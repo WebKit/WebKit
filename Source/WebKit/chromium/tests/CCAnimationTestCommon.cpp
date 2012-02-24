@@ -28,8 +28,29 @@
 
 #include "GraphicsLayer.h"
 #include "LayerChromium.h"
+#include "cc/CCLayerAnimationController.h"
 
 using namespace WebCore;
+
+namespace {
+
+template <class Target>
+void addOpacityTransition(Target& target, double duration, float startOpacity, float endOpacity)
+{
+    WebCore::KeyframeValueList values(AnimatedPropertyOpacity);
+    if (duration > 0)
+        values.insert(new FloatAnimationValue(0, startOpacity));
+    values.insert(new FloatAnimationValue(duration, endOpacity));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+
+    IntSize boxSize;
+
+    target.addAnimation(values, boxSize, animation.get(), 0, 0, 0);
+}
+
+} // namespace
 
 namespace WebKitTests {
 
@@ -99,19 +120,14 @@ PassOwnPtr<WebCore::CCAnimationCurve> FakeFloatTransition::clone() const
     return adoptPtr(new FakeFloatTransition(*this));
 }
 
-void addOpacityTransition(WebCore::LayerChromium& layer, double duration, float startOpacity, float endOpacity)
+void addOpacityTransitionToController(WebCore::CCLayerAnimationController& controller, double duration, float startOpacity, float endOpacity)
 {
-    WebCore::KeyframeValueList values(AnimatedPropertyOpacity);
-    if (duration > 0)
-        values.insert(new FloatAnimationValue(0, startOpacity));
-    values.insert(new FloatAnimationValue(duration, endOpacity));
+    addOpacityTransition(controller, duration, startOpacity, endOpacity);
+}
 
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(1);
-
-    IntSize boxSize;
-
-    layer.addAnimation(values, boxSize, animation.get(), 0, 0, 0);
+void addOpacityTransitionToLayer(WebCore::LayerChromium& layer, double duration, float startOpacity, float endOpacity)
+{
+    addOpacityTransition(layer, duration, startOpacity, endOpacity);
 }
 
 } // namespace WebKitTests

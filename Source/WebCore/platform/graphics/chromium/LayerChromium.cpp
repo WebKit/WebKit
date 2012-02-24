@@ -136,6 +136,11 @@ void LayerChromium::setLayerAnimationController(PassOwnPtr<CCLayerAnimationContr
     setNeedsCommit();
 }
 
+bool LayerChromium::hasActiveAnimation() const
+{
+    return m_layerAnimationController->hasActiveAnimation();
+}
+
 void LayerChromium::setIsNonCompositedContent(bool isNonCompositedContent)
 {
     m_isNonCompositedContent = isNonCompositedContent;

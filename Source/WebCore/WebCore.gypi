@@ -3268,6 +3268,8 @@
             'platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp',
             'platform/graphics/chromium/cc/CCHeadsUpDisplay.h',
             'platform/graphics/chromium/cc/CCInputHandler.h',
+            'platform/graphics/chromium/cc/CCKeyframedAnimationCurve.cpp',
+            'platform/graphics/chromium/cc/CCKeyframedAnimationCurve.h',
             'platform/graphics/chromium/cc/CCLayerAnimationController.h',
             'platform/graphics/chromium/cc/CCLayerAnimationController.cpp',
             'platform/graphics/chromium/cc/CCLayerAnimationControllerImpl.h',

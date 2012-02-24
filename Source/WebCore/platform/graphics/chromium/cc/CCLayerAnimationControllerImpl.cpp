@@ -201,7 +201,7 @@ void CCLayerAnimationControllerImpl::tickAnimations(double now)
             switch (m_activeAnimations[i]->targetProperty()) {
 
             case CCActiveAnimation::Transform: {
-                const CCTransformAnimationCurve* transformAnimationCurve = m_activeAnimations[i]->animationCurve()->toTransformAnimationCurve();
+                const CCTransformAnimationCurve* transformAnimationCurve = m_activeAnimations[i]->curve()->toTransformAnimationCurve();
                 const TransformationMatrix matrix = transformAnimationCurve->getValue(trimmed, m_client->bounds());
                 if (m_activeAnimations[i]->isFinishedAt(now))
                     m_activeAnimations[i]->setRunState(CCActiveAnimation::Finished, now);
@@ -211,7 +211,7 @@ void CCLayerAnimationControllerImpl::tickAnimations(double now)
             }
 
             case CCActiveAnimation::Opacity: {
-                const CCFloatAnimationCurve* floatAnimationCurve = m_activeAnimations[i]->animationCurve()->toFloatAnimationCurve();
+                const CCFloatAnimationCurve* floatAnimationCurve = m_activeAnimations[i]->curve()->toFloatAnimationCurve();
                 const float opacity = floatAnimationCurve->getValue(trimmed);
                 if (m_activeAnimations[i]->isFinishedAt(now))
                     m_activeAnimations[i]->setRunState(CCActiveAnimation::Finished, now);

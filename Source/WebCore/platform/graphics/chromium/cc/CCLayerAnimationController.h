@@ -56,8 +56,8 @@ public:
     // are kept in sync. This function does not take ownership of the impl thread controller.
     virtual void synchronizeAnimations(CCLayerAnimationControllerImpl*);
 
-    // This is for testing purposes only.
-    Vector<OwnPtr<CCActiveAnimation> >& activeAnimations() { return m_activeAnimations; }
+    bool hasActiveAnimation() const { return m_activeAnimations.size(); }
+    CCActiveAnimation* getActiveAnimation(int groupId, CCActiveAnimation::TargetProperty);
 
 protected:
     CCLayerAnimationController();
@@ -68,7 +68,6 @@ private:
     void removeAnimationsCompletedOnMainThread(CCLayerAnimationControllerImpl*);
     void pushAnimationProperties(CCLayerAnimationControllerImpl*);
 
-    CCActiveAnimation* getActiveAnimation(int groupId, CCActiveAnimation::TargetProperty);
     void remove(int groupId, CCActiveAnimation::TargetProperty);
 
     Vector<OwnPtr<CCActiveAnimation> > m_activeAnimations;

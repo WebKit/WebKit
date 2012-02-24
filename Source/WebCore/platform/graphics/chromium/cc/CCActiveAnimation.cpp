@@ -38,7 +38,7 @@ PassOwnPtr<CCActiveAnimation> CCActiveAnimation::create(PassOwnPtr<CCAnimationCu
 }
 
 CCActiveAnimation::CCActiveAnimation(PassOwnPtr<CCAnimationCurve> curve, int animationId, int groupId, TargetProperty targetProperty)
-    : m_animationCurve(curve)
+    : m_curve(curve)
     , m_id(animationId)
     , m_group(groupId)
     , m_targetProperty(targetProperty)
@@ -70,7 +70,7 @@ bool CCActiveAnimation::isFinishedAt(double time) const
 
     return m_runState == Running
         && m_iterations >= 0
-        && m_iterations * m_animationCurve->duration() <= time - startTime() - m_totalPausedTime;
+        && m_iterations * m_curve->duration() <= time - startTime() - m_totalPausedTime;
 }
 
 bool CCActiveAnimation::isWaiting() const
@@ -109,20 +109,20 @@ double CCActiveAnimation::trimTimeToCurrentIteration(double now) const
         return 0;
 
     // If less than an iteration duration, just return trimmed.
-    if (trimmed < m_animationCurve->duration())
+    if (trimmed < m_curve->duration())
         return trimmed;
 
     // If greater than or equal to the total duration, return iteration duration.
-    if (m_iterations >= 0 && trimmed >= m_animationCurve->duration() * m_iterations)
-        return m_animationCurve->duration();
+    if (m_iterations >= 0 && trimmed >= m_curve->duration() * m_iterations)
+        return m_curve->duration();
 
     // Finally, return x where trimmed = x + n * m_animation->duration() for some positive integer n.
-    return fmod(trimmed, m_animationCurve->duration());
+    return fmod(trimmed, m_curve->duration());
 }
 
 PassOwnPtr<CCActiveAnimation> CCActiveAnimation::cloneForImplThread() const
 {
-    OwnPtr<CCActiveAnimation> toReturn(adoptPtr(new CCActiveAnimation(m_animationCurve->clone(), m_id, m_group, m_targetProperty)));
+    OwnPtr<CCActiveAnimation> toReturn(adoptPtr(new CCActiveAnimation(m_curve->clone(), m_id, m_group, m_targetProperty)));
     toReturn->m_runState = m_runState;
     toReturn->m_iterations = m_iterations;
     toReturn->m_startTime = m_startTime;

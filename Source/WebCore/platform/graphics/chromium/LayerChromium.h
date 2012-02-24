@@ -224,6 +224,7 @@ public:
 
     CCLayerAnimationController* layerAnimationController() { return m_layerAnimationController.get(); }
     void setLayerAnimationController(PassOwnPtr<CCLayerAnimationController>);
+    bool hasActiveAnimation() const;
 
 protected:
     friend class CCLayerImpl;

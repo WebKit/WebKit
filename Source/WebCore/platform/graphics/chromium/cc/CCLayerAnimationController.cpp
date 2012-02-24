@@ -28,10 +28,70 @@
 
 #include "GraphicsLayer.h" // for KeyframeValueList
 #include "cc/CCActiveAnimation.h"
+#include "cc/CCKeyframedAnimationCurve.h"
 #include "cc/CCLayerAnimationControllerImpl.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
+
+namespace {
+
+template <typename Keyframe, typename Value>
+void appendKeyframe(Vector<Keyframe>& keyframes, double keyTime, const Value* value)
+{
+    keyframes.append(Keyframe(keyTime, value->value()));
+}
+
+template <>
+void appendKeyframe<CCTransformKeyframe, TransformAnimationValue>(Vector<CCTransformKeyframe>& keyframes, double keyTime, const TransformAnimationValue* value)
+{
+    keyframes.append(CCTransformKeyframe(keyTime, *value->value()));
+}
+
+template <class Value, class Keyframe, class Curve>
+PassOwnPtr<CCActiveAnimation> createActiveAnimation(const KeyframeValueList& valueList, const Animation* animation, size_t animationId, size_t groupId, double timeOffset, CCActiveAnimation::TargetProperty targetProperty)
+{
+    // FIXME: add support for different directions.
+    if (animation && animation->isDirectionSet() && animation->direction() == Animation::AnimationDirectionAlternate)
+        return nullptr;
+
+    // FIXME: add support for delay
+    if (animation && animation->isDelaySet() && animation->delay() > 0)
+        return nullptr;
+
+    // FIXME: add support for fills forwards and fills backwards
+    if (animation && animation->isFillModeSet() && (animation->fillsForwards() || animation->fillsBackwards()))
+        return nullptr;
+
+    Vector<Keyframe> keyframes;
+
+    for (size_t i = 0; i < valueList.size(); i++) {
+        const Value* originalValue = static_cast<const Value*>(valueList.at(i));
+
+        // FIXME: add support for timing functions.
+        if (originalValue->timingFunction() && originalValue->timingFunction()->type() != TimingFunction::LinearFunction)
+            return nullptr;
+
+        double duration = (animation && animation->isDurationSet()) ? animation->duration() : 1;
+        appendKeyframe(keyframes, originalValue->keyTime() * duration, originalValue);
+    }
+
+    OwnPtr<Curve> curve = Curve::create(keyframes);
+
+    OwnPtr<CCActiveAnimation> anim = CCActiveAnimation::create(curve.release(), animationId, groupId, targetProperty);
+
+    ASSERT(anim.get());
+
+    if (anim.get()) {
+        int iterations = (animation && animation->isIterationCountSet()) ? animation->iterationCount() : 1;
+        anim->setIterations(iterations);
+    }
+
+    return anim.release();
+}
+
+} // namepace
 
 CCLayerAnimationController::CCLayerAnimationController()
 {
@@ -46,13 +106,22 @@ PassOwnPtr<CCLayerAnimationController> CCLayerAnimationController::create()
     return adoptPtr(new CCLayerAnimationController);
 }
 
-bool CCLayerAnimationController::addAnimation(const KeyframeValueList& valueList,
-                                              const IntSize&,
-                                              const Animation* animation,
-                                              int animationId,
-                                              int groupId,
-                                              double timeOffset)
+bool CCLayerAnimationController::addAnimation(const KeyframeValueList& valueList, const IntSize&, const Animation* animation, int animationId, int groupId, double timeOffset)
 {
+    if (!animation)
+        return false;
+
+    OwnPtr<CCActiveAnimation> toAdd;
+    if (valueList.property() == AnimatedPropertyWebkitTransform)
+        toAdd = createActiveAnimation<TransformAnimationValue, CCTransformKeyframe, CCKeyframedTransformAnimationCurve>(valueList, animation, animationId, groupId, timeOffset, CCActiveAnimation::Transform);
+    else if (valueList.property() == AnimatedPropertyOpacity)
+        toAdd = createActiveAnimation<FloatAnimationValue, CCFloatKeyframe, CCKeyframedFloatAnimationCurve>(valueList, animation, animationId, groupId, timeOffset, CCActiveAnimation::Opacity);
+
+    if (toAdd.get()) {
+        m_activeAnimations.append(toAdd.release());
+        return true;
+    }
+
     return false;
 }
 

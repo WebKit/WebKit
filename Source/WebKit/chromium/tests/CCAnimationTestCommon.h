@@ -31,6 +31,7 @@
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
+class CCLayerAnimationController;
 class LayerChromium;
 }
 
@@ -94,7 +95,9 @@ private:
     WebCore::IntSize m_bounds;
 };
 
-void addOpacityTransition(WebCore::LayerChromium&, double duration, float startOpacity, float endOpacity);
+void addOpacityTransitionToController(WebCore::CCLayerAnimationController&, double duration, float startOpacity, float endOpacity);
+
+void addOpacityTransitionToLayer(WebCore::LayerChromium&, double duration, float startOpacity, float endOpacity);
 
 } // namespace WebKitTests
 

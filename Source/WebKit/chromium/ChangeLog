@@ -1,3 +1,31 @@
+2012-02-23  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Implement keyframed animations for the cc thread.
+        https://bugs.webkit.org/show_bug.cgi?id=77229
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/CCAnimationTestCommon.cpp:
+        (WebCore):
+        (WebCore::addOpacityTransition):
+        (WebKitTests::addOpacityTransitionToController):
+        (WebKitTests::addOpacityTransitionToLayer):
+        * tests/CCAnimationTestCommon.h:
+        (WebCore):
+        (WebKitTests):
+        * tests/CCKeyframedAnimationCurveTest.cpp: Added.
+        (WebCore):
+        (WebCore::expectTranslateX):
+        (WebCore::TEST):
+        * tests/CCLayerAnimationControllerTest.cpp:
+        (WebKitTests::expectTranslateX):
+        (WebKitTests):
+        (WebKitTests::TEST):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::dispatchAddAnimation):
+        (WTF::CCLayerTreeHostTest::doBeginTest):
+
 2012-02-23  James Robinson  <jamesr@chromium.org>
 
         [chromium] Clean up GraphicsContext3D initialization paths

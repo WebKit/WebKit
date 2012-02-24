@@ -97,8 +97,8 @@ public:
     bool isWaiting() const;
     bool isRunningOrHasRun() const;
 
-    CCAnimationCurve* animationCurve() { return m_animationCurve.get(); }
-    const CCAnimationCurve* animationCurve() const { return m_animationCurve.get(); }
+    CCAnimationCurve* curve() { return m_curve.get(); }
+    const CCAnimationCurve* curve() const { return m_curve.get(); }
 
     // Takes the given absolute time, and using the start time and the number
     // of iterations, returns the relative time in the current iteration.
@@ -113,7 +113,7 @@ public:
 private:
     CCActiveAnimation(PassOwnPtr<CCAnimationCurve>, int animationId, int groupId, TargetProperty);
 
-    OwnPtr<CCAnimationCurve> m_animationCurve;
+    OwnPtr<CCAnimationCurve> m_curve;
 
     // IDs are not necessarily unique.
     int m_id;

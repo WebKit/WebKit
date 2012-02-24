@@ -151,25 +151,6 @@ private:
     TestHooks* m_testHooks;
 };
 
-// Adapts CCLayerAnimationController for test. Adds a dummy implementation of addAnimation that inserts a float animation.
-// FIXME: once CCLayerAnimationController::addAnimation is implemented, that function should be called directly and this
-// class can be removed.
-class MockLayerAnimationController : public CCLayerAnimationController {
-public:
-    static PassOwnPtr<MockLayerAnimationController> create()
-    {
-        return adoptPtr(new MockLayerAnimationController);
-    }
-
-private:
-    virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, int animationId, int groupId, double timeOffset)
-    {
-        double duration = 0;
-        activeAnimations().append(CCActiveAnimation::create(adoptPtr(new FakeFloatTransition(duration, 1, 0)), animationId, groupId, CCActiveAnimation::Opacity));
-        return true;
-    }
-};
-
 class CompositorFakeWebGraphicsContext3DWithTextureTracking : public CompositorFakeWebGraphicsContext3D {
 public:
     static PassOwnPtr<CompositorFakeWebGraphicsContext3DWithTextureTracking> create(Attributes attrs)
@@ -361,7 +342,7 @@ protected:
       CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
       ASSERT(test);
       if (test->m_layerTreeHost && test->m_layerTreeHost->rootLayer())
-          test->m_layerTreeHost->rootLayer()->addAnimation(KeyframeValueList(AnimatedPropertyOpacity), IntSize(), 0, 0, 0, 0.0);
+          addOpacityTransitionToLayer(*test->m_layerTreeHost->rootLayer(), 0, 0, 1);
     }
 
     static void dispatchSetNeedsAnimateAndCommit(void* self)
@@ -514,7 +495,6 @@ void CCLayerTreeHostTest::doBeginTest()
     m_layerTreeHost = MockLayerTreeHost::create(this, m_client.get(), rootLayer, m_settings);
     ASSERT_TRUE(m_layerTreeHost);
     rootLayer->setLayerTreeHost(m_layerTreeHost.get());
-    rootLayer->setLayerAnimationController(MockLayerAnimationController::create());
 
     m_beginning = true;
     beginTest();

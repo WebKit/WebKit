@@ -1,3 +1,54 @@
+2012-02-23  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Implement keyframed animations for the cc thread.
+        https://bugs.webkit.org/show_bug.cgi?id=77229
+
+        Reviewed by James Robinson.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::hasActiveAnimation):
+        (WebCore):
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+        * platform/graphics/chromium/cc/CCActiveAnimation.cpp:
+        (WebCore::CCActiveAnimation::CCActiveAnimation):
+        (WebCore::CCActiveAnimation::isFinishedAt):
+        (WebCore::CCActiveAnimation::trimTimeToCurrentIteration):
+        (WebCore::CCActiveAnimation::cloneForImplThread):
+        * platform/graphics/chromium/cc/CCActiveAnimation.h:
+        (WebCore::CCActiveAnimation::curve):
+        (CCActiveAnimation):
+        * platform/graphics/chromium/cc/CCKeyframedAnimationCurve.cpp: Added.
+        (WebCore::CCKeyframedFloatAnimationCurve::create):
+        (WebCore):
+        (WebCore::CCKeyframedFloatAnimationCurve::CCKeyframedFloatAnimationCurve):
+        (WebCore::CCKeyframedFloatAnimationCurve::~CCKeyframedFloatAnimationCurve):
+        (WebCore::CCKeyframedFloatAnimationCurve::duration):
+        (WebCore::CCKeyframedFloatAnimationCurve::clone):
+        (WebCore::CCKeyframedFloatAnimationCurve::getValue):
+        (WebCore::CCKeyframedTransformAnimationCurve::create):
+        (WebCore::CCKeyframedTransformAnimationCurve::CCKeyframedTransformAnimationCurve):
+        (WebCore::CCKeyframedTransformAnimationCurve::~CCKeyframedTransformAnimationCurve):
+        (WebCore::CCKeyframedTransformAnimationCurve::duration):
+        (WebCore::CCKeyframedTransformAnimationCurve::clone):
+        (WebCore::CCKeyframedTransformAnimationCurve::getValue):
+        * platform/graphics/chromium/cc/CCKeyframedAnimationCurve.h: Added.
+        (WebCore):
+        (WebCore::CCFloatKeyframe::CCFloatKeyframe):
+        (CCFloatKeyframe):
+        (WebCore::CCTransformKeyframe::CCTransformKeyframe):
+        (CCTransformKeyframe):
+        (CCKeyframedFloatAnimationCurve):
+        (CCKeyframedTransformAnimationCurve):
+        * platform/graphics/chromium/cc/CCLayerAnimationController.cpp:
+        (WebCore::CCLayerAnimationController::addAnimation):
+        * platform/graphics/chromium/cc/CCLayerAnimationController.h:
+        (WebCore::CCLayerAnimationController::hasActiveAnimation):
+        (CCLayerAnimationController):
+        * platform/graphics/chromium/cc/CCLayerAnimationControllerImpl.cpp:
+        (WebCore::CCLayerAnimationControllerImpl::tickAnimations):
+
 2012-02-23  Raymond Toy  <rtoy@google.com>
 
         Use MathExtras round() in timeToSampleFrame
