@@ -80,6 +80,11 @@ static void activateUriEntryCallback(BrowserWindow *window)
     webkit_web_view_load_uri(window->webView, gtk_entry_get_text(GTK_ENTRY(window->uriEntry)));
 }
 
+static void reloadCallback(BrowserWindow *window)
+{
+    webkit_web_view_reload(window->webView);
+}
+
 static void goBackCallback(BrowserWindow *window)
 {
     webkit_web_view_go_back(window->webView);
@@ -389,7 +394,7 @@ static void browser_window_init(BrowserWindow *window)
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_tool_button_new_from_stock(GTK_STOCK_OK);
-    g_signal_connect_swapped(item, "clicked", G_CALLBACK(activateUriEntryCallback), (gpointer)window);
+    g_signal_connect_swapped(item, "clicked", G_CALLBACK(reloadCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
