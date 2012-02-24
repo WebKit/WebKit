@@ -494,9 +494,6 @@ svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
 svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/svg-disallowed-in-dashboard-object.html
 
-# EFL's LayoutTestController does not implement setValueForUser
-fast/forms/onchange-setvalueforuser.html
-
 # EFL's LayoutTestController does not implement setViewModeMediaFeature
 fast/media/media-query-list-02.html
 fast/media/media-query-list-03.html
@@ -542,10 +539,6 @@ fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 
 # EFL's LayoutTestController does not implement setAuthorAndUserStylesEnabled
 fast/css/disabled-author-styles.html
-
-# EFL's LayoutTestController does not implement setAutofilled
-fast/forms/input-autofilled.html
-fast/forms/reset-autofilled.html
 
 # EFL's LayoutTestController does not implement disableImageLoading
 http/tests/misc/favicon-loads-with-icon-loading-override.html

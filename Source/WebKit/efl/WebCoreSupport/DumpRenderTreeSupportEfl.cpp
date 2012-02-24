@@ -31,13 +31,16 @@
 #include <FindOptions.h>
 #include <FloatSize.h>
 #include <FrameView.h>
+#include <HTMLInputElement.h>
 #include <IntRect.h>
+#include <JSElement.h>
 #include <PrintContext.h>
 #include <RenderTreeAsText.h>
 #include <Settings.h>
 #include <bindings/js/GCController.h>
 #include <history/HistoryItem.h>
 #include <workers/WorkerThread.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/text/AtomicString.h>
 
 unsigned DumpRenderTreeSupportEfl::activeAnimationsCount(const Evas_Object* ewkFrame)
@@ -277,6 +280,35 @@ void DumpRenderTreeSupportEfl::suspendAnimations(Evas_Object* ewkFrame)
     WebCore::AnimationController *animationController = frame->animation();
     if (animationController)
         animationController->suspendAnimations();
+}
+
+void DumpRenderTreeSupportEfl::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
+{
+    JSC::ExecState* exec = toJS(context);
+    WebCore::Element* element = WebCore::toElement(toJS(exec, nodeObject));
+    if (!element)
+        return;
+    WebCore::HTMLInputElement* inputElement = element->toInputElement();
+    if (!inputElement)
+        return;
+
+    size_t bufferSize = JSStringGetMaximumUTF8CStringSize(value);
+    OwnArrayPtr<char> valueBuffer = adoptArrayPtr(new char[bufferSize]);
+    JSStringGetUTF8CString(value, valueBuffer.get(), bufferSize);
+    inputElement->setValueForUser(String::fromUTF8(valueBuffer.get()));
+}
+
+void DumpRenderTreeSupportEfl::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
+{
+    JSC::ExecState* exec = toJS(context);
+    WebCore::Element* element = WebCore::toElement(toJS(exec, nodeObject));
+    if (!element)
+        return;
+    WebCore::HTMLInputElement* inputElement = element->toInputElement();
+    if (!inputElement)
+        return;
+
+    inputElement->setAutofilled(autofilled);
 }
 
 bool DumpRenderTreeSupportEfl::findString(const Evas_Object* ewkView, const char* text, WebCore::FindOptions options)

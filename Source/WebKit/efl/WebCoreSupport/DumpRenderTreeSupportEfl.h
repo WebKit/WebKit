@@ -24,6 +24,8 @@
 #include <Eina.h>
 #include <FindOptions.h>
 #include <IntRect.h>
+#include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/JSStringRef.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -60,6 +62,8 @@ public:
     static WebCore::IntRect selectionRectangle(const Evas_Object* ewkFrame);
     static String suitableDRTFrameName(const Evas_Object* ewkFrame);
     static void suspendAnimations(Evas_Object* ewkFrame);
+    static void setValueForUser(JSContextRef, JSValueRef nodeObject, JSStringRef value);
+    static void setAutofilled(JSContextRef, JSValueRef nodeObject, bool autofilled);
 
     static bool findString(const Evas_Object* ewkView, const char* text, WebCore::FindOptions);
 

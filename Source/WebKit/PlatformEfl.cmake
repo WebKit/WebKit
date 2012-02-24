@@ -6,8 +6,10 @@ LIST(APPEND WebKit_LINK_FLAGS
 )
 
 LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${CMAKE_SOURCE_DIR}/Source"
     "${WEBKIT_DIR}/efl/ewk"
     "${WEBKIT_DIR}/efl/WebCoreSupport"
+    "${JAVASCRIPTCORE_DIR}/ForwardingHeaders"
     "${JAVASCRIPTCORE_DIR}/wtf/gobject"
     "${WEBCORE_DIR}/platform/efl"
     "${WEBCORE_DIR}/platform/graphics/cairo"
