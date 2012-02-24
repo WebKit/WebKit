@@ -1,3 +1,26 @@
+2012-02-24  Adam Barth  <abarth@webkit.org>
+
+        DOMWindow*.idl should have had the same license block as DOMWindow.idl did originally
+        https://bugs.webkit.org/show_bug.cgi?id=79507
+
+        Reviewed by Alexey Proskuryakov.
+
+        In moving pieces of DOMWindow.idl into separate files, we mistakenly
+        changed some of the license blocks.  All these files should have a
+        license block that matches the file that originally contained the code.
+
+        * Modules/intents/DOMWindowIntents.idl:
+        * fileapi/DOMWindowFileSystem.idl:
+        * html/DOMWindowHTML.idl:
+        * html/canvas/DOMWindowWebGL.idl:
+        * mediastream/DOMWindowMediaStream.idl:
+        * storage/DOMWindowSQLDatabase.idl:
+        * svg/DOMWindowSVG.idl:
+        * webaudio/DOMWindowWebAudio.idl:
+        * websockets/DOMWindowWebSocket.idl:
+        * workers/DOMWindowWorker.idl:
+        * xml/DOMWindowXML.idl:
+
 2012-02-24  David Kilzer  <ddkilzer@apple.com>
 
         Use xcrun to find compiler paths for Generate Derived Sources build phase script
