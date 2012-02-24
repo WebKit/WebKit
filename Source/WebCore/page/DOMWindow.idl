@@ -401,15 +401,6 @@ module window {
         attribute CanvasRenderingContext2DConstructor CanvasRenderingContext2D;
 
         attribute ImageDataConstructor ImageData;
-        attribute [Conditional=WEBGL] WebGLActiveInfoConstructor WebGLActiveInfo;
-        attribute [Conditional=WEBGL] WebGLBufferConstructor WebGLBuffer;
-        attribute [Conditional=WEBGL] WebGLFramebufferConstructor WebGLFramebuffer;
-        attribute [Conditional=WEBGL] WebGLProgramConstructor WebGLProgram;
-        attribute [Conditional=WEBGL] WebGLRenderbufferConstructor WebGLRenderbuffer;
-        attribute [Conditional=WEBGL] WebGLRenderingContextConstructor WebGLRenderingContext;
-        attribute [Conditional=WEBGL] WebGLShaderConstructor WebGLShader;
-        attribute [Conditional=WEBGL] WebGLTextureConstructor WebGLTexture;
-        attribute [Conditional=WEBGL] WebGLUniformLocationConstructor WebGLUniformLocation;
         attribute TextMetricsConstructor TextMetrics;
 
         attribute DOMStringMapConstructor DOMStringMap;

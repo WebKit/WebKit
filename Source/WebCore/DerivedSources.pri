@@ -215,6 +215,7 @@ IDL_BINDINGS += \
     $$PWD/fileapi/WebKitBlobBuilder.idl \
     $$PWD/html/canvas/ArrayBufferView.idl \
     $$PWD/html/canvas/ArrayBuffer.idl \
+    $$PWD/html/canvas/DOMWindowWebGL.idl \
     $$PWD/html/canvas/DataView.idl \
     $$PWD/html/canvas/Int8Array.idl \
     $$PWD/html/canvas/Float32Array.idl \

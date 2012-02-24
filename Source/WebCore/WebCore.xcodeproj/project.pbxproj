@@ -10673,6 +10673,7 @@
 		A833C80A0A2CF25600D57664 /* XMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XMLNames.cpp; sourceTree = "<group>"; };
 		A833C80B0A2CF25600D57664 /* XMLNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLNames.h; sourceTree = "<group>"; };
 		A83B533814F399BB00720D9D /* IDLAttributes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDLAttributes.txt; path = scripts/IDLAttributes.txt; sourceTree = "<group>"; };
+		A83B535B14F7413A00720D9D /* DOMWindowWebGL.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DOMWindowWebGL.idl; path = canvas/DOMWindowWebGL.idl; sourceTree = "<group>"; };
 		A83B78F20CCAFF15000B0825 /* JSSVGFontFaceUriElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGFontFaceUriElement.h; sourceTree = "<group>"; };
 		A83B78F30CCAFF15000B0825 /* JSSVGFontFaceUriElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGFontFaceUriElement.cpp; sourceTree = "<group>"; };
 		A83B78F40CCAFF15000B0825 /* JSSVGFontFaceSrcElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGFontFaceSrcElement.h; sourceTree = "<group>"; };
@@ -14535,6 +14536,7 @@
 		49484FAE102CF01E00187DD3 /* canvas */ = {
 			isa = PBXGroup;
 			children = (
+				A83B535B14F7413A00720D9D /* DOMWindowWebGL.idl */,
 				49EECDCC10503C2300099FAB /* ArrayBuffer.idl */,
 				49EECDC910503C2300099FAB /* ArrayBufferView.idl */,
 				6E4E91A710F7FB3100A2779C /* CanvasContextAttributes.cpp */,

@@ -1,3 +1,24 @@
+2012-02-24  Kentaro Hara  <haraken@chromium.org>
+
+        Move WebGL APIs from DOMWindow.idl to DOMWindowWebGL.idl
+        https://bugs.webkit.org/show_bug.cgi?id=79432
+
+        Reviewed by Adam Barth.
+
+        For WebKit modularization, this patch moves WebGL-related APIs
+        from DOMWindow.idl to DOMWindowWebGL.idl.
+
+        No tests. No change in behavior.
+
+        * html/canvas/DOMWindowWebGL.idl: Added.
+        * page/DOMWindow.idl:
+
+        * DerivedSources.make: Added DOMWindowWebGL.idl.
+        * DerivedSources.pri: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
 2012-02-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Regression] network worker tests crash on qt.
