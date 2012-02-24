@@ -1,3 +1,23 @@
+2012-02-24  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Compute more acurate font heights.
+        https://bugs.webkit.org/show_bug.cgi?id=79524
+
+        Reviewed by Adam Roben.
+
+        Adjust font handling as suggested by Lynn Neir to use the proper
+        xHeight value for the font, rather than the fall-back guess
+        used in the current code.
+
+        css1/text_properties/line_height.html
+
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::SimpleFontData::platformInit): Properly initialize a
+          few elements.
+        (WebCore::SimpleFontData::platformWidthForGlyph): Use the Cairo
+          cairo_scaled_font_text_extents call, rather than attempting
+          to compute the value from ::GetGlyphOutline.
+
 2012-02-24  Tim Horton  <timothy_horton@apple.com>
 
         Infinite repaint loop with SVGImageCache and deferred repaint timers
