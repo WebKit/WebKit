@@ -1,3 +1,14 @@
+2012-02-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [Regression] network worker tests crash on qt.
+        https://bugs.webkit.org/show_bug.cgi?id=79263
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::createDecoder):
+        (WebCore::InspectorPageAgent::cachedResourceContent):
+
 2012-02-24  Andreas Kling  <awesomekling@apple.com>
 
         Miscellaneous CSSParser dodging in presentation attribute parsing.
