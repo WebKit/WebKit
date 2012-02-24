@@ -45,6 +45,12 @@ typedef struct tagSIZE SIZE;
 QT_BEGIN_NAMESPACE
 class QSize;
 QT_END_NAMESPACE
+#elif PLATFORM(BLACKBERRY)
+namespace BlackBerry {
+namespace Platform {
+class IntSize;
+}
+}
 #endif
 
 #if PLATFORM(WX)
@@ -126,6 +132,11 @@ public:
 #if PLATFORM(WX)
     IntSize(const wxSize&);
     operator wxSize() const;
+#endif
+
+#if PLATFORM(BLACKBERRY)
+    IntSize(const BlackBerry::Platform::IntSize&);
+    operator BlackBerry::Platform::IntSize() const;
 #endif
 
 private:
