@@ -298,11 +298,6 @@ WONTFIX : canvas/philip/tests/2d.drawImage.outsidesource.html = TEXT
 
 // We don't care about dashboard compatibility mode.
 WONTFIX SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = FAIL
-WONTFIX SKIP : http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html = FAIL
-WONTFIX SKIP : svg/custom/embedded-svg-disallowed-in-dashboard.xml = FAIL
-WONTFIX SKIP : svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html = FAIL
-WONTFIX SKIP : svg/custom/manually-parsed-svg-disallowed-in-dashboard.html = FAIL
-WONTFIX SKIP : svg/custom/svg-disallowed-in-dashboard-object.html = FAIL
 WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
 
 // Chrome uses different keyboard accelerators from those used by Safari, so
