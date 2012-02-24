@@ -399,13 +399,8 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return TextDocument::create(frame, url);
 
 #if ENABLE(SVG)
-    if (type == "image/svg+xml") {
-#if ENABLE(DASHBOARD_SUPPORT)    
-        Settings* settings = frame ? frame->settings() : 0;
-        if (!settings || !settings->usesDashboardBackwardCompatibilityMode())
-#endif
-            return SVGDocument::create(frame, url);
-    }
+    if (type == "image/svg+xml")
+        return SVGDocument::create(frame, url);
 #endif
     if (isXMLMIMEType(type))
         return Document::create(frame, url);

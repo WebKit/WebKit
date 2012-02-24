@@ -833,11 +833,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
 {
     ec = 0;
     
-    if (!importedNode
-#if ENABLE(SVG) && ENABLE(DASHBOARD_SUPPORT)
-        || (importedNode->isSVGElement() && page() && page()->settings()->usesDashboardBackwardCompatibilityMode())
-#endif
-        ) {
+    if (!importedNode) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
