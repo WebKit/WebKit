@@ -1,5 +1,18 @@
 2012-02-24  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed, rolling out r108477.
+        http://trac.webkit.org/changeset/108477
+        https://bugs.webkit.org/show_bug.cgi?id=79209
+
+        The perf tests committed in r108748 covers the perf tests
+        committed in r108477. So I'll roll out r108477.
+
+        * Bindings/dom_attributes_id_getter.html: Removed.
+        * Bindings/dom_attributes_id_setter.html: Removed.
+        * Bindings/resources/dom_attributes_common.js: Removed.
+
+2012-02-24  Kentaro Hara  <haraken@chromium.org>
+
         Add performance tests for DOM attribute getters and setters
         https://bugs.webkit.org/show_bug.cgi?id=79208
 
