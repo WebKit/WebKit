@@ -1,3 +1,19 @@
+2012-02-24  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r108730): Webkit nightlies fails to start due to WKPreferencesGetSuppressIncrementalRendering renaming
+        https://bugs.webkit.org/show_bug.cgi?id=79515
+
+        Reviewed by Alexey Proskuryakov.
+
+        Some versions of Safari contain call sites to two functions in WebKit2
+        that were removed in r108730. Restore these two functions so that these
+        versions of Safari can be used with WebKit nightly builds.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetSuppressIncrementalRendering):
+        (WKPreferencesGetSuppressIncrementalRendering):
+        * UIProcess/API/C/WKPreferences.h:
+
 2012-02-24  Jessie Berlin  <jberlin@apple.com>
 
         requestPermission callback not invoked if the WebProcess doesn't have to ask the UI Process
