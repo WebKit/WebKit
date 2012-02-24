@@ -832,14 +832,4 @@ bool ChromeClientBlackBerry::allowsAcceleratedCompositing() const
 }
 #endif
 
-void* ChromeClientBlackBerry::platformWindow() const
-{
-    return m_webPagePrivate->m_client->window();
-}
-
-void* ChromeClientBlackBerry::platformCompositingWindow() const
-{
-    return m_webPagePrivate->m_client->compositingWindow();
-}
-
 } // namespace WebCore

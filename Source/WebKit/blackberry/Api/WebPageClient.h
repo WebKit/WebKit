@@ -158,7 +158,6 @@ public:
     virtual void setPageTitle(const unsigned short* title, unsigned titleLength) = 0;
 
     virtual Platform::Graphics::Window* window() const = 0;
-    virtual Platform::Graphics::Window* compositingWindow() const = 0;
 
     virtual void notifyContentRendered(const Platform::IntRect&) = 0;
     virtual void notifyScreenRotated() = 0;

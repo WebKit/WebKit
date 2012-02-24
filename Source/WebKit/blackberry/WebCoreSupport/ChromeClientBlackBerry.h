@@ -148,9 +148,6 @@ public:
     virtual bool allowsAcceleratedCompositing() const;
 #endif
 
-    virtual void* platformWindow() const;
-    virtual void* platformCompositingWindow() const;
-
     BlackBerry::WebKit::WebPagePrivate* webPagePrivate() const { return m_webPagePrivate; }
 
 private:
