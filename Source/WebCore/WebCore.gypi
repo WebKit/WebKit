@@ -1103,6 +1103,7 @@
             'websockets/DOMWindowWebSocket.idl',
             'websockets/WebSocket.idl',
             'workers/AbstractWorker.idl',
+            'workers/DOMWindowWorker.idl',
             'workers/DedicatedWorkerContext.idl',
             'workers/SharedWorker.idl',
             'workers/SharedWorkerContext.idl',

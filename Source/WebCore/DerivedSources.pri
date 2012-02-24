@@ -430,6 +430,7 @@ IDL_BINDINGS += \
     $$PWD/websockets/DOMWindowWebSocket.idl \
     $$PWD/websockets/WebSocket.idl \
     $$PWD/workers/AbstractWorker.idl \
+    $$PWD/workers/DOMWindowWorker.idl \
     $$PWD/workers/DedicatedWorkerContext.idl \
     $$PWD/workers/SharedWorker.idl \
     $$PWD/workers/SharedWorkerContext.idl \

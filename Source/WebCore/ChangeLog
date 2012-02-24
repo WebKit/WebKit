@@ -1,3 +1,24 @@
+2012-02-24  Kentaro Hara  <haraken@chromium.org>
+
+        Move Worker-related APIs from DOMWindow.idl to DOMWindowWorker.idl
+        https://bugs.webkit.org/show_bug.cgi?id=79442
+
+        Reviewed by Adam Barth.
+
+        For WebKit modularization, this patch moves Worker-related APIs
+        from DOMWindow.idl to DOMWindowWorker.idl.
+
+        No tests. No change in behavior.
+
+        * workers/DOMWindowWorker.idl: Added.
+        * page/DOMWindow.idl:
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+
 2012-02-24  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Upstream helper classes for skia

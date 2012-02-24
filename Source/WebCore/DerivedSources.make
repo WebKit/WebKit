@@ -565,6 +565,7 @@ BINDING_IDLS = \
     $(WebCore)/websockets/DOMWindowWebSocket.idl \
     $(WebCore)/websockets/WebSocket.idl \
     $(WebCore)/workers/AbstractWorker.idl \
+    $(WebCore)/workers/DOMWindowWorker.idl \
     $(WebCore)/workers/DedicatedWorkerContext.idl \
     $(WebCore)/workers/SharedWorker.idl \
     $(WebCore)/workers/SharedWorkerContext.idl \

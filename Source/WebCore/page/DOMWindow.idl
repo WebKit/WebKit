@@ -485,14 +485,6 @@ module window {
         attribute MessageChannelConstructor MessageChannel; // Usable with the new operator
 #endif
 
-#if defined(ENABLE_WORKERS) && ENABLE_WORKERS
-        attribute WorkerConstructor Worker; // Usable with the new operator
-#endif
-
-#if defined(ENABLE_SHARED_WORKERS) && ENABLE_SHARED_WORKERS
-        attribute [JSCustomGetter, V8EnabledAtRuntime] SharedWorkerConstructor SharedWorker; // Usable with the new operator
-#endif
-
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
         attribute [V8EnabledAtRuntime=webkitVideoTrack] HTMLTrackElementConstructor HTMLTrackElement;
         attribute [V8EnabledAtRuntime=webkitVideoTrack] TextTrackConstructor TextTrack;
