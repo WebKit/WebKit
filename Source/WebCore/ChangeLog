@@ -1,3 +1,15 @@
+2012-02-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Show scripts panel navigator overlay on the first scripts panel opening.
+        https://bugs.webkit.org/show_bug.cgi?id=79248
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.wasShown):
+        (WebInspector.ScriptsPanel.prototype.set _showNavigatorOverlay):
+        (WebInspector.ScriptsPanel.prototype._hideNavigatorOverlay):
+
 2012-02-24  Mike Lawther  <mikelawther@chromium.org>
 
         CSS3 calc(): handle non-negative values
