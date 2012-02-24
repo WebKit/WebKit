@@ -948,13 +948,8 @@ void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZo
 
 void WebViewImpl::numberOfWheelEventHandlersChanged(unsigned numberOfWheelHandlers)
 {
-    m_haveWheelEventHandlers = numberOfWheelHandlers > 0;
     if (m_client)
         m_client->numberOfWheelEventHandlersChanged(numberOfWheelHandlers);
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_layerTreeHost)
-        m_layerTreeHost->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
-#endif
 }
 
 void WebViewImpl::numberOfTouchEventHandlersChanged(unsigned numberOfTouchHandlers)
@@ -3178,7 +3173,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
         m_layerTreeHost = CCLayerTreeHost::create(this, ccSettings);
         if (m_layerTreeHost) {
-            m_layerTreeHost->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
             m_layerTreeHost->setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
             updateLayerTreeViewport();
             m_client->didActivateCompositor(m_layerTreeHost->compositorIdentifier());

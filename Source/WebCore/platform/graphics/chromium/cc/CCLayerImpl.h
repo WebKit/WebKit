@@ -181,6 +181,9 @@ public:
     bool scrollable() const { return m_scrollable; }
     void setScrollable(bool scrollable) { m_scrollable = scrollable; }
 
+    bool haveWheelEventHandlers() const { return m_haveWheelEventHandlers; }
+    void setHaveWheelEventHandlers(bool haveWheelEventHandlers) { m_haveWheelEventHandlers = haveWheelEventHandlers; }
+
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
     void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
 
@@ -245,6 +248,7 @@ private:
     IntSize m_contentBounds;
     IntPoint m_scrollPosition;
     bool m_scrollable;
+    bool m_haveWheelEventHandlers;
     Color m_backgroundColor;
     bool m_backgroundCoversViewport;
 

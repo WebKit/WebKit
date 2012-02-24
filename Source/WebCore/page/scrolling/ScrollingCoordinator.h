@@ -48,6 +48,7 @@ class GraphicsLayer;
 class Page;
 class PlatformWheelEvent;
 class Region;
+class ScrollingCoordinatorPrivate;
 class ScrollingTreeState;
 
 #if ENABLE(THREADED_SCROLLING)
@@ -133,6 +134,8 @@ private:
     RefPtr<ScrollingTree> m_scrollingTree;
     Timer<ScrollingCoordinator> m_scrollingTreeStateCommitterTimer;
 #endif
+
+    ScrollingCoordinatorPrivate* m_private;
 };
 
 } // namespace WebCore

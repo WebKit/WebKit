@@ -46,13 +46,14 @@ public:
     virtual void setNeedsRedraw() = 0;
 
     enum ScrollStatus { ScrollFailed, ScrollStarted, ScrollIgnored };
+    enum ScrollInputType { Gesture, Wheel };
 
     // Attempt to start scrolling a layer at a given point in window
     // coordinates. Returns ScrollStarted if the layer at the coordinates can
     // be scrolled, ScrollFailed if the scroll event should instead be
     // delegated to the main thread, or ScrollIgnored if there is nothing to
     // be scrolled at the given coordinates.
-    virtual ScrollStatus scrollBegin(const IntPoint&) = 0;
+    virtual ScrollStatus scrollBegin(const IntPoint&, ScrollInputType) = 0;
 
     // Scroll the layer selected with scrollBegin(). If there is no room to
     // move the layer in the requested direction, its first ancestor layer that
@@ -64,7 +65,6 @@ public:
     // called if scrollBegin() returned ScrollStarted.
     virtual void scrollEnd() = 0;
 
-    virtual bool haveWheelEventHandlers() = 0;
     virtual void pinchGestureBegin() = 0;
     virtual void pinchGestureUpdate(float magnifyDelta, const IntPoint& anchor) = 0;
     virtual void pinchGestureEnd() = 0;

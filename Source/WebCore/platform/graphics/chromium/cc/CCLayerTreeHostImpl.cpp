@@ -52,7 +52,6 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_frameNumber(0)
     , m_settings(settings)
     , m_visible(true)
-    , m_haveWheelEventHandlers(false)
     , m_pageScale(1)
     , m_pageScaleDelta(1)
     , m_sentPageScaleDelta(1)
@@ -486,11 +485,18 @@ void CCLayerTreeHostImpl::setNeedsRedraw()
     m_client->setNeedsRedrawOnImplThread();
 }
 
-CCInputHandlerClient::ScrollStatus CCLayerTreeHostImpl::scrollBegin(const IntPoint&)
+CCInputHandlerClient::ScrollStatus CCLayerTreeHostImpl::scrollBegin(const IntPoint& point, CCInputHandlerClient::ScrollInputType type)
 {
     // TODO: Check for scrollable sublayers.
-    if (!m_scrollLayerImpl || !m_scrollLayerImpl->scrollable())
+    if (!m_scrollLayerImpl || !m_scrollLayerImpl->scrollable()) {
+        TRACE_EVENT("scrollBegin Ignored no scrollable", this, 0);
         return ScrollIgnored;
+    }
+
+    if (type == CCInputHandlerClient::Wheel && m_scrollLayerImpl->haveWheelEventHandlers()) {
+        TRACE_EVENT("scrollBegin Failed wheelEventHandlers", this, 0);
+        return ScrollFailed;
+    }
 
     return ScrollStarted;
 }
@@ -508,11 +514,6 @@ void CCLayerTreeHostImpl::scrollBy(const IntSize& scrollDelta)
 
 void CCLayerTreeHostImpl::scrollEnd()
 {
-}
-
-bool CCLayerTreeHostImpl::haveWheelEventHandlers()
-{
-    return m_haveWheelEventHandlers;
 }
 
 void CCLayerTreeHostImpl::pinchGestureBegin()

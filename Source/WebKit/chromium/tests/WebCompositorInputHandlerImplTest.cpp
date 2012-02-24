@@ -67,14 +67,13 @@ public:
 
 private:
     virtual void setNeedsRedraw() OVERRIDE { }
-    virtual ScrollStatus scrollBegin(const WebCore::IntPoint&) OVERRIDE
+    virtual ScrollStatus scrollBegin(const WebCore::IntPoint&, WebCore::CCInputHandlerClient::ScrollInputType) OVERRIDE
     {
         return m_scrollStatus;
     }
     virtual void scrollBy(const WebCore::IntSize&) OVERRIDE { }
     virtual void scrollEnd() OVERRIDE { }
 
-    virtual bool haveWheelEventHandlers() OVERRIDE { return false; }
     virtual void pinchGestureBegin() OVERRIDE
     {
         m_pinchStarted = true;

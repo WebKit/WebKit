@@ -121,9 +121,9 @@ void WebCompositorInputHandlerImpl::handleInputEvent(const WebInputEvent& event)
     ASSERT(CCProxy::isImplThread());
     ASSERT(m_client);
 
-    if (event.type == WebInputEvent::MouseWheel && !m_inputHandlerClient->haveWheelEventHandlers()) {
+    if (event.type == WebInputEvent::MouseWheel) {
         const WebMouseWheelEvent& wheelEvent = *static_cast<const WebMouseWheelEvent*>(&event);
-        CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(wheelEvent.x, wheelEvent.y));
+        CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(wheelEvent.x, wheelEvent.y), CCInputHandlerClient::Wheel);
         switch (scrollStatus) {
         case CCInputHandlerClient::ScrollStarted:
             m_inputHandlerClient->scrollBy(IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
@@ -143,7 +143,7 @@ void WebCompositorInputHandlerImpl::handleInputEvent(const WebInputEvent& event)
         m_expectScrollUpdateEnd = true;
 #endif
         const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
-        CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(gestureEvent.x, gestureEvent.y));
+        CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(gestureEvent.x, gestureEvent.y), CCInputHandlerClient::Gesture);
         switch (scrollStatus) {
         case CCInputHandlerClient::ScrollStarted:
             m_scrollStarted = true;

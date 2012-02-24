@@ -61,14 +61,6 @@ ScrollingCoordinator::ScrollingCoordinator(Page* page)
 {
 }
 
-ScrollingCoordinator::~ScrollingCoordinator()
-{
-    ASSERT(!m_page);
-#if ENABLE(THREADED_SCROLLING)
-    ASSERT(!m_scrollingTree);
-#endif
-}
-
 void ScrollingCoordinator::pageDestroyed()
 {
     ASSERT(m_page);

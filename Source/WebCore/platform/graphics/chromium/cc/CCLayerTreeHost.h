@@ -185,8 +185,6 @@ public:
     bool visible() const { return m_visible; }
     void setVisible(bool);
 
-    void setHaveWheelEventHandlers(bool);
-
     // Returns false if we should abort this frame due to initialization failure.
     bool updateLayers();
 
@@ -240,7 +238,6 @@ private:
 
     IntSize m_viewportSize;
     bool m_visible;
-    bool m_haveWheelEventHandlers;
     typedef HashMap<GraphicsContext3D*, RefPtr<RateLimiter> > RateLimiterMap;
     RateLimiterMap m_rateLimiters;
 

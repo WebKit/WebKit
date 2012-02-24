@@ -62,6 +62,7 @@ LayerChromium::LayerChromium()
     , m_parent(0)
     , m_layerAnimationController(CCLayerAnimationController::create())
     , m_scrollable(false)
+    , m_haveWheelEventHandlers(false)
     , m_anchorPoint(0.5, 0.5)
     , m_backgroundColor(0, 0, 0, 0)
     , m_backgroundCoversViewport(false)
@@ -412,6 +413,14 @@ void LayerChromium::setScrollable(bool scrollable)
     setNeedsCommit();
 }
 
+void LayerChromium::setHaveWheelEventHandlers(bool haveWheelEventHandlers)
+{
+    if (m_haveWheelEventHandlers == haveWheelEventHandlers)
+        return;
+    m_haveWheelEventHandlers = haveWheelEventHandlers;
+    setNeedsCommit();
+}
+
 void LayerChromium::setDoubleSided(bool doubleSided)
 {
     if (m_doubleSided == doubleSided)
@@ -466,6 +475,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setIsNonCompositedContent(m_isNonCompositedContent);
     layer->setMasksToBounds(m_masksToBounds);
     layer->setScrollable(m_scrollable);
+    layer->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
     layer->setName(m_name);
     layer->setOpaque(m_opaque);
     layer->setOpacity(m_opacity);

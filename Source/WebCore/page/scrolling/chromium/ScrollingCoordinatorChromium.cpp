@@ -27,11 +27,35 @@
 
 #include "ScrollingCoordinator.h"
 
+#include "LayerChromium.h"
+#include "Region.h"
+
 namespace WebCore {
+
+class ScrollingCoordinatorPrivate {
+WTF_MAKE_NONCOPYABLE(ScrollingCoordinatorPrivate);
+public:
+    ScrollingCoordinatorPrivate() { }
+    ~ScrollingCoordinatorPrivate() { }
+
+    void setScrollLayer(LayerChromium* layer) { m_scrollLayer = layer; }
+    LayerChromium* scrollLayer() const { return m_scrollLayer.get(); }
+
+private:
+    RefPtr<LayerChromium> m_scrollLayer;
+};
 
 PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
-    return adoptRef(new ScrollingCoordinator(page));
+    RefPtr<ScrollingCoordinator> coordinator(adoptRef(new ScrollingCoordinator(page)));
+    coordinator->m_private = new ScrollingCoordinatorPrivate;
+    return coordinator.release();
+}
+
+ScrollingCoordinator::~ScrollingCoordinator()
+{
+    ASSERT(!m_page);
+    delete m_private;
 }
 
 void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer* horizontalScrollbarLayer)
@@ -46,7 +70,7 @@ void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView*, 
 
 void ScrollingCoordinator::setScrollLayer(GraphicsLayer* scrollLayer)
 {
-    // FIXME: Implement!
+    m_private->setScrollLayer(scrollLayer ? scrollLayer->platformLayer() : 0);
 }
 
 void ScrollingCoordinator::setNonFastScrollableRegion(const Region&)
@@ -61,12 +85,13 @@ void ScrollingCoordinator::setScrollParameters(ScrollElasticity horizontalScroll
     // FIXME: Implement!
 }
 
-void ScrollingCoordinator::setWheelEventHandlerCount(unsigned)
+void ScrollingCoordinator::setWheelEventHandlerCount(unsigned wheelEventHandlerCount)
 {
-    // FIXME: Implement!
+    if (LayerChromium* layer = m_private->scrollLayer())
+        layer->setHaveWheelEventHandlers(wheelEventHandlerCount > 0);
 }
 
-void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool)
+void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool should)
 {
     // FIXME: Implement!
 }

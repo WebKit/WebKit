@@ -165,11 +165,26 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
     root->setScrollPosition(IntPoint(0, 0));
     root->setMaxScrollPosition(IntSize(100, 100));
     m_hostImpl->setRootLayer(root);
-    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0)), CCInputHandlerClient::ScrollStarted);
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
     m_hostImpl->scrollBy(IntSize(0, 10));
     m_hostImpl->scrollEnd();
     EXPECT_TRUE(m_didRequestRedraw);
     EXPECT_TRUE(m_didRequestCommit);
+}
+
+TEST_F(CCLayerTreeHostImplTest, wheelEventHandlers)
+{
+    RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+    root->setScrollable(true);
+    root->setScrollPosition(IntPoint(0, 0));
+    root->setMaxScrollPosition(IntSize(100, 100));
+    m_hostImpl->setRootLayer(root);
+    root->setHaveWheelEventHandlers(true);
+    // With registered event handlers, wheel scrolls have to go to the main thread.
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollFailed);
+
+    // But gesture scrolls can still be handled.
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Gesture), CCInputHandlerClient::ScrollStarted);
 }
 
 TEST_F(CCLayerTreeHostImplTest, pinchGesture)

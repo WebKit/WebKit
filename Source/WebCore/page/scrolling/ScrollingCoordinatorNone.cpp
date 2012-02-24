@@ -29,10 +29,18 @@
 
 namespace WebCore {
 
+class ScrollingCoordinatorPrivate {
+};
+
 #if !ENABLE(THREADED_SCROLLING)
 PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
     return adoptRef(new ScrollingCoordinator(page));
+}
+
+ScrollingCoordinator::~ScrollingCoordinator()
+{
+    ASSERT(!m_page);
 }
 
 void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer*)

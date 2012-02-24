@@ -68,7 +68,6 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
     , m_layerRendererInitialized(false)
     , m_settings(settings)
     , m_visible(true)
-    , m_haveWheelEventHandlers(false)
     , m_pageScaleFactor(1)
     , m_minPageScaleFactor(1)
     , m_maxPageScaleFactor(1)
@@ -179,7 +178,6 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
         hostImpl->setRootLayer(0);
 
     hostImpl->setSourceFrameNumber(frameNumber());
-    hostImpl->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
     hostImpl->setViewportSize(viewportSize());
     hostImpl->setPageScaleFactorAndLimits(m_pageScaleFactor, m_minPageScaleFactor, m_maxPageScaleFactor);
 
@@ -349,14 +347,6 @@ void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostIm
         hostImpl->setNeedsAnimateLayers();
     } else
         hostImpl->setRootLayer(0);
-}
-
-void CCLayerTreeHost::setHaveWheelEventHandlers(bool haveWheelEventHandlers)
-{
-    if (m_haveWheelEventHandlers == haveWheelEventHandlers)
-        return;
-    m_haveWheelEventHandlers = haveWheelEventHandlers;
-    m_proxy->setNeedsCommit();
 }
 
 void CCLayerTreeHost::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec)

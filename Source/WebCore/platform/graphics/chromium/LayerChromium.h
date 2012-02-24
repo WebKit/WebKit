@@ -131,7 +131,7 @@ public:
     const IntPoint& scrollPosition() const { return m_scrollPosition; }
 
     void setScrollable(bool);
-    bool scrollable() const { return m_scrollable; }
+    void setHaveWheelEventHandlers(bool);
 
     IntSize scrollDelta() const { return IntSize(); }
 
@@ -275,6 +275,7 @@ private:
     IntRect m_visibleLayerRect;
     IntPoint m_scrollPosition;
     bool m_scrollable;
+    bool m_haveWheelEventHandlers;
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;

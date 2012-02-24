@@ -1,3 +1,70 @@
+2012-02-21  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Notify compositor of wheel event registration via ScrollingCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=79133
+
+        Reviewed by Dimitri Glazkov.
+
+        This notifies the chromium compositor of changes to the number of wheel event handlers via ScrollingCoordinator
+        instead of through ChromeClient/WebViewImpl. This is the path we'll use for other properties in the future and
+        is more extensible for handling things other than the root layer.
+
+        Property behavior is covered by new unit tests in LayerChromiumTests and CCLayerTreeHostImplTest.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore):
+        (ScrollingCoordinator):
+            Add a ScrollingCoordinatorPrivate so implementations can tack on additional data without having to #ifdef up
+            ScrollingCoordinator.h/cpp
+        * page/scrolling/ScrollingCoordinatorNone.cpp:
+        (WebCore):
+        (WebCore::ScrollingCoordinator::~ScrollingCoordinator):
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (ScrollingCoordinatorPrivate):
+            ScrollingCoordinatorPrivate in the chromium implementation keeps a reference to the scroll layer.
+        (WebCore::ScrollingCoordinatorPrivate::ScrollingCoordinatorPrivate):
+        (WebCore::ScrollingCoordinatorPrivate::~ScrollingCoordinatorPrivate):
+        (WebCore::ScrollingCoordinatorPrivate::setScrollLayer):
+        (WebCore::ScrollingCoordinatorPrivate::scrollLayer):
+        (WebCore):
+        (WebCore::ScrollingCoordinator::create):
+        (WebCore::ScrollingCoordinator::~ScrollingCoordinator):
+        (WebCore::ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::setScrollLayer):
+        (WebCore::ScrollingCoordinator::setNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::setScrollParameters):
+        (WebCore::ScrollingCoordinator::setWheelEventHandlerCount):
+        (WebCore::ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore):
+        (WebCore::ScrollingCoordinator::~ScrollingCoordinator):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setHaveWheelEventHandlers):
+        (WebCore):
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+        * platform/graphics/chromium/cc/CCInputHandler.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::haveWheelEventHandlers):
+        (WebCore::CCLayerImpl::setHaveWheelEventHandlers):
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::scrollBegin):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+
 2012-02-23  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Clipping is broken

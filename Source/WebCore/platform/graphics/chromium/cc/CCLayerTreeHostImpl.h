@@ -62,10 +62,9 @@ public:
 
     // CCInputHandlerClient implementation
     virtual void setNeedsRedraw();
-    virtual CCInputHandlerClient::ScrollStatus scrollBegin(const IntPoint&);
+    virtual CCInputHandlerClient::ScrollStatus scrollBegin(const IntPoint&, CCInputHandlerClient::ScrollInputType);
     virtual void scrollBy(const IntSize&);
     virtual void scrollEnd();
-    virtual bool haveWheelEventHandlers();
     virtual void pinchGestureBegin();
     virtual void pinchGestureUpdate(float, const IntPoint&);
     virtual void pinchGestureEnd();
@@ -101,7 +100,6 @@ public:
 
     bool visible() const { return m_visible; }
     void setVisible(bool);
-    void setHaveWheelEventHandlers(bool haveWheelEventHandlers) { m_haveWheelEventHandlers = haveWheelEventHandlers; }
 
     int sourceFrameNumber() const { return m_sourceFrameNumber; }
     void setSourceFrameNumber(int frameNumber) { m_sourceFrameNumber = frameNumber; }
@@ -160,7 +158,6 @@ private:
     CCSettings m_settings;
     IntSize m_viewportSize;
     bool m_visible;
-    bool m_haveWheelEventHandlers;
 
     float m_pageScale;
     float m_pageScaleDelta;

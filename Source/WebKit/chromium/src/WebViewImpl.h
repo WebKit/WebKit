@@ -692,7 +692,6 @@ private:
     // If true, the graphics context is being restored.
     bool m_recreatingGraphicsContext;
 #endif
-    bool m_haveWheelEventHandlers;
     static const WebInputEvent* m_currentInputEvent;
 
 #if ENABLE(INPUT_SPEECH)
