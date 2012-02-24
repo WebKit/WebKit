@@ -1,3 +1,14 @@
+2012-02-24  Adam Roben  <aroben@apple.com>
+
+        Fix linker warnings on Windows
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Removed symbols that are already
+        exported via JS_EXPORTDATA.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops: Define BUILDING_WTF. We
+        aren't actually building WTF, but we are statically linking it, so we need to define this
+        symbol so that we export WTF's exports.
+
 2012-02-24  Philippe Normand  <pnormand@igalia.com>
 
         Fix GTK WebAudio build for WebKitGTK 1.7.90.
