@@ -1,3 +1,22 @@
+2012-02-23  Eric Seidel  <eric@webkit.org>
+
+        Use self._filesystem in more places in the SCM classes
+        https://bugs.webkit.org/show_bug.cgi?id=79415
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/checkout/scm/detection_unittest.py:
+        (SCMDetectorTest.test_detect_scm_system):
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.find_checkout_root):
+        (Git.to_object_name):
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.__init__):
+        (SCM.in_working_directory):
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.find_uuid):
+        (SVN.find_checkout_root):
+
 2012-02-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r108685.

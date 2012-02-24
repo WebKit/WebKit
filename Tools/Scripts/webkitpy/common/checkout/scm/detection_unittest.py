@@ -36,7 +36,7 @@ from webkitpy.common.system.executive_mock import MockExecutive
 
 
 class SCMDetectorTest(unittest.TestCase):
-    def test_find_checkout_root(self):
+    def test_detect_scm_system(self):
         filesystem = MockFileSystem()
         executive = MockExecutive(should_log=True)
         detector = SCMDetector(filesystem, executive)

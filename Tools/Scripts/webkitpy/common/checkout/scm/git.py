@@ -105,19 +105,18 @@ class Git(SCM, SVNRepository):
             # The Windows bots seem to through a WindowsError when git isn't installed.
             return False
 
-    @classmethod
-    def find_checkout_root(cls, path):
-        # FIXME: This should use a FileSystem object instead of os.path.
+    def find_checkout_root(self, path):
         # "git rev-parse --show-cdup" would be another way to get to the root
-        (checkout_root, dot_git) = os.path.split(run_command(['git', 'rev-parse', '--git-dir'], cwd=(path or "./")))
-        if not os.path.isabs(checkout_root):  # Sometimes git returns relative paths
-            checkout_root = os.path.join(path, checkout_root)
+        git_output = self._executive.run_command(['git', 'rev-parse', '--git-dir'], cwd=(path or "./"))
+        (checkout_root, dot_git) = self._filesystem.split(git_output)
+        if not self._filesystem.isabs(checkout_root):  # Sometimes git returns relative paths
+            checkout_root = self._filesystem.join(path, checkout_root)
         return checkout_root
 
-    @classmethod
-    def to_object_name(cls, filepath):
-        # FIXME: This should use a FileSystem object instead of os.path.
-        root_end_with_slash = os.path.join(cls.find_checkout_root(os.path.dirname(filepath)), '')
+    def to_object_name(self, filepath):
+        # FIXME: This can't be the right way to append a slash.
+        root_end_with_slash = self._filesystem.join(self.find_checkout_root(self._filesystem.dirname(filepath)), '')
+        # FIXME: This seems to want some sort of rel_path instead?
         return filepath.replace(root_end_with_slash, '')
 
     @classmethod

@@ -60,9 +60,9 @@ class AuthenticationError(Exception):
 class SCM:
     def __init__(self, cwd, executive=None, filesystem=None):
         self.cwd = cwd
-        self.checkout_root = self.find_checkout_root(self.cwd)
         self._executive = executive or Executive()
         self._filesystem = filesystem or FileSystem()
+        self.checkout_root = self.find_checkout_root(self.cwd)
 
     # A wrapper used by subclasses to create processes.
     def run(self, args, cwd=None, input=None, error_handler=None, return_exit_code=False, return_stderr=True, decode_output=True):
@@ -137,7 +137,6 @@ class SCM:
     def in_working_directory(path):
         SCM._subclass_must_implement()
 
-    @staticmethod
     def find_checkout_root(path):
         SCM._subclass_must_implement()
 
