@@ -4202,9 +4202,6 @@ BUGCR115073 SLOW LINUX DEBUG : inspector/debugger/script-formatter-breakpoints.h
 
 BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 
-// Failing after test was updated in r108387, media engine sending incorrect referrer?
-BUGWK79239 : http/tests/media/video-referer.html = FAIL
-
 // Need rebaselining after bug 75091
 BUGWK75091 SKIP : svg/carto.net/tabgroup.svg = FAIL
 BUGWK75091 SKIP : svg/carto.net/window.svg = FAIL

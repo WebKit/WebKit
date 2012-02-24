@@ -14,26 +14,19 @@
         var frame = document.createElement('iframe');
         frame.width = 0;
         frame.height = 0;
-        frame.src = "data:text/html,<b>test</b>";
         frame.addEventListener('load', function () {
-                video = document.getElementById('video');
                 source = document.getElementById('source');
                 source.src = 'http://127.0.0.1:8000/media/resources/video-referer-check-referer.php?name=' + movie + '&type=' + type;
                 source.type = type;
+
+                waitForEventAndFail('error');
+                waitForEventAndEnd('canplay');
                 video.load();
         });
 
+        frame.src = "data:text/html,<b>test</b>";
         document.body.appendChild(frame);
     }
-    
-    waitForEventAndEnd('error', function () {
-        consoleWrite('FAIL, got error when loading media error: ' + video.error.code);
-    });    
-
-    waitForEvent('canplay', function () {
-        if (window.layoutTestController)
-            window.layoutTestController.notifyDone();
-    } );
 </script>
 Tests that the media player will send the relevant referer when requesting the media file.<br/>
 </body>
