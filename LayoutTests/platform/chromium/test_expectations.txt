@@ -4219,3 +4219,6 @@ BUGWK79229 MAC DEBUG : http/tests/inspector/network/network-disable-cache-xhrs.h
 BUGWK79454 WIN : svg/text/text-rescale.html = IMAGE+TEXT
 BUGWK79454 LINUX MAC : svg/text/text-rescale.html = IMAGE
 BUGWK79454 : svg/text/text-viewbox-rescale.html = IMAGE
+
+// Flaky for DEBUG since r108585
+BUGWK79455 DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS IMAGE+TEXT
