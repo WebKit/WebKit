@@ -91,6 +91,11 @@ public:
     }
 
 protected:
+    PassRefPtr<GraphicsContext3D> createContext()
+    {
+        return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3D()), GraphicsContext3D::RenderDirectlyToHostWindow);
+    }
+
     DebugScopedSetImplThread m_alwaysImplThread;
     OwnPtr<CCLayerTreeHostImpl> m_hostImpl;
     bool m_didRequestCommit;
@@ -348,8 +353,7 @@ private:
 
 TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
 {
-GraphicsContext3D::Attributes attrs;
-    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3D()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+    RefPtr<GraphicsContext3D> context = createContext();
     m_hostImpl->initializeLayerRenderer(context);
 
     // Ensure visibleLayerRect for root layer is empty
@@ -384,8 +388,7 @@ GraphicsContext3D::Attributes attrs;
 
 TEST_F(CCLayerTreeHostImplTest, didDrawCalledOnAllLayers)
 {
-    GraphicsContext3D::Attributes attrs;
-    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3D()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+    RefPtr<GraphicsContext3D> context = createContext();
     m_hostImpl->initializeLayerRenderer(context);
     m_hostImpl->setViewportSize(IntSize(10, 10));
 
@@ -486,8 +489,7 @@ private:
 // https://bugs.webkit.org/show_bug.cgi?id=75783
 TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
 {
-    GraphicsContext3D::Attributes attrs;
-    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new BlendStateTrackerContext()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+    RefPtr<GraphicsContext3D> context = createContext();
     m_hostImpl->initializeLayerRenderer(context);
     m_hostImpl->setViewportSize(IntSize(10, 10));
 
@@ -653,9 +655,8 @@ public:
 // viewport size is never set.
 TEST_F(CCLayerTreeHostImplTest, reshapeNotCalledUntilDraw)
 {
-    GraphicsContext3D::Attributes attrs;
     ReshapeTrackerContext* reshapeTracker = new ReshapeTrackerContext();
-    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(reshapeTracker), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(reshapeTracker), GraphicsContext3D::RenderDirectlyToHostWindow);
     m_hostImpl->initializeLayerRenderer(context);
     m_hostImpl->setViewportSize(IntSize(10, 10));
 
@@ -697,9 +698,8 @@ private:
 // where it should request to swap only the subBuffer that is damaged.
 TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
 {
-    GraphicsContext3D::Attributes attrs;
     PartialSwapTrackerContext* partialSwapTracker = new PartialSwapTrackerContext();
-    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(partialSwapTracker), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(partialSwapTracker), GraphicsContext3D::RenderDirectlyToHostWindow);
 
     // This test creates its own CCLayerTreeHostImpl, so
     // that we can force partial swap enabled.

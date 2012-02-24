@@ -1,3 +1,60 @@
+2012-02-23  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up GraphicsContext3D initialization paths
+        https://bugs.webkit.org/show_bug.cgi?id=79321
+
+        Reviewed by Kenneth Russell.
+
+        This simplifies the GraphicsContext3D initialization paths down to two simple codepaths, one for offscreen
+        contexts initialized from WebCore and one for onscreen (compositor) contexts initialized by WebViewImpl or
+        WebLayerTreeViewImpl.
+
+        Offscreen initialization path:
+        1) WebCore code calls WebCore::GraphicsContext3D::create(), implemented in GraphicsContext3DChromium.cpp
+        2) GraphicsContext3D::create() instantiates a WebGraphicsContext3D via the static WebKitPlatformSupport interface
+        3) GraphicsContext3DPrivate::createGraphicsContextFromWebContext() wraps the WebGraphicsContext3D in a
+        GraphicsContext3D's m_private pointer.
+
+        Onscreen initialization path:
+        1) WebViewImpl or WebLayerTreeViewImpl request an onscreen WebGraphicsContext3D from either their WebViewClient
+        or WebLayerTreeViewClient, respectively
+        2) GraphicsContext3DPrivate::createGraphicsContextFromWebContext() wraps the WebGraphicsContext3D in a
+        GraphicsContext3D's m_private pointer.
+
+        There are no other initialization paths. Specifically, we do not support instantiating onscreen contexts from
+        within WebCore.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::createGraphicsContextFromWebContext):
+        (WebCore):
+        (WebCore::GraphicsContext3DPrivate::platformTexture):
+        (WebCore::GraphicsContext3D::create):
+        * src/GraphicsContext3DPrivate.h:
+        (GraphicsContext3DPrivate):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::createLayerTreeHostContext3D):
+        * src/WebViewImpl.cpp:
+        (std::getCompositorContextAttributes):
+        (WebKit::WebViewImpl::createCompositorGraphicsContext3D):
+        (WebKit):
+        (WebKit::WebViewImpl::createLayerTreeHostContext3D):
+        (WebKit::WebViewImpl::graphicsContext3D):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::CCLayerTreeHostImplTest::createContext):
+        (CCLayerTreeHostImplTest):
+        (WebKit::TEST_F):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHostClient::createLayerTreeHostContext3D):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        (WebCore::Canvas2DLayerChromiumTest::fullLifecycleTest):
+        * tests/CompositorFakeGraphicsContext3D.h:
+        (WebCore::createCompositorMockGraphicsContext3D):
+        * tests/FakeGraphicsContext3DTest.cpp:
+        (TEST):
+
 2012-02-23  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Plumb video damage to the damage tracker.
