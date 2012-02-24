@@ -22,6 +22,8 @@
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
+#include "TextureMapperGL.h"
+
 namespace WebCore {
 
 #ifndef TEXMAP_OPENGL_ES_2
@@ -154,6 +156,11 @@ const char* TextureMapperShaderProgramSimple::fragmentShaderSource()
     return fragmentShaderSourceSimple;
 }
 
+void TextureMapperShaderProgramSimple::prepare(float opacity, const BitmapTexture* maskTexture)
+{
+    glUniform1f(m_opacityVariable, opacity);
+}
+
 PassRefPtr<TextureMapperShaderProgramOpacityAndMask> TextureMapperShaderProgramOpacityAndMask::create()
 {
     return adoptRef(new TextureMapperShaderProgramOpacityAndMask());
@@ -178,6 +185,24 @@ const char* TextureMapperShaderProgramOpacityAndMask::vertexShaderSource()
 const char* TextureMapperShaderProgramOpacityAndMask::fragmentShaderSource()
 {
     return fragmentShaderSourceOpacityAndMask;
+}
+
+void TextureMapperShaderProgramOpacityAndMask::prepare(float opacity, const BitmapTexture* maskTexture)
+{
+    glUniform1f(m_opacityVariable, opacity);
+    if (!maskTexture || !maskTexture->isValid())
+        return;
+
+    const BitmapTextureGL* maskTextureGL = static_cast<const BitmapTextureGL*>(maskTexture);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, maskTextureGL->id());
+    const GLfloat m4mask[] = {maskTextureGL->relativeSize().width(), 0, 0, 0,
+                                     0, maskTextureGL->relativeSize().height(), 0, 0,
+                                     0, 0, 1, 0,
+                                     0, 0, 0, 1};
+    glUniformMatrix4fv(m_maskMatrixVariable, 1, GL_FALSE, m4mask);
+    glUniform1i(m_maskTextureVariable, 1);
+    glActiveTexture(GL_TEXTURE0);
 }
 
 TextureMapperShaderManager::TextureMapperShaderManager()

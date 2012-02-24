@@ -35,6 +35,7 @@ namespace WebCore {
 
 typedef void* ShaderType;
 
+class BitmapTexture;
 class TextureMapperShaderManager;
 
 class TextureMapperShaderProgram : public RefCounted<TextureMapperShaderProgram> {
@@ -51,6 +52,12 @@ public:
         return &type;
     }
 
+    virtual void prepare(float opacity, const BitmapTexture*) { }
+    GLint matrixVariable() { return m_matrixVariable; }
+    GLint sourceMatrixVariable() { return m_sourceMatrixVariable; }
+    GLint sourceTextureVariable() { return m_sourceTextureVariable; }
+    GLint opacityVariable() { return m_opacityVariable; }
+
 protected:
     void getUniformLocation(GLint& var, const char* name);
     void initializeProgram();
@@ -61,47 +68,37 @@ protected:
     GLuint m_vertexAttrib;
     GLuint m_vertexShader;
     GLuint m_fragmentShader;
-};
-
-class TextureMapperShaderProgramSimple : public TextureMapperShaderProgram {
-public:
-    static PassRefPtr<TextureMapperShaderProgramSimple> create();
-    GLint matrixVariable() { return m_matrixVariable; }
-    GLint sourceMatrixVariable() { return m_sourceMatrixVariable; }
-    GLint sourceTextureVariable() { return m_sourceTextureVariable; }
-    GLint opacityVariable() { return m_opacityVariable; }
-
-private:
-    virtual const char* vertexShaderSource();
-    virtual const char* fragmentShaderSource();
-    TextureMapperShaderProgramSimple();
     GLint m_matrixVariable;
     GLint m_sourceMatrixVariable;
     GLint m_sourceTextureVariable;
     GLint m_opacityVariable;
 };
 
+class TextureMapperShaderProgramSimple : public TextureMapperShaderProgram {
+public:
+    static PassRefPtr<TextureMapperShaderProgramSimple> create();
+    virtual void prepare(float opacity, const BitmapTexture*);
+
+private:
+    virtual const char* vertexShaderSource();
+    virtual const char* fragmentShaderSource();
+    TextureMapperShaderProgramSimple();
+};
+
 class TextureMapperShaderProgramOpacityAndMask : public TextureMapperShaderProgram {
 public:
     static PassRefPtr<TextureMapperShaderProgramOpacityAndMask> create();
-    GLint sourceMatrixVariable() { return m_sourceMatrixVariable; }
-    GLint matrixVariable() { return m_matrixVariable; }
+    virtual void prepare(float opacity, const BitmapTexture*);
     GLint maskMatrixVariable() { return m_maskMatrixVariable; }
-    GLint sourceTextureVariable() { return m_sourceTextureVariable; }
     GLint maskTextureVariable() { return m_maskTextureVariable; }
-    GLint opacityVariable() { return m_opacityVariable; }
 
 private:
     static int m_classID;
     virtual const char* vertexShaderSource();
     virtual const char* fragmentShaderSource();
     TextureMapperShaderProgramOpacityAndMask();
-    GLint m_sourceMatrixVariable;
-    GLint m_matrixVariable;
     GLint m_maskMatrixVariable;
-    GLint m_sourceTextureVariable;
     GLint m_maskTextureVariable;
-    GLint m_opacityVariable;
 };
 
 class TextureMapperShaderManager {

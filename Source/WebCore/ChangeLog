@@ -1,3 +1,42 @@
+2012-02-24  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Texmap] Consolidate the common parts of TextureMapperGL::drawTexture
+        https://bugs.webkit.org/show_bug.cgi?id=79143
+
+        Reviewed by Noam Rosenthal.
+
+        Combine the two drawTexture methods into one, and extract the part that
+        could not be combined into its own method.
+        No new tests. Refactoring only.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore):
+        (WebCore::TextureMapperGL::drawTexture):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        (WebCore):
+        (BitmapTextureGL):
+        (WebCore::BitmapTextureGL::~BitmapTextureGL):
+        (WebCore::BitmapTextureGL::id):
+        (WebCore::BitmapTextureGL::relativeSize):
+        (WebCore::BitmapTextureGL::setTextureMapper):
+        (WebCore::BitmapTextureGL::BitmapTextureGL):
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp:
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::fragmentShaderSource):
+        (WebCore):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::prepare):
+        * platform/graphics/texmap/TextureMapperShaderManager.h:
+        (WebCore):
+        (WebCore::TextureMapperShaderProgram::prepare):
+        (WebCore::TextureMapperShaderProgram::matrixVariable):
+        (WebCore::TextureMapperShaderProgram::sourceMatrixVariable):
+        (WebCore::TextureMapperShaderProgram::sourceTextureVariable):
+        (WebCore::TextureMapperShaderProgram::opacityVariable):
+        (TextureMapperShaderProgram):
+        (TextureMapperShaderProgramSimple):
+        (TextureMapperShaderProgramOpacityAndMask):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::maskMatrixVariable):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::maskTextureVariable):
+
 2012-02-24  Daniel Bates  <dbates@webkit.org>
 
         style element and link element for CSS stylesheet should emit load/error event when sheet loads/fails to load

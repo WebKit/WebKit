@@ -24,6 +24,7 @@
 
 #include "FloatQuad.h"
 #include "IntSize.h"
+#include "OpenGLShims.h"
 #include "TextureMapper.h"
 #include "TransformationMatrix.h"
 
@@ -31,6 +32,7 @@ namespace WebCore {
 
 class TextureMapperGLData;
 class GraphicsContext;
+class TextureMapperShaderProgram;
 
 // An OpenGL-ES2 implementation of TextureMapper.
 class TextureMapperGL : public TextureMapper {
@@ -48,8 +50,6 @@ public:
     // reimps from TextureMapper
     virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
     virtual void drawTexture(uint32_t texture, Flags, const FloatSize&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
-    virtual void drawTextureWithMaskAndOpacity(uint32_t texture, Flags, const FloatSize&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
-    virtual void drawTextureSimple(uint32_t texture, Flags, const FloatSize&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
     virtual void bindSurface(BitmapTexture* surface);
     virtual void beginClip(const TransformationMatrix&, const FloatRect&);
     virtual void beginPainting();
@@ -71,6 +71,42 @@ private:
     TextureMapperGLData* m_data;
     GraphicsContext* m_context;
     friend class BitmapTextureGL;
+};
+
+class BitmapTextureGL : public BitmapTexture {
+public:
+    virtual void destroy();
+    virtual IntSize size() const;
+    virtual bool isValid() const;
+    virtual void didReset();
+    void bind();
+    void initializeStencil();
+    ~BitmapTextureGL() { destroy(); }
+    virtual uint32_t id() const { return m_id; }
+    inline FloatSize relativeSize() const { return m_relativeSize; }
+    void setTextureMapper(TextureMapperGL* texmap) { m_textureMapper = texmap; }
+    void updateContents(Image*, const IntRect&, const IntRect&, PixelFormat);
+    void updateContents(const void*, const IntRect&);
+
+private:
+    GLuint m_id;
+    FloatSize m_relativeSize;
+    IntSize m_textureSize;
+    IntRect m_dirtyRect;
+    GLuint m_fbo;
+    GLuint m_rbo;
+    bool m_surfaceNeedsReset;
+    TextureMapperGL* m_textureMapper;
+    BitmapTextureGL()
+        : m_id(0)
+        , m_fbo(0)
+        , m_rbo(0)
+        , m_surfaceNeedsReset(true)
+        , m_textureMapper(0)
+    {
+    }
+
+    friend class TextureMapperGL;
 };
 
 // An offscreen buffer to be rendered by software.

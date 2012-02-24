@@ -223,42 +223,6 @@ struct TextureMapperGLData {
     RefPtr<BitmapTexture> currentSurface;
 };
 
-class BitmapTextureGL : public BitmapTexture {
-public:
-    virtual void destroy();
-    virtual IntSize size() const;
-    virtual bool isValid() const;
-    virtual void didReset();
-    void bind();
-    void initializeStencil();
-    ~BitmapTextureGL() { destroy(); }
-    virtual uint32_t id() const { return m_id; }
-    inline FloatSize relativeSize() const { return m_relativeSize; }
-    void setTextureMapper(TextureMapperGL* texmap) { m_textureMapper = texmap; }
-    void updateContents(Image*, const IntRect&, const IntRect&, PixelFormat);
-    void updateContents(const void*, const IntRect&);
-
-private:
-    GLuint m_id;
-    FloatSize m_relativeSize;
-    IntSize m_textureSize;
-    IntRect m_dirtyRect;
-    GLuint m_fbo;
-    GLuint m_rbo;
-    bool m_surfaceNeedsReset;
-    TextureMapperGL* m_textureMapper;
-    BitmapTextureGL()
-        : m_id(0)
-        , m_fbo(0)
-        , m_rbo(0)
-        , m_surfaceNeedsReset(true)
-        , m_textureMapper(0)
-    {
-    }
-
-    friend class TextureMapperGL;
-};
-
 void TextureMapperGLData::initializeStencil()
 {
     if (currentSurface) {
@@ -354,15 +318,11 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
 
 void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const FloatSize& relativeSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
 {
+    RefPtr<TextureMapperShaderProgram> shaderInfo;
     if (maskTexture)
-        drawTextureWithMaskAndOpacity(texture, flags, relativeSize, targetRect, modelViewMatrix, opacity, maskTexture);
+        shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram<TextureMapperShaderProgramOpacityAndMask>();
     else
-        drawTextureSimple(texture, flags, relativeSize, targetRect, modelViewMatrix, opacity, maskTexture);
-}
-
-void TextureMapperGL::drawTextureWithMaskAndOpacity(uint32_t texture, Flags flags, const FloatSize& relativeSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
-{
-    RefPtr<TextureMapperShaderProgramOpacityAndMask> shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram<TextureMapperShaderProgramOpacityAndMask>();
+        shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram<TextureMapperShaderProgramSimple>();
 
     GL_CMD(glUseProgram(shaderInfo->id()))
     GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()))
@@ -392,63 +352,10 @@ void TextureMapperGL::drawTextureWithMaskAndOpacity(uint32_t texture, Flags flag
     GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4))
     GL_CMD(glUniformMatrix4fv(shaderInfo->sourceMatrixVariable(), 1, GL_FALSE, m4src))
     GL_CMD(glUniform1i(shaderInfo->sourceTextureVariable(), 0))
-    GL_CMD(glUniform1f(shaderInfo->opacityVariable(), opacity))
 
-    if (maskTexture->isValid()) {
-        const BitmapTextureGL* maskTextureGL = static_cast<const BitmapTextureGL*>(maskTexture);
-        GL_CMD(glActiveTexture(GL_TEXTURE1))
-        GL_CMD(glBindTexture(GL_TEXTURE_2D, maskTextureGL->id()))
-        const GLfloat m4mask[] = {maskTextureGL->relativeSize().width(), 0, 0, 0,
-                                         0, maskTextureGL->relativeSize().height(), 0, 0,
-                                         0, 0, 1, 0,
-                                         0, 0, 0, 1};
-        GL_CMD(glUniformMatrix4fv(shaderInfo->maskMatrixVariable(), 1, GL_FALSE, m4mask));
-        GL_CMD(glUniform1i(shaderInfo->maskTextureVariable(), 1))
-        GL_CMD(glActiveTexture(GL_TEXTURE0))
-    }
+    shaderInfo->prepare(opacity, maskTexture);
 
-    GL_CMD(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA))
-    GL_CMD(glEnable(GL_BLEND))
-
-    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4))
-    GL_CMD(glDisableVertexAttribArray(shaderInfo->vertexAttrib()))
-}
-
-void TextureMapperGL::drawTextureSimple(uint32_t texture, Flags flags, const FloatSize& relativeSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture*)
-{
-    RefPtr<TextureMapperShaderProgramSimple> shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram<TextureMapperShaderProgramSimple>();
-
-    GL_CMD(glUseProgram(shaderInfo->id()))
-    GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()))
-    GL_CMD(glActiveTexture(GL_TEXTURE0))
-    GL_CMD(glBindTexture(GL_TEXTURE_2D, texture))
-    GL_CMD(glBindBuffer(GL_ARRAY_BUFFER, 0))
-    const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
-    GL_CMD(glVertexAttribPointer(shaderInfo->vertexAttrib(), 2, GL_FLOAT, GL_FALSE, 0, unitRect))
-
-    TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix).multiply(modelViewMatrix).multiply(TransformationMatrix(
-            targetRect.width(), 0, 0, 0,
-            0, targetRect.height(), 0, 0,
-            0, 0, 1, 0,
-            targetRect.x(), targetRect.y(), 0, 1));
-
-    const GLfloat m4[] = {
-        matrix.m11(), matrix.m12(), matrix.m13(), matrix.m14(),
-        matrix.m21(), matrix.m22(), matrix.m23(), matrix.m24(),
-        matrix.m31(), matrix.m32(), matrix.m33(), matrix.m34(),
-        matrix.m41(), matrix.m42(), matrix.m43(), matrix.m44()
-    };
-    const GLfloat m4src[] = {relativeSize.width(), 0, 0, 0,
-                                     0, relativeSize.height() * ((flags & ShouldFlipTexture) ? -1 : 1), 0, 0,
-                                     0, 0, 1, 0,
-                                     0, (flags & ShouldFlipTexture) ? relativeSize.height() : 0, 0, 1};
-
-    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4))
-    GL_CMD(glUniformMatrix4fv(shaderInfo->sourceMatrixVariable(), 1, GL_FALSE, m4src))
-    GL_CMD(glUniform1i(shaderInfo->sourceTextureVariable(), 0))
-    GL_CMD(glUniform1f(shaderInfo->opacityVariable(), opacity))
-
-    bool needsBlending = (flags & SupportsBlending) || opacity < 0.99;
+    bool needsBlending = (flags & SupportsBlending) || opacity < 0.99 || maskTexture;
 
     if (needsBlending) {
         GL_CMD(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA))
