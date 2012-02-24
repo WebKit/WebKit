@@ -619,6 +619,8 @@ void HTMLMediaElement::load(ExceptionCode& ec)
         ec = INVALID_STATE_ERR;
     else {
         m_loadInitiatedByUserGesture = ScriptController::processingUserGesture();
+        if (m_loadInitiatedByUserGesture)
+            removeBehaviorsRestrictionsAfterFirstUserGesture();
         prepareForLoad();
         loadInternal();
     }
@@ -2073,6 +2075,8 @@ void HTMLMediaElement::play()
 
     if (userGestureRequiredForRateChange() && !ScriptController::processingUserGesture())
         return;
+    if (ScriptController::processingUserGesture())
+        removeBehaviorsRestrictionsAfterFirstUserGesture();
 
     Settings* settings = document()->settings();
     if (settings && settings->needsSiteSpecificQuirks() && m_dispatchingCanPlayEvent && !m_loadInitiatedByUserGesture) {
@@ -4051,6 +4055,11 @@ String HTMLMediaElement::mediaPlayerReferrer() const
         return String();
 
     return SecurityPolicy::generateReferrerHeader(document()->referrerPolicy(), m_currentSrc, frame->loader()->outgoingReferrer());
+}
+
+void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
+{
+    m_restrictions = NoRestrictions;
 }
 
 }

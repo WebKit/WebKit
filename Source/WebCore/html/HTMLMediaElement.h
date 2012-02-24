@@ -477,6 +477,8 @@ private:
 
     void changeNetworkStateFromLoadingToIdle();
 
+    void removeBehaviorsRestrictionsAfterFirstUserGesture();
+
 #if ENABLE(MICRODATA)
     virtual String itemValueText() const;
     virtual void setItemValueText(const String&, ExceptionCode&);

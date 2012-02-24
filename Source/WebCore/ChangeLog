@@ -1,3 +1,26 @@
+2012-02-24  Min Qin  <qinmin@google.com>
+
+        Expose a setting to exempt media playback from user gesture requirement after a user gesture is initiated on loading/playing a media
+        https://bugs.webkit.org/show_bug.cgi?id=79167
+
+        Reviewed by Adam Barth.
+
+        Test: media/video-play-require-user-gesture.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture):
+        (WebCore):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaPlaybackRequiresUserGesture):
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-02-24  Adam Barth  <abarth@webkit.org>
 
         DOMWindow*.idl should have had the same license block as DOMWindow.idl did originally
