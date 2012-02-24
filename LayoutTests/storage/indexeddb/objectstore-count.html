@@ -17,6 +17,7 @@ function test()
     evalAndLog("window.indexedDB = window.indexedDB || window.webkitIndexedDB");
     evalAndLog("window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction");
     evalAndLog("window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange");
+    evalAndLog("window.IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException");
     request = evalAndLog("indexedDB.open('objectstore-count')");
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function() {
@@ -74,7 +75,7 @@ function verifyCountWithRange()
     trans = evalAndLog("trans = db.transaction('storeName', IDBTransaction.READ_ONLY)");
     shouldBeTrue("trans != null");
     trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = done;
+    trans.oncomplete = verifyCountWithKey;
 
     store = evalAndLog("store = trans.objectStore('storeName')");
     shouldBeTrue("store != null");
@@ -100,6 +101,46 @@ function verifyCountWithRange()
              shouldBeTrue("typeof request.result == 'number'");
              shouldBe("request.result", String(test.expected));
 
+             if (tests.length) {
+                 nextTest();
+             }
+             // otherwise let the transaction complete
+        };
+    }
+
+    nextTest();
+}
+
+function verifyCountWithKey()
+{
+    debug("");
+    debug("verifying count with key");
+    trans = evalAndLog("trans = db.transaction('storeName', IDBTransaction.READ_ONLY)");
+    shouldBeTrue("trans != null");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = done;
+
+    store = evalAndLog("store = trans.objectStore('storeName')");
+    shouldBeTrue("store != null");
+
+    evalAndExpectException("store.count(NaN)", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.count({})", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.count(/regex/)", "IDBDatabaseException.DATA_ERR");
+
+    var tests = [
+        { key: 0, expected: 1 },
+        { key: 100, expected: 0 },
+        { key: null, expected: 100 }
+    ];
+
+    function nextTest() {
+        debug("");
+        evalAndLog("test = " + JSON.stringify(tests.shift()));
+        request = evalAndLog("request = store.count(test.key)");
+        request.onerror = unexpectedErrorCallback;
+        request.onsuccess = function() {
+            shouldBeTrue("typeof request.result == 'number'");
+            shouldBe("request.result", String(test.expected));
              if (tests.length) {
                  nextTest();
              }

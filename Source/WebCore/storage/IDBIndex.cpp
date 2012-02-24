@@ -87,6 +87,15 @@ PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, PassRefP
     return request;
 }
 
+PassRefPtr<IDBRequest> IDBIndex::count(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBIndex::count");
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
+    if (ec)
+        return 0;
+    return count(context, keyRange.release(), ec);
+}
+
 PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, ExceptionCode& ec)
 {
     IDB_TRACE("IDBIndex::openKeyCursor");

@@ -6,6 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 window.indexedDB = window.indexedDB || window.webkitIndexedDB
 window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction
 window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange
+window.IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException
 indexedDB.open('objectstore-count')
 db = event.target.result
 db.setVersion('new version')
@@ -76,6 +77,36 @@ test = {"lower":500,"lowerOpen":false,"upper":500,"upperOpen":false,"expected":0
 request = store.count(IDBKeyRange.bound(test.lower, test.upper, test.lowerOpen, test.upperOpen))
 PASS typeof request.result == 'number' is true
 PASS request.result is 0
+
+verifying count with key
+trans = db.transaction('storeName', IDBTransaction.READ_ONLY)
+PASS trans != null is true
+store = trans.objectStore('storeName')
+PASS store != null is true
+Expecting exception from store.count(NaN)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+Expecting exception from store.count({})
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+Expecting exception from store.count(/regex/)
+PASS Exception was thrown.
+PASS code is IDBDatabaseException.DATA_ERR
+
+test = {"key":0,"expected":1}
+request = store.count(test.key)
+PASS typeof request.result == 'number' is true
+PASS request.result is 1
+
+test = {"key":100,"expected":0}
+request = store.count(test.key)
+PASS typeof request.result == 'number' is true
+PASS request.result is 0
+
+test = {"key":null,"expected":100}
+request = store.count(test.key)
+PASS typeof request.result == 'number' is true
+PASS request.result is 100
 PASS successfullyParsed is true
 
 TEST COMPLETE

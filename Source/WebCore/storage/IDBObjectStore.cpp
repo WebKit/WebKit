@@ -131,6 +131,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptExecutionContext* context, Pass
 
 PassRefPtr<IDBRequest> IDBObjectStore::deleteFunction(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBObjectStore::delete");
     if (!keyRange) {
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
@@ -255,6 +256,15 @@ PassRefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, Pa
         return 0;
     }
     return request.release();
+}
+
+PassRefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
+{
+    IDB_TRACE("IDBObjectStore::count");
+    RefPtr<IDBKeyRange> keyRange = IDBKeyRange::only(key, ec);
+    if (ec)
+        return 0;
+    return count(context, keyRange.release(), ec);
 }
 
 void IDBObjectStore::transactionFinished()
