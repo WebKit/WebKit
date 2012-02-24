@@ -1,3 +1,14 @@
+2012-02-24  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Enable requestAnimationFrame
+        https://bugs.webkit.org/show_bug.cgi?id=79408
+
+        Enable requestAnimationFrame for BlackBerry.
+
+        Reviewed by Rob Buis.
+
+        * Scripts/build-webkit:
+
 2012-02-24  Adam Barth  <abarth@webkit.org>
 
         style-queue tries to apply the patch twice
