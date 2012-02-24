@@ -431,4 +431,17 @@ caching behavior.
 */
 - (WebCacheModel)cacheModel;
 
+/*!
+    @method setSuppressesIncrementalRendering:
+    @param suppressesIncrementalRendering YES to suppress incremental rendering;
+    NO otherwise.
+*/
+- (void)setSuppressesIncrementalRendering:(BOOL)suppressesIncrementalRendering;
+
+/*!
+    @method suppressesIncrementalRendering
+    @result YES if the WebView suppresses incremental rendering; NO otherwise.
+*/
+- (BOOL)suppressesIncrementalRendering;
+
 @end

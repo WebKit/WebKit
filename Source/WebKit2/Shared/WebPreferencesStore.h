@@ -99,7 +99,7 @@ namespace WebKit {
     macro(MockScrollbarsEnabled, mockScrollbarsEnabled, Bool, bool, false) \
     macro(WebAudioEnabled, webAudioEnabled, Bool, bool, false) \
     macro(ApplicationChromeModeEnabled, applicationChromeMode, Bool, bool, false) \
-    macro(SuppressIncrementalRendering, suppressIncrementalRendering, Bool, bool, false) \
+    macro(SuppressesIncrementalRendering, suppressesIncrementalRendering, Bool, bool, false) \
     macro(BackspaceKeyNavigationEnabled, backspaceKeyNavigationEnabled, Bool, bool, true) \
     macro(CaretBrowsingEnabled, caretBrowsingEnabled, Bool, bool, false) \
     macro(ShouldDisplaySubtitles, shouldDisplaySubtitles, Bool, bool, false) \

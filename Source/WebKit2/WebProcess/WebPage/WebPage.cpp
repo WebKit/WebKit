@@ -1926,7 +1926,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
     settings->setApplicationChromeMode(store.getBoolValueForKey(WebPreferencesKey::applicationChromeModeKey()));    
-    settings->setSuppressIncrementalRendering(store.getBoolValueForKey(WebPreferencesKey::suppressIncrementalRenderingKey()));
+    settings->setSuppressesIncrementalRendering(store.getBoolValueForKey(WebPreferencesKey::suppressesIncrementalRenderingKey()));
     settings->setBackspaceKeyNavigationEnabled(store.getBoolValueForKey(WebPreferencesKey::backspaceKeyNavigationEnabledKey()));
     settings->setCaretBrowsingEnabled(store.getBoolValueForKey(WebPreferencesKey::caretBrowsingEnabledKey()));
 

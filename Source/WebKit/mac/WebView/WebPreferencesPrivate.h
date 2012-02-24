@@ -274,6 +274,7 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setHixie76WebSocketProtocolEnabled:(BOOL)flag;
 - (BOOL)isHixie76WebSocketProtocolEnabled;
 
+// Deprecated. You should use [setS|s]uppressesIncrementalRendering in WebPreferences.h instead.
 - (void)setSuppressIncrementalRendering:(BOOL)flag;
 - (BOOL)suppressIncrementalRendering;
 

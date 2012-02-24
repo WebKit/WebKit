@@ -483,8 +483,8 @@ namespace WebCore {
         void setPasswordEchoEnabled(bool flag) { m_passwordEchoEnabled = flag; }
         bool passwordEchoEnabled() const { return m_passwordEchoEnabled; }
 
-        void setSuppressIncrementalRendering(bool flag) { m_suppressIncrementalRendering = flag; }
-        bool suppressIncrementalRendering() const { return m_suppressIncrementalRendering; }
+        void setSuppressesIncrementalRendering(bool flag) { m_suppressesIncrementalRendering = flag; }
+        bool suppressesIncrementalRendering() const { return m_suppressesIncrementalRendering; }
         
         void setBackspaceKeyNavigationEnabled(bool flag) { m_backspaceKeyNavigationEnabled = flag; }
         bool backspaceKeyNavigationEnabled() const { return m_backspaceKeyNavigationEnabled; }
@@ -669,7 +669,7 @@ namespace WebCore {
         bool m_mediaPlaybackRequiresUserGesture : 1;
         bool m_mediaPlaybackAllowsInline : 1;
         bool m_passwordEchoEnabled : 1;
-        bool m_suppressIncrementalRendering : 1;
+        bool m_suppressesIncrementalRendering : 1;
         bool m_backspaceKeyNavigationEnabled : 1;
         bool m_visualWordMovementEnabled : 1;
 

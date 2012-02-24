@@ -1,3 +1,23 @@
+2012-02-23  Andy Estes  <aestes@apple.com>
+
+        Rename [setS|s]uppressIncrementalRendering to [setS|s]uppressesIncrementalRendering and make it WebPreferences API.
+        https://bugs.webkit.org/show_bug.cgi?id=79433
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetSuppressesIncrementalRendering):
+        (WKPreferencesGetSuppressesIncrementalRendering):
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::createInspectorPageGroup):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFirstLayout):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2012-02-23  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Wrong signal name on emission in WebKitWindowProperties.cpp

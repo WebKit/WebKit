@@ -1,3 +1,20 @@
+2012-02-23  Andy Estes  <aestes@apple.com>
+
+        Rename [setS|s]uppressIncrementalRendering to [setS|s]uppressesIncrementalRendering and make it WebPreferences API.
+        https://bugs.webkit.org/show_bug.cgi?id=79433
+
+        Reviewed by Dan Bernstein.
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::visualUpdatesAllowed):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setSuppressesIncrementalRendering):
+        (WebCore::Settings::suppressesIncrementalRendering):
+        (Settings):
+
 2012-02-23  Erik Arvidsson  <arv@chromium.org>
 
         Rename DOMWindow to Window in the bindings

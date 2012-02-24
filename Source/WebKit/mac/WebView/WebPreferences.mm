@@ -389,7 +389,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitMediaPlaybackRequiresUserGesturePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsInlinePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebAudioEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitSuppressIncrementalRenderingKey,
+        [NSNumber numberWithBool:NO],   WebKitSuppressesIncrementalRenderingKey,
         [NSNumber numberWithBool:YES],  WebKitBackspaceKeyNavigationEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitShouldDisplaySubtitlesPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldDisplayCaptionsPreferenceKey,
@@ -806,6 +806,17 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (WebCacheModel)cacheModel
 {
     return [self _integerValueForKey:WebKitCacheModelPreferenceKey];
+}
+
+
+- (void)setSuppressesIncrementalRendering:(BOOL)suppressesIncrementalRendering
+{
+    [self _setBoolValue:suppressesIncrementalRendering forKey:WebKitSuppressesIncrementalRenderingKey];
+}
+
+- (BOOL)suppressesIncrementalRendering
+{
+    return [self _boolValueForKey:WebKitSuppressesIncrementalRenderingKey];
 }
 
 @end
@@ -1595,12 +1606,12 @@ static NSString *classIBCreatorID = nil;
 
 - (void)setSuppressIncrementalRendering:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitSuppressIncrementalRenderingKey];
+    [self _setBoolValue:flag forKey:WebKitSuppressesIncrementalRenderingKey];
 }
 
 - (BOOL)suppressIncrementalRendering
 {
-    return [self _boolValueForKey:WebKitSuppressIncrementalRenderingKey];
+    return [self _boolValueForKey:WebKitSuppressesIncrementalRenderingKey];
 }
 
 - (void)setBackspaceKeyNavigationEnabled:(BOOL)flag

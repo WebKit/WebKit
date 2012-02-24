@@ -537,7 +537,7 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidFirstLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 
-    if (m_frame == m_frame->page()->mainWebFrame() && !webPage->corePage()->settings()->suppressIncrementalRendering())
+    if (m_frame == m_frame->page()->mainWebFrame() && !webPage->corePage()->settings()->suppressesIncrementalRendering())
         webPage->drawingArea()->setLayerTreeStateIsFrozen(false);
 }
 

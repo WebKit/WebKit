@@ -240,7 +240,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     [preferences setMinimumFontSize:0];
     [preferences setMinimumLogicalFontSize:9];
     [preferences setPlugInsEnabled:NO];
-    [preferences setSuppressIncrementalRendering:YES];
+    [preferences setSuppressesIncrementalRendering:YES];
     [preferences setTabsToLinks:NO];
     [preferences setUserStyleSheetEnabled:NO];
 

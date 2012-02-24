@@ -170,8 +170,8 @@ WK_EXPORT void WKPreferencesSetWebAudioEnabled(WKPreferencesRef preferencesRef, 
 WK_EXPORT bool WKPreferencesGetWebAudioEnabled(WKPreferencesRef preferencesRef);
     
 // Defaults to false
-WK_EXPORT void WKPreferencesSetSuppressIncrementalRendering(WKPreferencesRef preferencesRef, bool enabled);
-WK_EXPORT bool WKPreferencesGetSuppressIncrementalRendering(WKPreferencesRef preferencesRef);
+WK_EXPORT void WKPreferencesSetSuppressesIncrementalRendering(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetSuppressesIncrementalRendering(WKPreferencesRef preferencesRef);
 
 // Defaults to true
 WK_EXPORT void WKPreferencesSetBackspaceKeyNavigationEnabled(WKPreferencesRef preferencesRef, bool enabled);

@@ -2331,7 +2331,7 @@ void Document::implicitClose()
     }
 
     // If painting and compositing layer updates were suppressed pending the load event, do these actions now.
-    if (renderer() && settings() && settings()->suppressIncrementalRendering()) {
+    if (renderer() && settings() && settings()->suppressesIncrementalRendering()) {
 #if USE(ACCELERATED_COMPOSITING)
         view()->updateCompositingLayers();
 #endif
@@ -5437,7 +5437,7 @@ void Document::didRemoveTouchEventHandler()
 bool Document::visualUpdatesAllowed() const
 {
     return !settings()
-        || !settings()->suppressIncrementalRendering()
+        || !settings()->suppressesIncrementalRendering()
         || loadEventFinished();
 }
 

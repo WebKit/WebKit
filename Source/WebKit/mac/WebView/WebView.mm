@@ -1507,7 +1507,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #endif
     settings->setMediaPlaybackRequiresUserGesture([preferences mediaPlaybackRequiresUserGesture]);
     settings->setMediaPlaybackAllowsInline([preferences mediaPlaybackAllowsInline]);
-    settings->setSuppressIncrementalRendering([preferences suppressIncrementalRendering]);
+    settings->setSuppressesIncrementalRendering([preferences suppressesIncrementalRendering]);
     settings->setBackspaceKeyNavigationEnabled([preferences backspaceKeyNavigationEnabled]);
     settings->setMockScrollbarsEnabled([preferences mockScrollbarsEnabled]);
 
