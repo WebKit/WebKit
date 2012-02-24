@@ -1,3 +1,51 @@
+2012-02-24  Renata Hodovan  <reni@webkit.org>
+
+        External <use> xlink:href references do not work
+        https://bugs.webkit.org/show_bug.cgi?id=12499
+
+        Reviewed by Nikolas Zimmermann.
+
+        Support external references on <use> by introducing CachedSVGDocument.
+        CachedSVGDocument is a CachedResource specialized for SVGDocuments.
+        This CachedSVGDocument will be stored for every use element with external reference.
+        This first patch only contains the new classes to test whether it works on every platform.
+        So they aren't used anywhere and just a follow-up patch will bind them into the caching system.
+
+        No new tests - no change in functionality.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType):
+        (WebCore::cachedResourceTypeToTargetType):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceClient.h:
+        (CachedResourceClient):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::checkInsecureContent):
+        (WebCore::CachedResourceLoader::canRequest):
+        * loader/cache/CachedSVGDocument.cpp: Added.
+        (WebCore):
+        (WebCore::CachedSVGDocument::CachedSVGDocument):
+        (WebCore::CachedSVGDocument::~CachedSVGDocument):
+        (WebCore::CachedSVGDocument::setEncoding):
+        (WebCore::CachedSVGDocument::encoding):
+        (WebCore::CachedSVGDocument::data):
+        * loader/cache/CachedSVGDocument.h: Added.
+        (WebCore):
+        (CachedSVGDocument):
+        (WebCore::CachedSVGDocument::document):
+        (WebCore::CachedSVGDocument::schedule):
+        (CachedSVGDocumentClient):
+        (WebCore::CachedSVGDocumentClient::~CachedSVGDocumentClient):
+        (WebCore::CachedSVGDocumentClient::expectedType):
+        (WebCore::CachedSVGDocumentClient::resourceClientType):
+
 2012-02-24  Alexis Menard  <alexis.menard@openbossa.org>
 
         Little optimization in CSSParser::parseShorthand.

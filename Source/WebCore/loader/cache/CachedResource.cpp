@@ -61,6 +61,10 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
 #endif
             return ResourceLoadPriorityHigh;
         case CachedResource::Script:
+#if ENABLE(SVG)
+        case CachedResource::SVGDocumentResource:
+            return ResourceLoadPriorityLow;
+#endif
         case CachedResource::FontResource:
         case CachedResource::RawResource:
             return ResourceLoadPriorityMedium;
@@ -115,6 +119,10 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
         return ResourceRequest::TargetIsTextTrack;
+#endif
+#if ENABLE(SVG)
+    case CachedResource::SVGDocumentResource:
+        return ResourceRequest::TargetIsImage;
 #endif
     }
     ASSERT_NOT_REACHED();

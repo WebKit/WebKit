@@ -2544,6 +2544,8 @@
             'loader/cache/CachedScript.h',
             'loader/cache/CachedShader.cpp',
             'loader/cache/CachedShader.h',
+            'loader/cache/CachedSVGDocument.cpp',
+            'loader/cache/CachedSVGDocument.h',
             'loader/cache/CachedTextTrack.cpp',
             'loader/cache/CachedTextTrack.h',
             'loader/cache/CachedXSLStyleSheet.cpp',

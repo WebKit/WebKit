@@ -66,6 +66,9 @@ public:
         Script,
         FontResource,
         RawResource
+#if ENABLE(SVG)
+        , SVGDocumentResource
+#endif
 #if ENABLE(XSLT)
         , XSLStyleSheet
 #endif

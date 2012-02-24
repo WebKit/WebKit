@@ -929,6 +929,8 @@ SOURCES += \
     loader/cache/CachedResource.cpp \
     loader/cache/CachedScript.cpp \
     loader/cache/CachedShader.cpp \
+    loader/cache/CachedSVGDocument.cpp \
+    loader/cache/CachedSVGDocument.h \
     loader/cache/CachedXSLStyleSheet.cpp \
     loader/CrossOriginAccessControl.cpp \
     loader/CrossOriginPreflightResultCache.cpp \
@@ -2006,6 +2008,7 @@ HEADERS += \
     loader/cache/CachedResourceHandle.h \
     loader/cache/CachedScript.h \
     loader/cache/CachedShader.h \
+    loader/cache/CachedSVGDocument.h \
     loader/cache/CachedXSLStyleSheet.h \
     loader/cache/MemoryCache.h \
     loader/CrossOriginAccessControl.h \

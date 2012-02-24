@@ -2531,6 +2531,8 @@ webcore_sources += \
 	Source/WebCore/loader/cache/CachedShader.cpp \
 	Source/WebCore/loader/cache/CachedShader.h \
 	Source/WebCore/loader/cache/CachedStyleSheetClient.h \
+	Source/WebCore/loader/cache/CachedSVGDocument.cpp \
+	Source/WebCore/loader/cache/CachedSVGDocument.h \
 	Source/WebCore/loader/cache/CachedTextTrack.cpp \
 	Source/WebCore/loader/cache/CachedTextTrack.h \
 	Source/WebCore/loader/cache/CachedXSLStyleSheet.cpp \
