@@ -1027,7 +1027,6 @@ WebInspector.ScriptsPanel.prototype = {
         if (!this._navigatorOverlayShown)
             return;
 
-        this._navigatorWasOnceHidden = true;
         WebInspector.Dialog.hide();
     },
 
@@ -1042,6 +1041,7 @@ WebInspector.ScriptsPanel.prototype = {
     _navigatorOverlayWillHide: function(event)
     {
         delete this._navigatorOverlayShown;
+        this._navigatorWasOnceHidden = true;
         this.editorView.element.appendChild(this._navigatorShowHideButton);
         this._navigatorShowHideButton.removeStyleClass("toggled-on");
         this._navigatorShowHideButton.title = WebInspector.UIString("Show scripts navigator");
