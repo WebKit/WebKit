@@ -1,3 +1,15 @@
+2012-02-24  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Anchor mailto: with target set won't launch Messaging application when clicked
+        https://bugs.webkit.org/show_bug.cgi?id=79318
+
+        Need to give the client a chance to decide how to handle the new window request.
+
+        Reviewed by Rob Buis.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForNewWindowAction):
+
 2012-02-23  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Selection handler has compile failure with logs enabled.

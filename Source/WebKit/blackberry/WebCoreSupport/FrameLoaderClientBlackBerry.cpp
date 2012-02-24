@@ -270,13 +270,29 @@ void FrameLoaderClientBlackBerry::doPendingFragmentScroll()
     delayPolicyCheckUntilFragmentExists(fragment, function);
 }
 
-void FrameLoaderClientBlackBerry::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest& request, PassRefPtr<FormState>, const String& frameName)
+void FrameLoaderClientBlackBerry::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState>, const String& frameName)
 {
     if (request.isRequestedByPlugin() && ScriptController::processingUserGesture() && !m_webPagePrivate->m_pluginMayOpenNewTab)
         (m_frame->loader()->policyChecker()->*function)(PolicyIgnore);
 
     // A new window can never be a fragment scroll.
     PolicyAction decision = decidePolicyForExternalLoad(request, false);
+    // Let the client have a chance to say whether this navigation should
+    // be ignored or not.
+    BlackBerry::Platform::NetworkRequest platformRequest;
+    request.initializePlatformRequest(platformRequest, false /*isInitial*/);
+    if (isMainFrame() && !m_webPagePrivate->m_client->acceptNavigationRequest(
+        platformRequest, BlackBerry::Platform::NavigationType(action.type()))) {
+        if (action.type() == NavigationTypeFormSubmitted || action.type() == NavigationTypeFormResubmitted)
+            m_frame->loader()->resetMultipleFormSubmissionProtection();
+
+        if (action.type() == NavigationTypeLinkClicked && request.url().hasFragmentIdentifier()) {
+            ResourceRequest emptyRequest;
+            m_frame->loader()->activeDocumentLoader()->setLastCheckedRequest(emptyRequest);
+        }
+        decision = PolicyIgnore;
+    }
+
     (m_frame->loader()->policyChecker()->*function)(decision);
 }
 
