@@ -1,3 +1,45 @@
+2012-02-23  Adam Barth  <abarth@webkit.org>
+
+        should_proceed_with_work_item is unused and can be removed
+        https://bugs.webkit.org/show_bug.cgi?id=79416
+
+        Reviewed by Eric Seidel.
+
+        We used to use this function to check whether the tree is red.  Now, we
+        don't use external measures of whether to proceed with work items.
+        Instead, we analyze them with the idea in mind that the tree might be
+        red.
+
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        (QueueEngineDelegate.next_work_item):
+        (QueueEngine.run):
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py:
+        (LoggingDelegate):
+        (LoggingDelegate.next_work_item):
+        (RaisingDelegate.process_work_item):
+        (QueueEngineTest.test_terminating_error):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.__init__):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractQueue.next_work_item):
+        (FeederQueue.next_work_item):
+        (CommitQueue.next_work_item):
+        (AbstractReviewQueue.next_work_item):
+        (StyleQueue.__init__):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (FeederQueueTest.test_feeder_queue):
+        (CommitQueueTest.test_commit_queue):
+        (test_commit_queue_failure):
+        (test_commit_queue_failure_with_failing_tests):
+        (test_rollout):
+        (test_rollout_lands):
+        (StyleQueueTest.test_style_queue_with_style_exception):
+        (test_style_queue_with_watch_list_exception):
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        (QueuesTest.assert_queue_outputs):
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        (SheriffBot.next_work_item):
+
 2012-02-23  Adrienne Walker  <enne@google.com>
 
         Unreviewed, add Stephen Chenney to committers.py as a contributor.

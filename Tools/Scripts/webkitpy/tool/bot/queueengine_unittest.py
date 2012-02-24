@@ -50,7 +50,6 @@ class LoggingDelegate(QueueEngineDelegate):
         'begin_work_queue',
         'should_continue_work_queue',
         'next_work_item',
-        'should_proceed_with_work_item',
         'work_item_log_path',
         'process_work_item',
         'should_continue_work_queue',
@@ -82,12 +81,6 @@ class LoggingDelegate(QueueEngineDelegate):
         self.record("next_work_item")
         return "work_item"
 
-    def should_proceed_with_work_item(self, work_item):
-        self.record("should_proceed_with_work_item")
-        self._test.assertEquals(work_item, "work_item")
-        fake_patch = {'bug_id': 50000}
-        return (True, "waiting_message", fake_patch)
-
     def process_work_item(self, work_item):
         self.record("process_work_item")
         self._test.assertEquals(work_item, "work_item")
@@ -110,13 +103,6 @@ class RaisingDelegate(LoggingDelegate):
     def process_work_item(self, work_item):
         self.record("process_work_item")
         raise self._exception
-
-
-class NotSafeToProceedDelegate(LoggingDelegate):
-    def should_proceed_with_work_item(self, work_item):
-        self.record("should_proceed_with_work_item")
-        self._test.assertEquals(work_item, "work_item")
-        return False
 
 
 class FastQueueEngine(QueueEngine):
@@ -178,14 +164,6 @@ class QueueEngineTest(unittest.TestCase):
     def test_terminating_error(self):
         self._test_terminating_queue(KeyboardInterrupt(), "User terminated queue.")
         self._test_terminating_queue(TerminateQueue(), "TerminateQueue exception received.")
-
-    def test_not_safe_to_proceed(self):
-        delegate = NotSafeToProceedDelegate(self)
-        self._run_engine(delegate, engine=FastQueueEngine(delegate))
-        expected_callbacks = LoggingDelegate.expected_callbacks[:]
-        expected_callbacks.remove('work_item_log_path')
-        expected_callbacks.remove('process_work_item')
-        self.assertEquals(delegate._callbacks, expected_callbacks)
 
     def test_now(self):
         """Make sure there are no typos in the QueueEngine.now() method."""

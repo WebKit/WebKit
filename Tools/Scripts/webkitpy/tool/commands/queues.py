@@ -128,9 +128,6 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def next_work_item(self):
         raise NotImplementedError, "subclasses must implement"
 
-    def should_proceed_with_work_item(self, work_item):
-        raise NotImplementedError, "subclasses must implement"
-
     def process_work_item(self, work_item):
         raise NotImplementedError, "subclasses must implement"
 
@@ -184,9 +181,6 @@ class FeederQueue(AbstractQueue):
         # understand work items, but the base class in the heirarchy currently
         # understands work items.
         return "synthetic-work-item"
-
-    def should_proceed_with_work_item(self, work_item):
-        return True
 
     def process_work_item(self, work_item):
         for feeder in self.feeders:
@@ -274,11 +268,6 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
 
     def next_work_item(self):
         return self._next_patch()
-
-    def should_proceed_with_work_item(self, patch):
-        patch_text = "rollout patch" if patch.is_rollout() else "patch"
-        self._update_status("Processing %s" % patch_text, patch)
-        return True
 
     def process_work_item(self, patch):
         self._cc_watchers(patch.bug_id())
@@ -382,9 +371,6 @@ class AbstractReviewQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     def next_work_item(self):
         return self._next_patch()
 
-    def should_proceed_with_work_item(self, patch):
-        raise NotImplementedError("subclasses must implement")
-
     def process_work_item(self, patch):
         try:
             if not self.review_patch(patch):
@@ -415,9 +401,6 @@ class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
 
     def __init__(self):
         AbstractReviewQueue.__init__(self)
-
-    def should_proceed_with_work_item(self, patch):
-        return True
 
     def review_patch(self, patch):
         task = StyleQueueTask(self, patch)

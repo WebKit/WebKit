@@ -50,9 +50,6 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         AbstractReviewQueue.__init__(self, options=options)
         self.port = DeprecatedPort.port(self.port_name)
 
-    def should_proceed_with_work_item(self, patch):
-        return True
-
     def begin_work_queue(self):
         # FIXME: This violates abstraction
         self._tool._deprecated_port = self.port

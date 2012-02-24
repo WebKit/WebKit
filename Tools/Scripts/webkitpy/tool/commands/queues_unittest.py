@@ -132,7 +132,6 @@ class FeederQueueTest(QueuesTest):
         tool = MockTool(log_executive=True)
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("feeder-queue"),
-            "should_proceed_with_work_item": "",
             "next_work_item": "",
             "process_work_item": """Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
 Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
@@ -235,7 +234,6 @@ class CommitQueueTest(QueuesTest):
         tool.filesystem.write_text_file('/mock-results/full_results.json', '')  # Otherwise the commit-queue will hit a KeyError trying to read the results from the MockFileSystem.
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue"),
-            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
 MOCK: update_status: commit-queue Updated working directory
@@ -255,7 +253,6 @@ MOCK: release_work_item: commit-queue 10000
     def test_commit_queue_failure(self):
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue"),
-            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
 MOCK: update_status: commit-queue Updated working directory
@@ -283,7 +280,6 @@ MOCK: release_work_item: commit-queue 10000
     def test_commit_queue_failure_with_failing_tests(self):
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue"),
-            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK: update_status: commit-queue Cleaned working directory
 MOCK: update_status: commit-queue Updated working directory
@@ -317,7 +313,6 @@ MOCK: release_work_item: commit-queue 10000
         tool.buildbot.light_tree_on_fire()
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue"),
-            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Cleaned working directory
@@ -348,7 +343,6 @@ MOCK: release_work_item: commit-queue 10000
         assert(rollout_patch.is_rollout())
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue"),
-            "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing rollout patch\n",
             "next_work_item": "",
             "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean'], cwd=/mock-checkout
 MOCK: update_status: commit-queue Cleaned working directory
@@ -448,7 +442,6 @@ class StyleQueueTest(QueuesTest):
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("style-queue"),
             "next_work_item": "",
-            "should_proceed_with_work_item": "",
             "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean'], cwd=/mock-checkout
 MOCK: update_status: style-queue Cleaned working directory
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd=/mock-checkout
@@ -481,7 +474,6 @@ MOCK: release_work_item: style-queue 10000
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("style-queue"),
             "next_work_item": "",
-            "should_proceed_with_work_item": "",
             "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean'], cwd=/mock-checkout
 MOCK: update_status: style-queue Cleaned working directory
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd=/mock-checkout

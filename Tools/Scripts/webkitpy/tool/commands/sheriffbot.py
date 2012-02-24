@@ -58,10 +58,6 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
         self._irc_bot.process_pending_messages()
         return
 
-    def should_proceed_with_work_item(self, failure_map):
-        # Currently, we don't have any reasons not to proceed with work items.
-        return True
-
     def process_work_item(self, failure_map):
         return True
 

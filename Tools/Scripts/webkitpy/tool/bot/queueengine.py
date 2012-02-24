@@ -58,10 +58,6 @@ class QueueEngineDelegate:
     def next_work_item(self):
         raise NotImplementedError, "subclasses must implement"
 
-    def should_proceed_with_work_item(self, work_item):
-        # returns (safe_to_proceed, waiting_message, patch)
-        raise NotImplementedError, "subclasses must implement"
-
     def process_work_item(self, work_item):
         raise NotImplementedError, "subclasses must implement"
 
@@ -97,9 +93,6 @@ class QueueEngine:
                 work_item = self._delegate.next_work_item()
                 if not work_item:
                     self._sleep("No work item.")
-                    continue
-                if not self._delegate.should_proceed_with_work_item(work_item):
-                    self._sleep("Not proceeding with work item.")
                     continue
 
                 # FIXME: Work logs should not depend on bug_id specificaly.
