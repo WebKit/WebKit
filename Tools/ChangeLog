@@ -1,3 +1,17 @@
+2012-02-23  Adam Barth  <abarth@webkit.org>
+
+        style-queue logs bogus messages to the QueueStatusServer
+        https://bugs.webkit.org/show_bug.cgi?id=79424
+
+        Reviewed by Eric Seidel.
+
+        Copy/paste error.
+
+        * Scripts/webkitpy/tool/bot/stylequeuetask.py:
+        (StyleQueueTask._check_style):
+        (StyleQueueTask._apply_watch_list):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2012-02-23  Eric Seidel  <eric@webkit.org>
 
         Use self._filesystem in more places in the SCM classes

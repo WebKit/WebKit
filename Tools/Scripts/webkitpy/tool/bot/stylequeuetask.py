@@ -46,16 +46,16 @@ class StyleQueueTask(PatchAnalysisTask):
             "--non-interactive",
             self._patch.id(),
         ],
-        "ChangeLog validated",
-        "ChangeLog did not pass validation")
+        "Style checked",
+        "Patch did not pass style check")
 
     def _apply_watch_list(self):
         return self._run_command([
             "apply-watchlist-local",
             self._patch.bug_id(),
         ],
-        "ChangeLog validated",
-        "ChangeLog did not pass validation")
+        "Watchlist applied",
+        "Unabled to apply watchlist")
 
     def run(self):
         if not self._clean():
