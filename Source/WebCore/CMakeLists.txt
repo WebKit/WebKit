@@ -2060,7 +2060,6 @@ IF (ENABLE_WEB_SOCKETS)
         websockets/ThreadableWebSocketChannelClientWrapper.cpp
         websockets/WebSocket.cpp
         websockets/WebSocketChannel.cpp
-        websockets/WebSocketDeflateFramer.cpp
         websockets/WebSocketExtensionDispatcher.cpp
         websockets/WebSocketHandshake.cpp
         websockets/WebSocketHandshakeRequest.cpp

@@ -4832,8 +4832,6 @@
             'websockets/WebSocketChannel.cpp',
             'websockets/WebSocketChannel.h',
             'websockets/WebSocketChannelClient.h',
-            'websockets/WebSocketDeflateFramer.cpp',
-            'websockets/WebSocketDeflateFramer.h',
             'websockets/WebSocketDeflater.cpp',
             'websockets/WebSocketDeflater.h',
             'websockets/WebSocketExtensionDispatcher.cpp',

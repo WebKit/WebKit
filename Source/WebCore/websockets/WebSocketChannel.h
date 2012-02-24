@@ -37,7 +37,6 @@
 #include "SocketStreamHandleClient.h"
 #include "ThreadableWebSocketChannel.h"
 #include "Timer.h"
-#include "WebSocketDeflateFramer.h"
 #include "WebSocketFrame.h"
 #include "WebSocketHandshake.h"
 #include <wtf/Deque.h>
@@ -232,8 +231,6 @@ private:
     OwnPtr<FileReaderLoader> m_blobLoader;
     BlobLoaderStatus m_blobLoaderStatus;
 #endif
-
-    WebSocketDeflateFramer m_deflateFramer;
 };
 
 } // namespace WebCore

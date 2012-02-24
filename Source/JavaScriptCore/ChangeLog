@@ -1,3 +1,13 @@
+2012-02-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r108731.
+        http://trac.webkit.org/changeset/108731
+        https://bugs.webkit.org/show_bug.cgi?id=79464
+
+        Broke Chromium Win tests (Requested by bashi on #webkit).
+
+        * wtf/Platform.h:
+
 2012-02-24  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Enable requestAnimationFrame
