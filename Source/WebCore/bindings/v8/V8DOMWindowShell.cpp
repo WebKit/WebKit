@@ -577,6 +577,18 @@ void V8DOMWindowShell::namedItemAdded(HTMLDocument* doc, const AtomicString& nam
 
 void V8DOMWindowShell::namedItemRemoved(HTMLDocument* doc, const AtomicString& name)
 {
+    if (doc->hasNamedItem(name.impl()) || doc->hasExtraNamedItem(name.impl()))
+        return;
+
+    if (!initContextIfNeeded())
+        return;
+
+    v8::HandleScope handleScope;
+    v8::Context::Scope contextScope(m_context);
+
+    ASSERT(!m_document.IsEmpty());
+    checkDocumentWrapper(m_document, doc);
+    m_document->Delete(v8String(name));
 }
 
 void V8DOMWindowShell::updateSecurityOrigin()

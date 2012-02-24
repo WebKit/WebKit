@@ -1,3 +1,22 @@
+2012-02-24  Jochen Eisinger  <jochen@chromium.org>
+
+        [v8] when a named item on document goes out of scope, actually remove it
+        https://bugs.webkit.org/show_bug.cgi?id=79409
+
+        Reviewed by Adam Barth.
+
+        The original change already included the code, but it led to some
+        problems, so it was reverted in http://trac.webkit.org/changeset/63845.
+        However, not removing the items leaks a considerable amount of memory,
+        so I'm adding the code back. The bug that led to the revert was that
+        the accessor was removed unconditionally. I'm now only removing it,
+        when the last item with that name is removed.
+
+        Test: fast/dom/HTMLDocument/named-item.html
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::namedItemRemoved):
+
 2012-02-24  Kentaro Hara  <haraken@chromium.org>
 
         Move Worker-related APIs from DOMWindow.idl to DOMWindowWorker.idl
