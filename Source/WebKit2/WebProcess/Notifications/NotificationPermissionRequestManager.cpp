@@ -62,8 +62,10 @@ NotificationPermissionRequestManager::NotificationPermissionRequestManager(WebPa
 void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, PassRefPtr<VoidCallback> callback)
 {
 #if ENABLE(NOTIFICATIONS)
-    if (permissionLevel(origin) != NotificationPresenter::PermissionNotAllowed)
+    if (permissionLevel(origin) != NotificationPresenter::PermissionNotAllowed) {
+        callback->handleEvent();
         return;
+    }
 
     uint64_t requestID = generateRequestID();
     m_originToIDMap.set(origin, requestID);

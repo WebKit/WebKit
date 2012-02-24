@@ -1,3 +1,17 @@
+2012-02-24  Jessie Berlin  <jberlin@apple.com>
+
+        requestPermission callback not invoked if the WebProcess doesn't have to ask the UI Process
+        about the permission level.
+        https://bugs.webkit.org/show_bug.cgi?id=79494
+
+        Reviewed by Jon Honeycutt.
+
+        Invoke the callback in the case where the permission level is known and no message is sent
+        to the UI Process.
+
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::startRequest):
+
 2012-02-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Signal and property cleanup in QQuickWebView
