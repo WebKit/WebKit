@@ -32,10 +32,12 @@
 #include "HTMLContentSelector.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
+#include "Text.h"
 
 namespace WebCore {
 
 ShadowRootList::ShadowRootList()
+    : m_needsRecalculateContent(false)
 {
 }
 
@@ -94,12 +96,6 @@ void ShadowRootList::willRemove()
         root->willRemove();
 }
 
-void ShadowRootList::hostChildrenChanged()
-{
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        root->hostChildrenChanged();
-}
-
 void ShadowRootList::attach()
 {
     // FIXME: Currently we only support the case that the shadow root list has at most one shadow root.
@@ -137,6 +133,98 @@ InsertionPoint* ShadowRootList::insertionPointFor(Node* node) const
 bool ShadowRootList::isSelectorActive() const
 {
     return m_selector && m_selector->hasCandidates();
+}
+
+void ShadowRootList::reattach()
+{
+    detach();
+    attach();
+}
+
+bool ShadowRootList::childNeedsStyleRecalc()
+{
+    ASSERT(youngestShadowRoot());
+    if (!youngestShadowRoot())
+        return false;
+
+    return youngestShadowRoot()->childNeedsStyleRecalc();
+}
+
+bool ShadowRootList::needsStyleRecalc()
+{
+    ASSERT(youngestShadowRoot());
+    if (!youngestShadowRoot())
+        return false;
+
+    return youngestShadowRoot()->needsStyleRecalc();
+}
+
+void ShadowRootList::recalcShadowTreeStyle(Node::StyleChange change)
+{
+    ShadowRoot* youngest = youngestShadowRoot();
+    if (!youngest)
+        return;
+
+    if (needsReattachHostChildrenAndShadow())
+        reattachHostChildrenAndShadow();
+    else {
+        for (Node* n = youngest->firstChild(); n; n = n->nextSibling()) {
+            if (n->isElementNode())
+                static_cast<Element*>(n)->recalcStyle(change);
+            else if (n->isTextNode())
+                toText(n)->recalcTextStyle(change);
+        }
+    }
+
+    clearNeedsReattachHostChildrenAndShadow();
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+        root->clearNeedsStyleRecalc();
+        root->clearChildNeedsStyleRecalc();
+    }
+}
+
+bool ShadowRootList::needsReattachHostChildrenAndShadow()
+{
+    return m_needsRecalculateContent || (youngestShadowRoot() && youngestShadowRoot()->hasContentElement());
+}
+
+void ShadowRootList::hostChildrenChanged()
+{
+    ASSERT(youngestShadowRoot());
+
+    if (!youngestShadowRoot()->hasContentElement())
+        return;
+
+    // This results in forced detaching/attaching of the shadow render tree. See ShadowRoot::recalcStyle().
+    setNeedsReattachHostChildrenAndShadow();
+}
+
+void ShadowRootList::setNeedsReattachHostChildrenAndShadow()
+{
+    m_needsRecalculateContent = true;
+
+    host()->setNeedsStyleRecalc();
+}
+
+void ShadowRootList::reattachHostChildrenAndShadow()
+{
+    ASSERT(youngestShadowRoot());
+
+    Node* hostNode = youngestShadowRoot()->host();
+    if (!hostNode)
+        return;
+
+    for (Node* child = hostNode->firstChild(); child; child = child->nextSibling()) {
+        if (child->attached())
+            child->detach();
+    }
+
+    reattach();
+
+    for (Node* child = hostNode->firstChild(); child; child = child->nextSibling()) {
+        if (!child->attached())
+            child->attach();
+    }
 }
 
 HTMLContentSelector* ShadowRootList::ensureSelector()

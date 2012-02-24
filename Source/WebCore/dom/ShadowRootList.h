@@ -37,8 +37,8 @@ namespace WebCore {
 
 class Node;
 class Element;
-class HTMLContentElement;
 class HTMLContentSelector;
+class InsertionPoint;
 
 class ShadowRootList {
 public:
@@ -58,10 +58,18 @@ public:
     void removedFromTree(bool deep);
     void willRemove();
 
-    void hostChildrenChanged();
-
     void attach();
     void detach();
+    void reattach();
+
+    bool childNeedsStyleRecalc();
+    bool needsStyleRecalc();
+    void recalcShadowTreeStyle(Node::StyleChange);
+    void setNeedsReattachHostChildrenAndShadow();
+    void clearNeedsReattachHostChildrenAndShadow();
+    bool needsReattachHostChildrenAndShadow();
+    void reattachHostChildrenAndShadow();
+    void hostChildrenChanged();
 
     InsertionPoint* insertionPointFor(Node*) const;
 
@@ -75,6 +83,7 @@ private:
 
     DoublyLinkedList<ShadowRoot> m_shadowRoots;
     OwnPtr<HTMLContentSelector> m_selector;
+    bool m_needsRecalculateContent : 1;
     WTF_MAKE_NONCOPYABLE(ShadowRootList);
 };
 
@@ -96,6 +105,11 @@ inline ShadowRoot* ShadowRootList::oldestShadowRoot() const
 inline HTMLContentSelector* ShadowRootList::selector() const
 {
     return m_selector.get();
+}
+
+inline void ShadowRootList::clearNeedsReattachHostChildrenAndShadow()
+{
+    m_needsRecalculateContent = false;
 }
 
 inline Element* ShadowRootList::host() const

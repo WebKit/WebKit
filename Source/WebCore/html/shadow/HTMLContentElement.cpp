@@ -74,7 +74,7 @@ void HTMLContentElement::attach()
 
     // Before calling StyledElement::attach, selector must be calculated.
     if (root) {
-        HTMLContentSelector* selector = root->host()->shadowRootList()->ensureSelector();
+        HTMLContentSelector* selector = root->list()->ensureSelector();
         selector->unselect(&m_selections);
         selector->select(this, &m_selections);
     }
@@ -90,12 +90,12 @@ void HTMLContentElement::attach()
 void HTMLContentElement::detach()
 {
     if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
-        if (HTMLContentSelector* selector = root->host()->shadowRootList()->selector())
+        if (HTMLContentSelector* selector = root->list()->selector())
             selector->unselect(&m_selections);
 
         // When content element is detached, shadow tree should be recreated to re-calculate selector for
         // other content elements.
-        root->setNeedsReattachHostChildrenAndShadow();
+        root->list()->setNeedsReattachHostChildrenAndShadow();
     }
 
     ASSERT(m_selections.isEmpty());
@@ -122,7 +122,7 @@ void HTMLContentElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == selectAttr) {
         if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode()))
-            root->setNeedsReattachHostChildrenAndShadow();
+            root->list()->setNeedsReattachHostChildrenAndShadow();
     } else
         InsertionPoint::parseAttribute(attr);
 }

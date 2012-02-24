@@ -38,6 +38,7 @@ class Document;
 class HTMLContentElement;
 class HTMLContentSelector;
 class InsertionPoint;
+class ShadowRootList;
 
 class ShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
     friend class WTF::DoublyLinkedListNode<ShadowRoot>;
@@ -64,15 +65,17 @@ public:
     void hostChildrenChanged();
 
     virtual void attach();
-    void reattachHostChildrenAndShadow();
 
     virtual bool applyAuthorSheets() const;
     void setApplyAuthorSheets(bool);
 
     Element* host() const { return shadowHost(); }
+    ShadowRootList* list() const;
 
     ShadowRoot* youngerShadowRoot() { return prev(); }
     ShadowRoot* olderShadowRoot() { return next(); }
+
+    bool hasContentElement() const;
 
 private:
     ShadowRoot(Document*);
@@ -82,23 +85,10 @@ private:
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType) const;
 
-    bool hasContentElement() const;
-
     ShadowRoot* m_prev;
     ShadowRoot* m_next;
     bool m_applyAuthorSheets : 1;
-    bool m_needsRecalculateContent : 1;
 };
-
-inline void ShadowRoot::clearNeedsReattachHostChildrenAndShadow()
-{
-    m_needsRecalculateContent = false;
-}
-
-inline bool ShadowRoot::needsReattachHostChildrenAndShadow()
-{
-    return m_needsRecalculateContent || hasContentElement();
-}
 
 inline ShadowRoot* toShadowRoot(Node* node)
 {

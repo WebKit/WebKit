@@ -36,7 +36,6 @@
 #include "NodeRareData.h"
 #include "ShadowRootList.h"
 #include "SVGNames.h"
-#include "Text.h"
 
 #if ENABLE(SHADOW_DOM)
 #include "RuntimeEnabledFeatures.h"
@@ -50,7 +49,6 @@ ShadowRoot::ShadowRoot(Document* document)
     , m_prev(0)
     , m_next(0)
     , m_applyAuthorSheets(false)
-    , m_needsRecalculateContent(false)
 {
     ASSERT(document);
     
@@ -159,38 +157,11 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
     }
 }
 
-void ShadowRoot::recalcShadowTreeStyle(StyleChange change)
+ShadowRootList* ShadowRoot::list() const
 {
-    if (needsReattachHostChildrenAndShadow())
-        reattachHostChildrenAndShadow();
-    else {
-        for (Node* n = firstChild(); n; n = n->nextSibling()) {
-            if (n->isElementNode())
-                static_cast<Element*>(n)->recalcStyle(change);
-            else if (n->isTextNode())
-                toText(n)->recalcTextStyle(change);
-        }
-    }
-
-    clearNeedsReattachHostChildrenAndShadow();
-    clearNeedsStyleRecalc();
-    clearChildNeedsStyleRecalc();
-}
-
-void ShadowRoot::setNeedsReattachHostChildrenAndShadow()
-{
-    m_needsRecalculateContent = true;
-    if (shadowHost())
-        shadowHost()->setNeedsStyleRecalc();
-}
-
-void ShadowRoot::hostChildrenChanged()
-{
-    if (!hasContentElement())
-        return;
-
-    // This results in forced detaching/attaching of the shadow render tree. See ShadowRoot::recalcStyle().
-    setNeedsReattachHostChildrenAndShadow();
+    if (host())
+        return host()->shadowRootList();
+    return 0;
 }
 
 bool ShadowRoot::hasContentElement() const
@@ -226,23 +197,4 @@ void ShadowRoot::attach()
         selector->didSelect();
 }
 
-void ShadowRoot::reattachHostChildrenAndShadow()
-{
-    Node* hostNode = host();
-    if (!hostNode)
-        return;
-
-    for (Node* child = hostNode->firstChild(); child; child = child->nextSibling()) {
-        if (child->attached())
-            child->detach();
-    }
-
-    reattach();
-
-    for (Node* child = hostNode->firstChild(); child; child = child->nextSibling()) {
-        if (!child->attached())
-            child->attach();
-    }
 }
-
-} // namespace

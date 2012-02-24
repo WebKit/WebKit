@@ -264,7 +264,7 @@ RenderObject* NodeRenderingContext::parentRenderer() const
 void NodeRenderingContext::hostChildrenChanged()
 {
     if (m_phase == AttachingNotDistributed)
-        m_visualParentShadowRoot->hostChildrenChanged();
+        m_visualParentShadowRoot->host()->shadowRootList()->hostChildrenChanged();
 }
 
 bool NodeRenderingContext::shouldCreateRenderer() const
