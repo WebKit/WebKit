@@ -1,0 +1,78 @@
+<!doctype html>
+
+ <style>
+
+    @font-face {
+        font-family: webkit-ahem;
+        font-style: normal;
+        src: url(../../resources/Ahem.ttf);
+    }
+   
+    #float1 {
+        float: left;
+        position:fixed;
+        width: 150px;
+        height: 102px;
+        background-color:green;
+        z-index:-1;
+    }
+    
+    #float2 {
+        float:right;
+        width:200px;
+        height:30px;
+        background-color:orange
+    }
+
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+    }
+ 
+    #region1 {
+        width: 170px;
+        height: 80px;
+        padding: 5px;
+    }
+    
+    #region2 {
+        width: 390px;
+        height: 89px;
+        padding-top:1px;
+        padding-left:5px;
+        padding-right:5px;
+    }
+    
+    #region3 {
+        width: 385px;
+        height: 80px;
+        padding-left:5px;
+        padding-right:10px;
+        padding-bottom:10px;
+    }
+	
+   	p.flow1 {
+		clear:both;
+		margin-bottom: 0px;
+	}
+
+	p.flow2 {
+		margin-top: 0.5px;
+	}
+	
+</style>
+
+<p>In the example below, the green float should be at the top of the first region and on the left. It should spill into region two.
+The orange float should be on the right at the top of region two.</p>
+
+<div id="region1">
+     <p><img id="float1"></p>
+</div>
+<div id="region2">
+    <img id="float2">
+    <p class="flow1">This line of text should not get out of the region. This line of text should not get out of the region.</p>
+</div>
+<div id="region3">
+<p class="flow2">This line of text should not get out of the region. This line of text should not get out of the region.</p>
+<p>This line of text should not get out of the region.</p>
+</div>
+
