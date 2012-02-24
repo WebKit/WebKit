@@ -1,3 +1,11 @@
+2012-02-24  Darin Fisher  <darin@chromium.org>
+
+        Update watchlist for ChromiumPublicApi to include Platform/chromium/public/
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-02-24  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: config_unittest is sensitive to other tests that might've already run

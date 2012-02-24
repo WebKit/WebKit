@@ -20,6 +20,7 @@
         },
         "ChromiumPublicApi": {
             "filename": r"Source/WebKit/chromium/public/"
+                        r"Source/Platform/chromium/public/"
         },
         "AppleMacPublicApi": {
             "filename": r"Source/WebCore/bindings/objc/PublicDOMInterfaces.h"
@@ -143,7 +144,7 @@
         # two different accounts as far as bugzilla is concerned.
         "ChromiumDumpRenderTree": [ "tkent@chromium.org", ],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@google.com" ],
-        "ChromiumPublicApi": [ "fishd@chromium.org", ],
+        "ChromiumPublicApi": [ "fishd@chromium.org", "abarth@webkit.org" ],
         "AppleMacPublicApi": [ "timothy@apple.com" ],
         "Forms": [ "tkent@chromium.org", ],
         "GStreamerGraphics": [ "alexis.menard@openbossa.org", "pnormand@igalia.com", "gns@gnome.org" ],
