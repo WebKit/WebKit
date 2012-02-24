@@ -2196,17 +2196,11 @@ BUGWEBGL SLOW WIN DEBUG GPU : fast/canvas/webgl/index-validation-with-resized-bu
 BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = PASS TIMEOUT TEXT
 BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 
-// Seems to have been crashing intermittently for as long as we have test history.
-BUGWK68270 LEOPARD CPU DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = IMAGE CRASH
-
 // nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
 BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
 
 // Possibly regressed within 68216:68246 (flakiness rate increased)
 BUGCR57056 LINUX : svg/custom/clip-path-referencing-use2.svg = PASS FAIL
-
-// Flaky since http://trac.webkit.org/changeset/68440 (where this test added at).
-BUGWK46689 : fast/dom/HTMLElement/class-list.html = PASS TEXT
 
 // Flaky since r68438:r68445 or before that.
 BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
@@ -3820,9 +3814,6 @@ BUGWK78561 WIN : css3/filters/filter-empty-element-crash.html = MISSING
 
 // Still flaky:
 BUGWK78830 : svg/custom/mask-invalidation.svg = IMAGE
-BUGWK78830 : svg/repaint/image-with-clip-path.svg = IMAGE
-
-BUGWK78832 MAC : fast/dom/shadow/shadow-boundary-events.html = TEXT
 
 // Tests Error.stack behavior. We aren't consistent with JSC and do not intend to become so.
 WONTFIX : fast/js/stack-trace.html = TEXT
@@ -4191,9 +4182,6 @@ BUGWK41386 : svg/foreignObject/fO-parent-display-none.svg = FAIL
 BUGWK41386 : svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content.svg = FAIL
 BUGWK41386 : svg/foreignObject/fO-parent-of-parent-display-none.svg = FAIL
 BUGWK41386 : svg/foreignObject/fO-parent-display-changes.svg = FAIL
-
-// Started failing http://trac.webkit.org/log/?verbose=on&rev=107837&stop_rev=107836
-BUGWK78755 : compositing/culling/scrolled-within-boxshadow.html = IMAGE
 
 // Need rebaselining.
 BUGWK69210 MAC : fast/encoding/utf-16-big-endian.html = IMAGE+TEXT
