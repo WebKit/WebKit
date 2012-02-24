@@ -47,3 +47,9 @@
 - (NSString *)markupString;
 - (NSRect)_renderRect:(bool *)isReplaced;
 @end
+
+typedef BOOL (^WebArchiveSubframeFilter)(WebFrame* subframe);
+
+@interface DOMNode (WebDOMNodeOperationsPrivate)
+- (WebArchive *)webArchiveByFilteringSubframes:(WebArchiveSubframeFilter)webArchiveSubframeFilter;
+@end

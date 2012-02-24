@@ -1,3 +1,21 @@
+2012-02-24  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10805709> and https://bugs.webkit.org/show_bug.cgi?id=79421
+        Need a WK1 Mac API to filter which subframes go into WebArchives as they are created
+
+        Reviewed by Sam Weinig (with additional comments by Adam Roben)
+
+        Add webArchiveByFilteringSubframes: which takes a callback block:
+        * DOM/WebDOMOperationsPrivate.h:
+
+        Add FrameFilter that adapts the block, and use it to implement the new SPI:
+        * DOM/WebDOMOperations.mm:
+        (WebFrameFilter):
+        (WebFrameFilter::WebFrameFilter):
+        (WebFrameFilter::~WebFrameFilter):
+        (WebFrameFilter::shouldIncludeSubframe):
+        (-[DOMNode webArchiveByFilteringSubframes:]):
+
 2012-02-24  Shinya Kawanaka  <shinyak@chromium.org>
 
         SpellCheckRequest needs to know the context where the spellcheck happened.

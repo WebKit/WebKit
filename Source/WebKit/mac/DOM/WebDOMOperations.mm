@@ -35,10 +35,12 @@
 #import "WebArchiveInternal.h"
 #import "WebDataSourcePrivate.h"
 #import "WebFrameInternal.h"
+#import "WebFrameLoaderClient.h"
 #import "WebFramePrivate.h"
 #import "WebKitNSStringExtras.h"
 #import <JavaScriptCore/APICast.h>
 #import <WebCore/Document.h>
+#import <WebCore/Frame.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/JSElement.h>
@@ -76,11 +78,46 @@ using namespace JSC;
 
 @end
 
+class WebFrameFilter : public WebCore::FrameFilter {
+public:
+    WebFrameFilter(WebArchiveSubframeFilter filterBlock);
+    ~WebFrameFilter();
+private:
+    virtual bool shouldIncludeSubframe(Frame*) const OVERRIDE;
+
+    WebArchiveSubframeFilter m_filterBlock;
+};
+
+WebFrameFilter::WebFrameFilter(WebArchiveSubframeFilter filterBlock)
+    : m_filterBlock(Block_copy(filterBlock))
+{
+}
+
+WebFrameFilter::~WebFrameFilter()
+{
+    Block_release(m_filterBlock);
+}
+
+bool WebFrameFilter::shouldIncludeSubframe(Frame* frame) const
+{
+    if (!m_filterBlock)
+        return true;
+        
+    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    return m_filterBlock(webFrame);
+}
+
 @implementation DOMNode (WebDOMNodeOperations)
 
 - (WebArchive *)webArchive
 {
     return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(core(self))] autorelease];
+}
+
+- (WebArchive *)webArchiveByFilteringSubframes:(WebArchiveSubframeFilter)webArchiveSubframeFilter
+{
+    WebFrameFilter filter(webArchiveSubframeFilter);
+    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(core(self), &filter)] autorelease];
 }
 
 @end
