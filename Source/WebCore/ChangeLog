@@ -1,3 +1,16 @@
+2012-02-23  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Plumb video damage to the damage tracker.
+        https://bugs.webkit.org/show_bug.cgi?id=79373
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::contentChanged):
+        (WebCore):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        (VideoLayerChromium):
+
 2012-02-23  MORITA Hajime  <morrita@google.com>
 
         This test checks select attribute of content element is valid.

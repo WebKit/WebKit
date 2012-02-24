@@ -57,6 +57,12 @@ PassRefPtr<CCLayerImpl> VideoLayerChromium::createCCLayerImpl()
     return CCVideoLayerImpl::create(m_layerId, m_provider);
 }
 
+void VideoLayerChromium::contentChanged()
+{
+    m_updateRect = FloatRect(FloatPoint(), contentBounds());
+    setNeedsDisplay();
+}
+
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)

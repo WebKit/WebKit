@@ -1,3 +1,13 @@
+2012-02-23  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Plumb video damage to the damage tracker.
+        https://bugs.webkit.org/show_bug.cgi?id=79373
+
+        Reviewed by James Robinson.
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::repaint):
+
 2012-02-21  James Robinson  <jamesr@chromium.org>
 
         [chromium] Notify compositor of wheel event registration via ScrollingCoordinator
