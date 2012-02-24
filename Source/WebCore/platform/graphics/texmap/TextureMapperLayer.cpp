@@ -180,9 +180,9 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
     if (m_children.isEmpty())
         return;
 
-    bool shouldClip = m_state.masksToBounds || m_state.maskLayer;
+    bool shouldClip = m_state.masksToBounds && !m_state.preserves3D;
     if (shouldClip)
-        options.textureMapper->beginClip(TransformationMatrix(options.transform).multiply(m_transform.combined()), FloatRect(0, 0, m_size.width(), m_size.height()));
+        options.textureMapper->beginClip(TransformationMatrix(options.transform).multiply(m_transform.combined()), layerRect());
 
     for (int i = 0; i < m_children.size(); ++i)
         m_children[i]->paintRecursive(options);

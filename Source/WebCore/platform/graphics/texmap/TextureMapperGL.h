@@ -67,7 +67,6 @@ public:
 
 private:
     bool beginScissorClip(const TransformationMatrix&, const FloatRect&);
-    bool endScissorClip();
     inline TextureMapperGLData& data() { return *m_data; }
     TextureMapperGLData* m_data;
     GraphicsContext* m_context;

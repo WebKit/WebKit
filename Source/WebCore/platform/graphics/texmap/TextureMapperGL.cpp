@@ -125,12 +125,59 @@ struct TextureMapperGLData {
             return adoptRef(new SharedGLData(getCurrentGLContext()));
         }
 
-        int stencilIndex;
-        Vector<IntRect> clipStack;
+        struct ClipState {
+            IntRect scissorBox;
+            int stencilIndex;
+            ClipState(const IntRect& scissors, int stencil)
+                : scissorBox(scissors)
+                , stencilIndex(stencil)
+            { }
+
+            ClipState()
+                : stencilIndex(1)
+            { }
+        };
+
+        ClipState clipState;
+        Vector<ClipState> clipStack;
+
+        void pushClipState()
+        {
+            clipStack.append(clipState);
+        }
+
+        void popClipState()
+        {
+            if (clipStack.isEmpty())
+                return;
+            clipState = clipStack.last();
+            clipStack.removeLast();
+        }
+
+        static void scissorClip(const IntRect& rect)
+        {
+            if (rect.isEmpty())
+                return;
+
+            GLint viewport[4];
+            GL_CMD(glGetIntegerv(GL_VIEWPORT, viewport))
+            GL_CMD(glScissor(rect.x(), viewport[3] - rect.maxY() + 1, rect.width() - 1, rect.height() - 1))
+        }
+
+        void applyCurrentClip()
+        {
+            scissorClip(clipState.scissorBox);
+            GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP))
+            glStencilFunc(GL_EQUAL, clipState.stencilIndex - 1, clipState.stencilIndex - 1);
+            if (clipState.stencilIndex == 1)
+                glDisable(GL_STENCIL_TEST);
+            else
+                glEnable(GL_STENCIL_TEST);
+        }
+
         TextureMapperShaderManager textureMapperShaderManager;
 
         SharedGLData(GLContext glContext)
-            : stencilIndex(1)
         {
             glContextDataMap().add(glContext, this);
         }
@@ -155,14 +202,7 @@ struct TextureMapperGLData {
         return *(m_sharedGLData.get());
     }
 
-    void initStencil()
-    {
-        if (didModifyStencil)
-            return;
-        glClearStencil(0);
-        glClear(GL_STENCIL_BUFFER_BIT);
-        didModifyStencil = true;
-    }
+    void initializeStencil();
 
     TextureMapperGLData()
         : previousProgram(0)
@@ -178,7 +218,9 @@ struct TextureMapperGLData {
     GLint previousScissorState;
     GLint previousDepthState;
     GLint viewport[4];
+    GLint previousScissor[4];
     RefPtr<SharedGLData> m_sharedGLData;
+    RefPtr<BitmapTexture> currentSurface;
 };
 
 class BitmapTextureGL : public BitmapTexture {
@@ -188,6 +230,7 @@ public:
     virtual bool isValid() const;
     virtual void didReset();
     void bind();
+    void initializeStencil();
     ~BitmapTextureGL() { destroy(); }
     virtual uint32_t id() const { return m_id; }
     inline FloatSize relativeSize() const { return m_relativeSize; }
@@ -215,6 +258,21 @@ private:
 
     friend class TextureMapperGL;
 };
+
+void TextureMapperGLData::initializeStencil()
+{
+    if (currentSurface) {
+        static_cast<BitmapTextureGL*>(currentSurface.get())->initializeStencil();
+        return;
+    }
+
+    if (didModifyStencil)
+        return;
+
+    glClearStencil(0);
+    glClear(GL_STENCIL_BUFFER_BIT);
+    didModifyStencil = true;
+}
 
 TextureMapperGL::TextureMapperGL()
     : m_data(new TextureMapperGLData)
@@ -245,6 +303,9 @@ void TextureMapperGL::beginPainting()
     data().didModifyStencil = false;
     glDepthMask(0);
     glGetIntegerv(GL_VIEWPORT, data().viewport);
+    glGetIntegerv(GL_SCISSOR_BOX, data().previousScissor);
+    data().sharedGLData().clipState.stencilIndex = 1;
+    data().sharedGLData().clipState.scissorBox = IntRect(0, 0, data().viewport[2], data().viewport[3]);
     bindSurface(0);
 }
 
@@ -256,6 +317,8 @@ void TextureMapperGL::endPainting()
     }
 
     glUseProgram(data().previousProgram);
+
+    glScissor(data().previousScissor[0], data().previousScissor[1], data().previousScissor[2], data().previousScissor[3]);
     if (data().previousScissorState)
         glEnable(GL_SCISSOR_TEST);
     else
@@ -265,6 +328,7 @@ void TextureMapperGL::endPainting()
         glEnable(GL_DEPTH_TEST);
     else
         glDisable(GL_DEPTH_TEST);
+
 
 #if PLATFORM(QT)
     if (!m_context)
@@ -280,6 +344,10 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
 {
     if (!texture.isValid())
         return;
+
+    if (data().sharedGLData().clipState.scissorBox.isEmpty())
+        return;
+
     const BitmapTextureGL& textureGL = static_cast<const BitmapTextureGL&>(texture);
     drawTexture(textureGL.id(), textureGL.isOpaque() ? 0 : SupportsBlending, textureGL.relativeSize(), targetRect, matrix, opacity, mask);
 }
@@ -532,36 +600,40 @@ static inline TransformationMatrix createProjectionMatrix(const IntSize& size, b
                                 -1, flip ? 1 : -1, -(far + near) / (far - near), 1);
 }
 
+void BitmapTextureGL::initializeStencil()
+{
+    if (m_rbo)
+        return;
+    GL_CMD(glGenRenderbuffers(1, &m_rbo));
+    GL_CMD(glBindRenderbuffer(GL_RENDERBUFFER, m_rbo))
+#ifdef TEXMAP_OPENGL_ES_2
+    GL_CMD(glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_textureSize.width(), m_textureSize.height()))
+#else
+    GL_CMD(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, m_textureSize.width(), m_textureSize.height()))
+#endif
+    GL_CMD(glBindRenderbuffer(GL_RENDERBUFFER, 0))
+    GL_CMD(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo))
+    GL_CMD(glClearStencil(0))
+    GL_CMD(glClear(GL_STENCIL_BUFFER_BIT))
+}
+
 void BitmapTextureGL::bind()
 {
-    int& stencilIndex = m_textureMapper->data().sharedGLData().stencilIndex;
     if (m_surfaceNeedsReset || !m_fbo) {
         if (!m_fbo)
             GL_CMD(glGenFramebuffers(1, &m_fbo))
-        if (!m_rbo)
-            GL_CMD(glGenRenderbuffers(1, &m_rbo));
-        GL_CMD(glBindRenderbuffer(GL_RENDERBUFFER, m_rbo))
-#ifdef TEXMAP_OPENGL_ES_2
-        GL_CMD(glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_textureSize.width(), m_textureSize.height()))
-#else
-        GL_CMD(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, m_textureSize.width(), m_textureSize.height()))
-#endif
         GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo))
         GL_CMD(glBindTexture(GL_TEXTURE_2D, 0))
-        GL_CMD(glBindRenderbuffer(GL_RENDERBUFFER, 0))
         GL_CMD(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id(), 0))
-        GL_CMD(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo))
         GL_CMD(glClearColor(0, 0, 0, 0))
-        GL_CMD(glClearStencil(stencilIndex - 1))
-        GL_CMD(glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT))
+        GL_CMD(glClear(GL_COLOR_BUFFER_BIT))
         m_surfaceNeedsReset = false;
     } else
         GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo))
 
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-    glStencilFunc(stencilIndex > 1 ? GL_GEQUAL : GL_ALWAYS, stencilIndex - 1, stencilIndex - 1);
     GL_CMD(glViewport(0, 0, size().width(), size().height()))
     m_textureMapper->data().projectionMatrix = createProjectionMatrix(size(), false);
+    m_textureMapper->beginClip(TransformationMatrix(), FloatRect(IntPoint::zero(), contentSize()));
 }
 
 void BitmapTextureGL::destroy()
@@ -576,6 +648,7 @@ void BitmapTextureGL::destroy()
         GL_CMD(glDeleteRenderbuffers(1, &m_rbo))
 
     m_fbo = 0;
+    m_rbo = 0;
     m_id = 0;
     m_textureSize = IntSize();
     m_relativeSize = FloatSize(1, 1);
@@ -604,20 +677,16 @@ void TextureMapperGL::bindSurface(BitmapTexture *surfacePointer)
         IntSize viewportSize(data().viewport[2], data().viewport[3]);
         GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, 0))
         data().projectionMatrix = createProjectionMatrix(viewportSize, true);
-        GL_CMD(glStencilFunc(data().sharedGLData().stencilIndex > 1 ? GL_EQUAL : GL_ALWAYS, data().sharedGLData().stencilIndex - 1, data().sharedGLData().stencilIndex - 1))
-        GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP))
         GL_CMD(glViewport(0, 0, viewportSize.width(), viewportSize.height()))
+        if (data().currentSurface)
+            endClip();
+        data().currentSurface.clear();
         return;
     }
 
-    surface->bind();
-}
 
-static void scissorClip(const IntRect& rect)
-{
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    glScissor(rect.x(), viewport[3] - rect.maxY() + 1, rect.width() - 1, rect.height() - 1);
+    surface->bind();
+    data().currentSurface = surface;
 }
 
 bool TextureMapperGL::beginScissorClip(const TransformationMatrix& modelViewMatrix, const FloatRect& targetRect)
@@ -626,49 +695,23 @@ bool TextureMapperGL::beginScissorClip(const TransformationMatrix& modelViewMatr
     IntRect rect = quad.enclosingBoundingBox();
 
     // Only use scissors on rectilinear clips.
-    if (!quad.isRectilinear() || rect.isEmpty()) {
-        data().sharedGLData().clipStack.append(IntRect());
-        return false;
-    }
-
-    // Intersect with previous clip.
-    for (int i = data().sharedGLData().clipStack.size() - 1; i >= 0; --i) {
-        const IntRect& prevRect = data().sharedGLData().clipStack[i];
-        if (prevRect.isEmpty())
-            continue;
-
-        // We only need the last valid clip.
-        rect.intersect(prevRect);
-        break;
-    }
-
-    scissorClip(rect);
-    data().sharedGLData().clipStack.append(rect);
-
-    return true;
-}
-
-bool TextureMapperGL::endScissorClip()
-{
-    data().sharedGLData().clipStack.removeLast();
-    ASSERT(!data().sharedGLData().clipStack.isEmpty());
-
-    IntRect rect = data().sharedGLData().clipStack.last();
-    if (rect.isEmpty())
+    if (!quad.isRectilinear() || rect.isEmpty())
         return false;
 
-    scissorClip(rect);
+    data().sharedGLData().clipState.scissorBox.intersect(rect);
+    data().sharedGLData().applyCurrentClip();
     return true;
 }
 
 void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, const FloatRect& targetRect)
 {
+    data().sharedGLData().pushClipState();
     if (beginScissorClip(modelViewMatrix, targetRect))
         return;
 
-    data().initStencil();
+    data().initializeStencil();
 
-    RefPtr<TextureMapperShaderProgramClip> shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram<TextureMapperShaderProgramClip>();
+    RefPtr<TextureMapperShaderProgramSimple> shaderInfo = data().sharedGLData().textureMapperShaderManager.getShaderProgram<TextureMapperShaderProgramSimple>();
 
     GL_CMD(glUseProgram(shaderInfo->id()))
     GL_CMD(glEnableVertexAttribArray(shaderInfo->vertexAttrib()))
@@ -689,32 +732,46 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
         matrix.m41(), matrix.m42(), matrix.m43(), matrix.m44()
     };
 
-    int& stencilIndex = data().sharedGLData().stencilIndex;
+    const GLfloat m4all[] = {
+        2, 0, 0, 0,
+        0, 2, 0, 0,
+        0, 0, 1, 0,
+        -1, -1, 0, 1
+    };
 
-    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4))
+    int& stencilIndex = data().sharedGLData().clipState.stencilIndex;
+
     GL_CMD(glEnable(GL_STENCIL_TEST))
+
+    // Make sure we don't do any actual drawing.
     GL_CMD(glStencilFunc(GL_NEVER, stencilIndex, stencilIndex))
-    GL_CMD(glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE))
+
+    // Operate only on the stencilIndex and above.
     GL_CMD(glStencilMask(0xff & ~(stencilIndex - 1)))
+
+    // First clear the entire buffer at the current index.
+    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4all))
+    GL_CMD(glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO))
     GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4))
-    GL_CMD(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP))
-    stencilIndex <<= 1;
-    glStencilFunc(stencilIndex > 1 ? GL_EQUAL : GL_ALWAYS, stencilIndex - 1, stencilIndex - 1);
+
+    // Now apply the current index to the new quad.
+    GL_CMD(glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE))
+    GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4))
+    GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4))
+
+    // Clear the state.
     GL_CMD(glDisableVertexAttribArray(shaderInfo->vertexAttrib()))
+    GL_CMD(glStencilMask(0))
+
+    // Increase stencilIndex and apply stencil testing.
+    stencilIndex *= 2;
+    data().sharedGLData().applyCurrentClip();
 }
 
 void TextureMapperGL::endClip()
 {
-    if (endScissorClip())
-        return;
-
-    data().sharedGLData().stencilIndex >>= 1;
-    glStencilFunc(data().sharedGLData().stencilIndex > 1 ? GL_EQUAL : GL_ALWAYS, data().sharedGLData().stencilIndex - 1, data().sharedGLData().stencilIndex - 1);    
-
-    // After we've cleared the last non-rectalinear clip, we disable the stencil test.
-    if (data().sharedGLData().stencilIndex == 1)
-        GL_CMD(glDisable(GL_STENCIL_TEST))
-
+    data().sharedGLData().popClipState();
+    data().sharedGLData().applyCurrentClip();
 }
 
 PassRefPtr<BitmapTexture> TextureMapperGL::createTexture()

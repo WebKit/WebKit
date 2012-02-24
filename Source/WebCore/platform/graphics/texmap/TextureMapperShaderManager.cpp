@@ -89,23 +89,6 @@ static const char* vertexShaderSourceSimple =
             gl_Position = InMatrix * InVertex;
         }
     );
-static const char* fragmentShaderSourceClip =
-    FRAGMENT_SHADER(
-        void main(void)
-        {
-            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
-        }
-    );
-
-static const char* vertexShaderSourceClip =
-    VERTEX_SHADER(
-        uniform mat4 InMatrix;
-        attribute vec4 InVertex;
-        void main(void)
-        {
-            gl_Position = InMatrix * InVertex;
-        }
-    );
 
 void TextureMapperShaderProgram::initializeProgram()
 {
@@ -195,27 +178,6 @@ const char* TextureMapperShaderProgramOpacityAndMask::vertexShaderSource()
 const char* TextureMapperShaderProgramOpacityAndMask::fragmentShaderSource()
 {
     return fragmentShaderSourceOpacityAndMask;
-}
-
-PassRefPtr<TextureMapperShaderProgramClip> TextureMapperShaderProgramClip::create()
-{
-    return adoptRef(new TextureMapperShaderProgramClip());
-}
-
-TextureMapperShaderProgramClip::TextureMapperShaderProgramClip()
-{
-    initializeProgram();
-    getUniformLocation(m_matrixVariable, "InMatrix");
-}
-
-const char* TextureMapperShaderProgramClip::vertexShaderSource()
-{
-    return vertexShaderSourceClip;
-}
-
-const char* TextureMapperShaderProgramClip::fragmentShaderSource()
-{
-    return fragmentShaderSourceClip;
 }
 
 TextureMapperShaderManager::TextureMapperShaderManager()

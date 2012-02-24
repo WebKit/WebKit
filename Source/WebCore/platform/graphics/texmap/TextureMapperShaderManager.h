@@ -104,18 +104,6 @@ private:
     GLint m_opacityVariable;
 };
 
-class TextureMapperShaderProgramClip : public TextureMapperShaderProgram {
-public:
-    static PassRefPtr<TextureMapperShaderProgramClip> create();
-    GLint matrixVariable() { return m_matrixVariable; }
-
-private:
-    virtual const char* vertexShaderSource();
-    virtual const char* fragmentShaderSource();
-    TextureMapperShaderProgramClip();
-    GLint m_matrixVariable;
-};
-
 class TextureMapperShaderManager {
 public:
     TextureMapperShaderManager();
