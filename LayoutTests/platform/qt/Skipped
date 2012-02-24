@@ -245,12 +245,6 @@ fast/mutation/observe-childList.html
 fast/mutation/observe-exceptions.html
 fast/mutation/observe-subtree.html
 
-# New test introduced in r108731 fail on Qt, because USE(ZLIB) is disabled.
-http/tests/websocket/tests/hybi/compressed-control-frame.html
-http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter.html
-http/tests/websocket/tests/hybi/deflate-frame-parameter.html
-http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html
-
 # =========================================================================== #
 #       Feature not yet supported.                                            #
 # =========================================================================== #
