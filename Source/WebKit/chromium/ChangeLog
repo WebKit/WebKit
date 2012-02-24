@@ -1,3 +1,18 @@
+2012-02-24  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove deprecated and unused WebGraphicsContext3D::initialize call
+        https://bugs.webkit.org/show_bug.cgi?id=79296
+
+        Reviewed by Kenneth Russell.
+
+        The old way to initialize a WebGraphicsContext3D from inside WebKit was to call initialize() on it with a
+        WebView*. The new way to do this is via the WebViewClient interface. This deletes the old, unused path.
+
+        * public/platform/WebGraphicsContext3D.h:
+        (WebKit):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/FakeWebGraphicsContext3D.h:
+
 2012-02-23  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move Web*Layer* headers into Platform

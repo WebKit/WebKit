@@ -64,9 +64,6 @@ typedef signed long int WGC3Dsizeiptr;
 // Typedef for server-side objects like OpenGL textures and program objects.
 typedef WGC3Duint WebGLId;
 
-// FIXME: We shouldn't mention WebView in platform.
-class WebView;
-
 // This interface abstracts the operations performed by the
 // GraphicsContext3D in order to implement WebGL. Nearly all of the
 // methods exposed on this interface map directly to entry points in
@@ -140,9 +137,6 @@ public:
 
     // This destructor needs to be public so that using classes can destroy instances if initialization fails.
     virtual ~WebGraphicsContext3D() {}
-
-    // This function is deprecated and will be removed soon.
-    virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) { return false; }
 
     // Makes the OpenGL context current on the current thread. Returns true on
     // success.

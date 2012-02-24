@@ -422,8 +422,6 @@ class BlendStateTrackerContext: public FakeWebGraphicsContext3D {
 public:
     BlendStateTrackerContext() : m_blend(false) { }
 
-    virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) { return true; }
-
     virtual void enable(WGC3Denum cap)
     {
         if (cap == GraphicsContext3D::BLEND)
@@ -632,8 +630,6 @@ class ReshapeTrackerContext: public FakeWebGraphicsContext3D {
 public:
     ReshapeTrackerContext() : m_reshapeCalled(false) { }
 
-    virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) { return true; }
-
     virtual void reshape(int width, int height)
     {
         m_reshapeCalled = true;
@@ -673,8 +669,6 @@ TEST_F(CCLayerTreeHostImplTest, reshapeNotCalledUntilDraw)
 
 class PartialSwapTrackerContext : public FakeWebGraphicsContext3D {
 public:
-    virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) { return true; }
-
     virtual void postSubBufferCHROMIUM(int x, int y, int width, int height)
     {
         m_partialSwapRect = IntRect(x, y, width, height);
