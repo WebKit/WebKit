@@ -1,3 +1,12 @@
+2012-02-24  Pablo Flouret  <pablof@motorola.com>
+
+        Fix copypasta in build-webkit's --vibration option description
+        https://bugs.webkit.org/show_bug.cgi?id=79528
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/build-webkit:
+
 2012-02-24  Antonio Gomes  <agomes@rim.com>
 
         Adding myself to ScrollingCoordinator watchlist
