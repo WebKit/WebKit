@@ -41,9 +41,6 @@ BUGWK69999 RELEASE : http/tests/security/contentSecurityPolicy/media-src-allowed
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
-// The test hits an ASSERT in Debug.
-BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = CRASH
-
 // Need rebaselining after 71244
 BUGWK74432 : css2.1/20110323/border-conflict-style-079.htm = IMAGE
 BUGWK74432 : css2.1/20110323/floating-replaced-height-008.htm = IMAGE
