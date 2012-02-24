@@ -361,6 +361,7 @@ fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-disable.html
 fast/dom/shadow/shadow-root-attached.html
 fast/dom/shadow/shadow-root-new.html
+fast/dom/shadow/iframe-shadow.html
 
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
 fast/regions
