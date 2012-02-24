@@ -1,3 +1,19 @@
+2012-02-24  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: config_unittest is sensitive to other tests that might've already run
+        https://bugs.webkit.org/show_bug.cgi?id=79382
+
+        Reviewed by Adam Barth.
+
+        If another test runs prior to config_unittest and pokes the
+        cached configuration, the first test in config_unittest might
+        fail; the tearDown() will then allow subsequent tests to pass.
+        Clearing the configuration prior to each test makes things
+        slightly slower but safer.
+
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+        (ConfigTest.setUp):
+
 2012-02-24  David Kilzer  <ddkilzer@apple.com>
 
         Use xcrun to find compiler paths for Generate Derived Sources build phase script

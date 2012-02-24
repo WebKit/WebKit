@@ -40,6 +40,9 @@ import config
 
 
 class ConfigTest(unittest.TestCase):
+    def setUp(self):
+        config.clear_cached_configuration()
+
     def tearDown(self):
         config.clear_cached_configuration()
 
