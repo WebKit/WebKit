@@ -1,3 +1,18 @@
+2012-02-24  Kentaro Hara  <haraken@chromium.org>
+
+        Move HTML-related APIs from DOMWindow.idl to DOMWindowHTML.idl
+        https://bugs.webkit.org/show_bug.cgi?id=79436
+
+        Reviewed by Adam Barth.
+
+        For WebKit modularization, this patch moves HTML-related APIs
+        from DOMWindow.idl to DOMWindowHTML.idl.
+
+        No tests. No change in behavior.
+
+        * html/DOMWindowHTML.idl:
+        * page/DOMWindow.idl:
+
 2012-02-24  Jochen Eisinger  <jochen@chromium.org>
 
         [v8] when a named item on document goes out of scope, actually remove it

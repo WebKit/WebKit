@@ -26,7 +26,6 @@ module window {
     ] DOMWindowHTML {
 
         attribute HTMLDocumentConstructor HTMLDocument;
-
         attribute HTMLElementConstructor HTMLElement;
         attribute HTMLAnchorElementConstructor HTMLAnchorElement;
         attribute HTMLAppletElementConstructor HTMLAppletElement;
@@ -100,6 +99,21 @@ module window {
         attribute [JSCustomGetter, CustomConstructor] HTMLImageElementConstructorConstructor Image; // Usable with new operator
         attribute [JSCustomGetter] HTMLOptionElementConstructorConstructor Option; // Usable with new operator
 
+        attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] HTMLTrackElementConstructor HTMLTrackElement;
+        attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackConstructor TextTrack;
+        attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackCueConstructor TextTrackCue; // Usable with the new operator
+        attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackCueListConstructor TextTrackCueList;
+        attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackListConstructor TextTrackList;
+        attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TrackEventConstructor TrackEvent;
+
+        attribute [JSCustomGetter, Conditional=VIDEO, V8EnabledAtRuntime] HTMLAudioElementConstructorConstructor Audio; // Usable with the new operator
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLAudioElementConstructor HTMLAudioElement;
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLMediaElementConstructor HTMLMediaElement;
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLVideoElementConstructor HTMLVideoElement;
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] MediaErrorConstructor MediaError;
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] TimeRangesConstructor TimeRanges;
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLSourceElementConstructor HTMLSourceElement;
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] MediaControllerConstructor MediaController;
     };
 
 }

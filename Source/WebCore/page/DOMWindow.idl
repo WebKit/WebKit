@@ -485,15 +485,6 @@ module window {
         attribute MessageChannelConstructor MessageChannel; // Usable with the new operator
 #endif
 
-#if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
-        attribute [V8EnabledAtRuntime=webkitVideoTrack] HTMLTrackElementConstructor HTMLTrackElement;
-        attribute [V8EnabledAtRuntime=webkitVideoTrack] TextTrackConstructor TextTrack;
-        attribute [V8EnabledAtRuntime=webkitVideoTrack] TextTrackCueConstructor TextTrackCue; // Usable with the new operator
-        attribute [V8EnabledAtRuntime=webkitVideoTrack] TextTrackCueListConstructor TextTrackCueList;
-        attribute [V8EnabledAtRuntime=webkitVideoTrack] TextTrackListConstructor TextTrackList;
-        attribute [V8EnabledAtRuntime=webkitVideoTrack] TrackEventConstructor TrackEvent;
-#endif
-
         attribute DOMPluginConstructor Plugin;
         attribute DOMPluginArrayConstructor PluginArray;
 
@@ -504,15 +495,6 @@ module window {
         attribute ClientRectListConstructor ClientRectList;
 
         attribute StorageConstructor Storage;
-
-        attribute [JSCustomGetter, Conditional=VIDEO, V8EnabledAtRuntime] HTMLAudioElementConstructorConstructor Audio; // Usable with the new operator
-        attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLAudioElementConstructor HTMLAudioElement;
-        attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLMediaElementConstructor HTMLMediaElement;
-        attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLVideoElementConstructor HTMLVideoElement;
-        attribute [Conditional=VIDEO, V8EnabledAtRuntime] MediaErrorConstructor MediaError;
-        attribute [Conditional=VIDEO, V8EnabledAtRuntime] TimeRangesConstructor TimeRanges;
-        attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLSourceElementConstructor HTMLSourceElement;
-        attribute [Conditional=VIDEO, V8EnabledAtRuntime] MediaControllerConstructor MediaController;
 
 #if defined(ENABLE_ANIMATION_API) && ENABLE_ANIMATION_API
         attribute WebKitAnimationConstructor WebKitAnimation;
