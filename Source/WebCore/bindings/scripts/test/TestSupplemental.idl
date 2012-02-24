@@ -41,6 +41,7 @@ module test {
         void supplementalMethod1();
         [CallWith=ScriptExecutionContext] TestObj supplementalMethod2(in DOMString strArg, in TestObj objArg) raises(DOMException);
         [Custom] void supplementalMethod3();
+        static void supplementalMethod4();
 
         const unsigned short SUPPLEMENTALCONSTANT1 = 1;
         const [Reflect=CONST_IMPL] unsigned short SUPPLEMENTALCONSTANT2 = 2;

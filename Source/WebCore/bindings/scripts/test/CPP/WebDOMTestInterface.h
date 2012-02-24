@@ -65,6 +65,7 @@ public:
 #endif
 
     void supplementalMethod1();
+    void supplementalMethod4();
 
     WebCore::TestInterface* impl() const;
 

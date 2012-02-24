@@ -61,6 +61,7 @@ enum {
 - (void)supplementalMethod1;
 - (DOMTestObj *)supplementalMethod2:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (void)supplementalMethod3;
+- (void)supplementalMethod4;
 @end
 
 #endif

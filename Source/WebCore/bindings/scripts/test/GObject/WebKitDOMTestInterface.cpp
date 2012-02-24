@@ -97,6 +97,17 @@ webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, con
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 }
 
+void
+webkit_dom_test_interface_supplemental_method4(WebKitDOMTestInterface* self)
+{
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestInterface * item = WebKit::core(self);
+    TestSupplemental::supplementalMethod4(item);
+#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
+}
+
 gchar*
 webkit_dom_test_interface_get_supplemental_str1(WebKitDOMTestInterface* self)
 {

@@ -70,6 +70,16 @@ WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, const gchar* str_arg, WebKitDOMTestObj* obj_arg, GError **error);
 
 /**
+ * webkit_dom_test_interface_supplemental_method4:
+ * @self: A #WebKitDOMTestInterface
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_interface_supplemental_method4(WebKitDOMTestInterface* self);
+
+/**
  * webkit_dom_test_interface_get_supplemental_str1:
  * @self: A #WebKitDOMTestInterface
  *

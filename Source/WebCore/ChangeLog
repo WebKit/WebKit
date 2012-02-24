@@ -1,3 +1,44 @@
+2012-02-24  Kentaro Hara  <haraken@chromium.org>
+
+        Support [Supplemental] on static methods
+        https://bugs.webkit.org/show_bug.cgi?id=79357
+
+        Reviewed by Adam Barth.
+
+        [Supplemental] on static methods does not work in CodeGeneratorJS.pm
+        and CodeGeneratorV8.pm due to mis-ordered if-elsif statements.
+        This patch fixes it and supports [Supplemental] on static methods.
+
+        Test: bindings/scripts/test/TestSupplemental.idl
+
+        * bindings/scripts/CodeGeneratorJS.pm: Modified as described above.
+        (GenerateParametersCheck):
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        (GenerateFunctionCallString):
+
+        * bindings/scripts/test/TestSupplemental.idl: Added a test case.
+
+        * bindings/scripts/test/CPP/WebDOMTestInterface.cpp: Updated run-bindings-tests results.
+        (WebDOMTestInterface::supplementalMethod4):
+        * bindings/scripts/test/CPP/WebDOMTestInterface.h: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp: Ditto.
+        (webkit_dom_test_interface_supplemental_method4):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.h: Ditto.
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Ditto.
+        (WebCore):
+        (WebCore::JSTestInterfaceConstructor::getOwnPropertySlot):
+        (WebCore::JSTestInterfaceConstructor::getOwnPropertyDescriptor):
+        (WebCore::jsTestInterfaceConstructorFunctionSupplementalMethod4):
+        * bindings/scripts/test/JS/JSTestInterface.h: Ditto.
+        (WebCore):
+        * bindings/scripts/test/ObjC/DOMTestInterface.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestInterface.mm: Ditto.
+        (-[DOMTestInterface supplementalMethod4]):
+        * bindings/scripts/test/V8/V8TestInterface.cpp: Ditto.
+        (TestInterfaceInternal):
+        (WebCore::TestInterfaceInternal::supplementalMethod4Callback):
+        (WebCore::ConfigureV8TestInterfaceTemplate):
+
 2012-02-24  Tony Chang  <tony@chromium.org>
 
         Small refactor in RenderFlexibleBox::layoutAndPlaceChildren

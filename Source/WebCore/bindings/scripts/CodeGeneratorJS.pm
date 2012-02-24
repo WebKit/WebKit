@@ -2396,13 +2396,13 @@ sub GenerateParametersCheck
 
     my @arguments;
     my $functionName;
-    if ($function->isStatic) {
-        $functionName = "${implClassName}::${functionImplementationName}";
-    } elsif ($function->signature->extendedAttributes->{"ImplementedBy"}) {
-        my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
+    my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
+    if ($implementedBy) {
         AddToImplIncludes("${implementedBy}.h");
-        unshift(@arguments, "impl");
+        unshift(@arguments, "impl") if !$function->isStatic;
         $functionName = "${implementedBy}::${functionImplementationName}";
+    } elsif ($function->isStatic) {
+        $functionName = "${implClassName}::${functionImplementationName}";
     } elsif ($svgPropertyOrListPropertyType and !$svgListPropertyType) {
         $functionName = "podImpl.${functionImplementationName}";
     } else {

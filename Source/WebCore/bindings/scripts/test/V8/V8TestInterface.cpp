@@ -145,6 +145,17 @@ static v8::Handle<v8::Value> supplementalMethod2Callback(const v8::Arguments& ar
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 
+#if ENABLE(Condition11) || ENABLE(Condition12)
+
+static v8::Handle<v8::Value> supplementalMethod4Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestInterface.supplementalMethod4");
+    TestSupplemental::supplementalMethod4();
+    return v8::Handle<v8::Value>();
+}
+
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+
 } // namespace TestInterfaceInternal
 
 static const BatchedAttribute TestInterfaceAttrs[] = {
@@ -247,6 +258,9 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
     v8::Handle<v8::Signature> supplementalMethod2Signature = v8::Signature::New(desc, supplementalMethod2Argc, supplementalMethod2Argv);
 #if ENABLE(Condition11) || ENABLE(Condition12)
     proto->Set(v8::String::New("supplementalMethod2"), v8::FunctionTemplate::New(TestInterfaceInternal::supplementalMethod2Callback, v8::Handle<v8::Value>(), supplementalMethod2Signature));
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    desc->Set(v8::String::New("supplementalMethod4"), v8::FunctionTemplate::New(TestInterfaceInternal::supplementalMethod4Callback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
     batchConfigureConstants(desc, proto, TestInterfaceConsts, WTF_ARRAY_LENGTH(TestInterfaceConsts));
 

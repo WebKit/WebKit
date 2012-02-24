@@ -3155,13 +3155,13 @@ sub GenerateFunctionCallString()
 
     my @arguments;
     my $functionName;
-    if ($function->isStatic) {
-        $functionName = "${implClassName}::${name}";
-    } elsif ($function->signature->extendedAttributes->{"ImplementedBy"}) {
-        my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
+    my $implementedBy = $function->signature->extendedAttributes->{"ImplementedBy"};
+    if ($implementedBy) {
         AddToImplIncludes("${implementedBy}.h");
-        unshift(@arguments, "imp");
+        unshift(@arguments, "imp") if !$function->isStatic;
         $functionName = "${implementedBy}::${name}";
+    } elsif ($function->isStatic) {
+        $functionName = "${implClassName}::${name}";
     } else {
         $functionName = "imp->${name}";
     }

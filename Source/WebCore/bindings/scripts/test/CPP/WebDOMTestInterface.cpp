@@ -138,6 +138,18 @@ void WebDOMTestInterface::supplementalMethod1()
 
 #endif
 
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+void WebDOMTestInterface::supplementalMethod4()
+{
+    if (!impl())
+        return;
+
+    WebCore::TestSupplemental::supplementalMethod4(impl());
+}
+
+#endif
+
 WebCore::TestInterface* toWebCore(const WebDOMTestInterface& wrapper)
 {
     return wrapper.impl();
