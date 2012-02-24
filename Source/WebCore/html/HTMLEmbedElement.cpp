@@ -85,8 +85,8 @@ void HTMLEmbedElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
 {
     if (attr->name() == hiddenAttr) {
         if (equalIgnoringCase(attr->value(), "yes") || equalIgnoringCase(attr->value(), "true")) {
-            addHTMLLengthToStyle(style, CSSPropertyWidth, "0"); // FIXME: Pass as integer.
-            addHTMLLengthToStyle(style, CSSPropertyHeight, "0"); // FIXME: Pass as integer.
+            addPropertyToAttributeStyle(style, CSSPropertyWidth, 0, CSSPrimitiveValue::CSS_PX);
+            addPropertyToAttributeStyle(style, CSSPropertyHeight, 0, CSSPrimitiveValue::CSS_PX);
         }
     } else
         HTMLPlugInImageElement::collectStyleForAttribute(attr, style);

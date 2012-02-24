@@ -60,11 +60,11 @@ void HTMLHRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
 {
     if (attr->name() == alignAttr) {
         if (equalIgnoringCase(attr->value(), "left")) {
-            addPropertyToAttributeStyle(style, CSSPropertyMarginLeft, "0"); // FIXME: Pass as integer.
+            addPropertyToAttributeStyle(style, CSSPropertyMarginLeft, 0, CSSPrimitiveValue::CSS_PX);
             addPropertyToAttributeStyle(style, CSSPropertyMarginRight, CSSValueAuto);
         } else if (equalIgnoringCase(attr->value(), "right")) {
             addPropertyToAttributeStyle(style, CSSPropertyMarginLeft, CSSValueAuto);
-            addPropertyToAttributeStyle(style, CSSPropertyMarginRight, "0"); // FIXME: Pass as integer.
+            addPropertyToAttributeStyle(style, CSSPropertyMarginRight, 0, CSSPrimitiveValue::CSS_PX);
         } else {
             addPropertyToAttributeStyle(style, CSSPropertyMarginLeft, CSSValueAuto);
             addPropertyToAttributeStyle(style, CSSPropertyMarginRight, CSSValueAuto);
@@ -73,7 +73,7 @@ void HTMLHRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
         bool ok;
         int v = attr->value().toInt(&ok);
         if (ok && !v)
-            addHTMLLengthToStyle(style, CSSPropertyWidth, "1"); // FIXME: Pass as integer.
+            addPropertyToAttributeStyle(style, CSSPropertyWidth, 1, CSSPrimitiveValue::CSS_PX);
         else
             addHTMLLengthToStyle(style, CSSPropertyWidth, attr->value());
     } else if (attr->name() == colorAttr) {
@@ -90,9 +90,9 @@ void HTMLHRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
         StringImpl* si = attr->value().impl();
         int size = si->toInt();
         if (size <= 1)
-            addPropertyToAttributeStyle(style, CSSPropertyBorderBottomWidth, String("0")); // FIXME: Pass as integer.
+            addPropertyToAttributeStyle(style, CSSPropertyBorderBottomWidth, 0, CSSPrimitiveValue::CSS_PX);
         else
-            addHTMLLengthToStyle(style, CSSPropertyHeight, String::number(size - 2)); // FIXME: Pass as integer.
+            addPropertyToAttributeStyle(style, CSSPropertyHeight, size - 2, CSSPrimitiveValue::CSS_PX);
     } else
         HTMLElement::collectStyleForAttribute(attr, style);
 }

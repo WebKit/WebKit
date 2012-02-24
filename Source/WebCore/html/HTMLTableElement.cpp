@@ -300,8 +300,8 @@ void HTMLTableElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
     else if (attr->name() == heightAttr)
         addHTMLLengthToStyle(style, CSSPropertyHeight, attr->value());
     else if (attr->name() == borderAttr) {
-        int border = attr->isEmpty() ? 1 : attr->value().toInt();
-        addHTMLLengthToStyle(style, CSSPropertyBorderWidth, String::number(border)); // FIXME: Pass as integer.
+        int borderWidth = attr->isEmpty() ? 1 : attr->value().toInt();
+        addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, borderWidth, CSSPrimitiveValue::CSS_PX);
     } else if (attr->name() == bordercolorAttr) {
         if (!attr->isEmpty())
             addHTMLColorToStyle(style, CSSPropertyBorderColor, attr->value());

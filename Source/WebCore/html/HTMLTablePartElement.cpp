@@ -59,7 +59,15 @@ void HTMLTablePartElement::collectStyleForAttribute(Attribute* attr, StyleProper
             addPropertyToAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
         }
     } else if (attr->name() == valignAttr) {
-        if (!attr->value().isEmpty())
+        if (equalIgnoringCase(attr->value(), "top"))
+            addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueTop);
+        else if (equalIgnoringCase(attr->value(), "middle"))
+            addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueMiddle);
+        else if (equalIgnoringCase(attr->value(), "bottom"))
+            addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueBottom);
+        else if (equalIgnoringCase(attr->value(), "baseline"))
+            addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueBaseline);
+        else
             addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, attr->value());
     } else if (attr->name() == alignAttr) {
         if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))

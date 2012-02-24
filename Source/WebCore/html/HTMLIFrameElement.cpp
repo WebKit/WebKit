@@ -68,7 +68,7 @@ void HTMLIFrameElement::collectStyleForAttribute(Attribute* attr, StylePropertyS
         // a presentational hint that the border should be off if set to zero.
         if (!attr->isNull() && !attr->value().toInt()) {
             // Add a rule that nulls out our border width.
-            addHTMLLengthToStyle(style, CSSPropertyBorderWidth, "0"); // FIXME: Pass as integer.
+            addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, 0, CSSPrimitiveValue::CSS_PX);
         }
     } else
         HTMLFrameElementBase::collectStyleForAttribute(attr, style);

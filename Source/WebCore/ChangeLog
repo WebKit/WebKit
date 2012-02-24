@@ -1,3 +1,24 @@
+2012-02-24  Andreas Kling  <awesomekling@apple.com>
+
+        Miscellaneous CSSParser dodging in presentation attribute parsing.
+        <http://webkit.org/b/79468>
+
+        Reviewed by Antti Koivisto.
+
+        - Bypass CSSParser when adding constant values to attribute styles.
+        - Added fast paths for the valid HTMLTablePartElement align values.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::collectStyleForAttribute):
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::collectStyleForAttribute):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::collectStyleForAttribute):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::collectStyleForAttribute):
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::collectStyleForAttribute):
+
 2012-02-24  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Avoid culling work for fully-non-opaque tiles, and add tracing for draw culling
