@@ -55,6 +55,7 @@
       '../Modules/geolocation',
       '../Modules/intents',
       '../Modules/indexeddb',
+      '../Modules/mediastream',
       '../accessibility',
       '../accessibility/chromium',
       '../bindings',
@@ -85,7 +86,6 @@
       '../loader/cache',
       '../loader/icon',
       '../mathml',
-      '../mediastream',
       '../notifications',
       '../page',
       '../page/animation',
@@ -987,11 +987,11 @@
           ],
           'variables': {
             'generator_include_dirs': [
+              '--include', '../Modules/mediastream',
               '--include', '../css',
               '--include', '../dom',
               '--include', '../fileapi',
               '--include', '../html',
-              '--include', '../mediastream',
               '--include', '../notifications',
               '--include', '../page',
               '--include', '../plugins',

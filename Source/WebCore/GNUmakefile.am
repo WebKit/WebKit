@@ -12,6 +12,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include/GLSLANG \
 	-I$(srcdir)/Source/WebCore \
 	-I$(srcdir)/Source/WebCore/Modules/geolocation \
+	-I$(srcdir)/Source/WebCore/Modules/mediastream \
 	-I$(srcdir)/Source/WebCore/accessibility \
 	-I$(srcdir)/Source/WebCore/bindings \
 	-I$(srcdir)/Source/WebCore/bindings/generic \
@@ -39,7 +40,6 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/loader/cache \
 	-I$(srcdir)/Source/WebCore/loader/icon \
 	-I$(srcdir)/Source/WebCore/mathml \
-	-I$(srcdir)/Source/WebCore/mediastream \
 	-I$(srcdir)/Source/WebCore/notifications \
 	-I$(srcdir)/Source/WebCore/page \
 	-I$(srcdir)/Source/WebCore/page/animation \
@@ -760,6 +760,7 @@ DerivedSources/ANGLE/glslang_tab.h: DerivedSources/ANGLE/glslang_tab.cpp
 
 IDL_PATH := \
     $(WebCore)/Modules/geolocation \
+    $(WebCore)/Modules/mediastream \
     $(WebCore)/bindings/js \
     $(WebCore)/css \
     $(WebCore)/dom \
@@ -771,7 +772,6 @@ IDL_PATH := \
     $(WebCore)/html/track \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
-    $(WebCore)/mediastream \
     $(WebCore)/notifications \
     $(WebCore)/page \
     $(WebCore)/plugins \
@@ -899,6 +899,7 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(XT_CFLAGS)
 
 EXTRA_DIST += \
+	$(shell ls $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/css/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/dom/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/fileapi/*.idl) \
@@ -908,7 +909,6 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/html/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/inspector/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/loader/appcache/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/mediastream/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/notifications/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/page/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/plugins/*.idl) \

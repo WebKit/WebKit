@@ -1,3 +1,60 @@
+2012-02-24  Adam Barth  <abarth@webkit.org>
+
+        Move mediastream into Modules/mediastream
+        https://bugs.webkit.org/show_bug.cgi?id=79517
+
+        Reviewed by Eric Seidel.
+
+        This patch moves the mediastream directory into Modules.  mediastream
+        is a self-contained feature and is a good candidate for being a module.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Modules/mediastream: Copied from Source/WebCore/mediastream.
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * mediastream: Removed.
+        * mediastream/DOMWindowMediaStream.idl: Removed.
+        * mediastream/LocalMediaStream.cpp: Removed.
+        * mediastream/LocalMediaStream.h: Removed.
+        * mediastream/LocalMediaStream.idl: Removed.
+        * mediastream/MediaStream.cpp: Removed.
+        * mediastream/MediaStream.h: Removed.
+        * mediastream/MediaStream.idl: Removed.
+        * mediastream/MediaStreamEvent.cpp: Removed.
+        * mediastream/MediaStreamEvent.h: Removed.
+        * mediastream/MediaStreamEvent.idl: Removed.
+        * mediastream/MediaStreamList.cpp: Removed.
+        * mediastream/MediaStreamList.h: Removed.
+        * mediastream/MediaStreamList.idl: Removed.
+        * mediastream/MediaStreamRegistry.cpp: Removed.
+        * mediastream/MediaStreamRegistry.h: Removed.
+        * mediastream/MediaStreamTrack.cpp: Removed.
+        * mediastream/MediaStreamTrack.h: Removed.
+        * mediastream/MediaStreamTrack.idl: Removed.
+        * mediastream/MediaStreamTrackList.cpp: Removed.
+        * mediastream/MediaStreamTrackList.h: Removed.
+        * mediastream/MediaStreamTrackList.idl: Removed.
+        * mediastream/NavigatorMediaStream.cpp: Removed.
+        * mediastream/NavigatorMediaStream.h: Removed.
+        * mediastream/NavigatorMediaStream.idl: Removed.
+        * mediastream/NavigatorUserMediaError.h: Removed.
+        * mediastream/NavigatorUserMediaError.idl: Removed.
+        * mediastream/NavigatorUserMediaErrorCallback.h: Removed.
+        * mediastream/NavigatorUserMediaErrorCallback.idl: Removed.
+        * mediastream/NavigatorUserMediaSuccessCallback.h: Removed.
+        * mediastream/NavigatorUserMediaSuccessCallback.idl: Removed.
+        * mediastream/PeerConnection.cpp: Removed.
+        * mediastream/PeerConnection.h: Removed.
+        * mediastream/PeerConnection.idl: Removed.
+        * mediastream/SignalingCallback.h: Removed.
+        * mediastream/SignalingCallback.idl: Removed.
+        * mediastream/UserMediaClient.h: Removed.
+        * mediastream/UserMediaController.cpp: Removed.
+        * mediastream/UserMediaController.h: Removed.
+        * mediastream/UserMediaRequest.cpp: Removed.
+        * mediastream/UserMediaRequest.h: Removed.
+
 2012-02-24  Abhishek Arya  <inferno@chromium.org>
 
         Overhanging floats not removed from new flex box.
