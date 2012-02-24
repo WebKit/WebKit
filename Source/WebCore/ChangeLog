@@ -1,3 +1,22 @@
+2012-02-23  Shinya Kawanaka  <shinyak@chromium.org>
+
+        NodeRenderingContext should have ShadowRootList instead of ShadowRoot.
+        https://bugs.webkit.org/show_bug.cgi?id=79079
+
+        Reviewed by Dimitri Glazkov.
+
+        Apparently NodeRenderingContext should have ShadowRootList instead of ShadowRoot.
+        This patch changes it.
+
+        No new tests. Simple refactoring.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::hostChildrenChanged):
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        * dom/NodeRenderingContext.h:
+        (WebCore):
+
 2012-02-23  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Implement keyframed animations for the cc thread.

@@ -47,7 +47,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     : m_phase(AttachingNotInTree)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
-    , m_visualParentShadowRoot(0)
+    , m_visualParentShadowRootList(0)
     , m_insertionPoint(0)
     , m_style(0)
     , m_parentFlowRenderer(0)
@@ -63,13 +63,10 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     }
 
     if (parent->isElementNode()) {
-        if (toElement(parent)->hasShadowRoot())
-            m_visualParentShadowRoot = toElement(parent)->shadowRootList()->youngestShadowRoot();
-
-        if (m_visualParentShadowRoot) {
-            ShadowRootList* shadowRootList = m_visualParentShadowRoot->host()->shadowRootList();
-            if ((m_insertionPoint = shadowRootList->insertionPointFor(m_node))
-                && shadowRootList->isSelectorActive()) {
+        if (toElement(parent)->hasShadowRoot()) {
+            m_visualParentShadowRootList = toElement(parent)->shadowRootList();
+            if ((m_insertionPoint = m_visualParentShadowRootList->insertionPointFor(m_node))
+                && m_visualParentShadowRootList->isSelectorActive()) {
                 m_phase = AttachingDistributed;
                 m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_insertionPoint).parentNodeForRenderingAndStyle();
                 return;
@@ -98,7 +95,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
     : m_phase(Calculating)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
-    , m_visualParentShadowRoot(0)
+    , m_visualParentShadowRootList(0)
     , m_insertionPoint(0)
     , m_style(style)
     , m_parentFlowRenderer(0)
@@ -264,7 +261,7 @@ RenderObject* NodeRenderingContext::parentRenderer() const
 void NodeRenderingContext::hostChildrenChanged()
 {
     if (m_phase == AttachingNotDistributed)
-        m_visualParentShadowRoot->host()->shadowRootList()->hostChildrenChanged();
+        m_visualParentShadowRootList->hostChildrenChanged();
 }
 
 bool NodeRenderingContext::shouldCreateRenderer() const
@@ -285,7 +282,7 @@ bool NodeRenderingContext::shouldCreateRenderer() const
         if (!parentRenderer->canHaveChildren())
             return false;
 
-        if (m_visualParentShadowRoot)
+        if (m_visualParentShadowRootList)
             return false;
     }
 
