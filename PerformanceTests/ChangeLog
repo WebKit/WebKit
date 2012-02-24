@@ -1,3 +1,10 @@
+2012-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename dom*_*attributes.html to dom*-*attributes.html to follow the WebKit convention.
+
+        * Bindings/dom-attributes.html: Copied from PerformanceTests/Bindings/dom_attributes.html.
+        * Bindings/dom_attributes.html: Removed.
+
 2012-02-24  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r108477.
