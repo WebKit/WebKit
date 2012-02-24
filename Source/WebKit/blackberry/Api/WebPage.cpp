@@ -2259,7 +2259,7 @@ PassRefPtr<Node> WebPagePrivate::contextNode(TargetDetectionStrategy strategy)
 
     // Check for text input.
     if (isTouching && lastFatFingersResult.isTextInput())
-        return lastFatFingersResult.node(ShadowContentNotAllowed);
+        return lastFatFingersResult.node(FatFingersResult::ShadowContentNotAllowed);
 
     IntPoint contentPos;
     if (isTouching)
@@ -2269,7 +2269,7 @@ PassRefPtr<Node> WebPagePrivate::contextNode(TargetDetectionStrategy strategy)
 
     if (strategy == RectBased) {
         FatFingersResult result = FatFingers(this, lastFatFingersResult.adjustedPosition(), FatFingers::Text).findBestPoint();
-        return result.node(ShadowContentNotAllowed);
+        return result.node(FatFingersResult::ShadowContentNotAllowed);
     }
 
     HitTestResult result = eventHandler->hitTestResultAtPoint(contentPos, false /*allowShadowContent*/);
@@ -3461,7 +3461,7 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
         const FatFingersResult lastFatFingersResult = m_touchEventHandler->lastFatFingersResult();
 
         // Fat fingers can deal with shadow content.
-        node = lastFatFingersResult.node(ShadowContentNotAllowed);
+        node = lastFatFingersResult.node(FatFingersResult::ShadowContentNotAllowed);
     }
 
     if (!node) {

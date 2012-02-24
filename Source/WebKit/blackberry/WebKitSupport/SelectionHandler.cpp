@@ -539,7 +539,7 @@ void SelectionHandler::selectAtPoint(const IntPoint& location)
     // FIXME: Factory this get right fat finger code into a helper.
     const FatFingersResult lastFatFingersResult = m_webPage->m_touchEventHandler->lastFatFingersResult();
     if (lastFatFingersResult.positionWasAdjusted() && lastFatFingersResult.nodeAsElementIfApplicable()) {
-        targetNode = lastFatFingersResult.validNode();
+        targetNode = lastFatFingersResult.node(FatFingersResult::ShadowContentNotAllowed);
         targetPosition = lastFatFingersResult.adjustedPosition();
     } else {
         FatFingersResult newFatFingersResult = FatFingers(m_webPage, location, FatFingers::Text).findBestPoint();
@@ -547,7 +547,7 @@ void SelectionHandler::selectAtPoint(const IntPoint& location)
             return;
 
         targetPosition = newFatFingersResult.adjustedPosition();
-        targetNode = newFatFingersResult.validNode();
+        targetNode = newFatFingersResult.node(FatFingersResult::ShadowContentNotAllowed);
     }
 
     ASSERT(targetNode);

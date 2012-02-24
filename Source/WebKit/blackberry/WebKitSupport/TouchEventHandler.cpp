@@ -168,7 +168,7 @@ void TouchEventHandler::touchHoldEvent()
         handleFatFingerPressed();
 
     // Clear the focus ring indication if tap-and-hold'ing on a link.
-    if (m_lastFatFingersResult.validNode() && m_lastFatFingersResult.validNode()->isLink())
+    if (m_lastFatFingersResult.node() && m_lastFatFingersResult.node()->isLink())
         m_webPage->clearFocusNode();
 }
 
@@ -186,13 +186,13 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
             m_lastFatFingersResult = FatFingers(m_webPage, contentPos, FatFingers::ClickableElement).findBestPoint();
 
             Element* elementUnderFatFinger = 0;
-            if (m_lastFatFingersResult.positionWasAdjusted() && m_lastFatFingersResult.validNode()) {
-                ASSERT(m_lastFatFingersResult.validNode()->isElementNode());
+            if (m_lastFatFingersResult.positionWasAdjusted() && m_lastFatFingersResult.node()) {
+                ASSERT(m_lastFatFingersResult.node()->isElementNode());
                 elementUnderFatFinger = m_lastFatFingersResult.nodeAsElementIfApplicable();
             }
 
             // Set or reset the touch mode.
-            Element* possibleTargetNodeForMouseMoveEvents = static_cast<Element*>(m_lastFatFingersResult.positionWasAdjusted() ? elementUnderFatFinger : m_lastFatFingersResult.validNode());
+            Element* possibleTargetNodeForMouseMoveEvents = static_cast<Element*>(m_lastFatFingersResult.positionWasAdjusted() ? elementUnderFatFinger : m_lastFatFingersResult.node());
             m_convertTouchToMouse = shouldConvertTouchToMouse(possibleTargetNodeForMouseMoveEvents);
 
             if (elementUnderFatFinger)

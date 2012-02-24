@@ -1,3 +1,31 @@
+2012-02-19  Antonio Gomes  <agomes@rim.com>
+
+        Fat fingers - Add a clearer way to distinguish the node we want (shadow or non-shadow)
+        https://bugs.webkit.org/show_bug.cgi?id=79256
+        PR #127814 / MKS_2587410
+
+        Reviewed by Rob Buis.
+
+        Patch adds a cleaner way for call sites of FatFingersResult to
+        query for the appropriated target node: shadow or non-shadow DOM nodes.
+
+        It also renames FatFingersResults::validNode to ::node, assuming
+        that "invalid" nodes are not applicable in any context.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::clearDocumentData):
+        (BlackBerry::WebKit::WebPagePrivate::contextNode):
+        (BlackBerry::WebKit::WebPagePrivate::handleMouseEvent):
+        * WebKitSupport/FatFingers.h:
+        (FatFingersResult):
+        (BlackBerry::WebKit::FatFingersResult::node):
+        (BlackBerry::WebKit::FatFingersResult::nodeAsElementIfApplicable):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectAtPoint):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::touchHoldEvent):
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2012-02-23  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Upstream BlackBerry API web page related files

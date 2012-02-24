@@ -50,6 +50,7 @@ class TouchEventHandler;
 
 class FatFingersResult {
 public:
+
     FatFingersResult(const WebCore::IntPoint& p = WebCore::IntPoint::zero())
         : m_originalPosition(p)
         , m_adjustedPosition(p)
@@ -74,10 +75,33 @@ public:
     bool positionWasAdjusted() const { return m_isValid && m_positionWasAdjusted; }
     bool isTextInput() const { return m_isValid && !!m_nodeUnderFatFinger && m_isTextInput; }
     bool isValid() const { return m_isValid; }
-    WebCore::Node* validNode() const { return m_nodeUnderFatFinger && m_nodeUnderFatFinger->inDocument() ? m_nodeUnderFatFinger.get() : 0; }
-    WebCore::Element* nodeAsElementIfApplicable() const
+
+    enum ContentType { ShadowContentAllowed, ShadowContentNotAllowed };
+
+    WebCore::Node* node(ContentType type = ShadowContentAllowed) const
     {
-        return static_cast<WebCore::Element*>(m_nodeUnderFatFinger && m_nodeUnderFatFinger->inDocument() && m_nodeUnderFatFinger->isElementNode() ? m_nodeUnderFatFinger.get() : 0);
+        if (!m_nodeUnderFatFinger || !m_nodeUnderFatFinger->inDocument())
+            return 0;
+
+        WebCore::Node* result = m_nodeUnderFatFinger.get();
+
+        if (type == ShadowContentAllowed)
+            return result;
+
+        // Shadow trees can be nested.
+        while (result->isInShadowTree())
+            result = toElement(result->shadowAncestorNode());
+
+        return result;
+    }
+
+    WebCore::Element* nodeAsElementIfApplicable(ContentType type = ShadowContentAllowed) const
+    {
+        WebCore::Node* result = node(type);
+        if (!result || !result->isElementNode())
+            return 0;
+
+        return static_cast<WebCore::Element*>(result);
     }
 
 private:
