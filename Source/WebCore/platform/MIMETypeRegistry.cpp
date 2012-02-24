@@ -39,7 +39,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/RetainPtr.h>
 #endif
-#if PLATFORM(QT)
+#if PLATFORM(QT) && ENABLE(QT_IMAGE_DECODER)
 #include <qimagereader.h>
 #include <qimagewriter.h>
 #endif
@@ -229,7 +229,7 @@ static void initializeSupportedImageMIMETypes()
     supportedImageMIMETypes->remove("application/pdf");
     supportedImageMIMETypes->remove("application/postscript");
 
-#elif PLATFORM(QT)
+#elif PLATFORM(QT) && ENABLE(QT_IMAGE_DECODER)
     QList<QByteArray> formats = QImageReader::supportedImageFormats();
     for (size_t i = 0; i < static_cast<size_t>(formats.size()); ++i) {
 #if ENABLE(SVG)
@@ -289,7 +289,7 @@ static void initializeSupportedImageMIMETypesForEncoding()
     supportedImageMIMETypesForEncoding->add("image/jpeg");
     supportedImageMIMETypesForEncoding->add("image/gif");
 #endif
-#elif PLATFORM(QT)
+#elif PLATFORM(QT) && ENABLE(QT_IMAGE_DECODER)
     QList<QByteArray> formats = QImageWriter::supportedImageFormats();
     for (int i = 0; i < formats.size(); ++i) {
         String mimeType = MIMETypeRegistry::getMIMETypeForExtension(formats.at(i).constData());

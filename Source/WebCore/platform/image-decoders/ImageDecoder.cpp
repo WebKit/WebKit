@@ -31,7 +31,9 @@
 #include "ICOImageDecoder.h"
 #include "JPEGImageDecoder.h"
 #include "PNGImageDecoder.h"
+#if USE(WEBP)
 #include "WEBPImageDecoder.h"
+#endif
 #include "SharedBuffer.h"
 
 using namespace std;

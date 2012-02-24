@@ -86,6 +86,7 @@ haveQt(4):unix:!mac:!embedded {
 !contains(DEFINES, ENABLE_VIDEO_TRACK=.): DEFINES += ENABLE_VIDEO_TRACK=0
 !contains(DEFINES, ENABLE_TOUCH_ICON_LOADING=.): DEFINES += ENABLE_TOUCH_ICON_LOADING=0
 !contains(DEFINES, ENABLE_ANIMATION_API=.): DEFINES += ENABLE_ANIMATION_API=0
+!contains(DEFINES, ENABLE_QT_IMAGE_DECODER=.): DEFINES += ENABLE_QT_IMAGE_DECODER=1
 
 # Enabled in Source/JavaScriptCore/wtf/Platform.h if not set
 # We have to do the same to be able to disable the feature in build-webkit
