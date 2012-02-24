@@ -1,3 +1,22 @@
+2012-02-23  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] Add profiling trace for deferred canvas rendering
+        https://bugs.webkit.org/show_bug.cgi?id=79376
+
+        Reviewed by Stephen White.
+
+        No new tests.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::paintContentsIfDirty):
+        Profiling trace for the entire method, as well as for
+        calls to canvas flush and context flush, both of which may
+        cause deferred operation to be executed.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::bitmap):
+        Inserting a profiling trace in this method because it may cause
+        deferred draw commands to be executed.
+
 2012-02-23  Shinya Kawanaka  <shinyak@chromium.org>
 
         ShadowRootList should have recalculation flag instead of ShadowRoot.

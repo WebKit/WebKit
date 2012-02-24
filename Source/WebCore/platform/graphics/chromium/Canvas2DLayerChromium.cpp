@@ -97,6 +97,7 @@ void Canvas2DLayerChromium::setCanvas(SkCanvas* canvas)
 
 void Canvas2DLayerChromium::paintContentsIfDirty(const Region& /* occludedScreenSpace */)
 {
+    TRACE_EVENT("Canvas2DLayerChromium::paintContentsIfDirty", this, 0);
     if (!drawsContent())
         return;
 
@@ -111,9 +112,12 @@ void Canvas2DLayerChromium::paintContentsIfDirty(const Region& /* occludedScreen
     bool success = m_context->makeContextCurrent();
     ASSERT_UNUSED(success, success);
 
-    if (m_canvas)
+    if (m_canvas) {
+        TRACE_EVENT("SkDeferredCanvas::flush", m_canvas, 0);
         m_canvas->flush();
+    }
 
+    TRACE_EVENT("GrContext::flush", m_context, 0);
     m_context->flush();
 }
 
