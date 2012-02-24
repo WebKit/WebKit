@@ -166,7 +166,7 @@
         "EFL": [ "kubo@profusion.mobi", ],
         "CMake": [ "kubo@profusion.mobi", ],
         "SoupNetwork": [ "kubo@profusion.mobi", ],
-        "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org" ],
+        "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org" ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "

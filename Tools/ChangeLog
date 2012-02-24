@@ -1,3 +1,12 @@
+2012-02-24  Antonio Gomes  <agomes@rim.com>
+
+        Adding myself to ScrollingCoordinator watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=79525
+
+        Reviewed by Rob Buis.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-02-24  Darin Fisher  <darin@chromium.org>
 
         Update watchlist for ChromiumPublicApi to include Platform/chromium/public/
