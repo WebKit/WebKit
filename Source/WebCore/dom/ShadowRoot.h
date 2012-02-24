@@ -72,8 +72,8 @@ public:
     Element* host() const { return shadowHost(); }
     ShadowRootList* list() const;
 
-    ShadowRoot* youngerShadowRoot() { return prev(); }
-    ShadowRoot* olderShadowRoot() { return next(); }
+    ShadowRoot* youngerShadowRoot() const { return prev(); }
+    ShadowRoot* olderShadowRoot() const { return next(); }
 
     bool hasContentElement() const;
 
@@ -90,10 +90,15 @@ private:
     bool m_applyAuthorSheets : 1;
 };
 
-inline ShadowRoot* toShadowRoot(Node* node)
+inline const ShadowRoot* toShadowRoot(const Node* node)
 {
     ASSERT(!node || node->isShadowRoot());
-    return static_cast<ShadowRoot*>(node);
+    return static_cast<const ShadowRoot*>(node);
+}
+
+inline ShadowRoot* toShadowRoot(Node* node)
+{
+    return const_cast<ShadowRoot*>(toShadowRoot(static_cast<const Node*>(node)));
 }
 
 } // namespace

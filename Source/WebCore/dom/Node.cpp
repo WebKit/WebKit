@@ -809,7 +809,7 @@ bool Node::hasNonEmptyBoundingBox() const
     return false;
 }
 
-inline static ShadowRoot* oldestShadowRoot(Node* node)
+inline static ShadowRoot* oldestShadowRootFor(const Node* node)
 {
     return node->isElementNode() && toElement(node)->hasShadowRoot() ? toElement(node)->shadowRootList()->oldestShadowRoot() : 0;
 }
@@ -2269,12 +2269,11 @@ static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, 
             indent += "\t";
         fprintf(stderr, "%s", indent.utf8().data());
         node->showNode();
-
         if (node->isShadowRoot()) {
-            if (ShadowRoot* youngerShadowRoot = toShadowRoot(const_cast<Node*>(node))->youngerShadowRoot())
+            if (ShadowRoot* youngerShadowRoot = toShadowRoot(node)->youngerShadowRoot())
                 traverseTreeAndMark(indent + "\t", youngerShadowRoot, markedNode1, markedLabel1, markedNode2, markedLabel2);
-        } else if (ShadowRoot* rootNode = oldestShadowRoot(const_cast<Node*>(node)))
-            traverseTreeAndMark(indent + "\t", rootNode, markedNode1, markedLabel1, markedNode2, markedLabel2);
+        } else if (ShadowRoot* oldestShadowRoot = oldestShadowRootFor(node))
+            traverseTreeAndMark(indent + "\t", oldestShadowRoot, markedNode1, markedLabel1, markedNode2, markedLabel2);
     }
 }
 
@@ -2304,7 +2303,7 @@ void Node::formatForDebugger(char* buffer, unsigned length) const
     strncpy(buffer, result.utf8().data(), length - 1);
 }
 
-static ContainerNode* parentOrHostOrFrameOwner(Node* node)
+static ContainerNode* parentOrHostOrFrameOwner(const Node* node)
 {
     ContainerNode* parent = node->parentOrHostNode();
     if (!parent && node->document() && node->document()->frame())
@@ -2312,19 +2311,21 @@ static ContainerNode* parentOrHostOrFrameOwner(Node* node)
     return parent;
 }
 
-static void showSubTreeAcrossFrame(Node* node, const Node* markedNode, const String& indent)
+static void showSubTreeAcrossFrame(const Node* node, const Node* markedNode, const String& indent)
 {
     if (node == markedNode)
         fputs("*", stderr);
     fputs(indent.utf8().data(), stderr);
     node->showNode();
-    if (node->isFrameOwnerElement())
-        showSubTreeAcrossFrame(static_cast<HTMLFrameOwnerElement*>(node)->contentDocument(), markedNode, indent + "\t");
-    if (node->isShadowRoot()) {
-        if (ShadowRoot* youngerShadowRoot = toShadowRoot(node)->youngerShadowRoot())
-            showSubTreeAcrossFrame(youngerShadowRoot, markedNode, indent + "\t");
-    } else if (ShadowRoot* shadowRoot = oldestShadowRoot(node))
-        showSubTreeAcrossFrame(shadowRoot, markedNode, indent + "\t");
+     if (node->isShadowRoot()) {
+         if (ShadowRoot* youngerShadowRoot = toShadowRoot(node)->youngerShadowRoot())
+             showSubTreeAcrossFrame(youngerShadowRoot, markedNode, indent + "\t");
+     } else {
+         if (node->isFrameOwnerElement())
+             showSubTreeAcrossFrame(static_cast<const HTMLFrameOwnerElement*>(node)->contentDocument(), markedNode, indent + "\t");
+         if (ShadowRoot* oldestShadowRoot = oldestShadowRootFor(node))
+             showSubTreeAcrossFrame(oldestShadowRoot, markedNode, indent + "\t");
+     }
     for (Node* child = node->firstChild(); child; child = child->nextSibling())
         showSubTreeAcrossFrame(child, markedNode, indent + "\t");
 }
