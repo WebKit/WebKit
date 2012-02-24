@@ -4212,12 +4212,6 @@ BUGWK75091 SKIP : svg/custom/text-ctm.svg = FAIL
 BUGWK75091 SKIP : svg/custom/use-detach.svg = FAIL
 BUGWK75091 SKIP : svg/hixie/perf/003.xml = FAIL
 
-// Asserting in debug builds since r108506
-BUGWK79229 WIN LINUX DEBUG : http/tests/inspector/console-xhr-logging-async.html = CRASH
-BUGWK79229 MAC DEBUG : http/tests/inspector/console-xhr-logging-async.html = TIMEOUT
-BUGWK79229 WIN LINUX DEBUG : http/tests/inspector/network/network-disable-cache-xhrs.html = CRASH
-BUGWK79229 MAC DEBUG : http/tests/inspector/network/network-disable-cache-xhrs.html = TIMEOUT
-
 // Failing since added by r108699
 BUGWK79454 WIN : svg/text/text-rescale.html = IMAGE+TEXT
 BUGWK79454 LINUX MAC : svg/text/text-rescale.html = IMAGE

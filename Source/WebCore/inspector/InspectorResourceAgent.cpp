@@ -318,10 +318,7 @@ void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* load
 
 void InspectorResourceAgent::setInitialScriptContent(unsigned long identifier, const String& sourceString)
 {
-    // For Asynchronous XHRs, the inspector can grab the data directly off of the CachedResource. For sync XHRs, we need to
-    // provide the data here, since no CachedResource was involved.
-    if (m_loadingXHRSynchronously)
-        m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier), sourceString);
+    m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier), sourceString);
 }
 
 void InspectorResourceAgent::didReceiveScriptResponse(unsigned long identifier)
@@ -331,7 +328,10 @@ void InspectorResourceAgent::didReceiveScriptResponse(unsigned long identifier)
 
 void InspectorResourceAgent::setInitialXHRContent(unsigned long identifier, const String& sourceString)
 {
-    m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier), sourceString);
+    // For Asynchronous XHRs, the inspector can grab the data directly off of the CachedResource. For sync XHRs, we need to
+    // provide the data here, since no CachedResource was involved.
+    if (m_loadingXHRSynchronously)
+        m_resourcesData->setResourceContent(IdentifiersFactory::requestId(identifier), sourceString);
 }
 
 void InspectorResourceAgent::didReceiveXHRResponse(unsigned long identifier)
