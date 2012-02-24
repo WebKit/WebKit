@@ -21,38 +21,63 @@
  *  Boston, MA 02110-1301, USA.
  */
 
+#include "config.h"
+#include "StorageThread.h"
 
-#ifndef LocalStorageThreadWinCE_h
-#define LocalStorageThreadWinCE_h
-
-#include <wtf/Deque.h>
-#include <wtf/PassRefPtr.h>
+#include "StorageTask.h"
+#include "StorageAreaSync.h"
 
 namespace WebCore {
 
-    class StorageAreaSync;
-    class LocalStorageTask;
+StorageThread::StorageThread()
+: m_timer(this, &StorageThread::timerFired)
+{
+}
 
-    class LocalStorageThread : public RefCounted<LocalStorageThread> {
-    public:
-        static PassRefPtr<LocalStorageThread> create() { return adoptRef(new LocalStorageThread); }
+StorageThread::~StorageThread()
+{
+}
 
-        ~LocalStorageThread();
-        bool start();
-        void scheduleImport(PassRefPtr<StorageAreaSync>);
-        void scheduleSync(PassRefPtr<StorageAreaSync>);
-        void terminate();
-        void performTerminate();
+bool StorageThread::start()
+{
+    return true;
+}
 
-    private:
-        LocalStorageThread();
+void StorageThread::timerFired(Timer<StorageThread>*)
+{
+    if (!m_queue.isEmpty()) {
+        RefPtr<StorageTask> task = m_queue.first();
+        task->performTask();
+        m_queue.removeFirst();
+        if (!m_queue.isEmpty())
+            m_timer.startOneShot(0);
+    }
+}
 
-        void timerFired(Timer<LocalStorageThread>*);
+void StorageThread::scheduleImport(PassRefPtr<StorageAreaSync> area)
+{
+    m_queue.append(StorageTask::createImport(area));
+    if (!m_timer.isActive())
+        m_timer.startOneShot(0);
+}
 
-        Deque<RefPtr<LocalStorageTask> > m_queue;
-        Timer<LocalStorageThread> m_timer;
-    };
+void StorageThread::scheduleSync(PassRefPtr<StorageAreaSync> area)
+{
+    m_queue.append(StorageTask::createSync(area));
+    if (!m_timer.isActive())
+        m_timer.startOneShot(0);
+}
+
+void StorageThread::terminate()
+{
+    m_queue.clear();
+    m_timer.stop();
+}
+
+void StorageThread::performTerminate()
+{
+    m_queue.clear();
+    m_timer.stop();
+}
 
 } // namespace WebCore
-
-#endif // LocalStorageThreadWinCE_h

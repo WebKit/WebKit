@@ -1301,8 +1301,8 @@ SOURCES += \
     storage/Database.cpp \
     storage/DatabaseAuthorizer.cpp \
     storage/DatabaseSync.cpp \
-    storage/LocalStorageTask.cpp \
-    storage/LocalStorageThread.cpp \
+    storage/StorageTask.cpp \
+    storage/StorageThread.cpp \
     storage/Storage.cpp \
     storage/StorageAreaImpl.cpp \
     storage/StorageAreaSync.cpp \
@@ -2520,8 +2520,8 @@ HEADERS += \
     storage/DatabaseTask.h \
     storage/DatabaseThread.h \
     storage/DatabaseTracker.h \
-    storage/LocalStorageTask.h \
-    storage/LocalStorageThread.h \
+    storage/StorageTask.h \
+    storage/StorageThread.h \
     storage/OriginQuotaManager.h \
     storage/OriginUsageRecord.h \
     storage/SQLCallbackWrapper.h \

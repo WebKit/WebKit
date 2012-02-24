@@ -1475,10 +1475,10 @@
 		5112247810CFB8F4008099D7 /* WorkerThreadableWebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5112247710CFB8F4008099D7 /* WorkerThreadableWebSocketChannel.cpp */; };
 		5112247A10CFB8FF008099D7 /* WorkerThreadableWebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112247910CFB8FF008099D7 /* WorkerThreadableWebSocketChannel.h */; };
 		5116D9770CF177BD00C2B84D /* DatabaseDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5116D9750CF177BD00C2B84D /* DatabaseDetails.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		511F23170DC160DA004F0032 /* LocalStorageTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511F23130DC160DA004F0032 /* LocalStorageTask.cpp */; };
-		511F23180DC160DA004F0032 /* LocalStorageTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F23140DC160DA004F0032 /* LocalStorageTask.h */; };
-		511F23190DC160DA004F0032 /* LocalStorageThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511F23150DC160DA004F0032 /* LocalStorageThread.cpp */; };
-		511F231A0DC160DA004F0032 /* LocalStorageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F23160DC160DA004F0032 /* LocalStorageThread.h */; };
+		511F23170DC160DA004F0032 /* StorageTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511F23130DC160DA004F0032 /* StorageTask.cpp */; };
+		511F23180DC160DA004F0032 /* StorageTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F23140DC160DA004F0032 /* StorageTask.h */; };
+		511F23190DC160DA004F0032 /* StorageThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511F23150DC160DA004F0032 /* StorageThread.cpp */; };
+		511F231A0DC160DA004F0032 /* StorageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 511F23160DC160DA004F0032 /* StorageThread.h */; };
 		5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */; };
 		5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5126E6BA0A2E3B12005C29FA /* IconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512DD8E30D91E2B4000F89EE /* SharedBufferCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */; };
@@ -8347,10 +8347,10 @@
 		5112247710CFB8F4008099D7 /* WorkerThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
 		5112247910CFB8FF008099D7 /* WorkerThreadableWebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerThreadableWebSocketChannel.h; sourceTree = "<group>"; };
 		5116D9750CF177BD00C2B84D /* DatabaseDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseDetails.h; sourceTree = "<group>"; };
-		511F23130DC160DA004F0032 /* LocalStorageTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorageTask.cpp; sourceTree = "<group>"; };
-		511F23140DC160DA004F0032 /* LocalStorageTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageTask.h; sourceTree = "<group>"; };
-		511F23150DC160DA004F0032 /* LocalStorageThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalStorageThread.cpp; sourceTree = "<group>"; };
-		511F23160DC160DA004F0032 /* LocalStorageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalStorageThread.h; sourceTree = "<group>"; };
+		511F23130DC160DA004F0032 /* StorageTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageTask.cpp; sourceTree = "<group>"; };
+		511F23140DC160DA004F0032 /* StorageTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageTask.h; sourceTree = "<group>"; };
+		511F23150DC160DA004F0032 /* StorageThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageThread.cpp; sourceTree = "<group>"; };
+		511F23160DC160DA004F0032 /* StorageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageThread.h; sourceTree = "<group>"; };
 		5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconDatabase.cpp; sourceTree = "<group>"; };
 		5126E6BA0A2E3B12005C29FA /* IconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconDatabase.h; sourceTree = "<group>"; };
 		512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBufferCF.cpp; sourceTree = "<group>"; };
@@ -13962,10 +13962,10 @@
 				B6566268120B115A006EA85C /* IDBTransaction.h */,
 				B6566269120B115A006EA85C /* IDBTransaction.idl */,
 				B656626D120B116B006EA85C /* IDBTransactionBackendInterface.h */,
-				511F23130DC160DA004F0032 /* LocalStorageTask.cpp */,
-				511F23140DC160DA004F0032 /* LocalStorageTask.h */,
-				511F23150DC160DA004F0032 /* LocalStorageThread.cpp */,
-				511F23160DC160DA004F0032 /* LocalStorageThread.h */,
+				511F23130DC160DA004F0032 /* StorageTask.cpp */,
+				511F23140DC160DA004F0032 /* StorageTask.h */,
+				511F23150DC160DA004F0032 /* StorageThread.cpp */,
+				511F23160DC160DA004F0032 /* StorageThread.h */,
 				51A926780D53F0570063ECC2 /* OriginQuotaManager.cpp */,
 				51A926790D53F0570063ECC2 /* OriginQuotaManager.h */,
 				51A9267A0D53F0570063ECC2 /* OriginUsageRecord.cpp */,
@@ -23259,8 +23259,8 @@
 				A5732B0D136A16C4005C8D7C /* LocalizedDate.h in Headers */,
 				F5142C69123F12B000F5BD4C /* LocalizedNumber.h in Headers */,
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
-				511F23180DC160DA004F0032 /* LocalStorageTask.h in Headers */,
-				511F231A0DC160DA004F0032 /* LocalStorageThread.h in Headers */,
+				511F23180DC160DA004F0032 /* StorageTask.h in Headers */,
+				511F231A0DC160DA004F0032 /* StorageThread.h in Headers */,
 				BCE1C41B0D982980003B02F2 /* Location.h in Headers */,
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
 				FD31603912B0267600C1A359 /* LowPass2FilterNode.h in Headers */,
@@ -26424,8 +26424,8 @@
 				F5CC42DC12F801CA00D5F7E3 /* LocalizedNumberMac.mm in Sources */,
 				C046E1AC1208A9FE00BA2CF7 /* LocalizedStrings.cpp in Sources */,
 				BC25B52A131C6D3900180E10 /* LocalizedStringsMac.mm in Sources */,
-				511F23170DC160DA004F0032 /* LocalStorageTask.cpp in Sources */,
-				511F23190DC160DA004F0032 /* LocalStorageThread.cpp in Sources */,
+				511F23170DC160DA004F0032 /* StorageTask.cpp in Sources */,
+				511F23190DC160DA004F0032 /* StorageThread.cpp in Sources */,
 				BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */,
 				A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */,
 				1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */,

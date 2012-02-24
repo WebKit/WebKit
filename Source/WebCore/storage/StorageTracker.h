@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-class LocalStorageTask;
-class LocalStorageThread;
+class StorageTask;
+class StorageThread;
 class SecurityOrigin;
 class StorageTrackerClient;    
 
@@ -113,7 +113,7 @@ private:
     OriginSet m_originSet;
     OriginSet m_originsBeingDeleted;
 
-    OwnPtr<LocalStorageThread> m_thread;
+    OwnPtr<StorageThread> m_thread;
     
     bool m_isActive;
     bool m_needsInitialization;

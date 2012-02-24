@@ -1,3 +1,83 @@
+2012-02-24  Huang Dongsung  <luxtella@company100.net>
+
+        Rename LocalStorageThread to StorageThread and LocalStorageTask to StorageTask.
+        https://bugs.webkit.org/show_bug.cgi?id=79358
+
+        Revision 45124 commented FIXME to rename these classes.
+
+        Reviewed by Kentaro Hara.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * storage/LocalStorageTask.h: Removed.
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::StorageSyncManager):
+        (WebCore::StorageSyncManager::scheduleImport):
+        (WebCore::StorageSyncManager::scheduleSync):
+        (WebCore::StorageSyncManager::scheduleDeleteEmptyDatabase):
+        * storage/StorageSyncManager.h:
+        (WebCore):
+        (StorageSyncManager):
+        * storage/StorageTask.cpp: Renamed from Source/WebCore/storage/LocalStorageTask.cpp.
+        (WebCore):
+        (WebCore::StorageTask::StorageTask):
+        (WebCore::StorageTask::~StorageTask):
+        (WebCore::StorageTask::performTask):
+        * storage/StorageTask.h: Added.
+        (WebCore):
+        (StorageTask):
+        (WebCore::StorageTask::createImport):
+        (WebCore::StorageTask::createSync):
+        (WebCore::StorageTask::createDeleteEmptyDatabase):
+        (WebCore::StorageTask::createOriginIdentifiersImport):
+        (WebCore::StorageTask::createSetOriginDetails):
+        (WebCore::StorageTask::createDeleteOrigin):
+        (WebCore::StorageTask::createDeleteAllOrigins):
+        (WebCore::StorageTask::createTerminate):
+        * storage/StorageThread.cpp: Renamed from Source/WebCore/storage/LocalStorageThread.cpp.
+        (WebCore):
+        (WebCore::StorageThread::create):
+        (WebCore::StorageThread::StorageThread):
+        (WebCore::StorageThread::~StorageThread):
+        (WebCore::StorageThread::start):
+        (WebCore::StorageThread::threadEntryPointCallback):
+        (WebCore::StorageThread::threadEntryPoint):
+        (WebCore::StorageThread::scheduleTask):
+        (WebCore::StorageThread::terminate):
+        (WebCore::StorageThread::performTerminate):
+        * storage/StorageThread.h: Renamed from Source/WebCore/storage/LocalStorageThread.h.
+        (WebCore):
+        (StorageThread):
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::StorageTracker):
+        (WebCore::StorageTracker::importOriginIdentifiers):
+        (WebCore::StorageTracker::setOriginDetails):
+        (WebCore::StorageTracker::scheduleTask):
+        (WebCore::StorageTracker::deleteAllOrigins):
+        (WebCore::StorageTracker::deleteOrigin):
+        * storage/StorageTracker.h:
+        (WebCore):
+        (StorageTracker):
+        * storage/wince/StorageThreadWinCE.cpp: Renamed from Source/WebCore/storage/wince/LocalStorageThreadWinCE.cpp.
+        (WebCore):
+        (WebCore::StorageThread::StorageThread):
+        (WebCore::StorageThread::~StorageThread):
+        (WebCore::StorageThread::start):
+        (WebCore::StorageThread::timerFired):
+        (WebCore::StorageThread::scheduleImport):
+        (WebCore::StorageThread::scheduleSync):
+        (WebCore::StorageThread::terminate):
+        (WebCore::StorageThread::performTerminate):
+        * storage/wince/StorageThreadWinCE.h: Renamed from Source/WebCore/storage/wince/LocalStorageThreadWinCE.h.
+        (WebCore):
+        (StorageThread):
+        (WebCore::StorageThread::create):
+
 2012-02-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: prepare border images on timelines to enable zooming.

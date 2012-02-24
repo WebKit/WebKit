@@ -70926,19 +70926,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\storage\LocalStorageTask.cpp"
+				RelativePath="..\storage\StorageTask.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\LocalStorageTask.h"
+				RelativePath="..\storage\StorageTask.h"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\LocalStorageThread.cpp"
+				RelativePath="..\storage\StorageThread.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\storage\LocalStorageThread.h"
+				RelativePath="..\storage\StorageThread.h"
 				>
 			</File>
 			<File

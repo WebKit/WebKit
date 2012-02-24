@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-    class LocalStorageThread;
+    class StorageThread;
     class SecurityOrigin;
     class StorageAreaSync;
 
@@ -52,7 +52,7 @@ namespace WebCore {
     private:
         StorageSyncManager(const String& path);
 
-        OwnPtr<LocalStorageThread> m_thread;
+        OwnPtr<StorageThread> m_thread;
 
     // The following members are subject to thread synchronization issues
     public:

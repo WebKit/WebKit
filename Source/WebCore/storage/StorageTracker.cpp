@@ -28,8 +28,8 @@
 
 #include "DatabaseThread.h"
 #include "FileSystem.h"
-#include "LocalStorageTask.h"
-#include "LocalStorageThread.h"
+#include "StorageTask.h"
+#include "StorageThread.h"
 #include "Logging.h"
 #include "PageGroup.h"
 #include "SQLiteFileSystem.h"
@@ -87,7 +87,7 @@ StorageTracker& StorageTracker::tracker()
 StorageTracker::StorageTracker(const String& storagePath)
     : m_storageDirectoryPath(storagePath.isolatedCopy())
     , m_client(0)
-    , m_thread(LocalStorageThread::create())
+    , m_thread(StorageThread::create())
     , m_isActive(false)
     , m_needsInitialization(false)
     , m_finishedImportingOriginIdentifiers(false)
@@ -163,7 +163,7 @@ void StorageTracker::importOriginIdentifiers()
     ASSERT(isMainThread());
     ASSERT(m_thread);
 
-    m_thread->scheduleTask(LocalStorageTask::createOriginIdentifiersImport());
+    m_thread->scheduleTask(StorageTask::createOriginIdentifiersImport());
 }
 
 void StorageTracker::notifyFinishedImportingOriginIdentifiersOnMainThread(void*)
@@ -297,7 +297,7 @@ void StorageTracker::setOriginDetails(const String& originIdentifier, const Stri
         m_originSet.add(originIdentifier);
     }
 
-    OwnPtr<LocalStorageTask> task = LocalStorageTask::createSetOriginDetails(originIdentifier.isolatedCopy(), databaseFile);
+    OwnPtr<StorageTask> task = StorageTask::createSetOriginDetails(originIdentifier.isolatedCopy(), databaseFile);
 
     if (isMainThread()) {
         ASSERT(m_thread);
@@ -311,7 +311,7 @@ void StorageTracker::scheduleTask(void* taskIn)
     ASSERT(isMainThread());
     ASSERT(StorageTracker::tracker().m_thread);
     
-    OwnPtr<LocalStorageTask> task = adoptPtr(reinterpret_cast<LocalStorageTask*>(taskIn));
+    OwnPtr<StorageTask> task = adoptPtr(reinterpret_cast<StorageTask*>(taskIn));
 
     StorageTracker::tracker().m_thread->scheduleTask(task.release());
 }
@@ -383,7 +383,7 @@ void StorageTracker::deleteAllOrigins()
 
     PageGroup::clearLocalStorageForAllOrigins();
     
-    m_thread->scheduleTask(LocalStorageTask::createDeleteAllOrigins());
+    m_thread->scheduleTask(StorageTask::createDeleteAllOrigins());
 }
     
 void StorageTracker::syncDeleteAllOrigins()
@@ -479,7 +479,7 @@ void StorageTracker::deleteOrigin(SecurityOrigin* origin)
         m_originSet.remove(originId);
     }
     
-    m_thread->scheduleTask(LocalStorageTask::createDeleteOrigin(originId));
+    m_thread->scheduleTask(StorageTask::createDeleteOrigin(originId));
 }
 
 void StorageTracker::syncDeleteOrigin(const String& originIdentifier)

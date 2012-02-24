@@ -30,8 +30,8 @@
 #include "FileSystem.h"
 #include "Frame.h"
 #include "FrameTree.h"
-#include "LocalStorageTask.h"
-#include "LocalStorageThread.h"
+#include "StorageTask.h"
+#include "StorageThread.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "StorageAreaSync.h"
@@ -47,7 +47,7 @@ PassRefPtr<StorageSyncManager> StorageSyncManager::create(const String& path)
 }
 
 StorageSyncManager::StorageSyncManager(const String& path)
-    : m_thread(LocalStorageThread::create())
+    : m_thread(StorageThread::create())
     , m_path(path.isolatedCopy())
 {
     ASSERT(isMainThread());
@@ -87,7 +87,7 @@ bool StorageSyncManager::scheduleImport(PassRefPtr<StorageAreaSync> area)
     ASSERT(isMainThread());
     ASSERT(m_thread);
     if (m_thread)
-        m_thread->scheduleTask(LocalStorageTask::createImport(area.get()));
+        m_thread->scheduleTask(StorageTask::createImport(area.get()));
     return m_thread;
 }
 
@@ -96,7 +96,7 @@ void StorageSyncManager::scheduleSync(PassRefPtr<StorageAreaSync> area)
     ASSERT(isMainThread());
     ASSERT(m_thread);
     if (m_thread)
-        m_thread->scheduleTask(LocalStorageTask::createSync(area.get()));
+        m_thread->scheduleTask(StorageTask::createSync(area.get()));
 }
 
 void StorageSyncManager::scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync> area)
@@ -104,7 +104,7 @@ void StorageSyncManager::scheduleDeleteEmptyDatabase(PassRefPtr<StorageAreaSync>
     ASSERT(isMainThread());
     ASSERT(m_thread);
     if (m_thread)
-        m_thread->scheduleTask(LocalStorageTask::createDeleteEmptyDatabase(area.get()));
+        m_thread->scheduleTask(StorageTask::createDeleteEmptyDatabase(area.get()));
 }
 
 } // namespace WebCore

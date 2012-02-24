@@ -24,58 +24,58 @@
  */
 
 #include "config.h"
-#include "LocalStorageThread.h"
+#include "StorageThread.h"
 
-#include "LocalStorageTask.h"
+#include "StorageTask.h"
 #include "StorageAreaSync.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 
-PassOwnPtr<LocalStorageThread> LocalStorageThread::create()
+PassOwnPtr<StorageThread> StorageThread::create()
 {
-    return adoptPtr(new LocalStorageThread);
+    return adoptPtr(new StorageThread);
 }
 
-LocalStorageThread::LocalStorageThread()
+StorageThread::StorageThread()
     : m_threadID(0)
 {
 }
 
-LocalStorageThread::~LocalStorageThread()
+StorageThread::~StorageThread()
 {
     ASSERT(isMainThread());
     ASSERT(!m_threadID);
 }
 
-bool LocalStorageThread::start()
+bool StorageThread::start()
 {
     ASSERT(isMainThread());
     if (!m_threadID)
-        m_threadID = createThread(LocalStorageThread::threadEntryPointCallback, this, "WebCore: LocalStorage");
+        m_threadID = createThread(StorageThread::threadEntryPointCallback, this, "WebCore: LocalStorage");
     return m_threadID;
 }
 
-void LocalStorageThread::threadEntryPointCallback(void* thread)
+void StorageThread::threadEntryPointCallback(void* thread)
 {
-    static_cast<LocalStorageThread*>(thread)->threadEntryPoint();
+    static_cast<StorageThread*>(thread)->threadEntryPoint();
 }
 
-void LocalStorageThread::threadEntryPoint()
+void StorageThread::threadEntryPoint()
 {
     ASSERT(!isMainThread());
-    while (OwnPtr<LocalStorageTask> task = m_queue.waitForMessage())
+    while (OwnPtr<StorageTask> task = m_queue.waitForMessage())
         task->performTask();
 }
 
-void LocalStorageThread::scheduleTask(PassOwnPtr<LocalStorageTask> task)
+void StorageThread::scheduleTask(PassOwnPtr<StorageTask> task)
 {
     ASSERT(isMainThread());
     ASSERT(!m_queue.killed() && m_threadID);
     m_queue.append(task);
 }
 
-void LocalStorageThread::terminate()
+void StorageThread::terminate()
 {
     ASSERT(isMainThread());
     ASSERT(!m_queue.killed() && m_threadID);
@@ -83,13 +83,13 @@ void LocalStorageThread::terminate()
     if (!m_threadID)
         return;
 
-    m_queue.append(LocalStorageTask::createTerminate(this));
+    m_queue.append(StorageTask::createTerminate(this));
     waitForThreadCompletion(m_threadID);
     ASSERT(m_queue.killed());
     m_threadID = 0;
 }
 
-void LocalStorageThread::performTerminate()
+void StorageThread::performTerminate()
 {
     ASSERT(!isMainThread());
     m_queue.kill();

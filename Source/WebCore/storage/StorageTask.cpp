@@ -24,15 +24,15 @@
  */
 
 #include "config.h"
-#include "LocalStorageTask.h"
+#include "StorageTask.h"
 
-#include "LocalStorageThread.h"
+#include "StorageThread.h"
 #include "StorageAreaSync.h"
 #include "StorageTracker.h"
 
 namespace WebCore {
 
-LocalStorageTask::LocalStorageTask(Type type, StorageAreaSync* area)
+StorageTask::StorageTask(Type type, StorageAreaSync* area)
     : m_type(type)
     , m_area(area)
     , m_thread(0)
@@ -41,7 +41,7 @@ LocalStorageTask::LocalStorageTask(Type type, StorageAreaSync* area)
     ASSERT(m_type == AreaImport || m_type == AreaSync || m_type == DeleteEmptyDatabase);
 }
 
-LocalStorageTask::LocalStorageTask(Type type, LocalStorageThread* thread)
+StorageTask::StorageTask(Type type, StorageThread* thread)
     : m_type(type)
     , m_area(0)
     , m_thread(thread)
@@ -49,21 +49,21 @@ LocalStorageTask::LocalStorageTask(Type type, LocalStorageThread* thread)
     ASSERT(m_thread);
     ASSERT(m_type == TerminateThread);
 }
-    
-LocalStorageTask::LocalStorageTask(Type type)
+
+StorageTask::StorageTask(Type type)
     : m_type(type)
 {
     ASSERT(m_type == ImportOrigins || m_type == DeleteAllOrigins);
 }
-    
-LocalStorageTask::LocalStorageTask(Type type, const String& originIdentifier)
+
+StorageTask::StorageTask(Type type, const String& originIdentifier)
     : m_type(type)
     , m_originIdentifier(originIdentifier)
 {
     ASSERT(m_type == DeleteOrigin);
 }
 
-LocalStorageTask::LocalStorageTask(Type type, const String& originIdentifier, const String& databaseFilename)
+StorageTask::StorageTask(Type type, const String& originIdentifier, const String& databaseFilename)
     : m_type(type)
     , m_originIdentifier(originIdentifier)
     , m_databaseFilename(databaseFilename)
@@ -71,11 +71,11 @@ LocalStorageTask::LocalStorageTask(Type type, const String& originIdentifier, co
     ASSERT(m_type == SetOriginDetails);
 }
 
-LocalStorageTask::~LocalStorageTask()
+StorageTask::~StorageTask()
 {
 }
 
-void LocalStorageTask::performTask()
+void StorageTask::performTask()
 {
     switch (m_type) {
         case AreaImport:

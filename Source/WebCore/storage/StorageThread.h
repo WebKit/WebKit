@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LocalStorageThread_h
-#define LocalStorageThread_h
+#ifndef StorageThread_h
+#define StorageThread_h
 
 #include <wtf/HashSet.h>
 #include <wtf/MessageQueue.h>
@@ -35,33 +35,32 @@
 namespace WebCore {
 
     class StorageAreaSync;
-    class LocalStorageTask;
+    class StorageTask;
 
-    // FIXME: Rename this class to StorageThread
-    class LocalStorageThread {
-        WTF_MAKE_NONCOPYABLE(LocalStorageThread); WTF_MAKE_FAST_ALLOCATED;
+    class StorageThread {
+        WTF_MAKE_NONCOPYABLE(StorageThread); WTF_MAKE_FAST_ALLOCATED;
     public:
-        static PassOwnPtr<LocalStorageThread> create();
-        ~LocalStorageThread();
+        static PassOwnPtr<StorageThread> create();
+        ~StorageThread();
 
         bool start();
         void terminate();
-        void scheduleTask(PassOwnPtr<LocalStorageTask>);
+        void scheduleTask(PassOwnPtr<StorageTask>);
 
         // Background thread part of the terminate procedure.
         void performTerminate();
 
     private:
-        LocalStorageThread();
+        StorageThread();
 
         // Called on background thread.
         static void threadEntryPointCallback(void*);
         void threadEntryPoint();
 
         ThreadIdentifier m_threadID;
-        MessageQueue<LocalStorageTask> m_queue;
+        MessageQueue<StorageTask> m_queue;
     };
 
 } // namespace WebCore
 
-#endif // LocalStorageThread_h
+#endif // StorageThread_h

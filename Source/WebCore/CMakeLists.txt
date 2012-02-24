@@ -1402,8 +1402,8 @@ SET(WebCore_SOURCES
     storage/IDBFactory.cpp
     storage/IDBFactoryBackendInterface.cpp
     storage/IDBFactoryBackendImpl.cpp
-    storage/LocalStorageTask.cpp
-    storage/LocalStorageThread.cpp
+    storage/StorageTask.cpp
+    storage/StorageThread.cpp
     storage/OriginQuotaManager.cpp
     storage/OriginUsageRecord.cpp
     storage/SQLException.cpp
