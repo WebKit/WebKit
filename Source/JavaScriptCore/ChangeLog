@@ -1,3 +1,21 @@
+2012-02-24  Han Hojong  <hojong.han@samsung.com>
+
+        Remove useless jump instructions for short circuit
+        https://bugs.webkit.org/show_bug.cgi?id=75602
+
+        Reviewed by Michael Saboff.
+
+        Jump instruction is inserted to make short circuit, 
+        however it does nothing but moving to the next instruction.
+        Therefore useless jump instructions are removed, 
+        and jump list is moved into the case not for a short circuit,
+        so that only necessary instructions are added to JIT code
+        unless it has a 16 bit pattern character and an 8 bit string.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackPatternCharacterNonGreedy):
+
 2012-02-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r108731.

@@ -816,10 +816,8 @@ class YarrGenerator : private MacroAssembler {
 
         move(TrustedImm32(0), countRegister);
 
-        if ((ch > 0xff) && (m_charSize == Char8)) {
-            // Have a 16 bit pattern character and an 8 bit string - short circuit
-            op.m_jumps.append(jump());
-        } else {
+        // Unless have a 16 bit pattern character and an 8 bit string - short circuit
+        if (!((ch > 0xff) && (m_charSize == Char8))) {
             JumpList failures;
             Label loop(this);
             failures.append(atEndOfInput());
@@ -837,7 +835,6 @@ class YarrGenerator : private MacroAssembler {
         op.m_reentry = label();
 
         storeToFrame(countRegister, term->frameLocation);
-
     }
     void backtrackPatternCharacterGreedy(size_t opIndex)
     {
@@ -875,16 +872,13 @@ class YarrGenerator : private MacroAssembler {
         const RegisterID character = regT0;
         const RegisterID countRegister = regT1;
 
-        JumpList nonGreedyFailures;
-
         m_backtrackingState.link(this);
 
         loadFromFrame(term->frameLocation, countRegister);
 
-        if ((ch > 0xff) && (m_charSize == Char8)) {
-            // Have a 16 bit pattern character and an 8 bit string - short circuit
-            nonGreedyFailures.append(jump());
-        } else {
+        // Unless have a 16 bit pattern character and an 8 bit string - short circuit
+        if (!((ch > 0xff) && (m_charSize == Char8))) {
+            JumpList nonGreedyFailures;
             nonGreedyFailures.append(atEndOfInput());
             if (term->quantityCount != quantifyInfinite)
                 nonGreedyFailures.append(branch32(Equal, countRegister, Imm32(term->quantityCount.unsafeGet())));
@@ -894,8 +888,8 @@ class YarrGenerator : private MacroAssembler {
             add32(TrustedImm32(1), index);
 
             jump(op.m_reentry);
+            nonGreedyFailures.link(this);
         }
-        nonGreedyFailures.link(this);
 
         sub32(countRegister, index);
         m_backtrackingState.fallthrough();
