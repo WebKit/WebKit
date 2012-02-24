@@ -165,12 +165,12 @@ LIST(APPEND WebCore_SOURCES
     platform/graphics/blackberry/FloatRectBlackBerry.cpp
     platform/graphics/blackberry/FloatSizeBlackBerry.cpp
     platform/graphics/blackberry/IconBlackBerry.cpp
+    platform/graphics/blackberry/ImageBlackBerry.cpp
     platform/graphics/blackberry/IntPointBlackBerry.cpp
     platform/graphics/blackberry/IntRectBlackBerry.cpp
     platform/graphics/blackberry/IntSizeBlackBerry.cpp
     platform/graphics/blackberry/MMrenderer.cpp
     platform/graphics/blackberry/MediaPlayerPrivateMMrenderer.cpp
-    platform/graphics/blackberry/ResourceBlackBerry.cpp
     platform/text/blackberry/StringBlackBerry.cpp
 )
 
