@@ -1,3 +1,13 @@
+2012-02-24  Philippe Normand  <pnormand@igalia.com>
+
+        Fix GTK WebAudio build for WebKitGTK 1.7.90.
+
+        Patch by Priit Laes <plaes@plaes.org> on 2012-02-24
+        Rubber-stamped by Philippe Normand.
+
+        * GNUmakefile.list.am: Add Complex.h to the list of files so it
+        gets disted in the tarballs.
+
 2012-02-24  Zoltan Herczeg  <zherczeg@webkit.org>
 
         [Qt] Buildfix for "Zero out CopiedBlocks on initialization".

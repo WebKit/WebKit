@@ -584,6 +584,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/CheckedArithmetic.h \
 	Source/JavaScriptCore/wtf/CheckedBoolean.h \
 	Source/JavaScriptCore/wtf/Compiler.h \
+	Source/JavaScriptCore/wtf/Complex.h \
 	Source/JavaScriptCore/wtf/CryptographicallyRandomNumber.cpp \
 	Source/JavaScriptCore/wtf/CryptographicallyRandomNumber.h \
 	Source/JavaScriptCore/wtf/CurrentTime.cpp \

@@ -1,3 +1,14 @@
+2012-02-24  Philippe Normand  <pnormand@igalia.com>
+
+        Fix GTK WebAudio build for WebKitGTK 1.7.90.
+
+        Patch by Priit Laes <plaes@plaes.org> on 2012-02-24
+        Rubber-stamped by Philippe Normand.
+
+        * GNUmakefile.list.am: Add AudioBufferCallback.h and
+        DenormalDisabler.h to the list of files so they get disted in the
+        tarballs.
+
 2012-02-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: show all counters on one graph

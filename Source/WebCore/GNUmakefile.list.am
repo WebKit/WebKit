@@ -5333,6 +5333,7 @@ webcore_sources += \
 	Source/WebCore/webaudio/AudioBasicProcessorNode.h \
 	Source/WebCore/webaudio/AudioBuffer.cpp \
 	Source/WebCore/webaudio/AudioBuffer.h \
+	Source/WebCore/webaudio/AudioBufferCallback.h \
 	Source/WebCore/webaudio/AudioBufferSourceNode.cpp \
 	Source/WebCore/webaudio/AudioBufferSourceNode.h \
 	Source/WebCore/webaudio/AudioChannelMerger.cpp \
@@ -5426,6 +5427,7 @@ webcore_sources += \
 	Source/WebCore/platform/audio/Biquad.h \
 	Source/WebCore/platform/audio/Cone.cpp \
 	Source/WebCore/platform/audio/Cone.h \
+	Source/WebCore/platform/audio/DenormalDisabler.h \
 	Source/WebCore/platform/audio/Distance.cpp \
 	Source/WebCore/platform/audio/Distance.h \
 	Source/WebCore/platform/audio/DynamicsCompressor.h \
