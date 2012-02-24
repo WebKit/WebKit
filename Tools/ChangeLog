@@ -1,3 +1,9 @@
+2012-02-23  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, add Stephen Chenney to committers.py as a contributor.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-02-23  Adam Barth  <abarth@webkit.org>
 
         style-queue logs bogus messages to the QueueStatusServer
