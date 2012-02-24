@@ -187,6 +187,45 @@ function shouldBe(_a, _b, quiet)
     testFailed(_a + " should be " + _bv + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
 }
 
+// Variant of shouldBe()--confirms that result of eval(_to_eval) is within
+// numeric _tolerance of numeric _target.
+function shouldBeCloseTo(_to_eval, _target, _tolerance, quiet)
+{
+  if (typeof _to_eval != "string") {
+    testFailed("shouldBeCloseTo() requires string argument _to_eval. was type " + typeof _to_eval);
+    return;
+  }
+  if (typeof _target != "number") {
+    testFailed("shouldBeCloseTo() requires numeric argument _target. was type " + typeof _target);
+    return;
+  }
+  if (typeof _tolerance != "number") {
+    testFailed("shouldBeCloseTo() requires numeric argument _tolerance. was type " + typeof _tolerance);
+    return;
+  }
+
+  var _result;
+  try {
+     _result = eval(_to_eval);
+  } catch (e) {
+    testFailed(_to_eval + " should be within " + _tolerance + " of "
+               + _target + ". Threw exception " + e);
+    return;
+  }
+
+  if (typeof(_result) != typeof(_target)) {
+    testFailed(_to_eval + " should be of type " + typeof _target
+               + " but was of type " + typeof _result);
+  } else if (Math.abs(_result - _target) <= _tolerance) {
+    if (!quiet) {
+        testPassed(_to_eval + " is within " + _tolerance + " of " + _target);
+    }
+  } else {
+    testFailed(_to_eval + " should be within " + _tolerance + " of " + _target
+               + ". Was " + _result + ".");
+  }
+}
+
 function shouldNotBe(_a, _b, quiet)
 {
   if (typeof _a != "string" || typeof _b != "string")

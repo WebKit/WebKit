@@ -10,19 +10,10 @@ function print(message, color)
     document.getElementById("console").appendChild(paragraph);
 }
 
-function shouldNotBe(a, b)
+// Level of tolerance we expect of most pixel comparisons in this test.
+function shouldBeAlmost(_a, _b)
 {
-    var evalA;
-    try {
-        evalA = eval(a);
-    } catch(e) {
-        evalA = e;
-    }
-
-    if (evalA != b)
-        print("PASS " + a + " should not be " + b + " and it's not.", "green")
-    else
-        print("FAIL " + a + " should not be " + b + " but it is.", "red");
+    shouldBeCloseTo(_a, _b, 2);
 }
 
 var canvas = document.createElement('canvas');
@@ -62,53 +53,53 @@ var imageData, data;
 // Verify solid shadow.
 imageData = ctx.getImageData(650, 300, 1, 1);
 data = imageData.data;
-shouldBe('data[0]', '255');
-shouldBe('data[1]', '20');
-shouldBe('data[2]', '0');
+shouldBeAlmost('data[0]', 255);
+shouldBeAlmost('data[1]', 20);
+shouldBeAlmost('data[2]', 0);
 
 imageData = ctx.getImageData(650, 50, 1, 1);
 data = imageData.data;
-shouldBe('data[0]', '255');
-shouldBe('data[1]', '20');
-shouldBe('data[2]', '0');
+shouldBeAlmost('data[0]', 255);
+shouldBeAlmost('data[1]', 20);
+shouldBeAlmost('data[2]', 0);
 
 imageData = ctx.getImageData(380, 30, 1, 1);
 data = imageData.data;
-shouldBe('data[0]', '255');
-shouldBe('data[1]', '20');
-shouldBe('data[2]', '0');
+shouldBeAlmost('data[0]', 255);
+shouldBeAlmost('data[1]', 20);
+shouldBeAlmost('data[2]', 0);
 
 imageData = ctx.getImageData(400, 40, 1, 1);
 data = imageData.data;
-shouldBe('data[0]', '255');
-shouldBe('data[1]', '20');
-shouldBe('data[2]', '0');
+shouldBeAlmost('data[0]', 255);
+shouldBeAlmost('data[1]', 20);
+shouldBeAlmost('data[2]', 0);
 
 // Verify blurry shadow.
 imageData = ctx.getImageData(640, 640, 1, 1);
 data = imageData.data;
-shouldBe('data[0]', '255');
-shouldBe('data[1]', '0');
-shouldBe('data[2]', '0');
+shouldBeAlmost('data[0]', 255);
+shouldBeAlmost('data[1]', 0);
+shouldBeAlmost('data[2]', 0);
 shouldNotBe('data[3]', '255');
 
 imageData = ctx.getImageData(650, 400, 1, 1);
 data = imageData.data;
-shouldBe('data[0]', '255');
-shouldBe('data[1]', '0');
-shouldBe('data[2]', '0');
+shouldBeAlmost('data[0]', 255);
+shouldBeAlmost('data[1]', 0);
+shouldBeAlmost('data[2]', 0);
 shouldNotBe('data[3]', '255');
 
 imageData = ctx.getImageData(380, 380, 1, 1);
 data = imageData.data;
-shouldBe('data[0]', '255');
-shouldBe('data[1]', '0');
-shouldBe('data[2]', '0');
+shouldBeAlmost('data[0]', 255);
+shouldBeAlmost('data[1]', 0);
+shouldBeAlmost('data[2]', 0);
 shouldNotBe('data[3]', '255');
 
 imageData = ctx.getImageData(350, 380, 1, 1);
 data = imageData.data;
-shouldBe('data[0]', '255');
-shouldBe('data[1]', '0');
-shouldBe('data[2]', '0');
+shouldBeAlmost('data[0]', 255);
+shouldBeAlmost('data[1]', 0);
+shouldBeAlmost('data[2]', 0);
 shouldNotBe('data[3]', '255');
