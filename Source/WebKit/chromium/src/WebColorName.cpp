@@ -29,21 +29,21 @@
  */
 
 #include "config.h"
-#include "platform/WebColor.h"
+#include "WebColorName.h"
 
-#include "Color.h"
 #include "CSSValueKeywords.h"
+#include "Color.h"
 #include "RenderTheme.h"
 #include "UnusedParam.h"
-#include "platform/WebColorName.h"
+#include <public/WebColor.h>
 
 using namespace::WebCore;
 
 namespace WebKit {
 
-static int toCSSValueKeyword(WebColorName in_value)
+static int toCSSValueKeyword(WebColorName name)
 {
-    switch (in_value) {
+    switch (name) {
     case WebColorActiveBorder:
         return CSSValueActiveborder;
     case WebColorActiveCaption:

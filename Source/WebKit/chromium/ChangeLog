@@ -1,3 +1,16 @@
+2012-02-24  James Robinson  <jamesr@chromium.org>
+
+        [chromium] WebKit::setColorNames is a client API
+        https://bugs.webkit.org/show_bug.cgi?id=79539
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebColorName.h: Renamed from Source/Platform/chromium/public/WebColorName.h.
+        (WebKit):
+        * public/platform/WebColorName.h:
+        * src/WebColor.cpp:
+
 2012-02-22  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move WebGraphicsContext3D header into the Platform directory
