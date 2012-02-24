@@ -1,3 +1,50 @@
+2012-02-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: prepare border images on timelines to enable zooming.
+        https://bugs.webkit.org/show_bug.cgi?id=79360
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/Images/timelineBarBlue.png:
+        * inspector/front-end/Images/timelineBarGray.png:
+        * inspector/front-end/Images/timelineBarGreen.png:
+        * inspector/front-end/Images/timelineBarOrange.png:
+        * inspector/front-end/Images/timelineBarPurple.png:
+        * inspector/front-end/Images/timelineBarRed.png:
+        * inspector/front-end/Images/timelineBarYellow.png:
+        * inspector/front-end/Images/timelineHollowPillBlue.png:
+        * inspector/front-end/Images/timelineHollowPillGray.png:
+        * inspector/front-end/Images/timelineHollowPillGreen.png:
+        * inspector/front-end/Images/timelineHollowPillOrange.png:
+        * inspector/front-end/Images/timelineHollowPillPurple.png:
+        * inspector/front-end/Images/timelineHollowPillRed.png:
+        * inspector/front-end/Images/timelineHollowPillYellow.png:
+        * inspector/front-end/Images/timelinePillBlue.png:
+        * inspector/front-end/Images/timelinePillGray.png:
+        * inspector/front-end/Images/timelinePillGreen.png:
+        * inspector/front-end/Images/timelinePillOrange.png:
+        * inspector/front-end/Images/timelinePillPurple.png:
+        * inspector/front-end/Images/timelinePillRed.png:
+        * inspector/front-end/Images/timelinePillYellow.png:
+        * inspector/front-end/inspectorCommon.css:
+        (body):
+        * inspector/front-end/networkLogView.css:
+        (.network-graph-bar):
+        (.resource-cached .network-graph-bar):
+        (.network-category-documents .network-graph-bar):
+        (.network-category-documents.resource-cached .network-graph-bar):
+        (.network-category-stylesheets .network-graph-bar):
+        (.network-category-stylesheets.resource-cached .network-graph-bar):
+        (.network-category-images.resource-cached .network-graph-bar):
+        (.network-category-fonts .network-graph-bar):
+        (.network-category-fonts.resource-cached .network-graph-bar):
+        (.network-category-scripts .network-graph-bar):
+        (.network-category-scripts.resource-cached .network-graph-bar):
+        (.network-category-xhr .network-graph-bar):
+        (.network-category-xhr.resource-cached .network-graph-bar):
+        (.network-category-websockets .network-graph-bar):
+        (.network-category-websockets.resource-cached .network-graph-bar):
+
 2012-02-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: exception in front-end on selecting an element in heap snapshot

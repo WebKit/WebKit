@@ -311,10 +311,10 @@
     bottom: 0;
     margin: auto -7px;
     border-width: 6px 7px;
-    height: 13px;
+    height: 0;
     min-width: 14px;
     opacity: 0.65;
-    -webkit-border-image: url(Images/timelinePillGray.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelinePillGray.png) 7 7 7 7;
 }
 
 .network-graph-bar.waiting, .network-graph-bar.waiting-right {
@@ -325,23 +325,23 @@
 
 
 .resource-cached .network-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillGray.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelineHollowPillGray.png) 7 7 7 7;
 }
 
 .network-category-documents .network-graph-bar {
-    -webkit-border-image: url(Images/timelinePillBlue.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelinePillBlue.png) 7 7 7 7;
 }
 
 .network-category-documents.resource-cached .network-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillBlue.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelineHollowPillBlue.png) 7 7 7 7;
 }
 
 .network-category-stylesheets .network-graph-bar {
-    -webkit-border-image: url(Images/timelinePillGreen.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelinePillGreen.png) 7 7 7 7;
 }
 
 .network-category-stylesheets.resource-cached .network-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillGreen.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelineHollowPillGreen.png) 7 7 7 7;
 }
 
 .network-category-images .network-graph-bar {
@@ -349,39 +349,39 @@
 }
 
 .network-category-images.resource-cached .network-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillPurple.png) 6 7 6 7;
+    border-image: url(Images/timelineHollowPillPurple.png) 7 7 7 7;
 }
 
 .network-category-fonts .network-graph-bar {
-    -webkit-border-image: url(Images/timelinePillRed.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelinePillRed.png) 7 7 7 7;
 }
 
 .network-category-fonts.resource-cached .network-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillRed.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelineHollowPillRed.png) 7 7 7 7;
 }
 
 .network-category-scripts .network-graph-bar {
-    -webkit-border-image: url(Images/timelinePillOrange.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelinePillOrange.png) 7 7 7 7;
 }
 
 .network-category-scripts.resource-cached .network-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillOrange.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelineHollowPillOrange.png) 7 7 7 7;
 }
 
 .network-category-xhr .network-graph-bar {
-    -webkit-border-image: url(Images/timelinePillYellow.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelinePillYellow.png) 7 7 7 7;
 }
 
 .network-category-xhr.resource-cached .network-graph-bar {
-    -webkit-border-image: url(Images/timelineHollowPillYellow.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelineHollowPillYellow.png) 7 7 7 7;
 }
 
 .network-category-websockets .network-graph-bar {
-    -webkit-border-image: url(Images/timelinePillGray.png) 6 7 6 7;
+    -webkit-border-image: url(Images/timelinePillGray.png) 7 7 7 7;
 }
 
 .network-category-websockets.resource-cached .network-graph-bar {
-   -webkit-border-image: url(Images/timelineHollowPillGray.png) 6 7 6 7;
+   -webkit-border-image: url(Images/timelineHollowPillGray.png) 7 7 7 7;
 }
 
 .network-dim-cell {
