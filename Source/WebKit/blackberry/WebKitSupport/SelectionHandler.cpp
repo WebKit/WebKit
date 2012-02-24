@@ -884,8 +884,9 @@ void SelectionHandler::selectionPositionChanged(bool visualChangeOnly)
         }
     }
 
-    DEBUG_SELECTION(BlackBerry::Platform::LogLevelInfo, "SelectionHandler::selectionPositionChanged Start Rect=%s End Rect=%s",
-                        startCaret.toString().utf8().data(), endCaret.toString().utf8().data());
+    DEBUG_SELECTION(BlackBerry::Platform::LogLevelInfo, "SelectionHandler::selectionPositionChanged Start Rect=(%d, %d) (%d x %d) End Rect=(%d, %d) (%d x %d)",
+                    startCaret.x(), startCaret.y(), startCaret.width(), startCaret.height(), endCaret.x(), endCaret.y(), endCaret.width(), endCaret.height());
+
 
     m_webPage->m_client->notifySelectionDetailsChanged(startCaret, endCaret, region);
 }
