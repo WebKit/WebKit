@@ -1,3 +1,55 @@
+2012-02-23  Philip Rogers  <pdr@google.com>
+
+        Recompute font metrics on scale changes
+        https://bugs.webkit.org/show_bug.cgi?id=75091
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG text metrics depend on the transform from renderer to the svg root
+        which requires that we propagate transform changes down to text.
+        This change adds a boolean for tracking transform changes to
+        SVGViewportContainers and SVGTransformableContainers, and updates
+        RenderSVGText::layout() to recalculate text metrics if the transform
+        of an ancestor has changed.
+
+        Tests: platform/mac/svg/text/text-rescale.html
+               platform/mac/svg/text/text-viewbox-rescale.html
+               svg/text/text-rescale.html
+               svg/text/text-viewbox-rescale.html
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGTransformableContainer):
+        (WebCore::RenderObject::isSVGViewportContainer):
+        * rendering/svg/RenderSVGContainer.h:
+        (WebCore::RenderSVGContainer::didTransformToRootUpdate):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeNewScaledFontForStyle):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::RenderSVGText):
+        (WebCore::RenderSVGText::layout):
+        * rendering/svg/RenderSVGText.h:
+        (WebCore::RenderSVGText::setNeedsTextMetricsUpdate):
+        (RenderSVGText):
+        * rendering/svg/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::RenderSVGTransformableContainer):
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/svg/RenderSVGTransformableContainer.h:
+        (WebCore::RenderSVGTransformableContainer::isSVGTransformableContainer):
+        (WebCore::RenderSVGTransformableContainer::didTransformToRootUpdate):
+        (RenderSVGTransformableContainer):
+        * rendering/svg/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::RenderSVGViewportContainer):
+        (WebCore::RenderSVGViewportContainer::calcViewport):
+        * rendering/svg/RenderSVGViewportContainer.h:
+        (WebCore::RenderSVGViewportContainer::didTransformToRootUpdate):
+        (RenderSVGViewportContainer):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::transformToRootChanged):
+        (WebCore):
+        (WebCore::SVGRenderSupport::layoutChildren):
+        * rendering/svg/SVGRenderSupport.h:
+        (SVGRenderSupport):
+
 2012-02-21  James Robinson  <jamesr@chromium.org>
 
         [chromium] Notify compositor of wheel event registration via ScrollingCoordinator

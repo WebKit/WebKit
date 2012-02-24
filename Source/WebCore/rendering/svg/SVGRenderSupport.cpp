@@ -250,13 +250,34 @@ static inline bool layoutSizeOfNearestViewportChanged(const RenderObject* start)
     return toRenderSVGRoot(start)->isLayoutSizeChanged();
 }
 
+bool SVGRenderSupport::transformToRootChanged(RenderObject* ancestor)
+{
+    while (ancestor && !ancestor->isSVGRoot()) {
+        if (ancestor->isSVGTransformableContainer())
+            return toRenderSVGContainer(ancestor)->didTransformToRootUpdate();
+        if (ancestor->isSVGViewportContainer())
+            return toRenderSVGViewportContainer(ancestor)->didTransformToRootUpdate();
+        ancestor = ancestor->parent();
+    }
+
+    return false;
+}
+
 void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
 {
     bool layoutSizeChanged = layoutSizeOfNearestViewportChanged(start);
+    bool transformChanged = transformToRootChanged(start);
     HashSet<RenderObject*> notlayoutedObjects;
 
     for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
         bool needsLayout = selfNeedsLayout;
+
+        if (transformChanged) {
+            // If the transform changed we need to update the text metrics (note: this also happens for layoutSizeChanged=true).
+            if (child->isSVGText())
+                toRenderSVGText(child)->setNeedsTextMetricsUpdate();
+            needsLayout = true;
+        }
 
         if (layoutSizeChanged) {
             // When selfNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths

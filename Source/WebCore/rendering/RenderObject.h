@@ -387,7 +387,8 @@ public:
     // to add SVG renderer methods to RenderObject with an ASSERT_NOT_REACHED() default implementation.
     virtual bool isSVGRoot() const { return false; }
     virtual bool isSVGContainer() const { return false; }
-    virtual bool isSVGViewportContainer() const { return false; } 
+    virtual bool isSVGTransformableContainer() const { return false; }
+    virtual bool isSVGViewportContainer() const { return false; }
     virtual bool isSVGGradientStop() const { return false; }
     virtual bool isSVGHiddenContainer() const { return false; }
     virtual bool isSVGPath() const { return false; }

@@ -25,6 +25,7 @@
 #include "RenderSVGTransformableContainer.h"
 
 #include "SVGNames.h"
+#include "SVGRenderSupport.h"
 #include "SVGShadowTreeElements.h"
 #include "SVGStyledTransformableElement.h"
 
@@ -33,6 +34,7 @@ namespace WebCore {
 RenderSVGTransformableContainer::RenderSVGTransformableContainer(SVGStyledTransformableElement* node)
     : RenderSVGContainer(node)
     , m_needsTransformUpdate(true)
+    , m_didTransformToRootUpdate(false)
 {
 }
 
@@ -41,6 +43,7 @@ bool RenderSVGTransformableContainer::calculateLocalTransform()
     SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
 
     bool needsUpdate = m_needsTransformUpdate;
+    m_didTransformToRootUpdate = m_needsTransformUpdate || SVGRenderSupport::transformToRootChanged(parent());
     if (needsUpdate) {
         m_localTransform = element->animatedLocalTransform();
         m_needsTransformUpdate = false;

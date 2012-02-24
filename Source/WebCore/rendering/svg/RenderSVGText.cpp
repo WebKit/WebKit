@@ -58,6 +58,7 @@ RenderSVGText::RenderSVGText(SVGTextElement* node)
     , m_needsReordering(false)
     , m_needsPositioningValuesUpdate(true)
     , m_needsTransformUpdate(true)
+    , m_needsTextMetricsUpdate(true)
 {
 }
 
@@ -208,11 +209,13 @@ void RenderSVGText::layout()
         updateCachedBoundariesInParents = true;
     }
 
-    // If the root layout size changed (eg. window size changes) or the positioning values change, recompute the on-screen font size.
-    if (SVGRenderSupport::findTreeRootObject(this)->isLayoutSizeChanged()) {
+    // If the root layout size changed (eg. window size changes) or the positioning values change
+    // or the transform to the root context has changed then recompute the on-screen font size.
+    if (m_needsTextMetricsUpdate || SVGRenderSupport::findTreeRootObject(this)->isLayoutSizeChanged()) {
         recursiveUpdateScaledFont(this);
         rebuildLayoutAttributes(true);
         updateCachedBoundariesInParents = true;
+        m_needsTextMetricsUpdate = false;
     }
 
     if (m_needsPositioningValuesUpdate) {

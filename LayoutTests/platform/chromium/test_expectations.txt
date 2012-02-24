@@ -4206,6 +4206,16 @@ BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = 
 // Failing after test was updated in r108387, media engine sending incorrect referrer?
 BUGWK79239 : http/tests/media/video-referer.html = FAIL
 
+// Need rebaselining after bug 75091
+BUGWK75091 SKIP : svg/carto.net/tabgroup.svg = FAIL
+BUGWK75091 SKIP : svg/carto.net/window.svg = FAIL
+BUGWK75091 SKIP : svg/custom/js-late-clipPath-and-object-creation.svg = FAIL
+BUGWK75091 SKIP : svg/custom/js-late-gradient-and-object-creation.svg = FAIL
+BUGWK75091 SKIP : svg/custom/js-late-pattern-and-object-creation.svg = FAIL
+BUGWK75091 SKIP : svg/custom/text-ctm.svg = FAIL
+BUGWK75091 SKIP : svg/custom/use-detach.svg = FAIL
+BUGWK75091 SKIP : svg/hixie/perf/003.xml = FAIL
+
 // Asserting in debug builds since r108506
 BUGWK79229 WIN LINUX DEBUG : http/tests/inspector/console-xhr-logging-async.html = CRASH
 BUGWK79229 MAC DEBUG : http/tests/inspector/console-xhr-logging-async.html = TIMEOUT
