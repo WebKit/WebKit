@@ -100,8 +100,8 @@ int RegularExpression::match(const String& str, int startFrom, int* matchLength)
         return -1;
 
     int offsetVectorSize = (d->m_numSubpatterns + 1) * 2;
-    int* offsetVector;
-    Vector<int, 32> nonReturnedOvector;
+    unsigned* offsetVector;
+    Vector<unsigned, 32> nonReturnedOvector;
 
     nonReturnedOvector.resize(offsetVectorSize);
     offsetVector = nonReturnedOvector.data();
@@ -110,10 +110,16 @@ int RegularExpression::match(const String& str, int startFrom, int* matchLength)
     for (unsigned j = 0, i = 0; i < d->m_numSubpatterns + 1; j += 2, i++)
         offsetVector[j] = -1;
 
-    int result = JSC::Yarr::interpret(d->m_regExpByteCode.get(), JSC::UString(str.impl()), startFrom, str.length(), offsetVector);
-    ASSERT(result >= -1);
+    unsigned result;
+    if (str.length() <= INT_MAX)
+        result = JSC::Yarr::interpret(d->m_regExpByteCode.get(), JSC::UString(str.impl()), startFrom, str.length(), offsetVector);
+    else {
+        // This code can't handle unsigned offsets. Limit our processing to strings with offsets that 
+        // can be represented as ints.
+        result = JSC::Yarr::offsetNoMatch;
+    }
 
-    if (result < 0) {
+    if (result == JSC::Yarr::offsetNoMatch) {
         d->lastMatchLength = -1;
         return -1;
     }

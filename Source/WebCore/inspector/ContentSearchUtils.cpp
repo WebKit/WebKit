@@ -153,8 +153,8 @@ static String findMagicComment(const String& content, const String& name)
     ASSERT(pattern.m_numSubpatterns == 1);
     Vector<int, 4> matches;
     matches.resize(4);
-    int result = JSC::Yarr::interpret(bytecodePattern.get(), JSC::UString(content.impl()), 0, content.length(), matches.data());
-    if (result < 0)
+    unsigned result = JSC::Yarr::interpret(bytecodePattern.get(), JSC::UString(content.impl()), 0, content.length(), reinterpret_cast<unsigned*>(matches.data()));
+    if (result == JSC::Yarr::offsetNoMatch)
         return String();
     ASSERT(matches[2] > 0 && matches[3] > 0);
     return content.substring(matches[2], matches[3] - matches[2]);

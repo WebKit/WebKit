@@ -363,7 +363,33 @@ int RegExp::match(JSGlobalData& globalData, const UString& s, unsigned startOffs
 #endif
     } else
 #endif
-        result = Yarr::interpret(m_representation->m_regExpBytecode.get(), s, startOffset, s.length(), offsetVector);
+        result = Yarr::interpret(m_representation->m_regExpBytecode.get(), s, startOffset, s.length(), reinterpret_cast<unsigned*>(offsetVector));
+
+    // FIXME: The YARR engine should handle unsigned or size_t length matches.
+    // The YARR Interpreter is "unsigned" clean, while the YARR JIT hasn't been addressed.
+    // The offset vector handling needs to change as well.
+    // Right now we convert a match where the offsets overflowed into match failure.
+    // There are two places in WebCore that call the interpreter directly that need to
+    // have their offsets changed to int as well. They are platform/text/RegularExpression.cpp
+    // and inspector/ContentSearchUtils.cpp.
+    if (s.length() > INT_MAX) {
+        bool overflowed = false;
+
+        if (result < -1)
+            overflowed = true;
+
+        for (unsigned i = 0; i <= m_numSubpatterns; i++) {
+            if ((offsetVector[i*2] < -1) || ((offsetVector[i*2] >= 0) && (offsetVector[i*2+1] < -1))) {
+                overflowed = true;
+                offsetVector[i*2] = -1;
+                offsetVector[i*2+1] = -1;
+            }
+        }
+
+        if (overflowed)
+            result = -1;
+    }
+
     ASSERT(result >= -1);
 
 #if REGEXP_FUNC_TEST_DATA_GEN

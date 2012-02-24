@@ -1,3 +1,21 @@
+2012-02-24  Michael Saboff  <msaboff@apple.com>
+
+        ASSERT(position < 0) in JSC::Yarr::Interpreter::InputStream::readChecked
+        https://bugs.webkit.org/show_bug.cgi?id=73728
+
+        Reviewed by Gavin Barraclough.
+
+        No new tests, refactored usage of JSC::Yarr interpreter.
+        Should be covered by existing tests.
+
+        Changed WebCore callers of JSC::Yarr:Interpreter::interpret() to match the
+        new signature with unsigned offsets.
+
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::findMagicComment):
+        * platform/text/RegularExpression.cpp:
+        (WebCore::RegularExpression::match):
+
 2012-02-24  Hans Muller  <hmuller@adobe.com>
 
         onclick is not reliable for transformed SVG elements

@@ -105,7 +105,7 @@ struct ByteTerm {
     unsigned frameLocation;
     bool m_capture : 1;
     bool m_invert : 1;
-    int inputPosition;
+    unsigned inputPosition;
 
     ByteTerm(UChar ch, int inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
