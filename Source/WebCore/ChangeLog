@@ -1,3 +1,27 @@
+2012-02-23  Konrad Piascik  <kpiascik@rim.com>
+
+        Upstream BlackBerry Cookie Management Classes
+        https://bugs.webkit.org/show_bug.cgi?id=73654
+
+        Reviewed by Rob Buis.
+
+        Added ManualTests/cookieSpeedTest.html as well as tested functionality
+        on the BlackBerry port with http://testsuites.opera.com/cookies/
+        Passes all non Cookie 2 tests since Cookie 2 is not implemented/supported at this time.
+        Error handling and extended tests do not all pass and will be updated with future bugs/patches.
+
+        * platform/blackberry/CookieDatabaseBackingStore/CookieDatabaseBackingStore.cpp: Added.
+        * platform/blackberry/CookieDatabaseBackingStore/CookieDatabaseBackingStore.h: Added.
+        * platform/blackberry/CookieJarBlackBerry.cpp: Added.
+        * platform/blackberry/CookieManager.cpp: Added.
+        * platform/blackberry/CookieManager.h: Added.
+        * platform/blackberry/CookieMap.cpp: Added.
+        * platform/blackberry/CookieMap.h: Added.
+        * platform/blackberry/CookieParser.cpp: Added.
+        * platform/blackberry/CookieParser.h: Added.
+        * platform/blackberry/ParsedCookie.cpp: Added.
+        * platform/blackberry/ParsedCookie.h: Added.
+
 2012-02-23  Levi Weintraub  <leviw@chromium.org>
 
         Switch drawLineForBoxSide to use integers

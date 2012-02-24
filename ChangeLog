@@ -1,3 +1,15 @@
+2012-02-23  Konrad Piascik  <kpiascik@rim.com>
+
+        Upstream BlackBerry Cookie Management Classes
+        https://bugs.webkit.org/show_bug.cgi?id=73654
+
+        Reviewed by Rob Buis.
+
+        Manual test to see in milliseconds how quickly 100 writes followed by 100 reads take.
+        This test is ran twice and the average read and write for each of the 2 runs is shown.
+
+        * ManualTests/cookieSpeedTest.html: Added.
+
 2012-02-23  Dave Tu  <dtu@chromium.org>
 
         Add Chromium gpu_tests to the flakiness dashboard
