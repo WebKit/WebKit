@@ -1,3 +1,9 @@
+2012-02-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Increment perf-o-matic version.
+
+        * Websites/webkit-perf.appspot.com/app.yaml:
+
 2012-02-23  Konrad Piascik  <kpiascik@rim.com>
 
         Upstream BlackBerry Cookie Management Classes
