@@ -27,6 +27,8 @@
 #define CopiedBlock_h
 
 #include "HeapBlock.h"
+#include "JSValue.h"
+#include "JSValueInlineMethods.h"
 
 namespace JSC {
 
@@ -41,6 +43,15 @@ public:
         , m_offset(m_payload)
         , m_isPinned(false)
     {
+        ASSERT(is8ByteAligned(static_cast<void*>(m_payload)));
+#if USE(JSVALUE64)
+        memset(static_cast<void*>(m_payload), 0, static_cast<size_t>((reinterpret_cast<char*>(this) + allocation.size()) - m_payload));
+#else
+        JSValue emptyValue;
+        JSValue* limit = reinterpret_cast<JSValue*>(reinterpret_cast<char*>(this) + allocation.size());
+        for (JSValue* currentValue = reinterpret_cast<JSValue*>(m_payload); currentValue < limit; currentValue++)
+            *currentValue = emptyValue;
+#endif
     }
 
 private:

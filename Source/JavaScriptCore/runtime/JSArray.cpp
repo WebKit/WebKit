@@ -161,10 +161,6 @@ void JSArray::finishCreation(JSGlobalData& globalData, unsigned initialLength)
     m_storage->m_inCompactInitialization = false;
 #endif
 
-    WriteBarrier<Unknown>* vector = m_storage->m_vector;
-    for (size_t i = 0; i < initialVectorLength; ++i)
-        vector[i].clear();
-
     checkConsistency();
 }
 
@@ -193,10 +189,6 @@ JSArray* JSArray::tryFinishCreationUninitialized(JSGlobalData& globalData, unsig
 #if CHECK_ARRAY_CONSISTENCY
     m_storage->m_inCompactInitialization = true;
 #endif
-
-    WriteBarrier<Unknown>* vector = m_storage->m_vector;
-    for (size_t i = initialLength; i < initialVectorLength; ++i)
-        vector[i].clear();
 
     return this;
 }
@@ -992,10 +984,6 @@ bool JSArray::increaseVectorLength(JSGlobalData& globalData, unsigned newLength)
         m_storage->m_allocBase = newStorage;
         ASSERT(m_storage->m_allocBase);
 
-        WriteBarrier<Unknown>* vector = storage->m_vector;
-        for (unsigned i = vectorLength; i < newVectorLength; ++i)
-            vector[i].clear();
-
         m_vectorLength = newVectorLength;
         
         return true;
@@ -1015,10 +1003,8 @@ bool JSArray::increaseVectorLength(JSGlobalData& globalData, unsigned newLength)
     m_indexBias = newIndexBias;
     m_storage = reinterpret_cast_ptr<ArrayStorage*>(reinterpret_cast<WriteBarrier<Unknown>*>(newAllocBase) + m_indexBias);
 
-    // Copy the ArrayStorage header & current contents of the vector, clear the new post-capacity.
+    // Copy the ArrayStorage header & current contents of the vector.
     memmove(m_storage, storage, storageSize(vectorLength));
-    for (unsigned i = vectorLength; i < m_vectorLength; ++i)
-        m_storage->m_vector[i].clear();
 
     // Free the old allocation, update m_allocBase.
     m_storage->m_allocBase = newAllocBase;
@@ -1101,13 +1087,6 @@ bool JSArray::unshiftCountSlowCase(JSGlobalData& globalData, unsigned count)
     if (newAllocBase != m_storage->m_allocBase) {
         // Free the old allocation, update m_allocBase.
         m_storage->m_allocBase = newAllocBase;
-
-        // We need to clear any entries in the vector beyond length. We only need to
-        // do this if this was a new allocation, because if we're using an existing
-        // allocation the post-capacity will already be cleared, and in an existing
-        // allocation we can only beshrinking the amount of post capacity.
-        for (unsigned i = requiredVectorLength; i < m_vectorLength; ++i)
-            m_storage->m_vector[i].clear();
     }
 
     return true;

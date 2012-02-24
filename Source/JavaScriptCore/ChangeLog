@@ -1,3 +1,23 @@
+2012-02-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Zero out CopiedBlocks on initialization
+        https://bugs.webkit.org/show_bug.cgi?id=79199
+
+        Reviewed by Filip Pizlo.
+
+        Made CopyBlocks zero their payloads during construction. This allows 
+        JSArray to avoid having to manually clear its backing store upon allocation
+        and also alleviates any future pain with regard to the garbage collector trying 
+        to mark what it thinks are values in what is actually uninitialized memory.
+
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::CopiedBlock):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::finishCreation):
+        (JSC::JSArray::tryFinishCreationUninitialized):
+        (JSC::JSArray::increaseVectorLength):
+        (JSC::JSArray::unshiftCountSlowCase):
+
 2012-02-23  Oliver Hunt  <oliver@apple.com>
 
         Make Interpreter::getStackTrace be able to generate the line number for the top callframe if none is provided
