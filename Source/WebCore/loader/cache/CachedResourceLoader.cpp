@@ -330,8 +330,8 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
             printAccessDeniedMessage(url);
             return false;
         }
-        break;
 #endif
+        break;
     }
 
     switch (type) {

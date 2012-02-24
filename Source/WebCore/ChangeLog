@@ -1,3 +1,10 @@
+2012-02-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative buildfix after r108785 for ENABLE(SVG) && !ENABLE(XSLT) case.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest):
+
 2012-02-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Do not show scripts panel navigator automatically more than once to the same user.
