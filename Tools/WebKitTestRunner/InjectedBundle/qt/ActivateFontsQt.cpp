@@ -41,6 +41,7 @@ void activateFonts()
 {
     WebKit::initializeTestFonts();
     QApplication::setStyle(new QWindowsStyle);
+    QCoreApplication::setAttribute(Qt::AA_Use96Dpi, true);
 }
 
 }
