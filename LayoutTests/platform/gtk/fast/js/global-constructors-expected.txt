@@ -322,7 +322,7 @@ PASS WebKitPoint.toString() is '[object WebKitPointConstructor]'
 PASS WebKitTransitionEvent.toString() is '[object WebKitTransitionEventConstructor]'
 PASS WebSocket.toString() is '[object WebSocketConstructor]'
 PASS WheelEvent.toString() is '[object WheelEventConstructor]'
-FAIL Window.toString() should be [object WindowConstructor]. Was [object DOMWindowConstructor].
+FAIL Window.toString() should be [object WindowConstructor]. Was [object WindowConstructor].
 PASS Worker.toString() is '[object WorkerConstructor]'
 PASS XMLDocument.toString() is '[object DocumentConstructor]'
 PASS XMLHttpRequest.toString() is '[object XMLHttpRequestConstructor]'

@@ -209,7 +209,7 @@ WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
     this.snapshotNodeIndex = node.nodeIndex;
     if (this._type === "string")
         this.hasHoverMessage = true;
-    else if (this._type === "object" && this.isDOMWindow(this._name)) {
+    else if (this._type === "object" && this.isWindow(this._name)) {
         this._name = this.shortenWindowURL(this._name, false);
         this.hasHoverMessage = true;
     } else if (node.flags & tree.snapshot.nodeFlags.canBeQueried)
@@ -343,9 +343,9 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         this._provider.isEmpty(isEmptyCallback.bind(this));
     },
 
-    isDOMWindow: function(fullName)
+    isWindow: function(fullName)
     {
-        return fullName.substr(0, 9) === "DOMWindow";
+        return fullName.substr(0, 9) === "Window";
     },
 
     shortenWindowURL: function(fullName, hasObjectId)

@@ -11,7 +11,7 @@ G = F.bind("'a'", "'b'");
 H = G.bind("'Cannot rebind this!'", "'c'");
 
 F(1,2);
-shouldBe("result", '"[object DOMWindow] -> x:1, y:2"');
+shouldBe("result", '"[object Window] -> x:1, y:2"');
 G(1,2);
 shouldBe("result", '"\'a\' -> x:\'b\', y:1"');
 H(1,2);

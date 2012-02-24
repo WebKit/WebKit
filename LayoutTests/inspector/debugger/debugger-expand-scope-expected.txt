@@ -9,15 +9,15 @@ Dump scope sections:
 Local
     arguments: Arguments[1]
     innerFunctionLocalVar: 2012
-    this: DOMWindow
+    this: Window
     x: 2010
-DOMWindowWith Block
+WindowWith Block
     innerFunction: function innerFunction(x) {
 Closure
     arguments: Arguments[1]
     makeClosureLocalVar: "local.TextParam"
     n: "TextParam"
-DOMWindowGlobal
+WindowGlobal
     <section collapsed>
 Script execution resumed.
 Debugger was disabled.

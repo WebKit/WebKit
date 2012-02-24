@@ -73,11 +73,11 @@ InspectorTest.createHeapSnapshotMockWithDOM = function()
         nodes: [
             { fields: ["type", "name", "id", "children_count", "children"],
               types: [["hidden", "object"], "", "", "", { fields: ["type", "name_or_index", "to_node"], types: [["element", "hidden", "internal"], "", ""] }] },
-            // A tree with DOMWindow objects.
+            // A tree with Window objects.
             //
-            //    |----->DOMWindow--->A
+            //    |----->Window--->A
             //    |                \
-            //    |----->DOMWindow--->B--->C
+            //    |----->Window--->B--->C
             //    |        |     \
             //  (root)   hidden   --->D--internal / "native"-->N
             //    |         \         |
@@ -86,8 +86,8 @@ InspectorTest.createHeapSnapshotMockWithDOM = function()
             //    |----->F--->G------>M
             //
             /* (root) */    0,  0,  1, 4, 0,  1, 17, 0, 2, 27, 0, 3, 40, 0, 4, 44,
-            /* DOMWindow */ 1, 11,  2, 2, 0,  1, 51, 0, 2, 55,
-            /* DOMWindow */ 1, 11,  3, 3, 0,  1, 55, 0, 2, 62, 1, 3, 72,
+            /* Window */    1, 11,  2, 2, 0,  1, 51, 0, 2, 55,
+            /* Window */    1, 11,  3, 3, 0,  1, 55, 0, 2, 62, 1, 3, 72,
             /* E */         1,  5,  4, 0,
             /* F */         1,  6,  5, 1, 0,  1, 76,
             /* A */         1,  1,  6, 0,
@@ -99,7 +99,7 @@ InspectorTest.createHeapSnapshotMockWithDOM = function()
             /* N */         1, 10, 12, 0,
             /* M */         1,  9, 13, 0
             ],
-        strings: ["", "A", "B", "C", "D", "E", "F", "G", "H", "M", "N", "DOMWindow", "native"]
+        strings: ["", "A", "B", "C", "D", "E", "F", "G", "H", "M", "N", "Window", "native"]
     };
 };
 

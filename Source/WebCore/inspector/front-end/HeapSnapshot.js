@@ -591,9 +591,9 @@ WebInspector.HeapSnapshotNode.prototype = {
         return this._type() === this._snapshot._nodeSyntheticType;
     },
 
-    get isDOMWindow()
+    get isWindow()
     {
-        return this.name.substr(0, 9) === "DOMWindow";
+        return this.name.substr(0, 9) === "Window";
     },
 
     get isDetachedDOMTreesRoot()
@@ -945,10 +945,10 @@ WebInspector.HeapSnapshot.prototype = {
     {
         this._distancesToWindow = new Array(this.nodeCount);
 
-        // bfs for DOMWindow roots
+        // bfs for Window roots
         var list = [];
         for (var iter = this.rootNode.edges; iter.hasNext(); iter.next()) {
-            if (iter.edge.node.isDOMWindow) {
+            if (iter.edge.node.isWindow) {
                 list.push(iter.edge.node);
                 this._distancesToWindow[iter.edge.node.nodeIndex] = 0;
             }
@@ -1174,14 +1174,14 @@ WebInspector.HeapSnapshot.prototype = {
 
     _markQueriableHeapObjects: function()
     {
-        // Allow runtime properties query for objects accessible from DOMWindow objects
+        // Allow runtime properties query for objects accessible from Window objects
         // via regular properties, and for DOM wrappers. Trying to access random objects
         // can cause a crash due to insonsistent state of internal properties of wrappers.
         var flag = this._nodeFlags.canBeQueried;
 
         var list = [];
         for (var iter = this.rootNode.edges; iter.hasNext(); iter.next()) {
-            if (iter.edge.node.isDOMWindow)
+            if (iter.edge.node.isWindow)
                 list.push(iter.edge.node);
         }
 

@@ -51,5 +51,5 @@ PASS: canGet('targetWindow.objectPrototypeCustomProperty') should be 'false' and
 PASS: canSet('targetWindow.objectPrototypeCustomProperty') should be 'false' and is.
 PASS: canGet('targetWindow.toString') should be 'true' and is.
 PASS: canSet('targetWindow.toString') should be 'false' and is.
-PASS: toString('targetWindow', '') should be '[object DOMWindow]' and is.
+PASS: toString('targetWindow', '') should be '[object Window]' and is.
 

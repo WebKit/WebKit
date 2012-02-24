@@ -8,12 +8,12 @@ Script execution paused.
 Dump scope sections:
 Local
     innerFunctionLocalVar: 2012
-    this: DOMWindow
+    this: Window
     x: 2010
 Closure
     makeClosureLocalVar: "local.TextParam"
     n: "TextParam"
-DOMWindowGlobal
+WindowGlobal
     <section collapsed>
 Script execution resumed.
 Debugger was disabled.

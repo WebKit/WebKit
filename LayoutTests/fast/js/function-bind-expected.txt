@@ -3,7 +3,7 @@ Tests Function.bind.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS result is "[object DOMWindow] -> x:1, y:2"
+PASS result is "[object Window] -> x:1, y:2"
 PASS result is "'a' -> x:'b', y:1"
 PASS result is "'a' -> x:'b', y:'c'"
 PASS result is "[object Object] -> x:1, y:2"

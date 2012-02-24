@@ -33,8 +33,8 @@ PASS: (function() { var eval = window.eval; return eval("z = 5; window.z"); })()
 ----- This Object: -----
 
 PASS: eval("this") should be ["this" object passed to .call()] and is.
-PASS: window.eval("this") should be [object DOMWindow] and is.
-PASS: globalEval("this") should be [object DOMWindow] and is.
-PASS: localEval("this") should be [object DOMWindow] and is.
-PASS: (function() { var eval = window.eval; return eval("this"); })() should be [object DOMWindow] and is.
+PASS: window.eval("this") should be [object Window] and is.
+PASS: globalEval("this") should be [object Window] and is.
+PASS: localEval("this") should be [object Window] and is.
+PASS: (function() { var eval = window.eval; return eval("this"); })() should be [object Window] and is.
 

@@ -128,9 +128,9 @@ FAIL jsWrapperClass(document.evaluate('//*', document, document.createNSResolver
 
 Other
 
-FAIL jsWrapperClass(window) should be DOMWindow. Was global.
-FAIL jsWrapperClass(window.__proto__) should be DOMWindowPrototype. Was Object.
-FAIL jsWrapperClass(window.constructor) should be DOMWindowConstructor. Was Function.
+FAIL jsWrapperClass(window) should be Window. Was global.
+FAIL jsWrapperClass(window.__proto__) should be WindowPrototype. Was Object.
+FAIL jsWrapperClass(window.constructor) should be WindowConstructor. Was Function.
 
 HTML DOM
 

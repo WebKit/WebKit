@@ -128,9 +128,9 @@ PASS jsWrapperClass(document.evaluate('//*', document, document.createNSResolver
 
 Other
 
-PASS jsWrapperClass(window) is 'DOMWindow'
-PASS jsWrapperClass(window.__proto__) is 'DOMWindowPrototype'
-PASS jsWrapperClass(window.constructor) is 'DOMWindowConstructor'
+PASS jsWrapperClass(window) is 'Window'
+PASS jsWrapperClass(window.__proto__) is 'WindowPrototype'
+PASS jsWrapperClass(window.constructor) is 'WindowConstructor'
 
 HTML DOM
 

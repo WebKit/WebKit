@@ -7,8 +7,8 @@ PASS [object Object] === [object Object]
 PASS true === true
 PASS true === true
 PASS true === true
-PASS [object DOMWindow] === [object DOMWindow]
-PASS [object DOMWindow] === [object DOMWindow]
+PASS [object Window] === [object Window]
+PASS [object Window] === [object Window]
 PASS [object Object] === [object Object]
  PASSED! 
 PASS successfullyParsed is true

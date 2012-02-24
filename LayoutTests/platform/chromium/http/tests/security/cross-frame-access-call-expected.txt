@@ -67,7 +67,7 @@ PASS: window.getMatchedCSSRules.call(targetWindow, document.body, '') should be 
 PASS: window.openDatabase.call(targetWindow, 'name', '1.0', 'description', 0) should be 'undefined' and is.
 PASS: window.atob.call(targetWindow, 'string') should be 'undefined' and is.
 PASS: window.btoa.call(targetWindow, 'string') should be 'undefined' and is.
-*** FAIL: window.open.call(targetWindow, '') should be 'undefined' but instead is [object DOMWindow]. ***
+*** FAIL: window.open.call(targetWindow, '') should be 'undefined' but instead is [object Window]. ***
 PASS: window.addEventListener.call(targetWindow, 'load', null, false); should be 'undefined' and is.
 PASS: window.removeEventListener.call(targetWindow, 'load', null, false); should be 'undefined' and is.
 PASS: window.clearTimeout.call(targetWindow, 0); should be 'undefined' and is.

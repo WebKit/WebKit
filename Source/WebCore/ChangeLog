@@ -1,3 +1,21 @@
+2012-02-23  Erik Arvidsson  <arv@chromium.org>
+
+        Rename DOMWindow to Window in the bindings
+        https://bugs.webkit.org/show_bug.cgi?id=78721
+
+        Reviewed by Adam Barth.
+
+        Covered by existing tests.
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGenericObjectNode):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.isWindow):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotNode.prototype.get isWindow):
+        (WebInspector.HeapSnapshot.prototype._calculateObjectToWindowDistance):
+        (WebInspector.HeapSnapshot.prototype._markQueriableHeapObjects):
+        * page/DOMWindow.idl:
+
 2012-02-23  Shinya Kawanaka  <shinyak@chromium.org>
 
         NodeRenderingContext should have ShadowRootList instead of ShadowRoot.

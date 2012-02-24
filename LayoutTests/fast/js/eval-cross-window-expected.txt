@@ -33,8 +33,8 @@ PASS: frames[0].eval("z = 4; top.z") should be EvalError and is.
 
 ----- This Object: -----
 
-PASS: window.eval("this") should be [object DOMWindow] and is.
-PASS: frames[0].eval("this") should be [object DOMWindow] and is.
+PASS: window.eval("this") should be [object Window] and is.
+PASS: frames[0].eval("this") should be [object Window] and is.
 PASS: window.eval("this") should be EvalError and is.
 PASS: frames[0].eval("this") should be EvalError and is.
 

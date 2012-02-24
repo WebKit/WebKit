@@ -80,14 +80,14 @@ Exception
 
 
 Unmodified window
-window : [object DOMWindow]
-[window] : [object DOMWindow]
-String(window) : [object DOMWindow]
-String([window]) : [object DOMWindow]
-window.toString() : [object DOMWindow]
-[window].toString() : [object DOMWindow]
-window.valueOf() : [object DOMWindow]
-[window].valueOf() : [object DOMWindow]
+window : [object Window]
+[window] : [object Window]
+String(window) : [object Window]
+String([window]) : [object Window]
+window.toString() : [object Window]
+[window].toString() : [object Window]
+window.valueOf() : [object Window]
+[window].valueOf() : [object Window]
 
 window with modified toString and valueOf
 window : valueOf

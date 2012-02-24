@@ -40,7 +40,7 @@ Output format of an empty function is different.
 toString-and-valueOf-override-diff-win.txt
 --------------------------
 This test differs only in text.  V8 typeerror messages are slightly
-different, and the global object is of type global instead of 'DOMWindow'
+different, and the global object is of type global instead of 'Window'
 
 kde\crash-2-expected.txt
 --------------------------

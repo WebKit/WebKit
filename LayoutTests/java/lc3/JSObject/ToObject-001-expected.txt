@@ -41,7 +41,7 @@ FAIL dt.setObject( MyObject ); dt.PUB_OBJECT should be function MyObject(stringV
 } (of type object).
 PASS dt.setObject( MyObject ); dt.getObject() is MyObject
 PASS dt.getObject().constructor is Function
-FAIL dt.setObject( THIS ); dt.PUB_OBJECT should be [object DOMWindow]. Was [object DOMWindow].
+FAIL dt.setObject( THIS ); dt.PUB_OBJECT should be [object Window]. Was [object Window].
 PASS dt.setObject( THIS ); dt.getObject() is this
 PASS dt.getObject().constructor is this.constructor
 FAIL dt.setObject( Math ); dt.PUB_OBJECT should be [object Math]. Was [object Math].

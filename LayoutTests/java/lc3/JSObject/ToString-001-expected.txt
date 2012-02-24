@@ -33,8 +33,8 @@ FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find var
 PASS dt.setStringObject( MyObject ); dt.PUB_STRING +'' is MyObject.toString()
 PASS dt.setStringObject( MyObject ); dt.getStringObject() +'' is MyObject.toString()
 FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
-FAIL dt.setStringObject( THIS ); dt.PUB_STRING +'' should be [object global]. Was [object DOMWindow].
-FAIL dt.setStringObject( THIS ); dt.getStringObject() +'' should be [object global]. Was [object DOMWindow].
+FAIL dt.setStringObject( THIS ); dt.PUB_STRING +'' should be [object global]. Was [object Window].
+FAIL dt.setStringObject( THIS ); dt.getStringObject() +'' should be [object global]. Was [object Window].
 FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
 PASS dt.setStringObject( Math ); dt.PUB_STRING +'' is "[object Math]"
 PASS dt.setStringObject( Math ); dt.getStringObject() +'' is "[object Math]"

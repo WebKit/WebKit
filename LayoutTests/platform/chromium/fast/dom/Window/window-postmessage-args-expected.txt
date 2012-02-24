@@ -6,8 +6,8 @@ PASS: Posting message ('2', c): threw exception TypeError: TransferArray argumen
 PASS: Posting message ('2', c): threw exception TypeError: TransferArray argument must be an object
 PASS: Posting message ('3', [object Object]): threw exception TypeError: TransferArray argument has no length attribute
 PASS: Posting message ('3', [object Object]): threw exception TypeError: TransferArray argument has no length attribute
-PASS: Posting message ('4', [object DOMWindow]) did not throw an exception
-PASS: Posting message ('4', [object DOMWindow]) did not throw an exception
+PASS: Posting message ('4', [object Window]) did not throw an exception
+PASS: Posting message ('4', [object Window]) did not throw an exception
 PASS: Posting message ('4a', *) did not throw an exception
 PASS: Posting message ('4a', *) did not throw an exception
 PASS: Posting message ('5', null) did not throw an exception

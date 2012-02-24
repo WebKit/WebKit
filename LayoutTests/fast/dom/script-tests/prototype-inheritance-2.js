@@ -154,7 +154,7 @@ function pushPropertyValuesWithUnseenTypes(toCrawl, parentObject, parentPath)
             continue;
          // We already have other tests which cover window.Foo constructor objects, so skip them.
          // fooInstance.constructor is the case we want to catch here.
-        if (parentType == "DOMWindow" && type.match("Constructor$") && property != "constructor")
+        if (parentType == "Window" && type.match("Constructor$") && property != "constructor")
             continue;
         if (!resultsByType[type])
             toCrawl.push(makeCrawlObject(value, valuePath));

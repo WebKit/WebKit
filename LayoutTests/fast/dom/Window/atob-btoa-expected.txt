@@ -15,7 +15,7 @@ PASS window.btoa() is "dW5kZWZpbmVk"
 PASS window.btoa("") is ""
 PASS window.btoa(null) is ""
 PASS window.btoa(undefined) is "dW5kZWZpbmVk"
-PASS window.btoa(window) is "W29iamVjdCBET01XaW5kb3dd"
+PASS window.btoa(window) is "W29iamVjdCBXaW5kb3dd"
 PASS window.btoa("éé") is "6ek="
 PASS window.btoa("\u0080\u0081") is "gIE="
 PASS window.btoa("тест") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.

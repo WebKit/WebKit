@@ -1,6 +1,6 @@
 This test dumps all of the properties that are reachable from the window object, along with their types.
 
-window [object DOMWindow]
+window [object Window]
 window.Array [function]
 window.Attr [object AttrConstructor]
 window.Attr.prototype [object AttrPrototype]
@@ -2275,8 +2275,8 @@ window.console.timeEnd [function]
 window.console.timeStamp [function]
 window.console.trace [function]
 window.console.warn [function]
-window.constructor [object DOMWindowConstructor]
-window.constructor.prototype [object DOMWindowPrototype]
+window.constructor [object WindowConstructor]
+window.constructor.prototype [object WindowPrototype]
 window.constructor.prototype.addEventListener [function]
 window.constructor.prototype.alert [function]
 window.constructor.prototype.atob [function]

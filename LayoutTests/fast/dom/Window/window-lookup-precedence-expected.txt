@@ -1,4 +1,4 @@
-Tests lookup precedence for properties on DOMWindow objects in the presence of a child frame, and that IDL properties defined in the prototype (window.location, window.focus, etc) have higher lookup precedence than named document elements (such as input elements).
+Tests lookup precedence for properties on Window objects in the presence of a child frame, and that IDL properties defined in the prototype (window.location, window.focus, etc) have higher lookup precedence than named document elements (such as input elements).
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -322,16 +322,16 @@ PASS win['XSLTProcessor'] == '[object XSLTProcessorConstructor]' is true
 PASS win['XSLTProcessor'] == '[object XSLTProcessorConstructor]' is true
 PASS win['onload'] is null
 PASS win['onload'] is null
-PASS win['frames'] == '[object DOMWindow]' is true
-PASS win['frames'] == '[object DOMWindow]' is true
-PASS win['parent'] == '[object DOMWindow]' is true
-PASS win['parent'] == '[object DOMWindow]' is true
-PASS win['self'] == '[object DOMWindow]' is true
-PASS win['self'] == '[object DOMWindow]' is true
-PASS win['top'] == '[object DOMWindow]' is true
-PASS win['top'] == '[object DOMWindow]' is true
-PASS win['window'] == '[object DOMWindow]' is true
-PASS win['window'] == '[object DOMWindow]' is true
+PASS win['frames'] == '[object Window]' is true
+PASS win['frames'] == '[object Window]' is true
+PASS win['parent'] == '[object Window]' is true
+PASS win['parent'] == '[object Window]' is true
+PASS win['self'] == '[object Window]' is true
+PASS win['self'] == '[object Window]' is true
+PASS win['top'] == '[object Window]' is true
+PASS win['top'] == '[object Window]' is true
+PASS win['window'] == '[object Window]' is true
+PASS win['window'] == '[object Window]' is true
 PASS win['locationbar'] == '[object BarInfo]' is true
 PASS win['locationbar'] == '[object BarInfo]' is true
 PASS win['menubar'] == '[object BarInfo]' is true

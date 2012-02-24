@@ -17,7 +17,7 @@
 <div id="console"></div>
 
 <script>
-description('Tests lookup precedence for properties on DOMWindow objects in the presence of a child frame, and that IDL properties defined in the prototype (window.location, window.focus, etc) have higher lookup precedence than named document elements (such as input elements).');
+description('Tests lookup precedence for properties on Window objects in the presence of a child frame, and that IDL properties defined in the prototype (window.location, window.focus, etc) have higher lookup precedence than named document elements (such as input elements).');
 
 var win = window.window;
 var myInput = document.getElementById("MYINPUT");

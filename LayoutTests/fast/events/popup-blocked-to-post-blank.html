@@ -20,7 +20,7 @@ function test() {
 </head>
 <body onload="test()">
 If the POST pop-up was not blocked then there will be an ALERT containing a
-DOMWindow object. Otherwise, the test passes.
+Window object. Otherwise, the test passes.
 <form id="form" action="data:text/html,<script>alert(window)</script>" target="_blank">
 <input type="submit" value="Submit to new window"/>
 </form>
