@@ -74,6 +74,8 @@ namespace WebCore {
     class TiledBackingStoreClient { };
 #endif
 
+    class TreeScope;
+
     class Frame : public RefCounted<Frame>, public TiledBackingStoreClient {
     public:
         static PassRefPtr<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
@@ -123,6 +125,7 @@ namespace WebCore {
         void setIsDisconnected(bool);
         bool excludeFromTextSearch() const;
         void setExcludeFromTextSearch(bool);
+        bool inScope(TreeScope*) const;
 
         void injectUserScripts(UserScriptInjectionTime);
         

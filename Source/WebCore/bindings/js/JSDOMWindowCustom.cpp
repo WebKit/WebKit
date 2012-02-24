@@ -99,12 +99,12 @@ JSValue nonCachingStaticFunctionGetter(ExecState* exec, JSValue, const Identifie
 
 static JSValue childFrameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
-    return toJS(exec, static_cast<JSDOMWindow*>(asObject(slotBase))->impl()->frame()->tree()->child(identifierToAtomicString(propertyName))->domWindow());
+    return toJS(exec, static_cast<JSDOMWindow*>(asObject(slotBase))->impl()->frame()->tree()->scopedChild(identifierToAtomicString(propertyName))->domWindow());
 }
 
 static JSValue indexGetter(ExecState* exec, JSValue slotBase, unsigned index)
 {
-    return toJS(exec, static_cast<JSDOMWindow*>(asObject(slotBase))->impl()->frame()->tree()->child(index)->domWindow());
+    return toJS(exec, static_cast<JSDOMWindow*>(asObject(slotBase))->impl()->frame()->tree()->scopedChild(index)->domWindow());
 }
 
 static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
@@ -220,7 +220,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identi
     // naming frames things that conflict with window properties that
     // are in Moz but not IE. Since we have some of these, we have to do
     // it the Moz way.
-    if (thisObject->impl()->frame()->tree()->child(identifierToAtomicString(propertyName))) {
+    if (thisObject->impl()->frame()->tree()->scopedChild(identifierToAtomicString(propertyName))) {
         slot.setCustom(thisObject, childFrameGetter);
         return true;
     }
@@ -244,7 +244,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identi
     // allow window[1] or parent[1] etc. (#56983)
     bool ok;
     unsigned i = propertyName.toArrayIndex(ok);
-    if (ok && i < thisObject->impl()->frame()->tree()->childCount()) {
+    if (ok && i < thisObject->impl()->frame()->tree()->scopedChildCount()) {
         slot.setCustomIndex(thisObject, i, indexGetter);
         return true;
     }
@@ -310,7 +310,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, co
     // naming frames things that conflict with window properties that
     // are in Moz but not IE. Since we have some of these, we have to do
     // it the Moz way.
-    if (thisObject->impl()->frame()->tree()->child(identifierToAtomicString(propertyName))) {
+    if (thisObject->impl()->frame()->tree()->scopedChild(identifierToAtomicString(propertyName))) {
         PropertySlot slot;
         slot.setCustom(thisObject, childFrameGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
@@ -319,7 +319,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, co
     
     bool ok;
     unsigned i = propertyName.toArrayIndex(ok);
-    if (ok && i < thisObject->impl()->frame()->tree()->childCount()) {
+    if (ok && i < thisObject->impl()->frame()->tree()->scopedChildCount()) {
         PropertySlot slot;
         slot.setCustomIndex(thisObject, i, indexGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);

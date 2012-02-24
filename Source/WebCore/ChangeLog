@@ -1,3 +1,52 @@
+2012-02-23  MORITA Hajime  <morrita@google.com>
+
+        This test checks select attribute of content element is valid.
+        https://bugs.webkit.org/show_bug.cgi?id=65595
+
+        Reviewed by Dimitri Glazkov.
+
+        This change introduces FrameTree::scopedChild() and
+        FrameTree::scopedChild(), which can be used for scope-aware
+        frame lookup. Using these, the named accessor and the indexed
+        acceccor on Document, and Window.length are now TreeScope
+        aware. They don't count iframes in Shadow DOM.
+
+        This change also removes FrameTree::m_childCount since
+        Frame::childCount() is no longer in the hot
+        path. m_scopedChildCount is added instead.
+
+        Test: fast/dom/shadow/iframe-shadow.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::childFrameGetter):
+        (WebCore::indexGetter):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::indexedPropertyGetter):
+        (WebCore::V8DOMWindow::namedPropertyGetter):
+        (WebCore::V8DOMWindow::namedSecurityCheck):
+        (WebCore::V8DOMWindow::indexedSecurityCheck):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::length):
+        * page/Frame.cpp:
+        (WebCore::Frame::inScope):
+        (WebCore):
+        * page/Frame.h:
+        (WebCore):
+        (Frame):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::actuallyAppendChild):
+        (WebCore::FrameTree::removeChild):
+        (WebCore::FrameTree::scopedChild):
+        (WebCore):
+        (WebCore::FrameTree::scopedChildCount):
+        (WebCore::FrameTree::childCount):
+        * page/FrameTree.h:
+        (WebCore):
+        (FrameTree):
+        (WebCore::FrameTree::FrameTree):
+
 2012-02-23  Philip Rogers  <pdr@google.com>
 
         Recompute font metrics on scale changes

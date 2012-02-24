@@ -229,6 +229,15 @@ Frame::~Frame()
     }
 }
 
+bool Frame::inScope(TreeScope* scope) const
+{
+    ASSERT(scope);
+    HTMLFrameOwnerElement* owner = document()->ownerElement();
+    // Scoping test should be done only for child frames.
+    ASSERT(owner);
+    return owner->treeScope() == scope;
+}
+
 void Frame::addDestructionObserver(FrameDestructionObserver* observer)
 {
     m_destructionObservers.add(observer);

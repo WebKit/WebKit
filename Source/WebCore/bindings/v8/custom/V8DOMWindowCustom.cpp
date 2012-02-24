@@ -476,7 +476,7 @@ v8::Handle<v8::Value> V8DOMWindow::indexedPropertyGetter(uint32_t index, const v
     if (!frame)
         return notHandledByInterceptor();
 
-    Frame* child = frame->tree()->child(index);
+    Frame* child = frame->tree()->scopedChild(index);
     if (child)
         return toV8(child->domWindow());
 
@@ -499,7 +499,7 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
 
     // Search sub-frames.
     AtomicString propName = v8StringToAtomicWebCoreString(name);
-    Frame* child = frame->tree()->child(propName);
+    Frame* child = frame->tree()->scopedChild(propName);
     if (child)
         return toV8(child->domWindow());
 
@@ -556,14 +556,15 @@ bool V8DOMWindow::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::V
         DEFINE_STATIC_LOCAL(AtomicString, nameOfProtoProperty, ("__proto__"));
 
         String name = toWebCoreString(key);
+        Frame* childFrame = target->tree()->scopedChild(name);
         // Notice that we can't call HasRealNamedProperty for ACCESS_HAS
         // because that would generate infinite recursion.
-        if (type == v8::ACCESS_HAS && target->tree()->child(name))
+        if (type == v8::ACCESS_HAS && childFrame)
             return true;
         // We need to explicitly compare against nameOfProtoProperty because
         // V8's JSObject::LocalLookup finds __proto__ before
         // interceptors and even when __proto__ isn't a "real named property".
-        if (type == v8::ACCESS_GET && target->tree()->child(name) && !host->HasRealNamedProperty(key->ToString()) && name != nameOfProtoProperty)
+        if (type == v8::ACCESS_GET && childFrame && !host->HasRealNamedProperty(key->ToString()) && name != nameOfProtoProperty)
             return true;
     }
 
@@ -583,12 +584,13 @@ bool V8DOMWindow::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t inde
     Frame* target = targetWindow->frame();
     if (!target)
         return false;
+    Frame* childFrame =  target->tree()->scopedChild(index);
 
     // Notice that we can't call HasRealNamedProperty for ACCESS_HAS
     // because that would generate infinite recursion.
-    if (type == v8::ACCESS_HAS && target->tree()->child(index))
+    if (type == v8::ACCESS_HAS && childFrame)
         return true;
-    if (type == v8::ACCESS_GET && target->tree()->child(index) && !host->HasRealIndexedProperty(index))
+    if (type == v8::ACCESS_GET && childFrame && !host->HasRealIndexedProperty(index))
         return true;
 
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), target, false);
