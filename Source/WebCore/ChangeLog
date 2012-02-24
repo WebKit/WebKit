@@ -1,3 +1,64 @@
+2012-02-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Implement limited parsing of -webkit-grid-column and -webkit-grid-row
+        https://bugs.webkit.org/show_bug.cgi?id=79151
+
+        Reviewed by Ojan Vafai.
+
+        Test: fast/css-grid-layout/grid-item-column-row-get-set.html
+
+        This change implements a subset of the grammar:
+
+        -webkit-grid-{row|column} := <integer> | 'auto'
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added the new files to our build systems.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridPosition): Check that we have the right translated grammar
+        (this function will be more useful once we implement more of the grammar).
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Added handling for the new properties.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        Allow only 'auto' or <integer>.
+
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        grid-colum and grid-row are not inherited.
+
+        * css/CSSPropertyNames.in:
+        Added the 2 new properties.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleGridItemData.cpp: Added.
+        (WebCore::StyleGridItemData::StyleGridItemData):
+        * rendering/style/StyleGridItemData.h: Added.
+        (StyleGridItemData):
+        (WebCore::StyleGridItemData::create):
+        (WebCore::StyleGridItemData::copy):
+        (WebCore::StyleGridItemData::operator==):
+        (WebCore::StyleGridItemData::operator!=):
+        Implemented the minimum working class.
+
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (StyleRareNonInheritedData):
+        Added StyleGridItemData to the class StyleRareNonInheritedData.
+
 2012-02-24  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: IDBObjectStore.count() and IDBIndex.count() should accept key argument

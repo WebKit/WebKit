@@ -3688,6 +3688,8 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleGeneratedImage.h \
 	Source/WebCore/rendering/style/StyleGridData.cpp \
 	Source/WebCore/rendering/style/StyleGridData.h \
+	Source/WebCore/rendering/style/StyleGridItemData.cpp \
+	Source/WebCore/rendering/style/StyleGridItemData.h \
 	Source/WebCore/rendering/style/StyleImage.h \
 	Source/WebCore/rendering/style/StyleInheritedData.cpp \
 	Source/WebCore/rendering/style/StyleInheritedData.h \

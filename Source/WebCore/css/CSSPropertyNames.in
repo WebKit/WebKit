@@ -376,6 +376,8 @@ z-index
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid-columns
 -webkit-grid-rows
+-webkit-grid-column
+-webkit-grid-row
 #endif
 #if defined(ENABLE_DASHBOARD_SUPPORT) && ENABLE_DASHBOARD_SUPPORT
 -webkit-dashboard-region

@@ -98,6 +98,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
 #endif
 #if ENABLE(CSS_GRID_LAYOUT)
     , m_grid(o.m_grid)
+    , m_gridItem(o.m_gridItem)
 #endif
     , m_content(o.m_content ? o.m_content->clone() : nullptr)
     , m_counterDirectives(o.m_counterDirectives ? clone(*o.m_counterDirectives) : nullptr)
@@ -165,6 +166,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #endif
 #if ENABLE(CSS_GRID_LAYOUT)
         && m_grid == o.m_grid
+        && m_gridItem == o.m_gridItem
 #endif
         && contentDataEquivalent(o)
         && counterDataEquivalent(o)

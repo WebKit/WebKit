@@ -77,6 +77,7 @@
 
 #if ENABLE(CSS_GRID_LAYOUT)
 #include "StyleGridData.h"
+#include "StyleGridItemData.h"
 #endif
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -814,6 +815,9 @@ public:
 #if ENABLE(CSS_GRID_LAYOUT)
     const Vector<Length>& gridColumns() const { return rareNonInheritedData->m_grid->m_gridColumns; }
     const Vector<Length>& gridRows() const { return rareNonInheritedData->m_grid->m_gridRows; }
+
+    const Length& gridItemColumn() const { return rareNonInheritedData->m_gridItem->m_gridColumn; }
+    const Length& gridItemRow() const { return rareNonInheritedData->m_gridItem->m_gridRow; }
 #endif
 
     const ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow.get(); }
@@ -1240,6 +1244,9 @@ public:
 #if ENABLE(CSS_GRID_LAYOUT)
     void setGridColumns(const Vector<Length>& lengths) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridColumns, lengths); }
     void setGridRows(const Vector<Length>& lengths) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridRows, lengths); }
+
+    void setGridItemColumn(const Length& columnPosition) { SET_VAR(rareNonInheritedData.access()->m_gridItem, m_gridColumn, columnPosition); }
+    void setGridItemRow(const Length& rowPosition) { SET_VAR(rareNonInheritedData.access()->m_gridItem, m_gridRow, rowPosition); }
 #endif
 
     void setMarqueeIncrement(const Length& f) { SET_VAR(rareNonInheritedData.access()->m_marquee, increment, f); }
@@ -1636,6 +1643,10 @@ public:
     }
     static Vector<Length> initialGridColumns() { return initialGridTrackValue(); }
     static Vector<Length> initialGridRows() { return initialGridTrackValue(); }
+
+    // 'auto' is the default.
+    static Length initialGridItemColumn() { return Length(); }
+    static Length initialGridItemRow() { return Length(); }
 #endif
 
     static const AtomicString& initialLineGrid() { return nullAtom; }

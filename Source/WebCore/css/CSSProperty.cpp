@@ -573,6 +573,9 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
 #if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridColumns:
     case CSSPropertyWebkitGridRows:
+
+    case CSSPropertyWebkitGridColumn:
+    case CSSPropertyWebkitGridRow:
 #endif
     case CSSPropertyWebkitLineClamp:
     case CSSPropertyWebkitLogicalWidth:

@@ -3527,6 +3527,8 @@
 		A10BB58B1484E3B300B2E87A /* RenderSVGShape.h in Headers */ = {isa = PBXBuildFile; fileRef = A10BB5891484E3B300B2E87A /* RenderSVGShape.h */; };
 		A10DC76A14747BAB005E2471 /* StyleGridData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A10DC76814747BAB005E2471 /* StyleGridData.cpp */; };
 		A10DC76B14747BAB005E2471 /* StyleGridData.h in Headers */ = {isa = PBXBuildFile; fileRef = A10DC76914747BAB005E2471 /* StyleGridData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A110DB9D14F5DF8700A03B93 /* StyleGridItemData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A110DB9C14F5DF8700A03B93 /* StyleGridItemData.cpp */; };
+		A110DB9B14F5DF7700A03B93 /* StyleGridItemData.h in Headers */ = {isa = PBXBuildFile; fileRef = A110DB9A14F5DF7700A03B93 /* StyleGridItemData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A120ACA413F998CA00FE4AC7 /* LayoutRepainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A120ACA113F9984600FE4AC7 /* LayoutRepainter.cpp */; };
 		A12538D413F9B60A00024754 /* LayoutRepainter.h in Headers */ = {isa = PBXBuildFile; fileRef = A120ACA013F9983700FE4AC7 /* LayoutRepainter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A136A00C1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A136A00A1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp */; };
@@ -10416,6 +10418,8 @@
 		A10BB5891484E3B300B2E87A /* RenderSVGShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGShape.h; sourceTree = "<group>"; };
 		A10DC76814747BAB005E2471 /* StyleGridData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleGridData.cpp; path = style/StyleGridData.cpp; sourceTree = "<group>"; };
 		A10DC76914747BAB005E2471 /* StyleGridData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleGridData.h; path = style/StyleGridData.h; sourceTree = "<group>"; };
+		A110DB9A14F5DF7700A03B93 /* StyleGridItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleGridItemData.h; path = style/StyleGridItemData.h; sourceTree = "<group>"; };
+		A110DB9C14F5DF8700A03B93 /* StyleGridItemData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleGridItemData.cpp; path = style/StyleGridItemData.cpp; sourceTree = "<group>"; };
 		A120ACA013F9983700FE4AC7 /* LayoutRepainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutRepainter.h; sourceTree = "<group>"; };
 		A120ACA113F9984600FE4AC7 /* LayoutRepainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutRepainter.cpp; sourceTree = "<group>"; };
 		A136A00A1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestProgressEventThrottle.cpp; sourceTree = "<group>"; };
@@ -19590,6 +19594,8 @@
 				BCEF44490E6745E0001C1287 /* StyleGeneratedImage.h */,
 				A10DC76814747BAB005E2471 /* StyleGridData.cpp */,
 				A10DC76914747BAB005E2471 /* StyleGridData.h */,
+				A110DB9C14F5DF8700A03B93 /* StyleGridItemData.cpp */,
+				A110DB9A14F5DF7700A03B93 /* StyleGridItemData.h */,
 				BCEF43CE0E673DA1001C1287 /* StyleImage.h */,
 				BC2273010E82F1E600E7F975 /* StyleInheritedData.cpp */,
 				BC2273020E82F1E600E7F975 /* StyleInheritedData.h */,
@@ -23840,6 +23846,7 @@
 				5317612313C516690026E454 /* StyleFlexibleBoxData.h in Headers */,
 				BCEF444A0E6745E0001C1287 /* StyleGeneratedImage.h in Headers */,
 				A10DC76B14747BAB005E2471 /* StyleGridData.h in Headers */,
+				A110DB9B14F5DF7700A03B93 /* StyleGridItemData.h in Headers */,
 				BCEF43CF0E673DA1001C1287 /* StyleImage.h in Headers */,
 				BC2273040E82F1E600E7F975 /* StyleInheritedData.h in Headers */,
 				BC5EB72A0E81DE8100B25965 /* StyleMarqueeData.h in Headers */,
@@ -26905,6 +26912,7 @@
 				5317612213C516690026E454 /* StyleFlexibleBoxData.cpp in Sources */,
 				BCEF447D0E674806001C1287 /* StyleGeneratedImage.cpp in Sources */,
 				A10DC76A14747BAB005E2471 /* StyleGridData.cpp in Sources */,
+				A110DB9D14F5DF8700A03B93 /* StyleGridItemData.cpp in Sources */,
 				BC2273030E82F1E600E7F975 /* StyleInheritedData.cpp in Sources */,
 				BC5EB7290E81DE8100B25965 /* StyleMarqueeData.cpp in Sources */,
 				0FF50271102BA96A0066F39A /* StyleMedia.cpp in Sources */,

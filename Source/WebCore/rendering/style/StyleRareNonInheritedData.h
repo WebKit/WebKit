@@ -48,6 +48,7 @@ class StyleFilterData;
 class StyleFlexibleBoxData;
 #if ENABLE(CSS_GRID_LAYOUT)
 class StyleGridData;
+class StyleGridItemData;
 #endif
 class StyleMarqueeData;
 class StyleMultiColData;
@@ -119,6 +120,7 @@ public:
 
 #if ENABLE(CSS_GRID_LAYOUT)
     DataRef<StyleGridData> m_grid;
+    DataRef<StyleGridItemData> m_gridItem;
 #endif
 
     OwnPtr<ContentData> m_content;

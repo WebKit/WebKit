@@ -2952,6 +2952,22 @@ static bool createGridTrackList(CSSValue* value, Vector<Length>& lengths, CSSSty
 
     return false;
 }
+
+
+static bool createGridPosition(CSSValue* value, Length& position)
+{
+    // For now, we only accept: <integer> | 'auto'
+    if (!value->isPrimitiveValue())
+        return false;
+
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+    if (primitiveValue->getIdent() == CSSValueAuto)
+        return true;
+
+    ASSERT(primitiveValue->isNumber());
+    position.setValue(primitiveValue->getIntValue());
+    return true;
+}
 #endif
 
 void CSSStyleSelector::applyProperty(int id, CSSValue *value)
@@ -3802,6 +3818,21 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (!createGridTrackList(value, lengths, this))
             return;
         m_style->setGridRows(lengths);
+        return;
+    }
+
+    case CSSPropertyWebkitGridColumn: {
+        Length column;
+        if (!createGridPosition(value, column))
+            return;
+        m_style->setGridItemColumn(column);
+        return;
+    }
+    case CSSPropertyWebkitGridRow: {
+        Length row;
+        if (!createGridPosition(value, row))
+            return;
+        m_style->setGridItemRow(row);
         return;
     }
 #endif

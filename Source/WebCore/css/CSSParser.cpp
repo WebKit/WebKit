@@ -1882,6 +1882,11 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitGridColumns:
     case CSSPropertyWebkitGridRows:
         return parseGridTrackList(propId, important);
+
+    case CSSPropertyWebkitGridColumn:
+    case CSSPropertyWebkitGridRow:
+        validPrimitive = id == CSSValueAuto || validUnit(value, FInteger, m_strict);
+        break;
 #endif
     case CSSPropertyWebkitMarginCollapse: {
         const int properties[2] = { CSSPropertyWebkitMarginBeforeCollapse,

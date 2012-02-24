@@ -232,6 +232,9 @@ static const int computedProperties[] = {
 #if ENABLE(CSS_GRID_LAYOUT)
     CSSPropertyWebkitGridColumns,
     CSSPropertyWebkitGridRows,
+
+    CSSPropertyWebkitGridColumn,
+    CSSPropertyWebkitGridRow,
 #endif
     CSSPropertyWebkitHighlight,
     CSSPropertyWebkitHyphenateCharacter,
@@ -912,6 +915,15 @@ static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<Length>& trackLen
     for (size_t i = 0; i < trackLengths.size(); ++i)
         list->append(valueForGridTrackBreadth(trackLengths[i], style, cssValuePool));
     return list.release();
+}
+
+static PassRefPtr<CSSValue> valueForGridPosition(const Length& position, CSSValuePool* cssValuePool)
+{
+    if (position.isAuto())
+        return cssValuePool->createIdentifierValue(CSSValueAuto);
+
+    ASSERT(position.isFixed());
+    return cssValuePool->createValue(position.value(), CSSPrimitiveValue::CSS_NUMBER);
 }
 #endif
 
@@ -1648,6 +1660,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitGridRows: {
             return valueForGridTrackList(style->gridRows(), style.get(), cssValuePool);
         }
+
+        case CSSPropertyWebkitGridColumn:
+            return valueForGridPosition(style->gridItemColumn(), cssValuePool);
+        case CSSPropertyWebkitGridRow:
+            return valueForGridPosition(style->gridItemRow(), cssValuePool);
 #endif
         case CSSPropertyHeight:
             if (renderer) {
