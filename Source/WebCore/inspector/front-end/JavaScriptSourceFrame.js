@@ -274,7 +274,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         if (element.hasStyleClass("webkit-javascript-keyword"))
             return element.textContent === "this" ? element : null;
 
-        if (element !== lineElement || element.querySelectorAll(".source-frame-token").length)
+        if (element !== lineElement || lineElement.childElementCount)
             return null;
 
         // Handle non-highlighted case
