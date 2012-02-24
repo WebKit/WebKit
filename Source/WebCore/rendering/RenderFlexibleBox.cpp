@@ -734,6 +734,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(const OrderedFlexItemList& childr
         child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
 
+        LayoutUnit childCrossAxisExtent;
         if (flexAlignForChild(child) == AlignBaseline) {
             LayoutUnit ascent = marginBoxAscent(child);
             LayoutUnit descent = (crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child)) - ascent;
@@ -741,10 +742,11 @@ void RenderFlexibleBox::layoutAndPlaceChildren(const OrderedFlexItemList& childr
             maxAscent = std::max(maxAscent, ascent);
             maxDescent = std::max(maxDescent, descent);
 
-            if (crossAxisLength().isAuto())
-                setCrossAxisExtent(std::max(crossAxisExtent(), crossAxisBorderAndPaddingExtent() + crossAxisMarginExtentForChild(child) + maxAscent + maxDescent + crossAxisScrollbarExtent()));
-        } else if (crossAxisLength().isAuto())
-            setCrossAxisExtent(std::max(crossAxisExtent(), crossAxisBorderAndPaddingExtent() + crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child) + crossAxisScrollbarExtent()));
+            childCrossAxisExtent = maxAscent + maxDescent;
+        } else
+            childCrossAxisExtent =  crossAxisExtentForChild(child);
+        if (crossAxisLength().isAuto())
+            setCrossAxisExtent(std::max(crossAxisExtent(), crossAxisBorderAndPaddingExtent() + crossAxisMarginExtentForChild(child) + childCrossAxisExtent + crossAxisScrollbarExtent()));
 
         mainAxisOffset += flowAwareMarginStartForChild(child);
 

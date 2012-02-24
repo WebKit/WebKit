@@ -1,3 +1,16 @@
+2012-02-24  Tony Chang  <tony@chromium.org>
+
+        Small refactor in RenderFlexibleBox::layoutAndPlaceChildren
+        https://bugs.webkit.org/show_bug.cgi?id=79420
+
+        Reviewed by Ojan Vafai.
+
+        No new tests, just a refactor.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren): Share some of the logic
+        in computing the cross axis length.
+
 2012-02-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: cannot drag timeline overview window when clicking inside the window
