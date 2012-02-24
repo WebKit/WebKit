@@ -99,6 +99,11 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder* decoder, ResourceRe
 
 void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
 {
+    bool responseIsNull = resourceResponse.isNull();
+    encoder->encode(responseIsNull);
+    if (responseIsNull)
+        return;
+
     encoder->encode(resourceResponse.url().string());
     encoder->encode(static_cast<int32_t>(resourceResponse.httpStatusCode()));
 
@@ -115,6 +120,14 @@ void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder* encoder, const Res
 
 bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
 {
+    bool responseIsNull;
+    if (!decoder->decode(responseIsNull))
+        return false;
+    if (responseIsNull) {
+        resourceResponse = ResourceResponse();
+        return true;
+    }
+
     ResourceResponse response;
 
     String url;

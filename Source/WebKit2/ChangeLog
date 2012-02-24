@@ -1,3 +1,16 @@
+2012-02-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Encode/decode Null ResourceResponse objects in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=79471
+
+        Reviewed by Philippe Normand.
+
+        * Shared/gtk/WebCoreArgumentCodersGtk.cpp:
+        (CoreIPC::::encode): Check whether ResourceResponse is Null before
+        encoding it.
+        (CoreIPC::::decode): Check whether response is Null and create a
+        Null ResourceResponse object in such case.
+
 2012-02-24  Shinya Kawanaka  <shinyak@chromium.org>
 
         SpellCheckRequest needs to know the context where the spellcheck happened.
