@@ -1,3 +1,14 @@
+2012-02-24  David Kilzer  <ddkilzer@apple.com>
+
+        Use xcrun to find compiler paths for Generate Derived Sources build phase script
+        <http://webkit.org/b/79512>
+
+        Reviewed by Mark Rowe.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        (Generate Derived Sources): Use xcrun to find the path to the
+        compiler since that works on both iOS and OS X.
+
 2012-02-24  Anders Carlsson  <andersca@apple.com>
 
         Crash in TileCache::revalidateTiles
