@@ -1,3 +1,9 @@
+2012-02-24  Adam Roben  <aroben@apple.com>
+
+        Mac build fix after r108698
+
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm: Added missing #import.
+
 2012-02-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed speculative buildfix after r108785 for ENABLE(SVG) && !ENABLE(XSLT) case.

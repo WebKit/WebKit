@@ -32,6 +32,7 @@
 #import "FrameView.h"
 #import "Page.h"
 #import "ScrollingThread.h"
+#import "ScrollingTree.h"
 #import "ScrollingTreeState.h"
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/Functional.h>
