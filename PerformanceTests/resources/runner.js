@@ -11,6 +11,10 @@ PerfTestRunner.log = function (text) {
     window.scrollTo(0, document.body.height);
 }
 
+PerfTestRunner.info = function (text) {
+    this.log("Info: " + text);
+}
+
 PerfTestRunner.logInfo = function (text) {
     if (!window.layoutTestController)
         this.log(text);

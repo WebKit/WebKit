@@ -259,6 +259,7 @@ class PerfTestsRunner(object):
     _lines_to_ignore_in_parser_result = [
         re.compile(r'^Running \d+ times$'),
         re.compile(r'^Ignoring warm-up '),
+        re.compile(r'^Info:'),
         re.compile(r'^\d+(.\d+)?$'),
         # Following are for handle existing test like Dromaeo
         re.compile(re.escape("""main frame - has 1 onunload handler(s)""")),

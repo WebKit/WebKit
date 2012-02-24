@@ -1,3 +1,91 @@
+2012-02-24  Kentaro Hara  <haraken@chromium.org>
+
+        Add performance tests for DOM attribute getters and setters
+        https://bugs.webkit.org/show_bug.cgi?id=79208
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds performance micro-benchmarks for DOM attribute
+        getters and setters. We selected DOM attributes from HTMLElement,
+        Element and Node which will most impact on the DOM performance
+        in the real Web and which have different call-paths from another
+        DOM attribute.
+
+        The perf test result in my local Chromium/Linux environment is as follows:
+        median= 14967.0 ms, stdev= 85.2385476178 ms, min= 14861.0 ms, max= 15155.0 ms
+
+        If we run the test with DumpRenderTree, we can get the following test results:
+        Info: [HTMLElement.id] avg=65.76ms, median=65.00ms, stdev=2.14ms, min=63, max=70
+        Info: [HTMLElement.title] avg=64.05ms, median=63.00ms, stdev=1.50ms, min=63, max=67
+        Info: [HTMLElement.lang] avg=64.19ms, median=63.00ms, stdev=1.82ms, min=62, max=67
+        Info: [HTMLElement.dir] avg=64.10ms, median=63.00ms, stdev=1.72ms, min=62, max=68
+        Info: [HTMLElement.className] avg=63.33ms, median=63.00ms, stdev=0.89ms, min=63, max=67
+        Info: [HTMLElement.classList] avg=1946.00ms, median=1945.00ms, stdev=38.22ms, min=1921, max=2110
+        Info: [HTMLElement.tabIndex] avg=83.52ms, median=80.00ms, stdev=6.00ms, min=79, max=94
+        Info: [HTMLElement.draggable] avg=78.14ms, median=81.00ms, stdev=3.51ms, min=74, max=82
+        Info: [HTMLElement.webkitdropzone] avg=64.33ms, median=63.00ms, stdev=1.98ms, min=63, max=68
+        Info: [HTMLElement.hidden] avg=65.57ms, median=64.00ms, stdev=3.27ms, min=63, max=71
+        Info: [HTMLElement.accessKey] avg=64.43ms, median=63.00ms, stdev=2.11ms, min=62, max=68
+        Info: [HTMLElement.children] avg=130.76ms, median=128.00ms, stdev=9.75ms, min=109, max=143
+        Info: [HTMLElement.isContentEditable] avg=74.29ms, median=75.00ms, stdev=2.00ms, min=71, max=77
+        Info: [HTMLElement.spellcheck] avg=79.52ms, median=80.00ms, stdev=2.52ms, min=76, max=82
+        Info: [HTMLElement.innerHTML] avg=279.05ms, median=279.00ms, stdev=1.96ms, min=276, max=283
+        Info: [HTMLElement.innerText] avg=204.14ms, median=203.00ms, stdev=2.95ms, min=200, max=210
+        Info: [HTMLElement.outerHTML] avg=1544.10ms, median=1546.00ms, stdev=15.56ms, min=1514, max=1568
+        Info: [HTMLElement.outerText] avg=216.05ms, median=207.00ms, stdev=18.19ms, min=201, max=247
+        Info: [HTMLElement.contentEditable] avg=334.24ms, median=323.00ms, stdev=36.06ms, min=318, max=446
+        Info: [HTMLElement.id="foo"] avg=53.19ms, median=53.00ms, stdev=1.76ms, min=52, max=58
+        Info: [HTMLElement.title="foo"] avg=63.14ms, median=63.00ms, stdev=0.35ms, min=63, max=64
+        Info: [HTMLElement.lang="foo"] avg=60.86ms, median=61.00ms, stdev=0.56ms, min=60, max=62
+        Info: [HTMLElement.dir="foo"] avg=53.57ms, median=54.00ms, stdev=0.58ms, min=53, max=55
+        Info: [HTMLElement.className="foo"] avg=64.52ms, median=64.00ms, stdev=0.91ms, min=63, max=66
+        Info: [HTMLElement.tabIndex="foo"] avg=367.86ms, median=369.00ms, stdev=8.06ms, min=352, max=380
+        Info: [HTMLElement.draggable="foo"] avg=79.43ms, median=79.00ms, stdev=0.58ms, min=79, max=81
+        Info: [HTMLElement.webkitdropzone="foo"] avg=62.14ms, median=62.00ms, stdev=0.35ms, min=62, max=63
+        Info: [HTMLElement.hidden="foo"] avg=61.67ms, median=62.00ms, stdev=0.71ms, min=61, max=64
+        Info: [HTMLElement.accessKey="foo"] avg=61.86ms, median=62.00ms, stdev=0.56ms, min=61, max=63
+        Info: [HTMLElement.spellcheck="foo"] avg=79.57ms, median=80.00ms, stdev=0.58ms, min=78, max=80
+        Info: [HTMLElement.innerHTML="foo"] avg=1176.67ms, median=1169.00ms, stdev=26.60ms, min=1146, max=1246
+        Info: [HTMLElement.innerText="foo"] avg=51.62ms, median=52.00ms, stdev=0.72ms, min=50, max=53
+        Info: [Element.tagName] avg=79.52ms, median=80.00ms, stdev=1.05ms, min=78, max=81
+        Info: [Element.style] avg=126.19ms, median=126.00ms, stdev=10.40ms, min=104, max=161
+        Info: [Element.offsetLeft] avg=98.95ms, median=104.00ms, stdev=4.01ms, min=100, max=99
+        Info: [Element.clientLeft] avg=98.33ms, median=102.00ms, stdev=2.59ms, min=100, max=99
+        Info: [Element.scrollLeft] avg=103.29ms, median=96.00ms, stdev=15.63ms, min=100, max=97
+        Info: [Element.dataset] avg=2448.62ms, median=2441.00ms, stdev=20.43ms, min=2426, max=2503
+        Info: [Element.firstElementChild] avg=58.71ms, median=58.00ms, stdev=2.37ms, min=57, max=65
+        Info: [Element.lastElementChild] avg=56.33ms, median=55.00ms, stdev=1.83ms, min=54, max=59
+        Info: [Element.previousElementSibling] avg=52.95ms, median=52.00ms, stdev=1.70ms, min=52, max=57
+        Info: [Element.nextElementSibling] avg=58.48ms, median=58.00ms, stdev=1.79ms, min=57, max=63
+        Info: [Element.childElementCount] avg=64.57ms, median=64.00ms, stdev=1.81ms, min=63, max=71
+        Info: [Element.onload] avg=98.38ms, median=98.00ms, stdev=0.49ms, min=98, max=99
+        Info: [Element.scrollLeft="foo"] avg=95.24ms, median=95.00ms, stdev=0.92ms, min=94, max=98
+        Info: [Element.onload="foo"] avg=67.14ms, median=67.00ms, stdev=0.56ms, min=66, max=68
+        Info: [Node.nodeName] avg=76.29ms, median=76.00ms, stdev=0.63ms, min=75, max=77
+        Info: [Node.nodeType] avg=53.05ms, median=52.00ms, stdev=2.61ms, min=52, max=61
+        Info: [Node.parentNode] avg=53.52ms, median=53.00ms, stdev=1.22ms, min=52, max=56
+        Info: [Node.childNodes] avg=118.33ms, median=123.00ms, stdev=8.85ms, min=107, max=129
+        Info: [Node.firstChild] avg=53.62ms, median=53.00ms, stdev=1.13ms, min=51, max=55
+        Info: [Node.lastChild] avg=53.14ms, median=53.00ms, stdev=1.21ms, min=52, max=55
+        Info: [Node.previousSibling] avg=51.86ms, median=51.00ms, stdev=1.55ms, min=50, max=54
+        Info: [Node.nextSibling] avg=52.86ms, median=54.00ms, stdev=1.81ms, min=50, max=55
+        Info: [Node.attributes] avg=2027.71ms, median=2026.00ms, stdev=10.48ms, min=2010, max=2051
+        Info: [Node.ownerDocument] avg=152.14ms, median=152.00ms, stdev=1.73ms, min=149, max=155
+        Info: [Node.namespaceURI] avg=60.86ms, median=59.00ms, stdev=3.85ms, min=56, max=66
+        Info: [Node.localName] avg=60.00ms, median=59.00ms, stdev=2.71ms, min=57, max=66
+        Info: [Node.baseURI] avg=671.10ms, median=668.00ms, stdev=10.66ms, min=659, max=706
+        Info: [Node.parentElement] avg=55.05ms, median=56.00ms, stdev=2.15ms, min=52, max=58
+        Info: [Node.nodeValue] avg=61.24ms, median=60.00ms, stdev=2.56ms, min=59, max=68
+        Info: [Node.prefix] avg=60.90ms, median=58.00ms, stdev=4.26ms, min=57, max=68
+        Info: [Node.textContent] avg=149.71ms, median=149.00ms, stdev=1.12ms, min=148, max=152
+        Info: [Node.nodeValue="foo"] avg=23.62ms, median=23.00ms, stdev=0.72ms, min=23, max=25
+        Info: [Node.prefix="foo"] avg=49.57ms, median=49.00ms, stdev=0.73ms, min=49, max=51
+        Info: [Node.textContent="foo"] avg=145.81ms, median=140.00ms, stdev=17.43ms, min=138, max=199
+
+        * Bindings/dom_attributes.html: Added.
+        * resources/runner.js:
+        (PerfTestRunner.info):
+
 2012-02-22  Kentaro Hara  <haraken@chromium.org>
 
         Add performance tests for the Element.id getter and setter
