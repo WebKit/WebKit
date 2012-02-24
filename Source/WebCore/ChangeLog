@@ -1,3 +1,16 @@
+2012-02-24  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Fix Chromium Android build by building HarfBuzzShaperBase.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=79497
+
+        Reviewed by Tony Gentilcore.
+
+        The Chromium Android build was broken by revision r108733, as the
+        HarfBuzzShaperBase.cpp file also should have been included for Android.
+        Fix the build by including it.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-02-24  Yael Aharon  <yael.aharon@nokia.com>
 
         [Texmap] Consolidate the common parts of TextureMapperGL::drawTexture
