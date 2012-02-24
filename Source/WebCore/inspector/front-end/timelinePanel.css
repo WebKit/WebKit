@@ -131,7 +131,7 @@
     opacity: 0.2;
     border-right: 1px solid black;
     border-left: 1px solid black;
-    z-index: 250;
+    z-index: 150;
 }
 
 .timeline-window-resizer {
