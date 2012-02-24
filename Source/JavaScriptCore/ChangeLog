@@ -1,5 +1,14 @@
 2012-02-24  Adam Roben  <aroben@apple.com>
 
+        Undo the BUILDING_WTF part of r108808
+
+        This broke the build, which is obviously worse than the linker warning it was trying to
+        solve.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+
+2012-02-24  Adam Roben  <aroben@apple.com>
+
         Fix linker warnings on Windows
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Removed symbols that are already
