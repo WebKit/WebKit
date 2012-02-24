@@ -133,6 +133,9 @@
         "SoupNetwork": {
             "filename": r"Source/WebCore/platform/network/soup/",
         },
+        "ScrollingCoordinator": {
+            "filename": r"Source/WebCore/page/scrolling/",
+        }
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -162,6 +165,7 @@
         "EFL": [ "kubo@profusion.mobi", ],
         "CMake": [ "kubo@profusion.mobi", ],
         "SoupNetwork": [ "kubo@profusion.mobi", ],
+        "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org" ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "
