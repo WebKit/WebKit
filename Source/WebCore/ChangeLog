@@ -1,3 +1,89 @@
+2012-02-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add an empty skeleton of KURL for WTFURL
+        https://bugs.webkit.org/show_bug.cgi?id=78990
+
+        Reviewed by Adam Barth.
+
+        Add an empty skeleton of KURL based on WTFURL.
+
+        With WTFURL, the data of KURL is in an implicitely shared object
+        named KURLWTFURLImpl.
+
+        In KURLWTFURLImpl, KURL created with invalid URL would be stored
+        as a String. A valid URL would be stored as a ParsedURL.
+
+        * ForwardingHeaders/wtf/url/ParsedURL.h: Added.
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/KURL.cpp:
+        (WebCore):
+        * platform/KURL.h:
+        (KURL):
+        (WebCore::KURL::KURL):
+        (WebCore::KURL::isHashTableDeletedValue):
+        (WebCore):
+        * platform/KURLWTFURL.cpp: Added.
+        (WebCore):
+        (WebCore::KURL::KURL):
+        (WebCore::KURL::copy):
+        (WebCore::KURL::isNull):
+        (WebCore::KURL::isEmpty):
+        (WebCore::KURL::isValid):
+        (WebCore::KURL::hasPath):
+        (WebCore::KURL::string):
+        (WebCore::KURL::protocol):
+        (WebCore::KURL::host):
+        (WebCore::KURL::port):
+        (WebCore::KURL::hasPort):
+        (WebCore::KURL::user):
+        (WebCore::KURL::pass):
+        (WebCore::KURL::path):
+        (WebCore::KURL::lastPathComponent):
+        (WebCore::KURL::query):
+        (WebCore::KURL::fragmentIdentifier):
+        (WebCore::KURL::hasFragmentIdentifier):
+        (WebCore::KURL::copyParsedQueryTo):
+        (WebCore::KURL::baseAsString):
+        (WebCore::KURL::deprecatedString):
+        (WebCore::KURL::fileSystemPath):
+        (WebCore::KURL::protocolIs):
+        (WebCore::KURL::protocolIsInHTTPFamily):
+        (WebCore::KURL::setProtocol):
+        (WebCore::KURL::setHost):
+        (WebCore::KURL::removePort):
+        (WebCore::KURL::setPort):
+        (WebCore::KURL::setHostAndPort):
+        (WebCore::KURL::setUser):
+        (WebCore::KURL::setPass):
+        (WebCore::KURL::setPath):
+        (WebCore::KURL::setQuery):
+        (WebCore::KURL::setFragmentIdentifier):
+        (WebCore::KURL::removeFragmentIdentifier):
+        (WebCore::KURL::hostStart):
+        (WebCore::KURL::hostEnd):
+        (WebCore::KURL::pathStart):
+        (WebCore::KURL::pathEnd):
+        (WebCore::KURL::pathAfterLastSlash):
+        (WebCore::KURL::invalidate):
+        (WebCore::KURL::isHierarchical):
+        (WebCore::protocolIs):
+        (WebCore::equalIgnoringFragmentIdentifier):
+        (WebCore::protocolHostAndPortAreEqual):
+        (WebCore::encodeWithURLEscapeSequences):
+        (WebCore::decodeURLEscapeSequences):
+        * platform/KURLWTFURLImpl.h: Copied from Source/WebCore/platform/mac/KURLMac.mm.
+        (WebCore):
+        (KURLWTFURLImpl):
+        * platform/cf/KURLCFNet.cpp:
+        (WebCore):
+        (WebCore::KURL::KURL):
+        (WebCore::KURL::createCFURL):
+        * platform/mac/KURLMac.mm:
+        (WebCore):
+        (WebCore::KURL::KURL):
+        (WebCore::KURL::operator NSURL *):
+
 2012-02-25  Anders Carlsson  <andersca@apple.com>
 
         Make the libc++ workaround more targeted

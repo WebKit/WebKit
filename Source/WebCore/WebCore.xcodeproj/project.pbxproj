@@ -713,6 +713,8 @@
 		265541391489811C000DFC5D /* KeyEventCodesIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 265541371489811C000DFC5D /* KeyEventCodesIOS.h */; };
 		2655413A1489811C000DFC5D /* KeyEventIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 265541381489811C000DFC5D /* KeyEventIOS.mm */; };
 		265541521489B233000DFC5D /* CursorIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2655414B1489AA2B000DFC5D /* CursorIOS.cpp */; };
+		26A5034E14F0983600AA730D /* KURLWTFURLImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 26A5034D14F0983600AA730D /* KURLWTFURLImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		26A5035A14F0A2BC00AA730D /* KURLWTFURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26A5035914F0A2BC00AA730D /* KURLWTFURL.cpp */; };
 		26C17A3E1491D2D400D12BA2 /* FileSystemIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */; };
 		26C17A3F1491D2D400D12BA2 /* FileSystemIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */; };
 		26E98A10130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */; };
@@ -7482,6 +7484,8 @@
 		265541371489811C000DFC5D /* KeyEventCodesIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCodesIOS.h; path = ios/KeyEventCodesIOS.h; sourceTree = "<group>"; };
 		265541381489811C000DFC5D /* KeyEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventIOS.mm; path = ios/KeyEventIOS.mm; sourceTree = "<group>"; };
 		2655414B1489AA2B000DFC5D /* CursorIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CursorIOS.cpp; path = ios/CursorIOS.cpp; sourceTree = "<group>"; };
+		26A5034D14F0983600AA730D /* KURLWTFURLImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KURLWTFURLImpl.h; sourceTree = "<group>"; };
+		26A5035914F0A2BC00AA730D /* KURLWTFURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KURLWTFURL.cpp; sourceTree = "<group>"; };
 		26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemIOS.h; path = ios/FileSystemIOS.h; sourceTree = "<group>"; };
 		26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSystemIOS.mm; path = ios/FileSystemIOS.mm; sourceTree = "<group>"; };
 		26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecASCIIFastPath.h; sourceTree = "<group>"; };
@@ -19885,6 +19889,8 @@
 				6593923509AE4346002C531F /* KURL.cpp */,
 				6593923609AE4346002C531F /* KURL.h */,
 				BCBD21AA0E417AD400A070F2 /* KURLHash.h */,
+				26A5035914F0A2BC00AA730D /* KURLWTFURL.cpp */,
+				26A5034D14F0983600AA730D /* KURLWTFURLImpl.h */,
 				E18772F0126E2629003DD586 /* Language.cpp */,
 				85EC9AF90A71A2C600EEEAED /* Language.h */,
 				BCE65BE80EACDF16007E4533 /* Length.cpp */,
@@ -23235,6 +23241,7 @@
 				521D46F811AEC9B100514613 /* KillRing.h in Headers */,
 				6593923809AE4346002C531F /* KURL.h in Headers */,
 				BCBD21AB0E417AD400A070F2 /* KURLHash.h in Headers */,
+				26A5034E14F0983600AA730D /* KURLWTFURLImpl.h in Headers */,
 				A456FA2711AD4A830020B420 /* LabelsNodeList.h in Headers */,
 				85EC9AFB0A71A2C600EEEAED /* Language.h in Headers */,
 				2917B5621473496C0052C9D0 /* LayerFlushScheduler.h in Headers */,
@@ -26408,6 +26415,7 @@
 				6593923709AE4346002C531F /* KURL.cpp in Sources */,
 				1A98956B0AA78F80005EF5EF /* KURLCFNet.cpp in Sources */,
 				6593923A09AE435C002C531F /* KURLMac.mm in Sources */,
+				26A5035A14F0A2BC00AA730D /* KURLWTFURL.cpp in Sources */,
 				A456FA2611AD4A830020B420 /* LabelsNodeList.cpp in Sources */,
 				E18772F1126E2629003DD586 /* Language.cpp in Sources */,
 				9352084509BD43B900F2038D /* Language.mm in Sources */,

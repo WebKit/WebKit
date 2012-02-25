@@ -1374,6 +1374,12 @@ __ZNK7WebCore4KURL4pathEv
 __ZNK7WebCore4KURL4portEv
 __ZNK7WebCore4KURL4userEv
 __ZNK7WebCore4KURL5queryEv
+#if USE(WTFURL)
+__ZNK7WebCore4KURL6stringEv
+__ZNK7WebCore4KURL7isEmptyEv
+__ZNK7WebCore4KURL7isValidEv
+__ZNK7WebCore4KURL22protocolIsInHTTPFamilyEv
+#endif
 __ZNK7WebCore4KURL8protocolEv
 __ZNK7WebCore4KURLcvP5NSURLEv
 __ZNK7WebCore4Node14isDescendantOfEPKS0_

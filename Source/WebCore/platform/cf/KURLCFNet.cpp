@@ -33,6 +33,8 @@ using namespace std;
 
 namespace WebCore {
 
+#if !USE(WTFURL)
+
 typedef Vector<char, 512> CharBuffer;
 
 CFURLRef createCFURLFromBuffer(const CharBuffer&);
@@ -91,4 +93,21 @@ String KURL::fileSystemPath() const
     return RetainPtr<CFStringRef>(AdoptCF, CFURLCopyFileSystemPath(cfURL.get(), pathStyle)).get();
 }
 #endif
+
+#else // USE(WTFURL)
+
+KURL::KURL(CFURLRef)
+{
+    // FIXME: Add WTFURL Implementation.
+    invalidate();
+}
+
+CFURLRef KURL::createCFURL() const
+{
+    // FIXME: Add WTFURL Implementation.
+    return 0;
+}
+
+#endif // USE(WTFURL)
+
 }

@@ -30,7 +30,9 @@
 #include "TextEncoding.h"
 #include <stdio.h>
 #include <wtf/HashMap.h>
+#if !USE(WTFURL)
 #include <wtf/HexNumber.h>
+#endif
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -66,7 +68,7 @@ static inline bool isLetterMatchIgnoringCase(UChar character, char lowercaseLett
     return (character | 0x20) == lowercaseLetter;
 }
 
-#if !USE(GOOGLEURL)
+#if !USE(GOOGLEURL) && !USE(WTFURL)
 
 static const char wsScheme[] = {'w', 's'};
 static const char ftpScheme[] = {'f', 't', 'p'};
@@ -1796,7 +1798,7 @@ void KURL::print() const
 }
 #endif
 
-#endif // !USE(GOOGLEURL)
+#endif // !USE(GOOGLEURL) && !USE(WTFURL)
 
 String KURL::strippedForUseAsReferrer() const
 {

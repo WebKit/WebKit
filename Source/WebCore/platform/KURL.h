@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef KURL_h
 #define KURL_h
 
+#include "KURLWTFURLImpl.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
 
@@ -71,10 +72,16 @@ public:
     KURL(ParsedURLStringTag, const String&);
 #if USE(GOOGLEURL)
     KURL(WTF::HashTableDeletedValueType) : m_url(WTF::HashTableDeletedValue) { }
+#elif USE(WTFURL)
+    KURL(WTF::HashTableDeletedValueType) : m_urlImpl(WTF::HashTableDeletedValue) { }
 #else
     KURL(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
 #endif
+#if !USE(WTFURL)
     bool isHashTableDeletedValue() const { return string().isHashTableDeletedValue(); }
+#else
+    bool isHashTableDeletedValue() const { return m_urlImpl.isHashTableDeletedValue(); }
+#endif
 
     // Resolves the relative URL with the given base URL. If provided, the
     // TextEncoding is used to encode non-ASCII characers. The base URL can be
@@ -121,6 +128,9 @@ public:
 
 #if USE(GOOGLEURL)
     const String& string() const { return m_url.string(); }
+#elif USE(WTFURL)
+    // FIXME: Split this in URLString and InvalidURLString, get rid of the implicit conversions.
+    const String& string() const;
 #else
     const String& string() const { return m_string; }
 #endif
@@ -235,6 +245,8 @@ private:
 #if USE(GOOGLEURL)
     friend class KURLGooglePrivate;
     KURLGooglePrivate m_url;
+#elif USE(WTFURL)
+    RefPtr<KURLWTFURLImpl> m_urlImpl;
 #else  // !USE(GOOGLEURL)
     void init(const KURL&, const String&, const TextEncoding&);
     void copyToBuffer(Vector<char, 512>& buffer) const;
@@ -330,7 +342,7 @@ inline bool operator!=(const String& a, const KURL& b)
     return a != b.string();
 }
 
-#if !USE(GOOGLEURL)
+#if !USE(GOOGLEURL) && !USE(WTFURL)
 
 // Inline versions of some non-GoogleURL functions so we can get inlining
 // without having to have a lot of ugly ifdefs in the class definition.
@@ -385,7 +397,7 @@ inline unsigned KURL::pathAfterLastSlash() const
     return m_pathAfterLastSlash;
 }
 
-#endif  // !USE(GOOGLEURL)
+#endif // !USE(GOOGLEURL) && !USE(WTFURL)
 
 } // namespace WebCore
 

@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+#if !USE(WTFURL)
+
 typedef Vector<char, 512> CharBuffer;
 extern CFURLRef createCFURLFromBuffer(const CharBuffer& buffer);
 
@@ -68,5 +70,21 @@ CFURLRef KURL::createCFURL() const
     copyToBuffer(buffer);
     return createCFURLFromBuffer(buffer);
 }
+
+#else
+
+KURL::KURL(NSURL *)
+{
+    // FIXME: Add WTFURL Implementation.
+    invalidate();
+}
+
+KURL::operator NSURL *() const
+{
+    // FIXME: Add WTFURL Implementation.
+    return nil;
+}
+
+#endif
 
 }
