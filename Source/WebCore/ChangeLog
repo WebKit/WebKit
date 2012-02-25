@@ -1,3 +1,13 @@
+2012-02-25  Andreas Kling  <awesomekling@apple.com>
+
+        HTMLTableElement: Avoid CSSParser in createSharedCellStyle().
+        <http://webkit.org/b/79573>
+
+        Reviewed by Anders Carlsson.
+
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::createSharedCellStyle):
+
 2012-02-25  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Unreviewed, rolling out r108557.
