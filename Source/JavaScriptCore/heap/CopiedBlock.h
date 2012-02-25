@@ -40,18 +40,24 @@ class CopiedBlock : public HeapBlock {
 public:
     CopiedBlock(PageAllocationAligned& allocation)
         : HeapBlock(allocation)
-        , m_offset(m_payload)
+        , m_offset(payload())
         , m_isPinned(false)
     {
-        ASSERT(is8ByteAligned(static_cast<void*>(m_payload)));
+        ASSERT(is8ByteAligned(static_cast<void*>(m_offset)));
 #if USE(JSVALUE64)
-        memset(static_cast<void*>(m_payload), 0, static_cast<size_t>((reinterpret_cast<char*>(this) + allocation.size()) - m_payload));
+        char* offset = static_cast<char*>(m_offset);
+        memset(static_cast<void*>(offset), 0, static_cast<size_t>((reinterpret_cast<char*>(this) + allocation.size()) - offset));
 #else
         JSValue emptyValue;
         JSValue* limit = reinterpret_cast<JSValue*>(reinterpret_cast<char*>(this) + allocation.size());
-        for (JSValue* currentValue = reinterpret_cast<JSValue*>(m_payload); currentValue < limit; currentValue++)
+        for (JSValue* currentValue = reinterpret_cast<JSValue*>(m_offset); currentValue < limit; currentValue++)
             *currentValue = emptyValue;
 #endif
+    }
+
+    char* payload()
+    {
+        return reinterpret_cast<char*>(this) + ((sizeof(CopiedBlock) + 7) & ~7);
     }
 
 private:
@@ -59,7 +65,6 @@ private:
     uintptr_t m_isPinned;
     uintptr_t m_padding;
     uintptr_t m_dummy;
-    char m_payload[1];
 };
 
 } // namespace JSC

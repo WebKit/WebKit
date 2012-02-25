@@ -92,7 +92,7 @@ inline CheckedBoolean CopiedSpace::borrowBlock(CopiedBlock** outBlock)
     MutexLocker locker(m_loanedBlocksLock);
     m_numberOfLoanedBlocks++;
 
-    ASSERT(block->m_offset == block->m_payload);
+    ASSERT(block->m_offset == block->payload());
     *outBlock = block;
     return true;
 }
@@ -151,9 +151,9 @@ inline void* CopiedSpace::allocateFromBlock(CopiedBlock* block, size_t bytes)
     ASSERT(is8ByteAligned(block->m_offset));
     
     void* ptr = block->m_offset;
-    ASSERT(block->m_offset >= block->m_payload && block->m_offset < reinterpret_cast<char*>(block) + HeapBlock::s_blockSize);
+    ASSERT(block->m_offset >= block->payload() && block->m_offset < reinterpret_cast<char*>(block) + HeapBlock::s_blockSize);
     block->m_offset = static_cast<void*>((static_cast<char*>(ptr) + bytes));
-    ASSERT(block->m_offset >= block->m_payload && block->m_offset < reinterpret_cast<char*>(block) + HeapBlock::s_blockSize);
+    ASSERT(block->m_offset >= block->payload() && block->m_offset < reinterpret_cast<char*>(block) + HeapBlock::s_blockSize);
 
     ASSERT(is8ByteAligned(ptr));
     return ptr;

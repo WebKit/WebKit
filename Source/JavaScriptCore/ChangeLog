@@ -1,3 +1,26 @@
+2012-02-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Fix the CopiedBlock offset alignment in a cross platform fashion
+        https://bugs.webkit.org/show_bug.cgi?id=79556
+
+        Reviewed by Filip Pizlo.
+
+        Replaced m_payload with a payload() method that calculates the offset
+        of the payload with the proper alignment. This change allows us to 
+        avoid alignment-related issues in a cross-platform manner.
+
+        * heap/CopiedAllocator.h:
+        (JSC::CopiedAllocator::currentUtilization):
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::CopiedBlock):
+        (JSC::CopiedBlock::payload):
+        (CopiedBlock):
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::doneFillingBlock):
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::borrowBlock):
+        (JSC::CopiedSpace::allocateFromBlock):
+
 2012-02-24  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, Windows build fix.  Changed signature in export to match

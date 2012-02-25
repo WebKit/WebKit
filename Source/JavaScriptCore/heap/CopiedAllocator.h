@@ -93,7 +93,7 @@ inline void CopiedAllocator::resetCurrentBlock(CopiedBlock* newBlock)
 
 inline size_t CopiedAllocator::currentUtilization()
 {
-    return static_cast<size_t>(m_currentOffset - m_currentBlock->m_payload);
+    return static_cast<size_t>(m_currentOffset - m_currentBlock->payload());
 }
 
 inline void CopiedAllocator::resetLastAllocation(void* ptr)

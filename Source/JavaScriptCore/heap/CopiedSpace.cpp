@@ -153,7 +153,7 @@ void CopiedSpace::doneFillingBlock(CopiedBlock* block)
     ASSERT(block->m_offset < reinterpret_cast<char*>(block) + HeapBlock::s_blockSize);
     ASSERT(m_inCopyingPhase);
 
-    if (block->m_offset == block->m_payload) {
+    if (block->m_offset == block->payload()) {
         recycleBlock(block);
         return;
     }
@@ -167,7 +167,7 @@ void CopiedSpace::doneFillingBlock(CopiedBlock* block)
 
     {
         MutexLocker locker(m_memoryStatsLock);
-        m_totalMemoryUtilized += static_cast<size_t>(static_cast<char*>(block->m_offset) - block->m_payload);
+        m_totalMemoryUtilized += static_cast<size_t>(static_cast<char*>(block->m_offset) - block->payload());
     }
 
     {
