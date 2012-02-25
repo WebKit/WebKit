@@ -61,8 +61,10 @@ static const PredictedType PredictDoubleNaN         = 0x00040000; // It's defini
 static const PredictedType PredictDouble            = 0x00060000; // It's either a non-NaN or a NaN double.
 static const PredictedType PredictNumber            = 0x00070000; // It's either an Int32 or a Double.
 static const PredictedType PredictBoolean           = 0x00080000; // It's definitely a Boolean.
-static const PredictedType PredictOther             = 0x40000000; // It's definitely none of the above.
-static const PredictedType PredictTop               = 0x7fffffff; // It can be any of the above.
+static const PredictedType PredictOther             = 0x08000000; // It's definitely none of the above.
+static const PredictedType PredictTop               = 0x0fffffff; // It can be any of the above.
+static const PredictedType PredictEmpty             = 0x10000000; // It's definitely an empty value marker.
+static const PredictedType PredictEmptyOrTop        = 0x1fffffff; // It can be any of the above.
 static const PredictedType FixedIndexedStorageMask = PredictByteArray | PredictInt8Array | PredictInt16Array | PredictInt32Array | PredictUint8Array | PredictUint8ClampedArray | PredictUint16Array | PredictUint32Array | PredictFloat32Array | PredictFloat64Array;
 
 typedef bool (*PredictionChecker)(PredictedType);
@@ -215,6 +217,11 @@ inline bool isBooleanPrediction(PredictedType value)
 inline bool isOtherPrediction(PredictedType value)
 {
     return value == PredictOther;
+}
+
+inline bool isEmptyPrediction(PredictedType value)
+{
+    return value == PredictEmpty;
 }
 
 const char* predictionToString(PredictedType value);

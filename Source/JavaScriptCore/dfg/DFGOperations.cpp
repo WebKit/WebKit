@@ -33,8 +33,10 @@
 #include "GetterSetter.h"
 #include "InlineASM.h"
 #include "Interpreter.h"
+#include "JSActivation.h"
 #include "JSByteArray.h"
 #include "JSGlobalData.h"
+#include "JSStaticScopeObject.h"
 #include "Operations.h"
 
 #if ENABLE(DFG_JIT)
@@ -972,6 +974,43 @@ EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr
     }
     
     return JSValue::encode(RegExpObject::create(exec->globalData(), exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regexp));
+}
+
+JSCell* DFG_OPERATION operationCreateActivation(ExecState* exec)
+{
+    JSGlobalData& globalData = exec->globalData();
+    JSActivation* activation = JSActivation::create(
+        globalData, exec, static_cast<FunctionExecutable*>(exec->codeBlock()->ownerExecutable()));
+    exec->setScopeChain(exec->scopeChain()->push(activation));
+    return activation;
+}
+
+void DFG_OPERATION operationTearOffActivation(ExecState* exec, JSCell* activation)
+{
+    ASSERT(activation);
+    ASSERT(activation->inherits(&JSActivation::s_info));
+    static_cast<JSActivation*>(activation)->tearOff(exec->globalData());
+}
+
+JSCell* DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)
+{
+    ASSERT(functionExecutable->inherits(&FunctionExecutable::s_info));
+    return static_cast<FunctionExecutable*>(functionExecutable)->make(exec, exec->scopeChain());
+}
+
+JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* functionExecutableAsCell)
+{
+    ASSERT(functionExecutableAsCell->inherits(&FunctionExecutable::s_info));
+    FunctionExecutable* functionExecutable =
+        static_cast<FunctionExecutable*>(functionExecutableAsCell);
+    JSFunction *function = functionExecutable->make(exec, exec->scopeChain());
+    if (!functionExecutable->name().isNull()) {
+        JSStaticScopeObject* functionScopeObject =
+            JSStaticScopeObject::create(
+                exec, functionExecutable->name(), function, ReadOnly | DontDelete);
+        function->setScope(exec->globalData(), function->scope()->push(functionScopeObject));
+    }
+    return function;
 }
 
 DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState* exec, uint32_t callIndex)

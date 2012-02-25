@@ -1,3 +1,58 @@
+2012-02-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should support activations and nested functions
+        https://bugs.webkit.org/show_bug.cgi?id=79554
+
+        Reviewed by Oliver Hunt.
+        
+        Wrote the simplest possible implementation of activations. Big speed-up on
+        code that uses activations, no speed-up on major benchmarks (SunSpider, V8,
+        Kraken) because they do not appear to have sufficient coverage over code
+        that uses activations.
+
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToString):
+        (JSC::predictionFromValue):
+        * bytecode/PredictedType.h:
+        (JSC):
+        (JSC::isEmptyPrediction):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::buildOperandMapsIfNecessary):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        (JSC::DFG::canInlineOpcode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::needsActivation):
+        * dfg/DFGNode.h:
+        (DFG):
+        (JSC::DFG::Node::storageAccessDataIndex):
+        (Node):
+        (JSC::DFG::Node::hasFunctionDeclIndex):
+        (JSC::DFG::Node::functionDeclIndex):
+        (JSC::DFG::Node::hasFunctionExprIndex):
+        (JSC::DFG::Node::functionExprIndex):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionNoCheck):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileNewFunctionExpression):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-02-25  Benjamin Poulain  <benjamin@webkit.org>
 
         Add an empty skeleton of KURL for WTFURL

@@ -310,7 +310,7 @@ public:
 #if DFG_ENABLE(ALL_VARIABLES_CAPTURED)
         return true;
 #else
-        return m_codeBlock->ownerExecutable()->needsActivation() && m_codeBlock->codeType() != GlobalCode;
+        return m_codeBlock->needsFullScopeChain() && m_codeBlock->codeType() != GlobalCode;
 #endif
     }
     

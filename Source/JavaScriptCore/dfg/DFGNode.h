@@ -291,6 +291,17 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(ToPrimitive, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(StrCat, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     \
+    /* Nodes used for activations. Activation support works by having it anchored at */\
+    /* epilgoues via TearOffActivation, and all CreateActivation nodes kept alive by */\
+    /* being threaded with each other. */\
+    macro(CreateActivation, NodeResultJS) \
+    macro(TearOffActivation, NodeMustGenerate) \
+    \
+    /* Nodes for creating functions. */\
+    macro(NewFunctionNoCheck, NodeResultJS) \
+    macro(NewFunction, NodeResultJS) \
+    macro(NewFunctionExpression, NodeResultJS) \
+    \
     /* Block terminals. */\
     macro(Jump, NodeMustGenerate | NodeIsTerminal | NodeIsJump) \
     macro(Branch, NodeMustGenerate | NodeIsTerminal | NodeIsBranch) \
@@ -775,6 +786,30 @@ struct Node {
     
     unsigned storageAccessDataIndex()
     {
+        ASSERT(hasStorageAccessData());
+        return m_opInfo;
+    }
+    
+    bool hasFunctionDeclIndex()
+    {
+        return op == NewFunction
+            || op == NewFunctionNoCheck;
+    }
+    
+    unsigned functionDeclIndex()
+    {
+        ASSERT(hasFunctionDeclIndex());
+        return m_opInfo;
+    }
+    
+    bool hasFunctionExprIndex()
+    {
+        return op == NewFunctionExpression;
+    }
+    
+    unsigned functionExprIndex()
+    {
+        ASSERT(hasFunctionExprIndex());
         return m_opInfo;
     }
     

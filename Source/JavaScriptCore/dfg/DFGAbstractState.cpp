@@ -723,10 +723,25 @@ bool AbstractState::execute(NodeIndex nodeIndex)
     }
             
     case NewObject:
-        forNode(nodeIndex).set(m_codeBlock->globalObject()->emptyObjectStructure());
+        forNode(nodeIndex).set(m_codeBlock->globalObjectFor(node.codeOrigin)->emptyObjectStructure());
         m_haveStructures = true;
         break;
-            
+        
+    case CreateActivation:
+        forNode(nodeIndex).set(m_graph.m_globalData.activationStructure.get());
+        m_haveStructures = true;
+        break;
+        
+    case TearOffActivation:
+        // Does nothing that is user-visible.
+        break;
+        
+    case NewFunction:
+    case NewFunctionExpression:
+    case NewFunctionNoCheck:
+        forNode(nodeIndex).set(m_codeBlock->globalObjectFor(node.codeOrigin)->functionStructure());
+        break;
+        
     case GetCallee:
         forNode(nodeIndex).set(PredictFunction);
         break;

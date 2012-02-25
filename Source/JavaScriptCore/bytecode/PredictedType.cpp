@@ -153,8 +153,13 @@ const char* predictionToString(PredictedType value)
     else
         isTop = false;
     
-    if (isTop)
-        return "Top";
+    if (isTop) {
+        ptr = description;
+        ptr.strcat("Top");
+    }
+    
+    if (value & PredictEmpty)
+        ptr.strcat("Empty");
     
     *ptr++ = 0;
     
@@ -221,6 +226,8 @@ PredictedType predictionFromCell(JSCell* cell)
 
 PredictedType predictionFromValue(JSValue value)
 {
+    if (value.isEmpty())
+        return PredictEmpty;
     if (value.isInt32())
         return PredictInt32;
     if (value.isDouble()) {

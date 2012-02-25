@@ -2689,6 +2689,28 @@ void SpeculativeJIT::compileGetIndexedPropertyStorage(Node& node)
     storageResult(storageReg, m_compileIndex);
 }
 
+void SpeculativeJIT::compileNewFunctionNoCheck(Node& node)
+{
+    GPRResult result(this);
+    GPRReg resultGPR = result.gpr();
+    flushRegisters();
+    callOperation(
+        operationNewFunction, resultGPR, m_jit.codeBlock()->functionDecl(node.functionDeclIndex()));
+    cellResult(resultGPR, m_compileIndex);
+}
+
+void SpeculativeJIT::compileNewFunctionExpression(Node& node)
+{
+    GPRResult result(this);
+    GPRReg resultGPR = result.gpr();
+    flushRegisters();
+    callOperation(
+        operationNewFunctionExpression,
+        resultGPR,
+        m_jit.codeBlock()->functionExpr(node.functionExprIndex()));
+    cellResult(resultGPR, m_compileIndex);
+}
+
 } } // namespace JSC::DFG
 
 #endif

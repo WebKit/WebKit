@@ -154,6 +154,11 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     case op_call:
     case op_construct:
     case op_new_regexp: 
+    case op_init_lazy_reg:
+    case op_create_activation:
+    case op_tear_off_activation:
+    case op_new_func:
+    case op_new_func_exp:
         return true;
         
     default:
@@ -179,6 +184,14 @@ inline bool canInlineOpcode(OpcodeID opcodeID)
         
     // Inlining doesn't correctly remap regular expression operands.
     case op_new_regexp:
+        return false;
+        
+    // We don't support inlining code that creates activations or has nested functions.
+    case op_init_lazy_reg:
+    case op_create_activation:
+    case op_tear_off_activation:
+    case op_new_func:
+    case op_new_func_exp:
         return false;
         
     default:

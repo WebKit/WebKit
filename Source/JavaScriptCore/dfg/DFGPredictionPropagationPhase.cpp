@@ -397,6 +397,18 @@ private:
             break;
         }
             
+        case CreateActivation: {
+            changed |= setPrediction(PredictObjectOther);
+            break;
+        }
+            
+        case NewFunction:
+        case NewFunctionNoCheck:
+        case NewFunctionExpression: {
+            changed |= setPrediction(PredictFunction);
+            break;
+        }
+            
         case GetArrayLength:
         case GetByteArrayLength:
         case GetInt8ArrayLength:
@@ -439,6 +451,7 @@ private:
         case CheckFunction:
         case PutStructure:
         case PutByOffset:
+        case TearOffActivation:
             break;
             
         // These gets ignored because it doesn't do anything.
