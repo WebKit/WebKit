@@ -1,3 +1,15 @@
+2012-02-25  Adrienne Walker  <enne@google.com>
+
+        Fix unused variable warnings in HarfBuzzShaperBase
+        https://bugs.webkit.org/show_bug.cgi?id=79575
+
+        Reviewed by Andreas Kling.
+
+        In builds where asserts are not enabled, the error variable is unused.
+
+        * platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp:
+        (WebCore::normalizeSpacesAndMirrorChars):
+
 2012-02-25  Andreas Kling  <awesomekling@apple.com>
 
         Remove HTMLTableElement::attach().

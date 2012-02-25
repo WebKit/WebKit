@@ -68,7 +68,7 @@ static void normalizeSpacesAndMirrorChars(const UChar* source, UChar* destinatio
         else if (normalizeMode == HarfBuzzShaperBase::NormalizeMirrorChars)
             character = u_charMirror(character);
         U16_APPEND(destination, position, length, character, error);
-        ASSERT(!error);
+        ASSERT_UNUSED(error, !error);
         position = nextPosition;
     }
 }
