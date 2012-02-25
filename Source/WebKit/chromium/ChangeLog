@@ -1,3 +1,15 @@
+2012-02-25  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed gardening, fix Linux Clang OwnPtr breakage
+        https://bugs.webkit.org/show_bug.cgi?id=78404
+
+        r108886 doesn't compile on Linux Clang due to OwnPtr's public copy
+        constructor (i.e. "has internal linkage but is not defined"). Fixed
+        locally by changing copy initialization to direct initialization.
+
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+
 2012-02-24  Tien-Ren Chen  <trchen@chromium.org>
 
         [chromium] Replace RefPtr with OwnPtr for CCLayerImpl tree structure

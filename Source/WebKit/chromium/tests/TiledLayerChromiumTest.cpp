@@ -231,7 +231,7 @@ TEST(TiledLayerChromiumTest, pushDirtyTiles)
     OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl = adoptPtr(new FakeCCTiledLayerImpl(0));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
     FakeTextureAllocator textureAllocator;
     CCTextureUpdater updater(&textureAllocator);
@@ -266,7 +266,7 @@ TEST(TiledLayerChromiumTest, pushIdlePaintTiles)
     OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl = adoptPtr(new FakeCCTiledLayerImpl(0));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
     FakeTextureAllocator textureAllocator;
     CCTextureUpdater updater(&textureAllocator);
@@ -332,7 +332,7 @@ TEST(TiledLayerChromiumTest, idlePaintOutOfMemory)
     OwnPtr<TextureManager> textureManager = TextureManager::create(memoryLimit, memoryLimit / 2, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl = adoptPtr(new FakeCCTiledLayerImpl(0));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
     FakeTextureAllocator textureAllocator;
     CCTextureUpdater updater(&textureAllocator);
@@ -368,7 +368,7 @@ TEST(TiledLayerChromiumTest, invalidateFromPrepare)
     OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl = adoptPtr(new FakeCCTiledLayerImpl(0));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
     FakeTextureAllocator textureAllocator;
     CCTextureUpdater updater(&textureAllocator);
@@ -448,7 +448,7 @@ TEST(TiledLayerChromiumTest, verifyInvalidationWhenContentsScaleChanges)
     OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
     DebugScopedSetImplThread implThread;
-    OwnPtr<FakeCCTiledLayerImpl> layerImpl = adoptPtr(new FakeCCTiledLayerImpl(0));
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
 
     FakeTextureAllocator textureAllocator;
     CCTextureUpdater updater(&textureAllocator);
