@@ -1,3 +1,29 @@
+2012-02-24  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Texmap] Add const-ness to TextureMapperShaderManager
+        https://bugs.webkit.org/show_bug.cgi?id=79545
+
+        Reviewed by Noam Rosenthal.
+        
+        Add const to new methods.
+        No new tests.
+
+        * platform/graphics/texmap/TextureMapperShaderManager.cpp:
+        (WebCore::TextureMapperShaderProgramSimple::vertexShaderSource):
+        (WebCore::TextureMapperShaderProgramSimple::fragmentShaderSource):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::vertexShaderSource):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::fragmentShaderSource):
+        * platform/graphics/texmap/TextureMapperShaderManager.h:
+        (WebCore::TextureMapperShaderProgram::matrixVariable):
+        (WebCore::TextureMapperShaderProgram::sourceMatrixVariable):
+        (WebCore::TextureMapperShaderProgram::sourceTextureVariable):
+        (WebCore::TextureMapperShaderProgram::opacityVariable):
+        (TextureMapperShaderProgram):
+        (TextureMapperShaderProgramSimple):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::maskMatrixVariable):
+        (WebCore::TextureMapperShaderProgramOpacityAndMask::maskTextureVariable):
+        (TextureMapperShaderProgramOpacityAndMask):
+
 2012-02-24  Tom Sepez  <tsepez@chromium.org>
 
         XSS Auditor targeting legitimate frames as false positives.

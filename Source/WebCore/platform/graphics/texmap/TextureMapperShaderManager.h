@@ -53,16 +53,16 @@ public:
     }
 
     virtual void prepare(float opacity, const BitmapTexture*) { }
-    GLint matrixVariable() { return m_matrixVariable; }
-    GLint sourceMatrixVariable() { return m_sourceMatrixVariable; }
-    GLint sourceTextureVariable() { return m_sourceTextureVariable; }
-    GLint opacityVariable() { return m_opacityVariable; }
+    GLint matrixVariable() const { return m_matrixVariable; }
+    GLint sourceMatrixVariable() const { return m_sourceMatrixVariable; }
+    GLint sourceTextureVariable() const { return m_sourceTextureVariable; }
+    GLint opacityVariable() const { return m_opacityVariable; }
 
 protected:
     void getUniformLocation(GLint& var, const char* name);
     void initializeProgram();
-    virtual const char* vertexShaderSource() = 0;
-    virtual const char* fragmentShaderSource() = 0;
+    virtual const char* vertexShaderSource() const = 0;
+    virtual const char* fragmentShaderSource() const = 0;
 
     GLuint m_id;
     GLuint m_vertexAttrib;
@@ -80,8 +80,8 @@ public:
     virtual void prepare(float opacity, const BitmapTexture*);
 
 private:
-    virtual const char* vertexShaderSource();
-    virtual const char* fragmentShaderSource();
+    virtual const char* vertexShaderSource() const;
+    virtual const char* fragmentShaderSource() const;
     TextureMapperShaderProgramSimple();
 };
 
@@ -89,13 +89,13 @@ class TextureMapperShaderProgramOpacityAndMask : public TextureMapperShaderProgr
 public:
     static PassRefPtr<TextureMapperShaderProgramOpacityAndMask> create();
     virtual void prepare(float opacity, const BitmapTexture*);
-    GLint maskMatrixVariable() { return m_maskMatrixVariable; }
-    GLint maskTextureVariable() { return m_maskTextureVariable; }
+    GLint maskMatrixVariable() const { return m_maskMatrixVariable; }
+    GLint maskTextureVariable() const { return m_maskTextureVariable; }
 
 private:
     static int m_classID;
-    virtual const char* vertexShaderSource();
-    virtual const char* fragmentShaderSource();
+    virtual const char* vertexShaderSource() const;
+    virtual const char* fragmentShaderSource() const;
     TextureMapperShaderProgramOpacityAndMask();
     GLint m_maskMatrixVariable;
     GLint m_maskTextureVariable;

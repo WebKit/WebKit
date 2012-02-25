@@ -146,12 +146,12 @@ TextureMapperShaderProgramSimple::TextureMapperShaderProgramSimple()
     getUniformLocation(m_opacityVariable, "Opacity");
 }
 
-const char* TextureMapperShaderProgramSimple::vertexShaderSource()
+const char* TextureMapperShaderProgramSimple::vertexShaderSource() const
 {
     return vertexShaderSourceSimple;
 }
 
-const char* TextureMapperShaderProgramSimple::fragmentShaderSource()
+const char* TextureMapperShaderProgramSimple::fragmentShaderSource() const
 {
     return fragmentShaderSourceSimple;
 }
@@ -177,12 +177,12 @@ TextureMapperShaderProgramOpacityAndMask::TextureMapperShaderProgramOpacityAndMa
     getUniformLocation(m_opacityVariable, "Opacity");
 }
 
-const char* TextureMapperShaderProgramOpacityAndMask::vertexShaderSource()
+const char* TextureMapperShaderProgramOpacityAndMask::vertexShaderSource() const
 {
     return vertexShaderSourceOpacityAndMask;
 }
 
-const char* TextureMapperShaderProgramOpacityAndMask::fragmentShaderSource()
+const char* TextureMapperShaderProgramOpacityAndMask::fragmentShaderSource() const
 {
     return fragmentShaderSourceOpacityAndMask;
 }
