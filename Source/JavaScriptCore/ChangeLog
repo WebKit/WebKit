@@ -1,3 +1,13 @@
+2012-02-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix build for DFG disabled and LLInt enabled.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * llint/LLIntSlowPaths.cpp:
+        (LLInt):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
 2012-02-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fix the CopiedBlock offset alignment in a cross platform fashion

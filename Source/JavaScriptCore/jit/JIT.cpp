@@ -702,7 +702,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     }
 
 #if ENABLE(DFG_JIT) || ENABLE(LLINT)
-    if (m_canBeOptimized
+    if (canBeOptimized()
 #if ENABLE(LLINT)
         || true
 #endif

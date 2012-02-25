@@ -114,6 +114,7 @@ namespace JSC { namespace LLInt {
         LLINT_END_IMPL();                       \
     } while (false)
 
+#if ENABLE(VALUE_PROFILER)
 #define LLINT_RETURN_PROFILED(opcode, value) do {               \
         JSValue __rp_returnValue = (value);                     \
         LLINT_CHECK_EXCEPTION();                                \
@@ -122,6 +123,9 @@ namespace JSC { namespace LLInt {
             JSValue::encode(__rp_returnValue);                  \
         LLINT_END_IMPL();                                       \
     } while (false)
+#else // ENABLE(VALUE_PROFILER)
+#define LLINT_RETURN_PROFILED(opcode, value) LLINT_RETURN(value)
+#endif // ENABLE(VALUE_PROFILER)
 
 #define LLINT_CALL_END_IMPL(exec, callTarget) LLINT_RETURN_TWO((callTarget), (exec))
 
@@ -873,8 +877,10 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
             pc[5].u.operand = slot.cachedOffset() * sizeof(JSValue);
         }
     }
-    
+
+#if ENABLE(VALUE_PROFILER)    
     pc[OPCODE_LENGTH(op_get_by_id) - 1].u.profile->m_buckets[0] = JSValue::encode(result);
+#endif
     LLINT_END();
 }
 
