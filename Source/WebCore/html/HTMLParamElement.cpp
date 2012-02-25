@@ -42,37 +42,27 @@ PassRefPtr<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLParamElement(tagName, document));
 }
 
+String HTMLParamElement::name() const
+{
+    if (hasName())
+        return getNameAttribute();
+    return document()->isHTMLDocument() ? emptyAtom : getIdAttribute();
+}
+
+String HTMLParamElement::value() const
+{
+    return fastGetAttribute(valueAttr);
+}
+
 bool HTMLParamElement::isURLParameter(const String& name)
 {
     return equalIgnoringCase(name, "data") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "src");
 }
 
-void HTMLParamElement::parseAttribute(Attribute* attr)
-{
-    if (isIdAttributeName(attr->name())) {
-        // Must call base class so that hasID bit gets set.
-        HTMLElement::parseAttribute(attr);
-        if (document()->isHTMLDocument())
-            return;
-        m_name = attr->value();
-    } else if (attr->name() == nameAttr) {
-        m_name = attr->value();
-    } else if (attr->name() == valueAttr) {
-        m_value = attr->value();
-    } else
-        HTMLElement::parseAttribute(attr);
-}
-
 bool HTMLParamElement::isURLAttribute(Attribute* attr) const
 {
-    if (attr->name() == valueAttr && hasAttributes()) {
-        Attribute* nameAttribute = getAttributeItem(nameAttr);
-        if (nameAttribute) {
-            const AtomicString& value = nameAttribute->value();
-            if (isURLParameter(value))
-                return true;
-        }
-    }
+    if (attr->name() == valueAttr && isURLParameter(name()))
+        return true;
     return HTMLElement::isURLAttribute(attr);
 }
 

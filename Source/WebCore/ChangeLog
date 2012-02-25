@@ -1,3 +1,20 @@
+2012-02-25  Andreas Kling  <awesomekling@apple.com>
+
+        HTMLParamElement: Clean up name/value attribute handling.
+        <http://webkit.org/b/79559>
+
+        Reviewed by Anders Carlsson.
+
+        Out-of-line name() and value(), and move the logic from parseAttribute()
+        into them instead. This makes the class a bit simpler and shrinks it by
+        two AtomicStrings. Also reduced isURLAttribute() to a two-liner.
+
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::name):
+        (WebCore::HTMLParamElement::value):
+        (WebCore::HTMLParamElement::isURLAttribute):
+        * html/HTMLParamElement.h:
+
 2012-02-24  Tien-Ren Chen  <trchen@chromium.org>
 
         [chromium] Replace RefPtr with OwnPtr for CCLayerImpl tree structure

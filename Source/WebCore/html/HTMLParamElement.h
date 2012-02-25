@@ -31,24 +31,17 @@ class HTMLParamElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLParamElement> create(const QualifiedName&, Document*);
 
-    String name() const { return m_name; }
-    String value() const { return m_value; }
+    String name() const;
+    String value() const;
 
     static bool isURLParameter(const String&);
 
 private:
     HTMLParamElement(const QualifiedName&, Document*);
 
-    virtual void parseAttribute(Attribute*) OVERRIDE;
-
     virtual bool isURLAttribute(Attribute*) const;
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
-
-    // FIXME: These don't need to be stored as members and instead
-    // name() value() could use getAttribute(nameAttr/valueAttr).
-    AtomicString m_name;
-    AtomicString m_value;
 };
 
 } // namespace WebCore
