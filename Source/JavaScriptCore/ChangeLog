@@ -1,3 +1,10 @@
+2012-02-24  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed, Windows build fix.  Changed signature in export to match
+        change made in r108858.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-02-24  Filip Pizlo  <fpizlo@apple.com>
 
         DFG support for op_new_regexp should be enabled
