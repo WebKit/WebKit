@@ -23,7 +23,4 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: This is logically part of the WebKit client API and doesn't belong in platform. This is a forwarding header to avoid requiring a two-sided commit.
-// As soon as all chromium code is updated for the new location of this header, remove this.
-
-#include "../WebColorName.h"
+#include "../../../../Platform/chromium/public/WebColorName.h"

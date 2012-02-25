@@ -1,3 +1,18 @@
+2012-02-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r108860.
+        http://trac.webkit.org/changeset/108860
+        https://bugs.webkit.org/show_bug.cgi?id=79544
+
+        "Breaks Linux compile" (Requested by enne on #webkit).
+
+        * WebKit.gyp:
+        * public/platform/WebColorName.h:
+        * src/WebColor.cpp: Renamed from Source/WebKit/chromium/src/WebColorName.cpp.
+        (WebKit):
+        (WebKit::toCSSValueKeyword):
+        (WebKit::setNamedColors):
+
 2012-02-24  James Robinson  <jamesr@chromium.org>
 
         [chromium] WebKit::setColorNames is a client API

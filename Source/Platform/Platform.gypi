@@ -34,6 +34,7 @@
             'chromium/public/WebCString.h',
             'chromium/public/WebCanvas.h',
             'chromium/public/WebColor.h',
+            'chromium/public/WebColorName.h',
             'chromium/public/WebCommon.h',
             'chromium/public/WebContentLayer.h',
             'chromium/public/WebContentLayerClient.h',
