@@ -146,11 +146,11 @@ http/tests/misc/prefetch-purpose.html
 
 # ENABLE(DASHBOARD_SUPPORT) is disabled
 http/tests/xmlhttprequest/default-content-type-dashboard.html
-http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
-svg/custom/embedded-svg-disallowed-in-dashboard.xml
-svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
-svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
-svg/custom/svg-disallowed-in-dashboard-object.html
+http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html
+svg/custom/embedded-svg-allowed-in-dashboard.xml
+svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html
+svg/custom/manually-parsed-svg-allowed-in-dashboard.html
+svg/custom/svg-allowed-in-dashboard-object.html
 
 # CSS Grid Layout is not yet enabled. http://webkit.org/b/60731
 fast/css-grid-layout
@@ -240,6 +240,7 @@ fast/mutation/cross-document.html
 fast/mutation/database-callback-delivery.html
 fast/mutation/inline-event-listener.html
 fast/mutation/mutation-observer-constructor.html
+fast/mutation/mutation-callback-non-element-crash.html
 fast/mutation/observe-attributes.html
 fast/mutation/observe-characterdata.html
 fast/mutation/observe-childList.html
