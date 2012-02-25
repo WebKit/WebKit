@@ -85,8 +85,6 @@ public:
 
     Length styleOrColLogicalWidth() const;
 
-    LayoutUnit logicalHeightForRowSizing() const;
-
     virtual void computePreferredLogicalWidths();
 
     void updateLogicalWidth(LayoutUnit);

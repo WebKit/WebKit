@@ -1,3 +1,17 @@
+2012-02-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Unreviewed, rolling out r108557.
+        http://trac.webkit.org/changeset/108557
+        https://bugs.webkit.org/show_bug.cgi?id=77705
+
+        Broke svg/zoom/page/zoom-replated-intrinsic-ratio-001.htm.
+
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderTableCell.h:
+        (RenderTableCell):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+
 2012-02-25  Andreas Kling  <awesomekling@apple.com>
 
         HTMLParamElement: Clean up name/value attribute handling.
