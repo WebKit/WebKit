@@ -25,6 +25,7 @@
 
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "HTMLNames.h"
 #include "RenderBR.h"
 
@@ -62,7 +63,7 @@ void HTMLBRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
         // <br clear> and <br clear=""> are just treated like <br> by Gecko, Mac IE, etc. -dwh
         if (!attr->isEmpty()) {
             if (equalIgnoringCase(attr->value(), "all"))
-                addPropertyToAttributeStyle(style, CSSPropertyClear, "both");
+                addPropertyToAttributeStyle(style, CSSPropertyClear, CSSValueBoth);
             else
                 addPropertyToAttributeStyle(style, CSSPropertyClear, attr->value());
         }

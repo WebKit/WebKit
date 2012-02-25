@@ -1,3 +1,18 @@
+2012-02-24  Andreas Kling  <awesomekling@apple.com>
+
+        Don't pass constant strings to CSSParser for presentation attributes.
+        <http://webkit.org/b/79530>
+
+        Reviewed by Anders Carlsson.
+
+        "both" -> CSSValueBoth.
+        "center" -> CSSValueCenter.
+
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::collectStyleForAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::collectStyleForAttribute):
+
 2012-02-24  Yael Aharon  <yael.aharon@nokia.com>
 
         [Texmap] Add const-ness to TextureMapperShaderManager

@@ -170,7 +170,7 @@ void HTMLElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* st
 {
     if (attr->name() == alignAttr) {
         if (equalIgnoringCase(attr->value(), "middle"))
-            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, "center");
+            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueCenter);
         else
             addPropertyToAttributeStyle(style, CSSPropertyTextAlign, attr->value());
     } else if (attr->name() == contenteditableAttr) {
