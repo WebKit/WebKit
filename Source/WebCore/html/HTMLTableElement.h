@@ -64,8 +64,6 @@ public:
     String rules() const;
     String summary() const;
 
-    virtual void attach();
-
     StylePropertySet* additionalCellStyle();
     StylePropertySet* additionalGroupStyle(bool rows);
 

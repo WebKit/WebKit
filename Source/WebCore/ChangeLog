@@ -1,5 +1,18 @@
 2012-02-25  Andreas Kling  <awesomekling@apple.com>
 
+        Remove HTMLTableElement::attach().
+        <http://webkit.org/b/79574>
+
+        Reviewed by Anders Carlsson.
+
+        Remove this attach() override since it was only used to assert that
+        we're not already attached, and this is already done by Node::attach().
+
+        * html/HTMLTableElement.cpp:
+        * html/HTMLTableElement.h:
+
+2012-02-25  Andreas Kling  <awesomekling@apple.com>
+
         HTMLTableElement: Avoid CSSParser in createSharedCellStyle().
         <http://webkit.org/b/79573>
 

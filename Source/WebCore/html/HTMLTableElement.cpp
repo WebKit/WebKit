@@ -537,12 +537,6 @@ StylePropertySet* HTMLTableElement::additionalGroupStyle(bool rows)
     return columnBorderStyle;
 }
 
-void HTMLTableElement::attach()
-{
-    ASSERT(!attached());
-    HTMLElement::attach();
-}
-
 bool HTMLTableElement::isURLAttribute(Attribute *attr) const
 {
     return attr->name() == backgroundAttr || HTMLElement::isURLAttribute(attr);
