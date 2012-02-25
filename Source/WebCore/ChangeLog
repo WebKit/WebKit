@@ -1,3 +1,18 @@
+2012-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Make the libc++ workaround more targeted
+        https://bugs.webkit.org/show_bug.cgi?id=79578
+        <rdar://problem/10933150>
+
+        Reviewed by Sam Weinig.
+
+        Change the std::move implementation to take a WebCore::TimerHeapReference directly so 
+        WebCore still builds with a version of libc++ that has the right std::move function template.
+
+        * WebCorePrefix.h:
+        (WebCore):
+        (move):
+
 2012-02-25  Andreas Kling  <awesomekling@apple.com>
 
         Remove HTMLEmbedElement::insertedIntoDocument().

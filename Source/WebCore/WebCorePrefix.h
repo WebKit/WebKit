@@ -99,18 +99,16 @@
 
 #include <type_traits>
 
+namespace WebCore {
+    class TimerHeapReference;
+}
+
 _LIBCPP_BEGIN_NAMESPACE_STD
 
-template <class _Tp>
 inline _LIBCPP_INLINE_VISIBILITY
-typename enable_if
-<
-    !is_convertible<_Tp, __rv<_Tp> >::value,
-    const _Tp&
->::type
-move(const _Tp& __t)
+const WebCore::TimerHeapReference& move(const WebCore::TimerHeapReference& t)
 {
-    return __t;
+    return t;
 }
 
 _LIBCPP_END_NAMESPACE_STD
