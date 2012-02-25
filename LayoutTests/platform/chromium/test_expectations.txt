@@ -2334,9 +2334,6 @@ BUG_YUTAK LEOPARD : fast/images/imagemap-circle-focus-ring.html = IMAGE
 BUG_YUTAK LINUX WIN : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
 BUG_YUTAK LEOPARD : fast/images/imagemap-polygon-focus-ring.html = IMAGE
 
-// Rebaseline images after webkit bug 79457 lands. 
-BUGWK79457 LINUX WIN : fast/images/rgb-jpeg-with-abode-marker-only.html = IMAGE
-
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
 ///////////////////////////////////////////////////////////////////////////
