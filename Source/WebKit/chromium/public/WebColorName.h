@@ -31,6 +31,9 @@
 #ifndef WebColorName_h
 #define WebColorName_h
 
+#include "platform/WebColor.h"
+#include "platform/WebCommon.h"
+
 namespace WebKit {
 
 enum WebColorName {
@@ -66,6 +69,9 @@ enum WebColorName {
     WebColorWindowText
 };
 
-}  // namespace WebKit
+// Sets the values of a set of named colors.
+WEBKIT_EXPORT void setNamedColors(const WebColorName*, const WebColor*, size_t length);
+
+} // namespace WebKit
 
 #endif
