@@ -1,3 +1,28 @@
+2012-02-24  Tom Sepez  <tsepez@chromium.org>
+
+        XSS Auditor targeting legitimate frames as false positives.
+        https://bugs.webkit.org/show_bug.cgi?id=79397
+
+        Reviewed by Adam Barth.
+
+        Test: http/tests/security/xssAuditor/script-tag-safe4.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterCharacterToken):
+        (WebCore::XSSAuditor::filterScriptToken):
+        (WebCore::XSSAuditor::filterObjectToken):
+        (WebCore::XSSAuditor::filterEmbedToken):
+        (WebCore::XSSAuditor::filterAppletToken):
+        (WebCore::XSSAuditor::filterIframeToken):
+        (WebCore::XSSAuditor::decodedSnippetForToken):
+        (WebCore):
+        (WebCore::XSSAuditor::decodedSnippetForName):
+        (WebCore::XSSAuditor::decodedSnippetForAttribute):
+        (WebCore::XSSAuditor::decodedSnippetForJavascript):
+        (WebCore::XSSAuditor::isContainedInRequest):
+        (WebCore::XSSAuditor::isSameOriginResource):
+        * html/parser/XSSAuditor.h:
+
 2012-02-24  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Plumb animation started notifications from CCLayerTreeHost to GraphicsLayerChromium
