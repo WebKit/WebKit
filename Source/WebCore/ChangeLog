@@ -1,3 +1,37 @@
+2012-02-24  Eric Carlson  <eric.carlson@apple.com>
+
+        Update TextTrackCue API
+        https://bugs.webkit.org/show_bug.cgi?id=79368
+
+        Change TextTrackCue.alignment to .align, TextTrackCue.linePosition and .textPosition to .line
+        and .position, and TextTrackCue.direction to .vertical. Change direction values "horizontal" 
+        to "","vertical" to "rl", and "vertical-lr" to "lr".
+
+        Reviewed by Eric Seidel.
+
+        No new tests, updated existing tests for API changes.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::horizontalKeyword):
+        (WebCore::verticalGrowingLeftKeyword):
+        (WebCore):
+        (WebCore::verticalGrowingRightKeyword):
+        (WebCore::verticalKeywordOLD):
+        (WebCore::verticallrKeywordOLD):
+        (WebCore::TextTrackCue::TextTrackCue):
+        (WebCore::TextTrackCue::vertical):
+        (WebCore::TextTrackCue::setVertical):
+        (WebCore::TextTrackCue::setLine):
+        (WebCore::TextTrackCue::setPosition):
+        (WebCore::TextTrackCue::align):
+        (WebCore::TextTrackCue::setAlign):
+        (WebCore::TextTrackCue::parseSettings):
+        * html/track/TextTrackCue.h:
+        (TextTrackCue):
+        (WebCore::TextTrackCue::line):
+        (WebCore::TextTrackCue::position):
+        * html/track/TextTrackCue.idl:
+
 2012-02-24  Adrienne Walker  <enne@google.com>
 
         Fix uninitialized variables in HarfBuzzShaperBase

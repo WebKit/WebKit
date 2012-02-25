@@ -42,16 +42,16 @@ module html {
         attribute double endTime;
         attribute boolean pauseOnExit;
 
-        attribute DOMString direction
+        attribute DOMString vertical
             setter raises (DOMException);
         attribute boolean snapToLines;
-        attribute long linePosition
+        attribute long line
             setter raises (DOMException);
-        attribute long textPosition
+        attribute long position
             setter raises (DOMException);
         attribute long size
             setter raises (DOMException);
-        attribute DOMString alignment
+        attribute DOMString align
             setter raises (DOMException);
 
         attribute DOMString text;

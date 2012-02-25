@@ -16,12 +16,12 @@ EXPECTED (textCue.id == 'sausage-cue') OK
 EXPECTED (textCue.startTime == '33') OK
 EXPECTED (textCue.endTime == '3.4') OK
 EXPECTED (textCue.pauseOnExit == 'false') OK
-EXPECTED (textCue.direction == 'horizontal') OK
+EXPECTED (textCue.vertical == '') OK
 EXPECTED (textCue.snapToLines == 'true') OK
-EXPECTED (textCue.linePosition == '-1') OK
-EXPECTED (textCue.textPosition == '50') OK
+EXPECTED (textCue.line == '-1') OK
+EXPECTED (textCue.position == '50') OK
 EXPECTED (textCue.size == '100') OK
-EXPECTED (textCue.alignment == 'middle') OK
+EXPECTED (textCue.align == 'middle') OK
 
 *** Add the new cue to a track, make sure it is inserted correctly.
 RUN(testTrack.track.addCue(textCue))
@@ -39,12 +39,12 @@ EXPECTED (newCue.id == 'test') OK
 EXPECTED (newCue.startTime == '0') OK
 EXPECTED (newCue.endTime == '1') OK
 EXPECTED (newCue.pauseOnExit == 'false') OK
-EXPECTED (newCue.direction == 'horizontal') OK
+EXPECTED (newCue.vertical == '') OK
 EXPECTED (newCue.snapToLines == 'true') OK
-EXPECTED (newCue.linePosition == '-1') OK
-EXPECTED (newCue.textPosition == '50') OK
+EXPECTED (newCue.line == '-1') OK
+EXPECTED (newCue.position == '50') OK
 EXPECTED (newCue.size == '100') OK
-EXPECTED (newCue.alignment == 'middle') OK
+EXPECTED (newCue.align == 'middle') OK
 
 *** Remove a cue created with addCue().
 RUN(testTrack.track.removeCue(textCue))

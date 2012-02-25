@@ -46,51 +46,66 @@ namespace WebCore {
 
 static const int invalidCueIndex = -1;
 
-static const AtomicString& startKeyword()
+static const String& startKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, start, ("start"));
+    DEFINE_STATIC_LOCAL(const String, start, ("start"));
     return start;
 }
 
-static const AtomicString& middleKeyword()
+static const String& middleKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, middle, ("middle"));
+    DEFINE_STATIC_LOCAL(const String, middle, ("middle"));
     return middle;
 }
 
-static const AtomicString& endKeyword()
+static const String& endKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, end, ("end"));
+    DEFINE_STATIC_LOCAL(const String, end, ("end"));
     return end;
 }
 
-static const AtomicString& horizontalKeyword()
+static const String& horizontalKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, horizontal, ("horizontal"));
-    return horizontal;
+    return emptyString();
 }
 
-static const AtomicString& verticalKeyword()
+static const String& verticalGrowingLeftKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, vertical, ("vertical"));
+    DEFINE_STATIC_LOCAL(const String, vertical, ("rl"));
     return vertical;
 }
-static const AtomicString& verticallrKeyword()
+
+static const String& verticalGrowingRightKeyword()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, verticallr, ("vertical-lr"));
+    DEFINE_STATIC_LOCAL(const String, verticallr, ("lr"));
+    return verticallr;
+}
+
+// FIXME: remove this once https://bugs.webkit.org/show_bug.cgi?id=78706 has been fixed.
+static const String& verticalKeywordOLD()
+{
+    DEFINE_STATIC_LOCAL(const String, vertical, ("vertical"));
+    return vertical;
+}
+
+// FIXME: remove this once https://bugs.webkit.org/show_bug.cgi?id=78706 has been fixed.
+static const String& verticallrKeywordOLD()
+{
+    DEFINE_STATIC_LOCAL(const String, verticallr, ("vertical-lr"));
     return verticallr;
 }
     
+
 TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit)
     : m_id(id)
     , m_startTime(start)
     , m_endTime(end)
     , m_content(content)
-    , m_writingDirection(Horizontal)
     , m_linePosition(-1)
     , m_textPosition(50)
     , m_cueSize(100)
     , m_cueIndex(invalidCueIndex)
+    , m_writingDirection(Horizontal)
     , m_cueAlignment(Middle)
     , m_scriptExecutionContext(context)
     , m_isActive(false)
@@ -166,35 +181,35 @@ void TextTrackCue::setPauseOnExit(bool value)
     cueDidChange();
 }
 
-const String& TextTrackCue::direction() const
+const String& TextTrackCue::vertical() const
 {
     switch (m_writingDirection) {
     case Horizontal: 
         return horizontalKeyword();
     case VerticalGrowingLeft:
-        return verticalKeyword();
+        return verticalGrowingLeftKeyword();
     case VerticalGrowingRight:
-        return verticallrKeyword();
+        return verticalGrowingRightKeyword();
     default:
         ASSERT_NOT_REACHED();
         return emptyString();
     }
 }
 
-void TextTrackCue::setDirection(const String& value, ExceptionCode& ec)
+void TextTrackCue::setVertical(const String& value, ExceptionCode& ec)
 {
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-direction
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-vertical
     // On setting, the text track cue writing direction must be set to the value given 
     // in the first cell of the row in the table above whose second cell is a 
     // case-sensitive match for the new value, if any. If none of the values match, then
     // the user agent must instead throw a SyntaxError exception.
     
-    Direction direction = m_writingDirection;
+    WritingDirection direction = m_writingDirection;
     if (value == horizontalKeyword())
         direction = Horizontal;
-    else if (value == verticalKeyword())
+    else if (value == verticalGrowingLeftKeyword())
         direction = VerticalGrowingLeft;
-    else if (value == verticallrKeyword())
+    else if (value == verticalGrowingRightKeyword())
         direction = VerticalGrowingRight;
     else
         ec = SYNTAX_ERR;
@@ -217,9 +232,9 @@ void TextTrackCue::setSnapToLines(bool value)
     cueDidChange();
 }
 
-void TextTrackCue::setLinePosition(int position, ExceptionCode& ec)
+void TextTrackCue::setLine(int position, ExceptionCode& ec)
 {
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-lineposition
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-line
     // On setting, if the text track cue snap-to-lines flag is not set, and the new
     // value is negative or greater than 100, then throw an IndexSizeError exception.
     if (!m_snapToLines && (position < 0 || position > 100)) {
@@ -236,9 +251,9 @@ void TextTrackCue::setLinePosition(int position, ExceptionCode& ec)
     cueDidChange();
 }
 
-void TextTrackCue::setTextPosition(int position, ExceptionCode& ec)
+void TextTrackCue::setPosition(int position, ExceptionCode& ec)
 {
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-lineposition
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-position
     // On setting, if the new value is negative or greater than 100, then throw an IndexSizeError exception.
     // Otherwise, set the text track cue text position to the new value.
     if (position < 0 || position > 100) {
@@ -274,7 +289,7 @@ void TextTrackCue::setSize(int size, ExceptionCode& ec)
     cueDidChange();
 }
 
-const String& TextTrackCue::alignment() const
+const String& TextTrackCue::align() const
 {
     switch (m_cueAlignment) {
     case Start:
@@ -289,9 +304,9 @@ const String& TextTrackCue::alignment() const
     }
 }
 
-void TextTrackCue::setAlignment(const String& value, ExceptionCode& ec)
+void TextTrackCue::setAlign(const String& value, ExceptionCode& ec)
 {
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-alignment
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-align
     // On setting, the text track cue alignment must be set to the value given in the 
     // first cell of the row in the table above whose second cell is a case-sensitive
     // match for the new value, if any. If none of the values match, then the user
@@ -405,9 +420,9 @@ void TextTrackCue::parseSettings(const String& input)
             {
             // 1-3 - Collect the next word and set the writing direction accordingly.
             String writingDirection = WebVTTParser::collectWord(input, &position);
-            if (writingDirection == verticalKeyword())
+            if (writingDirection == verticalKeywordOLD())
                 m_writingDirection = VerticalGrowingLeft;
-            else if (writingDirection == verticallrKeyword())
+            else if (writingDirection == verticallrKeywordOLD())
                 m_writingDirection = VerticalGrowingRight;
             }
             break;

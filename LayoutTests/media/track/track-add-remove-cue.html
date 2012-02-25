@@ -29,12 +29,12 @@
                 testExpected("textCue.startTime", 33);
                 testExpected("textCue.endTime", 3.4);
                 testExpected("textCue.pauseOnExit", false);
-                testExpected("textCue.direction", "horizontal");
+                testExpected("textCue.vertical", "");
                 testExpected("textCue.snapToLines", true);
-                testExpected("textCue.linePosition", -1);
-                testExpected("textCue.textPosition", 50);
+                testExpected("textCue.line", -1);
+                testExpected("textCue.position", 50);
                 testExpected("textCue.size", 100);
-                testExpected("textCue.alignment", "middle");
+                testExpected("textCue.align", "middle");
 
                 consoleWrite("<br>*** Add the new cue to a track, make sure it is inserted correctly.");
                 run("testTrack.track.addCue(textCue)");
@@ -54,12 +54,12 @@
                 testExpected("newCue.startTime", 0.0);
                 testExpected("newCue.endTime", 1.0);
                 testExpected("newCue.pauseOnExit", false);
-                testExpected("newCue.direction", "horizontal");
+                testExpected("newCue.vertical", "");
                 testExpected("newCue.snapToLines", true);
-                testExpected("newCue.linePosition", -1);
-                testExpected("newCue.textPosition", 50);
+                testExpected("newCue.line", -1);
+                testExpected("newCue.position", 50);
                 testExpected("newCue.size", 100);
-                testExpected("newCue.alignment", "middle");
+                testExpected("newCue.align", "middle");
 
                 consoleWrite("<br>*** Remove a cue created with addCue().");
                 run("testTrack.track.removeCue(textCue)");
