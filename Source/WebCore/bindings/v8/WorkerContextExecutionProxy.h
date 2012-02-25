@@ -86,7 +86,6 @@ namespace WebCore {
 
         WorkerContext* m_workerContext;
         v8::Persistent<v8::Context> m_context;
-        int m_recursion;
 
         Vector<Event*> m_events;
     };

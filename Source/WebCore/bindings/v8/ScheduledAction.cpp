@@ -41,6 +41,7 @@
 
 #include "V8Binding.h"
 #include "V8Proxy.h"
+#include "V8RecursionScope.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 #include "WorkerThread.h"
@@ -141,7 +142,8 @@ void ScheduledAction::execute(WorkerContext* workerContext)
 {
     // In a Worker, the execution should always happen on a worker thread.
     ASSERT(workerContext->thread()->threadID() == currentThread());
-  
+
+    V8RecursionScope recursionScope(workerContext);
     WorkerScriptController* scriptController = workerContext->script();
 
     if (!m_function.IsEmpty() && m_function->IsFunction()) {

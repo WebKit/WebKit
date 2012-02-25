@@ -1,3 +1,27 @@
+2012-02-24  Joshua Bell  <jsbell@chromium.org>
+
+        [V8] IndexedDB: IDBTransaction objects leak in Workers
+        https://bugs.webkit.org/show_bug.cgi?id=79308
+
+        Use a V8RecursionScope whenever Workers call into script, so that
+        post-script side-effects can be executed.
+
+        Reviewed by Tony Chang.
+
+        Test: storage/indexeddb/transaction-abort-workers.html
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/v8/V8WorkerContextErrorHandler.cpp:
+        (WebCore::V8WorkerContextErrorHandler::callListenerFunction):
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::callListenerFunction):
+        * bindings/v8/WorkerContextExecutionProxy.cpp: Replace custom recursion tracking.
+        (WebCore::WorkerContextExecutionProxy::WorkerContextExecutionProxy):
+        (WebCore::WorkerContextExecutionProxy::runScript):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        (WorkerContextExecutionProxy):
+
 2012-02-24  Gregg Tavares  <gman@google.com>
 
         Limit WebGL Errors in Console to 10 per context

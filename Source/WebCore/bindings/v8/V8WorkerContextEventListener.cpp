@@ -37,6 +37,7 @@
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
 #include "V8Event.h"
+#include "V8RecursionScope.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 
@@ -90,6 +91,7 @@ v8::Local<v8::Value> V8WorkerContextEventListener::callListenerFunction(ScriptEx
         return v8::Local<v8::Value>();
 
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
+    V8RecursionScope recursionScope(context);
     v8::Local<v8::Value> result = handlerFunction->Call(receiver, 1, parameters);
 
     if (WorkerContextExecutionProxy* proxy = workerProxy(context))

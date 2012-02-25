@@ -498,6 +498,8 @@ function startWorker(testScriptURL)
         debug('Got error from worker: ' + event.message);
         finishJSTest();
     }
+
+    return worker;
 }
 
 if (isWorker()) {
