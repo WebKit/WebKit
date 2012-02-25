@@ -39,7 +39,6 @@ private:
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
-    virtual void insertedIntoDocument();
 
     virtual bool isURLAttribute(Attribute*) const;
     virtual const QualifiedName& imageSourceAttributeName() const;

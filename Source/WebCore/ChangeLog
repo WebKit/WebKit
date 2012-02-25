@@ -1,3 +1,13 @@
+2012-02-25  Andreas Kling  <awesomekling@apple.com>
+
+        Remove HTMLEmbedElement::insertedIntoDocument().
+        <http://webkit.org/b/79576>
+
+        Reviewed by Anders Carlsson.
+
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLEmbedElement.h:
+
 2012-02-25  Adrienne Walker  <enne@google.com>
 
         Fix unused variable warnings in HarfBuzzShaperBase

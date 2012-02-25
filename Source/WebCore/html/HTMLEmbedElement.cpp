@@ -208,13 +208,6 @@ bool HTMLEmbedElement::rendererIsNeeded(const NodeRenderingContext& context)
     return HTMLPlugInImageElement::rendererIsNeeded(context);
 }
 
-void HTMLEmbedElement::insertedIntoDocument()
-{
-    HTMLPlugInImageElement::insertedIntoDocument();
-    if (!inDocument())
-        return;
-}
-
 bool HTMLEmbedElement::isURLAttribute(Attribute* attr) const
 {
     return attr->name() == srcAttr || HTMLPlugInImageElement::isURLAttribute(attr);
