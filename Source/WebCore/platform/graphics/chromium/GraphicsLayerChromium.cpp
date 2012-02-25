@@ -62,7 +62,8 @@
 using namespace std;
 
 namespace {
-static int s_nextGroupId = 0;
+static int s_nextGroupId = 1;
+static int s_nextAnimationId = 1;
 }
 
 namespace WebCore {
@@ -88,11 +89,20 @@ GraphicsLayerChromium::~GraphicsLayerChromium()
     if (m_layer) {
         m_layer->clearDelegate();
         m_layer->clearRenderSurface();
+        // Primary layer may have at one point been m_layer. Be sure to reset
+        // the delegate, just in case.
+        m_layer->setLayerAnimationDelegate(0);
     }
+
     if (m_contentsLayer)
         m_contentsLayer->clearRenderSurface();
-    if (m_transformLayer)
+
+    if (m_transformLayer) {
         m_transformLayer->clearRenderSurface();
+        // Primary layer may have switched from m_layer to m_transformLayer.
+        // Be sure to reset the delegate, just in case.
+        m_transformLayer->setLayerAnimationDelegate(0);
+    }
 }
 
 void GraphicsLayerChromium::setName(const String& inName)
@@ -388,27 +398,28 @@ void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
 
 bool GraphicsLayerChromium::addAnimation(const KeyframeValueList& values, const IntSize& boxSize, const Animation* animation, const String& animationName, double timeOffset)
 {
-    return m_layer->addAnimation(values, boxSize, animation, mapAnimationNameToId(animationName), s_nextGroupId++, timeOffset);
+    primaryLayer()->setLayerAnimationDelegate(this);
+    return primaryLayer()->addAnimation(values, boxSize, animation, mapAnimationNameToId(animationName), s_nextGroupId++, timeOffset);
 }
 
 void GraphicsLayerChromium::pauseAnimation(const String& animationName, double timeOffset)
 {
-    m_layer->pauseAnimation(mapAnimationNameToId(animationName), timeOffset);
+    primaryLayer()->pauseAnimation(mapAnimationNameToId(animationName), timeOffset);
 }
 
 void GraphicsLayerChromium::removeAnimation(const String& animationName)
 {
-    m_layer->removeAnimation(mapAnimationNameToId(animationName));
+    primaryLayer()->removeAnimation(mapAnimationNameToId(animationName));
 }
 
 void GraphicsLayerChromium::suspendAnimations(double time)
 {
-    m_layer->suspendAnimations(time);
+    primaryLayer()->suspendAnimations(time);
 }
 
 void GraphicsLayerChromium::resumeAnimations()
 {
-    m_layer->resumeAnimations();
+    primaryLayer()->resumeAnimations();
 }
 
 void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
@@ -566,6 +577,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         // Create the transform layer.
         m_transformLayer = LayerChromium::create();
         m_transformLayer->setPreserves3D(true);
+        m_transformLayer->setLayerAnimationDelegate(this);
 
         // Copy the position from this layer.
         updateLayerPosition();
@@ -598,6 +610,7 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
             m_transformLayer->parent()->replaceChild(m_transformLayer.get(), m_layer.get());
 
         // Release the transform layer.
+        m_transformLayer->setLayerAnimationDelegate(0);
         m_transformLayer = 0;
 
         updateLayerPosition();
@@ -720,8 +733,29 @@ void GraphicsLayerChromium::paintContents(GraphicsContext& context, const IntRec
 
 int GraphicsLayerChromium::mapAnimationNameToId(const String& animationName)
 {
-    // FIXME: need to maintain a name to id mapping in this class.
-    return 0;
+    if (animationName.isEmpty())
+        return 0;
+
+    if (!m_animationIdMap.contains(animationName))
+        m_animationIdMap.add(animationName, s_nextAnimationId++);
+
+    return m_animationIdMap.find(animationName)->second;
+}
+
+void GraphicsLayerChromium::notifyAnimationStarted(double startTime)
+{
+    if (m_client)
+        m_client->notifyAnimationStarted(this, startTime);
+}
+
+void GraphicsLayerChromium::notifyAnimationFinished(int animationId)
+{
+    for (AnimationIdMap::iterator idIter = m_animationIdMap.begin(); idIter != m_animationIdMap.end(); ++idIter) {
+        if (idIter->second == animationId) {
+            m_animationIdMap.remove(idIter);
+            return;
+        }
+    }
 }
 
 } // namespace WebCore

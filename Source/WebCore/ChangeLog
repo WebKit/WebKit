@@ -1,3 +1,74 @@
+2012-02-24  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Plumb animation started notifications from CCLayerTreeHost to GraphicsLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=77646
+
+        Reviewed by James Robinson.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (std):
+        (WebCore::GraphicsLayerChromium::~GraphicsLayerChromium):
+        (WebCore::GraphicsLayerChromium::addAnimation):
+        (WebCore::GraphicsLayerChromium::pauseAnimation):
+        (WebCore::GraphicsLayerChromium::removeAnimation):
+        (WebCore::GraphicsLayerChromium::suspendAnimations):
+        (WebCore::GraphicsLayerChromium::resumeAnimations):
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D):
+        (WebCore::GraphicsLayerChromium::mapAnimationNameToId):
+        (WebCore):
+        (WebCore::GraphicsLayerChromium::notifyAnimationStarted):
+        (WebCore::GraphicsLayerChromium::notifyAnimationFinished):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        (GraphicsLayerChromium):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setAnimationEvent):
+        (WebCore):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore):
+        (LayerChromium):
+        (WebCore::LayerChromium::setLayerAnimationDelegate):
+        * platform/graphics/chromium/cc/CCAnimationEvents.cpp: Added.
+        (WebCore):
+        (WebCore::CCAnimationEvent::CCAnimationEvent):
+        (WebCore::CCAnimationEvent::~CCAnimationEvent):
+        (WebCore::CCAnimationEvent::toAnimationStartedEvent):
+        (WebCore::CCAnimationEvent::toAnimationFinishedEvent):
+        (WebCore::CCAnimationStartedEvent::create):
+        (WebCore::CCAnimationStartedEvent::CCAnimationStartedEvent):
+        (WebCore::CCAnimationStartedEvent::~CCAnimationStartedEvent):
+        (WebCore::CCAnimationStartedEvent::type):
+        (WebCore::CCAnimationFinishedEvent::create):
+        (WebCore::CCAnimationFinishedEvent::CCAnimationFinishedEvent):
+        (WebCore::CCAnimationFinishedEvent::~CCAnimationFinishedEvent):
+        (WebCore::CCAnimationFinishedEvent::type):
+        * platform/graphics/chromium/cc/CCAnimationEvents.h:
+        (WebCore):
+        (CCAnimationEvent):
+        (WebCore::CCAnimationEvent::layerId):
+        (CCAnimationStartedEvent):
+        (WebCore::CCAnimationStartedEvent::startTime):
+        (CCAnimationFinishedEvent):
+        (WebCore::CCAnimationFinishedEvent::animationId):
+        * platform/graphics/chromium/cc/CCLayerAnimationControllerImpl.cpp:
+        (WebCore::CCLayerAnimationControllerImpl::animate):
+        (WebCore::CCLayerAnimationControllerImpl::startAnimationsWaitingForNextTick):
+        (WebCore::CCLayerAnimationControllerImpl::startAnimationsWaitingForStartTime):
+        (WebCore::CCLayerAnimationControllerImpl::startAnimationsWaitingForTargetAvailability):
+        (WebCore::CCLayerAnimationControllerImpl::purgeFinishedAnimations):
+        (WebCore::CCLayerAnimationControllerImpl::tickAnimations):
+        * platform/graphics/chromium/cc/CCLayerAnimationControllerImpl.h:
+        (CCLayerAnimationControllerImpl):
+        * platform/graphics/chromium/cc/CCLayerAnimationDelegate.h: Copied from Source/WebCore/platform/graphics/chromium/cc/CCAnimationEvents.h.
+        (WebCore):
+        (CCLayerAnimationDelegate):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::setAnimationEvents):
+        (WebCore::CCLayerTreeHost::setAnimationEventsRecursive):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+
 2012-02-24  Abhishek Arya  <inferno@chromium.org>
 
         Regression(r107477): Crash in StaticNodeList::itemWithName.

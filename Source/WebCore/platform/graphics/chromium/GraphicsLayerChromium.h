@@ -37,12 +37,15 @@
 #include "LayerChromium.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
+#include "cc/CCLayerAnimationDelegate.h"
+
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
 class LayerChromium;
 
-class GraphicsLayerChromium : public GraphicsLayer, public ContentLayerDelegate {
+class GraphicsLayerChromium : public GraphicsLayer, public ContentLayerDelegate, public CCLayerAnimationDelegate {
 public:
     GraphicsLayerChromium(GraphicsLayerClient*);
     virtual ~GraphicsLayerChromium();
@@ -110,10 +113,16 @@ public:
     // ContentLayerDelegate implementation.
     virtual void paintContents(GraphicsContext&, const IntRect& clip);
 
+    // CCLayerAnimationDelegate implementation.
+    virtual void notifyAnimationStarted(double startTime);
+    virtual void notifyAnimationFinished(int animationId);
+
     // Exposed for tests.
     LayerChromium* contentsLayer() const { return m_contentsLayer.get(); }
 
 private:
+    typedef HashMap<String, int> AnimationIdMap;
+
     LayerChromium* primaryLayer() const  { return m_transformLayer.get() ? m_transformLayer.get() : m_layer.get(); }
     LayerChromium* hostLayerForChildren() const;
     LayerChromium* layerForParent() const;
@@ -156,6 +165,8 @@ private:
     ContentsLayerPurpose m_contentsLayerPurpose;
     bool m_contentsLayerHasBackgroundColor : 1;
     bool m_inSetChildren;
+
+    AnimationIdMap m_animationIdMap;
 };
 
 } // namespace WebCore

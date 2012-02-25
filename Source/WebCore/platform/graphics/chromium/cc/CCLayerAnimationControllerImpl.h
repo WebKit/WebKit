@@ -82,7 +82,7 @@ private:
     void startAnimationsWaitingForStartTime(double now, CCAnimationEventsVector&);
     void startAnimationsWaitingForTargetAvailability(double now, CCAnimationEventsVector&);
     void resolveConflicts(double now);
-    void purgeFinishedAnimations();
+    void purgeFinishedAnimations(CCAnimationEventsVector&);
 
     void tickAnimations(double now);
 

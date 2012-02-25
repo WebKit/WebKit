@@ -38,6 +38,7 @@
 #include "WebKit.h"
 #include "cc/CCActiveAnimation.h"
 #include "cc/CCLayerAnimationController.h"
+#include "cc/CCLayerAnimationDelegate.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCScopedThreadProxy.h"
@@ -59,7 +60,7 @@ using namespace WTF;
 namespace {
 
 // Used by test stubs to notify the test when something interesting happens.
-class TestHooks {
+class TestHooks : public CCLayerAnimationDelegate {
 public:
     virtual void beginCommitOnCCThread(CCLayerTreeHostImpl*) { }
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*) { }
@@ -68,6 +69,10 @@ public:
     virtual void applyScrollAndScale(const IntSize&, float) { }
     virtual void updateAnimations(double frameBeginTime) { }
     virtual void layout() { }
+
+    // Implementation of CCLayerAnimationDelegate
+    virtual void notifyAnimationStarted(double time) { }
+    virtual void notifyAnimationFinished(int animationId) { }
 };
 
 // Adapts CCLayerTreeHostImpl for test. Runs real code, then invokes test hooks.
@@ -129,6 +134,8 @@ public:
 
         // LayerTreeHostImpl won't draw if it has 1x1 viewport.
         layerTreeHost->setViewportSize(IntSize(1, 1));
+
+        layerTreeHost->rootLayer()->setLayerAnimationDelegate(testHooks);
 
         return layerTreeHost.release();
     }
@@ -827,7 +834,8 @@ class CCLayerTreeHostTestAddAnimation : public CCLayerTreeHostTestThreadOnly {
 public:
     CCLayerTreeHostTestAddAnimation()
         : m_numAnimates(0)
-        , m_layerTreeHostImpl(0)
+        , m_receivedAnimationStartedNotification(false)
+        , m_receivedAnimationFinishedNotification(false)
     {
     }
 
@@ -845,7 +853,19 @@ public:
             m_numAnimates++;
             return;
         }
+        EXPECT_TRUE(m_receivedAnimationStartedNotification);
+        EXPECT_TRUE(m_receivedAnimationFinishedNotification);
         endTest();
+    }
+
+    virtual void notifyAnimationStarted(double)
+    {
+        m_receivedAnimationStartedNotification = true;
+    }
+
+    virtual void notifyAnimationFinished(int)
+    {
+        m_receivedAnimationFinishedNotification = true;
     }
 
     virtual void afterTest()
@@ -854,7 +874,8 @@ public:
 
 private:
     int m_numAnimates;
-    CCLayerTreeHostImpl* m_layerTreeHostImpl;
+    bool m_receivedAnimationStartedNotification;
+    bool m_receivedAnimationFinishedNotification;
 };
 
 TEST_F(CCLayerTreeHostTestAddAnimation, runMultiThread)

@@ -33,7 +33,9 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "LayerChromium.h"
 
+#include "cc/CCAnimationEvents.h"
 #include "cc/CCLayerAnimationController.h"
+#include "cc/CCLayerAnimationDelegate.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHost.h"
 #if USE(SKIA)
@@ -82,6 +84,7 @@ LayerChromium::LayerChromium()
     , m_targetRenderSurface(0)
     , m_contentsScale(1.0)
     , m_pageScaleDirty(false)
+    , m_layerAnimationDelegate(0)
 {
 }
 
@@ -139,6 +142,25 @@ void LayerChromium::setLayerAnimationController(PassOwnPtr<CCLayerAnimationContr
 bool LayerChromium::hasActiveAnimation() const
 {
     return m_layerAnimationController->hasActiveAnimation();
+}
+
+void LayerChromium::setAnimationEvent(const CCAnimationEvent& event)
+{
+    switch (event.type()) {
+
+    case CCAnimationEvent::Started: {
+        const CCAnimationStartedEvent* startedEvent = event.toAnimationStartedEvent();
+        m_layerAnimationDelegate->notifyAnimationStarted(startedEvent->startTime());
+        break;
+    }
+
+    case CCAnimationEvent::Finished: {
+        const CCAnimationFinishedEvent* finishedEvent = event.toAnimationFinishedEvent();
+        m_layerAnimationDelegate->notifyAnimationFinished(finishedEvent->animationId());
+        break;
+    }
+
+    }
 }
 
 void LayerChromium::setIsNonCompositedContent(bool isNonCompositedContent)

@@ -218,6 +218,8 @@ private:
     void reserveTextures();
     void clearPendingUpdate();
 
+    void setAnimationEventsRecursive(const CCAnimationEventsVector&, LayerChromium*);
+
     int m_compositorIdentifier;
 
     bool m_animating;

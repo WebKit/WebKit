@@ -1,3 +1,21 @@
+2012-02-24  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Plumb animation started notifications from CCLayerTreeHost to GraphicsLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=77646
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (TestHooks):
+        (WTF::TestHooks::notifyAnimationStarted):
+        (WTF::TestHooks::notifyAnimationFinished):
+        (WTF::MockLayerTreeHost::create):
+        (WTF::CCLayerTreeHostTestAddAnimation::CCLayerTreeHostTestAddAnimation):
+        (WTF::CCLayerTreeHostTestAddAnimation::animateLayers):
+        (WTF::CCLayerTreeHostTestAddAnimation::notifyAnimationStarted):
+        (CCLayerTreeHostTestAddAnimation):
+        (WTF::CCLayerTreeHostTestAddAnimation::notifyAnimationFinished):
+
 2012-02-24  James Robinson  <jamesr@chromium.org>
 
         [chromium] WebKit::setColorNames is a client API

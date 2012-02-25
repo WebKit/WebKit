@@ -262,7 +262,7 @@ void CCLayerTreeHost::setNeedsRedraw()
 void CCLayerTreeHost::setAnimationEvents(PassOwnPtr<CCAnimationEventsVector> events)
 {
     ASSERT(CCThreadProxy::isMainThread());
-    // FIXME: need to walk the tree.
+    setAnimationEventsRecursive(*events, m_rootLayer.get());
 }
 
 void CCLayerTreeHost::setRootLayer(PassRefPtr<LayerChromium> rootLayer)
@@ -647,4 +647,15 @@ void CCLayerTreeHost::deleteTextureAfterCommit(PassOwnPtr<ManagedTexture> textur
     m_deleteTextureAfterCommitList.append(texture);
 }
 
+void CCLayerTreeHost::setAnimationEventsRecursive(const CCAnimationEventsVector& events, LayerChromium* layer)
+{
+    for (size_t eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
+        if (layer->id() == events[eventIndex]->layerId())
+            layer->setAnimationEvent(*events[eventIndex]);
+    }
+
+    for (size_t childIndex = 0; childIndex < layer->children().size(); ++childIndex)
+        setAnimationEventsRecursive(events, layer->children()[childIndex].get());
 }
+
+} // namespace WebCore

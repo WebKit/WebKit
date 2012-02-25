@@ -25,20 +25,69 @@
 #ifndef CCAnimationEvents_h
 #define CCAnimationEvents_h
 
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-// Indicates that an animation has started on a particular layer.
-struct CCAnimationStartedEvent {
-    CCAnimationStartedEvent(int layerID, double time)
-        : layerID(layerID)
-        , time(time) { }
-    int layerID;
-    double time;
+class CCAnimationStartedEvent;
+class CCAnimationFinishedEvent;
+
+class CCAnimationEvent {
+public:
+    enum Type { Started, Finished };
+
+    virtual ~CCAnimationEvent();
+
+    virtual Type type() const = 0;
+
+    int layerId() const { return m_layerId; }
+
+    const CCAnimationStartedEvent* toAnimationStartedEvent() const;
+    const CCAnimationFinishedEvent* toAnimationFinishedEvent() const;
+
+protected:
+    CCAnimationEvent(int layerId);
+
+private:
+    int m_layerId;
 };
 
-typedef Vector<CCAnimationStartedEvent> CCAnimationEventsVector;
+// Indicates that an animation has started on a particular layer.
+class CCAnimationStartedEvent : public CCAnimationEvent {
+public:
+    static PassOwnPtr<CCAnimationStartedEvent> create(int layerId, double startTime);
+
+    virtual ~CCAnimationStartedEvent();
+
+    virtual Type type() const;
+
+    double startTime() const { return m_startTime; }
+
+private:
+    CCAnimationStartedEvent(int layerId, double startTime);
+
+    double m_startTime;
+};
+
+// Indicates that an animation has started on a particular layer.
+class CCAnimationFinishedEvent : public CCAnimationEvent {
+public:
+    static PassOwnPtr<CCAnimationFinishedEvent> create(int layerId, int animationId);
+
+    virtual ~CCAnimationFinishedEvent();
+
+    virtual Type type() const;
+
+    int animationId() const { return m_animationId; }
+
+private:
+    CCAnimationFinishedEvent(int layerId, int animationId);
+
+    int m_animationId;
+};
+
+typedef Vector<OwnPtr<CCAnimationEvent> > CCAnimationEventsVector;
 
 } // namespace WebCore
 

@@ -56,7 +56,7 @@ void CCLayerAnimationControllerImpl::animate(double frameBeginTimeSecs, CCAnimat
     startAnimationsWaitingForTargetAvailability(frameBeginTimeSecs, events);
     resolveConflicts(frameBeginTimeSecs);
     tickAnimations(frameBeginTimeSecs);
-    purgeFinishedAnimations();
+    purgeFinishedAnimations(events);
     startAnimationsWaitingForTargetAvailability(frameBeginTimeSecs, events);
 }
 
@@ -89,7 +89,7 @@ void CCLayerAnimationControllerImpl::startAnimationsWaitingForNextTick(double no
         if (m_activeAnimations[i]->runState() == CCActiveAnimation::WaitingForNextTick) {
             m_activeAnimations[i]->setRunState(CCActiveAnimation::Running, now);
             m_activeAnimations[i]->setStartTime(now);
-            events.append(CCAnimationStartedEvent(m_client->id(), now));
+            events.append(CCAnimationStartedEvent::create(m_client->id(), now));
         }
     }
 }
@@ -99,7 +99,7 @@ void CCLayerAnimationControllerImpl::startAnimationsWaitingForStartTime(double n
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
         if (m_activeAnimations[i]->runState() == CCActiveAnimation::WaitingForStartTime && m_activeAnimations[i]->startTime() <= now) {
             m_activeAnimations[i]->setRunState(CCActiveAnimation::Running, now);
-            events.append(CCAnimationStartedEvent(m_client->id(), now));
+            events.append(CCAnimationStartedEvent::create(m_client->id(), now));
         }
     }
 }
@@ -136,7 +136,7 @@ void CCLayerAnimationControllerImpl::startAnimationsWaitingForTargetAvailability
             if (nullIntersection) {
                 m_activeAnimations[i]->setRunState(CCActiveAnimation::Running, now);
                 m_activeAnimations[i]->setStartTime(now);
-                events.append(CCAnimationStartedEvent(m_client->id(), now));
+                events.append(CCAnimationStartedEvent::create(m_client->id(), now));
                 for (size_t j = i + 1; j < m_activeAnimations.size(); ++j) {
                     if (m_activeAnimations[i]->group() == m_activeAnimations[j]->group()) {
                         m_activeAnimations[j]->setRunState(CCActiveAnimation::Running, now);
@@ -169,7 +169,7 @@ void CCLayerAnimationControllerImpl::resolveConflicts(double now)
     }
 }
 
-void CCLayerAnimationControllerImpl::purgeFinishedAnimations()
+void CCLayerAnimationControllerImpl::purgeFinishedAnimations(CCAnimationEventsVector& events)
 {
     // Each iteration, m_activeAnimations.size() decreases or i increments,
     // guaranteeing progress towards loop termination.
@@ -186,6 +186,7 @@ void CCLayerAnimationControllerImpl::purgeFinishedAnimations()
             }
         }
         if (allAnimsWithSameIdAreFinished) {
+            events.append(CCAnimationFinishedEvent::create(m_client->id(), m_activeAnimations[i]->id()));
             m_finishedAnimations.append(m_activeAnimations[i]->signature());
             m_activeAnimations.remove(i);
         } else
@@ -198,6 +199,7 @@ void CCLayerAnimationControllerImpl::tickAnimations(double now)
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
         if (m_activeAnimations[i]->runState() == CCActiveAnimation::Running) {
             double trimmed = m_activeAnimations[i]->trimTimeToCurrentIteration(now);
+
             switch (m_activeAnimations[i]->targetProperty()) {
 
             case CCActiveAnimation::Transform: {

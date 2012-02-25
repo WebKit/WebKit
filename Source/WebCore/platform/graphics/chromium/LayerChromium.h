@@ -52,7 +52,9 @@
 
 namespace WebCore {
 
+class CCAnimationEvent;
 class CCLayerAnimationController;
+class CCLayerAnimationDelegate;
 class CCLayerImpl;
 class CCLayerTreeHost;
 class CCTextureUpdater;
@@ -224,7 +226,12 @@ public:
 
     CCLayerAnimationController* layerAnimationController() { return m_layerAnimationController.get(); }
     void setLayerAnimationController(PassOwnPtr<CCLayerAnimationController>);
+
+    void setLayerAnimationDelegate(CCLayerAnimationDelegate* layerAnimationDelegate) { m_layerAnimationDelegate = layerAnimationDelegate; }
+
     bool hasActiveAnimation() const;
+
+    void setAnimationEvent(const CCAnimationEvent&);
 
 protected:
     friend class CCLayerImpl;
@@ -314,6 +321,8 @@ private:
     String m_name;
 
     bool m_pageScaleDirty;
+
+    CCLayerAnimationDelegate* m_layerAnimationDelegate;
 };
 
 void sortLayers(Vector<RefPtr<LayerChromium> >::iterator, Vector<RefPtr<LayerChromium> >::iterator, void*);
