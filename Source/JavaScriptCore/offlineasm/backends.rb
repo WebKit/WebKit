@@ -28,6 +28,7 @@ require "x86"
 BACKENDS =
     [
      "X86",
+     "X86_64",
      "ARMv7"
     ]
 
@@ -39,6 +40,7 @@ BACKENDS =
 WORKING_BACKENDS =
     [
      "X86",
+     "X86_64",
      "ARMv7"
     ]
 
@@ -46,6 +48,7 @@ BACKEND_PATTERN = Regexp.new('\\A(' + BACKENDS.join(')|(') + ')\\Z')
 
 class Node
     def lower(name)
+        $activeBackend = name
         send("lower" + name)
     end
 end
@@ -83,6 +86,7 @@ end
 
 class Sequence
     def lower(name)
+        $activeBackend = name
         if respond_to? "lower#{name}"
             send("lower#{name}")
         else

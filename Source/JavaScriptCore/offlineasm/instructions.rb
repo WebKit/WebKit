@@ -56,6 +56,8 @@ MACRO_INSTRUCTIONS =
      "ci2d",
      "fii2d", # usage: fii2d <gpr with least significant bits>, <gpr with most significant bits>, <fpr>
      "fd2ii", # usage: fd2ii <fpr>, <gpr with least significant bits>, <gpr with most significant bits>
+     "fp2d",
+     "fd2p",
      "bdeq",
      "bdneq",
      "bdgt",

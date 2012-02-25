@@ -1,5 +1,18 @@
 2012-02-25  Filip Pizlo  <fpizlo@apple.com>
 
+        Offlineasm should support X86_64
+        https://bugs.webkit.org/show_bug.cgi?id=79581
+
+        Reviewed by Oliver Hunt.
+
+        * llint/LLIntOfflineAsmConfig.h:
+        * offlineasm/backends.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/settings.rb:
+        * offlineasm/x86.rb:
+
+2012-02-25  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should support activations and nested functions
         https://bugs.webkit.org/show_bug.cgi?id=79554
 

@@ -43,6 +43,12 @@
 #define OFFLINE_ASM_ARMv7 0
 #endif
 
+#if CPU(X86_64)
+#define OFFLINE_ASM_X86_64 1
+#else
+#define OFFLINE_ASM_X86_64 0
+#endif
+
 #if !ASSERT_DISABLED
 #define OFFLINE_ASM_ASSERT_ENABLED 1
 #else

@@ -53,7 +53,7 @@ def computeSettingsCombinations(ast)
         settingsCombinator(settingsCombinations, newMap, remaining[1..-1])
     end
     
-    settingsCombinator(settingsCombinations, {}, (ast.filter(Setting).uniq.collect{|v| v.name} + ["X86", "ARMv7"]).uniq)
+    settingsCombinator(settingsCombinations, {}, (ast.filter(Setting).uniq.collect{|v| v.name} + BACKENDS).uniq)
     
     settingsCombinations
 end
