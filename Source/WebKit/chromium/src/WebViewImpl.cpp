@@ -34,6 +34,7 @@
 #include "AutofillPopupMenuClient.h"
 #include "AXObjectCache.h"
 #include "BackForwardListChromium.h"
+#include "cc/CCProxy.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
@@ -123,6 +124,8 @@
 #include "WebInputEventConversion.h"
 #include "WebKit.h"
 #include "platform/WebKitPlatformSupport.h"
+#include "platform/WebLayer.h"
+#include "platform/WebLayerTreeView.h"
 #include "WebMediaPlayerAction.h"
 #include "WebNode.h"
 #include "WebPlugin.h"
@@ -137,7 +140,6 @@
 #include "platform/WebString.h"
 #include "platform/WebVector.h"
 #include "WebViewClient.h"
-#include "cc/CCProxy.h"
 #include <wtf/ByteArray.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -627,8 +629,8 @@ bool WebViewImpl::gestureEvent(const WebGestureEvent& event)
 
 void WebViewImpl::startPageScaleAnimation(const IntPoint& scroll, bool useAnchor, float newScale, double durationSec)
 {
-    if (m_layerTreeHost)
-        m_layerTreeHost->startPageScaleAnimation(IntSize(scroll.x(), scroll.y()), useAnchor, newScale, durationSec);
+    if (!m_layerTreeView.isNull())
+        m_layerTreeView.startPageScaleAnimation(scroll, useAnchor, newScale, durationSec);
 }
 #endif
 
@@ -1276,7 +1278,7 @@ void WebViewImpl::animate(double frameBeginTime)
     // In composited mode, we always go through the compositor so it can apply
     // appropriate flow-control mechanisms.
     if (isAcceleratedCompositingActive())
-        m_layerTreeHost->updateAnimations(frameBeginTime);
+        m_layerTreeView.updateAnimations(frameBeginTime);
     else
 #endif
         updateAnimations(frameBeginTime);
@@ -1324,6 +1326,7 @@ void WebViewImpl::layout()
 #if USE(ACCELERATED_COMPOSITING)
 void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect)
 {
+    ASSERT(!m_layerTreeView.isNull());
 #if USE(SKIA)
     PlatformContextSkia context(canvas);
 
@@ -1342,7 +1345,7 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
     OwnPtr<ImageBuffer> imageBuffer(ImageBuffer::create(rect.size()));
     RefPtr<ByteArray> pixelArray(ByteArray::create(rect.width() * rect.height() * 4));
     if (imageBuffer && pixelArray) {
-        m_layerTreeHost->compositeAndReadback(pixelArray->data(), invertRect);
+        m_layerTreeView.compositeAndReadback(pixelArray->data(), invertRect);
         imageBuffer->putByteArray(Premultiplied, pixelArray.get(), rect.size(), IntRect(IntPoint(), rect.size()), IntPoint());
         gc.save();
         gc.translate(IntSize(0, bitmapHeight));
@@ -1364,7 +1367,7 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
         if (canvas) {
             // Clip rect to the confines of the rootLayerTexture.
             IntRect resizeRect(rect);
-            resizeRect.intersect(IntRect(IntPoint(0, 0), m_layerTreeHost->viewportSize()));
+            resizeRect.intersect(IntRect(IntPoint(0, 0), m_layerTreeView.viewportSize()));
             doPixelReadbackToCanvas(canvas, resizeRect);
         }
 #endif
@@ -1394,7 +1397,7 @@ void WebViewImpl::composite(bool)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (CCProxy::hasImplThread())
-        m_layerTreeHost->setNeedsRedraw();
+        m_layerTreeView.setNeedsRedraw();
     else {
         ASSERT(isAcceleratedCompositingActive());
         if (!page())
@@ -1403,7 +1406,7 @@ void WebViewImpl::composite(bool)
         if (m_pageOverlays)
             m_pageOverlays->update();
 
-        m_layerTreeHost->composite();
+        m_layerTreeView.composite();
     }
 #endif
 }
@@ -1411,16 +1414,16 @@ void WebViewImpl::composite(bool)
 void WebViewImpl::setNeedsRedraw()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_layerTreeHost && isAcceleratedCompositingActive())
-        m_layerTreeHost->setNeedsRedraw();
+    if (!m_layerTreeView.isNull() && isAcceleratedCompositingActive())
+        m_layerTreeView.setNeedsRedraw();
 #endif
 }
 
 void WebViewImpl::loseCompositorContext(int numTimes)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_layerTreeHost)
-        m_layerTreeHost->loseCompositorContext(numTimes);
+    if (!m_layerTreeView.isNull())
+        m_layerTreeView.loseCompositorContext(numTimes);
 #endif
 }
 
@@ -2302,8 +2305,8 @@ bool WebViewImpl::computePageScaleFactorLimits()
 
     float clampedScale = clampPageScaleFactorToLimits(pageScaleFactor());
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_layerTreeHost)
-        m_layerTreeHost->setPageScaleFactorAndLimits(clampedScale, m_minimumPageScaleFactor, m_maximumPageScaleFactor);
+    if (!m_layerTreeView.isNull())
+        m_layerTreeView.setPageScaleFactorAndLimits(clampedScale, m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 #endif
     if (clampedScale != pageScaleFactor()) {
         setPageScaleFactorPreservingScrollOffset(clampedScale);
@@ -2929,17 +2932,12 @@ void WebViewImpl::addPageOverlay(WebPageOverlay* overlay, int zOrder)
         m_pageOverlays = PageOverlayList::create(this);
 
     m_pageOverlays->add(overlay, zOrder);
-    setRootLayerNeedsDisplay();
 }
 
 void WebViewImpl::removePageOverlay(WebPageOverlay* overlay)
 {
-    if (m_pageOverlays && m_pageOverlays->remove(overlay)) {
-        setRootLayerNeedsDisplay();
-
-        if (m_pageOverlays->empty())
-            m_pageOverlays = nullptr;
-    }
+    if (m_pageOverlays && m_pageOverlays->remove(overlay) && m_pageOverlays->empty())
+        m_pageOverlays = nullptr;
 }
 
 void WebViewImpl::setOverlayLayer(WebCore::GraphicsLayer* layer)
@@ -3047,29 +3045,31 @@ void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
         }
         m_nonCompositedContentHost->setScrollLayer(scrollLayer);
     }
-    if (m_layerTreeHost)
-        m_layerTreeHost->setRootLayer(layer ? layer->platformLayer() : 0);
+
+    if (layer)
+        m_rootLayer = WebLayer(layer->platformLayer());
+
+    if (!m_layerTreeView.isNull())
+        m_layerTreeView.setRootLayer(layer ? &m_rootLayer : 0);
 
     IntRect damagedRect(0, 0, m_size.width, m_size.height);
     if (!m_isAcceleratedCompositingActive)
         m_client->didInvalidateRect(damagedRect);
 }
 
-void WebViewImpl::setRootLayerNeedsDisplay()
+void WebViewImpl::scheduleCompositingLayerSync()
 {
-    if (m_layerTreeHost)
-        m_layerTreeHost->setNeedsCommit();
+    m_layerTreeView.setNeedsRedraw();
 }
 
-void WebViewImpl::scrollRootLayerRect(const IntSize& scrollDelta, const IntRect& clipRect)
+void WebViewImpl::scrollRootLayerRect(const IntSize&, const IntRect&)
 {
     updateLayerTreeViewport();
-    setRootLayerNeedsDisplay();
 }
 
 void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
 {
-    ASSERT(m_layerTreeHost);
+    ASSERT(!m_layerTreeView.isNull());
 
     if (!page())
         return;
@@ -3078,7 +3078,6 @@ void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
     IntRect dirtyRect = view->windowToContents(rect);
     updateLayerTreeViewport();
     m_nonCompositedContentHost->invalidateRect(dirtyRect);
-    setRootLayerNeedsDisplay();
 }
 
 NonCompositedContentHost* WebViewImpl::nonCompositedContentHost()
@@ -3091,8 +3090,8 @@ void WebViewImpl::scheduleAnimation()
 {
     if (isAcceleratedCompositingActive()) {
         if (CCProxy::hasImplThread()) {
-            ASSERT(m_layerTreeHost);
-            m_layerTreeHost->setNeedsAnimate();
+            ASSERT(!m_layerTreeView.isNull());
+            m_layerTreeView.setNeedsAnimate();
         } else
             m_client->scheduleAnimation();
     } else
@@ -3145,26 +3144,26 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_isAcceleratedCompositingActive = false;
         // We need to finish all GL rendering before sending didDeactivateCompositor() to prevent
         // flickering when compositing turns off.
-        if (m_layerTreeHost)
-            m_layerTreeHost->finishAllRendering();
+        if (!m_layerTreeView.isNull())
+            m_layerTreeView.finishAllRendering();
         m_client->didDeactivateCompositor();
-    } else if (m_layerTreeHost) {
+    } else if (!m_layerTreeView.isNull()) {
         m_isAcceleratedCompositingActive = true;
         updateLayerTreeViewport();
 
-        m_client->didActivateCompositor(m_layerTreeHost->compositorIdentifier());
+        m_client->didActivateCompositor(m_layerTreeView.compositorIdentifier());
     } else {
         TRACE_EVENT("WebViewImpl::setIsAcceleratedCompositingActive(true)", this, 0);
 
-        WebCore::CCSettings ccSettings;
-        ccSettings.acceleratePainting = page()->settings()->acceleratedDrawingEnabled();
-        ccSettings.compositeOffscreen = settings()->compositeToTextureEnabled();
-        ccSettings.showFPSCounter = settings()->showFPSCounter();
-        ccSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
+        WebLayerTreeView::Settings layerTreeViewSettings;
+        layerTreeViewSettings.acceleratePainting = page()->settings()->acceleratedDrawingEnabled();
+        layerTreeViewSettings.compositeOffscreen = settings()->compositeToTextureEnabled();
+        layerTreeViewSettings.showFPSCounter = settings()->showFPSCounter();
+        layerTreeViewSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
 
-        ccSettings.perTilePainting = page()->settings()->perTileDrawingEnabled();
-        ccSettings.partialSwapEnabled = page()->settings()->partialSwapEnabled();
-        ccSettings.threadedAnimationEnabled = page()->settings()->threadedAnimationEnabled();
+        layerTreeViewSettings.perTilePainting = page()->settings()->perTileDrawingEnabled();
+        layerTreeViewSettings.partialSwapEnabled = page()->settings()->partialSwapEnabled();
+        layerTreeViewSettings.threadedAnimationEnabled = page()->settings()->threadedAnimationEnabled();
 
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
         m_nonCompositedContentHost->setShowDebugBorders(page()->settings()->showDebugBorders());
@@ -3172,17 +3171,16 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         if (page() && page()->mainFrame()->view())
             m_nonCompositedContentHost->setBackgroundColor(page()->mainFrame()->view()->documentBackgroundColor());
 
-        m_layerTreeHost = CCLayerTreeHost::create(this, ccSettings);
-        if (m_layerTreeHost) {
-            m_layerTreeHost->setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
+        m_layerTreeView.initialize(this, m_rootLayer, layerTreeViewSettings);
+        if (!m_layerTreeView.isNull()) {
+            m_layerTreeView.setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
             updateLayerTreeViewport();
-            m_client->didActivateCompositor(m_layerTreeHost->compositorIdentifier());
+            m_client->didActivateCompositor(m_layerTreeView.compositorIdentifier());
             m_isAcceleratedCompositingActive = true;
             m_compositorCreationFailed = false;
             if (m_pageOverlays)
                 m_pageOverlays->update();
         } else {
-            m_layerTreeHost.clear();
             m_nonCompositedContentHost.clear();
             m_isAcceleratedCompositingActive = false;
             m_client->didDeactivateCompositor();
@@ -3195,29 +3193,31 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
 #endif
 
-PassRefPtr<GraphicsContext3D> WebViewImpl::createCompositorGraphicsContext3D()
+PassOwnPtr<WebKit::WebGraphicsContext3D> WebViewImpl::createCompositorGraphicsContext3D()
 {
     WebKit::WebGraphicsContext3D::Attributes attributes = getCompositorContextAttributes(CCProxy::hasImplThread());
     OwnPtr<WebGraphicsContext3D> webContext = adoptPtr(client()->createGraphicsContext3D(attributes, true /* renderDirectlyToHostWindow */));
     if (!webContext)
-        return 0;
+        return nullptr;
 
-    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow);
+    return webContext.release();
 }
 
-PassRefPtr<GraphicsContext3D> WebViewImpl::createLayerTreeHostContext3D()
+WebKit::WebGraphicsContext3D* WebViewImpl::createContext3D()
 {
-    RefPtr<GraphicsContext3D> context;
+    OwnPtr<WebKit::WebGraphicsContext3D> webContext;
 
     // If we've already created an onscreen context for this view, return that.
     if (m_temporaryOnscreenGraphicsContext3D)
-        context = m_temporaryOnscreenGraphicsContext3D.release();
+        webContext = m_temporaryOnscreenGraphicsContext3D.release();
     else // Otherwise make a new one.
-        context = createCompositorGraphicsContext3D();
-    return context;
+        webContext = createCompositorGraphicsContext3D();
+    // The caller takes ownership of this object, but since there's no equivalent of PassOwnPtr<> in the WebKit API
+    // we return a raw pointer.
+    return webContext.leakPtr();
 }
 
-void WebViewImpl::applyScrollAndScale(const IntSize& scrollDelta, float pageScaleDelta)
+void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScaleDelta)
 {
     if (!mainFrameImpl() || !mainFrameImpl()->frameView())
         return;
@@ -3230,8 +3230,8 @@ void WebViewImpl::applyScrollAndScale(const IntSize& scrollDelta, float pageScal
         // in the old coordinate space, so we first need to multiply them
         // by the page scale delta.
         WebSize scrollOffset = mainFrame()->scrollOffset();
-        scrollOffset.width += scrollDelta.width();
-        scrollOffset.height += scrollDelta.height();
+        scrollOffset.width += scrollDelta.width;
+        scrollOffset.height += scrollDelta.height;
         WebPoint scaledScrollOffset(scrollOffset.width * pageScaleDelta,
                                     scrollOffset.height * pageScaleDelta);
         setPageScaleFactor(pageScaleFactor() * pageScaleDelta, scaledScrollOffset);
@@ -3250,7 +3250,7 @@ void WebViewImpl::didCompleteSwapBuffers()
         m_client->didCompleteSwapBuffers();
 }
 
-void WebViewImpl::didRecreateGraphicsContext(bool success)
+void WebViewImpl::didRebindGraphicsContext(bool success)
 {
 
     // Switch back to software rendering mode, if necessary
@@ -3277,7 +3277,7 @@ void WebViewImpl::scheduleComposite()
 
 void WebViewImpl::updateLayerTreeViewport()
 {
-    if (!page() || !m_nonCompositedContentHost || !m_layerTreeHost)
+    if (!page() || !m_nonCompositedContentHost || m_layerTreeView.isNull())
         return;
 
     FrameView* view = page()->mainFrame()->view();
@@ -3293,18 +3293,18 @@ void WebViewImpl::updateLayerTreeViewport()
         layerAdjustX = -view->contentsSize().width() + view->visibleContentRect(false).width();
     }
     m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, pageScaleFactor(), layerAdjustX);
-    m_layerTreeHost->setViewportSize(visibleRect.size());
-    m_layerTreeHost->setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
+    m_layerTreeView.setViewportSize(visibleRect.size());
+    m_layerTreeView.setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 }
 
 WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (m_page->settings()->acceleratedCompositingEnabled() && allowsAcceleratedCompositing()) {
-        if (m_layerTreeHost) {
-            WebGraphicsContext3D* webContext = GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_layerTreeHost->context());
-            if (webContext && !webContext->isContextLost())
-                return webContext;
+        if (!m_layerTreeView.isNull()) {
+            WebGraphicsContext3D* context = m_layerTreeView.context();
+            if (context && !context->isContextLost())
+                return context;
         }
         // If we get here it means that some system needs access to the context the compositor will use but the compositor itself
         // hasn't requested a context or it was unable to successfully instantiate a context.
@@ -3313,7 +3313,7 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
         if (!m_temporaryOnscreenGraphicsContext3D)
             m_temporaryOnscreenGraphicsContext3D = createCompositorGraphicsContext3D();
 
-        WebGraphicsContext3D* webContext = GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_temporaryOnscreenGraphicsContext3D.get());
+        WebGraphicsContext3D* webContext = m_temporaryOnscreenGraphicsContext3D.get();
         if (webContext && !webContext->isContextLost())
             return webContext;
     }
@@ -3338,7 +3338,7 @@ void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
         bool visible = visibilityState == WebPageVisibilityStateVisible;
         if (!visible)
             m_nonCompositedContentHost->protectVisibleTileTextures();
-        m_layerTreeHost->setVisible(visible);
+        m_layerTreeView.setVisible(visible);
     }
 #endif
 }

@@ -890,7 +890,7 @@ void ChromeClientImpl::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* grap
 
 void ChromeClientImpl::scheduleCompositingLayerSync()
 {
-    m_webView->setRootLayerNeedsDisplay();
+    m_webView->scheduleCompositingLayerSync();
 }
 
 ChromeClient::CompositingTriggerFlags ChromeClientImpl::allowedCompositingTriggers() const

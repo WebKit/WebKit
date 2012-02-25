@@ -1,3 +1,73 @@
+2012-02-08  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Make WebViewImpl depend on WebLayerTreeView instead of CCLayerTreeHost
+        https://bugs.webkit.org/show_bug.cgi?id=75591
+
+        Reviewed by Kenneth Russell.
+
+        This converts WebViewImpl from depending on CCLayerTreeHost to WebLayerTreeView in order to provide better
+        isolation and allow for future refactorings. The changes to WebViewImpl are mostly mechanical. The
+        WebLayerTreeView and WebLayerTreeViewClient interfaces have both grown and changed slightly:
+
+        - Setup path for WebLayerTreeView changed to expose an initialize() function instead of a create() factory
+        function. The new model is that a WebLayerTreeView when constructed is in a null state. Calling initialize()
+        attempts to re-initialize the WLTV, which can either fail or succeed.  All other functions must be called on a
+        successfully initialized view.
+
+        - WebLayerTreeView expanded to include functionality that CCLayerTreeHost exposes but WebLayerTreeView did not.
+        Some of this is only valid for the single thread case and will be removed when we invert the scheduling control
+        logic, these bits are commented.
+
+        - WebLayerTreeViewClient expanded with some flow-control related APIs.
+
+        Refactor only, no change in behavior.
+
+        * public/platform/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (WebKit::WebLayerTreeView::isNull):
+        * public/platform/WebLayerTreeViewClient.h:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::scheduleCompositingLayerSync):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::initialize):
+        (WebKit::WebLayerTreeView::compositorIdentifier):
+        (WebKit::WebLayerTreeView::setVisible):
+        (WebKit::WebLayerTreeView::setNeedsAnimate):
+        (WebKit::WebLayerTreeView::updateAnimations):
+        (WebKit::WebLayerTreeView::setNeedsRedraw):
+        (WebKit::WebLayerTreeView::setPageScaleFactorAndLimits):
+        (WebKit::WebLayerTreeView::startPageScaleAnimation):
+        (WebKit::WebLayerTreeView::finishAllRendering):
+        (WebKit::WebLayerTreeView::context):
+        (WebKit::WebLayerTreeView::loseCompositorContext):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::didRecreateGraphicsContext):
+        (WebKit::WebLayerTreeViewImpl::didCommitAndDrawFrame):
+        (WebKit::WebLayerTreeViewImpl::didCompleteSwapBuffers):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::animate):
+        (WebKit::WebViewImpl::doPixelReadbackToCanvas):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::loseCompositorContext):
+        (WebKit::WebViewImpl::computePageScaleFactorLimits):
+        (WebKit::WebViewImpl::addPageOverlay):
+        (WebKit::WebViewImpl::removePageOverlay):
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        (WebKit::WebViewImpl::scheduleCompositingLayerSync):
+        (WebKit::WebViewImpl::scrollRootLayerRect):
+        (WebKit::WebViewImpl::invalidateRootLayerRect):
+        (WebKit::WebViewImpl::scheduleAnimation):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::createContext3D):
+        (WebKit::WebViewImpl::applyScrollAndScale):
+        (WebKit::WebViewImpl::didRebindGraphicsContext):
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+        (WebKit::WebViewImpl::graphicsContext3D):
+        (WebKit::WebViewImpl::setVisibilityState):
+        * src/WebViewImpl.h:
+        * tests/WebLayerTest.cpp:
+
 2012-02-24  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Plumb animation started notifications from CCLayerTreeHost to GraphicsLayerChromium

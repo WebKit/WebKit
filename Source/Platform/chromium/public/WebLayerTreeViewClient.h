@@ -52,6 +52,9 @@ public:
     // context event).
     virtual void didRebindGraphicsContext(bool success) = 0;
 
+    virtual void didCommitAndDrawFrame() = 0;
+    virtual void didCompleteSwapBuffers() = 0;
+
     // Schedules a compositing pass, meaning the client should call
     // WebLayerTreeView::composite at a later time. This is only called if the
     // compositor thread is disabled; when enabled, the compositor will

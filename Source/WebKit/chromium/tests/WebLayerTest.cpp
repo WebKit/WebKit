@@ -57,6 +57,8 @@ public:
     virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) { }
     virtual WebGraphicsContext3D* createContext3D() { return CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes()).leakPtr(); }
     virtual void didRebindGraphicsContext(bool success) { }
+    virtual void didCommitAndDrawFrame() { }
+    virtual void didCompleteSwapBuffers() { }
 };
 
 class MockWebContentLayerClient : public WebContentLayerClient {
@@ -72,7 +74,7 @@ public:
         WebKit::WebCompositor::initialize(0);
         m_rootLayer = WebLayer::create();
         EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
-        m_view = WebLayerTreeView::create(&m_client, m_rootLayer, WebLayerTreeView::Settings());
+        EXPECT_TRUE(m_view.initialize(&m_client, m_rootLayer, WebLayerTreeView::Settings()));
         Mock::VerifyAndClearExpectations(&m_client);
     }
 

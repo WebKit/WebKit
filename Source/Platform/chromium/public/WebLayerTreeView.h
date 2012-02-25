@@ -35,8 +35,10 @@ struct CCSettings;
 }
 
 namespace WebKit {
+class WebGraphicsContext3D;
 class WebLayer;
 class WebLayerTreeViewClient;
+struct WebPoint;
 struct WebRect;
 struct WebSize;
 
@@ -51,7 +53,9 @@ public:
             , refreshRate(0)
             , perTilePainting(false)
             , partialSwapEnabled(false)
-            , threadedAnimationEnabled(false) { }
+            , threadedAnimationEnabled(false)
+        {
+        }
 
         bool acceleratePainting;
         bool compositeOffscreen;
@@ -66,8 +70,6 @@ public:
 #endif
     };
 
-    WEBKIT_EXPORT static WebLayerTreeView create(WebLayerTreeViewClient*, const WebLayer& root, const Settings&);
-
     WebLayerTreeView() { }
     WebLayerTreeView(const WebLayerTreeView& layer) { assign(layer); }
     ~WebLayerTreeView() { reset(); }
@@ -76,9 +78,56 @@ public:
         assign(layer);
         return *this;
     }
+
     WEBKIT_EXPORT void reset();
     WEBKIT_EXPORT void assign(const WebLayerTreeView&);
     WEBKIT_EXPORT bool equals(const WebLayerTreeView&) const;
+
+    bool isNull() const { return m_private.isNull(); }
+
+#define WEBLAYERTREEVIEW_HAS_INITIALIZE
+    // Initialization and lifecycle --------------------------------------
+
+    // Attempts to initialize this WebLayerTreeView with the given client, root layer, and settings.
+    // If initialization fails, this will return false and .isNull() will return true.
+    // Must be called before any methods below.
+    WEBKIT_EXPORT bool initialize(WebLayerTreeViewClient*, const WebLayer& root, const Settings&);
+
+    // Sets the root of the tree. The root is set by way of the constructor.
+    // This is typically used to explicitly set the root to null to break
+    // cycles.
+    WEBKIT_EXPORT void setRootLayer(WebLayer*);
+
+    // Returns a unique identifier that can be used on the compositor thread to request a
+    // WebCompositorInputHandler instance.
+    WEBKIT_EXPORT int compositorIdentifier();
+
+
+    // View properties ---------------------------------------------------
+
+    WEBKIT_EXPORT void setViewportSize(const WebSize&);
+    WEBKIT_EXPORT WebSize viewportSize() const;
+
+    // Sets whether this view is visible. In threaded mode, a view that is not visible will not
+    // composite or trigger updateAnimations() or layout() calls until it becomes visible.
+    WEBKIT_EXPORT void setVisible(bool);
+
+    // Sets the current page scale factor and minimum / maximum limits. Both limits are initially 1 (no page scale allowed).
+    WEBKIT_EXPORT void setPageScaleFactorAndLimits(float pageScaleFactor, float minimum, float maximum);
+
+    // Starts an animation of the page scale to a target scale factor and scroll offset.
+    // If useAnchor is true, destination is a point on the screen that will remain fixed for the duration of the animation.
+    // If useAnchor is false, destination is the final top-left scroll position.
+    WEBKIT_EXPORT void startPageScaleAnimation(const WebPoint& destination, bool useAnchor, float newPageScale, double durationSec);
+
+
+    // Flow control and scheduling ---------------------------------------
+
+    // Requests an updateAnimations() call.
+    WEBKIT_EXPORT void setNeedsAnimate();
+
+    // Indicates that the view needs to be redrawn. This is typically used when the frontbuffer is damaged.
+    WEBKIT_EXPORT void setNeedsRedraw();
 
     // Triggers a compositing pass. If the compositor thread was not
     // enabled via WebCompositor::initialize, the compositing pass happens
@@ -89,8 +138,10 @@ public:
     // WebContentLayerClient::paintContents.
     WEBKIT_EXPORT void composite();
 
-    WEBKIT_EXPORT void setViewportSize(const WebSize&);
-    WEBKIT_EXPORT WebSize viewportSize() const;
+    // Immediately update animations. This should only be used when frame scheduling is handled by
+    // the WebLayerTreeView user and not internally by the compositor, meaning only in single-threaded
+    // mode.
+    WEBKIT_EXPORT void updateAnimations(double frameBeginTime);
 
     // Composites and attempts to read back the result into the provided
     // buffer. If it wasn't possible, e.g. due to context lost, will return
@@ -100,18 +151,20 @@ public:
     // The buffer is not modified if the false is returned.
     WEBKIT_EXPORT bool compositeAndReadback(void *pixels, const WebRect&);
 
-    // Sets the root of the tree. The root is set by way of the constructor.
-    // This is typically used to explicitly set the root to null to break
-    // cycles.
-    WEBKIT_EXPORT void setRootLayer(WebLayer*);
+    // Blocks until the most recently composited frame has finished rendering on the GPU.
+    // This can have a significant performance impact and should be used with care.
+    WEBKIT_EXPORT void finishAllRendering();
 
-#if WEBKIT_IMPLEMENTATION
-    WebLayerTreeView(const WTF::PassRefPtr<WebCore::CCLayerTreeHost>&);
-    WebLayerTreeView& operator=(const WTF::PassRefPtr<WebCore::CCLayerTreeHost>&);
-    operator WTF::PassRefPtr<WebCore::CCLayerTreeHost>() const;
-#endif
 
-    WEBKIT_EXPORT void setNeedsRedraw();
+    // Debugging / dangerous ---------------------------------------------
+
+    // Returns the context being used for rendering this view. In threaded compositing mode, it is
+    // not safe to use this context at all on the main thread.
+    // FIXME: Remove this API as soon as possible, it's very bug-prone in threaded mode.
+    WEBKIT_EXPORT WebGraphicsContext3D* context();
+
+    // Simulates a lost context. For testing only.
+    WEBKIT_EXPORT void loseCompositorContext(int numTimes);
 
 protected:
     WebPrivatePtr<WebCore::CCLayerTreeHost> m_private;

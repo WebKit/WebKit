@@ -186,27 +186,27 @@ TEST_F(WebFrameTest, DivAutoZoomParamsTest)
     EXPECT_EQ(vScroll, scroll.y);
 
     // Test zoom out to overview scale.
-    webViewImpl->applyScrollAndScale(WebCore::IntSize(scroll.x, scroll.y), scale / webViewImpl->pageScaleFactor());
+    webViewImpl->applyScrollAndScale(WebSize(scroll.x, scroll.y), scale / webViewImpl->pageScaleFactor());
     webViewImpl->computeScaleAndScrollForHitRect(doubleTapPoint, WebViewImpl::DoubleTap, scale, scroll);
     EXPECT_FLOAT_EQ(1, scale);
     EXPECT_EQ(WebPoint(0, 0), scroll);
 
     // Tests for clamped scaling.
     // Test clamp to device scale:
-    webViewImpl->applyScrollAndScale(WebCore::IntSize(scroll.x, scroll.y), scale / webViewImpl->pageScaleFactor());
+    webViewImpl->applyScrollAndScale(WebSize(scroll.x, scroll.y), scale / webViewImpl->pageScaleFactor());
     webViewImpl->setDeviceScaleFactor(2.5);
     webViewImpl->computeScaleAndScrollForHitRect(doubleTapPoint, WebViewImpl::DoubleTap, scale, scroll);
     EXPECT_FLOAT_EQ(2.5, scale);
 
     // Test clamp to minimum scale:
-    webViewImpl->applyScrollAndScale(WebCore::IntSize(scroll.x, scroll.y), scale / webViewImpl->pageScaleFactor());
+    webViewImpl->applyScrollAndScale(WebSize(scroll.x, scroll.y), scale / webViewImpl->pageScaleFactor());
     webViewImpl->setPageScaleFactorLimits(1.5 / webViewImpl->deviceScaleFactor(), 4 / webViewImpl->deviceScaleFactor());
     webViewImpl->computeScaleAndScrollForHitRect(doubleTapPoint, WebViewImpl::DoubleTap, scale, scroll);
     EXPECT_FLOAT_EQ(1.5, scale);
     EXPECT_EQ(WebPoint(0, 0), scroll);
 
     // Test clamp to maximum scale:
-    webViewImpl->applyScrollAndScale(WebCore::IntSize(scroll.x, scroll.y), scale / webViewImpl->pageScaleFactor());
+    webViewImpl->applyScrollAndScale(WebSize(scroll.x, scroll.y), scale / webViewImpl->pageScaleFactor());
     webViewImpl->setDeviceScaleFactor(4);
     webViewImpl->setPageScaleFactorLimits(0, 3 / webViewImpl->deviceScaleFactor());
     webViewImpl->computeScaleAndScrollForHitRect(doubleTapPoint, WebViewImpl::DoubleTap, scale, scroll);

@@ -89,20 +89,22 @@ PassRefPtr<GraphicsContext3D> WebLayerTreeViewImpl::createLayerTreeHostContext3D
     return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(webContext.release(), GraphicsContext3D::RenderDirectlyToHostWindow, false /* preserveDrawingBuffer */ );
 }
 
-void WebLayerTreeViewImpl::didCommitAndDrawFrame()
-{
-    // FIXME: route this up to the WebLayerTreeView client
-}
-
-void WebLayerTreeViewImpl::didCompleteSwapBuffers()
-{
-    // FIXME: route this up to the WebLayerTreeView client
-}
-
 void WebLayerTreeViewImpl::didRecreateGraphicsContext(bool success)
 {
     if (m_client)
         m_client->didRebindGraphicsContext(success);
+}
+
+void WebLayerTreeViewImpl::didCommitAndDrawFrame()
+{
+    if (m_client)
+        m_client->didCommitAndDrawFrame();
+}
+
+void WebLayerTreeViewImpl::didCompleteSwapBuffers()
+{
+    if (m_client)
+        m_client->didCompleteSwapBuffers();
 }
 
 void WebLayerTreeViewImpl::scheduleComposite()

@@ -26,9 +26,11 @@
 #include "config.h"
 #include "platform/WebLayerTreeView.h"
 
+#include "GraphicsContext3DPrivate.h"
 #include "WebLayerTreeViewImpl.h"
 #include "cc/CCLayerTreeHost.h"
 #include "platform/WebLayer.h"
+#include "platform/WebPoint.h"
 #include "platform/WebRect.h"
 #include "platform/WebSize.h"
 
@@ -51,11 +53,6 @@ WebLayerTreeView::Settings::operator CCSettings() const
     return settings;
 }
 
-WebLayerTreeView WebLayerTreeView::create(WebLayerTreeViewClient* client, const WebLayer& root, const WebLayerTreeView::Settings& settings)
-{
-    return WebLayerTreeView(WebLayerTreeViewImpl::create(client, root, settings));
-}
-
 void WebLayerTreeView::reset()
 {
     m_private.reset();
@@ -71,12 +68,23 @@ bool WebLayerTreeView::equals(const WebLayerTreeView& n) const
     return (m_private.get() == n.m_private.get());
 }
 
-void WebLayerTreeView::composite()
+bool WebLayerTreeView::initialize(WebLayerTreeViewClient* client, const WebLayer& root, const WebLayerTreeView::Settings& settings)
 {
-    if (CCProxy::hasImplThread())
-        m_private->setNeedsCommit();
+    m_private = WebLayerTreeViewImpl::create(client, root, settings);
+    return !isNull();
+}
+
+void WebLayerTreeView::setRootLayer(WebLayer *root)
+{
+    if (root)
+        m_private->setRootLayer(*root);
     else
-        m_private->composite();
+        m_private->setRootLayer(PassRefPtr<LayerChromium>());
+}
+
+int WebLayerTreeView::compositorIdentifier()
+{
+    return m_private->compositorIdentifier();
 }
 
 void WebLayerTreeView::setViewportSize(const WebSize& viewportSize)
@@ -89,38 +97,62 @@ WebSize WebLayerTreeView::viewportSize() const
     return WebSize(m_private->viewportSize());
 }
 
-bool WebLayerTreeView::compositeAndReadback(void *pixels, const WebRect& rect)
+void WebLayerTreeView::setVisible(bool visible)
 {
-    return m_private->compositeAndReadback(pixels, rect);
+    m_private->setVisible(visible);
 }
 
-void WebLayerTreeView::setRootLayer(WebLayer *root)
+void WebLayerTreeView::setPageScaleFactorAndLimits(float pageScaleFactor, float minimum, float maximum)
 {
-    if (root)
-        m_private->setRootLayer(*root);
-    else
-        m_private->setRootLayer(PassRefPtr<LayerChromium>());
+    m_private->setPageScaleFactorAndLimits(pageScaleFactor, minimum, maximum);
 }
 
-WebLayerTreeView::WebLayerTreeView(const PassRefPtr<CCLayerTreeHost>& node)
-    : m_private(node)
+void WebLayerTreeView::startPageScaleAnimation(const WebPoint& scroll, bool useAnchor, float newPageScale, double durationSec)
 {
+    m_private->startPageScaleAnimation(IntSize(scroll.x, scroll.y), useAnchor, newPageScale, durationSec);
 }
 
-WebLayerTreeView& WebLayerTreeView::operator=(const PassRefPtr<CCLayerTreeHost>& node)
+void WebLayerTreeView::setNeedsAnimate()
 {
-    m_private = node;
-    return *this;
-}
-
-WebLayerTreeView::operator PassRefPtr<CCLayerTreeHost>() const
-{
-    return m_private.get();
+    m_private->setNeedsAnimate();
 }
 
 void WebLayerTreeView::setNeedsRedraw()
 {
     m_private->setNeedsRedraw();
+}
+
+void WebLayerTreeView::composite()
+{
+    if (CCProxy::hasImplThread())
+        m_private->setNeedsCommit();
+    else
+        m_private->composite();
+}
+
+void WebLayerTreeView::updateAnimations(double frameBeginTime)
+{
+    m_private->updateAnimations(frameBeginTime);
+}
+
+bool WebLayerTreeView::compositeAndReadback(void *pixels, const WebRect& rect)
+{
+    return m_private->compositeAndReadback(pixels, rect);
+}
+
+void WebLayerTreeView::finishAllRendering()
+{
+    m_private->finishAllRendering();
+}
+
+WebGraphicsContext3D* WebLayerTreeView::context()
+{
+    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_private->context());
+}
+
+void WebLayerTreeView::loseCompositorContext(int numTimes)
+{
+    m_private->loseCompositorContext(numTimes);
 }
 
 } // namespace WebKit

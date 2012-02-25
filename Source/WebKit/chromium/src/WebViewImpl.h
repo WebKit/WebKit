@@ -32,6 +32,9 @@
 #define WebViewImpl_h
 
 #include "WebNavigationPolicy.h"
+#include "platform/WebLayer.h"
+#include "platform/WebLayerTreeView.h"
+#include "platform/WebLayerTreeViewClient.h"
 #include "platform/WebPoint.h"
 #include "platform/WebRect.h"
 #include "platform/WebSize.h"
@@ -50,7 +53,6 @@
 #include "NotificationPresenterImpl.h"
 #include "PageOverlayList.h"
 #include "UserMediaClientImpl.h"
-#include "cc/CCLayerTreeHost.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -94,7 +96,7 @@ class WebMouseWheelEvent;
 class WebSettingsImpl;
 class WebTouchEvent;
 
-class WebViewImpl : public WebView, public WebCore::CCLayerTreeHostClient, public RefCounted<WebViewImpl> {
+class WebViewImpl : public WebView, public WebLayerTreeViewClient, public RefCounted<WebViewImpl> {
 public:
     enum AutoZoomType {
         DoubleTap,
@@ -246,13 +248,13 @@ public:
     virtual void addPageOverlay(WebPageOverlay*, int /* zOrder */);
     virtual void removePageOverlay(WebPageOverlay*);
 
-    // CCLayerTreeHostClient
+    // WebLayerTreeViewClient
     virtual void updateAnimations(double frameBeginTime);
-    virtual void applyScrollAndScale(const WebCore::IntSize&, float);
-    virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
+    virtual void applyScrollAndScale(const WebSize&, float);
+    virtual WebGraphicsContext3D* createContext3D();
+    virtual void didRebindGraphicsContext(bool);
     virtual void didCommitAndDrawFrame();
     virtual void didCompleteSwapBuffers();
-    virtual void didRecreateGraphicsContext(bool success);
     virtual void scheduleComposite();
 
     // WebViewImpl
@@ -434,7 +436,7 @@ public:
     bool allowsAcceleratedCompositing();
     bool pageHasRTLStyle() const;
     void setRootGraphicsLayer(WebCore::GraphicsLayer*);
-    void setRootLayerNeedsDisplay();
+    void scheduleCompositingLayerSync();
     void scrollRootLayerRect(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& clipRect);
     void invalidateRootLayerRect(const WebCore::IntRect&);
     NonCompositedContentHost* nonCompositedContentHost();
@@ -450,7 +452,7 @@ public:
     // we could not successfully instantiate a context.
     virtual WebGraphicsContext3D* graphicsContext3D();
 
-    PassRefPtr<WebCore::GraphicsContext3D> createCompositorGraphicsContext3D();
+    PassOwnPtr<WebGraphicsContext3D> createCompositorGraphicsContext3D();
 
     virtual void setVisibilityState(WebPageVisibilityState, bool);
 
@@ -688,7 +690,8 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     WebCore::IntRect m_rootLayerScrollDamage;
     OwnPtr<NonCompositedContentHost> m_nonCompositedContentHost;
-    RefPtr<WebCore::CCLayerTreeHost> m_layerTreeHost;
+    WebLayerTreeView m_layerTreeView;
+    WebLayer m_rootLayer;
     WebCore::GraphicsLayer* m_rootGraphicsLayer;
     bool m_isAcceleratedCompositingActive;
     bool m_compositorCreationFailed;
@@ -703,7 +706,7 @@ private:
     // If we attempt to fetch the on-screen GraphicsContext3D before
     // the compositor has been turned on, we need to instantiate it
     // early. This member holds on to the GC3D in this case.
-    RefPtr<WebCore::GraphicsContext3D> m_temporaryOnscreenGraphicsContext3D;
+    OwnPtr<WebGraphicsContext3D> m_temporaryOnscreenGraphicsContext3D;
     OwnPtr<DeviceOrientationClientProxy> m_deviceOrientationClientProxy;
     OwnPtr<GeolocationClientProxy> m_geolocationClientProxy;
 
