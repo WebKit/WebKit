@@ -19,8 +19,8 @@ TestWebView {
     }
 
     onLinkHovered: {
-        webView.lastUrl = hoveredUrl
-        webView.lastTitle = hoveredTitle
+        webView.lastUrl = url
+        webView.lastTitle = title
     }
 
     TestCase {

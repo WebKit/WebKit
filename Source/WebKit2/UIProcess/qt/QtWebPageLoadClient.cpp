@@ -56,22 +56,22 @@ void QtWebPageLoadClient::didStartProvisionalLoadForFrame(const QUrl& url)
     m_webView->d_func()->didChangeLoadingState(&loadRequest);
 }
 
-void QtWebPageLoadClient::didCommitLoadForFrame()
+void QtWebPageLoadClient::didCommitLoadForFrame(const QUrl& url)
 {
-    emit m_webView->navigationHistoryChanged();
-    emit m_webView->urlChanged();
+    emit m_webView->navigationStateChanged();
+    emit m_webView->urlChanged(url);
     m_webView->d_func()->loadDidCommit();
 }
 
-void QtWebPageLoadClient::didSameDocumentNavigationForFrame()
+void QtWebPageLoadClient::didSameDocumentNavigationForFrame(const QUrl& url)
 {
-    emit m_webView->navigationHistoryChanged();
-    emit m_webView->urlChanged();
+    emit m_webView->navigationStateChanged();
+    emit m_webView->urlChanged(url);
 }
 
-void QtWebPageLoadClient::didReceiveTitleForFrame()
+void QtWebPageLoadClient::didReceiveTitleForFrame(const QString& title)
 {
-    emit m_webView->titleChanged();
+    emit m_webView->titleChanged(title);
 }
 
 void QtWebPageLoadClient::didFirstVisuallyNonEmptyLayoutForFrame()
@@ -106,7 +106,7 @@ void QtWebPageLoadClient::dispatchLoadFailed(WKErrorRef error)
 void QtWebPageLoadClient::setLoadProgress(int loadProgress)
 {
     m_loadProgress = loadProgress;
-    emit m_webView->loadProgressChanged();
+    emit m_webView->loadProgressChanged(m_loadProgress);
 }
 
 static QtWebPageLoadClient* toQtWebPageLoadClient(const void* clientInfo)
@@ -136,7 +136,10 @@ void QtWebPageLoadClient::didCommitLoadForFrame(WKPageRef, WKFrameRef frame, WKT
 {
     if (!WKFrameIsMainFrame(frame))
         return;
-    toQtWebPageLoadClient(clientInfo)->didCommitLoadForFrame();
+    WebFrameProxy* wkframe = toImpl(frame);
+    QString urlStr(wkframe->url());
+    QUrl qUrl = urlStr;
+    toQtWebPageLoadClient(clientInfo)->didCommitLoadForFrame(qUrl);
 }
 
 void QtWebPageLoadClient::didFinishLoadForFrame(WKPageRef, WKFrameRef frame, WKTypeRef, const void* clientInfo)
@@ -155,14 +158,18 @@ void QtWebPageLoadClient::didFailLoadWithErrorForFrame(WKPageRef, WKFrameRef fra
 
 void QtWebPageLoadClient::didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void* clientInfo)
 {
-    toQtWebPageLoadClient(clientInfo)->didSameDocumentNavigationForFrame();
+    WebFrameProxy* wkframe = toImpl(frame);
+    QString urlStr(wkframe->url());
+    QUrl qUrl = urlStr;
+    toQtWebPageLoadClient(clientInfo)->didSameDocumentNavigationForFrame(qUrl);
 }
 
 void QtWebPageLoadClient::didReceiveTitleForFrame(WKPageRef, WKStringRef title, WKFrameRef frame, WKTypeRef, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
-    toQtWebPageLoadClient(clientInfo)->didReceiveTitleForFrame();
+    QString qTitle = WKStringCopyQString(title);
+    toQtWebPageLoadClient(clientInfo)->didReceiveTitleForFrame(qTitle);
 }
 
 void QtWebPageLoadClient::didStartProgress(WKPageRef, const void* clientInfo)

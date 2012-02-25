@@ -84,7 +84,6 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
 {
     viewport->setFlags(QQuickItem::ItemClipsChildrenToShape);
     QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
-    QObject::connect(viewport, SIGNAL(urlChanged()), viewport, SLOT(_q_onUrlChanged()));
     pageView.reset(new QQuickWebPage(viewport));
 }
 
@@ -115,6 +114,7 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
 
     QtWebIconDatabaseClient* iconDatabase = context->iconDatabase();
     QObject::connect(iconDatabase, SIGNAL(iconChangedForPageURL(QUrl, QUrl)), q_ptr, SLOT(_q_onIconChangedForPageURL(QUrl, QUrl)));
+    QObject::connect(q_ptr, SIGNAL(urlChanged(QUrl)), iconDatabase, SLOT(requestIconForPageURL(QUrl)));
 
     // Any page setting should preferrable be set before creating the page.
     webPageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
@@ -228,12 +228,6 @@ void QQuickWebViewPrivate::handleDownloadRequest(DownloadProxy* download)
 void QQuickWebViewPrivate::_q_onVisibleChanged()
 {
     webPageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible);
-}
-
-void QQuickWebViewPrivate::_q_onUrlChanged()
-{
-    Q_Q(QQuickWebView);
-    context->iconDatabase()->requestIconForPageURL(q->url());
 }
 
 void QQuickWebViewPrivate::_q_onReceivedResponseFromDownload(QWebDownloadItem* downloadItem)
@@ -436,7 +430,7 @@ void QQuickWebViewPrivate::setIcon(const QUrl& iconURL)
     }
 
     m_iconURL = iconURL;
-    emit q->iconChanged();
+    emit q->iconChanged(m_iconURL);
 }
 
 bool QQuickWebViewPrivate::navigatorQtObjectEnabled() const

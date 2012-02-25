@@ -95,7 +95,6 @@ public:
     void _q_onOpenPanelFilesSelected();
     void _q_onOpenPanelFinished(int result);
     void _q_onVisibleChanged();
-    void _q_onUrlChanged();
     void _q_onReceivedResponseFromDownload(QWebDownloadItem*);
     void _q_onIconChangedForPageURL(const QUrl& pageURL, const QUrl& iconURLString);
 
