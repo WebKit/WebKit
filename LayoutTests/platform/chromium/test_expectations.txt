@@ -107,9 +107,6 @@ BUGWK68610 SKIP : fast/dom/MicroData = PASS
 // Unskip after changes on both sides have landed and rolled together.
 BUGCR103939 SKIP : http/tests/appcache/wrong-content-type.html = TEXT
 
-BUGWK79423 : svg/carto.net/scrollbar.svg = IMAGE+TEXT IMAGE
-BUGWK79423 : svg/carto.net/selectionlist.svg = IMAGE+TEXT IMAGE
-
 // Vibration API is not supported yet in the chromium port.
 BUGWK72010 SKIP : fast/dom/navigator-vibration.html = FAIL
 
