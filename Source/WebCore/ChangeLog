@@ -1,3 +1,20 @@
+2012-02-24  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] JPEG RGB image with Adode Marker fails to turbo swizzle decode
+        https://bugs.webkit.org/show_bug.cgi?id=79457
+
+        Reviewed by Adam Barth.
+
+        If a JPEG has no JFIF marker, the Adode Marker must be used to determine the image
+        color space for decoding via that markers transform value. Transform 0 images with
+        3 color components (RGB) fail to decode with libjpeg-turbo when a swizzle decoding
+        is active. Detect this case and decode using JCS_RGB output color space instead.
+
+        Test: fast/images/rgb-jpeg-with-abode-marker-only.html
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode):
+
 2012-02-24  Joshua Bell  <jsbell@chromium.org>
 
         [V8] IndexedDB: IDBTransaction objects leak in Workers

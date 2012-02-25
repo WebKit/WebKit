@@ -247,6 +247,14 @@ public:
             case JCS_YCbCr:
                 // libjpeg can convert GRAYSCALE and YCbCr image pixels to RGB.
                 m_info.out_color_space = rgbOutputColorSpace();
+#if defined(TURBO_JPEG_RGB_SWIZZLE)
+                if (m_info.saw_JFIF_marker)
+                    break;
+                // FIXME: swizzler incorrectly handles Adobe transform=0 images
+                // so revert to using JSC_RGB in that case.
+                if (m_info.saw_Adobe_marker && !m_info.Adobe_transform)
+                    m_info.out_color_space = JCS_RGB;
+#endif
                 break;
             case JCS_CMYK:
             case JCS_YCCK:
