@@ -54,7 +54,7 @@ TEST(CCRenderSurfaceTest, verifySurfaceChangesAreTrackedProperly)
     // This will fake that we are on the correct thread for testing purposes.
     DebugScopedSetImplThread setImplThread;
 
-    RefPtr<CCLayerImpl> owningLayer = CCLayerImpl::create(0);
+    OwnPtr<CCLayerImpl> owningLayer = CCLayerImpl::create(0);
     owningLayer->createRenderSurface();
     ASSERT_TRUE(owningLayer->renderSurface());
     CCRenderSurface* renderSurface = owningLayer->renderSurface();
@@ -74,7 +74,7 @@ TEST(CCRenderSurfaceTest, verifySurfaceChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->setClipRect(testRect));
     EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->setContentRect(testRect));
 
-    RefPtr<CCLayerImpl> dummyMask = CCLayerImpl::create(1);
+    OwnPtr<CCLayerImpl> dummyMask = CCLayerImpl::create(1);
     TransformationMatrix dummyMatrix;
     dummyMatrix.translate(1.0, 2.0);
 

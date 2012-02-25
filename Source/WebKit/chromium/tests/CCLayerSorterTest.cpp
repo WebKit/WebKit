@@ -174,11 +174,11 @@ TEST(CCLayerSorterTest, verifyExistingOrderingPreservedWhenNoZDiff)
     //    - 3 and 4 do not have a 3d z difference, and therefore their relative ordering should be retained.
     //    - 3 and 4 should be re-sorted so they are in front of 1, 2, and 5.
 
-    RefPtr<CCLayerImpl> layer1 = CCLayerImpl::create(1);
-    RefPtr<CCLayerImpl> layer2 = CCLayerImpl::create(2);
-    RefPtr<CCLayerImpl> layer3 = CCLayerImpl::create(3);
-    RefPtr<CCLayerImpl> layer4 = CCLayerImpl::create(4);
-    RefPtr<CCLayerImpl> layer5 = CCLayerImpl::create(5);
+    OwnPtr<CCLayerImpl> layer1 = CCLayerImpl::create(1);
+    OwnPtr<CCLayerImpl> layer2 = CCLayerImpl::create(2);
+    OwnPtr<CCLayerImpl> layer3 = CCLayerImpl::create(3);
+    OwnPtr<CCLayerImpl> layer4 = CCLayerImpl::create(4);
+    OwnPtr<CCLayerImpl> layer5 = CCLayerImpl::create(5);
 
     TransformationMatrix BehindMatrix;
     BehindMatrix.translate3d(0, 0, 2);
@@ -205,12 +205,12 @@ TEST(CCLayerSorterTest, verifyExistingOrderingPreservedWhenNoZDiff)
     layer5->setDrawTransform(BehindMatrix);
     layer5->setDrawsContent(true);
 
-    Vector<RefPtr<CCLayerImpl> > layerList;
-    layerList.append(layer1);
-    layerList.append(layer2);
-    layerList.append(layer3);
-    layerList.append(layer4);
-    layerList.append(layer5);
+    Vector<CCLayerImpl*> layerList;
+    layerList.append(layer1.get());
+    layerList.append(layer2.get());
+    layerList.append(layer3.get());
+    layerList.append(layer4.get());
+    layerList.append(layer5.get());
 
     ASSERT_EQ(static_cast<size_t>(5), layerList.size());
     EXPECT_EQ(1, layerList[0]->id());

@@ -139,7 +139,7 @@ protected:
         {
             DebugScopedSetImplThread scopedImplThread;
 
-            RefPtr<CCLayerImpl> layerImpl = canvas->createCCLayerImpl();
+            OwnPtr<CCLayerImpl> layerImpl = canvas->createCCLayerImpl();
             EXPECT_EQ(0u, static_cast<CCCanvasLayerImpl*>(layerImpl.get())->textureId());
 
             canvas->updateCompositorResources(implContext.get(), updater);

@@ -37,9 +37,9 @@ class DrawableTile;
 
 class CCTiledLayerImpl : public CCLayerImpl {
 public:
-    static PassRefPtr<CCTiledLayerImpl> create(int id)
+    static PassOwnPtr<CCTiledLayerImpl> create(int id)
     {
-        return adoptRef(new CCTiledLayerImpl(id));
+        return adoptPtr(new CCTiledLayerImpl(id));
     }
     virtual ~CCTiledLayerImpl();
 

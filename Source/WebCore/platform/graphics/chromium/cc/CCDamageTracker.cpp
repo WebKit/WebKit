@@ -56,7 +56,7 @@ CCDamageTracker::~CCDamageTracker()
 {
 }
 
-void CCDamageTracker::updateDamageTrackingState(const Vector<RefPtr<CCLayerImpl> >& layerList, int targetSurfaceLayerID, CCLayerImpl* targetSurfaceMaskLayer)
+void CCDamageTracker::updateDamageTrackingState(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID, CCLayerImpl* targetSurfaceMaskLayer)
 {
     //
     // This function computes the "damage rect" of a target surface, and updates the state
@@ -130,7 +130,7 @@ void CCDamageTracker::updateDamageTrackingState(const Vector<RefPtr<CCLayerImpl>
 
     // If the target surface already knows its entire region is damaged, we can return early.
     // FIXME: this should go away, or will be cleaner, after refactoring into RenderPass/RenderSchedule.
-    CCLayerImpl* layer = layerList[0].get();
+    CCLayerImpl* layer = layerList[0];
     CCRenderSurface* targetSurface = layer->targetRenderSurface();
 
     if (m_forceFullDamageNextUpdate || targetSurface->surfacePropertyChangedOnlyFromDescendant()) {
@@ -161,12 +161,12 @@ void CCDamageTracker::saveRectForNextFrame(int layerID, const FloatRect& targetS
     m_nextRectHistory->set(layerID, targetSpaceRect);
 }
 
-FloatRect CCDamageTracker::trackDamageFromActiveLayers(const Vector<RefPtr<CCLayerImpl> >& layerList, int targetSurfaceLayerID)
+FloatRect CCDamageTracker::trackDamageFromActiveLayers(const Vector<CCLayerImpl*>& layerList, int targetSurfaceLayerID)
 {
     FloatRect damageRect = FloatRect();
 
     for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
-        CCLayerImpl* layer = layerList[layerIndex].get();
+        CCLayerImpl* layer = layerList[layerIndex];
 
         if (CCLayerTreeHostCommon::renderSurfaceContributesToTarget<CCLayerImpl>(layer, targetSurfaceLayerID))
             extendDamageForRenderSurface(layer, damageRect);

@@ -169,13 +169,11 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
 
-    // Synchronize trees, if one exists at all...
-    if (rootLayer()) {
-        hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->rootLayer()));
-        // We may have added an animation during the tree sync. This will cause hostImpl to visit its controllers.
+    hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->releaseRootLayer()));
+
+    // We may have added an animation during the tree sync. This will cause hostImpl to visit its controllers.
+    if (rootLayer())
         hostImpl->setNeedsAnimateLayers();
-    } else
-        hostImpl->setRootLayer(0);
 
     hostImpl->setSourceFrameNumber(frameNumber());
     hostImpl->setViewportSize(viewportSize());
@@ -337,16 +335,15 @@ void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostIm
     // If the frontbuffer is cached, then clobber the impl tree. Otherwise,
     // push over the tree changes.
     if (m_proxy->layerRendererCapabilities().contextHasCachedFrontBuffer) {
-        hostImpl->setRootLayer(0);
+        hostImpl->setRootLayer(nullptr);
         return;
     }
 
-    if (rootLayer()) {
-        hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->rootLayer()));
-        // We may have added an animation during the tree sync. This will cause hostImpl to visit its controllers.
+    hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->releaseRootLayer()));
+
+    // We may have added an animation during the tree sync. This will cause hostImpl to visit its controllers.
+    if (rootLayer())
         hostImpl->setNeedsAnimateLayers();
-    } else
-        hostImpl->setRootLayer(0);
 }
 
 void CCLayerTreeHost::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec)
@@ -440,7 +437,7 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
 void CCLayerTreeHost::reserveTextures()
 {
     // Use BackToFront since it's cheap and this isn't order-dependent.
-    typedef CCLayerIterator<LayerChromium, RenderSurfaceChromium, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
+    typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&m_updateList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&m_updateList); it != end; ++it) {
@@ -532,7 +529,7 @@ static void leaveTargetRenderSurface(Vector<RenderSurfaceRegion>& stack, RenderS
 void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList, PaintType paintType)
 {
     // Use FrontToBack to allow for testing occlusion and performing culling during the tree walk.
-    typedef CCLayerIterator<LayerChromium, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
+    typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
 
     // The stack holds occluded regions for subtrees in the RenderSurface-Layer tree, so that when we leave a subtree we may
     // apply a mask to it, but not to the parts outside the subtree.
@@ -569,7 +566,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
 void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
 {
     // Use BackToFront since it's cheap and this isn't order-dependent.
-    typedef CCLayerIterator<LayerChromium, RenderSurfaceChromium, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
+    typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&m_updateList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&m_updateList); it != end; ++it) {

@@ -573,7 +573,7 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
 
     // FIXME: when we fix this "root-layer special case" behavior in CCLayerTreeHost, we will have to fix it here, too.
     parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
-    renderSurfaceLayerList.append(parent);
+    renderSurfaceLayerList.append(parent.get());
 
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 

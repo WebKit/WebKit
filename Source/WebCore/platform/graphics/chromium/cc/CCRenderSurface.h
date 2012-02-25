@@ -95,7 +95,7 @@ public:
     bool skipsDraw() const { return m_skipsDraw; }
 
     void clearLayerList() { m_layerList.clear(); }
-    Vector<RefPtr<CCLayerImpl> >& layerList() { return m_layerList; }
+    Vector<CCLayerImpl*>& layerList() { return m_layerList; }
 
     void setMaskLayer(CCLayerImpl* maskLayer) { m_maskLayer = maskLayer; }
 
@@ -133,7 +133,7 @@ private:
     TransformationMatrix m_originTransform;
     FilterOperations m_filters;
     IntRect m_clipRect;
-    Vector<RefPtr<CCLayerImpl> > m_layerList;
+    Vector<CCLayerImpl*> m_layerList;
 
     // The nearest ancestor target surface that will contain the contents of this surface, and that is going
     // to move pixels within the surface (such as with a blur). This can point to itself.

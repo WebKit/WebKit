@@ -63,7 +63,7 @@ void PluginLayerChromium::updateCompositorResources(GraphicsContext3D* rendererC
     m_dirtyRect = FloatRect();
 }
 
-PassRefPtr<CCLayerImpl> PluginLayerChromium::createCCLayerImpl()
+PassOwnPtr<CCLayerImpl> PluginLayerChromium::createCCLayerImpl()
 {
     return CCPluginLayerImpl::create(m_layerId);
 }

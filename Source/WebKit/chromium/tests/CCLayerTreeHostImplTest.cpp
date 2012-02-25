@@ -78,16 +78,16 @@ public:
 
     void setupScrollAndContentsLayers(const IntSize& contentSize)
     {
-        RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
         root->setScrollable(true);
         root->setScrollPosition(IntPoint(0, 0));
         root->setMaxScrollPosition(contentSize);
-        RefPtr<CCLayerImpl> contents = CCLayerImpl::create(1);
+        OwnPtr<CCLayerImpl> contents = CCLayerImpl::create(1);
         contents->setDrawsContent(true);
         contents->setBounds(contentSize);
         contents->setContentBounds(contentSize);
-        root->addChild(contents);
-        m_hostImpl->setRootLayer(root);
+        root->addChild(contents.release());
+        m_hostImpl->setRootLayer(root.release());
     }
 
 protected:
@@ -112,37 +112,43 @@ TEST_F(CCLayerTreeHostImplTest, scrollDeltaNoLayers)
 
 TEST_F(CCLayerTreeHostImplTest, scrollDeltaTreeButNoChanges)
 {
-    RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
-    root->addChild(CCLayerImpl::create(1));
-    root->addChild(CCLayerImpl::create(2));
-    root->children()[1]->addChild(CCLayerImpl::create(3));
-    root->children()[1]->addChild(CCLayerImpl::create(4));
-    root->children()[1]->children()[0]->addChild(CCLayerImpl::create(5));
-    m_hostImpl->setRootLayer(root);
+    {
+        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+        root->addChild(CCLayerImpl::create(1));
+        root->addChild(CCLayerImpl::create(2));
+        root->children()[1]->addChild(CCLayerImpl::create(3));
+        root->children()[1]->addChild(CCLayerImpl::create(4));
+        root->children()[1]->children()[0]->addChild(CCLayerImpl::create(5));
+        m_hostImpl->setRootLayer(root.release());
+    }
+    CCLayerImpl* root = m_hostImpl->rootLayer();
 
-    expectClearedScrollDeltasRecursive(root.get());
+    expectClearedScrollDeltasRecursive(root);
 
     OwnPtr<CCScrollAndScaleSet> scrollInfo;
 
     scrollInfo = m_hostImpl->processScrollDeltas();
     ASSERT_EQ(scrollInfo->scrolls.size(), 0u);
-    expectClearedScrollDeltasRecursive(root.get());
+    expectClearedScrollDeltasRecursive(root);
 
     scrollInfo = m_hostImpl->processScrollDeltas();
     ASSERT_EQ(scrollInfo->scrolls.size(), 0u);
-    expectClearedScrollDeltasRecursive(root.get());
+    expectClearedScrollDeltasRecursive(root);
 }
 
 TEST_F(CCLayerTreeHostImplTest, scrollDeltaRepeatedScrolls)
 {
     IntPoint scrollPosition(20, 30);
     IntSize scrollDelta(11, -15);
-    RefPtr<CCLayerImpl> root = CCLayerImpl::create(10);
-    root->setScrollPosition(scrollPosition);
-    root->setScrollable(true);
-    root->setMaxScrollPosition(IntSize(100, 100));
-    root->scrollBy(scrollDelta);
-    m_hostImpl->setRootLayer(root);
+    {
+        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(10);
+        root->setScrollPosition(scrollPosition);
+        root->setScrollable(true);
+        root->setMaxScrollPosition(IntSize(100, 100));
+        root->scrollBy(scrollDelta);
+        m_hostImpl->setRootLayer(root.release());
+    }
+    CCLayerImpl* root = m_hostImpl->rootLayer();
 
     OwnPtr<CCScrollAndScaleSet> scrollInfo;
 
@@ -165,11 +171,14 @@ TEST_F(CCLayerTreeHostImplTest, scrollDeltaRepeatedScrolls)
 
 TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
 {
-    RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
-    root->setScrollable(true);
-    root->setScrollPosition(IntPoint(0, 0));
-    root->setMaxScrollPosition(IntSize(100, 100));
-    m_hostImpl->setRootLayer(root);
+    {
+        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+        root->setScrollable(true);
+        root->setScrollPosition(IntPoint(0, 0));
+        root->setMaxScrollPosition(IntSize(100, 100));
+        m_hostImpl->setRootLayer(root.release());
+    }
+
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
     m_hostImpl->scrollBy(IntSize(0, 10));
     m_hostImpl->scrollEnd();
@@ -179,11 +188,15 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
 
 TEST_F(CCLayerTreeHostImplTest, wheelEventHandlers)
 {
-    RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
-    root->setScrollable(true);
-    root->setScrollPosition(IntPoint(0, 0));
-    root->setMaxScrollPosition(IntSize(100, 100));
-    m_hostImpl->setRootLayer(root);
+    {
+        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+        root->setScrollable(true);
+        root->setScrollPosition(IntPoint(0, 0));
+        root->setMaxScrollPosition(IntSize(100, 100));
+        m_hostImpl->setRootLayer(root.release());
+    }
+    CCLayerImpl* root = m_hostImpl->rootLayer();
+
     root->setHaveWheelEventHandlers(true);
     // With registered event handlers, wheel scrolls have to go to the main thread.
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollFailed);
@@ -321,7 +334,7 @@ TEST_F(CCLayerTreeHostImplTest, pageScaleAnimation)
 
 class DidDrawCheckLayer : public CCLayerImpl {
 public:
-    static PassRefPtr<DidDrawCheckLayer> create(int id) { return adoptRef(new DidDrawCheckLayer(id)); }
+    static PassOwnPtr<DidDrawCheckLayer> create(int id) { return adoptPtr(new DidDrawCheckLayer(id)); }
 
     virtual void didDraw()
     {
@@ -359,8 +372,8 @@ TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
     // Ensure visibleLayerRect for root layer is empty
     m_hostImpl->setViewportSize(IntSize(0, 0));
 
-    RefPtr<DidDrawCheckLayer> root = DidDrawCheckLayer::create(0);
-    m_hostImpl->setRootLayer(root);
+    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
+    DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
 
     EXPECT_FALSE(root->willDrawCalled());
     EXPECT_FALSE(root->didDrawCalled());
@@ -392,14 +405,14 @@ TEST_F(CCLayerTreeHostImplTest, didDrawCalledOnAllLayers)
     m_hostImpl->initializeLayerRenderer(context);
     m_hostImpl->setViewportSize(IntSize(10, 10));
 
-    RefPtr<DidDrawCheckLayer> root = DidDrawCheckLayer::create(0);
-    m_hostImpl->setRootLayer(root);
+    m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
+    DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
 
-    RefPtr<DidDrawCheckLayer> layer1 = DidDrawCheckLayer::create(1);
-    root->addChild(layer1);
+    root->addChild(DidDrawCheckLayer::create(1));
+    DidDrawCheckLayer* layer1 = static_cast<DidDrawCheckLayer*>(root->children()[0].get());
 
-    RefPtr<DidDrawCheckLayer> layer2 = DidDrawCheckLayer::create(2);
-    layer1->addChild(layer2);
+    layer1->addChild(DidDrawCheckLayer::create(2));
+    DidDrawCheckLayer* layer2 = static_cast<DidDrawCheckLayer*>(layer1->children()[0].get());
 
     layer1->setOpacity(0.3);
     layer1->setPreserves3D(false);
@@ -442,7 +455,7 @@ private:
 
 class BlendStateCheckLayer : public CCLayerImpl {
 public:
-    static PassRefPtr<BlendStateCheckLayer> create(int id) { return adoptRef(new BlendStateCheckLayer(id)); }
+    static PassOwnPtr<BlendStateCheckLayer> create(int id) { return adoptPtr(new BlendStateCheckLayer(id)); }
 
     virtual void appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
     {
@@ -491,14 +504,17 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     m_hostImpl->initializeLayerRenderer(context);
     m_hostImpl->setViewportSize(IntSize(10, 10));
 
-    RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
-    root->setAnchorPoint(FloatPoint(0, 0));
-    root->setBounds(IntSize(10, 10));
-    root->setDrawsContent(false);
-    m_hostImpl->setRootLayer(root);
+    {
+        OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+        root->setAnchorPoint(FloatPoint(0, 0));
+        root->setBounds(IntSize(10, 10));
+        root->setDrawsContent(false);
+        m_hostImpl->setRootLayer(root.release());
+    }
+    CCLayerImpl* root = m_hostImpl->rootLayer();
 
-    RefPtr<BlendStateCheckLayer> layer1 = BlendStateCheckLayer::create(1);
-    root->addChild(layer1);
+    root->addChild(BlendStateCheckLayer::create(1));
+    BlendStateCheckLayer* layer1 = static_cast<BlendStateCheckLayer*>(root->children()[0].get());
 
     // Opaque layer, drawn without blending.
     layer1->setOpaque(true);
@@ -537,8 +553,8 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     m_hostImpl->drawLayers();
     EXPECT_TRUE(layer1->quadsAppended());
 
-    RefPtr<BlendStateCheckLayer> layer2 = BlendStateCheckLayer::create(2);
-    layer1->addChild(layer2);
+    layer1->addChild(BlendStateCheckLayer::create(2));
+    BlendStateCheckLayer* layer2 = static_cast<BlendStateCheckLayer*>(layer1->children()[0].get());
 
     // 2 opaque layers, drawn without blending.
     layer1->setOpaque(true);
@@ -656,11 +672,11 @@ TEST_F(CCLayerTreeHostImplTest, reshapeNotCalledUntilDraw)
     m_hostImpl->initializeLayerRenderer(context);
     m_hostImpl->setViewportSize(IntSize(10, 10));
 
-    RefPtr<CCLayerImpl> root = adoptRef(new FakeDrawableCCLayerImpl(1));
+    CCLayerImpl* root = new FakeDrawableCCLayerImpl(1);
     root->setAnchorPoint(FloatPoint(0, 0));
     root->setBounds(IntSize(10, 10));
     root->setDrawsContent(true);
-    m_hostImpl->setRootLayer(root);
+    m_hostImpl->setRootLayer(adoptPtr(root));
     EXPECT_FALSE(reshapeTracker->reshapeCalled());
 
     m_hostImpl->drawLayers();
@@ -703,8 +719,8 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     layerTreeHostImpl->initializeLayerRenderer(context);
     layerTreeHostImpl->setViewportSize(IntSize(500, 500));
 
-    RefPtr<CCLayerImpl> root = adoptRef(new FakeDrawableCCLayerImpl(1));
-    RefPtr<CCLayerImpl> child = adoptRef(new FakeDrawableCCLayerImpl(2));
+    CCLayerImpl* root = new FakeDrawableCCLayerImpl(1);
+    CCLayerImpl* child = new FakeDrawableCCLayerImpl(2);
     child->setPosition(FloatPoint(12, 13));
     child->setAnchorPoint(FloatPoint(0, 0));
     child->setBounds(IntSize(14, 15));
@@ -712,8 +728,8 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     root->setAnchorPoint(FloatPoint(0, 0));
     root->setBounds(IntSize(500, 500));
     root->setDrawsContent(true);
-    root->addChild(child);
-    layerTreeHostImpl->setRootLayer(root);
+    root->addChild(adoptPtr(child));
+    layerTreeHostImpl->setRootLayer(adoptPtr(root));
 
     // First frame, the entire screen should get swapped.
     layerTreeHostImpl->drawLayers();

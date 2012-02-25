@@ -39,9 +39,9 @@ namespace {
 
 // Create a default tiled layer with textures for all tiles and a default
 // visibility of the entire layer size.
-static PassRefPtr<CCTiledLayerImpl> createLayer(const IntSize& tileSize, const IntSize& layerSize, CCLayerTilingData::BorderTexelOption borderTexels)
+static PassOwnPtr<CCTiledLayerImpl> createLayer(const IntSize& tileSize, const IntSize& layerSize, CCLayerTilingData::BorderTexelOption borderTexels)
 {
-    RefPtr<CCTiledLayerImpl> layer = CCTiledLayerImpl::create(0);
+    OwnPtr<CCTiledLayerImpl> layer = CCTiledLayerImpl::create(0);
     OwnPtr<CCLayerTilingData> tiler = CCLayerTilingData::create(tileSize, borderTexels);
     tiler->setBounds(layerSize);
     layer->setTilingData(*tiler);
@@ -68,7 +68,7 @@ TEST(CCTiledLayerImplTest, emptyQuadList)
 
     // Verify default layer does creates quads
     {
-        RefPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
+        OwnPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
         CCQuadList quads;
         OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
         layer->appendQuads(quads, sharedQuadState.get());
@@ -78,7 +78,7 @@ TEST(CCTiledLayerImplTest, emptyQuadList)
 
     // Layer with empty visible layer rect produces no quads
     {
-        RefPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
+        OwnPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
         layer->setVisibleLayerRect(IntRect());
 
         CCQuadList quads;
@@ -89,7 +89,7 @@ TEST(CCTiledLayerImplTest, emptyQuadList)
 
     // Layer with non-intersecting visible layer rect produces no quads
     {
-        RefPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
+        OwnPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
 
         IntRect outsideBounds(IntPoint(-100, -100), IntSize(50, 50));
         layer->setVisibleLayerRect(outsideBounds);
@@ -102,7 +102,7 @@ TEST(CCTiledLayerImplTest, emptyQuadList)
 
     // Layer with skips draw produces no quads
     {
-        RefPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
+        OwnPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
         layer->setSkipsDraw(true);
 
         CCQuadList quads;
@@ -121,7 +121,7 @@ TEST(CCTiledLayerImplTest, checkerboarding)
     const int numTilesY = 2;
     const IntSize layerSize(tileSize.width() * numTilesX, tileSize.height() * numTilesY);
 
-    RefPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
+    OwnPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
 
     // No checkerboarding
@@ -150,7 +150,7 @@ TEST(CCTiledLayerImplTest, checkerboarding)
 
 static PassOwnPtr<CCSharedQuadState> getQuads(CCQuadList& quads, IntSize tileSize, const IntSize& layerSize, CCLayerTilingData::BorderTexelOption borderTexelOption, const IntRect& visibleLayerRect)
 {
-    RefPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, borderTexelOption);
+    OwnPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, borderTexelOption);
     layer->setVisibleLayerRect(visibleLayerRect);
     layer->setBounds(layerSize);
 
@@ -260,7 +260,7 @@ TEST(CCTiledLayerImplTest, backgroundCoversViewport)
     const int numTilesY = 2;
     const unsigned numTiles = numTilesX * numTilesY;
     const IntSize layerSize(tileSize.width() * numTilesX, tileSize.height() * numTilesY);
-    RefPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
+    OwnPtr<CCTiledLayerImpl> layer = createLayer(tileSize, layerSize, CCLayerTilingData::NoBorderTexels);
     layer->setBackgroundColor(Color::gray);
     layer->setBackgroundCoversViewport(true);
 

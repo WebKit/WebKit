@@ -92,15 +92,15 @@ struct CCLayerIteratorValue {
 };
 
 // An iterator class for walking over layers in the RenderSurface-Layer tree.
-template <typename LayerType, typename RenderSurfaceType, typename IteratorActionType>
+template <typename LayerType, typename LayerList, typename RenderSurfaceType, typename IteratorActionType>
 class CCLayerIterator {
-    typedef CCLayerIterator<LayerType, RenderSurfaceType, IteratorActionType> CCLayerIteratorType;
+    typedef CCLayerIterator<LayerType, LayerList, RenderSurfaceType, IteratorActionType> CCLayerIteratorType;
 
 public:
     CCLayerIterator() : m_renderSurfaceLayerList(0) { }
 
-    static CCLayerIteratorType begin(const Vector<RefPtr<LayerType> >* renderSurfaceLayerList) { return CCLayerIteratorType(renderSurfaceLayerList, true); }
-    static CCLayerIteratorType end(const Vector<RefPtr<LayerType> >* renderSurfaceLayerList) { return CCLayerIteratorType(renderSurfaceLayerList, false); }
+    static CCLayerIteratorType begin(const LayerList* renderSurfaceLayerList) { return CCLayerIteratorType(renderSurfaceLayerList, true); }
+    static CCLayerIteratorType end(const LayerList* renderSurfaceLayerList) { return CCLayerIteratorType(renderSurfaceLayerList, false); }
 
     CCLayerIteratorType& operator++() { m_actions.next(*this); return *this; }
     bool operator==(const CCLayerIterator& other) const
@@ -117,10 +117,10 @@ public:
     bool representsContributingRenderSurface() const { return !representsTargetRenderSurface() && currentLayerRepresentsContributingRenderSurface(); }
     bool representsItself() const { return !representsTargetRenderSurface() && !representsContributingRenderSurface(); }
 
-    LayerType* targetRenderSurfaceLayer() const { return (*m_renderSurfaceLayerList)[m_targetRenderSurfaceLayerIndex].get(); }
+    LayerType* targetRenderSurfaceLayer() const { return getRawPtr((*m_renderSurfaceLayerList)[m_targetRenderSurfaceLayerIndex]); }
 
 private:
-    CCLayerIterator(const Vector<RefPtr<LayerType> >* renderSurfaceLayerList, bool start)
+    CCLayerIterator(const LayerList* renderSurfaceLayerList, bool start)
         : m_renderSurfaceLayerList(renderSurfaceLayerList)
     {
         if (start && !renderSurfaceLayerList->isEmpty())
@@ -129,16 +129,19 @@ private:
             m_actions.end(*this);
     }
 
-    inline LayerType* currentLayer() const { return currentLayerRepresentsTargetRenderSurface() ? targetRenderSurfaceLayer() : targetRenderSurfaceChildren()[m_currentLayerIndex].get(); }
+    inline static LayerChromium* getRawPtr(const RefPtr<LayerChromium>& ptr) { return ptr.get(); }
+    inline static CCLayerImpl* getRawPtr(CCLayerImpl* ptr) { return ptr; }
+
+    inline LayerType* currentLayer() const { return currentLayerRepresentsTargetRenderSurface() ? targetRenderSurfaceLayer() : getRawPtr(targetRenderSurfaceChildren()[m_currentLayerIndex]); }
 
     inline bool currentLayerRepresentsContributingRenderSurface() const { return CCLayerTreeHostCommon::renderSurfaceContributesToTarget<LayerType>(currentLayer(), targetRenderSurfaceLayer()->id()); }
     inline bool currentLayerRepresentsTargetRenderSurface() const { return m_currentLayerIndex == CCLayerIteratorValue::LayerIndexRepresentingTargetRenderSurface; }
 
     inline RenderSurfaceType* targetRenderSurface() const { return targetRenderSurfaceLayer()->renderSurface(); }
-    inline const Vector<RefPtr<LayerType> >& targetRenderSurfaceChildren() const { return targetRenderSurface()->layerList(); }
+    inline const LayerList& targetRenderSurfaceChildren() const { return targetRenderSurface()->layerList(); }
 
     IteratorActionType m_actions;
-    const Vector<RefPtr<LayerType> >* m_renderSurfaceLayerList;
+    const LayerList* m_renderSurfaceLayerList;
 
     // The iterator's current position.
 
@@ -161,14 +164,14 @@ struct CCLayerIteratorActions {
     // Walks layers sorted by z-order from back to front.
     class BackToFront {
     public:
-        template <typename LayerType, typename RenderSurfaceType, typename ActionType>
-        void begin(CCLayerIterator<LayerType, RenderSurfaceType, ActionType>&);
+        template <typename LayerType, typename LayerList, typename RenderSurfaceType, typename ActionType>
+        void begin(CCLayerIterator<LayerType, LayerList, RenderSurfaceType, ActionType>&);
 
-        template <typename LayerType, typename RenderSurfaceType, typename ActionType>
-        void end(CCLayerIterator<LayerType, RenderSurfaceType, ActionType>&);
+        template <typename LayerType, typename LayerList, typename RenderSurfaceType, typename ActionType>
+        void end(CCLayerIterator<LayerType, LayerList, RenderSurfaceType, ActionType>&);
 
-        template <typename LayerType, typename RenderSurfaceType, typename ActionType>
-        void next(CCLayerIterator<LayerType, RenderSurfaceType, ActionType>&);
+        template <typename LayerType, typename LayerList, typename RenderSurfaceType, typename ActionType>
+        void next(CCLayerIterator<LayerType, LayerList, RenderSurfaceType, ActionType>&);
 
     private:
         int m_highestTargetRenderSurfaceLayer;
@@ -177,18 +180,18 @@ struct CCLayerIteratorActions {
     // Walks layers sorted by z-order from front to back
     class FrontToBack {
     public:
-        template <typename LayerType, typename RenderSurfaceType, typename ActionType>
-        void begin(CCLayerIterator<LayerType, RenderSurfaceType, ActionType>&);
+        template <typename LayerType, typename LayerList, typename RenderSurfaceType, typename ActionType>
+        void begin(CCLayerIterator<LayerType, LayerList, RenderSurfaceType, ActionType>&);
 
-        template <typename LayerType, typename RenderSurfaceType, typename ActionType>
-        void end(CCLayerIterator<LayerType, RenderSurfaceType, ActionType>&);
+        template <typename LayerType, typename LayerList, typename RenderSurfaceType, typename ActionType>
+        void end(CCLayerIterator<LayerType, LayerList, RenderSurfaceType, ActionType>&);
 
-        template <typename LayerType, typename RenderSurfaceType, typename ActionType>
-        void next(CCLayerIterator<LayerType, RenderSurfaceType, ActionType>&);
+        template <typename LayerType, typename LayerList, typename RenderSurfaceType, typename ActionType>
+        void next(CCLayerIterator<LayerType, LayerList, RenderSurfaceType, ActionType>&);
 
     private:
-        template <typename LayerType, typename RenderSurfaceType, typename ActionType>
-        void goToHighestInSubtree(CCLayerIterator<LayerType, RenderSurfaceType, ActionType>&);
+        template <typename LayerType, typename LayerList, typename RenderSurfaceType, typename ActionType>
+        void goToHighestInSubtree(CCLayerIterator<LayerType, LayerList, RenderSurfaceType, ActionType>&);
     };
 };
 

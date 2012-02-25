@@ -67,8 +67,8 @@ private:
     EXPECT_EQ(contrib, layer->m_countRepresentingContributingSurface);   \
     EXPECT_EQ(itself, layer->m_countRepresentingItself);
 
-typedef CCLayerIterator<LayerChromium, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> FrontToBack;
-typedef CCLayerIterator<LayerChromium, RenderSurfaceChromium, CCLayerIteratorActions::BackToFront> BackToFront;
+typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> FrontToBack;
+typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::BackToFront> BackToFront;
 
 void resetCounts(Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList)
 {
@@ -137,7 +137,7 @@ TEST(CCLayerIteratorTest, simpleTree)
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > layerList;
-    renderSurfaceLayerList.append(rootLayer);
+    renderSurfaceLayerList.append(rootLayer.get());
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer.get(), rootLayer.get(),
                                                                 TransformationMatrix(), TransformationMatrix(),
                                                                 renderSurfaceLayerList, layerList,
@@ -184,7 +184,7 @@ TEST(CCLayerIteratorTest, complexTree)
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > layerList;
-    renderSurfaceLayerList.append(rootLayer);
+    renderSurfaceLayerList.append(rootLayer.get());
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer.get(), rootLayer.get(),
                                                                 TransformationMatrix(), TransformationMatrix(),
                                                                 renderSurfaceLayerList, layerList,
@@ -243,7 +243,7 @@ TEST(CCLayerIteratorTest, complexTreeMultiSurface)
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > layerList;
-    renderSurfaceLayerList.append(rootLayer);
+    renderSurfaceLayerList.append(rootLayer.get());
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer.get(), rootLayer.get(),
                                                                 TransformationMatrix(), TransformationMatrix(),
                                                                 renderSurfaceLayerList, layerList,

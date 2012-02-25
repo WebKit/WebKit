@@ -1,3 +1,48 @@
+2012-02-24  Tien-Ren Chen  <trchen@chromium.org>
+
+        [chromium] Replace RefPtr with OwnPtr for CCLayerImpl tree structure
+        https://bugs.webkit.org/show_bug.cgi?id=78404
+
+        Reviewed by James Robinson.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::executeCalculateDrawTransformsAndVisibility):
+        (WebKitTests::emulateDrawingOneFrame):
+        (WebKitTests::createTestTreeWithOneSurface):
+        (WebKitTests::createTestTreeWithTwoSurfaces):
+        (WebKitTests::createAndSetUpTestTreeWithOneSurface):
+        (WebKitTests::createAndSetUpTestTreeWithTwoSurfaces):
+        (WebKitTests::TEST_F):
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+        * tests/CCLayerIteratorTest.cpp:
+        * tests/CCLayerSorterTest.cpp:
+        (WebCore::TEST):
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebCore::TEST):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::CCLayerTreeHostImplTest::setupScrollAndContentsLayers):
+        (WebKit::TEST_F):
+        (WebKit::DidDrawCheckLayer::create):
+        (WebKit::BlendStateCheckLayer::create):
+        * tests/CCRenderSurfaceTest.cpp:
+        (WebCore::TEST):
+        * tests/CCSolidColorLayerImplTest.cpp:
+        (CCLayerTestCommon::TEST):
+        * tests/CCTiledLayerImplTest.cpp:
+        (CCLayerTestCommon::createLayer):
+        (CCLayerTestCommon::TEST):
+        (CCLayerTestCommon::getQuads):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        (WebCore::Canvas2DLayerChromiumTest::fullLifecycleTest):
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+        * tests/TreeSynchronizerTest.cpp:
+        (WebKitTests::MockCCLayerImpl::create):
+        (WebKitTests::MockLayerChromium::createCCLayerImpl):
+        (WebKitTests::expectTreesAreIdentical):
+        (WebKitTests::TEST):
+
 2012-02-08  James Robinson  <jamesr@chromium.org>
 
         [chromium] Make WebViewImpl depend on WebLayerTreeView instead of CCLayerTreeHost

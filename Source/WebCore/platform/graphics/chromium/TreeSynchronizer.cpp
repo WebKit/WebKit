@@ -33,63 +33,59 @@
 
 namespace WebCore {
 
-void TreeSynchronizer::addCCLayerImplsToMapRecursive(CCLayerImplMap& map, CCLayerImpl* ccLayerImpl)
+PassOwnPtr<CCLayerImpl> TreeSynchronizer::synchronizeTrees(LayerChromium* layerChromiumRoot, PassOwnPtr<CCLayerImpl> oldCCLayerImplRoot)
 {
-    map.set(ccLayerImpl->id(), ccLayerImpl);
+    CCLayerImplMap map;
+    collectExistingCCLayerImplRecursive(map, oldCCLayerImplRoot);
 
-    const Vector<RefPtr<CCLayerImpl> >& children = ccLayerImpl->children();
-    for (size_t i = 0; i < children.size(); ++i)
-        addCCLayerImplsToMapRecursive(map, children[i].get());
-
-    if (CCLayerImpl* maskLayer = ccLayerImpl->maskLayer())
-        addCCLayerImplsToMapRecursive(map, maskLayer);
-
-    if (CCLayerImpl* replicaLayer = ccLayerImpl->replicaLayer())
-        addCCLayerImplsToMapRecursive(map, replicaLayer);
+    return synchronizeTreeRecursive(map, layerChromiumRoot);
 }
 
-PassRefPtr<CCLayerImpl> TreeSynchronizer::synchronizeTreeRecursive(LayerChromium* layer, CCLayerImplMap& map)
+void TreeSynchronizer::collectExistingCCLayerImplRecursive(CCLayerImplMap& map, PassOwnPtr<CCLayerImpl> popCCLayerImpl)
 {
-    RefPtr<CCLayerImpl> ccLayerImpl;
-    CCLayerImplMap::iterator it = map.find(layer->id());
-    if (it != map.end()) {
-        ccLayerImpl = it->second; // We already have an entry for this, we just need to reparent it.
-        ccLayerImpl->clearChildList();
-    } else {
-        ccLayerImpl = layer->createCCLayerImpl();
-        map.set(layer->id(), ccLayerImpl); // Add it to the map so other layers referencing this one can pick it up.
-    }
+    OwnPtr<CCLayerImpl> ccLayerImpl = popCCLayerImpl;
 
-    const Vector<RefPtr<LayerChromium> >& children = layer->children();
+    if (!ccLayerImpl)
+        return;
+
+    Vector<OwnPtr<CCLayerImpl> >& children = ccLayerImpl->m_children;
     for (size_t i = 0; i < children.size(); ++i)
-        ccLayerImpl->addChild(synchronizeTreeRecursive(children[i].get(), map));
+        collectExistingCCLayerImplRecursive(map, children[i].release());
 
-    if (LayerChromium* maskLayer = layer->maskLayer())
-        ccLayerImpl->setMaskLayer(synchronizeTreeRecursive(maskLayer, map));
-    else
-        ccLayerImpl->setMaskLayer(0);
+    collectExistingCCLayerImplRecursive(map, ccLayerImpl->m_maskLayer.release());
+    collectExistingCCLayerImplRecursive(map, ccLayerImpl->m_replicaLayer.release());
 
-    if (LayerChromium* replicaLayer = layer->replicaLayer())
-        ccLayerImpl->setReplicaLayer(synchronizeTreeRecursive(replicaLayer, map));
-    else
-        ccLayerImpl->setReplicaLayer(0);
+    int id = ccLayerImpl->id();
+    map.set(id, ccLayerImpl.release());
+}
 
-    layer->pushPropertiesTo(ccLayerImpl.get());
+PassOwnPtr<CCLayerImpl> TreeSynchronizer::reuseOrCreateCCLayerImpl(CCLayerImplMap& map, LayerChromium* layer)
+{
+    OwnPtr<CCLayerImpl> ccLayerImpl = map.take(layer->id());
+
+    if (!ccLayerImpl)
+        return layer->createCCLayerImpl();
+
     return ccLayerImpl.release();
 }
 
-PassRefPtr<CCLayerImpl> TreeSynchronizer::synchronizeTrees(LayerChromium* layerChromiumRoot, PassRefPtr<CCLayerImpl> prpOldCCLayerImplRoot)
+PassOwnPtr<CCLayerImpl> TreeSynchronizer::synchronizeTreeRecursive(CCLayerImplMap& map, LayerChromium* layer)
 {
-    RefPtr<CCLayerImpl> oldCCLayerImplRoot = prpOldCCLayerImplRoot;
-    // Build a map from layer IDs to CCLayerImpls so we can reuse layers from the old tree.
-    CCLayerImplMap map;
-    if (oldCCLayerImplRoot)
-        addCCLayerImplsToMapRecursive(map, oldCCLayerImplRoot.get());
+    if (!layer)
+        return nullptr;
 
-    // Recursively build the new layer tree.
-    RefPtr<CCLayerImpl> newCCLayerImplRoot = synchronizeTreeRecursive(layerChromiumRoot, map);
+    OwnPtr<CCLayerImpl> ccLayerImpl = reuseOrCreateCCLayerImpl(map, layer);
 
-    return newCCLayerImplRoot.release();
+    ccLayerImpl->clearChildList();
+    const Vector<RefPtr<LayerChromium> >& children = layer->children();
+    for (size_t i = 0; i < children.size(); ++i)
+        ccLayerImpl->addChild(synchronizeTreeRecursive(map, children[i].get()));
+
+    ccLayerImpl->setMaskLayer(synchronizeTreeRecursive(map, layer->maskLayer()));
+    ccLayerImpl->setReplicaLayer(synchronizeTreeRecursive(map, layer->replicaLayer()));
+
+    layer->pushPropertiesTo(ccLayerImpl.get());
+    return ccLayerImpl.release();
 }
 
 } // namespace WebCore

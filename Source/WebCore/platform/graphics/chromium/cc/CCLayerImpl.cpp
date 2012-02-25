@@ -42,6 +42,8 @@ namespace WebCore {
 
 CCLayerImpl::CCLayerImpl(int id)
     : m_parent(0)
+    , m_maskLayerId(-1)
+    , m_replicaLayerId(-1)
     , m_layerId(id)
     , m_anchorPoint(0.5, 0.5)
     , m_anchorPointZ(0)
@@ -73,7 +75,7 @@ CCLayerImpl::~CCLayerImpl()
     ASSERT(CCProxy::isImplThread());
 }
 
-void CCLayerImpl::addChild(PassRefPtr<CCLayerImpl> child)
+void CCLayerImpl::addChild(PassOwnPtr<CCLayerImpl> child)
 {
     child->setParent(this);
     m_children.append(child);
@@ -83,13 +85,16 @@ void CCLayerImpl::removeFromParent()
 {
     if (!m_parent)
         return;
-    for (size_t i = 0; i < m_parent->m_children.size(); ++i) {
-        if (m_parent->m_children[i].get() == this) {
-            m_parent->m_children.remove(i);
-            break;
+
+    CCLayerImpl* parent = m_parent;
+    m_parent = 0;
+
+    for (size_t i = 0; i < parent->m_children.size(); ++i) {
+        if (parent->m_children[i].get() == this) {
+            parent->m_children.remove(i);
+            return;
         }
     }
-    m_parent = 0;
 }
 
 void CCLayerImpl::removeAllChildren()
@@ -244,7 +249,7 @@ void CCLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
     ts << "drawsContent: " << (m_drawsContent ? "yes" : "no") << "\n";
 }
 
-void sortLayers(Vector<RefPtr<CCLayerImpl> >::iterator first, Vector<RefPtr<CCLayerImpl> >::iterator end, CCLayerSorter* layerSorter)
+void sortLayers(Vector<CCLayerImpl*>::iterator first, Vector<CCLayerImpl*>::iterator end, CCLayerSorter* layerSorter)
 {
     TRACE_EVENT("LayerRendererChromium::sortLayers", 0, 0);
     layerSorter->sort(first, end);
@@ -319,21 +324,27 @@ void CCLayerImpl::setBounds(const IntSize& bounds)
         m_layerPropertyChanged = true;
 }
 
-void CCLayerImpl::setMaskLayer(PassRefPtr<CCLayerImpl> maskLayer)
+void CCLayerImpl::setMaskLayer(PassOwnPtr<CCLayerImpl> maskLayer)
 {
-    if (m_maskLayer == maskLayer)
+    m_maskLayer = maskLayer;
+
+    int newLayerId = m_maskLayer ? m_maskLayer->id() : -1;
+    if (newLayerId == m_maskLayerId)
         return;
 
-    m_maskLayer = maskLayer;
+    m_maskLayerId = newLayerId;
     noteLayerPropertyChangedForSubtree();
 }
 
-void CCLayerImpl::setReplicaLayer(PassRefPtr<CCLayerImpl> replicaLayer)
+void CCLayerImpl::setReplicaLayer(PassOwnPtr<CCLayerImpl> replicaLayer)
 {
-    if (m_replicaLayer == replicaLayer)
+    m_replicaLayer = replicaLayer;
+
+    int newLayerId = m_replicaLayer ? m_replicaLayer->id() : -1;
+    if (newLayerId == m_replicaLayerId)
         return;
 
-    m_replicaLayer = replicaLayer;
+    m_replicaLayerId = newLayerId;
     noteLayerPropertyChangedForSubtree();
 }
 

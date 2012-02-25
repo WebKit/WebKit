@@ -34,9 +34,9 @@ namespace WebCore {
 
 class CCCanvasLayerImpl : public CCLayerImpl {
 public:
-    static PassRefPtr<CCCanvasLayerImpl> create(int id)
+    static PassOwnPtr<CCCanvasLayerImpl> create(int id)
     {
-        return adoptRef(new CCCanvasLayerImpl(id));
+        return adoptPtr(new CCCanvasLayerImpl(id));
     }
     virtual ~CCCanvasLayerImpl();
 

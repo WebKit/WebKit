@@ -52,7 +52,7 @@ VideoLayerChromium::~VideoLayerChromium()
 {
 }
 
-PassRefPtr<CCLayerImpl> VideoLayerChromium::createCCLayerImpl()
+PassOwnPtr<CCLayerImpl> VideoLayerChromium::createCCLayerImpl()
 {
     return CCVideoLayerImpl::create(m_layerId, m_provider);
 }

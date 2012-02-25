@@ -94,9 +94,10 @@ public:
     void readback(void* pixels, const IntRect&);
 
     CCLayerImpl* rootLayer() const { return m_rootLayerImpl.get(); }
-    void setRootLayer(PassRefPtr<CCLayerImpl>);
+    void setRootLayer(PassOwnPtr<CCLayerImpl>);
+    PassOwnPtr<CCLayerImpl> releaseRootLayer() { return m_rootLayerImpl.release(); }
 
-    CCLayerImpl* scrollLayer() const { return m_scrollLayerImpl.get(); }
+    CCLayerImpl* scrollLayer() const { return m_scrollLayerImpl; }
 
     bool visible() const { return m_visible; }
     void setVisible(bool);
@@ -136,7 +137,7 @@ protected:
     int m_frameNumber;
 
 private:
-    typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
+    typedef Vector<CCLayerImpl*> CCLayerList;
 
     void computeDoubleTapZoomDeltas(CCScrollAndScaleSet* scrollInfo);
     void computePinchZoomDeltas(CCScrollAndScaleSet* scrollInfo);
@@ -153,8 +154,8 @@ private:
     IntSize contentSize() const;
 
     OwnPtr<LayerRendererChromium> m_layerRenderer;
-    RefPtr<CCLayerImpl> m_rootLayerImpl;
-    RefPtr<CCLayerImpl> m_scrollLayerImpl;
+    OwnPtr<CCLayerImpl> m_rootLayerImpl;
+    CCLayerImpl* m_scrollLayerImpl;
     CCSettings m_settings;
     IntSize m_viewportSize;
     bool m_visible;

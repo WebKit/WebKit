@@ -295,7 +295,7 @@ void CCLayerSorter::createGraphNodes(LayerList::iterator first, LayerList::itera
     float minZ = FLT_MAX;
     float maxZ = -FLT_MAX;
     for (LayerList::const_iterator it = first; it < last; it++) {
-        m_nodes.append(GraphNode(it->get()));
+        m_nodes.append(GraphNode(*it));
         GraphNode& node = m_nodes.at(m_nodes.size() - 1);
         CCRenderSurface* renderSurface = node.layer->renderSurface();
         if (!node.layer->drawsContent() && !renderSurface)

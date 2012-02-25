@@ -97,7 +97,7 @@ TiledLayerChromium::~TiledLayerChromium()
 {
 }
 
-PassRefPtr<CCLayerImpl> TiledLayerChromium::createCCLayerImpl()
+PassOwnPtr<CCLayerImpl> TiledLayerChromium::createCCLayerImpl()
 {
     return CCTiledLayerImpl::create(id());
 }

@@ -39,7 +39,7 @@ public:
     static PassRefPtr<PluginLayerChromium> create();
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
 
-    virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
+    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
 
     // Code path for plugins which supply their own texture ID.
     void setTextureId(unsigned textureId);

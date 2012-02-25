@@ -50,6 +50,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     : m_client(client)
     , m_sourceFrameNumber(-1)
     , m_frameNumber(0)
+    , m_scrollLayerImpl(0)
     , m_settings(settings)
     , m_visible(true)
     , m_pageScale(1)
@@ -134,7 +135,7 @@ void CCLayerTreeHostImpl::trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, 
     // damage rect. The root damage rect is then used to scissor each surface.
 
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
-        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex];
         CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
         renderSurface->damageTracker()->updateDamageTrackingState(renderSurface->layerList(), renderSurfaceLayer->id(), renderSurfaceLayer->maskLayer());
@@ -198,7 +199,7 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
     m_rootDamageRect = rootLayer()->renderSurface()->damageTracker()->currentDamageRect();
 
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
-        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex];
         CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
 
         OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderSurface);
@@ -210,7 +211,7 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
 
         const CCLayerList& layerList = renderSurface->layerList();
         for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
-            CCLayerImpl* layer = layerList[layerIndex].get();
+            CCLayerImpl* layer = layerList[layerIndex];
             if (layer->visibleLayerRect().isEmpty())
                 continue;
 
@@ -294,7 +295,7 @@ void CCLayerTreeHostImpl::drawLayers()
     for (size_t i = 0; i < passes.size(); ++i)
         m_layerRenderer->drawRenderPass(passes[i].get());
 
-    typedef CCLayerIterator<CCLayerImpl, CCRenderSurface, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
+    typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
@@ -363,7 +364,7 @@ static CCLayerImpl* findScrollLayer(CCLayerImpl* layer)
     return 0;
 }
 
-void CCLayerTreeHostImpl::setRootLayer(PassRefPtr<CCLayerImpl> layer)
+void CCLayerTreeHostImpl::setRootLayer(PassOwnPtr<CCLayerImpl> layer)
 {
     m_rootLayerImpl = layer;
 

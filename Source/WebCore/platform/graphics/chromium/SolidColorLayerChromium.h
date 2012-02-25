@@ -38,7 +38,7 @@ class LayerTilerChromium;
 // setBackgroundColor() on the base class.
 class SolidColorLayerChromium : public LayerChromium {
 public:
-    virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
+    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
     static PassRefPtr<SolidColorLayerChromium> create();
 
     virtual ~SolidColorLayerChromium();

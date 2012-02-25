@@ -45,7 +45,7 @@ CanvasLayerChromium::CanvasLayerChromium()
 {
 }
 
-PassRefPtr<CCLayerImpl> CanvasLayerChromium::createCCLayerImpl()
+PassOwnPtr<CCLayerImpl> CanvasLayerChromium::createCCLayerImpl()
 {
     return CCCanvasLayerImpl::create(m_layerId);
 }

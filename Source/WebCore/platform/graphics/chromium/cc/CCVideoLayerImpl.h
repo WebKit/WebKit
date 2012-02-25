@@ -43,9 +43,9 @@ template<class VertexShader, class FragmentShader> class ProgramBinding;
 class CCVideoLayerImpl : public CCLayerImpl
                        , public VideoFrameProvider::Client {
 public:
-    static PassRefPtr<CCVideoLayerImpl> create(int id, VideoFrameProvider* provider)
+    static PassOwnPtr<CCVideoLayerImpl> create(int id, VideoFrameProvider* provider)
     {
-        return adoptRef(new CCVideoLayerImpl(id, provider));
+        return adoptPtr(new CCVideoLayerImpl(id, provider));
     }
     virtual ~CCVideoLayerImpl();
 

@@ -41,7 +41,7 @@ namespace WebCore {
 // Base class for WebGL and accelerated 2d canvases.
 class CanvasLayerChromium : public LayerChromium {
 public:
-    virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
+    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
 
 protected:
     CanvasLayerChromium();

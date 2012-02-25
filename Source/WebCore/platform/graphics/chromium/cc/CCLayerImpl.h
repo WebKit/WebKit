@@ -46,11 +46,11 @@ class CCLayerSorter;
 class LayerChromium;
 class LayerRendererChromium;
 
-class CCLayerImpl : public RefCounted<CCLayerImpl>, public CCLayerAnimationControllerImplClient {
+class CCLayerImpl : public CCLayerAnimationControllerImplClient {
 public:
-    static PassRefPtr<CCLayerImpl> create(int id)
+    static PassOwnPtr<CCLayerImpl> create(int id)
     {
-        return adoptRef(new CCLayerImpl(id));
+        return adoptPtr(new CCLayerImpl(id));
     }
 
     // CCLayerAnimationControllerImplClient implementation.
@@ -65,15 +65,15 @@ public:
 
     // Tree structure.
     CCLayerImpl* parent() const { return m_parent; }
-    const Vector<RefPtr<CCLayerImpl> >& children() const { return m_children; }
-    void addChild(PassRefPtr<CCLayerImpl>);
+    const Vector<OwnPtr<CCLayerImpl> >& children() const { return m_children; }
+    void addChild(PassOwnPtr<CCLayerImpl>);
     void removeFromParent();
     void removeAllChildren();
 
-    void setMaskLayer(PassRefPtr<CCLayerImpl>);
+    void setMaskLayer(PassOwnPtr<CCLayerImpl>);
     CCLayerImpl* maskLayer() const { return m_maskLayer.get(); }
 
-    void setReplicaLayer(PassRefPtr<CCLayerImpl>);
+    void setReplicaLayer(PassOwnPtr<CCLayerImpl>);
     CCLayerImpl* replicaLayer() const { return m_replicaLayer.get(); }
 
 #ifndef NDEBUG
@@ -236,9 +236,12 @@ private:
 
     // Properties internal to CCLayerImpl
     CCLayerImpl* m_parent;
-    Vector<RefPtr<CCLayerImpl> > m_children;
-    RefPtr<CCLayerImpl> m_maskLayer;
-    RefPtr<CCLayerImpl> m_replicaLayer;
+    Vector<OwnPtr<CCLayerImpl> > m_children;
+    // m_maskLayer can be temporarily stolen during tree sync, we need this ID to confirm newly assigned layer is still the previous one
+    int m_maskLayerId;
+    OwnPtr<CCLayerImpl> m_maskLayer;
+    int m_replicaLayerId; // ditto
+    OwnPtr<CCLayerImpl> m_replicaLayer;
     int m_layerId;
 
     // Properties synchronized from the associated LayerChromium.
@@ -324,7 +327,7 @@ private:
     OwnPtr<CCLayerAnimationControllerImpl> m_layerAnimationController;
 };
 
-void sortLayers(Vector<RefPtr<CCLayerImpl> >::iterator first, Vector<RefPtr<CCLayerImpl> >::iterator end, CCLayerSorter*);
+void sortLayers(Vector<CCLayerImpl*>::iterator first, Vector<CCLayerImpl*>::iterator end, CCLayerSorter*);
 
 }
 

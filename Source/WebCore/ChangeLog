@@ -1,3 +1,122 @@
+2012-02-24  Tien-Ren Chen  <trchen@chromium.org>
+
+        [chromium] Replace RefPtr with OwnPtr for CCLayerImpl tree structure
+        https://bugs.webkit.org/show_bug.cgi?id=78404
+
+        Reviewed by James Robinson.
+
+        No new tests. Updated existing test to reflect changes.
+
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        (CanvasLayerChromium):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+        * platform/graphics/chromium/PluginLayerChromium.cpp:
+        (WebCore::PluginLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/PluginLayerChromium.h:
+        (PluginLayerChromium):
+        * platform/graphics/chromium/SolidColorLayerChromium.cpp:
+        (WebCore::SolidColorLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/SolidColorLayerChromium.h:
+        (SolidColorLayerChromium):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (TiledLayerChromium):
+        * platform/graphics/chromium/TreeSynchronizer.cpp:
+        (WebCore::TreeSynchronizer::synchronizeTrees):
+        (WebCore::TreeSynchronizer::collectExistingCCLayerImplRecursive):
+        (WebCore):
+        (WebCore::TreeSynchronizer::reuseOrCreateCCLayerImpl):
+        (WebCore::TreeSynchronizer::synchronizeTreeRecursive):
+        * platform/graphics/chromium/TreeSynchronizer.h:
+        (TreeSynchronizer):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        (VideoLayerChromium):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h:
+        (WebCore::CCCanvasLayerImpl::create):
+        * platform/graphics/chromium/cc/CCDamageTracker.cpp:
+        (WebCore::CCDamageTracker::updateDamageTrackingState):
+        (WebCore::CCDamageTracker::trackDamageFromActiveLayers):
+        * platform/graphics/chromium/cc/CCDamageTracker.h:
+        (CCDamageTracker):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        (WebCore::CCLayerImpl::addChild):
+        (WebCore::sortLayers):
+        (WebCore::CCLayerImpl::setMaskLayer):
+        (WebCore::CCLayerImpl::setReplicaLayer):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::create):
+        (WebCore::CCLayerImpl::children):
+        (CCLayerImpl):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCLayerIterator.cpp:
+        (WebCore):
+        (WebCore::CCLayerIteratorActions::BackToFront::begin):
+        (WebCore::CCLayerIteratorActions::BackToFront::end):
+        (WebCore::CCLayerIteratorActions::BackToFront::next):
+        (WebCore::CCLayerIteratorActions::FrontToBack::begin):
+        (WebCore::CCLayerIteratorActions::FrontToBack::end):
+        (WebCore::CCLayerIteratorActions::FrontToBack::next):
+        (WebCore::CCLayerIteratorActions::FrontToBack::goToHighestInSubtree):
+        * platform/graphics/chromium/cc/CCLayerIterator.h:
+        (WebCore):
+        (CCLayerIterator):
+        (WebCore::CCLayerIterator::begin):
+        (WebCore::CCLayerIterator::end):
+        (WebCore::CCLayerIterator::targetRenderSurfaceLayer):
+        (WebCore::CCLayerIterator::CCLayerIterator):
+        (WebCore::CCLayerIterator::getRawPtr):
+        (WebCore::CCLayerIterator::currentLayer):
+        (WebCore::CCLayerIterator::targetRenderSurfaceChildren):
+        (BackToFront):
+        (FrontToBack):
+        * platform/graphics/chromium/cc/CCLayerSorter.cpp:
+        (WebCore::CCLayerSorter::createGraphNodes):
+        * platform/graphics/chromium/cc/CCLayerSorter.h:
+        (CCLayerSorter):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::didBecomeInvisibleOnImplThread):
+        (WebCore::CCLayerTreeHost::reserveTextures):
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        (WebCore::CCLayerTreeHost::updateCompositorResources):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore):
+        (WebCore::calculateDrawTransformsAndVisibilityInternal):
+        (WebCore::walkLayersAndCalculateVisibleLayerRects):
+        (WebCore::CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.h:
+        (CCLayerTreeHostCommon):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::trackDamageForAllSurfaces):
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        (WebCore::CCLayerTreeHostImpl::setRootLayer):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::releaseRootLayer):
+        (WebCore::CCLayerTreeHostImpl::scrollLayer):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+        (WebCore::CCPluginLayerImpl::create):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (WebCore::CCRenderSurface::layerList):
+        (CCRenderSurface):
+        * platform/graphics/chromium/cc/CCSolidColorLayerImpl.h:
+        (WebCore::CCSolidColorLayerImpl::create):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (WebCore::CCTiledLayerImpl::create):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+        (WebCore::CCVideoLayerImpl::create):
+
 2012-02-24  Andreas Kling  <awesomekling@apple.com>
 
         Don't pass constant strings to CSSParser for presentation attributes.

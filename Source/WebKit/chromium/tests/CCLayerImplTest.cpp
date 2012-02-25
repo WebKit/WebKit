@@ -65,14 +65,11 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     DebugScopedSetImplThread setImplThread;
 
     // Create a simple CCLayerImpl tree:
-    RefPtr<CCLayerImpl> root = CCLayerImpl::create(1);
-    RefPtr<CCLayerImpl> child = CCLayerImpl::create(2);
-    RefPtr<CCLayerImpl> grandChild = CCLayerImpl::create(3);
-    root->addChild(child);
-    child->addChild(grandChild);
-
-    RefPtr<CCLayerImpl> dummyMask = CCLayerImpl::create(4);
-    RefPtr<CCLayerImpl> dummyReplica = CCLayerImpl::create(5);
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    root->addChild(CCLayerImpl::create(2));
+    CCLayerImpl* child = root->children()[0].get();
+    child->addChild(CCLayerImpl::create(3));
+    CCLayerImpl* grandChild = child->children()[0].get();
 
     // Adding children is an internal operation and should not mark layers as changed.
     EXPECT_FALSE(root->layerPropertyChanged());
@@ -95,11 +92,11 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setAnchorPoint(arbitraryFloatPoint));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setAnchorPointZ(arbitraryNumber));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setFilters(arbitraryFilters));
-    EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setMaskLayer(dummyMask));
+    EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setMaskLayer(CCLayerImpl::create(4)));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setMasksToBounds(true));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setOpaque(true));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setOpacity(arbitraryNumber));
-    EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setReplicaLayer(dummyReplica));
+    EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setReplicaLayer(CCLayerImpl::create(5)));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setPosition(arbitraryFloatPoint));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setPreserves3D(true));
     EXECUTE_AND_VERIFY_SUBTREE_CHANGED(root->setTransform(arbitraryTransform));
@@ -134,9 +131,7 @@ TEST(CCLayerImplTest, verifyLayerChangesAreTrackedProperly)
     // not cause any change.
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setAnchorPoint(arbitraryFloatPoint));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setAnchorPointZ(arbitraryNumber));
-    EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setMaskLayer(dummyMask));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setMasksToBounds(true));
-    EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setReplicaLayer(dummyReplica));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setPosition(arbitraryFloatPoint));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setPreserves3D(true));
     EXECUTE_AND_VERIFY_SUBTREE_DID_NOT_CHANGE(root->setTransform(arbitraryTransform));

@@ -44,6 +44,7 @@
 #include "TransformationMatrix.h"
 
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -256,7 +257,7 @@ protected:
     RefPtr<LayerChromium> m_maskLayer;
 
     // Constructs a CCLayerImpl of the correct runtime type for this LayerChromium type.
-    virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
+    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
     int m_layerId;
 
 private:

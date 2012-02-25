@@ -35,9 +35,9 @@ namespace WebCore {
 
 class CCPluginLayerImpl : public CCLayerImpl {
 public:
-    static PassRefPtr<CCPluginLayerImpl> create(int id)
+    static PassOwnPtr<CCPluginLayerImpl> create(int id)
     {
-        return adoptRef(new CCPluginLayerImpl(id));
+        return adoptPtr(new CCPluginLayerImpl(id));
     }
     virtual ~CCPluginLayerImpl();
 

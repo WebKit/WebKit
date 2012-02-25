@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-PassRefPtr<CCLayerImpl> SolidColorLayerChromium::createCCLayerImpl()
+PassOwnPtr<CCLayerImpl> SolidColorLayerChromium::createCCLayerImpl()
 {
     return CCSolidColorLayerImpl::create(id());
 }

@@ -39,7 +39,7 @@ class CCLayerSorter {
 public:
     CCLayerSorter();
 
-    typedef Vector<RefPtr<CCLayerImpl> > LayerList;
+    typedef Vector<CCLayerImpl*> LayerList;
 
     void sort(LayerList::iterator first, LayerList::iterator last);
 

@@ -102,7 +102,7 @@ protected:
     virtual TextureManager* textureManager() const;
 
 private:
-    virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
+    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
 
     void createTilerIfNeeded();
     void setTilingOption(TilingOption);
