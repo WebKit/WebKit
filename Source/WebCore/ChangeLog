@@ -1,3 +1,15 @@
+2012-02-24  Adrienne Walker  <enne@google.com>
+
+        Fix uninitialized variables in HarfBuzzShaperBase
+        https://bugs.webkit.org/show_bug.cgi?id=79546
+
+        Reviewed by Dirk Pranke.
+
+        These were introduced in r108733.
+
+        * platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp:
+        (WebCore::HarfBuzzShaperBase::HarfBuzzShaperBase):
+
 2012-02-24  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] JPEG RGB image with Adode Marker fails to turbo swizzle decode
