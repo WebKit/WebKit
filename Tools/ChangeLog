@@ -1,5 +1,74 @@
 2012-02-24  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: committers_unittest fuzzy matching is really slow
+        https://bugs.webkit.org/show_bug.cgi?id=79179
+
+        Reviewed by Ryosuke Niwa.
+
+        Break the fuzzy matching tests into individual routines for
+        each contributor so that the intent is a little clearer, so
+        that it's easier to test individual names (and identify
+        duplicate tests), and so that we can eventually run
+        them in parallel.
+
+        Also, mark most of them as 'integration' tests so that they
+        can be skipped if we want to go fast (we leave a few as
+        regular tests for functional coverage).
+
+        * Scripts/webkitpy/common/config/committers_unittest.py:
+        (CommittersTest):
+        (CommittersTest.test_contributors_by_fuzzy_match):
+        (CommittersTest.integration_test_contributors__none):
+        (CommittersTest.integration_test_contributors__none_2):
+        (CommittersTest.integration_test_contributors__none_3):
+        (CommittersTest.integration_test_contributors_ada_chan):
+        (CommittersTest.integration_test_contributors_adele_peterson):
+        (CommittersTest.integration_test_contributors_alexey_proskuryakov):
+        (CommittersTest.integration_test_contributors_alice_liu):
+        (CommittersTest.integration_test_contributors_alp_toker):
+        (CommittersTest.integration_test_contributors_anders_carlsson):
+        (CommittersTest.integration_test_contributors_antti_koivisto):
+        (CommittersTest.integration_test_contributors_beth_dakin):
+        (CommittersTest.integration_test_contributors_brady_eidson):
+        (CommittersTest.integration_test_contributors_cameron_zwarich):
+        (CommittersTest.integration_test_contributors_chris_blumenberg):
+        (CommittersTest.integration_test_contributors_dan_bernstein):
+        (CommittersTest.integration_test_contributors_dan_bernstein_2):
+        (CommittersTest.integration_test_contributors_darin_adler):
+        (CommittersTest.integration_test_contributors_david_harrison):
+        (CommittersTest.integration_test_contributors_david_harrison_2):
+        (CommittersTest.integration_test_contributors_david_hyatt):
+        (CommittersTest.integration_test_contributors_david_kilzer):
+        (CommittersTest.integration_test_contributors_don_melton):
+        (CommittersTest.integration_test_contributors_eric_seidel):
+        (CommittersTest.integration_test_contributors_geoffrey_garen):
+        (CommittersTest.integration_test_contributors_greg_bolsinga):
+        (CommittersTest.integration_test_contributors_holger_freyther):
+        (CommittersTest.integration_test_contributors_jon_sullivan):
+        (CommittersTest.integration_test_contributors_jon_honeycutt):
+        (CommittersTest.integration_test_contributors_joseph_pecoraro):
+        (CommittersTest.integration_test_contributors_ken_kocienda):
+        (CommittersTest.integration_test_contributors_kenneth_russell):
+        (CommittersTest.integration_test_contributors_kevin_decker):
+        (CommittersTest.integration_test_contributors_kevin_mccullough):
+        (CommittersTest.integration_test_contributors_lars_knoll):
+        (CommittersTest.integration_test_contributors_lars_weintraub):
+        (CommittersTest.integration_test_contributors_maciej_stachowiak):
+        (CommittersTest.integration_test_contributors_mark_rowe):
+        (CommittersTest.integration_test_contributors_nikolas_zimmermann):
+        (CommittersTest.integration_test_contributors_oliver_hunt):
+        (CommittersTest.integration_test_contributors_rniwa):
+        (CommittersTest.disabled_integration_test_contributors_simon_fraser):
+        (CommittersTest.integration_test_contributors_steve_falkenburg):
+        (CommittersTest.integration_test_contributors_sam_weinig):
+        (CommittersTest.integration_test_contributors_tim_omernick):
+        (CommittersTest.integration_test_contributors_timothy_hatcher):
+        (CommittersTest.integration_test_contributors_tor_arne_vestbo):
+        (CommittersTest.integration_test_contributors_vicki_murley):
+        (CommittersTest.integration_test_contributors_zack_rusin):
+
+2012-02-24  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: should autoinstall coverage
         https://bugs.webkit.org/show_bug.cgi?id=79535
 
