@@ -106,6 +106,7 @@ private:
     void layoutAndPlaceChildren(const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace);
     void layoutColumnReverse(const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace);
     void alignChildren(const OrderedFlexItemList&, LayoutUnit maxAscent);
+    void flipForRightToLeftColumn(FlexOrderIterator&);
 };
 
 } // namespace WebCore

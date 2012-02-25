@@ -1,3 +1,21 @@
+2012-02-24  Tony Chang  <tony@chromium.org>
+
+        More refactoring in RenderFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=79533
+
+        Reviewed by Ojan Vafai.
+
+        No new tests, just refactoring.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutFlexItems): Move the flipping of RTL+column positions to its own method.
+        This might be a tiny bit slower, but it's clearer since it's not related to alignment.
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren): Move the logical height calculation out of the loop.  We only need the final height.
+        (WebCore::RenderFlexibleBox::alignChildren):
+        (WebCore::RenderFlexibleBox::flipForRightToLeftColumn):
+        * rendering/RenderFlexibleBox.h:
+        (RenderFlexibleBox):
+
 2012-02-24  Abhishek Arya  <inferno@chromium.org>
 
         Positioned objects not cleared when moving children

@@ -520,6 +520,9 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     }
 
     layoutAndPlaceChildren(orderedChildren, childSizes, availableFreeSpace);
+
+    // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
+    flipForRightToLeftColumn(flexIterator);
 }
 
 float RenderFlexibleBox::positiveFlexForChild(RenderBox* child) const
@@ -759,10 +762,10 @@ void RenderFlexibleBox::layoutAndPlaceChildren(const OrderedFlexItemList& childr
         mainAxisOffset += childMainExtent + flowAwareMarginEndForChild(child);
 
         mainAxisOffset += packingSpaceBetweenChildren(availableFreeSpace, style()->flexPack(), childSizes.size());
-
-        if (isColumnFlow())
-            setLogicalHeight(mainAxisOffset + flowAwareBorderEnd() + flowAwarePaddingEnd() + scrollbarLogicalHeight());
     }
+
+    if (isColumnFlow())
+        setLogicalHeight(mainAxisOffset + flowAwareBorderEnd() + flowAwarePaddingEnd() + scrollbarLogicalHeight());
 
     if (style()->flexDirection() == FlowColumnReverse) {
         // We have to do an extra pass for column-reverse to reposition the flex items since the start depends
@@ -818,8 +821,6 @@ void RenderFlexibleBox::adjustAlignmentForChild(RenderBox* child, LayoutUnit del
 
 void RenderFlexibleBox::alignChildren(const OrderedFlexItemList& children, LayoutUnit maxAscent)
 {
-    LayoutUnit crossExtent = crossAxisExtent();
-
     for (size_t i = 0; i < children.size(); ++i) {
         RenderBox* child = children[i];
         switch (flexAlignForChild(child)) {
@@ -856,14 +857,19 @@ void RenderFlexibleBox::alignChildren(const OrderedFlexItemList& children, Layou
             break;
         }
         }
+    }
+}
 
-        // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
-        if (!style()->isLeftToRightDirection() && isColumnFlow()) {
-            LayoutPoint location = flowAwareLocationForChild(child);
-            location.setY(crossExtent - crossAxisExtentForChild(child) - location.y());
-            setFlowAwareLocationForChild(child, location);
-        }
+void RenderFlexibleBox::flipForRightToLeftColumn(FlexOrderIterator& iterator)
+{
+    if (style()->isLeftToRightDirection() || !isColumnFlow())
+        return;
 
+    LayoutUnit crossExtent = crossAxisExtent();
+    for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+        LayoutPoint location = flowAwareLocationForChild(child);
+        location.setY(crossExtent - crossAxisExtentForChild(child) - location.y());
+        setFlowAwareLocationForChild(child, location);
     }
 }
 
