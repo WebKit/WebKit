@@ -1,3 +1,18 @@
+2012-02-24  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: should autoinstall coverage
+        https://bugs.webkit.org/show_bug.cgi?id=79535
+
+        Reviewed by Eric Seidel.
+
+        We should automatically print the coverage report after the run, too.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests):
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_coverage):
+
 2012-02-24  Pablo Flouret  <pablof@motorola.com>
 
         Fix copypasta in build-webkit's --vibration option description

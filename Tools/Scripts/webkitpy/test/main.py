@@ -198,7 +198,7 @@ class Tester(object):
     def _run_tests(self, dirs, args):
         if self._options.coverage:
             try:
-                import coverage
+                import webkitpy.thirdparty.autoinstalled.coverage as coverage
             except ImportError, e:
                 _log.error("Failed to import 'coverage'; can't generate coverage numbers.")
                 return False
@@ -233,6 +233,7 @@ class Tester(object):
         if self._options.coverage:
             cov.stop()
             cov.save()
+            cov.report(show_missing=False)
         return result.wasSuccessful()
 
     def _is_module(self, dirs, name):
