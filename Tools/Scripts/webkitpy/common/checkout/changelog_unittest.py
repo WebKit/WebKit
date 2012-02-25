@@ -250,39 +250,40 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEquals(parsed_entries[8].reviewer_text(), 'Darin Adler')
 
     def test_parse_log_entries_from_annotated_file(self):
-        changelog_file = StringIO(u'''100000 ossy@webkit.org 2011-11-11  Csaba Osztrogon\u00e1c  <ossy@webkit.org>
-100000 ossy@webkit.org 
-100000 ossy@webkit.org         100,000 !!!
-100000 ossy@webkit.org 
-100000 ossy@webkit.org         Reviewed by Zoltan Herczeg.
-100000 ossy@webkit.org 
-100000 ossy@webkit.org         * ChangeLog: Point out revision 100,000.
-100000 ossy@webkit.org
-93798 ap@apple.com 2011-08-25  Alexey Proskuryakov  <ap@apple.com>
-93798 ap@apple.com 
-93798 ap@apple.com         Fix build when GCC 4.2 is not installed.
-93798 ap@apple.com 
-93798 ap@apple.com         * gtest/xcode/Config/CompilerVersion.xcconfig: Copied from Source/WebCore/Configurations/CompilerVersion.xcconfig.
-93798 ap@apple.com         * gtest/xcode/Config/General.xcconfig:
-93798 ap@apple.com         Use the same compiler version as other projects do.
-93798 ap@apple.com
-99491 andreas.kling@nokia.com 2011-11-03  Andreas Kling  <kling@webkit.org>
-99491 andreas.kling@nokia.com 
-99190 andreas.kling@nokia.com         Unreviewed build fix, sigh.
-99190 andreas.kling@nokia.com 
-99190 andreas.kling@nokia.com         * css/CSSFontFaceRule.h:
-99190 andreas.kling@nokia.com         * css/CSSMutableStyleDeclaration.h:
-99190 andreas.kling@nokia.com 
-99190 andreas.kling@nokia.com 2011-11-03  Andreas Kling  <kling@webkit.org>
-99190 andreas.kling@nokia.com 
-99187 andreas.kling@nokia.com         Unreviewed build fix, out-of-line StyleSheet::parentStyleSheet()
-99187 andreas.kling@nokia.com         again since there's a cycle in the includes between CSSRule/StyleSheet.
-99187 andreas.kling@nokia.com 
-99187 andreas.kling@nokia.com         * css/StyleSheet.cpp:
-99187 andreas.kling@nokia.com         (WebCore::StyleSheet::parentStyleSheet):
-99187 andreas.kling@nokia.com         * css/StyleSheet.h:
-99187 andreas.kling@nokia.com 
-''')
+        # Note that there are trailing spaces on some of the lines intentionally.
+        changelog_file = StringIO(u"100000 ossy@webkit.org 2011-11-11  Csaba Osztrogon\u00e1c  <ossy@webkit.org>\n"
+            u"100000 ossy@webkit.org\n"
+            u"100000 ossy@webkit.org         100,000 !!!\n"
+            u"100000 ossy@webkit.org \n"
+            u"100000 ossy@webkit.org         Reviewed by Zoltan Herczeg.\n"
+            u"100000 ossy@webkit.org \n"
+            u"100000 ossy@webkit.org         * ChangeLog: Point out revision 100,000.\n"
+            u"100000 ossy@webkit.org \n"
+            u"93798 ap@apple.com 2011-08-25  Alexey Proskuryakov  <ap@apple.com>\n"
+            u"93798 ap@apple.com \n"
+            u"93798 ap@apple.com         Fix build when GCC 4.2 is not installed.\n"
+            u"93798 ap@apple.com \n"
+            u"93798 ap@apple.com         * gtest/xcode/Config/CompilerVersion.xcconfig: Copied from Source/WebCore/Configurations/CompilerVersion.xcconfig.\n"
+            u"93798 ap@apple.com         * gtest/xcode/Config/General.xcconfig:\n"
+            u"93798 ap@apple.com         Use the same compiler version as other projects do.\n"
+            u"93798 ap@apple.com\n"
+            u"99491 andreas.kling@nokia.com 2011-11-03  Andreas Kling  <kling@webkit.org>\n"
+            u"99491 andreas.kling@nokia.com \n"
+            u"99190 andreas.kling@nokia.com         Unreviewed build fix, sigh.\n"
+            u"99190 andreas.kling@nokia.com \n"
+            u"99190 andreas.kling@nokia.com         * css/CSSFontFaceRule.h:\n"
+            u"99190 andreas.kling@nokia.com         * css/CSSMutableStyleDeclaration.h:\n"
+            u"99190 andreas.kling@nokia.com\n"
+            u"99190 andreas.kling@nokia.com 2011-11-03  Andreas Kling  <kling@webkit.org>\n"
+            u"99190 andreas.kling@nokia.com \n"
+            u"99187 andreas.kling@nokia.com         Unreviewed build fix, out-of-line StyleSheet::parentStyleSheet()\n"
+            u"99187 andreas.kling@nokia.com         again since there's a cycle in the includes between CSSRule/StyleSheet.\n"
+            u"99187 andreas.kling@nokia.com \n"
+            u"99187 andreas.kling@nokia.com         * css/StyleSheet.cpp:\n"
+            u"99187 andreas.kling@nokia.com         (WebCore::StyleSheet::parentStyleSheet):\n"
+            u"99187 andreas.kling@nokia.com         * css/StyleSheet.h:\n"
+            u"99187 andreas.kling@nokia.com \n")
+
         parsed_entries = list(ChangeLog.parse_entries_from_file(changelog_file))
         self.assertEquals(parsed_entries[0].revision(), 100000)
         self.assertEquals(parsed_entries[0].reviewer_text(), "Zoltan Herczeg")
@@ -390,17 +391,27 @@ class ChangeLogTest(unittest.TestCase):
         self.assertEquals(reviewer_text_list, expected_text_list)
         self.assertEquals(self._entry_with_reviewer(reviewer_text).reviewers(), self._contributors(expected_contributors))
 
-    def test_fuzzy_reviewer_match(self):
-        self._assert_fuzzy_reviewer_match('Reviewed by Dimitri Glazkov, build fix', ['Dimitri Glazkov', 'build fix'], ['Dimitri Glazkov'])
+    def test_fuzzy_reviewer_match__none(self):
         self._assert_fuzzy_reviewer_match('Reviewed by BUILD FIX', ['BUILD FIX'], [])
         self._assert_fuzzy_reviewer_match('Reviewed by Mac build fix', ['Mac build fix'], [])
+
+    def test_fuzzy_reviewer_match_adam_barth(self):
+        self._assert_fuzzy_reviewer_match('Reviewed by Adam Barth.:w', ['Adam Barth.:w'], ['Adam Barth'])
+
+    def test_fuzzy_reviewer_match_darin_adler_et_al(self):
+        self._assert_fuzzy_reviewer_match('Reviewed by Darin Adler in <https://bugs.webkit.org/show_bug.cgi?id=47736>.', ['Darin Adler in'], ['Darin Adler'])
         self._assert_fuzzy_reviewer_match('Reviewed by Darin Adler, Dan Bernstein, Adele Peterson, and others.',
             ['Darin Adler', 'Dan Bernstein', 'Adele Peterson', 'others'], ['Darin Adler', 'Dan Bernstein', 'Adele Peterson'])
+
+    def test_fuzzy_reviewer_match_dimitri_glazkov(self):
+        self._assert_fuzzy_reviewer_match('Reviewed by Dimitri Glazkov, build fix', ['Dimitri Glazkov', 'build fix'], ['Dimitri Glazkov'])
+
+    def test_fuzzy_reviewer_match_george_staikos(self):
         self._assert_fuzzy_reviewer_match('Reviewed by George Staikos (and others)', ['George Staikos', 'others'], ['George Staikos'])
+
+    def test_fuzzy_reviewer_match_mark_rowe(self):
         self._assert_fuzzy_reviewer_match('Reviewed by Mark Rowe, but Dan Bernstein also reviewed and asked thoughtful questions.',
             ['Mark Rowe', 'but Dan Bernstein also reviewed', 'asked thoughtful questions'], ['Mark Rowe'])
-        self._assert_fuzzy_reviewer_match('Reviewed by Darin Adler in <https://bugs.webkit.org/show_bug.cgi?id=47736>.', ['Darin Adler in'], ['Darin Adler'])
-        self._assert_fuzzy_reviewer_match('Reviewed by Adam Barth.:w', ['Adam Barth.:w'], ['Adam Barth'])
 
     def _assert_parse_authors(self, author_text, expected_contributors):
         parsed_authors = [(author['name'], author['email']) for author in self._entry_with_author(author_text).authors()]

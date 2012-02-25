@@ -1,5 +1,33 @@
 2012-02-24  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: changelog_unittest test_fuzzy_reviewer_match is slow
+        https://bugs.webkit.org/show_bug.cgi?id=79258
+
+        Reviewed by Ryosuke Niwa.
+
+        Split the fuzzy matching into separate functions so that they
+        can be sharded and run in parallel.
+
+        Also, fix a bug in the svn_blame_regexp that was causing us
+        to require ChangeLog lines to have at least one space after the
+        author, making the code require trailing whitespace in the
+        changelog in some places (this was making my life harder because
+        I have my text editor set to strip trailing whitespace in python
+        files, and that was causing test_parse_log_entries_from_changelog() to fail
+        when the whitespace on line 275 was removed).
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLog):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_fuzzy_reviewer_match__none):
+        (test_fuzzy_reviewer_match_adam_barth):
+        (test_fuzzy_reviewer_match_darin_adler_et_al):
+        (test_fuzzy_reviewer_match_dimitri_glazkov):
+        (test_fuzzy_reviewer_match_george_staikos):
+        (test_fuzzy_reviewer_match_mark_rowe):
+
+2012-02-24  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: committers_unittest fuzzy matching is really slow
         https://bugs.webkit.org/show_bug.cgi?id=79179
 

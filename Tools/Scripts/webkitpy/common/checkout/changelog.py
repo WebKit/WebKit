@@ -263,7 +263,7 @@ class ChangeLog(object):
             entry_lines.append(line)
         return None # We never found a date line!
 
-    svn_blame_regexp = re.compile(r'^(\s*(?P<revision>\d+) [^ ]+)\s(?P<line>.*?\n)')
+    svn_blame_regexp = re.compile(r'^(\s*(?P<revision>\d+) [^ ]+)\s*(?P<line>.*?\n)')
 
     @staticmethod
     def _separate_revision_and_line(line):
