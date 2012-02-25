@@ -108,7 +108,7 @@ int RegularExpression::match(const String& str, int startFrom, int* matchLength)
 
     ASSERT(offsetVector);
     for (unsigned j = 0, i = 0; i < d->m_numSubpatterns + 1; j += 2, i++)
-        offsetVector[j] = -1;
+        offsetVector[j] = JSC::Yarr::offsetNoMatch;
 
     unsigned result;
     if (str.length() <= INT_MAX)

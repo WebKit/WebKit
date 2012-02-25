@@ -1,3 +1,11 @@
+2012-02-24  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed, Windows build fix.  Changed "-1" to newly
+        created constant JSC::Yarr::offsetNoMatch added in r108858.
+
+        * platform/text/RegularExpression.cpp:
+        (WebCore::RegularExpression::match):
+
 2012-02-24  Eric Carlson  <eric.carlson@apple.com>
 
         Update TextTrackCue API
