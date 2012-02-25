@@ -1,3 +1,12 @@
+2012-02-24  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        team.html (on webkit.org) doesn't recognize codeaurora.org
+        https://bugs.webkit.org/show_bug.cgi?id=79529
+
+        Reviewed by Ryosuke Niwa.
+
+        * team.html:
+
 2012-02-16  Kent Tamura  <tkent@chromium.org>
 
         Improve usability of coding-style.html
