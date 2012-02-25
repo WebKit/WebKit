@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+Test passes if it does not crash.
+<style>
+.caption1 { -webkit-column-width: 1px; }
+.div1 { position: absolute; }
+.keygen1:nth-last-child(even) { display: block; -webkit-column-span: all; }
+.flexbox1 { display: -webkit-flexbox; padding-right: 10px; -webkit-transform: rotate3d(0, 1, 0, 90deg); }
+</style>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function runTest() {
+    caption1 = document.createElement('caption');
+    caption1.setAttribute('class', 'caption1');
+    div1 = document.createElement('div');
+    div1.setAttribute('class', 'div1');
+    flexbox1 = document.createElement('div');
+    flexbox1.setAttribute('class', 'flexbox1');
+    keygen1 = document.createElement('keygen');
+    keygen1.setAttribute('class', 'keygen1');
+
+    div2 = document.createElement('div');
+    div3 = document.createElement('div');
+
+    flexbox1.appendChild(keygen1);
+    flexbox1.appendChild(div1);
+    flexbox1.appendChild(div3);
+    caption1.appendChild(flexbox1);
+    document.body.appendChild(caption1);
+    document.body.offsetTop;
+    flexbox1.appendChild(div2);
+    document.body.offsetTop;
+    flexbox1.removeChild(div1);
+}
+window.onload = runTest;
+</script>
+</body>
+</html>

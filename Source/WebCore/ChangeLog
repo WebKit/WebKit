@@ -1,3 +1,16 @@
+2012-02-24  Abhishek Arya  <inferno@chromium.org>
+
+        Positioned objects not cleared when moving children
+        to clone block in multi-column layout.
+        https://bugs.webkit.org/show_bug.cgi?id=78416
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/multicol/span/positioned-child-not-removed-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::splitBlocks):
+
 2012-02-24  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, Windows build fix.  Changed "-1" to newly
