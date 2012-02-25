@@ -153,21 +153,9 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     case op_throw_reference_error:
     case op_call:
     case op_construct:
-        return true;
-        
-    // Opcodes we support conditionally. Enabling these opcodes currently results in
-    // performance regressions. Each node that we disable under restrictions has a
-    // comment describing what we know about the regression so far.
-        
-    // Regresses string-validate-input, probably because it uses comparisons (< and >)
-    // on strings, which currently will cause speculation failures in some cases.
     case op_new_regexp: 
-#if DFG_ENABLE(RESTRICTIONS)
-        return false;
-#else
         return true;
-#endif
-      
+        
     default:
         return false;
     }
