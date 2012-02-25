@@ -1,3 +1,28 @@
+2012-02-24  Gregg Tavares  <gman@google.com>
+
+        Limit WebGL Errors in Console to 10 per context
+        https://bugs.webkit.org/show_bug.cgi?id=79387
+
+        Reviewed by Kenneth Russell.
+        
+        Some apps generated enough errors to overload
+        the Dev Tools so limit the number of errors.
+        For a correct app there should never be any
+        errors so seeing the first few should be enough
+        to debug.
+
+        No new tests as no new functionality
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContextErrorMessageCallback::onErrorMessage):
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::initializeNewContext):
+        (WebCore::WebGLRenderingContext::printGLErrorToConsole):
+        (WebCore::WebGLRenderingContext::synthesizeGLError):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebGLRenderingContext):
+
 2012-02-24  Michael Saboff  <msaboff@apple.com>
 
         ASSERT(position < 0) in JSC::Yarr::Interpreter::InputStream::readChecked

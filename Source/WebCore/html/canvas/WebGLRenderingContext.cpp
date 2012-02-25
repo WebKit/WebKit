@@ -82,6 +82,7 @@
 namespace WebCore {
 
 const double secondsBetweenRestoreAttempts = 1.0;
+const int maxGLErrorsAllowedToConsole = 10;
 
 namespace {
 
@@ -378,7 +379,7 @@ private:
 class WebGLRenderingContextErrorMessageCallback : public GraphicsContext3D::ErrorMessageCallback {
 public:
     explicit WebGLRenderingContextErrorMessageCallback(WebGLRenderingContext* cb) : m_context(cb) { }
-    virtual void onErrorMessage(const String& message, GC3Dint) { m_context->printWarningToConsole(message); }
+    virtual void onErrorMessage(const String& message, GC3Dint) { m_context->printGLErrorToConsole(message); }
     virtual ~WebGLRenderingContextErrorMessageCallback() { }
 private:
     WebGLRenderingContext* m_context;
@@ -426,6 +427,7 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     , m_contextLostMode(SyntheticLostContext)
     , m_attributes(attributes)
     , m_synthesizedErrorsToConsole(false)
+    , m_numGLErrorsToConsoleAllowed(maxGLErrorsAllowedToConsole)
 {
     ASSERT(m_context);
     m_contextGroup = WebGLContextGroup::create();
@@ -466,6 +468,7 @@ void WebGLRenderingContext::initializeNewContext()
     m_stencilFuncMask = 0xFFFFFFFF;
     m_stencilFuncMaskBack = 0xFFFFFFFF;
     m_layerCleared = false;
+    m_numGLErrorsToConsoleAllowed = maxGLErrorsAllowedToConsole;
     
     m_clearColor[0] = m_clearColor[1] = m_clearColor[2] = m_clearColor[3] = 0;
     m_scissorEnabled = false;
@@ -4883,6 +4886,18 @@ bool WebGLRenderingContext::validateStencilFunc(const char* functionName, GC3Den
     }
 }
 
+void WebGLRenderingContext::printGLErrorToConsole(const String& message)
+{
+    if (!m_numGLErrorsToConsoleAllowed)
+        return;
+
+    --m_numGLErrorsToConsoleAllowed;
+    printWarningToConsole(message);
+
+    if (!m_numGLErrorsToConsoleAllowed)
+        printWarningToConsole("WebGL: too many errors, no more errors will be reported to the console for this context.");
+}
+
 void WebGLRenderingContext::printWarningToConsole(const String& message)
 {
     if (!canvas())
@@ -5366,7 +5381,7 @@ void WebGLRenderingContext::synthesizeGLError(GC3Denum error, const char* functi
 {
     if (m_synthesizedErrorsToConsole) {
       String str = String("WebGL: ") + GetErrorString(error) +  ": " + String(functionName) + ": " + String(description);
-      printWarningToConsole(str);
+      printGLErrorToConsole(str);
     }
     m_context->synthesizeGLError(error);
 }
