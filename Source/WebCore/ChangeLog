@@ -1,3 +1,26 @@
+2012-02-25  Benjamin Poulain  <benjamin@webkit.org>
+
+        Get rid of copyParsedQueryTo()
+        https://bugs.webkit.org/show_bug.cgi?id=79590
+
+        Reviewed by Andreas Kling.
+
+        The function KURL::copyParsedQueryTo() is unused. Remove it from WebCore.
+
+        The function was used by HTMLAnchorElement::getParameter() but that feature
+        was removed in r100164.
+
+        * WebCore.order:
+        * platform/KURL.cpp:
+        (WebCore):
+        * platform/KURL.h:
+        (WebCore):
+        (KURL):
+        * platform/KURLGoogle.cpp:
+        (WebCore):
+        * platform/KURLWTFURL.cpp:
+        (WebCore):
+
 2012-02-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r108924.

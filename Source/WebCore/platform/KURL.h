@@ -57,8 +57,6 @@ namespace WebCore {
 class TextEncoding;
 struct KURLHash;
 
-typedef HashMap<String, String> ParsedURLParameters;
-
 enum ParsedURLStringTag { ParsedURLString };
 
 class KURL {
@@ -146,8 +144,6 @@ public:
     String query() const;
     String fragmentIdentifier() const;
     bool hasFragmentIdentifier() const;
-
-    void copyParsedQueryTo(ParsedURLParameters&) const;
 
     String baseAsString() const;
 

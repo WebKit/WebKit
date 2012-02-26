@@ -147,11 +147,6 @@ bool KURL::hasFragmentIdentifier() const
     return false;
 }
 
-void KURL::copyParsedQueryTo(ParsedURLParameters&) const
-{
-    // FIXME: Add WTFURL Implementation.
-}
-
 String KURL::baseAsString() const
 {
     // FIXME: Add WTFURL Implementation.
