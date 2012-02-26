@@ -1,5 +1,19 @@
 2012-02-25  Andreas Kling  <awesomekling@apple.com>
 
+        Setting style="" should destroy the element's inline style.
+        <http://webkit.org/b/79595>
+
+        Reviewed by Anders Carlsson.
+
+        There's no reason for an element with style="" to have an inline style object.
+        Remove the inline style in that case, just like we do when removing the style
+        attribute altogether.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::parseAttribute):
+
+2012-02-25  Andreas Kling  <awesomekling@apple.com>
+
         Allow matched property cache for elements with additional attribute style.
         <http://webkit.org/b/79583>
 

@@ -99,7 +99,7 @@ void StyledElement::parseAttribute(Attribute* attr)
     if (attr->name() == classAttr)
         classAttributeChanged(attr->value());
     else if (attr->name() == styleAttr) {
-        if (attr->isNull())
+        if (attr->isEmpty())
             destroyInlineStyleDecl();
         else if (document()->contentSecurityPolicy()->allowInlineStyle())
             ensureInlineStyleDecl()->parseDeclaration(attr->value(), document()->elementSheet());
