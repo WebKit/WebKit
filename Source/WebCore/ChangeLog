@@ -1,3 +1,14 @@
+2012-02-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r108924.
+        http://trac.webkit.org/changeset/108924
+        https://bugs.webkit.org/show_bug.cgi?id=79597
+
+        broke 4 inspector tests (Requested by kling on #webkit).
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::parseAttribute):
+
 2012-02-25  Adam Barth  <abarth@webkit.org>
 
         Fix typo in comment.  This #endif is for a different ENABLE macro.
