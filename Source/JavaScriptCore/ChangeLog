@@ -1,5 +1,28 @@
 2012-02-25  Filip Pizlo  <fpizlo@apple.com>
 
+        LLInt assembly file should be split into 32-bit and 64-bit parts
+        https://bugs.webkit.org/show_bug.cgi?id=79584
+
+        Reviewed by Sam Weinig.
+        
+        Moved LowLevelInterpreter.asm to LowLevelInterpreter32_64.asm. Gave offlineasm
+        the ability to include files, and correctly track dependencies: it restricts
+        the include mechanism to using the same directory as the source file, and uses
+        the SHA1 hash of all .asm files in that directory as an input hash.
+
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm: Added.
+            - This is just the entire contents of what was previously LowLevelInterpreter.asm
+        * llint/LowLevelInterpreter64.asm: Added.
+        * offlineasm/asm.rb:
+        * offlineasm/ast.rb:
+        * offlineasm/generate_offset_extractor.rb:
+        * offlineasm/parser.rb:
+        * offlineasm/self_hash.rb:
+
+2012-02-25  Filip Pizlo  <fpizlo@apple.com>
+
         Offlineasm should support X86_64
         https://bugs.webkit.org/show_bug.cgi?id=79581
 

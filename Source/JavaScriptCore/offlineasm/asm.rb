@@ -129,10 +129,9 @@ outputFlnm = ARGV.shift
 $stderr.puts "offlineasm: Parsing #{asmFile} and #{offsetsFile} and creating assembly file #{outputFlnm}."
 
 configurationList = offsetsAndConfigurationIndex(offsetsFile)
-inputData = IO::read(asmFile)
 
 inputHash =
-    "// offlineasm input hash: " + Digest::SHA1.hexdigest(inputData) +
+    "// offlineasm input hash: " + parseHash(asmFile) +
     " " + Digest::SHA1.hexdigest(configurationList.map{|v| (v[0] + [v[1]]).join(' ')}.join(' ')) +
     " " + selfHash
 
@@ -154,7 +153,7 @@ File.open(outputFlnm, "w") {
     
     $asm = Assembler.new($output)
     
-    ast = parse(lex(inputData))
+    ast = parse(asmFile)
     
     configurationList.each {
         | configuration |

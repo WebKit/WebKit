@@ -1,4 +1,4 @@
-# Copyright (C) 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,37 +21,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
-require "digest/sha1"
-require "pathname"
 
-#
-# dirHash(directory, regexp) -> SHA1 hexdigest
-#
-# Returns a hash of all files in the given directory that fit the given
-# pattern.
-#
-
-def dirHash(directory, regexp)
-    directory = Pathname.new(directory)
-    contents = ""
-    Dir.foreach(directory) {
-        | entry |
-        if entry =~ regexp
-            contents += IO::read(directory + entry)
-        end
-    }
-    return Digest::SHA1.hexdigest(contents)
-end
-
-#
-# selfHash -> SHA1 hexdigest
-#
-# Returns a hash of the offlineasm source code. This allows dependency
-# tracking for not just changes in input, but also changes in the assembler
-# itself.
-#
-
-def selfHash
-    dirHash(Pathname.new(__FILE__).dirname, /\.rb$/)
-end
+# Not supported yet, so give up.
+error
 

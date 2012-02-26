@@ -45,8 +45,7 @@ def emitMagicNumber
     }
 end
 
-inputData = IO::read(inputFlnm)
-inputHash = "// offlineasm input hash: #{Digest::SHA1.hexdigest(inputData)} #{selfHash}"
+inputHash = "// offlineasm input hash: #{parseHash(inputFlnm)} #{selfHash}"
 
 if FileTest.exist? outputFlnm
     File.open(outputFlnm, "r") {
@@ -59,7 +58,7 @@ if FileTest.exist? outputFlnm
     }
 end
 
-originalAST = parse(lex(inputData))
+originalAST = parse(inputFlnm)
 
 #
 # Optimize the AST to make configuration extraction faster. This reduces the AST to a form

@@ -49,6 +49,12 @@
 #define OFFLINE_ASM_X86_64 0
 #endif
 
+#if USE(JSVALUE64)
+#define OFFLINE_ASM_JSVALUE64 1
+#else
+#define OFFLINE_ASM_JSVALUE64 0
+#endif
+
 #if !ASSERT_DISABLED
 #define OFFLINE_ASM_ASSERT_ENABLED 1
 #else

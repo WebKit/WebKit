@@ -57,7 +57,7 @@ class Node
     end
     
     def codeOriginString
-        "line number #{@codeOrigin}"
+        @codeOrigin.to_s
     end
     
     def descendants

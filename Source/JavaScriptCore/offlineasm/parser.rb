@@ -23,7 +23,22 @@
 
 require "ast"
 require "instructions"
+require "pathname"
 require "registers"
+require "self_hash"
+
+class CodeOrigin
+    attr_reader :fileName, :lineNumber
+    
+    def initialize(fileName, lineNumber)
+        @fileName = fileName
+        @lineNumber = lineNumber
+    end
+    
+    def to_s
+        "#{fileName}:#{lineNumber}"
+    end
+end
 
 class Token
     attr_reader :codeOrigin, :string
@@ -46,7 +61,7 @@ class Token
     end
     
     def to_s
-        "#{@string.inspect} at line #{codeOrigin}"
+        "#{@string.inspect} at #{codeOrigin}"
     end
     
     def parseError(*comment)
@@ -62,7 +77,8 @@ end
 # The lexer. Takes a string and returns an array of tokens.
 #
 
-def lex(str)
+def lex(str, fileName)
+    fileName = Pathname.new(fileName)
     result = []
     lineNumber = 1
     while not str.empty?
@@ -70,28 +86,28 @@ def lex(str)
         when /\A\#([^\n]*)/
             # comment, ignore
         when /\A\n/
-            result << Token.new(lineNumber, $&)
+            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
             lineNumber += 1
         when /\A[a-zA-Z]([a-zA-Z0-9_]*)/
-            result << Token.new(lineNumber, $&)
+            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
         when /\A\.([a-zA-Z0-9_]*)/
-            result << Token.new(lineNumber, $&)
+            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
         when /\A_([a-zA-Z0-9_]*)/
-            result << Token.new(lineNumber, $&)
+            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
         when /\A([ \t]+)/
             # whitespace, ignore
         when /\A0x([0-9a-fA-F]+)/
-            result << Token.new(lineNumber, $&.hex.to_s)
+            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&.hex.to_s)
         when /\A0([0-7]+)/
-            result << Token.new(lineNumber, $&.oct.to_s)
+            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&.oct.to_s)
         when /\A([0-9]+)/
-            result << Token.new(lineNumber, $&)
+            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
         when /\A::/
-            result << Token.new(lineNumber, $&)
+            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
         when /\A[:,\(\)\[\]=\+\-*]/
-            result << Token.new(lineNumber, $&)
+            result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
         else
-            raise "Lexer error at line number #{lineNumber}, unexpected sequence #{str[0..20].inspect}"
+            raise "Lexer error at #{CodeOrigin.new(fileName, lineNumber).to_s}, unexpected sequence #{str[0..20].inspect}"
         end
         str = $~.post_match
     end
@@ -111,7 +127,7 @@ def isInstruction(token)
 end
 
 def isKeyword(token)
-    token =~ /\A((true)|(false)|(if)|(then)|(else)|(elsif)|(end)|(and)|(or)|(not)|(macro)|(const)|(sizeof)|(error))\Z/ or
+    token =~ /\A((true)|(false)|(if)|(then)|(else)|(elsif)|(end)|(and)|(or)|(not)|(macro)|(const)|(sizeof)|(error)|(include))\Z/ or
         token =~ REGISTER_PATTERN or
         token =~ INSTRUCTION_PATTERN
 end
@@ -142,8 +158,8 @@ end
 #
 
 class Parser
-    def initialize(tokens)
-        @tokens = tokens
+    def initialize(data, fileName)
+        @tokens = lex(data, fileName)
         @idx = 0
     end
     
@@ -571,6 +587,14 @@ class Parser
                     list << LocalLabel.forName(codeOrigin, name)
                 end
                 @idx += 1
+            elsif @tokens[@idx] == "include"
+                @idx += 1
+                parseError unless isIdentifier(@tokens[@idx])
+                moduleName = @tokens[@idx].string
+                fileName = @tokens[@idx].codeOrigin.fileName.dirname + (moduleName + ".asm")
+                @idx += 1
+                $stderr.puts "offlineasm: Including file #{fileName}"
+                list << parse(fileName)
             else
                 parseError "Expecting terminal #{final} #{comment}"
             end
@@ -579,8 +603,16 @@ class Parser
     end
 end
 
-def parse(tokens)
-    parser = Parser.new(tokens)
+def parseData(data, fileName)
+    parser = Parser.new(data, fileName)
     parser.parseSequence(nil, "")
+end
+
+def parse(fileName)
+    parseData(IO::read(fileName), fileName)
+end
+
+def parseHash(fileName)
+    dirHash(Pathname.new(fileName).dirname, /\.asm$/)
 end
 
