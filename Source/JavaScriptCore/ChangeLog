@@ -1,5 +1,13 @@
 2012-02-26  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed. Build fix for ENABLE(CLASSIC_INTERPRETER) after r108681.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::getLineNumberForCallFrame):
+        (JSC::Interpreter::getStackTrace):
+
+2012-02-26  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed. Build fix for !ENABLE(JIT) after r108681.
 
         * interpreter/Interpreter.cpp:

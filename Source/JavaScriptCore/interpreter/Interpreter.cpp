@@ -817,8 +817,9 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     exception->putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, message));
 }
 
-static int getLineNumberForCallFrame(CallFrame* callFrame)
+static int getLineNumberForCallFrame(JSGlobalData* globalData, CallFrame* callFrame)
 {
+    UNUSED_PARAM(globalData);
     callFrame = callFrame->removeHostCallFrameFlag();
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (!codeBlock)
@@ -951,8 +952,8 @@ void Interpreter::getStackTrace(JSGlobalData* globalData, int line, Vector<Stack
         return;
 
     if (line == -1)
-        line = getLineNumberForCallFrame(callFrame);
-    
+        line = getLineNumberForCallFrame(globalData, callFrame);
+
     while (callFrame && callFrame != CallFrame::noCaller()) {
         UString sourceURL;
         if (callFrame->codeBlock()) {
