@@ -833,6 +833,8 @@ static int getLineNumberForCallFrame(CallFrame* callFrame)
         return codeBlock->lineNumberForBytecodeOffset(codeBlock->codeOrigin(callFrame->codeOriginIndexForDFG()).bytecodeIndex);
 #endif
     return codeBlock->lineNumberForBytecodeOffset(callFrame->bytecodeOffsetForNonDFGCode());
+#else
+    return -1;
 #endif
 }
 
