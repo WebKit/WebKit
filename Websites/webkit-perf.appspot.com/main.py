@@ -20,6 +20,8 @@ from google.appengine.ext.webapp import util
 
 import json
 
+from admin_handlers import IsAdminHandler
+from admin_handlers import AdminDashboardHandler
 from controller import CachedDashboardHandler
 from controller import CachedManifestHandler
 from controller import CachedRunsHandler
@@ -38,6 +40,8 @@ routes = [
     ('/admin/merge-tests/?', MergeTestsHandler),
     ('/admin/report-logs/?', ReportLogsHandler),
     ('/admin/create/(.*)', CreateHandler),
+    (r'/admin/([A-Za-z\-]*)', AdminDashboardHandler),
+    ('/api/user/is-admin', IsAdminHandler),
     ('/api/test/?', CachedManifestHandler),
     ('/api/test/update', ManifestUpdateHandler),
     ('/api/test/report/?', ReportHandler),

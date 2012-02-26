@@ -30,6 +30,7 @@
 import webapp2
 from google.appengine.ext.webapp import template
 
+import json
 import os
 
 from controller import schedule_runs_update
@@ -41,14 +42,19 @@ from models import delete_model_with_numeric_id_holder
 
 
 class MergeTestsHandler(webapp2.RequestHandler):
-    def get(self):
-        self.response.out.write(template.render('merge_tests.html', {'tests': Test.all()}))
-
     def post(self):
         self.response.headers['Content-Type'] = 'text/plain; charset=utf-8';
 
-        merge = Test.get_by_key_name(self.request.get('merge'))
-        into = Test.get_by_key_name(self.request.get('into'))
+        try:
+            payload = json.loads(self.request.body)
+            merge = payload.get('merge', '')
+            into = payload.get('into', '')
+        except:
+            self.response.out.write("Failed to parse the payload: %s" % self.request.body)
+            return
+
+        merge = Test.get_by_key_name(merge)
+        into = Test.get_by_key_name(into)
         if not merge or not into:
             self.response.out.write('Invalid test names')
             return

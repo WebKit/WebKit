@@ -1,3 +1,28 @@
+2012-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        perf-o-matic needs a better admin page
+        https://bugs.webkit.org/show_bug.cgi?id=79585
+
+        Reviewed by Sam Weinig.
+        
+        Add admin/ to replace admin/create-models.html and admin/merge-tests.
+
+        Also update MergeTestHandler to accept JSON requests and add "Admin" navigation link on all pages.
+
+        * Websites/webkit-perf.appspot.com/admin_handlers.py: Added.
+        * Websites/webkit-perf.appspot.com/controller.py:
+        (RunsUpdateHandler.post): Fix a regression from r108399.
+        * Websites/webkit-perf.appspot.com/css/admin.css: Added.
+        * Websites/webkit-perf.appspot.com/js/admin.js: Added.
+        * Websites/webkit-perf.appspot.com/js/config.js:
+        * Websites/webkit-perf.appspot.com/main.py:
+        * Websites/webkit-perf.appspot.com/merge_tests.html: Removed.
+        * Websites/webkit-perf.appspot.com/merge_tests_handler.py:
+        (MergeTestsHandler):
+        (MergeTestsHandler.post):
+        * Websites/webkit-perf.appspot.com/static: Removed.
+        * Websites/webkit-perf.appspot.com/static/create-models.html: Removed.
+
 2012-02-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Increment perf-o-matic version.

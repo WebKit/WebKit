@@ -114,7 +114,7 @@ class RunsUpdateHandler(webapp2.RequestHandler):
     def get(self):
         self.post()
 
-    def get(self):
+    def post(self):
         self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
         test_id, branch_id, platform_id = _get_test_branch_platform_ids(self)
 

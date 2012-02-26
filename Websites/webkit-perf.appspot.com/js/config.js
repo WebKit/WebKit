@@ -99,3 +99,21 @@ function fetchDashboardManifest(callback)
         callback(dashboardManifest);
     });
 }
+
+(function() {
+    $.ajaxSetup({
+        'error': function(xhr, e, message) {
+            error('Could not determine the the login status', e);
+        },
+        cache: true,
+    });
+
+    $.getJSON('/api/user/is-admin', function (isAdmin) {
+        if (isAdmin) {
+            $('#header nav').append('<a href="/admin/">Admin</a>');
+            if (!$('#header nav .selected').length) {
+                $('#header nav a').last().addClass('selected')
+            }
+        }
+    })
+})();

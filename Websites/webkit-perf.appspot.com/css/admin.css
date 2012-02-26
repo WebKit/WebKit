@@ -1,0 +1,86 @@
+html {
+    padding: 0px;
+    margin: 0px;
+}
+
+#summary {
+    margin-top: 49px;
+    font-size: 14px;
+    line-height: 36px;
+    display: table;
+    border-collapse: collapse;
+}
+
+section {
+    display: table-cell;
+    background: white;
+    border: 1px solid lightgrey;
+    border-collapse: collapse;
+    min-height: 300px;
+    max-width: 400px;
+}
+
+h2 {
+    clear: both;
+    background: -moz-linear-gradient(-90deg, #f8f8f8, #e7e7e7);
+    background: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#e7e7e7));
+    padding: 0 10px;
+    border-bottom: solid 1px lightgrey;
+}
+
+dl, section > ul > li {
+    padding: 0 10px;
+}
+
+dt, dd {
+    float: left;
+}
+
+dt {
+    text-align: right;
+    clear: both;
+}
+
+dt:after {
+    content: " : ";
+}
+
+dd {
+    text-indent: 0.5ex;
+}
+
+.counts dt {
+    width: 100px;
+}
+
+.counts dd {
+    width: 50px;
+}
+
+li.form {
+    padding: 0;
+    border-top: solid 1px lightgrey;
+}
+
+form {
+    text-align: right;
+    padding: 10px;
+}
+
+input {
+    width: 100%;
+    font-size: 14px;
+    border: solid 1px lightgrey;
+}
+
+form dt {
+    width: 70px;
+}
+
+form dd {
+    width: 150px;
+}
+
+#footer {
+    margin: 10px;
+}
