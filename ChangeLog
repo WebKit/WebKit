@@ -1,5 +1,12 @@
 2012-02-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf-o-matic build fix after r108917. I need a scrollbar in order see all the tests.
+
+        * Websites/webkit-perf.appspot.com/css/admin.css:
+        (html):
+
+2012-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         perf-o-matic needs a better admin page
         https://bugs.webkit.org/show_bug.cgi?id=79585
 
