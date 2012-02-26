@@ -1043,7 +1043,6 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
                 result.ranges.firstAuthorRule = result.matchedProperties.size();
             result.ranges.lastAuthorRule = result.ranges.firstAuthorRule;
             addMatchedProperties(result, additionalStyle);
-            result.isCacheable = false;
         }
 
         if (m_styledElement->isHTMLElement()) {

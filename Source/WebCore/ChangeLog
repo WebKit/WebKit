@@ -1,3 +1,21 @@
+2012-02-25  Andreas Kling  <awesomekling@apple.com>
+
+        Allow matched property cache for elements with additional attribute style.
+        <http://webkit.org/b/79583>
+
+        Reviewed by Antti Koivisto.
+
+        There's no reason to disallow the matched style property cache for elements
+        that return something from additionalAttributeStyle(). The only requirement
+        for a property set to be cached is that it either doesn't mutate OR that it
+        invalidates the document's CSSStyleSelector when doing so.
+
+        This allows some more match caching for table-related elements, though we
+        are still held back by explicitly 'inherited' properties in html.css.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::collectMatchingRulesForList):
+
 2012-02-25  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Clean-up RenderTableSection::calcRowLogicalHeight
