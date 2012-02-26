@@ -771,16 +771,6 @@ void KURL::setPath(const String& path)
     m_url.replaceComponents(replacements);
 }
 
-// On Mac, this just seems to return the same URL, but with "/foo/bar" for
-// file: URLs instead of file:///foo/bar. We don't bother with any of this,
-// at least for now.
-String KURL::deprecatedString() const
-{
-    if (!m_url.m_isValid)
-        return String();
-    return m_url.string();
-}
-
 String decodeURLEscapeSequences(const String& str)
 {
     return decodeURLEscapeSequences(str, UTF8Encoding());

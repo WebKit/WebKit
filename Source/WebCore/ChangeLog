@@ -1,5 +1,25 @@
 2012-02-25  Benjamin Poulain  <benjamin@webkit.org>
 
+        Get rid of KURL::deprecatedString()
+        https://bugs.webkit.org/show_bug.cgi?id=79594
+
+        Reviewed by Andreas Kling.
+
+        The method KURL::deprecatedString() is unused, remove it from WebCore.
+
+        The last reference to the method was removed in r96779.
+
+        * platform/KURL.cpp:
+        (WebCore):
+        * platform/KURL.h:
+        (KURL):
+        * platform/KURLGoogle.cpp:
+        (WebCore):
+        * platform/KURLWTFURL.cpp:
+        (WebCore):
+
+2012-02-25  Benjamin Poulain  <benjamin@webkit.org>
+
         Get rid of copyParsedQueryTo()
         https://bugs.webkit.org/show_bug.cgi?id=79590
 

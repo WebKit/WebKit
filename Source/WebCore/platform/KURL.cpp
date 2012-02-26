@@ -847,54 +847,6 @@ void KURL::setPath(const String& s)
     parse(m_string.left(m_portEnd) + encodeWithURLEscapeSequences(path) + m_string.substring(m_pathEnd));
 }
 
-String KURL::deprecatedString() const
-{
-    if (!m_isValid)
-        return m_string;
-
-    StringBuilder result;
-
-    result.append(protocol());
-    result.append(':');
-
-    StringBuilder authority;
-
-    if (m_hostEnd != m_passwordEnd) {
-        if (m_userEnd != m_userStart) {
-            authority.append(user());
-            authority.append('@');
-        }
-        authority.append(host());
-        if (hasPort()) {
-            authority.append(':');
-            authority.append(String::number(port()));
-        }
-    }
-
-    if (!authority.isEmpty()) {
-        result.append('/');
-        result.append('/');
-        result.append(authority.characters(), authority.length());
-    } else if (protocolIs("file")) {
-        result.append('/');
-        result.append('/');
-    }
-
-    result.append(path());
-
-    if (m_pathEnd != m_queryEnd) {
-        result.append('?');
-        result.append(query());
-    }
-
-    if (m_fragmentEnd != m_queryEnd) {
-        result.append('#');
-        result.append(fragmentIdentifier());
-    }
-
-    return result.toString();
-}
-
 String decodeURLEscapeSequences(const String& string)
 {
     return decodeEscapeSequences<URLEscapeSequence>(string, UTF8Encoding());

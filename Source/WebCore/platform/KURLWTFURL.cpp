@@ -153,12 +153,6 @@ String KURL::baseAsString() const
     return String();
 }
 
-String KURL::deprecatedString() const
-{
-    // FIXME: Add WTFURL Implementation.
-    return String();
-}
-
 String KURL::fileSystemPath() const
 {
     // FIXME: Add WTFURL Implementation.
