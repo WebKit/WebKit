@@ -1372,6 +1372,16 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     return self != [self _topHTMLView];
 }
 
+static BOOL isQuickLookEvent(NSEvent *event)
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+    const int kCGSEventSystemSubtypeHotKeyCombinationReleased = 9;
+    return [event type] == NSSystemDefined && [event subtype] == kCGSEventSystemSubtypeHotKeyCombinationReleased && [event data1] == 'lkup';
+#else
+    return NO;
+#endif
+}
+
 - (NSView *)hitTest:(NSPoint)point
 {
     // WebHTMLView objects handle all events for objects inside them.
@@ -1412,7 +1422,8 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         captureHitsOnSubviews = !([event type] == NSMouseMoved
             || [event type] == NSRightMouseDown
             || ([event type] == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask) != 0)
-            || [event type] == NSFlagsChanged);
+            || [event type] == NSFlagsChanged
+            || isQuickLookEvent(event));
     }
 
     if (!captureHitsOnSubviews) {

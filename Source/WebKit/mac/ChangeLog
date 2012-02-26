@@ -1,3 +1,15 @@
+2012-02-25  Sam Weinig  <sam@webkit.org>
+
+        QuickLook events don't make it to WebKit plugins.
+        <rdar://problem/10931721>
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebHTMLView.mm:
+        (isQuickLookEvent):
+        (-[WebHTMLView hitTest:]):
+        Allow QuickLook events to hit test down to subviews.
+
 2012-02-24  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/10805709> and https://bugs.webkit.org/show_bug.cgi?id=79421
