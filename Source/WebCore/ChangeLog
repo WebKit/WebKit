@@ -1,3 +1,9 @@
+2012-02-25  Adam Barth  <abarth@webkit.org>
+
+        Fix typo in comment.  This #endif is for a different ENABLE macro.
+
+        * page/NavigatorRegisterProtocolHandler.cpp:
+
 2012-02-25  Anders Carlsson  <andersca@apple.com>
 
         Move an ASSERT to avoid it firing due to a race condition

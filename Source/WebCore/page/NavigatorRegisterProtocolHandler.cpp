@@ -142,4 +142,4 @@ void NavigatorRegisterProtocolHandler::registerProtocolHandler(Navigator* naviga
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_INTENTS)
+#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
