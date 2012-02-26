@@ -29,6 +29,7 @@
 VPATH = \
     $(WebCore) \
     $(WebCore)/Modules/geolocation \
+    $(WebCore)/Modules/websockets \
     $(WebCore)/bindings/generic \
     $(WebCore)/bindings/js \
     $(WebCore)/bindings/objc \
@@ -60,6 +61,9 @@ BINDING_IDLS = \
     $(WebCore)/Modules/geolocation/PositionCallback.idl \
     $(WebCore)/Modules/geolocation/PositionError.idl \
     $(WebCore)/Modules/geolocation/PositionErrorCallback.idl \
+    $(WebCore)/Modules/websockets/CloseEvent.idl \
+    $(WebCore)/Modules/websockets/DOMWindowWebSocket.idl \
+    $(WebCore)/Modules/websockets/WebSocket.idl \
     $(WebCore)/css/CSSCharsetRule.idl \
     $(WebCore)/css/CSSFontFaceRule.idl \
     $(WebCore)/css/CSSImportRule.idl \
@@ -561,9 +565,6 @@ BINDING_IDLS = \
     $(WebCore)/webaudio/OfflineAudioCompletionEvent.idl \
     $(WebCore)/webaudio/RealtimeAnalyserNode.idl \
     $(WebCore)/webaudio/WaveShaperNode.idl \
-    $(WebCore)/websockets/CloseEvent.idl \
-    $(WebCore)/websockets/DOMWindowWebSocket.idl \
-    $(WebCore)/websockets/WebSocket.idl \
     $(WebCore)/workers/AbstractWorker.idl \
     $(WebCore)/workers/DOMWindowWorker.idl \
     $(WebCore)/workers/DedicatedWorkerContext.idl \

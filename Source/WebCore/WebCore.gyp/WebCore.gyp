@@ -56,6 +56,7 @@
       '../Modules/intents',
       '../Modules/indexeddb',
       '../Modules/mediastream',
+      '../Modules/websockets',
       '../accessibility',
       '../accessibility/chromium',
       '../bindings',

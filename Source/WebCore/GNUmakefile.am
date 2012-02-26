@@ -13,6 +13,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore \
 	-I$(srcdir)/Source/WebCore/Modules/geolocation \
 	-I$(srcdir)/Source/WebCore/Modules/mediastream \
+	-I$(srcdir)/Source/WebCore/Modules/websockets \
 	-I$(srcdir)/Source/WebCore/accessibility \
 	-I$(srcdir)/Source/WebCore/bindings \
 	-I$(srcdir)/Source/WebCore/bindings/generic \
@@ -761,6 +762,7 @@ DerivedSources/ANGLE/glslang_tab.h: DerivedSources/ANGLE/glslang_tab.cpp
 IDL_PATH := \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/mediastream \
+    $(WebCore)/Modules/websockets \
     $(WebCore)/bindings/js \
     $(WebCore)/css \
     $(WebCore)/dom \
@@ -900,6 +902,7 @@ libWebCoreGtk_la_CPPFLAGS = \
 
 EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \
+	$(shell ls $(srcdir)/Source/WebCore/Modules/websockets/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/css/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/dom/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/fileapi/*.idl) \
@@ -916,7 +919,6 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/svg/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/testing/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/webaudio/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/websockets/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/workers/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/xml/*.idl) \
 	Source/ThirdParty/ANGLE/src/compiler/glslang.l \

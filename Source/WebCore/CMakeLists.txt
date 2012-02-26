@@ -1,6 +1,7 @@
 SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/geolocation"
+    "${WEBCORE_DIR}/Modules/websockets"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/bindings"
     "${WEBCORE_DIR}/bindings/generic"
@@ -90,6 +91,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
 
 SET(WebCore_IDL_INCLUDES
     Modules/geolocation
+    Modules/websockets
     bindings/generic
     css
     dom
@@ -114,6 +116,9 @@ SET(WebCore_IDL_FILES
     Modules/geolocation/PositionCallback.idl
     Modules/geolocation/PositionError.idl
     Modules/geolocation/PositionErrorCallback.idl
+
+    Modules/websockets/CloseEvent.idl
+    Modules/websockets/DOMWindowWebSocket.idl
 
     css/Counter.idl
     css/CSSCharsetRule.idl
@@ -387,9 +392,6 @@ SET(WebCore_IDL_FILES
     webaudio/JavaScriptAudioNode.idl
     webaudio/LowPass2FilterNode.idl
     webaudio/RealtimeAnalyserNode.idl
-
-    websockets/CloseEvent.idl
-    websockets/DOMWindowWebSocket.idl
 
     xml/DOMWindowXML.idl
     xml/DOMParser.idl
@@ -2059,24 +2061,24 @@ ENDIF()
 
 IF (ENABLE_WEB_SOCKETS)
     LIST(APPEND WebCore_SOURCES
-        websockets/ThreadableWebSocketChannel.cpp
-        websockets/ThreadableWebSocketChannelClientWrapper.cpp
-        websockets/WebSocket.cpp
-        websockets/WebSocketChannel.cpp
-        websockets/WebSocketExtensionDispatcher.cpp
-        websockets/WebSocketHandshake.cpp
-        websockets/WebSocketHandshakeRequest.cpp
-        websockets/WebSocketHandshakeResponse.cpp
+        Modules/websockets/ThreadableWebSocketChannel.cpp
+        Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp
+        Modules/websockets/WebSocket.cpp
+        Modules/websockets/WebSocketChannel.cpp
+        Modules/websockets/WebSocketExtensionDispatcher.cpp
+        Modules/websockets/WebSocketHandshake.cpp
+        Modules/websockets/WebSocketHandshakeRequest.cpp
+        Modules/websockets/WebSocketHandshakeResponse.cpp
     )
 
     LIST(APPEND WebCore_IDL_FILES
-        websockets/WebSocket.idl
+        Modules/websockets/WebSocket.idl
     )
 ENDIF ()
 
 IF (ENABLE_WEB_SOCKETS AND ENABLE_WORKERS)
     LIST(APPEND WebCore_SOURCES
-         websockets/WorkerThreadableWebSocketChannel.cpp
+        Modules/websockets/WorkerThreadableWebSocketChannel.cpp
     )
 ENDIF ()
 

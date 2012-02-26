@@ -92,6 +92,9 @@ IDL_BINDINGS += \
     $$PWD/Modules/geolocation/PositionCallback.idl \
     $$PWD/Modules/geolocation/PositionError.idl \
     $$PWD/Modules/geolocation/PositionErrorCallback.idl \
+    $$PWD/Modules/websockets/CloseEvent.idl \
+    $$PWD/Modules/websockets/DOMWindowWebSocket.idl \
+    $$PWD/Modules/websockets/WebSocket.idl \
     $$PWD/css/Counter.idl \
     $$PWD/css/CSSCharsetRule.idl \
     $$PWD/css/CSSFontFaceRule.idl \
@@ -426,9 +429,6 @@ IDL_BINDINGS += \
     $$PWD/webaudio/JavaScriptAudioNode.idl \
     $$PWD/webaudio/LowPass2FilterNode.idl \
     $$PWD/webaudio/RealtimeAnalyserNode.idl \
-    $$PWD/websockets/CloseEvent.idl \
-    $$PWD/websockets/DOMWindowWebSocket.idl \
-    $$PWD/websockets/WebSocket.idl \
     $$PWD/workers/AbstractWorker.idl \
     $$PWD/workers/DOMWindowWorker.idl \
     $$PWD/workers/DedicatedWorkerContext.idl \
@@ -692,6 +692,7 @@ generateBindings.commands = perl -I$$PWD/bindings/scripts $$generateBindings.scr
                             --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
                             --generator $$generator \
                             --include $$PWD/Modules/geolocation \
+                            --include $$PWD/Modules/websockets \
                             --include $$PWD/dom \
                             --include $$PWD/fileapi \
                             --include $$PWD/html \

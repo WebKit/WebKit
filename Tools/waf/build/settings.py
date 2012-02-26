@@ -100,6 +100,7 @@ jscore_dirs = [
 ]
 
 webcore_dirs_common = [
+    'Source/WebCore/Modules/websockets',
     'Source/WebCore/accessibility',
     'Source/WebCore/bindings',
     'Source/WebCore/bindings/cpp',
@@ -161,7 +162,6 @@ webcore_dirs_common = [
     'Source/WebCore/svg/properties',
     'Source/WebCore/testing',
     'Source/WebCore/testing/js',
-    'Source/WebCore/websockets',
     'Source/WebCore/xml',
     'Source/WebCore/xml/parser',
 ]

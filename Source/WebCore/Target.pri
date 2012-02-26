@@ -3671,29 +3671,29 @@ contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
 
 contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
     HEADERS += \
-        websockets/CloseEvent.h \
-        websockets/ThreadableWebSocketChannel.h \
-        websockets/ThreadableWebSocketChannelClientWrapper.h \
-        websockets/WebSocket.h \
-        websockets/WebSocketChannel.h \
-        websockets/WebSocketChannelClient.h \
-        websockets/WebSocketExtensionDispatcher.h \
-        websockets/WebSocketExtensionProcessor.h \
-        websockets/WebSocketFrame.h \
-        websockets/WebSocketHandshake.h \
-        websockets/WebSocketHandshakeRequest.h \
-        websockets/WebSocketHandshakeResponse.h \
+        Modules/websockets/CloseEvent.h \
+        Modules/websockets/ThreadableWebSocketChannel.h \
+        Modules/websockets/ThreadableWebSocketChannelClientWrapper.h \
+        Modules/websockets/WebSocket.h \
+        Modules/websockets/WebSocketChannel.h \
+        Modules/websockets/WebSocketChannelClient.h \
+        Modules/websockets/WebSocketExtensionDispatcher.h \
+        Modules/websockets/WebSocketExtensionProcessor.h \
+        Modules/websockets/WebSocketFrame.h \
+        Modules/websockets/WebSocketHandshake.h \
+        Modules/websockets/WebSocketHandshakeRequest.h \
+        Modules/websockets/WebSocketHandshakeResponse.h \
         platform/network/qt/SocketStreamHandlePrivate.h
 
     SOURCES += \
-        websockets/WebSocket.cpp \
-        websockets/WebSocketChannel.cpp \
-        websockets/WebSocketExtensionDispatcher.cpp \
-        websockets/WebSocketHandshake.cpp \
-        websockets/WebSocketHandshakeRequest.cpp \
-        websockets/WebSocketHandshakeResponse.cpp \
-        websockets/ThreadableWebSocketChannel.cpp \
-        websockets/ThreadableWebSocketChannelClientWrapper.cpp \
+        Modules/websockets/WebSocket.cpp \
+        Modules/websockets/WebSocketChannel.cpp \
+        Modules/websockets/WebSocketExtensionDispatcher.cpp \
+        Modules/websockets/WebSocketHandshake.cpp \
+        Modules/websockets/WebSocketHandshakeRequest.cpp \
+        Modules/websockets/WebSocketHandshakeResponse.cpp \
+        Modules/websockets/ThreadableWebSocketChannel.cpp \
+        Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp \
         platform/network/SocketStreamErrorBase.cpp \
         platform/network/SocketStreamHandleBase.cpp \
         platform/network/qt/SocketStreamHandleQt.cpp
@@ -3705,10 +3705,10 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
 
     contains(DEFINES, ENABLE_WORKERS=1) {
         HEADERS += \
-            websockets/WorkerThreadableWebSocketChannel.h
+            Modules/websockets/WorkerThreadableWebSocketChannel.h
 
         SOURCES += \
-            websockets/WorkerThreadableWebSocketChannel.cpp
+            Modules/websockets/WorkerThreadableWebSocketChannel.cpp
     }
 }
 

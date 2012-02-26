@@ -19,6 +19,7 @@ WEBCORE_GENERATED_SOURCES_DIR = $${ROOT_BUILD_DIR}/Source/WebCore/$${GENERATED_S
 INCLUDEPATH += \
     $$SOURCE_DIR \
     $$SOURCE_DIR/Modules/geolocation \
+    $$SOURCE_DIR/Modules/websockets \
     $$SOURCE_DIR/accessibility \
     $$SOURCE_DIR/bindings \
     $$SOURCE_DIR/bindings/generic \

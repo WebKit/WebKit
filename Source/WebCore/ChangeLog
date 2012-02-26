@@ -1,3 +1,57 @@
+2012-02-25  Adam Barth  <abarth@webkit.org>
+
+        Move websockets to Modules/websockets
+        https://bugs.webkit.org/show_bug.cgi?id=79598
+
+        Reviewed by Eric Seidel.
+
+        Nowadays, the only ENABLE(WEB_SOCKETS) ifdef in WebCore proper is in
+        WebCore::Settings, and that will be removed (soon?) once Apple drops
+        support for the old WebSockets protocol.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Modules/websockets: Copied from Source/WebCore/websockets.
+        * Target.pri:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+        * websockets: Removed.
+        * websockets/CloseEvent.h: Removed.
+        * websockets/CloseEvent.idl: Removed.
+        * websockets/DOMWindowWebSocket.idl: Removed.
+        * websockets/ThreadableWebSocketChannel.cpp: Removed.
+        * websockets/ThreadableWebSocketChannel.h: Removed.
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp: Removed.
+        * websockets/ThreadableWebSocketChannelClientWrapper.h: Removed.
+        * websockets/WebSocket.cpp: Removed.
+        * websockets/WebSocket.h: Removed.
+        * websockets/WebSocket.idl: Removed.
+        * websockets/WebSocketChannel.cpp: Removed.
+        * websockets/WebSocketChannel.h: Removed.
+        * websockets/WebSocketChannelClient.h: Removed.
+        * websockets/WebSocketDeflater.cpp: Removed.
+        * websockets/WebSocketDeflater.h: Removed.
+        * websockets/WebSocketExtensionDispatcher.cpp: Removed.
+        * websockets/WebSocketExtensionDispatcher.h: Removed.
+        * websockets/WebSocketExtensionProcessor.h: Removed.
+        * websockets/WebSocketFrame.h: Removed.
+        * websockets/WebSocketHandshake.cpp: Removed.
+        * websockets/WebSocketHandshake.h: Removed.
+        * websockets/WebSocketHandshakeRequest.cpp: Removed.
+        * websockets/WebSocketHandshakeRequest.h: Removed.
+        * websockets/WebSocketHandshakeResponse.cpp: Removed.
+        * websockets/WebSocketHandshakeResponse.h: Removed.
+        * websockets/WorkerThreadableWebSocketChannel.cpp: Removed.
+        * websockets/WorkerThreadableWebSocketChannel.h: Removed.
+
 2012-02-25  Benjamin Poulain  <benjamin@webkit.org>
 
         Get rid of KURL::deprecatedString()

@@ -997,6 +997,30 @@ webcore_sources += \
 	Source/WebCore/Modules/mediastream/UserMediaController.cpp \
 	Source/WebCore/Modules/mediastream/UserMediaRequest.cpp \
 	Source/WebCore/Modules/mediastream/UserMediaRequest.h \
+	Source/WebCore/Modules/websockets/CloseEvent.h \
+	Source/WebCore/Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp \
+	Source/WebCore/Modules/websockets/ThreadableWebSocketChannelClientWrapper.h \
+	Source/WebCore/Modules/websockets/ThreadableWebSocketChannel.cpp \
+	Source/WebCore/Modules/websockets/ThreadableWebSocketChannel.h \
+	Source/WebCore/Modules/websockets/WebSocketChannelClient.h \
+	Source/WebCore/Modules/websockets/WebSocketChannel.cpp \
+	Source/WebCore/Modules/websockets/WebSocketChannel.h \
+	Source/WebCore/Modules/websockets/WebSocket.cpp \
+	Source/WebCore/Modules/websockets/WebSocket.h \
+	Source/WebCore/Modules/websockets/WebSocketDeflater.cpp \
+	Source/WebCore/Modules/websockets/WebSocketDeflater.h \
+	Source/WebCore/Modules/websockets/WebSocketExtensionDispatcher.cpp \
+	Source/WebCore/Modules/websockets/WebSocketExtensionDispatcher.h \
+	Source/WebCore/Modules/websockets/WebSocketExtensionProcessor.h \
+	Source/WebCore/Modules/websockets/WebSocketFrame.h \
+	Source/WebCore/Modules/websockets/WebSocketHandshake.cpp \
+	Source/WebCore/Modules/websockets/WebSocketHandshake.h \
+	Source/WebCore/Modules/websockets/WebSocketHandshakeRequest.cpp \
+	Source/WebCore/Modules/websockets/WebSocketHandshakeRequest.h \
+	Source/WebCore/Modules/websockets/WebSocketHandshakeResponse.cpp \
+	Source/WebCore/Modules/websockets/WebSocketHandshakeResponse.h \
+	Source/WebCore/Modules/websockets/WorkerThreadableWebSocketChannel.cpp \
+	Source/WebCore/Modules/websockets/WorkerThreadableWebSocketChannel.h \
 	Source/WebCore/accessibility/AccessibilityARIAGridCell.cpp \
 	Source/WebCore/accessibility/AccessibilityARIAGridCell.h \
 	Source/WebCore/accessibility/AccessibilityARIAGrid.cpp \
@@ -4341,30 +4365,6 @@ webcore_sources += \
 	Source/WebCore/svg/SVGZoomEvent.cpp \
 	Source/WebCore/svg/SVGZoomEvent.h \
 	Source/WebCore/WebCorePrefix.h \
-	Source/WebCore/websockets/CloseEvent.h \
-	Source/WebCore/websockets/ThreadableWebSocketChannelClientWrapper.cpp \
-	Source/WebCore/websockets/ThreadableWebSocketChannelClientWrapper.h \
-	Source/WebCore/websockets/ThreadableWebSocketChannel.cpp \
-	Source/WebCore/websockets/ThreadableWebSocketChannel.h \
-	Source/WebCore/websockets/WebSocketChannelClient.h \
-	Source/WebCore/websockets/WebSocketChannel.cpp \
-	Source/WebCore/websockets/WebSocketChannel.h \
-	Source/WebCore/websockets/WebSocket.cpp \
-	Source/WebCore/websockets/WebSocket.h \
-	Source/WebCore/websockets/WebSocketDeflater.cpp \
-	Source/WebCore/websockets/WebSocketDeflater.h \
-	Source/WebCore/websockets/WebSocketExtensionDispatcher.cpp \
-	Source/WebCore/websockets/WebSocketExtensionDispatcher.h \
-	Source/WebCore/websockets/WebSocketExtensionProcessor.h \
-	Source/WebCore/websockets/WebSocketFrame.h \
-	Source/WebCore/websockets/WebSocketHandshake.cpp \
-	Source/WebCore/websockets/WebSocketHandshake.h \
-	Source/WebCore/websockets/WebSocketHandshakeRequest.cpp \
-	Source/WebCore/websockets/WebSocketHandshakeRequest.h \
-	Source/WebCore/websockets/WebSocketHandshakeResponse.cpp \
-	Source/WebCore/websockets/WebSocketHandshakeResponse.h \
-	Source/WebCore/websockets/WorkerThreadableWebSocketChannel.cpp \
-	Source/WebCore/websockets/WorkerThreadableWebSocketChannel.h \
 	Source/WebCore/workers/AbstractWorker.cpp \
 	Source/WebCore/workers/AbstractWorker.h \
 	Source/WebCore/workers/DedicatedWorkerContext.cpp \
@@ -5564,9 +5564,9 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebSocket.h
 
 dom_binding_idls += \
-	$(WebCore)/websockets/CloseEvent.idl \
-	$(WebCore)/websockets/DOMWindowWebSocket.idl \
-	$(WebCore)/websockets/WebSocket.idl
+	$(WebCore)/Modules/websockets/CloseEvent.idl \
+	$(WebCore)/Modules/websockets/DOMWindowWebSocket.idl \
+	$(WebCore)/Modules/websockets/WebSocket.idl
 endif  # END ENABLE_WEB_SOCKETS
 
 # ---
