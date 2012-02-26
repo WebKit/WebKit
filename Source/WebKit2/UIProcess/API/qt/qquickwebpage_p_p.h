@@ -41,7 +41,7 @@ public:
 
     void updateSize();
 
-    void paintToCurrentGLContext(const QTransform&, float opacity);
+    void paintToCurrentGLContext();
     void paint(QPainter*);
     void resetPaintNode();
 
