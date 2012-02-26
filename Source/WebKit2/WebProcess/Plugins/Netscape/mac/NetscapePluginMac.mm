@@ -532,12 +532,12 @@ static NPCocoaEvent initializeMouseEvent(const WebMouseEvent& mouseEvent, const 
 
 bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
 {
+    IntPoint eventPositionInPluginCoordinates;
+    if (!convertFromRootView(mouseEvent.position(), eventPositionInPluginCoordinates))
+        return true;
+
     switch (m_eventModel) {
         case NPEventModelCocoa: {
-            IntPoint eventPositionInPluginCoordinates;
-            if (!convertFromRootView(mouseEvent.position(), eventPositionInPluginCoordinates))
-                return true;
-
             NPCocoaEvent event = initializeMouseEvent(mouseEvent, eventPositionInPluginCoordinates);
 
             NPCocoaEvent* previousMouseEvent = m_currentMouseEvent;
@@ -579,8 +579,13 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
 
             EventRecord event = initializeEventRecord(eventKind);
             event.modifiers = modifiersForEvent(mouseEvent);
-            event.where.h = mouseEvent.globalPosition().x();
-            event.where.v = mouseEvent.globalPosition().y();
+
+            double globalX, globalY;
+            if (!convertPoint(eventPositionInPluginCoordinates.x(), eventPositionInPluginCoordinates.y(), NPCoordinateSpacePlugin, globalX, globalY, NPCoordinateSpaceFlippedScreen))
+                ASSERT_NOT_REACHED();
+
+            event.where.h = globalX;
+            event.where.v = globalY;
 
             NPP_HandleEvent(&event);
 
