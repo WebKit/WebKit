@@ -1,3 +1,14 @@
+2012-02-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r108547.
+        http://trac.webkit.org/changeset/108547
+        https://bugs.webkit.org/show_bug.cgi?id=79606
+
+        Crashes on ClusterFuzz (Requested by inferno-sec on #webkit).
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2012-02-25  Adam Barth  <abarth@webkit.org>
 
         Move websockets to Modules/websockets
