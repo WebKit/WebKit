@@ -1,3 +1,21 @@
+2012-02-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Change Build bot with BuildAndTest bot for EFL port.
+        https://bugs.webkit.org/show_bug.cgi?id=77518
+
+        Reviewed by Ryosuke Niwa.
+
+        EFL build bot starts to support layout test.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+        (extractBuiltProduct):
+        * BuildSlaveSupport/test-result-archive:
+        (archiveTestResults):
+        * Scripts/webkitdirs.pm: Enable SHARED_CORE option when ENABLE_DRT is enable in EFL port.
+        (generateBuildSystemFromCMakeProject):
+
 2012-02-24  Darin Fisher  <darin@chromium.org>
 
         Add watchlist for ChromiumPlatformApi matching Source/Platform/chromium/public/
