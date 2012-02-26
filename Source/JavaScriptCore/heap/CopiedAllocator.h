@@ -31,6 +31,7 @@
 namespace JSC {
 
 class CopiedAllocator {
+    friend class JIT;
 public:
     CopiedAllocator();
     void* allocate(size_t);

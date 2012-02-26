@@ -1,3 +1,55 @@
+2012-02-26  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Implement fast path for op_new_array in the baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=78612
+
+        Reviewed by Filip Pizlo.
+
+        heap/CopiedAllocator.h:
+        (CopiedAllocator): Friended the JIT to allow access to m_currentOffset.
+        * heap/CopiedSpace.h:
+        (CopiedSpace): Friended the JIT to allow access to isOversize.
+        (JSC::CopiedSpace::allocator):
+        * heap/Heap.h:
+        (JSC::Heap::storageAllocator): Added a getter for the CopiedAllocator class so the JIT
+        can use it for simple allocation i.e. when we can just bump the offset without having to 
+        do anything else.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases): Added new slow case for op_new_array for when
+        we have to bail out because the fast allocation path fails for whatever reason.
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicStorage): Added utility function that allows objects to 
+        allocate generic backing stores. This function is used by emitAllocateJSArray.
+        (JSC):
+        (JSC::JIT::emitAllocateJSArray): Added utility function that allows the client to 
+        more easily allocate JSArrays. This function is used by emit_op_new_array and I expect 
+        it will also be used for emit_op_new_array_buffer.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_array): Changed to do inline allocation of JSArrays. Still does 
+        a stub call for oversize arrays.
+        (JSC):
+        (JSC::JIT::emitSlow_op_new_array): New slow path that just bails out to a stub call if we 
+        fail in any way on the fast path.
+        * runtime/JSArray.cpp:
+        (JSC):
+        * runtime/JSArray.h: Added lots of offset functions for all the fields that we need to 
+        initialize in the JIT.
+        (ArrayStorage):
+        (JSC::ArrayStorage::lengthOffset):
+        (JSC::ArrayStorage::numValuesInVectorOffset):
+        (JSC::ArrayStorage::allocBaseOffset):
+        (JSC::ArrayStorage::vectorOffset):
+        (JSArray):
+        (JSC::JSArray::sparseValueMapOffset):
+        (JSC::JSArray::subclassDataOffset):
+        (JSC::JSArray::indexBiasOffset):
+        (JSC):
+        (JSC::JSArray::storageSize): Moved this function from being a static function in the cpp file
+        to being a static function in the JSArray class. This move allows the JIT to call it to 
+        see what size it should allocate.
+
 2012-02-26  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Build fix for ENABLE(CLASSIC_INTERPRETER) after r108681.
