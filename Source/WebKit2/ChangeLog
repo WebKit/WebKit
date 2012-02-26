@@ -1,5 +1,12 @@
 2012-02-25  Anders Carlsson  <andersca@apple.com>
 
+        Address review feedback from Andreas Kling.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+
+2012-02-25  Anders Carlsson  <andersca@apple.com>
+
         Mouse tracking incorrect in Silverlight when using multi monitor with offset arrangement
         https://bugs.webkit.org/show_bug.cgi?id=79589
         <rdar://problem/9719592>

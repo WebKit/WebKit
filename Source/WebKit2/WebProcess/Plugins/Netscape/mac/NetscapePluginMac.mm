@@ -580,7 +580,8 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
             EventRecord event = initializeEventRecord(eventKind);
             event.modifiers = modifiersForEvent(mouseEvent);
 
-            double globalX, globalY;
+            double globalX;
+            double globalY;
             if (!convertPoint(eventPositionInPluginCoordinates.x(), eventPositionInPluginCoordinates.y(), NPCoordinateSpacePlugin, globalX, globalY, NPCoordinateSpaceFlippedScreen))
                 ASSERT_NOT_REACHED();
 
