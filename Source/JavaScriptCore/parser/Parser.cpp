@@ -1204,7 +1204,6 @@ template <bool complete, class TreeBuilder> TreeProperty Parser<LexerType>::pars
             return context.template createProperty<complete>(ident, node, PropertyNode::Constant);
         }
         failIfFalse(wasIdent);
-        matchOrFail(IDENT);
         const Identifier* accessorName = 0;
         TreeFormalParameterList parameters = 0;
         TreeFunctionBody body = 0;
@@ -1218,8 +1217,19 @@ template <bool complete, class TreeBuilder> TreeProperty Parser<LexerType>::pars
             type = PropertyNode::Setter;
         else
             fail();
-        failIfFalse((parseFunctionInfo<FunctionNeedsName, false>(context, accessorName, parameters, body, openBracePos, closeBracePos, bodyStartLine)));
-        return context.template createGetterOrSetterProperty<complete>(m_lexer->lastLineNumber(), type, accessorName, parameters, body, openBracePos, closeBracePos, bodyStartLine, m_lastLine);
+        const Identifier* stringPropertyName = 0;
+        double numericPropertyName = 0;
+        if (m_token.m_type == IDENT || m_token.m_type == STRING)
+            stringPropertyName = m_token.m_data.ident;
+        else if (m_token.m_type == NUMBER)
+            numericPropertyName = m_token.m_data.doubleValue;
+        else
+            fail();
+        next();
+        failIfFalse((parseFunctionInfo<FunctionNoRequirements, false>(context, accessorName, parameters, body, openBracePos, closeBracePos, bodyStartLine)));
+        if (stringPropertyName)
+            return context.template createGetterOrSetterProperty<complete>(m_lexer->lastLineNumber(), type, stringPropertyName, parameters, body, openBracePos, closeBracePos, bodyStartLine, m_lastLine);
+        return context.template createGetterOrSetterProperty<complete>(const_cast<JSGlobalData*>(m_globalData), m_lexer->lastLineNumber(), type, numericPropertyName, parameters, body, openBracePos, closeBracePos, bodyStartLine, m_lastLine);
     }
     case NUMBER: {
         double propertyName = m_token.m_data.doubleValue;

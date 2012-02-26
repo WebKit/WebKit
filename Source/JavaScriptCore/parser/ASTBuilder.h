@@ -276,6 +276,11 @@ public:
         return new (m_globalData) PropertyNode(m_globalData, *name, new (m_globalData) FuncExprNode(lineNumber, m_globalData->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), params), type);
     }
     
+    template <bool> PropertyNode* createGetterOrSetterProperty(JSGlobalData*, int lineNumber, PropertyNode::Type type, double name, ParameterNode* params, FunctionBodyNode* body, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
+    {
+        body->setLoc(bodyStartLine, bodyEndLine);
+        return new (m_globalData) PropertyNode(m_globalData, name, new (m_globalData) FuncExprNode(lineNumber, m_globalData->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), params), type);
+    }
 
     ArgumentsNode* createArguments() { return new (m_globalData) ArgumentsNode(); }
     ArgumentsNode* createArguments(ArgumentListNode* args) { return new (m_globalData) ArgumentsNode(args); }

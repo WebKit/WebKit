@@ -30,6 +30,12 @@ PASS o7.x is undefined.
 If an object has a property and its prototype has a setter function for that property, then setting the property should set the property directly and not call the setter function.
 PASS o8.numSets is 0
 PASS typeof testObj.getter is 'string'
+the get set with string property name
+PASS o9.b is 8
+PASS o9.b is 11
+the get set with numeric property name
+PASS o10[42] is 8
+PASS o10[42] is 11
 PASS successfullyParsed is true
 
 TEST COMPLETE

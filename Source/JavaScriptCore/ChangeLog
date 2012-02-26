@@ -1,3 +1,17 @@
+2012-02-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        StringLiteral and NumericLiteral are allowed as ObjectLiteral getter / setter name
+        https://bugs.webkit.org/show_bug.cgi?id=79571
+
+        Reviewed by Gavin Barraclough.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        * parser/Parser.cpp:
+        (JSC::::parseProperty):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createGetterOrSetterProperty):
+
 2012-02-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Implement fast path for op_new_array in the baseline JIT

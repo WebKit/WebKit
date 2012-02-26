@@ -67,3 +67,15 @@ shouldBe("o8.numSets", "0");
 ({getter:"foo", b:"bar"});
 testObj=({get getter(){return 'getter was called.'}, b: 'bar'})
 shouldBe("typeof testObj.getter", "'string'");
+
+debug("the get set with string property name");
+var o9 = { 'a':7, get 'b'() { return this.a + 1 }, set 'b'(x) { this.a = x } }
+shouldBe("o9.b", "8");
+o9.b = 10;
+shouldBe("o9.b", "11");
+
+debug("the get set with numeric property name");
+var o10 = { 'a':7, get 42() { return this.a + 1 }, set 42(x) { this.a = x } }
+shouldBe("o10[42]", "8");
+o10[42] = 10;
+shouldBe("o10[42]", "11");
