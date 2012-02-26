@@ -45,6 +45,8 @@ void ScrollingThread::initializeRunLoop()
         m_initializeRunLoopCondition.broadcast();
     }
 
+    ASSERT(isCurrentThread());
+
     CFRunLoopRun();
 }
 

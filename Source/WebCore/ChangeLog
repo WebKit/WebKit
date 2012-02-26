@@ -1,3 +1,19 @@
+2012-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Move an ASSERT to avoid it firing due to a race condition
+        https://bugs.webkit.org/show_bug.cgi?id=79596
+
+        Reviewed by Andreas Kling.
+
+        ScrollingThread::isCurrentThread() can return false if called too early.
+        Move it into ScrollingThread::initializeRunLoop where we know that the thread has
+        been set up correctly.
+
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::threadBody):
+        * page/scrolling/mac/ScrollingThreadMac.mm:
+        (WebCore::ScrollingThread::initializeRunLoop):
+
 2012-02-25  Andreas Kling  <awesomekling@apple.com>
 
         Setting style="" should destroy the element's inline style.

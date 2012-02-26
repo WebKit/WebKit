@@ -85,8 +85,6 @@ void ScrollingThread::threadCallback(void* scrollingThread)
 
 void ScrollingThread::threadBody()
 {
-    ASSERT(isCurrentThread());
-
     initializeRunLoop();
 }
 
