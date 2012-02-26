@@ -1,3 +1,28 @@
+2012-02-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Clean-up RenderTableSection::calcRowLogicalHeight
+        https://bugs.webkit.org/show_bug.cgi?id=77705
+
+        Reviewed by Nikolas Zimmermann.
+
+        Refactoring / simplication of the code.
+
+        This change removes some variables that were unneeded and were
+        hiding what the code was really doing. Also some of the code was
+        split and moved down to RenderTableCell.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::logicalHeightForRowSizing):
+        * rendering/RenderTableCell.h:
+        (RenderTableCell):
+        Added the previous helper function to calculate the cell's
+        adjusted logical height.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        Removed some variables, simplified the rowspan logic to be clearer
+        (and added a comment about how we handle rowspans).
+
 2012-02-25  Benjamin Poulain  <benjamin@webkit.org>
 
         Add an empty skeleton of KURL for WTFURL
