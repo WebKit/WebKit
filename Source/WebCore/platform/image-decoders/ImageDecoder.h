@@ -64,7 +64,7 @@ namespace WebCore {
             DisposeOverwritePrevious  // Clear frame to previous framebuffer
                                       // contents
         };
-#if USE(SKIA) || (PLATFORM(QT) && ENABLE(QT_IMAGE_DECODER))
+#if USE(SKIA) || (PLATFORM(QT) && USE(QT_IMAGE_DECODER))
         typedef uint32_t PixelData;
 #else
         typedef unsigned PixelData;
@@ -140,7 +140,7 @@ namespace WebCore {
         {
 #if USE(SKIA)
             return m_bitmap.bitmap().getAddr32(x, y);
-#elif PLATFORM(QT) && ENABLE(QT_IMAGE_DECODER)
+#elif PLATFORM(QT) && USE(QT_IMAGE_DECODER)
             m_image = m_pixmap.toImage();
             m_pixmap = QPixmap();
             return reinterpret_cast_ptr<QRgb*>(m_image.scanLine(y)) + x;
@@ -149,7 +149,7 @@ namespace WebCore {
 #endif
         }
 
-#if PLATFORM(QT) && ENABLE(QT_IMAGE_DECODER)
+#if PLATFORM(QT) && USE(QT_IMAGE_DECODER)
         void setPixmap(const QPixmap& pixmap);
 #endif
 
@@ -190,7 +190,7 @@ namespace WebCore {
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
         ColorProfile m_colorProfile;
 #endif
-#elif PLATFORM(QT) && ENABLE(QT_IMAGE_DECODER)
+#elif PLATFORM(QT) && USE(QT_IMAGE_DECODER)
         mutable QPixmap m_pixmap;
         mutable QImage m_image;
         bool m_hasAlpha;

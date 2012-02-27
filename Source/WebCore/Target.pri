@@ -3941,7 +3941,7 @@ contains(DEFINES, ENABLE_MHTML=1) {
         page/PageSerializer.cpp
 }
 
-contains(DEFINES, ENABLE_QT_IMAGE_DECODER=1) {
+contains(DEFINES, WTF_USE_QT_IMAGE_DECODER=1) {
     HEADERS += platform/graphics/qt/ImageDecoderQt.h
     SOURCES += platform/graphics/qt/ImageDecoderQt.cpp
 } else {

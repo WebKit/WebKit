@@ -204,7 +204,7 @@ contains(CONFIG, texmap) {
     LIBS += -lsqlite3
 }
 
-contains(DEFINES, ENABLE_QT_IMAGE_DECODER=0) {
+contains(DEFINES, WTF_USE_QT_IMAGE_DECODER=0) {
     INCLUDEPATH += \
         $$SOURCE_DIR/platform/image-decoders/bmp \
         $$SOURCE_DIR/platform/image-decoders/gif \

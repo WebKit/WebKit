@@ -1,3 +1,21 @@
+2012-02-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Use USE() macro instead of ENABLE() for using the Qt image decoder
+
+        Reviewed by Kenneth Rohde Christiansen..
+
+        * Target.pri:
+        * WebCore.pri:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageFrame::getAddr):
+        (ImageFrame):
+        * platform/image-decoders/qt/ImageFrameQt.cpp:
+        (WebCore):
+        (WebCore::ImageFrame::asNewNativeImage):
+
 2012-02-27  MORITA Hajime  <morrita@google.com>
 
         Removing <ul>, <li> inside shadow DOM triggers assertion in updateListMarkerNumbers

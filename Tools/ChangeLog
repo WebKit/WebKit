@@ -1,3 +1,11 @@
+2012-02-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Use USE() macro instead of ENABLE() for using the Qt image decoder
+
+        Reviewed by Kenneth Rohde Christiansen..
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-02-27  Hao Zheng  <zhenghao@chromium.org>
 
         Add a ChromiumGpuAndroid port.
