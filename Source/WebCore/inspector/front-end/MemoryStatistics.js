@@ -52,9 +52,10 @@ WebInspector.MemoryStatistics = function(timelinePanel, sidebarWidth)
     this._canvas.id = "memory-counters-graph";
     this._lastMarkerXPosition = 0;
 
-    this._canvasContainer.addEventListener("mouseover", this._onMouseOver.bind(this), true);
-    this._canvasContainer.addEventListener("mousemove", this._onMouseMove.bind(this), true);
-    this._canvasContainer.addEventListener("mouseout", this._onMouseOut.bind(this), true);
+    this._canvas.addEventListener("mouseover", this._onMouseOver.bind(this), true);
+    this._canvas.addEventListener("mousemove", this._onMouseMove.bind(this), true);
+    this._canvas.addEventListener("mouseout", this._onMouseOut.bind(this), true);
+    this._canvas.addEventListener("click", this._onClick.bind(this), true);
 
     // Populate sidebar
     this._memorySplitView.sidebarElement.createChild("div", "sidebar-tree sidebar-tree-section").textContent = WebInspector.UIString("COUNTERS");
@@ -276,6 +277,14 @@ WebInspector.MemoryStatistics.prototype = {
         // Current window bounds.
         this._minTime = start;
         this._maxTime = end;
+    },
+
+    _onClick: function(event)
+    {
+        var x = event.x - event.target.offsetParent.offsetLeft
+        var i = this._recordIndexAt(x);
+        var counter = this._counters[i];
+        this._timelinePanel.revealRecordAt(counter.time / 1000);
     },
 
     _onMouseOut: function(event)

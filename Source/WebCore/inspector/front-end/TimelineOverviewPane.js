@@ -161,25 +161,6 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._categoryGraphs[category.name].dimmed = category.hidden;
     },
 
-    _forAllRecords: function(recordsArray, callback)
-    {
-        if (!recordsArray)
-            return;
-        var stack = [{array: recordsArray, index: 0}];
-        while (stack.length) {
-            var entry = stack[stack.length - 1];
-            var records = entry.array;
-            if (entry.index < records.length) {
-                 var record = records[entry.index];
-                 callback(record);
-                 if (record.children)
-                     stack.push({array: record.children, index: 0});
-                 ++entry.index;
-            } else
-                stack.pop();
-        }
-    },
-
     update: function(records, showShortEvents)
     {
         this._records = records;
@@ -193,7 +174,7 @@ WebInspector.TimelineOverviewPane.prototype = {
 
         // Create sparse arrays with 101 cells each to fill with chunks for a given category.
         this._overviewCalculator.reset();
-        this._forAllRecords(records, this._overviewCalculator.updateBoundaries.bind(this._overviewCalculator));
+        WebInspector.TimelinePanel.forAllRecords(records, this._overviewCalculator.updateBoundaries.bind(this._overviewCalculator));
 
         function markPercentagesForRecord(record)
         {
@@ -206,7 +187,7 @@ WebInspector.TimelineOverviewPane.prototype = {
             for (var j = Math.round(percentages.start); j <= end; ++j)
                 timelines[categoryName][j] = true;
         }
-        this._forAllRecords(records, markPercentagesForRecord.bind(this));
+        WebInspector.TimelinePanel.forAllRecords(records, markPercentagesForRecord.bind(this));
 
         // Convert sparse arrays to continuous segments, render graphs for each.
         for (var category in this._presentationModel.categories) {
@@ -662,7 +643,7 @@ WebInspector.HeapGraph.prototype = {
         var minUsedHeapSize = 100000000000;
         var minTime;
         var maxTime;
-        this._forAllRecords(records, function(r) {
+        WebInspector.TimelinePanel.forAllRecords(records, function(r) {
             maxUsedHeapSize = Math.max(maxUsedHeapSize, r.usedHeapSize || maxUsedHeapSize);
             minUsedHeapSize = Math.min(minUsedHeapSize, r.usedHeapSize || minUsedHeapSize);
 
@@ -679,7 +660,7 @@ WebInspector.HeapGraph.prototype = {
         var yFactor = height / (maxUsedHeapSize - minUsedHeapSize);
 
         var histogram = new Array(width);
-        this._forAllRecords(records, function(r) {
+        WebInspector.TimelinePanel.forAllRecords(records, function(r) {
             if (!r.usedHeapSize)
                 return;
              var x = Math.round((r.endTime - minTime) * xFactor);
@@ -728,8 +709,6 @@ WebInspector.HeapGraph.prototype = {
         ctx.fillStyle = "rgba(255,255,255,0.8)";
         ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
     },
-
-    _forAllRecords: WebInspector.TimelineOverviewPane.prototype._forAllRecords
 }
 
 /**

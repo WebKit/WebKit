@@ -767,7 +767,37 @@ WebInspector.TimelinePanel.prototype = {
         return recordsInWindow;
     },
 
-    _refreshRecords: function(updateBoundaries)
+    revealRecordAt: function(time)
+    {
+        if (this._startAtZero)
+            return;
+        var filter = new WebInspector.TimelineRecordFilter(this._calculator, this._showShortEvents);
+        var recordToReveal;
+        function recordFinder(record)
+        {
+            if (filter.accept(record) && record.containsTime(time)) {
+                recordToReveal = record;
+                return true;
+            }
+            return false;
+        }
+        WebInspector.TimelinePanel.forAllRecords(this._rootRecord.children, recordFinder);
+
+        // The record ends before the window left bound so scroll to the top.
+        if (!recordToReveal) {
+            this._containerElement.scrollTop = 0;
+            return;
+        }
+
+        // Expand all ancestors.
+        for (var parent = recordToReveal.parent; parent !== this._rootRecord; parent = parent.parent)
+            parent.collapsed = false;
+        var recordsInWindow = this._filterRecords();
+        var index = recordsInWindow.indexOf(recordToReveal);
+        this._containerElement.scrollTop = index * WebInspector.TimelinePanel.rowHeight;
+    },
+
+    _refreshRecords: function(updateBoundaries, recordToReveal)
     {
         var recordsInWindow = this._filterRecords();
 
@@ -1160,6 +1190,26 @@ WebInspector.TimelineRecordGraphRow.prototype = {
     }
 }
 
+WebInspector.TimelinePanel.forAllRecords = function(recordsArray, callback)
+{
+    if (!recordsArray)
+        return;
+    var stack = [{array: recordsArray, index: 0}];
+    while (stack.length) {
+        var entry = stack[stack.length - 1];
+        var records = entry.array;
+        if (entry.index < records.length) {
+             var record = records[entry.index];
+             if (callback(record))
+                 return;
+             if (record.children)
+                 stack.push({array: record.children, index: 0});
+             ++entry.index;
+        } else
+            stack.pop();
+    }
+}
+
 /**
  * @constructor
  */
@@ -1242,6 +1292,11 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
         if (!this._children)
             this._children = [];
         return this._children;
+    },
+
+    containsTime: function(time)
+    {
+        return this.startTime <= time && time <= this.endTime;
     },
 
     _generateAggregatedInfo: function()

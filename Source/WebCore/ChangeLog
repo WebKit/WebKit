@@ -1,3 +1,26 @@
+2012-02-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: reveal corresponding timeline record when user clicks on memory graph
+        https://bugs.webkit.org/show_bug.cgi?id=79669
+
+        When user clicks on DOM counter graph corresponding timeline record is
+        revealed in timelime grid and all its ancestors are expanded.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/MemoryStatistics.js:
+        (WebInspector.MemoryStatistics.prototype._onClick):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype.update):
+        (WebInspector.HeapGraph.prototype.update):
+        (WebInspector.HeapGraph.prototype._clear):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.revealRecordAt.recordFinder):
+        (WebInspector.TimelinePanel.prototype.revealRecordAt):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelinePanel.forAllRecords):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype.containsTime):
+
 2012-02-27  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed single line fix for r108983.
