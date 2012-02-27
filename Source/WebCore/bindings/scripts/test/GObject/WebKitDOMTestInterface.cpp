@@ -104,7 +104,7 @@ webkit_dom_test_interface_supplemental_method4(WebKitDOMTestInterface* self)
     g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
     WebCore::TestInterface * item = WebKit::core(self);
-    TestSupplemental::supplementalMethod4(item);
+    WebCore::TestSupplemental::supplementalMethod4(item);
 #endif /* ENABLE(Condition11) || ENABLE(Condition12) */
 }
 

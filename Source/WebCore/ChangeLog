@@ -1,3 +1,10 @@
+2012-02-26  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined run-bindings-tests results.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (webkit_dom_test_interface_supplemental_method4):
+
 2012-02-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r108547.
