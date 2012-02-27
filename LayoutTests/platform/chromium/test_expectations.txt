@@ -60,6 +60,8 @@ BUGWK76270 SKIP : http/tests/appcache/abort-cache-onprogress.html = FAIL
 BUGWK77523 WIN SLOW : media/media-fragments/TC0050-TC0059.html = PASS
 BUGWK77523 WIN RELEASE SLOW : media/media-fragments/TC0080-TC0089.html = PASS
 
+BUGWK79679 DEBUG GPU SLOW : fast/canvas/getPutImageDataPairTest.html = PASS
+
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
 // -----------------------------------------------------------------
