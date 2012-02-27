@@ -2379,7 +2379,7 @@ BUGWK50709 MAC : fast/css/font-weight-1.html = IMAGE+TEXT
 
 BUGCR65012 LINUX : fast/dom/HTMLHeadElement/head-check.html = PASS CRASH
 
-BUGWK70878 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
+BUGWK70878 : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 BUGWK73538 WIN : http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html = TEXT
 
 // Flaky failures
@@ -4226,3 +4226,7 @@ BUGWK79572 : css3/filters/effect-drop-shadow-hw.html = PASS IMAGE
 
 BUGWK79613 WIN : svg/carto.net/scrollbar.svg = TEXT
 BUGWK79613 WIN : svg/carto.net/selectionlist.svg = TEXT
+
+BUGWK79642 : accessibility/aria-describedby-on-input.html = TIMEOUT
+BUGWK79642 : fast/loader/subresource-willSendRequest-null.html = TIMEOUT
+BUGWK79642 : media/video-playbackrate.html = TIMEOUT
