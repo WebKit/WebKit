@@ -200,3 +200,7 @@ Tools/qmake/.build-hint
 .kdev_include_paths
 *.kdev4
 *.kate-swp
+
+# Ignore Eclipse files:
+.project
+.cproject
