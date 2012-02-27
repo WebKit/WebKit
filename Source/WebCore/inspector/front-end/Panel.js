@@ -212,6 +212,11 @@ WebInspector.Panel.prototype = {
     registerShortcut: function(key, handler)
     {
         this._shortcuts[key] = handler;
+    },
+
+    unregisterShortcut: function(key)
+    {
+        delete this._shortcuts[key];
     }
 }
 

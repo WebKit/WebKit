@@ -67,3 +67,20 @@
     z-index: 500;
     cursor: ew-resize;
 }
+
+.sidebar-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.sidebar-overlay-resizer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    z-index: 500;
+    cursor: ew-resize;
+}

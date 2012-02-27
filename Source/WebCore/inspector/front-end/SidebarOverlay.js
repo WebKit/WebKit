@@ -30,15 +30,18 @@
 
 /**
  * @constructor
- * @extends {WebInspector.DialogDelegate}
+ * @extends {WebInspector.Object}
  * @param {WebInspector.View} view
  * @param {string} widthSettingName
  * @param {number} minimalWidth
  */
 WebInspector.SidebarOverlay = function(view, widthSettingName, minimalWidth)
 {
-    WebInspector.DialogDelegate.call(this);
+    WebInspector.Object.call(this);
     
+    this.element = document.createElement("div");
+    this.element.className = "sidebar-overlay";
+
     this._view = view;
     this._widthSettingName = widthSettingName;
     this._minimalWidth = minimalWidth;
@@ -59,34 +62,36 @@ WebInspector.SidebarOverlay.EventTypes = {
 
 WebInspector.SidebarOverlay.prototype = {
     /**
-     * @param {Element} element
+     * @param {Element} relativeToElement
      */
-    show: function(element)
+    show: function(relativeToElement)
     {
-        this._element = element;
-        element.addStyleClass("sidebar-overlay-dialog");
-        this._view.markAsRoot();
-        this._view.show(element);
-        this._element.appendChild(this._resizerElement);
+        relativeToElement.appendChild(this.element);
+        relativeToElement.addStyleClass("sidebar-overlay-shown");
+        this._view.show(this.element);
+        this.element.appendChild(this._resizerElement);
         if (this._resizerWidgetElement)
-            this._element.appendChild(this._resizerWidgetElement);
-
+            this.element.appendChild(this._resizerWidgetElement);
+        this.position(relativeToElement);
+        this._boundContainingElementFocused = this._containingElementFocused.bind(this);
+        relativeToElement.addEventListener("DOMFocusIn", this._boundContainingElementFocused, false);
+        
         this.dispatchEventToListeners(WebInspector.SidebarOverlay.EventTypes.WasShown, null);
     },
 
+    _containingElementFocused: function(event)
+    {
+        if (!event.target.isSelfOrDescendant(this.element))
+            this.hide();
+    },
+
     /**
-     * @param {Element} element
      * @param {Element} relativeToElement
      */
-    position: function(element, relativeToElement)
+    position: function(relativeToElement)
     {
         this._totalWidth = relativeToElement.offsetWidth;
-        
-        var offset = relativeToElement.offsetRelativeToWindow(window);
-        element.style.left = offset.x + "px";
-        element.style.top = offset.y + "px";
         this._setWidth(this._preferredWidth());
-        element.style.height = relativeToElement.offsetHeight + "px";
     },
 
     focus: function()
@@ -94,17 +99,21 @@ WebInspector.SidebarOverlay.prototype = {
         WebInspector.setCurrentFocusElement(this._view.element);
     },
 
-    willHide: function() {
-        this._view.detach();
-        this.dispatchEventToListeners(WebInspector.SidebarOverlay.EventTypes.WillHide, null);
-    },
-    
-    /**
-     * @param {Element} relativeToElement
-     */
-    start: function(relativeToElement)
+    hide: function()
     {
-        WebInspector.Dialog.show(relativeToElement, this);
+        var element = this.element.parentElement;
+        if (!element)
+            return;
+
+        this.dispatchEventToListeners(WebInspector.SidebarOverlay.EventTypes.WillHide, null);
+        
+        this._view.detach();
+        element.removeChild(this.element);
+        element.removeStyleClass("sidebar-overlay-shown");
+        this.element.removeChild(this._resizerElement);
+        if (this._resizerWidgetElement)
+            this.element.removeChild(this._resizerWidgetElement);
+        element.removeEventListener("DOMFocusIn", this._boundContainingElementFocused);
     },
     
     /**
@@ -117,7 +126,7 @@ WebInspector.SidebarOverlay.prototype = {
         if (this._width === width)
             return;
 
-        this._element.style.width = width + "px";
+        this.element.style.width = width + "px";
         this._resizerElement.style.left = (width - 3) + "px";
         this._width = width;
         this._view.doResize();
@@ -191,4 +200,4 @@ WebInspector.SidebarOverlay.prototype = {
     }
 }
 
-WebInspector.SidebarOverlay.prototype.__proto__ = WebInspector.DialogDelegate.prototype;
+WebInspector.SidebarOverlay.prototype.__proto__ = WebInspector.Object.prototype;

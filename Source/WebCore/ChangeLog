@@ -1,3 +1,37 @@
+2012-02-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Scripts navigator overlay should not consume mouse actions.
+        https://bugs.webkit.org/show_bug.cgi?id=79674
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.registerShortcut):
+        (WebInspector.Panel.prototype.unregisterShortcut):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._editorClosed):
+        (WebInspector.ScriptsPanel.prototype._editorSelected):
+        (WebInspector.ScriptsPanel.prototype._fileSelected):
+        (WebInspector.ScriptsPanel.prototype._escDownWhileNavigatorOverlayOpen):
+        (WebInspector.ScriptsPanel.prototype.set _showNavigatorOverlay):
+        (WebInspector.ScriptsPanel.prototype._hideNavigatorOverlay):
+        (WebInspector.ScriptsPanel.prototype._navigatorOverlayWasShown):
+        * inspector/front-end/SidebarOverlay.js:
+        (WebInspector.SidebarOverlay):
+        (WebInspector.SidebarOverlay.prototype.show):
+        (WebInspector.SidebarOverlay.prototype._containingElementFocused):
+        (WebInspector.SidebarOverlay.prototype.position):
+        (WebInspector.SidebarOverlay.prototype.hide):
+        (WebInspector.SidebarOverlay.prototype._setWidth):
+        * inspector/front-end/dialog.css:
+        (.go-to-line-dialog button:active):
+        * inspector/front-end/scriptsPanel.css:
+        (#scripts-editor-view .sidebar-overlay):
+        * inspector/front-end/splitView.css:
+        (.split-view-resizer):
+        (.sidebar-overlay):
+        (.sidebar-overlay-resizer):
+
 2012-02-27  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] 0.11 support in MediaPlayerPrivateGStreamer
