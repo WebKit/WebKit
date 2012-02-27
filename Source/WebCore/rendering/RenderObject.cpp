@@ -644,8 +644,9 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderOb
         if (!container && !object->isRenderView())
             return;
         if (!last->isText() && last->style()->isPositioned()) {
-            bool willSkipRelativelyPositionedInlines = !object->isRenderBlock();
-            while (object && !object->isRenderBlock()) // Skip relatively positioned inlines and get to the enclosing RenderBlock.
+            bool willSkipRelativelyPositionedInlines = !object->isRenderBlock() || object->isAnonymousBlock();
+            // Skip relatively positioned inlines and anonymous blocks to get to the enclosing RenderBlock.
+            while (object && (!object->isRenderBlock() || object->isAnonymousBlock()))
                 object = object->container();
             if (!object || object->posChildNeedsLayout())
                 return;

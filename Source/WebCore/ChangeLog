@@ -1,3 +1,21 @@
+2012-02-27  Ken Buchanan  <kenrb@chromium.org>
+
+        Absolute positioned elements with Inline Relative Positioned Container are not layout correctly
+        https://bugs.webkit.org/show_bug.cgi?id=78713
+
+        Reviewed by David Hyatt.
+
+        Test: fast/css/positioned-in-relative-position-inline-crash.html
+
+        Patch originally by Robin Cao.
+
+        This is a regression. r104183 changes containingBlock() so that it returns the container
+        of an anonymous block for positioned objects, not the anonymous block itself. We should
+        change markContainingBlocksForLayout() to match the change in containingBlock().
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+
 2012-02-27  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: move record formatting into the timeline presentation model.
