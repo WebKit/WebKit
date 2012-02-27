@@ -173,10 +173,6 @@ namespace WebCore {
         PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
         PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
 
-#if ENABLE(CONTEXT_MENUS)
-        void showContextMenu();
-#endif
-
     private:
         Chrome(Page*, ChromeClient*);
 

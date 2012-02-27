@@ -1,3 +1,24 @@
+2012-02-26  Hajime Morrita  <morrita@chromium.org>
+
+        Move ChromeClient::showContextMenu() to ContextMenuClient
+        https://bugs.webkit.org/show_bug.cgi?id=79427
+
+        Reviewed by Adam Barth.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit):
+        (WebKit::WebContextMenuClient::showContextMenu): Moved from WebChromeClient
+        * WebProcess/WebCoreSupport/WebContextMenuClient.h:
+        (WebContextMenuClient):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleContextMenuEvent):
+        (WebKit::handleMouseEvent):
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::mouseEventSyncForTesting):
+
 2012-02-26  Huang Dongsung  <luxtella@company100.net>
 
         Use Functional instead of a MessageQueue for messages to the LayerTreeHostProxy

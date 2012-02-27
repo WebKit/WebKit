@@ -58,6 +58,7 @@
 #include "NavigationAction.h"
 #include "Node.h"
 #include "Page.h"
+#include "PlatformEvent.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
 #include "ReplaceSelectionCommand.h"
@@ -1269,6 +1270,17 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
     item.setChecked(shouldCheck);
     item.setEnabled(shouldEnable);
 }
+
+#if USE(ACCESSIBILITY_CONTEXT_MENUS)
+void ContextMenuController::showContextMenuAt(Frame* frame, const IntPoint& clickPoint)
+{
+    // Simulate a click in the middle of the accessibility object.
+    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime());
+    bool handled = frame->eventHandler()->sendContextMenuEvent(mouseEvent);
+    if (handled && client())
+        client()->showContextMenu();
+}
+#endif
 
 } // namespace WebCore
 

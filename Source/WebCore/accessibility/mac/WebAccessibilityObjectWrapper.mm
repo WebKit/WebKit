@@ -44,6 +44,7 @@
 #import "AccessibilityTableRow.h"
 #import "Chrome.h"
 #import "ColorMac.h"
+#import "ContextMenuController.h"
 #import "Frame.h"
 #import "FrameLoaderClient.h"
 #import "FrameSelection.h"
@@ -2614,14 +2615,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     Page* page = frame->page();
     if (!page)
         return;
-
-    // Simulate a click in the middle of the object.
-    IntPoint clickPoint = m_object->clickPoint();
-    
-    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime());
-    bool handled = frame->eventHandler()->sendContextMenuEvent(mouseEvent);
-    if (handled)
-        page->chrome()->showContextMenu();
+    page->contextMenuController()->showContextMenuAt(frame, m_object->clickPoint());
 }
 
 - (void)accessibilityPerformAction:(NSString*)action

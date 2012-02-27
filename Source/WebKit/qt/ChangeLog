@@ -1,3 +1,13 @@
+2012-02-26  Hajime Morrita  <morrita@chromium.org>
+
+        Move ChromeClient::showContextMenu() to ContextMenuClient
+        https://bugs.webkit.org/show_bug.cgi?id=79427
+
+        Reviewed by Adam Barth.
+
+        * WebCoreSupport/ChromeClientQt.h:
+        (ChromeClientQt):
+
 2012-02-24  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] API: Unify the loading properties and signals.

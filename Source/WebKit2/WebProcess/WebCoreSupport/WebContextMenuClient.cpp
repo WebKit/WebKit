@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebContextMenuClient.h"
 
+#include "WebContextMenu.h"
 #include "WebContextMenuItemData.h"
 #include "WebPage.h"
 #include <WebCore/ContextMenu.h>
@@ -86,5 +87,12 @@ void WebContextMenuClient::searchWithGoogle(const Frame* frame)
         page->mainFrame()->loader()->urlSelected(KURL(ParsedURLString, url), String(), 0, false, false, MaybeSendReferrer);
     }
 }
+
+#if USE(ACCESSIBILITY_CONTEXT_MENUS)
+void WebContextMenuClient::showContextMenu()
+{
+    m_page->contextMenu()->show();
+}
+#endif
 
 } // namespace WebKit

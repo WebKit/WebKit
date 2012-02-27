@@ -60,6 +60,10 @@ namespace WebCore {
 #if PLATFORM(MAC)
         virtual void searchWithSpotlight() = 0;
 #endif
+
+#if USE(ACCESSIBILITY_CONTEXT_MENUS)
+        virtual void showContextMenu() = 0;
+#endif
     };
 }
 

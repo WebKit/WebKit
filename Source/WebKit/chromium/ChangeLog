@@ -1,3 +1,13 @@
+2012-02-26  Hajime Morrita  <morrita@chromium.org>
+
+        Move ChromeClient::showContextMenu() to ContextMenuClient
+        https://bugs.webkit.org/show_bug.cgi?id=79427
+
+        Reviewed by Adam Barth.
+
+        * src/ChromeClientImpl.h:
+        (ChromeClientImpl):
+
 2012-02-26  James Robinson  <jamesr@chromium.org>
 
         Take 2 build fix.

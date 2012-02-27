@@ -125,9 +125,6 @@ namespace WebKit {
 #endif
         virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
         virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded);
-#if ENABLE(CONTEXT_MENUS)
-        virtual void showContextMenu() { }
-#endif
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
         virtual void loadIconForFiles(const Vector<WTF::String>&, FileIconLoader*);
 

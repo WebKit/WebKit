@@ -46,6 +46,7 @@ public:
     virtual void speak(const WTF::String&) OVERRIDE;
     virtual void stopSpeaking() OVERRIDE;
     virtual void searchWithSpotlight() OVERRIDE;
+    virtual void showContextMenu() OVERRIDE;
 
     WebView *webView() { return m_webView; }
         

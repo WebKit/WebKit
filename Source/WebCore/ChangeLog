@@ -1,3 +1,38 @@
+2012-02-26  Hajime Morrita  <morrita@chromium.org>
+
+        Move ChromeClient::showContextMenu() to ContextMenuClient
+        https://bugs.webkit.org/show_bug.cgi?id=79427
+
+        Reviewed by Adam Barth.
+
+        - Removed ChromeClient::showContextMenu(), Chrome::showContextMenu()
+        - Added ContextMenuController::showContextMenuAt(), ContextMenuClient::showContextMenu()
+        - Hided showContextMenu() behind ACCESSIBILITY_CONTEXT_MENUS
+
+        This change localizes context menu related code and will make it easy to
+        modularize CONTEXT_MENUS code.
+
+        Refactoring. No new tests.
+
+        * WebCore.exp.in:
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityShowContextMenu]):
+        * loader/EmptyClients.h:
+        (EmptyContextMenuClient):
+        (WebCore::EmptyContextMenuClient::showContextMenu):
+        * page/ContextMenuClient.h:
+        (ContextMenuClient):
+        * page/ContextMenuController.cpp:
+        (WebCore):
+        (WebCore::ContextMenuController::showContextMenuAt):
+        * page/ContextMenuController.h:
+        (ContextMenuController):
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        (Chrome):
+        * page/ChromeClient.h:
+        (ChromeClient):
+
 2012-02-26  Benjamin Poulain  <bpoulain@apple.com>
 
         [Mac] Release localized Strings instead of AutoRelease

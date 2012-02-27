@@ -152,10 +152,6 @@ public:
     virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const { return adoptRef(new EmptyPopupMenu()); }
     virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const { return adoptRef(new EmptySearchPopupMenu()); }
 
-#if ENABLE(CONTEXT_MENUS)
-    virtual void showContextMenu() { }
-#endif
-
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
     virtual void registerProtocolHandler(const String&, const String&, const String&, const String&) { }
 #endif
@@ -565,6 +561,10 @@ public:
 
 #if PLATFORM(MAC)
     virtual void searchWithSpotlight() { }
+#endif
+
+#if USE(ACCESSIBILITY_CONTEXT_MENUS)
+    virtual void showContextMenu() { }
 #endif
 };
 #endif // ENABLE(CONTEXT_MENUS)

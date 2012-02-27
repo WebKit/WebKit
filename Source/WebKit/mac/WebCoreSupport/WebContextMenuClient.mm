@@ -42,9 +42,12 @@
 #import "WebViewInternal.h"
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
+#import <WebCore/Document.h>
 #import <WebCore/KURL.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Page.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebKit/DOMPrivate.h>
 
@@ -345,4 +348,30 @@ void WebContextMenuClient::speak(const String& string)
 void WebContextMenuClient::stopSpeaking()
 {
     [NSApp stopSpeaking:nil];
+}
+
+void WebContextMenuClient::showContextMenu()
+{
+    Page* page = [m_webView page];
+    if (!page)
+        return;
+    ContextMenuController* controller = page->contextMenuController();
+    Node* node = controller->hitTestResult().innerNonSharedNode();
+    if (!node)
+        return;
+    Frame* frame = node->document()->frame();
+    if (!frame)
+        return;
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return;
+
+    IntPoint point = frameView->contentsToWindow(controller->hitTestResult().point());
+    NSView* view = frameView->documentView();
+    NSPoint nsScreenPoint = [view convertPoint:point toView:nil];
+    // Show the contextual menu for this event.
+    NSEvent* event = [NSEvent mouseEventWithType:NSRightMouseDown location:nsScreenPoint modifierFlags:0 timestamp:0 windowNumber:[[view window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
+    NSMenu* nsMenu = [view menuForEvent:event];
+    if (nsMenu)
+        [NSMenu popUpContextMenu:nsMenu withEvent:event forView:view];
 }

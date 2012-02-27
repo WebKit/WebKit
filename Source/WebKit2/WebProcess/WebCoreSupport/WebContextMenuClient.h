@@ -59,7 +59,11 @@ private:
 #if PLATFORM(MAC)
     virtual void searchWithSpotlight() OVERRIDE;
 #endif
-    
+
+#if USE(ACCESSIBILITY_CONTEXT_MENUS)
+    void showContextMenu() OVERRIDE;
+#endif
+
     WebPage* m_page;
 };
 
