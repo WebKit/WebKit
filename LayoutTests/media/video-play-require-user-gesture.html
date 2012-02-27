@@ -9,6 +9,11 @@
             if (window.internals) 
                 window.internals.setMediaPlaybackRequiresUserGesture(document, true);
 
+            function cleanGestureRequirement() {
+                if (window.internals) 
+                    window.internals.setMediaPlaybackRequiresUserGesture(document, false);
+            }
+
             function click()
             {
                 if (window.eventSender) {
@@ -16,6 +21,7 @@
                     try {
                         playCoords = mediaControlsButtonCoordinates(video, "play-button");
                     } catch (exception) {
+                        cleanGestureRequirement();
                         failTest(exception.description);
                         return;
                     }
@@ -32,6 +38,7 @@
             function playing()
             {
                 if (userGestureInitiated == 0) {
+                    cleanGestureRequirement();
                     failTest("Should not play without user gesture.");
                 } else {
                     run("video.pause()");
@@ -47,8 +54,10 @@
                 try {
                     run("video.webkitEnterFullScreen()");
                 } catch(ex) {
+                    cleanGestureRequirement();
                     failTest("video.webkitEnterFullScreen() still requires user gesture.");
                 }
+                cleanGestureRequirement(); 
                 endTest();
             }
 
