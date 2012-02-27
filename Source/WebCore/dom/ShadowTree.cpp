@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "HTMLContentSelector.h"
+#include "InspectorInstrumentation.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
 #include "Text.h"
@@ -56,6 +57,7 @@ void ShadowTree::pushShadowRoot(ShadowRoot* shadowRoot)
 #endif
 
     m_shadowRoots.push(shadowRoot);
+    InspectorInstrumentation::didPushShadowRoot(host(), shadowRoot);
 }
 
 ShadowRoot* ShadowTree::popShadowRoot()
@@ -63,6 +65,7 @@ ShadowRoot* ShadowTree::popShadowRoot()
     if (!hasShadowRoot())
         return 0;
 
+    InspectorInstrumentation::willPopShadowRoot(host(), m_shadowRoots.head());
     return m_shadowRoots.removeHead();
 }
 

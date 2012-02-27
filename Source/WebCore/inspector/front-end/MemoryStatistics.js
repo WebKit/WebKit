@@ -80,7 +80,10 @@ WebInspector.MemoryStatistics = function(timelinePanel, sidebarWidth)
     TimelineAgent.setIncludeMemoryDetails(true);
 }
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.SwatchCheckbox = function(title, color)
 {
     this.element = document.createElement("div");
@@ -120,7 +123,9 @@ WebInspector.SwatchCheckbox.prototype = {
 
 WebInspector.SwatchCheckbox.prototype.__proto__ = WebInspector.Object.prototype;
 
-
+/**
+ * @constructor
+ */
 WebInspector.CounterUI = function(memoryCountersPane, title, currentValueLabel, rgb, valueGetter)
 {
     this._memoryCountersPane = memoryCountersPane;

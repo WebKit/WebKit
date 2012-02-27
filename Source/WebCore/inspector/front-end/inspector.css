@@ -1075,6 +1075,10 @@ iframe.panel.extension {
     margin-left: -12px;
 }
 
+.webkit-html-tag.shadow, .webkit-html-fragment.shadow {
+    opacity: 0.6;
+}
+
 .outline-disclosure li.parent::before {
     content: url(Images/treeRightTriangleBlack.png);
     float: left;

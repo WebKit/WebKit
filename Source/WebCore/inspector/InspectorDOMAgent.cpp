@@ -81,6 +81,8 @@
 #include "RenderStyleConstants.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
+#include "ShadowTree.h"
 #include "StylePropertySet.h"
 #include "StyleSheetList.h"
 #include "Text.h"
@@ -335,6 +337,11 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
         unbind(frameOwner->contentDocument(), nodesMap);
     }
 
+    if (node->isElementNode() && toElement(node)->hasShadowRoot()) {
+        for (ShadowRoot* root = toElement(node)->shadowTree()->youngestShadowRoot(); root; root = root->olderShadowRoot())
+            unbind(root, nodesMap);
+    }
+
     nodesMap->remove(node);
     bool childrenRequested = m_childrenRequested.contains(id);
     if (childrenRequested) {
@@ -371,18 +378,31 @@ Element* InspectorDOMAgent::assertElement(ErrorString* errorString, int nodeId)
     return toElement(node);
 }
 
+Node* InspectorDOMAgent::assertEditableNode(ErrorString* errorString, int nodeId)
+{
+    Node* node = assertNode(errorString, nodeId);
+    if (!node)
+        return 0;
 
-HTMLElement* InspectorDOMAgent::assertHTMLElement(ErrorString* errorString, int nodeId)
+    if (node->isInShadowTree()) {
+        *errorString = "Can not edit nodes from shadow trees";
+        return 0;
+    }
+
+    return node;
+}
+
+Element* InspectorDOMAgent::assertEditableElement(ErrorString* errorString, int nodeId)
 {
     Element* element = assertElement(errorString, nodeId);
     if (!element)
         return 0;
 
-    if (!element->isHTMLElement()) {
-        *errorString = "Node is not an HTML Element";
+    if (element->isInShadowTree()) {
+        *errorString = "Can not edit elements from shadow trees";
         return 0;
     }
-    return toHTMLElement(element);
+    return element;
 }
 
 void InspectorDOMAgent::getDocument(ErrorString*, RefPtr<InspectorObject>& root)
@@ -403,7 +423,7 @@ void InspectorDOMAgent::getDocument(ErrorString*, RefPtr<InspectorObject>& root)
 void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId)
 {
     Node* node = nodeForId(nodeId);
-    if (!node || (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE && node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) || node->isShadowRoot())
+    if (!node || (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE && node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE))
         return;
     if (m_childrenRequested.contains(nodeId))
         return;
@@ -534,7 +554,7 @@ int InspectorDOMAgent::boundNodeId(Node* node)
 
 void InspectorDOMAgent::setAttributeValue(ErrorString* errorString, int elementId, const String& name, const String& value)
 {
-    Element* element = assertElement(errorString, elementId);
+    Element* element = assertEditableElement(errorString, elementId);
     if (!element)
         return;
 
@@ -543,7 +563,7 @@ void InspectorDOMAgent::setAttributeValue(ErrorString* errorString, int elementI
 
 void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elementId, const String& text, const String* const name)
 {
-    Element* element = assertElement(errorString, elementId);
+    Element* element = assertEditableElement(errorString, elementId);
     if (!element)
         return;
 
@@ -588,7 +608,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
 
 void InspectorDOMAgent::removeAttribute(ErrorString* errorString, int elementId, const String& name)
 {
-    Element* element = assertElement(errorString, elementId);
+    Element* element = assertEditableElement(errorString, elementId);
     if (!element)
         return;
 
@@ -597,7 +617,7 @@ void InspectorDOMAgent::removeAttribute(ErrorString* errorString, int elementId,
 
 void InspectorDOMAgent::removeNode(ErrorString* errorString, int nodeId)
 {
-    Node* node = assertNode(errorString, nodeId);
+    Node* node = assertEditableNode(errorString, nodeId);
     if (!node)
         return;
 
@@ -662,7 +682,7 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
         return;
     }
 
-    Node* node = assertNode(errorString, nodeId);
+    Node* node = assertEditableNode(errorString, nodeId);
     if (!node)
         return;
 
@@ -690,7 +710,7 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
 
 void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const String& value)
 {
-    Node* node = assertNode(errorString, nodeId);
+    Node* node = assertEditableNode(errorString, nodeId);
     if (!node)
         return;
 
@@ -1038,17 +1058,17 @@ void InspectorDOMAgent::hideHighlight(ErrorString*)
 
 void InspectorDOMAgent::moveTo(ErrorString* errorString, int nodeId, int targetElementId, const int* const anchorNodeId, int* newNodeId)
 {
-    Node* node = assertNode(errorString, nodeId);
+    Node* node = assertEditableNode(errorString, nodeId);
     if (!node)
         return;
 
-    Element* targetElement = assertElement(errorString, targetElementId);
+    Element* targetElement = assertEditableElement(errorString, targetElementId);
     if (!targetElement)
         return;
 
     Node* anchorNode = 0;
     if (anchorNodeId && *anchorNodeId) {
-        anchorNode = assertNode(errorString, *anchorNodeId);
+        anchorNode = assertEditableNode(errorString, *anchorNodeId);
         if (!anchorNode)
             return;
         if (anchorNode->parentNode() != targetElement) {
@@ -1159,9 +1179,6 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
         localName = node->localName();
         break;
     case Node::DOCUMENT_FRAGMENT_NODE:
-        if (!node->isShadowRoot())
-            break;
-        // Fall through
     case Node::DOCUMENT_NODE:
     case Node::ELEMENT_NODE:
     default:
@@ -1193,6 +1210,12 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
             Document* doc = frameOwner->contentDocument();
             if (doc)
                 value->setContentDocument(buildObjectForNode(doc, 0, nodesMap));
+        }
+        if (element->hasShadowRoot()) {
+            RefPtr<InspectorArray> shadowRoots = InspectorArray::create();
+            for (ShadowRoot* root = element->shadowTree()->youngestShadowRoot(); root; root = root->olderShadowRoot())
+                shadowRoots->pushObject(buildObjectForNode(root, 0, nodesMap));
+            value->setShadowRoots(shadowRoots);
         }
     } else if (node->isDocumentNode()) {
         Document* document = static_cast<Document*>(node);
@@ -1473,6 +1496,21 @@ void InspectorDOMAgent::didInvalidateStyleAttr(Node* node)
     if (!m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask = adoptPtr(new RevalidateStyleAttributeTask(this));
     m_revalidateStyleAttrTask->scheduleFor(static_cast<Element*>(node));
+}
+
+void InspectorDOMAgent::didPushShadowRoot(Element* host, ShadowRoot* root)
+{
+    int hostId = m_documentNodeToIdMap.get(host);
+    if (hostId)
+        m_frontend->shadowRootPushed(hostId, buildObjectForNode(root, 0, &m_documentNodeToIdMap));
+}
+
+void InspectorDOMAgent::willPopShadowRoot(Element* host, ShadowRoot* root)
+{
+    int hostId = m_documentNodeToIdMap.get(host);
+    int rootId = m_documentNodeToIdMap.get(root);
+    if (hostId && rootId)
+        m_frontend->shadowRootPopped(hostId, rootId);
 }
 
 Node* InspectorDOMAgent::nodeForPath(const String& path)

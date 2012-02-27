@@ -64,6 +64,7 @@ class ScriptArguments;
 class ScriptCallStack;
 class ScriptExecutionContext;
 class ScriptProfile;
+class ShadowRoot;
 class StorageArea;
 class WorkerContext;
 class WorkerContextProxy;
@@ -93,6 +94,8 @@ public:
     static void didInvalidateStyleAttr(Document*, Node*);
     static void frameWindowDiscarded(Frame*, DOMWindow*);
     static void mediaQueryResultChanged(Document*);
+    static void didPushShadowRoot(Element* host, ShadowRoot*);
+    static void willPopShadowRoot(Element* host, ShadowRoot*);
 
     static void mouseDidMoveOverElement(Page*, const HitTestResult&, unsigned modifierFlags);
     static bool handleMousePress(Page*);
@@ -243,6 +246,8 @@ private:
     static void didInvalidateStyleAttrImpl(InstrumentingAgents*, Node*);
     static void frameWindowDiscardedImpl(InstrumentingAgents*, DOMWindow*);
     static void mediaQueryResultChangedImpl(InstrumentingAgents*);
+    static void didPushShadowRootImpl(InstrumentingAgents*, Element* host, ShadowRoot*);
+    static void willPopShadowRootImpl(InstrumentingAgents*, Element* host, ShadowRoot*);
 
     static void mouseDidMoveOverElementImpl(InstrumentingAgents*, const HitTestResult&, unsigned modifierFlags);
     static bool handleMousePressImpl(InstrumentingAgents*);
@@ -475,6 +480,24 @@ inline void InspectorInstrumentation::mediaQueryResultChanged(Document* document
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         mediaQueryResultChangedImpl(instrumentingAgents);
+#endif
+}
+
+inline void InspectorInstrumentation::didPushShadowRoot(Element* host, ShadowRoot* root)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(host->ownerDocument()))
+        didPushShadowRootImpl(instrumentingAgents, host, root);
+#endif
+}
+
+inline void InspectorInstrumentation::willPopShadowRoot(Element* host, ShadowRoot* root)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(host->ownerDocument()))
+        willPopShadowRootImpl(instrumentingAgents, host, root);
 #endif
 }
 

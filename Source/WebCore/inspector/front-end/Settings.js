@@ -180,6 +180,7 @@ WebInspector.ExperimentsSettings = function()
     // FIXME: Enable http/tests/inspector/indexeddb/resources-panel.html when removed from experiments.
     this.showIndexedDB = this._createExperiment("showIndexedDB", "Show IndexedDB in Resources panel");
     this.debugCSS = this._createExperiment("debugCSS", "Load CSS via link tags for debugging");
+    this.showShadowDOM = this._createExperiment("showShadowDOM", "Show shadow DOM");
 
     this._cleanUpSetting();
 }

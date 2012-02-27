@@ -1298,7 +1298,8 @@
                     { "name": "xmlVersion", "type": "string", "optional": true, "description": "<code>Document</code>'s XML version in case of XML documents." },
                     { "name": "name", "type": "string", "optional": true, "description": "<code>Attr</code>'s name." },
                     { "name": "value", "type": "string", "optional": true, "description": "<code>Attr</code>'s value." },
-                    { "name": "contentDocument", "$ref": "Node", "optional": true, "description": "Content document for frame owner elements." }
+                    { "name": "contentDocument", "$ref": "Node", "optional": true, "description": "Content document for frame owner elements." },
+                    { "name": "shadowRoots", "type": "array", "optional": true, "items": { "$ref": "Node" }, "description": "Shadow root list for given element host." }
                 ],
                 "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
             },
@@ -1682,6 +1683,24 @@
                     { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has been removed." }
                 ],
                 "description": "Mirrors <code>DOMNodeRemoved</code> event."
+            },
+            {
+                "name": "shadowRootPushed",
+                "parameters": [
+                    { "name": "hostId", "$ref": "NodeId", "description": "Host element id." },
+                    { "name": "root", "$ref": "Node", "description": "Shadow root." }
+                ],
+                "description": "Called when shadow root is pushed into the element.",
+                "hidden": true
+            },
+            {
+                "name": "shadowRootPopped",
+                "parameters": [
+                    { "name": "hostId", "$ref": "NodeId", "description": "Host element id." },
+                    { "name": "rootId", "$ref": "NodeId", "description": "Shadow root id." }
+                ],
+                "description": "Called when shadow root is popped from the element.",
+                "hidden": true
             }
         ]
     },

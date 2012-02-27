@@ -201,6 +201,18 @@ void InspectorInstrumentation::mediaQueryResultChangedImpl(InstrumentingAgents* 
         cssAgent->mediaQueryResultChanged();
 }
 
+void InspectorInstrumentation::didPushShadowRootImpl(InstrumentingAgents* instrumentingAgents, Element* host, ShadowRoot* root)
+{
+    if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
+        domAgent->didPushShadowRoot(host, root);
+}
+
+void InspectorInstrumentation::willPopShadowRootImpl(InstrumentingAgents* instrumentingAgents, Element* host, ShadowRoot* root)
+{
+    if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
+        domAgent->willPopShadowRoot(host, root);
+}
+
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents* instrumentingAgents, const HitTestResult& result, unsigned modifierFlags)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())

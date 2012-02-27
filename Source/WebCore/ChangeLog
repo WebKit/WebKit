@@ -1,3 +1,63 @@
+2012-02-27  Pavel Feldman  <pfeldman@google.com>
+
+        [Shadow]: Expose one ShadowRoot in the Elements panel (under experiment flag)
+        https://bugs.webkit.org/show_bug.cgi?id=78202
+
+        Reviewed by Yury Semikhatsky.
+
+        * dom/ShadowTree.cpp:
+        (WebCore::ShadowTree::pushShadowRoot):
+        (WebCore::ShadowTree::popShadowRoot):
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::unbind):
+        (WebCore::InspectorDOMAgent::assertEditableNode):
+        (WebCore::InspectorDOMAgent::assertEditableElement):
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::setAttributeValue):
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        (WebCore::InspectorDOMAgent::removeAttribute):
+        (WebCore::InspectorDOMAgent::removeNode):
+        (WebCore::InspectorDOMAgent::setOuterHTML):
+        (WebCore::InspectorDOMAgent::setNodeValue):
+        (WebCore::InspectorDOMAgent::moveTo):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::didPushShadowRoot):
+        (WebCore):
+        (WebCore::InspectorDOMAgent::willPopShadowRoot):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore):
+        (InspectorDOMAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didPushShadowRootImpl):
+        (WebCore):
+        (WebCore::InspectorInstrumentation::willPopShadowRootImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore):
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::didPushShadowRoot):
+        (WebCore::InspectorInstrumentation::willPopShadowRoot):
+        * inspector/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::addInspectedNode):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMNode.prototype.hasChildNodes):
+        (WebInspector.DOMNode.prototype.isInShadowTree):
+        (WebInspector.DOMNode.prototype._insertChild):
+        (WebInspector.DOMNode.prototype._setChildrenPayload):
+        (WebInspector.DOMDocument):
+        (WebInspector.DOMAgent.prototype._setDetachedRoot):
+        (WebInspector.DOMAgent.prototype._shadowRootPopped):
+        (WebInspector.DOMDispatcher.prototype.childNodeRemoved):
+        (WebInspector.DOMDispatcher.prototype.shadowRootPushed):
+        (WebInspector.DOMDispatcher.prototype.shadowRootPopped):
+        * inspector/front-end/ElementsTreeOutline.js:
+        * inspector/front-end/MemoryStatistics.js:
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/inspector.css:
+        (.webkit-html-tag.shadow, .webkit-html-fragment.shadow):
+
 2012-02-27  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [refactoring] remove dependencies from TimelinePanel from most of FormattedRecord

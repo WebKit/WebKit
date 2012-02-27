@@ -69,6 +69,7 @@ class NameNodeMap;
 class Node;
 class RevalidateStyleAttributeTask;
 class ScriptValue;
+class ShadowRoot;
 
 struct Highlight;
 struct HighlightData;
@@ -167,6 +168,8 @@ public:
     void styleAttributeInvalidated(const Vector<Element*>& elements);
     void characterDataModified(CharacterData*);
     void didInvalidateStyleAttr(Node*);
+    void didPushShadowRoot(Element* host, ShadowRoot*);
+    void willPopShadowRoot(Element* host, ShadowRoot*);
 
     Node* nodeForId(int nodeId);
     int boundNodeId(Node*);
@@ -207,8 +210,10 @@ private:
     typedef HashMap<RefPtr<Node>, int> NodeToIdMap;
     int bind(Node*, NodeToIdMap*);
     void unbind(Node*, NodeToIdMap*);
+
     Element* assertElement(ErrorString*, int nodeId);
-    HTMLElement* assertHTMLElement(ErrorString*, int nodeId);
+    Node* assertEditableNode(ErrorString*, int nodeId);
+    Element* assertEditableElement(ErrorString*, int nodeId);
 
     int pushNodePathToFrontend(Node*);
     void pushChildNodesToFrontend(int nodeId);

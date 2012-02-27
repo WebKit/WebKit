@@ -33,11 +33,13 @@
  * @constructor
  * @param {WebInspector.DOMAgent} domAgent
  * @param {?WebInspector.DOMDocument} doc
+ * @param {boolean} isInShadowTree
  * @param {DOMAgent.Node} payload
  */
-WebInspector.DOMNode = function(domAgent, doc, payload) {
+WebInspector.DOMNode = function(domAgent, doc, isInShadowTree, payload) {
     this._domAgent = domAgent;
     this.ownerDocument = doc;
+    this._isInShadowTree = isInShadowTree;
 
     this.id = payload.nodeId;
     domAgent._idToDOMNode[this.id] = this;
@@ -45,6 +47,8 @@ WebInspector.DOMNode = function(domAgent, doc, payload) {
     this._nodeName = payload.nodeName;
     this._localName = payload.localName;
     this._nodeValue = payload.nodeValue;
+
+    this._shadowRoots = [];
 
     this._attributes = [];
     this._attributesMap = {};
@@ -67,6 +71,14 @@ WebInspector.DOMNode = function(domAgent, doc, payload) {
         this._contentDocument = new WebInspector.DOMDocument(domAgent, payload.contentDocument);
         this.children = [this._contentDocument];
         this._renumber();
+    }
+
+    if (payload.shadowRoots && WebInspector.experimentsSettings.showShadowDOM.isEnabled()) {
+        for (var i = 0; i < payload.shadowRoots.length; ++i) {
+            var root = payload.shadowRoots[i];
+            var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, true, root);
+            this._shadowRoots.push(node);
+        }
     }
 
     if (this._nodeType === Node.ELEMENT_NODE) {
@@ -117,7 +129,7 @@ WebInspector.DOMNode.prototype = {
      */
     hasChildNodes: function()
     {
-        return this._childNodeCount > 0;
+        return this._childNodeCount > 0 || !!this._shadowRoots.length;
     },
 
     /**
@@ -134,6 +146,14 @@ WebInspector.DOMNode.prototype = {
     nodeName: function()
     {
         return this._nodeName;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isInShadowTree: function()
+    {
+        return this._isInShadowTree;
     },
 
     /**
@@ -400,11 +420,11 @@ WebInspector.DOMNode.prototype = {
      */
     _insertChild: function(prev, payload)
     {
-        var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, payload);
+        var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, this._isInShadowTree, payload);
         if (!prev) {
             if (!this.children) {
                 // First node
-                this.children = [ node ];
+                this.children = this._shadowRoots.concat([ node ]);
             } else
                 this.children.unshift(node);
         } else
@@ -432,10 +452,10 @@ WebInspector.DOMNode.prototype = {
         if (this._contentDocument)
             return;
 
-        this.children = [];
+        this.children = this._shadowRoots.slice();
         for (var i = 0; i < payloads.length; ++i) {
             var payload = payloads[i];
-            var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, payload);
+            var node = new WebInspector.DOMNode(this._domAgent, this.ownerDocument, this._isInShadowTree, payload);
             this.children.push(node);
         }
         this._renumber();
@@ -642,7 +662,7 @@ WebInspector.DOMNode.prototype = {
  */
 WebInspector.DOMDocument = function(domAgent, payload)
 {
-    WebInspector.DOMNode.call(this, domAgent, this, payload);
+    WebInspector.DOMNode.call(this, domAgent, this, false, payload);
     this.documentURL = payload.documentURL || "";
     this.xmlVersion = payload.xmlVersion;
     this._listeners = {};
@@ -887,7 +907,7 @@ WebInspector.DOMAgent.prototype = {
      */
     _setDetachedRoot: function(payload)
     {
-        new WebInspector.DOMNode(this, null, payload);
+        new WebInspector.DOMNode(this, null, false, payload);
     },
 
     /**
@@ -941,6 +961,13 @@ WebInspector.DOMAgent.prototype = {
         parent._removeChild(node);
         this._unbind(node);
         this.dispatchEventToListeners(WebInspector.DOMAgent.Events.NodeRemoved, {node:node, parent:parent});
+    },
+
+    /**
+     * @param {DOMAgent.NodeId} rootId
+     */
+    _shadowRootPopped: function(rootId)
+    {
     },
 
     /**
@@ -1253,6 +1280,24 @@ WebInspector.DOMDispatcher.prototype = {
     childNodeRemoved: function(parentNodeId, nodeId)
     {
         this._domAgent._childNodeRemoved(parentNodeId, nodeId);
+    },
+
+    /**
+     * @param {DOMAgent.NodeId} hostId
+     * @param {DOMAgent.Node} root
+     */
+    shadowRootPushed: function(hostId, root)
+    {
+        this._domAgent._childNodeInserted(hostId, 0, root);
+    },
+
+    /**
+     * @param {DOMAgent.NodeId} hostId
+     * @param {DOMAgent.NodeId} rootId
+     */
+    shadowRootPopped: function(hostId, rootId)
+    {
+        this._domAgent._childNodeRemoved(hostId, rootId);
     }
 }
 
