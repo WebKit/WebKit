@@ -443,7 +443,7 @@ WebInspector.MetricsSidebarPane.prototype = {
                 continue;
 
             this.previousPropertyDataCandidate = property;
-            property.setValue(userInput, commitEditor, callback);
+            property.setValue(userInput, commitEditor, true, callback);
             return;
         }
 

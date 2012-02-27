@@ -13,42 +13,61 @@
 
 function test()
 {
-    InspectorTest.selectNodeAndWaitForStyles("container", step1);
+    InspectorTest.selectNodeAndWaitForStyles("container", testAppendProperty.bind(null, testInsertBegin));
 
-    function step1()
+    function testAppendProperty()
     {
-        InspectorTest.addResult("Initial value");
+        InspectorTest.addResult("=== Last property ===");
+        testAddProperty("margin-left: 2px", undefined, testInsertBegin);
+    }
+
+    function testInsertBegin()
+    {
+        InspectorTest.addResult("=== First property ===");
+        testAddProperty("margin-top: 0px", 0, testInsertMiddle);
+    }
+
+    function testInsertMiddle()
+    {
+        InspectorTest.addResult("=== Middle property ===");
+        testAddProperty("margin-right: 1px", 1, InspectorTest.completeTest.bind(InspectorTest));
+    }
+
+    function testAddProperty(propertyText, index, callback)
+    {
+
+        InspectorTest.addResult("(Initial value)");
         InspectorTest.dumpSelectedElementStyles(true);
 
         var treeItem = InspectorTest.getMatchedStylePropertyTreeItem("font-weight");
-        var treeElement = treeItem.section.addNewBlankProperty();
-        treeElement.applyStyleText("margin-left: 1px", true, false);
-        InspectorTest.waitForStyles("container", step2);
-    }
+        var treeElement = treeItem.section.addNewBlankProperty(index);
+        treeElement.applyStyleText(propertyText, true, true);
+        InspectorTest.waitForStyles("container", step1);
 
-    function step2()
-    {
-        InspectorTest.addResult("After adding property");
-        InspectorTest.dumpSelectedElementStyles(true);
+        function step1()
+        {
+            InspectorTest.addResult("(After adding property)");
+            InspectorTest.dumpSelectedElementStyles(true);
 
-        WebInspector.domAgent.undo();
-        InspectorTest.selectNodeAndWaitForStyles("other", step3);
-    }
+            WebInspector.domAgent.undo();
+            InspectorTest.selectNodeAndWaitForStyles("other", step2);
+        }
 
-    function step3()
-    {
-        InspectorTest.addResult("After undo");
-        InspectorTest.dumpSelectedElementStyles(true);
+        function step2()
+        {
+            InspectorTest.addResult("(After undo)");
+            InspectorTest.dumpSelectedElementStyles(true);
 
-        WebInspector.domAgent.redo();
-        InspectorTest.selectNodeAndWaitForStyles("container", step4);
-    }
+            WebInspector.domAgent.redo();
+            InspectorTest.selectNodeAndWaitForStyles("container", step3);
+        }
 
-    function step4()
-    {
-        InspectorTest.addResult("After redo");
-        InspectorTest.dumpSelectedElementStyles(true);
-        InspectorTest.completeTest();
+        function step3()
+        {
+            InspectorTest.addResult("(After redo)");
+            InspectorTest.dumpSelectedElementStyles(true);
+            callback();
+        }
     }
 }
 </script>

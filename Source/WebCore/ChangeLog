@@ -1,3 +1,24 @@
+2012-02-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Allow adding CSS properties anywhere in the style declaration, not only at the end
+        https://bugs.webkit.org/show_bug.cgi?id=79662
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleDeclaration.prototype.newBlankProperty):
+        (WebInspector.CSSProperty.prototype.setText):
+        (WebInspector.CSSProperty.prototype.setValue):
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype._applyUserInput):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection):
+        (WebInspector.StylePropertiesSection.prototype._handleSelectorContainerClick):
+        (WebInspector.StylePropertiesSection.prototype.addNewBlankProperty):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        (WebInspector.StylePropertyTreeElement.prototype.element.userInput.previousContent.context.moveDirection):
+        (WebInspector.StylePropertyTreeElement.prototype.styleText.updateInterface.majorChange.isRevert):
+
 2012-02-27  Pavel Feldman  <pfeldman@google.com>
 
         [Shadow]: Expose one ShadowRoot in the Elements panel (under experiment flag)

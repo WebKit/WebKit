@@ -56,7 +56,7 @@ function test()
                 {
                     var style = styleSheet.rules[0].style;
                     var property = style.getLiveProperty("margin");
-                    property.setText("margin:25px;", false, step2);
+                    property.setText("margin:25px;", false, true, step2);
                 }
 
                 function step2()
@@ -75,7 +75,7 @@ function test()
                     var style = styleSheet.rules[0].style;
                     var property = style.getLiveProperty("margin");
                     waitForRevision(next);
-                    property.setText("margin:30px;", true);
+                    property.setText("margin:30px;", true, true);
                 }
             }
         ]);

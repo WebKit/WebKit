@@ -967,6 +967,7 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     var openBrace = document.createElement("span");
     openBrace.textContent = " {";
     selectorContainer.appendChild(openBrace);
+    selectorContainer.addEventListener("click", this._handleSelectorContainerClick.bind(this), false);
 
     var closeBrace = document.createElement("div");
     closeBrace.textContent = "}";
@@ -996,6 +997,7 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     this._selectorRefElement.appendChild(this._createRuleOriginNode());
     selectorContainer.insertBefore(this._selectorRefElement, selectorContainer.firstChild);
     this.titleElement.appendChild(selectorContainer);
+    this._selectorContainer = selectorContainer;
 
     if (isInherited)
         this.element.addStyleClass("show-inherited"); // This one is related to inherited rules, not compted style.
@@ -1162,15 +1164,22 @@ WebInspector.StylePropertiesSection.prototype = {
         return null;
     },
 
+    _handleSelectorContainerClick: function(event)
+    {
+        if (event.target === this._selectorContainer)
+            this.addNewBlankProperty(0).startEditing();
+    },
+
     /**
-     * @param {number=} optionalIndex
+     * @param {number=} index
      */
-    addNewBlankProperty: function(optionalIndex)
+    addNewBlankProperty: function(index)
     {
         var style = this.styleRule.style;
-        var property = style.newBlankProperty();
+        var property = style.newBlankProperty(index);
         var item = new WebInspector.StylePropertyTreeElement(this, this._parentPane, this.styleRule, style, property, false, false, false);
-        this.propertiesTreeOutline.appendChild(item);
+        index = property.index;
+        this.propertiesTreeOutline.insertChild(item, index);
         item.listItemElement.textContent = "";
         item._newProperty = true;
         item.updateTitle();
@@ -1994,9 +2003,15 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     _startEditing: function(event)
     {
-        this.startEditing(event.target);
         event.stopPropagation();
         event.preventDefault();
+
+        if (event.target === this.listItemElement) {
+            this.section.addNewBlankProperty(this.property.index + 1).startEditing();
+            return;
+        }
+
+        this.startEditing(event.target);
     },
 
     _isNameElement: function(element)
@@ -2233,6 +2248,16 @@ WebInspector.StylePropertyTreeElement.prototype = {
         }
     },
 
+    _findSibling: function(moveDirection)
+    {
+        var target = this;
+        do {
+            target = (moveDirection === "forward" ? target.nextSibling : target.previousSibling);
+        } while(target && target.inherited);
+
+        return target;
+    },
+
     editingCommitted: function(element, userInput, previousContent, context, moveDirection)
     {
         this._removePrompt();
@@ -2245,10 +2270,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         var moveToOther = (isEditingName ^ (moveDirection === "forward"));
         var abandonNewProperty = this._newProperty && !userInput && (moveToOther || isEditingName);
         if (moveDirection === "forward" && !isEditingName || moveDirection === "backward" && isEditingName) {
-            do {
-                moveTo = (moveDirection === "forward" ? moveTo.nextSibling : moveTo.previousSibling);
-            } while(moveTo && moveTo.inherited);
-
+            moveTo = moveTo._findSibling(moveDirection);
             if (moveTo)
                 moveToPropertyName = moveTo.name;
             else if (moveDirection === "forward" && (!this._newProperty || userInput))
@@ -2322,7 +2344,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
             }
 
             if (abandonNewProperty) {
-                var sectionToEdit = moveDirection === "backward" ? section : section.nextEditableSibling();
+                moveTo = this._findSibling(moveDirection);
+                var sectionToEdit = (moveTo || moveDirection === "backward") ? section : section.nextEditableSibling();
                 if (sectionToEdit) {
                     if (sectionToEdit.rule)
                         sectionToEdit.startEditingSelector();
@@ -2401,6 +2424,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 return;
             }
 
+            if (this._newProperty)
+                this._newPropertyInStyle = true;
             this.style = newStyle;
             this.property = newStyle.propertyAt(this.property.index);
             this._styleRule.style = this.style;
@@ -2420,7 +2445,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
         // FIXME: this does not handle trailing comments.
         if (styleText.length && !/;\s*$/.test(styleText))
             styleText += ";";
-        this.property.setText(styleText, majorChange, callback.bind(this, userOperationFinishedCallback.bind(null, this._parentPane, updateInterface), this.originalPropertyText));
+        var overwriteProperty = !!(!this._newProperty || this._newPropertyInStyle);
+        this.property.setText(styleText, majorChange, overwriteProperty, callback.bind(this, userOperationFinishedCallback.bind(null, this._parentPane, updateInterface), this.originalPropertyText));
     },
 
     ondblclick: function()
