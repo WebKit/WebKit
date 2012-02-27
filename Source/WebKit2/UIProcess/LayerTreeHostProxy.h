@@ -22,7 +22,6 @@
 
 #include "BackingStore.h"
 #include "DrawingAreaProxy.h"
-#include "MessageQueue.h"
 #include "Region.h"
 #include "WebLayerTreeInfo.h"
 #include <WebCore/GraphicsContext.h>
@@ -31,6 +30,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/RunLoop.h>
 #include <WebCore/Timer.h>
+#include <wtf/Functional.h>
 #include <wtf/HashSet.h>
 
 #if USE(TEXTURE_MAPPER)
@@ -43,8 +43,6 @@ namespace WebKit {
 class LayerBackingStore;
 class WebLayerInfo;
 class WebLayerUpdateInfo;
-
-class LayerTreeMessageToRenderer;
 
 class LayerTreeHostProxy : public WebCore::GraphicsLayerClient {
 public:
@@ -91,8 +89,8 @@ protected:
     WebCore::IntRect m_visibleContentsRect;
     float m_contentsScale;
 
-    MessageQueue<LayerTreeMessageToRenderer> m_messagesToRenderer;
-    void pushUpdateToQueue(PassOwnPtr<LayerTreeMessageToRenderer>);
+    Vector<Function<void()> > m_renderQueue;
+    void dispatchUpdate(const Function<void()>&);
 
 #if USE(TEXTURE_MAPPER)
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
@@ -106,8 +104,8 @@ protected:
     void syncLayerParameters(const WebLayerInfo&);
     void createTile(WebLayerID, int, float scale);
     void removeTile(WebLayerID, int);
-    void updateTile(WebLayerID, int, const WebCore::IntRect&, const WebCore::IntRect&, ShareableBitmap*);
-    void createImage(int64_t, ShareableBitmap*);
+    void updateTile(WebLayerID, int, const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<ShareableBitmap>);
+    void createImage(int64_t, PassRefPtr<ShareableBitmap>);
     void destroyImage(int64_t);
     void assignImageToLayer(WebCore::GraphicsLayer*, int64_t imageID);
     void flushLayerChanges();

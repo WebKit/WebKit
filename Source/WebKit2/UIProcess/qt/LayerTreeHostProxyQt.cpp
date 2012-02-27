@@ -41,110 +41,7 @@
 
 namespace WebKit {
 
-class LayerTreeMessageToRenderer {
-public:
-    enum Type {
-        DeleteLayer,
-        CreateTile,
-        RemoveTile,
-        UpdateTile,
-        CreateImage,
-        DestroyImage,
-        SyncLayerParameters,
-        FlushLayerChanges,
-        SetRootLayer
-    };
-    virtual ~LayerTreeMessageToRenderer() { }
-    virtual Type type() const = 0;
-};
-
 using namespace WebCore;
-
-template<class MessageData, LayerTreeMessageToRenderer::Type messageType>
-class LayerTreeMessageToRendererWithData : public LayerTreeMessageToRenderer {
-public:
-    virtual Type type() const { return messageType; }
-
-    static PassOwnPtr<LayerTreeMessageToRenderer> create(const MessageData& data = MessageData())
-    {
-        return adoptPtr(new LayerTreeMessageToRendererWithData(data));
-    }
-
-    const MessageData& data() const
-    {
-        return m_data;
-    }
-
-private:
-    LayerTreeMessageToRendererWithData(const MessageData& data)
-        : m_data(data)
-    {
-    }
-
-    MessageData m_data;
-};
-
-
-namespace {
-struct CreateTileMessageData {
-    WebLayerID layerID;
-    int remoteTileID;
-    float scale;
-};
-
-struct UpdateTileMessageData {
-    WebLayerID layerID;
-    int remoteTileID;
-    IntRect sourceRect;
-    IntRect targetRect;
-    RefPtr<ShareableBitmap> bitmap;
-};
-
-struct RemoveTileMessageData {
-    WebLayerID layerID;
-    int remoteTileID;
-};
-
-struct CreateImageMessageData {
-    int64_t imageID;
-    RefPtr<ShareableBitmap> bitmap;
-};
-
-struct DestroyImageMessageData {
-    int64_t imageID;
-};
-
-struct SyncLayerParametersMessageData {
-    WebLayerInfo layerInfo;
-};
-
-struct EmptyMessageData { };
-struct DeleteLayerMessageData {
-    WebLayerID layerID;
-};
-struct SetRootLayerMessageData {
-    WebLayerID layerID;
-};
-
-class CreateTileMessage
-        : public LayerTreeMessageToRendererWithData<CreateTileMessageData, LayerTreeMessageToRenderer::CreateTile> { };
-class UpdateTileMessage
-        : public LayerTreeMessageToRendererWithData<UpdateTileMessageData, LayerTreeMessageToRenderer::UpdateTile> { };
-class RemoveTileMessage
-        : public LayerTreeMessageToRendererWithData<RemoveTileMessageData, LayerTreeMessageToRenderer::RemoveTile> { };
-class CreateImageMessage
-        : public LayerTreeMessageToRendererWithData<CreateImageMessageData, LayerTreeMessageToRenderer::CreateImage> { };
-class DestroyImageMessage
-        : public LayerTreeMessageToRendererWithData<DestroyImageMessageData, LayerTreeMessageToRenderer::DestroyImage> { };
-class FlushLayerChangesMessage
-        : public LayerTreeMessageToRendererWithData<EmptyMessageData, LayerTreeMessageToRenderer::FlushLayerChanges> { };
-class SyncLayerParametersMessage
-        : public LayerTreeMessageToRendererWithData<SyncLayerParametersMessageData, LayerTreeMessageToRenderer::SyncLayerParameters> { };
-class DeleteLayerMessage
-        : public LayerTreeMessageToRendererWithData<DeleteLayerMessageData, LayerTreeMessageToRenderer::DeleteLayer> { };
-class SetRootLayerMessage
-        : public LayerTreeMessageToRendererWithData<SetRootLayerMessageData, LayerTreeMessageToRenderer::SetRootLayer> { };
-}
 
 PassOwnPtr<GraphicsLayer> LayerTreeHostProxy::createLayer(WebLayerID layerID)
 {
@@ -362,15 +259,17 @@ void LayerTreeHostProxy::removeTile(WebLayerID layerID, int tileID)
     getBackingStore(layerID)->removeTile(tileID);
 }
 
-void LayerTreeHostProxy::updateTile(WebLayerID layerID, int tileID, const IntRect& sourceRect, const IntRect& targetRect, ShareableBitmap* bitmap)
+void LayerTreeHostProxy::updateTile(WebLayerID layerID, int tileID, const IntRect& sourceRect, const IntRect& targetRect, PassRefPtr<ShareableBitmap> weakBitmap)
 {
+    RefPtr<ShareableBitmap> bitmap = weakBitmap;
     RefPtr<LayerBackingStore> backingStore = getBackingStore(layerID);
-    backingStore->updateTile(tileID, sourceRect, targetRect, bitmap);
+    backingStore->updateTile(tileID, sourceRect, targetRect, bitmap.get());
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
 
-void LayerTreeHostProxy::createImage(int64_t imageID, ShareableBitmap* bitmap)
+void LayerTreeHostProxy::createImage(int64_t imageID, PassRefPtr<ShareableBitmap> weakBitmap)
 {
+    RefPtr<ShareableBitmap> bitmap = weakBitmap;
     RefPtr<TextureMapperTiledBackingStore> backingStore = TextureMapperTiledBackingStore::create();
     backingStore->updateContents(m_textureMapper.get(), bitmap->createImage().get(), BitmapTexture::BGRAFormat);
     m_directlyCompositedImages.set(imageID, backingStore);
@@ -427,140 +326,68 @@ void LayerTreeHostProxy::syncRemoteContent()
     // We enqueue messages and execute them during paint, as they require an active GL context.
     ensureRootLayer();
 
-    while (OwnPtr<LayerTreeMessageToRenderer> nextMessage = m_messagesToRenderer.tryGetMessage()) {
-        switch (nextMessage->type()) {
-        case LayerTreeMessageToRenderer::SetRootLayer: {
-            const SetRootLayerMessageData& data = static_cast<SetRootLayerMessage*>(nextMessage.get())->data();
-            setRootLayerID(data.layerID);
-            break;
-        }
+    for (size_t i = 0; i < m_renderQueue.size(); ++i)
+        m_renderQueue[i]();
 
-        case LayerTreeMessageToRenderer::DeleteLayer: {
-            const DeleteLayerMessageData& data = static_cast<DeleteLayerMessage*>(nextMessage.get())->data();
-            deleteLayer(data.layerID);
-            break;
-        }
-
-        case LayerTreeMessageToRenderer::SyncLayerParameters: {
-            const SyncLayerParametersMessageData& data = static_cast<SyncLayerParametersMessage*>(nextMessage.get())->data();
-            syncLayerParameters(data.layerInfo);
-            break;
-        }
-
-        case LayerTreeMessageToRenderer::CreateTile: {
-            const CreateTileMessageData& data = static_cast<CreateTileMessage*>(nextMessage.get())->data();
-            createTile(data.layerID, data.remoteTileID, data.scale);
-            break;
-        }
-
-        case LayerTreeMessageToRenderer::RemoveTile: {
-            const RemoveTileMessageData& data = static_cast<RemoveTileMessage*>(nextMessage.get())->data();
-            removeTile(data.layerID, data.remoteTileID);
-            break;
-        }
-
-        case LayerTreeMessageToRenderer::UpdateTile: {
-            const UpdateTileMessageData& data = static_cast<UpdateTileMessage*>(nextMessage.get())->data();
-            updateTile(data.layerID, data.remoteTileID, data.sourceRect, data.targetRect, data.bitmap.get());
-            break;
-        }
-
-        case LayerTreeMessageToRenderer::CreateImage: {
-            const CreateImageMessageData& data = static_cast<CreateImageMessage*>(nextMessage.get())->data();
-            createImage(data.imageID, data.bitmap.get());
-            break;
-        }
-
-        case LayerTreeMessageToRenderer::DestroyImage: {
-            const DestroyImageMessageData& data = static_cast<DestroyImageMessage*>(nextMessage.get())->data();
-            destroyImage(data.imageID);
-            break;
-        }
-
-        case LayerTreeMessageToRenderer::FlushLayerChanges:
-            flushLayerChanges();
-            break;
-        }
-    }
+    m_renderQueue.clear();
 }
 
-void LayerTreeHostProxy::pushUpdateToQueue(PassOwnPtr<LayerTreeMessageToRenderer> message)
+void LayerTreeHostProxy::dispatchUpdate(const Function<void()>& function)
 {
-    m_messagesToRenderer.append(message);
+    m_renderQueue.append(function);
     updateViewport();
 }
 
 void LayerTreeHostProxy::createTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo& updateInfo)
 {
-    CreateTileMessageData data;
-    data.layerID = layerID;
-    data.remoteTileID = tileID;
-    data.scale = updateInfo.updateScaleFactor;
-    pushUpdateToQueue(CreateTileMessage::create(data));
+    dispatchUpdate(bind(&LayerTreeHostProxy::createTile, this, layerID, tileID, updateInfo.updateScaleFactor));
     updateTileForLayer(layerID, tileID, updateInfo);
 }
 
 void LayerTreeHostProxy::updateTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo& updateInfo)
 {
-    UpdateTileMessageData data;
-    data.layerID = layerID;
-    data.remoteTileID = tileID;
-    data.bitmap = ShareableBitmap::create(updateInfo.bitmapHandle);
     ASSERT(updateInfo.updateRects.size() == 1);
-    data.sourceRect = updateInfo.updateRects.first();
-    data.targetRect = updateInfo.updateRectBounds;
-    pushUpdateToQueue(UpdateTileMessage::create(data));
+    IntRect sourceRect = updateInfo.updateRects.first();
+    IntRect targetRect = updateInfo.updateRectBounds;
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(updateInfo.bitmapHandle);
+    dispatchUpdate(bind(&LayerTreeHostProxy::updateTile, this, layerID, tileID, sourceRect, targetRect, bitmap));
 }
 
 void LayerTreeHostProxy::removeTileForLayer(int layerID, int tileID)
 {
-    RemoveTileMessageData data;
-    data.layerID = layerID;
-    data.remoteTileID = tileID;
-    pushUpdateToQueue(RemoveTileMessage::create(data));
+    dispatchUpdate(bind(&LayerTreeHostProxy::removeTile, this, layerID, tileID));
 }
 
 
 void LayerTreeHostProxy::deleteCompositingLayer(WebLayerID id)
 {
-    DeleteLayerMessageData data;
-    data.layerID = id;
-    pushUpdateToQueue(DeleteLayerMessage::create(data));
+    dispatchUpdate(bind(&LayerTreeHostProxy::deleteLayer, this, id));
 }
 
 void LayerTreeHostProxy::setRootCompositingLayer(WebLayerID id)
 {
-    SetRootLayerMessageData data;
-    data.layerID = id;
-    pushUpdateToQueue(SetRootLayerMessage::create(data));
+    dispatchUpdate(bind(&LayerTreeHostProxy::setRootLayerID, this, id));
 }
 
 void LayerTreeHostProxy::syncCompositingLayerState(const WebLayerInfo& info)
 {
-    SyncLayerParametersMessageData data;
-    data.layerInfo = info;
-    pushUpdateToQueue(SyncLayerParametersMessage::create(data));
+    dispatchUpdate(bind(&LayerTreeHostProxy::syncLayerParameters, this, info));
 }
 
 void LayerTreeHostProxy::didRenderFrame()
 {
-    pushUpdateToQueue(FlushLayerChangesMessage::create());
-    updateViewport();
+    dispatchUpdate(bind(&LayerTreeHostProxy::flushLayerChanges, this));
 }
 
 void LayerTreeHostProxy::createDirectlyCompositedImage(int64_t key, const WebKit::ShareableBitmap::Handle& handle)
 {
-    CreateImageMessageData data;
-    data.imageID = key;
-    data.bitmap = ShareableBitmap::create(handle);
-    pushUpdateToQueue(CreateImageMessage::create(data));
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle);
+    dispatchUpdate(bind(&LayerTreeHostProxy::createImage, this, key, bitmap));
 }
 
 void LayerTreeHostProxy::destroyDirectlyCompositedImage(int64_t key)
 {
-    DestroyImageMessageData data;
-    data.imageID = key;
-    pushUpdateToQueue(DestroyImageMessage::create(data));
+    dispatchUpdate(bind(&LayerTreeHostProxy::destroyImage, this, key));
 }
 
 void LayerTreeHostProxy::setVisibleContentsRectForPanning(const IntRect& rect, const FloatPoint& trajectoryVector)
