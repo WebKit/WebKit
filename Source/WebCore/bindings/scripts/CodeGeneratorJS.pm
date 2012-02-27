@@ -3368,7 +3368,7 @@ sub GenerateConstructorDefinition
     if (!defined $numberOfConstructorParameters) {
         if (IsConstructorTemplate($dataNode, "Event")) {
             $numberOfConstructorParameters = 2;
-        } elsif ($dataNode->extendedAttributes->{"Constructor"} and !$dataNode->extendedAttributes->{"CustomConstructor"} and !$dataNode->extendedAttributes->{"JSCustomConstructor"}) {
+        } elsif ($dataNode->extendedAttributes->{"Constructor"}) {
             $numberOfConstructorParameters = @{$dataNode->constructor->parameters};
         }
     }

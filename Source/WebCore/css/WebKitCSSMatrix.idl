@@ -27,7 +27,6 @@ module css {
 
     // Introduced in DOM Level ?:
     interface [
-        ConstructorParameters=1,
         Constructor(in [Optional=DefaultIsNullString] DOMString cssValue),
         ConstructorRaisesException,
     ] WebKitCSSMatrix {

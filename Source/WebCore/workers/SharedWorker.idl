@@ -35,7 +35,6 @@ module threads {
         Conditional=SHARED_WORKERS,
         ActiveDOMObject,
         JSCustomConstructor,
-        ConstructorParameters=2,
         Constructor(in DOMString scriptURL, in [Optional=DefaultIsNullString] DOMString name),
         CallWith=ScriptExecutionContext,
         ConstructorRaisesException,

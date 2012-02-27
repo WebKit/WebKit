@@ -1,3 +1,24 @@
+2012-02-27  Kentaro Hara  <haraken@chromium.org>
+
+        Remove [ConstructorParameters] from IDL files that have [Constructor]
+        https://bugs.webkit.org/show_bug.cgi?id=79643
+
+        Reviewed by Adam Barth.
+
+        This patch removes [ConstructorParameters] from IDL files that have [Constructor],
+        since CodeGeneratorJS.pm can automatically detect the number of constructor
+        arguments by the [Constructor(...)] signature.
+
+        Test: fast/js/constructor-length.html
+
+        * Modules/mediastream/PeerConnection.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        * css/WebKitCSSMatrix.idl:
+        * page/EventSource.idl:
+        * workers/SharedWorker.idl:
+        * workers/Worker.idl:
+
 2012-02-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Avoid doing 2 hash lookups if we override RenderBox's logical width / height
