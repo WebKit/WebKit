@@ -1,3 +1,43 @@
+2012-02-27  Enrica Casucci  <enrica@apple.com>
+
+        WebKit2: implement platform strategy to access Pasteboard in the UI process.
+        https://bugs.webkit.org/show_bug.cgi?id=79253
+        <rdar://problem/9971876>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContext.messages.in: Added messages to access NSPasteboard
+        in the UI process.
+        * UIProcess/mac/WebContextMac.mm: Added methods corresponding to the
+        new messages.
+        (WebKit::WebContext::getPasteboardTypes):
+        (WebKit::WebContext::getPasteboardPathnamesForType):
+        (WebKit::WebContext::getPasteboardStringForType):
+        (WebKit::WebContext::getPasteboardBufferForType):
+        (WebKit::WebContext::pasteboardCopy):
+        (WebKit::WebContext::getPasteboardChangeCount):
+        (WebKit::WebContext::getPasteboardUniqueName):
+        (WebKit::WebContext::getPasteboardColor):
+        (WebKit::WebContext::setPasteboardTypes):
+        (WebKit::WebContext::setPasteboardPathnamesForType):
+        (WebKit::WebContext::setPasteboardStringForType):
+        (WebKit::WebContext::setPasteboardBufferForType):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp: New implementation of the PasteboardStrategy using message exchange
+        with the UI process.
+        (WebKit::WebPlatformStrategies::getTypes):
+        (WebKit::WebPlatformStrategies::bufferForType):
+        (WebKit::WebPlatformStrategies::getPathnamesForType):
+        (WebKit::WebPlatformStrategies::stringForType):
+        (WebKit::WebPlatformStrategies::copy):
+        (WebKit::WebPlatformStrategies::changeCount):
+        (WebKit::WebPlatformStrategies::uniqueName):
+        (WebKit::WebPlatformStrategies::color):
+        (WebKit::WebPlatformStrategies::setTypes):
+        (WebKit::WebPlatformStrategies::setBufferForType):
+        (WebKit::WebPlatformStrategies::setPathnamesForType):
+        (WebKit::WebPlatformStrategies::setStringForType):
+
 2012-02-27  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9557598> REGRESSION (WebKit2): Non-activating links sometimes don’t work

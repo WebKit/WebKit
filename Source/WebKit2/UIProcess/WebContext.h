@@ -224,7 +224,22 @@ private:
     void didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID);
     void didClearPluginSiteData(uint64_t callbackID);
 #endif
-    
+
+#if PLATFORM(MAC)
+    void getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes);
+    void getPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames);
+    void getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, String&);
+    void getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, SharedMemory::Handle&, uint64_t& size);
+    void pasteboardCopy(const String& fromPasteboard, const String& toPasteboard);
+    void getPasteboardChangeCount(const String& pasteboardName, uint64_t& changeCount);
+    void getPasteboardUniqueName(String& pasteboardName);
+    void getPasteboardColor(const String& pasteboardName, WebCore::Color&);
+    void setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes);
+    void setPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames);
+    void setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String&);
+    void setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size);
+#endif
+
     void didGetWebCoreStatistics(const StatisticsData&, uint64_t callbackID);
         
     // Implemented in generated WebContextMessageReceiver.cpp

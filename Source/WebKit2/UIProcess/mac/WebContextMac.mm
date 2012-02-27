@@ -28,7 +28,9 @@
 
 #import "WebKitSystemInterface.h"
 #import "WebProcessCreationParameters.h"
+#import <WebCore/Color.h>
 #import <WebCore/FileSystem.h>
+#import <WebCore/PlatformPasteboard.h>
 #import <sys/param.h>
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
@@ -153,6 +155,78 @@ bool WebContext::omitPDFSupport()
 {
     // Since this is a "secret default" we don't bother registering it.
     return [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
+}
+
+void WebContext::getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes)
+{
+    PlatformPasteboard(pasteboardName).getTypes(pasteboardTypes);
+}
+
+void WebContext::getPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames)
+{
+    PlatformPasteboard(pasteboardName).getPathnamesForType(pathnames, pasteboardType);
+}
+
+void WebContext::getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, String& string)
+{
+    string = PlatformPasteboard(pasteboardName).stringForType(pasteboardType);
+}
+
+void WebContext::getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, SharedMemory::Handle& handle, uint64_t& size)
+{
+    RefPtr<SharedBuffer> buffer = PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
+    if (!buffer)
+        return;
+    size = buffer->size();
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(size);
+    memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
+    sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
+}
+
+void WebContext::pasteboardCopy(const String& fromPasteboard, const String& toPasteboard)
+{
+    PlatformPasteboard(toPasteboard).copy(fromPasteboard);
+}
+
+void WebContext::getPasteboardChangeCount(const String& pasteboardName, uint64_t& changeCount)
+{
+    changeCount = PlatformPasteboard(pasteboardName).changeCount();
+}
+
+void WebContext::getPasteboardUniqueName(String& pasteboardName)
+{
+    pasteboardName = PlatformPasteboard::uniqueName();
+}
+
+void WebContext::getPasteboardColor(const String& pasteboardName, WebCore::Color& color)
+{
+    color = PlatformPasteboard(pasteboardName).color();    
+}
+
+void WebContext::setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes)
+{
+    PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
+}
+
+void WebContext::setPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames)
+{
+    PlatformPasteboard(pasteboardName).setPathnamesForType(pathnames, pasteboardType);
+}
+
+void WebContext::setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String& string)
+{
+    PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);    
+}
+
+void WebContext::setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size)
+{
+    if (handle.isNull()) {
+        PlatformPasteboard(pasteboardName).setBufferForType(0, pasteboardType);
+        return;
+    }
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::ReadOnly);
+    RefPtr<SharedBuffer> buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
+    PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }
 
 } // namespace WebKit

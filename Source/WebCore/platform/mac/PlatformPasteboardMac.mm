@@ -45,7 +45,10 @@ void PlatformPasteboard::getTypes(Vector<String>& types)
 
 PassRefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardType)
 {
-    return SharedBuffer::wrapNSData([[[m_pasteboard.get() dataForType:pasteboardType] copy] autorelease]);
+    NSData *data = [m_pasteboard.get() dataForType:pasteboardType];
+    if (!data)
+        return 0;
+    return SharedBuffer::wrapNSData([[data copy] autorelease]);
 }
 
 void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType)

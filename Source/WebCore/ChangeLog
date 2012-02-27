@@ -1,3 +1,18 @@
+2012-02-27  Enrica Casucci  <enrica@apple.com>
+
+        WebKit2: implement platform strategy to access Pasteboard in the UI process.
+        https://bugs.webkit.org/show_bug.cgi?id=79253
+        <rdar://problem/9971876>
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests. No behavior change.
+
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::bufferForType): There is no need
+        to create a SharedBuffer object if there is no NSData in the pasteboard
+        for the given pasteboard type.
+
 2012-02-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed speculative Chromium win build fix.
