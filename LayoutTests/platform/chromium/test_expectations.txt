@@ -3069,6 +3069,7 @@ BUGWK63937 MAC : css2.1/20110323/replaced-intrinsic-ratio-001.htm = PASS IMAGE T
 // Has been timing out since r88913.
 BUGWK62754 LINUX MAC RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TIMEOUT IMAGE+TEXT
 BUGWK62754 SLOW LINUX MAC DEBUG : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
+BUGWK79615 WIN : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT
 
 // Has been flaky/crashy for a while
 BUGCR86359 WIN : fast/dom/DeviceOrientation/add-listener-from-callback.html = PASS CRASH
