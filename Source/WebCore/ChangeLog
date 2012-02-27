@@ -1,3 +1,13 @@
+2012-02-27  Timothy Hatcher  <timothy@apple.com>
+
+        Updated for WebKit2 string changes.
+
+        https://webkit.org/b/79649
+
+        Reviewed by John Sullivan.
+
+        * English.lproj/Localizable.strings: Updated.
+
 2012-02-27  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: Ctrl+K should not zoom in

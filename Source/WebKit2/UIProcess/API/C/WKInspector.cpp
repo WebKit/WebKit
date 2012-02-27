@@ -48,6 +48,11 @@ bool WKInspectorIsVisible(WKInspectorRef inspectorRef)
     return toImpl(inspectorRef)->isVisible();
 }
 
+bool WKInspectorIsFront(WKInspectorRef inspectorRef)
+{
+    return toImpl(inspectorRef)->isFront();
+}
+
 void WKInspectorShow(WKInspectorRef inspectorRef)
 {
     toImpl(inspectorRef)->show();

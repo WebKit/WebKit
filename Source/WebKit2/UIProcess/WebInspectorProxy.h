@@ -80,6 +80,8 @@ public:
     WebPageProxy* page() const { return m_page; }
 
     bool isVisible() const { return m_isVisible; }
+    bool isFront();
+
     void show();
     void close();
     
@@ -126,6 +128,7 @@ private:
     void platformOpen();
     void platformDidClose();
     void platformBringToFront();
+    bool platformIsFront();
     void platformInspectedURLChanged(const String&);
     unsigned platformInspectedWindowHeight();
     void platformAttach();

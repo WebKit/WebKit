@@ -110,6 +110,12 @@ void WebInspectorProxy::platformBringToFront()
     notImplemented();
 }
 
+bool WebInspectorProxy::platformIsFront()
+{
+    notImplemented();
+    return false;
+}
+
 void WebInspectorProxy::platformInspectedURLChanged(const String& url)
 {
     GOwnPtr<gchar> title(g_strdup_printf("%s - %s", _("Web Inspector"), url.utf8().data()));

@@ -33,6 +33,7 @@
 #include "WebProcessProxy.h"
 #include "WebView.h"
 #include <WebCore/InspectorFrontendClientLocal.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <wtf/PassRefPtr.h>
@@ -238,6 +239,12 @@ void WebInspectorProxy::platformBringToFront()
 
     ASSERT(::IsWindow(parentWindow));
     ::SetWindowPos(parentWindow, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
+}
+
+bool WebInspectorProxy::platformIsFront()
+{
+    notImplemented();
+    return false;
 }
 
 void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)

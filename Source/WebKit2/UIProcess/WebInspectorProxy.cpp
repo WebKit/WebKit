@@ -100,6 +100,14 @@ void WebInspectorProxy::invalidate()
 }
 
 // Public APIs
+bool WebInspectorProxy::isFront()
+{
+    if (!m_page)
+        return false;
+
+    return platformIsFront();
+}
+
 void WebInspectorProxy::show()
 {
     if (!m_page)

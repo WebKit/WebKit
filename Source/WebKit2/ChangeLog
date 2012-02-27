@@ -1,3 +1,38 @@
+2012-02-27  Timothy Hatcher  <timothy@apple.com>
+
+        Add WKInspector API to know when the Web Inspector is the frontmost window.
+
+        Also makes the Safari Develop menu items work when the Web Inspector is frontmost.
+
+        https://webkit.org/b/79649
+
+        Reviewed by John Sullivan.
+
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorIsFront): Added. Call WebInspectorProxy::isFront.
+        * UIProcess/API/C/WKInspector.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::isFront): Added. Call platformIsFront.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/efl/WebInspectorEfl.cpp:
+        (WebKit::WebInspectorProxy::platformIsFront): Added stub.
+        * UIProcess/gtk/WebInspectorGtk.cpp:
+        (WebKit::WebInspectorProxy::platformIsFront): Added stub.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter showWebInspector:]): Added. Makes the Develop menu items in Safari work when
+        the Web Inspector window is front.
+        (-[WKWebInspectorProxyObjCAdapter showErrorConsole:]): Added. Ditto.
+        (-[WKWebInspectorProxyObjCAdapter showResources:]): Added. Ditto.
+        (-[WKWebInspectorProxyObjCAdapter viewSource:]): Added. Ditto.
+        (-[WKWebInspectorProxyObjCAdapter toggleDebuggingJavaScript:]): Added. Ditto.
+        (-[WKWebInspectorProxyObjCAdapter toggleProfilingJavaScript:]): Added. Ditto.
+        (-[WKWebInspectorProxyObjCAdapter validateUserInterfaceItem:]): Added. Update the menu item titles.
+        (WebKit::WebInspectorProxy::platformIsFront): Added. Return if visible and the window is main.
+        * UIProcess/qt/WebInspectorProxyQt.cpp:
+        (WebKit::WebInspectorProxy::platformIsFront): Added stub.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformIsFront): Added stub.
+
 2012-02-26  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [EFL][WK2] Add InjectedBundleEfl.cpp
