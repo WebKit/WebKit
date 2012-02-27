@@ -429,6 +429,7 @@ fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-disable.html
 fast/dom/shadow/shadow-root-attached.html
 fast/dom/shadow/shadow-root-new.html
+fast/dom/shadow/shadow-ul-li.html
 
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html

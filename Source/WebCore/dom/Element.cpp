@@ -964,9 +964,18 @@ void Element::detach()
     cancelFocusAppearanceUpdate();
     if (hasRareData())
         rareData()->resetComputedStyle();
-    ContainerNode::detach();
-    if (ShadowTree* tree = shadowTree())
-        tree->detach();
+
+    if (hasShadowRoot()) {
+        for (Node* child = firstChild(); child; child = child->nextSibling()) {
+            if (child->attached())
+                child->detach();
+        }
+
+        shadowTree()->detach();
+        Node::detach();
+    } else
+        ContainerNode::detach();
+
 
     RenderWidget::resumeWidgetHierarchyUpdates();
 }

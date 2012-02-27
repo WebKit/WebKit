@@ -1,3 +1,24 @@
+2012-02-27  MORITA Hajime  <morrita@google.com>
+
+        Removing <ul>, <li> inside shadow DOM triggers assertion in updateListMarkerNumbers
+        https://bugs.webkit.org/show_bug.cgi?id=79630
+
+        Reviewed by Ryosuke Niwa.
+
+        This problem was caused by the inconsistent detach order of DOM tree where
+        Element::detach() called ContainerNode::detach() before shadow tree is detached.
+        This resulted the renderer of the element being destroyed even if its children,
+        each of which came from an element in the shadow tree, are alive.
+        In principle, child renderers should be destroyed before its parent.
+
+        This change aligns the detach order with the attach order. The shadow tree is
+        now deatched before parent's ContainerNode::detach() is called.
+
+        Test: fast/dom/shadow/shadow-ul-li.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::detach):
+
 2012-02-27  Keishi Hattori  <keishi@webkit.org>
 
         Color input type should be clickable through keyboard
