@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFullScreenManagerMac_h
-#define WebFullScreenManagerMac_h
+#import "config.h"
+#import "RemoteLayerClient.h"
 
-#if ENABLE(FULLSCREEN_API)
+#import <wtf/PassOwnPtr.h>
 
-#import "LayerTreeContext.h"
-#import "WebFullScreenManager.h"
-#import <WebCore/GraphicsLayer.h>
-#import <WebCore/IntRect.h>
-#import <wtf/RetainPtr.h>
-
-OBJC_CLASS WebFullScreenManagerAnimationListener;
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#import <QuartzCore/CARemoteLayerClient.h>
+#else
+#import <WebKitSystemInterface.h>
+#endif
 
 namespace WebKit {
 
-class RemoteLayerClient;
-
-class WebFullScreenManagerMac : public WebFullScreenManager {
-public:
-    static PassRefPtr<WebFullScreenManagerMac> create(WebPage*);
-
-    virtual void setRootFullScreenLayer(WebCore::GraphicsLayer*);
-
-private:
-    WebFullScreenManagerMac(WebPage*);
-    virtual ~WebFullScreenManagerMac();
-
-    virtual void beginEnterFullScreenAnimation(float duration);
-    virtual void beginExitFullScreenAnimation(float duration);
-    virtual void disposeOfLayerClient();
-
-    void animateFullScreen(const CATransform3D& startTransform, const CATransform3D& endTransform, float duration, id listener);
-    CATransform3D windowedCGTransform();
-
-    OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
-    LayerTreeContext m_layerTreeContext;
-    OwnPtr<RemoteLayerClient> m_remoteLayerClient;
-    RetainPtr<id> m_enterFullScreenListener;
-    RetainPtr<id> m_exitFullScreenListener;
-};
-
+PassOwnPtr<RemoteLayerClient> RemoteLayerClient::create(mach_port_t serverPort, CALayer *rootLayer)
+{
+    return adoptPtr(new RemoteLayerClient(serverPort, rootLayer));
 }
 
-#endif // ENABLE(FULLSCREEN_API)
+RemoteLayerClient::RemoteLayerClient(mach_port_t serverPort, CALayer *rootLayer)
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    m_platformClient = adoptNS([[CARemoteLayerClient alloc] initWithServerPort:serverPort]);
+    m_platformClient.get().layer = rootLayer;
+#else
+    m_platformClient = WKCARemoteLayerClientMakeWithServerPort(serverPort)
+    WKCARemoteLayerClientSetLayer(m_platformClient.get(), rootLayer);
+#endif
+}
 
-#endif // WebFullScreenManagerMac_h
+RemoteLayerClient::~RemoteLayerClient()
+{
+}
+
+uint32_t RemoteLayerClient::clientID() const
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    return m_platformClient.get().clientId;
+#else
+    return WKCARemoteLayerClientGetClientId(m_platformClient.get());
+#endif
+}
+
+void RemoteLayerClient::invalidate()
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    [m_platformClient.get() invalidate];
+#else
+    WKCARemoteLayerClientInvalidate(m_platformClient.get());
+#endif
+}
+
+} // namespace WebKit

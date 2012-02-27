@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFullScreenManagerMac_h
-#define WebFullScreenManagerMac_h
+#ifndef RemoteLayerClient_h
+#define RemoteLayerClient_h
 
-#if ENABLE(FULLSCREEN_API)
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RetainPtr.h>
 
-#import "LayerTreeContext.h"
-#import "WebFullScreenManager.h"
-#import <WebCore/GraphicsLayer.h>
-#import <WebCore/IntRect.h>
-#import <wtf/RetainPtr.h>
+OBJC_CLASS CALayer;
 
-OBJC_CLASS WebFullScreenManagerAnimationListener;
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+OBJC_CLASS CARemoteLayerClient;
+typedef CARemoteLayerClient *PlatformRemoteLayerClient;
+#else
+typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
+typedef WKCARemoteLayerClientRef PlatformRemoteLayerClient;
+#endif
 
 namespace WebKit {
 
-class RemoteLayerClient;
-
-class WebFullScreenManagerMac : public WebFullScreenManager {
+class RemoteLayerClient {
+    WTF_MAKE_NONCOPYABLE(RemoteLayerClient);
 public:
-    static PassRefPtr<WebFullScreenManagerMac> create(WebPage*);
+    static PassOwnPtr<RemoteLayerClient> create(mach_port_t serverPort, CALayer *rootLayer);
+    ~RemoteLayerClient();
 
-    virtual void setRootFullScreenLayer(WebCore::GraphicsLayer*);
+    uint32_t clientID() const;
+    void invalidate();
 
 private:
-    WebFullScreenManagerMac(WebPage*);
-    virtual ~WebFullScreenManagerMac();
+    RemoteLayerClient(mach_port_t serverPort, CALayer *rootLayer);
 
-    virtual void beginEnterFullScreenAnimation(float duration);
-    virtual void beginExitFullScreenAnimation(float duration);
-    virtual void disposeOfLayerClient();
-
-    void animateFullScreen(const CATransform3D& startTransform, const CATransform3D& endTransform, float duration, id listener);
-    CATransform3D windowedCGTransform();
-
-    OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
-    LayerTreeContext m_layerTreeContext;
-    OwnPtr<RemoteLayerClient> m_remoteLayerClient;
-    RetainPtr<id> m_enterFullScreenListener;
-    RetainPtr<id> m_exitFullScreenListener;
+    RetainPtr<PlatformRemoteLayerClient> m_platformClient;
 };
 
-}
+} // namespace WebKit
 
-#endif // ENABLE(FULLSCREEN_API)
-
-#endif // WebFullScreenManagerMac_h
+#endif // RemoteLayerClient_h

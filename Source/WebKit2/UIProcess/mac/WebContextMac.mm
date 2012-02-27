@@ -31,6 +31,10 @@
 #import <WebCore/FileSystem.h>
 #import <sys/param.h>
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#import <QuartzCore/CARemoteLayerServer.h>
+#endif
+
 using namespace WebCore;
 
 NSString *WebDatabaseDirectoryDefaultsKey = @"WebDatabaseDirectory";
@@ -93,7 +97,11 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    mach_port_t renderServerPort = [[CARemoteLayerServer sharedServer] serverPort];
+#else
     mach_port_t renderServerPort = WKInitializeRenderServer();
+#endif
     if (renderServerPort != MACH_PORT_NULL)
         parameters.acceleratedCompositingPort = CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);
 #endif

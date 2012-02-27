@@ -29,6 +29,7 @@
 #import "DrawingAreaProxyMessages.h"
 #import "EventDispatcher.h"
 #import "LayerTreeContext.h"
+#import "RemoteLayerClient.h"
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
@@ -38,7 +39,6 @@
 #import <WebCore/Page.h>
 #import <WebCore/ScrollingCoordinator.h>
 #import <WebCore/Settings.h>
-#import <WebKitSystemInterface.h>
 
 @interface CATransaction (Details)
 + (void)synchronize;
@@ -76,12 +76,10 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     m_rootLayer.get().opaque = YES;
     m_rootLayer.get().geometryFlipped = YES;
 
-    mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
-    m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
-    WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), m_rootLayer.get());
+    m_remoteLayerClient = RemoteLayerClient::create(WebProcess::shared().compositingRenderServerPort(), m_rootLayer.get());
 
     LayerTreeContext layerTreeContext;
-    layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
+    layerTreeContext.contextID = m_remoteLayerClient->clientID();
     m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
 }
 

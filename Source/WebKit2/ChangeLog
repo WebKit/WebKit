@@ -1,3 +1,49 @@
+2012-02-26  Sam Weinig  <sam@webkit.org>
+
+        Encapsulate uses of WKSI to setup a remote layer into a new RemoteLayerClient class
+        https://bugs.webkit.org/show_bug.cgi?id=79612
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/mac/RemoteLayerClient.h: 
+        * Platform/mac/RemoteLayerClient.mm: 
+        (WebKit::RemoteLayerClient::create):
+        (WebKit::RemoteLayerClient::RemoteLayerClient):
+        (WebKit::RemoteLayerClient::~RemoteLayerClient):
+        (WebKit::RemoteLayerClient::clientID):
+        (WebKit::RemoteLayerClient::invalidate):
+        New class that encapsulates calls to WKSI WKCARemoteLayerClient*. For platforms
+        where the use of WKSI is not necessary, due to CARemoteLayerClient being available,
+        stop using WKSI.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::platformInitialize):
+        (WebKit::PluginControllerProxy::platformDestroy):
+        (WebKit::PluginControllerProxy::remoteLayerClientID):
+        (WebKit::PluginControllerProxy::platformGeometryDidChange):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.h:
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::setRootFullScreenLayer):
+        (WebKit::WebFullScreenManagerMac::disposeOfLayerClient):
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.h:
+        (LayerTreeHostCAMac):
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.mm:
+        (WebKit::LayerTreeHostCAMac::platformInitialize):
+        (WebKit::LayerTreeHostCAMac::invalidate):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        Switch to using RemoteLayerClient.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        Use CARemoteLayerServer directly if available.
+
 2012-02-25  Anders Carlsson  <andersca@apple.com>
 
         Address review feedback from Andreas Kling.

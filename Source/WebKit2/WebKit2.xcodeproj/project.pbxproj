@@ -790,6 +790,8 @@
 		BCDE093B13272496001259FB /* MainMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FA31011E3921E00DB1371 /* MainMac.cpp */; };
 		BCDE093D13272496001259FB /* PluginProcessShim.dylib in Copy Plug-in Process Shim */ = {isa = PBXBuildFile; fileRef = 1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */; };
 		BCDE0ABF13272708001259FB /* PluginProcess.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCDE094213272496001259FB /* PluginProcess.app */; };
+		BCE0937714FB128C001138D9 /* RemoteLayerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCE0937514FB128B001138D9 /* RemoteLayerClient.mm */; };
+		BCE0937814FB128C001138D9 /* RemoteLayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE0937614FB128B001138D9 /* RemoteLayerClient.h */; };
 		BCE17B7D1381F1170012A641 /* WKPagePrivateMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE17B7B1381F1170012A641 /* WKPagePrivateMac.cpp */; };
 		BCE17B7E1381F1170012A641 /* WKPagePrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE17B7C1381F1170012A641 /* WKPagePrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE2315D122C30CA00D5C35A /* WebURLRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE2315B122C30CA00D5C35A /* WebURLRequest.h */; };
@@ -1809,6 +1811,8 @@
 		BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextInjectedBundleClient.h; sourceTree = "<group>"; };
 		BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextInjectedBundleClient.cpp; sourceTree = "<group>"; };
 		BCDE094213272496001259FB /* PluginProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PluginProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BCE0937514FB128B001138D9 /* RemoteLayerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerClient.mm; sourceTree = "<group>"; };
+		BCE0937614FB128B001138D9 /* RemoteLayerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerClient.h; sourceTree = "<group>"; };
 		BCE17B7B1381F1170012A641 /* WKPagePrivateMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WKPagePrivateMac.cpp; path = mac/WKPagePrivateMac.cpp; sourceTree = "<group>"; };
 		BCE17B7C1381F1170012A641 /* WKPagePrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPagePrivateMac.h; path = mac/WKPagePrivateMac.h; sourceTree = "<group>"; };
 		BCE2315B122C30CA00D5C35A /* WebURLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURLRequest.h; sourceTree = "<group>"; };
@@ -2260,6 +2264,8 @@
 				C0E3AA481209E45000A49D01 /* ModuleMac.mm */,
 				1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */,
 				BC0092F6115837A300E0AE2A /* WorkQueueMac.cpp */,
+				BCE0937514FB128B001138D9 /* RemoteLayerClient.mm */,
+				BCE0937614FB128B001138D9 /* RemoteLayerClient.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -4131,6 +4137,7 @@
 				BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */,
 				BC2E6E8E1141971500A63B1E /* WorkQueue.h in Headers */,
 				1AB42E8714BBBBB2004272F7 /* KeychainShimResponseMap.h in Headers */,
+				BCE0937814FB128C001138D9 /* RemoteLayerClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4867,6 +4874,7 @@
 				BC8699B6116AADAA002A925B /* WKView.mm in Sources */,
 				BC2E6E8D1141971500A63B1E /* WorkQueue.cpp in Sources */,
 				BC0092F8115837A300E0AE2A /* WorkQueueMac.cpp in Sources */,
+				BCE0937714FB128C001138D9 /* RemoteLayerClient.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -29,7 +29,6 @@
 #import "WebProcess.h"
 #import <QuartzCore/CATransaction.h>
 #import <WebCore/GraphicsLayer.h>
-#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 
@@ -59,12 +58,8 @@ LayerTreeHostCAMac::~LayerTreeHostCAMac()
 
 void LayerTreeHostCAMac::platformInitialize(LayerTreeContext& layerTreeContext)
 {
-    mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
-    m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
-
-    WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), rootLayer()->platformLayer());
-
-    layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
+    m_remoteLayerClient = RemoteLayerClient::create(WebProcess::shared().compositingRenderServerPort(), rootLayer()->platformLayer());
+    layerTreeContext.contextID = m_remoteLayerClient->clientID();
 }
 
 void LayerTreeHostCAMac::scheduleLayerFlush()
@@ -84,7 +79,7 @@ void LayerTreeHostCAMac::invalidate()
 {
     m_layerFlushScheduler.invalidate();
 
-    WKCARemoteLayerClientInvalidate(m_remoteLayerClient.get());
+    m_remoteLayerClient->invalidate();
     m_remoteLayerClient = nullptr;
 
     LayerTreeHostCA::invalidate();

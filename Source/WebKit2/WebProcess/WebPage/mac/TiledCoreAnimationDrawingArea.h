@@ -34,9 +34,9 @@
 OBJC_CLASS CALayer;
 OBJC_CLASS WKContentLayer;
 
-typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
-
 namespace WebKit {
+
+class RemoteLayerClient;
 
 class TiledCoreAnimationDrawingArea : public DrawingArea, private WebCore::LayerFlushSchedulerClient {
 public:
@@ -68,7 +68,7 @@ private:
     bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 
-    RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
+    OwnPtr<RemoteLayerClient> m_remoteLayerClient;
     RetainPtr<CALayer> m_rootLayer;
     RetainPtr<CALayer> m_pendingRootCompositingLayer;
 };
