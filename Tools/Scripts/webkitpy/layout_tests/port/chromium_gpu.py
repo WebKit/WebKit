@@ -26,6 +26,7 @@
 
 import sys
 
+import chromium_android
 import chromium_linux
 import chromium_mac
 import chromium_win
@@ -68,6 +69,29 @@ def _default_tests_paths(port):
         paths = ['fast/html']
 
     return paths
+
+
+class ChromiumGpuAndroidPort(chromium_android.ChromiumAndroidPort):
+    port_name = 'chromium-gpu-android'
+
+    def __init__(self, host, port_name, **kwargs):
+        chromium_android.ChromiumAndroidPort.__init__(self, host, port_name, **kwargs)
+        _set_gpu_options(self)
+        # Always enable hardware gpu, as Android platform doesn't support Mesa.
+        self._options.enable_hardware_gpu = True
+
+    def baseline_search_path(self):
+        # Mimic the Linux -> Win expectations fallback in the ordinary Chromium port.
+        return (map(self._webkit_baseline_path, ['chromium-gpu-android', 'chromium-gpu-linux',
+                                                 'chromium-gpu-win', 'chromium-gpu']) +
+                chromium_android.ChromiumAndroidPort.baseline_search_path(self))
+
+    def default_child_processes(self):
+        return 1
+
+    def tests(self, paths):
+        paths = paths or _default_tests_paths(self)
+        return chromium_android.ChromiumAndroidPort.tests(self, paths)
 
 
 class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):

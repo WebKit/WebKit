@@ -1,3 +1,23 @@
+2012-02-27  Hao Zheng  <zhenghao@chromium.org>
+
+        Add a ChromiumGpuAndroid port.
+        https://bugs.webkit.org/show_bug.cgi?id=79628
+
+        Reviewed by Adam Barth.
+
+        Android does have a gpu port, so revert r107697.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        (ChromiumGpuAndroidPort):
+        (ChromiumGpuAndroidPort.__init__):
+        (ChromiumGpuAndroidPort.baseline_search_path):
+        (ChromiumGpuAndroidPort.default_child_processes):
+        (ChromiumGpuAndroidPort.tests):
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (PortFactory):
+
 2012-02-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Change Build bot with BuildAndTest bot for EFL port.

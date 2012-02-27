@@ -43,6 +43,7 @@ class BuilderOptions(object):
 class PortFactory(object):
     PORT_CLASSES = (
         'chromium_android.ChromiumAndroidPort',
+        'chromium_gpu.ChromiumGpuAndroidPort',
         'chromium_gpu.ChromiumGpuLinuxPort',
         'chromium_gpu.ChromiumGpuMacPort',
         'chromium_gpu.ChromiumGpuWinPort',
