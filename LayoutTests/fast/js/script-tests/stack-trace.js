@@ -9,6 +9,7 @@ description(
 
 function printStack(stackTrace) {
     debug("--> Stack Trace:")
+    stackTrace = stackTrace.split("\n");
     var length = Math.min(stackTrace.length, 100);
     for (var i = 0; i < length; i++) {
         var indexOfAt = stackTrace[i].indexOf('@')
@@ -21,7 +22,6 @@ function printStack(stackTrace) {
     }
     debug('');
 }
-
 function hostThrower() { Element.prototype.appendChild.call({ }, [{ }]);  }
 function callbacker(f) { [0].map(f); }
 function outer(errorName) { inner(errorName); }

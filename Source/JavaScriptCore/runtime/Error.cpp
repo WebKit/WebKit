@@ -35,6 +35,7 @@
 #include "JSString.h"
 #include "NativeErrorConstructor.h"
 #include "SourceCode.h"
+#include "StringBuilder.h"
 
 namespace JSC {
 
@@ -132,20 +133,14 @@ JSObject* addErrorInfo(JSGlobalData* globalData, JSObject* error, int line, cons
             globalObject = globalData->dynamicGlobalObject;
         else
             globalObject = error->globalObject();
-        // We use the tryCreateUninitialized creation mechanism and related initialization
-        // functions as they're the only mechanism we currently have that will guarantee we
-        // don't call setters on the prototype. Technically it's faster than the alternative,
-        // but the numerous allocations that take place in this loop makes that last bit
-        // somewhat moot.
-        JSArray* stackTraceArray = JSArray::tryCreateUninitialized(*globalData, globalObject->arrayStructure(), stackTrace.size());
-        if (!stackTraceArray)
-            return error;
+        StringBuilder builder;
         for (unsigned i = 0; i < stackTrace.size(); i++) {
-            UString stackLevel = stackTrace[i].toString(globalObject->globalExec());
-            stackTraceArray->initializeIndex(*globalData, i, jsString(globalData, stackLevel));
+            builder.append(String(stackTrace[i].toString(globalObject->globalExec()).impl()));
+            if (i != stackTrace.size() - 1)
+                builder.append('\n');
         }
-        stackTraceArray->completeInitialization(stackTrace.size());
-        error->putDirect(*globalData, globalData->propertyNames->stack, stackTraceArray, ReadOnly | DontDelete);
+
+        error->putDirect(*globalData, globalData->propertyNames->stack, jsString(globalData, UString(builder.toString().impl())), ReadOnly | DontDelete);
     }
 
     return error;
