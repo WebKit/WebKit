@@ -3490,7 +3490,7 @@ void SpeculativeJIT::compile(Node& node)
 
     case CreateActivation: {
         JSValueOperand value(this, node.child1());
-        GPRTemporary result(this, value);
+        GPRTemporary result(this, value, false);
         
         GPRReg valueTagGPR = value.tagGPR();
         GPRReg valuePayloadGPR = value.payloadGPR();
@@ -3512,7 +3512,6 @@ void SpeculativeJIT::compile(Node& node)
         
     case TearOffActivation: {
         JSValueOperand value(this, node.child1());
-        GPRTemporary result(this, value);
         
         GPRReg valueTagGPR = value.tagGPR();
         GPRReg valuePayloadGPR = value.payloadGPR();
@@ -3535,7 +3534,7 @@ void SpeculativeJIT::compile(Node& node)
         
     case NewFunction: {
         JSValueOperand value(this, node.child1());
-        GPRTemporary result(this, value);
+        GPRTemporary result(this, value, false);
         
         GPRReg valueTagGPR = value.tagGPR();
         GPRReg valuePayloadGPR = value.payloadGPR();

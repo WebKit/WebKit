@@ -1,5 +1,18 @@
 2012-02-26  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should support activations and nested functions
+        https://bugs.webkit.org/show_bug.cgi?id=79554
+
+        Reviewed by Sam Weinig.
+        
+        Fix 32-bit. The 32-bit function+activation code had some really weird
+        register reuse bugs.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2012-02-26  Filip Pizlo  <fpizlo@apple.com>
+
         Getting the instruction stream for a code block should not require two loads
         https://bugs.webkit.org/show_bug.cgi?id=79608
 
