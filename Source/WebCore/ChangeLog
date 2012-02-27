@@ -1,3 +1,36 @@
+2012-02-27  Adam Klein  <adamk@chromium.org>
+
+        Move WebCore-internal DOM notification methods from Node to ContainerNode where appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=79697
+
+        Reviewed by Ryosuke Niwa.
+
+        insertedIntoTree/removedFromTree are only used by subclasses of
+        ContainerNode. Moreover, attempting to make use of these notifications
+        in a non-container Node would currently not work, because
+        Node::removedFromDocument/insertedIntoDocument do not dispatch to these methods.
+        Rather than adding useless calls to an always-empty virtual method,
+        this patch moves these methods to ContainerNode.
+
+        Meanwhile, childrenChanged moves to ContainerNode for an obvious reason:
+        non-container Nodes have no children to change.
+
+        No new tests, refactoring only.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::childrenChanged): Remove call to now-nonexistent Node::childrenChanged.
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChild): Check that the removed child is a container node before notifying it of removal.
+        (WebCore::ContainerNode::parserRemoveChild): ditto.
+        (WebCore::ContainerNode::insertedIntoTree): Remove call to now-nonexistent Node::insertedIntoTree.
+        (WebCore::ContainerNode::removedFromTree): Remove call to now-nonexistent Node::removedFromTree.
+        (WebCore::ContainerNode::childrenChanged): Remove call to now-nonexistent Node::childrenChanged.
+        (WebCore::notifyChildInserted): Check that the inserted child is a container node before notifying it of insertion.
+        * dom/ContainerNode.h:
+        (ContainerNode): Migrate comments from Node.h, point back at it for more notification methods.
+        * dom/Node.h:
+        (Node): Move methods, update comments to point at ContainerNode.h.
+
 2012-02-27  Chris Rogers  <crogers@google.com>
 
         Implement static compression curve parameters for DynamicsCompressorNode

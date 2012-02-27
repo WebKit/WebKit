@@ -172,8 +172,6 @@ void Attr::childrenChanged(bool changedByParser, Node* beforeChange, Node* after
     if (m_ignoreChildrenChanged > 0)
         return;
 
-    Node::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-
     invalidateNodeListsCacheAfterAttributeChanged(m_attribute->name());
 
     // FIXME: We should include entity references in the value

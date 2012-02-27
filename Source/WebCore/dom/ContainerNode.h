@@ -79,10 +79,20 @@ public:
     virtual void setHovered(bool = true) OVERRIDE;
     virtual void insertedIntoDocument() OVERRIDE;
     virtual void removedFromDocument() OVERRIDE;
-    virtual void insertedIntoTree(bool deep) OVERRIDE;
-    virtual void removedFromTree(bool deep) OVERRIDE;
-    virtual void childrenChanged(bool createdByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0) OVERRIDE;
     virtual void scheduleSetNeedsStyleRecalc(StyleChangeType = FullStyleChange) OVERRIDE;
+
+    // -----------------------------------------------------------------------------
+    // Notification of document structure changes (see Node.h for more notification methods)
+
+    // These functions are called whenever you are connected or disconnected from a tree. That tree may be the main
+    // document tree, or it could be another disconnected tree. Override these functions to do any work that depends
+    // on connectedness to some ancestor (e.g., an ancestor <form>).
+    virtual void insertedIntoTree(bool deep);
+    virtual void removedFromTree(bool deep);
+
+    // Notifies the node that it's list of children have changed (either by adding or removing child nodes), or a child
+    // node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed its value.
+    virtual void childrenChanged(bool createdByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
 protected:
     ContainerNode(Document*, ConstructionType = CreateContainer);

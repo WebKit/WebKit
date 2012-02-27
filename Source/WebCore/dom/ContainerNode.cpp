@@ -463,8 +463,8 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
     if (child->inDocument())
         child->removedFromDocument();
-    else
-        child->removedFromTree(true);
+    else if (child->isContainerNode())
+        toContainerNode(child.get())->removedFromTree(true);
 
     dispatchSubtreeModifiedEvent();
 
@@ -513,8 +513,8 @@ void ContainerNode::parserRemoveChild(Node* oldChild)
     childrenChanged(true, prev, next, -1);
     if (oldChild->inDocument())
         oldChild->removedFromDocument();
-    else
-        oldChild->removedFromTree(true);
+    else if (oldChild->isContainerNode())
+        toContainerNode(oldChild)->removedFromTree(true);
 }
 
 // this differs from other remove functions because it forcibly removes all the children,
@@ -812,21 +812,24 @@ void ContainerNode::insertedIntoTree(bool deep)
 {
     if (!deep)
         return;
-    for (Node* child = m_firstChild; child; child = child->nextSibling())
-        child->insertedIntoTree(true);
+    for (Node* child = m_firstChild; child; child = child->nextSibling()) {
+        if (child->isContainerNode())
+            toContainerNode(child)->insertedIntoTree(true);
+    }
 }
 
 void ContainerNode::removedFromTree(bool deep)
 {
     if (!deep)
         return;
-    for (Node* child = m_firstChild; child; child = child->nextSibling())
-        child->removedFromTree(true);
+    for (Node* child = m_firstChild; child; child = child->nextSibling()) {
+        if (child->isContainerNode())
+            toContainerNode(child)->removedFromTree(true);
+    }
 }
 
 void ContainerNode::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    Node::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     if (!changedByParser && childCountDelta)
         document()->updateRangesAfterChildrenChanged(this);
     invalidateNodeListsCacheAfterChildrenChanged();
@@ -1085,8 +1088,8 @@ static void notifyChildInserted(Node* child)
     Node* parentOrHostNode = c->parentOrHostNode();
     if (parentOrHostNode && parentOrHostNode->inDocument())
         c->insertedIntoDocument();
-    else
-        c->insertedIntoTree(true);
+    else if (c->isContainerNode())
+        toContainerNode(c.get())->insertedIntoTree(true);
 
     document->incDOMTreeVersion();
 }

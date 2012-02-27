@@ -510,7 +510,7 @@ public:
     RenderStyle* computedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO) { return virtualComputedStyle(pseudoElementSpecifier); }
 
     // -----------------------------------------------------------------------------
-    // Notification of document structure changes
+    // Notification of document structure changes (see ContainerNode.h for more notification methods)
 
     // Notifies the node that it has been inserted into the document. This is called during document parsing, and also
     // when a node is added through the DOM methods insertBefore(), appendChild() or replaceChild(). Note that this only
@@ -527,16 +527,6 @@ public:
     // This is similar to the DOMNodeRemovedFromDocument DOM event, but does not require the overhead of event
     // dispatching, and is called _after_ the node is removed from the tree.
     virtual void removedFromDocument();
-
-    // These functions are called whenever you are connected or disconnected from a tree.  That tree may be the main
-    // document tree, or it could be another disconnected tree.  Override these functions to do any work that depends
-    // on connectedness to some ancestor (e.g., an ancestor <form> for example).
-    virtual void insertedIntoTree(bool /*deep*/) { }
-    virtual void removedFromTree(bool /*deep*/) { }
-
-    // Notifies the node that it's list of children have changed (either by adding or removing child nodes), or a child
-    // node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed its value.
-    virtual void childrenChanged(bool /*changedByParser*/ = false, Node* /*beforeChange*/ = 0, Node* /*afterChange*/ = 0, int /*childCountDelta*/ = 0) { }
 
 #ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;
