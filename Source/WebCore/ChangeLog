@@ -1,3 +1,31 @@
+2012-02-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] 0.11 support in MediaPlayerPrivateGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=77089
+
+        Reviewed by Martin Robinson.
+
+        Basic port to GStreamer 0.11 APIs. This patch excludes the video
+        painting changes and the GStreamerGWorld changes which are handled
+        in two other patches (bugs 77087 and 77088).
+
+        * GNUmakefile.list.am: Add GStreamerVersioning files to the build.
+        * Source/WebCore/PlatformEfl.cmake: Ditto.
+        * Source/WebCore/Target.pri: Ditto.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::GstElement):
+        (WTF::GstPad):
+        (WTF::GstPadTemplate):
+        (WTF::GstTask):
+        * platform/graphics/gstreamer/GStreamerVersioning.cpp: Added.
+        (webkit_gst_object_ref_sink):
+        (webkit_gst_element_get_pad_caps):
+        * platform/graphics/gstreamer/GStreamerVersioning.h: Added.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::isAvailable):
+        (WebCore::MediaPlayerPrivateGStreamer::duration):
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize):
+
 2012-02-27  Philip Rogers  <pdr@google.com>
 
         Stop recomputing SVG path data twice during layout
