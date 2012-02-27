@@ -1,3 +1,17 @@
+2012-02-27  Ojan Vafai  <ojan@chromium.org>
+
+        implement display: -webkit-inline-flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=77772
+
+        Reviewed by David Hyatt.
+
+        Tests: css3/flexbox/inline-flexbox-expected.html
+               css3/flexbox/inline-flexbox.html
+
+        * rendering/style/RenderStyle.h:
+        -Add INLINE_FLEXBOX to the list of replaced display types.
+        -Restructure the isDisplayInline methods to avoid code duplication.
+
 2012-02-27  Ken Buchanan  <kenrb@chromium.org>
 
         Absolute positioned elements with Inline Relative Positioned Container are not layout correctly
