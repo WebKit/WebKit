@@ -28,20 +28,38 @@
 
 #include "WKBundleAPICast.h"
 #include "WKBundleInitialize.h"
-#include <WebCore/NotImplemented.h>
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-bool InjectedBundle::load(APIObject*)
+bool InjectedBundle::load(APIObject* initializationUserData)
 {
-    return false;
+    m_platformBundle = eina_module_new(m_path.utf8().data());
+    if (!m_platformBundle) {
+        EINA_LOG_CRIT("Error loading the injected bundle: eina_module_new() failed");
+        return false;
+    }
+    if (!eina_module_load(m_platformBundle)) {
+        EINA_LOG_CRIT("Error loading the injected bundle: %s", m_path.utf8().data());
+        eina_module_free(m_platformBundle);
+        m_platformBundle = 0;
+        return false;
+    }
+
+    WKBundleInitializeFunctionPtr initializeFunction = reinterpret_cast<WKBundleInitializeFunctionPtr>(eina_module_symbol_get(m_platformBundle, "WKBundleInitialize"));
+    if (!initializeFunction) {
+        EINA_LOG_CRIT("Error loading WKBundleInitialize symbol from injected bundle.");
+        return false;
+    }
+
+    initializeFunction(toAPI(this), toAPI(initializationUserData));
+    return true;
 }
 
 void InjectedBundle::activateMacFontAscentHack()
 {
-    notImplemented();
 }
 
 } // namespace WebKit

@@ -43,6 +43,10 @@
 typedef struct _GModule GModule;
 #endif
 
+#if PLATFORM(EFL)
+#include <Eina.h>
+#endif
+
 namespace CoreIPC {
     class ArgumentDecoder;
     class Connection;
@@ -59,6 +63,8 @@ typedef HMODULE PlatformBundle;
 typedef QLibrary PlatformBundle;
 #elif PLATFORM(GTK)
 typedef ::GModule* PlatformBundle;
+#elif PLATFORM(EFL)
+typedef Eina_Module* PlatformBundle;
 #endif
 
 class ImmutableArray;
