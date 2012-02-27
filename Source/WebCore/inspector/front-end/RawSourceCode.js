@@ -62,7 +62,7 @@ WebInspector.RawSourceCode = function(id, script, resource, formatter, formatted
 }
 
 WebInspector.RawSourceCode.Events = {
-    SourceMappingUpdated: "source-mapping-updated"
+    UISourceCodeListChanged: "us-source-code-list-changed"
 }
 
 WebInspector.RawSourceCode.prototype = {
@@ -76,11 +76,37 @@ WebInspector.RawSourceCode.prototype = {
     },
 
     /**
-     * @return {WebInspector.RawSourceCode.SourceMapping}
+     * @param {DebuggerAgent.Location} rawLocation
+     * @return {WebInspector.UILocation}
      */
-    get sourceMapping()
+    rawLocationToUILocation: function(rawLocation)
     {
-        return this._sourceMapping;
+        if (this._sourceMapping)
+            return this._sourceMapping.rawLocationToUILocation(rawLocation);
+        return null;
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {number} lineNumber
+     * @param {number} columnNumber
+     * @return {DebuggerAgent.Location}
+     */
+    uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
+    {
+        if (this._sourceMapping)
+            return this._sourceMapping.uiLocationToRawLocation(uiSourceCode, lineNumber, columnNumber);
+        return null;
+    },
+
+    /**
+     * @return {Array.<WebInspector.UISourceCode>}
+     */
+    uiSourceCodeList: function()
+    {
+        if (this._sourceMapping)
+            return this._sourceMapping.uiSourceCodeList();
+        return [];
     },
 
     /**
@@ -241,11 +267,11 @@ WebInspector.RawSourceCode.prototype = {
      */
     _saveSourceMapping: function(sourceMapping)
     {
-        var oldSourceMapping;
+        var oldUISourceCodeList = [];
         if (this._sourceMapping)
-            oldSourceMapping = this._sourceMapping;
+            oldUISourceCodeList = this._sourceMapping.uiSourceCodeList();
         this._sourceMapping = sourceMapping;
-        this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.SourceMappingUpdated, { oldSourceMapping: oldSourceMapping });
+        this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.UISourceCodeListChanged, { oldUISourceCodeList: oldUISourceCodeList });
     }
 }
 

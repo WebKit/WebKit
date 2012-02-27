@@ -147,7 +147,7 @@ WebInspector.ScriptsSearchResultsPane.prototype = {
         
         var uiSourceCode = file;
         var rawSourceCode = uiSourceCode.rawSourceCode;
-        var rawLocation = rawSourceCode.sourceMapping.uiLocationToRawLocation(uiSourceCode, lineNumber, columnNumber);
+        var rawLocation = rawSourceCode.uiLocationToRawLocation(uiSourceCode, lineNumber, columnNumber);
         var anchor = this._linkifier.linkifyRawSourceCode(uiSourceCode.rawSourceCode, rawLocation.lineNumber, rawLocation.columnNumber);
         anchor.removeChildren();
         return anchor;

@@ -639,7 +639,6 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.scopechain.update(callFrame);
         this.sidebarPanes.watchExpressions.refreshExpressions();
         this.sidebarPanes.callstack.selectedCallFrame = callFrame;
-        this._updateExecutionLine(this._presentationModel.executionLineLocation);
     },
 
     _editorClosed: function(event)

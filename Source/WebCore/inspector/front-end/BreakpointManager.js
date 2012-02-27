@@ -71,7 +71,7 @@ WebInspector.BreakpointManager.prototype = {
         for (var lineNumber in breakpoints) {
             var breakpoint = breakpoints[lineNumber];
             breakpoint.uiSourceCode = uiSourceCode;
-            this._materializeBreakpoint(breakpoint, uiSourceCode.rawSourceCode.sourceMapping, uiSourceCode);
+            this._materializeBreakpoint(breakpoint, uiSourceCode.rawSourceCode, uiSourceCode);
             if (breakpoint._debuggerLocation)
                 this._breakpointDebuggerLocationChanged(breakpoint);
         }
@@ -100,7 +100,7 @@ WebInspector.BreakpointManager.prototype = {
         var breakpoint = new WebInspector.Breakpoint(uiSourceCode.id, lineNumber, condition, enabled, persistent);
         breakpoint.uiSourceCode = uiSourceCode;
         this._addBreakpointToUI(breakpoint);
-        this._materializeBreakpoint(breakpoint, uiSourceCode.rawSourceCode.sourceMapping, uiSourceCode);
+        this._materializeBreakpoint(breakpoint, uiSourceCode.rawSourceCode, uiSourceCode);
     },
 
     /**
@@ -131,16 +131,16 @@ WebInspector.BreakpointManager.prototype = {
 
     /**
      * @param {WebInspector.Breakpoint} breakpoint
-     * @param {WebInspector.RawSourceCode.SourceMapping} sourceMapping
+     * @param {WebInspector.RawSourceCode} rawSourceCode
      * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    _materializeBreakpoint: function(breakpoint, sourceMapping, uiSourceCode)
+    _materializeBreakpoint: function(breakpoint, rawSourceCode, uiSourceCode)
     {
         if (!breakpoint.enabled || breakpoint._materialized)
             return;
 
         breakpoint._materialized = true;
-        var rawLocation = sourceMapping.uiLocationToRawLocation(uiSourceCode, breakpoint.lineNumber, 0);
+        var rawLocation = rawSourceCode.uiLocationToRawLocation(uiSourceCode, breakpoint.lineNumber, 0);
         this._setBreakpointInDebugger(breakpoint, rawLocation);
     },
 
@@ -151,7 +151,7 @@ WebInspector.BreakpointManager.prototype = {
     {
         if (!breakpoint.uiSourceCode)
             return;
-        var uiLocation = breakpoint.uiSourceCode.rawSourceCode.sourceMapping.rawLocationToUILocation(breakpoint._debuggerLocation);
+        var uiLocation = breakpoint.uiSourceCode.rawSourceCode.rawLocationToUILocation(breakpoint._debuggerLocation);
         if (uiLocation.lineNumber === breakpoint.lineNumber)
             return;
 

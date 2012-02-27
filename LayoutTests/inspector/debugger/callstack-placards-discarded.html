@@ -22,7 +22,7 @@ var test = function()
                 var callFrame = event.data.callFrames[0];
                 InspectorTest.addResult("Function name: " + callFrame._callFrame.functionName);
                 var rawSourceCode = callFrame._rawSourceCode;
-                var listeners = rawSourceCode._listeners[WebInspector.RawSourceCode.Events.SourceMappingUpdated]
+                var listeners = rawSourceCode._listeners[WebInspector.RawSourceCode.Events.UISourceCodeListChanged];
                 InspectorTest.addResult("Listeners length: " + listeners.length);
                 if (previousListenerLength !== undefined && listeners.length !== previousListenerLength)
                     InspectorTest.addResult("FAILED: RawSourceCode listeners count has changed!");
