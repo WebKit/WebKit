@@ -2086,7 +2086,6 @@ HEADERS += \
     page/PageGroup.h \
     page/PageGroupLoadDeferrer.h \
     page/Page.h \
-    page/PageSupplement.h \
     page/PageVisibilityState.h \
     page/PrintContext.h \
     page/Screen.h \
