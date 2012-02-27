@@ -50,7 +50,7 @@
 #include "RenderTreeAsText.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 #include "SpellChecker.h"
 #include "TextIterator.h"
 
@@ -203,7 +203,7 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::ensureShadowRoot(Eleme
     }
 
     if (host->hasShadowRoot())
-        return host->shadowRootList()->youngestShadowRoot();
+        return host->shadowTree()->youngestShadowRoot();
 
     return ShadowRoot::create(host, ec).get();
 }
@@ -225,7 +225,7 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::youngestShadowRoot(Ele
     if (!host->hasShadowRoot())
         return 0;
 
-    return host->shadowRootList()->youngestShadowRoot();
+    return host->shadowTree()->youngestShadowRoot();
 }
 
 Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::oldestShadowRoot(Element* host, ExceptionCode& ec)
@@ -238,7 +238,7 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::oldestShadowRoot(Eleme
     if (!host->hasShadowRoot())
         return 0;
 
-    return host->shadowRootList()->oldestShadowRoot();
+    return host->shadowTree()->oldestShadowRoot();
 }
 
 void Internals::removeShadowRoot(Element* host, ExceptionCode& ec)

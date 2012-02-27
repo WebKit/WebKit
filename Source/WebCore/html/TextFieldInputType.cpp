@@ -43,7 +43,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 #include "TextControlInnerElements.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
@@ -226,11 +226,11 @@ void TextFieldInputType::createShadowSubtree()
     ExceptionCode ec = 0;
     m_innerText = TextControlInnerTextElement::create(document);
     if (!createsContainer) {
-        element()->shadowRootList()->oldestShadowRoot()->appendChild(m_innerText, ec);
+        element()->shadowTree()->oldestShadowRoot()->appendChild(m_innerText, ec);
         return;
     }
 
-    ShadowRoot* shadowRoot = element()->shadowRootList()->oldestShadowRoot();
+    ShadowRoot* shadowRoot = element()->shadowTree()->oldestShadowRoot();
     m_container = HTMLDivElement::create(document);
     m_container->setShadowPseudoId("-webkit-textfield-decoration-container");
     shadowRoot->appendChild(m_container, ec);
@@ -392,7 +392,7 @@ void TextFieldInputType::updatePlaceholderText()
     if (!m_placeholder) {
         m_placeholder = HTMLDivElement::create(element()->document());
         m_placeholder->setShadowPseudoId("-webkit-input-placeholder");
-        element()->shadowRootList()->oldestShadowRoot()->insertBefore(m_placeholder, m_container ? m_container->nextSibling() : innerTextElement()->nextSibling(), ec);
+        element()->shadowTree()->oldestShadowRoot()->insertBefore(m_placeholder, m_container ? m_container->nextSibling() : innerTextElement()->nextSibling(), ec);
         ASSERT(!ec);
     }
     m_placeholder->setInnerText(placeholderText, ec);

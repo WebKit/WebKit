@@ -118,7 +118,7 @@
 #include "SecurityContext.cpp"
 #include "SelectorQuery.cpp"
 #include "ShadowRoot.cpp"
-#include "ShadowRootList.cpp"
+#include "ShadowTree.cpp"
 #include "SpaceSplitString.cpp"
 #include "StaticHashSetNodeList.cpp"
 #include "StaticNodeList.cpp"

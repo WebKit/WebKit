@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ShadowRootList_h
-#define ShadowRootList_h
+#ifndef ShadowTree_h
+#define ShadowTree_h
 
 #include "ShadowRoot.h"
 #include <wtf/DoublyLinkedList.h>
@@ -40,10 +40,10 @@ class Element;
 class HTMLContentSelector;
 class InsertionPoint;
 
-class ShadowRootList {
+class ShadowTree {
 public:
-    ShadowRootList();
-    ~ShadowRootList();
+    ShadowTree();
+    ~ShadowTree();
 
     bool hasShadowRoot() const;
     ShadowRoot* youngestShadowRoot() const;
@@ -84,35 +84,35 @@ private:
     DoublyLinkedList<ShadowRoot> m_shadowRoots;
     OwnPtr<HTMLContentSelector> m_selector;
     bool m_needsRecalculateContent : 1;
-    WTF_MAKE_NONCOPYABLE(ShadowRootList);
+    WTF_MAKE_NONCOPYABLE(ShadowTree);
 };
 
-inline bool ShadowRootList::hasShadowRoot() const
+inline bool ShadowTree::hasShadowRoot() const
 {
     return !m_shadowRoots.isEmpty();
 }
 
-inline ShadowRoot* ShadowRootList::youngestShadowRoot() const
+inline ShadowRoot* ShadowTree::youngestShadowRoot() const
 {
     return m_shadowRoots.head();
 }
 
-inline ShadowRoot* ShadowRootList::oldestShadowRoot() const
+inline ShadowRoot* ShadowTree::oldestShadowRoot() const
 {
     return m_shadowRoots.tail();
 }
 
-inline HTMLContentSelector* ShadowRootList::selector() const
+inline HTMLContentSelector* ShadowTree::selector() const
 {
     return m_selector.get();
 }
 
-inline void ShadowRootList::clearNeedsReattachHostChildrenAndShadow()
+inline void ShadowTree::clearNeedsReattachHostChildrenAndShadow()
 {
     m_needsRecalculateContent = false;
 }
 
-inline Element* ShadowRootList::host() const
+inline Element* ShadowTree::host() const
 {
     ASSERT(hasShadowRoot());
     return youngestShadowRoot()->host();

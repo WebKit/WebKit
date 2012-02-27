@@ -39,7 +39,7 @@ class Node;
 class RenderFlowThread;
 class RenderObject;
 class RenderStyle;
-class ShadowRootList;
+class ShadowTree;
 
 class NodeRenderingContext {
 public:
@@ -82,7 +82,7 @@ private:
     AttachingPhase m_phase;
     Node* m_node;
     ContainerNode* m_parentNodeForRenderingAndStyle;
-    ShadowRootList* m_visualParentShadowRootList;
+    ShadowTree* m_visualParentShadowTree;
     InsertionPoint* m_insertionPoint;
     RefPtr<RenderStyle> m_style;
     RenderFlowThread* m_parentFlowRenderer;

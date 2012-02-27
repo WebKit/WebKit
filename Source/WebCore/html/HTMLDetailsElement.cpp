@@ -31,7 +31,7 @@
 #include "NodeRenderingContext.h"
 #include "RenderDetails.h"
 #include "ShadowRoot.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -124,7 +124,7 @@ Element* HTMLDetailsElement::findMainSummary() const
             return toElement(child);
     }
 
-    return static_cast<DetailsSummaryElement*>(shadowRootList()->oldestShadowRoot()->firstChild())->fallbackSummary();
+    return static_cast<DetailsSummaryElement*>(shadowTree()->oldestShadowRoot()->firstChild())->fallbackSummary();
 }
 
 void HTMLDetailsElement::parseAttribute(Attribute* attr)

@@ -847,8 +847,8 @@ void Element::willRemove()
     if (containsFullScreenElement())
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
 #endif
-    if (ShadowRootList* shadowRoots = shadowRootList())
-        shadowRoots->willRemove();
+    if (ShadowTree* tree = shadowTree())
+        tree->willRemove();
     ContainerNode::willRemove();
 }
 
@@ -857,8 +857,8 @@ void Element::insertedIntoDocument()
     // need to do superclass processing first so inDocument() is true
     // by the time we reach updateId
     ContainerNode::insertedIntoDocument();
-    if (ShadowRootList* shadowRoots = shadowRootList())
-        shadowRoots->insertedIntoDocument();
+    if (ShadowTree* tree = shadowTree())
+        tree->insertedIntoDocument();
 
     if (m_attributeMap) {
         if (hasID()) {
@@ -890,8 +890,8 @@ void Element::removedFromDocument()
     }
 
     ContainerNode::removedFromDocument();
-    if (ShadowRootList* shadowRoots = shadowRootList())
-        shadowRoots->removedFromDocument();
+    if (ShadowTree* tree = shadowTree())
+        tree->removedFromDocument();
 }
 
 void Element::insertedIntoTree(bool deep)
@@ -899,8 +899,8 @@ void Element::insertedIntoTree(bool deep)
     ContainerNode::insertedIntoTree(deep);
     if (!deep)
         return;
-    if (ShadowRootList* shadowRoots = shadowRootList())
-        shadowRoots->insertedIntoTree(true);
+    if (ShadowTree* tree = shadowTree())
+        tree->insertedIntoTree(true);
 
 #if ENABLE(FULLSCREEN_API)
     if (containsFullScreenElement() && parentElement() && !parentElement()->containsFullScreenElement())
@@ -913,8 +913,8 @@ void Element::removedFromTree(bool deep)
     ContainerNode::removedFromTree(deep);
     if (!deep)
         return;
-    if (ShadowRootList* shadowRoots = shadowRootList())
-        shadowRoots->removedFromTree(true);
+    if (ShadowTree* tree = shadowTree())
+        tree->removedFromTree(true);
 }
 
 void Element::attach()
@@ -928,7 +928,7 @@ void Element::attach()
     // When a shadow root exists, it does the work of attaching the children.
     if (hasShadowRoot()) {
         parentPusher.push();
-        shadowRootList()->attach();
+        shadowTree()->attach();
 
         // In a shadow tree, some of light children may be attached by 'content' element.
         // However, when there is no content element or content element does not select
@@ -965,8 +965,8 @@ void Element::detach()
     if (hasRareData())
         rareData()->resetComputedStyle();
     ContainerNode::detach();
-    if (ShadowRootList* shadowRoots = shadowRootList())
-        shadowRoots->detach();
+    if (ShadowTree* tree = shadowTree())
+        tree->detach();
 
     RenderWidget::resumeWidgetHierarchyUpdates();
 }
@@ -1126,10 +1126,10 @@ void Element::recalcStyle(StyleChange change)
     }
     // FIXME: This does not care about sibling combinators. Will be necessary in XBL2 world.
     if (hasShadowRoot()) {
-        ShadowRootList* list = shadowRootList();
-        if (change >= Inherit || list->childNeedsStyleRecalc() || list->needsStyleRecalc()) {
+        ShadowTree* tree = shadowTree();
+        if (change >= Inherit || tree->childNeedsStyleRecalc() || tree->needsStyleRecalc()) {
             parentPusher.push();
-            list->recalcShadowTreeStyle(change);
+            tree->recalcShadowTreeStyle(change);
         }
     }
 
@@ -1142,17 +1142,17 @@ void Element::recalcStyle(StyleChange change)
 
 bool Element::hasShadowRoot() const
 {
-    if (ShadowRootList* list = shadowRootList())
-        return list->hasShadowRoot();
+    if (ShadowTree* tree = shadowTree())
+        return tree->hasShadowRoot();
     return false;
 }
 
-ShadowRootList* Element::shadowRootList() const
+ShadowTree* Element::shadowTree() const
 {
     if (!hasRareData())
         return 0;
 
-    return &rareData()->m_shadowRootList;
+    return &rareData()->m_shadowTree;
 }
 
 static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, ExceptionCode& ec)
@@ -1184,7 +1184,7 @@ void Element::setShadowRoot(PassRefPtr<ShadowRoot> shadowRoot, ExceptionCode& ec
     removeShadowRoot();
 
     shadowRoot->setShadowHost(this);
-    shadowRootList()->pushShadowRoot(shadowRoot.get());
+    shadowTree()->pushShadowRoot(shadowRoot.get());
 
     if (inDocument())
         shadowRoot->insertedIntoDocument();
@@ -1198,7 +1198,7 @@ void Element::setShadowRoot(PassRefPtr<ShadowRoot> shadowRoot, ExceptionCode& ec
 ShadowRoot* Element::ensureShadowRoot()
 {
     if (hasShadowRoot())
-        return shadowRootList()->oldestShadowRoot();
+        return shadowTree()->oldestShadowRoot();
 
     return ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot).get();
 }
@@ -1208,7 +1208,7 @@ void Element::removeShadowRoot()
     if (!hasShadowRoot())
         return;
 
-    while (RefPtr<ShadowRoot> oldRoot = shadowRootList()->popShadowRoot()) {
+    while (RefPtr<ShadowRoot> oldRoot = shadowTree()->popShadowRoot()) {
         document()->removeFocusedNodeOfSubtree(oldRoot.get());
 
         if (oldRoot->attached())
@@ -1361,7 +1361,7 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
 
     if (hasRareData()) {
         if (hasShadowRoot())
-            shadowRootList()->hostChildrenChanged();
+            shadowTree()->hostChildrenChanged();
     }
 }
 

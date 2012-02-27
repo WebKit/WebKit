@@ -42,7 +42,7 @@ class DOMTokenList;
 class ElementRareData;
 class IntSize;
 class ShadowRoot;
-class ShadowRootList;
+class ShadowTree;
 class WebKitAnimationList;
 
 enum SpellcheckAttributeState {
@@ -254,9 +254,9 @@ public:
     void recalcStyle(StyleChange = NoChange);
 
     bool hasShadowRoot() const;
-    ShadowRootList* shadowRootList() const;
+    ShadowTree* shadowTree() const;
 
-    // FIXME: These API will be moved to ShadowRootList.
+    // FIXME: These API will be moved to ShadowTree.
     // https://bugs.webkit.org/show_bug.cgi?id=78313
     void setShadowRoot(PassRefPtr<ShadowRoot>, ExceptionCode&);
     ShadowRoot* ensureShadowRoot();

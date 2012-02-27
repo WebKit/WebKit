@@ -35,7 +35,7 @@
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "ShadowRoot.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -47,7 +47,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     : m_phase(AttachingNotInTree)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
-    , m_visualParentShadowRootList(0)
+    , m_visualParentShadowTree(0)
     , m_insertionPoint(0)
     , m_style(0)
     , m_parentFlowRenderer(0)
@@ -64,9 +64,9 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
 
     if (parent->isElementNode()) {
         if (toElement(parent)->hasShadowRoot()) {
-            m_visualParentShadowRootList = toElement(parent)->shadowRootList();
-            if ((m_insertionPoint = m_visualParentShadowRootList->insertionPointFor(m_node))
-                && m_visualParentShadowRootList->isSelectorActive()) {
+            m_visualParentShadowTree = toElement(parent)->shadowTree();
+            if ((m_insertionPoint = m_visualParentShadowTree->insertionPointFor(m_node))
+                && m_visualParentShadowTree->isSelectorActive()) {
                 m_phase = AttachingDistributed;
                 m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_insertionPoint).parentNodeForRenderingAndStyle();
                 return;
@@ -95,7 +95,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
     : m_phase(Calculating)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
-    , m_visualParentShadowRootList(0)
+    , m_visualParentShadowTree(0)
     , m_insertionPoint(0)
     , m_style(style)
     , m_parentFlowRenderer(0)
@@ -261,7 +261,7 @@ RenderObject* NodeRenderingContext::parentRenderer() const
 void NodeRenderingContext::hostChildrenChanged()
 {
     if (m_phase == AttachingNotDistributed)
-        m_visualParentShadowRootList->hostChildrenChanged();
+        m_visualParentShadowTree->hostChildrenChanged();
 }
 
 bool NodeRenderingContext::shouldCreateRenderer() const

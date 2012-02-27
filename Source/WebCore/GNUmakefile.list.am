@@ -1738,8 +1738,8 @@ webcore_sources += \
 	Source/WebCore/dom/SelectorQuery.h \
 	Source/WebCore/dom/ShadowRoot.cpp \
 	Source/WebCore/dom/ShadowRoot.h \
-	Source/WebCore/dom/ShadowRootList.cpp \
-	Source/WebCore/dom/ShadowRootList.h \
+	Source/WebCore/dom/ShadowTree.cpp \
+	Source/WebCore/dom/ShadowTree.h \
 	Source/WebCore/dom/SpaceSplitString.cpp \
 	Source/WebCore/dom/SpaceSplitString.h \
 	Source/WebCore/dom/StaticHashSetNodeList.cpp \

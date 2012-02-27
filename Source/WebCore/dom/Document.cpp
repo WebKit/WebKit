@@ -141,7 +141,7 @@
 #include "SegmentedString.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 #include "StaticHashSetNodeList.h"
 #include "StyleSheetList.h"
 #include "TextResourceDecoder.h"
@@ -673,7 +673,7 @@ void Document::buildAccessKeyMap(TreeScope* scope)
             m_elementsByAccessKey.set(accessKey.impl(), element);
 
         if (element->hasShadowRoot()) {
-            for (ShadowRoot* root = element->shadowRootList()->youngestShadowRoot(); root; root = root->olderShadowRoot())
+            for (ShadowRoot* root = element->shadowTree()->youngestShadowRoot(); root; root = root->olderShadowRoot())
                 buildAccessKeyMap(root);
         }
     }

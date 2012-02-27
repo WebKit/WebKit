@@ -571,7 +571,7 @@ SOURCES += \
     dom/SecurityContext.cpp \
     dom/SelectorQuery.cpp \
     dom/ShadowRoot.cpp \
-    dom/ShadowRootList.cpp \
+    dom/ShadowTree.cpp \
     dom/SpaceSplitString.cpp \
     dom/StaticNodeList.cpp \
     dom/StyledElement.cpp \
@@ -1690,7 +1690,7 @@ HEADERS += \
     dom/ScriptExecutionContext.h \
     dom/SelectorQuery.h \
     dom/ShadowRoot.h \
-    dom/ShadowRootList.h \
+    dom/ShadowTree.h \
     dom/SpaceSplitString.h \
     dom/StaticNodeList.h \
     dom/StyledElement.h \

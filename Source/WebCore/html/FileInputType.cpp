@@ -36,7 +36,7 @@
 #include "RenderFileUploadControl.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -268,13 +268,13 @@ void FileInputType::createShadowSubtree()
 {
     ASSERT(element()->hasShadowRoot());
     ExceptionCode ec = 0;
-    element()->shadowRootList()->oldestShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()), ec);
+    element()->shadowTree()->oldestShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()), ec);
 }
 
 void FileInputType::multipleAttributeChanged()
 {
     ASSERT(element()->hasShadowRoot());
-    UploadButtonElement* button = static_cast<UploadButtonElement*>(element()->shadowRootList()->oldestShadowRoot()->firstChild());
+    UploadButtonElement* button = static_cast<UploadButtonElement*>(element()->shadowTree()->oldestShadowRoot()->firstChild());
     if (button)
         button->setValue(element()->multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
 }

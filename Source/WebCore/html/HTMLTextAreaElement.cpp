@@ -38,7 +38,7 @@
 #include "HTMLNames.h"
 #include "RenderTextControlMultiLine.h"
 #include "ShadowRoot.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
@@ -294,7 +294,7 @@ String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, 
 
 HTMLElement* HTMLTextAreaElement::innerTextElement() const
 {
-    Node* node = shadowRootList()->oldestShadowRoot()->firstChild();
+    Node* node = shadowTree()->oldestShadowRoot()->firstChild();
     ASSERT(!node || node->hasTagName(divTag));
     return toHTMLElement(node);
 }
@@ -471,7 +471,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
     String placeholderText = strippedPlaceholder();
     if (placeholderText.isEmpty()) {
         if (m_placeholder) {
-            shadowRootList()->oldestShadowRoot()->removeChild(m_placeholder.get(), ec);
+            shadowTree()->oldestShadowRoot()->removeChild(m_placeholder.get(), ec);
             ASSERT(!ec);
             m_placeholder.clear();
         }
@@ -480,7 +480,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
     if (!m_placeholder) {
         m_placeholder = HTMLDivElement::create(document());
         m_placeholder->setShadowPseudoId("-webkit-input-placeholder");
-        shadowRootList()->oldestShadowRoot()->insertBefore(m_placeholder, shadowRootList()->oldestShadowRoot()->firstChild()->nextSibling(), ec);
+        shadowTree()->oldestShadowRoot()->insertBefore(m_placeholder, shadowTree()->oldestShadowRoot()->firstChild()->nextSibling(), ec);
         ASSERT(!ec);
     }
     m_placeholder->setInnerText(placeholderText, ec);

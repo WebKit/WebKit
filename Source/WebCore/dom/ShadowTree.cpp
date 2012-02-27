@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 
 #include "Document.h"
 #include "Element.h"
@@ -36,17 +36,17 @@
 
 namespace WebCore {
 
-ShadowRootList::ShadowRootList()
+ShadowTree::ShadowTree()
     : m_needsRecalculateContent(false)
 {
 }
 
-ShadowRootList::~ShadowRootList()
+ShadowTree::~ShadowTree()
 {
     ASSERT(!hasShadowRoot());
 }
 
-void ShadowRootList::pushShadowRoot(ShadowRoot* shadowRoot)
+void ShadowTree::pushShadowRoot(ShadowRoot* shadowRoot)
 {
 #if ENABLE(SHADOW_DOM)
     if (!RuntimeEnabledFeatures::multipleShadowSubtreesEnabled())
@@ -58,7 +58,7 @@ void ShadowRootList::pushShadowRoot(ShadowRoot* shadowRoot)
     m_shadowRoots.push(shadowRoot);
 }
 
-ShadowRoot* ShadowRootList::popShadowRoot()
+ShadowRoot* ShadowTree::popShadowRoot()
 {
     if (!hasShadowRoot())
         return 0;
@@ -66,37 +66,37 @@ ShadowRoot* ShadowRootList::popShadowRoot()
     return m_shadowRoots.removeHead();
 }
 
-void ShadowRootList::insertedIntoDocument()
+void ShadowTree::insertedIntoDocument()
 {
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
         root->insertedIntoDocument();
 }
 
-void ShadowRootList::removedFromDocument()
+void ShadowTree::removedFromDocument()
 {
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
         root->removedFromDocument();
 }
 
-void ShadowRootList::insertedIntoTree(bool deep)
+void ShadowTree::insertedIntoTree(bool deep)
 {
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
         root->insertedIntoTree(deep);
 }
 
-void ShadowRootList::removedFromTree(bool deep)
+void ShadowTree::removedFromTree(bool deep)
 {
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
         root->removedFromTree(deep);
 }
 
-void ShadowRootList::willRemove()
+void ShadowTree::willRemove()
 {
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
         root->willRemove();
 }
 
-void ShadowRootList::attach()
+void ShadowTree::attach()
 {
     // FIXME: Currently we only support the case that the shadow root list has at most one shadow root.
     // See also https://bugs.webkit.org/show_bug.cgi?id=77503 and its dependent bugs.
@@ -108,7 +108,7 @@ void ShadowRootList::attach()
     }
 }
 
-void ShadowRootList::detach()
+void ShadowTree::detach()
 {
     // FIXME: Currently we only support the case that the shadow root list has at most one shadow root.
     // See also https://bugs.webkit.org/show_bug.cgi?id=77503 and its dependent bugs.
@@ -120,7 +120,7 @@ void ShadowRootList::detach()
     }
 }
 
-InsertionPoint* ShadowRootList::insertionPointFor(Node* node) const
+InsertionPoint* ShadowTree::insertionPointFor(Node* node) const
 {
     if (!m_selector)
         return 0;
@@ -130,18 +130,18 @@ InsertionPoint* ShadowRootList::insertionPointFor(Node* node) const
     return found->insertionPoint();
 }
 
-bool ShadowRootList::isSelectorActive() const
+bool ShadowTree::isSelectorActive() const
 {
     return m_selector && m_selector->hasCandidates();
 }
 
-void ShadowRootList::reattach()
+void ShadowTree::reattach()
 {
     detach();
     attach();
 }
 
-bool ShadowRootList::childNeedsStyleRecalc()
+bool ShadowTree::childNeedsStyleRecalc()
 {
     ASSERT(youngestShadowRoot());
     if (!youngestShadowRoot())
@@ -150,7 +150,7 @@ bool ShadowRootList::childNeedsStyleRecalc()
     return youngestShadowRoot()->childNeedsStyleRecalc();
 }
 
-bool ShadowRootList::needsStyleRecalc()
+bool ShadowTree::needsStyleRecalc()
 {
     ASSERT(youngestShadowRoot());
     if (!youngestShadowRoot())
@@ -159,7 +159,7 @@ bool ShadowRootList::needsStyleRecalc()
     return youngestShadowRoot()->needsStyleRecalc();
 }
 
-void ShadowRootList::recalcShadowTreeStyle(Node::StyleChange change)
+void ShadowTree::recalcShadowTreeStyle(Node::StyleChange change)
 {
     ShadowRoot* youngest = youngestShadowRoot();
     if (!youngest)
@@ -183,12 +183,12 @@ void ShadowRootList::recalcShadowTreeStyle(Node::StyleChange change)
     }
 }
 
-bool ShadowRootList::needsReattachHostChildrenAndShadow()
+bool ShadowTree::needsReattachHostChildrenAndShadow()
 {
     return m_needsRecalculateContent || (youngestShadowRoot() && youngestShadowRoot()->hasContentElement());
 }
 
-void ShadowRootList::hostChildrenChanged()
+void ShadowTree::hostChildrenChanged()
 {
     ASSERT(youngestShadowRoot());
 
@@ -199,14 +199,14 @@ void ShadowRootList::hostChildrenChanged()
     setNeedsReattachHostChildrenAndShadow();
 }
 
-void ShadowRootList::setNeedsReattachHostChildrenAndShadow()
+void ShadowTree::setNeedsReattachHostChildrenAndShadow()
 {
     m_needsRecalculateContent = true;
 
     host()->setNeedsStyleRecalc();
 }
 
-void ShadowRootList::reattachHostChildrenAndShadow()
+void ShadowTree::reattachHostChildrenAndShadow()
 {
     ASSERT(youngestShadowRoot());
 
@@ -227,7 +227,7 @@ void ShadowRootList::reattachHostChildrenAndShadow()
     }
 }
 
-HTMLContentSelector* ShadowRootList::ensureSelector()
+HTMLContentSelector* ShadowTree::ensureSelector()
 {
     if (!m_selector)
         m_selector = adoptPtr(new HTMLContentSelector());

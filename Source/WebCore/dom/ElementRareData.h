@@ -27,7 +27,7 @@
 #include "Element.h"
 #include "HTMLCollection.h"
 #include "NodeRareData.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -64,7 +64,7 @@ public:
 
     LayoutSize m_minimumSizeForResizing;
     RefPtr<RenderStyle> m_computedStyle;
-    ShadowRootList m_shadowRootList;
+    ShadowTree m_shadowTree;
     AtomicString m_shadowPseudoId;
 
     OwnPtr<DatasetDOMStringMap> m_datasetDOMStringMap;
@@ -94,7 +94,7 @@ inline ElementRareData::ElementRareData()
 
 inline ElementRareData::~ElementRareData()
 {
-    ASSERT(!m_shadowRootList.hasShadowRoot());
+    ASSERT(!m_shadowTree.hasShadowRoot());
 }
 
 inline void ElementRareData::resetComputedStyle()

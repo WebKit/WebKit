@@ -32,7 +32,7 @@
 #include "HTMLNames.h"
 #include "QualifiedName.h"
 #include "ShadowRoot.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -74,7 +74,7 @@ void HTMLContentElement::attach()
 
     // Before calling StyledElement::attach, selector must be calculated.
     if (root) {
-        HTMLContentSelector* selector = root->list()->ensureSelector();
+        HTMLContentSelector* selector = root->tree()->ensureSelector();
         selector->unselect(&m_selections);
         selector->select(this, &m_selections);
     }
@@ -90,12 +90,12 @@ void HTMLContentElement::attach()
 void HTMLContentElement::detach()
 {
     if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
-        if (HTMLContentSelector* selector = root->list()->selector())
+        if (HTMLContentSelector* selector = root->tree()->selector())
             selector->unselect(&m_selections);
 
         // When content element is detached, shadow tree should be recreated to re-calculate selector for
         // other content elements.
-        root->list()->setNeedsReattachHostChildrenAndShadow();
+        root->tree()->setNeedsReattachHostChildrenAndShadow();
     }
 
     ASSERT(m_selections.isEmpty());
@@ -122,7 +122,7 @@ void HTMLContentElement::parseAttribute(Attribute* attr)
 {
     if (attr->name() == selectAttr) {
         if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode()))
-            root->list()->setNeedsReattachHostChildrenAndShadow();
+            root->tree()->setNeedsReattachHostChildrenAndShadow();
     } else
         InsertionPoint::parseAttribute(attr);
 }

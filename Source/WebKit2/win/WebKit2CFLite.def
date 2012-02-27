@@ -183,7 +183,7 @@ EXPORTS
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
         ?settings@Frame@WebCore@@QBEPAVSettings@2@XZ
         ?setFixedElementsLayoutRelativeToFrame@Settings@WebCore@@QAEX_N@Z
-        ?shadowRootList@Element@WebCore@@QBEPAVShadowRootList@2@XZ
+        ?shadowTree@Element@WebCore@@QBEPAVShadowTree@2@XZ
         ?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z

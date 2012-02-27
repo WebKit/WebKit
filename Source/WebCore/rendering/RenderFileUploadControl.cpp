@@ -32,7 +32,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 #include "TextRun.h"
 #include "VisiblePosition.h"
 #include <math.h>
@@ -220,7 +220,7 @@ HTMLInputElement* RenderFileUploadControl::uploadButton() const
 
     ASSERT(input->hasShadowRoot());
 
-    Node* buttonNode = input->shadowRootList()->oldestShadowRoot()->firstChild();
+    Node* buttonNode = input->shadowTree()->oldestShadowRoot()->firstChild();
     return buttonNode && buttonNode->isHTMLElement() && buttonNode->hasTagName(inputTag) ? static_cast<HTMLInputElement*>(buttonNode) : 0;
 }
 

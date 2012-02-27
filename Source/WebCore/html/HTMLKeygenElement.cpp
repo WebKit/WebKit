@@ -33,7 +33,7 @@
 #include "HTMLOptionElement.h"
 #include "SSLKeyGenerator.h"
 #include "ShadowRoot.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
 
@@ -132,7 +132,7 @@ void HTMLKeygenElement::reset()
 HTMLSelectElement* HTMLKeygenElement::shadowSelect() const
 {
     ASSERT(hasShadowRoot());
-    ShadowRoot* shadow = shadowRootList()->oldestShadowRoot();
+    ShadowRoot* shadow = shadowTree()->oldestShadowRoot();
     return shadow ? toHTMLSelectElement(shadow->firstChild()) : 0;
 }
 

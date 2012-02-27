@@ -32,7 +32,7 @@
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
 #include "ShadowRoot.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 #include "SVGDocument.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
@@ -165,7 +165,7 @@ void SVGTRefElement::updateReferencedText()
         textContent = target->textContent();
 
     ASSERT(hasShadowRoot());
-    ShadowRoot* root = shadowRootList()->oldestShadowRoot();
+    ShadowRoot* root = shadowTree()->oldestShadowRoot();
     if (!root->firstChild())
         root->appendChild(SVGShadowText::create(document(), textContent), ASSERT_NO_EXCEPTION);
     else
@@ -181,7 +181,7 @@ void SVGTRefElement::detachTarget()
     ExceptionCode ignore = 0;
 
     ASSERT(hasShadowRoot());
-    Node* container = shadowRootList()->oldestShadowRoot()->firstChild();
+    Node* container = shadowTree()->oldestShadowRoot()->firstChild();
     if (container)
         container->setTextContent(emptyContent, ignore);
 

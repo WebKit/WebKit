@@ -34,7 +34,7 @@
 #include "HTMLNames.h"
 #include "InsertionPoint.h"
 #include "NodeRareData.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 #include "SVGNames.h"
 
 #if ENABLE(SHADOW_DOM)
@@ -157,10 +157,10 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
     }
 }
 
-ShadowRootList* ShadowRoot::list() const
+ShadowTree* ShadowRoot::tree() const
 {
     if (host())
-        return host()->shadowRootList();
+        return host()->shadowTree();
     return 0;
 }
 
@@ -190,10 +190,10 @@ void ShadowRoot::attach()
     // ensureSelector(), and here we just ensure that
     // it is in clean state.
     // FIXME: This assertion breaks if multiple shadow roots are being attached.
-    // ShadowRootList should have responsibility of side effect of selector in attaching/detaching.
-    ASSERT(!host()->shadowRootList()->selector() || !host()->shadowRootList()->selector()->hasCandidates());
+    // ShadowTree should have responsibility of side effect of selector in attaching/detaching.
+    ASSERT(!tree()->selector() || !tree()->selector()->hasCandidates());
     DocumentFragment::attach();
-    if (HTMLContentSelector* selector = host()->shadowRootList()->selector())
+    if (HTMLContentSelector* selector = tree()->selector())
         selector->didSelect();
 }
 

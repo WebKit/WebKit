@@ -1,3 +1,140 @@
+2012-02-26  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Rename ShadowRootList to ShadowTree.
+        https://bugs.webkit.org/show_bug.cgi?id=79342
+
+        Reviewed by Hajime Morita.
+
+        This patch renames ShadowRootList ot ShadowTree.
+
+        No new tests, no change in behavior.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::buildAccessKeyMap):
+        * dom/Element.cpp:
+        (WebCore::Element::willRemove):
+        (WebCore::Element::insertedIntoDocument):
+        (WebCore::Element::removedFromDocument):
+        (WebCore::Element::insertedIntoTree):
+        (WebCore::Element::removedFromTree):
+        (WebCore::Element::attach):
+        (WebCore::Element::detach):
+        (WebCore::Element::recalcStyle):
+        (WebCore::Element::hasShadowRoot):
+        (WebCore::Element::shadowTree):
+        (WebCore::Element::setShadowRoot):
+        (WebCore::Element::ensureShadowRoot):
+        (WebCore::Element::removeShadowRoot):
+        (WebCore::Element::childrenChanged):
+        * dom/Element.h:
+        (WebCore):
+        (Element):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::~ElementRareData):
+        * dom/Node.cpp:
+        (WebCore::oldestShadowRoot):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::hostChildrenChanged):
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        * dom/NodeRenderingContext.h:
+        (WebCore):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::tree):
+        (WebCore::ShadowRoot::attach):
+        * dom/ShadowRoot.h:
+        (WebCore):
+        (ShadowRoot):
+        * dom/ShadowTree.cpp: Renamed from Source/WebCore/dom/ShadowRootList.cpp.
+        (WebCore):
+        (WebCore::ShadowTree::ShadowTree):
+        (WebCore::ShadowTree::~ShadowTree):
+        (WebCore::ShadowTree::pushShadowRoot):
+        (WebCore::ShadowTree::popShadowRoot):
+        (WebCore::ShadowTree::insertedIntoDocument):
+        (WebCore::ShadowTree::removedFromDocument):
+        (WebCore::ShadowTree::insertedIntoTree):
+        (WebCore::ShadowTree::removedFromTree):
+        (WebCore::ShadowTree::willRemove):
+        (WebCore::ShadowTree::attach):
+        (WebCore::ShadowTree::detach):
+        (WebCore::ShadowTree::insertionPointFor):
+        (WebCore::ShadowTree::isSelectorActive):
+        (WebCore::ShadowTree::reattach):
+        (WebCore::ShadowTree::childNeedsStyleRecalc):
+        (WebCore::ShadowTree::needsStyleRecalc):
+        (WebCore::ShadowTree::recalcShadowTreeStyle):
+        (WebCore::ShadowTree::needsReattachHostChildrenAndShadow):
+        (WebCore::ShadowTree::hostChildrenChanged):
+        (WebCore::ShadowTree::setNeedsReattachHostChildrenAndShadow):
+        (WebCore::ShadowTree::reattachHostChildrenAndShadow):
+        (WebCore::ShadowTree::ensureSelector):
+        * dom/ShadowTree.h: Renamed from Source/WebCore/dom/ShadowRootList.h.
+        (WebCore):
+        (ShadowTree):
+        (WebCore::ShadowTree::hasShadowRoot):
+        (WebCore::ShadowTree::youngestShadowRoot):
+        (WebCore::ShadowTree::oldestShadowRoot):
+        (WebCore::ShadowTree::selector):
+        (WebCore::ShadowTree::clearNeedsReattachHostChildrenAndShadow):
+        (WebCore::ShadowTree::host):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::shadowRootFor):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree):
+        (WebCore::ColorInputType::shadowColorSwatch):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::createShadowSubtree):
+        (WebCore::FileInputType::multipleAttributeChanged):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::findMainSummary):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::shadowSelect):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaControls):
+        (WebCore::HTMLMediaElement::hasMediaControls):
+        * html/HTMLSummaryElement.cpp:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::innerTextElement):
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText):
+        * html/InputType.cpp:
+        (WebCore::InputType::destroyShadowSubtree):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent):
+        (WebCore::RangeInputType::createShadowSubtree):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::deleteBubbleTree):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::attach):
+        (WebCore::HTMLContentElement::detach):
+        (WebCore::HTMLContentElement::parseAttribute):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::sliderThumbElementOf):
+        (WebCore::RenderSliderContainer::layout):
+        (WebCore::trackLimiterElementOf):
+        * page/FocusController.cpp:
+        (WebCore::shadowRoot):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::uploadButton):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::updateReferencedText):
+        (WebCore::SVGTRefElement::detachTarget):
+        * testing/Internals.cpp:
+        (WebCore::Internals::ensureShadowRoot):
+        (WebCore::Internals::youngestShadowRoot):
+        (WebCore::Internals::oldestShadowRoot):
+
 2012-02-26  Adam Barth  <abarth@webkit.org>
 
         Extract Supplementable base class from Page and Navigator

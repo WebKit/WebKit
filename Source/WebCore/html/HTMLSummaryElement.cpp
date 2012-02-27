@@ -33,7 +33,7 @@
 #include "PlatformMouseEvent.h"
 #include "RenderSummary.h"
 #include "ShadowRoot.h"
-#include "ShadowRootList.h"
+#include "ShadowTree.h"
 
 namespace WebCore {
 
