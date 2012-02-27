@@ -352,7 +352,6 @@ fast/replaced/no-focus-ring-embed.html
 fast/replaced/no-focus-ring-object.html
 fast/text/whitespace/028.html
 http/tests/cache/history-only-cached-subresource-loads.html
-http/tests/workers/interrupt-database-sync-open-crash.html
 security/autocomplete-cleared-on-back.html
 # Crashing test on qt-wk2 after unskipping qt-5.0/Skipped tests, need more investigation
 editing/execCommand/align-in-span.html
@@ -428,3 +427,7 @@ http/tests/loading/progress-finished-callback.html
 fast/history/form-submit-in-frame-via-onclick.html
 fast/history/form-submit-in-frame.html
 http/tests/loading/state-object-security-exception.html
+
+# [Qt][WK2] fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html crashes regularly
+# https://bugs.webkit.org/show_bug.cgi?id=79656
+fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html

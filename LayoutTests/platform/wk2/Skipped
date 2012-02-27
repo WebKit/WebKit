@@ -193,7 +193,6 @@ compositing/video-page-visibility.html
 
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
-css3/filters/custom-filter.html
 fast/canvas/webgl/framebuffer-object-attachment.html
 fast/canvas/webgl/gl-vertex-attrib-zero-issues.html
 fast/canvas/webgl/gl-getshadersource.html
@@ -372,7 +371,6 @@ http/tests/security/mixedContent/insecure-image-in-iframe.html
 http/tests/security/mixedContent/insecure-image-in-main-frame.html
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html
 http/tests/security/mixedContent/insecure-script-in-iframe.html
-http/tests/security/mixedContent/insecure-video-in-iframe.html
 http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
 http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html
 http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
@@ -532,12 +530,12 @@ http/tests/download
 # <https://bugs.webkit.org/show_bug.cgi?id=42547>
 fast/canvas/canvas-gradient-addStop-error.html
 http/tests/xmlhttprequest/default-content-type-dashboard.html
-http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
+http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html
 platform/mac/fast/events/pointer-events-dashboard.html
-svg/custom/embedded-svg-disallowed-in-dashboard.xml
-svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
-svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
-svg/custom/svg-disallowed-in-dashboard-object.html
+svg/custom/embedded-svg-allowed-in-dashboard.xml
+svg/custom/manually-parsed-embedded-svg-allowed-in-dashboard.html
+svg/custom/manually-parsed-svg-allowed-in-dashboard.html
+svg/custom/svg-allowed-in-dashboard-object.html
 
 # WebKitTestRunner needs layoutTestController.queueReload
 # <https://bugs.webkit.org/show_bug.cgi?id=42672>
@@ -722,7 +720,6 @@ http/tests/loading/bad-server-subframe.html
 http/tests/loading/basic.html
 http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
 http/tests/loading/empty-subframe.html
-http/tests/loading/empty-urls.html
 http/tests/loading/gmail-assert-on-load.html
 http/tests/loading/load-javascript-after-many-xhrs.html
 http/tests/loading/location-hash-reload-cycle.html
@@ -1021,7 +1018,6 @@ fast/replaced/applet-rendering-java-disabled.html
 java
 
 # WebKitTestRunner needs layoutTestController.displayInvalidatedRegion
-plugins/invalidate_rect.html
 plugins/windowless_plugin_paint_test.html
 
 # WebKitTestRunner needs layoutTestController.setMinimumTimerInterval
@@ -1057,7 +1053,6 @@ fast/events/onchange-setvalue.html
 fast/forms/focus-with-display-block.html
 fast/forms/input-search-press-escape-key.html
 fast/forms/placeholder-crash-with-scrollbar-corner.html
-fast/forms/radio-group-keyboard-change-event.html
 fast/forms/search-disabled-readonly.html
 fast/forms/ValidityState-valueMissing-002.html
 fast/frames/focus-controller-crash-change-event.html
