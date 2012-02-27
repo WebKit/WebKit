@@ -4231,3 +4231,6 @@ BUGWK79613 WIN : svg/carto.net/selectionlist.svg = TEXT
 BUGWK79642 : accessibility/aria-describedby-on-input.html = TIMEOUT
 BUGWK79642 : fast/loader/subresource-willSendRequest-null.html = TIMEOUT
 BUGWK79642 : media/video-playbackrate.html = TIMEOUT
+
+BUGWK79702 : fast/regex/lastIndex.html = TEXT
+BUGWK79703 : fast/regex/overflow.html = TEXT
