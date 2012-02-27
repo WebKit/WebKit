@@ -1,3 +1,18 @@
+2012-02-26  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Mac] Release localized Strings instead of AutoRelease
+        https://bugs.webkit.org/show_bug.cgi?id=79552
+
+        Reviewed by Sam Weinig.
+
+        By using the CoreFoundation API, we can release the memory as soon as
+        the WTF::String is created.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/LocalizedStringsMac.cpp: Renamed from Source/WebCore/platform/mac/LocalizedStringsMac.mm.
+        (WebCore):
+        (WebCore::localizedString):
+
 2012-02-26  Adam Barth  <abarth@webkit.org>
 
         ContextDestructionObserver should live in its own file

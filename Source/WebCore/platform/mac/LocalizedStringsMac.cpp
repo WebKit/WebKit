@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "LocalizedStrings.h"
+#include "config.h"
+#include "LocalizedStrings.h"
 
-#import <wtf/Assertions.h>
-#import <wtf/MainThread.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/text/WTFString.h>
+#include <CoreFoundation/CFBundle.h>
+#include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 String localizedString(const char* key)
 {
-    static NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
+    static CFBundleRef bundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
 
 #if !PLATFORM(IOS)
     // Can be called on a dispatch queue when initializing strings on iOS.
     // See LoadWebLocalizedStrings and <rdar://problem/7902473>.
     ASSERT(isMainThread());
 #endif
-    
-    RetainPtr<CFStringRef> keyString(AdoptCF, CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull));
-    NSString *notFound = @"localized string not found";
-    NSString *result = [bundle localizedStringForKey:(NSString *)keyString.get() value:notFound table:nil];
 
-    ASSERT_WITH_MESSAGE(result != notFound, "could not find localizable string %s in bundle", key);
-    return result;
+    RetainPtr<CFStringRef> keyString(AdoptCF, CFStringCreateWithCStringNoCopy(0, key, kCFStringEncodingUTF8, kCFAllocatorNull));
+    CFStringRef notFound = CFSTR("localized string not found");
+    RetainPtr<CFStringRef> result(AdoptCF, CFBundleCopyLocalizedString(bundle, keyString.get(), notFound, 0));
+
+    ASSERT_WITH_MESSAGE(result.get() != notFound, "could not find localizable string %s in bundle", key);
+    return String(result.get());
 }
 
 } // namespace WebCore
