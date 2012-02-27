@@ -425,9 +425,8 @@ class ChromiumAndroidDriver(chromium.ChromiumDriver):
             _log.debug('Starting adb shell for DumpRenderTree: ' + ' '.join(shell_cmd))
             executive = self._port.host.executive
             self._proc = executive.Popen(shell_cmd, stdin=executive.PIPE, stdout=executive.PIPE, stderr=executive.STDOUT, close_fds=True)
-            # Read back the shell prompt ('# ') to ensure adb shell ready.
-            prompt = self._proc.stdout.read(2)
-            assert(prompt == '# ')
+            # Read back the shell prompt to ensure adb shell ready.
+            self._read_prompt()
             # Some tests rely on this to produce proper number format etc.,
             # e.g. fast/speech/input-appearance-numberandspeech.html.
             self._write_command_and_read_line("export LC_CTYPE='en_US'\n")
@@ -520,3 +519,14 @@ class ChromiumAndroidDriver(chromium.ChromiumDriver):
         # (which causes Shell to output a message), and dumps the stack strace.
         # We use the Shell output as a crash hint.
         return line is not None and line.find('[1] + Stopped (signal)') >= 0
+
+    def _read_prompt(self):
+        last_char = ''
+        while True:
+            current_char = self._proc.stdout.read(1)
+            if current_char == ' ':
+                if last_char == '#':
+                    return
+                if last_char == '$':
+                    raise AssertionError('Adbd is not running as root')
+            last_char = current
