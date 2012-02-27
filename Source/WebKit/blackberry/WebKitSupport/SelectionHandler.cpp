@@ -393,13 +393,13 @@ bool SelectionHandler::updateOrHandleInputSelection(VisibleSelection& newSelecti
         character = extendSelectionToFieldBoundary(true /* isStartHandle */, relativeStart, newSelection);
         if (character) {
             // Invert the selection so that the cursor point is at the beginning.
-            controller->setSelection(VisibleSelection(controller->selection().end(), controller->selection().start()));
+            controller->setSelection(VisibleSelection(controller->selection().end(), controller->selection().start(), true /* isDirectional */));
         }
     } else if (endIsOutsideOfField) {
         character = extendSelectionToFieldBoundary(false /* isStartHandle */, relativeEnd, newSelection);
         if (character) {
             // Reset the selection so that the end is the edit point.
-            controller->setSelection(VisibleSelection(controller->selection().start(), controller->selection().end()));
+            controller->setSelection(VisibleSelection(controller->selection().start(), controller->selection().end(), true /* isDirectional */));
         }
     }
 
@@ -445,7 +445,7 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
 
     // We need the selection to be ordered base then extent.
     if (!controller->selection().isBaseFirst())
-        controller->setSelection(VisibleSelection(controller->selection().start(), controller->selection().end()));
+        controller->setSelection(VisibleSelection(controller->selection().start(), controller->selection().end(), true /* isDirectional */));
 
     if (startIsValid) {
         relativeStart = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), focusedFrame, start);
@@ -466,6 +466,8 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
         // Reset the selection using the existing base without validation.
         newSelection.setWithoutValidation(controller->selection().start(), newSelection.extent());
     }
+
+    newSelection.setIsDirectional(true);
 
     if (m_webPage->m_inputHandler->isInputMode()) {
         if (updateOrHandleInputSelection(newSelection, relativeStart, relativeEnd))
