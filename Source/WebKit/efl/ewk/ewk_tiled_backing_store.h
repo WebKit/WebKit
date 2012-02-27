@@ -77,7 +77,6 @@ struct _Ewk_Tile {
                                    */
     int visible;                  /**< visibility counter of this tile */
     Evas_Object *image;           /**< Evas Image, the tile to be rendered */
-    uint8_t *pixels;
 };
 
 #include "ewk_tiled_matrix.h"

@@ -49,7 +49,12 @@ static Eina_Bool _ewk_view_tiled_render_cb(void* data, Ewk_Tile* tile, const Ein
         return false;
     }
 
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(tile->pixels, format, tile->width, tile->height, stride));
+    uint8_t* pixels = static_cast<uint8_t*>(evas_object_image_data_get(tile->image, true));
+    if (!pixels) {
+        ERR("fail to get the pixel data from the image object");
+        return false;
+    }
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(pixels, format, tile->width, tile->height, stride));
     cairo_status_t status = cairo_surface_status(surface.get());
     if (status != CAIRO_STATUS_SUCCESS) {
         ERR("failed to create cairo surface: %s", cairo_status_to_string(status));
@@ -65,7 +70,9 @@ static Eina_Bool _ewk_view_tiled_render_cb(void* data, Ewk_Tile* tile, const Ein
 
     cairo_translate(cairo.get(), -tile->x, -tile->y);
 
-    return ewk_view_paint_contents(priv, cairo.get(), &rect);
+    bool result = ewk_view_paint_contents(priv, cairo.get(), &rect);
+    evas_object_image_data_set(tile->image, pixels);
+    return result;
 }
 
 static void* _ewk_view_tiled_updates_process_pre(void* data, Evas_Object* ewkView)

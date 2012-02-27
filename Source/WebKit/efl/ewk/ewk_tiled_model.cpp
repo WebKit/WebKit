@@ -221,7 +221,6 @@ Ewk_Tile* ewk_tile_new(Evas* evas, Evas_Coord width, Evas_Coord height, float zo
 
     evas_object_image_size_set(tile->image, tile->width, tile->height);
     evas_object_image_colorspace_set(tile->image, tile->cspace);
-    tile->pixels = static_cast<uint8_t*>(evas_object_image_data_get(tile->image, true));
     _ewk_tile_account_allocated(tile);
 
     return tile;
