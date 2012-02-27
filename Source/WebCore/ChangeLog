@@ -1,3 +1,45 @@
+2012-02-26  Dirk Schulze  <krit@webkit.org>
+
+        Cleanup of Adobes copyright text. The text got harmonized with copyright texts of other companies. 
+
+        Rubber stamped by.
+
+        * css/CSSWrapShapes.cpp:
+        * css/CSSWrapShapes.h:
+        * css/WebKitCSSRegionRule.cpp:
+        * css/WebKitCSSRegionRule.h:
+        * css/WebKitCSSRegionRule.idl:
+        * css/WebKitCSSShaderValue.cpp:
+        * css/WebKitCSSShaderValue.h:
+        * dom/WebKitNamedFlow.cpp:
+        * dom/WebKitNamedFlow.h:
+        * dom/WebKitNamedFlow.idl:
+        * loader/cache/CachedShader.cpp:
+        * loader/cache/CachedShader.h:
+        * platform/graphics/filters/CustomFilterMesh.cpp:
+        * platform/graphics/filters/CustomFilterMesh.h:
+        * platform/graphics/filters/CustomFilterNumberParameter.h:
+        * platform/graphics/filters/CustomFilterOperation.cpp:
+        * platform/graphics/filters/CustomFilterOperation.h:
+        * platform/graphics/filters/CustomFilterParameter.h:
+        * platform/graphics/filters/CustomFilterProgram.cpp:
+        * platform/graphics/filters/CustomFilterProgram.h:
+        * platform/graphics/filters/CustomFilterProgramClient.h:
+        * platform/graphics/filters/CustomFilterShader.cpp:
+        * platform/graphics/filters/CustomFilterShader.h:
+        * platform/graphics/filters/FECustomFilter.cpp:
+        * platform/graphics/filters/FECustomFilter.h:
+        * rendering/FilterEffectObserver.h:
+        * rendering/RenderFlowThread.cpp:
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        * rendering/RenderRegion.h:
+        * rendering/style/StyleCachedShader.cpp:
+        * rendering/style/StyleCachedShader.h:
+        * rendering/style/StyleCustomFilterProgram.h:
+        * rendering/style/StylePendingShader.h:
+        * rendering/style/StyleShader.h:
+
 2012-02-26  Hyowon Kim  <hw1008.kim@samsung.com>
 
         [EFL] Implementation of GraphicsContext3D for EFL port
