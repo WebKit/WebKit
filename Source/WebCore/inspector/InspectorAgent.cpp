@@ -159,50 +159,6 @@ bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const KURL& re
 }
 
 #if ENABLE(WORKERS)
-class PostWorkerNotificationToFrontendTask : public ScriptExecutionContext::Task {
-public:
-    static PassOwnPtr<PostWorkerNotificationToFrontendTask> create(PassRefPtr<InspectorWorkerResource> worker, InspectorAgent::WorkerAction action)
-    {
-        return adoptPtr(new PostWorkerNotificationToFrontendTask(worker, action));
-    }
-
-private:
-    PostWorkerNotificationToFrontendTask(PassRefPtr<InspectorWorkerResource> worker, InspectorAgent::WorkerAction action)
-        : m_worker(worker)
-        , m_action(action)
-    {
-    }
-
-    virtual void performTask(ScriptExecutionContext* scriptContext)
-    {
-        if (scriptContext->isDocument()) {
-            if (InspectorAgent* inspectorAgent = static_cast<Document*>(scriptContext)->page()->inspectorController()->m_inspectorAgent)
-                inspectorAgent->postWorkerNotificationToFrontend(*m_worker, m_action);
-        }
-    }
-
-private:
-    RefPtr<InspectorWorkerResource> m_worker;
-    InspectorAgent::WorkerAction m_action;
-};
-
-void InspectorAgent::postWorkerNotificationToFrontend(const InspectorWorkerResource& worker, InspectorAgent::WorkerAction action)
-{
-    if (!m_frontend || !m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
-        return;
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    switch (action) {
-    case InspectorAgent::WorkerCreated:
-        m_frontend->inspector()->didCreateWorker(worker.id(), worker.url(), worker.isSharedWorker());
-        break;
-    case InspectorAgent::WorkerDestroyed:
-        m_frontend->inspector()->didDestroyWorker(worker.id());
-        break;
-    }
-#endif
-}
-
 void InspectorAgent::didCreateWorker(intptr_t id, const String& url, bool isSharedWorker)
 {
     if (!developerExtrasEnabled())
@@ -210,8 +166,10 @@ void InspectorAgent::didCreateWorker(intptr_t id, const String& url, bool isShar
 
     RefPtr<InspectorWorkerResource> workerResource(InspectorWorkerResource::create(id, url, isSharedWorker));
     m_workers.set(id, workerResource);
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_inspectedPage && m_frontend && m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
-        m_inspectedPage->mainFrame()->document()->postTask(PostWorkerNotificationToFrontendTask::create(workerResource, InspectorAgent::WorkerCreated));
+        m_frontend->inspector()->didCreateWorker(id, url, isSharedWorker);
+#endif
 }
 
 void InspectorAgent::didDestroyWorker(intptr_t id)
@@ -222,8 +180,10 @@ void InspectorAgent::didDestroyWorker(intptr_t id)
     WorkersMap::iterator workerResource = m_workers.find(id);
     if (workerResource == m_workers.end())
         return;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_inspectedPage && m_frontend && m_state->getBoolean(InspectorAgentState::inspectorAgentEnabled))
-        m_inspectedPage->mainFrame()->document()->postTask(PostWorkerNotificationToFrontendTask::create(workerResource->second, InspectorAgent::WorkerDestroyed));
+        m_frontend->inspector()->didDestroyWorker(id);
+#endif
     m_workers.remove(workerResource);
 }
 #endif // ENABLE(WORKERS)

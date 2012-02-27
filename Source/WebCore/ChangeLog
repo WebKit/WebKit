@@ -1,3 +1,20 @@
+2012-02-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: crash in fake workers
+        https://bugs.webkit.org/show_bug.cgi?id=79637
+
+        Notify front-end about worker creation/destruction synchronously instead of
+        posting a task.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore):
+        (WebCore::InspectorAgent::didCreateWorker):
+        (WebCore::InspectorAgent::didDestroyWorker):
+        * inspector/InspectorAgent.h:
+        (InspectorAgent):
+
 2012-02-26  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.

@@ -83,9 +83,6 @@ public:
     void emitCommitLoadIfNeeded();
 
 #if ENABLE(WORKERS)
-    enum WorkerAction { WorkerCreated, WorkerDestroyed };
-
-    void postWorkerNotificationToFrontend(const InspectorWorkerResource&, WorkerAction);
     void didCreateWorker(intptr_t, const String& url, bool isSharedWorker);
     void didDestroyWorker(intptr_t);
 #endif
