@@ -123,7 +123,7 @@ WebInspector.Drawer.prototype = {
         
         function animationFinished()
         {
-            WebInspector.inspectorView.currentPanel().statusBarResized();
+            WebInspector.inspectorView.currentPanel().doResize();
             if (this._view && this._view.afterShow)
                 this._view.afterShow();
             delete this._currentAnimation;
