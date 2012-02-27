@@ -1,3 +1,12 @@
+2012-02-26  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Fix some warnings in the build from referencing the non-existent
+        websockets directory.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-02-26  Shinya Kawanaka  <shinyak@chromium.org>
 
         Rename ShadowRootList to ShadowTree.
