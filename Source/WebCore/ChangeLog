@@ -1,3 +1,39 @@
+2012-02-27  Kentaro Hara  <haraken@chromium.org>
+
+        [JSC] Add [ConstructorParameters=] to all custom constructors
+        https://bugs.webkit.org/show_bug.cgi?id=78221
+
+        Reviewed by Adam Barth.
+
+        This patch adds [ConstructorParameters=X] to IDL files that have
+        custom constructors, where X is the maximum number of arguments
+        of the constructor. [ConstructorParameters=X] is needed for custom
+        constructors, because custom constructors do not have a signature
+        in IDL files and thus CodeGeneratorJS.pm cannot know the number of
+        constructor arguments.
+
+        Test: fast/js/constructor-length.html
+
+        * dom/WebKitMutationObserver.idl:
+        * html/DOMFormData.idl:
+        * html/canvas/ArrayBuffer.idl:
+        * html/canvas/DataView.idl:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Float64Array.idl:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.idl:
+        * html/canvas/Uint8ClampedArray.idl:
+        * webaudio/AudioContext.idl:
+
+        * bindings/scripts/test/TestTypedArray.idl:
+
+        * bindings/scripts/test/JS/JSFloat64Array.cpp: Updated run-bindings-tests results.
+        (WebCore::JSFloat64ArrayConstructor::finishCreation):
+
 2012-02-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [BlackBerry][EFL] Provide dummy RunLoop implementations.

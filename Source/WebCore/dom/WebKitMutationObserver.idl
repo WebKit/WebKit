@@ -31,7 +31,8 @@
 module core {
     interface [
         Conditional=MUTATION_OBSERVERS,
-        CustomConstructor
+        CustomConstructor,
+        ConstructorParameters=1
     ] WebKitMutationObserver {
         [Custom] void observe(in Node target, in MutationObserverOptions options)
             raises(DOMException);

@@ -27,6 +27,7 @@
 module html {
     interface [
         CustomConstructor,
+        ConstructorParameters=123,
         NumericIndexedGetter,
         CustomIndexedSetter,
         JSGenerateToNativeObject,

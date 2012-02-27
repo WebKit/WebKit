@@ -28,6 +28,7 @@ module html {
     interface [
         JSGenerateIsReachable=Impl,
         CustomConstructor,
+        ConstructorParameters=1,
         JSNoStaticTables
     ] ArrayBuffer {
         readonly attribute int byteLength;

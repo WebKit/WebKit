@@ -27,6 +27,7 @@ module html {
 
     interface [
         CustomConstructor,
+        ConstructorParameters=3,
         CustomToJSObject,
         JSNoStaticTables
     ] DataView : ArrayBufferView {

@@ -32,6 +32,7 @@ module html {
 
     interface [
         CustomConstructor,
+        ConstructorParameters=1,
         JSGenerateToNativeObject,
         JSGenerateToJSObject,
         InterfaceName=FormData
