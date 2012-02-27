@@ -1,3 +1,9 @@
+2012-02-27  Vincent Untz  <vuntz@gnome.org>
+
+        Build fix for building with GTK+ 2.x.
+
+        * tests/testwebview.c:
+
 2012-02-22  Martin Robinson  <mrobinson@igalia.com>
 
         Update the NEWS file in preparation for the 1.7.90 release.

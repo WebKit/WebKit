@@ -389,7 +389,12 @@ static void test_webkit_web_view_does_not_steal_focus()
     GtkWidget *window = gtk_offscreen_window_new();
     GtkWidget *webView = webkit_web_view_new();
     GtkWidget *entry = gtk_entry_new();
+
+#ifdef GTK_API_VERSION_2
+    GtkWidget *box = gtk_hbox_new(FALSE, 0);
+#else
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+#endif
 
     gtk_container_add(GTK_CONTAINER(box), webView);
     gtk_container_add(GTK_CONTAINER(box), entry);
