@@ -1721,7 +1721,6 @@ IF (ENABLE_SVG)
         rendering/svg/SVGTextMetricsBuilder.cpp
         rendering/svg/SVGTextQuery.cpp
         svg/ColorDistance.cpp
-        svg/DOMWindowSVG.idl
         svg/SVGAElement.cpp
         svg/SVGAltGlyphDefElement.cpp
         svg/SVGAltGlyphElement.cpp
@@ -1889,6 +1888,7 @@ IF (ENABLE_SVG)
     # For now, we explicitly demarcate the SVG IDL files so that the BlackBerry port can skip them
     # during DOM binding generation. See <https://bugs.webkit.org/show_bug.cgi?id=72773>.
     SET(SVG_IDL_FILES
+        svg/DOMWindowSVG.idl
         svg/SVGAElement.idl
         svg/SVGAltGlyphDefElement.idl
         svg/SVGAltGlyphElement.idl
