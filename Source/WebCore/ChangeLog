@@ -1,3 +1,15 @@
+2012-02-27  John Sullivan  <sullivan@apple.com>
+
+        Build fix (on Lion at least).
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::childrenChanged):
+        Removed names of unused parameters.
+        
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::childrenChanged):
+        Ditto.
+
 2012-02-27  Kentaro Hara  <haraken@chromium.org>
 
         Remove [ConstructorParameters] from IDL files that have [Constructor]

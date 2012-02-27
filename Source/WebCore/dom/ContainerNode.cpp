@@ -828,7 +828,7 @@ void ContainerNode::removedFromTree(bool deep)
     }
 }
 
-void ContainerNode::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void ContainerNode::childrenChanged(bool changedByParser, Node*, Node*, int childCountDelta)
 {
     if (!changedByParser && childCountDelta)
         document()->updateRangesAfterChildrenChanged(this);
