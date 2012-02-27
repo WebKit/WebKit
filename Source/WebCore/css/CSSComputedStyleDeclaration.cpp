@@ -2267,7 +2267,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return counterToCSSValue(style.get(), propertyID, cssValuePool);
         case CSSPropertyWebkitFlowInto:
             if (style->flowThread().isNull())
-                return cssValuePool->createIdentifierValue(CSSValueAuto);
+                return cssValuePool->createIdentifierValue(CSSValueNone);
             return cssValuePool->createValue(style->flowThread(), CSSPrimitiveValue::CSS_STRING);
         case CSSPropertyWebkitFlowFrom:
             if (style->regionThread().isNull())

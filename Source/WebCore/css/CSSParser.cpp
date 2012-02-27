@@ -7103,7 +7103,7 @@ bool CSSParser::parseFlowThread(int propId, bool important)
     if (value->unit != CSSPrimitiveValue::CSS_IDENT)
         return false;
 
-    if (value->id == CSSValueAuto) {
+    if (value->id == CSSValueNone) {
         addProperty(propId, cssValuePool()->createIdentifierValue(value->id), important);
         return true;
     }
@@ -7114,7 +7114,7 @@ bool CSSParser::parseFlowThread(int propId, bool important)
             return false;
         addProperty(propId, cssValuePool()->createValue(inputProperty, CSSPrimitiveValue::CSS_STRING), important);
     } else
-        addProperty(propId, cssValuePool()->createIdentifierValue(CSSValueAuto), important);
+        addProperty(propId, cssValuePool()->createIdentifierValue(CSSValueNone), important);
 
     return true;
 }

@@ -1,3 +1,19 @@
+2012-02-27  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]-webkit-flow-into initial value should be none instead of auto
+        https://bugs.webkit.org/show_bug.cgi?id=79670
+
+        Reviewed by Simon Fraser.
+
+        No new tests, modified expectations for existing tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFlowThread):
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+
 2012-02-27  Ojan Vafai  <ojan@chromium.org>
 
         implement display: -webkit-inline-flexbox

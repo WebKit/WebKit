@@ -32,7 +32,7 @@ function testNotInherited(parentValue, childValue) {
     return childWebKitFlowComputedValue;
 }
 
-shouldBeEqualToString('test("-webkit-flow-into: auto")', "auto");
+shouldBeEqualToString('test("-webkit-flow-into: none")', "none");
 shouldBeEqualToString('test("-webkit-flow-into: first-flow")', "first-flow");
 shouldBeEqualToString('test("-webkit-flow-into: \'first flow\'")', "");
 shouldBeEqualToString('test("-webkit-flow-into: ;")', "");
@@ -41,13 +41,13 @@ shouldBeEqualToString('test("-webkit-flow-into: 1.2")', "");
 shouldBeEqualToString('test("-webkit-flow-into: -1")', "");
 shouldBeEqualToString('test("-webkit-flow-into: 12px")', "");
 
-shouldBeEqualToString('testComputedStyle("auto")', "auto");
-shouldBeEqualToString('testComputedStyle("")', "auto");
-shouldBeEqualToString('testComputedStyle("\'first-flow\'")', "auto");
+shouldBeEqualToString('testComputedStyle("none")', "none");
+shouldBeEqualToString('testComputedStyle("")', "none");
+shouldBeEqualToString('testComputedStyle("\'first-flow\'")', "none");
 shouldBeEqualToString('testComputedStyle("first-flow")', "first-flow");
-shouldBeEqualToString('testComputedStyle("12px")', "auto");
+shouldBeEqualToString('testComputedStyle("12px")', "none");
 
-shouldBeEqualToString('testNotInherited("auto", "auto")', "auto");
-shouldBeEqualToString('testNotInherited("auto", "child-flow")', "child-flow");
-shouldBeEqualToString('testNotInherited("parent-flow", "auto")', "auto");
+shouldBeEqualToString('testNotInherited("none", "none")', "none");
+shouldBeEqualToString('testNotInherited("none", "child-flow")', "child-flow");
+shouldBeEqualToString('testNotInherited("parent-flow", "none")', "none");
 shouldBeEqualToString('testNotInherited("parent-flow", "child-flow")', "child-flow");

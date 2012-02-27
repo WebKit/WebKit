@@ -3,7 +3,7 @@ Test parsing of the CSS webkit-flow-into property.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS test("-webkit-flow-into: auto") is "auto"
+PASS test("-webkit-flow-into: none") is "none"
 PASS test("-webkit-flow-into: first-flow") is "first-flow"
 PASS test("-webkit-flow-into: 'first flow'") is ""
 PASS test("-webkit-flow-into: ;") is ""
@@ -11,14 +11,14 @@ PASS test("-webkit-flow-into: 1") is ""
 PASS test("-webkit-flow-into: 1.2") is ""
 PASS test("-webkit-flow-into: -1") is ""
 PASS test("-webkit-flow-into: 12px") is ""
-PASS testComputedStyle("auto") is "auto"
-PASS testComputedStyle("") is "auto"
-PASS testComputedStyle("'first-flow'") is "auto"
+PASS testComputedStyle("none") is "none"
+PASS testComputedStyle("") is "none"
+PASS testComputedStyle("'first-flow'") is "none"
 PASS testComputedStyle("first-flow") is "first-flow"
-PASS testComputedStyle("12px") is "auto"
-PASS testNotInherited("auto", "auto") is "auto"
-PASS testNotInherited("auto", "child-flow") is "child-flow"
-PASS testNotInherited("parent-flow", "auto") is "auto"
+PASS testComputedStyle("12px") is "none"
+PASS testNotInherited("none", "none") is "none"
+PASS testNotInherited("none", "child-flow") is "child-flow"
+PASS testNotInherited("parent-flow", "none") is "none"
 PASS testNotInherited("parent-flow", "child-flow") is "child-flow"
 PASS successfullyParsed is true
 

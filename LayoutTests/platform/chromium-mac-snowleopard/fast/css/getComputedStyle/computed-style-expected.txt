@@ -212,7 +212,7 @@ zoom: 1;
 -webkit-user-modify: read-only;
 -webkit-user-select: text;
 -webkit-writing-mode: horizontal-tb;
--webkit-flow-into: auto;
+-webkit-flow-into: none;
 -webkit-flow-from: none;
 -webkit-region-overflow: auto;
 -webkit-region-break-after: auto;

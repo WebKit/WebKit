@@ -48,10 +48,10 @@ function testComputedStyleWebKitRegionOverflow(value) {
     return computedValue;
 }
 
-shouldBeEqualToString('testWebKitFlowInto("-webkit-flow-into: auto")', "");
+shouldBeEqualToString('testWebKitFlowInto("-webkit-flow-into: none")', "");
 shouldBeEqualToString('testWebKitFlowInto("-webkit-flow-into: first-flow")', "");
-shouldBeEqualToString('testComputedStyleWebKitFlowInto("auto")', "auto");
-shouldBeEqualToString('testComputedStyleWebKitFlowInto("first-flow")', "auto");
+shouldBeEqualToString('testComputedStyleWebKitFlowInto("none")', "none");
+shouldBeEqualToString('testComputedStyleWebKitFlowInto("first-flow")', "none");
 
 shouldBeEqualToString('testWebKitFlowFrom("-webkit-flow-from: first-flow")', "");
 shouldBeEqualToString('testWebKitFlowFrom("-webkit-flow-from: none")', "");
