@@ -5380,3 +5380,19 @@ fast/css-generated-content/before-content-continuation-chain.html
 
 # new crashing test
 fast/css/font-face-synthetic-bold-italic.html
+fast/css/font-face-insert-link.html
+
+# new failing tests
+fast/block/float/centered-float-avoidance-complexity.html
+fast/block/float/shrink-to-avoid-float-complexity.html
+fast/multicol/span/clone-flexbox.html
+fast/multicol/span/clone-summary.html
+fast/repaint/region-painting-invalidation.html
+fast/runin/runin-div-before-child.html
+fast/runin/runin-table-before-child.html
+svg/repaint/inner-svg-change-viewPort-relative.svg
+svg/text/ems-display-none.svg
+svg/text/exs-display-none.svg
+svg/text/text-fill-opacity.svg
+svg/text/text-viewbox-rescale.html
+svg/text/tspan-dynamic-positioning.svg

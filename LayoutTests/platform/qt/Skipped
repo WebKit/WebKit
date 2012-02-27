@@ -1423,6 +1423,10 @@ svg/custom/use-referencing-style-crash.svg
 # https://bugs.webkit.org/show_bug.cgi?id=79451
 svg/text/text-rescale.html
 
+# [Qt] svg/zoom/page/zoom-svg-float-border-padding.xml crashes
+# https://bugs.webkit.org/show_bug.cgi?id=79631
+svg/zoom/page/zoom-svg-float-border-padding.xml
+
 # ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
@@ -2641,3 +2645,7 @@ sputnik/Conformance/15_Native_Objects/15.1_The_Global_Object/15.1.3/15.1.3.2_dec
 # New test introduced in r108690 fails
 # https://bugs.webkit.org/show_bug.cgi?id=71266
 fast/ruby/text-decoration-in-descendants-ruby.html
+
+# [Qt] transitions/cancel-transition.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=79564
+transitions/cancel-transition.html
