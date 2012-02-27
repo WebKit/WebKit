@@ -328,6 +328,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/ThunkGenerators.cpp \
 	Source/JavaScriptCore/jit/ThunkGenerators.h \
 	Source/JavaScriptCore/llint/LLIntData.h \
+	Source/JavaScriptCore/llint/LLIntEntrypoints.cpp \
+	Source/JavaScriptCore/llint/LLIntEntrypoints.h \
+	Source/JavaScriptCore/llint/LowLevelInterpreter.cpp \
+	Source/JavaScriptCore/llint/LowLevelInterpreter.h \
 	Source/JavaScriptCore/os-win32/stdbool.h \
 	Source/JavaScriptCore/os-win32/stdint.h \
 	Source/JavaScriptCore/parser/ASTBuilder.h \
@@ -833,4 +837,5 @@ Programs_minidom_SOURCES = \
 	Source/JavaScriptCore/API/tests/minidom.c
 
 Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_SOURCES = \
+	Source/JavaScriptCore/JSCTypedArrayStubs.h \
 	Source/JavaScriptCore/jsc.cpp

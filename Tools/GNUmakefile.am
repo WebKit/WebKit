@@ -225,9 +225,9 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	Tools/DumpRenderTree/TestNetscapePlugIn/TestObject.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/TestObject.h \
 	Tools/DumpRenderTree/TestNetscapePlugIn/main.cpp \
-	Tools/DumpRenderTree/TestNetscapePlugin/unix/ForwardingHeaders/WebKit/npapi.h \
-	Tools/DumpRenderTree/TestNetscapePlugin/unix/ForwardingHeaders/WebKit/npfunctions.h \
-	Tools/DumpRenderTree/TestNetscapePlugin/unix/ForwardingHeaders/WebKit/npruntime.h
+	Tools/DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders/WebKit/npapi.h \
+	Tools/DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders/WebKit/npfunctions.h \
+	Tools/DumpRenderTree/TestNetscapePlugIn/unix/ForwardingHeaders/WebKit/npruntime.h
 
 TestNetscapePlugin_libtestnetscapeplugin_la_LDFLAGS = \
 	-rpath ${shell pwd}/$(top_builddir)/../unix/TestNetscapePlugin/.libs \

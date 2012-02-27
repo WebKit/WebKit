@@ -901,6 +901,7 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(XT_CFLAGS)
 
 EXTRA_DIST += \
+	$(shell ls $(srcdir)/Source/WebCore/Modules/geolocation/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/websockets/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/css/*.idl) \
@@ -926,6 +927,7 @@ EXTRA_DIST += \
 	Source/WebCore/bindings/scripts/CodeGeneratorGObject.pm \
 	Source/WebCore/bindings/scripts/CodeGeneratorJS.pm \
 	Source/WebCore/bindings/scripts/CodeGenerator.pm \
+	Source/WebCore/bindings/scripts/IDLAttributes.txt \
 	Source/WebCore/bindings/scripts/IDLParser.pm \
 	Source/WebCore/bindings/scripts/IDLStructure.pm \
 	Source/WebCore/bindings/scripts/InFilesCompiler.pm \

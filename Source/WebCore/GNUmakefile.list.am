@@ -2814,6 +2814,8 @@ webcore_sources += \
 	Source/WebCore/page/scrolling/ScrollingCoordinator.cpp \
 	Source/WebCore/page/scrolling/ScrollingCoordinator.h \
 	Source/WebCore/page/scrolling/ScrollingCoordinatorNone.cpp \
+	Source/WebCore/page/scrolling/ScrollingTreeState.cpp \
+	Source/WebCore/page/scrolling/ScrollingTreeState.h \
 	Source/WebCore/page/SecurityOrigin.cpp \
 	Source/WebCore/page/SecurityOrigin.h \
 	Source/WebCore/page/SecurityOriginHash.h \
@@ -3155,6 +3157,8 @@ webcore_sources += \
 	Source/WebCore/platform/KURL.cpp \
 	Source/WebCore/platform/KURL.h \
 	Source/WebCore/platform/KURLHash.h \
+	Source/WebCore/platform/KURLWTFURL.cpp \
+	Source/WebCore/platform/KURLWTFURLImpl.h \
 	Source/WebCore/platform/Language.cpp \
 	Source/WebCore/platform/Language.h \
 	Source/WebCore/platform/LengthBox.h \
