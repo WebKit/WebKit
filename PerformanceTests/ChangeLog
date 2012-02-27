@@ -1,3 +1,19 @@
+2012-02-26  Kentaro Hara  <haraken@chromium.org>
+
+        [Performance Tests] [Chromium] Bindings/dom-attributes.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=79593
+
+        Reviewed by Adam Barth.
+
+        This patch halves the execution time of Bindings/dom-attributes.html
+        in order to avoid timeout in Chromium. The reason for the timeout is that
+        V8 DOM bindings are too much slower than JSC bindings.
+        I am a bit afraid that this patch will reduce the accuracy of the
+        perf test results, but it would make sense to reduce the execution time
+        until we fix the performance issue in V8 DOM bindings.
+
+        * Bindings/dom-attributes.html:
+
 2012-02-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename dom*_*attributes.html to dom*-*attributes.html to follow the WebKit convention.
