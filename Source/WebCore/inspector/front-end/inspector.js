@@ -722,19 +722,24 @@ WebInspector.documentKeyDown = function(event)
                 event.preventDefault();
             }
             break;
-        case "U+004B": // +
+    }
+
+    switch (event.keyCode) {
+        case 107: // +
+        case 187: // +
             if (hasCtrlOrMeta && !InspectorFrontendHost.isStub) {
                 WebInspector._zoomIn();
                 event.preventDefault();
             }
             break;
-        case "U+004D": // -
+        case 109: // -
+        case 189: // -
             if (hasCtrlOrMeta && !InspectorFrontendHost.isStub) {
                 WebInspector._zoomOut();
                 event.preventDefault();
             }
             break;
-        case "U+0030": // 0
+        case 48: // 0
             if (hasCtrlOrMeta && !InspectorFrontendHost.isStub) {
                 WebInspector._resetZoom();
                 event.preventDefault();
