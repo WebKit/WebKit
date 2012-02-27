@@ -2539,9 +2539,10 @@ BUGWK47949 WIN MAC : compositing/reflections/nested-reflection-transformed.html 
 BUGWK47949 MAC : compositing/reflections/reflection-opacity.html = IMAGE PASS
 BUGWK47949 : compositing/reflections/reflection-positioning.html = IMAGE PASS
 BUGWK74949 WIN MAC : compositing/reflections/nested-reflection-transformed2.html = IMAGE PASS
-BUGWK47949 MAC : compositing/reflections/nested-reflection-transition.html = IMAGE PASS
+BUGWK47949 : compositing/reflections/nested-reflection-transition.html = IMAGE PASS
 BUGWK47949 MAC : compositing/reflections/nested-reflection-size-change.html = IMAGE PASS
 BUGWK79647 WIN MAC : compositing/reflections/reflection-ordering.html = IMAGE PASS
+BUGWK79647 WIN LINUX : compositing/reflections/remove-add-reflection.html = IMAGE PASS
 
 // Flaky because these are a poorly written tests. Need dino's new animation API
 BUGWK54306 : compositing/reflections/animation-inside-reflection.html = PASS IMAGE IMAGE+TEXT
