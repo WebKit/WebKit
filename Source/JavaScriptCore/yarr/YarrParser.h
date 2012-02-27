@@ -54,6 +54,7 @@ private:
         PatternTooLarge,
         QuantifierOutOfOrder,
         QuantifierWithoutAtom,
+        QuantifierTooLarge,
         MissingParentheses,
         ParenthesesUnmatched,
         ParenthesesTypeInvalid,
@@ -546,6 +547,11 @@ private:
         ASSERT(!m_err);
         ASSERT(min <= max);
 
+        if (min == UINT_MAX) {
+            m_err = QuantifierTooLarge;
+            return;
+        }
+
         if (lastTokenWasAnAtom)
             m_delegate.quantifyAtom(min, max, !tryConsume('?'));
         else
@@ -685,6 +691,7 @@ private:
             REGEXP_ERROR_PREFIX "regular expression too large",
             REGEXP_ERROR_PREFIX "numbers out of order in {} quantifier",
             REGEXP_ERROR_PREFIX "nothing to repeat",
+            REGEXP_ERROR_PREFIX "number too large in {} quantifier",
             REGEXP_ERROR_PREFIX "missing )",
             REGEXP_ERROR_PREFIX "unmatched parentheses",
             REGEXP_ERROR_PREFIX "unrecognized character after (?",
@@ -695,7 +702,6 @@ private:
 
         return errorMessages[m_err];
     }
-
 
     // Misc helper functions:
 

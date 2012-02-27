@@ -1,3 +1,18 @@
+2012-02-27  Michael Saboff  <msaboff@apple.com>
+
+        Error check regexp min quantifier
+        https://bugs.webkit.org/show_bug.cgi?id=70648
+
+        Reviewed by Gavin Barraclough.
+
+        Added checking for min or only quantifier being UINT_MAX.
+        When encountered this becomes a SyntaxError during parsing.
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::parseQuantifier):
+        (JSC::Yarr::Parser::parse):
+        (Parser):
+
 2012-02-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
