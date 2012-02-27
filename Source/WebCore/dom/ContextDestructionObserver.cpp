@@ -25,70 +25,34 @@
  */
 
 #include "config.h"
-#include "ActiveDOMObject.h"
+#include "ContextDestructionObserver.h"
 
 #include "ScriptExecutionContext.h"
-#include "WorkerContext.h"
-#include "WorkerThread.h"
 
 namespace WebCore {
 
-ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext, void* upcastPointer)
-    : ContextDestructionObserver(scriptExecutionContext)
-    , m_pendingActivityCount(0)
-#if !ASSERT_DISABLED
-    , m_suspendIfNeededCalled(false)
-#endif
+ContextDestructionObserver::ContextDestructionObserver(ScriptExecutionContext* scriptExecutionContext)
+    : m_scriptExecutionContext(scriptExecutionContext)
 {
     if (!m_scriptExecutionContext)
         return;
 
     ASSERT(m_scriptExecutionContext->isContextThread());
-    m_scriptExecutionContext->didCreateActiveDOMObject(this, upcastPointer);
+    m_scriptExecutionContext->didCreateDestructionObserver(this);
 }
 
-ActiveDOMObject::~ActiveDOMObject()
+ContextDestructionObserver::~ContextDestructionObserver()
 {
     if (!m_scriptExecutionContext)
         return;
 
-    ASSERT(m_suspendIfNeededCalled);
     ASSERT(m_scriptExecutionContext->isContextThread());
-    m_scriptExecutionContext->willDestroyActiveDOMObject(this);
+    m_scriptExecutionContext->willDestroyDestructionObserver(this);
 }
 
-void ActiveDOMObject::suspendIfNeeded()
+void ContextDestructionObserver::contextDestroyed()
 {
-#if !ASSERT_DISABLED
-    ASSERT(!m_suspendIfNeededCalled);
-    m_suspendIfNeededCalled = true;
-#endif
-    if (!m_scriptExecutionContext)
-        return;
-
-    m_scriptExecutionContext->suspendActiveDOMObjectIfNeeded(this);
-}
-
-bool ActiveDOMObject::hasPendingActivity() const
-{
-    return m_pendingActivityCount;
-}
-
-bool ActiveDOMObject::canSuspend() const
-{
-    return false;
-}
-
-void ActiveDOMObject::suspend(ReasonForSuspension)
-{
-}
-
-void ActiveDOMObject::resume()
-{
-}
-
-void ActiveDOMObject::stop()
-{
+    m_scriptExecutionContext = 0;
 }
 
 } // namespace WebCore

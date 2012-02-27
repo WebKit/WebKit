@@ -3350,6 +3350,8 @@
 		975CA28B130365F800E99AD9 /* Crypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 975CA288130365F800E99AD9 /* Crypto.h */; };
 		975CA2A11303679D00E99AD9 /* JSCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 975CA29F1303679D00E99AD9 /* JSCrypto.cpp */; };
 		975CA2A21303679D00E99AD9 /* JSCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 975CA2A01303679D00E99AD9 /* JSCrypto.h */; };
+		97627B8D14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97627B8B14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp */; };
+		97627B8E14FB3CEE002CDCA1 /* ContextDestructionObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 97627B8C14FB3CEE002CDCA1 /* ContextDestructionObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97665013144FAA4200F6BB51 /* EventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 97665011144FAA4200F6BB51 /* EventFactory.h */; };
 		9766504F144FBFFE00F6BB51 /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9766504E144FBFFE00F6BB51 /* EventFactory.cpp */; };
 		9767CE0B145ABC13005E64DB /* ExceptionHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 9767CE09145ABC12005E64DB /* ExceptionHeaders.h */; };
@@ -10233,6 +10235,8 @@
 		975CA289130365F800E99AD9 /* Crypto.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Crypto.idl; sourceTree = "<group>"; };
 		975CA29F1303679D00E99AD9 /* JSCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCrypto.cpp; sourceTree = "<group>"; };
 		975CA2A01303679D00E99AD9 /* JSCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCrypto.h; sourceTree = "<group>"; };
+		97627B8B14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextDestructionObserver.cpp; sourceTree = "<group>"; };
+		97627B8C14FB3CEE002CDCA1 /* ContextDestructionObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextDestructionObserver.h; sourceTree = "<group>"; };
 		97665011144FAA4200F6BB51 /* EventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventFactory.h; sourceTree = "<group>"; };
 		9766504E144FBFFE00F6BB51 /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
 		9767CE09145ABC12005E64DB /* ExceptionHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionHeaders.h; sourceTree = "<group>"; };
@@ -20626,6 +20630,8 @@
 				A81872140977D3C0005826D9 /* ContainerNode.cpp */,
 				A81872110977D3C0005826D9 /* ContainerNode.h */,
 				E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */,
+				97627B8B14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp */,
+				97627B8C14FB3CEE002CDCA1 /* ContextDestructionObserver.h */,
 				2E3FAA0811A36BF100576624 /* CrossThreadTask.h */,
 				62CD32561157E57C0063B0A7 /* CustomEvent.cpp */,
 				62CD32571157E57C0063B0A7 /* CustomEvent.h */,
@@ -21458,6 +21464,7 @@
 				57B791A614C6A62900F202D1 /* ContentSelectorQuery.h in Headers */,
 				41D015CA0F4B5C71004A662F /* ContentType.h in Headers */,
 				370D6EDB138454550044103E /* ContentTypeParser.h in Headers */,
+				97627B8E14FB3CEE002CDCA1 /* ContextDestructionObserver.h in Headers */,
 				93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */,
 				065AD4F50B0C2EDA005A2B1D /* ContextMenuClient.h in Headers */,
 				065AD4F70B0C2EDA005A2B1D /* ContextMenuController.h in Headers */,
@@ -24890,6 +24897,7 @@
 				57B791A514C6A62900F202D1 /* ContentSelectorQuery.cpp in Sources */,
 				41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */,
 				370D6EDA138454550044103E /* ContentTypeParser.cpp in Sources */,
+				97627B8D14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp in Sources */,
 				065AD4F60B0C2EDA005A2B1D /* ContextMenuController.cpp in Sources */,
 				06027CB30B1CC03D00884B2D /* ContextMenuItemMac.mm in Sources */,
 				93B6A0EA0B0BCA8400F5027A /* ContextMenuMac.mm in Sources */,

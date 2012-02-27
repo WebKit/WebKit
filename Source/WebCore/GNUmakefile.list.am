@@ -1552,6 +1552,8 @@ webcore_sources += \
 	Source/WebCore/dom/ContainerNodeAlgorithms.h \
 	Source/WebCore/dom/ContainerNode.cpp \
 	Source/WebCore/dom/ContainerNode.h \
+	Source/WebCore/dom/ContextDestructionObserver.cpp \
+	Source/WebCore/dom/ContextDestructionObserver.h \
 	Source/WebCore/dom/CrossThreadTask.h \
 	Source/WebCore/dom/CustomEvent.cpp \
 	Source/WebCore/dom/CustomEvent.h \

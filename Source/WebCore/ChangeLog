@@ -1,3 +1,37 @@
+2012-02-26  Adam Barth  <abarth@webkit.org>
+
+        ContextDestructionObserver should live in its own file
+        https://bugs.webkit.org/show_bug.cgi?id=79619
+
+        Reviewed by Hajime Morita.
+
+        WebKit prefers to have one class per file.  (This patch is paying a
+        build system hacking debt I incurred earlier.)
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ActiveDOMObject.cpp:
+        (WebCore):
+        * dom/ActiveDOMObject.h:
+        (ActiveDOMObject):
+        (WebCore::ActiveDOMObject::suspendIfNeededCalled):
+        (WebCore::ActiveDOMObject::setPendingActivity):
+        (WebCore::ActiveDOMObject::unsetPendingActivity):
+        * dom/ContextDestructionObserver.cpp: Added.
+        (WebCore):
+        (WebCore::ContextDestructionObserver::ContextDestructionObserver):
+        (WebCore::ContextDestructionObserver::~ContextDestructionObserver):
+        (WebCore::ContextDestructionObserver::contextDestroyed):
+        * dom/ContextDestructionObserver.h: Added.
+        (WebCore):
+        (ContextDestructionObserver):
+        (WebCore::ContextDestructionObserver::scriptExecutionContext):
+        * dom/DOMAllInOne.cpp:
+
 2012-02-26  Dirk Schulze  <krit@webkit.org>
 
         Cleanup of Adobes copyright text. The text got harmonized with copyright texts of other companies. 
