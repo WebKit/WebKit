@@ -623,7 +623,7 @@ WebInspector.DetailedHeapshotView.prototype = {
     {
         this._currentSearchResultIndex = -1;
         this._popoverHelper.hidePopover();
-        if (this.helpPopover.visible)
+        if (this.helpPopover && this.helpPopover.visible)
             this.helpPopover.hide();
     },
 

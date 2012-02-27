@@ -1,3 +1,10 @@
+2012-02-27  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed single line fix for r108983.
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype.willHide):
+
 2012-02-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: repaint counter graphs when timeline splitter moves
