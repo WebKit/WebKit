@@ -47,7 +47,7 @@ RemoteLayerClient::RemoteLayerClient(mach_port_t serverPort, CALayer *rootLayer)
     m_platformClient = adoptNS([[CARemoteLayerClient alloc] initWithServerPort:serverPort]);
     m_platformClient.get().layer = rootLayer;
 #else
-    m_platformClient = WKCARemoteLayerClientMakeWithServerPort(serverPort)
+    m_platformClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
     WKCARemoteLayerClientSetLayer(m_platformClient.get(), rootLayer);
 #endif
 }

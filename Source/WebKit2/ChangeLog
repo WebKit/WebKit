@@ -1,3 +1,10 @@
+2012-02-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Build fix for SL.
+
+        * Platform/mac/RemoteLayerClient.mm:
+        (WebKit::RemoteLayerClient::RemoteLayerClient):
+
 2012-02-26  Sam Weinig  <sam@webkit.org>
 
         Encapsulate uses of WKSI to setup a remote layer into a new RemoteLayerClient class
