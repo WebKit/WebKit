@@ -1,3 +1,22 @@
+2012-02-27  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [refactoring] remove dependencies from TimelinePanel from most of FormattedRecord
+        https://bugs.webkit.org/show_bug.cgi?id=79665
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._linkifyLocation):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._linkifyCallFrame):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._linkifyTopCallFrame):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._linkifyScriptLocation):
+        (WebInspector.TimelinePanel.PopupContentHelper):
+        (WebInspector.TimelinePanel.PopupContentHelper.prototype._appendStackTrace):
+
 2012-02-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: reveal corresponding timeline record when user clicks on memory graph
