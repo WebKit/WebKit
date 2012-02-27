@@ -1,3 +1,44 @@
+2012-02-27  Matthew Delaney  <mdelaney@apple.com>
+
+        Add ImageBuffer support for having a hi-res backing store. This allows
+        ImageBuffer clients to specify a scale factor upon creation so that they
+        don't have to maintain that info themselves as they use/pass around the ImageBuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=79395
+
+        Reviewed by Dan Bernstein.
+
+        No new tests. This patch doesn't change behavior.
+
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::create): Scale the backing store by the resolution scale.
+        (WebCore::ImageBuffer::logicalSize): Differentiate the logical size from the backing store's size.
+        (WebCore::ImageBuffer::internalSize): The backing store's size.
+
+        * platform/graphics/cg/ImageBufferCG.cpp: Prefer the explicit use of logicalSize and internalSize.
+
+        Explicitly state a 1x scale for all ImageBuffer creation sites
+        since this is what they currently assume.
+        * html/HTMLCanvasElement.cpp:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * page/Frame.cpp:
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        * platform/graphics/ShadowBlur.cpp:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        * platform/graphics/filters/FEDropShadow.cpp:
+        * platform/graphics/filters/FilterEffect.cpp:
+        * platform/mac/ScrollbarThemeMac.mm:
+        * rendering/FilterEffectRenderer.cpp:
+        * rendering/RenderThemeMac.mm:
+        * rendering/svg/SVGImageBufferTools.cpp:
+        * svg/graphics/SVGImage.cpp:
+        * svg/graphics/SVGImageCache.cpp:
+
+        Update ImageBuffer::size() calls to new versions.
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/ImageBuffer.cpp:
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+
 2012-02-27  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]-webkit-flow-into initial value should be none instead of auto

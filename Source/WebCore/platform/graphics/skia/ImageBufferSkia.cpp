@@ -169,11 +169,6 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-size_t ImageBuffer::dataSize() const
-{
-    return m_size.width() * m_size.height() * 4;
-}
-
 PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior) const
 {
     return BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), copyBehavior == CopyBackingStore);

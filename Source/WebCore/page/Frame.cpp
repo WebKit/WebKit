@@ -1094,7 +1094,7 @@ DragImageRef Frame::nodeImage(Node* node)
     LayoutRect topLevelRect;
     IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
 
-    OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size()));
+    OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), 1, ColorSpaceDeviceRGB));
     if (!buffer)
         return 0;
     buffer->context()->translate(-paintingRect.x(), -paintingRect.y());
@@ -1117,7 +1117,7 @@ DragImageRef Frame::dragImageForSelection()
 
     IntRect paintingRect = enclosingIntRect(selection()->bounds());
 
-    OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size()));
+    OwnPtr<ImageBuffer> buffer(ImageBuffer::create(paintingRect.size(), 1, ColorSpaceDeviceRGB));
     if (!buffer)
         return 0;
     buffer->context()->translate(-paintingRect.x(), -paintingRect.y());

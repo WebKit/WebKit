@@ -71,7 +71,7 @@ void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstCo
 
 inline void ImageBuffer::genericConvertToLuminanceMask()
 {
-    IntRect luminanceRect(IntPoint(), size());
+    IntRect luminanceRect(IntPoint(), internalSize());
     RefPtr<ByteArray> srcPixelArray = getUnmultipliedImageData(luminanceRect);
     
     unsigned pixelArrayLength = srcPixelArray->length();

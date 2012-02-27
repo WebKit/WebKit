@@ -144,7 +144,7 @@ Image* SVGImageCache::lookupOrCreateBitmapImageForRenderer(const RenderObject* r
     }
 
     // Create and cache new image and image buffer at requested size.
-    OwnPtr<ImageBuffer> newBuffer = ImageBuffer::create(size);
+    OwnPtr<ImageBuffer> newBuffer = ImageBuffer::create(size, 1);
     if (!newBuffer)
         return Image::nullImage();
 

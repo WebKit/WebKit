@@ -73,14 +73,14 @@ public:
         m_bufferInUse = true;
 #endif
         // We do not need to recreate the buffer if the current buffer is large enough.
-        if (m_imageBuffer && m_imageBuffer->width() >= size.width() && m_imageBuffer->height() >= size.height())
+        if (m_imageBuffer && m_imageBuffer->logicalSize().width() >= size.width() && m_imageBuffer->logicalSize().height() >= size.height())
             return m_imageBuffer.get();
 
         // Round to the nearest 32 pixels so we do not grow the buffer for similar sized requests.
         IntSize roundedSize(roundUpToMultipleOf32(size.width()), roundUpToMultipleOf32(size.height()));
 
         clearScratchBuffer();
-        m_imageBuffer = ImageBuffer::create(roundedSize);
+        m_imageBuffer = ImageBuffer::create(roundedSize, 1);
         return m_imageBuffer.get();
     }
 
@@ -440,7 +440,7 @@ void ShadowBlur::drawShadowBuffer(GraphicsContext* graphicsContext)
 
     GraphicsContextStateSaver stateSaver(*graphicsContext);
 
-    IntSize bufferSize = m_layerImage->size();
+    IntSize bufferSize = m_layerImage->internalSize();
     if (bufferSize != m_layerSize) {
         // The rect passed to clipToImageBuffer() has to be the size of the entire buffer,
         // but we may not have cleared it all, so clip to the filled part first.

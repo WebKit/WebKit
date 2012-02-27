@@ -312,7 +312,7 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame()
     if (!m_frameCache) {
         if (!m_page)
             return 0;
-        OwnPtr<ImageBuffer> buffer = ImageBuffer::create(size());
+        OwnPtr<ImageBuffer> buffer = ImageBuffer::create(size(), 1);
         if (!buffer) // failed to allocate image
             return 0;
         draw(buffer->context(), rect(), rect(), ColorSpaceDeviceRGB, CompositeSourceOver);

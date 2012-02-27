@@ -48,12 +48,6 @@ ImageBuffer::~ImageBuffer()
 {
 }
 
-size_t ImageBuffer::dataSize() const
-{
-    notImplemented();
-    return 0;
-}
-
 GraphicsContext* ImageBuffer::context() const
 {
     notImplemented();

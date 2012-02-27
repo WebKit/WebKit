@@ -60,7 +60,7 @@ bool SVGImageBufferTools::createImageBuffer(const FloatRect& targetRect, const A
         return false;
 
     IntSize clampedSize = clampedAbsoluteSize(paintRect.size());
-    OwnPtr<ImageBuffer> image = ImageBuffer::create(clampedSize, colorSpace, renderingMode);
+    OwnPtr<ImageBuffer> image = ImageBuffer::create(clampedSize, 1, colorSpace, renderingMode);
     if (!image)
         return false;
 
@@ -89,7 +89,7 @@ bool SVGImageBufferTools::createImageBufferForPattern(const FloatRect& absoluteT
     if (imageSize.isEmpty())
         return false;
 
-    OwnPtr<ImageBuffer> image = ImageBuffer::create(imageSize, colorSpace, renderingMode);
+    OwnPtr<ImageBuffer> image = ImageBuffer::create(imageSize, 1, colorSpace, renderingMode);
     if (!image)
         return false;
 

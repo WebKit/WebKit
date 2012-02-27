@@ -76,11 +76,6 @@ ImageBuffer::~ImageBuffer()
     cairo_surface_destroy(m_data.m_surface);
 }
 
-size_t ImageBuffer::dataSize() const
-{
-    return m_size.width() * m_size.height() * 4;
-}
-
 GraphicsContext* ImageBuffer::context() const
 {
     return m_context.get();

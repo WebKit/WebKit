@@ -241,7 +241,7 @@ void PlatformContextSkia::beginLayerClippedToImage(const FloatRect& rect,
 
     canvas()->clipRect(bounds);
 
-    if (imageBuffer->size().isEmpty())
+    if (imageBuffer->internalSize().isEmpty())
         return;
 
     canvas()->saveLayerAlpha(&bounds, 255,

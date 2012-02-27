@@ -5330,13 +5330,13 @@ ImageBuffer* WebGLRenderingContext::LRUImageBufferCache::imageBuffer(const IntSi
         ImageBuffer* buf = m_buffers[i].get();
         if (!buf)
             break;
-        if (buf->size() != size)
+        if (buf->logicalSize() != size)
             continue;
         bubbleToFront(i);
         return buf;
     }
 
-    OwnPtr<ImageBuffer> temp = ImageBuffer::create(size);
+    OwnPtr<ImageBuffer> temp = ImageBuffer::create(size, 1);
     if (!temp)
         return 0;
     i = std::min(m_capacity - 1, i);

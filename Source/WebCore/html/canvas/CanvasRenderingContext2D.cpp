@@ -1521,7 +1521,7 @@ template<class T> IntRect CanvasRenderingContext2D::calculateCompositingBufferRe
 PassOwnPtr<ImageBuffer> CanvasRenderingContext2D::createCompositingBuffer(const IntRect& bufferRect)
 {
     RenderingMode renderMode = isAccelerated() ? Accelerated : Unaccelerated;
-    return ImageBuffer::create(bufferRect.size(), ColorSpaceDeviceRGB, renderMode);
+    return ImageBuffer::create(bufferRect.size(), 1, ColorSpaceDeviceRGB, renderMode);
 }
 
 void CanvasRenderingContext2D::compositeBuffer(ImageBuffer* buffer, const IntRect& bufferRect, CompositeOperator op)
@@ -1883,7 +1883,7 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy,
     IntSize destOffset(static_cast<int>(dx), static_cast<int>(dy));
     IntRect destRect = enclosingIntRect(clipRect);
     destRect.move(destOffset);
-    destRect.intersect(IntRect(IntPoint(), buffer->size()));
+    destRect.intersect(IntRect(IntPoint(), buffer->internalSize()));
     if (destRect.isEmpty())
         return;
     IntRect sourceRect(destRect);
@@ -2089,9 +2089,9 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         IntRect maskRect = enclosingIntRect(textRect);
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size(), ColorSpaceDeviceRGB, Accelerated);
+        OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size(), 1, ColorSpaceDeviceRGB, Accelerated);
 #else
-        OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size());
+        OwnPtr<ImageBuffer> maskImage = ImageBuffer::create(maskRect.size(), 1);
 #endif
 
         GraphicsContext* maskImageContext = maskImage->context();

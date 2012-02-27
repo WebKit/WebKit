@@ -109,11 +109,6 @@ ImageBuffer::~ImageBuffer()
 {
 }
 
-size_t ImageBuffer::dataSize() const
-{
-    return m_size.width() * m_size.height() * 4;
-}
-
 GraphicsContext* ImageBuffer::context() const
 {
     ASSERT(m_data.m_painter->isActive());

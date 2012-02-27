@@ -32,7 +32,7 @@ public:
     static PassRefPtr<BitmapTexture> create() { return adoptRef(new BitmapTextureImageBuffer); }
     ~BitmapTextureImageBuffer() { destroy(); }
     virtual void destroy() { m_image.clear(); }
-    virtual IntSize size() const { return m_image->size(); }
+    virtual IntSize size() const { return m_image->internalSize(); }
     virtual void didReset();
     virtual bool isValid() const { return m_image; }
     inline GraphicsContext* graphicsContext() { return m_image ? m_image->context() : 0; }

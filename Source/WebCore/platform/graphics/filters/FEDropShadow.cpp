@@ -103,7 +103,7 @@ void FEDropShadow::platformApplySoftware()
     ShadowBlur contextShadow(blurRadius, offset, m_shadowColor, ColorSpaceDeviceRGB);
 
     // TODO: Direct pixel access to ImageBuffer would avoid copying the ImageData.
-    IntRect shadowArea(IntPoint(), resultImage->size());
+    IntRect shadowArea(IntPoint(), resultImage->internalSize());
     RefPtr<ByteArray> srcPixelArray = resultImage->getPremultipliedImageData(shadowArea);
 
     contextShadow.blurLayerImage(srcPixelArray->data(), shadowArea.size(), 4 * shadowArea.size().width());
