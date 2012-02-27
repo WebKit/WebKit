@@ -1,3 +1,13 @@
+2012-02-27  Philip Rogers  <pdr@google.com>
+
+        Stop recomputing SVG path data twice during layout
+        https://bugs.webkit.org/show_bug.cgi?id=79672
+
+        Reviewed by Nikolas Zimmermann.
+
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::layout):
+
 2012-02-27  Timothy Hatcher  <timothy@apple.com>
 
         Updated for WebKit2 string changes.

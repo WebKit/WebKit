@@ -168,7 +168,7 @@ void RenderSVGShape::layout()
     bool updateCachedBoundariesInParents = false;
 
     bool needsShapeUpdate = m_needsShapeUpdate;
-    if (needsShapeUpdate) {
+    if (needsShapeUpdate || m_needsBoundariesUpdate) {
         setIsPaintingFallback(false);
         m_path.clear();
         createShape();
@@ -179,13 +179,6 @@ void RenderSVGShape::layout()
     if (m_needsTransformUpdate) {
         m_localTransform = element->animatedLocalTransform();
         m_needsTransformUpdate = false;
-        updateCachedBoundariesInParents = true;
-    }
-
-    if (m_needsBoundariesUpdate) {
-        setIsPaintingFallback(false);
-        m_path.clear();
-        createShape();
         updateCachedBoundariesInParents = true;
     }
 
