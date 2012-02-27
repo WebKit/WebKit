@@ -226,7 +226,7 @@ static bool isPropertyAccess(OpcodeID opcodeID)
     }
 }
 
-static unsigned instructionOffsetForNth(ExecState* exec, const Vector<Instruction>& instructions, int nth, bool (*predicate)(OpcodeID))
+static unsigned instructionOffsetForNth(ExecState* exec, const RefCountedArray<Instruction>& instructions, int nth, bool (*predicate)(OpcodeID))
 {
     size_t i = 0;
     while (i < instructions.size()) {
@@ -347,18 +347,13 @@ void CodeBlock::printStructures(const Instruction* vPC) const
 
 void CodeBlock::dump(ExecState* exec) const
 {
-    if (!m_instructions) {
-        dataLog("No instructions available.\n");
-        return;
-    }
-
     size_t instructionCount = 0;
 
     for (size_t i = 0; i < instructions().size(); i += opcodeLengths[exec->interpreter()->getOpcodeID(instructions()[i].u.opcode)])
         ++instructionCount;
 
     dataLog("%lu m_instructions; %lu bytes at %p; %d parameter(s); %d callee register(s); %d variable(s)\n\n",
-        static_cast<unsigned long>(instructionCount),
+        static_cast<unsigned long>(instructions().size()),
         static_cast<unsigned long>(instructions().size() * sizeof(Instruction)),
         this, m_numParameters, m_numCalleeRegisters, m_numVars);
 
@@ -1424,11 +1419,9 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
     , m_numVars(other.m_numVars)
     , m_numCapturedVars(other.m_numCapturedVars)
     , m_isConstructor(other.m_isConstructor)
-    , m_shouldDiscardBytecode(false)
     , m_ownerExecutable(*other.m_globalData, other.m_ownerExecutable.get(), other.m_ownerExecutable.get())
     , m_globalData(other.m_globalData)
     , m_instructions(other.m_instructions)
-    , m_instructionCount(other.m_instructionCount)
     , m_thisRegister(other.m_thisRegister)
     , m_argumentsRegister(other.m_argumentsRegister)
     , m_activationRegister(other.m_activationRegister)
@@ -1484,12 +1477,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_numCalleeRegisters(0)
     , m_numVars(0)
     , m_isConstructor(isConstructor)
-    , m_shouldDiscardBytecode(false)
     , m_numParameters(0)
     , m_ownerExecutable(globalObject->globalData(), ownerExecutable, ownerExecutable)
     , m_globalData(0)
-    , m_instructions(adoptRef(new Instructions))
-    , m_instructionCount(0)
     , m_argumentsRegister(-1)
     , m_needsFullScopeChain(ownerExecutable->needsActivation())
     , m_usesEval(ownerExecutable->usesEval())
@@ -1903,12 +1893,6 @@ void CodeBlock::finalizeUnconditionally()
         }
     }
 #endif
-
-    // Handle the bytecode discarding chore.
-    if (m_shouldDiscardBytecode) {
-        discardBytecode();
-        m_shouldDiscardBytecode = false;
-    }
 }
 
 void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
@@ -1980,7 +1964,7 @@ void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
 
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 {
-    ASSERT(bytecodeOffset < m_instructionCount);
+    ASSERT(bytecodeOffset < instructions().size());
 
     if (!m_rareData)
         return 0;
@@ -1998,7 +1982,7 @@ HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 
 int CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
-    ASSERT(bytecodeOffset < m_instructionCount);
+    ASSERT(bytecodeOffset < instructions().size());
 
     if (!m_rareData)
         return m_ownerExecutable->source().firstLine();
@@ -2022,7 +2006,7 @@ int CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 
 void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset)
 {
-    ASSERT(bytecodeOffset < m_instructionCount);
+    ASSERT(bytecodeOffset < instructions().size());
 
     if (!m_rareData) {
         startOffset = 0;
@@ -2102,8 +2086,6 @@ bool CodeBlock::hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset)
 
 void CodeBlock::shrinkToFit()
 {
-    instructions().shrinkToFit();
-
 #if ENABLE(CLASSIC_INTERPRETER)
     m_propertyAccessInstructions.shrinkToFit();
     m_globalResolveInstructions.shrinkToFit();

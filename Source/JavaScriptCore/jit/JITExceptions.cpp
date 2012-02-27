@@ -48,8 +48,7 @@ ExceptionHandler genericThrow(JSGlobalData* globalData, ExecState* callFrame, JS
     Instruction* catchPCForInterpreter = 0;
     if (handler) {
         catchRoutine = handler->nativeCode.executableAddress();
-        if (callFrame->codeBlock()->hasInstructions())
-            catchPCForInterpreter = &callFrame->codeBlock()->instructions()[handler->target];
+        catchPCForInterpreter = &callFrame->codeBlock()->instructions()[handler->target];
     } else
         catchRoutine = FunctionPtr(ctiOpThrowNotCaught).value();
     

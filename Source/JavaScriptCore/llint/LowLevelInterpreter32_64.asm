@@ -443,8 +443,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     codeBlockSetter(t1)
     
     # Set up the PC.
-    loadp CodeBlock::m_instructions[t1], t0
-    loadp CodeBlock::Instructions::m_instructions + VectorBufferOffset[t0], PC
+    loadp CodeBlock::m_instructions[t1], PC
 end
 
 # Expects that CodeBlock is in t1, which is what prologue() leaves behind.
@@ -503,8 +502,7 @@ macro functionArityCheck(doneLabel, slow_path)
 .continue:
     # Reload CodeBlock and PC, since the slow_path clobbered it.
     loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_instructions[t1], t0
-    loadp CodeBlock::Instructions::m_instructions + VectorBufferOffset[t0], PC
+    loadp CodeBlock::m_instructions[t1], PC
     jmp doneLabel
 end
 

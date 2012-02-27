@@ -61,6 +61,7 @@
 #include "UString.h"
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
+#include <wtf/RefCountedArray.h>
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -127,8 +128,6 @@ namespace JSC {
         }
 #endif
         
-        bool canProduceCopyWithBytecode() { return hasInstructions(); }
-
         void visitAggregate(SlotVisitor&);
 
         static void dumpStatistics();
@@ -341,20 +340,13 @@ namespace JSC {
         void setIsNumericCompareFunction(bool isNumericCompareFunction) { m_isNumericCompareFunction = isNumericCompareFunction; }
         bool isNumericCompareFunction() { return m_isNumericCompareFunction; }
 
-        bool hasInstructions() const { return !!m_instructions; }
-        unsigned numberOfInstructions() const { return !m_instructions ? 0 : m_instructions->m_instructions.size(); }
-        Vector<Instruction>& instructions() { return m_instructions->m_instructions; }
-        const Vector<Instruction>& instructions() const { return m_instructions->m_instructions; }
-        void discardBytecode() { m_instructions.clear(); }
-        void discardBytecodeLater()
-        {
-            m_shouldDiscardBytecode = true;
-        }
+        unsigned numberOfInstructions() const { return m_instructions.size(); }
+        RefCountedArray<Instruction>& instructions() { return m_instructions; }
+        const RefCountedArray<Instruction>& instructions() const { return m_instructions; }
         
         bool usesOpcode(OpcodeID);
 
-        unsigned instructionCount() { return m_instructionCount; }
-        void setInstructionCount(unsigned instructionCount) { m_instructionCount = instructionCount; }
+        unsigned instructionCount() { return m_instructions.size(); }
 
 #if ENABLE(JIT)
         void setJITCode(const JITCode& code, MacroAssemblerCodePtr codeWithArityCheck)
@@ -541,11 +533,10 @@ namespace JSC {
         {
             ValueProfile* result = WTF::genericBinarySearch<ValueProfile, int, getValueProfileBytecodeOffset>(m_valueProfiles, m_valueProfiles.size(), bytecodeOffset);
             ASSERT(result->m_bytecodeOffset != -1);
-            ASSERT(!hasInstructions()
-                   || instructions()[bytecodeOffset + opcodeLength(
-                           m_globalData->interpreter->getOpcodeID(
-                               instructions()[
-                                   bytecodeOffset].u.opcode)) - 1].u.profile == result);
+            ASSERT(instructions()[bytecodeOffset + opcodeLength(
+                       m_globalData->interpreter->getOpcodeID(
+                           instructions()[
+                               bytecodeOffset].u.opcode)) - 1].u.profile == result);
             return result;
         }
         PredictedType valueProfilePredictionForBytecodeOffset(int bytecodeOffset)
@@ -1047,9 +1038,6 @@ namespace JSC {
         int m_numCapturedVars;
         bool m_isConstructor;
 
-        // This is public because otherwise we would have many friends.
-        bool m_shouldDiscardBytecode;
-
     protected:
 #if ENABLE(JIT)
         virtual void jitCompileImpl(JSGlobalData&) = 0;
@@ -1115,11 +1103,7 @@ namespace JSC {
         WriteBarrier<ScriptExecutable> m_ownerExecutable;
         JSGlobalData* m_globalData;
 
-        struct Instructions : public RefCounted<Instructions> {
-            Vector<Instruction> m_instructions;
-        };
-        RefPtr<Instructions> m_instructions;
-        unsigned m_instructionCount;
+        RefCountedArray<Instruction> m_instructions;
 
         int m_thisRegister;
         int m_argumentsRegister;
@@ -1377,27 +1361,6 @@ namespace JSC {
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFGInternal();
 #endif
-    };
-
-    // Use this if you want to copy a code block and you're paranoid about a GC
-    // happening.
-    class BytecodeDestructionBlocker {
-    public:
-        BytecodeDestructionBlocker(CodeBlock* codeBlock)
-            : m_codeBlock(codeBlock)
-            , m_oldValueOfShouldDiscardBytecode(codeBlock->m_shouldDiscardBytecode)
-        {
-            codeBlock->m_shouldDiscardBytecode = false;
-        }
-        
-        ~BytecodeDestructionBlocker()
-        {
-            m_codeBlock->m_shouldDiscardBytecode = m_oldValueOfShouldDiscardBytecode;
-        }
-        
-    private:
-        CodeBlock* m_codeBlock;
-        bool m_oldValueOfShouldDiscardBytecode;
     };
 
     inline CodeBlock* baselineCodeBlockForOriginAndBaselineCodeBlock(const CodeOrigin& codeOrigin, CodeBlock* baselineCodeBlock)

@@ -210,8 +210,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
     
-    if (!!m_evalCodeBlock && m_evalCodeBlock->canProduceCopyWithBytecode()) {
-        BytecodeDestructionBlocker blocker(m_evalCodeBlock.get());
+    if (!!m_evalCodeBlock) {
         OwnPtr<EvalCodeBlock> newCodeBlock = adoptPtr(new EvalCodeBlock(CodeBlock::CopyParsedBlock, *m_evalCodeBlock));
         newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_evalCodeBlock.release()));
         m_evalCodeBlock = newCodeBlock.release();
@@ -346,8 +345,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
     
-    if (!!m_programCodeBlock && m_programCodeBlock->canProduceCopyWithBytecode()) {
-        BytecodeDestructionBlocker blocker(m_programCodeBlock.get());
+    if (!!m_programCodeBlock) {
         OwnPtr<ProgramCodeBlock> newCodeBlock = adoptPtr(new ProgramCodeBlock(CodeBlock::CopyParsedBlock, *m_programCodeBlock));
         newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_programCodeBlock.release()));
         m_programCodeBlock = newCodeBlock.release();
@@ -494,18 +492,13 @@ void FunctionExecutable::jitCompileForConstruct(JSGlobalData& globalData)
 
 FunctionCodeBlock* FunctionExecutable::codeBlockWithBytecodeFor(CodeSpecializationKind kind)
 {
-    FunctionCodeBlock* codeBlock = baselineCodeBlockFor(kind);
-    if (codeBlock->canProduceCopyWithBytecode())
-        return codeBlock;
-    return 0;
+    return baselineCodeBlockFor(kind);
 }
 
 PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ScopeChainNode* scopeChainNode, CompilationKind compilationKind, CodeSpecializationKind specializationKind, JSObject*& exception)
 {
-    if (!!codeBlockFor(specializationKind) && codeBlockFor(specializationKind)->canProduceCopyWithBytecode()) {
-        BytecodeDestructionBlocker blocker(codeBlockFor(specializationKind).get());
+    if (!!codeBlockFor(specializationKind))
         return adoptPtr(new FunctionCodeBlock(CodeBlock::CopyParsedBlock, *codeBlockFor(specializationKind)));
-    }
     
     exception = 0;
     JSGlobalData* globalData = scopeChainNode->globalData;

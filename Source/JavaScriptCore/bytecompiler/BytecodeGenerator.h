@@ -48,6 +48,7 @@
 namespace JSC {
 
     class Identifier;
+    class Label;
     class ScopeChainNode;
 
     class CallArguments {
@@ -532,6 +533,8 @@ namespace JSC {
         ScopeChainNode* scopeChain() const { return m_scopeChain.get(); }
 
     private:
+        friend class Label;
+        
         void emitOpcode(OpcodeID);
         ValueProfile* emitProfiledOpcode(OpcodeID);
         void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);
@@ -611,7 +614,7 @@ namespace JSC {
 
         RegisterID* emitInitLazyRegister(RegisterID*);
 
-        Vector<Instruction>& instructions() { return m_codeBlock->instructions(); }
+        Vector<Instruction>& instructions() { return m_instructions; }
         SymbolTable& symbolTable() { return *m_symbolTable; }
 
         bool shouldOptimizeLocals()
@@ -644,6 +647,8 @@ namespace JSC {
         void createArgumentsIfNecessary();
         void createActivationIfNecessary();
         RegisterID* createLazyRegisterIfNecessary(RegisterID*);
+        
+        Vector<Instruction> m_instructions;
 
         bool m_shouldEmitDebugHooks;
         bool m_shouldEmitProfileHooks;

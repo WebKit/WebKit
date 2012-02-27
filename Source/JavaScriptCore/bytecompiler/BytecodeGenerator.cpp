@@ -119,6 +119,15 @@ namespace JSC {
     expected by the callee.
 */
 
+void Label::setLocation(unsigned location)
+{
+    m_location = location;
+    
+    unsigned size = m_unresolvedJumps.size();
+    for (unsigned i = 0; i < size; ++i)
+        m_generator->m_instructions[m_unresolvedJumps[i].second].u.operand = m_location - m_unresolvedJumps[i].first;
+}
+
 #ifndef NDEBUG
 void ResolveResult::checkValidity()
 {
@@ -171,8 +180,8 @@ JSObject* BytecodeGenerator::generate()
     m_codeBlock->setThisRegister(m_thisRegister.index());
 
     m_scopeNode->emitBytecode(*this);
-
-    m_codeBlock->setInstructionCount(m_codeBlock->instructions().size());
+    
+    m_codeBlock->instructions() = RefCountedArray<Instruction>(m_instructions);
 
     if (s_dumpsGeneratedCode)
         m_codeBlock->dump(m_scopeChain->globalObject->globalExec());
@@ -607,7 +616,7 @@ PassRefPtr<Label> BytecodeGenerator::newLabel()
         m_labels.removeLast();
 
     // Allocate new label ID.
-    m_labels.append(m_codeBlock);
+    m_labels.append(this);
     return &m_labels.last();
 }
 

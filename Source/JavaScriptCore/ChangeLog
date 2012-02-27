@@ -1,3 +1,79 @@
+2012-02-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Getting the instruction stream for a code block should not require two loads
+        https://bugs.webkit.org/show_bug.cgi?id=79608
+
+        Reviewed by Sam Weinig.
+        
+        Introduced the RefCountedArray class, which contains a single inline pointer
+        to a ref-counted non-resizeable vector backing store. This satisfies the
+        requirements of CodeBlock, which desires the ability to share instruction
+        streams with other CodeBlocks. It also reduces the number of loads required
+        for getting the instruction stream by one.
+        
+        This patch also gets rid of the bytecode discarding logic, since we don't
+        use it anymore and it's unlikely to ever work right with DFG or LLInt. And
+        I didn't feel like porting dead code to use RefCountedArray.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::instructionOffsetForNth):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::handlerForBytecodeOffset):
+        (JSC::CodeBlock::lineNumberForBytecodeOffset):
+        (JSC::CodeBlock::expressionRangeForBytecodeOffset):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::numberOfInstructions):
+        (JSC::CodeBlock::instructions):
+        (JSC::CodeBlock::instructionCount):
+        (JSC::CodeBlock::valueProfileForBytecodeOffset):
+        (JSC):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::Label::setLocation):
+        (JSC):
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::newLabel):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC):
+        (BytecodeGenerator):
+        (JSC::BytecodeGenerator::instructions):
+        * bytecompiler/Label.h:
+        (JSC::Label::Label):
+        (Label):
+        * dfg/DFGByteCodeCache.h:
+        (JSC::DFG::ByteCodeCache::~ByteCodeCache):
+        (JSC::DFG::ByteCodeCache::get):
+        * jit/JITExceptions.cpp:
+        (JSC::genericThrow):
+        * llint/LowLevelInterpreter32_64.asm:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::codeBlockWithBytecodeFor):
+        (JSC::FunctionExecutable::produceCodeBlockFor):
+        * wtf/RefCountedArray.h: Added.
+        (WTF):
+        (RefCountedArray):
+        (WTF::RefCountedArray::RefCountedArray):
+        (WTF::RefCountedArray::operator=):
+        (WTF::RefCountedArray::~RefCountedArray):
+        (WTF::RefCountedArray::size):
+        (WTF::RefCountedArray::data):
+        (WTF::RefCountedArray::begin):
+        (WTF::RefCountedArray::end):
+        (WTF::RefCountedArray::at):
+        (WTF::RefCountedArray::operator[]):
+        (Header):
+        (WTF::RefCountedArray::Header::size):
+        (WTF::RefCountedArray::Header::payload):
+        (WTF::RefCountedArray::Header::fromPayload):
+        * wtf/Platform.h:
+
 2012-02-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         StringLiteral and NumericLiteral are allowed as ObjectLiteral getter / setter name

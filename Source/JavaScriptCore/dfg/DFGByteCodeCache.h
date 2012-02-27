@@ -138,7 +138,6 @@ public:
                 delete iter->second.codeBlock;
                 continue;
             }
-            iter->second.codeBlock->m_shouldDiscardBytecode = iter->second.oldValueOfShouldDiscardBytecode;
         }
     }
     
@@ -155,7 +154,6 @@ public:
         value.codeBlock = key.executable()->codeBlockWithBytecodeFor(key.kind());
         if (value.codeBlock) {
             value.owned = false;
-            value.oldValueOfShouldDiscardBytecode = value.codeBlock->m_shouldDiscardBytecode;
         } else {
             // Nope, so try to parse one.
             JSObject* exception;
@@ -170,13 +168,6 @@ public:
                 delete value.codeBlock;
             value.codeBlock = 0;
         }
-        
-        // If we're about to return a code block, make sure that we're not going
-        // to be discarding its bytecode if a GC were to happen during DFG
-        // compilation. That's unlikely, but it's good to thoroughly enjoy this
-        // kind of paranoia.
-        if (!!value.codeBlock)
-            value.codeBlock->m_shouldDiscardBytecode = false;
         
         m_map.add(key, value);
         

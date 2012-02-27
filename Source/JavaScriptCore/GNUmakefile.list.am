@@ -583,6 +583,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/ByteArray.h \
 	Source/JavaScriptCore/wtf/CheckedArithmetic.h \
 	Source/JavaScriptCore/wtf/CheckedBoolean.h \
+	Source/JavaScriptCore/wtf/RefCountedArray.h \
 	Source/JavaScriptCore/wtf/Compiler.h \
 	Source/JavaScriptCore/wtf/Complex.h \
 	Source/JavaScriptCore/wtf/CryptographicallyRandomNumber.cpp \

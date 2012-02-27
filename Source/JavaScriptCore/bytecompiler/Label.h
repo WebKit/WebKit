@@ -39,21 +39,14 @@ namespace JSC {
 
     class Label {
     public:
-        explicit Label(CodeBlock* codeBlock)
+        explicit Label(BytecodeGenerator* generator)
             : m_refCount(0)
             , m_location(invalidLocation)
-            , m_codeBlock(codeBlock)
+            , m_generator(generator)
         {
         }
 
-        void setLocation(unsigned location)
-        {
-            m_location = location;
-
-            unsigned size = m_unresolvedJumps.size();
-            for (unsigned i = 0; i < size; ++i)
-                m_codeBlock->instructions()[m_unresolvedJumps[i].second].u.operand = m_location - m_unresolvedJumps[i].first;
-        }
+        void setLocation(unsigned);
 
         int bind(int opcode, int offset) const
         {
@@ -81,7 +74,7 @@ namespace JSC {
 
         int m_refCount;
         unsigned m_location;
-        CodeBlock* m_codeBlock;
+        BytecodeGenerator* m_generator;
         mutable JumpVector m_unresolvedJumps;
     };
 
