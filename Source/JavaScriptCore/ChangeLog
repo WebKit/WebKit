@@ -1,5 +1,17 @@
 2012-02-26  Filip Pizlo  <fpizlo@apple.com>
 
+        LayoutTests/fast/xpath/xpath-functional-test.html is crashing in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=79616
+
+        Reviewed by Oliver Hunt.
+        
+        Guard against the fact that in JSVALUE64, JSValue().isCell() == true.
+
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::validate):
+
+2012-02-26  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should support activations and nested functions
         https://bugs.webkit.org/show_bug.cgi?id=79554
 

@@ -442,6 +442,11 @@ struct AbstractValue {
         if (mergePredictions(m_type, predictionFromValue(value)) != m_type)
             return false;
         
+        if (value.isEmpty()) {
+            ASSERT(m_type & PredictEmpty);
+            return true;
+        }
+        
         if (m_structure.isTop())
             return true;
         
