@@ -27,6 +27,8 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <gdk/gdk.h>
+#include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
@@ -389,7 +391,12 @@ static void test_webkit_web_view_does_not_steal_focus()
     GtkWidget *window = gtk_offscreen_window_new();
     GtkWidget *webView = webkit_web_view_new();
     GtkWidget *entry = gtk_entry_new();
+
+#ifdef GTK_API_VERSION_2
+    GtkWidget *box = gtk_hbox_new(FALSE, 0);
+#else
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+#endif
 
     gtk_container_add(GTK_CONTAINER(box), webView);
     gtk_container_add(GTK_CONTAINER(box), entry);
@@ -424,8 +431,10 @@ static gboolean emitKeyStroke(WebKitWebView* webView)
     pressEvent->key.window = window;
     g_object_ref(pressEvent->key.window);
 
+#ifndef GTK_API_VERSION_2
     GdkDeviceManager* manager = gdk_display_get_device_manager(gdk_window_get_display(window));
     gdk_event_set_device(pressEvent, gdk_device_manager_get_client_pointer(manager));
+#endif
 
     // When synthesizing an event, an invalid hardware_keycode value
     // can cause it to be badly processed by Gtk+.
