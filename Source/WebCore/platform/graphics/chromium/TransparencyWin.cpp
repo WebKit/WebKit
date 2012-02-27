@@ -127,7 +127,7 @@ public:
     // Returns whether the current layer will fix a buffer of the given size.
     bool canHandleSize(const IntSize& size) const
     {
-        return m_destBitmap->size().width() >= size.width() && m_destBitmap->size().height() >= size.height();
+        return m_destBitmap->internalSize().width() >= size.width() && m_destBitmap->internalSize().height() >= size.height();
     }
 
 private:

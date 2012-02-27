@@ -1,3 +1,13 @@
+2012-02-27  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed speculative Chromium win build fix.
+
+        mdelaney's http://trac.webkit.org/changeset/109016 changed the
+        interface on ImageBuffer, but didn't update TransparencyWin.
+
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::OwnedBuffers::canHandleSize):
+
 2012-02-27  Matthew Delaney  <mdelaney@apple.com>
 
         Add ImageBuffer support for having a hi-res backing store. This allows
