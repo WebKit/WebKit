@@ -668,12 +668,6 @@ LLINT_SLOW_PATH_DECL(slow_path_bitxor)
     LLINT_RETURN(jsNumber(LLINT_OP_C(2).jsValue().toInt32(exec) ^ LLINT_OP_C(3).jsValue().toInt32(exec)));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_bitnot)
-{
-    LLINT_BEGIN();
-    LLINT_RETURN(jsNumber(~LLINT_OP_C(2).jsValue().toInt32(exec)));
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_check_has_instance)
 {
     LLINT_BEGIN();

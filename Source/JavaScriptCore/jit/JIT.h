@@ -780,7 +780,6 @@ namespace JSC {
 
         void emit_op_add(Instruction*);
         void emit_op_bitand(Instruction*);
-        void emit_op_bitnot(Instruction*);
         void emit_op_bitor(Instruction*);
         void emit_op_bitxor(Instruction*);
         void emit_op_call(Instruction*);
@@ -900,7 +899,6 @@ namespace JSC {
 
         void emitSlow_op_add(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_bitand(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_bitnot(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_bitor(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_bitxor(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call(Instruction*, Vector<SlowCaseEntry>::iterator&);

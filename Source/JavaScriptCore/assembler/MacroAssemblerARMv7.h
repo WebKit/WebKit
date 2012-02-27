@@ -303,11 +303,6 @@ public:
         m_assembler.neg(srcDest, srcDest);
     }
 
-    void not32(RegisterID srcDest)
-    {
-        m_assembler.mvn(srcDest, srcDest);
-    }
-
     void or32(RegisterID src, RegisterID dest)
     {
         m_assembler.orr(dest, dest, src);
@@ -447,6 +442,11 @@ public:
 
     void xor32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
+        if (imm.m_value == -1) {
+            m_assembler.mvn(dest, src);
+            return;
+        }
+
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
         if (armImm.isValid())
             m_assembler.eor(dest, src, armImm);
@@ -463,7 +463,10 @@ public:
 
     void xor32(TrustedImm32 imm, RegisterID dest)
     {
-        xor32(imm, dest, dest);
+        if (imm.m_value == -1)
+            m_assembler.mvn(dest, dest);
+        else
+            xor32(imm, dest, dest);
     }
     
 

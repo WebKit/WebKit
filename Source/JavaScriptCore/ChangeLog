@@ -1,3 +1,78 @@
+2012-02-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Implement support for op_negate and op_bitnot in the DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=79617
+
+        Reviewed by Sam Weinig.
+
+        Remove op_bitnop - this is redundant, ~x === x^-1.
+        This is a fractional (<1%) progression.
+
+        Remove not32(X) from the MacroAssemblers - make this an optimization to add32(-1, X).
+        Remove CanReuse from the result type - this was unused.
+        Remove op_bitnot.
+
+        * assembler/MacroAssemblerARM.h:
+        (MacroAssemblerARM):
+        (JSC::MacroAssemblerARM::xor32):
+        * assembler/MacroAssemblerARMv7.h:
+        (MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::xor32):
+        * assembler/MacroAssemblerMIPS.h:
+        (MacroAssemblerMIPS):
+        (JSC::MacroAssemblerMIPS::xor32):
+        * assembler/MacroAssemblerSH4.h:
+        (MacroAssemblerSH4):
+        (JSC::MacroAssemblerSH4::xor32):
+        * assembler/MacroAssemblerX86Common.h:
+        (MacroAssemblerX86Common):
+        (JSC::MacroAssemblerX86Common::xor32):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC):
+        (JSC::BitwiseNotNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC):
+        * jit/JITOpcodes.cpp:
+        (JSC):
+        * jit/JITStubs.cpp:
+        (JSC):
+        * jit/JITStubs.h:
+        * llint/LLIntSlowPaths.cpp:
+        (LLInt):
+        * llint/LLIntSlowPaths.h:
+        (LLInt):
+        * llint/LowLevelInterpreter32_64.asm:
+        * parser/NodeConstructors.h:
+        (JSC::NegateNode::NegateNode):
+        (JSC::BitwiseNotNode::BitwiseNotNode):
+        (JSC::MultNode::MultNode):
+        (JSC::DivNode::DivNode):
+        (JSC::ModNode::ModNode):
+        (JSC::SubNode::SubNode):
+        (JSC::UnsignedRightShiftNode::UnsignedRightShiftNode):
+        * parser/Nodes.h:
+        (BitwiseNotNode):
+        (JSC::BitwiseNotNode::expr):
+        (JSC):
+        * parser/ResultType.h:
+        (ResultType):
+        (JSC::ResultType::numberTypeIsInt32):
+        (JSC::ResultType::stringOrNumberType):
+        (JSC::ResultType::forAdd):
+        (JSC::ResultType::forBitOp):
+
 2012-02-27  Michael Saboff  <msaboff@apple.com>
 
         Error check regexp min quantifier

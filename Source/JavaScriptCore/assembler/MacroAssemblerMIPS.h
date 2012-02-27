@@ -291,11 +291,6 @@ public:
         m_assembler.subu(srcDest, MIPSRegisters::zero, srcDest);
     }
 
-    void not32(RegisterID srcDest)
-    {
-        m_assembler.nor(srcDest, srcDest, MIPSRegisters::zero);
-    }
-
     void or32(RegisterID src, RegisterID dest)
     {
         m_assembler.orInsn(dest, dest, src);
@@ -458,6 +453,11 @@ public:
 
     void xor32(TrustedImm32 imm, RegisterID dest)
     {
+        if (imm.m_value == -1) {
+            m_assembler.nor(dest, dest, MIPSRegisters::zero);
+            return;
+        }
+
         /*
             li  immTemp, imm
             xor dest, dest, immTemp

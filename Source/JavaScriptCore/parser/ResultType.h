@@ -32,8 +32,7 @@ namespace JSC {
         friend struct OperandTypes;
 
         typedef char Type;
-        static const Type TypeReusable = 1;
-        static const Type TypeInt32    = 2;
+        static const Type TypeInt32 = 1;
         
         static const Type TypeMaybeNumber = 0x04;
         static const Type TypeMaybeString = 0x08;
@@ -48,11 +47,6 @@ namespace JSC {
         {
         }
         
-        bool isReusable()
-        {
-            return m_type & TypeReusable;
-        }
-
         bool isInt32()
         {
             return m_type & TypeInt32;
@@ -93,19 +87,14 @@ namespace JSC {
             return ResultType(TypeMaybeNumber);
         }
         
-        static ResultType numberTypeCanReuse()
+        static ResultType numberTypeIsInt32()
         {
-            return ResultType(TypeReusable | TypeMaybeNumber);
+            return ResultType(TypeInt32 | TypeMaybeNumber);
         }
         
-        static ResultType numberTypeCanReuseIsInt32()
+        static ResultType stringOrNumberType()
         {
-            return ResultType(TypeReusable | TypeInt32 | TypeMaybeNumber);
-        }
-        
-        static ResultType stringOrNumberTypeCanReuse()
-        {
-            return ResultType(TypeReusable | TypeMaybeNumber | TypeMaybeString);
+            return ResultType(TypeMaybeNumber | TypeMaybeString);
         }
         
         static ResultType stringType()
@@ -121,15 +110,15 @@ namespace JSC {
         static ResultType forAdd(ResultType op1, ResultType op2)
         {
             if (op1.definitelyIsNumber() && op2.definitelyIsNumber())
-                return numberTypeCanReuse();
+                return numberType();
             if (op1.definitelyIsString() || op2.definitelyIsString())
                 return stringType();
-            return stringOrNumberTypeCanReuse();
+            return stringOrNumberType();
         }
         
         static ResultType forBitOp()
         {
-            return numberTypeCanReuseIsInt32();
+            return numberTypeIsInt32();
         }
 
     private:

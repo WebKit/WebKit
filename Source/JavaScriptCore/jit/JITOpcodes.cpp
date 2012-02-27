@@ -764,15 +764,6 @@ void JIT::emit_op_eq(Instruction* currentInstruction)
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
-void JIT::emit_op_bitnot(Instruction* currentInstruction)
-{
-    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-    emitJumpSlowCaseIfNotImmediateInteger(regT0);
-    not32(regT0);
-    emitFastArithIntToImmNoCheck(regT0, regT0);
-    emitPutVirtualRegister(currentInstruction[1].u.operand);
-}
-
 void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_resolve_with_base);
@@ -1317,14 +1308,6 @@ void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEnt
     stubCall.addArgument(regT0);
     stubCall.call();
     emitJumpSlowToHot(branchTest32(Zero, regT0), currentInstruction[2].u.operand); // inverted!
-}
-
-void JIT::emitSlow_op_bitnot(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_bitnot);
-    stubCall.addArgument(regT0);
-    stubCall.call(currentInstruction[1].u.operand);
 }
 
 void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

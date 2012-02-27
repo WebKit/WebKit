@@ -330,7 +330,6 @@ namespace JSC {
 extern "C" {
     EncodedJSValue JIT_STUB cti_op_add(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_bitand(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_bitnot(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_bitor(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_bitxor(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_call_NotJSFunction(STUB_ARGS_DECLARATION);

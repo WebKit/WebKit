@@ -684,10 +684,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             ++it;
             break;
         }
-        case op_bitnot: {
-            printUnaryOp(exec, location, it, "bitnot");
-            break;
-        }
         case op_check_has_instance: {
             int base = (++it)->u.operand;
             dataLog("[%4d] check_has_instance\t\t %s\n", location, registerName(exec, base).data());

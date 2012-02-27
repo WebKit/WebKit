@@ -448,31 +448,6 @@ void JIT::emitSlow_op_bitxor(Instruction* currentInstruction, Vector<SlowCaseEnt
     stubCall.call(dst);
 }
 
-// BitNot (~)
-
-void JIT::emit_op_bitnot(Instruction* currentInstruction)
-{
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned src = currentInstruction[2].u.operand;
-
-    emitLoad(src, regT1, regT0);
-    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-
-    not32(regT0);
-    emitStoreAndMapInt32(dst, regT1, regT0, dst == src, OPCODE_LENGTH(op_bitnot));
-}
-
-void JIT::emitSlow_op_bitnot(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    unsigned dst = currentInstruction[1].u.operand;
-
-    linkSlowCase(iter); // int32 check
-
-    JITStubCall stubCall(this, cti_op_bitnot);
-    stubCall.addArgument(regT1, regT0);
-    stubCall.call(dst);
-}
-
 // PostInc (i++)
 
 void JIT::emit_op_post_inc(Instruction* currentInstruction)

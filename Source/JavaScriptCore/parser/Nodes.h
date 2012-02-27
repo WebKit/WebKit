@@ -793,11 +793,20 @@ namespace JSC {
         NegateNode(int, ExpressionNode*);
     };
 
-    class BitwiseNotNode : public UnaryOpNode {
+    class BitwiseNotNode : public ExpressionNode {
     public:
         BitwiseNotNode(int, ExpressionNode*);
-    };
 
+    protected:
+        ExpressionNode* expr() { return m_expr; }
+        const ExpressionNode* expr() const { return m_expr; }
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
+
+        ExpressionNode* m_expr;
+    };
+ 
     class LogicalNotNode : public UnaryOpNode {
     public:
         LogicalNotNode(int, ExpressionNode*);

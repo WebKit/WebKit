@@ -1148,22 +1148,6 @@ _llint_op_bitor:
         5)
 
 
-_llint_op_bitnot:
-    traceExecution()
-    loadi 8[PC], t1
-    loadi 4[PC], t0
-    loadConstantOrVariable(t1, t2, t3)
-    bineq t2, Int32Tag, .opBitnotSlow
-    noti t3
-    storei t2, TagOffset[cfr, t0, 8]
-    storei t3, PayloadOffset[cfr, t0, 8]
-    dispatch(3)
-
-.opBitnotSlow:
-    callSlowPath(_llint_slow_path_bitnot)
-    dispatch(3)
-
-
 _llint_op_check_has_instance:
     traceExecution()
     loadi 4[PC], t1

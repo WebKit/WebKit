@@ -223,16 +223,6 @@ public:
         m_assembler.negl_m(srcDest.offset, srcDest.base);
     }
 
-    void not32(RegisterID srcDest)
-    {
-        m_assembler.notl_r(srcDest);
-    }
-
-    void not32(Address srcDest)
-    {
-        m_assembler.notl_m(srcDest.offset, srcDest.base);
-    }
-    
     void or32(RegisterID src, RegisterID dest)
     {
         m_assembler.orl_rr(src, dest);
@@ -375,7 +365,6 @@ public:
         m_assembler.subl_rm(src, dest.offset, dest.base);
     }
 
-
     void xor32(RegisterID src, RegisterID dest)
     {
         m_assembler.xorl_rr(src, dest);
@@ -383,11 +372,17 @@ public:
 
     void xor32(TrustedImm32 imm, Address dest)
     {
-        m_assembler.xorl_im(imm.m_value, dest.offset, dest.base);
+        if (imm.m_value == -1)
+            m_assembler.notl_m(dest.offset, dest.base);
+        else
+            m_assembler.xorl_im(imm.m_value, dest.offset, dest.base);
     }
 
     void xor32(TrustedImm32 imm, RegisterID dest)
     {
+        if (imm.m_value == -1)
+        m_assembler.notl_r(dest);
+        else
         m_assembler.xorl_ir(imm.m_value, dest);
     }
 

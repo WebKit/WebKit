@@ -97,7 +97,6 @@ LLINT_SLOW_PATH_DECL(slow_path_urshift);
 LLINT_SLOW_PATH_DECL(slow_path_bitand);
 LLINT_SLOW_PATH_DECL(slow_path_bitor);
 LLINT_SLOW_PATH_DECL(slow_path_bitxor);
-LLINT_SLOW_PATH_DECL(slow_path_bitnot);
 LLINT_SLOW_PATH_DECL(slow_path_check_has_instance);
 LLINT_SLOW_PATH_DECL(slow_path_instanceof);
 LLINT_SLOW_PATH_DECL(slow_path_typeof);

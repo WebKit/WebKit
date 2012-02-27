@@ -3036,19 +3036,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_rshift)
     return JSValue::encode(result);
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_bitnot)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    JSValue src = stackFrame.args[0].jsValue();
-
-    ASSERT(!src.isInt32());
-    CallFrame* callFrame = stackFrame.callFrame;
-    JSValue result = jsNumber(~src.toInt32(callFrame));
-    CHECK_FOR_EXCEPTION_AT_END();
-    return JSValue::encode(result);
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_base)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

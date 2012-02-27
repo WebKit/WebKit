@@ -2570,24 +2570,6 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         vPC += OPCODE_LENGTH(op_bitor);
         NEXT_INSTRUCTION();
     }
-    DEFINE_OPCODE(op_bitnot) {
-        /* bitnot dst(r) src(r)
-
-           Computes bitwise NOT of register src1 (converted to int32),
-           and puts the result in register dst.
-        */
-        int dst = vPC[1].u.operand;
-        JSValue src = callFrame->r(vPC[2].u.operand).jsValue();
-        if (src.isInt32())
-            callFrame->uncheckedR(dst) = jsNumber(~src.asInt32());
-        else {
-            JSValue result = jsNumber(~src.toInt32(callFrame));
-            CHECK_FOR_EXCEPTION();
-            callFrame->uncheckedR(dst) = result;
-        }
-        vPC += OPCODE_LENGTH(op_bitnot);
-        NEXT_INSTRUCTION();
-    }
     DEFINE_OPCODE(op_not) {
         /* not dst(r) src(r)
 
