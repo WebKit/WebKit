@@ -53,12 +53,20 @@ DynamicsCompressor::DynamicsCompressor(float sampleRate, unsigned numberOfChanne
     initializeParameters();
 }
 
+void DynamicsCompressor::setParameterValue(unsigned parameterID, float value)
+{
+    ASSERT(parameterID < ParamLast);
+    if (parameterID < ParamLast)
+        m_parameters[parameterID] = value;
+}
+
 void DynamicsCompressor::initializeParameters()
 {
     // Initializes compressor to default values.
     
     m_parameters[ParamThreshold] = -24; // dB
-    m_parameters[ParamHeadroom] = 21; // dB
+    m_parameters[ParamKnee] = 30; // dB
+    m_parameters[ParamRatio] = 12; // unit-less
     m_parameters[ParamAttack] = 0.003f; // seconds
     m_parameters[ParamRelease] = 0.250f; // seconds
     m_parameters[ParamPreDelay] = 0.006f; // seconds
@@ -74,6 +82,7 @@ void DynamicsCompressor::initializeParameters()
     m_parameters[ParamFilterAnchor] = 15000 / nyquist();
     
     m_parameters[ParamPostGain] = 0; // dB
+    m_parameters[ParamReduction] = 0; // dB
 
     // Linear crossfade (0 -> 1).
     m_parameters[ParamEffectBlend] = 1;
@@ -180,7 +189,8 @@ void DynamicsCompressor::process(const AudioBus* sourceBus, AudioBus* destinatio
     }
 
     float dbThreshold = parameterValue(ParamThreshold);
-    float dbHeadroom = parameterValue(ParamHeadroom);
+    float dbKnee = parameterValue(ParamKnee);
+    float ratio = parameterValue(ParamRatio);
     float attackTime = parameterValue(ParamAttack);
     float releaseTime = parameterValue(ParamRelease);
     float preDelayTime = parameterValue(ParamPreDelay);
@@ -206,7 +216,8 @@ void DynamicsCompressor::process(const AudioBus* sourceBus, AudioBus* destinatio
                          framesToProcess,
 
                          dbThreshold,
-                         dbHeadroom,
+                         dbKnee,
+                         ratio,
                          attackTime,
                          releaseTime,
                          preDelayTime,
@@ -218,6 +229,9 @@ void DynamicsCompressor::process(const AudioBus* sourceBus, AudioBus* destinatio
                          releaseZone3,
                          releaseZone4
                          );
+                         
+    // Update the compression amount.                     
+    setParameterValue(ParamReduction, m_compressor.meteringGain());
 
     // Apply de-emphasis filter.
     for (unsigned i = 0; i < numberOfChannels; ++i) {

@@ -26,31 +26,44 @@
 #define DynamicsCompressorNode_h
 
 #include "AudioNode.h"
+#include "AudioParam.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
 class DynamicsCompressor;
-    
+
 class DynamicsCompressorNode : public AudioNode {
 public:
     static PassRefPtr<DynamicsCompressorNode> create(AudioContext* context, float sampleRate)
     {
-        return adoptRef(new DynamicsCompressorNode(context, sampleRate));      
+        return adoptRef(new DynamicsCompressorNode(context, sampleRate));
     }
-    
+
     virtual ~DynamicsCompressorNode();
-    
+
     // AudioNode
     virtual void process(size_t framesToProcess);
     virtual void reset();
     virtual void initialize();
     virtual void uninitialize();
 
+    // Static compression curve parameters.
+    AudioParam* threshold() { return m_threshold.get(); }
+    AudioParam* knee() { return m_knee.get(); }
+    AudioParam* ratio() { return m_ratio.get(); }
+
+    // Amount by which the compressor is currently compressing the signal in decibels.
+    AudioParam* reduction() { return m_reduction.get(); }
+
 private:
     DynamicsCompressorNode(AudioContext*, float sampleRate);
 
     OwnPtr<DynamicsCompressor> m_dynamicsCompressor;
+    RefPtr<AudioParam> m_threshold;
+    RefPtr<AudioParam> m_knee;
+    RefPtr<AudioParam> m_ratio;
+    RefPtr<AudioParam> m_reduction;
 };
 
 } // namespace WebCore

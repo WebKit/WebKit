@@ -48,7 +48,8 @@ class DynamicsCompressor {
 public:
     enum {
         ParamThreshold,
-        ParamHeadroom,
+        ParamKnee,
+        ParamRatio,
         ParamAttack,
         ParamRelease,
         ParamPreDelay,
@@ -61,6 +62,7 @@ public:
         ParamFilterStageRatio,
         ParamFilterAnchor,
         ParamEffectBlend,
+        ParamReduction,
         ParamLast
     };
 
@@ -70,6 +72,7 @@ public:
     void reset();
     void setNumberOfChannels(unsigned);
 
+    void setParameterValue(unsigned parameterID, float value);
     float parameterValue(unsigned parameterID);
 
     float sampleRate() const { return m_sampleRate; }

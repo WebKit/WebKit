@@ -1,3 +1,44 @@
+2012-02-27  Chris Rogers  <crogers@google.com>
+
+        Implement static compression curve parameters for DynamicsCompressorNode
+        https://bugs.webkit.org/show_bug.cgi?id=78937
+
+        Reviewed by Kenneth Russell.
+
+        Test: webaudio/dynamicscompressor-basic.html
+
+        * platform/audio/DynamicsCompressor.cpp:
+        (WebCore::DynamicsCompressor::setParameterValue):
+        (WebCore):
+        (WebCore::DynamicsCompressor::initializeParameters):
+        (WebCore::DynamicsCompressor::process):
+        * platform/audio/DynamicsCompressor.h:
+        * platform/audio/DynamicsCompressorKernel.cpp:
+        (WebCore):
+        (WebCore::DynamicsCompressorKernel::DynamicsCompressorKernel):
+        (WebCore::DynamicsCompressorKernel::setPreDelayTime):
+        (WebCore::DynamicsCompressorKernel::kneeCurve):
+        (WebCore::DynamicsCompressorKernel::saturate):
+        (WebCore::DynamicsCompressorKernel::slopeAt):
+        (WebCore::DynamicsCompressorKernel::kAtSlope):
+        (WebCore::DynamicsCompressorKernel::updateStaticCurveParameters):
+        (WebCore::DynamicsCompressorKernel::process):
+        * platform/audio/DynamicsCompressorKernel.h:
+        (DynamicsCompressorKernel):
+        (WebCore::DynamicsCompressorKernel::meteringGain):
+        * webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        (WebCore::DynamicsCompressorNode::process):
+        * webaudio/DynamicsCompressorNode.h:
+        (WebCore):
+        (WebCore::DynamicsCompressorNode::create):
+        (DynamicsCompressorNode):
+        (WebCore::DynamicsCompressorNode::threshold):
+        (WebCore::DynamicsCompressorNode::knee):
+        (WebCore::DynamicsCompressorNode::ratio):
+        (WebCore::DynamicsCompressorNode::reduction):
+        * webaudio/DynamicsCompressorNode.idl:
+
 2012-02-27  Enrica Casucci  <enrica@apple.com>
 
         WebKit2: implement platform strategy to access Pasteboard in the UI process.

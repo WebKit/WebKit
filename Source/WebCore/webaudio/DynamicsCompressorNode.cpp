@@ -43,9 +43,19 @@ DynamicsCompressorNode::DynamicsCompressorNode(AudioContext* context, float samp
 {
     addInput(adoptPtr(new AudioNodeInput(this)));
     addOutput(adoptPtr(new AudioNodeOutput(this, defaultNumberOfOutputChannels)));
-    
+
     setNodeType(NodeTypeDynamicsCompressor);
-    
+
+    m_threshold = AudioParam::create("threshold", -24, -100, 0);
+    m_knee = AudioParam::create("knee", 30, 0, 40);
+    m_ratio = AudioParam::create("ratio", 12, 1, 20);
+    m_reduction = AudioParam::create("reduction", 0, -20, 0);
+
+    m_threshold->setContext(context);
+    m_knee->setContext(context);
+    m_ratio->setContext(context);
+    m_reduction->setContext(context);
+
     initialize();
 }
 
@@ -59,7 +69,18 @@ void DynamicsCompressorNode::process(size_t framesToProcess)
     AudioBus* outputBus = output(0)->bus();
     ASSERT(outputBus);
 
+    float threshold = m_threshold->value();
+    float knee = m_knee->value();
+    float ratio = m_ratio->value();
+
+    m_dynamicsCompressor->setParameterValue(DynamicsCompressor::ParamThreshold, threshold);
+    m_dynamicsCompressor->setParameterValue(DynamicsCompressor::ParamKnee, knee);
+    m_dynamicsCompressor->setParameterValue(DynamicsCompressor::ParamRatio, ratio);
+
     m_dynamicsCompressor->process(input(0)->bus(), outputBus, framesToProcess);
+
+    float reduction = m_dynamicsCompressor->parameterValue(DynamicsCompressor::ParamReduction);
+    m_reduction->setValue(reduction);
 }
 
 void DynamicsCompressorNode::reset()

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Basic tests for DynamicsCompressorNode API.");
+
+var context;
+var compressor;
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+
+    context = new webkitAudioContext();
+    compressor = context.createDynamicsCompressor();
+
+    try {
+        if (compressor.threshold.value == -24)
+            testPassed("threshold attribute has correct default value.");
+        else
+            testFailed("threshold attribute has incorrect default value.");
+
+        if (compressor.knee.value == 30)
+            testPassed("knee attribute has correct default value.");
+        else
+            testFailed("knee attribute has incorrect default value.");
+        
+        if (compressor.ratio.value == 12)
+            testPassed("ratio attribute has correct default value.");
+        else
+            testFailed("ratio attribute has incorrect default value.");
+        
+    } catch(e) {
+        testFailed("Exception thrown when accessing DynamicsCompressorNode attributes.");
+    }
+
+    finishJSTest();
+}
+
+runTest();
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

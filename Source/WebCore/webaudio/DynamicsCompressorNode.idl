@@ -27,5 +27,9 @@ module audio {
         Conditional=WEB_AUDIO,
         JSGenerateToJSObject
     ] DynamicsCompressorNode : AudioNode {
+        readonly attribute AudioParam threshold; // in Decibels
+        readonly attribute AudioParam knee; // in Decibels
+        readonly attribute AudioParam ratio; // unit-less
+        readonly attribute AudioParam reduction; // in Decibels
     };
 }
