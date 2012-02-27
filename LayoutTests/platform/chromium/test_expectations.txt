@@ -2944,7 +2944,8 @@ BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = PASS 
 // Appears to be a configuration error in the Mac 10.6 deps
 // Has been going on for at least a few weeks (as of 20/5/2011)
 BUGCR83426 MAC : svg/as-border-image/svg-as-border-image-2.html = PASS IMAGE
-BUGCR83426 MAC : svg/as-border-image/svg-as-border-image.html = PASS IMAGE
+// Commented out because bug 79707 also specifies CRASH
+// BUGCR83426 MAC : svg/as-border-image/svg-as-border-image.html = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-specular-01-f.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-turb-01-f.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-turb-02-f.svg = PASS IMAGE
@@ -3450,7 +3451,8 @@ BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.h
 BUGWK77110 WIN DEBUG : accessibility/loading-iframe-sends-notification.html = PASS TEXT
 
 BUGWK73494 : svg/text/non-bmp-positioning-lists.svg = IMAGE+TEXT IMAGE
-BUGWK73494 : svg/as-image/svg-non-integer-scaled-image.html = IMAGE PASS
+// This happens on all platforms, but bug79707 specifies CRASH for MAC as well
+BUGWK73494 WIN LINUX : svg/as-image/svg-non-integer-scaled-image.html = IMAGE PASS
 
 BUGWK73872 LINUX : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
 
@@ -4214,7 +4216,9 @@ BUGWK79454 LINUX MAC : svg/text/text-rescale.html = IMAGE
 BUGWK79454 : svg/text/text-viewbox-rescale.html = IMAGE
 
 // Flaky for DEBUG since r108585
-BUGWK79455 DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS IMAGE+TEXT
+// This happens on all platforms, but bug79707 specifies CRASH for MAC as well
+// BUGWK79455 DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS IMAGE+TEXT
+BUGWK79455 DEBUG WIN LINUX : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS IMAGE+TEXT
 
 // Flaky for DEBUG
 BUGWK79456 DEBUG : svg/repaint/image-with-clip-path.svg = PASS IMAGE
@@ -4234,3 +4238,17 @@ BUGWK79642 : media/video-playbackrate.html = TIMEOUT
 
 BUGWK79702 : fast/regex/lastIndex.html = TEXT
 BUGWK79703 : fast/regex/overflow.html = TEXT
+
+// All MAC flaky crashers. Additional expectations come from preexisting bugs.
+BUGWK79707 MAC : svg/as-background-image/background-image-preserveaspectRatio-support.html = PASS CRASH
+BUGWK79707 MAC : svg/as-background-image/same-image-two-instances-background-image.html = PASS CRASH
+BUGWK79707 MAC : svg/as-border-image/svg-as-border-image.html = PASS CRASH IMAGE
+BUGWK79707 MAC : svg/as-image/drag-svg-as-image.html = PASS CRASH
+BUGWK79707 MAC : svg/as-image/svg-as-relative-image-with-explicit-size.html = PASS CRASH
+BUGWK79707 MAC : svg/as-image/svg-non-integer-scaled-image.html = PASS CRASH IMAGE
+BUGWK79707 MAC : svg/clip-path/clip-path-nonzero-evenodd.svg = PASS CRASH
+BUGWK79707 MAC : svg/custom/feDisplacementMap-01.svg = PASS CRASH
+BUGWK79707 MAC : svg/custom/font-face-name-without-name-attr.svg = PASS CRASH
+BUGWK79707 MAC RELEASE : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS CRASH
+BUGWK79707 MAC DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS CRASH IMAGE+TEXT
+BUGWK79707 MAC : svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox.html = PASS CRASH
