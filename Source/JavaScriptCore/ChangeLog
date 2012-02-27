@@ -1,5 +1,47 @@
 2012-02-27  Gavin Barraclough  <barraclough@apple.com>
 
+        RegExp lastIndex should behave as a regular property
+        https://bugs.webkit.org/show_bug.cgi?id=79446
+
+        Reviewed by Sam Weinig.
+
+        lastIndex should be a regular data descriptor, with the attributes configurable:false,
+        enumerable:false, writable:true. As such, it should be possible to reconfigure writable
+        as false. If the lastIndex property is reconfigured to be read-only, we should respect
+        this correctly.
+
+        * runtime/CommonIdentifiers.h:
+            - Removed some unused identifiers, added lastIndex.
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::getOwnPropertySlot):
+            - lastIndex is no longer a static value, provided specific handling.
+        (JSC::RegExpObject::getOwnPropertyDescriptor):
+            - lastIndex is no longer a static value, provided specific handling.
+        (JSC::RegExpObject::deleteProperty):
+            - lastIndex is no longer a static value, provided specific handling.
+        (JSC::RegExpObject::getOwnPropertyNames):
+            - lastIndex is no longer a static value, provided specific handling.
+        (JSC::RegExpObject::getPropertyNames):
+            - lastIndex is no longer a static value, provided specific handling.
+        (JSC::reject):
+            - helper function for defineOwnProperty.
+        (JSC::RegExpObject::defineOwnProperty):
+            - lastIndex is no longer a static value, provided specific handling.
+        (JSC::RegExpObject::put):
+            - lastIndex is no longer a static value, provided specific handling.
+        (JSC::RegExpObject::match):
+            - Pass setLastIndex an ExecState, so it can throw if read-only.
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::setLastIndex):
+            - Pass setLastIndex an ExecState, so it can throw if read-only.
+        (RegExpObjectData):
+            - Added lastIndexIsWritable.
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+            - Pass setLastIndex an ExecState, so it can throw if read-only.
+
+2012-02-27  Gavin Barraclough  <barraclough@apple.com>
+
         Implement support for op_negate and op_bitnot in the DFG JIT
         https://bugs.webkit.org/show_bug.cgi?id=79617
 

@@ -1,0 +1,30 @@
+This page tests that a RegExp object's lastIndex behaves like a regular property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS delete /x/.lastIndex is false
+PASS 'use strict'; delete /x/.lastIndex threw exception TypeError: Unable to delete property..
+PASS 'lastIndex' in /x/ is true
+PASS for (property in /x/) if (property === 'lastIndex') throw false; true is true
+PASS var re = /x/; re.lastIndex = re; re.lastIndex === re is true
+PASS Object.defineProperty(/x/, {get:function(){}}) threw exception TypeError: Property description must be an object..
+PASS Object.defineProperty(/x/, 'lastIndex', {enumerable:true}); true threw exception TypeError: Attempting to change enumerable attribute of unconfigurable property..
+PASS Object.defineProperty(/x/, 'lastIndex', {enumerable:false}); true is true
+PASS Object.defineProperty(/x/, 'lastIndex', {configurable:true}); true threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS Object.defineProperty(/x/, 'lastIndex', {configurable:false}); true is true
+PASS var re = Object.defineProperty(/x/, 'lastIndex', {writable:true}); re.lastIndex = 42; re.lastIndex is 42
+PASS var re = Object.defineProperty(/x/, 'lastIndex', {writable:false}); re.lastIndex = 42; re.lastIndex is 0
+PASS var re = Object.defineProperty(/x/, 'lastIndex', {value:42}); re.lastIndex is 42
+PASS Object.defineProperty(Object.defineProperty(/x/, 'lastIndex', {writable:false}), 'lastIndex', {writable:true}); true threw exception TypeError: Attempting to change writable attribute of unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty(/x/, 'lastIndex', {writable:false}), 'lastIndex', {value:42}); true threw exception TypeError: Attempting to change value of a readonly property..
+PASS Object.defineProperty(Object.defineProperty(/x/, 'lastIndex', {writable:false}), 'lastIndex', {value:0}); true is true
+PASS Object.defineProperty(/x/, 'lastIndex', {writable:false}).exec('') is null
+PASS Object.defineProperty(/x/, 'lastIndex', {writable:false}).exec('x') is ["x"]
+PASS Object.defineProperty(/x/g, 'lastIndex', {writable:false}).exec('') threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.defineProperty(/x/g, 'lastIndex', {writable:false}).exec('x') threw exception TypeError: Attempted to assign to readonly property..
+PASS var re = /x/; Object.freeze(re); Object.isFrozen(re); is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

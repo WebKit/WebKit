@@ -27,10 +27,6 @@
 // MarkedArgumentBuffer of property names, passed to a macro so we can do set them up various
 // ways without repeating the list.
 #define JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
-    macro(__defineGetter__) \
-    macro(__defineSetter__) \
-    macro(__lookupGetter__) \
-    macro(__lookupSetter__) \
     macro(apply) \
     macro(arguments) \
     macro(bind) \
@@ -52,6 +48,7 @@
     macro(input) \
     macro(isArray) \
     macro(isPrototypeOf) \
+    macro(lastIndex) \
     macro(length) \
     macro(message) \
     macro(multiline) \

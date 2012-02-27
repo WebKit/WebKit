@@ -129,7 +129,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
         return throwVMError(exec, createSyntaxError(exec, regExp->errorMessage()));
 
     asRegExpObject(thisValue)->setRegExp(exec->globalData(), regExp);
-    asRegExpObject(thisValue)->setLastIndex(0);
+    asRegExpObject(thisValue)->setLastIndex(exec, 0);
     return JSValue::encode(jsUndefined());
 }
 

@@ -47,13 +47,20 @@ namespace JSC {
         void setRegExp(JSGlobalData& globalData, RegExp* r) { d->regExp.set(globalData, this, r); }
         RegExp* regExp() const { return d->regExp.get(); }
 
-        void setLastIndex(size_t lastIndex)
+        void setLastIndex(ExecState* exec, size_t lastIndex)
         {
             d->lastIndex.setWithoutWriteBarrier(jsNumber(lastIndex));
+            if (LIKELY(d->lastIndexIsWritable))
+                d->lastIndex.setWithoutWriteBarrier(jsNumber(lastIndex));
+            else
+                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         }
-        void setLastIndex(JSGlobalData& globalData, JSValue lastIndex)
+        void setLastIndex(ExecState* exec, JSValue lastIndex, bool shouldThrow)
         {
-            d->lastIndex.set(globalData, this, lastIndex);
+            if (LIKELY(d->lastIndexIsWritable))
+                d->lastIndex.set(exec->globalData(), this, lastIndex);
+            else if (shouldThrow)
+                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         }
         JSValue getLastIndex() const
         {
@@ -83,6 +90,11 @@ namespace JSC {
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
+        JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
+        JS_EXPORT_PRIVATE static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+        JS_EXPORT_PRIVATE static void getPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+        JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
+
     private:
         bool match(ExecState*);
 
@@ -91,12 +103,14 @@ namespace JSC {
         public:
             RegExpObjectData(JSGlobalData& globalData, RegExpObject* owner, RegExp* regExp)
                 : regExp(globalData, owner, regExp)
+                , lastIndexIsWritable(true)
             {
                 lastIndex.setWithoutWriteBarrier(jsNumber(0));
             }
 
             WriteBarrier<RegExp> regExp;
             WriteBarrier<Unknown> lastIndex;
+            bool lastIndexIsWritable;
         };
 #if COMPILER(MSVC)
         friend void WTF::deleteOwnedPtr<RegExpObjectData>(RegExpObjectData*);
