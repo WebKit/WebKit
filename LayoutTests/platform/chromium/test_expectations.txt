@@ -1183,7 +1183,7 @@ BUGCR30536 SLOW MAC : http/tests/misc/acid3.html = IMAGE+TEXT PASS
 BUGCR30536 : http/tests/misc/favicon-as-image.html = FAIL
 
 // Has failed for Chromium since it was first checked in.  (Lighttpd related?)
-BUGCR10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProgress.html = FAIL
+BUGCR10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProgress.html = TEXT TIMEOUT
 
 // Post-MERGE failures: these will all need to be fixed one day
 
