@@ -1,3 +1,13 @@
+2012-02-27  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: [chromium] Profiles - Tooltip with object/property types stays on screen when another tab selected
+        https://bugs.webkit.org/show_bug.cgi?id=79654
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype.willHide):
+
 2012-02-27  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Remove page/PageSupplement.h from WebCore's Target.pri
