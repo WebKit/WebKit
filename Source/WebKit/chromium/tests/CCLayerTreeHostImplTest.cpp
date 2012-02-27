@@ -240,9 +240,7 @@ TEST_F(CCLayerTreeHostImplTest, nonFastScrollableRegionBasic)
 
 TEST_F(CCLayerTreeHostImplTest, nonFastScrollableRegionWithOffset)
 {
-    GraphicsContext3D::Attributes attrs;
-    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3D()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
-    m_hostImpl->initializeLayerRenderer(context);
+    m_hostImpl->initializeLayerRenderer(createContext());
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(0);
     root->setScrollable(true);
@@ -423,8 +421,7 @@ private:
 
 TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
 {
-    RefPtr<GraphicsContext3D> context = createContext();
-    m_hostImpl->initializeLayerRenderer(context);
+    m_hostImpl->initializeLayerRenderer(createContext());
 
     // Ensure visibleLayerRect for root layer is empty
     m_hostImpl->setViewportSize(IntSize(0, 0));
@@ -458,8 +455,7 @@ TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
 
 TEST_F(CCLayerTreeHostImplTest, didDrawCalledOnAllLayers)
 {
-    RefPtr<GraphicsContext3D> context = createContext();
-    m_hostImpl->initializeLayerRenderer(context);
+    m_hostImpl->initializeLayerRenderer(createContext());
     m_hostImpl->setViewportSize(IntSize(10, 10));
 
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(0));
@@ -557,8 +553,7 @@ private:
 // https://bugs.webkit.org/show_bug.cgi?id=75783
 TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
 {
-    RefPtr<GraphicsContext3D> context = createContext();
-    m_hostImpl->initializeLayerRenderer(context);
+    m_hostImpl->initializeLayerRenderer(createContext());
     m_hostImpl->setViewportSize(IntSize(10, 10));
 
     {
