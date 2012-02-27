@@ -440,7 +440,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 
     // Find the frame the point is over.
     IntPoint point = roundedIntPoint(floatPoint);
-    HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(point, false);
+    HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(point), false);
     frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController()->focusedOrMainFrame();
 
     IntPoint translatedPoint = frame->view()->windowToContents(point);
@@ -687,7 +687,7 @@ void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event,
     if (!frame)
         return;
 
-    HitTestResult hitResult = frame->eventHandler()->hitTestResultAtPoint(event.position(), true);
+    HitTestResult hitResult = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(event.position()), true);
     if (hitResult.isSelected())
         result = frame->eventHandler()->eventMayStartDrag(platform(event));
 }
@@ -699,7 +699,7 @@ void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& ev
     if (!frame)
         return;
     
-    HitTestResult hitResult = frame->eventHandler()->hitTestResultAtPoint(event.position(), true);
+    HitTestResult hitResult = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(event.position()), true);
     frame->eventHandler()->setActivationEventNumber(eventNumber);
     if (hitResult.isSelected())
         result = frame->eventHandler()->eventMayStartDrag(platform(event));

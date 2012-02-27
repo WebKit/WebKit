@@ -1,3 +1,22 @@
+2012-02-27  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9557598> REGRESSION (WebKit2): Non-activating links sometimes don’t work
+        https://bugs.webkit.org/show_bug.cgi?id=79607
+
+        Reviewed by Adele Peterson.
+
+        Test: TestWebKitAPI/Tests/mac/AcceptsFirstMouse.mm
+
+        This was caused by not mapping the mouse event coordinates from window coordinates to
+        document coordinates.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation): Convert the point to main frame
+        coordinates when performing the hit test.
+        (WebKit::WebPage::shouldDelayWindowOrderingEvent): Convert the point to the main or focused
+        frame coordinates when perfomring the hit test.
+        (WebKit::WebPage::acceptsFirstMouse): Ditto.
+
 2012-02-27  Timothy Hatcher  <timothy@apple.com>
 
         Add WKInspector API to know when the Web Inspector is the frontmost window.

@@ -1,3 +1,18 @@
+2012-02-27  Dan Bernstein  <mitz@apple.com>
+
+        Added a test for <rdar://problem/9557598> REGRESSION (WebKit2): Non-activating links sometimes don’t work
+        https://bugs.webkit.org/show_bug.cgi?id=79607
+
+        Reviewed by Adele Peterson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added new files.
+        * TestWebKitAPI/Tests/mac/AcceptsFirstMouse.mm: Added.
+        (TestWebKitAPI::AcceptsFirstMouse::url):
+        (TestWebKitAPI::AcceptsFirstMouse::didLoadURL):
+        (TestWebKitAPI::AcceptsFirstMouse::runTest):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/mac/acceptsFirstMouse.html: Added.
+
 2012-02-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
