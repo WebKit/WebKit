@@ -170,7 +170,6 @@ WebInspector.TimelineModel.prototype = {
 
     reset: function()
     {
-        this.stopRecord();
         this._records = [];
         this.dispatchEventToListeners(WebInspector.TimelineModel.Events.RecordsCleared);
     }

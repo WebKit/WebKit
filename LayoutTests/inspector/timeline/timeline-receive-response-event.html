@@ -48,7 +48,7 @@ function test()
         }
         WebInspector.panels.timeline._model._collectionEnabled = false;
 
-        var records = WebInspector.panels.timeline._rootRecord.children;
+        var records = WebInspector.panels.timeline._rootRecord().children;
         for (var i = 0; i < records.length; ++i)
             dumpFormattedRecord(records[i]);
         InspectorTest.completeTest();

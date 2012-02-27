@@ -174,7 +174,14 @@ WebInspector.TimelineOverviewPane.prototype = {
 
         // Create sparse arrays with 101 cells each to fill with chunks for a given category.
         this._overviewCalculator.reset();
-        WebInspector.TimelinePanel.forAllRecords(records, this._overviewCalculator.updateBoundaries.bind(this._overviewCalculator));
+        
+        function updateBoundaries(record)
+        {
+            this._overviewCalculator.updateBoundaries(record);
+            return false;
+        }
+        
+        WebInspector.TimelinePanel.forAllRecords(records, updateBoundaries.bind(this));
 
         function markPercentagesForRecord(record)
         {
@@ -477,15 +484,16 @@ WebInspector.TimelineOverviewCalculator.prototype = {
 
     updateBoundaries: function(record)
     {
+        var result = false;
         if (typeof this.minimumBoundary === "undefined" || record.startTime < this.minimumBoundary) {
             this.minimumBoundary = record.startTime;
-            return true;
+            result = true;
         }
         if (typeof this.maximumBoundary === "undefined" || record.endTime > this.maximumBoundary) {
             this.maximumBoundary = record.endTime;
-            return true;
+            result = true;
         }
-        return false;
+        return result;
     },
 
     get boundarySpan()

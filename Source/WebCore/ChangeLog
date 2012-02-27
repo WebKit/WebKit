@@ -1,3 +1,74 @@
+2012-02-27  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: move record formatting into the timeline presentation model.
+        https://bugs.webkit.org/show_bug.cgi?id=79684
+
+        Drive-by: fix for stop recording in reset; cpu time restored.
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/TimelineModel.js:
+        (WebInspector.TimelineModel.prototype.reset):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype.update.updateBoundaries):
+        (WebInspector.TimelineOverviewCalculator.prototype.updateBoundaries):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._rootRecord):
+        (WebInspector.TimelinePanel.prototype._updateRecordsCounter):
+        (WebInspector.TimelinePanel.prototype._repopulateRecords):
+        (WebInspector.TimelinePanel.prototype._onTimelineEventRecorded):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._resetPanel):
+        (WebInspector.TimelinePanel.prototype._refresh):
+        (WebInspector.TimelinePanel.prototype._updateBoundaries):
+        (WebInspector.TimelinePanel.prototype._filterRecords):
+        (WebInspector.TimelinePanel.prototype.revealRecordAt):
+        (WebInspector.TimelinePanel.prototype._showPopover):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphPercentages):
+        (WebInspector.TimelineCalculator.prototype.computeBarGraphWindowPosition):
+        (WebInspector.TimelineCalculator.prototype.updateBoundaries):
+        (WebInspector.TimelineStartAtZeroCalculator.prototype.computeBarGraphPercentages):
+        (WebInspector.TimelineRecordGraphRow):
+        (WebInspector.TimelineRecordGraphRow.prototype.update):
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel):
+        (WebInspector.TimelinePresentationModel.prototype.createFormattedRecord):
+        (WebInspector.TimelinePresentationModel.prototype._createRootRecord):
+        (WebInspector.TimelinePresentationModel.prototype.rootRecord):
+        (WebInspector.TimelinePresentationModel.prototype.reset):
+        (WebInspector.TimelinePresentationModel.prototype._findParentRecord):
+        (WebInspector.TimelinePresentationModel.prototype._resetWindow):
+        (WebInspector.TimelinePresentationModel.prototype._addCategory):
+        (WebInspector.TimelinePresentationModel.prototype.setCategoryVisibility):
+        (WebInspector.TimelinePresentationModel.prototype.get _recordStyles):
+        (WebInspector.TimelinePresentationModel.Record):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get lastChildEndTime):
+        (WebInspector.TimelinePresentationModel.Record.prototype.set lastChildEndTime):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get selfTime):
+        (WebInspector.TimelinePresentationModel.Record.prototype.set selfTime):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get cpuTime):
+        (WebInspector.TimelinePresentationModel.Record.prototype.isLong):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get children):
+        (WebInspector.TimelinePresentationModel.Record.prototype.containsTime):
+        (WebInspector.TimelinePresentationModel.Record.prototype._generateAggregatedInfo):
+        (WebInspector.TimelinePresentationModel.Record.prototype.generatePopupContent):
+        (WebInspector.TimelinePresentationModel.Record.prototype._refreshDetails):
+        (WebInspector.TimelinePresentationModel.Record.prototype._getRecordDetails):
+        (WebInspector.TimelinePresentationModel.Record.prototype._linkifyLocation):
+        (WebInspector.TimelinePresentationModel.Record.prototype._linkifyCallFrame):
+        (WebInspector.TimelinePresentationModel.Record.prototype._linkifyTopCallFrame):
+        (WebInspector.TimelinePresentationModel.Record.prototype._linkifyScriptLocation):
+        (WebInspector.TimelinePresentationModel.Record.prototype.calculateAggregatedStats):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get aggregatedStats):
+        (WebInspector.TimelinePresentationModel.PopupContentHelper):
+        (WebInspector.TimelinePresentationModel.PopupContentHelper.prototype._createCell):
+        (WebInspector.TimelinePresentationModel.PopupContentHelper.prototype._appendTextRow):
+        (WebInspector.TimelinePresentationModel.PopupContentHelper.prototype._appendElementRow):
+        (WebInspector.TimelinePresentationModel.PopupContentHelper.prototype._appendStackTrace):
+        * inspector/front-end/timelinePanel.css:
+        (.timeline-graph-bar.cpu):
+
 2012-02-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Scripts navigator overlay should not consume mouse actions.

@@ -353,6 +353,10 @@
     opacity: 0.2;
 }
 
+.timeline-graph-bar.cpu {
+    opacity: 0.6;
+}
+
 .timeline-graph-side.even {
     background-color: rgba(0, 0, 0, 0.05);
 }
