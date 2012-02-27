@@ -29,12 +29,12 @@ function test()
     {
         function format(record)
         {
-            if (record.type === WebInspector.TimelineAgent.RecordType.EvaluateScript)
+            if (record.type === WebInspector.TimelineModel.RecordType.EvaluateScript)
                 InspectorTest.printTimelineRecordProperties(record);
-            else if (record.type === WebInspector.TimelineAgent.RecordType.ParseHTML) {
+            else if (record.type === WebInspector.TimelineModel.RecordType.ParseHTML) {
                 var children = [];
                 for (var i = 0; i < record.children.length; ++i) {
-                    if (record.children[i].type !== WebInspector.TimelineAgent.RecordType.RecalculateStyles)
+                    if (record.children[i].type !== WebInspector.TimelineModel.RecordType.RecalculateStyles)
                         children.push(record.children[i]);
                 }
                 record.children = children;

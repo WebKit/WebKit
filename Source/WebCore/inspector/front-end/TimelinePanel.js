@@ -208,7 +208,7 @@ WebInspector.TimelinePanel.prototype = {
     get _recordStyles()
     {
         if (!this._recordStylesArray) {
-            var recordTypes = WebInspector.TimelineAgent.RecordType;
+            var recordTypes = WebInspector.TimelineModel.RecordType;
             var categories = this._presentationModel.categories;
 
             var recordStyles = {};
@@ -346,7 +346,7 @@ WebInspector.TimelinePanel.prototype = {
 
     _saveToFile: function()
     {
-        this._model._saveToFile();
+        this._model.saveToFile();
     },
 
     _loadFromFile: function()
@@ -355,7 +355,7 @@ WebInspector.TimelinePanel.prototype = {
             this.toggleTimelineButton.toggled = false;
             this._model.stopRecord();
         }
-        this._model._loadFromFile(this._fileSelectorElement.files[0]);
+        this._model.loadFromFile(this._fileSelectorElement.files[0]);
         this._createFileSelector();
     },
 
@@ -387,7 +387,7 @@ WebInspector.TimelinePanel.prototype = {
     {
         var eventDivider = document.createElement("div");
         eventDivider.className = "resources-event-divider";
-        var recordTypes = WebInspector.TimelineAgent.RecordType;
+        var recordTypes = WebInspector.TimelineModel.RecordType;
 
         var eventDividerPadding = document.createElement("div");
         eventDividerPadding.className = "resources-event-divider-padding";
@@ -494,7 +494,7 @@ WebInspector.TimelinePanel.prototype = {
         if (!this._glueParentButton.toggled)
             return null;
 
-        var recordTypes = WebInspector.TimelineAgent.RecordType;
+        var recordTypes = WebInspector.TimelineModel.RecordType;
         var parentRecord;
         if (record.type === recordTypes.ResourceReceiveResponse ||
             record.type === recordTypes.ResourceFinish ||
@@ -512,7 +512,7 @@ WebInspector.TimelinePanel.prototype = {
     _innerAddRecordToTimeline: function(record, parentRecord)
     {
         var connectedToOldRecord = false;
-        var recordTypes = WebInspector.TimelineAgent.RecordType;
+        var recordTypes = WebInspector.TimelineModel.RecordType;
 
         if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad)
             parentRecord = null; // No bar entry for load events.
@@ -614,7 +614,7 @@ WebInspector.TimelinePanel.prototype = {
 
     _clearPanel: function()
     {
-        this._model._reset();
+        this._model.reset();
     },
 
     _onRecordsCleared: function()
@@ -784,7 +784,7 @@ WebInspector.TimelinePanel.prototype = {
         this._containerElement.scrollTop = index * WebInspector.TimelinePanel.rowHeight;
     },
 
-    _refreshRecords: function(updateBoundaries, recordToReveal)
+    _refreshRecords: function(updateBoundaries)
     {
         var recordsInWindow = this._filterRecords();
 
@@ -1203,7 +1203,7 @@ WebInspector.TimelinePanel.forAllRecords = function(recordsArray, callback)
 WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, panel, linkifier, scriptDetails)
 {
     this._linkifier = linkifier;
-    var recordTypes = WebInspector.TimelineAgent.RecordType;
+    var recordTypes = WebInspector.TimelineModel.RecordType;
     var style = panel._recordStyles[record.type];
     this.parent = parentRecord;
     if (parentRecord)
@@ -1313,7 +1313,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             calculator.formatValue(this.startTime - calculator.minimumBoundary));
         contentHelper._appendTextRow(WebInspector.UIString("Duration"), text);
 
-        const recordTypes = WebInspector.TimelineAgent.RecordType;
+        const recordTypes = WebInspector.TimelineModel.RecordType;
 
         switch (this.type) {
             case recordTypes.GCEvent:
@@ -1385,38 +1385,38 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
     _getRecordDetails: function()
     {
         switch (this.type) {
-            case WebInspector.TimelineAgent.RecordType.GCEvent:
+            case WebInspector.TimelineModel.RecordType.GCEvent:
                 return WebInspector.UIString("%s collected", Number.bytesToString(this.data["usedHeapSizeDelta"]));
-            case WebInspector.TimelineAgent.RecordType.TimerFire:
+            case WebInspector.TimelineModel.RecordType.TimerFire:
                 return this._linkifyScriptLocation(this.data["timerId"]);
-            case WebInspector.TimelineAgent.RecordType.FunctionCall:
+            case WebInspector.TimelineModel.RecordType.FunctionCall:
                 return this._linkifyScriptLocation();
-            case WebInspector.TimelineAgent.RecordType.FireAnimationFrame:
+            case WebInspector.TimelineModel.RecordType.FireAnimationFrame:
                 return this._linkifyScriptLocation(this.data["id"]);
-            case WebInspector.TimelineAgent.RecordType.EventDispatch:
+            case WebInspector.TimelineModel.RecordType.EventDispatch:
                 return this.data ? this.data["type"] : null;
-            case WebInspector.TimelineAgent.RecordType.Paint:
+            case WebInspector.TimelineModel.RecordType.Paint:
                 return this.data["width"] + "\u2009\u00d7\u2009" + this.data["height"];
-            case WebInspector.TimelineAgent.RecordType.TimerInstall:
-            case WebInspector.TimelineAgent.RecordType.TimerRemove:
+            case WebInspector.TimelineModel.RecordType.TimerInstall:
+            case WebInspector.TimelineModel.RecordType.TimerRemove:
                 return this._linkifyTopCallFrame(this.data["timerId"]);
-            case WebInspector.TimelineAgent.RecordType.RequestAnimationFrame:
-            case WebInspector.TimelineAgent.RecordType.CancelAnimationFrame:
+            case WebInspector.TimelineModel.RecordType.RequestAnimationFrame:
+            case WebInspector.TimelineModel.RecordType.CancelAnimationFrame:
                 return this._linkifyTopCallFrame(this.data["id"]);
-            case WebInspector.TimelineAgent.RecordType.ParseHTML:
-            case WebInspector.TimelineAgent.RecordType.RecalculateStyles:
+            case WebInspector.TimelineModel.RecordType.ParseHTML:
+            case WebInspector.TimelineModel.RecordType.RecalculateStyles:
                 return this._linkifyTopCallFrame();
-            case WebInspector.TimelineAgent.RecordType.EvaluateScript:
+            case WebInspector.TimelineModel.RecordType.EvaluateScript:
                 return this.url ? this._linkifyLocation(this.url, this.data["lineNumber"], 0) : null;
-            case WebInspector.TimelineAgent.RecordType.XHRReadyStateChange:
-            case WebInspector.TimelineAgent.RecordType.XHRLoad:
-            case WebInspector.TimelineAgent.RecordType.ScheduleResourceRequest:
-            case WebInspector.TimelineAgent.RecordType.ResourceSendRequest:
-            case WebInspector.TimelineAgent.RecordType.ResourceReceivedData:
-            case WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse:
-            case WebInspector.TimelineAgent.RecordType.ResourceFinish:
+            case WebInspector.TimelineModel.RecordType.XHRReadyStateChange:
+            case WebInspector.TimelineModel.RecordType.XHRLoad:
+            case WebInspector.TimelineModel.RecordType.ScheduleResourceRequest:
+            case WebInspector.TimelineModel.RecordType.ResourceSendRequest:
+            case WebInspector.TimelineModel.RecordType.ResourceReceivedData:
+            case WebInspector.TimelineModel.RecordType.ResourceReceiveResponse:
+            case WebInspector.TimelineModel.RecordType.ResourceFinish:
                 return WebInspector.displayNameForURL(this.url);
-            case WebInspector.TimelineAgent.RecordType.TimeStamp:
+            case WebInspector.TimelineModel.RecordType.TimeStamp:
                 return this.data["message"];
             default:
                 return null;
@@ -1598,191 +1598,6 @@ WebInspector.TimelineExpandableElement.prototype = {
 
 /**
  * @constructor
- * @extends {WebInspector.Object}
- */
-WebInspector.TimelineModel = function()
-{
-    this._records = [];
-    this._collectionEnabled = false;
-
-    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._onRecordAdded, this);
-}
-
-WebInspector.TimelineModel.Events = {
-    RecordAdded: "RecordAdded",
-    RecordsCleared: "RecordsCleared"
-}
-
-WebInspector.TimelineModel.prototype = {
-    startRecord: function()
-    {
-        if (this._collectionEnabled)
-            return;
-        this._reset();
-        WebInspector.timelineManager.start(30);
-        this._collectionEnabled = true;
-    },
-
-    stopRecord: function()
-    {
-        if (!this._collectionEnabled)
-            return;
-        WebInspector.timelineManager.stop();
-        this._collectionEnabled = false;
-    },
-
-    get records()
-    {
-        return this._records;
-    },
-
-    _onRecordAdded: function(event)
-    {
-        if (this._collectionEnabled)
-            this._addRecord(event.data);
-    },
-
-    _addRecord: function(record)
-    {
-        this._records.push(record);
-        this.dispatchEventToListeners(WebInspector.TimelineModel.Events.RecordAdded, record);
-    },
-
-    _loadNextChunk: function(data, index)
-    {
-        for (var i = 0; i < 20 && index < data.length; ++i, ++index)
-            this._addRecord(data[index]);
-
-        if (index !== data.length)
-            setTimeout(this._loadNextChunk.bind(this, data, index), 0);
-    },
-
-    _loadFromFile: function(file)
-    {
-        function onLoad(e)
-        {
-            var data = JSON.parse(e.target.result);
-            this._reset();
-            this._loadNextChunk(data, 1);
-        }
-
-        function onError(e)
-        {
-            switch(e.target.error.code) {
-            case e.target.error.NOT_FOUND_ERR:
-                WebInspector.log(WebInspector.UIString('Timeline.loadFromFile: File "%s" not found.', file.name));
-            break;
-            case e.target.error.NOT_READABLE_ERR:
-                WebInspector.log(WebInspector.UIString('Timeline.loadFromFile: File "%s" is not readable', file.name));
-            break;
-            case e.target.error.ABORT_ERR:
-                break;
-            default:
-                WebInspector.log(WebInspector.UIString('Timeline.loadFromFile: An error occurred while reading the file "%s"', file.name));
-            }
-        }
-
-        var reader = new FileReader();
-        reader.onload = onLoad.bind(this);
-        reader.onerror = onError;
-        reader.readAsText(file);
-    },
-
-    _saveToFile: function()
-    {
-        var records = ['[' + JSON.stringify(new String(window.navigator.appVersion))];
-        for (var i = 0; i < this._records.length; ++i)
-            records.push(JSON.stringify(this._records[i]));
-
-        records[records.length - 1] = records[records.length - 1] + "]";
-
-        var now = new Date();
-        var suggestedFileName = "TimelineRawData-" + now.toISO8601Compact() + ".json";
-        InspectorFrontendHost.saveAs(suggestedFileName, records.join(",\n"));
-    },
-
-    _reset: function()
-    {
-        this.stopRecord();
-        this._records = [];
-        this.dispatchEventToListeners(WebInspector.TimelineModel.Events.RecordsCleared);
-    }
-}
-
-WebInspector.TimelineModel.prototype.__proto__ = WebInspector.Object.prototype;
-
-/**
- * @constructor
- * @extends {WebInspector.Object}
- */
-WebInspector.TimelinePresentationModel = function()
-{
-    this._categories = {};
-    this.reset();
-}
-
-WebInspector.TimelinePresentationModel.Events = {
-    WindowChanged: "WindowChanged",
-    CategoryVisibilityChanged: "CategoryVisibilityChanged"
-}
-
-WebInspector.TimelinePresentationModel.prototype = {
-    reset: function()
-    {
-        this.windowLeft = 0.0;
-        this.windowRight = 1.0;
-        this.windowIndexLeft = 0;
-        this.windowIndexRight = null;
-    },
-
-    get categories()
-    {
-        return this._categories;
-    },
-
-    /**
-     * @param {WebInspector.TimelineCategory} category
-     */
-    addCategory: function(category)
-    {
-        this._categories[category.name] = category;
-    },
-
-    /**
-     * @param {number} left
-     * @param {number} right
-     */
-    setWindowPosition: function(left, right)
-    {
-        this.windowLeft = left;
-        this.windowRight = right;
-        this.dispatchEventToListeners(WebInspector.TimelinePresentationModel.Events.WindowChanged);
-    },
-
-    /**
-     * @param {number} left
-     * @param {?number} right
-     */
-    setWindowIndices: function(left, right)
-    {
-        this.windowIndexLeft = left;
-        this.windowIndexRight = right;
-        this.dispatchEventToListeners(WebInspector.TimelinePresentationModel.Events.WindowChanged);
-    },
-
-    /**
-     * @param {WebInspector.TimelineCategory} category
-     * @param {boolean} visible
-     */
-    setCategoryVisibility: function(category, visible)
-    {
-        category.hidden = !visible;
-        this.dispatchEventToListeners(WebInspector.TimelinePresentationModel.Events.CategoryVisibilityChanged, category);
-    }
-}
-
-/**
- * @constructor
  * @param {WebInspector.TimelineCalculator} calculator
  * @param {boolean} showShortEvents
  */
@@ -1838,5 +1653,3 @@ WebInspector.TimelineStartAtZeroRecordFilter.prototype = {
             (typeof this._windowIndexRight !== "number" || this._topLevelRecordIndex <= this._windowIndexRight);
     }
 }
-
-WebInspector.TimelinePresentationModel.prototype.__proto__ = WebInspector.Object.prototype;

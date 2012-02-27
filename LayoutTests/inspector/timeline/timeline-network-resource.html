@@ -35,11 +35,11 @@ function test()
     {
         function format(record)
         {
-            if (record.type === WebInspector.TimelineAgent.RecordType.ResourceSendRequest)
+            if (record.type === WebInspector.TimelineModel.RecordType.ResourceSendRequest)
                 printSend(record);
-            else if (record.type === WebInspector.TimelineAgent.RecordType.ResourceReceiveResponse)
+            else if (record.type === WebInspector.TimelineModel.RecordType.ResourceReceiveResponse)
                 printReceive(record);
-            else if (record.type === WebInspector.TimelineAgent.RecordType.ResourceFinish)
+            else if (record.type === WebInspector.TimelineModel.RecordType.ResourceFinish)
                 printFinish(record);
         }
         InspectorTest.printTimelineRecords(null, format);

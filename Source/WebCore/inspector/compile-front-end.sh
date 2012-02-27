@@ -45,7 +45,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
         --js Source/WebCore/inspector/front-end/HandlerRegistry.js \
         --js Source/WebCore/inspector/front-end/InspectorFrontendHostStub.js \
-    --module jsmodule_sdk:30:jsmodule_common \
+    --module jsmodule_sdk:33:jsmodule_common \
         --js Source/WebCore/inspector/front-end/InspectorBackend.js \
         --js Source/WebCore/inspector/front-end/ApplicationCacheModel.js \
         --js Source/WebCore/inspector/front-end/Color.js \
@@ -68,6 +68,9 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/Placard.js \
         --js Source/WebCore/inspector/front-end/Script.js \
         --js Source/WebCore/inspector/front-end/ScriptFormatter.js \
+        --js Source/WebCore/inspector/front-end/TimelineManager.js \
+        --js Source/WebCore/inspector/front-end/TimelineModel.js \
+        --js Source/WebCore/inspector/front-end/TimelinePresentationModel.js \
         --js Source/WebCore/inspector/front-end/RawSourceCode.js \
         --js Source/WebCore/inspector/front-end/RemoteObject.js \
         --js Source/WebCore/inspector/front-end/Resource.js \
@@ -113,7 +116,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/Toolbar.js \
         --js Source/WebCore/inspector/front-end/UIUtils.js \
         --js Source/WebCore/inspector/front-end/View.js \
-    --module jsmodule_components:16:jsmodule_sdk,jsmodule_ui \
+    --module jsmodule_components:14:jsmodule_sdk,jsmodule_ui \
         --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
         --js Source/WebCore/inspector/front-end/BreakpointsSidebarPane.js \
         --js Source/WebCore/inspector/front-end/DOMBreakpointsSidebarPane.js \
@@ -127,9 +130,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/ObjectPropertiesSection.js \
         --js Source/WebCore/inspector/front-end/PropertiesSidebarPane.js \
         --js Source/WebCore/inspector/front-end/SourceFrame.js \
-        --js Source/WebCore/inspector/front-end/TimelineAgent.js \
         --js Source/WebCore/inspector/front-end/TimelineGrid.js \
-        --js Source/WebCore/inspector/front-end/TimelineManager.js \
     --module jsmodule_elements:3:jsmodule_components \
         --js Source/WebCore/inspector/front-end/StylesSidebarPane.js \
         --js Source/WebCore/inspector/front-end/MetricsSidebarPane.js \

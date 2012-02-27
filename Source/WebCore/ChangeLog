@@ -1,3 +1,46 @@
+2012-02-27  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: extract TimelineModel and TimelinePresentationModel into their own files.
+        https://bugs.webkit.org/show_bug.cgi?id=79675
+
+        Reviewed by Vsevolod Vlasov.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/TimelineAgent.js: Removed.
+        * inspector/front-end/TimelineModel.js: Added.
+        (WebInspector.TimelineModel):
+        (WebInspector.TimelineModel.prototype.startRecord):
+        (WebInspector.TimelineModel.prototype.stopRecord):
+        (WebInspector.TimelineModel.prototype.get records):
+        (WebInspector.TimelineModel.prototype._onRecordAdded):
+        (WebInspector.TimelineModel.prototype._addRecord):
+        (WebInspector.TimelineModel.prototype._loadNextChunk):
+        (WebInspector.TimelineModel.prototype._loadFromFile):
+        (WebInspector.TimelineModel.prototype._loadFromFile.onError):
+        (WebInspector.TimelineModel.prototype._saveToFile):
+        (WebInspector.TimelineModel.prototype._reset):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.get _recordStyles):
+        (WebInspector.TimelinePanel.prototype._createEventDivider):
+        (WebInspector.TimelinePanel.prototype._findParentRecord):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        * inspector/front-end/TimelinePresentationModel.js: Added.
+        (WebInspector.TimelinePresentationModel):
+        (WebInspector.TimelinePresentationModel.prototype.reset):
+        (WebInspector.TimelinePresentationModel.prototype.get categories):
+        (WebInspector.TimelinePresentationModel.prototype.addCategory):
+        (WebInspector.TimelinePresentationModel.prototype.setWindowPosition):
+        (WebInspector.TimelinePresentationModel.prototype.setWindowIndices):
+        (WebInspector.TimelinePresentationModel.prototype.setCategoryVisibility):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2012-02-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Allow adding CSS properties anywhere in the style declaration, not only at the end

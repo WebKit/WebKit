@@ -41,7 +41,7 @@ InspectorTest.waitForRecordType = function(recordType, callback)
 
     function addRecord(record)
     {
-        if (record.type !== WebInspector.TimelineAgent.RecordType[recordType]) {
+        if (record.type !== WebInspector.TimelineModel.RecordType[recordType]) {
             for (var i = 0; record.children && i < record.children.length; ++i)
                 addRecord(record.children[i]);
             return ;
@@ -84,7 +84,7 @@ InspectorTest.printTimelineRecords = function(typeName, formatter)
 {
     for (var i = 0; i < InspectorTest._timelineRecords.length; ++i) {
         var record = InspectorTest._timelineRecords[i];
-        if (typeName && record.type === WebInspector.TimelineAgent.RecordType[typeName])
+        if (typeName && record.type === WebInspector.TimelineModel.RecordType[typeName])
             InspectorTest.printTimelineRecordProperties(record);
         if (formatter)
             formatter(record);
@@ -102,7 +102,7 @@ InspectorTest.dumpTimelineRecord = function(record, level)
         prefix = "----" + prefix;
     if (level > 0)
         prefix = prefix + "> ";
-    if (record.type === WebInspector.TimelineAgent.RecordType.TimeStamp) {
+    if (record.type === WebInspector.TimelineModel.RecordType.TimeStamp) {
         suffix = " : " + record.data.message;
     }
     InspectorTest.addResult(prefix + InspectorTest._timelineAgentTypeToString(record.type) + suffix);
@@ -127,8 +127,8 @@ InspectorTest.printTimelineRecordProperties = function(record)
 
 InspectorTest._timelineAgentTypeToString = function(numericType)
 {
-    for (var prop in WebInspector.TimelineAgent.RecordType) {
-        if (WebInspector.TimelineAgent.RecordType[prop] === numericType)
+    for (var prop in WebInspector.TimelineModel.RecordType) {
+        if (WebInspector.TimelineModel.RecordType[prop] === numericType)
             return prop;
     }
     return undefined;

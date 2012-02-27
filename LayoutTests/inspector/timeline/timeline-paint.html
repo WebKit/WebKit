@@ -27,7 +27,7 @@ function test()
     {
         for (var i = 0; i < records.length; ++i) {
             var record = records[i];
-            if (record.type === WebInspector.TimelineAgent.RecordType.Paint) {
+            if (record.type === WebInspector.TimelineModel.RecordType.Paint) {
                 InspectorTest.printTimelineRecordProperties(record);
                 break;
             }

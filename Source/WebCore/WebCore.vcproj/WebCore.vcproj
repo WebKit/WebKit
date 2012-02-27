@@ -73585,10 +73585,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\TimelineAgent.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\TimelineGrid.js"
 					>
 				</File>
@@ -73597,7 +73593,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\TimelineModel.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\TimelineOverviewPane.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\TimelinePresentationModel.js"
 					>
 				</File>
 				<File
