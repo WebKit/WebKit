@@ -47,6 +47,7 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/PopupMenuEfl.cpp
   platform/efl/RefPtrEfl.cpp
   platform/efl/RenderThemeEfl.cpp
+  platform/efl/RunLoopEfl.cpp
   platform/efl/ScrollViewEfl.cpp
   platform/efl/ScrollbarEfl.cpp
   platform/efl/ScrollbarThemeEfl.cpp

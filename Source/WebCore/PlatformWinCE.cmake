@@ -32,7 +32,6 @@ LIST(APPEND WebCore_SOURCES
     platform/Cursor.cpp
     platform/LocalizedStrings.cpp
     platform/PlatformStrategies.cpp
-    platform/RunLoop.cpp
     platform/ScrollAnimatorWin.cpp
 
     platform/graphics/ImageSource.cpp
