@@ -47,52 +47,9 @@ bool BaseButtonInputType::appendFormData(FormDataList&, bool) const
     return false;
 }
 
-void BaseButtonInputType::handleKeydownEvent(KeyboardEvent* event)
-{
-    const String& key = event->keyIdentifier();
-    if (key == "U+0020") {
-        element()->setActive(true, true);
-        // No setDefaultHandled(), because IE dispatches a keypress in this case
-        // and the caller will only dispatch a keypress if we don't call setDefaultHandled().
-    }
-}
-
-void BaseButtonInputType::handleKeypressEvent(KeyboardEvent* event)
-{
-    int charCode = event->charCode();
-    if (charCode == '\r') {
-        element()->dispatchSimulatedClick(event);
-        event->setDefaultHandled();
-        return;
-    }
-    if (charCode == ' ') {
-        // Prevent scrolling down the page.
-        event->setDefaultHandled();
-    }
-}
-
-void BaseButtonInputType::handleKeyupEvent(KeyboardEvent* event)
-{
-    const String& key = event->keyIdentifier();
-    if (key != "U+0020")
-        return;
-    // Simulate mouse click for spacebar for button types.
-    dispatchSimulatedClickIfActive(event);
-}
-
 RenderObject* BaseButtonInputType::createRenderer(RenderArena* arena, RenderStyle*) const
 {
     return new (arena) RenderButton(element());
-}
-
-// FIXME: Could share this with BaseCheckableInputType and RangeInputType if we had a common base class.
-void BaseButtonInputType::accessKeyAction(bool sendMouseEvents)
-{
-    InputType::accessKeyAction(sendMouseEvents);
-
-    // Send mouse button events if the caller specified sendMouseEvents.
-    // FIXME: The comment above is no good. It says what we do, but not why.
-    element()->dispatchSimulatedClick(0, sendMouseEvents);
 }
 
 bool BaseButtonInputType::storesValueSeparateFromAttribute()

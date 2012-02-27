@@ -695,6 +695,7 @@ SOURCES += \
     history/PageCache.cpp \
     html/BaseButtonInputType.cpp \
     html/BaseCheckableInputType.cpp \
+    html/BaseClickableWithKeyInputType.cpp \
     html/BaseDateAndTimeInputType.cpp \
     html/BaseTextInputType.cpp \
     html/ButtonInputType.cpp \

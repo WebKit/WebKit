@@ -5212,6 +5212,8 @@
             'html/BaseButtonInputType.h',
             'html/BaseCheckableInputType.cpp',
             'html/BaseCheckableInputType.h',
+            'html/BaseClickableWithKeyInputType.cpp',
+            'html/BaseClickableWithKeyInputType.h',
             'html/BaseDateAndTimeInputType.cpp',
             'html/BaseDateAndTimeInputType.h',
             'html/BaseTextInputType.cpp',

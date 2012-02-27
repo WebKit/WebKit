@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,38 +30,16 @@
  */
 
 #include "config.h"
-#include "BaseCheckableInputType.h"
+#include "BaseClickableWithKeyInputType.h"
 
-#include "FormDataList.h"
 #include "HTMLInputElement.h"
-#include "HTMLNames.h"
 #include "KeyboardEvent.h"
-#include "RegularExpression.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-bool BaseCheckableInputType::saveFormControlState(String& result) const
-{
-    result = element()->checked() ? "on" : "off";
-    return true;
-}
-
-void BaseCheckableInputType::restoreFormControlState(const String& state) const
-{
-    element()->setChecked(state == "on");
-}
-
-bool BaseCheckableInputType::appendFormData(FormDataList& encoding, bool) const
-{
-    if (!element()->checked())
-        return false;
-    encoding.appendData(element()->name(), element()->value());
-    return true;
-}
-
-void BaseCheckableInputType::handleKeydownEvent(KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeydownEvent(KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
     if (key == "U+0020") {
@@ -71,47 +49,37 @@ void BaseCheckableInputType::handleKeydownEvent(KeyboardEvent* event)
     }
 }
 
-void BaseCheckableInputType::handleKeypressEvent(KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeypressEvent(KeyboardEvent* event)
 {
-    if (event->charCode() == ' ') {
+    int charCode = event->charCode();
+    if (charCode == '\r') {
+        element()->dispatchSimulatedClick(event);
+        event->setDefaultHandled();
+        return;
+    }
+    if (charCode == ' ') {
         // Prevent scrolling down the page.
         event->setDefaultHandled();
     }
 }
 
-bool BaseCheckableInputType::canSetStringValue() const
+void BaseClickableWithKeyInputType::handleKeyupEvent(KeyboardEvent* event)
 {
-    return false;
+    const String& key = event->keyIdentifier();
+    if (key != "U+0020")
+        return;
+    // Simulate mouse click for spacebar for button types.
+    dispatchSimulatedClickIfActive(event);
 }
 
-// FIXME: Could share this with BaseClickableWithKeyInputType and RangeInputType if we had a common base class.
-void BaseCheckableInputType::accessKeyAction(bool sendMouseEvents)
+// FIXME: Could share this with BaseCheckableInputType and RangeInputType if we had a common base class.
+void BaseClickableWithKeyInputType::accessKeyAction(bool sendMouseEvents)
 {
     InputType::accessKeyAction(sendMouseEvents);
 
     // Send mouse button events if the caller specified sendMouseEvents.
     // FIXME: The comment above is no good. It says what we do, but not why.
     element()->dispatchSimulatedClick(0, sendMouseEvents);
-}
-
-String BaseCheckableInputType::fallbackValue() const
-{
-    return "on";
-}
-
-bool BaseCheckableInputType::storesValueSeparateFromAttribute()
-{
-    return false;
-}
-
-void BaseCheckableInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior)
-{
-    element()->setAttribute(valueAttr, sanitizedValue);
-}
-
-bool BaseCheckableInputType::isCheckable()
-{
-    return true;
 }
 
 } // namespace WebCore

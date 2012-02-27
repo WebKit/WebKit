@@ -1,5 +1,47 @@
 2012-02-27  Keishi Hattori  <keishi@webkit.org>
 
+        Color input type should be clickable through keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=79629
+
+        Reviewed by Kent Tamura.
+
+        Introduced BaseClickableWithKeyInputType that represents an input type
+        that can be clicked by pressing space/return keys.
+        ColorInputType, FileInputType directly inherit it because it doesn't
+        want the other methods(like appendFormData) in BaseButtonInputType.
+
+        * CMakeLists.txt: Added BaseClickableWithKeyInputType.cpp
+        * GNUmakefile.list.am: Added BaseClickableWithKeyInputType.{cpp,h}
+        * Target.pri: Added BaseClickableWithKeyInputType.{cpp,h}
+        * WebCore.gypi: Added BaseClickableWithKeyInputType.{cpp,h}
+        * WebCore.vcproj/WebCore.vcproj: Added BaseClickableWithKeyInputType.{cpp,h}
+        * WebCore.xcodeproj/project.pbxproj: Added BaseClickableWithKeyInputType.{cpp,h}
+        * html/BaseButtonInputType.cpp:
+        * html/BaseButtonInputType.h:
+        (WebCore::BaseButtonInputType::BaseButtonInputType): Inherits BaseClickableWithKeyInputType now.
+        (BaseButtonInputType):
+        * html/BaseCheckableInputType.cpp: Changed comment.
+        * html/BaseClickableWithKeyInputType.cpp:
+        (WebCore):
+        (WebCore::BaseClickableWithKeyInputType::handleKeydownEvent): Moved from BaseButtonInputType
+        (WebCore::BaseClickableWithKeyInputType::handleKeypressEvent): Moved from BaseButtonInputType
+        (WebCore::BaseClickableWithKeyInputType::handleKeyupEvent): Moved from BaseButtonInputType
+        (WebCore::BaseClickableWithKeyInputType::accessKeyAction): Moved from BaseButtonInputType
+        * html/BaseClickableWithKeyInputType.h:
+        (WebCore):
+        (BaseClickableWithKeyInputType): Input type that can be clicked by pressing space/return keys.
+        (WebCore::BaseClickableWithKeyInputType::BaseClickableWithKeyInputType):
+        * html/ColorInputType.h:
+        (WebCore::ColorInputType::ColorInputType): Inherits BaseClickableWithKeyInputType now.
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::FileInputType):
+        * html/FileInputType.h:
+        (FileInputType): Inherits BaseClickableWithKeyInputType now.
+        * html/RangeInputType.cpp: Changed comment.
+        (WebCore):
+
+2012-02-27  Keishi Hattori  <keishi@webkit.org>
+
         Add missing include to ColorInputType.cpp
         https://bugs.webkit.org/show_bug.cgi?id=79632
 

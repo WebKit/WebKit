@@ -84,7 +84,7 @@ const AtomicString& UploadButtonElement::shadowPseudoId() const
 }
 
 inline FileInputType::FileInputType(HTMLInputElement* element)
-    : BaseButtonInputType(element)
+    : BaseClickableWithKeyInputType(element)
     , m_fileList(FileList::create())
 {
 }
@@ -210,11 +210,6 @@ bool FileInputType::getTypeSpecificValue(String& value)
     // (because that's what Windows file paths use). To be compatible
     // with that code, we make up a fake path for the file.
     value = "C:\\fakepath\\" + m_fileList->item(0)->fileName();
-    return true;
-}
-
-bool FileInputType::storesValueSeparateFromAttribute()
-{
     return true;
 }
 

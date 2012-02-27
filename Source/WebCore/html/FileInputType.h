@@ -32,7 +32,7 @@
 #ifndef FileInputType_h
 #define FileInputType_h
 
-#include "BaseButtonInputType.h"
+#include "BaseClickableWithKeyInputType.h"
 #include "FileChooser.h"
 #include "FileIconLoader.h"
 #include <wtf/RefPtr.h>
@@ -41,7 +41,7 @@ namespace WebCore {
 
 class FileList;
 
-class FileInputType : public BaseButtonInputType, private FileChooserClient, private FileIconLoaderClient {
+class FileInputType : public BaseClickableWithKeyInputType, private FileChooserClient, private FileIconLoaderClient {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
@@ -58,7 +58,6 @@ private:
     virtual FileList* files() OVERRIDE;
     virtual bool canSetValue(const String&) OVERRIDE;
     virtual bool getTypeSpecificValue(String&) OVERRIDE; // Checked first, before internal storage or the value attribute.
-    virtual bool storesValueSeparateFromAttribute() OVERRIDE;
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual void receiveDroppedFiles(const Vector<String>&) OVERRIDE;
     virtual Icon* icon() const OVERRIDE;

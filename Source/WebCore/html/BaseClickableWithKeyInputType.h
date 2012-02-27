@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,25 +28,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BaseButtonInputType_h
-#define BaseButtonInputType_h
+#ifndef BaseClickableWithKeyInputType_h
+#define BaseClickableWithKeyInputType_h
 
-#include "BaseClickableWithKeyInputType.h"
+#include "InputType.h"
 
 namespace WebCore {
 
-// Base of button, file, image, reset, and submit types.
-class BaseButtonInputType : public BaseClickableWithKeyInputType {
+// Base of input types that dispatches a simulated click on space/return key.
+class BaseClickableWithKeyInputType : public InputType {
 protected:
-    BaseButtonInputType(HTMLInputElement* element) : BaseClickableWithKeyInputType(element) { }
+    BaseClickableWithKeyInputType(HTMLInputElement* element) : InputType(element) { }
 
 private:
-    virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
-    virtual bool storesValueSeparateFromAttribute() OVERRIDE;
-    virtual void setValue(const String&, bool, TextFieldEventBehavior) OVERRIDE;
+    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
+    virtual void handleKeypressEvent(KeyboardEvent*) OVERRIDE;
+    virtual void handleKeyupEvent(KeyboardEvent*) OVERRIDE;
+    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
 };
 
 } // namespace WebCore
 
-#endif // BaseButtonInputType_h
+#endif // BaseClickableWithKeyInputType_h

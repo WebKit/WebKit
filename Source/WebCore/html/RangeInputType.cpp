@@ -271,7 +271,7 @@ String RangeInputType::serialize(double value) const
     return serializeForNumberType(value);
 }
 
-// FIXME: Could share this with BaseButtonInputType and BaseCheckableInputType if we had a common base class.
+// FIXME: Could share this with BaseClickableWithKeyInputType and BaseCheckableInputType if we had a common base class.
 void RangeInputType::accessKeyAction(bool sendMouseEvents)
 {
     InputType::accessKeyAction(sendMouseEvents);

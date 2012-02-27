@@ -55994,6 +55994,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\BaseClickableWithKeyInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\BaseClickableWithKeyInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\BaseDateAndTimeInputType.cpp"
 				>
 			</File>
