@@ -1,3 +1,17 @@
+2012-02-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Avoid doing 2 hash lookups if we override RenderBox's logical width / height
+        https://bugs.webkit.org/show_bug.cgi?id=79591
+
+        Reviewed by Antonio Gomes.
+
+        Refactoring only.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clearOverrideSize):
+        Instead of doing one hash lookup as part of hasOverride{Height|Width}, let's
+        just directly call HashMap::remove that will do the lookup instead.
+
 2012-02-27  Adam Klein  <adamk@chromium.org>
 
         Move WebCore-internal DOM notification methods from Node to ContainerNode where appropriate

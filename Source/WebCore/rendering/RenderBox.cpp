@@ -795,9 +795,9 @@ void RenderBox::setOverrideWidth(LayoutUnit width)
 
 void RenderBox::clearOverrideSize()
 {
-    if (hasOverrideHeight())
+    if (gOverrideHeightMap)
         gOverrideHeightMap->remove(this);
-    if (hasOverrideWidth())
+    if (gOverrideWidthMap)
         gOverrideWidthMap->remove(this);
 }
 
