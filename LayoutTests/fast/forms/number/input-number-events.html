@@ -29,14 +29,14 @@ if (window.eventSender) {
     eventSender.mouseDown();
     eventSender.mouseUp();
     shouldBe('numberInput.value', '"1"');
-    shouldBe('changeEventCounter', '0');
+    shouldBe('changeEventCounter', '1');
     shouldBe('inputEventCounter', '1');
 
     debug('Click again, but the value is not changed.');
     eventSender.mouseDown();
     eventSender.mouseUp();
     shouldBe('numberInput.value', '"1"');
-    shouldBe('changeEventCounter', '0');
+    shouldBe('changeEventCounter', '1');
     shouldBe('inputEventCounter', '1');
 
     debug('Focus on another field');

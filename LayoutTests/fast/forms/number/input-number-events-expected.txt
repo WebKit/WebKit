@@ -8,11 +8,11 @@ PASS changeEventCounter is 0
 PASS inputEventCounter is 0
 Click the upper button
 PASS numberInput.value is "1"
-PASS changeEventCounter is 0
+PASS changeEventCounter is 1 
 PASS inputEventCounter is 1
 Click again, but the value is not changed.
 PASS numberInput.value is "1"
-PASS changeEventCounter is 0
+PASS changeEventCounter is 1
 PASS inputEventCounter is 1
 Focus on another field
 PASS changeEventCounter is 1
