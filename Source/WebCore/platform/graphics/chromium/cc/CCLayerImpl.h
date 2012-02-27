@@ -30,6 +30,7 @@
 #include "FilterOperations.h"
 #include "FloatRect.h"
 #include "IntRect.h"
+#include "Region.h"
 #include "TextStream.h"
 #include "TransformationMatrix.h"
 #include "cc/CCLayerAnimationControllerImpl.h"
@@ -181,8 +182,14 @@ public:
     bool scrollable() const { return m_scrollable; }
     void setScrollable(bool scrollable) { m_scrollable = scrollable; }
 
+    bool shouldScrollOnMainThread() const { return m_shouldScrollOnMainThread; }
+    void setShouldScrollOnMainThread(bool shouldScrollOnMainThread) { m_shouldScrollOnMainThread = shouldScrollOnMainThread; }
+
     bool haveWheelEventHandlers() const { return m_haveWheelEventHandlers; }
     void setHaveWheelEventHandlers(bool haveWheelEventHandlers) { m_haveWheelEventHandlers = haveWheelEventHandlers; }
+
+    const Region& nonFastScrollableRegion() const { return m_nonFastScrollableRegion; }
+    void setNonFastScrollableRegion(const Region& region) { m_nonFastScrollableRegion = region; }
 
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
     void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
@@ -251,7 +258,9 @@ private:
     IntSize m_contentBounds;
     IntPoint m_scrollPosition;
     bool m_scrollable;
+    bool m_shouldScrollOnMainThread;
     bool m_haveWheelEventHandlers;
+    Region m_nonFastScrollableRegion;
     Color m_backgroundColor;
     bool m_backgroundCoversViewport;
 

@@ -39,6 +39,7 @@
 #include "GraphicsContext.h"
 #include "PlatformString.h"
 #include "ProgramBinding.h"
+#include "Region.h"
 #include "RenderSurfaceChromium.h"
 #include "ShaderChromium.h"
 #include "TransformationMatrix.h"
@@ -60,7 +61,6 @@ class CCLayerImpl;
 class CCLayerTreeHost;
 class CCTextureUpdater;
 class GraphicsContext3D;
-class Region;
 
 // Base class for composited layers. Special layer types are derived from
 // this class.
@@ -134,7 +134,9 @@ public:
     const IntPoint& scrollPosition() const { return m_scrollPosition; }
 
     void setScrollable(bool);
+    void setShouldScrollOnMainThread(bool);
     void setHaveWheelEventHandlers(bool);
+    void setNonFastScrollableRegion(const Region&);
 
     IntSize scrollDelta() const { return IntSize(); }
 
@@ -284,7 +286,10 @@ private:
     IntRect m_visibleLayerRect;
     IntPoint m_scrollPosition;
     bool m_scrollable;
+    bool m_shouldScrollOnMainThread;
     bool m_haveWheelEventHandlers;
+    Region m_nonFastScrollableRegion;
+    bool m_nonFastScrollableRegionChanged;
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;

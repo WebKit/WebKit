@@ -1,3 +1,40 @@
+2012-02-26  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Wire up shouldUpdateScrollPositionOnMainThread and nonFastScrollableRegion to compositor
+        https://bugs.webkit.org/show_bug.cgi?id=79155
+
+        Reviewed by Adam Barth.
+
+        This hooks up ScrollingCoordinator::setNonFastScrollableRegion() and
+        ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread() to the chromium compositor
+        implementation and implements them on the impl thread.
+
+        New compositor behavior is covered by unit tests in LayerChromiumTests and CCLayerTreeHostImplTests. The rest is
+        just glue code.
+
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::ScrollingCoordinator::setNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setShouldScrollOnMainThread):
+        (WebCore):
+        (WebCore::LayerChromium::setNonFastScrollableRegion):
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore):
+        (LayerChromium):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::shouldScrollOnMainThread):
+        (WebCore::CCLayerImpl::setShouldScrollOnMainThread):
+        (CCLayerImpl):
+        (WebCore::CCLayerImpl::nonFastScrollableRegion):
+        (WebCore::CCLayerImpl::setNonFastScrollableRegion):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::scrollBegin):
+
 2012-02-26  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.

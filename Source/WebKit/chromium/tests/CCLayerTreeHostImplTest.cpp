@@ -205,6 +205,63 @@ TEST_F(CCLayerTreeHostImplTest, wheelEventHandlers)
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Gesture), CCInputHandlerClient::ScrollStarted);
 }
 
+TEST_F(CCLayerTreeHostImplTest, shouldScrollOnMainThread)
+{
+    RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+    root->setScrollable(true);
+    root->setScrollPosition(IntPoint(0, 0));
+    root->setMaxScrollPosition(IntSize(100, 100));
+    m_hostImpl->setRootLayer(root);
+    root->setShouldScrollOnMainThread(true);
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollFailed);
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Gesture), CCInputHandlerClient::ScrollFailed);
+}
+
+TEST_F(CCLayerTreeHostImplTest, nonFastScrollableRegionBasic)
+{
+    RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+    root->setScrollable(true);
+    root->setScrollPosition(IntPoint(0, 0));
+    root->setMaxScrollPosition(IntSize(100, 100));
+    m_hostImpl->setRootLayer(root);
+    root->setNonFastScrollableRegion(IntRect(0, 0, 50, 50));
+    // All scroll types inside the non-fast scrollable region should fail.
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(25, 25), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollFailed);
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(25, 25), CCInputHandlerClient::Gesture), CCInputHandlerClient::ScrollFailed);
+
+    // All scroll types outside this region should succeed.
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(75, 75), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
+    m_hostImpl->scrollBy(IntSize(0, 10));
+    m_hostImpl->scrollEnd();
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(75, 75), CCInputHandlerClient::Gesture), CCInputHandlerClient::ScrollStarted);
+    m_hostImpl->scrollBy(IntSize(0, 10));
+    m_hostImpl->scrollEnd();
+}
+
+TEST_F(CCLayerTreeHostImplTest, nonFastScrollableRegionWithOffset)
+{
+    GraphicsContext3D::Attributes attrs;
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3D()), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnThisThread);
+    m_hostImpl->initializeLayerRenderer(context);
+
+    RefPtr<CCLayerImpl> root = CCLayerImpl::create(0);
+    root->setScrollable(true);
+    root->setScrollPosition(IntPoint(0, 0));
+    root->setMaxScrollPosition(IntSize(100, 100));
+    m_hostImpl->setRootLayer(root);
+    root->setNonFastScrollableRegion(IntRect(0, 0, 50, 50));
+    root->setPosition(FloatPoint(-25, 0));
+    m_hostImpl->drawLayers(); // Update draw transforms so we can correctly map points into layer space.
+
+    // This point would fall into the non-fast scrollable region except that we've moved the layer down by 25 pixels.
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(40, 10), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
+    m_hostImpl->scrollBy(IntSize(0, 1));
+    m_hostImpl->scrollEnd();
+
+    // This point is still inside the non-fast region.
+    EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(10, 10), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollFailed);
+}
+
 TEST_F(CCLayerTreeHostImplTest, pinchGesture)
 {
     setupScrollAndContentsLayers(IntSize(100, 100));

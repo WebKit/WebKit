@@ -73,9 +73,10 @@ void ScrollingCoordinator::setScrollLayer(GraphicsLayer* scrollLayer)
     m_private->setScrollLayer(scrollLayer ? scrollLayer->platformLayer() : 0);
 }
 
-void ScrollingCoordinator::setNonFastScrollableRegion(const Region&)
+void ScrollingCoordinator::setNonFastScrollableRegion(const Region& region)
 {
-    // FIXME: Implement!
+    if (LayerChromium* layer = m_private->scrollLayer())
+        layer->setNonFastScrollableRegion(region);
 }
 
 void ScrollingCoordinator::setScrollParameters(ScrollElasticity horizontalScrollElasticity, ScrollElasticity verticalScrollElasticity,
@@ -93,7 +94,8 @@ void ScrollingCoordinator::setWheelEventHandlerCount(unsigned wheelEventHandlerC
 
 void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool should)
 {
-    // FIXME: Implement!
+    if (LayerChromium* layer = m_private->scrollLayer())
+        layer->setShouldScrollOnMainThread(should);
 }
 
 }

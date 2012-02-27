@@ -488,12 +488,23 @@ void CCLayerTreeHostImpl::setNeedsRedraw()
     m_client->setNeedsRedrawOnImplThread();
 }
 
-CCInputHandlerClient::ScrollStatus CCLayerTreeHostImpl::scrollBegin(const IntPoint& point, CCInputHandlerClient::ScrollInputType type)
+CCInputHandlerClient::ScrollStatus CCLayerTreeHostImpl::scrollBegin(const IntPoint& viewportPoint, CCInputHandlerClient::ScrollInputType type)
 {
     // TODO: Check for scrollable sublayers.
     if (!m_scrollLayerImpl || !m_scrollLayerImpl->scrollable()) {
         TRACE_EVENT("scrollBegin Ignored no scrollable", this, 0);
         return ScrollIgnored;
+    }
+
+    if (m_scrollLayerImpl->shouldScrollOnMainThread()) {
+        TRACE_EVENT("scrollBegin Failed shouldScrollOnMainThread", this, 0);
+        return ScrollFailed;
+    }
+
+    IntPoint scrollLayerContentPoint(m_scrollLayerImpl->screenSpaceTransform().inverse().mapPoint(viewportPoint));
+    if (m_scrollLayerImpl->nonFastScrollableRegion().contains(scrollLayerContentPoint)) {
+        TRACE_EVENT("scrollBegin Failed nonFastScrollableRegion", this, 0);
+        return ScrollFailed;
     }
 
     if (type == CCInputHandlerClient::Wheel && m_scrollLayerImpl->haveWheelEventHandlers()) {

@@ -42,7 +42,6 @@
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #endif
-#include "Region.h"
 #include "RenderLayerBacking.h"
 #include "TextStream.h"
 #include "skia/ext/platform_canvas.h"
@@ -64,7 +63,9 @@ LayerChromium::LayerChromium()
     , m_parent(0)
     , m_layerAnimationController(CCLayerAnimationController::create())
     , m_scrollable(false)
+    , m_shouldScrollOnMainThread(false)
     , m_haveWheelEventHandlers(false)
+    , m_nonFastScrollableRegionChanged(false)
     , m_anchorPoint(0.5, 0.5)
     , m_backgroundColor(0, 0, 0, 0)
     , m_backgroundCoversViewport(false)
@@ -440,11 +441,28 @@ void LayerChromium::setScrollable(bool scrollable)
     setNeedsCommit();
 }
 
+void LayerChromium::setShouldScrollOnMainThread(bool shouldScrollOnMainThread)
+{
+    if (m_shouldScrollOnMainThread == shouldScrollOnMainThread)
+        return;
+    m_shouldScrollOnMainThread = shouldScrollOnMainThread;
+    setNeedsCommit();
+}
+
 void LayerChromium::setHaveWheelEventHandlers(bool haveWheelEventHandlers)
 {
     if (m_haveWheelEventHandlers == haveWheelEventHandlers)
         return;
     m_haveWheelEventHandlers = haveWheelEventHandlers;
+    setNeedsCommit();
+}
+
+void LayerChromium::setNonFastScrollableRegion(const Region& region)
+{
+    if (m_nonFastScrollableRegion == region)
+        return;
+    m_nonFastScrollableRegion = region;
+    m_nonFastScrollableRegionChanged = true;
     setNeedsCommit();
 }
 
@@ -502,7 +520,14 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setIsNonCompositedContent(m_isNonCompositedContent);
     layer->setMasksToBounds(m_masksToBounds);
     layer->setScrollable(m_scrollable);
+    layer->setShouldScrollOnMainThread(m_shouldScrollOnMainThread);
     layer->setHaveWheelEventHandlers(m_haveWheelEventHandlers);
+    // Copying a Region is more expensive than most layer properties, since it involves copying two Vectors that may be
+    // arbitrarily large depending on page content, so we only push the property if it's changed.
+    if (m_nonFastScrollableRegionChanged) {
+        layer->setNonFastScrollableRegion(m_nonFastScrollableRegion);
+        m_nonFastScrollableRegionChanged = false;
+    }
     layer->setName(m_name);
     layer->setOpaque(m_opaque);
     layer->setOpacity(m_opacity);
