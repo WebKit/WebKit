@@ -1037,13 +1037,11 @@ SET(WebCore_SOURCES
     page/Navigator.cpp
     page/NavigatorBase.cpp
     page/NavigatorRegisterProtocolHandler.cpp
-    page/NavigatorSupplement.cpp
     page/OriginAccessEntry.cpp
     page/Page.cpp
     page/PageGroup.cpp
     page/PageGroupLoadDeferrer.cpp
     page/PageSerializer.cpp
-    page/PageSupplement.cpp
     page/PageVisibilityState.cpp
     page/Performance.cpp
     page/PerformanceNavigation.cpp

@@ -25710,14 +25710,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\NavigatorSupplement.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\page\NavigatorSupplement.h"
-				>
-			</File>
-			<File
 				RelativePath="..\page\OriginAccessEntry.cpp"
 				>
 			</File>
@@ -25751,14 +25743,6 @@
 			</File>
 			<File
 				RelativePath="..\page\PageSerializer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\page\PageSupplement.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\page\PageSupplement.h"
 				>
 			</File>
 			<File

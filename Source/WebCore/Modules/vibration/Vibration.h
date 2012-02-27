@@ -22,7 +22,7 @@
 
 #if ENABLE(VIBRATION)
 
-#include "PageSupplement.h"
+#include "Page.h"
 #include "Timer.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -32,7 +32,7 @@ class Navigator;
 class Page;
 class VibrationClient;
 
-class Vibration : public PageSupplement {
+class Vibration : public Supplement<Page> {
 public:
     typedef Vector<unsigned long> VibrationPattern;
 
@@ -52,7 +52,7 @@ public:
     void timerStopFired(Timer<Vibration>*);
 
     static const AtomicString& supplementName();
-    static Vibration* from(Page* page) { return static_cast<Vibration*>(PageSupplement::from(page, supplementName())); }
+    static Vibration* from(Page* page) { return static_cast<Vibration*>(Supplement<Page>::from(page, supplementName())); }
     static bool isActive(Page*);
 
 private:

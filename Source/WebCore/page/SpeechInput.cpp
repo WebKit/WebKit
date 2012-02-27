@@ -125,7 +125,7 @@ const AtomicString& SpeechInput::supplementName()
 
 void provideSpeechInputTo(Page* page, SpeechInputClient* client)
 {
-    PageSupplement::provideTo(page, SpeechInput::supplementName(), SpeechInput::create(client));
+    SpeechInput::provideTo(page, SpeechInput::supplementName(), SpeechInput::create(client));
 }
 
 } // namespace WebCore

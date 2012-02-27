@@ -22,7 +22,7 @@
 
 #include "DOMWindowProperty.h"
 #include "NavigatorBase.h"
-#include "NavigatorSupplement.h"
+#include "Supplementable.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -39,7 +39,7 @@ class PluginData;
 
 typedef int ExceptionCode;
 
-class Navigator : public NavigatorBase, public RefCounted<Navigator>, public DOMWindowProperty {
+class Navigator : public NavigatorBase, public RefCounted<Navigator>, public DOMWindowProperty, public Supplementable<Navigator> {
 public:
     static PassRefPtr<Navigator> create(Frame* frame) { return adoptRef(new Navigator(frame)); }
     virtual ~Navigator();
@@ -60,14 +60,8 @@ public:
     // Relinquishes the storage lock, if one exists.
     void getStorageUpdates();
 
-    void provideSupplement(const AtomicString&, PassOwnPtr<NavigatorSupplement>);
-    NavigatorSupplement* requireSupplement(const AtomicString&);
-
 private:
     explicit Navigator(Frame*);
-
-    typedef HashMap<AtomicStringImpl*, OwnPtr<NavigatorSupplement> > NavigatorSupplementMap;
-    NavigatorSupplementMap m_suppliments;
 
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;

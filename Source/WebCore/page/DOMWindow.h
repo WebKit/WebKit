@@ -56,6 +56,7 @@ namespace WebCore {
     class Navigator;
     class Node;
     class NotificationCenter;
+    class Page;
     class Performance;
     class PostMessageTimer;
     class ScheduledAction;
@@ -399,6 +400,8 @@ namespace WebCore {
 
     private:
         explicit DOMWindow(Frame*);
+
+        Page* page();
 
         virtual void frameDestroyed() OVERRIDE;
         virtual void willDetachPage() OVERRIDE;

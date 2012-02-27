@@ -124,7 +124,7 @@ void Vibration::timerStopFired(Timer<Vibration>* timer)
 
 const AtomicString& Vibration::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("vibration"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("Vibration"));
     return name;
 }
 
@@ -135,7 +135,7 @@ bool Vibration::isActive(Page* page)
 
 void provideVibrationTo(Page* page, VibrationClient* client)
 {
-    PageSupplement::provideTo(page, Vibration::supplementName(), Vibration::create(client));
+    Vibration::provideTo(page, Vibration::supplementName(), Vibration::create(client));
 }
 
 } // namespace WebCore

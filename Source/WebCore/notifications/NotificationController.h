@@ -28,24 +28,22 @@
 
 #if ENABLE(NOTIFICATIONS)
 
-#include "PageSupplement.h"
+#include "Page.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class NotificationPresenter;
-class Page;
 
-class NotificationController : public PageSupplement {
+class NotificationController : public Supplement<Page> {
     WTF_MAKE_NONCOPYABLE(NotificationController);
 public:
     ~NotificationController();
 
     static PassOwnPtr<NotificationController> create(Page*, NotificationPresenter*);
     static const AtomicString& supplementName();
-    static NotificationController* from(Frame* frame) { return static_cast<NotificationController*>(PageSupplement::from(frame, supplementName())); }
-    static NotificationController* from(Page* page) { return static_cast<NotificationController*>(PageSupplement::from(page, supplementName())); }
+    static NotificationController* from(Page* page) { return static_cast<NotificationController*>(Supplement<Page>::from(page, supplementName())); }
     static NotificationPresenter* clientFrom(Page*);
 
     NotificationPresenter* client() { return m_client; }

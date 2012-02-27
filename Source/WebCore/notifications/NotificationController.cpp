@@ -65,7 +65,7 @@ const AtomicString& NotificationController::supplementName()
 
 void provideNotification(Page* page, NotificationPresenter* client)
 {
-    PageSupplement::provideTo(page, NotificationController::supplementName(), NotificationController::create(page, client));
+    NotificationController::provideTo(page, NotificationController::supplementName(), NotificationController::create(page, client));
 }
 
 } // namespace WebCore

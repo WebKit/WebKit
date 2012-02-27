@@ -2782,8 +2782,6 @@ webcore_sources += \
 	Source/WebCore/page/NavigatorBase.h \
 	Source/WebCore/page/NavigatorRegisterProtocolHandler.cpp \
 	Source/WebCore/page/NavigatorRegisterProtocolHandler.h \
-	Source/WebCore/page/NavigatorSupplement.cpp \
-	Source/WebCore/page/NavigatorSupplement.h \
 	Source/WebCore/page/OriginAccessEntry.cpp \
 	Source/WebCore/page/OriginAccessEntry.h \
 	Source/WebCore/page/Page.cpp \
@@ -2794,8 +2792,6 @@ webcore_sources += \
 	Source/WebCore/page/PageGroupLoadDeferrer.h \
 	Source/WebCore/page/PageSerializer.cpp \
 	Source/WebCore/page/PageSerializer.h \
-	Source/WebCore/page/PageSupplement.cpp \
-	Source/WebCore/page/PageSupplement.h \
 	Source/WebCore/page/PageVisibilityState.cpp \
 	Source/WebCore/page/PageVisibilityState.h \
 	Source/WebCore/page/Performance.cpp \
@@ -3350,6 +3346,7 @@ webcore_sources += \
 	Source/WebCore/platform/sql/SQLValue.h \
 	Source/WebCore/platform/SSLKeyGenerator.h \
 	Source/WebCore/platform/SuddenTermination.h \
+	Source/WebCore/platform/Supplementable.h \
 	Source/WebCore/platform/SystemTime.h \
 	Source/WebCore/platform/text/Base64.cpp \
 	Source/WebCore/platform/text/Base64.h \

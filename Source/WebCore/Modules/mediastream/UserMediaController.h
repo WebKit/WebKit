@@ -27,16 +27,13 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "PageSupplement.h"
+#include "Page.h"
 #include "UserMediaClient.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class Frame;
-class Page;
-
-class UserMediaController : public PageSupplement {
+class UserMediaController : public Supplement<Page> {
 public:
     ~UserMediaController();
 
@@ -46,8 +43,7 @@ public:
 
     static PassOwnPtr<UserMediaController> create(UserMediaClient*);
     static const AtomicString& supplementName();
-    static UserMediaController* from(Frame* frame) { return static_cast<UserMediaController*>(PageSupplement::from(frame, supplementName())); }
-    static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(PageSupplement::from(page, supplementName())); }
+    static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(Supplement<Page>::from(page, supplementName())); }
 
 protected:
     UserMediaController(UserMediaClient*);

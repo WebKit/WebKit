@@ -1049,17 +1049,6 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const IntRect& objec
     }
 }
 
-void Page::provideSupplement(const AtomicString& name, PassOwnPtr<PageSupplement> supplement)
-{
-    ASSERT(!m_supplements.get(name.impl()));
-    m_supplements.set(name.impl(), supplement);
-}
-
-PageSupplement* Page::requireSupplement(const AtomicString& name)
-{
-    return m_supplements.get(name.impl());
-}
-
 Page::PageClients::PageClients()
     : chromeClient(0)
     , contextMenuClient(0)

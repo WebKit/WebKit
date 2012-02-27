@@ -51,17 +51,6 @@ Navigator::~Navigator()
 {
 }
 
-void Navigator::provideSupplement(const AtomicString& name, PassOwnPtr<NavigatorSupplement> supplement)
-{
-    ASSERT(!m_suppliments.get(name.impl()));
-    m_suppliments.set(name.impl(), supplement);
-}
-
-NavigatorSupplement* Navigator::requireSupplement(const AtomicString& name)
-{
-    return m_suppliments.get(name.impl());
-}
-
 // If this function returns true, we need to hide the substring "4." that would otherwise
 // appear in the appVersion string. This is to avoid problems with old versions of a
 // library called OpenCube QuickMenu, which as of this writing is still being used on

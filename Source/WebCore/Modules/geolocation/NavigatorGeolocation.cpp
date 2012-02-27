@@ -54,7 +54,7 @@ void NavigatorGeolocation::willDetachPage()
 NavigatorGeolocation* NavigatorGeolocation::from(Navigator* navigator)
 {
     DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorGeolocation"));
-    NavigatorGeolocation* supplement = static_cast<NavigatorGeolocation*>(NavigatorSupplement::from(navigator, name));
+    NavigatorGeolocation* supplement = static_cast<NavigatorGeolocation*>(Supplement<Navigator>::from(navigator, name));
     if (!supplement) {
         supplement = new NavigatorGeolocation(navigator->frame());
         provideTo(navigator, name, adoptPtr(supplement));

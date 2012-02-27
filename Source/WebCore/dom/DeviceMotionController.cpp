@@ -150,7 +150,7 @@ bool DeviceMotionController::isActiveAt(Page* page)
 
 void provideDeviceMotionTo(Page* page, DeviceMotionClient* client)
 {
-    PageSupplement::provideTo(page, DeviceMotionController::supplementName(), DeviceMotionController::create(client));
+    DeviceMotionController::provideTo(page, DeviceMotionController::supplementName(), DeviceMotionController::create(client));
 }
 
 } // namespace WebCore

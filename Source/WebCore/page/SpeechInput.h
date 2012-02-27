@@ -33,7 +33,7 @@
 
 #if ENABLE(INPUT_SPEECH)
 
-#include "PageSupplement.h"
+#include "Page.h"
 #include "SpeechInputListener.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -49,15 +49,14 @@ class SpeechInputListener;
 // speech recognition engine. It provides methods for the input elements to activate speech
 // recognition and methods for the speech recognition engine to return back the results.
 class SpeechInput : public SpeechInputListener,
-                    public PageSupplement {
+                    public Supplement<Page> {
     WTF_MAKE_NONCOPYABLE(SpeechInput);
 public:
     virtual ~SpeechInput();
 
     static PassOwnPtr<SpeechInput> create(SpeechInputClient*);
     static const AtomicString& supplementName();
-    static SpeechInput* from(Frame* frame) { return static_cast<SpeechInput*>(PageSupplement::from(frame, supplementName())); }
-    static SpeechInput* from(Page* page) { return static_cast<SpeechInput*>(PageSupplement::from(page, supplementName())); }
+    static SpeechInput* from(Page* page) { return static_cast<SpeechInput*>(Supplement<Page>::from(page, supplementName())); }
 
     // Generates a unique ID for the given listener to be used for speech requests.
     // This should be the first call made by listeners before anything else.

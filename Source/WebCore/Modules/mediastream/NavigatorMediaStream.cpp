@@ -53,7 +53,7 @@ void NavigatorMediaStream::webkitGetUserMedia(Navigator* navigator, const String
     if (!successCallback)
         return;
 
-    UserMediaController* userMedia = UserMediaController::from(navigator->frame());
+    UserMediaController* userMedia = UserMediaController::from(navigator->frame() ? navigator->frame()->page() : 0);
     if (!userMedia) {
         ec = NOT_SUPPORTED_ERR;
         return;

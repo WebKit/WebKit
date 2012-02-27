@@ -463,6 +463,11 @@ void DOMWindow::setSecurityOrigin(SecurityOrigin* securityOrigin)
     m_securityOrigin = securityOrigin;
 }
 
+Page* DOMWindow::page()
+{
+    return frame() ? frame()->page() : 0;
+}
+
 void DOMWindow::frameDestroyed()
 {
     FrameDestructionObserver::frameDestroyed();
@@ -1494,10 +1499,10 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, PassRefPtr<Event
         addBeforeUnloadEventListener(this);
 #if ENABLE(DEVICE_ORIENTATION)
     else if (eventType == eventNames().devicemotionEvent) {
-        if (DeviceMotionController* controller = DeviceMotionController::from(frame()))
+        if (DeviceMotionController* controller = DeviceMotionController::from(page()))
             controller->addListener(this);
     } else if (eventType == eventNames().deviceorientationEvent) {
-        if (DeviceOrientationController* controller = DeviceOrientationController::from(frame()))
+        if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
             controller->addListener(this);
     }
 #endif
@@ -1521,10 +1526,10 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
         removeBeforeUnloadEventListener(this);
 #if ENABLE(DEVICE_ORIENTATION)
     else if (eventType == eventNames().devicemotionEvent) {
-        if (DeviceMotionController* controller = DeviceMotionController::from(frame()))
+        if (DeviceMotionController* controller = DeviceMotionController::from(page()))
             controller->removeListener(this);
     } else if (eventType == eventNames().deviceorientationEvent) {
-        if (DeviceOrientationController* controller = DeviceOrientationController::from(frame()))
+        if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
             controller->removeListener(this);
     }
 #endif
@@ -1579,9 +1584,9 @@ void DOMWindow::removeAllEventListeners()
     EventTarget::removeAllEventListeners();
 
 #if ENABLE(DEVICE_ORIENTATION)
-    if (DeviceMotionController* controller = DeviceMotionController::from(frame()))
+    if (DeviceMotionController* controller = DeviceMotionController::from(page()))
         controller->removeAllListeners(this);
-    if (DeviceOrientationController* controller = DeviceOrientationController::from(frame()))
+    if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
         controller->removeAllListeners(this);
 #endif
 

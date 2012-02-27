@@ -24,10 +24,10 @@
 #include "FrameLoaderTypes.h"
 #include "FindOptions.h"
 #include "LayoutTypes.h"
-#include "PageSupplement.h"
 #include "PageVisibilityState.h"
 #include "PlatformScreen.h"
 #include "PlatformString.h"
+#include "Supplementable.h"
 #include "ViewportArguments.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -89,7 +89,7 @@ namespace WebCore {
 
     float deviceScaleFactor(Frame*);
 
-    class Page {
+    class Page : public Supplementable<Page> {
         WTF_MAKE_NONCOPYABLE(Page);
         friend class Settings;
     public:
@@ -324,14 +324,8 @@ namespace WebCore {
         void startCountingRelevantRepaintedObjects();
         void addRelevantRepaintedObject(RenderObject*, const IntRect& objectPaintRect);
 
-        void provideSupplement(const AtomicString&, PassOwnPtr<PageSupplement>);
-        PageSupplement* requireSupplement(const AtomicString&);
-
     private:
         void initGroup();
-
-        typedef HashMap<AtomicStringImpl*, OwnPtr<PageSupplement> > PageSupplementMap;
-        PageSupplementMap m_supplements;
 
 #if ASSERT_DISABLED
         void checkFrameCountConsistency() const { }

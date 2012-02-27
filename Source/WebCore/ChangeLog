@@ -1,3 +1,79 @@
+2012-02-26  Adam Barth  <abarth@webkit.org>
+
+        Extract Supplementable base class from Page and Navigator
+        https://bugs.webkit.org/show_bug.cgi?id=79624
+
+        Reviewed by Hajime Morita.
+
+        We'll use this pattern again soon for ScriptExecutionContext.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/gamepad/NavigatorGamepad.cpp:
+        (WebCore::NavigatorGamepad::from):
+        * Modules/gamepad/NavigatorGamepad.h:
+        * Modules/geolocation/NavigatorGeolocation.cpp:
+        (WebCore::NavigatorGeolocation::from):
+        * Modules/geolocation/NavigatorGeolocation.h:
+        * Modules/mediastream/NavigatorMediaStream.cpp:
+        (WebCore::NavigatorMediaStream::webkitGetUserMedia):
+        * Modules/mediastream/UserMediaController.cpp:
+        (WebCore::provideUserMediaTo):
+        * Modules/mediastream/UserMediaController.h:
+        (WebCore::UserMediaController::from):
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DeviceMotionController.cpp:
+        (WebCore::provideDeviceMotionTo):
+        * dom/DeviceMotionController.h:
+        (WebCore::DeviceMotionController::from):
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::provideDeviceOrientationTo):
+        * dom/DeviceOrientationController.h:
+        (WebCore):
+        (WebCore::DeviceOrientationController::from):
+        * notifications/NotificationController.cpp:
+        (WebCore::provideNotification):
+        * notifications/NotificationController.h:
+        (WebCore):
+        (WebCore::NotificationController::from):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::page):
+        (WebCore):
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+        * page/DOMWindow.h:
+        (WebCore):
+        (DOMWindow):
+        * page/Navigator.cpp:
+        (WebCore):
+        * page/Navigator.h:
+        (Navigator):
+        * page/NavigatorSupplement.cpp: Removed.
+        * page/NavigatorSupplement.h: Removed.
+        * page/Page.cpp:
+        (WebCore):
+        * page/Page.h:
+        (Page):
+        * page/PageSupplement.cpp: Removed.
+        * page/PageSupplement.h: Removed.
+        * page/SpeechInput.cpp:
+        (WebCore::provideSpeechInputTo):
+        * page/SpeechInput.h:
+        (WebCore::SpeechInput::from):
+        * platform/Supplementable.h: Added.
+        (WebCore):
+        (Supplement):
+        (WebCore::Supplement::~Supplement):
+        (WebCore::Supplement::provideTo):
+        (WebCore::Supplement::from):
+        (Supplementable):
+        (WebCore::Supplementable::provideSupplement):
+        (WebCore::Supplementable::requireSupplement):
+
 2012-02-26  Hajime Morrita  <morrita@chromium.org>
 
         Move ChromeClient::showContextMenu() to ContextMenuClient

@@ -152,7 +152,7 @@ bool DeviceOrientationController::isActiveAt(Page* page)
 
 void provideDeviceOrientationTo(Page* page, DeviceOrientationClient* client)
 {
-    PageSupplement::provideTo(page, DeviceOrientationController::supplementName(), DeviceOrientationController::create(page, client));
+    DeviceOrientationController::provideTo(page, DeviceOrientationController::supplementName(), DeviceOrientationController::create(page, client));
 }
 
 } // namespace WebCore
