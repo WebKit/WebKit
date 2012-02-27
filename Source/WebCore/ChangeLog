@@ -1,3 +1,14 @@
+2012-02-27  Dan Beam  <dbeam@chromium.org>
+
+        Web Inspector: Close TabbedPanes on middle click of tab handle
+        https://bugs.webkit.org/show_bug.cgi?id=79518
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPaneTab.prototype._createTabElement):
+        (WebInspector.TabbedPaneTab.prototype._tabClicked):
+
 2012-02-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: crash in fake workers
