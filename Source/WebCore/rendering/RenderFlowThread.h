@@ -13,7 +13,7 @@
  *    disclaimer in the documentation and/or other materials
  *    provided with the distribution.
  * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER “AS IS” AND ANY
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE
@@ -136,6 +136,10 @@ public:
     void computeOverflowStateForRegions(LayoutUnit oldClientAfterEdge);
 
     bool overflow() const { return m_overflow; }
+
+    // Check if the object is in region and the region is part of this flow thread.
+    bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
+
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
 
@@ -145,6 +149,8 @@ private:
     void checkInvalidRegions();
 
     bool shouldRepaint(const LayoutRect&) const;
+
+    bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
 
     typedef ListHashSet<RenderObject*> FlowThreadChildList;
     FlowThreadChildList m_flowThreadChildList;

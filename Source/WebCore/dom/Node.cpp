@@ -1031,6 +1031,16 @@ void Node::removeCachedClassNodeList(ClassNodeList* list, const String& classNam
     data->m_classNodeListCache.remove(className);
 }
 
+void Node::removeCachedRegionNodeList(RegionNodeList* list, const AtomicString& flowName)
+{
+    ASSERT(rareData());
+    ASSERT(rareData()->nodeLists());
+
+    NodeListsNodeData* data = rareData()->nodeLists();
+    ASSERT_UNUSED(list, list == data->m_regionNodeListCache.get(flowName));
+    data->m_regionNodeListCache.remove(flowName);
+}
+
 void Node::removeCachedNameNodeList(NameNodeList* list, const String& nodeName)
 {
     ASSERT(rareData());
@@ -1663,6 +1673,18 @@ PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
         return PassRefPtr<NodeList>(result.first->second);
 
     RefPtr<ClassNodeList> list = ClassNodeList::create(this, classNames);
+    result.first->second = list.get();
+    return list.release();
+}
+
+PassRefPtr<NodeList> Node::getRegionsByContentNode(const AtomicString& flowName)
+{
+    pair<NodeListsNodeData::RegionNodeListCache::iterator, bool> result
+    = ensureRareData()->ensureNodeLists(this)->m_regionNodeListCache.add(flowName, 0);
+    if (!result.second)
+        return PassRefPtr<NodeList>(result.first->second);
+    
+    RefPtr<RegionNodeList> list = RegionNodeList::create(this, flowName);
     result.first->second = list.get();
     return list.release();
 }
@@ -2352,6 +2374,9 @@ void NodeListsNodeData::invalidateCaches()
     TagNodeListCacheNS::const_iterator tagCacheNSEnd = m_tagNodeListCacheNS.end();
     for (TagNodeListCacheNS::const_iterator it = m_tagNodeListCacheNS.begin(); it != tagCacheNSEnd; ++it)
         it->second->invalidateCache();
+    RegionNodeListCache::const_iterator regionListCacheEnd = m_regionNodeListCache.end();
+    for (RegionNodeListCache::const_iterator it = m_regionNodeListCache.begin(); it != regionListCacheEnd; ++it)
+        it->second->invalidateCache();
     invalidateCachesThatDependOnAttributes();
 }
 
@@ -2398,10 +2423,12 @@ bool NodeListsNodeData::isEmpty() const
     if (!m_microDataItemListCache.isEmpty())
         return false;
 #endif
+    if (!m_regionNodeListCache.isEmpty())
+        return false;
 
     if (m_labelsNodeListCache)
         return false;
-
+    
     return true;
 }
 

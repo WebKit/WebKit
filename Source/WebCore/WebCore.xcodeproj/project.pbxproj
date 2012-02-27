@@ -3011,6 +3011,8 @@
 		8AA61CFF144D595B00F37350 /* WebKitCSSRegionRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AA61CFD144D595B00F37350 /* WebKitCSSRegionRule.cpp */; };
 		8AA61D00144D595B00F37350 /* WebKitCSSRegionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AA61CFE144D595B00F37350 /* WebKitCSSRegionRule.h */; };
 		8AB4BC77126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AB4BC76126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h */; };
+		8ABAFB9F14F5107500A4984B /* RegionNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8ABAFB9D14F5107500A4984B /* RegionNodeList.cpp */; };
+		8ABAFBA014F5107500A4984B /* RegionNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABAFB9E14F5107500A4984B /* RegionNodeList.h */; };
 		8AD0A59414C88336000D83C5 /* JSWebKitCSSRegionRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC24CD148E24B200EFCC0D /* JSWebKitCSSRegionRule.cpp */; };
 		8AD0A59514C88336000D83C5 /* JSWebKitCSSRegionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ACC24CE148E24B200EFCC0D /* JSWebKitCSSRegionRule.h */; };
 		8AD0A59614C88358000D83C5 /* DOMWebKitCSSRegionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ACC2817148E47E700EFCC0D /* DOMWebKitCSSRegionRule.h */; };
@@ -9880,6 +9882,8 @@
 		8AA61CFD144D595B00F37350 /* WebKitCSSRegionRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSRegionRule.cpp; sourceTree = "<group>"; };
 		8AA61CFE144D595B00F37350 /* WebKitCSSRegionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSRegionRule.h; sourceTree = "<group>"; };
 		8AB4BC76126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IgnoreDestructiveWriteCountIncrementer.h; sourceTree = "<group>"; };
+		8ABAFB9D14F5107500A4984B /* RegionNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegionNodeList.cpp; sourceTree = "<group>"; };
+		8ABAFB9E14F5107500A4984B /* RegionNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegionNodeList.h; sourceTree = "<group>"; };
 		8ACC24CD148E24B200EFCC0D /* JSWebKitCSSRegionRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSRegionRule.cpp; sourceTree = "<group>"; };
 		8ACC24CE148E24B200EFCC0D /* JSWebKitCSSRegionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSRegionRule.h; sourceTree = "<group>"; };
 		8ACC2817148E47E700EFCC0D /* DOMWebKitCSSRegionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSRegionRule.h; sourceTree = "<group>"; };
@@ -20836,6 +20840,8 @@
 				D23CA56B0AB0EB8D005108A5 /* RangeException.h */,
 				D23CA5480AB0E983005108A5 /* RangeException.idl */,
 				A84D827B11D333ED00972990 /* RawDataDocumentParser.h */,
+				8ABAFB9D14F5107500A4984B /* RegionNodeList.cpp */,
+				8ABAFB9E14F5107500A4984B /* RegionNodeList.h */,
 				85031B350A44EFC700F992E0 /* RegisteredEventListener.cpp */,
 				85031B360A44EFC700F992E0 /* RegisteredEventListener.h */,
 				A76E5F7E135E0DCF00A69837 /* RenderedDocumentMarker.h */,
@@ -24366,6 +24372,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				8ABAFBA014F5107500A4984B /* RegionNodeList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27318,6 +27325,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				8ABAFB9F14F5107500A4984B /* RegionNodeList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

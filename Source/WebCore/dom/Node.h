@@ -72,6 +72,7 @@ class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
 class QualifiedName;
+class RegionNodeList;
 class RegisteredEventListener;
 class RenderArena;
 class RenderBox;
@@ -550,6 +551,7 @@ public:
     void unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
     void invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName&);
     void invalidateNodeListsCacheAfterChildrenChanged();
+    void invalidateRegionListCache();
     void notifyLocalNodeListsLabelChanged();
     void removeCachedClassNodeList(ClassNodeList*, const String&);
 
@@ -557,6 +559,7 @@ public:
     void removeCachedTagNodeList(TagNodeList*, const AtomicString&);
     void removeCachedTagNodeList(TagNodeList*, const QualifiedName&);
     void removeCachedLabelsNodeList(DynamicSubtreeNodeList*);
+    void removeCachedRegionNodeList(RegionNodeList*, const AtomicString&);
 
     void removeCachedChildNodeList();
 
@@ -564,6 +567,7 @@ public:
     PassRefPtr<NodeList> getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName);
     PassRefPtr<NodeList> getElementsByName(const String& elementName);
     PassRefPtr<NodeList> getElementsByClassName(const String& classNames);
+    PassRefPtr<NodeList> getRegionsByContentNode(const AtomicString& flowName);
 
     PassRefPtr<Element> querySelector(const String& selectors, ExceptionCode&);
     PassRefPtr<NodeList> querySelectorAll(const String& selectors, ExceptionCode&);

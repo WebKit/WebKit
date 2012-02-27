@@ -561,6 +561,7 @@ SOURCES += \
     dom/Range.cpp \
     dom/RangeException.cpp \
     dom/RawDataDocumentParser.h \
+    dom/RegionNodeList.cpp \
     dom/RegisteredEventListener.cpp \
     dom/ScopedEventQueue.cpp \
     dom/ScriptedAnimationController.cpp \
