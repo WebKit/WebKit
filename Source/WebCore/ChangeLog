@@ -1,3 +1,19 @@
+2012-02-27  Andrey Kosyakov  <caseq@chromium.org>
+
+        Use built-in bind in ExtensionAPI.js
+
+        Web Inspector: [Extensions API] get rid of custom bind() in favor of built-in
+        https://bugs.webkit.org/show_bug.cgi?id=79570
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ExtensionAPI.js:
+        (injectedExtensionAPI.EventSinkImpl.prototype.addListener):
+        (injectedExtensionAPI):
+        (injectedExtensionAPI.Panels.prototype.create):
+        (injectedExtensionAPI.AuditResultImpl):
+        (injectedExtensionAPI.ExtensionServerClient):
+
 2012-02-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: get rid of RawSourceCode.sourceMapping getter.

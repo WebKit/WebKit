@@ -125,7 +125,7 @@ EventSinkImpl.prototype = {
         if (this._listeners.length === 0)
             extensionServer.sendRequest({ command: commands.Subscribe, type: this._type });
         this._listeners.push(callback);
-        extensionServer.registerHandler("notify-" + this._type, bind(this._dispatch, this));
+        extensionServer.registerHandler("notify-" + this._type, this._dispatch.bind(this));
     },
 
     removeListener: function(callback)
@@ -279,7 +279,7 @@ function Panels()
         return panels[name];
     }
     for (var panel in panels)
-        this.__defineGetter__(panel, bind(panelGetter, null, panel));
+        this.__defineGetter__(panel, panelGetter.bind(null, panel));
 }
 
 Panels.prototype = {
@@ -293,7 +293,7 @@ Panels.prototype = {
             icon: icon,
             page: page
         };
-        extensionServer.sendRequest(request, callback && bind(callback, this, new ExtensionPanel(id)));
+        extensionServer.sendRequest(request, callback && callback.bind(this, new ExtensionPanel(id)));
     },
 
     setOpenResourceHandler: function(callback)
@@ -495,9 +495,9 @@ function AuditResultImpl(id)
 {
     this._id = id;
 
-    this.createURL = bind(this._nodeFactory, null, "url");
-    this.createSnippet = bind(this._nodeFactory, null, "snippet");
-    this.createText = bind(this._nodeFactory, null, "text");
+    this.createURL = this._nodeFactory.bind(null, "url");
+    this.createSnippet = this._nodeFactory.bind(null, "snippet");
+    this.createText = this._nodeFactory.bind(null, "text");
 }
 
 AuditResultImpl.prototype = {
@@ -677,11 +677,11 @@ function ExtensionServerClient()
     this._lastRequestId = 0;
     this._lastObjectId = 0;
 
-    this.registerHandler("callback", bind(this._onCallback, this));
+    this.registerHandler("callback", this._onCallback.bind(this));
 
     var channel = new MessageChannel();
     this._port = channel.port1;
-    this._port.addEventListener("message", bind(this._onMessage, this), false);
+    this._port.addEventListener("message", this._onMessage.bind(this), false);
     this._port.start();
 
     top.postMessage("registerExtension", [ channel.port2 ], "*");
@@ -740,15 +740,6 @@ ExtensionServerClient.prototype = {
     }
 }
 
-/**
- * @param {...*} vararg
- */
-function bind(func, thisObject, vararg)
-{
-    var args = Array.prototype.slice.call(arguments, 2);
-    return function() { return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0))); };
-}
-
 function populateInterfaceClass(interface, implementation)
 {
     for (var member in implementation) {
@@ -761,9 +752,9 @@ function populateInterfaceClass(interface, implementation)
         if (!descriptor)
             continue;
         if (typeof descriptor.value === "function")
-            interface[member] = bind(descriptor.value, implementation);
+            interface[member] = descriptor.value.bind(implementation);
         else if (typeof descriptor.get === "function")
-            interface.__defineGetter__(member, bind(descriptor.get, implementation));
+            interface.__defineGetter__(member, descriptor.get.bind(implementation));
         else
             Object.defineProperty(interface, member, descriptor);
     }
