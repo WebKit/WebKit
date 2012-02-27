@@ -1,3 +1,26 @@
+2012-02-27  Ed Baker  <edbaker@rim.com>
+
+        [BlackBerry] Dragging a selection handle outside of the content bounding box does not update the selection range correctly
+        https://bugs.webkit.org/show_bug.cgi?id=78608
+
+        Ensure that when selection handles leave the content bounding box that
+        the handle not being dragged remains fixed. Do not apply padding to a
+        direction that would cause the selection to shrink when performing the
+        handle direction detection.
+
+        Reviewed by Antonio Gomes.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::convertPointToFrame):
+        * WebKitSupport/DOMSupport.h:
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::clamp):
+        (BlackBerry::WebKit::directionalVisiblePositionAtExtentOfBox):
+        (BlackBerry::WebKit::SelectionHandler::extendSelectionToFieldBoundary):
+        (BlackBerry::WebKit::SelectionHandler::setSelection):
+        (BlackBerry::WebKit::SelectionHandler::clipPointToVisibleContainer):
+        * WebKitSupport/SelectionHandler.h:
+
 2012-02-27  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Upstream accelerated compositing helper class

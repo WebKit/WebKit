@@ -336,7 +336,7 @@ bool elementIdOrNameIndicatesNoAutocomplete(const Element* element)
     return false;
 }
 
-IntPoint convertPointToFrame(const Frame* sourceFrame, const Frame* targetFrame, const IntPoint& point)
+IntPoint convertPointToFrame(const Frame* sourceFrame, const Frame* targetFrame, const IntPoint& point, const bool clampToTargetFrame)
 {
     ASSERT(sourceFrame && targetFrame);
     if (sourceFrame == targetFrame)
@@ -347,6 +347,7 @@ IntPoint convertPointToFrame(const Frame* sourceFrame, const Frame* targetFrame,
 
     Frame* targetFrameParent = targetFrame->tree()->parent();
     IntRect targetFrameRect = targetFrame->view()->frameRect();
+    IntPoint targetPoint = point;
 
     // Convert the target frame rect to source window content coordinates. This is only required
     // if the parent frame is not the source. If the parent is the source, subframeRect
@@ -355,11 +356,14 @@ IntPoint convertPointToFrame(const Frame* sourceFrame, const Frame* targetFrame,
         targetFrameRect = sourceFrame->view()->windowToContents(targetFrameParent->view()->contentsToWindow(targetFrameRect));
 
     // Requested point is outside of target frame, return InvalidPoint.
-    if (!targetFrameRect.contains(point))
+    if (clampToTargetFrame && !targetFrameRect.contains(targetPoint))
+        targetPoint = IntPoint(targetPoint.x() < targetFrameRect.x() ? targetFrameRect.x() : std::min(targetPoint.x(), targetFrameRect.maxX()),
+                targetPoint.y() < targetFrameRect.y() ? targetFrameRect.y() : std::min(targetPoint.y(), targetFrameRect.maxY()));
+    else if (!targetFrameRect.contains(targetPoint))
         return InvalidPoint;
 
     // Adjust the points to be relative to the target.
-    return targetFrame->view()->windowToContents(sourceFrame->view()->contentsToWindow(point));
+    return targetFrame->view()->windowToContents(sourceFrame->view()->contentsToWindow(targetPoint));
 }
 
 VisibleSelection visibleSelectionForClosestActualWordStart(const VisibleSelection& selection)

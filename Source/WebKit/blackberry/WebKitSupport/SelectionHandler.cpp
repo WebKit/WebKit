@@ -271,6 +271,11 @@ static bool shouldExtendSelectionInDirection(const VisibleSelection& selection, 
     return tempSelection.selection().selectionType() == VisibleSelection::RangeSelection;
 }
 
+static int clamp(const int min, const int value, const int max)
+{
+    return value < min ? min : std::min(value, max);
+}
+
 static VisiblePosition directionalVisiblePositionAtExtentOfBox(Frame* frame, const WebCore::IntRect& boundingBox, unsigned short direction, const WebCore::IntPoint& basePoint)
 {
     ASSERT(frame);
@@ -280,17 +285,17 @@ static VisiblePosition directionalVisiblePositionAtExtentOfBox(Frame* frame, con
 
     switch (direction) {
     case KEYCODE_LEFT:
-        // Extend x to start without modifying y.
-        return frame->visiblePositionForPoint(WebCore::IntPoint(boundingBox.x(), basePoint.y()));
+        // Extend x to start and clamp y to the edge of bounding box.
+        return frame->visiblePositionForPoint(WebCore::IntPoint(boundingBox.x(), clamp(boundingBox.y(), basePoint.y(), boundingBox.maxY())));
     case KEYCODE_RIGHT:
-        // Extend x to end without modifying y.
-        return frame->visiblePositionForPoint(WebCore::IntPoint(boundingBox.maxX(), basePoint.y()));
+        // Extend x to end and clamp y to the edge of bounding box.
+        return frame->visiblePositionForPoint(WebCore::IntPoint(boundingBox.maxX(), clamp(boundingBox.y(), basePoint.y(), boundingBox.maxY())));
     case KEYCODE_UP:
-        // Extend y to top without modifying x.
-        return frame->visiblePositionForPoint(WebCore::IntPoint(basePoint.x(), boundingBox.y()));
+        // Extend y to top and clamp x to the edge of bounding box.
+        return frame->visiblePositionForPoint(WebCore::IntPoint(clamp(boundingBox.x(), basePoint.x(), boundingBox.maxX()), boundingBox.y()));
     case KEYCODE_DOWN:
-        // Extend y to bottom without modifying x.
-        return frame->visiblePositionForPoint(WebCore::IntPoint(basePoint.x(), boundingBox.maxY()));
+        // Extend y to bottom and clamp x to the edge of bounding box.
+        return frame->visiblePositionForPoint(WebCore::IntPoint(clamp(boundingBox.x(), basePoint.x(), boundingBox.maxX()), boundingBox.maxY()));
     default:
         break;
     }
@@ -325,7 +330,7 @@ unsigned short SelectionHandler::extendSelectionToFieldBoundary(bool isStartHand
 
     // Start handle is outside of the field. Treat it as the changed handle and move
     // relative to the start caret rect.
-    unsigned short character = directionOfPointRelativeToRect(selectionPoint, caretRect, isStartHandle /*useTopPadding*/, !isStartHandle /*useBottomPadding*/);
+    unsigned short character = directionOfPointRelativeToRect(selectionPoint, caretRect, isStartHandle /* useTopPadding */, !isStartHandle /* useBottomPadding */);
 
     // Prevent incorrect movement, handles can only extend the selection this way
     // to prevent inversion of the handles.
@@ -340,9 +345,9 @@ unsigned short SelectionHandler::extendSelectionToFieldBoundary(bool isStartHand
         newVisiblePosition = directionalVisiblePositionAtExtentOfBox(focusedFrame, nodeBoundingBox, character, selectionPoint);
 
     if (isStartHandle)
-        newSelection = VisibleSelection(newVisiblePosition, newSelection.extent(), true /*isDirectional*/);
+        newSelection = VisibleSelection(newVisiblePosition, newSelection.extent(), true /* isDirectional */);
     else
-        newSelection = VisibleSelection(newSelection.base(), newVisiblePosition, true /*isDirectional*/);
+        newSelection = VisibleSelection(newSelection.base(), newVisiblePosition, true /* isDirectional */);
 
     // If no selection will be changed, return the character to extend using navigation.
     if (controller->selection() == newSelection)
@@ -412,28 +417,6 @@ bool SelectionHandler::updateOrHandleInputSelection(VisibleSelection& newSelecti
     return true;
 }
 
-WebCore::IntPoint SelectionHandler::clipPointToFocusNode(const WebCore::IntPoint& point)
-{
-    // Clipping should only happen if we are in an input field.
-    if (!m_webPage->m_inputHandler->isInputMode())
-        return point;
-
-    Frame* focusedFrame = m_webPage->focusedOrMainFrame();
-    if (!focusedFrame->document()->focusedNode() || !focusedFrame->document()->focusedNode()->renderer())
-        return point;
-
-    WebCore::IntRect focusedNodeBoundingBox = focusedFrame->document()->focusedNode()->renderer()->absoluteBoundingBoxRect();
-    focusedNodeBoundingBox.inflate(-1);
-
-    WebCore::IntPoint clippedPoint = point;
-    if (!focusedNodeBoundingBox.contains(clippedPoint))
-        clippedPoint = WebCore::IntPoint(
-            point.x() < focusedNodeBoundingBox.x() ? focusedNodeBoundingBox.x() : std::min(focusedNodeBoundingBox.maxX(), point.x()),
-            point.y() < focusedNodeBoundingBox.y() ? focusedNodeBoundingBox.y() : std::min(focusedNodeBoundingBox.maxY(), point.y()));
-
-    return clippedPoint;
-}
-
 void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCore::IntPoint& end)
 {
     m_selectionActive = true;
@@ -468,7 +451,7 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
         relativeStart = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), focusedFrame, start);
 
         // Set the selection with validation.
-        newSelection.setBase(visiblePositionForPointIgnoringClipping(*focusedFrame, clipPointToFocusNode(relativeStart)));
+        newSelection.setBase(visiblePositionForPointIgnoringClipping(*focusedFrame, clipPointToVisibleContainer(start)));
 
         // Reset the selection using the existing extent without validation.
         newSelection.setWithoutValidation(newSelection.base(), controller->selection().end());
@@ -478,7 +461,7 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
         relativeEnd = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), focusedFrame, end);
 
         // Set the selection with validation.
-        newSelection.setExtent(visiblePositionForPointIgnoringClipping(*focusedFrame, clipPointToFocusNode(relativeEnd)));
+        newSelection.setExtent(visiblePositionForPointIgnoringClipping(*focusedFrame, clipPointToVisibleContainer(end)));
 
         // Reset the selection using the existing base without validation.
         newSelection.setWithoutValidation(controller->selection().start(), newSelection.extent());
@@ -774,6 +757,24 @@ void SelectionHandler::clipRegionToVisibleContainer(IntRectRegion& region)
 
         region = intersectRegions(IntRectRegion(boundingBox), region);
     }
+}
+
+WebCore::IntPoint SelectionHandler::clipPointToVisibleContainer(const WebCore::IntPoint& point) const
+{
+    ASSERT(m_webPage->m_mainFrame && m_webPage->m_mainFrame->view());
+
+    Frame* frame = m_webPage->focusedOrMainFrame();
+    WebCore::IntPoint clippedPoint = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), frame, point, true /* clampToTargetFrame */);
+
+    if (m_webPage->m_inputHandler->isInputMode()
+            && frame->document()->focusedNode()
+            && frame->document()->focusedNode()->renderer()) {
+        WebCore::IntRect boundingBox(frame->document()->focusedNode()->renderer()->absoluteBoundingBoxRect());
+        boundingBox.inflate(-1);
+        clippedPoint = WebCore::IntPoint(clamp(boundingBox.x(), clippedPoint.x(), boundingBox.maxX()), clamp(boundingBox.y(), clippedPoint.y(), boundingBox.maxY()));
+    }
+
+    return clippedPoint;
 }
 
 static WebCore::IntPoint referencePoint(const VisiblePosition& position, const WebCore::IntRect& boundingRect, const WebCore::IntPoint& framePosition, bool isStartCaret, bool isRTL)

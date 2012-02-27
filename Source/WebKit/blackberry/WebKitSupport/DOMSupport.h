@@ -72,7 +72,7 @@ bool isPositionInNode(WebCore::Node*, const WebCore::Position&);
 AttributeState elementSupportsAutocomplete(const WebCore::Element*);
 bool elementIdOrNameIndicatesNoAutocomplete(const WebCore::Element*);
 
-WebCore::IntPoint convertPointToFrame(const WebCore::Frame* sourceFrame, const WebCore::Frame* targetFrame, const WebCore::IntPoint& sourcePoint);
+WebCore::IntPoint convertPointToFrame(const WebCore::Frame* sourceFrame, const WebCore::Frame* targetFrame, const WebCore::IntPoint& sourcePoint, const bool clampToTargetFrame = false);
 
 static const WebCore::IntPoint InvalidPoint = WebCore::IntPoint(-1, -1);
 

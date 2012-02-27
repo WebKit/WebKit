@@ -76,7 +76,7 @@ private:
     WebCore::Node* DOMContainerNodeForVisiblePosition(const WebCore::VisiblePosition&) const;
     bool shouldUpdateSelectionOrCaretForPoint(const WebCore::IntPoint&, const WebCore::IntRect&, bool startCaret = true) const;
     unsigned short extendSelectionToFieldBoundary(bool isStartHandle, const WebCore::IntPoint& selectionPoint, WebCore::VisibleSelection& newSelection);
-    WebCore::IntPoint clipPointToFocusNode(const WebCore::IntPoint&);
+    WebCore::IntPoint clipPointToVisibleContainer(const WebCore::IntPoint&) const;
 
     WebPagePrivate* m_webPage;
 
