@@ -1,0 +1,27 @@
+<html>
+<body>
+<pre id="console">
+test
+</pre>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+
+    var msg = 'Document zoom should not apply when printing.';
+    var pass = true;
+
+    for (var i = 0; i < 10; i++) {
+        var numberOfPages = layoutTestController.numberOfPages(100, 30);
+        if (numberOfPages != 1) {
+            pass = false;
+            msg += 'Got ' + numberOfPages + ' pages, expected 1.\n';
+        }
+        eventSender.zoomPageIn();
+    }
+
+    msg = (pass ? 'PASS' : 'FAIL') + ' ' + msg;
+    document.querySelector('#console').textContent = msg;
+}
+</script>
+</body>
+</html>

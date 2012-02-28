@@ -1436,7 +1436,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document, C
     RefPtr<RenderStyle> documentStyle = RenderStyle::create();
     documentStyle->setDisplay(BLOCK);
     documentStyle->setRTLOrdering(document->visuallyOrdered() ? VisualOrder : LogicalOrder);
-    documentStyle->setZoom(frame ? frame->pageZoomFactor() : 1);
+    documentStyle->setZoom(frame && !document->printing() ? frame->pageZoomFactor() : 1);
     documentStyle->setPageScaleTransform(frame ? frame->frameScaleFactor() : 1);
     documentStyle->setUserModify(document->inDesignMode() ? READ_WRITE : READ_ONLY);
     documentStyle->setLocale(document->contentLanguage());
