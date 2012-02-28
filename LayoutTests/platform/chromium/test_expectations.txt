@@ -4459,3 +4459,5 @@ BUGWK79707 MAC : svg/custom/font-face-not-in-document.svg = PASS CRASH
 BUGWK79707 MAC : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = PASS CRASH
 
 BUGWK79765 DEBUG : webaudio/audiobuffersource-channels.html = CRASH
+
+BUGWK79823 : compositing/repaint/opacity-between-absolute.html = PASS IMAGE
