@@ -82,31 +82,10 @@ static NSString *webFallbackFontFamily(void)
 }
 
 #if !ERROR_DISABLED
-#if defined(__LP64__) || (!defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD))
-static NSString* pathFromFont(NSFont*)
+static NSString *pathFromFont(NSFont *font)
 {
-    // FMGetATSFontRefFromFont is not available. As pathFromFont is only used for debugging purposes,
-    // returning nil is acceptable.
-    return nil;
+    return [[[font fontDescriptor] objectForKey:(NSString *)kCTFontURLAttribute] path];
 }
-#else
-static NSString* pathFromFont(NSFont *font)
-{
-    ATSFontRef atsFont = FMGetATSFontRefFromFont(CTFontGetPlatformFont(toCTFontRef(font), 0));
-    FSRef fileRef;
-
-    OSStatus status = ATSFontGetFileReference(atsFont, &fileRef);
-    if (status != noErr)
-        return nil;
-
-    UInt8 filePathBuffer[PATH_MAX];
-    status = FSRefMakePath(&fileRef, filePathBuffer, PATH_MAX);
-    if (status == noErr)
-        return [NSString stringWithUTF8String:(const char*)filePathBuffer];
-
-    return nil;
-}
-#endif // __LP64__
 #endif // !ERROR_DISABLED
 
 void SimpleFontData::platformInit()
