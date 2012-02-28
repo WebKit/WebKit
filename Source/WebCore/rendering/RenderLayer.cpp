@@ -3653,8 +3653,12 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, RenderRegion*
     // Update the clip rects that will be passed to child layers.
     if (renderer()->hasOverflowClip() || renderer()->hasClip()) {
         // This layer establishes a clip of some kind.
+
+        // This offset cannot use convertToLayerCoords, because sometimes our rootLayer may be across
+        // some transformed layer boundary, for example, in the RenderLayerCompositor overlapMap, where
+        // clipRects are needed in view space.
         LayoutPoint offset;
-        convertToLayerCoords(rootLayer, offset);
+        offset = roundedIntPoint(renderer()->localToContainerPoint(FloatPoint(), rootLayer->renderer()));
         RenderView* view = renderer()->view();
         ASSERT(view);
         if (view && clipRects.fixed() && rootLayer->renderer() == view) {

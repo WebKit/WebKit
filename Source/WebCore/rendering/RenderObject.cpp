@@ -2094,6 +2094,15 @@ FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderB
     return transformState.lastPlanarQuad();
 }
 
+FloatPoint RenderObject::localToContainerPoint(const FloatPoint& localPoint, RenderBoxModelObject* repaintContainer, bool fixed, bool* wasFixed) const
+{
+    TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
+    mapLocalToContainer(repaintContainer, fixed, true, transformState, wasFixed);
+    transformState.flatten();
+
+    return transformState.lastPlanarPoint();
+}
+
 LayoutSize RenderObject::offsetFromContainer(RenderObject* o, const LayoutPoint& point) const
 {
     ASSERT(o == container());

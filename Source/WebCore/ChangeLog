@@ -1,3 +1,26 @@
+2012-02-27  Shawn Singh  <shawnsingh@chromium.org>
+
+        RenderLayer ClipRect not accounting for transforms
+        https://bugs.webkit.org/show_bug.cgi?id=76486
+
+        Reviewed by Simon Fraser.
+
+        Test: compositing/layer-creation/overlap-transformed-and-clipped.html
+
+        This patch changes calculateClipRects() so that the clipRect
+        offset is allowed to be converted across layers with
+        transforms. This is necessary because the RenderLayerCompositor
+        needs clipRects in document space, rather than with respect to
+        some local clipping layer.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localToContainerPoint):
+        (WebCore):
+        * rendering/RenderObject.h:
+        (RenderObject):
+
 2012-02-27  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Clear pending mutation records on disconnect()
