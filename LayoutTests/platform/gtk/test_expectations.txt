@@ -99,6 +99,9 @@ BUGWK74270 : fast/forms/basic-selects.html = FAIL
 
 BUGWK76639 : fast/table/multiple-captions-crash3.html = IMAGE FAIL
 
+BUGWK79756 : css3/flexbox/inline-flexbox.html = IMAGE FAIL
+BUGWK79757 : fast/selectors/selection-window-inactive.html = IMAGE FAIL
+
 // Need rebaselining. Only TEXT is suppressed because that is all the buildbots check, however
 // images need to be rebaselined too.
 BUGWK69210: fast/encoding/utf-16-big-endian.html = TEXT
