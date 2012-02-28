@@ -28,10 +28,12 @@
             "filename": r"Source/WebCore/bindings/objc/PublicDOMInterfaces.h"
         },
         "Forms": {
-            "filename": r"Source/WebCore/html/HTML(FieldSet|Form|FormControl|Input|Label"
-                        r"|OptGroup|Option|Select|TextArea|TextFormControl)Element\."
+            "filename": r"Source/WebCore/html/HTML(DataList|FieldSet|Form|FormControl|Input|Keygen|Label"
+                        r"|Legend|OptGroup|Option|Output|Select|TextArea|TextFormControl)Element\."
+                        r"|Source/WebCore/html/FormAssociatedElement\."
                         r"|Source/WebCore/html/\w*InputType\."
-                        r"|Source/WebCore/rendering/Render(ListBox|MenuList|Slider|TextControl"
+                        r"|Source/WebCore/html/shadow/(SliderThumbElement|TextControlInnerElements)\."
+                        r"|Source/WebCore/rendering/Render(FileUploadControl|ListBox|MenuList|Slider|TextControl"
                         r"|TextControlMultiLine|TextControlSingleLine)\."
         },
         "GStreamerGraphics": {
