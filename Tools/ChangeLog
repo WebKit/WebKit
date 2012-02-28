@@ -1,3 +1,17 @@
+2012-02-28  János Badics  <dicska@gmail.com>
+
+        [Qt] build-webkit does not detect the number of CPUs
+        https://bugs.webkit.org/show_bug.cgi?id=76445
+
+        Based on Seo Sanghyeon's work (modification:
+        Automatically determine the number of CPUs for make
+        only if -j make argument haven't already been specified.)
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
 2012-02-28  Kent Tamura  <tkent@chromium.org>
 
         Update a pattern for forms files of watchlist
