@@ -86,6 +86,7 @@ inline bool canCompileOpcode(OpcodeID opcodeID)
     case op_post_dec:
     case op_add:
     case op_sub:
+    case op_negate:
     case op_mul:
     case op_mod:
     case op_div:

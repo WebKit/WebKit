@@ -341,6 +341,17 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         break;
     }
         
+    case ArithNegate: {
+        if (m_graph.negateShouldSpeculateInteger(node)) {
+            forNode(node.child1()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictInt32);
+            break;
+        }
+        forNode(node.child1()).filter(PredictNumber);
+        forNode(nodeIndex).set(PredictDouble);
+        break;
+    }
+        
     case ArithMul:
     case ArithDiv:
     case ArithMin:

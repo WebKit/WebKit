@@ -1711,6 +1711,7 @@ private:
     void compilePutByValForByteArray(GPRReg base, GPRReg property, Node&);
     void compileAdd(Node&);
     void compileArithSub(Node&);
+    void compileArithNegate(Node&);
     void compileArithMul(Node&);
     void compileArithMod(Node&);
     void compileSoftModulo(Node&);

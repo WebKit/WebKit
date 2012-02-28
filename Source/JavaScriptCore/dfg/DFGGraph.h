@@ -177,6 +177,12 @@ public:
         return Node::shouldSpeculateInteger(left, right) && add.canSpeculateInteger();
     }
     
+    bool negateShouldSpeculateInteger(Node& negate)
+    {
+        ASSERT(negate.op == ArithNegate);
+        return at(negate.child1()).shouldSpeculateInteger() && negate.canSpeculateInteger();
+    }
+    
     bool addShouldSpeculateInteger(NodeIndex nodeIndex)
     {
         return addShouldSpeculateInteger(at(nodeIndex));

@@ -209,6 +209,15 @@ private:
             break;
         }
             
+        case ArithNegate:
+            if (m_graph[node.child1()].prediction()) {
+                if (m_graph.negateShouldSpeculateInteger(node))
+                    changed |= mergePrediction(PredictInt32);
+                else
+                    changed |= mergePrediction(PredictDouble);
+            }
+            break;
+            
         case ArithMul:
         case ArithMin:
         case ArithMax:

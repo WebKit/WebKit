@@ -2363,6 +2363,34 @@ void SpeculativeJIT::compileArithSub(Node& node)
     doubleResult(result.fpr(), m_compileIndex);
 }
 
+void SpeculativeJIT::compileArithNegate(Node& node)
+{
+    if (m_jit.graph().negateShouldSpeculateInteger(node)) {
+        SpeculateIntegerOperand op1(this, node.child1());
+        GPRTemporary result(this);
+
+        m_jit.move(op1.gpr(), result.gpr());
+
+        if (nodeCanTruncateInteger(node.arithNodeFlags()))
+            m_jit.neg32(result.gpr());
+        else {
+            speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchNeg32(MacroAssembler::Overflow, result.gpr()));
+            if (!nodeCanIgnoreNegativeZero(node.arithNodeFlags()))
+                speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchTest32(MacroAssembler::Zero, result.gpr()));
+        }
+
+        integerResult(result.gpr(), m_compileIndex);
+        return;
+    }
+        
+    SpeculateDoubleOperand op1(this, node.child1());
+    FPRTemporary result(this);
+
+    m_jit.negateDouble(op1.fpr(), result.fpr());
+
+    doubleResult(result.fpr(), m_compileIndex);
+}
+
 void SpeculativeJIT::compileArithMul(Node& node)
 {
     if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {

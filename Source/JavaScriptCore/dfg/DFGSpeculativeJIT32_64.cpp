@@ -1885,6 +1885,10 @@ void SpeculativeJIT::compile(Node& node)
         compileArithSub(node);
         break;
 
+    case ArithNegate:
+        compileArithNegate(node);
+        break;
+
     case ArithMul:
         compileArithMul(node);
         break;

@@ -886,6 +886,11 @@ public:
         m_assembler.vabs(dest, src);
     }
 
+    void negateDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.vneg(dest, src);
+    }
+
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
     {
         m_assembler.vmov(fpTempRegisterAsSingle(), src);
@@ -1402,6 +1407,13 @@ public:
     {
         move(imm, dataTempRegister);
         return branchMul32(cond, dataTempRegister, src, dest);
+    }
+
+    Jump branchNeg32(ResultCondition cond, RegisterID srcDest)
+    {
+        ARMThumbImmediate zero = ARMThumbImmediate::makeUInt12(0);
+        m_assembler.sub_S(srcDest, zero, srcDest);
+        return Jump(makeBranch(cond));
     }
 
     Jump branchOr32(ResultCondition cond, RegisterID src, RegisterID dest)

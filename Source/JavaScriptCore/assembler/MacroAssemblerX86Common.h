@@ -34,6 +34,11 @@
 namespace JSC {
 
 class MacroAssemblerX86Common : public AbstractMacroAssembler<X86Assembler> {
+protected:
+#if CPU(X86_64)
+    static const X86Registers::RegisterID scratchRegister = X86Registers::r11;
+#endif
+
     static const int DoubleConditionBitInvert = 0x10;
     static const int DoubleConditionBitSpecial = 0x20;
     static const int DoubleConditionBits = DoubleConditionBitInvert | DoubleConditionBitSpecial;
@@ -419,6 +424,23 @@ public:
         m_assembler.sqrtsd_rr(src, dst);
     }
 
+    void absDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        ASSERT(src != dst);
+        static const double negativeZeroConstant = -0.0;
+        loadDouble(&negativeZeroConstant, dst);
+        m_assembler.andnpd_rr(src, dst);
+    }
+
+    void negateDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        ASSERT(src != dst);
+        static const double negativeZeroConstant = -0.0;
+        loadDouble(&negativeZeroConstant, dst);
+        m_assembler.xorpd_rr(src, dst);
+    }
+
+
     // Memory access operations:
     //
     // Loads are of the form load(address, destination) and stores of the form
@@ -613,6 +635,17 @@ public:
         ASSERT(isSSE2Present());
         if (src != dest)
             m_assembler.movsd_rr(src, dest);
+    }
+
+    void loadDouble(const void* address, FPRegisterID dest)
+    {
+#if CPU(X86)
+        ASSERT(isSSE2Present());
+        m_assembler.movsd_mr(address, dest);
+#else
+        move(TrustedImmPtr(address), scratchRegister);
+        loadDouble(scratchRegister, dest);
+#endif
     }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)

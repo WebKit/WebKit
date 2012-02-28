@@ -584,6 +584,7 @@ private:
         OP_VMOV_T2      = 0xEEB0,
         OP_VMOV_IMM_T2  = 0xEEB0,
         OP_VMRS         = 0xEEB0,
+        OP_VNEG_T2      = 0xEEB0,
         OP_VSQRT_T1     = 0xEEB0,
         OP_B_T3a        = 0xF000,
         OP_B_T4a        = 0xF000,
@@ -601,6 +602,7 @@ private:
         OP_SUB_S_imm_T3 = 0xF1B0,
         OP_CMP_imm_T2   = 0xF1B0,
         OP_RSB_imm_T2   = 0xF1C0,
+        OP_RSB_S_imm_T2 = 0xF1D0,
         OP_ADD_imm_T4   = 0xF200,
         OP_MOV_imm_T3   = 0xF240,
         OP_SUB_imm_T4   = 0xF2A0,
@@ -649,6 +651,7 @@ private:
         OP_VABS_T2b     = 0x0A40,
         OP_VCMPb        = 0x0A40,
         OP_VCVT_FPIVFPb = 0x0A40,
+        OP_VNEG_T2b     = 0x0A40,
         OP_VSUB_T2b     = 0x0A40,
         OP_VSQRT_T1b    = 0x0A40,
         OP_NOP_T2b      = 0x8000,
@@ -1584,6 +1587,16 @@ public:
         m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_SUB_S_imm_T3, rn, rd, imm);
     }
 
+    ALWAYS_INLINE void sub_S(RegisterID rd, ARMThumbImmediate imm, RegisterID rn)
+    {
+        ASSERT(rd != ARMRegisters::pc);
+        ASSERT(rn != ARMRegisters::pc);
+        ASSERT(imm.isValid());
+        ASSERT(imm.isUInt12());
+
+        m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_RSB_S_imm_T2, rn, rd, imm);
+    }
+
     // Not allowed in an IT (if then) block?
     ALWAYS_INLINE void sub_S(RegisterID rd, RegisterID rn, RegisterID rm, ShiftTypeAndAmount shift)
     {
@@ -1732,6 +1745,11 @@ public:
     void vabs(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
     {
         m_formatter.vfpOp(OP_VABS_T2, OP_VABS_T2b, true, VFPOperand(16), rd, rm);
+    }
+
+    void vneg(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
+    {
+        m_formatter.vfpOp(OP_VNEG_T2, OP_VNEG_T2b, true, VFPOperand(1), rd, rm);
     }
 
     void vsqrt(FPDoubleRegisterID rd, FPDoubleRegisterID rm)

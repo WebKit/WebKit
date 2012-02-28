@@ -598,6 +598,7 @@ private:
         case BitURShift:
         case ArithAdd:
         case ArithSub:
+        case ArithNegate:
         case ArithMul:
         case ArithMod:
         case ArithDiv:

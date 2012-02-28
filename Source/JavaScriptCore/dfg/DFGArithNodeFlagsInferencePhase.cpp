@@ -131,6 +131,11 @@ private:
             break;
         }
             
+        case ArithNegate: {
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            break;
+        }
+            
         case ArithMul:
         case ArithDiv: {
             // As soon as a multiply happens, we can easily end up in the part

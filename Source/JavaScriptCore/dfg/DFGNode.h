@@ -204,6 +204,7 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     /* Nodes for arithmetic operations. */\
     macro(ArithAdd, NodeResultNumber) \
     macro(ArithSub, NodeResultNumber) \
+    macro(ArithNegate, NodeResultNumber) \
     macro(ArithMul, NodeResultNumber) \
     macro(ArithDiv, NodeResultNumber) \
     macro(ArithMod, NodeResultNumber) \
@@ -531,6 +532,7 @@ struct Node {
         case UInt32ToNumber:
         case ArithAdd:
         case ArithSub:
+        case ArithNegate:
         case ArithMul:
         case ArithAbs:
         case ArithMin:

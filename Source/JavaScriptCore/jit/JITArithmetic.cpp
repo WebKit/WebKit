@@ -192,6 +192,42 @@ void JIT::emitSlow_op_jngreatereq(Instruction* currentInstruction, Vector<SlowCa
 
 #if USE(JSVALUE64)
 
+void JIT::emit_op_negate(Instruction* currentInstruction)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned src = currentInstruction[2].u.operand;
+
+    emitGetVirtualRegister(src, regT0);
+
+    Jump srcNotInt = emitJumpIfNotImmediateInteger(regT0);
+    addSlowCase(branchTest32(Zero, regT0, TrustedImm32(0x7fffffff)));
+    neg32(regT0);
+    emitFastArithReTagImmediate(regT0, regT0);
+
+    Jump end = jump();
+
+    srcNotInt.link(this);
+    emitJumpSlowCaseIfNotImmediateNumber(regT0);
+
+    move(TrustedImmPtr(reinterpret_cast<void*>(0x8000000000000000ull)), regT1);
+    xorPtr(regT1, regT0);
+
+    end.link(this);
+    emitPutVirtualRegister(dst);
+}
+
+void JIT::emitSlow_op_negate(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+
+    linkSlowCase(iter); // 0x7fffffff check
+    linkSlowCase(iter); // double check
+
+    JITStubCall stubCall(this, cti_op_negate);
+    stubCall.addArgument(regT1, regT0);
+    stubCall.call(dst);
+}
+
 void JIT::emit_op_lshift(Instruction* currentInstruction)
 {
     unsigned result = currentInstruction[1].u.operand;

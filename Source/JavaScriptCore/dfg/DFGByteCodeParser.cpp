@@ -686,6 +686,7 @@ private:
         case UInt32ToNumber:
         case ArithAdd:
         case ArithSub:
+        case ArithNegate:
         case ValueAdd:
         case ArithMod: // for ArithMode "MayOverflow" means we tried to divide by zero, or we saw double.
             m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow);
@@ -1603,6 +1604,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithSub, OpInfo(NodeUseBottom), op1, op2)));
             NEXT_OPCODE(op_sub);
+        }
+
+        case op_negate: {
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithNegate, OpInfo(NodeUseBottom), op1)));
+            NEXT_OPCODE(op_negate);
         }
 
         case op_mul: {

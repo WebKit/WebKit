@@ -1,3 +1,90 @@
+2012-02-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Implement support for op_negate and op_bitnot in the DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=79617
+
+        Reviewed by Filip Pizlo.
+
+        Add an ArithNegate op to the DFG JIT, to implement op_negate.
+
+        This patch also adds support for op_negate to the JSVALUE64 baseline JIT
+        (JSVALUE32_64 already had this), so that we can profile the slowpath usage.
+
+        This is a 2.5%-3% Sunspider progression and a 1% win on Kraken.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::sub_S):
+            - Added sub_S from immediate.
+        (ARMv7Assembler):
+        (JSC::ARMv7Assembler::vneg):
+            - Added double negate.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::negateDouble):
+            - Added double negate.
+        (MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::branchNeg32):
+            - Added.
+        * assembler/MacroAssemblerX86.h:
+        (MacroAssemblerX86):
+            - moved loadDouble, absDouble to common.
+        * assembler/MacroAssemblerX86Common.h:
+        (MacroAssemblerX86Common):
+        (JSC::MacroAssemblerX86Common::absDouble):
+            - implementation can be shared.
+        (JSC::MacroAssemblerX86Common::negateDouble):
+            - Added.
+        (JSC::MacroAssemblerX86Common::loadDouble):
+            - allow absDouble to have a common implementation.
+        * assembler/MacroAssemblerX86_64.h:
+        (MacroAssemblerX86_64):
+            - moved loadDouble, absDouble to common.
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+            - support ArithNegate.
+        * dfg/DFGArithNodeFlagsInferencePhase.cpp:
+        (JSC::DFG::ArithNodeFlagsInferencePhase::propagate):
+            - support ArithNegate.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+            - support ArithNegate.
+        (JSC::DFG::ByteCodeParser::parseBlock):
+            - support op_negate.
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+            - support ArithNegate.
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+            - support op_negate.
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::negateShouldSpeculateInteger):
+            - support ArithNegate.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArithNodeFlags):
+            - support ArithNegate.
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+            - support ArithNegate.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+            - support ArithNegate.
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+            - support ArithNegate.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+            - support ArithNegate.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+            - support ArithNegate.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+            - Add support for op_negate in JSVALUE64.
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emitSlow_op_negate):
+            - Add support for op_negate in JSVALUE64.
+
 2012-02-27  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Unreviewed. Build fix for linux-bot (qt) after r109021.
