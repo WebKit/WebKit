@@ -1,3 +1,29 @@
+2012-02-28  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: remove window aspects from the timeline presentation model.
+        https://bugs.webkit.org/show_bug.cgi?id=79803
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane):
+        (WebInspector.TimelineOverviewPane.prototype.accept):
+        (WebInspector.TimelineOverviewPane.prototype._setWindowIndices):
+        (WebInspector.TimelineOverviewPane.prototype.windowLeft):
+        (WebInspector.TimelineOverviewPane.prototype.windowRight):
+        (WebInspector.TimelineOverviewPane.prototype._fireWindowChanged):
+        (WebInspector.TimelineOverviewWindow.prototype._dragWindow):
+        (WebInspector.TimelineOverviewPane.WindowSelector):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._onCategoryCheckboxClicked):
+        (WebInspector.TimelinePanel.prototype._updateBoundaries):
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.prototype.reset):
+        (WebInspector.TimelineCategory):
+        (WebInspector.TimelineCategory.prototype.get hidden):
+        (WebInspector.TimelineCategory.prototype.set hidden):
+
 2012-02-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Improve the visual of the tiling

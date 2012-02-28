@@ -44,11 +44,6 @@ WebInspector.TimelinePresentationModel = function()
     this.reset();
 }
 
-WebInspector.TimelinePresentationModel.Events = {
-    WindowChanged: "WindowChanged",
-    CategoryVisibilityChanged: "CategoryVisibilityChanged"
-}
-
 WebInspector.TimelinePresentationModel.shortRecordThreshold = 0.015;
 
 WebInspector.TimelinePresentationModel.prototype = {
@@ -75,7 +70,6 @@ WebInspector.TimelinePresentationModel.prototype = {
         this._requestAnimationFrameRecords = {};
         this._minimumRecordTime = -1;
         this._maximumRecordTime = -1;
-        this._resetWindow();
     },
 
     minimumRecordTime: function()
@@ -181,14 +175,6 @@ WebInspector.TimelinePresentationModel.prototype = {
         return parentRecord;
     },
 
-    _resetWindow: function()
-    {
-        this.windowLeft = 0.0;
-        this.windowRight = 1.0;
-        this.windowIndexLeft = 0;
-        this.windowIndexRight = null;
-    },
-
     setGlueRecords: function(glue)
     {
         this._glueRecords = glue;
@@ -205,32 +191,6 @@ WebInspector.TimelinePresentationModel.prototype = {
     _addCategory: function(category)
     {
         this._categories[category.name] = category;
-    },
-
-    /**
-     * @param {number} left
-     * @param {number} right
-     */
-    setWindowPosition: function(left, right)
-    {
-        this.windowLeft = left;
-        this.windowRight = right;
-        this.dispatchEventToListeners(WebInspector.TimelinePresentationModel.Events.WindowChanged);
-    },
-
-    fireWindowChanged: function()
-    {
-        this.dispatchEventToListeners(WebInspector.TimelinePresentationModel.Events.WindowChanged);
-    },
-
-    /**
-     * @param {WebInspector.TimelineCategory} category
-     * @param {boolean} visible
-     */
-    setCategoryVisibility: function(category, visible)
-    {
-        category.hidden = !visible;
-        this.dispatchEventToListeners(WebInspector.TimelinePresentationModel.Events.CategoryVisibilityChanged, category);
     },
 
     get _recordStyles()
@@ -730,3 +690,37 @@ WebInspector.TimelinePresentationModel.Filter.prototype = {
      */
     accept: function(record) { return false; }
 }
+
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
+WebInspector.TimelineCategory = function(name, title, color)
+{
+    this.name = name;
+    this.title = title;
+    this.color = color;
+    this.hidden = false;
+}
+
+WebInspector.TimelineCategory.Events = {
+    VisibilityChanged: "VisibilityChanged"
+};
+
+WebInspector.TimelineCategory.prototype = {
+    /**
+     * @type {boolean}
+     */
+    get hidden()
+    {
+        return this._hidden;
+    },
+
+    set hidden(hidden)
+    {
+        this._hidden = hidden;
+        this.dispatchEventToListeners(WebInspector.TimelineCategory.Events.VisibilityChanged, this);
+    }
+}
+
+WebInspector.TimelineCategory.prototype.__proto__ = WebInspector.Object.prototype;

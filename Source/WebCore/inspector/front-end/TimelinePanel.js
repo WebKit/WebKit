@@ -38,10 +38,9 @@ WebInspector.TimelinePanel = function()
     this.registerRequiredCSS("timelinePanel.css");
 
     this._presentationModel = new WebInspector.TimelinePresentationModel();
-    this._presentationModel.addEventListener(WebInspector.TimelinePresentationModel.Events.WindowChanged, this._scheduleRefresh.bind(this, false));
-    this._presentationModel.addEventListener(WebInspector.TimelinePresentationModel.Events.CategoryVisibilityChanged, this._scheduleRefresh.bind(this, true));
 
     this._overviewPane = new WebInspector.TimelineOverviewPane(this._presentationModel);
+    this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.WindowChanged, this._scheduleRefresh.bind(this, false));
 
     this.element.appendChild(this._overviewPane.element);
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
@@ -264,7 +263,8 @@ WebInspector.TimelinePanel.prototype = {
 
     _onCategoryCheckboxClicked: function(category, event)
     {
-        this._presentationModel.setCategoryVisibility(category, event.target.checked);
+        category.hidden = !event.target.checked;
+        this._scheduleRefresh(true);
     },
 
     _registerShortcuts: function()
@@ -579,8 +579,8 @@ WebInspector.TimelinePanel.prototype = {
     _updateBoundaries: function()
     {
         this._calculator.reset();
-        this._calculator.windowLeft = this._presentationModel.windowLeft;
-        this._calculator.windowRight = this._presentationModel.windowRight;
+        this._calculator.windowLeft = this._overviewPane.windowLeft();
+        this._calculator.windowRight = this._overviewPane.windowRight();
 
         for (var i = 0; i < this._rootRecord().children.length; ++i)
             this._calculator.updateBoundaries(this._rootRecord().children[i]);
@@ -757,16 +757,6 @@ WebInspector.TimelinePanel.prototype = {
 }
 
 WebInspector.TimelinePanel.prototype.__proto__ = WebInspector.Panel.prototype;
-
-/**
- * @constructor
- */
-WebInspector.TimelineCategory = function(name, title, color)
-{
-    this.name = name;
-    this.title = title;
-    this.color = color;
-}
 
 /**
  * @constructor
