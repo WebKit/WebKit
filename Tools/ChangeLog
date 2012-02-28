@@ -1,3 +1,18 @@
+2012-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r109110.
+        http://trac.webkit.org/changeset/109110
+        https://bugs.webkit.org/show_bug.cgi?id=79806
+
+        webkitpy makes it too easy to add wkb.ug URLs to ChangeLogs
+        (Requested by aroben on #webkit).
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (parse_bug_id):
+        (parse_bug_id_from_changelog):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        * Scripts/webkitpy/common/config/urls.py:
+
 2012-02-28  Adam Roben  <aroben@webkit.org>
 
         Add my new email address
