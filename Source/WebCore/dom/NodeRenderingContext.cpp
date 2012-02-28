@@ -57,7 +57,12 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
         return;
 
     if (parent->isShadowRoot()) {
-        m_phase = AttachingShadowChild;
+        // FIXME: We don't support <shadow> yet, so the non-youngest shadow won't be rendered.
+        // https://bugs.webkit.org/shod_bugs.cgi?id=78596
+        if (toShadowRoot(parent)->isYoungest())
+            m_phase = AttachingShadowChild;
+        else
+            m_phase = AttachingNotDistributed;
         m_parentNodeForRenderingAndStyle = parent->shadowHost();
         return;
     }
@@ -67,9 +72,14 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
             m_visualParentShadowTree = toElement(parent)->shadowTree();
             if ((m_insertionPoint = m_visualParentShadowTree->insertionPointFor(m_node))
                 && m_visualParentShadowTree->isSelectorActive()) {
-                m_phase = AttachingDistributed;
-                m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_insertionPoint).parentNodeForRenderingAndStyle();
-                return;
+
+                // FIXME: We don't support <shadow> yet, so the non-youngest shadow won't be rendered.
+                // https://bugs.webkit.org/show_bugs.cgi?id=78596
+                if (toShadowRoot(m_insertionPoint->shadowTreeRootNode())->isYoungest()) {
+                    m_phase = AttachingDistributed;
+                    m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_insertionPoint).parentNodeForRenderingAndStyle();
+                    return;
+                }
             }
 
             m_phase = AttachingNotDistributed;
@@ -260,7 +270,7 @@ RenderObject* NodeRenderingContext::parentRenderer() const
 
 void NodeRenderingContext::hostChildrenChanged()
 {
-    if (m_phase == AttachingNotDistributed)
+    if (m_phase == AttachingNotDistributed && m_visualParentShadowTree)
         m_visualParentShadowTree->hostChildrenChanged();
 }
 

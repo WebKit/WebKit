@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This test ensure that the multiple shadow root is available.");
+
+internals.setMultipleShadowSubtreesEnabled(true);
+
+var div = document.createElement('div');
+shouldBe("internals.shadowRoot(div)", "null");
+var shadowRoot1 = new WebKitShadowRoot(div);
+shouldBe("internals.shadowRoot(div)", "shadowRoot1");
+shouldBe("internals.olderShadowRoot(shadowRoot1)", "null");
+
+var shadowRoot2 = new WebKitShadowRoot(div)
+shouldBe("internals.shadowRoot(div)", "shadowRoot2");
+shouldBe("internals.olderShadowRoot(shadowRoot2)", "shadowRoot1");
+
+var shadowRoot3 = new WebKitShadowRoot(div);
+shouldBe("internals.shadowRoot(div)", "shadowRoot3");
+shouldBe("internals.olderShadowRoot(shadowRoot3)", "shadowRoot2");
+
+internals.removeShadowRoot(div);
+shouldBe("internals.shadowRoot(div)", "null");
+
+internals.setMultipleShadowSubtreesEnabled(false);
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

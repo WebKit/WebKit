@@ -1,3 +1,59 @@
+2012-02-28  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Element should be able to have multiple shadow roots.
+        https://bugs.webkit.org/show_bug.cgi?id=77931
+
+        Reviewed by Hajime Morita.
+
+        This patch enables us to add multiple shadow subtrees into elements.
+        Note that multiple shadow subtrees are enabled
+        only if RuntimeEnabledFeatures::multipleShadowSubtrees is enabled.
+
+        Since we don't have <shadow> element yet, only the youngest shadow tree
+        will be rendered. This patch includes tests to confirm adding a new shadow
+        tree dynamically to confirm only the youngest shadow tree is renderered.
+
+        Tests: fast/dom/shadow/multiple-shadowroot-rendering.html
+               fast/dom/shadow/multiple-shadowroot.html
+
+        * WebCore.exp.in:
+        * dom/Element.cpp:
+          Uses ShadowRootList interfaces directly instead of ShadowRootList emulation methods.
+        (WebCore::Element::~Element):
+        (WebCore::Element::attach):
+        (WebCore::Element::addShadowRoot):
+        (WebCore::Element::removeShadowRootList):
+        * dom/Element.h:
+        (Element):
+        * dom/NodeRenderingContext.cpp:
+          Makes non-youngest shadow subtrees hidden.
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::hostChildrenChanged):
+          Since non-youngest children may be changed, make sure host children are changed.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::create):
+        * dom/ShadowRoot.h:
+          Utility methods to make code intention clear are added.
+        (WebCore::ShadowRoot::youngerShadowRoot):
+        (WebCore::ShadowRoot::olderShadowRoot):
+        (ShadowRoot):
+        (WebCore::ShadowRoot::isYoungest):
+        (WebCore::ShadowRoot::isOldest):
+        * dom/ShadowRootList.cpp:
+        (WebCore::ShadowRootList::popShadowRoot):
+        (WebCore::ShadowRootList::attach):
+        (WebCore::ShadowRootList::detach):
+          Detaches shadow subtrees.
+        * testing/Internals.cpp:
+        (WebCore::Internals::address):
+        (WebCore):
+        (WebCore::Internals::youngerShadowRoot):
+        (WebCore::Internals::olderShadowRoot):
+        (WebCore::Internals::removeShadowRoot):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-02-28  Antti Koivisto  <antti@apple.com>
 
         Split CSSStyleRule into internal and CSSOM type

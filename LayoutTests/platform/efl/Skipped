@@ -2091,6 +2091,8 @@ fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-disable.html
 fast/dom/shadow/shadow-root-attached.html
 fast/dom/shadow/shadow-root-new.html
+fast/dom/shadow/multiple-shadowroot.html
+fast/dom/shadow/multiple-shadowroot-rendering.html
 
 # CSS Filters support not yet enabled (needs ENABLE_CSS_FILTERS).
 # https://bugs.webkit.org/show_bug.cgi?id=68469

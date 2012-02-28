@@ -1,0 +1,14 @@
+testDoubleShadowSubtrees
+PASS
+testTripleShadowSubtrees
+PASS
+testShadowSubtreesWithContent
+PASS
+testShadowSubtreesWithContentInOlderSubtree
+PASS
+testShadowSubtreesWithDynamicCreation
+PASS
+testShadowSubtreesWithDynamicCreationOutOfTree
+PASS
+TEST COMPLETED
+

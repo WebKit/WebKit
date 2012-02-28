@@ -119,6 +119,14 @@ Internals::Internals(Document* document)
     reset(document);
 }
 
+String Internals::address(Node* node)
+{
+    char buf[32];
+    sprintf(buf, "%p", node);
+
+    return String(buf);
+}
+
 bool Internals::isPreloaded(Document* document, const String& url)
 {
     if (!document)
@@ -239,6 +247,26 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::oldestShadowRoot(Eleme
         return 0;
 
     return host->shadowTree()->oldestShadowRoot();
+}
+
+Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::youngerShadowRoot(Node* shadow, ExceptionCode& ec)
+{
+    if (!shadow || !shadow->isShadowRoot()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return toShadowRoot(shadow)->youngerShadowRoot();
+}
+
+Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::olderShadowRoot(Node* shadow, ExceptionCode& ec)
+{
+    if (!shadow || !shadow->isShadowRoot()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return toShadowRoot(shadow)->olderShadowRoot();
 }
 
 void Internals::removeShadowRoot(Element* host, ExceptionCode& ec)

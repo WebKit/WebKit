@@ -60,6 +60,7 @@
 #include "RenderRegion.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "Text.h"
@@ -931,7 +932,7 @@ void Element::attach()
         parentPusher.push();
         shadowTree()->attach();
 
-        // In a shadow tree, some of light children may be attached by 'content' element.
+        // In a shadow tree, some of light children may be attached by <content> or <shadow>.
         // However, when there is no content element or content element does not select
         // all light children, we have to attach the rest of light children here.
         for (Node* child = firstChild(); child; child = child->nextSibling()) {

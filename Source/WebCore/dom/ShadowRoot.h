@@ -64,8 +64,6 @@ public:
     InsertionPoint* insertionPointFor(Node*) const;
     void hostChildrenChanged();
 
-    virtual void attach();
-
     virtual bool applyAuthorSheets() const;
     void setApplyAuthorSheets(bool);
 
@@ -74,6 +72,9 @@ public:
 
     ShadowRoot* youngerShadowRoot() const { return prev(); }
     ShadowRoot* olderShadowRoot() const { return next(); }
+
+    bool isYoungest() const { return !youngerShadowRoot(); }
+    bool isOldest() const { return !olderShadowRoot(); }
 
     bool hasContentElement() const;
 

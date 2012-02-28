@@ -1,3 +1,13 @@
+2012-02-28  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Element should be able to have multiple shadow roots.
+        https://bugs.webkit.org/show_bug.cgi?id=77931
+
+        Reviewed by Hajime Morita.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-02-28  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [Qt][WK2] Use movementStarted/Ended signals instead of movingChanged on QtViewportInterationEngine

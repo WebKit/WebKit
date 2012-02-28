@@ -184,17 +184,4 @@ void ShadowRoot::setApplyAuthorSheets(bool value)
     m_applyAuthorSheets = value;
 }
 
-void ShadowRoot::attach()
-{
-    // Children of m_selector is populated lazily in
-    // ensureSelector(), and here we just ensure that
-    // it is in clean state.
-    // FIXME: This assertion breaks if multiple shadow roots are being attached.
-    // ShadowTree should have responsibility of side effect of selector in attaching/detaching.
-    ASSERT(!tree()->selector() || !tree()->selector()->hasCandidates());
-    DocumentFragment::attach();
-    if (HTMLContentSelector* selector = tree()->selector())
-        selector->didSelect();
-}
-
 }

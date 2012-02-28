@@ -53,9 +53,11 @@ function check() {
     }
 }
 
-function createSpanWithText(text) {
+function createSpanWithText(text, className) {
     var span = document.createElement('span');
     span.appendChild(document.createTextNode(text));
+    if (className)
+        span.className = className;
     return span;
 }
 
@@ -118,11 +120,16 @@ function doTestIfLeft(restTests) {
 
 function doneTest() {
     log("TEST COMPLETED");
+    if (window.tearDownOnce)
+        window.tearDownOnce();
     layoutTestController.notifyDone();
 }
 
 // A test driver. Call this body.onload.
 function doTest(tests) {
+    if (window.setUpOnce)
+        window.setUpOnce();
+
     if (window.layoutTestController) {
         layoutTestController.waitUntilDone();
         layoutTestController.dumpAsText();

@@ -109,6 +109,8 @@ void ShadowTree::removeAllShadowRoots()
             oldRoot->detach();
 
         oldRoot->setShadowHost(0);
+        oldRoot->setPrev(0);
+        oldRoot->setNext(0);
         shadowHost->document()->adoptIfNeeded(oldRoot.get());
         if (oldRoot->inDocument())
             oldRoot->removedFromDocument();
@@ -156,22 +158,21 @@ void ShadowTree::willRemove()
 
 void ShadowTree::attach()
 {
-    // FIXME: Currently we only support the case that the shadow root list has at most one shadow root.
-    // See also https://bugs.webkit.org/show_bug.cgi?id=77503 and its dependent bugs.
-    ASSERT(m_shadowRoots.size() <= 1);
+    // Children of m_selector is populated lazily in
+    // ensureSelector(), and here we just ensure that it is in clean state.
+    ASSERT(!selector() || !selector()->hasCandidates());
 
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         if (!root->attached())
             root->attach();
     }
+
+    if (HTMLContentSelector* contentSelector = selector())
+        contentSelector->didSelect();
 }
 
 void ShadowTree::detach()
 {
-    // FIXME: Currently we only support the case that the shadow root list has at most one shadow root.
-    // See also https://bugs.webkit.org/show_bug.cgi?id=77503 and its dependent bugs.
-    ASSERT(m_shadowRoots.size() <= 1);
-
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         if (root->attached())
             root->detach();
