@@ -27,6 +27,7 @@
 #include "config.h"
 #include "RunLoop.h"
 
+#include <gdk/gdk.h>
 #include <glib.h>
 
 namespace WebCore {
@@ -36,29 +37,64 @@ RunLoop::RunLoop()
     // g_main_context_default() doesn't add an extra reference.
     m_runLoopContext = g_main_context_default();
     ASSERT(m_runLoopContext);
-    m_runLoopMain = adoptGRef(g_main_loop_new(m_runLoopContext.get(), FALSE));
-    ASSERT(m_runLoopMain);
+    GRefPtr<GMainLoop> innermostLoop = adoptGRef(g_main_loop_new(m_runLoopContext.get(), FALSE));
+    ASSERT(innermostLoop);
+    m_runLoopMainLoops.append(innermostLoop);
 }
 
 RunLoop::~RunLoop()
 {
-    if (m_runLoopMain && g_main_loop_is_running(m_runLoopMain.get()))
-        g_main_loop_quit(m_runLoopMain.get());
+    for (int i = m_runLoopMainLoops.size() - 1; i >= 0; --i) {
+        if (!g_main_loop_is_running(m_runLoopMainLoops[i].get()))
+            continue;
+        g_main_loop_quit(m_runLoopMainLoops[i].get());
+    }
 }
 
 void RunLoop::run()
 {
-    g_main_loop_run(RunLoop::main()->mainLoop());
+    RunLoop* mainRunLoop = RunLoop::main();
+    GMainLoop* innermostLoop = mainRunLoop->innermostLoop();
+    if (!g_main_loop_is_running(innermostLoop)) {
+        g_main_loop_run(innermostLoop);
+        return;
+    }
+
+    // Create and run a nested loop if the innermost one was already running.
+    GMainLoop* nestedMainLoop = g_main_loop_new(0, FALSE);
+    mainRunLoop->pushNestedMainLoop(nestedMainLoop);
+    g_main_loop_run(nestedMainLoop);
+    mainRunLoop->popNestedMainLoop();
 }
 
-GMainLoop* RunLoop::mainLoop()
+GMainLoop* RunLoop::innermostLoop()
 {
-    return m_runLoopMain.get();
+    // The innermost main loop should always be there.
+    ASSERT(!m_runLoopMainLoops.isEmpty());
+    return m_runLoopMainLoops[0].get();
+}
+
+void RunLoop::pushNestedMainLoop(GMainLoop* nestedLoop)
+{
+    // The innermost main loop should always be there.
+    ASSERT(!m_runLoopMainLoops.isEmpty());
+    m_runLoopMainLoops.append(adoptGRef(nestedLoop));
+}
+
+void RunLoop::popNestedMainLoop()
+{
+    // The innermost main loop should always be there.
+    ASSERT(!m_runLoopMainLoops.isEmpty());
+    m_runLoopMainLoops.removeLast();
 }
 
 void RunLoop::stop()
 {
-    g_main_loop_quit(m_runLoopMain.get());
+    // The innermost main loop should always be there.
+    ASSERT(!m_runLoopMainLoops.isEmpty());
+    GRefPtr<GMainLoop> lastMainLoop = m_runLoopMainLoops.last();
+    if (g_main_loop_is_running(lastMainLoop.get()))
+        g_main_loop_quit(lastMainLoop.get());
 }
 
 gboolean RunLoop::queueWork(RunLoop* runLoop)

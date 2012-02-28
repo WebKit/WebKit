@@ -151,10 +151,12 @@ private:
 #elif PLATFORM(GTK)
 public:
     static gboolean queueWork(RunLoop*);
-    GMainLoop* mainLoop();
+    GMainLoop* innermostLoop();
+    void pushNestedMainLoop(GMainLoop*);
+    void popNestedMainLoop();
 private:
     GRefPtr<GMainContext> m_runLoopContext;
-    GRefPtr<GMainLoop> m_runLoopMain;
+    Vector<GRefPtr<GMainLoop> > m_runLoopMainLoops;
 #endif
 };
 

@@ -1,3 +1,26 @@
+2012-02-29  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Add support for nested event loops in RunLoop
+        https://bugs.webkit.org/show_bug.cgi?id=79499
+
+        Reviewed by Martin Robinson.
+
+        Run a new nested mainloop if the main event loop is already
+        running when calling to RunLoop::run(), and take care of stopping
+        the right main loop too when RunLoop::stop() is invoked.
+
+        * platform/RunLoop.h:
+        (RunLoop):
+        * platform/gtk/RunLoopGtk.cpp:
+        (WebCore::RunLoop::RunLoop):
+        (WebCore::RunLoop::~RunLoop):
+        (WebCore::RunLoop::run):
+        (WebCore::RunLoop::innermostLoop):
+        (WebCore::RunLoop::pushNestedMainLoop):
+        (WebCore::RunLoop::popNestedMainLoop):
+        (WebCore):
+        (WebCore::RunLoop::stop):
+
 2012-02-28  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Move RenderLayer::size() calls to a common function
