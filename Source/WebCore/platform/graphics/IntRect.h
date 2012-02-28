@@ -53,6 +53,12 @@ typedef struct _GdkRectangle GdkRectangle;
 #endif
 #elif PLATFORM(EFL)
 typedef struct _Eina_Rectangle Eina_Rectangle;
+#elif PLATFORM(BLACKBERRY)
+namespace BlackBerry {
+namespace Platform {
+class IntRect;
+}
+}
 #endif
 
 #if USE(CAIRO)
@@ -212,6 +218,11 @@ public:
 #if (PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)) \
         || (PLATFORM(CHROMIUM) && OS(DARWIN))  || (PLATFORM(QT) && USE(QTKIT))
     operator NSRect() const;
+#endif
+
+#if PLATFORM(BLACKBERRY)
+    IntRect(const BlackBerry::Platform::IntRect&);
+    operator BlackBerry::Platform::IntRect() const;
 #endif
 
 private:

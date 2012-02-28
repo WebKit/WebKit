@@ -1,3 +1,18 @@
+2012-02-27  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Upstream the BlackBerry change to platform/graphics/IntRect.h
+        https://bugs.webkit.org/show_bug.cgi?id=79732
+
+        Reviewed by Antonio Gomes.
+
+        Add conversion convenience between WebCore::IntRect and BlackBerry::Platform::IntRect.
+
+        The porting can't be built yet, no new tests.
+
+        * platform/graphics/IntRect.h:
+        (Platform):
+        (IntRect):
+
 2012-02-27  Emil A Eklund  <eae@chromium.org>
 
         Printed font-size should not be dependant on zoom level
