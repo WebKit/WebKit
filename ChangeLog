@@ -1,3 +1,12 @@
+2012-02-27  Dave Tu  <dtu@chromium.org>
+
+        Update flakiness dashboard unit test.
+        https://bugs.webkit.org/show_bug.cgi?id=79711
+
+        Reviewed by Ojan Vafai.
+
+        * Tools/TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+
 2012-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Extract the logic to merge tests from MergeTestsHandler and add unit tests

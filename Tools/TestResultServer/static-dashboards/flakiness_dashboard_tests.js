@@ -393,7 +393,7 @@ function testHtmlForTestTypeSwitcherGroup()
     assertEquals(selects.length, 3);
     var group = selects[2];
     assertEquals(group.parentNode.textContent.indexOf('Group:'), 0);
-    assertEquals(group.children.length, 2);
+    assertEquals(group.children.length, 3);
 
     g_currentState.testType = 'layout-tests';
     container.innerHTML = htmlForTestTypeSwitcher();
