@@ -27,6 +27,7 @@
 #ifndef ShadowTree_h
 #define ShadowTree_h
 
+#include "ExceptionCode.h"
 #include "ShadowRoot.h"
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Noncopyable.h>
@@ -49,8 +50,8 @@ public:
     ShadowRoot* youngestShadowRoot() const;
     ShadowRoot* oldestShadowRoot() const;
 
-    void pushShadowRoot(ShadowRoot*);
-    ShadowRoot* popShadowRoot();
+    void addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot>, ExceptionCode&);
+    void removeAllShadowRoots();
 
     void insertedIntoDocument();
     void removedFromDocument();

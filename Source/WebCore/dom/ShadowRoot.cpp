@@ -123,7 +123,7 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootCreationPu
     RefPtr<ShadowRoot> shadowRoot = adoptRef(new ShadowRoot(element->document()));
 
     ec = 0;
-    element->setShadowRoot(shadowRoot, ec);
+    element->ensureShadowTree()->addShadowRoot(element, shadowRoot, ec);
     if (ec)
         return 0;
     ASSERT(element == shadowRoot->host());

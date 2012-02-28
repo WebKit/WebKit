@@ -1,3 +1,13 @@
+2012-02-27  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Element::removeShadowRoot() and setShadowRoot() should be moved into ShadowTree.
+        https://bugs.webkit.org/show_bug.cgi?id=78313
+
+        Reviewed by Hajime Morita.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-02-27  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/10924993> and https://bugs.webkit.org/show_bug.cgi?id=79725

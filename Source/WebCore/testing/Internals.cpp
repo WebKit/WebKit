@@ -248,7 +248,8 @@ void Internals::removeShadowRoot(Element* host, ExceptionCode& ec)
         return;
     }
 
-    host->removeShadowRoot();
+    if (host->hasShadowRoot())
+        host->shadowTree()->removeAllShadowRoots();
 }
 
 void Internals::setMultipleShadowSubtreesEnabled(bool enabled)

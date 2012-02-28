@@ -122,7 +122,8 @@ PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* docu
 
 Element::~Element()
 {
-    removeShadowRoot();
+    if (shadowTree())
+        rareData()->m_shadowTree.clear();
     if (m_attributeMap)
         m_attributeMap->detachFromElement();
 }
@@ -1161,47 +1162,16 @@ ShadowTree* Element::shadowTree() const
     if (!hasRareData())
         return 0;
 
-    return &rareData()->m_shadowTree;
+    return rareData()->m_shadowTree.get();
 }
 
-static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, ExceptionCode& ec)
+ShadowTree* Element::ensureShadowTree()
 {
-    if (!shadowRoot)
-        return true;
+    if (ShadowTree* tree = ensureRareData()->m_shadowTree.get())
+        return tree;
 
-    if (shadowRoot->shadowHost()) {
-        ec = HIERARCHY_REQUEST_ERR;
-        return false;
-    }
-
-    if (shadowRoot->document() != document) {
-        ec = WRONG_DOCUMENT_ERR;
-        return false;
-    }
-
-    return true;
-}
-
-void Element::setShadowRoot(PassRefPtr<ShadowRoot> shadowRoot, ExceptionCode& ec)
-{
-    if (!validateShadowRoot(document(), shadowRoot.get(), ec))
-        return;
-
-    if (!hasRareData())
-        ensureRareData();
-
-    removeShadowRoot();
-
-    shadowRoot->setShadowHost(this);
-    shadowTree()->pushShadowRoot(shadowRoot.get());
-
-    if (inDocument())
-        shadowRoot->insertedIntoDocument();
-    if (attached()) {
-        shadowRoot->lazyAttach();
-        for (Node* child = firstChild(); child; child = child->nextSibling())
-            child->detach();
-    }
+    rareData()->m_shadowTree = adoptPtr(new ShadowTree());
+    return rareData()->m_shadowTree.get();
 }
 
 ShadowRoot* Element::ensureShadowRoot()
@@ -1210,32 +1180,6 @@ ShadowRoot* Element::ensureShadowRoot()
         return shadowTree()->oldestShadowRoot();
 
     return ShadowRoot::create(this, ShadowRoot::CreatingUserAgentShadowRoot).get();
-}
-
-void Element::removeShadowRoot()
-{
-    if (!hasShadowRoot())
-        return;
-
-    while (RefPtr<ShadowRoot> oldRoot = shadowTree()->popShadowRoot()) {
-        document()->removeFocusedNodeOfSubtree(oldRoot.get());
-
-        if (oldRoot->attached())
-            oldRoot->detach();
-
-        oldRoot->setShadowHost(0);
-        document()->adoptIfNeeded(oldRoot.get());
-        if (oldRoot->inDocument())
-            oldRoot->removedFromDocument();
-        else
-            oldRoot->removedFromTree(true);
-        if (attached()) {
-            for (Node* child = firstChild(); child; child = child->nextSibling()) {
-                if (!child->attached())
-                    child->lazyAttach();
-            }
-        }
-    }
 }
 
 const AtomicString& Element::shadowPseudoId() const

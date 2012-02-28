@@ -44,29 +44,84 @@ ShadowTree::ShadowTree()
 
 ShadowTree::~ShadowTree()
 {
-    ASSERT(!hasShadowRoot());
+    if (hasShadowRoot())
+        removeAllShadowRoots();
 }
 
-void ShadowTree::pushShadowRoot(ShadowRoot* shadowRoot)
+static bool validateShadowRoot(Document* document, ShadowRoot* shadowRoot, ExceptionCode& ec)
 {
+    if (!shadowRoot)
+        return true;
+
+    if (shadowRoot->shadowHost()) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return false;
+    }
+
+    if (shadowRoot->document() != document) {
+        ec = WRONG_DOCUMENT_ERR;
+        return false;
+    }
+
+    return true;
+}
+
+void ShadowTree::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> shadowRoot, ExceptionCode& ec)
+{
+    ASSERT(shadowHost);
+    ASSERT(shadowRoot);
 #if ENABLE(SHADOW_DOM)
-    if (!RuntimeEnabledFeatures::multipleShadowSubtreesEnabled())
-        ASSERT(!hasShadowRoot());
+    ASSERT(!hasShadowRoot() || RuntimeEnabledFeatures::multipleShadowSubtreesEnabled());
 #else
     ASSERT(!hasShadowRoot());
 #endif
 
-    m_shadowRoots.push(shadowRoot);
-    InspectorInstrumentation::didPushShadowRoot(host(), shadowRoot);
+    if (!validateShadowRoot(shadowHost->document(), shadowRoot.get(), ec))
+        return;
+
+    shadowRoot->setShadowHost(shadowHost);
+
+    if (shadowHost->inDocument())
+        shadowRoot->insertedIntoDocument();
+    if (shadowHost->attached()) {
+        shadowRoot->lazyAttach();
+        detach();
+        for (Node* child = shadowHost->firstChild(); child; child = child->nextSibling())
+            child->detach();
+    }
+
+    m_shadowRoots.push(shadowRoot.get());
+    InspectorInstrumentation::didPushShadowRoot(shadowHost, shadowRoot.get());
 }
 
-ShadowRoot* ShadowTree::popShadowRoot()
+void ShadowTree::removeAllShadowRoots()
 {
     if (!hasShadowRoot())
-        return 0;
+        return;
 
-    InspectorInstrumentation::willPopShadowRoot(host(), m_shadowRoots.head());
-    return m_shadowRoots.removeHead();
+    Element* shadowHost = host();
+
+    while (RefPtr<ShadowRoot> oldRoot = m_shadowRoots.removeHead()) {
+        InspectorInstrumentation::willPopShadowRoot(shadowHost, oldRoot.get());
+        shadowHost->document()->removeFocusedNodeOfSubtree(oldRoot.get());
+
+        if (oldRoot->attached())
+            oldRoot->detach();
+
+        oldRoot->setShadowHost(0);
+        shadowHost->document()->adoptIfNeeded(oldRoot.get());
+        if (oldRoot->inDocument())
+            oldRoot->removedFromDocument();
+        else
+            oldRoot->removedFromTree(true);
+    }
+
+    if (shadowHost->attached()) {
+        for (Node* child = shadowHost->firstChild(); child; child = child->nextSibling()) {
+            if (!child->attached())
+                child->lazyAttach();
+        }
+    }
 }
 
 void ShadowTree::insertedIntoDocument()

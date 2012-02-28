@@ -64,11 +64,11 @@ public:
 
     LayoutSize m_minimumSizeForResizing;
     RefPtr<RenderStyle> m_computedStyle;
-    ShadowTree m_shadowTree;
     AtomicString m_shadowPseudoId;
 
     OwnPtr<DatasetDOMStringMap> m_datasetDOMStringMap;
     OwnPtr<ClassList> m_classList;
+    OwnPtr<ShadowTree> m_shadowTree;
 
     bool m_styleAffectedByEmpty;
 
@@ -94,7 +94,7 @@ inline ElementRareData::ElementRareData()
 
 inline ElementRareData::~ElementRareData()
 {
-    ASSERT(!m_shadowTree.hasShadowRoot());
+    ASSERT(!m_shadowTree);
 }
 
 inline void ElementRareData::resetComputedStyle()

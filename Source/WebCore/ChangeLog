@@ -1,3 +1,40 @@
+2012-02-27  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Element::removeShadowRoot() and setShadowRoot() should be moved into ShadowTree.
+        https://bugs.webkit.org/show_bug.cgi?id=78313
+
+        Reviewed by Hajime Morita.
+
+        This patch is for refactoring ShadowTree related code.
+          (1) Element::removeShadowRoot() and Element::setShadowRoot() are moved into ShadowTree.
+          (2) ShadowTree is now put on its own heap.
+
+        No new tests, no change in behavior.
+
+        * WebCore.exp.in:
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::shadowTree):
+        (WebCore::Element::ensureShadowTree):
+          Ensure the existence of ShadowTree. This does not ensure ShadowRoot exists.
+        * dom/Element.h:
+        (Element):
+        * dom/ElementRareData.h:
+          Makes ShadowTree on Heap.
+        (ElementRareData):
+        (WebCore::ElementRareData::~ElementRareData):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::create):
+        * dom/ShadowTree.cpp:
+        (WebCore::validateShadowRoot):
+        (WebCore):
+        (WebCore::ShadowTree::addShadowRoot):
+        (WebCore::ShadowTree::removeAllShadowRoots):
+        * dom/ShadowTree.h:
+        (ShadowTree):
+        * testing/Internals.cpp:
+        (WebCore::Internals::removeShadowRoot):
+
 2012-02-27  David Barton  <dbarton@mathscribe.com>
 
         Fix <msubsup> formatting, especially for a tall base, subscript, or superscript

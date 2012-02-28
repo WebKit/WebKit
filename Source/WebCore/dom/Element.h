@@ -255,12 +255,11 @@ public:
 
     bool hasShadowRoot() const;
     ShadowTree* shadowTree() const;
+    ShadowTree* ensureShadowTree();
 
-    // FIXME: These API will be moved to ShadowTree.
-    // https://bugs.webkit.org/show_bug.cgi?id=78313
-    void setShadowRoot(PassRefPtr<ShadowRoot>, ExceptionCode&);
+    // FIXME: Remove Element::ensureShadowRoot
+    // https://bugs.webkit.org/show_bug.cgi?id=77608
     ShadowRoot* ensureShadowRoot();
-    void removeShadowRoot();
 
     virtual const AtomicString& shadowPseudoId() const;
     void setShadowPseudoId(const AtomicString&, ExceptionCode& = ASSERT_NO_EXCEPTION);
