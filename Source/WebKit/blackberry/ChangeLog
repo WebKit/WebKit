@@ -1,3 +1,18 @@
+2012-02-28  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Remove unused focusedNodeChange notifications from the Chrome client.
+        https://bugs.webkit.org/show_bug.cgi?id=79794
+
+        Reviewed by Rob Buis.
+
+        Remove unused notification for focusedNodeChanged.
+
+        Internally reviewed by Gen Mak.
+
+        * Api/WebPageClient.h:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::focusedNodeChanged):
+
 2012-02-27  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Upstream BlackBerry API web page related files
