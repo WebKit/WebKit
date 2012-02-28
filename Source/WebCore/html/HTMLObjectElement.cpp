@@ -77,11 +77,11 @@ RenderWidget* HTMLObjectElement::renderWidgetForJSBindings()
     return renderPart(); // This will return 0 if the renderer is not a RenderPart.
 }
 
-bool HTMLObjectElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLObjectElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == borderAttr)
+    if (name == borderAttr)
         return true;
-    return HTMLPlugInImageElement::isPresentationAttribute(attr);
+    return HTMLPlugInImageElement::isPresentationAttribute(name);
 }
 
 void HTMLObjectElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

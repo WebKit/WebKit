@@ -44,11 +44,11 @@ PassRefPtr<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedNam
     return adoptRef(new HTMLParagraphElement(tagName, document));
 }
 
-bool HTMLParagraphElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLParagraphElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == alignAttr)
+    if (name == alignAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(attr);
+    return HTMLElement::isPresentationAttribute(name);
 }
 
 void HTMLParagraphElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

@@ -42,11 +42,11 @@ PassRefPtr<HTMLPreElement> HTMLPreElement::create(const QualifiedName& tagName, 
     return adoptRef(new HTMLPreElement(tagName, document));
 }
 
-bool HTMLPreElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLPreElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == wrapAttr)
+    if (name == wrapAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(attr);
+    return HTMLElement::isPresentationAttribute(name);
 }
 
 void HTMLPreElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

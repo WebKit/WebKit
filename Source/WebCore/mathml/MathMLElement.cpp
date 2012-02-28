@@ -48,11 +48,11 @@ PassRefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Do
     return adoptRef(new MathMLElement(tagName, document));
 }
 
-bool MathMLElement::isPresentationAttribute(Attribute* attr) const
+bool MathMLElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == mathbackgroundAttr || attr->name() == mathsizeAttr || attr->name() == mathcolorAttr || attr->name() == fontsizeAttr || attr->name() == backgroundAttr || attr->name() == colorAttr || attr->name() == fontstyleAttr || attr->name() == fontweightAttr || attr->name() == fontfamilyAttr)
+    if (name == mathbackgroundAttr || name == mathsizeAttr || name == mathcolorAttr || name == fontsizeAttr || name == backgroundAttr || name == colorAttr || name == fontstyleAttr || name == fontweightAttr || name == fontfamilyAttr)
         return true;
-    return StyledElement::isPresentationAttribute(attr);
+    return StyledElement::isPresentationAttribute(name);
 }
 
 void MathMLElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

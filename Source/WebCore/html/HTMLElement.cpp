@@ -159,11 +159,11 @@ void HTMLElement::mapLanguageAttributeToLocale(Attribute* attribute, StyleProper
     }
 }
 
-bool HTMLElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == alignAttr || attr->name() == contenteditableAttr || attr->name() == hiddenAttr || attr->name() == langAttr || attr->name().matches(XMLNames::langAttr) || attr->name() == draggableAttr || attr->name() == dirAttr)
+    if (name == alignAttr || name == contenteditableAttr || name == hiddenAttr || name == langAttr || name.matches(XMLNames::langAttr) || name == draggableAttr || name == dirAttr)
         return true;
-    return StyledElement::isPresentationAttribute(attr);
+    return StyledElement::isPresentationAttribute(name);
 }
 
 void HTMLElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

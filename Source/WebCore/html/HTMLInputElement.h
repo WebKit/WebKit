@@ -276,7 +276,7 @@ private:
     virtual void accessKeyAction(bool sendMouseEvents);
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
-    virtual bool isPresentationAttribute(Attribute*) const OVERRIDE;
+    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
     virtual void finishParsingChildren();
 

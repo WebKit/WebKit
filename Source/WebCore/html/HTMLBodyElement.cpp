@@ -61,11 +61,11 @@ HTMLBodyElement::~HTMLBodyElement()
 {
 }
 
-bool HTMLBodyElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLBodyElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == backgroundAttr || attr->name() == marginwidthAttr || attr->name() == leftmarginAttr || attr->name() == marginheightAttr || attr->name() == topmarginAttr || attr->name() == bgcolorAttr || attr->name() == textAttr || attr->name() == bgpropertiesAttr)
+    if (name == backgroundAttr || name == marginwidthAttr || name == leftmarginAttr || name == marginheightAttr || name == topmarginAttr || name == bgcolorAttr || name == textAttr || name == bgpropertiesAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(attr);
+    return HTMLElement::isPresentationAttribute(name);
 }
 
 void HTMLBodyElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

@@ -660,11 +660,11 @@ void HTMLInputElement::accessKeyAction(bool sendMouseEvents)
     m_inputType->accessKeyAction(sendMouseEvents);
 }
 
-bool HTMLInputElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLInputElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr || attr->name() == widthAttr || attr->name() == heightAttr || (attr->name() == borderAttr && isImageButton()))
+    if (name == vspaceAttr || name == hspaceAttr || name == alignAttr || name == widthAttr || name == heightAttr || (name == borderAttr && isImageButton()))
         return true;
-    return HTMLTextFormControlElement::isPresentationAttribute(attr);
+    return HTMLTextFormControlElement::isPresentationAttribute(name);
 }
 
 void HTMLInputElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

@@ -352,11 +352,11 @@ void HTMLTableElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
         HTMLElement::collectStyleForAttribute(attr, style);
 }
 
-bool HTMLTableElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLTableElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == bgcolorAttr || attr->name() == backgroundAttr || attr->name() == valignAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr || attr->name() == cellspacingAttr || attr->name() == borderAttr || attr->name() == bordercolorAttr || attr->name() == frameAttr || attr->name() == rulesAttr)
+    if (name == widthAttr || name == heightAttr || name == bgcolorAttr || name == backgroundAttr || name == valignAttr || name == vspaceAttr || name == hspaceAttr || name == alignAttr || name == cellspacingAttr || name == borderAttr || name == bordercolorAttr || name == frameAttr || name == rulesAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(attr);
+    return HTMLElement::isPresentationAttribute(name);
 }
 
 void HTMLTableElement::parseAttribute(Attribute* attr)

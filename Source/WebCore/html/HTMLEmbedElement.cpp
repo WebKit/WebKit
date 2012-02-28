@@ -74,11 +74,11 @@ RenderWidget* HTMLEmbedElement::renderWidgetForJSBindings()
     return findWidgetRenderer(this);
 }
 
-bool HTMLEmbedElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLEmbedElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == hiddenAttr)
+    if (name == hiddenAttr)
         return true;
-    return HTMLPlugInImageElement::isPresentationAttribute(attr);
+    return HTMLPlugInImageElement::isPresentationAttribute(name);
 }
 
 void HTMLEmbedElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

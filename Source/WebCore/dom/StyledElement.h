@@ -64,7 +64,7 @@ protected:
     virtual void parseAttribute(Attribute*);
     virtual void copyNonAttributeProperties(const Element*);
 
-    virtual bool isPresentationAttribute(Attribute*) const { return false; }
+    virtual bool isPresentationAttribute(const QualifiedName&) const { return false; }
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) { }
 
     void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, int identifier);

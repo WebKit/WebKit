@@ -48,11 +48,11 @@ PassRefPtr<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, 
     return adoptRef(new HTMLDivElement(tagName, document));
 }
 
-bool HTMLDivElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLDivElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == alignAttr)
+    if (name == alignAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(attr);
+    return HTMLElement::isPresentationAttribute(name);
 }
 
 void HTMLDivElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

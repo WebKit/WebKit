@@ -49,11 +49,11 @@ PassRefPtr<HTMLBRElement> HTMLBRElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLBRElement(tagName, document));
 }
 
-bool HTMLBRElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLBRElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == clearAttr)
+    if (name == clearAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(attr);
+    return HTMLElement::isPresentationAttribute(name);
 }
 
 void HTMLBRElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

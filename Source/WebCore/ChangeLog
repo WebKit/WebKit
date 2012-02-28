@@ -1,3 +1,117 @@
+2012-02-28  Andreas Kling  <awesomekling@apple.com>
+
+        StyledElement::isPresentationAttribute() only needs the attribute name.
+        <http://webkit.org/b/79828>
+
+        Reviewed by Anders Carlsson.
+
+        Pass the QualifiedName to isPresentationAttribute instead of the whole
+        Attribute. We only need the name to know what kind of attribute it is.
+
+        This makes the code a little less ugly and makes it possible to use
+        the function without having an Attribute object.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::isPresentationAttribute):
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::isPresentationAttribute):
+        * html/HTMLBRElement.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::isPresentationAttribute):
+        * html/HTMLBodyElement.h:
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::isPresentationAttribute):
+        * html/HTMLButtonElement.h:
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::isPresentationAttribute):
+        * html/HTMLDivElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isPresentationAttribute):
+        * html/HTMLElement.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::isPresentationAttribute):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::isPresentationAttribute):
+        * html/HTMLFontElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::isPresentationAttribute):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::isPresentationAttribute):
+        * html/HTMLHRElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::isPresentationAttribute):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::isPresentationAttribute):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isPresentationAttribute):
+        * html/HTMLInputElement.h:
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::isPresentationAttribute):
+        * html/HTMLLIElement.h:
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::isPresentationAttribute):
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::isPresentationAttribute):
+        * html/HTMLOListElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::isPresentationAttribute):
+        * html/HTMLObjectElement.h:
+        * html/HTMLParagraphElement.cpp:
+        (WebCore::HTMLParagraphElement::isPresentationAttribute):
+        * html/HTMLParagraphElement.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::isPresentationAttribute):
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPreElement.cpp:
+        (WebCore::HTMLPreElement::isPresentationAttribute):
+        * html/HTMLPreElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::isPresentationAttribute):
+        * html/HTMLSelectElement.h:
+        * html/HTMLTableCaptionElement.cpp:
+        (WebCore::HTMLTableCaptionElement::isPresentationAttribute):
+        * html/HTMLTableCaptionElement.h:
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::isPresentationAttribute):
+        * html/HTMLTableCellElement.h:
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::isPresentationAttribute):
+        * html/HTMLTableColElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::isPresentationAttribute):
+        * html/HTMLTableElement.h:
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::isPresentationAttribute):
+        * html/HTMLTablePartElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::isPresentationAttribute):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLUListElement.cpp:
+        (WebCore::HTMLUListElement::isPresentationAttribute):
+        * html/HTMLUListElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::isPresentationAttribute):
+        * html/HTMLVideoElement.h:
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::isPresentationAttribute):
+        * mathml/MathMLElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::isPresentationAttribute):
+        * svg/SVGImageElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::isPresentationAttribute):
+        * svg/SVGStyledElement.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::isPresentationAttribute):
+        * svg/SVGTextContentElement.h:
+
 2012-02-28  Enrica Casucci  <enrica@apple.com>
 
         More Pasteboard code cleanup.

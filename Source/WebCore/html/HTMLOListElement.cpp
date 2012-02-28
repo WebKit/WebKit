@@ -54,11 +54,11 @@ PassRefPtr<HTMLOListElement> HTMLOListElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLOListElement(tagName, document));
 }
 
-bool HTMLOListElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLOListElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == typeAttr)
+    if (name == typeAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(attr);
+    return HTMLElement::isPresentationAttribute(name);
 }
 
 void HTMLOListElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

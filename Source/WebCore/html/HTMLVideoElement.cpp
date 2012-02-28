@@ -105,11 +105,11 @@ void HTMLVideoElement::collectStyleForAttribute(Attribute* attr, StylePropertySe
         HTMLMediaElement::collectStyleForAttribute(attr, style);
 }
 
-bool HTMLVideoElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLVideoElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == widthAttr || attr->name() == heightAttr)
+    if (name == widthAttr || name == heightAttr)
         return true;
-    return HTMLMediaElement::isPresentationAttribute(attr);
+    return HTMLMediaElement::isPresentationAttribute(name);
 }
 
 void HTMLVideoElement::parseAttribute(Attribute* attr)

@@ -34,7 +34,7 @@ public:
 private:
     HTMLParagraphElement(const QualifiedName&, Document*);
 
-    virtual bool isPresentationAttribute(Attribute*) const OVERRIDE;
+    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 };
 

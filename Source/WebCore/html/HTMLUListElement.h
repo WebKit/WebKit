@@ -35,7 +35,7 @@ public:
 private:
     HTMLUListElement(const QualifiedName&, Document*);
 
-    virtual bool isPresentationAttribute(Attribute*) const OVERRIDE;
+    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 };
 

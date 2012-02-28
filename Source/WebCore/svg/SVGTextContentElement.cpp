@@ -228,11 +228,11 @@ bool SVGTextContentElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-bool SVGTextContentElement::isPresentationAttribute(Attribute* attr) const
+bool SVGTextContentElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name().matches(XMLNames::spaceAttr))
+    if (name.matches(XMLNames::spaceAttr))
         return true;
-    return SVGStyledElement::isPresentationAttribute(attr);
+    return SVGStyledElement::isPresentationAttribute(name);
 }
 
 void SVGTextContentElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

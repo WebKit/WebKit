@@ -48,11 +48,11 @@ PassRefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tag
     return adoptRef(new HTMLIFrameElement(tagName, document));
 }
 
-bool HTMLIFrameElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLIFrameElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == alignAttr || attr->name() == frameborderAttr)
+    if (name == widthAttr || name == heightAttr || name == alignAttr || name == frameborderAttr)
         return true;
-    return HTMLFrameElementBase::isPresentationAttribute(attr);
+    return HTMLFrameElementBase::isPresentationAttribute(name);
 }
 
 void HTMLIFrameElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

@@ -257,15 +257,15 @@ void HTMLSelectElement::setValue(const String &value)
     setSelectedIndex(-1);
 }
 
-bool HTMLSelectElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLSelectElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == alignAttr) {
+    if (name == alignAttr) {
         // Don't map 'align' attribute. This matches what Firefox, Opera and IE do.
         // See http://bugs.webkit.org/show_bug.cgi?id=12072
         return false;
     }
 
-    return HTMLFormControlElementWithState::isPresentationAttribute(attr);
+    return HTMLFormControlElementWithState::isPresentationAttribute(name);
 }
 
 void HTMLSelectElement::parseAttribute(Attribute* attr)

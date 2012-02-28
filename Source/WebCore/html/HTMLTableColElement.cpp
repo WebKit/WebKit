@@ -47,11 +47,11 @@ PassRefPtr<HTMLTableColElement> HTMLTableColElement::create(const QualifiedName&
     return adoptRef(new HTMLTableColElement(tagName, document));
 }
 
-bool HTMLTableColElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLTableColElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == widthAttr)
+    if (name == widthAttr)
         return true;
-    return HTMLTablePartElement::isPresentationAttribute(attr);
+    return HTMLTablePartElement::isPresentationAttribute(name);
 }
 
 void HTMLTableColElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

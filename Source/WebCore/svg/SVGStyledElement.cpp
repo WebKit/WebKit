@@ -279,11 +279,11 @@ bool SVGStyledElement::isAnimatableCSSProperty(const QualifiedName& attrName)
     return cssPropertyToTypeMap().contains(attrName);
 }
 
-bool SVGStyledElement::isPresentationAttribute(Attribute* attr) const
+bool SVGStyledElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (SVGStyledElement::cssPropertyIdForSVGAttributeName(attr->name()) > 0)
+    if (SVGStyledElement::cssPropertyIdForSVGAttributeName(name) > 0)
         return true;
-    return SVGElement::isPresentationAttribute(attr);
+    return SVGElement::isPresentationAttribute(name);
 }
 
 void SVGStyledElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

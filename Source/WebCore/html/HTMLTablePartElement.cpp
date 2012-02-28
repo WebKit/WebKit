@@ -38,11 +38,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-bool HTMLTablePartElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLTablePartElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == bgcolorAttr || attr->name() == backgroundAttr || attr->name() == bordercolorAttr || attr->name() == valignAttr || attr->name() == alignAttr || attr->name() == heightAttr)
+    if (name == bgcolorAttr || name == backgroundAttr || name == bordercolorAttr || name == valignAttr || name == alignAttr || name == heightAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(attr);
+    return HTMLElement::isPresentationAttribute(name);
 }
 
 void HTMLTablePartElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

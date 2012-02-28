@@ -64,11 +64,11 @@ PassRefPtr<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName&
     return adoptRef(new HTMLFrameSetElement(tagName, document));
 }
 
-bool HTMLFrameSetElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLFrameSetElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == bordercolorAttr)
+    if (name == bordercolorAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(attr);
+    return HTMLElement::isPresentationAttribute(name);
 }
 
 void HTMLFrameSetElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

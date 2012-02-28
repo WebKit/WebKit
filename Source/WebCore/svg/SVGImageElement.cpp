@@ -91,11 +91,11 @@ bool SVGImageElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-bool SVGImageElement::isPresentationAttribute(Attribute* attr) const
+bool SVGImageElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == SVGNames::widthAttr || attr->name() == SVGNames::heightAttr)
+    if (name == SVGNames::widthAttr || name == SVGNames::heightAttr)
         return true;
-    return SVGStyledTransformableElement::isPresentationAttribute(attr);
+    return SVGStyledTransformableElement::isPresentationAttribute(name);
 }
 
 void SVGImageElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

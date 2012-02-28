@@ -49,11 +49,11 @@ PassRefPtr<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Do
     return adoptRef(new HTMLLIElement(tagName, document));
 }
 
-bool HTMLLIElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLLIElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == typeAttr)
+    if (name == typeAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(attr);
+    return HTMLElement::isPresentationAttribute(name);
 }
 
 void HTMLLIElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

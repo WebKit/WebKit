@@ -119,17 +119,17 @@ void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChan
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
-bool HTMLTextAreaElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLTextAreaElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == alignAttr) {
+    if (name == alignAttr) {
         // Don't map 'align' attribute.  This matches what Firefox, Opera and IE do.
         // See http://bugs.webkit.org/show_bug.cgi?id=7075
         return false;
     }
 
-    if (attr->name() == wrapAttr)
+    if (name == wrapAttr)
         return true;
-    return HTMLTextFormControlElement::isPresentationAttribute(attr);
+    return HTMLTextFormControlElement::isPresentationAttribute(name);
 }
 
 void HTMLTextAreaElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

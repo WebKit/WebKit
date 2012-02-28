@@ -140,11 +140,11 @@ Widget* HTMLPlugInElement::pluginWidget()
     return renderWidget->widget();
 }
 
-bool HTMLPlugInElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLPlugInElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == widthAttr || attr->name() == heightAttr || attr->name() == vspaceAttr || attr->name() == hspaceAttr || attr->name() == alignAttr)
+    if (name == widthAttr || name == heightAttr || name == vspaceAttr || name == hspaceAttr || name == alignAttr)
         return true;
-    return HTMLFrameOwnerElement::isPresentationAttribute(attr);
+    return HTMLFrameOwnerElement::isPresentationAttribute(name);
 }
 
 void HTMLPlugInElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)

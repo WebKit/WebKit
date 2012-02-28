@@ -160,11 +160,11 @@ bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, int& size)
     return true;
 }
 
-bool HTMLFontElement::isPresentationAttribute(Attribute* attr) const
+bool HTMLFontElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (attr->name() == sizeAttr || attr->name() == colorAttr || attr->name() == faceAttr)
+    if (name == sizeAttr || name == colorAttr || name == faceAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(attr);
+    return HTMLElement::isPresentationAttribute(name);
 }
 
 void HTMLFontElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* style)
