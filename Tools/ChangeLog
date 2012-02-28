@@ -1,3 +1,11 @@
+2012-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Touch the master.cfg to force a reconfig.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (BuildAndTestLeaksFactory):
+        (NewBuildAndTestFactory):
+
 2012-02-27  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Upstream BlackBerry API web page related files
