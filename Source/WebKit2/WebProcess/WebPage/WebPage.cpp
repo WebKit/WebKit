@@ -1893,6 +1893,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setMediaPlaybackRequiresUserGesture(store.getBoolValueForKey(WebPreferencesKey::mediaPlaybackRequiresUserGestureKey()));
     settings->setMediaPlaybackAllowsInline(store.getBoolValueForKey(WebPreferencesKey::mediaPlaybackAllowsInlineKey()));
     settings->setMockScrollbarsEnabled(store.getBoolValueForKey(WebPreferencesKey::mockScrollbarsEnabledKey()));
+    settings->setHyperlinkAuditingEnabled(store.getBoolValueForKey(WebPreferencesKey::hyperlinkAuditingEnabledKey()));
 
     // <rdar://problem/10697417>: It is necessary to force compositing when accelerate drawing
     // is enabled on Mac so that scrollbars are always in their own layers.

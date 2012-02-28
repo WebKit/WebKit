@@ -1,3 +1,13 @@
+2012-02-27  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10924993> and https://bugs.webkit.org/show_bug.cgi?id=79725
+        <a ping> doesn't work in WebKit2
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Push the WK2 <a ping> setting to WebCore::Settings.
+
 2012-02-27  Enrica Casucci  <enrica@apple.com>
 
         WebKit2: implement platform strategy to access Pasteboard in the UI process.
