@@ -431,6 +431,7 @@ private:
     TouchTargetMap m_originatingTouchPointTargets;
     bool m_touchPressed;
 #endif
+    double m_maxMouseMovedDuration;
 };
 
 } // namespace WebCore

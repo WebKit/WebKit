@@ -1,3 +1,27 @@
+2012-02-28  Dave Moore  <davemoore@chromium.org>
+
+        Slow content causes choppy scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=79403
+
+        Reviewed by James Robinson.
+
+        This code helps make scrolling (via wheel or pad) less choppy
+        when the content takes a long time to respond to the fake mouse moves
+        generated during scrolls.
+
+
+ * page/EventHandler.cpp:
+        (WebCore):
+        (MaximumDurationTracker):
+        (WebCore::MaximumDurationTracker::MaximumDurationTracker):
+        (WebCore::MaximumDurationTracker::~MaximumDurationTracker):
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoon):
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoonInQuad):
+        * page/EventHandler.h:
+
 2012-02-28  Andreas Kling  <awesomekling@apple.com>
 
         StyledElement::isPresentationAttribute() only needs the attribute name.

@@ -126,7 +126,11 @@ using namespace SVGNames;
 // When the autoscroll or the panScroll is triggered when do the scroll every 0.05s to make it smooth
 const double autoscrollInterval = 0.05;
 
-const double fakeMouseMoveInterval = 0.1;
+// The amount of time to wait before sending a fake mouse event, triggered
+// during a scroll. The short interval is used if the content responds to the mouse events quickly enough,
+// otherwise the long interval is used.
+const double fakeMouseMoveShortInterval = 0.1;
+const double fakeMouseMoveLongInterval = 0.250;
 
 enum NoCursorChangeType { NoCursorChange };
 
@@ -141,6 +145,24 @@ public:
 private:
     bool m_isCursorChange;
     Cursor m_cursor;
+};
+
+class MaximumDurationTracker {
+public:
+    explicit MaximumDurationTracker(double *maxDuration)
+        : m_maxDuration(maxDuration)
+        , m_start(monotonicallyIncreasingTime())
+    {
+    }
+
+    ~MaximumDurationTracker()
+    {
+        *m_maxDuration = max(*m_maxDuration, monotonicallyIncreasingTime() - m_start);
+    }
+
+private:
+    double* m_maxDuration;
+    double m_start;
 };
 
 #if ENABLE(TOUCH_EVENTS)
@@ -289,6 +311,7 @@ EventHandler::EventHandler(Frame* frame)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchPressed(false)
 #endif
+    , m_maxMouseMovedDuration(0)
 {
 }
 
@@ -335,6 +358,7 @@ void EventHandler::clear()
 #if ENABLE(TOUCH_EVENTS)
     m_originatingTouchPointTargets.clear();
 #endif
+    m_maxMouseMovedDuration = 0;
 }
 
 void EventHandler::nodeWillBeRemoved(Node* nodeToBeRemoved)
@@ -1635,7 +1659,9 @@ static RenderLayer* layerForNode(Node* node)
 
 bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
 {
+    MaximumDurationTracker maxDurationTracker(&m_maxMouseMovedDuration);
     RefPtr<FrameView> protector(m_frame->view());
+
 
 #if ENABLE(TOUCH_EVENTS)
     // FIXME: this should be moved elsewhere to also be able to dispatch touchcancel events.
@@ -2499,8 +2525,18 @@ void EventHandler::dispatchFakeMouseMoveEventSoon()
     if (m_mousePressed)
         return;
 
-    if (!m_fakeMouseMoveEventTimer.isActive())
-        m_fakeMouseMoveEventTimer.startOneShot(fakeMouseMoveInterval);
+    // If the content has ever taken longer than fakeMouseMoveShortInterval we
+    // reschedule the timer and use a longer time. This will cause the content
+    // to receive these moves only after the user is done scrolling, reducing
+    // pauses during the scroll.
+    if (m_maxMouseMovedDuration > fakeMouseMoveShortInterval) {
+        if (m_fakeMouseMoveEventTimer.isActive())
+            m_fakeMouseMoveEventTimer.stop();
+        m_fakeMouseMoveEventTimer.startOneShot(fakeMouseMoveLongInterval);
+    } else {
+        if (!m_fakeMouseMoveEventTimer.isActive())
+            m_fakeMouseMoveEventTimer.startOneShot(fakeMouseMoveShortInterval);
+    }
 }
 
 void EventHandler::dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad& quad)
@@ -2509,11 +2545,10 @@ void EventHandler::dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad& quad)
     if (!view)
         return;
 
-    if (m_mousePressed || !quad.containsPoint(view->windowToContents(m_currentMousePosition)))
+    if (!quad.containsPoint(view->windowToContents(m_currentMousePosition)))
         return;
 
-    if (!m_fakeMouseMoveEventTimer.isActive())
-        m_fakeMouseMoveEventTimer.startOneShot(fakeMouseMoveInterval);
+    dispatchFakeMouseMoveEventSoon();
 }
 
 void EventHandler::cancelFakeMouseMoveEvent()
