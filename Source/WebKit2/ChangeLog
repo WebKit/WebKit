@@ -1,3 +1,22 @@
+2012-02-28  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Add an experimental SPI for plug-ins to enter sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=79709
+
+        Reviewed by Anders Carlsson.
+
+        * PluginProcess/PluginProcess.h: (WebKit::PluginProcess::pluginPath): Exposed plugin path.
+
+        * PluginProcess/mac/com.apple.WebKit.PluginProcess.sb: Added.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added new files.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp: (WebKit::NPN_GetValue): Exposed
+        a function to access sandboxing functions when available.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.h: Added.
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.mm: Added.
+
 2012-02-28  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         [Qt] Allow read/write to the WebView.url property

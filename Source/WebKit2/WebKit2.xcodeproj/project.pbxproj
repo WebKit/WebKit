@@ -886,6 +886,9 @@
 		E134F01A12EA5D99004EC58D /* WKPrintingView.mm in Sources */ = {isa = PBXBuildFile; fileRef = E134F01912EA5D99004EC58D /* WKPrintingView.mm */; };
 		E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E179FD9B134D38060015B883 /* ArgumentCodersMac.h */; };
 		E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */; };
+		E17BF99614D0A73E00A5A069 /* NetscapeSandboxFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */; };
+		E17BF99814D0AA8300A5A069 /* NetscapeSandboxFunctions.mm in Sources */ = {isa = PBXBuildFile; fileRef = E17BF99714D0AA8300A5A069 /* NetscapeSandboxFunctions.mm */; };
+		E17BF99A14D0CBF100A5A069 /* com.apple.WebKit.PluginProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E17BF99914D0CBF100A5A069 /* com.apple.WebKit.PluginProcess.sb */; };
 		E18C92F412DB9E7100CF2AEB /* PrintInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */; };
 		E199875E142C045400BB2DE7 /* BuiltInPDFView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E199875C142BFC9700BB2DE7 /* BuiltInPDFView.cpp */; };
 		E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A31731134CEA6C007C9A4F /* AttributedString.h */; };
@@ -1932,6 +1935,9 @@
 		E14E99F914D879C9001D221F /* add-entitlements.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "add-entitlements.sh"; sourceTree = "<group>"; };
 		E179FD9B134D38060015B883 /* ArgumentCodersMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersMac.h; sourceTree = "<group>"; };
 		E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersMac.mm; sourceTree = "<group>"; };
+		E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapeSandboxFunctions.h; sourceTree = "<group>"; };
+		E17BF99714D0AA8300A5A069 /* NetscapeSandboxFunctions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetscapeSandboxFunctions.mm; sourceTree = "<group>"; };
+		E17BF99914D0CBF100A5A069 /* com.apple.WebKit.PluginProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.PluginProcess.sb; sourceTree = "<group>"; };
 		E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintInfo.cpp; sourceTree = "<group>"; };
 		E199875A142BF9B800BB2DE7 /* BuiltInPDFView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BuiltInPDFView.h; path = PDF/BuiltInPDFView.h; sourceTree = "<group>"; };
 		E199875C142BFC9700BB2DE7 /* BuiltInPDFView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BuiltInPDFView.cpp; path = PDF/BuiltInPDFView.cpp; sourceTree = "<group>"; };
@@ -2123,6 +2129,7 @@
 				1A0EC802124BD41E007EF4A5 /* PluginProcessMainMac.mm */,
 				1AC25F8912A48E0300BD2671 /* PluginProcessShim.h */,
 				1AC25F8A12A48E0300BD2671 /* PluginProcessShim.mm */,
+				E17BF99914D0CBF100A5A069 /* com.apple.WebKit.PluginProcess.sb */,
 				E14E99F914D879C9001D221F /* add-entitlements.sh */,
 			);
 			path = mac;
@@ -2250,6 +2257,8 @@
 			isa = PBXGroup;
 			children = (
 				1AE5B7F911E7AED200BA6767 /* NetscapePluginMac.mm */,
+				E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */,
+				E17BF99714D0AA8300A5A069 /* NetscapeSandboxFunctions.mm */,
 				1A2D92201281DC1B001EB962 /* PluginProxyMac.mm */,
 			);
 			path = mac;
@@ -3695,6 +3704,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E17BF99A14D0CBF100A5A069 /* com.apple.WebKit.PluginProcess.sb in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4137,6 +4147,7 @@
 				BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */,
 				BC2E6E8E1141971500A63B1E /* WorkQueue.h in Headers */,
 				1AB42E8714BBBBB2004272F7 /* KeychainShimResponseMap.h in Headers */,
+				E17BF99614D0A73E00A5A069 /* NetscapeSandboxFunctions.h in Headers */,
 				BCE0937814FB128C001138D9 /* RemoteLayerClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4300,6 +4311,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E17BF99A14D0CBF100A5A069 /* com.apple.WebKit.PluginProcess.sb in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4874,6 +4886,7 @@
 				BC8699B6116AADAA002A925B /* WKView.mm in Sources */,
 				BC2E6E8D1141971500A63B1E /* WorkQueue.cpp in Sources */,
 				BC0092F8115837A300E0AE2A /* WorkQueueMac.cpp in Sources */,
+				E17BF99814D0AA8300A5A069 /* NetscapeSandboxFunctions.mm in Sources */,
 				BCE0937714FB128C001138D9 /* RemoteLayerClient.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

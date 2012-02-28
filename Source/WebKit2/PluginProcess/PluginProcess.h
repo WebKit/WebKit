@@ -52,6 +52,8 @@ public:
 
     NetscapePluginModule* netscapePluginModule();
 
+    const String& pluginPath() const { return m_pluginPath; }
+
 #if PLATFORM(MAC)
     void initializeShim();
 
