@@ -1,3 +1,14 @@
+2012-02-28  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Change the API to use std::string
+        https://bugs.webkit.org/show_bug.cgi?id=79818
+
+        Reviewed by Antonio Gomes.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::dispatchInspectorMessage):
+        * Api/WebPage.h:
+
 2012-02-28  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] x86 build fix after cleaning up WebPage.cpp

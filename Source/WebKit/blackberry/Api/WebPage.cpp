@@ -5033,9 +5033,9 @@ void WebPage::disablePasswordEcho()
     d->m_page->settings()->setPasswordEchoEnabled(false);
 }
 
-void WebPage::dispatchInspectorMessage(const char* message, int length)
+void WebPage::dispatchInspectorMessage(const std::string& message)
 {
-    String stringMessage(message, length);
+    String stringMessage(message.c_str(), message.length());
     d->m_page->inspectorController()->dispatchMessageFromFrontend(stringMessage);
 }
 

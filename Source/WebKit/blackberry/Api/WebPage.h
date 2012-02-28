@@ -302,7 +302,7 @@ public:
     void disableWebInspector();
     void enablePasswordEcho();
     void disablePasswordEcho();
-    void dispatchInspectorMessage(const char* message, int length);
+    void dispatchInspectorMessage(const std::string& message);
 
     // FIXME: Needs API review on this header. See PR #120402.
     void notifyPagePause();
