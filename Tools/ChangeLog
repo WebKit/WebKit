@@ -1,3 +1,13 @@
+2012-02-28  Adam Roben  <aroben@webkit.org>
+
+        Add my new email address
+
+        Fixes <http://wkb.ug/79797> Adam Roben's email address in webkitpy is soon to be incorrect
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-02-28  Adam Roben  <aroben@apple.com>
 
         Teach webkitpy about wkb.ug URLs

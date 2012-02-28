@@ -374,7 +374,7 @@ committers_unable_to_review = [
 reviewers_list = [
     Reviewer("Ada Chan", "adachan@apple.com", "chanada"),
     Reviewer("Adam Barth", "abarth@webkit.org", "abarth"),
-    Reviewer("Adam Roben", "aroben@apple.com", "aroben"),
+    Reviewer("Adam Roben", ["aroben@webkit.org", "aroben@apple.com"], "aroben"),
     Reviewer("Adam Treat", ["treat@kde.org", "treat@webkit.org", "atreat@rim.com"], "manyoso"),
     Reviewer("Alejandro G. Castro", ["alex@igalia.com", "alex@webkit.org"], "alexg__"),
     Reviewer("Adele Peterson", "adele@apple.com", "adele"),
