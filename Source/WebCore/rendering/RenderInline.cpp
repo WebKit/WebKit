@@ -1033,7 +1033,7 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* rep
         LayoutRect repaintRect(r);
         repaintRect.move(-cb->scrolledContentOffset()); // For overflow:auto/scroll/hidden.
 
-        LayoutRect boxRect(LayoutPoint(), cb->layer()->size());
+        LayoutRect boxRect(LayoutPoint(), cb->cachedSizeForOverflowClip());
         r = intersection(repaintRect, boxRect);
     }
     
@@ -1135,7 +1135,7 @@ void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
         topLeft -= containerBox->scrolledContentOffset(); // For overflow:auto/scroll/hidden.
 
         LayoutRect repaintRect(topLeft, rect.size());
-        LayoutRect boxRect(LayoutPoint(), containerBox->layer()->size());
+        LayoutRect boxRect(LayoutPoint(), containerBox->cachedSizeForOverflowClip());
         rect = intersection(repaintRect, boxRect);
         if (rect.isEmpty())
             return;

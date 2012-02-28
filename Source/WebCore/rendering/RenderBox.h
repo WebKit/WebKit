@@ -448,6 +448,7 @@ public:
     virtual void computeIntrinsicRatioInformation(FloatSize& /* intrinsicSize */, double& /* intrinsicRatio */, bool& /* isPercentageIntrinsicSize */) const { }
 
     IntSize scrolledContentOffset() const;
+    IntSize cachedSizeForOverflowClip() const;
 
     virtual bool hasRelativeDimensions() const;
 

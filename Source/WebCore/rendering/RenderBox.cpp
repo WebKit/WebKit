@@ -753,6 +753,14 @@ IntSize RenderBox::scrolledContentOffset() const
     return layer()->scrolledContentOffset();
 }
 
+IntSize RenderBox::cachedSizeForOverflowClip() const
+{
+    ASSERT(hasOverflowClip());
+    ASSERT(hasLayer());
+
+    return layer()->size();
+}
+
 LayoutUnit RenderBox::minPreferredLogicalWidth() const
 {
     if (preferredLogicalWidthsDirty())
@@ -1642,7 +1650,7 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
         topLeft -= containerBox->scrolledContentOffset(); // For overflow:auto/scroll/hidden.
 
         LayoutRect repaintRect(topLeft, rect.size());
-        LayoutRect boxRect(LayoutPoint(), containerBox->layer()->size());
+        LayoutRect boxRect(LayoutPoint(), containerBox->cachedSizeForOverflowClip());
         rect = intersection(repaintRect, boxRect);
         if (rect.isEmpty())
             return;

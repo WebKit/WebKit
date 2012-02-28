@@ -1520,7 +1520,7 @@ void RenderObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
             LayoutRect repaintRect(rect);
             repaintRect.move(-boxParent->scrolledContentOffset()); // For overflow:auto/scroll/hidden.
 
-            LayoutRect boxRect(LayoutPoint(), boxParent->layer()->size());
+            LayoutRect boxRect(LayoutPoint(), boxParent->cachedSizeForOverflowClip());
             rect = intersection(repaintRect, boxRect);
             if (rect.isEmpty())
                 return;
