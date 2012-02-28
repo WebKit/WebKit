@@ -1,3 +1,18 @@
+2012-02-28  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash from list marker having inline and block children
+        https://bugs.webkit.org/show_bug.cgi?id=79793
+
+        Reviewed by Julien Chaffraix.
+
+        Crashing condition in which an anonymous block was being collapsed
+        even though it had a block sibling. removeChild() was not checking
+        for siblings that might precede :before content renderers, such
+        as list items. This patch corrects that.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild)
+
 2012-02-28  Adam Klein  <adamk@chromium.org>
 
         Unreviewed, speculative test fix after r109016.
