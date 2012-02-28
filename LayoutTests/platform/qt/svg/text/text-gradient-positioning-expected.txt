@@ -11,7 +11,6 @@ layer at (0,0) size 800x200
         RenderSVGInlineText {#text} at (0,0) size 731x51
           chunk 1 text run 1 at (0.00,100.00) startOffset 0 endOffset 37 width 731.00: "This should be GREEN and appear once."
     RenderSVGContainer {use} at (0,61) size 731x51
-      RenderSVGContainer {g} at (0,61) size 731x51
-        RenderSVGText {text} at (0,61) size 731x51 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 731x51
-            chunk 1 text run 1 at (0.00,100.00) startOffset 0 endOffset 37 width 731.00: "This should be GREEN and appear once."
+      RenderSVGText {text} at (0,61) size 731x51 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 731x51
+          chunk 1 text run 1 at (0.00,100.00) startOffset 0 endOffset 37 width 731.00: "This should be GREEN and appear once."

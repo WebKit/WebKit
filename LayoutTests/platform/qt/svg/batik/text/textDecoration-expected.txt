@@ -96,4 +96,3 @@ layer at (0,0) size 450x500
             RenderSVGInlineText {#text} at (174,0) size 53x26
               chunk 1 text run 1 at (224.00,460.00) startOffset 0 endOffset 6 width 53.00: "ations"
     RenderSVGContainer {use} at (0,0) size 0x0
-      RenderSVGContainer {g} at (0,0) size 0x0

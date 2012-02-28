@@ -10,6 +10,5 @@ layer at (0,0) size 200x200
       RenderSVGText {text} at (82,84) size 118x21 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 118x21
           chunk 1 (end anchor) text run 1 at (82.00,100.00) startOffset 0 endOffset 18 width 118.00: "right-aligned text"
-      RenderSVGContainer {use} at (180,120) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-20.00,0.00)}]
-        RenderSVGContainer {g} at (180,120) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,120.00)}]
-          RenderSVGPath {polygon} at (180,120) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [points="0 0 0 20 20 10"]
+      RenderSVGContainer {use} at (180,120) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,120.00)}]
+        RenderSVGPath {polygon} at (180,120) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [points="0 0 0 20 20 10"]
