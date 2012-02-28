@@ -144,6 +144,55 @@ void TiledCoreAnimationDrawingArea::scheduleCompositingLayerSync()
     m_layerFlushScheduler.schedule();
 }
 
+void TiledCoreAnimationDrawingArea::didInstallPageOverlay()
+{
+    createPageOverlayLayer();
+    scheduleCompositingLayerSync();
+}
+
+void TiledCoreAnimationDrawingArea::didUninstallPageOverlay()
+{
+    destroyPageOverlayLayer();
+    scheduleCompositingLayerSync();
+}
+
+void TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay(const IntRect& rect)
+{
+    ASSERT(m_pageOverlayLayer);
+    m_pageOverlayLayer->setNeedsDisplayInRect(rect);
+    scheduleCompositingLayerSync();
+}
+
+void TiledCoreAnimationDrawingArea::notifyAnimationStarted(const GraphicsLayer*, double)
+{
+}
+
+void TiledCoreAnimationDrawingArea::notifySyncRequired(const GraphicsLayer*)
+{
+}
+
+void TiledCoreAnimationDrawingArea::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
+{
+    ASSERT_UNUSED(graphicsLayer, graphicsLayer == m_pageOverlayLayer);
+
+    m_webPage->drawPageOverlay(graphicsContext, clipRect);
+}
+
+bool TiledCoreAnimationDrawingArea::showDebugBorders(const GraphicsLayer*) const
+{
+    return m_webPage->corePage()->settings()->showDebugBorders();
+}
+
+bool TiledCoreAnimationDrawingArea::showRepaintCounter(const GraphicsLayer*) const
+{
+    return m_webPage->corePage()->settings()->showRepaintCounter();
+}
+
+float TiledCoreAnimationDrawingArea::deviceScaleFactor() const
+{
+    return m_webPage->corePage()->deviceScaleFactor();
+}
+
 bool TiledCoreAnimationDrawingArea::flushLayers()
 {
     ASSERT(!m_layerTreeStateIsFrozen);
@@ -158,6 +207,9 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         m_pendingRootCompositingLayer = nullptr;
     }
 
+    if (m_pageOverlayLayer)
+        m_pageOverlayLayer->syncCompositingStateForThisLayerOnly();
+
     bool returnValue = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 
     [pool drain];
@@ -168,6 +220,9 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
 {
     m_webPage->setSize(viewSize);
     m_webPage->layoutIfNeeded();
+
+    if (m_pageOverlayLayer)
+        m_pageOverlayLayer->setSize(viewSize);
 
     if (!m_layerTreeStateIsFrozen)
         flushLayers();
@@ -199,10 +254,37 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
 
     if (!layer)
         m_rootLayer.get().sublayers = nil;
-    else
+    else {
         m_rootLayer.get().sublayers = [NSArray arrayWithObject:layer];
 
+        if (m_pageOverlayLayer)
+            [m_rootLayer.get() addSublayer:m_pageOverlayLayer->platformLayer()];
+    }
+
     [CATransaction commit];
+}
+
+void TiledCoreAnimationDrawingArea::createPageOverlayLayer()
+{
+    ASSERT(!m_pageOverlayLayer);
+
+    m_pageOverlayLayer = GraphicsLayer::create(this);
+#ifndef NDEBUG
+    m_pageOverlayLayer->setName("page overlay content");
+#endif
+
+    m_pageOverlayLayer->setDrawsContent(true);
+    m_pageOverlayLayer->setSize(m_webPage->size());
+
+    [m_rootLayer.get() addSublayer:m_pageOverlayLayer->platformLayer()];
+}
+
+void TiledCoreAnimationDrawingArea::destroyPageOverlayLayer()
+{
+    ASSERT(m_pageOverlayLayer);
+
+    [m_pageOverlayLayer->platformLayer() removeFromSuperlayer];
+    m_pageOverlayLayer = nullptr;
 }
 
 } // namespace WebKit

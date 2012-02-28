@@ -1,3 +1,46 @@
+2012-02-27  Anders Carlsson  <andersca@apple.com>
+
+        Add basic page overlay support to TiledCoreAnimationDrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=79716
+        <rdar://problem/10923079>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        Make TiledCoreAnimationDrawingArea a GraphicsLayerClient.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::didInstallPageOverlay):
+        Create the page overlay layer.
+
+        (WebKit::TiledCoreAnimationDrawingArea::didUninstallPageOverlay):
+        Destroy the page overlay layer.
+
+        (WebKit::TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay):
+        Mark the page overlay layer as needing display.
+
+        (WebKit::TiledCoreAnimationDrawingArea::notifyAnimationStarted):
+        (WebKit::TiledCoreAnimationDrawingArea::notifySyncRequired):
+        Add empty GraphisLayerClient member function implementations.
+
+        (WebKit::TiledCoreAnimationDrawingArea::paintContents):
+        Ask the page overlay to paint itself.
+
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        Flush the page overlay layer.
+        
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        Resize the page overlay layer.
+
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+        If we have a page overlay layer, add it as a sublayer of the root layer.
+
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+        Create the page overlay layer and add it as a sublayer of the root layer.
+
+        (WebKit::TiledCoreAnimationDrawingArea::destroyPageOverlayLayer):
+        Remove the page overlay layer and destroy it.
+
 2012-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove virtual methods of WebKitDownload signals in WebKit2 GTK+ API

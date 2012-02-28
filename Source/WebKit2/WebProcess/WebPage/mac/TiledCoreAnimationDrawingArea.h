@@ -27,6 +27,7 @@
 #define TiledCoreAnimationDrawingArea_h
 
 #include "DrawingArea.h"
+#include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/LayerFlushScheduler.h>
 #include <WebCore/LayerFlushSchedulerClient.h>
 #include <wtf/RetainPtr.h>
@@ -38,7 +39,7 @@ namespace WebKit {
 
 class RemoteLayerClient;
 
-class TiledCoreAnimationDrawingArea : public DrawingArea, private WebCore::LayerFlushSchedulerClient {
+class TiledCoreAnimationDrawingArea : public DrawingArea, WebCore::GraphicsLayerClient, WebCore::LayerFlushSchedulerClient {
 public:
     static PassOwnPtr<TiledCoreAnimationDrawingArea> create(WebPage*, const WebPageCreationParameters&);
     virtual ~TiledCoreAnimationDrawingArea();
@@ -56,6 +57,18 @@ private:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
     virtual void scheduleCompositingLayerSync() OVERRIDE;
 
+    virtual void didInstallPageOverlay() OVERRIDE;
+    virtual void didUninstallPageOverlay() OVERRIDE;
+    virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
+
+    // WebCore::GraphicsLayerClient
+    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) OVERRIDE;
+    virtual void notifySyncRequired(const WebCore::GraphicsLayer*) OVERRIDE;
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect) OVERRIDE;
+    virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const OVERRIDE;
+    virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const OVERRIDE;
+    virtual float deviceScaleFactor() const OVERRIDE;
+
     // WebCore::LayerFlushSchedulerClient
     virtual bool flushLayers() OVERRIDE;
 
@@ -65,12 +78,17 @@ private:
 
     void setRootCompositingLayer(CALayer *);
 
+    void createPageOverlayLayer();
+    void destroyPageOverlayLayer();
+
     bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 
     OwnPtr<RemoteLayerClient> m_remoteLayerClient;
     RetainPtr<CALayer> m_rootLayer;
     RetainPtr<CALayer> m_pendingRootCompositingLayer;
+
+    OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
 };
 
 } // namespace WebKit
