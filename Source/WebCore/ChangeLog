@@ -1,3 +1,22 @@
+2012-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r108834.
+        http://trac.webkit.org/changeset/108834
+        https://bugs.webkit.org/show_bug.cgi?id=79840
+
+        Seems to cause a number of crashes under
+        FrameView::doDeferredRepaints (Requested by jamesr__ on
+        #webkit).
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw):
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageCache.cpp:
+        (WebCore::SVGImageCache::imageContentChanged):
+        (WebCore::SVGImageCache::redrawTimerFired):
+        * svg/graphics/SVGImageCache.h:
+        (SVGImageCache):
+
 2012-02-29  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add support for nested event loops in RunLoop
