@@ -14,6 +14,9 @@ var numberInput = document.getElementById('number');
 var anotherInput = document.getElementById('another');
 
 if (window.eventSender) {
+    // Reset mouse position
+    eventSender.mouseMoveTo(0, 0);
+
     // Move the cursor on the upper button of the first input field.
     eventSender.mouseMoveTo(numberInput.offsetLeft + numberInput.offsetWidth - 10, numberInput.offsetTop + numberInput.offsetHeight / 4);
 

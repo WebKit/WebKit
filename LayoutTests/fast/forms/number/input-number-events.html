@@ -20,6 +20,7 @@ numberInput.oninput = function() { inputEventCounter++; };
 
 if (window.eventSender) {
     debug('Initial state');
+    eventSender.mouseMoveTo(0, 0);
     shouldBe('changeEventCounter', '0');
     shouldBe('inputEventCounter', '0');
 

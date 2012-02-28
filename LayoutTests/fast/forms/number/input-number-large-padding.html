@@ -12,6 +12,9 @@ description('Test for a bug that spin buttons did not work if a number input has
 
 var numberInput = document.getElementById('number');
 if (window.eventSender) {
+    // Reset mouse position
+    eventSender.mouseMoveTo(0, 0);
+
     // Move the cursor on the upper button.
     eventSender.mouseMoveTo(numberInput.offsetLeft + numberInput.offsetWidth - 10, numberInput.offsetTop + numberInput.offsetHeight / 4);
     eventSender.mouseDown();
