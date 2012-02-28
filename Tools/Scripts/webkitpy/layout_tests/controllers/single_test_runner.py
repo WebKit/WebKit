@@ -198,11 +198,14 @@ class SingleTestRunner:
 
         if driver_output.crash:
             failures.append(test_failures.FailureCrash(bool(reference_filename)))
-            _log.debug("%s Stacktrace for %s:\n%s" % (self._worker_name, testname,
-                                                      driver_output.error))
+            if driver_output.error:
+                _log.debug("%s %s crashed, stack trace:" % (self._worker_name, testname))
+            else:
+                _log.debug("%s %s crashed, no stack trace" % (self._worker_name, testname))
         elif driver_output.error:
-            _log.debug("%s %s output stderr lines:\n%s" % (self._worker_name, testname,
-                                                           driver_output.error))
+            _log.debug("%s %s output stderr lines:" % (self._worker_name, testname))
+        for line in driver_output.error.splitlines():
+            _log.debug("  %s" % line)
         return failures
 
     def _compare_output(self, driver_output, expected_driver_output):
@@ -266,7 +269,7 @@ class SingleTestRunner:
                 failures.append(test_failures.FailureImageHashMismatch(diff_result[1]))
             else:
                 # See https://bugs.webkit.org/show_bug.cgi?id=69444 for why this isn't a full failure.
-                _log.warning('%s -> pixel hash failed (but pixel test still passes)' % self._test_name)
+                _log.warning('  %s -> pixel hash failed (but pixel test still passes)' % self._test_name)
         return failures
 
     def _run_reftest(self):

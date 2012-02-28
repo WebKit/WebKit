@@ -1,3 +1,19 @@
+2012-02-27  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: log multiline stderr/crash output properly
+        https://bugs.webkit.org/show_bug.cgi?id=79722
+
+        Reviewed by Adam Barth.
+
+        This cleans up some nits in the log output to make things
+        slightly easier to read (every line gets timestamped, etc.).
+
+        Also tweaks the log message for pixel hash mismatches.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._handle_error):
+        (SingleTestRunner._compare_image):
+
 2012-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Touch the master.cfg to force a reconfig.
