@@ -1,3 +1,10 @@
+2012-02-28  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed, fix cr-win build after r109119.
+
+        * platform/graphics/chromium/TransparencyWin.h:
+        (TransparencyWin):
+
 2012-02-28  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add GMainLoop and GMainContext to be handled by GRefPtr
