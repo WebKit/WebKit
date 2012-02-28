@@ -1,5 +1,12 @@
 2012-02-28  Alexey Proskuryakov  <ap@apple.com>
 
+        More build fix.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.mm: Check for build platform
+        properly.
+
+2012-02-28  Alexey Proskuryakov  <ap@apple.com>
+
         Build fix.
 
         * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp: (WebKit::NPN_GetValue):

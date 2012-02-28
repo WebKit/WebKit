@@ -26,7 +26,7 @@
 #import "config.h"
 #import "NetscapeSandboxFunctions.h"
 
-#if !defined(BUILDING_ON_LEOPARD) || !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
 #import "PluginProcess.h"
 #import "WebKitSystemInterface.h"
