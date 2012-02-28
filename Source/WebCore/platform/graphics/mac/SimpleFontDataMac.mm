@@ -57,7 +57,7 @@ const float smallCapsFontSizeMultiplier = 0.7f;
 static bool fontHasVerticalGlyphs(CTFontRef ctFont)
 {
     // The check doesn't look neat but this is what AppKit does for vertical writing...
-    RetainPtr<CFArrayRef> tableTags(AdoptCF, CTFontCopyAvailableTables(ctFont, kCTFontTableOptionExcludeSynthetic));
+    RetainPtr<CFArrayRef> tableTags(AdoptCF, CTFontCopyAvailableTables(ctFont, kCTFontTableOptionNoOptions));
     CFIndex numTables = CFArrayGetCount(tableTags.get());
     for (CFIndex index = 0; index < numTables; ++index) {
         CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tableTags.get(), index);
@@ -71,7 +71,6 @@ static bool initFontData(SimpleFontData* fontData)
 {
     if (!fontData->platformData().cgFont())
         return false;
-
 
     return true;
 }
