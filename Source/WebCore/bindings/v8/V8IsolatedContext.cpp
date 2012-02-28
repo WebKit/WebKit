@@ -75,7 +75,7 @@ V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup, int wor
     //        changes.
     m_context->get()->UseDefaultSecurityToken();
 
-    m_frame->loader()->client()->didCreateScriptContext(context(), m_world->id());
+    m_frame->loader()->client()->didCreateScriptContext(context(), extensionGroup, m_world->id());
 }
 
 void V8IsolatedContext::destroy()

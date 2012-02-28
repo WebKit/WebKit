@@ -297,7 +297,7 @@ public:
     // Notifies that a new script context has been created for this frame.
     // This is similar to didClearWindowObject but only called once per
     // frame context.
-    virtual void didCreateScriptContext(WebFrame*, v8::Handle<v8::Context>, int worldId) { }
+    virtual void didCreateScriptContext(WebFrame*, v8::Handle<v8::Context>, int extensionGroup, int worldId) { }
 
     // WebKit is about to release its reference to a v8 context for a frame.
     virtual void willReleaseScriptContext(WebFrame*, v8::Handle<v8::Context>, int worldId) { }

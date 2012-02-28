@@ -339,7 +339,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
 
     setSecurityToken();
 
-    m_frame->loader()->client()->didCreateScriptContext(m_context, 0);
+    m_frame->loader()->client()->didCreateScriptContext(m_context, 0, 0);
 
     // FIXME: This is wrong. We should actually do this for the proper world once
     // we do isolated worlds the WebCore way.

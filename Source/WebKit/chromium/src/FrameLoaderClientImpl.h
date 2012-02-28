@@ -62,7 +62,7 @@ public:
     virtual void documentElementAvailable();
 
 #if USE(V8)
-    virtual void didCreateScriptContext(v8::Handle<v8::Context>, int worldId);
+    virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId);
     virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId);
 #endif
 

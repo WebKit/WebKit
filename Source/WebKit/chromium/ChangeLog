@@ -1,3 +1,17 @@
+2012-02-27  James Kozianski  <koz@chromium.org>
+
+        [chromium] Plumb extensionGroup into didCreateScriptContext().
+        https://bugs.webkit.org/show_bug.cgi?id=79072
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::didCreateScriptContext):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::didCreateScriptContext):
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+
 2012-02-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed gardening, disable TransparencyWinTest unit tests
