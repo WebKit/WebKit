@@ -106,7 +106,8 @@ QtFlickProvider::QtFlickProvider(QQuickWebView* viewItem, QQuickWebPage* pageIte
     pageItem->setParentItem(m_contentItem);
 
     // Propagate flickable signals.
-    connect(m_flickable, SIGNAL(movingChanged()), SIGNAL(movingChanged()), Qt::DirectConnection);
+    connect(m_flickable, SIGNAL(movementStarted()), SIGNAL(movementStarted()), Qt::DirectConnection);
+    connect(m_flickable, SIGNAL(movementEnded()), SIGNAL(movementEnded()), Qt::DirectConnection);
     connect(m_flickable, SIGNAL(flickingChanged()), SIGNAL(flickingChanged()), Qt::DirectConnection);
     connect(m_flickable, SIGNAL(draggingChanged()), SIGNAL(draggingChanged()), Qt::DirectConnection);
     connect(m_flickable, SIGNAL(contentWidthChanged()), SIGNAL(contentWidthChanged()), Qt::DirectConnection);

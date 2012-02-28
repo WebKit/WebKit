@@ -72,7 +72,8 @@ Q_SIGNALS:
     void contentHeightChanged();
     void contentXChanged();
     void contentYChanged();
-    void movingChanged();
+    void movementStarted();
+    void movementEnded();
     void flickingChanged();
     void draggingChanged();
 

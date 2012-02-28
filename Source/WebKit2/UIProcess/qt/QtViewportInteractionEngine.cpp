@@ -125,7 +125,8 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(QQuickWebView* viewport
 
     connect(m_content, SIGNAL(widthChanged()), SLOT(itemSizeChanged()), Qt::DirectConnection);
     connect(m_content, SIGNAL(heightChanged()), SLOT(itemSizeChanged()), Qt::DirectConnection);
-    connect(m_flickProvider, SIGNAL(movingChanged()), SLOT(flickableMovingStateChanged()), Qt::DirectConnection);
+    connect(m_flickProvider, SIGNAL(movementStarted()), SLOT(flickableMoveStarted()), Qt::DirectConnection);
+    connect(m_flickProvider, SIGNAL(movementEnded()), SLOT(flickableMoveEnded()), Qt::DirectConnection);
 
     connect(m_scaleAnimation, SIGNAL(valueChanged(QVariant)),
             SLOT(scaleAnimationValueChanged(QVariant)), Qt::DirectConnection);
@@ -187,18 +188,9 @@ bool QtViewportInteractionEngine::animateItemRectVisible(const QRectF& itemRect)
     return true;
 }
 
-void QtViewportInteractionEngine::flickableMovingStateChanged()
+void QtViewportInteractionEngine::flickableMoveStarted()
 {
-    if (m_flickProvider->isMoving()) {
-        if (m_scrollUpdateDeferrer)
-            return; // We get the isMoving() signal multiple times.
-        panMoveStarted();
-    } else
-        panMoveEnded();
-}
-
-void QtViewportInteractionEngine::panMoveStarted()
-{
+    Q_ASSERT(m_flickProvider->isMoving());
     m_scrollUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this));
 
     m_lastScrollPosition = m_flickProvider->contentPos();
@@ -206,8 +198,9 @@ void QtViewportInteractionEngine::panMoveStarted()
     connect(m_flickProvider, SIGNAL(contentYChanged()), SLOT(flickableMovingPositionUpdate()));
 }
 
-void QtViewportInteractionEngine::panMoveEnded()
+void QtViewportInteractionEngine::flickableMoveEnded()
 {
+    Q_ASSERT(!m_flickProvider->isMoving());
     // This method is called on the end of the pan or pan kinetic animation.
     m_scrollUpdateDeferrer.clear();
 

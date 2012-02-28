@@ -113,11 +113,13 @@ private Q_SLOTS:
     // Respond to changes of content that are not driven by us, like the page resizing itself.
     void itemSizeChanged();
 
-    void flickableMovingStateChanged();
     void flickableMovingPositionUpdate();
 
     void scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State);
     void scaleAnimationValueChanged(QVariant value) { setItemRectVisible(value.toRectF()); }
+
+    void flickableMoveStarted(); // Called when panning starts.
+    void flickableMoveEnded(); //   Called when panning (+ kinetic animation) ends.
 
 private:
     friend class ViewportUpdateDeferrer;
@@ -129,9 +131,6 @@ private:
 
     qreal innerBoundedCSSScale(qreal);
     qreal outerBoundedCSSScale(qreal);
-
-    void panMoveStarted(); // Called when panning starts.
-    void panMoveEnded(); //   Called when panning (+ kinetic animation) ends.
 
     QRectF computePosRangeForItemAtScale(qreal itemScale) const;
     bool ensureContentWithinViewportBoundary(bool immediate = false);
