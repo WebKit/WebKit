@@ -529,4 +529,4 @@ class ChromiumAndroidDriver(chromium.ChromiumDriver):
                     return
                 if last_char == '$':
                     raise AssertionError('Adbd is not running as root')
-            last_char = current
+            last_char = current_char
