@@ -1,3 +1,21 @@
+2012-02-28  Jungshik Shin  <jshin@chromium.org>
+
+        Add a fallback path to LineBreakIteratorPoolICU when the locale
+        name from a web page is invalid and ICU fails to get a line break
+        iterator instance. Also add a null check to 
+        TextBreakIteratorICU::acquireLineBreakIterator.
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=67640
+
+        Test: fast/text/invalid-locale.html
+
+        * platform/text/LineBreakIteratorPoolICU.h:
+        (WebCore::LineBreakIteratorPool::take):
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::acquireLineBreakIterator):
+
 2012-02-28  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to accessing removed continuation in multi-column layout.

@@ -61,7 +61,15 @@ public:
 
         if (!iterator) {
             UErrorCode openStatus = U_ZERO_ERROR;
-            iterator = ubrk_open(UBRK_LINE, locale.isEmpty() ? currentTextBreakLocaleID() : locale.string().utf8().data(), 0, 0, &openStatus);
+            bool localeIsEmpty = locale.isEmpty();
+            iterator = ubrk_open(UBRK_LINE, localeIsEmpty ? currentTextBreakLocaleID() : locale.string().utf8().data(), 0, 0, &openStatus);
+            // locale comes from a web page and it can be invalid, leading ICU
+            // to fail, in which case we fall back to the default locale.
+            if (!localeIsEmpty && U_FAILURE(openStatus)) {
+                openStatus = U_ZERO_ERROR;
+                iterator = ubrk_open(UBRK_LINE, currentTextBreakLocaleID(), 0, 0, &openStatus);
+            }
+                
             if (U_FAILURE(openStatus)) {
                 LOG_ERROR("ubrk_open failed with status %d", openStatus);
                 return 0;
