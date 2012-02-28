@@ -1,3 +1,13 @@
+2012-02-28  Anders Carlsson  <andersca@apple.com>
+
+        Fix build with newer versions of clang.
+
+        Clang now warns since we're not passing a CFString literal to CFStringCreateWithFormatAndArguments,
+        but it's OK to ignore this warning since clang is also checking that the caller (vprintf_stderr_common)
+        takes a string literal.
+
+        * wtf/Assertions.cpp:
+
 2012-02-28  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add GMainLoop and GMainContext to be handled by GRefPtr

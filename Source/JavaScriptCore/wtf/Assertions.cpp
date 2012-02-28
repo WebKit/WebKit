@@ -70,8 +70,15 @@ static void vprintf_stderr_common(const char* format, va_list args)
 #if PLATFORM(MAC)
     if (strstr(format, "%@")) {
         CFStringRef cfFormat = CFStringCreateWithCString(NULL, format, kCFStringEncodingUTF8);
-        CFStringRef str = CFStringCreateWithFormatAndArguments(NULL, NULL, cfFormat, args);
 
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+#endif
+        CFStringRef str = CFStringCreateWithFormatAndArguments(NULL, NULL, cfFormat, args);
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
         int length = CFStringGetMaximumSizeForEncoding(CFStringGetLength(str), kCFStringEncodingUTF8);
         char* buffer = (char*)malloc(length + 1);
 
