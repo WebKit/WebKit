@@ -207,6 +207,11 @@ WebInspector.CounterUI.prototype = {
 
 
 WebInspector.MemoryStatistics.prototype = {
+    reset: function()
+    {
+        this._counters = [];
+    },
+
     setMainTimelineGrid: function(timelineGrid)
     {
         this._mainTimelineGrid = timelineGrid;

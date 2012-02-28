@@ -63,6 +63,7 @@ WebInspector.TimelinePanel = function()
         this._timelineMemorySplitter.addStyleClass("hidden");
         this._memoryStatistics = new WebInspector.MemoryStatistics(this, this.splitView.preferredSidebarWidth());
         this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._timelinesOverviewModeChanged, this);
+        WebInspector.settings.memoryCounterGraphsHeight = WebInspector.settings.createSetting("memoryCounterGraphsHeight", 150);
     }
 
     var itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);
@@ -163,6 +164,7 @@ WebInspector.TimelinePanel.prototype = {
         WebInspector.elementDragEnd(event);
         if (this._memoryStatistics)
             this._memoryStatistics.show();
+        WebInspector.settings.memoryCounterGraphsHeight.set(this.splitView.element.offsetHeight);
     },
 
     _setSplitterPosition: function(top)
@@ -388,7 +390,7 @@ WebInspector.TimelinePanel.prototype = {
             this._timelineMemorySplitter.removeStyleClass("hidden");
             this._memoryStatistics.show();
             this.splitView.element.style.bottom = "auto";
-            this._setSplitterPosition(600);
+            this._setSplitterPosition(WebInspector.settings.memoryCounterGraphsHeight.get());
         }
         this._refresh();
     },
@@ -506,6 +508,8 @@ WebInspector.TimelinePanel.prototype = {
         this._adjustScrollPosition(0);
         this._closeRecordDetails();
         this._allRecordsCount = 0;
+        if (this._memoryStatistics)
+            this._memoryStatistics.reset();
     },
 
     elementsToRestoreScrollPositionsFor: function()

@@ -599,6 +599,7 @@
 
 #counter-values-bar {
     border-bottom: solid 1px lightgray;
+    min-height: 15px;
 }
 
 .timeline-overview-start-at-zero-bars {
