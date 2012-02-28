@@ -1,3 +1,13 @@
+2012-02-27  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [chromium] Add createSnapshotFile API to WebFileSystem to create File snapshots for filesystem files
+        https://bugs.webkit.org/show_bug.cgi?id=79394
+
+        Reviewed by Darin Fisher.
+
+        * public/platform/WebFileSystem.h:
+        (WebKit::WebFileSystem::createSnapshotFileAndReadMetadata): Added.
+
 2012-02-27  James Kozianski  <koz@chromium.org>
 
         [chromium] Plumb extensionGroup into didCreateScriptContext().

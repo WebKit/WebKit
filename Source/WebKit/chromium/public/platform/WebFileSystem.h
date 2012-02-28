@@ -71,6 +71,7 @@ public:
     virtual void removeRecursively(const WebURL& path, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     // Retrieves the metadata information of the file or directory at the given |path|.
+    // This may not always return the local platform path in remote filesystem cases.
     // WebFileSystemCallbacks::didReadMetadata() must be called with a valid metadata when the retrieval is completed successfully.
     // WebFileSystemCallbacks::didFail() must be called otherwise.
     virtual void readMetadata(const WebURL& path, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
@@ -113,6 +114,15 @@ public:
     // Creates a WebFileWriter that can be used to write to the given file.
     // This is a fast, synchronous call, and should not stat the filesystem.
     virtual WebFileWriter* createFileWriter(const WebURL& path, WebFileWriterClient*) { WEBKIT_ASSERT_NOT_REACHED(); return 0; }
+
+    // Creates a snapshot file for a given file specified by |path| and registers the file with the |blobURL|. It returns the metadata of the created snapshot file.
+    // The returned metadata should include a local platform path to the snapshot image.
+    // In local filesystem cases the backend may simply return the metadata of the file itself (as well as readMetadata does), while in remote filesystem case the backend may download the file into a temporary snapshot file and return the metadata of the temporary file.
+    // The returned metadata is used to create a File object for the |path|.
+    // The snapshot file is supposed to be deleted when the last reference to the |blobURL| is dropped.
+    // WebFileSystemCallbacks::didReadMetadata() with the metadata of the snapshot file must be called when the operation is completed successfully.
+    // WebFileSystemCallbacks::didFail() must be called otherwise.
+    virtual void createSnapshotFileAndReadMetadata(const WebURL& blobURL, const WebURL& path, WebFileSystemCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
 
 protected:
     virtual ~WebFileSystem() { }
