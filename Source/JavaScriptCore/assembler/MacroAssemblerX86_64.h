@@ -334,6 +334,13 @@ public:
         m_assembler.movzbl_rr(dest, dest);
     }
     
+    void comparePtr(RelationalCondition cond, RegisterID left, RegisterID right, RegisterID dest)
+    {
+        m_assembler.cmpq_rr(right, left);
+        m_assembler.setCC_r(x86Condition(cond), dest);
+        m_assembler.movzbl_rr(dest, dest);
+    }
+    
     Jump branchAdd32(ResultCondition cond, TrustedImm32 src, AbsoluteAddress dest)
     {
         move(TrustedImmPtr(dest.m_ptr), scratchRegister);

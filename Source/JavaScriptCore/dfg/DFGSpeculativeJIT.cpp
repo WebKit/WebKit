@@ -383,9 +383,6 @@ bool SpeculativeJIT::nonSpeculativeCompare(Node& node, MacroAssembler::Relationa
 
 bool SpeculativeJIT::nonSpeculativeStrictEq(Node& node, bool invert)
 {
-    if (!invert && (isKnownNumeric(node.child1().index()) || isKnownNumeric(node.child2().index())))
-        return nonSpeculativeCompare(node, MacroAssembler::Equal, operationCompareStrictEq);
-    
     NodeIndex branchNodeIndex = detectPeepHoleBranch();
     if (branchNodeIndex != NoNode) {
         ASSERT(node.adjustedRefCount() == 1);

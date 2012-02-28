@@ -736,8 +736,14 @@ size_t DFG_OPERATION operationCompareStrictEq(ExecState* exec, EncodedJSValue en
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
+
+    JSValue src1 = JSValue::decode(encodedOp1);
+    JSValue src2 = JSValue::decode(encodedOp2);
     
-    return JSValue::strictEqual(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
+    ASSERT((src1.isCell() && src2.isCell())
+           || src1.isDouble() || src2.isDouble());
+    
+    return JSValue::strictEqual(exec, src1, src2);
 }
 
 static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializationKind kind)

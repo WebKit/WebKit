@@ -963,17 +963,25 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     unsigned src2 = currentInstruction[3].u.operand;
 
     emitGetVirtualRegisters(src1, regT0, src2, regT1);
-
-    // Jump to a slow case if either operand is a number, or if both are JSCell*s.
+    
+    // Jump slow if both are cells (to cover strings).
     move(regT0, regT2);
     orPtr(regT1, regT2);
     addSlowCase(emitJumpIfJSCell(regT2));
-    addSlowCase(emitJumpIfImmediateNumber(regT2));
+    
+    // Jump slow if either is a double. First test if it's an integer, which is fine, and then test
+    // if it's a double.
+    Jump leftOK = emitJumpIfImmediateInteger(regT0);
+    addSlowCase(emitJumpIfImmediateNumber(regT0));
+    leftOK.link(this);
+    Jump rightOK = emitJumpIfImmediateInteger(regT1);
+    addSlowCase(emitJumpIfImmediateNumber(regT1));
+    rightOK.link(this);
 
     if (type == OpStrictEq)
-        compare32(Equal, regT1, regT0, regT0);
+        comparePtr(Equal, regT1, regT0, regT0);
     else
-        compare32(NotEqual, regT1, regT0, regT0);
+        comparePtr(NotEqual, regT1, regT0, regT0);
     emitTagAsBoolImmediate(regT0);
 
     emitPutVirtualRegister(dst);
@@ -1364,6 +1372,7 @@ void JIT::emitSlow_op_stricteq(Instruction* currentInstruction, Vector<SlowCaseE
 {
     linkSlowCase(iter);
     linkSlowCase(iter);
+    linkSlowCase(iter);
     JITStubCall stubCall(this, cti_op_stricteq);
     stubCall.addArgument(regT0);
     stubCall.addArgument(regT1);
@@ -1372,6 +1381,7 @@ void JIT::emitSlow_op_stricteq(Instruction* currentInstruction, Vector<SlowCaseE
 
 void JIT::emitSlow_op_nstricteq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
     JITStubCall stubCall(this, cti_op_nstricteq);

@@ -1,3 +1,26 @@
+2012-02-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Old JIT's style of JSVALUE64 strict equality is subtly wrong
+        https://bugs.webkit.org/show_bug.cgi?id=79700
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::comparePtr):
+        (MacroAssemblerX86_64):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeStrictEq):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeStrictEq):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emitSlow_op_stricteq):
+        (JSC::JIT::emitSlow_op_nstricteq):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2012-02-27  Gavin Barraclough  <barraclough@apple.com>
 
         Implement support for op_negate and op_bitnot in the DFG JIT

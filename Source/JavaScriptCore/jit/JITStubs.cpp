@@ -3294,6 +3294,9 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_stricteq)
 
     JSValue src1 = stackFrame.args[0].jsValue();
     JSValue src2 = stackFrame.args[1].jsValue();
+    
+    ASSERT((src1.isCell() && src2.isCell())
+           || src1.isDouble() || src2.isDouble());
 
     bool result = JSValue::strictEqual(stackFrame.callFrame, src1, src2);
     CHECK_FOR_EXCEPTION_AT_END();
@@ -3322,6 +3325,9 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_nstricteq)
 
     JSValue src1 = stackFrame.args[0].jsValue();
     JSValue src2 = stackFrame.args[1].jsValue();
+
+    ASSERT((src1.isCell() && src2.isCell())
+           || src1.isDouble() || src2.isDouble());
 
     bool result = !JSValue::strictEqual(stackFrame.callFrame, src1, src2);
     CHECK_FOR_EXCEPTION_AT_END();
