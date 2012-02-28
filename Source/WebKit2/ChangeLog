@@ -1,3 +1,28 @@
+2012-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove virtual methods of WebKitDownload signals in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=79804
+
+        Reviewed by Martin Robinson.
+
+        That comes from the first patch that followed the approach of the
+        first LoaderClient implementation. With current implementation
+        download signals, except decide-destination, don't need to be
+        true_handled, and they won't have a default handler
+        implementation. Also the download object is not supposed to be
+        inheritable, since instances are created privately by the
+        WebContext, so it's not possible to override the virtual methods
+        in derived classes.
+
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkit_download_class_init):
+        (webkitDownloadNotifyProgress):
+        (webkitDownloadFailed):
+        (webkitDownloadFinished):
+        * UIProcess/API/gtk/WebKitDownload.h:
+        (_WebKitDownloadClass):
+        * UIProcess/API/gtk/webkit2marshal.list:
+
 2012-02-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Fix build for WK2, do not use enum type if values can be outside the enum

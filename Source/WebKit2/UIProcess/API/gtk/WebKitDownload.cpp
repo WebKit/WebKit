@@ -169,18 +169,14 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      * This signal is emitted after response is received,
      * every time new data has been written to the destination. It's
      * useful to know the progress of the download operation.
-     *
-     * Returns: %TRUE to stop other handlers from being invoked for the event.
-     *   %FALSE to propagate the event further.
      */
     signals[RECEIVED_DATA] =
         g_signal_new("received-data",
                      G_TYPE_FROM_CLASS(objectClass),
                      G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitDownloadClass, received_data),
-                     g_signal_accumulator_true_handled, NULL,
-                     webkit_marshal_BOOLEAN__UINT64,
-                     G_TYPE_BOOLEAN, 1,
+                     0, 0, 0,
+                     webkit_marshal_VOID__UINT64,
+                     G_TYPE_NONE, 1,
                      G_TYPE_UINT64);
 
     /**
@@ -189,18 +185,14 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      *
      * This signal is emitted when download finishes successfully or due to an error.
      * In case of errors #WebKitDownload::failed signal is emitted before this one.
-     *
-     * Returns: %TRUE to stop other handlers from being invoked for the event.
-     *   %FALSE to propagate the event further.
      */
     signals[FINISHED] =
         g_signal_new("finished",
                      G_TYPE_FROM_CLASS(objectClass),
                      G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitDownloadClass, finished),
-                     g_signal_accumulator_true_handled, NULL,
-                     webkit_marshal_BOOLEAN__VOID,
-                     G_TYPE_BOOLEAN, 0);
+                     0, 0, 0,
+                     g_cclosure_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
 
     /**
      * WebKitDownload::failed:
@@ -213,18 +205,14 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      * with webkit_download_cancel(), this signal is emitted with error
      * %WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER. The download operation finishes
      * after an error and #WebKitDownload::finished signal is emitted after this one.
-     *
-     * Returns: %TRUE to stop other handlers from being invoked for the event.
-     *   %FALSE to propagate the event further.
      */
     signals[FAILED] =
         g_signal_new("failed",
                      G_TYPE_FROM_CLASS(objectClass),
                      G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitDownloadClass, failed),
-                     g_signal_accumulator_true_handled, NULL,
-                     webkit_marshal_BOOLEAN__POINTER,
-                     G_TYPE_BOOLEAN, 1,
+                     0, 0, 0,
+                     g_cclosure_marshal_VOID__POINTER,
+                     G_TYPE_NONE, 1,
                      G_TYPE_POINTER);
 
     /**
@@ -258,17 +246,13 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      * This signal is emitted after #WebKitDownload::decide-destination and before
      * #WebKitDownload::received-data to notify that destination file has been
      * created successfully at @destination.
-     *
-     * Returns: %TRUE to stop other handlers from being invoked for the event.
-     *   %FALSE to propagate the event further.
      */
     signals[CREATED_DESTINATION] =
         g_signal_new("created-destination",
                      G_TYPE_FROM_CLASS(objectClass),
                      G_SIGNAL_RUN_LAST,
-                     G_STRUCT_OFFSET(WebKitDownloadClass, created_destination),
-                     g_signal_accumulator_true_handled, NULL,
-                     webkit_marshal_BOOLEAN__STRING,
+                     0, 0, 0,
+                     g_cclosure_marshal_VOID__STRING,
                      G_TYPE_BOOLEAN, 1,
                      G_TYPE_STRING);
 
@@ -304,8 +288,7 @@ void webkitDownloadNotifyProgress(WebKitDownload* download, guint64 bytesReceive
         download->priv->timer.set(g_timer_new());
 
     priv->currentSize += bytesReceived;
-    gboolean returnValue;
-    g_signal_emit(download, signals[RECEIVED_DATA], 0, bytesReceived, &returnValue);
+    g_signal_emit(download, signals[RECEIVED_DATA], 0, bytesReceived);
 
     // Throttle progress notification to not consume high amounts of
     // CPU on fast links, except when the last notification occured
@@ -333,9 +316,9 @@ void webkitDownloadFailed(WebKitDownload* download, const ResourceError& resourc
                                                  resourceError.localizedDescription().utf8().data()));
     if (download->priv->timer)
         g_timer_stop(download->priv->timer.get());
-    gboolean returnValue;
-    g_signal_emit(download, signals[FAILED], 0, webError.get(), &returnValue);
-    g_signal_emit(download, signals[FINISHED], 0, &returnValue);
+
+    g_signal_emit(download, signals[FAILED], 0, webError.get());
+    g_signal_emit(download, signals[FINISHED], 0, NULL);
 }
 
 void webkitDownloadCancelled(WebKitDownload* download)
@@ -356,8 +339,7 @@ void webkitDownloadFinished(WebKitDownload* download)
     }
     if (download->priv->timer)
         g_timer_stop(download->priv->timer.get());
-    gboolean returnValue;
-    g_signal_emit(download, signals[FINISHED], 0, &returnValue);
+    g_signal_emit(download, signals[FINISHED], 0, NULL);
 }
 
 CString webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, const CString& suggestedFilename)

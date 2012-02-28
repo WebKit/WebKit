@@ -50,15 +50,8 @@ struct _WebKitDownload {
 struct _WebKitDownloadClass {
     GObjectClass parent_class;
 
-    gboolean (* received_data)       (WebKitDownload *download,
-                                      guint64         data_length);
-    gboolean (* finished)            (WebKitDownload *download);
-    gboolean (* failed)              (WebKitDownload *download,
-                                      GError         *error);
     gboolean (* decide_destination)  (WebKitDownload *download,
                                       const gchar    *suggested_filename);
-    gboolean (* created_destination) (WebKitDownload *download,
-                                      const gchar    *destination);
 };
 
 WEBKIT_API GType
