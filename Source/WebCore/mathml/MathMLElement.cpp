@@ -79,7 +79,7 @@ void MathMLElement::collectStyleForAttribute(Attribute* attr, StylePropertySet* 
     else if (attr->name() == fontfamilyAttr)
         addPropertyToAttributeStyle(style, CSSPropertyFontFamily, attr->value());
     else {
-        ASSERT(!isPresentationAttribute(attr));
+        ASSERT(!isPresentationAttribute(attr->name()));
         StyledElement::collectStyleForAttribute(attr, style);
     }
 }
