@@ -865,11 +865,11 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
             for (int i = rules->length(); i > 0; --i) {
                 CSSStyleRule* rule = static_cast<CSSStyleRule*>(rules->item(i - 1));
 
-                if (rule->declaration()->propertyIsImportant(propID))
-                    return rule->declaration()->getPropertyValue(propID);
+                if (rule->styleRule()->properties()->propertyIsImportant(propID))
+                    return rule->styleRule()->properties()->getPropertyValue(propID);
 
                 if (style->getPropertyValue(propID).isEmpty())
-                    style = rule->declaration();
+                    style = rule->styleRule()->properties();
             }
         }
 
