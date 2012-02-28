@@ -1,3 +1,17 @@
+2012-02-27  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Make order of attribute/method in HTMLInputElement.idl as same as specification
+        https://bugs.webkit.org/show_bug.cgi?id=79622
+
+        For ease of maintainability, this patch reorders attributes and methods declaration
+        matching with specification.
+
+        Reviewed by Adam Barth.
+
+        No new tests. No behavior change.
+
+        * html/HTMLInputElement.idl: Reorder and remove obsolete comments.
+
 2012-02-27  Luke Macpherson   <macpherson@chromium.org>
 
         Sort CSSStyleSelector property handler constructors by CSS property name.
