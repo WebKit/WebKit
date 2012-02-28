@@ -273,7 +273,9 @@ typedef enum {
     WKMediaUIPartControlsPanel,
     WKMediaUIPartVolumeSliderContainer,
     WKMediaUIPartVolumeSlider,
-    WKMediaUIPartVolumeSliderThumb
+    WKMediaUIPartVolumeSliderThumb,
+    WKMediaUIPartFullScreenVolumeSlider,
+    WKMediaUIPartFullScreenVolumeSliderThumb,
 } WKMediaUIPart;
 
 typedef enum {
@@ -343,6 +345,8 @@ typedef struct __WKWindowBounceAnimationContext *WKWindowBounceAnimationContextR
 WKWindowBounceAnimationContextRef WKWindowBounceAnimationContextCreate(NSWindow *window);
 void WKWindowBounceAnimationContextDestroy(WKWindowBounceAnimationContextRef context);
 void WKWindowBounceAnimationSetAnimationProgress(WKWindowBounceAnimationContextRef context, double animationProgress);
+
+void WKWindowSetClipRect(NSWindow*, NSRect);
 
 #if defined(__x86_64__)
 #import <mach/mig.h>
@@ -431,6 +435,8 @@ const char* WKSandboxExtensionGetSerializedFormat(WKSandboxExtensionRef sandboxE
 WKSandboxExtensionRef WKSandboxExtensionCreateFromSerializedFormat(const char* serializationFormat, size_t length);
 
 OSStatus WKEnableSandboxStyleFileQuarantine(void);
+
+bool WKEnterPluginSandbox(const char* profile, const char* parameters[], const char* readOnlyPaths[], const char* readWritePaths[]);
 
 int WKRecommendedScrollerStyle(void);
 

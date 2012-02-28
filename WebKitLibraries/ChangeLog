@@ -1,3 +1,16 @@
+2012-02-28  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Add an experimental SPI for plug-ins to enter sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=79709
+
+        This pulls a lot of WKSI changes at once, because the script that updates it didn't
+        work for a while.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2012-02-10  Adam Klein  <adamk@chromium.org>
 
         Enable MUTATION_OBSERVERS by default on all platforms
