@@ -65,9 +65,10 @@ void JSString::resolveRope(ExecState* exec) const
 
     if (is8Bit()) {
         LChar* buffer;
-        if (RefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer))
+        if (RefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer)) {
+            Heap::heap(this)->reportExtraMemoryCost(newImpl->cost());
             m_value = newImpl.release();
-        else {
+        } else {
             outOfMemory(exec);
             return;
         }
@@ -92,9 +93,10 @@ void JSString::resolveRope(ExecState* exec) const
     }
 
     UChar* buffer;
-    if (RefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer))
+    if (RefPtr<StringImpl> newImpl = StringImpl::tryCreateUninitialized(m_length, buffer)) {
+        Heap::heap(this)->reportExtraMemoryCost(newImpl->cost());
         m_value = newImpl.release();
-    else {
+    } else {
         outOfMemory(exec);
         return;
     }
