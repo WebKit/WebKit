@@ -1,3 +1,27 @@
+2012-02-28  Enrica Casucci  <enrica@apple.com>
+
+        More Pasteboard code cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=79816
+
+        Removing the last references to NSPasteboard.
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests. No change in functionality.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::Editor::takeFindStringFromSelection):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyEditorClient::setInsertionPasteboard):
+        * page/DragClient.h:
+        * page/EditorClient.h:
+        * platform/DragData.h:
+        * platform/Pasteboard.h:
+        * platform/mac/ClipboardMac.h:
+        * platform/mac/PasteboardHelper.h: Removed.
+
 2012-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r109137.

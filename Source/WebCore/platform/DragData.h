@@ -46,8 +46,6 @@ typedef id <NSDraggingInfo> DragDataRef;
 typedef void* DragDataRef;
 #endif
 
-OBJC_CLASS NSPasteboard;
-
 #elif PLATFORM(QT)
 QT_BEGIN_NAMESPACE
 class QMimeData;

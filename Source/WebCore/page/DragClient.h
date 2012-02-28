@@ -35,7 +35,6 @@
 OBJC_CLASS DOMElement;
 OBJC_CLASS NSURL;
 OBJC_CLASS NSString;
-OBJC_CLASS NSPasteboard;
 #endif
 
 namespace WebCore {

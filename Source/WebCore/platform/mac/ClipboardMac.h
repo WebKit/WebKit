@@ -31,7 +31,6 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSImage;
-OBJC_CLASS NSPasteboard;
 
 namespace WebCore {
 

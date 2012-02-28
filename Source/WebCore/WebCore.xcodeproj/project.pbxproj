@@ -3645,7 +3645,6 @@
 		A7D20F62107F406900A80392 /* JSWebGLActiveInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */; };
 		A7D20F63107F406900A80392 /* JSWebGLActiveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */; };
 		A7D20F6D107F438B00A80392 /* WebGLActiveInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D20F6B107F438B00A80392 /* WebGLActiveInfo.h */; };
-		A7D3C5240B576B4B002CA450 /* PasteboardHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7D6B3490F61104500B79FD1 /* WorkerScriptLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */; };
 		A7D6B34A0F61104500B79FD1 /* WorkerScriptLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D6B3480F61104500B79FD1 /* WorkerScriptLoader.cpp */; };
 		A7DBF8DD1276919C006B6008 /* TextCheckingHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7DBF8DB1276919C006B6008 /* TextCheckingHelper.cpp */; };
@@ -10547,7 +10546,6 @@
 		A7D20F60107F406900A80392 /* JSWebGLActiveInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLActiveInfo.cpp; sourceTree = "<group>"; };
 		A7D20F61107F406900A80392 /* JSWebGLActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLActiveInfo.h; sourceTree = "<group>"; };
 		A7D20F6B107F438B00A80392 /* WebGLActiveInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLActiveInfo.h; path = canvas/WebGLActiveInfo.h; sourceTree = "<group>"; };
-		A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardHelper.h; sourceTree = "<group>"; };
 		A7D6B3470F61104500B79FD1 /* WorkerScriptLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerScriptLoader.h; path = workers/WorkerScriptLoader.h; sourceTree = "<group>"; };
 		A7D6B3480F61104500B79FD1 /* WorkerScriptLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerScriptLoader.cpp; path = workers/WorkerScriptLoader.cpp; sourceTree = "<group>"; };
 		A7DB418114CE1F0A00A2E316 /* ShadowRoot.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShadowRoot.idl; sourceTree = "<group>"; };
@@ -15123,7 +15121,6 @@
 				BC772C5D0C4EB3440083285F /* MIMETypeRegistryMac.mm */,
 				93500F3113FDE3BE0099EC24 /* NSScrollerImpDetails.h */,
 				52F52E1014A0134F00ACC397 /* NSScrollerImpDetails.mm */,
-				A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */,
 				4B2709810AF2E5E00065127F /* PasteboardMac.mm */,
 				CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */,
 				CDEA762F146084EE008B31F1 /* PlatformClockCA.h */,
@@ -23437,7 +23434,6 @@
 				BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */,
 				F55B3DCA1251F12D003EF269 /* PasswordInputType.h in Headers */,
 				4B2708C70AF19EE40065127F /* Pasteboard.h in Headers */,
-				A7D3C5240B576B4B002CA450 /* PasteboardHelper.h in Headers */,
 				C598905714E9C28000E8D18B /* PasteboardStrategy.h in Headers */,
 				B27535800B053814002CE64F /* Path.h in Headers */,
 				A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */,

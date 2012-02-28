@@ -37,7 +37,6 @@
 
 #if PLATFORM(MAC)
 OBJC_CLASS NSAttributedString;
-OBJC_CLASS NSPasteboard;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 #endif
@@ -117,7 +116,7 @@ public:
 #if PLATFORM(MAC)
     virtual NSString* userVisibleString(NSURL*) = 0;
     virtual DocumentFragment* documentFragmentFromAttributedString(NSAttributedString*, Vector< RefPtr<ArchiveResource> >&) = 0;
-    virtual void setInsertionPasteboard(NSPasteboard*) = 0;
+    virtual void setInsertionPasteboard(const String& pasteboardName) = 0;
     virtual NSURL* canonicalizeURL(NSURL*) = 0;
     virtual NSURL* canonicalizeURLString(NSString*) = 0;
 #endif

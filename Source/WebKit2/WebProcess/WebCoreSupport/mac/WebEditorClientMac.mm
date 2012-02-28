@@ -126,7 +126,7 @@ DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttrib
     return core(fragment);
 }
 
-void WebEditorClient::setInsertionPasteboard(NSPasteboard *)
+void WebEditorClient::setInsertionPasteboard(const String&)
 {
     // This is used only by Mail, no need to implement it now.
     notImplemented();

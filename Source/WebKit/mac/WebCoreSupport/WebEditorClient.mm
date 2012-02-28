@@ -373,9 +373,9 @@ DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttrib
     return core(fragment);
 }
 
-void WebEditorClient::setInsertionPasteboard(NSPasteboard *pasteboard)
+void WebEditorClient::setInsertionPasteboard(const String& pasteboardName)
 {
-    [m_webView _setInsertionPasteboard:pasteboard];
+    [m_webView _setInsertionPasteboard:[NSPasteboard pasteboardWithName:pasteboardName]];
 }
 
 

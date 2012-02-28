@@ -44,7 +44,6 @@
 
 #if PLATFORM(MAC)
 OBJC_CLASS NSFileWrapper;
-OBJC_CLASS NSPasteboard;
 OBJC_CLASS NSArray;
 #endif
 

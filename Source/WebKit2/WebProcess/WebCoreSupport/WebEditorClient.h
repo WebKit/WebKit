@@ -94,7 +94,7 @@ private:
 #if PLATFORM(MAC)
     virtual NSString *userVisibleString(NSURL *) OVERRIDE;
     virtual WebCore::DocumentFragment* documentFragmentFromAttributedString(NSAttributedString *, Vector< RefPtr<WebCore::ArchiveResource> >&) OVERRIDE;
-    virtual void setInsertionPasteboard(NSPasteboard *) OVERRIDE;
+    virtual void setInsertionPasteboard(const String& pasteboardName) OVERRIDE;
     virtual NSURL* canonicalizeURL(NSURL*) OVERRIDE;
     virtual NSURL* canonicalizeURLString(NSString*) OVERRIDE;
 #endif

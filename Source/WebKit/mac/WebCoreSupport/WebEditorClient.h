@@ -72,7 +72,7 @@ public:
 
     virtual NSString* userVisibleString(NSURL *) OVERRIDE;
     virtual WebCore::DocumentFragment* documentFragmentFromAttributedString(NSAttributedString *, Vector< RefPtr<WebCore::ArchiveResource> >&) OVERRIDE;
-    virtual void setInsertionPasteboard(NSPasteboard *) OVERRIDE;
+    virtual void setInsertionPasteboard(const String&) OVERRIDE;
     virtual NSURL* canonicalizeURL(NSURL*) OVERRIDE;
     virtual NSURL* canonicalizeURLString(NSString*) OVERRIDE;
     

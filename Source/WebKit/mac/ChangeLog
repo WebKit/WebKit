@@ -1,3 +1,16 @@
+2012-02-28  Enrica Casucci  <enrica@apple.com>
+
+        More Pasteboard code cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=79816
+
+        Removing the last references to NSPasteboard.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::setInsertionPasteboard):
+
 2012-02-26  Hajime Morrita  <morrita@chromium.org>
 
         Move ChromeClient::showContextMenu() to ContextMenuClient

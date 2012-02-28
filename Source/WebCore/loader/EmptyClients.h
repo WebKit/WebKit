@@ -494,7 +494,7 @@ public:
 
     virtual NSString* userVisibleString(NSURL*) { return 0; }
     virtual DocumentFragment* documentFragmentFromAttributedString(NSAttributedString*, Vector<RefPtr<ArchiveResource> >&) { return 0; };
-    virtual void setInsertionPasteboard(NSPasteboard*) { };
+    virtual void setInsertionPasteboard(const String&) { };
     virtual NSURL* canonicalizeURL(NSURL*) { return 0; }
     virtual NSURL* canonicalizeURLString(NSString*) { return 0; }
 #endif

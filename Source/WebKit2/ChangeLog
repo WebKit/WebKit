@@ -1,3 +1,16 @@
+2012-02-28  Enrica Casucci  <enrica@apple.com>
+
+        More Pasteboard code cleanup.
+        https://bugs.webkit.org/show_bug.cgi?id=79816
+
+        Removing the last references to NSPasteboard.
+        
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::setInsertionPasteboard):
+
 2012-02-28  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Add an experimental SPI for plug-ins to enter sandbox
