@@ -1,3 +1,20 @@
+2012-02-28  Alexis Menard  <alexis.menard@openbossa.org>
+
+        getComputedStyle fails for 'first-line' pseudo-element
+        https://bugs.webkit.org/show_bug.cgi?id=57505
+
+        Reviewed by Tony Chang.
+
+        Querying the selector with a pseudo-element using getComputedStyle should work
+        even if the selector was not declared in the stylesheet. When not declared, we need
+        to use the RenderStyle created to do the rendering as there is no pseudo-style.
+        This match the behavior of Firefox.
+
+        No new tests : Updated expectation and extended getComputedStyle-with-pseudo-element.html.
+
+        * dom/Element.cpp:
+        (WebCore::Element::computedStyle):
+
 2012-02-28  Ashod Nakashian  <ashodnakashian@yahoo.com>
 
         Move FILE_SYSTEM code out of WorkerContext and into the fileapi folder

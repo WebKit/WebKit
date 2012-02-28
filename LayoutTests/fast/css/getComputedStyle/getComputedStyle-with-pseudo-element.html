@@ -67,7 +67,10 @@
         { 'elementId' : 'testBeforeAfter', 'pseudoElement' : ':before', 'property' : 'color', 'expectedValue' : 'rgb(165, 42, 42)' },
         { 'elementId' : 'testBeforeAfter', 'pseudoElement' : ':after', 'property' : 'color', 'expectedValue' : 'rgb(0, 0, 255)' },
         { 'elementId' : 'testNoPseudoElement', 'pseudoElement' : null, 'property' : 'color', 'expectedValue' : 'rgb(165, 42, 42)' },
-        { 'elementId' : 'testNoPseudoElement', 'pseudoElement' : ':first-line', 'property' : 'color', 'expectedValue' : '' },
+        { 'elementId' : 'testNoPseudoElement', 'pseudoElement' : ':first-line', 'property' : 'color', 'expectedValue' : 'rgb(165, 42, 42)' },
+        { 'elementId' : 'testNoPseudoElement', 'pseudoElement' : ':first-letter', 'property' : 'color', 'expectedValue' : 'rgb(165, 42, 42)' },
+        { 'elementId' : 'testNoPseudoElement', 'pseudoElement' : ':before', 'property' : 'color', 'expectedValue' : 'rgb(165, 42, 42)' },
+        { 'elementId' : 'testNoPseudoElement', 'pseudoElement' : ':after', 'property' : 'color', 'expectedValue' : 'rgb(165, 42, 42)' },
         { 'elementId' : 'testNoPseudoElement', 'pseudoElement' : ':garbage', 'property' : 'color', 'expectedValue' : 'rgb(165, 42, 42)' },
         { 'elementId' : 'testHardwareAcceleratedCompositing', 'pseudoElement' : ':before', 'property' : 'opacity', 'expectedValue' : '0.5' }
       ];
