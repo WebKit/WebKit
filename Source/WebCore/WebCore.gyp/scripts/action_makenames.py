@@ -130,8 +130,8 @@ def main(args):
              or inputBasename.endswith('attrs.in'):
             assert attrInput == None
             attrInput = inputAbsPosix
-        elif inputBasename.endswith('EventFactory.in') \
-            or inputBasename.endswith('EventTargetFactory.in') \
+        elif inputBasename.endswith('EventTargetFactory.in') \
+            or inputBasename.endswith('EventNames.in') \
             or inputBasename.endswith('DOMExceptions.in'):
             eventsInput = inputAbsPosix
         elif inputBasename.endswith('Names.in'):

@@ -43,7 +43,7 @@ XMLNS_NAMES = $$PWD/xml/xmlnsattrs.in
 
 HTML_ENTITIES = $$PWD/html/parser/HTMLEntityNames.in
 
-EVENT_FACTORY = $$PWD/dom/EventFactory.in
+EVENTS_NAMES = $$PWD/dom/EventNames.in
 
 EVENT_TARGET_FACTORY = $$PWD/dom/EventTargetFactory.in
 
@@ -815,10 +815,10 @@ GENERATORS += fontnames
 
 # GENERATOR 5-E:
 eventfactory.output = EventFactory.cpp
-eventfactory.input = EVENT_FACTORY
+eventfactory.input = EVENTS_NAMES
 eventfactory.script = $$PWD/dom/make_event_factory.pl
-eventfactory.commands = perl -I$$PWD/bindings/scripts $$eventfactory.script --input $$EVENT_FACTORY --outputDir ${QMAKE_FUNC_FILE_OUT_PATH}
-eventfactory.depends = $$PWD/dom/make_event_factory.pl $$EVENT_FACTORY
+eventfactory.commands = perl -I$$PWD/bindings/scripts $$eventfactory.script --input $$EVENTS_NAMES --outputDir ${QMAKE_FUNC_FILE_OUT_PATH}
+eventfactory.depends = $$PWD/dom/make_event_factory.pl $$EVENTS_NAMES
 GENERATORS += eventfactory
 
 # GENERATOR 5-F:

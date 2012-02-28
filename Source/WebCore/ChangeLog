@@ -1,3 +1,31 @@
+2012-02-27  Adam Barth  <abarth@webkit.org>
+
+        EventFactory.in should be named EventNames.in
+        https://bugs.webkit.org/show_bug.cgi?id=79727
+
+        Reviewed by Kentaro Hara.
+
+        Originally EventFactory.in was just used to generate EventFactory.cpp,
+        but now we're able to generate a bunch of other Event-related code from
+        this "in" file.
+
+        In writing some documentation about how to use these mechanisms, the
+        name EventFactory.in didn't seem like the right name.  This patch
+        renames EventFactory.in to EventNames.in, which more accurately
+        describes the role of this file (and matches the naming convention of
+        HTMLTagNames.in).
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/action_makenames.py:
+        (main):
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.in: Copied from Source/WebCore/dom/EventFactory.in.
+        * dom/EventFactory.in: Removed.
+
 2012-02-27  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Make order of attribute/method in HTMLInputElement.idl as same as specification

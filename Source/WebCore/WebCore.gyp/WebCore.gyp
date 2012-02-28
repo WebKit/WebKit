@@ -728,7 +728,7 @@
           'action_name': 'EventFactory',
           'inputs': [
             '../dom/make_event_factory.pl',
-            '../dom/EventFactory.in',
+            '../dom/EventNames.in',
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/EventFactory.cpp',

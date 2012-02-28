@@ -12287,7 +12287,7 @@
 		BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheetCustom.cpp; sourceTree = "<group>"; };
 		BC99812D0DBE807A008CE9EF /* DOMAbstractViewFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAbstractViewFrame.h; sourceTree = "<group>"; };
 		BC9A6141146859D9006057FD /* DOMExceptions.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMExceptions.in; sourceTree = "<group>"; };
-		BC9A6142146859D9006057FD /* EventFactory.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = EventFactory.in; sourceTree = "<group>"; };
+		BC9A6142146859D9006057FD /* EventNames.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = EventNames.in; sourceTree = "<group>"; };
 		BC9A6144146859D9006057FD /* make_dom_exceptions.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = make_dom_exceptions.pl; sourceTree = "<group>"; };
 		BC9A6145146859D9006057FD /* make_event_factory.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = make_event_factory.pl; sourceTree = "<group>"; };
 		BC9A6146146859D9006057FD /* make_names.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = make_names.pl; sourceTree = "<group>"; };
@@ -19250,7 +19250,6 @@
 		BC1A3790097C6F970019F3D8 /* bindings */ = {
 			isa = PBXGroup;
 			children = (
-				A83B538014FBB2EC00720D9D /* preprocess-idls.pl */,
 				B5D31DF711CF60E5009F22B4 /* generic */,
 				BC1A3793097C6FB10019F3D8 /* js */,
 				BC1A3794097C6FC40019F3D8 /* objc */,
@@ -19259,6 +19258,7 @@
 				A83B533814F399BB00720D9D /* IDLAttributes.txt */,
 				14813BF309EDF88E00F757E1 /* IDLParser.pm */,
 				93F8B3080A300FEA00F61AB8 /* IDLStructure.pm */,
+				A83B538014FBB2EC00720D9D /* preprocess-idls.pl */,
 				C0F2A43F13869A280066C534 /* preprocessor.pm */,
 				8C6EA61711EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp */,
 				8C6EA61811EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h */,
@@ -20683,6 +20683,7 @@
 				978D07BD145A0F6C0096908D /* DOMCoreException.cpp */,
 				BC60D6E80D28D83400B9918F /* DOMCoreException.h */,
 				BC60D6EB0D28D99900B9918F /* DOMCoreException.idl */,
+				BC9A6142146859D9006057FD /* EventNames.in */,
 				BC9A6141146859D9006057FD /* DOMExceptions.in */,
 				A8185F3609765765005826D9 /* DOMImplementation.cpp */,
 				A8185F3309765765005826D9 /* DOMImplementation.h */,
@@ -20725,7 +20726,6 @@
 				BC60D9090D2A17CE00B9918F /* EventException.h */,
 				BC60D90A0D2A17CE00B9918F /* EventException.idl */,
 				97665011144FAA4200F6BB51 /* EventFactory.h */,
-				BC9A6142146859D9006057FD /* EventFactory.in */,
 				935FBC4409BA00B900E230B1 /* EventListener.h */,
 				85AFA7410AAF298400E84305 /* EventListener.idl */,
 				AD4495F1141FC08900541EDF /* EventListenerMap.cpp */,
@@ -23523,6 +23523,7 @@
 				FD31603E12B0267600C1A359 /* RealtimeAnalyserNode.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
 				BCAB418213E356E800D8AAF3 /* Region.h in Headers */,
+				8ABAFBA014F5107500A4984B /* RegionNodeList.h in Headers */,
 				85031B4C0A44EFC700F992E0 /* RegisteredEventListener.h in Headers */,
 				B2C3DA2D0D006C1D00EF6F26 /* RegularExpression.h in Headers */,
 				93309E01099E64920056E581 /* RemoveCSSPropertyCommand.h in Headers */,
@@ -24379,7 +24380,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
-				8ABAFBA014F5107500A4984B /* RegionNodeList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26638,6 +26638,7 @@
 				FD31603B12B0267600C1A359 /* RealtimeAnalyser.cpp in Sources */,
 				FD31603D12B0267600C1A359 /* RealtimeAnalyserNode.cpp in Sources */,
 				BCAB418113E356E800D8AAF3 /* Region.cpp in Sources */,
+				8ABAFB9F14F5107500A4984B /* RegionNodeList.cpp in Sources */,
 				85031B4B0A44EFC700F992E0 /* RegisteredEventListener.cpp in Sources */,
 				B2C3DA2C0D006C1D00EF6F26 /* RegularExpression.cpp in Sources */,
 				93309E00099E64920056E581 /* RemoveCSSPropertyCommand.cpp in Sources */,
@@ -27333,7 +27334,6 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
-				8ABAFB9F14F5107500A4984B /* RegionNodeList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

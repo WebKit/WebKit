@@ -720,8 +720,8 @@ DerivedSources/WebCore/XMLNSNames.cpp DerivedSources/WebCore/XMLNSNames.h: $(Web
 DerivedSources/WebCore/XMLNames.cpp DerivedSources/WebCore/XMLNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
-DerivedSources/WebCore/EventFactory.cpp DerivedSources/WebCore/EventHeaders.h DerivedSources/WebCore/EventInterfaces.h: $(WebCore)/dom/make_event_factory.pl $(WebCore)/dom/EventFactory.in
-	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --input $(WebCore)/dom/EventFactory.in --outputDir "$(GENSOURCES_WEBCORE)"
+DerivedSources/WebCore/EventFactory.cpp DerivedSources/WebCore/EventHeaders.h DerivedSources/WebCore/EventInterfaces.h: $(WebCore)/dom/make_event_factory.pl $(WebCore)/dom/EventNames.in
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --input $(WebCore)/dom/EventNames.in --outputDir "$(GENSOURCES_WEBCORE)"
 
 DerivedSources/WebCore/EventTargetHeaders.h DerivedSources/WebCore/EventTargetInterfaces.h: $(WebCore)/dom/make_event_factory.pl $(WebCore)/dom/EventTargetFactory.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --input $(WebCore)/dom/EventTargetFactory.in --outputDir "$(GENSOURCES_WEBCORE)"
@@ -958,7 +958,7 @@ EXTRA_DIST += \
 	Source/WebCore/css/SVGCSSValueKeywords.in \
 	Source/WebCore/css/view-source.css \
 	Source/WebCore/css/WebKitFontFamilyNames.in \
-	Source/WebCore/dom/EventFactory.in \
+	Source/WebCore/dom/EventNames.in \
 	Source/WebCore/dom/EventTargetFactory.in \
 	Source/WebCore/dom/make_dom_exceptions.pl \
 	Source/WebCore/dom/make_event_factory.pl \
