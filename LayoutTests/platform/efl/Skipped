@@ -1065,7 +1065,7 @@ fast/animation
 fast/filesystem
 http/tests/filesystem
 http/tests/security/filesystem-iframe-from-remote.html
-fast/mutation/end-of-task-delivery.html
+fast/mutation/filesystem-callback-delivery.html
 
 # The EFL port has no support for Geolocation
 fast/dom/Geolocation
@@ -1248,6 +1248,11 @@ editing/pasteboard/drag-files-to-editable-element.html
 # Fails because MutationObservers are not notified at end-of-task
 # https://bugs.webkit.org/show_bug.cgi?id=78290
 fast/mutation/end-of-task-delivery.html
+fast/mutation/inline-event-listener.html
+
+# Fails because of the security policy of the user agent?
+# http://webkit.org/b/79604
+fast/mutation/database-callback-delivery.html
 
 # --------------------------------
 # Tests which are expected to fail
@@ -2212,17 +2217,6 @@ fast/mediastream/peerconnection-addstream.html
 fast/mediastream/peerconnection-argument-types.html
 fast/mediastream/peerconnection-eventlistener-optional-argument.html
 fast/mediastream/peerconnection-removestream.html
-fast/mutation/callback-second-argument.html
-fast/mutation/cross-document.html
-fast/mutation/database-callback-delivery.html
-fast/mutation/filesystem-callback-delivery.html
-fast/mutation/inline-event-listener.html
-fast/mutation/mutation-observer-constructor.html
-fast/mutation/observe-attributes.html
-fast/mutation/observe-characterdata.html
-fast/mutation/observe-childList.html
-fast/mutation/observe-exceptions.html
-fast/mutation/observe-subtree.html
 fast/multicol
 fast/overflow/overflow-float-stacking.html
 fast/overflow/overflow-stacking.html
