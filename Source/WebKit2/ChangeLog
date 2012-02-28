@@ -1,3 +1,10 @@
+2012-02-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp: (WebKit::NPN_GetValue):
+        Check for build platform properly.
+
 2012-02-28  Enrica Casucci  <enrica@apple.com>
 
         More Pasteboard code cleanup.
