@@ -559,6 +559,14 @@
     border-top: 1px solid #AAA;
 }
 
+#memory-graphs-canvas-container {
+    border-right: 1px solid #AAA;
+}
+
+#memory-graphs-canvas-container .resources-dividers {
+    top: 15px;
+}
+
 #memory-graphs-container .split-view-contents {
     overflow: hidden;
 }

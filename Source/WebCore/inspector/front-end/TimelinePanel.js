@@ -79,6 +79,8 @@ WebInspector.TimelinePanel = function()
     this._itemsGraphsElement.id = "timeline-graphs";
     this._itemsGraphsElement.addEventListener("mousewheel", this._overviewPane.scrollWindow.bind(this._overviewPane), true);
     this._containerContentElement.appendChild(this._timelineGrid.element);
+    if (this._memoryStatistics)
+        this._memoryStatistics.setMainTimelineGrid(this._timelineGrid);
 
     this._topGapElement = document.createElement("div");
     this._topGapElement.className = "timeline-gap";
@@ -378,13 +380,13 @@ WebInspector.TimelinePanel.prototype = {
             this._memoryStatistics.hide();
             this.splitView.element.style.height = "auto";
             this.splitView.element.style.bottom = "0";
-            this.onResize();
         } else {
             this._timelineMemorySplitter.removeStyleClass("hidden");
             this._memoryStatistics.show();
             this.splitView.element.style.bottom = "auto";
             this._setSplitterPosition(600);
         }
+        this._refresh();
     },
 
     _toggleTimelineButtonClicked: function()
@@ -787,10 +789,14 @@ WebInspector.TimelinePanel.prototype = {
         this._itemsGraphsElement.appendChild(this._expandElements);
         this.splitView.sidebarResizerElement.style.height = this.sidebarElement.clientHeight + "px";
         // Reserve some room for expand / collapse controls to the left for records that start at 0ms.
-        var timelinePaddingLeft = this._calculator.windowLeft === 0 ? this._expandOffset : 0;
         if (updateBoundaries)
-            this._timelineGrid.updateDividers(true, this._calculator, timelinePaddingLeft);
+            this._timelineGrid.updateDividers(true, this._calculator, this.timelinePaddingLeft);
         this._adjustScrollPosition((recordsInWindow.length + 1) * rowHeight);
+    },
+
+    get timelinePaddingLeft()
+    {
+        return this._calculator.windowLeft === 0 ? this._expandOffset : 0;
     },
 
     _adjustScrollPosition: function(totalHeight)

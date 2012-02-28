@@ -1,3 +1,31 @@
+2012-02-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: show resource dividers on memory counter graphs
+        https://bugs.webkit.org/show_bug.cgi?id=79782
+
+        Resource dividers are drawn on the memory counter graphs.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/MemoryStatistics.js:
+        (WebInspector.MemoryStatistics.prototype.updateDividers):
+        (WebInspector.MemoryStatistics.prototype.setMainTimelineGrid):
+        (WebInspector.MemoryStatistics.prototype._updateSize):
+        (WebInspector.MemoryStatistics.prototype.show):
+        (WebInspector.MemoryStatistics.prototype.refresh):
+        (WebInspector.MemoryStatistics.prototype._refreshDividers):
+        * inspector/front-end/TimelineGrid.js:
+        (WebInspector.TimelineGrid.prototype.get dividersElement):
+        (WebInspector.TimelineGrid.prototype.updateDividers):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._timelinesOverviewModeChanged):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelinePanel.prototype.get timlinePaddingLeft):
+        * inspector/front-end/timelinePanel.css:
+        (#memory-graphs-canvas-container):
+        (#memory-graphs-canvas-container .resources-dividers):
+
 2012-02-28  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Integrate SVGUseElement within the new shadow root concept

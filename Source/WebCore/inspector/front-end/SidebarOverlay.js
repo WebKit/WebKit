@@ -113,7 +113,7 @@ WebInspector.SidebarOverlay.prototype = {
         this.element.removeChild(this._resizerElement);
         if (this._resizerWidgetElement)
             this.element.removeChild(this._resizerWidgetElement);
-        element.removeEventListener("DOMFocusIn", this._boundContainingElementFocused);
+        element.removeEventListener("DOMFocusIn", this._boundContainingElementFocused, false);
     },
     
     /**

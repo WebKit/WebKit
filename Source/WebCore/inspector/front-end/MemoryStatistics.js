@@ -46,6 +46,7 @@ WebInspector.MemoryStatistics = function(timelinePanel, sidebarWidth)
     this._memorySplitView.addEventListener(WebInspector.SplitView.EventTypes.Resized, this._sidebarResized.bind(this));
 
     this._canvasContainer = this._memorySplitView.mainElement;
+    this._canvasContainer.id = "memory-graphs-canvas-container";
     this._currentValuesBar = this._canvasContainer.createChild("div");
     this._currentValuesBar.id = "counter-values-bar";
     this._canvas = this._canvasContainer.createChild("canvas");
@@ -56,6 +57,9 @@ WebInspector.MemoryStatistics = function(timelinePanel, sidebarWidth)
     this._canvas.addEventListener("mousemove", this._onMouseMove.bind(this), true);
     this._canvas.addEventListener("mouseout", this._onMouseOut.bind(this), true);
     this._canvas.addEventListener("click", this._onClick.bind(this), true);
+    // We create extra timeline grid here to reuse its event dividers.
+    this._timelineGrid = new WebInspector.TimelineGrid();
+    this._canvasContainer.appendChild(this._timelineGrid.dividersElement);
 
     // Populate sidebar
     this._memorySplitView.sidebarElement.createChild("div", "sidebar-tree sidebar-tree-section").textContent = WebInspector.UIString("COUNTERS");
@@ -203,6 +207,11 @@ WebInspector.CounterUI.prototype = {
 
 
 WebInspector.MemoryStatistics.prototype = {
+    setMainTimelineGrid: function(timelineGrid)
+    {
+        this._mainTimelineGrid = timelineGrid;
+    },
+
     setTopPosition: function(top)
     {
         this._memorySplitView.element.style.top = top + "px";
@@ -229,8 +238,11 @@ WebInspector.MemoryStatistics.prototype = {
 
     _updateSize: function()
     {
+        var width = this._mainTimelineGrid.dividersElement.offsetWidth + 1;
+        this._canvasContainer.style.width = width + "px";
+
         var height = this._canvasContainer.offsetHeight - this._currentValuesBar.offsetHeight;
-        this._canvas.width = this._canvasContainer.offsetWidth;
+        this._canvas.width = width;
         this._canvas.height = height;
     },
 
@@ -384,12 +396,14 @@ WebInspector.MemoryStatistics.prototype = {
         var anchor = /** @type {Element|null} */ this._containerAnchor.nextSibling;
         this._memorySplitView.show(this._timelinePanel.element, anchor);
         this._updateSize();
+        this._refreshDividers();
         setTimeout(this._draw.bind(this), 0);
     },
 
     refresh: function()
     {
         this._updateSize();
+        this._refreshDividers();
         this._draw();
         this._refreshCurrentValues();
     },
@@ -397,6 +411,11 @@ WebInspector.MemoryStatistics.prototype = {
     hide: function()
     {
         this._memorySplitView.detach();
+    },
+
+    _refreshDividers: function()
+    {
+        this._timelineGrid.updateDividers(true, this._timelinePanel.calculator, this._timelinePanel.timelinePaddingLeft);
     },
 
     _setVerticalClip: function(originY, height)

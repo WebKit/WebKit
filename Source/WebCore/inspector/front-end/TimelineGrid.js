@@ -58,6 +58,11 @@ WebInspector.TimelineGrid.prototype = {
         return this._itemsGraphsElement;
     },
 
+    get dividersElement()
+    {
+        return this._dividersElement;
+    },
+
     /**
      * @param {number=} paddingLeft
      */
@@ -76,8 +81,8 @@ WebInspector.TimelineGrid.prototype = {
         var divider = this._dividersElement.firstChild;
         var dividerLabelBar = this._dividersLabelBarElement.firstChild;
 
-        var dividersLabelBarElementClientWidth = this._dividersLabelBarElement.clientWidth;
-        var clientWidth = dividersLabelBarElementClientWidth - paddingLeft;
+        var dividersElementClientWidth = this._dividersElement.clientWidth;
+        var clientWidth = dividersElementClientWidth - paddingLeft;
         for (var i = paddingLeft ? 0 : 1; i <= dividerCount; ++i) {
             if (!divider) {
                 divider = document.createElement("div");
@@ -91,7 +96,6 @@ WebInspector.TimelineGrid.prototype = {
                 dividerLabelBar._labelElement = label;
                 dividerLabelBar.appendChild(label);
                 this._dividersLabelBarElement.appendChild(dividerLabelBar);
-                dividersLabelBarElementClientWidth = this._dividersLabelBarElement.clientWidth;
             }
 
             if (i === (paddingLeft ? 0 : 1)) {
@@ -111,7 +115,7 @@ WebInspector.TimelineGrid.prototype = {
             }
 
             var left = paddingLeft + clientWidth * (i / dividerCount);
-            var percentLeft = 100 * left / dividersLabelBarElementClientWidth;
+            var percentLeft = 100 * left / dividersElementClientWidth;
             this._setDividerAndBarLeft(divider, dividerLabelBar, percentLeft);
 
             if (!isNaN(slice))
