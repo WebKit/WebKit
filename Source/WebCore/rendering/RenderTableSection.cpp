@@ -993,17 +993,63 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
         cell->paint(paintInfo, cellPoint);
 }
 
+CellSpan RenderTableSection::dirtiedRows(const LayoutRect& damageRect) const
+{
+    if (m_forceSlowPaintPathWithOverflowingCell) 
+        return fullTableRowSpan();
+
+    LayoutUnit before = style()->isHorizontalWritingMode() ? damageRect.y() : damageRect.x();
+
+    // binary search to find a row
+    unsigned startRow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), before) - m_rowPos.begin();
+
+    // The binary search above gives us the first row with
+    // a y position >= the top of the paint rect. Thus, the previous
+    // may need to be repainted as well.
+    if (startRow == m_rowPos.size() || (startRow > 0 && (m_rowPos[startRow] >  before)))
+        --startRow;
+
+    LayoutUnit after = (style()->isHorizontalWritingMode() ? damageRect.maxY() : damageRect.maxX());
+    unsigned endRow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), after) - m_rowPos.begin();
+    if (endRow == m_rowPos.size())
+        --endRow;
+
+    if (!endRow && m_rowPos[0] - table()->outerBorderBefore() <= after)
+        ++endRow;
+
+    return CellSpan(startRow, endRow);
+}
+
+
+CellSpan RenderTableSection::dirtiedColumns(const LayoutRect& damageRect) const
+{
+    if (m_forceSlowPaintPathWithOverflowingCell) 
+        return fullTableColumnSpan();
+
+    // FIXME: Implement RTL.
+    if (!style()->isLeftToRightDirection())
+        return fullTableColumnSpan();
+
+    LayoutUnit start = style()->isHorizontalWritingMode() ? damageRect.x() : damageRect.y();
+    Vector<int>& columnPos = table()->columnPositions();
+    unsigned startCol = std::lower_bound(columnPos.begin(), columnPos.end(), start) - columnPos.begin();
+    if ((startCol == columnPos.size()) || (startCol > 0 && (columnPos[startCol] > start)))
+        --startCol;
+
+    LayoutUnit end = (style()->isHorizontalWritingMode() ? damageRect.maxX() : damageRect.maxY());
+    unsigned endCol = std::lower_bound(columnPos.begin(), columnPos.end(), end) - columnPos.begin();
+    if (endCol == columnPos.size())
+        --endCol;
+
+    if (!endCol && columnPos[0] - table()->outerBorderStart() <= end)
+        ++endCol;
+
+    return CellSpan(startCol, endCol);
+}
+
 void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    // Check which rows and cols are visible and only paint these.
-    unsigned totalRows = m_grid.size();
-    unsigned totalCols = table()->columns().size();
-
     PaintPhase paintPhase = paintInfo.phase;
-
-    LayoutUnit os = 2 * maximalOutlineSize(paintPhase);
-    unsigned startrow = 0;
-    unsigned endrow = totalRows;
 
     LayoutRect localRepaintRect = paintInfo.rect;
     localRepaintRect.moveBy(-paintOffset);
@@ -1014,56 +1060,25 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
             localRepaintRect.setX(width() - localRepaintRect.maxX());
     }
 
-    if (!m_forceSlowPaintPathWithOverflowingCell) {
-        LayoutUnit before = (style()->isHorizontalWritingMode() ? localRepaintRect.y() : localRepaintRect.x()) - os;
-        // binary search to find a row
-        startrow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), before) - m_rowPos.begin();
+    // FIXME: Why do we double the outline size?
+    LayoutUnit outlineSize = 2 * maximalOutlineSize(paintPhase);
+    localRepaintRect.inflate(outlineSize);
 
-        // The binary search above gives us the first row with
-        // a y position >= the top of the paint rect. Thus, the previous
-        // may need to be repainted as well.
-        if (startrow == m_rowPos.size() || (startrow > 0 && (m_rowPos[startrow] >  before)))
-          --startrow;
+    CellSpan dirtiedRows = this->dirtiedRows(localRepaintRect);
+    CellSpan dirtiedColumns = this->dirtiedColumns(localRepaintRect);
 
-        LayoutUnit after = (style()->isHorizontalWritingMode() ? localRepaintRect.maxY() : localRepaintRect.maxX()) + os;
-        endrow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), after) - m_rowPos.begin();
-        if (endrow == m_rowPos.size())
-          --endrow;
-
-        if (!endrow && m_rowPos[0] - table()->outerBorderBefore() <= after)
-            ++endrow;
-    }
-
-    unsigned startcol = 0;
-    unsigned endcol = totalCols;
-    // FIXME: Implement RTL.
-    if (!m_forceSlowPaintPathWithOverflowingCell && style()->isLeftToRightDirection()) {
-        LayoutUnit start = (style()->isHorizontalWritingMode() ? localRepaintRect.x() : localRepaintRect.y()) - os;
-        Vector<int>& columnPos = table()->columnPositions();
-        startcol = std::lower_bound(columnPos.begin(), columnPos.end(), start) - columnPos.begin();
-        if ((startcol == columnPos.size()) || (startcol > 0 && (columnPos[startcol] > start)))
-            --startcol;
-
-        LayoutUnit end = (style()->isHorizontalWritingMode() ? localRepaintRect.maxX() : localRepaintRect.maxY()) + os;
-        endcol = std::lower_bound(columnPos.begin(), columnPos.end(), end) - columnPos.begin();
-        if (endcol == columnPos.size())
-            --endcol;
-
-        if (!endcol && columnPos[0] - table()->outerBorderStart() <= end)
-            ++endcol;
-    }
-    if (startcol < endcol) {
+    if (dirtiedColumns.start() < dirtiedColumns.end()) {
         if (!m_hasMultipleCellLevels && !m_overflowingCells.size()) {
             if (paintInfo.phase == PaintPhaseCollapsedTableBorders) {
                 // Collapsed borders are painted from the bottom right to the top left so that precedence
                 // due to cell position is respected.
-                for (unsigned r = endrow; r > startrow; r--) {
+                for (unsigned r = dirtiedRows.end(); r > dirtiedRows.start(); r--) {
                     unsigned row = r - 1;
-                    for (unsigned c = endcol; c > startcol; c--) {
+                    for (unsigned c = dirtiedColumns.end(); c > dirtiedColumns.start(); c--) {
                         unsigned col = c - 1;
                         CellStruct& current = cellAt(row, col);
                         RenderTableCell* cell = current.primaryCell();
-                        if (!cell || (row > startrow && primaryCellAt(row - 1, col) == cell) || (col > startcol && primaryCellAt(row, col - 1) == cell))
+                        if (!cell || (row > dirtiedRows.start() && primaryCellAt(row - 1, col) == cell) || (col > dirtiedColumns.start() && primaryCellAt(row, col - 1) == cell))
                             continue;
                         LayoutPoint cellPoint = flipForWritingModeForChild(cell, paintOffset);
                         cell->paintCollapsedBorders(paintInfo, cellPoint);
@@ -1071,14 +1086,14 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
                 }
             } else {
                 // Draw the dirty cells in the order that they appear.
-                for (unsigned r = startrow; r < endrow; r++) {
+                for (unsigned r = dirtiedRows.start(); r < dirtiedRows.end(); r++) {
                     RenderTableRow* row = m_grid[r].rowRenderer;
                     if (row && !row->hasSelfPaintingLayer())
                         row->paintOutlineForRowIfNeeded(paintInfo, paintOffset);
-                    for (unsigned c = startcol; c < endcol; c++) {
+                    for (unsigned c = dirtiedColumns.start(); c < dirtiedColumns.end(); c++) {
                         CellStruct& current = cellAt(r, c);
                         RenderTableCell* cell = current.primaryCell();
-                        if (!cell || (r > startrow && primaryCellAt(r - 1, c) == cell) || (c > startcol && primaryCellAt(r, c - 1) == cell))
+                        if (!cell || (r > dirtiedRows.start() && primaryCellAt(r - 1, c) == cell) || (c > dirtiedColumns.start() && primaryCellAt(r, c - 1) == cell))
                             continue;
                         paintCell(cell, paintInfo, paintOffset);
                     }
@@ -1086,7 +1101,11 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
             }
         } else {
             // The overflowing cells should be scarce to avoid adding a lot of cells to the HashSet.
+#ifndef NDEBUG
+            unsigned totalRows = m_grid.size();
+            unsigned totalCols = table()->columns().size();
             ASSERT(m_overflowingCells.size() < totalRows * totalCols * gMaxAllowedOverflowingCellRatioForFastPaintPath);
+#endif
 
             // To make sure we properly repaint the section, we repaint all the overflowing cells that we collected.
             Vector<RenderTableCell*> cells;
@@ -1094,11 +1113,11 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
 
             HashSet<RenderTableCell*> spanningCells;
 
-            for (unsigned r = startrow; r < endrow; r++) {
+            for (unsigned r = dirtiedRows.start(); r < dirtiedRows.end(); r++) {
                 RenderTableRow* row = m_grid[r].rowRenderer;
                 if (row && !row->hasSelfPaintingLayer())
                     row->paintOutlineForRowIfNeeded(paintInfo, paintOffset);
-                for (unsigned c = startcol; c < endcol; c++) {
+                for (unsigned c = dirtiedColumns.start(); c < dirtiedColumns.end(); c++) {
                     CellStruct& current = cellAt(r, c);
                     if (!current.hasCells())
                         continue;
