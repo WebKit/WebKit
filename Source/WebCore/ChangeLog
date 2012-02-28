@@ -1,3 +1,54 @@
+2012-02-28  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: move filtering of the timeline records into the presentation model.
+        https://bugs.webkit.org/show_bug.cgi?id=79789
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/TimelineModel.js:
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane):
+        (WebInspector.TimelineOverviewPane.prototype.setStartAtZero):
+        (WebInspector.TimelineOverviewPane.prototype.scrollWindow):
+        (WebInspector.TimelineOverviewPane.prototype.accept):
+        (WebInspector.TimelineOverviewPane.prototype._setWindowIndices):
+        (WebInspector.TimelineStartAtZeroOverview):
+        (WebInspector.TimelineStartAtZeroOverview.prototype._onWindowChanged):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._createStatusbarButtons):
+        (WebInspector.TimelinePanel.prototype._updateRecordsCounter):
+        (WebInspector.TimelinePanel.prototype._glueParentButtonClicked):
+        (WebInspector.TimelinePanel.prototype._toggleStartAtZeroButtonClicked):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._resetPanel):
+        (WebInspector.TimelinePanel.prototype._refresh):
+        (WebInspector.TimelinePanel.prototype.revealRecordAt):
+        (WebInspector.TimelinePanel.prototype._refreshRecords):
+        (WebInspector.TimelineExpandableElement.prototype._update):
+        (WebInspector.TimelineCategoryFilter):
+        (WebInspector.TimelineCategoryFilter.prototype.accept):
+        (WebInspector.TimelineIsLongFilter):
+        (WebInspector.TimelineIsLongFilter.prototype.accept):
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel):
+        (WebInspector.TimelinePresentationModel.prototype.addFilter):
+        (WebInspector.TimelinePresentationModel.prototype.reset):
+        (WebInspector.TimelinePresentationModel.prototype.minimumRecordTime):
+        (WebInspector.TimelinePresentationModel.prototype.maximumRecordTime):
+        (WebInspector.TimelinePresentationModel.prototype.addRecord):
+        (WebInspector.TimelinePresentationModel.prototype._updateBoundaries):
+        (WebInspector.TimelinePresentationModel.prototype._findParentRecord):
+        (WebInspector.TimelinePresentationModel.prototype.setGlueRecords):
+        (WebInspector.TimelinePresentationModel.prototype.fireWindowChanged):
+        (WebInspector.TimelinePresentationModel.prototype.get _recordStyles):
+        (WebInspector.TimelinePresentationModel.prototype.filteredRecords):
+        (WebInspector.TimelinePresentationModel.prototype._filterRecords):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get visibleChildrenCount):
+        (WebInspector.TimelinePresentationModel.Record.prototype.get invisibleChildrenCount):
+        (WebInspector.TimelinePresentationModel.Filter):
+        (WebInspector.TimelinePresentationModel.Filter.prototype.accept):
+
 2012-02-28  Florin Malita  <fmalita@google.com>
 
         Percent width/height SVG not always scaled on window resize

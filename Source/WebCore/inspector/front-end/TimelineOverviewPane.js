@@ -31,6 +31,7 @@
 /**
  * @constructor
  * @extends {WebInspector.Object}
+ * @implements {WebInspector.TimelinePresentationModel.Filter}
  */
 WebInspector.TimelineOverviewPane = function(presentationModel)
 {
@@ -38,6 +39,9 @@ WebInspector.TimelineOverviewPane = function(presentationModel)
     this.element.className = "fill";
 
     this._startAtZero = false;
+    this._topLevelRecordIndex = 0;
+    this._windowIndexLeft = 0;
+    this._windowIndexRight = null;
 
     this._presentationModel = presentationModel;
 
@@ -139,7 +143,7 @@ WebInspector.TimelineOverviewPane.prototype = {
             if (this._heapGraph.visible)
                 this._showTimelines();
             this.element.addStyleClass("timeline-start-at-zero");
-            this._startAtZeroOverview = new WebInspector.TimelineStartAtZeroOverview(this._presentationModel);
+            this._startAtZeroOverview = new WebInspector.TimelineStartAtZeroOverview(this);
             this._startAtZeroOverview.show(this.element);
             this._startAtZeroOverview.update(this._records);
         } else {
@@ -163,6 +167,7 @@ WebInspector.TimelineOverviewPane.prototype = {
 
     update: function(records, showShortEvents)
     {
+        this._topLevelRecordIndex = 0;
         this._records = records;
         this._showShortEvents = showShortEvents;
         // Clear summary bars.
@@ -261,6 +266,32 @@ WebInspector.TimelineOverviewPane.prototype = {
     scrollWindow: function(event)
     {
         this._overviewWindow.scrollWindow(event);
+    },
+
+    /**
+     * @param {WebInspector.TimelinePresentationModel.Record} record
+     */
+    accept: function(record)
+    {
+        if (this._startAtZeroOverview) {
+            if (record.parent === this._presentationModel.rootRecord())
+                ++this._topLevelRecordIndex;
+            return this._topLevelRecordIndex > this._windowIndexLeft &&
+                (typeof this._windowIndexRight !== "number" || this._topLevelRecordIndex <= this._windowIndexRight);
+        } else {
+            var absoluteMin = this._presentationModel.minimumRecordTime();
+            var absoluteMax = this._presentationModel.maximumRecordTime();
+            var windowLeft = absoluteMin + (absoluteMax - absoluteMin) * this._overviewWindow.windowLeft;
+            var windowRight = absoluteMin + (absoluteMax - absoluteMin) * this._overviewWindow.windowRight;
+            return record.endTime >= windowLeft && record.startTime <= windowRight;
+        }
+    },
+
+    _setWindowIndices: function(indexLeft, indexRight)
+    {
+        this._windowIndexLeft = indexLeft;
+        this._windowIndexRight = indexRight;
+        this._presentationModel.fireWindowChanged();
     }
 }
 
@@ -721,12 +752,12 @@ WebInspector.HeapGraph.prototype = {
 
 /**
  * @constructor
- * @param {WebInspector.TimelinePresentationModel} model
+ * @param {WebInspector.TimelineOverviewPane} pane
  * @extends {WebInspector.View}
  */
-WebInspector.TimelineStartAtZeroOverview = function(model) {
+WebInspector.TimelineStartAtZeroOverview = function(pane) {
     WebInspector.View.call(this);
-    this._presentationModel = model;
+    this._pane = pane;
     this.element.className = "timeline-overview-start-at-zero fill";
     this._overviewElement = this.element.createChild("div", "timeline-overview-start-at-zero-bars fill");
     this._overviewWindow = new WebInspector.TimelineOverviewWindow(this.element);
@@ -810,7 +841,7 @@ WebInspector.TimelineStartAtZeroOverview.prototype = {
         var leftIndex = Math.floor((leftOffset - offset0) / barWidth * this._recordsPerBar);
         var rightIndex = rightOffset + barWidth >= this.element.clientWidth ? null : Math.ceil((rightOffset - offset0 - 2) / barWidth * this._recordsPerBar);
 
-        this._presentationModel.setWindowIndices(leftIndex, rightIndex);
+        this._pane._setWindowIndices(leftIndex, rightIndex);
     }
 }
 

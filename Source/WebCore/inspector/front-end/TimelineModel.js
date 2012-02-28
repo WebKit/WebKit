@@ -41,6 +41,7 @@ WebInspector.TimelineModel = function()
 }
 
 WebInspector.TimelineModel.RecordType = {
+    Root: "Root",
     EventDispatch: "EventDispatch",
     Layout: "Layout",
     RecalculateStyles: "RecalculateStyles",
