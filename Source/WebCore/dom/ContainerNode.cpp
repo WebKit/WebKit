@@ -582,9 +582,8 @@ void ContainerNode::removeChildren()
         Node* removedChild = removedChildren[i].get();
         if (removedChild->inDocument())
             removedChild->removedFromDocument();
-        // removeChild() calls removedFromTree(true) if the child was not in the
-        // document. There is no explanation for this discrepancy between removeChild()
-        // and its optimized version removeChildren().
+        else if (removedChild->isContainerNode())
+            toContainerNode(removedChild)->removedFromTree(true);
     }
 
     dispatchSubtreeModifiedEvent();
