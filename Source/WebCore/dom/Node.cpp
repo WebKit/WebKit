@@ -1480,12 +1480,6 @@ bool Node::canStartSelection() const
     return parentOrHostNode() ? parentOrHostNode()->canStartSelection() : true;
 }
 
-#if ENABLE(SVG)
-SVGUseElement* Node::svgShadowHost() const
-{
-    return isSVGShadowRoot() ? static_cast<SVGUseElement*>(parent()) : 0;
-}
-#endif
 
 Node* Node::shadowAncestorNode() const
 {
@@ -1508,7 +1502,7 @@ Node* Node::shadowTreeRootNode() const
 {
     Node* root = const_cast<Node*>(this);
     while (root) {
-        if (root->isShadowRoot() || root->isSVGShadowRoot())
+        if (root->isShadowRoot())
             return root;
         root = root->parentNodeGuaranteedHostFree();
     }
@@ -1520,7 +1514,7 @@ Node* Node::nonBoundaryShadowTreeRootNode()
     ASSERT(!isShadowRoot());
     Node* root = this;
     while (root) {
-        if (root->isShadowRoot() || root->isSVGShadowRoot())
+        if (root->isShadowRoot())
             return root;
         Node* parent = root->parentNodeGuaranteedHostFree();
         if (parent && parent->isShadowRoot())
@@ -1536,7 +1530,7 @@ ContainerNode* Node::nonShadowBoundaryParentNode() const
     return parent && !parent->isShadowRoot() ? parent : 0;
 }
 
-bool Node::isInShadowTree()
+bool Node::isInShadowTree() const
 {
     return treeScope() != document();
 }

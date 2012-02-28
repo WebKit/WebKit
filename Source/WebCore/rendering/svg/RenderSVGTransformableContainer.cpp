@@ -26,8 +26,8 @@
 
 #include "SVGNames.h"
 #include "SVGRenderSupport.h"
-#include "SVGShadowTreeElements.h"
 #include "SVGStyledTransformableElement.h"
+#include "SVGUseElement.h"
 
 namespace WebCore {
     
@@ -42,27 +42,33 @@ bool RenderSVGTransformableContainer::calculateLocalTransform()
 {
     SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(node());
 
-    bool needsUpdate = m_needsTransformUpdate;
-    m_didTransformToRootUpdate = m_needsTransformUpdate || SVGRenderSupport::transformToRootChanged(parent());
-    if (needsUpdate) {
-        m_localTransform = element->animatedLocalTransform();
-        m_needsTransformUpdate = false;
+    // If we're either the renderer for a <use> element, or for any <g> element inside the shadow
+    // tree, that was created during the use/symbol/svg expansion in SVGUseElement. These containers
+    // need to respect the translations induced by their corresponding use elements x/y attributes.
+    SVGUseElement* useElement = 0;
+    if (element->hasTagName(SVGNames::useTag))
+        useElement = static_cast<SVGUseElement*>(element);
+    else if (element->isInShadowTree() && element->hasTagName(SVGNames::gTag)) {
+        SVGElement* correspondingElement = element->correspondingElement();
+        if (correspondingElement && correspondingElement->hasTagName(SVGNames::useTag))
+            useElement = static_cast<SVGUseElement*>(correspondingElement);
     }
 
-    if (!element->hasTagName(SVGNames::gTag) || !static_cast<SVGGElement*>(element)->isShadowTreeContainerElement())
-        return needsUpdate;
+    if (useElement) {
+        SVGLengthContext lengthContext(useElement);
+        FloatSize translation(useElement->x().value(lengthContext), useElement->y().value(lengthContext));
+        if (translation != m_lastTranslation)
+            m_needsTransformUpdate = true;
+        m_lastTranslation = translation;
+    }
 
-    SVGShadowTreeContainerElement* shadowElement = static_cast<SVGShadowTreeContainerElement*>(element);
-    FloatSize translation = shadowElement->containerTranslation();
-    if (!shadowElement->containerOffsetChanged() && !translation.width() && !translation.height())
-        return needsUpdate;
+    m_didTransformToRootUpdate = m_needsTransformUpdate || SVGRenderSupport::transformToRootChanged(parent());
+    if (!m_needsTransformUpdate)
+        return false;
 
-    // FIXME: Could optimize this case for use to avoid refetching the animatedLocalTransform() here, if only the containerTranslation() changed.
-    if (!needsUpdate)
-        m_localTransform = element->animatedLocalTransform();
-
-    m_localTransform.translate(translation.width(), translation.height());
-    shadowElement->setContainerOffsetChanged(false);
+    m_localTransform = element->animatedLocalTransform();
+    m_localTransform.translate(m_lastTranslation.width(), m_lastTranslation.height());
+    m_needsTransformUpdate = false;
     return true;
 }
 

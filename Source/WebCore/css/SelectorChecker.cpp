@@ -52,15 +52,11 @@
 #include "ScrollbarTheme.h"
 #include "StyledElement.h"
 #include "Text.h"
+#include "XLinkNames.h"
 
 #if USE(PLATFORM_STRATEGIES)
 #include "PlatformStrategies.h"
 #include "VisitedLinkStrategy.h"
-#endif
-
-#if ENABLE(SVG)
-#include "SVGNames.h"
-#include "XLinkNames.h"
 #endif
 
 namespace WebCore {
@@ -218,11 +214,8 @@ static inline const AtomicString* linkAttribute(Node* node)
     Element* element = static_cast<Element*>(node);
     if (element->isHTMLElement())
         return &element->fastGetAttribute(hrefAttr);
-
-#if ENABLE(SVG)
     if (element->isSVGElement())
         return &element->getAttribute(XLinkNames::hrefAttr);
-#endif
 
     return 0;
 }
@@ -445,13 +438,6 @@ bool SelectorChecker::isFastCheckableSelector(const CSSSelector* selector)
 // * SelectorFailsCompletely  - the selector fails for e and any sibling or ancestor of e
 SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorCheckingContext& context, PseudoId& dynamicPseudo) const
 {
-#if ENABLE(SVG)
-    // Spec: CSS2 selectors cannot be applied to the (conceptually) cloned DOM tree
-    // because its contents are not part of the formal document structure.
-    if (context.element->isSVGShadowRoot())
-        return SelectorFailsCompletely;
-#endif
-
     // first selector has to match
     if (!checkOneSelector(context, dynamicPseudo))
         return SelectorFailsLocally;

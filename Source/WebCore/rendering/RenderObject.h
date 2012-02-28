@@ -403,7 +403,6 @@ public:
     virtual bool isSVGResourceContainer() const { return false; }
     virtual bool isSVGResourceFilter() const { return false; }
     virtual bool isSVGResourceFilterPrimitive() const { return false; }
-    virtual bool isSVGShadowTreeRootContainer() const { return false; }
 
     virtual RenderSVGResourceContainer* toRenderSVGResourceContainer();
 

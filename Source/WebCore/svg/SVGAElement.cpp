@@ -144,7 +144,7 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
 
 RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    if (static_cast<SVGElement*>(parentNode())->isTextContent())
+    if (parentNode() && parentNode()->isSVGElement() && static_cast<SVGElement*>(parentNode())->isTextContent())
         return new (arena) RenderSVGInline(this);
 
     return new (arena) RenderSVGTransformableContainer(this);

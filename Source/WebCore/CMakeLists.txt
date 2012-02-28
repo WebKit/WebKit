@@ -1691,7 +1691,6 @@ IF (ENABLE_SVG)
         rendering/svg/RenderSVGResourceRadialGradient.cpp
         rendering/svg/RenderSVGResourceSolidColor.cpp
         rendering/svg/RenderSVGRoot.cpp
-        rendering/svg/RenderSVGShadowTreeRootContainer.cpp
         rendering/svg/RenderSVGShape.cpp
         rendering/svg/RenderSVGTSpan.cpp
         rendering/svg/RenderSVGText.cpp
@@ -1709,7 +1708,6 @@ IF (ENABLE_SVG)
         rendering/svg/SVGResourcesCache.cpp
         rendering/svg/SVGResourcesCycleSolver.cpp
         rendering/svg/SVGRootInlineBox.cpp
-        rendering/svg/SVGShadowTreeElements.cpp
         rendering/svg/SVGTextChunk.cpp
         rendering/svg/SVGTextChunkBuilder.cpp
         rendering/svg/SVGTextLayoutAttributes.cpp

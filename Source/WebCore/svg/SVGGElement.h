@@ -37,8 +37,6 @@ class SVGGElement : public SVGStyledTransformableElement,
 public:
     static PassRefPtr<SVGGElement> create(const QualifiedName&, Document*);
 
-    virtual bool isShadowTreeContainerElement() const { return false; }
-
 protected:
     SVGGElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
 

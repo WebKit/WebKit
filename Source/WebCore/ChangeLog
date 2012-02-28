@@ -1,3 +1,150 @@
+2012-02-28  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Integrate SVGUseElement within the new shadow root concept
+        https://bugs.webkit.org/show_bug.cgi?id=78902
+
+        Reviewed by Zoltan Herczeg.
+
+        Replace SVG shadow tree implementation with the new, modern #shadow-root implementation.
+
+        Current situation in trunk:
+        SVGUseElement doesn't create/hold the shadow tree, unlike its expected in
+        the modern #shadow-root concept, but its renderer RenderSVGShadowTreeRootContainer.
+        That creates a cycle, as the actual DOM tree is stored as RefPtr<SVGGElement> inside
+        a renderer - that's weak conceptually, and has lead to sublte security bugs in the past.
+
+        Whenever a target element of a <use> element changed, invalidateShadowTree() is called
+        which calls setNeedsStyleRecalc(), and sets m_needsShadodwTreeRecreation to true.
+        Once style recalculation happens, the RenderSVGShadowTreeRootContainer then eventually
+        built the shadow tree, by cloning the target node, building the SVGElementInstance tree
+        etc, -- all within the render tree.
+
+        To easy reviewing, here's a dump of the current render tree for a simple <use> example:
+        <defs><rect id="rect"/></defs><use xlink:href="#rect"/>
+
+        Dump of render tree:
+        RenderSVGHiddenContainer {defs}        // <defs> (SVGDefsElement)
+            RenderSVGRect {rect}               // <rect> (SVGRectElement)
+        RenderSVGShadowTreeRootContainer {use} // <use> (SVGUseElement)
+            RenderSVGContainer {g}             // <g> (SVGShadowTreeRootElement)
+                RenderSVGRect {rect}           // <rect> (SVGRectElement, clone of <rect> in <defs>)
+
+        The SVGShadowTreeRootElement is created & stored by RenderSVGShadowTreeRootContainer,
+        the renderer of the <use> element. The RenderSVGTransformableContainer renderer created
+        for the SVGShadowTreeRootElement stores the x/y translation induced by the <use> attributes.
+
+        There are lots of places all over WebCore that assume the existance of a <g> renderer
+        as first child of the <use> element, representing the "SVG shadow tree root".
+
+        Summary of this patch:
+        Let SVGUseElement create&maintain a #shadow-root, and append the cloned target elements
+        into this shadow root. We no longer have to take care of attachment/detachment, style
+        recalculation, etc. - that's handled transparenly by ShadowRoot(List) now.
+
+        This makes SVGShadowTreeElements & RenderSVGShadowTreeRootContainer obsolete. Switch
+        SVGUseElement to create a RenderSVGTransformableContainer as its renderer, and make
+        it respect the translation induced by the x/y attributes, given for a <use> element.
+
+        Remove all occourences of SVGShadowRoot, remove all special cases it induced.
+
+        It's all covered by existing tests, took a while to make them all pass again.
+
+        * CMakeLists.txt: Remove SVGShadowTreeElements/RenderSVGShadowTreeRootContainer from build.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::collectMatchingRulesForList): Enable fast path for selector checking, now that special shadow tree rules are gone.
+        * css/SelectorChecker.cpp:
+        (WebCore::linkAttribute): No need to guard this code with ENABLE(SVG).
+        (WebCore::SelectorChecker::checkSelector): Remove obsolete SVG shadow root special case.
+        * dom/EventDispatcher.cpp:
+        (WebCore::eventTargetRespectingSVGTargetRules): Remove loop, simplify & cleanup this code.
+        (WebCore::EventDispatcher::adjustToShadowBoundaries): s/isShadowRootOrSVGShadowRoot/isShadowRoot/.
+        (WebCore::EventDispatcher::adjustRelatedTarget): Ditto.
+        (WebCore::EventDispatcher::ensureEventAncestors): Simplify logic for SVG, fixed a FIXME.
+        * dom/Node.cpp: Remove obsolete svgShadowHost().
+        (WebCore::Node::shadowTreeRootNode): Remove obsolete isSVGShadowRoot() checks.
+        (WebCore::Node::nonBoundaryShadowTreeRootNode): Ditto.
+        (WebCore::Node::isInShadowTree): Make it const.
+        * dom/Node.h: Remove isSVGShadowRoot/svgShadowHost.
+        (WebCore::Node::isShadowRoot): s/IsShadowRootOrSVGShadowRootFlag/isShadowRoot/.
+        (WebCore::Node::parentNode): Augment comments.
+        (WebCore::Node::parentNodeGuaranteedHostFree): Ditto.
+        * dom/Range.cpp:
+        (WebCore::Range::checkNodeBA): Remove obsolete SVG shadow root special case.
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript): Ditto.
+        * rendering/RenderObject.h: Remove isSVGShadowTreeRootContainer.
+        (WebCore::RenderObject::isSVGTransformableContainer): Added.
+        * rendering/svg/RenderSVGAllInOne.cpp: Remove SVGShadowTreeElements/RenderSVGShadowTreeRootContainer from build.
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::isGraphicsElement): To check for <use>, a tag name comparision is needed now, as it no longer has a special renderer.
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage): Ditto.
+        (WebCore::RenderSVGResourceClipper::calculateClipContentRepaintRect): Ditto.
+        (WebCore::RenderSVGResourceClipper::hitTestClipContent): Ditto.
+        * rendering/svg/RenderSVGResourceContainer.cpp: Remove RenderSVGShadowTreeRootContainer.h include.
+        * rendering/svg/RenderSVGShadowTreeRootContainer.cpp: Removed.
+        * rendering/svg/RenderSVGShadowTreeRootContainer.h: Removed.
+        * rendering/svg/RenderSVGTransformableContainer.cpp: Keep track of last used additional x/y translation.
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform): Handle x/y translation for <use> contains here, instead of storing it in the SVGShadowTreeRootElement.
+        * rendering/svg/RenderSVGTransformableContainer.h: Store last used x/y translation.
+        (WebCore::RenderSVGTransformableContainer::isSVGTransformableContainer): Return true.
+        (WebCore::toRenderSVGTransformableContainer): Add conversion helpers.
+        * rendering/svg/RenderSVGViewportContainer.cpp: Ditto.
+        (WebCore::RenderSVGViewportContainer::calcViewport): Handle width/height attributes inheritance from the <use> element, if we're a <svg> or <symbol> replacement in the shadow tree.
+        * rendering/svg/RenderSVGViewportContainer.h: Remove isSVGContainer() override which is not needed here (already present in RenderSVGContainer).
+        * rendering/svg/SVGShadowTreeElements.cpp: Removed.
+        * rendering/svg/SVGShadowTreeElements.h: Removed.
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::createRenderer): Check if parentNode is really a SVGElement, before casting.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::isOutermostSVGSVGElement): Early exit if tag name isn't <svg>, or if we're in a shadow tree (can't be an outermost <svg> element then).
+        (WebCore::hasLoadListener): Deploy parentOrHostElement() usage to remove any special cases, related to shadow boundaries.
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible): Ditto.
+        (WebCore::SVGElement::customStyleForRenderer): Ditto.
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::invalidateAllInstancesOfElement): Call updateStyleIfNeeded() instead of updateLayoutIgnorePendingStylesheets().
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::rendererIsNeeded): s/parentNode/parentOrHostElement/ - we need to cross shadow boundaries now.
+        * svg/SVGGElement.h: Remove obsolete isShadowTreeContainerElement().
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::nearestViewportElement): s/parentNode/parentOrHostElement/ - we need to cross shadow boundaries now.
+        (WebCore::SVGLocatable::farthestViewportElement): Ditto.
+        (WebCore::SVGLocatable::computeCTM): Ditto.
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::title): Ditto. (+ simplify code a lot, no need to walk the shadow tree to find its root anymore, use isInShadowTree() helper.)
+        (WebCore::SVGStyledElement::rendererIsNeeded): Ditto.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement): Remove no longer needed m_updatesBlocked.
+        (WebCore::SVGUseElement::create): Always call ensureShadowRoot(), to create a #shadow-root, upon creating a SVGUseElement.
+        (WebCore::SVGUseElement::insertedIntoDocument): Align with SVGFEImageElement/SVGTRefElement - call buildPendingResource() from insertedIntoDocument(), finally! (no renderer needed anymore to update the SVG shadow subtree).
+        (WebCore::SVGUseElement::removedFromDocument): Align with SVGFEImageElement/SVGTRefElement - immediately release the SVGElementInstance & shadow tree, once we're removed from the document.
+        (WebCore::SVGUseElement::svgAttributeChanged): Simplify code a lot, no longer need to deal with x/y/width/height attributes, the renderes in the shadow tree grab these values from their corresponding <use> elements automatically now.
+        (WebCore::SVGUseElement::willRecalcStyle):
+            New main part of the logic. invalidateShadowTree() calls setNeedsStyleRecalc, and sets m_needsShadowTreeRecreation=true. If we encounter this case, force rebuilding the SVG shadow tree
+            and the SVGElementInstance tree, immediately, before executing the actual style recalc. This allows us to lazily rebuild the SVG shadow tree for the <use> element. Consider:
+            <defs><rect id="rect"></defs> <use xlink:href="#rect"/>. Now from a script we change the rect x/y/width/height attributes:
+            rect.setAttribute("x", "10"); rect.setAttribute("y", "10")... each call will lead to a SVGUseElement::invalidateShadowTree() call by SVGElementInstance::invalidateAllInstancesOfElement, invoked after the <rect> element got parsed.
+            This won't update the shadow tree four times, but only once upon the next style recalculation - otherwise performance is a nightmare.
+            This will serve as future starting point, to explore partial SVG subtree re-clones, which should easily be doable now.
+        (WebCore::dumpInstanceTree): Add a 'static' to allow DUMP_INSTANCE_TREE to be used in clang builds.
+        (WebCore::SVGUseElement::clearResourceReferences): Added helper to release instance & shadow tree.
+        (WebCore::SVGUseElement::buildPendingResource): Modeled exactly like SVGFEImageElement/SVGTRefElement. It's possible to share more code between these in future.
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree): Cleanup code, adapt to new shadow-root concept.
+        (WebCore::SVGUseElement::createRenderer): Create a RenderSVGTransformableContainer, no longer a <use> specific renderer.
+        (WebCore::removeDisallowedElementsFromSubtree): Use new replacedChild/appendChild variants, that don't require a ExceptionCode to be passed in.
+        (WebCore::SVGUseElement::buildShadowTree): Ditto.
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree): Ditto.
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree): Ditto.
+        (WebCore::SVGUseElement::invalidateShadowTree): Only trigger style recalculations if needed.
+        * svg/SVGUseElement.h: Remove lots of now unnecessary overrides: attach/detach/didRecalcStyle/updateContainerOffset/updateContainerSizes/etc..
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::insertedIntoDocument): No need to walk the shadow tree to find its root anymore, use isInShadowTree() helper.
+
 2012-02-28  Shinya Kawanaka  <shinyak@chromium.org>
 
         Element should be able to have multiple shadow roots.

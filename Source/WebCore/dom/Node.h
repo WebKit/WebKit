@@ -79,9 +79,6 @@ class RenderBox;
 class RenderBoxModelObject;
 class RenderObject;
 class RenderStyle;
-#if ENABLE(SVG)
-class SVGUseElement;
-#endif
 class TagNodeList;
 class TreeScope;
 
@@ -205,14 +202,8 @@ public:
     bool isElementNode() const { return getFlag(IsElementFlag); }
     bool isContainerNode() const { return getFlag(IsContainerFlag); }
     bool isTextNode() const { return getFlag(IsTextFlag); }
-
     bool isHTMLElement() const { return getFlag(IsHTMLFlag); }
-
     bool isSVGElement() const { return getFlag(IsSVGFlag); }
-    bool isSVGShadowRoot() const { return getFlag(IsShadowRootOrSVGShadowRootFlag) && isSVGElement(); }
-#if ENABLE(SVG)
-    SVGUseElement* svgShadowHost() const;
-#endif
 
     virtual bool isMediaControlElement() const { return false; }
     virtual bool isMediaControls() const { return false; }
@@ -222,7 +213,7 @@ public:
     bool isCommentNode() const { return getFlag(IsCommentFlag); }
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
-    bool isShadowRoot() const { return getFlag(IsShadowRootOrSVGShadowRootFlag) && !isSVGElement(); }
+    bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
     virtual bool isContentElement() const { return false; }
 #if ENABLE(SHADOW_DOM)
     virtual bool isShadowElement() const { return false; }
@@ -233,11 +224,11 @@ public:
     Node* shadowTreeRootNode() const;
     // Returns 0, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();
-    bool isInShadowTree();
-    // Node's parent, shadow tree host, or SVG use.
+    bool isInShadowTree() const;
+    // Node's parent, shadow tree host.
     ContainerNode* parentOrHostNode() const;
     Element* parentOrHostElement() const;
-    // Use when it's guaranteed to that shadowHost is 0 and svgShadowHost is 0.
+    // Use when it's guaranteed to that shadowHost is 0.
     ContainerNode* parentNodeGuaranteedHostFree() const;
     // Returns the parent node, but 0 if the parent node is a ShadowRoot.
     ContainerNode* nonShadowBoundaryParentNode() const;
@@ -657,7 +648,7 @@ private:
         InActiveChainFlag = 1 << 13,
         InDetachFlag = 1 << 14,
         HasRareDataFlag = 1 << 15,
-        IsShadowRootOrSVGShadowRootFlag = 1 << 16,
+        IsShadowRootFlag = 1 << 16,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
@@ -701,11 +692,10 @@ protected:
         CreateComment = DefaultNodeFlags | IsCommentFlag,
         CreateContainer = DefaultNodeFlags | IsContainerFlag, 
         CreateElement = CreateContainer | IsElementFlag, 
-        CreateShadowRoot = CreateContainer | IsShadowRootOrSVGShadowRootFlag,
+        CreateShadowRoot = CreateContainer | IsShadowRootFlag,
         CreateStyledElement = CreateElement | IsStyledElementFlag, 
         CreateHTMLElement = CreateStyledElement | IsHTMLFlag, 
-        CreateSVGElement = CreateStyledElement | IsSVGFlag,
-        CreateSVGShadowRoot = CreateSVGElement | IsShadowRootOrSVGShadowRootFlag,
+        CreateSVGElement = CreateStyledElement | IsSVGFlag
     };
     Node(Document*, ConstructionType);
 
@@ -818,7 +808,7 @@ inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
 
 inline ContainerNode* Node::parentNode() const
 {
-    return getFlag(IsShadowRootOrSVGShadowRootFlag) ? 0 : parent();
+    return getFlag(IsShadowRootFlag) ? 0 : parent();
 }
 
 inline ContainerNode* Node::parentOrHostNode() const
@@ -828,7 +818,7 @@ inline ContainerNode* Node::parentOrHostNode() const
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 {
-    ASSERT(!getFlag(IsShadowRootOrSVGShadowRootFlag));
+    ASSERT(!getFlag(IsShadowRootFlag));
     return parentOrHostNode();
 }
 

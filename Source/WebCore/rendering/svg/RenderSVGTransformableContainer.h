@@ -43,7 +43,9 @@ private:
     bool m_needsTransformUpdate : 1;
     bool m_didTransformToRootUpdate : 1;
     AffineTransform m_localTransform;
+    FloatSize m_lastTranslation;
 };
+
 }
 
 #endif // ENABLE(SVG)

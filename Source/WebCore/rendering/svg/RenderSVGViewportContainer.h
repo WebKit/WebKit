@@ -42,7 +42,6 @@ public:
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
 private:
-    virtual bool isSVGContainer() const { return true; }
     virtual bool isSVGViewportContainer() const { return true; }
     virtual const char* renderName() const { return "RenderSVGViewportContainer"; }
 

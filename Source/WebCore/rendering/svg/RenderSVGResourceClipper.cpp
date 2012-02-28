@@ -244,7 +244,7 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
             continue;
 
         WindRule newClipRule = style->svgStyle()->clipRule();
-        bool isUseElement = renderer->isSVGShadowTreeRootContainer();
+        bool isUseElement = childNode->hasTagName(SVGNames::useTag);
         if (isUseElement) {
             SVGUseElement* useElement = static_cast<SVGUseElement*>(childNode);
             renderer = useElement->rendererClipChild();
@@ -277,7 +277,7 @@ void RenderSVGResourceClipper::calculateClipContentRepaintRect()
         RenderObject* renderer = childNode->renderer();
         if (!childNode->isSVGElement() || !static_cast<SVGElement*>(childNode)->isStyled() || !renderer)
             continue;
-        if (!renderer->isSVGShape() && !renderer->isSVGText() && !renderer->isSVGShadowTreeRootContainer())
+        if (!renderer->isSVGShape() && !renderer->isSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
         RenderStyle* style = renderer->style();
         if (!style || style->display() == NONE || style->visibility() != VISIBLE)
@@ -307,7 +307,7 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
         RenderObject* renderer = childNode->renderer();
         if (!childNode->isSVGElement() || !static_cast<SVGElement*>(childNode)->isStyled() || !renderer)
             continue;
-        if (!renderer->isSVGShape() && !renderer->isSVGText() && !renderer->isSVGShadowTreeRootContainer())
+        if (!renderer->isSVGShape() && !renderer->isSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
         IntPoint hitPoint;
         HitTestResult result(hitPoint);

@@ -22,7 +22,6 @@
 #if ENABLE(SVG)
 #include "RenderSVGResourceContainer.h"
 
-#include "RenderSVGShadowTreeRootContainer.h"
 #include "RenderView.h"
 #include "SVGResourcesCache.h"
 #include "SVGStyledTransformableElement.h"

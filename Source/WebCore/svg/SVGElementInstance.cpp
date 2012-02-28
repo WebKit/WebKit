@@ -130,8 +130,7 @@ void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
         }
     }
 
-    // Be sure to rebuild use trees, if needed
-    element->document()->updateLayoutIgnorePendingStylesheets();
+    element->document()->updateStyleIfNeeded();
 }
 
 const AtomicString& SVGElementInstance::interfaceName() const

@@ -2108,8 +2108,7 @@ inline bool CSSStyleSelector::checkSelector(const RuleData& ruleData, const Elem
     m_dynamicPseudo = NOPSEUDO;
     m_checker.clearHasUnknownPseudoElements();
 
-    // Let the slow path handle SVG as it has some additional rules regarding shadow trees.
-    if (ruleData.hasFastCheckableSelector() && !m_element->isSVGElement()) {
+    if (ruleData.hasFastCheckableSelector()) {
         // We know this selector does not include any pseudo elements.
         if (m_checker.pseudoStyle() != NOPSEUDO)
             return false;
