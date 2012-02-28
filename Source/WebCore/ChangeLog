@@ -1,5 +1,25 @@
 2012-02-28  Abhishek Arya  <inferno@chromium.org>
 
+        Crash due to accessing removed continuation in multi-column layout.
+        https://bugs.webkit.org/show_bug.cgi?id=78417
+
+        Reviewed by David Hyatt.
+
+        This patch addresses two problems:
+        1. Run-in block got split due to addition of a column-span child.
+        The clone part was incorrectly intruding into the sibling block,
+        even when it was part of the continuation chain.
+        2. Like r73296, we don't need to set continuation on an
+        anonymous block since we haven't split a real element.
+
+        Test: fast/multicol/span/runin-continuation-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        (WebCore::RenderBlock::handleRunInChild):
+
+2012-02-28  Abhishek Arya  <inferno@chromium.org>
+
         Incorrect before child parent calculation when adding new children
         to anonymous column blocks.
         https://bugs.webkit.org/show_bug.cgi?id=79755

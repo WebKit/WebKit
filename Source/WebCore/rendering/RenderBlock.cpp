@@ -852,7 +852,11 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
             // We are nested inside a multi-column element and are being split by the span.  We have to break up
             // our block into continuations.
             RenderBoxModelObject* oldContinuation = continuation();
-            setContinuation(newBox);
+
+            // When we split an anonymous block, there's no need to do any continuation hookup,
+            // since we haven't actually split a real element.
+            if (!isAnonymousBlock())
+                setContinuation(newBox);
 
             // Someone may have put a <p> inside a <q>, causing a split.  When this happens, the :after content
             // has to move into the inline continuation.  Call updateBeforeAfterContent to ensure that our :after
@@ -1759,6 +1763,10 @@ bool RenderBlock::handleRunInChild(RenderBox* child)
         return false;
     // FIXME: We don't handle non-block elements with run-in for now.
     if (!child->isRenderBlock())
+        return false;  
+    // Run-in child shouldn't intrude into the sibling block if it is part of a
+    // continuation chain. In that case, treat it as a normal block.
+    if (child->isElementContinuation() || child->virtualContinuation())
         return false;
 
     RenderBlock* blockRunIn = toRenderBlock(child);
