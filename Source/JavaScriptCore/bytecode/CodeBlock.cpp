@@ -1581,13 +1581,15 @@ void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC) const
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_chain)) {
         visitor.append(&vPC[4].u.structure);
-        visitor.append(&vPC[5].u.structureChain);
+        if (vPC[5].u.structureChain)
+            visitor.append(&vPC[5].u.structureChain);
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
         visitor.append(&vPC[4].u.structure);
         visitor.append(&vPC[5].u.structure);
-        visitor.append(&vPC[6].u.structureChain);
+        if (vPC[6].u.structureChain)
+            visitor.append(&vPC[6].u.structureChain);
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) && vPC[4].u.structure) {

@@ -1,3 +1,19 @@
+2012-02-27  Oliver Hunt  <oliver@apple.com>
+
+        sputnik/Unicode/Unicode_500/S7.2_A1.6_T1.html crashes in the interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=79728
+
+        Reviewed by Gavin Barraclough.
+
+        When initialising a chained get instruction we may end up in a state where
+        the instruction stream says we have a scopechain, but it has not yet been set
+        (eg. if allocating the StructureChain itself is what leads to the GC).  We could
+        re-order the allocation, but it occurs in a couple of places, so it seems less
+        fragile simply to null check the scopechain slot before we actually visit the slot.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitStructures):
+
 2012-02-27  Filip Pizlo  <fpizlo@apple.com>
 
         Old JIT's style of JSVALUE64 strict equality is subtly wrong
