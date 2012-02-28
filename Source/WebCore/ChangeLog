@@ -1,3 +1,37 @@
+2012-02-28  Ashod Nakashian  <ashodnakashian@yahoo.com>
+
+        Move FILE_SYSTEM code out of WorkerContext and into the fileapi folder
+        https://bugs.webkit.org/show_bug.cgi?id=79449
+
+        Reviewed by Adam Barth.
+
+        This moves FILE_SYSTEM code out of WorkerContext and into the fileapi/WorkerContextFileSystem.
+        None-functional changes, no new tests necessary.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * fileapi/WorkerContextFileSystem.cpp: Added.
+        (WebCore):
+        (WebCore::WorkerContextFileSystem::webkitRequestFileSystem):
+        (WebCore::WorkerContextFileSystem::webkitRequestFileSystemSync):
+        (WebCore::WorkerContextFileSystem::webkitResolveLocalFileSystemURL):
+        (WebCore::WorkerContextFileSystem::webkitResolveLocalFileSystemSyncURL):
+        * fileapi/WorkerContextFileSystem.h: Added.
+        (WebCore):
+        (WorkerContextFileSystem):
+        * fileapi/WorkerContextFileSystem.idl: Added.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::ensureEventTargetData):
+        * workers/WorkerContext.h:
+        (WebCore):
+        (WorkerContext):
+        * workers/WorkerContext.idl:
+
 2012-02-28  Alexey Proskuryakov  <ap@apple.com>
 
         FileReader crashes when file is not readable

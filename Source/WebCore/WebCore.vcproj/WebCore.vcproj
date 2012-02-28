@@ -73534,6 +73534,34 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="fileapi"
+			>
+			<File
+				RelativePath="..\fileapi\DOMWindowFileSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DOMWindowFileSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\EntryBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\SyncCallbackHelper.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\WorkerContextFileSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\WorkerContextFileSystem.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\config.h"
 			>

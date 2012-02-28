@@ -216,6 +216,7 @@ IDL_BINDINGS += \
     $$PWD/fileapi/Metadata.idl \
     $$PWD/fileapi/MetadataCallback.idl \
     $$PWD/fileapi/WebKitBlobBuilder.idl \
+    $$PWD/fileapi/WorkerContextFileSystem.idl \
     $$PWD/html/canvas/ArrayBufferView.idl \
     $$PWD/html/canvas/ArrayBuffer.idl \
     $$PWD/html/canvas/DOMWindowWebGL.idl \

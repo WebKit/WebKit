@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
@@ -47,15 +47,10 @@
 namespace WebCore {
 
     class Blob;
-    class DOMFileSystemSync;
     class DOMURL;
     class Database;
     class DatabaseCallback;
     class DatabaseSync;
-    class EntryCallback;
-    class EntrySync;
-    class ErrorCallback;
-    class FileSystemCallback;
     class IDBFactory;
     class NotificationCenter;
     class ScheduledAction;
@@ -131,16 +126,6 @@ namespace WebCore {
         virtual bool isContextThread() const;
         virtual bool isJSExecutionForbidden() const;
 
-#if ENABLE(FILE_SYSTEM)
-        enum FileSystemType {
-            TEMPORARY,
-            PERSISTENT,
-        };
-        void webkitRequestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback>);
-        PassRefPtr<DOMFileSystemSync> webkitRequestFileSystemSync(int type, long long size, ExceptionCode&);
-        void webkitResolveLocalFileSystemURL(const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback>);
-        PassRefPtr<EntrySync> webkitResolveLocalFileSystemSyncURL(const String& url, ExceptionCode&);
-#endif
 #if ENABLE(INSPECTOR)
         WorkerInspectorController* workerInspectorController() { return m_workerInspectorController.get(); }
 #endif

@@ -1623,6 +1623,7 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/FileWriterBase.cpp
         fileapi/FileWriterSync.cpp
         fileapi/LocalFileSystem.cpp
+        fileapi/WorkerContextFileSystem.cpp
         platform/AsyncFileSystem.cpp
     )
     LIST(APPEND WebCore_IDL_FILES
@@ -1649,6 +1650,7 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/FileWriterSync.idl
         fileapi/Metadata.idl
         fileapi/MetadataCallback.idl
+        fileapi/WorkerContextFileSystem.idl
     )
 ENDIF ()
 

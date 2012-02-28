@@ -687,6 +687,7 @@ SOURCES += \
     fileapi/OperationNotAllowedException.cpp \
     fileapi/ThreadableBlobRegistry.cpp \
     fileapi/WebKitBlobBuilder.cpp \
+    fileapi/WorkerContextFileSystem.cpp \
     history/BackForwardController.cpp \
     history/BackForwardListImpl.cpp \
     history/CachedFrame.cpp \

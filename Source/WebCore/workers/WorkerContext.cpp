@@ -68,24 +68,7 @@
 #include "NotificationCenter.h"
 #endif
 
-#if ENABLE(FILE_SYSTEM)
-#include "AsyncFileSystem.h"
-#include "DirectoryEntrySync.h"
-#include "DOMFileSystem.h"
-#include "DOMFileSystemBase.h"
-#include "DOMFileSystemSync.h"
-#include "ErrorCallback.h"
-#include "FileEntrySync.h"
-#include "FileError.h"
-#include "FileException.h"
-#include "FileSystemCallback.h"
-#include "FileSystemCallbacks.h"
-#include "LocalFileSystem.h"
-#include "SyncCallbackHelper.h"
-#else
 #include "ExceptionCode.h"
-#endif
-
 #include "IDBFactory.h"
 
 namespace WebCore {
@@ -376,93 +359,6 @@ EventTargetData* WorkerContext::ensureEventTargetData()
 {
     return &m_eventTargetData;
 }
-
-#if ENABLE(FILE_SYSTEM)
-void WorkerContext::webkitRequestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
-{
-    if (!AsyncFileSystem::isAvailable() || !securityOrigin()->canAccessFileSystem()) {
-        DOMFileSystem::scheduleCallback(this, errorCallback, FileError::create(FileError::SECURITY_ERR));
-        return;
-    }
-
-    AsyncFileSystem::Type fileSystemType = static_cast<AsyncFileSystem::Type>(type);
-    if (!AsyncFileSystem::isValidType(fileSystemType)) {
-        DOMFileSystem::scheduleCallback(this, errorCallback, FileError::create(FileError::INVALID_MODIFICATION_ERR));
-        return;
-    }
-
-    LocalFileSystem::localFileSystem().requestFileSystem(this, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, this), false);
-}
-
-PassRefPtr<DOMFileSystemSync> WorkerContext::webkitRequestFileSystemSync(int type, long long size, ExceptionCode& ec)
-{
-    ec = 0;
-    if (!AsyncFileSystem::isAvailable() || !securityOrigin()->canAccessFileSystem()) {
-        ec = FileException::SECURITY_ERR;
-        return 0;
-    }
-
-    AsyncFileSystem::Type fileSystemType = static_cast<AsyncFileSystem::Type>(type);
-    if (!AsyncFileSystem::isValidType(fileSystemType)) {
-        ec = FileException::INVALID_MODIFICATION_ERR;
-        return 0;
-    }
-
-    FileSystemSyncCallbackHelper helper;
-    LocalFileSystem::localFileSystem().requestFileSystem(this, fileSystemType, size, FileSystemCallbacks::create(helper.successCallback(), helper.errorCallback(), this), true);
-    return helper.getResult(ec);
-}
-
-void WorkerContext::webkitResolveLocalFileSystemURL(const String& url, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
-{
-    KURL completedURL = completeURL(url);
-    if (!AsyncFileSystem::isAvailable() || !securityOrigin()->canAccessFileSystem() || !securityOrigin()->canRequest(completedURL)) {
-        DOMFileSystem::scheduleCallback(this, errorCallback, FileError::create(FileError::SECURITY_ERR));
-        return;
-    }
-
-    AsyncFileSystem::Type type;
-    String filePath;
-    if (!completedURL.isValid() || !AsyncFileSystem::crackFileSystemURL(completedURL, type, filePath)) {
-        DOMFileSystem::scheduleCallback(this, errorCallback, FileError::create(FileError::ENCODING_ERR));
-        return;
-    }
-
-    LocalFileSystem::localFileSystem().readFileSystem(this, type, ResolveURICallbacks::create(successCallback, errorCallback, this, filePath));
-}
-
-PassRefPtr<EntrySync> WorkerContext::webkitResolveLocalFileSystemSyncURL(const String& url, ExceptionCode& ec)
-{
-    ec = 0;
-    KURL completedURL = completeURL(url);
-    if (!AsyncFileSystem::isAvailable() || !securityOrigin()->canAccessFileSystem() || !securityOrigin()->canRequest(completedURL)) {
-        ec = FileException::SECURITY_ERR;
-        return 0;
-    }
-
-    AsyncFileSystem::Type type;
-    String filePath;
-    if (!completedURL.isValid() || !AsyncFileSystem::crackFileSystemURL(completedURL, type, filePath)) {
-        ec = FileException::ENCODING_ERR;
-        return 0;
-    }
-
-    FileSystemSyncCallbackHelper readFileSystemHelper;
-    LocalFileSystem::localFileSystem().readFileSystem(this, type, FileSystemCallbacks::create(readFileSystemHelper.successCallback(), readFileSystemHelper.errorCallback(), this), true);
-    RefPtr<DOMFileSystemSync> fileSystem = readFileSystemHelper.getResult(ec);
-    if (!fileSystem)
-        return 0;
-
-    RefPtr<EntrySync> entry = fileSystem->root()->getDirectory(filePath, 0, ec);
-    if (ec == FileException::TYPE_MISMATCH_ERR)
-        return fileSystem->root()->getFile(filePath, 0, ec);
-
-    return entry.release();
-}
-
-COMPILE_ASSERT(static_cast<int>(WorkerContext::TEMPORARY) == static_cast<int>(AsyncFileSystem::Temporary), enum_mismatch);
-COMPILE_ASSERT(static_cast<int>(WorkerContext::PERSISTENT) == static_cast<int>(AsyncFileSystem::Persistent), enum_mismatch);
-#endif
 
 WorkerContext::Observer::Observer(WorkerContext* context)
     : m_context(context)

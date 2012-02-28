@@ -1998,6 +1998,8 @@ webcore_sources += \
 	Source/WebCore/fileapi/ThreadableBlobRegistry.h \
 	Source/WebCore/fileapi/WebKitBlobBuilder.cpp \
 	Source/WebCore/fileapi/WebKitBlobBuilder.h \
+	Source/WebCore/fileapi/WorkerContextFileSystem.cpp \
+	Source/WebCore/fileapi/WorkerContextFileSystem.h \
 	Source/WebCore/history/BackForwardController.cpp \
 	Source/WebCore/history/BackForwardController.h \
 	Source/WebCore/history/BackForwardList.h \
@@ -4872,7 +4874,8 @@ dom_binding_idls += \
 	$(WebCore)/fileapi/FileWriterCallback.idl \
 	$(WebCore)/fileapi/FileWriterSync.idl \
 	$(WebCore)/fileapi/Metadata.idl \
-	$(WebCore)/fileapi/MetadataCallback.idl
+	$(WebCore)/fileapi/MetadataCallback.idl \
+	$(WebCore)/fileapi/WorkerContextFileSystem.idl
 
 webcoregtk_sources += \
 	Source/WebCore/platform/gtk/AsyncFileSystemGtk.cpp \

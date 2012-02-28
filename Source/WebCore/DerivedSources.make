@@ -191,6 +191,7 @@ BINDING_IDLS = \
     $(WebCore)/fileapi/MetadataCallback.idl \
     $(WebCore)/fileapi/OperationNotAllowedException.idl \
     $(WebCore)/fileapi/WebKitBlobBuilder.idl \
+    $(WebCore)/fileapi/WorkerContextFileSystem.idl \
     $(WebCore)/html/DOMFormData.idl \
     $(WebCore)/html/DOMSettableTokenList.idl \
     $(WebCore)/html/DOMTokenList.idl \
