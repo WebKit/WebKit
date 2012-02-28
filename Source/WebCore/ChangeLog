@@ -728,7 +728,7 @@
 2012-02-27  MORITA Hajime  <morrita@google.com>
 
         Removing <ul>, <li> inside shadow DOM triggers assertion in updateListMarkerNumbers
-        https://bugs.webkit.org/show_bug.cgi?id=79630
+        https://bugs.webkit.org/show_bug.cgi?id=72440
 
         Reviewed by Ryosuke Niwa.
 
