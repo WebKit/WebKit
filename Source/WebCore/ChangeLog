@@ -1,3 +1,10 @@
+2012-02-27  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Unreviewed gardening, fix compile error after r109043
+
+        * platform/graphics/chromium/TransparencyWin.h:
+        (TransparencyWin):
+
 2012-02-27  Adam Barth  <abarth@webkit.org>
 
         EventFactory.in should be named EventNames.in

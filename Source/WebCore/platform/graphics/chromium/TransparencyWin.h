@@ -156,10 +156,10 @@ public:
     const IntRect& drawRect() { return m_drawRect; }
 
 private:
-    friend TransparencyWin_NoLayer_Test;
-    friend TransparencyWin_WhiteLayer_Test;
-    friend TransparencyWin_TextComposite_Test;
-    friend TransparencyWin_OpaqueCompositeLayer_Test;
+    friend TransparencyWin_DISABLED_NoLayer_Test;
+    friend TransparencyWin_DISABLED_WhiteLayer_Test;
+    friend TransparencyWin_DISABLED_TextComposite_Test;
+    friend TransparencyWin_DISABLED_OpaqueCompositeLayer_Test;
 
     class OwnedBuffers;
 
