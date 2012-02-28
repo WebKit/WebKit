@@ -1,3 +1,22 @@
+2012-02-27  Adam Barth  <abarth@webkit.org>
+
+        Repair license blocks for files created during modularization
+        https://bugs.webkit.org/show_bug.cgi?id=79721
+
+        Reviewed by Eric Seidel.
+
+        We failed to copy the license blocks correctly when moving code into
+        these files.  This patch restores the correct license blocks.
+
+        * Modules/geolocation/NavigatorGeolocation.cpp:
+        * Modules/geolocation/NavigatorGeolocation.h:
+        * Modules/mediastream/NavigatorMediaStream.cpp:
+        * Modules/mediastream/NavigatorMediaStream.h:
+        * bindings/js/JSDOMWindowWebAudioCustom.cpp:
+        * bindings/js/JSDOMWindowWebSocketCustom.cpp:
+        * storage/DOMWindowSQLDatabase.cpp:
+        * storage/DOMWindowSQLDatabase.h:
+
 2012-02-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Extract the logic for computing the dirty rows / columns out of RenderTableSection::paintObject
