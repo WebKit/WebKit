@@ -1,3 +1,15 @@
+2012-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r109137.
+        http://trac.webkit.org/changeset/109137
+        https://bugs.webkit.org/show_bug.cgi?id=79833
+
+        Broke cr-mac build (Requested by aklein on #webkit).
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore):
+        (WebCore::pathFromFont):
+
 2012-02-28  Jungshik Shin  <jshin@chromium.org>
 
         Add a fallback path to LineBreakIteratorPoolICU when the locale
