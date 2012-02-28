@@ -85,7 +85,7 @@ static QStringList expectedAPI = QStringList()
     << "QWebNavigationRequest.url --> QUrl"
     << "QWebNavigationRequest.mouseButton --> int"
     << "QWebNavigationRequest.keyboardModifiers --> int"
-    << "QWebNavigationRequest.action --> QQuickWebView::NavigationRequestAction"
+    << "QWebNavigationRequest.action --> int"
     << "QWebNavigationRequest.navigationType --> QQuickWebView::NavigationType"
     << "QWebNavigationRequest.actionChanged() --> void"
     ;

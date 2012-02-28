@@ -1,3 +1,25 @@
+2012-02-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Fix build for WK2, do not use enum type if values can be outside the enum
+        https://bugs.webkit.org/show_bug.cgi?id=79800
+
+        Reviewed by Csaba Osztrogonác.
+
+        We have two different enums called NavigationRequestAction. If we use one of them
+        to store the variables, compilers can rightfully warn about comparison with
+        values from other enums.
+
+        We might revisit the strategy of exposing different enumerations in experimental,
+        but for now, fallback to using int for the 'action' property in
+        QWebNavigationRequest.
+
+        * UIProcess/API/qt/qwebnavigationrequest.cpp:
+        (QWebNavigationRequestPrivate):
+        (QWebNavigationRequest::setAction):
+        (QWebNavigationRequest::action):
+        * UIProcess/API/qt/qwebnavigationrequest_p.h:
+        * UIProcess/API/qt/tests/publicapi/tst_publicapi.cpp:
+
 2012-02-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] API changes to QWebNavigationRequest

@@ -33,7 +33,7 @@ class QWEBKIT_EXPORT QWebNavigationRequest : public QObject {
     Q_PROPERTY(QUrl url READ url CONSTANT FINAL)
     Q_PROPERTY(int mouseButton READ mouseButton CONSTANT FINAL)
     Q_PROPERTY(int keyboardModifiers READ keyboardModifiers CONSTANT FINAL)
-    Q_PROPERTY(QQuickWebView::NavigationRequestAction action READ action WRITE setAction NOTIFY actionChanged FINAL)
+    Q_PROPERTY(int action READ action WRITE setAction NOTIFY actionChanged FINAL)
     Q_PROPERTY(QQuickWebView::NavigationType navigationType READ navigationType CONSTANT FINAL)
 
 public:
@@ -43,9 +43,9 @@ public:
     QUrl url() const;
     int mouseButton() const;
     int keyboardModifiers() const;
-    QQuickWebView::NavigationRequestAction action() const;
+    int action() const;
 
-    void setAction(QQuickWebView::NavigationRequestAction action);
+    void setAction(int action);
     QQuickWebView::NavigationType navigationType() const;
 
 Q_SIGNALS:
