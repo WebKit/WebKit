@@ -1,3 +1,14 @@
+2012-02-28  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Get rid of padding cruft in CopiedBlock
+        https://bugs.webkit.org/show_bug.cgi?id=79686
+
+        Reviewed by Filip Pizlo.
+
+        * heap/CopiedBlock.h:
+        (CopiedBlock): Removed the extra padding that was used for alignment purposes until 
+        the calculation of the payload offset into CopiedBlocks was redone recently.
+
 2012-02-28  Anders Carlsson  <andersca@apple.com>
 
         Fix build with newer versions of clang.
