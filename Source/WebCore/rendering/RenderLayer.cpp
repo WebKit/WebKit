@@ -1197,6 +1197,11 @@ void RenderLayer::removeOnlyThisLayer()
     bool hasLayerOffset;
     const LayoutPoint offsetFromRootBeforeMove = computeOffsetFromRoot(hasLayerOffset);
 
+    // Remove the child reflection layer before moving other child layers.
+    // The reflection layer should not be moved to the parent.
+    if (reflection())
+        removeChild(reflectionLayer());
+
     // Now walk our kids and reattach them to our parent.
     RenderLayer* current = m_first;
     while (current) {
@@ -1212,10 +1217,7 @@ void RenderLayer::removeOnlyThisLayer()
     }
 
     // Remove us from the parent.
-    if (reflection())
-        removeChild(reflectionLayer());
     m_parent->removeChild(this);
-
     m_renderer->destroyLayer();
 }
 

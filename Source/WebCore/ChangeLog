@@ -1,3 +1,21 @@
+2012-02-28  Alok Priyadarshi  <alokp@chromium.org>
+
+        Heap-use-after-free in WebCore::RenderLayer::addChild
+        https://bugs.webkit.org/show_bug.cgi?id=79698
+
+        Reviewed by Simon Fraser.
+
+        This patch fixes a regression introduced in r108659.
+        The reflection layer was moved to the parent by mistake. It was then
+        deleted and the parent was left holding on to a deleted pointer. This
+        patch restores the location where reflection layer is removed - before
+        moving the child layers.
+
+        Test: fast/reflections/toggle-reflection-crash.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+
 2012-02-28  Ken Buchanan  <kenrb@chromium.org>
 
         Crash from list marker having inline and block children
