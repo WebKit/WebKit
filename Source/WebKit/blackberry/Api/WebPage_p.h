@@ -37,7 +37,6 @@ namespace WebCore {
 class DOMWrapperWorld;
 class Document;
 class Frame;
-class FrameView;
 class GeolocationControllerClientBlackBerry;
 class JavaScriptDebuggerBlackBerry;
 class KURL;
@@ -60,7 +59,6 @@ class BackingStoreTile;
 class DumpRenderTreeClient;
 class InPageSearchManager;
 class InputHandler;
-class InRegionScrollableArea;
 class SelectionHandler;
 class TouchEventHandler;
 class WebPageClient;
@@ -81,6 +79,8 @@ public:
 
     WebPagePrivate(WebPage*, WebPageClient*, const WebCore::IntRect&);
     virtual ~WebPagePrivate();
+
+    static WebCore::Page* core(const WebPage*);
 
     void init(const WebString& pageGroupName);
     bool handleMouseEvent(WebCore::PlatformMouseEvent&);

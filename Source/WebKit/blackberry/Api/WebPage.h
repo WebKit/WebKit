@@ -34,17 +34,8 @@ typedef const struct OpaqueJSValue* JSValueRef;
 
 namespace WebCore {
 class ChromeClientBlackBerry;
-class EditorClientBlackBerry;
-class Element;
 class Frame;
 class FrameLoaderClientBlackBerry;
-class GeolocationControllerClientBlackBerry;
-class IconDatabaseClientBlackBerry;
-class InspectorClientBlackBerry;
-class JavaScriptDebuggerBlackBerry;
-class Node;
-class RenderObject;
-class VisibleSelection;
 }
 
 class WebDOMDocument;
@@ -67,7 +58,6 @@ namespace WebKit {
 class BackingStore;
 class BackingStoreClient;
 class BackingStorePrivate;
-class DumpRenderTreeClient;
 class RenderQueue;
 class WebPageClient;
 class WebPageGroupLoadDeferrer;
@@ -192,8 +182,6 @@ public:
 
     void assignFocus(Platform::FocusDirection);
 
-    Platform::IntRect focusNodeRect();
-
     void setFocused(bool);
 
     void clearBrowsingData();
@@ -250,7 +238,7 @@ public:
     int32_t setComposingText(spannable_string_t*, int32_t relativeCursorPosition);
     int32_t commitText(spannable_string_t*, int32_t relativeCursorPosition);
 
-    void spellCheckingEnabled(bool);
+    void setSpellCheckingEnabled(bool);
 
     void setSelection(const Platform::IntPoint& startPoint, const Platform::IntPoint& endPoint);
     void setCaretPosition(const Platform::IntPoint&);
@@ -315,7 +303,6 @@ public:
     void enablePasswordEcho();
     void disablePasswordEcho();
     void dispatchInspectorMessage(const char* message, int length);
-    WebCore::Frame* mainFrame() const;
 
     // FIXME: Needs API review on this header. See PR #120402.
     void notifyPagePause();
@@ -344,6 +331,7 @@ private:
     friend class WebKit::BackingStorePrivate;
     friend class WebKit::RenderQueue;
     friend class WebKit::WebPageGroupLoadDeferrer;
+    friend class WebKit::WebPagePrivate;
     friend class WebCore::ChromeClientBlackBerry;
     friend class WebCore::FrameLoaderClientBlackBerry;
     WebPagePrivate* d;

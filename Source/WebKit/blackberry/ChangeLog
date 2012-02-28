@@ -1,3 +1,80 @@
+2012-02-27  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Upstream BlackBerry API web page related files
+        https://bugs.webkit.org/show_bug.cgi?id=74380
+
+        Reviewed by Antonio Gomes.
+
+        Clean up WebPage.{h, cpp} and WebPage_p.h.
+        - Remove WebPage::mainFrame() as it is bad to expose WebCore::Frame in
+          the public API, adapt to the change by adding a new method
+          WebPagePrivate::core(Const WebPage*) and expose it to
+          DumpRenderTreeSupport.
+        - Rename WebPage::spellCheckingEnabled to
+          WebPage::setSpellCheckingEnabled.
+        - Remove unused WebPage::focusNodeRect().
+        - Remove extra blank lines.
+        - Put WebPage methods and their associated WebPagePrivate methods
+          together.
+
+        No new tests as this patch doesn't change behavior.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::WebPage):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::~WebPage):
+        (BlackBerry::WebKit::WebPagePrivate::core):
+        (BlackBerry::WebKit::WebPage::load):
+        (BlackBerry::WebKit::WebPage::loadExtended):
+        (BlackBerry::WebKit::WebPage::loadFile):
+        (BlackBerry::WebKit::WebPage::download):
+        (BlackBerry::WebKit::WebPage::loadString):
+        (BlackBerry::WebKit::WebPage::executeJavaScript):
+        (BlackBerry::WebKit::WebPage::executeJavaScriptInIsolatedWorld):
+        (BlackBerry::WebKit::WebPage::stopLoading):
+        (BlackBerry::WebKit::WebPage::prepareToDestroy):
+        (BlackBerry::WebKit::WebPage::setScrollPosition):
+        (BlackBerry::WebKit::WebPage::scrollBy):
+        (BlackBerry::WebKit::WebPage::notifyInRegionScrollStatusChanged):
+        (BlackBerry::WebKit::WebPage::zoomToFitScale):
+        (BlackBerry::WebKit::WebPage::initialScale):
+        (BlackBerry::WebKit::WebPage::maximumScale):
+        (BlackBerry::WebKit::WebPage::scrollPosition):
+        (BlackBerry::WebKit::WebPage::viewportSize):
+        (BlackBerry::WebKit::WebPage::activeNodeContext):
+        (BlackBerry::WebKit::WebPage::assignFocus):
+        (BlackBerry::WebKit::WebPage::blockZoomAnimationFinished):
+        (BlackBerry::WebKit::WebPage::onInputLocaleChanged):
+        (BlackBerry::WebKit::WebPage::setScreenOrientation):
+        (BlackBerry::WebKit::WebPage::applyPendingOrientationIfNeeded):
+        (BlackBerry::WebKit::WebPage::setViewportSize):
+        (BlackBerry::WebKit::WebPage::setDefaultLayoutSize):
+        (BlackBerry::WebKit::WebPage::setScrollOriginPoint):
+        (BlackBerry::WebKit::WebPage::textEncoding):
+        (BlackBerry::WebKit::WebPage::forcedTextEncoding):
+        (BlackBerry::WebKit::WebPage::setForcedTextEncoding):
+        (BlackBerry::WebKit::WebPage::setSpellCheckingEnabled):
+        (BlackBerry::WebKit::parentLayer):
+        (BlackBerry::WebKit::WebPagePrivate::inRegionScrollableAreasForPoint):
+        (BlackBerry::WebKit::WebPage::destroyWebPageCompositor):
+        * Api/WebPage.h:
+        (WebCore):
+        (WebKit):
+        * Api/WebPage_p.h:
+        (WebCore):
+        (WebKit):
+        * WebKitSupport/DumpRenderTreeSupport.cpp:
+        (DumpRenderTreeSupport::corePage):
+        (DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests):
+        (DumpRenderTreeSupport::resetGeolocationMock):
+        (DumpRenderTreeSupport::setMockGeolocationError):
+        (DumpRenderTreeSupport::setMockGeolocationPermission):
+        (DumpRenderTreeSupport::setMockGeolocationPosition):
+        (DumpRenderTreeSupport::scalePageBy):
+        * WebKitSupport/DumpRenderTreeSupport.h:
+        (WebCore):
+        (DumpRenderTreeSupport):
+
 2012-02-27  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Selection handling should be entirely directional

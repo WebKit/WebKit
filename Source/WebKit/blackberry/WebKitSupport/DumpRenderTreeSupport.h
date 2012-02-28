@@ -29,6 +29,7 @@ class WebPage;
 
 namespace WebCore {
 class Frame;
+class Page;
 }
 
 namespace WTF {
@@ -39,6 +40,8 @@ class DumpRenderTreeSupport {
 public:
     DumpRenderTreeSupport();
     ~DumpRenderTreeSupport();
+
+    static WebCore::Page* corePage(BlackBerry::WebKit::WebPage*);
 
     static void setLinksIncludedInFocusChain(bool);
     static bool linksIncludedInFocusChain();

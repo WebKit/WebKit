@@ -29,7 +29,7 @@
 #include "JSElement.h"
 #include "Page.h"
 #include "ViewportArguments.h"
-#include "WebPage.h"
+#include "WebPage_p.h"
 #include "bindings/js/GCController.h"
 #include <JavaScriptCore/APICast.h>
 #include <wtf/CurrentTime.h>
@@ -54,6 +54,11 @@ DumpRenderTreeSupport::DumpRenderTreeSupport()
 
 DumpRenderTreeSupport::~DumpRenderTreeSupport()
 {
+}
+
+Page* DumpRenderTreeSupport::corePage(WebPage* webPage)
+{
+    return WebPagePrivate::core(webPage);
 }
 
 int DumpRenderTreeSupport::javaScriptObjectsCount()
@@ -94,7 +99,7 @@ void DumpRenderTreeSupport::dumpConfigurationForViewport(Frame* mainFrame, int d
 int DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests(WebPage* webPage)
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    GeolocationClientMock* mockClient = toGeolocationClientMock(webPage->mainFrame()->page()->geolocationController()->client());
+    GeolocationClientMock* mockClient = toGeolocationClientMock(corePage(webPage)->geolocationController()->client());
     return mockClient->numberOfPendingPermissionRequests();
 #else
     UNUSED_PARAM(webPage);
@@ -105,7 +110,7 @@ int DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests(WebPage*
 void DumpRenderTreeSupport::resetGeolocationMock(WebPage* webPage)
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    GeolocationClientMock* mockClient = toGeolocationClientMock(webPage->mainFrame()->page()->geolocationController()->client());
+    GeolocationClientMock* mockClient = toGeolocationClientMock(corePage(webPage)->geolocationController()->client());
     mockClient->reset();
 #endif
 }
@@ -123,7 +128,7 @@ void DumpRenderTreeSupport::setMockGeolocationError(WebPage* webPage, int errorC
         break;
     }
 
-    GeolocationClientMock* mockClient = static_cast<GeolocationClientMock*>(webPage->mainFrame()->page()->geolocationController()->client());
+    GeolocationClientMock* mockClient = static_cast<GeolocationClientMock*>(corePage(webPage)->geolocationController()->client());
     mockClient->setError(GeolocationError::create(code, message));
 #endif
 }
@@ -131,7 +136,7 @@ void DumpRenderTreeSupport::setMockGeolocationError(WebPage* webPage, int errorC
 void DumpRenderTreeSupport::setMockGeolocationPermission(WebPage* webPage, bool allowed)
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    GeolocationClientMock* mockClient = toGeolocationClientMock(webPage->mainFrame()->page()->geolocationController()->client());
+    GeolocationClientMock* mockClient = toGeolocationClientMock(corePage(webPage)->geolocationController()->client());
     mockClient->setPermission(allowed);
 #endif
 }
@@ -139,14 +144,14 @@ void DumpRenderTreeSupport::setMockGeolocationPermission(WebPage* webPage, bool 
 void DumpRenderTreeSupport::setMockGeolocationPosition(WebPage* webPage, double latitude, double longitude, double accuracy)
 {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    GeolocationClientMock* mockClient = toGeolocationClientMock(webPage->mainFrame()->page()->geolocationController()->client());
+    GeolocationClientMock* mockClient = toGeolocationClientMock(corePage(webPage)->geolocationController()->client());
     mockClient->setPosition(GeolocationPosition::create(currentTime(), latitude, longitude, accuracy));
 #endif
 }
 
 void DumpRenderTreeSupport::scalePageBy(WebPage* webPage, float scaleFactor, float x, float y)
 {
-    webPage->mainFrame()->page()->setPageScaleFactor(scaleFactor, IntPoint(x, y));
+    corePage(webPage)->setPageScaleFactor(scaleFactor, IntPoint(x, y));
 }
 
 JSValueRef DumpRenderTreeSupport::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)

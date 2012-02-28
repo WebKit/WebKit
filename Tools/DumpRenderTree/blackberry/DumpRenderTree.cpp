@@ -265,21 +265,22 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     m_page->resetVirtualViewportOnCommitted(false);
     m_page->setJavaScriptCanAccessClipboard(true);
 
-    mainFrame = m_page->mainFrame();
-    if (mainFrame) {
-        mainFrame->page()->setTabKeyCyclesThroughElements(true);
-        mainFrame->page()->settings()->setEditingBehaviorType(WebCore::EditingUnixBehavior);
-        mainFrame->page()->settings()->setDOMPasteAllowed(true);
-        mainFrame->page()->settings()->setValidationMessageTimerMagnification(-1);
-        mainFrame->page()->settings()->setInteractiveFormValidationEnabled(true);
-        mainFrame->page()->settings()->setAllowFileAccessFromFileURLs(true);
-        mainFrame->page()->settings()->setAllowUniversalAccessFromFileURLs(true);
-        mainFrame->page()->settings()->setAuthorAndUserStylesEnabled(true);
-        mainFrame->page()->settings()->setUsePreHTML5ParserQuirks(false);
-        mainFrame->tree()->clearName();
-        mainFrame->loader()->setOpener(0);
+    if (WebCore::Page* page = DumpRenderTreeSupport::corePage(m_page)) {
+        page->setTabKeyCyclesThroughElements(true);
+        page->settings()->setEditingBehaviorType(WebCore::EditingUnixBehavior);
+        page->settings()->setDOMPasteAllowed(true);
+        page->settings()->setValidationMessageTimerMagnification(-1);
+        page->settings()->setInteractiveFormValidationEnabled(true);
+        page->settings()->setAllowFileAccessFromFileURLs(true);
+        page->settings()->setAllowUniversalAccessFromFileURLs(true);
+        page->settings()->setAuthorAndUserStylesEnabled(true);
+        page->settings()->setUsePreHTML5ParserQuirks(false);
         // FIXME: Other ports also clear history/backForwardList allong with visited links.
-        mainFrame->page()->group().removeVisitedLinks();
+        page->group().removeVisitedLinks();
+        if (mainFrame = page->mainFrame()) {
+            mainFrame->tree()->clearName();
+            mainFrame->loader()->setOpener(0);
+        }
     }
 
     // For now we manually garbage collect between each test to make sure the device won't run out of memory due to lazy collection.
@@ -292,7 +293,7 @@ void DumpRenderTree::runTests()
     m_accessibilityController = new AccessibilityController();
     getTestsToRun();
 
-    mainFrame = m_page->mainFrame();
+    mainFrame = DumpRenderTreeSupport::corePage(m_page)->mainFrame();
 
     m_currentTest = m_tests.begin();
 

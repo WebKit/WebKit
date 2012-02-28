@@ -1,3 +1,19 @@
+2012-02-27  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Upstream BlackBerry API web page related files
+        https://bugs.webkit.org/show_bug.cgi?id=74380
+
+        Reviewed by Antonio Gomes.
+
+        Adapt to the removing of WebPage::mainFrame(), use
+        DumpRenderTreeSupport::corePage() and its mainFrame() instead.
+
+        No new tests as this patch doesn't change behavior.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        (BlackBerry::WebKit::DumpRenderTree::runTests):
+
 2012-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Windows and Linux Chromium perf bots
