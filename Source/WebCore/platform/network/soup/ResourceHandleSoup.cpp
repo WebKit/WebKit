@@ -56,6 +56,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(BLOB)
@@ -86,7 +87,7 @@ private:
     ResourceResponse& m_response;
     Vector<char>& m_data;
     bool m_finished;
-    GMainLoop* m_mainLoop;
+    GRefPtr<GMainLoop> m_mainLoop;
 };
 
 WebCoreSynchronousLoader::WebCoreSynchronousLoader(ResourceError& error, ResourceResponse& response, Vector<char>& data)
@@ -95,12 +96,11 @@ WebCoreSynchronousLoader::WebCoreSynchronousLoader(ResourceError& error, Resourc
     , m_data(data)
     , m_finished(false)
 {
-    m_mainLoop = g_main_loop_new(0, false);
+    m_mainLoop = adoptGRef(g_main_loop_new(0, false));
 }
 
 WebCoreSynchronousLoader::~WebCoreSynchronousLoader()
 {
-    g_main_loop_unref(m_mainLoop);
 }
 
 void WebCoreSynchronousLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
@@ -115,7 +115,7 @@ void WebCoreSynchronousLoader::didReceiveData(ResourceHandle*, const char* data,
 
 void WebCoreSynchronousLoader::didFinishLoading(ResourceHandle*, double)
 {
-    g_main_loop_quit(m_mainLoop);
+    g_main_loop_quit(m_mainLoop.get());
     m_finished = true;
 }
 
@@ -128,7 +128,7 @@ void WebCoreSynchronousLoader::didFail(ResourceHandle* handle, const ResourceErr
 void WebCoreSynchronousLoader::run()
 {
     if (!m_finished)
-        g_main_loop_run(m_mainLoop);
+        g_main_loop_run(m_mainLoop.get());
 }
 
 static void cleanupSoupRequestOperation(ResourceHandle*, bool isDestroying);

@@ -37,6 +37,32 @@ template <> void derefGPtr(GHashTable* ptr)
     g_hash_table_unref(ptr);
 }
 
+template <> GMainContext* refGPtr(GMainContext* ptr)
+{
+    if (ptr)
+        g_main_context_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GMainContext* ptr)
+{
+    if (ptr)
+        g_main_context_unref(ptr);
+}
+
+template <> GMainLoop* refGPtr(GMainLoop* ptr)
+{
+    if (ptr)
+        g_main_loop_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GMainLoop* ptr)
+{
+    if (ptr)
+        g_main_loop_unref(ptr);
+}
+
 #if GLIB_CHECK_VERSION(2, 24, 0)
 template <> GVariant* refGPtr(GVariant* ptr)
 {

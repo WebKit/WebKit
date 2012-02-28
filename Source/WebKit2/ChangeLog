@@ -1,3 +1,28 @@
+2012-02-28  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Add GMainLoop and GMainContext to be handled by GRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=79496
+
+        Reviewed by Martin Robinson.
+
+        Updated places where raw pointers to GMainLoop and GMainContext
+        were being used, replacing them with GRefPtr-based code.
+
+        * Platform/WorkQueue.h:
+        (WorkQueue):
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::platformInitialize):
+        (WorkQueue::platformInvalidate):
+        (WorkQueue::workQueueThreadBody):
+        (WorkQueue::registerEventSourceHandler):
+        (WorkQueue::dispatchOnSource):
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::WebPopupMenuProxyGtk):
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu):
+        (WebKit::WebPopupMenuProxyGtk::shutdownRunLoop):
+        * UIProcess/gtk/WebPopupMenuProxyGtk.h:
+        (WebPopupMenuProxyGtk):
+
 2012-02-28  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Initialize QtWebContext as much as we can in its constructor.

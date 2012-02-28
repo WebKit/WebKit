@@ -1,3 +1,29 @@
+2012-02-28  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Add GMainLoop and GMainContext to be handled by GRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=79496
+
+        Reviewed by Martin Robinson.
+
+        Updated places where raw pointers to GMainLoop and GMainContext
+        were being used, replacing them with GRefPtr-based code.
+
+        * platform/RunLoop.h:
+        (RunLoop):
+        * platform/gtk/RunLoopGtk.cpp:
+        (WebCore::RunLoop::RunLoop):
+        (WebCore::RunLoop::~RunLoop):
+        (WebCore::RunLoop::mainLoop):
+        (WebCore::RunLoop::stop):
+        (WebCore::RunLoop::wakeUp):
+        (WebCore::RunLoop::TimerBase::start):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCoreSynchronousLoader):
+        (WebCore::WebCoreSynchronousLoader::WebCoreSynchronousLoader):
+        (WebCore::WebCoreSynchronousLoader::~WebCoreSynchronousLoader):
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        (WebCore::WebCoreSynchronousLoader::run):
+
 2012-02-28  Alok Priyadarshi  <alokp@chromium.org>
 
         Heap-use-after-free in WebCore::RenderLayer::addChild
