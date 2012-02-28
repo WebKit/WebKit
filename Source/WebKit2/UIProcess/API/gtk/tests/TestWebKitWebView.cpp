@@ -71,24 +71,22 @@ static void testWebViewSettings(WebViewTest* test, gconstpointer)
     g_assert(webkit_settings_get_enable_javascript(settings));
 }
 
-static void replaceContentTitleChangedCallback(WebViewTest* test)
+static void replaceContentLoadCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
 {
-    g_main_loop_quit(test->m_mainLoop);
-}
-
-static void replaceContentLoadCallback()
-{
-    g_assert_not_reached();
+    // There might be an event from a previous load,
+    // but never a WEBKIT_LOAD_STARTED after webkit_web_view_replace_content().
+    g_assert_cmpint(loadEvent, !=, WEBKIT_LOAD_STARTED);
 }
 
 static void testWebViewReplaceContent(WebViewTest* test, gconstpointer)
 {
-    g_signal_connect_swapped(test->m_webView, "notify::title", G_CALLBACK(replaceContentTitleChangedCallback), test);
+    test->loadHtml("<html><head><title>Replace Content Test</title></head><body>Content to replace</body></html>", 0);
+    test->waitUntilTitleChangedTo("Replace Content Test");
+
     g_signal_connect(test->m_webView, "load-changed", G_CALLBACK(replaceContentLoadCallback), test);
-    g_signal_connect(test->m_webView, "load-failed", G_CALLBACK(replaceContentLoadCallback), test);
-    test->replaceContent("<html><head><title>Content Replaced</title></head><body>New Content</body></html>",
+    test->replaceContent("<html><body onload='document.title=\"Content Replaced\"'>New Content</body></html>",
                          "http://foo.com/bar", 0);
-    g_main_loop_run(test->m_mainLoop);
+    test->waitUntilTitleChangedTo("Content Replaced");
 }
 
 static const char* kAlertDialogMessage = "WebKitGTK+ alert dialog message";

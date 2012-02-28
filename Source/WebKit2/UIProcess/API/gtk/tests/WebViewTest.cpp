@@ -136,6 +136,28 @@ void WebViewTest::waitUntilLoadFinished()
     g_main_loop_run(m_mainLoop);
 }
 
+static void titleChanged(WebKitWebView* webView, GParamSpec*, WebViewTest* test)
+{
+    if (!test->m_expectedTitle.isNull() && test->m_expectedTitle != webkit_web_view_get_title(webView))
+        return;
+
+    g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(titleChanged), test);
+    g_main_loop_quit(test->m_mainLoop);
+}
+
+void WebViewTest::waitUntilTitleChangedTo(const char* expectedTitle)
+{
+    m_expectedTitle = expectedTitle;
+    g_signal_connect(m_webView, "notify::title", G_CALLBACK(titleChanged), this);
+    g_main_loop_run(m_mainLoop);
+    m_expectedTitle = CString();
+}
+
+void WebViewTest::waitUntilTitleChanged()
+{
+    waitUntilTitleChangedTo(0);
+}
+
 static gboolean parentWindowMapped(GtkWidget* widget, GdkEvent*, WebViewTest* test)
 {
     g_signal_handlers_disconnect_by_func(widget, reinterpret_cast<void*>(parentWindowMapped), test);

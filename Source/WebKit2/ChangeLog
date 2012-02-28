@@ -1,3 +1,34 @@
+2012-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Inconsistent state of WebKitWebView when replacing content in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=79775
+
+        Reviewed by Martin Robinson.
+
+        Use an enum instead of a boolean to track the status of a
+        replace_content() load operation. We need to know when the load of
+        the replace content actually starts to not ignore valid load
+        events of a previous ongoing load operation.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewLoadChanged): Transit to new replace content state
+        when replacing content depending on the load event.
+        (webkitWebViewLoadFailed): Ignore load failed events when
+        replacing content.
+        (webkitWebViewSetEstimatedLoadProgress): Ignore load progress when
+        replacing content.
+        (webkit_web_view_replace_content): Set replace content status to
+        WillReplaceContent.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (replaceContentLoadCallback):
+        (testWebViewReplaceContent):
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (titleChanged):
+        (WebViewTest::waitUntilTitleChanged): Convenient method to wait
+        until title changes. Use with replaceConent() since load events
+        are not emitted when replacing content.
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+
 2012-02-27  Anders Carlsson  <andersca@apple.com>
 
         Add basic page overlay support to TiledCoreAnimationDrawingArea

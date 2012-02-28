@@ -42,6 +42,8 @@ public:
 
     void wait(double seconds);
     void waitUntilLoadFinished();
+    void waitUntilTitleChangedTo(const char* expectedTitle);
+    void waitUntilTitleChanged();
     void showInWindowAndWaitUntilMapped();
 
     void mouseMoveTo(int x, int y, unsigned int mouseModifiers = 0);
@@ -50,6 +52,7 @@ public:
     GMainLoop* m_mainLoop;
     CString m_activeURI;
     GtkWidget* m_parentWindow;
+    CString m_expectedTitle;
 };
 
 #endif // WebViewTest_h

@@ -78,13 +78,20 @@ enum {
     PROP_ZOOM_LEVEL
 };
 
+typedef enum {
+    NotReplacingContent,
+    WillReplaceContent,
+    ReplacingContent,
+    DidReplaceContent
+} ReplaceContentStatus;
+
 struct _WebKitWebViewPrivate {
     WebKitWebContext* context;
     CString title;
     CString customTextEncoding;
     double estimatedLoadProgress;
     CString activeURI;
-    bool replacingContent;
+    ReplaceContentStatus replaceContentStatus;
 
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
@@ -679,13 +686,29 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      WEBKIT_TYPE_PRINT_OPERATION);
 }
 
+static bool updateReplaceContentStatus(WebKitWebView* webView, WebKitLoadEvent loadEvent)
+{
+    if (webView->priv->replaceContentStatus == ReplacingContent) {
+        if (loadEvent == WEBKIT_LOAD_FINISHED)
+            webView->priv->replaceContentStatus = DidReplaceContent;
+        return true;
+    }
+
+    if (loadEvent == WEBKIT_LOAD_STARTED) {
+        if (webView->priv->replaceContentStatus == WillReplaceContent) {
+            webView->priv->replaceContentStatus = ReplacingContent;
+            return true;
+        }
+        webView->priv->replaceContentStatus = NotReplacingContent;
+    }
+
+    return false;
+}
+
 void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
-    if (webView->priv->replacingContent) {
-        if (loadEvent == WEBKIT_LOAD_FINISHED)
-            webView->priv->replacingContent = false;
+    if (updateReplaceContentStatus(webView, loadEvent))
         return;
-    }
 
     if (loadEvent != WEBKIT_LOAD_FINISHED)
         webkitWebViewUpdateURI(webView);
@@ -694,7 +717,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 
 void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError *error)
 {
-    if (webView->priv->replacingContent)
+    if (webView->priv->replaceContentStatus == ReplacingContent)
         return;
 
     gboolean returnValue;
@@ -714,7 +737,7 @@ void webkitWebViewSetTitle(WebKitWebView* webView, const CString& title)
 
 void webkitWebViewSetEstimatedLoadProgress(WebKitWebView* webView, double estimatedLoadProgress)
 {
-    if (webView->priv->replacingContent)
+    if (webView->priv->replaceContentStatus != NotReplacingContent)
         return;
 
     if (webView->priv->estimatedLoadProgress == estimatedLoadProgress)
@@ -965,7 +988,7 @@ void webkit_web_view_replace_content(WebKitWebView* webView, const gchar* conten
     g_return_if_fail(content);
     g_return_if_fail(contentURI);
 
-    webView->priv->replacingContent = true;
+    webView->priv->replaceContentStatus = WillReplaceContent;
 
     WKRetainPtr<WKStringRef> htmlString(AdoptWK, WKStringCreateWithUTF8CString(content));
     WKRetainPtr<WKURLRef> contentURL(AdoptWK, WKURLCreateWithUTF8CString(contentURI));
