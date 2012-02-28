@@ -54,6 +54,7 @@ public:
     virtual void setDefaultFixedFontSize(int);
     virtual void setMinimumFontSize(int);
     virtual void setMinimumLogicalFontSize(int);
+    virtual void setDefaultDeviceScaleFactor(int);
     virtual void setDefaultTextEncodingName(const WebString&);
     virtual void setJavaScriptEnabled(bool);
     virtual void setWebSecurityEnabled(bool);

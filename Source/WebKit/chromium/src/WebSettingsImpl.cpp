@@ -109,6 +109,11 @@ void WebSettingsImpl::setMinimumLogicalFontSize(int size)
     m_settings->setMinimumLogicalFontSize(size);
 }
 
+void WebSettingsImpl::setDefaultDeviceScaleFactor(int defaultDeviceScaleFactor)
+{
+    m_settings->setDefaultDeviceScaleFactor(defaultDeviceScaleFactor);
+}
+
 void WebSettingsImpl::setDefaultTextEncodingName(const WebString& encoding)
 {
     m_settings->setDefaultTextEncodingName((String)encoding);

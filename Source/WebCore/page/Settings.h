@@ -103,6 +103,9 @@ namespace WebCore {
         void setDefaultFixedFontSize(int);
         int defaultFixedFontSize() const { return m_defaultFixedFontSize; }
 
+        void setDefaultDeviceScaleFactor(int);
+        int defaultDeviceScaleFactor() const { return m_defaultDeviceScaleFactor; }
+
         // Unlike areImagesEnabled, this only suppresses the network load of
         // the image URL.  A cached image will still be rendered if requested.
         void setLoadsImagesAutomatically(bool);
@@ -562,6 +565,7 @@ namespace WebCore {
         int m_minimumLogicalFontSize;
         int m_defaultFontSize;
         int m_defaultFixedFontSize;
+        int m_defaultDeviceScaleFactor;
         int m_validationMessageTimerMagnification;
         int m_minimumAccelerated2dCanvasSize;
         int m_layoutFallbackWidth;

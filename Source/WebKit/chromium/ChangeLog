@@ -1,3 +1,17 @@
+2012-02-28  Tim Dresser  <tdresser@chromium.org>
+
+        Provide DefaultDeviceScaleFactor though WebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=79534
+
+        Reviewed by Darin Fisher.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setDefaultDeviceScaleFactor):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2012-02-28  Gary Kacmarcik  <garykac@chromium.org>
 
         [chromium] Set nativeKeyCode to include Windows scan code
