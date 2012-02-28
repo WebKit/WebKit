@@ -477,7 +477,7 @@
             'idl_files_list': '<|(idl_files_list.tmp <@(bindings_idl_files))',
           },
           'inputs': [
-            '../bindings/scripts/resolve-supplemental.pl',
+            '../bindings/scripts/preprocess-idls.pl',
             '../bindings/scripts/IDLParser.pm',
             '../bindings/scripts/IDLAttributes.txt',
             '<(idl_files_list)',
@@ -490,7 +490,7 @@
             'perl',
             '-w',
             '-I../bindings/scripts',
-            '../bindings/scripts/resolve-supplemental.pl',
+            '../bindings/scripts/preprocess-idls.pl',
             '--defines',
             '<(feature_defines) LANGUAGE_JAVASCRIPT V8_BINDING',
             '--idlFilesList',

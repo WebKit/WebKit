@@ -69109,7 +69109,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\scripts\resolve-supplemental.pl"
+					RelativePath="..\bindings\scripts\preprocess-idls.pl"
 					>
 				</File>
 				<File

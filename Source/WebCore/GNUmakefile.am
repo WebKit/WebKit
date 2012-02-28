@@ -687,9 +687,9 @@ SCRIPTS_FOR_GENERATE_BINDINGS = \
 	$(WebCore)/bindings/scripts/generate-bindings.pl \
 	$(WebCore)/bindings/scripts/preprocessor.pm
 
-SCRIPTS_FOR_RESOLVE_SUPPLEMENTAL = \
+SCRIPTS_FOR_PREPROCESS_IDLS = \
 	$(WebCore)/bindings/scripts/IDLParser.pm \
-	$(WebCore)/bindings/scripts/resolve-supplemental.pl
+	$(WebCore)/bindings/scripts/preprocess-idls.pl
 
 DerivedSources/WebCore/UserAgentStyleSheetsData.cpp: DerivedSources/WebCore/UserAgentStyleSheets.h
 DerivedSources/WebCore/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS)
@@ -792,11 +792,11 @@ idl_files_list = $(top_builddir)/DerivedSources/WebCore/idl_files_list
 idl_attributes_file = $(WebCore)/bindings/scripts/IDLAttributes.txt
 
 .SECONDARY:
-$(supplemental_dependency_file): $(SCRIPTS_FOR_RESOLVE_SUPPLEMENTAL) $(dom_binding_idls) $(idl_attributes_file)
+$(supplemental_dependency_file): $(SCRIPTS_FOR_PREPROCESS_IDLS) $(dom_binding_idls) $(idl_attributes_file)
 	$(AM_V_GEN)
 	$(AM_V_at)echo -n > $(idl_files_list)
 	$(AM_V_at)($(foreach idl, $(dom_binding_idls), echo $(idl) &&) echo -n) >> $(idl_files_list)
-	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/resolve-supplemental.pl --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --idlFilesList $(idl_files_list) --supplementalDependencyFile $@ --idlAttributesFile $(idl_attributes_file)
+	$(AM_V_at)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --idlFilesList $(idl_files_list) --supplementalDependencyFile $@ --idlAttributesFile $(idl_attributes_file)
 
 # This does not appear to work correctly with gnumake unless
 # it includes an empty command list (the semicolon).
@@ -935,7 +935,7 @@ EXTRA_DIST += \
 	Source/WebCore/bindings/scripts/generate-bindings.pl \
 	Source/WebCore/bindings/scripts/gobject-generate-headers.pl \
 	Source/WebCore/bindings/scripts/preprocessor.pm \
-	Source/WebCore/bindings/scripts/resolve-supplemental.pl \
+	Source/WebCore/bindings/scripts/preprocess-idls.pl \
 	Source/WebCore/ChangeLog \
 	Source/WebCore/css/CSSGrammar.y \
 	Source/WebCore/css/CSSPropertyNames.in \

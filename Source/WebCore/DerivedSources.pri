@@ -665,23 +665,23 @@ GENERATORS += cssvalues
 # GENERATOR 0: Resolve [Supplemental] dependency in IDLs
 SUPPLEMENTAL_DEPENDENCY_FILE = supplemental_dependency.tmp
 IDL_FILES_TMP = ${QMAKE_FUNC_FILE_OUT_PATH}/idl_files.tmp
-RESOLVE_SUPPLEMENTAL_SCRIPT = $$PWD/bindings/scripts/resolve-supplemental.pl
+PREPROCESS_IDLS_SCRIPT = $$PWD/bindings/scripts/preprocess-idls.pl
 IDL_ATTRIBUTES_FILE = $$PWD/bindings/scripts/IDLAttributes.txt
 
-resolveSupplemental.input = IDL_ATTRIBUTES_FILE
-resolveSupplemental.script = $$RESOLVE_SUPPLEMENTAL_SCRIPT
+preprocessIdls.input = IDL_ATTRIBUTES_FILE
+preprocessIdls.script = $$PREPROCESS_IDLS_SCRIPT
 # FIXME : We need to use only perl at some point.
-resolveSupplemental.commands = echo $$IDL_BINDINGS | tr \' \' \'\\n\' > $$IDL_FILES_TMP && \
-                               perl -I$$PWD/bindings/scripts $$resolveSupplemental.script \
+preprocessIdls.commands = echo $$IDL_BINDINGS | tr \' \' \'\\n\' > $$IDL_FILES_TMP && \
+                               perl -I$$PWD/bindings/scripts $$preprocessIdls.script \
                                --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
                                --idlFilesList $$IDL_FILES_TMP \
                                --supplementalDependencyFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
                                --idlAttributesFile $${IDL_ATTRIBUTES_FILE} \
                                --preprocessor \"$${QMAKE_MOC} -E\"
-resolveSupplemental.output = $$SUPPLEMENTAL_DEPENDENCY_FILE
-resolveSupplemental.add_output_to_sources = false
-resolveSupplemental.depends = $$PWD/bindings/scripts/IDLParser.pm $$IDL_BINDINGS
-GENERATORS += resolveSupplemental
+preprocessIdls.output = $$SUPPLEMENTAL_DEPENDENCY_FILE
+preprocessIdls.add_output_to_sources = false
+preprocessIdls.depends = $$PWD/bindings/scripts/IDLParser.pm $$IDL_BINDINGS
+GENERATORS += preprocessIdls
 
 # GENERATOR 1: Generate .h and .cpp from IDLs
 generateBindings.input = IDL_BINDINGS
