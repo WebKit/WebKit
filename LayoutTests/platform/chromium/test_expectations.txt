@@ -1032,7 +1032,8 @@ BUGCR3244 LINUX WIN : fast/backgrounds/repeat/mask-negative-offset-repeat.html =
 // or change the test upstream to specify explicitly what font to use.
 // The mask part of this test is totally wrong.
 BUGCR3244 LEOPARD LINUX WIN : svg/as-background-image/svg-as-background-6.html = FAIL
-BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = TIMEOUT IMAGE
+// Commented out because of BUGWK79707 below
+//BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = TIMEOUT IMAGE
 
 // Our gradients are wrong here.
 BUGCR19559 LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
@@ -3383,7 +3384,8 @@ BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 
 BUGWK71211 GPU LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
 
-BUGWK71673 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = TEXT IMAGE IMAGE+TEXT
+// Commented out because of BUGWK79707 below
+//BUGWK71673 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = TEXT IMAGE IMAGE+TEXT
 BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
 
 BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
@@ -3477,7 +3479,8 @@ BUGWK73643 RELEASE WIN MAC : svg/filters/big-sized-filter.svg = IMAGE
 BUGWK73643 WIN MAC : svg/filters/filter-placement-issue.svg = IMAGE
 //BUGWK73643 WIN MAC : svg/filters/filterRes.svg = IMAGE
 BUGWK73643 WIN MAC : svg/filters/filterRes2.svg = IMAGE
-BUGWK73643 WIN MAC : svg/as-background-image/svg-as-background-2.html = IMAGE
+// This also occurs on MAC, but is merged with BUGWK79707 below
+BUGWK73643 WIN : svg/as-background-image/svg-as-background-2.html = IMAGE
 
 BUGWK73692 : media/event-attributes.html = TEXT PASS
 
@@ -4252,3 +4255,8 @@ BUGWK79707 MAC : svg/custom/font-face-name-without-name-attr.svg = PASS CRASH
 BUGWK79707 MAC RELEASE : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS CRASH
 BUGWK79707 MAC DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS CRASH IMAGE+TEXT
 BUGWK79707 MAC : svg/zoom/page/zoom-svg-as-background-with-relative-size-and-viewBox.html = PASS CRASH
+BUGWK79707 MAC : svg/zoom/page/zoom-zoom-coords.xhtml = PASS CRASH
+BUGWK79707 MAC : svg/as-background-image/svg-as-background-2.html = PASS IMAGE CRASH
+BUGWK79707 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = PASS TIMEOUT IMAGE CRASH
+BUGWK79707 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = TEXT IMAGE IMAGE+TEXT CRASH
+BUGWK79707 MAC : svg/custom/font-face-not-in-document.svg = PASS CRASH
