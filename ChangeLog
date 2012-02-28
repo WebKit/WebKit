@@ -1,3 +1,46 @@
+2012-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Extract the logic to merge tests from MergeTestsHandler and add unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=79602
+
+        Reviewed by Hajime Morita.
+
+        Extracted Test.merge and TestResult.replace_to_change_test_name out of MergeTestsHandler,
+        and moved MergeTestsHandler into admin_handlers.py where it belongs.
+
+        Added new backend "model-manipulator" to execute tasks to merge tests.
+
+        Also revive the inadvertently removed manual submission form on the admin page.
+
+        * Websites/webkit-perf.appspot.com/admin_handlers.py:
+        (AdminDashboardHandler.get_tests):
+        (MergeTestsHandler):
+        (MergeTestsHandler.post):
+        * Websites/webkit-perf.appspot.com/app.yaml:
+        * Websites/webkit-perf.appspot.com/backends.yaml: Added.
+        * Websites/webkit-perf.appspot.com/css/admin.css:
+        * Websites/webkit-perf.appspot.com/js/admin.js:
+        * Websites/webkit-perf.appspot.com/main.py:
+        * Websites/webkit-perf.appspot.com/merge_tests_handler.py: Removed.
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Test):
+        (Test.merge):
+        (TestResult.replace_to_change_test_name):
+        * Websites/webkit-perf.appspot.com/models_unittest.py:
+        (DataStoreTestsBase.assertOnlyInstance):
+        (DataStoreTestsBase):
+        (DataStoreTestsBase.assertOnlyInstances):
+        (DataStoreTestsBase.assertEqualUnorderedModelList):
+        (DataStoreTestsBase.assertEqualUnorderedList):
+        (_create_build):
+        (TestModelTests.test_merge):
+        (TestResultTests):
+        (TestResultTests.test_get_or_insert_value):
+        (TestResultTests.test_get_or_insert_stat_value):
+        (TestResultTests.test_replace_to_change_test_name):
+        (TestResultTests.test_replace_to_change_test_name_with_stat_value):
+        (TestResultTests.test_replace_to_change_test_name_overrides_conflicting_result):
+
 2012-02-27  ChangSeok Oh  <shivamidow@gmail.com>
 
         [EFL] Support mutation observers

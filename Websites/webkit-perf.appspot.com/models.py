@@ -142,6 +142,8 @@ class Build(db.Model):
 class Test(db.Model):
     id = db.IntegerProperty(required=True)
     name = db.StringProperty(required=True)
+    # FIXME: Storing branches and platforms separately is flawed since a test maybe available on
+    # one platform but only on some branch and vice versa.
     branches = db.ListProperty(db.Key)
     platforms = db.ListProperty(db.Key)
 
@@ -169,6 +171,26 @@ class Test(db.Model):
             return test
 
         return create_in_transaction_with_numeric_id_holder(execute) or existing_test[0]
+
+    def merge(self, other):
+        assert self.key() != other.key()
+
+        merged_results = TestResult.all()
+        merged_results.filter('name =', other.name)
+
+        # FIXME: We should be doing this check in a transaction but only ancestor queries are allowed
+        for result in merged_results:
+            if TestResult.get_by_key_name(TestResult.key_name(result.build, self.name)):
+                return None
+
+        branches_and_platforms_to_update = set()
+        for result in merged_results:
+            branches_and_platforms_to_update.add((result.build.branch.id, result.build.platform.id))
+            result.replace_to_change_test_name(self.name)
+
+        delete_model_with_numeric_id_holder(other)
+
+        return branches_and_platforms_to_update
 
 
 class TestResult(db.Model):
@@ -200,6 +222,13 @@ class TestResult(db.Model):
         return cls.get_or_insert(key_name, name=test_name, build=build, value=float(result['avg']),
             valueMedian=_float_or_none(result, 'median'), valueStdev=_float_or_none(result, 'stdev'),
             valueMin=_float_or_none(result, 'min'), valueMax=_float_or_none(result, 'max'))
+
+    def replace_to_change_test_name(self, new_name):
+        clone = TestResult(key_name=TestResult.key_name(self.build, new_name), name=new_name, build=self.build,
+            value=self.value, valueMedian=self.valueMedian, valueStdev=self.valueMin, valueMin=self.valueMin, valueMax=self.valueMax)
+        clone.put()
+        self.delete()
+        return clone
 
 
 class ReportLog(db.Model):

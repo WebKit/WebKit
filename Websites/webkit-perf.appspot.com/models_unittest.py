@@ -49,11 +49,18 @@ class DataStoreTestsBase(unittest.TestCase):
         self.assertEqual(len(model.all().fetch(5)), 0)
 
     def assertOnlyInstance(self, only_instasnce):
-        self.assertEqual(len(only_instasnce.__class__.all().fetch(5)), 1)
-        self.assertTrue(only_instasnce.__class__.get(only_instasnce.key()))
+        self.assertOnlyInstances([only_instasnce])
+
+    def assertOnlyInstances(self, expected_instances):
+        actual_instances = expected_instances[0].__class__.all().fetch(len(expected_instances) + 1)
+        self.assertEqualUnorderedModelList(actual_instances, expected_instances)
+
+    def assertEqualUnorderedModelList(self, list1, list2):
+        self.assertEqualUnorderedList([item.key() for item in list1], [item.key() for item in list1])
 
     def assertEqualUnorderedList(self, list1, list2):
         self.assertEqual(set(list1), set(list2))
+        self.assertEqual(len(list1), len(list2))
 
 
 class HelperTests(DataStoreTestsBase):
@@ -200,6 +207,12 @@ def _create_some_builder():
     return branch, platform, models.Builder.get(builder_key)
 
 
+def _create_build(branch, platform, builder, key_name='some-build'):
+    build_key = models.Build(key_name=key_name, branch=branch, platform=platform, builder=builder,
+        buildNumber=1, revision=100, timestamp=datetime.now()).put()
+    return models.Build.get(build_key)
+
+
 class BuildTests(DataStoreTestsBase):
     def test_get_or_insert_from_log(self):
         branch, platform, builder = _create_some_builder()
@@ -254,16 +267,42 @@ class TestModelTests(DataStoreTestsBase):
         self.assertEqualUnorderedList(test.branches, [branch.key(), other_branch.key()])
         self.assertEqualUnorderedList(test.platforms, [platform.key(), other_platform.key()])
 
+    def test_merge(self):
+        branch, platform, builder = _create_some_builder()
+        some_build = _create_build(branch, platform, builder)
+        some_result = models.TestResult.get_or_insert_from_parsed_json('some-test', some_build, 50)
+        some_test = models.Test.update_or_insert('some-test', branch, platform)
+
+        other_build = _create_build(branch, platform, builder, 'other-build')
+        other_result = models.TestResult.get_or_insert_from_parsed_json('other-test', other_build, 30)
+        other_test = models.Test.update_or_insert('other-test', branch, platform)
+
+        self.assertOnlyInstances([some_result, other_result])
+        self.assertNotEqual(some_result.key(), other_result.key())
+        self.assertOnlyInstances([some_test, other_test])
+
+        self.assertRaises(AssertionError, some_test.merge, (some_test))
+        self.assertOnlyInstances([some_test, other_test])
+
+        some_test.merge(other_test)
+        results_for_some_test = models.TestResult.all()
+        results_for_some_test.filter('name =', 'some-test')
+        results_for_some_test = results_for_some_test.fetch(5)
+        self.assertEqual(len(results_for_some_test), 2)
+
+        self.assertEqual(results_for_some_test[0].name, 'some-test')
+        self.assertEqual(results_for_some_test[1].name, 'some-test')
+
+        if results_for_some_test[0].value == 50:
+            self.assertEqual(results_for_some_test[1].value, 30)
+        else:
+            self.assertEqual(results_for_some_test[1].value, 50)
+
 
 class TestResultTests(DataStoreTestsBase):
-    def _create_build(self):
-        branch, platform, builder = _create_some_builder()
-        build_key = models.Build(key_name='some-build', branch=branch, platform=platform, builder=builder,
-            buildNumber=1, revision=100, timestamp=datetime.now()).put()
-        return models.Build.get(build_key)
-
     def test_get_or_insert_value(self):
-        build = self._create_build()
+        branch, platform, builder = _create_some_builder()
+        build = _create_build(branch, platform, builder)
         self.assertThereIsNoInstanceOf(models.TestResult)
         result = models.TestResult.get_or_insert_from_parsed_json('some-test', build, 50)
         self.assertOnlyInstance(result)
@@ -276,7 +315,8 @@ class TestResultTests(DataStoreTestsBase):
         self.assertEqual(result.valueMax, None)
 
     def test_get_or_insert_stat_value(self):
-        build = self._create_build()
+        branch, platform, builder = _create_some_builder()
+        build = _create_build(branch, platform, builder)
         self.assertThereIsNoInstanceOf(models.TestResult)
         result = models.TestResult.get_or_insert_from_parsed_json('some-test', build,
             {"avg": 40, "median": "40.1", "stdev": 3.25, "min": 30.5, "max": 45})
@@ -288,6 +328,64 @@ class TestResultTests(DataStoreTestsBase):
         self.assertEqual(result.valueStdev, 3.25)
         self.assertEqual(result.valueMin, 30.5)
         self.assertEqual(result.valueMax, 45)
+
+    def test_replace_to_change_test_name(self):
+        branch, platform, builder = _create_some_builder()
+        build = _create_build(branch, platform, builder)
+        self.assertThereIsNoInstanceOf(models.TestResult)
+        result = models.TestResult.get_or_insert_from_parsed_json('some-test', build, 50)
+        self.assertOnlyInstance(result)
+        self.assertEqual(result.name, 'some-test')
+
+        new_result = result.replace_to_change_test_name('other-test')
+        self.assertNotEqual(result, new_result)
+        self.assertOnlyInstance(new_result)
+
+        self.assertEqual(new_result.name, 'other-test')
+        self.assertEqual(new_result.build.key(), result.build.key())
+        self.assertEqual(new_result.value, result.value)
+        self.assertEqual(new_result.valueMedian, None)
+        self.assertEqual(new_result.valueStdev, None)
+        self.assertEqual(new_result.valueMin, None)
+        self.assertEqual(new_result.valueMax, None)
+
+    def test_replace_to_change_test_name_with_stat_value(self):
+        branch, platform, builder = _create_some_builder()
+        build = _create_build(branch, platform, builder)
+        self.assertThereIsNoInstanceOf(models.TestResult)
+        result = models.TestResult.get_or_insert_from_parsed_json('some-test', build,
+            {"avg": 40, "median": "40.1", "stdev": 3.25, "min": 30.5, "max": 45})
+        self.assertOnlyInstance(result)
+        self.assertEqual(result.name, 'some-test')
+
+        new_result = result.replace_to_change_test_name('other-test')
+        self.assertNotEqual(result, new_result)
+        self.assertOnlyInstance(new_result)
+
+        self.assertEqual(new_result.name, 'other-test')
+        self.assertEqual(new_result.build.key(), result.build.key())
+        self.assertEqual(new_result.value, result.value)
+        self.assertEqual(result.value, 40.0)
+        self.assertEqual(result.valueMedian, 40.1)
+        self.assertEqual(result.valueStdev, 3.25)
+        self.assertEqual(result.valueMin, 30.5)
+        self.assertEqual(result.valueMax, 45)
+
+    def test_replace_to_change_test_name_overrides_conflicting_result(self):
+        branch, platform, builder = _create_some_builder()
+        build = _create_build(branch, platform, builder)
+        self.assertThereIsNoInstanceOf(models.TestResult)
+        result = models.TestResult.get_or_insert_from_parsed_json('some-test', build, 20)
+        self.assertOnlyInstance(result)
+
+        conflicting_result = models.TestResult.get_or_insert_from_parsed_json('other-test', build, 10)
+
+        new_result = result.replace_to_change_test_name('other-test')
+        self.assertNotEqual(result, new_result)
+        self.assertOnlyInstance(new_result)
+
+        self.assertEqual(new_result.name, 'other-test')
+        self.assertEqual(models.TestResult.get(conflicting_result.key()).value, 20)
 
 
 class ReportLogTests(DataStoreTestsBase):

@@ -1,5 +1,5 @@
 application: webkit-perf
-version: 14
+version: 15
 runtime: python27
 api_version: 1
 threadsafe: false
@@ -8,12 +8,6 @@ handlers:
 - url: /favicon\.ico
   static_files: favicon.ico
   upload: favicon\.ico
-
-- url: /admin/(.+\.html)
-  static_files: static/\1
-  upload: static
-  secure: always
-  login: admin
 
 - url: /
   static_files: index.html

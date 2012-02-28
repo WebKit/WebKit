@@ -59,9 +59,15 @@ $('form').trigger('reload');
 $('form').bind('submit', function (event) {
     event.preventDefault();
 
-    var contents = {}
-    for (var i = 0; i < this.elements.length; i++)
-        contents[this.elements[i].name] = this.elements[i].value;
+    var payload;
+    if (this.payload)
+        payload = this.payload.value;
+    else {
+        var contents = {};
+        for (var i = 0; i < this.elements.length; i++)
+            contents[this.elements[i].name] = this.elements[i].value;
+        payload = JSON.stringify(contents);
+    }
 
     var xhr = new XMLHttpRequest;
     xhr.onreadystatechange = function () {
@@ -71,10 +77,24 @@ $('form').bind('submit', function (event) {
             error('HTTP status: ' + xhr.status);
         else if (xhr.responseText != 'OK')
             error(xhr.responseText);
-        
     }
     xhr.open(this.method, this.action, true);
-    xhr.send(JSON.stringify(contents));
+    xhr.send(payload);
 
     $(this).trigger('reload');
 });
+
+$('#manual-submission textarea').val(JSON.stringify({
+    'branch': 'webkit-trunk',
+    'platform': 'chromium-mac',
+    'builder-name': 'Chromium Mac Release (Perf)',
+    'build-number': '123',
+    'timestamp': parseInt(Date.now() / 1000),
+    'webkit-revision': 104856,
+    'chromium-revision': 123059,
+    'results':
+        {
+            'webkit_style_test': {'avg': 100, 'median': 102, 'stdev': 5, 'min': 90, 'max': 110},
+            'some_test': 54,
+        },
+}, null, '  '));

@@ -30,10 +30,14 @@
 import webapp2
 import json
 
+from google.appengine.api import taskqueue
 from google.appengine.api import users
 from google.appengine.ext.db import GqlQuery
 from google.appengine.ext.webapp import template
 
+from controller import schedule_runs_update
+from controller import schedule_dashboard_update
+from controller import schedule_manifest_update
 from models import Branch
 from models import Builder
 from models import Platform
@@ -81,3 +85,42 @@ class AdminDashboardHandler(webapp2.RequestHandler):
     def get_tests(self):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps([test.name for test in Test.all().fetch(limit=200)]))
+
+
+class MergeTestsHandler(webapp2.RequestHandler):
+    def post(self, task):
+        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+
+        if task != 'run':
+            try:
+                payload = json.loads(self.request.body)
+                merge = payload.get('merge', '')
+                into = payload.get('into', '')
+            except:
+                self.response.out.write("Failed to parse the payload: %s" % self.request.body)
+                return
+
+            if merge == into or not Test.get_by_key_name(merge) or not Test.get_by_key_name(into):
+                self.response.out.write('Invalid test names')
+                return
+
+            taskqueue.add(url='/admin/merge-tests/run', params={'merge': merge, 'into': into}, target='model-manipulator')
+            self.response.out.write('OK')
+            return
+
+        merge = Test.get_by_key_name(self.request.get('merge'))
+        into = Test.get_by_key_name(self.request.get('into'))
+
+        branches_and_platforms_to_update = into.merge(merge)
+        if branches_and_platforms_to_update == None:
+            # FIXME: This message is invisible. Need to store this somewhere and let the admin page pull it.
+            self.response.out.write('Cannot merge %s into %s. There are conflicting results.' % (merge.name, into.name))
+            return
+
+        for branch_id, platform_id in branches_and_platforms_to_update:
+            schedule_runs_update(into.id, branch_id, platform_id)
+
+        schedule_dashboard_update()
+        schedule_manifest_update()
+
+        self.response.out.write('OK')

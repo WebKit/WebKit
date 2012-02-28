@@ -20,8 +20,9 @@ from google.appengine.ext.webapp import util
 
 import json
 
-from admin_handlers import IsAdminHandler
 from admin_handlers import AdminDashboardHandler
+from admin_handlers import IsAdminHandler
+from admin_handlers import MergeTestsHandler
 from controller import CachedDashboardHandler
 from controller import CachedManifestHandler
 from controller import CachedRunsHandler
@@ -33,11 +34,10 @@ from report_handler import ReportHandler
 from report_handler import AdminReportHandler
 from report_process_handler import ReportProcessHandler
 from report_logs_handler import ReportLogsHandler
-from merge_tests_handler import MergeTestsHandler
 
 routes = [
     ('/admin/report/?', AdminReportHandler),
-    ('/admin/merge-tests/?', MergeTestsHandler),
+    (r'/admin/merge-tests(?:/(.*))?', MergeTestsHandler),
     ('/admin/report-logs/?', ReportLogsHandler),
     ('/admin/create/(.*)', CreateHandler),
     (r'/admin/([A-Za-z\-]*)', AdminDashboardHandler),

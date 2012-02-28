@@ -4,10 +4,13 @@ html {
     overflow: auto;
 }
 
-#summary {
-    margin-top: 49px;
+#summary, #manual-submission {
     font-size: 14px;
     line-height: 36px;
+}
+
+#summary {
+    margin-top: 49px;
     display: table;
     border-collapse: collapse;
 }
@@ -18,7 +21,6 @@ section {
     border: 1px solid lightgrey;
     border-collapse: collapse;
     min-height: 300px;
-    max-width: 400px;
 }
 
 h2 {
@@ -80,6 +82,15 @@ form dt {
 
 form dd {
     width: 150px;
+}
+
+#manual-submission form {
+    padding: 0;
+}
+#manual-submission textarea {
+    font-family: monospace;
+    font-size: 14px;
+    border: none;
 }
 
 #footer {
