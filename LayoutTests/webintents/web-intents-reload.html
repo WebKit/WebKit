@@ -1,7 +1,6 @@
 <html>
   <head>
     <script src="../fast/js/resources/js-test-pre.js"></script>
-    <script src="resources/web-intents-testing.js"></script>
     <script>
       var latch = true;
 
@@ -27,14 +26,19 @@
         if (window.layoutTestController) {
           window.layoutTestController.waitUntilDone();
           window.layoutTestController.dumpChildFramesAsText();
-        } else {
-          alert('This test needs to run in DRT');
         }
 
         debug("* loaded");
 
-        simulateButtonPress();
-        debug("* sent mouseup");
+        // We must simulate a button press with eventSender because intents
+        // require a user gesture.
+        var button = document.getElementById("button");
+        if (eventSender) {
+          eventSender.mouseMoveTo(button.getBoundingClientRect().left + 2, button.getBoundingClientRect().top + 12);
+          eventSender.mouseDown();
+          eventSender.mouseUp();
+          debug("* sent mouseup");
+        }
       }
     </script>
   </head>
