@@ -49,16 +49,19 @@
 #include "WebGeolocationClientMock.h"
 #include "WebIDBFactory.h"
 #include "WebInputElement.h"
+#include "WebIntentRequest.h"
 #include "WebKit.h"
 #include "WebNotificationPresenter.h"
 #include "WebPermissions.h"
 #include "WebScriptSource.h"
 #include "WebSecurityPolicy.h"
+#include "platform/WebSerializedScriptValue.h"
 #include "WebSettings.h"
 #include "platform/WebSize.h"
 #include "platform/WebURL.h"
 #include "WebView.h"
 #include "WebViewHost.h"
+#include "v8/include/v8.h"
 #include "webkit/support/webkit_support.h"
 #include <algorithm>
 #include <cctype>
@@ -262,6 +265,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindProperty("platformName", &m_platformName);
     bindProperty("interceptPostMessage", &m_interceptPostMessage);
     bindProperty("workerThreadCount", &LayoutTestController::workerThreadCount);
+    bindMethod("sendWebIntentResponse", &LayoutTestController::sendWebIntentResponse);
 }
 
 LayoutTestController::~LayoutTestController()
@@ -2124,6 +2128,28 @@ void LayoutTestController::selectionAsMarkup(const CppArgumentList& arguments, C
 void LayoutTestController::workerThreadCount(CppVariant* result)
 {
     result->set(static_cast<int>(WebWorkerInfo::dedicatedWorkerCount()));
+}
+
+void LayoutTestController::sendWebIntentResponse(const CppArgumentList& arguments, CppVariant* result)
+{
+    v8::HandleScope scope;
+    v8::Local<v8::Context> ctx = m_shell->webView()->mainFrame()->mainWorldScriptContext();
+    result->set(m_shell->webView()->mainFrame()->selectionAsMarkup().utf8());
+    v8::Context::Scope cscope(ctx);
+
+    WebKit::WebIntentRequest* request = m_shell->webViewHost()->currentIntentRequest();
+    if (request->isNull())
+        return;
+
+    if (arguments.size() == 1) {
+        WebKit::WebString reply = cppVariantToWebString(arguments[0]);
+        v8::Handle<v8::Value> v8value = v8::String::New(reply.data(), reply.length());
+        request->postResult(WebKit::WebSerializedScriptValue::serialize(v8value));
+    } else {
+        v8::Handle<v8::Value> v8value = v8::String::New("ERROR");
+        request->postFailure(WebKit::WebSerializedScriptValue::serialize(v8value));
+    }
+    result->setNull();
 }
 
 void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)

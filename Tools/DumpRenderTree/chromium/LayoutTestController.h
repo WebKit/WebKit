@@ -437,6 +437,10 @@ public:
 
     void workerThreadCount(CppVariant*);
 
+    // Expects one string argument for sending successful result, zero
+    // for sending a failure result.
+    void sendWebIntentResponse(const CppArgumentList&, CppVariant*);
+
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

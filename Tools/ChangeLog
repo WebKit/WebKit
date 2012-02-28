@@ -1,3 +1,19 @@
+2012-02-27  Greg Billock  <gbillock@google.com>
+
+        Add more tests for web intents
+        https://bugs.webkit.org/show_bug.cgi?id=79527
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::sendWebIntentResponse):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+        (WebViewHost::currentIntentRequest):
+
 2012-02-27  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Chromium-Android layout test script: the adb shell prompt is not always '# '
