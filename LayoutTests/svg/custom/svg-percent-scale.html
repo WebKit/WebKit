@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+</head>
+
+<body style="margin: 0; padding: 0; overflow: hidden;" onload="runRepaintTest()">
+
+<div style="width: 100%; height: 100%; position: absolute;">
+<!-- After window resizing, this SVG element should not be visible -->
+<svg width="50%" height="50%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <rect fill="red" width="800" height="600"></rect>
+</svg>
+</div>
+
+<div style="width: 100%; height: 100%; position: absolute;">
+<svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+  <rect fill="green" width="100%" height="100%"/>
+</svg>
+</div>
+
+<script>
+  function repaintTest() {
+    window.resizeTo(window.innerWidth / 2, window.innerHeight / 2);
+  }
+</script>
+</body>
+</html>

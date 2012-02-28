@@ -1486,7 +1486,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repain
             if (o->isReplaced() || o->isFloating() || o->isPositioned()) {
                 RenderBox* box = toRenderBox(o);
 
-                if (relayoutChildren || o->style()->width().isPercent() || o->style()->height().isPercent())
+                if (relayoutChildren || box->hasRelativeDimensions())
                     o->setChildNeedsLayout(true, false);
 
                 // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.

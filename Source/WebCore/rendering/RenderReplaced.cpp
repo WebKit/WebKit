@@ -440,9 +440,7 @@ void RenderReplaced::computePreferredLogicalWidths()
     if (style()->maxWidth().isFixed())
         m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : zeroLayoutUnit));
 
-    if (style()->width().isPercent() || style()->height().isPercent()
-        || style()->maxWidth().isPercent() || style()->maxHeight().isPercent()
-        || style()->minWidth().isPercent() || style()->minHeight().isPercent())
+    if (hasRelativeDimensions())
         m_minPreferredLogicalWidth = 0;
     else
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;

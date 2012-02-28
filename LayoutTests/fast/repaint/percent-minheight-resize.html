@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/repaint.js"></script>
+</head>
+
+<body style="margin: 0; padding: 0; overflow: hidden;" onload="runRepaintTest()">
+<div style="width: 100%; height: 100%; position: absolute;">
+  <!-- After window resizing, this DIV element should not be visible -->
+  <div style="width: 100px; min-height: 33%; background-color: red; display: inline-block;"></div>
+</div>
+
+<div style="width: 100px; height: 100px; background-color: green; position: absolute;"></div>
+
+<script>
+  function repaintTest() {
+    window.resizeBy(0, -window.innerHeight / 2);
+  }
+</script>
+</body>
+</html>

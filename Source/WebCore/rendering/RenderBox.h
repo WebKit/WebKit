@@ -449,6 +449,8 @@ public:
 
     IntSize scrolledContentOffset() const;
 
+    virtual bool hasRelativeDimensions() const;
+
 protected:
     virtual void willBeDestroyed();
 

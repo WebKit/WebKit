@@ -188,8 +188,20 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
     if (hasReplacedLogicalHeight())
         return RenderReplaced::computeReplacedLogicalHeight();
 
-    if (svg->heightAttributeEstablishesViewport())
-        return resolveLengthAttributeForSVG(svg->intrinsicHeight(SVGSVGElement::IgnoreCSSProperties), style()->effectiveZoom(), containingBlock()->availableLogicalHeight());
+    if (svg->heightAttributeEstablishesViewport()) {
+        Length height = svg->intrinsicHeight(SVGSVGElement::IgnoreCSSProperties);
+        if (height.isPercent()) {
+            RenderBlock* cb = containingBlock();
+            ASSERT(cb);
+            while (cb->isAnonymous()) {
+                cb = cb->containingBlock();
+                cb->addPercentHeightDescendant(const_cast<RenderSVGRoot*>(this));
+            }
+        } else
+            RenderBlock::removePercentHeightDescendant(const_cast<RenderSVGRoot*>(this));
+
+        return resolveLengthAttributeForSVG(height, style()->effectiveZoom(), containingBlock()->availableLogicalHeight());
+    }
 
     // Only SVGs embedded in <object> reach this point.
     ASSERT(isEmbeddedThroughFrameContainingSVGDocument());
@@ -275,6 +287,8 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& adjus
 
 void RenderSVGRoot::willBeDestroyed()
 {
+    RenderBlock::removePercentHeightDescendant(const_cast<RenderSVGRoot*>(this));
+
     SVGResourcesCache::clientDestroyed(this);
     RenderReplaced::willBeDestroyed();
 }
@@ -399,6 +413,14 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     }
 
     return false;
+}
+
+bool RenderSVGRoot::hasRelativeDimensions() const
+{
+    SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
+    ASSERT(svg);
+
+    return svg->intrinsicHeight(SVGSVGElement::IgnoreCSSProperties).isPercent() || svg->intrinsicWidth(SVGSVGElement::IgnoreCSSProperties).isPercent();
 }
 
 }

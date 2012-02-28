@@ -3960,4 +3960,11 @@ LayoutSize RenderBox::topLeftLocationOffset() const
     return LayoutSize(rect.x(), rect.y());
 }
 
+bool RenderBox::hasRelativeDimensions() const
+{
+    return style()->height().isPercent() || style()->width().isPercent()
+            || style()->maxHeight().isPercent() || style()->maxWidth().isPercent()
+            || style()->minHeight().isPercent() || style()->minWidth().isPercent();
+}
+
 } // namespace WebCore

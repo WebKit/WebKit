@@ -1,3 +1,53 @@
+2012-02-28  Florin Malita  <fmalita@google.com>
+
+        Percent width/height SVG not always scaled on window resize
+        https://bugs.webkit.org/show_bug.cgi?id=79490
+
+        Reviewed by Nikolas Zimmermann.
+
+        Tests: fast/repaint/percent-minheight-resize-expected.html
+               fast/repaint/percent-minheight-resize.html
+               svg/custom/svg-percent-scale-expected.html
+               svg/custom/svg-percent-scale-vonly-expected.html
+               svg/custom/svg-percent-scale-vonly.html
+               svg/custom/svg-percent-scale.html
+
+        Fix a couple of problems preventing correct SVG scaling on window resize:
+
+        - RenderReplaced::computePreferredLogicalWidths is not SVG attribute aware and computes
+        a non-zero m_minPreferredLogicalWidth even when the SVG widh/height are percentages.
+
+        - RenderBlock::layoutInlineChildren is also not SVG attribute aware and does not trigger
+        percent height child layouts on vertical-only resizes.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        Use hasRelativeDimensions() instead of direct width/height->isPercent tests. This also fixes
+        an HTML issue where percent {min,max}Height inline elements are not updated on vertical-only resizes.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hasRelativeDimensions):
+        (WebCore):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        Add virtual hasRelativeDimensions() method.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computePreferredLogicalWidths):
+        Use hasRelativeDimensions() instead of direct width/height->isPercent tests.
+
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight):
+        (WebCore::RenderSVGRoot::willBeDestroyed):
+        Register percent-height SVG elements with the gPercentHeightDescendantsMap, and clean-up on destruction
+        or height unit change.
+
+        (WebCore::RenderSVGRoot::hasRelativeDimensions):
+        (WebCore):
+        * rendering/svg/RenderSVGRoot.h:
+        (RenderSVGRoot):
+        SVG-aware hasRelativeDimensions() override.
+
 2012-02-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: show resource dividers on memory counter graphs

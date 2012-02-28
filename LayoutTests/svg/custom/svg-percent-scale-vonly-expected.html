@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/repaint/resources/repaint.js"></script>
+</head>
+
+<body style="margin: 0; padding: 0; overflow: hidden;" onload="runRepaintTest()">
+<div style="width: 100px; height: 100px; position: absolute; background-color: green;"></div>
+
+<script>
+  function repaintTest() {
+    window.resizeBy(0, -window.innerHeight / 2);
+  }
+</script>
+</body>
+</html>
