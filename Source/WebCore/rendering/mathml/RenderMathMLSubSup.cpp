@@ -35,9 +35,7 @@ namespace WebCore {
     
 using namespace MathMLNames;
 
-static const int gTopAdjustDivisor = 3;
 static const int gSubsupScriptMargin = 1;
-static const float gSubSupStretch = 1.2f;
 
 RenderMathMLSubSup::RenderMathMLSubSup(Element* element) 
     : RenderMathMLBlock(element)
@@ -90,6 +88,8 @@ void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild
             scriptsStyle->setVerticalAlign(TOP);
             scriptsStyle->setMarginLeft(Length(gSubsupScriptMargin, Fixed));
             scriptsStyle->setTextAlign(LEFT);
+            // Set this wrapper's font-size for its line-height & baseline position.
+            scriptsStyle->setBlendedFontSize(static_cast<int>(0.75 * style()->fontSize()));
             m_scripts->setStyle(scriptsStyle.release());
             RenderMathMLBlock::addChild(m_scripts, beforeChild);
         }
@@ -126,74 +126,67 @@ RenderMathMLOperator* RenderMathMLSubSup::unembellishedOperator()
 void RenderMathMLSubSup::stretchToHeight(int height)
 {
     RenderBoxModelObject* base = this->base();
-    if (base && base->isRenderMathMLBlock()) {
-        toRenderMathMLBlock(base)->stretchToHeight(static_cast<int>(gSubSupStretch * height));
-        
-        // Adjust the script placement after we stretch
-        if (height > 0 && m_kind == SubSup && m_scripts) {
-            RenderObject* supWrapper = m_scripts->firstChild();
-            if (supWrapper) {
-                // Calculate the script height without the container margins.
-                int supHeight = getBoxModelObjectHeight(supWrapper->firstChild());
-                int supTopAdjust = supHeight / gTopAdjustDivisor;
-                supWrapper->style()->setMarginTop(Length(-supTopAdjust, Fixed));
-                supWrapper->style()->setMarginBottom(Length(height - supHeight + supTopAdjust, Fixed));
-                supWrapper->setNeedsLayout(true);
-            }
-        }
-    }
+    if (base && base->isRenderMathMLBlock())
+        toRenderMathMLBlock(base)->stretchToHeight(height);
 }
 
 void RenderMathMLSubSup::layout()
 {
     RenderBlock::layout();
     
-    if (m_kind == SubSup && m_scripts) {
-        if (RenderBoxModelObject* base = this->base()) {
-            LayoutUnit heightDiff = (m_scripts->offsetHeight() - base->offsetHeight()) / 2;
-            if (heightDiff < 0) 
-                heightDiff = 0;
-            RenderObject* baseWrapper = firstChild();
-            baseWrapper->style()->setPaddingTop(Length(heightDiff, Fixed));
-            baseWrapper->setNeedsLayout(true);
-            RenderBlock::layout();
-        }
-    }    
-}
-
-LayoutUnit RenderMathMLSubSup::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
-{
-    RenderObject* base = firstChild();
-    if (!base) 
-        return offsetHeight();
+    if (m_kind != SubSup || !m_scripts)
+        return;
+    RenderBoxModelObject* base = this->base();
+    RenderObject* superscriptWrapper = m_scripts->firstChild();
+    RenderObject* subscriptWrapper = m_scripts->lastChild();
+    if (!base || !superscriptWrapper || !subscriptWrapper || superscriptWrapper == subscriptWrapper)
+        return;
+    ASSERT(superscriptWrapper->isRenderMathMLBlock());
+    ASSERT(subscriptWrapper->isRenderMathMLBlock());
+    RenderObject* superscript = superscriptWrapper->firstChild();
+    RenderObject* subscript = subscriptWrapper->firstChild();
+    if (!superscript || !subscript)
+        return;
     
-    LayoutUnit baseline = offsetHeight();
-    if (!base || !base->isBoxModelObject()) 
-        return baseline;
-
-    switch (m_kind) {
-    case SubSup:
-        base = base->firstChild();
-        if (m_scripts && base && base->isBoxModelObject()) {
-            RenderBoxModelObject* box = toRenderBoxModelObject(base);
-            
-            int topAdjust = (m_scripts->offsetHeight() - box->offsetHeight()) / 2;
-        
-            // FIXME: The last bit of this calculation should be more exact. Why is the 2-3px scaled for zoom necessary?
-            // The baseline is top spacing of the base + the baseline of the base + adjusted space for zoom
-            float zoomFactor = style()->effectiveZoom();
-            return topAdjust + box->baselinePosition(AlphabeticBaseline, firstLine, direction, linePositionMode) + static_cast<int>((zoomFactor > 1.25 ? 2 : 3) * zoomFactor);
-        }
-        break;
-    case Sup: 
-    case Sub:
-        return RenderMathMLBlock::baselinePosition(AlphabeticBaseline, firstLine, direction, linePositionMode);
+    LineDirectionMode lineDirection = style()->isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
+    LayoutUnit baseBaseline = base->baselinePosition(AlphabeticBaseline, true, lineDirection);
+    LayoutUnit baseExtendUnderBaseline = getBoxModelObjectHeight(base) - baseBaseline;
+    LayoutUnit axis = style()->fontMetrics().xHeight() / 2;
+    LayoutUnit superscriptHeight = getBoxModelObjectHeight(superscript);
+    LayoutUnit subscriptHeight = getBoxModelObjectHeight(subscript);
+    
+    // Our layout rules are: Don't let the superscript go below the "axis" (half x-height above the
+    // baseline), or the subscript above the axis. Also, don't let the superscript's top edge be
+    // below the base's top edge, or the subscript's bottom edge above the base's bottom edge.
+    //
+    // FIXME: Check any subscriptshift or superscriptshift attributes, and maybe use more sophisticated
+    // heuristics from TeX or elsewhere. See https://bugs.webkit.org/show_bug.cgi?id=79274#c5.
+    
+    // Above we did scriptsStyle->setVerticalAlign(TOP) for mscripts' style, so the superscript's
+    // top edge will equal the top edge of the base's padding.
+    LayoutUnit basePaddingTop = superscriptHeight + axis - baseBaseline;
+    // If basePaddingTop is positive, it's indeed the base's padding-top that we need. If it's negative,
+    // then we should instead use its absolute value to pad the bottom of the superscript, to get the
+    // superscript's bottom edge down to the axis. First we compute how much more we need to shift the
+    // subscript down, once its top edge is at the axis.
+    LayoutUnit superPaddingBottom = max<LayoutUnit>(baseExtendUnderBaseline + axis - subscriptHeight, 0);
+    if (basePaddingTop < 0) {
+        superPaddingBottom += -basePaddingTop;
+        basePaddingTop = 0;
     }
     
-    return baseline;
+    setChildNeedsLayout(true, false);
     
+    RenderObject* baseWrapper = firstChild();
+    baseWrapper->style()->setPaddingTop(Length(basePaddingTop, Fixed));
+    baseWrapper->setNeedsLayout(true, false);
+    
+    superscriptWrapper->style()->setPaddingBottom(Length(superPaddingBottom, Fixed));
+    superscriptWrapper->setNeedsLayout(true, false);
+    
+    RenderBlock::layout();
 }
-    
+
 }    
 
 #endif // ENABLE(MATHML)

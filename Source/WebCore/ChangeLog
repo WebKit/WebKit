@@ -1,3 +1,30 @@
+2012-02-27  David Barton  <dbarton@mathscribe.com>
+
+        Fix <msubsup> formatting, especially for a tall base, subscript, or superscript
+        https://bugs.webkit.org/show_bug.cgi?id=79274
+
+        Reviewed by Julien Chaffraix.
+
+        Move the <msubsup> formatting code in stretchToHeight() to layout(). Then revise the
+        combined code to produce more vertically accurate results, and without extra white
+        space. Finally, don't multiply msub/msup/msubsup operator stretching by 1.2.
+
+        Test: Added the bug report's attached test case to mathml/presentation/subsup.xhtml, and
+        it and 5 other test files in mathml/presentation now produce improved results. The
+        integral sign in mo-stretch.html is no longer scaled up by an extra 1.2, and baselines
+        are more accurate so the base is higher in msubsup-sub-changed.png. Several examples are
+        slightly tighter vertically, because their (somewhat) anonymous blocks wrapping
+        subscripts and superscripts now have the correct font size.
+
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore):
+        (WebCore::RenderMathMLSubSup::addChild):
+        (WebCore::RenderMathMLSubSup::stretchToHeight):
+        (WebCore::RenderMathMLSubSup::layout):
+        * rendering/mathml/RenderMathMLSubSup.h:
+        (RenderMathMLSubSup):
+        * rendering/style/RenderStyle.h:
+
 2012-02-27  Ned Holbrook  <nholbrook@apple.com>
 
         kCTFontTableOptionExcludeSynthetic is unneeded

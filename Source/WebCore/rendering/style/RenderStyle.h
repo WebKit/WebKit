@@ -1104,7 +1104,7 @@ public:
         return false;
     }
 
-    // Only used for blending font sizes when animating.
+    // Only used for blending font sizes when animating, or MathML anonymous blocks.
     void setBlendedFontSize(int);
 
     void setColor(const Color& v) { SET_VAR(inherited, color, v) }
