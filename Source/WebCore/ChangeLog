@@ -1,3 +1,19 @@
+2012-02-27  Luke Macpherson   <macpherson@chromium.org>
+
+        Sort CSSStyleSelector property handler constructors by CSS property name.
+        https://bugs.webkit.org/show_bug.cgi?id=79713
+
+        Reviewed by Andreas Kling.
+
+        No new tests / refactoring only.
+
+        This patch is simply an automated sort of the property constructors.
+        Presently they are all over the place and it is difficult to know where to insert new rules.
+        This patch provides a clear pattern and should reduce future conflicts when adding properties.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+
 2012-02-27  James Kozianski  <koz@chromium.org>
 
         [chromium] Plumb extensionGroup into didCreateScriptContext().
