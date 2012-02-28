@@ -1,3 +1,12 @@
+2012-02-27  James Kozianski  <koz@chromium.org>
+
+        Add missing parameter to didCreateScriptContext() so it overrides base class again.
+        https://bugs.webkit.org/show_bug.cgi?id=79742
+
+        Reviewed by Kent Tamura.
+
+        * tests/WebFrameTest.cpp:
+
 2012-02-27  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Unreviewed gardening, Disable TransparencyWin.OpaqueCompositeLayerPixel

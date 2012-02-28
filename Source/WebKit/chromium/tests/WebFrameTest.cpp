@@ -322,12 +322,12 @@ public:
     std::vector<Notification*> releaseNotifications;
 
  private:
-    virtual void didCreateScriptContext(WebFrame* frame, v8::Handle<v8::Context> context, int worldId)
+    virtual void didCreateScriptContext(WebFrame* frame, v8::Handle<v8::Context> context, int extensionGroup, int worldId) OVERRIDE
     {
         createNotifications.push_back(new Notification(frame, context, worldId));
     }
 
-    virtual void willReleaseScriptContext(WebFrame* frame, v8::Handle<v8::Context> context, int worldId)
+    virtual void willReleaseScriptContext(WebFrame* frame, v8::Handle<v8::Context> context, int worldId) OVERRIDE
     {
         releaseNotifications.push_back(new Notification(frame, context, worldId));
     }
