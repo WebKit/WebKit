@@ -380,8 +380,17 @@ void RenderBlock::addChildToAnonymousColumnBlocks(RenderObject* newChild, Render
     ASSERT(!continuation()); // We don't yet support column spans that aren't immediate children of the multi-column block.
         
     // The goal is to locate a suitable box in which to place our child.
-    RenderBlock* beforeChildParent = toRenderBlock(beforeChild && beforeChild->parent()->isRenderBlock() ? beforeChild->parent() : lastChild());
-    
+    RenderBlock* beforeChildParent = 0;
+    if (beforeChild) {
+        RenderObject* curr = beforeChild;
+        while (curr && curr->parent() != this)
+            curr = curr->parent();
+        beforeChildParent = toRenderBlock(curr);
+        ASSERT(beforeChildParent);
+        ASSERT(beforeChildParent->isAnonymousColumnsBlock() || beforeChildParent->isAnonymousColumnSpanBlock());
+    } else
+        beforeChildParent = toRenderBlock(lastChild());
+
     // If the new child is floating or positioned it can just go in that block.
     if (newChild->isFloatingOrPositioned()) {
         beforeChildParent->addChildIgnoringAnonymousColumnBlocks(newChild, beforeChild);

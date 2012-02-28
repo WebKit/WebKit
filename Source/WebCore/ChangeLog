@@ -1,3 +1,19 @@
+2012-02-28  Abhishek Arya  <inferno@chromium.org>
+
+        Incorrect before child parent calculation when adding new children
+        to anonymous column blocks.
+        https://bugs.webkit.org/show_bug.cgi?id=79755
+
+        Reviewed by David Hyatt.
+
+        before child can be wrapped in anonymous containers, so need to
+        take care of that in before child parent calculation.
+
+        Test: fast/multicol/span/before-child-anonymous-column-block.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildToAnonymousColumnBlocks):
+
 2012-02-28  Ned Holbrook  <nholbrook@apple.com>
 
         Reimplement pathFromFont() in SimpleFontDataMac.mm
