@@ -2781,6 +2781,16 @@ void WebPagePrivate::resetBlockZoom()
     m_shouldReflowBlock = false;
 }
 
+void WebPage::destroyWebPageCompositor()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    // Destroy the layer renderer in a sync command before we destroy the backing store,
+    // to flush any pending compositing messages on the compositing thread.
+    // The backing store is indirectly deleted by the 'detachFromParent' call below.
+    d->syncDestroyCompositorOnCompositingThread();
+#endif
+}
+
 void WebPage::destroy()
 {
     // TODO: need to verify if this call needs to be made before calling
@@ -5334,16 +5344,6 @@ void WebPagePrivate::syncDestroyCompositorOnCompositingThread()
     Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
         Platform::createMethodCallMessage(
             &WebPagePrivate::destroyCompositor, this));
-}
-
-void WebPage::destroyWebPageCompositor()
-{
-#if USE(ACCELERATED_COMPOSITING)
-    // Destroy the layer renderer in a sync command before we destroy the backing store,
-    // to flush any pending compositing messages on the compositing thread.
-    // The backing store is indirectly deleted by the 'detachFromParent' call below.
-    d->syncDestroyCompositorOnCompositingThread();
-#endif
 }
 
 void WebPagePrivate::destroyLayerResources()

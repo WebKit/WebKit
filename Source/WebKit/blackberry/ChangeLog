@@ -1,3 +1,17 @@
+2012-02-28  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] x86 build fix after cleaning up WebPage.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=79814
+
+        Reviewed by Antonio Gomes.
+
+        x86 build fix, keep WebPage::destroyWebPageCompositor() method where it
+        was which was outside of USE(ACCELERATED_COMPOSITING).
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::destroyWebPageCompositor):
+        (WebKit):
+
 2012-02-28  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Remove unused focusedNodeChange notifications from the Chrome client.
