@@ -1,3 +1,20 @@
+2012-02-28  Roland Steiner  <rolandsteiner@chromium.org>
+
+        RuntimeEnabledFeatures::setMultipleShadowSubtreesEnabled should not be inline
+        https://bugs.webkit.org/show_bug.cgi?id=79753
+
+        Moved the function implementation to the .cpp file.
+
+        Reviewed by Hajime Morita.
+
+        No new tests. (no functional change)
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::setMultipleShadowSubtreesEnabled):
+        (WebCore):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (RuntimeEnabledFeatures):
+
 2012-02-28  Noel Gordon  <noel.gordon@gmail.com>
 
         Fix comment about RGB swizzle decoding and Adobe transform=0 images

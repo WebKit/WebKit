@@ -181,6 +181,11 @@ bool RuntimeEnabledFeatures::isMediaSourceEnabled = false;
 #endif
 
 #if ENABLE(SHADOW_DOM)
+void RuntimeEnabledFeatures::setMultipleShadowSubtreesEnabled(bool isEnabled)
+{
+    isMultipleShadowSubtreesEnabled = isEnabled;
+}
+
 bool RuntimeEnabledFeatures::isShadowDOMEnabled = false;
 bool RuntimeEnabledFeatures::isMultipleShadowSubtreesEnabled = false;
 #endif

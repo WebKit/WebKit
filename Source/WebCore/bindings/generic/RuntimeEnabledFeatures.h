@@ -196,7 +196,7 @@ public:
     static void setShadowDOMEnabled(bool isEnabled) { isShadowDOMEnabled = isEnabled; }
 
     static bool multipleShadowSubtreesEnabled() { return isMultipleShadowSubtreesEnabled; }
-    static void setMultipleShadowSubtreesEnabled(bool isEnabled) { isMultipleShadowSubtreesEnabled = isEnabled; }
+    static void setMultipleShadowSubtreesEnabled(bool isEnabled);
 #endif
 
 #if ENABLE(STYLE_SCOPED)
