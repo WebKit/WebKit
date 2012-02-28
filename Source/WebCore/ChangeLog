@@ -1,3 +1,13 @@
+2012-02-28  Dean Jackson  <dino@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=79824
+
+        Unreviewed build fix for when ENABLE(CSS_FILTERS) is on
+        but ENABLE(CSS_SHADERS) is off.
+
+        * css/WebKitCSSFilterValue.cpp:
+        (WebCore::WebKitCSSFilterValue::typeUsesSpaceSeparator):
+
 2012-02-28  Dave Moore  <davemoore@chromium.org>
 
         Slow content causes choppy scrolling
