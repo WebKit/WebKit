@@ -1,3 +1,14 @@
+2012-02-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Move registration of experimental types to the proper plugin
+        https://bugs.webkit.org/show_bug.cgi?id=79706
+
+        Reviewed by Tor Arne Vestbø.
+
+        * declarative/experimental/plugin.cpp:
+        * declarative/plugin.cpp:
+        (WebKitQmlPlugin::registerTypes):
+
 2012-02-28  Antti Koivisto  <antti@apple.com>
 
         Try to fix build.
