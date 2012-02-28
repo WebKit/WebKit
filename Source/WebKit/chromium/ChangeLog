@@ -1,3 +1,30 @@
+2012-02-28  Gary Kacmarcik  <garykac@chromium.org>
+
+        [chromium] Set nativeKeyCode to include Windows scan code
+        https://bugs.webkit.org/show_bug.cgi?id=79289
+
+        Reviewed by Ryosuke Niwa.
+
+        Set the key event's nativeKeyCode on Windows Chromium so that it
+        actually includes the native scancode and other context bits.
+        Currently on Windows, the nativeKeyCode is set to be the same value as
+        the windowsKeyCode, which is redundant.
+
+        The actual native key information is required so that components (like
+        plugins) can reconstruct the original key event. The value stored in
+        the windowsKeyCode is a Windows virtual key code which does not provide
+        sufficient info to disambiguate the actual key being pressed (for
+        example, it cannot distinguish between the left and right shift keys).
+
+        All platforms except Windows currently send native key event info, so
+        this change will bring Windows in line with other platforms.
+
+        This change is part of our effort to send enhanced keycode information
+        to Pepper plugins in Chromium.
+
+        * src/win/WebInputEventFactory.cpp:
+        (WebKit::WebInputEventFactory::keyboardEvent):
+
 2012-02-28  Adam Klein  <adamk@chromium.org>
 
         Unreviewed, speculative test fix after r109016.

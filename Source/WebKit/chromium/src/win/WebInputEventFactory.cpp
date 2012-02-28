@@ -107,7 +107,9 @@ WebKeyboardEvent WebInputEventFactory::keyboardEvent(HWND hwnd, UINT message,
     // caller, who would know for sure.
     result.timeStampSeconds = GetMessageTime() / 1000.0;
 
-    result.windowsKeyCode = result.nativeKeyCode = static_cast<int>(wparam);
+    result.windowsKeyCode = static_cast<int>(wparam);
+    // Record the scan code (along with other context bits) for this key event.
+    result.nativeKeyCode = static_cast<int>(lparam);
 
     switch (message) {
     case WM_SYSKEYDOWN:
