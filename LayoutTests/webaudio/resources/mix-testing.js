@@ -1,4 +1,3 @@
-var renderLengthSeconds = 2;
 var toneLengthSeconds = 1;
 
 // Create a buffer with multiple channels.
