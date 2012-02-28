@@ -1,3 +1,32 @@
+2012-02-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Improve the visual of the tiling
+        https://bugs.webkit.org/show_bug.cgi?id=79648
+
+        Reviewed by Noam Rosenthal.
+
+        When we cover the view with tiles[1], we do so from the center
+        and out, in bigger and bigger cicles by finding the current minimum
+        covered distance.
+
+        This looks like painting a rect, then a cross, then a rect, ...
+        and can be noticed when a page blocks during tiling.
+
+        We can do this better by only covering with tiles in rects at a time.
+
+        The original code was done so that it gave preference to tiles in
+        vertical direction due to that being the most common scrolling
+        direction. This is not needed anymore as we are now using the
+        trajectory vector when panning, which always gives preference for
+        creating tiles in the panned direction.
+
+        [1] It should be noted that we always cover the visibleRect in one go,
+            and that we here are talking about covering the coverRect beyond
+            the visibleRect
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::tileDistance):
+
 2012-02-28  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: preserve memory counters size after frontend reopening

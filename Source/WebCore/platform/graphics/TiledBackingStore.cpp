@@ -193,13 +193,11 @@ double TiledBackingStore::tileDistance(const IntRect& viewport, const Tile::Coor
 {
     if (viewport.intersects(tileRectForCoordinate(tileCoordinate)))
         return 0;
-    
+
     IntPoint viewCenter = viewport.location() + IntSize(viewport.width() / 2, viewport.height() / 2);
     Tile::Coordinate centerCoordinate = tileCoordinateForPoint(viewCenter);
-    
-    // Manhattan distance, biased so that vertical distances are shorter.
-    const double horizontalBias = 1.3;
-    return abs(centerCoordinate.y() - tileCoordinate.y()) + horizontalBias * abs(centerCoordinate.x() - tileCoordinate.x());
+
+    return std::max(abs(centerCoordinate.y() - tileCoordinate.y()), abs(centerCoordinate.x() - tileCoordinate.x()));
 }
 
 // Returns a ratio between 0.0f and 1.0f of the surface of contentsRect covered by rendered tiles.
