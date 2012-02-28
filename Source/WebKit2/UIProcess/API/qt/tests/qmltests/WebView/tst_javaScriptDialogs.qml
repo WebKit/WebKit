@@ -67,7 +67,7 @@ TestWebView {
         }
 
         function test_alert() {
-            webView.load(Qt.resolvedUrl("../common/alert.html"))
+            webView.url = Qt.resolvedUrl("../common/alert.html")
             verify(webView.waitForLoadSucceeded())
             compare(webView.messageFromAlertDialog, "Hello Qt")
             verify(webView.modelMessageEqualsMessage)
@@ -75,13 +75,13 @@ TestWebView {
 
         function test_alertWithoutDialog() {
             webView.experimental.alertDialog = null
-            webView.load(Qt.resolvedUrl("../common/alert.html"))
+            webView.url = Qt.resolvedUrl("../common/alert.html")
             verify(webView.waitForLoadSucceeded())
             compare(webView.messageFromAlertDialog, "")
         }
 
         function test_confirm() {
-            webView.load(Qt.resolvedUrl("../common/confirm.html"))
+            webView.url = Qt.resolvedUrl("../common/confirm.html")
             verify(webView.waitForLoadSucceeded())
             compare(webView.confirmCount, 2)
             compare(webView.title, "ACCEPTED REJECTED")
@@ -89,14 +89,14 @@ TestWebView {
 
         function test_confirmWithoutDialog() {
             webView.experimental.confirmDialog = null
-            webView.load(Qt.resolvedUrl("../common/confirm.html"))
+            webView.url = Qt.resolvedUrl("../common/confirm.html")
             verify(webView.waitForLoadSucceeded())
             compare(webView.confirmCount, 0)
             compare(webView.title, "ACCEPTED ACCEPTED")
         }
 
         function test_prompt() {
-            webView.load(Qt.resolvedUrl("../common/prompt.html"))
+            webView.url = Qt.resolvedUrl("../common/prompt.html")
             verify(webView.waitForLoadSucceeded())
             compare(webView.promptCount, 2)
             compare(webView.title, "tQ olleH")
@@ -104,7 +104,7 @@ TestWebView {
 
         function test_promptWithoutDialog() {
             webView.experimental.promptDialog = null
-            webView.load(Qt.resolvedUrl("../common/prompt.html"))
+            webView.url = Qt.resolvedUrl("../common/prompt.html")
             verify(webView.waitForLoadSucceeded())
             compare(webView.promptCount, 0)
             compare(webView.title, "FAIL")

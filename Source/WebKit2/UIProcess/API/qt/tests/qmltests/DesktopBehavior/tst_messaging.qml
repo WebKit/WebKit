@@ -56,7 +56,7 @@ Item {
         }
 
         function test_basic() {
-            webView.load(testUrl)
+            webView.url = testUrl
             verify(webView.waitForLoadSucceeded())
             webView.experimental.postMessage("HELLO")
             messageSpy.wait()
@@ -65,8 +65,8 @@ Item {
         }
 
         function test_twoWebViews() {
-            webView.load(testUrl)
-            otherWebView.load(testUrl)
+            webView.url = testUrl
+            otherWebView.url = testUrl
             verify(webView.waitForLoadSucceeded())
             verify(otherWebView.waitForLoadSucceeded())
             webView.experimental.postMessage("FIRST")
@@ -78,7 +78,7 @@ Item {
         }
 
         function test_disabled() {
-            disabledWebView.load(testUrl)
+            disabledWebView.url = testUrl
             verify(!disabledWebView.experimental.preferences.navigatorQtObjectEnabled)
             verify(disabledWebView.waitForLoadSucceeded())
             disabledWebView.experimental.postMessage("HI")

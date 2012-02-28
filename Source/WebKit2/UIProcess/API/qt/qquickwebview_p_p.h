@@ -73,7 +73,7 @@ public:
     virtual void updateContentsSize(const QSizeF&) { }
 
     virtual void loadDidSucceed();
-    virtual void onComponentComplete() { }
+    virtual void onComponentComplete();
     virtual void loadDidCommit() { }
     virtual void didFinishFirstNonEmptyLayout() { }
     virtual void didChangeViewportProperties(const WebCore::ViewportArguments& args) { }
@@ -162,6 +162,7 @@ protected:
     bool m_renderToOffscreenBuffer;
     bool m_loadStartedSignalSent;
     QUrl m_iconURL;
+    QUrl m_deferedUrlToLoad;
 };
 
 class QQuickWebViewLegacyPrivate : public QQuickWebViewPrivate {

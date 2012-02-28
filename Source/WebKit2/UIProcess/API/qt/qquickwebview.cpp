@@ -153,6 +153,14 @@ void QQuickWebViewPrivate::loadDidSucceed()
     emit q->loadingChanged(&loadRequest);
 }
 
+void QQuickWebViewPrivate::onComponentComplete()
+{
+    if (m_deferedUrlToLoad.isEmpty())
+        return;
+
+    q_ptr->setUrl(m_deferedUrlToLoad);
+}
+
 void QQuickWebViewPrivate::setNeedsDisplay()
 {
     Q_Q(QQuickWebView);
@@ -1124,15 +1132,6 @@ QQuickWebPage* QQuickWebView::page()
     return d->pageView.data();
 }
 
-void QQuickWebView::load(const QUrl& url)
-{
-    if (url.isEmpty())
-        return;
-
-    Q_D(QQuickWebView);
-    d->webPageProxy->loadURL(url.toString());
-}
-
 void QQuickWebView::goBack()
 {
     Q_D(QQuickWebView);
@@ -1165,6 +1164,21 @@ QUrl QQuickWebView::url() const
     if (!mainFrame)
         return QUrl();
     return QUrl(QString(mainFrame->url()));
+}
+
+void QQuickWebView::setUrl(const QUrl& url)
+{
+    Q_D(QQuickWebView);
+
+    if (url.isEmpty())
+        return;
+
+    if (!isComponentComplete()) {
+        d->m_deferedUrlToLoad = url;
+        return;
+    }
+
+    d->webPageProxy->loadURL(url.toString());
 }
 
 QUrl QQuickWebView::icon() const

@@ -30,20 +30,20 @@ TestWebView {
         function test_loadIgnoreEmptyUrl() {
             var url = Qt.resolvedUrl("../common/test1.html")
 
-            webView.load(url)
+            webView.url = url
             verify(webView.waitForLoadSucceeded())
             compare(numLoadStarted, 1)
             compare(numLoadSucceeded, 1)
             compare(webView.url, url)
 
             lastUrl = webView.url
-            webView.load('')
+            webView.url = ''
             wait(1000)
             compare(numLoadStarted, 1)
             compare(numLoadSucceeded, 1)
             compare(webView.url, lastUrl)
 
-            webView.load('about:blank')
+            webView.url = 'about:blank'
             verify(webView.waitForLoadSucceeded())
             compare(numLoadStarted, 2)
             compare(numLoadSucceeded, 2)
@@ -51,7 +51,7 @@ TestWebView {
 
             // It shouldn't interrupt any ongoing load when an empty url is used.
             watchProgress = true
-            webView.load(url)
+            webView.url = url
             webView.waitForLoadSucceeded()
             compare(numLoadStarted, 3)
             compare(numLoadSucceeded, 3)

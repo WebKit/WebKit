@@ -1,3 +1,44 @@
+2012-02-28  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        [Qt] Allow read/write to the WebView.url property
+        https://bugs.webkit.org/show_bug.cgi?id=77554
+
+        Reviewed by Tor Arne Vestbø.
+
+        Change QML API WebView.url to read/write to reflect either the url requested by the user.
+        Also removed WebView.load(url). Defers setting url (loading page) until onComponentComplete is triggered. 
+        Fixed c++ and qml tests to reflect the new API.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::onComponentComplete):
+        (QQuickWebView::setUrl):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/tests/publicapi/tst_publicapi.cpp:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_itemSelector.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_linkHovered.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_messaging.qml:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_navigationRequested.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_applicationScheme.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_download.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_favIconLoad.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_geopermission.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_javaScriptDialogs.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadFail.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadProgress.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadProgressSignal.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadUrl.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_navigationHistory.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_origin.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_preferences.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_properties.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_titleChanged.qml:
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::loadEmptyPageViewHidden):
+        (tst_QQuickWebView::loadNonexistentFileUrl):
+
 2012-02-28  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Signal and property cleanup in QQuickWebView

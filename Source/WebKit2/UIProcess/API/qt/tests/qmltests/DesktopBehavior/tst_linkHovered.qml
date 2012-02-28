@@ -43,7 +43,7 @@ TestWebView {
 
         function test_linkHovered() {
             compare(spy.count, 0)
-            webView.load(Qt.resolvedUrl("../common/test2.html"))
+            webView.url = Qt.resolvedUrl("../common/test2.html")
             verify(webView.waitForLoadSucceeded())
             mouseMove(webView, 100, 100)
             spy.wait()
@@ -59,7 +59,7 @@ TestWebView {
 
         function test_linkHoveredDoesntEmitRepeated() {
             compare(spy.count, 0)
-            webView.load(Qt.resolvedUrl("../common/test2.html"))
+            webView.url = Qt.resolvedUrl("../common/test2.html")
             verify(webView.waitForLoadSucceeded())
 
             for (var i = 0; i < 100; i += 10)

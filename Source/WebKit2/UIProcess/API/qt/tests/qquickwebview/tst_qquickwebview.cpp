@@ -154,7 +154,7 @@ void tst_QQuickWebView::stopEnabledAfterLoadStarted()
     QCOMPARE(webView()->loading(), false);
 
     LoadStartedCatcher catcher(webView());
-    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
     waitForSignal(&catcher, SIGNAL(finished()));
 
     QCOMPARE(webView()->loading(), true);
@@ -170,8 +170,8 @@ void tst_QQuickWebView::baseUrl()
 
 void tst_QQuickWebView::loadEmptyUrl()
 {
-    webView()->load(QUrl());
-    webView()->load(QUrl(QLatin1String("")));
+    webView()->setUrl(QUrl());
+    webView()->setUrl(QUrl(QLatin1String("")));
 }
 
 void tst_QQuickWebView::loadEmptyPageViewVisible()
@@ -184,7 +184,7 @@ void tst_QQuickWebView::loadEmptyPageViewHidden()
 {
     QSignalSpy loadSpy(webView(), SIGNAL(loadingChanged(QWebLoadRequest*)));
 
-    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
     QVERIFY(waitForLoadSucceeded(webView()));
 
     QCOMPARE(loadSpy.size(), 2);
@@ -194,7 +194,7 @@ void tst_QQuickWebView::loadNonexistentFileUrl()
 {
     QSignalSpy loadSpy(webView(), SIGNAL(loadingChanged(QWebLoadRequest*)));
 
-    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/file_that_does_not_exist.html")));
+    webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/file_that_does_not_exist.html")));
     QVERIFY(waitForLoadFailed(webView()));
 
     QCOMPARE(loadSpy.size(), 2);
@@ -202,12 +202,12 @@ void tst_QQuickWebView::loadNonexistentFileUrl()
 
 void tst_QQuickWebView::backAndForward()
 {
-    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
     QVERIFY(waitForLoadSucceeded(webView()));
 
     QCOMPARE(webView()->url().path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
 
-    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page2.html")));
+    webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page2.html")));
     QVERIFY(waitForLoadSucceeded(webView()));
 
     QCOMPARE(webView()->url().path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page2.html"));
@@ -225,7 +225,7 @@ void tst_QQuickWebView::backAndForward()
 
 void tst_QQuickWebView::reload()
 {
-    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
     QVERIFY(waitForLoadSucceeded(webView()));
 
     QCOMPARE(webView()->url().path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
@@ -238,7 +238,7 @@ void tst_QQuickWebView::reload()
 
 void tst_QQuickWebView::stop()
 {
-    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
     QVERIFY(waitForLoadSucceeded(webView()));
 
     QCOMPARE(webView()->url().path(), QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html"));
@@ -251,7 +251,7 @@ void tst_QQuickWebView::loadProgress()
 {
     QCOMPARE(webView()->loadProgress(), 0);
 
-    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
     QSignalSpy loadProgressChangedSpy(webView(), SIGNAL(loadProgressChanged()));
     QVERIFY(waitForLoadSucceeded(webView()));
 
@@ -272,7 +272,7 @@ void tst_QQuickWebView::showWebView()
 {
     webView()->setSize(QSizeF(300, 400));
 
-    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/direct-image-compositing.html")));
+    webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/direct-image-compositing.html")));
     QVERIFY(waitForLoadSucceeded(webView()));
 
     m_window->show();
@@ -308,13 +308,13 @@ void tst_QQuickWebView::multipleWebViewWindows()
     QScopedPointer<TestWindow> window2(new TestWindow(webView2));
 
     webView1->setSize(QSizeF(300, 400));
-    webView1->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
+    webView1->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
     QVERIFY(waitForLoadSucceeded(webView1));
     window1->show();
     webView1->setVisible(true);
 
     webView2->setSize(QSizeF(300, 400));
-    webView2->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    webView2->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
     QVERIFY(waitForLoadSucceeded(webView2));
     window2->show();
     webView2->setVisible(true);
@@ -332,12 +332,12 @@ void tst_QQuickWebView::multipleWebViews()
     webView2->setParentItem(m_window->rootItem());
 
     webView1->setSize(QSizeF(300, 400));
-    webView1->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
+    webView1->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
     QVERIFY(waitForLoadSucceeded(webView1.data()));
     webView1->setVisible(true);
 
     webView2->setSize(QSizeF(300, 400));
-    webView2->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    webView2->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
     QVERIFY(waitForLoadSucceeded(webView2.data()));
     webView2->setVisible(true);
     QTest::qWait(200);
@@ -347,7 +347,7 @@ void tst_QQuickWebView::scrollRequest()
 {
     webView()->setSize(QSizeF(300, 400));
 
-    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
+    webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
     QVERIFY(waitForLoadSucceeded(webView()));
 
     // COMPARE with the position requested in the html

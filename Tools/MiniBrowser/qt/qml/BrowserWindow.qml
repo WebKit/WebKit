@@ -39,7 +39,7 @@ Rectangle {
     signal newWindow(string url)
 
     function load(address) {
-        webView.load(address)
+        webView.url = address
     }
 
     function reload() {
@@ -283,7 +283,7 @@ Rectangle {
 
                 Keys.onReturnPressed:{
                     console.log("going to: ", addressLine.text)
-                    webView.load(utils.urlFromUserInput(addressLine.text))
+                    webView.url = utils.urlFromUserInput(addressLine.text)
                 }
             }
         }

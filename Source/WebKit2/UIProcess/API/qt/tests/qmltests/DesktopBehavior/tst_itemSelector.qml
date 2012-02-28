@@ -53,7 +53,7 @@ TestWebView {
             webView.finalSelection = -1
             webView.useAcceptDirectly = false
             webView.selectorLoaded = false
-            webView.load(Qt.resolvedUrl("../common/select.html"))
+            webView.url = Qt.resolvedUrl("../common/select.html")
             verify(webView.waitForLoadSucceeded())
             titleSpy.clear()
         }

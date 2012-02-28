@@ -15,7 +15,7 @@ TestWebView {
         name: "WebViewLoadFail"
         function test_fail() {
             testUrl = Qt.resolvedUrl("file_that_does_not_exist.html")
-            webView.load(testUrl)
+            webView.url = testUrl
             verify(webView.waitForLoadFailed())
         }
     }

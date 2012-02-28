@@ -48,7 +48,7 @@ WebView {
 
         function test_permissionRequest() {
             compare(spy.count, 0)
-            webView.load(Qt.resolvedUrl("../common/geolocation.html"))
+            webView.url = Qt.resolvedUrl("../common/geolocation.html")
             spy.wait()
             compare(spy.count, 1)
             compare(webView.success, true)

@@ -13,7 +13,7 @@ TestWebView {
 
         function test_loadProgress() {
             compare(webView.loadProgress, 0)
-            webView.load(Qt.resolvedUrl("../common/test1.html"))
+            webView.url = Qt.resolvedUrl("../common/test1.html")
             compare(webView.loadProgress, 0)
             verify(webView.waitForLoadSucceeded())
             compare(webView.loadProgress, 100)

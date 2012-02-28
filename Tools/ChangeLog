@@ -1,3 +1,14 @@
+2012-02-28  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        [Qt] Allow read/write to the WebView.url property
+        https://bugs.webkit.org/show_bug.cgi?id=77554
+
+        Reviewed by Tor Arne Vestbø.
+
+        Fix MiniBrowser to use WebView.url property and remove WebView.load usage.
+
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+
 2012-02-28  Dan Winship  <danw@gnome.org>
 
         [GTK] make tests explicitly request GSettingsBackendMemory

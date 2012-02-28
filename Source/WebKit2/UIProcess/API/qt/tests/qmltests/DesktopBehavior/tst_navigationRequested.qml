@@ -22,7 +22,7 @@ Item {
             if (shouldDownload)
                 request.action = WebViewExperimental.DownloadRequest
             else if (request.mouseButton == Qt.MiddleButton && request.keyboardModifiers & Qt.ControlModifier) {
-                otherWebView.load(request.url)
+                otherWebView.url = request.url
                 request.action = WebView.IgnoreRequest
             }
         }
@@ -79,7 +79,7 @@ Item {
         }
 
         function test_usePolicy() {
-            webView.load(beginUrl)
+            webView.url = beginUrl
             verify(webView.waitForLoadSucceeded())
             mouseClick(webView, 100, 100, Qt.LeftButton)
             verify(webView.waitForLoadSucceeded())
@@ -88,7 +88,7 @@ Item {
         }
 
         function test_ignorePolicy() {
-            webView.load(beginUrl)
+            webView.url = beginUrl
             verify(webView.waitForLoadSucceeded())
             mouseClick(webView, 100, 100, Qt.MiddleButton, Qt.ControlModifier)
             verify(otherWebView.waitForLoadSucceeded())
@@ -99,7 +99,7 @@ Item {
         }
 
         function test_downloadPolicy() {
-            webView.load(beginUrl)
+            webView.url = beginUrl
             verify(webView.waitForLoadSucceeded())
             downloadSpy.clear()
             downloadFinishedSpy.clear()

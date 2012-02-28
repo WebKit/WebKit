@@ -12,14 +12,14 @@ TestWebView {
         name: "WebViewProperties"
 
         function test_title() {
-            webView.load(Qt.resolvedUrl("../common/test1.html"))
+            webView.url =  Qt.resolvedUrl("../common/test1.html")
             verify(webView.waitForLoadSucceeded())
             compare(webView.title, "Test page 1")
         }
 
         function test_url() {
             var testUrl = Qt.resolvedUrl("../common/test1.html")
-            webView.load(testUrl)
+            webView.url = testUrl
             verify(webView.waitForLoadSucceeded())
             compare(webView.url, testUrl)
         }

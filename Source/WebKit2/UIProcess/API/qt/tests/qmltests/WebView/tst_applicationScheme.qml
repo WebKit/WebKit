@@ -78,7 +78,7 @@ WebView {
             spyTitle.clear()
             compare(spyTitle.count, 0)
             var testUrl = "applicationScheme://something"
-            webView.load(testUrl)
+            webView.url = testUrl
             spyTitle.wait()
             compare(webView.title, "Test Application Scheme")
         }
@@ -88,12 +88,12 @@ WebView {
             spyTitle.clear()
             compare(spyTitle.count, 0)
             var testUrl = "scheme2://some-url-string"
-            webView.load(testUrl)
+            webView.url = testUrl
             spyTitle.wait()
             compare(webView.title, "Scheme2 Reply")
 
             testUrl = "scheme1://some-url-string"
-            webView.load(testUrl)
+            webView.url = testUrl
             spyTitle.wait()
             compare(webView.title, "Scheme1 Reply")
 
@@ -104,12 +104,12 @@ WebView {
             spyTitle.clear()
             compare(spyTitle.count, 0)
             var testUrl = "scheme3://url1"
-            webView.load(testUrl)
+            webView.url = testUrl
             spyTitle.wait()
             compare(webView.title, "Scheme3 Reply1")
 
             testUrl = "scheme3://url2"
-            webView.load(testUrl)
+            webView.url = testUrl
             spyTitle.wait()
             compare(webView.title, "Scheme3 Reply2")
 
@@ -120,12 +120,12 @@ WebView {
             spyTitle.clear()
             compare(spyTitle.count, 0)
             var testUrl = "schemeCharset://latin1"
-            webView.load(testUrl)
+            webView.url = testUrl
             spyTitle.wait()
             compare(webView.title, "title with copyright ©")
 
             testUrl = "schemeCharset://utf-8"
-            webView.load(testUrl)
+            webView.url = testUrl
             spyTitle.wait()
             compare(webView.title, "title with copyright ©")
         }

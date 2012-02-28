@@ -20,7 +20,7 @@ TestWebView {
         function test_titleFirstLoad() {
             compare(spyTitle.count, 0)
             var testUrl = Qt.resolvedUrl("../common/test3.html")
-            webView.load(testUrl)
+            webView.url = testUrl
             verify(webView.waitForLoadSucceeded())
             spyTitle.wait()
             compare(webView.title, "Test page 3")

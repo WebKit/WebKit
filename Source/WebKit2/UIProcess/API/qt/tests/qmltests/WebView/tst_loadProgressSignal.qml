@@ -20,7 +20,7 @@ TestWebView {
         function test_loadProgressSignal() {
             compare(spyProgress.count, 0)
             compare(webView.loadProgress, 0)
-            webView.load(Qt.resolvedUrl("../common/test1.html"))
+            webView.url = Qt.resolvedUrl("../common/test1.html")
             spyProgress.wait()
             compare(true, webView.loadProgress > -1 && webView.loadProgress < 101)
             if (webView.loadProgress > 0 && webView.loadProgress < 100) {

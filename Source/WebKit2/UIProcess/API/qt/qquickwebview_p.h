@@ -68,7 +68,7 @@ QT_END_NAMESPACE
 class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
     Q_OBJECT
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
-    Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
+    Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
     Q_PROPERTY(QUrl icon READ icon NOTIFY iconChanged FINAL)
     Q_PROPERTY(bool canGoBack READ canGoBack NOTIFY navigationHistoryChanged FINAL)
     Q_PROPERTY(bool canGoForward READ canGoForward NOTIFY navigationHistoryChanged FINAL)
@@ -110,6 +110,7 @@ public:
     virtual ~QQuickWebView();
 
     QUrl url() const;
+    void setUrl(const QUrl&);
     QUrl icon() const;
     QString title() const;
     int loadProgress() const;
@@ -137,7 +138,6 @@ public:
     QPointF pageItemPos();
 
 public Q_SLOTS:
-    void load(const QUrl&);
     void loadHtml(const QString& html, const QUrl& baseUrl = QUrl());
 
     void goBack();
