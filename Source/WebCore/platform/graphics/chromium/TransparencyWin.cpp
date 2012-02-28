@@ -109,7 +109,7 @@ class TransparencyWin::OwnedBuffers {
 public:
     OwnedBuffers(const IntSize& size, bool needReferenceBuffer)
     {
-        m_destBitmap = ImageBuffer::create(size);
+        m_destBitmap = ImageBuffer::create(size, 1);
 
         if (needReferenceBuffer) {
             m_referenceBitmap.setConfig(SkBitmap::kARGB_8888_Config, size.width(), size.height());

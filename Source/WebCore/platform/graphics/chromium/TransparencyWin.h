@@ -44,10 +44,10 @@ class SkCanvas;
 namespace WebCore {
 
 class GraphicsContext;
-class TransparencyWin_DISABLED_NoLayer_Test;
-class TransparencyWin_DISABLED_WhiteLayer_Test;
-class TransparencyWin_DISABLED_TextComposite_Test;
-class TransparencyWin_DISABLED_OpaqueCompositeLayer_Test;
+class TransparencyWin_NoLayer_Test;
+class TransparencyWin_WhiteLayer_Test;
+class TransparencyWin_TextComposite_Test;
+class TransparencyWin_OpaqueCompositeLayer_Test;
 
 // Helper class that abstracts away drawing ClearType text and Windows form
 // controls either to the original context directly, or to an offscreen context

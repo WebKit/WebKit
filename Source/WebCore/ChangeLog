@@ -1,3 +1,12 @@
+2012-02-28  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed, speculative test fix after r109016.
+
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::OwnedBuffers::OwnedBuffers): Explicitly pass a scale of 1 to ImageBuffer::create.
+        * platform/graphics/chromium/TransparencyWin.h:
+        (WebCore): Update names of re-enabled tests.
+
 2012-02-28  Antti Koivisto  <antti@apple.com>
 
         Give StyleRule files of its own
