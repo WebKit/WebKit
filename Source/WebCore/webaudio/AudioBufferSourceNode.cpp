@@ -126,6 +126,9 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         quantumFrameOffset = min(quantumFrameOffset, framesToProcess); // clamp to valid range
         size_t bufferFramesToProcess = framesToProcess - quantumFrameOffset;
 
+        for (unsigned i = 0; i < outputBus->numberOfChannels(); ++i) 
+            m_destinationChannels[i] = outputBus->channel(i)->mutableData();
+
         // Render by reading directly from the buffer.
         renderFromBuffer(outputBus, quantumFrameOffset, bufferFramesToProcess);
 
@@ -144,7 +147,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
             
             if (isSafe) {
                 for (unsigned i = 0; i < outputBus->numberOfChannels(); ++i)
-                    memset(outputBus->channel(i)->mutableData() + zeroStartFrame, 0, sizeof(float) * framesToZero);
+                    memset(m_destinationChannels[i] + zeroStartFrame, 0, sizeof(float) * framesToZero);
             }
 
             m_isPlaying = false;
@@ -160,7 +163,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
 }
 
 // Returns true if we're finished.
-bool AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping(float* destinationL, float* destinationR, size_t framesToProcess)
+bool AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping(AudioBus*, unsigned index, size_t framesToProcess)
 {
     if (!loop()) {
         // If we're not looping, then stop playing when we get to the end.
@@ -169,10 +172,8 @@ bool AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping(float* destinatio
         if (framesToProcess > 0) {
             // We're not looping and we've reached the end of the sample data, but we still need to provide more output,
             // so generate silence for the remaining.
-            memset(destinationL, 0, sizeof(float) * framesToProcess);
-
-            if (destinationR)
-                memset(destinationR, 0, sizeof(float) * framesToProcess);
+            for (unsigned i = 0; i < numberOfChannels(); ++i) 
+                memset(m_destinationChannels[i] + index, 0, sizeof(float) * framesToProcess);
         }
 
         finish();
@@ -194,21 +195,11 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     unsigned numberOfChannels = this->numberOfChannels();
     unsigned busNumberOfChannels = bus->numberOfChannels();
 
-    // FIXME: we can add support for sources with more than two channels, but this is not a common case.
-    bool channelCountGood = numberOfChannels == busNumberOfChannels && (numberOfChannels == 1 || numberOfChannels == 2);
+    bool channelCountGood = numberOfChannels && numberOfChannels == busNumberOfChannels;
     ASSERT(channelCountGood);
     if (!channelCountGood)
         return;
 
-    // Get the destination pointers.
-    float* destinationL = bus->channel(0)->mutableData();
-    ASSERT(destinationL);
-    if (!destinationL)
-        return;
-    float* destinationR = (numberOfChannels < 2) ? 0 : bus->channel(1)->mutableData();
-    
-    bool isStereo = destinationR;
-    
     // Sanity check destinationFrameOffset, numberOfFrames.
     size_t destinationLength = bus->length();
 
@@ -221,18 +212,15 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     ASSERT(isOffsetGood);
     if (!isOffsetGood)
         return;
-        
+
     // Potentially zero out initial frames leading up to the offset.
     if (destinationFrameOffset) {
-        memset(destinationL, 0, sizeof(float) * destinationFrameOffset);
-        if (destinationR)
-            memset(destinationR, 0, sizeof(float) * destinationFrameOffset);
+        for (unsigned i = 0; i < numberOfChannels; ++i) 
+            memset(m_destinationChannels[i], 0, sizeof(float) * destinationFrameOffset);
     }
 
     // Offset the pointers to the correct offset frame.
-    destinationL += destinationFrameOffset;
-    if (destinationR)
-        destinationR += destinationFrameOffset;
+    unsigned writeIndex = destinationFrameOffset;
 
     size_t bufferLength = buffer()->length();
     double bufferSampleRate = buffer()->sampleRate();
@@ -264,10 +252,6 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     if (m_virtualReadIndex >= endFrame)
         m_virtualReadIndex = startFrame; // reset to start
 
-    // Get pointers to the start of the sample buffer.
-    float* sourceL = m_buffer->getChannelData(0)->data();
-    float* sourceR = m_buffer->numberOfChannels() == 2 ? m_buffer->getChannelData(1)->data() : 0;
-    
     double pitchRate = totalPitchRate();
 
     // Get local copy.
@@ -275,6 +259,9 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
 
     // Render loop - reading from the source buffer to the destination using linear interpolation.
     int framesToProcess = numberOfFrames;
+
+    const float** sourceChannels = m_sourceChannels.get();
+    float** destinationChannels = m_destinationChannels.get();
 
     // Optimize for the very common case of playing back with pitchRate == 1.
     // We can avoid the linear interpolation.
@@ -285,20 +272,17 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
             int framesThisTime = min(framesToProcess, framesToEnd);
             framesThisTime = max(0, framesThisTime);
 
-            memcpy(destinationL, sourceL + readIndex, sizeof(*sourceL) * framesThisTime);
-            destinationL += framesThisTime;
-            if (isStereo) {
-                memcpy(destinationR, sourceR + readIndex, sizeof(*sourceR) * framesThisTime);
-                destinationR += framesThisTime;
-            }
+            for (unsigned i = 0; i < numberOfChannels; ++i) 
+                memcpy(destinationChannels[i] + writeIndex, sourceChannels[i] + readIndex, sizeof(float) * framesThisTime);
 
+            writeIndex += framesThisTime;
             readIndex += framesThisTime;
             framesToProcess -= framesThisTime;
 
             // Wrap-around.
             if (readIndex >= endFrame) {
                 readIndex -= deltaFrames;
-                if (renderSilenceAndFinishIfNotLooping(destinationL, destinationR, framesToProcess))
+                if (renderSilenceAndFinishIfNotLooping(bus, writeIndex, framesToProcess))
                     break;
             }
         }
@@ -324,17 +308,17 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
                 break;
 
             // Linear interpolation.
-            double sampleL1 = sourceL[readIndex];
-            double sampleL2 = sourceL[readIndex2];
-            double sampleL = (1.0 - interpolationFactor) * sampleL1 + interpolationFactor * sampleL2;
-            *destinationL++ = narrowPrecisionToFloat(sampleL);
+            for (unsigned i = 0; i < numberOfChannels; ++i) {
+                float* destination = destinationChannels[i];
+                const float* source = sourceChannels[i];
 
-            if (isStereo) {
-                double sampleR1 = sourceR[readIndex];
-                double sampleR2 = sourceR[readIndex2];
-                double sampleR = (1.0 - interpolationFactor) * sampleR1 + interpolationFactor * sampleR2;
-                *destinationR++ = narrowPrecisionToFloat(sampleR);
+                double sample1 = source[readIndex];
+                double sample2 = source[readIndex2];
+                double sample = (1.0 - interpolationFactor) * sample1 + interpolationFactor * sample2;
+
+                destination[writeIndex] = narrowPrecisionToFloat(sample);
             }
+            writeIndex++;
 
             virtualReadIndex += pitchRate;
 
@@ -342,7 +326,7 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
             if (virtualReadIndex >= endFrame) {
                 virtualReadIndex -= deltaFrames;
 
-                if (renderSilenceAndFinishIfNotLooping(destinationL, destinationR, framesToProcess))
+                if (renderSilenceAndFinishIfNotLooping(bus, writeIndex, framesToProcess))
                     break;
             }
         }
@@ -379,11 +363,13 @@ bool AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
     if (buffer) {
         // Do any necesssary re-configuration to the buffer's number of channels.
         unsigned numberOfChannels = buffer->numberOfChannels();
-        if (!numberOfChannels || numberOfChannels > 2) {
-            // FIXME: implement multi-channel greater than stereo.
-            return false;
-        }
         output(0)->setNumberOfChannels(numberOfChannels);
+
+        m_sourceChannels = adoptArrayPtr(new const float* [numberOfChannels]);
+        m_destinationChannels = adoptArrayPtr(new float* [numberOfChannels]);
+
+        for (unsigned i = 0; i < numberOfChannels; ++i) 
+            m_sourceChannels[i] = buffer->getChannelData(i)->data();
     }
 
     m_virtualReadIndex = 0;

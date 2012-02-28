@@ -1,3 +1,19 @@
+2012-02-27  Wei James  <james.wei@intel.com>
+
+        Multi-Channel support in AudioBufferSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=79202
+
+        Reviewed by Chris Rogers.
+
+        Test: webaudio/audiobuffersource-multi-channels.html
+
+        * webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping):
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+        (WebCore::AudioBufferSourceNode::setBuffer):
+        * webaudio/AudioBufferSourceNode.h:
+        (AudioBufferSourceNode):
+
 2012-02-27  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Upstream the BlackBerry change to platform/graphics/IntRect.h

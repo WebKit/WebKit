@@ -48,17 +48,16 @@ function runTest() {
         testFailed("Stereo buffer can not be set.");
     }
     
-    // Check a few buffers with more than two channels and check for failure.
-    // (for now the implementation will only work with mono and stereo buffers)
+    // Check buffers with more than two channels.
     for (var i = 3; i < 10; ++i) {
         try {
             var buffer = context.createBuffer(i, 1024, context.sampleRate);
             source.buffer = buffer;
-            var message = i + " channel buffer should not be settable.";
-            testFailed(message);
-        } catch(e) {
-            var message = i + " channel buffer is not settable.";
+            var message = i + " channels buffer can be set.";
             testPassed(message);
+        } catch(e) {
+            var message = i + " channels buffer can not be set.";
+            testFailed(message);
         }
     }
         

@@ -30,6 +30,7 @@
 #include "AudioGain.h"
 #include "AudioPannerNode.h"
 #include "AudioSourceNode.h"
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
@@ -87,10 +88,15 @@ private:
 
     void renderFromBuffer(AudioBus*, unsigned destinationFrameOffset, size_t numberOfFrames);
 
-    inline bool renderSilenceAndFinishIfNotLooping(float* destinationL, float* destinationR, size_t framesToProcess);
+    // Render silence starting from "index" frame in AudioBus.
+    inline bool renderSilenceAndFinishIfNotLooping(AudioBus*, unsigned index, size_t framesToProcess);
 
     // m_buffer holds the sample data which this node outputs.
     RefPtr<AudioBuffer> m_buffer;
+
+    // Pointers for the buffer and destination.
+    OwnArrayPtr<const float*> m_sourceChannels;
+    OwnArrayPtr<float*> m_destinationChannels;
 
     // Used for the "gain" and "playbackRate" attributes.
     RefPtr<AudioGain> m_gain;
