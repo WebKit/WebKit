@@ -63,7 +63,6 @@ public:
 private:
     explicit QtWebContext(WebContext*);
 
-    void initialize();
     void initializeContextInjectedBundleClient();
 
     static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void*);

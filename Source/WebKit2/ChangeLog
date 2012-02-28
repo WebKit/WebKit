@@ -1,3 +1,22 @@
+2012-02-28  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Initialize QtWebContext as much as we can in its constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=79809
+
+        Reviewed by Tor Arne Vestbø.
+
+        The icon database wouldn't be initialized on the QtWebContext while in WebKitTestRunner
+        since it doesn't call the initialize method on it after creating it.
+        Remove the initialize method, move the download manager and icon database initialization
+        in the constructor and call initializeContextInjectedBundleClient directly in
+        defaultContext to prevent overriding WKTR's injected bundle client.
+
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit::QtWebContext::QtWebContext):
+        (WebKit::QtWebContext::defaultContext):
+        * UIProcess/qt/QtWebContext.h:
+        (QtWebContext):
+
 2012-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Inconsistent state of WebKitWebView when replacing content in WebKit2

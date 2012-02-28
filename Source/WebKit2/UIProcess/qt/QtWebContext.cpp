@@ -45,9 +45,11 @@ static HashMap<uint64_t, QtWebContext*> contextMap;
 QtWebContext* QtWebContext::s_defaultContext = 0;
 
 QtWebContext::QtWebContext(WebContext* context)
-    : m_context(context)
+    : m_contextID(generateContextID())
+    , m_context(context)
+    , m_downloadManager(adoptPtr(new QtDownloadManager(context)))
+    , m_iconDatabase(adoptPtr(new QtWebIconDatabaseClient(this)))
 {
-    m_contextID = generateContextID();
     contextMap.set(m_contextID, this);
 }
 
@@ -72,7 +74,8 @@ PassRefPtr<QtWebContext> QtWebContext::defaultContext()
     RefPtr<WebContext> context = WebContext::sharedProcessContext();
     RefPtr<QtWebContext> defaultContext = QtWebContext::create(context.get());
     s_defaultContext = defaultContext.get();
-    defaultContext->initialize();
+    // Make sure that this doesn't get called in WebKitTestRunner (defaultContext isn't used there).
+    defaultContext->initializeContextInjectedBundleClient();
 
     return defaultContext.release();
 }
@@ -105,13 +108,6 @@ void QtWebContext::postMessageToNavigatorQtObject(WebPageProxy* webPageProxy, co
 QtWebContext* QtWebContext::contextByID(uint64_t id)
 {
     return contextMap.get(id);
-}
-
-void QtWebContext::initialize()
-{
-    m_downloadManager = adoptPtr(new QtDownloadManager(m_context.get()));
-    m_iconDatabase = adoptPtr(new QtWebIconDatabaseClient(this));
-    initializeContextInjectedBundleClient();
 }
 
 void QtWebContext::initializeContextInjectedBundleClient()
