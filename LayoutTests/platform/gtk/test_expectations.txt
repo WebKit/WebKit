@@ -66,6 +66,7 @@ BUGWK71777 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 BUGWK71655 : fast/frames/flattening/frameset-flattening-simple.html = PASS TEXT
 
 BUGWK72698 : media/audio-garbage-collect.html = PASS TEXT
+BUGWK79760 : media/video-poster-blocked-by-willsendrequest.html = PASS TEXT
 
 BUGWK72694 : fast/canvas/canvas-lineWidth.html = PASS TIMEOUT TEXT
 BUGWK73772 : fast/table/multiple-captions-display.xhtml = PASS TEXT
