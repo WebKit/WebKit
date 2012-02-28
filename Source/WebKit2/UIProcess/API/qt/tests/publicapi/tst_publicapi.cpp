@@ -83,10 +83,9 @@ static QStringList expectedAPI = QStringList()
     << "QWebLoadRequest.errorDomain --> QQuickWebView::ErrorDomain"
     << "QWebLoadRequest.errorCode --> int"
     << "QWebNavigationRequest.url --> QUrl"
-    << "QWebNavigationRequest.originatingUrl --> QUrl"
-    << "QWebNavigationRequest.button --> int"
-    << "QWebNavigationRequest.modifiers --> int"
-    << "QWebNavigationRequest.action --> int"
+    << "QWebNavigationRequest.mouseButton --> int"
+    << "QWebNavigationRequest.keyboardModifiers --> int"
+    << "QWebNavigationRequest.action --> QQuickWebView::NavigationRequestAction"
     << "QWebNavigationRequest.navigationType --> QQuickWebView::NavigationType"
     << "QWebNavigationRequest.actionChanged() --> void"
     ;

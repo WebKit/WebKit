@@ -41,12 +41,11 @@ QtWebPagePolicyClient::QtWebPagePolicyClient(WKPageRef pageRef, QQuickWebView* w
     WKPageSetPagePolicyClient(pageRef, &policyClient);
 }
 
-void QtWebPagePolicyClient::decidePolicyForNavigationAction(const QUrl& url, const QUrl& originatingUrl, Qt::MouseButton mouseButton,
-                                                            Qt::KeyboardModifiers keyboardModifiers, QQuickWebView::NavigationType navigationType, WKFramePolicyListenerRef listener)
+void QtWebPagePolicyClient::decidePolicyForNavigationAction(const QUrl& url, Qt::MouseButton mouseButton, Qt::KeyboardModifiers keyboardModifiers, QQuickWebView::NavigationType navigationType, WKFramePolicyListenerRef listener)
 {
     // NOTE: even though the C API (and the WebKit2 IPC) supports an asynchronous answer, this is not currently working.
     // We are expected to call the listener immediately. See the patch for https://bugs.webkit.org/show_bug.cgi?id=53785.
-    QWebNavigationRequest navigationRequest(url, originatingUrl, mouseButton, keyboardModifiers, navigationType);
+    QWebNavigationRequest navigationRequest(url, mouseButton, keyboardModifiers, navigationType);
     emit m_webView->navigationRequested(&navigationRequest);
 
     switch (navigationRequest.action()) {
@@ -123,9 +122,8 @@ void QtWebPagePolicyClient::decidePolicyForNavigationAction(WKPageRef, WKFrameRe
 {
     WKRetainPtr<WKURLRef> frameURL(AdoptWK, WKFrameCopyURL(frame));
     WKRetainPtr<WKURLRef> requestURL(AdoptWK, WKURLRequestCopyURL(request));
-    QUrl qUrlFrame = WKURLCopyQUrl(frameURL.get());
     QUrl qUrl = WKURLCopyQUrl(requestURL.get());
-    toQtWebPagePolicyClient(clientInfo)->decidePolicyForNavigationAction(qUrl, qUrlFrame, toQtMouseButton(mouseButton), toQtKeyboardModifiers(modifiers), toQuickWebViewNavigationType(navigationType), listener);
+    toQtWebPagePolicyClient(clientInfo)->decidePolicyForNavigationAction(qUrl, toQtMouseButton(mouseButton), toQtKeyboardModifiers(modifiers), toQuickWebViewNavigationType(navigationType), listener);
 }
 
 void QtWebPagePolicyClient::decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void*)

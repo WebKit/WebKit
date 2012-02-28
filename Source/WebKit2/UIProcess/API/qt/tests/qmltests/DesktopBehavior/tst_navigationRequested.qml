@@ -8,7 +8,6 @@ Item {
     property int expectedLength: 0
     property int totalBytes: 0
     property bool shouldDownload: false
-    property string originatingUrl: ""
     property url beginUrl: Qt.resolvedUrl("../common/test2.html")
     property url endUrl: Qt.resolvedUrl("../common/test1.html")
 
@@ -22,11 +21,10 @@ Item {
         onNavigationRequested: {
             if (shouldDownload)
                 request.action = WebViewExperimental.DownloadRequest
-            else if (request.button == Qt.MiddleButton && request.modifiers & Qt.ControlModifier) {
+            else if (request.mouseButton == Qt.MiddleButton && request.keyboardModifiers & Qt.ControlModifier) {
                 otherWebView.load(request.url)
                 request.action = WebView.IgnoreRequest
             }
-            originatingUrl = request.originatingUrl
         }
 
         experimental.onDownloadRequested: {
@@ -78,7 +76,6 @@ Item {
             downloadSpy.clear()
             downloadFinishedSpy.clear()
             shouldDownload = false
-            originatingUrl = ""
         }
 
         function test_usePolicy() {
@@ -114,16 +111,6 @@ Item {
             downloadFinishedSpy.wait()
             compare(downloadFinishedSpy.count, 1)
             compare(totalBytes, expectedLength)
-        }
-
-        function test_originatingUrl() {
-            webView.load(beginUrl)
-            verify(webView.waitForLoadSucceeded())
-            mouseClick(webView, 100, 100, Qt.LeftButton)
-            verify(webView.waitForLoadSucceeded())
-            compare(webView.title, "Test page 1")
-            compare(webView.url, endUrl)
-            compare(originatingUrl, beginUrl)
         }
     }
 }

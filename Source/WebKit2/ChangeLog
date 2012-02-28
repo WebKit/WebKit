@@ -1,3 +1,30 @@
+2012-02-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] API changes to QWebNavigationRequest
+        https://bugs.webkit.org/show_bug.cgi?id=78821
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Changes discussed in API review at Szeged: rename 'button' to 'mouseButton',
+        rename 'modifiers' to 'keyboardModifiers', remove 'originatingUrl' and
+        use the enum type for 'action'.
+
+        * UIProcess/API/qt/qwebnavigationrequest.cpp:
+        (QWebNavigationRequestPrivate::QWebNavigationRequestPrivate):
+        (QWebNavigationRequestPrivate):
+        (QWebNavigationRequest::QWebNavigationRequest):
+        (QWebNavigationRequest::setAction):
+        (QWebNavigationRequest::mouseButton):
+        (QWebNavigationRequest::keyboardModifiers):
+        (QWebNavigationRequest::action):
+        * UIProcess/API/qt/qwebnavigationrequest_p.h:
+        * UIProcess/API/qt/tests/publicapi/tst_publicapi.cpp:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_navigationRequested.qml:
+        * UIProcess/qt/QtWebPagePolicyClient.cpp:
+        (QtWebPagePolicyClient::decidePolicyForNavigationAction):
+        * UIProcess/qt/QtWebPagePolicyClient.h:
+        (QtWebPagePolicyClient):
+
 2012-02-28  Shinya Kawanaka  <shinyak@chromium.org>
 
         Element should be able to have multiple shadow roots.

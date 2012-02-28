@@ -31,24 +31,21 @@ class QWebNavigationRequestPrivate;
 class QWEBKIT_EXPORT QWebNavigationRequest : public QObject {
     Q_OBJECT
     Q_PROPERTY(QUrl url READ url CONSTANT FINAL)
-    Q_PROPERTY(QUrl originatingUrl READ originatingUrl CONSTANT FINAL)
-    Q_PROPERTY(int button READ button CONSTANT FINAL)
-    Q_PROPERTY(int modifiers READ modifiers CONSTANT FINAL)
-    Q_PROPERTY(int action READ action WRITE setAction NOTIFY actionChanged FINAL)
+    Q_PROPERTY(int mouseButton READ mouseButton CONSTANT FINAL)
+    Q_PROPERTY(int keyboardModifiers READ keyboardModifiers CONSTANT FINAL)
+    Q_PROPERTY(QQuickWebView::NavigationRequestAction action READ action WRITE setAction NOTIFY actionChanged FINAL)
     Q_PROPERTY(QQuickWebView::NavigationType navigationType READ navigationType CONSTANT FINAL)
 
 public:
-    QWebNavigationRequest(const QUrl& url, const QUrl& originatingUrl, Qt::MouseButton button, Qt::KeyboardModifiers modifiers,
-                          QQuickWebView::NavigationType navigationType, QObject* parent = 0);
+    QWebNavigationRequest(const QUrl& url, Qt::MouseButton mouseButton, Qt::KeyboardModifiers keyboardModifiers, QQuickWebView::NavigationType navigationType, QObject* parent = 0);
     ~QWebNavigationRequest();
 
     QUrl url() const;
-    QUrl originatingUrl() const;
-    int button() const;
-    int modifiers() const;
-    int action() const;
+    int mouseButton() const;
+    int keyboardModifiers() const;
+    QQuickWebView::NavigationRequestAction action() const;
 
-    void setAction(int action);
+    void setAction(QQuickWebView::NavigationRequestAction action);
     QQuickWebView::NavigationType navigationType() const;
 
 Q_SIGNALS:
