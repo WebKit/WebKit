@@ -46,6 +46,7 @@
 #include "InspectorValues.h"
 #include "Node.h"
 #include "SVGNames.h"
+#include "StyleRule.h"
 #include "StyleSheetList.h"
 #include "WebKitCSSKeyframesRule.h"
 

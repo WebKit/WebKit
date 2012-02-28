@@ -461,6 +461,7 @@ SOURCES += \
     css/ShadowValue.cpp \
     css/StyleMedia.cpp \
     css/StylePropertySet.cpp \
+    css/StyleRule.cpp \
     css/StyleSheet.cpp \
     css/StyleSheetList.cpp \
     css/WebKitCSSFilterValue.cpp \
@@ -1594,6 +1595,7 @@ HEADERS += \
     css/ShadowValue.h \
     css/StyleMedia.h \
     css/StylePropertySet.h \
+    css/StyleRule.h \
     css/StyleSheet.h \
     css/StyleSheetList.h \
     css/WebKitCSSFilterValue.h \

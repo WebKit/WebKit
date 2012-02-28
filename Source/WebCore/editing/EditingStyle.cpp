@@ -44,6 +44,7 @@
 #include "QualifiedName.h"
 #include "RenderStyle.h"
 #include "StylePropertySet.h"
+#include "StyleRule.h"
 #include "StyledElement.h"
 #include "htmlediting.h"
 #include "visible_units.h"

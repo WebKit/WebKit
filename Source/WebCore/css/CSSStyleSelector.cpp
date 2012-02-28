@@ -96,6 +96,7 @@
 #include "SkewTransformOperation.h"
 #include "StyleCachedImage.h"
 #include "StylePendingImage.h"
+#include "StyleRule.h"
 #include "StyleGeneratedImage.h"
 #include "StyleSheetList.h"
 #include "Text.h"

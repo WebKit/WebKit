@@ -508,6 +508,7 @@ SET(WebCore_SOURCES
     css/ShadowValue.cpp
     css/StyleMedia.cpp
     css/StylePropertySet.cpp
+    css/StyleRule.cpp
     css/StyleSheet.cpp
     css/StyleSheetList.cpp
     css/WebKitCSSFilterValue.cpp

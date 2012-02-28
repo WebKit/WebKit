@@ -52,6 +52,7 @@
 #include "Page.h"
 #include "StyleCachedImage.h"
 #include "StyleImage.h"
+#include "StyleRule.h"
 #include "Text.h"
 #include "TextEncoding.h"
 #include <wtf/text/CString.h>

@@ -1,3 +1,35 @@
+2012-02-28  Antti Koivisto  <antti@apple.com>
+
+        Give StyleRule files of its own
+        https://bugs.webkit.org/show_bug.cgi?id=79778
+
+        Totally rubber-stamped by Andreas Kling.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        * css/CSSStyleRule.cpp:
+        (WebCore):
+        (WebCore::CSSStyleRule::style):
+        * css/CSSStyleRule.h:
+        (WebCore):
+        (CSSStyleRule):
+        * css/CSSStyleSelector.cpp:
+        * css/CSSStyleSheet.cpp:
+        * css/StyleRule.cpp: Copied from Source/WebCore/css/CSSStyleRule.cpp.
+        (WebCore):
+        * css/StyleRule.h: Copied from Source/WebCore/css/CSSStyleRule.h.
+        (WebCore):
+        * editing/EditingStyle.cpp:
+        * inspector/InspectorCSSAgent.cpp:
+        * inspector/InspectorInstrumentation.cpp:
+        * inspector/InspectorStyleSheet.cpp:
+        * page/PageSerializer.cpp:
+
 2012-02-28  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: remove window aspects from the timeline presentation model.

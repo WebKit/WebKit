@@ -35678,6 +35678,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\StyleRule.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\StyleRule.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\StyleSheet.cpp"
 				>
 			</File>

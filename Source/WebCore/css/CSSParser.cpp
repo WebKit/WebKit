@@ -74,6 +74,7 @@
 #include "Settings.h"
 #include "ShadowValue.h"
 #include "StylePropertySet.h"
+#include "StyleRule.h"
 #if ENABLE(CSS_FILTERS)
 #include "WebKitCSSFilterValue.h"
 #endif

@@ -1492,6 +1492,8 @@ webcore_sources += \
 	Source/WebCore/css/StyleMedia.h \
 	Source/WebCore/css/StylePropertySet.cpp \
 	Source/WebCore/css/StylePropertySet.h \
+	Source/WebCore/css/StyleRule.cpp \
+	Source/WebCore/css/StyleRule.h \
 	Source/WebCore/css/StyleSheet.cpp \
 	Source/WebCore/css/StyleSheet.h \
 	Source/WebCore/css/StyleSheetList.cpp \

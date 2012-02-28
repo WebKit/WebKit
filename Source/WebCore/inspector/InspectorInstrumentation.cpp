@@ -63,6 +63,7 @@
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptProfile.h"
+#include "StyleRule.h"
 #include "WorkerContext.h"
 #include "WorkerThread.h"
 #include "XMLHttpRequest.h"

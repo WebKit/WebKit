@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "HTMLElement.h"
 #include "StylePropertySet.h"
+#include "StyleRule.h"
 #if USE(JSC)
 #include "Completion.h"
 #include "JSGlobalObject.h"

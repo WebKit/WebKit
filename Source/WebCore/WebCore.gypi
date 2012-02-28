@@ -2161,6 +2161,8 @@
             'css/StyleMedia.h',
             'css/StylePropertySet.cpp',
             'css/StylePropertySet.h',
+            'css/StyleRule.cpp',
+            'css/StyleRule.h',
             'css/StyleSheet.cpp',
             'css/StyleSheet.h',
             'css/StyleSheetList.cpp',

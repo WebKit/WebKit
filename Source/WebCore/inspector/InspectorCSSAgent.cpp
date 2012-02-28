@@ -46,6 +46,7 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "StylePropertySet.h"
+#include "StyleRule.h"
 #include "StyleSheetList.h"
 
 #include <wtf/CurrentTime.h>

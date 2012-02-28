@@ -34,6 +34,7 @@
 #include "Node.h"
 #include "SVGNames.h"
 #include "SecurityOrigin.h"
+#include "StyleRule.h"
 #include "TextEncoding.h"
 #include <wtf/Deque.h>
 

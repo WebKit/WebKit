@@ -22,41 +22,15 @@
 #include "config.h"
 #include "CSSStyleRule.h"
 
-#include "CSSPageRule.h"
 #include "CSSParser.h"
 #include "CSSSelector.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "StylePropertySet.h"
-#include "StyledElement.h"
-#include "StyleSheet.h"
-
+#include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-
-StyleRule::StyleRule(int line, CSSStyleRule* wrapper)
-    : m_sourceLine(line)
-    , m_cssomWrapper(wrapper)
-{
-}
-    
-StyleRule::~StyleRule()
-{
-}
-    
-void StyleRule::addSubresourceStyleURLs(ListHashSet<KURL>& urls, CSSStyleSheet* styleSheet) 
-{
-    if (!m_properties)
-        return;
-    m_properties->addSubresourceStyleURLs(urls, styleSheet);
-}
-    
-CSSStyleRule* StyleRule::ensureCSSStyleRule() const
-{
-    ASSERT(m_cssomWrapper);
-    return m_cssomWrapper;
-}
 
 CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int line)
     : CSSRule(parent, CSSRule::STYLE_RULE)
@@ -69,6 +43,11 @@ CSSStyleRule::~CSSStyleRule()
     if (m_styleRule->properties())
         m_styleRule->properties()->clearParentRule(this);
     cleanup();
+}
+
+CSSStyleDeclaration* CSSStyleRule::style() const
+{
+    return m_styleRule->properties()->ensureRuleCSSStyleDeclaration(this);
 }
 
 typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;
