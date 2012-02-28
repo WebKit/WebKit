@@ -1,3 +1,15 @@
+2012-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Windows and Linux Chromium perf bots
+        https://bugs.webkit.org/show_bug.cgi?id=79418
+
+        Reviewed by Tony Chang.
+
+        Add Chromium Win and Linux perf bots. Also replace Chromium Mac by
+        the dedicated perf bot slave (uses the same hardware).
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-02-27  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Undefined variable 'current' when running chromium_android.py

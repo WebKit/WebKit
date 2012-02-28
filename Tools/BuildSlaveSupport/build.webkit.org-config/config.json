@@ -55,12 +55,15 @@
 
                     { "name": "google-windows-1", "platform": "chromium-win" },
                     { "name": "google-windows-2", "platform": "chromium-win" },
+                    { "name": "google-windows-perf", "platform": "chromium-win" },
                     { "name": "google-mac-1", "platform": "chromium-mac" },
                     { "name": "google-mac-2", "platform": "chromium-mac" },
                     { "name": "google-mac-3", "platform": "chromium-mac" },
                     { "name": "google-mac-4", "platform": "chromium-mac" },
+                    { "name": "google-mac-perf", "platform": "chromium-mac" },
                     { "name": "google-linux-1", "platform": "chromium-linux" },
                     { "name": "google-linux-2", "platform": "chromium-linux" },
+                    { "name": "google-linux-perf", "platform": "chromium-linux" },
                     { "name": "google-linux-android", "platform": "chromium-android" },
                     { "name": "google-linux-flexbox", "platform": "chromium-linux" },
 
@@ -232,6 +235,11 @@
                       "slavenames": ["google-windows-2"]
                     },
                     {
+                      "name": "Chromium Win Release (Perf)", "type": "BuildAndPerfTest", "builddir": "chromium-win-perf-tests",
+                      "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-windows-perf"]
+                    },
+                    {
                       "name": "Chromium Mac Release", "type": "Build", "builddir": "chromium-mac-release",
                       "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-mac-1", "google-mac-3"]
@@ -239,7 +247,12 @@
                     {
                       "name": "Chromium Mac Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-mac-release-tests",
                       "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["google-mac-2"]
+                      "slavenames": ["google-mac-2", "google-mac-4"]
+                    },
+                    {
+                      "name": "Chromium Mac Release (Perf)", "type": "BuildAndPerfTest", "builddir": "chromium-mac-perf-tests",
+                      "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-mac-perf"]
                     },
                     {
                       "name": "Chromium Linux Release", "type": "Build", "builddir": "chromium-linux-release",
@@ -252,6 +265,11 @@
                       "slavenames": ["google-linux-2"]
                     },
                     {
+                      "name": "Chromium Linux Release (Perf)", "type": "BuildAndPerfTest", "builddir": "chromium-linux-perf-tests",
+                      "platform": "chromium-linx", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-linx-perf"]
+                    },
+                    {
                       "name": "Chromium Linux Release (Grid Layout)", "type": "NewBuildAndTest", "builddir": "chromium-linux-flexbox",
                       "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-linux-flexbox"]
@@ -260,11 +278,6 @@
                       "name": "Chromium Android Release", "type": "Build", "builddir": "chromium-linux-android",
                       "platform": "chromium-android", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-linux-android"]
-                    },
-                    {
-                      "name": "Chromium Mac Release (Perf)", "type": "BuildAndPerfTest", "builddir": "chromium-mac-perf-tests",
-                      "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["google-mac-4"]
                     },
                     {
                       "name": "WinCairo Release", "type": "BuildAndTest", "builddir": "win-cairo-release",
@@ -288,10 +301,11 @@
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux 64-bit Release (Perf)", "Qt Linux ARMv7 Release",
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release",
                                        "Qt Linux MIPS Release", "Qt Linux SH4 Release",
-                                       "Chromium Win Release", "Chromium Win Release (Tests)", "Chromium Mac Release", "Chromium Mac Release (Tests)",
-                                       "Chromium Linux Release", "Chromium Linux Release (Tests)", "Chromium Linux Release (Grid Layout)",
-                                       "Chromium Android Release", "Chromium Mac Release (Perf)", "WinCairo Release", "WinCE Release (Build)",
-                                       "EFL Linux Release"]
+                                       "Chromium Win Release", "Chromium Win Release (Tests)", "Chromium Win Release (Perf)",
+                                       "Chromium Mac Release", "Chromium Mac Release (Tests)", "Chromium Mac Release (Perf)",
+                                       "Chromium Linux Release", "Chromium Linux Release (Tests)", "Chromium Linux Release (Perf)",
+                                       "Chromium Linux Release (Grid Layout)", "Chromium Android Release",
+                                       "WinCairo Release", "WinCE Release (Build)", "EFL Linux Release"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-snowleopard", "branch": "trunk", "treeStableTimer": 45.0, 
                       "builderNames": ["SnowLeopard Intel Release (Build)", "SnowLeopard Intel Debug (Build)"] 
