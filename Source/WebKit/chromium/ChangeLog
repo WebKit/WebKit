@@ -1,3 +1,10 @@
+2012-02-27  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Unreviewed gardening, Disable TransparencyWin.OpaqueCompositeLayerPixel
+
+        * tests/TransparencyWinTest.cpp:
+        (WebCore::TEST):
+
 2012-02-27  Kinuko Yasuda  <kinuko@chromium.org>
 
         [chromium] Add createSnapshotFile API to WebFileSystem to create File snapshots for filesystem files

@@ -303,7 +303,7 @@ TEST(TransparencyWin, DISABLED_WhiteLayerPixelTest)
     EXPECT_EQ(Color(Color::white), getPixelAt(src->context(), 4, 4));
 }
 
-TEST(TransparencyWin, OpaqueCompositeLayerPixel)
+TEST(TransparencyWin, DISABLED_OpaqueCompositeLayerPixel)
 {
     Color red(0xFFFF0000), darkRed(0xFFBF0000);
     Color green(0xFF00FF00);
