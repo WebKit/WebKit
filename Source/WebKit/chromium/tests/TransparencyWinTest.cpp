@@ -98,7 +98,7 @@ static std::ostream& operator<<(std::ostream& out, const Color& c)
     return out;
 }
 
-TEST(TransparencyWin, NoLayer)
+TEST(TransparencyWin, DISABLED_NoLayer)
 {
     OwnPtr<ImageBuffer> src(ImageBuffer::create(IntSize(17, 16), ColorSpaceDeviceRGB));
 
@@ -137,7 +137,7 @@ TEST(TransparencyWin, NoLayer)
     src->context()->restore();
 }
 
-TEST(TransparencyWin, WhiteLayer)
+TEST(TransparencyWin, DISABLED_WhiteLayer)
 {
     OwnPtr<ImageBuffer> src(ImageBuffer::create(IntSize(16, 16), ColorSpaceDeviceRGB));
 
@@ -189,7 +189,7 @@ TEST(TransparencyWin, WhiteLayer)
     src->context()->restore();
 }
 
-TEST(TransparencyWin, TextComposite)
+TEST(TransparencyWin, DISABLED_TextComposite)
 {
     OwnPtr<ImageBuffer> src(ImageBuffer::create(IntSize(16, 16), ColorSpaceDeviceRGB));
 
@@ -208,7 +208,7 @@ TEST(TransparencyWin, TextComposite)
     }
 }
 
-TEST(TransparencyWin, OpaqueCompositeLayer)
+TEST(TransparencyWin, DISABLED_OpaqueCompositeLayer)
 {
     OwnPtr<ImageBuffer> src(ImageBuffer::create(IntSize(16, 16), ColorSpaceDeviceRGB));
 
@@ -277,7 +277,7 @@ TEST(TransparencyWin, OpaqueCompositeLayer)
     src->context()->restore();
 }
 
-TEST(TransparencyWin, WhiteLayerPixelTest)
+TEST(TransparencyWin, DISABLED_WhiteLayerPixelTest)
 {
     // Make a total transparent buffer, and draw the white layer inset by 1 px.
     OwnPtr<ImageBuffer> src(ImageBuffer::create(IntSize(16, 16), ColorSpaceDeviceRGB));
