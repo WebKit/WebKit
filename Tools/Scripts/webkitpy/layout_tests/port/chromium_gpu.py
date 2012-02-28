@@ -50,25 +50,7 @@ def _set_gpu_options(port, graphics_type='gpu'):
 
 
 def _default_tests_paths(port):
-    paths = []
-    if port.name() != 'chromium-gpu-mac-leopard':
-        # Only run tests requiring accelerated compositing on platforms that
-        # support it.
-        # FIXME: we should add the above paths here as well but let's test
-        # the waters with media first.
-        paths += ['media']
-
-    paths += ['fast/canvas', 'canvas/philip']
-
-    if not paths:
-        # FIXME: This is a hack until we can turn off the webkit_gpu
-        # tests on the bots. If paths is empty, port.tests()
-        # finds *everything*. However, we have to return something,
-        # or NRWT thinks there's something wrong. So, we return a single
-        # short directory. See https://bugs.webkit.org/show_bug.cgi?id=72498.
-        paths = ['fast/html']
-
-    return paths
+    return ['fast/canvas', 'canvas/philip']
 
 
 class ChromiumGpuAndroidPort(chromium_android.ChromiumAndroidPort):

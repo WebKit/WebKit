@@ -109,8 +109,7 @@ class ChromiumGpuTest(unittest.TestCase):
         def test_paths(port_name):
             return chromium_gpu._default_tests_paths(PortFactory(MockSystemHost()).get(port_name))
 
-        self.assertEqual(test_paths('chromium-gpu-linux'), ['media', 'fast/canvas', 'canvas/philip'])
-        self.assertEqual(test_paths('chromium-gpu-mac-leopard'), ['fast/canvas', 'canvas/philip'])
+        self.assertEqual(test_paths('chromium-gpu-linux'), ['fast/canvas', 'canvas/philip'])
 
     def test_test_files(self):
         host = MockSystemHost()
@@ -118,7 +117,6 @@ class ChromiumGpuTest(unittest.TestCase):
             '/mock-checkout/LayoutTests/canvas/philip/test.html': '',
             '/mock-checkout/LayoutTests/fast/canvas/test.html': '',
             '/mock-checkout/LayoutTests/fast/html/test.html': '',
-            '/mock-checkout/LayoutTests/media/test.html': '',
             '/mock-checkout/LayoutTests/foo/bar.html': '',
         }
         host.filesystem = MockFileSystem(files)
@@ -126,8 +124,7 @@ class ChromiumGpuTest(unittest.TestCase):
         def test_paths(port_name):
             return PortFactory(host).get(port_name).tests([])
 
-        self.assertEqual(test_paths('chromium-gpu-linux'), set(['canvas/philip/test.html', 'fast/canvas/test.html', 'media/test.html']))
-        self.assertEqual(test_paths('chromium-gpu-mac-leopard'), set(['canvas/philip/test.html', 'fast/canvas/test.html']))
+        self.assertEqual(test_paths('chromium-gpu-linux'), set(['canvas/philip/test.html', 'fast/canvas/test.html']))
 
 
 if __name__ == '__main__':

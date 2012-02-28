@@ -1,3 +1,19 @@
+2012-02-27  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove media tests from ChromiumGpu configurations
+        https://bugs.webkit.org/show_bug.cgi?id=79720
+
+        Reviewed by Adam Barth.
+
+        We no longer need to run the media/ tests in both GPU and non-GPU configurations since we can exercise the GPU
+        composited playback path via tests in the compositing/ directory.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        (_default_tests_paths):
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        (ChromiumGpuTest.test_default_tests_paths):
+        (ChromiumGpuTest.test_test_files):
+
 2012-02-27  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: log multiline stderr/crash output properly
