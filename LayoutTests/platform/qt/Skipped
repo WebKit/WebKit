@@ -2656,8 +2656,3 @@ fast/ruby/text-decoration-in-descendants-ruby.html
 # [Qt] transitions/cancel-transition.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=79564
 transitions/cancel-transition.html
-
-# Printed font-size should not be dependant on zoom level
-# New test introduced in r109073 fails on Qt
-# https://bugs.webkit.org/show_bug.cgi?id=79717
-printing/zoomed-document.html
