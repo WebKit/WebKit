@@ -392,6 +392,7 @@ css3/filters/effect-invert-hw.html
 css3/filters/effect-opacity-hw.html
 css3/filters/effect-saturate-hw.html
 css3/filters/effect-sepia-hw.html
+css3/filters/custom
 
 # Unskipped on Qt5, but still fail on qt-wk2 platform
 editing/input/emacs-ctrl-o.html

@@ -3047,10 +3047,10 @@ BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical.htm
 BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds.html = PASS FAIL MISSING
 
 // CSS custom() filters are not currently supported
-BUGWK71392 : css3/filters/missing-custom-filter-shader.html = FAIL
-BUGWK71392 : css3/filters/custom-filter-property-computed-style.html = FAIL
-BUGWK71392 : css3/filters/custom-filter-property-parsing.html = FAIL
-BUGWK71392 : css3/filters/custom-filter-shader-cache.html = FAIL
+BUGWK71392 : css3/filters/custom/missing-custom-filter-shader.html = FAIL
+BUGWK71392 : css3/filters/custom/custom-filter-property-computed-style.html = FAIL
+BUGWK71392 : css3/filters/custom/custom-filter-property-parsing.html = FAIL
+BUGWK71392 : css3/filters/custom/custom-filter-shader-cache.html = FAIL
 
 // <style scoped> not yet enabled.
 BUGWK49142 SKIP : fast/css/style-scoped = PASS

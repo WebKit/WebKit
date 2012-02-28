@@ -574,6 +574,7 @@ css3/filters/effect-invert-hw.html
 css3/filters/effect-opacity-hw.html
 css3/filters/effect-saturate-hw.html
 css3/filters/effect-sepia-hw.html
+css3/filters/custom
 
 # Should be moved to platform/mac <rdar://5621425>
 http/tests/misc/willCacheResponse-delegate-callback.html

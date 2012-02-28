@@ -1,0 +1,17 @@
+Test that the custom() function of the -webkit-filter property is not parsed when CSS Custom Filter is disabled.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Custom with vertex shader : custom(url(vertex.shader))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+Multiple with fragment shader : grayscale() custom(none url(fragment.shader)) sepia()
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
