@@ -252,7 +252,7 @@ void tst_QQuickWebView::loadProgress()
     QCOMPARE(webView()->loadProgress(), 0);
 
     webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
-    QSignalSpy loadProgressChangedSpy(webView(), SIGNAL(loadProgressChanged(int)));
+    QSignalSpy loadProgressChangedSpy(webView(), SIGNAL(loadProgressChanged()));
     QVERIFY(waitForLoadSucceeded(webView()));
 
     QVERIFY(loadProgressChangedSpy.count() >= 1);

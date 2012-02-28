@@ -35,10 +35,10 @@ public:
     int loadProgress() const { return m_loadProgress; }
 
 private:
-    void didCommitLoadForFrame(const QUrl&);
-    void didSameDocumentNavigationForFrame(const QUrl&);
-    void didReceiveTitleForFrame(const QString&);
     void didStartProvisionalLoadForFrame(const QUrl&);
+    void didCommitLoadForFrame();
+    void didSameDocumentNavigationForFrame();
+    void didReceiveTitleForFrame();
     void didFirstVisuallyNonEmptyLayoutForFrame();
     void didChangeBackForwardList();
 
