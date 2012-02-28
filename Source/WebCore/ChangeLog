@@ -1,3 +1,165 @@
+2012-02-27  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        [EFL] Initial implementation of GraphicsContext3DPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=62961
+
+        Reviewed by Noam Rosenthal.
+
+        This patch adds the GraphicsContext3DPrivate class using Evas_GL.
+        GraphicsContext3DPrivate delegates all GL function calls to Evas_GL_API.
+
+        * platform/graphics/efl/GraphicsContext3DPrivate.cpp: Added.
+        (WebCore):
+        (WebCore::GraphicsContext3DPrivate::create):
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::initialize):
+        (WebCore::GraphicsContext3DPrivate::createSurface):
+        (WebCore::GraphicsContext3DPrivate::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3DPrivate::makeContextCurrent):
+        (WebCore::GraphicsContext3DPrivate::isGLES2Compliant):
+        (WebCore::GraphicsContext3DPrivate::activeTexture):
+        (WebCore::GraphicsContext3DPrivate::attachShader):
+        (WebCore::GraphicsContext3DPrivate::bindAttribLocation):
+        (WebCore::GraphicsContext3DPrivate::bindBuffer):
+        (WebCore::GraphicsContext3DPrivate::bindFramebuffer):
+        (WebCore::GraphicsContext3DPrivate::bindRenderbuffer):
+        (WebCore::GraphicsContext3DPrivate::bindTexture):
+        (WebCore::GraphicsContext3DPrivate::blendColor):
+        (WebCore::GraphicsContext3DPrivate::blendEquation):
+        (WebCore::GraphicsContext3DPrivate::blendEquationSeparate):
+        (WebCore::GraphicsContext3DPrivate::blendFunc):
+        (WebCore::GraphicsContext3DPrivate::blendFuncSeparate):
+        (WebCore::GraphicsContext3DPrivate::bufferData):
+        (WebCore::GraphicsContext3DPrivate::bufferSubData):
+        (WebCore::GraphicsContext3DPrivate::checkFramebufferStatus):
+        (WebCore::GraphicsContext3DPrivate::clear):
+        (WebCore::GraphicsContext3DPrivate::clearColor):
+        (WebCore::GraphicsContext3DPrivate::clearDepth):
+        (WebCore::GraphicsContext3DPrivate::clearStencil):
+        (WebCore::GraphicsContext3DPrivate::colorMask):
+        (WebCore::GraphicsContext3DPrivate::compileShader):
+        (WebCore::GraphicsContext3DPrivate::copyTexImage2D):
+        (WebCore::GraphicsContext3DPrivate::copyTexSubImage2D):
+        (WebCore::GraphicsContext3DPrivate::cullFace):
+        (WebCore::GraphicsContext3DPrivate::depthFunc):
+        (WebCore::GraphicsContext3DPrivate::depthMask):
+        (WebCore::GraphicsContext3DPrivate::depthRange):
+        (WebCore::GraphicsContext3DPrivate::detachShader):
+        (WebCore::GraphicsContext3DPrivate::disable):
+        (WebCore::GraphicsContext3DPrivate::disableVertexAttribArray):
+        (WebCore::GraphicsContext3DPrivate::drawArrays):
+        (WebCore::GraphicsContext3DPrivate::drawElements):
+        (WebCore::GraphicsContext3DPrivate::enable):
+        (WebCore::GraphicsContext3DPrivate::enableVertexAttribArray):
+        (WebCore::GraphicsContext3DPrivate::finish):
+        (WebCore::GraphicsContext3DPrivate::flush):
+        (WebCore::GraphicsContext3DPrivate::framebufferRenderbuffer):
+        (WebCore::GraphicsContext3DPrivate::framebufferTexture2D):
+        (WebCore::GraphicsContext3DPrivate::frontFace):
+        (WebCore::GraphicsContext3DPrivate::generateMipmap):
+        (WebCore::GraphicsContext3DPrivate::getActiveAttrib):
+        (WebCore::GraphicsContext3DPrivate::getActiveUniform):
+        (WebCore::GraphicsContext3DPrivate::getAttachedShaders):
+        (WebCore::GraphicsContext3DPrivate::getAttribLocation):
+        (WebCore::GraphicsContext3DPrivate::getBooleanv):
+        (WebCore::GraphicsContext3DPrivate::getBufferParameteriv):
+        (WebCore::GraphicsContext3DPrivate::getContextAttributes):
+        (WebCore::GraphicsContext3DPrivate::getError):
+        (WebCore::GraphicsContext3DPrivate::getFloatv):
+        (WebCore::GraphicsContext3DPrivate::getFramebufferAttachmentParameteriv):
+        (WebCore::GraphicsContext3DPrivate::getIntegerv):
+        (WebCore::GraphicsContext3DPrivate::getProgramiv):
+        (WebCore::GraphicsContext3DPrivate::getProgramInfoLog):
+        (WebCore::GraphicsContext3DPrivate::getRenderbufferParameteriv):
+        (WebCore::GraphicsContext3DPrivate::getShaderiv):
+        (WebCore::GraphicsContext3DPrivate::getShaderInfoLog):
+        (WebCore::GraphicsContext3DPrivate::getShaderSource):
+        (WebCore::GraphicsContext3DPrivate::getString):
+        (WebCore::GraphicsContext3DPrivate::getTexParameterfv):
+        (WebCore::GraphicsContext3DPrivate::getTexParameteriv):
+        (WebCore::GraphicsContext3DPrivate::getUniformfv):
+        (WebCore::GraphicsContext3DPrivate::getUniformiv):
+        (WebCore::GraphicsContext3DPrivate::getUniformLocation):
+        (WebCore::GraphicsContext3DPrivate::getVertexAttribfv):
+        (WebCore::GraphicsContext3DPrivate::getVertexAttribiv):
+        (WebCore::GraphicsContext3DPrivate::getVertexAttribOffset):
+        (WebCore::GraphicsContext3DPrivate::hint):
+        (WebCore::GraphicsContext3DPrivate::isBuffer):
+        (WebCore::GraphicsContext3DPrivate::isEnabled):
+        (WebCore::GraphicsContext3DPrivate::isFramebuffer):
+        (WebCore::GraphicsContext3DPrivate::isProgram):
+        (WebCore::GraphicsContext3DPrivate::isRenderbuffer):
+        (WebCore::GraphicsContext3DPrivate::isShader):
+        (WebCore::GraphicsContext3DPrivate::isTexture):
+        (WebCore::GraphicsContext3DPrivate::lineWidth):
+        (WebCore::GraphicsContext3DPrivate::linkProgram):
+        (WebCore::GraphicsContext3DPrivate::pixelStorei):
+        (WebCore::GraphicsContext3DPrivate::polygonOffset):
+        (WebCore::GraphicsContext3DPrivate::readPixels):
+        (WebCore::GraphicsContext3DPrivate::renderbufferStorage):
+        (WebCore::GraphicsContext3DPrivate::sampleCoverage):
+        (WebCore::GraphicsContext3DPrivate::scissor):
+        (WebCore::GraphicsContext3DPrivate::shaderSource):
+        (WebCore::GraphicsContext3DPrivate::stencilFunc):
+        (WebCore::GraphicsContext3DPrivate::stencilFuncSeparate):
+        (WebCore::GraphicsContext3DPrivate::stencilMask):
+        (WebCore::GraphicsContext3DPrivate::stencilMaskSeparate):
+        (WebCore::GraphicsContext3DPrivate::stencilOp):
+        (WebCore::GraphicsContext3DPrivate::stencilOpSeparate):
+        (WebCore::GraphicsContext3DPrivate::texImage2D):
+        (WebCore::GraphicsContext3DPrivate::texParameterf):
+        (WebCore::GraphicsContext3DPrivate::texParameteri):
+        (WebCore::GraphicsContext3DPrivate::texSubImage2D):
+        (WebCore::GraphicsContext3DPrivate::uniform1f):
+        (WebCore::GraphicsContext3DPrivate::uniform1fv):
+        (WebCore::GraphicsContext3DPrivate::uniform1i):
+        (WebCore::GraphicsContext3DPrivate::uniform1iv):
+        (WebCore::GraphicsContext3DPrivate::uniform2f):
+        (WebCore::GraphicsContext3DPrivate::uniform2fv):
+        (WebCore::GraphicsContext3DPrivate::uniform2i):
+        (WebCore::GraphicsContext3DPrivate::uniform2iv):
+        (WebCore::GraphicsContext3DPrivate::uniform3f):
+        (WebCore::GraphicsContext3DPrivate::uniform3fv):
+        (WebCore::GraphicsContext3DPrivate::uniform3i):
+        (WebCore::GraphicsContext3DPrivate::uniform3iv):
+        (WebCore::GraphicsContext3DPrivate::uniform4f):
+        (WebCore::GraphicsContext3DPrivate::uniform4fv):
+        (WebCore::GraphicsContext3DPrivate::uniform4i):
+        (WebCore::GraphicsContext3DPrivate::uniform4iv):
+        (WebCore::GraphicsContext3DPrivate::uniformMatrix2fv):
+        (WebCore::GraphicsContext3DPrivate::uniformMatrix3fv):
+        (WebCore::GraphicsContext3DPrivate::uniformMatrix4fv):
+        (WebCore::GraphicsContext3DPrivate::useProgram):
+        (WebCore::GraphicsContext3DPrivate::validateProgram):
+        (WebCore::GraphicsContext3DPrivate::vertexAttrib1f):
+        (WebCore::GraphicsContext3DPrivate::vertexAttrib1fv):
+        (WebCore::GraphicsContext3DPrivate::vertexAttrib2f):
+        (WebCore::GraphicsContext3DPrivate::vertexAttrib2fv):
+        (WebCore::GraphicsContext3DPrivate::vertexAttrib3f):
+        (WebCore::GraphicsContext3DPrivate::vertexAttrib3fv):
+        (WebCore::GraphicsContext3DPrivate::vertexAttrib4f):
+        (WebCore::GraphicsContext3DPrivate::vertexAttrib4fv):
+        (WebCore::GraphicsContext3DPrivate::vertexAttribPointer):
+        (WebCore::GraphicsContext3DPrivate::viewport):
+        (WebCore::GraphicsContext3DPrivate::createBuffer):
+        (WebCore::GraphicsContext3DPrivate::createFramebuffer):
+        (WebCore::GraphicsContext3DPrivate::createProgram):
+        (WebCore::GraphicsContext3DPrivate::createRenderbuffer):
+        (WebCore::GraphicsContext3DPrivate::createShader):
+        (WebCore::GraphicsContext3DPrivate::createTexture):
+        (WebCore::GraphicsContext3DPrivate::deleteBuffer):
+        (WebCore::GraphicsContext3DPrivate::deleteFramebuffer):
+        (WebCore::GraphicsContext3DPrivate::deleteProgram):
+        (WebCore::GraphicsContext3DPrivate::deleteRenderbuffer):
+        (WebCore::GraphicsContext3DPrivate::deleteShader):
+        (WebCore::GraphicsContext3DPrivate::deleteTexture):
+        (WebCore::GraphicsContext3DPrivate::synthesizeGLError):
+        (WebCore::GraphicsContext3DPrivate::getExtensions):
+        * platform/graphics/efl/GraphicsContext3DPrivate.h: Added.
+        (WebCore):
+        (GraphicsContext3DPrivate):
+
 2012-02-27  Shawn Singh  <shawnsingh@chromium.org>
 
         RenderLayer ClipRect not accounting for transforms
