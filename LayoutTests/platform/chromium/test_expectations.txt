@@ -4260,3 +4260,4 @@ BUGWK79707 MAC : svg/as-background-image/svg-as-background-2.html = PASS IMAGE C
 BUGWK79707 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = PASS TIMEOUT IMAGE CRASH
 BUGWK79707 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = TEXT IMAGE IMAGE+TEXT CRASH
 BUGWK79707 MAC : svg/custom/font-face-not-in-document.svg = PASS CRASH
+BUGWK79707 MAC : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = PASS CRASH
