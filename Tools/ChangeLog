@@ -1,3 +1,23 @@
+2012-02-28  Adam Roben  <aroben@apple.com>
+
+        Teach webkitpy about wkb.ug URLs
+
+        Fixes <http://wkb.ug/79799> webkit-patch can't find bug numbers from ChangeLog entries that
+        use wkb.ug URLs
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (parse_bug_id):
+        (parse_bug_id_from_changelog):
+        Fall back to the tiny URL format if neither the short nor long URL formats work.
+
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (ChangeLogTest.test_parse_bug_id_from_changelog): Added tests for the above changes.
+
+        * Scripts/webkitpy/common/config/urls.py: Added bug_url_tiny, which can be used to match
+        wkb.ug URLs.
+
 2012-02-28  János Badics  <dicska@gmail.com>
 
         [Qt] build-webkit does not detect the number of CPUs

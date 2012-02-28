@@ -50,6 +50,9 @@ def parse_bug_id(message):
     match = re.search(config_urls.bug_url_long, message)
     if match:
         return int(match.group('bug_id'))
+    match = re.search(config_urls.bug_url_tiny, message)
+    if match:
+        return int(match.group('bug_id'))
     return None
 
 
@@ -63,6 +66,9 @@ def parse_bug_id_from_changelog(message):
     if match:
         return int(match.group('bug_id'))
     match = re.search("^\s*" + config_urls.bug_url_long + "$", message, re.MULTILINE)
+    if match:
+        return int(match.group('bug_id'))
+    match = re.search("^\s*" + config_urls.bug_url_tiny + "$", message, re.MULTILINE)
     if match:
         return int(match.group('bug_id'))
     # We weren't able to find a bug URL in the format used by prepare-ChangeLog. Fall back to the
