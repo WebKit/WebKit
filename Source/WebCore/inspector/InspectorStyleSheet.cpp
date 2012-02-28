@@ -862,7 +862,7 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForRule(CSSStyleRule
     // "sourceURL" is present only for regular rules, otherwise "origin" should be used in the frontend.
     if (m_origin == "regular")
         result->setString("sourceURL", finalURL());
-    result->setNumber("sourceLine", rule->sourceLine());
+    result->setNumber("sourceLine", rule->styleRule()->sourceLine());
     result->setString("origin", m_origin);
 
     result->setObject("style", buildObjectForStyle(rule->style()));
@@ -1148,7 +1148,7 @@ void InspectorStyleSheet::revalidateStyle(CSSStyleDeclaration* pageStyle)
     for (unsigned i = 0, size = m_flatRules.size(); i < size; ++i) {
         CSSStyleRule* parsedRule = m_flatRules.at(i);
         if (parsedRule->style() == pageStyle) {
-            if (parsedRule->declaration()->asText() != pageStyle->cssText()) {
+            if (parsedRule->styleRule()->properties()->asText() != pageStyle->cssText()) {
                 // Clear the disabled properties for the invalid style here.
                 m_inspectorStyles.remove(pageStyle);
                 setStyleText(pageStyle, pageStyle->cssText());

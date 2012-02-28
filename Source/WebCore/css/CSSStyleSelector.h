@@ -48,7 +48,6 @@ class CSSImageValue;
 class CSSRuleList;
 class CSSSelector;
 class CSSStyleApplyProperty;
-class CSSStyleRule;
 class CSSStyleSheet;
 class CSSValue;
 class ContainerNode;
@@ -70,6 +69,7 @@ class Settings;
 class StyleImage;
 class StylePendingImage;
 class StylePropertySet;
+class StyleRule;
 class StyleShader;
 class StyleSheet;
 class StyleSheetList;
@@ -228,8 +228,8 @@ public:
 #endif // ENABLE(CSS_FILTERS)
 
     struct RuleSelectorPair {
-        RuleSelectorPair(CSSStyleRule* rule, CSSSelector* selector) : rule(rule), selector(selector) { }
-        CSSStyleRule* rule;
+        RuleSelectorPair(StyleRule* rule, CSSSelector* selector) : rule(rule), selector(selector) { }
+        StyleRule* rule;
         CSSSelector* selector;
     };
     struct Features {
@@ -280,7 +280,7 @@ private:
     struct MatchResult {
         MatchResult() : isCacheable(true) { }
         Vector<MatchedProperties, 64> matchedProperties;
-        Vector<CSSStyleRule*, 64> matchedRules;
+        Vector<StyleRule*, 64> matchedRules;
         MatchRanges ranges;
         bool isCacheable;
     };
@@ -291,7 +291,7 @@ private:
         bool includeEmptyRules;
     };
 
-    static void addMatchedProperties(MatchResult& matchResult, StylePropertySet* properties, CSSStyleRule* rule = 0, unsigned linkMatchType =  SelectorChecker::MatchAll);
+    static void addMatchedProperties(MatchResult&, StylePropertySet* properties, StyleRule* = 0, unsigned linkMatchType = SelectorChecker::MatchAll);
 
     void matchAllRules(MatchResult&);
     void matchUARules(MatchResult&);
@@ -312,7 +312,7 @@ private:
     template <bool firstPass>
     void applyMatchedProperties(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
     template <bool firstPass>
-    void applyProperties(const StylePropertySet* properties, CSSStyleRule*, bool isImportant, bool inheritedOnly);
+    void applyProperties(const StylePropertySet* properties, StyleRule*, bool isImportant, bool inheritedOnly);
 
     static bool isValidRegionStyleProperty(int id);
 

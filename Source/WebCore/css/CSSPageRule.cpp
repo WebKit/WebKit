@@ -30,10 +30,9 @@
 
 namespace WebCore {
 
-CSSPageRule::CSSPageRule(CSSStyleSheet* parent, int sourceLine)
+CSSPageRule::CSSPageRule(CSSStyleSheet* parent)
     : CSSRule(parent, CSSRule::PAGE_RULE)
 {
-    setSourceLine(sourceLine);
 }
 
 CSSPageRule::~CSSPageRule()

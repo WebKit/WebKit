@@ -1,3 +1,92 @@
+2012-02-28  Antti Koivisto  <antti@apple.com>
+
+        Split CSSStyleRule into internal and CSSOM type
+        https://bugs.webkit.org/show_bug.cgi?id=79763
+
+        Reviewed by Andreas Kling.
+
+        - Split the data out as StyleRule
+        - Make CSSStyleSelector operate on StyleRule instead of CSSStyleRule
+        
+        This is an intermediate step. Both CSSStyleRule and StyleRule are still always constructed so
+        the patch increases memory consumption by a few pointers per css rule. Upcoming
+        patches will make CSSStyleRules to be constructed on demand.
+        
+        The patch does not yet move StyleRule to a file of its own.
+
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::CSSPageRule):
+        * css/CSSPageRule.h:
+        (WebCore::CSSPageRule::create):
+        (CSSPageRule):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createPageRule):
+        * css/CSSRule.h:
+        (WebCore::CSSRule::CSSRule):
+        (CSSRule):
+        * css/CSSStyleRule.cpp:
+        (WebCore::StyleRule::StyleRule):
+        (WebCore):
+        (WebCore::StyleRule::~StyleRule):
+        (WebCore::StyleRule::addSubresourceStyleURLs):
+        (WebCore::StyleRule::ensureCSSStyleRule):
+        (WebCore::CSSStyleRule::CSSStyleRule):
+        (WebCore::CSSStyleRule::~CSSStyleRule):
+        (WebCore::CSSStyleRule::generateSelectorText):
+        (WebCore::CSSStyleRule::setSelectorText):
+        (WebCore::CSSStyleRule::cssText):
+        * css/CSSStyleRule.h:
+        (WebCore):
+        (StyleRule):
+        (WebCore::StyleRule::selectorList):
+        (WebCore::StyleRule::properties):
+        (WebCore::StyleRule::sourceLine):
+        (WebCore::StyleRule::adoptSelectorVector):
+        (WebCore::StyleRule::adoptSelectorList):
+        (WebCore::StyleRule::setProperties):
+        (WebCore::CSSStyleRule::create):
+        (WebCore::CSSStyleRule::style):
+        (CSSStyleRule):
+        (WebCore::CSSStyleRule::styleRule):
+        * css/CSSStyleSelector.cpp:
+        (RuleData):
+        (WebCore::RuleData::rule):
+        (RuleSet):
+        (WebCore::CSSStyleSelector::addMatchedProperties):
+        (WebCore::CSSStyleSelector::sortAndTransferMatchedRules):
+        (WebCore::CSSStyleSelector::collectMatchingRulesForList):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::RuleSelectorPair::RuleSelectorPair):
+        (RuleSelectorPair):
+        (MatchResult):
+        (CSSStyleSelector):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addSubresourceStyleURLs):
+        * editing/EditingStyle.cpp:
+        (WebCore::styleFromMatchedRulesForElement):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::SelectorProfile::startSelector):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willMatchRuleImpl):
+        (WebCore::InspectorInstrumentation::willProcessRuleImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore):
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::willMatchRule):
+        (WebCore::InspectorInstrumentation::willProcessRule):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::revalidateStyle):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeFrame):
+        (WebCore::PageSerializer::serializeCSSStyleSheet):
+        (WebCore::PageSerializer::retrieveResourcesForRule):
+        (WebCore::PageSerializer::retrieveResourcesForProperties):
+        * page/PageSerializer.h:
+        (WebCore):
+        (PageSerializer):
+
 2012-02-28  Roland Steiner  <rolandsteiner@chromium.org>
 
         RuntimeEnabledFeatures::setMultipleShadowSubtreesEnabled should not be inline

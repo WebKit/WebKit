@@ -8826,10 +8826,10 @@ CSSRule* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selector
     if (selectors) {
         m_allowImportRules = m_allowNamespaceDeclarations = false;
         RefPtr<CSSStyleRule> rule = CSSStyleRule::create(m_styleSheet, m_lastSelectorLineNumber);
-        rule->adoptSelectorVector(*selectors);
+        rule->styleRule()->adoptSelectorVector(*selectors);
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
-        rule->setDeclaration(StylePropertySet::create(m_parsedProperties, m_numParsedProperties, m_strict));
+        rule->styleRule()->setProperties(StylePropertySet::create(m_parsedProperties, m_numParsedProperties, m_strict));
         result = rule.get();
         m_parsedRules.append(rule.release());
         if (m_ruleRangeMap) {
@@ -8935,7 +8935,7 @@ CSSRule* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelector)
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     CSSPageRule* pageRule = 0;
     if (pageSelector) {
-        RefPtr<CSSPageRule> rule = CSSPageRule::create(m_styleSheet, m_lastSelectorLineNumber);
+        RefPtr<CSSPageRule> rule = CSSPageRule::create(m_styleSheet);
         Vector<OwnPtr<CSSParserSelector> > selectorVector;
         selectorVector.append(pageSelector);
         rule->adoptSelectorVector(selectorVector);

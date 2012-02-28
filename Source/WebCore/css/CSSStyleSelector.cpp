@@ -173,10 +173,10 @@ if (primitiveValue) \
 
 class RuleData {
 public:
-    RuleData(CSSStyleRule*, CSSSelector*, unsigned position, bool canUseFastCheckSelector = true);
+    RuleData(StyleRule*, CSSSelector*, unsigned position, bool canUseFastCheckSelector = true);
 
     unsigned position() const { return m_position; }
-    CSSStyleRule* rule() const { return m_rule; }
+    StyleRule* rule() const { return m_rule; }
     CSSSelector* selector() const { return m_selector; }
 
     bool hasFastCheckableSelector() const { return m_hasFastCheckableSelector; }
@@ -191,7 +191,7 @@ public:
     const unsigned* descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
 
 private:
-    CSSStyleRule* m_rule;
+    StyleRule* m_rule;
     CSSSelector* m_selector;
     unsigned m_specificity;
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
@@ -225,8 +225,8 @@ public:
 
     void addRulesFromSheet(CSSStyleSheet*, const MediaQueryEvaluator&, CSSStyleSelector* = 0, const Element* = 0);
 
-    void addStyleRule(CSSStyleRule*, bool canUseFastCheckSelector = true);
-    void addRule(CSSStyleRule*, CSSSelector*, bool canUseFastCheckSelector = true);
+    void addStyleRule(StyleRule*, bool canUseFastCheckSelector = true);
+    void addRule(StyleRule*, CSSSelector*, bool canUseFastCheckSelector = true);
     void addPageRule(CSSPageRule*);
     void addToRuleSet(AtomicStringImpl* key, AtomRuleMap&, const RuleData&);
     void addRegionRule(WebKitCSSRegionRule*);
@@ -750,7 +750,7 @@ static void ensureDefaultStyleSheetsForElement(Element* element)
     ASSERT_UNUSED(loadedMathMLUserAgentSheet, loadedMathMLUserAgentSheet || defaultStyle->features().siblingRules.isEmpty());
 }
 
-void CSSStyleSelector::addMatchedProperties(MatchResult& matchResult, StylePropertySet* properties, CSSStyleRule* rule, unsigned linkMatchType)
+void CSSStyleSelector::addMatchedProperties(MatchResult& matchResult, StylePropertySet* properties, StyleRule* rule, unsigned linkMatchType)
 {
     matchResult.matchedProperties.grow(matchResult.matchedProperties.size() + 1);
     MatchedProperties& newProperties = matchResult.matchedProperties.last();
@@ -815,7 +815,7 @@ void CSSStyleSelector::sortAndTransferMatchedRules(MatchResult& result)
         if (!m_ruleList)
             m_ruleList = CSSRuleList::create();
         for (unsigned i = 0; i < m_matchedRules.size(); ++i)
-            m_ruleList->append(m_matchedRules[i]->rule());
+            m_ruleList->append(m_matchedRules[i]->rule()->ensureCSSStyleRule());
         return;
     }
 
@@ -828,7 +828,7 @@ void CSSStyleSelector::sortAndTransferMatchedRules(MatchResult& result)
         unsigned linkMatchType = m_matchedRules[i]->linkMatchType();
         if (swapVisitedUnvisited && linkMatchType && linkMatchType != SelectorChecker::MatchAll)
             linkMatchType = (linkMatchType == SelectorChecker::MatchVisited) ? SelectorChecker::MatchLink : SelectorChecker::MatchVisited;
-        addMatchedProperties(result, m_matchedRules[i]->rule()->declaration(), m_matchedRules[i]->rule(), linkMatchType);
+        addMatchedProperties(result, m_matchedRules[i]->rule()->properties(), m_matchedRules[i]->rule(), linkMatchType);
     }
 }
 
@@ -948,7 +948,7 @@ void CSSStyleSelector::collectMatchingRulesForList(const Vector<RuleData>* rules
         if (canUseFastReject && m_checker.fastRejectSelector<RuleData::maximumIdentifierCount>(ruleData.descendantSelectorIdentifierHashes()))
             continue;
 
-        CSSStyleRule* rule = ruleData.rule();
+        StyleRule* rule = ruleData.rule();
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willMatchRule(document(), rule);
 #if ENABLE(STYLE_SCOPED)
         if (checkSelector(ruleData, options.scope)) {
@@ -972,12 +972,13 @@ void CSSStyleSelector::collectMatchingRulesForList(const Vector<RuleData>* rules
                 continue;
             }
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
-            StylePropertySet* decl = rule->declaration();
-            if (!decl || (decl->isEmpty() && !options.includeEmptyRules)) {
+            StylePropertySet* properties = rule->properties();
+            if (!properties || (properties->isEmpty() && !options.includeEmptyRules)) {
                 InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
             }
-            if (m_sameOriginOnly && !m_checker.document()->securityOrigin()->canRequest(rule->baseURL())) {
+            // FIXME: Exposing getMatchedCSSRules as a web facing API is forcing us to have a way to get the base URL per-rule.
+            if (m_sameOriginOnly && !m_checker.document()->securityOrigin()->canRequest(rule->ensureCSSStyleRule()->baseURL())) {
                 InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
             }
@@ -2160,7 +2161,7 @@ bool CSSStyleSelector::determineStylesheetSelectorScopes(CSSStyleSheet* styleshe
     for (size_t i = 0; i < size; i++) {
         CSSRule* rule = stylesheet->item(i);
         if (rule->isStyleRule()) {
-            CSSStyleRule* styleRule = static_cast<CSSStyleRule*>(rule);
+            StyleRule* styleRule = static_cast<CSSStyleRule*>(rule)->styleRule();
             if (!SelectorChecker::determineSelectorScopes(styleRule->selectorList(), idScopes, classScopes))
                 return false;
             continue;
@@ -2235,7 +2236,7 @@ static inline bool containsUncommonAttributeSelector(const CSSSelector* selector
     return false;
 }
 
-RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position, bool canUseFastCheckSelector)
+RuleData::RuleData(StyleRule* rule, CSSSelector* selector, unsigned position, bool canUseFastCheckSelector)
     : m_rule(rule)
     , m_selector(selector)
     , m_specificity(selector->specificity())
@@ -2309,7 +2310,7 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
     rules->append(ruleData);
 }
 
-void RuleSet::addRule(CSSStyleRule* rule, CSSSelector* selector, bool canUseFastCheckSelector)
+void RuleSet::addRule(StyleRule* rule, CSSSelector* selector, bool canUseFastCheckSelector)
 {
     RuleData ruleData(rule, selector, m_ruleCount++, canUseFastCheckSelector);
     collectFeaturesFromRuleData(m_features, ruleData);
@@ -2368,7 +2369,7 @@ void RuleSet::addRegionRule(WebKitCSSRegionRule* rule)
     for (unsigned i = 0; i < rulesSize; ++i) {
         CSSRule* regionStylingRule = regionStylingRules->item(i);
         if (regionStylingRule->isStyleRule())
-            regionRuleSet->addStyleRule(static_cast<CSSStyleRule*>(regionStylingRule));
+            regionRuleSet->addStyleRule(static_cast<CSSStyleRule*>(regionStylingRule)->styleRule());
     }
 
     m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(rule->selectorList().first(), regionRuleSet));
@@ -2388,7 +2389,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
     for (int i = 0; i < len; i++) {
         CSSRule* rule = sheet->item(i);
         if (rule->isStyleRule())
-            addStyleRule(static_cast<CSSStyleRule*>(rule), !scope);
+            addStyleRule(static_cast<CSSStyleRule*>(rule)->styleRule(), !scope);
         else if (rule->isPageRule())
             addPageRule(static_cast<CSSPageRule*>(rule));
         else if (rule->isImportRule()) {
@@ -2405,7 +2406,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
                 for (unsigned j = 0; j < rules->length(); j++) {
                     CSSRule *childItem = rules->item(j);
                     if (childItem->isStyleRule())
-                        addStyleRule(static_cast<CSSStyleRule*>(childItem), !scope);
+                        addStyleRule(static_cast<CSSStyleRule*>(childItem)->styleRule(), !scope);
                     else if (childItem->isPageRule())
                         addPageRule(static_cast<CSSPageRule*>(childItem));
                     else if (childItem->isFontFaceRule() && styleSelector) {
@@ -2449,7 +2450,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
         shrinkToFit();
 }
 
-void RuleSet::addStyleRule(CSSStyleRule* rule, bool canUseFastCheckSelector)
+void RuleSet::addStyleRule(StyleRule* rule, bool canUseFastCheckSelector)
 {
     for (CSSSelector* s = rule->selectorList().first(); s; s = CSSSelectorList::next(s))
         addRule(rule, s, canUseFastCheckSelector);
@@ -2527,10 +2528,10 @@ static inline bool isInsideRegionRule(CSSRule* rule)
 }
 
 template <bool applyFirst>
-void CSSStyleSelector::applyProperties(const StylePropertySet* properties, CSSStyleRule* rule, bool isImportant, bool inheritedOnly)
+void CSSStyleSelector::applyProperties(const StylePropertySet* properties, StyleRule* rule, bool isImportant, bool inheritedOnly)
 {
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(document(), rule);
-    bool styleDeclarationInsideRegionRule = m_regionForStyling && isInsideRegionRule(rule);
+    bool styleDeclarationInsideRegionRule = m_regionForStyling && isInsideRegionRule(rule->ensureCSSStyleRule());
 
     unsigned propertyCount = properties->propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {

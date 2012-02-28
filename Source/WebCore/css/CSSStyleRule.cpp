@@ -35,19 +35,39 @@
 
 namespace WebCore {
 
+StyleRule::StyleRule(int line, CSSStyleRule* wrapper)
+    : m_sourceLine(line)
+    , m_cssomWrapper(wrapper)
+{
+}
+    
+StyleRule::~StyleRule()
+{
+}
+    
+void StyleRule::addSubresourceStyleURLs(ListHashSet<KURL>& urls, CSSStyleSheet* styleSheet) 
+{
+    if (!m_properties)
+        return;
+    m_properties->addSubresourceStyleURLs(urls, styleSheet);
+}
+    
+CSSStyleRule* StyleRule::ensureCSSStyleRule() const
+{
+    ASSERT(m_cssomWrapper);
+    return m_cssomWrapper;
+}
+
 CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int line)
     : CSSRule(parent, CSSRule::STYLE_RULE)
+    , m_styleRule(adoptPtr(new StyleRule(line, this)))
 {
-    setSourceLine(line);
-
-    // m_sourceLine is a bitfield, so let's catch any overflow early in debug mode.
-    ASSERT(sourceLine() == line);
 }
 
 CSSStyleRule::~CSSStyleRule()
 {
-    if (m_style)
-        m_style->clearParentRule(this);
+    if (m_styleRule->properties())
+        m_styleRule->properties()->clearParentRule(this);
     cleanup();
 }
 
@@ -69,8 +89,8 @@ inline void CSSStyleRule::cleanup()
 String CSSStyleRule::generateSelectorText() const
 {
     StringBuilder builder;
-    for (CSSSelector* s = selectorList().first(); s; s = CSSSelectorList::next(s)) {
-        if (s != selectorList().first())
+    for (CSSSelector* s = m_styleRule->selectorList().first(); s; s = CSSSelectorList::next(s)) {
+        if (s != m_styleRule->selectorList().first())
             builder.append(", ");
         builder.append(s->selectorText());
     }
@@ -106,7 +126,7 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
         return;
 
     String oldSelectorText = this->selectorText();
-    m_selectorList.adopt(selectorList);
+    m_styleRule->adoptSelectorList(selectorList);
 
     if (hasCachedSelectorText()) {
         ASSERT(selectorTextCache().contains(this));
@@ -124,16 +144,10 @@ String CSSStyleRule::cssText() const
     String result = selectorText();
 
     result += " { ";
-    result += m_style->asText();
+    result += m_styleRule->properties()->asText();
     result += "}";
 
     return result;
-}
-
-void CSSStyleRule::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
-{
-    if (m_style)
-        m_style->addSubresourceStyleURLs(urls, parentStyleSheet());
 }
 
 } // namespace WebCore

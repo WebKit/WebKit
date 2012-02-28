@@ -35,9 +35,9 @@ class CSSSelectorList;
 
 class CSSPageRule : public CSSRule {
 public:
-    static PassRefPtr<CSSPageRule> create(CSSStyleSheet* parent, int sourceLine)
+    static PassRefPtr<CSSPageRule> create(CSSStyleSheet* parent)
     {
-        return adoptRef(new CSSPageRule(parent, sourceLine));
+        return adoptRef(new CSSPageRule(parent));
     }
     ~CSSPageRule();
 
@@ -55,7 +55,7 @@ public:
     void setDeclaration(PassRefPtr<StylePropertySet> style) { m_style = style; }
 
 private:
-    CSSPageRule(CSSStyleSheet* parent, int sourceLine);
+    CSSPageRule(CSSStyleSheet* parent);
 
     RefPtr<StylePropertySet> m_style;
     CSSSelectorList m_selectorList;

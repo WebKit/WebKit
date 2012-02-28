@@ -31,31 +31,51 @@
 namespace WebCore {
 
 class CSSSelector;
+class CSSStyleRule;
+    
+class StyleRule {
+    WTF_MAKE_NONCOPYABLE(StyleRule); WTF_MAKE_FAST_ALLOCATED;
+public:
+    StyleRule(int sourceLine, CSSStyleRule*);
+    ~StyleRule();
+            
+    const CSSSelectorList& selectorList() const { return m_selectorList; }
+    StylePropertySet* properties() const { return m_properties.get(); }
+    
+    void addSubresourceStyleURLs(ListHashSet<KURL>& urls, CSSStyleSheet*);
+
+    int sourceLine() const { return m_sourceLine; }
+    
+    CSSStyleRule* ensureCSSStyleRule() const;
+    
+    void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void adoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
+    void setProperties(PassRefPtr<StylePropertySet> properties) { m_properties = properties; }
+    
+private:
+    RefPtr<StylePropertySet> m_properties;
+    CSSSelectorList m_selectorList;
+    signed m_sourceLine;
+
+    CSSStyleRule* m_cssomWrapper;
+};
 
 class CSSStyleRule : public CSSRule {
 public:
-    static PassRefPtr<CSSStyleRule> create(CSSStyleSheet* parent, int sourceLine)
+    static PassRefPtr<CSSStyleRule> create(CSSStyleSheet* parent, int line)
     {
-        return adoptRef(new CSSStyleRule(parent, sourceLine));
+        return adoptRef(new CSSStyleRule(parent, line));
     }
     ~CSSStyleRule();
 
     String selectorText() const;
     void setSelectorText(const String&);
 
-    CSSStyleDeclaration* style() const { return m_style->ensureRuleCSSStyleDeclaration(this); }
+    CSSStyleDeclaration* style() const { return m_styleRule->properties()->ensureRuleCSSStyleDeclaration(this); }
 
     String cssText() const;
-
-    void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
-    void setDeclaration(PassRefPtr<StylePropertySet> style) { m_style = style; }
-
-    const CSSSelectorList& selectorList() const { return m_selectorList; }
-    StylePropertySet* declaration() const { return m_style.get(); }
-
-    void addSubresourceStyleURLs(ListHashSet<KURL>& urls);
-
-    using CSSRule::sourceLine;
+    
+    StyleRule* styleRule() const { return m_styleRule.get(); }
 
 private:
     CSSStyleRule(CSSStyleSheet* parent, int sourceLine);
@@ -63,8 +83,7 @@ private:
     void cleanup();
     String generateSelectorText() const;
 
-    RefPtr<StylePropertySet> m_style;
-    CSSSelectorList m_selectorList;
+    OwnPtr<StyleRule> m_styleRule;
 };
 
 } // namespace WebCore

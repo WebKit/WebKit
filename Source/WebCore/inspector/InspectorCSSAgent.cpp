@@ -168,7 +168,7 @@ inline void SelectorProfile::startSelector(const CSSStyleRule* rule)
             url = InspectorDOMAgent::documentURLString(styleSheet->findDocument());
     }
     m_currentMatchData.url = url;
-    m_currentMatchData.lineNumber = rule->sourceLine();
+    m_currentMatchData.lineNumber = rule->styleRule()->sourceLine();
     m_currentMatchData.startTime = WTF::currentTimeMS();
 }
 

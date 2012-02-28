@@ -1032,7 +1032,7 @@ static PassRefPtr<StylePropertySet> styleFromMatchedRulesForElement(Element* ele
     if (matchedRules) {
         for (unsigned i = 0; i < matchedRules->length(); i++) {
             if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE) {
-                RefPtr<StylePropertySet> s = static_cast<CSSStyleRule*>(matchedRules->item(i))->declaration();
+                RefPtr<StylePropertySet> s = static_cast<CSSStyleRule*>(matchedRules->item(i))->styleRule()->properties();
                 style->merge(s.get(), true);
             }
         }

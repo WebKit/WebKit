@@ -464,11 +464,11 @@ void InspectorInstrumentation::didScheduleStyleRecalculationImpl(InstrumentingAg
         resourceAgent->didScheduleStyleRecalculation(document);
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willMatchRuleImpl(InstrumentingAgents* instrumentingAgents, const CSSStyleRule* rule)
+InspectorInstrumentationCookie InspectorInstrumentation::willMatchRuleImpl(InstrumentingAgents* instrumentingAgents, const StyleRule* rule)
 {
     InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent();
     if (cssAgent) {
-        cssAgent->willMatchRule(rule);
+        cssAgent->willMatchRule(rule->ensureCSSStyleRule());
         return InspectorInstrumentationCookie(instrumentingAgents, 1);
     }
 
@@ -482,14 +482,11 @@ void InspectorInstrumentation::didMatchRuleImpl(const InspectorInstrumentationCo
         cssAgent->didMatchRule(matched);
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willProcessRuleImpl(InstrumentingAgents* instrumentingAgents, const CSSRule* rule)
+InspectorInstrumentationCookie InspectorInstrumentation::willProcessRuleImpl(InstrumentingAgents* instrumentingAgents, const StyleRule* rule)
 {
-    if (!rule->isStyleRule())
-        return InspectorInstrumentationCookie();
-
     InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent();
     if (cssAgent) {
-        cssAgent->willProcessRule(static_cast<const CSSStyleRule*>(rule));
+        cssAgent->willProcessRule(rule->ensureCSSStyleRule());
         return InspectorInstrumentationCookie(instrumentingAgents, 1);
     }
 
