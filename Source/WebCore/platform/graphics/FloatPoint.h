@@ -31,6 +31,14 @@
 #include "IntPoint.h"
 #include <wtf/MathExtras.h>
 
+#if PLATFORM(BLACKBERRY)
+namespace BlackBerry {
+namespace Platform {
+class FloatPoint;
+}
+}
+#endif
+
 #if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
 typedef struct CGPoint CGPoint;
 #endif
@@ -154,6 +162,11 @@ public:
 #if PLATFORM(QT)
     FloatPoint(const QPointF&);
     operator QPointF() const;
+#endif
+
+#if PLATFORM(BLACKBERRY)
+    FloatPoint(const BlackBerry::Platform::FloatPoint&);
+    operator BlackBerry::Platform::FloatPoint() const;
 #endif
 
 #if USE(SKIA)
