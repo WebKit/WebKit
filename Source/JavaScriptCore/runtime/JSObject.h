@@ -834,8 +834,7 @@ inline JSValue JSValue::get(ExecState* exec, unsigned propertyName, PropertySlot
 inline void JSValue::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (UNLIKELY(!isCell())) {
-        JSObject* thisObject = synthesizeObject(exec);
-        thisObject->methodTable()->put(thisObject, exec, propertyName, value, slot);
+        putToPrimitive(exec, propertyName, value, slot);
         return;
     }
     asCell()->methodTable()->put(asCell(), exec, propertyName, value, slot);

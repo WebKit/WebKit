@@ -119,11 +119,6 @@ bool JSObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned
     return thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
 }
 
-static void throwSetterError(ExecState* exec)
-{
-    throwError(exec, createTypeError(exec, "setting a property that has only a getter"));
-}
-
 // ECMA 8.6.2.2
 void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
@@ -161,7 +156,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName
                 JSObject* setterFunc = asGetterSetter(gs)->setter();        
                 if (!setterFunc) {
                     if (slot.isStrictMode())
-                        throwSetterError(exec);
+                        throwError(exec, createTypeError(exec, "setting a property that has only a getter"));
                     return;
                 }
                 

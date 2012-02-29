@@ -119,7 +119,7 @@ function strictThisTest()
 {
     // In a strict mode function primitive this values are not converted, so
     // the property access in the first eval is writing a value to a temporary
-    // object, and should not be observed by the second eval.
+    // object. This throws, per section 8.7.2.
     "use strict";
     eval('this.value = "Seekrit message";');
     return eval('this.value') === undefined;
@@ -143,4 +143,4 @@ shouldBeTrue('postIncTest();');
 shouldBeTrue('postDecTest();');
 
 shouldBeTrue('primitiveThisTest.call(1);');
-shouldBeTrue('strictThisTest.call(1);');
+shouldThrow('strictThisTest.call(1);');

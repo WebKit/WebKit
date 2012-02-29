@@ -27,6 +27,7 @@
 #include "BooleanPrototype.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
+#include "GetterSetter.h"
 #include "JSGlobalObject.h"
 #include "JSFunction.h"
 #include "JSNotAnObject.h"
@@ -105,7 +106,11 @@ JSObject* JSValue::synthesizeObject(ExecState* exec) const
 
 JSObject* JSValue::synthesizePrototype(ExecState* exec) const
 {
-    ASSERT(!isCell());
+    if (isCell()) {
+        ASSERT(isString());
+        return exec->lexicalGlobalObject()->stringPrototype();
+    }
+
     if (isNumber())
         return exec->lexicalGlobalObject()->numberPrototype();
     if (isBoolean())
@@ -114,6 +119,70 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
     ASSERT(isUndefinedOrNull());
     throwError(exec, createNotAnObjectError(exec, *this));
     return JSNotAnObject::create(exec);
+}
+
+// ECMA 8.7.2
+void JSValue::putToPrimitive(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    JSGlobalData& globalData = exec->globalData();
+
+    // Check if there are any setters or getters in the prototype chain
+    JSObject* obj = synthesizePrototype(exec);
+    JSValue prototype;
+    if (propertyName != exec->propertyNames().underscoreProto) {
+        for (; !obj->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto(); obj = asObject(prototype)) {
+            prototype = obj->prototype();
+            if (prototype.isNull()) {
+                if (slot.isStrictMode())
+                    throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+                return;
+            }
+        }
+    }
+
+    for (; ; obj = asObject(prototype)) {
+        unsigned attributes;
+        JSCell* specificValue;
+        size_t offset = obj->structure()->get(globalData, propertyName, attributes, specificValue);
+        if (offset != WTF::notFound) {
+            if (attributes & ReadOnly) {
+                if (slot.isStrictMode())
+                    throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
+                return;
+            }
+
+            JSValue gs = obj->getDirectOffset(offset);
+            if (gs.isGetterSetter()) {
+                JSObject* setterFunc = asGetterSetter(gs)->setter();        
+                if (!setterFunc) {
+                    if (slot.isStrictMode())
+                        throwError(exec, createTypeError(exec, "setting a property that has only a getter"));
+                    return;
+                }
+                
+                CallData callData;
+                CallType callType = setterFunc->methodTable()->getCallData(setterFunc, callData);
+                MarkedArgumentBuffer args;
+                args.append(value);
+
+                // If this is WebCore's global object then we need to substitute the shell.
+                call(exec, setterFunc, callType, callData, *this, args);
+                return;
+            }
+
+            // If there's an existing property on the object or one of its 
+            // prototypes it should be replaced, so break here.
+            break;
+        }
+
+        prototype = obj->prototype();
+        if (prototype.isNull())
+            break;
+    }
+    
+    if (slot.isStrictMode())
+        throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+    return;
 }
 
 char* JSValue::description()

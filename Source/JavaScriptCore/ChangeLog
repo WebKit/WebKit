@@ -1,3 +1,39 @@
+2012-02-28  Gavin Barraclough  <barraclough@apple.com>
+
+        [[Get]]/[[Put]] for primitives should not wrap on strict accessor call
+        https://bugs.webkit.org/show_bug.cgi?id=79588
+
+        Reviewed by Oliver Hunt.
+
+        In the case of [[Get]], this is a pretty trivial bug - just don't wrap
+        primitives at the point you call a getter.
+
+        For setters, this is a little more involved, since we have already wrapped
+        the value up in a synthesized object. Stop doing so. There is also a further
+        subtely, that in strict mode all attempts to create a new data property on
+        the object should throw.
+
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::put):
+            - [[Put]] to a string primitive should use JSValue::putToPrimitive.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+            - Remove static function called in one place.
+        * runtime/JSObject.h:
+        (JSC::JSValue::put):
+            - [[Put]] to a non-cell JSValue should use JSValue::putToPrimitive.
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::synthesizePrototype):
+            - Add support for synthesizing the prototype of strings.
+        (JSC::JSValue::putToPrimitive):
+            - Added, implements [[Put]] for primitive bases, per 8.7.2.
+        * runtime/JSValue.h:
+        (JSValue):
+            - Add declaration for JSValue::putToPrimitive.
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter):
+            - Don't call ToObject on primitive this values.
+
 2012-02-28  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Re-enable parallel GC on Mac

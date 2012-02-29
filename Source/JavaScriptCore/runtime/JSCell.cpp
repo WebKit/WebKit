@@ -97,6 +97,10 @@ bool JSCell::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i
 
 void JSCell::put(JSCell* cell, ExecState* exec, const Identifier& identifier, JSValue value, PutPropertySlot& slot)
 {
+    if (cell->isString()) {
+        JSValue(cell).putToPrimitive(exec, identifier, value, slot);
+        return;
+    }
     JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
     thisObject->methodTable()->put(thisObject, exec, identifier, value, slot);
 }

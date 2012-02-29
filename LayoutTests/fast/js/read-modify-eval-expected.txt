@@ -19,7 +19,7 @@ PASS preDecTest(); is true
 PASS postIncTest(); is true
 PASS postDecTest(); is true
 PASS primitiveThisTest.call(1); is true
-PASS strictThisTest.call(1); is true
+PASS strictThisTest.call(1); threw exception TypeError: Attempted to assign to readonly property..
 PASS successfullyParsed is true
 
 TEST COMPLETE
