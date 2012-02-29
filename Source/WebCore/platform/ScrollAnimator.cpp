@@ -122,6 +122,12 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
     return handled;
 }
 
+void ScrollAnimator::setCurrentPosition(const FloatPoint& position)
+{
+    m_currentPosX = position.x();
+    m_currentPosY = position.y();
+}
+
 FloatPoint ScrollAnimator::currentPosition() const
 {
     return FloatPoint(m_currentPosX, m_currentPosY);

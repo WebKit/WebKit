@@ -150,6 +150,7 @@ void ScrollableArea::notifyScrollPositionChanged(const IntPoint& position)
             verticalScrollbar->invalidate();
     }
 
+    scrollAnimator()->setCurrentPosition(position);
     scrollAnimator()->notifyContentAreaScrolled();
 }
 

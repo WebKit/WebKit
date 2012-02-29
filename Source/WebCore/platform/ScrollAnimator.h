@@ -65,6 +65,7 @@ public:
 
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
 
+    void setCurrentPosition(const FloatPoint&);
     FloatPoint currentPosition() const;
 
     virtual void cancelAnimations() { }
