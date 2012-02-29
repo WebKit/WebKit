@@ -1,3 +1,9 @@
+2012-02-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-02-29  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Don't let invalidation for next frame prevent tile upload
