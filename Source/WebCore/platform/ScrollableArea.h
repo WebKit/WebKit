@@ -179,6 +179,8 @@ protected:
     bool hasLayerForScrollCorner() const;
 
 private:
+    void scrollPositionChanged(const IntPoint&);
+    
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;
     void setScrollOffsetFromAnimation(const IntPoint&);

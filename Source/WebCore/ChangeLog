@@ -1,3 +1,23 @@
+2012-02-29  Anders Carlsson  <andersca@apple.com>
+
+        [Chromium] Some Layout Tests in platform/chromium/rubberbanding and platform/chromium/compositing/rubberbanding are failing
+        https://bugs.webkit.org/show_bug.cgi?id=79878
+
+        Reviewed by James Robinson.
+
+        Make sure that ScrollableArea::setScrollOffsetFromAnimation doesn't end up
+        setting the ScrollAnimator's current scroll position by making a new function, scrollPositionChanged,
+        that both notifyScrollPositionChanged and setScrollOffsetFromAnimation call and move the call to update
+        the position to notifyScrollPositionChanged.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::notifyScrollPositionChanged):
+        (WebCore):
+        (WebCore::ScrollableArea::scrollPositionChanged):
+        (WebCore::ScrollableArea::setScrollOffsetFromAnimation):
+        * platform/ScrollableArea.h:
+        (ScrollableArea):
+
 2012-02-29  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Don't let invalidation for next frame prevent tile upload

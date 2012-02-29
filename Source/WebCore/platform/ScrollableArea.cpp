@@ -124,6 +124,12 @@ void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orienta
 
 void ScrollableArea::notifyScrollPositionChanged(const IntPoint& position)
 {
+    scrollPositionChanged(position);
+    scrollAnimator()->setCurrentPosition(position);
+}
+
+void ScrollableArea::scrollPositionChanged(const IntPoint& position)
+{
     // Tell the derived class to scroll its contents.
     setScrollOffset(position);
 
@@ -150,7 +156,6 @@ void ScrollableArea::notifyScrollPositionChanged(const IntPoint& position)
             verticalScrollbar->invalidate();
     }
 
-    scrollAnimator()->setCurrentPosition(position);
     scrollAnimator()->notifyContentAreaScrolled();
 }
 
@@ -170,7 +175,7 @@ void ScrollableArea::setScrollOffsetFromAnimation(const IntPoint& offset)
     if (requestScrollPositionUpdate(offset))
         return;
 
-    notifyScrollPositionChanged(offset);
+    scrollPositionChanged(offset);
 }
 
 void ScrollableArea::willStartLiveResize()
