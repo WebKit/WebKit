@@ -52,6 +52,14 @@ QT_END_NAMESPACE
 class wxRect2DDouble;
 #endif
 
+#if PLATFORM(BLACKBERRY)
+namespace BlackBerry {
+namespace Platform {
+class FloatRect;
+}
+}
+#endif
+
 #if USE(SKIA)
 struct SkRect;
 #endif
@@ -180,6 +188,11 @@ public:
     void fitToPoints(const FloatPoint& p0, const FloatPoint& p1);
     void fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2);
     void fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& p3);
+
+#if PLATFORM(BLACKBERRY)
+    FloatRect(const BlackBerry::Platform::FloatRect&);
+    operator BlackBerry::Platform::FloatRect() const;
+#endif
 
 #if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
     FloatRect(const CGRect&);
