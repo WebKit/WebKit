@@ -55,14 +55,10 @@ private slots:
             return;
 
         setGeometry(0, 0, 800, 600);
-        m_view->setX(0);
-        m_view->setY(0);
-        m_view->setWidth(800);
-        m_view->setHeight(600);
 
         setResizeMode(QQuickView::SizeRootObjectToView);
-
         m_view->setParentItem(rootObject());
+        QDeclarativeProperty::write(m_view, "anchors.fill", qVariantFromValue(rootObject()));
 
         QWindowSystemInterface::handleWindowActivated(this);
         m_view->page()->setFocus(true);
@@ -91,9 +87,15 @@ PlatformWebView::~PlatformWebView()
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)
 {
+    // If we do not have a platform window we will never get the necessary
+    // resize event, so simulate it in that case to make sure the quickview is
+    // resized to what the layout test expects.
+    if (!m_window->handle()) {
+        QRect newGeometry(m_window->x(), m_window->y(), width, height);
+        QWindowSystemInterface::handleSynchronousGeometryChange(m_window, newGeometry);
+    }
+
     m_window->resize(width, height);
-    m_view->setWidth(width);
-    m_view->setHeight(height);
 }
 
 WKPageRef PlatformWebView::page()
