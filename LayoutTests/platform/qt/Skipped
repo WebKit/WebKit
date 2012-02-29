@@ -201,12 +201,11 @@ fast/css/font-face-woff.html
 # Need to implement getFormValue().
 plugins/form-value.html
 
+# We have bad support for 3d transformations in general, so this will remain skipped.
+transforms/3d
+
 # accessibility support
 accessibility
-
-# Tests requiring 3D_RENDERING and ACCELERATED_COMPOSITING support
-transforms/3d
-compositing
 
 fast/loader/subframe-navigate-during-main-frame-load.html
 

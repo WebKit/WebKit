@@ -433,3 +433,110 @@ http/tests/loading/state-object-security-exception.html
 # https://bugs.webkit.org/show_bug.cgi?id=79656
 fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html
 fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout.html
+
+###################################
+# Unskipping 'compositing' tests. #
+###################################
+
+# Most of these tests crash or doesn't generate expected results.
+compositing/reflections
+
+# Does not transform child as expected.
+compositing/flat-with-transformed-child.html
+
+# Flaky tests.
+compositing/masks/simple-composited-mask.html
+compositing/masks/direct-image-mask.html
+compositing/masks/masked-ancestor.html
+compositing/geometry/limit-layer-bounds-fixed-positioned.html
+compositing/geometry/video-opacity-overlay.html
+compositing/rtl/rtl-absolute-overflow-scrolled.html
+compositing/visibility/layer-visible-content.html
+
+# Some of them crashes once other tests are skipped.
+compositing/overflow/clip-descendents.html
+compositing/overflow/clip-content-under-overflow-controls.html
+compositing/overflow/ancestor-overflow.html
+compositing/masks/simple-composited-mask.html
+compositing/masks/multiple-masks.html
+compositing/color-matching/image-color-matching.html
+compositing/culling/tile-occlusion-boundaries.html
+compositing/direct-image-compositing.html
+compositing/fixed-position-changed-in-composited-layer.html
+compositing/images/content-image-change.html
+compositing/images/content-image.html
+compositing/tiling/crash-huge-layer.html
+compositing/visibility/visibility-image-layers-dynamic.html
+compositing/visibility/visibility-image-layers.html
+compositing/visibility/visibility-simple-webgl-layer.html
+
+# Black square instead of green square is displayed.
+compositing/masks/layer-mask-placement.html
+
+# Blur effect doesnt show up.
+compositing/culling/filter-occlusion-blur-large.html
+compositing/culling/filter-occlusion-blur.html
+
+# The following tests doesnt match expected text files.
+compositing/geometry/fixed-position-composited-switch.html
+compositing/geometry/layer-due-to-layer-children-deep-switch.html
+compositing/geometry/layer-due-to-layer-children-switch.html
+compositing/geometry/limit-layer-bounds-clipping-ancestor.html
+compositing/geometry/limit-layer-bounds-opacity-transition.html
+compositing/geometry/limit-layer-bounds-overflow-root.html
+compositing/geometry/limit-layer-bounds-positioned-transition.html
+compositing/geometry/limit-layer-bounds-positioned.html
+compositing/geometry/limit-layer-bounds-transformed-overflow.html
+compositing/geometry/limit-layer-bounds-transformed.html
+compositing/iframes/become-composited-nested-iframes.html
+compositing/iframes/become-overlapped-iframe.html
+compositing/iframes/composited-iframe-scroll.html
+compositing/iframes/composited-parent-iframe.html
+compositing/iframes/connect-compositing-iframe-delayed.html
+compositing/iframes/connect-compositing-iframe.html
+compositing/iframes/connect-compositing-iframe2.html
+compositing/iframes/connect-compositing-iframe3.html
+compositing/iframes/enter-compositing-iframe.html
+compositing/iframes/iframe-content-flipping.html
+compositing/iframes/iframe-resize.html
+compositing/iframes/iframe-size-to-zero.html
+compositing/iframes/invisible-nested-iframe-show.html
+compositing/iframes/leave-compositing-iframe.html
+compositing/iframes/overlapped-iframe.html
+compositing/iframes/overlapped-nested-iframes.html
+compositing/iframes/scrolling-iframe.html
+compositing/layer-creation/fixed-position-out-of-view.html
+compositing/layer-creation/overflow-scroll-overlap.html
+compositing/layer-creation/scroll-partial-update.html
+compositing/layer-creation/spanOverlapsCanvas.html
+compositing/overflow/content-gains-scrollbars.html
+compositing/overflow/overflow-scrollbar-layers.html
+compositing/plugins/1x1-composited-plugin.html
+compositing/plugins/invalidate_rect.html
+compositing/plugins/large-to-small-composited-plugin.html
+compositing/plugins/small-to-large-composited-plugin.html
+compositing/tiled-layers-hidpi.html
+compositing/tiling/crash-reparent-tiled-layer.html
+compositing/video/video-poster.html
+compositing/layers-inside-overflow-scroll.html
+
+# The following tests get image mismatch.
+compositing/culling/filter-occlusion-alpha-large.html
+compositing/culling/filter-occlusion-alpha.html
+compositing/backface-visibility-hierarchical-transform.html
+compositing/backface-visibility.html
+compositing/images/direct-pdf-image.html
+compositing/visibility/visibility-simple-video-layer.html
+
+# The following tests doesnt match both expected image and text.
+compositing/geometry/ancestor-overflow-change.html
+compositing/geometry/tall-page-composited.html
+
+# Boxes are not showing the correct perspective.
+transforms/3d/general/perspective-units.html
+
+# "backface-visibility: hidden" is not hiding test boxes.
+transforms/3d/hit-testing
+
+# Generated results doesn't contain any visible 3d transformation.
+transforms/3d/point-mapping

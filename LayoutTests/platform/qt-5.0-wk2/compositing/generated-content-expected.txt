@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x300
+  RenderBlock {HTML} at (0,0) size 800x300
+    RenderBody {BODY} at (8,16) size 784x276
+      RenderBlock {P} at (0,0) size 784x21
+        RenderInline {A} at (0,0) size 337x21 [color=#0000EE]
+          RenderText {#text} at (0,0) size 337x21
+            text run at (0,0) width 337: "https://bugs.webkit.org/show_bug.cgi?id=26095"
+      RenderBlock {P} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 440x21
+          text run at (0,0) width 440: "Tests that a 3D transform on a generated node does not crash."
+      RenderBlock {DIV} at (0,74) size 202x202 [border: (1px solid #000000)]
+layer at (9,91) size 200x200
+  RenderBlock (generated) at (1,1) size 200x200
+    RenderText at (0,0) size 75x21
+      text run at (0,0) width 75: "Generated"

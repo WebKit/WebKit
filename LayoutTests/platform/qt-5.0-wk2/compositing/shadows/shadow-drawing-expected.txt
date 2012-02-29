@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x313
+  RenderBlock {HTML} at (0,0) size 800x313
+    RenderBody {BODY} at (8,16) size 784x289
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 293x21
+          text run at (0,0) width 293: "Left and right sides should look the same."
+      RenderBlock (anonymous) at (0,37) size 784x252
+        RenderBlock {DIV} at (50,50) size 202x152 [border: (1px solid #000000)]
+        RenderText {#text} at (302,155) size 4x21
+          text run at (302,155) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+layer at (59,141) size 200x94
+  RenderBlock {P} at (1,38) size 200x94 [color=#0000FF]
+    RenderText {#text} at (11,0) size 178x94
+      text run at (11,0) width 178: "Shadowed"
+      text run at (70,47) width 60: "text"
+layer at (364,103) size 202x152
+  RenderBlock {DIV} at (356,50) size 202x152 [border: (1px solid #000000)]
+layer at (365,141) size 200x94
+  RenderBlock {P} at (1,38) size 200x94 [color=#0000FF]
+    RenderText {#text} at (11,0) size 178x94
+      text run at (11,0) width 178: "Shadowed"
+      text run at (70,47) width 60: "text"

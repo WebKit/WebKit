@@ -1,0 +1,128 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x592
+  RenderBlock {HTML} at (0,0) size 800x592
+    RenderBody {BODY} at (8,16) size 784x568
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 268x21
+          text run at (0,0) width 268: "All of the boxes should look the same."
+      RenderBlock (anonymous) at (0,37) size 784x531
+        RenderText {#text} at (172,156) size 4x21
+          text run at (172,156) width 4: " "
+        RenderText {#text} at (348,156) size 4x21
+          text run at (348,156) width 4: " "
+        RenderText {#text} at (524,156) size 4x21
+          text run at (524,156) width 4: " "
+        RenderText {#text} at (700,156) size 4x21
+          text run at (700,156) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (172,333) size 4x21
+          text run at (172,333) width 4: " "
+        RenderText {#text} at (348,333) size 4x21
+          text run at (348,333) width 4: " "
+        RenderText {#text} at (524,333) size 4x21
+          text run at (524,333) width 4: " "
+        RenderText {#text} at (700,333) size 4x21
+          text run at (700,333) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (172,510) size 4x21
+          text run at (172,510) width 4: " "
+        RenderText {#text} at (348,510) size 4x21
+          text run at (348,510) width 4: " "
+        RenderText {#text} at (524,510) size 4x21
+          text run at (524,510) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+layer at (18,63) size 152x152 clip at (19,64) size 134x134 scrollY 50 scrollWidth 210 scrollHeight 510
+  RenderBlock {DIV} at (10,10) size 152x152 [border: (1px solid #000000)]
+layer at (194,63) size 152x152 clip at (195,64) size 134x134 scrollY 50 scrollWidth 210 scrollHeight 510
+  RenderBlock {DIV} at (186,10) size 152x152 [border: (1px solid #000000)]
+layer at (19,14) size 210x510 backgroundClip at (19,64) size 134x134 clip at (19,64) size 134x134 outlineClip at (19,64) size 134x134
+  RenderBlock {DIV} at (1,1) size 210x510 [bgcolor=#808080]
+    RenderBlock {P} at (5,29) size 200x60
+      RenderText {#text} at (0,0) size 168x60
+        text run at (0,0) width 168: "This is the inner"
+        text run at (0,30) width 158: "div that scrolls."
+layer at (195,14) size 210x510 backgroundClip at (195,64) size 134x134 clip at (195,64) size 134x134 outlineClip at (195,64) size 134x134
+  RenderBlock (relative positioned) {DIV} at (1,1) size 210x510 [bgcolor=#808080]
+    RenderBlock {P} at (5,29) size 200x60
+      RenderText {#text} at (0,0) size 168x60
+        text run at (0,0) width 168: "This is the inner"
+        text run at (0,30) width 158: "div that scrolls."
+layer at (370,63) size 152x152 clip at (371,64) size 134x134 scrollY 50 scrollWidth 210 scrollHeight 510
+  RenderBlock (relative positioned) {DIV} at (362,10) size 152x152 [border: (1px solid #000000)]
+layer at (371,14) size 210x510 backgroundClip at (371,64) size 134x134 clip at (371,64) size 134x134 outlineClip at (371,64) size 134x134
+  RenderBlock {DIV} at (1,1) size 210x510 [bgcolor=#808080]
+    RenderBlock {P} at (5,29) size 200x60
+      RenderText {#text} at (0,0) size 168x60
+        text run at (0,0) width 168: "This is the inner"
+        text run at (0,30) width 158: "div that scrolls."
+layer at (546,63) size 152x152 clip at (547,64) size 134x134 scrollY 50 scrollWidth 210 scrollHeight 510
+  RenderBlock (relative positioned) {DIV} at (538,10) size 152x152 [border: (1px solid #000000)]
+layer at (547,14) size 210x510 backgroundClip at (547,64) size 134x134 clip at (547,64) size 134x134 outlineClip at (547,64) size 134x134
+  RenderBlock (relative positioned) {DIV} at (1,1) size 210x510 [bgcolor=#808080]
+    RenderBlock {P} at (5,29) size 200x60
+      RenderText {#text} at (0,0) size 168x60
+        text run at (0,0) width 168: "This is the inner"
+        text run at (0,30) width 158: "div that scrolls."
+layer at (18,240) size 152x152 clip at (19,241) size 134x134 scrollY 50 scrollWidth 210 scrollHeight 510
+  RenderBlock {DIV} at (10,187) size 152x152 [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 210x510 [bgcolor=#808080]
+      RenderBlock {P} at (5,29) size 200x60
+        RenderText {#text} at (0,0) size 168x60
+          text run at (0,0) width 168: "This is the inner"
+          text run at (0,30) width 158: "div that scrolls."
+layer at (194,240) size 152x152 clip at (195,241) size 134x134 scrollY 50 scrollWidth 210 scrollHeight 510
+  RenderBlock {DIV} at (186,187) size 152x152 [border: (1px solid #000000)]
+layer at (195,191) size 210x510 backgroundClip at (195,241) size 134x134 clip at (195,241) size 134x134 outlineClip at (195,241) size 134x134
+  RenderBlock (relative positioned) {DIV} at (1,1) size 210x510 [bgcolor=#808080]
+    RenderBlock {P} at (5,29) size 200x60
+      RenderText {#text} at (0,0) size 168x60
+        text run at (0,0) width 168: "This is the inner"
+        text run at (0,30) width 158: "div that scrolls."
+layer at (370,240) size 152x152 clip at (371,241) size 134x134 scrollY 50 scrollWidth 210 scrollHeight 510
+  RenderBlock {DIV} at (362,187) size 152x152 [border: (1px solid #000000)]
+layer at (371,191) size 210x510 backgroundClip at (371,241) size 134x134 clip at (371,241) size 134x134 outlineClip at (371,241) size 134x134
+  RenderBlock {DIV} at (1,1) size 210x510 [bgcolor=#808080]
+    RenderBlock {P} at (5,29) size 200x60
+      RenderText {#text} at (0,0) size 168x60
+        text run at (0,0) width 168: "This is the inner"
+        text run at (0,30) width 158: "div that scrolls."
+layer at (546,240) size 152x152 clip at (547,241) size 134x134 scrollY 50 scrollWidth 210 scrollHeight 510
+  RenderBlock {DIV} at (538,187) size 152x152 [border: (1px solid #000000)]
+layer at (547,191) size 210x510 backgroundClip at (547,241) size 134x134 clip at (547,241) size 134x134 outlineClip at (547,241) size 134x134
+  RenderBlock (relative positioned) {DIV} at (1,1) size 210x510 [bgcolor=#808080]
+    RenderBlock {P} at (5,29) size 200x60
+      RenderText {#text} at (0,0) size 168x60
+        text run at (0,0) width 168: "This is the inner"
+        text run at (0,30) width 158: "div that scrolls."
+layer at (18,417) size 152x152 clip at (19,418) size 134x134 scrollY 50 scrollWidth 210 scrollHeight 510
+  RenderBlock (relative positioned) {DIV} at (10,364) size 152x152 [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 210x510 [bgcolor=#808080]
+      RenderBlock {P} at (5,29) size 200x60
+        RenderText {#text} at (0,0) size 168x60
+          text run at (0,0) width 168: "This is the inner"
+          text run at (0,30) width 158: "div that scrolls."
+layer at (194,417) size 152x152 clip at (195,418) size 134x134 scrollY 50 scrollWidth 210 scrollHeight 510
+  RenderBlock (relative positioned) {DIV} at (186,364) size 152x152 [border: (1px solid #000000)]
+layer at (195,368) size 210x510 backgroundClip at (195,418) size 134x134 clip at (195,418) size 134x134 outlineClip at (195,418) size 134x134
+  RenderBlock (relative positioned) {DIV} at (1,1) size 210x510 [bgcolor=#808080]
+    RenderBlock {P} at (5,29) size 200x60
+      RenderText {#text} at (0,0) size 168x60
+        text run at (0,0) width 168: "This is the inner"
+        text run at (0,30) width 158: "div that scrolls."
+layer at (370,417) size 152x152 clip at (371,418) size 134x134 scrollY 50 scrollWidth 210 scrollHeight 510
+  RenderBlock (relative positioned) {DIV} at (362,364) size 152x152 [border: (1px solid #000000)]
+layer at (371,368) size 210x510 backgroundClip at (371,418) size 134x134 clip at (371,418) size 134x134 outlineClip at (371,418) size 134x134
+  RenderBlock {DIV} at (1,1) size 210x510 [bgcolor=#808080]
+    RenderBlock {P} at (5,29) size 200x60
+      RenderText {#text} at (0,0) size 168x60
+        text run at (0,0) width 168: "This is the inner"
+        text run at (0,30) width 158: "div that scrolls."
+layer at (546,417) size 152x152 clip at (547,418) size 134x134 scrollY 50 scrollWidth 210 scrollHeight 510
+  RenderBlock (relative positioned) {DIV} at (538,364) size 152x152 [border: (1px solid #000000)]
+layer at (547,368) size 210x510 backgroundClip at (547,418) size 134x134 clip at (547,418) size 134x134 outlineClip at (547,418) size 134x134
+  RenderBlock (relative positioned) {DIV} at (1,1) size 210x510 [bgcolor=#808080]
+    RenderBlock {P} at (5,29) size 200x60
+      RenderText {#text} at (0,0) size 168x60
+        text run at (0,0) width 168: "This is the inner"
+        text run at (0,30) width 158: "div that scrolls."

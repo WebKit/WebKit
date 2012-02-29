@@ -65,3 +65,5 @@ fast/events/drag-selects-image.html
 
 # eventSender missing touchCancel() and cancelTouchPoint()
 fast/events/touch/send-oncancel-event.html
+
+compositing

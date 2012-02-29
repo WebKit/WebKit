@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x432
+  RenderBlock {HTML} at (0,0) size 800x432
+    RenderBody {BODY} at (8,16) size 784x406
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 363x21
+          text run at (0,0) width 363: "You should not see double text when the div scrolls"
+      RenderBlock {DIV} at (10,37) size 302x207 [border: (1px solid #000000)]
+        RenderText {#text} at (0,0) size 0x0
+layer at (19,54) size 300x200
+  RenderVideo {VIDEO} at (1,1) size 300x200
+layer at (18,270) size 302x152 clip at (19,271) size 284x150 scrollY 24 scrollHeight 500
+  RenderBlock {DIV} at (10,254) size 302x152 [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 284x500
+      RenderText {#text} at (0,3) size 116x41
+        text run at (0,3) width 116: "Scrolled"
+      RenderBR {BR} at (116,3) size 0x41
+      RenderText {#text} at (0,51) size 52x41
+        text run at (0,51) width 52: "text"
+      RenderBR {BR} at (52,51) size 0x41
+      RenderText {#text} at (0,99) size 74x41
+        text run at (0,99) width 74: "here."

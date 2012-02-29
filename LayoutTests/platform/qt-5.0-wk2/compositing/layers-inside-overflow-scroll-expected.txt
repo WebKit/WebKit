@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x432
+  RenderBlock {HTML} at (0,0) size 800x432
+    RenderBody {BODY} at (8,16) size 784x406
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 477x21
+          text run at (0,0) width 477: "The red box in the overflow:scroll div should be scrolled out of view."
+      RenderBlock {DIV} at (10,37) size 302x207 [border: (1px solid #000000)]
+        RenderText {#text} at (0,0) size 0x0
+layer at (19,54) size 300x200
+  RenderVideo {VIDEO} at (1,1) size 300x200
+layer at (18,270) size 302x152 clip at (19,271) size 284x150 scrollY 100 scrollHeight 500
+  RenderBlock {DIV} at (10,254) size 302x152 [border: (1px solid #000000)]
+    RenderBlock {DIV} at (1,1) size 284x500

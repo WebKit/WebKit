@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x584
+      RenderBlock {P} at (0,0) size 800x21
+        RenderText {#text} at (0,0) size 33x21
+          text run at (0,0) width 33: "Bug "
+        RenderInline {A} at (0,0) size 45x21 [color=#0000EE]
+          RenderText {#text} at (33,0) size 45x21
+            text run at (33,0) width 45: "29495"
+        RenderText {#text} at (78,0) size 362x21
+          text run at (78,0) width 362: ". You should see one green box below, with no red."
+layer at (10,60) size 50x50
+  RenderBlock (positioned) {DIV} at (10,60) size 50x50 [bgcolor=#FF0000]
+layer at (10,10) size 100x100
+  RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
