@@ -1299,12 +1299,6 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 
 void WebPage::mouseEventSyncForTesting(const WebMouseEvent& mouseEvent, bool& handled)
 {
-    // Don't try to handle any pending mouse events if a context menu is showing.
-    if (m_isShowingContextMenu) {
-        handled = true;
-        return;
-    }
-
     handled = m_pageOverlay && m_pageOverlay->mouseEvent(mouseEvent);
 
     if (!handled) {
