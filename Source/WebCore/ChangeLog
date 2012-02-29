@@ -1,3 +1,20 @@
+2012-02-29  Parag Radke  <parag@motorola.com>
+
+        Crash in WebCore::CompositeEditCommand::insertNodeAt
+        https://bugs.webkit.org/show_bug.cgi?id=67764
+
+        Reviewed by Ryosuke Niwa.
+
+        If caret position after deletion and destination position coincides then
+        removing the node will result in removing the destination node also. Hence crash.
+
+        Test: editing/deleting/delete-block-merge-contents-025.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::cleanupAfterDeletion):
+        If the caret position after delete and the destination position
+        renderes at the same place, pruning the node and making an early exit.
+
 2012-02-29  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: remove calculator's updateBoundaries in the timeline panel.
