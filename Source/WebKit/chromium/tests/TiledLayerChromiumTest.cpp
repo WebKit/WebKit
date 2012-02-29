@@ -318,6 +318,102 @@ TEST(TiledLayerChromiumTest, pushIdlePaintTiles)
     }
 }
 
+TEST(TiledLayerChromiumTest, pushTilesMarkedDirtyDuringPaint)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    DebugScopedSetImplThread implThread;
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    // The tile size is 100x100, so this invalidates and then paints two tiles.
+    // However, during the paint, we invalidate one of the tiles. This should
+    // not prevent the tile from being pushed.
+    layer->setBounds(IntSize(100, 200));
+    layer->invalidateRect(IntRect(0, 0, 100, 200));
+    layer->fakeLayerTextureUpdater()->setRectToInvalidate(IntRect(0, 50, 100, 50), layer.get());
+    layer->prepareToUpdate(IntRect(0, 0, 100, 200));
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // We should have both tiles on the impl side.
+    EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
+    EXPECT_TRUE(layerImpl->hasTileAt(0, 1));
+}
+
+TEST(TiledLayerChromiumTest, pushTilesLayerMarkedDirtyDuringPaintOnNextLayer)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
+    RefPtr<FakeTiledLayerChromium> layer1 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    RefPtr<FakeTiledLayerChromium> layer2 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    DebugScopedSetImplThread implThread;
+    OwnPtr<FakeCCTiledLayerImpl> layer1Impl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layer2Impl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    layer1->setBounds(IntSize(100, 200));
+    layer1->invalidateRect(IntRect(0, 0, 100, 200));
+    layer2->setBounds(IntSize(100, 200));
+    layer2->invalidateRect(IntRect(0, 0, 100, 200));
+
+    layer1->prepareToUpdate(IntRect(0, 0, 100, 200));
+
+    // Invalidate a tile on layer1
+    layer2->fakeLayerTextureUpdater()->setRectToInvalidate(IntRect(0, 50, 100, 50), layer1.get());
+    layer2->prepareToUpdate(IntRect(0, 0, 100, 200));
+
+    layer1->updateCompositorResources(0, updater);
+    layer2->updateCompositorResources(0, updater);
+
+    layer1->pushPropertiesTo(layer1Impl.get());
+    layer2->pushPropertiesTo(layer2Impl.get());
+
+    // We should have both tiles on the impl side for all layers.
+    EXPECT_TRUE(layer1Impl->hasTileAt(0, 0));
+    EXPECT_TRUE(layer1Impl->hasTileAt(0, 1));
+    EXPECT_TRUE(layer2Impl->hasTileAt(0, 0));
+    EXPECT_TRUE(layer2Impl->hasTileAt(0, 1));
+}
+
+TEST(TiledLayerChromiumTest, pushTilesLayerMarkedDirtyDuringPaintOnPreviousLayer)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
+    RefPtr<FakeTiledLayerChromium> layer1 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    RefPtr<FakeTiledLayerChromium> layer2 = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    DebugScopedSetImplThread implThread;
+    OwnPtr<FakeCCTiledLayerImpl> layer1Impl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    OwnPtr<FakeCCTiledLayerImpl> layer2Impl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    layer1->setBounds(IntSize(100, 200));
+    layer1->invalidateRect(IntRect(0, 0, 100, 200));
+    layer2->setBounds(IntSize(100, 200));
+    layer2->invalidateRect(IntRect(0, 0, 100, 200));
+
+    // Invalidate a tile on layer2
+    layer1->fakeLayerTextureUpdater()->setRectToInvalidate(IntRect(0, 50, 100, 50), layer2.get());
+    layer1->prepareToUpdate(IntRect(0, 0, 100, 200));
+
+    layer2->prepareToUpdate(IntRect(0, 0, 100, 200));
+
+    layer1->updateCompositorResources(0, updater);
+    layer2->updateCompositorResources(0, updater);
+
+    layer1->pushPropertiesTo(layer1Impl.get());
+    layer2->pushPropertiesTo(layer2Impl.get());
+
+    // We should have both tiles on the impl side for all layers.
+    EXPECT_TRUE(layer1Impl->hasTileAt(0, 0));
+    EXPECT_TRUE(layer1Impl->hasTileAt(0, 1));
+    EXPECT_TRUE(layer2Impl->hasTileAt(0, 0));
+    EXPECT_TRUE(layer2Impl->hasTileAt(0, 1));
+}
 
 TEST(TiledLayerChromiumTest, idlePaintOutOfMemory)
 {
@@ -486,6 +582,7 @@ TEST(TiledLayerChromiumTest, verifyInvalidationWhenContentsScaleChanges)
     // Invalidate the entire layer again, but do not paint. All tiles should be gone now from the
     // impl side.
     layer->setNeedsDisplay();
+    layer->prepareToUpdate(IntRect(0, 0, 0, 0));
     layer->updateCompositorResources(0, updater);
     layer->pushPropertiesTo(layerImpl.get());
     EXPECT_FALSE(layerImpl->hasTileAt(0, 0));

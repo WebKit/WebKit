@@ -1,3 +1,34 @@
+2012-02-29  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Don't let invalidation for next frame prevent tile upload
+        https://bugs.webkit.org/show_bug.cgi?id=79841
+
+        Reviewed by James Robinson.
+
+        We currently don't push dirty tiles to the impl thread so there are no
+        tiles with garbage data on the impl thread. However, this judgement is
+        overzealous and blocks tiles that get invalidated by WebKit for the
+        next frame during the paint of the current frame.
+
+        Instead, check if a tile is dirty and was not painted for the current
+        frame when deciding to push the tile to the impl thread. This requires
+        that we know if a tile was painted during the current frame, which we
+        can do if we always reset m_updateRect to be empty each frame.
+
+        New unit tests: TiledLayerChromiumTest.pushTilesMarkedDirtyDuringPaint
+                        TiledLayerChromiumTest.pushTilesLayerMarkedDirtyDuringPaintOnNextLayer
+                        TiledLayerChromiumTest.pushTilesLayerMarkedDirtyDuringPaintOnPreviousLayer
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::UpdatableTile::isDirtyForCurrentFrame):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles):
+        (WebCore::TiledLayerChromium::resetUpdateState):
+        (WebCore):
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (TiledLayerChromium):
+
 2012-02-29  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: MediaStreamTrackList out-of-bounds access fix

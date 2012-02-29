@@ -86,6 +86,9 @@ protected:
     // Set invalidations to be potentially repainted during update().
     void invalidateRect(const IntRect& layerRect);
 
+    // Reset state on tiles that will be used for updating the layer.
+    void resetUpdateState();
+
     // Prepare data needed to update textures that intersect with layerRect.
     void prepareToUpdate(const IntRect& layerRect);
 

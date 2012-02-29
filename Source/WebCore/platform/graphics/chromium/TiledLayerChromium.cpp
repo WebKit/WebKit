@@ -67,6 +67,7 @@ public:
         m_updateRect = m_dirtyRect;
         m_dirtyRect = IntRect();
     }
+    bool isDirtyForCurrentFrame() { return !m_dirtyRect.isEmpty() && m_updateRect.isEmpty(); }
 
     IntRect m_dirtyRect;
     IntRect m_updateRect;
@@ -263,7 +264,7 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
             invalidTiles.append(tile);
             continue;
         }
-        if (tile->isDirty())
+        if (tile->isDirtyForCurrentFrame())
             continue;
 
         tiledLayer->pushTileProperties(i, j, tile->managedTexture()->textureId(), tile->m_opaqueRect);
@@ -398,13 +399,6 @@ bool TiledLayerChromium::tileNeedsBufferedUpdate(UpdatableTile* tile)
 
 void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int right, int bottom)
 {
-    // Reset m_updateRect for all tiles.
-    for (CCLayerTilingData::TileMap::const_iterator iter = m_tiler->tiles().begin(); iter != m_tiler->tiles().end(); ++iter) {
-        UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
-        tile->m_updateRect = IntRect();
-        tile->m_partialUpdate = false;
-    }
-
     createTextureUpdaterIfNeeded();
 
     // Create tiles as needed, expanding a dirty rect to contain all
@@ -566,6 +560,17 @@ void TiledLayerChromium::addSelfToOccludedScreenSpace(Region& occludedScreenSpac
     }
 }
 
+void TiledLayerChromium::resetUpdateState()
+{
+    // Reset m_updateRect for all tiles.
+    CCLayerTilingData::TileMap::const_iterator end = m_tiler->tiles().end();
+    for (CCLayerTilingData::TileMap::const_iterator iter = m_tiler->tiles().begin(); iter != end; ++iter) {
+        UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
+        tile->m_updateRect = IntRect();
+        tile->m_partialUpdate = false;
+    }
+}
+
 void TiledLayerChromium::prepareToUpdate(const IntRect& layerRect)
 {
     m_skipsDraw = false;
@@ -574,6 +579,8 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& layerRect)
     m_paintRect = IntRect();
 
     updateBounds();
+
+    resetUpdateState();
 
     if (layerRect.isEmpty() || !m_tiler->numTiles())
         return;
