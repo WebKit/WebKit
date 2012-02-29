@@ -1,3 +1,9 @@
+2012-02-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium build fix attempt.
+
+        * src/WebDragData.cpp:
+
 2012-02-28  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Reset damage tracker on visibility change.

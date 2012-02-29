@@ -33,6 +33,7 @@
 
 #include "ChromiumDataObject.h"
 #include "ClipboardMimeTypes.h"
+#include "DOMStringList.h"
 #include "platform/WebData.h"
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
