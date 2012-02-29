@@ -39,6 +39,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "Node.h"
+#include "StaticNodeList.h"
 
 namespace WebCore {
 
@@ -170,6 +171,48 @@ PassRefPtr<DOMStringList> HTMLPropertiesCollection::names() const
     }
 
     return m_propertyNames;
+}
+
+PassRefPtr<NodeList> HTMLPropertiesCollection::namedItem(const String& name) const
+{
+    if (!base()->isHTMLElement() || !toHTMLElement(base())->fastHasAttribute(itemscopeAttr))
+      return 0;
+
+    m_properties.clear();
+    Vector<RefPtr<Node> > namedItems;
+    findPropetiesOfAnItem(base());
+
+    std::sort(m_properties.begin(), m_properties.end(), compareTreeOrder);
+
+    // For each item properties, split the value of that itemprop attribute on spaces.
+    // Add element to namedItem that contains a property named name, with the order preserved.
+    for (size_t i = 0; i < m_properties.size(); ++i) {
+        DOMSettableTokenList* itemProperty = m_properties[i]->itemProp();
+        if (itemProperty->tokens().contains(name))
+            namedItems.append(m_properties[i]);
+    }
+
+    // FIXME: HTML5 specifies that this should return PropertyNodeList.
+    return namedItems.isEmpty() ? 0 : StaticNodeList::adopt(namedItems);
+}
+
+bool HTMLPropertiesCollection::hasNamedItem(const AtomicString& name) const
+{
+    if (!base()->isHTMLElement() || !toHTMLElement(base())->fastHasAttribute(itemscopeAttr))
+        return false;
+
+    m_properties.clear();
+    findPropetiesOfAnItem(base());
+
+    // For each item properties, split the value of that itemprop attribute on spaces.
+    // Return true if element contains a property named name.
+    for (size_t i = 0; i < m_properties.size(); ++i) {
+        DOMSettableTokenList* itemProperty = m_properties[i]->itemProp();
+        if (itemProperty->tokens().contains(name))
+            return true;
+    }
+
+    return false;
 }
 
 } // namespace WebCore

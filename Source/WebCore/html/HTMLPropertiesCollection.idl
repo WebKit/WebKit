@@ -32,13 +32,15 @@ module html {
 
     interface [
         Conditional=MICRODATA,
-        IndexedGetter
+        IndexedGetter,
+        NamedGetter
     ] HTMLPropertiesCollection : HTMLCollection {
         readonly attribute unsigned long length;
         Node item(in unsigned long index);
 
         readonly attribute DOMStringList names;
 
-        // FIXME: override inherited namedItem()
+        // FIXME: HTML5 specifies that this should return PropertyNodeList.
+        NodeList namedItem(in DOMString name);
     };
 }

@@ -2224,6 +2224,20 @@ sub GenerateImplementation
         }
     }
 
+    if ($interfaceName eq "HTMLPropertiesCollection") {
+        if ($dataNode->extendedAttributes->{"NamedGetter"}) {
+            push(@implContent, "bool ${className}::canGetItemsForName(ExecState*, $implClassName* collection, const Identifier& propertyName)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    return collection->hasNamedItem(identifierToAtomicString(propertyName));\n");
+            push(@implContent, "}\n\n");
+            push(@implContent, "JSValue ${className}::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    ${className}* thisObj = static_cast<$className*>(asObject(slotBase));\n");
+            push(@implContent, "    return toJS(exec, thisObj->globalObject(), static_cast<$implClassName*>(thisObj->impl())->namedItem(identifierToAtomicString(propertyName)));\n");
+            push(@implContent, "}\n\n");
+        }
+    }
+
     if ((!$hasParent && !$dataNode->extendedAttributes->{"JSCustomIsReachable"})|| $dataNode->extendedAttributes->{"JSGenerateIsReachable"} || $dataNode->extendedAttributes->{"ActiveDOMObject"}) {
         push(@implContent, "static inline bool isObservable(JS${implClassName}* js${implClassName})\n");
         push(@implContent, "{\n");

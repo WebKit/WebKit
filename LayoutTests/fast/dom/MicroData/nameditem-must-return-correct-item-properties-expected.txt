@@ -1,0 +1,35 @@
+This test ensures that namedItem must return the correct item properties.
+
+Created element of type: div
+
+Test properties.namedItem(name).
+PASS item.properties.namedItem('foo').length is 2
+PASS item.properties.namedItem('bar').length is 1
+PASS item.properties.namedItem('baz').length is 1
+PASS item.properties.namedItem('qux').length is 1
+PASS item.properties.namedItem('foo')[0] is element.firstChild
+PASS item.properties.namedItem('foo')[1] is item.firstChild
+PASS item.properties.namedItem('bar')[0] is item.firstChild
+PASS item.properties.namedItem('baz')[0] is element.lastChild
+PASS item.properties.namedItem('qux')[0] is element.lastChild.firstChild
+
+Test properties[name].
+PASS item.properties['foo'].length is 2
+PASS item.properties['bar'].length is 1
+PASS item.properties['baz'].length is 1
+PASS item.properties['qux'].length is 1
+PASS item.properties['foo'][0] is element.firstChild
+PASS item.properties['foo'][1] is item.firstChild
+PASS item.properties['bar'][0] is item.firstChild
+PASS item.properties['baz'][0] is element.lastChild
+PASS item.properties['qux'][0] is element.lastChild.firstChild
+
+Test properties[index].
+PASS item.properties[0] is element.firstChild
+PASS item.properties[1] is item.firstChild
+PASS item.properties[2] is element.lastChild
+PASS item.properties[3] is element.lastChild.firstChild
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

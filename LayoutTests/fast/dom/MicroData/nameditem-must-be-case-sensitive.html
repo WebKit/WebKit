@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that namedItem must be case sensitive.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemscope: 'itemscope'}, '<div itemprop="foo"></div><div itemprop="bar"><div itemprop="FOO"></div><div itemprop="foo FOo foo"></div></div><div itemprop="baz qux"></div>');
+
+shouldBe("element.properties.namedItem('foo').length", '2');
+shouldBe("element.properties.namedItem('FOO').length", '1');
+shouldBe("element.properties.namedItem('FOo').length", '1');
+
+shouldBe("element.properties.namedItem('foo')[0]", 'element.firstChild');
+shouldBe("element.properties.namedItem('foo')[1]", 'element.childNodes[1].lastChild');
+shouldBe("element.properties.namedItem('FOO')[0]", 'element.childNodes[1].firstChild');
+shouldBe("element.properties.namedItem('FOo')[0]", 'element.childNodes[1].lastChild');
+debug('');
+
+shouldBe("element.properties['foo'].length", '2');
+shouldBe("element.properties['FOO'].length", '1');
+shouldBe("element.properties['FOo'].length", '1');
+
+shouldBe("element.properties['foo'][0]", 'element.firstChild');
+shouldBe("element.properties['foo'][1]", 'element.childNodes[1].lastChild');
+shouldBe("element.properties['FOO'][0]", 'element.childNodes[1].firstChild');
+shouldBe("element.properties['FOo'][0]", 'element.childNodes[1].lastChild');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

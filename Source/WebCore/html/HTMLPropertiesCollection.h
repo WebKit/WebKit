@@ -50,10 +50,14 @@ public:
 
     PassRefPtr<DOMStringList> names() const;
 
+    PassRefPtr<NodeList> namedItem(const String&) const;
+    bool hasNamedItem(const AtomicString&) const;
+
 private:
     HTMLPropertiesCollection(Node*);
 
     void findPropetiesOfAnItem(Node* current) const;
+    void getNamedItems(Vector<RefPtr<Node> >&, const String&) const;
 
     mutable Vector<Node*> m_properties;
     mutable RefPtr<DOMStringList> m_propertyNames;

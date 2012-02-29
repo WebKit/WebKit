@@ -1,0 +1,22 @@
+Properties collection's namedItem property simple test.
+
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+
+Test properties.namedItem(name).
+PASS element.properties.namedItem('foo') is defined.
+PASS element.properties.namedItem('foo').length is 1
+PASS element.properties.namedItem('foo')[0] is element.firstChild
+
+Test properties[name].
+PASS element.properties['foo'] is defined.
+PASS element.properties['foo'].length is 1
+PASS element.properties['foo'][0] is element.firstChild
+
+Test properties[index].
+PASS element.properties[0] is defined.
+PASS element.properties[0] is element.firstChild
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

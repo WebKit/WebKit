@@ -1,3 +1,29 @@
+2012-02-28  Arko Saha  <arko@motorola.com>
+
+        Microdata: Implement HTMLPropertiesCollection collection.namedItem().
+        https://bugs.webkit.org/show_bug.cgi?id=73156
+
+        Reviewed by Kentaro Hara.
+
+        Tests: fast/dom/MicroData/nameditem-must-be-case-sensitive.html
+               fast/dom/MicroData/nameditem-must-return-correct-item-properties.html
+               fast/dom/MicroData/properties-collection-nameditem-test.html
+
+        * bindings/scripts/CodeGeneratorJS.pm: Modified code generator to generate
+        JS bindings code for HTMLPropertiesCollection [NamedGetter] property.
+        (GenerateImplementation):
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::names):
+        (WebCore):
+        (WebCore::HTMLPropertiesCollection::namedItem): Returns a NodeList object
+        containing any elements that add a property named name.
+        (WebCore::HTMLPropertiesCollection::hasNamedItem): Checks if the items can
+        be retrieved or not based on the property named name.
+        * html/HTMLPropertiesCollection.h: Added namedItem(), hasProperty(),
+        hasNamedItem() methods.
+        (HTMLPropertiesCollection):
+        * html/HTMLPropertiesCollection.idl: Added namedItem() IDL method.
+
 2012-02-28  Kinuko Yasuda  <kinuko@chromium.org>
 
         Add size field to Metadata in FileSystem API

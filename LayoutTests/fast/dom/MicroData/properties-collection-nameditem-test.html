@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>Properties collection's namedItem property simple test.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {itemscope: 'itemscope'}, '<div itemprop="foo"></div>');
+
+debug("<br>Test properties.namedItem(name).");
+shouldBeDefined("element.properties.namedItem('foo')");
+shouldBe("element.properties.namedItem('foo').length", '1');
+shouldBe("element.properties.namedItem('foo')[0]", 'element.firstChild');
+
+debug("<br>Test properties[name].");
+shouldBeDefined("element.properties['foo']");
+shouldBe("element.properties['foo'].length", '1');
+shouldBe("element.properties['foo'][0]", 'element.firstChild');
+
+debug("<br>Test properties[index].");
+shouldBeDefined("element.properties[0]");
+shouldBe("element.properties[0]", 'element.firstChild');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

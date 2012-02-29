@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<p>This test ensures that namedItem must return the correct item properties.</p>
+<div id="console"></div>
+<script>
+var element = createElement('div', {}, '<div itemprop="foo" id="id1"></div><div itemscope itemref="id2 id1"><div itemprop="foo bar"></div></div><div itemprop="baz" id="id2"><div itemprop="qux">');
+var item = element.childNodes[1];
+document.body.appendChild(element);
+
+debug("<br>Test properties.namedItem(name).");
+shouldBe("item.properties.namedItem('foo').length", '2');
+shouldBe("item.properties.namedItem('bar').length", '1');
+shouldBe("item.properties.namedItem('baz').length", '1');
+shouldBe("item.properties.namedItem('qux').length", '1');
+
+shouldBe("item.properties.namedItem('foo')[0]", 'element.firstChild');
+shouldBe("item.properties.namedItem('foo')[1]", 'item.firstChild');
+shouldBe("item.properties.namedItem('bar')[0]", 'item.firstChild');
+shouldBe("item.properties.namedItem('baz')[0]", 'element.lastChild');
+shouldBe("item.properties.namedItem('qux')[0]", 'element.lastChild.firstChild');
+
+debug("<br>Test properties[name].");
+shouldBe("item.properties['foo'].length", '2');
+shouldBe("item.properties['bar'].length", '1');
+shouldBe("item.properties['baz'].length", '1');
+shouldBe("item.properties['qux'].length", '1');
+
+shouldBe("item.properties['foo'][0]", 'element.firstChild');
+shouldBe("item.properties['foo'][1]", 'item.firstChild');
+shouldBe("item.properties['bar'][0]", 'item.firstChild');
+shouldBe("item.properties['baz'][0]", 'element.lastChild');
+shouldBe("item.properties['qux'][0]", 'element.lastChild.firstChild');
+
+debug("<br>Test properties[index].");
+shouldBe("item.properties[0]", 'element.firstChild');
+shouldBe("item.properties[1]", 'item.firstChild');
+shouldBe("item.properties[2]", 'element.lastChild');
+shouldBe("item.properties[3]", 'element.lastChild.firstChild')
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

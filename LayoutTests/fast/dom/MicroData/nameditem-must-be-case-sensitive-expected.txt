@@ -1,0 +1,23 @@
+This test ensures that namedItem must be case sensitive.
+
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+PASS element.properties.namedItem('foo').length is 2
+PASS element.properties.namedItem('FOO').length is 1
+PASS element.properties.namedItem('FOo').length is 1
+PASS element.properties.namedItem('foo')[0] is element.firstChild
+PASS element.properties.namedItem('foo')[1] is element.childNodes[1].lastChild
+PASS element.properties.namedItem('FOO')[0] is element.childNodes[1].firstChild
+PASS element.properties.namedItem('FOo')[0] is element.childNodes[1].lastChild
+
+PASS element.properties['foo'].length is 2
+PASS element.properties['FOO'].length is 1
+PASS element.properties['FOo'].length is 1
+PASS element.properties['foo'][0] is element.firstChild
+PASS element.properties['foo'][1] is element.childNodes[1].lastChild
+PASS element.properties['FOO'][0] is element.childNodes[1].firstChild
+PASS element.properties['FOo'][0] is element.childNodes[1].lastChild
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
