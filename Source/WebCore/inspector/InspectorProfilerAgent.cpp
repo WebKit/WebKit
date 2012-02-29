@@ -50,10 +50,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/text/StringConcatenate.h>
 
-#if USE(JSC)
-#include "JSDOMWindow.h"
-#endif
-
 namespace WebCore {
 
 namespace ProfilerAgentState {
@@ -65,15 +61,63 @@ static const char* const UserInitiatedProfileName = "org.webkit.profiles.user-in
 static const char* const CPUProfileType = "CPU";
 static const char* const HeapProfileType = "HEAP";
 
+
+class PageProfilerAgent : public InspectorProfilerAgent {
+public:
+    PageProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, Page* inspectedPage, InspectorState* state, InjectedScriptManager* injectedScriptManager)
+        : InspectorProfilerAgent(instrumentingAgents, consoleAgent, state, injectedScriptManager), m_inspectedPage(inspectedPage) { }
+    virtual ~PageProfilerAgent() { }
+
+private:
+    virtual void startProfiling(const String& title)
+    {
+        ScriptProfiler::startForPage(m_inspectedPage, title);
+    }
+
+    virtual PassRefPtr<ScriptProfile> stopProfiling(const String& title)
+    {
+        return ScriptProfiler::stopForPage(m_inspectedPage, title);
+    }
+
+    Page* m_inspectedPage;
+};
+
 PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, Page* inspectedPage, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
 {
-    return adoptPtr(new InspectorProfilerAgent(instrumentingAgents, consoleAgent, inspectedPage, inspectorState, injectedScriptManager));
+    return adoptPtr(new PageProfilerAgent(instrumentingAgents, consoleAgent, inspectedPage, inspectorState, injectedScriptManager));
 }
 
-InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, Page* inspectedPage, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
+
+#if ENABLE(WORKERS)
+class WorkerProfilerAgent : public InspectorProfilerAgent {
+public:
+    WorkerProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, WorkerContext* workerContext, InspectorState* state, InjectedScriptManager* injectedScriptManager)
+        : InspectorProfilerAgent(instrumentingAgents, consoleAgent, state, injectedScriptManager), m_workerContext(workerContext) { }
+    virtual ~WorkerProfilerAgent() { }
+
+private:
+    virtual void startProfiling(const String& title)
+    {
+        ScriptProfiler::startForWorkerContext(m_workerContext, title);
+    }
+
+    virtual PassRefPtr<ScriptProfile> stopProfiling(const String& title)
+    {
+        return ScriptProfiler::stopForWorkerContext(m_workerContext, title);
+    }
+
+    WorkerContext* m_workerContext;
+};
+
+PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, WorkerContext* workerContext, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
+{
+    return adoptPtr(new WorkerProfilerAgent(instrumentingAgents, consoleAgent, workerContext, inspectorState, injectedScriptManager));
+}
+#endif
+
+InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentingAgents, InspectorConsoleAgent* consoleAgent, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     : InspectorBaseAgent<InspectorProfilerAgent>("Profiler", instrumentingAgents, inspectorState)
     , m_consoleAgent(consoleAgent)
-    , m_inspectedPage(inspectedPage)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_enabled(false)
@@ -318,12 +362,7 @@ void InspectorProfilerAgent::start(ErrorString*)
     }
     m_recordingUserInitiatedProfile = true;
     String title = getCurrentUserInitiatedProfileName(true);
-#if USE(JSC)
-    JSC::ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame(), debuggerWorld())->globalExec();
-#else
-    ScriptState* scriptState = 0;
-#endif
-    ScriptProfiler::start(scriptState, title);
+    startProfiling(title);
     addStartProfilingMessageToConsole(title, 0, String());
     toggleRecordButton(true);
     m_state->setBoolean(ProfilerAgentState::userInitiatedProfiling, true);
@@ -335,14 +374,7 @@ void InspectorProfilerAgent::stop(ErrorString*)
         return;
     m_recordingUserInitiatedProfile = false;
     String title = getCurrentUserInitiatedProfileName();
-#if USE(JSC)
-    JSC::ExecState* scriptState = toJSDOMWindow(m_inspectedPage->mainFrame(), debuggerWorld())->globalExec();
-#else
-    // Use null script state to avoid filtering by context security token.
-    // All functions from all iframes should be visible from Inspector UI.
-    ScriptState* scriptState = 0;
-#endif
-    RefPtr<ScriptProfile> profile = ScriptProfiler::stop(scriptState, title);
+    RefPtr<ScriptProfile> profile = stopProfiling(title);
     if (profile)
         addProfile(profile, 0, String());
     toggleRecordButton(false);

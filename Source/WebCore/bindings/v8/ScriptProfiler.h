@@ -41,7 +41,9 @@
 namespace WebCore {
 
 class DOMWrapperVisitor;
+class Page;
 class ScriptObject;
+class WorkerContext;
 
 class ScriptProfiler {
     WTF_MAKE_NONCOPYABLE(ScriptProfiler);
@@ -58,7 +60,15 @@ public:
     static void collectGarbage();
     static ScriptObject objectByHeapObjectId(unsigned id);
     static void start(ScriptState* state, const String& title);
+    static void startForPage(Page*, const String& title);
+#if ENABLE(WORKERS)
+    static void startForWorkerContext(WorkerContext*, const String& title);
+#endif
     static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
+    static PassRefPtr<ScriptProfile> stopForPage(Page*, const String& title);
+#if ENABLE(WORKERS)
+    static PassRefPtr<ScriptProfile> stopForWorkerContext(WorkerContext*, const String& title);
+#endif
     static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String& title, HeapSnapshotProgress*);
     static bool causesRecompilation() { return false; }
     static bool isSampling() { return true; }

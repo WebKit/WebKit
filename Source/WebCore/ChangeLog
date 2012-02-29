@@ -1,3 +1,62 @@
+2012-02-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: enable Profiles panel for workers
+        https://bugs.webkit.org/show_bug.cgi?id=79908
+
+        Introduced worker profiler agent. Enabled script profiling for
+        workers.
+
+        Reviewed by Pavel Feldman.
+
+        * bindings/js/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::startForPage):
+        (WebCore):
+        (WebCore::ScriptProfiler::startForWorkerContext):
+        (WebCore::ScriptProfiler::stopForPage):
+        (WebCore::ScriptProfiler::stopForWorkerContext):
+        * bindings/js/ScriptProfiler.h:
+        (WebCore):
+        (ScriptProfiler):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::startForPage):
+        (WebCore):
+        (WebCore::ScriptProfiler::startForWorkerContext):
+        (WebCore::ScriptProfiler::stopForPage):
+        (WebCore::ScriptProfiler::stopForWorkerContext):
+        * bindings/v8/ScriptProfiler.h:
+        (WebCore):
+        (ScriptProfiler):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore):
+        (PageProfilerAgent):
+        (WebCore::PageProfilerAgent::PageProfilerAgent):
+        (WebCore::PageProfilerAgent::~PageProfilerAgent):
+        (WebCore::PageProfilerAgent::startProfiling):
+        (WebCore::PageProfilerAgent::stopProfiling):
+        (WebCore::InspectorProfilerAgent::create):
+        (WorkerProfilerAgent):
+        (WebCore::WorkerProfilerAgent::WorkerProfilerAgent):
+        (WebCore::WorkerProfilerAgent::~WorkerProfilerAgent):
+        (WebCore::WorkerProfilerAgent::startProfiling):
+        (WebCore::WorkerProfilerAgent::stopProfiling):
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::start):
+        (WebCore::InspectorProfilerAgent::stop):
+        * inspector/InspectorProfilerAgent.h:
+        (WebCore):
+        (InspectorProfilerAgent):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::connectFrontend):
+        (WebCore::WorkerInspectorController::disconnectFrontend):
+        (WebCore::WorkerInspectorController::restoreInspectorStateFromCookie):
+        * inspector/WorkerInspectorController.h:
+        (WebCore):
+        (WorkerInspectorController):
+        * inspector/front-end/ProfilesPanel.js:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+
 2012-02-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Clicking relative links fails when query string contains a slash

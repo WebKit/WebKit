@@ -49,6 +49,18 @@ void ScriptProfiler::start(ScriptState* state, const String& title)
     v8::CpuProfiler::StartProfiling(v8String(title));
 }
 
+void ScriptProfiler::startForPage(Page*, const String& title)
+{
+    return start(0, title);
+}
+
+#if ENABLE(WORKERS)
+void ScriptProfiler::startForWorkerContext(WorkerContext*, const String& title)
+{
+    return start(0, title);
+}
+#endif
+
 PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String& title)
 {
     v8::HandleScope hs;
@@ -57,6 +69,20 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String&
         v8::CpuProfiler::StopProfiling(v8String(title));
     return profile ? ScriptProfile::create(profile) : 0;
 }
+
+PassRefPtr<ScriptProfile> ScriptProfiler::stopForPage(Page*, const String& title)
+{
+    // Use null script state to avoid filtering by context security token.
+    // All functions from all iframes should be visible from Inspector UI.
+    return stop(0, title);
+}
+
+#if ENABLE(WORKERS)
+PassRefPtr<ScriptProfile> ScriptProfiler::stopForWorkerContext(WorkerContext*, const String& title)
+{
+    return stop(0, title);
+}
+#endif
 
 void ScriptProfiler::collectGarbage()
 {

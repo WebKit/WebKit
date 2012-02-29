@@ -142,7 +142,8 @@ WebInspector.ProfilesPanel = function()
     this._launcherView.setUpEventListeners();
 
     this._registerProfileType(new WebInspector.CPUProfileType());
-    this._registerProfileType(new WebInspector.CSSSelectorProfileType());
+    if (!WebInspector.WorkerManager.isWorkerFrontend())
+        this._registerProfileType(new WebInspector.CSSSelectorProfileType());
     if (Capabilities.heapProfilerPresent)
         this._registerProfileType(new WebInspector.DetailedHeapshotProfileType());
 

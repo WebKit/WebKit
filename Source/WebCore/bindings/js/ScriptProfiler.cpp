@@ -30,9 +30,13 @@
 
 #include "ScriptProfiler.h"
 
+#include "Frame.h"
 #include "GCController.h"
 #include "JSDOMBinding.h"
+#include "JSDOMWindow.h"
+#include "Page.h"
 #include "ScriptObject.h"
+#include "ScriptState.h"
 #include <profiler/Profiler.h>
 
 namespace WebCore {
@@ -52,11 +56,37 @@ void ScriptProfiler::start(ScriptState* state, const String& title)
     JSC::Profiler::profiler()->startProfiling(state, stringToUString(title));
 }
 
+void ScriptProfiler::startForPage(Page* inspectedPage, const String& title)
+{
+    JSC::ExecState* scriptState = toJSDOMWindow(inspectedPage->mainFrame(), debuggerWorld())->globalExec();
+    start(scriptState, title);
+}
+
+#if ENABLE(WORKERS)
+void ScriptProfiler::startForWorkerContext(WorkerContext* context, const String& title)
+{
+    start(scriptStateFromWorkerContext(context), title);
+}
+#endif
+
 PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String& title)
 {
     RefPtr<JSC::Profile> profile = JSC::Profiler::profiler()->stopProfiling(state, stringToUString(title));
     return ScriptProfile::create(profile);
 }
+
+PassRefPtr<ScriptProfile> ScriptProfiler::stopForPage(Page* inspectedPage, const String& title)
+{
+    JSC::ExecState* scriptState = toJSDOMWindow(inspectedPage->mainFrame(), debuggerWorld())->globalExec();
+    return stop(scriptState, title);
+}
+
+#if ENABLE(WORKERS)
+PassRefPtr<ScriptProfile> ScriptProfiler::stopForWorkerContext(WorkerContext* context, const String& title)
+{
+    return stop(scriptStateFromWorkerContext(context), title);
+}
+#endif
 
 } // namespace WebCore
 
