@@ -485,6 +485,7 @@ WONTFIX SKIP : media/audio-mpeg-supported.html = TIMEOUT FAIL
 WONTFIX SKIP : media/audio-mpeg4-supported.html = TIMEOUT FAIL
 WONTFIX SKIP : media/media-can-play-mpeg-audio.html = TEXT
 WONTFIX SKIP : media/media-can-play-mpeg4-video.html = TEXT
+WONTFIX SKIP : media/media-can-play-flac-audio.html = TEXT
 WONTFIX SKIP : media/video-can-play-type.html = TIMEOUT FAIL
 WONTFIX SKIP : media/video-document-types.html = TIMEOUT FAIL
 WONTFIX SKIP : media/video-element-other-namespace-crash.html = TIMEOUT

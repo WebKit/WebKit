@@ -97,6 +97,9 @@ static const ExtensionMap extensionMap[] = {
     { "m3u8", "application/vnd.apple.mpegurl" },
     { "m3url", "audio/mpegurl" },
     { "m3u", "audio/mpegurl" },
+    { "flac", "audio/x-flac" },
+    { "ogg", "audio/ogg" },
+    { "oga", "audio/ogg" },
     // FIXME: wince also maps ttf and otf to text/plain. Should we do that too?
     { 0, 0 }
 };

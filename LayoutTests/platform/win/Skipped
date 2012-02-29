@@ -908,6 +908,9 @@ plugins/reloadplugins-no-pages.html
 # This test requires ogg codecs
 media/media-can-play-ogg.html
 
+# This test requires flac codec
+media/media-can-play-flac-audio.html
+
 # These tests require touch support
 fast/events/touch
 

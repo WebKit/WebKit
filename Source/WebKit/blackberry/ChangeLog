@@ -1,3 +1,13 @@
+2012-02-29  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Add support for FLAC audio and OGG/Vorbis audio
+        https://bugs.webkit.org/show_bug.cgi?id=79519
+
+        Reviewed by Antonio Gomes.
+
+        * Api/WebSettings.cpp:
+        (BlackBerry::WebKit::mimeTypeAssociationMap):
+
 2012-02-28  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Change the API to use std::string

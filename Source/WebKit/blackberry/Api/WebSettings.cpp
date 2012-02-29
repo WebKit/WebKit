@@ -131,6 +131,7 @@ static const MIMETypeAssociationMap& mimeTypeAssociationMap()
     mimeTypeMap->add("audio/x-aac", "audio/aac");
     mimeTypeMap->add("audio/x-amr", "audio/amr");
     mimeTypeMap->add("audio/mpegurl", "audio/x-mpegurl");
+    mimeTypeMap->add("audio/flac", "audio/x-flac");
     mimeTypeMap->add("video/3gp", "video/3gpp");
     mimeTypeMap->add("video/avi", "video/x-msvideo");
     mimeTypeMap->add("video/x-m4v", "video/mp4");

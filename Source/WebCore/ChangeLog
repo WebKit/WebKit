@@ -1,3 +1,18 @@
+2012-02-29  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Add support for FLAC audio and OGG/Vorbis audio
+        https://bugs.webkit.org/show_bug.cgi?id=79519
+
+        Reviewed by Antonio Gomes.
+
+        A layout test already exists for OGG. We do not support OGG
+        video at this time, only audio.
+
+        Test: media/media-can-play-flac-audio.html
+
+        * platform/blackberry/MIMETypeRegistryBlackBerry.cpp:
+        (WebCore):
+
 2012-02-28  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=79868

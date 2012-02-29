@@ -959,6 +959,9 @@ media/video-width-height.html
 media/video-zoom-controls.html
 media/video-zoom.html
 
+# This test requires flac codec
+media/media-can-play-flac-audio.html
+
 # Video size reported as 0,0 due to how size-hints are reported by QtMultimedia
 media/video-poster-delayed.html
 

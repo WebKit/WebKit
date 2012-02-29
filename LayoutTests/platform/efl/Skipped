@@ -2873,3 +2873,7 @@ http/tests/misc/slow-loading-image-in-pattern.html
 media/video-colorspace-yuv420.html
 media/video-colorspace-yuv422.html
 perf/nested-combined-selectors.html
+
+# This test requires flac codec
+media/media-can-play-flac-audio.html
+

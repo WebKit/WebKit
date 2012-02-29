@@ -1597,3 +1597,6 @@ editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html
 fast/dom/MediaStream/argument-types.html
 fast/mediastream/peerconnection-Attributes.html
 fast/mediastream/peerconnection-argument-types.html
+
+# This test requires flac codec
+media/media-can-play-flac-audio.html
