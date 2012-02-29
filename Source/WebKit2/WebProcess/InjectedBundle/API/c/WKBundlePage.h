@@ -95,6 +95,7 @@ typedef void (*WKBundlePageDidRunInsecureContentForFrameCallback)(WKBundlePageRe
 typedef void (*WKBundlePageDidDetectXSSForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidFirstLayoutForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
+typedef void (*WKBundlePageDidNewFirstVisuallyNonEmptyLayoutCallback)(WKBundlePageRef page, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidLayoutForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo);
 typedef void (*WKBundlePageDidClearWindowObjectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleScriptWorldRef world, const void *clientInfo);
 typedef void (*WKBundlePageDidCancelClientRedirectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
@@ -127,6 +128,7 @@ struct WKBundlePageLoaderClient {
 
     // Version 1.
     WKBundlePageDidLayoutForFrameCallback                               didLayoutForFrame;
+    WKBundlePageDidNewFirstVisuallyNonEmptyLayoutCallback               didNewFirstVisuallyNonEmptyLayout;
     WKBundlePageDidDetectXSSForFrameCallback                            didDetectXSSForFrame;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;

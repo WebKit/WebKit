@@ -186,7 +186,6 @@ void InjectedBundlePageLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame(WebP
     userData = adoptRef(toImpl(userDataToPass));
 }
 
-
 void InjectedBundlePageLoaderClient::didLayoutForFrame(WebPage* page, WebFrame* frame)
 {
     if (!m_client.didLayoutForFrame)
@@ -194,6 +193,16 @@ void InjectedBundlePageLoaderClient::didLayoutForFrame(WebPage* page, WebFrame* 
 
     m_client.didLayoutForFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
 }
+
+void InjectedBundlePageLoaderClient::didNewFirstVisuallyNonEmptyLayout(WebPage* page, RefPtr<APIObject>& userData)
+{
+    if (!m_client.didNewFirstVisuallyNonEmptyLayout)
+        return;
+    
+    WKTypeRef userDataToPass = 0;
+    m_client.didNewFirstVisuallyNonEmptyLayout(toAPI(page), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
+}    
 
 void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page, WebFrame* frame, DOMWrapperWorld* world)
 {

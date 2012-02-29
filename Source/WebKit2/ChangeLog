@@ -1,3 +1,23 @@
+2012-02-28  Brian Weinstein  <bweinstein@apple.com>
+
+        WebKit2: didNewFirstVisuallyNonEmptyLayout should be sent to injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=79849
+        
+        Tell the injected bundle about didNewFirstVisuallyNonEmptyLayout (we currently
+        just tell the UI process).
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Add didNewFirstVisuallyNonEmptyLayout to version 1.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didNewFirstVisuallyNonEmptyLayout): Call through to the
+            client.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        (InjectedBundlePageLoaderClient):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidNewFirstVisuallyNonEmptyLayout): Tell the injected
+            bundle.
+
 2012-02-29  Tim Horton  <timothy_horton@apple.com>
 
         Make use of CG rounded-rect primitives

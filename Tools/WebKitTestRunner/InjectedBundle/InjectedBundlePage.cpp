@@ -215,6 +215,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         willPerformClientRedirectForFrame,
         didHandleOnloadEventsForFrame,
         0, // didLayoutForFrame
+        0, // didNewFirstVisuallyNonEmptyLayoutForFrame
         didDetectXSSForFrame,
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);

@@ -564,6 +564,9 @@ void WebFrameLoaderClient::dispatchDidNewFirstVisuallyNonEmptyLayout()
 
     RefPtr<APIObject> userData;
 
+    // Notify the bundle client.
+    webPage->injectedBundleLoaderClient().didNewFirstVisuallyNonEmptyLayout(webPage, userData);
+    
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidNewFirstVisuallyNonEmptyLayout(InjectedBundleUserMessageEncoder(userData.get())));
 }
