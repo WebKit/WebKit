@@ -4440,3 +4440,5 @@ BUGWK79823 WIN LINUX : compositing/reflections/nested-reflection.html = PASS IMA
 
 BUGWK79862 : fast/js/primitive-property-access-edge-cases.html = TEXT
 BUGWK79862 : fast/js/read-modify-eval.html = TEXT
+
+BUGWK79863 WIN : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
