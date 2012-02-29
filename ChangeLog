@@ -1,5 +1,12 @@
 2012-02-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Bump WebKitGTK+ version number.
+
+        * configure.ac: Bump version number to 1.9.0 now that we branched
+        for 1.8.
+
+2012-02-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ build.
 
         * Source/autotools/symbols.filter: Add symbol.
