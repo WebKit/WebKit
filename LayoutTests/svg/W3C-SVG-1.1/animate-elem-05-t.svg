@@ -46,7 +46,7 @@
 			<rect x="60" y="20" width="10" height="10" fill="#FFCCCC" stroke="black" stroke-width="1"/>
 			<text x="60" y="37">6+</text>
 			<path d="M-5,0 L0,-10 L5,0 z" fill="blue" stroke="red" stroke-width="1">
-				<animateMotion values="15,43;40,30;65,30" begin="0s" dur="6s" calcMode="linear" fill="freeze"/>
+				<animateMotion id="an1" values="15,43;40,30;65,30" begin="0s" dur="6s" calcMode="linear" fill="freeze"/>
 			</path>
 		</g>
 	</g>

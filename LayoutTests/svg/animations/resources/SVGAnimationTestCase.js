@@ -30,11 +30,25 @@ function shouldBeCloseEnough(_a, _b, tolerance) {
         testFailed(_a + " should be close to " + _bv + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
 }
 
+function expectMatrix(actualMatrix, expectedA, expectedB, expectedC, expectedD, expectedE, expectedF, tolerance) {
+    shouldBeCloseEnough(actualMatrix + ".a", expectedA, tolerance);
+    shouldBeCloseEnough(actualMatrix + ".b", expectedB, tolerance);
+    shouldBeCloseEnough(actualMatrix + ".c", expectedC, tolerance);
+    shouldBeCloseEnough(actualMatrix + ".d", expectedD, tolerance);
+    shouldBeCloseEnough(actualMatrix + ".e", expectedE, tolerance);
+    shouldBeCloseEnough(actualMatrix + ".f", expectedF, tolerance);
+}
+
+function expectTranslationMatrix(actualMatrix, expectedE, expectedF, tolerance) {
+    shouldBeCloseEnough(actualMatrix + ".e", expectedE, tolerance);
+    shouldBeCloseEnough(actualMatrix + ".f", expectedF, tolerance);
+}
+
 function moveAnimationTimelineAndSample(index) {
     var animationId = expectedResults[index][0];
     var time = expectedResults[index][1];
     var sampleCallback = expectedResults[index][2];
-    var animation = document.getElementById(animationId);
+    var animation = rootSVGElement.ownerDocument.getElementById(animationId);
 
     // If we want to sample the animation end, add a small delta, to reliable point past the end of the animation.
     newTime = time;

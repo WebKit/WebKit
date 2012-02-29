@@ -45,7 +45,7 @@
 			<rect x="60" y="23" width="10" height="10" fill="#FFCCCC" stroke="black" stroke-width="1"/>
 			<text x="52" y="40">6+ sec.</text>
 			<path d="M-5,0 L0,-10 L5,0 z" fill="blue" stroke="red" stroke-width="1">
-				<animateMotion path="M15,43 C15,43 36,20 65,33" begin="0s" dur="6s" calcMode="linear" fill="freeze"/>
+				<animateMotion id="an1" path="M15,43 C15,43 36,20 65,33" begin="0s" dur="6s" calcMode="linear" fill="freeze"/>
 			</path>
 		</g>
 	</g>

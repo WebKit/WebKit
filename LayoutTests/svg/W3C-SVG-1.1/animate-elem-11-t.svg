@@ -60,7 +60,7 @@
                     <line x1="120" y1="0" x2="170" y2="0"/>
                 </g>
                 <rect  x="140" y="-10" width="60" height="210" fill="#FFAA44" stroke="#FF00FF" stroke-width="4">
-                    <animate attributeName="height" calcMode="paced" values="210;177;121;10" begin="0s" dur="9s" fill="freeze"/>
+                    <animate id="an1" attributeName="height" calcMode="paced" values="210;177;121;10" begin="0s" dur="9s" fill="freeze"/>
                 </rect>
             </g>
 

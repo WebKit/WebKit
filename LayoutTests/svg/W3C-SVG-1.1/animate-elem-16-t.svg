@@ -63,7 +63,7 @@
             <text font-size="36" x="20" y="140">8</text>
             <line x1="30" y1="0" x2="30" y2="100" fill="none" stroke="#880000" />
             <rect x="0" y="0" width="300" height="80" fill="#44AAFF" stroke="#880088" stroke-width="4" >
-               <animate attributeName="width" calcMode="linear" values="300;255;180;30" keyTimes="0;.25;.5;1" begin="0s" dur="8s" fill="freeze"/>
+               <animate id="an1" attributeName="width" calcMode="linear" values="300;255;180;30" keyTimes="0;.25;.5;1" begin="0s" dur="8s" fill="freeze"/>
             </rect>
             
          </g>

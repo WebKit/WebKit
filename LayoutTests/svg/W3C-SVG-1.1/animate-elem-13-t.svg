@@ -53,7 +53,7 @@
         <text x="370" y="32">5+ sec.</text>
         <g>
             <rect x="160" y="60" width="30" height="30" fill="#FFAA44" stroke="#FF00FF" stroke-width="4">
-                <animate attributeName="width" from="30" to="300" begin="2s" dur="3s" fill="freeze"/>
+                <animate id="an1" attributeName="width" from="30" to="300" begin="2s" dur="3s" fill="freeze"/>
             </rect>
             <text x="20" y="85" fill="red">from to</text>
         </g>

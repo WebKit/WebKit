@@ -78,7 +78,7 @@
         <text x="20" y="80" font-size="40">Sample 123</text>
         <text x="20" y="155" font-size="60" fill="#00f">Sample 123</text>
         <text x="20" y="250">Sample 123</text>
-        <animate attributeName="font-size" attributeType="CSS" begin="0s" dur="6s" fill="freeze" from="40" to="80"/>
+        <animate id="an1" attributeName="font-size" attributeType="CSS" begin="0s" dur="6s" fill="freeze" from="40" to="80"/>
         <animate attributeName="fill" attributeType="CSS" begin="0s" dur="6s" fill="freeze" from="#00f" to="#070"/>
       </g>
     </g>

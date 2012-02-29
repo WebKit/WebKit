@@ -52,7 +52,7 @@
 			<rect x="160" y="170" width="30" height="30" fill="#FFCCCC" stroke="black" stroke-width="4"/>
 			<text x="175" y="215">6+ sec.</text>
 			<path d="M-15,0 L0,-30 L15,0 z" fill="blue" stroke="red" stroke-width="2">
-				<animateMotion path="M25,225 C25,175 125,150 175,200" rotate="auto" begin="0s" dur="6s" calcMode="linear" fill="freeze"/>
+				<animateMotion id="an1" path="M25,225 C25,175 125,150 175,200" rotate="auto" begin="0s" dur="6s" calcMode="linear" fill="freeze"/>
 			</path>
 			<text x="100" y="260" fill="red" stroke="none" font-size="14">rotate='auto'</text>
 			<path d="M275,225 C275,175 375,150 425,200" fill="none" stroke="black" stroke-width="2"/>

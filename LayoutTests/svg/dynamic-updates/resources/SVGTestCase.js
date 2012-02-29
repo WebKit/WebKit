@@ -6,6 +6,7 @@ var xlinkNS = "http://www.w3.org/1999/xlink";
 var xhtmlNS = "http://www.w3.org/1999/xhtml";
 
 var rootSVGElement;
+var iframeElement;
 
 function createSVGElement(name) {
     return document.createElementNS(svgNS, "svg:" + name);
@@ -21,6 +22,23 @@ function createSVGTestCase() {
 
     var bodyElement = document.documentElement.lastChild;
     bodyElement.insertBefore(rootSVGElement, document.getElementById("description"));
+}
+
+function embedSVGTestCase(uri) {
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    iframeElement = document.createElement("iframe");
+    iframeElement.setAttribute("style", "width: 300px; height: 300px;");
+    iframeElement.setAttribute("src", uri);
+    iframeElement.setAttribute("onload", "iframeLoaded()");
+
+    var bodyElement = document.documentElement.lastChild;
+    bodyElement.insertBefore(iframeElement, document.getElementById("description"));
+}
+
+function iframeLoaded() {
+    rootSVGElement = iframeElement.getSVGDocument().rootElement;
 }
 
 function clickAt(x, y) {

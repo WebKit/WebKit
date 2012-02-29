@@ -1,0 +1,20 @@
+SVG 1.1 dynamic animation tests
+
+
+A copy of the corresponding W3C-SVG-1.1 test, which dumps the animation at certain times
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(text).fontSize is "40px"
+PASS getComputedStyle(text).fill is "#0000ff"
+PASS getComputedStyle(text).fontSize is "60px"
+PASS getComputedStyle(text).fill is "#003b80"
+PASS getComputedStyle(text).fontSize is "80px"
+PASS getComputedStyle(text).fill is "#007700"
+PASS getComputedStyle(text).fontSize is "80px"
+PASS getComputedStyle(text).fill is "#007700"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
