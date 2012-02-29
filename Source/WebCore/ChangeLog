@@ -1,3 +1,32 @@
+2012-02-29  Tim Horton  <timothy_horton@apple.com>
+
+        Make use of CG rounded-rect primitives
+        https://bugs.webkit.org/show_bug.cgi?id=79932
+        <rdar://problem/9274953>
+
+        Reviewed by Simon Fraser.
+
+        Dispatch to potentially platform-specific rounded rectangle path
+        construction from addPathForRoundedRect. Make use of this to call
+        wkCGPathAddRoundedRect on Lion and above, as long as the rounded
+        corners are all equivalent.
+
+        No new tests, as this is covered by many that use rounded corners,
+        and is only a performance improvement.
+
+        * WebCore.exp.in:
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::addRoundedRect):
+        (WebCore):
+        (WebCore::Path::addPathForRoundedRect):
+        * platform/graphics/Path.h:
+        (Path):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::addPathForRoundedRect):
+        (WebCore):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2012-02-29  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Upstream the BlackBerry change to platform/graphics/FloatPoint.h
