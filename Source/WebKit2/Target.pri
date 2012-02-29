@@ -319,7 +319,7 @@ HEADERS += \
     WebProcess/Plugins/Netscape/NPJSObject.h \
     WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h \
     WebProcess/Plugins/Netscape/NPRuntimeUtilities.h \
-    WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp \
+    WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.h \
     WebProcess/Plugins/Netscape/NetscapePlugin.h \
     WebProcess/Plugins/Netscape/NetscapePluginStream.h \
     WebProcess/Plugins/Plugin.h \

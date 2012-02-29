@@ -1,3 +1,12 @@
+2012-02-29  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt][WK2] We should not add NetscapeBrowserFuncs.cpp as header
+        https://bugs.webkit.org/show_bug.cgi?id=79847
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Target.pri: Fix typo, so we can add ".h" file instead.
+
 2012-02-29  Sam Weinig  <sam@webkit.org>
 
         When invoking Lookup while zoomed in, the highlighted word renders out of line
