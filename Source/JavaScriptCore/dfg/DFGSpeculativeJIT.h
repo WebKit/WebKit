@@ -1737,13 +1737,15 @@ private:
     void compileNewFunctionNoCheck(Node& node);
     void compileNewFunctionExpression(Node& node);
     
-    // It is acceptable to have structure be equal to scratch, so long as you're fine
-    // with the structure GPR being clobbered.
-    template<typename T>
-    void emitAllocateJSFinalObject(T structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
+    template <typename ClassType, bool destructor, typename StructureType> 
+    void emitAllocateBasicJSObject(StructureType structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
-        MarkedAllocator* allocator = &m_jit.globalData()->heap.allocatorForObjectWithoutDestructor(sizeof(JSFinalObject));
-        
+        MarkedAllocator* allocator = 0;
+        if (destructor)
+            allocator = &m_jit.globalData()->heap.allocatorForObjectWithDestructor(sizeof(ClassType));
+        else
+            allocator = &m_jit.globalData()->heap.allocatorForObjectWithoutDestructor(sizeof(ClassType));
+
         m_jit.loadPtr(&allocator->m_firstFreeCell, resultGPR);
         slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, resultGPR));
         
@@ -1759,14 +1761,22 @@ private:
         m_jit.storePtr(scratchGPR, &allocator->m_firstFreeCell);
         
         // Initialize the object's classInfo pointer
-        m_jit.storePtr(MacroAssembler::TrustedImmPtr(&JSFinalObject::s_info), MacroAssembler::Address(resultGPR, JSCell::classInfoOffset()));
+        m_jit.storePtr(MacroAssembler::TrustedImmPtr(&ClassType::s_info), MacroAssembler::Address(resultGPR, JSCell::classInfoOffset()));
         
         // Initialize the object's inheritorID.
         m_jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::Address(resultGPR, JSObject::offsetOfInheritorID()));
         
         // Initialize the object's property storage pointer.
         m_jit.addPtr(MacroAssembler::TrustedImm32(sizeof(JSObject)), resultGPR, scratchGPR);
-        m_jit.storePtr(scratchGPR, MacroAssembler::Address(resultGPR, JSFinalObject::offsetOfPropertyStorage()));
+        m_jit.storePtr(scratchGPR, MacroAssembler::Address(resultGPR, ClassType::offsetOfPropertyStorage()));
+    }
+
+    // It is acceptable to have structure be equal to scratch, so long as you're fine
+    // with the structure GPR being clobbered.
+    template<typename T>
+    void emitAllocateJSFinalObject(T structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
+    {
+        return emitAllocateBasicJSObject<JSFinalObject, false>(structure, resultGPR, scratchGPR, slowPath);
     }
 
 #if USE(JSVALUE64) 

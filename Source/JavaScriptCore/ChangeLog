@@ -1,3 +1,16 @@
+2012-02-28  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Refactor SpeculativeJIT::emitAllocateJSFinalObject
+        https://bugs.webkit.org/show_bug.cgi?id=79801
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicJSObject): Split emitAllocateJSFinalObject out to form this
+        function, which is more generic in that it can allocate a variety of classes.
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSFinalObject): Changed to use the new helper function.
+
 2012-02-28  Gavin Barraclough  <barraclough@apple.com>
 
         [[Get]]/[[Put]] for primitives should not wrap on strict accessor call
