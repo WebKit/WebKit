@@ -15,5 +15,6 @@ Paint Properties:
     type : "Paint"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 

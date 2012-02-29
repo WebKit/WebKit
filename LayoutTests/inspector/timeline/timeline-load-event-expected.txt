@@ -9,5 +9,6 @@ MarkLoad Properties:
     type : "MarkLoad"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 

@@ -13,7 +13,8 @@ InspectorTest.timelinePropertyFormatters = {
     usedHeapSize: "formatAsTypeName",
     totalHeapSize: "formatAsTypeName",
     mimeType: "formatAsTypeName",
-    id: "formatAsTypeName"
+    id: "formatAsTypeName",
+    counters: "formatAsTypeName"
 };
 
 InspectorTest.startTimeline = function(callback)

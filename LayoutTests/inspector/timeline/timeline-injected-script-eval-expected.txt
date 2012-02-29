@@ -12,6 +12,7 @@ FunctionCall Properties:
     type : "FunctionCall"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 FunctionCall Properties:
 {
@@ -25,5 +26,6 @@ FunctionCall Properties:
     type : "FunctionCall"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 

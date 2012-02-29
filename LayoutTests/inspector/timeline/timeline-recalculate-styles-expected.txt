@@ -11,5 +11,6 @@ RecalculateStyles Properties:
     type : "RecalculateStyles"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 

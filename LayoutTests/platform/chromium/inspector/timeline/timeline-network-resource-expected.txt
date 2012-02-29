@@ -15,6 +15,7 @@ ResourceSendRequest Properties:
     type : "ResourceSendRequest"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 
 ResourceReceiveResponse Properties:
@@ -30,6 +31,7 @@ ResourceReceiveResponse Properties:
     type : "ResourceReceiveResponse"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 
 ResourceFinish Properties:
@@ -42,5 +44,6 @@ ResourceFinish Properties:
     type : "ResourceFinish"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 

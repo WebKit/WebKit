@@ -13,5 +13,6 @@ EvaluateScript Properties:
     type : "EvaluateScript"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 

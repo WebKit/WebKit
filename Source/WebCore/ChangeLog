@@ -1,3 +1,26 @@
+2012-02-28  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: move DOM counter graphs out of experimental
+        https://bugs.webkit.org/show_bug.cgi?id=79802
+
+        Enable DOM counter graphs by default.
+
+        Reveal nearest record from the left hand side when there is no
+        record containing the point where the user clicked.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._endSplitterDragging):
+        (WebInspector.TimelinePanel.prototype._onTimelineEventRecorded):
+        (WebInspector.TimelinePanel.prototype.sidebarResized):
+        (WebInspector.TimelinePanel.prototype._resetPanel):
+        (WebInspector.TimelinePanel.prototype._refresh):
+        (WebInspector.TimelinePanel.prototype.revealRecordAt):
+
 2012-02-28  MORITA Hajime  <morrita@google.com>
 
         [Refactoring] Shadow related attach paths should be in ShadowTree.

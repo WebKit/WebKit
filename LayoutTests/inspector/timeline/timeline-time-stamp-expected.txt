@@ -9,5 +9,6 @@ TimeStamp Properties:
     type : "TimeStamp"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 

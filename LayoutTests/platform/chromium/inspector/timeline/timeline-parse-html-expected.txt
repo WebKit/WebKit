@@ -15,6 +15,7 @@ ParseHTML Properties:
     type : "ParseHTML"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 ParseHTML Properties:
 {
@@ -30,5 +31,6 @@ ParseHTML Properties:
     type : "ParseHTML"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 

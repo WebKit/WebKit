@@ -12,5 +12,6 @@ EventDispatch Properties:
     type : "EventDispatch"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 

@@ -12,5 +12,6 @@ Layout Properties:
     type : "Layout"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 

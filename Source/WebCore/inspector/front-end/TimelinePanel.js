@@ -55,15 +55,13 @@ WebInspector.TimelinePanel = function()
     this._containerElement.id = "timeline-container";
     this._containerElement.addEventListener("scroll", this._onScroll.bind(this), false);
 
-    if (WebInspector.experimentsSettings.showMemoryCounters.isEnabled()) {
-        this._timelineMemorySplitter = this.element.createChild("div");
-        this._timelineMemorySplitter.id = "timeline-memory-splitter";
-        this._timelineMemorySplitter.addEventListener("mousedown", this._startSplitterDragging.bind(this), false);
-        this._timelineMemorySplitter.addStyleClass("hidden");
-        this._memoryStatistics = new WebInspector.MemoryStatistics(this, this.splitView.preferredSidebarWidth());
-        this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._timelinesOverviewModeChanged, this);
-        WebInspector.settings.memoryCounterGraphsHeight = WebInspector.settings.createSetting("memoryCounterGraphsHeight", 150);
-    }
+    this._timelineMemorySplitter = this.element.createChild("div");
+    this._timelineMemorySplitter.id = "timeline-memory-splitter";
+    this._timelineMemorySplitter.addEventListener("mousedown", this._startSplitterDragging.bind(this), false);
+    this._timelineMemorySplitter.addStyleClass("hidden");
+    this._memoryStatistics = new WebInspector.MemoryStatistics(this, this.splitView.preferredSidebarWidth());
+    this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._timelinesOverviewModeChanged, this);
+    WebInspector.settings.memoryCounterGraphsHeight = WebInspector.settings.createSetting("memoryCounterGraphsHeight", 150);
 
     var itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);
     this.sidebarTree.appendChild(itemsTreeElement);
@@ -79,8 +77,7 @@ WebInspector.TimelinePanel = function()
     this._itemsGraphsElement.id = "timeline-graphs";
     this._itemsGraphsElement.addEventListener("mousewheel", this._overviewPane.scrollWindow.bind(this._overviewPane), true);
     this._containerContentElement.appendChild(this._timelineGrid.element);
-    if (this._memoryStatistics)
-        this._memoryStatistics.setMainTimelineGrid(this._timelineGrid);
+    this._memoryStatistics.setMainTimelineGrid(this._timelineGrid);
 
     this._topGapElement = document.createElement("div");
     this._topGapElement.className = "timeline-gap";
@@ -161,8 +158,7 @@ WebInspector.TimelinePanel.prototype = {
     {
         delete this._dragOffset;
         WebInspector.elementDragEnd(event);
-        if (this._memoryStatistics)
-            this._memoryStatistics.show();
+        this._memoryStatistics.show();
         WebInspector.settings.memoryCounterGraphsHeight.set(this.splitView.element.offsetHeight);
     },
 
@@ -376,8 +372,6 @@ WebInspector.TimelinePanel.prototype = {
 
     _timelinesOverviewModeChanged: function(event)
     {
-        if (!this._memoryStatistics)
-            return;
         var shouldShowMemory = event.data === WebInspector.TimelineOverviewPane.Mode.Memory;
         if (shouldShowMemory === this._memoryStatistics.visible())
             return;
@@ -456,7 +450,7 @@ WebInspector.TimelinePanel.prototype = {
         this._innerAddRecordToTimeline(event.data, this._rootRecord());
         this._scheduleRefresh(false);
 
-        if (this._memoryStatistics && event.data["counters"])
+        if (event.data["counters"])
             this._memoryStatistics.addTimlineEvent(event);
     },
 
@@ -477,9 +471,7 @@ WebInspector.TimelinePanel.prototype = {
         this._overviewPane.sidebarResized(width);
         // Min width = <number of buttons on the left> * 31
         this.statusBarFilters.style.left = Math.max((this.statusBarItems.length + 2) * 31, width) + "px";
-
-        if (this._memoryStatistics)
-            this._memoryStatistics.setSidebarWidth(width);
+        this._memoryStatistics.setSidebarWidth(width);
     },
 
     onResize: function()
@@ -508,8 +500,7 @@ WebInspector.TimelinePanel.prototype = {
         this._adjustScrollPosition(0);
         this._closeRecordDetails();
         this._allRecordsCount = 0;
-        if (this._memoryStatistics)
-            this._memoryStatistics.reset();
+        this._memoryStatistics.reset();
     },
 
     elementsToRestoreScrollPositionsFor: function()
@@ -571,7 +562,7 @@ WebInspector.TimelinePanel.prototype = {
         this._updateRecordsCounter(recordsInWindowCount);
         if(!this._boundariesAreValid)
             this._updateEventDividers();
-        if (this._memoryStatistics && this._memoryStatistics.visible())
+        if (this._memoryStatistics.visible())
             this._memoryStatistics.refresh();
         this._boundariesAreValid = true;
     },
@@ -595,10 +586,14 @@ WebInspector.TimelinePanel.prototype = {
         var recordsInWindow = this._presentationModel.filteredRecords();
         var recordToReveal;
         for (var i = 0; i < recordsInWindow.length; ++i) {
-            if (recordsInWindow[i].containsTime(time)) {
-                recordToReveal = recordsInWindow[i];
+            var record = recordsInWindow[i];
+            if (record.containsTime(time)) {
+                recordToReveal = record;
                 break;
             }
+            // If there is no record containing the time than use the latest one before that time.
+            if (!recordToReveal || record.endTime < time && recordToReveal.endTime < record.endTime)
+                recordToReveal = record;
         }
 
         // The record ends before the window left bound so scroll to the top.

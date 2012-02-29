@@ -8,6 +8,7 @@ MarkDOMContent Properties:
     type : "MarkDOMContent"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 Page reloaded.
 
