@@ -2297,9 +2297,11 @@ WONTFIX SKIP WIN : platform/win/plugins/draws-gradient.html = IMAGE+TEXT CRASH
 WONTFIX SKIP WIN : platform/win/plugins/get-value-netscape-window.html = TEXT CRASH
 
 // Added in WK r71424
-BUGCR62138 MAC DEBUG : animations/stop-animation-on-suspend.html = CRASH TEXT PASS
-BUGCR62138 MAC RELEASE : animations/stop-animation-on-suspend.html = TEXT PASS
-BUGCR62138 LINUX WIN : animations/stop-animation-on-suspend.html = TEXT PASS
+// We should probably just skip this test, everyone else has since
+// https://bugs.webkit.org/show_bug.cgi?id=49182
+BUGCR62138 WIN MAC DEBUG : animations/stop-animation-on-suspend.html = CRASH TEXT PASS
+BUGCR62138 WIN MAC RELEASE : animations/stop-animation-on-suspend.html = TEXT PASS
+BUGCR62138 LINUX : animations/stop-animation-on-suspend.html = TEXT PASS
 
 BUGCR61739 DEBUG : animations/suspend-resume-animation-events.html = CRASH TEXT PASS
 BUGCR61739 WIN RELEASE : animations/suspend-resume-animation-events.html = TEXT PASS
