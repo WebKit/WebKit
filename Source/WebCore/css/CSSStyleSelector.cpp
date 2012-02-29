@@ -174,7 +174,7 @@ if (primitiveValue) \
 
 class RuleData {
 public:
-    RuleData(StyleRule*, CSSSelector*, unsigned position, bool canUseFastCheckSelector = true);
+    RuleData(StyleRule*, CSSSelector*, unsigned position, bool canUseFastCheckSelector, bool inRegionRule);
 
     unsigned position() const { return m_position; }
     StyleRule* rule() const { return m_rule; }
@@ -186,6 +186,7 @@ public:
     bool containsUncommonAttributeSelector() const { return m_containsUncommonAttributeSelector; }
     unsigned specificity() const { return m_specificity; }
     unsigned linkMatchType() const { return m_linkMatchType; }
+    bool isInRegionRule() const { return m_isInRegionRule; }
 
     // Try to balance between memory usage (there can be lots of RuleData objects) and good filtering performance.
     static const unsigned maximumIdentifierCount = 4;
@@ -197,12 +198,13 @@ private:
     unsigned m_specificity;
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
     // Some simple testing showed <100,000 RuleData's on large sites.
-    unsigned m_position : 26;
+    unsigned m_position : 25;
     unsigned m_hasFastCheckableSelector : 1;
     unsigned m_hasMultipartSelector : 1;
     unsigned m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
+    unsigned m_isInRegionRule : 1;
     // Use plain array instead of a Vector to minimize memory overhead.
     unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
 };
@@ -226,8 +228,8 @@ public:
 
     void addRulesFromSheet(CSSStyleSheet*, const MediaQueryEvaluator&, CSSStyleSelector* = 0, const Element* = 0);
 
-    void addStyleRule(StyleRule*, bool canUseFastCheckSelector = true);
-    void addRule(StyleRule*, CSSSelector*, bool canUseFastCheckSelector = true);
+    void addStyleRule(StyleRule*, bool canUseFastCheckSelector = true, bool isInRegionRule = false);
+    void addRule(StyleRule*, CSSSelector*, bool canUseFastCheckSelector = true, bool isInRegionRule = false);
     void addPageRule(CSSPageRule*);
     void addToRuleSet(AtomicStringImpl* key, AtomRuleMap&, const RuleData&);
     void addRegionRule(WebKitCSSRegionRule*);
@@ -751,12 +753,13 @@ static void ensureDefaultStyleSheetsForElement(Element* element)
     ASSERT_UNUSED(loadedMathMLUserAgentSheet, loadedMathMLUserAgentSheet || defaultStyle->features().siblingRules.isEmpty());
 }
 
-void CSSStyleSelector::addMatchedProperties(MatchResult& matchResult, StylePropertySet* properties, StyleRule* rule, unsigned linkMatchType)
+void CSSStyleSelector::addMatchedProperties(MatchResult& matchResult, StylePropertySet* properties, StyleRule* rule, unsigned linkMatchType, bool inRegionRule)
 {
     matchResult.matchedProperties.grow(matchResult.matchedProperties.size() + 1);
     MatchedProperties& newProperties = matchResult.matchedProperties.last();
     newProperties.properties = properties;
     newProperties.linkMatchType = linkMatchType;
+    newProperties.isInRegionRule = inRegionRule;
     matchResult.matchedRules.append(rule);
 }
 
@@ -829,7 +832,7 @@ void CSSStyleSelector::sortAndTransferMatchedRules(MatchResult& result)
         unsigned linkMatchType = m_matchedRules[i]->linkMatchType();
         if (swapVisitedUnvisited && linkMatchType && linkMatchType != SelectorChecker::MatchAll)
             linkMatchType = (linkMatchType == SelectorChecker::MatchVisited) ? SelectorChecker::MatchLink : SelectorChecker::MatchVisited;
-        addMatchedProperties(result, m_matchedRules[i]->rule()->properties(), m_matchedRules[i]->rule(), linkMatchType);
+        addMatchedProperties(result, m_matchedRules[i]->rule()->properties(), m_matchedRules[i]->rule(), linkMatchType, m_matchedRules[i]->isInRegionRule());
     }
 }
 
@@ -2236,7 +2239,7 @@ static inline bool containsUncommonAttributeSelector(const CSSSelector* selector
     return false;
 }
 
-RuleData::RuleData(StyleRule* rule, CSSSelector* selector, unsigned position, bool canUseFastCheckSelector)
+RuleData::RuleData(StyleRule* rule, CSSSelector* selector, unsigned position, bool canUseFastCheckSelector, bool inRegionRule)
     : m_rule(rule)
     , m_selector(selector)
     , m_specificity(selector->specificity())
@@ -2246,6 +2249,7 @@ RuleData::RuleData(StyleRule* rule, CSSSelector* selector, unsigned position, bo
     , m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector))
     , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(selector))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector))
+    , m_isInRegionRule(inRegionRule)
 {
     SelectorChecker::collectIdentifierHashes(m_selector, m_descendantSelectorIdentifierHashes, maximumIdentifierCount);
 }
@@ -2310,9 +2314,9 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
     rules->append(ruleData);
 }
 
-void RuleSet::addRule(StyleRule* rule, CSSSelector* selector, bool canUseFastCheckSelector)
+void RuleSet::addRule(StyleRule* rule, CSSSelector* selector, bool canUseFastCheckSelector, bool inRegionRule)
 {
-    RuleData ruleData(rule, selector, m_ruleCount++, canUseFastCheckSelector);
+    RuleData ruleData(rule, selector, m_ruleCount++, canUseFastCheckSelector, inRegionRule);
     collectFeaturesFromRuleData(m_features, ruleData);
 
     if (selector->m_match == CSSSelector::Id) {
@@ -2369,7 +2373,7 @@ void RuleSet::addRegionRule(WebKitCSSRegionRule* rule)
     for (unsigned i = 0; i < rulesSize; ++i) {
         CSSRule* regionStylingRule = regionStylingRules->item(i);
         if (regionStylingRule->isStyleRule())
-            regionRuleSet->addStyleRule(static_cast<CSSStyleRule*>(regionStylingRule)->styleRule());
+            regionRuleSet->addStyleRule(static_cast<CSSStyleRule*>(regionStylingRule)->styleRule(), true, true);
     }
 
     m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(rule->selectorList().first(), regionRuleSet));
@@ -2450,10 +2454,10 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
         shrinkToFit();
 }
 
-void RuleSet::addStyleRule(StyleRule* rule, bool canUseFastCheckSelector)
+void RuleSet::addStyleRule(StyleRule* rule, bool canUseFastCheckSelector, bool isInRegionRule)
 {
     for (CSSSelector* s = rule->selectorList().first(); s; s = CSSSelectorList::next(s))
-        addRule(rule, s, canUseFastCheckSelector);
+        addRule(rule, s, canUseFastCheckSelector, isInRegionRule);
 }
 
 static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)
@@ -2516,22 +2520,11 @@ static Length convertToFloatLength(CSSPrimitiveValue* primitiveValue, RenderStyl
     return convertToLength(primitiveValue, style, rootStyle, true, multiplier, ok);
 }
 
-static inline bool isInsideRegionRule(CSSRule* rule)
-{
-    // FIXME: Cache this bit somewhere.
-    while (rule) {
-        if (rule->isRegionRule())
-            return true;
-        rule = rule->parentRule();
-    }
-    return false;
-}
-
 template <bool applyFirst>
-void CSSStyleSelector::applyProperties(const StylePropertySet* properties, StyleRule* rule, bool isImportant, bool inheritedOnly)
+void CSSStyleSelector::applyProperties(const StylePropertySet* properties, StyleRule* rule, bool isImportant, bool inheritedOnly, bool filterRegionProperties)
 {
+    ASSERT(!filterRegionProperties || m_regionForStyling);
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(document(), rule);
-    bool styleDeclarationInsideRegionRule = m_regionForStyling && isInsideRegionRule(rule->ensureCSSStyleRule());
 
     unsigned propertyCount = properties->propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {
@@ -2547,8 +2540,7 @@ void CSSStyleSelector::applyProperties(const StylePropertySet* properties, Style
         }
         int property = current.id();
 
-        // Filter the properties that can be applied using region styling.
-        if (styleDeclarationInsideRegionRule && !CSSStyleSelector::isValidRegionStyleProperty(property))
+        if (filterRegionProperties && !CSSStyleSelector::isValidRegionStyleProperty(property))
             continue;
 
         if (applyFirst) {
@@ -2580,19 +2572,22 @@ void CSSStyleSelector::applyMatchedProperties(const MatchResult& matchResult, bo
 
     if (m_style->insideLink() != NotInsideLink) {
         for (int i = startIndex; i <= endIndex; ++i) {
-            unsigned linkMatchType = matchResult.matchedProperties[i].linkMatchType;
+            const MatchedProperties& matchedProperties = matchResult.matchedProperties[i];
+            unsigned linkMatchType = matchedProperties.linkMatchType;
             // FIXME: It would be nicer to pass these as arguments but that requires changes in many places.
             m_applyPropertyToRegularStyle = linkMatchType & SelectorChecker::MatchLink;
             m_applyPropertyToVisitedLinkStyle = linkMatchType & SelectorChecker::MatchVisited;
 
-            applyProperties<applyFirst>(matchResult.matchedProperties[i].properties.get(), matchResult.matchedRules[i], isImportant, inheritedOnly);
+            applyProperties<applyFirst>(matchedProperties.properties.get(), matchResult.matchedRules[i], isImportant, inheritedOnly, matchedProperties.isInRegionRule);
         }
         m_applyPropertyToRegularStyle = true;
         m_applyPropertyToVisitedLinkStyle = false;
         return;
     }
-    for (int i = startIndex; i <= endIndex; ++i)
-        applyProperties<applyFirst>(matchResult.matchedProperties[i].properties.get(), matchResult.matchedRules[i], isImportant, inheritedOnly);
+    for (int i = startIndex; i <= endIndex; ++i) {
+        const MatchedProperties& matchedProperties = matchResult.matchedProperties[i];
+        applyProperties<applyFirst>(matchedProperties.properties.get(), matchResult.matchedRules[i], isImportant, inheritedOnly, matchedProperties.isInRegionRule);
+    }
 }
 
 unsigned CSSStyleSelector::computeMatchedPropertiesHash(const MatchedProperties* properties, unsigned size)

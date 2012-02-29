@@ -1,3 +1,25 @@
+2012-02-29  Antti Koivisto  <antti@apple.com>
+
+        Applying region style should not need to access parent rules
+        https://bugs.webkit.org/show_bug.cgi?id=79910 
+         
+        Reviewed by Andreas Kling.
+
+        Currently CSSStyleSelector::applyProperties looks into parent rules to see if a rule is
+        part of region style. The plan is to eliminate the rule parent pointer so this needs to be refactored.
+        
+        Add a bit to RuleData to indicate if the StyleRule is part of a region style.
+
+        * css/CSSStyleSelector.cpp:
+        (RuleData):
+        (WebCore::RuleData::isInRegionRule):
+        (RuleSet):
+        (WebCore::CSSStyleSelector::addMatchedProperties):
+        (WebCore::CSSStyleSelector::sortAndTransferMatchedRules):
+        (WebCore::CSSStyleSelector::collectMatchingRulesForList):
+        * css/CSSStyleSelector.h:
+        (CSSStyleSelector):
+
 2012-02-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [InspectorIndexedDB] Add refresh to IndexedDB support.

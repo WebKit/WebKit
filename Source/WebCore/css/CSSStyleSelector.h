@@ -271,7 +271,10 @@ private:
         
         RefPtr<StylePropertySet> properties;
         union {
-            unsigned linkMatchType;
+            struct {
+                unsigned linkMatchType : 2;
+                unsigned isInRegionRule : 1;
+            };
             // Used to make sure all memory is zero-initialized since we compute the hash over the bytes of this object.
             void* possiblyPaddedMember;
         };
@@ -291,7 +294,7 @@ private:
         bool includeEmptyRules;
     };
 
-    static void addMatchedProperties(MatchResult&, StylePropertySet* properties, StyleRule* = 0, unsigned linkMatchType = SelectorChecker::MatchAll);
+    static void addMatchedProperties(MatchResult&, StylePropertySet* properties, StyleRule* = 0, unsigned linkMatchType = SelectorChecker::MatchAll, bool inRegionRule = false);
 
     void matchAllRules(MatchResult&);
     void matchUARules(MatchResult&);
@@ -312,7 +315,7 @@ private:
     template <bool firstPass>
     void applyMatchedProperties(const MatchResult&, bool important, int startIndex, int endIndex, bool inheritedOnly);
     template <bool firstPass>
-    void applyProperties(const StylePropertySet* properties, StyleRule*, bool isImportant, bool inheritedOnly);
+    void applyProperties(const StylePropertySet* properties, StyleRule*, bool isImportant, bool inheritedOnly, bool filterRegionProperties);
 
     static bool isValidRegionStyleProperty(int id);
 
