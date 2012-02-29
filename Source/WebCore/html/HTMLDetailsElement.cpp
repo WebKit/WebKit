@@ -29,7 +29,7 @@
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "NodeRenderingContext.h"
-#include "RenderDetails.h"
+#include "RenderBlock.h"
 #include "ShadowRoot.h"
 #include "ShadowTree.h"
 #include "Text.h"
@@ -105,7 +105,7 @@ HTMLDetailsElement::HTMLDetailsElement(const QualifiedName& tagName, Document* d
 
 RenderObject* HTMLDetailsElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderDetails(this);
+    return new (arena) RenderBlock(this);
 }
 
 void HTMLDetailsElement::createShadowSubtree()

@@ -23,10 +23,10 @@
 
 #if ENABLE(DETAILS)
 
+#include "Element.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "PaintInfo.h"
-#include "RenderDetails.h"
 
 namespace WebCore {
 
@@ -35,13 +35,6 @@ using namespace HTMLNames;
 RenderDetailsMarker::RenderDetailsMarker(Node* node)
     : RenderBlock(node)
 {
-}
-
-bool RenderDetailsMarker::isOpen() const
-{
-    if (RenderDetails* owner = details())
-        return owner->isOpen();
-    return false;
 }
 
 static Path createPath(const FloatPoint* path)
@@ -144,14 +137,14 @@ void RenderDetailsMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     paintInfo.context->fillPath(getPath(boxOrigin));
 }
 
-RenderDetails* RenderDetailsMarker::details() const
+bool RenderDetailsMarker::isOpen() const
 {
     for (RenderObject* renderer = parent(); renderer; renderer = renderer->parent()) {
-        if (renderer->isDetails())
-            return toRenderDetails(renderer);
+        if (renderer->node() && renderer->node()->hasTagName(detailsTag))
+            return !toElement(renderer->node())->getAttribute(openAttr).isNull();
     }
 
-    return 0;
+    return false;
 }
 
 }

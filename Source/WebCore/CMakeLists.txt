@@ -1294,7 +1294,6 @@ SET(WebCore_SOURCES
     rendering/RenderCombineText.cpp
     rendering/RenderCounter.cpp
     rendering/RenderDeprecatedFlexibleBox.cpp
-    rendering/RenderDetails.cpp
     rendering/RenderDetailsMarker.cpp
     rendering/RenderEmbeddedObject.cpp
     rendering/RenderFieldset.cpp
@@ -1337,7 +1336,6 @@ SET(WebCore_SOURCES
     rendering/RenderScrollbarPart.cpp
     rendering/RenderScrollbarTheme.cpp
     rendering/RenderSlider.cpp
-    rendering/RenderSummary.cpp
     rendering/RenderTable.cpp
     rendering/RenderTableCaption.cpp
     rendering/RenderTableCell.cpp

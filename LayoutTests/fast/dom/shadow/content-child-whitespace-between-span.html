@@ -31,7 +31,7 @@ function test()
     var refContainerRenderTree = window.internals.elementRenderTreeAsText(document.getElementById("refContainer"));
     var refRenderTree = removeContainerLines(refContainerRenderTree);
 
-    targetRenderTree = targetRenderTree.replace("RenderDetails {DETAILS}", "RenderBlock {DIV}");
+    targetRenderTree = targetRenderTree.replace("RenderBlock {DETAILS}", "RenderBlock {DIV}");
 
     if (targetRenderTree == refRenderTree)
         log("PASS");

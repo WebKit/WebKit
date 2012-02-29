@@ -1,3 +1,41 @@
+2012-02-27  MORITA Hajime  <morrita@google.com>
+
+        [Refactoring] RenderSummary and RenderDetail is no longer needed.
+        https://bugs.webkit.org/show_bug.cgi?id=79641
+
+        Reviewed by Kent Tamura.
+
+        Removed RenderDetails and RenderSummary because its only
+        modification they had is already handled by RenderBlock::styleWillChange().
+        These are just a historical artifact. We could have removed these
+        classes when they were switched to shadow-based implementations.
+
+        Tests: fast/html/details-inline-expected.html
+               fast/html/details-inline.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::createRenderer):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::createRenderer):
+        (WebCore::HTMLSummaryElement::defaultEventHandler):
+        * rendering/RenderDetails.cpp: Removed.
+        * rendering/RenderDetails.h: Removed.
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::isOpen):
+        * rendering/RenderDetailsMarker.h:
+        (RenderDetailsMarker):
+        * rendering/RenderObject.h:
+        (RenderObject):
+        * rendering/RenderSummary.cpp: Removed.
+        * rendering/RenderSummary.h: Removed.
+        * rendering/RenderingAllInOne.cpp:
+
 2012-02-28  Simon Fraser  <simon.fraser@apple.com>
 
         Optimize the rects being drawn into compositing layers

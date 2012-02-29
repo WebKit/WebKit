@@ -27,8 +27,6 @@
 
 namespace WebCore {
 
-class RenderDetails;
-
 class RenderDetailsMarker : public RenderBlock {
 public:
     RenderDetailsMarker(Node*);
@@ -45,7 +43,6 @@ private:
     bool isOpen() const;
     Path getCanonicalPath() const;
     Path getPath(const IntPoint& origin) const;
-    RenderDetails* details() const;
 };
 
 inline RenderDetailsMarker* toRenderDetailsMarker(RenderObject* object)

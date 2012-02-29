@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderDetails {DETAILS} at (0,0) size 784x148 [border: (8px solid #555599)]
-        RenderSummary {SUMMARY} at (8,8) size 768x111 [border: (8px solid #9999CC)]
+      RenderBlock {DETAILS} at (0,0) size 784x148 [border: (8px solid #555599)]
+        RenderBlock {SUMMARY} at (8,8) size 768x111 [border: (8px solid #9999CC)]
           RenderBlock (anonymous) at (8,8) size 752x21
             RenderDetailsMarker {DIV} at (0,6) size 10x10: down
             RenderText {#text} at (16,0) size 69x21
               text run at (16,0) width 4: " "
               text run at (20,0) width 65: "summary"
-          RenderDetails {DETAILS} at (8,29) size 752x74 [border: (8px solid #995555)]
-            RenderSummary {SUMMARY} at (8,8) size 736x37 [border: (8px solid #CC9999)]
+          RenderBlock {DETAILS} at (8,29) size 752x74 [border: (8px solid #995555)]
+            RenderBlock {SUMMARY} at (8,8) size 736x37 [border: (8px solid #CC9999)]
               RenderDetailsMarker {DIV} at (8,14) size 10x10: down
               RenderText {#text} at (24,8) size 318x21
                 text run at (24,8) width 4: " "

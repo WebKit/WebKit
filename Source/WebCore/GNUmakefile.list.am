@@ -3524,8 +3524,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderCounter.h \
 	Source/WebCore/rendering/RenderDeprecatedFlexibleBox.cpp \
 	Source/WebCore/rendering/RenderDeprecatedFlexibleBox.h \
-	Source/WebCore/rendering/RenderDetails.cpp \
-	Source/WebCore/rendering/RenderDetails.h \
 	Source/WebCore/rendering/RenderDetailsMarker.cpp \
 	Source/WebCore/rendering/RenderDetailsMarker.h \
 	Source/WebCore/rendering/RenderEmbeddedObject.cpp \
@@ -3615,8 +3613,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderSelectionInfo.h \
 	Source/WebCore/rendering/RenderSlider.cpp \
 	Source/WebCore/rendering/RenderSlider.h \
-	Source/WebCore/rendering/RenderSummary.cpp \
-	Source/WebCore/rendering/RenderSummary.h \
 	Source/WebCore/rendering/RenderTableCaption.cpp \
 	Source/WebCore/rendering/RenderTableCaption.h \
 	Source/WebCore/rendering/RenderTableCell.cpp \

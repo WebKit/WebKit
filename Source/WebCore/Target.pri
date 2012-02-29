@@ -1215,7 +1215,6 @@ SOURCES += \
     rendering/RenderCombineText.cpp \
     rendering/RenderCounter.cpp \
     rendering/RenderDeprecatedFlexibleBox.cpp \
-    rendering/RenderDetails.cpp \
     rendering/RenderDetailsMarker.cpp \
     rendering/RenderEmbeddedObject.cpp \
     rendering/RenderFieldset.cpp \
@@ -1257,7 +1256,6 @@ SOURCES += \
     rendering/RenderScrollbarPart.cpp \
     rendering/RenderScrollbarTheme.cpp \
     rendering/RenderSlider.cpp \
-    rendering/RenderSummary.cpp \
     rendering/RenderTable.cpp \
     rendering/RenderTableCaption.cpp \
     rendering/RenderTableCell.cpp \
@@ -2366,7 +2364,6 @@ HEADERS += \
     rendering/RenderCombineText.h \
     rendering/RenderCounter.h \
     rendering/RenderDeprecatedFlexibleBox.h \
-    rendering/RenderDetails.h \
     rendering/RenderDetailsMarker.h \
     rendering/RenderEmbeddedObject.h \
     rendering/RenderFieldset.h \
@@ -2408,7 +2405,6 @@ HEADERS += \
     rendering/RenderScrollbarPart.h \
     rendering/RenderScrollbarTheme.h \
     rendering/RenderSlider.h \
-    rendering/RenderSummary.h \
     rendering/RenderTableCaption.h \
     rendering/RenderTableCell.h \
     rendering/RenderTableCol.h \

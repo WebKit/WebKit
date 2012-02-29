@@ -5680,12 +5680,8 @@
 		D23CA55D0AB0EAAE005108A5 /* JSRangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */; };
 		D23CA55F0AB0EAB6005108A5 /* JSRangeException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */; };
 		D23CA56C0AB0EB8D005108A5 /* RangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = D23CA56B0AB0EB8D005108A5 /* RangeException.h */; };
-		D302754712A5FE84004BD828 /* RenderDetails.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D302754312A5FE84004BD828 /* RenderDetails.cpp */; };
-		D302754812A5FE84004BD828 /* RenderDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = D302754412A5FE84004BD828 /* RenderDetails.h */; };
 		D302754912A5FE84004BD828 /* RenderDetailsMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D302754512A5FE84004BD828 /* RenderDetailsMarker.cpp */; };
 		D302754A12A5FE84004BD828 /* RenderDetailsMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = D302754612A5FE84004BD828 /* RenderDetailsMarker.h */; };
-		D302754D12A5FEAB004BD828 /* RenderSummary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D302754B12A5FEAB004BD828 /* RenderSummary.cpp */; };
-		D302754E12A5FEAB004BD828 /* RenderSummary.h in Headers */ = {isa = PBXBuildFile; fileRef = D302754C12A5FEAB004BD828 /* RenderSummary.h */; };
 		D340629B1253BC8C009E4259 /* MediaQueryListListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D340629A1253BC8C009E4259 /* MediaQueryListListener.cpp */; };
 		D359D789129CA2710006E5D2 /* HTMLDetailsElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D359D786129CA2710006E5D2 /* HTMLDetailsElement.cpp */; };
 		D359D78A129CA2710006E5D2 /* HTMLDetailsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = D359D787129CA2710006E5D2 /* HTMLDetailsElement.h */; };
@@ -12688,12 +12684,8 @@
 		D23CA55C0AB0EAAE005108A5 /* JSRangeException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSRangeException.h; sourceTree = "<group>"; };
 		D23CA55E0AB0EAB6005108A5 /* JSRangeException.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSRangeException.cpp; sourceTree = "<group>"; };
 		D23CA56B0AB0EB8D005108A5 /* RangeException.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RangeException.h; sourceTree = "<group>"; };
-		D302754312A5FE84004BD828 /* RenderDetails.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderDetails.cpp; sourceTree = "<group>"; };
-		D302754412A5FE84004BD828 /* RenderDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderDetails.h; sourceTree = "<group>"; };
 		D302754512A5FE84004BD828 /* RenderDetailsMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderDetailsMarker.cpp; sourceTree = "<group>"; };
 		D302754612A5FE84004BD828 /* RenderDetailsMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderDetailsMarker.h; sourceTree = "<group>"; };
-		D302754B12A5FEAB004BD828 /* RenderSummary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSummary.cpp; sourceTree = "<group>"; };
-		D302754C12A5FEAB004BD828 /* RenderSummary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSummary.h; sourceTree = "<group>"; };
 		D340629A1253BC8C009E4259 /* MediaQueryListListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryListListener.cpp; sourceTree = "<group>"; };
 		D359D786129CA2710006E5D2 /* HTMLDetailsElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDetailsElement.cpp; sourceTree = "<group>"; };
 		D359D787129CA2710006E5D2 /* HTMLDetailsElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDetailsElement.h; sourceTree = "<group>"; };
@@ -20426,8 +20418,6 @@
 				9392F1410AD185F400691BD4 /* RenderCounter.h */,
 				BCEA482E097D93020094C9E4 /* RenderDeprecatedFlexibleBox.cpp */,
 				BCEA482F097D93020094C9E4 /* RenderDeprecatedFlexibleBox.h */,
-				D302754312A5FE84004BD828 /* RenderDetails.cpp */,
-				D302754412A5FE84004BD828 /* RenderDetails.h */,
 				D302754512A5FE84004BD828 /* RenderDetailsMarker.cpp */,
 				D302754612A5FE84004BD828 /* RenderDetailsMarker.h */,
 				0F5B7A5210F65D7A00376302 /* RenderEmbeddedObject.cpp */,
@@ -20520,8 +20510,6 @@
 				0F11A54E0F39233100C37884 /* RenderSelectionInfo.h */,
 				AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */,
 				AB247A6B0AFD6383003FA5FD /* RenderSlider.h */,
-				D302754B12A5FEAB004BD828 /* RenderSummary.cpp */,
-				D302754C12A5FEAB004BD828 /* RenderSummary.h */,
 				A8DF4AE20980C42C0052981B /* RenderTable.cpp */,
 				A8DF4AE10980C42C0052981B /* RenderTable.h */,
 				6ED878C2147493F4004C3597 /* RenderTableCaption.cpp */,
@@ -23533,7 +23521,6 @@
 				BCE4413412F748E2009B84B8 /* RenderCombineText.h in Headers */,
 				9392F1420AD185F400691BD4 /* RenderCounter.h in Headers */,
 				BCEA486E097D93020094C9E4 /* RenderDeprecatedFlexibleBox.h in Headers */,
-				D302754812A5FE84004BD828 /* RenderDetails.h in Headers */,
 				D302754A12A5FE84004BD828 /* RenderDetailsMarker.h in Headers */,
 				A76E5F7F135E0DCF00A69837 /* RenderedDocumentMarker.h in Headers */,
 				9B32CDA913DF7FA900F34D13 /* RenderedPosition.h in Headers */,
@@ -23595,7 +23582,6 @@
 				AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */,
 				BC8C8FAE0DDCD31B00B592F4 /* RenderStyle.h in Headers */,
 				BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */,
-				D302754E12A5FEAB004BD828 /* RenderSummary.h in Headers */,
 				436708C112D9CA4B00044234 /* RenderSVGBlock.h in Headers */,
 				436708C312D9CA4B00044234 /* RenderSVGContainer.h in Headers */,
 				43C092BC12D9E4EE00A989C3 /* RenderSVGForeignObject.h in Headers */,
@@ -26647,7 +26633,6 @@
 				BCE4413312F748E2009B84B8 /* RenderCombineText.cpp in Sources */,
 				9392F1440AD185FE00691BD4 /* RenderCounter.cpp in Sources */,
 				BCEA486D097D93020094C9E4 /* RenderDeprecatedFlexibleBox.cpp in Sources */,
-				D302754712A5FE84004BD828 /* RenderDetails.cpp in Sources */,
 				D302754912A5FE84004BD828 /* RenderDetailsMarker.cpp in Sources */,
 				9B32CDAA13DF7FA900F34D13 /* RenderedPosition.cpp in Sources */,
 				0F5B7A5410F65D7A00376302 /* RenderEmbeddedObject.cpp in Sources */,
@@ -26705,7 +26690,6 @@
 				BC3BE9A50E9C239600835588 /* RenderScrollbarTheme.cpp in Sources */,
 				AB247A6C0AFD6383003FA5FD /* RenderSlider.cpp in Sources */,
 				BC8C8FAD0DDCD31B00B592F4 /* RenderStyle.cpp in Sources */,
-				D302754D12A5FEAB004BD828 /* RenderSummary.cpp in Sources */,
 				0F4E57171313276200CF85AF /* RenderSVGAllInOne.cpp in Sources */,
 				A8DF4AEC0980C42C0052981B /* RenderTable.cpp in Sources */,
 				6ED878C4147493F4004C3597 /* RenderTableCaption.cpp in Sources */,

@@ -286,8 +286,8 @@ public:
     virtual bool isBoxModelObject() const { return false; }
     virtual bool isCounter() const { return false; }
     virtual bool isQuote() const { return false; }
+
 #if ENABLE(DETAILS)
-    virtual bool isDetails() const { return false; }
     virtual bool isDetailsMarker() const { return false; }
 #endif
     virtual bool isEmbeddedObject() const { return false; }
@@ -325,9 +325,6 @@ public:
 
     virtual bool isSlider() const { return false; }
     virtual bool isSliderThumb() const { return false; }
-#if ENABLE(DETAILS)
-    virtual bool isSummary() const { return false; }
-#endif
     virtual bool isTable() const { return false; }
     virtual bool isTableCell() const { return false; }
     virtual bool isTableCol() const { return false; }
