@@ -36,7 +36,7 @@
 
 namespace WTF {
 
-class ArrayBufferView : public RefCounted<ArrayBufferView> {
+class WTF_EXPORT_PRIVATE_RTTI ArrayBufferView : public RefCounted<ArrayBufferView> {
   public:
     virtual bool isByteArray() const { return false; }
     virtual bool isUnsignedByteArray() const { return false; }

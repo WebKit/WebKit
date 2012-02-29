@@ -1,3 +1,13 @@
+2012-02-29  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Add JSCore symbol exports needed by wx port
+        https://bugs.webkit.org/show_bug.cgi?id=77280
+
+        Reviewed by Hajime Morita.
+
+        * wtf/ArrayBufferView.h:
+        * wtf/ExportMacros.h:
+
 2012-02-28  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Always build wtf as a static library.
