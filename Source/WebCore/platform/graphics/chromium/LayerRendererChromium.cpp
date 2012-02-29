@@ -135,6 +135,21 @@ bool contextSupportsAcceleratedPainting(GraphicsContext3D* context)
 }
 #endif
 
+bool needsLionIOSurfaceReadbackWorkaround()
+{
+#if OS(DARWIN)
+    static SInt32 systemVersion = 0;
+    if (!systemVersion) {
+        if (Gestalt(gestaltSystemVersion, &systemVersion) != noErr)
+            return false;
+    }
+
+    return systemVersion >= 0x1070;
+#else
+    return false;
+#endif
+}
+
 } // anonymous namespace
 
 class LayerRendererSwapBuffersCompleteCallbackAdapter : public Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM {
@@ -1059,8 +1074,44 @@ void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& re
 
     makeContextCurrent();
 
-    GLC(m_context.get(), m_context->readPixels(rect.x(), rect.y(), rect.width(), rect.height(),
-                                         GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
+    bool doWorkaround = needsLionIOSurfaceReadbackWorkaround();
+
+    Platform3DObject temporaryTexture = NullPlatform3DObject;
+    Platform3DObject temporaryFBO = NullPlatform3DObject;
+    GraphicsContext3D* context = m_context.get();
+
+    if (doWorkaround) {
+        // On Mac OS X 10.7, calling glReadPixels against an FBO whose color attachment is an
+        // IOSurface-backed texture causes corruption of future glReadPixels calls, even those on
+        // different OpenGL contexts. It is believed that this is the root cause of top crasher
+        // http://crbug.com/99393. <rdar://problem/10949687>
+
+        temporaryTexture = context->createTexture();
+        GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, temporaryTexture));
+        GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+        GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+        GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
+        GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
+        // Copy the contents of the current (IOSurface-backed) framebuffer into a temporary texture.
+        GLC(context, context->copyTexImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, 0, 0, rect.maxX(), rect.maxY(), 0));
+        temporaryFBO = context->createFramebuffer();
+        // Attach this texture to an FBO, and perform the readback from that FBO.
+        GLC(context, context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, temporaryFBO));
+        GLC(context, context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, temporaryTexture, 0));
+
+        ASSERT(context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) == GraphicsContext3D::FRAMEBUFFER_COMPLETE);
+    }
+
+    GLC(context, context->readPixels(rect.x(), rect.y(), rect.width(), rect.height(),
+                                     GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
+
+    if (doWorkaround) {
+        // Clean up.
+        GLC(context, context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
+        GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0));
+        GLC(context, context->deleteFramebuffer(temporaryFBO));
+        GLC(context, context->deleteTexture(temporaryTexture));
+    }
 }
 
 ManagedTexture* LayerRendererChromium::getOffscreenLayerTexture()

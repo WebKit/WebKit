@@ -1,3 +1,21 @@
+2012-02-28  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Work around IOSurface-related corruption during readback
+        https://bugs.webkit.org/show_bug.cgi?id=79735
+
+        Reviewed by James Robinson.
+
+        Copy the compositor's IOSurface-backed output into a temporary
+        texture and perform the ReadPixels operation against that texture.
+
+        It is infeasible to write an automated test for this issue.
+        Tested manually by performing print preview multiple times against
+        pages containing WebGL content on 10.7 and observing that the
+        corruption in the output is no longer present.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::getFramebufferPixels):
+
 2012-02-28  Adrienne Walker  <enne@google.com>
 
         [chromium] Inform v8 about extra memory used for PatternSkia clamp mode
