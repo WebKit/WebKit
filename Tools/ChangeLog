@@ -1,3 +1,41 @@
+2012-02-29  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: support more than two drivers in DriverProxy
+        https://bugs.webkit.org/show_bug.cgi?id=79736
+
+        Reviewed by Adam Barth.
+
+        Now that we can support per-test command lines for
+        Drivers, modify DriverProxy to keep a map of running
+        drivers for each needed command-line; this will allow
+        us to transparently maintain a pool of appropriately
+        configured DRTs without having to constantly start and stop
+        them.
+
+        Note that this potentially raises a garbage collection
+        problem - the number of running DRTs will grow with the
+        number of different sets of command line args. For now
+        this is no worse than the current code - if you're running
+        with pixel tests, you will only need one DRT per worker,
+        and if you aren't, you'll need two (one for text-only tests,
+        and one for reftests).
+
+        An alternative would be to only ever have one running driver,
+        and restart the driver as the command line changes, but this
+        might (?) slow down execution in the text-only case - we
+        should benchmark this because it would be simpler and possibly
+        allow us to eliminate DriverProxy altogether.
+
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (DriverProxy.__init__):
+        (DriverProxy):
+        (DriverProxy._make_driver):
+        (DriverProxy.run_test):
+        (DriverProxy.has_crashed):
+        (DriverProxy.stop):
+        (DriverProxy.cmd_line):
+        (DriverProxy._cmd_line_as_key):
+
 2012-02-29  Adrienne Walker  <enne@google.com>
 
         Unreviewed, add myself as a reviewer
