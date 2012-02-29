@@ -4442,3 +4442,25 @@ BUGWK79862 : fast/js/primitive-property-access-edge-cases.html = TEXT
 BUGWK79862 : fast/js/read-modify-eval.html = TEXT
 
 BUGWK79863 WIN : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
+
+BUGWK79878 SNOWLEOPARD : platform/chromium/rubberbanding/overhang-sw.html = IMAGE+TEXT
+BUGWK79878 SNOWLEOPARD : platform/chromium/rubberbanding/overhang-nw.html = IMAGE
+BUGWK79878 SNOWLEOPARD : platform/chromium/rubberbanding/custom-scrollbars-ne.html = IMAGE+TEXT
+BUGWK79878 SNOWLEOPARD : platform/chromium/rubberbanding/custom-scrollbars-sw.html = IMAGE+TEXT
+BUGWK79878 SNOWLEOPARD : platform/chromium/rubberbanding/overhang-n.html = IMAGE
+BUGWK79878 SNOWLEOPARD : platform/chromium/rubberbanding/custom-scrollbars-se.html = IMAGE+TEXT
+BUGWK79878 SNOWLEOPARD : platform/chromium/rubberbanding/overhang-ne.html = IMAGE+TEXT
+BUGWK79878 SNOWLEOPARD : platform/chromium/rubberbanding/custom-scrollbars-nw.html = IMAGE
+BUGWK79878 SNOWLEOPARD : platform/chromium/rubberbanding/overhang-se.html = IMAGE+TEXT
+BUGWK79878 SNOWLEOPARD : platform/chromium/rubberbanding/overhang-w.html = IMAGE
+BUGWK79878 SNOWLEOPARD : platform/chromium/rubberbanding/overhang-e.html = IMAGE+TEXT
+BUGWK79878 SNOWLEOPARD : platform/chromium/rubberbanding/overhang-s.html = IMAGE+TEXT
+
+BUGWK79878 SNOWLEOPARD : platform/chromium/compositing/rubberbanding/transform-overhang-nw.html = IMAGE
+BUGWK79878 SNOWLEOPARD : platform/chromium/compositing/rubberbanding/transform-overhang-se.html = IMAGE
+BUGWK79878 SNOWLEOPARD : platform/chromium/compositing/rubberbanding/transform-overhang-s.html = IMAGE
+BUGWK79878 SNOWLEOPARD : platform/chromium/compositing/rubberbanding/transform-overhang-e.html = IMAGE
+BUGWK79878 SNOWLEOPARD : platform/chromium/compositing/rubberbanding/transform-overhang-sw.html = IMAGE
+BUGWK79878 SNOWLEOPARD : platform/chromium/compositing/rubberbanding/transform-overhang-n.html = IMAGE
+BUGWK79878 SNOWLEOPARD : platform/chromium/compositing/rubberbanding/transform-overhang-ne.html = IMAGE
+BUGWK79878 SNOWLEOPARD : platform/chromium/compositing/rubberbanding/transform-overhang-w.html = IMAGE
