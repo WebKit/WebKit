@@ -928,18 +928,9 @@ void Element::attach()
     StyleSelectorParentPusher parentPusher(this);
 
     // When a shadow root exists, it does the work of attaching the children.
-    if (hasShadowRoot()) {
+    if (ShadowTree* tree = shadowTree()) {
         parentPusher.push();
-        shadowTree()->attach();
-
-        // In a shadow tree, some of light children may be attached by <content> or <shadow>.
-        // However, when there is no content element or content element does not select
-        // all light children, we have to attach the rest of light children here.
-        for (Node* child = firstChild(); child; child = child->nextSibling()) {
-            if (!child->attached())
-                child->attach();
-        }
-        Node::attach();
+        tree->attachHost(this);
     } else {
         if (firstChild())
             parentPusher.push();
@@ -967,17 +958,10 @@ void Element::detach()
     if (hasRareData())
         rareData()->resetComputedStyle();
 
-    if (hasShadowRoot()) {
-        for (Node* child = firstChild(); child; child = child->nextSibling()) {
-            if (child->attached())
-                child->detach();
-        }
-
-        shadowTree()->detach();
-        Node::detach();
-    } else
+    if (ShadowTree* tree = shadowTree())
+        tree->detachHost(this);
+    else
         ContainerNode::detach();
-
 
     RenderWidget::resumeWidgetHierarchyUpdates();
 }

@@ -62,6 +62,8 @@ public:
     void attach();
     void detach();
     void reattach();
+    void attachHost(Element*);
+    void detachHost(Element*);
 
     bool childNeedsStyleRecalc();
     bool needsStyleRecalc();

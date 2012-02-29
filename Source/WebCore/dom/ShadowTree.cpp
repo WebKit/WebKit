@@ -86,8 +86,7 @@ void ShadowTree::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> shado
     if (shadowHost->attached()) {
         shadowRoot->lazyAttach();
         detach();
-        for (Node* child = shadowHost->firstChild(); child; child = child->nextSibling())
-            child->detach();
+        shadowHost->detachChildren();
     }
 
     m_shadowRoots.push(shadowRoot.get());
@@ -118,12 +117,8 @@ void ShadowTree::removeAllShadowRoots()
             oldRoot->removedFromTree(true);
     }
 
-    if (shadowHost->attached()) {
-        for (Node* child = shadowHost->firstChild(); child; child = child->nextSibling()) {
-            if (!child->attached())
-                child->lazyAttach();
-        }
-    }
+    if (shadowHost->attached())
+        shadowHost->attachChildrenLazily();
 }
 
 void ShadowTree::insertedIntoDocument()
@@ -171,12 +166,27 @@ void ShadowTree::attach()
         contentSelector->didSelect();
 }
 
+void ShadowTree::attachHost(Element* host)
+{
+    attach();
+    host->attachChildrenIfNeeded();
+    host->attachAsNode();
+}
+
+
 void ShadowTree::detach()
 {
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         if (root->attached())
             root->detach();
     }
+}
+
+void ShadowTree::detachHost(Element* host)
+{
+    host->detachChildrenIfNeeded();
+    detach();
+    host->detachAsNode();
 }
 
 InsertionPoint* ShadowTree::insertionPointFor(Node* node) const
@@ -269,21 +279,10 @@ void ShadowTree::reattachHostChildrenAndShadow()
 {
     ASSERT(youngestShadowRoot());
 
-    Node* hostNode = youngestShadowRoot()->host();
-    if (!hostNode)
-        return;
-
-    for (Node* child = hostNode->firstChild(); child; child = child->nextSibling()) {
-        if (child->attached())
-            child->detach();
-    }
-
+    Element* hostNode = youngestShadowRoot()->host();
+    hostNode->detachChildrenIfNeeded();
     reattach();
-
-    for (Node* child = hostNode->firstChild(); child; child = child->nextSibling()) {
-        if (!child->attached())
-            child->attach();
-    }
+    hostNode->attachChildrenIfNeeded();
 }
 
 HTMLContentSelector* ShadowTree::ensureSelector()

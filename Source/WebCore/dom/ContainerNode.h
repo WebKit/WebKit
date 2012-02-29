@@ -94,6 +94,14 @@ public:
     // node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed its value.
     virtual void childrenChanged(bool createdByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
+    void attachAsNode();
+    void attachChildren();
+    void attachChildrenIfNeeded();
+    void attachChildrenLazily();
+    void detachAsNode();
+    void detachChildren();
+    void detachChildrenIfNeeded();
+
 protected:
     ContainerNode(Document*, ConstructionType = CreateContainer);
 
@@ -144,6 +152,51 @@ inline ContainerNode::ContainerNode(Document* document, ConstructionType type)
     , m_firstChild(0)
     , m_lastChild(0)
 {
+}
+
+inline void ContainerNode::attachAsNode()
+{
+    Node::attach();
+}
+
+inline void ContainerNode::attachChildren()
+{
+    for (Node* child = firstChild(); child; child = child->nextSibling())
+        child->attach();
+}
+
+inline void ContainerNode::attachChildrenIfNeeded()
+{
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->attached())
+            child->attach();
+    }
+}
+
+inline void ContainerNode::attachChildrenLazily()
+{
+    for (Node* child = firstChild(); child; child = child->nextSibling())
+        if (!child->attached())
+            child->lazyAttach();
+}
+
+inline void ContainerNode::detachAsNode()
+{
+    Node::detach();
+}
+
+inline void ContainerNode::detachChildrenIfNeeded()
+{
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->attached())
+            child->detach();
+    }
+}
+
+inline void ContainerNode::detachChildren()
+{
+    for (Node* child = firstChild(); child; child = child->nextSibling())
+        child->detach();
 }
 
 inline unsigned Node::childNodeCount() const

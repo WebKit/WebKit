@@ -1,3 +1,45 @@
+2012-02-28  MORITA Hajime  <morrita@google.com>
+
+        [Refactoring] Shadow related attach paths should be in ShadowTree.
+        https://bugs.webkit.org/show_bug.cgi?id=79854
+
+        Reviewed by Ryosuke Niwa.
+
+        No new tests. No behavior change.
+
+        This change introduces ShadowTree::attachHost() and ShadowTree::detachHost()
+        and moves shadow-enabled attachment code from Element to ShadowRoot.
+        This also factored out small ContainerNode method to use it from ShadowTree.
+
+        Even after this change, the traveral order in ShadowTree
+        attachment has some unclear part. Coming changes will clarify
+        these. This change is aimed to be purely textural.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::attach):
+        (WebCore::ContainerNode::detach):
+        * dom/ContainerNode.h:
+        (ContainerNode):
+        (WebCore::ContainerNode::attachAsNode): Added.
+        (WebCore::ContainerNode::attachChildren): Added.
+        (WebCore::ContainerNode::attachChildrenIfNeeded): Added.
+        (WebCore::ContainerNode::attachChildrenLazily): Added.
+        (WebCore::ContainerNode::detachAsNode): Added.
+        (WebCore::ContainerNode::detachChildrenIfNeeded): Added.
+        (WebCore::ContainerNode::detachChildren): Added.
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        (WebCore::Element::detach):
+        * dom/ShadowTree.cpp:
+        (WebCore::ShadowTree::addShadowRoot):
+        (WebCore::ShadowTree::removeAllShadowRoots):
+        (WebCore::ShadowTree::detachHost):
+        (WebCore):
+        (WebCore::ShadowTree::attachHost):
+        (WebCore::ShadowTree::reattachHostChildrenAndShadow):
+        * dom/ShadowTree.h:
+        (ShadowTree):
+
 2012-02-28  Arko Saha  <arko@motorola.com>
 
         Microdata: Implement HTMLPropertiesCollection collection.namedItem().
