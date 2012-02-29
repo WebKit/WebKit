@@ -1,3 +1,20 @@
+2012-02-29  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: MediaStreamTrackList out-of-bounds access fix
+        https://bugs.webkit.org/show_bug.cgi?id=79889
+
+        Reviewed by Adam Barth.
+
+        Out-of-bounds access to MediaStreamTrackList ASSERTS instead of returning 0,
+        this is not according to ecmascript standard. Also fixed a similar issue in MediaStreamList.
+
+        Test: fast/mediastream/peerconnection-mediastreamlist.html
+
+        * Modules/mediastream/MediaStreamList.cpp:
+        (WebCore::MediaStreamList::item):
+        * Modules/mediastream/MediaStreamTrackList.cpp:
+        (WebCore::MediaStreamTrackList::item):
+
 2012-02-29  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Upstream the BlackBerry change to platform/graphics/FloatSize.h

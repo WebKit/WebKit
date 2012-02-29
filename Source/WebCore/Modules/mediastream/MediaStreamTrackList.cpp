@@ -51,7 +51,8 @@ unsigned MediaStreamTrackList::length() const
 
 MediaStreamTrack* MediaStreamTrackList::item(unsigned index) const
 {
-    ASSERT(index < length());
+    if (index >= m_trackVector.size())
+        return 0;
     return m_trackVector[index].get();
 }
 

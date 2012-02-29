@@ -50,6 +50,8 @@ unsigned MediaStreamList::length() const
 
 MediaStream* MediaStreamList::item(unsigned index) const
 {
+    if (index >= m_streams.size())
+        return 0;
     return m_streams[index].get();
 }
 
