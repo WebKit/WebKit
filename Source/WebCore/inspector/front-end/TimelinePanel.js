@@ -459,8 +459,13 @@ WebInspector.TimelinePanel.prototype = {
         var formattedRecord = this._presentationModel.addRecord(record, parentRecord);
         ++this._allRecordsCount;
         var recordTypes = WebInspector.TimelineModel.RecordType;
-        if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad || record.type === recordTypes.TimeStamp)
-            this._timeStampRecords.push(formattedRecord);
+        var timeStampRecords = this._timeStampRecords;
+        function addTimestampRecords(record)
+        {
+            if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad || record.type === recordTypes.TimeStamp)
+                timeStampRecords.push(record);
+        }
+        WebInspector.TimelinePanel.forAllRecords([ formattedRecord ], addTimestampRecords);
     },
 
     sidebarResized: function(event)
