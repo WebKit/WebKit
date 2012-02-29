@@ -1,3 +1,35 @@
+2012-02-27  MORITA Hajime  <morrita@google.com>
+
+        <content> element should behave as HTMLUnknownElement outside of a shadow DOM subtree
+        https://bugs.webkit.org/show_bug.cgi?id=79551
+
+        Reviewed by Dimitri Glazkov.
+
+        The problem happened because HTMLContentElement doesn't create renderer anytime.
+        
+        This change allows it to create a renderer unless the HTMLContentElement is shadowed.
+        Since this could happen not only on <content> but also on upcoming <shadow>,
+        the corresponding part of the code is pulled up to InsertionPoint.
+
+        Tests: fast/dom/shadow/content-element-outside-shadow-style-expected.html
+               fast/dom/shadow/content-element-outside-shadow-style.html
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        * dom/ShadowRoot.h:
+        (WebCore):
+        (WebCore::TreeScope::isShadowRoot):
+        * dom/TreeScope.h:
+        (TreeScope):
+        * html/shadow/HTMLContentElement.h:
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::isShadowBoundary):
+        (WebCore):
+        * html/shadow/InsertionPoint.h:
+        (InsertionPoint):
+        (WebCore::isShadowBoundary):
+        (WebCore):
+
 2012-02-28  Daniel Cheng  <dcheng@chromium.org>
 
         Clipboard::getData should return an empty string instead of undefined

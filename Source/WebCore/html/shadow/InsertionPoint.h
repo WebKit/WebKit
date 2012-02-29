@@ -42,9 +42,12 @@ public:
 
     const HTMLContentSelectionList* selections() const { return &m_selections; }
     bool hasSelection() const { return m_selections.first(); }
+    bool isShadowBoundary() const;
 
 protected:
     InsertionPoint(const QualifiedName&, Document*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&) OVERRIDE;
+
     HTMLContentSelectionList m_selections;
 };
 
@@ -62,6 +65,13 @@ inline InsertionPoint* toInsertionPoint(Node* node)
 {
     ASSERT(isInsertionPoint(node));
     return static_cast<InsertionPoint*>(node);
+}
+
+inline bool isShadowBoundary(Node* node)
+{
+    if (!isInsertionPoint(node))
+        return false;
+    return toInsertionPoint(node)->isShadowBoundary();
 }
 
 } // namespace WebCore

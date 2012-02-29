@@ -18,17 +18,17 @@ function removeContainerLines(text)
 
 var cases = [
     ["<div><content></content></div>",
-     "<div></div>"],
+     "<div><unknown></unknown></div>"],
     ["<div><content>Here is a text.</content></div>",
-     "<div>Here is a text.</div>"],
+     "<div><unknown>Here is a text.</unknown></div>"],
     ["<div><content><div>Here is a </div><div>series of</div><div>blocks</div></content></div>",
-     "<div><div>Here is a </div><div>series of</div><div>blocks</div></div>"],
+     "<div><unknown><div>Here is a </div><div>series of</div><div>blocks</div></unknown></div>"],
     ["<div><content><span>Here is a<span><span>series of</span><span>inlines.</span></content></div>",
-     "<div><span>Here is a<span><span>series of</span><span>inlines.</span></div>"],
+     "<div><unknown><span>Here is a<span><span>series of</span><span>inlines.</span></unknown></div>"],
     ["<div><content>Here is a <content>nested content</content> inside content.</content></div>",
-     "<div>Here is a <" + "!-- --" + ">nested content<" + "!-- --" + "> inside content.</div>"],
+     "<div><unknown>Here is a <unknown>nested content</unknown> inside content.</unknown></div>"],
     ["<div><content>Here is a <div>block and <content>nested content</content> inside the block</div>.</content></div>",
-     "<div>Here is a <div>block and <!" + "-- --" + ">nested content<!" + "-- --" + "> inside the block</div>.</div>"]
+     "<div><unknown>Here is a <div>block and <unknown>nested content</unknown> inside the block</div>.</unknown></div>"]
 ];
 
 var targetContainer = document.getElementById("targetContainer");
@@ -41,6 +41,7 @@ for (var i = 0; i < cases.length; ++i) {
     targetContainer.innerHTML = targetMarkup;
     comparisonContainer.innerHTML = expectedMarkup;
     targetRenderTree = removeContainerLines(window.internals.elementRenderTreeAsText(targetContainer));
+    targetRenderTree = targetRenderTree.replace(/CONTENT/g, "UNKNOWN");
     comparisonRenderTree = removeContainerLines(window.internals.elementRenderTreeAsText(comparisonContainer));
     debug(escapeHTML(targetMarkup));
     shouldBe("targetRenderTree", "comparisonRenderTree");

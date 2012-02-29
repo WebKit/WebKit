@@ -63,9 +63,6 @@ protected:
 
 private:
     virtual bool isContentElement() const { return true; }
-    virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) { return 0; }
-
     virtual void parseAttribute(Attribute*) OVERRIDE;
 };
 

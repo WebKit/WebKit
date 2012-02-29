@@ -87,7 +87,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
             return;
         }
 
-        if (isInsertionPoint(parent)) {
+        if (isShadowBoundary(parent)) {
             if (toInsertionPoint(parent)->hasSelection())
                 m_phase = AttachingNotFallbacked;
             else

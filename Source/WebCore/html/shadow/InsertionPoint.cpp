@@ -31,6 +31,8 @@
 #include "config.h"
 #include "InsertionPoint.h"
 
+#include "ShadowRoot.h"
+
 namespace WebCore {
 
 InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document* document)
@@ -41,6 +43,18 @@ InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document* document)
 
 InsertionPoint::~InsertionPoint()
 {
+}
+
+bool InsertionPoint::isShadowBoundary() const
+{
+    if (TreeScope* scope = treeScope())
+        return scope->isShadowRoot();
+    return false;
+}
+
+bool InsertionPoint::rendererIsNeeded(const NodeRenderingContext& context)
+{
+    return !isShadowBoundary() && HTMLElement::rendererIsNeeded(context);
 }
 
 } // namespace WebCore

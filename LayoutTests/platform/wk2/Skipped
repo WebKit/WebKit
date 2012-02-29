@@ -1065,6 +1065,7 @@ fast/dom/shadow/create-content-element.html
 # ENABLE(SHADOW_DOM) is disabled.
 fast/dom/shadow/content-element-api.html
 fast/dom/shadow/content-element-outside-shadow.html
+fast/dom/shadow/content-element-outside-shadow-style.html
 fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-disable.html
 fast/dom/shadow/shadow-root-attached.html
