@@ -260,7 +260,6 @@ WONTFIX WIN LINUX SKIP : editing/input/emacs-ctrl-o.html = FAIL
 // These tests should pass on Mac
 BUGRNIWA MAC : editing/pasteboard/emacs-cntl-y-001.html = PASS FAIL
 BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = PASS FAIL
-BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-k-with-move.html = FAIL
 BUGRNIWA MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = PASS FAIL
 BUGRNIWA MAC : editing/input/emacs-ctrl-o.html = PASS FAIL
 
@@ -903,9 +902,6 @@ BUGCR10278 LINUX : fast/css/font-face-unicode-range.html = FAIL
 // what the resolution was.
 BUGCR10279 : fast/js/var-declarations-shadowing.html = FAIL
 
-// FIXME: Enable this test when V8 r10800 has rolled into WebKit.
-BUGWK79361 : fast/js/var-declarations-zero-width.html = FAIL
-
 // Implement full JSON support in V8
 BUGCR14885 SLOW : fast/js/JSON-parse.html = FAIL
 BUGCR14885 SLOW : fast/js/JSON-stringify.html = CRASH FAIL
@@ -1369,7 +1365,6 @@ BUGCR88911 LEOPARD : fast/xsl/xslt-extra-content-at-end.xml = IMAGE+TEXT
 BUGCR23473 MAC : fast/repaint/4774354.html = IMAGE
 BUGCR23473 MAC : fast/repaint/4776765.html = IMAGE
 BUGCR23473 MAC : fast/repaint/background-generated.html = IMAGE
-BUGCR23473 MAC : fast/repaint/backgroundSizeRepaint.html = IMAGE
 BUGCR23473 MAC : fast/repaint/block-selection-gap-in-table-cell.html = IMAGE
 BUGCR23473 MAC : fast/repaint/body-background-image.html = IMAGE
 BUGCR23473 MAC : fast/repaint/border-fit-lines.html = IMAGE
@@ -1383,7 +1378,6 @@ BUGCR23473 MAC : fast/repaint/bugzilla-6388.html = IMAGE
 BUGCR23473 MAC : fast/repaint/bugzilla-7235.html = IMAGE
 BUGCR23473 MAC : fast/repaint/button-spurious-layout-hint.html = IMAGE
 BUGCR23473 MAC : fast/repaint/change-transform.html = IMAGE
-BUGCR23473 MAC : fast/repaint/clipped-relative.html = IMAGE
 BUGCR23473 MAC : fast/repaint/clip-with-layout-delta.html = IMAGE
 BUGCR23473 MAC : fast/repaint/containing-block-position-change.html = IMAGE
 BUGCR23473 MAC : fast/repaint/content-into-overflow.html = IMAGE
@@ -1431,7 +1425,6 @@ BUGCR23473 MAC : fast/repaint/reflection-repaint-test.html = IMAGE
 BUGCR23473 MAC : fast/repaint/rel-positioned-inline-with-overflow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/repaint-resized-overflow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/search-field-cancel.html = IMAGE
-BUGCR23473 MAC : fast/repaint/selected-replaced.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-after-delete.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-clear.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-gap-overflow-scroll.html = IMAGE
@@ -3230,8 +3223,6 @@ BUGWK68436 SNOWLEOPARD CPU : fast/repaint/text-emphasis-h.html = TIMEOUT IMAGE
 BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia (CPU and/or GPU) graphics.
-BUGWK68437 LEOPARD CPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = TEXT
-
 BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD GPU : fast/canvas/set-colors.html = TEXT
 // Failures introduced by USE_NEW_BUILDER in Skia.
 BUGCR33287 CPU : fast/canvas/set-colors.html = TEXT
