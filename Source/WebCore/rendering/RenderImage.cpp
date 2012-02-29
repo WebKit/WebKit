@@ -338,7 +338,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             return;
         }
 
-    if (page && paintInfo.phase == PaintPhaseForeground) {
+    if (cachedImage() && page && paintInfo.phase == PaintPhaseForeground) {
         // For now, count images as unpainted if they are still progressively loading. We may want 
         // to refine this in the future to account for the portion of the image that has painted.
         if (cachedImage()->isLoading())

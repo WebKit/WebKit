@@ -1,5 +1,12 @@
 2012-02-29  Beth Dakin  <bdakin@apple.com>
 
+        Speculative build-fix.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+
+2012-02-29  Beth Dakin  <bdakin@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=79705
         didNewFirstVisuallyNonEmptyLayout should be enhanced to look at size instead 
         of a raw tally
