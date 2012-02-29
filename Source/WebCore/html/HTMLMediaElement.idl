@@ -99,15 +99,15 @@ module html {
     [V8EnabledAtRuntime=webkitMediaSource] void webkitSourceAppend(in Uint8Array data) raises (DOMException);
 
     // Signals the end of stream.
-    const [V8EnabledAtRuntime=webkitMediaSource] unsigned short EOS_NO_ERROR = 0; // End of stream reached w/o error.
-    const [V8EnabledAtRuntime=webkitMediaSource] unsigned short EOS_NETWORK_ERR = 1; // A network error triggered end of stream.
-    const [V8EnabledAtRuntime=webkitMediaSource] unsigned short EOS_DECODE_ERR = 2; // A decode error triggered end of stream.
+    [V8EnabledAtRuntime=webkitMediaSource] const unsigned short EOS_NO_ERROR = 0; // End of stream reached w/o error.
+    [V8EnabledAtRuntime=webkitMediaSource] const unsigned short EOS_NETWORK_ERR = 1; // A network error triggered end of stream.
+    [V8EnabledAtRuntime=webkitMediaSource] const unsigned short EOS_DECODE_ERR = 2; // A decode error triggered end of stream.
     [V8EnabledAtRuntime=webkitMediaSource] void webkitSourceEndOfStream(in unsigned short status) raises (DOMException);
 
     // Indicates the current state of the media source.
-    const [V8EnabledAtRuntime=webkitMediaSource] unsigned short SOURCE_CLOSED = 0;
-    const [V8EnabledAtRuntime=webkitMediaSource] unsigned short SOURCE_OPEN = 1;
-    const [V8EnabledAtRuntime=webkitMediaSource] unsigned short SOURCE_ENDED = 2;
+    [V8EnabledAtRuntime=webkitMediaSource] const unsigned short SOURCE_CLOSED = 0;
+    [V8EnabledAtRuntime=webkitMediaSource] const unsigned short SOURCE_OPEN = 1;
+    [V8EnabledAtRuntime=webkitMediaSource] const unsigned short SOURCE_ENDED = 2;
     readonly attribute [V8EnabledAtRuntime=webkitMediaSource] unsigned short webkitSourceState;
 #endif
 

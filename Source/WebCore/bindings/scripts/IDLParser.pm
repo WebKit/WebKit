@@ -326,6 +326,7 @@ sub ParseInterface
         my @interfaceMethods = split(/;/, $interfaceData);
 
         foreach my $line (@interfaceMethods) {
+            next if $line =~ /^\s*$/;
             if ($line =~ /\Wattribute\W/) {
                 $line =~ /$IDLStructure::interfaceAttributeSelector/;
 
@@ -361,11 +362,11 @@ sub ParseInterface
                 $setterException =~ s/\s+//g;
                 @{$newDataNode->getterExceptions} = split(/,/, $getterException);
                 @{$newDataNode->setterExceptions} = split(/,/, $setterException);
-            } elsif (($line !~ s/^\s*$//g) and ($line !~ /^\s*const/)) {
+            } elsif ($line !~ /^\s*($IDLStructure::extendedAttributeSyntax )?const\s+/) {
                 $line =~ /$IDLStructure::interfaceMethodSelector/ or die "Parsing error!\nSource:\n$line\n)";
 
-                my $isStatic = defined($1);
-                my $methodExtendedAttributes = (defined($2) ? $2 : " "); chop($methodExtendedAttributes);
+                my $methodExtendedAttributes = (defined($1) ? $1 : " "); chop($methodExtendedAttributes);
+                my $isStatic = defined($2);
                 my $methodType = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
                 my $methodName = (defined($4) ? $4 : die("Parsing error!\nSource:\n$line\n)"));
                 my $methodSignature = (defined($5) ? $5 : die("Parsing error!\nSource:\n$line\n)"));
@@ -393,7 +394,7 @@ sub ParseInterface
 
                 my $arrayRef = $dataNode->functions;
                 push(@$arrayRef, $newDataNode);
-            } elsif ($line =~ /^\s*const/) {
+            } else {
                 $line =~ /$IDLStructure::constantSelector/;
                 my $constExtendedAttributes = (defined($1) ? $1 : " "); chop($constExtendedAttributes);
                 my $constType = (defined($2) ? $2 : die("Parsing error!\nSource:\n$line\n)"));

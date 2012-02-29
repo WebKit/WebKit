@@ -38,7 +38,7 @@ module html {
         const unsigned short LOADING = 1;
         const unsigned short LOADED = 2;
         // Reflect is used for ERROR because it conflicts with a windows define.
-        const [Reflect=TRACK_ERROR] unsigned short ERROR = 3;
+        [Reflect=TRACK_ERROR] const unsigned short ERROR = 3;
         readonly attribute unsigned short readyState;
 
         readonly attribute TextTrack track;

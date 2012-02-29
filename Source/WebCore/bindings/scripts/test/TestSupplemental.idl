@@ -44,6 +44,6 @@ module test {
         static void supplementalMethod4();
 
         const unsigned short SUPPLEMENTALCONSTANT1 = 1;
-        const [Reflect=CONST_IMPL] unsigned short SUPPLEMENTALCONSTANT2 = 2;
+        [Reflect=CONST_IMPL] const unsigned short SUPPLEMENTALCONSTANT2 = 2;
     };
 }

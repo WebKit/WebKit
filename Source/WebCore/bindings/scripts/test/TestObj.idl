@@ -151,7 +151,7 @@ module test {
         attribute [Conditional=Condition1&Condition2] TestObjectBConstructor conditionalAttr5;
         attribute [Conditional=Condition1|Condition2] TestObjectCConstructor conditionalAttr6;
 
-        const [Conditional=Condition1] unsigned short CONDITIONAL_CONST = 0;
+        [Conditional=Condition1] const unsigned short CONDITIONAL_CONST = 0;
 
 #if defined(TESTING_V8) || defined(TESTING_JS)
         readonly attribute [CachedAttribute] any cachedAttribute1;
@@ -175,8 +175,8 @@ module test {
 
         // Static method with conditional on overloaded methods
 
-        static [Conditional=Condition1] void overloadedMethod1(in long arg);
-        static [Conditional=Condition1] void overloadedMethod1(in DOMString type);
+        [Conditional=Condition1] static void overloadedMethod1(in long arg);
+        [Conditional=Condition1] static void overloadedMethod1(in DOMString type);
 
 #if defined(TESTING_V8)
         // 'V8EnabledAtRuntime' methods and attributes.
@@ -234,6 +234,6 @@ module test {
         const unsigned short CONST_VALUE_12 = 0x01;
         const unsigned short CONST_VALUE_13 = 0X20;
         const unsigned short CONST_VALUE_14 = 0x1abc;
-        const [Reflect=CONST_IMPL] unsigned short CONST_JAVASCRIPT = 15;
+        [Reflect=CONST_IMPL] const unsigned short CONST_JAVASCRIPT = 15;
     };
 }
