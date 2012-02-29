@@ -1,4 +1,4 @@
-shouldBe("(new RegExp()).source", "''");
+shouldBe("(new RegExp()).source", "'(?:)'");
 shouldBe("Boolean(new RegExp())", "true");
 shouldBeTrue("isNaN(Number(new RegExp()))");
 

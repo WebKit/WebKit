@@ -155,7 +155,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
         postfix[index] = 'm';
     UString source = thisObject->get(exec, exec->propertyNames().source).toString(exec)->value(exec);
     // If source is empty, use "/(?:)/" to avoid colliding with comment syntax
-    return JSValue::encode(jsMakeNontrivialString(exec, "/", source.length() ? source : UString("(?:)"), postfix));
+    return JSValue::encode(jsMakeNontrivialString(exec, "/", source, postfix));
 }
 
 } // namespace JSC

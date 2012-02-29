@@ -189,6 +189,14 @@ JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, const Identifier&)
     bool inBrackets = false;
     bool shouldEscape = false;
 
+    // 15.10.6.4 specifies that RegExp.prototype.toString must return '/' + source + '/',
+    // and also states that the result must be a valid RegularExpressionLiteral. '//' is
+    // not a valid RegularExpressionLiteral (since it is a single line comment), and hence
+    // source cannot ever validly be "". If the source is empty, return a different Pattern
+    // that would match the same thing.
+    if (!length)
+        return jsString(exec, "(?:)");
+
     // early return for strings that don't contain a forwards slash and LineTerminator
     for (unsigned i = 0; i < length; ++i) {
         UChar ch = characters[i];

@@ -18,8 +18,8 @@ function testLineTerminator(pattern)
 }
 
 shouldBe("RegExp('/').source", '"\\\\/"');
-shouldBe("RegExp('').source", '""');
-shouldBe("RegExp.prototype.source", '""');
+shouldBe("RegExp('').source", '"(?:)"');
+shouldBe("RegExp.prototype.source", '"(?:)"');
 
 shouldBe("RegExp('/').toString()", '"/\\\\//"');
 shouldBe("RegExp('').toString()", '"/(?:)/"');
@@ -53,3 +53,12 @@ shouldBeFalse('testLineTerminator("\\\\u2029");');
 
 shouldBe("RegExp('[/]').source", "'[/]'");
 shouldBe("RegExp('\\\\[/]').source", "'\\\\[\\\\/]'");
+
+// See 15.10.6.4
+// The first half of this checks that:
+//     Return the String value formed by concatenating the Strings "/", the
+//     String value of the source property of this RegExp object, and "/";
+// The second half checks that:
+//     The returned String has the form of a RegularExpressionLiteral that
+//     evaluates to another RegExp object with the same behaviour as this object.
+shouldBe("var o = new RegExp(); o.toString() === '/'+o.source+'/' && eval(o.toString()+'.exec(String())')", '[""]');

@@ -22,6 +22,26 @@
 
 2012-02-29  Gavin Barraclough  <barraclough@apple.com>
 
+        'source' property of RegExp instance cannot be ""
+        https://bugs.webkit.org/show_bug.cgi?id=79938
+
+        Reviewed by Oliver Hunt.
+
+        15.10.6.4 specifies that RegExp.prototype.toString must return '/' + source + '/',
+        and also states that the result must be a valid RegularExpressionLiteral. '//' is
+        not a valid RegularExpressionLiteral (since it is a single line comment), and hence
+        source cannot ever validly be "". If the source is empty, return a different Pattern
+        that would match the same thing.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::regExpObjectSource):
+            - Do not return "" if the source is empty, this would lead to invalid behaviour in toString.
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+            - No need to special case the empty string - this should be being done by 'source'.
+
+2012-02-29  Gavin Barraclough  <barraclough@apple.com>
+
         Writable attribute not set correctly when redefining an accessor to a data descriptor
         https://bugs.webkit.org/show_bug.cgi?id=79931
 
