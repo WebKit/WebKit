@@ -1,3 +1,22 @@
+2012-02-29  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=79940
+        <rdar://problem/10080189>
+        
+        Add support in WebKit for an intra-line character grid for Japanese text layout.
+        
+        Patch logicalLeftOffsetForLine and logicalRightOffsetForLine in order to get the
+        basic edge snapping grid functionality up and running. See all the FIXMEs in the function for
+        some of the issues that still have to be dealt with for it to really work well.
+
+        Reviewed by Dan Bernstein.
+
+        Added new tests in fast/line-grid.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+
 2012-02-29  Anders Carlsson  <andersca@apple.com>
 
         [Chromium] Some Layout Tests in platform/chromium/rubberbanding and platform/chromium/compositing/rubberbanding are failing
