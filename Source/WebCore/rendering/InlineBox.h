@@ -358,7 +358,7 @@ public:
 protected:
     mutable bool m_determinedIfNextOnLineExists : 1;
     mutable bool m_nextOnLineExists : 1;
-    signed m_expansion : 11; // for justified text
+    signed m_expansion : 12; // for justified text
 
 #ifndef NDEBUG
 private:

@@ -1,3 +1,19 @@
+2012-02-29  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Align InlineBox::m_expansion to a byte boundary
+        https://bugs.webkit.org/show_bug.cgi?id=79761
+
+        Add a bit to m_expansion to align a byte boundary.
+        This will make valgrind memcheck happy.
+        I confirmed sizeof(InlineBox) is unchanged.
+
+        Reviewed by Hajime Morita.
+
+        No new tests. No behavior changes.
+
+        * rendering/InlineBox.h:
+        (InlineBox): Aligned m_expansion to a byte boundary.
+
 2012-02-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Do not iterate all tiles for resizing when the content didn't change
