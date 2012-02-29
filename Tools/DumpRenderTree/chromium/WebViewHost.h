@@ -252,6 +252,9 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     // Pending task list, Note taht the method is referred from MethodTask class.
     TaskList* taskList() { return &m_taskList; }
 
+    // The current web intents request.
+    WebKit::WebIntentRequest* currentIntentRequest() { return &m_currentRequest; }
+
 private:
 
     class HostMethodTask : public MethodTask<WebViewHost> {

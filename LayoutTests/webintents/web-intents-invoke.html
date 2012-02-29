@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script src="resources/web-intents-testing.js"></script>
+    <script>
+      function buttonClicked() {
+        navigator.startActivity(new Intent("action1", "mime/type1", "test"));
+          debug("* sent intent");
+      }
+    </script>
+  </head>
+<body onload="simulateButtonPress()">
+<input type="button" id="button" value="Start Web Intent" onmouseup="buttonClicked()">
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
