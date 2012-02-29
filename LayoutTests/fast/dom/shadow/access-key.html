@@ -55,16 +55,18 @@ function getElementInShadow(path)
     return element;
 }
 
-function prepareDomTree(parent)
+function prepareDOMTree(parent)
 {
     parent.appendChild(
-        createDom('div', {'id': 'divA'},
-                  createDom('input', {'id': 'inputB'}),
-                  createShadow('div', {'id': 'shadowC', 'tabindex': 0},
-                               createDom('input', {'id': 'inputD'}),
-                               createDom('input', {'id': 'inputE', 'accesskey': 'a'}),
-                               createShadow('div', {'id': 'shadowF', 'tabindex': 0},
-                                            createDom('input', {'id': 'inputG'})))));
+        createDOM('div', {'id': 'divA'},
+                  createDOM('input', {'id': 'inputB'}),
+                  createDOM('div', {'id': 'shadowC', 'tabindex': 0},
+                            createShadowRoot(
+                                createDOM('input', {'id': 'inputD'}),
+                                createDOM('input', {'id': 'inputE', 'accesskey': 'a'}),
+                                createDOM('div', {'id': 'shadowF', 'tabindex': 0},
+                                          createShadowRoot(
+                                              createDOM('input', {'id': 'inputG'})))))));
 
     var ids = ['inputB',
                'shadowC/inputD', 'shadowC/inputE',
@@ -80,7 +82,7 @@ function test()
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
-    prepareDomTree(document.getElementById('sandbox'));
+    prepareDOMTree(document.getElementById('sandbox'));
 
     // Please see the discussion of https://bugs.webkit.org/show_bug.cgi?id=67096.
     // We don't have a clear idea how accesskey should work in regard to shadow DOM.

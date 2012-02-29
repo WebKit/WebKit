@@ -1,24 +1,28 @@
-// This function can take optional child elements as arguments[2:].
-function createShadow(tagName, attributes)
+function createShadowRoot()
 {
-    var element = document.createElement(tagName);
-    for (var name in attributes)
-        element.setAttribute(name, attributes[name]);
-    var shadow = internals.ensureShadowRoot(element);
-    var childElements = Array.prototype.slice.call(arguments, 2);
-    for (var i = 0; i < childElements.length; ++i)
-        shadow.appendChild(childElements[i]);
-    return element;
+    return {'isShadowRoot': true,
+            'children': Array.prototype.slice.call(arguments)};
 }
 
-// This function can take optional child elements as arguments[2:].
-function createDom(tagName, attributes)
+// This function can take optional child elements, which might be a result of createShadowRoot(), as arguments[2:].
+function createDOM(tagName, attributes)
 {
     var element = document.createElement(tagName);
     for (var name in attributes)
         element.setAttribute(name, attributes[name]);
     var childElements = Array.prototype.slice.call(arguments, 2);
-    for (var i = 0; i < childElements.length; ++i)
-        element.appendChild(childElements[i]);
+    for (var i = 0; i < childElements.length; ++i) {
+        var child = childElements[i];
+        if (child.isShadowRoot) {
+            var shadowRoot;
+            if (window.WebKitShadowRoot)
+              shadowRoot = new WebKitShadowRoot(element);
+            else
+              shadowRoot = new internals.ensureShadowRoot(element);
+            for (var j = 0; j < child.children.length; ++j)
+                shadowRoot.appendChild(child.children[j]);
+        } else
+            element.appendChild(child);
+    }
     return element;
 }

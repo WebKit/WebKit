@@ -22,10 +22,12 @@ function getElementInShadow(path)
 function prepareDomTree(parent)
 {
     parent.appendChild(
-        createShadow('div', {'id': 'divA'},
-                     createDom('input', {'id': 'inputB'}),
-                     createShadow('div', {'id': 'divC'},
-                                  createDom('input', {'id': 'inputD'}))));
+        createDOM('div', {'id': 'divA'},
+                  createShadowRoot(
+                      createDOM('input', {'id': 'inputB'}),
+                      createDOM('div', {'id': 'divC'},
+                                createShadowRoot(
+                                    createDOM('input', {'id': 'inputD'}))))));
 }
 
 function test()
