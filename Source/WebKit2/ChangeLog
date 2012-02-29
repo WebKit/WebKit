@@ -1,3 +1,14 @@
+2012-02-29  Sam Weinig  <sam@webkit.org>
+
+        When invoking Lookup while zoomed in, the highlighted word renders out of line
+        <rdar://problem/10812527>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupForRange):
+        Make sure to scale the ascent when determining the origin for the overlay.
+
 2012-02-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use text or page zoom factor in WebKitWebView depending on zoom-text-only
