@@ -1,3 +1,24 @@
+2012-02-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        DidFindString should be emitted even if FindOptionsShowOverlay is not enabled
+        https://bugs.webkit.org/show_bug.cgi?id=76522
+
+        Reviewed by Darin Adler.
+
+        DidFindString message should be issued always even if neither
+        FindOptionsShowOverlay or FindOptionsShowHighlight are
+        provided. The difference is that if any of those flags are present
+        the find operation will look for all the appearances of the text
+        in the web view, otherwise it will just look and report the next
+        occurrence.
+
+        This patch removes the temporary workaround added in r109222 to
+        the WebKitFindController unit tests.
+
+        * UIProcess/API/gtk/tests/TestWebKitFindController.cpp:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString):
+
 2012-01-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] [WK2] Add Find API
