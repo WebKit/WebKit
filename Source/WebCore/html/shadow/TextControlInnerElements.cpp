@@ -294,10 +294,11 @@ void SpinButtonElement::defaultEventHandler(Event* event)
             input->focus();
             input->select();
             if (renderer()) {
-                ASSERT(m_upDownState != Indeterminate);
-                input->stepUpFromRenderer(m_upDownState == Up ? 1 : -1);
-                if (renderer())
-                    startRepeatingTimer();
+                if (m_upDownState != Indeterminate) {
+                    input->stepUpFromRenderer(m_upDownState == Up ? 1 : -1);
+                    if (renderer())
+                        startRepeatingTimer();
+                }
             }
             event->setDefaultHandled();
         }
@@ -365,7 +366,8 @@ void SpinButtonElement::step(int amount)
     
 void SpinButtonElement::repeatingTimerFired(Timer<SpinButtonElement>*)
 {
-    step(m_upDownState == Up ? 1 : -1);
+    if (m_upDownState != Indeterminate)
+        step(m_upDownState == Up ? 1 : -1);
 }
 
 void SpinButtonElement::setHovered(bool flag)

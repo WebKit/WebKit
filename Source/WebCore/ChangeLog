@@ -1,3 +1,22 @@
+2012-02-28  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Spin button sometimes ignores Indeterminate of m_upDownState
+        https://bugs.webkit.org/show_bug.cgi?id=79754
+
+        Reviewed by Kent Tamura.
+
+        This patch checks enum value Indeterminate before using m_upDownState. This make
+        sure Indeterminate state doesn't act like Down state.
+
+        m_upDownState can be Indeterminate at mousedown event if mouse pointer is on
+        spin button when it is displayed.
+
+        Test: fast/forms/number/spin-button-state.html
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::defaultEventHandler):
+        (WebCore::SpinButtonElement::repeatingTimerFired):
+
 2012-02-27  MORITA Hajime  <morrita@google.com>
 
         [Refactoring] RenderSummary and RenderDetail is no longer needed.
