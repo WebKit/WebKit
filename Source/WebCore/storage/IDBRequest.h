@@ -72,6 +72,7 @@ public:
     bool resetReadyState(IDBTransaction*);
     void setCursorType(IDBCursorBackendInterface::CursorType);
     void setCursor(PassRefPtr<IDBCursor>);
+    void finishCursor();
     IDBAny* source();
     void abort();
 
@@ -122,6 +123,7 @@ private:
 
     ReadyState m_readyState;
     bool m_requestFinished; // Is it possible that we'll fire any more events? If not, we're finished.
+    bool m_cursorFinished;
     bool m_contextStopped;
     Vector<RefPtr<Event> > m_enqueuedEvents;
 

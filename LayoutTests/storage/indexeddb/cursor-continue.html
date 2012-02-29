@@ -262,14 +262,21 @@ function descendingErrorTestEqual()
             evalAndLog("event.target.result.continue('A bit2')");
         } else if (window.stage == 1) {
             shouldBe("event.target.result.primaryKey", "15");
+            evalAndLog("cursor = event.target.result");
             evalAndExpectException("event.target.result.continue('A bit2')", "IDBDatabaseException.DATA_ERR");
-            done();
+            window.trans.oncomplete = onTransactionComplete;
             return;
         } else {
            testFailed("Illegal stage.");
         }
         window.stage++;
     };
+}
+
+function onTransactionComplete()
+{
+    evalAndExpectException("cursor.continue()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
+    done();
 }
 
 test();

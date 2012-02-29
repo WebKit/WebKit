@@ -1,3 +1,50 @@
+2012-02-29  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Resource leak with IDBObjectStore.openCursor
+        https://bugs.webkit.org/show_bug.cgi?id=79835
+
+        IDBCursor object that were never continue()'d to the end would leak due to a 
+        reference cycle with IDBRequest. In addition, the IDBRequest would never be
+        marked "finished" which would prevent GC from reclaiming it. IDBTransactions
+        now track and notify IDBCursors to break these references when the transaction
+        can no longer not process requests.
+
+        Reviewed by Tony Chang.
+
+        Tests: storage/indexeddb/cursor-continue.html
+
+        * storage/IDBCursor.cpp:
+        (WebCore::IDBCursor::IDBCursor): Register with IDBTransaction bookkeeping.
+        (WebCore::IDBCursor::continueFunction): Early error if transaction has finished.
+        (WebCore::IDBCursor::close): Break the reference cycle with IDBRequest, and notify it
+        that the cursor is finished.
+        (WebCore):
+        * storage/IDBCursor.h:
+        (WebCore):
+        (IDBCursor):
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::finishCursor): If there is no request in flight, mark itself as
+        finished to allow GC.
+        (WebCore):
+        (WebCore::IDBRequest::dispatchEvent): Once an in-flight request has been processed,
+        mark the request as finished if the cursor is finished, to allow GC.
+        * storage/IDBRequest.h:
+        (IDBRequest):
+        * storage/IDBTransaction.cpp: Track open cursors, close them when finished.
+        (WebCore::IDBTransaction::OpenCursorNotifier::OpenCursorNotifier):
+        (WebCore):
+        (WebCore::IDBTransaction::OpenCursorNotifier::~OpenCursorNotifier):
+        (WebCore::IDBTransaction::registerOpenCursor):
+        (WebCore::IDBTransaction::unregisterOpenCursor):
+        (WebCore::IDBTransaction::closeOpenCursors):
+        (WebCore::IDBTransaction::onAbort):
+        (WebCore::IDBTransaction::onComplete):
+        * storage/IDBTransaction.h:
+        (WebCore):
+        (OpenCursorNotifier):
+        (IDBTransaction):
+
 2012-02-29  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=79940

@@ -50,6 +50,7 @@ IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend, IDBRequest* 
     , m_request(request)
     , m_source(source)
     , m_transaction(transaction)
+    , m_transactionNotifier(transaction, this)
 {
     ASSERT(m_backend);
     ASSERT(m_request);
@@ -110,6 +111,10 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
         return;
     }
 
+    if (!m_request) {
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        return;
+    }
     // FIXME: We're not using the context from when continue was called, which means the callback
     //        will be on the original context openCursor was called on. Is this right?
     if (m_request->resetReadyState(m_transaction.get())) {
@@ -134,6 +139,13 @@ PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context
 void IDBCursor::postSuccessHandlerCallback()
 {
     m_backend->postSuccessHandlerCallback();
+}
+
+void IDBCursor::close()
+{
+    ASSERT(m_request);
+    m_request->finishCursor();
+    m_request.clear();
 }
 
 } // namespace WebCore

@@ -36,10 +36,12 @@
 #include "EventTarget.h"
 #include "IDBTransactionBackendInterface.h"
 #include "IDBTransactionCallbacks.h"
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class IDBCursor;
 class IDBDatabase;
 class IDBObjectStore;
 
@@ -61,6 +63,15 @@ public:
     IDBDatabase* db() const;
     PassRefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCode&);
     void abort();
+
+    class OpenCursorNotifier {
+    public:
+        OpenCursorNotifier(PassRefPtr<IDBTransaction>, IDBCursor*);
+        ~OpenCursorNotifier();
+    private:
+        RefPtr<IDBTransaction> m_transaction;
+        IDBCursor* m_cursor;
+    };
 
     void registerRequest(IDBRequest*);
     void unregisterRequest(IDBRequest*);
@@ -93,6 +104,10 @@ private:
     IDBTransaction(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, IDBDatabase*);
 
     void enqueueEvent(PassRefPtr<Event>);
+    void closeOpenCursors();
+
+    void registerOpenCursor(IDBCursor*);
+    void unregisterOpenCursor(IDBCursor*);
 
     // EventTarget
     virtual void refEventTarget() { ref(); }
@@ -110,6 +125,8 @@ private:
 
     typedef HashMap<String, RefPtr<IDBObjectStore> > IDBObjectStoreMap;
     IDBObjectStoreMap m_objectStoreMap;
+
+    HashSet<IDBCursor*> m_openCursors;
 
     EventTargetData m_eventTargetData;
 };

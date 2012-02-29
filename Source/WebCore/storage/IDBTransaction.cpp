@@ -126,6 +126,36 @@ void IDBTransaction::abort()
         m_backend->abort();
 }
 
+IDBTransaction::OpenCursorNotifier::OpenCursorNotifier(PassRefPtr<IDBTransaction> transaction, IDBCursor* cursor)
+    : m_transaction(transaction),
+      m_cursor(cursor)
+{
+    m_transaction->registerOpenCursor(m_cursor);
+}
+
+IDBTransaction::OpenCursorNotifier::~OpenCursorNotifier()
+{
+    m_transaction->unregisterOpenCursor(m_cursor);
+}
+
+void IDBTransaction::registerOpenCursor(IDBCursor* cursor)
+{
+    m_openCursors.add(cursor);
+}
+
+void IDBTransaction::unregisterOpenCursor(IDBCursor* cursor)
+{
+    m_openCursors.remove(cursor);
+}
+
+void IDBTransaction::closeOpenCursors()
+{
+    HashSet<IDBCursor*> cursors;
+    cursors.swap(m_openCursors);
+    for (HashSet<IDBCursor*>::iterator i = cursors.begin(); i != cursors.end(); ++i)
+        (*i)->close();
+}
+
 void IDBTransaction::registerRequest(IDBRequest* request)
 {
     m_childRequests.add(request);
@@ -148,6 +178,7 @@ void IDBTransaction::onAbort()
 
     if (m_mode == IDBTransaction::VERSION_CHANGE)
         m_database->clearVersionChangeTransaction(this);
+    closeOpenCursors();
 
     if (m_contextStopped || !scriptExecutionContext())
         return;
@@ -160,6 +191,7 @@ void IDBTransaction::onComplete()
     ASSERT(!m_transactionFinished);
     if (m_mode == IDBTransaction::VERSION_CHANGE)
         m_database->clearVersionChangeTransaction(this);
+    closeOpenCursors();
 
     if (m_contextStopped || !scriptExecutionContext())
         return;

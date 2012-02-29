@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKey.h"
+#include "IDBTransaction.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -39,7 +40,6 @@ class IDBAny;
 class IDBCallbacks;
 class IDBCursorBackendInterface;
 class IDBRequest;
-class IDBTransaction;
 class ScriptExecutionContext;
 class SerializedScriptValue;
 
@@ -71,6 +71,7 @@ public:
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, ExceptionCode&);
 
     void postSuccessHandlerCallback();
+    void close();
 
 protected:
     IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IDBRequest*, IDBAny* source, IDBTransaction*);
@@ -80,6 +81,7 @@ private:
     RefPtr<IDBRequest> m_request;
     RefPtr<IDBAny> m_source;
     RefPtr<IDBTransaction> m_transaction;
+    IDBTransaction::OpenCursorNotifier m_transactionNotifier;
 };
 
 } // namespace WebCore

@@ -58,6 +58,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_transaction(transaction)
     , m_readyState(LOADING)
     , m_requestFinished(false)
+    , m_cursorFinished(false)
     , m_contextStopped(false)
     , m_cursorType(IDBCursorBackendInterface::InvalidCursorType)
     , m_cursor(0)
@@ -180,6 +181,13 @@ void IDBRequest::setCursor(PassRefPtr<IDBCursor> cursor)
 {
     ASSERT(!m_cursor);
     m_cursor = cursor;
+}
+
+void IDBRequest::finishCursor()
+{
+    m_cursorFinished = true;
+    if (m_readyState != LOADING)
+        m_requestFinished = true;
 }
 
 void IDBRequest::onError(PassRefPtr<IDBDatabaseError> error)
@@ -364,7 +372,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     bool dontPreventDefault = IDBEventDispatcher::dispatch(event.get(), targets);
 
     // If the result was of type IDBCursor, or a onBlocked event, then we'll fire again.
-    if (event->type() != eventNames().blockedEvent && m_result && m_result->type() != IDBAny::IDBCursorType && m_result->type() != IDBAny::IDBCursorWithValueType)
+    if (event->type() != eventNames().blockedEvent && (!cursorToNotify || m_cursorFinished))
         m_requestFinished = true;
 
     if (cursorToNotify)
