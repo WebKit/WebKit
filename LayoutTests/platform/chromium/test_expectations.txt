@@ -4463,3 +4463,4 @@ BUGWK79707 MAC : svg/zoom/page/zoom-svg-as-object.html = PASS CRASH
 BUGWK79765 DEBUG : webaudio/audiobuffersource-channels.html = CRASH
 
 BUGWK79823 : compositing/repaint/opacity-between-absolute.html = PASS IMAGE
+BUGWK79823 : compositing/reflections/masked-reflection-on-composited.html = PASS IMAGE
