@@ -797,7 +797,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)_setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(EditAction)undoAction
 {
-    if (!_private->coreFrame)
+    if (!_private->coreFrame || !style)
         return;
     // FIXME: We shouldn't have to create a copy here.
     _private->coreFrame->editor()->computeAndSetTypingStyle(core(style)->copy().get(), undoAction);
