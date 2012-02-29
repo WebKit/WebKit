@@ -312,7 +312,7 @@ class PortTest(unittest.TestCase):
 
     def test_find_with_skipped_directories(self):
         port = self.make_port(with_tests=True)
-        tests = port.tests('userscripts')
+        tests = port.tests(['userscripts'])
         self.assertTrue('userscripts/resources/iframe.html' not in tests)
 
     def test_find_with_skipped_directories_2(self):

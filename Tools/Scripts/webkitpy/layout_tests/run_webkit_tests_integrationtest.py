@@ -273,6 +273,10 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(passing_run(['--accelerated-2d-canvas']))
         self.assertTrue(passing_run(['--no-accelerated-2d-canvas']))
 
+    def test_all(self):
+        res, out, err, user = logging_run([], tests_included=True)
+        self.assertEquals(res, unexpected_tests_count)
+
     def test_basic(self):
         self.assertTrue(passing_run())
 
@@ -747,6 +751,10 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # should be used.
         test_port = get_port_for_run(base_args)
         self.assertEqual(None, test_port.tolerance_used_for_diff_image)
+
+    def test_virtual(self):
+        self.assertTrue(passing_run(['passes/text.html', 'passes/args.html',
+                                     'virtual/text.html', 'virtual/args.html']))
 
     def test_worker_model__inline(self):
         self.assertTrue(passing_run(['--worker-model', 'inline']))

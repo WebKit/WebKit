@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import copy
 import re
 import shlex
 
@@ -33,11 +34,12 @@ from webkitpy.common.system import path
 
 
 class DriverInput(object):
-    def __init__(self, test_name, timeout, image_hash, is_reftest):
+    def __init__(self, test_name, timeout, image_hash, is_reftest, args=None):
         self.test_name = test_name
         self.timeout = timeout  # in ms
         self.image_hash = image_hash
         self.is_reftest = is_reftest
+        self.args = args or []
 
 
 class DriverOutput(object):
@@ -199,8 +201,15 @@ class DriverProxy(object):
         return self._driver.uri_to_test(uri)
 
     def run_test(self, driver_input):
+        base = self._port.lookup_virtual_test_base(driver_input.test_name)
+        if base:
+            virtual_driver_input = copy.copy(driver_input)
+            virtual_driver_input.test_name = base
+            virtual_driver_input.args = self._port.lookup_virtual_test_args(driver_input.test_name)
+            return self.run_test(virtual_driver_input)
+
         pixel_tests_needed = self._pixel_tests or driver_input.is_reftest
-        cmd_line_key = self._cmd_line_as_key(pixel_tests_needed, [])
+        cmd_line_key = self._cmd_line_as_key(pixel_tests_needed, driver_input.args)
         if not cmd_line_key in self._running_drivers:
             self._running_drivers[cmd_line_key] = self._make_driver(pixel_tests_needed)
 

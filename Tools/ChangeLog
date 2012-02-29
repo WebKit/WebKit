@@ -1,5 +1,60 @@
 2012-02-29  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: implement simple 'virtual test suite' support
+        https://bugs.webkit.org/show_bug.cgi?id=79737
+
+        Reviewed by Adam Barth.
+
+        Add very basic support for 'virtual test suites' to NRWT:
+        a virtual suite is a directory that may contain new baselines,
+        contains a pointer to a "base" directory of tests, and an
+        optional list of command line arguments to pass to DRT;
+        it gives us a way to run all of the tests in a given directory
+        multiple times with multiple (potentially differing) sets of
+        results and baselines.
+
+        This patch implements the support needed for this feature, and
+        some basic tests, but no actual port will use the feature yet.
+
+        This is probably the simplest implementation possible - the
+        list of virtual suites will be hard-coded into the port's
+        implementation. One can imagine a more data-driven approach
+        where the suite instructions are stored in a manifest file
+        either in LayoutTests (all suites in one file), or per-port,
+        or per-directory. If this feature ends up being useful we
+        should probably add something like that so people don't have
+        to hunt around in the code to add suites.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__):
+        (Port.expected_filename):
+        (Port.tests):
+        (Port):
+        (Port._real_tests):
+        (Port._driver_class):
+        (Port.virtual_test_suites):
+        (Port.virtual_suite):
+        (Port.virtual_suite.VirtualTestSuite):
+        (Port.virtual_suite.VirtualTestSuite.__init__):
+        (Port.virtual_suite.VirtualTestSuite.__repr__):
+        (Port.populated_virtual_test_suites):
+        (Port._virtual_tests):
+        (Port.lookup_virtual_test_base):
+        (Port.lookup_virtual_test_args):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_find_with_skipped_directories):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (DriverInput.__init__):
+        (DriverProxy.run_test):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.virtual_test_suites):
+        (TestDriver.run_test):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_all):
+        (MainTest.test_virtual):
+
+2012-02-29  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: support more than two drivers in DriverProxy
         https://bugs.webkit.org/show_bug.cgi?id=79736
 
