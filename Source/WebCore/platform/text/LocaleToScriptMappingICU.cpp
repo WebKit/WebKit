@@ -68,7 +68,7 @@ UScriptCode localeToScriptCodeForFontSelection(const String& locale)
     if (U_FAILURE(status))
         return USCRIPT_COMMON;
 
-    UScriptCode scriptCode;
+    UScriptCode scriptCode = USCRIPT_COMMON;
     uscript_getCode(script, &scriptCode, 1, &status);
     // Ignore error that multiple scripts could be returned, since we only want one script.
     if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)

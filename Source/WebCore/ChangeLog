@@ -1,3 +1,17 @@
+2012-02-28  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Uninitialized value in LocaleToScriptCodeForFontSelection
+        https://bugs.webkit.org/show_bug.cgi?id=79779
+
+        Set USCRIPT_COMMON to scriptCode as the initial value.
+
+        Reviewed by Kent Tamura.
+
+        No new tests. No behavior change.
+
+        * platform/text/LocaleToScriptMappingICU.cpp:
+        (WebCore::localeToScriptCodeForFontSelection):
+
 2012-02-28  Kenneth Russell  <kbr@google.com>
 
         [chromium] Work around IOSurface-related corruption during readback
