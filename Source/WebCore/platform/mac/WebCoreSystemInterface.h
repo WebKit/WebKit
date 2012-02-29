@@ -78,6 +78,7 @@ typedef const struct _CFURLRequest* CFURLRequestRef;
 #endif
 
 OBJC_CLASS AVAsset;
+OBJC_CLASS CALayer;
 OBJC_CLASS NSArray;
 OBJC_CLASS NSButtonCell;
 OBJC_CLASS NSControl;
@@ -106,6 +107,10 @@ extern "C" {
 // In alphabetical order.
 
 extern void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+extern void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef, void (^block)(CGRect rect));
+#endif
+
 extern BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
 typedef enum {
     wkPatternTilingNoDistortion,

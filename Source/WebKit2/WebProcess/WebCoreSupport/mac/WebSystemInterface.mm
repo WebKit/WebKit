@@ -37,6 +37,9 @@ void InitWebCoreSystemInterface(void)
     
     dispatch_once(&initOnce, ^{
         INIT(AdvanceDefaultButtonPulseAnimation);
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+        INIT(CALayerEnumerateRectsBeingDrawnWithBlock);
+#endif
         INIT(CopyCFLocalizationPreferredName);
         INIT(CGContextGetShouldSmoothFonts);
         INIT(CGPatternCreateWithImageAndTransform);

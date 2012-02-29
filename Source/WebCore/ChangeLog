@@ -1,3 +1,14 @@
+2012-02-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Update WebKitSystemInterface.
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        (drawLayerContents):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2012-02-27  MORITA Hajime  <morrita@google.com>
 
         <content> element should behave as HTMLUnknownElement outside of a shadow DOM subtree

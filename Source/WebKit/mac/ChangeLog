@@ -1,3 +1,12 @@
+2012-02-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Update WebKitSystemInterface.
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2012-02-28  Enrica Casucci  <enrica@apple.com>
 
         More Pasteboard code cleanup.

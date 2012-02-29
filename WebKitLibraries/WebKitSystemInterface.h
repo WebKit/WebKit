@@ -335,6 +335,10 @@ uint32_t WKCARemoteLayerClientGetClientId(WKCARemoteLayerClientRef);
 void WKCARemoteLayerClientSetLayer(WKCARemoteLayerClientRef, CALayer *);
 CALayer *WKCARemoteLayerClientGetLayer(WKCARemoteLayerClientRef);
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+void WKCALayerEnumerateRectsBeingDrawnWithBlock(CALayer *layer, CGContextRef context, void (^block)(CGRect rect));
+#endif
+
 @class CARenderer;
 
 void WKCARendererAddChangeNotificationObserver(CARenderer *, void (*callback)(void*), void* context);
