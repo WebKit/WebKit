@@ -33,12 +33,15 @@
 
 namespace WebCore {
 
+    class ContainerNode;
     class Document;
     class DocumentFragment;
     class Element;
     class KURL;
     class Node;
     class Range;
+
+    typedef int ExceptionCode;
 
     enum EChildrenOnly { IncludeNode, ChildrenOnly };
     enum EAbsoluteURLs { DoNotResolveURLs, ResolveAllURLs, ResolveNonLocalURLs };
@@ -47,8 +50,13 @@ namespace WebCore {
     PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String& markup, const String& baseURL, FragmentScriptingPermission = FragmentScriptingAllowed);
     PassRefPtr<DocumentFragment> createFragmentFromMarkupWithContext(Document*, const String& markup, unsigned fragmentStart, unsigned fragmentEnd, const String& baseURL, FragmentScriptingPermission);
     PassRefPtr<DocumentFragment> createFragmentFromNodes(Document*, const Vector<Node*>&);
+    PassRefPtr<DocumentFragment> createFragmentFromSource(const String&, Element*, ExceptionCode&);
 
     bool isPlainTextMarkup(Node *node);
+
+    // These methods are used by HTMLElement & ShadowRoot to replace the children with respected fragment/text.
+    void replaceChildrenWithFragment(ContainerNode*, PassRefPtr<DocumentFragment>, ExceptionCode&);
+    void replaceChildrenWithText(ContainerNode*, const String&, ExceptionCode&);
 
     String createMarkup(const Range*,
         Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false, EAbsoluteURLs = DoNotResolveURLs);

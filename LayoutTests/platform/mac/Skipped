@@ -432,6 +432,7 @@ fast/dom/shadow/content-element-outside-shadow-style.html
 fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-disable.html
 fast/dom/shadow/shadow-root-attached.html
+fast/dom/shadow/shadow-root-innerHTML.html
 fast/dom/shadow/shadow-root-new.html
 fast/dom/shadow/shadow-ul-li.html
 fast/dom/shadow/multiple-shadowroot.html

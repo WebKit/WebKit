@@ -1,3 +1,35 @@
+2012-02-29  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        ShadowRoot need innerHTML
+        https://bugs.webkit.org/show_bug.cgi?id=78473
+
+        Reviewed by Hajime Morita.
+
+        Refactor code for sharing common code between HTMLElement & ShadowRoot.
+        Implement innerHTML attribute for ShadowRoot.
+
+        Test: fast/dom/shadow/shadow-root-innerHTML.html
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::cloneNode):
+        (WebCore):
+        (WebCore::ShadowRoot::innerHTML):
+        (WebCore::ShadowRoot::setInnerHTML):
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+        * dom/ShadowRoot.idl:
+        * editing/markup.cpp:
+        (WebCore::urlToMarkup):
+        (WebCore):
+        (WebCore::createFragmentFromSource):
+        (WebCore::hasOneChild):
+        (WebCore::hasOneTextChild):
+        (WebCore::replaceChildrenWithFragment):
+        (WebCore::replaceChildrenWithText):
+        * editing/markup.h:
+        * html/HTMLElement.cpp:
+        (WebCore):
+
 2012-02-29  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Stop doubling maximalOutlineSize during painting

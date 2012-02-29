@@ -39,10 +39,12 @@
 #include "CSSStyleSelector.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
+#include "ChildListMutationScope.h"
 #include "DeleteButtonController.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Editor.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
@@ -988,6 +990,82 @@ String urlToMarkup(const KURL& url, const String& title)
     appendCharactersReplacingEntities(markup, title.characters(), title.length(), EntityMaskInPCDATA);
     markup.append("</a>");
     return markup.toString();
+}
+
+PassRefPtr<DocumentFragment> createFragmentFromSource(const String& markup, Element* contextElement, ExceptionCode& ec)
+{
+    Document* document = contextElement->document();
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
+
+    if (document->isHTMLDocument()) {
+        fragment->parseHTML(markup, contextElement);
+        return fragment;
+    }
+
+    bool wasValid = fragment->parseXML(markup, contextElement);
+    if (!wasValid) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
+    return fragment.release();
+}
+
+static inline bool hasOneChild(ContainerNode* node)
+{
+    Node* firstChild = node->firstChild();
+    return firstChild && !firstChild->nextSibling();
+}
+
+static inline bool hasOneTextChild(ContainerNode* node)
+{
+    return hasOneChild(node) && node->firstChild()->isTextNode();
+}
+
+void replaceChildrenWithFragment(ContainerNode* containerNode, PassRefPtr<DocumentFragment> fragment, ExceptionCode& ec)
+{
+#if ENABLE(MUTATION_OBSERVERS)
+    ChildListMutationScope mutation(containerNode);
+#endif
+
+    if (!fragment->firstChild()) {
+        containerNode->removeChildren();
+        return;
+    }
+
+    if (hasOneTextChild(containerNode) && hasOneTextChild(fragment.get())) {
+        toText(containerNode->firstChild())->setData(toText(fragment->firstChild())->data(), ec);
+        return;
+    }
+
+    if (hasOneChild(containerNode)) {
+        containerNode->replaceChild(fragment, containerNode->firstChild(), ec);
+        return;
+    }
+
+    containerNode->removeChildren();
+    containerNode->appendChild(fragment, ec);
+}
+
+void replaceChildrenWithText(ContainerNode* containerNode, const String& text, ExceptionCode& ec)
+{
+#if ENABLE(MUTATION_OBSERVERS)
+    ChildListMutationScope mutation(containerNode);
+#endif
+
+    if (hasOneTextChild(containerNode)) {
+        toText(containerNode->firstChild())->setData(text, ec);
+        return;
+    }
+
+    RefPtr<Text> textNode = Text::create(containerNode->document(), text);
+
+    if (hasOneChild(containerNode)) {
+        containerNode->replaceChild(textNode.release(), containerNode->firstChild(), ec);
+        return;
+    }
+
+    containerNode->removeChildren();
+    containerNode->appendChild(textNode.release(), ec);
 }
 
 }

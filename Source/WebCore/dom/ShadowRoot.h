@@ -70,6 +70,9 @@ public:
     Element* host() const { return shadowHost(); }
     ShadowTree* tree() const;
 
+    String innerHTML() const;
+    void setInnerHTML(const String&, ExceptionCode&);
+
     ShadowRoot* youngerShadowRoot() const { return prev(); }
     ShadowRoot* olderShadowRoot() const { return next(); }
 

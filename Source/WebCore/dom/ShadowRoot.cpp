@@ -28,6 +28,7 @@
 #include "ShadowRoot.h"
 
 #include "Document.h"
+#include "DocumentFragment.h"
 #include "Element.h"
 #include "HTMLContentElement.h"
 #include "HTMLContentSelector.h"
@@ -36,6 +37,7 @@
 #include "NodeRareData.h"
 #include "ShadowTree.h"
 #include "SVGNames.h"
+#include "markup.h"
 
 #if ENABLE(SHADOW_DOM)
 #include "RuntimeEnabledFeatures.h"
@@ -140,6 +142,18 @@ PassRefPtr<Node> ShadowRoot::cloneNode(bool)
 {
     // ShadowRoot should not be arbitrarily cloned.
     return 0;
+}
+
+String ShadowRoot::innerHTML() const
+{
+    return createMarkup(this, ChildrenOnly);
+}
+
+void ShadowRoot::setInnerHTML(const String& markup, ExceptionCode& ec)
+{
+    RefPtr<DocumentFragment> fragment = createFragmentFromSource(markup, host(), ec);
+    if (fragment)
+        replaceChildrenWithFragment(this, fragment.release(), ec);
 }
 
 bool ShadowRoot::childTypeAllowed(NodeType type) const
