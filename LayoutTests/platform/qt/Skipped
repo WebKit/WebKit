@@ -159,10 +159,13 @@ fast/css-grid-layout
 fast/css/style-scoped
 
 # ENABLE(SHADOW_DOM) is disabled.
+fast/dom/shadow/access-key.html
 fast/dom/shadow/content-element-api.html
 fast/dom/shadow/content-element-outside-shadow.html
 fast/dom/shadow/content-element-outside-shadow-style.html
+fast/dom/shadow/get-element-by-id-in-shadow-root.html
 fast/dom/shadow/iframe-shadow.html
+fast/dom/shadow/shadow-boundary-events.html
 fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-disable.html
 fast/dom/shadow/shadow-on-image.html
@@ -349,7 +352,7 @@ http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi
 http/tests/security/drag-drop-same-unique-origin.html
 
-# [Qt] DumpRenderTree needs a beginDragWithFiles implementation
+# [Qt] DumpRenderTree needs eventSender.beginDragWithFiles() implementation
 # https://bugs.webkit.org/show_bug.cgi?id=50902
 editing/pasteboard/dataTransfer-setData-getData.html
 editing/pasteboard/file-drag-to-editable.html
@@ -359,6 +362,7 @@ fast/dom/Window/window-postmessage-clone.html
 fast/events/drag-file-crash.html
 fast/events/drag-to-navigate.html
 fast/events/prevent-drag-to-navigate.html
+fast/files/file-reader-directory-crash.html
 fast/forms/file/file-input-change-event.html
 fast/forms/file/file-input-reset.html
 fast/forms/file/get-file-upload.html
@@ -2647,3 +2651,7 @@ fast/ruby/text-decoration-in-descendants-ruby.html
 # [Qt] transitions/cancel-transition.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=79564
 transitions/cancel-transition.html
+
+# REGRESSION, r109105 made it fail
+# https://bugs.webkit.org/show_bug.cgi?id=79555
+fast/events/dispatch-message-string-data.html
