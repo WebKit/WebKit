@@ -1,3 +1,10 @@
+2012-02-28  Lucas Forschler  <lforschler@apple.com>
+
+        Fix a typo in config.json
+        linx -> linux
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-02-28  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         [Qt] Allow read/write to the WebView.url property

@@ -266,8 +266,8 @@
                     },
                     {
                       "name": "Chromium Linux Release (Perf)", "type": "BuildAndPerfTest", "builddir": "chromium-linux-perf-tests",
-                      "platform": "chromium-linx", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["google-linx-perf"]
+                      "platform": "chromium-linux", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-linux-perf"]
                     },
                     {
                       "name": "Chromium Linux Release (Grid Layout)", "type": "NewBuildAndTest", "builddir": "chromium-linux-flexbox",
