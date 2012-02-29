@@ -206,22 +206,6 @@ bool PropertyDescriptor::attributesEqual(const PropertyDescriptor& other) const
     return true;
 }
 
-unsigned PropertyDescriptor::attributesWithOverride(const PropertyDescriptor& other) const
-{
-    unsigned mismatch = other.m_attributes ^ m_attributes;
-    unsigned sharedSeen = other.m_seenAttributes & m_seenAttributes;
-    unsigned newAttributes = m_attributes & defaultAttributes;
-    if (sharedSeen & WritablePresent && mismatch & ReadOnly)
-        newAttributes ^= ReadOnly;
-    if (sharedSeen & ConfigurablePresent && mismatch & DontDelete)
-        newAttributes ^= DontDelete;
-    if (sharedSeen & EnumerablePresent && mismatch & DontEnum)
-        newAttributes ^= DontEnum;
-    if (isAccessorDescriptor() && other.isDataDescriptor())
-        newAttributes |= ReadOnly;
-    return newAttributes;
-}
-
 unsigned PropertyDescriptor::attributesOverridingCurrent(const PropertyDescriptor& current) const
 {
     unsigned currentAttributes = current.m_attributes;

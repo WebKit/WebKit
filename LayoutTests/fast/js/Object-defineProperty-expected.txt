@@ -116,6 +116,9 @@ PASS 0 in Object.prototype is true
 PASS '0' in Object.prototype is true
 PASS var o = {}; o.readOnly = false; o.readOnly is true
 PASS 'use strict'; var o = {}; o.readOnly = false; o.readOnly threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.getOwnPropertyDescriptor(Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return false; }, configurable: true}), 'foo', {value:false}), 'foo').writable is false
+PASS Object.getOwnPropertyDescriptor(Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return false; }, configurable: true}), 'foo', {value:false, writable: false}), 'foo').writable is false
+PASS Object.getOwnPropertyDescriptor(Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return false; }, configurable: true}), 'foo', {value:false, writable: true}), 'foo').writable is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

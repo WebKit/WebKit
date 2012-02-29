@@ -1,3 +1,17 @@
+2012-02-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Writable attribute not set correctly when redefining an accessor to a data descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=79931
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineOwnProperty):
+            - use attributesOverridingCurrent instead of attributesWithOverride.
+        * runtime/PropertyDescriptor.cpp:
+        * runtime/PropertyDescriptor.h:
+            - remove attributesWithOverride - attributesOverridingCurrent does the same thing.
+
 2012-02-29  Kevin Ollivier  <kevino@theolliviers.com>
 
         Add JSCore symbol exports needed by wx port

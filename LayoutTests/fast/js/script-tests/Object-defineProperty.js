@@ -167,4 +167,7 @@ shouldBeTrue("var o = {}; o.readOnly = false; o.readOnly");
 shouldThrow("'use strict'; var o = {}; o.readOnly = false; o.readOnly");
 delete Object.prototype.readOnly;
 
-
+// Check the writable attribute is set correctly when redefining an accessor as a data descriptor.
+shouldBeFalse("Object.getOwnPropertyDescriptor(Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return false; }, configurable: true}), 'foo', {value:false}), 'foo').writable");
+shouldBeFalse("Object.getOwnPropertyDescriptor(Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return false; }, configurable: true}), 'foo', {value:false, writable: false}), 'foo').writable");
+shouldBeTrue("Object.getOwnPropertyDescriptor(Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return false; }, configurable: true}), 'foo', {value:false, writable: true}), 'foo').writable");

@@ -702,7 +702,7 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identi
     if (descriptor.isGenericDescriptor()) {
         if (!current.attributesEqual(descriptor)) {
             object->methodTable()->deleteProperty(object, exec, propertyName);
-            return putDescriptor(exec, object, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
+            return putDescriptor(exec, object, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
         }
         return true;
     }
@@ -715,7 +715,7 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identi
             return false;
         }
         object->methodTable()->deleteProperty(object, exec, propertyName);
-        return putDescriptor(exec, object, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
+        return putDescriptor(exec, object, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
     }
 
     // Changing the value and attributes of an existing property
@@ -737,7 +737,7 @@ bool JSObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identi
         if (current.attributesEqual(descriptor) && !descriptor.value())
             return true;
         object->methodTable()->deleteProperty(object, exec, propertyName);
-        return putDescriptor(exec, object, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
+        return putDescriptor(exec, object, propertyName, descriptor, descriptor.attributesOverridingCurrent(current), current);
     }
 
     // Changing the accessor functions of an existing accessor property
