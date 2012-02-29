@@ -1,3 +1,20 @@
+2012-02-28  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Always build wtf as a static library.
+        https://bugs.webkit.org/show_bug.cgi?id=79857
+
+        Reviewed by Eric Seidel.
+
+        To help the efforts in bug 75673 to move WTF out of
+        JavaScriptCore, act more like the other ports and remove the
+        possibility of building WTF as a shared library.
+
+        It does not make much sense to, for example, ship WTF as a
+        separate .so with webkit-efl packages, and it should be small
+        enough not to cause problems during linking.
+
+        * wtf/CMakeLists.txt:
+
 2012-02-28  Dmitry Lomov  <dslomov@google.com>
 
         [JSC] Implement ArrayBuffer transfer

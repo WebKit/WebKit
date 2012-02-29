@@ -1,3 +1,13 @@
+2012-02-28  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Always build wtf as a static library.
+        https://bugs.webkit.org/show_bug.cgi?id=79857
+
+        Reviewed by Eric Seidel.
+
+        * CMakeLists.txt: Put static libraries in ${CMAKE_BINARY_DIR} too
+        to have them grouped with the shared ones.
+
 2012-02-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         perf-o-matic: generate dashboard images using Google Chart Tools
