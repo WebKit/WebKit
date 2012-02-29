@@ -2091,9 +2091,6 @@ BUGCR51571 WIN : http/tests/misc/bad-charset-alias.html = PASS TIMEOUT
 
 BUGCR51854 SLOW WIN : http/tests/storage/callbacks-are-called-in-correct-context.html = PASS
 
-// Regressions from r65229
-BUGWK43912 LINUX WIN : svg/custom/grayscale-gradient-mask.svg = IMAGE
-
 // Times out frequently since the test was added
 BUGCR52017 LINUX MAC RELEASE : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT
 BUGCR52017 LINUX MAC DEBUG : http/tests/misc/isindex-with-no-form.html = PASS TIMEOUT CRASH
@@ -3761,8 +3758,6 @@ BUGWK77508 SKIP : platform/mac/fast/events/non-roman-key-code.html = FAIL
 
 // Started failing at WK r106432.
 BUGWK77519 WIN LINUX : fast/forms/textfield-overflow.html = IMAGE+TEXT
-BUGWK77521 LINUX : fast/repaint/textarea-set-disabled.html = IMAGE
-BUGWK77521 LINUX : fast/repaint/search-field-cancel.html = IMAGE
 
 BUGWK77526 WIN LINUX : svg/text/text-align-04-b.svg = PASS IMAGE
 
