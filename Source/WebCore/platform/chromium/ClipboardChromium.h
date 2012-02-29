@@ -58,7 +58,7 @@ namespace WebCore {
 
         virtual void clearData(const String& type);
         void clearAllData();
-        String getData(const String& type, bool& success) const;
+        String getData(const String& type) const;
         bool setData(const String& type, const String& data);
         bool platformClipboardChanged() const;
 

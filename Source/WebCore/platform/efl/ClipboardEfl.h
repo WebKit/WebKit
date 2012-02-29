@@ -36,7 +36,7 @@ public:
 
     void clearData(const String&);
     void clearAllData();
-    String getData(const String&, bool&) const;
+    String getData(const String&) const;
     bool setData(const String&, const String&);
 
     PassRefPtr<DOMStringList> types() const;

@@ -212,9 +212,8 @@ static Vector<String> absoluteURLsFromPasteboard(const String& pasteboardName, b
     return Vector<String>();
 }
 
-String ClipboardMac::getData(const String& type, bool& success) const
+String ClipboardMac::getData(const String& type) const
 {
-    success = false;
     if (policy() != ClipboardReadable)
         return String();
 
@@ -236,7 +235,6 @@ String ClipboardMac::getData(const String& type, bool& success) const
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
     if (!cocoaValue.isEmpty() && m_changeCount == platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName)) {
-        success = true;
         return cocoaValue;
     }
 

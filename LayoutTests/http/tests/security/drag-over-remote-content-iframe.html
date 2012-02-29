@@ -17,8 +17,8 @@ window.onload = function () {
 
     dragTarget.ondragover = function() {
         var url = event.dataTransfer.getData('URL');
-        var result = url === undefined
-            ? "PASS: ondragover saw a URL of 'undefined'"
+        var result = url === ''
+            ? "PASS: ondragover saw a URL of ''"
             : "FAIL: ondragover saw a URL of '" + url + "'";
         log(result);
         event.preventDefault();

@@ -4,5 +4,5 @@ https://bugs.webkit.org/show_bug.cgi?id=25907 | rdar://problem/6910832.
 
 To test, drag Abe's image into this light blue div.
 
-PASS: ondragover saw a URL of 'undefined'
+PASS: ondragover saw a URL of ''
 

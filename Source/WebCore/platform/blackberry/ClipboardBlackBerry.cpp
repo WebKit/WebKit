@@ -56,9 +56,8 @@ void ClipboardBlackBerry::clearAllData()
     BlackBerry::Platform::Clipboard::clearClipboard();
 }
 
-String ClipboardBlackBerry::getData(const String& type, bool& success) const
+String ClipboardBlackBerry::getData(const String& type) const
 {
-    success = true;
     return String::fromUTF8(BlackBerry::Platform::Clipboard::readClipboardByType(type.utf8().data()).c_str());
 }
 

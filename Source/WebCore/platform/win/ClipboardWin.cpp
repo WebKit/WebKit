@@ -436,22 +436,21 @@ void ClipboardWin::clearAllData()
     m_dataObject = m_writableDataObject;
 }
 
-String ClipboardWin::getData(const String& type, bool& success) const
+String ClipboardWin::getData(const String& type) const
 {     
-    success = false;
     if (policy() != ClipboardReadable || (!m_dataObject && m_dragDataMap.isEmpty()))
         return "";
 
     ClipboardDataType dataType = clipboardTypeFromMIMEType(type);
     if (dataType == ClipboardDataTypeText)
-        return m_dataObject ? getPlainText(m_dataObject.get(), success) : getPlainText(&m_dragDataMap);
+        return m_dataObject ? getPlainText(m_dataObject.get()) : getPlainText(&m_dragDataMap);
     if (dataType == ClipboardDataTypeURL)
-        return m_dataObject ? getURL(m_dataObject.get(), DragData::DoNotConvertFilenames, success) : getURL(&m_dragDataMap, DragData::DoNotConvertFilenames);
+        return m_dataObject ? getURL(m_dataObject.get(), DragData::DoNotConvertFilenames) : getURL(&m_dragDataMap, DragData::DoNotConvertFilenames);
     else if (dataType == ClipboardDataTypeTextHTML) {
-        String data = m_dataObject ? getTextHTML(m_dataObject.get(), success) : getTextHTML(&m_dragDataMap);
-        if (success)
+        String data = m_dataObject ? getTextHTML(m_dataObject.get()) : getTextHTML(&m_dragDataMap);
+        if (!data.isEmpty())
             return data;
-        return m_dataObject ? getCFHTML(m_dataObject.get(), success) : getCFHTML(&m_dragDataMap);
+        return m_dataObject ? getCFHTML(m_dataObject.get()) : getCFHTML(&m_dragDataMap);
     }
     
     return "";

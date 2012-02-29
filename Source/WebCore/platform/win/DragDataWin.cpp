@@ -101,8 +101,7 @@ void DragData::getDragFileContentData(int size, void* dataBlob)
 
 String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
 {
-    bool success;
-    return (m_platformDragData) ? getURL(m_platformDragData, filenamePolicy, success, title) : getURL(&m_dragDataMap, filenamePolicy, title);
+    return (m_platformDragData) ? getURL(m_platformDragData, filenamePolicy, title) : getURL(&m_dragDataMap, filenamePolicy, title);
 }
 
 bool DragData::containsFiles() const
@@ -155,8 +154,7 @@ bool DragData::containsPlainText() const
 
 String DragData::asPlainText(Frame*) const
 {
-    bool success;
-    return (m_platformDragData) ? getPlainText(m_platformDragData, success) : getPlainText(&m_dragDataMap);
+    return (m_platformDragData) ? getPlainText(m_platformDragData) : getPlainText(&m_dragDataMap);
 }
 
 bool DragData::containsColor() const

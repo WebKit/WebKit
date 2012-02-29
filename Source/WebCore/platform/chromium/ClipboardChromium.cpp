@@ -263,16 +263,16 @@ void ClipboardChromium::clearAllData()
     m_dataObject->clearAll();
 }
 
-String ClipboardChromium::getData(const String& type, bool& success) const
+String ClipboardChromium::getData(const String& type) const
 {
-    success = false;
+    bool ignoredSuccess = false;
     if (policy() != ClipboardReadable || !m_dataObject)
         return String();
 
     if (isForCopyAndPaste() && platformClipboardChanged())
         return String();
 
-    return m_dataObject->getData(normalizeType(type), success);
+    return m_dataObject->getData(normalizeType(type), ignoredSuccess);
 }
 
 bool ClipboardChromium::setData(const String& type, const String& data)

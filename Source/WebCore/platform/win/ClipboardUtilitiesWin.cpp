@@ -208,7 +208,7 @@ HGLOBAL createGlobalData(const Vector<char>& vector)
     return globalData;
 }
 
-static String getFullCFHTML(IDataObject* data, bool& success)
+static String getFullCFHTML(IDataObject* data)
 {
     STGMEDIUM store;
     if (SUCCEEDED(data->GetData(htmlFormat(), &store))) {
@@ -218,10 +218,8 @@ static String getFullCFHTML(IDataObject* data, bool& success)
         String cfhtml(UTF8Encoding().decode(data, dataSize));
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
-        success = true;
         return cfhtml;
     }
-    success = false;
     return String();
 }
 
@@ -447,27 +445,25 @@ void setFileContentData(IDataObject* dataObject, int size, void* dataBlob)
     dataObject->SetData(fileContentFormatZero(), &medium, TRUE);
 }
 
-String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filenamePolicy, bool& success, String* title)
+String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filenamePolicy, String* title)
 {
     STGMEDIUM store;
     String url;
-    success = false;
     if (getWebLocData(dataObject, url, title))
-        success = true;
-    else if (SUCCEEDED(dataObject->GetData(urlWFormat(), &store))) {
+        return url;
+
+    if (SUCCEEDED(dataObject->GetData(urlWFormat(), &store))) {
         // URL using Unicode
         UChar* data = static_cast<UChar*>(GlobalLock(store.hGlobal));
         url = extractURL(String(data), title);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
-        success = true;
     } else if (SUCCEEDED(dataObject->GetData(urlFormat(), &store))) {
         // URL using ASCII
         char* data = static_cast<char*>(GlobalLock(store.hGlobal));
         url = extractURL(String(data), title);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
-        success = true;
     }
 #if USE(CF)
     else if (filenamePolicy == DragData::ConvertFilenames) {
@@ -476,11 +472,8 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
             wchar_t* data = static_cast<wchar_t*>(GlobalLock(store.hGlobal));
             if (data && data[0] && (PathFileExists(data) || PathIsUNC(data))) {
                 RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar*)data, wcslen(data)));
-                if (urlFromPath(pathAsCFString.get(), url)) {
-                    if (title)
-                        *title = url;
-                    success = true;
-                }
+                if (urlFromPath(pathAsCFString.get(), url) && title)
+                    *title = url;
             }
             GlobalUnlock(store.hGlobal);
             ReleaseStgMedium(&store);
@@ -489,11 +482,8 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
             char* data = static_cast<char*>(GlobalLock(store.hGlobal));
             if (data && data[0] && (PathFileExistsA(data) || PathIsUNCA(data))) {
                 RetainPtr<CFStringRef> pathAsCFString(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, data, kCFStringEncodingASCII));
-                if (urlFromPath(pathAsCFString.get(), url)) {
-                    if (title)
-                        *title = url;
-                    success = true;
-                }
+                if (urlFromPath(pathAsCFString.get(), url) && title)
+                    *title = url;
             }
             GlobalUnlock(store.hGlobal);
             ReleaseStgMedium(&store);
@@ -530,31 +520,27 @@ String getURL(const DragDataMap* data, DragData::FilenameConversionPolicy filena
     return url;
 }
 
-String getPlainText(IDataObject* dataObject, bool& success)
+String getPlainText(IDataObject* dataObject)
 {
     STGMEDIUM store;
     String text;
-    success = false;
     if (SUCCEEDED(dataObject->GetData(plainTextWFormat(), &store))) {
         // Unicode text
         UChar* data = static_cast<UChar*>(GlobalLock(store.hGlobal));
         text = String(data);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
-        success = true;
     } else if (SUCCEEDED(dataObject->GetData(plainTextFormat(), &store))) {
         // ASCII text
         char* data = static_cast<char*>(GlobalLock(store.hGlobal));
         text = String(data);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
-        success = true;
     } else {
         // FIXME: Originally, we called getURL() here because dragging and dropping files doesn't
         // populate the drag with text data. Per https://bugs.webkit.org/show_bug.cgi?id=38826, this
         // is undesirable, so maybe this line can be removed.
-        text = getURL(dataObject, DragData::DoNotConvertFilenames, success);
-        success = true;
+        text = getURL(dataObject, DragData::DoNotConvertFilenames);
     }
     return text;
 }
@@ -570,17 +556,15 @@ String getPlainText(const DragDataMap* data)
     return getURL(data, DragData::DoNotConvertFilenames);
 }
 
-String getTextHTML(IDataObject* data, bool& success)
+String getTextHTML(IDataObject* data)
 {
     STGMEDIUM store;
     String html;
-    success = false;
     if (SUCCEEDED(data->GetData(texthtmlFormat(), &store))) {
         UChar* data = static_cast<UChar*>(GlobalLock(store.hGlobal));
         html = String(data);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
-        success = true;
     }
     return html;
 }
@@ -592,10 +576,10 @@ String getTextHTML(const DragDataMap* data)
     return text;
 }
 
-String getCFHTML(IDataObject* data, bool& success)
+String getCFHTML(IDataObject* data)
 {
-    String cfhtml = getFullCFHTML(data, success);
-    if (success)
+    String cfhtml = getFullCFHTML(data);
+    if (!cfhtml.isEmpty())
         return extractMarkupFromCFHTML(cfhtml);
     return String();
 }
@@ -655,16 +639,15 @@ PassRefPtr<DocumentFragment> fragmentFromHTML(Document* doc, IDataObject* data)
     if (!doc || !data)
         return 0;
 
-    bool success = false;
-    String cfhtml = getFullCFHTML(data, success);
-    if (success) {
+    String cfhtml = getFullCFHTML(data);
+    if (!cfhtml.isEmpty()) {
         if (RefPtr<DocumentFragment> fragment = fragmentFromCFHTML(doc, cfhtml))
             return fragment.release();
     }
 
-    String html = getTextHTML(data, success);
+    String html = getTextHTML(data);
     String srcURL;
-    if (success)
+    if (!html.isEmpty())
         return createFragmentFromMarkup(doc, html, srcURL, FragmentScriptingNotAllowed);
 
     return 0;

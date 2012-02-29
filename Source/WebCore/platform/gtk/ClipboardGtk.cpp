@@ -143,13 +143,8 @@ void ClipboardGtk::clearAllData()
         PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_clipboard);
 }
 
-String ClipboardGtk::getData(const String& typeString, bool& success) const
+String ClipboardGtk::getData(const String& typeString) const
 {
-    success = true; // According to http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html
-    // "The getData(format) method must return the data that is associated with the type format converted
-    // to ASCII lowercase, if any, and must return the empty string otherwise." Since success == false 
-    // results in an 'undefined' return value, we always want to return success == true. This parameter
-    // should eventually be removed.
     if (policy() != ClipboardReadable || !m_dataObject)
         return String();
 

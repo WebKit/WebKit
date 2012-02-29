@@ -144,28 +144,21 @@ void ClipboardQt::clearAllData()
     m_writableData = 0;
 }
 
-String ClipboardQt::getData(const String& type, bool& success) const
+String ClipboardQt::getData(const String& type) const
 {
 
-    if (policy() != ClipboardReadable) {
-        success = false;
+    if (policy() != ClipboardReadable)
         return String();
-    }
 
-    if (isHtmlMimeType(type) && m_readableData->hasHtml()) {
-        success = true;
+    if (isHtmlMimeType(type) && m_readableData->hasHtml())
         return m_readableData->html();
-    }
 
-    if (isTextMimeType(type) && m_readableData->hasText()) {
-        success = true;
+    if (isTextMimeType(type) && m_readableData->hasText())
         return m_readableData->text();
-    }
 
     ASSERT(m_readableData);
     QByteArray rawData = m_readableData->data(type);
     QString data = QTextCodec::codecForName("UTF-16")->toUnicode(rawData);
-    success = !data.isEmpty();
     return data;
 }
 

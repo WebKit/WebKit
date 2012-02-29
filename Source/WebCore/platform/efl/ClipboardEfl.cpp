@@ -65,10 +65,9 @@ void ClipboardEfl::clearAllData()
     notImplemented();
 }
 
-String ClipboardEfl::getData(const String&, bool &success) const
+String ClipboardEfl::getData(const String&) const
 {
     notImplemented();
-    success = false;
     return String();
 }
 

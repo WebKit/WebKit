@@ -36,8 +36,7 @@ module core {
 
         [Custom] void clearData(in [Optional] DOMString type)
             raises(DOMException);
-        [Custom] void getData(in DOMString type)
-            raises(DOMException);
+        DOMString getData(in DOMString type);
         boolean setData(in DOMString type, in DOMString data);
         [Custom] void setDragImage(in HTMLImageElement image, in long x, in long y)
             raises(DOMException);

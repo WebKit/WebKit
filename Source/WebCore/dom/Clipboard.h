@@ -63,7 +63,7 @@ namespace WebCore {
     
         virtual void clearData(const String& type) = 0;
         virtual void clearAllData() = 0;
-        virtual String getData(const String& type, bool& success) const = 0;
+        virtual String getData(const String& type) const = 0;
         virtual bool setData(const String& type, const String& data) = 0;
     
         // extensions beyond IE's API

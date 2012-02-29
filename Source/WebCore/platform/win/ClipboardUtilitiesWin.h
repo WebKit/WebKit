@@ -67,13 +67,13 @@ PassRefPtr<DocumentFragment> fragmentFromHTML(Document*, IDataObject*);
 PassRefPtr<DocumentFragment> fragmentFromHTML(Document*, const DragDataMap*);
 PassRefPtr<DocumentFragment> fragmentFromCFHTML(Document*, const String& cfhtml);
 
-String getURL(IDataObject*, DragData::FilenameConversionPolicy, bool& success, String* title = 0);
+String getURL(IDataObject*, DragData::FilenameConversionPolicy, String* title = 0);
 String getURL(const DragDataMap*, DragData::FilenameConversionPolicy, String* title = 0);
-String getPlainText(IDataObject*, bool& success);
+String getPlainText(IDataObject*);
 String getPlainText(const DragDataMap*);
-String getTextHTML(IDataObject*, bool& success);
+String getTextHTML(IDataObject*);
 String getTextHTML(const DragDataMap*);
-String getCFHTML(IDataObject*, bool& success);
+String getCFHTML(IDataObject*);
 String getCFHTML(const DragDataMap*);
 
 void getClipboardData(IDataObject*, FORMATETC* fetc, Vector<String>& dataStrings);

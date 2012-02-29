@@ -58,7 +58,7 @@ void ClipboardWx::clearAllData()
     Pasteboard::generalPasteboard()->clear();
 }
 
-String ClipboardWx::getData(const String& type, bool& success) const 
+String ClipboardWx::getData(const String& type) const 
 {
     notImplemented();
     return ""; 
