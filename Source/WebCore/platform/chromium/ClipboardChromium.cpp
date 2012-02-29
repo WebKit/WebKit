@@ -31,7 +31,6 @@
 #include "ChromiumDataObject.h"
 #include "ClipboardMimeTypes.h"
 #include "ClipboardUtilitiesChromium.h"
-#include "DOMStringList.h"
 #include "DataTransferItemChromium.h"
 #include "DataTransferItemListChromium.h"
 #include "Document.h"
@@ -290,20 +289,21 @@ bool ClipboardChromium::platformClipboardChanged() const
 }
 
 // extensions beyond IE's API
-PassRefPtr<DOMStringList> ClipboardChromium::types() const
+HashSet<String> ClipboardChromium::types() const
 {
+    HashSet<String> results;
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
-        return DOMStringList::create();
+        return results;
 
     if (!m_dataObject)
-        return DOMStringList::create();
+        return results;
 
-    RefPtr<DOMStringList> results = m_dataObject->types();
+    results = m_dataObject->types();
 
     if (m_dataObject->containsFilenames())
-        results->append(mimeTypeFiles);
+        results.add(mimeTypeFiles);
 
-    return results.release();
+    return results;
 }
 
 PassRefPtr<FileList> ClipboardChromium::files() const
@@ -518,9 +518,9 @@ void ClipboardChromium::mayUpdateItems(Vector<RefPtr<DataTransferItem> >& items)
 
     if (isForCopyAndPaste() && policy() == ClipboardReadable) {
         // Iterate through the types and add them.
-        RefPtr<DOMStringList> types = m_dataObject->types();
-        for (size_t i = 0; i < types->length(); ++i)
-            items.append(DataTransferItemChromium::createFromPasteboard(this, scriptExecutionContext, types->item(i)));
+        HashSet<String> types = m_dataObject->types();
+        for (HashSet<String>::const_iterator it = types.begin(); it != types.end(); ++it)
+            items.append(DataTransferItemChromium::createFromPasteboard(this, scriptExecutionContext, *it));
         return;
     }
 

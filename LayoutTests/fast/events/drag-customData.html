@@ -32,8 +32,8 @@ function dragover(event) {
 }
 function drop(event) {
     var failed = false;
-    if (!event.dataTransfer.types.contains('text/plain')
-        || !event.dataTransfer.types.contains('custom-data'))
+    if (event.dataTransfer.types.indexOf('text/plain') < 0
+        || event.dataTransfer.types.indexOf('custom-data') < 0)
         failed = true;
     if (event.dataTransfer.getData('text') != 'sample'
         || event.dataTransfer.getData('custom-data') != 'hello world')

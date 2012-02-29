@@ -19,7 +19,6 @@
 #include "config.h"
 #include "ClipboardBlackBerry.h"
 
-#include "DOMStringList.h"
 #include "FileList.h"
 #include "NotImplemented.h"
 
@@ -72,14 +71,14 @@ bool ClipboardBlackBerry::setData(const String& type, const String& text)
     return true;
 }
 
-PassRefPtr<DOMStringList> ClipboardBlackBerry::types() const
+HashSet<String> ClipboardBlackBerry::types() const
 {
     // We use hardcoded list here since there seems to be no API to get the list.
-    RefPtr<DOMStringList> ret = DOMStringList::create();
-    ret->append("text/plain");
-    ret->append("text/html");
-    ret->append("text/url");
-    return ret.release();
+    HashSet<String> ret;
+    ret.add("text/plain");
+    ret.add("text/html");
+    ret.add("text/url");
+    return ret;
 }
 
 PassRefPtr<FileList> ClipboardBlackBerry::files() const

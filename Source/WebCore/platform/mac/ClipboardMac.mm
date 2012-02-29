@@ -27,7 +27,6 @@
 #import "ClipboardMac.h"
 
 #import "DOMElementInternal.h"
-#import "DOMStringList.h"
 #import "DragClient.h"
 #import "DragController.h"
 #import "DragData.h"
@@ -112,15 +111,15 @@ static String utiTypeFromCocoaType(const String& type)
     return String();
 }
 
-static void addHTMLClipboardTypesForCocoaType(DOMStringList* resultTypes, const String& cocoaType, const String& pasteboardName)
+static void addHTMLClipboardTypesForCocoaType(HashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName)
 {
     // UTI may not do these right, so make sure we get the right, predictable result
     if (cocoaType == String(NSStringPboardType)) {
-        resultTypes->append("text/plain");
+        resultTypes.add("text/plain");
         return;
     }
     if (cocoaType == String(NSURLPboardType)) {
-        resultTypes->append("text/uri-list");
+        resultTypes.add("text/uri-list");
         return;
     }
     if (cocoaType == String(NSFilenamesPboardType)) {
@@ -132,18 +131,18 @@ static void addHTMLClipboardTypesForCocoaType(DOMStringList* resultTypes, const 
         if (!fileList.isEmpty()) {
             // It is unknown if NSFilenamesPboardType always implies NSURLPboardType in Cocoa,
             // but NSFilenamesPboardType should imply both 'text/uri-list' and 'Files'
-            resultTypes->append("text/uri-list");
-            resultTypes->append("Files");
+            resultTypes.add("text/uri-list");
+            resultTypes.add("Files");
         }
         return;
     }
     String utiType = utiTypeFromCocoaType(cocoaType);
     if (!utiType.isEmpty()) {
-        resultTypes->append(utiType);
+        resultTypes.add(utiType);
         return;
     }
     // No mapping, just pass the whole string though
-    resultTypes->append(cocoaType);
+    resultTypes.add(cocoaType);
 }
 
 void ClipboardMac::clearData(const String& type)
@@ -282,10 +281,10 @@ bool ClipboardMac::setData(const String &type, const String &data)
     return false;
 }
 
-PassRefPtr<DOMStringList> ClipboardMac::types() const
+HashSet<String> ClipboardMac::types() const
 {
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
-        return DOMStringList::create();
+        return HashSet<String>();
 
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
@@ -293,19 +292,19 @@ PassRefPtr<DOMStringList> ClipboardMac::types() const
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
     if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
-        return DOMStringList::create();
+        return HashSet<String>();
 
-    RefPtr<DOMStringList> result = DOMStringList::create();
+    HashSet<String> result;
     // FIXME: This loop could be split into two stages. One which adds all the HTML5 specified types
     // and a second which adds all the extra types from the cocoa clipboard (which is Mac-only behavior).
     for (size_t i = 0; i < types.size(); i++) {
         if (types[i] == "NeXT plain ascii pasteboard type")
             continue;   // skip this ancient type that gets auto-supplied by some system conversion
 
-        addHTMLClipboardTypesForCocoaType(result.get(), types[i], m_pasteboardName);
+        addHTMLClipboardTypesForCocoaType(result, types[i], m_pasteboardName);
     }
 
-    return result.release();
+    return result;
 }
 
 // FIXME: We could cache the computed fileList if necessary

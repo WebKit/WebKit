@@ -101,36 +101,33 @@ bool ChromiumDataObject::hasData() const
         || m_fileContent;
 }
 
-PassRefPtr<DOMStringList> ChromiumDataObject::types() const
+HashSet<String> ChromiumDataObject::types() const
 {
-    RefPtr<DOMStringList> results = DOMStringList::create();
-
     if (m_storageMode == Pasteboard) {
         bool ignoredContainsFilenames;
-        HashSet<String> hashedResults = PlatformSupport::clipboardReadAvailableTypes(
-            currentPasteboardBuffer(), &ignoredContainsFilenames);
-        for (HashSet<String>::const_iterator it = hashedResults.begin(); it != hashedResults.end(); ++it)
-          results->append(*it);
-        return results.release();
+        return PlatformSupport::clipboardReadAvailableTypes(currentPasteboardBuffer(),
+                                                            &ignoredContainsFilenames);
     }
 
+    HashSet<String> results;
+
     if (!m_plainText.isEmpty()) {
-        results->append(mimeTypeText);
-        results->append(mimeTypeTextPlain);
+        results.add(mimeTypeText);
+        results.add(mimeTypeTextPlain);
     }
 
     if (!m_uriList.isEmpty())
-        results->append(mimeTypeTextURIList);
+        results.add(mimeTypeTextURIList);
 
     if (!m_textHtml.isEmpty())
-        results->append(mimeTypeTextHTML);
+        results.add(mimeTypeTextHTML);
 
     for (HashMap<String, String>::const_iterator::Keys it = m_customData.begin().keys();
          it != m_customData.end().keys(); ++it) {
-        results->append(*it);
+        results.add(*it);
     }
 
-    return results.release();
+    return results;
 }
 
 String ChromiumDataObject::getData(const String& type, bool& success) const

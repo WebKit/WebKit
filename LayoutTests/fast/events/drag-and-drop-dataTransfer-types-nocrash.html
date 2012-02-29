@@ -84,7 +84,7 @@
     {
         event = e;
         var formatTypes = e.dataTransfer.types; // This line causes the crash.
-        if (event.dataTransfer.types.contains(FORMAT_TYPE) == -1)
+        if (event.dataTransfer.types.indexOf(FORMAT_TYPE) == -1)
             testFailed('event.dataTransfer.types should contain format "' + FORMAT_TYPE + '", but it does not.');
         else
             testPassed('event.dataTransfer.types contains format "' + FORMAT_TYPE + '"');

@@ -39,7 +39,7 @@ public:
     String getData(const String&) const;
     bool setData(const String&, const String&);
 
-    PassRefPtr<DOMStringList> types() const;
+    HashSet<String> types() const;
     virtual PassRefPtr<FileList> files() const;
 
     IntPoint dragLocation() const;

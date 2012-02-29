@@ -57,7 +57,7 @@ namespace WebCore {
         String getData(const String&) const;
         bool setData(const String&, const String&);
 
-        virtual PassRefPtr<DOMStringList> types() const;
+        virtual HashSet<String> types() const;
         virtual PassRefPtr<FileList> files() const;
 
         void setDragImage(CachedImage*, const IntPoint&);

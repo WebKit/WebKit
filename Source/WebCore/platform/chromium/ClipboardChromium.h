@@ -63,7 +63,7 @@ namespace WebCore {
         bool platformClipboardChanged() const;
 
         // extensions beyond IE's API
-        virtual PassRefPtr<DOMStringList> types() const;
+        virtual HashSet<String> types() const;
         virtual PassRefPtr<FileList> files() const;
 
         void setDragImage(CachedImage*, const IntPoint&);

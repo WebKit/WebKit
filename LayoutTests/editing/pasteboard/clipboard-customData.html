@@ -17,8 +17,8 @@ function copy(event) {
 
 function paste(event) {
     var failed = false;
-    if (!event.clipboardData.types.contains('text/plain')
-        || !event.clipboardData.types.contains('custom-data'))
+    if (event.clipboardData.types.indexOf('text/plain') < 0
+        || event.clipboardData.types.indexOf('custom-data') < 0)
         failed = true;
     if (event.clipboardData.getData('text') != 'sample'
         || event.clipboardData.getData('custom-data') != 'hello world')
