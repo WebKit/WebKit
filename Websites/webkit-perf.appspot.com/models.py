@@ -322,3 +322,11 @@ class PersistentCache(db.Model):
             return None
         memcache.set(name, cache.value)
         return cache.value
+
+
+class DashboardImage(db.Model):
+    image = db.BlobProperty(required=True)
+
+    @staticmethod
+    def key_name(branch_id, platform_id, test_id, display_days):
+        return '%d:%d:%d:%d' % (branch_id, platform_id, test_id, display_days)

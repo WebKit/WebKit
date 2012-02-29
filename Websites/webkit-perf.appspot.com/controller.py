@@ -27,14 +27,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import urllib
 import webapp2
 from google.appengine.api import taskqueue
 from google.appengine.ext import db
 
 from json_generators import DashboardJSONGenerator
 from json_generators import ManifestJSONGenerator
-from json_generators import RunsJSONGenerator
+from json_generators import Runs
 from models import Branch
+from models import DashboardImage
 from models import Platform
 from models import Test
 from models import PersistentCache
@@ -97,6 +99,7 @@ def cache_runs(test_id, branch_id, platform_id, cache):
 
 def schedule_runs_update(test_id, branch_id, platform_id):
     taskqueue.add(url='/api/test/runs/update', params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id})
+    taskqueue.add(url='/api/test/runs/chart', params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id})
 
 
 def _get_test_branch_platform_ids(handler):
@@ -125,7 +128,7 @@ class RunsUpdateHandler(webapp2.RequestHandler):
         assert platform
         assert test
 
-        cache_runs(test_id, branch_id, platform_id, RunsJSONGenerator(branch, platform, test.name).to_json())
+        cache_runs(test_id, branch_id, platform_id, Runs(branch, platform, test.name).to_json())
         self.response.out.write('OK')
 
 
@@ -141,5 +144,48 @@ class CachedRunsHandler(webapp2.RequestHandler):
             schedule_runs_update(test_id, branch_id, platform_id)
 
 
+class RunsChartHandler(webapp2.RequestHandler):
+    def get(self):
+        self.post()
+
+    def post(self):
+        self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+        test_id, branch_id, platform_id = _get_test_branch_platform_ids(self)
+
+        branch = model_from_numeric_id(branch_id, Branch)
+        platform = model_from_numeric_id(platform_id, Platform)
+        test = model_from_numeric_id(test_id, Test)
+        display_days = int(self.request.get('displayDays'))
+        assert branch
+        assert platform
+        assert test
+
+        params = Runs(branch, platform, test.name).chart_params(display_days)
+        dashboard_chart_file = urllib.urlopen('http://chart.googleapis.com/chart', urllib.urlencode(params))
+
+        DashboardImage(key_name=DashboardImage.key_name(branch.id, platform.id, test.id, display_days),
+            image=dashboard_chart_file.read()).put()
+
+        self.response.out.write('Fetched http://chart.googleapis.com/chart?%s' % urllib.urlencode(params))
+
+
+class DashboardImageHandler(webapp2.RequestHandler):
+    def get(self, test_id, branch_id, platform_id, display_days):
+        try:
+            branch_id = int(branch_id)
+            platform_id = int(platform_id)
+            test_id = int(test_id)
+            display_days = int(display_days)
+        except ValueError:
+            self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+            self.response.out.write('Failed')
+
+        self.response.headers['Content-Type'] = 'image/png'
+        image = DashboardImage.get_by_key_name(DashboardImage.key_name(branch_id, platform_id, test_id, display_days))
+        if image:
+            self.response.out.write(image.image)
+
+
 def schedule_report_process(log):
+    self.response.headers['Content-Type'] = 'application/json'
     taskqueue.add(url='/api/test/report/process', params={'id': log.key().id()})

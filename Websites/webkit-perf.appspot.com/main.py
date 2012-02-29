@@ -26,8 +26,10 @@ from admin_handlers import MergeTestsHandler
 from controller import CachedDashboardHandler
 from controller import CachedManifestHandler
 from controller import CachedRunsHandler
+from controller import DashboardImageHandler
 from controller import DashboardUpdateHandler
 from controller import ManifestUpdateHandler
+from controller import RunsChartHandler
 from controller import RunsUpdateHandler
 from create_handler import CreateHandler
 from report_handler import ReportHandler
@@ -41,6 +43,7 @@ routes = [
     ('/admin/report-logs/?', ReportLogsHandler),
     ('/admin/create/(.*)', CreateHandler),
     (r'/admin/([A-Za-z\-]*)', AdminDashboardHandler),
+
     ('/api/user/is-admin', IsAdminHandler),
     ('/api/test/?', CachedManifestHandler),
     ('/api/test/update', ManifestUpdateHandler),
@@ -48,9 +51,11 @@ routes = [
     ('/api/test/report/process', ReportProcessHandler),
     ('/api/test/runs/?', CachedRunsHandler),
     ('/api/test/runs/update', RunsUpdateHandler),
+    ('/api/test/runs/chart', RunsChartHandler),
     ('/api/test/dashboard/?', CachedDashboardHandler),
     ('/api/test/dashboard/update', DashboardUpdateHandler),
-]
+
+    ('/images/dashboard/flot-(\d+)-(\d+)-(\d+)_(\d+).png', DashboardImageHandler)]
 
 
 def main():

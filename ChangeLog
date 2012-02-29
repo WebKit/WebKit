@@ -1,3 +1,51 @@
+2012-02-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        perf-o-matic: generate dashboard images using Google Chart Tools
+        https://bugs.webkit.org/show_bug.cgi?id=79838
+
+        Reviewed by Hajime Morita.
+
+        Rename RunsJSONGenerator to Runs and added an ability to generate parameters for Google chart tool.
+        Also added RunsChartHandler to make url-fetches these images and DashboardImageHandler to serve them.
+        The image is stored in DashboardImage model.
+
+        We can't enable flip the switch to use images yet because we don't create images on fly (they're
+        generated when runs are updated; i.e. bots upload new results). We should be able to flip the switch
+        once this patch lands and all perf bots cycle.
+
+        We probably make way too many calls to Google chart tool's server with this preliminary design but we
+        can easily move this task into the backend and run it via a cron job once we know it works.
+
+        * Websites/webkit-perf.appspot.com/controller.py:
+        (schedule_runs_update):
+        (RunsUpdateHandler.post):
+        (RunsChartHandler):
+        (RunsChartHandler.get):
+        (RunsChartHandler.post):
+        (DashboardImageHandler):
+        (DashboardImageHandler.get):
+        (schedule_report_process):
+        * Websites/webkit-perf.appspot.com/json_generators.py:
+        (ManifestJSONGenerator.value):
+        (Runs):
+        (Runs.__init__):
+        (Runs.value):
+        (Runs.chart_params):
+        * Websites/webkit-perf.appspot.com/json_generators_unittest.py:
+        (RunsTest):
+        (RunsTest._create_results):
+        (RunsTest.test_generate_runs):
+        (RunsTest.test_value_without_results):
+        (RunsTest.test_value_with_results):
+        (RunsTest.test_run_from_build_and_result):
+        (RunsTest.test_chart_params_with_value):
+        (RunsTest.test_chart_params_with_value.split_as_int):
+        * Websites/webkit-perf.appspot.com/main.py:
+        * Websites/webkit-perf.appspot.com/models.py:
+        (PersistentCache.get_cache):
+        (DashboardImage):
+        (DashboardImage.key_name):
+
 2012-02-28  Dave Tu  <dtu@chromium.org>
 
         Add new GPU builders to flakiness dashboard.

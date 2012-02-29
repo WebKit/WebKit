@@ -28,6 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+from datetime import datetime
+from datetime import timedelta
 from time import mktime
 
 from models import Build
@@ -118,20 +120,12 @@ class ManifestJSONGenerator(JSONGeneratorBase):
         return {'branchMap': self._branch_map, 'platformMap': self._platform_map, 'testMap': self._test_map}
 
 
-class RunsJSONGenerator(JSONGeneratorBase):
-    def __init__(self, branch, platform, test):
-        self._test_runs = []
-        self._averages = {}
-        values = []
-
-        for build, result in RunsJSONGenerator._generate_runs(branch, platform, test):
-            self._test_runs.append(RunsJSONGenerator._entry_from_build_and_result(build, result))
-            # FIXME: Calculate the average. In practice, we wouldn't have more than one value for a given revision.
-            self._averages[build.revision] = result.value
-            values.append(result.value)
-
-        self._min = min(values) if values else None
-        self._max = max(values) if values else None
+# FIXME: This isn't a JSON generator anymore. We should move it elsewhere or rename the file.
+class Runs(JSONGeneratorBase):
+    def __init__(self, branch, platform, test_name):
+        self._branch = branch
+        self._platform = platform
+        self._test_name = test_name
 
     @staticmethod
     def _generate_runs(branch, platform, test_name):
@@ -167,10 +161,58 @@ class RunsJSONGenerator(JSONGeneratorBase):
             builder_id, statistics]
 
     def value(self):
+        _test_runs = []
+        _averages = {}
+        values = []
+
+        for build, result in Runs._generate_runs(self._branch, self._platform, self._test_name):
+            _test_runs.append(Runs._entry_from_build_and_result(build, result))
+            # FIXME: Calculate the average. In practice, we wouldn't have more than one value for a given revision.
+            _averages[build.revision] = result.value
+            values.append(result.value)
+
+        _min = min(values) if values else None
+        _max = max(values) if values else None
+
         return {
-            'test_runs': self._test_runs,
-            'averages': self._averages,
-            'min': self._min,
-            'max': self._max,
+            'test_runs': _test_runs,
+            'averages': _averages,
+            'min': _min,
+            'max': _max,
             'date_range': None,  # Never used by common.js.
             'stat': 'ok'}
+
+    def chart_params(self, display_days, now=datetime.now()):
+        chart_data_x = []
+        chart_data_y = []
+        end_time = now
+        start_timestamp = mktime((end_time - timedelta(display_days)).timetuple())
+        end_timestamp = mktime(end_time.timetuple())
+
+        for build, result in self._generate_runs(self._branch, self._platform, self._test_name):
+            timestamp = mktime(build.timestamp.timetuple())
+            if timestamp < start_timestamp or timestamp > end_timestamp:
+                continue
+            chart_data_x.append(timestamp)
+            chart_data_y.append(result.value)
+
+        dates = [end_time + timedelta(day - display_days) for day in range(0, display_days + 1)]
+
+        y_max = max(chart_data_y) * 1.1
+        y_grid_step = y_max / 5
+        y_axis_label_step = int(y_grid_step + 0.5)  # This won't work for decimal numbers
+
+        return {
+            'cht': 'lxy',  # Specify with X and Y coordinates
+            'chxt': 'x,y',  # Display both X and Y axies
+            'chxl': '0:|' + '|'.join([date.strftime('%b %d') for date in dates]),  # X-axis labels
+            'chxr': '1,0,%f,%f' % (int(y_max + 0.5), y_axis_label_step),  # Y-axis range: min=0, max, step
+            'chds': '%f,%f,%f,%f' % (start_timestamp, end_timestamp, 0, y_max),  # X, Y data range
+            'chxs': '1,676767,11.167,0,l,676767',  # Y-axis label: 1,color,font-size,centerd on tick,axis line/no ticks, tick color
+            'chs': '360x240',  # Image size: 360px by 240px
+            'chco': 'ff0000',  # Plot line color
+            'chg': '%f,%f,0,0' % (100 / (len(dates) - 1), y_grid_step),  # X, Y grid line step sizes - max for X is 100.
+            'chls': '3',  # Line thickness
+            'chf': 'bg,s,eff6fd',  # Transparent background
+            'chd': 't:' + ','.join([str(x) for x in chart_data_x]) + '|' + ','.join([str(y) for y in chart_data_y]),  # X, Y data
+        }
