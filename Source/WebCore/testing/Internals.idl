@@ -47,7 +47,6 @@ module window {
         Node youngestShadowRoot(in Element host) raises (DOMException);
         Node oldestShadowRoot(in Element host) raises (DOMException);
         Node youngerShadowRoot(in Node root) raises (DOMException);
-        Node youngerShadowRoot(in Node root) raises (DOMException);
 #endif
         void setMultipleShadowSubtreesEnabled(in boolean enabled);
         Element includerFor(in Node node) raises (DOMException);

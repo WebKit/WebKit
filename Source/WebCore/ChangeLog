@@ -1,3 +1,11 @@
+2012-02-28  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed. Build fixes after recent bindings changes.
+
+        * bindings/scripts/CodeGeneratorCPP.pm: 
+        (ShouldSkipType):
+        * testing/Internals.idl:
+
 2012-02-28  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Spin button sometimes ignores Indeterminate of m_upDownState
