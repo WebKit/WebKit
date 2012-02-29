@@ -38,12 +38,18 @@
 #include "SkColorShader.h"
 #include "SkShader.h"
 
+#include <v8.h>
+
 namespace WebCore {
 
 void Pattern::platformDestroy()
 {
     SkSafeUnref(m_pattern);
     m_pattern = 0;
+    if (m_externalMemoryAllocated) {
+        v8::V8::AdjustAmountOfExternalAllocatedMemory(-m_externalMemoryAllocated);
+        m_externalMemoryAllocated = 0;
+    }
 }
 
 PlatformPatternPtr Pattern::platformPattern(const AffineTransform& patternTransform)
@@ -89,6 +95,9 @@ PlatformPatternPtr Pattern::platformPattern(const AffineTransform& patternTransf
         SkCanvas canvas(bm2);
         canvas.drawBitmap(image->bitmap(), 0, 0);
         m_pattern = SkShader::CreateBitmapShader(bm2, tileModeX, tileModeY);
+
+        m_externalMemoryAllocated = bm2.getSafeSize();
+        v8::V8::AdjustAmountOfExternalAllocatedMemory(m_externalMemoryAllocated);
     }
     m_pattern->setLocalMatrix(m_patternSpaceTransformation);
     return m_pattern;
