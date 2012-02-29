@@ -4466,3 +4466,6 @@ BUGWK79878 SNOWLEOPARD : platform/chromium/compositing/rubberbanding/transform-o
 BUGWK79878 SNOWLEOPARD : platform/chromium/compositing/rubberbanding/transform-overhang-n.html = IMAGE
 BUGWK79878 SNOWLEOPARD : platform/chromium/compositing/rubberbanding/transform-overhang-ne.html = IMAGE
 BUGWK79878 SNOWLEOPARD : platform/chromium/compositing/rubberbanding/transform-overhang-w.html = IMAGE
+
+// EPOGER: To be rebaselined after skia rev. 3283 lands in webkit
+BUGCR116252 LINUX : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
