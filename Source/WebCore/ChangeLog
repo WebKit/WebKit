@@ -1,3 +1,9 @@
+2012-02-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the SnowLeopard build.
+
+        * WebCore.exp.in:
+
 2012-02-28  Anders Carlsson  <andersca@apple.com>
 
         With tiled drawing enabled, pressing Down arrow after scrolling via mouse gesture causes page to jump back up to top

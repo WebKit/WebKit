@@ -1511,7 +1511,9 @@ _stringEncodingForResource
 _stringIsCaseInsensitiveEqualToString
 _suggestedFilenameWithMIMEType
 _wkAdvanceDefaultButtonPulseAnimation
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 _wkCALayerEnumerateRectsBeingDrawnWithBlock
+#endif
 _wkCGContextGetShouldSmoothFonts
 _wkCGContextResetClip
 _wkCGPatternCreateWithImageAndTransform
