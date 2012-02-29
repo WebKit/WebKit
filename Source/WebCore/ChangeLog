@@ -1,5 +1,20 @@
 2012-02-28  Simon Fraser  <simon.fraser@apple.com>
 
+        Optimize the rects being drawn into compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=79852
+
+        Reviewed by Dan Bernstein.
+
+        Use the newly added WebKitSystemInterface method
+        to limit the area being painted in a CALayer
+        -drawInContext callback. This avoids redundant drawing,
+        for performance.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+
+2012-02-28  Simon Fraser  <simon.fraser@apple.com>
+
         Fix the SnowLeopard build.
 
         * WebCore.exp.in:

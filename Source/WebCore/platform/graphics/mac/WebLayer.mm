@@ -35,6 +35,7 @@
 #import <objc/objc-runtime.h>
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/UnusedParam.h>
+#import "WebCoreSystemInterface.h"
 
 @interface CALayer(WebCoreCALayerPrivate)
 - (void)reloadValueForKeyPath:(NSString *)keyPath;
@@ -76,9 +77,24 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     
     // It's important to get the clip from the context, because it may be significantly
     // smaller than the layer bounds (e.g. tiled layers)
-    CGRect clipBounds = CGContextGetClipBoundingBox(context);
-    IntRect clip(enclosingIntRect(clipBounds));
+    FloatRect clipBounds = CGContextGetClipBoundingBox(context);
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    __block GraphicsContext* ctx = &graphicsContext;
+
+    wkCALayerEnumerateRectsBeingDrawnWithBlock(layer, context, ^(CGRect rect){
+        FloatRect rectBeingDrawn(rect);
+        rectBeingDrawn.intersect(clipBounds);
+        
+        GraphicsContextStateSaver stateSaver(*ctx);
+        ctx->clip(rectBeingDrawn);
+        
+        layerContents->platformCALayerPaintContents(*ctx, enclosedIntRect(rectBeingDrawn));
+    });
+#else
+    IntRect clip(enclosedIntRect(clipBounds));
     layerContents->platformCALayerPaintContents(graphicsContext, clip);
+#endif
 
     [NSGraphicsContext restoreGraphicsState];
 
