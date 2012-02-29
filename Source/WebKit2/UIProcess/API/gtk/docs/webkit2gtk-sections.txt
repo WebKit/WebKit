@@ -86,6 +86,7 @@ webkit_web_view_get_zoom_level
 webkit_web_view_can_execute_editing_command
 webkit_web_view_can_execute_editing_command_finish
 webkit_web_view_execute_editing_command
+webkit_web_view_get_find_controller
 
 <SUBSECTION Standard>
 WebKitWebViewClass
@@ -461,3 +462,30 @@ webkit_policy_error_quark
 webkit_download_error_quark
 </SECTION>
 
+<SECTION>
+<FILE>WebKitFindController</FILE>
+WebKitFindController
+WebKitFindOptions
+webkit_find_controller_search
+webkit_find_controller_search_finish
+webkit_find_controller_search_next
+webkit_find_controller_search_previous
+webkit_find_controller_get_search_text
+webkit_find_controller_count_matches
+webkit_find_controller_get_options
+webkit_find_controller_get_max_match_count
+webkit_find_controller_get_web_view
+
+<SUBSECTION Standard>
+WebKitFindControllerClass
+WEBKIT_TYPE_FIND_CONTROLLER
+WEBKIT_FIND_CONTROLLER
+WEBKIT_IS_FIND_CONTROLLER
+WEBKIT_FIND_CONTROLLER_CLASS
+WEBKIT_IS_FIND_CONTROLLER_CLASS
+WEBKIT_FIND_CONTROLLER_GET_CLASS
+
+<SUBSECTION Private>
+WebKitFindControllerPrivate
+webkit_find_controller_get_type
+</SECTION>

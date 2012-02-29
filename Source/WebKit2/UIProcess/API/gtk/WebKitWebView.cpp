@@ -99,6 +99,8 @@ struct _WebKitWebViewPrivate {
 
     GRefPtr<WebKitHitTestResult> mouseTargetHitTestResult;
     unsigned mouseTargetModifiers;
+
+    GRefPtr<WebKitFindController> findController;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -1386,7 +1388,6 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
     return WKPageGetPageZoomFactor(wkPage);
 }
 
-
 static void didValidateCommand(WKStringRef command, bool isEnabled, int32_t state, WKErrorRef, void* context)
 {
     GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
@@ -1458,4 +1459,24 @@ void webkit_web_view_execute_editing_command(WebKitWebView* webView, const char*
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     WKRetainPtr<WKStringRef> wkCommand(AdoptWK, WKStringCreateWithUTF8CString(command));
     WKPageExecuteCommand(toAPI(page), wkCommand.get());
+}
+
+/**
+ * webkit_web_view_get_find_controller:
+ * @web_view: the #WebKitWebView
+ *
+ * Gets the #WebKitFindController that will allow the caller to query
+ * the #WebKitWebView for the text to look for.
+ *
+ * Returns: (transfer none): the #WebKitFindController associated to
+ * this particular #WebKitWebView.
+ */
+WebKitFindController* webkit_web_view_get_find_controller(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    if (!webView->priv->findController)
+        webView->priv->findController = adoptGRef(WEBKIT_FIND_CONTROLLER(g_object_new(WEBKIT_TYPE_FIND_CONTROLLER, "web-view", webView, NULL)));
+
+    return webView->priv->findController.get();
 }
