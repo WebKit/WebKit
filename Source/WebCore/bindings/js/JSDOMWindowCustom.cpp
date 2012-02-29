@@ -568,6 +568,7 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec)
 static JSValue handlePostMessage(DOMWindow* impl, ExecState* exec, bool doTransfer)
 {
     MessagePortArray messagePorts;
+    ArrayBufferArray arrayBuffers;
 
     // This function has variable arguments and can be:
     // Per current spec:
@@ -582,13 +583,14 @@ static JSValue handlePostMessage(DOMWindow* impl, ExecState* exec, bool doTransf
             targetOriginArgIndex = 2;
             transferablesArgIndex = 1;
         }
-        fillMessagePortArray(exec, exec->argument(transferablesArgIndex), messagePorts);
+        fillMessagePortArray(exec, exec->argument(transferablesArgIndex), messagePorts, arrayBuffers);
     }
     if (exec->hadException())
         return jsUndefined();
 
-    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(exec, exec->argument(0), 
-                                                                         doTransfer ? &messagePorts : 0);
+    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(exec, exec->argument(0),
+                                                                         doTransfer ? &messagePorts : 0,
+                                                                         doTransfer ? &arrayBuffers : 0);
 
     if (exec->hadException())
         return jsUndefined();

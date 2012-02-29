@@ -2045,9 +2045,6 @@ pointer-lock/
 # https://bugs.webkit.org/show_bug.cgi?id=72435
 fast/dom/Window/window-postmessage-arrays.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=73493
-fast/canvas/webgl/arraybuffer-transfer-of-control.html
-
 # Fails because MutationObservers are not notified at end-of-task
 # https://bugs.webkit.org/show_bug.cgi?id=78290
 fast/mutation/end-of-task-delivery.html

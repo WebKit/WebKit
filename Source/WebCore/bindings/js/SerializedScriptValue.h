@@ -30,6 +30,7 @@
 #include "ScriptState.h"
 #include <heap/Strong.h>
 #include <runtime/JSValue.h>
+#include <wtf/ArrayBuffer.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -41,6 +42,7 @@ namespace WebCore {
 
 class MessagePort;
 typedef Vector<RefPtr<MessagePort>, 1> MessagePortArray;
+typedef Vector<RefPtr<WTF::ArrayBuffer>, 1> ArrayBufferArray;
  
 enum SerializationReturnCode {
     SuccessfullyCompleted,
@@ -58,8 +60,9 @@ class SharedBuffer;
 
 class SerializedScriptValue : public RefCounted<SerializedScriptValue> {
 public:
-    static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, MessagePortArray*, SerializationErrorMode = Throwing);
-    static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, MessagePortArray*,  JSValueRef* exception);
+    static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, MessagePortArray*, ArrayBufferArray*,
+                                                    SerializationErrorMode = Throwing);
+    static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, MessagePortArray*, ArrayBufferArray*, JSValueRef* exception);
     static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, JSValueRef* exception);
 
     static PassRefPtr<SerializedScriptValue> create(const String&);
@@ -88,11 +91,15 @@ public:
     ~SerializedScriptValue();
 
 private:
+    typedef Vector<WTF::ArrayBufferContents> ArrayBufferContentsArray;
     static void maybeThrowExceptionIfSerializationFailed(JSC::ExecState*, SerializationReturnCode);
     static bool serializationDidCompleteSuccessfully(SerializationReturnCode);
+    static PassOwnPtr<ArrayBufferContentsArray> transferArrayBuffers(ArrayBufferArray&, SerializationReturnCode&);
     
     SerializedScriptValue(Vector<unsigned char>&);
+    SerializedScriptValue(Vector<unsigned char>&, PassOwnPtr<ArrayBufferContentsArray>);
     Vector<unsigned char> m_data;
+    OwnPtr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
 };
 
 }

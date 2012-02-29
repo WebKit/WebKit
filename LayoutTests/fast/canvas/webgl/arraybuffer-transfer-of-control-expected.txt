@@ -12,6 +12,7 @@ PASS raw Int32
 PASS raw Uint32
 PASS raw Int8
 PASS raw Uint8
+PASS raw Uint8Clamped
 PASS raw Int16
 PASS raw Uint16
 PASS raw Float32
@@ -21,6 +22,7 @@ PASS send view, buffer for Int32
 PASS send view, buffer for Uint32
 PASS send view, buffer for Int8
 PASS send view, buffer for Uint8
+PASS send view, buffer for Uint8Clamped
 PASS send view, buffer for Int16
 PASS send view, buffer for Uint16
 PASS send view, buffer for Float32
@@ -30,6 +32,7 @@ PASS send buffer, view for Int32
 PASS send buffer, view for Uint32
 PASS send buffer, view for Int8
 PASS send buffer, view for Uint8
+PASS send buffer, view for Uint8Clamped
 PASS send buffer, view for Int16
 PASS send buffer, view for Uint16
 PASS send buffer, view for Float32
@@ -39,6 +42,7 @@ PASS squash unrelated views for Int32
 PASS squash unrelated views for Uint32
 PASS squash unrelated views for Int8
 PASS squash unrelated views for Uint8
+PASS squash unrelated views for Uint8Clamped
 PASS squash unrelated views for Int16
 PASS squash unrelated views for Uint16
 PASS squash unrelated views for Float32

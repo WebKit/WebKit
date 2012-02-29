@@ -25,11 +25,12 @@ var allBufferTypes =
     ["Uint32", Uint32Array, 4],
     ["Int8", Int8Array, 1],
     ["Uint8", Uint8Array, 1],
+    ["Uint8Clamped", Uint8ClampedArray, 1],
     ["Int16", Int16Array, 2],
     ["Uint16", Uint16Array, 2],
     ["Float32", Float32Array, 4],
     ["Float64", Float64Array, 8],
-    ["DataView", DataView, 1]
+    ["DataView", DataView, 1] 
 ];
 
 function isTypedArray(view)
@@ -359,6 +360,7 @@ testList = testList.concat(allBufferTypes.map(function(bufferType) { return {
         return checkView(name, bufferType[1], e.data) && checkEmptyArray(name, e.ports);
     }
 }}));
+
 
 function viewAndBuffer(viewFirst, bufferType) {
     return {

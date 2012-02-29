@@ -1,3 +1,50 @@
+2012-02-28  Dmitry Lomov  <dslomov@google.com>
+
+        [JSC] Implement ArrayBuffer transfer
+        https://bugs.webkit.org/show_bug.cgi?id=73493.
+        Implement ArrayBuffer transfer, per Khronos spec:  http://www.khronos.org/registry/typedarray/specs/latest/#9.
+        This brings parity with V8 implementation of transferable typed arrays.
+
+        Reviewed by Oliver Hunt.
+
+        Covered by existing tests.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::handlePostMessage):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::pushState):
+        (WebCore::JSHistory::replaceState):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::handleInitMessageEvent):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::fillMessagePortArray):
+        * bindings/js/JSMessagePortCustom.h:
+        (WebCore):
+        (WebCore::handlePostMessage):
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::serialize):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore):
+        (WebCore::CloneSerializer::serialize):
+        (CloneSerializer):
+        (WebCore::CloneSerializer::CloneSerializer):
+        (WebCore::CloneSerializer::fillTransferMap):
+        (WebCore::CloneSerializer::dumpArrayBufferView):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::readTerminal):
+        (CloneDeserializer):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::transferArrayBuffers):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore):
+        (SerializedScriptValue):
+
 2012-02-28  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed. Build fixes after recent bindings changes.
