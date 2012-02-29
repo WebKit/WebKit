@@ -543,7 +543,7 @@ WebInspector.TimelineOverviewCalculator.prototype = {
         return this.maximumBoundary - this.minimumBoundary;
     },
 
-    formatValue: function(value)
+    formatTime: function(value)
     {
         return Number.secondsToString(value);
     }
@@ -774,7 +774,6 @@ WebInspector.TimelineStartAtZeroOverview = function(pane) {
     this._overviewWindow = new WebInspector.TimelineOverviewWindow(this.element);
     this._overviewWindow.addEventListener(WebInspector.TimelineOverviewWindow.Events.WindowChanged, this._onWindowChanged, this);
     this._recordsPerBar = 1;
-    this._calculator = new WebInspector.TimelineStartAtZeroCalculator();
 }
 
 WebInspector.TimelineStartAtZeroOverview.prototype = {
@@ -786,12 +785,16 @@ WebInspector.TimelineStartAtZeroOverview.prototype = {
 
     update: function(records)
     {
-        this._calculator.reset();
         records = this._filterRecords(records);
-        records.forEach(this._calculator.updateBoundaries, this._calculator);
-        this._calculator.calculateWindow();
-
-        var scale = (this._overviewElement.clientHeight - 4) / this._calculator.boundarySpan;
+        var boundarySpan = 0;
+        for (var i = 0; i < records.length; ++i) {
+            var record = records[i];
+            var duration = record.endTime - record.startTime;
+            if (boundarySpan < duration)
+                boundarySpan = duration;
+        }
+      
+        var scale = (this._overviewElement.clientHeight - 4) / boundarySpan;
         this._recordsPerBar = Math.max(1, records.length * 4 / this.element.clientWidth);
         var numberOfBars = Math.ceil(records.length / this._recordsPerBar);
 

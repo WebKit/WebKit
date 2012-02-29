@@ -94,7 +94,7 @@ WebInspector.TimelinePanel = function()
     this._expandElements.id = "orphan-expand-elements";
     this._itemsGraphsElement.appendChild(this._expandElements);
 
-    this._calculator = new WebInspector.TimelineCalculator();
+    this._calculator = new WebInspector.TimelineCalculator(this._presentationModel);
     var shortRecordThresholdTitle = Number.secondsToString(WebInspector.TimelinePresentationModel.shortRecordThreshold);
     this._showShortRecordsTitleText = WebInspector.UIString("Show the records that are shorter than %s", shortRecordThresholdTitle);
     this._hideShortRecordsTitleText = WebInspector.UIString("Hide the records that are shorter than %s", shortRecordThresholdTitle);
@@ -425,7 +425,7 @@ WebInspector.TimelinePanel.prototype = {
         var toggled = !this.toggleStartAtZeroButton.toggled
         this._glueParentButton.disabled = toggled;
         this.toggleStartAtZeroButton.toggled = toggled;
-        this._calculator = toggled ? new WebInspector.TimelineStartAtZeroCalculator() : new WebInspector.TimelineCalculator();
+        this._calculator = toggled ? new WebInspector.TimelineFitInWindowCalculator(this._presentationModel) : new WebInspector.TimelineCalculator(this._presentationModel);
         this._presentationModel.setGlueRecords(this._glueParentButton.toggled && !this.toggleStartAtZeroButton.toggled);
         this._repopulateRecords();
         this._overviewPane.setStartAtZero(toggled);
@@ -556,8 +556,12 @@ WebInspector.TimelinePanel.prototype = {
 
         this._overviewPane.update(this._rootRecord().children, this._showShortEvents);
 
-        if (!this._boundariesAreValid)
-            this._updateBoundaries();
+        if (!this._boundariesAreValid) {
+            var min = this._presentationModel.minimumRecordTime();
+            var max = this._presentationModel.maximumRecordTime();
+            this._calculator.setWindow(min + (max - min) * this._overviewPane.windowLeft(), min + (max - min) * this._overviewPane.windowRight());
+        }
+
         var recordsInWindowCount = this._refreshRecords(!this._boundariesAreValid);
         this._updateRecordsCounter(recordsInWindowCount);
         if(!this._boundariesAreValid)
@@ -565,18 +569,6 @@ WebInspector.TimelinePanel.prototype = {
         if (this._memoryStatistics.visible())
             this._memoryStatistics.refresh();
         this._boundariesAreValid = true;
-    },
-
-    _updateBoundaries: function()
-    {
-        this._calculator.reset();
-        this._calculator.windowLeft = this._overviewPane.windowLeft();
-        this._calculator.windowRight = this._overviewPane.windowRight();
-
-        for (var i = 0; i < this._rootRecord().children.length; ++i)
-            this._calculator.updateBoundaries(this._rootRecord().children[i]);
-
-        this._calculator.calculateWindow();
     },
 
     revealRecordAt: function(time)
@@ -612,6 +604,7 @@ WebInspector.TimelinePanel.prototype = {
     _refreshRecords: function(updateBoundaries)
     {
         var recordsInWindow = this._presentationModel.filteredRecords();
+        this._calculator.setRecords(recordsInWindow);
 
         // Calculate the visible area.
         this._scrollTop = this._containerElement.scrollTop;
@@ -693,7 +686,7 @@ WebInspector.TimelinePanel.prototype = {
 
     get timelinePaddingLeft()
     {
-        return this._calculator.windowLeft === 0 ? this._expandOffset : 0;
+        return !this._overviewPane.windowLeft() ? this._expandOffset : 0;
     },
 
     _adjustScrollPosition: function(totalHeight)
@@ -755,12 +748,11 @@ WebInspector.TimelinePanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 /**
  * @constructor
+ * @param {WebInspector.TimelinePresentationModel} presentationModel
  */
-WebInspector.TimelineCalculator = function()
+WebInspector.TimelineCalculator = function(presentationModel)
 {
-    this.reset();
-    this.windowLeft = 0.0;
-    this.windowRight = 1.0;
+    this._presentationModel = presentationModel;
 }
 
 WebInspector.TimelineCalculator.prototype = {
@@ -789,105 +781,56 @@ WebInspector.TimelineCalculator.prototype = {
         return {left: left, width: width, widthWithChildren: widthWithChildren, cpuWidth: cpuWidth};
     },
 
-    calculateWindow: function()
+    setWindow: function(minimumBoundary, maximumBoundary)
     {
-        this.minimumBoundary = this._absoluteMinimumBoundary + this.windowLeft * (this._absoluteMaximumBoundary - this._absoluteMinimumBoundary);
-        this.maximumBoundary = this._absoluteMinimumBoundary + this.windowRight * (this._absoluteMaximumBoundary - this._absoluteMinimumBoundary);
+        this.minimumBoundary = minimumBoundary;
+        this.maximumBoundary = maximumBoundary;
         this.boundarySpan = this.maximumBoundary - this.minimumBoundary;
     },
 
-    reset: function()
+    setRecords: function(records)
     {
-        this._absoluteMinimumBoundary = -1;
-        this._absoluteMaximumBoundary = -1;
     },
 
-    updateBoundaries: function(record)
+    formatTime: function(value)
     {
-        var lowerBound = record.startTime;
-        if (this._absoluteMinimumBoundary === -1 || lowerBound < this._absoluteMinimumBoundary)
-            this._absoluteMinimumBoundary = lowerBound;
-
-        const minimumTimeFrame = 0.1;
-        const minimumDeltaForZeroSizeEvents = 0.01;
-        var upperBound = Math.max(record.lastChildEndTime + minimumDeltaForZeroSizeEvents, lowerBound + minimumTimeFrame);
-        if (this._absoluteMaximumBoundary === -1 || upperBound > this._absoluteMaximumBoundary)
-            this._absoluteMaximumBoundary = upperBound;
-    },
-
-    formatValue: function(value)
-    {
-        return Number.secondsToString(value + this.minimumBoundary - this._absoluteMinimumBoundary);
+        return Number.secondsToString(value + this.minimumBoundary - this._presentationModel.minimumRecordTime());
     }
 }
 
 /**
  * @constructor
+ * @param {WebInspector.TimelinePresentationModel} presentationModel
  * @extends WebInspector.TimelineCalculator
  */
-WebInspector.TimelineStartAtZeroCalculator = function()
+WebInspector.TimelineFitInWindowCalculator = function(presentationModel)
 {
-    this.reset();
-    this.windowLeft = 0.0;
-    this.windowRight = 1.0;
+    WebInspector.TimelineCalculator.call(this, presentationModel);
 }
 
-WebInspector.TimelineStartAtZeroCalculator.prototype = {
-    computeBarGraphPercentages: function(record)
+WebInspector.TimelineFitInWindowCalculator.prototype = {
+    setWindow: function(minimumBoundary, maximumBoundary)
     {
-        var scale = 100 / this.maximumBoundary;
-        return {
-            start: record._initiatorOffset * scale,
-            end: (record._initiatorOffset + record.endTime - record.startTime) * scale,
-            endWithChildren: (record._initiatorOffset + record.lastChildEndTime - record.startTime) * scale
-        };
     },
 
-    computeBarGraphWindowPosition: function(record, clientWidth)
+    setRecords: function(records)
     {
-        const minWidth = 5;
-        const borderWidth = 4;
-        var workingArea = clientWidth - minWidth - borderWidth;
-        var percentages = this.computeBarGraphPercentages(record);
-        var left = percentages.start / 100 * workingArea;
-        var width = (percentages.end - percentages.start) / 100 * workingArea + minWidth;
-        var widthWithChildren =  (percentages.endWithChildren - percentages.start) / 100 * workingArea;
-        if (percentages.endWithChildren > percentages.end)
-            widthWithChildren += borderWidth + minWidth;
+        this.minimumBoundary = -1;
+        this.maximumBoundary = -1;
 
-        return {left: left, width: width, widthWithChildren: widthWithChildren};
-    },
-
-    calculateWindow: function()
-    {
-        this.minimumBoundary = this._absoluteMinimumBoundary;
-        this.maximumBoundary = this._absoluteMaximumBoundary * 1.05;
-        this.boundarySpan = this.maximumBoundary >= 0 ? this.maximumBoundary : 0;
-    },
-
-    reset: function()
-    {
-        this._absoluteMinimumBoundary = -1;
-        this._absoluteMaximumBoundary = -1;
-    },
-
-    updateBoundaries: function(record)
-    {
-        var lowerBound = record.startTime;
-        if (this._absoluteMinimumBoundary === -1 || lowerBound < this._absoluteMinimumBoundary)
-            this._absoluteMinimumBoundary = lowerBound;
-
-        const minimumTimeFrame = 0.001;
-        var upperBound = Math.max(record.endTime - record.startTime, minimumTimeFrame);
-        if (this._absoluteMaximumBoundary === -1 || upperBound > this._absoluteMaximumBoundary)
-            this._absoluteMaximumBoundary = upperBound;
-    },
-
-    formatValue: function(value)
-    {
-        return Number.secondsToString(value, true);
+        var boundarySpan = 0;
+        for (var i = 0; i < records.length; ++i) {
+            var record = records[i];
+            if (this.minimumBoundary == -1 || record.startTime < this.minimumBoundary)
+                this.minimumBoundary = record.startTime;
+            if (this.maximumBoundary == -1 || record.endTime > this.maximumBoundary)
+                this.maximumBoundary = record.endTime;
+        }
+        this.boundarySpan = this.maximumBoundary - this.minimumBoundary;
     }
-};
+}
+
+WebInspector.TimelineFitInWindowCalculator.prototype.__proto__ = WebInspector.TimelineCalculator.prototype;
 
 /**
  * @constructor

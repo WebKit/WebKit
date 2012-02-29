@@ -119,7 +119,7 @@ WebInspector.TimelineGrid.prototype = {
             this._setDividerAndBarLeft(divider, dividerLabelBar, percentLeft);
 
             if (!isNaN(slice))
-                dividerLabelBar._labelElement.textContent = calculator.formatValue(slice * i);
+                dividerLabelBar._labelElement.textContent = calculator.formatTime(slice * i);
             else
                 dividerLabelBar._labelElement.textContent = "";
 

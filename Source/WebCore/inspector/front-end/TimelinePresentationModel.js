@@ -431,7 +431,7 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
             contentHelper._appendElementRow(WebInspector.UIString("Aggregated Time"), this._generateAggregatedInfo());
         }
         var text = WebInspector.UIString("%s (at %s)", Number.secondsToString(this._lastChildEndTime - this.startTime, true),
-            calculator.formatValue(this.startTime - calculator.minimumBoundary));
+            Number.secondsToString(this.startTime - this._presentationModel.minimumRecordTime()));
         contentHelper._appendTextRow(WebInspector.UIString("Duration"), text);
 
         const recordTypes = WebInspector.TimelineModel.RecordType;
