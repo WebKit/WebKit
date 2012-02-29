@@ -274,6 +274,11 @@ WebInspector.completeURL = function(baseURL, href)
         var path = href;
         if (path.charAt(0) !== "/") {
             var basePath = parsedURL.path;
+
+            // Trim off the query part of the basePath.
+            var questionMarkIndex = basePath.indexOf("?");
+            if (questionMarkIndex > 0)
+                basePath = basePath.substring(0, questionMarkIndex);
             // A href of "?foo=bar" implies "basePath?foo=bar".
             // With "basePath?a=b" and "?foo=bar" we should get "basePath?foo=bar".
             var prefix;
