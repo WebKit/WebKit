@@ -247,14 +247,15 @@ void RenderListItem::updateMarkerLocation()
             LayoutStateDisabler layoutStateDisabler(view());
             updateFirstLetter();
             m_marker->remove();
-            // If markerPar is an anonymous block that will lose all its children, destroy it
-            if (markerPar && (markerPar != lineBoxParent) && markerPar->isAnonymousBlock() && !(toRenderBlock(markerPar)->firstChild()))
-                markerPar->destroy();
             if (!lineBoxParent)
                 lineBoxParent = this;
             lineBoxParent->addChild(m_marker, firstNonMarkerChild(lineBoxParent));
             if (m_marker->preferredLogicalWidthsDirty())
                 m_marker->computePreferredLogicalWidths();
+            // If markerPar is an anonymous block that has lost all its children, destroy it.
+            // Extraneous anonymous blocks can cause problems for RenderBlock::updateBeforeAfterContent.
+            if (markerPar && markerPar->isAnonymousBlock() && !markerPar->firstChild() && !toRenderBlock(markerPar)->continuation())
+                markerPar->destroy();
         }
     }
 }

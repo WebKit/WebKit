@@ -1,3 +1,23 @@
+2012-02-29  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash when changing list marker locations
+        https://bugs.webkit.org/show_bug.cgi?id=79681
+
+        Reviewed by David Hyatt.
+
+        This fixes a regression crash from r108548.
+
+        There are some conditions where removing the anonymous block
+        parent at that point can cause problems. One is when there is
+        a continuation from it, and another when it is a sibling of
+        lineBoxParent and it causes lineBoxParent to be deleted
+        incidentally. This patch delays the destruction until after
+        lineBoxParent has been used and makes an exception for
+        continuations.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::updateMarkerLocation)
+
 2012-02-29  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Add support for FLAC audio and OGG/Vorbis audio
