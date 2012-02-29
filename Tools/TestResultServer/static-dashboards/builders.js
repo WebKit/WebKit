@@ -43,6 +43,7 @@ BuilderMaster.prototype.getLogPath = function(builder, buildNumber)
 CHROMIUM_BUILDER_MASTER = new BuilderMaster('Chromium', 'http://build.chromium.org/p/chromium/builders/');
 CHROMIUMOS_BUILDER_MASTER = new BuilderMaster('ChromiumChromiumOS', 'http://build.chromium.org/p/chromium.chromiumos/builders/');
 CHROMIUM_GPU_BUILDER_MASTER = new BuilderMaster('ChromiumGPU', 'http://build.chromium.org/p/chromium.gpu/builders/');
+CHROMIUM_GPU_FYI_BUILDER_MASTER = new BuilderMaster('ChromiumGPUFYI', 'http://build.chromium.org/p/chromium.gpu.fyi/builders/');
 CHROMIUM_WEBKIT_BUILDER_MASTER = new BuilderMaster('ChromiumWebkit', 'http://build.chromium.org/p/chromium.webkit/builders/');
 WEBKIT_BUILDER_MASTER = new BuilderMaster('webkit.org', 'http://build.webkit.org/builders/');
 
@@ -160,15 +161,25 @@ var LAYOUT_TESTS_BUILDER_GROUPS = {
 };
 
 var CHROMIUM_GPU_GTESTS_DEPS_BUILDERS = [
+    ['Win7 Release (NVIDIA)', BuilderGroup.DEFAULT_BUILDER],
+    ['Win7 Debug (NVIDIA)'],
+    ['Mac Release (Intel)'],
+    ['Mac Debug (Intel)'],
+    ['Linux Release (NVIDIA)'],
+    ['Linux Debug (NVIDIA)'],
+];
+associateBuildersWithMaster(CHROMIUM_GPU_GTESTS_DEPS_BUILDERS, CHROMIUM_GPU_BUILDER_MASTER);
+
+var CHROMIUM_GPU_FYI_GTESTS_DEPS_BUILDERS = [
     ['Win7 Release (ATI)', BuilderGroup.DEFAULT_BUILDER],
     ['Win7 Release (Intel)'],
     ['WinXP Release (NVIDIA)'],
     ['WinXP Debug (NVIDIA)'],
-    ['Mac Release (Intel)'],
+    ['Mac Release (ATI)'],
     ['Linux Release (ATI)'],
     ['Linux Release (Intel)'],
 ];
-associateBuildersWithMaster(CHROMIUM_GPU_GTESTS_DEPS_BUILDERS, CHROMIUM_GPU_BUILDER_MASTER);
+associateBuildersWithMaster(CHROMIUM_GPU_FYI_GTESTS_DEPS_BUILDERS, CHROMIUM_GPU_FYI_BUILDER_MASTER);
 
 var CHROMIUM_GPU_GTESTS_TOT_BUILDERS = [
     ['GPU Win7 (dbg) (NVIDIA)', BuilderGroup.DEFAULT_BUILDER],
@@ -179,6 +190,7 @@ associateBuildersWithMaster(CHROMIUM_GPU_GTESTS_TOT_BUILDERS, CHROMIUM_WEBKIT_BU
 
 var CHROMIUM_GPU_TESTS_BUILDER_GROUPS = {
     '@DEPS - chromium.org': new BuilderGroup(BuilderGroup.DEPS_WEBKIT, CHROMIUM_GPU_GTESTS_DEPS_BUILDERS),
+    '@DEPS FYI - chromium.org': new BuilderGroup(BuilderGroup.DEPS_WEBKIT, CHROMIUM_GPU_FYI_GTESTS_DEPS_BUILDERS),
     '@ToT - chromium.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, CHROMIUM_GPU_GTESTS_TOT_BUILDERS)
 };
 
