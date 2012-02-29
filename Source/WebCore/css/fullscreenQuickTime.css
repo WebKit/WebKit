@@ -88,17 +88,17 @@ video:-webkit-full-screen::-webkit-media-controls-fullscreen-volume-min-button {
     position: absolute;
     left: 11px;
     top: 15px;
-    width: 14px;
-    height: 12px;
+    width: 17px;
+    height: 14px;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-fullscreen-volume-slider {
-    -webkit-appearance: media-slider;
+    -webkit-appearance: media-fullscreen-volume-slider;
     display: block;
     position: absolute;
     left: 28px;
-    top: 15px;
-    height: 12px;
+    top: 14px;
+    height: 11px;
     width: 50px;
 }
 
@@ -108,8 +108,8 @@ video:-webkit-full-screen::-webkit-media-controls-fullscreen-volume-max-button {
     position: absolute;
     left: 84px;
     top: 15px;
-    width: 14px;
-    height: 12px;
+    width: 17px;
+    height: 14px;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-play-button {

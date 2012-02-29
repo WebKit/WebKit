@@ -417,6 +417,12 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         case MediaControlsFullscreenBackgroundPart:
             m_value.ident = CSSValueMediaControlsFullscreenBackground;
             break;
+        case MediaFullScreenVolumeSliderPart:
+            m_value.ident = CSSValueMediaFullscreenVolumeSlider;
+            break;
+        case MediaFullScreenVolumeSliderThumbPart:
+            m_value.ident = CSSValueMediaFullscreenVolumeSliderThumb;
+            break;
         case MediaCurrentTimePart:
             m_value.ident = CSSValueMediaCurrentTimeDisplay;
             break;

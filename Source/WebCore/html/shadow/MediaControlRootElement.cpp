@@ -343,6 +343,9 @@ void MediaControlRootElement::reset()
     m_playButton->updateDisplayType();
 
 #if ENABLE(FULLSCREEN_API)
+    if (m_fullScreenVolumeSlider)
+        m_fullScreenVolumeSlider->setVolume(m_mediaController->volume());
+
     if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == toParentMediaElement(this)) {
         if (m_mediaController->isLiveStream()) {
             m_seekBackButton->hide();

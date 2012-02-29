@@ -615,6 +615,8 @@ list-button
 listbox
 listitem
 media-fullscreen-button
+media-fullscreen-volume-slider
+media-fullscreen-volume-slider-thumb
 media-mute-button
 media-play-button
 media-seek-back-button

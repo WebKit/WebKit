@@ -68,6 +68,8 @@ enum MediaControlElementType {
     MediaVolumeSliderContainer,
     MediaVolumeSlider,
     MediaVolumeSliderThumb,
+    MediaFullScreenVolumeSlider,
+    MediaFullScreenVolumeSliderThumb,
     MediaVolumeSliderMuteButton,
     MediaTextTrackDisplayContainer,
     MediaTextTrackDisplay,

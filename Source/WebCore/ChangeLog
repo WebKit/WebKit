@@ -1,3 +1,56 @@
+2012-02-28  Jer Noble  <jer.noble@apple.com>
+
+        Full screen video volume slider has "progress bar"
+        https://bugs.webkit.org/show_bug.cgi?id=79812
+
+        Reviewed by Eric Carlson.
+
+        No new tests; strictly a platform-specific look-and-feel change.
+
+        The full-screen volume slider has a "media-slider"" appearance, which is rendering as if
+        the volume slider has a "progress".  Make a concrete "media-fullscreen-volume-slider" appearance
+        which has the correct look-and-feel.
+
+        Add two new appearance keywords, media-fullscreen-volume-slider and thumb, and their associated
+        types and CSS keywords:
+        * css/CSSValueKeywords.in:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * html/shadow/MediaControlElements.h:
+        * platform/ThemeTypes.h:
+
+        Handle the new slider and thumb types when rendering:
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::adjustMediaSliderThumbSize):
+        (WebCore::RenderMediaControls::paintMediaControlsPart):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::paintMediaFullScreenVolumeSliderTrack):
+        (WebCore::RenderTheme::paintMediaFullScreenVolumeSliderThumb):
+        * rendering/RenderThemeMac.h:
+        (RenderThemeMac):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustMediaSliderThumbSize):
+        (WebCore::RenderThemeMac::paintMediaFullScreenVolumeSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaFullScreenVolumeSliderThumb):
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::RenderMediaControlsChromium::paintMediaControlsPart):
+
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::orientation): Mark the fullscreen volume slider as horizontal.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderThumb::updateAppearance): Give MediaFullScreenVolumeSliderParts 
+            MediaFullScreenVolumeSliderThumbParts.
+        * css/fullscreenQuickTime.css: Change the styles for the fullscreen slider, min, and max buttons.
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-volume-min-button):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-volume-slider):
+        (video:-webkit-full-screen::-webkit-media-controls-fullscreen-volume-max-button):
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::reset): Set the value of the fullscreen volume slider
+            when resetting.
+
 2012-02-29  Antti Koivisto  <antti@apple.com>
 
         Applying region style should not need to access parent rules

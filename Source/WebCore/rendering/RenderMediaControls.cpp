@@ -90,12 +90,23 @@ static const int mediaSliderThumbHeight = 14;
 
 void RenderMediaControls::adjustMediaSliderThumbSize(RenderStyle* style)
 {
-    ControlPart part = style->appearance();
-    if (part != MediaSliderThumbPart && part != MediaVolumeSliderThumbPart)
+    int part;
+    switch (style->appearance()) {
+    case MediaSliderThumbPart:
+        part = MediaSliderThumb;
+        break;
+    case MediaVolumeSliderThumbPart:
+        part = MediaVolumeSliderThumb;
+        break;
+    case MediaFullScreenVolumeSliderThumbPart:
+        part = MediaFullScreenVolumeSliderThumb;
+        break;
+    default:
         return;
+    }
 
     CGSize size;
-    wkMeasureMediaUIPart(part == MediaSliderThumbPart ? MediaSliderThumb : MediaVolumeSliderThumb, WKMediaControllerThemeQuickTime, 0, &size);
+    wkMeasureMediaUIPart(part, WKMediaControllerThemeQuickTime, 0, &size);
 
     float zoomLevel = style->effectiveZoom();
     style->setWidth(Length(static_cast<int>(size.width * zoomLevel), Fixed));
@@ -162,6 +173,12 @@ bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, R
             break;
         case MediaVolumeSliderThumb:
             wkDrawMediaUIPart(WKMediaUIPartVolumeSliderThumb, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+            break;
+        case MediaFullScreenVolumeSlider:
+            wkDrawMediaUIPart(WKMediaUIPartFullScreenVolumeSlider, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+            break;
+        case MediaFullScreenVolumeSliderThumb:
+            wkDrawMediaUIPart(WKMediaUIPartFullScreenVolumeSliderThumb, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
             break;
         case MediaTimelineContainer:
             wkDrawMediaUIPart(WKMediaUIPartBackground, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
