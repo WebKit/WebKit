@@ -1,3 +1,14 @@
+2012-02-28  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Re-enable parallel GC on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=79837
+
+        Rubber stamped by Filip Pizlo.
+
+        * runtime/Options.cpp:
+        (JSC::Options::initializeOptions): We accidentally disabled parallel GC with this line,
+        so we removed it and things should go back to normal.
+
 2012-02-28  Filip Pizlo  <fpizlo@apple.com>
 
         Some run-javascriptcore-tests broken for 32-bit debug

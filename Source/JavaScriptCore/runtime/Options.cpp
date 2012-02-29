@@ -193,8 +193,6 @@ void initializeOptions()
     if (cpusToUse < 1)
         cpusToUse = 1;
     
-    cpusToUse = 1;
-    
     SET(numberOfGCMarkers, cpusToUse);
 
     ASSERT(executionCounterValueForDontOptimizeAnytimeSoon <= executionCounterValueForOptimizeAfterLongWarmUp);
