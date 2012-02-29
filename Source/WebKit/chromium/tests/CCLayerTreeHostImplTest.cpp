@@ -745,7 +745,7 @@ public:
     virtual WebString getString(WGC3Denum name)
     {
         if (name == GraphicsContext3D::EXTENSIONS)
-            return WebString("GL_CHROMIUM_post_sub_buffer");
+            return WebString("GL_CHROMIUM_post_sub_buffer GL_CHROMIUM_set_visibility");
 
         return WebString();
     }
@@ -816,6 +816,49 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     layerTreeHostImpl->swapBuffers();
     actualSwapRect = partialSwapTracker->partialSwapRect();
     expectedSwapRect = IntRect(IntPoint::zero(), IntSize(10, 10));
+    EXPECT_EQ(expectedSwapRect.x(), actualSwapRect.x());
+    EXPECT_EQ(expectedSwapRect.y(), actualSwapRect.y());
+    EXPECT_EQ(expectedSwapRect.width(), actualSwapRect.width());
+    EXPECT_EQ(expectedSwapRect.height(), actualSwapRect.height());
+}
+
+// Make sure that we reset damage tracking on visibility change because the
+// state of the front buffer that we push to with PostSubBuffer is undefined.
+TEST_F(CCLayerTreeHostImplTest, visibilityChangeResetsDamage)
+{
+    PartialSwapTrackerContext* partialSwapTracker = new PartialSwapTrackerContext();
+    RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(partialSwapTracker), GraphicsContext3D::RenderDirectlyToHostWindow);
+
+    // This test creates its own CCLayerTreeHostImpl, so
+    // that we can force partial swap enabled.
+    CCSettings settings;
+    settings.partialSwapEnabled = true;
+    OwnPtr<CCLayerTreeHostImpl> layerTreeHostImpl = CCLayerTreeHostImpl::create(settings, this);
+    layerTreeHostImpl->initializeLayerRenderer(context);
+    layerTreeHostImpl->setViewportSize(IntSize(500, 500));
+
+    CCLayerImpl* root = new FakeDrawableCCLayerImpl(1);
+    root->setAnchorPoint(FloatPoint(0, 0));
+    root->setBounds(IntSize(500, 500));
+    root->setDrawsContent(true);
+    layerTreeHostImpl->setRootLayer(adoptPtr(root));
+
+    // First frame: ignore.
+    layerTreeHostImpl->drawLayers();
+    layerTreeHostImpl->swapBuffers();
+ 
+    // Second frame: nothing has changed --- so we souldn't push anything with partial swap.
+    layerTreeHostImpl->drawLayers();
+    layerTreeHostImpl->swapBuffers();
+    EXPECT_TRUE(partialSwapTracker->partialSwapRect().isEmpty());
+
+    // Third frame: visibility change --- so we should push a full frame with partial swap.
+    layerTreeHostImpl->setVisible(false);
+    layerTreeHostImpl->setVisible(true);
+    layerTreeHostImpl->drawLayers();
+    layerTreeHostImpl->swapBuffers();
+    IntRect actualSwapRect = partialSwapTracker->partialSwapRect();
+    IntRect expectedSwapRect = IntRect(IntPoint::zero(), IntSize(500, 500));
     EXPECT_EQ(expectedSwapRect.x(), actualSwapRect.x());
     EXPECT_EQ(expectedSwapRect.y(), actualSwapRect.y());
     EXPECT_EQ(expectedSwapRect.width(), actualSwapRect.width());

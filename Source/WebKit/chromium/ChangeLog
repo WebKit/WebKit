@@ -1,3 +1,15 @@
+2012-02-28  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Reset damage tracker on visibility change.
+        https://bugs.webkit.org/show_bug.cgi?id=79267
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::PartialSwapTrackerContext::getString):
+        (WebKit):
+        (WebKit::TEST_F):
+
 2012-02-28  Tim Dresser  <tdresser@chromium.org>
 
         Provide DefaultDeviceScaleFactor though WebSettings

@@ -285,9 +285,17 @@ void LayerRendererChromium::setVisible(bool visible)
 {
     if (!visible)
         releaseRenderSurfaceTextures();
+
+    // TODO: Replace setVisibilityCHROMIUM with an extension to explicitly manage front/backbuffers
+    // crbug.com/116049
     if (m_capabilities.usingSetVisibility) {
         Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(m_context->getExtensions());
         extensions3DChromium->setVisibilityCHROMIUM(visible);
+
+        // Reset the damage tracker because the front/back buffers may have been damaged by the GPU
+        // process on visibility change.
+        if (visible && m_capabilities.usingPartialSwap)
+            m_owner->setFullRootLayerDamage();
     }
 }
 
