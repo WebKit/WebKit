@@ -1,3 +1,24 @@
+2012-02-29  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Stop doubling maximalOutlineSize during painting
+        https://bugs.webkit.org/show_bug.cgi?id=79724
+
+        Reviewed by Tony Chang.
+
+        Refactoring only, covered by existing tests (mostly repaint ones).
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+        Introduce a local repaint rectangle that we inflate by the maximalOutlineSize
+        to simplify the comparison logic. Also tried to make it clearer what's going on
+        by tweaking the existing code.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintObject):
+        Remove the doubling.
+
 2012-02-29  Ken Buchanan  <kenrb@chromium.org>
 
         Crash when changing list marker locations

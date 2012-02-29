@@ -1060,9 +1060,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
             localRepaintRect.setX(width() - localRepaintRect.maxX());
     }
 
-    // FIXME: Why do we double the outline size?
-    LayoutUnit outlineSize = 2 * maximalOutlineSize(paintPhase);
-    localRepaintRect.inflate(outlineSize);
+    localRepaintRect.inflate(maximalOutlineSize(paintPhase));
 
     CellSpan dirtiedRows = this->dirtiedRows(localRepaintRect);
     CellSpan dirtiedColumns = this->dirtiedColumns(localRepaintRect);

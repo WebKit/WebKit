@@ -960,17 +960,19 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     if (!paintInfo.shouldPaintWithinRoot(this) || style()->visibility() != VISIBLE)
         return;
 
-    LayoutPoint adjustedPaintOffset = paintOffset + location();
-    LayoutUnit os = 2 * maximalOutlineSize(paintInfo.phase);
-    if (!(adjustedPaintOffset.y() - table()->outerBorderTop() < paintInfo.rect.maxY() + os
-        && adjustedPaintOffset.y() + height() + table()->outerBorderBottom() > paintInfo.rect.y() - os))
+    LayoutRect localRepaintRect = paintInfo.rect;
+    localRepaintRect.inflate(maximalOutlineSize(paintInfo.phase));
+
+    LayoutRect paintRect = LayoutRect(paintOffset + location(), size());
+    if (paintRect.y() - table()->outerBorderTop() >= localRepaintRect.maxY())
+        return;
+
+    if (paintRect.maxY() + table()->outerBorderBottom() <= localRepaintRect.y())
         return;
 
     GraphicsContext* graphicsContext = paintInfo.context;
     if (!table()->currentBorderValue() || graphicsContext->paintingDisabled())
         return;
-
-    LayoutRect paintRect = LayoutRect(adjustedPaintOffset, size());
 
     RenderStyle* tableStyle = table()->style();
     CollapsedBorderValue leftVal = cachedCollapsedLeftBorder(tableStyle);
