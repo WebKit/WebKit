@@ -279,6 +279,22 @@ void ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition(c
 #endif
 }
 
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+void ScrollingCoordinator::handleWheelEventPhase(PlatformWheelEventPhase phase)
+{
+    ASSERT(isMainThread());
+
+    if (!m_page)
+        return;
+
+    FrameView* frameView = m_page->mainFrame()->view();
+    if (!frameView)
+        return;
+
+    frameView->scrollAnimator()->handleWheelEventPhase(phase);
+}
+#endif
+
 void ScrollingCoordinator::recomputeWheelEventHandlerCount()
 {
     unsigned wheelEventHandlerCount = 0;

@@ -1,3 +1,39 @@
+2012-02-28  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=79868
+        Overlay scrollbars should respond to AppKit's NSEventPhaseMayBegin
+        -and corresponding-
+        <rdar://problem/10688637>
+
+        Reviewed by Anders Carlsson.
+
+        Scrollbars are currently drawn on the main thread even when scrolling happens 
+        on the scrolling thread, so we have to call back to the main thread for the 
+        time being to make the right drawing calls for NSEventPhaseMayBegin.
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::handleWheelEventPhase):
+        (WebCore):
+        * page/scrolling/ScrollingCoordinator.h:
+        (ScrollingCoordinator):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEventPhase):
+        (WebCore):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm:
+        (WebCore::ScrollingTreeNodeMac::handleWheelEvent):
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::handleWheelEventPhase):
+        (ScrollAnimator):
+
+        Call into AppKit on NSEventPhaseMayBegin.
+        * platform/mac/ScrollAnimatorMac.h:
+        (ScrollAnimatorMac):
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::mayBeginScrollGesture):
+        (WebCore):
+        (WebCore::ScrollAnimatorMac::handleWheelEventPhase):
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+
 2012-02-28  Jer Noble  <jer.noble@apple.com>
 
         Full screen video volume slider has "progress bar"

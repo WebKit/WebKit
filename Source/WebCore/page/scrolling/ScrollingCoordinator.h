@@ -28,6 +28,7 @@
 
 #include "GraphicsLayer.h"
 #include "IntRect.h"
+#include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
@@ -46,7 +47,6 @@ namespace WebCore {
 class FrameView;
 class GraphicsLayer;
 class Page;
-class PlatformWheelEvent;
 class Region;
 class ScrollingCoordinatorPrivate;
 class ScrollingTreeState;
@@ -106,6 +106,11 @@ public:
 
     // Dispatched by the scrolling tree whenever the main frame scroll position changes and the scroll layer position needs to be updated as well.
     void updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint&);
+
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+    // Dispatched by the scrolling tree during handleWheelEvent. This is required as long as scrollbars are painted on the main thread.
+    void handleWheelEventPhase(PlatformWheelEventPhase);
+#endif
 
 private:
     explicit ScrollingCoordinator(Page*);

@@ -28,6 +28,7 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#include "PlatformWheelEvent.h"
 #include "Region.h"
 #include <wtf/Functional.h>
 #include <wtf/OwnPtr.h>
@@ -39,7 +40,6 @@
 namespace WebCore {
 
 class IntPoint;
-class PlatformWheelEvent;
 class ScrollingCoordinator;
 class ScrollingTreeNode;
 class ScrollingTreeState;
@@ -79,6 +79,10 @@ public:
 
     void updateMainFrameScrollPosition(const IntPoint& scrollPosition);
     void updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint& scrollPosition);
+
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+    void handleWheelEventPhase(PlatformWheelEventPhase);
+#endif
 
     bool canGoBack();
     bool canGoForward();

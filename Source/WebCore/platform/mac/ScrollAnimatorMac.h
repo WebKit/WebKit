@@ -86,6 +86,8 @@ private:
     virtual bool handleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
 #endif
 
+    virtual void handleWheelEventPhase(PlatformWheelEventPhase) OVERRIDE;
+
     virtual void cancelAnimations();
     virtual void setIsActive();
     
@@ -103,6 +105,7 @@ private:
     virtual void contentAreaDidHide() const;
     void didBeginScrollGesture() const;
     void didEndScrollGesture() const;
+    void mayBeginScrollGesture() const;
 
     virtual void didAddVerticalScrollbar(Scrollbar*);
     virtual void willRemoveVerticalScrollbar(Scrollbar*);

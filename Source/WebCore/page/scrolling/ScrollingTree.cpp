@@ -174,6 +174,16 @@ void ScrollingTree::updateMainFrameScrollPositionAndScrollLayerPosition(const In
     callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition, m_scrollingCoordinator.get(), scrollPosition));
 }
 
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+void ScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
+{
+    if (!m_scrollingCoordinator)
+        return;
+
+    callOnMainThread(bind(&ScrollingCoordinator::handleWheelEventPhase, m_scrollingCoordinator.get(), phase));
+}
+#endif
+
 bool ScrollingTree::canGoBack()
 {
     MutexLocker lock(m_swipeStateMutex);

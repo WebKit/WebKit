@@ -65,6 +65,7 @@ void ScrollingTreeNodeMac::update(ScrollingTreeState* state)
 void ScrollingTreeNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     m_scrollElasticityController.handleWheelEvent(wheelEvent);
+    scrollingTree()->handleWheelEventPhase(wheelEvent.phase());
 }
 
 void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& scrollPosition)

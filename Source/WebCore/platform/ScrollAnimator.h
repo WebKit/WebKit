@@ -31,13 +31,13 @@
 #ifndef ScrollAnimator_h
 #define ScrollAnimator_h
 
+#include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 class FloatPoint;
-class PlatformWheelEvent;
 class ScrollableArea;
 class Scrollbar;
 
@@ -64,6 +64,10 @@ public:
     virtual void setIsActive() { }
 
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
+
+#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+    virtual void handleWheelEventPhase(PlatformWheelEventPhase) { }
+#endif
 
     void setCurrentPosition(const FloatPoint&);
     FloatPoint currentPosition() const;
