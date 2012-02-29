@@ -37,14 +37,14 @@ WebInspector.IDBDatabaseView = function(database)
 {
     WebInspector.View.call(this);
     this.registerRequiredCSS("indexedDBViews.css");
-    
+
     this.element.addStyleClass("fill");
     this.element.addStyleClass("indexed-db-database-view");
-    
+
     this._headersListElement = this.element.createChild("ol", "outline-disclosure");
     this._headersTreeOutline = new TreeOutline(this._headersListElement);
     this._headersTreeOutline.expandTreeElementsWhenArrowing = true;
-    
+
     this._securityOriginTreeElement = new TreeElement("", null, false);
     this._securityOriginTreeElement.selectable = false;
     this._headersTreeOutline.appendChild(this._securityOriginTreeElement);
@@ -105,8 +105,8 @@ WebInspector.IDBDataView = function(model, databaseId, objectStore, index)
 {
     WebInspector.View.call(this);
     this.registerRequiredCSS("indexedDBViews.css");
-    
-    this._model = model; 
+
+    this._model = model;
     this._databaseId = databaseId;
     this._isIndex = !!index;
 
@@ -114,9 +114,12 @@ WebInspector.IDBDataView = function(model, databaseId, objectStore, index)
 
     var editorToolbar = this._createEditorToolbar();
     this.element.appendChild(editorToolbar);
-    
+
     this._dataGridContainer = this.element.createChild("div", "fill");
     this._dataGridContainer.addStyleClass("data-grid-container");
+
+    this._refreshButton = new WebInspector.StatusBarButton(WebInspector.UIString("Refresh"), "refresh-storage-status-bar-item");
+    this._refreshButton.addEventListener("click", this._refreshButtonClicked, this);
 
     this._pageSize = 50;
     this._skipCount = 0;
@@ -134,18 +137,18 @@ WebInspector.IDBDataView.prototype = {
         columns["number"] = {};
         columns["number"].title = WebInspector.UIString("#");
         columns["number"].width = "50px";
-        
+
         var keyPath = this._isIndex ? this._index.keyPath : this._objectStore.keyPath;
         columns["key"] = {};
         var keyColumnTitle = WebInspector.UIString("Key") + (keyPath ? " (" + keyPath + ")" : "");
         columns["key"].title = keyColumnTitle;
-        
+
         if (this._isIndex) {
             columns["primaryKey"] = {};
             var primaryKeyColumnTitle = WebInspector.UIString("Primary key") + (this._objectStore.keyPath ? " (" + this._objectStore.keyPath + ")" : "");
             columns["primaryKey"].title = primaryKeyColumnTitle;
         }
-        
+
         columns["value"] = {};
         columns["value"].title = WebInspector.UIString("Value");
 
@@ -169,7 +172,7 @@ WebInspector.IDBDataView.prototype = {
         this._pageBackButton.appendChild(document.createElement("img"));
         this._pageBackButton.addEventListener("click", this._pageBackButtonClicked.bind(this), false);
         editorToolbar.appendChild(this._pageBackButton);
-        
+
         this._pageForwardButton = editorToolbar.createChild("button", "forward-button");
         this._pageForwardButton.addStyleClass("status-bar-item");
         this._pageForwardButton.title = WebInspector.UIString("Show next page.");
@@ -177,7 +180,7 @@ WebInspector.IDBDataView.prototype = {
         this._pageForwardButton.appendChild(document.createElement("img"));
         this._pageForwardButton.addEventListener("click", this._pageForwardButtonClicked.bind(this), false);
         editorToolbar.appendChild(this._pageForwardButton);
-        
+
         this._keyInputElement = editorToolbar.createChild("input", "key-input");
         this._keyInputElement.placeholder = WebInspector.UIString("Start from key");
         this._keyInputElement.addEventListener("paste", this._keyInputChanged.bind(this));
@@ -193,18 +196,18 @@ WebInspector.IDBDataView.prototype = {
         this._skipCount = Math.max(0, this._skipCount - this._pageSize);
         this._updateData(false);
     },
-    
+
     _pageForwardButtonClicked: function()
     {
         this._skipCount = this._skipCount + this._pageSize;
         this._updateData(false);
     },
-    
+
     _keyInputChanged: function()
     {
-        window.setTimeout(this._updateData.bind(this, false), 0);        
+        window.setTimeout(this._updateData.bind(this, false), 0);
     },
-    
+
     /**
      * @param {WebInspector.IndexedDBModel.ObjectStore} objectStore
      * @param {WebInspector.IndexedDBModel.Index} index
@@ -220,9 +223,9 @@ WebInspector.IDBDataView.prototype = {
         this._dataGrid.show(this._dataGridContainer);
 
         this._skipCount = 0;
-        this._updateData(true); 
+        this._updateData(true);
     },
-    
+
     /**
      * @param {string} keyString
      */
@@ -236,7 +239,7 @@ WebInspector.IDBDataView.prototype = {
         }
         return result;
     },
-    
+
     /**
      * @return {string}
      */
@@ -255,7 +258,7 @@ WebInspector.IDBDataView.prototype = {
         var key = this._parseKey(this._keyInputElement.value);
         var pageSize = this._pageSize;
         var skipCount = this._skipCount;
-        
+
         if (!force && this._lastKey === key && this._lastPageSize === pageSize && this._lastSkipCount === skipCount)
             return;
 
@@ -286,17 +289,27 @@ WebInspector.IDBDataView.prototype = {
                 var node = new WebInspector.IDBDataGridNode(valueTitle, data);
                 this._dataGrid.appendChild(node);
             }
-            
+
             this._pageBackButton.disabled = skipCount === 0;
             this._pageForwardButton.disabled = !hasMore;
         }
-        
+
         var idbKeyRange = key ? window.webkitIDBKeyRange.lowerBound(key) : null;
         if (this._isIndex)
             this._model.loadIndexData(this._databaseId, this._objectStore.name, this._index.name, idbKeyRange, skipCount, pageSize, callback.bind(this));
         else
             this._model.loadObjectStoreData(this._databaseId, this._objectStore.name, idbKeyRange, skipCount, pageSize, callback.bind(this));
     },
+
+    _refreshButtonClicked: function(event)
+    {
+        this._updateData(true);
+    },
+
+    get statusBarItems()
+    {
+        return [this._refreshButton.element];
+    }
 }
 
 WebInspector.IDBDataView.prototype.__proto__ = WebInspector.View.prototype;
@@ -310,7 +323,7 @@ WebInspector.IDBDataView.prototype.__proto__ = WebInspector.View.prototype;
 WebInspector.IDBDataGridNode = function(valueTitle, data)
 {
     WebInspector.DataGridNode.call(this, data, false);
-    
+
     this._valueTitle = valueTitle;
     this.selectable = false;
 }
@@ -323,7 +336,7 @@ WebInspector.IDBDataGridNode.prototype = {
     {
         if (columnIdentifier !== "value")
             return WebInspector.DataGridNode.prototype.createCell.call(this, columnIdentifier);
-        
+
         var section = new WebInspector.ObjectPropertiesSection(this.data["value"], this._valueTitle)
         section.editable = false;
         section.skipProto = true;

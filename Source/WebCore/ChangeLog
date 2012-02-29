@@ -1,3 +1,22 @@
+2012-02-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [InspectorIndexedDB] Add refresh to IndexedDB support.
+        https://bugs.webkit.org/show_bug.cgi?id=79695
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/IndexedDBViews.js:
+        (WebInspector.IDBDataView):
+        (WebInspector.IDBDataView.prototype._refreshButtonClicked):
+        (WebInspector.IDBDataView.prototype.get statusBarItems):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.IndexedDBTreeElement):
+        (WebInspector.IndexedDBTreeElement.prototype.onattach):
+        (WebInspector.IndexedDBTreeElement.prototype._handleContextMenuEvent):
+        (WebInspector.IDBDatabaseTreeElement.prototype.onattach):
+        (WebInspector.IDBDatabaseTreeElement.prototype._handleContextMenuEvent):
+        (WebInspector.IDBDatabaseTreeElement.prototype._refreshIndexedDB):
+
 2012-02-29  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: timeline markers are not shown on the timeline panel
