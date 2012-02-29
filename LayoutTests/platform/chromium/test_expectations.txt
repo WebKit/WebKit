@@ -1630,7 +1630,7 @@ BUGCR11251 SLOW WIN RELEASE : fast/forms/textarea-width.html = FAIL
 BUGCR11251 LINUX WIN RELEASE : fast/forms/text-control-intrinsic-widths.html = FAIL
 BUGCR11251 LINUX WIN DEBUG : fast/forms/text-control-intrinsic-widths.html = FAIL
 BUGCR11251 LINUX WIN : svg/custom/svg-fonts-in-text-controls.html = FAIL
-BUGCR11251 : fast/forms/textarea-metrics.html = FAIL
+BUGCR11251 LINUX WIN : fast/forms/textarea-metrics.html = FAIL
 
 // Regresssions from WebKit Merge 43114:43242 that just need to be re-baselined.
 BUGCR11483 LINUX : fast/forms/input-text-double-click.html = FAIL
@@ -1999,8 +1999,8 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
 BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
 // These SVG tests have been flaky on Win from quite some time.
 // Hard to pin down which roll introduced the flakiness.
@@ -3549,7 +3549,7 @@ BUGWK75367 : svg/css/composite-shadow-with-opacity.html = PASS TEXT
 // Crashes due to an OOM error on V8.
 BUGCR108832 SKIP : fast/js/array-splice.html = CRASH
 
-BUGWK75418 : css2.1/20110323/border-collapse-offset-002.htm = MISSING
+BUGWK75418 WIN LINUX : css2.1/20110323/border-collapse-offset-002.htm = MISSING
 
 BUGWK75430 MAC : plugins/iframe-plugin-bgcolor.html = TEXT TIMEOUT
 BUGWK75468 : fast/js/kde/GlobalObject.html = TEXT
@@ -3563,8 +3563,6 @@ BUGWK75633 : fast/media/viewport-media-query.html = PASS IMAGE+TEXT
 BUGWK75696 MAC LINUX DEBUG : svg/text/text-style-recalc-crash.html = PASS TIMEOUT
 
 BUGWK75716 : fullscreen/video-controls-drag.html = TEXT
-
-BUGWK75742 MAC : fast/forms/input-disabled-color.html = IMAGE
 
 BUGWK75786 SKIP : compositing/tiled-layers-hidpi.html = TIMEOUT
 
@@ -3597,7 +3595,6 @@ BUGJAMESR LEOPARD GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
 
 BUGWK77187 WIN GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
 
-BUGWK76511 : compositing/geometry/clipped-video-controller.html = IMAGE
 BUGWK76511 : compositing/geometry/video-opacity-overlay.html = IMAGE
 BUGWK76511 : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK76511 : compositing/visibility/visibility-simple-video-layer.html = IMAGE
@@ -4428,7 +4425,6 @@ BUGWK79613 WIN : svg/carto.net/selectionlist.svg = TEXT
 
 BUGWK79642 : accessibility/aria-describedby-on-input.html = TIMEOUT
 BUGWK79642 : fast/loader/subresource-willSendRequest-null.html = TIMEOUT
-BUGWK79642 : media/video-playbackrate.html = TIMEOUT
 
 BUGWK79702 : fast/regex/lastIndex.html = TEXT
 BUGWK79703 : fast/regex/overflow.html = TEXT
