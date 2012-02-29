@@ -1,3 +1,9 @@
+2012-02-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build.
+
+        * Source/autotools/symbols.filter: Add symbol.
+
 2012-02-28  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Always build wtf as a static library.
