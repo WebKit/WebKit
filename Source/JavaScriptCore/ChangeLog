@@ -1,3 +1,19 @@
+2012-02-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Some run-javascriptcore-tests broken for 32-bit debug
+        https://bugs.webkit.org/show_bug.cgi?id=79844
+
+        Rubber stamped by Oliver Hunt.
+        
+        These assertions are just plain wrong for 32-bit. We could either have a massive
+        assertion that depends on value representation, that has to be changed every
+        time we change the JITs, resulting in a bug tail of debug-mode crashes, or we
+        could get rid of the assertions. I pick the latter.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2012-02-28  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Get rid of padding cruft in CopiedBlock

@@ -740,9 +740,6 @@ size_t DFG_OPERATION operationCompareStrictEq(ExecState* exec, EncodedJSValue en
     JSValue src1 = JSValue::decode(encodedOp1);
     JSValue src2 = JSValue::decode(encodedOp2);
     
-    ASSERT((src1.isCell() && src2.isCell())
-           || src1.isDouble() || src2.isDouble());
-    
     return JSValue::strictEqual(exec, src1, src2);
 }
 
