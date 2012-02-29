@@ -64,6 +64,7 @@ MetaAllocatorHandle::MetaAllocatorHandle(MetaAllocator* allocator, void* start, 
     ASSERT(allocator);
     ASSERT(start);
     ASSERT(sizeInBytes);
+    turnOffVerifier();
 }
 
 MetaAllocatorHandle::~MetaAllocatorHandle()
@@ -169,8 +170,6 @@ PassRefPtr<MetaAllocatorHandle> MetaAllocator::allocate(size_t sizeInBytes, void
 #endif
 
     MetaAllocatorHandle* handle = new MetaAllocatorHandle(this, start, sizeInBytes, ownerUID);
-    // FIXME: Implement a verifier scheme that groks MetaAllocatorHandles
-    handle->deprecatedTurnOffVerifier();
 
     if (UNLIKELY(!!m_tracker))
         m_tracker->notify(handle);

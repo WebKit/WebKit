@@ -1,3 +1,25 @@
+2012-02-28  Filip Pizlo  <fpizlo@apple.com>
+
+        RefCounted::deprecatedTurnOffVerifier() should not be deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=79864
+
+        Reviewed by Oliver Hunt.
+        
+        Removed the word "deprecated" from the name of this method, since this method
+        should not be deprecated. It works just fine as it is, and there is simply no
+        alternative to calling this method for many interesting JSC classes.
+
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::SourceProvider):
+        * runtime/SymbolTable.h:
+        (JSC::SharedSymbolTable::SharedSymbolTable):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocatorHandle::MetaAllocatorHandle):
+        (WTF::MetaAllocator::allocate):
+        * wtf/RefCounted.h:
+        (RefCountedBase):
+        (WTF::RefCountedBase::turnOffVerifier):
+
 2012-02-29  Gavin Barraclough  <barraclough@apple.com>
 
         Writable attribute not set correctly when redefining an accessor to a data descriptor
