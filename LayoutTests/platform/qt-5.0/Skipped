@@ -89,3 +89,13 @@ fast/events/remove-target-with-shadow-in-drag.html
 # https://bugs.webkit.org/show_bug.cgi?id=79634
 editing/selection/vertical-rl-rtl-extend-line-forward-br.html
 editing/selection/vertical-rl-rtl-extend-line-forward-p.html
+
+# [Qt] New tests introduced in r109104 fails with Qt5
+# https://bugs.webkit.org/show_bug.cgi?id=79888
+fast/repaint/percent-minheight-resize.html
+svg/custom/svg-percent-scale-vonly.html
+svg/custom/svg-percent-scale.html
+
+# [Qt] fast/selectors/selection-window-inactive.html fails with Qt5
+# https://bugs.webkit.org/show_bug.cgi?id=79890
+fast/selectors/selection-window-inactive.html
