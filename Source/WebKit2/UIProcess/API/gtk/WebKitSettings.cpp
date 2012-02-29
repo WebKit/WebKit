@@ -46,6 +46,7 @@ struct _WebKitSettingsPrivate {
     CString fantasyFontFamily;
     CString pictographFontFamily;
     CString defaultCharset;
+    bool zoomTextOnly;
 };
 
 /**
@@ -103,7 +104,8 @@ enum {
     PROP_ENABLE_FULLSCREEN,
     PROP_PRINT_BACKGROUNDS,
     PROP_ENABLE_WEBAUDIO,
-    PROP_ENABLE_WEBGL
+    PROP_ENABLE_WEBGL,
+    PROP_ZOOM_TEXT_ONLY
 };
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -209,6 +211,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_ENABLE_WEBGL:
         webkit_settings_set_enable_webgl(settings, g_value_get_boolean(value));
+        break;
+    case PROP_ZOOM_TEXT_ONLY:
+        webkit_settings_set_zoom_text_only(settings, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -319,6 +324,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ENABLE_WEBGL:
         g_value_set_boolean(value, webkit_settings_get_enable_webgl(settings));
+        break;
+    case PROP_ZOOM_TEXT_ONLY:
+        g_value_set_boolean(value, webkit_settings_get_zoom_text_only(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -813,6 +821,22 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                     g_param_spec_boolean("enable-webgl",
                                                          _("Enable WebGL"),
                                                          _("Whether WebGL content should be rendered"),
+                                                         FALSE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:zoom-text-only:
+     *
+     * Whether #WebKitWebView:zoom-level affects only the
+     * text of the page or all the contents. Other contents containing text
+     * like form controls will be also affected by zoom factor when
+     * this property is enabled.
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_ZOOM_TEXT_ONLY,
+                                    g_param_spec_boolean("zoom-text-only",
+                                                         _("Zoom Text Only"),
+                                                         _("Whether zoom level of web view changes only the text size"),
                                                          FALSE,
                                                          readWriteConstructParamFlags));
 
@@ -2073,3 +2097,39 @@ void webkit_settings_set_enable_webgl(WebKitSettings* settings, gboolean enabled
     WKPreferencesSetWebGLEnabled(priv->preferences.get(), enabled);
     g_object_notify(G_OBJECT(settings), "enable-webgl");
 }
+
+/**
+ * webkit_settings_set_zoom_text_only:
+ * @settings: a #WebKitSettings
+ * @zoom_text_only: Value to be set
+ *
+ * Set the #WebKitSettings:zoom-text-only property.
+ */
+void webkit_settings_set_zoom_text_only(WebKitSettings* settings, gboolean zoomTextOnly)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    if (priv->zoomTextOnly == zoomTextOnly)
+        return;
+
+    priv->zoomTextOnly = zoomTextOnly;
+    g_object_notify(G_OBJECT(settings), "zoom-text-only");
+}
+
+/**
+ * webkit_settings_get_zoom_text_only:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:zoom-text-only property.
+ *
+ * Returns: %TRUE If zoom level of the view should only affect the text
+ *    or %FALSE if all view contents should be scaled.
+ */
+gboolean webkit_settings_get_zoom_text_only(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->zoomTextOnly;
+}
+
