@@ -1,3 +1,9 @@
+2012-02-29  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, add myself as a reviewer
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-02-29  Greg Billock  <gbillock@google.com>
 
         Add more tests for web intents
