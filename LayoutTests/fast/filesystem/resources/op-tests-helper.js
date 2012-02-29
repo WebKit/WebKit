@@ -31,9 +31,22 @@ function createTestEnvironment(fileSystem, entries, successCallback, errorCallba
         this.errorCallback = errorCallback;
         this.environment = {};
 
-        this.createSuccessCallback = function(entry)
+        this.createSuccessCallback = function(entry, size)
         {
+            if (entry.isFile && size > 0) {
+                entry.createWriter(bindCallback(this, function(writer) {
+                    writer.truncate(size);
+                    writer.onerror = bindCallback(this, this.createErrorCallback);
+                    writer.onwriteend = bindCallback(this, function() {
+                        this.environment[entry.fullPath] = entry;
+                        this.environment[entry.fullPath + '.size'] = size;
+                        this.createNextEntry();
+                    });
+                }), bindCallback(this, this.createErrorCallback));
+                return;
+            }
             this.environment[entry.fullPath] = entry;
+            this.environment[entry.fullPath + '.size'] = 0;
             this.createNextEntry();
         }
 
@@ -53,7 +66,7 @@ function createTestEnvironment(fileSystem, entries, successCallback, errorCallba
             if (entry.isDirectory)
                 fileSystem.root.getDirectory(entry.fullPath, {create:true}, bindCallback(this, this.createSuccessCallback), bindCallback(this, this.createErrorCallback));
             else
-                fileSystem.root.getFile(entry.fullPath, {create:true}, bindCallback(this, this.createSuccessCallback), bindCallback(this, this.createErrorCallback));
+                fileSystem.root.getFile(entry.fullPath, {create:true}, bindCallback(this, this.createSuccessCallback, entry.size), bindCallback(this, this.createErrorCallback));
         };
     };
 
@@ -211,12 +224,18 @@ function runOperationTest(fileSystem, testCase, successCallback, errorCallback)
         {
             if (!this.expectedErrorCode) {
                 testPassed('Succeeded: ' + this.stage);
-                var symbol = entry + '.modificationTime';
+                var symbol = entry + '.returned.modificationTime';
                 this.environment[symbol] = metadata.modificationTime;
-
                 var entryMetadataString = this.getSymbolString(symbol);
-                if (entry != '/')
+                if (entry != '/') {
                     shouldBeGreaterThanOrEqual.apply(this, [entryMetadataString, 'this.roundedStartDate']);
+                }
+                if (metadata.size) {
+                    this.environment[entry + '.returned.size'] = metadata.size;
+                    var entrySizeString = this.getSymbolString(entry + '.returned.size');
+                    var expectedSizeString = this.getSymbolString(entry + '.size');
+                    shouldBe.apply(this, [expectedSizeString, entrySizeString]);
+                }
                 this.runNextTest();
             } else
                 testFailed('Unexpectedly succeeded while ' + this.stage);

@@ -33,32 +33,34 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "FileMetadata.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class Metadata : public RefCounted<Metadata> {
 public:
-    static PassRefPtr<Metadata> create(double modificationTime)
+    static PassRefPtr<Metadata> create(const FileMetadata& platformMetadata)
     {
-        return adoptRef(new Metadata(modificationTime));
+        return adoptRef(new Metadata(platformMetadata));
     }
 
     static PassRefPtr<Metadata> create(Metadata* metadata)
     {
-        return adoptRef(new Metadata(metadata->m_modificationTime));
+        return adoptRef(new Metadata(metadata->m_platformMetadata));
     }
 
-    // Needs to return epoch time in milliseconds for Date.
-    double modificationTime() const { return m_modificationTime * 1000.0; }
+    // Needs to return epoch time in milliseconds for Date while FileMetadata's modificationTime is in seconds.
+    double modificationTime() const { return m_platformMetadata.modificationTime * 1000.0; }
+    unsigned long long size() const { return static_cast<unsigned long long>(m_platformMetadata.length); }
 
 private:
-    Metadata(double modificationTime)
-        : m_modificationTime(modificationTime)
+    Metadata(const FileMetadata& platformMetadata)
+        : m_platformMetadata(platformMetadata)
     {
     }
 
-    double m_modificationTime;
+    FileMetadata m_platformMetadata;
 };
 
 } // namespace

@@ -268,7 +268,7 @@ MetadataCallbacks::MetadataCallbacks(PassRefPtr<MetadataCallback> successCallbac
 void MetadataCallbacks::didReadMetadata(const FileMetadata& metadata)
 {
     if (m_successCallback)
-        m_successCallback->handleEvent(Metadata::create(metadata.modificationTime).get());
+        m_successCallback->handleEvent(Metadata::create(metadata).get());
     m_successCallback.clear();
 }
 

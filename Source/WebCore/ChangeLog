@@ -1,3 +1,21 @@
+2012-02-28  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Add size field to Metadata in FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=79813
+
+        Reviewed by David Levin.
+
+        Test: fast/filesystem/op-get-metadata.html
+
+        * fileapi/FileSystemCallbacks.cpp:
+        (WebCore::MetadataCallbacks::didReadMetadata):
+        * fileapi/Metadata.h:
+        (WebCore::Metadata::create):
+        (WebCore::Metadata::modificationTime):
+        (WebCore::Metadata::size): Added.
+        (WebCore::Metadata::Metadata):
+        * fileapi/Metadata.idl:
+
 2012-02-28  Dmitry Lomov  <dslomov@google.com>
 
         [JSC] Implement ArrayBuffer transfer
