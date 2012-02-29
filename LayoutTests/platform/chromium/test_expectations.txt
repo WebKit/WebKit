@@ -237,7 +237,6 @@ WONTFIX SKIP : fast/events/message-port-deleted-frame.html = FAIL
 WONTFIX SKIP : fast/events/message-port-inactive-document.html = FAIL
 WONTFIX SKIP : fast/events/message-port-no-wrapper.html = FAIL
 WONTFIX SKIP : fast/events/message-port.html = FAIL
-WONTFIX SKIP : fast/events/message-port-multi.html = FAIL
 WONTFIX SKIP : http/tests/security/MessagePort/event-listener-context.html = FAIL
 
 // Chrome does not support Java LiveConnect.
