@@ -533,7 +533,7 @@ class Port(object):
     def driver_cmd_line(self):
         """Prints the DRT command line that will be used."""
         driver = self.create_driver(0)
-        return driver.cmd_line()
+        return driver.cmd_line(self.get_option('pixel_tests'), [])
 
     def update_baseline(self, baseline_path, data):
         """Updates the baseline for a test.

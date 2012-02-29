@@ -93,8 +93,8 @@ class MockDRTPort(object):
 
     @staticmethod
     def _overriding_cmd_line(original_cmd_line, driver_path, python_exe, this_file, port_name):
-        def new_cmd_line():
-            cmd_line = original_cmd_line()
+        def new_cmd_line(pixel_tests, per_test_args):
+            cmd_line = original_cmd_line(pixel_tests, per_test_args)
             index = cmd_line.index(driver_path)
             cmd_line[index:index + 1] = [python_exe, this_file, '--platform', port_name]
             return cmd_line
@@ -275,6 +275,7 @@ class MockChromiumDRT(MockDRT):
         self._stdout.write("#URL:%s\n" % self._driver.test_to_uri(test_input.test_name))
         if self._options.pixel_tests and (test_input.image_hash or test_input.is_reftest):
             self._stdout.write("#MD5:%s\n" % output.image_hash)
+            self._host.filesystem.maybe_make_directory(self._host.filesystem.dirname(self._options.pixel_path))
             self._host.filesystem.write_binary_file(self._options.pixel_path,
                                                     output.image)
         self._stdout.write(output.text)

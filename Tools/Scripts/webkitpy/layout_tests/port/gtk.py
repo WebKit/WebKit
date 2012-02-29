@@ -64,9 +64,9 @@ class GtkDriver(WebKitDriver):
             self._xvfb_process.wait()
             self._xvfb_process = None
 
-    def cmd_line(self):
+    def cmd_line(self, pixel_tests, per_test_args):
         wrapper_path = self._port.path_from_webkit_base("Tools", "gtk", "run-with-jhbuild")
-        return [wrapper_path] + WebKitDriver.cmd_line(self)
+        return [wrapper_path] + WebKitDriver.cmd_line(self, pixel_tests, per_test_args)
 
 
 class GtkPort(WebKitPort):

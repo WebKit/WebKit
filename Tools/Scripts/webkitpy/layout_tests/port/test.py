@@ -352,7 +352,7 @@ class TestPort(Port):
     def _path_to_driver(self):
         # This routine shouldn't normally be called, but it is called by
         # the mock_drt Driver. We return something, but make sure it's useless.
-        return 'junk'
+        return 'MOCK _path_to_driver'
 
     def baseline_search_path(self):
         search_paths = {
@@ -493,8 +493,9 @@ class TestPort(Port):
 class TestDriver(Driver):
     """Test/Dummy implementation of the DumpRenderTree interface."""
 
-    def cmd_line(self):
-        return [self._port._path_to_driver()] + self._port.get_option('additional_drt_flag', [])
+    def cmd_line(self, pixel_tests, per_test_args):
+        pixel_tests_flag = '-p' if pixel_tests else ''
+        return [self._port._path_to_driver()] + [pixel_tests_flag] + self._port.get_option('additional_drt_flag', []) + per_test_args
 
     def run_test(self, test_input):
         start_time = time.time()
@@ -520,7 +521,7 @@ class TestDriver(Driver):
             crashed_process_name=crashed_process_name,
             test_time=time.time() - start_time, timeout=test.timeout, error=test.error)
 
-    def start(self):
+    def start(self, pixel_tests, per_test_args):
         pass
 
     def stop(self):

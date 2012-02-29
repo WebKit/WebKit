@@ -300,4 +300,4 @@ class WebKitDriverTest(unittest.TestCase):
     def test_no_timeout(self):
         port = TestWebKitPort()
         driver = WebKitDriver(port, 0, pixel_tests=True, no_timeout=True)
-        self.assertEquals(driver.cmd_line(), ['MOCK output of child process/DumpRenderTree', '--pixel-tests', '--no-timeout', '-'])
+        self.assertEquals(driver.cmd_line(True, []), ['MOCK output of child process/DumpRenderTree', '--no-timeout', '--pixel-tests', '-'])

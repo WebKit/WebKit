@@ -162,7 +162,7 @@ class Driver(object):
     def stop(self):
         raise NotImplementedError('Driver.stop')
 
-    def cmd_line(self):
+    def cmd_line(self, pixel_tests, per_test_args):
         raise NotImplementedError('Driver.cmd_line')
 
 
@@ -172,6 +172,7 @@ class DriverProxy(object):
     single driver."""
 
     def __init__(self, port, worker_number, driver_instance_constructor, pixel_tests, no_timeout):
+        self._pixel_tests = pixel_tests
         self._driver = driver_instance_constructor(port, worker_number, pixel_tests, no_timeout)
         if pixel_tests:
             self._reftest_driver = self._driver
@@ -196,14 +197,21 @@ class DriverProxy(object):
         return self._driver.has_crashed() or self._reftest_driver.has_crashed()
 
     def start(self):
-        self._driver.start()
+        # FIXME: Callers shouldn't normally call this, since this routine
+        # may not be specifying the correct combination of pixel test and
+        # per_test args.
+        #
+        # The only reason we have this routine at all is so the perftestrunner
+        # can pause before running a test; it might be better to push that
+        # into run_test() directly.
+        self._driver.start(self._pixel_tests, [])
 
     def stop(self):
         self._driver.stop()
         self._reftest_driver.stop()
 
-    def cmd_line(self):
-        cmd_line = self._driver.cmd_line()
+    def cmd_line(self, pixel_tests, per_test_args):
+        cmd_line = self._driver.cmd_line(pixel_tests, per_test_args)
         if self._driver != self._reftest_driver:
-            cmd_line += ['; '] + self._reftest_driver.cmd_line()
+            cmd_line += ['; '] + self._reftest_driver.cmd_line(pixel_tests, per_test_args)
         return cmd_line

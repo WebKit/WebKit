@@ -464,13 +464,11 @@ class WebKitDriver(Driver):
     def __del__(self):
         self._port._filesystem.rmtree(str(self._driver_tempdir))
 
-    def cmd_line(self):
+    def cmd_line(self, pixel_tests, per_test_args):
         cmd = self._command_wrapper(self._port.get_option('wrapper'))
         cmd.append(self._port._path_to_driver())
         if self._port.get_option('skip_pixel_test_if_no_baseline'):
             cmd.append('--skip-pixel-test-if-no-baseline')
-        if self._pixel_tests:
-            cmd.append('--pixel-tests')
         if self._port.get_option('gc_between_tests'):
             cmd.append('--gc-between-tests')
         if self._port.get_option('complex_text'):
@@ -482,10 +480,15 @@ class WebKitDriver(Driver):
         # FIXME: We need to pass --timeout=SECONDS to WebKitTestRunner for WebKit2.
 
         cmd.extend(self._port.get_option('additional_drt_flag', []))
+
+        if pixel_tests or self._pixel_tests:
+            cmd.append('--pixel-tests')
+        cmd.extend(per_test_args)
+
         cmd.append('-')
         return cmd
 
-    def _start(self):
+    def _start(self, pixel_tests, per_test_args):
         server_name = self._port.driver_name()
         environment = self._port.setup_environ_for_server(server_name)
         environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
@@ -493,7 +496,7 @@ class WebKitDriver(Driver):
         environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
         self._crashed_subprocess_name = None
-        self._server_process = server_process.ServerProcess(self._port, server_name, self.cmd_line(), environment)
+        self._server_process = server_process.ServerProcess(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
 
     def has_crashed(self):
         if self._server_process is None:
@@ -553,7 +556,7 @@ class WebKitDriver(Driver):
 
     def run_test(self, driver_input):
         if not self._server_process:
-            self._start()
+            self._start(driver_input.is_reftest or self._pixel_tests, [])
         self.error_from_test = str()
         self.err_seen_eof = False
 
@@ -645,9 +648,9 @@ class WebKitDriver(Driver):
         block.decode_content()
         return block
 
-    def start(self):
+    def start(self, pixel_tests, per_test_args):
         if not self._server_process:
-            self._start()
+            self._start(pixel_tests, per_test_args)
 
     def stop(self):
         if self._server_process:

@@ -16,6 +16,57 @@
 
 2012-02-29  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: port/Driver needs to support per-test command line args
+        https://bugs.webkit.org/show_bug.cgi?id=79733
+
+        Reviewed by Adam Barth.
+
+        As part of removing the 'gpu' configurations and adding support
+        for 'virtual test suites', the Driver classes need to support
+        per-test command lines (since different tests will need to be
+        run with different command line options).
+
+        The per-test args are not yet used, so this change should have
+        no visible effects and need no additional testing.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.driver_cmd_line):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.cmd_line):
+        (ChromiumDriver._start):
+        (ChromiumDriver.start):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumDriverTest.test_two_drivers.MockDriver.cmd_line):
+        (ChromiumDriverTest):
+        (ChromiumDriverTest.test_two_drivers):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.cmd_line):
+        (DriverProxy.__init__):
+        (DriverProxy.start):
+        (DriverProxy.cmd_line):
+        * Scripts/webkitpy/layout_tests/port/driver_unittest.py:
+        (DriverTest.test_virtual_driver_methods):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkDriver.cmd_line):
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort._path_to_driver):
+        (TestDriver.cmd_line):
+        (TestDriver.start):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.cmd_line):
+        (WebKitDriver._start):
+        (WebKitDriver.run_test):
+        (WebKitDriver.start):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (WebKitDriverTest.test_no_timeout):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._run_tests_set):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_test_pause_before_testing):
+
+2012-02-29  Dirk Pranke  <dpranke@chromium.org>
+
         perftestsrunner can call printer.write() after printer.cleanup()
         https://bugs.webkit.org/show_bug.cgi?id=79872
 

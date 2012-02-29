@@ -398,9 +398,9 @@ class ChromiumDriver(Driver):
         if self._pixel_tests:
             self._image_path = self._port._filesystem.join(self._port.results_directory(), 'png_result%s.png' % self._worker_number)
 
-    def _wrapper_options(self):
+    def _wrapper_options(self, pixel_tests):
         cmd = []
-        if self._pixel_tests:
+        if pixel_tests or self._pixel_tests:
             # See note above in diff_image() for why we need _convert_path().
             cmd.append("--pixel-tests=" + self._port._convert_path(self._image_path))
         # FIXME: This is not None shouldn't be necessary, unless --js-flags="''" changes behavior somehow?
@@ -433,21 +433,23 @@ class ChromiumDriver(Driver):
         cmd.extend(self._port.get_option('additional_drt_flag', []))
         return cmd
 
-    def cmd_line(self):
+    def cmd_line(self, pixel_tests, per_test_args):
         cmd = self._command_wrapper(self._port.get_option('wrapper'))
         cmd.append(self._port._path_to_driver())
         # FIXME: Why does --test-shell exist?  TestShell is dead, shouldn't this be removed?
         # It seems it's still in use in Tools/DumpRenderTree/chromium/DumpRenderTree.cpp as of 8/10/11.
         cmd.append('--test-shell')
-        cmd.extend(self._wrapper_options())
+        cmd.extend(self._wrapper_options(pixel_tests))
+        cmd.extend(per_test_args)
+
         return cmd
 
-    def _start(self):
+    def _start(self, pixel_tests, per_test_args):
         assert not self._proc
         # FIXME: This should use ServerProcess like WebKitDriver does.
         # FIXME: We should be reading stderr and stdout separately like how WebKitDriver does.
         close_fds = sys.platform != 'win32'
-        self._proc = subprocess.Popen(self.cmd_line(), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=close_fds)
+        self._proc = subprocess.Popen(self.cmd_line(pixel_tests, per_test_args), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=close_fds)
 
     def has_crashed(self):
         if self._proc is None:
@@ -508,7 +510,7 @@ class ChromiumDriver(Driver):
 
     def run_test(self, driver_input):
         if not self._proc:
-            self._start()
+            self._start(driver_input.is_reftest or self._pixel_tests, [])
 
         output = []
         error = []
@@ -594,9 +596,9 @@ class ChromiumDriver(Driver):
         return DriverOutput(text, output_image, actual_checksum, audio=audio_bytes,
             crash=crash, crashed_process_name=crashed_process_name, test_time=run_time, timeout=timeout, error=error)
 
-    def start(self):
+    def start(self, pixel_tests, per_test_args):
         if not self._proc:
-            self._start()
+            self._start(pixel_tests, per_test_args)
 
     def stop(self):
         if not self._proc:

@@ -174,7 +174,7 @@ max 1120
         unexpected_result_count = runner._run_tests_set(tests, runner._port)
         self.assertEqual(TestDriverWithStopCount.stop_count, 6)
 
-    def test_run_test_set_kills_drt_per_run(self):
+    def test_run_test_pause_before_testing(self):
         class TestDriverWithStartCount(MainTest.TestDriver):
             start_count = 0
 

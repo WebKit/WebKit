@@ -91,7 +91,7 @@ class DriverTest(unittest.TestCase):
         driver = Driver(self.make_port(), None, pixel_tests=False)
         self.assertVirtual(driver.run_test, None)
         self.assertVirtual(driver.stop)
-        self.assertVirtual(driver.cmd_line)
+        self.assertVirtual(driver.cmd_line, False, [])
 
     def test_command_wrapper(self):
         self._assert_wrapper(None, [])

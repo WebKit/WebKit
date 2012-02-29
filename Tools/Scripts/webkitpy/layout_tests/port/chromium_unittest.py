@@ -138,15 +138,15 @@ class ChromiumDriverTest(unittest.TestCase):
             def __init__(self):
                 chromium.ChromiumDriver.__init__(self, mock_port, worker_number=0, pixel_tests=False)
 
-            def cmd_line(self):
+            def cmd_line(self, pixel_test, per_test_args):
                 return 'python'
 
         # get_option is used to get the timeout (ms) for a process before we kill it.
         mock_port.get_option = lambda name: 60 * 1000
         driver1 = MockDriver()
-        driver1._start()
+        driver1._start(False, [])
         driver2 = MockDriver()
-        driver2._start()
+        driver2._start(False, [])
         # It's possible for driver1 to timeout when stopping if it's sharing stdin with driver2.
         start_time = time.time()
         driver1.stop()
