@@ -1,3 +1,13 @@
+2012-02-29  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Ctrl R should reload page from the console panel as well.
+        https://bugs.webkit.org/show_bug.cgi?id=79883
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+
 2012-02-28  Pavel Podivilov  <podivilov@chromium.org>
 
         Extended attributes list should go before 'static' and 'const' modifiers in IDLs.

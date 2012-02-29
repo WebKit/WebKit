@@ -709,15 +709,13 @@ WebInspector.documentKeyDown = function(event)
             }
             break;
         case "U+0052": // R key
-            if (WebInspector.isInEditMode(event))
-                return;
             if ((event.metaKey && isMac) || (event.ctrlKey && !isMac)) {
                 PageAgent.reload(event.shiftKey);
                 event.preventDefault();
             }
             break;
         case "F5":
-            if (!isMac && !WebInspector.isInEditMode(event)) {
+            if (!isMac) {
                 PageAgent.reload(event.ctrlKey || event.shiftKey);
                 event.preventDefault();
             }
