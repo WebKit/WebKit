@@ -1,3 +1,12 @@
+2012-02-29  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        [GTK] Small fix for cross compilation to not generate gtkdoc.
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        * Scripts/webkitdirs.pm:
+        (isCrossCompilation):
+
 2012-02-28  Lucas Forschler  <lforschler@apple.com>
 
         Fix a typo in config.json

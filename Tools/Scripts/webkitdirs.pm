@@ -1264,7 +1264,8 @@ sub isARM()
 
 sub isCrossCompilation()
 {
-  my $compiler = "" unless $ENV{'CC'};
+  my $compiler = "";
+  $compiler = $ENV{'CC'} if (defined($ENV{'CC'}));
   if ($compiler =~ /gcc/) {
       my $compiler_options = `$compiler -v 2>&1`;
       my @host = $compiler_options =~ m/--host=(.*?)\s/;
