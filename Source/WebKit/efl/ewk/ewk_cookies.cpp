@@ -76,7 +76,7 @@ Eina_List* ewk_cookies_get_all(void)
     list = soup_cookie_jar_all_cookies(cookieJar);
     for (p = list; p; p = p->next) {
         SoupCookie* cookie = static_cast<SoupCookie*>(p->data);
-        Ewk_Cookie* ewkCookie = static_cast<Ewk_Cookie*>(malloc(sizeof(*ewkCookie)));
+        Ewk_Cookie* ewkCookie = new Ewk_Cookie;
         ewkCookie->name = strdup(cookie->name);
         ewkCookie->value = strdup(cookie->value);
         ewkCookie->domain = strdup(cookie->domain);
@@ -121,7 +121,7 @@ void ewk_cookies_cookie_free(Ewk_Cookie* cookie)
     free(cookie->value);
     free(cookie->domain);
     free(cookie->path);
-    free(cookie);
+    delete cookie;
 }
 
 void ewk_cookies_policy_set(Ewk_Cookie_Policy cookiePolicy)

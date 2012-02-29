@@ -26,6 +26,8 @@
 #include "ewk_tiled_private.h"
 #include <Ecore.h>
 #include <Eina.h>
+#include <OwnPtr.h>
+#include <PassOwnPtr.h>
 #include <algorithm>
 #include <errno.h>
 #include <math.h>
@@ -249,11 +251,7 @@ static void _ewk_tiled_backing_store_tile_dissociate_all(Ewk_Tiled_Backing_Store
 
 static inline Eina_Bool _ewk_tiled_backing_store_pre_render_request_add(Ewk_Tiled_Backing_Store_Data* priv, unsigned long column, unsigned long row, float zoom)
 {
-    Ewk_Tiled_Backing_Store_Pre_Render_Request* request;
-
-    request = static_cast<Ewk_Tiled_Backing_Store_Pre_Render_Request*>(malloc(sizeof(*request)));
-    if (!request)
-        return false;
+    Ewk_Tiled_Backing_Store_Pre_Render_Request* request = new Ewk_Tiled_Backing_Store_Pre_Render_Request;
 
     priv->render.preRenderRequests = eina_inlist_append
                                            (priv->render.preRenderRequests, EINA_INLIST_GET(request));
@@ -269,7 +267,7 @@ static inline void _ewk_tiled_backing_store_pre_render_request_del(Ewk_Tiled_Bac
 {
     priv->render.preRenderRequests = eina_inlist_remove
                                            (priv->render.preRenderRequests, EINA_INLIST_GET(request));
-    free(request);
+    delete request;
 }
 
 static inline Ewk_Tiled_Backing_Store_Pre_Render_Request* _ewk_tiled_backing_store_pre_render_request_first(const Ewk_Tiled_Backing_Store_Data* priv)
@@ -286,7 +284,7 @@ static void _ewk_tiled_backing_store_pre_render_request_flush(Ewk_Tiled_Backing_
         Ewk_Tiled_Backing_Store_Pre_Render_Request* request;
         request = _ewk_tiled_backing_store_pre_render_request_first(priv);
         *preRenderList = eina_inlist_remove(*preRenderList, *preRenderList);
-        free(request);
+        delete request;
     }
 }
 
@@ -301,7 +299,7 @@ static void _ewk_tiled_backing_store_pre_render_request_clear(Ewk_Tiled_Backing_
         next = iter->next;
         *preRenderList = eina_inlist_remove(*preRenderList, iter);
         iter = next;
-        free(request);
+        delete request;
     }
 }
 
@@ -471,31 +469,25 @@ end:
 
 static Ewk_Tiled_Backing_Store_Item* _ewk_tiled_backing_store_item_add(Ewk_Tiled_Backing_Store_Data* priv, unsigned long column, unsigned long row)
 {
-    Ewk_Tiled_Backing_Store_Item* item;
     Evas_Coord x, y, tileWidth, tileHeight;
 
     DBG("ewkBackingStore=%p", priv->self);
-
-    item = static_cast<Ewk_Tiled_Backing_Store_Item*>(malloc(sizeof(*item)));
-    if (!item)
-        return 0;
 
     tileWidth = priv->view.tile.width;
     tileHeight = priv->view.tile.height;
     x = priv->view.offset.base.x + priv->view.x + tileWidth * column;
     y = priv->view.offset.base.y + priv->view.y + tileHeight * row;
 
+    OwnPtr<Ewk_Tiled_Backing_Store_Item> item = adoptPtr(new Ewk_Tiled_Backing_Store_Item);
     item->tile = 0;
-
     item->smoothScale = priv->view.tile.zoomWeakSmoothScale;
-    _ewk_tiled_backing_store_item_move(item, x, y);
-    _ewk_tiled_backing_store_item_resize(item, tileWidth, tileHeight);
-    if (!_ewk_tiled_backing_store_item_fill(priv, item, column, row)) {
-        free(item);
-        return 0;
-    }
 
-    return item;
+    _ewk_tiled_backing_store_item_move(item.get(), x, y);
+    _ewk_tiled_backing_store_item_resize(item.get(), tileWidth, tileHeight);
+    if (!_ewk_tiled_backing_store_item_fill(priv, item.get(), column, row))
+        return 0;
+
+    return item.leakPtr();
 }
 
 static void _ewk_tiled_backing_store_item_del(Ewk_Tiled_Backing_Store_Data* priv, Ewk_Tiled_Backing_Store_Item* item)
@@ -505,7 +497,7 @@ static void _ewk_tiled_backing_store_item_del(Ewk_Tiled_Backing_Store_Data* priv
         _ewk_tiled_backing_store_tile_dissociate(priv, item, last_used);
     }
 
-    free(item);
+    delete item;
 }
 
 static void _ewk_tiled_backing_store_item_smooth_scale_set(Ewk_Tiled_Backing_Store_Item* item, Eina_Bool smoothScale)

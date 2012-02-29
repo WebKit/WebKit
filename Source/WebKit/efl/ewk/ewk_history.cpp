@@ -241,13 +241,10 @@ Ewk_History_Item* ewk_history_item_new_from_core(WebCore::HistoryItem* core)
         return 0;
     }
 
-    item = (Ewk_History_Item*)calloc(1, sizeof(Ewk_History_Item));
-    if (!item) {
-        CRITICAL("Could not allocate item memory.");
-        return 0;
-    }
-
     core->ref();
+
+    item = new Ewk_History_Item;
+    memset(item, 0, sizeof(*item));
     item->core = core;
 
     return item;
@@ -265,7 +262,7 @@ Ewk_History_Item* ewk_history_item_new(const char* uri, const char* title)
 static inline void _ewk_history_item_free(Ewk_History_Item* item, WebCore::HistoryItem* core)
 {
     core->deref();
-    free(item);
+    delete item;
 }
 
 void ewk_history_item_free(Ewk_History_Item* item)
@@ -399,14 +396,9 @@ Ewk_History* ewk_history_new(WebCore::BackForwardListImpl* core)
     EINA_SAFETY_ON_NULL_RETURN_VAL(core, 0);
     DBG("core=%p", core);
 
-    history = static_cast<Ewk_History*>(malloc(sizeof(Ewk_History)));
-    if (!history) {
-        CRITICAL("Could not allocate history memory.");
-        return 0;
-    }
-
-    core->ref();
+    history = new Ewk_History;
     history->core = core;
+    core->ref();
 
     return history;
 }
@@ -423,7 +415,7 @@ void ewk_history_free(Ewk_History* history)
 {
     DBG("history=%p", history);
     history->core->deref();
-    free(history);
+    delete history;
 }
 
 namespace EWKPrivate {

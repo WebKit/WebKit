@@ -93,19 +93,13 @@ static void session_authenticate(SoupSession* session, SoupMessage* message, Sou
     if (!ewk_auth_show_dialog_callback)
         return;
 
-    authenticationData = static_cast<Ewk_Auth_Data*>(calloc(1, sizeof(Ewk_Auth_Data)));
-
-    if (!authenticationData) {
-        CRITICAL("could not allocate Ewk_Auth_Data");
-        return;
-    }
-
     soup_session_pause_message(session, message);
     // We need to make sure the message sticks around when pausing it.
     g_object_ref(message);
     g_object_ref(session);
     g_object_ref(auth);
 
+    authenticationData = new Ewk_Auth_Data;
     authenticationData->message = message;
     authenticationData->auth = auth;
     authenticationData->session = session;
@@ -122,7 +116,7 @@ static void free_auth_data(Ewk_Auth_Data* authData)
     g_object_unref(authData->message);
     g_object_unref(authData->session);
     g_object_unref(authData->auth);
-    free(authData);
+    delete authData;
 }
 
 static void attach(SoupSessionFeature* manager, SoupSession* session)

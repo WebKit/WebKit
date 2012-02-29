@@ -659,7 +659,7 @@ void ewk_frame_hit_test_free(Ewk_Hit_Test* hitTest)
     eina_stringshare_del(hitTest->link.title);
     eina_stringshare_del(hitTest->image_uri);
     eina_stringshare_del(hitTest->media_uri);
-    free(hitTest);
+    delete hitTest;
 }
 
 Ewk_Hit_Test* ewk_frame_hit_test_new(const Evas_Object* ewkFrame, int x, int y)
@@ -680,12 +680,7 @@ Ewk_Hit_Test* ewk_frame_hit_test_new(const Evas_Object* ewkFrame, int x, int y)
     if (!result.innerNode())
         return 0;
 
-    Ewk_Hit_Test* hitTest = static_cast<Ewk_Hit_Test*>(calloc(1, sizeof(Ewk_Hit_Test)));
-    if (!hitTest) {
-        CRITICAL("Could not allocate memory for hit test.");
-        return 0;
-    }
-
+    Ewk_Hit_Test* hitTest = new Ewk_Hit_Test;
     hitTest->x = result.point().x();
     hitTest->y = result.point().y();
 #if 0

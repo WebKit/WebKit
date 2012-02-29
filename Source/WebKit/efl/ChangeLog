@@ -1,3 +1,67 @@
+2012-02-29  Tomasz Morawski  <t.morawski@samsung.com>
+
+        [EFL] Replace malloc/calloc/free to new/delete.
+        https://bugs.webkit.org/show_bug.cgi?id=75848
+
+        Reviewed by Hajime Morita.
+
+        Replaced almost all malloc/calloc/free to new/delete operator and where it was possible smart pointers were also
+        used. Left few c memory allocation by intention to not mix c and c++ memory managment. Left malloc for Ewk_Tile
+        object due to const fields present in Ewk_tile structure.
+
+        * ewk/ewk_auth_soup.cpp:
+        * ewk/ewk_contextmenu.cpp:
+        (ewk_context_menu_unref):
+        (ewk_context_menu_item_new):
+        (ewk_context_menu_item_free):
+        (ewk_context_menu_new):
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_get_all):
+        (ewk_cookies_cookie_free):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_hit_test_free):
+        (ewk_frame_hit_test_new):
+        * ewk/ewk_history.cpp:
+        (ewk_history_item_new_from_core):
+        (_ewk_history_item_free):
+        (ewk_history_new):
+        (ewk_history_free):
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_Ewk_Tiled_Backing_Store_Item):
+        (_ewk_tiled_backing_store_pre_render_request_add):
+        (_ewk_tiled_backing_store_pre_render_request_del):
+        (_ewk_tiled_backing_store_pre_render_request_flush):
+        (_ewk_tiled_backing_store_pre_render_request_clear):
+        (_ewk_tiled_backing_store_item_add):
+        (_ewk_tiled_backing_store_item_del):
+        * ewk/ewk_tiled_matrix.cpp:
+        (_ewk_tile_matrix_tile_free):
+        (ewk_tile_matrix_new):
+        (ewk_tile_matrix_zoom_level_set):
+        (ewk_tile_matrix_invalidate):
+        (ewk_tile_matrix_free):
+        * ewk/ewk_tiled_model.cpp:
+        (tile_account):
+        (ewk_tile_unused_cache_new):
+        (_ewk_tile_unused_cache_free):
+        (ewk_tile_unused_cache_clear):
+        (ewk_tile_unused_cache_flush):
+        (ewk_tile_unused_cache_tile_get):
+        (ewk_tile_unused_cache_tile_put):
+        * ewk/ewk_tiled_private.h:
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_core_frame_new):
+        (_ewk_view_priv_new):
+        (_ewk_view_priv_del):
+        (ewk_view_core_page_get):
+        (ewk_view_popup_new):
+        (ewk_view_popup_destroy):
+        (EWKPrivate::corePage):
+        * ewk/ewk_window_features.cpp:
+        (ewk_window_features_unref):
+        (ewk_window_features_new_from_core):
+
 2012-02-27  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL] Pairing up between evas_object_image_data_get and evas_object_image_data_set.

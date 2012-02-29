@@ -75,7 +75,7 @@ void ewk_context_menu_unref(Ewk_Context_Menu* menu)
     EINA_LIST_FREE(menu->items, item)
         ewk_context_menu_item_free(static_cast<Ewk_Context_Menu_Item*>(item));
 
-    free(menu);
+    delete menu;
 }
 
 Eina_Bool ewk_context_menu_destroy(Ewk_Context_Menu* menu)
@@ -101,10 +101,7 @@ Ewk_Context_Menu_Item* ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type
                                                  Ewk_Context_Menu_Action action, Ewk_Context_Menu* submenu,
                                                  const char* title, Eina_Bool checked, Eina_Bool enabled)
 {
-    Ewk_Context_Menu_Item* item = static_cast<Ewk_Context_Menu_Item*>(malloc(sizeof(*item)));
-    if (!item)
-        return 0;
-
+    Ewk_Context_Menu_Item* item = new Ewk_Context_Menu_Item;
     item->type = type;
     item->action = action;
     item->title = eina_stringshare_add(title);
@@ -137,7 +134,7 @@ void ewk_context_menu_item_free(Ewk_Context_Menu_Item* item)
     EINA_SAFETY_ON_NULL_RETURN(item);
 
     eina_stringshare_del(item->title);
-    free(item);
+    delete item;
 }
 
 Ewk_Context_Menu_Item_Type ewk_context_menu_item_type_get(const Ewk_Context_Menu_Item* item)
@@ -226,11 +223,7 @@ Ewk_Context_Menu* ewk_context_menu_new(Evas_Object* view, WebCore::ContextMenuCo
     EINA_SAFETY_ON_NULL_RETURN_VAL(view, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(controller, 0);
 
-    menu = static_cast<Ewk_Context_Menu*>(malloc(sizeof(*menu)));
-    if (!menu) {
-        CRITICAL("Could not allocate context menu memory.");
-        return 0;
-    }
+    menu = new Ewk_Context_Menu;
 
     menu->__ref = 1;
     menu->view = view;

@@ -25,6 +25,8 @@
 #include "ewk_tiled_backing_store.h"
 #include "ewk_tiled_private.h"
 #include <Eina.h>
+#include <OwnPtr.h>
+#include <PassOwnPtr.h>
 #include <errno.h>
 #include <inttypes.h>
 #include <math.h>
@@ -170,7 +172,7 @@ static void _ewk_tile_matrix_tile_free(void* data, Ewk_Tile* tile)
     if (!entry->count && entry->matrix != tileMatrix->matrix) {
         eina_matrixsparse_free(entry->matrix);
         tileMatrix->matrices = eina_inlist_remove(tileMatrix->matrices, EINA_INLIST_GET(entry));
-        free(entry);
+        delete entry;
     }
 
     ewk_tile_free(tile);
@@ -197,18 +199,16 @@ static void _ewk_tile_matrix_tile_free(void* data, Ewk_Tile* tile)
  */
 Ewk_Tile_Matrix* ewk_tile_matrix_new(Ewk_Tile_Unused_Cache* tileUnusedCache, unsigned long columns, unsigned long rows, float zoomLevel, Evas_Colorspace colorSpace, void (*renderCallback)(void* data, Ewk_Tile* tile, const Eina_Rectangle* update), const void* renderData)
 {
-    Ewk_Tile_Matrix* tileMatrix = static_cast<Ewk_Tile_Matrix*>(calloc(1, sizeof(Ewk_Tile_Matrix)));
-    if (!tileMatrix)
-        return 0;
+    OwnPtr<Ewk_Tile_Matrix> tileMatrix = adoptPtr(new Ewk_Tile_Matrix);
 
-    tileMatrix->matrix = eina_matrixsparse_new(rows, columns, _ewk_tile_matrix_cell_free, tileMatrix);
+    tileMatrix->matrix = eina_matrixsparse_new(rows, columns, _ewk_tile_matrix_cell_free, tileMatrix.get());
     if (!tileMatrix->matrix) {
         ERR("could not create sparse matrix.");
-        free(tileMatrix);
         return 0;
     }
 
-    ewk_tile_matrix_zoom_level_set(tileMatrix, zoomLevel);
+    tileMatrix->matrices = 0;
+    ewk_tile_matrix_zoom_level_set(tileMatrix.get(), zoomLevel);
 
     if (tileUnusedCache)
         tileMatrix->tileUnusedCache = ewk_tile_unused_cache_ref(tileUnusedCache);
@@ -217,7 +217,6 @@ Ewk_Tile_Matrix* ewk_tile_matrix_new(Ewk_Tile_Unused_Cache* tileUnusedCache, uns
         if (!tileMatrix->tileUnusedCache) {
             ERR("no cache of unused tile!");
             eina_matrixsparse_free(tileMatrix->matrix);
-            free(tileMatrix);
             return 0;
         }
     }
@@ -227,8 +226,16 @@ Ewk_Tile_Matrix* ewk_tile_matrix_new(Ewk_Tile_Unused_Cache* tileUnusedCache, uns
     tileMatrix->render.data = (void*)renderData;
     tileMatrix->tile.width = defaultTileWidth;
     tileMatrix->tile.height = defaultTileHeigth;
+    tileMatrix->frozen = 0;
+    tileMatrix->updates = 0;
 
-    return tileMatrix;
+#ifdef DEBUG_MEM_LEAKS
+    tileMatrix->stats.tiles.allocated = 0;
+    tileMatrix->stats.tiles.freed = 0;
+    tileMatrix->stats.bytes.allocated = 0;
+    tileMatrix->stats.bytes.freed = 0;
+#endif
+    return tileMatrix.leakPtr();
 }
 
 void ewk_tile_matrix_zoom_level_set(Ewk_Tile_Matrix* tileMatrix, float zoom)
@@ -249,12 +256,14 @@ void ewk_tile_matrix_zoom_level_set(Ewk_Tile_Matrix* tileMatrix, float zoom)
     }
 
     if (!entry) {
-        entry = static_cast<Ewk_Tile_Matrix_Entry*>(calloc(1, sizeof(Ewk_Tile_Matrix_Entry)));
-        entry->zoom = zoom;
+        entry = new Ewk_Tile_Matrix_Entry;
+        memset(entry, 0, sizeof(Ewk_Tile_Matrix_Entry));
         entry->matrix = eina_matrixsparse_new(rows, columns, _ewk_tile_matrix_cell_free, tileMatrix);
+        entry->count = 0;
+        entry->zoom = zoom;
         if (!entry->matrix) {
             ERR("could not create sparse matrix.");
-            free(entry);
+            delete entry;
             return;
         }
         tileMatrix->matrices = eina_inlist_prepend(tileMatrix->matrices, EINA_INLIST_GET(entry));
@@ -277,7 +286,7 @@ void ewk_tile_matrix_invalidate(Ewk_Tile_Matrix* tileMatrix)
         if (iterator->matrix != tileMatrix->matrix) {
             eina_matrixsparse_free(iterator->matrix);
             tileMatrix->matrices = eina_inlist_remove(tileMatrix->matrices, matrixList);
-            free(iterator);
+            delete iterator;
         }
 
         matrixList = next;
@@ -303,8 +312,8 @@ void ewk_tile_matrix_free(Ewk_Tile_Matrix* tileMatrix)
     entry = EINA_INLIST_CONTAINER_GET(tileMatrix->matrices, Ewk_Tile_Matrix_Entry);
     eina_matrixsparse_free(entry->matrix);
     tileMatrix->matrices = eina_inlist_remove(tileMatrix->matrices, reinterpret_cast<Eina_Inlist*>(entry));
-    free(entry);
     tileMatrix->matrices = 0;
+    delete entry;
 
     ewk_tile_unused_cache_thaw(tileMatrix->tileUnusedCache);
     ewk_tile_unused_cache_unref(tileMatrix->tileUnusedCache);
@@ -335,7 +344,7 @@ void ewk_tile_matrix_free(Ewk_Tile_Matrix* tileMatrix)
             tileMatrix->stats.bytes.allocated, tileMatrix->stats.bytes.freed);
 #endif
 
-    free(tileMatrix);
+    delete tileMatrix;
 }
 
 /**

@@ -439,9 +439,8 @@ Ewk_Tile_Unused_Cache* ewk_tile_unused_cache_new(size_t max)
 {
     Ewk_Tile_Unused_Cache* tileUnusedCache;
 
-    tileUnusedCache = static_cast<Ewk_Tile_Unused_Cache*>(calloc(1, sizeof(Ewk_Tile_Unused_Cache)));
-    if (!tileUnusedCache)
-        return 0;
+    tileUnusedCache = new Ewk_Tile_Unused_Cache;
+    memset(tileUnusedCache, 0, sizeof(Ewk_Tile_Unused_Cache));
 
     DBG("tileUnusedCache=%p", tileUnusedCache);
     tileUnusedCache->memory.max = max;
@@ -491,7 +490,7 @@ static void _ewk_tile_unused_cache_free(Ewk_Tile_Unused_Cache* tileUnusedCache)
         tileUnusedCache->memory.max, tileUnusedCache->memory.used);
 
     ewk_tile_unused_cache_clear(tileUnusedCache);
-    free(tileUnusedCache);
+    delete tileUnusedCache;
 }
 
 /**
@@ -511,7 +510,7 @@ void ewk_tile_unused_cache_clear(Ewk_Tile_Unused_Cache* tileUnusedCache)
     EINA_LIST_FREE(tileUnusedCache->entries.list, item) {
         Ewk_Tile_Unused_Cache_Entry* itr = static_cast<Ewk_Tile_Unused_Cache_Entry*>(item);
         itr->tile_free.callback(itr->tile_free.data, itr->tile);
-        free(itr);
+        delete itr;
     }
 
     tileUnusedCache->memory.used = 0;
@@ -604,7 +603,7 @@ size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache* tileUnusedCache, size_
         done += ewk_tile_memory_size_get(itr->tile);
         itr->tile_free.callback(itr->tile_free.data, itr->tile);
         tileUnusedCache->entries.list = eina_list_remove_list(tileUnusedCache->entries.list, list);
-        free(itr);
+        delete itr;
         count++;
     }
 
@@ -669,28 +668,23 @@ void ewk_tile_unused_cache_thaw(Ewk_Tile_Unused_Cache* tileUnusedCache)
  */
 Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache* tileUnusedCache, Ewk_Tile* tile)
 {
-    Eina_List* foundEntry, *iterateEntry;
-
+    Eina_List* iterateEntry;
     void* item;
-    foundEntry = 0;
+
     EINA_LIST_FOREACH(tileUnusedCache->entries.list, iterateEntry, item) {
         Ewk_Tile_Unused_Cache_Entry* entry = static_cast<Ewk_Tile_Unused_Cache_Entry*>(item);
         if (entry->tile == tile) {
-            foundEntry = iterateEntry;
-            break;
+            tileUnusedCache->entries.count--;
+            tileUnusedCache->memory.used -= ewk_tile_memory_size_get(tile);
+            tileUnusedCache->entries.list = eina_list_remove_list(tileUnusedCache->entries.list, iterateEntry);
+            delete entry;
+
+            return true;
         }
     }
-    if (!foundEntry) {
-        ERR("tile %p not found in cache %p", tile, tileUnusedCache);
-        return false;
-    }
 
-    tileUnusedCache->entries.count--;
-    tileUnusedCache->memory.used -= ewk_tile_memory_size_get(tile);
-    tileUnusedCache->entries.list = eina_list_remove_list(tileUnusedCache->entries.list, foundEntry);
-    free(item);
-
-    return true;
+    ERR("tile %p not found in cache %p", tile, tileUnusedCache);
+    return false;
 }
 
 /**
@@ -724,9 +718,7 @@ Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache* tileUnusedCache,
         return false;
     }
 
-    unusedCacheEntry = static_cast<Ewk_Tile_Unused_Cache_Entry*>(malloc(sizeof(Ewk_Tile_Unused_Cache_Entry)));
-    if (!unusedCacheEntry)
-        return false;
+    unusedCacheEntry = new Ewk_Tile_Unused_Cache_Entry;
 
     tileUnusedCache->entries.list = eina_list_append(tileUnusedCache->entries.list, unusedCacheEntry);
     if (eina_error_get()) {

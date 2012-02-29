@@ -45,7 +45,7 @@ void ewk_window_features_unref(Ewk_Window_Features* windowFeatures)
 
     delete windowFeatures->core;
     windowFeatures->core = 0;
-    free(windowFeatures);
+    delete windowFeatures;
 }
 
 void ewk_window_features_ref(Ewk_Window_Features* windowFeatures)
@@ -109,11 +109,7 @@ void ewk_window_features_int_property_get(const Ewk_Window_Features* windowFeatu
  */
 Ewk_Window_Features* ewk_window_features_new_from_core(const WebCore::WindowFeatures* core)
 {
-    Ewk_Window_Features* window_features = static_cast<Ewk_Window_Features*>(malloc(sizeof(*window_features)));
-    if (!window_features) {
-        CRITICAL("Could not allocate Ewk_Window_Features.");
-        return 0;
-    }
+    Ewk_Window_Features* window_features = new Ewk_Window_Features;
 
     if (core)
         window_features->core = new WebCore::WindowFeatures(*core);
