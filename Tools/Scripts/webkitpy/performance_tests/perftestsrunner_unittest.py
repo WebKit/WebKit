@@ -280,6 +280,10 @@ max 1120
         self.assertEqual(generated_json['builder-name'], 'builder1')
         self.assertEqual(generated_json['build-number'], 123)
         upload_json_returns_true = False
+
+        runner = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
+            '--test-results-server', 'some.host', '--platform', 'platform1', '--builder-name', 'builder1', '--build-number', '123'])
+        runner._upload_json = mock_upload_json
         self.assertEqual(runner.run(), -3)
 
     def test_upload_json(self):
