@@ -77,6 +77,20 @@ bool Region::contains(const IntPoint& point) const
     return contains(IntRect(point, IntSize(1, 1)));
 }
 
+unsigned Region::totalArea() const
+{
+    Vector<IntRect> rects = this->rects();
+    size_t size = rects.size();
+    unsigned totalArea = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        IntRect rect = rects[i];
+        totalArea += (rect.width() * rect.height());
+    }
+
+    return totalArea;
+}
+
 Region::Shape::Shape()
 {
 }

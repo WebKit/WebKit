@@ -58,13 +58,16 @@ bool RenderHTMLCanvas::requiresLayer() const
 
 void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (Frame* frame = this->frame()) {
-        if (Page* page = frame->page())
-            page->addRelevantRepaintedObject(this, paintInfo.rect);
-    }
-
     LayoutRect rect = contentBoxRect();
     rect.moveBy(paintOffset);
+
+    if (Frame* frame = this->frame()) {
+        if (Page* page = frame->page()) {
+            if (paintInfo.phase == PaintPhaseForeground)
+                page->addRelevantRepaintedObject(this, rect);
+        }
+    }
+
     bool useLowQualityScale = style()->imageRendering() == ImageRenderingOptimizeContrast;
     static_cast<HTMLCanvasElement*>(node())->paint(paintInfo.context, rect, useLowQualityScale);
 }

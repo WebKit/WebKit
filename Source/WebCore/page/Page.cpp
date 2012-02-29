@@ -1009,28 +1009,45 @@ PageVisibilityState Page::visibilityState() const
 }
 #endif
 
+// FIXME: gPaintedObjectCounterThreshold is no longer used for calculating relevant repainted areas,
+// and it should be removed. For the time being, it is useful because it allows us to avoid doing
+// any of this work for ports that don't make sure of didNewFirstVisuallyNonEmptyLayout. We should
+// remove this when we resolve <rdar://problem/10791680> Need to merge didFirstVisuallyNonEmptyLayout 
+// and didNewFirstVisuallyNonEmptyLayout
 static uint64_t gPaintedObjectCounterThreshold = 0;
+
+// These are magical constants that might be tweaked over time.
+static double gMinimumPaintedAreaRatio = 0.1;
+static double gMaximumUnpaintedAreaRatio = 0.1;
 
 void Page::setRelevantRepaintedObjectsCounterThreshold(uint64_t threshold)
 {
     gPaintedObjectCounterThreshold = threshold;
 }
 
+bool Page::isCountingRelevantRepaintedObjects() const
+{
+    return m_isCountingRelevantRepaintedObjects && gPaintedObjectCounterThreshold > 0;
+}
+
 void Page::startCountingRelevantRepaintedObjects()
 {
     m_isCountingRelevantRepaintedObjects = true;
 
-    // Clear the HashSet in case we didn't hit the threshold last time.
-    m_relevantPaintedRenderObjects.clear();
+    // Reset everything in case we didn't hit the threshold last time.
+    resetRelevantPaintedObjectCounter();
+}
+
+void Page::resetRelevantPaintedObjectCounter()
+{
+    m_relevantUnpaintedRenderObjects.clear();
+    m_relevantPaintedRegion = Region();
+    m_relevantUnpaintedRegion = Region();
 }
 
 void Page::addRelevantRepaintedObject(RenderObject* object, const IntRect& objectPaintRect)
 {
-    if (!m_isCountingRelevantRepaintedObjects)
-        return;
-
-    // We don't need to do anything if there is no counter threshold.
-    if (!gPaintedObjectCounterThreshold)
+    if (!isCountingRelevantRepaintedObjects())
         return;
 
     // The objects are only relevant if they are being painted within the viewRect().
@@ -1039,14 +1056,44 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const IntRect& objec
             return;
     }
 
-    m_relevantPaintedRenderObjects.add(object);
+    // If this object was previously counted as an unpainted object, remove it from that HashSet
+    // and corresponding Region. FIXME: This doesn't do the right thing if the objects overlap.
+    if (m_relevantUnpaintedRenderObjects.contains(object)) {
+        m_relevantUnpaintedRenderObjects.remove(object);
+        m_relevantUnpaintedRegion.subtract(objectPaintRect);
+    }
 
-    if (m_relevantPaintedRenderObjects.size() == static_cast<int>(gPaintedObjectCounterThreshold)) {
+    m_relevantPaintedRegion.unite(objectPaintRect);
+
+    RenderView* view = object->view();
+    if (!view)
+        return;
+    
+    float viewArea = view->viewRect().width() * view->viewRect().height();
+    float ratioOfViewThatIsPainted = m_relevantPaintedRegion.totalArea() / viewArea;
+    float ratioOfViewThatIsUnpainted = m_relevantUnpaintedRegion.totalArea() / viewArea;
+
+    if (ratioOfViewThatIsPainted > gMinimumPaintedAreaRatio && ratioOfViewThatIsUnpainted < gMaximumUnpaintedAreaRatio) {
         m_isCountingRelevantRepaintedObjects = false;
-        m_relevantPaintedRenderObjects.clear();
+        resetRelevantPaintedObjectCounter();
         if (Frame* frame = mainFrame())
             frame->loader()->didNewFirstVisuallyNonEmptyLayout();
     }
+}
+
+void Page::addRelevantUnpaintedObject(RenderObject* object, const IntRect& objectPaintRect)
+{
+    if (!isCountingRelevantRepaintedObjects())
+        return;
+
+    // The objects are only relevant if they are being painted within the viewRect().
+    if (RenderView* view = object->view()) {
+        if (!objectPaintRect.intersects(pixelSnappedIntRect(view->viewRect())))
+            return;
+    }
+
+    m_relevantUnpaintedRenderObjects.add(object);
+    m_relevantUnpaintedRegion.unite(objectPaintRect);
 }
 
 Page::PageClients::PageClients()

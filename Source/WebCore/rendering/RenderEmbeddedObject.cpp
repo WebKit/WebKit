@@ -139,11 +139,20 @@ void RenderEmbeddedObject::setMissingPluginIndicatorIsPressed(bool pressed)
 
 void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
+    Page* page = 0;
+    if (Frame* frame = this->frame())
+        page = frame->page();
+
     if (pluginCrashedOrWasMissing()) {
+        if (page && paintInfo.phase == PaintPhaseForeground)
+            page->addRelevantUnpaintedObject(this, visualOverflowRect());
         RenderReplaced::paint(paintInfo, paintOffset);
         return;
     }
-    
+
+    if (page && paintInfo.phase == PaintPhaseForeground)
+        page->addRelevantRepaintedObject(this, visualOverflowRect());
+
     RenderPart::paint(paintInfo, paintOffset);
 }
 
@@ -167,11 +176,6 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     float textWidth;
     if (!getReplacementTextGeometry(paintOffset, contentRect, path, replacementTextRect, font, run, textWidth))
         return;
-
-    if (Frame* frame = this->frame()) {
-        if (Page* page = frame->page())
-            page->addRelevantRepaintedObject(this, paintInfo.rect);
-    }
     
     GraphicsContextStateSaver stateSaver(*context);
     context->clip(contentRect);

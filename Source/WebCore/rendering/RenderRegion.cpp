@@ -139,11 +139,6 @@ void RenderRegion::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintO
     if (!m_flowThread || !isValid())
         return;
 
-    if (Frame* frame = this->frame()) {
-        if (Page* page = frame->page())
-            page->addRelevantRepaintedObject(this, paintInfo.rect);
-    }
-
     setRegionBoxesRegionStyle();
     m_flowThread->paintIntoRegion(paintInfo, this, LayoutPoint(paintOffset.x() + borderLeft() + paddingLeft(), paintOffset.y() + borderTop() + paddingTop()));
     restoreRegionBoxesOriginalStyle();

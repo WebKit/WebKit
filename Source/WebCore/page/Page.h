@@ -27,6 +27,7 @@
 #include "PageVisibilityState.h"
 #include "PlatformScreen.h"
 #include "PlatformString.h"
+#include "Region.h"
 #include "Supplementable.h"
 #include "ViewportArguments.h"
 #include <wtf/Forward.h>
@@ -320,9 +321,12 @@ namespace WebCore {
 
         PlatformDisplayID displayID() const { return m_displayID; }
 
+        bool isCountingRelevantRepaintedObjects() const;
         void setRelevantRepaintedObjectsCounterThreshold(uint64_t);
         void startCountingRelevantRepaintedObjects();
+        void resetRelevantPaintedObjectCounter();
         void addRelevantRepaintedObject(RenderObject*, const IntRect& objectPaintRect);
+        void addRelevantUnpaintedObject(RenderObject*, const IntRect& objectPaintRect);
 
     private:
         void initGroup();
@@ -418,7 +422,9 @@ namespace WebCore {
 #endif
         PlatformDisplayID m_displayID;
 
-        HashSet<RenderObject*> m_relevantPaintedRenderObjects;
+        HashSet<RenderObject*> m_relevantUnpaintedRenderObjects;
+        Region m_relevantPaintedRegion;
+        Region m_relevantUnpaintedRegion;
         bool m_isCountingRelevantRepaintedObjects;
     };
 

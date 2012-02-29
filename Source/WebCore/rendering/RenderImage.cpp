@@ -264,9 +264,16 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     GraphicsContext* context = paintInfo.context;
 
+    Page* page = 0;
+    if (Frame* frame = this->frame())
+        page = frame->page();
+
     if (!m_imageResource->hasImage() || m_imageResource->errorOccurred()) {
         if (paintInfo.phase == PaintPhaseSelection)
             return;
+
+        if (page && paintInfo.phase == PaintPhaseForeground)
+            page->addRelevantUnpaintedObject(this, visualOverflowRect());
 
         if (cWidth > 2 && cHeight > 2) {
             // Draw an outline rect where the image should be.
@@ -325,12 +332,19 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         }
     } else if (m_imageResource->hasImage() && cWidth > 0 && cHeight > 0) {
         RefPtr<Image> img = m_imageResource->image(cWidth, cHeight);
-        if (!img || img->isNull())
+        if (!img || img->isNull()) {
+            if (page && paintInfo.phase == PaintPhaseForeground)
+                page->addRelevantUnpaintedObject(this, visualOverflowRect());
             return;
+        }
 
-    if (Frame* frame = this->frame()) {
-        if (Page* page = frame->page())
-            page->addRelevantRepaintedObject(this, paintInfo.rect);
+    if (page && paintInfo.phase == PaintPhaseForeground) {
+        // For now, count images as unpainted if they are still progressively loading. We may want 
+        // to refine this in the future to account for the portion of the image that has painted.
+        if (cachedImage()->isLoading())
+            page->addRelevantUnpaintedObject(this, visualOverflowRect());
+        else
+            page->addRelevantRepaintedObject(this, visualOverflowRect());
     }
 
 #if PLATFORM(MAC)

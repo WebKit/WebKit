@@ -52,6 +52,8 @@ public:
 
     bool contains(const IntPoint&) const;
 
+    unsigned totalArea() const;
+
 #ifndef NDEBUG
     void dump() const;
 #endif

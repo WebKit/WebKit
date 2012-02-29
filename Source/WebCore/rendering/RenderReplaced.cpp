@@ -137,11 +137,6 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         drawSelectionTint = false;
     }
 
-    if (Frame* frame = this->frame()) {
-        if (Page* page = frame->page())
-            page->addRelevantRepaintedObject(this, paintInfo.rect);
-    }
-
     bool completelyClippedOut = false;
     if (style()->hasBorderRadius()) {
         LayoutRect borderRect = LayoutRect(adjustedPaintOffset, size());

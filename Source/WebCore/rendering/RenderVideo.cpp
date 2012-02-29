@@ -198,21 +198,29 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     MediaPlayer* mediaPlayer = mediaElement()->player();
     bool displayingPoster = videoElement()->shouldDisplayPosterImage();
 
+    Page* page = 0;
+    if (Frame* frame = this->frame())
+        page = frame->page();
+
     if (!displayingPoster) {
-        if (!mediaPlayer)
+        if (!mediaPlayer) {
+            if (page && paintInfo.phase == PaintPhaseForeground)
+                page->addRelevantUnpaintedObject(this, visualOverflowRect());
             return;
+        }
         updatePlayer();
     }
 
     LayoutRect rect = videoBox();
-    if (rect.isEmpty())
+    if (rect.isEmpty()) {
+        if (page && paintInfo.phase == PaintPhaseForeground)
+            page->addRelevantUnpaintedObject(this, visualOverflowRect());
         return;
+    }
     rect.moveBy(paintOffset);
 
-    if (Frame* frame = this->frame()) {
-        if (Page* page = frame->page())
-            page->addRelevantRepaintedObject(this, paintInfo.rect);
-    }
+    if (page && paintInfo.phase == PaintPhaseForeground)
+        page->addRelevantRepaintedObject(this, visualOverflowRect());
 
     if (displayingPoster)
         paintIntoRect(paintInfo.context, rect);

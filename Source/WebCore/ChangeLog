@@ -1,3 +1,67 @@
+2012-02-29  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=79705
+        didNewFirstVisuallyNonEmptyLayout should be enhanced to look at size instead 
+        of a raw tally
+        -and corresponding-
+        <rdar://problem/10821314>
+
+        Reviewed by Dave Hyatt.
+
+        Instead of firing didNewFirstVisuallyNonEmptyLayout() when a raw tally of 
+        relevant painted objects has reached a port-defined threshold, this patch 
+        looks at the size of those objects with respect to the view area. The patch 
+        also looks at relevant objects that cannot yet be fully painted, such as 
+        incrementally loading images. 
+
+        We no longer need a HashSet for the relevant painted objects since Region can 
+        do all of the heavy lifting. We now have a Region for the painted and 
+        unpainted regions. We do need a HashSet for the unpainted objects though, 
+        because we need to know if a painted object needs to be subtracted from the 
+        unpainted region before being added to the painted region.
+        * page/Page.cpp:
+        (WebCore):
+        (WebCore::Page::isCountingRelevantRepaintedObjects):
+        (WebCore::Page::startCountingRelevantRepaintedObjects):
+        (WebCore::Page::resetRelevantPaintedObjectCounter):
+        (WebCore::Page::addRelevantRepaintedObject):
+        (WebCore::Page::addRelevantUnpaintedObject):
+        * page/Page.h:
+        (Page):
+
+        New function on Region iterates through the rects and calculates the total 
+        area.
+        * platform/graphics/Region.cpp:
+        (WebCore::Region::totalArea):
+        (WebCore):
+        * platform/graphics/Region.h:
+        (Region):
+
+        Remove code from these classes since they are not actually relevant objects.
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::paint):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::paintReplaced):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+
+        All of these other callers send a rect that actually represents their size 
+        (usually the visualOverflowRect) instead of the paintInfo's paintRect, and 
+        they call addRelevantUnpaintedObject when appropriate.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paint):
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced):
+
 2012-02-29  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Resource leak with IDBObjectStore.openCursor

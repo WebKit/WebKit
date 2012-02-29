@@ -497,8 +497,14 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         return;
 
     if (Frame* frame = renderer()->frame()) {
-        if (Page* page = frame->page())
-            page->addRelevantRepaintedObject(renderer(), paintInfo.rect);
+        if (Page* page = frame->page()) {
+            // FIXME: Right now, InlineTextBoxes never call addRelevantUnpaintedObject() even though they might 
+            // legitimately be unpainted if they are waiting on a slow-loading web font. We should fix that, and
+            // when we do, we will have to account for the fact the InlineTextBoxes do not always have unique
+            // renderers and Page currently relies on each unpainted object having a unique renderer.
+            if (paintInfo.phase == PaintPhaseForeground)
+                page->addRelevantRepaintedObject(renderer(), IntRect(adjustedPaintOffset.x(), adjustedPaintOffset.y(), logicalWidth(), logicalHeight()));
+        }
     }
 
     if (m_truncation != cNoTruncation) {
