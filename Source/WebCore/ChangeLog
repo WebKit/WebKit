@@ -1,3 +1,13 @@
+2012-02-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Do not iterate all tiles for resizing when the content didn't change
+        https://bugs.webkit.org/show_bug.cgi?id=79787
+
+        Reviewed by Simon Hausmann.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::createTiles):
+
 2012-02-29  Parag Radke  <parag@motorola.com>
 
         Crash in WebCore::CompositeEditCommand::insertNodeAt

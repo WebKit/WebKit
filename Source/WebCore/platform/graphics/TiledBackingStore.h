@@ -121,8 +121,10 @@ private:
     double m_tileCreationDelay;
     float m_coverAreaMultiplier;
     FloatPoint m_visibleRectTrajectoryVector;
-    
+
     IntRect m_previousVisibleRect;
+    IntSize m_previousContentsSize;
+
     float m_contentsScale;
     float m_pendingScale;
 

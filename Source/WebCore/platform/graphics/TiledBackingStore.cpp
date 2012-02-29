@@ -232,22 +232,28 @@ void TiledBackingStore::createTiles()
 {
     if (m_contentsFrozen)
         return;
-    
-    IntRect visibleRect = visibleContentsRect();
+
+    const IntRect visibleRect = visibleContentsRect();
     m_previousVisibleRect = visibleRect;
 
     if (visibleRect.isEmpty())
         return;
 
     // Resize tiles on edges in case the contents size has changed.
-    bool didResizeTiles = resizeEdgeTiles();
+    bool didResizeTiles = false;
+    const IntSize contentsSize = contentsRect().size();
+
+    if (contentsSize != m_previousContentsSize) {
+        m_previousContentsSize = contentsSize;
+        didResizeTiles = resizeEdgeTiles();
+    }
 
     IntRect keepRect;
     IntRect coverRect;
     computeCoverAndKeepRect(visibleRect, coverRect, keepRect);
 
     dropTilesOutsideRect(keepRect);
-    
+
     // Search for the tile position closest to the viewport center that does not yet contain a tile. 
     // Which position is considered the closest depends on the tileDistance function.
     double shortestDistance = std::numeric_limits<double>::infinity();
