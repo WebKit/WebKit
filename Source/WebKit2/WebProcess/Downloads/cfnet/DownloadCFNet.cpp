@@ -100,7 +100,9 @@ void Download::start(WebPage*)
     // FIXME: Allow this to be changed by the client.
     CFURLDownloadSetDeletesUponFailure(m_download.get(), false);
 
+#if OS(WINDOWS)
     CFURLDownloadScheduleWithCurrentMessageQueue(m_download.get());
+#endif
     CFURLDownloadScheduleDownloadWithRunLoop(m_download.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
 
     CFURLDownloadStart(m_download.get());

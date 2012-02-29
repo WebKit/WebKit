@@ -1,3 +1,17 @@
+2012-02-29  Andy Estes  <aestes@apple.com>
+
+        CFURLDownloadScheduleWithCurrentMessageQueue only exists on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=79936
+
+        Reviewed by Brady Eidson.
+
+        CFURLDownloadScheduleWithCurrentMessageQueue only exists on Windows
+        platforms. Non-Windows platforms that use CFNetwork-based downloads
+        should omit this call.
+
+        * WebProcess/Downloads/cfnet/DownloadCFNet.cpp:
+        (WebKit::Download::start):
+
 2012-02-29  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] We should not add NetscapeBrowserFuncs.cpp as header
