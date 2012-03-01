@@ -1,3 +1,15 @@
+2012-02-29  Luke Macpherson   <macpherson@chromium.org>
+
+        Clean up CSSPrimitiveValue::computeLengthDouble().
+        https://bugs.webkit.org/show_bug.cgi?id=77065
+
+        Reviewed by Eric Seidel.
+
+        Refactoring only / no behavioral change.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+
 2012-02-29  Beth Dakin  <bdakin@apple.com>
 
         Speculative build-fix.
