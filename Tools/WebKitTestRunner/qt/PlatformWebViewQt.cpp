@@ -126,12 +126,12 @@ void PlatformWebView::setWindowFrame(WKRect wkRect)
 
 bool PlatformWebView::sendEvent(QEvent* event)
 {
-    return QCoreApplication::sendEvent(m_view, event);
+    return QCoreApplication::sendEvent(m_window, event);
 }
 
 void PlatformWebView::postEvent(QEvent* event)
 {
-    QCoreApplication::postEvent(m_view, event);
+    QCoreApplication::postEvent(m_window, event);
 }
 
 void PlatformWebView::addChromeInputField()

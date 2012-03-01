@@ -106,57 +106,7 @@ QtWebPageEventHandler::~QtWebPageEventHandler()
     disconnect(qApp->inputPanel(), SIGNAL(visibleChanged()), this, SLOT(inputPanelVisibleChanged()));
 }
 
-bool QtWebPageEventHandler::handleEvent(QEvent* ev)
-{
-    switch (ev->type()) {
-    case QEvent::MouseMove:
-        return handleMouseMoveEvent(static_cast<QMouseEvent*>(ev));
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonDblClick:
-        // If a MouseButtonDblClick was received then we got a MouseButtonPress before
-        // handleMousePressEvent will take care of double clicks.
-        return handleMousePressEvent(static_cast<QMouseEvent*>(ev));
-    case QEvent::MouseButtonRelease:
-        return handleMouseReleaseEvent(static_cast<QMouseEvent*>(ev));
-    case QEvent::Wheel:
-        return handleWheelEvent(static_cast<QWheelEvent*>(ev));
-    case QEvent::HoverLeave:
-        return handleHoverLeaveEvent(static_cast<QHoverEvent*>(ev));
-    case QEvent::HoverEnter: // Fall-through, for WebKit the distinction doesn't matter.
-    case QEvent::HoverMove:
-        return handleHoverMoveEvent(static_cast<QHoverEvent*>(ev));
-    case QEvent::DragEnter:
-        return handleDragEnterEvent(static_cast<QDragEnterEvent*>(ev));
-    case QEvent::DragLeave:
-        return handleDragLeaveEvent(static_cast<QDragLeaveEvent*>(ev));
-    case QEvent::DragMove:
-        return handleDragMoveEvent(static_cast<QDragMoveEvent*>(ev));
-    case QEvent::Drop:
-        return handleDropEvent(static_cast<QDropEvent*>(ev));
-    case QEvent::KeyPress:
-        return handleKeyPressEvent(static_cast<QKeyEvent*>(ev));
-    case QEvent::KeyRelease:
-        return handleKeyReleaseEvent(static_cast<QKeyEvent*>(ev));
-    case QEvent::FocusIn:
-        return handleFocusInEvent(static_cast<QFocusEvent*>(ev));
-    case QEvent::FocusOut:
-        return handleFocusOutEvent(static_cast<QFocusEvent*>(ev));
-    case QEvent::TouchBegin:
-    case QEvent::TouchEnd:
-    case QEvent::TouchCancel:
-    case QEvent::TouchUpdate:
-        touchEvent(static_cast<QTouchEvent*>(ev));
-        return true;
-    case QEvent::InputMethod:
-        inputMethodEvent(static_cast<QInputMethodEvent*>(ev));
-        return false; // This is necessary to avoid an endless loop in connection with QQuickItem::event().
-    }
-
-    // FIXME: Move all common event handling here.
-    return false;
-}
-
-bool QtWebPageEventHandler::handleMouseMoveEvent(QMouseEvent* ev)
+void QtWebPageEventHandler::handleMouseMoveEvent(QMouseEvent* ev)
 {
     // For some reason mouse press results in mouse hover (which is
     // converted to mouse move for WebKit). We ignore these hover
@@ -167,15 +117,13 @@ bool QtWebPageEventHandler::handleMouseMoveEvent(QMouseEvent* ev)
     QTransform fromItemTransform = m_webPage->transformFromItem();
     QPointF webPagePoint = fromItemTransform.map(ev->localPos());
     if (lastPos == webPagePoint)
-        return ev->isAccepted();
+        return;
     lastPos = webPagePoint;
 
     m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, fromItemTransform, /*eventClickCount*/ 0));
-
-    return ev->isAccepted();
 }
 
-bool QtWebPageEventHandler::handleMousePressEvent(QMouseEvent* ev)
+void QtWebPageEventHandler::handleMousePressEvent(QMouseEvent* ev)
 {
     QTransform fromItemTransform = m_webPage->transformFromItem();
     QPointF webPagePoint = fromItemTransform.map(ev->localPos());
@@ -193,48 +141,43 @@ bool QtWebPageEventHandler::handleMousePressEvent(QMouseEvent* ev)
 
     m_lastClick = webPagePoint;
     m_clickTimer.start(qApp->styleHints()->mouseDoubleClickInterval(), this);
-
-    return ev->isAccepted();
 }
 
-bool QtWebPageEventHandler::handleMouseReleaseEvent(QMouseEvent* ev)
+void QtWebPageEventHandler::handleMouseReleaseEvent(QMouseEvent* ev)
 {
     QTransform fromItemTransform = m_webPage->transformFromItem();
     m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, fromItemTransform, /*eventClickCount*/ 0));
-    return ev->isAccepted();
 }
 
-bool QtWebPageEventHandler::handleWheelEvent(QWheelEvent* ev)
+void QtWebPageEventHandler::handleWheelEvent(QWheelEvent* ev)
 {
     QTransform fromItemTransform = m_webPage->transformFromItem();
     m_webPageProxy->handleWheelEvent(NativeWebWheelEvent(ev, fromItemTransform));
     // FIXME: Handle whether the page used the wheel event or not.
     if (m_interactionEngine)
         m_interactionEngine->wheelEvent(ev);
-    return ev->isAccepted();
 }
 
-bool QtWebPageEventHandler::handleHoverLeaveEvent(QHoverEvent* ev)
+void QtWebPageEventHandler::handleHoverLeaveEvent(QHoverEvent* ev)
 {
     // To get the correct behavior of mouseout, we need to turn the Leave event of our webview into a mouse move
     // to a very far region.
     QTransform fromItemTransform = m_webPage->transformFromItem();
     QHoverEvent fakeEvent(QEvent::HoverMove, QPoint(INT_MIN, INT_MIN), fromItemTransform.map(ev->oldPosF()));
     fakeEvent.setTimestamp(ev->timestamp());
-    return handleHoverMoveEvent(&fakeEvent);
+    handleHoverMoveEvent(&fakeEvent);
 }
 
-bool QtWebPageEventHandler::handleHoverMoveEvent(QHoverEvent* ev)
+void QtWebPageEventHandler::handleHoverMoveEvent(QHoverEvent* ev)
 {
     QTransform fromItemTransform = m_webPage->transformFromItem();
     QMouseEvent me(QEvent::MouseMove, fromItemTransform.map(ev->posF()), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
     me.setAccepted(ev->isAccepted());
     me.setTimestamp(ev->timestamp());
-
-    return handleMouseMoveEvent(&me);
+    handleMouseMoveEvent(&me);
 }
 
-bool QtWebPageEventHandler::handleDragEnterEvent(QDragEnterEvent* ev)
+void QtWebPageEventHandler::handleDragEnterEvent(QDragEnterEvent* ev)
 {
     m_webPageProxy->resetDragOperation();
     QTransform fromItemTransform = m_webPage->transformFromItem();
@@ -242,10 +185,9 @@ bool QtWebPageEventHandler::handleDragEnterEvent(QDragEnterEvent* ev)
     DragData dragData(ev->mimeData(), fromItemTransform.map(ev->pos()), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
     m_webPageProxy->dragEntered(&dragData);
     ev->acceptProposedAction();
-    return true;
 }
 
-bool QtWebPageEventHandler::handleDragLeaveEvent(QDragLeaveEvent* ev)
+void QtWebPageEventHandler::handleDragLeaveEvent(QDragLeaveEvent* ev)
 {
     bool accepted = ev->isAccepted();
 
@@ -255,10 +197,9 @@ bool QtWebPageEventHandler::handleDragLeaveEvent(QDragLeaveEvent* ev)
     m_webPageProxy->resetDragOperation();
 
     ev->setAccepted(accepted);
-    return accepted;
 }
 
-bool QtWebPageEventHandler::handleDragMoveEvent(QDragMoveEvent* ev)
+void QtWebPageEventHandler::handleDragMoveEvent(QDragMoveEvent* ev)
 {
     bool accepted = ev->isAccepted();
 
@@ -271,10 +212,9 @@ bool QtWebPageEventHandler::handleDragMoveEvent(QDragMoveEvent* ev)
         ev->accept();
 
     ev->setAccepted(accepted);
-    return accepted;
 }
 
-bool QtWebPageEventHandler::handleDropEvent(QDropEvent* ev)
+void QtWebPageEventHandler::handleDropEvent(QDropEvent* ev)
 {
     bool accepted = ev->isAccepted();
     QTransform fromItemTransform = m_webPage->transformFromItem();
@@ -286,7 +226,6 @@ bool QtWebPageEventHandler::handleDropEvent(QDropEvent* ev)
     ev->accept();
 
     ev->setAccepted(accepted);
-    return accepted;
 }
 
 void QtWebPageEventHandler::handlePotentialSingleTapEvent(const QTouchEvent::TouchPoint& point)
@@ -319,28 +258,24 @@ void QtWebPageEventHandler::timerEvent(QTimerEvent* ev)
         QObject::timerEvent(ev);
 }
 
-bool QtWebPageEventHandler::handleKeyPressEvent(QKeyEvent* ev)
+void QtWebPageEventHandler::handleKeyPressEvent(QKeyEvent* ev)
 {
     m_webPageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(ev));
-    return true;
 }
 
-bool QtWebPageEventHandler::handleKeyReleaseEvent(QKeyEvent* ev)
+void QtWebPageEventHandler::handleKeyReleaseEvent(QKeyEvent* ev)
 {
     m_webPageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(ev));
-    return true;
 }
 
-bool QtWebPageEventHandler::handleFocusInEvent(QFocusEvent*)
+void QtWebPageEventHandler::handleFocusInEvent(QFocusEvent*)
 {
     m_webPageProxy->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
-    return true;
 }
 
-bool QtWebPageEventHandler::handleFocusOutEvent(QFocusEvent*)
+void QtWebPageEventHandler::handleFocusOutEvent(QFocusEvent*)
 {
     m_webPageProxy->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
-    return true;
 }
 
 void QtWebPageEventHandler::setViewportInteractionEngine(QtViewportInteractionEngine* engine)
@@ -348,7 +283,7 @@ void QtWebPageEventHandler::setViewportInteractionEngine(QtViewportInteractionEn
     m_interactionEngine = engine;
 }
 
-void QtWebPageEventHandler::inputMethodEvent(QInputMethodEvent* ev)
+void QtWebPageEventHandler::handleInputMethodEvent(QInputMethodEvent* ev)
 {
     QString commit = ev->commitString();
     QString composition = ev->preeditString();
@@ -415,7 +350,7 @@ void QtWebPageEventHandler::inputMethodEvent(QInputMethodEvent* ev)
     ev->accept();
 }
 
-void QtWebPageEventHandler::touchEvent(QTouchEvent* event)
+void QtWebPageEventHandler::handleTouchEvent(QTouchEvent* event)
 {
 #if ENABLE(TOUCH_EVENTS)
     QTransform fromItemTransform = m_webPage->transformFromItem();

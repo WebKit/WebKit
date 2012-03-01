@@ -1,3 +1,53 @@
+2012-02-29  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][WK2] QQuickWebView::event should lookup faster which events QQuickWebPage can handle
+        https://bugs.webkit.org/show_bug.cgi?id=78047
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Replaced double-dispatch of events with direct forwarding of events from QQuickWebView::*Event to
+        QtWebPageEventHandler::handle*Event.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::keyPressEvent):
+        (QQuickWebView::keyReleaseEvent):
+        (QQuickWebView::inputMethodEvent):
+        (QQuickWebView::focusInEvent):
+        (QQuickWebView::focusOutEvent):
+        (QQuickWebView::touchEvent):
+        (QQuickWebView::mousePressEvent):
+        (QQuickWebView::mouseMoveEvent):
+        (QQuickWebView::mouseReleaseEvent):
+        (QQuickWebView::mouseDoubleClickEvent):
+        (QQuickWebView::wheelEvent):
+        (QQuickWebView::hoverEnterEvent):
+        (QQuickWebView::hoverMoveEvent):
+        (QQuickWebView::hoverLeaveEvent):
+        (QQuickWebView::dragMoveEvent):
+        (QQuickWebView::dragEnterEvent):
+        (QQuickWebView::dragLeaveEvent):
+        (QQuickWebView::dropEvent):
+        (QQuickWebView::event):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handleMouseMoveEvent):
+        (QtWebPageEventHandler::handleMousePressEvent):
+        (QtWebPageEventHandler::handleMouseReleaseEvent):
+        (QtWebPageEventHandler::handleWheelEvent):
+        (QtWebPageEventHandler::handleHoverLeaveEvent):
+        (QtWebPageEventHandler::handleHoverMoveEvent):
+        (QtWebPageEventHandler::handleDragEnterEvent):
+        (QtWebPageEventHandler::handleDragLeaveEvent):
+        (QtWebPageEventHandler::handleDragMoveEvent):
+        (QtWebPageEventHandler::handleDropEvent):
+        (QtWebPageEventHandler::handleKeyPressEvent):
+        (QtWebPageEventHandler::handleKeyReleaseEvent):
+        (QtWebPageEventHandler::handleFocusInEvent):
+        (QtWebPageEventHandler::handleFocusOutEvent):
+        (QtWebPageEventHandler::handleInputMethodEvent):
+        (QtWebPageEventHandler::handleTouchEvent):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        (QtWebPageEventHandler):
+
 2012-03-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed buildfix after r109277.

@@ -1305,128 +1305,120 @@ void QQuickWebView::componentComplete()
 
 void QQuickWebView::keyPressEvent(QKeyEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleKeyPressEvent(event);
 }
 
 void QQuickWebView::keyReleaseEvent(QKeyEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleKeyReleaseEvent(event);
 }
 
 void QQuickWebView::inputMethodEvent(QInputMethodEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleInputMethodEvent(event);
 }
 
 void QQuickWebView::focusInEvent(QFocusEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleFocusInEvent(event);
 }
 
 void QQuickWebView::focusOutEvent(QFocusEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleFocusOutEvent(event);
 }
 
 void QQuickWebView::touchEvent(QTouchEvent* event)
 {
+    Q_D(QQuickWebView);
     forceActiveFocus();
-    this->event(event);
+    d->pageView->eventHandler()->handleTouchEvent(event);
 }
 
 void QQuickWebView::mousePressEvent(QMouseEvent* event)
 {
+    Q_D(QQuickWebView);
     forceActiveFocus();
-    this->event(event);
+    d->pageView->eventHandler()->handleMousePressEvent(event);
 }
 
 void QQuickWebView::mouseMoveEvent(QMouseEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleMouseMoveEvent(event);
 }
 
 void QQuickWebView::mouseReleaseEvent(QMouseEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleMouseReleaseEvent(event);
 }
 
 void QQuickWebView::mouseDoubleClickEvent(QMouseEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    // If a MouseButtonDblClick was received then we got a MouseButtonPress before
+    // handleMousePressEvent will take care of double clicks.
+    d->pageView->eventHandler()->handleMousePressEvent(event);
 }
 
 void QQuickWebView::wheelEvent(QWheelEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleWheelEvent(event);
 }
 
 void QQuickWebView::hoverEnterEvent(QHoverEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    // Map HoverEnter to Move, for WebKit the distinction doesn't matter.
+    d->pageView->eventHandler()->handleHoverMoveEvent(event);
 }
 
 void QQuickWebView::hoverMoveEvent(QHoverEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleHoverMoveEvent(event);
 }
 
 void QQuickWebView::hoverLeaveEvent(QHoverEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleHoverLeaveEvent(event);
 }
 
 void QQuickWebView::dragMoveEvent(QDragMoveEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleDragMoveEvent(event);
 }
 
 void QQuickWebView::dragEnterEvent(QDragEnterEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleDragEnterEvent(event);
 }
 
 void QQuickWebView::dragLeaveEvent(QDragLeaveEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleDragLeaveEvent(event);
 }
 
 void QQuickWebView::dropEvent(QDropEvent* event)
 {
-    this->event(event);
+    Q_D(QQuickWebView);
+    d->pageView->eventHandler()->handleDropEvent(event);
 }
 
 bool QQuickWebView::event(QEvent* ev)
 {
-    Q_D(QQuickWebView);
-
-    switch (ev->type()) {
-    case QEvent::MouseMove:
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonRelease:
-    case QEvent::MouseButtonDblClick:
-    case QEvent::Wheel:
-    case QEvent::HoverLeave:
-    case QEvent::HoverEnter:
-    case QEvent::HoverMove:
-    case QEvent::DragEnter:
-    case QEvent::DragLeave:
-    case QEvent::DragMove:
-    case QEvent::Drop:
-    case QEvent::KeyPress:
-    case QEvent::KeyRelease:
-    case QEvent::FocusIn:
-    case QEvent::FocusOut:
-    case QEvent::TouchBegin:
-    case QEvent::TouchEnd:
-    case QEvent::TouchCancel:
-    case QEvent::TouchUpdate:
-        if (d->pageView->eventHandler()->handleEvent(ev))
-            return true;
-    }
-
-    if (ev->type() == QEvent::InputMethod)
-        return false; // This is necessary to avoid an endless loop in connection with QQuickItem::event().
-
+    // Re-implemented for possible future use without breaking binary compatibility.
     return QQuickItem::event(ev);
 }
 
