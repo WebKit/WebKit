@@ -1,3 +1,10 @@
+2012-03-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed buildfix after r109277.
+
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage):
+
 2012-02-29  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Get rid of the #ifdef mess in LayerTreeHost[Proxy]
