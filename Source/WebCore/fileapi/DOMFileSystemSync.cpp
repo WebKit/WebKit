@@ -72,60 +72,35 @@ PassRefPtr<DirectoryEntrySync> DOMFileSystemSync::root()
 
 namespace {
 
-class GetPathHelper : public AsyncFileSystemCallbacks {
+class CreateFileHelper : public AsyncFileSystemCallbacks {
 public:
-    class GetPathResult : public RefCounted<GetPathResult> {
+    class CreateFileResult : public RefCounted<CreateFileResult> {
       public:
-        static PassRefPtr<GetPathResult> create()
+        static PassRefPtr<CreateFileResult> create()
         {
-            return adoptRef(new GetPathResult());
+            return adoptRef(new CreateFileResult());
         }
 
         bool m_failed;
         int m_code;
-        String m_path;
+        RefPtr<File> m_file;
 
       private:
-        GetPathResult()
+        CreateFileResult()
             : m_failed(false)
             , m_code(0)
         {
         }
 
-        ~GetPathResult()
+        ~CreateFileResult()
         {
         }
-        friend class WTF::RefCounted<GetPathResult>;
+        friend class WTF::RefCounted<CreateFileResult>;
     };
 
-    static PassOwnPtr<GetPathHelper> create(PassRefPtr<GetPathResult> result)
+    static PassOwnPtr<CreateFileHelper> create(PassRefPtr<CreateFileResult> result, const String& name)
     {
-        return adoptPtr(new GetPathHelper(result));
-    }
-
-    virtual void didSucceed()
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    virtual void didOpenFileSystem(const String&, PassOwnPtr<AsyncFileSystem>)
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    virtual void didReadDirectoryEntry(const String&, bool)
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    virtual void didReadDirectoryEntries(bool)
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    virtual void didCreateFileWriter(PassOwnPtr<AsyncFileWriter>, long long)
-    {
-        ASSERT_NOT_REACHED();
+        return adoptPtr(new CreateFileHelper(result, name));
     }
 
     virtual void didFail(int code)
@@ -134,21 +109,23 @@ public:
         m_result->m_code = code;
     }
 
-    virtual ~GetPathHelper()
+    virtual ~CreateFileHelper()
     {
     }
 
     void didReadMetadata(const FileMetadata& metadata)
     {
-        m_result->m_path = metadata.platformPath;
+        m_result->m_file = File::createWithName(metadata.platformPath, m_name);
     }
 private:
-    GetPathHelper(PassRefPtr<GetPathResult> result)
+    CreateFileHelper(PassRefPtr<CreateFileResult> result, const String& name)
         : m_result(result)
+        , m_name(name)
     {
     }
 
-    RefPtr<GetPathResult> m_result;
+    RefPtr<CreateFileResult> m_result;
+    String m_name;
 };
 
 } // namespace
@@ -156,8 +133,8 @@ private:
 PassRefPtr<File> DOMFileSystemSync::createFile(const FileEntrySync* fileEntry, ExceptionCode& ec)
 {
     ec = 0;
-    RefPtr<GetPathHelper::GetPathResult> result(GetPathHelper::GetPathResult::create());
-    m_asyncFileSystem->readMetadata(fileEntry->fullPath(), GetPathHelper::create(result));
+    RefPtr<CreateFileHelper::CreateFileResult> result(CreateFileHelper::CreateFileResult::create());
+    m_asyncFileSystem->createSnapshotFileAndReadMetadata(fileEntry->fullPath(), CreateFileHelper::create(result, fileEntry->name()));
     if (!m_asyncFileSystem->waitForOperationToComplete()) {
         ec = FileException::ABORT_ERR;
         return 0;
@@ -166,8 +143,7 @@ PassRefPtr<File> DOMFileSystemSync::createFile(const FileEntrySync* fileEntry, E
         ec = result->m_code;
         return 0;
     }
-    ASSERT(!result->m_path.isEmpty());
-    return File::createWithName(result->m_path, fileEntry->name());
+    return result->m_file;
 }
 
 namespace {

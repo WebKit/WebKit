@@ -59,24 +59,10 @@ class FileSystemCallbacksBase : public AsyncFileSystemCallbacks {
 public:
     virtual ~FileSystemCallbacksBase();
 
-    // For EntryCallbacks and VoidCallbacks.
-    virtual void didSucceed();
-
-    // For FileSystemCallbacks.
-    virtual void didOpenFileSystem(const String& name, PassOwnPtr<AsyncFileSystem>);
-
-    // For MetadataCallbacks.
-    virtual void didReadMetadata(const FileMetadata&);
-
-    // For EntriesCallbacks. didReadDirectoryEntry is called each time the API reads an entry, and didReadDirectoryDone is called when a chunk of entries have been read (i.e. good time to call back to the application).  If hasMore is true there can be more chunks.
-    virtual void didReadDirectoryEntry(const String& name, bool isDirectory);
-    virtual void didReadDirectoryEntries(bool hasMore);
-
-    // For createFileWriter.
-    virtual void didCreateFileWriter(PassOwnPtr<AsyncFileWriter>, long long length);
-
     // For ErrorCallback.
     virtual void didFail(int code);
+
+    // Other callback methods are implemented by each subclass.
 
 protected:
     FileSystemCallbacksBase(PassRefPtr<ErrorCallback> errorCallback);

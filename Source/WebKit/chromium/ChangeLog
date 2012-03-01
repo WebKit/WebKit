@@ -1,5 +1,36 @@
 2012-02-29  Kinuko Yasuda  <kinuko@chromium.org>
 
+        Use the new createSnapshotFileAndReadMetadata API for FileEntry.file()
+        https://bugs.webkit.org/show_bug.cgi?id=79928
+
+        Reviewed by David Levin.
+
+        In the new flow we first create an internal Blob URL for the
+        snapshot file and call the new createSnapshotFileAndReadMetadata()
+        WebKit API with the Blob URL.
+
+        The implementor of createSnapshotFileAndReadMetadata() (i.e. chromium)
+        registers the created snapshot file with the given internal Blob URL.
+
+        In the callback chain we call File::createWithName() to create a
+        new File using the returned platform path, and then call
+        unregisterBlobURL() to clean up the internal Blob URL.
+
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::AsyncFileSystemChromium::createSnapshotFileAndReadMetadata): Added.
+        (WebCore::AsyncFileSystemChromium::createSnapshotFileCallback): Added.
+        * src/AsyncFileSystemChromium.h:
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        (WebCore::WorkerAsyncFileSystemChromium::createSnapshotFileAndReadMetadata): Added.
+        * src/WorkerAsyncFileSystemChromium.h:
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (WebKit::WorkerFileSystemCallbacksBridge::postCreateSnapshotFileToMainThread): Added.
+        (WebKit::WorkerFileSystemCallbacksBridge::createSnapshotFileOnMainThread): Added.
+        * src/WorkerFileSystemCallbacksBridge.h:
+        (WorkerFileSystemCallbacksBridge):
+
+2012-02-29  Kinuko Yasuda  <kinuko@chromium.org>
+
         Unreviewed.  Rolled DEPS.
 
         * DEPS:

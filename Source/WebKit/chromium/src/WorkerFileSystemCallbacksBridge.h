@@ -94,6 +94,7 @@ public:
     void postFileExistsToMainThread(WebFileSystem*, const WebCore::KURL& path, const String& mode);
     void postDirectoryExistsToMainThread(WebFileSystem*, const WebCore::KURL& path, const String& mode);
     void postReadDirectoryToMainThread(WebFileSystem*, const WebCore::KURL& path, const String& mode);
+    void postCreateSnapshotFileToMainThread(WebFileSystem*, const WebCore::KURL& internalBlobURL, const WebCore::KURL& path, const String& mode);
 
     // Callback methods that are called on the main thread.
     void didFailOnMainThread(WebFileError, const String& mode);
@@ -117,6 +118,7 @@ private:
     static void fileExistsOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
     static void directoryExistsOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
     static void readDirectoryOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
+    static void createSnapshotFileOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& internalBlobURL, const WebCore::KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
 
     friend class MainThreadFileSystemCallbacks;
 

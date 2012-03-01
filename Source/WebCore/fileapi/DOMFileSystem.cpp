@@ -154,7 +154,7 @@ private:
 
 void DOMFileSystem::createFile(const FileEntry* fileEntry, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    m_asyncFileSystem->readMetadata(fileEntry->fullPath(), GetPathCallback::create(this, fileEntry->name(), successCallback, errorCallback));
+    m_asyncFileSystem->createSnapshotFileAndReadMetadata(fileEntry->fullPath(), GetPathCallback::create(this, fileEntry->name(), successCallback, errorCallback));
 }
 
 } // namespace WebCore

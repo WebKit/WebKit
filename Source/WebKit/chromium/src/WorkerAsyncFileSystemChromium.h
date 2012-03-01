@@ -74,6 +74,7 @@ public:
     virtual void directoryExists(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void readDirectory(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createSnapshotFileAndReadMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 private:
     WorkerAsyncFileSystemChromium(ScriptExecutionContext*, AsyncFileSystem::Type, const WebKit::WebURL& rootURL, bool synchronous);

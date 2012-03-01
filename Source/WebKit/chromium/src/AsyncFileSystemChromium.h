@@ -66,9 +66,13 @@ public:
     virtual void directoryExists(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void readDirectory(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void createSnapshotFileAndReadMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 protected:
     AsyncFileSystemChromium(AsyncFileSystem::Type, const KURL& rootURL);
+
+    PassOwnPtr<AsyncFileSystemCallbacks> createSnapshotFileCallback(const KURL& internalBlobURL, PassOwnPtr<AsyncFileSystemCallbacks>) const;
+
     WebKit::WebFileSystem* m_webFileSystem;
 
     // Converts a given absolute virtual path to a full origin-qualified FileSystem URL.

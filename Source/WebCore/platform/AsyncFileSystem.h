@@ -140,6 +140,13 @@ public:
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
     virtual void createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
+    // Creates a snapshot file and read its metadata for a new File object.
+    // In local filesystem cases the backend may simply return the metadata of the file itself (as well as readMetadata does),
+    // while in remote filesystem case the backend may download the file into a temporary snapshot file and return the metadata of the temporary file.
+    // AsyncFileSystemCallbacks::didReadMetadata() is called when the metadata for the snapshot file is successfully returned.
+    // AsyncFileSystemCallbacks::didFail() is called otherwise.
+    virtual void createSnapshotFileAndReadMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
+
     Type type() const { return m_type; }
 
 protected:

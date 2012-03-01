@@ -34,6 +34,7 @@
 #if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
 #include "AsyncFileSystemCallbacks.h"
+#include "BlobURL.h"
 #include "FileMetadata.h"
 #include "FileSystem.h"
 #include "NotImplemented.h"
@@ -206,6 +207,14 @@ void WorkerAsyncFileSystemChromium::createWriter(AsyncFileWriterClient* client, 
 {
     KURL pathAsURL = virtualPathToFileSystemURL(path);
     createWorkerFileSystemCallbacksBridge(WorkerFileWriterHelperCallbacks::create(client, pathAsURL, m_webFileSystem, callbacks, m_workerContext))->postReadMetadataToMainThread(m_webFileSystem, pathAsURL, m_modeForCurrentOperation);
+}
+
+void WorkerAsyncFileSystemChromium::createSnapshotFileAndReadMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+{
+    KURL pathAsURL = virtualPathToFileSystemURL(path);
+    KURL internalBlobURL = BlobURL::createInternalURL();
+
+    createWorkerFileSystemCallbacksBridge(createSnapshotFileCallback(internalBlobURL, callbacks))->postCreateSnapshotFileToMainThread(m_webFileSystem, internalBlobURL, pathAsURL, m_modeForCurrentOperation);
 }
 
 PassRefPtr<WorkerFileSystemCallbacksBridge> WorkerAsyncFileSystemChromium::createWorkerFileSystemCallbacksBridge(PassOwnPtr<AsyncFileSystemCallbacks> callbacks)

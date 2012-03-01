@@ -34,7 +34,10 @@
 
 #include "AsyncFileSystemCallbacks.h"
 #include "AsyncFileWriterChromium.h"
+#include "BlobURL.h"
+#include "FileMetadata.h"
 #include "SecurityOrigin.h"
+#include "ThreadableBlobRegistry.h"
 #include "WebFileInfo.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
@@ -46,10 +49,50 @@
 
 namespace WebCore {
 
+namespace {
+
 // ChromeOS-specific filesystem type.
 const AsyncFileSystem::Type externalType = static_cast<AsyncFileSystem::Type>(WebKit::WebFileSystem::TypeExternal);
 const char externalPathPrefix[] = "external";
 const size_t externalPathPrefixLength = sizeof(externalPathPrefix) - 1;
+
+// Specialized callback class for createSnapshotFileAndReadMetadata.
+class SnapshotFileCallbacks : public AsyncFileSystemCallbacks {
+public:
+    static PassOwnPtr<SnapshotFileCallbacks> create(const KURL& internalBlobURL, PassOwnPtr<WebCore::AsyncFileSystemCallbacks> callbacks)
+    {
+        return adoptPtr(new SnapshotFileCallbacks(internalBlobURL, callbacks));
+    }
+
+    virtual void didReadMetadata(const FileMetadata& metadata)
+    {
+        ASSERT(m_callbacks);
+
+        // This will create a new File object using the metadata.
+        m_callbacks->didReadMetadata(metadata);
+
+        // Now that we've registered the snapshot file, we can unregister our internalBlobURL which has played a placeholder for the file during the IPC.
+        ThreadableBlobRegistry::unregisterBlobURL(m_internalBlobURL);
+    }
+
+    virtual void didFail(int error)
+    {
+        ASSERT(m_callbacks);
+        m_callbacks->didFail(error);
+    }
+
+private:
+    SnapshotFileCallbacks(const KURL& internalBlobURL, PassOwnPtr<WebCore::AsyncFileSystemCallbacks> callbacks)
+        : m_internalBlobURL(internalBlobURL)
+        , m_callbacks(callbacks)
+    {
+    }
+
+    KURL m_internalBlobURL;
+    OwnPtr<WebCore::AsyncFileSystemCallbacks> m_callbacks;
+};
+
+} // namespace
 
 // static
 bool AsyncFileSystem::isAvailable()
@@ -254,6 +297,15 @@ void AsyncFileSystemChromium::createWriter(AsyncFileWriterClient* client, const 
     m_webFileSystem->readMetadata(pathAsURL, new FileWriterHelperCallbacks(client, pathAsURL, m_webFileSystem, callbacks));
 }
 
+void AsyncFileSystemChromium::createSnapshotFileAndReadMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+{
+    KURL pathAsURL = virtualPathToFileSystemURL(path);
+    KURL internalBlobURL = BlobURL::createInternalURL();
+
+    // This will create a snapshot file and register the file to a blob using the given internalBlobURL.
+    m_webFileSystem->createSnapshotFileAndReadMetadata(internalBlobURL, pathAsURL, new WebKit::WebFileSystemCallbacksImpl(createSnapshotFileCallback(internalBlobURL, callbacks)));
+}
+
 KURL AsyncFileSystemChromium::virtualPathToFileSystemURL(const String& virtualPath) const
 {
     ASSERT(!m_filesystemRootURL.isEmpty());
@@ -261,6 +313,11 @@ KURL AsyncFileSystemChromium::virtualPathToFileSystemURL(const String& virtualPa
     // Remove the extra leading slash.
     url.setPath(url.path() + encodeWithURLEscapeSequences(virtualPath.substring(1)));
     return url;
+}
+
+PassOwnPtr<AsyncFileSystemCallbacks> AsyncFileSystemChromium::createSnapshotFileCallback(const KURL& internalBlobURL, PassOwnPtr<AsyncFileSystemCallbacks> callbacks) const
+{
+    return SnapshotFileCallbacks::create(internalBlobURL, callbacks);
 }
 
 } // namespace WebCore
