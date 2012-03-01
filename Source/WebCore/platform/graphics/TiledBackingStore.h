@@ -93,13 +93,12 @@ private:
     void commitScaleChange();
 
     bool resizeEdgeTiles();
-    void dropTilesOutsideRect(const IntRect&);
+    void setKeepRect(const IntRect&);
 
     PassRefPtr<Tile> tileAt(const Tile::Coordinate&) const;
     void setTile(const Tile::Coordinate& coordinate, PassRefPtr<Tile> tile);
     void removeTile(const Tile::Coordinate& coordinate);
 
-    IntRect contentsRect() const;
     IntRect visibleContentsRect() const;
 
     float coverageRatio(const IntRect&) const;
@@ -123,7 +122,9 @@ private:
     FloatPoint m_visibleRectTrajectoryVector;
 
     IntRect m_previousVisibleRect;
-    IntSize m_previousContentsSize;
+
+    IntRect m_keepRect;
+    IntRect m_rect;
 
     float m_contentsScale;
     float m_pendingScale;
