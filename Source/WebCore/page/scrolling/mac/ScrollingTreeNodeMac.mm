@@ -60,6 +60,13 @@ void ScrollingTreeNodeMac::update(ScrollingTreeState* state)
 
     if (state->changedProperties() & (ScrollingTreeState::ScrollLayer | ScrollingTreeState::ContentsSize | ScrollingTreeState::ViewportRect))
         updateMainFramePinState(scrollPosition());
+
+    if ((state->changedProperties() & ScrollingTreeState::ShouldUpdateScrollLayerPositionOnMainThread) && shouldUpdateScrollLayerPositionOnMainThread()) {
+        // We're transitioning to the slow "update scroll layer position on the main thread" mode.
+        // Initialize the probable main thread scroll position with the current scroll layer position.
+        CGPoint scrollLayerPosition = m_scrollLayer.get().position;
+        m_probableMainThreadScrollPosition = IntPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
+    }
 }
 
 void ScrollingTreeNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
@@ -73,6 +80,7 @@ void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& scrollPosition)
     updateMainFramePinState(scrollPosition);
 
     if (shouldUpdateScrollLayerPositionOnMainThread()) {
+        m_probableMainThreadScrollPosition = scrollPosition;
         scrollingTree()->updateMainFrameScrollPositionAndScrollLayerPosition(scrollPosition);
         return;
     }
@@ -215,6 +223,9 @@ void ScrollingTreeNodeMac::stopSnapRubberbandTimer()
 
 IntPoint ScrollingTreeNodeMac::scrollPosition() const
 {
+    if (shouldUpdateScrollLayerPositionOnMainThread())
+        return m_probableMainThreadScrollPosition;
+
     CGPoint scrollLayerPosition = m_scrollLayer.get().position;
     return IntPoint(-scrollLayerPosition.x, -scrollLayerPosition.y);
 }

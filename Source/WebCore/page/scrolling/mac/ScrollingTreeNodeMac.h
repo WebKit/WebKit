@@ -76,6 +76,7 @@ private:
     RetainPtr<CFRunLoopTimerRef> m_snapRubberbandTimer;
 
     RetainPtr<CALayer> m_scrollLayer;
+    IntPoint m_probableMainThreadScrollPosition;
 };
 
 } // namespace WebCore
