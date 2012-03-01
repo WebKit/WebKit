@@ -546,6 +546,16 @@ unsigned Internals::lengthFromRange(Element* scope, const Range* range, Exceptio
     return length;
 }
 
+String Internals::rangeAsText(const Range* range, ExceptionCode& ec)
+{
+    if (!range) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    return range->text();
+}
+
 int Internals::lastSpellCheckRequestSequence(Document* document, ExceptionCode& ec)
 {
     SpellChecker* checker = spellchecker(document);

@@ -186,6 +186,7 @@ EXPORTS
         ?setFixedElementsLayoutRelativeToFrame@Settings@WebCore@@QAEX_N@Z
         ?shadowTree@Element@WebCore@@QBEPAVShadowTree@2@XZ
         ?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ
+        ?text@Range@WebCore@@QBE?AVString@WTF@@XZ
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRect@1@@Z
