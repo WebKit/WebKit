@@ -61,11 +61,11 @@ function createSpanWithText(text, className) {
     return span;
 }
 
-function createContentWithSelect(select, fallbackText) {
+function createContentWithSelect(select, fallback) {
     var content = internals.createContentElement(document);
     content.setAttribute('select', select);
-    if (fallbackText)
-        content.appendChild(createSpanWithText(fallbackText));
+    if (!fallback)
+        content.appendChild(createSpanWithText("FALLBACK"));
 
     return content;
 }
