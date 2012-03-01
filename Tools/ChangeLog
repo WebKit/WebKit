@@ -1,3 +1,11 @@
+2012-02-29  Adam Barth  <abarth@webkit.org>
+
+        Disable watchlist.  It's been spamming CCs.
+
+        * Scripts/webkitpy/tool/bot/stylequeuetask.py:
+        (StyleQueueTask.run):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2012-02-29  Dirk Pranke  <dpranke@chromium.org>
 
         need to clone the gpu baselines and expectations into the new "virtual" dir
