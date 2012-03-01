@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-static const unsigned bufferSize = 1024;
+static const unsigned bufferSize = 512 * 1024;
 static const long long positionNotSpecified = -1;
 
 static const int httpOK = 200;
