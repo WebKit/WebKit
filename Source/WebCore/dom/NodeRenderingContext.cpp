@@ -88,6 +88,14 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
         }
 
         if (isShadowBoundary(parent)) {
+            // FIXME: We don't support <shadow> yet, so the non-youngest shadow won't be rendered.
+            // https://bugs.webkit.org/show_bugs.cgi?id=78596
+            if (!toShadowRoot(parent->shadowTreeRootNode())->isYoungest()) {
+                m_phase = AttachingNotDistributed;
+                m_parentNodeForRenderingAndStyle = parent;
+                return;
+            }
+
             if (toInsertionPoint(parent)->hasSelection())
                 m_phase = AttachingNotFallbacked;
             else
