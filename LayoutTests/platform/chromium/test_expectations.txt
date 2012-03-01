@@ -4410,6 +4410,7 @@ BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-async.html = PASS CRASH
 BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-sync.html = PASS CRASH
 
 BUGWK79572 : css3/filters/effect-drop-shadow-hw.html = PASS IMAGE
+BUGWK80007 : css3/filters/filtered-compositing-descendant.html = PASS IMAGE
 
 BUGWK79613 WIN : svg/carto.net/scrollbar.svg = TEXT
 BUGWK79613 WIN : svg/carto.net/selectionlist.svg = TEXT
