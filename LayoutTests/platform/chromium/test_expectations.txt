@@ -4354,3 +4354,5 @@ BUGCR53554 LINUX : svg/W3C-SVG-1.1/fonts-elem-04-b.svg = IMAGE+TEXT
 BUGWK79956 SKIP : platform/chromium/virtual/gpu = PASS
 
 BUGWK80053 DEBUG : svg/W3C-SVG-1.1/animate-elem-32-t.svg = CRASH PASS
+
+BUGWK80058 WIN RELEASE : fast/workers/stress-js-execution.html = CRASH PASS
