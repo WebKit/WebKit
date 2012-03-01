@@ -99,7 +99,8 @@ def cache_runs(test_id, branch_id, platform_id, cache):
 
 def schedule_runs_update(test_id, branch_id, platform_id):
     taskqueue.add(url='/api/test/runs/update', params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id})
-    taskqueue.add(url='/api/test/runs/chart', params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id})
+    taskqueue.add(url='/api/test/runs/chart', params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id,
+        'displayDays': 7})
 
 
 def _get_test_branch_platform_ids(handler):
@@ -187,5 +188,4 @@ class DashboardImageHandler(webapp2.RequestHandler):
 
 
 def schedule_report_process(log):
-    self.response.headers['Content-Type'] = 'application/json'
     taskqueue.add(url='/api/test/report/process', params={'id': log.key().id()})

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-var USE_GENERATED_IMAGES_IN_DASHBOARD = false;
+var USE_GENERATED_IMAGES_IN_DASHBOARD = true;
 var MAX_GRAPHS = 6;
 var MAX_CSETS = 100;
 var DAY = 86400000;

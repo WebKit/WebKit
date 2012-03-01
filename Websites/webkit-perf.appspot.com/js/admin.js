@@ -75,7 +75,7 @@ $('form').bind('submit', function (event) {
             return;
         if (xhr.status != 200)
             error('HTTP status: ' + xhr.status);
-        else if (xhr.responseText != 'OK')
+        else if (xhr.responseText != 'OK\n')
             error(xhr.responseText);
     }
     xhr.open(this.method, this.action, true);

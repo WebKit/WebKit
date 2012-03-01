@@ -1,3 +1,14 @@
+2012-02-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf-o-matic build fix. Also toggle the switch to start using ping images on the dashboard after r109190.
+
+        * Websites/webkit-perf.appspot.com/controller.py:
+        (schedule_runs_update):
+        (schedule_report_process):
+        * Websites/webkit-perf.appspot.com/js/admin.js:
+        (bind):
+        * Websites/webkit-perf.appspot.com/js/config.js:
+
 2012-02-29  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Unreviewed, fix build on 64-bit platforms with SHARED_CORE=ON after r109197.
