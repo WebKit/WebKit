@@ -1,5 +1,12 @@
 2012-03-01  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, second attempt to fix GTK NRWT after r109242.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkDriver._start):
+
+2012-03-01  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK NRWT build fix attempt after r109242.
 
         * Scripts/webkitpy/layout_tests/port/gtk.py:
