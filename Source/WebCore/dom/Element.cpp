@@ -1215,6 +1215,9 @@ static void checkForEmptyStyleChange(Element* element, RenderStyle* style)
 static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool finishedParsingCallback,
                                         Node* beforeChange, Node* afterChange, int childCountDelta)
 {
+    // :empty selector.
+    checkForEmptyStyleChange(e, style);
+    
     if (!style || (e->needsStyleRecalc() && style->childrenAffectedByPositionalRules()))
         return;
 
@@ -1286,9 +1289,6 @@ static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool fin
     if ((style->childrenAffectedByForwardPositionalRules() && afterChange) ||
         (style->childrenAffectedByBackwardPositionalRules() && beforeChange))
         e->setNeedsStyleRecalc();
-    
-    // :empty selector.
-    checkForEmptyStyleChange(e, style);
 }
 
 void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
