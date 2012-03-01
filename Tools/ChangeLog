@@ -1,3 +1,14 @@
+2012-02-29  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: make --print trace work with virtual tests
+        https://bugs.webkit.org/show_bug.cgi?id=79952
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer._print_test_trace):
+        (Printer._print_baseline):
+
 2012-02-28  Brian Weinstein  <bweinstein@apple.com>
 
         WebKit2: didNewFirstVisuallyNonEmptyLayout should be sent to injected bundle

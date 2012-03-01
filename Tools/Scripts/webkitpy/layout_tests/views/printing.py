@@ -315,18 +315,25 @@ class Printer(object):
            - actual result
            - timing info
         """
-        filename = self._port.abspath_for_test(result.test_name)
         test_name = result.test_name
         self._write('trace: %s' % test_name)
+
+        base = self._port.lookup_virtual_test_base(test_name)
+        if base:
+            args = ' '.join(self._port.lookup_virtual_test_args(test_name))
+            self._write(' base: %s' % base)
+            self._write(' args: %s' % args)
+
         for extension in ('.txt', '.png', '.wav', '.webarchive'):
-            self._print_baseline(filename, extension)
+            self._print_baseline(test_name, extension)
+
         self._write('  exp: %s' % exp_str)
         self._write('  got: %s' % got_str)
         self._write(' took: %-.3f' % result.test_run_time)
         self._write('')
 
-    def _print_baseline(self, filename, extension):
-        baseline = self._port.expected_filename(filename, extension)
+    def _print_baseline(self, test_name, extension):
+        baseline = self._port.expected_filename(test_name, extension)
         if self._port._filesystem.exists(baseline):
             relpath = self._port.relative_test_filename(baseline)
         else:
