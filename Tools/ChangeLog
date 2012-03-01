@@ -1,3 +1,10 @@
+2012-02-29  Mark Rowe  <mrowe@apple.com>
+
+        Switch to using json rather than simplejson now that the master is using Python 2.7.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (loadBuilderConfig):
+
 2012-02-29  David Levin  <levin@chromium.org>
 
         [chromium] Add the ability to turn off autoresize.
