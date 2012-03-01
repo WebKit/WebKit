@@ -251,7 +251,6 @@ void FrameLoader::setDefersLoading(bool defers)
 
 void FrameLoader::changeLocation(SecurityOrigin* securityOrigin, const KURL& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool refresh)
 {
-    RefPtr<Frame> protect(m_frame);
     urlSelected(FrameLoadRequest(securityOrigin, ResourceRequest(url, referrer, refresh ? ReloadIgnoringCacheData : UseProtocolCachePolicy), "_self"),
         0, lockHistory, lockBackForwardList, MaybeSendReferrer, ReplaceDocumentIfJavaScriptURL);
 }
@@ -268,6 +267,7 @@ void FrameLoader::urlSelected(const FrameLoadRequest& passedRequest, PassRefPtr<
 {
     ASSERT(!m_suppressOpenerInNewFrame);
 
+    RefPtr<Frame> protect(m_frame);
     FrameLoadRequest frameRequest(passedRequest);
 
     if (m_frame->script()->executeIfJavaScriptURL(frameRequest.resourceRequest().url(), shouldReplaceDocumentIfJavaScriptURL))
