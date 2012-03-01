@@ -377,7 +377,7 @@ function filterData(filterCoef, signal, len) {
     var b1 = filterCoef.b1;
     var b2 = filterCoef.b2;
     var a1 = filterCoef.a1;
-    var a2 = filterCoef. a2;
+    var a2 = filterCoef.a2;
 
     // Prime the pump. (Assumes the signal has length >= 2!)
     y[0] = b0 * signal[0];

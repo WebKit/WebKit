@@ -53,14 +53,23 @@ Biquad::Biquad()
     m_outputBuffer.allocate(kBufferSize + 2);
 #endif
 
+#if USE(WEBAUDIO_IPP)
+    int bufferSize;
+    ippsIIRGetStateSize64f_BiQuad_32f(1, &bufferSize);
+    m_ippInternalBuffer = ippsMalloc_8u(bufferSize);
+#endif // USE(WEBAUDIO_IPP)
+
     // Initialize as pass-thru (straight-wire, no filter effect)
-    m_b0 = 1;
-    m_b1 = 0;
-    m_b2 = 0;
-    m_a1 = 0;
-    m_a2 = 0;
+    setNormalizedCoefficients(1, 0, 0, 1, 0, 0);
 
     reset(); // clear filter memory
+}
+
+Biquad::~Biquad()
+{
+#if USE(WEBAUDIO_IPP)
+    ippsFree(m_ippInternalBuffer);
+#endif // USE(WEBAUDIO_IPP)
 }
 
 void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
@@ -68,7 +77,11 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
 #if OS(DARWIN)
     // Use vecLib if available
     processFast(sourceP, destP, framesToProcess);
-#else
+
+#elif USE(WEBAUDIO_IPP)
+    ippsIIR64f_32f(sourceP, destP, static_cast<int>(framesToProcess), m_biquadState);
+#else // USE(WEBAUDIO_IPP)
+
     int n = framesToProcess;
 
     // Create local copies of member variables
@@ -171,8 +184,6 @@ void Biquad::processSliceFast(double* sourceP, double* destP, double* coefficien
 
 void Biquad::reset()
 {
-    m_x1 = m_x2 = m_y1 = m_y2 = 0;
-
 #if OS(DARWIN)
     // Two extra samples for filter history
     double* inputP = m_inputBuffer.data();
@@ -182,89 +193,88 @@ void Biquad::reset()
     double* outputP = m_outputBuffer.data();
     outputP[0] = 0;
     outputP[1] = 0;
+
+#elif USE(WEBAUDIO_IPP)
+    int bufferSize;
+    ippsIIRGetStateSize64f_BiQuad_32f(1, &bufferSize);
+    ippsZero_8u(m_ippInternalBuffer, bufferSize);
+
+#else
+    m_x1 = m_x2 = m_y1 = m_y2 = 0;
 #endif
 }
 
 void Biquad::setLowpassParams(double cutoff, double resonance)
 {
-    resonance = std::max(0.0, resonance); // can't go negative
     // Limit cutoff to 0 to 1.
     cutoff = std::max(0.0, std::min(cutoff, 1.0));
     
-    double g = pow(10.0, 0.05 * resonance);
-    double d = sqrt((4 - sqrt(16 - 16 / (g * g))) / 2);
-
     if (cutoff == 1) {
         // When cutoff is 1, the z-transform is 1.
-        m_b0 = 1;
-        m_b1 = 0;
-        m_b2 = 0;
-        m_a1 = 0;
-        m_a2 = 0;
+        setNormalizedCoefficients(1, 0, 0,
+                                  1, 0, 0);
     } else if (cutoff > 0) {
         // Compute biquad coefficients for lowpass filter
+        resonance = std::max(0.0, resonance); // can't go negative
+        double g = pow(10.0, 0.05 * resonance);
+        double d = sqrt((4 - sqrt(16 - 16 / (g * g))) / 2);
+
         double theta = piDouble * cutoff;
         double sn = 0.5 * d * sin(theta);
         double beta = 0.5 * (1 - sn) / (1 + sn);
         double gamma = (0.5 + beta) * cos(theta);
         double alpha = 0.25 * (0.5 + beta - gamma);
 
-        m_b0 = 2 * alpha;
-        m_b1 = 2 * 2 * alpha;
-        m_b2 = 2 * alpha;
-        m_a1 = 2 * -gamma;
-        m_a2 = 2 * beta;
+        double b0 = 2 * alpha;
+        double b1 = 2 * 2 * alpha;
+        double b2 = 2 * alpha;
+        double a1 = 2 * -gamma;
+        double a2 = 2 * beta;
+
+        setNormalizedCoefficients(b0, b1, b2, 1, a1, a2);
     } else {
         // When cutoff is zero, nothing gets through the filter, so set
         // coefficients up correctly.
-        m_b0 = 0;
-        m_b1 = 0;
-        m_b2 = 0;
-        m_a1 = 0;
-        m_a2 = 0;
+        setNormalizedCoefficients(0, 0, 0,
+                                  1, 0, 0);
     }
 }
 
 void Biquad::setHighpassParams(double cutoff, double resonance)
 {
-    resonance = std::max(0.0, resonance); // can't go negative
-
     // Limit cutoff to 0 to 1.
     cutoff = std::max(0.0, std::min(cutoff, 1.0));
 
-    double g = pow(10.0, 0.05 * resonance);
-    double d = sqrt((4 - sqrt(16 - 16 / (g * g))) / 2);
-
     if (cutoff == 1) {
         // The z-transform is 0.
-        m_b0 = 0;
-        m_b1 = 0;
-        m_b2 = 0;
-        m_a1 = 0;
-        m_a2 = 0;
+        setNormalizedCoefficients(0, 0, 0,
+                                  1, 0, 0);
     } else if (cutoff > 0) {
         // Compute biquad coefficients for highpass filter
+        resonance = std::max(0.0, resonance); // can't go negative
+        double g = pow(10.0, 0.05 * resonance);
+        double d = sqrt((4 - sqrt(16 - 16 / (g * g))) / 2);
+
         double theta = piDouble * cutoff;
         double sn = 0.5 * d * sin(theta);
         double beta = 0.5 * (1 - sn) / (1 + sn);
         double gamma = (0.5 + beta) * cos(theta);
         double alpha = 0.25 * (0.5 + beta + gamma);
 
-        m_b0 = 2 * alpha;
-        m_b1 = 2 * -2 * alpha;
-        m_b2 = 2 * alpha;
-        m_a1 = 2 * -gamma;
-        m_a2 = 2 * beta;
+        double b0 = 2 * alpha;
+        double b1 = 2 * -2 * alpha;
+        double b2 = 2 * alpha;
+        double a1 = 2 * -gamma;
+        double a2 = 2 * beta;
+
+        setNormalizedCoefficients(b0, b1, b2, 1, a1, a2);
     } else {
       // When cutoff is zero, we need to be careful because the above
       // gives a quadratic divided by the same quadratic, with poles
       // and zeros on the unit circle in the same place. When cutoff
       // is zero, the z-transform is 1.
-      m_b0 = 1;
-      m_b1 = 0;
-      m_b2 = 0;
-      m_a1 = 0;
-      m_a2 = 0;
+        setNormalizedCoefficients(1, 0, 0,
+                                  1, 0, 0);
     }
 }
 
@@ -277,6 +287,19 @@ void Biquad::setNormalizedCoefficients(double b0, double b1, double b2, double a
     m_b2 = b2 * a0Inverse;
     m_a1 = a1 * a0Inverse;
     m_a2 = a2 * a0Inverse;
+
+#if USE(WEBAUDIO_IPP)
+    Ipp64f taps[6];
+    taps[0] = m_b0;
+    taps[1] = m_b1;
+    taps[2] = m_b2;
+    taps[3] = 1;
+    taps[4] = m_a1;
+    taps[5] = m_a2;
+    m_biquadState = 0;
+
+    ippsIIRInit64f_BiQuad_32f(&m_biquadState, taps, 1, 0, m_ippInternalBuffer);
+#endif // USE(WEBAUDIO_IPP)
 }
 
 void Biquad::setLowShelfParams(double frequency, double dbGain)
@@ -501,16 +524,17 @@ void Biquad::setBandpassParams(double frequency, double Q)
 
 void Biquad::setZeroPolePairs(const Complex &zero, const Complex &pole)
 {
-    m_b0 = 1;
-    m_b1 = -2 * zero.real();
+    double b0 = 1;
+    double b1 = -2 * zero.real();
 
     double zeroMag = abs(zero);
-    m_b2 = zeroMag * zeroMag;
+    double b2 = zeroMag * zeroMag;
 
-    m_a1 = -2 * pole.real();
+    double a1 = -2 * pole.real();
 
     double poleMag = abs(pole);
-    m_a2 = poleMag * poleMag;
+    double a2 = poleMag * poleMag;
+    setNormalizedCoefficients(b0, b1, b2, 1, a1, a2);
 }
 
 void Biquad::setAllpassPole(const Complex &pole)
