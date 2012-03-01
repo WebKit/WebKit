@@ -63,6 +63,7 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event)
         m_state = GestureRecognitionStarted;
         m_firstPosition = touchPoint.screenPos();
         m_touchBegin.reset(new QTouchEvent(*event));
+        interactionEngine()->panGestureCancelled();
         return false;
     case QEvent::TouchUpdate: {
         ASSERT(m_state != NoGesture);

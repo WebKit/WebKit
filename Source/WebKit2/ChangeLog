@@ -1,3 +1,24 @@
+2012-03-01  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Make the interaction with the Flickable work on the N9
+        https://bugs.webkit.org/show_bug.cgi?id=80029
+
+        Reviewed by Simon Hausmann.
+
+        Because the WebView item accepts all touch events it receives and sends
+        them to the web process before propagating them to the gesture recognizers,
+        which is correct behaviour, we can not rely on the touch->mouse conversion
+        of Qt5 when controlling Flickable. Hence we need to convert the received
+        touch events to mouse events in the QtFlickProvider.
+
+        * UIProcess/qt/QtFlickProvider.cpp:
+        (QtFlickProvider::handleTouchFlickEvent):
+        Do the touch to mouse event conversion for the Flickable.
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::recognize):
+        A touch begin event should cancel the previous pan gesture
+        and stop the ongoing flick animation.
+
 2012-03-01  Anders Carlsson  <andersca@apple.com>
 
         Assertion failure in pageContainsAnyHorizontalScrollbars() (scrollableArea->isOnActivePage()) when leaving pages with embedded PDFs

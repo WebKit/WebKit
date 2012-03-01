@@ -26,7 +26,9 @@
 
 #include <QCoreApplication>
 #include <QDeclarativeEngine>
+#include <QMouseEvent>
 #include <QPointF>
+#include <QQuickCanvas>
 #include <QQuickItem>
 #include <QTouchEvent>
 #include <wtf/Assertions.h>
@@ -116,9 +118,42 @@ QtFlickProvider::QtFlickProvider(QQuickWebView* viewItem, QQuickWebPage* pageIte
     connect(m_flickable, SIGNAL(contentYChanged()), SIGNAL(contentYChanged()), Qt::DirectConnection);
 }
 
-void QtFlickProvider::handleTouchFlickEvent(QTouchEvent* event)
+void QtFlickProvider::handleTouchFlickEvent(QTouchEvent* touchEvent)
 {
-    QCoreApplication::sendEvent(m_flickable, event);
+    // Since the Flickable does not handle touch events directly the sent
+    // touch event would end up in the WebView again and would thus trigger
+    // an infinite loop.
+    // Hence do the touch to mouse event conversion for the Flickable here.
+    QEvent::Type mouseEventType = QEvent::None;
+    Qt::MouseButton mouseButton = Qt::NoButton;
+
+    switch (touchEvent->type()) {
+    case QEvent::TouchBegin:
+        mouseEventType = QEvent::MouseButtonPress;
+
+        // We need to set the mouse button so that the Flickable
+        // item receives the initial mouse press event.
+        mouseButton = Qt::LeftButton;
+        break;
+    case QEvent::TouchUpdate:
+        mouseEventType = QEvent::MouseMove;
+        break;
+    case QEvent::TouchEnd:
+        mouseEventType = QEvent::MouseButtonRelease;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    QPointF touchPosition = touchEvent->touchPoints().last().pos();
+    QMouseEvent mouseEvent(mouseEventType, touchPosition, mouseButton, mouseButton, Qt::NoModifier);
+
+    // Send the event to the canvas and let the canvas propagate it
+    // to the Flickable. This makes sure that the Flickable grabs
+    // the mouse so that it also receives the events of gestures
+    // which started inside the viewport but ended outside of it.
+    QCoreApplication::sendEvent(m_flickable->canvas(), &mouseEvent);
 }
 
 QQuickItem* QtFlickProvider::contentItem()
