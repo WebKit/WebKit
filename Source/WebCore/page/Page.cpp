@@ -1018,7 +1018,7 @@ static uint64_t gPaintedObjectCounterThreshold = 0;
 
 // These are magical constants that might be tweaked over time.
 static double gMinimumPaintedAreaRatio = 0.1;
-static double gMaximumUnpaintedAreaRatio = 0.1;
+static double gMaximumUnpaintedAreaRatio = 0.04;
 
 void Page::setRelevantRepaintedObjectsCounterThreshold(uint64_t threshold)
 {
