@@ -115,7 +115,7 @@ void Path::addRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii)
     if (radius.height() > halfSize.height())
         radius.setHeight(halfSize.height());
 
-    addPathForRoundedRect(rect, radius, radius, radius, radius);
+    addBeziersForRoundedRect(rect, radius, radius, radius, radius);
 }
 
 void Path::addRoundedRect(const FloatRect& rect, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius)
@@ -132,15 +132,8 @@ void Path::addRoundedRect(const FloatRect& rect, const FloatSize& topLeftRadius,
         return;
     }
 
-    addPathForRoundedRect(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
-}
-
-#if !USE(CG)
-void Path::addPathForRoundedRect(const FloatRect& rect, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius)
-{
     addBeziersForRoundedRect(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
 }
-#endif
 
 // Approximation of control point positions on a bezier to simulate a quarter of a circle.
 // This is 1-kappa, where kappa = 4 * (sqrt(2) - 1) / 3

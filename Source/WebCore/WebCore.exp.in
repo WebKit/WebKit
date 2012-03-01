@@ -1517,9 +1517,6 @@ _wkCALayerEnumerateRectsBeingDrawnWithBlock
 #endif
 _wkCGContextGetShouldSmoothFonts
 _wkCGContextResetClip
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-_wkCGPathAddRoundedRect
-#endif
 _wkCGPatternCreateWithImageAndTransform
 _wkCopyCFLocalizationPreferredName
 _wkCopyCFURLResponseSuggestedFilename

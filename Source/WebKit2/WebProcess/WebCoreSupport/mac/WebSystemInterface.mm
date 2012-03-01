@@ -163,9 +163,5 @@ void InitWebCoreSystemInterface(void)
         INIT(ExecutableWasLinkedOnOrBeforeLion);
 #endif
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-        INIT(CGPathAddRoundedRect);
-#endif
-
     });
 }

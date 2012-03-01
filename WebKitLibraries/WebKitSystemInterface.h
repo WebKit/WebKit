@@ -471,10 +471,6 @@ NSString *WKGetMacOSXVersionString(void);
 bool WKExecutableWasLinkedOnOrBeforeLion(void);
 #endif
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-void WKCGPathAddRoundedRect(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
-#endif
-
 #ifdef __cplusplus
 }
 #endif
