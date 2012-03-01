@@ -1,3 +1,25 @@
+2012-03-01  Kentaro Hara  <haraken@chromium.org>
+
+        REGRESSION(r109288): WebViewImpl::enableAutoResizeMode loops infinitely
+        https://bugs.webkit.org/show_bug.cgi?id=77452
+
+        Reviewed by Hajime Morita.
+
+        WebViewImpl::enableAutoResizeMode loops infinitely.
+        This patch fixes the following line:
+
+            enableAutoResizeMode(enable, minSize, maxSize);
+
+        to
+            enableAutoResizeMode(minSize, maxSize);
+
+        to avoid the infinite loop. I guess this is the change originally intended.
+
+        Test: webkit_unit_tests.WebViewTest.AutoResizeMinimumSize
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::enableAutoResizeMode):
+
 2012-02-29  Kinuko Yasuda  <kinuko@chromium.org>
 
         Use the new createSnapshotFileAndReadMetadata API for FileEntry.file()

@@ -2282,7 +2282,7 @@ void WebViewImpl::disableAutoResizeMode()
 void WebViewImpl::enableAutoResizeMode(bool enable, const WebSize& minSize, const WebSize& maxSize)
 {
     if (enable)
-        enableAutoResizeMode(enable, minSize, maxSize);
+        enableAutoResizeMode(minSize, maxSize);
     else
         disableAutoResizeMode();
 }
