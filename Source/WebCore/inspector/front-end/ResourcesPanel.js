@@ -1679,6 +1679,13 @@ WebInspector.IDBDatabaseTreeElement.prototype = {
 
         if (this._view)
             this._view.update(database);
+        
+        this._updateTooltip();
+    },
+
+    _updateTooltip: function()
+    {
+        this.tooltip = WebInspector.UIString("Version") + ": " + this._database.version;
     },
 
     onselect: function()
@@ -1747,6 +1754,13 @@ WebInspector.IDBObjectStoreTreeElement.prototype = {
 
         if (this._view)
             this._view.update(this._objectStore);
+        
+        this._updateTooltip();
+    },
+
+    _updateTooltip: function()
+    {
+        this.tooltip = this._objectStore.keyPath ? (WebInspector.UIString("Key path") + ": " + this._objectStore.keyPath) : "";
     },
 
     onselect: function()
@@ -1794,6 +1808,19 @@ WebInspector.IDBIndexTreeElement.prototype = {
 
         if (this._view)
             this._view.update(this._index);
+        
+        this._updateTooltip();
+    },
+
+    _updateTooltip: function()
+    {
+        var tooltipLines = [];
+        tooltipLines.push(WebInspector.UIString("Key path") + ": " + this._index.keyPath);
+        if (this._index.unique)
+            tooltipLines.push(WebInspector.UIString("unique"));
+        if (this._index.multiEntry)
+            tooltipLines.push(WebInspector.UIString("multiEntry"));
+        this.tooltip = tooltipLines.join("\n");
     },
 
     onselect: function()

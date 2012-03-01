@@ -140,12 +140,12 @@ WebInspector.IDBDataView.prototype = {
 
         var keyPath = this._isIndex ? this._index.keyPath : this._objectStore.keyPath;
         columns["key"] = {};
-        var keyColumnTitle = WebInspector.UIString("Key") + (keyPath ? " (" + keyPath + ")" : "");
+        var keyColumnTitle = WebInspector.UIString("Key") + this._keyPathHeader(keyPath);
         columns["key"].title = keyColumnTitle;
 
         if (this._isIndex) {
             columns["primaryKey"] = {};
-            var primaryKeyColumnTitle = WebInspector.UIString("Primary key") + (this._objectStore.keyPath ? " (" + this._objectStore.keyPath + ")" : "");
+            var primaryKeyColumnTitle = WebInspector.UIString("Primary key") + this._keyPathHeader(this._objectStore.keyPath);
             columns["primaryKey"].title = primaryKeyColumnTitle;
         }
 
@@ -154,6 +154,16 @@ WebInspector.IDBDataView.prototype = {
 
         var dataGrid = new WebInspector.DataGrid(columns);
         return dataGrid;
+    },
+
+    /**
+     * @return {string}
+     */
+    _keyPathHeader: function(keyPath)
+    {
+        if (!keyPath)
+            return "";
+        return " (" + WebInspector.UIString("keyPath") + ": \"" + keyPath + "\")";
     },
 
     /**
