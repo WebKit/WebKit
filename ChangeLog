@@ -1,6 +1,19 @@
 2012-02-29  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Unreviewed, fix build on 64-bit platforms with SHARED_CORE=ON after r109197.
+        https://bugs.webkit.org/show_bug.cgi?id=79965
+
+        This partially reverts r66714, in that whether -fPIC is passed to
+        the compiler does not depend on the value of SHARED_CORE anymore:
+        since we always build WTF as a static library, it will always need
+        -fPIC because our shared libraries are built with it.
+
+        * Source/cmake/WebKitHelpers.cmake: Always pass -fPIC to
+        STATIC_LIBRARY targets.
+
+2012-02-29  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Unreviewed, fix build on 64-bit platforms with SHARED_CORE=ON after r109197.
 
         This partially reverts r66714, in that whether -fPIC is passed to
         the compiler does not depend on the value of SHARED_CORE anymore:
