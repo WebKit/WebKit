@@ -30,6 +30,7 @@
 
 #include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitFindController.h>
 #include <webkit2/WebKitHitTestResult.h>
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
@@ -265,6 +266,10 @@ webkit_web_view_can_execute_editing_command_finish (WebKitWebView             *w
 WEBKIT_API void
 webkit_web_view_execute_editing_command            (WebKitWebView             *web_view,
                                                     const gchar               *command);
+
+WEBKIT_API WebKitFindController *
+webkit_web_view_get_find_controller                (WebKitWebView             *web_view);
+
 G_END_DECLS
 
 #endif

@@ -46,4 +46,7 @@ typedef struct _WebKitPrintOperation WebKitPrintOperation;
 #    define WEBKIT_OBSOLETE_API WEBKIT_API __attribute__((deprecated))
 #endif
 
+typedef struct _WebKitFindController WebKitFindController;
+typedef struct _WebKitWebView        WebKitWebView;
+
 #endif // WebKitDefines_h
