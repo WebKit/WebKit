@@ -69,7 +69,7 @@ static inline void collectNodes(Node* node, NodeVector& nodes)
 
 static void collectTargetNodes(Node* node, NodeVector& nodes)
 {
-    if (node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE || node->isShadowRoot()) {
+    if (node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {
         nodes.append(node);
         return;
     }

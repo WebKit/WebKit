@@ -1974,6 +1974,7 @@ fast/dom/shadow/shadow-disable.html
 fast/dom/shadow/shadow-root-attached.html
 fast/dom/shadow/shadow-root-innerHTML.html
 fast/dom/shadow/shadow-root-new.html
+fast/dom/shadow/shadow-root-append.html
 fast/dom/shadow/multiple-shadowroot.html
 fast/dom/shadow/multiple-shadowroot-rendering.html
 fast/dom/shadow/multiple-shadowroot-adopt.html

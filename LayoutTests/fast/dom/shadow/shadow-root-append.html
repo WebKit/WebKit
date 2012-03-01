@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This test checks that appending shadow root as a child does not crash.</p>
+<pre id="console"></pre>
+<div id="container"></div>
+
+<script>
+function doTest() {
+    if (!window.internals) {
+        debug('This test runs on DRT only');
+        return;
+    }
+
+    var div = document.createElement('div');
+    root = new WebKitShadowRoot(div);
+    root.appendChild(document.createTextNode('SS'));
+
+    container = document.getElementById('container');
+    container.appendChild(root);
+
+    shouldBeNull('root.firstChild');
+    shouldBe('container.firstChild.textContent', '"SS"');
+
+    var div = document.createElement('div');
+    root = new WebKitShadowRoot(div);
+    root.appendChild(document.createTextNode('PA'));
+
+    container.insertBefore(root, container.firstChild);
+
+    shouldBeNull('root.firstChild');
+    shouldBe('container.firstChild.textContent', '"PA"');
+    shouldNotBe('container.firstChild', 'container.lastChild');
+}
+
+doTest();
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
