@@ -259,6 +259,8 @@ WebInspector.RawSourceCode.prototype = {
     {
         var uiSourceCode = new WebInspector.UISourceCode(id, url, this, contentProvider);
         uiSourceCode.isContentScript = this.isContentScript;
+        uiSourceCode.isEditable = this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset
+                                  && !this._formatted && !this._compilerSourceMapping;
         return uiSourceCode;
     },
 

@@ -264,11 +264,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     canEditScriptSource: function(uiSourceCode)
     {
-        if (!WebInspector.debuggerModel.canSetScriptSource() || this._formatSource)
-            return false;
-        var rawSourceCode = uiSourceCode.rawSourceCode;
-        var script = this._scriptForRawSourceCode(rawSourceCode);
-        return script && !script.lineOffset && !script.columnOffset;
+        return WebInspector.debuggerModel.canSetScriptSource() && uiSourceCode.isEditable;
     },
 
     /**

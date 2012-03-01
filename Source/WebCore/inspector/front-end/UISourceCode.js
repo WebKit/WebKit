@@ -43,6 +43,7 @@ WebInspector.UISourceCode = function(id, url, rawSourceCode, contentProvider)
     this._rawSourceCode = rawSourceCode;
     this._contentProvider = contentProvider;
     this.isContentScript = false;
+    this.isEditable = false;
     /**
      * @type Array.<function(string,string)>
      */
