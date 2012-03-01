@@ -2240,6 +2240,21 @@ bool RenderObject::isSelectionBorder() const
     return st == SelectionStart || st == SelectionEnd || st == SelectionBoth;
 }
 
+inline void RenderObject::clearLayoutRootIfNeeded() const
+{
+    if (node() && !documentBeingDestroyed() && frame()) {
+        if (FrameView* view = frame()->view()) {
+            if (view->layoutRoot() == this) {
+                ASSERT_NOT_REACHED();
+                // This indicates a failure to layout the child, which is why
+                // the layout root is still set to |this|. Make sure to clear it
+                // since we are getting destroyed.
+                view->clearLayoutRoot();
+            }
+        }
+    }
+}
+
 void RenderObject::willBeDestroyed()
 {
     // Destroy any leftover anonymous children.
@@ -2290,6 +2305,8 @@ void RenderObject::willBeDestroyed()
         setHasLayer(false);
         toRenderBoxModelObject(this)->destroyLayer();
     }
+
+    clearLayoutRootIfNeeded();
 }
 
 void RenderObject::destroyAndCleanupAnonymousWrappers()

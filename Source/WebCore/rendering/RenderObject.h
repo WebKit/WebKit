@@ -870,6 +870,7 @@ protected:
 
     void adjustRectForOutlineAndShadow(LayoutRect&) const;
 
+    void clearLayoutRootIfNeeded() const;
     virtual void willBeDestroyed();
     void arenaDelete(RenderArena*, void* objectBase);
 
