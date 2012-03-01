@@ -37,7 +37,9 @@
 
 namespace WebCore {
 
-DOMWindowIndexedDatabase::DOMWindowIndexedDatabase()
+DOMWindowIndexedDatabase::DOMWindowIndexedDatabase(DOMWindow* window)
+    : DOMWindowProperty(window->frame())
+    , m_window(window)
 {
 }
 
@@ -45,9 +47,31 @@ DOMWindowIndexedDatabase::~DOMWindowIndexedDatabase()
 {
 }
 
+DOMWindowIndexedDatabase* DOMWindowIndexedDatabase::from(DOMWindow* window)
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowIndexedDatabase"));
+    DOMWindowIndexedDatabase* supplement = static_cast<DOMWindowIndexedDatabase*>(Supplement<DOMWindow>::from(window, name));
+    if (!supplement) {
+        supplement = new DOMWindowIndexedDatabase(window);
+        provideTo(window, name, adoptPtr(supplement));
+    }
+    return supplement;
+}
+
+void DOMWindowIndexedDatabase::disconnectFrame()
+{
+    m_idbFactory = 0;
+    DOMWindowProperty::disconnectFrame();
+}
+
 IDBFactory* DOMWindowIndexedDatabase::webkitIndexedDB(DOMWindow* window)
 {
-    Document* document = window->document();
+    return from(window)->webkitIndexedDB();
+}
+
+IDBFactory* DOMWindowIndexedDatabase::webkitIndexedDB()
+{
+    Document* document = m_window->document();
     if (!document)
         return 0;
 
@@ -58,9 +82,9 @@ IDBFactory* DOMWindowIndexedDatabase::webkitIndexedDB(DOMWindow* window)
     if (!document->securityOrigin()->canAccessDatabase())
         return 0;
 
-    if (!window->idbFactory() && window->isCurrentlyDisplayedInFrame())
-        window->setIDBFactory(IDBFactory::create(page->group().idbFactory()));
-    return window->idbFactory();
+    if (!m_idbFactory && m_window->isCurrentlyDisplayedInFrame())
+        m_idbFactory = IDBFactory::create(page->group().idbFactory());
+    return m_idbFactory.get();
 }
 
 } // namespace WebCore
