@@ -27,45 +27,65 @@
 
 #include "TransformOperations.h"
 #include "cc/CCAnimationCurve.h"
+#include "cc/CCTimingFunction.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-struct CCFloatKeyframe {
-    CCFloatKeyframe(double time, float value)
-        : time(time)
-        , value(value)
-    {
-    }
+class CCKeyframe {
+public:
+    double time() const;
+    const CCTimingFunction* timingFunction() const;
 
-    double time;
-    float value;
+protected:
+    CCKeyframe(double time, PassOwnPtr<CCTimingFunction>);
+    virtual ~CCKeyframe();
+
+private:
+    double m_time;
+    OwnPtr<CCTimingFunction> m_timingFunction;
 };
 
-struct CCTransformKeyframe {
-    explicit CCTransformKeyframe(double time)
-        : time(time)
-    {
-    }
+class CCFloatKeyframe : public CCKeyframe {
+public:
+    static PassOwnPtr<CCFloatKeyframe> create(double time, float value, PassOwnPtr<CCTimingFunction>);
+    virtual ~CCFloatKeyframe();
 
-    CCTransformKeyframe(double time, const TransformOperations& value)
-        : time(time)
-        , value(value)
-    {
-    }
+    float value() const;
 
-    double time;
-    TransformOperations value;
+    PassOwnPtr<CCFloatKeyframe> clone() const;
+
+private:
+    CCFloatKeyframe(double time, float value, PassOwnPtr<CCTimingFunction>);
+
+    float m_value;
+};
+
+class CCTransformKeyframe : public CCKeyframe {
+public:
+    static PassOwnPtr<CCTransformKeyframe> create(double time, const TransformOperations& value, PassOwnPtr<CCTimingFunction>);
+    virtual ~CCTransformKeyframe();
+
+    const TransformOperations& value() const;
+
+    PassOwnPtr<CCTransformKeyframe> clone() const;
+
+private:
+    CCTransformKeyframe(double time, const TransformOperations& value, PassOwnPtr<CCTimingFunction>);
+
+    TransformOperations m_value;
 };
 
 class CCKeyframedFloatAnimationCurve : public CCFloatAnimationCurve {
 public:
     // It is required that the keyframes be sorted by time.
-    static PassOwnPtr<CCKeyframedFloatAnimationCurve> create(const Vector<CCFloatKeyframe>& keyframes);
+    static PassOwnPtr<CCKeyframedFloatAnimationCurve> create();
 
     virtual ~CCKeyframedFloatAnimationCurve();
+
+    void addKeyframe(PassOwnPtr<CCFloatKeyframe>);
 
     // CCAnimationCurve implementation
     virtual double duration() const;
@@ -75,19 +95,21 @@ public:
     virtual float getValue(double t) const;
 
 private:
-    explicit CCKeyframedFloatAnimationCurve(const Vector<CCFloatKeyframe>&);
+    CCKeyframedFloatAnimationCurve();
 
     // Always sorted in order of increasing time. No two keyframes have the
     // same time.
-    Vector<CCFloatKeyframe> m_keyframes;
+    Vector<OwnPtr<CCFloatKeyframe> > m_keyframes;
 };
 
 class CCKeyframedTransformAnimationCurve : public CCTransformAnimationCurve {
 public:
     // It is required that the keyframes be sorted by time.
-    static PassOwnPtr<CCKeyframedTransformAnimationCurve> create(const Vector<CCTransformKeyframe>& keyframes);
+    static PassOwnPtr<CCKeyframedTransformAnimationCurve> create();
 
     virtual ~CCKeyframedTransformAnimationCurve();
+
+    void addKeyframe(PassOwnPtr<CCTransformKeyframe>);
 
     // CCAnimationCurve implementation
     virtual double duration() const;
@@ -97,11 +119,11 @@ public:
     virtual TransformationMatrix getValue(double t, const IntSize&) const;
 
 private:
-    explicit CCKeyframedTransformAnimationCurve(const Vector<CCTransformKeyframe>&);
+    CCKeyframedTransformAnimationCurve();
 
     // Always sorted in order of increasing time. No two keyframes have the
     // same time.
-    Vector<CCTransformKeyframe> m_keyframes;
+    Vector<OwnPtr<CCTransformKeyframe> > m_keyframes;
 };
 
 } // namespace WebCore

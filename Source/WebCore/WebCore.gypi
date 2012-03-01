@@ -3362,6 +3362,8 @@
             'platform/graphics/chromium/cc/CCTextureUpdater.h',
             'platform/graphics/chromium/cc/CCTileDrawQuad.cpp',
             'platform/graphics/chromium/cc/CCTileDrawQuad.h',
+            'platform/graphics/chromium/cc/CCTimingFunction.cpp',
+            'platform/graphics/chromium/cc/CCTimingFunction.h',
             'platform/graphics/chromium/cc/CCThread.h',
             'platform/graphics/chromium/cc/CCThreadProxy.cpp',
             'platform/graphics/chromium/cc/CCThreadProxy.h',

@@ -1,3 +1,71 @@
+2012-02-29  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Add impl-thread support for animation-timing-function
+        https://bugs.webkit.org/show_bug.cgi?id=79819
+
+        Reviewed by James Robinson.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCKeyframedAnimationCurve.cpp:
+        (WebCore::CCKeyframe::CCKeyframe):
+        (WebCore):
+        (WebCore::CCKeyframe::~CCKeyframe):
+        (WebCore::CCKeyframe::time):
+        (WebCore::CCKeyframe::timingFunction):
+        (WebCore::CCFloatKeyframe::create):
+        (WebCore::CCFloatKeyframe::CCFloatKeyframe):
+        (WebCore::CCFloatKeyframe::~CCFloatKeyframe):
+        (WebCore::CCFloatKeyframe::value):
+        (WebCore::CCFloatKeyframe::clone):
+        (WebCore::CCTransformKeyframe::create):
+        (WebCore::CCTransformKeyframe::CCTransformKeyframe):
+        (WebCore::CCTransformKeyframe::~CCTransformKeyframe):
+        (WebCore::CCTransformKeyframe::value):
+        (WebCore::CCTransformKeyframe::clone):
+        (WebCore::CCKeyframedFloatAnimationCurve::create):
+        (WebCore::CCKeyframedFloatAnimationCurve::CCKeyframedFloatAnimationCurve):
+        (WebCore::CCKeyframedFloatAnimationCurve::addKeyframe):
+        (WebCore::CCKeyframedFloatAnimationCurve::duration):
+        (WebCore::CCKeyframedFloatAnimationCurve::clone):
+        (WebCore::CCKeyframedFloatAnimationCurve::getValue):
+        (WebCore::CCKeyframedTransformAnimationCurve::create):
+        (WebCore::CCKeyframedTransformAnimationCurve::CCKeyframedTransformAnimationCurve):
+        (WebCore::CCKeyframedTransformAnimationCurve::~CCKeyframedTransformAnimationCurve):
+        (WebCore::CCKeyframedTransformAnimationCurve::addKeyframe):
+        (WebCore::CCKeyframedTransformAnimationCurve::duration):
+        (WebCore::CCKeyframedTransformAnimationCurve::clone):
+        (WebCore::CCKeyframedTransformAnimationCurve::getValue):
+        * platform/graphics/chromium/cc/CCKeyframedAnimationCurve.h:
+        (CCKeyframe):
+        (CCFloatKeyframe):
+        (WebCore):
+        (CCTransformKeyframe):
+        (CCKeyframedFloatAnimationCurve):
+        (CCKeyframedTransformAnimationCurve):
+        * platform/graphics/chromium/cc/CCLayerAnimationController.cpp:
+        * platform/graphics/chromium/cc/CCTimingFunction.cpp: Added.
+        (WebCore):
+        (WebCore::CCTimingFunction::CCTimingFunction):
+        (WebCore::CCTimingFunction::~CCTimingFunction):
+        (WebCore::CCTimingFunction::duration):
+        (WebCore::CCCubicBezierTimingFunction::create):
+        (WebCore::CCCubicBezierTimingFunction::CCCubicBezierTimingFunction):
+        (WebCore::CCCubicBezierTimingFunction::~CCCubicBezierTimingFunction):
+        (WebCore::CCCubicBezierTimingFunction::getValue):
+        (WebCore::CCCubicBezierTimingFunction::clone):
+        (WebCore::CCEaseTimingFunction::create):
+        (WebCore::CCEaseInTimingFunction::create):
+        (WebCore::CCEaseOutTimingFunction::create):
+        (WebCore::CCEaseInOutTimingFunction::create):
+        * platform/graphics/chromium/cc/CCTimingFunction.h: Added.
+        (WebCore):
+        (CCTimingFunction):
+        (CCCubicBezierTimingFunction):
+        (CCEaseTimingFunction):
+        (CCEaseInTimingFunction):
+        (CCEaseOutTimingFunction):
+        (CCEaseInOutTimingFunction):
+
 2012-02-29  Shinya Kawanaka  <shinyak@chromium.org>
 
         Methods in ShadowTree and TreeScopeAdopter should be multiple shadow roots aware.

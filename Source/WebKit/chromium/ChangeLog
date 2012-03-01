@@ -1,3 +1,14 @@
+2012-02-29  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Add impl-thread support for animation-timing-function
+        https://bugs.webkit.org/show_bug.cgi?id=79819
+
+        Reviewed by James Robinson.
+
+        * tests/CCKeyframedAnimationCurveTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+
 2012-02-29  David Levin  <levin@chromium.org>
 
         [chromium] Add the ability to turn off autoresize.

@@ -37,16 +37,16 @@ namespace WebCore {
 
 namespace {
 
-template <typename Keyframe, typename Value>
-void appendKeyframe(Vector<Keyframe>& keyframes, double keyTime, const Value* value)
+template <class Value, class Keyframe, class Curve>
+void appendKeyframe(Curve& curve, double keyTime, const Value* value, PassOwnPtr<CCTimingFunction> timingFunction)
 {
-    keyframes.append(Keyframe(keyTime, value->value()));
+    curve.addKeyframe(Keyframe::create(keyTime, value->value(), timingFunction));
 }
 
 template <>
-void appendKeyframe<CCTransformKeyframe, TransformAnimationValue>(Vector<CCTransformKeyframe>& keyframes, double keyTime, const TransformAnimationValue* value)
+void appendKeyframe<TransformAnimationValue, CCTransformKeyframe, CCKeyframedTransformAnimationCurve>(CCKeyframedTransformAnimationCurve& curve, double keyTime, const TransformAnimationValue* value, PassOwnPtr<CCTimingFunction> timingFunction)
 {
-    keyframes.append(CCTransformKeyframe(keyTime, *value->value()));
+    curve.addKeyframe(CCTransformKeyframe::create(keyTime, *value->value(), timingFunction));
 }
 
 template <class Value, class Keyframe, class Curve>
@@ -64,20 +64,32 @@ PassOwnPtr<CCActiveAnimation> createActiveAnimation(const KeyframeValueList& val
     if (animation && animation->isFillModeSet() && (animation->fillsForwards() || animation->fillsBackwards()))
         return nullptr;
 
+    OwnPtr<Curve> curve = Curve::create();
     Vector<Keyframe> keyframes;
 
     for (size_t i = 0; i < valueList.size(); i++) {
         const Value* originalValue = static_cast<const Value*>(valueList.at(i));
 
-        // FIXME: add support for timing functions.
-        if (originalValue->timingFunction() && originalValue->timingFunction()->type() != TimingFunction::LinearFunction)
-            return nullptr;
+        OwnPtr<CCTimingFunction> timingFunction;
+        if (originalValue->timingFunction()) {
+            switch (originalValue->timingFunction()->type()) {
+            case TimingFunction::StepsFunction:
+                // FIXME: add support for steps timing function.
+                return nullptr;
+            case TimingFunction::LinearFunction:
+                // Don't set the timing function. Keyframes are interpolated linearly if there is no timing function.
+                break;
+            case TimingFunction::CubicBezierFunction:
+                const CubicBezierTimingFunction* originalTimingFunction = static_cast<const CubicBezierTimingFunction*>(originalValue->timingFunction());
+                timingFunction = CCCubicBezierTimingFunction::create(originalTimingFunction->x1(), originalTimingFunction->y1(), originalTimingFunction->x2(), originalTimingFunction->y2());
+                break;
+            } // switch
+        } else
+            timingFunction = CCEaseTimingFunction::create();
 
         double duration = (animation && animation->isDurationSet()) ? animation->duration() : 1;
-        appendKeyframe(keyframes, originalValue->keyTime() * duration, originalValue);
+        appendKeyframe<Value, Keyframe, Curve>(*curve, originalValue->keyTime() * duration, originalValue, timingFunction.release());
     }
-
-    OwnPtr<Curve> curve = Curve::create(keyframes);
 
     OwnPtr<CCActiveAnimation> anim = CCActiveAnimation::create(curve.release(), animationId, groupId, targetProperty);
 
