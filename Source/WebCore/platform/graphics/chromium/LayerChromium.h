@@ -169,7 +169,6 @@ public:
     virtual void setIsMask(bool) { }
     virtual void unreserveContentsTexture() { }
     virtual void bindContentsTexture() { }
-    virtual void pageScaleChanged() { m_pageScaleDirty = true; }
     virtual void protectVisibleTileTextures() { }
     virtual bool needsContentsScale() const { return false; }
 
@@ -325,8 +324,6 @@ private:
     float m_contentsScale;
 
     String m_name;
-
-    bool m_pageScaleDirty;
 
     CCLayerAnimationDelegate* m_layerAnimationDelegate;
 };

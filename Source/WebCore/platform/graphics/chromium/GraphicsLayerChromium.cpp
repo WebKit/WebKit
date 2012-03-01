@@ -78,6 +78,7 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
     , m_inSetChildren(false)
+    , m_pageScaleChanged(false)
 {
     m_layer = ContentLayerChromium::create(this);
 
@@ -201,6 +202,10 @@ void GraphicsLayerChromium::setSize(const FloatSize& size)
 
     GraphicsLayer::setSize(clampedSize);
     updateLayerSize();
+
+    if (m_pageScaleChanged && m_layer)
+        m_layer->setNeedsDisplay();
+    m_pageScaleChanged = false;
 }
 
 void GraphicsLayerChromium::setTransform(const TransformationMatrix& transform)
@@ -722,8 +727,10 @@ float GraphicsLayerChromium::contentsScale() const
 void GraphicsLayerChromium::deviceOrPageScaleFactorChanged()
 {
     updateContentsScale();
-    if (m_layer)
-        m_layer->pageScaleChanged();
+    // Invalidations are clamped to the layer's bounds but we receive the scale changed notification before receiving
+    // the new layer bounds. When the scale changes, we really want to invalidate the post-scale layer bounds, so we
+    // remember that the scale has changed and then invalidate the full layer bounds when we receive the new size.
+    m_pageScaleChanged = true;
 }
 
 void GraphicsLayerChromium::paintContents(GraphicsContext& context, const IntRect& clip)

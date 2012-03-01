@@ -165,6 +165,7 @@ private:
     ContentsLayerPurpose m_contentsLayerPurpose;
     bool m_contentsLayerHasBackgroundColor : 1;
     bool m_inSetChildren;
+    bool m_pageScaleChanged;
 
     AnimationIdMap m_animationIdMap;
 };

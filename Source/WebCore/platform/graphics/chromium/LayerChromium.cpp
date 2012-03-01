@@ -84,7 +84,6 @@ LayerChromium::LayerChromium()
     , m_drawOpacity(0)
     , m_targetRenderSurface(0)
     , m_contentsScale(1.0)
-    , m_pageScaleDirty(false)
     , m_layerAnimationDelegate(0)
 {
 }
@@ -278,12 +277,10 @@ void LayerChromium::setBounds(const IntSize& size)
 
     m_bounds = size;
 
-    if (firstResize || m_pageScaleDirty)
+    if (firstResize)
         setNeedsDisplay();
     else
         setNeedsCommit();
-
-    m_pageScaleDirty = false;
 }
 
 const LayerChromium* LayerChromium::rootLayer() const
