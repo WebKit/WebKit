@@ -187,13 +187,15 @@ PassRefPtr<HTMLElement> HTMLTableElement::insertRow(int index, ExceptionCode& ec
         return 0;
     }
 
-    HTMLTableRowElement* lastRow = 0;
-    HTMLTableRowElement* row = 0;
+    RefPtr<Node> protectFromMutationEvents(this);
+
+    RefPtr<HTMLTableRowElement> lastRow = 0;
+    RefPtr<HTMLTableRowElement> row = 0;
     if (index == -1)
         lastRow = HTMLTableRowsCollection::lastRow(this);
     else {
         for (int i = 0; i <= index; ++i) {
-            row = HTMLTableRowsCollection::rowAfter(this, lastRow);
+            row = HTMLTableRowsCollection::rowAfter(this, lastRow.get());
             if (!row) {
                 if (i != index) {
                     ec = INDEX_SIZE_ERR;
@@ -205,7 +207,7 @@ PassRefPtr<HTMLElement> HTMLTableElement::insertRow(int index, ExceptionCode& ec
         }
     }
 
-    ContainerNode* parent;
+    RefPtr<ContainerNode> parent;
     if (lastRow)
         parent = row ? row->parentNode() : lastRow->parentNode();
     else {
@@ -220,7 +222,7 @@ PassRefPtr<HTMLElement> HTMLTableElement::insertRow(int index, ExceptionCode& ec
     }
 
     RefPtr<HTMLTableRowElement> newRow = HTMLTableRowElement::create(document());
-    parent->insertBefore(newRow, row, ec);
+    parent->insertBefore(newRow, row.get(), ec);
     return newRow.release();
 }
 

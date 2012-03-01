@@ -82,6 +82,8 @@ void HTMLScriptElement::insertedIntoDocument()
 
 void HTMLScriptElement::setText(const String &value)
 {
+    RefPtr<Node> protectFromMutationEvents(this);
+
     ExceptionCode ec = 0;
     int numChildren = childNodeCount();
 

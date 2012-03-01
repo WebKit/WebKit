@@ -384,8 +384,9 @@ String HTMLTextAreaElement::defaultValue() const
 
 void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
 {
-    // To preserve comments, remove only the text nodes, then add a single text node.
+    RefPtr<Node> protectFromMutationEvents(this);
 
+    // To preserve comments, remove only the text nodes, then add a single text node.
     Vector<RefPtr<Node> > textNodes;
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
         if (n->isTextNode())

@@ -693,7 +693,7 @@ static bool findNodesSurroundingContext(Document* document, RefPtr<Node>& nodeBe
 static void trimFragment(DocumentFragment* fragment, Node* nodeBeforeContext, Node* nodeAfterContext)
 {
     ExceptionCode ec = 0;
-    Node* next;
+    RefPtr<Node> next;
     for (RefPtr<Node> node = fragment->firstChild(); node; node = next) {
         if (nodeBeforeContext->isDescendantOf(node.get())) {
             next = node->traverseNextNode();
@@ -707,9 +707,9 @@ static void trimFragment(DocumentFragment* fragment, Node* nodeBeforeContext, No
     }
 
     ASSERT(nodeAfterContext->parentNode());
-    for (Node* node = nodeAfterContext; node; node = next) {
+    for (RefPtr<Node> node = nodeAfterContext; node; node = next) {
         next = node->traverseNextSibling();
-        node->parentNode()->removeChild(node, ec);
+        node->parentNode()->removeChild(node.get(), ec);
         ASSERT(!ec);
     }
 }
@@ -1021,10 +1021,12 @@ static inline bool hasOneTextChild(ContainerNode* node)
     return hasOneChild(node) && node->firstChild()->isTextNode();
 }
 
-void replaceChildrenWithFragment(ContainerNode* containerNode, PassRefPtr<DocumentFragment> fragment, ExceptionCode& ec)
+void replaceChildrenWithFragment(ContainerNode* container, PassRefPtr<DocumentFragment> fragment, ExceptionCode& ec)
 {
+    RefPtr<ContainerNode> containerNode(container);
+
 #if ENABLE(MUTATION_OBSERVERS)
-    ChildListMutationScope mutation(containerNode);
+    ChildListMutationScope mutation(containerNode.get());
 #endif
 
     if (!fragment->firstChild()) {
@@ -1032,12 +1034,12 @@ void replaceChildrenWithFragment(ContainerNode* containerNode, PassRefPtr<Docume
         return;
     }
 
-    if (hasOneTextChild(containerNode) && hasOneTextChild(fragment.get())) {
+    if (hasOneTextChild(containerNode.get()) && hasOneTextChild(fragment.get())) {
         toText(containerNode->firstChild())->setData(toText(fragment->firstChild())->data(), ec);
         return;
     }
 
-    if (hasOneChild(containerNode)) {
+    if (hasOneChild(containerNode.get())) {
         containerNode->replaceChild(fragment, containerNode->firstChild(), ec);
         return;
     }
@@ -1046,20 +1048,22 @@ void replaceChildrenWithFragment(ContainerNode* containerNode, PassRefPtr<Docume
     containerNode->appendChild(fragment, ec);
 }
 
-void replaceChildrenWithText(ContainerNode* containerNode, const String& text, ExceptionCode& ec)
+void replaceChildrenWithText(ContainerNode* container, const String& text, ExceptionCode& ec)
 {
+    RefPtr<ContainerNode> containerNode(container);
+
 #if ENABLE(MUTATION_OBSERVERS)
-    ChildListMutationScope mutation(containerNode);
+    ChildListMutationScope mutation(containerNode.get());
 #endif
 
-    if (hasOneTextChild(containerNode)) {
+    if (hasOneTextChild(containerNode.get())) {
         toText(containerNode->firstChild())->setData(text, ec);
         return;
     }
 
     RefPtr<Text> textNode = Text::create(containerNode->document(), text);
 
-    if (hasOneChild(containerNode)) {
+    if (hasOneChild(containerNode.get())) {
         containerNode->replaceChild(textNode.release(), containerNode->firstChild(), ec);
         return;
     }
