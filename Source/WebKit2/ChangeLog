@@ -1,3 +1,21 @@
+2012-03-01  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2] [GTK] [libsoup] SoupSession should use system CA
+        https://bugs.webkit.org/show_bug.cgi?id=79657
+
+        Reviewed by Martin Robinson.
+
+        SoupSession sould use system CA list to validate SSL
+        certificates. Do not use strict certificate validation though as
+        we want clients to decide whether or not accept/decline invalid
+        certificates (API to be added later).
+
+        No new tests required as current behaviour does not change at all
+        as we continue to accept invalid certificates by default.
+
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk):
+
 2012-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKit2 GTK+ build.

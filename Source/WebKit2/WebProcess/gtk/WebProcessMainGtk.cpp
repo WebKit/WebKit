@@ -64,6 +64,12 @@ WK_EXPORT int WebProcessMainGtk(int argc, char* argv[])
     SoupSession* session = WebCore::ResourceHandle::defaultSession();
     soup_session_add_feature_by_type(session, WEB_TYPE_AUTH_DIALOG);
 
+    // Despite using system CAs to validate certificates we're
+    // accepting invalid certificates by default. New API will be
+    // added later to let client accept/discard invalid certificates.
+    g_object_set(session, SOUP_SESSION_SSL_USE_SYSTEM_CA_FILE, TRUE,
+                 SOUP_SESSION_SSL_STRICT, FALSE, NULL);
+
     RunLoop::run();
 
     return 0;
