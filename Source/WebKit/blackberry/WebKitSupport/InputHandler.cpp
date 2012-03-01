@@ -162,6 +162,7 @@ static int inputStyle(BlackBerryInputType type, const Element* element)
     switch (type) {
     case InputTypeText:
     case InputTypeSearch:
+    case InputTypeTextArea:
         {
             // Regular input mode, disable help if autocomplete is off.
             int imfMask = 0;
@@ -189,7 +190,6 @@ static int inputStyle(BlackBerryInputType type, const Element* element)
     case InputTypeURL:
         // Disable special handling.
         return NO_AUTO_TEXT | NO_PREDICTION | NO_AUTO_CORRECTION;
-    case InputTypeTextArea:
     default:
         break;
     }

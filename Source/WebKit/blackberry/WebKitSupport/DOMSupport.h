@@ -35,6 +35,7 @@ class Frame;
 class HTMLTextFormControlElement;
 class Node;
 class Position;
+class QualifiedName;
 class Range;
 class VisibleSelection;
 }
@@ -54,7 +55,10 @@ bool isPasswordElement(const WebCore::Element*);
 bool isPopupInputField(const WebCore::Element*);
 bool isDateTimeInputField(const WebCore::Element*);
 bool isColorInputField(const WebCore::Element*);
+
+AttributeState elementAttributeState(const WebCore::Element*, const WebCore::QualifiedName&);
 AttributeState elementSupportsAutocorrect(const WebCore::Element*);
+AttributeState elementSupportsAutocomplete(const WebCore::Element*);
 
 WTF::String inputElementText(WebCore::Element*);
 
@@ -69,7 +73,6 @@ WebCore::VisibleSelection visibleSelectionForInputElement(WebCore::Element*);
 WebCore::Node* DOMContainerNodeForPosition(const WebCore::Position&);
 bool isPositionInNode(WebCore::Node*, const WebCore::Position&);
 
-AttributeState elementSupportsAutocomplete(const WebCore::Element*);
 bool elementIdOrNameIndicatesNoAutocomplete(const WebCore::Element*);
 
 WebCore::IntPoint convertPointToFrame(const WebCore::Frame* sourceFrame, const WebCore::Frame* targetFrame, const WebCore::IntPoint& sourcePoint, const bool clampToTargetFrame = false);

@@ -173,13 +173,27 @@ bool isColorInputField(const Element* element)
     return false;
 }
 
+// This is a Tristate return to allow us to override name matching when
+// the attribute is expressly requested for a field. Default indicates
+// that the setting is On which is the default but not expressly requested
+// for the element being checked. On indicates that it is directly added
+// to the element.
 AttributeState elementSupportsAutocorrect(const Element* element)
+{
+    return elementAttributeState(element, QualifiedName(nullAtom, "autocorrect", nullAtom));
+}
+
+AttributeState elementSupportsAutocomplete(const Element* element)
+{
+    return elementAttributeState(element, HTMLNames::autocompleteAttr);
+}
+
+AttributeState elementAttributeState(const Element* element, const QualifiedName& attributeName)
 {
     // First we check the input item itself. If the attribute is not defined,
     // we check its parent form.
-    QualifiedName autocorrectAttr = QualifiedName(nullAtom, "autocorrect", nullAtom);
-    if (element->fastHasAttribute(autocorrectAttr)) {
-        AtomicString attributeString = element->fastGetAttribute(autocorrectAttr);
+    if (element->fastHasAttribute(attributeName)) {
+        AtomicString attributeString = element->fastGetAttribute(attributeName);
         if (equalIgnoringCase(attributeString, "off"))
             return Off;
         if (equalIgnoringCase(attributeString, "on"))
@@ -189,8 +203,8 @@ AttributeState elementSupportsAutocorrect(const Element* element)
     }
     if (element->isFormControlElement()) {
         const HTMLFormControlElement* formElement = static_cast<const HTMLFormControlElement*>(element);
-        if (formElement->form() && formElement->form()->fastHasAttribute(autocorrectAttr)) {
-            AtomicString attributeString = formElement->form()->fastGetAttribute(autocorrectAttr);
+        if (formElement->form() && formElement->form()->fastHasAttribute(attributeName)) {
+            AtomicString attributeString = formElement->form()->fastGetAttribute(attributeName);
             if (equalIgnoringCase(attributeString, "off"))
                 return Off;
             if (equalIgnoringCase(attributeString, "on"))
@@ -283,25 +297,6 @@ bool isPositionInNode(Node* node, const Position& position)
     int ec;
 
     return rangeForNode->isPointInRange(domNodeAtPos, offset, ec);
-}
-
-// This is a Tristate return to allow us to override name matching when
-// autocomplete is expressly requested for a field. Default indicates
-// that the setting is On which is the default but not expressly requested
-// for the element being checked. On indicates that it is directly added
-// to the element.
-AttributeState elementSupportsAutocomplete(const Element* element)
-{
-    if (!element->hasTagName(HTMLNames::inputTag))
-        return Default;
-
-    const HTMLInputElement* inputElement = static_cast<const HTMLInputElement*>(element);
-    if (inputElement->fastHasAttribute(HTMLNames::autocompleteAttr)) {
-        if (equalIgnoringCase(inputElement->fastGetAttribute(HTMLNames::autocompleteAttr), "on"))
-            return On;
-    }
-
-    return inputElement->shouldAutocomplete() ? Default : Off;
 }
 
 bool matchesReservedStringPreventingAutocomplete(AtomicString& string)
