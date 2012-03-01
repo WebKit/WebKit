@@ -35,7 +35,7 @@ void Phase::beginPhase()
 {
     dataLog("Beginning DFG phase %s.\n", m_name);
     dataLog("Graph before %s:\n", m_name);
-    m_graph.dump(m_codeBlock);
+    m_graph.dump();
 }
 
 void Phase::endPhase()

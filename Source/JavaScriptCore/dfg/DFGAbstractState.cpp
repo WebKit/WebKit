@@ -54,13 +54,7 @@ AbstractState::AbstractState(Graph& graph)
     , m_variables(m_codeBlock->numParameters(), graph.m_localVars)
     , m_block(0)
 {
-    size_t maxBlockSize = 0;
-    for (size_t i = 0; i < graph.m_blocks.size(); ++i) {
-        BasicBlock* block = graph.m_blocks[i].get();
-        if (block->end - block->begin > maxBlockSize)
-            maxBlockSize = block->end - block->begin;
-    }
-    m_nodes.resize(maxBlockSize);
+    m_nodes.resize(graph.size());
 }
 
 AbstractState::~AbstractState() { }
@@ -75,8 +69,9 @@ void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
     ASSERT(basicBlock->variablesAtTail.numberOfLocals() == basicBlock->valuesAtTail.numberOfLocals());
     ASSERT(basicBlock->variablesAtHead.numberOfLocals() == basicBlock->variablesAtTail.numberOfLocals());
     
-    for (size_t i = 0; i < basicBlock->end - basicBlock->begin; ++i)
-        m_nodes[i].clear();
+    for (size_t i = 0; i < basicBlock->size(); i++)
+        m_nodes[basicBlock->at(i)].clear();
+
     m_variables = basicBlock->valuesAtHead;
     m_haveStructures = false;
     for (size_t i = 0; i < m_variables.numberOfArguments(); ++i) {
@@ -215,12 +210,13 @@ void AbstractState::reset()
     m_isValid = false;
 }
 
-bool AbstractState::execute(NodeIndex nodeIndex)
+bool AbstractState::execute(unsigned indexInBlock)
 {
     PROFILE(FLAG_FOR_EXECUTION);
     ASSERT(m_block);
     ASSERT(m_isValid);
         
+    NodeIndex nodeIndex = m_block->at(indexInBlock);
     Node& node = m_graph[nodeIndex];
         
     if (!node.shouldGenerate())
@@ -319,7 +315,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             break;
         }
         if (node.op == ValueAdd) {
-            clobberStructures(nodeIndex);
+            clobberStructures(indexInBlock);
             forNode(nodeIndex).set(PredictString | PredictInt32 | PredictNumber);
             break;
         }
@@ -409,7 +405,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         else if (child.shouldSpeculateNumber())
             forNode(node.child1()).filter(PredictNumber);
         else
-            clobberStructures(nodeIndex);
+            clobberStructures(indexInBlock);
         forNode(nodeIndex).set(PredictBoolean);
         break;
     }
@@ -432,7 +428,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             filter = PredictArray;
         else {
             filter = PredictTop;
-            clobberStructures(nodeIndex);
+            clobberStructures(indexInBlock);
         }
         forNode(node.child1()).filter(filter);
         forNode(node.child2()).filter(filter);
@@ -462,7 +458,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             break;
         }
         if (!isActionableArrayPrediction(m_graph[node.child1()].prediction()) || !m_graph[node.child2()].shouldSpeculateInteger()) {
-            clobberStructures(nodeIndex);
+            clobberStructures(indexInBlock);
             forNode(nodeIndex).makeTop();
             break;
         }
@@ -548,7 +544,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         }
         if (!m_graph[node.child2()].shouldSpeculateInteger() || !isActionableMutableArrayPrediction(m_graph[node.child1()].prediction())) {
             ASSERT(node.op == PutByVal);
-            clobberStructures(nodeIndex);
+            clobberStructures(indexInBlock);
             forNode(nodeIndex).makeTop();
             break;
         }
@@ -766,7 +762,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         break;
             
     case PutScopedVar:
-        clobberStructures(nodeIndex);
+        clobberStructures(indexInBlock);
         break;
             
     case GetById:
@@ -777,7 +773,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         }
         if (isCellPrediction(m_graph[node.child1()].prediction()))
             forNode(node.child1()).filter(PredictCell);
-        clobberStructures(nodeIndex);
+        clobberStructures(indexInBlock);
         forNode(nodeIndex).makeTop();
         break;
             
@@ -839,7 +835,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         break;
             
     case PutStructure:
-        clobberStructures(nodeIndex);
+        clobberStructures(indexInBlock);
         forNode(node.child1()).set(node.structureTransitionData().newStructure);
         m_haveStructures = true;
         break;
@@ -930,7 +926,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
     case PutById:
     case PutByIdDirect:
         forNode(node.child1()).filter(PredictCell);
-        clobberStructures(nodeIndex);
+        clobberStructures(indexInBlock);
         break;
             
     case GetGlobalVar:
@@ -966,7 +962,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
     case ResolveBase:
     case ResolveBaseStrictPut:
     case ResolveGlobal:
-        clobberStructures(nodeIndex);
+        clobberStructures(indexInBlock);
         forNode(nodeIndex).makeTop();
         break;
             
@@ -983,13 +979,13 @@ bool AbstractState::execute(NodeIndex nodeIndex)
     return m_isValid;
 }
 
-inline void AbstractState::clobberStructures(NodeIndex nodeIndex)
+inline void AbstractState::clobberStructures(unsigned indexInBlock)
 {
     PROFILE(FLAG_FOR_STRUCTURE_CLOBBERING);
     if (!m_haveStructures)
         return;
-    for (size_t i = nodeIndex - m_block->begin + 1; i-- > 0;)
-        m_nodes[i].clobberStructures();
+    for (size_t i = indexInBlock + 1; i-- > m_block->startExcludingPhis;)
+        forNode(m_block->at(i)).clobberStructures();
     for (size_t i = 0; i < m_variables.numberOfArguments(); ++i)
         m_variables.argument(i).clobberStructures();
     for (size_t i = 0; i < m_variables.numberOfLocals(); ++i)
@@ -1108,7 +1104,7 @@ inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBloc
 {
     PROFILE(FLAG_FOR_MERGE_TO_SUCCESSORS);
 
-    Node& terminal = graph[basicBlock->end - 1];
+    Node& terminal = graph[basicBlock->last()];
     
     ASSERT(terminal.isTerminal());
     
@@ -1147,15 +1143,17 @@ inline bool AbstractState::mergeVariableBetweenBlocks(AbstractValue& destination
 void AbstractState::dump(FILE* out)
 {
     bool first = true;
-    for (size_t i = 0; i < m_nodes.size(); ++i) {
-        if (m_nodes[i].isClear())
+    for (size_t i = m_block->startExcludingPhis; i < m_block->size(); ++i) {
+        NodeIndex index = m_block->at(i);
+        AbstractValue& value = m_nodes[index];
+        if (value.isClear())
             continue;
         if (first)
             first = false;
         else
             fprintf(out, " ");
-        fprintf(out, "@%lu:", static_cast<unsigned long>(i + m_block->begin));
-        m_nodes[i].dump(out);
+        fprintf(out, "@%lu:", static_cast<unsigned long>(index));
+        value.dump(out);
     }
 }
 #endif

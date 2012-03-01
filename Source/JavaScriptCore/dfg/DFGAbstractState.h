@@ -98,7 +98,7 @@ public:
     
     AbstractValue& forNode(NodeIndex nodeIndex)
     {
-        return m_nodes[nodeIndex - m_block->begin];
+        return m_nodes[nodeIndex];
     }
     
     AbstractValue& forNode(NodeUse nodeUse)
@@ -152,7 +152,7 @@ public:
     // if execution should continue past this node. Notably, it will return true
     // for block terminals, so long as those terminals are not Return or variants
     // of Throw.
-    bool execute(NodeIndex);
+    bool execute(unsigned);
     
     // Is the execution state still valid? This will be false if execute() has
     // returned false previously.
@@ -176,7 +176,7 @@ public:
 #endif
     
 private:
-    void clobberStructures(NodeIndex);
+    void clobberStructures(unsigned);
     
     bool mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, NodeIndex);
     
@@ -185,7 +185,7 @@ private:
     CodeBlock* m_codeBlock;
     Graph& m_graph;
     
-    Vector<AbstractValue, 32> m_nodes;
+    Vector<AbstractValue, 64> m_nodes;
     Operands<AbstractValue> m_variables;
     BasicBlock* m_block;
     bool m_haveStructures;

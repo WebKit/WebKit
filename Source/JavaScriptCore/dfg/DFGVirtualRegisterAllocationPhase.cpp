@@ -48,8 +48,7 @@ public:
         dataLog("\n");
 #endif
         ScoreBoard scoreBoard(m_graph, m_graph.m_preservedVars);
-        unsigned sizeExcludingPhiNodes = m_graph.m_blocks.last()->end;
-        for (size_t i = 0; i < sizeExcludingPhiNodes; ++i) {
+        for (size_t i = 0; i < m_graph.size(); ++i) {
             Node& node = m_graph[i];
         
             if (!node.shouldGenerate() || node.op == Phi || node.op == Flush)

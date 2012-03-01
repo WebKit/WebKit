@@ -222,6 +222,9 @@ private:
     
     NodeIndex m_compileIndex;
     bool m_changed;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+    unsigned m_count;
+#endif
 };
 
 void performArithNodeFlagsInference(Graph& graph)

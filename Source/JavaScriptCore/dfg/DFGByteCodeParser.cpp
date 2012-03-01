@@ -569,6 +569,7 @@ private:
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
         m_graph.append(Node(op, currentCodeOrigin(), child1, child2, child3));
+        m_currentBlock->append(resultIndex);
 
         if (op & NodeMustGenerate)
             m_graph.ref(resultIndex);
@@ -578,6 +579,7 @@ private:
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
         m_graph.append(Node(op, currentCodeOrigin(), info, child1, child2, child3));
+        m_currentBlock->append(resultIndex);
 
         if (op & NodeMustGenerate)
             m_graph.ref(resultIndex);
@@ -587,6 +589,7 @@ private:
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
         m_graph.append(Node(op, currentCodeOrigin(), info1, info2, child1, child2, child3));
+        m_currentBlock->append(resultIndex);
 
         if (op & NodeMustGenerate)
             m_graph.ref(resultIndex);
@@ -597,6 +600,7 @@ private:
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
         m_graph.append(Node(Node::VarArg, op, currentCodeOrigin(), info1, info2, m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs));
+        m_currentBlock->append(resultIndex);
         
         m_numPassedVarArgs = 0;
         
@@ -604,6 +608,17 @@ private:
             m_graph.ref(resultIndex);
         return resultIndex;
     }
+
+    NodeIndex insertPhiNode(OpInfo info, BasicBlock* block)
+    {
+        NodeIndex resultIndex = (NodeIndex)m_graph.size();
+        m_graph.append(Node(Phi, currentCodeOrigin(), info));
+        block->prepend(resultIndex);
+        ++block->startExcludingPhis;
+
+        return resultIndex;
+    }
+
     void addVarArgChild(NodeIndex child)
     {
         m_graph.m_varArgChildren.append(NodeUse(child));
@@ -1169,7 +1184,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // the caller to continue in whatever basic block we're in right now.
     if (!inlineStackEntry.m_didEarlyReturn && inlineStackEntry.m_didReturn) {
         BasicBlock* lastBlock = m_graph.m_blocks.last().get();
-        ASSERT(lastBlock->begin == lastBlock->end || !m_graph.last().isTerminal());
+        ASSERT(lastBlock->isEmpty() || !m_graph.last().isTerminal());
         
         // If we created new blocks then the last block needs linking, but in the
         // caller. It doesn't need to be linked to, but it needs outgoing links.
@@ -1201,7 +1216,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
             continue;
         BasicBlock* block = m_graph.m_blocks[inlineStackEntry.m_unlinkedBlocks[i].m_blockIndex].get();
         ASSERT(!block->isLinked);
-        Node& node = m_graph[block->end - 1];
+        Node& node = m_graph[block->last()];
         ASSERT(node.op == Jump);
         ASSERT(node.takenBlockIndex() == NoBlock);
         node.setTakenBlockIndex(m_graph.m_blocks.size());
@@ -1212,7 +1227,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     }
     
     // Need to create a new basic block for the continuation at the caller.
-    OwnPtr<BasicBlock> block = adoptPtr(new BasicBlock(nextOffset, m_graph.size(), m_numArguments, m_numLocals));
+    OwnPtr<BasicBlock> block = adoptPtr(new BasicBlock(nextOffset, m_numArguments, m_numLocals));
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("Creating inline epilogue basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
 #endif
@@ -1404,7 +1419,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // logic relies on every bytecode resulting in one or more nodes, which would
             // be true anyway except for op_loop_hint, which emits a Phantom to force this
             // to be true.
-            if (m_currentBlock->begin != m_graph.size())
+            if (!m_currentBlock->isEmpty())
                 addToGraph(Jump, OpInfo(m_currentIndex));
             else {
 #if DFG_ENABLE(DEBUG_VERBOSE)
@@ -2313,7 +2328,7 @@ void ByteCodeParser::processPhiStack()
                 dataLog("      Did not find node, adding phi.\n");
 #endif
 
-                valueInPredecessor = addToGraph(Phi, OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? argumentToOperand(varNo) : static_cast<int>(varNo))));
+                valueInPredecessor = insertPhiNode(OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? argumentToOperand(varNo) : static_cast<int>(varNo))), predecessorBlock);
                 var = valueInPredecessor;
                 if (stackType == ArgumentPhiStack)
                     predecessorBlock->variablesAtHead.setArgumentFirstTime(varNo, valueInPredecessor);
@@ -2395,7 +2410,7 @@ void ByteCodeParser::processPhiStack()
                 continue;
             }
             
-            NodeIndex newPhi = addToGraph(Phi, OpInfo(dataForPhi));
+            NodeIndex newPhi = insertPhiNode(OpInfo(dataForPhi), entry.m_block);
             
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLog("      Splitting @%u, created @%u.\n", entry.m_phi, newPhi);
@@ -2435,10 +2450,9 @@ void ByteCodeParser::fixVariableAccessPredictions()
 
 void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BlockIndex>& possibleTargets)
 {
-    ASSERT(block->end != NoNode);
     ASSERT(!block->isLinked);
-    ASSERT(block->end > block->begin);
-    Node& node = m_graph[block->end - 1];
+    ASSERT(!block->isEmpty());
+    Node& node = m_graph[block->last()];
     ASSERT(node.isTerminal());
     
     switch (node.op) {
@@ -2502,7 +2516,7 @@ void ByteCodeParser::determineReachability()
         BasicBlock* block = m_graph.m_blocks[index].get();
         ASSERT(block->isLinked);
         
-        Node& node = m_graph[block->end - 1];
+        Node& node = m_graph[block->last()];
         ASSERT(node.isTerminal());
         
         if (node.isJump())
@@ -2649,7 +2663,7 @@ void ByteCodeParser::parseCodeBlock()
         do {
             if (!m_currentBlock) {
                 // Check if we can use the last block.
-                if (!m_graph.m_blocks.isEmpty() && m_graph.m_blocks.last()->begin == m_graph.m_blocks.last()->end) {
+                if (!m_graph.m_blocks.isEmpty() && m_graph.m_blocks.last()->isEmpty()) {
                     // This must be a block belonging to us.
                     ASSERT(m_inlineStackTop->m_unlinkedBlocks.last().m_blockIndex == m_graph.m_blocks.size() - 1);
                     // Either the block is linkable or it isn't. If it's linkable then it's the last
@@ -2667,7 +2681,7 @@ void ByteCodeParser::parseCodeBlock()
 #endif
                     m_currentBlock->bytecodeBegin = m_currentIndex;
                 } else {
-                    OwnPtr<BasicBlock> block = adoptPtr(new BasicBlock(m_currentIndex, m_graph.size(), m_numArguments, m_numLocals));
+                    OwnPtr<BasicBlock> block = adoptPtr(new BasicBlock(m_currentIndex, m_numArguments, m_numLocals));
 #if DFG_ENABLE(DEBUG_VERBOSE)
                     dataLog("Creating basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
 #endif
@@ -2690,10 +2704,8 @@ void ByteCodeParser::parseCodeBlock()
             // are at the end of an inline function, or we realized that we
             // should stop parsing because there was a return in the first
             // basic block.
-            ASSERT(m_currentBlock->begin == m_graph.size() || m_graph.last().isTerminal() || (m_currentIndex == codeBlock->instructions().size() && m_inlineStackTop->m_inlineCallFrame) || !shouldContinueParsing);
+            ASSERT(m_currentBlock->isEmpty() || m_graph.last().isTerminal() || (m_currentIndex == codeBlock->instructions().size() && m_inlineStackTop->m_inlineCallFrame) || !shouldContinueParsing);
 
-            m_currentBlock->end = m_graph.size();
-            
             if (!shouldContinueParsing)
                 return;
             

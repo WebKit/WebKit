@@ -82,7 +82,8 @@ private:
         dumpOperands(block->valuesAtHead, WTF::dataFile());
         dataLog("\n");
 #endif
-        for (NodeIndex nodeIndex = block->begin; nodeIndex < block->end; ++nodeIndex) {
+        for (unsigned i = block->startExcludingPhis; i < block->size(); ++i) {
+            NodeIndex nodeIndex = block->at(i);
             if (!m_graph[nodeIndex].shouldGenerate())
                 continue;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -90,7 +91,7 @@ private:
             m_state.dump(WTF::dataFile());
             dataLog("\n");
 #endif
-            if (!m_state.execute(nodeIndex))
+            if (!m_state.execute(i))
                 break;
         }
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -120,6 +121,9 @@ private:
     AbstractState m_state;
     
     bool m_changed;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+    unsigned m_count;
+#endif
 };
 
 void performCFA(Graph& graph)

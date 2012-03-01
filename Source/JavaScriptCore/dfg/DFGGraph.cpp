@@ -274,8 +274,8 @@ void Graph::dump()
         dataLog("  var links: ");
         dumpOperands(block->variablesAtHead, WTF::dataFile());
         dataLog("\n");
-        for (size_t i = block->begin; i < block->end; ++i)
-            dump(i);
+        for (size_t i = 0; i < block->size(); ++i)
+            dump(block->at(i));
         dataLog("  vars after: ");
         if (block->cfaHasVisited)
             dumpOperands(block->valuesAtTail, WTF::dataFile());
@@ -283,9 +283,6 @@ void Graph::dump()
             dataLog("<empty>");
         dataLog("\n");
     }
-    dataLog("Phi Nodes:\n");
-    for (size_t i = m_blocks.last()->end; i < size(); ++i)
-        dump(i);
 }
 
 // FIXME: Convert this to be iterative, not recursive.

@@ -873,20 +873,21 @@ private:
         }
     }
     
-    // Returns the node index of the branch node if peephole is okay, NoNode otherwise.
-    NodeIndex detectPeepHoleBranch()
+    // Returns the index of the branch node if peephole is okay, UINT_MAX otherwise.
+    unsigned detectPeepHoleBranch()
     {
-        NodeIndex lastNodeIndex = m_jit.graph().m_blocks[m_block]->end - 1;
+        BasicBlock* block = m_jit.graph().m_blocks[m_block].get();
 
         // Check that no intervening nodes will be generated.
-        for (NodeIndex index = m_compileIndex + 1; index < lastNodeIndex; ++index) {
-            if (at(index).shouldGenerate())
-                return NoNode;
+        for (unsigned index = m_indexInBlock + 1; index < block->size() - 1; ++index) {
+            NodeIndex nodeIndex = block->at(index);
+            if (at(nodeIndex).shouldGenerate())
+                return UINT_MAX;
         }
 
         // Check if the lastNode is a branch on this node.
-        Node& lastNode = at(lastNodeIndex);
-        return lastNode.op == Branch && lastNode.child1().index() == m_compileIndex ? lastNodeIndex : NoNode;
+        Node& lastNode = at(block->last());
+        return lastNode.op == Branch && lastNode.child1().index() == m_compileIndex ? block->size() - 1 : UINT_MAX;
     }
     
     void nonSpeculativeValueToNumber(Node&);
@@ -1880,6 +1881,7 @@ private:
     // The current node being generated.
     BlockIndex m_block;
     NodeIndex m_compileIndex;
+    unsigned m_indexInBlock;
     // Virtual and physical register maps.
     Vector<GenerationInfo, 32> m_generationInfo;
     RegisterBank<GPRInfo> m_gprs;
@@ -2513,6 +2515,7 @@ inline SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     : m_compileOkay(true)
     , m_jit(jit)
     , m_compileIndex(0)
+    , m_indexInBlock(0)
     , m_generationInfo(m_jit.codeBlock()->m_numCalleeRegisters)
     , m_blockHeads(jit.graph().m_blocks.size())
     , m_arguments(jit.codeBlock()->numParameters())

@@ -38,11 +38,9 @@ namespace JSC { namespace DFG {
 
 typedef Vector <BlockIndex, 2> PredecessorList;
 
-struct BasicBlock {
-    BasicBlock(unsigned bytecodeBegin, NodeIndex begin, unsigned numArguments, unsigned numLocals)
+struct BasicBlock : Vector<NodeIndex, 8> {
+    BasicBlock(unsigned bytecodeBegin, unsigned numArguments, unsigned numLocals)
         : bytecodeBegin(bytecodeBegin)
-        , begin(begin)
-        , end(NoNode)
         , isOSRTarget(false)
         , cfaHasVisited(false)
         , cfaShouldRevisit(false)
@@ -50,6 +48,7 @@ struct BasicBlock {
         , isLinked(false)
 #endif
         , isReachable(false)
+        , startExcludingPhis(0)
         , variablesAtHead(numArguments, numLocals)
         , variablesAtTail(numArguments, numLocals)
         , valuesAtHead(numArguments, numLocals)
@@ -69,8 +68,6 @@ struct BasicBlock {
     // for other purposes due to inlining.
     unsigned bytecodeBegin;
     
-    NodeIndex begin;
-    NodeIndex end;
     bool isOSRTarget;
     bool cfaHasVisited;
     bool cfaShouldRevisit;
@@ -78,6 +75,7 @@ struct BasicBlock {
     bool isLinked;
 #endif
     bool isReachable;
+    unsigned startExcludingPhis;
     
     PredecessorList m_predecessors;
     
