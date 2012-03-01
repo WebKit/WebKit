@@ -151,6 +151,12 @@ void ShadowTree::willRemove()
         root->willRemove();
 }
 
+void ShadowTree::setParentTreeScope(TreeScope* scope)
+{
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
+        root->setParentTreeScope(scope);
+}
+
 void ShadowTree::attach()
 {
     // Children of m_selector is populated lazily in
@@ -213,19 +219,21 @@ void ShadowTree::reattach()
 bool ShadowTree::childNeedsStyleRecalc()
 {
     ASSERT(youngestShadowRoot());
-    if (!youngestShadowRoot())
-        return false;
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
+        if (root->childNeedsStyleRecalc())
+            return true;
 
-    return youngestShadowRoot()->childNeedsStyleRecalc();
+    return false;
 }
 
 bool ShadowTree::needsStyleRecalc()
 {
     ASSERT(youngestShadowRoot());
-    if (!youngestShadowRoot())
-        return false;
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
+        if (root->needsStyleRecalc())
+            return true;
 
-    return youngestShadowRoot()->needsStyleRecalc();
+    return false;
 }
 
 void ShadowTree::recalcShadowTreeStyle(Node::StyleChange change)

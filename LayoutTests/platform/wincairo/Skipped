@@ -1976,6 +1976,7 @@ fast/dom/shadow/shadow-root-innerHTML.html
 fast/dom/shadow/shadow-root-new.html
 fast/dom/shadow/multiple-shadowroot.html
 fast/dom/shadow/multiple-shadowroot-rendering.html
+fast/dom/shadow/multiple-shadowroot-adopt.html
 
 # CSS Regions support not yet enabled. http://webkit.org/b/57312
 fast/regions

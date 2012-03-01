@@ -40,6 +40,7 @@ class Node;
 class Element;
 class HTMLContentSelector;
 class InsertionPoint;
+class TreeScope;
 
 class ShadowTree {
 public:
@@ -58,6 +59,8 @@ public:
     void insertedIntoTree(bool deep);
     void removedFromTree(bool deep);
     void willRemove();
+
+    void setParentTreeScope(TreeScope*);
 
     void attach();
     void detach();

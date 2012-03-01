@@ -1074,6 +1074,7 @@ fast/dom/shadow/shadow-root-new.html
 fast/dom/shadow/shadow-ul-li.html
 fast/dom/shadow/multiple-shadowroot.html
 fast/dom/shadow/multiple-shadowroot-rendering.html
+fast/dom/shadow/multiple-shadowroot-adopt.html
 
 # WTR needs an implementation for eventSender.continuousMouseScrollBy
 # https://bugs.webkit.org/show_bug.cgi?id=69417
