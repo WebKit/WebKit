@@ -57,8 +57,7 @@ private:
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    // We need to allocate a layer whenever we have an overflow clip as RenderTableSection::paintObject does not push rows' clips.
-    virtual bool requiresLayer() const OVERRIDE { return isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasFilter(); }
+    virtual bool requiresLayer() const { return isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasFilter(); }
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
