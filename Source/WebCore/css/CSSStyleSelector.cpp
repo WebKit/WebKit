@@ -3316,9 +3316,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
 
     // CSS3 Properties
-    case CSSPropertyImageRendering:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(imageRendering, ImageRendering);
-        return;
     case CSSPropertyTextShadow:
     case CSSPropertyBoxShadow:
     case CSSPropertyWebkitBoxShadow: {
@@ -3898,6 +3895,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyFontVariant:
     case CSSPropertyFontWeight:
     case CSSPropertyHeight:
+    case CSSPropertyImageRendering:
     case CSSPropertyLeft:
     case CSSPropertyLetterSpacing:
     case CSSPropertyLineHeight:
