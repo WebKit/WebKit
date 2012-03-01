@@ -950,9 +950,6 @@ BUGWK64591 : compositing/repaint/become-overlay-composited-layer.html = PASS FAI
 // Crashes due to debug assert until we fix issues with style elements in SVG
 BUGWK77764 DEBUG : svg/custom/use-referencing-style-crash.svg = CRASH
 
-// Merge 39744:39829 - regression
-BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
-
 // Text mismatch since r65370.
 // There was also an unnoticed image mismatch before this revision
 // (wrong baseline was committed). No idea about when it really started to fail.
@@ -2527,8 +2524,7 @@ BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
 BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
 
-BUGWK55968 MAC : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE IMAGE+TEXT
-BUGWK55968 WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
+BUGWK55968 MAC WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
@@ -3100,9 +3096,7 @@ BUGWK65874 : fast/js/preventExtensions.html = TEXT
 
 BUGWK63796 MAC : css3/font-feature-settings-rendering.html = MISSING FAIL
 
-BUGWK66417 WIN : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
-BUGWK66417 MAC : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE
-BUGWK66417 LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT TIMEOUT
+BUGWK66417 WIN LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
 
 BUGWK66419 : http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html = TEXT
 BUGWK66419 : http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html = TEXT
@@ -3419,20 +3413,13 @@ BUGWK74050 : compositing/reflections/nested-reflection-mask-change.html = IMAGE 
 
 BUGWK74055 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 
-BUGWK74157 MAC : animations/cross-fade-border-image-source.html = IMAGE+TEXT IMAGE TEXT
-BUGWK74157 MAC : transitions/cross-fade-border-image.html = IMAGE+TEXT IMAGE
-BUGWK74157 LEOPARD : animations/cross-fade-background-image.html = IMAGE+TEXT IMAGE
-BUGWK74157 LEOPARD : animations/cross-fade-list-style-image.html = IMAGE+TEXT IMAGE
+BUGWK74157 SNOWLEOPARD : animations/cross-fade-border-image-source.html = IMAGE
+BUGWK74157 SNOWLEOPARD : transitions/cross-fade-border-image.html = IMAGE+TEXT IMAGE
 BUGWK74157 LEOPARD : animations/cross-fade-webkit-mask-box-image.html = IMAGE+TEXT IMAGE
-BUGWK74157 LEOPARD : animations/cross-fade-webkit-mask-image.html = IMAGE+TEXT IMAGE
-
-BUGWK74167 WIN LINUX : fast/replaced/width100percent-textarea.html = IMAGE PASS
-
-BUGWK74317 LINUX : transitions/cross-fade-border-image.html = PASS CRASH
 
 BUGWK74357 SKIP : plugins/netscape-plugin-page-cache-works.html = TEXT TIMEOUT
 
-BUGWK74374 WIN : fast/forms/select-listbox-multiple-no-focusring.html = PASS IMAGE
+BUGWK74374 WIN : fast/forms/select-listbox-multiple-no-focusring.html = IMAGE
 
 BUGWK74662 : fast/text/unicode-variation-selector.html = IMAGE+TEXT
 
@@ -3494,7 +3481,7 @@ BUGV81900 SLOW LINUX DEBUG : inspector/debugger/watch-expressions-panel-switch.h
 BUGV81900 SLOW LINUX DEBUG : inspector/debugger/debugger-breakpoints-not-activated-on-reload.html = PASS CRASH
 
 // New test, image results added but it is timing out on Leopard.
-BUGWK75570 : http/tests/media/video-buffering-repaints-controls.html = IMAGE
+BUGWK75570 WIN LINUX : http/tests/media/video-buffering-repaints-controls.html = IMAGE
 
 // New reftest failing on Win7.
 BUGWK76050 WIN7 : fast/text/font-kerning.html = IMAGE
@@ -3539,11 +3526,8 @@ BUGWK76647 : svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolut
 BUGWK76647 : svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute.xhtml = IMAGE+TEXT
 BUGWK76647 : svg/custom/object-sizing-width-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
 BUGWK76647 : svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute.xhtml = IMAGE+TEXT
-BUGWK76647 : tables/mozilla/bugs/bug86708.html = IMAGE+TEXT
-BUGWK76647 : tables/mozilla_expected_failures/bugs/97619.html = IMAGE+TEXT
-
-// Just needs a rebaseline.
-BUGWK76780 : svg/filters/feImage-preserveAspectratio.svg = IMAGE+TEXT
+BUGWK76647 WIN LINUX : tables/mozilla/bugs/bug86708.html = IMAGE+TEXT
+BUGWK76647 WIN LINUX : tables/mozilla_expected_failures/bugs/97619.html = IMAGE+TEXT
 
 // Just needs a rebaseline.
 BUGWK76800 : svg/W3C-SVG-1.1/filters-composite-02-b.svg = IMAGE
