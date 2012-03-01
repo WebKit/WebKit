@@ -51,7 +51,6 @@ WebInspector.RawSourceCode = function(id, script, resource, formatter, formatted
     this._formatted = formatted;
     this._compilerSourceMapping = compilerSourceMapping;
     this._resource = resource;
-    this.messages = [];
 
     this._useTemporaryContent = !this._compilerSourceMapping && this._resource && !this._resource.finished;
     this._hasNewScripts = true;
