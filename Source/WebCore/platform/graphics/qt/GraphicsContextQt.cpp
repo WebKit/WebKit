@@ -1068,12 +1068,14 @@ void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
     w = device->width();
     h = device->height();
 
-    QRectF clip = m_data->clipBoundingRect();
-    QRectF deviceClip = p->transform().mapRect(clip);
-    x = int(qBound(qreal(0), deviceClip.x(), (qreal)w));
-    y = int(qBound(qreal(0), deviceClip.y(), (qreal)h));
-    w = int(qBound(qreal(0), deviceClip.width(), (qreal)w) + 2);
-    h = int(qBound(qreal(0), deviceClip.height(), (qreal)h) + 2);
+    if (p->hasClipping()) {
+        QRectF clip = m_data->clipBoundingRect();
+        QRectF deviceClip = p->transform().mapRect(clip);
+        x = int(qBound(qreal(0), deviceClip.x(), (qreal)w));
+        y = int(qBound(qreal(0), deviceClip.y(), (qreal)h));
+        w = int(qBound(qreal(0), deviceClip.width(), (qreal)w) + 2);
+        h = int(qBound(qreal(0), deviceClip.height(), (qreal)h) + 2);
+    }
 
     QPixmap emptyAlphaMask;
     m_data->layers.push(new TransparencyLayer(p, QRect(x, y, w, h), opacity, emptyAlphaMask));
