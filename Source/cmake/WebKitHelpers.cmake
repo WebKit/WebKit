@@ -22,7 +22,12 @@ MACRO(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
     ENDIF ()
 
     IF (NOT SHARED_CORE)
-        SET(OLD_COMPILE_FLAGS "-fPIC -fvisibility=hidden ${OLD_COMPILE_FLAGS}")
+        SET(OLD_COMPILE_FLAGS "-fvisibility=hidden ${OLD_COMPILE_FLAGS}")
+    ENDIF ()
+
+    GET_TARGET_PROPERTY(TARGET_TYPE ${_target} TYPE)
+    IF (${TARGET_TYPE} STREQUAL "STATIC_LIBRARY") # -fPIC is automatically added to shared libraries
+        SET(OLD_COMPILE_FLAGS "-fPIC")
     ENDIF ()
 
     SET(OLD_COMPILE_FLAGS "-fno-exceptions -fno-strict-aliasing ${OLD_COMPILE_FLAGS}")
