@@ -73,7 +73,7 @@ class BindingsTests:
 
         cmd = ['perl', '-w',
                '-IWebCore/bindings/scripts',
-               'WebCore/bindings/scripts/resolve-supplemental.pl',
+               'WebCore/bindings/scripts/preprocess-idls.pl',
                '--idlFilesList', idl_files_list[1],
                '--defines', '',
                '--supplementalDependencyFile', supplemental_dependency_file,
