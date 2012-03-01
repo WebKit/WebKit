@@ -26,8 +26,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
 #include "LayerTreeHostQt.h"
 
 #include "DrawingAreaImpl.h"
@@ -397,7 +395,6 @@ bool LayerTreeHost::supportsAcceleratedCompositing()
     return true;
 }
 
-#if USE(TILED_BACKING_STORE)
 void LayerTreeHostQt::createTile(WebLayerID layerID, int tileID, const UpdateInfo& updateInfo)
 {
     m_webPage->send(Messages::LayerTreeHostProxy::CreateTileForLayer(layerID, tileID, updateInfo));
@@ -459,20 +456,5 @@ void LayerTreeHostQt::purgeBackingStores()
 
     ASSERT(!m_directlyCompositedImageRefCounts.size());
 }
-#endif
 
 } // namespace WebKit
-#else
-#include "LayerTreeHost.h"
-
-using namespace WebCore;
-
-namespace WebKit {
-
-bool LayerTreeHost::supportsAcceleratedCompositing()
-{
-    return false;
-}
-
-} // namespace WebKit
-#endif

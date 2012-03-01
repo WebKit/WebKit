@@ -33,9 +33,7 @@ class UpdateInfo;
 class WebPage;
 
 class LayerTreeHostQt : public LayerTreeHost, WebCore::GraphicsLayerClient
-#if USE(TILED_BACKING_STORE)
                       , public WebGraphicsLayerClient
-#endif
 {
 public:
     static PassRefPtr<LayerTreeHostQt> create(WebPage*);
@@ -65,7 +63,6 @@ public:
     virtual int64_t adoptImageBackingStore(WebCore::Image*);
     virtual void releaseImageBackingStore(int64_t);
 
-#if USE(TILED_BACKING_STORE)
     virtual void createTile(WebLayerID, int tileID, const UpdateInfo&);
     virtual void updateTile(WebLayerID, int tileID, const UpdateInfo&);
     virtual void removeTile(WebLayerID, int tileID);
@@ -78,7 +75,6 @@ public:
     virtual void didSyncCompositingStateForLayer(const WebLayerInfo&);
     virtual void attachLayer(WebCore::WebGraphicsLayer*);
     virtual void detachLayer(WebCore::WebGraphicsLayer*);
-#endif
 
 protected:
     explicit LayerTreeHostQt(WebPage*);
@@ -112,12 +108,12 @@ private:
 
     bool m_notifyAfterScheduledLayerFlush;
     bool m_isValid;
-#if USE(TILED_BACKING_STORE)
+
     bool m_waitingForUIProcess;
     bool m_isSuspended;
     WebCore::IntRect m_visibleContentsRect;
     float m_contentsScale;
-#endif
+
     LayerTreeContext m_layerTreeContext;
     bool m_shouldSyncFrame;
     bool m_shouldSyncRootLayer;

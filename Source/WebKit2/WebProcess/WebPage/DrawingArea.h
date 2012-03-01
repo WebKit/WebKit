@@ -79,9 +79,10 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void scheduleCompositingLayerSync() = 0;
-#if USE(TEXTURE_MAPPER) && USE(TILED_BACKING_STORE)
-    virtual void didReceiveLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
 #endif
+
+#if USE(UI_SIDE_COMPOSITING)
+    virtual void didReceiveLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
 #endif
 
 #if PLATFORM(WIN)

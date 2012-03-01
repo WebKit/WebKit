@@ -1,3 +1,14 @@
+2012-02-29  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Get rid of the #ifdef mess in LayerTreeHost[Proxy]
+        https://bugs.webkit.org/show_bug.cgi?id=79501
+
+        Enable WTF_USE_UI_SIDE_COMPOSITING for Qt.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * wtf/Platform.h:
+
 2012-02-29  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Oliver Hunt.

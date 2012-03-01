@@ -19,8 +19,7 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
+#if USE(UI_SIDE_COMPOSITING)
 #include "WebGraphicsLayer.h"
 
 #include "Animation.h"

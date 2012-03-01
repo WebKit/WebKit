@@ -70,7 +70,7 @@ private:
     virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&);
 #endif
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER) && USE(TILED_BACKING_STORE)
+#if USE(UI_SIDE_COMPOSITING)
     virtual void didReceiveLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 #endif
 

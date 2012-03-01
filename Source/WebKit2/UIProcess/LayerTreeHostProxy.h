@@ -20,9 +20,13 @@
 #ifndef LayerTreeHostProxy_h
 #define LayerTreeHostProxy_h
 
+#if USE(UI_SIDE_COMPOSITING)
+
 #include "BackingStore.h"
 #include "DrawingAreaProxy.h"
 #include "Region.h"
+#include "TextureMapper.h"
+#include "TextureMapperBackingStore.h"
 #include "WebLayerTreeInfo.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
@@ -33,10 +37,6 @@
 #include <wtf/Functional.h>
 #include <wtf/HashSet.h>
 
-#if USE(TEXTURE_MAPPER)
-#include "TextureMapper.h"
-#include "TextureMapperBackingStore.h"
-#endif
 
 namespace WebKit {
 
@@ -57,7 +57,6 @@ public:
     void purgeGLResources();
     void setVisibleContentsRectForScaling(const WebCore::IntRect&, float);
     void setVisibleContentsRectForPanning(const WebCore::IntRect&, const WebCore::FloatPoint&);
-#if USE(TILED_BACKING_STORE)
     void syncRemoteContent();
     void swapContentBuffers();
     void didRenderFrame();
@@ -68,7 +67,6 @@ public:
     void destroyDirectlyCompositedImage(int64_t);
     void didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void updateViewport();
-#endif
 
 protected:
     PassOwnPtr<WebCore::GraphicsLayer> createLayer(WebLayerID);
@@ -94,9 +92,11 @@ protected:
 
 #if USE(TEXTURE_MAPPER)
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
+    PassRefPtr<LayerBackingStore> getBackingStore(WebLayerID);
+    HashMap<int64_t, RefPtr<WebCore::TextureMapperBackingStore> > m_directlyCompositedImages;
+    HashSet<RefPtr<LayerBackingStore> > m_backingStoresWithPendingBuffers;
 #endif
 
-#if PLATFORM(QT)
     void scheduleWebViewUpdate();
     void synchronizeViewport();
     void deleteLayer(WebLayerID);
@@ -111,15 +111,11 @@ protected:
     void flushLayerChanges();
     void ensureRootLayer();
     void ensureLayer(WebLayerID);
-    PassRefPtr<LayerBackingStore> getBackingStore(WebLayerID);
     void swapBuffers();
     void syncAnimations();
-#endif
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
     Vector<WebLayerID> m_layersToDelete;
-    HashMap<int64_t, RefPtr<WebCore::TextureMapperBackingStore> > m_directlyCompositedImages;
-    HashSet<RefPtr<LayerBackingStore> > m_backingStoresWithPendingBuffers;
 
     LayerMap m_layers;
     WebLayerID m_rootLayerID;
@@ -127,5 +123,7 @@ protected:
 };
 
 }
+
+#endif
 
 #endif // LayerTreeHostProxy_h

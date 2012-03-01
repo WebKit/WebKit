@@ -20,6 +20,7 @@
 #ifndef LayerBackingStore_h
 #define LayerBackingStore_h
 
+#if USE(UI_SIDE_COMPOSITING)
 #include "HashMap.h"
 #include "ShareableBitmap.h"
 #include "TextureMapper.h"
@@ -65,4 +66,6 @@ private:
 };
 
 }
+#endif
+
 #endif // LayerBackingStore_h

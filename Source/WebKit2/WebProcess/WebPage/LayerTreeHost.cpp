@@ -34,7 +34,7 @@
 #endif
 #endif
 
-#if PLATFORM(QT) && USE(TEXTURE_MAPPER)
+#if PLATFORM(QT)
 #include "qt/LayerTreeHostQt.h"
 #endif
 
@@ -48,7 +48,7 @@ PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage)
     return LayerTreeHostCAMac::create(webPage);
 #elif PLATFORM(WIN) && HAVE(WKQCA)
     return LayerTreeHostCAWin::create(webPage);
-#elif PLATFORM(QT) && USE(TEXTURE_MAPPER)
+#elif PLATFORM(QT)
     return LayerTreeHostQt::create(webPage);
 #else
     return 0;

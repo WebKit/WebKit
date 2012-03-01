@@ -1,3 +1,46 @@
+2012-02-29  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Get rid of the #ifdef mess in LayerTreeHost[Proxy]
+        https://bugs.webkit.org/show_bug.cgi?id=79501
+
+        Use a new UI_SIDE_COMPOSITING flag instead of the several #ifdef flags we currently use.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Shared/WebLayerTreeInfo.cpp:
+        * Shared/WebLayerTreeInfo.h:
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit):
+        * UIProcess/DrawingAreaProxy.h:
+        (DrawingAreaProxy):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (DrawingAreaProxyImpl):
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        * UIProcess/qt/LayerBackingStore.cpp:
+        * UIProcess/qt/LayerBackingStore.h:
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (DrawingArea):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (DrawingAreaImpl):
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::purgeBackingStores):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
 2012-02-28  Brian Weinstein  <bweinstein@apple.com>
 
         WebKit2: didNewFirstVisuallyNonEmptyLayout should be sent to injected bundle

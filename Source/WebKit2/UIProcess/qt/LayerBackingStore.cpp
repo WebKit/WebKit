@@ -20,6 +20,7 @@
 #include "config.h"
 #include "LayerBackingStore.h"
 
+#if USE(UI_SIDE_COMPOSITING)
 #include "GraphicsLayer.h"
 #include "TextureMapper.h"
 
@@ -141,3 +142,4 @@ void LayerBackingStore::swapBuffers(TextureMapper* textureMapper)
 }
 
 }
+#endif

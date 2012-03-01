@@ -83,7 +83,7 @@ public:
 
     virtual void pageCustomRepresentationChanged() { }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(UI_SIDE_COMPOSITING)
     virtual void updateViewport();
     virtual WebCore::IntRect viewportVisibleRect() const { return contentsRect(); }
     virtual WebCore::IntRect contentsRect() const;
@@ -91,8 +91,6 @@ public:
     virtual void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&) { }
     virtual void paintLayerTree(BackingStore::PlatformGraphicsContext) { }
     LayerTreeHostProxy* layerTreeHostProxy() const { return m_layerTreeHostProxy.get(); }
-
-#if USE(TILED_BACKING_STORE)
     virtual void setVisibleContentsRectForScaling(const WebCore::IntRect& visibleContentsRect, float scale) { }
     virtual void setVisibleContentsRectForPanning(const WebCore::IntRect& visibleContentsRect, const WebCore::FloatPoint& trajectoryVector) { }
     virtual void createTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo&) { }
@@ -101,7 +99,6 @@ public:
     virtual void didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     WebPageProxy* page() { return m_webPageProxy; }
-#endif
 #endif
 protected:
     explicit DrawingAreaProxy(DrawingAreaType, WebPageProxy*);
@@ -112,7 +109,7 @@ protected:
     WebCore::IntSize m_size;
     WebCore::IntSize m_scrollOffset;
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(UI_SIDE_COMPOSITING)
     OwnPtr<LayerTreeHostProxy> m_layerTreeHostProxy;
 #endif
 

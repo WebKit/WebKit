@@ -28,7 +28,7 @@
 
 #include "WebPageProxy.h"
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(UI_SIDE_COMPOSITING)
 #include "LayerTreeHostProxy.h"
 #include <CoreIPC/MessageID.h>
 #endif
@@ -58,7 +58,7 @@ void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& scrollOffset)
     sizeDidChange();
 }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(UI_SIDE_COMPOSITING)
 void DrawingAreaProxy::updateViewport()
 {
     m_webPageProxy->setViewNeedsDisplay(viewportVisibleRect());
@@ -69,12 +69,9 @@ WebCore::IntRect DrawingAreaProxy::contentsRect() const
     return IntRect(IntPoint::zero(), m_webPageProxy->viewSize());
 }
 
-#if USE(TILED_BACKING_STORE)
 void DrawingAreaProxy::didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
 }
-#endif
-
 #endif
 
 } // namespace WebKit

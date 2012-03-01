@@ -1074,6 +1074,11 @@
 #define WTF_USE_ACCELERATED_COMPOSITING 1
 #endif
 
+/* Compositing on the UI-process in WebKit2 */
+#if PLATFORM(QT)
+#define WTF_USE_UI_SIDE_COMPOSITING 1
+#endif
+
 #if (PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD)) || PLATFORM(IOS)
 #define WTF_USE_PROTECTION_SPACE_AUTH_CALLBACK 1
 #endif

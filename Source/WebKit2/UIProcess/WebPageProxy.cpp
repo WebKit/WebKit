@@ -85,7 +85,7 @@
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(UI_SIDE_COMPOSITING)
 #include "LayerTreeHostProxyMessages.h"
 #endif
 
@@ -1542,7 +1542,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         return;
     }
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER) && USE(TILED_BACKING_STORE)
+#if USE(UI_SIDE_COMPOSITING)
     if (messageID.is<CoreIPC::MessageClassLayerTreeHostProxy>()) {
         m_drawingArea->didReceiveLayerTreeHostProxyMessage(connection, messageID, arguments);
         return;

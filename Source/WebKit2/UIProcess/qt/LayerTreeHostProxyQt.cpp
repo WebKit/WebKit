@@ -19,7 +19,6 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
 #include "LayerTreeHostProxy.h"
 
 #include "GraphicsLayerTextureMapper.h"
@@ -416,4 +415,3 @@ void LayerTreeHostProxy::purgeGLResources()
 }
 
 }
-#endif

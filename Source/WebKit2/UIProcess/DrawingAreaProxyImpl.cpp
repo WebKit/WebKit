@@ -36,7 +36,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/Region.h>
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#if USE(UI_SIDE_COMPOSITING)
 #include "LayerTreeHostProxy.h"
 #endif
 
@@ -58,7 +58,7 @@ DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     , m_isBackingStoreDiscardable(true)
     , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyImpl::discardBackingStore)
 {
-#if USE(TEXTURE_MAPPER)
+#if USE(UI_SIDE_COMPOSITING)
     // Construct the proxy early to allow messages to be sent to the web process while AC is entered there.
     if (webPageProxy->pageGroup()->preferences()->forceCompositingMode())
         m_layerTreeHostProxy = adoptPtr(new LayerTreeHostProxy(this));
@@ -335,13 +335,13 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContex
     m_backingStore = nullptr;
     m_layerTreeContext = layerTreeContext;
     m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
-#if USE(TEXTURE_MAPPER)
+#if USE(UI_SIDE_COMPOSITING)
     if (!m_layerTreeHostProxy)
         m_layerTreeHostProxy = adoptPtr(new LayerTreeHostProxy(this));
 #endif
 }
 
-#if USE(TILED_BACKING_STORE)
+#if USE(UI_SIDE_COMPOSITING)
 void DrawingAreaProxyImpl::didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (m_layerTreeHostProxy)

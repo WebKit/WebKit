@@ -37,8 +37,7 @@
 #include <WebCore/RunLoop.h>
 #include <wtf/text/StringHash.h>
 
-#if USE(ACCELERATED_COMPOSITING)
-
+#if USE(UI_SIDE_COMPOSITING)
 namespace WebCore {
 class WebGraphicsLayer;
 }
@@ -65,10 +64,8 @@ public:
 namespace WebCore {
 
 class WebGraphicsLayer : public WebCore::GraphicsLayer
-#if USE(TILED_BACKING_STORE)
                        , public TiledBackingStoreClient
                        , public WebKit::TiledBackingStoreRemoteTileClient
-#endif
 {
 public:
     WebGraphicsLayer(GraphicsLayerClient*);
