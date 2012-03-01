@@ -129,6 +129,11 @@ void WebDataSourceImpl::setDeferMainResourceDataLoad(bool defer)
     DocumentLoader::setDeferMainResourceDataLoad(defer);
 }
 
+void WebDataSourceImpl::setNavigationStartTime(double navigationStart)
+{
+    timing()->setNavigationStart(navigationStart);
+}
+
 WebNavigationType WebDataSourceImpl::toWebNavigationType(NavigationType type)
 {
     switch (type) {

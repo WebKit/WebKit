@@ -72,6 +72,12 @@ void DocumentLoadTiming::markNavigationStart(Frame* frame)
     }
 }
 
+void DocumentLoadTiming::setNavigationStart(double navigationStart)
+{
+    ASSERT(m_referenceMonotonicTime && m_referenceWallTime);
+    m_navigationStart = navigationStart;
+}
+
 void DocumentLoadTiming::addRedirect(const KURL& redirectingUrl, const KURL& redirectedUrl)
 {
     m_redirectCount++;

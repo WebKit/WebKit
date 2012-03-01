@@ -38,6 +38,7 @@ public:
     DocumentLoadTiming();
 
     void markNavigationStart(Frame*);
+    void setNavigationStart(double);
     void addRedirect(const KURL& redirectingUrl, const KURL& redirectedUrl);
     double convertMonotonicTimeToDocumentTime(double monotonicTime) const;
 

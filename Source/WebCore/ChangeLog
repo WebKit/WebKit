@@ -1,3 +1,14 @@
+2012-02-29  James Simonsen  <simonjam@chromium.org>
+
+        [chromium] Fix navigation start time on cross-renderer navigation
+        https://bugs.webkit.org/show_bug.cgi?id=75922
+
+        Reviewed by Darin Fisher.
+
+        * loader/DocumentLoadTiming.cpp:
+        (WebCore::DocumentLoadTiming::setNavigationStart): Added.
+        * loader/DocumentLoadTiming.h:
+
 2012-02-29  Stephen Chenney  <schenney@chromium.org>
 
         SVG <use> element allows invalid contents

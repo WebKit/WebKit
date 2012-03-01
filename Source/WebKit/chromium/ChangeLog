@@ -1,3 +1,15 @@
+2012-02-29  James Simonsen  <simonjam@chromium.org>
+
+        [chromium] Fix navigation start time on cross-renderer navigation
+        https://bugs.webkit.org/show_bug.cgi?id=75922
+
+        Reviewed by Darin Fisher.
+
+        * public/WebDataSource.h:
+        * src/WebDataSource.cpp:
+        (WebKit::WebDataSource::setNavigationStartTime): Added.
+        * src/WebDataSource.h:
+
 2012-02-29  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Add impl-thread support for animation-timing-function
