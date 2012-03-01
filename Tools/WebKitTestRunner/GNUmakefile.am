@@ -62,7 +62,9 @@ Programs_WebKitTestRunner_LDFLAGS = \
 	-no-install
 
 # The InjectedBundle library allows the render process to load harness code.
+if ENABLE_WEBKIT2
 noinst_LTLIBRARIES += Libraries/libTestRunnerInjectedBundle.la
+endif
 
 webkittestrunner_built_sources += \
 	DerivedSources/InjectedBundle/JSAccessibilityController.cpp \
