@@ -961,7 +961,7 @@ public:
 
     EImageRendering imageRendering() const { return static_cast<EImageRendering>(rareInheritedData->m_imageRendering); }
     
-    ESpeak speak() { return static_cast<ESpeak>(rareInheritedData->speak); }
+    ESpeak speak() const { return static_cast<ESpeak>(rareInheritedData->speak); }
 
 #if ENABLE(CSS_FILTERS)
     FilterOperations& filter() { return rareNonInheritedData.access()->m_filter.access()->m_operations; }

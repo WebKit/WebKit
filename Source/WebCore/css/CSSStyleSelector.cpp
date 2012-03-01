@@ -3646,9 +3646,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitColorCorrection:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(colorSpace, ColorSpace);
         return;
-    case CSSPropertySpeak:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(speak, Speak);
-        return;
     case CSSPropertyInvalid:
         return;
     // Directional properties are resolved by resolveDirectionAwareProperty() before the switch.
@@ -3928,6 +3925,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyResize:
     case CSSPropertyRight:
     case CSSPropertySize:
+    case CSSPropertySpeak:
     case CSSPropertyTableLayout:
     case CSSPropertyTextAlign:
     case CSSPropertyTextDecoration:
