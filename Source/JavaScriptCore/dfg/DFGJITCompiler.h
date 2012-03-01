@@ -194,8 +194,8 @@ public:
     {
     }
 
-    void compile(JITCode& entry);
-    void compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck);
+    bool compile(JITCode& entry);
+    bool compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck);
 
     // Accessors for properties.
     Graph& graph() { return m_graph; }

@@ -177,10 +177,9 @@ JSObject* EvalExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scop
 }
 
 #if ENABLE(JIT)
-void EvalExecutable::jitCompile(JSGlobalData& globalData)
+bool EvalExecutable::jitCompile(JSGlobalData& globalData)
 {
-    bool result = jitCompileIfAppropriate(globalData, m_evalCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT());
-    ASSERT_UNUSED(result, result);
+    return jitCompileIfAppropriate(globalData, m_evalCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT(), JITCompilationCanFail);
 }
 #endif
 
@@ -327,10 +326,9 @@ JSObject* ProgramExecutable::compileOptimized(ExecState* exec, ScopeChainNode* s
 }
 
 #if ENABLE(JIT)
-void ProgramExecutable::jitCompile(JSGlobalData& globalData)
+bool ProgramExecutable::jitCompile(JSGlobalData& globalData)
 {
-    bool result = jitCompileIfAppropriate(globalData, m_programCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT());
-    ASSERT_UNUSED(result, result);
+    return jitCompileIfAppropriate(globalData, m_programCodeBlock, m_jitCodeForCall, JITCode::bottomTierJIT(), JITCompilationCanFail);
 }
 #endif
 
@@ -477,16 +475,14 @@ JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, Scop
 }
 
 #if ENABLE(JIT)
-void FunctionExecutable::jitCompileForCall(JSGlobalData& globalData)
+bool FunctionExecutable::jitCompileForCall(JSGlobalData& globalData)
 {
-    bool result = jitCompileFunctionIfAppropriate(globalData, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, JITCode::bottomTierJIT());
-    ASSERT_UNUSED(result, result);
+    return jitCompileFunctionIfAppropriate(globalData, m_codeBlockForCall, m_jitCodeForCall, m_jitCodeForCallWithArityCheck, m_symbolTable, JITCode::bottomTierJIT(), JITCompilationCanFail);
 }
 
-void FunctionExecutable::jitCompileForConstruct(JSGlobalData& globalData)
+bool FunctionExecutable::jitCompileForConstruct(JSGlobalData& globalData)
 {
-    bool result = jitCompileFunctionIfAppropriate(globalData, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, JITCode::bottomTierJIT());
-    ASSERT_UNUSED(result, result);
+    return jitCompileFunctionIfAppropriate(globalData, m_codeBlockForConstruct, m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, m_symbolTable, JITCode::bottomTierJIT(), JITCompilationCanFail);
 }
 #endif
 

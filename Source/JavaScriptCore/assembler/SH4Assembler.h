@@ -31,6 +31,7 @@
 
 #include "AssemblerBuffer.h"
 #include "AssemblerBufferWithConstantPool.h"
+#include "JITCompilationEffort.h"
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -1514,9 +1515,9 @@ public:
         return reinterpret_cast<void*>(readPCrelativeAddress((*instructionPtr & 0xff), instructionPtr));
     }
 
-    PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID)
+    PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID, JITCompilationEffort effort)
     {
-        return m_buffer.executableCopy(globalData, ownerUID);
+        return m_buffer.executableCopy(globalData, ownerUID, effort);
     }
 
     void prefix(uint16_t pre)

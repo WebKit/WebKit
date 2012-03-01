@@ -38,7 +38,7 @@
 namespace JSC {
 
 template<typename CodeBlockType>
-inline bool jitCompileIfAppropriate(JSGlobalData& globalData, OwnPtr<CodeBlockType>& codeBlock, JITCode& jitCode, JITCode::JITType jitType)
+inline bool jitCompileIfAppropriate(JSGlobalData& globalData, OwnPtr<CodeBlockType>& codeBlock, JITCode& jitCode, JITCode::JITType jitType, JITCompilationEffort effort)
 {
     if (jitType == codeBlock->getJITType())
         return true;
@@ -47,6 +47,8 @@ inline bool jitCompileIfAppropriate(JSGlobalData& globalData, OwnPtr<CodeBlockTy
         return true;
     
     codeBlock->unlinkIncomingCalls();
+    
+    JITCode oldJITCode = jitCode;
     
     bool dfgCompiled = false;
     if (jitType == JITCode::DFGJIT)
@@ -57,16 +59,21 @@ inline bool jitCompileIfAppropriate(JSGlobalData& globalData, OwnPtr<CodeBlockTy
     } else {
         if (codeBlock->alternative()) {
             codeBlock = static_pointer_cast<CodeBlockType>(codeBlock->releaseAlternative());
+            jitCode = oldJITCode;
             return false;
         }
-        jitCode = JIT::compile(&globalData, codeBlock.get());
+        jitCode = JIT::compile(&globalData, codeBlock.get(), effort);
+        if (!jitCode) {
+            jitCode = oldJITCode;
+            return false;
+        }
     }
     codeBlock->setJITCode(jitCode, MacroAssemblerCodePtr());
     
     return true;
 }
 
-inline bool jitCompileFunctionIfAppropriate(JSGlobalData& globalData, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, SharedSymbolTable*& symbolTable, JITCode::JITType jitType)
+inline bool jitCompileFunctionIfAppropriate(JSGlobalData& globalData, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, SharedSymbolTable*& symbolTable, JITCode::JITType jitType, JITCompilationEffort effort)
 {
     if (jitType == codeBlock->getJITType())
         return true;
@@ -75,6 +82,9 @@ inline bool jitCompileFunctionIfAppropriate(JSGlobalData& globalData, OwnPtr<Fun
         return true;
     
     codeBlock->unlinkIncomingCalls();
+    
+    JITCode oldJITCode = jitCode;
+    MacroAssemblerCodePtr oldJITCodeWithArityCheck = jitCodeWithArityCheck;
     
     bool dfgCompiled = false;
     if (jitType == JITCode::DFGJIT)
@@ -86,9 +96,16 @@ inline bool jitCompileFunctionIfAppropriate(JSGlobalData& globalData, OwnPtr<Fun
         if (codeBlock->alternative()) {
             codeBlock = static_pointer_cast<FunctionCodeBlock>(codeBlock->releaseAlternative());
             symbolTable = codeBlock->sharedSymbolTable();
+            jitCode = oldJITCode;
+            jitCodeWithArityCheck = oldJITCodeWithArityCheck;
             return false;
         }
-        jitCode = JIT::compile(&globalData, codeBlock.get(), &jitCodeWithArityCheck);
+        jitCode = JIT::compile(&globalData, codeBlock.get(), effort, &jitCodeWithArityCheck);
+        if (!jitCode) {
+            jitCode = oldJITCode;
+            jitCodeWithArityCheck = oldJITCodeWithArityCheck;
+            return false;
+        }
     }
     codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
     

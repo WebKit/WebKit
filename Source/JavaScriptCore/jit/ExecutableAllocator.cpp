@@ -112,10 +112,10 @@ bool ExecutableAllocator::underMemoryPressure()
     return false;
 }
 
-PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData&, size_t sizeInBytes, void* ownerUID)
+PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
 {
     RefPtr<ExecutableMemoryHandle> result = allocator->allocate(sizeInBytes, ownerUID);
-    if (!result)
+    if (!result && effort == JITCompilationMustSucceed)
         CRASH();
     return result.release();
 }

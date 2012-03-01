@@ -346,7 +346,7 @@ namespace JSC {
         
 #if ENABLE(JIT)
         void jettisonOptimizedCode(JSGlobalData&);
-        void jitCompile(JSGlobalData&);
+        bool jitCompile(JSGlobalData&);
 #endif
 
         EvalCodeBlock& generatedBytecode()
@@ -421,7 +421,7 @@ namespace JSC {
         
 #if ENABLE(JIT)
         void jettisonOptimizedCode(JSGlobalData&);
-        void jitCompile(JSGlobalData&);
+        bool jitCompile(JSGlobalData&);
 #endif
 
         ProgramCodeBlock& generatedBytecode()
@@ -520,7 +520,7 @@ namespace JSC {
         
 #if ENABLE(JIT)
         void jettisonOptimizedCodeForCall(JSGlobalData&);
-        void jitCompileForCall(JSGlobalData&);
+        bool jitCompileForCall(JSGlobalData&);
 #endif
 
         bool isGeneratedForCall() const
@@ -548,7 +548,7 @@ namespace JSC {
         
 #if ENABLE(JIT)
         void jettisonOptimizedCodeForConstruct(JSGlobalData&);
-        void jitCompileForConstruct(JSGlobalData&);
+        bool jitCompileForConstruct(JSGlobalData&);
 #endif
 
         bool isGeneratedForConstruct() const
@@ -597,14 +597,12 @@ namespace JSC {
             }
         }
         
-        void jitCompileFor(JSGlobalData& globalData, CodeSpecializationKind kind)
+        bool jitCompileFor(JSGlobalData& globalData, CodeSpecializationKind kind)
         {
-            if (kind == CodeForCall) {
-                jitCompileForCall(globalData);
-                return;
-            }
+            if (kind == CodeForCall)
+                return jitCompileForCall(globalData);
             ASSERT(kind == CodeForConstruct);
-            jitCompileForConstruct(globalData);
+            return jitCompileForConstruct(globalData);
         }
 #endif
         

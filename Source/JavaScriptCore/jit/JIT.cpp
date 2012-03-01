@@ -519,7 +519,7 @@ void JIT::privateCompileSlowCases()
 #endif
 }
 
-JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
+JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffort effort)
 {
 #if ENABLE(JIT_VERBOSE_OSR)
     printf("Compiling JIT code!\n");
@@ -617,7 +617,9 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 
     ASSERT(m_jmpTable.isEmpty());
 
-    LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock);
+    LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock, effort);
+    if (patchBuffer.didFailToAllocate())
+        return JITCode();
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {

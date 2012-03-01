@@ -32,6 +32,7 @@
 #if ENABLE(ASSEMBLER) && CPU(MIPS)
 
 #include "AssemblerBuffer.h"
+#include "JITCompilationEffort.h"
 #include <wtf/Assertions.h>
 #include <wtf/SegmentedVector.h>
 
@@ -645,9 +646,9 @@ public:
         return m_buffer.codeSize();
     }
 
-    PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID)
+    PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID, JITCompilationEffort effort)
     {
-        RefPtr<ExecutableMemoryHandle> result = m_buffer.executableCopy(globalData, ownerUID);
+        RefPtr<ExecutableMemoryHandle> result = m_buffer.executableCopy(globalData, ownerUID, effort);
         if (!result)
             return 0;
 

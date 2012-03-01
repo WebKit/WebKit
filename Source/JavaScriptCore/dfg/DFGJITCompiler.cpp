@@ -195,7 +195,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     codeBlock()->shrinkWeakReferenceTransitionsToFit();
 }
 
-void JITCompiler::compile(JITCode& entry)
+bool JITCompiler::compile(JITCode& entry)
 {
     compileEntry();
     SpeculativeJIT speculative(*this);
@@ -204,14 +204,17 @@ void JITCompiler::compile(JITCode& entry)
     // Create OSR entry trampolines if necessary.
     speculative.createOSREntries();
 
-    LinkBuffer linkBuffer(*m_globalData, this, m_codeBlock);
+    LinkBuffer linkBuffer(*m_globalData, this, m_codeBlock, JITCompilationCanFail);
+    if (linkBuffer.didFailToAllocate())
+        return false;
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
 
     entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
+    return true;
 }
 
-void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck)
+bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck)
 {
     compileEntry();
 
@@ -272,7 +275,9 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
 
 
     // === Link ===
-    LinkBuffer linkBuffer(*m_globalData, this, m_codeBlock);
+    LinkBuffer linkBuffer(*m_globalData, this, m_codeBlock, JITCompilationCanFail);
+    if (linkBuffer.didFailToAllocate())
+        return false;
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
     
@@ -282,6 +287,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
 
     entryWithArityCheck = linkBuffer.locationOf(arityCheck);
     entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
+    return true;
 }
 
 } } // namespace JSC::DFG

@@ -70,18 +70,19 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
 #endif
     
     JITCompiler dataFlowJIT(dfg);
+    bool result;
     if (compileMode == CompileFunction) {
         ASSERT(jitCodeWithArityCheck);
         
-        dataFlowJIT.compileFunction(jitCode, *jitCodeWithArityCheck);
+        result = dataFlowJIT.compileFunction(jitCode, *jitCodeWithArityCheck);
     } else {
         ASSERT(compileMode == CompileOther);
         ASSERT(!jitCodeWithArityCheck);
         
-        dataFlowJIT.compile(jitCode);
+        result = dataFlowJIT.compile(jitCode);
     }
     
-    return true;
+    return result;
 }
 
 bool tryCompile(JSGlobalData& globalData, CodeBlock* codeBlock, JITCode& jitCode)

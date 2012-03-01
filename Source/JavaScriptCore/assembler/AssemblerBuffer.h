@@ -28,6 +28,7 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include "JITCompilationEffort.h"
 #include "JSGlobalData.h"
 #include "stdint.h"
 #include <string.h>
@@ -129,12 +130,12 @@ namespace JSC {
             return AssemblerLabel(m_index);
         }
 
-        PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID)
+        PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID, JITCompilationEffort effort)
         {
             if (!m_index)
                 return 0;
 
-            RefPtr<ExecutableMemoryHandle> result = globalData.executableAllocator.allocate(globalData, m_index, ownerUID);
+            RefPtr<ExecutableMemoryHandle> result = globalData.executableAllocator.allocate(globalData, m_index, ownerUID, effort);
 
             if (!result)
                 return 0;

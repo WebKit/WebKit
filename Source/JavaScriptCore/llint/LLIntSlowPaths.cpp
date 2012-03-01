@@ -267,6 +267,32 @@ inline bool shouldJIT(ExecState* exec)
     return exec->globalData().canUseJIT();
 }
 
+// Returns true if we should try to OSR.
+inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
+{
+    CodeBlock::JITCompilationResult result = codeBlock->jitCompile(exec->globalData());
+    switch (result) {
+    case CodeBlock::AlreadyCompiled:
+#if ENABLE(JIT_VERBOSE_OSR)
+        dataLog("    Code was already compiled.\n");
+#endif
+        codeBlock->jitSoon();
+        return true;
+    case CodeBlock::CouldNotCompile:
+#if ENABLE(JIT_VERBOSE_OSR)
+        dataLog("    JIT compilation failed.\n");
+#endif
+        codeBlock->dontJITAnytimeSoon();
+        return false;
+    case CodeBlock::CompiledSuccessfully:
+#if ENABLE(JIT_VERBOSE_OSR)
+        dataLog("    JIT compilation successful.\n");
+#endif
+        codeBlock->jitSoon();
+        return true;
+    }
+}
+
 enum EntryKind { Prologue, ArityCheck };
 static SlowPathReturnType entryOSR(ExecState* exec, Instruction* pc, CodeBlock* codeBlock, const char *name, EntryKind kind)
 {
@@ -278,12 +304,9 @@ static SlowPathReturnType entryOSR(ExecState* exec, Instruction* pc, CodeBlock* 
         codeBlock->dontJITAnytimeSoon();
         LLINT_RETURN_TWO(0, exec);
     }
-    if (!codeBlock->jitCompile(exec->globalData())) {
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("    Code was already compiled.\n");
-#endif
-    }
-    codeBlock->jitSoon();
+    if (!jitCompileAndSetHeuristics(codeBlock, exec))
+        LLINT_RETURN_TWO(0, exec);
+    
     if (kind == Prologue)
         LLINT_RETURN_TWO(codeBlock->getJITCode().executableAddressAtOffset(0), exec);
     ASSERT(kind == ArityCheck);
@@ -328,12 +351,8 @@ LLINT_SLOW_PATH_DECL(loop_osr)
         LLINT_RETURN_TWO(0, exec);
     }
     
-    if (!codeBlock->jitCompile(exec->globalData())) {
-#if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("    Code was already compiled.\n");
-#endif
-    }
-    codeBlock->jitSoon();
+    if (!jitCompileAndSetHeuristics(codeBlock, exec))
+        LLINT_RETURN_TWO(0, exec);
     
     ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
     
@@ -357,14 +376,9 @@ LLINT_SLOW_PATH_DECL(replace)
     dataLog("%p: Entered replace with executeCounter = %d\n", codeBlock, codeBlock->llintExecuteCounter());
 #endif
     
-    if (shouldJIT(exec)) {
-        if (!codeBlock->jitCompile(exec->globalData())) {
-#if ENABLE(JIT_VERBOSE_OSR)
-            dataLog("    Code was already compiled.\n");
-#endif
-        }
-        codeBlock->jitSoon();
-    } else
+    if (shouldJIT(exec))
+        jitCompileAndSetHeuristics(codeBlock, exec);
+    else
         codeBlock->dontJITAnytimeSoon();
     LLINT_END_IMPL();
 }

@@ -2325,21 +2325,21 @@ void FunctionCodeBlock::jettison()
     static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(*globalData(), m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
-void ProgramCodeBlock::jitCompileImpl(JSGlobalData& globalData)
+bool ProgramCodeBlock::jitCompileImpl(JSGlobalData& globalData)
 {
     ASSERT(getJITType() == JITCode::InterpreterThunk);
     ASSERT(this == replacement());
     return static_cast<ProgramExecutable*>(ownerExecutable())->jitCompile(globalData);
 }
 
-void EvalCodeBlock::jitCompileImpl(JSGlobalData& globalData)
+bool EvalCodeBlock::jitCompileImpl(JSGlobalData& globalData)
 {
     ASSERT(getJITType() == JITCode::InterpreterThunk);
     ASSERT(this == replacement());
     return static_cast<EvalExecutable*>(ownerExecutable())->jitCompile(globalData);
 }
 
-void FunctionCodeBlock::jitCompileImpl(JSGlobalData& globalData)
+bool FunctionCodeBlock::jitCompileImpl(JSGlobalData& globalData)
 {
     ASSERT(getJITType() == JITCode::InterpreterThunk);
     ASSERT(this == replacement());

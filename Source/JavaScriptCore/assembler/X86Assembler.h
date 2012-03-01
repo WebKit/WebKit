@@ -29,6 +29,7 @@
 #if ENABLE(ASSEMBLER) && (CPU(X86) || CPU(X86_64))
 
 #include "AssemblerBuffer.h"
+#include "JITCompilationEffort.h"
 #include <stdint.h>
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
@@ -1782,9 +1783,9 @@ public:
         return b.m_offset - a.m_offset;
     }
     
-    PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID)
+    PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID, JITCompilationEffort effort)
     {
-        return m_formatter.executableCopy(globalData, ownerUID);
+        return m_formatter.executableCopy(globalData, ownerUID, effort);
     }
 
     unsigned debugOffset() { return m_formatter.debugOffset(); }
@@ -2130,9 +2131,9 @@ private:
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
         void* data() const { return m_buffer.data(); }
 
-        PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID)
+        PassRefPtr<ExecutableMemoryHandle> executableCopy(JSGlobalData& globalData, void* ownerUID, JITCompilationEffort effort)
         {
-            return m_buffer.executableCopy(globalData, ownerUID);
+            return m_buffer.executableCopy(globalData, ownerUID, effort);
         }
 
         unsigned debugOffset() { return m_buffer.debugOffset(); }

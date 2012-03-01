@@ -34,6 +34,7 @@
 #define GLOBAL_THUNK_ID reinterpret_cast<void*>(static_cast<intptr_t>(-1))
 #define REGEXP_CODE_ID reinterpret_cast<void*>(static_cast<intptr_t>(-2))
 
+#include "JITCompilationEffort.h"
 #include "MacroAssembler.h"
 #include <wtf/DataLog.h>
 #include <wtf/Noncopyable.h>
@@ -73,7 +74,7 @@ class LinkBuffer {
 #endif
 
 public:
-    LinkBuffer(JSGlobalData& globalData, MacroAssembler* masm, void* ownerUID)
+    LinkBuffer(JSGlobalData& globalData, MacroAssembler* masm, void* ownerUID, JITCompilationEffort effort = JITCompilationMustSucceed)
         : m_size(0)
 #if ENABLE(BRANCH_COMPACTION)
         , m_initialSize(0)
@@ -83,16 +84,27 @@ public:
         , m_globalData(&globalData)
 #ifndef NDEBUG
         , m_completed(false)
+        , m_effort(effort)
 #endif
     {
-        linkCode(ownerUID);
+        linkCode(ownerUID, effort);
     }
 
     ~LinkBuffer()
     {
-        ASSERT(m_completed);
+        ASSERT(m_completed || (!m_executableMemory && m_effort == JITCompilationCanFail));
+    }
+    
+    bool didFailToAllocate() const
+    {
+        return !m_executableMemory;
     }
 
+    bool isValid() const
+    {
+        return !didFailToAllocate();
+    }
+    
     // These methods are used to link or set values at code generation time.
 
     void link(Call call, FunctionPtr function)
@@ -218,11 +230,11 @@ private:
         return m_code;
     }
 
-    void linkCode(void* ownerUID)
+    void linkCode(void* ownerUID, JITCompilationEffort effort)
     {
         ASSERT(!m_code);
 #if !ENABLE(BRANCH_COMPACTION)
-        m_executableMemory = m_assembler->m_assembler.executableCopy(*m_globalData, ownerUID);
+        m_executableMemory = m_assembler->m_assembler.executableCopy(*m_globalData, ownerUID, effort);
         if (!m_executableMemory)
             return;
         m_code = m_executableMemory->start();
@@ -230,7 +242,7 @@ private:
         ASSERT(m_code);
 #else
         m_initialSize = m_assembler->m_assembler.codeSize();
-        m_executableMemory = m_globalData->executableAllocator.allocate(*m_globalData, m_initialSize, ownerUID);
+        m_executableMemory = m_globalData->executableAllocator.allocate(*m_globalData, m_initialSize, ownerUID, effort);
         if (!m_executableMemory)
             return;
         m_code = (uint8_t*)m_executableMemory->start();
@@ -307,6 +319,7 @@ private:
     {
 #ifndef NDEBUG
         ASSERT(!m_completed);
+        ASSERT(isValid());
         m_completed = true;
 #endif
 
@@ -375,6 +388,7 @@ private:
     JSGlobalData* m_globalData;
 #ifndef NDEBUG
     bool m_completed;
+    JITCompilationEffort m_effort;
 #endif
 };
 

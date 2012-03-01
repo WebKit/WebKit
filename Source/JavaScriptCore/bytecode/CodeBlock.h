@@ -366,18 +366,20 @@ namespace JSC {
         ExecutableMemoryHandle* executableMemory() { return getJITCode().getExecutableMemory(); }
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*) = 0;
         virtual void jettison() = 0;
-        bool jitCompile(JSGlobalData& globalData)
+        enum JITCompilationResult { AlreadyCompiled, CouldNotCompile, CompiledSuccessfully };
+        JITCompilationResult jitCompile(JSGlobalData& globalData)
         {
             if (getJITType() != JITCode::InterpreterThunk) {
                 ASSERT(getJITType() == JITCode::BaselineJIT);
-                return false;
+                return AlreadyCompiled;
             }
 #if ENABLE(JIT)
-            jitCompileImpl(globalData);
-            return true;
+            if (jitCompileImpl(globalData))
+                return CompiledSuccessfully;
+            return CouldNotCompile;
 #else
             UNUSED_PARAM(globalData);
-            return false;
+            return CouldNotCompile;
 #endif
         }
         virtual CodeBlock* replacement() = 0;
@@ -1040,7 +1042,7 @@ namespace JSC {
 
     protected:
 #if ENABLE(JIT)
-        virtual void jitCompileImpl(JSGlobalData&) = 0;
+        virtual bool jitCompileImpl(JSGlobalData&) = 0;
 #endif
         virtual void visitWeakReferences(SlotVisitor&);
         virtual void finalizeUnconditionally();
@@ -1284,7 +1286,7 @@ namespace JSC {
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         virtual void jettison();
-        virtual void jitCompileImpl(JSGlobalData&);
+        virtual bool jitCompileImpl(JSGlobalData&);
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFGInternal();
 #endif
@@ -1319,7 +1321,7 @@ namespace JSC {
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         virtual void jettison();
-        virtual void jitCompileImpl(JSGlobalData&);
+        virtual bool jitCompileImpl(JSGlobalData&);
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFGInternal();
 #endif
@@ -1357,7 +1359,7 @@ namespace JSC {
     protected:
         virtual JSObject* compileOptimized(ExecState*, ScopeChainNode*);
         virtual void jettison();
-        virtual void jitCompileImpl(JSGlobalData&);
+        virtual bool jitCompileImpl(JSGlobalData&);
         virtual CodeBlock* replacement();
         virtual bool canCompileWithDFGInternal();
 #endif

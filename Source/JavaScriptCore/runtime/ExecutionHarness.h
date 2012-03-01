@@ -46,7 +46,7 @@ inline bool prepareForExecution(JSGlobalData& globalData, OwnPtr<CodeBlockType>&
         return true;
     }
 #endif // ENABLE(LLINT)
-    return jitCompileIfAppropriate(globalData, codeBlock, jitCode, jitType);
+    return jitCompileIfAppropriate(globalData, codeBlock, jitCode, jitType, JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
 }
 
 inline bool prepareFunctionForExecution(JSGlobalData& globalData, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, SharedSymbolTable*& symbolTable, JITCode::JITType jitType, CodeSpecializationKind kind)
@@ -61,7 +61,7 @@ inline bool prepareFunctionForExecution(JSGlobalData& globalData, OwnPtr<Functio
 #else
     UNUSED_PARAM(kind);
 #endif // ENABLE(LLINT)
-    return jitCompileFunctionIfAppropriate(globalData, codeBlock, jitCode, jitCodeWithArityCheck, symbolTable, jitType);
+    return jitCompileFunctionIfAppropriate(globalData, codeBlock, jitCode, jitCodeWithArityCheck, symbolTable, jitType, JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
 }
 
 } // namespace JSC
