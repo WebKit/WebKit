@@ -1,3 +1,13 @@
+2012-02-29  Dirk Pranke  <dpranke@chromium.org>
+
+        need to clone the gpu baselines and expectations into the new "virtual" dir
+        https://bugs.webkit.org/show_bug.cgi?id=79956
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.virtual_test_suites):
+
 2012-02-29  Mark Rowe  <mrowe@apple.com>
 
         Switch to using json rather than simplejson now that the master is using Python 2.7.

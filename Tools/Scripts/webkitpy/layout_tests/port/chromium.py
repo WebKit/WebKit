@@ -45,7 +45,7 @@ from webkitpy.common.system.path import cygpath
 from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.layout_tests.port.base import Port
+from webkitpy.layout_tests.port.base import Port, VirtualTestSuite
 from webkitpy.layout_tests.port.driver import Driver, DriverOutput
 from webkitpy.layout_tests.port import builders
 from webkitpy.layout_tests.servers import http_server
@@ -341,6 +341,16 @@ class ChromiumPort(Port):
         repos = super(ChromiumPort, self).repository_paths()
         repos.append(('chromium', self.path_from_chromium_base('build')))
         return repos
+
+    def virtual_test_suites(self):
+        return [
+            VirtualTestSuite('platform/chromium/virtual/gpu/fast/canvas',
+                             'fast/canvas',
+                             ['--accelerated-2d-canvas']),
+            VirtualTestSuite('platform/chromium/virtual/gpu/canvas/philip',
+                             'canvas/philip',
+                             ['--accelerated-2d-canvas'])
+        ]
 
     #
     # PROTECTED METHODS
