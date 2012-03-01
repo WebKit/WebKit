@@ -260,10 +260,17 @@ public:
     // In auto-resize mode, the view is automatically adjusted to fit the html
     // content within the given bounds.
     virtual void enableAutoResizeMode(
-        bool enable,
         const WebSize& minSize,
         const WebSize& maxSize) = 0;
 
+    // Turn off auto-resize.
+    virtual void disableAutoResizeMode() = 0;
+
+    // DEPRECATED
+    virtual void enableAutoResizeMode(
+        bool enable,
+        const WebSize& minSize,
+        const WebSize& maxSize) = 0;
 
     // Media ---------------------------------------------------------------
 

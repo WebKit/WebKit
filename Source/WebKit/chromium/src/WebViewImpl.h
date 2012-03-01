@@ -188,6 +188,10 @@ public:
     virtual WebSize fixedLayoutSize() const;
     virtual void setFixedLayoutSize(const WebSize&);
     virtual void enableAutoResizeMode(
+        const WebSize& minSize,
+        const WebSize& maxSize);
+    virtual void disableAutoResizeMode();
+    virtual void enableAutoResizeMode(
         bool enable,
         const WebSize& minSize,
         const WebSize& maxSize);
@@ -534,6 +538,7 @@ private:
                                                DragAction);
 
     void sendResizeEventAndRepaint();
+    void configureAutoResizeMode();
 
 #if USE(ACCELERATED_COMPOSITING)
     void setIsAcceleratedCompositingActive(bool);

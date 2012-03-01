@@ -1,3 +1,23 @@
+2012-02-29  David Levin  <levin@chromium.org>
+
+        [chromium] Add the ability to turn off autoresize.
+        https://bugs.webkit.org/show_bug.cgi?id=77452
+
+        Reviewed by Darin Fisher.
+
+        * public/WebView.h:
+        (WebKit::WebViewImpl::enableAutoResizeMode): Cleaned up the api.
+        (WebKit::WebViewImpl::disableAutoResizeMode): Added the ability to disable auto-resize.
+        (WebKit::WebViewImpl::enableAutoResizeMode): Deprecated it.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::enableAutoResizeMode): Adjust for new api.
+        (WebKit::WebViewImpl::disableAutoResizeMode): Allow turning off autoresize.
+        (WebKit::WebViewImpl::enableAutoResizeMode): Call the other two apis, but
+        this api will be deleted shortly.
+        (WebKit::WebViewImpl::configureAutoResizeMode): Common code.
+        * src/WebViewImpl.h:
+        (WebViewImpl): Adjust to new public api.
+
 2012-02-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

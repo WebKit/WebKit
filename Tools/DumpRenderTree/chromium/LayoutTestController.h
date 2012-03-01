@@ -241,6 +241,7 @@ public:
     void pauseTransitionAtTimeOnElementWithId(const CppArgumentList&, CppVariant*);
     void elementDoesAutoCompleteForElementWithId(const CppArgumentList&, CppVariant*);
     void enableAutoResizeMode(const CppArgumentList&, CppVariant*);
+    void disableAutoResizeMode(const CppArgumentList&, CppVariant*);
     void numberOfActiveAnimations(const CppArgumentList&, CppVariant*);
     void suspendAnimations(const CppArgumentList&, CppVariant*);
     void resumeAnimations(const CppArgumentList&, CppVariant*);

@@ -104,6 +104,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
 #if ENABLE(POINTER_LOCK)
     bindMethod("didLosePointerLock", &LayoutTestController::didLosePointerLock);
 #endif
+    bindMethod("disableAutoResizeMode", &LayoutTestController::disableAutoResizeMode);
     bindMethod("disableImageLoading", &LayoutTestController::disableImageLoading);
     bindMethod("display", &LayoutTestController::display);
     bindMethod("displayInvalidatedRegion", &LayoutTestController::displayInvalidatedRegion);
@@ -1129,7 +1130,23 @@ void LayoutTestController::enableAutoResizeMode(const CppArgumentList& arguments
     int maxHeight = cppVariantToInt32(arguments[3]);
     WebKit::WebSize maxSize(maxWidth, maxHeight);
 
-    m_shell->webView()->enableAutoResizeMode(true, minSize, maxSize);
+    m_shell->webView()->enableAutoResizeMode(minSize, maxSize);
+    result->set(true);
+}
+
+void LayoutTestController::disableAutoResizeMode(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() !=2) {
+        result->set(false);
+        return;
+    }
+    int newWidth = cppVariantToInt32(arguments[0]);
+    int newHeight = cppVariantToInt32(arguments[1]);
+    WebKit::WebSize newSize(newWidth, newHeight);
+
+    m_shell->webViewHost()->setWindowRect(WebRect(0, 0, newSize.width, newSize.height));
+    m_shell->webView()->disableAutoResizeMode();
+    m_shell->webView()->resize(newSize);
     result->set(true);
 }
 

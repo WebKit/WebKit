@@ -2264,15 +2264,27 @@ void WebViewImpl::enableFixedLayoutMode(bool enable)
 #endif
 }
 
-void WebViewImpl::enableAutoResizeMode(bool enable, const WebSize& minSize, const WebSize& maxSize)
+
+void WebViewImpl::enableAutoResizeMode(const WebSize& minSize, const WebSize& maxSize)
 {
-    m_shouldAutoResize = enable;
+    m_shouldAutoResize = true;
     m_minAutoSize = minSize;
     m_maxAutoSize = maxSize;
-    if (!mainFrameImpl() || !mainFrameImpl()->frame() || !mainFrameImpl()->frame()->view())
-        return;
+    configureAutoResizeMode();
+}
 
-    mainFrameImpl()->frame()->view()->enableAutoSizeMode(m_shouldAutoResize, m_minAutoSize, m_maxAutoSize);
+void WebViewImpl::disableAutoResizeMode()
+{
+    m_shouldAutoResize = false;
+    configureAutoResizeMode();
+}
+
+void WebViewImpl::enableAutoResizeMode(bool enable, const WebSize& minSize, const WebSize& maxSize)
+{
+    if (enable)
+        enableAutoResizeMode(enable, minSize, maxSize);
+    else
+        disableAutoResizeMode();
 }
 
 void WebViewImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScale)
@@ -2583,6 +2595,14 @@ void WebViewImpl::sendResizeEventAndRepaint()
             m_client->didInvalidateRect(damagedRect);
         }
     }
+}
+
+void WebViewImpl::configureAutoResizeMode()
+{
+    if (!mainFrameImpl() || !mainFrameImpl()->frame() || !mainFrameImpl()->frame()->view())
+        return;
+
+    mainFrameImpl()->frame()->view()->enableAutoSizeMode(m_shouldAutoResize, m_minAutoSize, m_maxAutoSize);
 }
 
 unsigned long WebViewImpl::createUniqueIdentifierForRequest()

@@ -3024,11 +3024,15 @@ void FrameView::enableAutoSizeMode(bool enable, const IntSize& minSize, const In
     m_minAutoSize = minSize;
     m_maxAutoSize = maxSize;
 
-    if (!m_shouldAutoSize)
-        return;
-
     setNeedsLayout();
     scheduleRelayout();
+    if (m_shouldAutoSize)
+        return;
+
+    // Since autosize mode forces the scrollbar mode, change them to being auto.
+    setVerticalScrollbarLock(false);
+    setHorizontalScrollbarLock(false);
+    setScrollbarModes(ScrollbarAuto, ScrollbarAuto);
 }
 
 void FrameView::forceLayout(bool allowSubtree)
