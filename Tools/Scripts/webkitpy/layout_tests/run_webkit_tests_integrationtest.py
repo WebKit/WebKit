@@ -754,7 +754,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
     def test_virtual(self):
         self.assertTrue(passing_run(['passes/text.html', 'passes/args.html',
-                                     'virtual/text.html', 'virtual/args.html']))
+                                     'virtual/passes/text.html', 'virtual/passes/args.html']))
 
     def test_worker_model__inline(self):
         self.assertTrue(passing_run(['--worker-model', 'inline']))

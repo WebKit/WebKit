@@ -306,7 +306,7 @@ WONTFIX SKIP : failures/expected/exception.html = CRASH
         add_file(test, '-expected.txt', test.expected_text)
         add_file(test, '-expected.png', test.expected_image)
 
-    filesystem.write_text_file(filesystem.join(LAYOUT_TEST_DIR, 'virtual', 'args-expected.txt'), 'args-txt --virtual-arg')
+    filesystem.write_text_file(filesystem.join(LAYOUT_TEST_DIR, 'virtual', 'passes', 'args-expected.txt'), 'args-txt --virtual-arg')
     # Clear the list of written files so that we can watch what happens during testing.
     filesystem.clear_written_files()
 
@@ -494,7 +494,8 @@ class TestPort(Port):
 
     def virtual_test_suites(self):
         return [
-            VirtualTestSuite('virtual', 'passes', ['--virtual-arg']),
+            VirtualTestSuite('virtual/passes', 'passes', ['--virtual-arg']),
+            VirtualTestSuite('virtual/failures', 'failures/expected', ['--virtual-arg']),
         ]
 
 class TestDriver(Driver):

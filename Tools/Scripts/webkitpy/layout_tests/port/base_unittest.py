@@ -406,6 +406,38 @@ class PortTest(unittest.TestCase):
         self.assertVirtual(port._path_to_lighttpd_php)
         self.assertVirtual(port._path_to_wdiff)
 
+    def test_test_exists(self):
+        port = self.make_port(with_tests=True)
+        self.assertTrue(port.test_exists('passes'))
+        self.assertTrue(port.test_exists('passes/text.html'))
+        self.assertFalse(port.test_exists('passes/does_not_exist.html'))
+
+        self.assertTrue(port.test_exists('virtual'))
+        self.assertFalse(port.test_exists('virtual/does_not_exist.html'))
+        self.assertTrue(port.test_exists('virtual/passes/text.html'))
+
+    def test_test_isfile(self):
+        port = self.make_port(with_tests=True)
+        self.assertFalse(port.test_isfile('passes'))
+        self.assertTrue(port.test_isfile('passes/text.html'))
+        self.assertFalse(port.test_isfile('passes/does_not_exist.html'))
+
+        self.assertFalse(port.test_isfile('virtual'))
+        self.assertTrue(port.test_isfile('virtual/passes/text.html'))
+        self.assertFalse(port.test_isfile('virtual/does_not_exist.html'))
+
+    def test_test_isdir(self):
+        port = self.make_port(with_tests=True)
+        self.assertTrue(port.test_isdir('passes'))
+        self.assertFalse(port.test_isdir('passes/text.html'))
+        self.assertFalse(port.test_isdir('passes/does_not_exist.html'))
+        self.assertFalse(port.test_isdir('passes/does_not_exist/'))
+
+        self.assertTrue(port.test_isdir('virtual'))
+        self.assertFalse(port.test_isdir('virtual/does_not_exist.html'))
+        self.assertFalse(port.test_isdir('virtual/does_not_exist/'))
+        self.assertFalse(port.test_isdir('virtual/passes/text.html'))
+
 
 if __name__ == '__main__':
     unittest.main()

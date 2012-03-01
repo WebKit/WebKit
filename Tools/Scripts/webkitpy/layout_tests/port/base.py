@@ -506,22 +506,26 @@ class Port(object):
     def test_isfile(self, test_name):
         """Return True if the test name refers to a directory of tests."""
         # Used by test_expectations.py to apply rules to whole directories.
-        test_path = self.abspath_for_test(test_name)
-        return self._filesystem.isfile(test_path)
+        if self._filesystem.isfile(self.abspath_for_test(test_name)):
+            return True
+        base = self.lookup_virtual_test_base(test_name)
+        return base and self._filesystem.isfile(self.abspath_for_test(base))
 
     @memoized
     def test_isdir(self, test_name):
         """Return True if the test name refers to a directory of tests."""
         # Used by test_expectations.py to apply rules to whole directories.
-        test_path = self.abspath_for_test(test_name)
-        return self._filesystem.isdir(test_path)
+        if self._filesystem.isdir(self.abspath_for_test(test_name)):
+            return True
+        base = self.lookup_virtual_test_base(test_name)
+        return base and self._filesystem.isdir(self.abspath_for_test(base))
 
+    @memoized
     def test_exists(self, test_name):
         """Return True if the test name refers to an existing test or baseline."""
         # Used by test_expectations.py to determine if an entry refers to a
         # valid test and by printing.py to determine if baselines exist.
-        test_path = self.abspath_for_test(test_name)
-        return self._filesystem.exists(test_path)
+        return self.test_isfile(test_name) or self.test_isdir(test_name)
 
     def split_test(self, test_name):
         """Splits a test name into the 'directory' part and the 'basename' part."""
