@@ -66,13 +66,13 @@ void ScrollbarThemeGtk::updateThemeProperties()
     updateScrollbarsFrameThickness();
 }
 
-static GtkWidget* getWidgetForScrollbar(Scrollbar* scrollbar)
+static GtkWidget* getWidgetForScrollbar(ScrollbarThemeClient* scrollbar)
 {
     RenderThemeGtk* theme = static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get());
     return scrollbar->orientation() == VerticalScrollbar ? theme->gtkVScrollbar() : theme->gtkHScrollbar();
 }
 
-void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
+void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect)
 {
     // Paint the track background. If the trough-under-steppers property is true, this
     // should be the full size of the scrollbar, but if is false, it should only be the
@@ -87,7 +87,7 @@ void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, Scrollbar
                               GTK_STATE_ACTIVE, GTK_SHADOW_IN, "trough");
 }
 
-void ScrollbarThemeGtk::paintScrollbarBackground(GraphicsContext* context, Scrollbar* scrollbar)
+void ScrollbarThemeGtk::paintScrollbarBackground(GraphicsContext* context, ScrollbarThemeClient* scrollbar)
 {
     IntRect fullScrollbarRect = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
 
@@ -96,7 +96,7 @@ void ScrollbarThemeGtk::paintScrollbarBackground(GraphicsContext* context, Scrol
                               GTK_STATE_NORMAL, GTK_SHADOW_IN, "scrolled_window");
 }
 
-void ScrollbarThemeGtk::paintThumb(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
+void ScrollbarThemeGtk::paintThumb(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect)
 {
     GtkWidget* widget = getWidgetForScrollbar(scrollbar);
     gboolean activateSlider;
@@ -129,7 +129,7 @@ void ScrollbarThemeGtk::paintThumb(GraphicsContext* context, Scrollbar* scrollba
     widgetContext.gtkPaintSlider(sliderRect, widget, stateType, shadowType, "slider", orientation);
 }
 
-void ScrollbarThemeGtk::paintButton(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
+void ScrollbarThemeGtk::paintButton(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect, ScrollbarPart part)
 {
     // The buttons will be disabled if the thumb is as the appropriate extreme.
     GtkShadowType shadowType = GTK_SHADOW_OUT;

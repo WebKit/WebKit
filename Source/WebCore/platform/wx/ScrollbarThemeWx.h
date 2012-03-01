@@ -35,21 +35,21 @@ class ScrollbarThemeWx : public ScrollbarThemeComposite {
 public:
     virtual ~ScrollbarThemeWx();
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
-    virtual bool paint(Scrollbar*, GraphicsContext*, const IntRect&);
+    virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect&);
     
 protected:
-    virtual bool hasButtons(Scrollbar*) { return true; }
-    virtual bool hasThumb(Scrollbar*);
+    virtual bool hasButtons(ScrollbarThemeClient*) { return true; }
+    virtual bool hasThumb(ScrollbarThemeClient*);
 
-    virtual IntSize buttonSize(Scrollbar*);
+    virtual IntSize buttonSize(ScrollbarThemeClient*);
 
-    virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
-    virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
-    virtual IntRect trackRect(Scrollbar*, bool painting = false);
+    virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);
+    virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);
+    virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false);
 
-    virtual void splitTrack(Scrollbar*, const IntRect& track, IntRect& startTrack, IntRect& thumb, IntRect& endTrack);
+    virtual void splitTrack(ScrollbarThemeClient*, const IntRect& track, IntRect& startTrack, IntRect& thumb, IntRect& endTrack);
     
-    virtual int minimumThumbLength(Scrollbar*);
+    virtual int minimumThumbLength(ScrollbarThemeClient*);
 };
 
 }

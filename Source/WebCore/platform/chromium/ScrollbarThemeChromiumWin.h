@@ -38,19 +38,19 @@ namespace WebCore {
     public:
         virtual int scrollbarThickness(ScrollbarControlSize);
         virtual bool invalidateOnMouseEnterExit();
-        virtual bool shouldSnapBackToDragOrigin(Scrollbar*, const PlatformMouseEvent&);
+        virtual bool shouldSnapBackToDragOrigin(ScrollbarThemeClient*, const PlatformMouseEvent&);
 
     protected:
-        virtual void paintTrackPiece(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
-        virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
-        virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
-        virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
-        virtual IntSize buttonSize(Scrollbar*);
+        virtual void paintTrackPiece(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart);
+        virtual void paintButton(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart);
+        virtual void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
+        virtual bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&);
+        virtual IntSize buttonSize(ScrollbarThemeClient*);
 
     private:
-        int getThemeState(Scrollbar*, ScrollbarPart) const;
-        int getThemeArrowState(Scrollbar*, ScrollbarPart) const;
-        int getClassicThemeState(Scrollbar*, ScrollbarPart) const;
+        int getThemeState(ScrollbarThemeClient*, ScrollbarPart) const;
+        int getThemeArrowState(ScrollbarThemeClient*, ScrollbarPart) const;
+        int getClassicThemeState(ScrollbarThemeClient*, ScrollbarPart) const;
     };
 } // namespace WebCore
 

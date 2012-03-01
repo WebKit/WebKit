@@ -36,15 +36,15 @@ public:
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
 
 protected:
-    virtual bool hasButtons(Scrollbar*) { return false; }
-    virtual bool hasThumb(Scrollbar*) { return true; }
+    virtual bool hasButtons(ScrollbarThemeClient*) { return false; }
+    virtual bool hasThumb(ScrollbarThemeClient*) { return true; }
 
-    virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool /*painting*/ = false) { return IntRect(); }
-    virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool /*painting*/ = false) { return IntRect(); }
-    virtual IntRect trackRect(Scrollbar*, bool painting = false);
+    virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool /*painting*/ = false) { return IntRect(); }
+    virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool /*painting*/ = false) { return IntRect(); }
+    virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false);
     
-    virtual void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&);
-    virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
+    virtual void paintTrackBackground(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
+    virtual void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
     
 private:
     virtual bool isMockTheme() const { return true; }

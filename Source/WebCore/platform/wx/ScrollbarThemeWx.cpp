@@ -71,19 +71,19 @@ int ScrollbarThemeWx::scrollbarThickness(ScrollbarControlSize size)
     return thickness;
 }
 
-bool ScrollbarThemeWx::hasThumb(Scrollbar* scrollbar)
+bool ScrollbarThemeWx::hasThumb(ScrollbarThemeClient* scrollbar)
 {
     // This method is just called as a paint-time optimization to see if
     // painting the thumb can be skipped.  We don't have to be exact here.
     return thumbLength(scrollbar) > 0;
 }
 
-int ScrollbarThemeWx::minimumThumbLength(Scrollbar* scrollbar)
+int ScrollbarThemeWx::minimumThumbLength(ScrollbarThemeClient* scrollbar)
 {
     return 20;
 }
 
-IntSize ScrollbarThemeWx::buttonSize(Scrollbar*) 
+IntSize ScrollbarThemeWx::buttonSize(ScrollbarThemeClient*) 
 {
 #ifdef __WXMAC__
     return IntSize(20,20);
@@ -92,7 +92,7 @@ IntSize ScrollbarThemeWx::buttonSize(Scrollbar*)
 #endif
 }
 
-void ScrollbarThemeWx::splitTrack(Scrollbar* scrollbar, const IntRect& unconstrainedTrackRect, IntRect& beforeThumbRect, IntRect& thumbRect, IntRect& afterThumbRect)
+void ScrollbarThemeWx::splitTrack(ScrollbarThemeClient* scrollbar, const IntRect& unconstrainedTrackRect, IntRect& beforeThumbRect, IntRect& thumbRect, IntRect& afterThumbRect)
 {
     ScrollbarThemeComposite::splitTrack(scrollbar, unconstrainedTrackRect, beforeThumbRect, thumbRect, afterThumbRect);
 #ifdef __WXMAC__
@@ -109,7 +109,7 @@ void ScrollbarThemeWx::splitTrack(Scrollbar* scrollbar, const IntRect& unconstra
 #endif
 }
 
-IntRect ScrollbarThemeWx::backButtonRect(Scrollbar* scrollbar, ScrollbarPart part, bool)
+IntRect ScrollbarThemeWx::backButtonRect(ScrollbarThemeClient* scrollbar, ScrollbarPart part, bool)
 {
     // FIXME: Handling this case is needed when there are two sets of arrow buttons
     // on Mac, one at the top and one at the bottom.
@@ -130,7 +130,7 @@ IntRect ScrollbarThemeWx::backButtonRect(Scrollbar* scrollbar, ScrollbarPart par
     return IntRect(x, y, size.width(), size.height());
 }
 
-IntRect ScrollbarThemeWx::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart part, bool)
+IntRect ScrollbarThemeWx::forwardButtonRect(ScrollbarThemeClient* scrollbar, ScrollbarPart part, bool)
 {
     // FIXME: Handling this case is needed when there are two sets of arrow buttons
     // on Mac, one at the top and one at the bottom.
@@ -155,7 +155,7 @@ IntRect ScrollbarThemeWx::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart 
     return IntRect(x, y, size.width(), size.height());
 }
 
-IntRect ScrollbarThemeWx::trackRect(Scrollbar* scrollbar, bool)
+IntRect ScrollbarThemeWx::trackRect(ScrollbarThemeClient* scrollbar, bool)
 {
     IntSize bs = buttonSize(scrollbar);
     int trackStart = 0;
@@ -179,11 +179,11 @@ IntRect ScrollbarThemeWx::trackRect(Scrollbar* scrollbar, bool)
     return IntRect(scrollbar->x(), scrollbar->y() + trackStart, thickness, scrollbar->height() - 2 * bs.height());
 }
 
-bool ScrollbarThemeWx::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& rect)
+bool ScrollbarThemeWx::paint(ScrollbarThemeClient* scrollbar, GraphicsContext* context, const IntRect& rect)
 {
     wxOrientation orientation = (scrollbar->orientation() == HorizontalScrollbar) ? wxHORIZONTAL : wxVERTICAL;
     int flags = 0;
-    if (scrollbar->scrollableArea()->isActive())
+    if (scrollbar->isScrollableAreaActive())
         flags |= wxCONTROL_FOCUSED;
     
     if (!scrollbar->enabled())

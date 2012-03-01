@@ -40,19 +40,19 @@ class ScrollbarThemeQt : public ScrollbarTheme {
 public:
     virtual ~ScrollbarThemeQt();
 
-    virtual bool paint(Scrollbar*, GraphicsContext*, const IntRect& damageRect);
+    virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& damageRect);
     virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect& cornerRect);
 
-    virtual ScrollbarPart hitTest(Scrollbar*, const PlatformMouseEvent&);
+    virtual ScrollbarPart hitTest(ScrollbarThemeClient*, const PlatformMouseEvent&);
 
-    virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
+    virtual bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&);
 
-    virtual void invalidatePart(Scrollbar*, ScrollbarPart);
+    virtual void invalidatePart(ScrollbarThemeClient*, ScrollbarPart);
 
-    virtual int thumbPosition(Scrollbar*);
-    virtual int thumbLength(Scrollbar*);
-    virtual int trackPosition(Scrollbar*);
-    virtual int trackLength(Scrollbar*);
+    virtual int thumbPosition(ScrollbarThemeClient*);
+    virtual int thumbLength(ScrollbarThemeClient*);
+    virtual int trackPosition(ScrollbarThemeClient*);
+    virtual int trackLength(ScrollbarThemeClient*);
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
 

@@ -32,40 +32,40 @@ namespace WebCore {
 
 class ScrollbarThemeComposite : public ScrollbarTheme {
 public:
-    virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
+    virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& damageRect);
 
-    virtual ScrollbarPart hitTest(Scrollbar*, const PlatformMouseEvent&);
+    virtual ScrollbarPart hitTest(ScrollbarThemeClient*, const PlatformMouseEvent&);
 
-    virtual void invalidatePart(Scrollbar*, ScrollbarPart);
+    virtual void invalidatePart(ScrollbarThemeClient*, ScrollbarPart);
 
-    virtual int thumbPosition(Scrollbar*);
-    virtual int thumbLength(Scrollbar*);
-    virtual int trackPosition(Scrollbar*);
-    virtual int trackLength(Scrollbar*);
+    virtual int thumbPosition(ScrollbarThemeClient*);
+    virtual int thumbLength(ScrollbarThemeClient*);
+    virtual int trackPosition(ScrollbarThemeClient*);
+    virtual int trackLength(ScrollbarThemeClient*);
 
     virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect& cornerRect);
     virtual void paintOverhangAreas(ScrollView*, GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
 
 protected:
-    virtual bool hasButtons(Scrollbar*) = 0;
-    virtual bool hasThumb(Scrollbar*) = 0;
+    virtual bool hasButtons(ScrollbarThemeClient*) = 0;
+    virtual bool hasThumb(ScrollbarThemeClient*) = 0;
 
-    virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool painting = false) = 0;
-    virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool painting = false) = 0;
-    virtual IntRect trackRect(Scrollbar*, bool painting = false) = 0;
+    virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) = 0;
+    virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) = 0;
+    virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false) = 0;
 
-    virtual void splitTrack(Scrollbar*, const IntRect& track, IntRect& startTrack, IntRect& thumb, IntRect& endTrack);
+    virtual void splitTrack(ScrollbarThemeClient*, const IntRect& track, IntRect& startTrack, IntRect& thumb, IntRect& endTrack);
     
-    virtual int minimumThumbLength(Scrollbar*);
+    virtual int minimumThumbLength(ScrollbarThemeClient*);
 
-    virtual void paintScrollbarBackground(GraphicsContext*, Scrollbar*) {}
-    virtual void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&) {}
-    virtual void paintTrackPiece(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart) {}
-    virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart) {}
-    virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&) {}
-    virtual void paintTickmarks(GraphicsContext*, Scrollbar*, const IntRect&) {}
+    virtual void paintScrollbarBackground(GraphicsContext*, ScrollbarThemeClient*) { }
+    virtual void paintTrackBackground(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) { }
+    virtual void paintTrackPiece(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart) { }
+    virtual void paintButton(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart) { }
+    virtual void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) { }
+    virtual void paintTickmarks(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) { }
 
-    virtual IntRect constrainTrackRectToTrackPieces(Scrollbar*, const IntRect& rect) { return rect; }
+    virtual IntRect constrainTrackRectToTrackPieces(ScrollbarThemeClient*, const IntRect& rect) { return rect; }
 };
 
 }

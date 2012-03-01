@@ -41,17 +41,17 @@ namespace WebCore {
     // Windows and Linux.
     class ScrollbarThemeChromium : public ScrollbarThemeComposite {
     protected:
-        virtual bool hasButtons(Scrollbar*) { return true; }
-        virtual bool hasThumb(Scrollbar*);
+        virtual bool hasButtons(ScrollbarThemeClient*) { return true; }
+        virtual bool hasThumb(ScrollbarThemeClient*);
 
-        virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
-        virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
-        virtual IntRect trackRect(Scrollbar*, bool painting = false);
+        virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);
+        virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);
+        virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false);
 
-        virtual void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&);
-        virtual void paintTickmarks(GraphicsContext*, Scrollbar*, const IntRect&);
+        virtual void paintTrackBackground(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
+        virtual void paintTickmarks(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
 
-        virtual IntSize buttonSize(Scrollbar*) = 0;
+        virtual IntSize buttonSize(ScrollbarThemeClient*) = 0;
     };
 } // namespace WebCore
 

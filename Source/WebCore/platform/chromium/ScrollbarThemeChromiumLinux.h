@@ -39,12 +39,12 @@ namespace WebCore {
         virtual int scrollbarThickness(ScrollbarControlSize);
 
     protected:
-        virtual void paintTrackPiece(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
-        virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
-        virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
-        virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
-        virtual IntSize buttonSize(Scrollbar*);
-        virtual int minimumThumbLength(Scrollbar*);
+        virtual void paintTrackPiece(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart);
+        virtual void paintButton(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart);
+        virtual void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
+        virtual bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&);
+        virtual IntSize buttonSize(ScrollbarThemeClient*);
+        virtual int minimumThumbLength(ScrollbarThemeClient*);
     };
 } // namespace WebCore
 

@@ -85,7 +85,7 @@ private:
     HashMap<unsigned, RenderScrollbarPart*> m_parts;
 };
 
-inline RenderScrollbar* toRenderScrollbar(Scrollbar* scrollbar)
+inline RenderScrollbar* toRenderScrollbar(ScrollbarThemeClient* scrollbar)
 {
     ASSERT(!scrollbar || scrollbar->isCustomScrollbar());
     return static_cast<RenderScrollbar*>(scrollbar);

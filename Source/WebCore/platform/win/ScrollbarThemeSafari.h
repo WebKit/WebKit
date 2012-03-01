@@ -41,20 +41,20 @@ public:
     virtual bool supportsControlTints() const { return true; }
 
 protected:
-    virtual bool hasButtons(Scrollbar*);
-    virtual bool hasThumb(Scrollbar*);
+    virtual bool hasButtons(ScrollbarThemeClient*);
+    virtual bool hasThumb(ScrollbarThemeClient*);
 
-    virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
-    virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
-    virtual IntRect trackRect(Scrollbar*, bool painting = false);
+    virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);
+    virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);
+    virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false);
 
-    virtual int minimumThumbLength(Scrollbar*);
+    virtual int minimumThumbLength(ScrollbarThemeClient*);
     
-    virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
+    virtual bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&);
 
-    virtual void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&);
-    virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
-    virtual void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
+    virtual void paintTrackBackground(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
+    virtual void paintButton(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart);
+    virtual void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
 };
 
 }

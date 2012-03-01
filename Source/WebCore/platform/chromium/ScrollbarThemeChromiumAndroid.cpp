@@ -57,7 +57,7 @@ int ScrollbarThemeChromiumAndroid::scrollbarThickness(ScrollbarControlSize contr
     return scrollbarThicknessValue;
 }
 
-void ScrollbarThemeChromiumAndroid::paintScrollbarBackground(GraphicsContext* context, Scrollbar* scrollbar)
+void ScrollbarThemeChromiumAndroid::paintScrollbarBackground(GraphicsContext* context, ScrollbarThemeClient* scrollbar)
 {
     // Paint black background in DumpRenderTree, otherwise the pixels in the scrollbar area depend
     // on their previous state, which makes the dumped result undetermined.
@@ -65,12 +65,12 @@ void ScrollbarThemeChromiumAndroid::paintScrollbarBackground(GraphicsContext* co
         context->fillRect(scrollbar->frameRect(), Color::black, ColorSpaceDeviceRGB);
 }
 
-bool ScrollbarThemeChromiumAndroid::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
+bool ScrollbarThemeChromiumAndroid::shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent& evt)
 {
     return true;
 }
 
-IntSize ScrollbarThemeChromiumAndroid::buttonSize(Scrollbar* scrollbar)
+IntSize ScrollbarThemeChromiumAndroid::buttonSize(ScrollbarThemeClient* scrollbar)
 {
     if (scrollbar->orientation() == VerticalScrollbar)
         return IntSize(scrollbarThicknessValue, buttonLength);
@@ -78,7 +78,7 @@ IntSize ScrollbarThemeChromiumAndroid::buttonSize(Scrollbar* scrollbar)
     return IntSize(buttonLength, scrollbarThicknessValue);
 }
 
-int ScrollbarThemeChromiumAndroid::minimumThumbLength(Scrollbar* scrollbar)
+int ScrollbarThemeChromiumAndroid::minimumThumbLength(ScrollbarThemeClient* scrollbar)
 {
     return 2 * scrollbarThickness(scrollbar->controlSize());
 }

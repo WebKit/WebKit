@@ -36,12 +36,12 @@ public:
     ScrollbarThemeChromiumMac();
     virtual ~ScrollbarThemeChromiumMac();
 
-    virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
+    virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& damageRect);
 
     virtual void paintOverhangAreas(ScrollView*, GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
     
 private:
-    void paintGivenTickmarks(GraphicsContext*, Scrollbar*, const IntRect&, const Vector<IntRect>&);
+    void paintGivenTickmarks(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, const Vector<IntRect>&);
 
     RefPtr<Pattern> m_overhangPattern;
 };

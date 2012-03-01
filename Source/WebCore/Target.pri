@@ -2279,6 +2279,7 @@ HEADERS += \
     platform/ScrollableArea.h \
     platform/ScrollAnimator.h \
     platform/Scrollbar.h \
+    platform/ScrollbarThemeClient.h \
     platform/ScrollbarThemeComposite.h \
     platform/ScrollView.h \
     platform/SearchPopupMenu.h \

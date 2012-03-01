@@ -291,6 +291,7 @@
             'platform/ScrollableArea.h',
             'platform/Scrollbar.h',
             'platform/ScrollbarTheme.h',
+            'platform/ScrollbarThemeClient.h',
             'platform/SearchPopupMenu.h',
             'platform/SharedBuffer.h',
             'platform/SharedBufferChunkReader.h',

@@ -112,6 +112,27 @@ Scrollbar::~Scrollbar()
     m_theme->unregisterScrollbar(this);
 }
 
+ScrollbarOverlayStyle Scrollbar::scrollbarOverlayStyle() const
+{
+    return m_scrollableArea ? ScrollbarOverlayStyleDefault : m_scrollableArea->scrollbarOverlayStyle();
+}
+
+void Scrollbar::getTickmarks(Vector<IntRect>& tickmarks) const
+{
+    if (m_scrollableArea)
+        m_scrollableArea->getTickmarks(tickmarks);
+}
+
+bool Scrollbar::isScrollableAreaActive() const
+{
+    return m_scrollableArea && m_scrollableArea->isActive();
+}
+
+bool Scrollbar::isScrollViewScrollbar() const
+{
+    return parent() && parent()->isFrameView() && static_cast<FrameView*>(parent())->isScrollViewScrollbar(this);
+}
+
 void Scrollbar::offsetDidChange()
 {
     ASSERT(m_scrollableArea);
@@ -434,7 +455,7 @@ bool Scrollbar::mouseDown(const PlatformMouseEvent& evt)
 
 void Scrollbar::setFrameRect(const IntRect& rect)
 {
-    // Get our window resizer rect and see if we overlap.  Adjust to avoid the overlap
+    // Get our window resizer rect and see if we overlap. Adjust to avoid the overlap
     // if necessary.
     IntRect adjustedRect(rect);
     bool overlapsResizer = false;

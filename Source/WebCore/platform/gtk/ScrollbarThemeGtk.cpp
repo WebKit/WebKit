@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static HashSet<Scrollbar*>* gScrollbars;
+static HashSet<ScrollbarThemeClient*>* gScrollbars;
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
@@ -45,14 +45,14 @@ ScrollbarThemeGtk::~ScrollbarThemeGtk()
 {
 }
 
-void ScrollbarThemeGtk::registerScrollbar(Scrollbar* scrollbar)
+void ScrollbarThemeGtk::registerScrollbar(ScrollbarThemeClient* scrollbar)
 {
     if (!gScrollbars)
-        gScrollbars = new HashSet<Scrollbar*>;
+        gScrollbars = new HashSet<ScrollbarThemeClient*>;
     gScrollbars->add(scrollbar);
 }
 
-void ScrollbarThemeGtk::unregisterScrollbar(Scrollbar* scrollbar)
+void ScrollbarThemeGtk::unregisterScrollbar(ScrollbarThemeClient* scrollbar)
 {
     gScrollbars->remove(scrollbar);
     if (gScrollbars->isEmpty()) {
@@ -69,9 +69,9 @@ void ScrollbarThemeGtk::updateScrollbarsFrameThickness()
     // Update the thickness of every interior frame scrollbar widget. The
     // platform-independent scrollbar them code isn't yet smart enough to get
     // this information when it paints.
-    HashSet<Scrollbar*>::iterator end = gScrollbars->end();
-    for (HashSet<Scrollbar*>::iterator it = gScrollbars->begin(); it != end; ++it) {
-        Scrollbar* scrollbar = (*it);
+    HashSet<ScrollbarThemeClient*>::iterator end = gScrollbars->end();
+    for (HashSet<ScrollbarThemeClient*>::iterator it = gScrollbars->begin(); it != end; ++it) {
+        ScrollbarThemeClient* scrollbar = (*it);
 
         // Top-level scrollbar i.e. scrollbars who have a parent ScrollView
         // with no parent are native, and thus do not need to be resized.
@@ -86,14 +86,14 @@ void ScrollbarThemeGtk::updateScrollbarsFrameThickness()
     }
 }
 
-bool ScrollbarThemeGtk::hasThumb(Scrollbar* scrollbar)
+bool ScrollbarThemeGtk::hasThumb(ScrollbarThemeClient* scrollbar)
 {
     // This method is just called as a paint-time optimization to see if
     // painting the thumb can be skipped.  We don't have to be exact here.
     return thumbLength(scrollbar) > 0;
 }
 
-IntRect ScrollbarThemeGtk::backButtonRect(Scrollbar* scrollbar, ScrollbarPart part, bool)
+IntRect ScrollbarThemeGtk::backButtonRect(ScrollbarThemeClient* scrollbar, ScrollbarPart part, bool)
 {
     if (part == BackButtonEndPart && !m_hasBackButtonEndPart)
         return IntRect();
@@ -114,7 +114,7 @@ IntRect ScrollbarThemeGtk::backButtonRect(Scrollbar* scrollbar, ScrollbarPart pa
     return IntRect(x, scrollbar->y() + scrollbar->height() - m_troughBorderWidth - (2 * size.height()), size.width(), size.height());
 }
 
-IntRect ScrollbarThemeGtk::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart part, bool)
+IntRect ScrollbarThemeGtk::forwardButtonRect(ScrollbarThemeClient* scrollbar, ScrollbarPart part, bool)
 {
     if (part == ForwardButtonStartPart && !m_hasForwardButtonStartPart)
         return IntRect();
@@ -140,7 +140,7 @@ IntRect ScrollbarThemeGtk::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart
     return IntRect(x, scrollbar->y() + m_troughBorderWidth + size.height(), size.width(), size.height());
 }
 
-IntRect ScrollbarThemeGtk::trackRect(Scrollbar* scrollbar, bool)
+IntRect ScrollbarThemeGtk::trackRect(ScrollbarThemeClient* scrollbar, bool)
 {
     // The padding along the thumb movement axis includes the trough border
     // plus the size of stepper spacing (the space between the stepper and
@@ -180,7 +180,7 @@ IntRect ScrollbarThemeGtk::trackRect(Scrollbar* scrollbar, bool)
                    thickness, scrollbar->height() - (2 * movementAxisPadding) - buttonsWidth);
 }
 
-IntRect ScrollbarThemeGtk::thumbRect(Scrollbar* scrollbar, const IntRect& unconstrainedTrackRect)
+IntRect ScrollbarThemeGtk::thumbRect(ScrollbarThemeClient* scrollbar, const IntRect& unconstrainedTrackRect)
 {
     IntRect trackRect = constrainTrackRectToTrackPieces(scrollbar, unconstrainedTrackRect);
     int thumbPos = thumbPosition(scrollbar);
@@ -191,7 +191,7 @@ IntRect ScrollbarThemeGtk::thumbRect(Scrollbar* scrollbar, const IntRect& uncons
     return IntRect(trackRect.x() + (trackRect.width() - m_thumbFatness) / 2, trackRect.y() + thumbPos, m_thumbFatness, thumbLength(scrollbar));
 }
 
-bool ScrollbarThemeGtk::paint(Scrollbar* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
+bool ScrollbarThemeGtk::paint(ScrollbarThemeClient* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
     if (graphicsContext->paintingDisabled())
         return false;
@@ -260,7 +260,7 @@ bool ScrollbarThemeGtk::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCon
     return true;
 }
 
-bool ScrollbarThemeGtk::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& event)
+bool ScrollbarThemeGtk::shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent& event)
 {
     return (event.shiftKey() && event.button() == LeftButton) || (event.button() == MiddleButton);
 }
@@ -270,7 +270,7 @@ int ScrollbarThemeGtk::scrollbarThickness(ScrollbarControlSize)
     return m_thumbFatness + (m_troughBorderWidth * 2);
 }
 
-IntSize ScrollbarThemeGtk::buttonSize(Scrollbar* scrollbar)
+IntSize ScrollbarThemeGtk::buttonSize(ScrollbarThemeClient* scrollbar)
 {
     if (scrollbar->orientation() == VerticalScrollbar)
         return IntSize(m_thumbFatness, m_stepperSize);
@@ -279,7 +279,7 @@ IntSize ScrollbarThemeGtk::buttonSize(Scrollbar* scrollbar)
     return IntSize(m_stepperSize, m_thumbFatness);
 }
 
-int ScrollbarThemeGtk::minimumThumbLength(Scrollbar* scrollbar)
+int ScrollbarThemeGtk::minimumThumbLength(ScrollbarThemeClient* scrollbar)
 {
     return m_minThumbLength;
 }

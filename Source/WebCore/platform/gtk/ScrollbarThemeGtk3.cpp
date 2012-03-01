@@ -72,7 +72,7 @@ static void applyScrollbarStyleContextClasses(GtkStyleContext* context, Scrollba
     gtk_style_context_add_class(context, orientation == VerticalScrollbar ?  GTK_STYLE_CLASS_VERTICAL : GTK_STYLE_CLASS_HORIZONTAL);
 }
 
-void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
+void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect)
 {
     // Paint the track background. If the trough-under-steppers property is true, this
     // should be the full size of the scrollbar, but if is false, it should only be the
@@ -94,7 +94,7 @@ void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, Scrollbar
     gtk_style_context_restore(m_context);
 }
 
-void ScrollbarThemeGtk::paintScrollbarBackground(GraphicsContext* context, Scrollbar* scrollbar)
+void ScrollbarThemeGtk::paintScrollbarBackground(GraphicsContext* context, ScrollbarThemeClient* scrollbar)
 {
     gtk_style_context_save(m_context);
 
@@ -105,7 +105,7 @@ void ScrollbarThemeGtk::paintScrollbarBackground(GraphicsContext* context, Scrol
     gtk_style_context_restore(m_context);
 }
 
-void ScrollbarThemeGtk::paintThumb(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
+void ScrollbarThemeGtk::paintThumb(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect)
 {
     gtk_style_context_save(m_context);
 
@@ -126,7 +126,7 @@ void ScrollbarThemeGtk::paintThumb(GraphicsContext* context, Scrollbar* scrollba
     gtk_style_context_restore(m_context);
 }
 
-void ScrollbarThemeGtk::paintButton(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
+void ScrollbarThemeGtk::paintButton(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect, ScrollbarPart part)
 {
     gtk_style_context_save(m_context);
 

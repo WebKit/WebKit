@@ -37,29 +37,29 @@ public:
     ScrollbarThemeGtk();
     virtual ~ScrollbarThemeGtk();
 
-    virtual bool hasButtons(Scrollbar*) { return true; }
-    virtual bool hasThumb(Scrollbar*);
-    virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool);
-    virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool);
-    virtual IntRect trackRect(Scrollbar*, bool);
-    IntRect thumbRect(Scrollbar*, const IntRect& unconstrainedTrackRect);
-    bool paint(Scrollbar*, GraphicsContext*, const IntRect& damageRect);
-    void paintScrollbarBackground(GraphicsContext*, Scrollbar*);
-    void paintTrackBackground(GraphicsContext*, Scrollbar*, const IntRect&);
-    void paintThumb(GraphicsContext*, Scrollbar*, const IntRect&);
-    virtual void paintButton(GraphicsContext*, Scrollbar*, const IntRect&, ScrollbarPart);
-    virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
+    virtual bool hasButtons(ScrollbarThemeClient*) { return true; }
+    virtual bool hasThumb(ScrollbarThemeClient*);
+    virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool);
+    virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool);
+    virtual IntRect trackRect(ScrollbarThemeClient*, bool);
+    IntRect thumbRect(ScrollbarThemeClient*, const IntRect& unconstrainedTrackRect);
+    bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& damageRect);
+    void paintScrollbarBackground(GraphicsContext*, ScrollbarThemeClient*);
+    void paintTrackBackground(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
+    void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);
+    virtual void paintButton(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart);
+    virtual bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&);
     virtual int scrollbarThickness(ScrollbarControlSize);
-    virtual IntSize buttonSize(Scrollbar*);
-    virtual int minimumThumbLength(Scrollbar*);
+    virtual IntSize buttonSize(ScrollbarThemeClient*);
+    virtual int minimumThumbLength(ScrollbarThemeClient*);
 
     // TODO: These are the default GTK+ values. At some point we should pull these from the theme itself.
     virtual double initialAutoscrollTimerDelay() { return 0.20; }
     virtual double autoscrollTimerDelay() { return 0.02; }
     void updateThemeProperties();
     void updateScrollbarsFrameThickness();
-    void registerScrollbar(Scrollbar*);
-    void unregisterScrollbar(Scrollbar*);
+    void registerScrollbar(ScrollbarThemeClient*);
+    void unregisterScrollbar(ScrollbarThemeClient*);
 
 protected:
 #ifndef GTK_API_VERSION_2

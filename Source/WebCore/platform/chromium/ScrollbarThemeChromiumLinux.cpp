@@ -50,7 +50,7 @@ int ScrollbarThemeChromiumLinux::scrollbarThickness(ScrollbarControlSize control
     return scrollbarSize.width();
 }
 
-void ScrollbarThemeChromiumLinux::paintTrackPiece(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart partType)
+void ScrollbarThemeChromiumLinux::paintTrackPiece(GraphicsContext* gc, ScrollbarThemeClient* scrollbar, const IntRect& rect, ScrollbarPart partType)
 {
     PlatformSupport::ThemePaintState state = scrollbar->hoveredPart() == partType ? PlatformSupport::StateHover : PlatformSupport::StateNormal;
     IntRect alignRect = trackRect(scrollbar, false);
@@ -67,7 +67,7 @@ void ScrollbarThemeChromiumLinux::paintTrackPiece(GraphicsContext* gc, Scrollbar
         &extraParams);
 }
 
-void ScrollbarThemeChromiumLinux::paintButton(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
+void ScrollbarThemeChromiumLinux::paintButton(GraphicsContext* gc, ScrollbarThemeClient* scrollbar, const IntRect& rect, ScrollbarPart part)
 {
     PlatformSupport::ThemePart paintPart;
     PlatformSupport::ThemePaintState state = PlatformSupport::StateNormal;
@@ -102,7 +102,7 @@ void ScrollbarThemeChromiumLinux::paintButton(GraphicsContext* gc, Scrollbar* sc
     PlatformSupport::paintThemePart(gc, paintPart, state, rect, 0);
 }
 
-void ScrollbarThemeChromiumLinux::paintThumb(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect)
+void ScrollbarThemeChromiumLinux::paintThumb(GraphicsContext* gc, ScrollbarThemeClient* scrollbar, const IntRect& rect)
 {
     PlatformSupport::ThemePaintState state;
 
@@ -120,12 +120,12 @@ void ScrollbarThemeChromiumLinux::paintThumb(GraphicsContext* gc, Scrollbar* scr
         0);
 }
 
-bool ScrollbarThemeChromiumLinux::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
+bool ScrollbarThemeChromiumLinux::shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent& evt)
 {
     return (evt.shiftKey() && evt.button() == LeftButton) || (evt.button() == MiddleButton);
 }
 
-IntSize ScrollbarThemeChromiumLinux::buttonSize(Scrollbar* scrollbar)
+IntSize ScrollbarThemeChromiumLinux::buttonSize(ScrollbarThemeClient* scrollbar)
 {
     if (scrollbar->orientation() == VerticalScrollbar) {
         IntSize size = PlatformSupport::getThemePartSize(PlatformSupport::PartScrollbarUpArrow);
@@ -137,7 +137,7 @@ IntSize ScrollbarThemeChromiumLinux::buttonSize(Scrollbar* scrollbar)
     return IntSize(scrollbar->width() < 2 * size.width() ? scrollbar->width() / 2 : size.width(), size.height());
 }
 
-int ScrollbarThemeChromiumLinux::minimumThumbLength(Scrollbar* scrollbar)
+int ScrollbarThemeChromiumLinux::minimumThumbLength(ScrollbarThemeClient* scrollbar)
 {
     if (scrollbar->orientation() == VerticalScrollbar) {
         IntSize size = PlatformSupport::getThemePartSize(PlatformSupport::PartScrollbarVerticalThumb);

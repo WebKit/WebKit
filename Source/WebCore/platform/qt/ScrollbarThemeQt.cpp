@@ -112,7 +112,7 @@ static ScrollbarPart scrollbarPart(const QStyle::SubControl& sc)
     return NoPart;
 }
 
-static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar, QWidget* widget = 0)
+static QStyleOptionSlider* styleOptionSlider(ScrollbarThemeClient* scrollbar, QWidget* widget = 0)
 {
     static QStyleOptionSlider opt;
     if (widget)
@@ -155,7 +155,7 @@ static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar, QWidget* widg
     return &opt;
 }
 
-bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
+bool ScrollbarThemeQt::paint(ScrollbarThemeClient* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
     if (graphicsContext->updatingControlTints()) {
        scrollbar->invalidateRect(damageRect);
@@ -193,7 +193,7 @@ bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCont
     return true;
 }
 
-ScrollbarPart ScrollbarThemeQt::hitTest(Scrollbar* scrollbar, const PlatformMouseEvent& evt)
+ScrollbarPart ScrollbarThemeQt::hitTest(ScrollbarThemeClient* scrollbar, const PlatformMouseEvent& evt)
 {
     QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
     const QPoint pos = scrollbar->convertFromContainingWindow(evt.position());
@@ -202,13 +202,13 @@ ScrollbarPart ScrollbarThemeQt::hitTest(Scrollbar* scrollbar, const PlatformMous
     return scrollbarPart(sc);
 }
 
-bool ScrollbarThemeQt::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
+bool ScrollbarThemeQt::shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent& evt)
 {
     // Middle click centers slider thumb (if supported).
     return style()->styleHint(QStyle::SH_ScrollBar_MiddleClickAbsolutePosition) && evt.button() == MiddleButton;
 }
 
-void ScrollbarThemeQt::invalidatePart(Scrollbar* scrollbar, ScrollbarPart)
+void ScrollbarThemeQt::invalidatePart(ScrollbarThemeClient* scrollbar, ScrollbarPart)
 {
     // FIXME: Do more precise invalidation.
     scrollbar->invalidate();
@@ -224,7 +224,7 @@ int ScrollbarThemeQt::scrollbarThickness(ScrollbarControlSize controlSize)
     return style()->pixelMetric(QStyle::PM_ScrollBarExtent, &o, 0);
 }
 
-int ScrollbarThemeQt::thumbPosition(Scrollbar* scrollbar)
+int ScrollbarThemeQt::thumbPosition(ScrollbarThemeClient* scrollbar)
 {
     if (scrollbar->enabled()) {
         float pos = (float)scrollbar->currentPos() * (trackLength(scrollbar) - thumbLength(scrollbar)) / scrollbar->maximum();
@@ -233,21 +233,21 @@ int ScrollbarThemeQt::thumbPosition(Scrollbar* scrollbar)
     return 0;
 }
 
-int ScrollbarThemeQt::thumbLength(Scrollbar* scrollbar)
+int ScrollbarThemeQt::thumbLength(ScrollbarThemeClient* scrollbar)
 {
     QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
     IntRect thumb = style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarSlider, 0);
     return scrollbar->orientation() == HorizontalScrollbar ? thumb.width() : thumb.height();
 }
 
-int ScrollbarThemeQt::trackPosition(Scrollbar* scrollbar)
+int ScrollbarThemeQt::trackPosition(ScrollbarThemeClient* scrollbar)
 {
     QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
     IntRect track = style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarGroove, 0);
     return scrollbar->orientation() == HorizontalScrollbar ? track.x() - scrollbar->x() : track.y() - scrollbar->y();
 }
 
-int ScrollbarThemeQt::trackLength(Scrollbar* scrollbar)
+int ScrollbarThemeQt::trackLength(ScrollbarThemeClient* scrollbar)
 {
     QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
     IntRect track = style()->subControlRect(QStyle::CC_ScrollBar, opt, QStyle::SC_ScrollBarGroove, 0);

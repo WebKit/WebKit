@@ -49,11 +49,11 @@ int ScrollbarThemeEfl::scrollbarThickness(ScrollbarControlSize controlSize)
     return 0; // we paint on top
 }
 
-void ScrollbarThemeEfl::registerScrollbar(Scrollbar* scrollbar)
+void ScrollbarThemeEfl::registerScrollbar(ScrollbarThemeClient* scrollbar)
 {
 }
 
-void ScrollbarThemeEfl::unregisterScrollbar(Scrollbar* scrollbar)
+void ScrollbarThemeEfl::unregisterScrollbar(ScrollbarThemeClient* scrollbar)
 {
 }
 

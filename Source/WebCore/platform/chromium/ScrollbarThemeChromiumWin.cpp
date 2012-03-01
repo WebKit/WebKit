@@ -73,7 +73,7 @@ bool ScrollbarThemeChromiumWin::invalidateOnMouseEnterExit()
     return windowsVersion() >= WindowsVista;
 }
 
-bool ScrollbarThemeChromiumWin::shouldSnapBackToDragOrigin(Scrollbar* scrollbar, const PlatformMouseEvent& evt)
+bool ScrollbarThemeChromiumWin::shouldSnapBackToDragOrigin(ScrollbarThemeClient* scrollbar, const PlatformMouseEvent& evt)
 {
     // Find the rect within which we shouldn't snap, by expanding the track rect
     // in both dimensions.
@@ -91,7 +91,7 @@ bool ScrollbarThemeChromiumWin::shouldSnapBackToDragOrigin(Scrollbar* scrollbar,
     return !rect.contains(mousePosition);
 }
 
-void ScrollbarThemeChromiumWin::paintTrackPiece(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart partType)
+void ScrollbarThemeChromiumWin::paintTrackPiece(GraphicsContext* gc, ScrollbarThemeClient* scrollbar, const IntRect& rect, ScrollbarPart partType)
 {
     bool horz = scrollbar->orientation() == HorizontalScrollbar;
 
@@ -113,7 +113,7 @@ void ScrollbarThemeChromiumWin::paintTrackPiece(GraphicsContext* gc, Scrollbar* 
         alignRect);
 }
 
-void ScrollbarThemeChromiumWin::paintButton(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
+void ScrollbarThemeChromiumWin::paintButton(GraphicsContext* gc, ScrollbarThemeClient* scrollbar, const IntRect& rect, ScrollbarPart part)
 {
     bool horz = scrollbar->orientation() == HorizontalScrollbar;
 
@@ -131,7 +131,7 @@ void ScrollbarThemeChromiumWin::paintButton(GraphicsContext* gc, Scrollbar* scro
         rect);
 }
 
-void ScrollbarThemeChromiumWin::paintThumb(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect)
+void ScrollbarThemeChromiumWin::paintThumb(GraphicsContext* gc, ScrollbarThemeClient* scrollbar, const IntRect& rect)
 {
     bool horz = scrollbar->orientation() == HorizontalScrollbar;
 
@@ -152,7 +152,7 @@ void ScrollbarThemeChromiumWin::paintThumb(GraphicsContext* gc, Scrollbar* scrol
         rect);
 }
 
-int ScrollbarThemeChromiumWin::getThemeState(Scrollbar* scrollbar, ScrollbarPart part) const
+int ScrollbarThemeChromiumWin::getThemeState(ScrollbarThemeClient* scrollbar, ScrollbarPart part) const
 {
     // When dragging the thumb, draw thumb pressed and other segments normal
     // regardless of where the cursor actually is.  See also four places in
@@ -171,7 +171,7 @@ int ScrollbarThemeChromiumWin::getThemeState(Scrollbar* scrollbar, ScrollbarPart
     return (scrollbar->pressedPart() == part) ? SCRBS_PRESSED : SCRBS_NORMAL;
 }
 
-int ScrollbarThemeChromiumWin::getThemeArrowState(Scrollbar* scrollbar, ScrollbarPart part) const
+int ScrollbarThemeChromiumWin::getThemeArrowState(ScrollbarThemeClient* scrollbar, ScrollbarPart part) const
 {
     // We could take advantage of knowing the values in the state enum to write
     // some simpler code, but treating the state enum as a black box seems
@@ -221,7 +221,7 @@ int ScrollbarThemeChromiumWin::getThemeArrowState(Scrollbar* scrollbar, Scrollba
     return (scrollbar->pressedPart() == part) ? ABS_DOWNPRESSED : ABS_DOWNNORMAL;
 }
 
-int ScrollbarThemeChromiumWin::getClassicThemeState(Scrollbar* scrollbar, ScrollbarPart part) const
+int ScrollbarThemeChromiumWin::getClassicThemeState(ScrollbarThemeClient* scrollbar, ScrollbarPart part) const
 {
     // When dragging the thumb, draw the buttons normal even when hovered.
     if (scrollbar->pressedPart() == ThumbPart)
@@ -235,12 +235,12 @@ int ScrollbarThemeChromiumWin::getClassicThemeState(Scrollbar* scrollbar, Scroll
     return (scrollbar->pressedPart() == part) ? (DFCS_PUSHED | DFCS_FLAT) : 0;
 }
 
-bool ScrollbarThemeChromiumWin::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
+bool ScrollbarThemeChromiumWin::shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent& evt)
 {
     return evt.shiftKey() && evt.button() == LeftButton;
 }
 
-IntSize ScrollbarThemeChromiumWin::buttonSize(Scrollbar* scrollbar)
+IntSize ScrollbarThemeChromiumWin::buttonSize(ScrollbarThemeClient* scrollbar)
 {
     // Our desired rect is essentially thickness by thickness.
 

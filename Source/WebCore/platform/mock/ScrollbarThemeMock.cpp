@@ -32,7 +32,7 @@ namespace WebCore {
 
 static int cScrollbarThickness[] = { 15, 11 };
 
-IntRect ScrollbarThemeMock::trackRect(Scrollbar* scrollbar, bool)
+IntRect ScrollbarThemeMock::trackRect(ScrollbarThemeClient* scrollbar, bool)
 {
     return scrollbar->frameRect();
 }
@@ -42,12 +42,12 @@ int ScrollbarThemeMock::scrollbarThickness(ScrollbarControlSize controlSize)
     return cScrollbarThickness[controlSize];
 }
 
-void ScrollbarThemeMock::paintTrackBackground(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& trackRect)
+void ScrollbarThemeMock::paintTrackBackground(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& trackRect)
 {
     context->fillRect(trackRect, scrollbar->enabled() ? Color::lightGray : Color(0xFFE0E0E0), ColorSpaceDeviceRGB);
 }
 
-void ScrollbarThemeMock::paintThumb(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& thumbRect)
+void ScrollbarThemeMock::paintThumb(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& thumbRect)
 {
     if (scrollbar->enabled())
         context->fillRect(thumbRect, Color::darkGray, ColorSpaceDeviceRGB);

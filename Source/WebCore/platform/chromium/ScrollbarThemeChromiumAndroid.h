@@ -35,10 +35,10 @@ public:
     virtual int scrollbarThickness(ScrollbarControlSize);
 
 protected:
-    virtual void paintScrollbarBackground(GraphicsContext*, Scrollbar*);
-    virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
-    virtual IntSize buttonSize(Scrollbar*);
-    virtual int minimumThumbLength(Scrollbar*);
+    virtual void paintScrollbarBackground(GraphicsContext*, ScrollbarThemeClient*);
+    virtual bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&);
+    virtual IntSize buttonSize(ScrollbarThemeClient*);
+    virtual int minimumThumbLength(ScrollbarThemeClient*);
 };
 
 } // namespace WebCore

@@ -33,7 +33,7 @@
 namespace WebCore {
 
 class PlatformMouseEvent;
-class Scrollbar;
+class ScrollbarThemeClient;
 class ScrollView;
 
 #if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
@@ -46,10 +46,10 @@ public:
     ScrollbarTheme() { }
     virtual ~ScrollbarTheme() {};
 
-    virtual void updateEnabledState(Scrollbar*) { };
+    virtual void updateEnabledState(ScrollbarThemeClient*) { };
 
-    virtual bool paint(Scrollbar*, GraphicsContext*, const IntRect& /*damageRect*/) { return false; }
-    virtual ScrollbarPart hitTest(Scrollbar*, const PlatformMouseEvent&) { return NoPart; }
+    virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& /*damageRect*/) { return false; }
+    virtual ScrollbarPart hitTest(ScrollbarThemeClient*, const PlatformMouseEvent&) { return NoPart; }
     
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) { return 0; }
 
@@ -57,13 +57,13 @@ public:
 
     virtual bool supportsControlTints() const { return false; }
     virtual bool usesOverlayScrollbars() const { return false; }
-    virtual void updateScrollbarOverlayStyle(Scrollbar*) { }
+    virtual void updateScrollbarOverlayStyle(ScrollbarThemeClient*) { }
 
     virtual void themeChanged() {}
     
     virtual bool invalidateOnMouseEnterExit() { return false; }
 
-    void invalidateParts(Scrollbar* scrollbar, ScrollbarControlPartMask mask)
+    void invalidateParts(ScrollbarThemeClient* scrollbar, ScrollbarControlPartMask mask)
     {
         if (mask & BackButtonStartPart)
             invalidatePart(scrollbar, BackButtonStartPart);
@@ -81,7 +81,7 @@ public:
             invalidatePart(scrollbar, ForwardButtonEndPart);
     }
 
-    virtual void invalidatePart(Scrollbar*, ScrollbarPart) {}
+    virtual void invalidatePart(ScrollbarThemeClient*, ScrollbarPart) { }
 
     virtual void paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& cornerRect) { defaultPaintScrollCorner(context, cornerRect); }
     static void defaultPaintScrollCorner(GraphicsContext* context, const IntRect& cornerRect) { context->fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB); }
@@ -93,21 +93,21 @@ public:
     virtual void setUpContentShadowLayer(GraphicsLayer*) { }
 #endif
 
-    virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&) { return false; }
-    virtual bool shouldSnapBackToDragOrigin(Scrollbar*, const PlatformMouseEvent&) { return false; }
-    virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar*, const PlatformMouseEvent&) { return false; }
-    virtual int thumbPosition(Scrollbar*) { return 0; } // The position of the thumb relative to the track.
-    virtual int thumbLength(Scrollbar*) { return 0; } // The length of the thumb along the axis of the scrollbar.
-    virtual int trackPosition(Scrollbar*) { return 0; } // The position of the track relative to the scrollbar.
-    virtual int trackLength(Scrollbar*) { return 0; } // The length of the track along the axis of the scrollbar.
+    virtual bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&) { return false; }
+    virtual bool shouldSnapBackToDragOrigin(ScrollbarThemeClient*, const PlatformMouseEvent&) { return false; }
+    virtual bool shouldDragDocumentInsteadOfThumb(ScrollbarThemeClient*, const PlatformMouseEvent&) { return false; }
+    virtual int thumbPosition(ScrollbarThemeClient*) { return 0; } // The position of the thumb relative to the track.
+    virtual int thumbLength(ScrollbarThemeClient*) { return 0; } // The length of the thumb along the axis of the scrollbar.
+    virtual int trackPosition(ScrollbarThemeClient*) { return 0; } // The position of the track relative to the scrollbar.
+    virtual int trackLength(ScrollbarThemeClient*) { return 0; } // The length of the track along the axis of the scrollbar.
 
     virtual int maxOverlapBetweenPages() { return std::numeric_limits<int>::max(); }
 
     virtual double initialAutoscrollTimerDelay() { return 0.25; }
     virtual double autoscrollTimerDelay() { return 0.05; }
 
-    virtual void registerScrollbar(Scrollbar*) {}
-    virtual void unregisterScrollbar(Scrollbar*) {}
+    virtual void registerScrollbar(ScrollbarThemeClient*) { }
+    virtual void unregisterScrollbar(ScrollbarThemeClient*) { }
 
     virtual bool isMockTheme() const { return false; }
 

@@ -39,8 +39,8 @@ public:
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
 
-    virtual void registerScrollbar(Scrollbar* scrollbar);
-    virtual void unregisterScrollbar(Scrollbar* scrollbar);
+    virtual void registerScrollbar(ScrollbarThemeClient*);
+    virtual void unregisterScrollbar(ScrollbarThemeClient*);
 };
 
 }

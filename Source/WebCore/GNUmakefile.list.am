@@ -3330,6 +3330,7 @@ webcore_sources += \
 	Source/WebCore/platform/ScrollableArea.h \
 	Source/WebCore/platform/Scrollbar.cpp \
 	Source/WebCore/platform/Scrollbar.h \
+	Source/WebCore/platform/ScrollbarThemeClient.h \
 	Source/WebCore/platform/ScrollbarThemeComposite.cpp \
 	Source/WebCore/platform/ScrollbarThemeComposite.h \
 	Source/WebCore/platform/ScrollbarTheme.cpp \
