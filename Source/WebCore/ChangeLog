@@ -1,3 +1,22 @@
+2012-02-29  David Barton  <dbarton@mathscribe.com>
+
+        <msubsup> setNeedsLayout() correction
+        https://bugs.webkit.org/show_bug.cgi?id=79856
+
+        Reviewed by Julien Chaffraix.
+
+        m_scripts->setNeedsLayout(true, false); needs to be added to the fix for bug 79274.
+
+        No new tests. It's actually difficult to test the need for this with the current code,
+        because there are a lot of extra setNeedsLayout() calls right now. I caught this after
+        removing some of those calls that should be redundant, for a future patch. Actually
+        removing those calls now changes other behavior, due to other bugs, so I'll save all
+        that for future patches. We should land this fix now though I think, as it could
+        possibly matter in some cases.
+
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::layout):
+
 2012-02-29  Andreas Kling  <awesomekling@apple.com>
 
         IsSynchronizingStyleAttributeFlag could be purged.

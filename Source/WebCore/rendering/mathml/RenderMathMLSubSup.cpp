@@ -183,6 +183,7 @@ void RenderMathMLSubSup::layout()
     
     superscriptWrapper->style()->setPaddingBottom(Length(superPaddingBottom, Fixed));
     superscriptWrapper->setNeedsLayout(true, false);
+    m_scripts->setNeedsLayout(true, false);
     
     RenderBlock::layout();
 }
