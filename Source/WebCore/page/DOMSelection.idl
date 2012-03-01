@@ -33,7 +33,7 @@ module window {
     // https://developer.mozilla.org/En/DOM/Selection
     interface [
         JSGenerateIsReachable=ImplFrame,
-        OmitConstructor
+        InterfaceName=Selection
     ] DOMSelection {
         readonly attribute Node anchorNode;
         readonly attribute long anchorOffset;

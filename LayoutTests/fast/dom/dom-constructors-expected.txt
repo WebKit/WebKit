@@ -115,7 +115,7 @@ FAIL TryAllocate('BarInfo') should be exception. Was no constructor.
 PASS TryAllocate('CanvasGradient') is 'exception'
 PASS TryAllocate('CanvasPattern') is 'exception'
 FAIL TryAllocate('Console') should be exception. Was no constructor.
-FAIL TryAllocate('DOMSelection') should be exception. Was no constructor.
+PASS TryAllocate('Selection') is 'exception'
 PASS TryAllocate('Window') is 'exception'
 FAIL TryAllocate('History') should be exception. Was no constructor.
 FAIL TryAllocate('HTMLOptionsCollection') should be exception. Was no constructor.
