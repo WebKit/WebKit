@@ -624,12 +624,12 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
     setAttributeInternal(index, qName, value);
 }
 
-void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
+void Element::setAttribute(const QualifiedName& name, const AtomicString& value, bool notifyChanged)
 {
-    setAttributeInternal(ensureUpdatedAttributeData()->getAttributeItemIndex(name), name, value);
+    setAttributeInternal(ensureUpdatedAttributeData()->getAttributeItemIndex(name), name, value, notifyChanged);
 }
 
-inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value)
+inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value, bool notifyChanged)
 {
     ElementAttributeData* attributeData = &m_attributeMap->m_attributeData;
     Attribute* old = index != notFound ? attributeData->attributeItem(index) : 0;
@@ -644,14 +644,16 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
         return;
     }
 
-    willModifyAttribute(name, old ? old->value() : nullAtom, value);
+    if (notifyChanged)
+        willModifyAttribute(name, old ? old->value() : nullAtom, value);
 
     if (Attr* attrNode = old->attr())
         attrNode->setValue(value);
     else
         old->setValue(value);
 
-    didModifyAttribute(old);
+    if (notifyChanged)
+        didModifyAttribute(old);
 }
 
 void Element::attributeChanged(Attribute* attr)
@@ -1939,15 +1941,12 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
         updateName(oldValue, newValue);
 
 #if ENABLE(MUTATION_OBSERVERS)
-    if (!isSynchronizingStyleAttribute()) {
-        if (OwnPtr<MutationObserverInterestGroup> recipients = MutationObserverInterestGroup::createForAttributesMutation(this, name))
-            recipients->enqueueMutationRecord(MutationRecord::createAttributes(this, name, oldValue));
-    }
+    if (OwnPtr<MutationObserverInterestGroup> recipients = MutationObserverInterestGroup::createForAttributesMutation(this, name))
+        recipients->enqueueMutationRecord(MutationRecord::createAttributes(this, name, oldValue));
 #endif
 
 #if ENABLE(INSPECTOR)
-    if (!isSynchronizingStyleAttribute())
-        InspectorInstrumentation::willModifyDOMAttr(document(), this, oldValue, newValue);
+    InspectorInstrumentation::willModifyDOMAttr(document(), this, oldValue, newValue);
 #endif
 }
 
@@ -1955,10 +1954,8 @@ void Element::didModifyAttribute(Attribute* attr)
 {
     attributeChanged(attr);
 
-    if (!isSynchronizingStyleAttribute()) {
-        InspectorInstrumentation::didModifyDOMAttr(document(), this, attr->name().localName(), attr->value());
-        dispatchSubtreeModifiedEvent();
-    }
+    InspectorInstrumentation::didModifyDOMAttr(document(), this, attr->name().localName(), attr->value());
+    dispatchSubtreeModifiedEvent();
 }
 
 void Element::didRemoveAttribute(Attribute* attr)
@@ -1971,10 +1968,8 @@ void Element::didRemoveAttribute(Attribute* attr)
     attributeChanged(attr);
     attr->setValue(savedValue);
 
-    if (!isSynchronizingStyleAttribute()) {
-        InspectorInstrumentation::didRemoveDOMAttr(document(), this, attr->name().localName());
-        dispatchSubtreeModifiedEvent();
-    }
+    InspectorInstrumentation::didRemoveDOMAttr(document(), this, attr->name().localName());
+    dispatchSubtreeModifiedEvent();
 }
 
 

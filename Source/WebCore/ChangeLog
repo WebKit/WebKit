@@ -1,3 +1,33 @@
+2012-02-29  Andreas Kling  <awesomekling@apple.com>
+
+        IsSynchronizingStyleAttributeFlag could be purged.
+        <http://webkit.org/b/79313>
+
+        Reviewed by Anders Carlsson.
+
+        We were using IsSynchronizingStyleAttributeFlag to prevent various things from
+        happening below setAttribute() when serializing the "style" attribute based on
+        an element's inline style.
+
+        Simplify the whole thing by adding a way to set an attribute without triggering
+        any callbacks (a 'notifyChanged' argument to Element::setAttribute().)
+        This removes the need for IsSynchronizingStyleAttributeFlag in the first place
+        and makes StyledElement::updateStyleAttribute() a bit cheaper to boot.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::Element::willModifyAttribute):
+        (WebCore::Element::didModifyAttribute):
+        (WebCore::Element::didRemoveAttribute):
+        * dom/Element.h:
+        * dom/Node.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateStyleAttribute):
+        (WebCore::StyledElement::attributeChanged):
+        * html/HTMLElement.cpp:
+        (WebCore::StyledElement::copyNonAttributeProperties):
+
 2012-02-29  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] REGRESSION: Cannot drag a file out

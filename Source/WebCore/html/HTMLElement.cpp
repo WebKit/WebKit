@@ -1114,8 +1114,7 @@ void StyledElement::copyNonAttributeProperties(const Element* sourceElement)
     inlineStyle->setStrictParsing(source->inlineStyleDecl()->useStrictParsing());
 
     setIsStyleAttributeValid(source->isStyleAttributeValid());
-    setIsSynchronizingStyleAttribute(source->isSynchronizingStyleAttribute());
-    
+
     Element::copyNonAttributeProperties(sourceElement);
 }
 

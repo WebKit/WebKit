@@ -50,10 +50,8 @@ void StyledElement::updateStyleAttribute() const
 {
     ASSERT(!isStyleAttributeValid());
     setIsStyleAttributeValid();
-    setIsSynchronizingStyleAttribute();
     if (StylePropertySet* inlineStyle = inlineStyleDecl())
-        const_cast<StyledElement*>(this)->setAttribute(styleAttr, inlineStyle->asText());
-    clearIsSynchronizingStyleAttribute();
+        const_cast<StyledElement*>(this)->setAttribute(styleAttr, inlineStyle->asText(), /*notifyChanged*/ false);
 }
 
 StyledElement::~StyledElement()
@@ -63,8 +61,7 @@ StyledElement::~StyledElement()
 
 void StyledElement::attributeChanged(Attribute* attr)
 {
-    if (!(attr->name() == styleAttr && isSynchronizingStyleAttribute()))
-        parseAttribute(attr);
+    parseAttribute(attr);
 
     if (isPresentationAttribute(attr->name())) {
         setAttributeStyleDirty();

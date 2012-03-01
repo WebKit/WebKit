@@ -88,7 +88,7 @@ class HTMLPropertiesCollection;
 
 typedef int ExceptionCode;
 
-const int nodeStyleChangeShift = 23;
+const int nodeStyleChangeShift = 22;
 
 // SyntheticStyleChange means that we need to go through the entire style change logic even though
 // no style property has actually changed. It is used to restructure the tree when, for instance,
@@ -654,22 +654,21 @@ private:
         // be stored in the same memory word as the Node bits above.
         IsParsingChildrenFinishedFlag = 1 << 17, // Element
         IsStyleAttributeValidFlag = 1 << 18, // StyledElement
-        IsSynchronizingStyleAttributeFlag = 1 << 19, // StyledElement
 #if ENABLE(SVG)
-        AreSVGAttributesValidFlag = 1 << 20, // Element
-        IsSynchronizingSVGAttributesFlag = 1 << 21, // SVGElement
-        HasSVGRareDataFlag = 1 << 22, // SVGElement
+        AreSVGAttributesValidFlag = 1 << 19, // Element
+        IsSynchronizingSVGAttributesFlag = 1 << 20, // SVGElement
+        HasSVGRareDataFlag = 1 << 21, // SVGElement
 #endif
 
         StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1),
 
-        SelfOrAncestorHasDirAutoFlag = 1 << 25,
-        HasCustomWillOrDidRecalcStyleFlag = 1 << 26,
-        HasCustomStyleForRendererFlag = 1 << 27,
+        SelfOrAncestorHasDirAutoFlag = 1 << 24,
+        HasCustomWillOrDidRecalcStyleFlag = 1 << 25,
+        HasCustomStyleForRendererFlag = 1 << 26,
 
-        HasNameFlag = 1 << 28,
+        HasNameFlag = 1 << 27,
 
-        AttributeStyleDirtyFlag = 1 << 31,
+        AttributeStyleDirtyFlag = 1 << 28,
 
 #if ENABLE(SVG)
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag
@@ -775,10 +774,6 @@ protected:
     void setIsStyleAttributeValid(bool f) { setFlag(f, IsStyleAttributeValidFlag); }
     void setIsStyleAttributeValid() const { setFlag(IsStyleAttributeValidFlag); }
     void clearIsStyleAttributeValid() { clearFlag(IsStyleAttributeValidFlag); }
-    bool isSynchronizingStyleAttribute() const { return getFlag(IsSynchronizingStyleAttributeFlag); }
-    void setIsSynchronizingStyleAttribute(bool f) { setFlag(f, IsSynchronizingStyleAttributeFlag); }
-    void setIsSynchronizingStyleAttribute() const { setFlag(IsSynchronizingStyleAttributeFlag); }
-    void clearIsSynchronizingStyleAttribute() const { clearFlag(IsSynchronizingStyleAttributeFlag); }
 
 #if ENABLE(SVG)
     bool areSVGAttributesValid() const { return getFlag(AreSVGAttributesValidFlag); }
