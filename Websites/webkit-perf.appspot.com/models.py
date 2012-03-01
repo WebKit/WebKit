@@ -29,9 +29,11 @@
 
 import hashlib
 import json
+import math
 import re
 
 from datetime import datetime
+from datetime import timedelta
 from google.appengine.ext import db
 from google.appengine.api import memcache
 from time import mktime
@@ -326,6 +328,16 @@ class PersistentCache(db.Model):
 
 class DashboardImage(db.Model):
     image = db.BlobProperty(required=True)
+    createdAt = db.DateTimeProperty(required=True, auto_now=True)
+
+    @classmethod
+    def needs_update(cls, branch_id, platform_id, test_id, display_days, now=datetime.now()):
+        if display_days < 10:
+            return True
+        image = DashboardImage.get_by_key_name(cls.key_name(branch_id, platform_id, test_id, display_days))
+        duration = math.sqrt(display_days) / 10
+        # e.g. 13 hours for 30 days, 23 hours for 90 days, and 46 hours for 365 days
+        return not image or image.createdAt < now - timedelta(duration)
 
     @staticmethod
     def key_name(branch_id, platform_id, test_id, display_days):

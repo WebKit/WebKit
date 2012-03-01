@@ -99,8 +99,10 @@ def cache_runs(test_id, branch_id, platform_id, cache):
 
 def schedule_runs_update(test_id, branch_id, platform_id):
     taskqueue.add(url='/api/test/runs/update', params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id})
-    taskqueue.add(url='/api/test/runs/chart', params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id,
-        'displayDays': 7})
+    for display_days in [7, 30, 90, 365]:
+        if DashboardImage.needs_update(branch_id, test_id, platform_id, display_days):
+            taskqueue.add(url='/api/test/runs/chart', params={'id': test_id, 'branchid': branch_id, 'platformid': platform_id,
+                'displayDays': display_days})
 
 
 def _get_test_branch_platform_ids(handler):
@@ -166,8 +168,6 @@ class RunsChartHandler(webapp2.RequestHandler):
 
         DashboardImage(key_name=DashboardImage.key_name(branch.id, platform.id, test.id, display_days),
             image=dashboard_chart_file.read()).put()
-
-        self.response.out.write('Fetched http://chart.googleapis.com/chart?%s' % urllib.urlencode(params))
 
 
 class DashboardImageHandler(webapp2.RequestHandler):

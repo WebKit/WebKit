@@ -330,8 +330,17 @@ class RunsTest(DataStoreTestsBase):
         self.assertEqual(datetime.fromtimestamp(x_max), end_time)
         self.assertEqual(y_min, 0)
         self.assertEqual(y_max, int(52 * 1.1))
-        self.assertEqual(split_as_int(params['chg']), [int(100 / 7), int(52 * 1.1 / 5), 0, 0])
+        self.assertEqual(split_as_int(params['chg']), [int(100 / 7), 20, 0, 0])
 
+        params = Runs(some_branch, some_platform, 'some-test').chart_params(14, end_time)
+        self.assertEqual(params['chxl'], '0:|Feb 14|Feb 16|Feb 18|Feb 20|Feb 22|Feb 24|Feb 26|Feb 28')
+        self.assertEqual(split_as_int(params['chxr']), [1, 0, 57, int(52 * 1.1 / 5 + 0.5)])
+        x_min, x_max, y_min, y_max = split_as_int(params['chds'])
+        self.assertEqual(datetime.fromtimestamp(x_min), datetime(2011, 2, 14, 12, 0, 0))
+        self.assertEqual(datetime.fromtimestamp(x_max), end_time)
+        self.assertEqual(y_min, 0)
+        self.assertEqual(y_max, int(52 * 1.1))
+        self.assertEqual(split_as_int(params['chg']), [int(100 / 7), 20, 0, 0])
 
 
 if __name__ == '__main__':

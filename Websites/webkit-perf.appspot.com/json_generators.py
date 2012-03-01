@@ -182,7 +182,7 @@ class Runs(JSONGeneratorBase):
             'date_range': None,  # Never used by common.js.
             'stat': 'ok'}
 
-    def chart_params(self, display_days, now=datetime.now()):
+    def chart_params(self, display_days, now=datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)):
         chart_data_x = []
         chart_data_y = []
         end_time = now
@@ -196,11 +196,10 @@ class Runs(JSONGeneratorBase):
             chart_data_x.append(timestamp)
             chart_data_y.append(result.value)
 
-        dates = [end_time + timedelta(day - display_days) for day in range(0, display_days + 1)]
+        dates = [end_time - timedelta(display_days / 7.0 * (7 - i)) for i in range(0, 8)]
 
         y_max = max(chart_data_y) * 1.1
-        y_grid_step = y_max / 5
-        y_axis_label_step = int(y_grid_step + 0.5)  # This won't work for decimal numbers
+        y_axis_label_step = int(y_max / 5 + 0.5)  # This won't work for decimal numbers
 
         return {
             'cht': 'lxy',  # Specify with X and Y coordinates
@@ -211,7 +210,7 @@ class Runs(JSONGeneratorBase):
             'chxs': '1,676767,11.167,0,l,676767',  # Y-axis label: 1,color,font-size,centerd on tick,axis line/no ticks, tick color
             'chs': '360x240',  # Image size: 360px by 240px
             'chco': 'ff0000',  # Plot line color
-            'chg': '%f,%f,0,0' % (100 / (len(dates) - 1), y_grid_step),  # X, Y grid line step sizes - max for X is 100.
+            'chg': '%f,20,0,0' % (100 / (len(dates) - 1)),  # X, Y grid line step sizes - max is 100.
             'chls': '3',  # Line thickness
             'chf': 'bg,s,eff6fd',  # Transparent background
             'chd': 't:' + ','.join([str(x) for x in chart_data_x]) + '|' + ','.join([str(y) for y in chart_data_y]),  # X, Y data
