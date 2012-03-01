@@ -1,3 +1,12 @@
+2012-02-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Oliver Hunt.
+
+        * tests/mozilla/ecma_2/RegExp/constructor-001.js:
+        * tests/mozilla/ecma_2/RegExp/function-001.js:
+        * tests/mozilla/ecma_2/RegExp/properties-001.js:
+            - Check in new test cases results.
+
 2012-02-29  Mark Rowe  <mrowe@apple.com>
 
         Stop installing JSCLLIntOffsetsExtractor.

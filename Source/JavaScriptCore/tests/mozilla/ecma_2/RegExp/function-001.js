@@ -40,7 +40,7 @@
 
     AddTestCase(
         "(new RegExp()).source",
-        "",
+        "(?:)",
         re.source );
 
     AddTestCase(
