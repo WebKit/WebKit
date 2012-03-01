@@ -167,10 +167,12 @@ WebInspector.ScopeVariableTreeElement.prototype = {
         var result;
 
         do {
-            if (result)
-                result = current.property.name + "." + result;
-            else
-                result = current.property.name;
+            if (current.property) {
+                if (result)
+                    result = current.property.name + "." + result;
+                else
+                    result = current.property.name;
+            }
             current = current.parent;
         } while (current && !current.root);
 

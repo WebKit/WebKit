@@ -1623,9 +1623,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     _mouseDown: function(event)
     {
-        this._parentPane._mouseDownTreeElement = this;
-        this._parentPane._mouseDownTreeElementIsName = this._isNameElement(event.target);
-        this._parentPane._mouseDownTreeElementIsValue = this._isValueElement(event.target);
+        if (this._parentPane) {
+            this._parentPane._mouseDownTreeElement = this;
+            this._parentPane._mouseDownTreeElementIsName = this._isNameElement(event.target);
+            this._parentPane._mouseDownTreeElementIsValue = this._isValueElement(event.target);
+        }
     },
 
     _resetMouseDownElement: function()

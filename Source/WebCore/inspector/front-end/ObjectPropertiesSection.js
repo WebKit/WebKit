@@ -88,10 +88,18 @@ WebInspector.ObjectPropertiesSection.prototype = {
         for (var i = 0; i < properties.length; ++i) {
             if (this.skipProto && properties[i].name === "__proto__")
                 continue;
-
             properties[i].parentObject = this.object;
-            this.propertiesTreeOutline.appendChild(new rootTreeElementConstructor(properties[i]));
         }
+
+        this.propertiesForTest = properties;
+
+        if (this.object && this.object.arrayLength() > WebInspector.ArrayGroupingTreeElement._bucketThreshold) {
+            WebInspector.ArrayGroupingTreeElement.populateAsArray(this.propertiesTreeOutline, rootTreeElementConstructor, properties);
+            return;
+        } 
+
+        for (var i = 0; i < properties.length; ++i)
+            this.propertiesTreeOutline.appendChild(new rootTreeElementConstructor(properties[i]));
 
         if (!this.propertiesTreeOutline.children.length) {
             var title = document.createElement("div");
@@ -100,7 +108,6 @@ WebInspector.ObjectPropertiesSection.prototype = {
             var infoElement = new TreeElement(title, null, false);
             this.propertiesTreeOutline.appendChild(infoElement);
         }
-        this.propertiesForTest = properties;
     }
 }
 
@@ -175,6 +182,11 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             this.removeChildren();
             if (!properties)
                 return;
+
+            if (this.property.value.type === "array") {
+                WebInspector.ArrayGroupingTreeElement.populateAsArray(this, this.treeOutline.section.treeElementConstructor, properties);
+                return;
+            }
 
             properties.sort(WebInspector.ObjectPropertiesSection.CompareProperties);
             for (var i = 0; i < properties.length; ++i) {
@@ -292,7 +304,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
     startEditing: function()
     {
-        if (WebInspector.isBeingEdited(this.valueElement) || !this.treeOutline.section.editable)
+        if (WebInspector.isBeingEdited(this.valueElement) || !this.treeOutline.section.editable || this._readOnly)
             return;
 
         var context = { expanded: this.expanded };
@@ -359,3 +371,81 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 }
 
 WebInspector.ObjectPropertyTreeElement.prototype.__proto__ = TreeElement.prototype;
+
+WebInspector.ArrayGroupingTreeElement = function(treeElementConstructor, properties, fromIndex, toIndex)
+{
+    this._properties = properties;
+    this._fromIndex = fromIndex;
+    this._toIndex = toIndex;
+    this._treeElementConstructor = treeElementConstructor;
+
+    TreeElement.call(this, "[" + this._properties[fromIndex].name + " \u2026 " + this._properties[toIndex - 1].name + "]", null, true);
+}
+
+WebInspector.ArrayGroupingTreeElement._bucketThreshold = 20;
+
+WebInspector.ArrayGroupingTreeElement.populateAsArray = function(parentTreeElement, treeElementConstructor, properties)
+{
+    var nonIndexProperties = [];
+
+    for (var i = properties.length - 1; i >= 0; --i) {
+        if (!isNaN(properties[i].name)) {
+            // We've reached index properties, trim properties and break.
+            properties.length = i + 1;
+            break;
+        }
+
+        nonIndexProperties.push(properties[i]);
+    }
+
+    WebInspector.ArrayGroupingTreeElement._populate(parentTreeElement, treeElementConstructor, properties, 0, properties.length);
+
+    nonIndexProperties.sort(WebInspector.ObjectPropertiesSection.CompareProperties);
+    for (var i = 0; i < nonIndexProperties.length; ++i) {
+        var treeElement = new treeElementConstructor(nonIndexProperties[i]);
+        treeElement._readOnly = true; 
+        parentTreeElement.appendChild(treeElement);
+    }
+}
+
+WebInspector.ArrayGroupingTreeElement._populate = function(parentTreeElement, treeElementConstructor, properties, fromIndex, toIndex)
+{
+    parentTreeElement.removeChildren();
+    const bucketThreshold = WebInspector.ArrayGroupingTreeElement._bucketThreshold;
+    var range = toIndex - fromIndex;
+
+    function appendElement(i)
+    {
+        var treeElement = new treeElementConstructor(properties[i]);
+        treeElement._readOnly = true;
+        parentTreeElement.appendChild(treeElement);
+    }
+
+    if (range <= bucketThreshold) {
+        for (var i = fromIndex; i < toIndex; ++i)
+            appendElement(i);
+        return;
+    }
+
+    var bucketSize = Math.ceil(range / bucketThreshold);
+    if (bucketSize < bucketThreshold)
+        bucketSize = Math.floor(Math.sqrt(range));
+
+    for (var i = fromIndex; i < toIndex; i += bucketSize) {
+        var to = Math.min(i + bucketSize, toIndex);
+        if (to - i > 1) {
+            var group = new WebInspector.ArrayGroupingTreeElement(treeElementConstructor, properties, i, to);
+            parentTreeElement.appendChild(group);
+        } else
+            appendElement(i);
+    }
+}
+
+WebInspector.ArrayGroupingTreeElement.prototype = {
+    onpopulate: function()
+    {
+        WebInspector.ArrayGroupingTreeElement._populate(this, this._treeElementConstructor, this._properties, this._fromIndex, this._toIndex);
+    }
+}
+
+WebInspector.ArrayGroupingTreeElement.prototype.__proto__ = TreeElement.prototype;

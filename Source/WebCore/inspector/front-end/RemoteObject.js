@@ -301,6 +301,20 @@ WebInspector.RemoteObject.prototype = {
     release: function()
     {
         RuntimeAgent.releaseObject(this._objectId);
+    },
+
+    /**
+     * @return {number}
+     */
+    arrayLength: function()
+    {
+        if (this.subtype !== "array")
+            return 0;
+
+        var matches = this._description.match(/\[([0-9]+)\]/);
+        if (!matches)
+            return 0;
+        return parseInt(matches[1], 10);
     }
 }
 
@@ -474,5 +488,13 @@ WebInspector.LocalJSONObject.prototype = {
     isError: function()
     {
         return false;
+    },
+
+    /**
+     * @return {number}
+     */
+    arrayLength: function()
+    {
+        return this._value instanceof Array ? this._value.length : 0;
     }
 }

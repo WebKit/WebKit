@@ -286,9 +286,13 @@ WebInspector.ConsoleMessageImpl.prototype = {
         object.pushNodeToFrontend(printNode.bind(this));
     },
 
-    _formatParameterAsArray: function(arr, elem)
+    _formatParameterAsArray: function(array, elem)
     {
-        arr.getOwnProperties(this._printArray.bind(this, elem));
+        const maxFlatArrayLength = 100;
+        if (array.arrayLength() > maxFlatArrayLength)
+            this._formatParameterAsObject(array, elem);
+        else
+            array.getOwnProperties(this._printArray.bind(this, array, elem));
     },
 
     _formatParameterAsString: function(output, elem)
@@ -304,19 +308,16 @@ WebInspector.ConsoleMessageImpl.prototype = {
         elem.appendChild(document.createTextNode("\""));
     },
 
-    _printArray: function(elem, properties)
+    _printArray: function(array, elem, properties)
     {
         if (!properties)
             return;
 
         var elements = [];
-        var length = 0;
         for (var i = 0; i < properties.length; ++i) {
             var property = properties[i];
             var name = property.name;
-            if (name === "length")
-                length = parseInt(property.value.description, 10);
-            if (name == parseInt(name, 10))
+            if (!isNaN(name))
                 elements[name] = this._formatAsArrayEntry(property.value);
         }
 
@@ -331,6 +332,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
             span.textContent = WebInspector.UIString("undefined × %d", index - lastNonEmptyIndex - 1);
         }
 
+        var length = array.arrayLength();
         for (var i = 0; i < length; ++i) {
             var element = elements[i];
             if (!element)

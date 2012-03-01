@@ -895,14 +895,14 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     display: none;
 }
 
-.console-formatted-object, .console-formatted-node {
+.console-formatted-object, .console-formatted-node, .console-formatted-array {
     position: relative;
     display: inline-block;
     vertical-align: top;
     color: black;
 }
 
-.console-formatted-object .section, .console-formatted-node .section {
+.console-formatted-object .section, .console-formatted-node .section, .console-formatted-array .section {
     position: static;
 }
 
