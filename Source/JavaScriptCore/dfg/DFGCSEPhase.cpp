@@ -90,6 +90,9 @@ private:
         
         for (unsigned i = endIndexForPureCSE(); i-- > m_currentBlock->startExcludingPhis;) {
             NodeIndex index = m_currentBlock->at(i);
+            if (index == child1 || index == child2 || index == child3)
+                break;
+
             Node& otherNode = m_graph[index];
             if (node.op != otherNode.op)
                 continue;
@@ -174,6 +177,9 @@ private:
         
         for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
             NodeIndex index = m_currentBlock->at(i);
+            if (index == child1 || index == child2 || index == child3)
+                break;
+
             Node& otherNode = m_graph[index];
             if (node.op == otherNode.op
                 && node.arithNodeFlagsForCompare() == otherNode.arithNodeFlagsForCompare()) {
@@ -226,6 +232,9 @@ private:
     {
         for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
             NodeIndex index = m_currentBlock->at(i);
+            if (index == child1 || index == canonicalize(child2)) 
+                break;
+
             Node& node = m_graph[index];
             switch (node.op) {
             case GetByVal:
@@ -267,6 +276,9 @@ private:
     {
         for (unsigned i = endIndexForPureCSE(); i-- > m_currentBlock->startExcludingPhis;) {
             NodeIndex index = m_currentBlock->at(i);
+            if (index == child1) 
+                break;
+
             Node& node = m_graph[index];
             if (node.op == CheckFunction && node.child1() == child1 && node.function() == function)
                 return true;
@@ -278,6 +290,9 @@ private:
     {
         for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
             NodeIndex index = m_currentBlock->at(i);
+            if (index == child1) 
+                break;
+
             Node& node = m_graph[index];
             switch (node.op) {
             case CheckStructure:
@@ -321,6 +336,9 @@ private:
     {
         for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
             NodeIndex index = m_currentBlock->at(i);
+            if (index == child1) 
+                break;
+
             Node& node = m_graph[index];
             switch (node.op) {
             case GetByOffset:
@@ -364,6 +382,9 @@ private:
     {
         for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
             NodeIndex index = m_currentBlock->at(i);
+            if (index == child1) 
+                break;
+
             Node& node = m_graph[index];
             switch (node.op) {
             case GetPropertyStorage:
@@ -400,6 +421,9 @@ private:
     {
         for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
             NodeIndex index = m_currentBlock->at(i);
+            if (index == child1) 
+                break;
+
             Node& node = m_graph[index];
             switch (node.op) {
             case GetIndexedPropertyStorage: {
