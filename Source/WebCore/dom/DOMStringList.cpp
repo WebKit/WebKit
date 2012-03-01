@@ -48,4 +48,9 @@ bool DOMStringList::contains(const String& string) const
     return false;
 }
 
+void DOMStringList::sort()
+{
+    std::sort(m_strings.begin(), m_strings.end(), WTF::codePointCompareLessThan);
+}
+
 } // namespace WebCore

@@ -45,6 +45,7 @@ public:
     bool isEmpty() const { return m_strings.isEmpty(); }
     void clear() { m_strings.clear(); }
     void append(const String& string) { m_strings.append(string); }
+    void sort();
 
     // Implements the IDL.
     size_t length() const { return m_strings.size(); }

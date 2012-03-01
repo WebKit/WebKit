@@ -133,6 +133,7 @@ PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStoreNames() const
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
     for (ObjectStoreMap::const_iterator it = m_objectStores.begin(); it != m_objectStores.end(); ++it)
         objectStoreNames->append(it->first);
+    objectStoreNames->sort();
     return objectStoreNames.release();
 }
 
