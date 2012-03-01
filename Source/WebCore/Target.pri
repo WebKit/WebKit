@@ -1304,6 +1304,7 @@ SOURCES += \
     storage/DOMWindowSQLDatabase.cpp \
     storage/Database.cpp \
     storage/DatabaseAuthorizer.cpp \
+    storage/DatabaseContext.cpp \
     storage/DatabaseSync.cpp \
     storage/StorageTask.cpp \
     storage/StorageThread.cpp \

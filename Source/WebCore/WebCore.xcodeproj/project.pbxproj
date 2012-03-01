@@ -3313,6 +3313,8 @@
 		97205AB81239291000B17380 /* MediaDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97205AB41239291000B17380 /* MediaDocument.h */; };
 		97205ABB1239292700B17380 /* PluginDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97205AB91239292700B17380 /* PluginDocument.cpp */; };
 		97205ABC1239292700B17380 /* PluginDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97205ABA1239292700B17380 /* PluginDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9724585214FB724800CA8746 /* DatabaseContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9724585014FB724800CA8746 /* DatabaseContext.cpp */; };
+		9724585314FB724800CA8746 /* DatabaseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 9724585114FB724800CA8746 /* DatabaseContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9728C3131268E4390041E89B /* MarkupAccumulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9728C3111268E4390041E89B /* MarkupAccumulator.cpp */; };
 		9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9728C3121268E4390041E89B /* MarkupAccumulator.h */; };
 		973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9738899E116EA9DC00ADF313 /* DocumentWriter.cpp */; };
@@ -10180,6 +10182,8 @@
 		97205AB41239291000B17380 /* MediaDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDocument.h; sourceTree = "<group>"; };
 		97205AB91239292700B17380 /* PluginDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginDocument.cpp; sourceTree = "<group>"; };
 		97205ABA1239292700B17380 /* PluginDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDocument.h; sourceTree = "<group>"; };
+		9724585014FB724800CA8746 /* DatabaseContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseContext.cpp; sourceTree = "<group>"; };
+		9724585114FB724800CA8746 /* DatabaseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseContext.h; sourceTree = "<group>"; };
 		9728C3111268E4390041E89B /* MarkupAccumulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkupAccumulator.cpp; sourceTree = "<group>"; };
 		9728C3121268E4390041E89B /* MarkupAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkupAccumulator.h; sourceTree = "<group>"; };
 		9730BE1414EF286B00DF06B9 /* NavigatorRegisterProtocolHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorRegisterProtocolHandler.cpp; sourceTree = "<group>"; };
@@ -13894,6 +13898,8 @@
 				51A45B540CAD7FD7000D2BE9 /* DatabaseAuthorizer.h */,
 				B5D36019112F8B560048DEA8 /* DatabaseCallback.h */,
 				B59DD68D1190298E007E9684 /* DatabaseCallback.idl */,
+				9724585014FB724800CA8746 /* DatabaseContext.cpp */,
+				9724585114FB724800CA8746 /* DatabaseContext.h */,
 				5116D9750CF177BD00C2B84D /* DatabaseDetails.h */,
 				B523CF031182675400EBB29C /* DatabaseSync.cpp */,
 				B523CF041182675400EBB29C /* DatabaseSync.h */,
@@ -20664,7 +20670,6 @@
 				978D07BD145A0F6C0096908D /* DOMCoreException.cpp */,
 				BC60D6E80D28D83400B9918F /* DOMCoreException.h */,
 				BC60D6EB0D28D99900B9918F /* DOMCoreException.idl */,
-				BC9A6142146859D9006057FD /* EventNames.in */,
 				BC9A6141146859D9006057FD /* DOMExceptions.in */,
 				A8185F3609765765005826D9 /* DOMImplementation.cpp */,
 				A8185F3309765765005826D9 /* DOMImplementation.h */,
@@ -20713,6 +20718,7 @@
 				AD4495F2141FC08900541EDF /* EventListenerMap.h */,
 				939885C108B7E3D100E707C4 /* EventNames.cpp */,
 				939885C208B7E3D100E707C4 /* EventNames.h */,
+				BC9A6142146859D9006057FD /* EventNames.in */,
 				8F6756191288B17B0047ACA3 /* EventQueue.h */,
 				CE5CB1B314EDAB6F00BB2795 /* EventSender.h */,
 				E12EDBE90B308E0B002704B6 /* EventTarget.cpp */,
@@ -21550,6 +21556,7 @@
 				5196116B0CAC56570010A80C /* Database.h in Headers */,
 				51A45B560CAD7FD7000D2BE9 /* DatabaseAuthorizer.h in Headers */,
 				B5D3601A112F8B560048DEA8 /* DatabaseCallback.h in Headers */,
+				9724585314FB724800CA8746 /* DatabaseContext.h in Headers */,
 				5116D9770CF177BD00C2B84D /* DatabaseDetails.h in Headers */,
 				B523CF0B1182675400EBB29C /* DatabaseSync.h in Headers */,
 				519611EA0CAC749C0010A80C /* DatabaseTask.h in Headers */,
@@ -23852,6 +23859,7 @@
 				BC2272E40E82EE9B00E7F975 /* StyleRareInheritedData.h in Headers */,
 				BC2272BD0E82EAAE00E7F975 /* StyleRareNonInheritedData.h in Headers */,
 				BC2272870E82E70700E7F975 /* StyleReflection.h in Headers */,
+				E4BBED4D14FCDBA1003F0B98 /* StyleRule.h in Headers */,
 				3138A9E51474434600B0ED12 /* StyleShader.h in Headers */,
 				A8EA800C0A19516E00A8EF5F /* StyleSheet.h in Headers */,
 				A8EA800A0A19516E00A8EF5F /* StyleSheetList.h in Headers */,
@@ -24356,7 +24364,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
-				E4BBED4D14FCDBA1003F0B98 /* StyleRule.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24964,6 +24971,7 @@
 				50D40611147D49DE00D30BB5 /* CustomFilterShader.cpp in Sources */,
 				5196116A0CAC56570010A80C /* Database.cpp in Sources */,
 				51A45B570CAD7FD7000D2BE9 /* DatabaseAuthorizer.cpp in Sources */,
+				9724585214FB724800CA8746 /* DatabaseContext.cpp in Sources */,
 				B523CF0A1182675400EBB29C /* DatabaseSync.cpp in Sources */,
 				519611EB0CAC749C0010A80C /* DatabaseTask.cpp in Sources */,
 				5196116D0CAC56570010A80C /* DatabaseThread.cpp in Sources */,
@@ -26917,6 +26925,7 @@
 				A80E6DFB0A199067007FB8C5 /* StylePropertySet.cpp in Sources */,
 				BC2272E30E82EE9B00E7F975 /* StyleRareInheritedData.cpp in Sources */,
 				BC2272BC0E82EAAE00E7F975 /* StyleRareNonInheritedData.cpp in Sources */,
+				E4BBED4C14FCDBA1003F0B98 /* StyleRule.cpp in Sources */,
 				A8EA800D0A19516E00A8EF5F /* StyleSheet.cpp in Sources */,
 				A8EA800B0A19516E00A8EF5F /* StyleSheetList.cpp in Sources */,
 				BC5EB5E70E81BFEF00B25965 /* StyleSurroundData.cpp in Sources */,
@@ -27309,7 +27318,6 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
-				E4BBED4C14FCDBA1003F0B98 /* StyleRule.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

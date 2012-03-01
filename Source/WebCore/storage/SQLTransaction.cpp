@@ -33,6 +33,7 @@
 
 #include "Database.h"
 #include "DatabaseAuthorizer.h"
+#include "DatabaseContext.h"
 #include "DatabaseThread.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
@@ -163,7 +164,7 @@ void SQLTransaction::checkAndHandleClosedOrInterruptedDatabase()
     m_errorCallbackWrapper.clear();
 
     // The next steps should be executed only if we're on the DB thread.
-    if (currentThread() != database()->scriptExecutionContext()->databaseThread()->getThreadID())
+    if (currentThread() != database()->databaseContext()->databaseThread()->getThreadID())
         return;
 
     // The current SQLite transaction should be stopped, as well
@@ -215,7 +216,7 @@ void SQLTransaction::performPendingCallback()
 
 void SQLTransaction::notifyDatabaseThreadIsShuttingDown()
 {
-    ASSERT(currentThread() == database()->scriptExecutionContext()->databaseThread()->getThreadID());
+    ASSERT(currentThread() == database()->databaseContext()->databaseThread()->getThreadID());
 
     // If the transaction is in progress, we should roll it back here, since this is our last
     // oportunity to do something related to this transaction on the DB thread.

@@ -1387,6 +1387,7 @@ SET(WebCore_SOURCES
     storage/DOMWindowSQLDatabase.cpp
     storage/Database.cpp
     storage/DatabaseAuthorizer.cpp
+    storage/DatabaseContext.cpp
     storage/DatabaseSync.cpp
     storage/DatabaseTask.cpp
     storage/DatabaseThread.cpp

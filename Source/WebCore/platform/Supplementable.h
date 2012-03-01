@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
@@ -57,16 +58,16 @@ public:
     void provideSupplement(const AtomicString& key, PassOwnPtr<Supplement<T> > supplement)
     {
         ASSERT(!m_supplements.get(key.impl()));
-        m_supplements.set(key.impl(), supplement);
+        m_supplements.set(key, supplement);
     }
 
     Supplement<T>* requireSupplement(const AtomicString& key)
     {
-        return m_supplements.get(key.impl());
+        return m_supplements.get(key);
     }
 
 private:
-    typedef HashMap<AtomicStringImpl*, OwnPtr<Supplement<T> > > SupplementMap;
+    typedef HashMap<AtomicString, OwnPtr<Supplement<T> > > SupplementMap;
     SupplementMap m_supplements;
 };
 

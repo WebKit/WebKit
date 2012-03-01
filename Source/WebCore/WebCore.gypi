@@ -4640,6 +4640,8 @@
             'storage/DatabaseAuthorizer.cpp',
             'storage/DatabaseAuthorizer.h',
             'storage/DatabaseCallback.h',
+            'storage/DatabaseContext.cpp',
+            'storage/DatabaseContext.h',
             'storage/DatabaseSync.cpp',
             'storage/DatabaseSync.h',
             'storage/DatabaseTask.cpp',

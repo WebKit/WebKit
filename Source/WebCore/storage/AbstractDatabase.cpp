@@ -32,6 +32,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseAuthorizer.h"
+#include "DatabaseContext.h"
 #include "DatabaseTracker.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
@@ -188,6 +189,7 @@ const char* AbstractDatabase::databaseInfoTableName()
 AbstractDatabase::AbstractDatabase(ScriptExecutionContext* context, const String& name, const String& expectedVersion,
                                    const String& displayName, unsigned long estimatedSize, DatabaseType databaseType)
     : m_scriptExecutionContext(context)
+    , m_databaseContext(DatabaseContext::from(context))
     , m_name(name.isolatedCopy())
     , m_expectedVersion(expectedVersion.isolatedCopy())
     , m_displayName(displayName.isolatedCopy())

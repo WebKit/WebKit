@@ -42,6 +42,7 @@
 namespace WebCore {
 
 class DatabaseAuthorizer;
+class DatabaseContext;
 class ScriptExecutionContext;
 class SecurityOrigin;
 
@@ -86,6 +87,8 @@ public:
     virtual void markAsDeletedAndClose() = 0;
     virtual void closeImmediately() = 0;
 
+    DatabaseContext* databaseContext() const { return m_databaseContext; }
+
 protected:
     friend class ChangeVersionWrapper;
     friend class SQLStatement;
@@ -124,8 +127,9 @@ protected:
 
     static const char* databaseInfoTableName();
 
-    RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
     RefPtr<SecurityOrigin> m_contextThreadSecurityOrigin;
+    RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
+    DatabaseContext* m_databaseContext; // Owned by m_scriptExecutionContext.
 
     String m_name;
     String m_expectedVersion;

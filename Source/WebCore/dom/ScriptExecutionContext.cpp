@@ -30,9 +30,6 @@
 #include "ActiveDOMObject.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTimer.h"
-#include "Database.h"
-#include "DatabaseTask.h"
-#include "DatabaseThread.h"
 #include "ErrorEvent.h"
 #include "EventListener.h"
 #include "EventTarget.h"
@@ -94,9 +91,6 @@ ScriptExecutionContext::ScriptExecutionContext()
     , m_inDestructor(false)
     , m_inDispatchErrorEvent(false)
     , m_activeDOMObjectsAreSuspended(false)
-#if ENABLE(SQL_DATABASE)
-    , m_hasOpenDatabases(false)
-#endif
 {
 }
 
@@ -115,12 +109,6 @@ ScriptExecutionContext::~ScriptExecutionContext()
         ASSERT((*iter)->scriptExecutionContext() == this);
         (*iter)->contextDestroyed();
     }
-#if ENABLE(SQL_DATABASE)
-    if (m_databaseThread) {
-        ASSERT(m_databaseThread->terminationRequested());
-        m_databaseThread = 0;
-    }
-#endif
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
     if (m_fileThread) {
         m_fileThread->stop();
@@ -132,32 +120,6 @@ ScriptExecutionContext::~ScriptExecutionContext()
         m_publicURLManager->contextDestroyed();
 #endif
 }
-
-#if ENABLE(SQL_DATABASE)
-
-DatabaseThread* ScriptExecutionContext::databaseThread()
-{
-    if (!m_databaseThread && !m_hasOpenDatabases) {
-        // Create the database thread on first request - but not if at least one database was already opened,
-        // because in that case we already had a database thread and terminated it and should not create another.
-        m_databaseThread = DatabaseThread::create();
-        if (!m_databaseThread->start())
-            m_databaseThread = 0;
-    }
-
-    return m_databaseThread.get();
-}
-
-void ScriptExecutionContext::stopDatabases(DatabaseTaskSynchronizer* cleanupSync)
-{
-    ASSERT(isContextThread());
-    if (m_databaseThread)
-        m_databaseThread->requestTermination(cleanupSync);
-    else if (cleanupSync)
-        cleanupSync->taskCompleted();
-}
-
-#endif
 
 void ScriptExecutionContext::processMessagePortMessagesSoon()
 {

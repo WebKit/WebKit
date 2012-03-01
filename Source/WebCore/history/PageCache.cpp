@@ -31,6 +31,7 @@
 #include "MemoryCache.h"
 #include "CachedPage.h"
 #include "DOMWindow.h"
+#include "DatabaseContext.h"
 #include "DeviceMotionController.h"
 #include "DeviceOrientationController.h"
 #include "Document.h"
@@ -120,7 +121,7 @@ static bool logCanCacheFrameDecision(Frame* frame, int indentLevel)
             cannotCache = true;
         }
 #if ENABLE(SQL_DATABASE)
-        if (frame->document()->hasOpenDatabases()) {
+        if (DatabaseContext::hasOpenDatabases(frame->document())) {
             PCLOG("   -Frame has open database handles");
             cannotCache = true;
         }
@@ -263,7 +264,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         && (!document->url().protocolIs("https") || (!documentLoader->response().cacheControlContainsNoCache() && !documentLoader->response().cacheControlContainsNoStore()))
         && (!frame->domWindow() || !frame->domWindow()->hasEventListeners(eventNames().unloadEvent))
 #if ENABLE(SQL_DATABASE)
-        && !document->hasOpenDatabases()
+        && !DatabaseContext::hasOpenDatabases(document)
 #endif
 #if ENABLE(SHARED_WORKERS)
         && !SharedWorkerRepository::hasSharedWorkers(document)

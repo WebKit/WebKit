@@ -60,6 +60,7 @@
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/DOMImplementation.h>
+#import <WebCore/DatabaseContext.h>
 #import <WebCore/DocumentFragment.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DocumentMarkerController.h>
@@ -1120,7 +1121,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     
     if (Document* document = _private->coreFrame->document()) {
 #if ENABLE(SQL_DATABASE)
-        if (document->hasOpenDatabases())
+        if (DatabaseContext::hasOpenDatabases(document))
             [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameUsesDatabases];
 #endif
             

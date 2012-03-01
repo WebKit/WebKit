@@ -3861,12 +3861,14 @@ webcore_sources += \
 	Source/WebCore/storage/ChangeVersionWrapper.h \
 	Source/WebCore/storage/DOMWindowSQLDatabase.cpp \
 	Source/WebCore/storage/DOMWindowSQLDatabase.h \
+	Source/WebCore/storage/Database.cpp \
+	Source/WebCore/storage/Database.h \
 	Source/WebCore/storage/DatabaseAuthorizer.cpp \
 	Source/WebCore/storage/DatabaseAuthorizer.h \
 	Source/WebCore/storage/DatabaseCallback.h \
-	Source/WebCore/storage/Database.cpp \
+	Source/WebCore/storage/DatabaseContext.cpp \
+	Source/WebCore/storage/DatabaseContext.h \
 	Source/WebCore/storage/DatabaseDetails.h \
-	Source/WebCore/storage/Database.h \
 	Source/WebCore/storage/DatabaseSync.cpp \
 	Source/WebCore/storage/DatabaseSync.h \
 	Source/WebCore/storage/DatabaseTask.cpp \

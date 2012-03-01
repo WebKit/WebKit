@@ -70682,6 +70682,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\DatabaseContext.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\DatabaseContext.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\DatabaseSync.cpp"
 				>
 			</File>

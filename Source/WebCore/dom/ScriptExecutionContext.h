@@ -32,6 +32,7 @@
 #include "KURL.h"
 #include "ScriptCallStack.h"
 #include "SecurityContext.h"
+#include "Supplementable.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -56,17 +57,12 @@ class MessagePort;
 #if ENABLE(BLOB)
 class PublicURLManager;
 #endif
-#if ENABLE(SQL_DATABASE)
-class Database;
-class DatabaseTaskSynchronizer;
-class DatabaseThread;
-#endif
 
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 class FileThread;
 #endif
 
-class ScriptExecutionContext : public SecurityContext {
+class ScriptExecutionContext : public SecurityContext, public Supplementable<ScriptExecutionContext> {
 public:
     ScriptExecutionContext();
     virtual ~ScriptExecutionContext();
@@ -77,11 +73,6 @@ public:
 #if ENABLE(SQL_DATABASE)
     virtual bool allowDatabaseAccess() const = 0;
     virtual void databaseExceededQuota(const String& name) = 0;
-    DatabaseThread* databaseThread();
-    void setHasOpenDatabases() { m_hasOpenDatabases = true; }
-    bool hasOpenDatabases() const { return m_hasOpenDatabases; }
-    // When the database cleanup is done, cleanupSync will be signalled.
-    void stopDatabases(DatabaseTaskSynchronizer*);
 #endif
     virtual bool isContextThread() const { return true; }
     virtual bool isJSExecutionForbidden() const = 0;
@@ -223,11 +214,6 @@ private:
 
     bool m_activeDOMObjectsAreSuspended;
     ActiveDOMObject::ReasonForSuspension m_reasonForSuspendingActiveDOMObjects;
-
-#if ENABLE(SQL_DATABASE)
-    RefPtr<DatabaseThread> m_databaseThread;
-    bool m_hasOpenDatabases; // This never changes back to false, even after the database thread is closed.
-#endif
 
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
     RefPtr<FileThread> m_fileThread;

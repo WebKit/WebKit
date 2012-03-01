@@ -30,6 +30,7 @@
 
 #include "WorkerThread.h"
 
+#include "DatabaseContext.h"
 #include "DedicatedWorkerContext.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
@@ -215,8 +216,9 @@ public:
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
 
 #if ENABLE(SQL_DATABASE)
+        // FIXME: Should we stop the databases as part of stopActiveDOMObjects() below?
         DatabaseTaskSynchronizer cleanupSync;
-        workerContext->stopDatabases(&cleanupSync);
+        DatabaseContext::stopDatabases(workerContext, &cleanupSync);
 #endif
 
         workerContext->stopActiveDOMObjects();
