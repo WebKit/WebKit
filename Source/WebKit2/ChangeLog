@@ -1,3 +1,10 @@
+2012-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebKit2 GTK+ build.
+
+        * UIProcess/API/gtk/WebKitDefines.h:
+        * UIProcess/API/gtk/WebKitWebView.h:
+
 2012-02-29  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] QQuickWebView::event should lookup faster which events QQuickWebPage can handle
