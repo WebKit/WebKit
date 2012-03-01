@@ -47,7 +47,6 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "QWebPageClient.h"
-#include "QtStyleOptionWebComboBox.h"
 #include "RenderBox.h"
 #if ENABLE(PROGRESS_TAG)
 #include "RenderProgress.h"
@@ -442,7 +441,7 @@ bool RenderThemeQStyle::paintMenuList(RenderObject* o, const PaintInfo& i, const
     if (!p.isValid())
         return true;
 
-    QtStyleOptionWebComboBox opt(o);
+    QStyleOptionComboBox opt;
     initStyleOption(p.widget, opt);
     initializeCommonQStyleOptions(opt, o);
 
@@ -482,7 +481,7 @@ bool RenderThemeQStyle::paintMenuListButton(RenderObject* o, const PaintInfo& i,
     if (!p.isValid())
         return true;
 
-    QtStyleOptionWebComboBox option(o);
+    QStyleOptionComboBox option;
     initStyleOption(p.widget, option);
     initializeCommonQStyleOptions(option, o);
     option.rect = r;

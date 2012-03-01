@@ -2865,8 +2865,7 @@ SOURCES += \
 }
 
 contains(DEFINES, HAVE_QSTYLE=1) {
-    HEADERS += platform/qt/QtStyleOptionWebComboBox.h \
-               platform/qt/RenderThemeQStyle.h \
+    HEADERS += platform/qt/RenderThemeQStyle.h \
                platform/qt/ScrollbarThemeQt.h
     SOURCES += platform/qt/RenderThemeQStyle.cpp
 }
