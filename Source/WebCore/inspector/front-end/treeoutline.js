@@ -28,8 +28,9 @@
 
 /**
  * @constructor
+ * @param {boolean=} nonFocusable
  */
-function TreeOutline(listNode)
+function TreeOutline(listNode, nonFocusable)
 {
     /**
      * @type {Array.<TreeElement>}
@@ -48,12 +49,20 @@ function TreeOutline(listNode)
     this.searchable = false;
     this.searchInputElement = null;
 
-    this._childrenListNode.tabIndex = 0;
+    this.setFocusable(!nonFocusable);
     this._childrenListNode.addEventListener("keydown", this._treeKeyDown.bind(this), true);
     this._childrenListNode.addEventListener("keypress", this._treeKeyPress.bind(this), true);
     
     this._treeElementsMap = new Map();
     this._expandedStateMap = new Map();
+}
+
+TreeOutline.prototype.setFocusable = function(focusable)
+{
+    if (focusable)
+        this._childrenListNode.setAttribute("tabIndex", 0);
+    else
+        this._childrenListNode.removeAttribute("tabIndex");
 }
 
 TreeOutline.prototype.appendChild = function(child)

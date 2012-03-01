@@ -38,6 +38,8 @@ WebInspector.Spectrum = function()
 
     this._containerElement = document.createElement('div');
     this._containerElement.className = "spectrum-container";
+    this._containerElement.tabIndex = 0;
+    this._containerElement.addEventListener("keydown", this._onKeyDown.bind(this), false);
 
     var topElement = this._containerElement.createChild("div", "spectrum-top");
     topElement.createChild("div", "spectrum-fill");
@@ -405,11 +407,16 @@ WebInspector.Spectrum.prototype = {
 
     reposition: function(element)
     {
+        if (!this._previousFocusElement)
+            this._previousFocusElement = WebInspector.currentFocusElement();
         this._popover.show(this._containerElement, element);
+        WebInspector.markBeingEdited(this._containerElement, true);    
+        WebInspector.setCurrentFocusElement(this._containerElement);
     },
 
     hide: function()
     {
+        WebInspector.markBeingEdited(this._containerElement, false);
         this._popover.hide();
 
         document.removeEventListener("mousedown", this._hideProxy, false);
@@ -417,8 +424,20 @@ WebInspector.Spectrum.prototype = {
 
         this.dispatchEventToListeners(WebInspector.Spectrum.Events.Hidden);
 
+        WebInspector.setCurrentFocusElement(this._previousFocusElement);
+        delete this._previousFocusElement;
+
         delete this.anchorElement;
+    },
+
+    _onKeyDown: function(event)
+    {
+        if (event.keyIdentifier === "Enter" || event.keyIdentifier === "U+001B") { // Escape key
+            this.hide();
+            event.stopPropagation();
+            event.preventDefault();
+        }
     }
-};
+}
 
 WebInspector.Spectrum.prototype.__proto__ = WebInspector.Object.prototype;
