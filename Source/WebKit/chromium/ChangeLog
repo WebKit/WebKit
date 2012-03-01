@@ -1,3 +1,9 @@
+2012-02-29  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-02-29  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Estimate pixel count for frame rate control
