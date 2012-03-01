@@ -122,6 +122,9 @@ HashSet<String> ChromiumDataObject::types() const
     if (!m_textHtml.isEmpty())
         results.add(mimeTypeTextHTML);
 
+    if (!m_downloadMetadata.isEmpty())
+        results.add(mimeTypeDownloadURL);
+
     for (HashMap<String, String>::const_iterator::Keys it = m_customData.begin().keys();
          it != m_customData.end().keys(); ++it) {
         results.add(*it);

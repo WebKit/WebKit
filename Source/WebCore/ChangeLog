@@ -1,3 +1,18 @@
+2012-02-29  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] REGRESSION: Cannot drag a file out
+        https://bugs.webkit.org/show_bug.cgi?id=79817
+
+        Reviewed by Ryosuke Niwa.
+
+        Temporary fix for file drag out. This change won't be needed once DataTransferItemList
+        support is better implemented.
+
+        Test: platform/chromium/fast/events/drag-downloadURL.html
+
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::types):
+
 2012-02-29  Luke Macpherson   <macpherson@chromium.org>
 
         Clean up CSSPrimitiveValue::computeLengthDouble().
