@@ -4342,15 +4342,6 @@ BUGWK79863 WIN : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
 // EPOGER: To be rebaselined after skia rev. 3283 lands in webkit
 BUGCR116252 LINUX : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
 
-// adamk plans to rebaseline these by 2012-03-02
-BUGWK48256 LINUX WIN : fast/multicol/float-multicol.html = IMAGE+TEXT
-BUGWK48352 : fast/writing-mode/block-level-images.html = IMAGE
-BUGWK60130 LINUX WIN : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
-BUGWK60130 LINUX WIN : fast/backgrounds/background-leakage.html = IMAGE+TEXT IMAGE
-BUGCR53554 LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = IMAGE
-BUGCR53554 WIN : svg/W3C-SVG-1.1/fonts-elem-04-b.svg = TEXT
-BUGCR53554 LINUX : svg/W3C-SVG-1.1/fonts-elem-04-b.svg = IMAGE+TEXT
-
 BUGWK80053 DEBUG : svg/W3C-SVG-1.1/animate-elem-32-t.svg = CRASH PASS
 
 BUGWK80058 WIN RELEASE : fast/workers/stress-js-execution.html = CRASH PASS
