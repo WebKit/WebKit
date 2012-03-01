@@ -420,6 +420,9 @@ DOMWindow::~DOMWindow()
 #if ENABLE(NOTIFICATIONS)
     ASSERT(!m_notifications);
 #endif
+#if ENABLE(INDEXED_DATABASE)
+    ASSERT(!m_idbFactory);
+#endif
 #if ENABLE(BLOB)
     ASSERT(!m_domURL);
 #endif
@@ -527,6 +530,9 @@ void DOMWindow::clear()
     // FIXME: Notifications shouldn't have different disconnection logic than
     // the rest of the DOMWindowProperties.
     resetNotifications();
+#endif
+#if ENABLE(INDEXED_DATABASE)
+    m_idbFactory = 0;
 #endif
 #if ENABLE(BLOB)
     m_domURL = 0;
@@ -731,6 +737,13 @@ void DOMWindow::resetNotifications()
         return;
     m_notifications->disconnectFrame();
     m_notifications = 0;
+}
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+void DOMWindow::setIDBFactory(PassRefPtr<IDBFactory> idbFactory)
+{
+    m_idbFactory = idbFactory;
 }
 #endif
 

@@ -30,7 +30,6 @@
 #include "EventTarget.h"
 #include "FrameDestructionObserver.h"
 #include "KURL.h"
-#include "Supplementable.h"
 
 namespace WebCore {
 
@@ -81,7 +80,7 @@ namespace WebCore {
 
     enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 
-    class DOMWindow : public RefCounted<DOMWindow>, public EventTarget, public FrameDestructionObserver, public Supplementable<DOMWindow> {
+    class DOMWindow : public RefCounted<DOMWindow>, public EventTarget, public FrameDestructionObserver {
     public:
         static PassRefPtr<DOMWindow> create(Frame* frame) { return adoptRef(new DOMWindow(frame)); }
         virtual ~DOMWindow();
@@ -394,6 +393,11 @@ namespace WebCore {
         // by the document that is currently active in m_frame.
         bool isCurrentlyDisplayedInFrame() const;
 
+#if ENABLE(INDEXED_DATABASE)
+        IDBFactory* idbFactory() { return m_idbFactory.get(); }
+        void setIDBFactory(PassRefPtr<IDBFactory>);
+#endif
+
     private:
         explicit DOMWindow(Frame*);
 
@@ -441,6 +445,11 @@ namespace WebCore {
 
         mutable RefPtr<Storage> m_sessionStorage;
         mutable RefPtr<Storage> m_localStorage;
+
+#if ENABLE(INDEXED_DATABASE)
+        mutable RefPtr<IDBFactory> m_idbFactory;
+#endif
+
         mutable RefPtr<DOMApplicationCache> m_applicationCache;
 
 #if ENABLE(NOTIFICATIONS)

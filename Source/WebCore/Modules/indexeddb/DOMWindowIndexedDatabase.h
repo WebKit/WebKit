@@ -28,30 +28,18 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "DOMWindowProperty.h"
-#include "Supplementable.h"
-
 namespace WebCore {
 
 class IDBFactory;
 class DOMWindow;
 
-class DOMWindowIndexedDatabase : public DOMWindowProperty, public Supplement<DOMWindow> {
+class DOMWindowIndexedDatabase {
 public:
-    virtual ~DOMWindowIndexedDatabase();
-    static DOMWindowIndexedDatabase* from(DOMWindow*);
-
     static IDBFactory* webkitIndexedDB(DOMWindow*);
 
-    virtual void disconnectFrame() OVERRIDE;
-
 private:
-    explicit DOMWindowIndexedDatabase(DOMWindow*);
-
-    IDBFactory* webkitIndexedDB();
-
-    DOMWindow* m_window;
-    RefPtr<IDBFactory> m_idbFactory;
+    DOMWindowIndexedDatabase();
+    ~DOMWindowIndexedDatabase();
 };
 
 } // namespace WebCore
