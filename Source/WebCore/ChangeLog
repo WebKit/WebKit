@@ -1,3 +1,24 @@
+2012-02-29  Stephen Chenney  <schenney@chromium.org>
+
+        SVG <use> element allows invalid contents
+        https://bugs.webkit.org/show_bug.cgi?id=77764
+
+        Reviewed by Nikolas Zimmermann.
+
+        Modify the isDisallowedElement method to disallow all of the
+        disallowed elements, instead of just a few. It is now a whitelist
+        implementation.
+
+        This also fixes bugs 78807, 78838 and 79798 related to memory
+        corruption issues.
+
+        Tests: svg/custom/bug78807.svg
+               svg/custom/bug78838.html
+               svg/custom/bug79798.html
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::isDisallowedElement):
+
 2012-02-29  Ami Fischman  <fischman@chromium.org>
 
         Continue the search for playable mime types among <source> children of <video> even when using data: URLs
