@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc.  All rights reserved.
+ * Copyright (C) 2012 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -37,6 +38,7 @@
 #include "Blob.h"
 #include "CrossThreadTask.h"
 #include "FileStream.h"
+#include "FileStreamClient.h"
 #include "FileThread.h"
 #include "FileThreadTask.h"
 #include "PlatformString.h"
@@ -55,7 +57,7 @@ PassRefPtr<FileStreamProxy> FileStreamProxy::create(ScriptExecutionContext* cont
 {
     RefPtr<FileStreamProxy> proxy = adoptRef(new FileStreamProxy(context, client));
 
-    // Hold an ref so that the instance will not get deleted while there are tasks on the file thread.
+    // Hold a reference so that the instance will not get deleted while there are tasks on the file thread.
     // This is balanced by the deref in derefProxyOnContext below.
     proxy->ref();
 

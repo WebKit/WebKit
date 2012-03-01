@@ -33,14 +33,15 @@
 
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 
-#include "FileStreamClient.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class FileStreamClient;
 class KURL;
 
+// FIXME: This should be merged with the only derived class (FileStreamProxy) once RunLoop is abstracted away in platform.
 class AsyncFileStream : public RefCounted<AsyncFileStream> {
 public:
     virtual ~AsyncFileStream() { }

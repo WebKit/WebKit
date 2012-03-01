@@ -48,6 +48,7 @@ class KURL;
 class ScriptExecutionContext;
 
 // A proxy module that asynchronously calls corresponding FileStream methods on the file thread.  Note: you must call stop() first and then release the reference to destruct the FileStreamProxy instance.
+// FIXME: Logically, this class is part of platform. ScriptExecutionContext is what keeps it outside for now.
 class FileStreamProxy : public AsyncFileStream {
 public:
     static PassRefPtr<FileStreamProxy> create(ScriptExecutionContext*, FileStreamClient*);
@@ -61,7 +62,7 @@ public:
     virtual void write(const KURL& blobURL, long long position, int length);
     virtual void truncate(long long position);
 
-    // Stops the proxy and scedules it to be destructed.  All the pending tasks will be aborted and the file stream will be closed.
+    // Stops the proxy and schedules it to be destructed. All the pending tasks will be aborted and the file stream will be closed.
     // Note: the caller should deref the instance immediately after calling stop().
     virtual void stop();
 

@@ -35,13 +35,13 @@
 #include "BlobResourceHandle.h"
 
 #include "AsyncFileStream.h"
-#include "BlobRegistryImpl.h"
+#include "BlobStorageData.h"
 #include "FileStream.h"
 #include "FileSystem.h"
 #include "HTTPParsers.h"
 #include "KURL.h"
 #include "ResourceError.h"
-#include "ResourceLoader.h"
+#include "ResourceHandleClient.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <wtf/MainThread.h>
@@ -49,7 +49,6 @@
 namespace WebCore {
 
 static const unsigned bufferSize = 1024;
-static const int maxVectorLength = 0x7fffffff;
 static const long long positionNotSpecified = -1;
 
 static const int httpOK = 200;
