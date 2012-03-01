@@ -1,3 +1,22 @@
+2012-02-29  Mark Rowe  <mrowe@apple.com>
+
+        Stop installing JSCLLIntOffsetsExtractor.
+
+        Replace the separate TestRegExp and TestAPI xcconfig files with a single ToolExecutable xcconfig file
+        that derives the product name from the target name. We can then use that xcconfig file for JSCLLIntOffsetsExtractor.
+        This has the results of setting SKIP_INSTALL = YES for JSCLLIntOffsetsExtractor.
+
+        While I was doing this fiddling I noticed that the JSCLLIntOffsetsExtractor target had a custom value
+        for USER_HEADER_SEARCH_PATHS to allow it to find LLIntDesiredOffsets.h. A better way of doing that is
+        to add LLIntDesiredOffsets.h to the Xcode project so that it'll be included in the header map. That
+        allows us to remove the override of USER_HEADER_SEARCH_PATHS entirely. So I did that too!
+
+        Reviewed by Filip Pizlo.
+
+        * Configurations/TestRegExp.xcconfig: Removed.
+        * Configurations/ToolExecutable.xcconfig: Renamed from Source/JavaScriptCore/Configurations/TestAPI.xcconfig.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2012-02-28  Filip Pizlo  <fpizlo@apple.com>
 
         RefCounted::deprecatedTurnOffVerifier() should not be deprecated

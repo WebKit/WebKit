@@ -1218,8 +1218,8 @@
 		5D6A566A0F05995500266145 /* Threading.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Threading.cpp; sourceTree = "<group>"; };
 		5DA479650CFBCF56009328A0 /* TCPackedCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCPackedCache.h; sourceTree = "<group>"; };
 		5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = JSC.xcconfig; sourceTree = "<group>"; };
-		5DAFD6CC146B68B900FBEFB4 /* TestRegExp.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestRegExp.xcconfig; sourceTree = "<group>"; };
 		5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MallocZoneSupport.h; sourceTree = "<group>"; };
+		5DDDF44614FEE72200B4FB4D /* LLIntDesiredOffsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntDesiredOffsets.h; path = LLIntOffsets/LLIntDesiredOffsets.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAvailability.h; sourceTree = "<group>"; };
 		6507D2970E871E4A00D7D896 /* JSTypeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypeInfo.h; sourceTree = "<group>"; };
 		651122E5140469BA002B101D /* testRegExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testRegExp.cpp; sourceTree = "<group>"; };
@@ -1528,7 +1528,7 @@
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
 		BC021BF1136900C300FC5467 /* CompilerVersion.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CompilerVersion.xcconfig; sourceTree = "<group>"; };
-		BC021BF2136900C300FC5467 /* TestAPI.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TestAPI.xcconfig; sourceTree = "<group>"; };
+		BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ToolExecutable.xcconfig; sourceTree = "<group>"; };
 		BC02E9040E1839DB000F9297 /* ErrorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorConstructor.cpp; sourceTree = "<group>"; };
 		BC02E9050E1839DB000F9297 /* ErrorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorConstructor.h; sourceTree = "<group>"; };
 		BC02E9060E1839DB000F9297 /* ErrorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorPrototype.cpp; sourceTree = "<group>"; };
@@ -1869,6 +1869,7 @@
 		0F46809C14BA7F4D00BFE272 /* llint */ = {
 			isa = PBXGroup;
 			children = (
+				5DDDF44614FEE72200B4FB4D /* LLIntDesiredOffsets.h */,
 				0F0B839514BCF45A00885B4F /* LLIntEntrypoints.cpp */,
 				0F0B839614BCF45A00885B4F /* LLIntEntrypoints.h */,
 				0F0B839714BCF45A00885B4F /* LLIntThunks.cpp */,
@@ -2106,8 +2107,7 @@
 				449097EE0F8F81B50076A327 /* FeatureDefines.xcconfig */,
 				5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */,
 				1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */,
-				BC021BF2136900C300FC5467 /* TestAPI.xcconfig */,
-				5DAFD6CC146B68B900FBEFB4 /* TestRegExp.xcconfig */,
+				BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */,
 				1C9051420BA9E8A70081E9D0 /* Version.xcconfig */,
 			);
 			path = Configurations;
@@ -4101,37 +4101,29 @@
 		};
 		0FF922CB14F46B130041A24E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = JSCLLIntOffsetsExtractor;
-				USER_HEADER_SEARCH_PATHS = ". icu $(HEADER_SEARCH_PATHS) $(BUILT_PRODUCTS_DIR)/LLIntOffsets";
 			};
 			name = Debug;
 		};
 		0FF922CC14F46B130041A24E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = JSCLLIntOffsetsExtractor;
-				USER_HEADER_SEARCH_PATHS = ". icu $(HEADER_SEARCH_PATHS) $(BUILT_PRODUCTS_DIR)/LLIntOffsets";
 			};
 			name = Release;
 		};
 		0FF922CD14F46B130041A24E /* Profiling */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = JSCLLIntOffsetsExtractor;
-				USER_HEADER_SEARCH_PATHS = ". icu $(HEADER_SEARCH_PATHS) $(BUILT_PRODUCTS_DIR)/LLIntOffsets";
 			};
 			name = Profiling;
 		};
 		0FF922CE14F46B130041A24E /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = JSCLLIntOffsetsExtractor;
-				USER_HEADER_SEARCH_PATHS = ". icu $(HEADER_SEARCH_PATHS) $(BUILT_PRODUCTS_DIR)/LLIntOffsets";
 			};
 			name = Production;
 		};
@@ -4253,49 +4245,49 @@
 		};
 		14BD59D70A3E8FC900BAF59C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* TestAPI.xcconfig */;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		14BD59D80A3E8FC900BAF59C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* TestAPI.xcconfig */;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		14BD59D90A3E8FC900BAF59C /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* TestAPI.xcconfig */;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
 		};
 		6511230114046A4C002B101D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAFD6CC146B68B900FBEFB4 /* TestRegExp.xcconfig */;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		6511230214046A4C002B101D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAFD6CC146B68B900FBEFB4 /* TestRegExp.xcconfig */;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		6511230314046A4C002B101D /* Profiling */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAFD6CC146B68B900FBEFB4 /* TestRegExp.xcconfig */;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
 			};
 			name = Profiling;
 		};
 		6511230414046A4C002B101D /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAFD6CC146B68B900FBEFB4 /* TestRegExp.xcconfig */;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
@@ -4361,7 +4353,7 @@
 		};
 		A76148420E6402F700E357FA /* Profiling */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC021BF2136900C300FC5467 /* TestAPI.xcconfig */;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
 			};
 			name = Profiling;
