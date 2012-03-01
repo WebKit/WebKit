@@ -3741,10 +3741,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSSPropertyWebkitColumnAxis:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(columnAxis, ColumnAxis);
-        return;
-
     case CSSPropertyWebkitWrapShapeInside:
         HANDLE_INHERIT_AND_INITIAL(wrapShapeInside, WrapShapeInside);
         if (!primitiveValue)
@@ -3969,6 +3965,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitBoxOrdinalGroup:
     case CSSPropertyWebkitBoxOrient:
     case CSSPropertyWebkitBoxPack:
+    case CSSPropertyWebkitColumnAxis:
     case CSSPropertyWebkitColumnCount:
     case CSSPropertyWebkitColumnGap:
     case CSSPropertyWebkitColumnRuleColor:
