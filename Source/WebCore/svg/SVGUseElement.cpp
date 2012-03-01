@@ -282,7 +282,7 @@ static bool isDisallowedElement(Node* node)
     // "Graphics Element" is defined as 'circle', 'ellipse', 'image', 'line', 'path', 'polygon', 'polyline', 'rect', 'text'
     // Excluded are anything that is used by reference or that only make sense to appear once in a document.
     // We must also allow the shadow roots of other use elements.
-    if (node->isShadowRoot())
+    if (node->isShadowRoot() || node->isTextNode())
         return false;
 
     if (!node->isSVGElement())
@@ -290,31 +290,31 @@ static bool isDisallowedElement(Node* node)
 
     Element* element = static_cast<Element*>(node);
 
-    DEFINE_STATIC_LOCAL(HashSet<String>, allowedElementTags, ());
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedElementTags, ());
     if (allowedElementTags.isEmpty()) {
-        allowedElementTags.add(SVGNames::aTag.toString());
-        allowedElementTags.add(SVGNames::circleTag.toString());
-        allowedElementTags.add(SVGNames::descTag.toString());
-        allowedElementTags.add(SVGNames::ellipseTag.toString());
-        allowedElementTags.add(SVGNames::gTag.toString());
-        allowedElementTags.add(SVGNames::imageTag.toString());
-        allowedElementTags.add(SVGNames::lineTag.toString());
-        allowedElementTags.add(SVGNames::metadataTag.toString());
-        allowedElementTags.add(SVGNames::pathTag.toString());
-        allowedElementTags.add(SVGNames::polygonTag.toString());
-        allowedElementTags.add(SVGNames::polylineTag.toString());
-        allowedElementTags.add(SVGNames::rectTag.toString());
-        allowedElementTags.add(SVGNames::svgTag.toString());
-        allowedElementTags.add(SVGNames::switchTag.toString());
-        allowedElementTags.add(SVGNames::symbolTag.toString());
-        allowedElementTags.add(SVGNames::textTag.toString());
-        allowedElementTags.add(SVGNames::textPathTag.toString());
-        allowedElementTags.add(SVGNames::titleTag.toString());
-        allowedElementTags.add(SVGNames::trefTag.toString());
-        allowedElementTags.add(SVGNames::tspanTag.toString());
-        allowedElementTags.add(SVGNames::useTag.toString());
+        allowedElementTags.add(SVGNames::aTag);
+        allowedElementTags.add(SVGNames::circleTag);
+        allowedElementTags.add(SVGNames::descTag);
+        allowedElementTags.add(SVGNames::ellipseTag);
+        allowedElementTags.add(SVGNames::gTag);
+        allowedElementTags.add(SVGNames::imageTag);
+        allowedElementTags.add(SVGNames::lineTag);
+        allowedElementTags.add(SVGNames::metadataTag);
+        allowedElementTags.add(SVGNames::pathTag);
+        allowedElementTags.add(SVGNames::polygonTag);
+        allowedElementTags.add(SVGNames::polylineTag);
+        allowedElementTags.add(SVGNames::rectTag);
+        allowedElementTags.add(SVGNames::svgTag);
+        allowedElementTags.add(SVGNames::switchTag);
+        allowedElementTags.add(SVGNames::symbolTag);
+        allowedElementTags.add(SVGNames::textTag);
+        allowedElementTags.add(SVGNames::textPathTag);
+        allowedElementTags.add(SVGNames::titleTag);
+        allowedElementTags.add(SVGNames::trefTag);
+        allowedElementTags.add(SVGNames::tspanTag);
+        allowedElementTags.add(SVGNames::useTag);
     }
-    return !allowedElementTags.contains(element->tagName());
+    return !allowedElementTags.contains<QualifiedName, SVGAttributeHashTranslator>(element->tagQName());
 }
 
 static bool subtreeContainsDisallowedElement(Node* start)
