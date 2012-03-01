@@ -1,3 +1,28 @@
+2012-02-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add zoom-text-only setting to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=75249
+
+        Reviewed by Gustavo Noronha Silva.
+
+        To set whether zoom level of web view should affect only the text
+        or all page contents. It's disabled by default.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init): Add WebKitSettings:zoom-text-only
+        property.
+        (webkit_settings_set_zoom_text_only): Set
+        WebKitSettings:zoom-text-only.
+        (webkit_settings_get_zoom_text_only): Get
+        WebKitSettings:zoom-text-only.
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new
+        symbols.
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+
 2012-02-29  Sergio Villar Senin  <svillar@igalia.com>
 
         DidFindString should be emitted even if FindOptionsShowOverlay is not enabled

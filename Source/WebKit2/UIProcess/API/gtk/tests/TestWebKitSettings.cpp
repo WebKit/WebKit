@@ -194,6 +194,11 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_webaudio(settings, TRUE);
     g_assert(webkit_settings_get_enable_webaudio(settings));
 
+    // Zoom text only is disabled by default.
+    g_assert(!webkit_settings_get_zoom_text_only(settings));
+    webkit_settings_set_zoom_text_only(settings, TRUE);
+    g_assert(webkit_settings_get_zoom_text_only(settings));
+
     g_object_unref(G_OBJECT(settings));
 }
 
