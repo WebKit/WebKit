@@ -43,14 +43,14 @@ function test()
         InspectorTest.addResult("listeners added on raw source code: " + (count2 - count1));
         InspectorTest.addResult("original location: " + link.textContent);
 
-        InspectorTest.addSniffer(linkifier, "_updateAnchor", linkUpdated);
+        InspectorTest.addSniffer(linkifier._formatter, "formatLiveAnchor", linkUpdated);
         WebInspector.debuggerPresentationModel.setFormatSource(true);
     }
 
     function linkUpdated()
     {
         InspectorTest.addResult("pretty printed location: " + link.textContent);
-        InspectorTest.addSniffer(linkifier, "_updateAnchor", linkReverted);
+        InspectorTest.addSniffer(linkifier._formatter, "formatLiveAnchor", linkReverted);
         WebInspector.debuggerPresentationModel.setFormatSource(false);
     }
 
@@ -75,7 +75,7 @@ function test()
             var listenersArray = listeners[eventTypes];
             count += listenersArray.length;
         }
-        return count; 
+        return count;
     }
 }
 

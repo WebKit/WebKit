@@ -176,10 +176,10 @@ WebInspector.ScriptsSearchResultsPane.LinkifierFormatter = function()
 
 WebInspector.ScriptsSearchResultsPane.LinkifierFormatter.prototype = {
     /**
-     * @param {WebInspector.RawSourceCode} rawSourceCode
      * @param {Element} anchor
+     * @param {WebInspector.UILocation} uiLocation
      */
-    formatRawSourceCodeAnchor: function(rawSourceCode, anchor)
+    formatLiveAnchor: function(anchor, uiLocation)
     {
         // Empty because we don't want to ever update anchor contents after creation.
     }

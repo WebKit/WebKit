@@ -749,16 +749,13 @@ WebInspector.PresentationCallFrame.prototype = {
      */
     uiLocation: function(callback)
     {
-        function uiSourceCodeListChanged()
+        function locationUpdated(uiLocation)
         {
-            callback(this._rawSourceCode.rawLocationToUILocation(this._callFrame.location));
-            this._rawSourceCode.removeEventListener(WebInspector.RawSourceCode.Events.UISourceCodeListChanged, uiSourceCodeListChanged, this);
-        }
-        var uiLocation = this._rawSourceCode.rawLocationToUILocation(this._callFrame.location);
-        if (uiLocation)
             callback(uiLocation);
-        else
-            this._rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeListChanged, uiSourceCodeListChanged, this);
+            liveLocation.dispose();
+        }
+        var liveLocation = this._rawSourceCode.createLiveLocation(this._callFrame.location, locationUpdated.bind(this));
+        liveLocation.init();
     }
 }
 
@@ -770,23 +767,19 @@ WebInspector.PresentationCallFrame.prototype = {
 WebInspector.DebuggerPresentationModel.CallFramePlacard = function(callFrame)
 {
     WebInspector.Placard.call(this, callFrame._callFrame.functionName || WebInspector.UIString("(anonymous function)"), "");
-    this._callFrame = callFrame;
-    this._update();
-    this._callFrame._rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeListChanged, this._update, this);
+    this._liveLocation = callFrame._rawSourceCode.createLiveLocation(callFrame._callFrame.location, this._update.bind(this));
+    this._liveLocation.init();
 }
 
 WebInspector.DebuggerPresentationModel.CallFramePlacard.prototype = {
     discard: function()
     {
-        this._callFrame._rawSourceCode.removeEventListener(WebInspector.RawSourceCode.Events.UISourceCodeListChanged, this._update, this);
+        this._liveLocation.dispose();
     },
 
-    _update: function()
+    _update: function(uiLocation)
     {
-        var rawSourceCode = this._callFrame._rawSourceCode;
-        var uiLocation = rawSourceCode.rawLocationToUILocation(this._callFrame._callFrame.location);
-        if (uiLocation)
-            this.subtitle = WebInspector.displayNameForURL(uiLocation.uiSourceCode.url) + ":" + (uiLocation.lineNumber + 1);
+        this.subtitle = WebInspector.displayNameForURL(uiLocation.uiSourceCode.url) + ":" + (uiLocation.lineNumber + 1);
     }
 }
 
@@ -859,6 +852,8 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
     }
 }
 
+WebInspector.DebuggerPresentationModelResourceBinding.prototype.__proto__ = WebInspector.ResourceDomainModelBinding.prototype;
+
 /**
  * @interface
  */
@@ -868,10 +863,10 @@ WebInspector.DebuggerPresentationModel.LinkifierFormatter = function()
 
 WebInspector.DebuggerPresentationModel.LinkifierFormatter.prototype = {
     /**
-     * @param {WebInspector.RawSourceCode} rawSourceCode
      * @param {Element} anchor
+     * @param {WebInspector.UILocation} uiLocation
      */
-    formatRawSourceCodeAnchor: function(rawSourceCode, anchor) { },
+    formatLiveAnchor: function(anchor, uiLocation) { },
 }
 
 /**
@@ -886,15 +881,11 @@ WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter = function(maxL
 
 WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter.prototype = {
     /**
-     * @param {WebInspector.RawSourceCode} rawSourceCode
      * @param {Element} anchor
+     * @param {WebInspector.UILocation} uiLocation
      */
-    formatRawSourceCodeAnchor: function(rawSourceCode, anchor)
+    formatLiveAnchor: function(anchor, uiLocation)
     {
-        var uiLocation = rawSourceCode.rawLocationToUILocation(anchor.rawLocation);
-        if (!uiLocation)
-            return;
-
         anchor.textContent = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
 
         var text = WebInspector.formatLinkText(uiLocation.uiSourceCode.url, uiLocation.lineNumber);
@@ -915,7 +906,7 @@ WebInspector.DebuggerPresentationModel.Linkifier = function(model, formatter)
 {
     this._model = model;
     this._formatter = formatter || new WebInspector.DebuggerPresentationModel.DefaultLinkifierFormatter();
-    this._anchorsForRawSourceCode = {};
+    this._liveLocations = [];
 }
 
 WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
@@ -943,17 +934,10 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
     linkifyRawSourceCode: function(rawSourceCode, lineNumber, columnNumber, classes)
     {
         var anchor = WebInspector.linkifyURLAsNode(rawSourceCode.url, "", classes, false);
-        anchor.rawLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
-
-        var anchors = this._anchorsForRawSourceCode[rawSourceCode.id];
-        if (!anchors) {
-            anchors = [];
-            this._anchorsForRawSourceCode[rawSourceCode.id] = anchors;
-            rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeListChanged, this._updateSourceAnchors, this);
-        }
-
-        this._updateAnchor(rawSourceCode, anchor);
-        anchors.push(anchor);
+        var rawLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
+        var liveLocation = rawSourceCode.createLiveLocation(rawLocation, this._updateAnchor.bind(this, anchor));
+        liveLocation.init();
+        this._liveLocations.push(liveLocation);
         return anchor;
     },
 
@@ -967,43 +951,23 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
 
     reset: function()
     {
-        for (var id in this._anchorsForRawSourceCode) {
-            if (this._model._rawSourceCodeForScriptId[id]) // In case of navigation the list of rawSourceCodes is empty.
-                this._model._rawSourceCodeForScriptId[id].removeEventListener(WebInspector.RawSourceCode.Events.UISourceCodeListChanged, this._updateSourceAnchors, this);
-        }
-        this._anchorsForRawSourceCode = {};
+        for (var i = 0; i < this._liveLocations.length; ++i)
+            this._liveLocations[i].dispose();
+        this._liveLocations = [];
     },
 
     /**
-     * @param {WebInspector.Event} event
-     */
-    _updateSourceAnchors: function(event)
-    {
-        var rawSourceCode = /** @type {WebInspector.RawSourceCode} */ event.target;
-        var anchors = this._anchorsForRawSourceCode[rawSourceCode.id];
-        for (var i = 0; i < anchors.length; ++i)
-            this._updateAnchor(rawSourceCode, anchors[i]);
-    },
-
-    /**
-     * @param {WebInspector.RawSourceCode} rawSourceCode
      * @param {Element} anchor
+     * @param {WebInspector.UILocation} uiLocation
      */
-    _updateAnchor: function(rawSourceCode, anchor)
+    _updateAnchor: function(anchor, uiLocation)
     {
-        var uiLocation = rawSourceCode.rawLocationToUILocation(anchor.rawLocation);
-        if (!uiLocation)
-            return;
-
         anchor.preferredPanel = "scripts";
         anchor.uiSourceCode = uiLocation.uiSourceCode;
         anchor.lineNumber = uiLocation.lineNumber;
-
-        this._formatter.formatRawSourceCodeAnchor(rawSourceCode, anchor);
+        this._formatter.formatLiveAnchor(anchor, uiLocation);
     }
 }
-
-WebInspector.DebuggerPresentationModelResourceBinding.prototype.__proto__ = WebInspector.ResourceDomainModelBinding.prototype;
 
 /**
  * @type {?WebInspector.DebuggerPresentationModel}
