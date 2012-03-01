@@ -262,14 +262,14 @@ void ShadowTree::recalcShadowTreeStyle(Node::StyleChange change)
 
 bool ShadowTree::needsReattachHostChildrenAndShadow()
 {
-    return m_needsRecalculateContent || (youngestShadowRoot() && youngestShadowRoot()->hasContentElement());
+    return m_needsRecalculateContent || (youngestShadowRoot() && youngestShadowRoot()->hasInsertionPoint());
 }
 
 void ShadowTree::hostChildrenChanged()
 {
     ASSERT(youngestShadowRoot());
 
-    if (!youngestShadowRoot()->hasContentElement())
+    if (!youngestShadowRoot()->hasInsertionPoint())
         return;
 
     // This results in forced detaching/attaching of the shadow render tree. See ShadowRoot::recalcStyle().

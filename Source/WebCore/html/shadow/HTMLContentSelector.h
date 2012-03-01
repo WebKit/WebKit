@@ -130,7 +130,7 @@ public:
     HTMLContentSelector();
     ~HTMLContentSelector();
 
-    void select(HTMLContentElement*, HTMLContentSelectionList*);
+    void select(InsertionPoint*, HTMLContentSelectionList*);
     void unselect(HTMLContentSelectionList*);
     HTMLContentSelection* findFor(Node* key) const;
 

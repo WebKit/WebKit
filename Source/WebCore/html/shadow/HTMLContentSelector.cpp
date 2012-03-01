@@ -108,11 +108,12 @@ HTMLContentSelector::~HTMLContentSelector()
     ASSERT(m_candidates.isEmpty());
 }
 
-void HTMLContentSelector::select(HTMLContentElement* contentElement, HTMLContentSelectionList* selections)
+void HTMLContentSelector::select(InsertionPoint* insertionPoint, HTMLContentSelectionList* selections)
 {
     ASSERT(selections->isEmpty());
 
-    ContentSelectorQuery query(contentElement);
+    ContentSelectorQuery query(insertionPoint);
+
     for (size_t i = 0; i < m_candidates.size(); ++i) {
         Node* child = m_candidates[i].get();
         if (!child)
@@ -120,7 +121,7 @@ void HTMLContentSelector::select(HTMLContentElement* contentElement, HTMLContent
         if (!query.matches(child))
             continue;
 
-        RefPtr<HTMLContentSelection> selection = HTMLContentSelection::create(contentElement, child);
+        RefPtr<HTMLContentSelection> selection = HTMLContentSelection::create(insertionPoint, child);
 
         selections->append(selection);
         m_selectionSet.add(selection.get());

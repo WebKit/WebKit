@@ -94,7 +94,7 @@ void HTMLContentElement::detach()
             selector->unselect(&m_selections);
 
         // When content element is detached, shadow tree should be recreated to re-calculate selector for
-        // other content elements.
+        // other insertion points.
         root->tree()->setNeedsReattachHostChildrenAndShadow();
     }
 

@@ -66,6 +66,12 @@ private:
     virtual void parseAttribute(Attribute*) OVERRIDE;
 };
 
+inline const HTMLContentElement* toHTMLContentElement(const Node* node)
+{
+    ASSERT(!node || node->isContentElement());
+    return static_cast<const HTMLContentElement*>(node);
+}
+
 inline HTMLContentElement* toHTMLContentElement(Node* node)
 {
     ASSERT(!node || node->isContentElement());

@@ -41,19 +41,19 @@ namespace WebCore {
 
 class Document;
 class Node;
-class HTMLContentElement;
+class InsertionPoint;
 
 class ContentSelectorQuery {
     WTF_MAKE_NONCOPYABLE(ContentSelectorQuery);
 public:
-    explicit ContentSelectorQuery(const HTMLContentElement*);
+    explicit ContentSelectorQuery(const InsertionPoint*);
 
     bool isValidSelector() const;
     bool matches(Node*) const;
 private:
     bool validateSelectorList();
 
-    const HTMLContentElement* m_contentElement;
+    const InsertionPoint* m_insertionPoint;
     SelectorDataList m_selectors;
     CSSSelectorList m_selectorList;
     SelectorChecker m_selectorChecker;

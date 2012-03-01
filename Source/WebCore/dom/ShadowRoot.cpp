@@ -178,10 +178,10 @@ ShadowTree* ShadowRoot::tree() const
     return 0;
 }
 
-bool ShadowRoot::hasContentElement() const
+bool ShadowRoot::hasInsertionPoint() const
 {
     for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
-        if (n->isContentElement())
+        if (isInsertionPoint(n))
             return true;
     }
 

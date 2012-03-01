@@ -79,7 +79,7 @@ public:
     bool isYoungest() const { return !youngerShadowRoot(); }
     bool isOldest() const { return !olderShadowRoot(); }
 
-    bool hasContentElement() const;
+    bool hasInsertionPoint() const;
 
 private:
     ShadowRoot(Document*);

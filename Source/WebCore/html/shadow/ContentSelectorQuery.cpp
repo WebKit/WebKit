@@ -29,23 +29,23 @@
 
 #include "CSSParser.h"
 #include "CSSSelectorList.h"
-#include "HTMLContentElement.h"
+#include "InsertionPoint.h"
 
 namespace WebCore {
 
-ContentSelectorQuery::ContentSelectorQuery(const HTMLContentElement* element)
-    : m_contentElement(element)
-    , m_selectorChecker(element->document(), !element->document()->inQuirksMode())
+ContentSelectorQuery::ContentSelectorQuery(const InsertionPoint* insertionPoint)
+    : m_insertionPoint(insertionPoint)
+    , m_selectorChecker(insertionPoint->document(), !insertionPoint->document()->inQuirksMode())
 {
     m_selectorChecker.setCollectingRulesOnly(true);
 
-    if (element->select().isNull() || element->select().isEmpty()) {
+    if (insertionPoint->select().isNull() || insertionPoint->select().isEmpty()) {
         m_isValidSelector = true;
         return;
     }
 
     CSSParser parser(true);
-    parser.parseSelector(element->select(), element->document(), m_selectorList);
+    parser.parseSelector(insertionPoint->select(), insertionPoint->document(), m_selectorList);
 
     m_isValidSelector = ContentSelectorQuery::validateSelectorList();
     if (m_isValidSelector)
@@ -63,9 +63,9 @@ bool ContentSelectorQuery::matches(Node* node) const
     if (!node)
         return false;
 
-    ASSERT(node->parentNode() == m_contentElement->shadowTreeRootNode()->shadowHost());
+    ASSERT(node->parentNode() == m_insertionPoint->shadowTreeRootNode()->shadowHost());
 
-    if (m_contentElement->select().isNull() || m_contentElement->select().isEmpty())
+    if (m_insertionPoint->select().isNull() || m_insertionPoint->select().isEmpty())
         return true;
 
     if (!m_isValidSelector)
