@@ -278,7 +278,7 @@ void LayoutState::computeLineGridPaginationOrigin(RenderBox* renderer)
         if (pageLogicalTop > firstLineTopWithLeading) {
             // Shift to the next highest line grid multiple past the page logical top. Cache the delta
             // between this new value and the page logical top as the pagination origin.
-            LayoutUnit remainder = (pageLogicalTop - firstLineTopWithLeading) % gridLineHeight;
+            LayoutUnit remainder = roundToInt(pageLogicalTop - firstLineTopWithLeading) % roundToInt(gridLineHeight);
             LayoutUnit paginationDelta = gridLineHeight - remainder;
             if (isHorizontalWritingMode)
                 m_lineGridPaginationOrigin.setHeight(paginationDelta);

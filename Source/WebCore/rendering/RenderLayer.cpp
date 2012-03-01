@@ -1547,11 +1547,14 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
         LayoutRect exposeRect = LayoutRect(rect.x() + scrollXOffset(), rect.y() + scrollYOffset(), rect.width(), rect.height());
         LayoutRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
         
-        LayoutUnit xOffset = r.x() - absPos.x();
-        LayoutUnit yOffset = r.y() - absPos.y();
+        LayoutUnit adjustedX = r.x() - absPos.x();
+        LayoutUnit adjustedY = r.y() - absPos.y();
         // Adjust offsets if they're outside of the allowable range.
-        xOffset = max<LayoutUnit>(0, min(scrollWidth() - layerBounds.width(), xOffset));
-        yOffset = max<LayoutUnit>(0, min(scrollHeight() - layerBounds.height(), yOffset));
+        adjustedX = max<LayoutUnit>(0, min(scrollWidth() - layerBounds.width(), adjustedX));
+        adjustedY = max<LayoutUnit>(0, min(scrollHeight() - layerBounds.height(), adjustedY));
+
+        int xOffset = roundToInt(adjustedX);
+        int yOffset = roundToInt(adjustedY);
         
         if (xOffset != scrollXOffset() || yOffset != scrollYOffset()) {
             LayoutUnit diffX = scrollXOffset();
@@ -1578,8 +1581,8 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                     LayoutRect viewRect = frameView->visibleContentRect();
                     LayoutRect exposeRect = getRectToExpose(viewRect, rect, alignX, alignY);
 
-                    LayoutUnit xOffset = exposeRect.x();
-                    LayoutUnit yOffset = exposeRect.y();
+                    int xOffset = roundToInt(exposeRect.x());
+                    int yOffset = roundToInt(exposeRect.y());
                     // Adjust offsets if they're outside of the allowable range.
                     xOffset = max<LayoutUnit>(0, min(frameView->contentsWidth(), xOffset));
                     yOffset = max<LayoutUnit>(0, min(frameView->contentsHeight(), yOffset));

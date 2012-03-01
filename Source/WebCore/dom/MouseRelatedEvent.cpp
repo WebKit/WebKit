@@ -214,14 +214,14 @@ int MouseRelatedEvent::offsetX()
 {
     if (!m_hasCachedRelativePosition)
         computeRelativePosition();
-    return m_offsetLocation.x();
+    return roundToInt(m_offsetLocation.x());
 }
 
 int MouseRelatedEvent::offsetY()
 {
     if (!m_hasCachedRelativePosition)
         computeRelativePosition();
-    return m_offsetLocation.y();
+    return roundToInt(m_offsetLocation.y());
 }
 
 int MouseRelatedEvent::pageX() const

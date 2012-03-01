@@ -182,7 +182,7 @@ public:
 
     int pixelSnappedLogicalLeftOffsetForLine(LayoutUnit position, bool firstLine) const
     {
-        return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(position), firstLine, 0);
+        return roundToInt(logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(position), firstLine, 0));
     }
     
     LayoutUnit startAlignedOffsetForLine(RenderBox* child, LayoutUnit position, bool firstLine);
@@ -636,11 +636,11 @@ private:
     LayoutUnit logicalRightForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->maxX() : child->maxY(); }
     LayoutUnit logicalWidthForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->width() : child->height(); }
 
-    // FIXME: The implementation for these functions will change once we move to subpixel layout. See bug 60318.
-    int pixelSnappedLogicalTopForFloat(const FloatingObject* child) const { return logicalTopForFloat(child); }
-    int pixelSnappedLogicalBottomForFloat(const FloatingObject* child) const { return logicalBottomForFloat(child); }
-    int pixelSnappedLogicalLeftForFloat(const FloatingObject* child) const { return logicalLeftForFloat(child); }
-    int pixelSnappedLogicalRightForFloat(const FloatingObject* child) const { return logicalRightForFloat(child); }
+    int pixelSnappedLogicalTopForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->pixelSnappedY() : child->pixelSnappedX(); }
+    int pixelSnappedLogicalBottomForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->pixelSnappedMaxY() : child->pixelSnappedMaxX(); }
+    int pixelSnappedLogicalLeftForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->pixelSnappedX() : child->pixelSnappedY(); }
+    int pixelSnappedLogicalRightForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->pixelSnappedMaxX() : child->pixelSnappedMaxY(); }
+    int pixelSnappedLogicalWidthForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->pixelSnappedWidth() : child->pixelSnappedHeight(); }
 
     void setLogicalTopForFloat(FloatingObject* child, LayoutUnit logicalTop)
     {

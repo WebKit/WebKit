@@ -1211,7 +1211,7 @@ void MediaControlTextTrackContainerElement::updateSizes()
     LayoutUnit bottom = static_cast<LayoutUnit>(m_videoDisplaySize.y() + m_videoDisplaySize.height() - (m_videoDisplaySize.height() * trackBottomMultiplier));
     if (bottom != m_bottom) {
         m_bottom = bottom;
-        setInlineStyleProperty(CSSPropertyBottom, String::number(bottom) + "px");
+        setInlineStyleProperty(CSSPropertyBottom, String::number(roundToInt(bottom)) + "px");
     }
 }
 

@@ -114,9 +114,9 @@ private:
 
 inline void LineWidth::updateAvailableWidth()
 {
-    int height = m_block->logicalHeight();
-    m_left = m_block->logicalLeftOffsetForLine(height, m_isFirstLine);
-    m_right = m_block->logicalRightOffsetForLine(height, m_isFirstLine);
+    LayoutUnit height = m_block->logicalHeight();
+    m_left = m_block->pixelSnappedLogicalLeftOffsetForLine(height, m_isFirstLine);
+    m_right = m_block->pixelSnappedLogicalRightOffsetForLine(height, m_isFirstLine);
 
     computeAvailableWidthFromLeftAndRight();
 }
@@ -759,8 +759,8 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
                                                          GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
 {
     ETextAlign textAlign = textAlignmentForLine(!reachedEnd && !lineBox->endsWithBreak());
-    float logicalLeft = logicalLeftOffsetForLine(logicalHeight(), lineInfo.isFirstLine());
-    float availableLogicalWidth = logicalRightOffsetForLine(logicalHeight(), lineInfo.isFirstLine()) - logicalLeft;
+    float logicalLeft = pixelSnappedLogicalLeftOffsetForLine(logicalHeight(), lineInfo.isFirstLine());
+    float availableLogicalWidth = pixelSnappedLogicalRightOffsetForLine(logicalHeight(), lineInfo.isFirstLine()) - logicalLeft;
 
     bool needsWordSpacing = false;
     float totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();

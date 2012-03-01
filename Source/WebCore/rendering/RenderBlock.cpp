@@ -6673,7 +6673,7 @@ LayoutUnit RenderBlock::pageLogicalTopForOffset(LayoutUnit offset) const
         LayoutUnit pageLogicalHeight = renderView->layoutState()->pageLogicalHeight();
         if (!pageLogicalHeight)
             return 0;
-        return cumulativeOffset - (cumulativeOffset - firstPageLogicalTop) % pageLogicalHeight;
+        return cumulativeOffset - roundToInt(cumulativeOffset - firstPageLogicalTop) % roundToInt(pageLogicalHeight);
     }
     return enclosingRenderFlowThread()->regionLogicalTopForLine(cumulativeOffset);
 }

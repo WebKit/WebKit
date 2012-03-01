@@ -111,7 +111,7 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
 
         if (shadow) {
             paintInfo.context->clip(repaintRect);
-            paintInfo.context->setShadow(IntSize(shadow->x(), shadow->y()), shadow->blur(), shadow->color(), style->colorSpace());
+            paintInfo.context->setShadow(IntSize(roundToInt(shadow->x()), roundToInt(shadow->y())), shadow->blur(), shadow->color(), style->colorSpace());
             paintInfo.context->beginTransparencyLayer(1);
         }
     }
