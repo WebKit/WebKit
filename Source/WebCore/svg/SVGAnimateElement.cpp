@@ -41,6 +41,7 @@ namespace WebCore {
 SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* document)
     : SVGAnimationElement(tagName, document)
     , m_animatedPropertyType(AnimatedString)
+    , m_aboutToStopAnimation(false)
     , m_fromPropertyValueType(RegularPropertyValue)
     , m_toPropertyValueType(RegularPropertyValue)
 {
@@ -230,6 +231,12 @@ void SVGAnimateElement::applyResultsToTarget()
     ASSERT(m_animatedPropertyType != AnimatedUnknown);
     ASSERT(m_animatedType);
 
+    if (m_aboutToStopAnimation) {
+        m_aboutToStopAnimation = false;
+        resetAnimationState(m_animatedType->valueAsString());
+        return;
+    }
+
     setTargetAttributeAnimatedValue(m_animatedType->valueAsString());
 }
     
@@ -258,6 +265,12 @@ SVGAnimatedTypeAnimator* SVGAnimateElement::ensureAnimator()
         m_animator = SVGAnimatorFactory::create(this, targetElement(), m_animatedPropertyType);
     ASSERT(m_animatedPropertyType == m_animator->type());
     return m_animator.get();
+}
+
+void SVGAnimateElement::endedActiveInterval()
+{
+    SVGAnimationElement::endedActiveInterval();
+    m_aboutToStopAnimation = true;
 }
 
 }

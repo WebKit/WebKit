@@ -295,6 +295,7 @@ private:
     };
 
     static void addMatchedProperties(MatchResult&, StylePropertySet* properties, StyleRule* = 0, unsigned linkMatchType = SelectorChecker::MatchAll, bool inRegionRule = false);
+    void addElementStyleProperties(MatchResult&, StylePropertySet*, bool isCacheable = true);
 
     void matchAllRules(MatchResult&);
     void matchUARules(MatchResult&);

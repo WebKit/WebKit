@@ -74,6 +74,21 @@ public:
     CSSCursorImageValue* cursorImageValue() const { return m_cursorImageValue; }
     void setCursorImageValue(CSSCursorImageValue* cursorImageValue) { m_cursorImageValue = cursorImageValue; }
 
+    StylePropertySet* animatedSMILStyleProperties() const { return m_animatedSMILStyleProperties.get(); }
+    StylePropertySet* ensureAnimatedSMILStyleProperties()
+    {
+        if (!m_animatedSMILStyleProperties) {
+            m_animatedSMILStyleProperties = StylePropertySet::create();
+            m_animatedSMILStyleProperties->setStrictParsing(false);
+        }
+        return m_animatedSMILStyleProperties.get();
+    }
+
+    void destroyAnimatedSMILStyleProperties()
+    {
+        m_animatedSMILStyleProperties.clear();
+    }
+
 private:
     HashSet<SVGElementInstance*> m_elementInstances;
     SVGCursorElement* m_cursorElement;
@@ -81,6 +96,7 @@ private:
     SVGElement* m_correspondingElement;
     bool m_instancesUpdatesBlocked : 1;
     bool m_hasPendingResources : 1;
+    RefPtr<StylePropertySet> m_animatedSMILStyleProperties;
 };
 
 }

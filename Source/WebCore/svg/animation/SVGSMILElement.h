@@ -116,11 +116,11 @@ protected:
 
     // Sub-classes may need to take action when the target is changed.
     virtual void targetElementDidChange(SVGElement*) { }
+    virtual void endedActiveInterval();
 
 private:
     virtual void startedActiveInterval() = 0;
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) = 0;
-    void endedActiveInterval();
 
     enum BeginOrEnd {
         Begin,

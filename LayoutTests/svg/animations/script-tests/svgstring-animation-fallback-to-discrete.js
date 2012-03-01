@@ -22,15 +22,18 @@ rootSVGElement.appendChild(rect);
 // Setup animation test
 function sample1() {
     // Check initial/end conditions
-    shouldBe("rect.style.visibility", "'visible'");
+    shouldBe("getComputedStyle(rect).visibility", "'visible'");
+    shouldBeEqualToString("rect.style.visibility", "");
 }
 
 function sample2() {
-    shouldBe("rect.style.visibility", "'hidden'");
+    shouldBe("getComputedStyle(rect).visibility", "'hidden'");
+    shouldBeEqualToString("rect.style.visibility", "");
 }
 
 function sample3() {
-    shouldBe("rect.style.visibility", "'visible'");
+    shouldBe("getComputedStyle(rect).visibility", "'visible'");
+    shouldBeEqualToString("rect.style.visibility", "");
 }
 
 function executeTest() {

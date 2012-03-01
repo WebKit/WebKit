@@ -78,6 +78,7 @@ SVGElement::~SVGElement()
         ASSERT(it != rareDataMap.end());
 
         SVGElementRareData* rareData = it->second;
+        rareData->destroyAnimatedSMILStyleProperties();
         if (SVGCursorElement* cursorElement = rareData->cursorElement())
             cursorElement->removeClient(this);
         if (CSSCursorImageValue* cursorImageValue = rareData->cursorImageValue())
@@ -486,6 +487,18 @@ PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
     }
 
     return document()->styleSelector()->styleForElement(correspondingElement(), style, false /*allowSharing*/);
+}
+
+StylePropertySet* SVGElement::animatedSMILStyleProperties() const
+{
+    if (hasRareSVGData())
+        return rareSVGData()->animatedSMILStyleProperties();
+    return 0;
+}
+
+StylePropertySet* SVGElement::ensureAnimatedSMILStyleProperties()
+{
+    return ensureRareSVGData()->ensureAnimatedSMILStyleProperties();
 }
 
 #ifndef NDEBUG

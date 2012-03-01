@@ -24,17 +24,20 @@ rootSVGElement.appendChild(rect);
 // Setup animation test
 function sample1() {
     // Check initial/end conditions
-    shouldBe("rect.style.fill", "'#ff0000'");
+    shouldBe("getComputedStyle(rect).fill", "'#ff0000'");
+    shouldBeEqualToString("rect.style.fill", "");
 }
 
 function sample2() {
     // Check half-time conditions
-    shouldBe("rect.style.fill", "'#804000'");
+    shouldBe("getComputedStyle(rect).fill", "'#804000'");
+    shouldBeEqualToString("rect.style.fill", "");
 }
 
 function sample3() {
     // Check half-time conditions
-    shouldBe("rect.style.fill", "'#008000'");
+    shouldBe("getComputedStyle(rect).fill", "'#008000'");
+    shouldBeEqualToString("rect.style.fill", "");
 }
 
 function executeTest() {

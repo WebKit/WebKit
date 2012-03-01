@@ -105,6 +105,8 @@ protected:
     virtual void startedActiveInterval();
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement);
 
+    void resetAnimationState(const String& baseValue);
+
 private:
     virtual void attributeChanged(Attribute*) OVERRIDE;
 
@@ -121,6 +123,14 @@ private:
     float calculatePercentForSpline(float percent, unsigned splineIndex) const;
     float calculatePercentForFromTo(float percent) const;
     unsigned calculateKeyTimesIndex(float percent) const;
+
+    enum ShouldApplyAnimation {
+        DontApplyAnimation,
+        ApplyCSSAnimation,
+        ApplyXMLAnimation
+    };
+
+    ShouldApplyAnimation shouldApplyAnimation(SVGElement* targetElement, const QualifiedName& attributeName);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAnimationElement)
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)

@@ -107,6 +107,9 @@ public:
     static bool isAnimatableAttribute(const QualifiedName&);
 #endif
 
+    StylePropertySet* animatedSMILStyleProperties() const;
+    StylePropertySet* ensureAnimatedSMILStyleProperties();
+
 protected:
     SVGElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
 

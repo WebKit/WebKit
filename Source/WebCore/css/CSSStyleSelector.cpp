@@ -122,6 +122,7 @@
 #endif
 
 #if ENABLE(SVG)
+#include "SVGElement.h"
 #include "SVGNames.h"
 #endif
 
@@ -763,6 +764,18 @@ void CSSStyleSelector::addMatchedProperties(MatchResult& matchResult, StylePrope
     matchResult.matchedRules.append(rule);
 }
 
+inline void CSSStyleSelector::addElementStyleProperties(MatchResult& result, StylePropertySet* propertySet, bool isCacheable)
+{
+    if (!propertySet)
+        return;
+    result.ranges.lastAuthorRule = result.matchedProperties.size();
+    if (result.ranges.firstAuthorRule == -1)
+        result.ranges.firstAuthorRule = result.ranges.lastAuthorRule;
+    addMatchedProperties(result, propertySet);
+    if (!isCacheable)
+        result.isCacheable = false;
+}
+
 void CSSStyleSelector::collectMatchingRules(RuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, const MatchOptions& options)
 {
     ASSERT(rules);
@@ -1033,22 +1046,12 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
         
     // Now check author rules, beginning first with presentational attributes mapped from HTML.
     if (m_styledElement) {
-        if (StylePropertySet* attributeStyle = m_styledElement->attributeStyle()) {
-            result.ranges.lastAuthorRule = m_matchedRules.size();
-            if (result.ranges.firstAuthorRule == -1)
-                result.ranges.firstAuthorRule = result.ranges.lastAuthorRule;
-            addMatchedProperties(result, attributeStyle);
-        }
+        addElementStyleProperties(result, m_styledElement->attributeStyle());
 
         // Now we check additional mapped declarations.
         // Tables and table cells share an additional mapped rule that must be applied
         // after all attributes, since their mapped style depends on the values of multiple attributes.
-        if (StylePropertySet* additionalStyle = m_styledElement->additionalAttributeStyle()) {
-            if (result.ranges.firstAuthorRule == -1)
-                result.ranges.firstAuthorRule = result.matchedProperties.size();
-            result.ranges.lastAuthorRule = result.ranges.firstAuthorRule;
-            addMatchedProperties(result, additionalStyle);
-        }
+        addElementStyleProperties(result, m_styledElement->additionalAttributeStyle());
 
         if (m_styledElement->isHTMLElement()) {
             bool isAuto;
@@ -1063,16 +1066,14 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
         matchAuthorRules(result, false);
 
     // Now check our inline style attribute.
-    if (m_matchAuthorAndUserStyles && m_styledElement) {
-        StylePropertySet* inlineDecl = m_styledElement->inlineStyleDecl();
-        if (inlineDecl) {
-            result.ranges.lastAuthorRule = result.matchedProperties.size();
-            if (result.ranges.firstAuthorRule == -1)
-                result.ranges.firstAuthorRule = result.ranges.lastAuthorRule;
-            addMatchedProperties(result, inlineDecl);
-            result.isCacheable = false;
-        }
-    }
+    if (m_matchAuthorAndUserStyles && m_styledElement)
+        addElementStyleProperties(result, m_styledElement->inlineStyleDecl(), false /* isCacheable */);
+
+#if ENABLE(SVG)
+    // Now check SMIL animation override style.
+    if (m_matchAuthorAndUserStyles && m_styledElement && m_styledElement->isSVGElement())
+        addElementStyleProperties(result, static_cast<SVGElement*>(m_styledElement)->animatedSMILStyleProperties(), false /* isCacheable */);
+#endif
 }
 
 inline void CSSStyleSelector::initElement(Element* e)
@@ -1128,6 +1129,10 @@ Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned& visitedNodeC
     StyledElement* p = static_cast<StyledElement*>(parent);
     if (p->inlineStyleDecl())
         return 0;
+#if ENABLE(SVG)
+    if (p->isSVGElement() && static_cast<SVGElement*>(p)->animatedSMILStyleProperties())
+        return 0;
+#endif
     if (p->hasID() && m_features.idsInRules.contains(p->idForStyleResolution().impl()))
         return 0;
 
@@ -1276,6 +1281,10 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element->inlineStyleDecl())
         return false;
+#if ENABLE(SVG)
+    if (element->isSVGElement() && static_cast<SVGElement*>(element)->animatedSMILStyleProperties())
+        return false;
+#endif
     if (!!element->attributeStyle() != !!m_styledElement->attributeStyle())
         return false;
     if (element->isLink() != m_element->isLink())
@@ -1373,6 +1382,10 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
     // If the element has inline style it is probably unique.
     if (m_styledElement->inlineStyleDecl())
         return 0;
+#if ENABLE(SVG)
+    if (m_styledElement->isSVGElement() && static_cast<SVGElement*>(m_styledElement)->animatedSMILStyleProperties())
+        return 0;
+#endif
     // Ids stop style sharing if they show up in the stylesheets.
     if (m_styledElement->hasID() && m_features.idsInRules.contains(m_styledElement->idForStyleResolution().impl()))
         return 0;

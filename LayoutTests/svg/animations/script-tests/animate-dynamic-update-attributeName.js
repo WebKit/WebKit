@@ -24,7 +24,8 @@ rootSVGElement.appendChild(rect);
 
 // Setup animation test
 function sample1() {
-    shouldBe("rect.style.color", "'rgb(0, 128, 0)'");
+    shouldBe("getComputedStyle(rect).color", "'rgb(0, 128, 0)'");
+    shouldBeEqualToString("rect.style.color", "");
 }
 
 function sample2() {
@@ -33,7 +34,8 @@ function sample2() {
 }
 
 function sample3() {
-    shouldBe("rect.style.fill", "'#008000'");
+    shouldBe("getComputedStyle(rect).fill", "'#008000'");
+    shouldBeEqualToString("rect.style.fill", "");
 }
 
 function executeTest() {

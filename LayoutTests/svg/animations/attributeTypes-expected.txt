@@ -1,0 +1,44 @@
+SVG 1.1 dynamic animation tests
+
+
+This verifies several attributeTypes combiniations
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rect1.width.animVal.value is 10
+PASS getComputedStyle(rect1).fill is "#008000"
+PASS rect2.width.animVal.value is 100
+PASS getComputedStyle(rect2).fill is "#008000"
+PASS rect3.width.animVal.value is 100
+PASS getComputedStyle(rect3).fill is "#ff0000"
+PASS rect4.width.animVal.value is 100
+PASS getComputedStyle(rect4).fill is "#ff0000"
+PASS rect1.width.animVal.value is 55
+PASS getComputedStyle(rect1).fill is "#008000"
+PASS rect2.width.animVal.value is 100
+PASS getComputedStyle(rect2).fill is "#008000"
+PASS rect3.width.animVal.value is 100
+PASS getComputedStyle(rect3).fill is "#804000"
+PASS rect4.width.animVal.value is 100
+PASS getComputedStyle(rect4).fill is "#804000"
+PASS rect1.width.animVal.value is 100
+PASS getComputedStyle(rect1).fill is "#008000"
+PASS rect2.width.animVal.value is 100
+PASS getComputedStyle(rect2).fill is "#008000"
+PASS rect3.width.animVal.value is 100
+PASS getComputedStyle(rect3).fill is "#008000"
+PASS rect4.width.animVal.value is 100
+PASS getComputedStyle(rect4).fill is "#008000"
+PASS rect1.width.animVal.value is 100
+PASS getComputedStyle(rect1).fill is "#008000"
+PASS rect2.width.animVal.value is 100
+PASS getComputedStyle(rect2).fill is "#008000"
+PASS rect3.width.animVal.value is 100
+PASS getComputedStyle(rect3).fill is "#008000"
+PASS rect4.width.animVal.value is 100
+PASS getComputedStyle(rect4).fill is "#008000"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
