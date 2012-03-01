@@ -37,12 +37,12 @@ public:
     virtual void updateAnimations(double frameBeginTime) { }
     virtual void layout() { }
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) { }
-    virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D()
+    virtual PassRefPtr<GraphicsContext3D> createContext()
     {
         GraphicsContext3D::Attributes attrs;
         return createCompositorMockGraphicsContext3D(attrs);
     }
-    virtual void didRecreateGraphicsContext(bool success) { }
+    virtual void didRecreateContext(bool success) { }
     virtual void didCommitAndDrawFrame() { }
     virtual void didCompleteSwapBuffers() { }
 

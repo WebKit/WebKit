@@ -152,7 +152,7 @@ WebGraphicsContext3D* WebLayerTreeView::context()
 
 void WebLayerTreeView::loseCompositorContext(int numTimes)
 {
-    m_private->loseCompositorContext(numTimes);
+    m_private->loseContext(numTimes);
 }
 
 } // namespace WebKit

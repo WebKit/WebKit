@@ -49,9 +49,10 @@ public:
     virtual bool isStarted() const;
     virtual bool initializeContext();
     virtual bool initializeLayerRenderer();
+    virtual bool recreateContext();
     virtual int compositorIdentifier() const { return m_compositorIdentifier; }
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
-    virtual void loseCompositorContext(int numTimes);
+    virtual void loseContext();
     virtual void setNeedsAnimate();
     virtual void setNeedsCommit();
     virtual void setNeedsRedraw();
@@ -71,13 +72,14 @@ public:
 
 private:
     explicit CCSingleThreadProxy(CCLayerTreeHost*);
-    bool recreateContextIfNeeded();
+
     bool commitIfNeeded();
     void doCommit();
     bool doComposite();
 
     // Accessed on main thread only.
     CCLayerTreeHost* m_layerTreeHost;
+    bool m_contextLost;
     int m_compositorIdentifier;
 
     // Holds on to the context between initializeContext() and initializeLayerRenderer() calls. Shouldn't
@@ -89,9 +91,6 @@ private:
     bool m_layerRendererInitialized;
     LayerRendererCapabilities m_layerRendererCapabilitiesForMainThread;
 
-    int m_numFailedRecreateAttempts;
-    bool m_graphicsContextLost;
-    int m_timesRecreateShouldFail; // Used during testing.
     bool m_nextFrameIsNewlyCommittedFrame;
 };
 

@@ -55,8 +55,8 @@ public:
     virtual void updateAnimations(double frameBeginTime) = 0;
     virtual void layout() = 0;
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) = 0;
-    virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
-    virtual void didRecreateGraphicsContext(bool success) = 0;
+    virtual PassRefPtr<GraphicsContext3D> createContext() = 0;
+    virtual void didRecreateContext(bool success) = 0;
     virtual void didCommitAndDrawFrame() = 0;
     virtual void didCompleteSwapBuffers() = 0;
 
@@ -130,13 +130,15 @@ public:
     void beginCommitOnImplThread(CCLayerTreeHostImpl*);
     void finishCommitOnImplThread(CCLayerTreeHostImpl*);
     void commitComplete();
-    PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D();
+    PassRefPtr<GraphicsContext3D> createContext();
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
     void didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl*);
-    void didRecreateGraphicsContext(bool success);
+    void didLoseContext();
     void didCommitAndDrawFrame() { m_client->didCommitAndDrawFrame(); }
     void didCompleteSwapBuffers() { m_client->didCompleteSwapBuffers(); }
     void deleteContentsTexturesOnImplThread(TextureAllocator*);
+    // Returns false if we should abort this frame due to initialization failure.
+    bool updateLayers();
 
     CCLayerTreeHostClient* client() { return m_client; }
 
@@ -159,7 +161,7 @@ public:
     const LayerRendererCapabilities& layerRendererCapabilities() const;
 
     // Test only hook
-    void loseCompositorContext(int numTimes);
+    void loseContext(int numTimes);
 
     void setNeedsAnimate();
     // virtual for testing
@@ -185,9 +187,6 @@ public:
     bool visible() const { return m_visible; }
     void setVisible(bool);
 
-    // Returns false if we should abort this frame due to initialization failure.
-    bool updateLayers();
-
     void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec);
 
     void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
@@ -207,6 +206,7 @@ private:
     typedef Vector<OwnPtr<ManagedTexture> > TextureList;
 
     void initializeLayerRenderer();
+    void recreateContext();
 
     enum PaintType { PaintVisible, PaintIdle };
     static void paintContentsIfDirty(LayerChromium*, PaintType, const Region& occludedScreenSpace);
@@ -230,6 +230,9 @@ private:
 
     OwnPtr<CCProxy> m_proxy;
     bool m_layerRendererInitialized;
+    bool m_contextLost;
+    int m_numTimesRecreateShouldFail;
+    int m_numFailedRecreateAttempts;
 
     RefPtr<LayerChromium> m_rootLayer;
     OwnPtr<TextureManager> m_contentsTextureManager;

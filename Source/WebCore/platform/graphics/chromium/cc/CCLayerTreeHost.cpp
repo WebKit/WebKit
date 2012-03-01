@@ -66,6 +66,9 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
     , m_client(client)
     , m_frameNumber(0)
     , m_layerRendererInitialized(false)
+    , m_contextLost(false)
+    , m_numTimesRecreateShouldFail(0)
+    , m_numFailedRecreateAttempts(0)
     , m_settings(settings)
     , m_visible(true)
     , m_pageScaleFactor(1)
@@ -114,7 +117,7 @@ void CCLayerTreeHost::initializeLayerRenderer()
     TRACE_EVENT("CCLayerTreeHost::initializeLayerRenderer", this, 0);
     if (!m_proxy->initializeLayerRenderer()) {
         // Uh oh, better tell the client that we can't do anything with this context.
-        m_client->didRecreateGraphicsContext(false);
+        m_client->didRecreateContext(false);
         return;
     }
 
@@ -131,6 +134,35 @@ void CCLayerTreeHost::initializeLayerRenderer()
     m_layerRendererInitialized = true;
 }
 
+void CCLayerTreeHost::recreateContext()
+{
+    TRACE_EVENT0("cc", "CCLayerTreeHost::recreateContext");
+    ASSERT(m_contextLost);
+
+    bool recreated = false;
+    if (!m_numTimesRecreateShouldFail)
+        recreated = m_proxy->recreateContext();
+    else
+        m_numTimesRecreateShouldFail--;
+
+    if (recreated) {
+        m_client->didRecreateContext(true);
+        m_contextLost = false;
+        return;
+    }
+
+    // Tolerate a certain number of recreation failures to work around races
+    // in the context-lost machinery.
+    m_numFailedRecreateAttempts++;
+    if (m_numFailedRecreateAttempts < 5) {
+        setNeedsCommit();
+        return;
+    }
+
+    // We have tried too many times to recreate the context. Tell the host to fall
+    // back to software rendering.
+    m_client->didRecreateContext(false);
+}
 
 void CCLayerTreeHost::deleteContentsTexturesOnImplThread(TextureAllocator* allocator)
 {
@@ -189,9 +221,9 @@ void CCLayerTreeHost::commitComplete()
     m_contentsTextureManager->unprotectAllTextures();
 }
 
-PassRefPtr<GraphicsContext3D> CCLayerTreeHost::createLayerTreeHostContext3D()
+PassRefPtr<GraphicsContext3D> CCLayerTreeHost::createContext()
 {
-    return m_client->createLayerTreeHostContext3D();
+    return m_client->createContext();
 }
 
 PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)
@@ -199,9 +231,13 @@ PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl(CCLayer
     return CCLayerTreeHostImpl::create(m_settings, client);
 }
 
-void CCLayerTreeHost::didRecreateGraphicsContext(bool success)
+void CCLayerTreeHost::didLoseContext()
 {
-    m_client->didRecreateGraphicsContext(success);
+    TRACE_EVENT("CCLayerTreeHost::didLoseContext", 0, this);
+    ASSERT(CCProxy::isMainThread());
+    m_contextLost = true;
+    m_numFailedRecreateAttempts = 0;
+    setNeedsCommit();
 }
 
 // Temporary hack until WebViewImpl context creation gets simplified
@@ -216,6 +252,11 @@ bool CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
     if (!m_layerRendererInitialized) {
         initializeLayerRenderer();
         if (!m_layerRendererInitialized)
+            return false;
+    }
+    if (m_contextLost) {
+        recreateContext();
+        if (m_contextLost)
             return false;
     }
     m_triggerIdlePaints = false;
@@ -351,9 +392,11 @@ void CCLayerTreeHost::startPageScaleAnimation(const IntSize& targetPosition, boo
     m_proxy->startPageScaleAnimation(targetPosition, useAnchor, scale, durationSec);
 }
 
-void CCLayerTreeHost::loseCompositorContext(int numTimes)
+void CCLayerTreeHost::loseContext(int numTimes)
 {
-    m_proxy->loseCompositorContext(numTimes);
+    TRACE_EVENT1("cc", "CCLayerTreeHost::loseCompositorContext", "numTimes", numTimes);
+    m_numTimesRecreateShouldFail = numTimes - 1;
+    m_proxy->loseContext();
 }
 
 TextureManager* CCLayerTreeHost::contentsTextureManager() const
@@ -373,6 +416,11 @@ bool CCLayerTreeHost::updateLayers()
         initializeLayerRenderer();
         // If we couldn't initialize, then bail since we're returning to software mode.
         if (!m_layerRendererInitialized)
+            return false;
+    }
+    if (m_contextLost) {
+        recreateContext();
+        if (m_contextLost)
             return false;
     }
 

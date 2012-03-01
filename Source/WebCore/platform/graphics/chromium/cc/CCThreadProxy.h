@@ -56,9 +56,10 @@ public:
     virtual bool isStarted() const;
     virtual bool initializeContext();
     virtual bool initializeLayerRenderer();
+    virtual bool recreateContext();
     virtual int compositorIdentifier() const;
     virtual const LayerRendererCapabilities& layerRendererCapabilities() const;
-    virtual void loseCompositorContext(int numTimes);
+    virtual void loseContext();
     virtual void setNeedsAnimate();
     virtual void setNeedsCommit();
     virtual void setNeedsRedraw();

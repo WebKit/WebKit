@@ -227,7 +227,7 @@ public:
         m_testHooks->applyScrollAndScale(scrollDelta, scale);
     }
 
-    virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D()
+    virtual PassRefPtr<GraphicsContext3D> createContext()
     {
         GraphicsContext3D::Attributes attrs;
         WebGraphicsContext3D::Attributes webAttrs;
@@ -245,7 +245,7 @@ public:
     {
     }
 
-    virtual void didRecreateGraphicsContext(bool)
+    virtual void didRecreateContext(bool)
     {
     }
 

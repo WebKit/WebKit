@@ -170,7 +170,7 @@ bool CCThreadProxy::isStarted() const
 bool CCThreadProxy::initializeContext()
 {
     TRACE_EVENT("CCThreadProxy::initializeContext", this, 0);
-    RefPtr<GraphicsContext3D> context = m_layerTreeHost->createLayerTreeHostContext3D();
+    RefPtr<GraphicsContext3D> context = m_layerTreeHost->createContext();
     if (!context)
         return false;
     ASSERT(context->hasOneRef());
@@ -205,6 +205,12 @@ bool CCThreadProxy::initializeLayerRenderer()
     return initializeSucceeded;
 }
 
+bool CCThreadProxy::recreateContext()
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 int CCThreadProxy::compositorIdentifier() const
 {
     ASSERT(isMainThread());
@@ -217,7 +223,7 @@ const LayerRendererCapabilities& CCThreadProxy::layerRendererCapabilities() cons
     return m_layerRendererCapabilitiesMainThreadCopy;
 }
 
-void CCThreadProxy::loseCompositorContext(int numTimes)
+void CCThreadProxy::loseContext()
 {
     ASSERT_NOT_REACHED();
 }
