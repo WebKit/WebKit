@@ -447,6 +447,10 @@ static void testWebViewZoomLevel(WebViewTest* test, gconstpointer)
     g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->m_webView), ==, 1);
     webkit_web_view_set_zoom_level(test->m_webView, 2.5);
     g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->m_webView), ==, 2.5);
+
+    webkit_settings_set_zoom_text_only(webkit_web_view_get_settings(test->m_webView), TRUE);
+    // The zoom level shouldn't change when zoom-text-only setting changes.
+    g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->m_webView), ==, 2.5);
 }
 
 void beforeAll()

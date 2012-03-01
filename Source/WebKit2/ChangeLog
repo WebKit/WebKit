@@ -1,5 +1,29 @@
 2012-02-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Use text or page zoom factor in WebKitWebView depending on zoom-text-only
+        https://bugs.webkit.org/show_bug.cgi?id=75252
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (zoomTextOnlyChanged): Update text/page zoom factor when
+        zoom-text-only setting changes.
+        (webkitWebViewSetSettings): Helper function to set the settings
+        object for the web view, initializing the settings for the page
+        and connecting to notify::zoom-text-only signal.
+        (webkitWebViewConstructed): Use webkitWebViewSetSettings().
+        (webkit_web_view_set_settings): Use webkitWebViewSetSettings() and
+        disconnect from the notify::zoom-text-only signal of the previous
+        settings object.
+        (webkit_web_view_set_zoom_level): Set text/page zoom factor
+        depending on WebKitSettings:zoom-text-only property.
+        (webkit_web_view_get_zoom_level): Get text/page zoom factor
+        depending on WebKitSettings:zoom-text-only property.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewZoomLevel):
+
+2012-02-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add zoom-text-only setting to WebKit2 GTK+ API
         https://bugs.webkit.org/show_bug.cgi?id=75249
 
