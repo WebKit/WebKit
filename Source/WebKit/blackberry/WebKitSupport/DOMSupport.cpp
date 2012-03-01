@@ -180,7 +180,8 @@ bool isColorInputField(const Element* element)
 // to the element.
 AttributeState elementSupportsAutocorrect(const Element* element)
 {
-    return elementAttributeState(element, QualifiedName(nullAtom, "autocorrect", nullAtom));
+    DEFINE_STATIC_LOCAL(QualifiedName, autocorrectAttr, (nullAtom, "autocorrect", nullAtom));
+    return elementAttributeState(element, autocorrectAttr);
 }
 
 AttributeState elementSupportsAutocomplete(const Element* element)
