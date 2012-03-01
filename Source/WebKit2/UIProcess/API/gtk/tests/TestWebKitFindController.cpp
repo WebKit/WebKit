@@ -45,12 +45,6 @@ public:
 
     void find(const char* searchText, guint32 findOptions, guint maxMatchCount)
     {
-        // Due to http://weakit.org/b/76522 we have to artificially
-        // add here the show overlay option (that we do not even
-        // expose in the API) to get the DidFindString messsage
-        // issued. Remove this once 76522 is fixed.
-        findOptions = findOptions | 1 << 5;
-
         g_signal_connect(m_findController.get(), "found-text", G_CALLBACK(foundTextCallback), this);
         g_signal_connect(m_findController.get(), "failed-to-find-text", G_CALLBACK(failedToFindTextCallback), this);
         webkit_find_controller_search(m_findController.get(), searchText, findOptions, maxMatchCount);
