@@ -1,3 +1,14 @@
+2012-02-29  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry]Make about:cache feature available in release version.
+        https://bugs.webkit.org/show_bug.cgi?id=79866
+
+        Reviewed by Antonio Gomes.
+
+        No tests.
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::handleAbout):
+
 2012-02-29  James Simonsen  <simonjam@chromium.org>
 
         [chromium] Fix navigation start time on cross-renderer navigation

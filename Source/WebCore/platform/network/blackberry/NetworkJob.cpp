@@ -911,7 +911,6 @@ void NetworkJob::handleAbout()
         result.append(String(BlackBerry::Platform::WEBKITCREDITS));
         result.append(String("</body></html>"));
         handled = true;
-#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     } else if (aboutWhat.startsWith("cache?query=", false)) {
         BlackBerry::Platform::Client* client = BlackBerry::Platform::Client::get();
         ASSERT(client);
@@ -929,6 +928,7 @@ void NetworkJob::handleAbout()
         result.append(String(client->generateHtmlFragmentForCacheKeys().data()));
         result.append(String("</body></html>"));
         handled = true;
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     } else if (equalIgnoringCase(aboutWhat, "cache/disable")) {
         BlackBerry::Platform::Client* client = BlackBerry::Platform::Client::get();
         ASSERT(client);
