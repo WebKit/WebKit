@@ -227,34 +227,15 @@ void BuiltInPDFView::updateScrollbars()
             scrollbarRect.contract(0, m_horizontalScrollbar->height());
         m_verticalScrollbar->setFrameRect(scrollbarRect);
     }
-}
+    
+    FrameView* frameView = m_frame->coreFrame()->view();
+    if (!frameView)
+        return;
 
-void BuiltInPDFView::didAddHorizontalScrollbar(Scrollbar* scrollbar)
-{
-    pluginView()->frame()->document()->didAddWheelEventHandler();
-    ScrollableArea::didAddHorizontalScrollbar(scrollbar);
-}
-
-void BuiltInPDFView::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
-{
-    ScrollableArea::willRemoveHorizontalScrollbar(scrollbar);
-    // FIXME: Maybe need a separate ScrollableArea::didRemoveHorizontalScrollbar callback?
-    if (PluginView* pluginView = this->pluginView())
-        pluginView->frame()->document()->didRemoveWheelEventHandler();
-}
-
-void BuiltInPDFView::didAddVerticalScrollbar(Scrollbar* scrollbar)
-{
-    pluginView()->frame()->document()->didAddWheelEventHandler();
-    ScrollableArea::didAddVerticalScrollbar(scrollbar);
-}
-
-void BuiltInPDFView::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
-{
-    ScrollableArea::willRemoveVerticalScrollbar(scrollbar);
-    // FIXME: Maybe need a separate ScrollableArea::didRemoveHorizontalScrollbar callback?
-    if (PluginView* pluginView = this->pluginView())
-        pluginView->frame()->document()->didRemoveWheelEventHandler();
+    if (m_verticalScrollbar || m_horizontalScrollbar)
+        frameView->addScrollableArea(this);
+    else
+        frameView->removeScrollableArea(this);
 }
 
 PassRefPtr<Scrollbar> BuiltInPDFView::createScrollbar(ScrollbarOrientation orientation)
@@ -348,8 +329,6 @@ void BuiltInPDFView::calculateSizes()
 
 bool BuiltInPDFView::initialize(const Parameters& parameters)
 {
-    m_frame->coreFrame()->view()->addScrollableArea(this);
-
     // Load the src URL if needed.
     m_sourceURL = parameters.url;
     if (!parameters.loadManually && !parameters.url.isEmpty())

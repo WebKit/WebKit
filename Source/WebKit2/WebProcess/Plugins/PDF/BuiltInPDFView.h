@@ -58,10 +58,6 @@ private:
     const PluginView* pluginView() const;
 
     void updateScrollbars();
-    void didAddHorizontalScrollbar(WebCore::Scrollbar*);
-    void willRemoveHorizontalScrollbar(WebCore::Scrollbar*);
-    void didAddVerticalScrollbar(WebCore::Scrollbar*);
-    void willRemoveVerticalScrollbar(WebCore::Scrollbar*);
     PassRefPtr<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
     void destroyScrollbar(WebCore::ScrollbarOrientation);
     void addArchiveResource();
