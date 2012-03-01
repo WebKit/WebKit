@@ -234,10 +234,17 @@ void CCLayerTreeHostImpl::optimizeRenderPasses(CCRenderPassList& passes)
 
     bool haveDamageRect = layerRendererCapabilities().usingPartialSwap;
 
+    // FIXME: compute overdraw metrics only occasionally, not every frame.
+    CCOverdrawCounts overdrawCounts;
     for (unsigned i = 0; i < passes.size(); ++i) {
         FloatRect damageRect = passes[i]->targetSurface()->damageTracker()->currentDamageRect();
-        passes[i]->optimizeQuads(haveDamageRect, damageRect);
+        passes[i]->optimizeQuads(haveDamageRect, damageRect, &overdrawCounts);
     }
+
+    float normalization = 1000.f / (m_layerRenderer->viewportWidth() * m_layerRenderer->viewportHeight());
+    PlatformSupport::histogramCustomCounts("Renderer4.pixelOverdrawOpaque", static_cast<int>(normalization * overdrawCounts.m_pixelsDrawnOpaque), 100, 1000000, 50);
+    PlatformSupport::histogramCustomCounts("Renderer4.pixelOverdrawTransparent", static_cast<int>(normalization * overdrawCounts.m_pixelsDrawnTransparent), 100, 1000000, 50);
+    PlatformSupport::histogramCustomCounts("Renderer4.pixelOverdrawCulled", static_cast<int>(normalization * overdrawCounts.m_pixelsCulled), 100, 1000000, 50);
 }
 
 void CCLayerTreeHostImpl::animateLayersRecursive(CCLayerImpl* current, double frameBeginTimeSecs, CCAnimationEventsVector& events, bool& didAnimate, bool& needsAnimateLayers)

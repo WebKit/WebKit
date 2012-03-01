@@ -38,6 +38,16 @@ class CCSharedQuadState;
 
 typedef Vector<OwnPtr<CCDrawQuad> > CCQuadList;
 
+struct CCOverdrawCounts {
+    // Count of pixels that are opaque (and thus occlude). Ideally this is no more
+    // than wiewport width x height.
+    float m_pixelsDrawnOpaque;
+    // Count of pixels that are possibly transparent, and cannot occlude.
+    float m_pixelsDrawnTransparent;
+    // Count of pixels not drawn as they are occluded by somthing opaque.
+    float m_pixelsCulled;
+};
+
 class CCRenderPass {
     WTF_MAKE_NONCOPYABLE(CCRenderPass);
 public:
@@ -46,7 +56,8 @@ public:
     void appendQuadsForLayer(CCLayerImpl*);
     void appendQuadsForRenderSurfaceLayer(CCLayerImpl*);
 
-    void optimizeQuads(bool haveDamageRect, const FloatRect& damageRect);
+    // Passing in 0 for CCOverdrawCounts is valid, and disables performing overdraw calculations.
+    void optimizeQuads(bool haveDamageRect, const FloatRect& damageRect, CCOverdrawCounts*);
 
     const CCQuadList& quadList() const { return m_quadList; }
     CCRenderSurface* targetSurface() const { return m_targetSurface; }

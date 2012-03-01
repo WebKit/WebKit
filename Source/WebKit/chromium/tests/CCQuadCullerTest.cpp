@@ -64,6 +64,7 @@ void setQuads(CCSharedQuadState* rootState, CCSharedQuadState* childState, CCQua
 
 #define DECLARE_AND_INITIALIZE_TEST_QUADS               \
     CCQuadList quadList;                                \
+    CCOverdrawCounts overdraw = {0, 0, 0};              \
     TransformationMatrix childTransform;                \
     IntSize rootSize = IntSize(300, 300);               \
     IntRect rootRect = IntRect(IntPoint(), rootSize);   \
@@ -79,8 +80,11 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpTopLeft)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect(), &overdraw);
     EXPECT_EQ(quadList.size(), 9u);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 90000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 0, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 40000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullWhenChildOpacityNotOne)
@@ -92,8 +96,11 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpacityNotOne)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect(), &overdraw);
     EXPECT_EQ(quadList.size(), 13u);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 90000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 40000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullWhenChildOpaqueFlagFalse)
@@ -105,8 +112,11 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpaqueFlagFalse)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect(), &overdraw);
     EXPECT_EQ(quadList.size(), 13u);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 90000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 40000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullCenterTileOnly)
@@ -120,7 +130,7 @@ TEST(CCQuadCullerTest, verifyCullCenterTileOnly)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect(), &overdraw);
     EXPECT_EQ(quadList.size(), 12u);
 
     IntRect quadVisibleRect1 = quadList[1].get()->quadVisibleRect();
@@ -137,6 +147,10 @@ TEST(CCQuadCullerTest, verifyCullCenterTileOnly)
     IntRect quadVisibleRect6 = quadList[6].get()->quadVisibleRect();
     EXPECT_EQ(quadVisibleRect6.height(), 50);
     EXPECT_EQ(quadVisibleRect6.y(), 250);
+
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 100000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 0, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 30000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize1)
@@ -158,8 +172,12 @@ TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize1)
     quadList.append(MakeTileQuad(childState.get(), IntRect(IntPoint(), IntSize(100, 100))));
 
     EXPECT_EQ(quadList.size(), 2u);
-    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect(), &overdraw);
     EXPECT_EQ(quadList.size(), 2u);
+
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 20363, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 0, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize2)
@@ -181,8 +199,12 @@ TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize2)
     quadList.append(MakeTileQuad(childState.get(), IntRect(IntPoint(), IntSize(100, 100))));
 
     EXPECT_EQ(quadList.size(), 2u);
-    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect(), &overdraw);
     EXPECT_EQ(quadList.size(), 2u);
+
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 19643, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 0, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullChildLinesUpBottomRight)
@@ -196,8 +218,11 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpBottomRight)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect(), &overdraw);
     EXPECT_EQ(quadList.size(), 9u);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 90000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 0, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 40000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullSubRegion)
@@ -212,8 +237,11 @@ TEST(CCQuadCullerTest, verifyCullSubRegion)
 
     setQuads(rootState.get(), childState.get(), quadList, childOpaqueRect);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect(), &overdraw);
     EXPECT_EQ(quadList.size(), 12u);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 90000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 30000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 10000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullSubRegion2)
@@ -228,8 +256,11 @@ TEST(CCQuadCullerTest, verifyCullSubRegion2)
 
     setQuads(rootState.get(), childState.get(), quadList, childOpaqueRect);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect(), &overdraw);
     EXPECT_EQ(quadList.size(), 12u);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 90000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 25000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 15000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullSubRegionCheckOvercull)
@@ -244,7 +275,7 @@ TEST(CCQuadCullerTest, verifyCullSubRegionCheckOvercull)
 
     setQuads(rootState.get(), childState.get(), quadList, childOpaqueRect);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect(), &overdraw);
     EXPECT_EQ(quadList.size(), 13u);
 }
 
@@ -260,8 +291,11 @@ TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsDontOcclude)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect(), &overdraw);
     EXPECT_EQ(quadList.size(), 13u);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 130000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 0, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 0, 1);
 }
 
 // This test requires some explanation: here we are rotating the quads to be culled.
@@ -282,11 +316,14 @@ TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsSafelyCulled)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect());
+    CCQuadCuller::cullOccludedQuads(quadList, false, IntRect(), &overdraw);
     EXPECT_EQ(quadList.size(), 12u);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 120000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 0, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 10000, 1);
 }
 
-TEST(CCQuadCullerTest, veriftyCullOutsideScissorOverTile)
+TEST(CCQuadCullerTest, verifyCullOutsideScissorOverTile)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
@@ -295,11 +332,27 @@ TEST(CCQuadCullerTest, veriftyCullOutsideScissorOverTile)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, true, IntRect(200, 100, 100, 100));
+    CCQuadCuller::cullOccludedQuads(quadList, true, IntRect(200, 100, 100, 100), &overdraw);
+    EXPECT_EQ(quadList.size(), 1u);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 10000, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 0, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 120000, 1);
+}
+
+TEST(CCQuadCullerTest, verifyCullOutsideScissorOverCulledTile)
+{
+    DECLARE_AND_INITIALIZE_TEST_QUADS
+
+    OwnPtr<CCSharedQuadState> rootState = CCSharedQuadState::create(TransformationMatrix(), TransformationMatrix(), rootRect, IntRect(), 1.0, true);
+    OwnPtr<CCSharedQuadState> childState = CCSharedQuadState::create(childTransform, TransformationMatrix(), childRect, IntRect(), 1.0, true);
+
+    setQuads(rootState.get(), childState.get(), quadList);
+    EXPECT_EQ(quadList.size(), 13u);
+    CCQuadCuller::cullOccludedQuads(quadList, true, IntRect(100, 100, 100, 100), &overdraw);
     EXPECT_EQ(quadList.size(), 1u);
 }
 
-TEST(CCQuadCullerTest, veriftyCullOutsideScissorOverCulledTile)
+TEST(CCQuadCullerTest, verifyCullOutsideScissorOverPartialTiles)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
@@ -308,24 +361,11 @@ TEST(CCQuadCullerTest, veriftyCullOutsideScissorOverCulledTile)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, true, IntRect(100, 100, 100, 100));
-    EXPECT_EQ(quadList.size(), 1u);
-}
-
-TEST(CCQuadCullerTest, veriftyCullOutsideScissorOverPartialTiles)
-{
-    DECLARE_AND_INITIALIZE_TEST_QUADS
-
-    OwnPtr<CCSharedQuadState> rootState = CCSharedQuadState::create(TransformationMatrix(), TransformationMatrix(), rootRect, IntRect(), 1.0, true);
-    OwnPtr<CCSharedQuadState> childState = CCSharedQuadState::create(childTransform, TransformationMatrix(), childRect, IntRect(), 1.0, true);
-
-    setQuads(rootState.get(), childState.get(), quadList);
-    EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, true, IntRect(50, 50, 200, 200));
+    CCQuadCuller::cullOccludedQuads(quadList, true, IntRect(50, 50, 200, 200), &overdraw);
     EXPECT_EQ(quadList.size(), 9u);
 }
 
-TEST(CCQuadCullerTest, veriftyCullOutsideScissorOverNoTiles)
+TEST(CCQuadCullerTest, verifyCullOutsideScissorOverNoTiles)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 
@@ -334,8 +374,11 @@ TEST(CCQuadCullerTest, veriftyCullOutsideScissorOverNoTiles)
 
     setQuads(rootState.get(), childState.get(), quadList);
     EXPECT_EQ(quadList.size(), 13u);
-    CCQuadCuller::cullOccludedQuads(quadList, true, IntRect(500, 500, 100, 100));
+    CCQuadCuller::cullOccludedQuads(quadList, true, IntRect(500, 500, 100, 100), &overdraw);
     EXPECT_EQ(quadList.size(), 0u);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnOpaque, 0, 1);
+    EXPECT_NEAR(overdraw.m_pixelsDrawnTransparent, 0, 1);
+    EXPECT_NEAR(overdraw.m_pixelsCulled, 130000, 1);
 }
 
 

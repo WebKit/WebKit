@@ -32,7 +32,9 @@ namespace WebCore {
 
 class CCQuadCuller {
 public:
-    static void cullOccludedQuads(CCQuadList&, bool haveDamageRect, const FloatRect& damageRect);
+    // Passing 0 for CCOverdrawCounts* is valid, and disable the extra computation
+    // done to estimate over draw statistics.
+    static void cullOccludedQuads(CCQuadList&, bool haveDamageRect, const FloatRect& damageRect, CCOverdrawCounts*);
 
 private:
     // Make non-instantiable.

@@ -1,3 +1,16 @@
+2012-02-29  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Estimate pixel count for frame rate control
+        https://bugs.webkit.org/show_bug.cgi?id=74982
+
+        Reviewed by James Robinson.
+
+        Adds mechanism to compute and collect statistics on pixel overdraw for selected frames.
+
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore):
+        (WebCore::TEST):
+
 2012-02-29  James Simonsen  <simonjam@chromium.org>
 
         [chromium] Fix navigation start time on cross-renderer navigation

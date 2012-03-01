@@ -1,3 +1,30 @@
+2012-02-29  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Estimate pixel count for frame rate control
+        https://bugs.webkit.org/show_bug.cgi?id=74982
+
+        Reviewed by James Robinson.
+
+        Value checks added to unit tests.
+
+        Adds mechanism to compute and collect statistics on pixel overdraw for selected frames.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::optimizeRenderPasses):
+        * platform/graphics/chromium/cc/CCQuadCuller.cpp:
+        (WebCore::wedgeProduct):
+        (WebCore):
+        (WebCore::quadArea):
+        (WebCore::CCQuadCuller::cullOccludedQuads):
+        * platform/graphics/chromium/cc/CCQuadCuller.h:
+        (CCQuadCuller):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::optimizeQuads):
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+        (CCOverdrawCounts):
+        (WebCore):
+        (CCRenderPass):
+
 2012-02-29  Jason Liu  <jason.liu@torchmobile.com.cn>
 
         [BlackBerry]Make about:cache feature available in release version.

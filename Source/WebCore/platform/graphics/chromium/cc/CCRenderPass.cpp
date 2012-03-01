@@ -65,9 +65,9 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer)
     m_sharedQuadStateList.append(sharedQuadState.release());
 }
 
-void CCRenderPass::optimizeQuads(bool haveDamageRect, const FloatRect& damageRect)
+void CCRenderPass::optimizeQuads(bool haveDamageRect, const FloatRect& damageRect, CCOverdrawCounts* overdraw)
 {
-    CCQuadCuller::cullOccludedQuads(m_quadList, haveDamageRect, damageRect);
+    CCQuadCuller::cullOccludedQuads(m_quadList, haveDamageRect, damageRect, overdraw);
 }
 
 }

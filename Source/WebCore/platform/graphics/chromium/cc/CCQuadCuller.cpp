@@ -75,7 +75,22 @@ static IntRect rectSubtractRegion(const Region& region, const IntRect& rect)
     return rect;
 }
 
-void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList, bool haveDamageRect, const FloatRect& damageRect)
+static float wedgeProduct(const FloatPoint& p1, const FloatPoint& p2)
+{
+    return p1.x() * p2.y() - p1.y() * p2.x();
+}
+
+// Computes area of quads that are possibly non-rectangular. Can
+// be easily extended to polygons.
+static float quadArea(const FloatQuad& quad)
+{
+    return fabs(0.5 * (wedgeProduct(quad.p1(), quad.p2()) +
+                   wedgeProduct(quad.p2(), quad.p3()) +
+                   wedgeProduct(quad.p3(), quad.p4()) +
+                   wedgeProduct(quad.p4(), quad.p1())));
+}
+
+void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList, bool haveDamageRect, const FloatRect& damageRect, CCOverdrawCounts* overdrawMetrics)
 {
     if (!quadList.size())
         return;
@@ -96,21 +111,44 @@ void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList, bool haveDamageRect, 
 
         IntRect transformedVisibleQuadRect = rectSubtractRegion(opaqueCoverageThusFar, transformedQuadRect);
         bool keepQuad = !transformedVisibleQuadRect.isEmpty();
-        if (!keepQuad)
-            continue;
 
         // See if we can reduce the number of pixels to draw by reducing the size of the draw
         // quad - we do this by changing its visible rect.
-        if (transformedVisibleQuadRect != transformedQuadRect && drawQuad->isLayerAxisAlignedIntRect())
-            drawQuad->setQuadVisibleRect(drawQuad->quadTransform().inverse().mapRect(transformedVisibleQuadRect));
+        bool didReduceQuadSize = false;
+        if (keepQuad) {
+            if (transformedVisibleQuadRect != transformedQuadRect && drawQuad->isLayerAxisAlignedIntRect()) {
+                drawQuad->setQuadVisibleRect(drawQuad->quadTransform().inverse().mapRect(transformedVisibleQuadRect));
+                didReduceQuadSize = true;
+            }
 
-        // When adding rect to opaque region, deflate it to stay conservative.
-        if (drawQuad->isLayerAxisAlignedIntRect() && !drawQuad->opaqueRect().isEmpty()) {
-            FloatRect floatOpaqueRect = drawQuad->quadTransform().mapRect(FloatRect(drawQuad->opaqueRect()));
-            opaqueCoverageThusFar.unite(Region(enclosedIntRect(floatOpaqueRect)));
+            // When adding rect to opaque region, deflate it to stay conservative.
+            if (drawQuad->isLayerAxisAlignedIntRect() && !drawQuad->opaqueRect().isEmpty()) {
+                FloatRect floatOpaqueRect = drawQuad->quadTransform().mapRect(FloatRect(drawQuad->opaqueRect()));
+                opaqueCoverageThusFar.unite(Region(enclosedIntRect(floatOpaqueRect)));
+            }
+
+            culledList.append(quadList[i].release());
         }
 
-        culledList.append(quadList[i].release());
+        if (overdrawMetrics) {
+            TRACE_EVENT("CCQuadCuller::cullOccludedQuads_OverdrawMetrics", 0, 0);
+            // We compute the area of the transformed quad, as this should be in pixels.
+            float area = quadArea(drawQuad->quadTransform().mapQuad(FloatQuad(drawQuad->quadRect())));
+            if (keepQuad) {
+                if (didReduceQuadSize) {
+                    float visibleQuadRectArea = quadArea(drawQuad->quadTransform().mapQuad(FloatQuad(drawQuad->quadVisibleRect())));
+                    overdrawMetrics->m_pixelsCulled += area - visibleQuadRectArea;
+                    area = visibleQuadRectArea;
+                }
+                IntRect visibleOpaqueRect(drawQuad->quadVisibleRect());
+                visibleOpaqueRect.intersect(drawQuad->opaqueRect());
+                FloatQuad visibleOpaqueQuad = drawQuad->quadTransform().mapQuad(FloatQuad(visibleOpaqueRect));
+                float opaqueArea = quadArea(visibleOpaqueQuad);
+                overdrawMetrics->m_pixelsDrawnOpaque += opaqueArea;
+                overdrawMetrics->m_pixelsDrawnTransparent += area - opaqueArea;
+            } else
+                overdrawMetrics->m_pixelsCulled += area;
+        }
     }
     quadList.clear(); // Release anything that remains.
 
