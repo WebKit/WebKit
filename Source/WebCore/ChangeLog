@@ -1,3 +1,15 @@
+2012-02-29  Ami Fischman  <fischman@chromium.org>
+
+        Continue the search for playable mime types among <source> children of <video> even when using data: URLs
+        https://bugs.webkit.org/show_bug.cgi?id=79934
+
+        Reviewed by Eric Carlson.
+
+        Test: media/sources-fallback-codecs.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+
 2012-02-29  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Add impl-thread support for animation-timing-function

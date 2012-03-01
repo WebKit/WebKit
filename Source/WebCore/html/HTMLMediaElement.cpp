@@ -2758,6 +2758,7 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidUR
     HTMLSourceElement* source = 0;
     bool lookingForStartNode = m_nextChildNodeToConsider;
     bool canUse = false;
+    String type;
 
     for (node = firstChild(); !canUse && node; node = node->nextSibling()) {
         if (lookingForStartNode && m_nextChildNodeToConsider != node)
@@ -2789,12 +2790,15 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidUR
                 goto check_again;
         }
 
-        if (source->fastHasAttribute(typeAttr)) {
+        type = source->type();
+        if (type.isEmpty() && mediaURL.protocolIsData())
+            type = mimeTypeFromDataURL(mediaURL);
+        if (!type.isEmpty()) {
 #if !LOG_DISABLED
             if (shouldLog)
-                LOG(Media, "HTMLMediaElement::selectNextSourceChild - 'type' is %s", source->type().utf8().data());
+                LOG(Media, "HTMLMediaElement::selectNextSourceChild - 'type' is %s", type.utf8().data());
 #endif
-            if (!MediaPlayer::supportsType(ContentType(source->type())))
+            if (!MediaPlayer::supportsType(ContentType(type)))
                 goto check_again;
         }
 
@@ -2812,7 +2816,7 @@ check_again:
 
     if (canUse) {
         if (contentType)
-            *contentType = ContentType(source->type());
+            *contentType = ContentType(type);
         m_currentSourceNode = source;
         m_nextChildNodeToConsider = source->nextSibling();
         if (!m_nextChildNodeToConsider)
