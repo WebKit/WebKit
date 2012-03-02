@@ -158,7 +158,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint
     // https://bugs.webkit.org/show_bug.cgi?id=47236
     if (style()->isHorizontalWritingMode()) {
         LayoutUnit clipTop = paintRect.y();
-        LayoutUnit clipHeight = max(static_cast<LayoutUnit>(style()->borderTopWidth()), legend->height());
+        LayoutUnit clipHeight = max(static_cast<LayoutUnit>(style()->borderTopWidth()), legend->height() - ((legend->height() - borderTop()) / 2));
         graphicsContext->clipOut(LayoutRect(paintRect.x() + legend->x(), clipTop, legend->width(), clipHeight));
     } else {
         LayoutUnit clipLeft = paintRect.x();

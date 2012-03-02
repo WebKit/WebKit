@@ -4339,3 +4339,8 @@ BUGWK77550 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.inter
 BUGCR76610 MAC WIN DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGCR83325 MAC DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.put.created.html = PASS CRASH
 BUGWK66908 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
+
+//NEED REBASELINING
+BUGWK78684 : fast/block/basic/fieldset-stretch-to-legend.html = FAIL
+BUGWK78684 : fast/borders/fieldsetBorderRadius.html = FAIL
+BUGWK78684 : fast/forms/fieldset-legend-padding-unclipped-fieldset-border.html = IMAGE IMAGE+TEXT
