@@ -852,8 +852,17 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
 
     if (callerFrame == CallFrame::noCaller() || !callerFrame || !callerFrame->codeBlock())
         return callerFrame;
-
+    
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
+    
+#if ENABLE(JIT)
+    if (!callFrame->hasReturnPC())
+        callframeIsHost = true;
+#endif
+#if ENABLE(DFG_JIT)
+    if (callFrame->isInlineCallFrame())
+        callframeIsHost = false;
+#endif
 
     if (callframeIsHost) {
         // Don't need to deal with inline callframes here as by definition we haven't
@@ -867,9 +876,10 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
 #endif
 #if ENABLE(JIT)
 #if ENABLE(DFG_JIT)
-        if (callerCodeBlock && callerCodeBlock->getJITType() == JITCode::DFGJIT)
-            bytecodeOffset = callerCodeBlock->codeOrigin(callerFrame->codeOriginIndexForDFG()).bytecodeIndex;
-        else
+        if (callerCodeBlock && callerCodeBlock->getJITType() == JITCode::DFGJIT) {
+            unsigned codeOriginIndex = callerFrame->codeOriginIndexForDFG();
+            bytecodeOffset = callerCodeBlock->codeOrigin(codeOriginIndex).bytecodeIndex;
+        } else
 #endif
             bytecodeOffset = callerFrame->bytecodeOffsetForNonDFGCode();
 #endif

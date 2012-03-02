@@ -1,3 +1,16 @@
+2012-03-02  Filip Pizlo  <fpizlo@apple.com>
+
+        When getting the line number of a call into a call frame with no code block, it's
+        incorrect to rely on the returnPC
+        https://bugs.webkit.org/show_bug.cgi?id=80195
+
+        Reviewed by Oliver Hunt.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::getCallerInfo):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs):
+
 2012-03-02  Han Hojong  <hojong.han@samsung.com>
 
         Expected results updated for checking type conversion

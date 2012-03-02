@@ -83,8 +83,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         slowCase.append(branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->registerFile().addressOfEnd()), regT1));
 
         // Initialize ArgumentCount.
-        emitFastArithReTagImmediate(regT0, regT2);
-        storePtr(regT2, Address(regT1, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))));
+        store32(regT0, Address(regT1, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
 
         // Initialize 'this'.
         emitGetVirtualRegister(thisValue, regT2);
