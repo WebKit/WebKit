@@ -136,7 +136,7 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
 
         touchPoint.setRect(touchRectForPosition(mouseEvent->localPos()));
         touchPoint.setLastPos(m_lastPos);
-        m_lastPos = mouseEvent->pos();
+        m_lastPos = mouseEvent->localPos();
 
         // Gesture recognition uses the screen position for the initial threshold
         // but since the canvas translates touch events we actually need to pass
