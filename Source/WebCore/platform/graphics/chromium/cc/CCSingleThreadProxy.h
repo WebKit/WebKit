@@ -76,6 +76,7 @@ private:
     bool commitIfNeeded();
     void doCommit();
     bool doComposite();
+    void didSwapFrame();
 
     // Accessed on main thread only.
     CCLayerTreeHost* m_layerTreeHost;

@@ -80,6 +80,8 @@ bool CCSingleThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect
 
     m_layerTreeHostImpl->readback(pixels, rect);
 
+    didSwapFrame();
+
     if (m_layerTreeHostImpl->isContextLost())
         return false;
 
@@ -266,8 +268,10 @@ void CCSingleThreadProxy::compositeImmediately()
     if (!commitIfNeeded())
         return;
 
-    if (doComposite())
+    if (doComposite()) {
         m_layerTreeHostImpl->swapBuffers();
+        didSwapFrame();
+    }
 }
 
 bool CCSingleThreadProxy::commitIfNeeded()
@@ -297,12 +301,15 @@ bool CCSingleThreadProxy::doComposite()
         return false;
     }
 
+    return true;
+}
+
+void CCSingleThreadProxy::didSwapFrame()
+{
     if (m_nextFrameIsNewlyCommittedFrame) {
         m_nextFrameIsNewlyCommittedFrame = false;
         m_layerTreeHost->didCommitAndDrawFrame();
     }
-
-    return true;
 }
 
 }
