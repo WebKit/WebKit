@@ -1,5 +1,21 @@
 2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Fix tests run with WTR not using QStyle theme
+        https://bugs.webkit.org/show_bug.cgi?id=80147
+
+        Reviewed by Csaba Osztrogonác.
+
+        Use an environment variable (set by WTR) to select the QStyle theme.
+        This is a temporary kludge until we rebase the layout tests to use the
+        QStyle independent "mobile" theme. This also temporarily breaks the
+        force_static_libs_as_shared build.
+
+        * Target.pri:
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+
+2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Compile WebCore without QtWidgets
         https://bugs.webkit.org/show_bug.cgi?id=80141
 

@@ -43,6 +43,9 @@
 #include "WebGraphicsLayer.h"
 #endif
 
+#include "RenderThemeQStyle.h"
+#include "ScrollbarThemeQStyle.h"
+
 #ifndef NDEBUG
 #if !OS(WINDOWS)
 #include <unistd.h>
@@ -203,6 +206,8 @@ Q_DECL_EXPORT int WebProcessMainQt(int argc, char** argv)
 #if USE(ACCELERATED_COMPOSITING)
     WebGraphicsLayer::initFactory();
 #endif
+    if (!qgetenv("QT_WEBKIT_USE_QSTYLE_THEME").isEmpty())
+        RenderThemeQt::setCustomTheme(RenderThemeQStyle::create, new ScrollbarThemeQStyle);
 
     WebKit::WebProcess::shared().initialize(identifier, RunLoop::main());
 

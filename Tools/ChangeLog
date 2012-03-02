@@ -1,3 +1,13 @@
+2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix tests run with WTR not using QStyle theme
+        https://bugs.webkit.org/show_bug.cgi?id=80147
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WebKitTestRunner/qt/main.cpp:
+        (main): Set environment variable for web process to use QStyle theme.
+
 2012-03-02  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, remove debug print call.

@@ -725,6 +725,7 @@ SOURCES += \
     WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp
 
+INCLUDEPATH += ../WebKit/qt/WebCoreSupport
 
 mac: {
     INCLUDEPATH += \
