@@ -1362,7 +1362,6 @@
           # This directory needs to be on the include path for multiple sub-targets of webcore.
           'direct_dependent_settings': {
             'include_dirs': [
-              '<(chromium_src_dir)/third_party/ffmpeg/patched-ffmpeg',
               '<(chromium_src_dir)/third_party/ffmpeg',
             ],
           },
