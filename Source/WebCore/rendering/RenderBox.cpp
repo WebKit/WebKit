@@ -1232,8 +1232,11 @@ LayoutRect RenderBox::overflowClipRect(const LayoutPoint& location, RenderRegion
     clipRect.setSize(clipRect.size() - LayoutSize(borderLeft() + borderRight(), borderTop() + borderBottom()));
 
     // Subtract out scrollbars if we have them.
-    if (layer())
+     if (layer()) {
+        if (style()->shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
+            clipRect.move(layer()->verticalScrollbarWidth(relevancy), 0);
         clipRect.contract(layer()->verticalScrollbarWidth(relevancy), layer()->horizontalScrollbarHeight(relevancy));
+     }
 
     return clipRect;
 }

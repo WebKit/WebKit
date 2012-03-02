@@ -755,6 +755,9 @@ private:
             ;
     }
 
+    LayoutUnit verticalScrollbarStart(int minX, int maxX) const;
+    LayoutUnit horizontalScrollbarStart(int minX) const;
+
 protected:
     // The bitfields are up here so they will fall into the padding from ScrollableArea on 64-bit.
 

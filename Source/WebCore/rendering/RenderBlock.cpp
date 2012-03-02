@@ -1652,8 +1652,12 @@ void RenderBlock::addOverflowFromPositionedObjects()
         positionedObject = *it;
         
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
-        if (positionedObject->style()->position() != FixedPosition)
-            addOverflowFromChild(positionedObject);
+        if (positionedObject->style()->position() != FixedPosition) {
+            int x = positionedObject->x();
+            if (style()->shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
+                x -= verticalScrollbarWidth();
+            addOverflowFromChild(positionedObject, IntSize(x, positionedObject->y()));
+        }
     }
 }
 
@@ -2049,6 +2053,8 @@ LayoutUnit RenderBlock::computeStartPositionDeltaForChildAvoidingFloats(const Re
 void RenderBlock::determineLogicalLeftPositionForChild(RenderBox* child)
 {
     LayoutUnit startPosition = borderStart() + paddingStart();
+    if (style()->shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
+        startPosition -= verticalScrollbarWidth();
     LayoutUnit totalAvailableLogicalWidth = borderAndPaddingLogicalWidth() + availableLogicalWidth();
 
     // Add in our start margin.

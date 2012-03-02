@@ -1834,6 +1834,13 @@ bool RenderLayer::isActive() const
     return page && page->focusController()->isActive();
 }
 
+static LayoutUnit cornerStart(const RenderLayer* layer, int minX, int maxX, int thickness)
+{
+    if (layer->renderer()->style()->shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
+        return minX + layer->renderer()->style()->borderLeftWidth();
+    return maxX - thickness - layer->renderer()->style()->borderRightWidth();
+}
+
 static IntRect cornerRect(const RenderLayer* layer, const IntRect& bounds)
 {
     int horizontalThickness;
@@ -1853,7 +1860,7 @@ static IntRect cornerRect(const RenderLayer* layer, const IntRect& bounds)
         horizontalThickness = layer->verticalScrollbar()->width();
         verticalThickness = layer->horizontalScrollbar()->height();
     }
-    return IntRect(bounds.maxX() - horizontalThickness - layer->renderer()->style()->borderRightWidth(), 
+    return IntRect(cornerStart(layer, bounds.x(), bounds.maxX(), horizontalThickness),
                    bounds.maxY() - verticalThickness - layer->renderer()->style()->borderBottomWidth(),
                    horizontalThickness, verticalThickness);
 }
@@ -1976,15 +1983,32 @@ IntPoint RenderLayer::currentMousePosition() const
     return renderer()->frame() ? renderer()->frame()->eventHandler()->currentMousePosition() : IntPoint();
 }
 
+LayoutUnit RenderLayer::verticalScrollbarStart(int minX, int maxX) const
+{
+    const RenderBox* box = renderBox();
+    if (renderer()->style()->shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
+        return minX + box->borderLeft();
+    return maxX - box->borderRight() - m_vBar->width();
+}
+
+LayoutUnit RenderLayer::horizontalScrollbarStart(int minX) const
+{
+    const RenderBox* box = renderBox();
+    int x = minX + box->borderLeft();
+    if (renderer()->style()->shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
+        x += m_vBar ? m_vBar->width() : resizerCornerRect(this, box->borderBoxRect()).width();
+    return x;
+}
+
 IntSize RenderLayer::scrollbarOffset(const Scrollbar* scrollbar) const
 {
     RenderBox* box = renderBox();
 
     if (scrollbar == m_vBar.get())
-        return IntSize(box->width() - box->borderRight() - scrollbar->width(), box->borderTop());
+        return IntSize(verticalScrollbarStart(0, box->width()), box->borderTop());
 
     if (scrollbar == m_hBar.get())
-        return IntSize(box->borderLeft(), box->height() - box->borderBottom() - scrollbar->height());
+        return IntSize(horizontalScrollbarStart(0), box->height() - box->borderBottom() - scrollbar->height());
     
     ASSERT_NOT_REACHED();
     return IntSize();
@@ -2009,9 +2033,9 @@ void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& r
     RenderBox* box = renderBox();
     ASSERT(box);
     if (scrollbar == m_vBar.get())
-        scrollRect.move(box->width() - box->borderRight() - scrollbar->width(), box->borderTop());
+        scrollRect.move(verticalScrollbarStart(0, box->width()), box->borderTop());
     else
-        scrollRect.move(box->borderLeft(), box->height() - box->borderBottom() - scrollbar->height());
+        scrollRect.move(horizontalScrollbarStart(0), box->height() - box->borderBottom() - scrollbar->height());
     renderer()->repaintRectangle(scrollRect);
 }
 
@@ -2176,13 +2200,13 @@ void RenderLayer::positionOverflowControls(const IntSize& offsetFromLayer)
     const IntRect& scrollCorner = scrollCornerRect();
     IntRect absBounds(borderBox.location() + offsetFromLayer, borderBox.size());
     if (m_vBar)
-        m_vBar->setFrameRect(IntRect(absBounds.maxX() - box->borderRight() - m_vBar->width(),
+        m_vBar->setFrameRect(IntRect(verticalScrollbarStart(absBounds.x(), absBounds.maxX()),
                                      absBounds.y() + box->borderTop(),
                                      m_vBar->width(),
                                      absBounds.height() - (box->borderTop() + box->borderBottom()) - scrollCorner.height()));
 
     if (m_hBar)
-        m_hBar->setFrameRect(IntRect(absBounds.x() + box->borderLeft(),
+        m_hBar->setFrameRect(IntRect(horizontalScrollbarStart(absBounds.x()),
                                      absBounds.maxY() - box->borderBottom() - m_hBar->height(),
                                      absBounds.width() - (box->borderLeft() + box->borderRight()) - scrollCorner.width(),
                                      m_hBar->height()));
@@ -2593,7 +2617,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint&
     int resizeControlSize = max(resizeControlRect.height(), 0);
 
     if (m_vBar && m_vBar->shouldParticipateInHitTesting()) {
-        LayoutRect vBarRect(box->width() - box->borderRight() - m_vBar->width(), 
+        LayoutRect vBarRect(verticalScrollbarStart(0, box->width()),
                             box->borderTop(),
                             m_vBar->width(),
                             box->height() - (box->borderTop() + box->borderBottom()) - (m_hBar ? m_hBar->height() : resizeControlSize));
@@ -2605,7 +2629,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint&
 
     resizeControlSize = max(resizeControlRect.width(), 0);
     if (m_hBar && m_hBar->shouldParticipateInHitTesting()) {
-        LayoutRect hBarRect(box->borderLeft(),
+        LayoutRect hBarRect(horizontalScrollbarStart(0),
                             box->height() - box->borderBottom() - m_hBar->height(),
                             box->width() - (box->borderLeft() + box->borderRight()) - (m_vBar ? m_vBar->width() : resizeControlSize),
                             m_hBar->height());

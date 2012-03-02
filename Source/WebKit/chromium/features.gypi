@@ -106,6 +106,7 @@
       # We can't define it here because it should be present only
       # in Debug or release_valgrind_build=1 builds.
       'WTF_USE_OPENTYPE_SANITIZER=1',
+      'WTF_USE_RTL_SCROLLBAR=1',
       'WTF_USE_SKIA_TEXT=<(enable_skia_text)',
       'WTF_USE_WEBP=1',
       'WTF_USE_WEBKIT_IMAGE_DECODERS=1',

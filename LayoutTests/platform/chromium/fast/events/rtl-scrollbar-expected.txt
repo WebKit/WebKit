@@ -1,0 +1,10 @@
+Test that we can scroll down an RTL element with its left-side scrollbar.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS document.getElementById('overflow').scrollTop > scrollTop is true
+

@@ -970,6 +970,12 @@ public:
 #else
     bool hasFilter() const { return false; }
 #endif
+
+#if USE(RTL_SCROLLBAR)
+    bool shouldPlaceBlockDirectionScrollbarOnLogicalLeft() const { return !isLeftToRightDirection() && isHorizontalWritingMode(); }
+#else
+    bool shouldPlaceBlockDirectionScrollbarOnLogicalLeft() const { return false; }
+#endif
         
 // attribute setter methods
 

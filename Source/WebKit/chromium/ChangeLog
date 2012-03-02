@@ -1,3 +1,16 @@
+2012-03-01  Hironori Bono  <hbono@chromium.org>
+
+        Render overflow controls of an RTL element to its left-side.
+        https://bugs.webkit.org/show_bug.cgi?id=54623
+
+        This change adds a new flag WTF_USE_RTL_SCROLLBAR and render the
+        vertical scrollbars and resizers of RTL elements to their left side if
+        this new flag is enabled.
+
+        Reviewed by Ryosuke Niwa.
+
+        * features.gypi: Set WTF_USE_RTL_SCROLLBAR to 1 on Chromium.
+
 2012-03-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Rename LayerChromium::name to debugName to be more consistent with other debug properties, make threadsafe
