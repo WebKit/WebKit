@@ -100,8 +100,6 @@ public:
     // NOTE: |imageBuffer| may be deleted before the |restore| is invoked.
     void beginLayerClippedToImage(const FloatRect&, const ImageBuffer*);
     void clipPathAntiAliased(const SkPath&);
-    // If non-empty, the layer is clipped to the bitmap.
-    const SkBitmap& clippedToImage() const;
 
     // Sets up the common flags on a paint for antialiasing, effects, etc.
     // This is implicitly called by setupPaintFill and setupPaintStroke, but

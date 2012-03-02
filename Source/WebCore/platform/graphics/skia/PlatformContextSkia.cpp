@@ -267,11 +267,6 @@ void PlatformContextSkia::clipPathAntiAliased(const SkPath& clipPath)
     canvas()->clipPath(clipPath, SkRegion::kIntersect_Op, true);
 }
 
-const SkBitmap& PlatformContextSkia::clippedToImage() const
-{
-    return m_state->m_imageBufferClip;
-}
-
 void PlatformContextSkia::restore()
 {
     if (!m_state->m_imageBufferClip.empty()) {

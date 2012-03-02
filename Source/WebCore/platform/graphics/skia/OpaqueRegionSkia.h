@@ -53,13 +53,15 @@ public:
     // The resulting opaque region as a single rect.
     IntRect asRect() const;
 
-    void didDrawRect(const PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&, const SkBitmap*);
-    void didDrawPath(const PlatformContextSkia*, const AffineTransform&, const SkPath&, const SkPaint&);
-    void didDrawPoints(const PlatformContextSkia*, const AffineTransform&, SkCanvas::PointMode, int numPoints, const SkPoint[], const SkPaint&);
-    void didDrawBounded(const PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&);
+    // FIXME: make all the PlatformContextSkia* into a const pointer when Skia fixes LayerIter's SkCanvas*.
+
+    void didDrawRect(PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&, const SkBitmap*);
+    void didDrawPath(PlatformContextSkia*, const AffineTransform&, const SkPath&, const SkPaint&);
+    void didDrawPoints(PlatformContextSkia*, const AffineTransform&, SkCanvas::PointMode, int numPoints, const SkPoint[], const SkPaint&);
+    void didDrawBounded(PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&);
 
 private:
-    void didDraw(const PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&, bool drawsOpaque, bool fillsBounds);
+    void didDraw(PlatformContextSkia*, const AffineTransform&, const SkRect&, const SkPaint&, bool drawsOpaque, bool fillsBounds);
     void didDrawUnbounded(const SkPaint&, bool drawsOpaque);
     void markRectAsOpaque(const SkRect&);
     void markRectAsNonOpaque(const SkRect&);

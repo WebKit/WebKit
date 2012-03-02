@@ -147,7 +147,7 @@ static inline bool paintIsOpaque(const SkPaint& paint, const SkBitmap* bitmap = 
     return true;
 }
 
-void OpaqueRegionSkia::didDrawRect(const PlatformContextSkia* context, const AffineTransform& transform, const SkRect& fillRect, const SkPaint& paint, const SkBitmap* bitmap)
+void OpaqueRegionSkia::didDrawRect(PlatformContextSkia* context, const AffineTransform& transform, const SkRect& fillRect, const SkPaint& paint, const SkBitmap* bitmap)
 {
     // Any stroking may put alpha in pixels even if the filling part does not.
     if (paint.getStyle() != SkPaint::kFill_Style) {
@@ -169,7 +169,7 @@ void OpaqueRegionSkia::didDrawRect(const PlatformContextSkia* context, const Aff
     didDraw(context, transform, fillRect, paint, opaque, fillsBounds);
 }
 
-void OpaqueRegionSkia::didDrawPath(const PlatformContextSkia* context, const AffineTransform& transform, const SkPath& path, const SkPaint& paint)
+void OpaqueRegionSkia::didDrawPath(PlatformContextSkia* context, const AffineTransform& transform, const SkPath& path, const SkPaint& paint)
 {
     SkRect rect;
     if (path.isRect(&rect)) {
@@ -188,7 +188,7 @@ void OpaqueRegionSkia::didDrawPath(const PlatformContextSkia* context, const Aff
     }
 }
 
-void OpaqueRegionSkia::didDrawPoints(const PlatformContextSkia* context, const AffineTransform& transform, SkCanvas::PointMode mode, int numPoints, const SkPoint points[], const SkPaint& paint)
+void OpaqueRegionSkia::didDrawPoints(PlatformContextSkia* context, const AffineTransform& transform, SkCanvas::PointMode mode, int numPoints, const SkPoint points[], const SkPaint& paint)
 {
     if (!numPoints)
         return;
@@ -217,7 +217,7 @@ void OpaqueRegionSkia::didDrawPoints(const PlatformContextSkia* context, const A
     }
 }
 
-void OpaqueRegionSkia::didDrawBounded(const PlatformContextSkia* context, const AffineTransform& transform, const SkRect& bounds, const SkPaint& paint)
+void OpaqueRegionSkia::didDrawBounded(PlatformContextSkia* context, const AffineTransform& transform, const SkRect& bounds, const SkPaint& paint)
 {
     bool opaque = paintIsOpaque(paint);
     bool fillsBounds = false;
@@ -231,9 +231,12 @@ void OpaqueRegionSkia::didDrawBounded(const PlatformContextSkia* context, const 
     }
 }
 
-void OpaqueRegionSkia::didDraw(const PlatformContextSkia* context, const AffineTransform& transform, const SkRect& rect, const SkPaint& paint, bool drawsOpaque, bool fillsBounds)
+void OpaqueRegionSkia::didDraw(PlatformContextSkia* context, const AffineTransform& transform, const SkRect& rect, const SkPaint& paint, bool drawsOpaque, bool fillsBounds)
 {
     SkRect targetRect = rect;
+
+    bool xfersOpaque = xfermodeIsOpaque(paint, drawsOpaque);
+    bool preservesOpaque = xfermodePreservesOpaque(paint, drawsOpaque);
 
     // Apply the transform to device coordinate space.
     SkMatrix canvasTransform = context->canvas()->getTotalMatrix();
@@ -249,17 +252,33 @@ void OpaqueRegionSkia::didDraw(const PlatformContextSkia* context, const AffineT
         if (!targetRect.intersect(SkIntToScalar(deviceClip.fLeft), SkIntToScalar(deviceClip.fTop), SkIntToScalar(deviceClip.fRight), SkIntToScalar(deviceClip.fBottom)))
             return;
     }
-    if (!context->clippedToImage().isOpaque())
-        fillsBounds = false;
+
+    // Apply any layers that we are drawing into.
+    for (SkCanvas::LayerIter it(context->canvas(), false); !it.done(); it.next()) {
+        // Apply the layer's clip (which is in device space)
+        const SkRegion& deviceLayerClip = it.clip();
+        if (deviceLayerClip.isEmpty() || !deviceLayerClip.isRect())
+            fillsBounds = false;
+        else {
+            SkIRect clipBounds = it.clip().getBounds();
+            if (!targetRect.intersect(SkIntToScalar(clipBounds.fLeft), SkIntToScalar(clipBounds.fTop), SkIntToScalar(clipBounds.fRight), SkIntToScalar(clipBounds.fBottom)))
+                return;
+        }
+
+        // Make sure the paint stays opaque through the layer.
+        bool drawsOpaque = paintIsOpaque(it.paint());
+        xfersOpaque = xfersOpaque && xfermodeIsOpaque(it.paint(), drawsOpaque);
+        preservesOpaque = preservesOpaque && xfermodePreservesOpaque(it.paint(), drawsOpaque);
+    }
 
     // Apply the transform to the tracking space.
     SkMatrix canvasToTargetTransform = transform;
     if (!canvasToTargetTransform.mapRect(&targetRect))
         fillsBounds = false;
 
-    if (fillsBounds && xfermodeIsOpaque(paint, drawsOpaque))
+    if (fillsBounds && xfersOpaque)
         markRectAsOpaque(targetRect);
-    else if (SkRect::Intersects(targetRect, m_opaqueRect) && !xfermodePreservesOpaque(paint, drawsOpaque))
+    else if (SkRect::Intersects(targetRect, m_opaqueRect) && !preservesOpaque)
         markRectAsNonOpaque(targetRect);
 }
 
@@ -338,5 +357,6 @@ void OpaqueRegionSkia::markRectAsNonOpaque(const SkRect& rect)
     else
         m_opaqueRect = vertical;
 }
+
 
 } // namespace WebCore
