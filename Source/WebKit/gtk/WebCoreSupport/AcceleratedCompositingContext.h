@@ -28,8 +28,8 @@
 #include <wtf/PassOwnPtr.h>
 
 #if USE(TEXTURE_MAPPER_GL)
+#include "GLContext.h"
 #include "TextureMapperLayer.h"
-#include "WindowGLContext.h"
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -69,11 +69,8 @@ private:
 #if USE(CLUTTER)
     GtkWidget* m_rootLayerEmbedder;
 #elif USE(TEXTURE_MAPPER_GL)
-    void initializeIfNecessary();
-
-    bool m_initialized;
+    WebCore::GLContext* glContext();
     WebCore::TextureMapperLayer* m_rootTextureMapperLayer;
-    OwnPtr<WebCore::WindowGLContext> m_context;
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
 #endif
 

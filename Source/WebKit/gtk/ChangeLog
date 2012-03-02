@@ -1,3 +1,28 @@
+2012-02-18  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [AC] Generalize WindowContextGL
+        https://bugs.webkit.org/show_bug.cgi?id=78969
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use GLContext instead of WindowContextGL. Remove a few unnecessary
+        namespace specifiers in the implementation of AcceleratedCompositingContext.
+
+        * WebCoreSupport/AcceleratedCompositingContext.h: Now we find the GLContext
+        of our widget, which is cached in WebCore. Remove m_initialized as it isn't needed.
+        (AcceleratedCompositingContext):
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+        (WebKit::AcceleratedCompositingContext::AcceleratedCompositingContext): No longer initialize
+        m_initialized.
+        (WebKit::AcceleratedCompositingContext::glContext): Added.
+        (WebKit::AcceleratedCompositingContext::renderLayersToWindow): Use glContext() now.
+        (WebKit::AcceleratedCompositingContext::attachRootGraphicsLayer): Ditto.
+        (WebKit::AcceleratedCompositingContext::notifyAnimationStarted): Remove unnecessary namespace specifier.
+        (WebKit::AcceleratedCompositingContext::notifySyncRequired): Ditto.
+        (WebKit::AcceleratedCompositingContext::paintContents): Ditto.
+        (WebKit::AcceleratedCompositingContext::showDebugBorders): Ditto.
+        (WebKit::AcceleratedCompositingContext::showRepaintCounter): Ditto.
+
 2012-03-02  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Smooth scrolling support

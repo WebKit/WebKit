@@ -42,7 +42,6 @@ namespace WebKit {
 AcceleratedCompositingContext::AcceleratedCompositingContext(WebKitWebView* webView)
     : m_webView(webView)
     , m_syncTimerCallbackId(0)
-    , m_initialized(false)
     , m_rootTextureMapperLayer(0)
 {
 }
@@ -53,38 +52,30 @@ AcceleratedCompositingContext::~AcceleratedCompositingContext()
         g_source_remove(m_syncTimerCallbackId);
 }
 
-void AcceleratedCompositingContext::initializeIfNecessary()
-{
-    if (m_initialized)
-        return;
-
-    m_initialized = true;
-
-    // The GTK+ docs say that we can fail to create a native window.
-    // FIXME: We should fall back to the ImageBuffer TextureMapper when it exists.
-    if (!m_webView->priv->hasNativeWindow)
-        return;
-
-    m_context = WebCore::WindowGLContext::createContextWithGdkWindow(gtk_widget_get_window(GTK_WIDGET(m_webView)));
-}
-
 bool AcceleratedCompositingContext::enabled()
 {
     return m_rootTextureMapperLayer && m_textureMapper;
 }
 
+GLContext* AcceleratedCompositingContext::glContext()
+{
+    GLContext* context = GLContext::getContextForWidget(GTK_WIDGET(m_webView));
+    if (!context->canRenderToDefaultFramebuffer())
+        return 0;
+    return context;
+}
 
 bool AcceleratedCompositingContext::renderLayersToWindow(const IntRect& clipRect)
 {
     if (!enabled())
         return false;
 
-    // We initialize the context lazily here so that we know that the GdkWindow realized.
-    initializeIfNecessary();
-    if (!m_context)
+    GLContext* context = glContext();
+    if (!context)
         return false;
 
-    m_context->startDrawing();
+    if (!context->makeContextCurrent())
+        return false;
 
     GtkAllocation allocation;
     gtk_widget_get_allocation(GTK_WIDGET(m_webView), &allocation);
@@ -94,7 +85,7 @@ bool AcceleratedCompositingContext::renderLayersToWindow(const IntRect& clipRect
     m_rootTextureMapperLayer->paint();
     m_textureMapper->endPainting();
 
-    m_context->finishDrawing();
+    context->swapBuffers();
     return true;
 }
 
@@ -114,14 +105,14 @@ void AcceleratedCompositingContext::attachRootGraphicsLayer(GraphicsLayer* graph
     m_rootGraphicsLayer->setNeedsDisplay();
     m_rootGraphicsLayer->setSize(core(m_webView)->mainFrame()->view()->frameRect().size());
 
-    // We initialize the context lazily here so that we know that the GdkWindow realized.
-    initializeIfNecessary();
-    if (!m_context)
+    GLContext* context = glContext();
+    if (!context)
         return;
 
     // The context needs to be active when creating the texture mapper. It's fine to
-    // avoid calling endDrawing here, because it will just initialize shaders.
-    m_context->startDrawing();
+    // avoid calling swapBuffers here, because it will just initialize shaders.
+    if (!context->makeContextCurrent())
+        return;
 
     GtkAllocation allocation;
     gtk_widget_get_allocation(GTK_WIDGET(m_webView), &allocation);
@@ -188,28 +179,28 @@ void AcceleratedCompositingContext::syncLayersTimeout()
         m_syncTimerCallbackId = g_timeout_add_full(GDK_PRIORITY_EVENTS, 1000.0 / 60.0, reinterpret_cast<GSourceFunc>(syncLayersTimeoutCallback), this, 0);
 }
 
-void AcceleratedCompositingContext::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)
+void AcceleratedCompositingContext::notifyAnimationStarted(const GraphicsLayer*, double time)
 {
 
 }
-void AcceleratedCompositingContext::notifySyncRequired(const WebCore::GraphicsLayer*)
+void AcceleratedCompositingContext::notifySyncRequired(const GraphicsLayer*)
 {
 
 }
 
-void AcceleratedCompositingContext::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& rectToPaint)
+void AcceleratedCompositingContext::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& rectToPaint)
 {
     cairo_t* cr = context.platformContext()->cr();
     copyRectFromCairoSurfaceToContext(m_webView->priv->backingStore->cairoSurface(), cr,
                                       IntSize(), rectToPaint);
 }
 
-bool AcceleratedCompositingContext::showDebugBorders(const WebCore::GraphicsLayer*) const
+bool AcceleratedCompositingContext::showDebugBorders(const GraphicsLayer*) const
 {
     return false;
 }
 
-bool AcceleratedCompositingContext::showRepaintCounter(const WebCore::GraphicsLayer*) const
+bool AcceleratedCompositingContext::showRepaintCounter(const GraphicsLayer*) const
 {
     return false;
 }
