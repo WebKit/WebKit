@@ -3410,15 +3410,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInitial)
             m_style->resetColumnRule();
         return;
-    case CSSPropertyWebkitRegionBreakBefore:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(regionBreakBefore, RegionBreakBefore, PageBreak)
-        return;
-    case CSSPropertyWebkitRegionBreakAfter:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(regionBreakAfter, RegionBreakAfter, PageBreak)
-        return;
-    case CSSPropertyWebkitRegionBreakInside:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(regionBreakInside, RegionBreakInside, PageBreak)
-        return;
     case CSSPropertyWebkitMarquee:
         if (!m_parentNode || !value->isInheritedValue())
             return;
@@ -4021,6 +4012,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitPerspectiveOriginX:
     case CSSPropertyWebkitPerspectiveOriginY:
     case CSSPropertyWebkitPrintColorAdjust:
+    case CSSPropertyWebkitRegionBreakAfter:
+    case CSSPropertyWebkitRegionBreakBefore:
+    case CSSPropertyWebkitRegionBreakInside:
     case CSSPropertyWebkitRegionOverflow:
     case CSSPropertyWebkitRtlOrdering:
     case CSSPropertyWebkitTextCombine:
