@@ -273,7 +273,7 @@ WebWidget* WebViewHost::createPopupMenu(const WebPopupMenuInfo&)
 
 WebStorageNamespace* WebViewHost::createSessionStorageNamespace(unsigned quota)
 {
-    return WebKit::WebStorageNamespace::createSessionStorageNamespace(quota);
+    return webkit_support::CreateSessionStorageNamespace(quota);
 }
 
 WebKit::WebGraphicsContext3D* WebViewHost::createGraphicsContext3D(const WebKit::WebGraphicsContext3D::Attributes& attributes, bool direct)
