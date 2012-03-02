@@ -1106,8 +1106,15 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
 
     case WebInputEvent::GestureScrollBegin:
         m_gestureStartLocation = WebPoint(point.x, point.y);
-        // Fallthrough
+        event.x = m_gestureStartLocation.x;
+        event.y = m_gestureStartLocation.y;
+        break;
     case WebInputEvent::GestureScrollEnd:
+        event.deltaX = static_cast<float>(arguments[0].toDouble());
+        event.deltaY = static_cast<float>(arguments[1].toDouble());
+        event.x = m_gestureStartLocation.x;
+        event.y = m_gestureStartLocation.y;
+        break;
     case WebInputEvent::GestureTap:
         event.x = point.x;
         event.y = point.y;

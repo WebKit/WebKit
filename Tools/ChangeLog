@@ -1,3 +1,13 @@
+2012-03-02  Robert Kroeger  <rjkroege@chromium.org>
+
+        Updated EventSender to send complete gesture events.
+        https://bugs.webkit.org/show_bug.cgi?id=80075
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::gestureEvent): set additional parameters in sent events.
+
 2012-03-01  Kalev Lember  <kalevlember@gmail.com>
 
         WebKitTestRunner: Explicitly include unistd.h for gcc 4.7
