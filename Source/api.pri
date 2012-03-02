@@ -79,7 +79,6 @@ HEADERS += \
     $$PWD/WebKit/qt/WebCoreSupport/PageClientQt.h \
     $$PWD/WebKit/qt/WebCoreSupport/PopupMenuQt.h \
     $$PWD/WebKit/qt/WebCoreSupport/QtPlatformPlugin.h \
-    $$PWD/WebKit/qt/WebCoreSupport/QtStyleOptionWebComboBox.h.h \
     $$PWD/WebKit/qt/WebCoreSupport/RenderThemeQStyle.h \
     $$PWD/WebKit/qt/WebCoreSupport/ScrollbarThemeQStyle.h \
     $$PWD/WebKit/qt/WebCoreSupport/SearchPopupMenuQt.h \

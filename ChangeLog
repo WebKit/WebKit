@@ -1,3 +1,11 @@
+2012-03-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Remove deleted file from api.pro
+
+        Reviewed by Noam Rosenthal.
+
+        * Source/api.pri:
+
 2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Compile WebCore without QtWidgets
