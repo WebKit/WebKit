@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2012, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -23,39 +23,44 @@
  * DAMAGE.
  */
 
-#ifndef DOMWindowIndexedDatabase_h
-#define DOMWindowIndexedDatabase_h
+#include "config.h"
+#include "PageGroupIndexedDatabase.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "DOMWindowProperty.h"
-#include "Supplementable.h"
+#include "IDBFactoryBackendInterface.h"
+#include "PageGroup.h"
 
 namespace WebCore {
 
-class IDBFactory;
-class DOMWindow;
+PageGroupIndexedDatabase::PageGroupIndexedDatabase()
+{
+}
 
-class DOMWindowIndexedDatabase : public DOMWindowProperty, public Supplement<DOMWindow> {
-public:
-    virtual ~DOMWindowIndexedDatabase();
-    static DOMWindowIndexedDatabase* from(DOMWindow*);
+PageGroupIndexedDatabase::~PageGroupIndexedDatabase()
+{
+}
 
-    static IDBFactory* webkitIndexedDB(DOMWindow*);
+PageGroupIndexedDatabase* PageGroupIndexedDatabase::from(PageGroup& group)
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("PageGroupIndexedDatabase"));
+    PageGroupIndexedDatabase* supplement = static_cast<PageGroupIndexedDatabase*>(Supplement<PageGroup>::from(&group, name));
+    if (!supplement) {
+        supplement = new PageGroupIndexedDatabase();
+        provideTo(&group, name, adoptPtr(supplement));
+    }
+    return supplement;
+}
 
-    virtual void disconnectFrame() OVERRIDE;
-
-private:
-    explicit DOMWindowIndexedDatabase(DOMWindow*);
-
-    IDBFactory* webkitIndexedDB();
-
-    DOMWindow* m_window;
-    RefPtr<IDBFactory> m_idbFactory;
-};
+IDBFactoryBackendInterface* PageGroupIndexedDatabase::factoryBackend()
+{
+    // Do not add page setting based access control here since this object is shared by all pages in
+    // the group and having per-page controls is misleading.
+    if (!m_factoryBackend)
+        m_factoryBackend = IDBFactoryBackendInterface::create();
+    return m_factoryBackend.get();
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
-
-#endif // DOMWindowIndexedDatabase_h

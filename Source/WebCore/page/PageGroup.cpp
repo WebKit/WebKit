@@ -261,17 +261,6 @@ StorageNamespace* PageGroup::localStorage()
     return m_localStorage.get();
 }
 
-#if ENABLE(INDEXED_DATABASE)
-IDBFactoryBackendInterface* PageGroup::idbFactory()
-{
-    // Do not add page setting based access control here since this object is shared by all pages in
-    // the group and having per-page controls is misleading.
-    if (!m_factoryBackend)
-        m_factoryBackend = IDBFactoryBackendInterface::create();
-    return m_factoryBackend.get();
-}
-#endif
-
 void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& source, const KURL& url,
                                      PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,
                                      UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames)

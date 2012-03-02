@@ -1296,6 +1296,8 @@
             'Modules/geolocation/NavigatorGeolocation.h',
             'Modules/indexeddb/DOMWindowIndexedDatabase.cpp',
             'Modules/indexeddb/DOMWindowIndexedDatabase.h',
+            'Modules/indexeddb/PageGroupIndexedDatabase.cpp',
+            'Modules/indexeddb/PageGroupIndexedDatabase.h',
             'Modules/intents/Intent.cpp',
             'Modules/intents/Intent.h',
             'Modules/intents/IntentRequest.cpp',

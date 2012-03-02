@@ -58,6 +58,7 @@
 #include "InstrumentingAgents.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PageGroupIndexedDatabase.h"
 #include "SecurityOrigin.h"
 
 #include <wtf/Vector.h>
@@ -633,7 +634,7 @@ static Document* assertDocument(ErrorString* errorString, const String& frameId,
 static IDBFactoryBackendInterface* assertIDBFactory(ErrorString* errorString, Document* document)
 {
     Page* page = document ? document->page() : 0;
-    IDBFactoryBackendInterface* idbFactory = page ? page->group().idbFactory() : 0;
+    IDBFactoryBackendInterface* idbFactory = page ? PageGroupIndexedDatabase::from(page->group())->factoryBackend() : 0;
 
     if (!idbFactory)
         *errorString = "No IndexedDB factory for given frame found";

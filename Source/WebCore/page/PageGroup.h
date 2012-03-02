@@ -29,6 +29,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include "LinkHash.h"
+#include "Supplementable.h"
 #include "UserScript.h"
 #include "UserStyleSheet.h"
 #include <wtf/text/StringHash.h>
@@ -42,7 +43,7 @@ namespace WebCore {
     class SecurityOrigin;
     class StorageNamespace;
 
-    class PageGroup {
+    class PageGroup : public Supplementable<PageGroup> {
         WTF_MAKE_NONCOPYABLE(PageGroup); WTF_MAKE_FAST_ALLOCATED;
     public:
         PageGroup(const String& name);
@@ -81,11 +82,6 @@ namespace WebCore {
         StorageNamespace* localStorage();
         bool hasLocalStorage() { return m_localStorage; }
 
-#if ENABLE(INDEXED_DATABASE)
-        IDBFactoryBackendInterface* idbFactory();
-        bool hasIDBFactory() { return m_factoryBackend; }
-#endif
-
         void addUserScriptToWorld(DOMWrapperWorld*, const String& source, const KURL&,
                                   PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,
                                   UserScriptInjectionTime, UserContentInjectedFrames);
@@ -122,9 +118,6 @@ namespace WebCore {
 
         unsigned m_identifier;
         RefPtr<StorageNamespace> m_localStorage;
-#if ENABLE(INDEXED_DATABASE)
-        RefPtr<IDBFactoryBackendInterface> m_factoryBackend;
-#endif
 
         OwnPtr<UserScriptMap> m_userScripts;
         OwnPtr<UserStyleSheetMap> m_userStyleSheets;

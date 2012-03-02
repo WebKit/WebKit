@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2012, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -23,39 +23,33 @@
  * DAMAGE.
  */
 
-#ifndef DOMWindowIndexedDatabase_h
-#define DOMWindowIndexedDatabase_h
+#ifndef PageGroupIndexedDatabase_h
+#define PageGroupIndexedDatabase_h
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "DOMWindowProperty.h"
 #include "Supplementable.h"
 
 namespace WebCore {
 
-class IDBFactory;
-class DOMWindow;
+class IDBFactoryBackendInterface;
+class PageGroup;
 
-class DOMWindowIndexedDatabase : public DOMWindowProperty, public Supplement<DOMWindow> {
+class PageGroupIndexedDatabase : public Supplement<PageGroup> {
 public:
-    virtual ~DOMWindowIndexedDatabase();
-    static DOMWindowIndexedDatabase* from(DOMWindow*);
+    virtual ~PageGroupIndexedDatabase();
+    static PageGroupIndexedDatabase* from(PageGroup&);
 
-    static IDBFactory* webkitIndexedDB(DOMWindow*);
-
-    virtual void disconnectFrame() OVERRIDE;
+    IDBFactoryBackendInterface* factoryBackend();
 
 private:
-    explicit DOMWindowIndexedDatabase(DOMWindow*);
+    PageGroupIndexedDatabase();
 
-    IDBFactory* webkitIndexedDB();
-
-    DOMWindow* m_window;
-    RefPtr<IDBFactory> m_idbFactory;
+    RefPtr<IDBFactoryBackendInterface> m_factoryBackend;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
 
-#endif // DOMWindowIndexedDatabase_h
+#endif // PageGroupIndexedDatabase_h
