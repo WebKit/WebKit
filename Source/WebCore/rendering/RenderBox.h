@@ -452,6 +452,28 @@ public:
 
     virtual bool hasRelativeDimensions() const;
 
+    bool hasHorizontalLayoutOverflow() const
+    {
+        if (RenderOverflow* overflow = hasRenderOverflow()) {
+            LayoutRect layoutOverflowRect = overflow->layoutOverflowRect();
+            flipForWritingMode(layoutOverflowRect);
+            return layoutOverflowRect.x() < x() || layoutOverflowRect.maxX() > x() + logicalWidth();
+        }
+
+        return false;
+    }
+
+    bool hasVerticalLayoutOverflow() const
+    {
+        if (RenderOverflow* overflow = hasRenderOverflow()) {
+            LayoutRect layoutOverflowRect = overflow->layoutOverflowRect();
+            flipForWritingMode(layoutOverflowRect);
+            return layoutOverflowRect.y() < y() || layoutOverflowRect.maxY() > y() + logicalHeight();
+        }
+
+        return false;
+    }
+
 protected:
     virtual void willBeDestroyed();
 

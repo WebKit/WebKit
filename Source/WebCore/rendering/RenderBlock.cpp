@@ -38,6 +38,7 @@
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "LayoutRepainter.h"
+#include "OverflowEvent.h"
 #include "PODFreeListArena.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -84,6 +85,50 @@ static int gDelayUpdateScrollInfo = 0;
 static DelayedUpdateScrollInfoSet* gDelayedUpdateScrollInfoSet = 0;
 
 bool RenderBlock::s_canPropagateFloatIntoSibling = false;
+
+// This class helps dispatching the 'overflow' event on layout change. overflow can be set on RenderBoxes, yet the existing code
+// only works on RenderBlocks. If this change, this class should be shared with other RenderBoxes.
+class OverflowEventDispatcher {
+    WTF_MAKE_NONCOPYABLE(OverflowEventDispatcher);
+public:
+    OverflowEventDispatcher(const RenderBlock* block)
+        : m_block(block)
+        , m_hadHorizontalLayoutOverflow(false)
+        , m_hadVerticalLayoutOverflow(false)
+    {
+        m_shouldDispatchEvent = !m_block->isAnonymous() && m_block->hasOverflowClip() && m_block->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER);
+        if (m_shouldDispatchEvent) {
+            m_hadHorizontalLayoutOverflow = m_block->hasHorizontalLayoutOverflow();
+            m_hadVerticalLayoutOverflow = m_block->hasVerticalLayoutOverflow();
+        }
+    }
+
+    ~OverflowEventDispatcher()
+    {
+        if (!m_shouldDispatchEvent)
+            return;
+
+        bool hasHorizontalLayoutOverflow = m_block->hasHorizontalLayoutOverflow();
+        bool hasVerticalLayoutOverflow = m_block->hasVerticalLayoutOverflow();
+
+        bool horizontalLayoutOverflowChanged = hasHorizontalLayoutOverflow != m_hadHorizontalLayoutOverflow;
+        bool verticalLayoutOverflowChanged = hasVerticalLayoutOverflow != m_hadVerticalLayoutOverflow;
+        if (horizontalLayoutOverflowChanged || verticalLayoutOverflowChanged) {
+            if (FrameView* frameView = m_block->document()->view())
+                frameView->scheduleEvent(OverflowEvent::create(horizontalLayoutOverflowChanged, hasHorizontalLayoutOverflow, verticalLayoutOverflowChanged, hasVerticalLayoutOverflow), m_block->node());
+        }
+    }
+
+private:
+    void computeOverflowStatus(bool& hasHorizontalLayoutOverflow, bool& hasVerticalLayoutOverflow)
+    {
+    }
+
+    const RenderBlock* m_block;
+    bool m_shouldDispatchEvent;
+    bool m_hadHorizontalLayoutOverflow;
+    bool m_hadVerticalLayoutOverflow;
+};
 
 // Our MarginInfo state used when laying out block children.
 RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, LayoutUnit beforeBorderPadding, LayoutUnit afterBorderPadding)
@@ -1321,6 +1366,8 @@ void RenderBlock::updateScrollInfoAfterLayout()
 
 void RenderBlock::layout()
 {
+    OverflowEventDispatcher dispatcher(this);
+
     // Update our first letter info now.
     updateFirstLetter();
 

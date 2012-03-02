@@ -153,7 +153,6 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_paintingInsideReflection(false)
     , m_inOverflowRelayout(false)
     , m_repaintStatus(NeedsNormalRepaint)
-    , m_overflowStatusDirty(true)
     , m_visibleContentStatusDirty(true)
     , m_hasVisibleContent(false)
     , m_visibleDescendantStatusDirty(false)
@@ -2318,29 +2317,6 @@ void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
         *needVBar = pixelSnappedScrollHeight() > box->pixelSnappedClientHeight();
 }
 
-void RenderLayer::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)
-{
-    if (m_overflowStatusDirty) {
-        m_horizontalOverflow = horizontalOverflow;
-        m_verticalOverflow = verticalOverflow;
-        m_overflowStatusDirty = false;
-        return;
-    }
-    
-    bool horizontalOverflowChanged = (m_horizontalOverflow != horizontalOverflow);
-    bool verticalOverflowChanged = (m_verticalOverflow != verticalOverflow);
-    
-    if (horizontalOverflowChanged || verticalOverflowChanged) {
-        m_horizontalOverflow = horizontalOverflow;
-        m_verticalOverflow = verticalOverflow;
-        
-        if (FrameView* frameView = renderer()->document()->view()) {
-            frameView->scheduleEvent(OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow),
-                renderer()->node());
-        }
-    }
-}
-
 void RenderLayer::updateScrollInfoAfterLayout()
 {
     RenderBox* box = renderBox();
@@ -2434,9 +2410,6 @@ void RenderLayer::updateScrollInfoAfterLayout()
 
     if (scrollOffsetOriginal != scrollOffset())
         scrollToOffsetWithoutAnimation(LayoutPoint(scrollXOffset(), scrollYOffset()));
-
-    if (renderer()->node() && renderer()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
-        updateOverflowStatus(horizontalOverflow, verticalOverflow);
 }
 
 void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& damageRect, bool paintingOverlayControls)
