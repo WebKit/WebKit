@@ -3658,9 +3658,6 @@ BUGWK77494 MAC : fast/replaced/width100percent-searchfield.html = IMAGE
 // Started crashing at WK r106422.
 BUGWK77508 SKIP : platform/mac/fast/events/non-roman-key-code.html = FAIL
 
-// Started failing at WK r106432.
-BUGWK77519 WIN LINUX : fast/forms/textfield-overflow.html = IMAGE+TEXT
-
 BUGWK77526 WIN LINUX : svg/text/text-align-04-b.svg = PASS IMAGE
 
 // Will need rebaselines for mock scrollbars
