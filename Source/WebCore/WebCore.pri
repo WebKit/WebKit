@@ -184,16 +184,19 @@ contains(DEFINES, ENABLE_WEBGL=1) {
     !contains(QT_CONFIG, opengl) {
         error( "This configuration needs an OpenGL enabled Qt. Your Qt is missing OpenGL.")
     }
-    QT *= opengl
 }
 
 contains(CONFIG, texmap) {
     DEFINES += WTF_USE_TEXTURE_MAPPER=1
     !win32-*:contains(QT_CONFIG, opengl) {
-        DEFINES += WTF_USE_TEXTURE_MAPPER_GL
-        QT *= opengl
+        DEFINES += WTF_USE_TEXTURE_MAPPER_GL=1
         contains(QT_CONFIG, opengles2): LIBS += -lEGL
     }
+}
+
+contains(DEFINES, WTF_USE_TEXTURE_MAPPER_GL=1)|contains(DEFINES, ENABLE_WEBGL=1) {
+    # Only Qt 4 needs the opengl module, for Qt 5 everything we need is part of QtGui.
+    haveQt(4): QT *= opengl
 }
 
 !system-sqlite:exists( $${SQLITE3SRCDIR}/sqlite3.c ) {

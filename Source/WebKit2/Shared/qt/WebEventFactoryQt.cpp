@@ -26,7 +26,6 @@
 
 #include "config.h"
 #include "WebEventFactoryQt.h"
-#include <qgraphicssceneevent.h>
 #include <QApplication>
 #include <QKeyEvent>
 #include <QTransform>

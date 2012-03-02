@@ -1,3 +1,14 @@
+2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Compile WebCore without QtWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=80141
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Shared/qt/WebEventFactoryQt.cpp: Removed unnecessary include.
+        * Target.pri: Require widgets for WK2 for the moment, until bug #79458
+        is fixed.
+
 2012-03-02  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Suspend/Resume API for pausing timers and animations.

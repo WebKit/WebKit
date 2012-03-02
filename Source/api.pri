@@ -33,9 +33,10 @@ WEBKIT += webcore
 QT += network
 haveQt(5): QT += widgets printsupport quick
 
-win32*:!win32-msvc* {
+contains(DEFINES, WTF_USE_TEXTURE_MAPPER_GL=1)|contains(DEFINES, ENABLE_WEBGL=1) {
+    QT *= opengl
     # Make sure OpenGL libs are after the webcore lib so MinGW can resolve symbols
-    contains(DEFINES, ENABLE_WEBGL=1)|contains(CONFIG, texmap): LIBS += $$QMAKE_LIBS_OPENGL
+    win32*:!win32-msvc*: LIBS += $$QMAKE_LIBS_OPENGL
 }
 
 !static: DEFINES += QT_MAKEDLL

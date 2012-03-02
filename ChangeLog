@@ -1,3 +1,13 @@
+2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Compile WebCore without QtWidgets
+        https://bugs.webkit.org/show_bug.cgi?id=80141
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/api.pri: Use QT += opengl for the WebKit1 bits, such as the QGLWidget
+        usage in PageClientQt.cpp. Previously this dependency came implicitly through WebCore.pri.
+
 2012-03-02  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL] Build warning : comparison between signed and unsigned integer expressions.
