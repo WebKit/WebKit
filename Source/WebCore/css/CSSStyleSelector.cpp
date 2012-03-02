@@ -3511,9 +3511,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         setFontDescription(fontDescription);
         return;
     }
-    case CSSPropertyWebkitBorderFit:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(borderFit, BorderFit);
-        return;
     case CSSPropertyWebkitTextSizeAdjust: {
         HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
         if (!primitiveValue || !primitiveValue->getIdent())
@@ -3957,6 +3954,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitBackgroundComposite:
     case CSSPropertyWebkitBackgroundOrigin:
     case CSSPropertyWebkitBackgroundSize:
+    case CSSPropertyWebkitBorderFit:
     case CSSPropertyWebkitBorderHorizontalSpacing:
     case CSSPropertyWebkitBorderImage:
     case CSSPropertyWebkitBorderRadius:
