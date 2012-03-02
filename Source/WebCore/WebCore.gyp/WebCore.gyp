@@ -987,6 +987,7 @@
           ],
           'variables': {
             'generator_include_dirs': [
+              '--include', '../Modules/indexeddb',
               '--include', '../Modules/mediastream',
               '--include', '../css',
               '--include', '../dom',
@@ -1839,6 +1840,8 @@
 
         ['exclude', 'AllInOne\\.cpp$'],
 
+        ['exclude', 'Modules/indexeddb/IDBFactoryBackendInterface\\.cpp$'],
+        ['exclude', 'Modules/indexeddb/IDBKeyPathBackendImpl\\.cpp$'],
         ['exclude', 'fileapi/LocalFileSystem\\.cpp$'],
         ['exclude', 'inspector/InspectorFrontendClientLocal\\.cpp$'],
         ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],
@@ -1857,8 +1860,6 @@
         ['exclude', 'plugins/npapi\\.cpp$'],
         ['exclude', 'storage/DatabaseTrackerClient\\.h$'],
         ['exclude', 'storage/DatabaseTracker\\.cpp$'],
-        ['exclude', 'storage/IDBFactoryBackendInterface\\.cpp$'],
-        ['exclude', 'storage/IDBKeyPathBackendImpl\\.cpp$'],
         ['exclude', 'storage/OriginQuotaManager\\.(cpp|h)$'],
         ['exclude', 'storage/OriginUsageRecord\\.(cpp|h)$'],
         ['exclude', 'storage/SQLTransactionClient\\.cpp$'],

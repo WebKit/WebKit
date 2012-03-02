@@ -2986,31 +2986,31 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
     }
 
     HEADERS += \
-        storage/IDBAny.h \
-        storage/IDBCallbacks.h \
-        storage/IDBCursor.h \
-        storage/IDBCursorBackendImpl.h \
-        storage/IDBCursorBackendInterface.h \
-        storage/IDBDatabase.h \
-        storage/IDBDatabaseBackendImpl.h \
-        storage/IDBDatabaseBackendInterface.h \
-        storage/IDBDatabaseError.h \
-        storage/IDBDatabaseException.h \
-        storage/IDBEventDispatcher.h \
-        storage/IDBFactory.h \
-        storage/IDBFactoryBackendInterface.h \
-        storage/IDBFactoryBackendImpl.h \
-        storage/IDBIndex.h \
-        storage/IDBIndexBackendInterface.h \
-        storage/IDBIndexBackendImpl.h \
-        storage/IDBKey.h \
-        storage/IDBKeyRange.h \
-        storage/IDBObjectStore.h \
-        storage/IDBObjectStoreBackendImpl.h \
-        storage/IDBObjectStoreBackendInterface.h \
-        storage/IDBRequest.h \
-        storage/IDBTransaction.h \
-        storage/IDBTransactionBackendInterface.h
+        Modules/indexeddb/IDBAny.h \
+        Modules/indexeddb/IDBCallbacks.h \
+        Modules/indexeddb/IDBCursor.h \
+        Modules/indexeddb/IDBCursorBackendImpl.h \
+        Modules/indexeddb/IDBCursorBackendInterface.h \
+        Modules/indexeddb/IDBDatabase.h \
+        Modules/indexeddb/IDBDatabaseBackendImpl.h \
+        Modules/indexeddb/IDBDatabaseBackendInterface.h \
+        Modules/indexeddb/IDBDatabaseError.h \
+        Modules/indexeddb/IDBDatabaseException.h \
+        Modules/indexeddb/IDBEventDispatcher.h \
+        Modules/indexeddb/IDBFactory.h \
+        Modules/indexeddb/IDBFactoryBackendInterface.h \
+        Modules/indexeddb/IDBFactoryBackendImpl.h \
+        Modules/indexeddb/IDBIndex.h \
+        Modules/indexeddb/IDBIndexBackendInterface.h \
+        Modules/indexeddb/IDBIndexBackendImpl.h \
+        Modules/indexeddb/IDBKey.h \
+        Modules/indexeddb/IDBKeyRange.h \
+        Modules/indexeddb/IDBObjectStore.h \
+        Modules/indexeddb/IDBObjectStoreBackendImpl.h \
+        Modules/indexeddb/IDBObjectStoreBackendInterface.h \
+        Modules/indexeddb/IDBRequest.h \
+        Modules/indexeddb/IDBTransaction.h \
+        Modules/indexeddb/IDBTransactionBackendInterface.h
 
     !v8 {
         SOURCES += \
@@ -3020,24 +3020,24 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
     }
 
     SOURCES += \
-        storage/IDBAny.cpp \
-        storage/IDBCursor.cpp \
-        storage/IDBCursorBackendImpl.cpp \
-        storage/IDBDatabase.cpp \
-        storage/IDBDatabaseBackendImpl.cpp \
-        storage/IDBDatabaseException.cpp \
-        storage/IDBEventDispatcher.cpp \
-        storage/IDBFactory.cpp \
-        storage/IDBFactoryBackendInterface.cpp \
-        storage/IDBFactoryBackendImpl.cpp \
-        storage/IDBIndex.cpp \
-        storage/IDBIndexBackendImpl.cpp \
-        storage/IDBKey.cpp \
-        storage/IDBKeyRange.cpp \
-        storage/IDBObjectStore.cpp \
-        storage/IDBObjectStoreBackendImpl.cpp \
-        storage/IDBRequest.cpp \
-        storage/IDBTransaction.cpp
+        Modules/indexeddb/IDBAny.cpp \
+        Modules/indexeddb/IDBCursor.cpp \
+        Modules/indexeddb/IDBCursorBackendImpl.cpp \
+        Modules/indexeddb/IDBDatabase.cpp \
+        Modules/indexeddb/IDBDatabaseBackendImpl.cpp \
+        Modules/indexeddb/IDBDatabaseException.cpp \
+        Modules/indexeddb/IDBEventDispatcher.cpp \
+        Modules/indexeddb/IDBFactory.cpp \
+        Modules/indexeddb/IDBFactoryBackendInterface.cpp \
+        Modules/indexeddb/IDBFactoryBackendImpl.cpp \
+        Modules/indexeddb/IDBIndex.cpp \
+        Modules/indexeddb/IDBIndexBackendImpl.cpp \
+        Modules/indexeddb/IDBKey.cpp \
+        Modules/indexeddb/IDBKeyRange.cpp \
+        Modules/indexeddb/IDBObjectStore.cpp \
+        Modules/indexeddb/IDBObjectStoreBackendImpl.cpp \
+        Modules/indexeddb/IDBRequest.cpp \
+        Modules/indexeddb/IDBTransaction.cpp
 }
 
 contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1) {

@@ -92,6 +92,18 @@ IDL_BINDINGS += \
     $$PWD/Modules/geolocation/PositionCallback.idl \
     $$PWD/Modules/geolocation/PositionError.idl \
     $$PWD/Modules/geolocation/PositionErrorCallback.idl \
+    $$PWD/Modules/indexeddb/IDBAny.idl \
+    $$PWD/Modules/indexeddb/IDBCursor.idl \
+    $$PWD/Modules/indexeddb/IDBDatabaseError.idl \
+    $$PWD/Modules/indexeddb/IDBDatabaseException.idl \
+    $$PWD/Modules/indexeddb/IDBDatabase.idl \
+    $$PWD/Modules/indexeddb/IDBFactory.idl \
+    $$PWD/Modules/indexeddb/IDBIndex.idl \
+    $$PWD/Modules/indexeddb/IDBKey.idl \
+    $$PWD/Modules/indexeddb/IDBKeyRange.idl \
+    $$PWD/Modules/indexeddb/IDBObjectStore.idl \
+    $$PWD/Modules/indexeddb/IDBRequest.idl \
+    $$PWD/Modules/indexeddb/IDBTransaction.idl \
     $$PWD/Modules/websockets/CloseEvent.idl \
     $$PWD/Modules/websockets/DOMWindowWebSocket.idl \
     $$PWD/Modules/websockets/WebSocket.idl \
@@ -378,18 +390,6 @@ IDL_BINDINGS += \
     $$PWD/storage/Database.idl \
     $$PWD/storage/DatabaseCallback.idl \
     $$PWD/storage/DatabaseSync.idl \
-    $$PWD/storage/IDBAny.idl \
-    $$PWD/storage/IDBCursor.idl \
-    $$PWD/storage/IDBDatabaseError.idl \
-    $$PWD/storage/IDBDatabaseException.idl \
-    $$PWD/storage/IDBDatabase.idl \
-    $$PWD/storage/IDBFactory.idl \
-    $$PWD/storage/IDBIndex.idl \
-    $$PWD/storage/IDBKey.idl \
-    $$PWD/storage/IDBKeyRange.idl \
-    $$PWD/storage/IDBObjectStore.idl \
-    $$PWD/storage/IDBRequest.idl \
-    $$PWD/storage/IDBTransaction.idl \
     $$PWD/storage/Storage.idl \
     $$PWD/storage/StorageEvent.idl \
     $$PWD/storage/StorageInfo.idl \
@@ -693,6 +693,7 @@ generateBindings.commands = perl -I$$PWD/bindings/scripts $$generateBindings.scr
                             --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
                             --generator $$generator \
                             --include $$PWD/Modules/geolocation \
+                            --include $$PWD/Modules/indexeddb \
                             --include $$PWD/Modules/websockets \
                             --include $$PWD/dom \
                             --include $$PWD/fileapi \

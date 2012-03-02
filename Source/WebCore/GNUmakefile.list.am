@@ -970,6 +970,62 @@ webcore_sources += \
 	Source/WebCore/Modules/geolocation/PositionError.h \
 	Source/WebCore/Modules/geolocation/PositionErrorCallback.h \
 	Source/WebCore/Modules/geolocation/PositionOptions.h \
+	Source/WebCore/Modules/indexeddb/IDBAny.cpp \
+	Source/WebCore/Modules/indexeddb/IDBAny.h \
+	Source/WebCore/Modules/indexeddb/IDBBackingStore.h \
+	Source/WebCore/Modules/indexeddb/IDBCallbacks.h \
+	Source/WebCore/Modules/indexeddb/IDBCursorBackendImpl.cpp \
+	Source/WebCore/Modules/indexeddb/IDBCursorBackendImpl.h \
+	Source/WebCore/Modules/indexeddb/IDBCursorBackendInterface.h \
+	Source/WebCore/Modules/indexeddb/IDBCursor.cpp \
+	Source/WebCore/Modules/indexeddb/IDBCursor.h \
+	Source/WebCore/Modules/indexeddb/IDBDatabaseBackendImpl.cpp \
+	Source/WebCore/Modules/indexeddb/IDBDatabaseBackendImpl.h \
+	Source/WebCore/Modules/indexeddb/IDBDatabaseBackendInterface.h \
+	Source/WebCore/Modules/indexeddb/IDBDatabaseCallbacks.h \
+	Source/WebCore/Modules/indexeddb/IDBDatabaseCallbacksImpl.h \
+	Source/WebCore/Modules/indexeddb/IDBDatabase.cpp \
+	Source/WebCore/Modules/indexeddb/IDBDatabaseError.h \
+	Source/WebCore/Modules/indexeddb/IDBDatabaseException.cpp \
+	Source/WebCore/Modules/indexeddb/IDBDatabaseException.h \
+	Source/WebCore/Modules/indexeddb/IDBDatabase.h \
+	Source/WebCore/Modules/indexeddb/IDBEventDispatcher.cpp \
+	Source/WebCore/Modules/indexeddb/IDBEventDispatcher.h \
+	Source/WebCore/Modules/indexeddb/IDBFactoryBackendImpl.cpp \
+	Source/WebCore/Modules/indexeddb/IDBFactoryBackendImpl.h \
+	Source/WebCore/Modules/indexeddb/IDBFactoryBackendInterface.cpp \
+	Source/WebCore/Modules/indexeddb/IDBFactoryBackendInterface.h \
+	Source/WebCore/Modules/indexeddb/IDBFactory.cpp \
+	Source/WebCore/Modules/indexeddb/IDBFactory.h \
+	Source/WebCore/Modules/indexeddb/IDBIndexBackendImpl.cpp \
+	Source/WebCore/Modules/indexeddb/IDBIndexBackendImpl.h \
+	Source/WebCore/Modules/indexeddb/IDBIndexBackendInterface.h \
+	Source/WebCore/Modules/indexeddb/IDBIndexBackendInterface.h \
+	Source/WebCore/Modules/indexeddb/IDBIndex.cpp \
+	Source/WebCore/Modules/indexeddb/IDBIndex.h \
+	Source/WebCore/Modules/indexeddb/IDBKey.h \
+	Source/WebCore/Modules/indexeddb/IDBKeyPath.h \
+	Source/WebCore/Modules/indexeddb/IDBKeyPathBackendImpl.h \
+	Source/WebCore/Modules/indexeddb/IDBKeyRange.cpp \
+	Source/WebCore/Modules/indexeddb/IDBKeyRange.h \
+	Source/WebCore/Modules/indexeddb/IDBLevelDBBackingStore.cpp \
+	Source/WebCore/Modules/indexeddb/IDBLevelDBBackingStore.h \
+	Source/WebCore/Modules/indexeddb/IDBLevelDBCoding.cpp \
+	Source/WebCore/Modules/indexeddb/IDBLevelDBCoding.h \
+	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendImpl.cpp \
+	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendImpl.h \
+	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendInterface.h \
+	Source/WebCore/Modules/indexeddb/IDBObjectStoreBackendInterface.h \
+	Source/WebCore/Modules/indexeddb/IDBObjectStore.cpp \
+	Source/WebCore/Modules/indexeddb/IDBObjectStore.h \
+	Source/WebCore/Modules/indexeddb/IDBRequest.cpp \
+	Source/WebCore/Modules/indexeddb/IDBRequest.h \
+	Source/WebCore/Modules/indexeddb/IDBTransactionBackendInterface.h \
+	Source/WebCore/Modules/indexeddb/IDBTransactionCoordinator.h \
+	Source/WebCore/Modules/indexeddb/IDBTransaction.cpp \
+	Source/WebCore/Modules/indexeddb/IDBTransaction.h \
+	Source/WebCore/Modules/indexeddb/IDBVersionChangeEvent.h \
+	Source/WebCore/Modules/indexeddb/IDBVersionChangeRequest.h \
 	Source/WebCore/Modules/mediastream/LocalMediaStream.cpp \
 	Source/WebCore/Modules/mediastream/LocalMediaStream.h \
 	Source/WebCore/Modules/mediastream/MediaStream.cpp \
@@ -3879,62 +3935,6 @@ webcore_sources += \
 	Source/WebCore/storage/DatabaseTrackerClient.h \
 	Source/WebCore/storage/DatabaseTracker.cpp \
 	Source/WebCore/storage/DatabaseTracker.h \
-	Source/WebCore/storage/IDBAny.cpp \
-	Source/WebCore/storage/IDBAny.h \
-	Source/WebCore/storage/IDBBackingStore.h \
-	Source/WebCore/storage/IDBCallbacks.h \
-	Source/WebCore/storage/IDBCursorBackendImpl.cpp \
-	Source/WebCore/storage/IDBCursorBackendImpl.h \
-	Source/WebCore/storage/IDBCursorBackendInterface.h \
-	Source/WebCore/storage/IDBCursor.cpp \
-	Source/WebCore/storage/IDBCursor.h \
-	Source/WebCore/storage/IDBDatabaseBackendImpl.cpp \
-	Source/WebCore/storage/IDBDatabaseBackendImpl.h \
-	Source/WebCore/storage/IDBDatabaseBackendInterface.h \
-	Source/WebCore/storage/IDBDatabaseCallbacks.h \
-	Source/WebCore/storage/IDBDatabaseCallbacksImpl.h \
-	Source/WebCore/storage/IDBDatabase.cpp \
-	Source/WebCore/storage/IDBDatabaseError.h \
-	Source/WebCore/storage/IDBDatabaseException.cpp \
-	Source/WebCore/storage/IDBDatabaseException.h \
-	Source/WebCore/storage/IDBDatabase.h \
-	Source/WebCore/storage/IDBEventDispatcher.cpp \
-	Source/WebCore/storage/IDBEventDispatcher.h \
-	Source/WebCore/storage/IDBFactoryBackendImpl.cpp \
-	Source/WebCore/storage/IDBFactoryBackendImpl.h \
-	Source/WebCore/storage/IDBFactoryBackendInterface.cpp \
-	Source/WebCore/storage/IDBFactoryBackendInterface.h \
-	Source/WebCore/storage/IDBFactory.cpp \
-	Source/WebCore/storage/IDBFactory.h \
-	Source/WebCore/storage/IDBIndexBackendImpl.cpp \
-	Source/WebCore/storage/IDBIndexBackendImpl.h \
-	Source/WebCore/storage/IDBIndexBackendInterface.h \
-	Source/WebCore/storage/IDBIndexBackendInterface.h \
-	Source/WebCore/storage/IDBIndex.cpp \
-	Source/WebCore/storage/IDBIndex.h \
-	Source/WebCore/storage/IDBKey.h \
-	Source/WebCore/storage/IDBKeyPath.h \
-	Source/WebCore/storage/IDBKeyPathBackendImpl.h \
-	Source/WebCore/storage/IDBKeyRange.cpp \
-	Source/WebCore/storage/IDBKeyRange.h \
-	Source/WebCore/storage/IDBLevelDBBackingStore.cpp \
-	Source/WebCore/storage/IDBLevelDBBackingStore.h \
-	Source/WebCore/storage/IDBLevelDBCoding.cpp \
-	Source/WebCore/storage/IDBLevelDBCoding.h \
-	Source/WebCore/storage/IDBObjectStoreBackendImpl.cpp \
-	Source/WebCore/storage/IDBObjectStoreBackendImpl.h \
-	Source/WebCore/storage/IDBObjectStoreBackendInterface.h \
-	Source/WebCore/storage/IDBObjectStoreBackendInterface.h \
-	Source/WebCore/storage/IDBObjectStore.cpp \
-	Source/WebCore/storage/IDBObjectStore.h \
-	Source/WebCore/storage/IDBRequest.cpp \
-	Source/WebCore/storage/IDBRequest.h \
-	Source/WebCore/storage/IDBTransactionBackendInterface.h \
-	Source/WebCore/storage/IDBTransactionCoordinator.h \
-	Source/WebCore/storage/IDBTransaction.cpp \
-	Source/WebCore/storage/IDBTransaction.h \
-	Source/WebCore/storage/IDBVersionChangeEvent.h \
-	Source/WebCore/storage/IDBVersionChangeRequest.h \
 	Source/WebCore/storage/StorageTask.cpp \
 	Source/WebCore/storage/StorageTask.h \
 	Source/WebCore/storage/StorageThread.cpp \
@@ -4788,16 +4788,16 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBTransaction.h
 
 dom_binding_idls += \
-	$(WebCore)/storage/IDBAny.idl \
-	$(WebCore)/storage/IDBDatabase.idl \
-	$(WebCore)/storage/IDBDatabaseError.idl \
-	$(WebCore)/storage/IDBDatabaseException.idl \
-	$(WebCore)/storage/IDBFactory.idl \
-	$(WebCore)/storage/IDBIndex.idl \
-	$(WebCore)/storage/IDBKeyRange.idl \
-	$(WebCore)/storage/IDBObjectStore.idl \
-	$(WebCore)/storage/IDBRequest.idl \
-	$(WebCore)/storage/IDBTransaction.idl
+	$(WebCore)/Modules/indexeddb/IDBAny.idl \
+	$(WebCore)/Modules/indexeddb/IDBDatabase.idl \
+	$(WebCore)/Modules/indexeddb/IDBDatabaseError.idl \
+	$(WebCore)/Modules/indexeddb/IDBDatabaseException.idl \
+	$(WebCore)/Modules/indexeddb/IDBFactory.idl \
+	$(WebCore)/Modules/indexeddb/IDBIndex.idl \
+	$(WebCore)/Modules/indexeddb/IDBKeyRange.idl \
+	$(WebCore)/Modules/indexeddb/IDBObjectStore.idl \
+	$(WebCore)/Modules/indexeddb/IDBRequest.idl \
+	$(WebCore)/Modules/indexeddb/IDBTransaction.idl
 endif # END ENABLE_INDEXED_DATABASE
 
 # ----

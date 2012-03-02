@@ -65,8 +65,6 @@
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
 #include "History.h"
-#include "IDBFactory.h"
-#include "IDBFactoryBackendInterface.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "Location.h"

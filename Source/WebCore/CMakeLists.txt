@@ -1,6 +1,7 @@
 SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/geolocation"
+    "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/websockets"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/bindings"
@@ -91,6 +92,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
 
 SET(WebCore_IDL_INCLUDES
     Modules/geolocation
+    Modules/indexeddb
     Modules/websockets
     bindings/generic
     css
@@ -412,6 +414,24 @@ SET(WebCore_SOURCES
     Modules/geolocation/Geolocation.cpp
     Modules/geolocation/GeolocationController.cpp
     Modules/geolocation/NavigatorGeolocation.cpp
+
+    Modules/indexeddb/IDBAny.cpp
+    Modules/indexeddb/IDBDatabase.cpp
+    Modules/indexeddb/IDBDatabaseBackendImpl.cpp
+    Modules/indexeddb/IDBCursor.cpp
+    Modules/indexeddb/IDBCursorBackendImpl.cpp
+    Modules/indexeddb/IDBDatabaseException.cpp
+    Modules/indexeddb/IDBEventDispatcher.cpp
+    Modules/indexeddb/IDBIndex.cpp
+    Modules/indexeddb/IDBIndexBackendImpl.cpp
+    Modules/indexeddb/IDBKey.cpp
+    Modules/indexeddb/IDBKeyRange.cpp
+    Modules/indexeddb/IDBRequest.cpp
+    Modules/indexeddb/IDBObjectStore.cpp
+    Modules/indexeddb/IDBObjectStoreBackendImpl.cpp
+    Modules/indexeddb/IDBFactory.cpp
+    Modules/indexeddb/IDBFactoryBackendInterface.cpp
+    Modules/indexeddb/IDBFactoryBackendImpl.cpp
 
     accessibility/AXObjectCache.cpp
     accessibility/AccessibilityARIAGrid.cpp
@@ -1392,23 +1412,6 @@ SET(WebCore_SOURCES
     storage/DatabaseTask.cpp
     storage/DatabaseThread.cpp
     storage/DatabaseTracker.cpp
-    storage/IDBAny.cpp
-    storage/IDBDatabase.cpp
-    storage/IDBDatabaseBackendImpl.cpp
-    storage/IDBCursor.cpp
-    storage/IDBCursorBackendImpl.cpp
-    storage/IDBDatabaseException.cpp
-    storage/IDBEventDispatcher.cpp
-    storage/IDBIndex.cpp
-    storage/IDBIndexBackendImpl.cpp
-    storage/IDBKey.cpp
-    storage/IDBKeyRange.cpp
-    storage/IDBRequest.cpp
-    storage/IDBObjectStore.cpp
-    storage/IDBObjectStoreBackendImpl.cpp
-    storage/IDBFactory.cpp
-    storage/IDBFactoryBackendInterface.cpp
-    storage/IDBFactoryBackendImpl.cpp
     storage/StorageTask.cpp
     storage/StorageThread.cpp
     storage/OriginQuotaManager.cpp
@@ -1536,18 +1539,18 @@ ENDIF ()
 
 IF (ENABLE_INDEXED_DATABASE)
     LIST(APPEND WebCore_IDL_FILES
-        storage/IDBAny.idl
-        storage/IDBCursor.idl
-        storage/IDBDatabaseError.idl
-        storage/IDBDatabaseException.idl
-        storage/IDBDatabase.idl
-        storage/IDBFactory.idl
-        storage/IDBIndex.idl
-        storage/IDBKey.idl
-        storage/IDBKeyRange.idl
-        storage/IDBObjectStore.idl
-        storage/IDBRequest.idl
-        storage/IDBTransaction.idl
+        Modules/indexeddb/IDBAny.idl
+        Modules/indexeddb/IDBCursor.idl
+        Modules/indexeddb/IDBDatabaseError.idl
+        Modules/indexeddb/IDBDatabaseException.idl
+        Modules/indexeddb/IDBDatabase.idl
+        Modules/indexeddb/IDBFactory.idl
+        Modules/indexeddb/IDBIndex.idl
+        Modules/indexeddb/IDBKey.idl
+        Modules/indexeddb/IDBKeyRange.idl
+        Modules/indexeddb/IDBObjectStore.idl
+        Modules/indexeddb/IDBRequest.idl
+        Modules/indexeddb/IDBTransaction.idl
     )
 ENDIF ()
 

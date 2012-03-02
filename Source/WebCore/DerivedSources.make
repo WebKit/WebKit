@@ -29,6 +29,7 @@
 VPATH = \
     $(WebCore) \
     $(WebCore)/Modules/geolocation \
+    $(WebCore)/Modules/indexeddb \
     $(WebCore)/Modules/websockets \
     $(WebCore)/bindings/generic \
     $(WebCore)/bindings/js \
@@ -61,6 +62,18 @@ BINDING_IDLS = \
     $(WebCore)/Modules/geolocation/PositionCallback.idl \
     $(WebCore)/Modules/geolocation/PositionError.idl \
     $(WebCore)/Modules/geolocation/PositionErrorCallback.idl \
+    $(WebCore)/Modules/indexeddb/IDBAny.idl \
+    $(WebCore)/Modules/indexeddb/IDBCursor.idl \
+    $(WebCore)/Modules/indexeddb/IDBDatabase.idl \
+    $(WebCore)/Modules/indexeddb/IDBDatabaseError.idl \
+    $(WebCore)/Modules/indexeddb/IDBDatabaseException.idl \
+    $(WebCore)/Modules/indexeddb/IDBFactory.idl \
+    $(WebCore)/Modules/indexeddb/IDBIndex.idl \
+    $(WebCore)/Modules/indexeddb/IDBKey.idl \
+    $(WebCore)/Modules/indexeddb/IDBKeyRange.idl \
+    $(WebCore)/Modules/indexeddb/IDBObjectStore.idl \
+    $(WebCore)/Modules/indexeddb/IDBRequest.idl \
+    $(WebCore)/Modules/indexeddb/IDBTransaction.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/DOMWindowWebSocket.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
@@ -355,18 +368,6 @@ BINDING_IDLS = \
     $(WebCore)/storage/Database.idl \
     $(WebCore)/storage/DatabaseCallback.idl \
     $(WebCore)/storage/DatabaseSync.idl \
-    $(WebCore)/storage/IDBAny.idl \
-    $(WebCore)/storage/IDBCursor.idl \
-    $(WebCore)/storage/IDBDatabase.idl \
-    $(WebCore)/storage/IDBDatabaseError.idl \
-    $(WebCore)/storage/IDBDatabaseException.idl \
-    $(WebCore)/storage/IDBFactory.idl \
-    $(WebCore)/storage/IDBIndex.idl \
-    $(WebCore)/storage/IDBKey.idl \
-    $(WebCore)/storage/IDBKeyRange.idl \
-    $(WebCore)/storage/IDBObjectStore.idl \
-    $(WebCore)/storage/IDBRequest.idl \
-    $(WebCore)/storage/IDBTransaction.idl \
     $(WebCore)/storage/SQLError.idl \
     $(WebCore)/storage/SQLException.idl \
     $(WebCore)/storage/SQLResultSet.idl \
