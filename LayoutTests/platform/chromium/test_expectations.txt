@@ -4252,6 +4252,12 @@ BUGWK80068 WIN DEBUG : media/video-source-error.html = PASS TEXT
 
 BUGV8_1973 : fast/js/caller-property.html = TEXT
 
+// Failures after Skia roll to 3303. Working with reed to figure out if
+// they just need a rebaseline.
+BUGADAMK WIN : fast/repaint/shadow-multiple-vertical.html = IMAGE
+BUGADAMK WIN : fast/transforms/shadows.html = IMAGE
+BUGADAMK WIN : svg/css/group-with-shadow.svg = IMAGE
+
 // FIXME: sort these in next to the non-virtual expectations.
 BUGWK79679 DEBUG SLOW : platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html = PASS
 BUGWK63933 : platform/chromium/virtual/gpu/fast/canvas/canvas-webkitLineDash.html = FAIL
