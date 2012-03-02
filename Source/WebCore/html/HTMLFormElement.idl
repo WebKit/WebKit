@@ -24,19 +24,19 @@ module html {
         IndexedGetter,
         CustomNamedGetter
     ] HTMLFormElement : HTMLElement {
+        attribute [Reflect=accept_charset] DOMString acceptCharset;
+        attribute [Reflect, URL] DOMString action;
+        attribute [Reflect] DOMString autocomplete;
+        attribute [TreatNullAs=NullString] DOMString enctype;
+        attribute [TreatNullAs=NullString] DOMString encoding;
+        attribute [TreatNullAs=NullString] DOMString method;
+        attribute [Reflect] DOMString name;
+        attribute [Reflect] boolean noValidate;
+        attribute [Reflect] DOMString target;
+
         readonly attribute HTMLCollection elements;
         readonly attribute long length;
 
-        attribute [Reflect] DOMString name;
-        attribute [Reflect] boolean noValidate;
-        attribute [Reflect=accept_charset] DOMString acceptCharset;
-        attribute [Reflect, URL] DOMString action;
-        attribute [TreatNullAs=NullString] DOMString encoding;
-        attribute [TreatNullAs=NullString] DOMString enctype;
-        attribute [TreatNullAs=NullString] DOMString method;
-        attribute [Reflect] DOMString target;
-        attribute [Reflect] DOMString autocomplete;
-        
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [ImplementedAs=submitFromJavaScript] void submit();
 #else
@@ -45,5 +45,4 @@ module html {
         void reset();
         boolean checkValidity();
     };
-
 }
