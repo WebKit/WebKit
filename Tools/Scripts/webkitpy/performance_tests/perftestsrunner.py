@@ -302,6 +302,8 @@ class PerfTestsRunner(object):
 
     def _run_single_test(self, test, driver, is_chromium_style):
         test_failed = False
+        start_time = time.time()
+
         output = driver.run_test(DriverInput(test, self._options.time_out_ms, None, False))
 
         if output.text == None:
@@ -324,5 +326,7 @@ class PerfTestsRunner(object):
 
         if test_failed:
             self._printer.write('FAILED')
+
+        self._printer.write("Finished: %f s" % (time.time() - start_time))
 
         return not test_failed

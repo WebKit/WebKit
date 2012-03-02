@@ -1,3 +1,15 @@
+2012-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests should report the test runtime
+        https://bugs.webkit.org/show_bug.cgi?id=80078
+
+        Reviewed by Hajime Morita.
+
+        Record and output the aggreated test run time.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._run_single_test):
+
 2012-03-01  Michael Nordman  <michaeln@google.com>
 
         [chromium] Use webkit_support to create session storage namespaces in DRT.
