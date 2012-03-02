@@ -46,9 +46,13 @@ String localizedString(const char* key)
 
     RetainPtr<CFStringRef> keyString(AdoptCF, CFStringCreateWithCStringNoCopy(0, key, kCFStringEncodingUTF8, kCFAllocatorNull));
     CFStringRef notFound = CFSTR("localized string not found");
-    RetainPtr<CFStringRef> result(AdoptCF, CFBundleCopyLocalizedString(bundle, keyString.get(), notFound, 0));
+    RetainPtr<CFStringRef> result;
+    if (bundle) {
+        result.adoptCF(CFBundleCopyLocalizedString(bundle, keyString.get(), notFound, 0));
+        ASSERT_WITH_MESSAGE(result.get() != notFound, "could not find localizable string %s in bundle", key);
+    } else
+        result = notFound;
 
-    ASSERT_WITH_MESSAGE(result.get() != notFound, "could not find localizable string %s in bundle", key);
     return String(result.get());
 }
 
