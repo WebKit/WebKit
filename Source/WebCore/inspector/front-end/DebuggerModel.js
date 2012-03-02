@@ -234,11 +234,11 @@ WebInspector.DebuggerModel.prototype = {
 
     /**
      * @param {DebuggerAgent.ScriptId} scriptId
-     * @return {WebInspector.Script|undefined}
+     * @return {WebInspector.Script}
      */
     scriptForSourceID: function(scriptId)
     {
-        return this._scripts[scriptId];
+        return this._scripts[scriptId] || null;
     },
 
     /**

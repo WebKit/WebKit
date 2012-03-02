@@ -677,6 +677,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     /**
      * @param {string} url
      * @param {DebuggerAgent.Location} rawLocation
+     * @return {WebInspector.Script}
      */
     _scriptForURLAndLocation: function(url, rawLocation)
     {
@@ -987,10 +988,10 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
      */
     linkifyLocation: function(sourceURL, lineNumber, columnNumber, classes)
     {
-        var script = this._model._scriptForURLAndLocation(sourceURL, lineNumber, columnNumber);
+        var rawLocation = new WebInspector.DebuggerModel.Location(lineNumber, columnNumber || 0);
+        var script = this._model._scriptForURLAndLocation(sourceURL, rawLocation);
         if (!script)
             return WebInspector.linkifyResourceAsNode(sourceURL, lineNumber, classes);
-        var rawLocation = new WebInspector.DebuggerModel.Location(lineNumber, columnNumber);
         rawLocation.scriptId = script.scriptId;
         return this.linkifyRawLocation(rawLocation, classes);
     },
