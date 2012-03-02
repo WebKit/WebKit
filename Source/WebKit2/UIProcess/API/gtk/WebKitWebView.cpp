@@ -1380,10 +1380,10 @@ void webkit_web_view_set_zoom_level(WebKitWebView* webView, gdouble zoomLevel)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
-    if (WKPageGetPageZoomFactor(wkPage) == zoomLevel)
+    if (webkit_web_view_get_zoom_level(webView) == zoomLevel)
         return;
 
+    WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
     if (webkit_settings_get_zoom_text_only(webView->priv->settings.get()))
         WKPageSetTextZoomFactor(wkPage, zoomLevel);
     else
