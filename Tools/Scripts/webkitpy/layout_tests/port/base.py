@@ -1078,9 +1078,12 @@ class Port(object):
     def _virtual_tests(self, paths, suites):
         virtual_tests = set()
         for suite in suites:
-            for test in suite.tests:
-                if any(test.startswith(p) for p in paths):
-                    virtual_tests.add(test)
+            if paths:
+                for test in suite.tests:
+                    if any(test.startswith(p) for p in paths):
+                        virtual_tests.add(test)
+            else:
+                virtual_tests.update(set(suite.tests.keys()))
         return virtual_tests
 
     def lookup_virtual_test_base(self, test_name):

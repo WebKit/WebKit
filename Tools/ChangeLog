@@ -1,3 +1,21 @@
+2012-03-01  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: virtual tests aren't being run
+        https://bugs.webkit.org/show_bug.cgi?id=80083
+
+        Reviewed by Eric Seidel.
+
+        If we tried to run all of the tests by default (and
+        didn't specify any paths), the virtual tests weren't
+        picked up.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port._virtual_tests):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_tests):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.virtual_test_suites):
+
 2012-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests should report the test runtime

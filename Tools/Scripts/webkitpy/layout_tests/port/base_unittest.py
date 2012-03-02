@@ -438,6 +438,20 @@ class PortTest(unittest.TestCase):
         self.assertFalse(port.test_isdir('virtual/does_not_exist/'))
         self.assertFalse(port.test_isdir('virtual/passes/text.html'))
 
+    def test_tests(self):
+        port = self.make_port(with_tests=True)
+        tests = port.tests([])
+        self.assertTrue('passes/text.html' in tests)
+        self.assertTrue('virtual/passes/text.html' in tests)
+
+        tests = port.tests(['passes'])
+        self.assertTrue('passes/text.html' in tests)
+        self.assertFalse('virtual/passes/text.html' in tests)
+
+        tests = port.tests(['virtual/passes'])
+        self.assertFalse('passes/text.html' in tests)
+        self.assertTrue('virtual/passes/text.html' in tests)
+
 
 if __name__ == '__main__':
     unittest.main()

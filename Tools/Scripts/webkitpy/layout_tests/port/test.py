@@ -495,7 +495,6 @@ class TestPort(Port):
     def virtual_test_suites(self):
         return [
             VirtualTestSuite('virtual/passes', 'passes', ['--virtual-arg']),
-            VirtualTestSuite('virtual/failures', 'failures/expected', ['--virtual-arg']),
         ]
 
 class TestDriver(Driver):
