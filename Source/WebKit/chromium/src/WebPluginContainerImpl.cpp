@@ -435,6 +435,14 @@ void WebPluginContainerImpl::zoomLevelChanged(double zoomLevel)
     view->fullFramePluginZoomLevelChanged(zoomLevel);
 }
  
+void WebPluginContainerImpl::setOpaque(bool opaque)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_platformLayer)
+        m_platformLayer->setOpaque(opaque);
+#endif
+}
+
 bool WebPluginContainerImpl::isRectTopmost(const WebRect& rect)
 {
     Page* page = m_element->document()->page();
