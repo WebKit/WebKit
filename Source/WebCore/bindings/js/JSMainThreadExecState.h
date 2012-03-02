@@ -56,28 +56,19 @@ public:
         return JSC::call(exec, functionObject, callType, callData, thisValue, args);
     };
 
-    static JSC::JSValue instrumentedCall(ScriptExecutionContext* context, JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args)
+    static inline InspectorInstrumentationCookie instrumentFunctionCall(ScriptExecutionContext* context, JSC::CallType callType, const JSC::CallData& callData)
     {
-        InspectorInstrumentationCookie cookie;
-        if (InspectorInstrumentation::hasFrontends()) {
-            String resourceName;
-            int lineNumber = 1;
-
-            if (callType == JSC::CallTypeJS) {
-                resourceName = ustringToString(callData.js.functionExecutable->sourceURL());
-                lineNumber = callData.js.functionExecutable->lineNo();
-            } else
-                resourceName = "undefined";
-
-            cookie = InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber);
-        }
-
-        JSC::JSValue value = call(exec, functionObject, callType, callData, thisValue, args);
-
-        InspectorInstrumentation::didCallFunction(cookie);
-
-        return value;
-    };
+        if (!InspectorInstrumentation::hasFrontends())
+            return InspectorInstrumentationCookie();
+        String resourceName;
+        int lineNumber = 1;
+        if (callType == JSC::CallTypeJS) {
+            resourceName = ustringToString(callData.js.functionExecutable->sourceURL());
+            lineNumber = callData.js.functionExecutable->lineNo();
+        } else
+            resourceName = "undefined";
+        return InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber);
+    }
 
     static JSC::JSValue evaluate(JSC::ExecState* exec, JSC::ScopeChainNode* chain, const JSC::SourceCode& source, JSC::JSValue thisValue, JSC::JSValue* exception)
     {

@@ -121,8 +121,14 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         DynamicGlobalObjectScope globalObjectScope(globalData, globalData.dynamicGlobalObject ? globalData.dynamicGlobalObject : globalObject);
 
         globalData.timeoutChecker.start();
+        InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(scriptExecutionContext, callType, callData);
+
         JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event->currentTarget()) : jsFunction;
-        JSValue retval = JSMainThreadExecState::instrumentedCall(scriptExecutionContext, exec, handleEventFunction, callType, callData, thisValue, args);
+        JSValue retval = scriptExecutionContext->isDocument()
+            ? JSMainThreadExecState::call(exec, handleEventFunction, callType, callData, thisValue, args)
+            : JSC::call(exec, handleEventFunction, callType, callData, thisValue, args);
+
+        InspectorInstrumentation::didCallFunction(cookie);
         globalData.timeoutChecker.stop();
 
         globalObject->setCurrentEvent(savedEvent);
