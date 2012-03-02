@@ -494,8 +494,11 @@ sub GenerateHeader
                 AddForwardDeclarationsForType($type, 1);
             }
 
+            my $conditionalString = GenerateConditionalString($function->signature);
+            push(@headerFunctions, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerFunctions, "    ");
             push(@headerFunctions, $functionDeclaration);
+            push(@headerFunctions, "#endif\n") if $conditionalString;
         }
 
         if (@headerFunctions > 0) {

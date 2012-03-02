@@ -160,13 +160,23 @@ public:
     void methodWithOptionalString(const WebDOMString& str);
     void methodWithOptionalStringIsUndefined(const WebDOMString& str);
     void methodWithOptionalStringIsNullString(const WebDOMString& str);
+#if ENABLE(Condition1)
     WebDOMString conditionalMethod1();
+#endif
+#if ENABLE(Condition1) && ENABLE(Condition2)
     void conditionalMethod2();
+#endif
+#if ENABLE(Condition1) || ENABLE(Condition2)
     void conditionalMethod3();
+#endif
     void classMethod();
     int classMethodWithOptional(int arg);
+#if ENABLE(Condition1)
     void overloadedMethod1(int arg);
+#endif
+#if ENABLE(Condition1)
     void overloadedMethod1(const WebDOMString& type);
+#endif
     void convert1(const WebDOMa& );
     void convert2(const WebDOMb& );
     void convert3(const WebDOMc& );

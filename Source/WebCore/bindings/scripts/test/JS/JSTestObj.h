@@ -184,13 +184,21 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSt
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg(JSC::ExecState*);
+#if ENABLE(Condition1)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(JSC::ExecState*);
+#endif
+#if ENABLE(Condition1) && ENABLE(Condition2)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod2(JSC::ExecState*);
+#endif
+#if ENABLE(Condition1) || ENABLE(Condition2)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(JSC::ExecState*);
+#endif
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional(JSC::ExecState*);
+#if ENABLE(Condition1)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(JSC::ExecState*);
+#endif
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongArray(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(JSC::ExecState*);
@@ -269,18 +277,30 @@ JSC::JSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribut
 void setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjWithScriptArgumentsAndCallStackAttribute(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#if ENABLE(Condition1)
 JSC::JSValue jsTestObjConditionalAttr1(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjConditionalAttr1(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
+#if ENABLE(Condition1) && ENABLE(Condition2)
 JSC::JSValue jsTestObjConditionalAttr2(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjConditionalAttr2(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
+#if ENABLE(Condition1) || ENABLE(Condition2)
 JSC::JSValue jsTestObjConditionalAttr3(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjConditionalAttr3(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
+#if ENABLE(Condition1)
 JSC::JSValue jsTestObjConditionalAttr4Constructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjConditionalAttr4Constructor(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
+#if ENABLE(Condition1) && ENABLE(Condition2)
 JSC::JSValue jsTestObjConditionalAttr5Constructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjConditionalAttr5Constructor(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
+#if ENABLE(Condition1) || ENABLE(Condition2)
 JSC::JSValue jsTestObjConditionalAttr6Constructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjConditionalAttr6Constructor(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
 JSC::JSValue jsTestObjCachedAttribute1(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 JSC::JSValue jsTestObjCachedAttribute2(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 JSC::JSValue jsTestObjContentDocument(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);

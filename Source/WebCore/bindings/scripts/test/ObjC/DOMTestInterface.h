@@ -58,10 +58,18 @@ enum {
 - (DOMNode *)supplementalNode;
 - (void)setSupplementalNode:(DOMNode *)newSupplementalNode;
 #endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 - (void)supplementalMethod1;
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 - (DOMTestObj *)supplementalMethod2:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 - (void)supplementalMethod3;
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 - (void)supplementalMethod4;
+#endif
 @end
 
 #endif

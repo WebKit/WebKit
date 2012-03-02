@@ -64,8 +64,12 @@ public:
     void setSupplementalNode(const WebDOMNode&);
 #endif
 
+#if ENABLE(Condition11) || ENABLE(Condition12)
     void supplementalMethod1();
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
     void supplementalMethod4();
+#endif
 
     WebCore::TestInterface* impl() const;
 

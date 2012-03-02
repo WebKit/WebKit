@@ -58,11 +58,17 @@ public:
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
 
     // Custom attributes
+#if ENABLE(Condition11) || ENABLE(Condition12)
     JSC::JSValue supplementalStr3(JSC::ExecState*) const;
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
     void setSupplementalStr3(JSC::ExecState*, JSC::JSValue);
+#endif
 
     // Custom functions
+#if ENABLE(Condition11) || ENABLE(Condition12)
     JSC::JSValue supplementalMethod3(JSC::ExecState*);
+#endif
     TestInterface* impl() const { return m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
@@ -149,19 +155,35 @@ protected:
 
 // Functions
 
+#if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1(JSC::ExecState*);
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2(JSC::ExecState*);
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3(JSC::ExecState*);
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionSupplementalMethod4(JSC::ExecState*);
+#endif
 // Attributes
 
+#if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::JSValue jsTestInterfaceSupplementalStr1(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::JSValue jsTestInterfaceSupplementalStr2(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestInterfaceSupplementalStr2(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::JSValue jsTestInterfaceSupplementalStr3(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestInterfaceSupplementalStr3(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::JSValue jsTestInterfaceSupplementalNode(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestInterfaceSupplementalNode(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
+#endif
 JSC::JSValue jsTestInterfaceConstructor(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 // Constants
 
