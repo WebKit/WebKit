@@ -1156,10 +1156,8 @@ static CString descriptionSuitableForTestResult(WebKitNetworkRequest* request)
 {
     SoupMessage* soupMessage = webkit_network_request_get_message(request);
 
-    if (!soupMessage) {
-        g_printerr("GRR\n");
+    if (!soupMessage)
         return CString("");
-    }
 
     SoupURI* requestURI = soup_message_get_uri(soupMessage);
     SoupURI* mainDocumentURI = soup_message_get_first_party(soupMessage);

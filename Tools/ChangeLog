@@ -1,3 +1,10 @@
+2012-03-02  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, remove debug print call.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (descriptionSuitableForTestResult):
+
 2012-03-02  Robert Kroeger  <rjkroege@chromium.org>
 
         Updated EventSender to send complete gesture events.
