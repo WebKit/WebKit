@@ -1,3 +1,23 @@
+2012-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Simplify the code to adjust font sizes depending on screen DPI
+        https://bugs.webkit.org/show_bug.cgi?id=80032
+
+        Reviewed by Martin Robinson.
+
+        * webkit/webkitwebview.cpp:
+        (screenDPI): Helper function to get the DPI of a given
+        GdkScreen. Added also fallback code when gdk_screen_resolution
+        returns -1.
+        (webViewGetDPI): Use screenDPI() from WebCore.
+        (webViewConvertFontSizeToPixels): This is the existing
+        pixelsFromSize(), renamed and moved to be used also in
+        webkit_web_view_screen_changed().
+        (webkit_web_view_screen_changed): Use
+        webViewConvertFontSizeToPixels() instead of duplicating the code.
+        (webkit_web_view_settings_notify): Use
+        webViewConvertFontSizeToPixels() instead of pixelsFromSize().
+
 2012-02-27  Vincent Untz  <vuntz@gnome.org>> and Gustavo Noronha Silva  <gns@gnome.org>
 
         Build fix for building with GTK+ 2.x.
