@@ -1483,12 +1483,12 @@ void LayerRendererChromium::cleanupSharedObjects()
         m_tilerProgram->cleanup(m_context.get());
     if (m_tilerProgramOpaque)
         m_tilerProgramOpaque->cleanup(m_context.get());
-    if (m_tilerProgramAA)
-        m_tilerProgramAA->cleanup(m_context.get());
     if (m_tilerProgramSwizzle)
         m_tilerProgramSwizzle->cleanup(m_context.get());
     if (m_tilerProgramSwizzleOpaque)
         m_tilerProgramSwizzleOpaque->cleanup(m_context.get());
+    if (m_tilerProgramAA)
+        m_tilerProgramAA->cleanup(m_context.get());
     if (m_tilerProgramSwizzleAA)
         m_tilerProgramSwizzleAA->cleanup(m_context.get());
     if (m_canvasLayerProgram)
@@ -1497,18 +1497,24 @@ void LayerRendererChromium::cleanupSharedObjects()
         m_pluginLayerProgram->cleanup(m_context.get());
     if (m_pluginLayerProgramFlip)
         m_pluginLayerProgramFlip->cleanup(m_context.get());
+    if (m_pluginLayerTexRectProgram)
+        m_pluginLayerTexRectProgram->cleanup(m_context.get());
+    if (m_pluginLayerTexRectProgramFlip)
+        m_pluginLayerTexRectProgramFlip->cleanup(m_context.get());
     if (m_renderSurfaceMaskProgram)
         m_renderSurfaceMaskProgram->cleanup(m_context.get());
-    if (m_renderSurfaceMaskProgramAA)
-        m_renderSurfaceMaskProgramAA->cleanup(m_context.get());
     if (m_renderSurfaceProgram)
         m_renderSurfaceProgram->cleanup(m_context.get());
+    if (m_renderSurfaceMaskProgramAA)
+        m_renderSurfaceMaskProgramAA->cleanup(m_context.get());
     if (m_renderSurfaceProgramAA)
         m_renderSurfaceProgramAA->cleanup(m_context.get());
     if (m_videoLayerRGBAProgram)
         m_videoLayerRGBAProgram->cleanup(m_context.get());
     if (m_videoLayerYUVProgram)
         m_videoLayerYUVProgram->cleanup(m_context.get());
+    if (m_videoLayerNativeTextureProgram)
+        m_videoLayerNativeTextureProgram->cleanup(m_context.get());
     if (m_streamTextureLayerProgram)
         m_streamTextureLayerProgram->cleanup(m_context.get());
 
@@ -1516,19 +1522,22 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_headsUpDisplayProgram.clear();
     m_tilerProgram.clear();
     m_tilerProgramOpaque.clear();
-    m_tilerProgramAA.clear();
     m_tilerProgramSwizzle.clear();
     m_tilerProgramSwizzleOpaque.clear();
+    m_tilerProgramAA.clear();
     m_tilerProgramSwizzleAA.clear();
     m_canvasLayerProgram.clear();
     m_pluginLayerProgram.clear();
     m_pluginLayerProgramFlip.clear();
+    m_pluginLayerTexRectProgram.clear();
+    m_pluginLayerTexRectProgramFlip.clear();
     m_renderSurfaceMaskProgram.clear();
-    m_renderSurfaceMaskProgramAA.clear();
     m_renderSurfaceProgram.clear();
+    m_renderSurfaceMaskProgramAA.clear();
     m_renderSurfaceProgramAA.clear();
     m_videoLayerRGBAProgram.clear();
     m_videoLayerYUVProgram.clear();
+    m_videoLayerNativeTextureProgram.clear();
     m_streamTextureLayerProgram.clear();
     if (m_offscreenFramebufferId)
         GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
