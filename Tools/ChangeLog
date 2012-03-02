@@ -1,3 +1,29 @@
+2012-03-02  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Infinite loop on history navigation, when panning
+        https://bugs.webkit.org/show_bug.cgi?id=79119
+
+        Reviewed by Simon Hausmann.
+
+        Make the touch mocking more robust by creating touch events
+        directly and sending them synchronously to the browser window.
+        If the sent touch event was not accepted we propagate the
+        original mouse event to its target.
+        This way we make sure we only send either a touch or a mouse
+        event and do not end up in an infinite loop between our mocking
+        code and the Qt5 automatic mouse event synthesizing.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::updateVisualMockTouchPoints):
+        * MiniBrowser/qt/BrowserWindow.h:
+        (BrowserWindow):
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (touchRectForPosition):
+        (MiniBrowserApplication::notify):
+        (MiniBrowserApplication::sendTouchEvent):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (MiniBrowserApplication):
+
 2012-03-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Use 'all' as default target when debug_and_release is in effect

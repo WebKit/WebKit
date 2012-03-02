@@ -46,7 +46,7 @@ public:
     void focusAddressBar();
     QQuickWebView* webView() const;
 
-    void updateVisualMockTouchPoints(const QList<QWindowSystemInterface::TouchPoint>& touchPoints);
+    void updateVisualMockTouchPoints(const QList<QTouchEvent::TouchPoint>& touchPoints);
 
 public slots:
     BrowserWindow* newWindow(const QString& url = "about:blank");

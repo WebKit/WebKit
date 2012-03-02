@@ -93,30 +93,27 @@ BrowserWindow* BrowserWindow::newWindow(const QString& url)
     return window;
 }
 
-void BrowserWindow::updateVisualMockTouchPoints(const QList<QWindowSystemInterface::TouchPoint>& touchPoints)
+void BrowserWindow::updateVisualMockTouchPoints(const QList<QTouchEvent::TouchPoint>& touchPoints)
 {
-    foreach (const QWindowSystemInterface::TouchPoint& touchPoint, touchPoints) {
-        QString mockTouchPointIdentifier = QString("mockTouchPoint%1").arg(touchPoint.id);
+    foreach (const QTouchEvent::TouchPoint& touchPoint, touchPoints) {
+        QString mockTouchPointIdentifier = QString("mockTouchPoint%1").arg(touchPoint.id());
         QQuickItem* mockTouchPointItem = rootObject()->findChild<QQuickItem*>(mockTouchPointIdentifier, Qt::FindDirectChildrenOnly);
 
         if (!mockTouchPointItem) {
             QDeclarativeComponent touchMockPointComponent(engine(), QUrl("qrc:/qml/MockTouchPoint.qml"));
             mockTouchPointItem = qobject_cast<QQuickItem*>(touchMockPointComponent.create());
             mockTouchPointItem->setObjectName(mockTouchPointIdentifier);
-            mockTouchPointItem->setProperty("pointId", QVariant(touchPoint.id));
+            mockTouchPointItem->setProperty("pointId", QVariant(touchPoint.id()));
             mockTouchPointItem->setParent(rootObject());
             mockTouchPointItem->setParentItem(rootObject());
         }
 
-        QPointF position = touchPoint.area.center();
-        position.rx() -= geometry().x();
-        position.ry() -= geometry().y();
-
-        mockTouchPointItem->setX(position.x());
-        mockTouchPointItem->setY(position.y());
-        mockTouchPointItem->setWidth(touchPoint.area.width());
-        mockTouchPointItem->setHeight(touchPoint.area.height());
-        mockTouchPointItem->setProperty("pressed", QVariant(touchPoint.state != Qt::TouchPointReleased));
+        QRectF touchRect = touchPoint.rect();
+        mockTouchPointItem->setX(touchRect.center().x());
+        mockTouchPointItem->setY(touchRect.center().y());
+        mockTouchPointItem->setWidth(touchRect.width());
+        mockTouchPointItem->setHeight(touchRect.height());
+        mockTouchPointItem->setProperty("pressed", QVariant(touchPoint.state() != Qt::TouchPointReleased));
     }
 }
 
