@@ -1,3 +1,16 @@
+2012-03-01  Filip Pizlo  <fpizlo@apple.com>
+
+        The JIT should not crash the entire process just because there is not enough executable
+        memory, if the LLInt is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=79962
+
+        Reviewed by Csaba Osztrogonác.
+        
+        Fix for ARM, SH4.
+
+        * assembler/AssemblerBufferWithConstantPool.h:
+        (JSC::AssemblerBufferWithConstantPool::executableCopy):
+
 2012-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert my change. Broke builds.
