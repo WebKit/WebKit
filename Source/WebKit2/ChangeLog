@@ -1,3 +1,15 @@
+2012-03-02  Andy Estes  <aestes@apple.com>
+
+        Remove com.apple.WebKit.PluginProcess.sb from WebKit2.xcodeproj's Headers build phase
+        https://bugs.webkit.org/show_bug.cgi?id=80197
+
+        Reviewed by Alexey Proskuryakov.
+
+        It doesn't belong there, and it makes the Xcode consider the project to
+        be invalid, triggering assertions in some builds of Xcode.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2012-03-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix spelling mistake in header guard

@@ -3704,7 +3704,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E17BF99A14D0CBF100A5A069 /* com.apple.WebKit.PluginProcess.sb in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
