@@ -1,3 +1,14 @@
+2012-03-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make sure activeBuildConfig() returns the right config
+
+        Using isActiveConfig fails, as that only checks if the given
+        argument is in CONFIG, not the order.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/functions.prf:
+
 2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix tests run with WTR not using QStyle theme

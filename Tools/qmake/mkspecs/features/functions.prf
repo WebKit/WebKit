@@ -25,7 +25,7 @@ defineReplace(toEvaluatablePath) {
 }
 
 defineReplace(activeBuildConfig) {
-    isActiveConfig(debug): return(debug)
+    CONFIG(debug, debug|release): return(debug)
     else: return(release)
 }
 
