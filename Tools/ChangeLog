@@ -1,3 +1,8 @@
+2012-03-02  Ojan Vafai  <ojan@chromium.org>
+
+        Add the Chromium Lion canary bot to the flakiness dashboard.
+        * TestResultServer/static-dashboards/builders.js:
+
 2012-03-02  Dirk Pranke  <dpranke@chromium.org>
 
         links for virtual tests are broken in the flakiness dashboard

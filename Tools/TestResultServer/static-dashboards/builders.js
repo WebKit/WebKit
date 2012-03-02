@@ -120,6 +120,7 @@ var CHROMIUM_LAYOUT_TOT_BUILDERS = [
     ['Webkit Mac10.5 (dbg)(2)'],
     ['Webkit Mac10.6'],
     ['Webkit Mac10.6 (dbg)'],
+    ['Webkit Mac10.7'],
 ];
 associateBuildersWithMaster(CHROMIUM_LAYOUT_TOT_BUILDERS, CHROMIUM_WEBKIT_BUILDER_MASTER);
 
