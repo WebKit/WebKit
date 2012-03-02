@@ -24,37 +24,28 @@ module html {
         IndexedGetter,
         CustomIndexedSetter
     ] HTMLSelectElement : HTMLElement {
-        readonly attribute DOMString type;
-        attribute long selectedIndex;
-        attribute [TreatNullAs=NullString] DOMString value;
-        
-        // Modified in DOM Level 2:
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        readonly attribute long length;
-#else
-        attribute unsigned long length setter raises (DOMException);
-#endif
-
-        readonly attribute HTMLFormElement form;
-        readonly attribute ValidityState validity;
-        readonly attribute boolean willValidate;
-        readonly attribute DOMString validationMessage;
-        boolean checkValidity();
-        void setCustomValidity(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
-
-        // Modified in DOM Level 2:
-        readonly attribute HTMLOptionsCollection options;
-
-        attribute [Reflect] boolean disabled;
         attribute [Reflect] boolean autofocus;
+        attribute [Reflect] boolean disabled;
+        readonly attribute HTMLFormElement form;
         attribute boolean multiple;
         attribute [TreatNullAs=NullString] DOMString name;
         attribute [Reflect] boolean required;
         attribute long size;
-        
-        [ObjCLegacyUnnamedParameters] void add(in [Optional=DefaultIsUndefined] HTMLElement element, 
-                                in [Optional=DefaultIsUndefined] HTMLElement before) raises(DOMException);
 
+        readonly attribute DOMString type;
+
+        readonly attribute HTMLOptionsCollection options;
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+        // DOM Level 2 changes type of length attribute to unsigned long, 
+        // for compatibility we keep DOM Level 1 definition.
+        readonly attribute long length;
+#else
+        attribute unsigned long length setter raises (DOMException);
+#endif
+        Node item(in [IsIndex,Optional=DefaultIsUndefined] unsigned long index);
+        Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);
+        [ObjCLegacyUnnamedParameters] void add(in [Optional=DefaultIsUndefined] HTMLElement element,
+                                in [Optional=DefaultIsUndefined] HTMLElement before) raises(DOMException);
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         // In JavaScript, we support both option index and option object parameters.
         // As of this writing this cannot be auto-generated.
@@ -62,12 +53,15 @@ module html {
 #else
         void remove(in long index);
 #endif
+        attribute long selectedIndex;
+        attribute [TreatNullAs=NullString] DOMString value;
 
-        // These methods are not in DOM Level 2 IDL, but are mentioned in the standard:
-        // "The contained options can be directly accessed through the select element as a collection."
-        Node item(in [IsIndex,Optional=DefaultIsUndefined] unsigned long index);
-        Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);
+        readonly attribute boolean willValidate;
+        readonly attribute ValidityState validity;
+        readonly attribute DOMString validationMessage;
+        boolean checkValidity();
+        void setCustomValidity(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
+
         readonly attribute NodeList labels;
     };
-
 }
