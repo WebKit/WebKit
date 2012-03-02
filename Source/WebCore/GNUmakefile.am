@@ -112,6 +112,12 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/network/soup
 
 # ---
+# Features enabled by default at compilation time
+# ---
+FEATURE_DEFINES += ENABLE_SMOOTH_SCROLLING=1
+webcore_cppflags += -DENABLE_SMOOTH_SCROLLING=1
+
+# ---
 # Channel mesaging support
 # ---
 if ENABLE_CHANNEL_MESSAGING

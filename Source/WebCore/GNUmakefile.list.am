@@ -3390,6 +3390,8 @@ webcore_sources += \
 	Source/WebCore/platform/SchemeRegistry.h \
 	Source/WebCore/platform/ScrollAnimator.cpp \
 	Source/WebCore/platform/ScrollAnimator.h \
+	Source/WebCore/platform/ScrollAnimatorNone.cpp \
+	Source/WebCore/platform/ScrollAnimatorNone.h \
 	Source/WebCore/platform/ScrollableArea.cpp \
 	Source/WebCore/platform/ScrollableArea.h \
 	Source/WebCore/platform/Scrollbar.cpp \

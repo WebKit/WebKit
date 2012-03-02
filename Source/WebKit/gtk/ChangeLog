@@ -1,3 +1,21 @@
+2012-03-02  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Smooth scrolling support
+        https://bugs.webkit.org/show_bug.cgi?id=16123
+
+        Reviewed by Martin Robinson.
+
+        Add a new settings option to enable smooth scrolling.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        * webkit/webkitwebsettingsprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+
 2012-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Simplify the code to adjust font sizes depending on screen DPI
