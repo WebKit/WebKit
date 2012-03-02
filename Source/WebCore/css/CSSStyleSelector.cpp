@@ -3389,9 +3389,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
         return;
-    case CSSPropertyBoxSizing:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxSizing, BoxSizing);
-        return;
     case CSSPropertyWebkitColumnRuleStyle:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(columnRuleStyle, ColumnRuleStyle, BorderStyle)
         return;
@@ -3879,6 +3876,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBorderTopWidth:
     case CSSPropertyBorderWidth:
     case CSSPropertyBottom:
+    case CSSPropertyBoxSizing:
     case CSSPropertyCaptionSide:
     case CSSPropertyClear:
     case CSSPropertyClip:
