@@ -1069,7 +1069,7 @@ static CString pathFromSoupURI(SoupURI* uri)
     if (!uri)
         return CString();
 
-    if (g_str_equal(uri->scheme, "http")) {
+    if (g_str_equal(uri->scheme, "http") || g_str_equal(uri->scheme, "ftp")) {
         GOwnPtr<char> uriString(soup_uri_to_string(uri, FALSE));
         return CString(uriString.get());
     }
@@ -1143,8 +1143,11 @@ static CString descriptionSuitableForTestResult(GError* error, WebKitWebResource
     const gchar* errorDomain = g_quark_to_string(error->domain);
     CString resourceURIString(urlSuitableForTestResult(webkit_web_resource_get_uri(webResource)));
 
-    if (g_str_equal(errorDomain, "webkit-network-error-quark"))
+    if (g_str_equal(errorDomain, "webkit-network-error-quark") || g_str_equal(errorDomain, "soup_http_error_quark"))
         errorDomain = "NSURLErrorDomain";
+
+    if (g_str_equal(errorDomain, "WebKitPolicyError"))
+        errorDomain = "WebKitErrorDomain";
 
     // TODO: the other ports get the failingURL from the ResourceError
     GOwnPtr<char> errorString(g_strdup_printf("<NSError domain %s, code %d, failing URL \"%s\">",
