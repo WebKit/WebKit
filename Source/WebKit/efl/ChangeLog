@@ -1,3 +1,20 @@
+2012-03-02  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Enabling 'Inspect Element' in Ewk_Context_Menu_Action.
+        https://bugs.webkit.org/show_bug.cgi?id=79646
+
+        Reviewed by Andreas Kling.
+
+        INSPECTOR feature is already enabled for WebKit-Efl port (OptionsEfl.cmake).
+        As a result WebCore's ContextMenuAction contains ContextMenuItemTagInspectElement
+        and enums order has been changed. WebKit-Efl has to synchronize ContextMenuAction
+        with Ewk_Context_Menu_Action.
+        To avoid similar case in the feature I added checks between WebCore and
+        WebKit-EFL's enums by using COMPILE_ASSERT_MATCHING_ENUM.
+
+        * WebCoreSupport/AssertMatchingEnums.cpp:
+        * ewk/ewk_contextmenu.h:
+
 2012-02-29  Tomasz Morawski  <t.morawski@samsung.com>
 
         [EFL] Replace malloc/calloc/free to new/delete.
