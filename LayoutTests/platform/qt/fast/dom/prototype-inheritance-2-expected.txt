@@ -430,6 +430,7 @@ Never found SVGTransformList
 Never found SVGUnitTypes
 Never found SVGUseElement
 Never found SVGViewElement
+Never found Selection
 Never found SharedWorker
 Never found StyleSheet
 Never found TextMetrics
