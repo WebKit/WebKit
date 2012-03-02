@@ -1189,9 +1189,6 @@ BUGCR10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onPr
 // On Linux, we don't seem to be getting Helvetica Bold for all cases.
 BUGCR10328 LINUX : fast/css/font-face-multiple-faces.html = IMAGE+TEXT
 
-// Looks like we're failing the test -- there are red boogers in the box that should be all green.
-BUGCR10332 LINUX : css2.1/t1605-c545-txttrans-00-b-ag.html = FAIL
-
 // Asks for "system" fonts, which we don't support at all.
 BUGCR10335 LINUX : fast/css/css2-system-fonts.html = FAIL
 
@@ -2529,18 +2526,10 @@ BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS T
 BUGWK54051 MAC : compositing/plugins/invalidate_rect.html = TEXT
 BUGWK54051 MAC : plugins/windowless_plugin_paint_test.html = TIMEOUT
 
-// Snow Leopard-only failures (generally just need updated pixel results)
-BUGWK54322 SNOWLEOPARD : css1/text_properties/text_transform.html = IMAGE+TEXT
-BUGWK54322 SNOWLEOPARD : css2.1/t1605-c545-txttrans-00-b-ag.html = IMAGE+TEXT
-BUGWK54322 SNOWLEOPARD CPU : fast/canvas/arc360.html = IMAGE
-BUGWK54322 SNOWLEOPARD : fast/css/transform-default-parameter.html = IMAGE
+// Actual failures
 BUGWK54322 SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
-BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
-BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
-BUGWK54322 SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
-BUGWK54322 SNOWLEOPARD : fast/dom/scroll-reveal-left-overflow.html = IMAGE
 
 // Snow Leopard-only flakiness
 BUGWK54322 SLOW SNOWLEOPARD : fast/loader/loadInProgress.html = PASS
