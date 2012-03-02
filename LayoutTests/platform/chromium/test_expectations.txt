@@ -4315,8 +4315,6 @@ BUGWK79642 : fast/loader/subresource-willSendRequest-null.html = TIMEOUT
 BUGWK79702 : fast/regex/lastIndex.html = TEXT
 BUGWK79703 : fast/regex/overflow.html = TEXT
 
-BUGWK79765 DEBUG : webaudio/audiobuffersource-channels.html = CRASH
-
 BUGWK79823 : compositing/repaint/opacity-between-absolute.html = PASS IMAGE
 BUGWK79823 : compositing/reflections/masked-reflection-on-composited.html = PASS IMAGE
 // Already associated with bug 47949 on Mac.

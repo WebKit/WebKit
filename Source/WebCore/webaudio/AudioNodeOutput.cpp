@@ -35,10 +35,6 @@
 
 namespace WebCore {
 
-// This is considering that 5.1 (6 channels) is the largest we'll ever deal with.
-// It can easily be increased to support more if the web audio specification is updated.
-const unsigned MaxNumberOfChannels = 6;
-
 AudioNodeOutput::AudioNodeOutput(AudioNode* node, unsigned numberOfChannels)
     : m_node(node)
     , m_numberOfChannels(numberOfChannels)
@@ -47,7 +43,7 @@ AudioNodeOutput::AudioNodeOutput(AudioNode* node, unsigned numberOfChannels)
     , m_isEnabled(true)
     , m_renderingFanOutCount(0)
 {
-    ASSERT(numberOfChannels <= MaxNumberOfChannels);
+    ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels());
 
     m_internalBus = adoptPtr(new AudioBus(numberOfChannels, AudioNode::ProcessingSizeInFrames));
     m_actualDestinationBus = m_internalBus.get();
@@ -55,7 +51,7 @@ AudioNodeOutput::AudioNodeOutput(AudioNode* node, unsigned numberOfChannels)
 
 void AudioNodeOutput::setNumberOfChannels(unsigned numberOfChannels)
 {
-    ASSERT(numberOfChannels <= MaxNumberOfChannels);
+    ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels());
     ASSERT(context()->isGraphOwner());
 
     m_desiredNumberOfChannels = numberOfChannels;

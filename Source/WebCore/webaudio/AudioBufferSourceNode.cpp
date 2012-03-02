@@ -363,6 +363,10 @@ bool AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
     if (buffer) {
         // Do any necesssary re-configuration to the buffer's number of channels.
         unsigned numberOfChannels = buffer->numberOfChannels();
+
+        if (numberOfChannels > AudioContext::maxNumberOfChannels())
+            return false;
+
         output(0)->setNumberOfChannels(numberOfChannels);
 
         m_sourceChannels = adoptArrayPtr(new const float* [numberOfChannels]);
