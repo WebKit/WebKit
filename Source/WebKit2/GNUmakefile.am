@@ -1280,7 +1280,7 @@ Programs_WebKitWebProcess_LDADD = \
 	$(GTK_LIBS) \
 	$(GTK_UNIX_PRINTING_LIBS) \
 	$(LIBSOUP_LIBS) \
-	$(ZLIB_CFLAGS)
+	$(ZLIB_LIBS)
 
 Programs_WebKitWebProcess_LDFLAGS = \
 	-no-fast-install \

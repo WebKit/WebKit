@@ -1,3 +1,9 @@
+2012-03-02  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Unreviewed. Fix WebKit2 GTK+ build.
+
+        * GNUmakefile.am: allow WebKitWebProcess to link with zlib properly.
+
 2012-03-01  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Make the interaction with the Flickable work on the N9
