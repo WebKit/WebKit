@@ -3343,6 +3343,7 @@ BUGWK66953 MAC DEBUG : animations/animation-direction-reverse.html = TEXT PASS
 BUGWK72631 LINUX WIN : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 MAC DEBUG : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 WIN : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
+BUGWK72631 MAC DEBUG : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
 
 BUGWK72990 WIN : accessibility/loading-iframe-updates-axtree.html = PASS TIMEOUT
 BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.html = PASS TIMEOUT
