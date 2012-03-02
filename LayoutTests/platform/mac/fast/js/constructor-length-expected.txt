@@ -10,7 +10,6 @@ PASS CloseEvent.length is 2
 PASS CustomEvent.length is 2
 FAIL DOMFormData.length should be 0. Threw exception ReferenceError: Can't find variable: DOMFormData
 PASS DOMParser.length is 0
-FAIL DOMURL.length should be 0. Threw exception ReferenceError: Can't find variable: DOMURL
 PASS DataView.length is 3
 PASS ErrorEvent.length is 2
 PASS Event.length is 2
@@ -51,6 +50,7 @@ PASS WebKitPoint.length is 2
 PASS WebKitTransitionEvent.length is 2
 PASS WebSocket.length is 1
 PASS Worker.length is 1
+PASS webkitURL.length is 0
 PASS XMLHttpRequest.length is 0
 PASS XMLSerializer.length is 0
 PASS XPathEvaluator.length is 0

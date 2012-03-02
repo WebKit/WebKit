@@ -30,7 +30,8 @@ module html {
         Constructor,
         JSGenerateToNativeObject,
         JSGenerateToJSObject,
-        JSNoStaticTables
+        JSNoStaticTables,
+        InterfaceName=URL
     ] DOMURL {
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
         [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Undefined] static DOMString createObjectURL(in MediaStream stream);
