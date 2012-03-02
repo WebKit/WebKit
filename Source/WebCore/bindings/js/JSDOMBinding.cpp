@@ -161,9 +161,8 @@ void reportException(ExecState* exec, JSValue exception)
         errorMessage = stringToUString(exceptionBase->message() + ": "  + exceptionBase->description());
 
     ScriptExecutionContext* scriptExecutionContext = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
-    ASSERT(scriptExecutionContext);
 
-    // Crash data indicates null-dereference crashes at this point in the Safari 4 Public Beta.
+    // scriptExecutionContext can be null when the relevant global object is a stale inner window object.
     // It's harmless to return here without reporting the exception to the log and the debugger in this case.
     if (!scriptExecutionContext)
         return;
