@@ -18,7 +18,7 @@
  *
  */
 
-#ifndef qwebviewportinfp_p_h
+#ifndef qwebviewportinfo_p_h
 #define qwebviewportinfo_p_h
 
 #include "qwebkitglobal.h"
