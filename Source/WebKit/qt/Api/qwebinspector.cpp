@@ -50,8 +50,8 @@
 
     \note A QWebInspector will display a blank widget if either:
     \list
-        \o page() is null
-        \o QWebSettings::DeveloperExtrasEnabled is false
+        \li page() is null
+        \li QWebSettings::DeveloperExtrasEnabled is false
     \endlist
 
     \section1 Resources
@@ -60,8 +60,8 @@
     Most of the resources needed by the inspector are owned by the associated
     QWebPage and are allocated the first time that:
     \list
-        \o an element is inspected
-        \o the QWebInspector is shown.
+        \li an element is inspected
+        \li the QWebInspector is shown.
     \endlist
 
     \section1 Inspector configuration persistence
@@ -98,12 +98,12 @@ QWebInspector::~QWebInspector()
 /*!
     Bind this inspector to the QWebPage to be inspected.
 
-    \bold {Notes:}
+    \b {Notes:}
     \list
-        \o There can only be one QWebInspector associated with a QWebPage
+        \li There can only be one QWebInspector associated with a QWebPage
            and vice versa.
-        \o Calling this method with a null \a page will break the current association, if any.
-        \o If \a page is already associated to another QWebInspector, the association
+        \li Calling this method with a null \a page will break the current association, if any.
+        \li If \a page is already associated to another QWebInspector, the association
            will be replaced and the previous QWebInspector will become unbound
     \endlist
 

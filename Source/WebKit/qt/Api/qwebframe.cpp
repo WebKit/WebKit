@@ -783,12 +783,12 @@ QString QWebFrame::title() const
 
     Given the above HTML code the metaData() function will return a map with two entries:
     \table
-    \header \o Key
-            \o Value
-    \row    \o "description"
-            \o "This document is a tutorial about Qt development"
-    \row    \o "keywords"
-            \o "Qt, WebKit, Programming"
+    \header \li Key
+            \li Value
+    \row    \li "description"
+            \li "This document is a tutorial about Qt development"
+    \row    \li "keywords"
+            \li "Qt, WebKit, Programming"
     \endtable
 
     This function returns a multi map to support multiple meta tags with the same attribute name.

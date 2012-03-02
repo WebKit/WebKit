@@ -106,54 +106,54 @@
     The following locations are searched for plugins:
 
     \table
-    \header \o Linux/Unix (X11)
-    \row \o
+    \header \li Linux/Unix (X11)
+    \row \li
     \list
-    \o \c{.mozilla/plugins} in the user's home directory
-    \o \c{.netscape/plugins} in the user's home directory
-    \o System locations, such as
+    \li \c{.mozilla/plugins} in the user's home directory
+    \li \c{.netscape/plugins} in the user's home directory
+    \li System locations, such as
     \list
-    \o \c{/usr/lib/browser/plugins}
-    \o \c{/usr/local/lib/mozilla/plugins}
-    \o \c{/usr/lib/firefox/plugins}
-    \o \c{/usr/lib64/browser-plugins}
-    \o \c{/usr/lib/browser-plugins}
-    \o \c{/usr/lib/mozilla/plugins}
-    \o \c{/usr/local/netscape/plugins}
-    \o \c{/opt/mozilla/plugins}
-    \o \c{/opt/mozilla/lib/plugins}
-    \o \c{/opt/netscape/plugins}
-    \o \c{/opt/netscape/communicator/plugins}
-    \o \c{/usr/lib/netscape/plugins}
-    \o \c{/usr/lib/netscape/plugins-libc5}
-    \o \c{/usr/lib/netscape/plugins-libc6}
-    \o \c{/usr/lib64/netscape/plugins}
-    \o \c{/usr/lib64/mozilla/plugins}
+    \li \c{/usr/lib/browser/plugins}
+    \li \c{/usr/local/lib/mozilla/plugins}
+    \li \c{/usr/lib/firefox/plugins}
+    \li \c{/usr/lib64/browser-plugins}
+    \li \c{/usr/lib/browser-plugins}
+    \li \c{/usr/lib/mozilla/plugins}
+    \li \c{/usr/local/netscape/plugins}
+    \li \c{/opt/mozilla/plugins}
+    \li \c{/opt/mozilla/lib/plugins}
+    \li \c{/opt/netscape/plugins}
+    \li \c{/opt/netscape/communicator/plugins}
+    \li \c{/usr/lib/netscape/plugins}
+    \li \c{/usr/lib/netscape/plugins-libc5}
+    \li \c{/usr/lib/netscape/plugins-libc6}
+    \li \c{/usr/lib64/netscape/plugins}
+    \li \c{/usr/lib64/mozilla/plugins}
     \endlist
-    \o Locations specified by environment variables:
+    \li Locations specified by environment variables:
     \list
-    \o \c{$MOZILLA_HOME/plugins}
-    \o \c{$MOZ_PLUGIN_PATH}
-    \o \c{$QTWEBKIT_PLUGIN_PATH}
+    \li \c{$MOZILLA_HOME/plugins}
+    \li \c{$MOZ_PLUGIN_PATH}
+    \li \c{$QTWEBKIT_PLUGIN_PATH}
     \endlist
-    \endlist
-    \endtable
-
-    \table
-    \header  \o Windows
-    \row \o
-    \list
-    \o The user's \c{Application Data\Mozilla\plugins} directory
-    \o Standard system locations of plugins for Quicktime, Flash, etc.
     \endlist
     \endtable
 
     \table
-    \header \o Mac OS X
-    \row \o
+    \header  \li Windows
+    \row \li
     \list
-    \o \c{Library/Internet Plug-Ins} in the user's home directory
-    \o The system \c{/Library/Internet Plug-Ins} directory
+    \li The user's \c{Application Data\Mozilla\plugins} directory
+    \li Standard system locations of plugins for Quicktime, Flash, etc.
+    \endlist
+    \endtable
+
+    \table
+    \header \li Mac OS X
+    \row \li
+    \list
+    \li \c{Library/Internet Plug-Ins} in the user's home directory
+    \li The system \c{/Library/Internet Plug-Ins} directory
     \endlist
     \endtable
     

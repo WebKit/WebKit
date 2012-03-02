@@ -181,16 +181,16 @@ void QWebPluginFactory::refreshPlugins()
 
     The above object element will result in a call to create() with the following arguments:
     \table
-    \header \o Parameter
-            \o Value
-    \row    \o mimeType
-            \o "application/x-pdf"
-    \row    \o url
-            \o "http://qt.nokia.com/document.pdf"
-    \row    \o argumentNames
-            \o "showTableOfContents" "hideThumbnails"
-    \row    \o argumentVaues
-            \o "true" "false"
+    \header \li Parameter
+            \li Value
+    \row    \li mimeType
+            \li "application/x-pdf"
+    \row    \li url
+            \li "http://qt.nokia.com/document.pdf"
+    \row    \li argumentNames
+            \li "showTableOfContents" "hideThumbnails"
+    \row    \li argumentVaues
+            \li "true" "false"
     \endtable
 
     \note Ownership of the returned object will be transferred to the caller.

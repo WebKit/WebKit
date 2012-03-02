@@ -53,13 +53,13 @@ enum {
   the functions used to access them.
 
   \table
-  \header \o Function      \o Description
-  \row    \o title()       \o The page title.
-  \row    \o url()         \o The location of the page.
-  \row    \o originalUrl() \o The URL used to access the page.
-  \row    \o lastVisited() \o The date and time of the user's last visit to the page.
-  \row    \o icon()        \o The icon associated with the page that was provided by the server.
-  \row    \o userData()    \o The user specific data that was stored with the history item.
+  \header \li Function      \li Description
+  \row    \li title()       \li The page title.
+  \row    \li url()         \li The location of the page.
+  \row    \li originalUrl() \li The URL used to access the page.
+  \row    \li lastVisited() \li The date and time of the user's last visit to the page.
+  \row    \li icon()        \li The icon associated with the page that was provided by the server.
+  \row    \li userData()    \li The user specific data that was stored with the history item.
   \endtable
 
   \note QWebHistoryItem objects are value based, but \e{explicitly shared}. Changing

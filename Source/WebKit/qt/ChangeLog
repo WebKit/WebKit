@@ -1,3 +1,25 @@
+2012-03-02  Casper van Donderen  <casper.vandonderen@nokia.com>
+
+        [Qt] Documentation cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=80131
+
+        Reviewed by Simon Hausmann.
+
+        QDoc uses different commands to do bold, lists, and italics.
+        This change updates the documentation accordingly.
+        QTBUG-24578
+
+        * Api/qwebframe.cpp:
+        * Api/qwebhistory.cpp:
+        * Api/qwebinspector.cpp:
+        * Api/qwebpage.cpp:
+        * Api/qwebpluginfactory.cpp:
+        * Api/qwebsettings.cpp:
+        * declarative/qdeclarativewebview.cpp:
+        * docs/qtwebkit-bridge.qdoc:
+        * docs/qtwebkit.qdoc:
+        * docs/qtwebkit.qdocconf:
+
 2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Build system cleanup
