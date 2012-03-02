@@ -210,7 +210,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         }
 
         this._restoreBreakpoints(rawSourceCode);
-        this._restoreExecutionLine(rawSourceCode);
 
         var uiSourceCodeList = rawSourceCode.uiSourceCodeList();
         if (!oldUISourceCodeList.length) {
@@ -235,18 +234,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
             for (var lineNumber in breakpoints)
                 this._breakpointAdded(breakpoints[lineNumber]);
         }
-    },
-
-    /**
-     * @param {WebInspector.RawSourceCode} rawSourceCode
-     */
-    _restoreExecutionLine: function(rawSourceCode)
-    {
-        if (!this._selectedCallFrame || this._selectedCallFrame.rawSourceCode !== rawSourceCode)
-            return;
-
-        var uiLocation = rawSourceCode.rawLocationToUILocation(this._selectedCallFrame._callFrame.location);
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ExecutionLineChanged, uiLocation);
     },
 
     /**
@@ -567,6 +554,10 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     set selectedCallFrame(callFrame)
     {
+        if (this._executionLineLiveLocation)
+            this._executionLineLiveLocation.dispose();
+        delete this._executionLineLiveLocation;
+        
         this._selectedCallFrame = callFrame;
         if (!this._selectedCallFrame)
             return;
@@ -574,9 +565,12 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._selectedCallFrame.rawSourceCode.forceUpdateSourceMapping();
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, callFrame);
 
-        var uiLocation = callFrame.rawSourceCode.rawLocationToUILocation(callFrame._callFrame.location);
-        if (uiLocation)
+        function updateExecutionLine(uiLocation)
+        {
             this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ExecutionLineChanged, uiLocation);
+        }
+        this._executionLineLiveLocation = this._selectedCallFrame.rawSourceCode.createLiveLocation(callFrame._callFrame.location, updateExecutionLine.bind(this));
+        this._executionLineLiveLocation.init();
     },
 
     get selectedCallFrame()
