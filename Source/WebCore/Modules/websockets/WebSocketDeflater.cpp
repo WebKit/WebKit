@@ -29,10 +29,9 @@
  */
 
 #include "config.h"
-
-#if ENABLE(WEB_SOCKETS)
-
 #include "WebSocketDeflater.h"
+
+#if ENABLE(WEB_SOCKETS) && USE(ZLIB)
 
 #include "Logging.h"
 #include <wtf/FastMalloc.h>
@@ -209,4 +208,4 @@ void WebSocketInflater::reset()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_SOCKETS)
+#endif // ENABLE(WEB_SOCKETS) && USE(ZLIB)

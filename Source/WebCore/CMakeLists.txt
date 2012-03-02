@@ -2075,6 +2075,7 @@ IF (ENABLE_WEB_SOCKETS)
         Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp
         Modules/websockets/WebSocket.cpp
         Modules/websockets/WebSocketChannel.cpp
+        Modules/websockets/WebSocketDeflater.cpp
         Modules/websockets/WebSocketDeflateFramer.cpp
         Modules/websockets/WebSocketExtensionDispatcher.cpp
         Modules/websockets/WebSocketHandshake.cpp
