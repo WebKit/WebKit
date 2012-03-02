@@ -3710,6 +3710,7 @@ BUGWK78219 : svg/dynamic-updates/SVGCircleElement-dom-requiredFeatures.html = IM
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-r-prop.html = IMAGE
+BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-requiredFeatures.html = IMAGE 
 BUGWK78219 : svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCursorElement-dom-x-attr.html = IMAGE
