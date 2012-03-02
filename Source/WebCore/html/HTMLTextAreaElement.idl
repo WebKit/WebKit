@@ -22,13 +22,11 @@
 module html {
 
     interface HTMLTextAreaElement : HTMLElement {
-        attribute [TreatNullAs=NullString] DOMString defaultValue;
-        readonly attribute HTMLFormElement form;
-        readonly attribute ValidityState validity;
+        attribute [Reflect] boolean autofocus;
         attribute long cols;
         attribute [Reflect] DOMString dirName;
         attribute [Reflect] boolean disabled;
-        attribute [Reflect] boolean autofocus;
+        readonly attribute HTMLFormElement form;
         attribute long maxLength setter raises(DOMException);
         attribute [TreatNullAs=NullString] DOMString name;
         attribute [Reflect] DOMString placeholder;
@@ -36,32 +34,34 @@ module html {
         attribute [Reflect] boolean required;
         attribute long rows;
         attribute [Reflect] DOMString wrap;
+
         readonly attribute DOMString type;
+        attribute [TreatNullAs=NullString] DOMString defaultValue;
         attribute [TreatNullAs=NullString] DOMString value;
         readonly attribute unsigned long textLength;
 
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        attribute [Reflect] DOMString accessKey;
-#endif
-        void select();
-
         readonly attribute boolean willValidate;
+        readonly attribute ValidityState validity;
         readonly attribute DOMString validationMessage;
         boolean checkValidity();
         void setCustomValidity(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString error);
 
-        // WinIE & FireFox extension:
+        readonly attribute NodeList labels;
+
+        void select();
         attribute long selectionStart;
         attribute long selectionEnd;
         attribute DOMString selectionDirection;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         void setSelectionRange(in long start, in long end);
 #else
-        void setSelectionRange(in [Optional=DefaultIsUndefined] long start, 
-                               in [Optional=DefaultIsUndefined] long end, 
+        void setSelectionRange(in [Optional=DefaultIsUndefined] long start,
+                               in [Optional=DefaultIsUndefined] long end,
                                in [Optional] DOMString direction);
 #endif
-        readonly attribute NodeList labels;
-    };
 
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+        attribute [Reflect] DOMString accessKey;
+#endif
+    };
 }
