@@ -1,5 +1,15 @@
 2012-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Revert my change. Broke builds.
+        Source/JavaScriptCore/wtf/Atomics.h:188: error: redefinition of 'bool WTF::weakCompareAndSwap(volatile uintptr_t*, uintptr_t, uintptr_t)'
+        Source/JavaScriptCore/wtf/Atomics.h:122: error: 'bool WTF::weakCompareAndSwap(volatile unsigned int*, unsigned int, unsigned i
+
+        * wtf/Atomics.h:
+        (WTF):
+        (WTF::weakCompareAndSwap):
+
+2012-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
         Gcc build fix.
 
         Rubber-stamped by Filip Pizlo.
