@@ -1,3 +1,9 @@
+2012-03-02  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Fix build on AppleWebKit after 109548.
+
+        * mac/WebKit2.order:
+
 2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix tests run with WTR not using QStyle theme
