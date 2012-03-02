@@ -106,14 +106,14 @@ static inline void _ewk_view_screen_move(uint32_t* image, size_t destinationX, s
 
     uint32_t* source, * destination;
     if (sourceX >= destinationX) {
-        for (int i = 0; i < copyHeight; i++) {
+        for (size_t i = 0; i < copyHeight; i++) {
             source = sourceBegin + (frameWidth * startHeight);
             destination = destinationBegin + (frameWidth * startHeight);
             startHeight = startHeight + moveLineUpDown;
             memcpy(destination, source, copyLength);
         }
     } else {
-        for (int i = 0; i < copyHeight; i++) {
+        for (size_t i = 0; i < copyHeight; i++) {
             source = sourceBegin + (frameWidth * startHeight);
             destination = destinationBegin + (frameWidth * startHeight);
             startHeight = startHeight + moveLineUpDown;

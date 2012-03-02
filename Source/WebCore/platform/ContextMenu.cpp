@@ -38,7 +38,7 @@ static const ContextMenuItem* findItemWithAction(unsigned action, const Vector<C
 {
     for (size_t i = 0; i < items.size(); ++i) {
         const ContextMenuItem& item = items[i];
-        if (item.action() == action)
+        if (item.action() == static_cast<ContextMenuAction>(action))
             return &item;
         if (item.type() != SubmenuType)
             continue;

@@ -1,3 +1,17 @@
+2012-03-02  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL] Build warning : comparison between signed and unsigned integer expressions.
+        https://bugs.webkit.org/show_bug.cgi?id=79860
+
+        Reviewed by Hajime Morita.
+
+        Fixed build warnings which are getting generated when comparing signed
+        and unsigned integer expressions.
+
+        * Source/WebCore/bindings/js/JSDocumentCustom.cpp:
+        * Source/WebCore/platform/ContextMenu.cpp:
+        * Source/WebKit/efl/ewk/ewk_view_single.cpp:
+
 2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Move QStyle theming code out of WebCore into WebKit1
