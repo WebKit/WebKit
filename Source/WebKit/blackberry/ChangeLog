@@ -1,3 +1,18 @@
+2012-03-02  Jacky Jiang  <zhajiang@rim.com>
+
+        Fix a warning in InputHandler::learnText()
+        https://bugs.webkit.org/show_bug.cgi?id=80049
+
+        Reviewed by Antonio Gomes.
+
+        Fix a warning of the comparison "textInField.length() <=
+        MaxLearnTextDataSize" in InputHandler::learnText().
+
+        Rubber-stamped internally by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::learnText):
+
 2012-03-01  Andy Chen  <andchen@rim.com>
 
         [BlackBerry] Implement features for find-in-page

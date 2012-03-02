@@ -64,7 +64,7 @@
 #define ENABLE_INPUT_LOG 0
 #define ENABLE_FOCUS_LOG 0
 
-static const int MaxLearnTextDataSize = 500;
+static const unsigned MaxLearnTextDataSize = 500;
 
 using namespace BlackBerry::Platform;
 using namespace WebCore;
@@ -368,7 +368,7 @@ void InputHandler::learnText()
         return;
 
     String textInField(elementText());
-    textInField = textInField.substring(std::max(0, static_cast<int>(textInField.length()) - MaxLearnTextDataSize), textInField.length());
+    textInField = textInField.substring(std::max(0, static_cast<int>(textInField.length() - MaxLearnTextDataSize)), textInField.length());
     textInField.remove(0, textInField.find(" "));
 
     // Build up the 500 character strings in word chunks.
