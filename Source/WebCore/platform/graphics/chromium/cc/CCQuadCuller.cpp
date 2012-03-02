@@ -131,7 +131,6 @@ void CCQuadCuller::cullOccludedQuads(CCQuadList& quadList, bool haveDamageRect, 
         }
 
         if (overdrawMetrics) {
-            TRACE_EVENT("CCQuadCuller::cullOccludedQuads_OverdrawMetrics", 0, 0);
             // We compute the area of the transformed quad, as this should be in pixels.
             float area = quadArea(drawQuad->quadTransform().mapQuad(FloatQuad(drawQuad->quadRect())));
             if (keepQuad) {
