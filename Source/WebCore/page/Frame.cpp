@@ -166,6 +166,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     , m_inViewSourceMode(false)
     , m_isDisconnected(false)
     , m_excludeFromTextSearch(false)
+    , m_activeDOMObjectsAndAnimationsSuspendedCount(0)
 {
     ASSERT(page);
     AtomicString::init();
@@ -196,6 +197,11 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
 #ifndef NDEBUG
     frameCounter.increment();
 #endif
+
+    // Pause future ActiveDOMObjects if this frame is being created while the page is in a paused state.
+    Frame* parent = parentFromOwnerElement(ownerElement);
+    if (parent && parent->activeDOMObjectsAndAnimationsSuspended())
+        suspendActiveDOMObjectsAndAnimations();
 }
 
 PassRefPtr<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* client)
@@ -305,6 +311,13 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
     if (m_page && m_page->mainFrame() == this) {
         notifyChromeClientWheelEventHandlerCountChanged();
         notifyChromeClientTouchEventHandlerCountChanged();
+    }
+
+    // Suspend document if this frame was created in suspended state.
+    if (activeDOMObjectsAndAnimationsSuspended()) {
+        document()->suspendScriptedAnimationControllerCallbacks();
+        animation()->suspendAnimationsForDocument(document());
+        document()->suspendActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
     }
 }
 
@@ -1009,6 +1022,38 @@ float Frame::frameScaleFactor() const
     if (!page || page->mainFrame() != this)
         return 1;
     return page->pageScaleFactor();
+}
+
+void Frame::suspendActiveDOMObjectsAndAnimations()
+{
+    bool wasSuspended = activeDOMObjectsAndAnimationsSuspended();
+
+    m_activeDOMObjectsAndAnimationsSuspendedCount++;
+
+    if (wasSuspended)
+        return;
+
+    if (document()) {
+        document()->suspendScriptedAnimationControllerCallbacks();
+        animation()->suspendAnimationsForDocument(document());
+        document()->suspendActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
+    }
+}
+
+void Frame::resumeActiveDOMObjectsAndAnimations()
+{
+    ASSERT(activeDOMObjectsAndAnimationsSuspended());
+
+    m_activeDOMObjectsAndAnimationsSuspendedCount--;
+
+    if (activeDOMObjectsAndAnimationsSuspended())
+        return;
+
+    if (document()) {
+        document()->resumeActiveDOMObjects();
+        animation()->resumeAnimationsForDocument(document());
+        document()->resumeScriptedAnimationControllerCallbacks();
+    }
 }
 
 #if USE(ACCELERATED_COMPOSITING)

@@ -1654,7 +1654,20 @@ void WebPage::setUserAgent(const String& userAgent)
 {
     m_userAgent = userAgent;
 }
-  
+
+void WebPage::suspendActiveDOMObjectsAndAnimations()
+{
+    m_page->suspendActiveDOMObjectsAndAnimations();
+}
+
+void WebPage::resumeActiveDOMObjectsAndAnimations()
+{
+    m_page->resumeActiveDOMObjectsAndAnimations();
+
+    // We need to repaint on resume to kickstart animated painting again.
+    m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
+}
+
 IntPoint WebPage::screenToWindow(const IntPoint& point)
 {
     IntPoint windowPoint;

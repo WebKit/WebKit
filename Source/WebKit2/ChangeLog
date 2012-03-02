@@ -1,3 +1,30 @@
+2012-03-02  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Suspend/Resume API for pausing timers and animations.
+        https://bugs.webkit.org/show_bug.cgi?id=76063
+
+        Based on the initial work of Zalan Bujtas <zalan.bujtas@nokia.com>,
+
+        Adds suspend and resume API for WebKit2 and uses it in Qt to
+        suspend animations and DOM timers during panning and zoom.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::_q_suspend):
+        (QQuickWebViewFlickablePrivate::_q_resume):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::resumeActiveDOMObjectsAndAnimations):
+        (WebKit::WebPageProxy::suspendActiveDOMObjectsAndAnimations):
+        (WebKit::WebPageProxy::processDidCrash):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::suspendActiveDOMObjectsAndAnimations):
+        (WebKit::WebPage::resumeActiveDOMObjectsAndAnimations):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2012-03-02  Joone Hur  <joone.hur@collabora.co.uk>
 
         Unreviewed. Fix WebKit2 GTK+ build.

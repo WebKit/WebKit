@@ -2662,6 +2662,10 @@ bool RenderObject::willRenderImage(CachedImage*)
     if (style()->visibility() != VISIBLE)
         return false;
 
+    // We will not render a new image when Active DOM is suspended
+    if (document()->activeDOMObjectsAreSuspended())
+        return false;
+
     // If we're not in a window (i.e., we're dormant from being put in the b/f cache or in a background tab)
     // then we don't want to render either.
     return !document()->inPageCache() && !document()->view()->isOffscreen();

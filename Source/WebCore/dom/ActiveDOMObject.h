@@ -54,7 +54,8 @@ public:
     enum ReasonForSuspension {
         JavaScriptDebuggerPaused,
         WillShowDialog,
-        DocumentWillBecomeInactive
+        DocumentWillBecomeInactive,
+        PageWillBeSuspended
     };
     virtual bool canSuspend() const;
     virtual void suspend(ReasonForSuspension);

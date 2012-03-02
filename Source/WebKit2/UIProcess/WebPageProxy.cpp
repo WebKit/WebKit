@@ -186,6 +186,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_needTouchEvents(false)
 #endif
     , m_pageID(pageID)
+    , m_isPageSuspended(false)
 #if PLATFORM(MAC)
     , m_isSmartInsertDeleteEnabled(TextChecker::isSmartInsertDeleteEnabled())
 #endif
@@ -1124,6 +1125,26 @@ void WebPageProxy::setCustomUserAgent(const String& customUserAgent)
     }
 
     setUserAgent(m_customUserAgent);
+}
+
+void WebPageProxy::resumeActiveDOMObjectsAndAnimations()
+{
+    if (!isValid() || !m_isPageSuspended)
+        return;
+
+    m_isPageSuspended = false;
+
+    process()->send(Messages::WebPage::ResumeActiveDOMObjectsAndAnimations(), m_pageID);
+}
+
+void WebPageProxy::suspendActiveDOMObjectsAndAnimations()
+{
+    if (!isValid() || m_isPageSuspended)
+        return;
+
+    m_isPageSuspended = true;
+
+    process()->send(Messages::WebPage::SuspendActiveDOMObjectsAndAnimations(), m_pageID);
 }
 
 bool WebPageProxy::supportsTextEncoding() const
@@ -3191,6 +3212,7 @@ void WebPageProxy::processDidCrash()
     ASSERT(m_pageClient);
 
     m_isValid = false;
+    m_isPageSuspended = false;
 
     if (m_mainFrame) {
         m_urlAtProcessExit = m_mainFrame->url();

@@ -3408,12 +3408,13 @@ void HTMLMediaElement::stop()
 void HTMLMediaElement::suspend(ReasonForSuspension why)
 {
     LOG(Media, "HTMLMediaElement::suspend");
-    
+
     switch (why)
     {
         case DocumentWillBecomeInactive:
             stop();
             break;
+        case PageWillBeSuspended:
         case JavaScriptDebuggerPaused:
         case WillShowDialog:
             // Do nothing, we don't pause media playback in these cases.

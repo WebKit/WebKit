@@ -328,6 +328,9 @@ namespace WebCore {
         void addRelevantRepaintedObject(RenderObject*, const IntRect& objectPaintRect);
         void addRelevantUnpaintedObject(RenderObject*, const IntRect& objectPaintRect);
 
+        void suspendActiveDOMObjectsAndAnimations();
+        void resumeActiveDOMObjectsAndAnimations();
+
     private:
         void initGroup();
 

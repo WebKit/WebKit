@@ -1096,6 +1096,18 @@ void Page::addRelevantUnpaintedObject(RenderObject* object, const IntRect& objec
     m_relevantUnpaintedRegion.unite(objectPaintRect);
 }
 
+void Page::suspendActiveDOMObjectsAndAnimations()
+{
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->suspendActiveDOMObjectsAndAnimations();
+}
+
+void Page::resumeActiveDOMObjectsAndAnimations()
+{
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->resumeActiveDOMObjectsAndAnimations();
+}
+
 Page::PageClients::PageClients()
     : chromeClient(0)
     , contextMenuClient(0)

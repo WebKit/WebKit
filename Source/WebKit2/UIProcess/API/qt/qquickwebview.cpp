@@ -669,6 +669,7 @@ void QQuickWebViewPrivate::_q_commitPositionChange(const QPointF& trajectoryVect
 void QQuickWebViewFlickablePrivate::_q_suspend()
 {
     pageIsSuspended = true;
+    webPageProxy->suspendActiveDOMObjectsAndAnimations();
 }
 
 void QQuickWebViewFlickablePrivate::_q_resume()
@@ -677,6 +678,7 @@ void QQuickWebViewFlickablePrivate::_q_resume()
         return;
 
     pageIsSuspended = false;
+    webPageProxy->resumeActiveDOMObjectsAndAnimations();
 
     if (isTransitioningToNewPage) {
         isTransitioningToNewPage = false;

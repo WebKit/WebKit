@@ -407,6 +407,9 @@ public:
     void setCustomTextEncodingName(const String&);
     String customTextEncodingName() const { return m_customTextEncodingName; }
 
+    void resumeActiveDOMObjectsAndAnimations();
+    void suspendActiveDOMObjectsAndAnimations();
+
     double estimatedProgress() const;
 
     void terminateProcess();
@@ -991,6 +994,8 @@ private:
 #endif
 
     uint64_t m_pageID;
+
+    bool m_isPageSuspended;
 
 #if PLATFORM(MAC)
     bool m_isSmartInsertDeleteEnabled;
