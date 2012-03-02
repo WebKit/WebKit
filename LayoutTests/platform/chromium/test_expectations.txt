@@ -3968,14 +3968,6 @@ BUGWK78878 : media/audio-repaint.html = IMAGE
 BUGWK65072 : svg/text/exs-display-none.svg = IMAGE IMAGE+TEXT
 BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
 
-// Needs new baselines.
-BUGWK41386 WIN LINUX : svg/foreignObject/fO-parent-display-none-with-relative-pos-content.svg = TEXT
-BUGWK41386 WIN LINUX : svg/foreignObject/fO-parent-display-none.svg = TEXT
-BUGWK41386 WIN LINUX : svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content.svg = TEXT
-BUGWK41386 WIN LINUX : svg/foreignObject/fO-parent-of-parent-display-none.svg = TEXT
-BUGWK41386 WIN LINUX : svg/foreignObject/fO-parent-display-changes.svg = IMAGE+TEXT
-BUGWK41386 MAC : svg/foreignObject/fO-parent-display-changes.svg = IMAGE
-
 // Needs new baselines, most text only, after the SVG <use> rewrite.
 BUGWK78902 : svg/W3C-SVG-1.1-SE/struct-use-11-f.svg = TEXT IMAGE IMAGE+TEXT PASS
 BUGWK78902 : svg/W3C-SVG-1.1-SE/struct-use-14-f.svg = TEXT IMAGE IMAGE+TEXT PASS
