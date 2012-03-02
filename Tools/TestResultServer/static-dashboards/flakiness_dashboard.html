@@ -1174,6 +1174,9 @@ function htmlForBugs(bugs)
 
 function linkHTMLToOpenWindow(url, text)
 {
+    // FIXME: We probably need a more general way to map virtual tests
+    // to their underlying actual tests.
+    url = url.replace('platform/chromium/virtual/gpu/', '')
     return '<a href="' + url + '" target="_blank">' + text + '</a>';
 }
 

@@ -1,3 +1,15 @@
+2012-03-02  Dirk Pranke  <dpranke@chromium.org>
+
+        links for virtual tests are broken in the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=80180
+
+        Reviewed by Ojan Vafai.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        (linkHTMLToOpenWindow):
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        (testLinkHTMLToOpenWindow): added.
+
 2012-03-02  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] security/block-test.html baselines differ from mac
