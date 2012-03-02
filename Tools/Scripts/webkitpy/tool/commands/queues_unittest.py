@@ -448,6 +448,8 @@ MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd
 MOCK: update_status: style-queue Updated working directory
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 10000], cwd=/mock-checkout
 MOCK: update_status: style-queue Applied patch
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-watchlist-local', 50000], cwd=/mock-checkout
+MOCK: update_status: style-queue Watchlist applied
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'check-style-local', '--non-interactive', '--quiet'], cwd=/mock-checkout
 MOCK: update_status: style-queue Style checked
 MOCK: update_status: style-queue Pass
@@ -469,6 +471,8 @@ MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update'], cwd
 MOCK: update_status: style-queue Updated working directory
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 10000], cwd=/mock-checkout
 MOCK: update_status: style-queue Applied patch
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-watchlist-local', 50000], cwd=/mock-checkout
+MOCK: update_status: style-queue Unabled to apply watchlist
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'check-style-local', '--non-interactive', '--quiet'], cwd=/mock-checkout
 MOCK: update_status: style-queue Style checked
 MOCK: update_status: style-queue Pass

@@ -69,6 +69,7 @@ class StyleQueueTask(PatchAnalysisTask):
             return False
         if not self._apply():
             raise UnableToApplyPatch(self._patch)
+        self._apply_watch_list()
         if not self._check_style():
             return self.report_failure()
         return True
