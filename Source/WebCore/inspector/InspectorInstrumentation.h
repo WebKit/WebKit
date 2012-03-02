@@ -106,7 +106,7 @@ public:
     static void didInstallTimer(ScriptExecutionContext*, int timerId, int timeout, bool singleShot);
     static void didRemoveTimer(ScriptExecutionContext*, int timerId);
 
-    static InspectorInstrumentationCookie willCallFunction(Page*, const String& scriptName, int scriptLine);
+    static InspectorInstrumentationCookie willCallFunction(ScriptExecutionContext*, const String& scriptName, int scriptLine);
     static void didCallFunction(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willChangeXHRReadyState(ScriptExecutionContext*, XMLHttpRequest* request);
     static void didChangeXHRReadyState(const InspectorInstrumentationCookie&);
@@ -372,6 +372,7 @@ private:
     static InstrumentingAgents* instrumentingAgentsForDocument(Document*);
 #if ENABLE(WORKERS)
     static InstrumentingAgents* instrumentingAgentsForWorkerContext(WorkerContext*);
+    static InstrumentingAgents* instrumentingAgentsForNonDocumentContext(ScriptExecutionContext*);
 #endif
 
     static bool collectingHTMLParseErrors(InstrumentingAgents*);
@@ -575,15 +576,16 @@ inline void InspectorInstrumentation::didRemoveTimer(ScriptExecutionContext* con
 #endif
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willCallFunction(Page* page, const String& scriptName, int scriptLine)
+inline InspectorInstrumentationCookie InspectorInstrumentation::willCallFunction(ScriptExecutionContext* context, const String& scriptName, int scriptLine)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
         return willCallFunctionImpl(instrumentingAgents, scriptName, scriptLine);
 #endif
     return InspectorInstrumentationCookie();
 }
+
 
 inline void InspectorInstrumentation::didCallFunction(const InspectorInstrumentationCookie& cookie)
 {
@@ -1241,9 +1243,15 @@ inline bool InspectorInstrumentation::collectingHTMLParseErrors(Page* page)
 
 inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForContext(ScriptExecutionContext* context)
 {
-    if (context && context->isDocument())
+    if (!context)
+        return 0;
+    if (context->isDocument())
         return instrumentingAgentsForPage(static_cast<Document*>(context)->page());
+#if ENABLE(WORKERS)
+    return instrumentingAgentsForNonDocumentContext(context);
+#else
     return 0;
+#endif
 }
 
 inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForFrame(Frame* frame)

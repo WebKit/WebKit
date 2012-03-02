@@ -414,8 +414,10 @@ v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Frame* frame, v8::Handle<
     if (V8RecursionScope::recursionLevel() >= kMaxRecursionDepth)
         return handleMaxRecursionDepthExceeded();
 
+    ScriptExecutionContext* context = frame ? frame->document() : 0;
+
     InspectorInstrumentationCookie cookie;
-    if (InspectorInstrumentation::hasFrontends() && frame) {
+    if (InspectorInstrumentation::hasFrontends() && context) {
         String resourceName("undefined");
         int lineNumber = 1;
         v8::ScriptOrigin origin = function->GetScriptOrigin();
@@ -423,7 +425,7 @@ v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Frame* frame, v8::Handle<
             resourceName = toWebCoreString(origin.ResourceName());
             lineNumber = function->GetScriptLineNumber() + 1;
         }
-        cookie = InspectorInstrumentation::willCallFunction(frame->page(), resourceName, lineNumber);
+        cookie = InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber);
     }
 
     v8::Local<v8::Value> result;
@@ -431,7 +433,7 @@ v8::Local<v8::Value> V8Proxy::instrumentedCallFunction(Frame* frame, v8::Handle<
 #if PLATFORM(CHROMIUM)
         TRACE_EVENT0("v8", "v8.callFunction");
 #endif
-        V8RecursionScope recursionScope(frame ? frame->document() : 0);
+        V8RecursionScope recursionScope(context);
         result = function->Call(receiver, argc, args);
     }
 

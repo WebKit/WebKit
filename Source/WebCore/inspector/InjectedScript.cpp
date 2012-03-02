@@ -218,8 +218,8 @@ bool InjectedScript::canAccessInspectedWindow() const
 
 ScriptValue InjectedScript::callFunctionWithEvalEnabled(ScriptFunctionCall& function, bool& hadException) const
 {
-    DOMWindow* domWindow = domWindowFromScriptState(m_injectedScriptObject.scriptState());
-    InspectorInstrumentationCookie cookie = domWindow && domWindow->frame() ? InspectorInstrumentation::willCallFunction(domWindow->frame()->page(), "InjectedScript", 1) : InspectorInstrumentationCookie();
+    ScriptExecutionContext* scriptExecutionContext = scriptExecutionContextFromScriptState(m_injectedScriptObject.scriptState());
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willCallFunction(scriptExecutionContext, "InjectedScript", 1);
 
     ScriptState* scriptState = m_injectedScriptObject.scriptState();
     bool evalIsDisabled = false;

@@ -1061,6 +1061,13 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForWorkerConte
         return 0;
     return instrumentationForWorkerContext(workerContext);
 }
+
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForNonDocumentContext(ScriptExecutionContext* context)
+{
+    if (context->isWorkerContext())
+        return instrumentationForWorkerContext(static_cast<WorkerContext*>(context));
+    return 0;
+}
 #endif
 
 } // namespace WebCore

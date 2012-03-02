@@ -34,6 +34,7 @@
 
 #include "V8WorkerContextEventListener.h"
 
+#include "InspectorInstrumentation.h"
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
 #include "V8Event.h"
@@ -90,12 +91,26 @@ v8::Local<v8::Value> V8WorkerContextEventListener::callListenerFunction(ScriptEx
     if (handlerFunction.IsEmpty() || receiver.IsEmpty())
         return v8::Local<v8::Value>();
 
+    InspectorInstrumentationCookie cookie;
+    if (InspectorInstrumentation::hasFrontends()) {
+        String resourceName("undefined");
+        int lineNumber = 1;
+        v8::ScriptOrigin origin = handlerFunction->GetScriptOrigin();
+        if (!origin.ResourceName().IsEmpty()) {
+            resourceName = toWebCoreString(origin.ResourceName());
+            lineNumber = handlerFunction->GetScriptLineNumber() + 1;
+        }
+        cookie = InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber);
+    }
+
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
     V8RecursionScope recursionScope(context);
     v8::Local<v8::Value> result = handlerFunction->Call(receiver, 1, parameters);
 
     if (WorkerContextExecutionProxy* proxy = workerProxy(context))
         proxy->trackEvent(event);
+
+    InspectorInstrumentation::didCallFunction(cookie);
 
     return result;
 }

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class Page;
+class ScriptExecutionContext;
 
 class JSMainThreadExecState {
     WTF_MAKE_NONCOPYABLE(JSMainThreadExecState);
@@ -56,7 +56,7 @@ public:
         return JSC::call(exec, functionObject, callType, callData, thisValue, args);
     };
 
-    static JSC::JSValue instrumentedCall(Page* page, JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args)
+    static JSC::JSValue instrumentedCall(ScriptExecutionContext* context, JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args)
     {
         InspectorInstrumentationCookie cookie;
         if (InspectorInstrumentation::hasFrontends()) {
@@ -69,7 +69,7 @@ public:
             } else
                 resourceName = "undefined";
 
-            cookie = InspectorInstrumentation::willCallFunction(page, resourceName, lineNumber);
+            cookie = InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber);
         }
 
         JSC::JSValue value = call(exec, functionObject, callType, callData, thisValue, args);

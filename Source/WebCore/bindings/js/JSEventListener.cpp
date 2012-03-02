@@ -122,9 +122,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
 
         globalData.timeoutChecker.start();
         JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event->currentTarget()) : jsFunction;
-        JSValue retval = scriptExecutionContext->isDocument()
-            ? JSMainThreadExecState::instrumentedCall(frame ? frame->page() : 0, exec, handleEventFunction, callType, callData, thisValue, args)
-            : JSC::call(exec, handleEventFunction, callType, callData, thisValue, args);
+        JSValue retval = JSMainThreadExecState::instrumentedCall(scriptExecutionContext, exec, handleEventFunction, callType, callData, thisValue, args);
         globalData.timeoutChecker.stop();
 
         globalObject->setCurrentEvent(savedEvent);

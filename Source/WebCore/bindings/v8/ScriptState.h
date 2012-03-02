@@ -42,6 +42,7 @@ class DOMWrapperWorld;
 class Frame;
 class Node;
 class Page;
+class ScriptExecutionContext;
 class WorkerContext;
 
 class ScriptState {
@@ -60,6 +61,7 @@ public:
     }
 
     DOMWindow* domWindow() const;
+    ScriptExecutionContext* scriptExecutionContext() const;
 
     static ScriptState* forContext(v8::Local<v8::Context>);
     static ScriptState* current();
@@ -108,6 +110,7 @@ private:
 };
 
 DOMWindow* domWindowFromScriptState(ScriptState*);
+ScriptExecutionContext* scriptExecutionContextFromScriptState(ScriptState*);
 
 bool evalEnabled(ScriptState*);
 void setEvalEnabled(ScriptState*, bool);

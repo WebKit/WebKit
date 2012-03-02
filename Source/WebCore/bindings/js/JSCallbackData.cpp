@@ -66,18 +66,11 @@ JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, bool* raisedE
 
     globalObject()->globalData().timeoutChecker.start();
 
-    bool contextIsDocument = context->isDocument();
-    JSValue result;
-    if (contextIsDocument) {
-        Frame* frame = static_cast<JSDOMWindow*>(globalObject())->impl()->frame();
-        Page* page = frame ? frame->page() : 0;
-        result = JSMainThreadExecState::instrumentedCall(page, exec, function, callType, callData, callback(), args);
-    } else
-        result = JSC::call(exec, function, callType, callData, callback(), args);
+    JSValue result = JSMainThreadExecState::instrumentedCall(context, exec, function, callType, callData, callback(), args);
 
     globalObject()->globalData().timeoutChecker.stop();
 
-    if (contextIsDocument)
+    if (context->isDocument())
         Document::updateStyleForAllDocuments();
 
     if (exec->hadException()) {

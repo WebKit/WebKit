@@ -55,6 +55,7 @@ class InspectorProfilerAgent;
 class InspectorRuntimeAgent;
 class InspectorState;
 class InspectorStateClient;
+class InspectorTimelineAgent;
 class InstrumentingAgents;
 class WorkerContext;
 
@@ -88,6 +89,7 @@ private:
 #endif
     OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
     OwnPtr<InspectorConsoleAgent> m_consoleAgent;
+    OwnPtr<InspectorTimelineAgent> m_timelineAgent;
 
     OwnPtr<InspectorFrontendChannel> m_frontendChannel;
     OwnPtr<InspectorFrontend> m_frontend;

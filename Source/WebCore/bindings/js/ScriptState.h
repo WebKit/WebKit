@@ -46,6 +46,7 @@ class DOMWrapperWorld;
 class Frame;
 class Node;
 class Page;
+class ScriptExecutionContext;
 class WorkerContext;
 
 // The idea is to expose "state-like" methods (hadException, and any other
@@ -65,6 +66,7 @@ private:
 };
 
 DOMWindow* domWindowFromScriptState(ScriptState*);
+ScriptExecutionContext* scriptExecutionContextFromScriptState(ScriptState*);
 
 bool evalEnabled(ScriptState*);
 void setEvalEnabled(ScriptState*, bool);

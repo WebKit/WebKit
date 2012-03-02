@@ -39,6 +39,7 @@ var WebInspector = {
 
         if (WebInspector.WorkerManager.isWorkerFrontend()) {
             this.panels.scripts = new WebInspector.ScriptsPanel(this.debuggerPresentationModel);
+            this.panels.timeline = new WebInspector.TimelinePanel();
             this.panels.profiles = new WebInspector.ProfilesPanel();
             this.panels.console = new WebInspector.ConsolePanel();
             return;

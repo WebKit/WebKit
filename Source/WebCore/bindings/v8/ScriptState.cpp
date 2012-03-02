@@ -37,7 +37,7 @@
 #include "ScriptController.h"
 #include "V8DOMWindow.h"
 #include "V8HiddenPropertyName.h"
-
+#include "V8WorkerContext.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 #include "WorkerScriptController.h"
@@ -66,6 +66,22 @@ DOMWindow* ScriptState::domWindow() const
     if (!V8DOMWrapper::isWrapperOfType(v8RealGlobal, &V8DOMWindow::info))
         return 0;
     return V8DOMWindow::toNative(v8RealGlobal);
+}
+
+ScriptExecutionContext* ScriptState::scriptExecutionContext() const
+{
+    v8::HandleScope handleScope;
+
+    v8::Handle<v8::Object> global = m_context->Global();
+    v8::Handle<v8::Object> v8RealGlobal = v8::Handle<v8::Object>::Cast(global->GetPrototype());
+    if (V8DOMWrapper::isWrapperOfType(v8RealGlobal, &V8DOMWindow::info))
+        return V8DOMWindow::toNative(v8RealGlobal)->scriptExecutionContext();
+#if ENABLE(WORKERS)
+    global = V8DOMWrapper::lookupDOMWrapper(V8WorkerContext::GetTemplate(), global);
+    if (!global.IsEmpty())
+        return V8WorkerContext::toNative(global)->scriptExecutionContext();
+#endif
+    return 0;
 }
 
 ScriptState* ScriptState::forContext(v8::Local<v8::Context> context)
@@ -107,6 +123,11 @@ void ScriptState::weakReferenceCallback(v8::Persistent<v8::Value> object, void* 
 DOMWindow* domWindowFromScriptState(ScriptState* scriptState)
 {
     return scriptState->domWindow();
+}
+
+ScriptExecutionContext* scriptExecutionContextFromScriptState(ScriptState* scriptState)
+{
+    return scriptState->scriptExecutionContext();
 }
 
 bool evalEnabled(ScriptState* scriptState)

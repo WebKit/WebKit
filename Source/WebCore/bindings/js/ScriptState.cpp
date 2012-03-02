@@ -71,6 +71,14 @@ DOMWindow* domWindowFromScriptState(ScriptState* scriptState)
     return static_cast<JSDOMWindowBase*>(globalObject)->impl();
 }
 
+ScriptExecutionContext* scriptExecutionContextFromScriptState(ScriptState* scriptState)
+{
+    JSC::JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
+    if (!globalObject->inherits(&JSDOMGlobalObject::s_info))
+        return 0;
+    return static_cast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext();
+}
+
 bool evalEnabled(ScriptState* scriptState)
 {
     JSC::JSGlobalObject* globalObject = scriptState->lexicalGlobalObject();
