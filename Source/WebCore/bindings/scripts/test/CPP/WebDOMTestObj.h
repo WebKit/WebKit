@@ -37,9 +37,6 @@ class WebDOMOptionsObject;
 class WebDOMSVGPoint;
 class WebDOMString;
 class WebDOMTestObj;
-class WebDOMTestObjectAConstructor;
-class WebDOMTestObjectBConstructor;
-class WebDOMTestObjectCConstructor;
 class WebDOMa;
 class WebDOMb;
 class WebDOMbool;
@@ -131,18 +128,6 @@ public:
 #if ENABLE(Condition1) || ENABLE(Condition2)
     int conditionalAttr3() const;
     void setConditionalAttr3(int);
-#endif
-#if ENABLE(Condition1)
-    WebDOMTestObjectAConstructor conditionalAttr4() const;
-    void setConditionalAttr4(const WebDOMTestObjectAConstructor&);
-#endif
-#if ENABLE(Condition1) && ENABLE(Condition2)
-    WebDOMTestObjectBConstructor conditionalAttr5() const;
-    void setConditionalAttr5(const WebDOMTestObjectBConstructor&);
-#endif
-#if ENABLE(Condition1) || ENABLE(Condition2)
-    WebDOMTestObjectCConstructor conditionalAttr6() const;
-    void setConditionalAttr6(const WebDOMTestObjectCConstructor&);
 #endif
     WebDOMDocument contentDocument() const;
     WebDOMSVGPoint mutablePoint() const;
