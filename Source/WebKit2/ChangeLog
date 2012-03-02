@@ -5,8 +5,8 @@
 
         Reviewed by Alexey Proskuryakov.
 
-        It doesn't belong there, and it makes the Xcode consider the project to
-        be invalid, triggering assertions in some builds of Xcode.
+        It doesn't belong there, and it makes Xcode consider the project to be
+        invalid, triggering assertions in some builds of Xcode.
 
         * WebKit2.xcodeproj/project.pbxproj:
 
