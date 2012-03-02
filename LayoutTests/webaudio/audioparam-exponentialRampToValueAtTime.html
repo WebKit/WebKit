@@ -20,44 +20,14 @@
       // discontinuity is for testing timing.  Also, we alternate between an increasing and
       // decreasing ramp for each interval.
 
+      // Number of tests to run.
+      var numberOfTests = 100;
+
       // Max allowed difference between the rendered data and the expected result.
       var maxAllowedError = 6.75e-4;
 
-      // Information about the starting and ending times and starting and ending values for each
-      // time interval.
-      var timeValueInfo;
-
       // The AudioGainNode starts with this value instead of the default value.
       var initialValue = 100;
-
-      // The difference between starting values between each time interval.
-      var startingValueDelta = initialValue / numberOfTests;
-      
-      // Each exponential ramp will increase or decrease by this much from the start to the end of
-      // the time interval.  We choose half of startingValueDelta so that the ending value of the
-      // ramp will be distinct from the starting value of the ramp for next time interval.  This
-      // allows us to detect where the ramp begins and ends.
-      var startEndValueChange = startingValueDelta / 2;
-
-      // Threshold to use for detecting discontinuities that should appear at each time interval.
-      var discontinuityThreshold = startEndValueChange / 2;
-
-      var gainNode;
-      
-      var constantBuffer;
-      var bufferSource;
-
-      // Return the difference between the starting value and the ending value for time interval
-      // |timeIntervalIndex|.  We alternate between an end value that is above or below the starting
-      // value.
-      function endValueDelta(timeIntervalIndex)
-      {
-          if (timeIntervalIndex & 1) {
-              return -startEndValueChange;
-          } else {
-              return startEndValueChange;
-          }
-      }
 
       // Set the gain node value to the specified value at the specified time.
       function setValue(value, time)
@@ -73,65 +43,16 @@
           gainNode.gain.exponentialRampToValueAtTime(value, endTime)
       }
       
-      // Return the difference between the starting value at |timeIntervalIndex| and the starting
-      // value at the next time interval.  Since we started at a large initial value, we decrease
-      // the value at each time interval.
-      function valueUpdate(timeIntervalIndex)
-      {
-          return -startingValueDelta;
-      }
-
-      function checkResult(event)
-      {
-          var buffer = event.renderedBuffer;
-          renderedData = buffer.getChannelData(0);
-
-          compareSignals("exponentialRampToValueAtTime()", maxAllowedError, renderedData, createExponentialRampArray, timeValueInfo, discontinuityThreshold);
-
-          finishJSTest();
-      }
-      
       function runTest()
       {
-          if (window.layoutTestController) {
-              layoutTestController.dumpAsText();
-              layoutTestController.waitUntilDone();
-          }
+          createAudioGraphAndTest(numberOfTests,
+                                  initialValue,
+                                  setValue,
+                                  generateRamp,
+                                  "exponentialRampToValueAtTime()",
+                                  maxAllowedError,
+                                  createExponentialRampArray);
 
-          window.jsTestIsAsync = true;
-
-          // Create offline audio context.
-          context = new webkitAudioContext(2, renderLength, sampleRate);
-          constantBuffer = createConstantBuffer(context, 1, renderLength);
-
-          // We use an AudioGainNode here simply as a convenient way to test the AudioParam
-          // automation, since it's easy to pass a constant value through the node, automate the
-          // .gain attribute and observe the resulting values.
-
-          gainNode = context.createGainNode();
-
-          bufferSource = context.createBufferSource();
-          bufferSource.buffer = constantBuffer;
-          bufferSource.connect(gainNode);
-          gainNode.connect(context.destination);
-
-          // At each time interval, we adjust the value by startingValueDelta.  However, the
-          // exponential ramp end value is the value +/- startEndValueChange.  (We alternately
-          // specify the end value to be greater or smaller than the starting value, to test the
-          // ramp going up and down.)
-          //
-          // By doing it this way, we get a discontinuity at each time interval which we can use to
-          // test if the ramp started and ended at the correct time.
-          timeValueInfo = doAutomation(initialValue,
-                                       endValueDelta,
-                                       setValue,
-                                       generateRamp,
-                                       valueUpdate);
-
-          bufferSource.noteOn(0);
-      
-          context.oncomplete = checkResult;
-          context.startRendering();
       }
 
       runTest();

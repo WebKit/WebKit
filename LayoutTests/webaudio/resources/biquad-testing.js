@@ -480,11 +480,6 @@ function generateReference(filterType, filterParameters) {
     return result;
 }
 
-// True if the number is not an infinity or NaN
-function isValidNumber(x) {
-    return !isNaN(x) && (x != Infinity) && (x != -Infinity);
-}
-
 function checkFilterResponse(filterType, filterParameters) {
     return function(event) {
         renderedBuffer = event.renderedBuffer;

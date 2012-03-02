@@ -329,7 +329,10 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
                     // Render the stretched curve data using nearest neighbor sampling.
                     // Oversampled curve data can be provided if smoothness is desired.
                     for (; writeIndex < fillToFrame; ++writeIndex) {
-                        unsigned curveIndex = static_cast<unsigned>(curveVirtualIndex);
+                        // Ideally we'd use round() from MathExtras, but we're in a tight loop here
+                        // and we're trading off precision for extra speed.
+                        unsigned curveIndex = static_cast<unsigned>(0.5 + curveVirtualIndex);
+
                         curveVirtualIndex += curvePointsPerFrame;
 
                         // Bounds check.

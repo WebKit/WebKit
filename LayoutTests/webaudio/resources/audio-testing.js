@@ -128,3 +128,8 @@ function grainLengthInSampleFrames(grainOffset, duration, sampleRate) {
 
     return endFrame - startFrame;
 }
+
+// True if the number is not an infinity or NaN
+function isValidNumber(x) {
+    return !isNaN(x) && (x != Infinity) && (x != -Infinity);
+}
