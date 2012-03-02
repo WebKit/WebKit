@@ -14,11 +14,11 @@ assertEq(testLenientAndStrict('try{}catch(eval){}',
                               parseRaisesException(SyntaxError)),
          true);
 assertEq(testLenientAndStrict('try{}catch([eval]){}',
-                              parsesSuccessfully,
+                              parseRaisesException(SyntaxError),
                               parseRaisesException(SyntaxError)),
          true);
 assertEq(testLenientAndStrict('try{}catch({x:eval}){}',
-                              parsesSuccessfully,
+                              parseRaisesException(SyntaxError),
                               parseRaisesException(SyntaxError)),
          true);
 assertEq(testLenientAndStrict('try{}catch(arguments){}',
@@ -26,11 +26,11 @@ assertEq(testLenientAndStrict('try{}catch(arguments){}',
                               parseRaisesException(SyntaxError)),
          true);
 assertEq(testLenientAndStrict('try{}catch([arguments]){}',
-                              parsesSuccessfully,
+                              parseRaisesException(SyntaxError),
                               parseRaisesException(SyntaxError)),
          true);
 assertEq(testLenientAndStrict('try{}catch({x:arguments}){}',
-                              parsesSuccessfully,
+                              parseRaisesException(SyntaxError),
                               parseRaisesException(SyntaxError)),
          true);
 
