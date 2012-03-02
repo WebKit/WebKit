@@ -1,5 +1,21 @@
 2012-03-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Use 'all' as default target when debug_and_release is in effect
+
+        When debug_and_release is enabled, in combination with build_all,
+        qmake will generate an aggregate makefile that calls make on both
+        the debug and the release makefiles, but with the 'all' target.
+
+        In this case we can't use 'first' as the default target, as the
+        extra targets would then not be run, so we append extra targets
+        to 'all' instead.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_post.prf:
+
+2012-03-02  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Make sure activeBuildConfig() returns the right config
 
         Using isActiveConfig fails, as that only checks if the given

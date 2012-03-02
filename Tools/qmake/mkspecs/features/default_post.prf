@@ -278,7 +278,8 @@ ignore_missing_headers.commands = $${MAKEFILE_NOOP_COMMAND}
 QMAKE_EXTRA_TARGETS += ignore_missing_headers
 
 # Override default target
-default_target.target = first
+build_pass:build_all:default_target.target = all
+else: default_target.target = first
 for(target, $$list($$unique(DEFAULT_TARGETS))) {
     default_target.depends += $$target
 }
