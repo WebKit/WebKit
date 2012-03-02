@@ -92,7 +92,6 @@ void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererCo
         // publishToPlatformLayer prepares the contents of the off-screen render target for use by the compositor.
         drawingBuffer()->publishToPlatformLayer();
         context()->markLayerComposited();
-        m_updateRect = FloatRect(FloatPoint(), bounds());
         m_needsDisplay = false;
         m_textureUpdated = false;
     }
@@ -127,9 +126,12 @@ bool WebGLLayerChromium::paintRenderedResultsToCanvas(ImageBuffer* imageBuffer)
     return true;
 }
 
-void WebGLLayerChromium::contentChanged()
+void WebGLLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 {
+    LayerChromium::setNeedsDisplayRect(dirtyRect);
+
     m_textureUpdated = true;
+
     // If WebGL commands are issued outside of a the animation callbacks, then use
     // call rateLimitOffscreenContextCHROMIUM() to keep the context from getting too far ahead.
     if (layerTreeHost())

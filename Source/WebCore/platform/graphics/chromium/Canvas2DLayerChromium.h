@@ -52,7 +52,7 @@ public:
 
     void setTextureId(unsigned);
 
-    virtual void contentChanged();
+    virtual void setNeedsDisplayRect(const FloatRect&);
 
     virtual bool drawsContent() const;
     virtual void paintContentsIfDirty(const Region& occludedScreenSpace);

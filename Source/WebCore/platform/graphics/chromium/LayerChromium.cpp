@@ -487,6 +487,8 @@ LayerChromium* LayerChromium::parent() const
 
 void LayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 {
+    m_updateRect.unite(dirtyRect);
+
     // Simply mark the contents as dirty. For non-root layers, the call to
     // setNeedsCommit will schedule a fresh compositing pass.
     // For the root layer, setNeedsCommit has no effect.

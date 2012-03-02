@@ -55,7 +55,7 @@ public:
     virtual bool drawsContent() const;
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
     virtual void pushPropertiesTo(CCLayerImpl*);
-    virtual void contentChanged();
+    virtual void setNeedsDisplayRect(const FloatRect&);
     bool paintRenderedResultsToCanvas(ImageBuffer*);
 
     GraphicsContext3D* context() const;

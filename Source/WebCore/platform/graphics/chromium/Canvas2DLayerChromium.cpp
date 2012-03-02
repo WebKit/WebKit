@@ -75,13 +75,12 @@ void Canvas2DLayerChromium::setTextureId(unsigned textureId)
     setNeedsCommit();
 }
 
-void Canvas2DLayerChromium::contentChanged()
+void Canvas2DLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 {
+    LayerChromium::setNeedsDisplayRect(dirtyRect);
+
     if (layerTreeHost())
         layerTreeHost()->startRateLimiter(m_context);
-
-    m_updateRect = FloatRect(FloatPoint(), contentBounds());
-    setNeedsDisplay();
 }
 
 bool Canvas2DLayerChromium::drawsContent() const

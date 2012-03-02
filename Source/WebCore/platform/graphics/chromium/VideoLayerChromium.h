@@ -50,8 +50,6 @@ public:
 
     virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
 
-    void contentChanged();
-
 private:
     explicit VideoLayerChromium(VideoFrameProvider*);
 

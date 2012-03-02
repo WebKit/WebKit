@@ -52,17 +52,6 @@ PluginLayerChromium::PluginLayerChromium()
 {
 }
 
-void PluginLayerChromium::updateCompositorResources(GraphicsContext3D* rendererContext, CCTextureUpdater&)
-{
-    if (!m_needsDisplay)
-        return;
-
-    // PluginLayers are updated externally (outside of the compositor).
-    // |m_dirtyRect| covers the region that has changed since the last composite.
-    m_updateRect = m_dirtyRect;
-    m_dirtyRect = FloatRect();
-}
-
 PassOwnPtr<CCLayerImpl> PluginLayerChromium::createCCLayerImpl()
 {
     return CCPluginLayerImpl::create(m_layerId);
@@ -108,12 +97,6 @@ void PluginLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     pluginLayer->setFlipped(m_flipped);
     pluginLayer->setUVRect(m_uvRect);
     pluginLayer->setIOSurfaceProperties(m_ioSurfaceWidth, m_ioSurfaceHeight, m_ioSurfaceId);
-}
-
-void PluginLayerChromium::invalidateRect(const FloatRect& dirtyRect)
-{
-    setNeedsDisplayRect(dirtyRect);
-    m_dirtyRect.unite(dirtyRect);
 }
 
 }

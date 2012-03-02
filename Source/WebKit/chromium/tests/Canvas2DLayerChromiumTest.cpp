@@ -131,7 +131,7 @@ protected:
         canvas->setBounds(IntSize(600, 300));
         canvas->setTextureId(backTextureId);
 
-        canvas->contentChanged();
+        canvas->setNeedsDisplay();
         EXPECT_TRUE(canvas->needsDisplay());
         Region occludedScreenSpace;
         canvas->paintContentsIfDirty(occludedScreenSpace);

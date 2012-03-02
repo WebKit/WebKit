@@ -152,7 +152,7 @@ void WebMediaPlayerClientImpl::repaint()
     ASSERT(m_mediaPlayer);
 #if USE(ACCELERATED_COMPOSITING)
     if (m_videoLayer && supportsAcceleratedRendering())
-        m_videoLayer->contentChanged();
+        m_videoLayer->setNeedsDisplay();
 #endif
     m_mediaPlayer->repaint();
 }
