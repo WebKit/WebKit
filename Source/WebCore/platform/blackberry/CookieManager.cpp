@@ -120,7 +120,7 @@ CookieManager::~CookieManager()
 static bool cookieSorter(ParsedCookie* a, ParsedCookie* b)
 {
     if (a->path().length() == b->path().length())
-        return a->creationTime() <= b->creationTime();
+        return a->creationTime() < b->creationTime();
     return a->path().length() > b->path().length();
 }
 
@@ -300,7 +300,7 @@ void CookieManager::getRawCookies(Vector<ParsedCookie*> &stackOfCookies, const K
         }
     }
 
-    std::sort(stackOfCookies.begin(), stackOfCookies.end(), cookieSorter);
+    std::stable_sort(stackOfCookies.begin(), stackOfCookies.end(), cookieSorter);
 }
 
 void CookieManager::removeAllCookies(BackingStoreRemovalPolicy backingStoreRemoval)
@@ -370,32 +370,59 @@ void CookieManager::checkAndTreatCookie(ParsedCookie* candidateCookie, BackingSt
         if (postToBackingStore == BackingStoreCookieEntry)
             m_cookieBackingStore->remove(candidateCookie);
         else if (curMap) {
-            bool cookieAlreadyExists = curMap->existsCookie(candidateCookie);
-            if (cookieAlreadyExists) {
-                CookieLog("CookieManager - expired cookie exists in memory");
-                ParsedCookie* expired = curMap->removeCookie(candidateCookie);
-                // Cookie is useless, Remove the cookie from the backingstore if it exists
-                // Backup check for BackingStoreCookieEntry incase someone incorrectly uses this enum
-                if (postToBackingStore != BackingStoreCookieEntry && !expired->isSession()) {
-                    CookieLog("CookieManager - expired cookie is nonsession, deleting from db");
-                    m_cookieBackingStore->remove(expired);
-                }
-                delete expired;
+            // RemoveCookie will return 0 if the cookie doesn't exist.
+            ParsedCookie* expired = curMap->removeCookie(candidateCookie);
+            // Cookie is useless, Remove the cookie from the backingstore if it exists.
+            // Backup check for BackingStoreCookieEntry incase someone incorrectly uses this enum.
+            if (expired && postToBackingStore != BackingStoreCookieEntry && !expired->isSession()) {
+                CookieLog("CookieManager - expired cookie is nonsession, deleting from db");
+                m_cookieBackingStore->remove(expired);
             }
+            delete expired;
+
         } else
             delete candidateCookie;
     } else {
         ASSERT(curMap);
-        bool cookieAlreadyExists = curMap->existsCookie(candidateCookie);
-        if (cookieAlreadyExists)
-            update(curMap, candidateCookie, postToBackingStore);
-        else
-            addCookieToMap(curMap, candidateCookie, postToBackingStore);
+        addCookieToMap(curMap, candidateCookie, postToBackingStore);
     }
 }
 
 void CookieManager::addCookieToMap(CookieMap* targetMap, ParsedCookie* candidateCookie, BackingStoreRemovalPolicy postToBackingStore)
 {
+    ParsedCookie* prevCookie = targetMap->addOrReplaceCookie(candidateCookie);
+    if (prevCookie) {
+
+        CookieLog("CookieManager - updating new cookie - %s.\n", candidateCookie->toString().utf8().data());
+
+        // A cookie was replaced in targetMap.
+        // If old cookie is non-session and new one is, we have to delete it from backingstore
+        // If new cookie is non-session and old one is, we have to add it to backingstore
+        // If both sessions are non-session, then we update it in the backingstore
+        bool newIsSession = candidateCookie->isSession();
+        bool oldIsSession = prevCookie->isSession();
+
+        if (postToBackingStore == RemoveFromBackingStore) {
+            if (!newIsSession && !oldIsSession)
+                m_cookieBackingStore->update(candidateCookie);
+            else if (newIsSession && !oldIsSession) {
+                // Must manually decrease the counter because it was not counted when
+                // the cookie was removed in cookieVector.
+                removedCookie();
+                m_cookieBackingStore->remove(prevCookie);
+            } else if (!newIsSession && oldIsSession) {
+                // Must manually increase the counter because it was not counted when
+                // the cookie was added in cookieVector.
+                addedCookie();
+                m_cookieBackingStore->insert(candidateCookie);
+            }
+        }
+        delete prevCookie;
+        return;
+    }
+
+    CookieLog("CookieManager - adding new cookie - %s.\n", candidateCookie->toString().utf8().data());
+
     ParsedCookie* oldestCookie = 0;
     // Check if we have not reached the per cookie domain limit.
     // If that is not true, we check if the global limit has been reached if backingstore mode is on
@@ -408,17 +435,13 @@ void CookieManager::addCookieToMap(CookieMap* targetMap, ParsedCookie* candidate
     //    then it means the global count will never exceed the limit
 
     CookieLimitLog("CookieManager - local count: %d  global count: %d", targetMap->count(), m_count);
-    if (targetMap->count() >= s_maxCookieCountPerHost) {
+    if (targetMap->count() > s_maxCookieCountPerHost) {
         CookieLog("CookieManager - deleting oldest cookie from this map due to domain count.\n");
         oldestCookie = targetMap->removeOldestCookie();
-    } else if (m_count >= s_globalMaxCookieCount && (postToBackingStore != DoNotRemoveFromBackingStore)) {
+    } else if (m_count > s_globalMaxCookieCount && (postToBackingStore != DoNotRemoveFromBackingStore)) {
         CookieLimitLog("CookieManager - Global limit reached, initiate cookie limit clean up.");
         initiateCookieLimitCleanUp();
     }
-
-    CookieLog("CookieManager - adding new cookie - %s.\n", candidateCookie->toString().utf8().data());
-
-    targetMap->addCookie(candidateCookie);
 
     // Only add non session cookie to the backing store.
     if (postToBackingStore == RemoveFromBackingStore) {
@@ -431,38 +454,6 @@ void CookieManager::addCookieToMap(CookieMap* targetMap, ParsedCookie* candidate
     }
     if (oldestCookie)
         delete oldestCookie;
-}
-
-void CookieManager::update(CookieMap* targetMap, ParsedCookie* newCookie, BackingStoreRemovalPolicy postToBackingStore)
-{
-    // If old cookie is non-session and new one is, we have to delete it from backingstore
-    // If new cookie is non-session and old one is, we have to add it to backingstore
-    // If both sessions are non-session, then we update it in the backingstore
-
-    CookieLog("CookieManager - updating new cookie - %s.\n", newCookie->toString().utf8().data());
-
-    ParsedCookie* oldCookie = targetMap->updateCookie(newCookie);
-
-    ASSERT(oldCookie);
-
-    if (postToBackingStore == RemoveFromBackingStore) {
-        bool newIsSession = newCookie->isSession();
-        bool oldIsSession = oldCookie->isSession();
-        if (!newIsSession && !oldIsSession)
-            m_cookieBackingStore->update(newCookie);
-        else if (newIsSession && !oldIsSession) {
-            // Must manually decrease the counter because it was not counted when
-            // the cookie was removed in cookieMap.
-            removedCookie();
-            m_cookieBackingStore->remove(oldCookie);
-        } else if (!newIsSession && oldIsSession) {
-            // Must manually increase the counter because it was not counted when
-            // the cookie was added in cookieMap.
-            addedCookie();
-            m_cookieBackingStore->insert(newCookie);
-        }
-    }
-    delete oldCookie;
 }
 
 void CookieManager::getBackingStoreCookies()

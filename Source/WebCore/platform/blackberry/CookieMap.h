@@ -51,17 +51,14 @@ public:
     CookieMap(const String& name = "");
     ~CookieMap();
 
-    unsigned int count() const { return m_cookieMap.size(); }
+    unsigned int count() const { return m_cookieVector.size(); }
     const String& getName() const { return m_name; }
 
-    void addCookie(ParsedCookie*);
-
     // Returning the original cookie object so manager can keep a reference to the updates in the database queue.
-    ParsedCookie* updateCookie(ParsedCookie*);
+    ParsedCookie* addOrReplaceCookie(ParsedCookie*);
 
     // Need to return the reference to the removed cookie so manager can deal with it (garbage collect).
     ParsedCookie* removeCookie(const ParsedCookie*);
-    bool existsCookie(const ParsedCookie*) const;
 
     // Returns a map with that given subdomain.
     CookieMap* getSubdomainMap(const String&);
@@ -74,11 +71,9 @@ public:
 
 private:
     void updateOldestCookie();
+    ParsedCookie* removeCookieAtIndex(int position, const ParsedCookie*);
 
-    // The key is the tuple (name, path).
-    // The spec asks to have also domain, which is implied by choosing the CookieMap relevant to the domain.
-    HashMap<String, ParsedCookie*> m_cookieMap;
-
+    Vector<ParsedCookie*> m_cookieVector;
     // The key is a subsection of the domain.
     // ex: if inserting accounts.google.com & this cookiemap is "com", this subdomain map will contain "google"
     // the "google" cookiemap will contain "accounts" in its subdomain map.
