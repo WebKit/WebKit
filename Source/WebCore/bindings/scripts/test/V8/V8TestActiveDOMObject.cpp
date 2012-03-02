@@ -179,7 +179,7 @@ v8::Handle<v8::Object> V8TestActiveDOMObject::wrapSlow(TestActiveDOMObject* impl
     // Exit the node's context if it was entered.
     if (!context.IsEmpty())
         context->Exit();
-    if (wrapper.IsEmpty())
+    if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 
     impl->ref();

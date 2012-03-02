@@ -3037,21 +3037,28 @@ sub GenerateToV8Converters
 v8::Handle<v8::Object> ${className}::wrapSlow(${nativeType}* impl)
 {
     v8::Handle<v8::Object> wrapper;
-    V8Proxy* proxy = 0;
 END
 
+    my $proxyInit;
     if (IsNodeSubType($dataNode)) {
-        push(@implContent, <<END);
-    if (impl->document()) {
-        proxy = V8Proxy::retrieve(impl->document()->frame());
-        if (proxy && static_cast<Node*>(impl->document()) == static_cast<Node*>(impl)) {
-            if (proxy->windowShell()->context().IsEmpty() && proxy->windowShell()->initContextIfNeeded()) {
-                // initContextIfNeeded may have created a wrapper for the object, retry from the start.
-                return ${className}::wrap(impl);
-            }
+        $proxyInit = "V8Proxy::retrieve(impl->document()->frame())";
+        # DocumentType nodes are the only nodes that may have a NULL document.
+        if ($interfaceName eq "DocumentType") {
+            $proxyInit = "impl->document() ? $proxyInit : 0";
         }
+    } else {
+        $proxyInit = "0";
     }
+    push(@implContent, <<END);
+    V8Proxy* proxy = $proxyInit;
+END
 
+    if (IsSubType($dataNode, "Document")) {
+        push(@implContent, <<END);
+    if (proxy && proxy->windowShell()->context().IsEmpty() && proxy->windowShell()->initContextIfNeeded()) {
+        // initContextIfNeeded may have created a wrapper for the object, retry from the start.
+        return ${className}::wrap(impl);
+    }
 END
     }
 
@@ -3093,7 +3100,7 @@ END
     }
 
     push(@implContent, <<END);
-    if (wrapper.IsEmpty())
+    if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 END
     push(@implContent, "\n    impl->ref();\n") if IsRefPtrType($interfaceName);

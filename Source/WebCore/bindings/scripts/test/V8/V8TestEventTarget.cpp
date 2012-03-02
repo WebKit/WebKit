@@ -178,7 +178,7 @@ v8::Handle<v8::Object> V8TestEventTarget::wrapSlow(TestEventTarget* impl)
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;
     wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl);
-    if (wrapper.IsEmpty())
+    if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 
     impl->ref();
