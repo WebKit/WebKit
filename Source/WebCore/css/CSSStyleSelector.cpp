@@ -3389,9 +3389,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
         return;
-    case CSSPropertyWebkitColumnRuleStyle:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(columnRuleStyle, ColumnRuleStyle, BorderStyle)
-        return;
     case CSSPropertyWebkitColumnBreakBefore:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(columnBreakBefore, ColumnBreakBefore, PageBreak)
         return;
@@ -3960,6 +3957,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitColumnCount:
     case CSSPropertyWebkitColumnGap:
     case CSSPropertyWebkitColumnRuleColor:
+    case CSSPropertyWebkitColumnRuleStyle:
     case CSSPropertyWebkitColumnRuleWidth:
     case CSSPropertyWebkitColumns:
     case CSSPropertyWebkitColumnSpan:
