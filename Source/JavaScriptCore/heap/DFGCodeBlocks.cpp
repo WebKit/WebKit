@@ -67,8 +67,10 @@ void DFGCodeBlocks::jettison(PassOwnPtr<CodeBlock> codeBlockPtr)
 
 void DFGCodeBlocks::clearMarks()
 {
-    for (HashSet<CodeBlock*>::iterator iter = m_set.begin(); iter != m_set.end(); ++iter)
+    for (HashSet<CodeBlock*>::iterator iter = m_set.begin(); iter != m_set.end(); ++iter) {
         (*iter)->m_dfgData->mayBeExecuting = false;
+        (*iter)->m_dfgData->visitAggregateHasBeenCalled = false;
+    }
 }
 
 void DFGCodeBlocks::deleteUnmarkedJettisonedCodeBlocks()

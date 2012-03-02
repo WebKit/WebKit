@@ -1619,6 +1619,32 @@ void EvalCodeCache::visitAggregate(SlotVisitor& visitor)
 
 void CodeBlock::visitAggregate(SlotVisitor& visitor)
 {
+#if ENABLE(PARALLEL_GC)
+    if (!!m_dfgData) {
+        // I may be asked to scan myself more than once, and it may even happen concurrently.
+        // To this end, use a CAS loop to check if I've been called already. Only one thread
+        // may proceed past this point - whichever one wins the CAS race.
+        unsigned oldValue;
+        do {
+            oldValue = m_dfgData->visitAggregateHasBeenCalled;
+            if (oldValue) {
+                // Looks like someone else won! Return immediately to ensure that we don't
+                // trace the same CodeBlock concurrently. Doing so is hazardous since we will
+                // be mutating the state of ValueProfiles, which contain JSValues, which can
+                // have word-tearing on 32-bit, leading to awesome timing-dependent crashes
+                // that are nearly impossible to track down.
+                
+                // Also note that it must be safe to return early as soon as we see the
+                // value true (well, (unsigned)1), since once a GC thread is in this method
+                // and has won the CAS race (i.e. was responsible for setting the value true)
+                // it will definitely complete the rest of this method before declaring
+                // termination.
+                return;
+            }
+        } while (!WTF::weakCompareAndSwap(&m_dfgData->visitAggregateHasBeenCalled, 0, 1));
+    }
+#endif // ENABLE(PARALLEL_GC)
+    
     if (!!m_alternative)
         m_alternative->visitAggregate(visitor);
 

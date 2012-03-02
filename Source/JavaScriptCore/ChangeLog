@@ -1,5 +1,40 @@
 2012-03-01  Filip Pizlo  <fpizlo@apple.com>
 
+        DFGCodeBlocks should not trace CodeBlocks that are also going to be traced by
+        virtue of being in the transitive closure
+        https://bugs.webkit.org/show_bug.cgi?id=80098
+ 
+        Reviewed by Anders Carlsson.
+        
+        If DFGCodeBlocks traces a CodeBlock that might also be traced via its owner Executable,
+        then you might have the visitAggregate() method called concurrently by multiple threads.
+        This is benign on 64-bit -- visitAggregate() and everything it calls turns out to be
+        racy and slightly imprecise but not unsound. But on 32-bit, visitAggregate() may crash
+        due to word tearing in ValueProfile bucket updates inside of computeUpdatedPrediction().
+        
+        It would seem that the fix is just to have DFGCodeBlocks not trace CodeBlocks that are
+        not jettisoned. But CodeBlocks may be jettisoned later during the GC, so it must trace
+        any CodeBlock that it knows to be live by virtue of it being reachable from the stack.
+        Hence the real fix is to make sure that concurrent calls into CodeBlock::visitAggregate()
+        don't lead to two threads racing over each other as they clobber state. This patch
+        achieves this with a simple CAS loop: whichever thread wins the CAS race (which is
+        trivially linearizable) will get to trace the CodeBlock; all other threads give up and
+        go home.
+        
+        Unfortunately there will be no new tests. It's possible to reproduce this maybe 1/10
+        times by running V8-v6's raytrace repeatedly, using the V8 harness hacked to rerun it
+        even when it's gotten sufficient counts. But that takes a while - sometimes up to a
+        minute to get a crash. I have no other reliable repro case.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        * bytecode/CodeBlock.h:
+        (DFGData):
+        * heap/DFGCodeBlocks.cpp:
+        (JSC::DFGCodeBlocks::clearMarks):
+
+2012-03-01  Filip Pizlo  <fpizlo@apple.com>
+
         The JIT should not crash the entire process just because there is not enough executable
         memory, if the LLInt is enabled
         https://bugs.webkit.org/show_bug.cgi?id=79962

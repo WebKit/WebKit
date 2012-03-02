@@ -1172,6 +1172,7 @@ namespace JSC {
             bool isJettisoned;
             bool livenessHasBeenProved; // Initialized and used on every GC.
             bool allTransitionsHaveBeenMarked; // Initialized and used on every GC.
+            unsigned visitAggregateHasBeenCalled; // Unsigned to make it work seamlessly with the broadest set of CAS implementations.
         };
         
         OwnPtr<DFGData> m_dfgData;
