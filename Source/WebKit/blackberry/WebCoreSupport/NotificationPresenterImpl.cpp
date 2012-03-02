@@ -108,10 +108,10 @@ void NotificationPresenterImpl::onPermission(const std::string& domain, bool isA
     ASSERT(!domain.empty());
     String domainString = String::fromUTF8(domain.c_str());
     PermissionRequestMap::iterator it = m_permissionRequests.begin();
-    PermissionRequestMap::iterator end = m_permissionRequests.end();
-    for (; it != end; ++it) {
+    for (; it != m_permissionRequests.end(); ++it) {
         if (it->first->url().host() != domainString)
             continue;
+
         if (isAllowed) {
             m_allowedDomains.add(domainString);
             it->second->handleEvent();
@@ -119,6 +119,7 @@ void NotificationPresenterImpl::onPermission(const std::string& domain, bool isA
             m_allowedDomains.remove(domainString);
 
         m_permissionRequests.remove(it);
+        return;
     }
 }
 
@@ -143,11 +144,12 @@ void NotificationPresenterImpl::notificationClicked(const std::string& id)
     ASSERT(!id.empty());
     String idString = String::fromUTF8(id.c_str());
     NotificationMap::iterator it = m_notifications.begin();
-    NotificationMap::iterator end = m_notifications.end();
-    for (; it != end; ++it) {
+    for (; it != m_notifications.end(); ++it) {
         if (it->second == idString && it->first->scriptExecutionContext()) {
+            RefPtr<Notification> notification = it->first;
             it->first->dispatchEvent(Event::create(eventNames().clickEvent, false, true));
-            m_notifications.remove(it);
+            m_notifications.remove(notification);
+            return;
         }
     }
 }

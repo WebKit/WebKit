@@ -1,3 +1,25 @@
+2012-03-01  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Web Notification crashes the browser.
+        https://bugs.webkit.org/show_bug.cgi?id=79897
+
+        Reviewed by Antonio Gomes.
+
+        The reason of the crash is that it still uses the iterator
+        after been removed from the container, which invalidates the
+        iterator. 
+        We should stop processing after we have found the element
+        and removed from the container through the iterator.
+
+        This patch only fixes the crash issue, but not any notification
+        functionality issue, which is tracked seperatly.
+
+        Test case: http://sandbox.gtaero.net/chrome/notifications.php
+
+        * WebCoreSupport/NotificationPresenterImpl.cpp:
+        (WebKit::NotificationPresenterImpl::onPermission):
+        (WebKit::NotificationPresenterImpl::notificationClicked):
+
 2012-03-01  Mike Fenton  <mifenton@rim.com>
 
         Autocomplete attribute should apply to textarea's.
