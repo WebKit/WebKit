@@ -346,11 +346,10 @@ class ChromiumPort(Port):
         return [
             VirtualTestSuite('platform/chromium/virtual/gpu/fast/canvas',
                              'fast/canvas',
-                             ['--accelerated-2d-canvas']),
+                             ['--enable-accelerated-2d-canvas']),
             VirtualTestSuite('platform/chromium/virtual/gpu/canvas/philip',
                              'canvas/philip',
-                             ['--accelerated-2d-canvas'])
-        ]
+                             ['--enable-accelerated-2d-canvas'])]
 
     #
     # PROTECTED METHODS

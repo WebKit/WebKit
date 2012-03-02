@@ -1,3 +1,12 @@
+2012-03-01  Dirk Pranke  <dpranke@chromium.org>
+
+        Fix typo in flag used to run gpu virtual suites.
+
+        Unreviewed, build fix.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.virtual_test_suites):
+
 2012-03-01  Adam Barth  <abarth@webkit.org>
 
         Unreviewed, rolling out r109317.
