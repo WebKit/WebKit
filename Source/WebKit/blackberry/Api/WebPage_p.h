@@ -392,6 +392,8 @@ public:
     // Clean up any document related data we might be holding.
     void clearDocumentData(const WebCore::Document*);
 
+    void frameUnloaded(const WebCore::Frame*);
+
     static WebCore::RenderLayer* enclosingPositionedAncestorOrSelfIfPositioned(WebCore::RenderLayer*);
     static WebCore::RenderLayer* enclosingFixedPositionedAncestorOrSelfIfFixedPositioned(WebCore::RenderLayer*);
 

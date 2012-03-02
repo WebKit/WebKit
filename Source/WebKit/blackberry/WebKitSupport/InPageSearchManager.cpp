@@ -19,6 +19,7 @@
 #include "config.h"
 #include "InPageSearchManager.h"
 
+#include "DOMSupport.h"
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "Editor.h"
@@ -51,26 +52,87 @@ bool InPageSearchManager::findNextString(const String& text, bool forward)
         return false;
     }
 
-    if (m_activeSearchString != text) {
-        clearTextMatches();
+    if (!shouldSearchForText(text)) {
         m_activeSearchString = text;
-        m_activeMatchCount = m_webPage->m_page->markAllMatchesForText(text, WebCore::CaseInsensitive, true, TextMatchMarkerLimit);
-    } else
-        setMarkerActive(m_activeMatch.get(), false);
-
-    if (!m_activeMatchCount)
         return false;
+    }
 
-    const FindOptions findOptions = (forward ? 0 : WebCore::Backwards)
-        | WebCore::CaseInsensitive
-        | WebCore::WrapAround; // TODO should wrap around in page, not in frame
+    // Validate the range in case any node has been removed since last search.
+    if (m_activeMatch && !m_activeMatch->boundaryPointsValid())
+        m_activeMatch = 0;
 
-    // TODO StartInSelection
+    RefPtr<Range> searchStartingPoint(m_activeMatch);
+    if (m_activeSearchString != text) { // Start a new search.
+        m_activeSearchString = text;
+        m_webPage->m_page->unmarkAllTextMatches();
+        m_activeMatchCount = m_webPage->m_page->markAllMatchesForText(text, CaseInsensitive, true /* shouldHighlight */, TextMatchMarkerLimit);
+        if (!m_activeMatchCount) {
+            clearTextMatches();
+            return false;
+        }
+    } else { // Search same string for next occurrence.
+        setMarkerActive(m_activeMatch.get(), false /* active */);
+        // Searching for same string should start from the end of last match.
+        if (m_activeMatch) {
+            if (forward)
+                searchStartingPoint->setStart(searchStartingPoint->endPosition());
+            else
+                searchStartingPoint->setEnd(searchStartingPoint->startPosition());
+        }
+    }
 
-    m_activeMatch = m_webPage->mainFrame()->editor()->findStringAndScrollToVisible(text, m_activeMatch.get(), findOptions);
-    setMarkerActive(m_activeMatch.get(), true);
+    // If there is any active selection, new search should start from the beginning of it.
+    VisibleSelection selection = m_webPage->focusedOrMainFrame()->selection()->selection();
+    if (!selection.isNone()) {
+        searchStartingPoint = selection.firstRange().get();
+        m_webPage->focusedOrMainFrame()->selection()->clear();
+    }
 
+    Frame* currentActiveMatchFrame = selection.isNone() && m_activeMatch ? m_activeMatch->ownerDocument()->frame() : m_webPage->focusedOrMainFrame();
+
+    const FindOptions findOptions = (forward ? 0 : Backwards)
+        | CaseInsensitive
+        | StartInSelection;
+
+    if (findAndMarkText(text, searchStartingPoint.get(), currentActiveMatchFrame, findOptions))
+        return true;
+
+    Frame* startFrame = currentActiveMatchFrame;
+    do {
+        currentActiveMatchFrame = DOMSupport::incrementFrame(currentActiveMatchFrame, forward, true /* wrapFlag */);
+        if (findAndMarkText(text, 0, currentActiveMatchFrame, findOptions))
+            return true;
+    } while (currentActiveMatchFrame && startFrame != currentActiveMatchFrame);
+
+    clearTextMatches();
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool InPageSearchManager::shouldSearchForText(const String& text)
+{
+    if (text == m_activeSearchString)
+        return m_activeMatchCount;
+
+    // If the previous search string is prefix of new search string,
+    // don't search if the previous one has zero result.
+    if (!m_activeMatchCount
+        && m_activeSearchString.length()
+        && text.length() > m_activeSearchString.length()
+        && m_activeSearchString == text.substring(0, m_activeSearchString.length()))
+        return false;
     return true;
+}
+
+bool InPageSearchManager::findAndMarkText(const String& text, Range* range, Frame* frame, const FindOptions& options)
+{
+    m_activeMatch = frame->editor()->findStringAndScrollToVisible(text, range, options);
+    if (m_activeMatch) {
+        setMarkerActive(m_activeMatch.get(), true /* active */);
+        return true;
+    }
+    return false;
 }
 
 void InPageSearchManager::clearTextMatches()
@@ -79,14 +141,34 @@ void InPageSearchManager::clearTextMatches()
     m_activeMatch = 0;
 }
 
-void InPageSearchManager::setMarkerActive(WebCore::Range* range, bool active)
+void InPageSearchManager::setMarkerActive(Range* range, bool active)
 {
     if (!range)
         return;
-    WebCore::Document* doc = m_webPage->mainFrame()->document();
+    Document* doc = m_activeMatch->ownerDocument();
     if (!doc)
         return;
     doc->markers()->setMarkersActive(range, active);
+}
+
+void InPageSearchManager::frameUnloaded(const Frame* frame)
+{
+    if (!m_activeMatch) {
+        if (m_webPage->mainFrame() == frame && m_activeSearchString.length())
+            m_activeSearchString = String();
+        return;
+    }
+
+    Frame* currentActiveMatchFrame = m_activeMatch->ownerDocument()->frame();
+    if (currentActiveMatchFrame == frame) {
+        m_activeMatch = 0;
+        m_activeSearchString = String();
+        m_activeMatchCount = 0;
+        // FIXME: We need to notify client here.
+        if (frame == m_webPage->mainFrame()) // Don't need to unmark because the page will be destroyed.
+            return;
+        m_webPage->m_page->unmarkAllTextMatches();
+    }
 }
 
 }

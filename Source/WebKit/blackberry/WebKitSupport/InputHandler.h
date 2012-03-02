@@ -60,7 +60,7 @@ public:
     void nodeFocused(WebCore::Node*);
     void nodeTextChanged(const WebCore::Node*);
     void selectionChanged();
-    void frameUnloaded(WebCore::Frame*);
+    void frameUnloaded(const WebCore::Frame*);
 
     bool handleKeyboardInput(const BlackBerry::Platform::KeyboardEvent&, bool changeIsPartOfComposition = false);
 

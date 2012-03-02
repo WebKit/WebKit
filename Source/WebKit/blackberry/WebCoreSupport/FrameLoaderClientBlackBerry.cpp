@@ -790,7 +790,7 @@ ObjectContentType FrameLoaderClientBlackBerry::objectContentType(const KURL& url
 
 void FrameLoaderClientBlackBerry::dispatchWillClose()
 {
-    m_webPagePrivate->m_inputHandler->frameUnloaded(m_frame);
+    m_webPagePrivate->frameUnloaded(m_frame);
 }
 
 void FrameLoaderClientBlackBerry::setMainDocumentError(DocumentLoader*, const ResourceError& error)
@@ -926,7 +926,7 @@ void FrameLoaderClientBlackBerry::detachedFromParent2()
     if (m_frame->document())
         m_webPagePrivate->clearDocumentData(m_frame->document());
 
-    m_webPagePrivate->m_inputHandler->frameUnloaded(m_frame);
+    m_webPagePrivate->frameUnloaded(m_frame);
     m_webPagePrivate->m_client->notifyFrameDetached(m_frame);
 }
 

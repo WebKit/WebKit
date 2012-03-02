@@ -81,6 +81,8 @@ static const WebCore::IntPoint InvalidPoint = WebCore::IntPoint(-1, -1);
 
 WebCore::VisibleSelection visibleSelectionForClosestActualWordStart(const WebCore::VisibleSelection&);
 
+WebCore::Frame* incrementFrame(WebCore::Frame* curr, bool forward, bool wrapFlag);
+
 } // DOMSupport
 } // WebKit
 } // BlackBerry

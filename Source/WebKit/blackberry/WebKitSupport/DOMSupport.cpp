@@ -399,6 +399,14 @@ VisibleSelection visibleSelectionForClosestActualWordStart(const VisibleSelectio
     return selection;
 }
 
+// This function is copied from WebCore/page/Page.cpp.
+Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)
+{
+    return forward
+        ? curr->tree()->traverseNextWithWrap(wrapFlag)
+        : curr->tree()->traversePreviousWithWrap(wrapFlag);
+}
+
 } // DOMSupport
 } // WebKit
 } // BlackBerry

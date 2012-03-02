@@ -710,7 +710,7 @@ void InputHandler::ensureFocusElementVisible(bool centerInView)
         ensureFocusTextElementVisible(centerInView ? CenterAlways : CenterIfNeeded);
 }
 
-void InputHandler::frameUnloaded(Frame* frame)
+void InputHandler::frameUnloaded(const Frame* frame)
 {
     if (!isActiveTextEdit())
         return;

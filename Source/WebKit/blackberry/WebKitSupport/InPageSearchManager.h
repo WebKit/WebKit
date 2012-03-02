@@ -19,12 +19,13 @@
 #ifndef InPageSearchManager_h
 #define InPageSearchManager_h
 
+#include "FindOptions.h"
 #include "WTFString.h"
 
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
+class Frame;
 class Range;
+class VisibleSelection;
 }
 
 namespace BlackBerry {
@@ -39,10 +40,13 @@ public:
     ~InPageSearchManager();
 
     bool findNextString(const String& text, bool forward);
+    void frameUnloaded(const WebCore::Frame*);
 
 private:
     void clearTextMatches();
-    void setMarkerActive(WebCore::Range*, bool active);
+    void setMarkerActive(WebCore::Range*, bool);
+    bool findAndMarkText(const String&, WebCore::Range*, WebCore::Frame*, const WebCore::FindOptions&);
+    bool shouldSearchForText(const String&);
 
     WebPagePrivate* m_webPage;
     RefPtr<WebCore::Range> m_activeMatch;

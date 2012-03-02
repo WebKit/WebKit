@@ -1,3 +1,35 @@
+2012-03-01  Andy Chen  <andchen@rim.com>
+
+        [BlackBerry] Implement features for find-in-page
+        https://bugs.webkit.org/show_bug.cgi?id=79820
+
+        Reviewed by Antonio Gomes.
+
+        - Make it be able to search text around the whole page instead of single frame.
+        - Make it be able to start new search from active selection and last active match.
+
+        No new tests as this patch doesn't change behavior.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::frameUnloaded):
+        * Api/WebPage_p.h:
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillClose):
+        (WebCore::FrameLoaderClientBlackBerry::detachedFromParent2):
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::incrementFrame):
+        * WebKitSupport/DOMSupport.h:
+        * WebKitSupport/InPageSearchManager.cpp:
+        (BlackBerry::WebKit::InPageSearchManager::findNextString):
+        (BlackBerry::WebKit::InPageSearchManager::shouldSearchForText):
+        (BlackBerry::WebKit::InPageSearchManager::findAndMarkText):
+        (BlackBerry::WebKit::InPageSearchManager::setMarkerActive):
+        (BlackBerry::WebKit::InPageSearchManager::frameUnloaded):
+        * WebKitSupport/InPageSearchManager.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::frameUnloaded):
+        * WebKitSupport/InputHandler.h:
+
 2012-03-01  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Web Notification crashes the browser.
