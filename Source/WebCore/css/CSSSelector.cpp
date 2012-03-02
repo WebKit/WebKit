@@ -188,6 +188,7 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     case PseudoValid:
     case PseudoInvalid:
     case PseudoIndeterminate:
+    case PseudoScope:
     case PseudoTarget:
     case PseudoLang:
     case PseudoNot:
@@ -272,6 +273,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, scrollbarTrack, ("-webkit-scrollbar-track"));
     DEFINE_STATIC_LOCAL(AtomicString, scrollbarTrackPiece, ("-webkit-scrollbar-track-piece"));
     DEFINE_STATIC_LOCAL(AtomicString, selection, ("selection"));
+    DEFINE_STATIC_LOCAL(AtomicString, scope, ("scope"));
     DEFINE_STATIC_LOCAL(AtomicString, target, ("target"));
     DEFINE_STATIC_LOCAL(AtomicString, visited, ("visited"));
     DEFINE_STATIC_LOCAL(AtomicString, windowInactive, ("window-inactive"));
@@ -362,6 +364,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(scrollbarTrackPiece.impl(), CSSSelector::PseudoScrollbarTrackPiece);
         nameToPseudoType->set(cornerPresent.impl(), CSSSelector::PseudoCornerPresent);
         nameToPseudoType->set(selection.impl(), CSSSelector::PseudoSelection);
+        nameToPseudoType->set(scope.impl(), CSSSelector::PseudoScope);
         nameToPseudoType->set(target.impl(), CSSSelector::PseudoTarget);
         nameToPseudoType->set(visited.impl(), CSSSelector::PseudoVisited);
         nameToPseudoType->set(firstPage.impl(), CSSSelector::PseudoFirstPage);
@@ -454,6 +457,7 @@ void CSSSelector::extractPseudoType() const
     case PseudoValid:
     case PseudoInvalid:
     case PseudoIndeterminate:
+    case PseudoScope:
     case PseudoTarget:
     case PseudoLang:
     case PseudoNot:

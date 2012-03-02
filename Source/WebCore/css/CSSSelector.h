@@ -144,6 +144,7 @@ namespace WebCore {
             PseudoValid,
             PseudoInvalid,
             PseudoIndeterminate,
+            PseudoScope,
             PseudoTarget,
             PseudoBefore,
             PseudoAfter,

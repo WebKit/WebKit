@@ -981,6 +981,8 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
                     return true;
             }
             break;
+        case CSSSelector::PseudoScope:
+            return element == context.scope;
         case CSSSelector::PseudoTarget:
             if (element == element->document()->cssTarget())
                 return true;
