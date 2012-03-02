@@ -970,6 +970,8 @@ webcore_sources += \
 	Source/WebCore/Modules/geolocation/PositionError.h \
 	Source/WebCore/Modules/geolocation/PositionErrorCallback.h \
 	Source/WebCore/Modules/geolocation/PositionOptions.h \
+	Source/WebCore/Modules/indexeddb/DOMWindowIndexedDatabase.cpp \
+	Source/WebCore/Modules/indexeddb/DOMWindowIndexedDatabase.h \
 	Source/WebCore/Modules/indexeddb/IDBAny.cpp \
 	Source/WebCore/Modules/indexeddb/IDBAny.h \
 	Source/WebCore/Modules/indexeddb/IDBBackingStore.h \
@@ -1026,6 +1028,10 @@ webcore_sources += \
 	Source/WebCore/Modules/indexeddb/IDBTransaction.h \
 	Source/WebCore/Modules/indexeddb/IDBVersionChangeEvent.h \
 	Source/WebCore/Modules/indexeddb/IDBVersionChangeRequest.h \
+	Source/WebCore/Modules/indexeddb/PageGroupIndexedDatabase.cpp \
+	Source/WebCore/Modules/indexeddb/PageGroupIndexedDatabase.h \
+	Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.cpp \
+	Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.h \
 	Source/WebCore/Modules/mediastream/LocalMediaStream.cpp \
 	Source/WebCore/Modules/mediastream/LocalMediaStream.h \
 	Source/WebCore/Modules/mediastream/MediaStream.cpp \
@@ -4790,6 +4796,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBTransaction.h
 
 dom_binding_idls += \
+	$(WebCore)/Modules/indexeddb/DOMWindowIndexedDatabase.idl \
 	$(WebCore)/Modules/indexeddb/IDBAny.idl \
 	$(WebCore)/Modules/indexeddb/IDBDatabase.idl \
 	$(WebCore)/Modules/indexeddb/IDBDatabaseError.idl \
@@ -4799,7 +4806,8 @@ dom_binding_idls += \
 	$(WebCore)/Modules/indexeddb/IDBKeyRange.idl \
 	$(WebCore)/Modules/indexeddb/IDBObjectStore.idl \
 	$(WebCore)/Modules/indexeddb/IDBRequest.idl \
-	$(WebCore)/Modules/indexeddb/IDBTransaction.idl
+	$(WebCore)/Modules/indexeddb/IDBTransaction.idl \
+	$(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl
 endif # END ENABLE_INDEXED_DATABASE
 
 # ----

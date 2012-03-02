@@ -3014,6 +3014,7 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
     }
 
     SOURCES += \
+        Modules/indexeddb/DOMWindowIndexedDatabase.cpp \
         Modules/indexeddb/IDBAny.cpp \
         Modules/indexeddb/IDBCursor.cpp \
         Modules/indexeddb/IDBCursorBackendImpl.cpp \
@@ -3031,7 +3032,9 @@ contains(DEFINES, ENABLE_INDEXED_DATABASE=1) {
         Modules/indexeddb/IDBObjectStore.cpp \
         Modules/indexeddb/IDBObjectStoreBackendImpl.cpp \
         Modules/indexeddb/IDBRequest.cpp \
-        Modules/indexeddb/IDBTransaction.cpp
+        Modules/indexeddb/IDBTransaction.cpp \
+        Modules/indexeddb/PageGroupIndexedDatabase.cpp \
+        Modules/indexeddb/WorkerContextIndexedDatabase.cpp
 }
 
 contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1) {

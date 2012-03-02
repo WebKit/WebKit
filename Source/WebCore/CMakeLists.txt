@@ -415,6 +415,7 @@ SET(WebCore_SOURCES
     Modules/geolocation/GeolocationController.cpp
     Modules/geolocation/NavigatorGeolocation.cpp
 
+    Modules/indexeddb/DOMWindowIndexedDatabase.cpp
     Modules/indexeddb/IDBAny.cpp
     Modules/indexeddb/IDBDatabase.cpp
     Modules/indexeddb/IDBDatabaseBackendImpl.cpp
@@ -432,6 +433,8 @@ SET(WebCore_SOURCES
     Modules/indexeddb/IDBFactory.cpp
     Modules/indexeddb/IDBFactoryBackendInterface.cpp
     Modules/indexeddb/IDBFactoryBackendImpl.cpp
+    Modules/indexeddb/PageGroupIndexedDatabase.cpp
+    Modules/indexeddb/WorkerContextIndexedDatabase.cpp
 
     accessibility/AXObjectCache.cpp
     accessibility/AccessibilityARIAGrid.cpp
@@ -1539,6 +1542,7 @@ ENDIF ()
 
 IF (ENABLE_INDEXED_DATABASE)
     LIST(APPEND WebCore_IDL_FILES
+        Modules/indexeddb/DOMWindowIndexedDatabase.idl
         Modules/indexeddb/IDBAny.idl
         Modules/indexeddb/IDBCursor.idl
         Modules/indexeddb/IDBDatabaseError.idl
@@ -1551,6 +1555,7 @@ IF (ENABLE_INDEXED_DATABASE)
         Modules/indexeddb/IDBObjectStore.idl
         Modules/indexeddb/IDBRequest.idl
         Modules/indexeddb/IDBTransaction.idl
+        Modules/indexeddb/WorkerContextIndexedDatabase.idl
     )
 ENDIF ()
 

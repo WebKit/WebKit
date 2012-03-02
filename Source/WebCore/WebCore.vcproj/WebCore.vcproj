@@ -24113,6 +24113,14 @@
 				Name="indexeddb"
 				>
 				<File
+					RelativePath="..\Modules\indexeddb\DOMWindowIndexedDatabase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\indexeddb\DOMWindowIndexedDatabase.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\indexeddb\IDBAny.cpp"
 					>
 				</File>
@@ -24266,6 +24274,22 @@
 				</File>
 				<File
 					RelativePath="..\Modules\indexeddb\IDBTransaction.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\indexeddb\PageGroupIndexedDatabase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\indexeddb\PageGroupIndexedDatabase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\indexeddb\WorkerContextIndexedDatabase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\indexeddb\WorkerContextIndexedDatabase.h"
 					>
 				</File>
 			</Filter>

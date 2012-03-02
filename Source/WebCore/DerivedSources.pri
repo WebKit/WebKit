@@ -92,6 +92,7 @@ IDL_BINDINGS += \
     $$PWD/Modules/geolocation/PositionCallback.idl \
     $$PWD/Modules/geolocation/PositionError.idl \
     $$PWD/Modules/geolocation/PositionErrorCallback.idl \
+    $$PWD/Modules/indexeddb/DOMWindowIndexedDatabase.idl \
     $$PWD/Modules/indexeddb/IDBAny.idl \
     $$PWD/Modules/indexeddb/IDBCursor.idl \
     $$PWD/Modules/indexeddb/IDBDatabaseError.idl \
@@ -104,6 +105,7 @@ IDL_BINDINGS += \
     $$PWD/Modules/indexeddb/IDBObjectStore.idl \
     $$PWD/Modules/indexeddb/IDBRequest.idl \
     $$PWD/Modules/indexeddb/IDBTransaction.idl \
+    $$PWD/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
     $$PWD/Modules/websockets/CloseEvent.idl \
     $$PWD/Modules/websockets/DOMWindowWebSocket.idl \
     $$PWD/Modules/websockets/WebSocket.idl \

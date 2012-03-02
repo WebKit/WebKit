@@ -3375,6 +3375,8 @@
 		9712A60215004EDA0048AF10 /* IDBVersionChangeRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A5A915004EDA0048AF10 /* IDBVersionChangeRequest.h */; };
 		9712A60415004EDA0048AF10 /* PageGroupIndexedDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A5AB15004EDA0048AF10 /* PageGroupIndexedDatabase.cpp */; };
 		9712A60515004EDA0048AF10 /* PageGroupIndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A5AC15004EDA0048AF10 /* PageGroupIndexedDatabase.h */; };
+		9712A611150090CE0048AF10 /* WorkerContextIndexedDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A60E150090CE0048AF10 /* WorkerContextIndexedDatabase.cpp */; };
+		9712A612150090CE0048AF10 /* WorkerContextIndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A60F150090CE0048AF10 /* WorkerContextIndexedDatabase.h */; };
 		97205AAF123928CA00B17380 /* FTPDirectoryDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97205AAD123928CA00B17380 /* FTPDirectoryDocument.cpp */; };
 		97205AB0123928CA00B17380 /* FTPDirectoryDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97205AAE123928CA00B17380 /* FTPDirectoryDocument.h */; };
 		97205AB51239291000B17380 /* ImageDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97205AB11239291000B17380 /* ImageDocument.cpp */; };
@@ -10294,6 +10296,9 @@
 		9712A5AA15004EDA0048AF10 /* IDBVersionChangeRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBVersionChangeRequest.idl; path = Modules/indexeddb/IDBVersionChangeRequest.idl; sourceTree = "<group>"; };
 		9712A5AB15004EDA0048AF10 /* PageGroupIndexedDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PageGroupIndexedDatabase.cpp; path = Modules/indexeddb/PageGroupIndexedDatabase.cpp; sourceTree = "<group>"; };
 		9712A5AC15004EDA0048AF10 /* PageGroupIndexedDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PageGroupIndexedDatabase.h; path = Modules/indexeddb/PageGroupIndexedDatabase.h; sourceTree = "<group>"; };
+		9712A60E150090CE0048AF10 /* WorkerContextIndexedDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorkerContextIndexedDatabase.cpp; path = Modules/indexeddb/WorkerContextIndexedDatabase.cpp; sourceTree = "<group>"; };
+		9712A60F150090CE0048AF10 /* WorkerContextIndexedDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerContextIndexedDatabase.h; path = Modules/indexeddb/WorkerContextIndexedDatabase.h; sourceTree = "<group>"; };
+		9712A610150090CE0048AF10 /* WorkerContextIndexedDatabase.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WorkerContextIndexedDatabase.idl; path = Modules/indexeddb/WorkerContextIndexedDatabase.idl; sourceTree = "<group>"; };
 		97205AAD123928CA00B17380 /* FTPDirectoryDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FTPDirectoryDocument.cpp; sourceTree = "<group>"; };
 		97205AAE123928CA00B17380 /* FTPDirectoryDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTPDirectoryDocument.h; sourceTree = "<group>"; };
 		97205AB11239291000B17380 /* ImageDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDocument.cpp; sourceTree = "<group>"; };
@@ -17205,6 +17210,9 @@
 				9712A5AA15004EDA0048AF10 /* IDBVersionChangeRequest.idl */,
 				9712A5AB15004EDA0048AF10 /* PageGroupIndexedDatabase.cpp */,
 				9712A5AC15004EDA0048AF10 /* PageGroupIndexedDatabase.h */,
+				9712A60E150090CE0048AF10 /* WorkerContextIndexedDatabase.cpp */,
+				9712A60F150090CE0048AF10 /* WorkerContextIndexedDatabase.h */,
+				9712A610150090CE0048AF10 /* WorkerContextIndexedDatabase.idl */,
 			);
 			name = indexeddb;
 			sourceTree = "<group>";
@@ -24442,6 +24450,7 @@
 				2E4346460F546A8200B0F1BA /* Worker.h in Headers */,
 				F3820897147D35F90010BC06 /* WorkerConsoleAgent.h in Headers */,
 				2E4346490F546A8200B0F1BA /* WorkerContext.h in Headers */,
+				9712A612150090CE0048AF10 /* WorkerContextIndexedDatabase.h in Headers */,
 				2E43464B0F546A8200B0F1BA /* WorkerContextProxy.h in Headers */,
 				F34742E11343631F00531BC2 /* WorkerDebuggerAgent.h in Headers */,
 				A3E2643114748991005A8588 /* WorkerEventQueue.h in Headers */,
@@ -27417,6 +27426,7 @@
 				2E4346450F546A8200B0F1BA /* Worker.cpp in Sources */,
 				F3820896147D35F90010BC06 /* WorkerConsoleAgent.cpp in Sources */,
 				2E4346480F546A8200B0F1BA /* WorkerContext.cpp in Sources */,
+				9712A611150090CE0048AF10 /* WorkerContextIndexedDatabase.cpp in Sources */,
 				F34742E01343631F00531BC2 /* WorkerDebuggerAgent.cpp in Sources */,
 				A3E2643014748991005A8588 /* WorkerEventQueue.cpp in Sources */,
 				F36E07A41358A8BE00AACBC9 /* WorkerInspectorController.cpp in Sources */,
