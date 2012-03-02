@@ -29,6 +29,7 @@ namespace WebCore {
 
 class HTMLParagraphElement : public HTMLElement {
 public:
+    static PassRefPtr<HTMLParagraphElement> create(Document*);
     static PassRefPtr<HTMLParagraphElement> create(const QualifiedName&, Document*);
 
 private:

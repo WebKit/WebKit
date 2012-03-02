@@ -29,6 +29,8 @@
 #include "AXObjectCache.h"
 #include "Document.h"
 #include "EditingText.h"
+#include "Editor.h"
+#include "Frame.h"
 #include "HTMLBRElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLElementFactory.h"
@@ -38,6 +40,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLOListElement.h"
+#include "HTMLParagraphElement.h"
 #include "HTMLUListElement.h"
 #include "PositionIterator.h"
 #include "RenderObject.h"
@@ -844,7 +847,15 @@ bool isEmptyTableCell(const Node* node)
 
 PassRefPtr<HTMLElement> createDefaultParagraphElement(Document* document)
 {
-    return HTMLDivElement::create(document);
+    switch (document->frame()->editor()->defaultParagraphSeparator()) {
+    case EditorParagraphSeparatorIsDiv:
+        return HTMLDivElement::create(document);
+    case EditorParagraphSeparatorIsP:
+        return HTMLParagraphElement::create(document);
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 PassRefPtr<HTMLElement> createBreakElement(Document* document)

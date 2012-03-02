@@ -307,6 +307,16 @@ static bool executeCut(Frame* frame, Event*, EditorCommandSource source, const S
     return true;
 }
 
+static bool executeDefaultParagraphSeparator(Frame* frame, Event*, EditorCommandSource, const String& value)
+{
+    if (equalIgnoringCase(value, "div"))
+        frame->editor()->setDefaultParagraphSeparator(EditorParagraphSeparatorIsDiv);
+    else if (equalIgnoringCase(value, "p"))
+        frame->editor()->setDefaultParagraphSeparator(EditorParagraphSeparatorIsP);
+
+    return true;
+}
+
 static bool executeDelete(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
     switch (source) {
@@ -1378,6 +1388,19 @@ static String valueBackColor(Frame* frame, Event*)
     return valueStyle(frame, CSSPropertyBackgroundColor);
 }
 
+static String valueDefaultParagraphSeparator(Frame* frame, Event*)
+{
+    switch (frame->editor()->defaultParagraphSeparator()) {
+    case EditorParagraphSeparatorIsDiv:
+        return divTag.localName();
+    case EditorParagraphSeparatorIsP:
+        return pTag.localName();
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
 static String valueFontName(Frame* frame, Event*)
 {
     return valueStyle(frame, CSSPropertyFontFamily);
@@ -1429,6 +1452,7 @@ static const CommandMap& createCommandMap()
         { "Copy", { executeCopy, supportedCopyCut, enabledCopy, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "CreateLink", { executeCreateLink, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Cut", { executeCut, supportedCopyCut, enabledCut, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
+        { "DefaultParagraphSeparator", { executeDefaultParagraphSeparator, supported, enabled, stateNone, valueDefaultParagraphSeparator, notTextInsertion, doNotAllowExecutionWhenDisabled} },
         { "Delete", { executeDelete, supported, enabledDelete, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "DeleteBackward", { executeDeleteBackward, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "DeleteBackwardByDecomposingPreviousCharacter", { executeDeleteBackwardByDecomposingPreviousCharacter, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },

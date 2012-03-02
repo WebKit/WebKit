@@ -846,6 +846,7 @@ Editor::Editor(Frame* frame)
     , m_spellChecker(adoptPtr(new SpellChecker(frame)))
     , m_spellingCorrector(adoptPtr(new SpellingCorrectionController(frame)))
     , m_areMarkedTextMatchesHighlighted(false)
+    , m_defaultParagraphSeparator(EditorParagraphSeparatorIsDiv)
 {
 }
 

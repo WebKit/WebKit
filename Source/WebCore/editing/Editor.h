@@ -80,6 +80,7 @@ struct CompositionUnderline {
 };
 
 enum EditorCommandSource { CommandFromMenuOrKeyBinding, CommandFromDOM, CommandFromDOMWithUserInterface };
+enum EditorParagraphSeparator { EditorParagraphSeparatorIsDiv, EditorParagraphSeparatorIsP };
 
 class Editor {
 public:
@@ -383,6 +384,9 @@ public:
 
     void deviceScaleFactorChanged();
 
+    EditorParagraphSeparator defaultParagraphSeparator() const { return m_defaultParagraphSeparator; }
+    void setDefaultParagraphSeparator(EditorParagraphSeparator separator) { m_defaultParagraphSeparator = separator; }
+
 private:
     Frame* m_frame;
     OwnPtr<DeleteButtonController> m_deleteButtonController;
@@ -400,6 +404,7 @@ private:
     OwnPtr<SpellingCorrectionController> m_spellingCorrector;
     VisibleSelection m_mark;
     bool m_areMarkedTextMatchesHighlighted;
+    EditorParagraphSeparator m_defaultParagraphSeparator;
 
     bool canDeleteRange(Range*) const;
     bool canSmartReplaceWithPasteboard(Pasteboard*);
