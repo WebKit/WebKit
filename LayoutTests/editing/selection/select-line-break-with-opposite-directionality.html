@@ -97,16 +97,16 @@ if (window.layoutTestController) {
     }
 
     document.body.className = 'hideTestsInDRT';
+} else {
+    document.addEventListener('selectionchange', function () {
+        var selection = window.getSelection();
+        if (selection.isCollapsed)
+            document.getElementById('log').innerHTML += selection.baseOffset + '\n';
+        else
+            document.getElementById('log').innerHTML += selection.baseOffset + ':' + selection.extentOffset + '\n';
+    });
 }
 
-document.addEventListener('selectionchange', function () {
-    var selection = window.getSelection();
-    if (selection.isCollapsed)
-        document.getElementById('log').innerHTML += selection.baseOffset + '\n';
-    else
-        document.getElementById('log').innerHTML += selection.baseOffset + ':' + selection.extentOffset + '\n';
-})
-
-</script
-></body>
+</script></pre>
+</body>
 </html>
