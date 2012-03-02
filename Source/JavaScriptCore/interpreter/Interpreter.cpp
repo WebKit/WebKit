@@ -44,6 +44,7 @@
 #include "GetterSetter.h"
 #include "JSActivation.h"
 #include "JSArray.h"
+#include "JSBoundFunction.h"
 #include "JSByteArray.h"
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
@@ -845,7 +846,7 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
     unsigned bytecodeOffset = 0;
     lineNumber = -1;
     ASSERT(!callFrame->hasHostCallFrameFlag());
-    CallFrame* callerFrame = callFrame->codeBlock() ? callFrame->trueCallerFrame() : 0;
+    CallFrame* callerFrame = callFrame->codeBlock() ? callFrame->trueCallerFrame() : callFrame->callerFrame()->removeHostCallFrameFlag();
     bool callframeIsHost = callerFrame->addHostCallFrameFlag() == callFrame->callerFrame();
     ASSERT(!callerFrame->hasHostCallFrameFlag());
 
@@ -5301,17 +5302,28 @@ JSValue Interpreter::retrieveArgumentsFromVMCode(CallFrame* callFrame, JSFunctio
 JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* function) const
 {
     CallFrame* functionCallFrame = findFunctionCallFrameFromVMCode(callFrame, function);
+
     if (!functionCallFrame)
         return jsNull();
     
-    if (functionCallFrame->callerFrame()->hasHostCallFrameFlag())
+    int lineNumber;
+    CallFrame* callerFrame = getCallerInfo(&callFrame->globalData(), functionCallFrame, lineNumber);
+    if (!callerFrame)
         return jsNull();
-
-    CallFrame* callerFrame = functionCallFrame->trueCallerFrame();
-
     JSValue caller = callerFrame->callee();
     if (!caller)
         return jsNull();
+
+    // Skip over function bindings.
+    ASSERT(caller.isObject());
+    while (asObject(caller)->inherits(&JSBoundFunction::s_info)) {
+        callerFrame = getCallerInfo(&callFrame->globalData(), callerFrame, lineNumber);
+        if (!callerFrame)
+            return jsNull();
+        caller = callerFrame->callee();
+        if (!caller)
+            return jsNull();
+    }
 
     return caller;
 }

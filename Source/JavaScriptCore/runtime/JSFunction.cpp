@@ -181,7 +181,15 @@ JSValue JSFunction::callerGetter(ExecState* exec, JSValue slotBase, const Identi
 {
     JSFunction* thisObj = asFunction(slotBase);
     ASSERT(!thisObj->isHostFunction());
-    return exec->interpreter()->retrieveCallerFromVMCode(exec, thisObj);
+    JSValue caller = exec->interpreter()->retrieveCallerFromVMCode(exec, thisObj);
+
+    // See ES5.1 15.3.5.4 - Function.caller may not be used to retrieve a strict caller.
+    if (!caller.isObject() || !asObject(caller)->inherits(&JSFunction::s_info))
+        return caller;
+    JSFunction* function = asFunction(caller);
+    if (function->isHostFunction() || !function->jsExecutable()->isStrictMode())
+        return caller;
+    return throwTypeError(exec, "Function.caller used to retrieve strict caller");
 }
 
 JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, const Identifier&)

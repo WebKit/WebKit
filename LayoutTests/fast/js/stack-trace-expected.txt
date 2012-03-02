@@ -12,12 +12,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     0   inner at stack-trace.js:28
     1    at eval code
     2   eval at [native code]
+    3   evaler at stack-trace.js:29
+    4   global code at stack-trace.js:39
 
 --> Stack Trace:
     0   inner at stack-trace.js:28
     1   outer at stack-trace.js:27
     2    at eval code
     3   eval at [native code]
+    4   evaler at stack-trace.js:29
+    5   global code at stack-trace.js:40
 
 --> Stack Trace:
     0   inner at stack-trace.js:28
@@ -251,6 +255,103 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     0   selfRecursive3 at stack-trace.js:69
     1    at eval code
     2   eval at [native code]
+    3   selfRecursive3 at stack-trace.js:69
+    4    at eval code
+    5   eval at [native code]
+    6   selfRecursive3 at stack-trace.js:69
+    7    at eval code
+    8   eval at [native code]
+    9   selfRecursive3 at stack-trace.js:69
+    10    at eval code
+    11   eval at [native code]
+    12   selfRecursive3 at stack-trace.js:69
+    13    at eval code
+    14   eval at [native code]
+    15   selfRecursive3 at stack-trace.js:69
+    16    at eval code
+    17   eval at [native code]
+    18   selfRecursive3 at stack-trace.js:69
+    19    at eval code
+    20   eval at [native code]
+    21   selfRecursive3 at stack-trace.js:69
+    22    at eval code
+    23   eval at [native code]
+    24   selfRecursive3 at stack-trace.js:69
+    25    at eval code
+    26   eval at [native code]
+    27   selfRecursive3 at stack-trace.js:69
+    28    at eval code
+    29   eval at [native code]
+    30   selfRecursive3 at stack-trace.js:69
+    31    at eval code
+    32   eval at [native code]
+    33   selfRecursive3 at stack-trace.js:69
+    34    at eval code
+    35   eval at [native code]
+    36   selfRecursive3 at stack-trace.js:69
+    37    at eval code
+    38   eval at [native code]
+    39   selfRecursive3 at stack-trace.js:69
+    40    at eval code
+    41   eval at [native code]
+    42   selfRecursive3 at stack-trace.js:69
+    43    at eval code
+    44   eval at [native code]
+    45   selfRecursive3 at stack-trace.js:69
+    46    at eval code
+    47   eval at [native code]
+    48   selfRecursive3 at stack-trace.js:69
+    49    at eval code
+    50   eval at [native code]
+    51   selfRecursive3 at stack-trace.js:69
+    52    at eval code
+    53   eval at [native code]
+    54   selfRecursive3 at stack-trace.js:69
+    55    at eval code
+    56   eval at [native code]
+    57   selfRecursive3 at stack-trace.js:69
+    58    at eval code
+    59   eval at [native code]
+    60   selfRecursive3 at stack-trace.js:69
+    61    at eval code
+    62   eval at [native code]
+    63   selfRecursive3 at stack-trace.js:69
+    64    at eval code
+    65   eval at [native code]
+    66   selfRecursive3 at stack-trace.js:69
+    67    at eval code
+    68   eval at [native code]
+    69   selfRecursive3 at stack-trace.js:69
+    70    at eval code
+    71   eval at [native code]
+    72   selfRecursive3 at stack-trace.js:69
+    73    at eval code
+    74   eval at [native code]
+    75   selfRecursive3 at stack-trace.js:69
+    76    at eval code
+    77   eval at [native code]
+    78   selfRecursive3 at stack-trace.js:69
+    79    at eval code
+    80   eval at [native code]
+    81   selfRecursive3 at stack-trace.js:69
+    82    at eval code
+    83   eval at [native code]
+    84   selfRecursive3 at stack-trace.js:69
+    85    at eval code
+    86   eval at [native code]
+    87   selfRecursive3 at stack-trace.js:69
+    88    at eval code
+    89   eval at [native code]
+    90   selfRecursive3 at stack-trace.js:69
+    91    at eval code
+    92   eval at [native code]
+    93   selfRecursive3 at stack-trace.js:69
+    94    at eval code
+    95   eval at [native code]
+    96   selfRecursive3 at stack-trace.js:69
+    97    at eval code
+    98   eval at [native code]
+    99   selfRecursive3 at stack-trace.js:69
 
 --> Stack Trace:
     0   throwError at stack-trace.js:77
@@ -262,6 +363,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     6   makeInlinableCall at stack-trace.js:131
     7   g at stack-trace.js:140
     8   map at [native code]
+    9   global code at stack-trace.js:143
 
 --> Stack Trace:
     0   throwError at stack-trace.js:77
@@ -272,6 +374,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     5   makeInlinableCall at stack-trace.js:131
     6   g at stack-trace.js:140
     7   map at [native code]
+    8   global code at stack-trace.js:143
 
 --> Stack Trace:
     0   throwError at stack-trace.js:77
@@ -282,6 +385,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     5   makeInlinableCall at stack-trace.js:131
     6   g at stack-trace.js:140
     7   map at [native code]
+    8   global code at stack-trace.js:143
 
 --> Stack Trace:
     0   throwError at stack-trace.js:77
@@ -293,19 +397,27 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     6   makeInlinableCall at stack-trace.js:131
     7   g at stack-trace.js:140
     8   map at [native code]
+    9   global code at stack-trace.js:143
 
 --> Stack Trace:
     0   h at stack-trace.js:151
     1   map at [native code]
+    2   mapTest at stack-trace.js:158
+    3   mapTestDriver at stack-trace.js:164
+    4   global code at stack-trace.js:169
 
 --> Stack Trace:
     0   h at stack-trace.js:153
     1   map at [native code]
+    2   mapTest at stack-trace.js:158
+    3   mapTestDriver at stack-trace.js:164
+    4   global code at stack-trace.js:175
 
 --> Stack Trace:
     0   throwError at stack-trace.js:77
     1   dfgFunction at stack-trace.js:184
     2   map at [native code]
+    3   global code at stack-trace.js:193
 
 --> Stack Trace:
     0   throwError at stack-trace.js:77
