@@ -63,7 +63,10 @@ class SQLTransaction;
 // For builds with IconDatabase disabled, they'll just use a default derivation of IconDatabaseBase. Which does nothing.
 class IconDatabase : public IconDatabaseBase {
 public:
+    static PassOwnPtr<IconDatabase> create() { return adoptPtr(new IconDatabase); }
     static void delayDatabaseCleanup() { }
+    static void allowDatabaseCleanup() { }
+    static void checkIntegrityBeforeOpening() { }
     static String defaultDatabaseFilename() { return "WebpageIcons.db"; }
 };
 #else 
