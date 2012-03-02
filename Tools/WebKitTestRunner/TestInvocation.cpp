@@ -42,10 +42,8 @@
 #include <direct.h> // For _getcwd.
 #define getcwd _getcwd // MSDN says getcwd is deprecated.
 #define PATH_MAX _MAX_PATH
-#endif
-
-#if PLATFORM(MAC)
-#include <unistd.h>
+#else
+#include <unistd.h> // For getcwd.
 #endif
 
 using namespace WebKit;
