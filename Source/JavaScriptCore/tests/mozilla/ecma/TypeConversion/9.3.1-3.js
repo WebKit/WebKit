@@ -82,7 +82,7 @@ testcases[tc++] = new TestCase( SECTION,
 
 testcases[tc++] = new TestCase( SECTION,
     '- "-0x123456789abcde8"',
-    81985529216486880,
+    NaN,
     - "-0x123456789abcde8" );
 
 // Convert some large numbers to string
@@ -474,7 +474,7 @@ testcases[tc++] = new TestCase( SECTION,
 
 testcases[tc++] = new TestCase( SECTION,
                                 "parseInt(\"0022\")",
-                                18,
+                                22,
                                 parseInt("0022") );
 
 testcases[tc++] = new TestCase( SECTION,
@@ -664,7 +664,7 @@ testcases[tc++] = new TestCase( SECTION,
 
 testcases[tc++] = new TestCase( SECTION,
                                 "- \"-0x123456789abcde8\"",
-                                81985529216486880,
+                                NaN,
                                 - "-0x123456789abcde8" );
 
 // the following two tests are not strictly ECMA 1.0
