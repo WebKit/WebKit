@@ -115,17 +115,23 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     //
     // Don't use new lines so that lines in the modified handler
     // have the same numbers as in the original code.
-    // FIXME: What about m_eventParameterName from JSLazyEventListener?
     // FIXME: This approach is a giant hack! What if m_code escapes to run
     //        arbitrary script?
-    String code = "(function (evt) {" \
+    String eventParameterName = m_isSVGEvent ? "evt" : "event";
+    String code = "(function(";
+    code.append(eventParameterName);
+    code.append(") {" \
             "with (this.ownerDocument ? this.ownerDocument : {}) {" \
             "with (this.form ? this.form : {}) {" \
             "with (this) {" \
-            "return (function(evt){";
+            "return (function(");
+    code.append(eventParameterName);
+    code.append("){");
     code.append(m_code);
     // Insert '\n' otherwise //-style comments could break the handler.
-    code.append(  "\n}).call(this, evt);}}}})");
+    code.append("\n}).call(this, ");
+    code.append(eventParameterName);
+    code.append(");}}}})");
     v8::Handle<v8::String> codeExternalString = v8ExternalString(code);
     v8::Handle<v8::Script> script = V8Proxy::compileScript(codeExternalString, m_sourceURL, m_position);
     if (!script.IsEmpty()) {
@@ -156,7 +162,7 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
                 String toStringResult = "function ";
                 toStringResult.append(m_functionName);
                 toStringResult.append("(");
-                toStringResult.append(m_isSVGEvent ? "evt" : "event");
+                toStringResult.append(eventParameterName);
                 toStringResult.append(") {\n  ");
                 toStringResult.append(m_code);
                 toStringResult.append("\n}");
