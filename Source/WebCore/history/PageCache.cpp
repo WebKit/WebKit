@@ -58,27 +58,7 @@ static const double autoreleaseInterval = 3;
 
 #ifndef NDEBUG
 
-static String& pageCacheLogPrefix(int indentLevel)
-{
-    static int previousIndent = -1;
-    DEFINE_STATIC_LOCAL(String, prefix, ());
-    
-    if (indentLevel != previousIndent) {    
-        previousIndent = indentLevel;
-        prefix.truncate(0);
-        for (int i = 0; i < previousIndent; ++i)
-            prefix += "    ";
-    }
-    
-    return prefix;
-}
-
-static void pageCacheLog(const String& prefix, const String& message)
-{
-    LOG(PageCache, "%s%s", prefix.utf8().data(), message.utf8().data());
-}
-    
-#define PCLOG(...) pageCacheLog(pageCacheLogPrefix(indentLevel), makeString(__VA_ARGS__))
+#define PCLOG(...) LOG(PageCache, "%*s%s", indentLevel*4, "", makeString(__VA_ARGS__).utf8().data())
     
 static bool logCanCacheFrameDecision(Frame* frame, int indentLevel)
 {
@@ -98,22 +78,26 @@ static bool logCanCacheFrameDecision(Frame* frame, int indentLevel)
     
     bool cannotCache = false;
     
-    do {
-        if (!frame->loader()->documentLoader()) {
-            PCLOG("   -There is no DocumentLoader object");
-            cannotCache = true;
-            break;
-        }
+    if (!frame->loader()->documentLoader()) {
+        PCLOG("   -There is no DocumentLoader object");
+        cannotCache = true;
+    } else {
         if (!frame->loader()->documentLoader()->mainDocumentError().isNull()) {
             PCLOG("   -Main document has an error");
+            cannotCache = true;
+        }
+        if (frame->loader()->documentLoader()->substituteData().isValid() && frame->loader()->documentLoader()->substituteData().failingURL().isEmpty()) {
+            PCLOG("   -Frame is an error page");
             cannotCache = true;
         }
         if (frame->loader()->subframeLoader()->containsPlugins() && !frame->page()->settings()->pageCacheSupportsPlugins()) {
             PCLOG("   -Frame contains plugins");
             cannotCache = true;
         }
-        if (frame->document()->url().protocolIs("https")) {
-            PCLOG("   -Frame is HTTPS");
+        if (frame->document()->url().protocolIs("https")
+            && (frame->loader()->documentLoader()->response().cacheControlContainsNoCache()
+                || frame->loader()->documentLoader()->response().cacheControlContainsNoStore())) {
+            PCLOG("   -Frame is HTTPS, and cache control prohibits caching or storing");
             cannotCache = true;
         }
         if (frame->domWindow() && frame->domWindow()->hasEventListeners(eventNames().unloadEvent)) {
@@ -164,7 +148,7 @@ static bool logCanCacheFrameDecision(Frame* frame, int indentLevel)
             PCLOG("   -The client says this frame cannot be cached");
             cannotCache = true; 
         }
-    } while (false);
+    }
     
     for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
         if (!logCanCacheFrameDecision(child, indentLevel + 1))
@@ -190,7 +174,6 @@ static void logCanCachePageDecision(Page* page)
     
     bool cannotCache = !logCanCacheFrameDecision(page->mainFrame(), 1);
     
-    FrameLoadType loadType = page->mainFrame()->loader()->loadType();
     if (!page->backForward()->isActive()) {
         PCLOG("   -The back/forward list is disabled or has 0 capacity");
         cannotCache = true;
@@ -209,6 +192,7 @@ static void logCanCachePageDecision(Page* page)
         cannotCache = true;
     }
 #endif
+    FrameLoadType loadType = page->mainFrame()->loader()->loadType();
     if (loadType == FrameLoadTypeReload) {
         PCLOG("   -Load type is: Reload");
         cannotCache = true;
