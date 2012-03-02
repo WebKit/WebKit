@@ -105,6 +105,17 @@ WebInspector.DebuggerPresentationModel.prototype = {
     },
 
     /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {number} lineNumber
+     * @param {number} columnNumber
+     * @return {DebuggerAgent.Location}
+     */
+    uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
+    {
+        return uiSourceCode.rawSourceCode.uiLocationToRawLocation(uiSourceCode, lineNumber, columnNumber);
+    },
+
+    /**
      * @param {WebInspector.Event} event
      */
     _parsedScriptSource: function(event)
@@ -976,35 +987,27 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
      */
     linkifyLocation: function(sourceURL, lineNumber, columnNumber, classes)
     {
-        var rawSourceCode = this._model._rawSourceCodeForScriptWithURL(sourceURL);
-        if (!rawSourceCode)
+        var script = this._model._scriptForURLAndLocation(sourceURL, lineNumber, columnNumber);
+        if (!script)
             return WebInspector.linkifyResourceAsNode(sourceURL, lineNumber, classes);
-
-        return this.linkifyRawSourceCode(rawSourceCode, lineNumber, columnNumber, classes);
+        var rawLocation = new WebInspector.DebuggerModel.Location(lineNumber, columnNumber);
+        rawLocation.scriptId = script.scriptId;
+        return this.linkifyRawLocation(rawLocation, classes);
     },
 
     /**
-     * @param {WebInspector.RawSourceCode} rawSourceCode
-     * @param {number=} lineNumber
-     * @param {number=} columnNumber
+     * @param {WebInspector.DebuggerModel.Location} rawLocation
      * @param {string=} classes
      */
-    linkifyRawSourceCode: function(rawSourceCode, lineNumber, columnNumber, classes)
+    linkifyRawLocation: function(rawLocation, classes)
     {
-        var anchor = WebInspector.linkifyURLAsNode(rawSourceCode.url, "", classes, false);
-        var rawLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
+        var anchor = WebInspector.linkifyURLAsNode("", "", classes, false);
+        var script = WebInspector.debuggerModel.scriptForSourceID(rawLocation.scriptId);
+        var rawSourceCode = this._model._rawSourceCodeForScript(script);
         var liveLocation = rawSourceCode.createLiveLocation(rawLocation, this._updateAnchor.bind(this, anchor));
         liveLocation.init();
         this._liveLocations.push(liveLocation);
         return anchor;
-    },
-
-    linkifyFunctionLocation: function(functionLocation, classes)
-    {
-        var rawSourceCode = this._model._rawSourceCodeForScriptId[functionLocation.scriptId];
-        if (!rawSourceCode)
-            return undefined;
-        return this.linkifyRawSourceCode(rawSourceCode, functionLocation.lineNumber, functionLocation.columnNumber, classes);
     },
 
     reset: function()

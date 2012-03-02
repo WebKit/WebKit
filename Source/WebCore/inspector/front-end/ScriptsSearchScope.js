@@ -144,11 +144,9 @@ WebInspector.ScriptsSearchResultsPane.prototype = {
      */
     createAnchor: function(file, lineNumber, columnNumber)
     {
-        
         var uiSourceCode = file;
-        var rawSourceCode = uiSourceCode.rawSourceCode;
-        var rawLocation = rawSourceCode.uiLocationToRawLocation(uiSourceCode, lineNumber, columnNumber);
-        var anchor = this._linkifier.linkifyRawSourceCode(uiSourceCode.rawSourceCode, rawLocation.lineNumber, rawLocation.columnNumber);
+        var rawLocation = WebInspector.debuggerPresentationModel.uiLocationToRawLocation(uiSourceCode, lineNumber, columnNumber);
+        var anchor = this._linkifier.linkifyRawLocation(rawLocation);
         anchor.removeChildren();
         return anchor;
     },
