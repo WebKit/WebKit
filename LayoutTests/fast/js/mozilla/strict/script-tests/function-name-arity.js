@@ -16,11 +16,13 @@ assertEq(testLenientAndStrict('var f = fn(); delete f.name',
                               returns(false), raisesException(TypeError)),
          true);
 
+// arity is not a spec defined property of Function.
 assertEq(testLenientAndStrict('var f = fn(); f.arity = 4; f.arity',
-                              returns(3), raisesException(TypeError)),
+                              returns(4), returns(4)),
          true);
+// arity is not a spec defined property of Function.
 assertEq(testLenientAndStrict('var f = fn(); delete f.arity',
-                              returns(false), raisesException(TypeError)),
+                              returns(true), returns(true)),
          true);
 
 reportCompare(true, true);
