@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ShadowTree.h"
 
+#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Element.h"
 #include "HTMLContentSelector.h"
@@ -245,12 +246,16 @@ void ShadowTree::recalcShadowTreeStyle(Node::StyleChange change)
     if (needsReattachHostChildrenAndShadow())
         reattachHostChildrenAndShadow();
     else {
+        CSSStyleSelector* styleSelector = youngest->document()->styleSelector();
+
+        styleSelector->pushParentShadowRoot(youngest);
         for (Node* n = youngest->firstChild(); n; n = n->nextSibling()) {
             if (n->isElementNode())
                 static_cast<Element*>(n)->recalcStyle(change);
             else if (n->isTextNode())
                 toText(n)->recalcTextStyle(change);
         }
+        styleSelector->popParentShadowRoot(youngest);
     }
 
     clearNeedsReattachHostChildrenAndShadow();

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ShadowRoot.h"
 
+#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Element.h"
@@ -196,6 +197,14 @@ bool ShadowRoot::applyAuthorSheets() const
 void ShadowRoot::setApplyAuthorSheets(bool value)
 {
     m_applyAuthorSheets = value;
+}
+
+void ShadowRoot::attach()
+{
+    CSSStyleSelector* styleSelector = document()->styleSelector();
+    styleSelector->pushParentShadowRoot(this);
+    DocumentFragment::attach();
+    styleSelector->popParentShadowRoot(this);
 }
 
 }

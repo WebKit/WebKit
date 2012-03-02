@@ -164,7 +164,10 @@ void HTMLStyleElement::insertedIntoDocument()
 void HTMLStyleElement::removedFromDocument()
 {
 #if ENABLE(STYLE_SCOPED)
-    ASSERT(!m_isRegisteredWithScopingNode);
+    // In come cases on teardown willRemove is not called - test here for unregistering again
+    // FIXME: Do we need to bother?
+    if (m_isRegisteredWithScopingNode)
+        unregisterWithScopingNode();
 #endif
     HTMLElement::removedFromDocument();
     StyleElement::removedFromDocument(document(), this);

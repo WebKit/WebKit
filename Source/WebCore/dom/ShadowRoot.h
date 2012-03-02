@@ -81,6 +81,8 @@ public:
 
     bool hasInsertionPoint() const;
 
+    virtual void attach();
+
 private:
     ShadowRoot(Document*);
     virtual ~ShadowRoot();

@@ -92,6 +92,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "ShadowData.h"
+#include "ShadowRoot.h"
 #include "ShadowValue.h"
 #include "SkewTransformOperation.h"
 #include "StyleCachedImage.h"
@@ -227,7 +228,7 @@ public:
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<RuleData> > > AtomRuleMap;
 
-    void addRulesFromSheet(CSSStyleSheet*, const MediaQueryEvaluator&, CSSStyleSelector* = 0, const Element* = 0);
+    void addRulesFromSheet(CSSStyleSheet*, const MediaQueryEvaluator&, CSSStyleSelector* = 0, const ContainerNode* = 0);
 
     void addStyleRule(StyleRule*, bool canUseFastCheckSelector = true, bool isInRegionRule = false);
     void addRule(StyleRule*, CSSSelector*, bool canUseFastCheckSelector = true, bool isInRegionRule = false);
@@ -343,7 +344,7 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
     , m_hasPendingShaders(false)
 #endif
 #if ENABLE(STYLE_SCOPED)
-    , m_scopingElementStackParent(0)
+    , m_scopeStackParent(0)
 #endif
 {
     Element* root = document->documentElement();
@@ -447,7 +448,7 @@ void CSSStyleSelector::collectFeatures()
 }
 
 #if ENABLE(STYLE_SCOPED)
-const Element* CSSStyleSelector::determineScopingElement(const CSSStyleSheet* sheet)
+const ContainerNode* CSSStyleSelector::determineScope(const CSSStyleSheet* sheet)
 {
     ASSERT(sheet);
 
@@ -462,14 +463,18 @@ const Element* CSSStyleSelector::determineScopingElement(const CSSStyleSheet* sh
     if (!styleElement->scoped())
         return 0;
 
-    return styleElement->parentElement();
+    ContainerNode* parent = styleElement->parentNode();
+    if (!parent)
+        return 0;
+
+    return (parent->isElementNode() || parent->isShadowRoot()) ? parent : 0;
 }
 
-inline RuleSet* CSSStyleSelector::scopedRuleSetForElement(const Element* element) const
+inline RuleSet* CSSStyleSelector::ruleSetForScope(const ContainerNode* scope) const
 {
-    if (!element->hasScopedHTMLStyleChild())
+    if (!scope->hasScopedHTMLStyleChild())
         return 0;
-    ScopedRuleSetMap::const_iterator it = m_scopedAuthorStyles.find(element);
+    ScopedRuleSetMap::const_iterator it = m_scopedAuthorStyles.find(scope);
     return it != m_scopedAuthorStyles.end() ? it->second.get() : 0; 
 }
 #endif
@@ -484,7 +489,7 @@ void CSSStyleSelector::appendAuthorStylesheets(unsigned firstNew, const Vector<R
             continue;
         CSSStyleSheet* cssSheet = static_cast<CSSStyleSheet*>(stylesheets[i].get());
 #if ENABLE(STYLE_SCOPED)
-        const Element* scope = determineScopingElement(cssSheet);
+        const ContainerNode* scope = determineScope(cssSheet);
         if (scope) {
             pair<ScopedRuleSetMap::iterator, bool> addResult = m_scopedAuthorStyles.add(scope, nullptr);
             if (addResult.second)
@@ -503,25 +508,55 @@ void CSSStyleSelector::appendAuthorStylesheets(unsigned firstNew, const Vector<R
 }
 
 #if ENABLE(STYLE_SCOPED)
-void CSSStyleSelector::setupScopingElementStack(const Element* parent)
+void CSSStyleSelector::setupScopeStack(const ContainerNode* parent)
 {
     // The scoping element stack shouldn't be used if <style scoped> isn't used anywhere.
     ASSERT(!m_scopedAuthorStyles.isEmpty());
 
-    m_scopingElementStack.shrink(0);
-    for (; parent; parent = parent->parentOrHostElement()) {
-        RuleSet* ruleSet = scopedRuleSetForElement(parent);
+    m_scopeStack.shrink(0);
+    for (; parent; parent = parent->parentOrHostNode()) {
+        RuleSet* ruleSet = ruleSetForScope(parent);
         if (ruleSet)
-            m_scopingElementStack.append(ScopeStackFrame(parent, ruleSet));
+            m_scopeStack.append(ScopeStackFrame(parent, ruleSet));
     }
-    m_scopingElementStack.reverse();
-    m_scopingElementStackParent = parent;
+    m_scopeStack.reverse();
+    m_scopeStackParent = parent;
+}
+
+void CSSStyleSelector::pushScope(const ContainerNode* scope, const ContainerNode* scopeParent)
+{
+    // Shortcut: Don't bother with the scoping element stack if <style scoped> isn't used anywhere.
+    if (m_scopedAuthorStyles.isEmpty()) {
+        ASSERT(!m_scopeStackParent);
+        ASSERT(m_scopeStack.isEmpty());
+        return;
+    }
+    // In some wacky cases during style resolve we may get invoked for random elements.
+    // Recreate the whole scoping element stack in such cases.
+    if (!scopeStackIsConsistent(scopeParent)) {
+        setupScopeStack(scope);
+        return;
+    }
+    // Otherwise just push the parent onto the stack.
+    RuleSet* ruleSet = ruleSetForScope(scope);
+    if (ruleSet)
+        m_scopeStack.append(ScopeStackFrame(scope, ruleSet));
+    m_scopeStackParent = scope;
+}
+
+void CSSStyleSelector::popScope(const ContainerNode* scope)
+{
+    // Only bother to update the scoping element stack if it is consistent.
+    if (scopeStackIsConsistent(scope)) {
+        m_scopeStack.removeLast();
+        m_scopeStackParent = scope->parentOrHostNode();
+    }
 }
 #endif
 
-void CSSStyleSelector::pushParent(Element* parent)
+void CSSStyleSelector::pushParentElement(Element* parent)
 {
-    const Element* parentsParent = parent->parentOrHostElement();
+    const ContainerNode* parentsParent = parent->parentOrHostNode();
     // We are not always invoked consistently. For example, script execution can cause us to enter
     // style recalc in the middle of tree building. We may also be invoked from somewhere within the tree.
     // Reset the stack in this case, or if we see a new root element.
@@ -530,41 +565,28 @@ void CSSStyleSelector::pushParent(Element* parent)
         m_checker.setupParentStack(parent);
     else
         m_checker.pushParent(parent);
-
-#if ENABLE(STYLE_SCOPED)
-    // Shortcut: Don't bother with the scoping element stack if <style scoped> isn't used anywhere.
-    if (m_scopedAuthorStyles.isEmpty()) {
-        ASSERT(!m_scopingElementStackParent);
-        ASSERT(m_scopingElementStack.isEmpty());
-        return;
-    }
-    // In some wacky cases during style resolve we may get invoked for random elements.
-    // Recreate the whole scoping element stack in such cases.
-    if (!scopingElementStackIsConsistent(parentsParent)) {
-        setupScopingElementStack(parent);
-        return;
-    }
-    // Otherwise just push the parent onto the stack.
-    RuleSet* ruleSet = scopedRuleSetForElement(parent);
-    if (ruleSet)
-        m_scopingElementStack.append(ScopeStackFrame(parent, ruleSet));
-    m_scopingElementStackParent = parent;
-#endif
+    pushScope(parent, parentsParent);
 }
 
-void CSSStyleSelector::popParent(Element* parent)
+void CSSStyleSelector::popParentElement(Element* parent)
 {
     // Note that we may get invoked for some random elements in some wacky cases during style resolve.
     // Pause maintaining the stack in this case.
     if (m_checker.parentStackIsConsistent(parent))
         m_checker.popParent();
-#if ENABLE(STYLE_SCOPED)
-    // Only bother to update the scoping element stack if it is consistent.
-    if (scopingElementStackIsConsistent(parent)) {
-        m_scopingElementStack.removeLast();
-        m_scopingElementStackParent = parent->parentOrHostElement();
-    }
-#endif
+    popScope(parent);
+}
+
+void CSSStyleSelector::pushParentShadowRoot(const ShadowRoot* shadowRoot)
+{
+    ASSERT(shadowRoot->host());
+    pushScope(shadowRoot, shadowRoot->host());
+}
+
+void CSSStyleSelector::popParentShadowRoot(const ShadowRoot* shadowRoot)
+{
+    ASSERT(shadowRoot->host());
+    popScope(shadowRoot);
 }
 
 // This is a simplified style setting function for keyframe styles
@@ -858,17 +880,17 @@ void CSSStyleSelector::matchScopedAuthorRules(MatchResult& result, bool includeE
     MatchOptions options(includeEmptyRules);
 
     // Match scoped author rules by traversing the scoped element stack (rebuild it if it got inconsistent).
-    const Element* parent = m_element->parentOrHostElement();
-    if (!scopingElementStackIsConsistent(parent))
-        setupScopingElementStack(parent);
-    for (size_t i = m_scopingElementStack.size(); i; --i) {
-        const ScopeStackFrame& frame = m_scopingElementStack[i - 1];
-        options.scope = frame.m_element;
+    const ContainerNode* parent = m_element->parentOrHostNode();
+    if (!scopeStackIsConsistent(parent))
+        setupScopeStack(parent);
+    for (size_t i = m_scopeStack.size(); i; --i) {
+        const ScopeStackFrame& frame = m_scopeStack[i - 1];
+        options.scope = frame.m_scope;
         collectMatchingRules(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
         collectMatchingRulesForRegion(frame.m_ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
     }
     // Also include the current element.
-    RuleSet* ruleSet = scopedRuleSetForElement(m_element);
+    RuleSet* ruleSet = ruleSetForScope(m_element);
     if (ruleSet) {
         options.scope = m_element;
         collectMatchingRules(ruleSet, result.ranges.firstAuthorRule, result.ranges.lastAuthorRule, options);
@@ -2120,7 +2142,7 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
     return m_ruleList.release();
 }
 
-inline bool CSSStyleSelector::checkSelector(const RuleData& ruleData, const Element* scope)
+inline bool CSSStyleSelector::checkSelector(const RuleData& ruleData, const ContainerNode* scope)
 {
     m_dynamicPseudo = NOPSEUDO;
     m_checker.clearHasUnknownPseudoElements();
@@ -2392,7 +2414,7 @@ void RuleSet::addRegionRule(WebKitCSSRegionRule* rule)
     m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(rule->selectorList().first(), regionRuleSet));
 }
 
-void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector, const Element* scope)
+void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector, const ContainerNode* scope)
 {
     ASSERT(sheet);
 

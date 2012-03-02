@@ -94,7 +94,7 @@ public:
         if (m_pushedStyleSelector)
             return;
         m_pushedStyleSelector = m_parent->document()->styleSelector();
-        m_pushedStyleSelector->pushParent(m_parent);
+        m_pushedStyleSelector->pushParentElement(m_parent);
     }
     ~StyleSelectorParentPusher() 
     {
@@ -108,7 +108,7 @@ public:
         if (m_pushedStyleSelector != m_parent->document()->styleSelector())
             return;
 
-        m_pushedStyleSelector->popParent(m_parent); 
+        m_pushedStyleSelector->popParentElement(m_parent); 
     }
 
 private:
@@ -1310,7 +1310,7 @@ void Element::beginParsingChildren()
     clearIsParsingChildrenFinished();
     CSSStyleSelector* styleSelector = document()->styleSelectorIfExists();
     if (styleSelector && attached())
-        styleSelector->pushParent(this);
+        styleSelector->pushParentElement(this);
 }
 
 void Element::finishParsingChildren()
@@ -1319,7 +1319,7 @@ void Element::finishParsingChildren()
     setIsParsingChildrenFinished();
     checkForSiblingStyleChanges(this, renderStyle(), true, lastChild(), 0, 0);
     if (CSSStyleSelector* styleSelector = document()->styleSelectorIfExists())
-        styleSelector->popParent(this);
+        styleSelector->popParentElement(this);
 }
 
 #ifndef NDEBUG

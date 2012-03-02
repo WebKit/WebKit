@@ -66,7 +66,7 @@ public:
 
         CSSSelector* selector;
         Element* element;
-        const Element* scope;
+        const ContainerNode* scope;
         VisitedMatchType visitedMatchType;
         RenderStyle* elementStyle;
         RenderStyle* elementParentStyle;
