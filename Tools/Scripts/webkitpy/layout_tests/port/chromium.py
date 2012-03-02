@@ -519,7 +519,7 @@ class ChromiumDriver(Driver):
 
     def run_test(self, driver_input):
         if not self._proc:
-            self._start(driver_input.is_reftest or self._pixel_tests, [])
+            self._start(driver_input.is_reftest or self._pixel_tests, driver_input.args)
 
         output = []
         error = []
