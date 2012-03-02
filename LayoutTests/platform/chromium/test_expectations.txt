@@ -4260,6 +4260,8 @@ BUGWK78902 : svg/text/text-text-06-t.svg = TEXT IMAGE IMAGE+TEXT PASS
 BUGWK78902 : svg/transforms/svg-css-transforms-clip-path.xhtml = TEXT IMAGE IMAGE+TEXT PASS
 BUGWK78902 : svg/zoom/page/zoom-mask-with-percentages.svg = TEXT IMAGE IMAGE+TEXT PASS
 
+BUGWK79445 LINUX WIN : fast/repaint/search-field-cancel.html = FAIL
+
 // Need rebaselining.
 BUGWK69210 MAC : fast/encoding/utf-16-big-endian.html = IMAGE+TEXT
 BUGWK69210 MAC : fast/encoding/utf-16-little-endian.html = IMAGE+TEXT
