@@ -1,3 +1,16 @@
+2012-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DOM tests take too long to run
+        https://bugs.webkit.org/show_bug.cgi?id=80082
+
+        Reviewed by Eric Seidel.
+
+        Reduce benchmark.timeToRun from 500ms to 100ms. Doesn't seem to affect test results much
+        (except DOM/DOMTable.html) but significantly reduces the runtime of tests.
+
+        * DOM/resources/dom-perf.js:
+        (BenchmarkSuite.prototype.RunSingle):
+
 2012-02-26  Kentaro Hara  <haraken@chromium.org>
 
         [Performance Tests] [Chromium] Bindings/dom-attributes.html is timing out
