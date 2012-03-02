@@ -1,5 +1,14 @@
 2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Build system cleanup
+
+        Rubber-stamped by Antti Koivisto.
+
+        * tests/MIMESniffing/MIMESniffing.pro: Don't link in WTFAssertions.cpp for ASSERT, now
+        that the symbols are properly exported with export macros from the DLL.
+
+2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Move QStyle theming code out of WebCore into WebKit1
         https://bugs.webkit.org/show_bug.cgi?id=80128
 

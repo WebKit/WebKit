@@ -12,8 +12,4 @@ INCLUDEPATH += \
     ../../../../JavaScriptCore \
     ../../../../JavaScriptCore/runtime
 
-debug {
-    SOURCES += ../../../../JavaScriptCore/wtf/Assertions.cpp
-}
-
 RESOURCES += resources.qrc
