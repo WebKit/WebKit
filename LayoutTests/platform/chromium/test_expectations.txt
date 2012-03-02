@@ -3973,7 +3973,7 @@ BUGWK41386 WIN LINUX : svg/foreignObject/fO-parent-display-none-with-relative-po
 BUGWK41386 WIN LINUX : svg/foreignObject/fO-parent-display-none.svg = TEXT
 BUGWK41386 WIN LINUX : svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content.svg = TEXT
 BUGWK41386 WIN LINUX : svg/foreignObject/fO-parent-of-parent-display-none.svg = TEXT
-BUGWK41386 WIN LINUX : svg/foreignObject/fO-parent-display-changes.svg = IMAGE TEXT
+BUGWK41386 WIN LINUX : svg/foreignObject/fO-parent-display-changes.svg = IMAGE+TEXT
 BUGWK41386 MAC : svg/foreignObject/fO-parent-display-changes.svg = IMAGE
 
 // Needs new baselines, most text only, after the SVG <use> rewrite.
