@@ -301,7 +301,7 @@ void XMLTreeBuilder::processNamespaces(const AtomicXMLToken& token, NodeStackIte
     if (!token.attributes())
         return;
 
-    for (size_t i = 0; i < token.attributes()->length(); ++i) {
+    for (size_t i = 0; i < token.attributes()->size(); ++i) {
         Attribute* attribute = token.attributes()->attributeItem(i);
         if (attribute->name().prefix() == xmlnsAtom)
             stackItem.setNamespaceURI(attribute->name().localName(), attribute->value());
@@ -315,7 +315,7 @@ void XMLTreeBuilder::processAttributes(const AtomicXMLToken& token, NodeStackIte
     if (!token.attributes())
         return;
 
-    for (size_t i = 0; i < token.attributes()->length(); ++i) {
+    for (size_t i = 0; i < token.attributes()->size(); ++i) {
         Attribute* attribute = token.attributes()->attributeItem(i);
         ExceptionCode ec = 0;
         if (attribute->name().prefix() == xmlnsAtom)

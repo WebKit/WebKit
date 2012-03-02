@@ -60,24 +60,6 @@ public:
 
     PassRefPtr<Node> item(unsigned index) const;
     size_t length() const { return m_attributeData.length(); }
-    bool isEmpty() const { return m_attributeData.isEmpty(); }
-
-    // Internal interface.
-
-    Attribute* attributeItem(unsigned index) const { return m_attributeData.attributeItem(index); }
-    Attribute* getAttributeItem(const QualifiedName& name) const { return m_attributeData.getAttributeItem(name); }
-    size_t getAttributeItemIndex(const QualifiedName& name) const { return m_attributeData.getAttributeItemIndex(name); }
-
-    void shrinkToLength() { m_attributeData.m_attributes.shrinkCapacity(length()); }
-    void reserveInitialCapacity(unsigned capacity) { m_attributeData.m_attributes.reserveInitialCapacity(capacity); }
-
-    // Used during parsing: only inserts if not already there. No error checking!
-    void insertAttribute(PassRefPtr<Attribute> newAttribute, bool allowDuplicates)
-    {
-        ASSERT(!m_element);
-        if (allowDuplicates || !getAttributeItem(newAttribute->name()))
-            addAttribute(newAttribute);
-    }
 
     bool mapsEquivalent(const NamedNodeMap* otherMap) const;
 

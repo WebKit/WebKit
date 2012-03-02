@@ -531,7 +531,7 @@ void HTMLTreeBuilder::processDoctypeToken(AtomicHTMLToken& token)
     parseError(token);
 }
 
-void HTMLTreeBuilder::processFakeStartTag(const QualifiedName& tagName, PassOwnPtr<NamedNodeMap> attributes)
+void HTMLTreeBuilder::processFakeStartTag(const QualifiedName& tagName, PassOwnPtr<AttributeVector> attributes)
 {
     // FIXME: We'll need a fancier conversion than just "localName" for SVG/MathML tags.
     AtomicHTMLToken fakeToken(HTMLTokenTypes::StartTag, tagName.localName(), attributes);
@@ -560,11 +560,11 @@ void HTMLTreeBuilder::processFakePEndTagIfPInButtonScope()
     processEndTag(endP);
 }
 
-PassOwnPtr<NamedNodeMap> HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLToken& token)
+PassOwnPtr<AttributeVector> HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLToken& token)
 {
-    OwnPtr<NamedNodeMap> attributes = token.takeAttributes();
+    OwnPtr<AttributeVector> attributes = token.takeAttributes();
     if (!attributes)
-        attributes = NamedNodeMap::create();
+        attributes = AttributeVector::create();
     else {
         attributes->removeAttribute(nameAttr);
         attributes->removeAttribute(actionAttr);
@@ -572,7 +572,7 @@ PassOwnPtr<NamedNodeMap> HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLTo
     }
 
     RefPtr<Attribute> mappedAttribute = Attribute::create(nameAttr, isindexTag.localName());
-    attributes->insertAttribute(mappedAttribute.release(), false);
+    attributes->insertAttribute(mappedAttribute.release());
     return attributes.release();
 }
 
@@ -679,11 +679,11 @@ void adjustAttributes(AtomicHTMLToken& token)
         mapLoweredLocalNameToName(caseMap, attrs, length);
     }
 
-    NamedNodeMap* attributes = token.attributes();
+    AttributeVector* attributes = token.attributes();
     if (!attributes)
         return;
 
-    for (unsigned x = 0; x < attributes->length(); ++x) {
+    for (unsigned x = 0; x < attributes->size(); ++x) {
         Attribute* attribute = attributes->attributeItem(x);
         const QualifiedName& casedName = caseMap->get(attribute->localName());
         if (!casedName.localName().isNull())
@@ -728,11 +728,11 @@ void adjustForeignAttributes(AtomicHTMLToken& token)
         map->add("xmlns:xlink", QualifiedName("xmlns", "xlink", XMLNSNames::xmlnsNamespaceURI));
     }
 
-    NamedNodeMap* attributes = token.attributes();
+    AttributeVector* attributes = token.attributes();
     if (!attributes)
         return;
 
-    for (unsigned x = 0; x < attributes->length(); ++x) {
+    for (unsigned x = 0; x < attributes->size(); ++x) {
         Attribute* attribute = attributes->attributeItem(x);
         const QualifiedName& name = map->get(attribute->localName());
         if (!name.localName().isNull())

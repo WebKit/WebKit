@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebNamedNodeMap.h"
 
+#include "Element.h"
 #include "NamedNodeMap.h"
 #include "Node.h"
 #include "WebAttribute.h"
@@ -63,7 +64,7 @@ unsigned WebNamedNodeMap::length() const
 
 WebAttribute WebNamedNodeMap::attributeItem(unsigned index) const
 {
-    return WebAttribute(m_private->attributeItem(index));
+    return WebAttribute(m_private->element()->attributeItem(index));
 }
 
 } // namespace WebKit

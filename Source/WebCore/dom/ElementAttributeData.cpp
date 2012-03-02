@@ -31,6 +31,18 @@
 
 namespace WebCore {
 
+void AttributeVector::removeAttribute(const QualifiedName& name)
+{
+    size_t index = getAttributeItemIndex(name);
+    if (index == notFound)
+        return;
+
+    RefPtr<Attribute> attribute = at(index);
+    if (Attr* attr = attribute->attr())
+        attr->m_element = 0;
+    remove(index);
+}
+
 ElementAttributeData::~ElementAttributeData()
 {
     detachAttributesFromElement();

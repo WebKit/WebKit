@@ -35,6 +35,50 @@ namespace WebCore {
 
 class Element;
 
+class AttributeVector : public Vector<RefPtr<Attribute>, 4> {
+    friend class ElementAttributeData;
+
+public:
+    static PassOwnPtr<AttributeVector> create()
+    {
+        return adoptPtr(new AttributeVector());
+    }
+
+    Attribute* attributeItem(unsigned index) const { return at(index).get(); }
+    Attribute* getAttributeItem(const QualifiedName&) const;
+    size_t getAttributeItemIndex(const QualifiedName&) const;
+
+    // Used during parsing: only inserts if not already there.
+    void insertAttribute(PassRefPtr<Attribute> newAttribute);
+    void removeAttribute(const QualifiedName&);
+
+private:
+    AttributeVector() { }
+};
+
+inline Attribute* AttributeVector::getAttributeItem(const QualifiedName& name) const
+{
+    size_t index = getAttributeItemIndex(name);
+    if (index != notFound)
+        return at(index).get();
+    return 0;
+}
+
+inline size_t AttributeVector::getAttributeItemIndex(const QualifiedName& name) const
+{
+    for (unsigned i = 0; i < size(); ++i) {
+        if (at(i)->name().matches(name))
+            return i;
+    }
+    return notFound;
+}
+
+inline void AttributeVector::insertAttribute(PassRefPtr<Attribute> newAttribute)
+{
+    if (!getAttributeItem(newAttribute->name()))
+        append(newAttribute);
+}
+
 class ElementAttributeData {
 public:
     ~ElementAttributeData();
@@ -57,9 +101,9 @@ public:
     bool isEmpty() const { return m_attributes.isEmpty(); }
 
     // Internal interface.
-    Attribute* attributeItem(unsigned index) const { return m_attributes[index].get(); }
-    Attribute* getAttributeItem(const QualifiedName&) const;
-    size_t getAttributeItemIndex(const QualifiedName&) const;
+    Attribute* attributeItem(unsigned index) const { return m_attributes.attributeItem(index); }
+    Attribute* getAttributeItem(const QualifiedName& name) const { return m_attributes.getAttributeItem(name); }
+    size_t getAttributeItemIndex(const QualifiedName& name) const { return m_attributes.getAttributeItemIndex(name); }
 
     // These functions do no error checking.
     void addAttribute(PassRefPtr<Attribute>, Element*);
@@ -90,7 +134,7 @@ private:
     RefPtr<StylePropertySet> m_attributeStyle;
     SpaceSplitString m_classNames;
     AtomicString m_idForStyleResolution;
-    Vector<RefPtr<Attribute>, 4> m_attributes;
+    AttributeVector m_attributes;
 };
 
 inline void ElementAttributeData::removeAttribute(const QualifiedName& name, Element* element)
@@ -110,26 +154,8 @@ inline Attribute* ElementAttributeData::getAttributeItem(const String& name, boo
     return 0;
 }
 
-inline Attribute* ElementAttributeData::getAttributeItem(const QualifiedName& name) const
-{
-    size_t index = getAttributeItemIndex(name);
-    if (index != notFound)
-        return m_attributes[index].get();
-    return 0;
-}
-
 // We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
-inline size_t ElementAttributeData::getAttributeItemIndex(const QualifiedName& name) const
-{
-    size_t len = length();
-    for (unsigned i = 0; i < len; ++i) {
-        if (m_attributes[i]->name().matches(name))
-            return i;
-    }
-    return notFound;
-}
-
 inline size_t ElementAttributeData::getAttributeItemIndex(const String& name, bool shouldIgnoreAttributeCase) const
 {
     unsigned len = length();

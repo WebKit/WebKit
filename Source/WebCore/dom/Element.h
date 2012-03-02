@@ -237,7 +237,7 @@ public:
     virtual void attributeChanged(Attribute*);
 
     // Only called by the parser immediately after element construction.
-    void parserSetAttributeMap(PassOwnPtr<NamedNodeMap>, FragmentScriptingPermission);
+    void parserSetAttributes(PassOwnPtr<AttributeVector>, FragmentScriptingPermission);
 
     ElementAttributeData* attributeData() const { return m_attributeMap ? m_attributeMap->attributeData() : 0; }
     ElementAttributeData* ensureAttributeData() const;
@@ -607,14 +607,14 @@ inline void Element::willRemoveAttribute(const QualifiedName& name, const Atomic
 inline bool Element::fastHasAttribute(const QualifiedName& name) const
 {
     ASSERT(fastAttributeLookupAllowed(name));
-    return m_attributeMap && m_attributeMap->getAttributeItem(name);
+    return m_attributeMap && getAttributeItem(name);
 }
 
 inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) const
 {
     ASSERT(fastAttributeLookupAllowed(name));
     if (m_attributeMap) {
-        if (Attribute* attribute = m_attributeMap->getAttributeItem(name))
+        if (Attribute* attribute = getAttributeItem(name))
             return attribute->value();
     }
     return nullAtom;
@@ -622,7 +622,7 @@ inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) 
 
 inline bool Element::hasAttributesWithoutUpdate() const
 {
-    return m_attributeMap && !m_attributeMap->isEmpty();
+    return m_attributeMap && !m_attributeMap->attributeData()->isEmpty();
 }
 
 inline const AtomicString& Element::idForStyleResolution() const
@@ -664,13 +664,13 @@ inline size_t Element::attributeCount() const
 inline Attribute* Element::attributeItem(unsigned index) const
 {
     ASSERT(m_attributeMap);
-    return m_attributeMap->attributeItem(index);
+    return m_attributeMap->attributeData()->attributeItem(index);
 }
 
 inline Attribute* Element::getAttributeItem(const QualifiedName& name) const
 {
     ASSERT(m_attributeMap);
-    return m_attributeMap->getAttributeItem(name);
+    return m_attributeMap->attributeData()->getAttributeItem(name);
 }
 
 inline void Element::removeAttribute(unsigned index)

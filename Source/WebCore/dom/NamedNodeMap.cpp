@@ -84,7 +84,7 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItemNS(const String& namespaceURI, con
 
 PassRefPtr<Node> NamedNodeMap::getNamedItem(const QualifiedName& name) const
 {
-    Attribute* a = getAttributeItem(name);
+    Attribute* a = m_attributeData.getAttributeItem(name);
     if (!a)
         return 0;
 
@@ -106,8 +106,8 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
     Attr* attr = static_cast<Attr*>(node);
 
     Attribute* attribute = attr->attr();
-    size_t index = getAttributeItemIndex(attribute->name());
-    Attribute* oldAttribute = index != notFound ? attributeItem(index) : 0;
+    size_t index = m_attributeData.getAttributeItemIndex(attribute->name());
+    Attribute* oldAttribute = index != notFound ? m_attributeData.attributeItem(index) : 0;
     if (oldAttribute == attribute)
         return node; // we know about it already
 
@@ -137,7 +137,7 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItem(const QualifiedName& name, Except
 {
     ASSERT(m_element);
 
-    size_t index = getAttributeItemIndex(name);
+    size_t index = m_attributeData.getAttributeItemIndex(name);
     if (index == notFound) {
         ec = NOT_FOUND_ERR;
         return 0;
@@ -171,15 +171,16 @@ void NamedNodeMap::detachFromElement()
 bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const
 {
     if (!otherMap)
-        return isEmpty();
+        return m_attributeData.isEmpty();
     
     unsigned len = length();
     if (len != otherMap->length())
         return false;
     
+    const ElementAttributeData& otherAttributeData = otherMap->m_attributeData;
     for (unsigned i = 0; i < len; i++) {
-        Attribute* attr = attributeItem(i);
-        Attribute* otherAttr = otherMap->getAttributeItem(attr->name());
+        Attribute* attr = m_attributeData.attributeItem(i);
+        Attribute* otherAttr = otherAttributeData.getAttributeItem(attr->name());
         if (!otherAttr || attr->value() != otherAttr->value())
             return false;
     }

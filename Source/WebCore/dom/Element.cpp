@@ -221,7 +221,7 @@ const AtomicString& Element::getAttribute(const QualifiedName& name) const
 #endif
 
     if (m_attributeMap) {
-        if (Attribute* attribute = m_attributeMap->getAttributeItem(name))
+        if (Attribute* attribute = getAttributeItem(name))
             return attribute->value();
     }
     return nullAtom;
@@ -598,7 +598,7 @@ const AtomicString& Element::getAttribute(const String& name) const
 #endif
 
     if (m_attributeMap) {
-        if (Attribute* attribute = m_attributeMap->getAttributeItem(name, ignoreCase))
+        if (Attribute* attribute = m_attributeMap->attributeData()->getAttributeItem(name, ignoreCase))
             return attribute->value();
     }
 
@@ -727,7 +727,7 @@ static bool isAttributeToRemove(const QualifiedName& name, const AtomicString& v
     return (name.localName().endsWith(hrefAttr.localName()) || name == srcAttr || name == actionAttr) && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value));       
 }
 
-void Element::parserSetAttributeMap(PassOwnPtr<NamedNodeMap> list, FragmentScriptingPermission scriptingPermission)
+void Element::parserSetAttributes(PassOwnPtr<AttributeVector> attributeVector, FragmentScriptingPermission scriptingPermission)
 {
     ASSERT(!inDocument());
     ASSERT(!parentNode());
@@ -735,34 +735,38 @@ void Element::parserSetAttributeMap(PassOwnPtr<NamedNodeMap> list, FragmentScrip
     document()->incDOMTreeVersion();
 
     ASSERT(!m_attributeMap);
-    m_attributeMap = list;
 
-    if (m_attributeMap) {
-        ElementAttributeData* attributeData = &m_attributeMap->m_attributeData;
-        m_attributeMap->m_element = this;
-        // If the element is created as result of a paste or drag-n-drop operation
-        // we want to remove all the script and event handlers.
-        if (scriptingPermission == FragmentScriptingNotAllowed) {
-            unsigned i = 0;
-            while (i < m_attributeMap->length()) {
-                const QualifiedName& attributeName = attributeData->m_attributes[i]->name();
-                if (isEventHandlerAttribute(attributeName)) {
-                    attributeData->m_attributes.remove(i);
-                    continue;
-                }
+    if (!attributeVector)
+        return;
 
-                if (isAttributeToRemove(attributeName, attributeData->m_attributes[i]->value()))
-                    attributeData->m_attributes[i]->setValue(nullAtom);
-                i++;
+    m_attributeMap = NamedNodeMap::create(this);
+    ElementAttributeData* attributeData = m_attributeMap->attributeData();
+    attributeData->m_attributes.swap(*attributeVector);
+
+    m_attributeMap->m_element = this;
+    // If the element is created as result of a paste or drag-n-drop operation
+    // we want to remove all the script and event handlers.
+    if (scriptingPermission == FragmentScriptingNotAllowed) {
+        unsigned i = 0;
+        while (i < m_attributeMap->length()) {
+            const QualifiedName& attributeName = attributeData->m_attributes[i]->name();
+            if (isEventHandlerAttribute(attributeName)) {
+                attributeData->m_attributes.remove(i);
+                continue;
             }
+
+            if (isAttributeToRemove(attributeName, attributeData->m_attributes[i]->value()))
+                attributeData->m_attributes[i]->setValue(nullAtom);
+            i++;
         }
-        // Store the set of attributes that changed on the stack in case
-        // attributeChanged mutates m_attributeMap.
-        Vector<RefPtr<Attribute> > attributes;
-        attributeData->copyAttributesToVector(attributes);
-        for (Vector<RefPtr<Attribute> >::iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
-            attributeChanged(iter->get());
     }
+
+    // Store the set of attributes that changed on the stack in case
+    // attributeChanged mutates m_attributeMap.
+    Vector<RefPtr<Attribute> > attributes;
+    attributeData->copyAttributesToVector(attributes);
+    for (Vector<RefPtr<Attribute> >::iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
+        attributeChanged(iter->get());
 }
 
 bool Element::hasAttributes() const
@@ -866,12 +870,12 @@ void Element::insertedIntoDocument()
 
     if (m_attributeMap) {
         if (hasID()) {
-            Attribute* idItem = m_attributeMap->getAttributeItem(document()->idAttributeName());
+            Attribute* idItem = getAttributeItem(document()->idAttributeName());
             if (idItem && !idItem->isNull())
                 updateId(nullAtom, idItem->value());
         }
         if (hasName()) {
-            Attribute* nameItem = m_attributeMap->getAttributeItem(HTMLNames::nameAttr);
+            Attribute* nameItem = getAttributeItem(HTMLNames::nameAttr);
             if (nameItem && !nameItem->isNull())
                 updateName(nullAtom, nameItem->value());
         }
@@ -882,12 +886,12 @@ void Element::removedFromDocument()
 {
     if (m_attributeMap) {
         if (hasID()) {
-            Attribute* idItem = m_attributeMap->getAttributeItem(document()->idAttributeName());
+            Attribute* idItem = getAttributeItem(document()->idAttributeName());
             if (idItem && !idItem->isNull())
                 updateId(idItem->value(), nullAtom);
         }
         if (hasName()) {
-            Attribute* nameItem = m_attributeMap->getAttributeItem(HTMLNames::nameAttr);
+            Attribute* nameItem = getAttributeItem(HTMLNames::nameAttr);
             if (nameItem && !nameItem->isNull())
                 updateName(nameItem->value(), nullAtom);
         }
@@ -1753,7 +1757,7 @@ KURL Element::getURLAttribute(const QualifiedName& name) const
 {
 #if !ASSERT_DISABLED
     if (m_attributeMap) {
-        if (Attribute* attribute = m_attributeMap->getAttributeItem(name))
+        if (Attribute* attribute = getAttributeItem(name))
             ASSERT(isURLAttribute(attribute));
     }
 #endif
@@ -1764,7 +1768,7 @@ KURL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
 {
 #if !ASSERT_DISABLED
     if (m_attributeMap) {
-        if (Attribute* attribute = m_attributeMap->getAttributeItem(name))
+        if (Attribute* attribute = getAttributeItem(name))
             ASSERT(isURLAttribute(attribute));
     }
 #endif
