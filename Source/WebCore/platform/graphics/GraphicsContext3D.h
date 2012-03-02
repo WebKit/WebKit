@@ -26,10 +26,10 @@
 #ifndef GraphicsContext3D_h
 #define GraphicsContext3D_h
 
+#include "IntRect.h"
 #include "GraphicsLayer.h"
 #include "GraphicsTypes3D.h"
 #include "PlatformString.h"
-
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
@@ -913,7 +913,7 @@ public:
 #endif
 
     bool reshapeFBOs(const IntSize&);
-    void resolveMultisamplingIfNecessary(const IntRect&);
+    void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
 
     int m_currentWidth, m_currentHeight;
     bool isResourceSafe();

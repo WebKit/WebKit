@@ -27,7 +27,6 @@
 
 #include "config.h"
 #include "GraphicsContext3D.h"
-#include "PlatformContextCairo.h"
 
 #if ENABLE(WEBGL)
 
@@ -35,9 +34,12 @@
 #include "GraphicsContext3DPrivate.h"
 #include "Image.h"
 #include "OpenGLShims.h"
+#include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include "ShaderLang.h"
 #include <cairo.h>
+#include <wtf/NotFound.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -48,16 +50,20 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     if (renderStyle == RenderDirectlyToHostWindow)
         return 0;
 
-    OwnPtr<GraphicsContext3DPrivate> priv = GraphicsContext3DPrivate::create();
-    if (!priv)
+    static bool initialized = false;
+    static bool success = true;
+    if (!initialized) {
+        success = initializeOpenGLShims();
+        initialized = true;
+    }
+    if (!success)
         return 0;
 
     RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(attributes, hostWindow, false));
-    context->m_private = priv.release();
     return context.release();
 }
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, HostWindow*, bool)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, HostWindow* hostWindow, bool)
     : m_currentWidth(0)
     , m_currentHeight(0)
     , m_attrs(attributes)
@@ -68,8 +74,9 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
     , m_multisampleFBO(0)
     , m_multisampleDepthStencilBuffer(0)
     , m_multisampleColorBuffer(0)
+    , m_private(GraphicsContext3DPrivate::create(this, hostWindow))
 {
-    GraphicsContext3DPrivate::addActiveGraphicsContext(this);
+    makeContextCurrent();
 
     validateAttributes();
 
@@ -123,10 +130,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
 
 GraphicsContext3D::~GraphicsContext3D()
 {
-    GraphicsContext3DPrivate::removeActiveGraphicsContext(this);
-    if (!m_private->m_context)
-        return;
-
     makeContextCurrent();
     ::glDeleteTextures(1, &m_texture);
     if (m_attrs.antialias) {
@@ -228,10 +231,9 @@ bool GraphicsContext3D::makeContextCurrent()
         return false;
     return m_private->makeContextCurrent();
 }
-
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
 {
-    return m_private->m_context;
+    return m_private->platformContext();
 }
 
 bool GraphicsContext3D::isGLES2Compliant() const
@@ -242,7 +244,7 @@ bool GraphicsContext3D::isGLES2Compliant() const
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* GraphicsContext3D::platformLayer() const
 {
-    return 0;
+    return m_private.get();
 }
 #endif
 

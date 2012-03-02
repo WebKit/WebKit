@@ -168,7 +168,7 @@ void GraphicsContext3D::prepareTexture()
 
     makeContextCurrent();
     if (m_attrs.antialias)
-        resolveMultisamplingIfNecessary(IntRect(0, 0, m_currentWidth, m_currentHeight));
+        resolveMultisamplingIfNecessary();
 
     ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
     ::glActiveTexture(GL_TEXTURE0);
@@ -191,7 +191,7 @@ void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSi
 
     bool mustRestoreFBO = false;
     if (m_attrs.antialias) {
-        resolveMultisamplingIfNecessary(IntRect(0, 0, m_currentWidth, m_currentHeight));
+        resolveMultisamplingIfNecessary();
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
         mustRestoreFBO = true;
     } else {
