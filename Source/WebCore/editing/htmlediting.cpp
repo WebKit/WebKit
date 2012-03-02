@@ -1153,22 +1153,15 @@ bool isRenderedAsNonInlineTableImageOrHR(const Node* node)
 
 bool areIdenticalElements(const Node* first, const Node* second)
 {
-    // check that tag name and all attribute names and values are identical
-
     if (!first->isElementNode() || !second->isElementNode())
         return false;
 
-    if (!toElement(first)->tagQName().matches(toElement(second)->tagQName()))
+    const Element* firstElement = toElement(first);
+    const Element* secondElement = toElement(second);
+    if (!firstElement->hasTagName(secondElement->tagQName()))
         return false;
 
-    NamedNodeMap* firstMap = toElement(first)->updatedAttributes();
-    NamedNodeMap* secondMap = toElement(second)->updatedAttributes();
-
-    if (firstMap)
-        return firstMap->mapsEquivalent(secondMap);
-    if (secondMap)
-        return secondMap->mapsEquivalent(firstMap);
-    return true;
+    return firstElement->hasEquivalentAttributes(secondElement);
 }
 
 bool isNonTableCellHTMLBlockElement(const Node* node)

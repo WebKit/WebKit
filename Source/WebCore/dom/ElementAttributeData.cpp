@@ -103,6 +103,25 @@ void ElementAttributeData::removeAttribute(size_t index, Element* element)
         element->didRemoveAttribute(attribute.get());
 }
 
+bool ElementAttributeData::isEquivalent(const ElementAttributeData* other) const
+{
+    if (!other)
+        return isEmpty();
+
+    unsigned len = length();
+    if (len != other->length())
+        return false;
+
+    for (unsigned i = 0; i < len; i++) {
+        Attribute* attr = attributeItem(i);
+        Attribute* otherAttr = other->getAttributeItem(attr->name());
+        if (!otherAttr || attr->value() != otherAttr->value())
+            return false;
+    }
+
+    return true;
+}
+
 void ElementAttributeData::detachAttributesFromElement()
 {
     size_t size = m_attributes.size();

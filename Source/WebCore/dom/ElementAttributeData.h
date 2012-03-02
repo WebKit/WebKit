@@ -113,6 +113,8 @@ public:
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
     bool hasClass() const { return !m_classNames.isNull(); }
 
+    bool isEquivalent(const ElementAttributeData* other) const;
+
 private:
     friend class Element;
     friend class NamedNodeMap;

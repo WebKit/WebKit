@@ -775,6 +775,17 @@ bool Element::hasAttributes() const
     return m_attributeMap && m_attributeMap->length();
 }
 
+bool Element::hasEquivalentAttributes(const Element* other) const
+{
+    ElementAttributeData* attributeData = updatedAttributeData();
+    ElementAttributeData* otherAttributeData = other->updatedAttributeData();
+    if (attributeData)
+        return attributeData->isEquivalent(otherAttributeData);
+    if (otherAttributeData)
+        return otherAttributeData->isEquivalent(attributeData);
+    return true;
+}
+
 String Element::nodeName() const
 {
     return m_tagName.toString();

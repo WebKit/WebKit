@@ -1772,18 +1772,8 @@ bool Node::isEqualNode(Node* other) const
     if (nodeValue() != other->nodeValue())
         return false;
     
-    if (isElementNode()) {
-        NamedNodeMap* attributes = toElement(this)->updatedAttributes();
-        NamedNodeMap* otherAttributes = toElement(other)->updatedAttributes();
-
-        if (attributes) {
-            if (!attributes->mapsEquivalent(otherAttributes))
-                return false;
-        } else if (otherAttributes) {
-            if (!otherAttributes->mapsEquivalent(attributes))
-                return false;
-        }
-    }
+    if (isElementNode() && !toElement(this)->hasEquivalentAttributes(toElement(other)))
+        return false;
     
     Node* child = firstChild();
     Node* otherChild = other->firstChild();

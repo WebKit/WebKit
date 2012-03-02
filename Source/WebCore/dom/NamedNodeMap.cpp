@@ -172,20 +172,7 @@ bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const
 {
     if (!otherMap)
         return m_attributeData.isEmpty();
-    
-    unsigned len = length();
-    if (len != otherMap->length())
-        return false;
-    
-    const ElementAttributeData& otherAttributeData = otherMap->m_attributeData;
-    for (unsigned i = 0; i < len; i++) {
-        Attribute* attr = m_attributeData.attributeItem(i);
-        Attribute* otherAttr = otherAttributeData.getAttributeItem(attr->name());
-        if (!otherAttr || attr->value() != otherAttr->value())
-            return false;
-    }
-    
-    return true;
+    return m_attributeData.isEquivalent(otherMap->attributeData());
 }
 
 } // namespace WebCore

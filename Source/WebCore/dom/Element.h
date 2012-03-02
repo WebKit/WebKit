@@ -245,6 +245,7 @@ public:
     ElementAttributeData* ensureUpdatedAttributeData() const;
 
     void setAttributesFromElement(const Element&);
+    bool hasEquivalentAttributes(const Element* other) const;
 
     virtual void copyNonAttributeProperties(const Element* source);
 
