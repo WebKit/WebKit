@@ -2574,10 +2574,12 @@ bool CSSParser::parseAnimationShorthand(bool important)
     RefPtr<CSSValue> values[numProperties];
 
     int i;
+    int initialParsedPropertyIndex = 0;
     while (m_valueList->current()) {
         CSSParserValue* val = m_valueList->current();
         if (val->unit == CSSParserValue::Operator && val->iValue == ',') {
             // We hit the end.  Fill in all remaining values with the initial value.
+            initialParsedPropertyIndex = 0;
             m_valueList->next();
             for (i = 0; i < numProperties; ++i) {
                 if (!parsedProperty[i])
@@ -2589,11 +2591,12 @@ bool CSSParser::parseAnimationShorthand(bool important)
         }
 
         bool found = false;
-        for (i = 0; !found && i < numProperties; ++i) {
+        for (i = initialParsedPropertyIndex; !found && i < numProperties; ++i) {
             if (!parsedProperty[i]) {
                 RefPtr<CSSValue> val;
                 if (parseAnimationProperty(properties[i], val)) {
                     parsedProperty[i] = found = true;
+                    initialParsedPropertyIndex = 1;
                     addAnimationValue(values[i], val.release());
                 }
             }

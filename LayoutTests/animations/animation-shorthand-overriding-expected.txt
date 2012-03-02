@@ -1,0 +1,8 @@
+Testing webkitAnimationName on a: PASS
+Testing webkitAnimationDuration on a: PASS
+Testing webkitAnimationTimingFunction on a: PASS
+Testing webkitAnimationDelay on a: PASS
+Testing webkitAnimationIterationCount on a: PASS
+Testing webkitAnimationDirection on a: PASS
+Testing webkitAnimationFillMode on a: PASS
+
