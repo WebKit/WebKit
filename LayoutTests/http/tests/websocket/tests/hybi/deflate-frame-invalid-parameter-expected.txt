@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: Received unexpected deflate-frame parameter
+CONSOLE MESSAGE: Received invalid max_window_bits parameter
+CONSOLE MESSAGE: Received invalid max_window_bits parameter
+CONSOLE MESSAGE: Received invalid no_context_takeover parameter
+CONSOLE MESSAGE: Received unexpected deflate-frame parameter
+Test whether WebSocket rejects invalid deflate-frame parameters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Testing parameter: "x-foo"
+onclose() was called.
+PASS closeEvent.wasClean is false
+Testing parameter: "max_window_bits=7"
+onclose() was called.
+PASS closeEvent.wasClean is false
+Testing parameter: "max_window_bits=16"
+onclose() was called.
+PASS closeEvent.wasClean is false
+Testing parameter: "no_context_takeover=foo"
+onclose() was called.
+PASS closeEvent.wasClean is false
+Testing parameter: "max_window_bits=8; no_context_takeover; x-foo"
+onclose() was called.
+PASS closeEvent.wasClean is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

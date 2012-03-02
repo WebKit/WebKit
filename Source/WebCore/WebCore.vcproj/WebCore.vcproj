@@ -24313,6 +24313,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\websockets\WebSocketDeflateFramer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\websockets\WebSocketDeflateFramer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\websockets\WebSocketDeflater.cpp"
 					>
 				</File>

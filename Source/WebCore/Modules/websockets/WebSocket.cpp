@@ -478,6 +478,7 @@ void WebSocket::didConnect()
     ASSERT(scriptExecutionContext());
     m_state = OPEN;
     m_subprotocol = m_channel->subprotocol();
+    m_extensions = m_channel->extensions();
     dispatchEvent(Event::create(eventNames().openEvent, false, false));
 }
 

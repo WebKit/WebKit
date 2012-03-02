@@ -1,3 +1,14 @@
+2012-03-02  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Adding WebSocket per-frame DEFLATE extension
+        https://bugs.webkit.org/show_bug.cgi?id=77522
+
+        Added USE(ZLIB) flag.
+
+        Reviewed by Kent Tamura.
+
+        * wtf/Platform.h:
+
 2012-03-02  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed build fix for platforms that have DFG_JIT disabled but PARALLEL_GC enabled.

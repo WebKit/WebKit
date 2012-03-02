@@ -1063,6 +1063,8 @@ webcore_sources += \
 	Source/WebCore/Modules/websockets/WebSocketChannel.h \
 	Source/WebCore/Modules/websockets/WebSocket.cpp \
 	Source/WebCore/Modules/websockets/WebSocket.h \
+	Source/WebCore/Modules/websockets/WebSocketDeflateFramer.cpp \
+	Source/WebCore/Modules/websockets/WebSocketDeflateFramer.h \
 	Source/WebCore/Modules/websockets/WebSocketDeflater.cpp \
 	Source/WebCore/Modules/websockets/WebSocketDeflater.h \
 	Source/WebCore/Modules/websockets/WebSocketExtensionDispatcher.cpp \

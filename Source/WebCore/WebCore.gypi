@@ -1412,6 +1412,8 @@
             'Modules/websockets/WebSocketChannel.cpp',
             'Modules/websockets/WebSocketChannel.h',
             'Modules/websockets/WebSocketChannelClient.h',
+            'Modules/websockets/WebSocketDeflateFramer.cpp',
+            'Modules/websockets/WebSocketDeflateFramer.h',
             'Modules/websockets/WebSocketDeflater.cpp',
             'Modules/websockets/WebSocketDeflater.h',
             'Modules/websockets/WebSocketExtensionDispatcher.cpp',

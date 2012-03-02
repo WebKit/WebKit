@@ -1195,6 +1195,7 @@
         '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
         '<(chromium_src_dir)/third_party/sqlite/sqlite.gyp:sqlite',
         '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:translator_glsl',
+        '<(chromium_src_dir)/third_party/zlib/zlib.gyp:zlib',
         '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
         '<(libjpeg_gyp_path):libjpeg',
       ],

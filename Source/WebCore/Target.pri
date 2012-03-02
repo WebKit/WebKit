@@ -3675,6 +3675,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
         Modules/websockets/WebSocket.h \
         Modules/websockets/WebSocketChannel.h \
         Modules/websockets/WebSocketChannelClient.h \
+        Modules/websockets/WebSocketDeflateFramer.h \
         Modules/websockets/WebSocketExtensionDispatcher.h \
         Modules/websockets/WebSocketExtensionProcessor.h \
         Modules/websockets/WebSocketFrame.h \
@@ -3686,6 +3687,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
     SOURCES += \
         Modules/websockets/WebSocket.cpp \
         Modules/websockets/WebSocketChannel.cpp \
+        Modules/websockets/WebSocketDeflateFramer.cpp \
         Modules/websockets/WebSocketExtensionDispatcher.cpp \
         Modules/websockets/WebSocketHandshake.cpp \
         Modules/websockets/WebSocketHandshakeRequest.cpp \
