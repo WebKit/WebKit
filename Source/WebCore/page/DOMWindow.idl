@@ -438,6 +438,7 @@ module window {
         attribute WebKitAnimationEventConstructor WebKitAnimationEvent;
         attribute WebKitTransitionEventConstructor WebKitTransitionEvent;
         attribute WheelEventConstructor WheelEvent;
+        attribute XMLHttpRequestProgressEventConstructor XMLHttpRequestProgressEvent;
         attribute [Conditional=DEVICE_ORIENTATION, V8EnabledAtRuntime] DeviceMotionEventConstructor DeviceMotionEvent;
         attribute [Conditional=DEVICE_ORIENTATION, V8EnabledAtRuntime] DeviceOrientationEventConstructor DeviceOrientationEvent;
         attribute [Conditional=TOUCH_EVENTS] TouchEventConstructor TouchEvent;
@@ -466,6 +467,16 @@ module window {
         attribute RangeExceptionConstructor RangeException;
 
         attribute EventSourceConstructor EventSource; // Usable with new the operator
+
+        // Mozilla has a separate XMLDocument object for XML documents. 
+        // We just use Document for this.
+        attribute DocumentConstructor XMLDocument;
+        attribute DOMParserConstructor DOMParser;
+        attribute XMLSerializerConstructor XMLSerializer;
+        attribute XMLHttpRequestConstructor XMLHttpRequest; // Usable with the new operator
+        attribute XMLHttpRequestUploadConstructor XMLHttpRequestUpload;
+        attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
+        attribute [Conditional=XSLT] XSLTProcessorConstructor XSLTProcessor; // Usable with the new operator
 
 #if defined(ENABLE_CHANNEL_MESSAGING) && ENABLE_CHANNEL_MESSAGING
         attribute MessagePortConstructor MessagePort;

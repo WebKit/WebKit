@@ -395,7 +395,6 @@ SET(WebCore_IDL_FILES
     webaudio/LowPass2FilterNode.idl
     webaudio/RealtimeAnalyserNode.idl
 
-    xml/DOMWindowXML.idl
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl
     xml/XMLHttpRequestException.idl

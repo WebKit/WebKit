@@ -1115,7 +1115,6 @@
             'workers/Worker.idl',
             'workers/WorkerContext.idl',
             'workers/WorkerLocation.idl',
-            'xml/DOMWindowXML.idl',
             'xml/DOMParser.idl',
             'xml/XMLHttpRequest.idl',
             'xml/XMLHttpRequestException.idl',

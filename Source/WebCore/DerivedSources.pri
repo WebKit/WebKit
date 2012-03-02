@@ -440,7 +440,6 @@ IDL_BINDINGS += \
     $$PWD/workers/Worker.idl \
     $$PWD/workers/WorkerContext.idl \
     $$PWD/workers/WorkerLocation.idl \
-    $$PWD/xml/DOMWindowXML.idl \
     $$PWD/xml/DOMParser.idl \
     $$PWD/xml/XMLHttpRequest.idl \
     $$PWD/xml/XMLHttpRequestException.idl \

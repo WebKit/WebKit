@@ -577,7 +577,6 @@ BINDING_IDLS = \
     $(WebCore)/workers/Worker.idl \
     $(WebCore)/workers/WorkerContext.idl \
     $(WebCore)/workers/WorkerLocation.idl \
-    $(WebCore)/xml/DOMWindowXML.idl \
     $(WebCore)/xml/DOMParser.idl \
     $(WebCore)/xml/XMLHttpRequest.idl \
     $(WebCore)/xml/XMLHttpRequestException.idl \
