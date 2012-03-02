@@ -58,6 +58,8 @@ namespace WebCore {
     class NavigationAction;
     class Node;
     class Page;
+    class PagePopup;
+    class PagePopupClient;
     class PopupMenuClient;
     class SecurityOrigin;
     class GraphicsContext3D;
@@ -306,6 +308,12 @@ namespace WebCore {
         virtual bool hasOpenedPopup() const = 0;
         virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const = 0;
         virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const = 0;
+#if ENABLE(PAGE_POPUP)
+        // Creates a PagePopup object, and shows it beside originBoundsInRootView.
+        // The return value can be 0.
+        virtual PagePopup* openPagePopup(PagePopupClient*, const IntRect& originBoundsInRootView) = 0;
+        virtual void closePagePopup(PagePopup*) = 0;
+#endif
 
         virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
         
