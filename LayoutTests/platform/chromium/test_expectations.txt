@@ -2487,7 +2487,7 @@ BUGWK47949 MAC : compositing/reflections/nested-reflection.html = IMAGE PASS
 BUGWK47949 WIN MAC : compositing/reflections/nested-reflection-transformed.html = IMAGE PASS
 BUGWK47949 MAC : compositing/reflections/reflection-opacity.html = IMAGE PASS
 BUGWK47949 : compositing/reflections/reflection-positioning.html = IMAGE PASS
-BUGWK74949 WIN MAC : compositing/reflections/nested-reflection-transformed2.html = IMAGE PASS
+BUGWK47949 : compositing/reflections/nested-reflection-transformed2.html = IMAGE PASS
 BUGWK47949 : compositing/reflections/nested-reflection-transition.html = IMAGE PASS
 BUGWK47949 MAC : compositing/reflections/nested-reflection-size-change.html = IMAGE PASS
 BUGWK79647 WIN MAC : compositing/reflections/reflection-ordering.html = IMAGE PASS
@@ -4343,4 +4343,4 @@ BUGWK66908 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.font
 //NEED REBASELINING
 BUGWK78684 : fast/block/basic/fieldset-stretch-to-legend.html = FAIL
 BUGWK78684 : fast/borders/fieldsetBorderRadius.html = FAIL
-BUGWK78684 : fast/forms/fieldset-legend-padding-unclipped-fieldset-border.html = IMAGE IMAGE+TEXT
+BUGWK78684 : fast/forms/fieldset-legend-padding-unclipped-fieldset-border.html = FAIL
