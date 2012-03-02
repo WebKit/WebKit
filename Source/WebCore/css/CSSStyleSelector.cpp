@@ -3644,9 +3644,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 #endif
-    case CSSPropertyWebkitColorCorrection:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(colorSpace, ColorSpace);
-        return;
     case CSSPropertyInvalid:
         return;
     // Directional properties are resolved by resolveDirectionAwareProperty() before the switch.
@@ -3967,6 +3964,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitBoxOrdinalGroup:
     case CSSPropertyWebkitBoxOrient:
     case CSSPropertyWebkitBoxPack:
+    case CSSPropertyWebkitColorCorrection:
     case CSSPropertyWebkitColumnAxis:
     case CSSPropertyWebkitColumnCount:
     case CSSPropertyWebkitColumnGap:
