@@ -1374,16 +1374,34 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attr, ExceptionCode& ec)
         ec = TYPE_MISMATCH_ERR;
         return 0;
     }
-    return static_pointer_cast<Attr>(ensureUpdatedAttributes()->setNamedItem(attr, ec));
+
+    ElementAttributeData* attributeData = ensureUpdatedAttributeData();
+    Attribute* attribute = attr->attr();
+    size_t index = attributeData->getAttributeItemIndex(attribute->name());
+    Attribute* oldAttribute = index != notFound ? attributeData->attributeItem(index) : 0;
+    if (oldAttribute == attribute)
+        return attr; // we know about it already
+
+    // INUSE_ATTRIBUTE_ERR: Raised if node is an Attr that is already an attribute of another Element object.
+    // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
+    if (attr->ownerElement()) {
+        ec = INUSE_ATTRIBUTE_ERR;
+        return 0;
+    }
+
+    RefPtr<Attr> oldAttr;
+    if (oldAttribute) {
+        oldAttr = oldAttribute->createAttrIfNeeded(this);
+        attributeData->replaceAttribute(index, attribute, this);
+    } else
+        attributeData->addAttribute(attribute, this);
+
+    return oldAttr.release();
 }
 
 PassRefPtr<Attr> Element::setAttributeNodeNS(Attr* attr, ExceptionCode& ec)
 {
-    if (!attr) {
-        ec = TYPE_MISMATCH_ERR;
-        return 0;
-    }
-    return static_pointer_cast<Attr>(ensureUpdatedAttributes()->setNamedItem(attr, ec));
+    return setAttributeNode(attr, ec);
 }
 
 PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)

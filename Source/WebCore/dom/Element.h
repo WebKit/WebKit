@@ -228,9 +228,8 @@ public:
     void setBooleanAttribute(const QualifiedName& name, bool);
 
     // For exposing to DOM only.
-    NamedNodeMap* attributes() const { return ensureUpdatedAttributes(); }
+    NamedNodeMap* attributes() const;
 
-    NamedNodeMap* ensureUpdatedAttributes() const;
     NamedNodeMap* updatedAttributes() const;
 
     // This method is called whenever an attribute is added, changed or removed.
@@ -530,7 +529,7 @@ inline Element* Element::nextElementSibling() const
     return static_cast<Element*>(n);
 }
 
-inline NamedNodeMap* Element::ensureUpdatedAttributes() const
+inline NamedNodeMap* Element::attributes() const
 {
     updateInvalidAttributes();
     if (!m_attributeMap)

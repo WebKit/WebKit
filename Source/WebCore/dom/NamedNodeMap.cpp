@@ -103,29 +103,8 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
         ec = HIERARCHY_REQUEST_ERR;
         return 0;
     }
-    Attr* attr = static_cast<Attr*>(node);
 
-    Attribute* attribute = attr->attr();
-    size_t index = m_attributeData.getAttributeItemIndex(attribute->name());
-    Attribute* oldAttribute = index != notFound ? m_attributeData.attributeItem(index) : 0;
-    if (oldAttribute == attribute)
-        return node; // we know about it already
-
-    // INUSE_ATTRIBUTE_ERR: Raised if node is an Attr that is already an attribute of another Element object.
-    // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
-    if (attr->ownerElement()) {
-        ec = INUSE_ATTRIBUTE_ERR;
-        return 0;
-    }
-
-    RefPtr<Attr> oldAttr;
-    if (oldAttribute) {
-        oldAttr = oldAttribute->createAttrIfNeeded(m_element);
-        m_attributeData.replaceAttribute(index, attribute, m_element);
-    } else
-        m_attributeData.addAttribute(attribute, m_element);
-
-    return oldAttr.release();
+    return m_element->setAttributeNode(static_cast<Attr*>(node), ec);
 }
 
 PassRefPtr<Node> NamedNodeMap::setNamedItemNS(Node* node, ExceptionCode& ec)
