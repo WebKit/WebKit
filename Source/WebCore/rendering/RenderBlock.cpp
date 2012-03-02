@@ -120,10 +120,6 @@ public:
     }
 
 private:
-    void computeOverflowStatus(bool& hasHorizontalLayoutOverflow, bool& hasVerticalLayoutOverflow)
-    {
-    }
-
     const RenderBlock* m_block;
     bool m_shouldDispatchEvent;
     bool m_hadHorizontalLayoutOverflow;
