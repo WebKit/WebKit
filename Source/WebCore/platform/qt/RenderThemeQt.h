@@ -40,13 +40,17 @@ class RenderProgress;
 class RenderStyle;
 class HTMLMediaElement;
 class StylePainter;
+class ScrollbarTheme;
+
+typedef PassRefPtr<RenderTheme> (*QtThemeFactoryFunction)(Page* page);
 
 class RenderThemeQt : public RenderTheme {
 
 public:
     RenderThemeQt(Page*);
 
-    static bool useMobileTheme();
+    static void setCustomTheme(QtThemeFactoryFunction, ScrollbarTheme* customScrollbarTheme);
+    static ScrollbarTheme* customScrollbarTheme();
 
     String extraDefaultStyleSheet();
 

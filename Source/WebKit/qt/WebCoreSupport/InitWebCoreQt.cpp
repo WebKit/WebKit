@@ -33,7 +33,9 @@
 #include "Image.h"
 #include "NotImplemented.h"
 #include "PlatformStrategiesQt.h"
+#include "RenderThemeQStyle.h"
 #include "ScriptController.h"
+#include "ScrollbarThemeQStyle.h"
 #include "SecurityPolicy.h"
 #if USE(QTKIT)
 #include "WebSystemInterface.h"
@@ -61,6 +63,8 @@ void initializeWebCoreQt()
 
     PlatformStrategiesQt::initialize();
     QtWebElementRuntime::initialize();
+
+    RenderThemeQt::setCustomTheme(RenderThemeQStyle::create, new ScrollbarThemeQStyle);
 
 #if USE(QTKIT)
     InitWebCoreSystemInterface();

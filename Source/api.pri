@@ -59,6 +59,8 @@ SOURCES += \
     $$PWD/WebKit/qt/WebCoreSupport/PageClientQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/PopupMenuQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/QtPlatformPlugin.cpp \
+    $$PWD/WebKit/qt/WebCoreSupport/RenderThemeQStyle.cpp \
+    $$PWD/WebKit/qt/WebCoreSupport/ScrollbarThemeQStyle.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/SearchPopupMenuQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/TextCheckerClientQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/PlatformStrategiesQt.cpp \
@@ -74,8 +76,11 @@ HEADERS += \
     $$PWD/WebKit/qt/WebCoreSupport/GeolocationPermissionClientQt.h \
     $$PWD/WebKit/qt/WebCoreSupport/NotificationPresenterClientQt.h \
     $$PWD/WebKit/qt/WebCoreSupport/PageClientQt.h \
-    $$PWD/WebKit/qt/WebCoreSupport/QtPlatformPlugin.h \
     $$PWD/WebKit/qt/WebCoreSupport/PopupMenuQt.h \
+    $$PWD/WebKit/qt/WebCoreSupport/QtPlatformPlugin.h \
+    $$PWD/WebKit/qt/WebCoreSupport/QtStyleOptionWebComboBox.h.h \
+    $$PWD/WebKit/qt/WebCoreSupport/RenderThemeQStyle.h \
+    $$PWD/WebKit/qt/WebCoreSupport/ScrollbarThemeQStyle.h \
     $$PWD/WebKit/qt/WebCoreSupport/SearchPopupMenuQt.h \
     $$PWD/WebKit/qt/WebCoreSupport/TextCheckerClientQt.h \
     $$PWD/WebKit/qt/WebCoreSupport/PlatformStrategiesQt.h \

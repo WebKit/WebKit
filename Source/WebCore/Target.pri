@@ -2865,12 +2865,6 @@ SOURCES += \
     SOURCES += xml/parser/XMLDocumentParserQt.cpp
 }
 
-contains(DEFINES, HAVE_QSTYLE=1) {
-    HEADERS += platform/qt/RenderThemeQStyle.h \
-               platform/qt/ScrollbarThemeQt.h
-    SOURCES += platform/qt/RenderThemeQStyle.cpp
-}
-
 contains(DEFINES, ENABLE_SMOOTH_SCROLLING=1) {
     win32-*|wince* {
         HEADERS += platform/ScrollAnimatorWin.h

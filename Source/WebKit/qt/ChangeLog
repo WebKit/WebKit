@@ -1,3 +1,84 @@
+2012-03-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Move QStyle theming code out of WebCore into WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=80128
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Moved the bulk of the QStyle dependant code here, where it's okay to depend on QtWidgets/QStyle.
+        Install the QStyle factory functions in initWebCoreQt.cpp.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::swallowContextMenuEvent):
+        * WebCoreSupport/InitWebCoreQt.cpp:
+        (WebCore::initializeWebCoreQt):
+        * WebCoreSupport/RenderThemeQStyle.cpp: Renamed from Source/WebCore/platform/qt/RenderThemeQStyle.cpp.
+        (WebCore):
+        (WebCore::initStyleOption):
+        (WebCore::RenderThemeQStyle::getStylePainter):
+        (WebCore::StylePainterQStyle::StylePainterQStyle):
+        (WebCore::StylePainterQStyle::init):
+        (WebCore::RenderThemeQStyle::create):
+        (WebCore::RenderThemeQStyle::RenderThemeQStyle):
+        (WebCore::RenderThemeQStyle::~RenderThemeQStyle):
+        (WebCore::RenderThemeQStyle::fallbackStyle):
+        (WebCore::RenderThemeQStyle::qStyle):
+        (WebCore::RenderThemeQStyle::findFrameLineWidth):
+        (WebCore::RenderThemeQStyle::inflateButtonRect):
+        (WebCore::RenderThemeQStyle::computeSizeBasedOnStyle):
+        (WebCore::RenderThemeQStyle::adjustButtonStyle):
+        (WebCore::RenderThemeQStyle::setButtonPadding):
+        (WebCore::RenderThemeQStyle::paintButton):
+        (WebCore::RenderThemeQStyle::paintTextField):
+        (WebCore::RenderThemeQStyle::adjustTextAreaStyle):
+        (WebCore::RenderThemeQStyle::paintTextArea):
+        (WebCore::RenderThemeQStyle::setPopupPadding):
+        (WebCore::RenderThemeQStyle::paintMenuList):
+        (WebCore::RenderThemeQStyle::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeQStyle::paintMenuListButton):
+        (WebCore::RenderThemeQStyle::animationDurationForProgressBar):
+        (WebCore::RenderThemeQStyle::paintProgressBar):
+        (WebCore::RenderThemeQStyle::paintSliderTrack):
+        (WebCore::RenderThemeQStyle::adjustSliderTrackStyle):
+        (WebCore::RenderThemeQStyle::paintSliderThumb):
+        (WebCore::RenderThemeQStyle::adjustSliderThumbStyle):
+        (WebCore::RenderThemeQStyle::paintSearchField):
+        (WebCore::RenderThemeQStyle::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeQStyle::paintSearchFieldDecoration):
+        (WebCore::RenderThemeQStyle::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeQStyle::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeQStyle::paintInnerSpinButton):
+        (WebCore::RenderThemeQStyle::initializeCommonQStyleOptions):
+        (WebCore::RenderThemeQStyle::adjustSliderThumbSize):
+        * WebCoreSupport/RenderThemeQStyle.h: Renamed from Source/WebCore/platform/qt/RenderThemeQStyle.h.
+        (WebCore):
+        (RenderThemeQStyle):
+        (StylePainterQStyle):
+        (WebCore::StylePainterQStyle::isValid):
+        (WebCore::StylePainterQStyle::drawPrimitive):
+        (WebCore::StylePainterQStyle::drawControl):
+        (WebCore::StylePainterQStyle::drawComplexControl):
+        * WebCoreSupport/ScrollbarThemeQStyle.cpp: Copied from Source/WebCore/platform/qt/ScrollbarThemeQt.cpp.
+        (WebCore):
+        (WebCore::ScrollbarThemeQStyle::~ScrollbarThemeQStyle):
+        (WebCore::scPart):
+        (WebCore::scrollbarPart):
+        (WebCore::styleOptionSlider):
+        (WebCore::ScrollbarThemeQStyle::paint):
+        (WebCore::ScrollbarThemeQStyle::hitTest):
+        (WebCore::ScrollbarThemeQStyle::shouldCenterOnThumb):
+        (WebCore::ScrollbarThemeQStyle::invalidatePart):
+        (WebCore::ScrollbarThemeQStyle::scrollbarThickness):
+        (WebCore::ScrollbarThemeQStyle::thumbPosition):
+        (WebCore::ScrollbarThemeQStyle::thumbLength):
+        (WebCore::ScrollbarThemeQStyle::trackPosition):
+        (WebCore::ScrollbarThemeQStyle::trackLength):
+        (WebCore::ScrollbarThemeQStyle::paintScrollCorner):
+        (WebCore::ScrollbarThemeQStyle::style):
+        * WebCoreSupport/ScrollbarThemeQStyle.h: Renamed from Source/WebCore/platform/qt/ScrollbarThemeQt.h.
+        (WebCore):
+        (ScrollbarThemeQStyle):
+
 2012-02-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Move registration of experimental types to the proper plugin

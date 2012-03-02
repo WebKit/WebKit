@@ -41,10 +41,6 @@
 #if ENABLE(PROGRESS_TAG)
 #include "RenderProgress.h"
 #endif
-#if HAVE(QSTYLE)
-#include "RenderThemeQStyle.h"
-#endif
-
 #include <QColor>
 #include <QFile>
 #include <QFontMetrics>
@@ -548,23 +544,6 @@ void StylePainterMobile::drawSliderThumb(const QRect & rect, bool pressed) const
 PassRefPtr<RenderTheme> RenderThemeQtMobile::create(Page* page)
 {
     return adoptRef(new RenderThemeQtMobile(page));
-}
-
-static PassRefPtr<RenderTheme> createTheme(Page* page)
-{
-#if HAVE(QSTYLE)
-    if (!RenderThemeQt::useMobileTheme())
-        return RenderThemeQStyle::create(page);
-#endif
-    return RenderThemeQtMobile::create(page);
-}
-
-PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
-{
-    if (page)
-        return createTheme(page);
-    static RenderTheme* fallback = createTheme(0).leakRef();
-    return fallback;
 }
 
 RenderThemeQtMobile::RenderThemeQtMobile(Page* page)

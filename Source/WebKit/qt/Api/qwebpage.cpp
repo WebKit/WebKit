@@ -3290,15 +3290,11 @@ bool QWebPage::swallowContextMenuEvent(QContextMenuEvent *event)
 {
     d->page->contextMenuController()->clearContextMenu();
 
-#if HAVE(QSTYLE)
-    if (!RenderThemeQt::useMobileTheme()) {
-        if (QWebFrame* webFrame = frameAt(event->pos())) {
-            Frame* frame = QWebFramePrivate::core(webFrame);
-            if (Scrollbar* scrollbar = frame->view()->scrollbarAtPoint(convertMouseEvent(event, 1).position()))
-                return handleScrollbarContextMenuEvent(scrollbar, event);
-        }
+    if (QWebFrame* webFrame = frameAt(event->pos())) {
+        Frame* frame = QWebFramePrivate::core(webFrame);
+        if (Scrollbar* scrollbar = frame->view()->scrollbarAtPoint(convertMouseEvent(event, 1).position()))
+            return handleScrollbarContextMenuEvent(scrollbar, event);
     }
-#endif
 
     WebCore::Frame* focusedFrame = d->page->focusController()->focusedOrMainFrame();
     focusedFrame->eventHandler()->sendContextMenuEvent(convertMouseEvent(event, 1));
