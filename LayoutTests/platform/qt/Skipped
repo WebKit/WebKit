@@ -1439,6 +1439,14 @@ svg/zoom/page/zoom-svg-as-relative-image.html
 svg/zoom/page/zoom-svg-float-border-padding.xml
 svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
 
+# [Qt] svg/animations/animate-elem-08-t-drt.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=80157
+svg/animations/animate-elem-08-t-drt.html
+
+# [Qt] svg/custom/bug78807.svg fails
+# https://bugs.webkit.org/show_bug.cgi?id=80156
+svg/custom/bug78807.svg
+
 # ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
@@ -2662,3 +2670,7 @@ transitions/cancel-transition.html
 # REGRESSION, r109105 made it fail
 # https://bugs.webkit.org/show_bug.cgi?id=79555
 fast/events/dispatch-message-string-data.html
+
+# ES5.1-15.3.5.4. prohibits Function.caller from [[Get]]ting a strict caller
+# https://bugs.webkit.org/show_bug.cgi?id=80011 (REGRESSION caused by r109461)
+fast/js/function-dot-arguments-and-caller.html
