@@ -195,7 +195,7 @@ max 1120
         finally:
             _, stderr, logs = output.restore_output()
             self.assertEqual(stderr, "Ready to run test?\n")
-            self.assertEqual(logs, "Running inspector/pass.html (1 of 1)\n\n")
+            self.assertTrue("Running inspector/pass.html (1 of 1)" in logs)
 
     def test_run_test_set_for_parser_tests(self):
         buildbot_output = StringIO.StringIO()
