@@ -190,6 +190,8 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
             properties.sort(WebInspector.ObjectPropertiesSection.CompareProperties);
             for (var i = 0; i < properties.length; ++i) {
+                if (this.treeOutline.section.skipProto && properties[i].name === "__proto__")
+                    continue;
                 this.appendChild(new this.treeOutline.section.treeElementConstructor(properties[i]));
             }
         };

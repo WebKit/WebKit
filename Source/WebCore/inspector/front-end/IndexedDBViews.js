@@ -290,8 +290,8 @@ WebInspector.IDBDataView.prototype = {
             for (var i = 0; i < entries.length; ++i) {
                 var data = {};
                 data["number"] = i + skipCount;
-                data["key"] = this._stringifyKey(entries[i].key);
-                data["primaryKey"] = this._stringifyKey(entries[i].primaryKey);
+                data["key"] = entries[i].key;
+                data["primaryKey"] = entries[i].primaryKey;
                 data["value"] = entries[i].value;
 
                 var primaryKey = JSON.stringify(this._isIndex ? entries[i].primaryKey : entries[i].key);
@@ -344,13 +344,46 @@ WebInspector.IDBDataGridNode.prototype = {
      */
     createCell: function(columnIdentifier)
     {
-        if (columnIdentifier !== "value")
-            return WebInspector.DataGridNode.prototype.createCell.call(this, columnIdentifier);
+        var cell = WebInspector.DataGridNode.prototype.createCell.call(this, columnIdentifier);
+        var value = this.data[columnIdentifier];
+        
+        switch (columnIdentifier) {
+        case "value":
+            cell.removeChildren();
+            this._formatValue(cell, value);
+            break;
+        case "key":
+        case "primaryKey":
+            cell.removeChildren();
+            this._formatValue(cell, new WebInspector.LocalJSONObject(value));
+            break;
+        default:
+        }
 
-        var section = new WebInspector.ObjectPropertiesSection(this.data["value"], this._valueTitle)
-        section.editable = false;
-        section.skipProto = true;
-        return section.element;
+        return cell;
+    },
+
+    _formatValue: function(cell, value)
+    {
+        var type = value.subtype || value.type;
+        var contents = cell.createChild("div", "source-code console-formatted-" + type);
+
+        switch (type) {
+        case "object":
+        case "array":
+            var section = new WebInspector.ObjectPropertiesSection(value, value.description)
+            section.editable = false;
+            section.skipProto = true;
+            contents.appendChild(section.element);
+            break;
+        case "string":
+            contents.addStyleClass("primitive-value");
+            contents.appendChild(document.createTextNode("\"" + value.description + "\""));
+            break;
+        default:
+            contents.addStyleClass("primitive-value");
+            contents.appendChild(document.createTextNode(value.description));
+        }
     }
 };
 

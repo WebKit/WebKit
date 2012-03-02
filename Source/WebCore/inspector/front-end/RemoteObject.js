@@ -378,6 +378,9 @@ WebInspector.LocalJSONObject.prototype = {
                 }
                 this._cachedDescription = this._concatenate("[", "]", formatArrayItem);
                 break;
+            case "date":
+                this._cachedDescription = "" + this._value;
+                break;
             case "null":
                 this._cachedDescription = "null";
                 break;
@@ -437,6 +440,9 @@ WebInspector.LocalJSONObject.prototype = {
 
         if (this._value instanceof Array)
             return "array";
+
+        if (this._value instanceof Date)
+            return "date";
 
         return undefined;
     },

@@ -73,7 +73,7 @@ WebInspector.IndexedDBModel.idbKeyFromKey = function(key)
         break;
     case WebInspector.IndexedDBModel.KeyTypes.ArrayType:
         idbKey = [];
-        for (var i = 0; i < key.length; ++i)
+        for (var i = 0; i < key.array.length; ++i)
             idbKey.push(WebInspector.IndexedDBModel.idbKeyFromKey(key.array[i]));
         break;
     }

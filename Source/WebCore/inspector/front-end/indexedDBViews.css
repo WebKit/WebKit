@@ -99,3 +99,26 @@
 .indexed-db-data-view .data-grid .data-container tr:nth-last-child(1) td {
     border: 0;
 }
+
+.indexed-db-data-view .data-grid .data-container td {
+    height: 18px;
+}
+
+.indexed-db-data-view .data-grid .data-container td.value-column,
+.indexed-db-data-view .data-grid .data-container td.key-column,
+.indexed-db-data-view .data-grid .data-container td.primaryKey-column {
+    padding: 0;
+}
+
+.indexed-db-data-view .data-grid .data-container td.value-column div.primitive-value,
+.indexed-db-data-view .data-grid .data-container td.key-column div.primitive-value,
+.indexed-db-data-view .data-grid .data-container td.primaryKey-column div.primitive-value {
+    padding-left: 5px;
+    margin-top: 1px;
+}
+
+.indexed-db-data-view .data-grid .data-container td .section .header .title {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
