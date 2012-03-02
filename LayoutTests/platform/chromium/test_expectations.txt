@@ -932,7 +932,7 @@ BUGWK78613 : svg/custom/circle-move-invalidation.svg = IMAGE IMAGE+TEXT
 BUGWK34714 : svg/text/select-textLength-spacing-squeeze-2.svg = IMAGE IMAGE+TEXT
 
 // New test, needs a rebaseline
-BUGWK77903 : svg/repaint/inner-svg-change-viewBox-contract.svg = IMAGE IMAGE+TEXT
+BUGWK77903 MAC : svg/repaint/inner-svg-change-viewBox-contract.svg = IMAGE IMAGE+TEXT
 
 // New test, needs a rebaseline
 BUGWK78631 : svg/dom/SVGLocatable-getCTM-svg-root.html = IMAGE
@@ -2463,7 +2463,7 @@ BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = PASS CRASH MIS
 // overhang even when we weren't over the edge.
 // * platform/ScrollView.cpp:
 //   (WebCore::ScrollView::calculateOverhangAreasForPainting):
-BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
+BUGCR71783 MAC : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
 //
 // GPU
@@ -3432,7 +3432,7 @@ BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods-async.html = FAIL
 BUGWK78725 : http/tests/filesystem/workers/resolve-url-sync.html = PASS TIMEOUT
 BUGWK78725 : http/tests/filesystem/workers/resolve-url.html = PASS TIMEOUT
 
-BUGWK74881 : fast/overflow/unreachable-overflow-rtl-bug.html = IMAGE
+BUGWK74881 MAC : fast/overflow/unreachable-overflow-rtl-bug.html = IMAGE
 
 BUGWK75111 : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TEXT TIMEOUT
 BUGWK77136 DEBUG : fast/workers/storage/interrupt-database.html = PASS CRASH
@@ -3468,7 +3468,8 @@ BUGWK75716 : fullscreen/video-controls-drag.html = TEXT
 
 BUGWK75786 SKIP : compositing/tiled-layers-hidpi.html = TIMEOUT
 
-BUGWK75787 MAC LINUX : fast/text/international/spaces-combined-in-vertical-text.html = TIMEOUT TEXT
+BUGWK75787 MAC : fast/text/international/spaces-combined-in-vertical-text.html = TIMEOUT TEXT
+BUGWK75787 LINUX DEBUG : fast/text/international/spaces-combined-in-vertical-text.html = TIMEOUT TEXT
 
 BUGWK75932 : fast/js/array-defineOwnProperty.html = TEXT
 BUGWK75932 : fast/js/mozilla/strict/15.4.4.6.html = TEXT
@@ -3497,7 +3498,7 @@ BUGJAMESR LEOPARD GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
 
 BUGWK77187 WIN GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
 
-BUGWK76511 : compositing/geometry/video-opacity-overlay.html = IMAGE
+BUGWK76511 : compositing/geometry/video-opacity-overlay.html = IMAGE PASS
 BUGWK76511 : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK76511 : compositing/visibility/visibility-simple-video-layer.html = IMAGE
 BUGWK76511 : compositing/self-painting-layers.html = IMAGE
@@ -3533,7 +3534,7 @@ BUGWK76800 : svg/filters/feImage-reference-svg-primitive.svg = IMAGE
 
 // Just needs a rebaseline.
 BUGWK69714 : svg/clip-path/clip-path-tspan-and-stroke.svg = IMAGE+TEXT
-BUGWK77103 : svg/repaint/image-href-change.svg = IMAGE
+BUGWK77103 MAC : svg/repaint/image-href-change.svg = IMAGE
 BUGWK77198 : svg/filters/feImage-target-remove-from-document.svg = IMAGE
 BUGWK77198 : svg/filters/feImage-target-add-to-document.svg = IMAGE
 BUGWK77198 : svg/filters/feImage-target-reappend-to-document.svg = IMAGE
@@ -3694,7 +3695,7 @@ BUGWK78561 WIN : css3/filters/crash-hw-sw-switch.html = MISSING
 BUGWK78561 WIN : css3/filters/filter-empty-element-crash.html = MISSING
 
 // Still flaky:
-BUGWK78830 : svg/custom/mask-invalidation.svg = IMAGE
+BUGWK78830 DEBUG : svg/custom/mask-invalidation.svg = IMAGE
 
 // Tests Error.stack behavior. We aren't consistent with JSC and do not intend to become so.
 WONTFIX : fast/js/stack-trace.html = TEXT
@@ -3725,7 +3726,7 @@ BUGWK78219 : svg/dynamic-updates/SVGEllipseElement-svgdom-requiredFeatures.html 
 BUGWK78219 : svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html = IMAGE
+BUGWK78219 WIN MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
@@ -4024,19 +4025,19 @@ BUGWK78219 : svg/dynamic-updates/SVGSVGElement-svgdom-requiredFeatures.html = IM
 BUGWK78219 : svg/dynamic-updates/SVGTRefElement-dom-href-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-dom-dx-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-dom-dy-attr.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr.html = IMAGE
+BUGWK78219 WIN : svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-dom-requiredFeatures.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-dom-rotate-attr.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGTextElement-dom-textLength-attr.html = IMAGE
+BUGWK78219 MAC : svg/dynamic-updates/SVGTextElement-dom-textLength-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-dom-transform-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-dom-x-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-dom-y-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-dx-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-dy-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop.html = IMAGE
+BUGWK78219 WIN : svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-requiredFeatures.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop.html = IMAGE
+BUGWK78219 MAC : svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-transform-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-x-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGTextElement-svgdom-y-prop.html = IMAGE
@@ -4292,8 +4293,9 @@ BUGWK75091 SKIP : svg/hixie/perf/003.xml = FAIL
 
 // Failing since added by r108699
 BUGWK79454 WIN : svg/text/text-rescale.html = IMAGE+TEXT
-BUGWK79454 LINUX MAC : svg/text/text-rescale.html = IMAGE
-BUGWK79454 : svg/text/text-viewbox-rescale.html = IMAGE
+BUGWK79454 MAC : svg/text/text-rescale.html = IMAGE
+BUGWK79454 LINUX : svg/text/text-rescale.html = IMAGE PASS
+BUGWK79454 MAC WIN : svg/text/text-viewbox-rescale.html = IMAGE
 
 // Flaky for DEBUG since r108585
 BUGWK79455 DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS IMAGE+TEXT
