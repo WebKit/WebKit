@@ -507,9 +507,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     static int docID = 0;
     m_docID = docID++;
     
-#ifndef NDEBUG
-    m_updatingStyleSelector = false;
-#endif
     InspectorCounters::incrementCounter(InspectorCounters::DocumentCounter);
 }
 
@@ -1847,7 +1844,6 @@ void Document::createStyleSelector()
     
 inline void Document::clearStyleSelector()
 {
-    ASSERT(!m_updatingStyleSelector);
     m_styleSelector.clear();
 }
 
@@ -3290,8 +3286,6 @@ void Document::analyzeStylesheetChange(StyleSelectorUpdateFlag updateFlag, const
 
 bool Document::updateActiveStylesheets(StyleSelectorUpdateFlag updateFlag)
 {
-    ASSERT(!m_updatingStyleSelector);
-
     if (m_inStyleRecalc) {
         // SVG <use> element may manage to invalidate style selector in the middle of a style recalc.
         // https://bugs.webkit.org/show_bug.cgi?id=54344
@@ -3313,16 +3307,7 @@ bool Document::updateActiveStylesheets(StyleSelectorUpdateFlag updateFlag)
     if (requiresStyleSelectorReset)
         clearStyleSelector();
     else {
-#ifndef NDEBUG
-        m_updatingStyleSelector = true;
-#endif
-        // Detach the style selector temporarily so it can't get deleted during appendAuthorStylesheets
-        OwnPtr<CSSStyleSelector> detachedStyleSelector = m_styleSelector.release();
-        detachedStyleSelector->appendAuthorStylesheets(m_styleSheets->length(), newStylesheets);
-        m_styleSelector = detachedStyleSelector.release();
-#ifndef NDEBUG
-        m_updatingStyleSelector = false;
-#endif
+        m_styleSelector->appendAuthorStylesheets(m_styleSheets->length(), newStylesheets);
         resetCSSFeatureFlags();
     }
     m_styleSheets->swap(newStylesheets);

@@ -1462,11 +1462,7 @@ private:
 #endif
 
     Timer<Document> m_pendingTasksTimer;
-    Vector<OwnPtr<Task> > m_pendingTasks;
-    
-#ifndef NDEBUG
-    bool m_updatingStyleSelector;
-#endif
+    Vector<OwnPtr<Task> > m_pendingTasks;    
 };
 
 // Put these methods here, because they require the Document definition, but we really want to inline them.
