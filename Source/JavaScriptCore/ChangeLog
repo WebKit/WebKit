@@ -1,3 +1,10 @@
+2012-03-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed build fix for platforms that have DFG_JIT disabled but PARALLEL_GC enabled.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+
 2012-03-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFGCodeBlocks should not trace CodeBlocks that are also going to be traced by
