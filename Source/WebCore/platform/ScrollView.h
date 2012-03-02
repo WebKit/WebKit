@@ -272,6 +272,7 @@ public:
     virtual bool scrollbarCornerPresent() const;
     virtual IntRect scrollCornerRect() const;
     virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
+    virtual void paintScrollbar(GraphicsContext*, Scrollbar*, const IntRect&);
 
     virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const;
     virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;

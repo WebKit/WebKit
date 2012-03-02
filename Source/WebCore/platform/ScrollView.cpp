@@ -970,6 +970,11 @@ void ScrollView::paintScrollCorner(GraphicsContext* context, const IntRect& corn
     ScrollbarTheme::theme()->paintScrollCorner(this, context, cornerRect);
 }
 
+void ScrollView::paintScrollbar(GraphicsContext* context, Scrollbar* bar, const IntRect& rect)
+{
+    bar->paint(context, rect);
+}
+
 void ScrollView::invalidateScrollCornerRect(const IntRect& rect)
 {
     invalidateRect(rect);
@@ -982,13 +987,13 @@ void ScrollView::paintScrollbars(GraphicsContext* context, const IntRect& rect)
         && !layerForHorizontalScrollbar()
 #endif
                                       )
-        m_horizontalScrollbar->paint(context, rect);
+        paintScrollbar(context, m_horizontalScrollbar.get(), rect);
     if (m_verticalScrollbar
 #if USE(ACCELERATED_COMPOSITING)
         && !layerForVerticalScrollbar()
 #endif
                                     )
-        m_verticalScrollbar->paint(context, rect);
+        paintScrollbar(context, m_verticalScrollbar.get(), rect);
 
 #if USE(ACCELERATED_COMPOSITING)
     if (layerForScrollCorner())

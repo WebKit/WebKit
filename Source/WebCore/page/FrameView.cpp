@@ -2702,11 +2702,26 @@ void FrameView::paintScrollCorner(GraphicsContext* context, const IntRect& corne
     }
 
     if (m_scrollCorner) {
+        bool needsBackgorund = m_frame->page() && m_frame->page()->mainFrame() == m_frame;
+        if (needsBackgorund)
+            context->fillRect(cornerRect, baseBackgroundColor(), ColorSpaceDeviceRGB);
         m_scrollCorner->paintIntoRect(context, cornerRect.location(), cornerRect);
         return;
     }
 
     ScrollView::paintScrollCorner(context, cornerRect);
+}
+
+void FrameView::paintScrollbar(GraphicsContext* context, Scrollbar* bar, const IntRect& rect)
+{
+    bool needsBackgorund = bar->isCustomScrollbar() && (m_frame->page() && m_frame->page()->mainFrame() == m_frame);
+    if (needsBackgorund) {
+        IntRect toFill = bar->frameRect();
+        toFill.intersect(rect);
+        context->fillRect(toFill, baseBackgroundColor(), ColorSpaceDeviceRGB);
+    }
+
+    ScrollView::paintScrollbar(context, bar, rect);
 }
 
 Color FrameView::documentBackgroundColor() const
