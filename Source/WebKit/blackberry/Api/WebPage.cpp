@@ -3020,6 +3020,7 @@ IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
     }
 
     ViewportAttributes result = computeViewportAttributes(m_viewportArguments, desktopWidth, deviceWidth, deviceHeight, deviceDPI, m_defaultLayoutSize);
+    m_page->setDeviceScaleFactor(result.devicePixelRatio);
     return IntSize(result.layoutSize.width(), result.layoutSize.height());
 }
 

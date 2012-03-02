@@ -1,3 +1,17 @@
+2012-03-02  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Set the devicePixelRatio from the results of computeViewportAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=80160
+
+        Reviewed by Antonio Gomes.
+
+        Tested by going to layout test fast/viewport/viewport-95.html and viewport-93.html
+        Previously when executing window.devicePixelRatio these two pages returned 1 now
+        they report the devicePixelRatio returned by computeViewportAttributes.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+
 2012-03-02  Jacky Jiang  <zhajiang@rim.com>
 
         Fix a warning in InputHandler::learnText()
