@@ -474,7 +474,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     m_backingStore = m_backingStoreClient->backingStore();
 
     m_page->settings()->setSpatialNavigationEnabled(m_webSettings->isSpatialNavigationEnabled());
-    blockClickRadius = int(roundf(0.35 * Platform::Graphics::Screen::pixelsPerInch(0).width())); // The clicked rectangle area should be a fixed unit of measurement.
+    blockClickRadius = int(roundf(0.35 * Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(0).width())); // The clicked rectangle area should be a fixed unit of measurement.
 
     m_page->settings()->setDelegateSelectionPaint(true);
 }
@@ -1618,7 +1618,7 @@ Platform::IntSize WebPage::viewportSize() const
 
 IntSize WebPagePrivate::transformedViewportSize() const
 {
-    return Platform::Graphics::Screen::size();
+    return Platform::Graphics::Screen::primaryScreen()->size();
 }
 
 IntRect WebPagePrivate::transformedVisibleContentsRect() const
@@ -2154,10 +2154,10 @@ IntSize WebPagePrivate::fixedLayoutSize(bool snapToIncrement) const
             // layout width.
 #if ENABLE(ORIENTATION_EVENTS)
             minWidth = m_mainFrame->orientation() % 180
-                ? Platform::Graphics::Screen::height()
-                : Platform::Graphics::Screen::width();
+                ? Platform::Graphics::Screen::primaryScreen()->height()
+                : Platform::Graphics::Screen::primaryScreen()->width();
 #else
-            minWidth = Platform::Graphics::Screen::width();
+            minWidth = Platform::Graphics::Screen::primaryScreen()->width();
 #endif
         }
     }
@@ -3009,9 +3009,9 @@ IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
         return IntSize();
 
     int desktopWidth = defaultMaxLayoutSize().width();
-    int deviceWidth = Platform::Graphics::Screen::width();
-    int deviceHeight = Platform::Graphics::Screen::height();
-    FloatSize currentPPI = Platform::Graphics::Screen::pixelsPerInch(-1);
+    int deviceWidth = Platform::Graphics::Screen::primaryScreen()->width();
+    int deviceHeight = Platform::Graphics::Screen::primaryScreen()->height();
+    FloatSize currentPPI = Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(-1);
     int deviceDPI = int(roundf((currentPPI.width() + currentPPI.height()) / 2));
     if (m_viewportArguments.targetDensityDpi == ViewportArguments::ValueAuto) {
         // Auto means 160dpi if we leave it alone. This looks terrible for pages wanting 1:1.
@@ -3378,7 +3378,7 @@ void WebPagePrivate::setDefaultLayoutSize(const IntSize& size)
     if (size == m_defaultLayoutSize)
         return;
 
-    IntSize screenSize = Platform::Graphics::Screen::size();
+    IntSize screenSize = Platform::Graphics::Screen::primaryScreen()->size();
     ASSERT(size.width() <= screenSize.width() && size.height() <= screenSize.height());
     m_defaultLayoutSize = size.expandedTo(minimumLayoutSize).shrunkTo(screenSize);
 
@@ -5538,8 +5538,8 @@ IntSize WebPagePrivate::defaultMaxLayoutSize()
 {
     static IntSize size;
     if (size.isEmpty())
-        size = IntSize(std::max(1024, Platform::Graphics::Screen::landscapeWidth()),
-                       std::max(768, Platform::Graphics::Screen::landscapeHeight()));
+        size = IntSize(std::max(1024, Platform::Graphics::Screen::primaryScreen()->landscapeWidth()),
+                       std::max(768, Platform::Graphics::Screen::primaryScreen()->landscapeHeight()));
 
     return size;
 }

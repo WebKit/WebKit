@@ -43,12 +43,12 @@ int screenDepth(Widget*)
 
 FloatRect screenAvailableRect(Widget* widget)
 {
-    return FloatRect(FloatPoint(), FloatSize(IntSize(BlackBerry::Platform::Graphics::Screen::size())));
+    return FloatRect(FloatPoint(), FloatSize(IntSize(BlackBerry::Platform::Graphics::Screen::primaryScreen()->size())));
 }
 
 FloatRect screenRect(Widget* widget)
 {
-    return FloatRect(FloatPoint(), FloatSize(IntSize(BlackBerry::Platform::Graphics::Screen::size())));
+    return FloatRect(FloatPoint(), FloatSize(IntSize(BlackBerry::Platform::Graphics::Screen::primaryScreen()->size())));
 }
 
 } // namespace WebCore

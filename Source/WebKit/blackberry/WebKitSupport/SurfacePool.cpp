@@ -38,7 +38,7 @@ namespace WebKit {
 #if USE(ACCELERATED_COMPOSITING) && ENABLE_COMPOSITING_SURFACE
 static PassRefPtr<BackingStoreCompositingSurface> createCompositingSurface()
 {
-    BlackBerry::Platform::IntSize screenSize = BlackBerry::Platform::Graphics::Screen::size();
+    BlackBerry::Platform::IntSize screenSize = BlackBerry::Platform::Graphics::Screen::primaryScreen()->size();
     return BackingStoreCompositingSurface::create(screenSize, false /*doubleBuffered*/);
 }
 #endif

@@ -1,3 +1,29 @@
+2012-03-02  Adam Treat  <atreat@rim.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=80161
+        PR: 141157
+
+        BlackBerryPlatformScreen.h API has been updated.  Reflect those
+        changes in our usage.
+
+        Reviewed by Antonio Gomes.
+        Internally reviewed by Jakob Petsovits.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::tileWidth):
+        (BlackBerry::WebKit::BackingStorePrivate::tileHeight):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPagePrivate::transformedViewportSize):
+        (BlackBerry::WebKit::WebPagePrivate::fixedLayoutSize):
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+        (BlackBerry::WebKit::WebPagePrivate::setDefaultLayoutSize):
+        (BlackBerry::WebKit::WebPagePrivate::defaultMaxLayoutSize):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::restoreViewState):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::createCompositingSurface):
+
 2012-03-02  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Set the devicePixelRatio from the results of computeViewportAttributes

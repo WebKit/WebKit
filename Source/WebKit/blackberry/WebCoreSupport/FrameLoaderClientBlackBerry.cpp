@@ -1058,7 +1058,7 @@ void FrameLoaderClientBlackBerry::restoreViewState()
 
     // When rotate happens, only zoom when previous page was zoomToFitScale, otherwise keep old scale.
     if (orientationChanged && viewState.isZoomToFitScale)
-        scale = BlackBerry::Platform::Graphics::Screen::width() * scale / static_cast<double>(BlackBerry::Platform::Graphics::Screen::height());
+        scale = BlackBerry::Platform::Graphics::Screen::primaryScreen()->width() * scale / static_cast<double>(BlackBerry::Platform::Graphics::Screen::primaryScreen()->height());
     m_webPagePrivate->m_backingStore->d->suspendScreenAndBackingStoreUpdates(); // don't flash checkerboard for the setScrollPosition call
     m_frame->view()->setContentsSizeFromHistory(contentsSize);
 
