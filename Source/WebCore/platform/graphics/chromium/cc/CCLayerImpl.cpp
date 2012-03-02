@@ -266,7 +266,7 @@ String CCLayerImpl::layerTreeAsText() const
 void CCLayerImpl::dumpLayer(TextStream& ts, int indent) const
 {
     writeIndent(ts, indent);
-    ts << layerTypeAsString() << "(" << m_name << ")\n";
+    ts << layerTypeAsString() << "(" << m_debugName << ")\n";
     dumpLayerProperties(ts, indent+2);
     if (m_replicaLayer) {
         writeIndent(ts, indent+2);

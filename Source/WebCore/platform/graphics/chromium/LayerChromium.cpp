@@ -485,11 +485,6 @@ LayerChromium* LayerChromium::parent() const
     return m_parent;
 }
 
-void LayerChromium::setName(const String& name)
-{
-    m_name = name;
-}
-
 void LayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
 {
     // Simply mark the contents as dirty. For non-root layers, the call to
@@ -511,6 +506,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setContentBounds(contentBounds());
     layer->setDebugBorderColor(m_debugBorderColor);
     layer->setDebugBorderWidth(m_debugBorderWidth);
+    layer->setDebugName(m_debugName.isolatedCopy()); // We have to use isolatedCopy() here to safely pass ownership to another thread.
     layer->setDoubleSided(m_doubleSided);
     layer->setDrawsContent(drawsContent());
     layer->setFilters(filters());
@@ -525,7 +521,6 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         layer->setNonFastScrollableRegion(m_nonFastScrollableRegion);
         m_nonFastScrollableRegionChanged = false;
     }
-    layer->setName(m_name);
     layer->setOpaque(m_opaque);
     layer->setOpacity(m_opacity);
     layer->setPosition(m_position);
@@ -565,6 +560,13 @@ void LayerChromium::setDebugBorderWidth(float width)
     m_debugBorderWidth = width;
     setNeedsCommit();
 }
+
+void LayerChromium::setDebugName(const String& debugName)
+{
+    m_debugName = debugName;
+    setNeedsCommit();
+}
+
 
 void LayerChromium::setContentsScale(float contentsScale)
 {

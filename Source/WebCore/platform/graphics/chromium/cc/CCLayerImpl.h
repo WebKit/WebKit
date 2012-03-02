@@ -135,15 +135,16 @@ public:
     void setSublayerTransform(const TransformationMatrix&);
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
-    void setName(const String& name) { m_name = name; }
-    const String& name() const { return m_name; }
-
     // Debug layer border - visual effect only, do not change geometry/clipping/etc.
     void setDebugBorderColor(Color);
     Color debugBorderColor() const { return m_debugBorderColor; }
     void setDebugBorderWidth(float);
     float debugBorderWidth() const { return m_debugBorderWidth; }
     bool hasDebugBorders() const;
+
+    // Debug layer name.
+    void setDebugName(const String& debugName) { m_debugName = debugName; }
+    String debugName() const { return m_debugName; }
 
     CCRenderSurface* renderSurface() const { return m_renderSurface.get(); }
     void createRenderSurface();
@@ -294,8 +295,6 @@ private:
     int m_debugID;
 #endif
 
-    String m_name;
-
     // Render surface this layer draws into. This is a surface that can belong
     // either to this layer (if m_targetRenderSurface == m_renderSurface) or
     // to an ancestor of this layer. The target render surface determines the
@@ -310,6 +309,9 @@ private:
     // Debug borders.
     Color m_debugBorderColor;
     float m_debugBorderWidth;
+
+    // Debug layer name.
+    String m_debugName;
 
     FilterOperations m_filters;
 

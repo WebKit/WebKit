@@ -117,11 +117,11 @@ void GraphicsLayerChromium::setName(const String& inName)
 void GraphicsLayerChromium::updateNames()
 {
     if (m_layer)
-        m_layer->setName("Layer for " + m_nameBase);
+        m_layer->setDebugName("Layer for " + m_nameBase);
     if (m_transformLayer)
-        m_transformLayer->setName("TransformLayer for " + m_nameBase);
+        m_transformLayer->setDebugName("TransformLayer for " + m_nameBase);
     if (m_contentsLayer)
-        m_contentsLayer->setName("ContentsLayer for " + m_nameBase);
+        m_contentsLayer->setDebugName("ContentsLayer for " + m_nameBase);
 }
 
 bool GraphicsLayerChromium::setChildren(const Vector<GraphicsLayer*>& children)

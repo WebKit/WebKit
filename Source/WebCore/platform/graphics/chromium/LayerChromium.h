@@ -99,9 +99,6 @@ public:
     void setMasksToBounds(bool);
     bool masksToBounds() const { return m_masksToBounds; }
 
-    void setName(const String&);
-    const String& name() const { return m_name; }
-
     void setMaskLayer(LayerChromium*);
     LayerChromium* maskLayer() const { return m_maskLayer.get(); }
 
@@ -174,6 +171,7 @@ public:
 
     void setDebugBorderColor(const Color&);
     void setDebugBorderWidth(float);
+    void setDebugName(const String&);
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 
@@ -295,6 +293,7 @@ private:
     bool m_backgroundCoversViewport;
     Color m_debugBorderColor;
     float m_debugBorderWidth;
+    String m_debugName;
     float m_opacity;
     FilterOperations m_filters;
     float m_anchorPointZ;
@@ -323,7 +322,7 @@ private:
     IntRect m_drawableContentRect;
     float m_contentsScale;
 
-    String m_name;
+    bool m_pageScaleDirty;
 
     CCLayerAnimationDelegate* m_layerAnimationDelegate;
 };

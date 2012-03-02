@@ -239,7 +239,7 @@ SkBitmap CCRenderSurface::applyFilters(LayerRendererChromium* layerRenderer)
 
 String CCRenderSurface::name() const
 {
-    return String::format("RenderSurface(id=%i,owner=%s)", m_owningLayer->id(), m_owningLayer->name().utf8().data());
+    return String::format("RenderSurface(id=%i,owner=%s)", m_owningLayer->id(), m_owningLayer->debugName().utf8().data());
 }
 
 static void writeIndent(TextStream& ts, int indent)
