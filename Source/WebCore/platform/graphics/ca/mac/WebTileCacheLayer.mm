@@ -58,6 +58,22 @@ using namespace WebCore;
     [super dealloc];
 }
 
+- (id)initWithLayer:(id)layer
+{
+    UNUSED_PARAM(layer);
+
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+- (id<CAAction>)actionForKey:(NSString *)key
+{
+    UNUSED_PARAM(key);
+    
+    // Disable all animations.
+    return nil;
+}
+
 - (void)setBounds:(CGRect)bounds
 {
     [super setBounds:bounds];
