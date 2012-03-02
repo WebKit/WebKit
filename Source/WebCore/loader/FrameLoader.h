@@ -119,6 +119,7 @@ public:
 
     void open(CachedFrameBase&);
     void loadItem(HistoryItem*, FrameLoadType);
+    HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
 
     static void reportLocalLoadFailed(Frame*, const String& url);
 
@@ -437,6 +438,7 @@ private:
 #endif
 
     KURL m_previousUrl;
+    RefPtr<HistoryItem> m_requestedHistoryItem;
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for
