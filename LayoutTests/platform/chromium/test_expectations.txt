@@ -1576,7 +1576,6 @@ BUGCR99500 WIN : svg/hixie/mixed/009.xml = IMAGE
 BUGCR99500 WIN : svg/text/foreignObject-text-clipping-bug.xml = IMAGE
 BUGCR99500 WIN : svg/text/scaling-font-with-geometric-precision.html = IMAGE
 BUGCR99500 WIN : svg/text/text-align-05-b.svg = IMAGE
-BUGCR99500 WIN : svg/text/text-align-06-b.svg = IMAGE
 BUGCR99500 WIN : svg/text/textPathBoundsBug.svg = IMAGE
 BUGCR99500 WIN : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE
 BUGCR99500 WIN : svg/zoom/page/zoom-hixie-mixed-009.xml = IMAGE
@@ -3229,9 +3228,7 @@ BUGWK69136 MAC SNOWLEOPARD : fast/frames/frame-set-scaling-hit.html = IMAGE
 
 // Suddenly crash sporadically.
 BUGCR99899 MAC : fast/parser/document-write-onload-ordering.html = CRASH PASS
-BUGCR99899 MAC : fast/frames/sandboxed-iframe-plugins.html = CRASH TEXT PASS
 // New failures from WebKit r51577
-BUGCR29164 WIN LINUX : fast/frames/sandboxed-iframe-plugins.html = TEXT
 BUGWK72530 SLOW DEBUG : fast/frames/sandboxed-iframe-navigation-targetlink.html = CRASH PASS
 
 BUGWK69998 LINUX WIN : plugins/refcount-leaks.html = PASS TEXT
@@ -3678,9 +3675,6 @@ BUGWK77889 LEOPARD SNOWLEOPARD DEBUG : fast/forms/listbox-clear-restore.html = P
 
 BUGWK77183 : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
 
-// SVGLoad event timing changes require some rebaselines.
-BUGWK78084 : svg/custom/polyline-setattribute-points-null.svg = IMAGE+TEXT
-
 // Massive rebaselining, some rebaseline just don't make sense.
 BUGWK78115 WIN : svg/custom/repaint-on-constant-size-change.svg = IMAGE
 
@@ -3709,9 +3703,6 @@ BUGWK78830 : svg/custom/mask-invalidation.svg = IMAGE
 WONTFIX : fast/js/stack-trace.html = TEXT
 
 // Needs a rebaseline, as svg/dynamic-updates tests are now using the repaint.js harness.
-BUGWK78219 : svg/dynamic-updates/SVGAElement-dom-target-attr.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGAElement-svgdom-href-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGAElement-svgdom-target-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-dom-cx-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-dom-cy-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-dom-r-attr.html = IMAGE
@@ -3719,7 +3710,6 @@ BUGWK78219 : svg/dynamic-updates/SVGCircleElement-dom-requiredFeatures.html = IM
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-r-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-requiredFeatures.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCursorElement-dom-x-attr.html = IMAGE
@@ -3944,7 +3934,6 @@ BUGWK78219 : svg/dynamic-updates/SVGLineElement-dom-x1-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGLineElement-dom-x2-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGLineElement-dom-y1-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGLineElement-dom-y2-attr.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGLineElement-svgdom-x1-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGLineElement-svgdom-x2-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGLineElement-svgdom-y1-prop.html = IMAGE
@@ -4068,8 +4057,6 @@ BUGWK65072 : svg/text/exs-display-none.svg = IMAGE IMAGE+TEXT
 BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
 
 // Needs new baselines.
-BUGWK41386 : svg/foreignObject/fO-display-none-with-relative-pos-content.svg = FAIL
-BUGWK41386 : svg/foreignObject/fO-display-none.svg = FAIL
 BUGWK41386 : svg/foreignObject/fO-parent-display-none-with-relative-pos-content.svg = FAIL
 BUGWK41386 : svg/foreignObject/fO-parent-display-none.svg = FAIL
 BUGWK41386 : svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content.svg = FAIL
