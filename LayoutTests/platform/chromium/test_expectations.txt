@@ -3123,6 +3123,12 @@ BUGWK66989 : transforms/3d = PASS FAIL
 // after WebKit bug r62684 is landed.
 BUGWK62684 WIN LINUX : fast/ruby/overhang-horizontal.html = FAIL
 
+// Temporary failure. This failure is going to be rebaselined after confirming the results
+BUGWK54623 : fast/block/float/026.html = FAIL
+BUGWK54623 : fast/block/float/028.html = FAIL
+BUGWK54623 : fast/events/offsetX-offsetY.html = FAIL
+BUGWK54623 : fast/overflow/unreachable-overflow-rtl-bug.html = FAIL
+
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 
