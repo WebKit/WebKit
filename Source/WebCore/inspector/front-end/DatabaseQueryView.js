@@ -61,7 +61,7 @@ WebInspector.DatabaseQueryView.prototype = {
             this.prompt.moveCaretToEndOfPrompt();
     },
     
-    completions: function(wordRange, force, completionsReadyCallback)
+    completions: function(textPrompt, wordRange, force, completionsReadyCallback)
     {
         var prefix = wordRange.toString().toLowerCase();
         if (!prefix.length && !force)

@@ -192,6 +192,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             for (var i = 0; i < properties.length; ++i) {
                 if (this.treeOutline.section.skipProto && properties[i].name === "__proto__")
                     continue;
+                properties[i].parentObject = this.property.value;
                 this.appendChild(new this.treeOutline.section.treeElementConstructor(properties[i]));
             }
         };
@@ -201,7 +202,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
     ondblclick: function(event)
     {
         if (this.property.writable)
-            this.startEditing();
+            this.startEditing(event);
     },
 
     onattach: function()
@@ -304,28 +305,56 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             this.parent.shouldRefreshChildren = true;
     },
 
-    startEditing: function()
+    renderPromptAsBlock: function()
     {
-        if (WebInspector.isBeingEdited(this.valueElement) || !this.treeOutline.section.editable || this._readOnly)
+        return false;
+    },
+
+    /**
+     * @param {Event=} event
+     */
+    elementAndValueToEdit: function(event)
+    {
+        return [this.valueElement, (typeof this.valueElement._originalTextContent === "string") ? this.valueElement._originalTextContent : undefined];
+    },
+
+    startEditing: function(event)
+    {
+        var elementAndValueToEdit = this.elementAndValueToEdit(event);
+        var elementToEdit = elementAndValueToEdit[0];
+        var valueToEdit = elementAndValueToEdit[1];
+
+        if (WebInspector.isBeingEdited(elementToEdit) || !this.treeOutline.section.editable || this._readOnly)
             return;
 
-        var context = { expanded: this.expanded };
+        // Edit original source.
+        if (typeof valueToEdit !== "undefined")
+            elementToEdit.textContent = valueToEdit;
+
+        var context = { expanded: this.expanded, elementToEdit: elementToEdit, previousContent: elementToEdit.textContent };
 
         // Lie about our children to prevent expanding on double click and to collapse subproperties.
         this.hasChildren = false;
 
         this.listItemElement.addStyleClass("editing-sub-part");
 
-        // Edit original source.
-        if (typeof this.valueElement._originalTextContent === "string")
-            this.valueElement.textContent = this.valueElement._originalTextContent;
+        this._prompt = new WebInspector.ObjectPropertyPrompt(this.editingCommitted.bind(this, null, elementToEdit.textContent, context.previousContent, context), this.editingCancelled.bind(this, null, context), this.renderPromptAsBlock());
 
-        var config = new WebInspector.EditingConfig(this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
-        WebInspector.startEditing(this.valueElement, config);
+        function blurListener()
+        {
+            this.editingCommitted(null, elementToEdit.textContent, context.previousContent, context);
+        }
+
+        var proxyElement = this._prompt.attachAndStartEditing(elementToEdit, blurListener.bind(this));
+        window.getSelection().setBaseAndExtent(elementToEdit, 0, elementToEdit, 1);
+        proxyElement.addEventListener("keydown", this._promptKeyDown.bind(this, context), false);
     },
 
     editingEnded: function(context)
     {
+        this._prompt.detach();
+        delete this._prompt;
+
         this.listItemElement.scrollLeft = 0;
         this.listItemElement.removeStyleClass("editing-sub-part");
         if (context.expanded)
@@ -334,8 +363,8 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
     editingCancelled: function(element, context)
     {
-        this.update();
         this.editingEnded(context);
+        this.update();
     },
 
     editingCommitted: function(element, userInput, previousContent, context)
@@ -343,9 +372,21 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         if (userInput === previousContent)
             return this.editingCancelled(element, context); // nothing changed, so cancel
 
-        this.applyExpression(userInput, true);
-
         this.editingEnded(context);
+        this.applyExpression(userInput, true);
+    },
+
+    _promptKeyDown: function(context, event)
+    {
+        if (isEnterKey(event)) {
+            event.stopPropagation();
+            event.preventDefault();
+            return this.editingCommitted(null, context.elementToEdit.textContent, context.previousContent, context);
+        }
+        if (event.keyIdentifier === "U+001B") { // Esc
+            event.stopPropagation();
+            return this.editingCancelled(null, context);
+        }
     },
 
     applyExpression: function(expression, updateInterface)
@@ -374,6 +415,10 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
 WebInspector.ObjectPropertyTreeElement.prototype.__proto__ = TreeElement.prototype;
 
+/**
+ * @constructor
+ * @extends {TreeElement}
+ */
 WebInspector.ArrayGroupingTreeElement = function(treeElementConstructor, properties, fromIndex, toIndex)
 {
     this._properties = properties;
@@ -451,3 +496,19 @@ WebInspector.ArrayGroupingTreeElement.prototype = {
 }
 
 WebInspector.ArrayGroupingTreeElement.prototype.__proto__ = TreeElement.prototype;
+
+/**
+ * @constructor
+ * @extends {WebInspector.TextPrompt}
+ * @param {boolean=} renderAsBlock
+ */
+WebInspector.ObjectPropertyPrompt = function(commitHandler, cancelHandler, renderAsBlock)
+{
+    const ExpressionStopCharacters = " =:[({;,!+-*/&|^<>."; // Same as in ConsoleView.js + "."
+    WebInspector.TextPrompt.call(this, WebInspector.consoleView.completionsForTextPrompt.bind(WebInspector.consoleView), ExpressionStopCharacters);
+    this.setSuggestBoxEnabled("generic-suggest");
+    if (renderAsBlock)
+        this.renderAsBlock();
+}
+
+WebInspector.ObjectPropertyPrompt.prototype.__proto__ = WebInspector.TextPrompt.prototype;

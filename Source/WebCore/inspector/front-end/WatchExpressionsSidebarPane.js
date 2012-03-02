@@ -344,30 +344,25 @@ WebInspector.WatchExpressionTreeElement.prototype = {
         this.treeOutline.section.updateExpression(this, null);
     },
 
-    startEditing: function()
+    renderPromptAsBlock: function()
     {
-        if (WebInspector.isBeingEdited(this.nameElement) || !this.treeOutline.section.editable)
-            return;
+        return true;
+    },
 
-        this.nameElement.textContent = this.property.name.trim();
-
-        var context = { expanded: this.expanded };
-
-        // collapse temporarily, if required
-        this.hasChildren = false;
-
-        this.listItemElement.addStyleClass("editing-sub-part");
-
-        WebInspector.startEditing(this.nameElement, new WebInspector.EditingConfig(this.editingCommitted.bind(this), this.editingCancelled.bind(this), context));
+    /**
+     * @param {Event=} event
+     */
+    elementAndValueToEdit: function(event)
+    {
+        return [this.nameElement, this.property.name.trim()];
     },
 
     editingCancelled: function(element, context)
     {
-        if (!this.nameElement.textContent)
+        if (!context.elementToEdit.textContent)
             this.treeOutline.section.updateExpression(this, null);
 
-        this.update();
-        this.editingEnded(context);
+        WebInspector.ObjectPropertyTreeElement.prototype.editingCancelled.call(this, element, context);
     },
 
     applyExpression: function(expression, updateInterface)

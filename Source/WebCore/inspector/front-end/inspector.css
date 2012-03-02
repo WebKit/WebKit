@@ -1379,7 +1379,7 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     padding-top: 2px;
 }
 
-.watch-expressions > li.editing-sub-part .name {
+.watch-expressions > li.editing-sub-part .text-prompt {
     display: block;
     width: 100%;
 }

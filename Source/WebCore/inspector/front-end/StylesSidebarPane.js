@@ -2583,7 +2583,7 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
         return false;
     },
 
-    _buildPropertyCompletions: function(wordRange, force, completionsReadyCallback)
+    _buildPropertyCompletions: function(textPrompt, wordRange, force, completionsReadyCallback)
     {
         var prefix = wordRange.toString().toLowerCase();
         if (!prefix && !force)
