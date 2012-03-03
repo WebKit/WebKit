@@ -3518,19 +3518,6 @@ BUGWK76647 WIN LINUX : tables/mozilla_expected_failures/bugs/97619.html = IMAGE+
 // Just needs a rebaseline.
 BUGWK69714 WIN LINUX : svg/clip-path/clip-path-tspan-and-stroke.svg = IMAGE+TEXT
 BUGWK77103 MAC : svg/repaint/image-href-change.svg = IMAGE
-BUGWK77198 : svg/filters/feImage-target-remove-from-document.svg = IMAGE
-BUGWK77198 : svg/filters/feImage-target-add-to-document.svg = IMAGE
-BUGWK77198 : svg/filters/feImage-target-reappend-to-document.svg = IMAGE
-BUGWK77198 : svg/filters/feImage-target-changes-id.svg = IMAGE
-BUGWK77198 : svg/filters/feImage-target-id-change.svg = IMAGE
-BUGWK77205 : svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox.svg = IMAGE+TEXT IMAGE
-BUGWK77205 : svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse.svg = IMAGE+TEXT IMAGE
-BUGWK77205 : svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox.svg = IMAGE+TEXT IMAGE
-BUGWK77205 : svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg = IMAGE+TEXT IMAGE
-BUGWK77205 : svg/filters/feImage-position.svg = IMAGE+TEXT IMAGE
-BUGWK77205 : svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox.svg = IMAGE+TEXT IMAGE
-BUGWK77205 : svg/filters/feImage-subregions-preseveAspectRatio-none.svg = IMAGE+TEXT IMAGE
-BUGWK77205 : svg/filters/feImage-subregions.svg = IMAGE+TEXT IMAGE
 
 // Need to implement file name logging.
 BUGWK76572 : http/tests/download = FAIL
