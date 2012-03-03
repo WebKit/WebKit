@@ -1,3 +1,52 @@
+2012-03-02  Arvid Nilsson  <anilsson@rim.com>
+
+        Accelerated compositing: Checkerboard never goes away
+        https://bugs.webkit.org/show_bug.cgi?id=79020
+        RIM PR #134164
+
+        Reviewed by Adam Treat.
+
+        Checkerboard appears in accelerated compositing layers when there's no
+        texture for (part of) a layer. The layer renderer queues up some render
+        jobs and schedules a commit to make the WebKit thread process those
+        jobs. Render jobs performed during commit cause texture upload jobs to
+        be scheduled on the UI thread. Texture uploads are performed when next
+        drawing the layers.
+
+        Unfortunately, sometimes commit operation happens without a subsequent
+        call draw the layers.
+
+        In order to implement one-shot drawing sync, I added a call to
+        commitRootLayerIfNeeded() in BackingStore::renderContents(), and
+        I was lucky that most of the time, renderContents() is followed by
+        blit(Visible)Contents() which in turn draws the layers.
+        However, render is not always followed by a blit, for example when
+        rendering offscreen tiles in BackingStore::renderOnIdle(), and in
+        direct rendering mode.
+
+        Fixed by making sure that every call to commitRootLayerIfNeeded() that
+        returns true is followed by a call to drawLayersOnCommit(), unless a
+        blit was requested already.
+
+        Also tweak the logic for one-shot drawing sync to make the code in
+        drawLayersOnCommit() reusable outside of rootLayerCommitTimerFired().
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::renderOnTimer):
+        (BlackBerry::WebKit::BackingStorePrivate::renderOnIdle):
+        (BlackBerry::WebKit::BackingStorePrivate::willFireTimer):
+        (BlackBerry::WebKit::BackingStorePrivate::renderDirectToWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+        (BlackBerry::WebKit::BackingStorePrivate::renderContents):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::drawLayersOnCommitIfNeeded):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::willDrawLayersOnCommit):
+
 2012-03-02  Adam Treat  <atreat@rim.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=80161
