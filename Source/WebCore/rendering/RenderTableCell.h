@@ -91,14 +91,14 @@ public:
 
     void updateLogicalWidth(LayoutUnit);
 
-    virtual LayoutUnit borderLeft() const;
-    virtual LayoutUnit borderRight() const;
-    virtual LayoutUnit borderTop() const;
-    virtual LayoutUnit borderBottom() const;
-    virtual LayoutUnit borderStart() const;
-    virtual LayoutUnit borderEnd() const;
-    virtual LayoutUnit borderBefore() const;
-    virtual LayoutUnit borderAfter() const;
+    virtual int borderLeft() const;
+    virtual int borderRight() const;
+    virtual int borderTop() const;
+    virtual int borderBottom() const;
+    virtual int borderStart() const;
+    virtual int borderEnd() const;
+    virtual int borderBefore() const;
+    virtual int borderAfter() const;
 
     void collectBorderValues(RenderTable::CollapsedBorderValues&) const;
     static void sortBorderValues(RenderTable::CollapsedBorderValues&);
@@ -159,15 +159,15 @@ private:
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect&, bool fixed = false) const;
 
-    LayoutUnit borderHalfLeft(bool outer) const;
-    LayoutUnit borderHalfRight(bool outer) const;
-    LayoutUnit borderHalfTop(bool outer) const;
-    LayoutUnit borderHalfBottom(bool outer) const;
+    int borderHalfLeft(bool outer) const;
+    int borderHalfRight(bool outer) const;
+    int borderHalfTop(bool outer) const;
+    int borderHalfBottom(bool outer) const;
 
-    LayoutUnit borderHalfStart(bool outer) const;
-    LayoutUnit borderHalfEnd(bool outer) const;
-    LayoutUnit borderHalfBefore(bool outer) const;
-    LayoutUnit borderHalfAfter(bool outer) const;
+    int borderHalfStart(bool outer) const;
+    int borderHalfEnd(bool outer) const;
+    int borderHalfBefore(bool outer) const;
+    int borderHalfAfter(bool outer) const;
 
     CollapsedBorderValue collapsedStartBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue collapsedEndBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;

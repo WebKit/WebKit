@@ -58,6 +58,11 @@ inline IntRect pixelSnappedIntRect(const LayoutRect& rect)
     return rect;
 }
 
+inline IntRect pixelSnappedIntRect(LayoutUnit left, LayoutUnit top, LayoutUnit width, LayoutUnit height)
+{
+    return IntRect(left, top, width, height);
+}
+
 inline IntRect pixelSnappedIntRectFromEdges(LayoutUnit left, LayoutUnit top, LayoutUnit right, LayoutUnit bottom)
 {
     return IntRect(left, top, right - left, bottom - top);

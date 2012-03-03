@@ -267,11 +267,11 @@ LayoutRect RenderTableCell::clippedOverflowRectForRepaint(RenderBoxModelObject* 
         return RenderBlock::clippedOverflowRectForRepaint(repaintContainer);
 
     bool rtl = !table()->style()->isLeftToRightDirection();
-    LayoutUnit outlineSize = style()->outlineSize();
-    LayoutUnit left = max(borderHalfLeft(true), outlineSize);
-    LayoutUnit right = max(borderHalfRight(true), outlineSize);
-    LayoutUnit top = max(borderHalfTop(true), outlineSize);
-    LayoutUnit bottom = max(borderHalfBottom(true), outlineSize);
+    int outlineSize = style()->outlineSize();
+    int left = max(borderHalfLeft(true), outlineSize);
+    int right = max(borderHalfRight(true), outlineSize);
+    int top = max(borderHalfTop(true), outlineSize);
+    int bottom = max(borderHalfBottom(true), outlineSize);
     if ((left && !rtl) || (right && rtl)) {
         if (RenderTableCell* before = table()->cellBefore(this)) {
             top = max(top, before->borderHalfTop(true));
@@ -747,49 +747,49 @@ inline CollapsedBorderValue RenderTableCell::cachedCollapsedBottomBorder(RenderS
     return tableStyle->isLeftToRightDirection() ? section()->cachedCollapsedBorder(this, CBSEnd) : section()->cachedCollapsedBorder(this, CBSStart);
 }
 
-LayoutUnit RenderTableCell::borderLeft() const
+int RenderTableCell::borderLeft() const
 {
     return table()->collapseBorders() ? borderHalfLeft(false) : RenderBlock::borderLeft();
 }
 
-LayoutUnit RenderTableCell::borderRight() const
+int RenderTableCell::borderRight() const
 {
     return table()->collapseBorders() ? borderHalfRight(false) : RenderBlock::borderRight();
 }
 
-LayoutUnit RenderTableCell::borderTop() const
+int RenderTableCell::borderTop() const
 {
     return table()->collapseBorders() ? borderHalfTop(false) : RenderBlock::borderTop();
 }
 
-LayoutUnit RenderTableCell::borderBottom() const
+int RenderTableCell::borderBottom() const
 {
     return table()->collapseBorders() ? borderHalfBottom(false) : RenderBlock::borderBottom();
 }
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=46191, make the collapsed border drawing
 // work with different block flow values instead of being hard-coded to top-to-bottom.
-LayoutUnit RenderTableCell::borderStart() const
+int RenderTableCell::borderStart() const
 {
     return table()->collapseBorders() ? borderHalfStart(false) : RenderBlock::borderStart();
 }
 
-LayoutUnit RenderTableCell::borderEnd() const
+int RenderTableCell::borderEnd() const
 {
     return table()->collapseBorders() ? borderHalfEnd(false) : RenderBlock::borderEnd();
 }
 
-LayoutUnit RenderTableCell::borderBefore() const
+int RenderTableCell::borderBefore() const
 {
     return table()->collapseBorders() ? borderHalfBefore(false) : RenderBlock::borderBefore();
 }
 
-LayoutUnit RenderTableCell::borderAfter() const
+int RenderTableCell::borderAfter() const
 {
     return table()->collapseBorders() ? borderHalfAfter(false) : RenderBlock::borderAfter();
 }
 
-LayoutUnit RenderTableCell::borderHalfLeft(bool outer) const
+int RenderTableCell::borderHalfLeft(bool outer) const
 {
     RenderStyle* tableStyle = table()->style();
     if (tableStyle->isHorizontalWritingMode())
@@ -797,7 +797,7 @@ LayoutUnit RenderTableCell::borderHalfLeft(bool outer) const
     return tableStyle->isFlippedBlocksWritingMode() ? borderHalfAfter(outer) : borderHalfBefore(outer);
 }
 
-LayoutUnit RenderTableCell::borderHalfRight(bool outer) const
+int RenderTableCell::borderHalfRight(bool outer) const
 {
     RenderStyle* tableStyle = table()->style();
     if (tableStyle->isHorizontalWritingMode())
@@ -805,7 +805,7 @@ LayoutUnit RenderTableCell::borderHalfRight(bool outer) const
     return tableStyle->isFlippedBlocksWritingMode() ? borderHalfBefore(outer) : borderHalfAfter(outer);
 }
 
-LayoutUnit RenderTableCell::borderHalfTop(bool outer) const
+int RenderTableCell::borderHalfTop(bool outer) const
 {
     RenderStyle* tableStyle = table()->style();
     if (tableStyle->isHorizontalWritingMode())
@@ -813,7 +813,7 @@ LayoutUnit RenderTableCell::borderHalfTop(bool outer) const
     return tableStyle->isLeftToRightDirection() ? borderHalfStart(outer) : borderHalfEnd(outer);
 }
 
-LayoutUnit RenderTableCell::borderHalfBottom(bool outer) const
+int RenderTableCell::borderHalfBottom(bool outer) const
 {
     RenderStyle* tableStyle = table()->style();
     if (tableStyle->isHorizontalWritingMode())
@@ -821,7 +821,7 @@ LayoutUnit RenderTableCell::borderHalfBottom(bool outer) const
     return tableStyle->isLeftToRightDirection() ? borderHalfEnd(outer) : borderHalfStart(outer);
 }
 
-LayoutUnit RenderTableCell::borderHalfStart(bool outer) const
+int RenderTableCell::borderHalfStart(bool outer) const
 {
     CollapsedBorderValue border = collapsedStartBorder(DoNotIncludeBorderColor);
     if (border.exists())
@@ -829,7 +829,7 @@ LayoutUnit RenderTableCell::borderHalfStart(bool outer) const
     return 0;
 }
     
-LayoutUnit RenderTableCell::borderHalfEnd(bool outer) const
+int RenderTableCell::borderHalfEnd(bool outer) const
 {
     CollapsedBorderValue border = collapsedEndBorder(DoNotIncludeBorderColor);
     if (border.exists())
@@ -837,7 +837,7 @@ LayoutUnit RenderTableCell::borderHalfEnd(bool outer) const
     return 0;
 }
 
-LayoutUnit RenderTableCell::borderHalfBefore(bool outer) const
+int RenderTableCell::borderHalfBefore(bool outer) const
 {
     CollapsedBorderValue border = collapsedBeforeBorder(DoNotIncludeBorderColor);
     if (border.exists())
@@ -845,7 +845,7 @@ LayoutUnit RenderTableCell::borderHalfBefore(bool outer) const
     return 0;
 }
 
-LayoutUnit RenderTableCell::borderHalfAfter(bool outer) const
+int RenderTableCell::borderHalfAfter(bool outer) const
 {
     CollapsedBorderValue border = collapsedAfterBorder(DoNotIncludeBorderColor);
     if (border.exists())
@@ -981,16 +981,16 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     CollapsedBorderValue bottomVal = cachedCollapsedBottomBorder(tableStyle);
      
     // Adjust our x/y/width/height so that we paint the collapsed borders at the correct location.
-    LayoutUnit topWidth = topVal.width();
-    LayoutUnit bottomWidth = bottomVal.width();
-    LayoutUnit leftWidth = leftVal.width();
-    LayoutUnit rightWidth = rightVal.width();
-    
-    LayoutUnit x = paintRect.x() - leftWidth / 2;
-    LayoutUnit y = paintRect.y() - topWidth / 2;
-    LayoutUnit w = paintRect.width() + leftWidth / 2 + (rightWidth + 1) / 2;
-    LayoutUnit h = paintRect.height() + topWidth / 2 + (bottomWidth + 1) / 2;
-    
+    int topWidth = topVal.width();
+    int bottomWidth = bottomVal.width();
+    int leftWidth = leftVal.width();
+    int rightWidth = rightVal.width();
+
+    IntRect borderRect = pixelSnappedIntRect(paintRect.x() - leftWidth / 2,
+            paintRect.y() - topWidth / 2,
+            paintRect.width() + leftWidth / 2 + (rightWidth + 1) / 2,
+            paintRect.height() + topWidth / 2 + (bottomWidth + 1) / 2);
+
     EBorderStyle topStyle = collapsedBorderStyle(topVal.style());
     EBorderStyle bottomStyle = collapsedBorderStyle(bottomVal.style());
     EBorderStyle leftStyle = collapsedBorderStyle(leftVal.style());
@@ -1004,10 +1004,10 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     // We never paint diagonals at the joins.  We simply let the border with the highest
     // precedence paint on top of borders with lower precedence.  
     CollapsedBorders borders;
-    borders.addBorder(topVal, BSTop, renderTop, x, y, x + w, y + topWidth, topStyle);
-    borders.addBorder(bottomVal, BSBottom, renderBottom, x, y + h - bottomWidth, x + w, y + h, bottomStyle);
-    borders.addBorder(leftVal, BSLeft, renderLeft, x, y, x + leftWidth, y + h, leftStyle);
-    borders.addBorder(rightVal, BSRight, renderRight, x + w - rightWidth, y, x + w, y + h, rightStyle);
+    borders.addBorder(topVal, BSTop, renderTop, borderRect.x(), borderRect.y(), borderRect.maxX(), borderRect.y() + topWidth, topStyle);
+    borders.addBorder(bottomVal, BSBottom, renderBottom, borderRect.x(), borderRect.maxY() - bottomWidth, borderRect.maxX(), borderRect.maxY(), bottomStyle);
+    borders.addBorder(leftVal, BSLeft, renderLeft, borderRect.x(), borderRect.y(), borderRect.x() + leftWidth, borderRect.maxY(), leftStyle);
+    borders.addBorder(rightVal, BSRight, renderRight, borderRect.maxX() - rightWidth, borderRect.y(), borderRect.maxX(), borderRect.maxY(), rightStyle);
 
     bool antialias = shouldAntialiasLines(graphicsContext);
     
