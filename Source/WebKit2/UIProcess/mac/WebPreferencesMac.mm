@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebPreferences.h"
 
-#import "PageClientImpl.h"
+#import "StringUtilities.h"
 #import <wtf/text/StringConcatenate.h>
 
 namespace WebKit {

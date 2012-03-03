@@ -1,5 +1,28 @@
 2012-03-02  Andy Estes  <aestes@apple.com>
 
+        Move nsStringFromWebCoreString out of PageClientImpl
+        https://bugs.webkit.org/show_bug.cgi?id=80202
+
+        Reviewed by Sam Weinig.
+
+        nsStringFromWebCoreString() doesn't really belong in PageClientImpl.mm,
+        and it makes us include PageClientImpl.h in places where we shouldn't.
+        Move this function into StringUtilities.{h, mm}.
+
+        * Platform/mac/StringUtilities.h: Added.
+        * Platform/mac/StringUtilities.mm: Added.
+        (WebKit::nsStringFromWebCoreString):
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        * UIProcess/mac/WebPreferencesMac.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2012-03-02  Andy Estes  <aestes@apple.com>
+
         Remove com.apple.WebKit.PluginProcess.sb from WebKit2.xcodeproj's Headers build phase
         https://bugs.webkit.org/show_bug.cgi?id=80197
 

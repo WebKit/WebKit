@@ -27,6 +27,7 @@
 #import "WebContextMenuProxyMac.h"
 
 #import "PageClientImpl.h"
+#import "StringUtilities.h"
 #import "WebContextMenuItemData.h"
 #import "WKView.h"
 

@@ -34,6 +34,7 @@
 #import "PluginComplexTextInputState.h"
 #import "PageClient.h"
 #import "PageClientImpl.h"
+#import "StringUtilities.h"
 #import "TextChecker.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"

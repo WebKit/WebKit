@@ -29,6 +29,7 @@
 #import "NativeWebMouseEvent.h"
 #import "PageClientImpl.h"
 #import "PlatformPopupMenuData.h"
+#import "StringUtilities.h"
 #import "WKView.h"
 #import "WebPopupItem.h"
 #import <WebKitSystemInterface.h>

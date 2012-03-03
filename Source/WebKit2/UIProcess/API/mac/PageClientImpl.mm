@@ -33,6 +33,7 @@
 #import "WKAPICast.h"
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
+#import "StringUtilities.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebEditCommandProxy.h"
 #import "WebPopupMenuProxyMac.h"
@@ -103,11 +104,6 @@ using namespace WebKit;
 @end
 
 namespace WebKit {
-
-NSString* nsStringFromWebCoreString(const String& string)
-{
-    return string.impl() ? HardAutorelease(WKStringCopyCFString(0, toAPI(string.impl()))) : @"";
-}
 
 PassOwnPtr<PageClientImpl> PageClientImpl::create(WKView* wkView)
 {
