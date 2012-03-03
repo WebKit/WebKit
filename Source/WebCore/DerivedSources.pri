@@ -432,7 +432,6 @@ IDL_BINDINGS += \
     $$PWD/webaudio/LowPass2FilterNode.idl \
     $$PWD/webaudio/RealtimeAnalyserNode.idl \
     $$PWD/workers/AbstractWorker.idl \
-    $$PWD/workers/DOMWindowWorker.idl \
     $$PWD/workers/DedicatedWorkerContext.idl \
     $$PWD/workers/SharedWorker.idl \
     $$PWD/workers/SharedWorkerContext.idl \

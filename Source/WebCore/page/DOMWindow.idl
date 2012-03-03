@@ -547,6 +547,9 @@ module window {
 
         attribute ClipboardConstructor Clipboard;
 
+        attribute [Conditional=WORKERS] WorkerConstructor Worker; // Usable with the new operator
+        attribute [Conditional=SHARED_WORKERS, JSCustomGetter, V8EnabledAtRuntime] SharedWorkerConstructor SharedWorker; // Usable with the new operator
+
         attribute FileConstructor File;
         attribute FileListConstructor FileList;
         attribute BlobConstructor Blob;

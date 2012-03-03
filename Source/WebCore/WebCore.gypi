@@ -1107,7 +1107,6 @@
             'webaudio/RealtimeAnalyserNode.idl',
             'webaudio/WaveShaperNode.idl',
             'workers/AbstractWorker.idl',
-            'workers/DOMWindowWorker.idl',
             'workers/DedicatedWorkerContext.idl',
             'workers/SharedWorker.idl',
             'workers/SharedWorkerContext.idl',

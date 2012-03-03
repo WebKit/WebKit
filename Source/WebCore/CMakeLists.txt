@@ -2136,12 +2136,6 @@ IF (ENABLE_SHARED_WORKERS)
     )
 ENDIF ()
 
-IF (ENABLE_WORKERS OR ENABLE_SHARED_WORKERS)
-    LIST(APPEND WebCore_IDL_FILES
-        workers/DOMWindowWorker.idl
-    )
-ENDIF ()
-
 IF (ENABLE_VIDEO_TRACK)
     LIST(APPEND WebCore_SOURCES
         html/HTMLTrackElement.cpp

@@ -569,7 +569,6 @@ BINDING_IDLS = \
     $(WebCore)/webaudio/RealtimeAnalyserNode.idl \
     $(WebCore)/webaudio/WaveShaperNode.idl \
     $(WebCore)/workers/AbstractWorker.idl \
-    $(WebCore)/workers/DOMWindowWorker.idl \
     $(WebCore)/workers/DedicatedWorkerContext.idl \
     $(WebCore)/workers/SharedWorker.idl \
     $(WebCore)/workers/SharedWorkerContext.idl \
