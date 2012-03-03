@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+    window.jsTestIsAsync = true;
+    window.onmessage = function (e) {
+        if (e.origin == location.protocol + "//" + location.host) {
+            queryCommandValues = JSON.parse(e.data);
+            shouldBeEqualToString('queryCommandValues["DefaultParagraphSeparator"]', "div");
+            shouldBeEqualToString('queryCommandValues["StyleWithCSS"]', "false");
+            finishJSTest();
+        }
+    }
+</script>
+</head>
+<body>
+<iframe style="display: none" src="resources/reset-default-values-helper-1.html"></iframe>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

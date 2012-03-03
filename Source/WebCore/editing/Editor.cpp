@@ -859,6 +859,7 @@ void Editor::clear()
     m_compositionNode = 0;
     m_customCompositionUnderlines.clear();
     m_shouldStyleWithCSS = false;
+    m_defaultParagraphSeparator = EditorParagraphSeparatorIsDiv;
 }
 
 bool Editor::insertText(const String& text, Event* triggeringEvent)
