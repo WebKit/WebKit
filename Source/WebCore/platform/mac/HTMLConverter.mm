@@ -818,7 +818,7 @@ static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
         NSUInteger textLength = [_attrStr length];
         NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
         NSTextAttachmentCell *cell;
-        NSString *string = [[NSString alloc] initWithFormat:(needsParagraph ? @"%C\n" : @"%C"), NSAttachmentCharacter];
+        NSString *string = [[NSString alloc] initWithFormat:(needsParagraph ? @"%C\n" : @"%C"), static_cast<unichar>(NSAttachmentCharacter)];
         NSRange rangeToReplace = NSMakeRange(textLength, 0);
         NSDictionary *attrs;
         if (fileWrapper) {

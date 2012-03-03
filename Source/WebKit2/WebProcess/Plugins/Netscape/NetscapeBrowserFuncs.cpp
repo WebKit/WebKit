@@ -424,7 +424,7 @@ static const unsigned WKNVCALayerRenderServerPort = 71879;
 
 static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
 {
-    switch (variable) {
+    switch (static_cast<unsigned>(variable)) {
         case NPNVWindowNPObject: {
             RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
             PluginDestructionProtector protector(plugin.get());

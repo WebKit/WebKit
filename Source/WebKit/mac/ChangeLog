@@ -1,3 +1,15 @@
+2012-03-03  Anders Carlsson  <andersca@apple.com>
+
+        Fix build with newer versions of clang.
+
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel setUpForChallenge:]):
+        Use %ld and cast to long.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView getVariable:value:]):
+        Cast the switch parameter to unsigned to prevent warnings about case values not being part of the enum type.
+
 2012-03-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Unreviewed, rolling out r109255.

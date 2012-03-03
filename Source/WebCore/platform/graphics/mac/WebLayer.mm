@@ -210,14 +210,14 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     CGRect aBounds = [self bounds];
     CGPoint aPos = [self position];
 
-    NSString* selfString = [NSString stringWithFormat:@"%@<%@ 0x%08x> \"%@\" bounds(%.1f, %.1f, %.1f, %.1f) pos(%.1f, %.1f), sublayers=%d masking=%d",
+    NSString* selfString = [NSString stringWithFormat:@"%@<%@ 0x%p> \"%@\" bounds(%.1f, %.1f, %.1f, %.1f) pos(%.1f, %.1f), sublayers=%lu masking=%d",
             inPrefix,
             [self class],
             self,
             [self name],
             aBounds.origin.x, aBounds.origin.y, aBounds.size.width, aBounds.size.height, 
             aPos.x, aPos.y,
-            [[self sublayers] count],
+            static_cast<unsigned long>([[self sublayers] count]),
             [self masksToBounds]];
     
     NSMutableString* curDesc = [NSMutableString stringWithString:selfString];

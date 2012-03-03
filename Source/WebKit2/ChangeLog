@@ -1,3 +1,11 @@
+2012-03-03  Anders Carlsson  <andersca@apple.com>
+
+        Fix build with newer versions of clang.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        Cast the switch parameter to unsigned to prevent warnings about case values not being part of the enum type.
+
 2012-03-02  Andy Estes  <aestes@apple.com>
 
         Move nsStringFromWebCoreString out of PageClientImpl

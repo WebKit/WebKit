@@ -264,7 +264,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
 - (NSString *)description
 {
     if (!_internal)
-        return [NSString stringWithFormat:@"<%@: null>", [[self class] description], self];
+        return [NSString stringWithFormat:@"<%@: null>", [[self class] description]];
 
     NSString *value = [self nodeValue];
     if (value)

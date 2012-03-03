@@ -48,13 +48,22 @@ namespace WebCore {
 //  2) It doesn't handle the %2$d syntax.
 // Note that because |format| is used as the second parameter to va_start, it cannot be a reference
 // type according to section 18.7/3 of the C++ N1905 standard.
-static String formatLocalizedString(String format, ...)
+static String formatLocalizedString(const String& format, ...)
 {
 #if USE(CF)
     va_list arguments;
     va_start(arguments, format);
     RetainPtr<CFStringRef> formatCFString(AdoptCF, format.createCFString());
+
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+#endif
     RetainPtr<CFStringRef> result(AdoptCF, CFStringCreateWithFormatAndArguments(0, 0, formatCFString.get(), arguments));
+#if COMPILER(CLANG)
+#pragma clang diagnostic pop
+#endif
+
     va_end(arguments);
     return result.get();
 #else

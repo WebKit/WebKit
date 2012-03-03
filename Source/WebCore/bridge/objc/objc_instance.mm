@@ -170,7 +170,7 @@ Bindings::Class* ObjcInstance::getClass() const
     if (!_instance)
         return 0;
     if (!_class)
-        _class = ObjcClass::classForIsA(_instance->isa);
+        _class = ObjcClass::classForIsA(object_getClass(_instance.get()));
     return static_cast<Bindings::Class*>(_class);
 }
 
