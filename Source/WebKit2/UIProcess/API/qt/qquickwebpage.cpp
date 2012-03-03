@@ -63,18 +63,6 @@ void QQuickWebPagePrivate::initialize(WebKit::WebPageProxy* webPageProxy)
     eventHandler.reset(new QtWebPageEventHandler(toAPI(webPageProxy), q, viewportItem));
 }
 
-static float computeEffectiveOpacity(const QQuickItem* item)
-{
-    if (!item)
-        return 1;
-
-    float opacity = item->opacity();
-    if (opacity < 0.01)
-        return 0;
-
-    return opacity * computeEffectiveOpacity(item->parentItem());
-}
-
 void QQuickWebPagePrivate::setDrawingAreaSize(const QSize& size)
 {
     DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
@@ -89,15 +77,11 @@ void QQuickWebPagePrivate::paint(QPainter* painter)
         webPageProxy->drawingArea()->paintLayerTree(painter);
 }
 
-void QQuickWebPagePrivate::paintToCurrentGLContext()
+void QQuickWebPagePrivate::paintToCurrentGLContext(const QTransform& transform, float opacity)
 {
     if (!q->isVisible())
         return;
 
-    QTransform transform = q->itemTransform(0, 0);
-    transform.scale(contentsScale, contentsScale);
-
-    float opacity = computeEffectiveOpacity(q);
     QRectF clipRect = viewportItem->mapRectToScene(viewportItem->boundingRect());
 
     if (!clipRect.isValid())
@@ -107,7 +91,7 @@ void QQuickWebPagePrivate::paintToCurrentGLContext()
     if (!drawingArea)
         return;
 
-    drawingArea->paintToCurrentGLContext(transform, opacity, clipRect);
+    drawingArea->paintToCurrentGLContext(QTransform(transform).scale(contentsScale, contentsScale), opacity, clipRect);
 }
 
 struct PageProxyNode : public QSGRenderNode {
@@ -118,14 +102,15 @@ struct PageProxyNode : public QSGRenderNode {
 
     virtual StateFlags changedStates()
     {
-        return StateFlags(DepthState) | StencilState | ScissorState | ColorState | BlendState
-               | CullState | ViewportState;
+        return StateFlags(StencilState) | ColorState | BlendState;
     }
 
-    virtual void render(const RenderState &)
+    virtual void render(const RenderState&)
     {
-        if (m_pagePrivate)
-            m_pagePrivate->paintToCurrentGLContext();
+        if (!m_pagePrivate)
+            return;
+        QTransform transform = matrix() ? matrix()->toTransform() : QTransform();
+        m_pagePrivate->paintToCurrentGLContext(transform, inheritedOpacity());
     }
 
     ~PageProxyNode()

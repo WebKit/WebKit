@@ -1,3 +1,21 @@
+2012-03-03  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Use the existing inheritedOpacity/matrix properties of QSGNode
+        https://bugs.webkit.org/show_bug.cgi?id=79543
+
+        Use QSGNode::inheritedOpacity() and QSGNode::matrix().
+        Also, remove flags from changedStates() that we don't actually touch.
+        This is covered by existing API tests.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::paintToCurrentGLContext):
+        (PageProxyNode::changedStates):
+        (PageProxyNode::render):
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (QQuickWebPagePrivate):
+
 2012-03-03  Anders Carlsson  <andersca@apple.com>
 
         Fix build with newer versions of clang.
