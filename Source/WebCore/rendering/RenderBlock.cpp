@@ -166,6 +166,7 @@ RenderBlock::RenderBlock(Node* node)
       , m_lineHeight(-1)
       , m_beingDestroyed(false)
       , m_hasPositionedFloats(false)
+      , m_hasMarkupTruncation(false)
 {
     setChildrenInline(true);
 }

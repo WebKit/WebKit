@@ -746,9 +746,6 @@ public:
     // Applied as a "slop" to dirty rect checks during the outline painting phase's dirty-rect checks.
     LayoutUnit maximalOutlineSize(PaintPhase) const;
 
-    void setHasMarkupTruncation(bool b = true) { m_bitfields.setHasMarkupTruncation(b); }
-    bool hasMarkupTruncation() const { return m_bitfields.hasMarkupTruncation(); }
-
     enum SelectionState {
         SelectionNone, // The object is not selected.
         SelectionStart, // The object either contains the start of a selection run or is the start of a run
@@ -934,7 +931,6 @@ private:
             , m_childrenInline(false)
             , m_marginBeforeQuirk(false) 
             , m_marginAfterQuirk(false)
-            , m_hasMarkupTruncation(false)
             , m_hasColumns(false)
             , m_selectionState(SelectionNone)
         {
@@ -978,7 +974,6 @@ private:
         ADD_BOOLEAN_BITFIELD(childrenInline, ChildrenInline);
         ADD_BOOLEAN_BITFIELD(marginBeforeQuirk, MarginBeforeQuirk);
         ADD_BOOLEAN_BITFIELD(marginAfterQuirk, MarginAfterQuirk);
-        ADD_BOOLEAN_BITFIELD(hasMarkupTruncation, HasMarkupTruncation);
         ADD_BOOLEAN_BITFIELD(hasColumns, HasColumns);
 
     private:

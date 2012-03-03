@@ -113,6 +113,9 @@ public:
     static bool hasPercentHeightDescendant(RenderBox*);
 #endif
 
+    void setHasMarkupTruncation(bool b) { m_hasMarkupTruncation = b; }
+    bool hasMarkupTruncation() const { return m_hasMarkupTruncation; }
+
     RootInlineBox* createAndAppendRootInlineBox();
 
     bool generatesLineBoxesForInlineChild(RenderObject*);
@@ -1119,9 +1122,10 @@ protected:
     RenderObjectChildList m_children;
     RenderLineBoxList m_lineBoxes;   // All of the root line boxes created for this block flow.  For example, <div>Hello<br>world.</div> will have two total lines for the <div>.
 
-    mutable signed m_lineHeight : 30;
+    mutable signed m_lineHeight : 29;
     bool m_beingDestroyed : 1;
     bool m_hasPositionedFloats : 1;
+    bool m_hasMarkupTruncation : 1;
 
     // RenderRubyBase objects need to be able to split and merge, moving their children around
     // (calling moveChildTo, moveAllChildrenTo, and makeChildrenNonInline).
