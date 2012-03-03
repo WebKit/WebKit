@@ -106,7 +106,7 @@ public:
     Document* responseXML(ExceptionCode&);
     Document* optionalResponseXML() const { return m_responseDocument.get(); }
 #if ENABLE(XHR_RESPONSE_BLOB)
-    Blob* responseBlob(ExceptionCode&) const;
+    Blob* responseBlob(ExceptionCode&);
     Blob* optionalResponseBlob() const { return m_responseBlob.get(); }
 #endif
 

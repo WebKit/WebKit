@@ -1,0 +1,51 @@
+Test that XHR.responseType = 'blob' gives you back a Blob.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL xhr.responseType should be blob. Was .
+PASS successfullyParsed is true
+
+TEST COMPLETE
+FAIL xhr.response should be null (of type object). Was  (of type string).
+FAIL xhr.response should be null (of type object). Was description("Test that XHR.responseType = 'blob' gives you back a Blob.");
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function testBlob(blobURL, blobType, doneFunction) {
+    window.xhr = new XMLHttpRequest();
+    xhr.open("GET", blobURL);
+    xhr.responseType = "blob";
+    shouldBeEqualToString("xhr.responseType", "blob");
+    xhr.send();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState != 4) {
+            shouldBeNull("xhr.response");
+            return;
+        }
+        shouldBeTrue("xhr.response instanceof Blob");
+        shouldBeEqualToString("xhr.response.type", blobType);
+        doneFunction();
+    }
+}
+
+testBlob("script-tests/xhr-response-blob.js", "text/javascript", function() {
+    testBlob("resources/does_not_exist.txt", "", function() {
+        testBlob("resources/empty-file", "", function() {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        })
+    })
+});
+ (of type string).
+FAIL xhr.response instanceof Blob should be true. Was false.
+FAIL xhr.response.type should be text/javascript (of type string). Was undefined (of type undefined).
+FAIL xhr.responseType should be blob. Was .
+FAIL xhr.response instanceof Blob should be true. Was false.
+FAIL xhr.response.type should be  (of type string). Was undefined (of type undefined).
+FAIL xhr.responseType should be blob. Was .
+FAIL xhr.response should be null (of type object). Was  (of type string).
+FAIL xhr.response instanceof Blob should be true. Was false.
+FAIL xhr.response.type should be  (of type string). Was undefined (of type undefined).
+
