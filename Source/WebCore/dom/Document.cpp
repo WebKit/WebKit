@@ -1764,6 +1764,7 @@ bool Document::isPageBoxVisible(int pageIndex)
 void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
 {
     RefPtr<RenderStyle> style = styleForPage(pageIndex);
+    IntSize viewSize = viewportSize();
 
     int width = pageSize.width();
     int height = pageSize.height();
@@ -1782,8 +1783,8 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
         LengthSize size = style->pageSize();
         ASSERT(size.width().isFixed());
         ASSERT(size.height().isFixed());
-        width = size.width().calcValue(0);
-        height = size.height().calcValue(0);
+        width = size.width().calcValue(0, viewSize);
+        height = size.height().calcValue(0, viewSize);
         break;
     }
     default:
@@ -1793,10 +1794,11 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 
     // The percentage is calculated with respect to the width even for margin top and bottom.
     // http://www.w3.org/TR/CSS2/box.html#margin-properties
-    marginTop = style->marginTop().isAuto() ? marginTop : style->marginTop().calcValue(width);
-    marginRight = style->marginRight().isAuto() ? marginRight : style->marginRight().calcValue(width);
-    marginBottom = style->marginBottom().isAuto() ? marginBottom : style->marginBottom().calcValue(width);
-    marginLeft = style->marginLeft().isAuto() ? marginLeft : style->marginLeft().calcValue(width);
+
+    marginTop = style->marginTop().isAuto() ? marginTop : style->marginTop().calcValue(width, viewSize);
+    marginRight = style->marginRight().isAuto() ? marginRight : style->marginRight().calcValue(width, viewSize);
+    marginBottom = style->marginBottom().isAuto() ? marginBottom : style->marginBottom().calcValue(width, viewSize);
+    marginLeft = style->marginLeft().isAuto() ? marginLeft : style->marginLeft().calcValue(width, viewSize);
 }
 
 PassRefPtr<CSSValuePool> Document::cssValuePool() const
@@ -5472,5 +5474,12 @@ void Document::removeCachedMicroDataItemList(MicroDataItemList* list, const Stri
     data->m_microDataItemListCache.remove(localTypeNames);
 }
 #endif
+
+IntSize Document::viewportSize() const
+{
+    if (!view())
+        return IntSize();
+    return view()->visibleContentRect().size();
+}
 
 } // namespace WebCore

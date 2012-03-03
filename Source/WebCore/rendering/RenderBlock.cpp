@@ -5781,11 +5781,11 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
     if (firstLine && document()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
-            return s->computedLineHeight();
+            return s->computedLineHeight(viewportSize());
     }
     
     if (m_lineHeight == -1)
-        m_lineHeight = style()->computedLineHeight();
+        m_lineHeight = style()->computedLineHeight(viewportSize());
 
     return m_lineHeight;
 }

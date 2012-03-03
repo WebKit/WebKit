@@ -1131,6 +1131,8 @@ public:
     void suspendScheduledTasks();
     void resumeScheduledTasks();
 
+    IntSize viewportSize() const;
+
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 

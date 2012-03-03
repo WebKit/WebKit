@@ -23,6 +23,7 @@
 #define Length_h
 
 #include "AnimationUtilities.h"
+#include "IntSize.h"
 #include <wtf/Assertions.h>
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
@@ -34,7 +35,7 @@ namespace WebCore {
 const int intMaxForLength = 0x7ffffff; // max value for a 28-bit int
 const int intMinForLength = (-0x7ffffff - 1); // min value for a 28-bit int
 
-enum LengthType { Auto, Relative, Percent, Fixed, Intrinsic, MinIntrinsic, Undefined };
+enum LengthType { Auto, Relative, Percent, Fixed, Intrinsic, MinIntrinsic, ViewportRelativeWidth, ViewportRelativeHeight, ViewportRelativeMin, Undefined };
 
 struct Length {
     WTF_MAKE_FAST_ALLOCATED;
@@ -123,14 +124,18 @@ public:
 
     // Note: May only be called for Fixed, Percent and Auto lengths.
     // Other types will ASSERT in order to catch invalid length calculations.
-    int calcValue(int maxValue, bool roundPercentages = false) const
+    int calcValue(int maxValue, IntSize viewportSize = IntSize(), bool roundPercentages = false) const
     {
         switch (type()) {
             case Fixed:
             case Percent:
-                return calcMinValue(maxValue, roundPercentages);
+                return calcMinValue(maxValue, viewportSize, roundPercentages);
             case Auto:
                 return maxValue;
+            case ViewportRelativeWidth:
+            case ViewportRelativeHeight:
+            case ViewportRelativeMin:
+                return calcMinValue(maxValue, viewportSize, roundPercentages);            
             case Relative:
             case Intrinsic:
             case MinIntrinsic:
@@ -142,7 +147,7 @@ public:
         return 0;
     }
 
-    int calcMinValue(int maxValue, bool roundPercentages = false) const
+    int calcMinValue(int maxValue, IntSize viewportSize = IntSize(), bool roundPercentages = false) const
     {
         switch (type()) {
             case Fixed:
@@ -154,6 +159,12 @@ public:
                 return static_cast<int>(static_cast<float>(maxValue * percent() / 100.0f));
             case Auto:
                 return 0;
+            case ViewportRelativeWidth:
+                return static_cast<int>(viewportSize.width() * viewportRelativeLength() / 100.0f);
+            case ViewportRelativeHeight:
+                return static_cast<int>(viewportSize.height() * viewportRelativeLength() / 100.0f);
+            case ViewportRelativeMin:
+                return static_cast<int>(std::min(viewportSize.width(), viewportSize.height()) * viewportRelativeLength() / 100.0f);
             case Relative:
             case Intrinsic:
             case MinIntrinsic:
@@ -165,7 +176,7 @@ public:
         return 0;
     }
 
-    float calcFloatValue(int maxValue) const
+    float calcFloatValue(int maxValue, IntSize viewportSize = IntSize()) const
     {
         switch (type()) {
             case Fixed:
@@ -174,6 +185,12 @@ public:
                 return static_cast<float>(maxValue * percent() / 100.0f);
             case Auto:
                 return static_cast<float>(maxValue);
+            case ViewportRelativeWidth:
+                return static_cast<float>(viewportSize.width() * viewportRelativeLength() / 100.0f);
+            case ViewportRelativeHeight:
+                return static_cast<float>(viewportSize.height() * viewportRelativeLength() / 100.0f);
+            case ViewportRelativeMin:
+                return static_cast<float>(std::min(viewportSize.width(), viewportSize.height()) * viewportRelativeLength() / 100.0f);
             case Relative:
             case Intrinsic:
             case MinIntrinsic:
@@ -224,6 +241,13 @@ public:
         float fromValue = from.isZero() ? 0 : from.value();
         float toValue = isZero() ? 0 : value();
         return Length(WebCore::blend(fromValue, toValue, progress), resultType);
+    }
+    
+    bool isViewportRelative() const { return type() >= ViewportRelativeWidth && type() <= ViewportRelativeMin; }
+    float viewportRelativeLength() const
+    {
+        ASSERT(isViewportRelative());
+        return getFloatValue();
     }
 
 private:

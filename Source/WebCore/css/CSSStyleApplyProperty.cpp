@@ -389,6 +389,8 @@ public:
                 setValue(selector->style(), length);
             } else if (primitiveValue->isPercentage())
                 setValue(selector->style(), Length(primitiveValue->getDoubleValue(), Percent));
+            else if (primitiveValue->isViewportRelativeLength())
+                setValue(selector->style(), primitiveValue->viewportRelativeLength());
         }
     }
 
@@ -440,6 +442,8 @@ public:
         Length radiusHeight;
         if (pair->first()->isPercentage())
             radiusWidth = Length(pair->first()->getDoubleValue(), Percent);
+        else if (pair->first()->isViewportRelativeLength())
+            radiusWidth = pair->first()->viewportRelativeLength();
         else if (pair->first()->isCalculatedPercentageWithLength()) {
             // FIXME calc(): http://webkit.org/b/16662
             // handle this case
@@ -448,6 +452,8 @@ public:
             radiusWidth = Length(max(intMinForLength, min(intMaxForLength, pair->first()->computeLength<int>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()))), Fixed);
         if (pair->second()->isPercentage())
             radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
+        else if (pair->second()->isViewportRelativeLength())
+            radiusHeight = pair->second()->viewportRelativeLength();
         else if (pair->second()->isCalculatedPercentageWithLength()) {
             // FIXME calc(): http://webkit.org/b/16662
             // handle this case
@@ -736,6 +742,8 @@ public:
                 size = primitiveValue->computeLength<float>(selector->parentStyle(), selector->rootElementStyle(), 1.0, true);
             else if (primitiveValue->isPercentage())
                 size = (primitiveValue->getFloatValue() * parentSize) / 100.0f;
+            else if (primitiveValue->isViewportRelativeLength())
+                size = primitiveValue->viewportRelativeLength().calcValue(0, selector->document()->viewportSize());
             else
                 return;
         }
@@ -1169,6 +1177,8 @@ public:
         } else if (primitiveValue->isNumber()) {
             // FIXME: number and percentage values should produce the same type of Length (ie. Fixed or Percent).
             lineHeight = Length(primitiveValue->getDoubleValue() * 100.0, Percent);
+        } else if (primitiveValue->isViewportRelativeLength()) {
+            lineHeight = primitiveValue->viewportRelativeLength();
         } else
             return;
         selector->style()->setLineHeight(lineHeight);
@@ -1527,6 +1537,8 @@ public:
             length = primitiveValue->computeLength<Length>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
         else if (primitiveValue->isPercentage())
             length = Length(primitiveValue->getDoubleValue(), Percent);
+        else if (primitiveValue->isViewportRelativeLength())
+            length = primitiveValue->viewportRelativeLength();
 
         selector->style()->setVerticalAlignLength(length);
     }
