@@ -68,7 +68,7 @@ DynamicsCompressorKernel::DynamicsCompressorKernel(float sampleRate, unsigned nu
     // Initializes most member variables
     reset();
 
-    m_meteringReleaseK = discreteTimeConstantForSampleRate(meteringReleaseTimeConstant, sampleRate);
+    m_meteringReleaseK = static_cast<float>(discreteTimeConstantForSampleRate(meteringReleaseTimeConstant, sampleRate));
 }
 
 void DynamicsCompressorKernel::setNumberOfChannels(unsigned numberOfChannels)

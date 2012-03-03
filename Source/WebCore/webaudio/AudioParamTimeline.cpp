@@ -279,7 +279,7 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
                     // Exponential approach to target value with given time constant.
                     float targetValue = event.value();
                     float timeConstant = event.timeConstant();
-                    float discreteTimeConstant = AudioUtilities::discreteTimeConstantForSampleRate(timeConstant, controlRate);
+                    float discreteTimeConstant = static_cast<float>(AudioUtilities::discreteTimeConstantForSampleRate(timeConstant, controlRate));
 
                     for (; writeIndex < fillToFrame; ++writeIndex) {
                         values[writeIndex] = value;
