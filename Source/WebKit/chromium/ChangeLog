@@ -1,3 +1,13 @@
+2012-03-03  Bill Budge  <bbudge@chromium.org>
+
+        Fixes AssociatedURLLoader support for Access-Control-Expose-Headers field in response.
+        https://bugs.webkit.org/show_bug.cgi?id=80198
+
+        Reviewed by Adam Barth.
+
+        * src/AssociatedURLLoader.cpp:
+        * tests/AssociatedURLLoaderTest.cpp:
+
 2012-03-02  Dana Jansens  <danakj@chromium.org>
 
         [Chromium] Allow plugins to set opaque() on their platform layer

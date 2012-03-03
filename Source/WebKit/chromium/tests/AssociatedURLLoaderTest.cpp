@@ -241,7 +241,7 @@ public:
         m_expectedResponse.setMIMEType("text/html");
         m_expectedResponse.addHTTPHeaderField("Access-Control-Allow-Origin", "*");
         if (exposed)
-            m_expectedResponse.addHTTPHeaderField("access-control-expose-header", headerNameString);
+            m_expectedResponse.addHTTPHeaderField("access-control-expose-headers", headerNameString);
         m_expectedResponse.addHTTPHeaderField(headerNameString, "foo");
         webkit_support::RegisterMockedURL(url, m_expectedResponse, m_frameFilePath);
 

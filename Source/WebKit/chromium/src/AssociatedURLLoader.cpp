@@ -79,6 +79,7 @@ void HTTPRequestHeaderValidator::visitHeader(const WebString& name, const WebStr
     m_isSafe = m_isSafe && isValidHTTPToken(name) && XMLHttpRequest::isAllowedHTTPHeader(name) && isValidHTTPHeaderValue(value);
 }
 
+// FIXME: Remove this and use WebCore code that does the same thing.
 class HTTPResponseHeaderValidator : public WebHTTPHeaderVisitor {
     WTF_MAKE_NONCOPYABLE(HTTPResponseHeaderValidator);
 public:
@@ -97,7 +98,7 @@ void HTTPResponseHeaderValidator::visitHeader(const WebString& name, const WebSt
 {
     String headerName(name);
     if (m_usingAccessControl) {
-        if (equalIgnoringCase(headerName, "access-control-expose-header"))
+        if (equalIgnoringCase(headerName, "access-control-expose-headers"))
             parseAccessControlExposeHeadersAllowList(value, m_exposedHeaders);
         else if (!isOnAccessControlResponseHeaderWhitelist(headerName))
             m_blockedHeaders.add(name);
@@ -112,7 +113,7 @@ const HTTPHeaderSet& HTTPResponseHeaderValidator::blockedHeaders()
         m_exposedHeaders.remove("set-cookie");
         m_exposedHeaders.remove("set-cookie2");
         // Block Access-Control-Expose-Header itself. It could be exposed later.
-        m_blockedHeaders.add("access-control-expose-header");
+        m_blockedHeaders.add("access-control-expose-headers");
         HTTPHeaderSet::const_iterator end = m_exposedHeaders.end();
         for (HTTPHeaderSet::const_iterator it = m_exposedHeaders.begin(); it != end; ++it)
             m_blockedHeaders.remove(*it);
