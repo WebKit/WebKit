@@ -2177,8 +2177,7 @@ BUG_HCLAM : http/tests/css/css-image-loading.html = PASS TIMEOUT TEXT
 BUG_HCLAM : http/tests/css/mask-image-loading.html = PASS TIMEOUT TEXT
 BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = PASS TIMEOUT TEXT
 
-// Added by r69084
-BUGCR57934 WIN : http/tests/appcache/fail-on-update-2.html = PASS TIMEOUT
+BUGCR57934 WIN LEOPARD DEBUG: http/tests/appcache/fail-on-update-2.html = PASS TIMEOUT
 
 // Failing since r69181. Verified as legitimate by looking at the results
 // of the SVG rendering.
@@ -4173,6 +4172,7 @@ BUGWK79456 DEBUG : svg/repaint/image-with-clip-path.svg = PASS IMAGE
 BUGWK79540 DEBUG : fast/files/workers/worker-apply-blob-url-to-xhr.html = PASS CRASH
 BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-async.html = PASS CRASH
 BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-sync.html = PASS CRASH
+BUGWK79540 LEOPARD DEBUG : fast/files/workers/worker-read-file-async.html = PASS CRASH
 
 BUGWK79572 : css3/filters/effect-drop-shadow-hw.html = PASS IMAGE
 BUGWK80007 : css3/filters/filtered-compositing-descendant.html = PASS IMAGE
