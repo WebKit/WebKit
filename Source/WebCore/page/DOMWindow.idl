@@ -396,7 +396,96 @@ module window {
         attribute DOMSelectionConstructor Selection;
         attribute DOMWindowConstructor Window;
 
-        // FIXME: Should these Canvas constructors move to html/DOMWindowHTML with the rest of canvas?
+        attribute HTMLDocumentConstructor HTMLDocument;
+        attribute HTMLElementConstructor HTMLElement;
+        attribute HTMLAnchorElementConstructor HTMLAnchorElement;
+        attribute HTMLAppletElementConstructor HTMLAppletElement;
+        attribute HTMLAreaElementConstructor HTMLAreaElement;
+        attribute HTMLBRElementConstructor HTMLBRElement;
+        attribute HTMLBaseElementConstructor HTMLBaseElement;
+        attribute HTMLBaseFontElementConstructor HTMLBaseFontElement;
+        attribute HTMLBodyElementConstructor HTMLBodyElement;
+        attribute HTMLButtonElementConstructor HTMLButtonElement;
+        attribute HTMLCanvasElementConstructor HTMLCanvasElement;
+        attribute HTMLDListElementConstructor HTMLDListElement;
+        attribute HTMLDirectoryElementConstructor HTMLDirectoryElement;
+        attribute HTMLDivElementConstructor HTMLDivElement;
+        attribute HTMLEmbedElementConstructor HTMLEmbedElement;
+        attribute HTMLFieldSetElementConstructor HTMLFieldSetElement;
+        attribute HTMLFontElementConstructor HTMLFontElement;
+        attribute HTMLFormElementConstructor HTMLFormElement;
+        attribute HTMLFrameElementConstructor HTMLFrameElement;
+        attribute HTMLFrameSetElementConstructor HTMLFrameSetElement;
+        attribute HTMLHRElementConstructor HTMLHRElement;
+        attribute HTMLHeadElementConstructor HTMLHeadElement;
+        attribute HTMLHeadingElementConstructor HTMLHeadingElement;
+        attribute HTMLHtmlElementConstructor HTMLHtmlElement;
+        attribute HTMLIFrameElementConstructor HTMLIFrameElement;
+        attribute HTMLImageElementConstructor HTMLImageElement;
+        attribute HTMLInputElementConstructor HTMLInputElement;
+        attribute HTMLKeygenElementConstructor HTMLKeygenElement;
+        attribute HTMLLIElementConstructor HTMLLIElement;
+        attribute HTMLLabelElementConstructor HTMLLabelElement;
+        attribute HTMLLegendElementConstructor HTMLLegendElement;
+        attribute HTMLLinkElementConstructor HTMLLinkElement;
+        attribute HTMLMapElementConstructor HTMLMapElement;
+        attribute HTMLMarqueeElementConstructor HTMLMarqueeElement;
+        attribute HTMLMenuElementConstructor HTMLMenuElement;
+        attribute HTMLMetaElementConstructor HTMLMetaElement;
+#if defined(ENABLE_METER_TAG) && ENABLE_METER_TAG
+        attribute HTMLMeterElementConstructor HTMLMeterElement;
+#endif
+        attribute HTMLModElementConstructor HTMLModElement;
+        attribute HTMLOListElementConstructor HTMLOListElement;
+        attribute HTMLObjectElementConstructor HTMLObjectElement;
+        attribute HTMLOptGroupElementConstructor HTMLOptGroupElement;
+        attribute HTMLOptionElementConstructor HTMLOptionElement;
+        attribute HTMLOutputElementConstructor HTMLOutputElement;
+        attribute HTMLParagraphElementConstructor HTMLParagraphElement;
+        attribute HTMLParamElementConstructor HTMLParamElement;
+        attribute HTMLPreElementConstructor HTMLPreElement;
+#if defined(ENABLE_PROGRESS_TAG) && ENABLE_PROGRESS_TAG
+        attribute HTMLProgressElementConstructor HTMLProgressElement;
+#endif
+        attribute HTMLQuoteElementConstructor HTMLQuoteElement;
+        attribute HTMLScriptElementConstructor HTMLScriptElement;
+        attribute HTMLSelectElementConstructor HTMLSelectElement;
+        attribute HTMLSpanElementConstructor HTMLSpanElement;
+        attribute HTMLStyleElementConstructor HTMLStyleElement;
+        attribute HTMLTableCaptionElementConstructor HTMLTableCaptionElement;
+        attribute HTMLTableCellElementConstructor HTMLTableCellElement;
+        attribute HTMLTableColElementConstructor HTMLTableColElement;
+        attribute HTMLTableElementConstructor HTMLTableElement;
+        attribute HTMLTableRowElementConstructor HTMLTableRowElement;
+        attribute HTMLTableSectionElementConstructor HTMLTableSectionElement;
+        attribute HTMLTextAreaElementConstructor HTMLTextAreaElement;
+        attribute HTMLTitleElementConstructor HTMLTitleElement;
+        attribute HTMLUListElementConstructor HTMLUListElement;
+
+        attribute HTMLCollectionConstructor HTMLCollection;
+        attribute HTMLAllCollectionConstructor HTMLAllCollection;
+        attribute [Conditional=MICRODATA] HTMLPropertiesCollectionConstructor HTMLPropertiesCollection;
+        attribute HTMLUnknownElementConstructor HTMLUnknownElement;
+
+        attribute [JSCustomGetter, CustomConstructor] HTMLImageElementConstructorConstructor Image; // Usable with new operator
+        attribute [JSCustomGetter] HTMLOptionElementConstructorConstructor Option; // Usable with new operator
+
+        attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] HTMLTrackElementConstructor HTMLTrackElement;
+        attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackConstructor TextTrack;
+        attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackCueConstructor TextTrackCue; // Usable with the new operator
+        attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackCueListConstructor TextTrackCueList;
+        attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TextTrackListConstructor TextTrackList;
+        attribute [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] TrackEventConstructor TrackEvent;
+
+        attribute [JSCustomGetter, Conditional=VIDEO, V8EnabledAtRuntime] HTMLAudioElementConstructorConstructor Audio; // Usable with the new operator
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLAudioElementConstructor HTMLAudioElement;
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLMediaElementConstructor HTMLMediaElement;
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLVideoElementConstructor HTMLVideoElement;
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] MediaErrorConstructor MediaError;
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] TimeRangesConstructor TimeRanges;
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] HTMLSourceElementConstructor HTMLSourceElement;
+        attribute [Conditional=VIDEO, V8EnabledAtRuntime] MediaControllerConstructor MediaController;
+
         attribute CanvasPatternConstructor CanvasPattern;
         attribute CanvasGradientConstructor CanvasGradient;
         attribute CanvasRenderingContext2DConstructor CanvasRenderingContext2D;

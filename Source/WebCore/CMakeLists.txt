@@ -223,7 +223,6 @@ SET(WebCore_IDL_FILES
     html/DOMSettableTokenList.idl
     html/DOMTokenList.idl
     html/DOMURL.idl
-    html/DOMWindowHTML.idl
     html/HTMLAllCollection.idl
     html/HTMLAnchorElement.idl
     html/HTMLAppletElement.idl

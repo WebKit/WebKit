@@ -271,7 +271,6 @@ IDL_BINDINGS += \
     $$PWD/html/DOMSettableTokenList.idl \
     $$PWD/html/DOMTokenList.idl \
     $$PWD/html/DOMURL.idl \
-    $$PWD/html/DOMWindowHTML.idl \
     $$PWD/html/HTMLAllCollection.idl \
     $$PWD/html/HTMLAudioElement.idl \
     $$PWD/html/HTMLAnchorElement.idl \
