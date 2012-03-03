@@ -1,3 +1,9 @@
+2012-03-02  Stephen Chenney  <schenney@chromium.org>
+
+        Unreviewed, add myself as a committer
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-03-02  Ojan Vafai  <ojan@chromium.org>
 
         Add the Chromium Lion canary bot to the flakiness dashboard.

@@ -333,6 +333,7 @@ committers_unable_to_review = [
     Committer("Shawn Singh", "shawnsingh@chromium.org", "shawnsingh"),
     Committer("Shinya Kawanaka", "shinyak@chromium.org", "shinyak"),
     Committer("Siddharth Mathur", "siddharth.mathur@nokia.com", "simathur"),
+    Committer("Stephen Chenney", "schenney@chromium.org", "schenney"),
     Committer("Steve Lacey", "sjl@chromium.org", "stevela"),
     Committer("Takashi Toyoshima", "toyoshim@chromium.org", "toyoshim"),
     Committer("Thomas Sepez", "tsepez@chromium.org", "tsepez"),
