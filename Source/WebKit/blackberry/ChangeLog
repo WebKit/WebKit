@@ -1,3 +1,20 @@
+2012-03-02  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Expose WebInspector state to client and clean up WebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=80177
+
+        Reviewed by Antonio Gomes.
+
+        Expose the Web Inspector state to WebPage client's and
+        re-order initialization of WebSettings to be alphabetical
+        matching their definitions.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::isWebInspectorEnabled):
+        * Api/WebPage.h:
+        * Api/WebSettings.cpp:
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+
 2012-03-02  Arvid Nilsson  <anilsson@rim.com>
 
         Accelerated compositing: Checkerboard never goes away

@@ -52,6 +52,7 @@ DEFINE_STATIC_LOCAL(String, BlackBerryUserAgentString, ("BlackBerryUserAgentStri
 DEFINE_STATIC_LOCAL(String, BlackBerryUserScalableEnabled, ("BlackBerryUserScalableEnabled"));
 DEFINE_STATIC_LOCAL(String, BlackBerryViewportWidth, ("BlackBerryViewportWidth"));
 DEFINE_STATIC_LOCAL(String, BlackBerryZoomToFitOnLoadEnabled, ("BlackBerryZoomToFitOnLoadEnabled"));
+DEFINE_STATIC_LOCAL(String, SpatialNavigationEnabled, ("SpatialNavigationEnabled"));
 DEFINE_STATIC_LOCAL(String, WebKitDatabasePath, ("WebKitDatabasePath"));
 DEFINE_STATIC_LOCAL(String, WebKitDatabasesEnabled, ("WebKitDatabasesEnabled"));
 DEFINE_STATIC_LOCAL(String, WebKitDefaultFixedFontSize, ("WebKitDefaultFixedFontSize"));
@@ -82,7 +83,6 @@ DEFINE_STATIC_LOCAL(String, WebKitUserStyleSheet, ("WebKitUserStyleSheet"));
 DEFINE_STATIC_LOCAL(String, WebKitUserStyleSheetLocation, ("WebKitUserStyleSheetLocation"));
 DEFINE_STATIC_LOCAL(String, WebKitWebSocketsEnabled, ("WebKitWebSocketsEnabled"));
 DEFINE_STATIC_LOCAL(String, WebKitXSSAuditorEnabled, ("WebKitXSSAuditorEnabled"));
-DEFINE_STATIC_LOCAL(String, SpatialNavigationEnabled, ("SpatialNavigationEnabled"));
 
 // FIXME: We should consider moving all the mime type code into its own object.
 
@@ -215,25 +215,25 @@ WebSettings* WebSettings::standardSettings()
     // FIXME: We should detect whether we are embedded in a browser or an email client and default to TextReflowEnabledOnlyForBlockZoom and TextReflowEnabled, respectively.
     settings->m_private->setTextReflowMode(BlackBerryTextReflowMode, TextReflowDisabled);
 
-    settings->m_private->setBoolean(BlackBerryUserScalableEnabled, true);
     settings->m_private->setBoolean(BlackBerryUseWebKitCache, true);
+    settings->m_private->setBoolean(BlackBerryUserScalableEnabled, true);
     settings->m_private->setBoolean(BlackBerryZoomToFitOnLoadEnabled, true);
+
     settings->m_private->setInteger(WebKitDefaultFontSize, 16);
     settings->m_private->setInteger(WebKitDefaultFixedFontSize, 13);
-    settings->m_private->setInteger(WebKitMinimumFontSize, 8);
     settings->m_private->setString(WebKitDefaultTextEncodingName, "iso-8859-1");
+    settings->m_private->setBoolean(WebKitDownloadableBinaryFontsEnabled, true);
     settings->m_private->setInteger(WebKitFirstScheduledLayoutDelay, 250); // Match Document::cLayoutScheduleThreshold.
+    settings->m_private->setString(WebKitFixedFontFamily, "Courier New");
     settings->m_private->setBoolean(WebKitJavaScriptEnabled, true);
     settings->m_private->setBoolean(WebKitLoadsImagesAutomatically, true);
-    settings->m_private->setBoolean(WebKitDownloadableBinaryFontsEnabled, true);
     settings->m_private->setUnsignedLongLong(WebKitLocalStorageQuota, 5 * 1024 * 1024);
     settings->m_private->setInteger(WebKitMaximumPagesInCache, 0);
-    settings->m_private->setBoolean(WebKitWebSocketsEnabled, true);
-    settings->m_private->setString(WebKitFixedFontFamily, "Courier New");
+    settings->m_private->setInteger(WebKitMinimumFontSize, 8);
     settings->m_private->setString(WebKitSansSeriffFontFamily, "Arial");
     settings->m_private->setString(WebKitSeriffFontFamily, "Times New Roman");
     settings->m_private->setString(WebKitStandardFontFamily, "Times New Roman");
-    settings->m_private->setBoolean(SpatialNavigationEnabled, false);
+    settings->m_private->setBoolean(WebKitWebSocketsEnabled, true);
 
     return settings;
 }

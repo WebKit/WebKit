@@ -5024,6 +5024,11 @@ void WebPage::disableWebInspector()
     d->m_page->settings()->setDeveloperExtrasEnabled(false);
 }
 
+bool WebPage::isWebInspectorEnabled()
+{
+    return d->m_page->settings()->developerExtrasEnabled();
+}
+
 void WebPage::enablePasswordEcho()
 {
     d->m_page->settings()->setPasswordEchoEnabled(true);

@@ -300,6 +300,7 @@ public:
 
     void enableWebInspector();
     void disableWebInspector();
+    bool isWebInspectorEnabled();
     void enablePasswordEcho();
     void disablePasswordEcho();
     void dispatchInspectorMessage(const std::string& message);
