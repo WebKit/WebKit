@@ -37,6 +37,7 @@ function checkDelayedResult(toneBuffer) {
             if (i < delayTimeFrames) {
                 // Check that initial portion is 0 (since signal is delayed).
                 if (renderedData[i] != 0) {
+                    testFailed("Initial portion is not 0 at frame " + i);
                     success = false;
                     break;
                 }
@@ -44,12 +45,14 @@ function checkDelayedResult(toneBuffer) {
                 // Make sure that the tone data is delayed by exactly the expected number of frames.
                 var j = i - delayTimeFrames;
                 if (renderedData[i] != sourceData[j]) {
+                    testFailed("Actual data does not match expected data at frame " + i);
                     success = false;
                     break;
                 }
             } else {
                 // Make sure we have silence after the delayed tone.
                 if (renderedData[i] != 0) {
+                    testFailed("Final portion is not 0 at frame " + i);
                     success = false;
                     break;
                 }
@@ -57,9 +60,9 @@ function checkDelayedResult(toneBuffer) {
         }
 
         if (success) {
-            testPassed("Test signal was correctly delayed.");
+            testPassed("Test signal was correctly delayed by " + delayTimeSeconds + " sec.");
         } else {
-            testFailed("Test signal was not correctly delayed.");
+            testFailed("Test signal was not correctly delayed by " + delayTimeSeconds + " sec.");
         }
 
         finishJSTest();

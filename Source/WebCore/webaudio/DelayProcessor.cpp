@@ -32,10 +32,11 @@
 
 namespace WebCore {
 
-DelayProcessor::DelayProcessor(float sampleRate, unsigned numberOfChannels)
+DelayProcessor::DelayProcessor(float sampleRate, unsigned numberOfChannels, double maxDelayTime)
     : AudioDSPKernelProcessor(sampleRate, numberOfChannels)
+    , m_maxDelayTime(maxDelayTime)
 {
-    m_delayTime = AudioParam::create("delayTime", 0.0, 0.0, 1.0);
+    m_delayTime = AudioParam::create("delayTime", 0.0, 0.0, maxDelayTime);
 }
 
 DelayProcessor::~DelayProcessor()

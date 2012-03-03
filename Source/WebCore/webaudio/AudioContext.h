@@ -114,6 +114,7 @@ public:
     PassRefPtr<BiquadFilterNode> createBiquadFilter();
     PassRefPtr<WaveShaperNode> createWaveShaper();
     PassRefPtr<DelayNode> createDelayNode();
+    PassRefPtr<DelayNode> createDelayNode(double maxDelayTime);
     PassRefPtr<LowPass2FilterNode> createLowPass2Filter();
     PassRefPtr<HighPass2FilterNode> createHighPass2Filter();
     PassRefPtr<AudioPannerNode> createPanner();

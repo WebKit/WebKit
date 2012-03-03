@@ -63,7 +63,7 @@ module webaudio {
 #endif
         // Processing nodes
         AudioGainNode createGainNode();
-        DelayNode createDelayNode();
+        DelayNode createDelayNode(in [Optional] double maxDelayTime);
         BiquadFilterNode createBiquadFilter();
         WaveShaperNode createWaveShaper();
         LowPass2FilterNode createLowPass2Filter();

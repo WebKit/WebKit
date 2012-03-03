@@ -445,9 +445,15 @@ PassRefPtr<AudioGainNode> AudioContext::createGainNode()
 
 PassRefPtr<DelayNode> AudioContext::createDelayNode()
 {
+    const double defaultMaxDelayTime = 1;
+    return createDelayNode(defaultMaxDelayTime);
+}
+
+PassRefPtr<DelayNode> AudioContext::createDelayNode(double maxDelayTime)
+{
     ASSERT(isMainThread());
     lazyInitialize();
-    return DelayNode::create(this, m_destinationNode->sampleRate());
+    return DelayNode::create(this, m_destinationNode->sampleRate(), maxDelayTime);
 }
 
 PassRefPtr<AudioChannelSplitter> AudioContext::createChannelSplitter()

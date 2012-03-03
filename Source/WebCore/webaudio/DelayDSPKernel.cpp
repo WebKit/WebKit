@@ -32,15 +32,13 @@
 #include <algorithm>
 
 using namespace std;
-  
-const float DefaultMaxDelayTime = 1;
+
 const float SmoothingTimeConstant = 0.020f; // 20ms
   
 namespace WebCore {
 
 DelayDSPKernel::DelayDSPKernel(DelayProcessor* processor)
     : AudioDSPKernel(processor)
-    , m_maxDelayTime(DefaultMaxDelayTime)
     , m_writeIndex(0)
     , m_firstTime(true)
 {
@@ -48,7 +46,8 @@ DelayDSPKernel::DelayDSPKernel(DelayProcessor* processor)
     if (!processor)
         return;
 
-    m_buffer.allocate(static_cast<size_t>(processor->sampleRate() * DefaultMaxDelayTime));
+    m_maxDelayTime = processor->maxDelayTime();
+    m_buffer.allocate(static_cast<size_t>(processor->sampleRate() * m_maxDelayTime));
     m_buffer.zero();
 
     m_smoothingRate = AudioUtilities::discreteTimeConstantForSampleRate(SmoothingTimeConstant, processor->sampleRate());
