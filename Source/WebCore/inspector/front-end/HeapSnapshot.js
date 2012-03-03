@@ -28,30 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Int32Array = function()
-{
-    const preallocateSize = 1000;
-    this._usedSize = 0;
-    this._array = new Int32Array(preallocateSize);
-}
-
-WebInspector.Int32Array.prototype = {
-    push: function(value)
-    {
-        if (this._usedSize + 1 > this._array.length) {
-            var tempArray = new Int32Array(this._array.length * 2);
-            tempArray.set(this._array);
-            this._array = tempArray;
-        }
-        this._array[this._usedSize++] = value;
-    },
-
-    get array()
-    {
-        return this._array.subarray(0, this._usedSize);
-    }
-}
-
 WebInspector.HeapSnapshotLoader = function()
 {
     this._json = "";
@@ -100,7 +76,8 @@ WebInspector.HeapSnapshotLoader.prototype = {
                     break;
                 else if (code === closingBracket) {
                     this._json = this._json.slice(index + 1);
-                    this._snapshot.nodes = this._nodes.array;
+                    // Shave off provisionally allocated space.
+                    this._snapshot.nodes = this._snapshot.nodes.slice(0);
                     return false;
                 }
                 ++index;
@@ -120,7 +97,7 @@ WebInspector.HeapSnapshotLoader.prototype = {
                 this._json = this._json.slice(startIndex);
                 return true;
             }
-            this._nodes.push(parseInt(this._json.slice(startIndex, index)));
+            this._snapshot.nodes.push(parseInt(this._json.slice(startIndex, index)));
         }
     },
 
@@ -174,9 +151,7 @@ WebInspector.HeapSnapshotLoader.prototype = {
             var closingBracketIndex = this._findBalancedCurlyBrackets();
             if (closingBracketIndex === -1)
                 return;
-            this._nodes = new WebInspector.Int32Array();
-            this._nodes.push(0);
-            this._snapshot.metaNode = JSON.parse(this._json.slice(0, closingBracketIndex));
+            this._snapshot.nodes = [JSON.parse(this._json.slice(0, closingBracketIndex))];
             this._json = this._json.slice(closingBracketIndex);
             this._state = "parse-nodes";
             this.pushJSONChunk("");
@@ -734,7 +709,6 @@ WebInspector.HeapSnapshot = function(profile)
 {
     this.uid = profile.snapshot.uid;
     this._nodes = profile.nodes;
-    this._metaNode = profile.metaNode;
     this._strings = profile.strings;
 
     this._init();
@@ -743,8 +717,9 @@ WebInspector.HeapSnapshot = function(profile)
 WebInspector.HeapSnapshot.prototype = {
     _init: function()
     {
+        this._metaNodeIndex = 0;
         this._rootNodeIndex = 1;
-        var meta = this._metaNode;
+        var meta = this._nodes[this._metaNodeIndex];
         this._nodeTypeOffset = meta.fields.indexOf("type");
         this._nodeNameOffset = meta.fields.indexOf("name");
         this._nodeIdOffset = meta.fields.indexOf("id");

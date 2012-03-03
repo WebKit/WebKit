@@ -37,7 +37,7 @@ InspectorTest.createHeapSnapshotMockObject = function()
     };
 };
 
-InspectorTest.createHeapSnapshotMockRaw = function()
+InspectorTest.createHeapSnapshotMock = function()
 {
     return {
         snapshot: {},
@@ -66,24 +66,9 @@ InspectorTest.createHeapSnapshotMockRaw = function()
     };
 };
 
-InspectorTest._postprocessHeapSnapshotMock = function(mock)
-{
-    mock.metaNode = mock.nodes[0];
-    mock.nodes[0] = 0;
-    var tempNodes = new Int32Array(1000);
-    tempNodes.set(mock.nodes);
-    mock.nodes = tempNodes.subarray(0, mock.nodes.length);
-    return mock;
-};
-
-InspectorTest.createHeapSnapshotMock = function()
-{
-    return InspectorTest._postprocessHeapSnapshotMock(InspectorTest.createHeapSnapshotMockRaw());
-};
-
 InspectorTest.createHeapSnapshotMockWithDOM = function()
 {
-    return InspectorTest._postprocessHeapSnapshotMock({
+    return {
         snapshot: {},
         nodes: [
             { fields: ["type", "name", "id", "children_count", "children"],
@@ -115,7 +100,7 @@ InspectorTest.createHeapSnapshotMockWithDOM = function()
             /* M */         1,  9, 13, 0
             ],
         strings: ["", "A", "B", "C", "D", "E", "F", "G", "H", "M", "N", "Window", "native"]
-    });
+    };
 };
 
 };
