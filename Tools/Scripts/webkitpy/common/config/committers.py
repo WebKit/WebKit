@@ -141,7 +141,6 @@ contributors_who_are_not_committers = [
     Contributor("Peter Linss", "peter.linss@hp.com", "plinss"),
     Contributor("Radar WebKit Bug Importer", "webkit-bug-importer@group.apple.com"),
     Contributor("Roland Takacs", "takacs.roland@stud.u-szeged.hu", "rtakacs"),
-    Contributor("Stephen Chenney", "schenney@chromium.org", "schenney"),
     Contributor("Szilard Ledan-Muntean", "muntean-ledan.szilard@stud.u-szeged.hu", "szledan"),
     Contributor("Tab Atkins", ["tabatkins@google.com", "jackalmage@gmail.com"], "tabatkins"),
     Contributor("Tamas Czene", ["tczene@inf.u-szeged.hu", "Czene.Tamas@stud.u-szeged.hu"], "tczene"),
