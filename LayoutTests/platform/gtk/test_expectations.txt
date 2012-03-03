@@ -9,6 +9,8 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 
 BUGWK76814 DEBUG : fast/xmlhttprequest/xmlhttprequest-get.xhtml = CRASH
 
+BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = CRASH
+
 // Flaky tests
 
 BUGWK68878 : media/video-playing-and-pause.html = PASS TEXT
