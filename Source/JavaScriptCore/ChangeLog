@@ -1,3 +1,37 @@
+2012-03-04  David Kilzer  <ddkilzer@apple.com>
+
+        Fix build when the classic interpreter is enabled
+
+        Reviewed by Gavin Barraclough.
+
+        Fixes the following build error when running the "Generate
+        Derived Sources" build phase script:
+
+            offlineasm: Parsing JavaScriptCore/llint/LowLevelInterpreter.asm and ../../JSCLLIntOffsetsExtractor and creating assembly file LLIntAssembly.h.
+            ./JavaScriptCore/offlineasm/offsets.rb:145:in `offsetsAndConfigurationIndex': unhandled exception
+                    from JavaScriptCore/offlineasm/asm.rb:131
+            Command /bin/sh failed with exit code 1
+
+        Gavin's fix in r109674 avoided the #error statement in
+        JITStubs.h when compiling LLIntOffsetsExtractor.cpp, but it
+        caused the "Generate Derived Sources" build phase script to fail
+        when JavaScriptCore/offlineasm/asm.rb was run.  The solution is
+        to detect when the classic interpreter is being built and simply
+        exit early from asm.rb in that case.
+
+        * llint/LLIntOffsetsExtractor.cpp:
+        (JSC::LLIntOffsetsExtractor::dummy): Return NULL pointer if the
+        JIT is disabled.  Note that offsets.rb doesn't care about the
+        return value here, but instead it cares about finding the magic
+        values in the binary.  The magic values are no longer present
+        when the JIT is disabled.
+        * offlineasm/asm.rb: Catch MissingMagicValuesException and exit
+        early with a status message.
+        * offlineasm/offsets.rb:
+        (MissingMagicValuesException): Add new exception class.
+        (offsetsAndConfigurationIndex): Throw
+        MissingMagicValuesException when no magic values are found.
+
 2012-03-04  Jurij Smakov  <jurij@wooyd.org>
 
         SPARC also needs aligned accesses.

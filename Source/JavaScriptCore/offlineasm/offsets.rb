@@ -27,6 +27,16 @@ OFFSET_HEADER_MAGIC_NUMBERS = [ 0x9e43fd66, 0x4379bfba ]
 OFFSET_MAGIC_NUMBERS = [ 0xec577ac7, 0x0ff5e755 ]
 
 #
+# MissingMagicValuesException
+#
+# Thrown when magic values are missing from the binary.
+# This is usually an indication that the classic interpreter is enabled.
+#
+
+class MissingMagicValuesException < Exception
+end
+
+#
 # offsetsList(ast)
 # sizesList(ast)
 #
@@ -142,7 +152,7 @@ def offsetsAndConfigurationIndex(file)
         end
     }
     
-    raise unless result.length >= 1
+    raise MissingMagicValuesException unless result.length >= 1
     raise if result.map{|v| v[1]}.uniq.size < result.map{|v| v[1]}.size
     
     result

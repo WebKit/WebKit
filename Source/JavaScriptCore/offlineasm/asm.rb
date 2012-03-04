@@ -128,7 +128,12 @@ outputFlnm = ARGV.shift
 
 $stderr.puts "offlineasm: Parsing #{asmFile} and #{offsetsFile} and creating assembly file #{outputFlnm}."
 
-configurationList = offsetsAndConfigurationIndex(offsetsFile)
+begin
+    configurationList = offsetsAndConfigurationIndex(offsetsFile)
+rescue MissingMagicValuesException
+    $stderr.puts "offlineasm: No magic values found. Skipping assembly file generation assuming the classic interpreter is enabled."
+    exit 0
+end
 
 inputHash =
     "// offlineasm input hash: " + parseHash(asmFile) +
