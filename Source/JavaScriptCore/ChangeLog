@@ -1,3 +1,27 @@
+2012-03-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        Implement the basis of KURLWTFURL
+        https://bugs.webkit.org/show_bug.cgi?id=79600
+
+        Reviewed by Adam Barth.
+
+        Add an API to know if a ParsedURL is valid.
+
+        * wtf/url/api/ParsedURL.cpp:
+        (WTF::ParsedURL::ParsedURL):
+        (WTF):
+        (WTF::ParsedURL::isolatedCopy): This is needed by APIs moving URL objects between thread
+        and by KURL's detach() on write.
+        (WTF::ParsedURL::baseAsString):
+        (WTF::ParsedURL::segment):
+        Add a stronger constraint on accessors: the client of this API should never ask for the segments
+        on an invalid URL.
+        * wtf/url/api/ParsedURL.h:
+        (WTF):
+        (WTF::ParsedURL::ParsedURL):
+        (ParsedURL):
+        (WTF::ParsedURL::isValid):
+
 2012-03-03  Hans Wennborg  <hans@chromium.org>
 
         Implement Speech JavaScript API

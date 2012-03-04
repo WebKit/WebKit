@@ -28,11 +28,29 @@
 
 #if USE(WTFURL)
 
+using namespace WTF;
+
 namespace WebCore {
 
-KURL::KURL(ParsedURLStringTag, const String&)
+static const unsigned maximumValidPortNumber = 0xFFFE;
+static const unsigned invalidPortNumber = 0xFFFF;
+
+static inline void detach(RefPtr<KURLWTFURLImpl>& urlImpl)
 {
-    // FIXME: Add WTFURL Implementation.
+    if (!urlImpl)
+        return;
+
+    if (urlImpl->hasOneRef())
+        return;
+
+    urlImpl = urlImpl->copy();
+}
+
+KURL::KURL(ParsedURLStringTag, const String& urlString)
+    : m_urlImpl(adoptRef(new KURLWTFURLImpl()))
+{
+    m_urlImpl->m_parsedURL = ParsedURL(urlString);
+    ASSERT(m_urlImpl->m_parsedURL.isValid());
 }
 
 KURL::KURL(const KURL&, const String&)
@@ -47,8 +65,10 @@ KURL::KURL(const KURL&, const String&, const TextEncoding&)
 
 KURL KURL::copy() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return KURL();
+    KURL other;
+    if (!isNull())
+        other.m_urlImpl = m_urlImpl->copy();
+    return other;
 }
 
 bool KURL::isNull() const
@@ -56,174 +76,218 @@ bool KURL::isNull() const
     return !m_urlImpl;
 }
 
+// FIXME: Can we get rid of the concept of EmptyURL? Can an null URL be enough?
+// If we cannot get rid of the concept, we should make a shared empty URL.
 bool KURL::isEmpty() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return true;
+    return !m_urlImpl
+           || (!m_urlImpl->m_parsedURL.isValid() && m_urlImpl->m_invalidUrlString.isEmpty());
 }
 
 bool KURL::isValid() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return false;
-}
+    if (!m_urlImpl)
+        return false;
 
-bool KURL::hasPath() const
-{
-    // FIXME: Add WTFURL Implementation.
-    return false;
+    bool isParsedURLValid = m_urlImpl->m_parsedURL.isValid();
+#ifndef NDEBUG
+    if (isParsedURLValid)
+        ASSERT_WITH_MESSAGE(m_urlImpl->m_invalidUrlString.isNull(), "A valid URL should never have a valid invalidUrlString.");
+#endif
+    return isParsedURLValid;
 }
 
 const String &KURL::string() const
 {
-    // FIXME: Add WTFURL Implementation.
-    ASSERT(m_urlImpl);
-    return m_urlImpl->m_invalidUrlString;
+    if (isNull()) {
+        DEFINE_STATIC_LOCAL(const String, nullString, ());
+        return nullString;
+    }
+
+    if (!m_urlImpl->m_invalidUrlString.isNull()) {
+        ASSERT(!isValid());
+        return m_urlImpl->m_invalidUrlString;
+    }
+
+    ASSERT(isValid());
+    return m_urlImpl->m_parsedURL.spec().string();
 }
 
 String KURL::protocol() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return String();
+    ASSERT(isValid());
+    return m_urlImpl->m_parsedURL.scheme();
 }
 
 String KURL::host() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return String();
-}
-
-unsigned short KURL::port() const
-{
-    // FIXME: Add WTFURL Implementation.
-    return 0;
+    ASSERT(isValid());
+    return m_urlImpl->m_parsedURL.host();
 }
 
 bool KURL::hasPort() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return false;
+    ASSERT(isValid());
+    return !m_urlImpl->m_parsedURL.port().isNull();
+}
+
+unsigned short KURL::port() const
+{
+    ASSERT(isValid());
+
+    String portString = m_urlImpl->m_parsedURL.port();
+    bool ok = false;
+    unsigned portValue = portString.toUIntStrict(&ok);
+
+    if (!ok || portValue > maximumValidPortNumber)
+        return invalidPortNumber;
+
+    return static_cast<unsigned short>(portValue);
 }
 
 String KURL::user() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return String();
+    ASSERT(isValid());
+    return m_urlImpl->m_parsedURL.username();
 }
 
 String KURL::pass() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return String();
+    ASSERT(isValid());
+    return m_urlImpl->m_parsedURL.password();
+}
+
+bool KURL::hasPath() const
+{
+    ASSERT(isValid());
+    return !path().isEmpty();
 }
 
 String KURL::path() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return String();
+    ASSERT(isValid());
+    return m_urlImpl->m_parsedURL.path();
 }
 
 String KURL::lastPathComponent() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return String();
+    ASSERT(isValid());
+
+    String pathString = path();
+    size_t index = pathString.reverseFind('/');
+
+    if (index == notFound)
+        return pathString;
+
+    return pathString.substring(index + 1);
 }
 
 String KURL::query() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return String();
-}
-
-String KURL::fragmentIdentifier() const
-{
-    // FIXME: Add WTFURL Implementation.
-    return String();
+    ASSERT(isValid());
+    return m_urlImpl->m_parsedURL.query();
 }
 
 bool KURL::hasFragmentIdentifier() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return false;
+    ASSERT(isValid());
+    return !fragmentIdentifier().isNull();
 }
 
+String KURL::fragmentIdentifier() const
+{
+    ASSERT(isValid());
+    return m_urlImpl->m_parsedURL.fragment();
+}
+
+// FIXME: track an fix the bad use of this method.
 String KURL::baseAsString() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return String();
+    ASSERT(isValid());
+    return m_urlImpl->m_parsedURL.baseAsString();
 }
 
+// FIXME: Get rid of this function from KURL.
 String KURL::fileSystemPath() const
 {
-    // FIXME: Add WTFURL Implementation.
     return String();
 }
 
-bool KURL::protocolIs(const char*) const
+bool KURL::protocolIs(const char* testProtocol) const
 {
-    // FIXME: Add WTFURL Implementation.
-    return false;
+    ASSERT(isValid());
+    return WebCore::protocolIs(protocol(), testProtocol);
 }
 
 bool KURL::protocolIsInHTTPFamily() const
 {
-    // FIXME: Add WTFURL Implementation.
-    return false;
+    return protocolIs("http") || protocolIs("https");
 }
 
 bool KURL::setProtocol(const String&)
 {
+    detach(m_urlImpl);
     // FIXME: Add WTFURL Implementation.
     return false;
 }
 
 void KURL::setHost(const String&)
 {
+    detach(m_urlImpl);
     // FIXME: Add WTFURL Implementation.
 }
 
 void KURL::removePort()
 {
+    detach(m_urlImpl);
     // FIXME: Add WTFURL Implementation.
 }
 
 void KURL::setPort(unsigned short)
 {
+    detach(m_urlImpl);
     // FIXME: Add WTFURL Implementation.
 }
 
 void KURL::setHostAndPort(const String&)
 {
+    detach(m_urlImpl);
     // FIXME: Add WTFURL Implementation.
 }
 
 void KURL::setUser(const String&)
 {
+    detach(m_urlImpl);
     // FIXME: Add WTFURL Implementation.
 }
 
 void KURL::setPass(const String&)
 {
+    detach(m_urlImpl);
     // FIXME: Add WTFURL Implementation.
 }
 
 void KURL::setPath(const String&)
 {
+    detach(m_urlImpl);
     // FIXME: Add WTFURL Implementation.
 }
 
 void KURL::setQuery(const String&)
 {
+    detach(m_urlImpl);
     // FIXME: Add WTFURL Implementation.
 }
 
 void KURL::setFragmentIdentifier(const String&)
 {
+    detach(m_urlImpl);
     // FIXME: Add WTFURL Implementation.
 }
 
 void KURL::removeFragmentIdentifier()
 {
+    detach(m_urlImpl);
     // FIXME: Add WTFURL Implementation.
 }
 
@@ -280,10 +344,14 @@ bool equalIgnoringFragmentIdentifier(const KURL&, const KURL&)
     return false;
 }
 
-bool protocolHostAndPortAreEqual(const KURL&, const KURL&)
+bool protocolHostAndPortAreEqual(const KURL& a, const KURL& b)
 {
-    // FIXME: Add WTFURL Implementation.
-    return false;
+    if (!a.isValid() || !b.isValid())
+        return false;
+
+    return a.protocol() == b.protocol()
+           && a.host() == b.host()
+           && a.port() == b.port();
 }
 
 String encodeWithURLEscapeSequences(const String&)

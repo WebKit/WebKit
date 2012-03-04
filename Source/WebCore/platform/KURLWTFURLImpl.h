@@ -28,7 +28,9 @@
 
 #if USE(WTFURL)
 
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/url/ParsedURL.h>
 
@@ -38,7 +40,17 @@ class KURLWTFURLImpl : public RefCounted<KURLWTFURLImpl> {
 public:
     WTF::ParsedURL m_parsedURL;
     String m_invalidUrlString;
+
+    PassRefPtr<KURLWTFURLImpl> copy() const;
 };
+
+inline PassRefPtr<KURLWTFURLImpl> KURLWTFURLImpl::copy() const
+{
+    RefPtr<KURLWTFURLImpl> clone = adoptRef(new KURLWTFURLImpl);
+    clone->m_parsedURL = m_parsedURL.isolatedCopy();
+    clone->m_invalidUrlString = m_invalidUrlString.isolatedCopy();
+    return clone.release();
+}
 
 } // namespace WebCore
 

@@ -33,13 +33,21 @@
 
 namespace WTF {
 
-ParsedURL::ParsedURL(const URLString& spec)
-    : m_spec(spec)
+ParsedURL::ParsedURL(const String& urlString)
+    : m_spec(urlString)
 {
     // FIXME: Handle non-standard URLs.
-    if (spec.string().isEmpty())
+    if (urlString.isEmpty())
         return;
-    URLParser<UChar>::parseStandardURL(spec.string().characters(), spec.string().length(), m_segments);
+    URLParser<UChar>::parseStandardURL(urlString.characters(), urlString.length(), m_segments);
+}
+
+ParsedURL ParsedURL::isolatedCopy() const
+{
+    ParsedURL copy;
+    copy.m_segments = this->m_segments;
+    copy.m_spec = URLString(this->m_spec.string().isolatedCopy());
+    return copy;
 }
 
 String ParsedURL::scheme() const
@@ -82,11 +90,22 @@ String ParsedURL::fragment() const
     return segment(m_segments.fragment);
 }
 
+String ParsedURL::baseAsString() const
+{
+    // FIXME: Add WTFURL Implementation.
+    return String();
+}
+
 String ParsedURL::segment(const URLComponent& component) const
 {
+    ASSERT(isValid());
+
     if (!component.isValid())
         return String();
-    return m_spec.string().substring(component.begin(), component.length());
+
+    String segment = m_spec.string().substring(component.begin(), component.length());
+    ASSERT_WITH_MESSAGE(!segment.isEmpty(), "A valid URL component should not be empty.");
+    return segment;
 }
 
 }
