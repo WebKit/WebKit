@@ -1,3 +1,11 @@
+2012-03-04  Jurij Smakov  <jurij@wooyd.org>
+
+        SPARC also needs aligned accesses.
+
+        Rubber-stamped by Gustavo Noronha Silva.
+
+        * wtf/Platform.h:
+
 2012-03-04  Gavin Barraclough  <barraclough@apple.com>
 
         Unreviewed build fix.
