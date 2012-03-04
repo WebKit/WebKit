@@ -282,7 +282,6 @@ const KURL& blankURL();
 // This is especially important because valid javascript URLs are not necessarily considered valid by KURL.
 
 bool protocolIs(const String& url, const char* protocol);
-bool protocolIsInHTTPFamily(const String& url);
 bool protocolIsJavaScript(const String& url);
 
 bool isDefaultPortForProtocol(unsigned short port, const String& protocol);

@@ -1888,17 +1888,4 @@ String mimeTypeFromDataURL(const String& url)
     return "";
 }
 
-bool protocolIsInHTTPFamily(const String& url)
-{
-    unsigned length = url.length();
-    const UChar* characters = url.characters();
-    return length > 4
-        && isLetterMatchIgnoringCase(characters[0], 'h')
-        && isLetterMatchIgnoringCase(characters[1], 't')
-        && isLetterMatchIgnoringCase(characters[2], 't')
-        && isLetterMatchIgnoringCase(characters[3], 'p')
-        && (characters[4] == ':'
-            || (isLetterMatchIgnoringCase(characters[4], 's') && length > 5 && characters[5] == ':'));
-}
-
 }
