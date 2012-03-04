@@ -303,6 +303,16 @@ webcore_cppflags += -DENABLE_INPUT_SPEECH=0
 endif # END ENABLE_INPUT_SPEECH
 
 # ----
+# Scripted Speech API support
+# ----
+if ENABLE_SCRIPTED_SPEECH
+FEATURE_DEFINES += ENABLE_SCRIPTED_SPEECH=1
+webcore_cppflags += -DENABLE_SCRIPTED_SPEECH=1
+else
+webcore_cppflags += -DENABLE_SCRIPTED_SPEECH=0
+endif # END ENABLE_SCRIPTED_SPEECH
+
+# ----
 # Icon Database Support
 # ----
 if ENABLE_ICONDATABASE

@@ -688,6 +688,14 @@ AC_ARG_ENABLE(input_speech,
               [],[enable_input_speech="no"])
 AC_MSG_RESULT([$enable_input_speech])
 
+# check whether to enable the scripted speech API
+AC_MSG_CHECKING([whether to enable the scripted speech API])
+AC_ARG_ENABLE(scripted_speech,
+              AC_HELP_STRING([--enable-scripted-speech],
+                             [enable the scripted speech API [default=no]]),
+              [],[enable_scripted_speech="no"])
+AC_MSG_RESULT([$enable_scripted_speech])
+
 # check whether to build with SQL database support
 AC_MSG_CHECKING([whether to enable SQL client-side database storage support])
 AC_ARG_ENABLE(sql_database,
@@ -1338,6 +1346,7 @@ AM_CONDITIONAL([ENABLE_IMAGE_RESIZER],[test "$enable_image_resizer" = "yes"])
 AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
 AM_CONDITIONAL([ENABLE_INPUT_COLOR],[test "$enable_input_color" = "yes"])
 AM_CONDITIONAL([ENABLE_INPUT_SPEECH],[test "$enable_input_speech" = "yes"])
+AM_CONDITIONAL([ENABLE_SCRIPTED_SPEECH],[test "$enable_scripted_speech" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])
 AM_CONDITIONAL([ENABLE_FILTERS],[test "$enable_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_GEOLOCATION], [test "$enable_geolocation" = "yes"])
@@ -1459,6 +1468,7 @@ Features:
  SharedWorkers support                                    : $enable_shared_workers
  Color input support                                      : $enable_input_color
  Speech input support                                     : $enable_input_speech
+ Scripted speech support                                  : $enable_scripted_speech
  SVG support                                              : $enable_svg
  SVG fonts support                                        : $enable_svg_fonts
  Web Audio support                                        : $enable_web_audio

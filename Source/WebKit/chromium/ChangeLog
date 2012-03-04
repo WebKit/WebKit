@@ -1,3 +1,20 @@
+2012-03-03  Hans Wennborg  <hans@chromium.org>
+
+        Implement Speech JavaScript API
+        https://bugs.webkit.org/show_bug.cgi?id=80019
+
+        Reviewed by Adam Barth.
+
+        Add ENABLE_SCRIPTED_SPEECH and runtime flag.
+
+        * features.gypi:
+        * public/WebRuntimeFeatures.h:
+        (WebRuntimeFeatures):
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableScriptedSpeech):
+        (WebKit):
+        (WebKit::WebRuntimeFeatures::isScriptedSpeechEnabled):
+
 2012-03-03  Bill Budge  <bbudge@chromium.org>
 
         Fixes AssociatedURLLoader support for Access-Control-Expose-Headers field in response.

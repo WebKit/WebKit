@@ -260,6 +260,22 @@ bool WebRuntimeFeatures::isSpeechInputEnabled()
     return RuntimeEnabledFeatures::speechInputEnabled();
 }
 
+void WebRuntimeFeatures::enableScriptedSpeech(bool enable)
+{
+#if ENABLE(SCRIPTED_SPEECH)
+    RuntimeEnabledFeatures::setScriptedSpeechEnabled(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isScriptedSpeechEnabled()
+{
+#if ENABLE(SCRIPTED_SPEECH)
+    return RuntimeEnabledFeatures::scriptedSpeechEnabled();
+#else
+    return false;
+#endif
+}
+
 void WebRuntimeFeatures::enableXHRResponseBlob(bool enable)
 {
 #if ENABLE(XHR_RESPONSE_BLOB)

@@ -95,6 +95,7 @@ my (
     $indexedDatabaseSupport,
     $inputColorSupport,
     $inputSpeechSupport,
+    $scriptedSpeechSupport,
     $inputTypeDateSupport,
     $inputTypeDatetimeSupport,
     $inputTypeDatetimelocalSupport,
@@ -227,6 +228,9 @@ my @features = (
 
     { option => "input-speech", desc => "Speech Input API support",
       define => "ENABLE_INPUT_SPEECH", default => 0, value => \$inputSpeechSupport },
+
+    { option => "scripted-speech", desc => "Scripted Speech API support",
+      define => "ENABLE_SCRIPTED_SPEECH", default => 0, value => \$scriptedSpeechSupport },
 
     { option => "input-type-date", desc => "Toggle date type <input> support",
       define => "ENABLE_INPUT_TYPE_DATE", default => 0, value => \$inputTypeDateSupport },

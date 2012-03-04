@@ -3152,6 +3152,10 @@ contains(DEFINES, ENABLE_INPUT_SPEECH=1) {
         rendering/RenderInputSpeech.cpp
 }
 
+contains(DEFINES, ENABLE_SCRIPTED_SPEECH=1) {
+    SOURCES += # FIXME!
+}
+
 contains(DEFINES, ENABLE_QUOTA=1) {
     HEADERS += \
         storage/StorageInfo.h \
