@@ -124,7 +124,7 @@ static NSString* descriptionOfValue(id valueObject, id focusedAccessibilityObjec
         return NULL;
 
     if ([valueObject isKindOfClass:[NSArray class]])
-        return [NSString stringWithFormat:@"<array of size %d>", [(NSArray*)valueObject count]];
+        return [NSString stringWithFormat:@"<array of size %lu>", static_cast<unsigned long>([(NSArray*)valueObject count])];
 
     if ([valueObject isKindOfClass:[NSNumber class]])
         return [(NSNumber*)valueObject stringValue];
@@ -1029,12 +1029,12 @@ int AccessibilityUIElement::indexInTable()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::rowIndexRange()
 {
-    NSRange range = NSMakeRange(0,0);
+    NSRange range = NSMakeRange(0, 0);
     BEGIN_AX_OBJC_EXCEPTIONS
     NSValue* indexRange = [m_element accessibilityAttributeValue:@"AXRowIndexRange"];
     if (indexRange)
         range = [indexRange rangeValue];
-    NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
+    NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%lu, %lu}", static_cast<unsigned long>(range.location), static_cast<unsigned long>(range.length)];
     return [rangeDescription createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
     
@@ -1043,13 +1043,13 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::rowIndexRange()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::columnIndexRange()
 {
-    NSRange range = NSMakeRange(0,0);
+    NSRange range = NSMakeRange(0, 0);
     BEGIN_AX_OBJC_EXCEPTIONS
     NSNumber* indexRange = [m_element accessibilityAttributeValue:@"AXColumnIndexRange"];
     if (indexRange)
         range = [indexRange rangeValue];
-    NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
-    return [rangeDescription createJSStringRef];    
+    NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%lu, %lu}", static_cast<unsigned long>(range.location), static_cast<unsigned long>(range.length)];
+    return [rangeDescription createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
     
     return 0;
@@ -1090,8 +1090,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
     NSValue *indexRange = [m_element accessibilityAttributeValue:NSAccessibilitySelectedTextRangeAttribute];
     if (indexRange)
         range = [indexRange rangeValue];
-    NSMutableString *rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
-    return [rangeDescription createJSStringRef];    
+    NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%lu, %lu}", static_cast<unsigned long>(range.location), static_cast<unsigned long>(range.length)];
+    return [rangeDescription createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
     
     return 0;

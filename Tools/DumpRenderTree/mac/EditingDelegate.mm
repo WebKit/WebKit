@@ -57,7 +57,7 @@
 @implementation DOMRange (dump)
 - (NSString *)dump
 {
-    return [NSString stringWithFormat:@"range from %ld of %@ to %ld of %@", [self startOffset], [[self startContainer] dumpPath], [self endOffset], [[self endContainer] dumpPath]];
+    return [NSString stringWithFormat:@"range from %d of %@ to %d of %@", [self startOffset], [[self startContainer] dumpPath], [self endOffset], [[self endContainer] dumpPath]];
 }
 @end
 

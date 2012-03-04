@@ -57,7 +57,7 @@ using namespace std;
 @implementation NSError (DRTExtras)
 - (NSString *)_drt_descriptionSuitableForTestResult 
 {
-    NSString *str = [NSString stringWithFormat:@"<NSError domain %@, code %d", [self domain], [self code]];
+    NSString *str = [NSString stringWithFormat:@"<NSError domain %@, code %ld", [self domain], static_cast<long>([self code])];
     NSURL *failingURL;
 
     if ((failingURL = [[self userInfo] objectForKey:@"NSErrorFailingURLKey"]))

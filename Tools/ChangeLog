@@ -1,3 +1,26 @@
+2012-03-04  Anders Carlsson  <andersca@apple.com>
+
+        Newer versions of clang fail to compile WebKit.
+
+        Fix build.
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (descriptionOfValue):
+        (AccessibilityUIElement::rowIndexRange):
+        (AccessibilityUIElement::columnIndexRange):
+        (AccessibilityUIElement::selectedTextRange):
+        * DumpRenderTree/mac/EditingDelegate.mm:
+        (-[DOMRange dump]):
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        (-[PolicyDelegate webView:unableToImplementPolicyWithError:frame:]):
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[NSError _drt_descriptionSuitableForTestResult]):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::descriptionOfValue):
+        (WTR::AccessibilityUIElement::rowIndexRange):
+        (WTR::AccessibilityUIElement::columnIndexRange):
+        (WTR::AccessibilityUIElement::selectedTextRange):
+
 2012-03-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix static_libs_as_shared build
