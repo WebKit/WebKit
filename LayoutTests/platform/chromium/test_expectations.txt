@@ -4196,8 +4196,6 @@ BUGWK79863 WIN : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
 // EPOGER: To be rebaselined after skia rev. 3283 lands in webkit
 BUGCR116252 LINUX : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
 
-BUGWK80053 DEBUG : svg/W3C-SVG-1.1/animate-elem-32-t.svg = CRASH PASS
-
 BUGWK80058 WIN RELEASE : fast/workers/stress-js-execution.html = CRASH PASS
 
 BUGWK80067 DEBUG : media/track/track-cues-pause-on-exit.html = PASS TEXT

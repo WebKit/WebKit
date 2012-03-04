@@ -357,13 +357,16 @@ void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
     if (shouldApply == DontApplyAnimation)
         return;
 
+    if (targetElement->isStyled())
+        static_cast<SVGStyledElement*>(targetElement)->setInstanceUpdatesBlocked(true);
+
     if (shouldApply == ApplyCSSAnimation)
         setTargetAttributeAnimatedCSSValue(targetElement, attributeName, value);
     else
         setTargetAttributeAnimatedXMLValue(targetElement, attributeName, value);
 
     if (targetElement->isStyled())
-        static_cast<SVGStyledElement*>(targetElement)->setInstanceUpdatesBlocked(true);
+        static_cast<SVGStyledElement*>(targetElement)->setInstanceUpdatesBlocked(false);
 
     // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
     const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
@@ -376,11 +379,8 @@ void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
         if (shouldApply == ApplyCSSAnimation)
             setTargetAttributeAnimatedCSSValue(shadowTreeElement, attributeName, value);
         else
-            setTargetAttributeAnimatedCSSValue(shadowTreeElement, attributeName, value);
+            setTargetAttributeAnimatedXMLValue(shadowTreeElement, attributeName, value);
     }
-
-    if (targetElement->isStyled())
-        static_cast<SVGStyledElement*>(targetElement)->setInstanceUpdatesBlocked(false);
 }
 
 void SVGAnimationElement::resetAnimationState(const String& baseValue)
@@ -403,24 +403,15 @@ SVGAnimationElement::ShouldApplyAnimation SVGAnimationElement::shouldApplyAnimat
     if (!hasValidAttributeType() || !targetElement || attributeName == anyQName())
         return DontApplyAnimation;
 
-    AttributeType attributeType = this->attributeType();
-    switch (attributeType) {
-    case AttributeTypeAuto:
-        // For attributeType="auto", try CSS first. If that fails, try XML.
-    case AttributeTypeCSS:
-        // If attributeName is a known animatable SVG CSS property, apply the animation.
-        if (isTargetAttributeCSSProperty(targetElement, attributeName))
-            return ApplyCSSAnimation;
-        // If attributeName is unknown and ttributeType is not 'auto', don't apply the animation.
-        if (attributeType == AttributeTypeCSS)
-            return DontApplyAnimation;
-        // For attributeType="auto", try XML animation now.
-    case AttributeTypeXML:
-        return ApplyXMLAnimation;
-    };
+    // Always animate CSS properties, using the ApplyCSSAnimation code path, regardless of the attributeType value.
+    if (isTargetAttributeCSSProperty(targetElement, attributeName))
+        return ApplyCSSAnimation;
 
-    ASSERT_NOT_REACHED();
-    return DontApplyAnimation;
+    // If attributeType="CSS" and attributeName doesn't point to a CSS property, ignore the animation.
+    if (attributeType() == AttributeTypeCSS)
+        return DontApplyAnimation;
+
+    return ApplyXMLAnimation;
 }
 
 void SVGAnimationElement::calculateKeyTimesForCalcModePaced()
