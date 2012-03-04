@@ -1,3 +1,34 @@
+2012-03-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Split JSArray's [[Put]] & [[DefineOwnProperty]] traps.
+        https://bugs.webkit.org/show_bug.cgi?id=80217
+
+        Reviewed by Filip Pizlo.
+
+        putByIndex() provides similar behavior to put(), but for indexed property names.
+        Many places in ArrayPrototype call putByIndex() where they really mean to call
+        [[DefineOwnProperty]]. This is only okay due to a bug – putByIndex should be
+        calling numeric accessors (& respecting numeric read only properties) on the
+        prototype chain, but isn't. Add a new putDirectIndex (matching JSObject's
+        putDirect* methods), to correctly provide a fast [[DefineOwnProperty]] interface.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        * runtime/JSArray.cpp:
+        (JSC):
+        (JSC::reject):
+        (JSC::SparseArrayValueMap::putDirect):
+        (JSC::JSArray::defineOwnNumericProperty):
+        (JSC::JSArray::putByIndexBeyondVectorLength):
+        (JSC::JSArray::putDirectIndexBeyondVectorLength):
+        * runtime/JSArray.h:
+        (SparseArrayValueMap):
+        (JSArray):
+        (JSC::JSArray::putDirectIndex):
+
 2012-03-03  Benjamin Poulain  <benjamin@webkit.org>
 
         Implement the basis of KURLWTFURL

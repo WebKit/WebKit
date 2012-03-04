@@ -86,6 +86,7 @@ namespace JSC {
 
         // These methods may mutate the contents of the map
         void put(ExecState*, JSArray*, unsigned, JSValue);
+        bool putDirect(ExecState*, JSArray*, unsigned, JSValue, bool shouldThrow);
         std::pair<iterator, bool> add(JSArray*, unsigned);
         iterator find(unsigned i) { return m_map.find(i); }
         // This should ASSERT the remove is valid (check the result of the find).
@@ -160,6 +161,18 @@ namespace JSC {
         JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
         static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
+        // This is similar to the JSObject::putDirect* methods:
+        //  - the prototype chain is not consulted
+        //  - accessors are not called.
+        // This method creates a property with attributes writable, enumerable and configurable all set to true.
+        bool putDirectIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow = true)
+        {
+            if (canSetIndex(propertyName)) {
+                setIndex(exec->globalData(), propertyName, value);
+                return true;
+            }
+            return putDirectIndexBeyondVectorLength(exec, propertyName, value, shouldThrow);
+        }
 
         static JS_EXPORTDATA const ClassInfo s_info;
         
@@ -283,6 +296,7 @@ namespace JSC {
 
         bool getOwnPropertySlotSlowCase(ExecState*, unsigned propertyName, PropertySlot&);
         void putByIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue);
+        bool putDirectIndexBeyondVectorLength(ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
 
         unsigned getNewVectorLength(unsigned desiredLength);
         bool increaseVectorLength(JSGlobalData&, unsigned newLength);

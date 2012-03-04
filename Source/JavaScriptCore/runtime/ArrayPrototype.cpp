@@ -368,11 +368,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
                 if (exec->hadException())
                     return JSValue::encode(jsUndefined());
                 if (v)
-                    arr->methodTable()->putByIndex(arr, exec, n, v);
+                    arr->putDirectIndex(exec, n, v);
                 n++;
             }
         } else {
-            arr->methodTable()->putByIndex(arr, exec, n, curArg);
+            arr->putDirectIndex(exec, n, curArg);
             n++;
         }
         if (i == argCount)
@@ -521,7 +521,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
         if (v)
-            resObj->methodTable()->putByIndex(resObj, exec, n, v);
+            resObj->putDirectIndex(exec, n, v);
     }
     resObj->setLength(exec, n);
     return JSValue::encode(result);
@@ -732,7 +732,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncFilter(ExecState* exec)
             
             JSValue result = cachedCall.call();
             if (result.toBoolean(exec))
-                resultArray->methodTable()->putByIndex(resultArray, exec, filterIndex++, v);
+                resultArray->putDirectIndex(exec, filterIndex++, v);
         }
         if (k == length)
             return JSValue::encode(resultArray);
@@ -753,7 +753,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncFilter(ExecState* exec)
 
         JSValue result = call(exec, function, callType, callData, applyThis, eachArguments);
         if (result.toBoolean(exec))
-            resultArray->methodTable()->putByIndex(resultArray, exec, filterIndex++, v);
+            resultArray->putDirectIndex(exec, filterIndex++, v);
     }
     return JSValue::encode(resultArray);
 }
@@ -788,7 +788,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncMap(ExecState* exec)
             cachedCall.setArgument(1, jsNumber(k));
             cachedCall.setArgument(2, thisObj);
 
-            JSArray::putByIndex(resultArray, exec, k, cachedCall.call());
+            resultArray->putDirectIndex(exec, k, cachedCall.call());
         }
     }
     for (; k < length && !exec->hadException(); ++k) {
@@ -809,7 +809,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncMap(ExecState* exec)
             return JSValue::encode(jsUndefined());
 
         JSValue result = call(exec, function, callType, callData, applyThis, eachArguments);
-        resultArray->methodTable()->putByIndex(resultArray, exec, k, result);
+        resultArray->putDirectIndex(exec, k, result);
     }
 
     return JSValue::encode(resultArray);

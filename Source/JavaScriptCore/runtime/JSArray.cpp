@@ -41,6 +41,7 @@ using namespace WTF;
 
 namespace JSC {
 
+
 ASSERT_CLASS_FITS_IN_CELL(JSArray);
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSArray);
 
@@ -107,6 +108,13 @@ static unsigned lastArraySize = 0;
 static inline bool isDenseEnoughForVector(unsigned length, unsigned numValues)
 {
     return length <= MIN_SPARSE_ARRAY_INDEX || length / minDensityMultiplier <= numValues;
+}
+
+static bool reject(ExecState* exec, bool throwException, const char* message)
+{
+    if (throwException)
+        throwTypeError(exec, message);
+    return false;
 }
 
 #if !CHECK_ARRAY_CONSISTENCY
@@ -239,6 +247,24 @@ inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i
     MarkedArgumentBuffer args;
     args.append(value);
     call(exec, setter, callType, callData, array, args);
+}
+
+inline bool SparseArrayValueMap::putDirect(ExecState* exec, JSArray* array, unsigned i, JSValue value, bool shouldThrow)
+{
+    std::pair<SparseArrayValueMap::iterator, bool> result = add(array, i);
+    SparseArrayEntry& entry = result.first->second;
+
+    // To save a separate find & add, we first always add to the sparse map.
+    // In the uncommon case that this is a new property, and the array is not
+    // extensible, this is not the right thing to have done - so remove again.
+    if (result.second && !array->isExtensible()) {
+        remove(result.first);
+        return reject(exec, shouldThrow, "Attempting to define property on object that is not extensible.");
+    }
+
+    entry.attributes = 0;
+    entry.set(exec->globalData(), array, value);
+    return true;
 }
 
 inline void SparseArrayEntry::get(PropertySlot& slot) const
@@ -381,13 +407,6 @@ void JSArray::putDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, Prope
     entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor);
 }
 
-static bool reject(ExecState* exec, bool throwException, const char* message)
-{
-    if (throwException)
-        throwTypeError(exec, message);
-    return false;
-}
-
 // Defined in ES5.1 8.12.9
 bool JSArray::defineOwnNumericProperty(ExecState* exec, unsigned index, PropertyDescriptor& descriptor, bool throwException)
 {
@@ -400,8 +419,7 @@ bool JSArray::defineOwnNumericProperty(ExecState* exec, unsigned index, Property
         // state (i.e. defineOwnProperty could be used to set a value without needing to entering 'SparseMode').
         if (!descriptor.attributes()) {
             ASSERT(!descriptor.isAccessorDescriptor());
-            putByIndex(this, exec, index, descriptor.value());
-            return true;
+            return putDirectIndex(exec, index, descriptor.value(), throwException);
         }
 
         enterDictionaryMode(exec->globalData());
@@ -761,7 +779,7 @@ void JSArray::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue valu
     thisObject->checkConsistency();
 }
 
-NEVER_INLINE void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue value)
+void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue value)
 {
     JSGlobalData& globalData = exec->globalData();
 
@@ -832,6 +850,77 @@ NEVER_INLINE void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigne
     if (!valueSlot)
         ++storage->m_numValuesInVector;
     valueSlot.set(globalData, this, value);
+}
+
+bool JSArray::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue value, bool shouldThrow)
+{
+    JSGlobalData& globalData = exec->globalData();
+
+    // i should be a valid array index that is outside of the current vector.
+    ASSERT(i >= m_vectorLength);
+    ASSERT(i <= MAX_ARRAY_INDEX);
+
+    ArrayStorage* storage = m_storage;
+    SparseArrayValueMap* map = m_sparseValueMap;
+
+    // First, handle cases where we don't currently have a sparse map.
+    if (LIKELY(!map)) {
+        // If the array is not extensible, we should have entered dictionary mode, and created the spare map.
+        ASSERT(isExtensible());
+    
+        // Update m_length if necessary.
+        if (i >= storage->m_length)
+            storage->m_length = i + 1;
+
+        // Check that it is sensible to still be using a vector, and then try to grow the vector.
+        if (LIKELY((isDenseEnoughForVector(i, storage->m_numValuesInVector)) && increaseVectorLength(globalData, i + 1))) {
+            // success! - reread m_storage since it has likely been reallocated, and store to the vector.
+            storage = m_storage;
+            storage->m_vector[i].set(globalData, this, value);
+            ++storage->m_numValuesInVector;
+            return true;
+        }
+        // We don't want to, or can't use a vector to hold this property - allocate a sparse map & add the value.
+        allocateSparseMap(exec->globalData());
+        map = m_sparseValueMap;
+        return map->putDirect(exec, this, i, value, shouldThrow);
+    }
+
+    // Update m_length if necessary.
+    unsigned length = storage->m_length;
+    if (i >= length) {
+        // Prohibit growing the array if length is not writable.
+        if (map->lengthIsReadOnly())
+            return reject(exec, shouldThrow, StrictModeReadonlyPropertyWriteError);
+        if (!isExtensible())
+            return reject(exec, shouldThrow, "Attempting to define property on object that is not extensible.");
+        length = i + 1;
+        storage->m_length = length;
+    }
+
+    // We are currently using a map - check whether we still want to be doing so.
+    // We will continue  to use a sparse map if SparseMode is set, a vector would be too sparse, or if allocation fails.
+    unsigned numValuesInArray = storage->m_numValuesInVector + map->size();
+    if (map->sparseMode() || !isDenseEnoughForVector(length, numValuesInArray) || !increaseVectorLength(exec->globalData(), length))
+        return map->putDirect(exec, this, i, value, shouldThrow);
+
+    // Reread m_storage afterincreaseVectorLength, update m_numValuesInVector.
+    storage = m_storage;
+    storage->m_numValuesInVector = numValuesInArray;
+
+    // Copy all values from the map into the vector, and delete the map.
+    WriteBarrier<Unknown>* vector = storage->m_vector;
+    SparseArrayValueMap::const_iterator end = map->end();
+    for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
+        vector[it->first].set(globalData, this, it->second.getNonSparseMode());
+    deallocateSparseMap();
+
+    // Store the new property into the vector.
+    WriteBarrier<Unknown>& valueSlot = vector[i];
+    if (!valueSlot)
+        ++storage->m_numValuesInVector;
+    valueSlot.set(globalData, this, value);
+    return true;
 }
 
 bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
