@@ -228,9 +228,6 @@ public:
     void print() const;
 #endif
 
-    // FIXME: Remove this after changing all callers to use protocolIsInHTTPFamily.
-    bool protocolInHTTPFamily() const { return protocolIsInHTTPFamily(); }
-
 private:
     void invalidate();
     bool isHierarchical() const;

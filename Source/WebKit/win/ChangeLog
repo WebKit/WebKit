@@ -1,3 +1,15 @@
+2012-03-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove the redundant method KURL::protocolInHTTPFamily()
+        https://bugs.webkit.org/show_bug.cgi?id=80216
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidFailToStartPlugin):
+        * WebHistory.cpp:
+        (WebHistory::visitedURL):
+
 2012-02-26  Hajime Morrita  <morrita@chromium.org>
 
         Move ChromeClient::showContextMenu() to ContextMenuClient

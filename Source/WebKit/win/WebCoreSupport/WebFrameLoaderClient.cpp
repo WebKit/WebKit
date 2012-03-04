@@ -826,7 +826,7 @@ void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* plugin
 
     if (!pluginView->pluginsPage().isNull()) {
         KURL pluginPageURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(pluginView->pluginsPage()));
-        if (pluginPageURL.protocolInHTTPFamily()) {
+        if (pluginPageURL.protocolIsInHTTPFamily()) {
             static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
             RetainPtr<CFStringRef> str(AdoptCF, pluginPageURL.string().createCFString());
             CFDictionarySetValue(userInfo.get(), key, str.get());

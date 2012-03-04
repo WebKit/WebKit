@@ -54,7 +54,7 @@ static const unsigned maxRequestsInFlightPerHost = 10000;
 
 ResourceLoadScheduler::HostInformation* ResourceLoadScheduler::hostForURL(const KURL& url, CreateHostPolicy createHostPolicy)
 {
-    if (!url.protocolInHTTPFamily())
+    if (!url.protocolIsInHTTPFamily())
         return m_nonHTTPProtocolHost;
 
     m_hosts.checkConsistency();
@@ -126,7 +126,7 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Resourc
     bool hadRequests = host->hasRequests();
     host->schedule(resourceLoader, priority);
 
-    if (priority > ResourceLoadPriorityLow || !resourceLoader->url().protocolInHTTPFamily() || (priority == ResourceLoadPriorityLow && !hadRequests)) {
+    if (priority > ResourceLoadPriorityLow || !resourceLoader->url().protocolIsInHTTPFamily() || (priority == ResourceLoadPriorityLow && !hadRequests)) {
         // Try to request important resources immediately.
         servePendingRequests(host, priority);
         return;

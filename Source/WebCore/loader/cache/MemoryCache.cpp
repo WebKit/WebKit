@@ -77,7 +77,7 @@ KURL MemoryCache::removeFragmentIdentifierIfNeeded(const KURL& originalURL)
     // Strip away fragment identifier from HTTP URLs.
     // Data URLs must be unmodified. For file and custom URLs clients may expect resources 
     // to be unique even when they differ by the fragment identifier only.
-    if (!originalURL.protocolInHTTPFamily())
+    if (!originalURL.protocolIsInHTTPFamily())
         return originalURL;
     KURL url = originalURL;
     url.removeFragmentIdentifier();

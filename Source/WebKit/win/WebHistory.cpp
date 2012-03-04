@@ -735,7 +735,7 @@ void WebHistory::visitedURL(const KURL& url, const String& title, const String& 
 
     entryPrivate->setLastVisitWasFailure(wasFailure);
     if (!httpMethod.isEmpty())
-        entryPrivate->setLastVisitWasHTTPNonGet(!equalIgnoringCase(httpMethod, "GET") && url.protocolInHTTPFamily());
+        entryPrivate->setLastVisitWasHTTPNonGet(!equalIgnoringCase(httpMethod, "GET") && url.protocolIsInHTTPFamily());
 
     COMPtr<WebHistoryItem> item(Query, entry);
     item->historyItem()->setRedirectURLs(nullptr);

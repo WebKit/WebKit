@@ -612,7 +612,7 @@ void FrameLoaderClientImpl::dispatchWillPerformClientRedirect(
     // carry out such a navigation anyway, the best thing we can do for now to
     // not get confused is ignore this notification.
     if (m_expectedClientRedirectDest.isLocalFile()
-        && m_expectedClientRedirectSrc.protocolInHTTPFamily()) {
+        && m_expectedClientRedirectSrc.protocolIsInHTTPFamily()) {
         m_expectedClientRedirectSrc = KURL();
         m_expectedClientRedirectDest = KURL();
         return;

@@ -151,7 +151,7 @@ void ResourceRequestBase::setCachePolicy(ResourceRequestCachePolicy cachePolicy)
     
     m_cachePolicy = cachePolicy;
     
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 
@@ -168,7 +168,7 @@ void ResourceRequestBase::setTimeoutInterval(double timeoutInterval)
     
     m_timeoutInterval = timeoutInterval; 
     
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 
@@ -201,7 +201,7 @@ void ResourceRequestBase::setHTTPMethod(const String& httpMethod)
 
     m_httpMethod = httpMethod;
     
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 
@@ -232,7 +232,7 @@ void ResourceRequestBase::setHTTPHeaderField(const AtomicString& name, const Str
     
     m_httpHeaderFields.set(name, value); 
     
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 
@@ -247,7 +247,7 @@ void ResourceRequestBase::clearHTTPAuthorization()
 
     m_httpHeaderFields.remove("Authorization");
 
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 
@@ -257,7 +257,7 @@ void ResourceRequestBase::clearHTTPReferrer()
 
     m_httpHeaderFields.remove("Referer");
 
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 
@@ -267,7 +267,7 @@ void ResourceRequestBase::clearHTTPOrigin()
 
     m_httpHeaderFields.remove("Origin");
 
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 
@@ -283,7 +283,7 @@ void ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray(con
     if (!encoding3.isNull())
         m_responseContentDispositionEncodingFallbackArray.append(encoding3);
     
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 
@@ -300,7 +300,7 @@ void ResourceRequestBase::setHTTPBody(PassRefPtr<FormData> httpBody)
     
     m_httpBody = httpBody; 
     
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 } 
 
@@ -317,7 +317,7 @@ void ResourceRequestBase::setAllowCookies(bool allowCookies)
     
     m_allowCookies = allowCookies;
     
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 
@@ -334,7 +334,7 @@ void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
 
     m_priority = priority;
 
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 
@@ -345,7 +345,7 @@ void ResourceRequestBase::addHTTPHeaderField(const AtomicString& name, const Str
     if (!result.second)
         result.first->second += "," + value;
 
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 

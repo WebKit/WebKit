@@ -1,3 +1,15 @@
+2012-03-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove the redundant method KURL::protocolInHTTPFamily()
+        https://bugs.webkit.org/show_bug.cgi?id=80216
+
+        Reviewed by Anders Carlsson.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchWillPerformClientRedirect):
+        * src/WebPageSerializer.cpp:
+        (WebCore::retrieveResourcesForElement):
+
 2012-03-03  Hans Wennborg  <hans@chromium.org>
 
         Implement Speech JavaScript API

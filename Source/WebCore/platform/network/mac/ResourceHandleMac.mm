@@ -185,7 +185,7 @@ static bool shouldRelaxThirdPartyCookiePolicy(const KURL& url)
 void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff)
 {
     // Credentials for ftp can only be passed in URL, the connection:didReceiveAuthenticationChallenge: delegate call won't be made.
-    if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty()) && !firstRequest().url().protocolInHTTPFamily()) {
+    if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty()) && !firstRequest().url().protocolIsInHTTPFamily()) {
         KURL urlWithCredentials(firstRequest().url());
         urlWithCredentials.setUser(d->m_user);
         urlWithCredentials.setPass(d->m_pass);
@@ -195,7 +195,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     if (shouldRelaxThirdPartyCookiePolicy(firstRequest().url()))
         firstRequest().setFirstPartyForCookies(firstRequest().url());
 
-    if (shouldUseCredentialStorage && firstRequest().url().protocolInHTTPFamily()) {
+    if (shouldUseCredentialStorage && firstRequest().url().protocolIsInHTTPFamily()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
             // try and reuse the credential preemptively, as allowed by RFC 2617.

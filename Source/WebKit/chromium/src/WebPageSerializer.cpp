@@ -127,7 +127,7 @@ void retrieveResourcesForElement(Element* element,
 
     // Ignore URLs that have a non-standard protocols. Since the FTP protocol
     // does no have a cache mechanism, we skip it as well.
-    if (!url.protocolInHTTPFamily() && !url.isLocalFile())
+    if (!url.protocolIsInHTTPFamily() && !url.isLocalFile())
         return;
 
     if (!resourceURLs->contains(url))

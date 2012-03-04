@@ -460,7 +460,7 @@ static CFDictionaryRef createConnectionProperties(bool shouldUseCredentialStorag
 
 void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff)
 {
-    if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty()) && !firstRequest().url().protocolInHTTPFamily()) {
+    if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty()) && !firstRequest().url().protocolIsInHTTPFamily()) {
         // Credentials for ftp can only be passed in URL, the didReceiveAuthenticationChallenge delegate call won't be made.
         KURL urlWithCredentials(firstRequest().url());
         urlWithCredentials.setUser(d->m_user);
@@ -470,7 +470,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
 
     // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
     // try and reuse the credential preemptively, as allowed by RFC 2617.
-    if (shouldUseCredentialStorage && firstRequest().url().protocolInHTTPFamily()) {
+    if (shouldUseCredentialStorage && firstRequest().url().protocolIsInHTTPFamily()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
             // try and reuse the credential preemptively, as allowed by RFC 2617.

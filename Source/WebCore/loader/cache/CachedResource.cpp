@@ -299,7 +299,7 @@ double CachedResource::currentAge() const
 double CachedResource::freshnessLifetime() const
 {
     // Cache non-http resources liberally
-    if (!m_response.url().protocolInHTTPFamily())
+    if (!m_response.url().protocolIsInHTTPFamily())
         return std::numeric_limits<double>::max();
 
     // RFC2616 13.2.4

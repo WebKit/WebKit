@@ -580,7 +580,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri, GEr
 
     KURL url(KURL(), uri);
 
-    if (!url.isValid() || !url.protocolInHTTPFamily()) {
+    if (!url.isValid() || !url.protocolIsInHTTPFamily()) {
         g_set_error(error, GST_URI_ERROR, GST_URI_ERROR_BAD_URI, "Invalid URI '%s'", uri);
         return FALSE;
     }
@@ -624,7 +624,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri)
 
     KURL url(KURL(), uri);
 
-    if (!url.isValid() || !url.protocolInHTTPFamily()) {
+    if (!url.isValid() || !url.protocolIsInHTTPFamily()) {
         GST_ERROR_OBJECT(src, "Invalid URI '%s'", uri);
         return FALSE;
     }

@@ -117,7 +117,7 @@ ApplicationCacheResource* ApplicationCache::resourceForURL(const String& url)
 
 bool ApplicationCache::requestIsHTTPOrHTTPSGet(const ResourceRequest& request)
 {
-    if (!request.url().protocolInHTTPFamily())
+    if (!request.url().protocolIsInHTTPFamily())
         return false;
     
     if (!equalIgnoringCase(request.httpMethod(), "GET"))

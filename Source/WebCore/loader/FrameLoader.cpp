@@ -2026,7 +2026,7 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     KURL url = cachedFrame.url();
 
     // FIXME: I suspect this block of code doesn't do anything.
-    if (url.protocolInHTTPFamily() && !url.host().isEmpty() && url.path().isEmpty())
+    if (url.protocolIsInHTTPFamily() && !url.host().isEmpty() && url.path().isEmpty())
         url.setPath("/");
 
     m_hasReceivedFirstData = false;
@@ -2555,7 +2555,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
     }
 
     // The remaining modifications are only necessary for HTTP and HTTPS.
-    if (!request.url().isEmpty() && !request.url().protocolInHTTPFamily())
+    if (!request.url().isEmpty() && !request.url().protocolIsInHTTPFamily())
         return;
 
     applyUserAgent(request);
