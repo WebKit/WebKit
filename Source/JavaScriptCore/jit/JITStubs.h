@@ -39,6 +39,8 @@
 
 namespace JSC {
 
+#if ENABLE(JIT)
+
     struct StructureStubInfo;
 
     class CodeBlock;
@@ -260,8 +262,6 @@ namespace JSC {
 #endif
 
 #define JITSTACKFRAME_ARGS_INDEX (OBJECT_OFFSETOF(JITStackFrame, args) / sizeof(void*))
-
-#if ENABLE(JIT)
 
 #define STUB_ARGS_DECLARATION void** args
 #define STUB_ARGS (args)

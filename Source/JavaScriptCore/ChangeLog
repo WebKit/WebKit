@@ -1,3 +1,10 @@
+2012-03-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Unreviewed build fix.
+
+        * jit/JITStubs.h:
+            - Move ENABLE(JIT) to head of file.
+
 2012-03-03  Gavin Barraclough  <barraclough@apple.com>
 
         Split JSArray's [[Put]] & [[DefineOwnProperty]] traps.
