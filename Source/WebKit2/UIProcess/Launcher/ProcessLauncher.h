@@ -31,10 +31,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Threading.h>
 
-#if PLATFORM(QT)
-class QLocalSocket;
-#endif
-
 namespace WebKit {
 
 class ProcessLauncher : public ThreadSafeRefCounted<ProcessLauncher> {

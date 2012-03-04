@@ -28,6 +28,7 @@
 
 namespace WebKit {
 Q_DECL_IMPORT int WebProcessMainQt(int argc, char** argv);
+Q_DECL_IMPORT void initializeWebKit2Theme();
 }
 
 // The framework entry point.
@@ -35,5 +36,6 @@ Q_DECL_IMPORT int WebProcessMainQt(int argc, char** argv);
 // to reimplement the handling of command line arguments from QApplication.
 int main(int argc, char** argv)
 {
+    WebKit::initializeWebKit2Theme();
     return WebKit::WebProcessMainQt(argc, argv);
 }

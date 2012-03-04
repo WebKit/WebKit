@@ -1,3 +1,22 @@
+2012-03-03  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix static_libs_as_shared build
+        https://bugs.webkit.org/show_bug.cgi?id=80214
+
+        Reviewed by Tor Arne Vestbø.
+
+        Replace (static) link time dependency to WK1 with entrypoint
+        in the separate WebProcess for activating the QStyle theme if
+        necessary.
+
+        * Target.pri:
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+        * qt/MainQt.cpp:
+        (WebKit):
+        (main):
+
 2012-03-03  Hans Wennborg  <hans@chromium.org>
 
         Implement Speech JavaScript API

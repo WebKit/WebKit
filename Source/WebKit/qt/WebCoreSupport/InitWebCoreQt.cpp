@@ -48,6 +48,17 @@
 #include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
 
+namespace WebKit {
+
+// Called also from WebKit2's WebProcess.
+Q_DECL_EXPORT void initializeWebKit2Theme()
+{
+    if (qgetenv("QT_WEBKIT_THEME_NAME") == "qstyle")
+        WebCore::RenderThemeQt::setCustomTheme(WebCore::RenderThemeQStyle::create, new WebCore::ScrollbarThemeQStyle);
+}
+
+}
+
 namespace WebCore {
 
 void initializeWebCoreQt()

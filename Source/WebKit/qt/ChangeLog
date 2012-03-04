@@ -1,3 +1,17 @@
+2012-03-03  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix static_libs_as_shared build
+        https://bugs.webkit.org/show_bug.cgi?id=80214
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add helper function to be called by WebProcess main
+        to potentially initialize the QStyle theme.
+
+        * WebCoreSupport/InitWebCoreQt.cpp:
+        (WebKit):
+        (WebKit::initializeWebKit2Theme):
+
 2012-03-02  Casper van Donderen  <casper.vandonderen@nokia.com>
 
         [Qt] Documentation cleanup
