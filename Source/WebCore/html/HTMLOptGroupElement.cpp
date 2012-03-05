@@ -38,15 +38,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, document, form)
+inline HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(optgroupTag));
 }
 
-PassRefPtr<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+PassRefPtr<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagName, Document* document)
 {
-    return adoptRef(new HTMLOptGroupElement(tagName, document, form));
+    return adoptRef(new HTMLOptGroupElement(tagName, document));
 }
 
 bool HTMLOptGroupElement::supportsFocus() const
@@ -69,12 +69,12 @@ const AtomicString& HTMLOptGroupElement::formControlType() const
 void HTMLOptGroupElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     recalcSelectOptions();
-    HTMLFormControlElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
 void HTMLOptGroupElement::parseAttribute(Attribute* attr)
 {
-    HTMLFormControlElement::parseAttribute(attr);
+    HTMLElement::parseAttribute(attr);
     recalcSelectOptions();
 }
 
@@ -91,13 +91,13 @@ void HTMLOptGroupElement::attach()
 {
     if (parentNode()->renderStyle())
         setRenderStyle(styleForRenderer());
-    HTMLFormControlElement::attach();
+    HTMLElement::attach();
 }
 
 void HTMLOptGroupElement::detach()
 {
     m_style.clear();
-    HTMLFormControlElement::detach();
+    HTMLElement::detach();
 }
 
 void HTMLOptGroupElement::setRenderStyle(PassRefPtr<RenderStyle> newStyle)
