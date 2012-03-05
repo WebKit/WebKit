@@ -1,3 +1,15 @@
+2012-03-05  Joone Hur  <joone.hur@collabora.co.uk>
+
+        [GTK] zlib link error with --enable-webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=79877
+
+        Reviewed by Martin Robinson.
+
+        zlib should be linked properly.
+
+        * GNUmakefile.am: Link $(ZLIB_LIBS) with libwebkit2gtk instead of
+        linking it with WebKitWebProcess.
+
 2012-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WK2] WKPageGetContextMenuFromProposedContextMenuCallback should pass a HitTestResult
