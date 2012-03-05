@@ -106,6 +106,9 @@
 		0F4680D514BBD24B00BFE272 /* HostCallReturnValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4680D114BBC5F800BFE272 /* HostCallReturnValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F55F0F114D1063600AC7649 /* AbstractPC.cpp */; };
 		0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F55F0F214D1063600AC7649 /* AbstractPC.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F56A1D315000F35002992B1 /* ExecutionCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56A1D115000F31002992B1 /* ExecutionCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F56A1D515001CF4002992B1 /* ExecutionCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F56A1D415001CF2002992B1 /* ExecutionCounter.cpp */; };
+		0F56A1D7150028BB002992B1 /* SimpleStats.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F56A1D6150028B9002992B1 /* SimpleStats.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F5F08CF146C7633000472A9 /* UnconditionalFinalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5F08CE146C762F000472A9 /* UnconditionalFinalizer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F620174143FCD330068B77C /* DFGVariableAccessData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F620172143FCD2F0068B77C /* DFGVariableAccessData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F620175143FCD370068B77C /* DFGOperands.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F620171143FCD2F0068B77C /* DFGOperands.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -974,6 +977,9 @@
 		0F4680D114BBC5F800BFE272 /* HostCallReturnValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HostCallReturnValue.h; sourceTree = "<group>"; };
 		0F55F0F114D1063600AC7649 /* AbstractPC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPC.cpp; sourceTree = "<group>"; };
 		0F55F0F214D1063600AC7649 /* AbstractPC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractPC.h; sourceTree = "<group>"; };
+		0F56A1D115000F31002992B1 /* ExecutionCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutionCounter.h; sourceTree = "<group>"; };
+		0F56A1D415001CF2002992B1 /* ExecutionCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutionCounter.cpp; sourceTree = "<group>"; };
+		0F56A1D6150028B9002992B1 /* SimpleStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleStats.h; sourceTree = "<group>"; };
 		0F5F08CC146BE602000472A9 /* DFGByteCodeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGByteCodeCache.h; path = dfg/DFGByteCodeCache.h; sourceTree = "<group>"; };
 		0F5F08CE146C762F000472A9 /* UnconditionalFinalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnconditionalFinalizer.h; sourceTree = "<group>"; };
 		0F62016D143FCD2F0068B77C /* DFGAbstractState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAbstractState.cpp; path = dfg/DFGAbstractState.cpp; sourceTree = "<group>"; };
@@ -2314,6 +2320,7 @@
 				A7C40C08130B057D00D002A1 /* SentinelLinkedList.h */,
 				76FB9F1012E851960051A2EB /* SHA1.cpp */,
 				76FB9F0E12E851860051A2EB /* SHA1.h */,
+				0F56A1D6150028B9002992B1 /* SimpleStats.h */,
 				A7C40C09130B057D00D002A1 /* SinglyLinkedList.h */,
 				0BF28A2811A33DC300638F84 /* SizeLimits.cpp */,
 				0F2E5BF5146357D2003EB2EB /* Spectrum.h */,
@@ -2788,6 +2795,8 @@
 		969A078F0ED1D3AE00F1F681 /* bytecode */ = {
 			isa = PBXGroup;
 			children = (
+				0F56A1D415001CF2002992B1 /* ExecutionCounter.cpp */,
+				0F56A1D115000F31002992B1 /* ExecutionCounter.h */,
 				0FB5467C14F5CFD3002C2989 /* MethodOfGettingAValueProfile.cpp */,
 				0FB5467A14F5C7D4002C2989 /* MethodOfGettingAValueProfile.h */,
 				0FB5467814F5C468002C2989 /* LazyOperandValueProfile.cpp */,
@@ -3409,6 +3418,8 @@
 				0FB5467B14F5C7E1002C2989 /* MethodOfGettingAValueProfile.h in Headers */,
 				0FB5469014FADA7B002C2989 /* RefCountedArray.h in Headers */,
 				0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */,
+				0F56A1D315000F35002992B1 /* ExecutionCounter.h in Headers */,
+				0F56A1D7150028BB002992B1 /* SimpleStats.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4018,6 +4029,7 @@
 				0FFFC95F14EF90BB00C72532 /* DFGVirtualRegisterAllocationPhase.cpp in Sources */,
 				0FB5467914F5C46B002C2989 /* LazyOperandValueProfile.cpp in Sources */,
 				0FB5467D14F5CFD6002C2989 /* MethodOfGettingAValueProfile.cpp in Sources */,
+				0F56A1D515001CF4002992B1 /* ExecutionCounter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

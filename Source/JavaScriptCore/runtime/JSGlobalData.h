@@ -47,6 +47,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
+#include <wtf/SimpleStats.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/WTFThreadData.h>
 #if ENABLE(REGEXP_TRACING)
@@ -201,6 +202,7 @@ namespace JSC {
         SmallStrings smallStrings;
         NumericStrings numericStrings;
         DateInstanceCache dateInstanceCache;
+        WTF::SimpleStats machineCodeBytesPerBytecodeWordForBaselineJIT;
         Vector<CodeBlock*> codeBlocksBeingCompiled;
         void startedCompiling(CodeBlock* codeBlock)
         {

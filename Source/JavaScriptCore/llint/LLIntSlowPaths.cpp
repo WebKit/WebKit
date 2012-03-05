@@ -270,6 +270,13 @@ inline bool shouldJIT(ExecState* exec)
 // Returns true if we should try to OSR.
 inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
 {
+    if (!codeBlock->checkIfJITThresholdReached()) {
+#if ENABLE(JIT_VERBOSE_OSR)
+        dataLog("    JIT threshold should be lifted.\n");
+#endif
+        return false;
+    }
+        
     CodeBlock::JITCompilationResult result = codeBlock->jitCompile(exec->globalData());
     switch (result) {
     case CodeBlock::AlreadyCompiled:

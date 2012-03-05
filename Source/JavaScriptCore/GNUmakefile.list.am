@@ -95,6 +95,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/DFGExitProfile.cpp \
 	Source/JavaScriptCore/bytecode/DFGExitProfile.h \
 	Source/JavaScriptCore/bytecode/EvalCodeCache.h \
+	Source/JavaScriptCore/bytecode/ExecutionCounter.cpp \
+	Source/JavaScriptCore/bytecode/ExecutionCounter.h \
 	Source/JavaScriptCore/bytecode/ExpressionRangeInfo.h \
 	Source/JavaScriptCore/bytecode/GetByIdStatus.cpp \
 	Source/JavaScriptCore/bytecode/GetByIdStatus.h \
@@ -716,6 +718,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/SentinelLinkedList.h \
 	Source/JavaScriptCore/wtf/SHA1.cpp \
 	Source/JavaScriptCore/wtf/SHA1.h \
+	Source/JavaScriptCore/wtf/SimpleStats.h \
 	Source/JavaScriptCore/wtf/SinglyLinkedList.h \
 	Source/JavaScriptCore/wtf/Spectrum.h \
 	Source/JavaScriptCore/wtf/StackBounds.cpp \

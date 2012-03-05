@@ -29,10 +29,16 @@
 
 #if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
 #include "CodeProfiling.h"
+#include <wtf/DataLog.h>
 #include <wtf/MetaAllocator.h>
 #include <wtf/PageReservation.h>
 #include <wtf/VMTags.h>
 #endif
+
+// Uncomment to create an artificial executable memory usage limit. This limit
+// is imperfect and is primarily useful for testing the VM's ability to handle
+// out-of-executable-memory situations.
+// #define EXECUTABLE_MEMORY_LIMIT 1000000
 
 #if ENABLE(ASSEMBLER)
 
@@ -64,6 +70,11 @@ protected:
         ASSERT(newNumPages >= numPages);
         
         numPages = newNumPages;
+        
+#ifdef EXECUTABLE_MEMORY_LIMIT
+        if (bytesAllocated() >= EXECUTABLE_MEMORY_LIMIT)
+            return 0;
+#endif
         
         PageReservation reservation = PageReservation::reserve(numPages * pageSize(), OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
         if (!reservation)
@@ -109,7 +120,25 @@ bool ExecutableAllocator::isValid() const
 
 bool ExecutableAllocator::underMemoryPressure()
 {
+#ifdef EXECUTABLE_MEMORY_LIMIT
+    return allocator->bytesAllocated() > EXECUTABLE_MEMORY_LIMIT / 2;
+#else
     return false;
+#endif
+}
+
+double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
+{
+#ifdef EXECUTABLE_MEMORY_LIMIT
+    size_t bytesAllocated = allocator->bytesAllocated() + addedMemoryUsage;
+    if (bytesAllocated >= EXECUTABLE_MEMORY_LIMIT)
+        bytesAllocated = EXECUTABLE_MEMORY_LIMIT;
+    return static_cast<double>(EXECUTABLE_MEMORY_LIMIT) /
+        (EXECUTABLE_MEMORY_LIMIT - bytesAllocated);
+#else
+    UNUSED_PARAM(addedMemoryUsage);
+    return 1.0;
+#endif
 }
 
 PassRefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(JSGlobalData&, size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)

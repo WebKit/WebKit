@@ -2473,7 +2473,38 @@ void CodeBlock::dumpValueProfiles()
 }
 #endif
 
-#ifndef NDEBUG
+size_t CodeBlock::predictedMachineCodeSize()
+{
+    // This will be called from CodeBlock::CodeBlock before either m_globalData or the
+    // instructions have been initialized. It's OK to return 0 because what will really
+    // matter is the recomputation of this value when the slow path is triggered.
+    if (!m_globalData)
+        return 0;
+    
+    if (!m_globalData->machineCodeBytesPerBytecodeWordForBaselineJIT)
+        return 0; // It's as good of a prediction as we'll get.
+    
+    // Be conservative: return a size that will be an overestimation 84% of the time.
+    double multiplier = m_globalData->machineCodeBytesPerBytecodeWordForBaselineJIT.mean() +
+        m_globalData->machineCodeBytesPerBytecodeWordForBaselineJIT.standardDeviation();
+    
+    // Be paranoid: silently reject bogus multipiers. Silently doing the "wrong" thing
+    // here is OK, since this whole method is just a heuristic.
+    if (multiplier < 0 || multiplier > 1000)
+        return 0;
+    
+    double doubleResult = multiplier * m_instructions.size();
+    
+    // Be even more paranoid: silently reject values that won't fit into a size_t. If
+    // the function is so huge that we can't even fit it into virtual memory then we
+    // should probably have some other guards in place to prevent us from even getting
+    // to this point.
+    if (doubleResult > std::numeric_limits<size_t>::max())
+        return 0;
+    
+    return static_cast<size_t>(doubleResult);
+}
+
 bool CodeBlock::usesOpcode(OpcodeID opcodeID)
 {
     Interpreter* interpreter = globalData()->interpreter;
@@ -2498,6 +2529,5 @@ bool CodeBlock::usesOpcode(OpcodeID opcodeID)
     
     return false;
 }
-#endif
 
 } // namespace JSC

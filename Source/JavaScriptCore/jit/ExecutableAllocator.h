@@ -108,6 +108,8 @@ public:
 
     static bool underMemoryPressure();
     
+    static double memoryPressureMultiplier(size_t addedMemoryUsage);
+    
 #if ENABLE(META_ALLOCATOR_PROFILE)
     static void dumpProfile();
 #else

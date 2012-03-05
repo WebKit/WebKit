@@ -53,6 +53,7 @@ SOURCES += \
     bytecode/CallLinkStatus.cpp \
     bytecode/CodeBlock.cpp \
     bytecode/DFGExitProfile.cpp \
+    bytecode/ExecutionCounter.cpp \
     bytecode/GetByIdStatus.cpp \
     bytecode/JumpTable.cpp \
     bytecode/LazyOperandValueProfile.cpp \

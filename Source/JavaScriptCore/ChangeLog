@@ -1,3 +1,105 @@
+2012-03-04  Filip Pizlo  <fpizlo@apple.com>
+
+        JIT heuristics should be hyperbolic
+        https://bugs.webkit.org/show_bug.cgi?id=80055
+        <rdar://problem/10922260>
+
+        Reviewed by Oliver Hunt.
+        
+        Added tracking of the amount of executable memory typically used for a bytecode
+        instruction. Modified the execution counter scheme to use this, and the amount
+        of free memory, to determine how long to wait before invoking the JIT.
+        
+        The result is that even if we bomb the VM with more code than can fit in our
+        executable memory pool, we still keep running and almost never run out of
+        executable memory - which ensures that if we have to JIT something critical, then
+        we'll likely have enough memory to do so. This also does not regress performance
+        on the three main benchmarks.
+        
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::predictedMachineCodeSize):
+        (JSC):
+        (JSC::CodeBlock::usesOpcode):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::checkIfJITThresholdReached):
+        (JSC::CodeBlock::dontJITAnytimeSoon):
+        (JSC::CodeBlock::jitAfterWarmUp):
+        (JSC::CodeBlock::jitSoon):
+        (JSC::CodeBlock::llintExecuteCounter):
+        (JSC::CodeBlock::counterValueForOptimizeAfterWarmUp):
+        (JSC::CodeBlock::counterValueForOptimizeAfterLongWarmUp):
+        (JSC::CodeBlock::addressOfJITExecuteCounter):
+        (JSC::CodeBlock::offsetOfJITExecuteCounter):
+        (JSC::CodeBlock::offsetOfJITExecutionActiveThreshold):
+        (JSC::CodeBlock::offsetOfJITExecutionTotalCount):
+        (JSC::CodeBlock::jitExecuteCounter):
+        (JSC::CodeBlock::checkIfOptimizationThresholdReached):
+        (JSC::CodeBlock::optimizeNextInvocation):
+        (JSC::CodeBlock::dontOptimizeAnytimeSoon):
+        (JSC::CodeBlock::optimizeAfterWarmUp):
+        (JSC::CodeBlock::optimizeAfterLongWarmUp):
+        (JSC::CodeBlock::optimizeSoon):
+        * bytecode/ExecutionCounter.cpp: Added.
+        (JSC):
+        (JSC::ExecutionCounter::ExecutionCounter):
+        (JSC::ExecutionCounter::checkIfThresholdCrossedAndSet):
+        (JSC::ExecutionCounter::setNewThreshold):
+        (JSC::ExecutionCounter::deferIndefinitely):
+        (JSC::ExecutionCounter::applyMemoryUsageHeuristics):
+        (JSC::ExecutionCounter::applyMemoryUsageHeuristicsAndConvertToInt):
+        (JSC::ExecutionCounter::hasCrossedThreshold):
+        (JSC::ExecutionCounter::setThreshold):
+        (JSC::ExecutionCounter::reset):
+        * bytecode/ExecutionCounter.h: Added.
+        (JSC):
+        (ExecutionCounter):
+        (JSC::ExecutionCounter::formattedTotalCount):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::DemandExecutableAllocator::allocateNewSpace):
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC):
+        (JSC::ExecutableAllocator::memoryPressureMultiplier):
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::ExecutableAllocator::memoryPressureMultiplier):
+        (JSC):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        * llint/LowLevelInterpreter32_64.asm:
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/Options.cpp:
+        (Options):
+        (JSC::Options::initializeOptions):
+        * runtime/Options.h:
+        (Options):
+        * wtf/SimpleStats.h: Added.
+        (WTF):
+        (SimpleStats):
+        (WTF::SimpleStats::SimpleStats):
+        (WTF::SimpleStats::add):
+        (WTF::SimpleStats::operator!):
+        (WTF::SimpleStats::count):
+        (WTF::SimpleStats::sum):
+        (WTF::SimpleStats::sumOfSquares):
+        (WTF::SimpleStats::mean):
+        (WTF::SimpleStats::variance):
+        (WTF::SimpleStats::standardDeviation):
+
 2012-03-04  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Libraries are installed to /usr/lib and not /usr/lib64 on x86_64

@@ -1929,11 +1929,15 @@ DEFINE_STUB_FUNCTION(void, optimize_from_loop)
     
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
-    unsigned bytecodeIndex = stackFrame.args[0].int32();
 
+    unsigned bytecodeIndex = stackFrame.args[0].int32();
+    
 #if ENABLE(JIT_VERBOSE_OSR)
     dataLog("%p: Entered optimize_from_loop with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u\n", codeBlock, codeBlock->jitExecuteCounter(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
 #endif
+
+    if (!codeBlock->checkIfOptimizationThresholdReached())
+        return;
 
     if (codeBlock->hasOptimizedReplacement()) {
 #if ENABLE(JIT_VERBOSE_OSR)
@@ -2032,6 +2036,9 @@ DEFINE_STUB_FUNCTION(void, optimize_from_ret)
 #if ENABLE(JIT_VERBOSE_OSR)
     dataLog("Entered optimize_from_ret with executeCounter = %d, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u\n", codeBlock->jitExecuteCounter(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
 #endif
+
+    if (!codeBlock->checkIfOptimizationThresholdReached())
+        return;
 
     if (codeBlock->hasOptimizedReplacement()) {
 #if ENABLE(JIT_VERBOSE_OSR)

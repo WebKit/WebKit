@@ -560,13 +560,21 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     AssemblyHelpers::Jump lowFailRate = m_jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, GPRInfo::regT1);
     
     // Reoptimize as soon as possible.
-    m_jit.store32(AssemblyHelpers::Imm32(Options::executionCounterValueForOptimizeNextInvocation), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
+    m_jit.store32(AssemblyHelpers::Imm32(0), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
+    m_jit.store32(AssemblyHelpers::Imm32(0), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionActiveThreshold()));
     AssemblyHelpers::Jump doneAdjusting = m_jit.jump();
     
     fewFails.link(&m_jit);
     lowFailRate.link(&m_jit);
     
-    m_jit.store32(AssemblyHelpers::Imm32(m_jit.baselineCodeBlock()->counterValueForOptimizeAfterLongWarmUp()), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
+    // Adjust the execution counter such that the target is to only optimize after a while.
+    int32_t targetValue =
+        ExecutionCounter::applyMemoryUsageHeuristicsAndConvertToInt(
+            m_jit.baselineCodeBlock()->counterValueForOptimizeAfterLongWarmUp(),
+            m_jit.baselineCodeBlock());
+    m_jit.store32(AssemblyHelpers::Imm32(-targetValue), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()));
+    m_jit.store32(AssemblyHelpers::Imm32(targetValue), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionActiveThreshold()));
+    m_jit.store32(AssemblyHelpers::Imm32(ExecutionCounter::formattedTotalCount(targetValue)), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecutionTotalCount()));
     
     doneAdjusting.link(&m_jit);
     

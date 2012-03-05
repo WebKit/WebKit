@@ -52,15 +52,12 @@ unsigned maximumFunctionForConstructInlineCandidateInstructionCount;
 
 unsigned maximumInliningDepth;
 
-int32_t executionCounterValueForJITAfterWarmUp;
-int32_t executionCounterValueForDontJITAnytimeSoon;
-int32_t executionCounterValueForJITSoon;
+int32_t thresholdForJITAfterWarmUp;
+int32_t thresholdForJITSoon;
 
-int32_t executionCounterValueForOptimizeAfterWarmUp;
-int32_t executionCounterValueForOptimizeAfterLongWarmUp;
-int32_t executionCounterValueForDontOptimizeAnytimeSoon;
-int32_t executionCounterValueForOptimizeSoon;
-int32_t executionCounterValueForOptimizeNextInvocation;
+int32_t thresholdForOptimizeAfterWarmUp;
+int32_t thresholdForOptimizeAfterLongWarmUp;
+int32_t thresholdForOptimizeSoon;
 
 int32_t executionCounterIncrementForLoop;
 int32_t executionCounterIncrementForReturn;
@@ -141,15 +138,12 @@ void initializeOptions()
     
     SET(maximumInliningDepth, 5);
 
-    SET(executionCounterValueForJITAfterWarmUp,     -100);
-    SET(executionCounterValueForDontJITAnytimeSoon, std::numeric_limits<int32_t>::min());
-    SET(executionCounterValueForJITSoon,            -100);
+    SET(thresholdForJITAfterWarmUp,     100);
+    SET(thresholdForJITSoon,            100);
 
-    SET(executionCounterValueForOptimizeAfterWarmUp,     -1000);
-    SET(executionCounterValueForOptimizeAfterLongWarmUp, -5000);
-    SET(executionCounterValueForDontOptimizeAnytimeSoon, std::numeric_limits<int32_t>::min());
-    SET(executionCounterValueForOptimizeSoon,            -1000);
-    SET(executionCounterValueForOptimizeNextInvocation,  0);
+    SET(thresholdForOptimizeAfterWarmUp,     1000);
+    SET(thresholdForOptimizeAfterLongWarmUp, 5000);
+    SET(thresholdForOptimizeSoon,            1000);
 
     SET(executionCounterIncrementForLoop,   1);
     SET(executionCounterIncrementForReturn, 15);
@@ -195,11 +189,9 @@ void initializeOptions()
     
     SET(numberOfGCMarkers, cpusToUse);
 
-    ASSERT(executionCounterValueForDontOptimizeAnytimeSoon <= executionCounterValueForOptimizeAfterLongWarmUp);
-    ASSERT(executionCounterValueForOptimizeAfterLongWarmUp <= executionCounterValueForOptimizeAfterWarmUp);
-    ASSERT(executionCounterValueForOptimizeAfterWarmUp <= executionCounterValueForOptimizeSoon);
-    ASSERT(executionCounterValueForOptimizeAfterWarmUp < 0);
-    ASSERT(executionCounterValueForOptimizeSoon <= executionCounterValueForOptimizeNextInvocation);
+    ASSERT(thresholdForOptimizeAfterLongWarmUp >= thresholdForOptimizeAfterWarmUp);
+    ASSERT(thresholdForOptimizeAfterWarmUp >= thresholdForOptimizeSoon);
+    ASSERT(thresholdForOptimizeAfterWarmUp >= 0);
     
     // Compute the maximum value of the reoptimization retry counter. This is simply
     // the largest value at which we don't overflow the execute counter, when using it
@@ -207,11 +199,11 @@ void initializeOptions()
     // up being 18, so this loop is not so terrible; it probably takes up ~100 cycles
     // total on a 32-bit processor.
     reoptimizationRetryCounterMax = 0;
-    while ((static_cast<int64_t>(executionCounterValueForOptimizeAfterLongWarmUp) << (reoptimizationRetryCounterMax + 1)) >= static_cast<int64_t>(std::numeric_limits<int32_t>::min()))
+    while ((static_cast<int64_t>(thresholdForOptimizeAfterLongWarmUp) << (reoptimizationRetryCounterMax + 1)) <= static_cast<int64_t>(std::numeric_limits<int32_t>::max()))
         reoptimizationRetryCounterMax++;
     
-    ASSERT((static_cast<int64_t>(executionCounterValueForOptimizeAfterLongWarmUp) << reoptimizationRetryCounterMax) < 0);
-    ASSERT((static_cast<int64_t>(executionCounterValueForOptimizeAfterLongWarmUp) << reoptimizationRetryCounterMax) >= static_cast<int64_t>(std::numeric_limits<int32_t>::min()));
+    ASSERT((static_cast<int64_t>(thresholdForOptimizeAfterLongWarmUp) << reoptimizationRetryCounterMax) > 0);
+    ASSERT((static_cast<int64_t>(thresholdForOptimizeAfterLongWarmUp) << reoptimizationRetryCounterMax) <= static_cast<int64_t>(std::numeric_limits<int32_t>::max()));
 }
 
 } } // namespace JSC::Options

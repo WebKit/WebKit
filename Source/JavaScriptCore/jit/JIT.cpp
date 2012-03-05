@@ -715,6 +715,10 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
     
     CodeRef result = patchBuffer.finalizeCode();
     
+    m_globalData->machineCodeBytesPerBytecodeWordForBaselineJIT.add(
+        static_cast<double>(result.size()) /
+        static_cast<double>(m_codeBlock->instructions().size()));
+    
 #if ENABLE(JIT_VERBOSE)
     dataLog("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());
 #endif
