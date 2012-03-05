@@ -26,7 +26,7 @@
 #include "TiledBackingStoreClient.h"
 
 namespace WebCore {
-    
+
 static const int defaultTileDimension = 512;
 
 static IntPoint innerBottomRight(const IntRect& rect)
@@ -103,7 +103,7 @@ void TiledBackingStore::updateTileBuffers()
 {
     if (!m_client->tiledBackingStoreUpdatesAllowed() || m_contentsFrozen)
         return;
-    
+
     m_client->tiledBackingStorePaintBegin();
 
     Vector<IntRect> paintedArea;
@@ -114,7 +114,7 @@ void TiledBackingStore::updateTileBuffers()
             continue;
         dirtyTiles.append(it->second);
     }
-    
+
     if (dirtyTiles.isEmpty()) {
         m_client->tiledBackingStorePaintEnd(paintedArea);
         return;
@@ -136,13 +136,13 @@ void TiledBackingStore::updateTileBuffers()
 void TiledBackingStore::paint(GraphicsContext* context, const IntRect& rect)
 {
     context->save();
-    
+
     // Assumes the backing store is painted with the scale transform applied.
     // Since tile content is already scaled, first revert the scaling from the painter.
     context->scale(FloatSize(1.f / m_contentsScale, 1.f / m_contentsScale));
-    
+
     IntRect dirtyRect = mapFromContents(rect);
-    
+
     Tile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
     Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
 
