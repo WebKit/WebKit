@@ -118,7 +118,6 @@ static void test_keypress_events_load_status_cb(WebKitWebView* webView, GParamSp
 
 gboolean map_event_cb(GtkWidget *widget, GdkEvent* event, gpointer data)
 {
-    gtk_widget_grab_focus(widget);
     KeyEventFixture* fixture = (KeyEventFixture*)data;
     webkit_web_view_load_string(fixture->webView, fixture->info->page,
                                 "text/html", "utf-8", "file://");
@@ -134,6 +133,7 @@ static void setup_keyevent_test(KeyEventFixture* fixture, gconstpointer data, GC
     gtk_widget_show(fixture->window);
     gtk_widget_show(GTK_WIDGET(fixture->webView));
     gtk_window_present(GTK_WINDOW(fixture->window));
+    gtk_widget_grab_focus(fixture->webView);
 
     g_signal_connect(fixture->webView, "notify::load-status",
                      load_event_callback, fixture);
