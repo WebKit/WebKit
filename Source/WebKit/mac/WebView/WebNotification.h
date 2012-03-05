@@ -36,6 +36,7 @@
 
 - (NSString *)title;
 - (NSString *)body;
+- (NSString *)replaceID;
 - (WebSecurityOrigin *)origin;
 - (uint64_t)notificationID;
 

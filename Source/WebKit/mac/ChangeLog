@@ -1,3 +1,15 @@
+2012-03-02  Jon Lee  <jonlee@apple.com>
+
+        Add support for notification replaceId in Mac WebKit and WK2
+        https://bugs.webkit.org/show_bug.cgi?id=80206
+        <rdar://problem/10965574>
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebNotification.h: Add replaceID method.
+        * WebView/WebNotification.mm:
+        (-[WebNotification replaceID]):
+
 2012-03-05  Adam Barth  <abarth@webkit.org>
 
         Geolocation should use a ScriptExecutionContext as its context object

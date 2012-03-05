@@ -3419,9 +3419,9 @@ void WebPageProxy::requestNotificationPermission(uint64_t requestID, const Strin
         request->deny();
 }
 
-void WebPageProxy::showNotification(const String& title, const String& body, const String& iconURL, const String& originString, uint64_t notificationID)
+void WebPageProxy::showNotification(const String& title, const String& body, const String& iconURL, const String& replaceID, const String& originString, uint64_t notificationID)
 {
-    m_process->context()->notificationManagerProxy()->show(this, title, body, iconURL, originString, notificationID);
+    m_process->context()->notificationManagerProxy()->show(this, title, body, iconURL, replaceID, originString, notificationID);
 }
 
 float WebPageProxy::headerHeight(WebFrameProxy* frame)

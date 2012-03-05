@@ -101,6 +101,16 @@ Notification* core(WebNotification *notification)
 #endif
 }
 
+- (NSString *)replaceID
+{
+#if ENABLE(NOTIFICATIONS)
+    ASSERT(core(self));
+    return core(self)->replaceId();
+#else
+    return nil;
+#endif
+}
+
 - (WebSecurityOrigin *)origin
 {
 #if ENABLE(NOTIFICATIONS)
