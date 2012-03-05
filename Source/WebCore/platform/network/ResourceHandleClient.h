@@ -109,6 +109,9 @@ namespace WebCore {
 #if ENABLE(BLOB)
         virtual AsyncFileStream* createAsyncFileStream(FileStreamClient*) { return 0; }
 #endif
+#if USE(SOUP)
+        virtual bool isSynchronousClient() { return false; }
+#endif
     };
 
 }
