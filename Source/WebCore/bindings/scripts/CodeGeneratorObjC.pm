@@ -920,6 +920,13 @@ sub GenerateHeader
                 AddForwardDeclarationsForType($type, $public) unless $public and $needsDeprecatedVersion;
             }
 
+            my $functionConditionalString = GenerateConditionalString($function->signature);
+            if ($functionConditionalString) {
+                push(@headerFunctions, "#if ${functionConditionalString}\n") if $public;
+                push(@privateHeaderFunctions, "#if ${functionConditionalString}\n") unless $public;
+                push(@deprecatedHeaderFunctions, "#if ${functionConditionalString}\n") if $needsDeprecatedVersion;
+            }
+
             push(@headerFunctions, $functionDeclaration) if $public;
             push(@privateHeaderFunctions, $functionDeclaration) unless $public;
 
@@ -947,6 +954,12 @@ sub GenerateHeader
                 }
 
                 delete $publicInterfaces{$publicInterfaceKey};
+            }
+
+            if ($functionConditionalString) {
+                push(@headerFunctions, "#endif\n") if $public;
+                push(@privateHeaderFunctions, "#endif\n") unless $public;
+                push(@deprecatedHeaderFunctions, "#endif\n") if $needsDeprecatedVersion;
             }
         }
 

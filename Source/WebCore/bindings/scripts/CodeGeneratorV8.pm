@@ -365,9 +365,12 @@ END
         my $attrExt = $function->signature->extendedAttributes;
 
         if (($attrExt->{"Custom"} || $attrExt->{"V8Custom"}) && !$attrExt->{"ImplementedBy"} && $function->{overloadIndex} == 1) {
+            my $conditionalString = GenerateConditionalString($function->signature);
+            push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerContent, <<END);
     static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments&);
 END
+            push(@headerContent, "#endif // ${conditionalString}\n") if $conditionalString;
         }
 
         if ($attrExt->{"V8EnabledAtRuntime"}) {
@@ -384,19 +387,24 @@ END
     foreach my $attribute (@{$dataNode->attributes}) {
         my $name = $attribute->signature->name;
         my $attrExt = $attribute->signature->extendedAttributes;
+        my $conditionalString = GenerateConditionalString($attribute->signature);
         if (($attrExt->{"V8CustomGetter"} || $attrExt->{"CustomGetter"} ||
              $attrExt->{"V8Custom"} || $attrExt->{"Custom"}) &&
             !$attrExt->{"ImplementedBy"}) {
+            push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerContent, <<END);
     static v8::Handle<v8::Value> ${name}AccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo&);
 END
+            push(@headerContent, "#endif // ${conditionalString}\n") if $conditionalString;
         }
         if (($attrExt->{"V8CustomSetter"} || $attrExt->{"CustomSetter"} ||
              $attrExt->{"V8Custom"} || $attrExt->{"Custom"}) &&
             !$attrExt->{"ImplementedBy"}) {
+            push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerContent, <<END);
     static void ${name}AccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value>, const v8::AccessorInfo&);
 END
+            push(@headerContent, "#endif // ${conditionalString}\n") if $conditionalString;
         }
         if ($attrExt->{"V8EnabledAtRuntime"}) {
             push(@enabledAtRuntime, $attribute);

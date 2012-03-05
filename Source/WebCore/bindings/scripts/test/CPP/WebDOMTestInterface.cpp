@@ -26,10 +26,8 @@
 
 #include "KURL.h"
 #include "TestInterface.h"
-#include "TestObj.h"
 #include "TestSupplemental.h"
 #include "WebDOMString.h"
-#include "WebDOMTestObj.h"
 #include "WebExceptionHandler.h"
 #include "wtf/text/AtomicString.h"
 #include <wtf/GetPtr.h>
@@ -116,21 +114,6 @@ void WebDOMTestInterface::supplementalMethod1()
         return;
 
     WebCore::TestSupplemental::supplementalMethod1(impl());
-}
-
-#endif
-
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-WebDOMTestObj WebDOMTestInterface::supplementalMethod2(const WebDOMString& strArg, const WebDOMTestObj& objArg)
-{
-    if (!impl())
-        return WebDOMTestObj();
-
-    WebCore::ExceptionCode ec = 0;
-    WebDOMTestObj result = toWebKit(WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(impl(), strArg, toWebCore(objArg), ec)));
-    webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
-    return result;
 }
 
 #endif

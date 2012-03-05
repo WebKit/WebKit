@@ -858,9 +858,12 @@ sub GenerateHeader
             $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCustomGetter"});
             $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCustomSetter"});
             if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
+                my $conditionalString = GenerateConditionalString($attribute->signature);
+                push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
                 push(@headerContent, "    JSC::WriteBarrier<JSC::Unknown> m_" . $attribute->signature->name . ";\n");
                 $numCachedAttributes++;
                 $needsMarkChildren = 1;
+                push(@headerContent, "#endif\n") if $conditionalString;
             }
         }
     }
@@ -875,12 +878,17 @@ sub GenerateHeader
         push(@headerContent, "\n    // Custom attributes\n");
 
         foreach my $attribute (@{$dataNode->attributes}) {
+            my $conditionalString = GenerateConditionalString($attribute->signature);
             if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCustom"} || $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCustomGetter"}) {
+                push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
                 my $methodName = $codeGenerator->WK_lcfirst($attribute->signature->name);
                 push(@headerContent, "    JSC::JSValue " . $methodName . "(JSC::ExecState*) const;\n");
+                push(@headerContent, "#endif\n") if $conditionalString;
             }
             if (($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCustom"} || $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCustomSetter"}) && $attribute->type !~ /^readonly/) {
+                push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
                 push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue);\n");
+                push(@headerContent, "#endif\n") if $conditionalString;
             }
         }
     }
@@ -894,8 +902,11 @@ sub GenerateHeader
         foreach my $function (@{$dataNode->functions}) {
             next unless $function->signature->extendedAttributes->{"Custom"} or $function->signature->extendedAttributes->{"JSCustom"};
             next if $function->{overloads} && $function->{overloadIndex} != 1;
+            my $conditionalString = GenerateConditionalString($function->signature);
+            push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementedAs"} || $codeGenerator->WK_lcfirst($function->signature->name);
             push(@headerContent, "    JSC::JSValue " . $functionImplementationName . "(JSC::ExecState*);\n");
+            push(@headerContent, "#endif\n") if $conditionalString;
         }
     }
 
@@ -1081,20 +1092,26 @@ sub GenerateHeader
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$dataNode->functions}) {
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
+            my $conditionalString = GenerateConditionalString($function->signature);
+            push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $functionName = GetFunctionName($className, $function);
             push(@headerContent, "JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState*);\n");
+            push(@headerContent, "#endif\n") if $conditionalString;
         }
     }
 
     if ($numAttributes > 0 || !$dataNode->extendedAttributes->{"OmitConstructor"}) {
         push(@headerContent,"// Attributes\n\n");
         foreach my $attribute (@{$dataNode->attributes}) {
+            my $conditionalString = GenerateConditionalString($attribute->signature);
+            push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
             push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);\n");
             unless ($attribute->type =~ /readonly/) {
                 my $setter = "setJS" . $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name) . ($attribute->signature->type =~ /Constructor$/ ? "Constructor" : "");
                 push(@headerContent, "void ${setter}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);\n");
             }
+            push(@headerContent, "#endif\n") if $conditionalString;
         }
         
         if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
@@ -1111,14 +1128,11 @@ sub GenerateHeader
     if ($numConstants > 0) {
         push(@headerContent,"// Constants\n\n");
         foreach my $constant (@{$dataNode->constants}) {
+            my $conditionalString = GenerateConditionalString($constant);
+            push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
-            my $conditional = $constant->extendedAttributes->{"Conditional"};
-            if ($conditional) {
-                my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
-                push(@headerContent, "#if ${conditionalString}\n");
-            }
             push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);\n");
-            push(@headerContent, "#endif\n") if $conditional;
+            push(@headerContent, "#endif\n") if $conditionalString;
         }
     }
 

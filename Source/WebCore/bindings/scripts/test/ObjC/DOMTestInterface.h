@@ -53,9 +53,15 @@ enum {
 - (NSString *)supplementalStr3;
 - (void)setSupplementalStr3:(NSString *)newSupplementalStr3;
 #endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 - (void)supplementalMethod1;
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 - (DOMTestObj *)supplementalMethod2:(NSString *)strArg objArg:(DOMTestObj *)objArg;
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
 - (void)supplementalMethod3;
+#endif
 @end
 
 #endif
