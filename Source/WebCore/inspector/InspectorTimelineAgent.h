@@ -82,6 +82,8 @@ public:
     void willDispatchEvent(const Event&);
     void didDispatchEvent();
 
+    void didBeginFrame();
+
     void willLayout();
     void didLayout();
 

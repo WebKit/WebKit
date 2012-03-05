@@ -139,6 +139,7 @@ public:
     virtual void didNotAcquirePointerLock();
     virtual void didLosePointerLock();
     virtual void didChangeWindowResizerRect();
+    virtual void instrumentBeginFrame();
 
     // WebView methods:
     virtual void initializeMainFrame(WebFrameClient*);

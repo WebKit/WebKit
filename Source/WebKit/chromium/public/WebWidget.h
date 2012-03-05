@@ -192,6 +192,10 @@ public:
     // rect.)
     virtual void didChangeWindowResizerRect() { }
 
+    // Instrumentation method that marks beginning of frame update that includes
+    // things like animate()/layout()/paint()/composite().
+    virtual void instrumentBeginFrame() { }
+
 protected:
     ~WebWidget() { }
 };

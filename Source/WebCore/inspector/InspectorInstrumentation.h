@@ -120,6 +120,7 @@ public:
     static void didEvaluateScript(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext*, int timerId);
     static void didFireTimer(const InspectorInstrumentationCookie&);
+    static void didBeginFrame(Page*);
     static InspectorInstrumentationCookie willLayout(Frame*);
     static void didLayout(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willLoadXHR(ScriptExecutionContext*, XMLHttpRequest*);
@@ -272,6 +273,7 @@ private:
     static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents*, int timerId);
     static void didFireTimerImpl(const InspectorInstrumentationCookie&);
+    static void didBeginFrameImpl(InstrumentingAgents*);
     static InspectorInstrumentationCookie willLayoutImpl(InstrumentingAgents*);
     static void didLayoutImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willLoadXHRImpl(InstrumentingAgents*, XMLHttpRequest*);
@@ -707,6 +709,15 @@ inline void InspectorInstrumentation::didFireTimer(const InspectorInstrumentatio
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.first)
         didFireTimerImpl(cookie);
+#endif
+}
+
+inline void InspectorInstrumentation::didBeginFrame(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        didBeginFrameImpl(instrumentingAgents);
 #endif
 }
 

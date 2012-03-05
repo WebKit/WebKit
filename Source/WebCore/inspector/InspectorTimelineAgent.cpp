@@ -60,6 +60,8 @@ static const char EventDispatch[] = "EventDispatch";
 static const char Layout[] = "Layout";
 static const char RecalculateStyles[] = "RecalculateStyles";
 static const char Paint[] = "Paint";
+static const char BeginFrame[] = "BeginFrame";
+
 static const char ParseHTML[] = "ParseHTML";
 
 static const char TimerInstall[] = "TimerInstall";
@@ -168,6 +170,11 @@ void InspectorTimelineAgent::stop(ErrorString*)
 void InspectorTimelineAgent::setIncludeMemoryDetails(ErrorString*, bool value)
 {
     m_state->setBoolean(TimelineAgentState::includeMemoryDetails, value);
+}
+
+void InspectorTimelineAgent::didBeginFrame()
+{
+    appendRecord(InspectorObject::create(), TimelineRecordType::BeginFrame, true);
 }
 
 void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine)

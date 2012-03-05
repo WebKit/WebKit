@@ -78,10 +78,6 @@ iframe.view {
     pointer-events: none;
 }
 
-.timeline .resources-event-dividers {
-    height: 19px;
-}
-
 .resources-dividers-label-bar {
     position: absolute;
     top: 0;

@@ -74,6 +74,7 @@
 #include "Image.h"
 #include "ImageBuffer.h"
 #include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
 #include "LayerChromium.h"
@@ -1264,6 +1265,11 @@ void WebViewImpl::didExitFullScreen()
 
     m_fullScreenFrame.clear();
 #endif
+}
+
+void WebViewImpl::instrumentBeginFrame()
+{
+    InspectorInstrumentation::didBeginFrame(m_page.get());
 }
 
 void WebViewImpl::animate(double frameBeginTime)

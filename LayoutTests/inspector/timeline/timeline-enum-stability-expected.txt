@@ -5,6 +5,7 @@ Applications outside of WebKit depend on the stability of the mapping of these t
 {
     Root : "Root"
     EventDispatch : "EventDispatch"
+    BeginFrame : "BeginFrame"
     Layout : "Layout"
     RecalculateStyles : "RecalculateStyles"
     Paint : "Paint"

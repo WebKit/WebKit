@@ -334,8 +334,13 @@ WebInspector.TimelinePanel.prototype = {
         this._timelineGrid.removeEventDividers();
         var clientWidth = this._graphRowsElement.offsetWidth - this._expandOffset;
         var dividers = [];
+        // Only show frames if we're zoomed close enough -- otherwise they'd be to dense to be useful and will overpopulate DOM.
+        var showFrames = this.calculator.boundarySpan < 1.0 && this._startAtZero;
+
         for (var i = 0; i < this._timeStampRecords.length; ++i) {
             var record = this._timeStampRecords[i];
+            if (record.type === WebInspector.TimelineModel.RecordType.BeginFrame && !showFrames)
+                continue;
             var positions = this._calculator.computeBarGraphWindowPosition(record, clientWidth);
             var dividerPosition = Math.round(positions.left);
             if (dividerPosition < 0 || dividerPosition >= clientWidth || dividers[dividerPosition])
@@ -365,7 +370,9 @@ WebInspector.TimelinePanel.prototype = {
         else if (record.type === recordTypes.TimeStamp) {
             eventDivider.className += " resources-orange-divider";
             eventDividerPadding.title = record.data["message"];
-        }
+        } else if (record.type === recordTypes.BeginFrame)
+            eventDivider.className += " timeline-frame-divider";
+
         eventDividerPadding.appendChild(eventDivider);
         return eventDividerPadding;
     },
@@ -425,7 +432,10 @@ WebInspector.TimelinePanel.prototype = {
         var toggled = !this.toggleStartAtZeroButton.toggled
         this._glueParentButton.disabled = toggled;
         this.toggleStartAtZeroButton.toggled = toggled;
-        this._calculator = toggled ? new WebInspector.TimelineFitInWindowCalculator(this._presentationModel) : new WebInspector.TimelineCalculator(this._presentationModel);
+        if (toggled)
+            this.element.addStyleClass("timeline-start-at-zero");
+        else
+            this.element.removeStyleClass("timeline-start-at-zero");
         this._presentationModel.setGlueRecords(this._glueParentButton.toggled && !this.toggleStartAtZeroButton.toggled);
         this._repopulateRecords();
         this._overviewPane.setStartAtZero(toggled);
@@ -462,8 +472,10 @@ WebInspector.TimelinePanel.prototype = {
         var timeStampRecords = this._timeStampRecords;
         function addTimestampRecords(record)
         {
-            if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad || record.type === recordTypes.TimeStamp)
+            if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad ||
+                record.type === recordTypes.TimeStamp || record.type === recordTypes.BeginFrame) {
                 timeStampRecords.push(record);
+            }
         }
         WebInspector.TimelinePanel.forAllRecords([ formattedRecord ], addTimestampRecords);
     },
@@ -559,13 +571,10 @@ WebInspector.TimelinePanel.prototype = {
             delete this._refreshTimeout;
         }
 
-        this._overviewPane.update(this._rootRecord().children, this._showShortEvents);
+        this._overviewPane.update(this._showShortEvents);
 
-        if (!this._boundariesAreValid) {
-            var min = this._presentationModel.minimumRecordTime();
-            var max = this._presentationModel.maximumRecordTime();
-            this._calculator.setWindow(min + (max - min) * this._overviewPane.windowLeft(), min + (max - min) * this._overviewPane.windowRight());
-        }
+        if (!this._boundariesAreValid)
+            this._calculator.setWindow(this._overviewPane.windowStartTime(), this._overviewPane.windowEndTime());
 
         var recordsInWindowCount = this._refreshRecords(!this._boundariesAreValid);
         this._updateRecordsCounter(recordsInWindowCount);
@@ -609,7 +618,6 @@ WebInspector.TimelinePanel.prototype = {
     _refreshRecords: function(updateBoundaries)
     {
         var recordsInWindow = this._presentationModel.filteredRecords();
-        this._calculator.setRecords(recordsInWindow);
 
         // Calculate the visible area.
         this._scrollTop = this._containerElement.scrollTop;
@@ -793,49 +801,11 @@ WebInspector.TimelineCalculator.prototype = {
         this.boundarySpan = this.maximumBoundary - this.minimumBoundary;
     },
 
-    setRecords: function(records)
-    {
-    },
-
     formatTime: function(value)
     {
         return Number.secondsToString(value + this.minimumBoundary - this._presentationModel.minimumRecordTime());
     }
 }
-
-/**
- * @constructor
- * @param {WebInspector.TimelinePresentationModel} presentationModel
- * @extends WebInspector.TimelineCalculator
- */
-WebInspector.TimelineFitInWindowCalculator = function(presentationModel)
-{
-    WebInspector.TimelineCalculator.call(this, presentationModel);
-}
-
-WebInspector.TimelineFitInWindowCalculator.prototype = {
-    setWindow: function(minimumBoundary, maximumBoundary)
-    {
-    },
-
-    setRecords: function(records)
-    {
-        this.minimumBoundary = -1;
-        this.maximumBoundary = -1;
-
-        var boundarySpan = 0;
-        for (var i = 0; i < records.length; ++i) {
-            var record = records[i];
-            if (this.minimumBoundary == -1 || record.startTime < this.minimumBoundary)
-                this.minimumBoundary = record.startTime;
-            if (this.maximumBoundary == -1 || record.endTime > this.maximumBoundary)
-                this.maximumBoundary = record.endTime;
-        }
-        this.boundarySpan = this.maximumBoundary - this.minimumBoundary;
-    }
-}
-
-WebInspector.TimelineFitInWindowCalculator.prototype.__proto__ = WebInspector.TimelineCalculator.prototype;
 
 /**
  * @constructor
@@ -1032,7 +1002,7 @@ WebInspector.TimelineCategoryFilter.prototype = {
      */
     accept: function(record)
     {
-        return !record.category.hidden;
+        return !record.category.hidden && record.type !== WebInspector.TimelineModel.RecordType.BeginFrame;
     }
 }
 

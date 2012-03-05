@@ -382,6 +382,12 @@ void InspectorInstrumentation::didFireTimerImpl(const InspectorInstrumentationCo
         timelineAgent->didFireTimer();
 }
 
+void InspectorInstrumentation::didBeginFrameImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didBeginFrame();
+}
+
 InspectorInstrumentationCookie InspectorInstrumentation::willLayoutImpl(InstrumentingAgents* instrumentingAgents)
 {
     int timelineAgentId = 0;

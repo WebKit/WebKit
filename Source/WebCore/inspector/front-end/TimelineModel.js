@@ -43,11 +43,13 @@ WebInspector.TimelineModel = function()
 WebInspector.TimelineModel.RecordType = {
     Root: "Root",
     EventDispatch: "EventDispatch",
+
+    BeginFrame: "BeginFrame",
     Layout: "Layout",
     RecalculateStyles: "RecalculateStyles",
     Paint: "Paint",
-    ParseHTML: "ParseHTML",
 
+    ParseHTML: "ParseHTML",
 
     TimerInstall: "TimerInstall",
     TimerRemove: "TimerRemove",

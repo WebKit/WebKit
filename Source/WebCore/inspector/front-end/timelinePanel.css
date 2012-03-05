@@ -72,16 +72,7 @@
     border-right: 1px solid rgb(163, 163, 163);
 }
 
-.timeline-start-at-zero #timeline-overview-sidebar {
-    display: none;
-}
-
 #timeline-overview-grid {
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    left: 200px;
-    right: 0px;
     background-color: rgb(255, 255, 255);
 }
 
@@ -163,7 +154,7 @@
     bottom: 0;
     right: 0;
     border-right: 0 none transparent;
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x: hidden;
 }
 
@@ -593,10 +584,6 @@
     font-size: 11px;
 }
 
-.timeline-overview-start-at-zero {
-    background-color: white;
-}
-
 #counter-values-bar {
     border-bottom: solid 1px lightgray;
     min-height: 15px;
@@ -644,3 +631,19 @@
     background: -webkit-linear-gradient(left, rgb(213, 185, 236), rgb(137, 62, 200));
     border: solid 1px rgb(130, 59, 190);
 }
+
+.timeline .resources-event-divider {
+    height: 19px;
+    bottom: auto;
+}
+
+.timeline.timeline-start-at-zero .resources-divider {
+    height: 19px;
+    bottom: auto;
+}
+
+.timeline .resources-event-divider.timeline-frame-divider {
+    background-color: rgba(200, 185, 200, 0.8);
+    height: 100%;
+}
+
