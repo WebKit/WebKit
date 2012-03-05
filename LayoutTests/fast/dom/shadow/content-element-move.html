@@ -358,6 +358,29 @@ function testMoveLightChildOut(callIfDone) {
     setTimeout(f, 0);
 }
 
+function testInsertBeforeFallback(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>BEFORE</span><span>HOGE</span><span>FALLBACK</span><span>AFTER</span></div>";
+
+    var target = document.createElement('div');
+    document.getElementById('actual-container').appendChild(target);
+
+    var span1 = document.createElement('span');
+    var root = new WebKitShadowRoot(span1);
+    root.innerHTML = "<content>FALLBACK</content>";
+
+    target.appendChild(createSpanWithText('BEFORE'));
+    target.appendChild(span1);
+    target.appendChild(createSpanWithText('AFTER'));
+
+    var f = (function(target, span1, callIfDone) { return function() {
+        target.insertBefore(createSpanWithText('HOGE'), span1);
+        callIfDone();
+    };})(target, span1, callIfDone);
+
+    setTimeout(f, 0);
+}
+
 var testFuncs = [
     testRemoveContent,
     testRemoveContentToRecalc1,
@@ -369,7 +392,8 @@ var testFuncs = [
     testAppendContent2,
     testAppendContent3,
     testChangeOrderOfContent,
-    testMoveLightChildOut
+    testMoveLightChildOut,
+    testInsertBeforeFallback
 ];
 
 </script>

@@ -43,6 +43,9 @@
 
 namespace WebCore {
 
+static RenderObject* firstRendererOf(Node*);
+static RenderObject* lastRendererOf(Node*);
+
 NodeRenderingContext::NodeRenderingContext(Node* node)
     : m_phase(AttachingNotInTree)
     , m_node(node)
@@ -135,7 +138,7 @@ PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
     return m_style.release();
 }
 
-static RenderObject* nextRendererOf(InsertionPoint* parent, Node* current)
+static inline RenderObject* nextRendererOfInsertionPoint(InsertionPoint* parent, Node* current)
 {
     HTMLContentSelection* currentSelection = parent->selections()->find(current);
     if (!currentSelection)
@@ -149,7 +152,7 @@ static RenderObject* nextRendererOf(InsertionPoint* parent, Node* current)
     return 0;
 }
 
-static RenderObject* previousRendererOf(InsertionPoint* parent, Node* current)
+static inline RenderObject* previousRendererOfInsertionPoint(InsertionPoint* parent, Node* current)
 {
     RenderObject* lastRenderer = 0;
 
@@ -163,7 +166,7 @@ static RenderObject* previousRendererOf(InsertionPoint* parent, Node* current)
     return lastRenderer;
 }
 
-static RenderObject* firstRendererOf(InsertionPoint* parent)
+static inline RenderObject* firstRendererOfInsertionPoint(InsertionPoint* parent)
 {
     if (parent->hasSelection()) {
         for (HTMLContentSelection* selection = parent->selections()->first(); selection; selection = selection->next()) {
@@ -174,10 +177,10 @@ static RenderObject* firstRendererOf(InsertionPoint* parent)
         return 0;
     }
 
-    return NodeRenderingContext(parent).nextRenderer();
+    return firstRendererOf(parent->firstChild());
 }
 
-static RenderObject* lastRendererOf(InsertionPoint* parent)
+static inline RenderObject* lastRendererOfInsertionPoint(InsertionPoint* parent)
 {
     if (parent->hasSelection()) {
         for (HTMLContentSelection* selection = parent->selections()->last(); selection; selection = selection->previous()) {
@@ -188,7 +191,44 @@ static RenderObject* lastRendererOf(InsertionPoint* parent)
         return 0;
     }
 
-    return NodeRenderingContext(parent).previousRenderer();
+    return lastRendererOf(parent->lastChild());
+}
+
+static inline RenderObject* firstRendererOf(Node* node)
+{
+    for (; node; node = node->nextSibling()) {
+        if (node->renderer()) {
+            // Do not return elements that are attached to a different flow-thread.
+            if (node->renderer()->style() && !node->renderer()->style()->flowThread().isEmpty())
+                continue;
+            return node->renderer();
+        }
+
+        if (isInsertionPoint(node)) {
+            if (RenderObject* first = firstRendererOfInsertionPoint(toInsertionPoint(node)))
+                return first;
+        }
+    }
+
+    return 0;
+}
+
+static inline RenderObject* lastRendererOf(Node* node)
+{
+    for (; node; node = node->previousSibling()) {
+        if (node->renderer()) {
+            // Do not return elements that are attached to a different flow-thread.
+            if (node->renderer()->style() && !node->renderer()->style()->flowThread().isEmpty())
+                continue;
+            return node->renderer();
+        }
+        if (isInsertionPoint(node)) {
+            if (RenderObject* last = lastRendererOfInsertionPoint(toInsertionPoint(node)))
+                return last;
+        }
+    }
+
+    return 0;
 }
 
 RenderObject* NodeRenderingContext::nextRenderer() const
@@ -201,7 +241,7 @@ RenderObject* NodeRenderingContext::nextRenderer() const
         return m_parentFlowRenderer->nextRendererForNode(m_node);
 
     if (m_phase == AttachingDistributed) {
-        if (RenderObject* found = nextRendererOf(m_insertionPoint, m_node))
+        if (RenderObject* found = nextRendererOfInsertionPoint(m_insertionPoint, m_node))
             return found;
         return NodeRenderingContext(m_insertionPoint).nextRenderer();
     }
@@ -211,21 +251,7 @@ RenderObject* NodeRenderingContext::nextRenderer() const
     if (m_node->parentOrHostNode() && !m_node->parentOrHostNode()->attached())
         return 0;
 
-    for (Node* node = m_node->nextSibling(); node; node = node->nextSibling()) {
-        if (node->renderer()) {
-            // Do not return elements that are attached to a different flow-thread.
-            if (node->renderer()->style() && !node->renderer()->style()->flowThread().isEmpty())
-                continue;
-            return node->renderer();
-        }
-
-        if (isInsertionPoint(node)) {
-            if (RenderObject* first = firstRendererOf(toInsertionPoint(node)))
-                return first;
-        }
-    }
-
-    return 0;
+    return firstRendererOf(m_node->nextSibling());
 }
 
 RenderObject* NodeRenderingContext::previousRenderer() const
@@ -239,27 +265,14 @@ RenderObject* NodeRenderingContext::previousRenderer() const
         return m_parentFlowRenderer->previousRendererForNode(m_node);
 
     if (m_phase == AttachingDistributed) {
-        if (RenderObject* found = previousRendererOf(m_insertionPoint, m_node))
+        if (RenderObject* found = previousRendererOfInsertionPoint(m_insertionPoint, m_node))
             return found;
         return NodeRenderingContext(m_insertionPoint).previousRenderer();
     }
 
     // FIXME: We should have the same O(N^2) avoidance as nextRenderer does
     // however, when I tried adding it, several tests failed.
-    for (Node* node = m_node->previousSibling(); node; node = node->previousSibling()) {
-        if (node->renderer()) {
-            // Do not return elements that are attached to a different flow-thread.
-            if (node->renderer()->style() && !node->renderer()->style()->flowThread().isEmpty())
-                continue;
-            return node->renderer();
-        }
-        if (isInsertionPoint(node)) {
-            if (RenderObject* last = lastRendererOf(toInsertionPoint(node)))
-                return last;
-        }
-    }
-
-    return 0;
+    return lastRendererOf(m_node->previousSibling());
 }
 
 RenderObject* NodeRenderingContext::parentRenderer() const

@@ -20,5 +20,7 @@ testChangeOrderOfContent
 PASS
 testMoveLightChildOut
 PASS
+testInsertBeforeFallback
+PASS
 TEST COMPLETED
 
