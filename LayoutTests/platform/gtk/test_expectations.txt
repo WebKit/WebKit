@@ -96,6 +96,9 @@ BUGWK77636 : fast/forms/radio/radio-group.html = PASS TEXT
 
 BUGWK78344 : fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html = PASS IMAGE
 
+BUGWK80244 : editing/selection/select-line-break-with-opposite-directionality.html = PASS TEXT
+BUGWK80246 DEBUG : fast/css/hover-update.html = PASS TEXT
+
 // End of Flaky tests
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
