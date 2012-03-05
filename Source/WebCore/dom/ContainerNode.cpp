@@ -573,9 +573,6 @@ void ContainerNode::removeChildren()
             removedChild->detach();
     }
 
-    // FIXME: This should be just above dispatchSubtreeModifiedEvent();
-    allowEventDispatch();
-
     childrenChanged(false, 0, 0, -static_cast<int>(removedChildrenCount));
 
     for (i = 0; i < removedChildrenCount; ++i) {
@@ -586,6 +583,7 @@ void ContainerNode::removeChildren()
             toContainerNode(removedChild)->removedFromTree(true);
     }
 
+    allowEventDispatch();
     dispatchSubtreeModifiedEvent();
 }
 
@@ -1093,6 +1091,9 @@ static void notifyChildInserted(Node* child)
 
 static void dispatchChildInsertionEvents(Node* child)
 {
+    if (child->isInShadowTree())
+        return;
+
     ASSERT(!eventDispatchForbidden());
 
     RefPtr<Node> c = child;
@@ -1117,6 +1118,9 @@ static void dispatchChildInsertionEvents(Node* child)
 
 static void dispatchChildRemovalEvents(Node* child)
 {
+    if (child->isInShadowTree())
+        return;
+
     ASSERT(!eventDispatchForbidden());
 
 #if ENABLE(INSPECTOR)
