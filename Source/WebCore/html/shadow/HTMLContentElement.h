@@ -44,8 +44,6 @@ public:
     static PassRefPtr<HTMLContentElement> create(Document*);
 
     virtual ~HTMLContentElement();
-    virtual void attach();
-    virtual void detach();
 
     const AtomicString& select() const;
 

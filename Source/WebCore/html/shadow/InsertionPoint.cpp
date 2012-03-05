@@ -32,6 +32,7 @@
 #include "InsertionPoint.h"
 
 #include "ShadowRoot.h"
+#include "ShadowTree.h"
 
 namespace WebCore {
 
@@ -43,6 +44,39 @@ InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document* document)
 
 InsertionPoint::~InsertionPoint()
 {
+}
+
+void InsertionPoint::attach()
+{
+    ShadowRoot* root = toShadowRoot(shadowTreeRootNode());
+
+    if (root) {
+        HTMLContentSelector* selector = root->tree()->ensureSelector();
+        selector->unselect(&m_selections);
+        selector->select(this, &m_selections);
+    }
+
+    HTMLElement::attach();
+
+    if (root) {
+        for (HTMLContentSelection* selection = m_selections.first(); selection; selection = selection->next())
+            selection->node()->attach();
+    }
+}
+
+void InsertionPoint::detach()
+{
+    if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
+        if (HTMLContentSelector* selector = root->tree()->selector())
+            selector->unselect(&m_selections);
+
+        // When shadow element is detached, shadow tree should be recreated to re-calculate selector for
+        // other insertion points.
+        root->tree()->setNeedsReattachHostChildrenAndShadow();
+    }
+
+    ASSERT(m_selections.isEmpty());
+    HTMLElement::detach();
 }
 
 bool InsertionPoint::isShadowBoundary() const

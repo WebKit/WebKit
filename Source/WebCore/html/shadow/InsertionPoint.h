@@ -47,6 +47,9 @@ public:
 
     virtual const AtomicString& select() const = 0;
 
+    virtual void attach();
+    virtual void detach();
+
 protected:
     InsertionPoint(const QualifiedName&, Document*);
     virtual bool rendererIsNeeded(const NodeRenderingContext&) OVERRIDE;
