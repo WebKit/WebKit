@@ -122,9 +122,8 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
         // Prepare a cookie header if there are cookies related to this url.
         String cookiePairs = cookieManager().getCookie(url, WithHttpOnlyCookies);
         if (!cookiePairs.isEmpty()) {
-            // We encode the cookie header data using utf8 to support unicode characters.
-            // For more information, look at RFC5987 - 4.1 (http://tools.ietf.org/html/rfc5987#ref-ISO-8859-1).
-            platformRequest.setCookieData(cookiePairs.utf8().data());
+            // We need to check the encoding and encode the cookie header data using latin1 or utf8 to support unicode characters.
+            platformRequest.setCookieData(cookiePairs.containsOnlyLatin1() ? cookiePairs.latin1().data() : cookiePairs.utf8().data());
         }
     }
 
