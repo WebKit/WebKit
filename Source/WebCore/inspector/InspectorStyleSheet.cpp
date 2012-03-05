@@ -30,6 +30,7 @@
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
 #include "CSSParser.h"
+#include "CSSPropertyNames.h"
 #include "CSSPropertySourceData.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
@@ -484,7 +485,10 @@ void InspectorStyle::populateObjectWithStyleProperties(InspectorObject* result) 
                 // Parsed property overrides any property with the same name. Non-parsed property overrides
                 // previous non-parsed property with the same name (if any).
                 bool shouldInactivate = false;
-                HashMap<String, RefPtr<InspectorObject> >::iterator activeIt = propertyNameToPreviousActiveProperty.find(name);
+                CSSPropertyID propertyId = static_cast<CSSPropertyID>(cssPropertyID(name));
+                // Canonicalize property names to treat non-prefixed and vendor-prefixed property names the same (opacity vs. -webkit-opacity).
+                String canonicalPropertyName = propertyId ? String(getPropertyName(propertyId)) : name;
+                HashMap<String, RefPtr<InspectorObject> >::iterator activeIt = propertyNameToPreviousActiveProperty.find(canonicalPropertyName);
                 if (activeIt != propertyNameToPreviousActiveProperty.end()) {
                     if (propertyEntry.parsedOk)
                         shouldInactivate = true;
@@ -495,12 +499,12 @@ void InspectorStyle::populateObjectWithStyleProperties(InspectorObject* result) 
                             shouldInactivate = true;
                     }
                 } else
-                    propertyNameToPreviousActiveProperty.set(name, property);
+                    propertyNameToPreviousActiveProperty.set(canonicalPropertyName, property);
 
                 if (shouldInactivate) {
                     activeIt->second->setString("status", "inactive");
                     activeIt->second->remove("shorthandName");
-                    propertyNameToPreviousActiveProperty.set(name, property);
+                    propertyNameToPreviousActiveProperty.set(canonicalPropertyName, property);
                 }
             } else {
                 bool implicit = m_style->isPropertyImplicit(name);

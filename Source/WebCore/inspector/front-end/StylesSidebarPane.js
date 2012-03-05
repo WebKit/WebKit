@@ -189,7 +189,17 @@ WebInspector.StylesSidebarPane.alteredHexNumber = function(hexString, event)
     for (var i = 0, lengthDelta = hexString.length - resultString.length; i < lengthDelta; ++i)
         resultString = "0" + resultString;
     return resultString;
-},
+}
+
+WebInspector.StylesSidebarPane.canonicalPropertyName = function(name)
+{
+    if (!name || name.length < 9 || name.charAt(0) !== "-")
+        return name;
+    var match = name.match(/(?:-webkit-|-khtml-|-apple-)(.+)/);
+    if (!match)
+        return name;
+    return match[1];
+}
 
 WebInspector.StylesSidebarPane.prototype = {
     _contextMenuEventFired: function(event)
@@ -563,26 +573,26 @@ WebInspector.StylesSidebarPane.prototype = {
                 var property = allProperties[j];
                 if (!property.isLive || !property.parsedOk)
                     continue;
-                var name = property.name;
+                var canonicalName = WebInspector.StylesSidebarPane.canonicalPropertyName(property.name);
 
                 if (!priorityUsed && property.priority.length)
                     priorityUsed = true;
 
                 // If the property name is already used by another rule then this rule's
                 // property is overloaded, so don't add it to the rule's usedProperties.
-                if (!(name in usedProperties))
-                    styleRule.usedProperties[name] = true;
+                if (!(canonicalName in usedProperties))
+                    styleRule.usedProperties[canonicalName] = true;
             }
 
             // Add all the properties found in this style to the used properties list.
             // Do this here so only future rules are affect by properties used in this rule.
-            for (var name in styleRules[i].usedProperties)
-                usedProperties[name] = true;
+            for (var canonicalName in styleRules[i].usedProperties)
+                usedProperties[canonicalName] = true;
         }
 
         if (priorityUsed) {
             // Walk the properties again and account for !important.
-            var foundPriorityProperties = [];
+            var foundPriorityProperties = {};
 
             // Walk in direct order to detect the active/most specific rule providing a priority
             // (in this case all subsequent !important values get canceled.)
@@ -596,15 +606,15 @@ WebInspector.StylesSidebarPane.prototype = {
                     var property = allProperties[j];
                     if (!property.isLive)
                         continue;
-                    var name = property.name;
+                    var canonicalName = WebInspector.StylesSidebarPane.canonicalPropertyName(property.name);
                     if (property.priority.length) {
-                        if (!(name in foundPriorityProperties))
-                            styleRules[i].usedProperties[name] = true;
+                        if (!(canonicalName in foundPriorityProperties))
+                            styleRules[i].usedProperties[canonicalName] = true;
                         else
-                            delete styleRules[i].usedProperties[name];
-                        foundPriorityProperties[name] = true;
-                    } else if (name in foundPriorityProperties)
-                        delete styleRules[i].usedProperties[name];
+                            delete styleRules[i].usedProperties[canonicalName];
+                        foundPriorityProperties[canonicalName] = true;
+                    } else if (canonicalName in foundPriorityProperties)
+                        delete styleRules[i].usedProperties[canonicalName];
                 }
             }
         }
@@ -1032,7 +1042,8 @@ WebInspector.StylePropertiesSection.prototype = {
             return false;
         }
 
-        var used = (propertyName in this._usedProperties);
+        var canonicalName = WebInspector.StylesSidebarPane.canonicalPropertyName(propertyName);
+        var used = (canonicalName in this._usedProperties);
         if (used || !shorthand)
             return !used;
 
@@ -1041,7 +1052,7 @@ WebInspector.StylePropertiesSection.prototype = {
         var longhandProperties = this.styleRule.style.getLonghandProperties(propertyName);
         for (var j = 0; j < longhandProperties.length; ++j) {
             var individualProperty = longhandProperties[j];
-            if (individualProperty.name in this._usedProperties)
+            if (WebInspector.StylesSidebarPane.canonicalPropertyName(individualProperty.name) in this._usedProperties)
                 return false;
         }
 
