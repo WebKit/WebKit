@@ -1,0 +1,8 @@
+PASS parsedElementShouldBeUnknown.tagName is 'WEBKITSHADOWCONTENT'
+PASS 0 < parsedElementShouldBeUnknown.constructor.toString().indexOf('HTMLUnknownElement') is true
+PASS contentInuserAgentShadow.tagName is 'WEBKITSHADOWCONTENT'
+PASS 0 < contentInuserAgentShadow.constructor.toString().indexOf('HTMLElement') is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

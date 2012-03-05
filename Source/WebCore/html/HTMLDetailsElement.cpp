@@ -50,7 +50,7 @@ public:
 
 private:
     DetailsContentElement(Document* document)
-        : HTMLContentElement(HTMLNames::divTag, document)
+        : HTMLContentElement(HTMLNames::webkitShadowContentTag, document)
     {
     }
 };
@@ -72,7 +72,7 @@ public:
 
 private:
     DetailsSummaryElement(Document* document)
-        : HTMLContentElement(HTMLNames::divTag, document)
+        : HTMLContentElement(HTMLNames::webkitShadowContentTag, document)
     {
         setSelect(summaryQuerySelector());
     }

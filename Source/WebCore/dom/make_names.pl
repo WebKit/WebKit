@@ -179,6 +179,7 @@ sub defaultTagPropertyHash
     return (
         'constructorNeedsCreatedByParser' => 0,
         'constructorNeedsFormElement' => 0,
+        'noConstructor' => 0,
         'interfaceName' => defaultInterfaceName($_[0]),
         # By default, the JSInterfaceName is the same as the interfaceName.
         'JSInterfaceName' => defaultInterfaceName($_[0]),
@@ -393,6 +394,10 @@ sub printConstructors
         # Ignore the mapped tag
         # FIXME: It could be moved inside this loop but was split for readibility.
         next if (defined($uniqueTags{$interfaceName}) || $enabledTags{$tagName}{mapToTagName});
+        # Tags can have wrappers without constructors.
+        # This is useful to make user-agent shadow elements internally testable
+        # while keeping them from being avaialble in the HTML markup.
+        next if $enabledTags{$tagName}{noConstructor};
 
         $uniqueTags{$interfaceName} = '1';
 
@@ -426,6 +431,7 @@ sub printFunctionInits
     my %tagConstructorMap = %$tagConstructorMap;
 
     for my $tagName (sort keys %tagConstructorMap) {
+        next if $enabledTags{$tagName}{noConstructor};
 
         my $conditional = $enabledTags{$tagName}{conditional};
         if ($conditional) {

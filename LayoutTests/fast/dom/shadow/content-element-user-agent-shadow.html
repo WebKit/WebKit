@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="container"></div>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script><!--
+(function()
+{
+    if (!window.internals)
+        return;
+
+    // Parser should build HTMLUnknownElement for <webkitShadowContent>.
+    container = document.getElementById("container");
+    container.innerHTML = "<div><webkitShadowContent id='shouldBeUnknown'></webkitShadowContent></div>";
+    parsedElementShouldBeUnknown = document.getElementById("shouldBeUnknown");
+    shouldBe("parsedElementShouldBeUnknown.tagName", "'WEBKITSHADOWCONTENT'");
+    shouldBeTrue("0 < parsedElementShouldBeUnknown.constructor.toString().indexOf('HTMLUnknownElement')");
+
+    container.innerHTML = "<details id='details'><summary></summary></details>";
+    details = document.getElementById("details");
+
+    // The user agent shadow for <details> has HTMLContentElement with tagName "webkitShadowContent".
+    // This element should be wrapped as an HTMLElement because it isn't HTMLUnknownElement and
+    // HTMLContentElement wrapper is unavailable unless SHADOW_DOM is enabled.
+    shadow = internals.shadowRoot(details);
+    contentInuserAgentShadow = shadow.firstChild;
+    shouldBe("contentInuserAgentShadow.tagName", "'WEBKITSHADOWCONTENT'");
+    shouldBeTrue("0 < contentInuserAgentShadow.constructor.toString().indexOf('HTMLElement')");
+})();
+--></script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
