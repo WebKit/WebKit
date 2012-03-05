@@ -242,6 +242,7 @@ IDL_BINDINGS += \
     $$PWD/html/canvas/CanvasPattern.idl \
     $$PWD/html/canvas/CanvasRenderingContext.idl \
     $$PWD/html/canvas/CanvasRenderingContext2D.idl \
+    $$PWD/html/canvas/EXTTextureFilterAnisotropic.idl \
     $$PWD/html/canvas/OESStandardDerivatives.idl \
     $$PWD/html/canvas/OESTextureFloat.idl \
     $$PWD/html/canvas/OESVertexArrayObject.idl \

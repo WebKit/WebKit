@@ -161,6 +161,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSEntityReference.h \
 	DerivedSources/WebCore/JSErrorEvent.cpp \
 	DerivedSources/WebCore/JSErrorEvent.h \
+	DerivedSources/WebCore/JSEXTTextureFilterAnisotropic.cpp \
+	DerivedSources/WebCore/JSEXTTextureFilterAnisotropic.h \
 	DerivedSources/WebCore/JSEvent.cpp \
 	DerivedSources/WebCore/JSEventException.cpp \
 	DerivedSources/WebCore/JSEventException.h \
@@ -857,6 +859,7 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/CanvasRenderingContext.idl \
 	$(WebCore)/html/canvas/CanvasRenderingContext2D.idl \
 	$(WebCore)/html/canvas/DataView.idl \
+	$(WebCore)/html/canvas/EXTTextureFilterAnisotropic.idl \
 	$(WebCore)/html/canvas/Float32Array.idl \
 	$(WebCore)/html/canvas/Float64Array.idl \
 	$(WebCore)/html/canvas/Int16Array.idl \
@@ -5734,6 +5737,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLVertexArrayObjectOES.h \
 	Source/WebCore/html/canvas/WebGLExtension.cpp \
 	Source/WebCore/html/canvas/WebGLExtension.h \
+	Source/WebCore/html/canvas/EXTTextureFilterAnisotropic.cpp \
+	Source/WebCore/html/canvas/EXTTextureFilterAnisotropic.h \
 	Source/WebCore/html/canvas/OESStandardDerivatives.cpp \
 	Source/WebCore/html/canvas/OESStandardDerivatives.h \
 	Source/WebCore/html/canvas/OESTextureFloat.cpp \

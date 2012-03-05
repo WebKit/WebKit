@@ -29,6 +29,7 @@
 
 #include "WebGLObject.h"
 
+#include "EXTTextureFilterAnisotropic.h"
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
 #include "OESVertexArrayObject.h"

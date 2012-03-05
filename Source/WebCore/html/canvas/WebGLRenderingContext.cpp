@@ -34,6 +34,7 @@
 #include "CheckedInt.h"
 #include "Console.h"
 #include "DOMWindow.h"
+#include "EXTTextureFilterAnisotropic.h"
 #include "ExceptionCode.h"
 #include "Extensions3D.h"
 #include "Frame.h"
@@ -2211,6 +2212,14 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     if (isContextLost())
         return 0;
 
+    if (equalIgnoringCase(name, "WEBKIT_EXT_texture_filter_anisotropic")
+        && m_context->getExtensions()->supports("GL_EXT_texture_filter_anisotropic")) {
+        if (!m_extTextureFilterAnisotropic) {
+            m_context->getExtensions()->ensureEnabled("GL_EXT_texture_filter_anisotropic");
+            m_extTextureFilterAnisotropic = EXTTextureFilterAnisotropic::create(this);
+        }
+        return m_extTextureFilterAnisotropic.get();
+    }
     if (equalIgnoringCase(name, "OES_standard_derivatives")
         && m_context->getExtensions()->supports("GL_OES_standard_derivatives")) {
         if (!m_oesStandardDerivatives) {
@@ -2522,6 +2531,11 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
         }
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, OES_vertex_array_object not enabled");
         return WebGLGetInfo();
+    case Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT: // EXT_texture_filter_anisotropic
+        if (m_extTextureFilterAnisotropic)
+            return getUnsignedIntParameter(Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
+        return WebGLGetInfo();
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name");
         return WebGLGetInfo();
@@ -2683,6 +2697,8 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
         result.append("OES_texture_float");
     if (m_context->getExtensions()->supports("GL_OES_standard_derivatives"))
         result.append("OES_standard_derivatives");
+    if (m_context->getExtensions()->supports("GL_EXT_texture_filter_anisotropic"))
+        result.append("WEBKIT_EXT_texture_filter_anisotropic");
     if (m_context->getExtensions()->supports("GL_OES_vertex_array_object"))
         result.append("OES_vertex_array_object");
     result.append("WEBKIT_WEBGL_lose_context");
@@ -2715,6 +2731,13 @@ WebGLGetInfo WebGLRenderingContext::getTexParameter(GC3Denum target, GC3Denum pn
     case GraphicsContext3D::TEXTURE_WRAP_T:
         m_context->getTexParameteriv(target, pname, &value);
         return WebGLGetInfo(static_cast<unsigned int>(value));
+    case Extensions3D::TEXTURE_MAX_ANISOTROPY_EXT: // EXT_texture_filter_anisotropic
+        if (m_extTextureFilterAnisotropic) {
+            m_context->getTexParameteriv(target, pname, &value);
+            return WebGLGetInfo(static_cast<unsigned int>(value));
+        }
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getTexParameter", "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
+        return WebGLGetInfo();
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getTexParameter", "invalid parameter name");
         return WebGLGetInfo();
@@ -3535,6 +3558,12 @@ void WebGLRenderingContext::texParameter(GC3Denum target, GC3Denum pname, GC3Dfl
         if ((isFloat && paramf != GraphicsContext3D::CLAMP_TO_EDGE && paramf != GraphicsContext3D::MIRRORED_REPEAT && paramf != GraphicsContext3D::REPEAT)
             || (!isFloat && parami != GraphicsContext3D::CLAMP_TO_EDGE && parami != GraphicsContext3D::MIRRORED_REPEAT && parami != GraphicsContext3D::REPEAT)) {
             synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "texParameter", "invalid parameter");
+            return;
+        }
+        break;
+    case Extensions3D::TEXTURE_MAX_ANISOTROPY_EXT: // EXT_texture_filter_anisotropic
+        if (!m_extTextureFilterAnisotropic) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "texParameter", "invalid parameter, EXT_texture_filter_anisotropic not enabled");
             return;
         }
         break;

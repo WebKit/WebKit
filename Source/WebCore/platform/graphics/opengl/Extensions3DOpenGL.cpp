@@ -98,6 +98,9 @@ bool Extensions3DOpenGL::supports(const String& name)
     if (name == "GL_OES_standard_derivatives")
         return true;
 
+    if (name == "GL_EXT_texture_filter_anisotropic")
+        return m_availableExtensions.contains("GL_EXT_texture_filter_anisotropic");
+
     return m_availableExtensions.contains(name);
 }
 

@@ -1857,6 +1857,10 @@
 		76FC2B0B12370DA0006A991A /* DOMTokenList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76FC2B0812370DA0006A991A /* DOMTokenList.cpp */; };
 		76FC2B0C12370DA0006A991A /* DOMTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 76FC2B0912370DA0006A991A /* DOMTokenList.h */; };
 		76FF17E311235673001D61B5 /* PluginViewNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76FF17E211235673001D61B5 /* PluginViewNone.cpp */; };
+		7728694E14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7728694B14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp */; };
+		7728694F14F8882500F484DC /* EXTTextureFilterAnisotropic.h in Headers */ = {isa = PBXBuildFile; fileRef = 7728694C14F8882500F484DC /* EXTTextureFilterAnisotropic.h */; };
+		7728698314FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7728698114FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.cpp */; };
+		7728698414FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h in Headers */ = {isa = PBXBuildFile; fileRef = 7728698214FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h */; };
 		77A17A7112F28182004E02F6 /* OESVertexArrayObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77A17A6E12F28182004E02F6 /* OESVertexArrayObject.cpp */; };
 		77A17A7212F28182004E02F6 /* OESVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */; };
 		77A17A7712F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77A17A7412F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp */; };
@@ -8801,6 +8805,11 @@
 		76FC2B0912370DA0006A991A /* DOMTokenList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTokenList.h; sourceTree = "<group>"; };
 		76FC2B0A12370DA0006A991A /* DOMTokenList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMTokenList.idl; sourceTree = "<group>"; };
 		76FF17E211235673001D61B5 /* PluginViewNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginViewNone.cpp; sourceTree = "<group>"; };
+		7728694B14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EXTTextureFilterAnisotropic.cpp; path = canvas/EXTTextureFilterAnisotropic.cpp; sourceTree = "<group>"; };
+		7728694C14F8882500F484DC /* EXTTextureFilterAnisotropic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTTextureFilterAnisotropic.h; path = canvas/EXTTextureFilterAnisotropic.h; sourceTree = "<group>"; };
+		7728694D14F8882500F484DC /* EXTTextureFilterAnisotropic.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EXTTextureFilterAnisotropic.idl; path = canvas/EXTTextureFilterAnisotropic.idl; sourceTree = "<group>"; };
+		7728698114FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEXTTextureFilterAnisotropic.cpp; sourceTree = "<group>"; };
+		7728698214FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTTextureFilterAnisotropic.h; sourceTree = "<group>"; };
 		77A17A6E12F28182004E02F6 /* OESVertexArrayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OESVertexArrayObject.cpp; path = canvas/OESVertexArrayObject.cpp; sourceTree = "<group>"; };
 		77A17A6F12F28182004E02F6 /* OESVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OESVertexArrayObject.h; path = canvas/OESVertexArrayObject.h; sourceTree = "<group>"; };
 		77A17A7012F28182004E02F6 /* OESVertexArrayObject.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OESVertexArrayObject.idl; path = canvas/OESVertexArrayObject.idl; sourceTree = "<group>"; };
@@ -14589,6 +14598,9 @@
 				2E97CCE712939CB800C5C8FF /* DataView.cpp */,
 				2E97CCE812939CB800C5C8FF /* DataView.h */,
 				2E97CCE912939CB800C5C8FF /* DataView.idl */,
+				7728694B14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp */,
+				7728694C14F8882500F484DC /* EXTTextureFilterAnisotropic.h */,
+				7728694D14F8882500F484DC /* EXTTextureFilterAnisotropic.idl */,
 				49EECDCF10503C2300099FAB /* Float32Array.idl */,
 				6EBC5D80138B4C4E00A0CF8A /* Float64Array.idl */,
 				49EECDD510503C2300099FAB /* Int16Array.idl */,
@@ -17542,6 +17554,8 @@
 				7694563B1214D97C0007CBAE /* JSDOMTokenList.h */,
 				2E37E00312DBC5A400A6B233 /* JSDOMURL.cpp */,
 				2E37E00412DBC5A400A6B233 /* JSDOMURL.h */,
+				7728698114FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.cpp */,
+				7728698214FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h */,
 				49EECEF4105070C400099FAB /* JSFloat32Array.cpp */,
 				49EECEF5105070C400099FAB /* JSFloat32Array.h */,
 				6EBC5EAD138B50F200A0CF8A /* JSFloat64Array.cpp */,
@@ -24506,6 +24520,8 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				7728694F14F8882500F484DC /* EXTTextureFilterAnisotropic.h in Headers */,
+				7728698414FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27476,6 +27492,8 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				7728694E14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp in Sources */,
+				7728698314FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

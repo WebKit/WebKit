@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLExtension_h
-#define WebGLExtension_h
+#ifndef EXTTextureFilterAnisotropic_h
+#define EXTTextureFilterAnisotropic_h
 
-#include "WebGLRenderingContext.h"
+#include "WebGLExtension.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class WebGLExtension {
+class EXTTextureFilterAnisotropic : public WebGLExtension {
 public:
-    // Extension names are needed to properly wrap instances in JavaScript objects.
-    enum ExtensionName {
-        WebKitWebGLLoseContextName, // WEBKIT_ prefix until extension is official
-        EXTTextureFilterAnisotropicName,
-        OESTextureFloatName,
-        OESStandardDerivativesName,
-        OESVertexArrayObjectName,
-        WebGLDebugRendererInfoName,
-        WebGLDebugShadersName,
-        WebKitWebGLCompressedTextureS3TCName, // WEBKIT_ prefix until extension is official
-    };
+    static PassOwnPtr<EXTTextureFilterAnisotropic> create(WebGLRenderingContext*);
 
-    void ref() { m_context->ref(); }
-    void deref() { m_context->deref(); }
-    WebGLRenderingContext* context() { return m_context; }
+    virtual ~EXTTextureFilterAnisotropic();
+    virtual ExtensionName getName() const;
 
-    virtual ~WebGLExtension();
-    virtual ExtensionName getName() const = 0;
-
-protected:
-    WebGLExtension(WebGLRenderingContext*);
-    WebGLRenderingContext* m_context;
+private:
+    EXTTextureFilterAnisotropic(WebGLRenderingContext*);
 };
 
 } // namespace WebCore
 
-#endif // WebGLExtension_h
+#endif // EXTTextureFilterAnisotropic_h

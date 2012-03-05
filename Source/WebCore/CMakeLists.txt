@@ -2238,6 +2238,7 @@ IF (ENABLE_WEBGL)
         html/canvas/WebGLUniformLocation.cpp
         html/canvas/WebGLVertexArrayObjectOES.cpp
         html/canvas/WebGLExtension.cpp
+        html/canvas/EXTTextureFilterAnisotropic.cpp
         html/canvas/OESStandardDerivatives.cpp
         html/canvas/OESTextureFloat.cpp
         html/canvas/OESVertexArrayObject.cpp
@@ -2246,6 +2247,7 @@ IF (ENABLE_WEBGL)
         platform/graphics/gpu/DrawingBuffer.cpp
     )
     LIST(APPEND WebCore_IDL_FILES
+        html/canvas/EXTTextureFilterAnisotropic.idl
         html/canvas/OESStandardDerivatives.idl
         html/canvas/OESTextureFloat.idl
         html/canvas/OESVertexArrayObject.idl

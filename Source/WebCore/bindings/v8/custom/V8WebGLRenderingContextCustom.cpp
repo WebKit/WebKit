@@ -39,6 +39,7 @@
 #include "V8ArrayBufferView.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
+#include "V8EXTTextureFilterAnisotropic.h"
 #include "V8Float32Array.h"
 #include "V8HTMLCanvasElement.h"
 #include "V8HTMLImageElement.h"
@@ -174,6 +175,10 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
     case WebGLExtension::WebKitWebGLLoseContextName:
         extensionObject = toV8(static_cast<WebGLLoseContext*>(extension));
         referenceName = "webKitWebGLLoseContextName";
+        break;
+    case WebGLExtension::EXTTextureFilterAnisotropicName:
+        extensionObject = toV8(static_cast<EXTTextureFilterAnisotropic*>(extension));
+        referenceName = "extTextureFilterAnisotropicName";
         break;
     case WebGLExtension::OESStandardDerivativesName:
         extensionObject = toV8(static_cast<OESStandardDerivatives*>(extension));

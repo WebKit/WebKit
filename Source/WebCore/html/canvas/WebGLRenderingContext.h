@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+class EXTTextureFilterAnisotropic;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBuffer;
@@ -499,6 +500,7 @@ public:
     int m_numGLErrorsToConsoleAllowed;
 
     // Enabled extension objects.
+    OwnPtr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
     OwnPtr<OESTextureFloat> m_oesTextureFloat;
     OwnPtr<OESStandardDerivatives> m_oesStandardDerivatives;
     OwnPtr<OESVertexArrayObject> m_oesVertexArrayObject;

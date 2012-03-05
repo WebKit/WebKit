@@ -3735,6 +3735,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLRenderingContext.h \
         html/canvas/WebGLShader.h \
         html/canvas/WebGLSharedObject.h \
+        html/canvas/EXTTextureFilterAnisotropic.h \
         html/canvas/OESStandardDerivatives.h \
         html/canvas/OESTextureFloat.h \
         html/canvas/OESVertexArrayObject.h \
@@ -3775,6 +3776,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLRenderingContext.cpp \
         html/canvas/WebGLShader.cpp \
         html/canvas/WebGLSharedObject.cpp \
+        html/canvas/EXTTextureFilterAnisotropic.cpp \
         html/canvas/OESStandardDerivatives.cpp \
         html/canvas/OESTextureFloat.cpp \
         html/canvas/OESVertexArrayObject.cpp \

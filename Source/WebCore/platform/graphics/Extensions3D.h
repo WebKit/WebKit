@@ -65,6 +65,7 @@ public:
     //   GL_EXT_texture_compression_s3tc
     //   GL_OES_compressed_ETC1_RGB8_texture
     //   GL_IMG_texture_compression_pvrtc
+    //   EXT_texture_filter_anisotropic
 
     // Takes full name of extension; for example,
     // "GL_EXT_texture_format_BGRA8888".
@@ -135,6 +136,10 @@ public:
         COMPRESSED_RGB_PVRTC_2BPPV1_IMG = 0x8C01,
         COMPRESSED_RGBA_PVRTC_4BPPV1_IMG = 0x8C02,
         COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03,
+
+        // GL_EXT_texture_filter_anisotropic
+        TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE,
+        MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF,
     };
 
     // GL_ARB_robustness
