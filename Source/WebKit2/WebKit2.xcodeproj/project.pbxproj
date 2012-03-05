@@ -436,7 +436,7 @@
 		659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */; };
 		65B86F1E12F11DE300B7DD8A /* WKBundleInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6D8A91A611F0EFD100DD01FE /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = 6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */; };
-		6EE849C81368D9390038D481 /* WKInspectorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE849C61368D92D0038D481 /* WKInspectorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		762B748D120BC75C00819339 /* WKPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7801C099142290C400FAF9AF /* WebHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7801C095142290C400FAF9AF /* WebHitTestResult.cpp */; };
 		7801C09A142290C400FAF9AF /* WebHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 7801C096142290C400FAF9AF /* WebHitTestResult.h */; };
@@ -1454,7 +1454,7 @@
 		65B86F1712F11D7B00B7DD8A /* WKBundleInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleInspector.cpp; sourceTree = "<group>"; };
 		65B86F1812F11D7B00B7DD8A /* WKBundleInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleInspector.h; sourceTree = "<group>"; };
 		6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebProcess.sb; path = WebProcess/com.apple.WebProcess.sb; sourceTree = "<group>"; };
-		6EE849C61368D92D0038D481 /* WKInspectorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKInspectorMac.h; path = mac/WKInspectorMac.h; sourceTree = "<group>"; };
+		6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKInspectorPrivateMac.h; path = mac/WKInspectorPrivateMac.h; sourceTree = "<group>"; };
 		762B7481120BBA0100819339 /* FontSmoothingLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontSmoothingLevel.h; sourceTree = "<group>"; };
 		762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
 		7801C095142290C400FAF9AF /* WebHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebHitTestResult.cpp; sourceTree = "<group>"; };
@@ -2707,7 +2707,7 @@
 		6EE849C41368D9040038D481 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				6EE849C61368D92D0038D481 /* WKInspectorMac.h */,
+				6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */,
 				BCE17B7B1381F1170012A641 /* WKPagePrivateMac.cpp */,
 				BCE17B7C1381F1170012A641 /* WKPagePrivateMac.h */,
 			);
@@ -4098,7 +4098,7 @@
 				BCCF6AC312C91F34008F9C35 /* WKImage.h in Headers */,
 				BCCF6ACA12C91F59008F9C35 /* WKImageCG.h in Headers */,
 				1C8E293912761E5B00BC7BD0 /* WKInspector.h in Headers */,
-				6EE849C81368D9390038D481 /* WKInspectorMac.h in Headers */,
+				6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */,
 				51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */,
 				33D3A3B61339600B00709BE4 /* WKMediaCacheManager.h in Headers */,
 				BC4075FE124FF0270068F20A /* WKMutableArray.h in Headers */,

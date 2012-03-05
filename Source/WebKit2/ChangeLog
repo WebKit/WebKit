@@ -1,3 +1,18 @@
+2012-03-05  Timothy Hatcher  <timothy@apple.com>
+
+        Change how the Web Inspector Develop menu actions work.
+
+        This removes the methods used by Safari's Develop menu. They can now be implemented in Safari.
+
+        https://webkit.org/b/80308
+
+        Reviewed by John Sullivan.
+
+        * UIProcess/API/C/mac/WKInspectorPrivateMac.h: Renamed from Source/WebKit2/UIProcess/API/C/mac/WKInspectorMac.h.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter inspectorRef]): Added.
+        * WebKit2.xcodeproj/project.pbxproj: Renamed WKInspectorPrivateMac.h to better reflect its private nature.
+
 2012-03-02  Jon Lee  <jonlee@apple.com>
 
         Add support for notification replaceId in Mac WebKit and WK2

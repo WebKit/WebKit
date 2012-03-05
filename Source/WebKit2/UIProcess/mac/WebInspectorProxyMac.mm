@@ -30,7 +30,7 @@
 
 #import "WKAPICast.h"
 #import "WebContext.h"
-#import "WKInspectorMac.h"
+#import "WKInspectorPrivateMac.h"
 #import "WKViewPrivate.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
@@ -51,15 +51,22 @@ static const CGFloat windowContentBorderThickness = 55;
 // WKWebInspectorProxyObjCAdapter is a helper ObjC object used as a delegate or notification observer
 // for the sole purpose of getting back into the C++ code from an ObjC caller.
 
-@interface WKWebInspectorProxyObjCAdapter : NSObject <NSWindowDelegate> {
-    WebInspectorProxy* _inspectorProxy; // Not retained to prevent cycles
-}
+@interface WKWebInspectorProxyObjCAdapter ()
+
+@property (assign) WebInspectorProxy* _inspectorProxy; // Not retained to prevent cycles
 
 - (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy;
 
 @end
 
 @implementation WKWebInspectorProxyObjCAdapter
+
+@synthesize _inspectorProxy;
+
+- (WKInspectorRef)inspectorRef
+{
+    return toAPI(_inspectorProxy);
+}
 
 - (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy
 {
@@ -81,67 +88,6 @@ static const CGFloat windowContentBorderThickness = 55;
 - (void)inspectedViewFrameDidChange:(NSNotification *)notification
 {
     _inspectorProxy->inspectedViewFrameDidChange();
-}
-
-// These methods can be used by UI elements such as menu items and toolbar buttons when the inspector is the main/key window.
-// These methods are really only implemented to keep  UI elements enabled and working.
-
-- (void)showWebInspector:(id)sender
-{
-    // This method is a toggle, so it will close the Web Inspector if it is already front. Since the window delegate is handling
-    // the action, we know it is already showing, so we only need to support close here. To keep this working with older Safari
-    // builds the method name is still just "showWebInspector:" instead of something like "toggleWebInspector:".
-    ASSERT(_inspectorProxy->isFront());
-    _inspectorProxy->close();
-}
-
-- (void)showErrorConsole:(id)sender
-{
-    _inspectorProxy->showConsole();
-}
-
-- (void)showResources:(id)sender
-{
-    _inspectorProxy->showResources();
-}
-
-- (void)viewSource:(id)sender
-{
-    _inspectorProxy->showMainResourceForFrame(_inspectorProxy->page()->mainFrame());
-}
-
-- (void)toggleDebuggingJavaScript:(id)sender
-{
-    _inspectorProxy->toggleJavaScriptDebugging();
-}
-
-- (void)toggleProfilingJavaScript:(id)sender
-{
-    _inspectorProxy->toggleJavaScriptProfiling();
-}
-
-- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
-{
-    BOOL isMenuItem = [(id)item isKindOfClass:[NSMenuItem class]];
-    NSMenuItem *menuItem = (NSMenuItem *)item;
-    if ([item action] == @selector(showWebInspector:) && isMenuItem) {
-        // This action is a toggle, so it will close the Web Inspector if it is already front. Since the window delegate is handling
-        // the action, we know it is already showing, so we only need to update the title to mention hide.
-        ASSERT(_inspectorProxy->isFront());
-        [menuItem setTitle:WEB_UI_STRING("Hide Web Inspector", "title for Hide Web Inspector menu item")];
-    } else if ([item action] == @selector(toggleDebuggingJavaScript:) && isMenuItem) {
-        if (_inspectorProxy->isDebuggingJavaScript())
-            [menuItem setTitle:WEB_UI_STRING("Stop Debugging JavaScript", "title for Stop Debugging JavaScript menu item")];
-        else
-            [menuItem setTitle:WEB_UI_STRING("Start Debugging JavaScript", "title for Start Debugging JavaScript menu item")];
-    } else if ([item action] == @selector(toggleProfilingJavaScript:) && isMenuItem) {
-        if (_inspectorProxy->isProfilingJavaScript())
-            [menuItem setTitle:WEB_UI_STRING("Stop Profiling JavaScript", "title for Stop Profiling JavaScript menu item")];
-        else
-            [menuItem setTitle:WEB_UI_STRING("Start Profiling JavaScript", "title for Start Profiling JavaScript menu item")];
-    }
-
-    return YES;
 }
 
 @end
