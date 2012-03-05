@@ -141,17 +141,20 @@ String RenderButton::text() const
     return m_buttonText ? m_buttonText->text() : 0;
 }
 
+bool RenderButton::canHaveGeneratedChildren() const OVERRIDE
+{
+    // Input elements can't have generated children, but button elements can. We'll
+    // write the code assuming any other button types that might emerge in the future
+    // can also have children.
+    return !node()->hasTagName(inputTag);
+}
+
 void RenderButton::updateBeforeAfterContent(PseudoId type)
 {
     if (m_inner)
         m_inner->children()->updateBeforeAfterContent(m_inner, type, this);
     else
         children()->updateBeforeAfterContent(this, type);
-}
-
-RenderText* RenderButton::buttonText() const
-{
-    return m_buttonText;
 }
 
 LayoutRect RenderButton::controlClipRect(const LayoutPoint& additionalOffset) const

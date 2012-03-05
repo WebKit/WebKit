@@ -67,7 +67,7 @@ private:
 
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;
     virtual bool hasControlClip() const { return true; }
-    virtual RenderText* buttonText() const OVERRIDE { return m_buttonText; }
+    virtual bool canHaveGeneratedChildren() const OVERRIDE { return false; }
 
     virtual const char* renderName() const { return "RenderMenuList"; }
 

@@ -50,7 +50,7 @@ public:
 
     virtual void updateBeforeAfterContent(PseudoId);
 
-    virtual RenderText* buttonText() const OVERRIDE;
+    virtual bool canHaveGeneratedChildren() const OVERRIDE;
     virtual bool hasControlClip() const { return true; }
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;
 
