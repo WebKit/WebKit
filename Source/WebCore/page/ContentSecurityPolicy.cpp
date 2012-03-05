@@ -487,6 +487,7 @@ ContentSecurityPolicy::ContentSecurityPolicy(ScriptExecutionContext* scriptExecu
     , m_scriptExecutionContext(scriptExecutionContext)
     , m_reportOnly(false)
     , m_haveSandboxPolicy(false)
+    , m_overrideInlineStyleAllowed(false)
 {
 }
 
@@ -622,7 +623,7 @@ bool ContentSecurityPolicy::allowInlineScript() const
 bool ContentSecurityPolicy::allowInlineStyle() const
 {
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to apply inline style because of Content-Security-Policy.\n"));
-    return checkInlineAndReportViolation(operativeDirective(m_styleSrc.get()), consoleMessage);
+    return m_overrideInlineStyleAllowed || checkInlineAndReportViolation(operativeDirective(m_styleSrc.get()), consoleMessage);
 }
 
 bool ContentSecurityPolicy::allowEval() const
@@ -677,6 +678,11 @@ bool ContentSecurityPolicy::allowConnectFromSource(const KURL& url) const
 {
     DEFINE_STATIC_LOCAL(String, type, ("connect"));
     return checkSourceAndReportViolation(operativeDirective(m_connectSrc.get()), url, type);
+}
+
+void ContentSecurityPolicy::setOverrideAllowInlineStyle(bool value)
+{
+    m_overrideInlineStyleAllowed = value;
 }
 
 // policy            = directive-list

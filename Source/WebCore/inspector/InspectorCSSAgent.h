@@ -26,12 +26,14 @@
 #define InspectorCSSAgent_h
 
 #include "CSSSelector.h"
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "InspectorBaseAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorStyleSheet.h"
 #include "InspectorValues.h"
 #include "PlatformString.h"
+#include "SecurityContext.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -61,6 +63,23 @@ class InspectorCSSAgent
     , public InspectorStyleSheet::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
 public:
+    class InlineStyleOverrideScope {
+    public:
+        InlineStyleOverrideScope(SecurityContext* context)
+            : m_contentSecurityPolicy(context->contentSecurityPolicy())
+        {
+            m_contentSecurityPolicy->setOverrideAllowInlineStyle(true);
+        }
+
+        ~InlineStyleOverrideScope()
+        {
+            m_contentSecurityPolicy->setOverrideAllowInlineStyle(false);
+        }
+
+    private:
+        ContentSecurityPolicy* m_contentSecurityPolicy;
+    };
+
     static CSSStyleRule* asCSSStyleRule(CSSRule*);
 
     static PassOwnPtr<InspectorCSSAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorDOMAgent* domAgent)

@@ -36,6 +36,7 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "Element.h"
 #include "HTMLHeadElement.h"
@@ -1319,7 +1320,12 @@ bool InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style,
 {
     ASSERT_UNUSED(style, style == inlineStyle());
     ExceptionCode ec = 0;
-    m_element->setAttribute("style", text, ec);
+
+    {
+        InspectorCSSAgent::InlineStyleOverrideScope overrideScope(m_element->ownerDocument());
+        m_element->setAttribute("style", text, ec);
+    }
+
     m_styleText = text;
     m_isStyleTextValid = true;
     m_ruleSourceData.clear();

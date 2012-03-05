@@ -70,6 +70,8 @@ public:
     bool allowMediaFromSource(const KURL&) const;
     bool allowConnectFromSource(const KURL&) const;
 
+    void setOverrideAllowInlineStyle(bool);
+
 private:
     explicit ContentSecurityPolicy(ScriptExecutionContext*);
 
@@ -107,6 +109,7 @@ private:
     OwnPtr<CSPDirective> m_mediaSrc;
     OwnPtr<CSPDirective> m_connectSrc;
     bool m_haveSandboxPolicy;
+    bool m_overrideInlineStyleAllowed;
     Vector<KURL> m_reportURLs;
 };
 

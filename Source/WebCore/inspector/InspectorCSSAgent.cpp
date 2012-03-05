@@ -36,6 +36,7 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
+#include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "HTMLHeadElement.h"
 #include "InspectorDOMAgent.h"
@@ -896,13 +897,15 @@ InspectorStyleSheet* InspectorCSSAgent::viaInspectorStyleSheet(Document* documen
             targetNode = document->body();
         else
             return 0;
+
+        InlineStyleOverrideScope overrideScope(document);
         targetNode->appendChild(styleElement, ec);
     }
     if (ec)
         return 0;
     StyleSheetList* styleSheets = document->styleSheets();
     StyleSheet* styleSheet = styleSheets->item(styleSheets->length() - 1);
-    if (!styleSheet->isCSSStyleSheet())
+    if (!styleSheet || !styleSheet->isCSSStyleSheet())
         return 0;
     CSSStyleSheet* cssStyleSheet = static_cast<CSSStyleSheet*>(styleSheet);
     String id = String::number(m_lastStyleSheetId++);
