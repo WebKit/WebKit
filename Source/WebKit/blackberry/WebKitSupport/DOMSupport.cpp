@@ -269,6 +269,10 @@ VisibleSelection visibleSelectionForRangeInputElement(Element* element, int star
 
     // Must be content editable, generate the range.
     RefPtr<Range> selectionRange = TextIterator::rangeFromLocationAndLength(element, start, end - start);
+
+    if (!selectionRange)
+        return VisibleSelection();
+
     if (start == end)
         return VisibleSelection(selectionRange.get()->startPosition(), DOWNSTREAM);
 
