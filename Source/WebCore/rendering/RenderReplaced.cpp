@@ -495,7 +495,7 @@ IntRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
 
     if (!m_inlineBoxWrapper)
         // We're a block-level replaced element.  Just return our own dimensions.
-        return IntRect(0, 0, width(), height());
+        return IntRect(IntPoint(), size());
     
     RootInlineBox* root = m_inlineBoxWrapper->root();
     int newLogicalTop = root->block()->style()->isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - root->selectionBottom() : root->selectionTop() - m_inlineBoxWrapper->logicalTop();

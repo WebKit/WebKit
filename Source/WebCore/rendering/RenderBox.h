@@ -127,7 +127,7 @@ public:
     LayoutRect frameRect() const { return m_frameRect; }
     void setFrameRect(const LayoutRect& rect) { m_frameRect = rect; }
 
-    LayoutRect borderBoxRect() const { return LayoutRect(0, 0, width(), height()); }
+    LayoutRect borderBoxRect() const { return LayoutRect(LayoutPoint(), size()); }
     virtual LayoutRect borderBoundingBox() const { return borderBoxRect(); } 
 
     // The content area of the box (excludes padding and border).

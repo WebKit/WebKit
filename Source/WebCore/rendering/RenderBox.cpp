@@ -1357,8 +1357,7 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool
     if (RenderView* v = view()) {
         if (v->layoutStateEnabled() && !repaintContainer) {
             LayoutState* layoutState = v->layoutState();
-            LayoutSize offset = layoutState->m_paintOffset;
-            offset.expand(x(), y());
+            LayoutSize offset = layoutState->m_paintOffset + locationOffset();
             if (style()->position() == RelativePosition && layer())
                 offset += layer()->relativePositionOffset();
             transformState.move(offset);
@@ -1608,7 +1607,7 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
 #endif
 
     LayoutPoint topLeft = rect.location();
-    topLeft.move(x(), y());
+    topLeft.move(locationOffset());
 
     EPosition position = styleToUse->position();
 
@@ -1618,7 +1617,7 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
         fixed = position == FixedPosition;
         rect = layer()->transform()->mapRect(rect);
         topLeft = rect.location();
-        topLeft.move(x(), y());
+        topLeft.move(locationOffset());
     } else if (position == FixedPosition)
         fixed = true;
 

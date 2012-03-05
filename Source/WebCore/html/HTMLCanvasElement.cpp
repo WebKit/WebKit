@@ -490,7 +490,7 @@ void HTMLCanvasElement::createImageBuffer() const
 
     m_hasCreatedImageBuffer = true;
 
-    FloatSize logicalSize(width(), height());
+    FloatSize logicalSize = size();
     FloatSize deviceSize = convertLogicalToDevice(logicalSize);
     if (!deviceSize.isExpressibleAsIntSize())
         return;
@@ -572,7 +572,7 @@ void HTMLCanvasElement::clearCopiedImage()
 AffineTransform HTMLCanvasElement::baseTransform() const
 {
     ASSERT(m_hasCreatedImageBuffer);
-    FloatSize unscaledSize(width(), height());
+    FloatSize unscaledSize = size();
     FloatSize deviceSize = convertLogicalToDevice(unscaledSize);
     IntSize size(deviceSize.width(), deviceSize.height());
     AffineTransform transform;

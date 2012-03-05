@@ -218,7 +218,7 @@ void RenderSVGRoot::layout()
     bool needsLayout = selfNeedsLayout();
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && needsLayout);
 
-    LayoutSize oldSize(width(), height());
+    LayoutSize oldSize = size();
     computeLogicalWidth();
     computeLogicalHeight();
     buildLocalToBorderBoxTransform();

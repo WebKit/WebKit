@@ -703,7 +703,7 @@ void RenderView::notifyWidgets(WidgetNotification notification)
 IntRect RenderView::viewRect() const
 {
     if (printing())
-        return IntRect(0, 0, width(), height());
+        return IntRect(IntPoint(), size());
     if (m_frameView)
         return m_frameView->visibleContentRect();
     return IntRect();

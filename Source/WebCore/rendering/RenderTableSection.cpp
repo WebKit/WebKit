@@ -304,7 +304,7 @@ void RenderTableSection::setCellLogicalWidths()
                     if (!statePusher.didPush()) {
                         // Technically, we should also push state for the row, but since
                         // rows don't push a coordinate transform, that's not necessary.
-                        statePusher.push(this, LayoutSize(x(), y()));
+                        statePusher.push(this, locationOffset());
                     }
                     cell->repaint();
                 }
@@ -502,7 +502,7 @@ int RenderTableSection::layoutRows(int toAdd)
     int vspacing = table()->vBorderSpacing();
     unsigned nEffCols = table()->numEffCols();
 
-    LayoutStateMaintainer statePusher(view(), this, LayoutSize(x(), y()), style()->isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(view(), this, locationOffset(), style()->isFlippedBlocksWritingMode());
 
     for (unsigned r = 0; r < totalRows; r++) {
         // Set the row's x/y position and width/height.

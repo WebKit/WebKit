@@ -1094,7 +1094,7 @@ IntRect RenderListMarker::localSelectionRect()
 {
     InlineBox* box = inlineBoxWrapper();
     if (!box)
-        return IntRect(0, 0, width(), height());
+        return IntRect(IntPoint(), size());
     RootInlineBox* root = m_inlineBoxWrapper->root();
     int newLogicalTop = root->block()->style()->isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - root->selectionBottom() : root->selectionTop() - m_inlineBoxWrapper->logicalTop();
     if (root->block()->style()->isHorizontalWritingMode())
