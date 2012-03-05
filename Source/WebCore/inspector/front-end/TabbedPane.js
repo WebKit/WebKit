@@ -114,11 +114,9 @@ WebInspector.TabbedPane.prototype = {
     closeTab: function(id, userGesture)
     {
         this._innerCloseTab(id, userGesture);
-
+        this._updateTabElements();
         if (this._tabsHistory.length)
             this.selectTab(this._tabsHistory[0].id, userGesture);
-        else
-            this._updateTabElements();
     },
 
     /**
