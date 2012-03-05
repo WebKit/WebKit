@@ -33,12 +33,18 @@ enum EUnicodeBidi {
     Embed,
     Override,
     Isolate,
-    Plaintext
+    Plaintext,
+    OverrideIsolate,
 }; 
 
 inline bool isIsolated(const EUnicodeBidi& unicodeBidi)
 {
-    return unicodeBidi == Isolate || unicodeBidi == Plaintext;
+    return unicodeBidi == Isolate || unicodeBidi == OverrideIsolate || unicodeBidi == Plaintext;
+}
+
+inline bool isOverride(EUnicodeBidi unicodeBidi)
+{
+    return unicodeBidi == Override || unicodeBidi == OverrideIsolate;
 }
 
 }

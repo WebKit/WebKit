@@ -7344,7 +7344,7 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, c
         if (flags & RespectDirection)
             textDirection = style->direction();
         if (flags & RespectDirectionOverride)
-            directionalOverride |= style->unicodeBidi() == Override;
+            directionalOverride |= isOverride(style->unicodeBidi());
     }
 
     TextRun run(characters, length, false, 0, 0, expansion, textDirection, directionalOverride);

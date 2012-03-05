@@ -968,13 +968,30 @@ bool CSSParser::parseValue(int propId, bool important)
         else
             return parseQuotes(propId, important);
         break;
-    case CSSPropertyUnicodeBidi: // normal | embed | bidi-override | isolate | plaintext | inherit
+    case CSSPropertyUnicodeBidi: // normal | embed | (bidi-override || isolate) | plaintext | inherit
         if (id == CSSValueNormal
             || id == CSSValueEmbed
-            || id == CSSValueBidiOverride
-            || id == CSSValueWebkitIsolate
             || id == CSSValueWebkitPlaintext)
             validPrimitive = true;
+        else {
+            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+            bool isValid = true;
+            while (isValid && value) {
+                switch (value->id) {
+                case CSSValueBidiOverride:
+                case CSSValueWebkitIsolate:
+                    list->append(cssValuePool()->createIdentifierValue(value->id));
+                    break;
+                default:
+                    isValid = false;
+                }
+                value = m_valueList->next();
+            }
+            if (list->length() && isValid) {
+                parsedValue = list.release();
+                m_valueList->next();
+            }
+        }
         break;
 
     case CSSPropertyPosition:             // static | relative | absolute | fixed | inherit

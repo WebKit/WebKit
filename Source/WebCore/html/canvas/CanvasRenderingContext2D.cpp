@@ -2028,7 +2028,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     RenderStyle* computedStyle = canvas()->computedStyle();
     TextDirection direction = computedStyle ? computedStyle->direction() : LTR;
     bool isRTL = direction == RTL;
-    bool override = computedStyle ? computedStyle->unicodeBidi() == Override : false;
+    bool override = computedStyle ? isOverride(computedStyle->unicodeBidi()) : false;
 
     unsigned length = text.length();
     const UChar* string = text.characters();

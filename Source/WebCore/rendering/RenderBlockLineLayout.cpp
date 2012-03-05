@@ -943,10 +943,10 @@ void RenderBlock::appendFloatingObjectToLastLine(FloatingObject* floatingObject)
 }
 
 // FIXME: This should be a BidiStatus constructor or create method.
-static inline BidiStatus statusWithDirection(TextDirection textDirection)
+static inline BidiStatus statusWithDirection(TextDirection textDirection, bool isOverride)
 {
     WTF::Unicode::Direction direction = textDirection == LTR ? LeftToRight : RightToLeft;
-    RefPtr<BidiContext> context = BidiContext::create(textDirection == LTR ? 0 : 1, direction, false, FromStyleOrDOM);
+    RefPtr<BidiContext> context = BidiContext::create(textDirection == LTR ? 0 : 1, direction, isOverride, FromStyleOrDOM);
 
     // This copies BidiStatus and may churn the ref on BidiContext. I doubt it matters.
     return BidiStatus(direction, direction, direction, context.release());
@@ -980,10 +980,10 @@ static inline void constructBidiRuns(InlineBidiResolver& topResolver, BidiRunLis
         if (unicodeBidi == Plaintext)
             determineDirectionality(direction, InlineIterator(isolatedInline, isolatedRun->object(), 0));
         else {
-            ASSERT(unicodeBidi == Isolate);
+            ASSERT(unicodeBidi == Isolate || unicodeBidi == OverrideIsolate);
             direction = isolatedInline->style()->direction();
         }
-        isolatedResolver.setStatus(statusWithDirection(direction));
+        isolatedResolver.setStatus(statusWithDirection(direction, isOverride(unicodeBidi)));
 
         // FIXME: The fact that we have to construct an Iterator here
         // currently prevents this code from moving into BidiResolver.
@@ -1272,7 +1272,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
             if (isNewUBAParagraph && styleToUse->unicodeBidi() == Plaintext && !resolver.context()->parent()) {
                 TextDirection direction = styleToUse->direction();
                 determineDirectionality(direction, resolver.position());
-                resolver.setStatus(BidiStatus(direction, styleToUse->unicodeBidi() == Override));
+                resolver.setStatus(BidiStatus(direction, isOverride(styleToUse->unicodeBidi())));
             }
             // FIXME: This ownership is reversed. We should own the BidiRunList and pass it to createBidiRunsForLine.
             BidiRunList<BidiRun>& bidiRuns = resolver.runs();
@@ -1682,7 +1682,7 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
         TextDirection direction = style()->direction();
         if (style()->unicodeBidi() == Plaintext)
             determineDirectionality(direction, InlineIterator(this, bidiFirstSkippingEmptyInlines(this), 0));
-        resolver.setStatus(BidiStatus(direction, style()->unicodeBidi() == Override));
+        resolver.setStatus(BidiStatus(direction, isOverride(style()->unicodeBidi())));
         InlineIterator iter = InlineIterator(this, bidiFirstSkippingEmptyInlines(this, &resolver), 0);
         resolver.setPosition(iter, numberOfIsolateAncestors(iter));
     }

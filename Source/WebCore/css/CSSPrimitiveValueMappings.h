@@ -2206,29 +2206,6 @@ template<> inline CSSPrimitiveValue::operator ETextTransform() const
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUnicodeBidi e)
-    : CSSValue(PrimitiveClass)
-{
-    m_primitiveUnitType = CSS_IDENT;
-    switch (e) {
-    case UBNormal:
-        m_value.ident = CSSValueNormal;
-        break;
-    case Embed:
-        m_value.ident = CSSValueEmbed;
-        break;
-    case Override:
-        m_value.ident = CSSValueBidiOverride;
-        break;
-    case Isolate:
-        m_value.ident = CSSValueWebkitIsolate;
-        break;
-    case Plaintext:
-        m_value.ident = CSSValueWebkitPlaintext;
-        break;
-    }
-}
-
 template<> inline CSSPrimitiveValue::operator EUnicodeBidi() const
 {
     switch (m_value.ident) {

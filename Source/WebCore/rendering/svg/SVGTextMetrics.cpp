@@ -75,7 +75,7 @@ TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText* text, const UChar*
                 , 0 /* padding, only relevant for justified text, not relevant for SVG */
                 , TextRun::AllowTrailingExpansion
                 , style->direction()
-                , style->unicodeBidi() == Override /* directionalOverride */);
+                , isOverride(style->unicodeBidi()) /* directionalOverride */);
 
     if (textRunNeedsRenderingContext(style->font()))
         run.setRenderingContext(SVGTextRunRenderingContext::create(text));

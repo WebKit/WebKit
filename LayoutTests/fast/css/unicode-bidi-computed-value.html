@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<body>
+<script src="../js/resources/js-test-pre.js"></script>
+<p id="description">This tests the computed value of unicode-bidi property.</p>
+<div id="container"></div>
+<div id="console"></div>
+<script>
+
+var container = document.getElementById('container');
+
+function styleOf(name, attributes) {
+    var element = document.createElement('div');
+    for (var name in attributes) {
+        var value = attributes[name];
+        element.setAttribute(name, value);
+    }
+    container.appendChild(element);
+    return getComputedStyle(element);
+}
+
+var tests = [
+    ['span', {}, 'normal'],
+    ['span', {'style': 'unicode-bidi: embed;'}, 'embed'],
+    ['span', {'style': 'unicode-bidi: -webkit-isolate;'}, '-webkit-isolate'],
+    ['span', {'style': 'unicode-bidi: bidi-override;'}, 'bidi-override'],
+    ['span', {'style': 'unicode-bidi: -webkit-plaintext;'}, '-webkit-plaintext'],
+    ['span', {'style': 'unicode-bidi: bad-value;'}, 'normal'],
+    ['span', {'style': 'unicode-bidi: embed embed;'}, 'normal'],
+    ['span', {'style': 'unicode-bidi: embed -webkit-plain-text;'}, 'normal'],
+    ['span', {'style': 'unicode-bidi: bidi-override -webkit-isolate;'}, 'bidi-override -webkit-isolate'],
+    ['span', {'style': 'unicode-bidi: -webkit-isolate bidi-override;'}, 'bidi-override -webkit-isolate'],
+    ['span', {'style': 'unicode-bidi: bidi-override -webkit-isolate bidi-override;'}, 'bidi-override -webkit-isolate'],
+    ['span', {'style': 'unicode-bidi: bidi-override -webkit-isolate -webkit-isolate;'}, 'bidi-override -webkit-isolate'],
+    ['span', {'style': 'unicode-bidi: bidi-override bad-value;'}, 'normal'],
+    ['span', {'style': 'unicode-bidi: bidi-override embed;'}, 'normal'],
+].forEach(function (test) {
+    shouldBe('styleOf("' + test[0] + '", ' + JSON.stringify(test[1]) + ').unicodeBidi', '"' + test[2] + '"');
+});
+
+</script>
+</body>
+</html>
