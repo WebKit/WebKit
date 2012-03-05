@@ -265,7 +265,14 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
 void ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint& scrollPosition)
 {
 #if USE(ACCELERATED_COMPOSITING)
+    ASSERT(isMainThread());
+
+    if (!m_page)
+        return;
+
     FrameView* frameView = m_page->mainFrame()->view();
+    if (!frameView)
+        return;
 
     // Make sure to update the main frame scroll position before changing the scroll layer position,
     // otherwise we'll introduce jittering on pages with slow repaint objects (like background-attachment: fixed).
