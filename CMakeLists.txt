@@ -116,6 +116,7 @@ SET(JavaScriptCore_LIBRARY_NAME JavaScriptCore)
 SET(WebCore_LIBRARY_NAME WebCore)
 SET(WebKit_LIBRARY_NAME WebKit)
 SET(WebKit2_LIBRARY_NAME WebKit2)
+SET(WebCoreTestSupport_LIBRARY_NAME WebCoreTestSupport)
 
 # -----------------------------------------------------------------------------
 # Default library types
@@ -132,6 +133,7 @@ ENDIF ()
 
 SET(WebKit_LIBRARY_TYPE SHARED)
 SET(WebKit2_LIBRARY_TYPE SHARED)
+SET(WebCoreTestSupport_LIBRARY_TYPE STATIC)
 
 # -----------------------------------------------------------------------------
 # Port-specific options

@@ -2290,6 +2290,25 @@ IF (ENABLE_VIBRATION)
     )
 ENDIF ()
 
+SET(WebCoreTestSupport_INCLUDE_DIRECTORIES
+    "${WebCore_INCLUDE_DIRECTORIES}"
+    "${WEBCORE_DIR}/testing"
+)
+
+SET(WebCoreTestSupport_IDL_INCLUDES
+    testing
+)
+
+SET(WebCoreTestSupport_IDL_FILES
+    testing/Internals.idl
+    testing/InternalSettings.idl
+)
+
+SET(WebCoreTestSupport_SOURCES
+    testing/Internals.cpp
+    testing/InternalSettings.cpp
+)
+
 # Modules that the bindings generator scripts may use
 SET(SCRIPTS_RESOLVE_SUPPLEMENTAL
     ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm
@@ -2498,17 +2517,23 @@ ADD_CUSTOM_COMMAND(
     VERBATIM)
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitVersion.h)
 
-
-
 WEBKIT_WRAP_SOURCELIST(${WebCore_IDL_FILES} ${WebCore_SOURCES})
+WEBKIT_WRAP_SOURCELIST(${WebCoreTestSupport_IDL_FILES} ${WebCoreTestSupport_SOURCES})
+
 ADD_DEFINITIONS(-DBUILDING_WebCore)
-INCLUDE_DIRECTORIES(${WebCore_INCLUDE_DIRECTORIES})
+INCLUDE_DIRECTORIES(${WebCore_INCLUDE_DIRECTORIES} ${WebCoreTestSupport_INCLUDE_DIRECTORIES})
+
 ADD_LIBRARY(${WebCore_LIBRARY_NAME} ${WebCore_LIBRARY_TYPE} ${WebCore_SOURCES})
+ADD_LIBRARY(${WebCoreTestSupport_LIBRARY_NAME} ${WebCoreTestSupport_LIBRARY_TYPE} ${WebCoreTestSupport_SOURCES})
+
 ADD_DEPENDENCIES(${WebCore_LIBRARY_NAME} ${JavaScriptCore_LIBRARY_NAME})
+ADD_DEPENDENCIES(${WebCoreTestSupport_LIBRARY_NAME} ${WebCore_LIBRARY_NAME})
+
 TARGET_LINK_LIBRARIES(${WebCore_LIBRARY_NAME} ${WebCore_LIBRARIES})
 
 IF (WebCore_LINK_FLAGS)
     ADD_TARGET_PROPERTIES(${WebCore_LIBRARY_NAME} LINK_FLAGS "${WebCore_LINK_FLAGS}")
+    ADD_TARGET_PROPERTIES(${WebCoreTestSupport_LIBRARY_NAME} LINK_FLAGS "${WebCore_LINK_FLAGS}")
 ENDIF ()
 
 IF (SHARED_CORE)

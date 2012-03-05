@@ -3,6 +3,10 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bridge/jsc"
 )
 
+LIST(APPEND WebCoreTestSupport_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/testing/js"
+)
+
 LIST(APPEND WebCore_IDL_INCLUDES
     bindings/js
 )
@@ -164,6 +168,11 @@ LIST(APPEND WebCore_SOURCES
     bridge/jsc/BridgeJSC.cpp
 )
 
+LIST(APPEND WebCoreTestSupport_SOURCES
+    testing/js/JSInternalsCustom.cpp
+    testing/js/WebCoreTestSupport.cpp
+)
+
 IF (ENABLE_BLOB)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSFileReaderCustom.cpp
@@ -254,6 +263,10 @@ FOREACH (_include ${WebCore_IDL_INCLUDES})
     LIST(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
 ENDFOREACH ()
 
+FOREACH (_include ${WebCoreTestSupport_IDL_INCLUDES})
+    LIST(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
+ENDFOREACH ()
+
 SET(FEATURE_DEFINES_JAVASCRIPT "LANGUAGE_JAVASCRIPT=1")
 FOREACH (_feature ${FEATURE_DEFINES})
     SET(FEATURE_DEFINES_JAVASCRIPT "${FEATURE_DEFINES_JAVASCRIPT} ${_feature}")
@@ -263,11 +276,16 @@ ENDFOREACH ()
 FOREACH (_idl ${WebCore_IDL_FILES})
     SET(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
 ENDFOREACH ()
+
+FOREACH (_idl ${WebCoreTestSupport_IDL_FILES})
+    SET(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
+ENDFOREACH ()
+
 FILE(WRITE ${IDL_FILES_TMP} ${IDL_FILES_LIST})
 
 ADD_CUSTOM_COMMAND(
     OUTPUT ${SUPPLEMENTAL_DEPENDENCY_FILE}
-    DEPENDS ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl ${SCRIPTS_PREPROCESS_IDLS} ${WebCore_IDL_FILES} ${IDL_ATTRIBUTES_FILE}
+    DEPENDS ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl ${SCRIPTS_PREPROCESS_IDLS} ${WebCore_IDL_FILES} ${WebCoreTestSupport_IDL_FILES} ${IDL_ATTRIBUTES_FILE}
     COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --idlFilesList ${IDL_FILES_TMP} --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} --idlAttributesFile ${IDL_ATTRIBUTES_FILE}
     VERBATIM)
 
@@ -280,4 +298,15 @@ FOREACH (_file ${WebCore_IDL_FILES})
         COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --generator JS ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_WEBCORE_DIR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} ${WEBCORE_DIR}/${_file}
         VERBATIM)
     LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.cpp)
+ENDFOREACH ()
+
+FOREACH (_file ${WebCoreTestSupport_IDL_FILES})
+    GET_FILENAME_COMPONENT (_name ${_file} NAME_WE)
+    ADD_CUSTOM_COMMAND(
+        OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.h
+        MAIN_DEPENDENCY ${_file}
+        DEPENDS ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/bindings/scripts/CodeGeneratorJS.pm ${SUPPLEMENTAL_DEPENDENCY_FILE}
+        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --generator JS ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_WEBCORE_DIR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} ${WEBCORE_DIR}/${_file}
+        VERBATIM)
+    LIST(APPEND WebCoreTestSupport_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.cpp)
 ENDFOREACH ()

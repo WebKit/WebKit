@@ -1,3 +1,15 @@
+2012-03-05  Kangil Han  <kangil.han@samsung.com>
+
+        [CMake][DRT] Add WebCoreTestSupport.
+        https://bugs.webkit.org/show_bug.cgi?id=79896
+
+        Reviewed by Daniel Bates.
+
+        Add WebCoreTestSupport library for DRT in CMake.
+        We will use internals object by linking this library on DRT.
+
+        * CMakeLists.txt:
+
 2012-03-05  Martin Robinson  <mrobinson@igalia.com>
 
         [soup] Crash while loading http://www.jusco.cn
