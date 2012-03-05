@@ -56,6 +56,11 @@ void Pasteboard::writeImage(Node*, KURL const&, String const&)
     notImplemented();
 }
 
+void Pasteboard::writeClipboard(Clipboard*)
+{
+    notImplemented();
+}
+
 void Pasteboard::writeSelection(Range* selectedRange, bool, Frame* frame)
 {
     std::string text = frame->editor()->selectedText().utf8().data();
