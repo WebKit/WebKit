@@ -1,3 +1,27 @@
+2012-03-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Use config test to determine if the compiler supports -MD
+
+        We used to assume that unix systems building against Qt5 would have
+        a compiler that supported -MD. Although this was usually the case,
+        we failed to take into account broken tools for distributed builds
+        (e.g. teambuilder or icecream) which would end up producing .d files
+        in the root of the build dir instead of along-side the object file.
+
+        Now that we use a config-test to determine the support, we'll capture
+        those cases, unless distributed builds are enabled after the initial
+        build-webkit run.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Tools.pro:
+        * qmake/config.tests/gccdepends/empty.cpp: Added.
+        * qmake/config.tests/gccdepends/gccdepends.pro: Added.
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/features.prf:
+        * qmake/mkspecs/features/unix/default_pre.prf:
+        * qmake/sync.profile:
+
 2012-03-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Qt API test buildstep throws exception after buildmaster update
