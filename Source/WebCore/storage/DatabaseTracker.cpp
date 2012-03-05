@@ -34,6 +34,7 @@
 #include "AbstractDatabase.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DatabaseContext.h"
 #include "DatabaseThread.h"
 #include "DatabaseTrackerClient.h"
 #include "Logging.h"
@@ -175,7 +176,7 @@ bool DatabaseTracker::canEstablishDatabase(ScriptExecutionContext* context, cons
         m_proposedDatabases.add(&details);
     }
     // Drop all locks before calling out; we don't know what they'll do.
-    context->databaseExceededQuota(name);
+    DatabaseContext::from(context)->databaseExceededQuota(name);
 
     MutexLocker lockDatabase(m_databaseGuard);
 

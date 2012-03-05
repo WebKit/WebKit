@@ -30,9 +30,17 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Database.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
+#include "DatabaseTracker.h"
+#include "Document.h"
+#include "Page.h"
+#include "SchemeRegistry.h"
+#include "SecurityOrigin.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -41,8 +49,9 @@ static DatabaseContext* existingDatabaseContextFrom(ScriptExecutionContext* cont
     return static_cast<DatabaseContext*>(Supplement<ScriptExecutionContext>::from(context, "DatabaseContext"));
 }
 
-DatabaseContext::DatabaseContext()
-    : m_hasOpenDatabases(false)
+DatabaseContext::DatabaseContext(ScriptExecutionContext* context)
+    : m_scriptExecutionContext(context)
+    , m_hasOpenDatabases(false)
 {
 }
 
@@ -58,7 +67,7 @@ DatabaseContext* DatabaseContext::from(ScriptExecutionContext* context)
 {
     DatabaseContext* supplement = existingDatabaseContextFrom(context);
     if (!supplement) {
-        supplement = new DatabaseContext();
+        supplement = new DatabaseContext(context);
         provideTo(context, "DatabaseContext", adoptPtr(supplement));
         ASSERT(supplement == existingDatabaseContextFrom(context));
     }
@@ -98,6 +107,35 @@ void DatabaseContext::stopDatabases(ScriptExecutionContext* context, DatabaseTas
         databaseContext->m_databaseThread->requestTermination(cleanupSync);
     else if (cleanupSync)
         cleanupSync->taskCompleted();
+}
+
+bool DatabaseContext::allowDatabaseAccess() const
+{
+    if (m_scriptExecutionContext->isDocument()) {
+        Document* document = static_cast<Document*>(m_scriptExecutionContext);
+        if (!document->page() || (document->page()->settings()->privateBrowsingEnabled() && !SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document->securityOrigin()->protocol())))
+            return false;
+        return true;
+    }
+    ASSERT(m_scriptExecutionContext->isWorkerContext());
+    // allowDatabaseAccess is not yet implemented for workers.
+    return true;
+}
+
+void DatabaseContext::databaseExceededQuota(const String& name)
+{
+    if (m_scriptExecutionContext->isDocument()) {
+        Document* document = static_cast<Document*>(m_scriptExecutionContext);
+        if (Page* page = document->page())
+            page->chrome()->client()->exceededDatabaseQuota(document->frame(), name);
+        return;
+    }
+    ASSERT(m_scriptExecutionContext->isWorkerContext());
+#if !PLATFORM(CHROMIUM)
+    // FIXME: This needs a real implementation; this is a temporary solution for testing.
+    const unsigned long long defaultQuota = 5 * 1024 * 1024;
+    DatabaseTracker::tracker().setQuota(m_scriptExecutionContext->securityOrigin(), defaultQuota);
+#endif
 }
 
 } // namespace WebCore

@@ -34,6 +34,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "AbstractDatabase.h"
+#include "DatabaseContext.h"
 #include "DatabaseTracker.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -55,7 +56,7 @@ bool SQLTransactionClient::didExceedQuota(AbstractDatabase* database)
 {
     ASSERT(database->scriptExecutionContext()->isContextThread());
     unsigned long long currentQuota = DatabaseTracker::tracker().quotaForOrigin(database->securityOrigin());
-    database->scriptExecutionContext()->databaseExceededQuota(database->stringIdentifier());
+    database->databaseContext()->databaseExceededQuota(database->stringIdentifier());
     unsigned long long newQuota = DatabaseTracker::tracker().quotaForOrigin(database->securityOrigin());
     return (newQuota > currentQuota);
 }

@@ -98,7 +98,7 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
     }
 
     int permissions = DatabaseAuthorizer::ReadWriteMask;
-    if (!m_database->scriptExecutionContext()->allowDatabaseAccess())
+    if (!m_database->databaseContext()->allowDatabaseAccess())
         permissions |= DatabaseAuthorizer::NoAccessMask;
     else if (m_readOnly)
         permissions |= DatabaseAuthorizer::ReadOnlyMask;

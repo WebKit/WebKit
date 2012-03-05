@@ -53,9 +53,13 @@ public:
     // When the database cleanup is done, cleanupSync will be signalled.
     static void stopDatabases(ScriptExecutionContext*, DatabaseTaskSynchronizer*);
 
-private:
-    DatabaseContext();
+    bool allowDatabaseAccess() const;
+    void databaseExceededQuota(const String& name);
 
+private:
+    explicit DatabaseContext(ScriptExecutionContext*);
+
+    ScriptExecutionContext* m_scriptExecutionContext;
     RefPtr<DatabaseThread> m_databaseThread;
     bool m_hasOpenDatabases; // This never changes back to false, even after the database thread is closed.
 };

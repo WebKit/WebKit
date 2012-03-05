@@ -70,10 +70,6 @@ public:
     virtual bool isDocument() const { return false; }
     virtual bool isWorkerContext() const { return false; }
 
-#if ENABLE(SQL_DATABASE)
-    virtual bool allowDatabaseAccess() const = 0;
-    virtual void databaseExceededQuota(const String& name) = 0;
-#endif
     virtual bool isContextThread() const { return true; }
     virtual bool isJSExecutionForbidden() const = 0;
 

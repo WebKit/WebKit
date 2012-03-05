@@ -4738,24 +4738,6 @@ void Document::setSecurityOrigin(PassRefPtr<SecurityOrigin> origin)
     SecurityContext::setSecurityOrigin(origin);
 }
 
-#if ENABLE(SQL_DATABASE)
-
-bool Document::allowDatabaseAccess() const
-{
-    if (!page() || (page()->settings()->privateBrowsingEnabled() && !SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(securityOrigin()->protocol())))
-        return false;
-    return true;
-}
-
-void Document::databaseExceededQuota(const String& name)
-{
-    Page* currentPage = page();
-    if (currentPage)
-        currentPage->chrome()->client()->exceededDatabaseQuota(document()->frame(), name);
-}
-
-#endif
-
 bool Document::isContextThread() const
 {
     return isMainThread();

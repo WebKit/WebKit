@@ -319,15 +319,6 @@ PassRefPtr<Database> WorkerContext::openDatabase(const String& name, const Strin
     return Database::openDatabase(this, name, version, displayName, estimatedSize, creationCallback, ec);
 }
 
-void WorkerContext::databaseExceededQuota(const String&)
-{
-#if !PLATFORM(CHROMIUM)
-    // FIXME: This needs a real implementation; this is a temporary solution for testing.
-    const unsigned long long defaultQuota = 5 * 1024 * 1024;
-    DatabaseTracker::tracker().setQuota(securityOrigin(), defaultQuota);
-#endif
-}
-
 PassRefPtr<DatabaseSync> WorkerContext::openDatabaseSync(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
 {
     if (!securityOrigin()->canAccessDatabase() || !AbstractDatabase::isAvailable()) {

@@ -1028,11 +1028,6 @@ public:
     bool processingLoadEvent() const { return m_processingLoadEvent; }
     bool loadEventFinished() const { return m_loadEventFinished; }
 
-#if ENABLE(SQL_DATABASE)
-    virtual bool allowDatabaseAccess() const;
-    virtual void databaseExceededQuota(const String& name);
-#endif
-
     virtual bool isContextThread() const;
     virtual bool isJSExecutionForbidden() const { return false; }
 

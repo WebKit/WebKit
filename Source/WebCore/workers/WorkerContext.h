@@ -116,11 +116,6 @@ namespace WebCore {
         // HTML 5 client-side database
         PassRefPtr<Database> openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
         PassRefPtr<DatabaseSync> openDatabaseSync(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
-
-        // Not implemented yet.
-        virtual bool allowDatabaseAccess() const { return true; }
-        // Not implemented for real yet.
-        virtual void databaseExceededQuota(const String&);
 #endif
         virtual bool isContextThread() const;
         virtual bool isJSExecutionForbidden() const;
