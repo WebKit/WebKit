@@ -337,6 +337,16 @@ CALayer *WKCARemoteLayerClientGetLayer(WKCARemoteLayerClientRef);
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 void WKCALayerEnumerateRectsBeingDrawnWithBlock(CALayer *layer, CGContextRef context, void (^block)(CGRect rect));
+
+typedef struct __WKCAContextRef *WKCAContextRef;
+
+WKCAContextRef WKCAContextMakeRemoteWithServerPort(mach_port_t port);
+WKCAContextRef WKCAContextMakeRemoteForWindowServer(void);
+void WKCAContextInvalidate(WKCAContextRef);
+uint32_t WKCAContextGetContextId(WKCAContextRef);
+void WKCAContextSetLayer(WKCAContextRef, CALayer *);
+CALayer *WKCAContextGetLayer(WKCAContextRef);
+
 #endif
 
 @class CARenderer;
@@ -469,6 +479,10 @@ dispatch_source_t WKCreateVMPressureDispatchOnMainQueue(void);
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 NSString *WKGetMacOSXVersionString(void);
 bool WKExecutableWasLinkedOnOrBeforeLion(void);
+#endif
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+void WKCGPathAddRoundedRect(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 #endif
 
 #ifdef __cplusplus
