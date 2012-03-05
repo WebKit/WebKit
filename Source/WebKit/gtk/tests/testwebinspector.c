@@ -62,7 +62,7 @@ static WebKitWebView* inspectElementCallback(WebKitWebInspector *inspector, WebK
     return WEBKIT_WEB_VIEW(newWebView);
 }
 
-static gboolean closeInspector (WebKitWebInspector *inspector, int *timesClosed)
+static gboolean closeInspector(WebKitWebInspector *inspector, int *timesClosed)
 {
     *timesClosed = *timesClosed + 1;
 
@@ -70,23 +70,33 @@ static gboolean closeInspector (WebKitWebInspector *inspector, int *timesClosed)
     return TRUE;
 }
 
-static gboolean showInspector (WebKitWebInspector *inspector, gpointer data)
+static gboolean showInspector(WebKitWebInspector *inspector, gpointer data)
 {
     g_idle_add(quitLoop, NULL);
     return TRUE;
 }
 
+static void loadFinished(WebKitWebView *webView, WebKitWebFrame *frame, gboolean *isLoadFinished)
+{
+    *isLoadFinished = TRUE;
+    if (g_main_loop_is_running(loop))
+        g_main_loop_quit(loop);
+}
+
 static void test_webkit_web_inspector_close_and_inspect()
 {
     WebKitWebView *webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    loop = g_main_loop_new(NULL, TRUE);
 
-    WebKitWebSettings *settings = webkit_web_view_get_settings(webView);
-    g_object_set(settings, "enable-developer-extras", TRUE, NULL);
+    gboolean isLoadFinished = FALSE;
+    g_signal_connect(webView, "load-finished", G_CALLBACK(loadFinished), &isLoadFinished);
+    webkit_web_view_load_string(webView,
+                                "<html><body><p>woohoo</p></body></html>",
+                                "text/html", "UTF-8", "file://");
+    if (!isLoadFinished)
+        g_main_loop_run(loop);
 
-    webkit_web_view_load_string (webView,
-                                 "<html><body><p>woohoo</p></body></html>",
-                                 "text/html", "UTF-8", "file://");
-
+    g_object_set(webkit_web_view_get_settings(webView), "enable-developer-extras", TRUE, NULL);
     WebKitWebInspector *inspector = webkit_web_view_get_inspector(webView);
 
     int timesElementInspected = 0;
@@ -100,7 +110,6 @@ static void test_webkit_web_inspector_close_and_inspect()
     webkit_web_inspector_inspect_coordinates(inspector, 0.0, 0.0);
     g_assert_cmpint(timesElementInspected, ==, 1);
 
-    loop = g_main_loop_new(NULL, TRUE);
     g_main_loop_run(loop);
 
     webkit_web_inspector_close(inspector);
@@ -120,14 +129,17 @@ static void test_webkit_web_inspector_close_and_inspect()
 static void test_webkit_web_inspector_destroy_inspected_web_view()
 {
     WebKitWebView *webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    loop = g_main_loop_new(NULL, TRUE);
 
-    WebKitWebSettings *settings = webkit_web_view_get_settings(webView);
-    g_object_set(settings, "enable-developer-extras", TRUE, NULL);
+    gboolean isLoadFinished = FALSE;
+    g_signal_connect(webView, "load-finished", G_CALLBACK(loadFinished), &isLoadFinished);
+    webkit_web_view_load_string(webView,
+                                "<html><body><p>woohoo</p></body></html>",
+                                "text/html", "UTF-8", "file://");
+    if (!isLoadFinished)
+        g_main_loop_run(loop);
 
-    webkit_web_view_load_string (webView,
-                                 "<html><body><p>woohoo</p></body></html>",
-                                 "text/html", "UTF-8", "file://");
-
+    g_object_set(webkit_web_view_get_settings(webView), "enable-developer-extras", TRUE, NULL);
     WebKitWebInspector *inspector = webkit_web_view_get_inspector(webView);
 
     int timesElementInspected = 0;
@@ -141,7 +153,6 @@ static void test_webkit_web_inspector_destroy_inspected_web_view()
     webkit_web_inspector_inspect_coordinates(inspector, 0.0, 0.0);
     g_assert_cmpint(timesElementInspected, ==, 1);
 
-    loop = g_main_loop_new(NULL, TRUE);
     g_main_loop_run(loop);
 
     gtk_widget_destroy(GTK_WIDGET(webView));
@@ -154,17 +165,11 @@ int main(int argc, char** argv)
 {
     gtk_test_init(&argc, &argv, NULL);
 
-    testutils_relative_chdir("Programs/resources/inspector/inspector.html", argv[0]);
-
-    char *currentDir = g_get_current_dir();
-    g_setenv("WEBKIT_INSPECTOR_PATH", currentDir, TRUE);
-    g_free(currentDir);
-
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/webinspector/destroy-inspected-web-view", test_webkit_web_inspector_destroy_inspected_web_view);
     g_test_add_func("/webkit/webinspector/close-and-inspect", test_webkit_web_inspector_close_and_inspect);
 
-    return g_test_run ();
+    return g_test_run();
 }
 
 #else

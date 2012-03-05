@@ -89,6 +89,7 @@ class TestRunner:
 
         test_env = os.environ
         test_env["DISPLAY"] = ":55"
+        test_env["WEBKIT_INSPECTOR_PATH"] = os.path.abspath(os.path.join(self._programs_path, 'resources', 'inspector'))
 
         exit_status = [0]
         def _error_handler(error):
