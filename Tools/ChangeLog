@@ -1,3 +1,9 @@
+2012-03-05  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        Unreviewed. Add myself to committer list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-03-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Use config test to determine if the compiler supports -MD

@@ -164,6 +164,7 @@ committers_unable_to_review = [
     Committer("Adam Langley", "agl@chromium.org", "agl"),
     Committer("Ademar de Souza Reis Jr", ["ademar.reis@gmail.com", "ademar@webkit.org"], "ademar"),
     Committer("Albert J. Wong", "ajwong@chromium.org"),
+    Committer(u"Alexander F\u00e6r\u00f8y", ["ahf@0x90.dk", "alexander.faeroy@nokia.com"], "ahf"),
     Committer("Alexander Kellett", ["lypanov@mac.com", "a-lists001@lypanov.net", "lypanov@kde.org"], "lypanov"),
     Committer("Alexander Pavlov", "apavlov@chromium.org", "apavlov"),
     Committer("Alexandru Chiculita", "achicu@adobe.com", "achicu"),
