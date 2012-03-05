@@ -501,7 +501,9 @@ bool JPEGImageDecoder::outputScanlines()
         if (!buffer.setSize(scaledSize().width(), scaledSize().height()))
             return setFailed();
         buffer.setStatus(ImageFrame::FramePartial);
-        buffer.setHasAlpha(false);
+        // The buffer is transparent outside the decoded area while the image is
+        // loading. The completed image will be marked fully opaque in jpegComplete().
+        buffer.setHasAlpha(true);
         buffer.setColorProfile(m_colorProfile);
 
         // For JPEGs, the frame always fills the entire image.
@@ -569,7 +571,9 @@ void JPEGImageDecoder::jpegComplete()
 
     // Hand back an appropriately sized buffer, even if the image ended up being
     // empty.
-    m_frameBufferCache[0].setStatus(ImageFrame::FrameComplete);
+    ImageFrame& buffer = m_frameBufferCache[0];
+    buffer.setStatus(ImageFrame::FrameComplete);
+    buffer.setHasAlpha(false);
 }
 
 void JPEGImageDecoder::decode(bool onlySize)
