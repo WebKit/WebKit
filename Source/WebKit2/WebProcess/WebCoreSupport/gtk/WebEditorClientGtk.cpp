@@ -148,7 +148,13 @@ public:
 private:
     GClosure* m_closure;
 
-    static void destroyOnClosureFinalization(gpointer data, GClosure* closure) { delete data; }
+    static void destroyOnClosureFinalization(gpointer data, GClosure* closure)
+    {
+        // Calling delete void* will free the memory but won't invoke
+        // the destructor, something that is a must for us.
+        EditorClientFrameDestructionObserver* observer = static_cast<EditorClientFrameDestructionObserver*>(data);
+        delete observer;
+    }
 };
 
 static Frame* frameSettingClipboard;
