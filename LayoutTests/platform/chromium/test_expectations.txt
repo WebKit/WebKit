@@ -711,8 +711,6 @@ BUGWK75916 SKIP LINUX : http/tests/inspector/resource-tree/resource-tree-documen
 
 BUGWK78810 LINUX WIN DEBUG SLOW : inspector/debugger/script-formatter-console.html = PASS
 
-BUGWK80183 LINUX WIN : inspector/extensions/extensions-resources.html = TIMEOUT
-
 // -----------------------------------------------------------------
 // Editing tests
 // -----------------------------------------------------------------
