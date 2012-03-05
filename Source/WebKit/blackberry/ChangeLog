@@ -1,3 +1,34 @@
+2012-03-04  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Fixed positioned element not correctly positioned after orientation change, when viewport metatag is used
+        https://bugs.webkit.org/show_bug.cgi?id=80228
+        PR #138865
+
+        Reviewed by George Staikos.
+
+        Viewport size changes in two main scenarios:
+        - orientation changes;
+        - virtual keyboard pop up/hide.
+
+        When we are setting a new viewport size, we need to
+        update the FixedReportedSize of the mainframe. This size
+        is used to return innerWidth|Heigth as well as to calculate
+        the fixed position elements height relative to the RenderView [1].
+
+        [1] RenderBox::containingBlockLogicalHeightForPositioned.
+
+        When we are rotating, we need to delay setting the new FixedReportedSize
+        till we layout and are able to figure out the new contents size. At this
+        time we call setFixedReportedSize, but we do not reposition the fixed elemts
+        afterwards.
+
+        Patch adds a call to FrameView::repaintFixedElementsAfterScrolling, after
+        setting the new size.
+
+        Source/WebKit/blackberry:
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+
 2012-03-02  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Expose WebInspector state to client and clean up WebSettings

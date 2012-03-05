@@ -3194,7 +3194,7 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     bool newVisibleRectContainsOldVisibleRect = (m_actualVisibleHeight <= transformedActualVisibleSize.height())
                                           && (m_actualVisibleWidth <= transformedActualVisibleSize.width());
 
-    bool atInitialScale = currentScale() == initialScale();
+    bool atInitialScale = m_webPage->isAtInitialZoom();
     bool atTop = !scrollPosition().y();
     bool atLeft = !scrollPosition().x();
 
@@ -3264,8 +3264,10 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     if (setViewMode(viewMode()))
         needsLayout = true;
 
+    bool needsLayoutToFindContentSize = hasPendingOrientation;
+
     // We need to update the viewport size of the WebCore::ScrollView...
-    updateViewportSize(!hasPendingOrientation /* setFixedReportedSize */, false /* sendResizeEvent */);
+    updateViewportSize(!needsLayoutToFindContentSize /* setFixedReportedSize */, false /* sendResizeEvent */);
     notifyTransformedContentsSizeChanged();
 
     // If automatic zooming is disabled, prevent zooming below.
@@ -3302,7 +3304,7 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     // Do our own clamping.
     scale = clampedScale(scale);
 
-    if (hasPendingOrientation) {
+    if (needsLayoutToFindContentSize) {
         // Set the fixed reported size here so that innerWidth|innerHeight works
         // with this new scale.
         TransformationMatrix rotationMatrix;
@@ -3310,6 +3312,7 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
         IntRect viewportRect = IntRect(IntPoint::zero(), transformedActualVisibleSize);
         IntRect actualVisibleRect = enclosingIntRect(rotationMatrix.inverse().mapRect(FloatRect(viewportRect)));
         m_mainFrame->view()->setFixedReportedSize(actualVisibleRect.size());
+        m_mainFrame->view()->repaintFixedElementsAfterScrolling();
     }
 
     // We're going to need to send a resize event to JavaScript because
