@@ -1,5 +1,14 @@
 2012-03-05  Sam Weinig  <sam@webkit.org>
 
+        Fix the SnowLeoaprd build.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
+2012-03-05  Sam Weinig  <sam@webkit.org>
+
         Update WebKitSystemInterface for WKCAContext additions.
 
         * WebKitSystemInterface.h:

@@ -335,9 +335,6 @@ uint32_t WKCARemoteLayerClientGetClientId(WKCARemoteLayerClientRef);
 void WKCARemoteLayerClientSetLayer(WKCARemoteLayerClientRef, CALayer *);
 CALayer *WKCARemoteLayerClientGetLayer(WKCARemoteLayerClientRef);
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-void WKCALayerEnumerateRectsBeingDrawnWithBlock(CALayer *layer, CGContextRef context, void (^block)(CGRect rect));
-
 typedef struct __WKCAContextRef *WKCAContextRef;
 
 WKCAContextRef WKCAContextMakeRemoteWithServerPort(mach_port_t port);
@@ -347,6 +344,8 @@ uint32_t WKCAContextGetContextId(WKCAContextRef);
 void WKCAContextSetLayer(WKCAContextRef, CALayer *);
 CALayer *WKCAContextGetLayer(WKCAContextRef);
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+void WKCALayerEnumerateRectsBeingDrawnWithBlock(CALayer *layer, CGContextRef context, void (^block)(CGRect rect));
 #endif
 
 @class CARenderer;
