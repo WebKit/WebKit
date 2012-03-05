@@ -169,11 +169,6 @@ HANDLE_INHERIT_AND_INITIAL(prop, Prop) \
 if (primitiveValue) \
     m_style->set##Prop(*primitiveValue);
 
-#define HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(prop, Prop, Value) \
-HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(prop, Prop, Value) \
-if (primitiveValue) \
-    m_style->set##Prop(*primitiveValue);
-
 class RuleData {
 public:
     RuleData(StyleRule*, CSSSelector*, unsigned position, bool canUseFastCheckSelector, bool inRegionRule);
