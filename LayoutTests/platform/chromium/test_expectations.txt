@@ -1176,6 +1176,8 @@ BUGWK27914 WIN : fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html = T
 
 BUGWK66467 : fast/dom/HTMLInputElement/input-image-alt-text.html = FAIL
 
+BUGWK80227 : editing/selection/select-line-break-with-opposite-directionality.html = PASS TEXT
+
 // This test isn't hanging, it just takes 12-13 seconds to run.
 BUGCR30536 SLOW LINUX WIN : http/tests/misc/acid3.html = FAIL // See "SVG Tests" section too
 BUGCR30536 SLOW MAC : http/tests/misc/acid3.html = IMAGE+TEXT PASS
