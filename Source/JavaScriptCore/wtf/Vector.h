@@ -281,10 +281,14 @@ namespace WTF {
 
         void deallocateBuffer(T* bufferToDeallocate)
         {
+            if (!bufferToDeallocate)
+                return;
+            
             if (m_buffer == bufferToDeallocate) {
                 m_buffer = 0;
                 m_capacity = 0;
             }
+
             fastFree(bufferToDeallocate);
         }
 

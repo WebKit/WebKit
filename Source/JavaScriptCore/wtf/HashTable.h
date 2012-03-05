@@ -310,7 +310,8 @@ namespace WTF {
         ~HashTable() 
         {
             invalidateIterators(); 
-            deallocateTable(m_table, m_tableSize); 
+            if (m_table)
+                deallocateTable(m_table, m_tableSize);
 #if CHECK_HASHTABLE_USE_AFTER_DESTRUCTION
             m_table = (ValueType*)(uintptr_t)0xbbadbeef;
 #endif
@@ -979,6 +980,9 @@ namespace WTF {
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::clear()
     {
         invalidateIterators();
+        if (!m_table)
+            return;
+
         deallocateTable(m_table, m_tableSize);
         m_table = 0;
         m_tableSize = 0;

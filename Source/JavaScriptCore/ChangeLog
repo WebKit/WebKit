@@ -1,3 +1,25 @@
+2012-03-05  Andy Wingo  <wingo@igalia.com>
+
+        WTF: Micro-optimize cleanup of empty vectors and hash tables
+        https://bugs.webkit.org/show_bug.cgi?id=79903
+
+        Reviewed by Michael Saboff and Geoffrey Garen.
+
+        This patch speeds up cleanup of vectors and hash tables whose
+        backing store was never allocated.  This is the case by default
+        for most vectors / hash tables that never had any entries added.
+
+        The result for me is that calling checkSyntax 1000 times on
+        concat-jquery-mootools-prototype.js goes from 6.234s to 6.068s, a
+        2.4% speedup.
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::~HashTable):
+        (WTF::::clear): Don't deallocate the storage or frob member
+        variables if there is no backing storage.
+        * wtf/Vector.h:
+        (WTF::VectorBufferBase::deallocateBuffer): Likewise.
+
 2012-03-04  Filip Pizlo  <fpizlo@apple.com>
 
         JIT heuristics should be hyperbolic
