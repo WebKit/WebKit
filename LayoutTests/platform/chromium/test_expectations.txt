@@ -2496,7 +2496,7 @@ BUGWK47949 MAC : compositing/reflections/nested-reflection-anchor-point.html = I
 BUGWK47949 LINUX WIN : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
 // The following are flaky on Mac 10.6; occasionally the layers fail to show up.
 BUGWK47949 MAC : compositing/reflections/nested-reflection.html = IMAGE PASS
-BUGWK47949 WIN MAC : compositing/reflections/nested-reflection-transformed.html = IMAGE PASS
+BUGWK47949 : compositing/reflections/nested-reflection-transformed.html = IMAGE PASS
 BUGWK47949 MAC : compositing/reflections/reflection-opacity.html = IMAGE PASS
 BUGWK47949 : compositing/reflections/reflection-positioning.html = IMAGE PASS
 BUGWK47949 : compositing/reflections/nested-reflection-transformed2.html = IMAGE PASS
