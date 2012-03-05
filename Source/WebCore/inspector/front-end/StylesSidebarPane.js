@@ -2282,6 +2282,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         }
 
         // Make the Changes and trigger the moveToNextCallback after updating.
+        var moveToIndex = moveTo && this.treeOutline ? this.treeOutline.children.indexOf(moveTo) : -1;
         var blankInput = /^\s*$/.test(userInput);
         var isDataPasted = "originalName" in context;
         var isDirtyViaPaste = isDataPasted && (this.nameElement.textContent !== context.originalName || this.valueElement.textContent !== context.originalValue);
@@ -2303,8 +2304,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 this.updateTitle();
             moveToNextCallback.call(this, this._newProperty, false, this.treeOutline.section);
         }
-
-        var moveToIndex = moveTo && this.treeOutline ? this.treeOutline.children.indexOf(moveTo) : -1;
 
         // The Callback to start editing the next/previous property/selector.
         function moveToNextCallback(alreadyNew, valueChanged, section)
@@ -2329,7 +2328,10 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 else {
                     var treeElement = moveToIndex >= 0 ? propertyElements[moveToIndex] : null;
                     if (treeElement) {
-                        treeElement.startEditing(!isEditingName ? treeElement.nameElement : treeElement.valueElement);
+                        var elementToEdit = !isEditingName ? treeElement.nameElement : treeElement.valueElement;
+                        if (alreadyNew && blankInput)
+                            elementToEdit = moveDirection === "forward" ? treeElement.nameElement : treeElement.valueElement;
+                        treeElement.startEditing(elementToEdit);
                         return;
                     } else if (!alreadyNew)
                         moveToSelector = true;
