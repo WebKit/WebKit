@@ -1,3 +1,16 @@
+2012-03-04  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] upstream CredentialManager and CredentialTransformData implementation
+        https://bugs.webkit.org/show_bug.cgi?id=80107
+
+        Reviewed by Antonio Gomes.
+
+        Initial upstream of CredentialManager.[h|cpp] and
+        CredentialTransformData.[h|cpp].
+        No new test.
+
+        * PlatformBlackBerry.cmake:
+
 2012-03-04  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Libraries are installed to /usr/lib and not /usr/lib64 on x86_64

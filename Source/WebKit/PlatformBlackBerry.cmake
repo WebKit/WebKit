@@ -51,6 +51,8 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/ChromeClientBlackBerry.cpp
     blackberry/WebCoreSupport/ClientExtension.cpp
     blackberry/WebCoreSupport/ContextMenuClientBlackBerry.cpp
+    blackberry/WebCoreSupport/CredentialManager.cpp
+    blackberry/WebCoreSupport/CredentialTransformData.cpp
     blackberry/WebCoreSupport/DeviceMotionClientBlackBerry.cpp
     blackberry/WebCoreSupport/DeviceOrientationClientBlackBerry.cpp
     blackberry/WebCoreSupport/DragClientBlackBerry.cpp
