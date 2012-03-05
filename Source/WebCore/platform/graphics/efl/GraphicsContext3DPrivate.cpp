@@ -32,11 +32,11 @@
 
 namespace WebCore {
 
-PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(GraphicsContext3D::Attributes attributes, HostWindow* hostWindow, bool renderDirectlyToEvasGLObject)
+PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(GraphicsContext3D::Attributes attributes, HostWindow* hostWindow, bool renderDirectlyToHostWindow)
 {
     OwnPtr<GraphicsContext3DPrivate> internal = adoptPtr(new GraphicsContext3DPrivate());
 
-    if (!internal->initialize(attributes, hostWindow, renderDirectlyToEvasGLObject))
+    if (!internal->initialize(attributes, hostWindow, renderDirectlyToHostWindow))
         return nullptr;
 
     return internal.release();
@@ -49,25 +49,101 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate()
     , m_evasGL(0)
     , m_context(0)
     , m_surface(0)
-    , m_config(0)
     , m_api(0)
 {
 }
 
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 {
+    if (!m_evasGL)
+        return;
+
+    if (m_surface)
+        evas_gl_surface_destroy(m_evasGL, m_surface);
+
+    if (m_context)
+        evas_gl_context_destroy(m_evasGL, m_context);
+
+    evas_gl_free(m_evasGL);
 }
 
-bool GraphicsContext3DPrivate::initialize(GraphicsContext3D::Attributes attributes, HostWindow* hostWindow, bool bRenderDirectlyToEvasGLObject)
+bool GraphicsContext3DPrivate::initialize(GraphicsContext3D::Attributes attributes, HostWindow* hostWindow, bool renderDirectlyToHostWindow)
 {
-    notImplemented();
-    return false;
+    PageClientEfl* pageClient = static_cast<PageClientEfl*>(hostWindow->platformPageClient());
+
+    Evas* evas = evas_object_evas_get(pageClient->view());
+
+    // Create a new Evas_GL object for gl rendering on efl.
+    m_evasGL = evas_gl_new(evas);
+    if (!m_evasGL)
+        return false;
+
+    // Get the API for rendering using OpenGL.
+    // This returns a structure that contains all the OpenGL functions we can use to render in Evas
+    m_api = evas_gl_api_get(m_evasGL);
+    if (!m_api)
+        return false;
+
+    Evas_GL_Context* shareContext = 0;
+
+#if USE(ACCELERATED_COMPOSITING)
+    // GC3D with RenderOffscreen style for WebGL has to be shared with AC's context when AC is enabled.
+    if (!renderDirectlyToHostWindow) {
+        GraphicsContext3D* context = pageClient->acceleratedCompositingContext();
+        if (context)
+            shareContext = static_cast<Evas_GL_Context*>(context->platformGraphicsContext3D());
+    }
+#endif
+
+    // Create a context
+    m_context = evas_gl_context_create(m_evasGL, shareContext);
+    if (!m_context)
+        return false;
+
+    // Create a surface
+    if (!createSurface(pageClient, renderDirectlyToHostWindow))
+        return false;
+
+    return makeContextCurrent();
 }
 
-bool GraphicsContext3DPrivate::createSurface(PageClientEfl* pageClient, bool renderDirectlyToEvasGLObject)
+bool GraphicsContext3DPrivate::createSurface(PageClientEfl* pageClient, bool renderDirectlyToHostWindow)
 {
-    notImplemented();
-    return false;
+    // If RenderStyle is RenderOffscreen, we will be rendering to a FBO,
+    // so Evas_GL_Surface has a 1x1 dummy surface.
+    int x = 0;
+    int y = 0;
+    int width = 1;
+    int height = 1;
+
+    // But, in case of RenderDirectlyToHostWindow, we have to render to a render target surface with the same size as our webView.
+    if (renderDirectlyToHostWindow)
+        evas_object_geometry_get(pageClient->view(), &x, &y, &width, &height);
+
+    Evas_GL_Config config = {
+        EVAS_GL_RGBA_8888,
+        EVAS_GL_DEPTH_BIT_8,
+        EVAS_GL_STENCIL_NONE, // FIXME: set EVAS_GL_STENCIL_BIT_8 after fixing Evas_GL bug.
+        EVAS_GL_OPTIONS_NONE
+    };
+
+    // Create a new Evas_GL_Surface object
+    m_surface = evas_gl_surface_create(m_evasGL, &config, width, height);
+    if (!m_surface)
+        return false;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (renderDirectlyToHostWindow) {
+        Evas_Native_Surface nativeSurface;
+        // Fill in the Native Surface information from the given Evas GL surface.
+        evas_gl_native_surface_get(m_evasGL, m_surface, &nativeSurface);
+
+        // Create and specially set up a evas_object which act as the render targer surface.
+        if (!pageClient->createEvasObjectForAcceleratedCompositing(&nativeSurface, x, y, width, height))
+            return false;
+    }
+#endif
+    return true;
 }
 
 PlatformGraphicsContext3D GraphicsContext3DPrivate::platformGraphicsContext3D() const
@@ -77,8 +153,7 @@ PlatformGraphicsContext3D GraphicsContext3DPrivate::platformGraphicsContext3D() 
 
 bool GraphicsContext3DPrivate::makeContextCurrent()
 {
-    notImplemented();
-    return false;
+    return evas_gl_make_current(m_evasGL, m_surface, m_context);
 }
 
 bool GraphicsContext3DPrivate::isGLES2Compliant() const

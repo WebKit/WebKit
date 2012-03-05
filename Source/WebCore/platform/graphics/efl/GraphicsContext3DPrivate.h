@@ -204,7 +204,7 @@ public:
 private:
     GraphicsContext3DPrivate();
 
-    bool initialize(GraphicsContext3D::Attributes attrs, HostWindow*, bool renderDirectlyToEvasGLObject);
+    bool initialize(GraphicsContext3D::Attributes attrs, HostWindow*, bool renderDirectlyToHostWindow);
 
     bool createSurface(PageClientEfl*, bool renderDirectlyToEvasGLObject);
 
@@ -219,7 +219,6 @@ private:
     Evas_GL* m_evasGL;
     Evas_GL_Context* m_context;
     Evas_GL_Surface* m_surface;
-    Evas_GL_Config* m_config;
     Evas_GL_API* m_api;
 };
 
