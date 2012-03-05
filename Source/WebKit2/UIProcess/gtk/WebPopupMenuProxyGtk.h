@@ -23,6 +23,7 @@
 #include "WebPopupMenuProxy.h"
 #include <WebCore/GtkPopupMenu.h>
 #include <WebCore/IntRect.h>
+#include <wtf/gobject/GRefPtr.h>
 
 typedef struct _GMainLoop GMainLoop;
 
@@ -53,7 +54,7 @@ private:
     GtkWidget* m_webView;
     OwnPtr<WebCore::GtkPopupMenu> m_popup;
     int m_activeItem;
-    GMainLoop* m_runLoop;
+    GRefPtr<GMainLoop> m_runLoop;
 };
 
 } // namespace WebKit

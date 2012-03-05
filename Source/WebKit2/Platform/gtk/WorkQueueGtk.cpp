@@ -103,9 +103,9 @@ static const size_t kVisualStudioThreadNameLimit = 31;
 
 void WorkQueue::platformInitialize(const char* name)
 {
-    m_eventContext = g_main_context_new();
+    m_eventContext = adoptGRef(g_main_context_new());
     ASSERT(m_eventContext);
-    m_eventLoop = g_main_loop_new(m_eventContext, FALSE);
+    m_eventLoop = adoptGRef(g_main_loop_new(m_eventContext.get(), FALSE));
     ASSERT(m_eventLoop);
 
     // This name can be com.apple.WebKit.ProcessLauncher or com.apple.CoreIPC.ReceiveQueue.
@@ -129,17 +129,12 @@ void WorkQueue::platformInvalidate()
     MutexLocker locker(m_eventLoopLock);
 
     if (m_eventLoop) {
-        if (g_main_loop_is_running(m_eventLoop))
-            g_main_loop_quit(m_eventLoop);
-
-        g_main_loop_unref(m_eventLoop);
-        m_eventLoop = 0;
+        if (g_main_loop_is_running(m_eventLoop.get()))
+            g_main_loop_quit(m_eventLoop.get());
+        m_eventLoop.clear();
     }
 
-    if (m_eventContext) {
-        g_main_context_unref(m_eventContext);
-        m_eventContext = 0;
-    }
+    m_eventContext.clear();
 }
 
 void WorkQueue::startWorkQueueThread(WorkQueue* workQueue)
@@ -149,7 +144,7 @@ void WorkQueue::startWorkQueueThread(WorkQueue* workQueue)
 
 void WorkQueue::workQueueThreadBody()
 {
-    g_main_loop_run(m_eventLoop);
+    g_main_loop_run(m_eventLoop.get());
 }
 
 void WorkQueue::registerEventSourceHandler(int fileDescriptor, int condition, const Function<void()>& function)
@@ -177,7 +172,7 @@ void WorkQueue::registerEventSourceHandler(int fileDescriptor, int condition, co
         m_eventSources.set(fileDescriptor, sources);
     }
 
-    g_source_attach(dispatchSource.get(), m_eventContext);
+    g_source_attach(dispatchSource.get(), m_eventContext.get());
 }
 
 void WorkQueue::unregisterEventSourceHandler(int fileDescriptor)
@@ -206,7 +201,7 @@ void WorkQueue::dispatchOnSource(GSource* dispatchSource, const Function<void()>
     g_source_set_callback(dispatchSource, sourceCallback, eventSource,
                           reinterpret_cast<GDestroyNotify>(&WorkQueue::EventSource::deleteEventSource));
 
-    g_source_attach(dispatchSource, m_eventContext);
+    g_source_attach(dispatchSource, m_eventContext.get());
 }
 
 void WorkQueue::dispatch(const Function<void()>& function)

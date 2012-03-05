@@ -48,8 +48,7 @@ class QObject;
 class QThread;
 #elif PLATFORM(GTK)
 #include "PlatformProcessIdentifier.h"
-typedef struct _GMainContext GMainContext;
-typedef struct _GMainLoop GMainLoop;
+#include <wtf/gobject/GRefPtr.h>
 typedef gboolean (*GSourceFunc) (gpointer data);
 #endif
 
@@ -171,9 +170,9 @@ private:
     void dispatchOnSource(GSource*, const Function<void()>&, GSourceFunc);
 
     ThreadIdentifier m_workQueueThread;
-    GMainContext* m_eventContext;
+    GRefPtr<GMainContext> m_eventContext;
     Mutex m_eventLoopLock;
-    GMainLoop* m_eventLoop;
+    GRefPtr<GMainLoop> m_eventLoop;
     Mutex m_eventSourcesLock;
     class EventSource;
     HashMap<int, Vector<EventSource*> > m_eventSources;

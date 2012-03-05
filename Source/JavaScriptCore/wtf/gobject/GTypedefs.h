@@ -51,6 +51,8 @@ typedef struct _GFile GFile;
 typedef struct _GHashTable GHashTable;
 typedef struct _GInputStream GInputStream;
 typedef struct _GList GList;
+typedef struct _GMainContext GMainContext;
+typedef struct _GMainLoop GMainLoop;
 typedef struct _GPatternSpec GPatternSpec;
 typedef struct _GPollableOutputStream GPollableOutputStream;
 typedef struct _GSList GSList;

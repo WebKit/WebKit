@@ -201,6 +201,10 @@ template <typename T> GRefPtr<T> adoptGRef(T* p)
 
 template <> GHashTable* refGPtr(GHashTable* ptr);
 template <> void derefGPtr(GHashTable* ptr);
+template <> GMainContext* refGPtr(GMainContext* ptr);
+template <> void derefGPtr(GMainContext* ptr);
+template <> GMainLoop* refGPtr(GMainLoop* ptr);
+template <> void derefGPtr(GMainLoop* ptr);
 template <> GVariant* refGPtr(GVariant* ptr);
 template <> void derefGPtr(GVariant* ptr);
 template <> GSource* refGPtr(GSource* ptr);
