@@ -53,25 +53,25 @@ public:
 
     bool isNull() const { return !m_private; }
 
-    BinaryType binaryType() const;
-    virtual bool setBinaryType(BinaryType);
-    virtual void connect(const WebURL&, const WebString& protocol);
-    virtual WebString subprotocol();
-    virtual bool sendText(const WebString&);
-    virtual bool sendArrayBuffer(const WebArrayBuffer&);
-    virtual unsigned long bufferedAmount() const;
-    virtual void close(int code, const WebString& reason);
-    virtual void fail(const WebString& reason);
-    virtual void disconnect();
+    virtual BinaryType binaryType() const OVERRIDE;
+    virtual bool setBinaryType(BinaryType) OVERRIDE;
+    virtual void connect(const WebURL&, const WebString& protocol) OVERRIDE;
+    virtual WebString subprotocol() OVERRIDE;
+    virtual bool sendText(const WebString&) OVERRIDE;
+    virtual bool sendArrayBuffer(const WebArrayBuffer&) OVERRIDE;
+    virtual unsigned long bufferedAmount() const OVERRIDE;
+    virtual void close(int code, const WebString& reason) OVERRIDE;
+    virtual void fail(const WebString& reason) OVERRIDE;
+    virtual void disconnect() OVERRIDE;
 
     // WebSocketChannelClient
-    virtual void didConnect();
-    virtual void didReceiveMessage(const String& message);
-    virtual void didReceiveBinaryData(PassOwnPtr<Vector<char> > binaryData);
-    virtual void didReceiveMessageError();
-    virtual void didUpdateBufferedAmount(unsigned long bufferedAmount);
-    virtual void didStartClosingHandshake();
-    virtual void didClose(unsigned long bufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
+    virtual void didConnect() OVERRIDE;
+    virtual void didReceiveMessage(const String& message) OVERRIDE;
+    virtual void didReceiveBinaryData(PassOwnPtr<Vector<char> > binaryData) OVERRIDE;
+    virtual void didReceiveMessageError() OVERRIDE;
+    virtual void didUpdateBufferedAmount(unsigned long bufferedAmount) OVERRIDE;
+    virtual void didStartClosingHandshake() OVERRIDE;
+    virtual void didClose(unsigned long bufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) OVERRIDE;
 
 private:
     RefPtr<WebCore::WebSocketChannel> m_private;

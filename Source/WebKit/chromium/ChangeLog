@@ -1,3 +1,13 @@
+2012-03-05  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [Chromium] [WebSocket] use OVERRIDE in WebSocketImpl.h
+        https://bugs.webkit.org/show_bug.cgi?id=80192
+
+        Reviewed by Kent Tamura.
+
+        * src/WebSocketImpl.h: use OVERRIDE macro.
+        (WebSocketImpl):
+
 2012-03-05  Adam Barth  <abarth@webkit.org>
 
         Geolocation should use a ScriptExecutionContext as its context object
