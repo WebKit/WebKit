@@ -984,7 +984,6 @@
             'html/canvas/CanvasPixelArray.idl',
             'html/canvas/CanvasRenderingContext.idl',
             'html/canvas/CanvasRenderingContext2D.idl',
-            'html/canvas/DOMWindowWebGL.idl',
             'html/canvas/DataView.idl',
             'html/canvas/Float32Array.idl',
             'html/canvas/Float64Array.idl',

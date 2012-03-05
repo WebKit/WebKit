@@ -296,7 +296,6 @@ BINDING_IDLS = \
     $(WebCore)/html/canvas/CanvasPattern.idl \
     $(WebCore)/html/canvas/CanvasRenderingContext.idl \
     $(WebCore)/html/canvas/CanvasRenderingContext2D.idl \
-    $(WebCore)/html/canvas/DOMWindowWebGL.idl \
     $(WebCore)/html/canvas/DataView.idl \
     $(WebCore)/html/canvas/Float32Array.idl \
     $(WebCore)/html/canvas/Float64Array.idl \
