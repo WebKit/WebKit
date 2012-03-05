@@ -40,8 +40,6 @@ public:
 private:
     NavigatorGeolocation(Frame*);
 
-    virtual void willDetachPage() OVERRIDE;
-
     mutable RefPtr<Geolocation> m_geolocation;
 };
 

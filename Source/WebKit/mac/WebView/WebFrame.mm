@@ -1124,10 +1124,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         if (DatabaseContext::hasOpenDatabases(document))
             [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameUsesDatabases];
 #endif
-            
-        if (document->usingGeolocation())
-            [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameUsesGeolocation];
-            
         if (!document->canSuspendActiveDOMObjects())
             [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameCanSuspendActiveDOMObjects];
     }

@@ -116,10 +116,6 @@ static bool logCanCacheFrameDecision(Frame* frame, int indentLevel)
             cannotCache = true;
         }
 #endif
-        if (frame->document()->usingGeolocation()) {
-            PCLOG("   -Frame uses Geolocation");
-            cannotCache = true;
-        }
         if (!frame->loader()->history()->currentItem()) {
             PCLOG("   -No current history item");
             cannotCache = true;
@@ -253,7 +249,6 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
 #if ENABLE(SHARED_WORKERS)
         && !SharedWorkerRepository::hasSharedWorkers(document)
 #endif
-        && !document->usingGeolocation()
         && frameLoader->history()->currentItem()
         && !frameLoader->quickRedirectComing()
         && !documentLoader->isLoadingInAPISense()

@@ -23,6 +23,8 @@
 #include "config.h"
 #include "NavigatorGeolocation.h"
 
+#include "Document.h"
+#include "Frame.h"
 #include "Geolocation.h"
 #include "Navigator.h"
 
@@ -35,17 +37,6 @@ NavigatorGeolocation::NavigatorGeolocation(Frame* frame)
 
 NavigatorGeolocation::~NavigatorGeolocation()
 {
-}
-
-void NavigatorGeolocation::willDetachPage()
-{
-    // FIXME: We should ideally allow existing Geolocation activities to continue
-    // when the Geolocation's iframe is reparented. (Assuming we continue to
-    // support reparenting iframes.)
-    // See https://bugs.webkit.org/show_bug.cgi?id=55577
-    // and https://bugs.webkit.org/show_bug.cgi?id=52877
-    if (m_geolocation)
-        m_geolocation->reset();
 }
 
 NavigatorGeolocation* NavigatorGeolocation::from(Navigator* navigator)
@@ -66,8 +57,8 @@ Geolocation* NavigatorGeolocation::geolocation(Navigator* navigator)
 
 Geolocation* NavigatorGeolocation::geolocation() const
 {
-    if (!m_geolocation)
-        m_geolocation = Geolocation::create(frame());
+    if (!m_geolocation && frame())
+        m_geolocation = Geolocation::create(frame()->document());
     return m_geolocation.get();
 }
 

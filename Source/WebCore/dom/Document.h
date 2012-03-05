@@ -1031,9 +1031,6 @@ public:
     virtual bool isContextThread() const;
     virtual bool isJSExecutionForbidden() const { return false; }
 
-    void setUsingGeolocation(bool f) { m_usingGeolocation = f; }
-    bool usingGeolocation() const { return m_usingGeolocation; };
-
     bool containsValidityStyleRules() const { return m_containsValidityStyleRules; }
     void setContainsValidityStyleRules() { m_containsValidityStyleRules = true; }
 
@@ -1413,8 +1410,6 @@ private:
 
     bool m_isViewSource;
     bool m_sawElementsInKnownNamespaces;
-
-    bool m_usingGeolocation;
 
     RefPtr<DocumentEventQueue> m_eventQueue;
 

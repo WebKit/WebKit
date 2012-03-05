@@ -225,38 +225,57 @@ void Geolocation::Watchers::getNotifiersVector(GeoNotifierVector& copy) const
     copyValuesToVector(m_idToNotifierMap, copy);
 }
 
-Geolocation::Geolocation(Frame* frame)
-    : DOMWindowProperty(frame)
+PassRefPtr<Geolocation> Geolocation::create(ScriptExecutionContext* context)
+{
+    RefPtr<Geolocation> geolocation = adoptRef(new Geolocation(context));
+    geolocation->suspendIfNeeded();
+    return geolocation.release();
+}
+
+Geolocation::Geolocation(ScriptExecutionContext* context)
+    : ActiveDOMObject(context, this)
 #if !ENABLE(CLIENT_BASED_GEOLOCATION)
     , m_service(GeolocationService::create(this))
 #endif
     , m_allowGeolocation(Unknown)
 {
-    if (!m_frame)
-        return;
-    ASSERT(m_frame->document());
-    m_frame->document()->setUsingGeolocation(true);
 }
 
 Geolocation::~Geolocation()
 {
     ASSERT(m_allowGeolocation != InProgress);
-    ASSERT(!m_frame);
+}
+
+Document* Geolocation::document() const
+{
+    ASSERT(!scriptExecutionContext() || scriptExecutionContext()->isDocument());
+    return static_cast<Document*>(scriptExecutionContext());
+}
+
+Frame* Geolocation::frame() const
+{
+    return document() ? document()->frame() : 0;
 }
 
 Page* Geolocation::page() const
 {
-    return m_frame ? m_frame->page() : 0;
+    return document() ? document()->page() : 0;
 }
 
-void Geolocation::reset()
+void Geolocation::stop()
 {
+    // FIXME: We should ideally allow existing Geolocation activities to continue
+    // when the Geolocation's iframe is reparented. (Assuming we continue to
+    // support reparenting iframes.)
+    // See https://bugs.webkit.org/show_bug.cgi?id=55577
+    // and https://bugs.webkit.org/show_bug.cgi?id=52877
+
     Page* page = this->page();
     if (page && m_allowGeolocation == InProgress) {
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
         page->geolocationController()->cancelPermissionRequest(this);
 #else
-        page->chrome()->client()->cancelGeolocationPermissionRequestForFrame(m_frame, this);
+        page->chrome()->client()->cancelGeolocationPermissionRequestForFrame(frame(), this);
 #endif
     }
     // The frame may be moving to a new page and we want to get the permissions from the new page's client.
@@ -266,15 +285,6 @@ void Geolocation::reset()
 #if USE(PREEMPT_GEOLOCATION_PERMISSION)
     m_pendingForPermissionNotifiers.clear();
 #endif
-}
-
-void Geolocation::disconnectFrame()
-{
-    // Once we are disconnected from the Frame, it is no longer possible to perform any operations.
-    reset();
-    if (m_frame && m_frame->document())
-        m_frame->document()->setUsingGeolocation(false);
-    DOMWindowProperty::disconnectFrame();
 }
 
 Geoposition* Geolocation::lastPosition()
@@ -294,7 +304,7 @@ Geoposition* Geolocation::lastPosition()
 
 void Geolocation::getCurrentPosition(PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
 {
-    if (!m_frame)
+    if (!frame())
         return;
 
     RefPtr<GeoNotifier> notifier = startRequest(successCallback, errorCallback, options);
@@ -305,7 +315,7 @@ void Geolocation::getCurrentPosition(PassRefPtr<PositionCallback> successCallbac
 
 int Geolocation::watchPosition(PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
 {
-    if (!m_frame)
+    if (!frame())
         return 0;
 
     RefPtr<GeoNotifier> notifier = startRequest(successCallback, errorCallback, options);
@@ -620,7 +630,7 @@ void Geolocation::requestPermission()
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     page->geolocationController()->requestPermission(this);
 #else
-    page->chrome()->client()->requestGeolocationPermissionForFrame(m_frame, this);
+    page->chrome()->client()->requestGeolocationPermissionForFrame(frame(), this);
 #endif
 }
 
@@ -757,17 +767,11 @@ void Geolocation::handlePendingPermissionNotifiers()
 
 namespace WebCore {
 
-void Geolocation::clearWatch(int) {}
-
-void Geolocation::reset() {}
-
-void Geolocation::disconnectFrame() {}
-
-Geolocation::Geolocation(Frame*) : DOMWindowProperty(0) {}
-
-Geolocation::~Geolocation() {}
-
-void Geolocation::setIsAllowed(bool) {}
+void Geolocation::clearWatch(int) { }
+void Geolocation::stop() { }
+Geolocation::Geolocation(ScriptExecutionContext* context) : ActiveDOMObject(context, this) { }
+Geolocation::~Geolocation() { }
+void Geolocation::setIsAllowed(bool) { }
 
 }
                                                         

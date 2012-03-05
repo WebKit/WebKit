@@ -27,7 +27,7 @@
 #ifndef Geolocation_h
 #define Geolocation_h
 
-#include "DOMWindowProperty.h"
+#include "ActiveDOMObject.h"
 #include "Geoposition.h"
 #include "PositionCallback.h"
 #include "PositionError.h"
@@ -41,24 +41,27 @@
 
 namespace WebCore {
 
+class Document;
 class Frame;
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 class GeolocationPosition;
 class GeolocationError;
 #endif
 class Page;
+class ScriptExecutionContext;
 
-class Geolocation : public RefCounted<Geolocation>, public DOMWindowProperty
+class Geolocation : public RefCounted<Geolocation>, public ActiveDOMObject
 #if !ENABLE(CLIENT_BASED_GEOLOCATION) && ENABLE(GEOLOCATION)
     , public GeolocationServiceClient
 #endif
 {
 public:
-    static PassRefPtr<Geolocation> create(Frame* frame) { return adoptRef(new Geolocation(frame)); }
+    static PassRefPtr<Geolocation> create(ScriptExecutionContext*);
     ~Geolocation();
 
-    virtual void disconnectFrame() OVERRIDE;
-    void reset();
+    virtual void stop() OVERRIDE;
+    Document* document() const;
+    Frame* frame() const;
 
     void getCurrentPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     int watchPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
@@ -79,7 +82,7 @@ private:
     bool isAllowed() const { return m_allowGeolocation == Yes; }
     bool isDenied() const { return m_allowGeolocation == No; }
 
-    explicit Geolocation(Frame*);
+    explicit Geolocation(ScriptExecutionContext*);
 
     Page* page() const;
 

@@ -1,3 +1,14 @@
+2012-03-05  Adam Barth  <abarth@webkit.org>
+
+        Geolocation should use a ScriptExecutionContext as its context object
+        https://bugs.webkit.org/show_bug.cgi?id=80248
+
+        Reviewed by Kentaro Hara.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _cacheabilityDictionary]):
+            - We no longer special-case Geolocation.
+
 2012-03-03  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove the redundant method KURL::protocolInHTTPFamily()

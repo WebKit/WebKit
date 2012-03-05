@@ -39,7 +39,7 @@ namespace WebKit {
 
 WebSecurityOrigin WebGeolocationPermissionRequest::securityOrigin() const
 {
-    return WebSecurityOrigin(m_private->frame()->document()->securityOrigin());
+    return WebSecurityOrigin(m_private->scriptExecutionContext()->securityOrigin());
 }
 
 void WebGeolocationPermissionRequest::setIsAllowed(bool allowed)
