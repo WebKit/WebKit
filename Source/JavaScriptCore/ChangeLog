@@ -1,3 +1,9 @@
+2012-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file.
+
 2012-03-05  Andy Wingo  <wingo@igalia.com>
 
         WTF: Micro-optimize cleanup of empty vectors and hash tables
