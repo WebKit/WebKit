@@ -802,6 +802,11 @@ void LayoutTestController::resumeAnimations() const
     DumpRenderTreeSupportGtk::resumeAnimations(mainFrame);
 }
 
+static gboolean booleanFromValue(gchar* value)
+{
+    return !g_ascii_strcasecmp(value, "true") || !g_ascii_strcasecmp(value, "1");
+}
+
 void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value)
 {
     GOwnPtr<gchar> originalName(JSStringCopyUTF8CString(key));
@@ -831,10 +836,13 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
     else if (g_str_equal(originalName.get(), "WebKitWebAudioEnabled"))
         propertyName = "enable-webaudio";
     else if (g_str_equal(originalName.get(), "WebKitTabToLinksPreferenceKey")) {
-        DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(!g_ascii_strcasecmp(valueAsString.get(), "true") || !g_ascii_strcasecmp(valueAsString.get(), "1"));
+        DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(booleanFromValue(valueAsString.get()));
         return;
     } else if (g_str_equal(originalName.get(), "WebKitHixie76WebSocketProtocolEnabled")) {
-        DumpRenderTreeSupportGtk::setHixie76WebSocketProtocolEnabled(webkit_web_frame_get_web_view(mainFrame), !g_ascii_strcasecmp(valueAsString.get(), "true") || !g_ascii_strcasecmp(valueAsString.get(), "1"));
+        DumpRenderTreeSupportGtk::setHixie76WebSocketProtocolEnabled(webkit_web_frame_get_web_view(mainFrame), booleanFromValue(valueAsString.get()));
+        return;
+    } else if (g_str_equal(originalName.get(), "WebKitPageCacheSupportsPluginsPreferenceKey")) {
+        DumpRenderTreeSupportGtk::setPageCacheSupportsPlugins(webkit_web_frame_get_web_view(mainFrame), booleanFromValue(valueAsString.get()));
         return;
     } else {
         fprintf(stderr, "LayoutTestController::overridePreference tried to override "
@@ -851,8 +859,7 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
     if (G_VALUE_HOLDS_STRING(&currentPropertyValue))
         g_object_set(settings, propertyName, valueAsString.get(), NULL);
     else if (G_VALUE_HOLDS_BOOLEAN(&currentPropertyValue))
-        g_object_set(G_OBJECT(settings), propertyName, !g_ascii_strcasecmp(valueAsString.get(), "true")
-                        || !g_ascii_strcasecmp(valueAsString.get(), "1"), NULL);
+        g_object_set(G_OBJECT(settings), propertyName, booleanFromValue(valueAsString.get()), NULL);
     else if (G_VALUE_HOLDS_INT(&currentPropertyValue))
         g_object_set(G_OBJECT(settings), propertyName, atoi(valueAsString.get()), NULL);
     else if (G_VALUE_HOLDS_FLOAT(&currentPropertyValue)) {

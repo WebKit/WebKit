@@ -894,6 +894,11 @@ void DumpRenderTreeSupportGtk::setHixie76WebSocketProtocolEnabled(WebKitWebView*
 #endif
 }
 
+void DumpRenderTreeSupportGtk::setPageCacheSupportsPlugins(WebKitWebView* webView, bool enabled)
+{
+    core(webView)->settings()->setPageCacheSupportsPlugins(enabled);
+}
+
 bool DumpRenderTreeSupportGtk::elementDoesAutoCompleteForElementWithId(WebKitWebFrame* frame, JSStringRef id)
 {
     Frame* coreFrame = core(frame);

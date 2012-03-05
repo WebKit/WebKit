@@ -128,6 +128,7 @@ public:
     static int numberOfPendingGeolocationPermissionRequests(WebKitWebView*);
 
     static void setHixie76WebSocketProtocolEnabled(WebKitWebView*, bool enabled);
+    static void setPageCacheSupportsPlugins(WebKitWebView*, bool enabled);
 
     static void deliverAllMutationsIfNecessary();
 

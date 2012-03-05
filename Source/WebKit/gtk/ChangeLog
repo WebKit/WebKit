@@ -1,3 +1,17 @@
+2012-03-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] plugins/netscape-plugin-page-cache-works.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=74409
+
+        Reviewed by Martin Robinson.
+
+        Add a method to override page-cache-for-plugins preference.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setPageCacheSupportsPlugins):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        (DumpRenderTreeSupportGtk):
+
 2012-03-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] "Console: undefined @0: ReferenceError: Can't find variable: WebInspector" during testwebinspector
