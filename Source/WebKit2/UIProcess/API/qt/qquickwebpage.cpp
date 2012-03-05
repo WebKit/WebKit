@@ -23,10 +23,13 @@
 
 #include "LayerTreeHostProxy.h"
 #include "QtWebPageEventHandler.h"
-#include "QtWebPageSGNode.h"
 #include "TransformationMatrix.h"
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p.h"
+#include <QtQuick/QQuickCanvas>
+#include <QtQuick/QSGGeometryNode>
+#include <QtQuick/QSGMaterial>
+#include <private/qsgrendernode_p.h>
 
 QQuickWebPage::QQuickWebPage(QQuickWebView* viewportItem)
     : QQuickItem(viewportItem)
@@ -74,6 +77,50 @@ void QQuickWebPagePrivate::paint(QPainter* painter)
         webPageProxy->drawingArea()->paintLayerTree(painter);
 }
 
+void QQuickWebPagePrivate::paintToCurrentGLContext(const QTransform& transform, float opacity)
+{
+    if (!q->isVisible())
+        return;
+
+    QRectF clipRect = viewportItem->mapRectToScene(viewportItem->boundingRect());
+
+    if (!clipRect.isValid())
+        return;
+
+    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
+    if (!drawingArea)
+        return;
+
+    drawingArea->paintToCurrentGLContext(QTransform(transform).scale(contentsScale, contentsScale), opacity, clipRect);
+}
+
+struct PageProxyNode : public QSGRenderNode {
+    PageProxyNode(QQuickWebPagePrivate* page)
+        : m_pagePrivate(page)
+    {
+    }
+
+    virtual StateFlags changedStates()
+    {
+        return StateFlags(StencilState) | ColorState | BlendState;
+    }
+
+    virtual void render(const RenderState&)
+    {
+        if (!m_pagePrivate)
+            return;
+        QTransform transform = matrix() ? matrix()->toTransform() : QTransform();
+        m_pagePrivate->paintToCurrentGLContext(transform, inheritedOpacity());
+    }
+
+    ~PageProxyNode()
+    {
+        if (m_pagePrivate)
+            m_pagePrivate->resetPaintNode();
+    }
+
+    QQuickWebPagePrivate* m_pagePrivate;
+};
 
 QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 {
@@ -83,16 +130,13 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
         return 0;
     }
 
-    QtWebPageSGNode* sceneNode = static_cast<QtWebPageSGNode*>(oldNode);
-    if (sceneNode)
-        return sceneNode;
-    sceneNode = new QtWebPageSGNode(d->webPageProxy->drawingArea()->layerTreeHostProxy(), d);
-    {
-        MutexLocker lock(d->m_paintNodeMutex);
-        d->m_paintNode = sceneNode;
+    PageProxyNode* proxyNode = static_cast<PageProxyNode*>(oldNode);
+    if (!proxyNode) {
+        proxyNode = new PageProxyNode(d);
+        d->m_paintNode = proxyNode;
     }
-    d->updateSize();
-    return sceneNode;
+
+    return proxyNode;
 }
 
 QtWebPageEventHandler* QQuickWebPage::eventHandler() const
@@ -144,23 +188,20 @@ void QQuickWebPagePrivate::updateSize()
     QSizeF scaledSize = contentsSize * contentsScale;
     q->setSize(scaledSize);
     viewportItem->updateContentsSize(scaledSize);
-    QRectF clipRect = viewportItem->mapRectToScene(viewportItem->boundingRect());
-
-    MutexLocker lock(m_paintNodeMutex);
-    if (!m_paintNode)
-        return;
-    m_paintNode->setClipRect(clipRect);
-    m_paintNode->setContentsScale(contentsScale);
 }
 
-void QQuickWebPagePrivate::willDeleteScenegraphNode()
+void QQuickWebPagePrivate::resetPaintNode()
 {
-    MutexLocker lock(m_paintNodeMutex);
     m_paintNode = 0;
+    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
+    if (drawingArea && drawingArea->layerTreeHostProxy())
+        drawingArea->layerTreeHostProxy()->purgeGLResources();
 }
 
 QQuickWebPagePrivate::~QQuickWebPagePrivate()
 {
+    if (m_paintNode)
+        static_cast<PageProxyNode*>(m_paintNode)->m_pagePrivate = 0;
 }
 
 #include "moc_qquickwebpage_p.cpp"

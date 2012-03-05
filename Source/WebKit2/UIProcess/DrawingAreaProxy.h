@@ -29,7 +29,6 @@
 
 #include "BackingStore.h"
 #include "DrawingAreaInfo.h"
-#include "LayerTreeHostProxy.h"
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
 #include <stdint.h>
@@ -55,6 +54,7 @@ namespace WebCore {
 namespace WebKit {
 
 class LayerTreeContext;
+class LayerTreeHostProxy;
 class UpdateInfo;
 class WebLayerTreeInfo;
 class WebLayerUpdateInfo;
@@ -90,7 +90,7 @@ public:
     virtual bool isBackingStoreReady() const { return true; }
     virtual void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&) { }
     virtual void paintLayerTree(BackingStore::PlatformGraphicsContext) { }
-    PassRefPtr<LayerTreeHostProxy> layerTreeHostProxy() const { return m_layerTreeHostProxy; }
+    LayerTreeHostProxy* layerTreeHostProxy() const { return m_layerTreeHostProxy.get(); }
     virtual void setVisibleContentsRectForScaling(const WebCore::IntRect& visibleContentsRect, float scale) { }
     virtual void setVisibleContentsRectForPanning(const WebCore::IntRect& visibleContentsRect, const WebCore::FloatPoint& trajectoryVector) { }
     virtual void createTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo&) { }
@@ -110,7 +110,7 @@ protected:
     WebCore::IntSize m_scrollOffset;
 
 #if USE(UI_SIDE_COMPOSITING)
-    RefPtr<LayerTreeHostProxy> m_layerTreeHostProxy;
+    OwnPtr<LayerTreeHostProxy> m_layerTreeHostProxy;
 #endif
 
 private:

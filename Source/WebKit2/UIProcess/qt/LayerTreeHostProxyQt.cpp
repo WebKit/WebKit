@@ -95,32 +95,6 @@ void LayerTreeHostProxy::paintToCurrentGLContext(const TransformationMatrix& mat
     syncAnimations();
 }
 
-template<class T>
-class MainThreadGuardedInvoker {
-public:
-    static void call(PassRefPtr<T> objectToGuard, const Function<void()>& function)
-    {
-        MainThreadGuardedInvoker<T>* invoker = new MainThreadGuardedInvoker<T>(objectToGuard, function);
-        callOnMainThread(invoke, invoker);
-    }
-
-private:
-    MainThreadGuardedInvoker(PassRefPtr<T> object, const Function<void()>& newFunction)
-        : objectToGuard(object)
-        , function(newFunction)
-    {
-    }
-
-    RefPtr<T> objectToGuard;
-    Function<void()> function;
-    static void invoke(void* data)
-    {
-        MainThreadGuardedInvoker<T>* invoker = static_cast<MainThreadGuardedInvoker<T>*>(data);
-        invoker->function();
-        delete invoker;
-    }
-};
-
 void LayerTreeHostProxy::syncAnimations()
 {
     TextureMapperLayer* layer = toTextureMapperLayer(rootLayer());
@@ -128,7 +102,7 @@ void LayerTreeHostProxy::syncAnimations()
 
     layer->syncAnimationsRecursively();
     if (layer->descendantsOrSelfHaveRunningAnimations())
-        MainThreadGuardedInvoker<LayerTreeHostProxy>::call(this, bind(&LayerTreeHostProxy::updateViewport, this));
+        updateViewport();
 }
 
 void LayerTreeHostProxy::paintToGraphicsContext(QPainter* painter)
@@ -153,13 +127,7 @@ void LayerTreeHostProxy::paintToGraphicsContext(QPainter* painter)
 
 void LayerTreeHostProxy::updateViewport()
 {
-    if (m_drawingAreaProxy)
-        m_drawingAreaProxy->updateViewport();
-}
-
-void LayerTreeHostProxy::detachDrawingArea()
-{
-    m_drawingAreaProxy = 0;
+    m_drawingAreaProxy->updateViewport();
 }
 
 void LayerTreeHostProxy::syncLayerParameters(const WebLayerInfo& layerInfo)
@@ -217,12 +185,9 @@ void LayerTreeHostProxy::syncLayerParameters(const WebLayerInfo& layerInfo)
         case WebKit::WebLayerAnimation::RemoveAnimation:
             layer->removeAnimation(anim.name);
             break;
-        case WebKit::WebLayerAnimation::PauseAnimation: {
+        case WebKit::WebLayerAnimation::PauseAnimation:
             double offset = WTF::currentTime() - anim.startTime;
             layer->pauseAnimation(anim.name, offset);
-            break;
-        }
-        default:
             break;
         }
     }
@@ -330,17 +295,13 @@ void LayerTreeHostProxy::swapBuffers()
     m_backingStoresWithPendingBuffers.clear();
 }
 
-void LayerTreeHostProxy::setShouldRenderNextFrame()
-{
-    // The pending tiles state is on its way to the screen, tell the web process to render the next one.
-    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::RenderNextFrame(), m_drawingAreaProxy->page()->pageID());
-}
-
 void LayerTreeHostProxy::flushLayerChanges()
 {
     m_rootLayer->syncCompositingState(FloatRect());
     swapBuffers();
-    MainThreadGuardedInvoker<LayerTreeHostProxy>::call(this, bind(&LayerTreeHostProxy::setShouldRenderNextFrame, this));
+
+    // The pending tiles state is on its way for the screen, tell the web process to render the next one.
+    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::RenderNextFrame(), m_drawingAreaProxy->page()->pageID());
 }
 
 void LayerTreeHostProxy::ensureRootLayer()
@@ -354,13 +315,14 @@ void LayerTreeHostProxy::ensureRootLayer()
 
     // The root layer should not have zero size, or it would be optimized out.
     m_rootLayer->setSize(FloatSize(1.0, 1.0));
+    if (!m_textureMapper)
+        m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
     toTextureMapperLayer(m_rootLayer.get())->setTextureMapper(m_textureMapper.get());
 }
 
 void LayerTreeHostProxy::syncRemoteContent()
 {
     // We enqueue messages and execute them during paint, as they require an active GL context.
-    MutexLocker locker(m_renderQueueMutex);
     ensureRootLayer();
 
     for (size_t i = 0; i < m_renderQueue.size(); ++i)
@@ -371,7 +333,6 @@ void LayerTreeHostProxy::syncRemoteContent()
 
 void LayerTreeHostProxy::dispatchUpdate(const Function<void()>& function)
 {
-    MutexLocker locker(m_renderQueueMutex);
     m_renderQueue.append(function);
     updateViewport();
 }
@@ -396,6 +357,7 @@ void LayerTreeHostProxy::removeTileForLayer(int layerID, int tileID)
     dispatchUpdate(bind(&LayerTreeHostProxy::removeTile, this, layerID, tileID));
 }
 
+
 void LayerTreeHostProxy::deleteCompositingLayer(WebLayerID id)
 {
     dispatchUpdate(bind(&LayerTreeHostProxy::deleteLayer, this, id));
@@ -418,7 +380,6 @@ void LayerTreeHostProxy::didRenderFrame()
 
 void LayerTreeHostProxy::createDirectlyCompositedImage(int64_t key, const WebKit::ShareableBitmap::Handle& handle)
 {
-    // Even though ShareableBitmap is not ThreadSafeRefCounted, we can safely move it to the renderer thread as the main thread will not touch it anymore.
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle);
     dispatchUpdate(bind(&LayerTreeHostProxy::createImage, this, key, bitmap));
 }
@@ -442,8 +403,6 @@ void LayerTreeHostProxy::setVisibleContentsRectForScaling(const IntRect& rect, f
 
 void LayerTreeHostProxy::purgeGLResources()
 {
-    MutexLocker locker(m_renderQueueMutex);
-    m_renderQueue.clear();
     TextureMapperLayer* layer = toTextureMapperLayer(rootLayer());
 
     if (layer)

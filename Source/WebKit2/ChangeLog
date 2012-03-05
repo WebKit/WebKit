@@ -1,3 +1,49 @@
+2012-03-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r109748.
+        http://trac.webkit.org/changeset/109748
+        https://bugs.webkit.org/show_bug.cgi?id=80296
+
+        Made some tests crash, will fix and recommit (Requested by
+        noamr on #webkit).
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::paintToCurrentGLContext):
+        (PageProxyNode::PageProxyNode):
+        (PageProxyNode):
+        (PageProxyNode::changedStates):
+        (PageProxyNode::render):
+        (PageProxyNode::~PageProxyNode):
+        (QQuickWebPage::updatePaintNode):
+        (QQuickWebPagePrivate::updateSize):
+        (QQuickWebPagePrivate::resetPaintNode):
+        (QQuickWebPagePrivate::~QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (QQuickWebPagePrivate):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit):
+        (WebKit::DrawingAreaProxy::layerTreeHostProxy):
+        (DrawingAreaProxy):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::syncAnimations):
+        (WebKit::LayerTreeHostProxy::updateViewport):
+        (WebKit::LayerTreeHostProxy::syncLayerParameters):
+        (WebKit::LayerTreeHostProxy::flushLayerChanges):
+        (WebKit::LayerTreeHostProxy::ensureRootLayer):
+        (WebKit::LayerTreeHostProxy::syncRemoteContent):
+        (WebKit::LayerTreeHostProxy::dispatchUpdate):
+        (WebKit):
+        (WebKit::LayerTreeHostProxy::createDirectlyCompositedImage):
+        (WebKit::LayerTreeHostProxy::purgeGLResources):
+        * UIProcess/qt/QtWebPageSGNode.cpp: Removed.
+        * UIProcess/qt/QtWebPageSGNode.h: Removed.
+
 2012-03-05  Joone Hur  <joone.hur@collabora.co.uk>
 
         [GTK] zlib link error with --enable-webkit2

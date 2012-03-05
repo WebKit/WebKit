@@ -61,7 +61,7 @@ DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
 #if USE(UI_SIDE_COMPOSITING)
     // Construct the proxy early to allow messages to be sent to the web process while AC is entered there.
     if (webPageProxy->pageGroup()->preferences()->forceCompositingMode())
-        m_layerTreeHostProxy = LayerTreeHostProxy::create(this);
+        m_layerTreeHostProxy = adoptPtr(new LayerTreeHostProxy(this));
 #endif
 }
 
@@ -337,7 +337,7 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContex
     m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
 #if USE(UI_SIDE_COMPOSITING)
     if (!m_layerTreeHostProxy)
-        m_layerTreeHostProxy = LayerTreeHostProxy::create(this);
+        m_layerTreeHostProxy = adoptPtr(new LayerTreeHostProxy(this));
 #endif
 }
 

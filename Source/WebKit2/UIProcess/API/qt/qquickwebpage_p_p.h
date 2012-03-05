@@ -21,7 +21,6 @@
 #ifndef qquickwebpage_p_p_h
 #define qquickwebpage_p_p_h
 
-#include "QtWebPageSGNode.h"
 #include "qquickwebpage_p.h"
 #include <QTransform>
 
@@ -32,16 +31,17 @@ class QtViewportInteractionEngine;
 
 class QtWebPageEventHandler;
 
-class QQuickWebPagePrivate : public QtWebPageSGNode::Client {
+class QQuickWebPagePrivate {
 public:
     QQuickWebPagePrivate(QQuickWebPage* q, QQuickWebView* viewportItem);
     ~QQuickWebPagePrivate();
-    virtual void willDeleteScenegraphNode();
 
     void initialize(WebKit::WebPageProxy*);
     void setDrawingAreaSize(const QSize&);
 
     void updateSize();
+
+    void paintToCurrentGLContext(const QTransform&, float opacity);
     void paint(QPainter*);
     void resetPaintNode();
 
@@ -50,8 +50,7 @@ public:
     QQuickWebView* const viewportItem;
     WebKit::WebPageProxy* webPageProxy;
     bool paintingIsInitialized;
-    QtWebPageSGNode* m_paintNode;
-    Mutex m_paintNodeMutex;
+    QSGNode* m_paintNode;
 
     QSizeF contentsSize;
     qreal contentsScale;
