@@ -97,8 +97,6 @@ public:
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantDrawsContent();
 
-    void cleanupResources();
-
     void setAnchorPoint(const FloatPoint&);
     const FloatPoint& anchorPoint() const { return m_anchorPoint; }
 

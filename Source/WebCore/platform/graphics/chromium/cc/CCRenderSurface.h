@@ -55,7 +55,7 @@ public:
 
     bool prepareContentsTexture(LayerRendererChromium*);
     void releaseContentsTexture();
-    void cleanupResources();
+
     void draw(LayerRendererChromium*, const FloatRect& surfaceDamageRect);
 
     String name() const;

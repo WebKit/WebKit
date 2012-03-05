@@ -194,12 +194,6 @@ void CCLayerImpl::scrollBy(const IntSize& scroll)
     noteLayerPropertyChangedForSubtree();
 }
 
-void CCLayerImpl::cleanupResources()
-{
-    if (renderSurface())
-        renderSurface()->cleanupResources();
-}
-
 const IntRect CCLayerImpl::getDrawRect() const
 {
     // Form the matrix used by the shader to map the corners of the layer's

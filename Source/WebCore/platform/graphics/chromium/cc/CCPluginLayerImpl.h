@@ -61,8 +61,6 @@ private:
 
     virtual const char* layerTypeAsString() const { return "PluginLayer"; }
 
-    void cleanupResources();
-
     unsigned m_textureId;
     bool m_flipped;
     FloatRect m_uvRect;

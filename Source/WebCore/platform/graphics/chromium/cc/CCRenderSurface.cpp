@@ -58,15 +58,6 @@ CCRenderSurface::CCRenderSurface(CCLayerImpl* owningLayer)
 
 CCRenderSurface::~CCRenderSurface()
 {
-    cleanupResources();
-}
-
-void CCRenderSurface::cleanupResources()
-{
-    if (!m_contentsTexture)
-        return;
-
-    m_contentsTexture.clear();
 }
 
 FloatRect CCRenderSurface::drawableContentRect() const

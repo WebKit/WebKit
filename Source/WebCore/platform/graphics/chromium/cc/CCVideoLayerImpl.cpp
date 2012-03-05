@@ -89,7 +89,6 @@ CCVideoLayerImpl::~CCVideoLayerImpl()
     }
     for (unsigned i = 0; i < MaxPlanes; ++i)
         m_textures[i].m_texture.clear();
-    cleanupResources();
 }
 
 void CCVideoLayerImpl::stopUsingProvider()
