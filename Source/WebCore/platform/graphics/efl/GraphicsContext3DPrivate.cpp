@@ -336,14 +336,68 @@ void GraphicsContext3DPrivate::generateMipmap(GC3Denum target)
 
 bool GraphicsContext3DPrivate::getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo& info)
 {
-    notImplemented();
-    return false;
+    if (!program) {
+        synthesizeGLError(GL_INVALID_VALUE);
+        return false;
+    }
+
+    makeContextCurrent();
+
+    GLint maxNameLength = 0;
+    m_api->glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxNameLength);
+    if (!maxNameLength)
+        return false;
+
+    OwnArrayPtr<char> name = adoptArrayPtr(new char[maxNameLength]);
+    if (!name) {
+        synthesizeGLError(GL_OUT_OF_MEMORY);
+        return false;
+    }
+
+    GLsizei length = 0;
+    GLint size = 0;
+    GLenum type = 0;
+    m_api->glGetActiveAttrib(program, index, maxNameLength, &length, &size, &type, name.get());
+    if (!length)
+        return false;
+
+    info.name = String::fromUTF8(name.get(), length);
+    info.type = type;
+    info.size = size;
+    return true;
 }
 
 bool GraphicsContext3DPrivate::getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo& info)
 {
-    notImplemented();
-    return false;
+    if (!program) {
+        synthesizeGLError(GL_INVALID_VALUE);
+        return false;
+    }
+
+    makeContextCurrent();
+
+    GLint maxNameLength = 0;
+    m_api->glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxNameLength);
+    if (!maxNameLength)
+        return false;
+
+    OwnArrayPtr<char> name = adoptArrayPtr(new char[maxNameLength]);
+    if (!name) {
+        synthesizeGLError(GL_OUT_OF_MEMORY);
+        return false;
+    }
+
+    GLsizei length = 0;
+    GLint size = 0;
+    GLenum type = 0;
+    m_api->glGetActiveUniform(program, index, maxNameLength, &length, &size, &type, name.get());
+    if (!length)
+        return false;
+
+    info.name = String::fromUTF8(name.get(), length);
+    info.type = type;
+    info.size = size;
+    return true;
 }
 
 void GraphicsContext3DPrivate::getAttachedShaders(Platform3DObject program, GC3Dsizei maxCount, GC3Dsizei* count, Platform3DObject* shaders)
@@ -377,8 +431,14 @@ GraphicsContext3D::Attributes GraphicsContext3DPrivate::getContextAttributes()
 
 GC3Denum GraphicsContext3DPrivate::getError()
 {
-    notImplemented();
-    return 0;
+    if (!m_syntheticErrors.isEmpty()) {
+        GC3Denum error = m_syntheticErrors.first();
+        m_syntheticErrors.remove(m_syntheticErrors.begin());
+        return error;
+    }
+
+    makeContextCurrent();
+    return m_api->glGetError();
 }
 
 void GraphicsContext3DPrivate::getFloatv(GC3Denum paramName, GC3Dfloat* value)
@@ -395,7 +455,8 @@ void GraphicsContext3DPrivate::getFramebufferAttachmentParameteriv(GC3Denum targ
 
 void GraphicsContext3DPrivate::getIntegerv(GC3Denum paramName, GC3Dint* value)
 {
-    notImplemented();
+    makeContextCurrent();
+    m_api->glGetIntegerv(paramName, value);
 }
 
 void GraphicsContext3DPrivate::getProgramiv(Platform3DObject program, GC3Denum paramName, GC3Dint* value)
@@ -406,8 +467,23 @@ void GraphicsContext3DPrivate::getProgramiv(Platform3DObject program, GC3Denum p
 
 String GraphicsContext3DPrivate::getProgramInfoLog(Platform3DObject program)
 {
-    notImplemented();
-    return String();
+    makeContextCurrent();
+
+    GLint logLength = 0;
+    m_api->glGetProgramiv(program, GraphicsContext3D::INFO_LOG_LENGTH, &logLength);
+    if (!logLength)
+        return String();
+
+    OwnArrayPtr<char> log = adoptArrayPtr(new char[logLength]);
+    if (!log)
+        return String();
+
+    GLint returnedLogLength = 0;
+    m_api->glGetProgramInfoLog(program, logLength, &returnedLogLength, log.get());
+    ASSERT(logLength == returnedLogLength + 1);
+
+    String result = String::fromUTF8(log.get(), returnedLogLength);
+    return result;
 }
 
 void GraphicsContext3DPrivate::getRenderbufferParameteriv(GC3Denum target, GC3Denum paramName, GC3Dint* value)
@@ -424,14 +500,44 @@ void GraphicsContext3DPrivate::getShaderiv(Platform3DObject shader, GC3Denum par
 
 String GraphicsContext3DPrivate::getShaderInfoLog(Platform3DObject shader)
 {
-    notImplemented();
-    return String();
+    makeContextCurrent();
+
+    GLint logLength = 0;
+    m_api->glGetShaderiv(shader, GraphicsContext3D::INFO_LOG_LENGTH, &logLength);
+    if (logLength <= 1)
+        return String();
+
+    OwnArrayPtr<char> log = adoptArrayPtr(new char[logLength]);
+    if (!log)
+        return String();
+
+    GLint returnedLogLength = 0;
+    m_api->glGetShaderInfoLog(shader, logLength, &returnedLogLength, log.get());
+    ASSERT(logLength == returnedLogLength + 1);
+
+    String result = String::fromUTF8(log.get(), returnedLogLength);
+    return result;
 }
 
 String GraphicsContext3DPrivate::getShaderSource(Platform3DObject shader)
 {
-    notImplemented();
-    return String();
+    makeContextCurrent();
+
+    GLint logLength = 0;
+    m_api->glGetShaderiv(shader, GL_SHADER_SOURCE_LENGTH, &logLength);
+    if (logLength <= 1)
+        return String();
+
+    OwnArrayPtr<char> log = adoptArrayPtr(new char[logLength]);
+    if (!log)
+        return String();
+
+    GLint returnedLogLength = 0;
+    m_api->glGetShaderSource(shader, logLength, &returnedLogLength, log.get());
+    ASSERT(logLength == returnedLogLength + 1);
+
+    String result = String::fromUTF8(log.get(), returnedLogLength);
+    return result;
 }
 
 String GraphicsContext3DPrivate::getString(GC3Denum name)
