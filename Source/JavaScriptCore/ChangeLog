@@ -1,3 +1,40 @@
+2012-03-05  Andy Wingo  <wingo@igalia.com>
+
+        Lexer: Specialize character predicates for LChar, UChar
+        https://bugs.webkit.org/show_bug.cgi?id=79677
+
+        Reviewed by Oliver Hunt.
+
+        This patch specializes isIdentStart, isIdentPart, isWhiteSpace,
+        and isLineTerminator to perform a more limited number of checks if
+        the lexer is being instantiated to work on LChar sequences.  This
+        is about a 1.5% win on the --parse-only suite, here.
+
+        * parser/Lexer.cpp:
+        (JSC::isLatin1): New static helper, specialized for LChar and
+        UChar.
+        (JSC::typesOfLatin1Characters): Rename from
+        typesOfASCIICharacters, and expand to the range of the LChar
+        type.  All uses of isASCII are changed to use isLatin1.  Generated
+        using libunistring.
+        (JSC::isNonLatin1IdentStart):
+        (JSC::isIdentStart):
+        (JSC::isNonLatin1IdentPart):
+        (JSC::isIdentPart):
+        (JSC::Lexer::shiftLineTerminator):
+        (JSC::Lexer::parseIdentifier):
+        (JSC::Lexer::parseIdentifierSlowCase):
+        (JSC::Lexer::parseStringSlowCase):
+        (JSC::Lexer::parseMultilineComment):
+        (JSC::Lexer::lex):
+        (JSC::Lexer::scanRegExp):
+        (JSC::Lexer::skipRegExp): Sprinkle static_cast<T>(_) around.
+        * parser/Lexer.h:
+        (JSC::Lexer::isWhiteSpace):
+        (JSC::Lexer::isLineTerminator):
+        * KeywordLookupGenerator.py:
+        (Trie.printAsC): Declare specialized isIdentPart static functions.
+
 2012-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

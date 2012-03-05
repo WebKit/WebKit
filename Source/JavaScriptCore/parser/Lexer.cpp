@@ -95,8 +95,8 @@ enum CharacterType {
     CharacterWhiteSpace,
 };
 
-// 128 ASCII codes
-static const unsigned short typesOfASCIICharacters[128] = {
+// 256 Latin-1 codes
+static const unsigned short typesOfLatin1Characters[256] = {
 /*   0 - Null               */ CharacterInvalid,
 /*   1 - Start of Heading   */ CharacterInvalid,
 /*   2 - Start of Text      */ CharacterInvalid,
@@ -225,6 +225,134 @@ static const unsigned short typesOfASCIICharacters[128] = {
 /* 125 - }                  */ CharacterCloseBrace,
 /* 126 - ~                  */ CharacterTilde,
 /* 127 - Delete             */ CharacterInvalid,
+/* 128 - Cc category        */ CharacterInvalid,
+/* 129 - Cc category        */ CharacterInvalid,
+/* 130 - Cc category        */ CharacterInvalid,
+/* 131 - Cc category        */ CharacterInvalid,
+/* 132 - Cc category        */ CharacterInvalid,
+/* 133 - Cc category        */ CharacterInvalid,
+/* 134 - Cc category        */ CharacterInvalid,
+/* 135 - Cc category        */ CharacterInvalid,
+/* 136 - Cc category        */ CharacterInvalid,
+/* 137 - Cc category        */ CharacterInvalid,
+/* 138 - Cc category        */ CharacterInvalid,
+/* 139 - Cc category        */ CharacterInvalid,
+/* 140 - Cc category        */ CharacterInvalid,
+/* 141 - Cc category        */ CharacterInvalid,
+/* 142 - Cc category        */ CharacterInvalid,
+/* 143 - Cc category        */ CharacterInvalid,
+/* 144 - Cc category        */ CharacterInvalid,
+/* 145 - Cc category        */ CharacterInvalid,
+/* 146 - Cc category        */ CharacterInvalid,
+/* 147 - Cc category        */ CharacterInvalid,
+/* 148 - Cc category        */ CharacterInvalid,
+/* 149 - Cc category        */ CharacterInvalid,
+/* 150 - Cc category        */ CharacterInvalid,
+/* 151 - Cc category        */ CharacterInvalid,
+/* 152 - Cc category        */ CharacterInvalid,
+/* 153 - Cc category        */ CharacterInvalid,
+/* 154 - Cc category        */ CharacterInvalid,
+/* 155 - Cc category        */ CharacterInvalid,
+/* 156 - Cc category        */ CharacterInvalid,
+/* 157 - Cc category        */ CharacterInvalid,
+/* 158 - Cc category        */ CharacterInvalid,
+/* 159 - Cc category        */ CharacterInvalid,
+/* 160 - Zs category (nbsp) */ CharacterWhiteSpace,
+/* 161 - Po category        */ CharacterInvalid,
+/* 162 - Sc category        */ CharacterInvalid,
+/* 163 - Sc category        */ CharacterInvalid,
+/* 164 - Sc category        */ CharacterInvalid,
+/* 165 - Sc category        */ CharacterInvalid,
+/* 166 - So category        */ CharacterInvalid,
+/* 167 - So category        */ CharacterInvalid,
+/* 168 - Sk category        */ CharacterInvalid,
+/* 169 - So category        */ CharacterInvalid,
+/* 170 - Ll category        */ CharacterIdentifierStart,
+/* 171 - Pi category        */ CharacterInvalid,
+/* 172 - Sm category        */ CharacterInvalid,
+/* 173 - Cf category        */ CharacterInvalid,
+/* 174 - So category        */ CharacterInvalid,
+/* 175 - Sk category        */ CharacterInvalid,
+/* 176 - So category        */ CharacterInvalid,
+/* 177 - Sm category        */ CharacterInvalid,
+/* 178 - No category        */ CharacterInvalid,
+/* 179 - No category        */ CharacterInvalid,
+/* 180 - Sk category        */ CharacterInvalid,
+/* 181 - Ll category        */ CharacterIdentifierStart,
+/* 182 - So category        */ CharacterInvalid,
+/* 183 - Po category        */ CharacterInvalid,
+/* 184 - Sk category        */ CharacterInvalid,
+/* 185 - No category        */ CharacterInvalid,
+/* 186 - Ll category        */ CharacterIdentifierStart,
+/* 187 - Pf category        */ CharacterInvalid,
+/* 188 - No category        */ CharacterInvalid,
+/* 189 - No category        */ CharacterInvalid,
+/* 190 - No category        */ CharacterInvalid,
+/* 191 - Po category        */ CharacterInvalid,
+/* 192 - Lu category        */ CharacterIdentifierStart,
+/* 193 - Lu category        */ CharacterIdentifierStart,
+/* 194 - Lu category        */ CharacterIdentifierStart,
+/* 195 - Lu category        */ CharacterIdentifierStart,
+/* 196 - Lu category        */ CharacterIdentifierStart,
+/* 197 - Lu category        */ CharacterIdentifierStart,
+/* 198 - Lu category        */ CharacterIdentifierStart,
+/* 199 - Lu category        */ CharacterIdentifierStart,
+/* 200 - Lu category        */ CharacterIdentifierStart,
+/* 201 - Lu category        */ CharacterIdentifierStart,
+/* 202 - Lu category        */ CharacterIdentifierStart,
+/* 203 - Lu category        */ CharacterIdentifierStart,
+/* 204 - Lu category        */ CharacterIdentifierStart,
+/* 205 - Lu category        */ CharacterIdentifierStart,
+/* 206 - Lu category        */ CharacterIdentifierStart,
+/* 207 - Lu category        */ CharacterIdentifierStart,
+/* 208 - Lu category        */ CharacterIdentifierStart,
+/* 209 - Lu category        */ CharacterIdentifierStart,
+/* 210 - Lu category        */ CharacterIdentifierStart,
+/* 211 - Lu category        */ CharacterIdentifierStart,
+/* 212 - Lu category        */ CharacterIdentifierStart,
+/* 213 - Lu category        */ CharacterIdentifierStart,
+/* 214 - Lu category        */ CharacterIdentifierStart,
+/* 215 - Sm category        */ CharacterInvalid,
+/* 216 - Lu category        */ CharacterIdentifierStart,
+/* 217 - Lu category        */ CharacterIdentifierStart,
+/* 218 - Lu category        */ CharacterIdentifierStart,
+/* 219 - Lu category        */ CharacterIdentifierStart,
+/* 220 - Lu category        */ CharacterIdentifierStart,
+/* 221 - Lu category        */ CharacterIdentifierStart,
+/* 222 - Lu category        */ CharacterIdentifierStart,
+/* 223 - Ll category        */ CharacterIdentifierStart,
+/* 224 - Ll category        */ CharacterIdentifierStart,
+/* 225 - Ll category        */ CharacterIdentifierStart,
+/* 226 - Ll category        */ CharacterIdentifierStart,
+/* 227 - Ll category        */ CharacterIdentifierStart,
+/* 228 - Ll category        */ CharacterIdentifierStart,
+/* 229 - Ll category        */ CharacterIdentifierStart,
+/* 230 - Ll category        */ CharacterIdentifierStart,
+/* 231 - Ll category        */ CharacterIdentifierStart,
+/* 232 - Ll category        */ CharacterIdentifierStart,
+/* 233 - Ll category        */ CharacterIdentifierStart,
+/* 234 - Ll category        */ CharacterIdentifierStart,
+/* 235 - Ll category        */ CharacterIdentifierStart,
+/* 236 - Ll category        */ CharacterIdentifierStart,
+/* 237 - Ll category        */ CharacterIdentifierStart,
+/* 238 - Ll category        */ CharacterIdentifierStart,
+/* 239 - Ll category        */ CharacterIdentifierStart,
+/* 240 - Ll category        */ CharacterIdentifierStart,
+/* 241 - Ll category        */ CharacterIdentifierStart,
+/* 242 - Ll category        */ CharacterIdentifierStart,
+/* 243 - Ll category        */ CharacterIdentifierStart,
+/* 244 - Ll category        */ CharacterIdentifierStart,
+/* 245 - Ll category        */ CharacterIdentifierStart,
+/* 246 - Ll category        */ CharacterIdentifierStart,
+/* 247 - Sm category        */ CharacterInvalid,
+/* 248 - Ll category        */ CharacterIdentifierStart,
+/* 249 - Ll category        */ CharacterIdentifierStart,
+/* 250 - Ll category        */ CharacterIdentifierStart,
+/* 251 - Ll category        */ CharacterIdentifierStart,
+/* 252 - Ll category        */ CharacterIdentifierStart,
+/* 253 - Ll category        */ CharacterIdentifierStart,
+/* 254 - Ll category        */ CharacterIdentifierStart,
+/* 255 - Ll category        */ CharacterIdentifierStart
 };
 
 template <typename T>
@@ -350,7 +478,7 @@ int Lexer<T>::getUnicodeCharacter()
 template <typename T>
 void Lexer<T>::shiftLineTerminator()
 {
-    ASSERT(isLineTerminator(m_current));
+    ASSERT(isLineTerminator(static_cast<T>(m_current)));
 
     int m_prev = m_current;
     shift();
@@ -368,28 +496,48 @@ ALWAYS_INLINE bool Lexer<T>::lastTokenWasRestrKeyword() const
     return m_lastToken == CONTINUE || m_lastToken == BREAK || m_lastToken == RETURN || m_lastToken == THROW;
 }
 
-static NEVER_INLINE bool isNonASCIIIdentStart(int c)
+static NEVER_INLINE bool isNonLatin1IdentStart(int c)
 {
     return category(c) & (Letter_Uppercase | Letter_Lowercase | Letter_Titlecase | Letter_Modifier | Letter_Other);
 }
 
-static inline bool isIdentStart(int c)
+static ALWAYS_INLINE bool isLatin1(LChar)
 {
-    return isASCII(c) ? typesOfASCIICharacters[c] == CharacterIdentifierStart : isNonASCIIIdentStart(c);
+    return true;
 }
 
-static NEVER_INLINE bool isNonASCIIIdentPart(int c)
+static ALWAYS_INLINE bool isLatin1(UChar c)
+{
+    return c < 256;
+}
+
+static inline bool isIdentStart(LChar c)
+{
+    return typesOfLatin1Characters[c] == CharacterIdentifierStart;
+}
+
+static inline bool isIdentStart(UChar c)
+{
+    return isLatin1(c) ? isIdentStart(static_cast<LChar>(c)) : isNonLatin1IdentStart(c);
+}
+
+static NEVER_INLINE bool isNonLatin1IdentPart(int c)
 {
     return (category(c) & (Letter_Uppercase | Letter_Lowercase | Letter_Titlecase | Letter_Modifier | Letter_Other
         | Mark_NonSpacing | Mark_SpacingCombining | Number_DecimalDigit | Punctuation_Connector)) || c == 0x200C || c == 0x200D;
 }
 
-static ALWAYS_INLINE bool isIdentPart(int c)
+static ALWAYS_INLINE bool isIdentPart(LChar c)
 {
     // Character types are divided into two groups depending on whether they can be part of an
     // identifier or not. Those whose type value is less or equal than CharacterNumber can be
     // part of an identifier. (See the CharacterType definition for more details.)
-    return isASCII(c) ? typesOfASCIICharacters[c] <= CharacterNumber : isNonASCIIIdentPart(c);
+    return typesOfLatin1Characters[c] <= CharacterNumber;
+}
+
+static ALWAYS_INLINE bool isIdentPart(UChar c)
+{
+    return isLatin1(c) ? isIdentPart(static_cast<LChar>(c)) : isNonLatin1IdentPart(c);
 }
 
 static inline int singleEscape(int c)
@@ -499,7 +647,7 @@ template <>
 
     const LChar* identifierStart = currentCharacter();
     
-    while (isIdentPart(m_current))
+    while (m_current != -1 && isIdentPart(static_cast<LChar>(m_current)))
         shift();
     
     if (UNLIKELY(m_current == '\\')) {
@@ -550,7 +698,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer<UChar>::p
 
     UChar orAllChars = 0;
     
-    while (isIdentPart(m_current)) {
+    while (m_current != -1 && isIdentPart(static_cast<UChar>(m_current))) {
         orAllChars |= m_current;
         shift();
     }
@@ -604,7 +752,7 @@ template <bool shouldCreateIdentifier> JSTokenType Lexer<T>::parseIdentifierSlow
     bool bufferRequired = false;
 
     while (true) {
-        if (LIKELY(isIdentPart(m_current))) {
+        if (LIKELY(m_current != -1 && isIdentPart(static_cast<T>(m_current)))) {
             shift();
             continue;
         }
@@ -622,10 +770,11 @@ template <bool shouldCreateIdentifier> JSTokenType Lexer<T>::parseIdentifierSlow
         int character = getUnicodeCharacter();
         if (UNLIKELY(character == -1))
             return ERRORTOK;
-        if (UNLIKELY(m_buffer16.size() ? !isIdentPart(character) : !isIdentStart(character)))
+        UChar ucharacter = static_cast<UChar>(character);
+        if (UNLIKELY(m_buffer16.size() ? !isIdentPart(ucharacter) : !isIdentStart(ucharacter)))
             return ERRORTOK;
         if (shouldCreateIdentifier)
-            record16(character);
+            record16(ucharacter);
         identifierStart = currentCharacter();
     }
 
@@ -753,7 +902,7 @@ template <bool shouldBuildStrings> bool Lexer<T>::parseStringSlowCase(JSTokenDat
                 if (shouldBuildStrings)
                     record16(escape);
                 shift();
-            } else if (UNLIKELY(isLineTerminator(m_current)))
+            } else if (UNLIKELY(isLineTerminator(static_cast<T>(m_current))))
                 shiftLineTerminator();
             else if (m_current == 'x') {
                 shift();
@@ -826,7 +975,7 @@ template <bool shouldBuildStrings> bool Lexer<T>::parseStringSlowCase(JSTokenDat
         // as possible, and lets through all common ASCII characters.
         if (UNLIKELY(((static_cast<unsigned>(m_current) - 0xE) & 0x2000))) {
             // New-line or end of input is not allowed
-            if (UNLIKELY(isLineTerminator(m_current)) || UNLIKELY(m_current == -1)) {
+            if (UNLIKELY(m_current == -1) || UNLIKELY(isLineTerminator(static_cast<T>(m_current)))) {
                 m_lexErrorMessage = "Unexpected EOF";
                 return false;
             }
@@ -1006,7 +1155,7 @@ ALWAYS_INLINE bool Lexer<T>::parseMultilineComment()
         if (UNLIKELY(m_current == -1))
             return false;
 
-        if (isLineTerminator(m_current)) {
+        if (isLineTerminator(static_cast<T>(m_current))) {
             shiftLineTerminator();
             m_terminator = true;
         } else
@@ -1035,7 +1184,7 @@ JSTokenType Lexer<T>::lex(JSTokenData* tokenData, JSTokenInfo* tokenInfo, unsign
     m_terminator = false;
 
 start:
-    while (isWhiteSpace(m_current))
+    while (m_current != -1 && isWhiteSpace(static_cast<T>(m_current)))
         shift();
 
     int startOffset = currentOffset();
@@ -1046,11 +1195,11 @@ start:
     m_delimited = false;
 
     CharacterType type;
-    if (LIKELY(isASCII(m_current)))
-        type = static_cast<CharacterType>(typesOfASCIICharacters[m_current]);
-    else if (isNonASCIIIdentStart(m_current))
+    if (LIKELY(isLatin1(static_cast<T>(m_current))))
+        type = static_cast<CharacterType>(typesOfLatin1Characters[m_current]);
+    else if (isNonLatin1IdentStart(m_current))
         type = CharacterIdentifierStart;
-    else if (isLineTerminator(m_current))
+    else if (isLineTerminator(static_cast<T>(m_current)))
         type = CharacterLineTerminator;
     else
         type = CharacterInvalid;
@@ -1337,7 +1486,7 @@ inNumberAfterDecimalPoint:
         }
 
         // No identifiers allowed directly after numeric literal, e.g. "3in" is bad.
-        if (UNLIKELY(isIdentStart(m_current))) {
+        if (UNLIKELY(m_current != -1 && isIdentStart(static_cast<T>(m_current)))) {
             m_lexErrorMessage = "At least one digit must occur after a decimal point";
             goto returnError;
         }
@@ -1357,7 +1506,7 @@ inNumberAfterDecimalPoint:
         token = STRING;
         break;
     case CharacterIdentifierStart:
-        ASSERT(isIdentStart(m_current));
+        ASSERT(isIdentStart(static_cast<T>(m_current)));
         // Fall through into CharacterBackSlash.
     case CharacterBackSlash:
         if (lexerFlags & LexexFlagsDontBuildKeywords)
@@ -1366,7 +1515,7 @@ inNumberAfterDecimalPoint:
             token = parseIdentifier<true>(tokenData, lexerFlags, strictMode);
         break;
     case CharacterLineTerminator:
-        ASSERT(isLineTerminator(m_current));
+        ASSERT(isLineTerminator(static_cast<T>(m_current)));
         shiftLineTerminator();
         m_atLineStart = true;
         m_terminator = true;
@@ -1384,7 +1533,7 @@ inNumberAfterDecimalPoint:
     goto returnToken;
 
 inSingleLineComment:
-    while (!isLineTerminator(m_current)) {
+    while (!isLineTerminator(static_cast<T>(m_current))) {
         if (UNLIKELY(m_current == -1))
             return EOFTOK;
         shift();
@@ -1432,7 +1581,7 @@ bool Lexer<T>::scanRegExp(const Identifier*& pattern, const Identifier*& flags, 
     while (true) {
         int current = m_current;
 
-        if (isLineTerminator(current) || current == -1) {
+        if (isLineTerminator(static_cast<T>(current)) || current == -1) {
             m_buffer16.resize(0);
             return false;
         }
@@ -1465,7 +1614,7 @@ bool Lexer<T>::scanRegExp(const Identifier*& pattern, const Identifier*& flags, 
     pattern = makeIdentifier(m_buffer16.data(), m_buffer16.size());
     m_buffer16.resize(0);
 
-    while (isIdentPart(m_current)) {
+    while (m_current != -1 && isIdentPart(static_cast<T>(m_current))) {
         record16(m_current);
         shift();
     }
@@ -1485,7 +1634,7 @@ bool Lexer<T>::skipRegExp()
     while (true) {
         int current = m_current;
 
-        if (isLineTerminator(current) || current == -1)
+        if (isLineTerminator(static_cast<T>(current)) || current == -1)
             return false;
 
         shift();
@@ -1511,7 +1660,7 @@ bool Lexer<T>::skipRegExp()
         }
     }
 
-    while (isIdentPart(m_current))
+    while (m_current != -1 && isIdentPart(static_cast<T>(m_current)))
         shift();
 
     return true;

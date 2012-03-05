@@ -79,8 +79,8 @@ public:
     ~Lexer();
 
     // Character manipulation functions.
-    static bool isWhiteSpace(int character);
-    static bool isLineTerminator(int character);
+    static bool isWhiteSpace(T character);
+    static bool isLineTerminator(T character);
     static unsigned char convertHex(int c1, int c2);
     static UChar convertUnicode(int c1, int c2, int c3, int c4);
 
@@ -191,14 +191,26 @@ private:
     JSGlobalData* m_globalData;
 };
 
-template <typename T>
-ALWAYS_INLINE bool Lexer<T>::isWhiteSpace(int ch)
+template <>
+ALWAYS_INLINE bool Lexer<LChar>::isWhiteSpace(LChar ch)
 {
-    return isASCII(ch) ? (ch == ' ' || ch == '\t' || ch == 0xB || ch == 0xC) : (WTF::Unicode::isSeparatorSpace(ch) || ch == 0xFEFF);
+    return ch == ' ' || ch == '\t' || ch == 0xB || ch == 0xC || ch == 0xA0;
 }
 
-template <typename T>
-ALWAYS_INLINE bool Lexer<T>::isLineTerminator(int ch)
+template <>
+ALWAYS_INLINE bool Lexer<UChar>::isWhiteSpace(UChar ch)
+{
+    return (ch < 256) ? Lexer<LChar>::isWhiteSpace(static_cast<LChar>(ch)) : (WTF::Unicode::isSeparatorSpace(ch) || ch == 0xFEFF);
+}
+
+template <>
+ALWAYS_INLINE bool Lexer<LChar>::isLineTerminator(LChar ch)
+{
+    return ch == '\r' || ch == '\n';
+}
+
+template <>
+ALWAYS_INLINE bool Lexer<UChar>::isLineTerminator(UChar ch)
 {
     return ch == '\r' || ch == '\n' || (ch & ~1) == 0x2028;
 }
