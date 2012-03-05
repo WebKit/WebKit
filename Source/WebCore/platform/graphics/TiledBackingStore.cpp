@@ -38,8 +38,8 @@ static IntPoint innerBottomRight(const IntRect& rect)
 TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, PassOwnPtr<TiledBackingStoreBackend> backend)
     : m_client(client)
     , m_backend(backend)
-    , m_tileBufferUpdateTimer(new TileTimer(this, &TiledBackingStore::tileBufferUpdateTimerFired))
-    , m_tileCreationTimer(new TileTimer(this, &TiledBackingStore::tileCreationTimerFired))
+    , m_tileBufferUpdateTimer(this, &TiledBackingStore::tileBufferUpdateTimerFired)
+    , m_tileCreationTimer(this, &TiledBackingStore::tileCreationTimerFired)
     , m_tileSize(defaultTileDimension, defaultTileDimension)
     , m_tileCreationDelay(0.01)
     , m_coverAreaMultiplier(2.0f)
@@ -52,8 +52,6 @@ TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, PassOwnPtr
 
 TiledBackingStore::~TiledBackingStore()
 {
-    delete m_tileBufferUpdateTimer;
-    delete m_tileCreationTimer;
 }
 
 void TiledBackingStore::setTileSize(const IntSize& size)
@@ -296,7 +294,7 @@ void TiledBackingStore::createTiles()
 
     // Re-call createTiles on a timer to cover the visible area with the newest shortest distance.
     if (requiredTileCount)
-        m_tileCreationTimer->startOneShot(m_tileCreationDelay);
+        m_tileCreationTimer.startOneShot(m_tileCreationDelay);
 }
 
 void TiledBackingStore::adjustForContentsRect(IntRect& rect) const
@@ -472,9 +470,9 @@ Tile::Coordinate TiledBackingStore::tileCoordinateForPoint(const IntPoint& point
 
 void TiledBackingStore::startTileBufferUpdateTimer()
 {
-    if (m_tileBufferUpdateTimer->isActive() || !m_client->tiledBackingStoreUpdatesAllowed() || m_contentsFrozen)
+    if (m_tileBufferUpdateTimer.isActive() || !m_client->tiledBackingStoreUpdatesAllowed() || m_contentsFrozen)
         return;
-    m_tileBufferUpdateTimer->startOneShot(0);
+    m_tileBufferUpdateTimer.startOneShot(0);
 }
 
 void TiledBackingStore::tileBufferUpdateTimerFired(TileTimer*)
@@ -484,9 +482,9 @@ void TiledBackingStore::tileBufferUpdateTimerFired(TileTimer*)
 
 void TiledBackingStore::startTileCreationTimer()
 {
-    if (m_tileCreationTimer->isActive() || m_contentsFrozen)
+    if (m_tileCreationTimer.isActive() || m_contentsFrozen)
         return;
-    m_tileCreationTimer->startOneShot(0);
+    m_tileCreationTimer.startOneShot(0);
 }
 
 void TiledBackingStore::tileCreationTimerFired(TileTimer*)

@@ -113,8 +113,8 @@ private:
     typedef HashMap<Tile::Coordinate, RefPtr<Tile> > TileMap;
     TileMap m_tiles;
 
-    TileTimer* m_tileBufferUpdateTimer;
-    TileTimer* m_tileCreationTimer;
+    TileTimer m_tileBufferUpdateTimer;
+    TileTimer m_tileCreationTimer;
 
     IntSize m_tileSize;
     double m_tileCreationDelay;
