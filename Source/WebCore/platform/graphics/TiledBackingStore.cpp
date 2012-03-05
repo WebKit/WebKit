@@ -260,6 +260,9 @@ void TiledBackingStore::createTiles()
     Vector<Tile::Coordinate> tilesToCreate;
     unsigned requiredTileCount = 0;
 
+    // Cover areas (in tiles) with minimum distance from the visible rect. If the visible rect is
+    // not covered already it will be covered first in one go, due to the distance being 0 for tiles
+    // inside the visible rect.
     Tile::Coordinate topLeft = tileCoordinateForPoint(coverRect.location());
     Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(coverRect));
     for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
@@ -268,7 +271,6 @@ void TiledBackingStore::createTiles()
             if (tileAt(currentCoordinate))
                 continue;
             ++requiredTileCount;
-            // Distance is 0 for all tiles inside the visibleRect.
             double distance = tileDistance(visibleRect, currentCoordinate);
             if (distance > shortestDistance)
                 continue;
@@ -288,7 +290,7 @@ void TiledBackingStore::createTiles()
     }
     requiredTileCount -= tilesToCreateCount;
 
-    // Paint the content of the newly created tiles.
+    // Paint the content of the newly created tiles or resized tiles.
     if (tilesToCreateCount || didResizeTiles)
         updateTileBuffers();
 
