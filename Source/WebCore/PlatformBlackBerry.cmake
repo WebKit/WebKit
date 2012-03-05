@@ -238,6 +238,7 @@ IF (WTF_USE_ACCELERATED_COMPOSITING)
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerAnimation.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerCompositingThread.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerRenderer.cpp
+        ${WEBCORE_DIR}/platform/graphics/blackberry/LayerRendererSurface.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerTile.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerTiler.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerWebKitThread.cpp
