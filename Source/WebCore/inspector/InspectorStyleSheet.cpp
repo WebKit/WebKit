@@ -331,6 +331,10 @@ bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText,
 
     InspectorStyleTextEditor editor(&allProperties, &m_disabledProperties, text, newLineAndWhitespaceDelimiters());
     if (overwrite) {
+        if (index >= allProperties.size()) {
+            ec = INDEX_SIZE_ERR;
+            return false;
+        }
         *oldText = allProperties.at(index).rawText;
         editor.replaceProperty(index, propertyText);
     } else

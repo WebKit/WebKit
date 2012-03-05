@@ -988,10 +988,8 @@ void InspectorCSSAgent::didRemoveDOMNode(Node* node)
     if (!node)
         return;
 
-    if (m_lastElementWithPseudoState.get() == node) {
+    if (m_lastElementWithPseudoState.get() == node)
         clearPseudoState(false);
-        return;
-    }
 
     NodeToInspectorStyleSheet::iterator it = m_nodeToInspectorStyleSheet.find(node);
     if (it == m_nodeToInspectorStyleSheet.end())
