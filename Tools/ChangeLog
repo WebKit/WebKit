@@ -1,3 +1,15 @@
+2012-03-05  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Avoid building any parts of WebKitTestRunner when WK2 is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=80031
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Only build the libTestRunnerInjectedBundle.la convenience library when
+        ENABLE_WEBKIT2 is defined.
+
+        * WebKitTestRunner/GNUmakefile.am:
+
 2012-03-04  Kalev Lember  <kalevlember@gmail.com>
 
         Explicitly include unistd.h in TestNetscapePlugIn for GCC 4.7
