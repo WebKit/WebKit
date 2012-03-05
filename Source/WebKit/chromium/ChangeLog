@@ -1,3 +1,26 @@
+2012-03-05  Charlie Reis  <creis@chromium.org>
+
+        [chromium] Pass WebNavigationPolicy to WebViewClient::createView
+        https://bugs.webkit.org/show_bug.cgi?id=80057
+
+        Reviewed by Darin Fisher.
+
+        * public/WebViewClient.h:
+        (WebViewClient):
+        (WebKit::WebViewClient::createView):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::ChromeClientImpl):
+        (WebKit::ChromeClientImpl::createWindow):
+        (WebKit::ChromeClientImpl::getNavigationPolicy):
+        (WebKit):
+        (WebKit::ChromeClientImpl::show):
+        (WebKit::ChromeClientImpl::setNewWindowNavigationPolicy):
+        * src/ChromeClientImpl.h:
+        (ChromeClientImpl):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchCreatePage):
+        (WebKit::FrameLoaderClientImpl::dispatchDecidePolicyForNewWindowAction):
+
 2012-03-05  James Robinson  <jamesr@chromium.org>
 
         [chromium] Initialize CCOverdrawCounts struct to zero

@@ -136,6 +136,7 @@ ChromeClientImpl::ChromeClientImpl(WebViewImpl* webView)
     , m_scrollbarsVisible(true)
     , m_menubarVisible(true)
     , m_resizable(true)
+    , m_nextNewWindowNavigationPolicy(WebNavigationPolicyIgnore)
 {
 }
 
@@ -238,13 +239,23 @@ Page* ChromeClientImpl::createWindow(
     if (!m_webView->client())
         return 0;
 
+    // FrameLoaderClientImpl may have given us a policy to use for the next new
+    // window navigation. If not, determine the policy using the same logic as
+    // show().
+    WebNavigationPolicy policy;
+    if (m_nextNewWindowNavigationPolicy != WebNavigationPolicyIgnore) {
+        policy = m_nextNewWindowNavigationPolicy;
+        m_nextNewWindowNavigationPolicy = WebNavigationPolicyIgnore;
+    } else
+        policy = getNavigationPolicy();
+
     WrappedResourceRequest request;
     if (!r.resourceRequest().isEmpty())
         request.bind(r.resourceRequest());
     else if (!action.resourceRequest().isEmpty())
         request.bind(action.resourceRequest());
     WebViewImpl* newView = static_cast<WebViewImpl*>(
-        m_webView->client()->createView(WebFrameImpl::fromFrame(frame), request, features, r.frameName()));
+        m_webView->client()->createView(WebFrameImpl::fromFrame(frame), request, features, r.frameName(), policy));
     if (!newView)
         return 0;
 
@@ -287,11 +298,8 @@ static inline bool currentEventShouldCauseBackgroundTab(const WebInputEvent* inp
     return policy == WebNavigationPolicyNewBackgroundTab;
 }
 
-void ChromeClientImpl::show()
+WebNavigationPolicy ChromeClientImpl::getNavigationPolicy()
 {
-    if (!m_webView->client())
-        return;
-
     // If our default configuration was modified by a script or wasn't
     // created by a user gesture, then show as a popup. Else, let this
     // new window be opened as a toplevel window.
@@ -306,8 +314,15 @@ void ChromeClientImpl::show()
         policy = WebNavigationPolicyNewPopup;
     if (currentEventShouldCauseBackgroundTab(WebViewImpl::currentInputEvent()))
         policy = WebNavigationPolicyNewBackgroundTab;
+    return policy;
+}
+ 
+void ChromeClientImpl::show()
+{
+    if (!m_webView->client())
+        return;
 
-    m_webView->client()->show(policy);
+    m_webView->client()->show(getNavigationPolicy());
 }
 
 bool ChromeClientImpl::canRunModal()
@@ -800,6 +815,11 @@ void ChromeClientImpl::setCursor(const WebCursorInfo& cursor)
 void ChromeClientImpl::setCursorForPlugin(const WebCursorInfo& cursor)
 {
     setCursor(cursor);
+}
+
+void ChromeClientImpl::setNewWindowNavigationPolicy(WebNavigationPolicy policy)
+{
+    m_nextNewWindowNavigationPolicy = policy;
 }
 
 void ChromeClientImpl::formStateDidChange(const Node* node)

@@ -93,10 +93,13 @@ public:
     // WebStorage specification.
     // The request parameter is only for the client to check if the request
     // could be fulfilled.  The client should not load the request.
+    // The policy parameter indicates how the new view will be displayed in
+    // WebWidgetClient::show.
     virtual WebView* createView(WebFrame* creator,
                                 const WebURLRequest& request,
                                 const WebWindowFeatures& features,
-                                const WebString& name) {
+                                const WebString& name,
+                                WebNavigationPolicy policy) {
         return 0;
     }
 

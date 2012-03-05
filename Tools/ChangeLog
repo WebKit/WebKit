@@ -1,3 +1,15 @@
+2012-03-05  Charlie Reis  <creis@chromium.org>
+
+        [chromium] Pass WebNavigationPolicy to WebViewClient::createView
+        https://bugs.webkit.org/show_bug.cgi?id=80057
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createView):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-03-05  Martin Robinson  <mrobinson@igalia.com>
 
         [soup] Crash while loading http://www.jusco.cn
