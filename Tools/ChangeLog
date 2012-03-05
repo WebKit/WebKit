@@ -1,5 +1,16 @@
 2012-03-04  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] "Console: undefined @0: ReferenceError: Can't find variable: WebInspector" during testwebinspector
+        https://bugs.webkit.org/show_bug.cgi?id=80235
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner.run): Use the WEBKIT_INSPECTOR_PATH environment variable so that
+        inspector resources path determination is shared by all tests.
+
+2012-03-04  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] REGRESSION: r108278 broke some tests that expect focus
         https://bugs.webkit.org/show_bug.cgi?id=79084
 

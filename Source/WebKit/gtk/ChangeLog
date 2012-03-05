@@ -1,5 +1,23 @@
 2012-03-04  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] "Console: undefined @0: ReferenceError: Can't find variable: WebInspector" during testwebinspector
+        https://bugs.webkit.org/show_bug.cgi?id=80235
+
+        Reviewed by Philippe Normand.
+
+        Wait to inspect the WebView until the page has finished loading. Also
+        clean up some minor style errors.
+
+        * tests/testwebinspector.c:
+        (closeInspector): Small style fixes.
+        (showInspector): Ditto.
+        (loadFinished): Ditto.
+        (test_webkit_web_inspector_close_and_inspect): Wait to inspect until the page has loaded.
+        (test_webkit_web_inspector_destroy_inspected_web_view): Ditto.
+        (main): Small style fixes.
+
+2012-03-04  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] REGRESSION: r108278 broke some tests that expect focus
         https://bugs.webkit.org/show_bug.cgi?id=79084
 
