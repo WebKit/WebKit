@@ -1,3 +1,12 @@
+2012-03-04  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Libraries are installed to /usr/lib and not /usr/lib64 on x86_64
+        https://bugs.webkit.org/show_bug.cgi?id=71507
+
+        Reviewed by Antonio Gomes.
+
+        * CMakeLists.txt: Use ${LIB_INSTALL_DIR} instead of hardcoding "lib".
+
 2012-02-24  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL][DRT] Implement setValueForUser and setAutofilled.

@@ -14,3 +14,7 @@ ELSEIF (CMAKE_SYSTEM_NAME MATCHES QNX)
 ELSE ()
     SET(CODE_GENERATOR_PREPROCESSOR "${CMAKE_CXX_COMPILER} -E -P -x c++")
 ENDIF ()
+
+SET(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
+
+SET(LIB_INSTALL_DIR "lib${LIB_SUFFIX}" CACHE PATH "Where to install libraries (lib${LIB_SUFFIX})")

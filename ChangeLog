@@ -1,3 +1,17 @@
+2012-03-04  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Libraries are installed to /usr/lib and not /usr/lib64 on x86_64
+        https://bugs.webkit.org/show_bug.cgi?id=71507
+
+        Reviewed by Antonio Gomes.
+
+        * Source/cmake/OptionsCommon.cmake: Provide two variables which
+        can be changed via CMake: LIB_SUFFIX, which is often used in CMake
+        projects to let the user choose whether a suffix should be added
+        to the library installation directory (such as 32 or 64), and
+        LIB_INSTALL_DIR, which takes LIB_SUFFIX into account to determine
+        whether to install libraries.
+
 2012-03-03  Hans Wennborg  <hans@chromium.org>
 
         Implement Speech JavaScript API
