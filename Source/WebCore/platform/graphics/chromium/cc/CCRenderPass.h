@@ -39,6 +39,12 @@ class CCSharedQuadState;
 typedef Vector<OwnPtr<CCDrawQuad> > CCQuadList;
 
 struct CCOverdrawCounts {
+    CCOverdrawCounts()
+       : m_pixelsDrawnOpaque(0)
+       , m_pixelsDrawnTransparent(0)
+       , m_pixelsCulled(0)
+    {
+    }
     // Count of pixels that are opaque (and thus occlude). Ideally this is no more
     // than wiewport width x height.
     float m_pixelsDrawnOpaque;

@@ -1,3 +1,15 @@
+2012-03-05  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Initialize CCOverdrawCounts struct to zero
+        https://bugs.webkit.org/show_bug.cgi?id=80204
+
+        Reviewed by Adrienne Walker.
+
+        Update test to use c'tor instead of {} struct initialization.
+
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore):
+
 2012-03-05  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [Chromium] [WebSocket] use OVERRIDE in WebSocketImpl.h

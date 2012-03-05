@@ -64,7 +64,7 @@ void setQuads(CCSharedQuadState* rootState, CCSharedQuadState* childState, CCQua
 
 #define DECLARE_AND_INITIALIZE_TEST_QUADS               \
     CCQuadList quadList;                                \
-    CCOverdrawCounts overdraw = {0, 0, 0};              \
+    CCOverdrawCounts overdraw;              \
     TransformationMatrix childTransform;                \
     IntSize rootSize = IntSize(300, 300);               \
     IntRect rootRect = IntRect(IntPoint(), rootSize);   \
