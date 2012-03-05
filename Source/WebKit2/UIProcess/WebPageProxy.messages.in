@@ -194,7 +194,7 @@ messages -> WebPageProxy {
 #endif
 
     # ContextMenu messages
-    ShowContextMenu(WebCore::IntPoint menuLocation, WebKit::ContextMenuState state, Vector<WebKit::WebContextMenuItemData> items, WebKit::InjectedBundleUserMessageEncoder userData)
+    ShowContextMenu(WebCore::IntPoint menuLocation, WebKit::WebHitTestResult::Data hitTestResultData, Vector<WebKit::WebContextMenuItemData> items, WebKit::InjectedBundleUserMessageEncoder userData)
 
     # Authentication messages
     CanAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, WebCore::ProtectionSpace protectionSpace) -> (bool canAuthenticate)

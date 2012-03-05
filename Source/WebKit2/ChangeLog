@@ -1,3 +1,46 @@
+2012-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WK2] WKPageGetContextMenuFromProposedContextMenuCallback should pass a HitTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=77208
+
+        Reviewed by Anders Carlsson.
+
+        A HitTestResultData is now passed to ShowContextMenu WebPageProxy
+        message instead of the ContextMenuState. ContextMenu client has
+        been updated to pass the HitTestResult to the
+        getContextMenuFromProposedMenu callback.
+
+        * GNUmakefile.am: Remove ContextMenuState.h.
+        * Shared/APIClientTraits.h:
+        * Shared/ContextMenuState.h: Removed.
+        * Shared/WebHitTestResult.h:
+        (WebKit::WebHitTestResult::Data::Data): Add constructor that takes
+        a WebCore::HitTestResult.
+        * UIProcess/API/C/WKPage.h: Add HitTestResult parameter to
+        getContextMenuFromProposedMenu callback and deprecate the old
+        version.
+        * UIProcess/WebPageContextMenuClient.cpp:
+        (WebKit::WebPageContextMenuClient::getContextMenuFromProposedMenu):
+        Pass a HitTestResult to getContextMenuFromProposedMenu or use the
+        deprecated one if client version is an old one.
+        * UIProcess/WebPageContextMenuClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu):
+        (WebKit::WebPageProxy::internalShowContextMenu): Save the
+        WebHitTestResult::Data to use it for handling context menu actions.
+        (WebKit::WebPageProxy::contextMenuItemSelected): Use the saved
+        WebHitTestResult::Data.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj: Remove ContextMenuState.h.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mouseDidMoveOverElement): Use the new
+        WebHitTestResult::Data constructor that takes a WebCore::HitTestResult.
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show): Create a WebHitTestResult::Data
+        instead of a ContextMenuState and pass it to ShowContextMenu message.
+        * win/WebKit2.vcproj: ContextMenuState.h.
+
 2012-03-05  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] [WK2] Support threaded renderer in WK2

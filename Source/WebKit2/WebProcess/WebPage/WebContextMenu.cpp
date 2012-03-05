@@ -22,10 +22,10 @@
 #include "config.h"
 #include "WebContextMenu.h"
 
-#include "ContextMenuState.h"
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebHitTestResult.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
@@ -79,13 +79,11 @@ void WebContextMenu::show()
     if (m_page->injectedBundleContextMenuClient().getCustomMenuFromDefaultItems(m_page, hitTestResult.get(), proposedMenu, newMenu, userData))
         proposedMenu = newMenu;
 
-    ContextMenuState contextMenuState;
-    contextMenuState.absoluteImageURLString = controller->hitTestResult().absoluteImageURL().string();
-    contextMenuState.absoluteLinkURLString = controller->hitTestResult().absoluteLinkURL().string();
+    WebHitTestResult::Data webHitTestResultData(controller->hitTestResult());
 
     // Mark the WebPage has having a shown context menu then notify the UIProcess.
     m_page->contextMenuShowing();
-    m_page->send(Messages::WebPageProxy::ShowContextMenu(view->contentsToWindow(controller->hitTestResult().point()), contextMenuState, proposedMenu, InjectedBundleUserMessageEncoder(userData.get())));
+    m_page->send(Messages::WebPageProxy::ShowContextMenu(view->contentsToWindow(controller->hitTestResult().point()), webHitTestResultData, proposedMenu, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebContextMenu::itemSelected(const WebContextMenuItemData& item)

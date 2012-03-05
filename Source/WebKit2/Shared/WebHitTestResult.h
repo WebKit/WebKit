@@ -49,6 +49,20 @@ public:
         String linkLabel;
         String linkTitle;
 
+        Data()
+        {
+        }
+
+        explicit Data(const WebCore::HitTestResult& hitTestResult)
+            : absoluteImageURL(hitTestResult.absoluteImageURL().string())
+            , absolutePDFURL(hitTestResult.absolutePDFURL().string())
+            , absoluteLinkURL(hitTestResult.absoluteLinkURL().string())
+            , absoluteMediaURL(hitTestResult.absoluteMediaURL().string())
+            , linkLabel(hitTestResult.textContent())
+            , linkTitle(hitTestResult.titleDisplayString())
+        {
+        }
+
         void encode(CoreIPC::ArgumentEncoder*) const;
         static bool decode(CoreIPC::ArgumentDecoder*, WebHitTestResult::Data&);
     };

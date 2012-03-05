@@ -427,10 +427,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\ContextMenuState.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Shared\DictionaryPopupInfo.cpp"
 				>
 			</File>

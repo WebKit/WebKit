@@ -243,7 +243,6 @@ webkit2_sources += \
 	Source/WebKit2/PluginProcess/WebProcessConnection.h \
 	Source/WebKit2/PluginProcess/gtk/PluginControllerProxyGtk.cpp \
 	Source/WebKit2/PluginProcess/gtk/PluginProcessGtk.cpp \
-	Source/WebKit2/Shared/ContextMenuState.h \
 	Source/WebKit2/Shared/DragControllerAction.h \
 	Source/WebKit2/Shared/FontInfo.h \
 	Source/WebKit2/Shared/HTTPCookieAcceptPolicy.h \
