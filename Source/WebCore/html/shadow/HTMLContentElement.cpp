@@ -44,7 +44,7 @@ static const QualifiedName& contentTagName()
 #if ENABLE(SHADOW_DOM)
     return HTMLNames::contentTag;
 #else
-    return HTMLNames::webkitShadowContentTag
+    return HTMLNames::webkitShadowContentTag;
 #endif
 }
 
