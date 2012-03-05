@@ -897,3 +897,11 @@ void LayoutTestController::setBackingScaleFactor(double)
 {
 }
 
+void LayoutTestController::setMockSpeechInputDumpRect(bool)
+{
+}
+
+void LayoutTestController::simulateDesktopNotificationClick(JSStringRef title)
+{
+}
+

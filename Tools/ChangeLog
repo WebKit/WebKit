@@ -1,3 +1,23 @@
+2012-03-05  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Update Tools/DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=80287
+
+        Reviewed by Antonio Gomes.
+
+        Update so we are sure we can build our implementation of DRT.
+
+        * DumpRenderTree/DumpRenderTree.h: include DumpRenderTreeBlackBerry.h.
+        * DumpRenderTree/PixelDumpSupport.cpp: include PixelDumpSupportBlackBerry.h.
+        * DumpRenderTree/blackberry/AccessibilityControllerBlackBerry.cpp:
+        (AccessibilityController::addNotificationListener): add missing hook.
+        (AccessibilityController::removeNotificationListener): add missing hook.
+        * DumpRenderTree/blackberry/AccessibilityUIElementBlackBerry.cpp:
+        (AccessibilityUIElement::isSelectedOptionActive): add missing hook.
+        * DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp:
+        (LayoutTestController::setMockSpeechInputDumpRect): add missing hook.
+        (LayoutTestController::simulateDesktopNotificationClick): add missing hook.
+
 2012-03-05  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] [WK2] Support threaded renderer in WK2

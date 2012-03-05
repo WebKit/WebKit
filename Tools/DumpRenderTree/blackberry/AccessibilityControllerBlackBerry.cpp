@@ -68,13 +68,12 @@ void AccessibilityController::setLogAccessibilityEvents(bool)
     notImplemented();
 }
 
-void AccessibilityController::addNotificationListener(PlatformUIElement, JSObjectRef)
+bool AccessibilityController::addNotificationListener(JSObjectRef)
 {
-    notImplemented();
+    return false;
 }
 
-void AccessibilityController::notificationReceived(PlatformUIElement, const std::string&)
+void AccessibilityController::removeNotificationListener()
 {
-    notImplemented();
 }
 

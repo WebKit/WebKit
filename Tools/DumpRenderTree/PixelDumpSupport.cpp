@@ -41,6 +41,8 @@
 #include "PixelDumpSupportCG.h"
 #elif USE(CAIRO)
 #include "PixelDumpSupportCairo.h"
+#elif PLATFORM(BLACKBERRY)
+#include "PixelDumpSupportBlackBerry.h"
 #endif
 
 void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)

@@ -508,6 +508,12 @@ bool AccessibilityUIElement::isMultiSelectable() const
     return false;
 }
 
+bool AccessibilityUIElement::isSelectedOptionActive() const
+{
+    notImplemented();
+    return false;
+}
+
 bool AccessibilityUIElement::isVisible() const
 {
     notImplemented();
