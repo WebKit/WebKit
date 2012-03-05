@@ -1425,7 +1425,6 @@ BUGCR23473 MAC : fast/repaint/reflection-redraw.html = IMAGE
 BUGCR23473 MAC : fast/repaint/reflection-repaint-test.html = IMAGE
 BUGCR23473 MAC : fast/repaint/rel-positioned-inline-with-overflow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/repaint-resized-overflow.html = IMAGE
-BUGCR23473 MAC : fast/repaint/search-field-cancel.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-after-delete.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-clear.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-gap-overflow-scroll.html = IMAGE
@@ -4120,8 +4119,6 @@ BUGWK78902 : svg/text/text-text-05-t.svg = TEXT IMAGE IMAGE+TEXT PASS
 BUGWK78902 : svg/text/text-text-06-t.svg = TEXT IMAGE IMAGE+TEXT PASS
 BUGWK78902 : svg/transforms/svg-css-transforms-clip-path.xhtml = TEXT IMAGE IMAGE+TEXT PASS
 BUGWK78902 : svg/zoom/page/zoom-mask-with-percentages.svg = TEXT IMAGE IMAGE+TEXT PASS
-
-BUGWK79445 LINUX WIN : fast/repaint/search-field-cancel.html = FAIL
 
 // Need rebaselining.
 BUGWK69210 MAC : fast/encoding/utf-16-big-endian.html = IMAGE+TEXT
