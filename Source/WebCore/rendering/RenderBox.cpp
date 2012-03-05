@@ -1841,7 +1841,8 @@ bool RenderBox::sizesToIntrinsicLogicalWidth(LogicalWidthType widthType) const
     // In the case of columns that have a stretch alignment, we go ahead and layout at the
     // stretched size to avoid an extra layout when applying alignment.
     if (parent()->isFlexibleBox()) {
-        if (!parent()->style()->isColumnFlexDirection())
+        // For multiline columns, we need to apply the flex-line-pack first, so we can't stretch now.
+        if (!parent()->style()->isColumnFlexDirection() || parent()->style()->flexWrap() != FlexWrapNone)
             return true;
         EFlexAlign itemAlign = style()->flexItemAlign();
         if (itemAlign != AlignStretch && (itemAlign != AlignAuto || parent()->style()->flexAlign() != AlignStretch))
