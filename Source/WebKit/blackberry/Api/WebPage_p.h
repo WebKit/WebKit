@@ -373,6 +373,7 @@ public:
     void setRootLayerCompositingThread(WebCore::LayerCompositingThread*);
     void commitRootLayer(const WebCore::IntRect&, const WebCore::IntSize&);
     void setIsAcceleratedCompositingActive(bool);
+    bool isAcceleratedCompositingActive() const { return m_isAcceleratedCompositingActive; }
     void destroyCompositor();
     void syncDestroyCompositorOnCompositingThread();
     void destroyLayerResources();

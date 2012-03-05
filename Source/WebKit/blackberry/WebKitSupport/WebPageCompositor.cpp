@@ -21,9 +21,13 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "WebPageCompositor.h"
 
+#include "BackingStore_p.h"
 #include "LayerWebKitThread.h"
 #include "WebPage_p.h"
 
+#include <BlackBerryPlatformExecutableMessage.h>
+#include <BlackBerryPlatformMessage.h>
+#include <BlackBerryPlatformMessageClient.h>
 #include <GenericTimerClient.h>
 #include <ThreadTimerClient.h>
 
@@ -38,15 +42,15 @@ WebPageCompositor::WebPageCompositor(WebPagePrivate* page)
     , m_generation(0)
     , m_compositedGeneration(-1)
     , m_compositingOntoMainWindow(false)
-    , m_blitTimer(this, &BlackBerry::WebKit::WebPageCompositor::blitTimerFired)
-    , m_timerClient(new BlackBerry::Platform::GenericTimerClient(BlackBerry::Platform::userInterfaceThreadTimerClient()))
+    , m_animationTimer(this, &WebPageCompositor::animationTimerFired)
+    , m_timerClient(new Platform::GenericTimerClient(Platform::userInterfaceThreadTimerClient()))
 {
-    m_blitTimer.setClient(m_timerClient);
+    m_animationTimer.setClient(m_timerClient);
 }
 
 WebPageCompositor::~WebPageCompositor()
 {
-    m_blitTimer.stop();
+    m_animationTimer.stop();
     delete m_timerClient;
 }
 
@@ -93,7 +97,7 @@ bool WebPageCompositor::drawLayers(const IntRect& dstRect, const FloatRect& cont
     if (m_lastCompositingResults.needsAnimationFrame) {
         ++m_generation; // The animation update moves us along one generation.
         // Using a timeout of 0 actually won't start a timer, it will send a message.
-        m_blitTimer.start(1.0 / 60.0);
+        m_animationTimer.start(1.0 / 60.0);
         m_webPage->updateDelegatedOverlays();
     }
 
@@ -105,8 +109,18 @@ void WebPageCompositor::releaseLayerResources()
     m_layerRenderer->releaseLayerResources();
 }
 
-void WebPageCompositor::blitTimerFired()
+void WebPageCompositor::animationTimerFired()
 {
+    if (m_webPage->m_backingStore->d->shouldDirectRenderingToWindow()) {
+        if (m_webPage->m_backingStore->d->isDirectRenderingAnimationMessageScheduled())
+            return; // don't send new messages as long as we haven't rerendered
+
+        m_webPage->m_backingStore->d->setDirectRenderingAnimationMessageScheduled();
+        BlackBerry::Platform::webKitThreadMessageClient()->dispatchMessage(
+            BlackBerry::Platform::createMethodCallMessage(
+                &BackingStorePrivate::renderVisibleContents, m_webPage->m_backingStore->d));
+        return;
+    }
     m_webPage->blitVisibleContents();
 }
 

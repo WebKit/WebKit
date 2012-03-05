@@ -203,6 +203,7 @@ BackingStorePrivate::BackingStorePrivate()
     , m_blitGeneration(-1)
 #if USE(ACCELERATED_COMPOSITING)
     , m_needsDrawLayersOnCommit(false)
+    , m_isDirectRenderingAnimationMessageScheduled(false)
 #endif
 {
     m_frontState = reinterpret_cast<unsigned>(new BackingStoreGeometry);
@@ -945,7 +946,6 @@ bool BackingStorePrivate::renderDirectToWindow(const Platform::IntRect& rect)
 
     Platform::IntRect screenRect = m_client->mapFromTransformedContentsToTransformedViewport(dirtyRect);
     windowFrontBufferState()->clearBlittedRegion(screenRect);
-    copyPreviousContentsToBackSurfaceOfWindow();
 
     paintDefaultBackground(dirtyRect, TransformationMatrix(), true /*flush*/);
 
@@ -955,13 +955,14 @@ bool BackingStorePrivate::renderDirectToWindow(const Platform::IntRect& rect)
     windowBackBufferState()->addBlittedRegion(screenRect);
 
 #if USE(ACCELERATED_COMPOSITING)
-    drawLayersOnCommitIfNeeded();
-#if ENABLE_COMPOSITING_SURFACE
-    if (m_webPage->d->m_client->window()->windowUsage() != BlackBerry::Platform::Graphics::Window::GLES2Usage) {
-        Platform::IntRect clippedRect = intersection(dirtyRect, visibleContentsRect());
-        blendCompositingSurface(clippedRect);
+    m_isDirectRenderingAnimationMessageScheduled = false;
+
+    if (m_webPage->d->isAcceleratedCompositingActive()) {
+        BlackBerry::Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
+            BlackBerry::Platform::createMethodCallMessage(
+                &BackingStorePrivate::drawAndBlendLayersForDirectRendering,
+                this, dirtyRect));
     }
-#endif
 #endif
 
     invalidateWindow(screenRect);
@@ -2503,7 +2504,9 @@ bool BackingStorePrivate::drawSubLayers()
     if (!BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread())
         return false;
 
-    if (m_suspendBackingStoreUpdates)
+    bool blittingDirectlyToCompositingWindow = m_webPage->d->m_client->window()->windowUsage() == BlackBerry::Platform::Graphics::Window::GLES2Usage;
+
+    if (m_suspendBackingStoreUpdates && !blittingDirectlyToCompositingWindow)
         return false;
 
     Platform::IntRect dst = m_webPage->client()->userInterfaceBlittedDestinationRect();
@@ -2526,6 +2529,34 @@ bool BackingStorePrivate::drawLayersOnCommitIfNeeded()
     m_webPage->d->drawLayersOnCommit();
 
     return true;
+}
+
+void BackingStorePrivate::drawAndBlendLayersForDirectRendering(const Platform::IntRect& dirtyRect)
+{
+    ASSERT(BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread());
+    if (!BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread())
+        return;
+
+    // Because we're being called sync from the WebKit thread, we can use
+    // regular WebPage size and transformation functions without concerns.
+    WebCore::IntRect contentsRect = visibleContentsRect();
+    WebCore::FloatRect untransformedContentsRect = m_webPage->d->mapFromTransformedFloatRect(WebCore::FloatRect(contentsRect));
+    WebCore::IntRect contentsScreenRect = m_client->mapFromTransformedContentsToTransformedViewport(contentsRect);
+    WebCore::IntRect dstRect = intersection(contentsScreenRect,
+        WebCore::IntRect(WebCore::IntPoint(0, 0), m_webPage->d->transformedViewportSize()));
+
+    // Check if rendering caused a commit and we need to redraw the layers.
+    m_needsDrawLayersOnCommit = false;
+    m_webPage->d->drawSubLayers(dstRect, untransformedContentsRect);
+
+#if ENABLE_COMPOSITING_SURFACE
+    // See above comment about sync calling, visibleContentsRect() is safe here.
+    Platform::IntRect visibleDirtyRect = dirtyRect;
+    visibleDirtyRect.intersect(visibleContentsRect());
+    visibleDirtyRect = m_client->mapFromTransformedContentsToTransformedViewport(visibleDirtyRect);
+
+    blendCompositingSurface(visibleDirtyRect);
+#endif
 }
 #endif
 

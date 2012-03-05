@@ -197,8 +197,12 @@ public:
     void clearCompositingSurface();
     bool drawSubLayers();
     bool drawLayersOnCommitIfNeeded();
+    void drawAndBlendLayersForDirectRendering(const Platform::IntRect& dirtyRect);
     // WebPage will call this when drawing layers to tell us we don't need to
     void willDrawLayersOnCommit() { m_needsDrawLayersOnCommit = false; }
+    // WebPageCompositor uses this to cut down on excessive message sending.
+    bool isDirectRenderingAnimationMessageScheduled() { return m_isDirectRenderingAnimationMessageScheduled; }
+    void setDirectRenderingAnimationMessageScheduled() { m_isDirectRenderingAnimationMessageScheduled = true; }
 #endif
 
     void blitHorizontalScrollbar(const Platform::IntPoint&);
@@ -353,6 +357,7 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
     mutable bool m_needsDrawLayersOnCommit; // Not thread safe, WebKit thread only
+    bool m_isDirectRenderingAnimationMessageScheduled;
 #endif
 };
 } // namespace WebKit

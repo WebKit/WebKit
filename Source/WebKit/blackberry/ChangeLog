@@ -1,3 +1,67 @@
+2012-03-05  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Make accelerated compositing work again with direct rendering.
+        https://bugs.webkit.org/show_bug.cgi?id=80181
+        RIM PR: 139110
+
+        Reviewed by Antonio Gomes.
+        Internally reviewed by Arvid Nilsson.
+
+        The significant amount of refactoring and optimization work
+        that has gone into accelerated compositing missed out on
+        some of the code paths that are being used in direct rendering.
+
+        Animations were relying on blitVisibleContents() only (which
+        is a no-op in direct rendering mode). There were early returns
+        which are suitable to determine whether screen contents need
+        to be updated at all; however, when we're already forcing a
+        re-render then those checks would cause the composition surface
+        not to appear at all, or avoid drawing new animation frames.
+
+        We went through dispatchMessage(), potentially causing
+        mismatches between rendered (but not yet posted) back content
+        and layers composited on top of it. As we're rendering onto
+        the sole target surface (the window) directly and posting
+        from the same thread, we have to wait for compositing on the
+        UI thread to finish before posting the window.
+
+        In turn, this patch combines both drawSubLayers() and
+        blendCompositingSurface() calls into one method, reducing
+        the number of messages to the UI thread within
+        renderDirectToWindow() to one.
+
+        blendCompositingMessage() in renderDirectToScreen() was called
+        with contents coordinates rather than viewport coordinates.
+        That caused some of the composited content to be cut off when
+        the scroll position wasn't (0, 0).
+
+        We called copyPreviousContentsToBackSurfaceOfWindow() twice for
+        one frame, in both renderDirectToWindow() and invalidateWindow().
+        Only one of those (the latter one) is necessary.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::renderDirectToWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::drawSubLayers):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::drawAndBlendLayersForDirectRendering):
+        * Api/BackingStore.h:
+        (WebKit):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::isDirectRenderingAnimationMessageScheduled):
+        (BlackBerry::WebKit::BackingStorePrivate::setDirectRenderingAnimationMessageScheduled):
+        * Api/WebPage_p.h:
+        (BlackBerry::WebKit::WebPagePrivate::isAcceleratedCompositingActive):
+        (WebPagePrivate):
+        * WebKitSupport/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositor::WebPageCompositor):
+        (BlackBerry::WebKit::WebPageCompositor::~WebPageCompositor):
+        (BlackBerry::WebKit::WebPageCompositor::drawLayers):
+        (BlackBerry::WebKit::WebPageCompositor::animationTimerFired):
+        * WebKitSupport/WebPageCompositor.h:
+        (WebPageCompositor):
+
 2012-03-05  George Staikos  <gstaikos@rim.com>
 
         [BlackBerry] DOMSupport visibleSelectionForRangeInputElement incorrectly dereferences a null range.

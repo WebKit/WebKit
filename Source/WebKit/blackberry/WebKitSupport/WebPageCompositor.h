@@ -65,7 +65,7 @@ public:
     void releaseLayerResources();
 
 private:
-    void blitTimerFired();
+    void animationTimerFired();
 
     WebPagePrivate* m_webPage;
     OwnPtr<WebCore::LayerRenderer> m_layerRenderer;
@@ -78,7 +78,7 @@ private:
     WebCore::IntRect m_compositedDstRect;
     WebCore::FloatRect m_compositedContentsRect;
     bool m_compositingOntoMainWindow;
-    BlackBerry::Platform::Timer<WebPageCompositor> m_blitTimer;
+    BlackBerry::Platform::Timer<WebPageCompositor> m_animationTimer;
     BlackBerry::Platform::TimerClient* m_timerClient;
 };
 
