@@ -97,6 +97,10 @@ public:
     PassRefPtr<MicroDataItemValue> itemValue() const;
 #endif
 
+#ifndef NDEBUG
+    virtual bool isHTMLUnknownElement() const { return false; }
+#endif
+
 protected:
     HTMLElement(const QualifiedName& tagName, Document*);
 

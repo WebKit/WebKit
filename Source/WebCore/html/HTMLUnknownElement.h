@@ -41,12 +41,22 @@ public:
         return adoptRef(new HTMLUnknownElement(tagName, document));
     }
 
+#ifndef NDEBUG
+    virtual bool isHTMLUnknownElement() const OVERRIDE { return true; }
+#endif
+
 private:
     HTMLUnknownElement(const QualifiedName& tagName, Document* document)
         : HTMLElement(tagName, document)
     {
     }
 };
+
+inline HTMLUnknownElement* toHTMLUnknownElement(HTMLElement* element)
+{
+    ASSERT(!element || element->isHTMLUnknownElement());
+    return static_cast<HTMLUnknownElement*>(element);
+}
 
 } // namespace
 

@@ -48,5 +48,11 @@ private:
     
 }
 
+inline MathMLElement* toMathMLElement(Element* element)
+{
+    ASSERT(!element || element->isMathMLElement());
+    return static_cast<MathMLElement*>(element);
+}
+
 #endif // ENABLE(MATHML)
 #endif // MathMLElement_h
