@@ -859,9 +859,9 @@ void GraphicsLayerCA::syncCompositingStateForThisLayerOnly()
     commitLayerChangesAfterSublayers();
 }
 
-void GraphicsLayerCA::visibleRectChanged()
+void GraphicsLayerCA::visibleRectChanged(const IntRect& visibleRect)
 {
-    m_layer->visibleRectChanged();
+    m_layer->visibleRectChanged(visibleRect);
 }
 
 void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)

@@ -27,6 +27,7 @@
 #import <wtf/OwnPtr.h>
 
 namespace WebCore {
+    class IntRect;
     class TileCache;
 }
 
@@ -35,6 +36,6 @@ namespace WebCore {
 }
 
 - (CALayer *)tileContainerLayer;
-- (void)visibleRectChanged;
+- (void)visibleRectChanged:(const WebCore::IntRect&)visibleRect;
 
 @end

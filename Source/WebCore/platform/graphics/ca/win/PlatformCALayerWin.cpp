@@ -633,7 +633,7 @@ void PlatformCALayer::setContentsScale(float)
 {
 }
 
-void PlatformCALayer::visibleRectChanged()
+void PlatformCALayer::visibleRectChanged(const IntRect&)
 {
 }
 

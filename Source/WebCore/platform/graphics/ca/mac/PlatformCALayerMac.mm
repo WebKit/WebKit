@@ -956,13 +956,13 @@ void PlatformCALayer::setContentsScale(float value)
 #endif
 }
 
-void PlatformCALayer::visibleRectChanged()
+void PlatformCALayer::visibleRectChanged(const IntRect& visibleRect)
 {
     if (m_layerType != LayerTypeTileCacheLayer)
         return;
 
     WebTileCacheLayer *tileCacheLayer = static_cast<WebTileCacheLayer *>(m_layer.get());
-    [tileCacheLayer visibleRectChanged];
+    [tileCacheLayer visibleRectChanged:visibleRect];
 }
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)

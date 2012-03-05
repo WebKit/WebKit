@@ -978,7 +978,7 @@ void RenderLayerCompositor::frameViewDidScroll()
     IntPoint scrollPosition = frameView->scrollPosition();
 
     if (RenderLayerBacking* backing = rootRenderLayer()->backing())
-        backing->graphicsLayer()->visibleRectChanged();
+        backing->graphicsLayer()->visibleRectChanged(frameView->visibleContentRect(false /* exclude scrollbars */));
 
     if (!m_scrollLayer)
         return;

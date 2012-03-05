@@ -193,9 +193,13 @@ void TileCache::setAcceleratesDrawing(bool acceleratesDrawing)
 #endif
 }
 
-void TileCache::visibleRectChanged()
+void TileCache::visibleRectChanged(const IntRect& visibleRect)
 {
-    scheduleTileRevalidation();
+    if (m_visibleRect == visibleRect)
+        return;
+
+    m_visibleRect = visibleRect;
+    revalidateTiles();
 }
 
 void TileCache::setTileDebugBorderWidth(float borderWidth)
@@ -216,28 +220,6 @@ void TileCache::setTileDebugBorderColor(CGColorRef borderColor)
     m_tileDebugBorderColor = borderColor;
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
         [it->second.get() setBorderColor:m_tileDebugBorderColor.get()];
-}
-
-FloatRect TileCache::visibleRect() const
-{
-    CGRect rect = [m_tileCacheLayer bounds];
-
-    CALayer *layer = m_tileCacheLayer;
-    CALayer *superlayer = [layer superlayer];
-
-    while (superlayer) {
-        CGRect rectInSuperlayerCoordinates = [superlayer convertRect:rect fromLayer:layer];
-
-        if ([superlayer masksToBounds])
-            rect = CGRectIntersection([superlayer bounds], rectInSuperlayerCoordinates);
-        else
-            rect = rectInSuperlayerCoordinates;
-
-        layer = superlayer;
-        superlayer = [layer superlayer];
-    }
-
-    return [m_tileCacheLayer convertRect:rect fromLayer:layer];
 }
 
 IntRect TileCache::bounds() const
@@ -281,9 +263,10 @@ void TileCache::revalidateTiles()
     if (!platformLayer)
         return;
 
-    IntRect tileCoverageRect = enclosingIntRect(visibleRect());
-    if (tileCoverageRect.isEmpty())
+    if (m_visibleRect.isEmpty())
         return;
+
+    IntRect tileCoverageRect = m_visibleRect;
 
     // Inflate the coverage rect so that it covers 2x of the visible width and 3x of the visible height.
     // These values were chosen because it's more common to have tall pages and to scroll vertically,

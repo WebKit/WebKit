@@ -62,7 +62,7 @@ public:
     void setAcceleratesDrawing(bool);
 
     CALayer *tileContainerLayer() const { return m_tileContainerLayer.get(); }
-    void visibleRectChanged();
+    void visibleRectChanged(const IntRect&);
 
     float tileDebugBorderWidth() const { return m_tileDebugBorderWidth; }
     void setTileDebugBorderWidth(float);
@@ -75,7 +75,6 @@ private:
 
     TileCache(WebTileCacheLayer*, const IntSize& tileSize);
 
-    FloatRect visibleRect() const;
     IntRect bounds() const;
 
     IntRect rectForTileIndex(const TileIndex&) const;
@@ -93,6 +92,7 @@ private:
     WebTileCacheLayer* m_tileCacheLayer;
     RetainPtr<CALayer> m_tileContainerLayer;
     const IntSize m_tileSize;
+    IntRect m_visibleRect;
 
     typedef HashMap<TileIndex, RetainPtr<WebTileLayer> > TileMap;
     TileMap m_tiles;

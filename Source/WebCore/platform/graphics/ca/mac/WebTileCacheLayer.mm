@@ -120,9 +120,9 @@ using namespace WebCore;
     return _tileCache->tileContainerLayer();
 }
 
-- (void)visibleRectChanged
+- (void)visibleRectChanged:(const IntRect&)visibleRect
 {
-    _tileCache->visibleRectChanged();
+    _tileCache->visibleRectChanged(visibleRect);
 }
 
 - (CGColorRef)borderColor

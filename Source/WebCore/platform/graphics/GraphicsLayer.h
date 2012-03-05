@@ -428,7 +428,7 @@ public:
     bool usingTiledLayer() const { return m_usingTiledLayer; }
 
     // Called whenever the visible rect of the given GraphicsLayer changed.
-    virtual void visibleRectChanged() { }
+    virtual void visibleRectChanged(const IntRect&) { }
 
 #if PLATFORM(QT) || PLATFORM(GTK)
     // This allows several alternative GraphicsLayer implementations in the same port,
