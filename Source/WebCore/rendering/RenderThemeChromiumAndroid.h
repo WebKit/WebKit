@@ -41,6 +41,12 @@ public:
 
     virtual bool delegatesMenuListRendering() const OVERRIDE { return true; }
 
+    virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
+
+#if ENABLE(VIDEO)
+    virtual String extraMediaControlsStyleSheet() OVERRIDE;
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
     virtual Color platformTapHighlightColor() const OVERRIDE
     {

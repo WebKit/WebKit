@@ -238,6 +238,16 @@ static bool paintMediaTimelineContainer(RenderObject* object, const PaintInfo& p
     return true;
 }
 
+static bool paintMediaFullscreenButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    HTMLMediaElement* mediaElement = toParentMediaElement(object);
+    if (!mediaElement)
+        return false;
+
+    DEFINE_STATIC_LOCAL(Image*, mediaFullscreen, (platformResource("mediaFullscreen")));
+    return paintMediaButton(paintInfo.context, rect, mediaFullscreen);
+}
+
 bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType part, RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
     switch (part) {
@@ -257,8 +267,9 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
         return paintMediaVolumeSliderThumb(object, paintInfo, rect);
     case MediaTimelineContainer:
         return paintMediaTimelineContainer(object, paintInfo, rect);
-    case MediaVolumeSliderMuteButton:
     case MediaFullscreenButton:
+        return paintMediaFullscreenButton(object, paintInfo, rect);
+    case MediaVolumeSliderMuteButton:
     case MediaSeekBackButton:
     case MediaSeekForwardButton:
     case MediaVolumeSliderContainer:

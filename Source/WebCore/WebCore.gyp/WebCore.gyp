@@ -827,6 +827,7 @@
               '../css/mathml.css',
               '../css/mediaControls.css',
               '../css/mediaControlsChromium.css',
+              '../css/mediaControlsChromiumAndroid.css',
               '../css/fullscreen.css',
               # Skip fullscreenQuickTime.
             ],
