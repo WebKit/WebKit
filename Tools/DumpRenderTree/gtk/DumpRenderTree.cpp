@@ -518,6 +518,10 @@ void dump()
 {
     invalidateAnyPreviousWaitToDumpWatchdog();
 
+    // Grab widget focus before dumping the contents of a widget, in
+    // case it was lost in the course of the test.
+    gtk_widget_grab_focus(GTK_WIDGET(webView));
+
     if (dumpTree) {
         char* result = 0;
         gchar* responseMimeType = webkit_web_frame_get_response_mime_type(mainFrame);

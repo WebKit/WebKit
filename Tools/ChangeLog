@@ -1,3 +1,19 @@
+2012-03-04  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] REGRESSION: r108278 broke some tests that expect focus
+        https://bugs.webkit.org/show_bug.cgi?id=79084
+
+        Reviewed by Philippe Normand.
+
+        Grab focus when dumping test results and also when sending
+        events. During the course of testing, the WebView may lose
+        focus and this seems to snap it back when tests demand it.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dump): Grab focus.
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (dispatchEvent): Ditto.
+
 2012-03-04  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Unreviewed, Add myself to committer list.

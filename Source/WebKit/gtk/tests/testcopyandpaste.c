@@ -126,6 +126,7 @@ static void test_copy_and_paste(CopyAndPasteFixture* fixture, gconstpointer data
     gtk_widget_show(fixture->window);
     gtk_widget_show(GTK_WIDGET(fixture->webView));
     gtk_window_present(GTK_WINDOW(fixture->window));
+    gtk_widget_grab_focus(fixture->webView);
 
     g_signal_connect(fixture->webView, "notify::load-status",
                      G_CALLBACK(load_status_cb), fixture);

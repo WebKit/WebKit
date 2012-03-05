@@ -563,6 +563,9 @@ static void dispatchEvent(GdkEvent* event)
         return;
     }
 
+    // The widget focus may have been lost in the course of the test,
+    // so force another explicit focus grab here.
+    gtk_widget_grab_focus(GTK_WIDGET(view));
     gtk_main_do_event(event);
 
     if (!currentDragSourceContext) {
