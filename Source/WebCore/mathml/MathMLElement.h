@@ -45,13 +45,13 @@ private:
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
 };
-    
-}
 
 inline MathMLElement* toMathMLElement(Element* element)
 {
     ASSERT(!element || element->isMathMLElement());
     return static_cast<MathMLElement*>(element);
+}
+
 }
 
 #endif // ENABLE(MATHML)
