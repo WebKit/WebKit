@@ -37,10 +37,16 @@ public:
     void close();
     bool addLogin(const KURL&, const ProtectionSpace&, const Credential&);
     bool updateLogin(const KURL&, const ProtectionSpace&, const Credential&);
-    bool hasLogin(const ProtectionSpace&);
+    bool hasLogin(const KURL&, const ProtectionSpace&);
     Credential getLogin(const ProtectionSpace&);
-    bool removeLogin(const ProtectionSpace&);
-    bool clear();
+    Credential getLogin(const KURL&);
+    bool removeLogin(const KURL&, const ProtectionSpace&);
+    bool addNeverRemember(const KURL&, const ProtectionSpace&);
+    bool hasNeverRemember(const ProtectionSpace&);
+    KURL getNeverRemember(const ProtectionSpace&);
+    bool removeNeverRemember(const ProtectionSpace&);
+    bool clearLogins();
+    bool clearNeverRemember();
 
 private:
     CredentialBackingStore();
@@ -48,11 +54,16 @@ private:
     String decryptedString(const String& cipherText) const;
 
     SQLiteDatabase m_database;
-    SQLiteStatement* m_addStatement;
-    SQLiteStatement* m_updateStatement;
-    SQLiteStatement* m_hasStatement;
-    SQLiteStatement* m_getStatement;
-    SQLiteStatement* m_removeStatement;
+    SQLiteStatement* m_addLoginStatement;
+    SQLiteStatement* m_updateLoginStatement;
+    SQLiteStatement* m_hasLoginStatement;
+    SQLiteStatement* m_getLoginStatement;
+    SQLiteStatement* m_getLoginByURLStatement;
+    SQLiteStatement* m_removeLoginStatement;
+    SQLiteStatement* m_addNeverRememberStatement;
+    SQLiteStatement* m_hasNeverRememberStatement;
+    SQLiteStatement* m_getNeverRememberStatement;
+    SQLiteStatement* m_removeNeverRememberStatement;
 };
 
 } // namespace WebCore
