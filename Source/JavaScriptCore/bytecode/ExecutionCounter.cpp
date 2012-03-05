@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ExecutionCounter.h"
 
+#if ENABLE(JIT)
+
 #include "CodeBlock.h"
 #include "ExecutableAllocator.h"
 #include <wtf/DataLog.h>
@@ -157,3 +159,4 @@ void ExecutionCounter::reset()
 
 } // namespace JSC
 
+#endif // ENABLE(JIT)

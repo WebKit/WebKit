@@ -1,3 +1,10 @@
+2012-03-05  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Build fix for !ENABLE(JIT) after r109705.
+
+        * bytecode/ExecutionCounter.cpp:
+        * bytecode/ExecutionCounter.h:
+
 2012-03-05  Andy Wingo  <wingo@igalia.com>
 
         Lexer: Specialize character predicates for LChar, UChar
