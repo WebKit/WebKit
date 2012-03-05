@@ -365,7 +365,7 @@ WebInspector.DOMNode.prototype = {
 
         var className = this.getAttribute("class");
         if (className) {
-            var selector = "." + className.replace(/\s+/, ".");
+            var selector = "." + className.replace(/\s+/g, ".");
             return (justSelector ? selector : lowerCaseName + selector);
         }
 
