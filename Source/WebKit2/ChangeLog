@@ -1,3 +1,17 @@
+2012-03-05  Anders Carlsson  <andersca@apple.com>
+
+        Always update the scroll layer position on the main thread when we have an overlay
+        https://bugs.webkit.org/show_bug.cgi?id=80324
+
+        Reviewed by Sam Weinig.
+
+        Call setForceMainThreadScrollLayerPositionUpdates when installing and uninstalling page overlays,
+        so we'll be able to synchronize painting between the tile cache and the page overlays.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::didInstallPageOverlay):
+        (WebKit::TiledCoreAnimationDrawingArea::didUninstallPageOverlay):
+
 2012-03-05  Timothy Hatcher  <timothy@apple.com>
 
         Change how the Web Inspector Develop menu actions work.

@@ -146,12 +146,20 @@ void TiledCoreAnimationDrawingArea::scheduleCompositingLayerSync()
 
 void TiledCoreAnimationDrawingArea::didInstallPageOverlay()
 {
+#if ENABLE(THREADED_SCROLLING)
+    m_webPage->corePage()->scrollingCoordinator()->setForceMainThreadScrollLayerPositionUpdates(true);
+#endif
+
     createPageOverlayLayer();
     scheduleCompositingLayerSync();
 }
 
 void TiledCoreAnimationDrawingArea::didUninstallPageOverlay()
 {
+#if ENABLE(THREADED_SCROLLING)
+    m_webPage->corePage()->scrollingCoordinator()->setForceMainThreadScrollLayerPositionUpdates(false);
+#endif
+
     destroyPageOverlayLayer();
     scheduleCompositingLayerSync();
 }

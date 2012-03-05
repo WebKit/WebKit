@@ -53,6 +53,7 @@ namespace WebCore {
 
 ScrollingCoordinator::ScrollingCoordinator(Page* page)
     : m_page(page)
+    , m_forceMainThreadScrollLayerPositionUpdates(false)
 #if ENABLE(THREADED_SCROLLING)
     , m_scrollingTreeState(ScrollingTreeState::create())
     , m_scrollingTree(ScrollingTree::create(this))
@@ -317,7 +318,16 @@ void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread()
     FrameView* frameView = m_page->mainFrame()->view();
 
     // FIXME: Having fixed objects on the page should not trigger the slow path.
-    setShouldUpdateScrollLayerPositionOnMainThread(frameView->hasSlowRepaintObjects() || frameView->hasFixedObjects());
+    setShouldUpdateScrollLayerPositionOnMainThread(m_forceMainThreadScrollLayerPositionUpdates || frameView->hasSlowRepaintObjects() || frameView->hasFixedObjects());
+}
+
+void ScrollingCoordinator::setForceMainThreadScrollLayerPositionUpdates(bool forceMainThreadScrollLayerPositionUpdates)
+{
+    if (m_forceMainThreadScrollLayerPositionUpdates == forceMainThreadScrollLayerPositionUpdates)
+        return;
+
+    m_forceMainThreadScrollLayerPositionUpdates = forceMainThreadScrollLayerPositionUpdates;
+    updateShouldUpdateScrollLayerPositionOnMainThread();
 }
 
 #if ENABLE(THREADED_SCROLLING)

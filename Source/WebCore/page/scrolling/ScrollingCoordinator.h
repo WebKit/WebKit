@@ -112,6 +112,9 @@ public:
     void handleWheelEventPhase(PlatformWheelEventPhase);
 #endif
 
+    // Force all scroll layer position updates to happen on the main thread.
+    void setForceMainThreadScrollLayerPositionUpdates(bool);
+
 private:
     explicit ScrollingCoordinator(Page*);
 
@@ -127,6 +130,8 @@ private:
     void setShouldUpdateScrollLayerPositionOnMainThread(bool);
 
     Page* m_page;
+
+    bool m_forceMainThreadScrollLayerPositionUpdates;
 
 #if ENABLE(THREADED_SCROLLING)
     void scheduleTreeStateCommit();
