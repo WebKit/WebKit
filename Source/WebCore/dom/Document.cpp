@@ -33,6 +33,7 @@
 #include "Attr.h"
 #include "Attribute.h"
 #include "CDATASection.h"
+#include "CSSParser.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
@@ -1020,12 +1021,27 @@ bool Document::cssRegionsEnabled() const
     return settings() && settings()->cssRegionsEnabled(); 
 }
 
+static bool validFlowName(const String& flowName)
+{
+    if (equalIgnoringCase(flowName, "auto")
+        || equalIgnoringCase(flowName, "default")
+        || equalIgnoringCase(flowName, "inherit")
+        || equalIgnoringCase(flowName, "initial")
+        || equalIgnoringCase(flowName, "none"))
+        return false;
+    return true;
+}
+
 PassRefPtr<WebKitNamedFlow> Document::webkitGetFlowByName(const String& flowName)
 {
-    if (!cssRegionsEnabled())
+    if (!cssRegionsEnabled() || flowName.isEmpty() || !validFlowName(flowName) || !renderer())
         return 0;
-    if (!renderer())
+
+    // Make a slower check for invalid flow name
+    CSSParser p(true);
+    if (!p.parseFlowThread(flowName, this))
         return 0;
+
     if (RenderView* view = renderer()->view())
         return view->ensureRenderFlowThreadWithName(flowName)->ensureNamedFlow();
     return 0;

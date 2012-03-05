@@ -215,6 +215,7 @@ public:
     bool parseFontFeatureSettings(bool important);
 
     bool cssRegionsEnabled() const;
+    bool parseFlowThread(const String& flowName, Document*);
     bool parseFlowThread(int propId, bool important);
     bool parseRegionThread(int propId, bool important);
 

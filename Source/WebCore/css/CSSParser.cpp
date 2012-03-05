@@ -7108,7 +7108,23 @@ bool CSSParser::cssRegionsEnabled() const
     return false;
 }
 
-// auto | <ident>
+bool CSSParser::parseFlowThread(const String& flowName, Document* doc)
+{
+    ASSERT(doc);
+    ASSERT(doc->cssRegionsEnabled());
+
+    RefPtr<CSSStyleSheet> dummyStyleSheet = CSSStyleSheet::create(doc);
+    setStyleSheet(dummyStyleSheet.get());
+
+    setupParser("@-webkit-decls{-webkit-flow-into:", flowName, "}");
+    cssyyparse(this);
+
+    m_rule = 0;
+
+    return (m_numParsedProperties && m_parsedProperties[0]->m_id == CSSPropertyWebkitFlowInto);
+}
+
+// none | <ident>
 bool CSSParser::parseFlowThread(int propId, bool important)
 {
     ASSERT(propId == CSSPropertyWebkitFlowInto);
