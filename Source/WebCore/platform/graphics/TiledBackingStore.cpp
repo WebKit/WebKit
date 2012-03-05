@@ -68,14 +68,14 @@ void TiledBackingStore::setTileCreationDelay(double delay)
     m_tileCreationDelay = delay;
 }
 
-void TiledBackingStore::coverWithTilesIfNeeded(const FloatPoint& panningTrajectoryVector)
+void TiledBackingStore::coverWithTilesIfNeeded(const FloatPoint& trajectoryVector)
 {
-    IntRect visibleRect = visibleContentsRect();
-    if (m_visibleRectTrajectoryVector == panningTrajectoryVector && m_previousVisibleRect == visibleRect)
+    IntRect visibleRect = this->visibleRect();
+    if (m_trajectoryVector == trajectoryVector && m_visibleRect == visibleRect)
         return;
 
-    m_visibleRectTrajectoryVector = panningTrajectoryVector;
-    m_previousVisibleRect = visibleRect;
+    m_trajectoryVector = trajectoryVector;
+    m_visibleRect = visibleRect;
 
     startTileCreationTimer();
 }
@@ -164,7 +164,7 @@ void TiledBackingStore::paint(GraphicsContext* context, const IntRect& rect)
     context->restore();
 }
 
-IntRect TiledBackingStore::visibleContentsRect() const
+IntRect TiledBackingStore::visibleRect() const
 {
     return mapFromContents(intersection(m_client->tiledBackingStoreVisibleRect(), m_client->tiledBackingStoreContentsRect()));
 }
@@ -225,7 +225,7 @@ float TiledBackingStore::coverageRatio(const WebCore::IntRect& contentsRect) con
 
 bool TiledBackingStore::visibleAreaIsCovered() const
 {
-    return coverageRatio(visibleContentsRect()) == 1.0f;
+    return coverageRatio(visibleRect()) == 1.0f;
 }
 
 void TiledBackingStore::createTiles()
@@ -236,8 +236,8 @@ void TiledBackingStore::createTiles()
     const IntRect previousRect = m_rect;
     m_rect = mapFromContents(m_client->tiledBackingStoreContentsRect());
 
-    const IntRect visibleRect = visibleContentsRect();
-    m_previousVisibleRect = visibleRect;
+    const IntRect visibleRect = this->visibleRect();
+    m_visibleRect = visibleRect;
 
     if (visibleRect.isEmpty())
         return;
@@ -338,7 +338,7 @@ void TiledBackingStore::computeCoverAndKeepRect(const IntRect& visibleRect, IntR
         coverRect.inflateY(visibleRect.height() * (m_coverAreaMultiplier - 1) / 2);
         keepRect = coverRect;
 
-        float trajectoryVectorNorm = sqrt(pow(m_visibleRectTrajectoryVector.x(), 2) + pow(m_visibleRectTrajectoryVector.y(), 2));
+        float trajectoryVectorNorm = sqrt(pow(m_trajectoryVector.x(), 2) + pow(m_trajectoryVector.y(), 2));
         if (trajectoryVectorNorm) {
             // A null trajectory vector (no motion) means that tiles for the coverArea will be created.
             // A non-null trajectory vector will shrink the covered rect to visibleRect plus its expansion from its
@@ -354,8 +354,8 @@ void TiledBackingStore::computeCoverAndKeepRect(const IntRect& visibleRect, IntR
 
             // Unite the visible rect with a "ghost" of the visible rect moved in the direction of the trajectory vector.
             coverRect = visibleRect;
-            coverRect.move(coverRect.width() * m_visibleRectTrajectoryVector.x() / trajectoryVectorNorm * trajectoryVectorMultiplier,
-                           coverRect.height() * m_visibleRectTrajectoryVector.y() / trajectoryVectorNorm * trajectoryVectorMultiplier);
+            coverRect.move(coverRect.width() * m_trajectoryVector.x() / trajectoryVectorNorm * trajectoryVectorMultiplier,
+                           coverRect.height() * m_trajectoryVector.y() / trajectoryVectorNorm * trajectoryVectorMultiplier);
 
             coverRect.unite(visibleRect);
         }
@@ -416,7 +416,7 @@ void TiledBackingStore::setKeepRect(const IntRect& keepRect)
 
 void TiledBackingStore::removeAllNonVisibleTiles()
 {
-    setKeepRect(visibleContentsRect());
+    setKeepRect(visibleRect());
 }
 
 PassRefPtr<Tile> TiledBackingStore::tileAt(const Tile::Coordinate& coordinate) const

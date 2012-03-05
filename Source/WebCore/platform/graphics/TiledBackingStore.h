@@ -99,7 +99,7 @@ private:
     void setTile(const Tile::Coordinate& coordinate, PassRefPtr<Tile> tile);
     void removeTile(const Tile::Coordinate& coordinate);
 
-    IntRect visibleContentsRect() const;
+    IntRect visibleRect() const;
 
     float coverageRatio(const IntRect&) const;
     void adjustForContentsRect(IntRect&) const;
@@ -119,9 +119,9 @@ private:
     IntSize m_tileSize;
     double m_tileCreationDelay;
     float m_coverAreaMultiplier;
-    FloatPoint m_visibleRectTrajectoryVector;
 
-    IntRect m_previousVisibleRect;
+    FloatPoint m_trajectoryVector;
+    IntRect m_visibleRect;
 
     IntRect m_keepRect;
     IntRect m_rect;
