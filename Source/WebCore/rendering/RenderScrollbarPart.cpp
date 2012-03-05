@@ -79,43 +79,41 @@ void RenderScrollbarPart::layoutVerticalPart()
     } 
 }
 
-static int calcScrollbarThicknessUsing(const Length& length, int containingLength, const IntSize& viewportSize)
+static int calcScrollbarThicknessUsing(const Length& l, int containingLength)
 {
-    if (length.isIntrinsicOrAuto())
+    if (l.isIntrinsicOrAuto())
         return ScrollbarTheme::theme()->scrollbarThickness();
-    return length.calcMinValue(containingLength, viewportSize);
+    return l.calcMinValue(containingLength);
 }
 
 void RenderScrollbarPart::computeScrollbarWidth()
 {
     if (!m_scrollbar->owningRenderer())
         return;
-    IntSize viewSize = viewportSize();
     int visibleSize = m_scrollbar->owningRenderer()->width() - m_scrollbar->owningRenderer()->borderLeft() - m_scrollbar->owningRenderer()->borderRight();
-    int w = calcScrollbarThicknessUsing(style()->width(), visibleSize, viewSize);
-    int minWidth = calcScrollbarThicknessUsing(style()->minWidth(), visibleSize, viewSize);
-    int maxWidth = style()->maxWidth().isUndefined() ? w : calcScrollbarThicknessUsing(style()->maxWidth(), visibleSize, viewSize);
+    int w = calcScrollbarThicknessUsing(style()->width(), visibleSize);
+    int minWidth = calcScrollbarThicknessUsing(style()->minWidth(), visibleSize);
+    int maxWidth = style()->maxWidth().isUndefined() ? w : calcScrollbarThicknessUsing(style()->maxWidth(), visibleSize);
     setWidth(max(minWidth, min(maxWidth, w)));
     
     // Buttons and track pieces can all have margins along the axis of the scrollbar. 
-    m_marginLeft = style()->marginLeft().calcMinValue(visibleSize, viewSize);
-    m_marginRight = style()->marginRight().calcMinValue(visibleSize, viewSize);
+    m_marginLeft = style()->marginLeft().calcMinValue(visibleSize);
+    m_marginRight = style()->marginRight().calcMinValue(visibleSize);
 }
 
 void RenderScrollbarPart::computeScrollbarHeight()
 {
     if (!m_scrollbar->owningRenderer())
         return;
-    IntSize viewSize = viewportSize();
     int visibleSize = m_scrollbar->owningRenderer()->height() -  m_scrollbar->owningRenderer()->borderTop() - m_scrollbar->owningRenderer()->borderBottom();
-    int h = calcScrollbarThicknessUsing(style()->height(), visibleSize, viewSize);
-    int minHeight = calcScrollbarThicknessUsing(style()->minHeight(), visibleSize, viewSize);
-    int maxHeight = style()->maxHeight().isUndefined() ? h : calcScrollbarThicknessUsing(style()->maxHeight(), visibleSize, viewSize);
+    int h = calcScrollbarThicknessUsing(style()->height(), visibleSize);
+    int minHeight = calcScrollbarThicknessUsing(style()->minHeight(), visibleSize);
+    int maxHeight = style()->maxHeight().isUndefined() ? h : calcScrollbarThicknessUsing(style()->maxHeight(), visibleSize);
     setHeight(max(minHeight, min(maxHeight, h)));
 
     // Buttons and track pieces can all have margins along the axis of the scrollbar. 
-    m_marginTop = style()->marginTop().calcMinValue(visibleSize, viewSize);
-    m_marginBottom = style()->marginBottom().calcMinValue(visibleSize, viewSize);
+    m_marginTop = style()->marginTop().calcMinValue(visibleSize);
+    m_marginBottom = style()->marginBottom().calcMinValue(visibleSize);
 }
 
 void RenderScrollbarPart::computePreferredLogicalWidths()

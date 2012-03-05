@@ -222,7 +222,6 @@ void RenderTable::computeLogicalWidth()
         computePositionedLogicalWidth();
 
     RenderBlock* cb = containingBlock();
-    IntSize viewSize = viewportSize();
 
     LayoutUnit availableLogicalWidth = containingBlockLogicalWidthForContent();
     bool hasPerpendicularContainingBlock = cb->style()->isHorizontalWritingMode() != style()->isHorizontalWritingMode();
@@ -233,10 +232,10 @@ void RenderTable::computeLogicalWidth()
         setLogicalWidth(convertStyleLogicalWidthToComputedWidth(styleLogicalWidth, containerWidthInInlineDirection));
     else {
         // Subtract out any fixed margins from our available width for auto width tables.
-        LayoutUnit marginStart = style()->marginStart().calcMinValue(availableLogicalWidth, viewSize);
-        LayoutUnit marginEnd = style()->marginEnd().calcMinValue(availableLogicalWidth, viewSize);
+        LayoutUnit marginStart = style()->marginStart().calcMinValue(availableLogicalWidth);
+        LayoutUnit marginEnd = style()->marginEnd().calcMinValue(availableLogicalWidth);
         LayoutUnit marginTotal = marginStart + marginEnd;
-
+        
         // Subtract out our margins to get the available content width.
         LayoutUnit availableContentLogicalWidth = max<LayoutUnit>(0, containerWidthInInlineDirection - marginTotal);
         if (shrinkToAvoidFloats() && cb->containsFloats() && !hasPerpendicularContainingBlock) {
@@ -262,8 +261,8 @@ void RenderTable::computeLogicalWidth()
     if (!hasPerpendicularContainingBlock)
         computeInlineDirectionMargins(cb, availableLogicalWidth, logicalWidth());
     else {
-        setMarginStart(style()->marginStart().calcMinValue(availableLogicalWidth, viewSize));
-        setMarginEnd(style()->marginEnd().calcMinValue(availableLogicalWidth, viewSize));
+        setMarginStart(style()->marginStart().calcMinValue(availableLogicalWidth));
+        setMarginEnd(style()->marginEnd().calcMinValue(availableLogicalWidth));
     }
 }
 
@@ -277,7 +276,7 @@ LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& st
         recalcBordersInRowDirection();
         borders = borderStart() + borderEnd() + (collapseBorders() ? 0 : paddingStart() + paddingEnd());
     }
-    return styleLogicalWidth.calcMinValue(availableWidth, viewportSize()) + borders;
+    return styleLogicalWidth.calcMinValue(availableWidth) + borders;
 }
 
 void RenderTable::layoutCaption(RenderTableCaption* caption)

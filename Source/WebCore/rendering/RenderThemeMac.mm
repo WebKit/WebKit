@@ -1072,7 +1072,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    RoundedRect border = o->style()->getRoundedBorderFor(r, o->viewportSize());
+    RoundedRect border = o->style()->getRoundedBorderFor(r);
     int radius = border.radii().topLeft().width();
 
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();

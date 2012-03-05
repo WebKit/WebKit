@@ -43,11 +43,11 @@ int RenderBR::lineHeight(bool firstLine) const
     if (firstLine && document()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
-            return s->computedLineHeight(viewportSize());
+            return s->computedLineHeight();
     }
     
     if (m_lineHeight == -1)
-        m_lineHeight = style()->computedLineHeight(viewportSize());
+        m_lineHeight = style()->computedLineHeight();
     
     return m_lineHeight;
 }

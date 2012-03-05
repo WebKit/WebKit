@@ -842,17 +842,17 @@ void RenderStyle::setBoxShadow(PassOwnPtr<ShadowData> shadowData, bool add)
     rareData->m_boxShadow = shadowData;
 }
 
-static RoundedRect::Radii calcRadiiFor(const BorderData& border, LayoutSize size, const IntSize& viewportSize)
+static RoundedRect::Radii calcRadiiFor(const BorderData& border, LayoutSize size)
 {
     return RoundedRect::Radii(
-        LayoutSize(border.topLeft().width().calcValue(size.width(), viewportSize), 
-                   border.topLeft().height().calcValue(size.height(), viewportSize)),
-        LayoutSize(border.topRight().width().calcValue(size.width(), viewportSize),
-                   border.topRight().height().calcValue(size.height(), viewportSize)),
-        LayoutSize(border.bottomLeft().width().calcValue(size.width(), viewportSize), 
-                   border.bottomLeft().height().calcValue(size.height(), viewportSize)),
-        LayoutSize(border.bottomRight().width().calcValue(size.width(), viewportSize), 
-                   border.bottomRight().height().calcValue(size.height(), viewportSize)));
+        LayoutSize(border.topLeft().width().calcValue(size.width()), 
+                   border.topLeft().height().calcValue(size.height())),
+        LayoutSize(border.topRight().width().calcValue(size.width()),
+                   border.topRight().height().calcValue(size.height())),
+        LayoutSize(border.bottomLeft().width().calcValue(size.width()), 
+                   border.bottomLeft().height().calcValue(size.height())),
+        LayoutSize(border.bottomRight().width().calcValue(size.width()), 
+                   border.bottomRight().height().calcValue(size.height())));
 }
 
 static float calcConstraintScaleFor(const IntRect& rect, const RoundedRect::Radii& radii)
@@ -887,11 +887,11 @@ static float calcConstraintScaleFor(const IntRect& rect, const RoundedRect::Radi
     return factor;
 }
 
-RoundedRect RenderStyle::getRoundedBorderFor(const LayoutRect& borderRect, IntSize viewportSize, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
+RoundedRect RenderStyle::getRoundedBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     RoundedRect roundedRect(pixelSnappedIntRect(borderRect));
     if (hasBorderRadius()) {
-        RoundedRect::Radii radii = calcRadiiFor(surround->border, borderRect.size(), viewportSize);
+        RoundedRect::Radii radii = calcRadiiFor(surround->border, borderRect.size());
         radii.scale(calcConstraintScaleFor(borderRect, radii));
         roundedRect.includeLogicalEdges(radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
     }

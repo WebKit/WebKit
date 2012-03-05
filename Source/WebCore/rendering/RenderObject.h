@@ -847,8 +847,6 @@ public:
     // Return the renderer whose background style is used to paint the root background. Should only be called on the renderer for which isRoot() is true.
     RenderObject* rendererForRootBackground();
 
-    IntSize viewportSize() const { return document()->viewportSize(); }
-
 protected:
     inline bool layerCreationAllowedForSubtree() const;
 

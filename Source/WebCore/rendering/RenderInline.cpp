@@ -702,8 +702,6 @@ static LayoutUnit computeMargin(const RenderInline* renderer, const Length& marg
         return margin.value();
     if (margin.isPercent())
         return margin.calcMinValue(max<LayoutUnit>(0, renderer->containingBlock()->availableLogicalWidth()));
-    if (margin.isViewportRelative())
-        return margin.calcValue(0, renderer->viewportSize());
     return 0;
 }
 
@@ -1309,10 +1307,10 @@ LayoutUnit RenderInline::lineHeight(bool firstLine, LineDirectionMode /*directio
     if (firstLine && document()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
-            return s->computedLineHeight(viewportSize());
+            return s->computedLineHeight();
     }
 
-    return style()->computedLineHeight(viewportSize());
+    return style()->computedLineHeight();
 }
 
 LayoutUnit RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const

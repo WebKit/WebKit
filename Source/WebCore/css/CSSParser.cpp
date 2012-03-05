@@ -778,9 +778,6 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, bool strict)
     case CSSPrimitiveValue::CSS_IN:
     case CSSPrimitiveValue::CSS_PT:
     case CSSPrimitiveValue::CSS_PC:
-    case CSSPrimitiveValue::CSS_VW:
-    case CSSPrimitiveValue::CSS_VH:
-    case CSSPrimitiveValue::CSS_VMIN:
         b = (unitflags & FLength);
         break;
     case CSSPrimitiveValue::CSS_MS:
@@ -812,8 +809,7 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveNumericValue(CSSP
     }
                
     ASSERT((value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
-           || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
-           || (value->unit >= CSSPrimitiveValue::CSS_VW && value->unit <= CSSPrimitiveValue::CSS_VMIN));
+           || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS));
     return cssValuePool()->createValue(value->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit));
 }
 
@@ -862,12 +858,6 @@ static int unitFromString(CSSParserValue* value)
         return CSSPrimitiveValue::CSS_HZ;
     if (equal(value->string, "kHz"))
         return CSSPrimitiveValue::CSS_KHZ;
-    if (equal(value->string, "vw"))
-        return CSSPrimitiveValue::CSS_VW;
-    if (equal(value->string, "vh"))
-        return CSSPrimitiveValue::CSS_VH;
-    if (equal(value->string, "vmin"))
-        return CSSPrimitiveValue::CSS_VMIN;
 
     return 0;
 }
@@ -912,8 +902,6 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int id, CSSP
     if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
         return createPrimitiveNumericValue(value);
     if (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
-        return createPrimitiveNumericValue(value);
-    if (value->unit >= CSSPrimitiveValue::CSS_VW && value->unit <= CSSPrimitiveValue::CSS_VMIN)
         return createPrimitiveNumericValue(value);
     if (value->unit >= CSSParserValue::Q_EMS)
         return CSSPrimitiveValue::createAllowingMarginQuirk(value->fValue, CSSPrimitiveValue::CSS_EMS);
@@ -8049,16 +8037,6 @@ inline void CSSParser::detectNumberToken(UChar* type, int length)
         if (length == 4 && isASCIIAlphaCaselessEqual(type[1], 'u')
                 && isASCIIAlphaCaselessEqual(type[2], 'r') && isASCIIAlphaCaselessEqual(type[3], 'n'))
             m_token = TURNS;
-        return;
-    case 'v':
-        if (length == 2) {
-            if (isASCIIAlphaCaselessEqual(type[1], 'w'))
-                m_token = VW;
-            else if (isASCIIAlphaCaselessEqual(type[1], 'h'))
-                m_token = VH;
-        } else if (length == 4 && isASCIIAlphaCaselessEqual(type[1], 'm')
-                && isASCIIAlphaCaselessEqual(type[2], 'i') && isASCIIAlphaCaselessEqual(type[3], 'n'))
-            m_token = VMIN;
         return;
 
     default:

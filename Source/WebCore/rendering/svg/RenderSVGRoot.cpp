@@ -151,9 +151,9 @@ bool RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const
     return frame->document()->isSVGDocument();
 }
 
-static inline LayoutUnit resolveLengthAttributeForSVG(const Length& length, float scale, float maxSize, const IntSize& viewportSize)
+static inline LayoutUnit resolveLengthAttributeForSVG(const Length& length, float scale, float maxSize)
 {
-    return static_cast<LayoutUnit>(length.calcValue(maxSize, viewportSize) * (length.isFixed() ? scale : 1));
+    return static_cast<LayoutUnit>(length.calcValue(maxSize) * (length.isFixed() ? scale : 1));
 }
 
 LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) const
@@ -169,7 +169,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) cons
         return RenderReplaced::computeReplacedLogicalWidth(includeMaxWidth);
 
     if (svg->widthAttributeEstablishesViewport())
-        return resolveLengthAttributeForSVG(svg->intrinsicWidth(SVGSVGElement::IgnoreCSSProperties), style()->effectiveZoom(), containingBlock()->availableLogicalWidth(), viewportSize());
+        return resolveLengthAttributeForSVG(svg->intrinsicWidth(SVGSVGElement::IgnoreCSSProperties), style()->effectiveZoom(), containingBlock()->availableLogicalWidth());
 
     // Only SVGs embedded in <object> reach this point.
     ASSERT(isEmbeddedThroughFrameContainingSVGDocument());
@@ -200,7 +200,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
         } else
             RenderBlock::removePercentHeightDescendant(const_cast<RenderSVGRoot*>(this));
 
-        return resolveLengthAttributeForSVG(height, style()->effectiveZoom(), containingBlock()->availableLogicalHeight(), viewportSize());
+        return resolveLengthAttributeForSVG(height, style()->effectiveZoom(), containingBlock()->availableLogicalHeight());
     }
 
     // Only SVGs embedded in <object> reach this point.

@@ -2540,8 +2540,6 @@ static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* st
             l = Length(primitiveValue->getDoubleValue(), Percent);
         else if (primitiveValue->isNumber())
             l = Length(primitiveValue->getDoubleValue() * 100.0, Percent);
-        else if (primitiveValue->isViewportRelativeLength())
-            l = primitiveValue->viewportRelativeLength();
         else if (ok)
             *ok = false;
     }
@@ -2950,11 +2948,6 @@ static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, CSSStyleSe
 
     if (primitiveValue->isPercentage()) {
         length = Length(primitiveValue->getDoubleValue(), Percent);
-        return true;
-    }
-
-    if (primitiveValue->isViewportRelativeLength()) {
-        length = primitiveValue->viewportRelativeLength();
         return true;
     }
 
@@ -4254,8 +4247,6 @@ void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* va
         firstLength = first->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (first->isPercentage())
         firstLength = Length(first->getDoubleValue(), Percent);
-    else if (first->isViewportRelativeLength())
-        firstLength = first->viewportRelativeLength();
     else
         return;
 
@@ -4265,8 +4256,6 @@ void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* va
         secondLength = second->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (second->isPercentage())
         secondLength = Length(second->getDoubleValue(), Percent);
-    else if (second->isViewportRelativeLength())
-        secondLength = second->viewportRelativeLength();
     else
         return;
 
@@ -4293,8 +4282,6 @@ void CSSStyleSelector::mapFillXPosition(CSSPropertyID, FillLayer* layer, CSSValu
         l = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (primitiveValue->isPercentage())
         l = Length(primitiveValue->getDoubleValue(), Percent);
-    else if (primitiveValue->isViewportRelativeLength())
-        l = primitiveValue->viewportRelativeLength();
     else
         return;
     layer->setXPosition(l);
@@ -4318,8 +4305,6 @@ void CSSStyleSelector::mapFillYPosition(CSSPropertyID, FillLayer* layer, CSSValu
         l = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (primitiveValue->isPercentage())
         l = Length(primitiveValue->getDoubleValue(), Percent);
-    else if (primitiveValue->isViewportRelativeLength())
-        l = primitiveValue->viewportRelativeLength();
     else
         return;
     layer->setYPosition(l);

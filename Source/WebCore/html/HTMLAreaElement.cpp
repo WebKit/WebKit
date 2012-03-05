@@ -143,30 +143,29 @@ Path HTMLAreaElement::getRegion(const LayoutSize& size) const
     }
 
     Path path;
-    IntSize viewportSize = document()->viewportSize();
     switch (shape) {
         case Poly:
             if (m_coordsLen >= 6) {
                 int numPoints = m_coordsLen / 2;
-                path.moveTo(FloatPoint(m_coords[0].calcMinValue(width, viewportSize), m_coords[1].calcMinValue(height, viewportSize)));
+                path.moveTo(FloatPoint(m_coords[0].calcMinValue(width), m_coords[1].calcMinValue(height)));
                 for (int i = 1; i < numPoints; ++i)
-                    path.addLineTo(FloatPoint(m_coords[i * 2].calcMinValue(width, viewportSize), m_coords[i * 2 + 1].calcMinValue(height, viewportSize)));
+                    path.addLineTo(FloatPoint(m_coords[i * 2].calcMinValue(width), m_coords[i * 2 + 1].calcMinValue(height)));
                 path.closeSubpath();
             }
             break;
         case Circle:
             if (m_coordsLen >= 3) {
                 Length radius = m_coords[2];
-                int r = min(radius.calcMinValue(width, viewportSize), radius.calcMinValue(height, viewportSize));
-                path.addEllipse(FloatRect(m_coords[0].calcMinValue(width, viewportSize) - r, m_coords[1].calcMinValue(height, viewportSize) - r, 2 * r, 2 * r));
+                int r = min(radius.calcMinValue(width), radius.calcMinValue(height));
+                path.addEllipse(FloatRect(m_coords[0].calcMinValue(width) - r, m_coords[1].calcMinValue(height) - r, 2 * r, 2 * r));
             }
             break;
         case Rect:
             if (m_coordsLen >= 4) {
-                int x0 = m_coords[0].calcMinValue(width, viewportSize);
-                int y0 = m_coords[1].calcMinValue(height, viewportSize);
-                int x1 = m_coords[2].calcMinValue(width, viewportSize);
-                int y1 = m_coords[3].calcMinValue(height, viewportSize);
+                int x0 = m_coords[0].calcMinValue(width);
+                int y0 = m_coords[1].calcMinValue(height);
+                int x1 = m_coords[2].calcMinValue(width);
+                int y1 = m_coords[3].calcMinValue(height);
                 path.addRect(FloatRect(x0, y0, x1 - x0, y1 - y0));
             }
             break;
