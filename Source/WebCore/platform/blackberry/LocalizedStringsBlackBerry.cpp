@@ -57,8 +57,7 @@ String submitButtonDefaultLabel()
 
 String inputElementAltText()
 {
-    notImplemented();
-    return String();
+    return String::fromUTF8(s_resource.getString(BlackBerry::Platform::SUBMIT_BUTTON_LABEL));
 }
 
 static String platformLanguage()
@@ -370,10 +369,9 @@ String searchMenuClearRecentSearchesText()
     return String();
 }
 
-String imageTitle(String const&, IntSize const&)
+String imageTitle(String const& filename, IntSize const& size)
 {
-    notImplemented();
-    return String();
+    return filename + " (" + String::number(size.width()) + "x" + String::number(size.height()) + ")";
 }
 
 String AXButtonActionVerb()
@@ -576,6 +574,11 @@ String multipleFileUploadText(unsigned)
 String defaultDetailsSummaryText()
 {
     return String::fromUTF8(s_resource.getString(BlackBerry::Platform::DETAILS_SUMMARY));
+}
+
+String fileButtonNoFilesSelectedLabel()
+{
+    return String::fromUTF8(s_resource.getString(BlackBerry::Platform::FILE_BUTTON_NO_FILE_SELECTED_LABEL));
 }
 
 } // namespace WebCore
