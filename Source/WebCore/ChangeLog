@@ -1,3 +1,17 @@
+2012-03-05  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] media/media-can-play-flac-audio.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=80124
+
+        Reviewed by Martin Robinson.
+
+        Handle audio/x-flac in the mimeTypeCache() function so that we
+        advertize both audio/flac and audio/x-flac.
+
+        No new tests, this is covered already by media/media-can-play-flac-audio.html.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+
 2012-03-05  Pablo Flouret  <pablof@motorola.com>
 
         Fix code generators to correctly guard header declarations that have a [Conditional] attribute.

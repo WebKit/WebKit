@@ -1535,6 +1535,12 @@ static HashSet<String> mimeTypeCache()
                     cached = true;
                 }
 
+                if (g_str_equal(name, "audio/x-flac")) {
+                    cache.add(String("audio/flac"));
+                    cache.add(String("audio/x-flac"));
+                    cached = true;
+                }
+
                 if (g_str_equal(name, "audio/mpeg")) {
                     cache.add(String(name));
                     cache.add(String("audio/x-mpeg"));
