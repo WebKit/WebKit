@@ -263,18 +263,20 @@ WebInspector.HeapSnapshotLoaderProxy.prototype = {
         delete this._onLoadCallbacks;
         this._loading = false;
         this._loaded = true;
-        function callLoadCallbacks(snapshotProxy)
-        {
-            for (var i = 0; i < loadCallbacks.length; ++i)
-                loadCallbacks[i](snapshotProxy);
-        }
+        var self = this;
         function updateStaticData(snapshotProxy)
         {
             this.dispose();
-            snapshotProxy.updateStaticData(callLoadCallbacks);
+            snapshotProxy.updateStaticData(this._callLoadCallbacks.bind(this, loadCallbacks));
         }
         this.callFactoryMethod(updateStaticData.bind(this), "finishLoading", "WebInspector.HeapSnapshotProxy");
         return true;
+    },
+
+    _callLoadCallbacks: function(loadCallbacks, snapshotProxy)
+    {
+        for (var i = 0; i < loadCallbacks.length; ++i)
+            loadCallbacks[i](snapshotProxy);
     },
 
     get loaded()
