@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ExecutionCounter.h"
 
-#if ENABLE(JIT)
-
 #include "CodeBlock.h"
 #include "ExecutableAllocator.h"
 #include <wtf/DataLog.h>
@@ -66,9 +64,15 @@ void ExecutionCounter::deferIndefinitely()
 
 double ExecutionCounter::applyMemoryUsageHeuristics(int32_t value, CodeBlock* codeBlock)
 {
+#if ENABLE(JIT)
     double multiplier =
         ExecutableAllocator::memoryPressureMultiplier(
             codeBlock->predictedMachineCodeSize());
+#else
+    // This code path will probably not be taken, but if it is, we fake it.
+    double multiplier = 1.0;
+    UNUSED_PARAM(codeBlock);
+#endif
     ASSERT(multiplier >= 1.0);
     return multiplier * value;
 }
@@ -159,4 +163,3 @@ void ExecutionCounter::reset()
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)

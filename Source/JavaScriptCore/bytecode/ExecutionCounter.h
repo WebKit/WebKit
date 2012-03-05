@@ -26,8 +26,6 @@
 #ifndef ExecutionCounter_h
 #define ExecutionCounter_h
 
-#if ENABLE(JIT)
-
 #include <wtf/SimpleStats.h>
 
 namespace JSC {
@@ -80,8 +78,6 @@ public:
 };
 
 } // namespace JSC
-
-#endif // ENABLE(JIT)
 
 #endif // ExecutionCounter_h
 

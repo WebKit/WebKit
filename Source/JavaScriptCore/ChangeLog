@@ -1,3 +1,11 @@
+2012-03-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, attempted build fix for !ENABLE(JIT) after r109705.
+
+        * bytecode/ExecutionCounter.cpp:
+        (JSC::ExecutionCounter::applyMemoryUsageHeuristics):
+        * bytecode/ExecutionCounter.h:
+
 2012-03-05  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Build fix for !ENABLE(JIT) after r109705.
