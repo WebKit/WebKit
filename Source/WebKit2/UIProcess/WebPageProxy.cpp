@@ -161,6 +161,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_pageScaleFactor(1)
     , m_intrinsicDeviceScaleFactor(1)
     , m_customDeviceScaleFactor(0)
+    , m_layerHostingMode(LayerHostingModeDefault)
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
     , m_areMemoryCacheClientCallsEnabled(true)
@@ -759,6 +760,12 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
         if (m_isInWindow != isInWindow) {
             m_isInWindow = isInWindow;
             process()->send(Messages::WebPage::SetIsInWindow(isInWindow), m_pageID);
+        }
+
+        LayerHostingMode layerHostingMode = m_pageClient->viewLayerHostingMode();
+        if (m_layerHostingMode != layerHostingMode) {
+            m_layerHostingMode = layerHostingMode;
+            m_drawingArea->layerHostingModeDidChange();
         }
     }
 
@@ -3356,6 +3363,11 @@ void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layer
 void WebPageProxy::exitAcceleratedCompositingMode()
 {
     m_pageClient->exitAcceleratedCompositingMode();
+}
+
+void WebPageProxy::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
+{
+    m_pageClient->updateAcceleratedCompositingMode(layerTreeContext);
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 

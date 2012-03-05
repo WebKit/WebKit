@@ -38,6 +38,7 @@
 #if PLATFORM(QT)
 #include "QtNetworkRequestData.h"
 #endif
+#include "LayerTreeContext.h"
 #include "NotificationPermissionRequestManagerProxy.h"
 #include "PlatformProcessIdentifier.h"
 #include "SandboxExtension.h"
@@ -432,7 +433,9 @@ public:
     void setIntrinsicDeviceScaleFactor(float);
     void setCustomDeviceScaleFactor(float);
     void windowScreenDidChange(PlatformDisplayID);
-    
+
+    LayerHostingMode layerHostingMode() const { return m_layerHostingMode; }
+
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
     bool useFixedLayout() const { return m_useFixedLayout; };
@@ -531,6 +534,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode();
+    virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
 #endif
     
     void didDraw();
@@ -944,6 +948,8 @@ private:
     double m_pageScaleFactor;
     float m_intrinsicDeviceScaleFactor;
     float m_customDeviceScaleFactor;
+
+    LayerHostingMode m_layerHostingMode;
 
     bool m_drawsBackground;
     bool m_drawsTransparentBackground;

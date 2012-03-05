@@ -27,6 +27,7 @@
 #define TiledCoreAnimationDrawingArea_h
 
 #include "DrawingArea.h"
+#include "LayerTreeContext.h"
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/LayerFlushScheduler.h>
 #include <WebCore/LayerFlushSchedulerClient.h>
@@ -37,7 +38,7 @@ OBJC_CLASS WKContentLayer;
 
 namespace WebKit {
 
-class RemoteLayerClient;
+class LayerHostingContext;
 
 class TiledCoreAnimationDrawingArea : public DrawingArea, WebCore::GraphicsLayerClient, WebCore::LayerFlushSchedulerClient {
 public:
@@ -75,6 +76,7 @@ private:
     // Message handlers.
     virtual void updateGeometry(const WebCore::IntSize& viewSize) OVERRIDE;
     virtual void setDeviceScaleFactor(float) OVERRIDE;
+    virtual void setLayerHostingMode(uint32_t) OVERRIDE;
 
     void setRootCompositingLayer(CALayer *);
 
@@ -84,7 +86,9 @@ private:
     bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 
-    OwnPtr<RemoteLayerClient> m_remoteLayerClient;
+    OwnPtr<LayerHostingContext> m_layerHostingContext;
+    LayerHostingMode m_layerHostingMode;
+    
     RetainPtr<CALayer> m_rootLayer;
     RetainPtr<CALayer> m_pendingRootCompositingLayer;
 

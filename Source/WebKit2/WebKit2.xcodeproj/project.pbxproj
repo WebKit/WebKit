@@ -791,8 +791,8 @@
 		BCDE093B13272496001259FB /* MainMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FA31011E3921E00DB1371 /* MainMac.cpp */; };
 		BCDE093D13272496001259FB /* PluginProcessShim.dylib in Copy Plug-in Process Shim */ = {isa = PBXBuildFile; fileRef = 1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */; };
 		BCDE0ABF13272708001259FB /* PluginProcess.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCDE094213272496001259FB /* PluginProcess.app */; };
-		BCE0937714FB128C001138D9 /* RemoteLayerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCE0937514FB128B001138D9 /* RemoteLayerClient.mm */; };
-		BCE0937814FB128C001138D9 /* RemoteLayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE0937614FB128B001138D9 /* RemoteLayerClient.h */; };
+		BCE0937714FB128C001138D9 /* LayerHostingContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCE0937514FB128B001138D9 /* LayerHostingContext.mm */; };
+		BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE0937614FB128B001138D9 /* LayerHostingContext.h */; };
 		BCE17B7D1381F1170012A641 /* WKPagePrivateMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE17B7B1381F1170012A641 /* WKPagePrivateMac.cpp */; };
 		BCE17B7E1381F1170012A641 /* WKPagePrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE17B7C1381F1170012A641 /* WKPagePrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE2315D122C30CA00D5C35A /* WebURLRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE2315B122C30CA00D5C35A /* WebURLRequest.h */; };
@@ -1816,8 +1816,8 @@
 		BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextInjectedBundleClient.h; sourceTree = "<group>"; };
 		BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextInjectedBundleClient.cpp; sourceTree = "<group>"; };
 		BCDE094213272496001259FB /* PluginProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PluginProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		BCE0937514FB128B001138D9 /* RemoteLayerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerClient.mm; sourceTree = "<group>"; };
-		BCE0937614FB128B001138D9 /* RemoteLayerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerClient.h; sourceTree = "<group>"; };
+		BCE0937514FB128B001138D9 /* LayerHostingContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerHostingContext.mm; sourceTree = "<group>"; };
+		BCE0937614FB128B001138D9 /* LayerHostingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerHostingContext.h; sourceTree = "<group>"; };
 		BCE17B7B1381F1170012A641 /* WKPagePrivateMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WKPagePrivateMac.cpp; path = mac/WKPagePrivateMac.cpp; sourceTree = "<group>"; };
 		BCE17B7C1381F1170012A641 /* WKPagePrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKPagePrivateMac.h; path = mac/WKPagePrivateMac.h; sourceTree = "<group>"; };
 		BCE2315B122C30CA00D5C35A /* WebURLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURLRequest.h; sourceTree = "<group>"; };
@@ -2273,8 +2273,8 @@
 				1A24B5F011F531E800C38269 /* MachUtilities.cpp */,
 				1A24B5F111F531E800C38269 /* MachUtilities.h */,
 				C0E3AA481209E45000A49D01 /* ModuleMac.mm */,
-				BCE0937514FB128B001138D9 /* RemoteLayerClient.mm */,
-				BCE0937614FB128B001138D9 /* RemoteLayerClient.h */,
+				BCE0937514FB128B001138D9 /* LayerHostingContext.mm */,
+				BCE0937614FB128B001138D9 /* LayerHostingContext.h */,
 				1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */,
 				296BD85B15019BC30071F424 /* StringUtilities.h */,
 				296BD85C15019BC30071F424 /* StringUtilities.mm */,
@@ -4149,7 +4149,7 @@
 				BC2E6E8E1141971500A63B1E /* WorkQueue.h in Headers */,
 				1AB42E8714BBBBB2004272F7 /* KeychainShimResponseMap.h in Headers */,
 				E17BF99614D0A73E00A5A069 /* NetscapeSandboxFunctions.h in Headers */,
-				BCE0937814FB128C001138D9 /* RemoteLayerClient.h in Headers */,
+				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4889,7 +4889,7 @@
 				BC2E6E8D1141971500A63B1E /* WorkQueue.cpp in Sources */,
 				BC0092F8115837A300E0AE2A /* WorkQueueMac.cpp in Sources */,
 				E17BF99814D0AA8300A5A069 /* NetscapeSandboxFunctions.mm in Sources */,
-				BCE0937714FB128C001138D9 /* RemoteLayerClient.mm in Sources */,
+				BCE0937714FB128C001138D9 /* LayerHostingContext.mm in Sources */,
 				296BD85E15019BC30071F424 /* StringUtilities.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

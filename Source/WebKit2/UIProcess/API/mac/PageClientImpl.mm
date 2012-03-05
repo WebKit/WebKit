@@ -52,6 +52,12 @@
 - (NSCursor *)_cursorRectCursor;
 @end
 
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+@interface NSWindow (WebNSWindowDetails)
+- (BOOL)_hostsLayersInWindowServer;
+@end
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -182,6 +188,18 @@ bool PageClientImpl::isViewVisible()
 bool PageClientImpl::isViewInWindow()
 {
     return [m_wkView window];
+}
+
+LayerHostingMode PageClientImpl::layerHostingMode()
+{
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    if (![m_wkView window])
+        return LayerHostingModeDefault;
+
+    return [[m_wkView window] _hostsLayersInWindowServer] ? LayerHostingModeInWindowServer : LayerHostingModeDefault;
+#else
+    return LayerHostingModeDefault;
+#endif
 }
 
 void PageClientImpl::processDidCrash()
@@ -336,6 +354,11 @@ void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& lay
 void PageClientImpl::exitAcceleratedCompositingMode()
 {
     [m_wkView _exitAcceleratedCompositingMode];
+}
+
+void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
+{
+    [m_wkView _updateAcceleratedCompositingMode:layerTreeContext];
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 

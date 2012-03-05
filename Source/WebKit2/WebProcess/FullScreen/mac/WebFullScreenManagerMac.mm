@@ -28,9 +28,9 @@
 #if ENABLE(FULLSCREEN_API)
 
 #import "Connection.h"
+#import "LayerHostingContext.h"
 #import "LayerTreeContext.h"
 #import "MessageID.h"
-#import "RemoteLayerClient.h"
 #import "WebFullScreenManagerProxyMessages.h"
 #import "WebPage.h"
 #import "WebProcess.h"
@@ -163,9 +163,10 @@ void WebFullScreenManagerMac::setRootFullScreenLayer(WebCore::GraphicsLayer* lay
 
         [m_rootLayer->platformLayer() setGeometryFlipped:YES];
 
-        m_remoteLayerClient = RemoteLayerClient::create(WebProcess::shared().compositingRenderServerPort(), m_rootLayer->platformLayer());
-        m_layerTreeContext.contextID = m_remoteLayerClient->clientID();
-
+        m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::shared().compositingRenderServerPort());
+        m_layerHostingContext->setRootLayer(m_rootLayer->platformLayer());
+        
+        m_layerTreeContext.contextID = m_layerHostingContext->contextID();
         m_page->send(Messages::WebFullScreenManagerProxy::EnterAcceleratedCompositingMode(m_layerTreeContext));
     }
 
@@ -181,11 +182,11 @@ void WebFullScreenManagerMac::setRootFullScreenLayer(WebCore::GraphicsLayer* lay
 
 void WebFullScreenManagerMac::disposeOfLayerClient()
 {
-    if (!m_remoteLayerClient)
+    if (!m_layerHostingContext)
         return;
     
-    m_remoteLayerClient->invalidate();
-    m_remoteLayerClient = nullptr;
+    m_layerHostingContext->invalidate();
+    m_layerHostingContext = nullptr;
 }
 
 void WebFullScreenManagerMac::beginEnterFullScreenAnimation(float duration)

@@ -23,55 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "RemoteLayerClient.h"
+#ifndef LayerHostingContext_h
+#define LayerHostingContext_h
 
-#import <wtf/PassOwnPtr.h>
+#include "LayerTreeContext.h"
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RetainPtr.h>
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-#import <QuartzCore/CARemoteLayerClient.h>
-#else
-#import <WebKitSystemInterface.h>
-#endif
+OBJC_CLASS CALayer;
+typedef struct __WKCAContextRef *WKCAContextRef;
 
 namespace WebKit {
 
-PassOwnPtr<RemoteLayerClient> RemoteLayerClient::create(mach_port_t serverPort, CALayer *rootLayer)
-{
-    return adoptPtr(new RemoteLayerClient(serverPort, rootLayer));
-}
-
-RemoteLayerClient::RemoteLayerClient(mach_port_t serverPort, CALayer *rootLayer)
-{
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-    m_platformClient = adoptNS([[CARemoteLayerClient alloc] initWithServerPort:serverPort]);
-    m_platformClient.get().layer = rootLayer;
-#else
-    m_platformClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
-    WKCARemoteLayerClientSetLayer(m_platformClient.get(), rootLayer);
+class LayerHostingContext {
+    WTF_MAKE_NONCOPYABLE(LayerHostingContext);
+public:
+    static PassOwnPtr<LayerHostingContext> createForPort(mach_port_t serverPort);
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    static PassOwnPtr<LayerHostingContext> createForWindowServer();
 #endif
-}
+    ~LayerHostingContext();
 
-RemoteLayerClient::~RemoteLayerClient()
-{
-}
+    void setRootLayer(CALayer *);
+    CALayer *rootLayer() const;
 
-uint32_t RemoteLayerClient::clientID() const
-{
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-    return m_platformClient.get().clientId;
-#else
-    return WKCARemoteLayerClientGetClientId(m_platformClient.get());
+    uint32_t contextID() const;
+    void invalidate();
+
+    LayerHostingMode layerHostingMode() { return m_layerHostingMode; }
+
+private:
+    LayerHostingContext(mach_port_t serverPort);
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+    LayerHostingContext();
 #endif
-}
 
-void RemoteLayerClient::invalidate()
-{
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-    [m_platformClient.get() invalidate];
-#else
-    WKCARemoteLayerClientInvalidate(m_platformClient.get());
-#endif
-}
+    LayerHostingMode m_layerHostingMode;
+    RetainPtr<WKCAContextRef> m_context;
+};
 
 } // namespace WebKit
+
+#endif // LayerHostingContext_h

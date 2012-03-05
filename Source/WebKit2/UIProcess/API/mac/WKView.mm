@@ -2459,6 +2459,12 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_layerHostingView = nullptr;
 }
 
+- (void)_updateAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext
+{
+    [self _exitAcceleratedCompositingMode];
+    [self _enterAcceleratedCompositingMode:layerTreeContext];
+}
+
 - (void)_setAccessibilityWebProcessToken:(NSData *)data
 {
     _data->_remoteAccessibilityChild = WKAXRemoteElementForToken(data);

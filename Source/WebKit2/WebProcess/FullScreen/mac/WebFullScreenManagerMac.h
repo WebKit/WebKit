@@ -38,7 +38,7 @@ OBJC_CLASS WebFullScreenManagerAnimationListener;
 
 namespace WebKit {
 
-class RemoteLayerClient;
+class LayerHostingContext;
 
 class WebFullScreenManagerMac : public WebFullScreenManager {
 public:
@@ -59,7 +59,7 @@ private:
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
     LayerTreeContext m_layerTreeContext;
-    OwnPtr<RemoteLayerClient> m_remoteLayerClient;
+    OwnPtr<LayerHostingContext> m_layerHostingContext;
     RetainPtr<id> m_enterFullScreenListener;
     RetainPtr<id> m_exitFullScreenListener;
 };

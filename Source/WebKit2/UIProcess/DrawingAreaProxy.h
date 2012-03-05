@@ -74,6 +74,8 @@ public:
 
     // FIXME: These should be pure virtual.
     virtual void visibilityDidChange() { }
+    virtual void layerHostingModeDidChange() { }
+
     virtual void setBackingStoreIsDiscardable(bool) { }
 
     virtual void waitForBackingStoreUpdateOnNextPaint() { }
@@ -123,6 +125,7 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) { }
     virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) { }
+    virtual void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) { }
 #endif
 #if PLATFORM(MAC)
     virtual void didUpdateGeometry() { }

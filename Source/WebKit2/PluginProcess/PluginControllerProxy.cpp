@@ -46,7 +46,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
-#include "RemoteLayerClient.h"
+#include "LayerHostingContext.h"
 #endif
 
 using namespace WebCore;

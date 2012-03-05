@@ -26,6 +26,7 @@
 #import "config.h"
 #import "LayerTreeHostCAMac.h"
 
+#import "LayerHostingContext.h"
 #import "WebProcess.h"
 #import <QuartzCore/CATransaction.h>
 #import <WebCore/GraphicsLayer.h>
@@ -53,13 +54,15 @@ LayerTreeHostCAMac::LayerTreeHostCAMac(WebPage* webPage)
 
 LayerTreeHostCAMac::~LayerTreeHostCAMac()
 {
-    ASSERT(!m_remoteLayerClient);
+    ASSERT(!m_layerHostingContext);
 }
 
 void LayerTreeHostCAMac::platformInitialize(LayerTreeContext& layerTreeContext)
 {
-    m_remoteLayerClient = RemoteLayerClient::create(WebProcess::shared().compositingRenderServerPort(), rootLayer()->platformLayer());
-    layerTreeContext.contextID = m_remoteLayerClient->clientID();
+    m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::shared().compositingRenderServerPort());
+    m_layerHostingContext->setRootLayer(rootLayer()->platformLayer());
+
+    layerTreeContext.contextID = m_layerHostingContext->contextID();
 }
 
 void LayerTreeHostCAMac::scheduleLayerFlush()
@@ -79,8 +82,8 @@ void LayerTreeHostCAMac::invalidate()
 {
     m_layerFlushScheduler.invalidate();
 
-    m_remoteLayerClient->invalidate();
-    m_remoteLayerClient = nullptr;
+    m_layerHostingContext->invalidate();
+    m_layerHostingContext = nullptr;
 
     LayerTreeHostCA::invalidate();
 }

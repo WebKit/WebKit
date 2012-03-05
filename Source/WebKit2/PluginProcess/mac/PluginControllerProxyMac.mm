@@ -28,9 +28,9 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#import "LayerHostingContext.h"
 #import "PluginProcess.h"
 #import "PluginProxyMessages.h"
-#import "RemoteLayerClient.h"
 #import "WebProcessConnection.h"
 #import <QuartzCore/QuartzCore.h>
 
@@ -59,25 +59,26 @@ void PluginControllerProxy::platformInitialize()
     if (!platformLayer)
         return;
 
-    ASSERT(!m_remoteLayerClient);
-    m_remoteLayerClient = RemoteLayerClient::create(PluginProcess::shared().compositingRenderServerPort(), platformLayer);
+    ASSERT(!m_layerHostingContext);
+    m_layerHostingContext = LayerHostingContext::createForPort(PluginProcess::shared().compositingRenderServerPort());
+    m_layerHostingContext->setRootLayer(platformLayer);
 }
 
 void PluginControllerProxy::platformDestroy()
 {
-    if (!m_remoteLayerClient)
+    if (!m_layerHostingContext)
         return;
 
-    m_remoteLayerClient->invalidate();
-    m_remoteLayerClient = nullptr;
+    m_layerHostingContext->invalidate();
+    m_layerHostingContext = nullptr;
 }
 
 uint32_t PluginControllerProxy::remoteLayerClientID() const
 {
-    if (!m_remoteLayerClient)
+    if (!m_layerHostingContext)
         return 0;
 
-    return m_remoteLayerClient->clientID();
+    return m_layerHostingContext->contextID();
 }
 
 void PluginControllerProxy::platformGeometryDidChange()

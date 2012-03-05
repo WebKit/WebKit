@@ -27,11 +27,12 @@
 #define LayerTreeHostCAMac_h
 
 #include "LayerTreeHostCA.h"
-#include "RemoteLayerClient.h"
 #include <WebCore/LayerFlushScheduler.h>
 #include <WebCore/LayerFlushSchedulerClient.h>
 
 namespace WebKit {
+
+class LayerHostingContext;
 
 class LayerTreeHostCAMac : public LayerTreeHostCA, public WebCore::LayerFlushSchedulerClient {
 public:
@@ -59,7 +60,7 @@ private:
     // LayerFlushSchedulerClient
     virtual bool flushLayers();
 
-    OwnPtr<RemoteLayerClient> m_remoteLayerClient;
+    OwnPtr<LayerHostingContext> m_layerHostingContext;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 };
 

@@ -213,6 +213,11 @@ void PageClientImpl::exitAcceleratedCompositingMode()
 {
     notImplemented();
 }
+
+void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
+{
+    notImplemented();
+}
 #endif // USE(ACCELERATED_COMPOSITING)
 
 void PageClientImpl::didChangeScrollbarsForMainFrame() const

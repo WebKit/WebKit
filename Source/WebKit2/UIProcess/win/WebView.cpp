@@ -1564,6 +1564,9 @@ void WebView::exitAcceleratedCompositingMode()
 #endif
 }
 
+void WebView::updateAcceleratedCompositingMode(const LayerTreeContext&)
+{
+}
 #endif // USE(ACCELERATED_COMPOSITING)
 
 HWND WebView::nativeWindow()

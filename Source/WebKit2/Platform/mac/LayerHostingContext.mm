@@ -23,40 +23,60 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerClient_h
-#define RemoteLayerClient_h
+#import "config.h"
+#import "LayerHostingContext.h"
 
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS CALayer;
-
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-OBJC_CLASS CARemoteLayerClient;
-typedef CARemoteLayerClient *PlatformRemoteLayerClient;
-#else
-typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
-typedef WKCARemoteLayerClientRef PlatformRemoteLayerClient;
-#endif
+#import <wtf/PassOwnPtr.h>
+#import <WebKitSystemInterface.h>
 
 namespace WebKit {
 
-class RemoteLayerClient {
-    WTF_MAKE_NONCOPYABLE(RemoteLayerClient);
-public:
-    static PassOwnPtr<RemoteLayerClient> create(mach_port_t serverPort, CALayer *rootLayer);
-    ~RemoteLayerClient();
+PassOwnPtr<LayerHostingContext> LayerHostingContext::createForPort(mach_port_t serverPort)
+{
+    return adoptPtr(new LayerHostingContext(serverPort));
+}
 
-    uint32_t clientID() const;
-    void invalidate();
+LayerHostingContext::LayerHostingContext(mach_port_t serverPort)
+{
+    m_layerHostingMode = LayerHostingModeDefault;
+    m_context = WKCAContextMakeRemoteWithServerPort(serverPort);
+}
 
-private:
-    RemoteLayerClient(mach_port_t serverPort, CALayer *rootLayer);
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+PassOwnPtr<LayerHostingContext> LayerHostingContext::createForWindowServer()
+{
+    return adoptPtr(new LayerHostingContext);
+}
 
-    RetainPtr<PlatformRemoteLayerClient> m_platformClient;
-};
+LayerHostingContext::LayerHostingContext()
+{
+    m_layerHostingMode = LayerHostingModeInWindowServer;
+    m_context = WKCAContextMakeRemoteForWindowServer();
+}
+#endif
+
+LayerHostingContext::~LayerHostingContext()
+{
+}
+
+void LayerHostingContext::setRootLayer(CALayer *rootLayer)
+{
+    WKCAContextSetLayer(m_context.get(), rootLayer);
+}
+
+CALayer *LayerHostingContext::rootLayer() const
+{
+    return WKCAContextGetLayer(m_context.get());
+}
+
+uint32_t LayerHostingContext::contextID() const
+{
+    return WKCAContextGetContextId(m_context.get());
+}
+
+void LayerHostingContext::invalidate()
+{
+    WKCAContextInvalidate(m_context.get());
+}
 
 } // namespace WebKit
-
-#endif // RemoteLayerClient_h

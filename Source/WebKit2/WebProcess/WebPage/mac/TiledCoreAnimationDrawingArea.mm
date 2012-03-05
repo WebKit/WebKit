@@ -28,8 +28,8 @@
 
 #import "DrawingAreaProxyMessages.h"
 #import "EventDispatcher.h"
+#import "LayerHostingContext.h"
 #import "LayerTreeContext.h"
-#import "RemoteLayerClient.h"
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
@@ -76,10 +76,11 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     m_rootLayer.get().opaque = YES;
     m_rootLayer.get().geometryFlipped = YES;
 
-    m_remoteLayerClient = RemoteLayerClient::create(WebProcess::shared().compositingRenderServerPort(), m_rootLayer.get());
-
+    m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::shared().compositingRenderServerPort());
+    m_layerHostingContext->setRootLayer(m_rootLayer.get());
+    
     LayerTreeContext layerTreeContext;
-    layerTreeContext.contextID = m_remoteLayerClient->clientID();
+    layerTreeContext.contextID = m_layerHostingContext->contextID();
     m_webPage->send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
 }
 
@@ -251,6 +252,37 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
 void TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)
 {
     m_webPage->setDeviceScaleFactor(deviceScaleFactor);
+}
+
+void TiledCoreAnimationDrawingArea::setLayerHostingMode(uint32_t opaqueLayerHostingMode)
+{
+    LayerHostingMode layerHostingMode = static_cast<LayerHostingMode>(opaqueLayerHostingMode);
+    if (layerHostingMode != m_layerHostingContext->layerHostingMode()) {
+        // The mode has changed.
+        
+        // First, invalidate the old hosting context.
+        m_layerHostingContext->invalidate();
+        m_layerHostingContext = nullptr;
+
+        // Create a new context and set it up.
+        switch (layerHostingMode) {
+        case LayerHostingModeDefault:
+            m_layerHostingContext = LayerHostingContext::createForPort(WebProcess::shared().compositingRenderServerPort());
+            break;
+#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
+        case LayerHostingModeInWindowServer:
+            m_layerHostingContext = LayerHostingContext::createForWindowServer();        
+            break;
+#endif
+        }
+
+        m_layerHostingContext->setRootLayer(m_rootLayer.get());
+
+        // Finally, inform the UIProcess that the context has changed.
+        LayerTreeContext layerTreeContext;
+        layerTreeContext.contextID = m_layerHostingContext->contextID();
+        m_webPage->send(Messages::DrawingAreaProxy::UpdateAcceleratedCompositingMode(0, layerTreeContext));
+    }
 }
 
 void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)

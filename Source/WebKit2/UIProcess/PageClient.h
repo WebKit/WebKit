@@ -93,7 +93,10 @@ public:
 
     // Return whether the view is in a window.
     virtual bool isViewInWindow() = 0;
-    
+
+    // Return the layer hosting mode for the view.
+    virtual LayerHostingMode viewLayerHostingMode() { return LayerHostingModeDefault; }
+
     virtual void processDidCrash() = 0;
     virtual void didRelaunchProcess() = 0;
     virtual void pageClosed() = 0;
@@ -165,6 +168,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&) = 0;
     virtual void exitAcceleratedCompositingMode() = 0;
+    virtual void updateAcceleratedCompositingMode(const LayerTreeContext&) = 0;
 #endif
 
 #if PLATFORM(WIN)

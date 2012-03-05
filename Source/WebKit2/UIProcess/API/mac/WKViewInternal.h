@@ -64,6 +64,7 @@ namespace WebKit {
 
 - (void)_enterAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext;
 - (void)_exitAcceleratedCompositingMode;
+- (void)_updateAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext;
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;
 

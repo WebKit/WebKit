@@ -65,6 +65,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode();
+    virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
 #endif // USE(ACCELERATED_COMPOSITING)
     virtual void pageClosed() { }
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);

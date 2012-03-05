@@ -289,3 +289,8 @@ void QtPageClient::exitAcceleratedCompositingMode()
     // FIXME: Implement.
 }
 
+void QtPageClient::updateAcceleratedCompositingMode(const LayerTreeContext&)
+{
+    // FIXME: Implement.
+}
+
