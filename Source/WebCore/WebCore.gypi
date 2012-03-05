@@ -1126,7 +1126,6 @@
             'xml/XSLTProcessor.idl',
         ],
         'webcore_svg_bindings_idl_files': [
-            'svg/DOMWindowSVG.idl',
             'svg/ElementTimeControl.idl',
             'svg/SVGAElement.idl',
             'svg/SVGAltGlyphElement.idl',

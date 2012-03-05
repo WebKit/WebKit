@@ -385,7 +385,6 @@ BINDING_IDLS = \
     $(WebCore)/storage/StorageInfoErrorCallback.idl \
     $(WebCore)/storage/StorageInfoQuotaCallback.idl \
     $(WebCore)/storage/StorageInfoUsageCallback.idl \
-    $(WebCore)/svg/DOMWindowSVG.idl \
     $(WebCore)/svg/ElementTimeControl.idl \
     $(WebCore)/svg/SVGAElement.idl \
     $(WebCore)/svg/SVGAltGlyphDefElement.idl \

@@ -5194,7 +5194,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSVGZoomEvent.h
 
 dom_binding_idls += \
-	$(WebCore)/svg/DOMWindowSVG.idl \
 	$(WebCore)/svg/SVGAElement.idl \
 	$(WebCore)/svg/SVGAltGlyphDefElement.idl \
 	$(WebCore)/svg/SVGAltGlyphElement.idl \
