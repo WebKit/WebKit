@@ -1,3 +1,15 @@
+2012-03-05  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] [WK2] Support threaded renderer in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=76661
+
+        Remove the QML_NO_THREADED_RENDERER environment variable from MiniBrowser.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * MiniBrowser/qt/main.cpp:
+        (main):
+
 2012-03-05  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         Unreviewed. Add myself to committer list.

@@ -23,7 +23,7 @@
 #if USE(UI_SIDE_COMPOSITING)
 
 #include "BackingStore.h"
-#include "DrawingAreaProxy.h"
+#include "Connection.h"
 #include "Region.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
@@ -36,17 +36,17 @@
 #include <WebCore/Timer.h>
 #include <wtf/Functional.h>
 #include <wtf/HashSet.h>
-
+#include <wtf/ThreadingPrimitives.h>
 
 namespace WebKit {
 
+class DrawingAreaProxy;
 class LayerBackingStore;
 class WebLayerInfo;
 class WebLayerUpdateInfo;
 
-class LayerTreeHostProxy : public WebCore::GraphicsLayerClient {
+class LayerTreeHostProxy : public ThreadSafeRefCounted<LayerTreeHostProxy>, public WebCore::GraphicsLayerClient {
 public:
-    LayerTreeHostProxy(DrawingAreaProxy*);
     virtual ~LayerTreeHostProxy();
     void syncCompositingLayerState(const WebLayerInfo&);
     void deleteCompositingLayer(WebLayerID);
@@ -68,6 +68,8 @@ public:
     void didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void updateViewport();
 
+    static PassRefPtr<LayerTreeHostProxy> create(DrawingAreaProxy* drawingArea) { return adoptRef(new LayerTreeHostProxy(drawingArea)); }
+
 protected:
     PassOwnPtr<WebCore::GraphicsLayer> createLayer(WebLayerID);
 
@@ -88,7 +90,10 @@ protected:
     float m_contentsScale;
 
     Vector<Function<void()> > m_renderQueue;
+    WTF::Mutex m_renderQueueMutex;
     void dispatchUpdate(const Function<void()>&);
+    void detachDrawingArea();
+    void setShouldRenderNextFrame();
 
 #if USE(TEXTURE_MAPPER)
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
@@ -113,13 +118,14 @@ protected:
     void ensureLayer(WebLayerID);
     void swapBuffers();
     void syncAnimations();
+    void updateViewportOnMainThread();
+    LayerTreeHostProxy(DrawingAreaProxy*);
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
     Vector<WebLayerID> m_layersToDelete;
 
     LayerMap m_layers;
     WebLayerID m_rootLayerID;
-    int m_id;
 };
 
 }

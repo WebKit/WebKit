@@ -1,3 +1,69 @@
+2012-03-05  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] [WK2] Support threaded renderer in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=76661
+
+        Made the appropriate fixes in the UI process code to make rendering thread-safe.
+        - Separated the scenegraph node code to QtWebPageSGNode. QtWebPageSGNode has direct access
+          to LayerTreeHostProxy.
+
+        - Each function in LayerTreeHostProxy can be either called from the main thread (handling
+          messages from the web process), or from the renderer thread (handling the GL context).
+          The render-queue is locked with a mutex, and messages back to the web process are sent
+          via callOnMainThread.
+
+        - LayerTreeHostProxy is now ThreadSafeRefCounted. That is done to make sure that the GL
+          resources it creates are only freed when the QtWebPageSGNode is deleted, which can be
+          before or after the owning DrawingAreaProxy is deleted. This ensures that the class is
+          deleted only after its GL resources are freed, otherwise those resources may leak.
+
+        Based on a patch by Viatcheslav Ostapenko.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Target.pri: Added new files.
+        * UIProcess/API/qt/qquickwebpage.cpp: Moved QtWebPageSGNode out.
+        (QQuickWebPage::updatePaintNode): Call QtWebPageSGNode
+        (QQuickWebPagePrivate::updateSize): Call QtWebPageSGNode
+        (QQuickWebPagePrivate::didDeleteSGWebPageNode): Override QtWebPageSGNode::Client
+        (QQuickWebPagePrivate::~QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (QQuickWebPagePrivate):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit):
+        (WebKit::DrawingAreaProxy::layerTreeHostProxy): Made LayerTreeHostProxy ref-counted.
+        (DrawingAreaProxy):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        * UIProcess/LayerTreeHostProxy.h:
+        (WebKit):
+        (WebKit::LayerTreeHostProxy::create):
+        (LayerTreeHostProxy):
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::paintToCurrentGLContext):
+        (WebKit):
+        (MainThreadGuardedInvoker):
+            A class that allows invoking functions in the main thread, while guarding a ref-
+            counted object.
+
+        (WebKit::MainThreadGuardedInvoker::call):
+        (WebKit::MainThreadGuardedInvoker::MainThreadGuardedInvoker):
+        (WebKit::MainThreadGuardedInvoker::invoke):
+        (WebKit::LayerTreeHostProxy::syncAnimations):
+        (WebKit::LayerTreeHostProxy::updateViewport):
+        (WebKit::LayerTreeHostProxy::detachDrawingArea):
+        (WebKit::LayerTreeHostProxy::syncLayerParameters):
+        (WebKit::LayerTreeHostProxy::setShouldRenderNextFrame):
+        (WebKit::LayerTreeHostProxy::flushLayerChanges):
+        (WebKit::LayerTreeHostProxy::ensureRootLayer):
+        (WebKit::LayerTreeHostProxy::syncRemoteContent):
+        (WebKit::LayerTreeHostProxy::dispatchUpdate):
+        (WebKit::LayerTreeHostProxy::createDirectlyCompositedImage):
+        (WebKit::LayerTreeHostProxy::purgeGLResources):
+        * UIProcess/qt/QtWebPageSGNode.cpp: Added.
+        * UIProcess/qt/QtWebPageSGNode.h: Added.
+
 2012-03-04  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Libraries are installed to /usr/lib and not /usr/lib64 on x86_64
