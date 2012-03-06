@@ -29,6 +29,7 @@
 
 #include "DOMImplementation.h"
 #include "EventNames.h"
+#include "InspectorCounters.h"
 #include "ThreadTimers.h"
 #include <wtf/MainThread.h>
 #include <wtf/UnusedParam.h>
@@ -70,6 +71,9 @@ ThreadGlobalData::ThreadGlobalData()
 #if PLATFORM(MAC)
     , m_cachedConverterTEC(adoptPtr(new TECConverterWrapper))
 #endif
+#if ENABLE(INSPECTOR)
+    , m_inspectorCounters(adoptPtr(new ThreadLocalInspectorCounters()))
+#endif
 {
     // This constructor will have been called on the main thread before being called on
     // any other thread, and is only called once per thread - this makes this a convenient
@@ -91,6 +95,10 @@ void ThreadGlobalData::destroy()
 
 #if USE(ICU_UNICODE)
     m_cachedConverterICU.clear();
+#endif
+
+#if ENABLE(INSPECTOR)
+    m_inspectorCounters.clear();
 #endif
 
     m_eventNames.clear();

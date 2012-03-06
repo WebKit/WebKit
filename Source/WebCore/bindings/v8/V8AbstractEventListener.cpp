@@ -58,7 +58,9 @@ V8AbstractEventListener::V8AbstractEventListener(bool isAttribute, const WorldCo
     , m_isAttribute(isAttribute)
     , m_worldContext(worldContext)
 {
-    InspectorCounters::incrementCounter(InspectorCounters::JSEventListenerCounter);
+#if ENABLE(INSPECTOR)
+    ThreadLocalInspectorCounters::current().incrementCounter(ThreadLocalInspectorCounters::JSEventListenerCounter);
+#endif
 }
 
 V8AbstractEventListener::~V8AbstractEventListener()
@@ -69,7 +71,9 @@ V8AbstractEventListener::~V8AbstractEventListener()
         V8EventListenerList::clearWrapper(listener, m_isAttribute);
     }
     disposeListenerObject();
-    InspectorCounters::decrementCounter(InspectorCounters::JSEventListenerCounter);
+#if ENABLE(INSPECTOR)
+    ThreadLocalInspectorCounters::current().decrementCounter(ThreadLocalInspectorCounters::JSEventListenerCounter);
+#endif
 }
 
 void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event* event)

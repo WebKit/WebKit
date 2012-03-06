@@ -56,9 +56,10 @@ typedef String ErrorString;
 class InspectorTimelineAgent : public InspectorBaseAgent<InspectorTimelineAgent>, ScriptGCEventListener, public InspectorBackendDispatcher::TimelineCommandHandler {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
-    static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state)
+    enum InspectorType { PageInspector, WorkerInspector };
+    static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorType type)
     {
-        return adoptPtr(new InspectorTimelineAgent(instrumentingAgents, state));
+        return adoptPtr(new InspectorTimelineAgent(instrumentingAgents, state, type));
     }
 
     ~InspectorTimelineAgent();
@@ -142,7 +143,7 @@ private:
         String type;
     };
         
-    InspectorTimelineAgent(InstrumentingAgents*, InspectorState*);
+    InspectorTimelineAgent(InstrumentingAgents*, InspectorState*, InspectorType);
 
     void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack);
     void setHeapSizeStatistic(InspectorObject* record);
@@ -172,6 +173,7 @@ private:
     typedef Vector<GCEvent> GCEvents;
     GCEvents m_gcEvents;
     int m_maxCallStackDepth;
+    InspectorType m_inspectorType;
 };
 
 } // namespace WebCore

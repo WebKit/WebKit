@@ -45,12 +45,16 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
         m_jsFunction.setMayBeNull(*m_isolatedWorld->globalData(), wrapper, function);
     else
         ASSERT(!function);
-    InspectorCounters::incrementCounter(InspectorCounters::JSEventListenerCounter);
+#if ENABLE(INSPECTOR)
+    ThreadLocalInspectorCounters::current().incrementCounter(ThreadLocalInspectorCounters::JSEventListenerCounter);
+#endif
 }
 
 JSEventListener::~JSEventListener()
 {
-    InspectorCounters::decrementCounter(InspectorCounters::JSEventListenerCounter);
+#if ENABLE(INSPECTOR)
+    ThreadLocalInspectorCounters::current().decrementCounter(ThreadLocalInspectorCounters::JSEventListenerCounter);
+#endif
 }
 
 JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext*) const

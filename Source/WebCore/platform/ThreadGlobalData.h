@@ -42,6 +42,7 @@ using WTF::ThreadSpecific;
 namespace WebCore {
 
     class EventNames;
+    class ThreadLocalInspectorCounters;
     class ThreadTimers;
     class XMLMIMETypeRegExp;
 
@@ -67,6 +68,10 @@ namespace WebCore {
         TECConverterWrapper& cachedConverterTEC() { return *m_cachedConverterTEC; }
 #endif
 
+#if ENABLE(INSPECTOR)
+        ThreadLocalInspectorCounters& inspectorCounters() { return *m_inspectorCounters; }
+#endif
+
     private:
         OwnPtr<EventNames> m_eventNames;
         OwnPtr<ThreadTimers> m_threadTimers;
@@ -82,6 +87,10 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         OwnPtr<TECConverterWrapper> m_cachedConverterTEC;
+#endif
+
+#if ENABLE(INSPECTOR)
+        OwnPtr<ThreadLocalInspectorCounters> m_inspectorCounters;
 #endif
 
 #if ENABLE(WORKERS)

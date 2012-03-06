@@ -31,6 +31,10 @@
 #ifndef InspectorCounters_h
 #define InspectorCounters_h
 
+#if !ASSERT_DISABLED
+#include <wtf/MainThread.h>
+#endif
+
 namespace WebCore {
 
 class InspectorCounters {
@@ -45,6 +49,7 @@ public:
     static inline void incrementCounter(CounterType type)
     {
 #if ENABLE(INSPECTOR)
+        ASSERT(isMainThread());
         ++s_counters[type];
 #endif
     }
@@ -52,6 +57,7 @@ public:
     static inline void decrementCounter(CounterType type)
     {
 #if ENABLE(INSPECTOR)
+        ASSERT(isMainThread());
         --s_counters[type];
 #endif
     }
@@ -67,6 +73,35 @@ private:
     static int s_counters[CounterTypeLength];
 #endif
 };
+
+
+#if ENABLE(INSPECTOR)
+class ThreadLocalInspectorCounters {
+public:
+    enum CounterType {
+        JSEventListenerCounter,
+        CounterTypeLength
+    };
+    ThreadLocalInspectorCounters();
+
+    inline void incrementCounter(CounterType type)
+    {
+        ++m_counters[type];
+    }
+
+    inline void decrementCounter(CounterType type)
+    {
+        --m_counters[type];
+    }
+
+    int counterValue(CounterType);
+
+    static ThreadLocalInspectorCounters& current();
+
+private:
+    int m_counters[CounterTypeLength];
+};
+#endif
 
 } // namespace WebCore
 
