@@ -49,6 +49,8 @@ webkit_web_context_get_type
 WebKitWebView
 WebKitLoadEvent
 WebKitPolicyDecisionType
+WebKitScriptDialog
+WebKitScriptDialogType
 
 <SUBSECTION Editing Commands>
 WEBKIT_EDITING_COMMAND_CUT
@@ -87,6 +89,11 @@ webkit_web_view_can_execute_editing_command
 webkit_web_view_can_execute_editing_command_finish
 webkit_web_view_execute_editing_command
 webkit_web_view_get_find_controller
+webkit_script_dialog_get_dialog_type
+webkit_script_dialog_get_message
+webkit_script_dialog_confirm_set_confirmed
+webkit_script_dialog_prompt_get_default_text
+webkit_script_dialog_prompt_set_text
 
 <SUBSECTION Standard>
 WebKitWebViewClass
@@ -96,9 +103,11 @@ WEBKIT_TYPE_WEB_VIEW
 WEBKIT_WEB_VIEW_CLASS
 WEBKIT_IS_WEB_VIEW_CLASS
 WEBKIT_WEB_VIEW_GET_CLASS
+WEBKIT_TYPE_SCRIPT_DIALOG
 
 <SUBSECTION Private>
 webkit_web_view_get_type
+webkit_script_dialog_get_type
 WebKitWebViewPrivate
 </SECTION>
 

@@ -32,6 +32,7 @@
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitFindController.h>
 #include <webkit2/WebKitHitTestResult.h>
+#include <webkit2/WebKitScriptDialog.h>
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitWebContext.h>
@@ -128,15 +129,9 @@ struct _WebKitWebViewClass {
     void       (* ready_to_show)        (WebKitWebView             *web_view);
     void       (* close)                (WebKitWebView             *web_view);
 
-    gboolean   (* script_alert)         (WebKitWebView             *web_view,
-                                         const gchar               *message);
-    gboolean   (* script_confirm)       (WebKitWebView             *web_view,
-                                         const gchar               *message,
-                                         gboolean                  *confirmed);
-    gboolean   (* script_prompt)        (WebKitWebView             *web_view,
-                                         const gchar               *message,
-                                         const gchar               *default_text,
-                                         gchar                    **text);
+    gboolean   (* script_dialog)        (WebKitWebView             *web_view,
+                                         WebKitScriptDialog        *dialog);
+
     gboolean   (* decide_policy)        (WebKitWebView             *web_view,
                                          WebKitPolicyDecision      *decision,
                                          WebKitPolicyDecisionType   type);

@@ -1,3 +1,49 @@
+2012-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use a single signal for script dialogs in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=80271
+
+        Reviewed by Martin Robinson.
+
+        Add a new signal WebKitWebView::script-dialog that passes a
+        WebKitScriptDialog boxed type that can be used to build the dialog
+        and set the responses. It simplifies the API and makes it bindings
+        friendly.
+
+        * GNUmakefile.am:
+        * UIProcess/API/gtk/WebKitScriptDialog.cpp: Added.
+        (webkitScriptDialogCopy): Copy method for boxed type.
+        (webkitScriptDialogFree): Free method for boxed type.
+        (webkit_script_dialog_get_dialog_type): Return the type of dialog:
+        alert, confirm or prompt.
+        (webkit_script_dialog_get_message): Return the message of the dialog.
+        (webkit_script_dialog_confirm_set_confirmed): Set whether user
+        confirmed the dialog, for confirm dialogs.
+        (webkit_script_dialog_prompt_get_default_text): Get the default
+        text of prompt dialogs.
+        (webkit_script_dialog_prompt_set_text): Set the text entered by
+        the user, for prompt dialogs.
+        * UIProcess/API/gtk/WebKitScriptDialog.h: Added.
+        * UIProcess/API/gtk/WebKitScriptDialogPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewScriptDialog): Default implementation of
+        WebKitWebView::script-dialog signal.
+        (webkit_web_view_class_init): Add WebKitWebView::script-dialog and
+        remove alert, confirm and propmpt.
+        (webkitWebViewRunJavaScriptAlert): Create a WebKitScriptDialog and
+        emit WebKitWebView::script-dialog signal.
+        (webkitWebViewRunJavaScriptConfirm): Ditto.
+        (webkitWebViewRunJavaScriptPrompt): Ditto.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new
+        symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add webkit_script_dialog_get_type().
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewJavaScriptDialogs): Update javascript dialog test to
+        use the new API.
+        * UIProcess/API/gtk/webkit2marshal.list:
+        * UIProcess/API/gtk/webkit2.h:
+
 2012-03-05  Gavin Barraclough  <barraclough@apple.com>
 
         putByIndex should throw in strict mode
