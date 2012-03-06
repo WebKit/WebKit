@@ -2320,8 +2320,12 @@ void SpeculativeJIT::compileArithSub(Node& node)
                 m_jit.move(op1.gpr(), result.gpr());
                 m_jit.sub32(Imm32(imm2), result.gpr());
             } else {
+#if ENABLE(JIT_CONSTANT_BLINDING)
                 GPRTemporary scratch(this);
                 speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr(), scratch.gpr()));
+#else
+                speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
+#endif
             }
 
             integerResult(result.gpr(), m_compileIndex);

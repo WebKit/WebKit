@@ -34,6 +34,15 @@
 
 #if ENABLE(ASSEMBLER)
 
+
+#if PLATFORM(QT)
+#define ENABLE_JIT_CONSTANT_BLINDING 0
+#endif
+
+#ifndef ENABLE_JIT_CONSTANT_BLINDING
+#define ENABLE_JIT_CONSTANT_BLINDING 1
+#endif
+
 namespace JSC {
 
 class LinkBuffer;
@@ -233,7 +242,13 @@ public:
     };
 
 
-    struct Imm32 : private TrustedImm32 {
+    struct Imm32 : 
+#if ENABLE(JIT_CONSTANT_BLINDING)
+        private TrustedImm32 
+#else
+        public TrustedImm32
+#endif
+    {
         explicit Imm32(int32_t value)
             : TrustedImm32(value)
         {

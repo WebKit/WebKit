@@ -60,14 +60,11 @@ typedef MacroAssemblerSH4 MacroAssemblerBase;
 #error "The MacroAssembler is not supported on this platform."
 #endif
 
-
 namespace JSC {
 
 class MacroAssembler : public MacroAssemblerBase {
 public:
 
-    using MacroAssemblerBase::add32;
-    using MacroAssemblerBase::and32;
     using MacroAssemblerBase::pop;
     using MacroAssemblerBase::jump;
     using MacroAssemblerBase::branch32;
@@ -75,6 +72,10 @@ public:
     using MacroAssemblerBase::branchPtr;
     using MacroAssemblerBase::branchTestPtr;
 #endif
+
+#if ENABLE(JIT_CONSTANT_BLINDING)
+    using MacroAssemblerBase::add32;
+    using MacroAssemblerBase::and32;
     using MacroAssemblerBase::branchAdd32;
     using MacroAssemblerBase::branchMul32;
     using MacroAssemblerBase::branchSub32;
@@ -86,6 +87,7 @@ public:
     using MacroAssemblerBase::sub32;
     using MacroAssemblerBase::urshift32;
     using MacroAssemblerBase::xor32;
+#endif
 
     // Utilities used by the DFG JIT.
 #if ENABLE(DFG_JIT)
@@ -479,7 +481,8 @@ public:
         return MacroAssemblerBase::branchTest8(cond, Address(address.base, address.offset), mask);
     }
 #else
-
+    
+#if ENABLE(JIT_CONSTANT_BLINDING)
     using MacroAssemblerBase::addPtr;
     using MacroAssemblerBase::andPtr;
     using MacroAssemblerBase::branchSubPtr;
@@ -496,9 +499,11 @@ public:
         } else
             convertInt32ToDouble(imm.asTrustedImm32(), dest);
     }
+#endif
 
 #endif // !CPU(X86_64)
-    
+
+#if ENABLE(JIT_CONSTANT_BLINDING)
     bool shouldBlind(Imm32 imm)
     { 
         ASSERT(!inUninterruptedSequence());
@@ -845,6 +850,7 @@ public:
     {
         urshift32(src, trustedImm32ForShift(amount), dest);
     }
+#endif
 };
 
 } // namespace JSC

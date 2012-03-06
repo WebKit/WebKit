@@ -1,3 +1,15 @@
+2012-03-05  Oliver Hunt  <oliver@apple.com>
+
+        Fix Qt build.
+
+        * assembler/AbstractMacroAssembler.h:
+        * assembler/MacroAssembler.h:
+        (MacroAssembler):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitSub32Constant):
+
 2012-03-05  Eric Seidel  <eric@webkit.org>
 
         Update JavaScriptCore files to use fully-qualified WTF include paths
