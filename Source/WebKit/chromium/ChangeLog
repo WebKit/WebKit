@@ -1,3 +1,20 @@
+2012-03-05  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Add new popup type: PagePopup
+        https://bugs.webkit.org/show_bug.cgi?id=80106
+
+        Reviewed by Darin Fisher.
+
+        This is a preparation of implementing ChromeClient::openPagePopup and
+        closePagePopup.
+
+        * WebKit.gyp: Add WebPagePopup.h and WebPagePopupImpl.cpp.
+        * public/WebPagePopup.h:
+        (WebPagePopup): Add WebPagePopup interface.
+        * public/WebPopupType.h: Add WebPopupTypePage.
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopup::create): Temprary implementation which just returns 0.
+
 2012-03-05  Charlie Reis  <creis@chromium.org>
 
         [chromium] Pass WebNavigationPolicy to WebViewClient::createView

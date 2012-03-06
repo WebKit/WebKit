@@ -255,6 +255,7 @@ WebWidget* WebViewHost::createPopupMenu(WebPopupType type)
 {
     switch (type) {
     case WebKit::WebPopupTypeNone:
+    case WebKit::WebPopupTypePage:
         break;
     case WebKit::WebPopupTypeSelect:
     case WebKit::WebPopupTypeSuggestion:
