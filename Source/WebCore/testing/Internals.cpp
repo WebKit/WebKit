@@ -434,7 +434,10 @@ void Internals::reset(Document* document)
         return;
 
     observeFrame(document->frame());
-    m_settings = InternalSettings::create(document->frame(), m_settings.get());
+
+    if (m_settings)
+        m_settings->restoreTo(document->page()->settings());
+    m_settings = InternalSettings::create(document->frame());
     if (Page* page = document->page())
         page->setPagination(Page::Pagination());
 }

@@ -79,27 +79,27 @@
 namespace WebCore {
 
 
-PassRefPtr<InternalSettings> InternalSettings::create(Frame* frame, InternalSettings* old)
+PassRefPtr<InternalSettings> InternalSettings::create(Frame* frame)
 {
-    return adoptRef(new InternalSettings(frame, old));
+    return adoptRef(new InternalSettings(frame));
 }
 
 InternalSettings::~InternalSettings()
 {
 }
 
-InternalSettings::InternalSettings(Frame* frame, InternalSettings* old)
+InternalSettings::InternalSettings(Frame* frame)
     : FrameDestructionObserver(frame)
-    , m_passwordEchoDurationInSecondsBackup(0)
-    , m_passwordEchoDurationInSecondsBackedUp(false)
-    , m_passwordEchoEnabledBackedUp(false)
+    , m_originalPasswordEchoDurationInSeconds(settings()->passwordEchoDurationInSeconds())
+    , m_originalPasswordEchoEnabled(settings()->passwordEchoEnabled())
+
 {
-    if (old && settings()) {
-        if (old->m_passwordEchoDurationInSecondsBackedUp)
-            settings()->setPasswordEchoDurationInSeconds(old->m_passwordEchoDurationInSecondsBackup);
-        if (old->m_passwordEchoEnabledBackedUp)
-            settings()->setPasswordEchoEnabled(old->m_passwordEchoEnabledBackup);
-    }
+}
+
+void InternalSettings::restoreTo(Settings* settings)
+{
+    settings->setPasswordEchoDurationInSeconds(m_originalPasswordEchoDurationInSeconds);
+    settings->setPasswordEchoEnabled(m_originalPasswordEchoEnabled);
 }
 
 Settings* InternalSettings::settings() const
@@ -173,20 +173,12 @@ void InternalSettings::setMockScrollbarsEnabled(bool enabled, ExceptionCode& ec)
 void InternalSettings::setPasswordEchoEnabled(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    if (!m_passwordEchoEnabledBackedUp) {
-        m_passwordEchoEnabledBackup = settings()->passwordEchoEnabled();
-        m_passwordEchoEnabledBackedUp = true;
-    }
     settings()->setPasswordEchoEnabled(enabled);
 }
 
 void InternalSettings::setPasswordEchoDurationInSeconds(double durationInSeconds, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
-    if (!m_passwordEchoDurationInSecondsBackedUp) {
-        m_passwordEchoDurationInSecondsBackup = settings()->passwordEchoDurationInSeconds();
-        m_passwordEchoDurationInSecondsBackedUp = true;
-    }
     settings()->setPasswordEchoDurationInSeconds(durationInSeconds);
 }
 
