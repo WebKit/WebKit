@@ -1341,6 +1341,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     if (!style)
         return 0;
 
+    if (renderer) {
+        if (m_pseudoElementSpecifier == AFTER)
+            renderer = renderer->afterPseudoElementRenderer();
+        else if (m_pseudoElementSpecifier == BEFORE)
+            renderer = renderer->beforePseudoElementRenderer();
+    }
+
     CSSValuePool* cssValuePool = node->document()->cssValuePool().get();
 
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction(), style->writingMode());
