@@ -627,8 +627,8 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
 {
     var resource = WebInspector.resourceForURL(resourceURL);
     if (inResourcesPanel && resource) {
-        WebInspector.panels.resources.showResource(resource);
         WebInspector.showPanel("resources");
+        WebInspector.panels.resources.showResource(resource);
     } else
         InspectorFrontendHost.openInNewTab(resourceURL);
 }
