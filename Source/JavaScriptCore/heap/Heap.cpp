@@ -328,6 +328,7 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     , m_handleHeap(globalData)
     , m_isSafeToCollect(false)
     , m_globalData(globalData)
+    , m_lastGCLength(0)
 {
     (*m_activityCallback)();
     m_numberOfFreeBlocks = 0;
@@ -781,6 +782,7 @@ void Heap::collect(SweepToggle sweepToggle)
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
+    double lastGCStartTime = WTF::currentTime();
 #if ENABLE(GGC)
     bool fullGC = sweepToggle == DoSweep;
     if (!fullGC)
@@ -835,6 +837,8 @@ void Heap::collect(SweepToggle sweepToggle)
         m_lastFullGCSize = newSize;
         setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
     }
+    double lastGCEndTime = WTF::currentTime();
+    m_lastGCLength = lastGCEndTime - lastGCStartTime;
     JAVASCRIPTCORE_GC_END();
 
     (*m_activityCallback)();

@@ -53,7 +53,6 @@ struct DefaultGCActivityCallbackPlatformData {
 };
 
 const CFTimeInterval decade = 60 * 60 * 24 * 365 * 10;
-const CFTimeInterval triggerInterval = 2; // seconds
 
 void DefaultGCActivityCallbackPlatformData::trigger(CFRunLoopTimerRef timer, void *info)
 {
@@ -95,6 +94,7 @@ void DefaultGCActivityCallback::commonConstructor(Heap* heap, CFRunLoopRef runLo
 
 void DefaultGCActivityCallback::operator()()
 {
+    CFTimeInterval triggerInterval = static_cast<Heap*>(d->context.info)->lastGCLength() * 100.0; 
     CFRunLoopTimerSetNextFireDate(d->timer.get(), CFAbsoluteTimeGetCurrent() + triggerInterval);
 }
 

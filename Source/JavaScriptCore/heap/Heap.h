@@ -138,6 +138,8 @@ namespace JSC {
 
         void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
 
+        double lastGCLength() { return m_lastGCLength; }
+
     private:
         friend class CodeBlock;
         friend class LLIntOffsetsExtractor;
@@ -236,6 +238,7 @@ namespace JSC {
         bool m_isSafeToCollect;
 
         JSGlobalData* m_globalData;
+        double m_lastGCLength;
     };
 
     bool Heap::isBusy()
