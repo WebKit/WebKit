@@ -33,14 +33,12 @@
  * @extends {WebInspector.Object}
  * @param {string} id
  * @param {string} url
- * @param {WebInspector.RawSourceCode} rawSourceCode
  * @param {WebInspector.ContentProvider} contentProvider
  */
-WebInspector.UISourceCode = function(id, url, rawSourceCode, contentProvider)
+WebInspector.UISourceCode = function(id, url, contentProvider)
 {
     this._id = id;
     this._url = url;
-    this._rawSourceCode = rawSourceCode;
     this._contentProvider = contentProvider;
     this.isContentScript = false;
     this.isEditable = false;
@@ -69,14 +67,6 @@ WebInspector.UISourceCode.prototype = {
     get url()
     {
         return this._url;
-    },
-
-    /**
-     * @return {WebInspector.RawSourceCode}
-     */
-    get rawSourceCode()
-    {
-        return this._rawSourceCode;
     },
 
     /**

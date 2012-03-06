@@ -109,7 +109,6 @@ function test()
             var uiSourceCode = rawSourceCode.uiSourceCodeList()[0];
             InspectorTest.assertEquals("foo.js", uiSourceCode.url);
             InspectorTest.assertEquals(true, uiSourceCode.isContentScript);
-            InspectorTest.assertEquals(rawSourceCode, uiSourceCode.rawSourceCode);
             checkUILocation(uiSourceCode, 0, 5, rawSourceCode.rawLocationToUILocation(createRawLocation(0, 5)));
             checkRawLocation(script, 10, 0, rawSourceCode.uiLocationToRawLocation(uiSourceCode, 10, 0));
             uiSourceCode.requestContent(didRequestContent);
