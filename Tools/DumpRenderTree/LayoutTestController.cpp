@@ -39,6 +39,7 @@
 #include <locale.h>
 #include <stdio.h>
 #include <wtf/Assertions.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RefPtr.h>
@@ -2204,6 +2205,11 @@ static JSValueRef setBackingScaleFactorCallback(JSContextRef context, JSObjectRe
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef preciseTimeCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return JSValueMakeNumber(context, WTF::currentTime());
+}
+
 // Static Values
 
 static JSValueRef getGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -2501,6 +2507,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "removeChromeInputField", removeChromeInputFieldCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "focusWebView", focusWebViewCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setBackingScaleFactor", setBackingScaleFactorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "preciseTime", preciseTimeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 
