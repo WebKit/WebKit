@@ -33,6 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 // FIXME: Find a better way to avoid the name confliction for NO_ERROR.
 #if ((PLATFORM(CHROMIUM) && OS(WINDOWS)) || PLATFORM(WIN) || (PLATFORM(QT) && OS(WINDOWS)))
