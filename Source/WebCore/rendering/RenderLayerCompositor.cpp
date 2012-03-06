@@ -75,6 +75,58 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+class RenderLayerCompositor::OverlapMap {
+    WTF_MAKE_NONCOPYABLE(OverlapMap);
+public:
+    OverlapMap()
+    {
+        // Begin assuming the root layer will be composited so that there is
+        // something on the stack. The root layer should also never get an
+        // popCompositingContainer call.
+        pushCompositingContainer();
+    }
+
+    void add(const RenderLayer* layer, const IntRect& bounds)
+    {
+        // Layers do not contribute to overlap immediately--instead, they will
+        // contribute to overlap as soon as their composited ancestor has been
+        // recursively processed and popped off the stack.
+        ASSERT(m_overlapStack.size() >= 2);
+        m_overlapStack[m_overlapStack.size() - 2].unite(bounds);
+        m_layers.add(layer);
+    }
+
+    bool contains(const RenderLayer* layer)
+    {
+        return m_layers.contains(layer);
+    }
+
+    bool overlapsLayers(const IntRect& bounds) const
+    {
+        return m_overlapStack.last().intersects(bounds);
+    }
+
+    bool isEmpty()
+    {
+        return m_layers.isEmpty();
+    }
+
+    void pushCompositingContainer()
+    {
+        m_overlapStack.append(Region());
+    }
+
+    void popCompositingContainer()
+    {
+        m_overlapStack[m_overlapStack.size() - 2].unite(m_overlapStack.last());
+        m_overlapStack.removeLast();
+    }
+
+private:
+    Vector<Region> m_overlapStack;
+    HashSet<const RenderLayer*> m_layers;
+};
+
 struct CompositingState {
     CompositingState(RenderLayer* compAncestor)
         : m_compositingAncestor(compAncestor)
@@ -637,18 +689,6 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
     }
 }
 
-bool RenderLayerCompositor::overlapsCompositedLayers(OverlapMap& overlapMap, const IntRect& layerBounds)
-{
-    RenderLayerCompositor::OverlapMap::const_iterator end = overlapMap.end();
-    for (RenderLayerCompositor::OverlapMap::const_iterator it = overlapMap.begin(); it != end; ++it) {
-        const IntRect& bounds = it->second;
-        if (layerBounds.intersects(bounds))
-            return true;
-    }
-    
-    return false;
-}
-
 //  Recurse through the layers in z-index and overflow order (which is equivalent to painting order)
 //  For the z-order children of a compositing layer:
 //      If a child layers has a compositing layer, then all subsequent layers must
@@ -678,7 +718,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
         if (absBounds.isEmpty())
             absBounds.setSize(IntSize(1, 1));
         haveComputedBounds = true;
-        mustOverlapCompositedLayers = overlapsCompositedLayers(*overlapMap, absBounds);
+        mustOverlapCompositedLayers = overlapMap->overlapsLayers(absBounds);
     }
     
     layer->setMustOverlapCompositedLayers(mustOverlapCompositedLayers);
@@ -688,7 +728,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     // ancestor with m_subtreeIsCompositing set to false.
     CompositingState childState(compositingState.m_compositingAncestor);
 #ifndef NDEBUG
-    ++childState.m_depth;
+    childState.m_depth = compositingState.m_depth + 1;
 #endif
 
     bool willBeComposited = needsToBeComposited(layer);
@@ -697,10 +737,9 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
         compositingState.m_subtreeIsCompositing = true;
         // This layer now acts as the ancestor for kids.
         childState.m_compositingAncestor = layer;
-    }
 
-    if (overlapMap && childState.m_compositingAncestor && !childState.m_compositingAncestor->isRootLayer()) {
-        addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
+        if (overlapMap)
+            overlapMap->pushCompositingContainer();
     }
 
 #if ENABLE(VIDEO)
@@ -726,7 +765,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
                     layer->setMustOverlapCompositedLayers(true);
                     childState.m_compositingAncestor = layer;
                     if (overlapMap)
-                        addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
+                        overlapMap->pushCompositingContainer();
                     willBeComposited = true;
                 }
             }
@@ -760,13 +799,22 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     
     ASSERT(willBeComposited == needsToBeComposited(layer));
 
+    // All layers (even ones that aren't being composited) need to get added to
+    // the overlap map. Layers that do not composite will draw into their
+    // compositing ancestor's backing, and so are still considered for overlap.
+    if (overlapMap && childState.m_compositingAncestor && !childState.m_compositingAncestor->isRootLayer())
+        addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
+
     // If we have a software transform, and we have layers under us, we need to also
     // be composited. Also, if we have opacity < 1, then we need to be a layer so that
     // the child layers are opaque, then rendered with opacity on this layer.
     if (!willBeComposited && canBeComposited(layer) && childState.m_subtreeIsCompositing && requiresCompositingWhenDescendantsAreCompositing(layer->renderer())) {
         layer->setMustOverlapCompositedLayers(true);
-        if (overlapMap)
+        childState.m_compositingAncestor = layer;
+        if (overlapMap) {
+            overlapMap->pushCompositingContainer();
             addToOverlapMapRecursive(*overlapMap, layer);
+        }
         willBeComposited = true;
     }
 
@@ -784,10 +832,16 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     // setHasCompositingDescendant() may have changed the answer to needsToBeComposited() when clipping,
     // so test that again.
     if (!willBeComposited && canBeComposited(layer) && clipsCompositingDescendants(layer)) {
-        if (overlapMap)
+        childState.m_compositingAncestor = layer;
+        if (overlapMap) {
+            overlapMap->pushCompositingContainer();
             addToOverlapMapRecursive(*overlapMap, layer);
+        }
         willBeComposited = true;
     }
+
+    if (overlapMap && childState.m_compositingAncestor == layer && !layer->isRootLayer())
+        overlapMap->popCompositingContainer();
 
     // If we're back at the root, and no other layers need to be composited, and the root layer itself doesn't need
     // to be composited, then we can drop out of compositing mode altogether. However, don't drop out of compositing mode

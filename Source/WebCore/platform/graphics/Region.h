@@ -52,6 +52,9 @@ public:
 
     bool contains(const IntPoint&) const;
 
+    // Returns true if the query region intersects any part of this region.
+    bool intersects(const Region&) const;
+
     unsigned totalArea() const;
 
 #ifndef NDEBUG
