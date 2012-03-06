@@ -1437,6 +1437,7 @@ SET(WebCore_SOURCES
     storage/StorageNamespaceImpl.cpp
     storage/StorageSyncManager.cpp
     storage/StorageTracker.cpp
+    storage/WorkerContextSQLDatabase.cpp
 
     xml/DOMParser.cpp
     xml/NativeXPathNSResolver.cpp
@@ -1524,6 +1525,7 @@ IF (ENABLE_SQL_DATABASE)
         storage/SQLTransactionErrorCallback.idl
         storage/SQLTransactionSync.idl
         storage/SQLTransactionSyncCallback.idl
+        storage/WorkerContextSQLDatabase.idl
     )
 ENDIF ()
 

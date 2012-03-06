@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,39 +21,20 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ *
  */
 
-#include "config.h"
+module window {
 
-#if ENABLE(SQL_DATABASE)
+    interface [
+        Conditional=SQL_DATABASE,
+        Supplemental=WorkerContext
+    ] WorkerContextSQLDatabase {
+        [V8EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
+            raises(DOMException);
 
-#include "DOMWindowSQLDatabase.h"
+        [V8EnabledAtRuntime] DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
+            raises(DOMException);
+    };
 
-#include "AbstractDatabase.h"
-#include "DOMWindow.h"
-#include "Database.h"
-#include "DatabaseCallback.h"
-#include "Document.h"
-#include "Frame.h"
-#include "SecurityOrigin.h"
-
-namespace WebCore {
-
-PassRefPtr<Database> DOMWindowSQLDatabase::openDatabase(DOMWindow* window, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
-{
-    if (!window->isCurrentlyDisplayedInFrame())
-        return 0;
-
-    RefPtr<Database> database = 0;
-    if (AbstractDatabase::isAvailable() && window->document()->securityOrigin()->canAccessDatabase())
-        database = Database::openDatabase(window->document(), name, version, displayName, estimatedSize, creationCallback, ec);
-
-    if (!database && !ec)
-        ec = SECURITY_ERR;
-
-    return database;
 }
-
-} // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

@@ -408,6 +408,7 @@ IDL_BINDINGS += \
     $$PWD/storage/SQLTransactionErrorCallback.idl \
     $$PWD/storage/SQLTransactionSync.idl \
     $$PWD/storage/SQLTransactionSyncCallback.idl \
+    $$PWD/storage/WorkerContextSQLDatabase.idl \
     $$PWD/testing/Internals.idl \
     $$PWD/testing/InternalSettings.idl \
     $$PWD/webaudio/AudioBuffer.idl \

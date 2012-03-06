@@ -4005,6 +4005,8 @@ webcore_sources += \
 	Source/WebCore/storage/StorageTracker.cpp \
 	Source/WebCore/storage/StorageTracker.h \
 	Source/WebCore/storage/StorageTrackerClient.h \
+	Source/WebCore/storage/WorkerContextSQLDatabase.cpp \
+	Source/WebCore/storage/WorkerContextSQLDatabase.h \
 	Source/WebCore/svg/animation/SMILTimeContainer.cpp \
 	Source/WebCore/svg/animation/SMILTimeContainer.h \
 	Source/WebCore/svg/animation/SMILTime.cpp \

@@ -1318,6 +1318,7 @@ SOURCES += \
     storage/StorageNamespaceImpl.cpp \
     storage/StorageSyncManager.cpp \
     storage/StorageTracker.cpp \
+    storage/WorkerContextSQLDatabase.cpp \
     testing/Internals.cpp \
     testing/InternalSettings.cpp \
     xml/DOMParser.cpp \
@@ -2548,6 +2549,7 @@ HEADERS += \
     storage/StorageSyncManager.h \
     storage/StorageTracker.h \
     storage/StorageTrackerClient.h \
+    storage/WorkerContextSQLDatabase.h \
     svg/animation/SMILTimeContainer.h \
     svg/animation/SMILTime.h \
     svg/animation/SVGSMILElement.h \

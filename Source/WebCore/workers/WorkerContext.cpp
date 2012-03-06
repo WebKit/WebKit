@@ -31,13 +31,8 @@
 
 #include "WorkerContext.h"
 
-#include "AbstractDatabase.h"
 #include "ActiveDOMObject.h"
 #include "ContentSecurityPolicy.h"
-#include "Database.h"
-#include "DatabaseCallback.h"
-#include "DatabaseSync.h"
-#include "DatabaseTracker.h"
 #include "DOMTimer.h"
 #include "DOMURL.h"
 #include "DOMWindow.h"
@@ -305,28 +300,6 @@ NotificationCenter* WorkerContext::webkitNotifications() const
     if (!m_notifications)
         m_notifications = NotificationCenter::create(scriptExecutionContext(), m_thread->getNotificationPresenter());
     return m_notifications.get();
-}
-#endif
-
-#if ENABLE(SQL_DATABASE)
-PassRefPtr<Database> WorkerContext::openDatabase(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
-{
-    if (!securityOrigin()->canAccessDatabase() || !AbstractDatabase::isAvailable()) {
-        ec = SECURITY_ERR;
-        return 0;
-    }
-
-    return Database::openDatabase(this, name, version, displayName, estimatedSize, creationCallback, ec);
-}
-
-PassRefPtr<DatabaseSync> WorkerContext::openDatabaseSync(const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
-{
-    if (!securityOrigin()->canAccessDatabase() || !AbstractDatabase::isAvailable()) {
-        ec = SECURITY_ERR;
-        return 0;
-    }
-
-    return DatabaseSync::openDatabaseSync(this, name, version, displayName, estimatedSize, creationCallback, ec);
 }
 #endif
 

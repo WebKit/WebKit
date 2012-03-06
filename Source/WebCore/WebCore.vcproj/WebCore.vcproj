@@ -71165,6 +71165,14 @@
 				RelativePath="..\storage\VersionChangeCallback.h"
 				>
 			</File>
+			<File
+				RelativePath="..\storage\WorkerContextSQLDatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\WorkerContextSQLDatabase.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="strings"

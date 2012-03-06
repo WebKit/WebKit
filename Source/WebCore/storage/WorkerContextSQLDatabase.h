@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,40 +20,40 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-#include "config.h"
+#ifndef WorkerContextSQLDatabase_h
+#define WorkerContextSQLDatabase_h
 
 #if ENABLE(SQL_DATABASE)
 
-#include "DOMWindowSQLDatabase.h"
-
-#include "AbstractDatabase.h"
-#include "DOMWindow.h"
-#include "Database.h"
-#include "DatabaseCallback.h"
-#include "Document.h"
-#include "Frame.h"
-#include "SecurityOrigin.h"
+#include "ExceptionCode.h"
+#include "PlatformString.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-PassRefPtr<Database> DOMWindowSQLDatabase::openDatabase(DOMWindow* window, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode& ec)
-{
-    if (!window->isCurrentlyDisplayedInFrame())
-        return 0;
+class Database;
+class DatabaseCallback;
+class DatabaseSync;
+class WorkerContext;
 
-    RefPtr<Database> database = 0;
-    if (AbstractDatabase::isAvailable() && window->document()->securityOrigin()->canAccessDatabase())
-        database = Database::openDatabase(window->document(), name, version, displayName, estimatedSize, creationCallback, ec);
+class WorkerContextSQLDatabase {
+public:
+    static PassRefPtr<Database> openDatabase(WorkerContext*, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
+    static PassRefPtr<DatabaseSync> openDatabaseSync(WorkerContext*, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, ExceptionCode&);
 
-    if (!database && !ec)
-        ec = SECURITY_ERR;
-
-    return database;
-}
+private:
+    WorkerContextSQLDatabase() { };
+    ~WorkerContextSQLDatabase() { };
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(SQL_DATABASE)
+
+#endif // WorkerContextSQLDatabase_h
