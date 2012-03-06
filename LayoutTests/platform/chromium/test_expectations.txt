@@ -944,21 +944,15 @@ BUGWK64591 : compositing/repaint/become-overlay-composited-layer.html = PASS FAI
 // BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
 
 // We show reduced version of the entire SVN image rather than an image
-// BUGCR23463 LEOPARD : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
-// BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT
-// BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-use-01-t.svg = PASS IMAGE+TEXT IMAGE
+BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
 
 // Text mismatch since r65370.
 // There was also an unnoticed image mismatch before this revision
 // (wrong baseline was committed). No idea about when it really started to fail.
-// BUGCR52692 LINUX WIN : svg/W3C-SVG-1.1/animate-elem-80-t.svg = PASS IMAGE+TEXT
+BUGCR52692 LINUX WIN : svg/W3C-SVG-1.1/animate-elem-80-t.svg = IMAGE
 
 // Windows and Mac need rebaselining after 53378 patch.
-BUGWK53378 WIN MAC : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
-// This is a duplicate of BUGCR99500 below.
 BUGWK53378 WIN MAC : svg/clip-path/clip-in-mask.svg = IMAGE
-BUGWK53378 WIN : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE+TEXT
-BUGWK53378 MAC : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE
 BUGWK53378 WIN : svg/clip-path/deep-nested-clip-in-mask-panning.svg = IMAGE+TEXT
 BUGWK53378 MAC : svg/clip-path/deep-nested-clip-in-mask-panning.svg = IMAGE
 BUGWK53378 WIN : svg/clip-path/deep-nested-clip-in-mask.svg = IMAGE+TEXT
@@ -966,9 +960,9 @@ BUGWK53378 MAC : svg/clip-path/deep-nested-clip-in-mask.svg = IMAGE
 BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-image-based-clipping.svg = IMAGE
 BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping.svg = IMAGE
 BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg = IMAGE
-// BUGWK53378 MAC : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
+BUGWK53378 MAC : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 BUGWK53378 MAC : svg/clip-path/clip-path-pixelation.svg = IMAGE
-// BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
+BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 
 // Since r89233. May need a new baseline.
 // NOTE that this revision was rolled out, but it isn't clear whether we should remove these
@@ -976,10 +970,10 @@ BUGWK53378 MAC : svg/clip-path/clip-path-pixelation.svg = IMAGE
 BUGWK62974 LINUX WIN : svg/W3C-SVG-1.1/fonts-glyph-03-t.svg = IMAGE+TEXT
 BUGWK62974 LINUX WIN : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE
 BUGWK62974 : svg/text/text-altglyph-01-b.svg = IMAGE
-// BUGWK62974 LINUX WIN : svg/text/text-text-04-t.svg = IMAGE+TEXT
-// BUGWK62974 MAC : svg/text/text-text-04-t.svg = IMAGE
-// BUGWK62974 LINUX WIN : svg/text/text-text-06-t.svg = IMAGE+TEXT
-// BUGWK62974 MAC : svg/text/text-text-06-t.svg = IMAGE
+BUGWK62974 LINUX WIN : svg/text/text-text-04-t.svg = IMAGE
+BUGWK62974 MAC : svg/text/text-text-04-t.svg = IMAGE
+BUGWK62974 LINUX WIN : svg/text/text-text-06-t.svg = IMAGE
+BUGWK62974 MAC : svg/text/text-text-06-t.svg = IMAGE
 BUGWK62974 LINUX WIN : svg/wicd/test-rightsizing-b.xhtml = IMAGE+TEXT
 BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
 BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
@@ -1003,14 +997,11 @@ BUGCR10296 LEOPARD : fast/text/international/bidi-menulist.html = FAIL
 // to differing implementations of SVG fonts. They may or may not represent
 // real bugs which need fixin'
 
-// There's no baseline at all for this!
-// BUGCR32392 SKIP : svg/batik/text/smallFonts.svg = FAIL
-
 // SVG masks aren't quite working yet.
 // Might also be related to https://bugs.webkit.org/show_bug.cgi?id=21910
 // New tests. We should fix these, but they don't need to block the current release
 BUGCR3244 LINUX WIN : fast/backgrounds/svg-as-mask.html = FAIL
-// BUGCR3244 LINUX WIN : svg/zoom/page/zoom-mask-with-percentages.svg = FAIL
+BUGCR3244 LINUX WIN : svg/zoom/page/zoom-mask-with-percentages.svg = FAIL
 // More tests that fail because of masks not working properly.
 // New tests. We should fix these, but they don't need to block the current release
 BUGCR3244 LINUX WIN : fast/backgrounds/repeat/mask-negative-offset-repeat.html = FAIL
@@ -1129,7 +1120,7 @@ BUGCR105305 LINUX MAC CPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGCR105305 LINUX MAC CPU : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
 BUGCR105305 CPU : svg/css/composite-shadow-text.svg = IMAGE
 BUGCR105305 CPU : svg/css/text-gradient-shadow.svg = IMAGE
-// BUGCR105305 LINUX MAC CPU : svg/text/text-gradient-positioning.svg = IMAGE
+BUGCR105305 LINUX MAC CPU : svg/text/text-gradient-positioning.svg = IMAGE
 BUGCR105305 : svg/text/selection-background-color.xhtml = PASS CRASH IMAGE
 BUGCR105305 : svg/text/selection-styles.xhtml = PASS CRASH IMAGE
 BUGCR105305 MAC LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE PASS
@@ -1540,23 +1531,23 @@ BUGCR99500 WIN : fast/borders/border-antialiasing.html = IMAGE
 BUGCR99500 WIN : fast/reflections/reflection-overflow-hidden.html = IMAGE
 BUGCR99500 WIN : fast/repaint/reflection-redraw.html = IMAGE
 BUGCR99500 WIN : printing/width-overflow.html = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-39-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-40-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-39-t.svg = IMAGE PASS
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-40-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-60-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-61-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-61-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-62-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-63-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-64-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-65-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-66-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-67-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-68-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-69-t.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-70-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-63-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-64-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-65-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-66-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-67-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-68-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-69-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-70-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-81-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-82-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-83-t.svg = IMAGE
@@ -1565,8 +1556,8 @@ BUGCR99500 WIN : svg/W3C-SVG-1.1/struct-frag-02-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/text-align-04-b.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/text-align-05-b.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/text-align-06-b.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE
-// BUGCR99500 WIN : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE
+BUGCR99500 WIN : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE
 BUGCR99500 WIN : svg/as-background-image/svg-as-background-4.html = IMAGE
 BUGCR99500 WIN : svg/as-image/animated-svg-as-image-same-image.html = IMAGE
 BUGCR99500 WIN : svg/as-image/animated-svg-as-image.html = IMAGE
@@ -1589,8 +1580,8 @@ BUGCR9798 SLOW WIN : http/tests/misc/refresh-headers.php = PASS
 BUGCR9798 WIN : http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html = PASS TIMEOUT
 BUGCR9798 WIN DEBUG : http/tests/xmlhttprequest/encode-request-url-2.html = PASS TIMEOUT
 BUGCR9797 BUGCR9798 SLOW WIN RELEASE : http/tests/xmlhttprequest/state-after-network-error.html = PASS
-// BUGCR9797 LINUX DEBUG : svg/carto.net/colourpicker.svg = FAIL
-// BUGCR9798 LINUX RELEASE : svg/carto.net/colourpicker.svg = FAIL
+BUGCR9797 LINUX DEBUG : svg/carto.net/colourpicker.svg = FAIL
+BUGCR9798 LINUX RELEASE : svg/carto.net/colourpicker.svg = FAIL
 //also BUGCR24868 (crash)
 BUGCR9798 LINUX DEBUG : transitions/mask-transitions.html = PASS FAIL
 BUGCR9798 SLOW LINUX RELEASE : transitions/transition-timing-function.html = PASS
@@ -2045,8 +2036,6 @@ BUGCR48239 : fast/js/function-apply.html = TEXT
 BUGCR48239 LINUX WIN : fast/js/function-apply-aliased.html = PASS TEXT
 BUGCR48239 : fast/js/function-apply-many-args.html = TIMEOUT TEXT
 
-// BUGCR48668 MAC : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
-
 BUGCR49029 : fast/js/object-literal-syntax.html = TEXT
 
 BUGCR48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
@@ -2101,7 +2090,7 @@ BUGWK44278 : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT I
 
 // Clip paths aren't working after http://trac.webkit.org/changeset/65729
 BUGWK44341 LINUX WIN : svg/clip-path/clip-path-pixelation.svg = IMAGE+TEXT
-// BUGWK44341 LINUX WIN : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
+BUGWK44341 LINUX WIN : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 
 // new or failing since WebKit rev. 65740:65800
 // This test causes the DRT to crash.
@@ -3340,18 +3329,17 @@ BUGWK73607 GPU LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = TIME
 // Tests needing rebaseline after bug 73643 patch
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE
-//BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
-//BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
+BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
+BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/masking-path-01-b.svg = IMAGE
-//BUGWK73643 WIN MAC : svg/clip-path/clipper-placement-issue.svg = IMAGE
-//BUGWK73643 WIN MAC : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE
+BUGWK73643 WIN MAC : svg/clip-path/clipper-placement-issue.svg = IMAGE
+BUGWK73643 WIN MAC : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE IMAGE+TEXT
 BUGWK73643 WIN MAC : svg/filters/feDropShadow.svg = IMAGE
 BUGWK73643 WIN MAC : svg/filters/filterRes.svg = IMAGE
 BUGWK73643 SLOW DEBUG WIN MAC : svg/filters/big-sized-filter.svg = IMAGE
 BUGWK73643 SLOW DEBUG LINUX : svg/filters/big-sized-filter.svg = PASS
 BUGWK73643 RELEASE WIN MAC : svg/filters/big-sized-filter.svg = IMAGE
-//BUGWK73643 WIN MAC : svg/filters/filter-placement-issue.svg = IMAGE
-//BUGWK73643 WIN MAC : svg/filters/filterRes.svg = IMAGE
+BUGWK73643 WIN MAC : svg/filters/filter-placement-issue.svg = IMAGE
 BUGWK73643 WIN MAC : svg/filters/filterRes2.svg = IMAGE
 BUGWK73643 WIN : svg/as-background-image/svg-as-background-2.html = IMAGE
 BUGWK73643 MAC : svg/as-background-image/svg-as-background-2.html = PASS CRASH
@@ -3922,121 +3910,6 @@ BUGWK65072 : svg/text/exs-display-none.svg = IMAGE IMAGE+TEXT
 BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
 
 // Needs new baselines, most text only, after the SVG <use> rewrite.
-BUGWK78902 : svg/W3C-SVG-1.1-SE/struct-use-11-f.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1-SE/struct-use-14-f.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-30-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-36-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-40-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-41-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-46-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-61-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-63-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-64-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-65-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-66-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-67-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-68-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-69-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-70-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-77-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-78-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/filters-morph-01-f.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/fonts-elem-05-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/fonts-elem-06-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/fonts-kern-01-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/pservers-grad-13-b.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/struct-group-03-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/struct-image-02-b.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/struct-use-01-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/struct-use-03-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/struct-use-05-b.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/text-path-01-b.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/text-text-04-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/text-text-05-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/W3C-SVG-1.1/text-text-06-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/filters/feTile.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/filters/filterRegions.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/masking/maskRegions.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/paints/gradientLimit.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/paints/patternPreserveAspectRatioA.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/paints/patternRegionA.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/paints/patternRegions-positioned-objects.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/paints/patternRegions.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/longTextOnPath.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/smallFonts.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textAnchor.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textDecoration.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textEffect.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textEffect2.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textEffect3.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textFeatures.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textGlyphOrientationHorizontal.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textLayout.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textLayout2.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textLength.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textOnPath.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textOnPath2.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textOnPath3.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textOnPathSpaces.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textPosition.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textPosition2.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textProperties.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textProperties2.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/textStyles.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/verticalText.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/batik/text/verticalTextOnPath.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/carto.net/button.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/carto.net/colourpicker.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/carto.net/slider.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/carto.net/window.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-child-clipped.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-childs-clipped.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-clipped-evenodd-twice.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-clipped-no-content.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-clipped-nonzero.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-clipped.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-evenodd-nonzero.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-evenodd.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-nonzero-evenodd.svg = TEXT IMAGE IMAGE+TEXT PASS CRASH
-BUGWK78902 : svg/clip-path/clip-path-nonzero.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-on-clipped-use.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-text-and-shape.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-use-as-child.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-use-as-child2.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-use-as-child3.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-use-as-child4.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-use-as-child5.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-with-container.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-with-invisibile-child.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clip-path-with-text-clipped.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/clip-path/clipper-placement-issue.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/css/circle-in-mask-with-shadow.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/css/clippath-with-shadow.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/css/mask-with-shadow.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/filters/feImage-target-attribute-change-with-use-indirection-2.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/filters/feImage-target-attribute-change-with-use-indirection.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/filters/filter-placement-issue.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/filters/filter-refresh.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/filters/filter-source-position.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/hixie/error/014.xml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/hixie/error/017.xml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/hixie/use/001.xml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/hixie/use/002.xml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/overflow/overflow-on-inner-svg-element.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/stroke/zero-length-arc-linecaps-rendering.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/stroke/zero-length-path-linecap-rendering.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/stroke/zero-length-subpaths-linecap-rendering.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/text/text-gradient-positioning.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/text/text-path-01-b.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/text/text-text-04-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/text/text-text-05-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/text/text-text-06-t.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/transforms/svg-css-transforms-clip-path.xhtml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/zoom/page/zoom-mask-with-percentages.svg = TEXT IMAGE IMAGE+TEXT PASS
 
 // Need rebaselining.
 BUGWK69210 MAC : fast/encoding/utf-16-big-endian.html = IMAGE+TEXT
@@ -4059,14 +3932,14 @@ BUGCR115073 SLOW LINUX DEBUG : inspector/debugger/script-formatter-breakpoints.h
 BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 
 // Need rebaselining after bug 75091
-BUGWK75091 SKIP : svg/carto.net/tabgroup.svg = FAIL
-// BUGWK75091 SKIP : svg/carto.net/window.svg = FAIL
-BUGWK75091 SKIP : svg/custom/js-late-clipPath-and-object-creation.svg = FAIL
-BUGWK75091 SKIP : svg/custom/js-late-gradient-and-object-creation.svg = FAIL
-BUGWK75091 SKIP : svg/custom/js-late-pattern-and-object-creation.svg = FAIL
-BUGWK75091 SKIP : svg/custom/text-ctm.svg = FAIL
-BUGWK75091 SKIP : svg/custom/use-detach.svg = FAIL
-BUGWK75091 SKIP : svg/hixie/perf/003.xml = FAIL
+BUGWK75091 : svg/carto.net/tabgroup.svg = FAIL
+BUGWK75091 : svg/carto.net/window.svg = FAIL
+BUGWK75091 : svg/custom/js-late-clipPath-and-object-creation.svg = FAIL
+BUGWK75091 : svg/custom/js-late-gradient-and-object-creation.svg = FAIL
+BUGWK75091 : svg/custom/js-late-pattern-and-object-creation.svg = FAIL
+BUGWK75091 : svg/custom/text-ctm.svg = FAIL
+BUGWK75091 : svg/custom/use-detach.svg = FAIL
+BUGWK75091 : svg/hixie/perf/003.xml = FAIL
 
 // Failing since added by r108699
 BUGWK79454 WIN : svg/text/text-rescale.html = IMAGE+TEXT
@@ -4102,7 +3975,6 @@ BUGWK79823 WIN LINUX : compositing/reflections/nested-reflection.html = PASS IMA
 BUGWK79862 : fast/js/primitive-property-access-edge-cases.html = TEXT
 BUGWK79862 : fast/js/read-modify-eval.html = TEXT
 
-BUGWK79863 WIN : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
 
 // EPOGER: To be rebaselined after skia rev. 3283 lands in webkit
 BUGCR116252 LINUX : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT

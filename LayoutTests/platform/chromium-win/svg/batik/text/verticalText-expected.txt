@@ -237,8 +237,7 @@ layer at (0,0) size 450x500
           chunk 1 (vertical) text run 8 at (395.50,357.00) startOffset 7 endOffset 8 height 17.00: "t"
       RenderSVGContainer {g} at (52,450) size 319x45 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,450.00)}]
         RenderSVGContainer {use} at (54,450) size 317x45
-          RenderSVGContainer {g} at (54,450) size 317x45
-            RenderSVGPath {path} at (54,450) size 317x45 [transform={m=((0.15,0.00)(0.00,0.15)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 0 1000 100 C 1100 200 1200 300 1300 200 C 1400 100 1500 0 1600 100 C 1700 200 1800 300 1900 200 C 2000 100 2100 0 2200 100"]
+          RenderSVGPath {path} at (54,450) size 317x45 [transform={m=((0.15,0.00)(0.00,0.15)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 0 1000 100 C 1100 200 1200 300 1300 200 C 1400 100 1500 0 1600 100 C 1700 200 1800 300 1900 200 C 2000 100 2100 0 2200 100"]
         RenderSVGText {text} at (12,1) size 318x39 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 318x39
             RenderSVGInlineText {#text} at (0,0) size 318x39
@@ -269,4 +268,3 @@ layer at (0,0) size 450x500
               chunk 1 (vertical) text run 25 at (320.50,9.23) startOffset 24 endOffset 25 height 15.00: "\x{50CF}"
           RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGContainer {use} at (0,0) size 0x0
-      RenderSVGContainer {g} at (0,0) size 0x0
