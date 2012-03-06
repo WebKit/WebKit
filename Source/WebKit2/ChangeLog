@@ -1,3 +1,35 @@
+2012-03-05  Anders Carlsson  <andersca@apple.com>
+
+        pinch-to-zoom and double-tap flicker when using the new scrolling model
+        https://bugs.webkit.org/show_bug.cgi?id=80368
+        <rdar://problem/10866221>
+
+        Reviewed by Sam Weinig.
+
+        Add a way for drawing areas to respond to callback based force repaint requests asynchronously.
+        This is currently needed for the tiled drawing area when there might be outstanding scroll updates
+        that are sent from the scrolling thread to the main thread and we need to ensure that they're processed
+        before sending a message back.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::forceRepaintAsync):
+        Add new member function.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::forceRepaint):
+        Try forceRepaintAsync first.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::forceRepaintAndSendMessage):
+        Force the repaint and send the message.
+
+        (WebKit::dispatchBackToMainThread):
+        Dispatch a call to forceRepaintAndSendMessage to the main thread.
+
+        (WebKit::TiledCoreAnimationDrawingArea::forceRepaintAsync):
+        Dispatch a function on the scrolling thread. Its sole purpose is to dispatch a function back to the
+        main thread, ensuring that all previously dispatched functions have been executed.
+
 2012-03-05  Enrica Casucci  <enrica@apple.com>
 
         Can't type on some websites (plug-ins steal key events).

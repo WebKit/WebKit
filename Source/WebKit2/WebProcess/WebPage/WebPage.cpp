@@ -1821,6 +1821,9 @@ void WebPage::forceRepaintWithoutCallback()
 
 void WebPage::forceRepaint(uint64_t callbackID)
 {
+    if (m_drawingArea->forceRepaintAsync(callbackID))
+        return;
+
     forceRepaintWithoutCallback();
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }

@@ -53,6 +53,7 @@ private:
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) OVERRIDE;
 
     virtual void forceRepaint() OVERRIDE;
+    virtual bool forceRepaintAsync(uint64_t callbackID) OVERRIDE;
     virtual void setLayerTreeStateIsFrozen(bool) OVERRIDE;
     virtual bool layerTreeStateIsFrozen() const OVERRIDE;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;

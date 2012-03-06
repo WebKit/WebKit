@@ -236,7 +236,7 @@ void RenderLayerBacking::updateCompositedBounds()
     // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.  If this
     // is a fullscreen renderer, don't clip to the viewport, as the renderer will be asked to
     // display outside of the viewport bounds.
-    if (compositor()->compositingConsultsOverlap() && !layerOrAncestorIsTransformed(m_owningLayer) 
+    if (compositor()->compositingConsultsOverlap() && (!layerOrAncestorIsTransformed(m_owningLayer) || m_usingTiledCacheLayer)
 #if ENABLE(FULLSCREEN_API)
         && !layerOrAncestorIsFullScreen(m_owningLayer)
 #endif

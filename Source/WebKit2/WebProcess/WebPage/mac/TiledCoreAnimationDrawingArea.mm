@@ -31,6 +31,7 @@
 #import "LayerHostingContext.h"
 #import "LayerTreeContext.h"
 #import "WebPage.h"
+#import "WebPageProxyMessages.h"
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/Frame.h>
@@ -40,7 +41,9 @@
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/ScrollingCoordinator.h>
+#import <WebCore/ScrollingThread.h>
 #import <WebCore/Settings.h>
+#import <wtf/MainThread.h>
 
 @interface CATransaction (Details)
 + (void)synchronize;
@@ -123,6 +126,36 @@ void TiledCoreAnimationDrawingArea::forceRepaint()
     flushLayers();
     [CATransaction flush];
     [CATransaction synchronize];
+}
+
+#if ENABLE(THREADED_SCROLLING)
+static void forceRepaintAndSendMessage(uint64_t webPageID, uint64_t callbackID)
+{
+    WebPage* webPage = WebProcess::shared().webPage(webPageID);
+    if (!webPage)
+        return;
+
+    webPage->drawingArea()->forceRepaint();
+    webPage->send(Messages::WebPageProxy::VoidCallback(callbackID));
+}
+
+static void dispatchBackToMainThread(uint64_t webPageID, uint64_t callbackID)
+{
+    callOnMainThread(bind(forceRepaintAndSendMessage, webPageID, callbackID));
+}
+#endif
+
+bool TiledCoreAnimationDrawingArea::forceRepaintAsync(uint64_t callbackID)
+{
+#if ENABLE(THREADED_SCROLLING)
+    if (m_layerTreeStateIsFrozen)
+        return false;
+
+    ScrollingThread::dispatch(bind(dispatchBackToMainThread, m_webPage->pageID(), callbackID));
+    return true;
+#else
+    return false;
+#endif
 }
 
 void TiledCoreAnimationDrawingArea::setLayerTreeStateIsFrozen(bool layerTreeStateIsFrozen)

@@ -56,7 +56,8 @@ public:
     void setNeedsDisplay();
     void setNeedsDisplayInRect(const IntRect&);
     void drawLayer(WebTileLayer*, CGContextRef);
-    void setContentsScale(CGFloat);
+
+    void setScale(CGFloat);
 
     bool acceleratesDrawing() const { return m_acceleratesDrawing; }
     void setAcceleratesDrawing(bool);
@@ -98,6 +99,8 @@ private:
     TileMap m_tiles;
     Timer<TileCache> m_tileRevalidationTimer;
     IntRect m_tileCoverageRect;
+
+    CGFloat m_scale;
 
     bool m_acceleratesDrawing;
 

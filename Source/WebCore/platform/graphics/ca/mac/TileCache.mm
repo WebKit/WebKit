@@ -54,6 +54,7 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
     , m_tileContainerLayer(adoptCF([[CALayer alloc] init]))
     , m_tileSize(tileSize)
     , m_tileRevalidationTimer(this, &TileCache::tileRevalidationTimerFired)
+    , m_scale(1)
     , m_acceleratesDrawing(false)
     , m_tileDebugBorderWidth(0)
 {
@@ -90,10 +91,13 @@ void TileCache::setNeedsDisplayInRect(const IntRect& rect)
     if (m_tiles.isEmpty())
         return;
 
+    IntRect scaledRect = rect;
+    scaledRect.scale(m_scale);
+
     // Find the tiles that need to be invalidated.
     TileIndex topLeft;
     TileIndex bottomRight;
-    getTileIndexRangeForRect(intersection(rect, m_tileCoverageRect), topLeft, bottomRight);
+    getTileIndexRangeForRect(intersection(scaledRect, m_tileCoverageRect), topLeft, bottomRight);
 
     for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
         for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
@@ -126,6 +130,7 @@ void TileCache::drawLayer(WebTileLayer* layer, CGContextRef context)
 
     CGPoint layerOrigin = [layer frame].origin;
     CGContextTranslateCTM(context, -layerOrigin.x, -layerOrigin.y);
+    CGContextScaleCTM(context, m_scale, m_scale);
     drawLayerContents(context, layer, platformLayer);
 
     CGContextRestoreGState(context);
@@ -162,17 +167,22 @@ void TileCache::drawLayer(WebTileLayer* layer, CGContextRef context)
     CGContextRestoreGState(context);
 }
 
-void TileCache::setContentsScale(CGFloat contentsScale)
+void TileCache::setScale(CGFloat scale)
 {
+    if (m_scale == scale)
+        return;
+
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
-        [it->second.get() setContentsScale:contentsScale];
+    m_scale = scale;
+    [m_tileContainerLayer.get() setTransform:CATransform3DMakeScale(1 / m_scale, 1 / m_scale, 1)];
+
+    revalidateTiles();
+
+    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
         [it->second.get() setNeedsDisplay];
-    }
 
     PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
     platformLayer->owner()->platformCALayerDidCreateTiles();
-    revalidateTiles();
 #else
     UNUSED_PARAM(contentsScale);
 #endif
@@ -234,7 +244,9 @@ IntRect TileCache::rectForTileIndex(const TileIndex& tileIndex) const
 
 void TileCache::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft, TileIndex& bottomRight)
 {
-    IntRect clampedRect = intersection(rect, bounds());
+    IntRect clampedRect = bounds();
+    clampedRect.scale(m_scale);
+    clampedRect.intersect(rect);
 
     topLeft.setX(max(clampedRect.x() / m_tileSize.width(), 0));
     topLeft.setY(max(clampedRect.y() / m_tileSize.height(), 0));
@@ -263,7 +275,7 @@ void TileCache::revalidateTiles()
     if (!platformLayer)
         return;
 
-    if (m_visibleRect.isEmpty())
+    if (m_visibleRect.isEmpty() || bounds().isEmpty())
         return;
 
     IntRect tileCoverageRect = m_visibleRect;
@@ -351,7 +363,6 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer()
     [layer.get() setEdgeAntialiasingMask:0];
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    [layer.get() setContentsScale:[m_tileCacheLayer contentsScale]];
     [layer.get() setAcceleratesDrawing:m_acceleratesDrawing];
 #endif
 
