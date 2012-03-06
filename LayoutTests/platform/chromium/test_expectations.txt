@@ -948,9 +948,6 @@ BUGWK64591 : compositing/repaint/become-overlay-composited-layer.html = PASS FAI
 // BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT
 // BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-use-01-t.svg = PASS IMAGE+TEXT IMAGE
 
-// Crashes due to debug assert until we fix issues with style elements in SVG
-BUGWK77764 DEBUG : svg/custom/use-referencing-style-crash.svg = CRASH
-
 // Text mismatch since r65370.
 // There was also an unnoticed image mismatch before this revision
 // (wrong baseline was committed). No idea about when it really started to fail.
@@ -1599,7 +1596,6 @@ BUGCR9798 LINUX DEBUG : transitions/mask-transitions.html = PASS FAIL
 BUGCR9798 SLOW LINUX RELEASE : transitions/transition-timing-function.html = PASS
 // This test definitely times out (i.e. is not just slow).
 BUGCR9798 WIN RELEASE : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
-// BUGCR9798 LINUX : svg/custom/use-property-changes-through-svg-dom.svg = FAIL
 
 // New tests or failures from WebKit merge 42324:42364. Re-baselined on
 // Windows. Probably just need the same on other platforms.
@@ -2164,9 +2160,6 @@ BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 // nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
 BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
 
-// Possibly regressed within 68216:68246 (flakiness rate increased)
-// BUGCR57056 LINUX : svg/custom/clip-path-referencing-use2.svg = PASS FAIL
-
 // Flaky since r68438:r68445 or before that.
 BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 
@@ -2180,7 +2173,7 @@ BUG_HCLAM : http/tests/css/css-image-loading.html = PASS TIMEOUT TEXT
 BUG_HCLAM : http/tests/css/mask-image-loading.html = PASS TIMEOUT TEXT
 BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = PASS TIMEOUT TEXT
 
-BUGCR57934 WIN LEOPARD DEBUG: http/tests/appcache/fail-on-update-2.html = PASS TIMEOUT
+BUGCR57934 WIN LEOPARD DEBUG : http/tests/appcache/fail-on-update-2.html = PASS TIMEOUT
 
 // Failing since r69181. Verified as legitimate by looking at the results
 // of the SVG rendering.
@@ -3581,7 +3574,7 @@ BUGWK78219 : svg/dynamic-updates/SVGCircleElement-dom-requiredFeatures.html = IM
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-r-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-requiredFeatures.html = IMAGE 
+BUGWK78219 : svg/dynamic-updates/SVGCircleElement-svgdom-requiredFeatures.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop.html = IMAGE
 BUGWK78219 : svg/dynamic-updates/SVGCursorElement-dom-x-attr.html = IMAGE
@@ -4024,86 +4017,6 @@ BUGWK78902 : svg/clip-path/clipper-placement-issue.svg = TEXT IMAGE IMAGE+TEXT P
 BUGWK78902 : svg/css/circle-in-mask-with-shadow.svg = TEXT IMAGE IMAGE+TEXT PASS
 BUGWK78902 : svg/css/clippath-with-shadow.svg = TEXT IMAGE IMAGE+TEXT PASS
 BUGWK78902 : svg/css/mask-with-shadow.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/broken-internal-references.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/clip-path-referencing-use.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/clip-path-referencing-use2.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/deep-dynamic-updates.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/embedding-external-svgs.xhtml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/non-scaling-stroke.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/path-textPath-simulation.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/pattern-rotate.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/recursive-clippath.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/recursive-mask.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/recursive-pattern.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/relative-sized-deep-shadow-tree-content.xhtml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/relative-sized-shadow-tree-content-with-symbol.xhtml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/relative-sized-shadow-tree-content.xhtml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/relative-sized-use-on-symbol.xhtml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/resource-client-removal.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/struct-use-09-b.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-clipped-hit.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-clipped-transform.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-css-events.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-css-no-effect-on-shadow-tree.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-detach.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-disappears-after-style-update.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-dynamic-append.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-elementInstance-event-target.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-elementInstance-methods.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-empty-reference.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-event-handler-on-referenced-element.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-event-handler-on-use-element.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-events-crash.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-font-face-crash.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-forward-refs.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-image-in-g.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-in-symbol-with-offset.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-inherit-style.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-instanceRoot-event-bubbling.xhtml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-instanceRoot-event-listeners.xhtml = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-instanceRoot-modifications.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-modify-container-in-target.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-modify-target-container.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-modify-target-symbol.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-move-to-offset.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-multiple-on-nested-disallowed-font.html = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-nested-transform.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-clip-path-with-transformation.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-disallowed-foreign-object-1.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-disallowed-foreign-object-2.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-disallowed-foreign-object-3.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-disallowed-foreign-object-4.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-disallowed-foreign-object-5.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-disallowed-foreign-object-6.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-g-containing-foreignObject-and-image.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-g-containing-symbol.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-g-containing-use.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-g.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-non-svg-namespaced-element.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-rect.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-symbol-inside-pattern.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-symbol.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-text.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-on-use.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-property-changes-through-dom.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-property-changes-through-svg-dom.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-property-synchronization-crash.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-recalcStyle-crash.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-recursion-1.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-recursion-2.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-recursion-3.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-recursion-4.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-referencing-nonexisting-symbol.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-setAttribute-crash.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-symbol-overflow.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-transfer-width-height-properties-to-svg.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-transfer-width-height-properties-to-svg1.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-transfer-width-height-properties-to-svg2.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-transfer-width-height-properties-to-symbol.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-transfer-width-height-properties-to-symbol1.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-transfer-width-height-properties-to-symbol2.svg = TEXT IMAGE IMAGE+TEXT PASS
-BUGWK78902 : svg/custom/use-transform.svg = TEXT IMAGE IMAGE+TEXT PASS
 BUGWK78902 : svg/filters/feImage-target-attribute-change-with-use-indirection-2.svg = TEXT IMAGE IMAGE+TEXT PASS
 BUGWK78902 : svg/filters/feImage-target-attribute-change-with-use-indirection.svg = TEXT IMAGE IMAGE+TEXT PASS
 BUGWK78902 : svg/filters/filter-placement-issue.svg = TEXT IMAGE IMAGE+TEXT PASS
@@ -4152,7 +4065,7 @@ BUGWK75091 SKIP : svg/custom/js-late-clipPath-and-object-creation.svg = FAIL
 BUGWK75091 SKIP : svg/custom/js-late-gradient-and-object-creation.svg = FAIL
 BUGWK75091 SKIP : svg/custom/js-late-pattern-and-object-creation.svg = FAIL
 BUGWK75091 SKIP : svg/custom/text-ctm.svg = FAIL
-// BUGWK75091 SKIP : svg/custom/use-detach.svg = FAIL
+BUGWK75091 SKIP : svg/custom/use-detach.svg = FAIL
 BUGWK75091 SKIP : svg/hixie/perf/003.xml = FAIL
 
 // Failing since added by r108699
