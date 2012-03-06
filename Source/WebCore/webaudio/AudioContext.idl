@@ -30,9 +30,7 @@ module webaudio {
         CustomConstructor,
         ConstructorParameters=0,
         JSCustomMarkFunction,
-#if defined(V8_BINDING) && V8_BINDING
         EventTarget
-#endif        
     ] AudioContext {
         // All rendered audio ultimately connects to destination, which represents the audio hardware.
         readonly attribute AudioDestinationNode destination;

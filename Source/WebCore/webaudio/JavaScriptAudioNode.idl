@@ -28,9 +28,7 @@ module audio {
         Conditional=WEB_AUDIO,
         JSGenerateToJSObject,
         JSCustomMarkFunction,
-#if defined(V8_BINDING) && V8_BINDING
         EventTarget
-#endif
     ] JavaScriptAudioNode : AudioNode {
         // Rendering callback
         attribute EventListener onaudioprocess;
