@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("Checks whether SYNTAX_ERR is thrown when attemping to send unpaired surrogates.");
+
+window.jsTestIsAsync = true;
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+
+var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/echo");
+
+ws.onopen = function()
+{
+    debug("Connected.");
+    shouldThrow("ws.send('\uD807');");
+    ws.close();
+};
+
+ws.onmessage = function (event)
+{
+    var message = event.data;
+    testFailed("onmessage() was called. (message = \"" + message + "\")");
+    ws.close();
+};
+
+ws.onclose = function()
+{
+    finishJSTest();
+};
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>
