@@ -1207,11 +1207,11 @@ Map.prototype = {
         delete this._map[key.__identifier];
     },
     
-    keys: function()
+    values: function()
     {
         var result = [];
-        for (var key in this._map)
-            result.push(key);
+        for (var objectIdentifier in this._map)
+            result.push(this._map[objectIdentifier]);
         return result;
     },
     

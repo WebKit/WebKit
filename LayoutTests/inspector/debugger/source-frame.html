@@ -33,14 +33,33 @@ function test()
 
         function testConsoleMessage(next)
         {
-              InspectorTest.addSniffer(WebInspector.Resource.prototype, "addMessage", didAddMessage);
-              InspectorTest.evaluateInPage("addErrorToConsole()");
+            InspectorTest.showScriptSource("source-frame.html", didShowScriptSource);
 
-              function didAddMessage(message)
-              {
-                  InspectorTest.addResult("Message text: " + message.message);
-                  next();
-              }
+            var shownSourceFrame;
+            function didShowScriptSource(sourceFrame)
+            {
+                InspectorTest.addResult("Script source was shown.");
+                shownSourceFrame = sourceFrame;
+                InspectorTest.addSniffer(WebInspector.SourceFrame.prototype, "addMessageToSource", didAddMessage);
+                InspectorTest.addSniffer(WebInspector.SourceFrame.prototype, "clearMessages", clearMessages);
+                InspectorTest.evaluateInPage("addErrorToConsole()");
+            }
+
+            function didAddMessage(lineNumber, message)
+            {
+                if (this !== shownSourceFrame)
+                    return;
+                InspectorTest.addResult("Message added to source frame: " + message.message);
+                WebInspector.console.requestClearMessages();
+            }
+
+            function clearMessages()
+            {
+                if (this !== shownSourceFrame)
+                    return;
+                InspectorTest.addResult("Messages cleared in source frame.");
+                next();
+            }
         },
 
         function testShowResource(next)

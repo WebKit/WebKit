@@ -294,11 +294,9 @@ WebInspector.ScriptsPanel.prototype = {
 
     _consoleMessagesCleared: function()
     {
-        var uiSourceCodes = this._sourceFramesByUISourceCode;
-        for (var i = 0; i < uiSourceCodes.length; ++i) {
-            var sourceFrame = this._sourceFramesByUISourceCode.get(uiSourceCodes[i])
-            sourceFrame.clearMessages();
-        }
+        var sourceFrames = this._sourceFramesByUISourceCode.values();
+        for (var i = 0; i < sourceFrames.length; ++i)
+            sourceFrames[i].clearMessages();
     },
 
     _consoleMessageAdded: function(event)
