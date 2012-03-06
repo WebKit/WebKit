@@ -550,6 +550,7 @@ class Rebaseliner(object):
         baseline_filename = self._filesystem.basename(baseline_fullpath)
         new_file = get_result_file_fullpath(self._filesystem, self._options.html_directory,
                                             baseline_filename, self._platform, 'new')
+        self._filesystem.maybe_make_directory(self._filesystem.dirname(new_file))
         self._filesystem.copyfile(baseline_fullpath, new_file)
         _log.debug('  Html: copied new baseline file from "%s" to "%s".',
                   baseline_fullpath, new_file)

@@ -80,6 +80,7 @@ class RebaselineTest(AbstractDeclarativeCommand):
             print("Existing baseline at %s, not copying over it." % new_baseline)
         else:
             print("Copying baseline from %s to %s." % (old_baseline, new_baseline))
+            self._tool.filesystem.maybe_make_directory(self._tool.filesystem.dirname(new_baseline))
             self._tool.filesystem.copyfile(old_baseline, new_baseline)
             if not self._tool.scm().exists(new_baseline):
                 self._tool.scm().add(new_baseline)

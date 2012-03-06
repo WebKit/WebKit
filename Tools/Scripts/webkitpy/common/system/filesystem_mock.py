@@ -110,6 +110,8 @@ class MockFileSystem(object):
             raise IOError(errno.EISDIR, source, os.strerror(errno.ISDIR))
         if self.isdir(destination):
             raise IOError(errno.EISDIR, destination, os.strerror(errno.ISDIR))
+        if not self.exists(self.dirname(destination)):
+            raise IOError(errno.ENOENT, destination, os.strerror(errno.ENOENT))
 
         self.files[destination] = self.files[source]
         self.written_files[destination] = self.files[source]
