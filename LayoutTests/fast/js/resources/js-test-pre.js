@@ -467,11 +467,13 @@ function finishJSTest()
         layoutTestController.notifyDone();
 }
 
-function startWorker(testScriptURL)
+function startWorker(testScriptURL, shared)
 {
     self.jsTestIsAsync = true;
     debug('Starting worker: ' + testScriptURL);
-    var worker = new Worker(testScriptURL);
+    var worker = shared ? new SharedWorker(testScriptURL) : new Worker(testScriptURL);
+    if (shared)
+        worker.port.onmessage = function(event) { worker.onmessage(event); };
     worker.onmessage = function(event)
     {
         var workerPrefix = "[Worker] ";
