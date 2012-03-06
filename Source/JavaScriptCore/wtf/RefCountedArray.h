@@ -150,7 +150,7 @@ private:
         
         static Header* fromPayload(T* payload)
         {
-            return reinterpret_cast<Header*>(reinterpret_cast<char*>(payload) - size());
+            return reinterpret_cast_ptr<Header*>(reinterpret_cast<char*>(payload) - size());
         }
     };
     

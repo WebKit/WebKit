@@ -1,3 +1,17 @@
+2012-03-06  Rob Buis  <rbuis@rim.com>
+
+        BlackBerry] Fix cast-align gcc warnings when compiling JSC
+        https://bugs.webkit.org/show_bug.cgi?id=80420
+
+        Reviewed by Gavin Barraclough.
+
+        Fix warnings given in Blackberry build.
+
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::CopiedBlock):
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::Header::fromPayload):
+
 2012-03-06  Gavin Barraclough  <barraclough@apple.com>
 
         writable/configurable not respected for some properties of Function/String/Arguments

@@ -49,7 +49,7 @@ public:
         memset(static_cast<void*>(offset), 0, static_cast<size_t>((reinterpret_cast<char*>(this) + allocation.size()) - offset));
 #else
         JSValue emptyValue;
-        JSValue* limit = reinterpret_cast<JSValue*>(reinterpret_cast<char*>(this) + allocation.size());
+        JSValue* limit = reinterpret_cast_ptr<JSValue*>(reinterpret_cast<char*>(this) + allocation.size());
         for (JSValue* currentValue = reinterpret_cast<JSValue*>(m_offset); currentValue < limit; currentValue++)
             *currentValue = emptyValue;
 #endif
