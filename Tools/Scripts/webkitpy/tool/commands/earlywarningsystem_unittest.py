@@ -83,6 +83,7 @@ class EarlyWarningSytemTest(QueuesTest):
         self._test_builder_ews(MacEWS())
         self._test_builder_ews(ChromiumWindowsEWS())
         self._test_builder_ews(QtEWS())
+        self._test_builder_ews(QtWK2EWS())
         self._test_builder_ews(GtkEWS())
         self._test_builder_ews(EflEWS())
 

@@ -160,6 +160,11 @@ class QtEWS(AbstractEarlyWarningSystem):
     port_name = "qt"
 
 
+class QtWK2EWS(AbstractEarlyWarningSystem):
+    name = "qt-wk2-ews"
+    port_name = "qt"
+
+
 class WinEWS(AbstractEarlyWarningSystem):
     name = "win-ews"
     port_name = "win"

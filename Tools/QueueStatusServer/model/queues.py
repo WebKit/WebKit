@@ -41,6 +41,7 @@ class Queue(object):
         "style-queue",
         "chromium-ews",  # aka cr-linux-ews
         "qt-ews",
+        "qt-wk2-ews",
         "gtk-ews",
         "mac-ews",
         "win-ews",
