@@ -17,27 +17,23 @@ class BuildBotConfigLoader(object):
         sys.path.append(scripts_dir)
 
     def _create_mock_passwords_dict(self):
-        config_dict = simplejson.load(open('config.json'))
+        config_dict = json.load(open('config.json'))
         return dict([(slave['name'], '1234') for slave in config_dict['slaves']])
 
     def _mock_open(self, filename):
         if filename == 'passwords.json':
-            # FIXME: This depends on _add_dependant_modules_to_sys_modules imported simplejson.
-            return StringIO.StringIO(simplejson.dumps(self._create_mock_passwords_dict()))
+            return StringIO.StringIO(json.dumps(self._create_mock_passwords_dict()))
         return __builtins__.open(filename)
 
     def _add_dependant_modules_to_sys_modules(self):
         from webkitpy.thirdparty.autoinstalled import buildbot
-        import json as simplejson
-
         sys.modules['buildbot'] = buildbot
-        sys.modules['simplejson'] = simplejson
 
     def load_config(self, master_cfg_path):
         # Before we can use webkitpy.thirdparty, we need to fix our path to include webkitpy.
         # FIXME: If we're ever run by test-webkitpy we won't need this step.
         self._add_webkitpy_to_sys_path()
-        # master.cfg expects the buildbot and simplejson modules to be in sys.path.
+        # master.cfg expects the buildbot module to be in sys.path.
         self._add_dependant_modules_to_sys_modules()
 
         # master.cfg expects a passwords.json file which is not checked in.  Fake it by mocking open().
