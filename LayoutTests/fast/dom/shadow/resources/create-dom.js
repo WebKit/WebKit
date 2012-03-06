@@ -18,7 +18,7 @@ function createDOM(tagName, attributes)
             if (window.WebKitShadowRoot)
               shadowRoot = new WebKitShadowRoot(element);
             else
-              shadowRoot = new internals.ensureShadowRoot(element);
+              shadowRoot = internals.ensureShadowRoot(element);
             for (var j = 0; j < child.children.length; ++j)
                 shadowRoot.appendChild(child.children[j]);
         } else
