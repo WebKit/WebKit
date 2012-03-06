@@ -7091,13 +7091,11 @@ PassRefPtr<CSSValueList> CSSParser::parseFilter()
 
 static bool validFlowName(const String& flowName)
 {
-    if (equalIgnoringCase(flowName, "auto")
-        || equalIgnoringCase(flowName, "default")
-        || equalIgnoringCase(flowName, "inherit")
-        || equalIgnoringCase(flowName, "initial")
-        || equalIgnoringCase(flowName, "none"))
-        return false;
-    return true;
+    return !(equalIgnoringCase(flowName, "auto")
+            || equalIgnoringCase(flowName, "default")
+            || equalIgnoringCase(flowName, "inherit")
+            || equalIgnoringCase(flowName, "initial")
+            || equalIgnoringCase(flowName, "none"));
 }
 
 bool CSSParser::cssRegionsEnabled() const
@@ -7121,7 +7119,7 @@ bool CSSParser::parseFlowThread(const String& flowName, Document* doc)
 
     m_rule = 0;
 
-    return (m_numParsedProperties && m_parsedProperties[0]->m_id == CSSPropertyWebkitFlowInto);
+    return ((m_numParsedProperties == 1) && (m_parsedProperties[0]->m_id == CSSPropertyWebkitFlowInto));
 }
 
 // none | <ident>
