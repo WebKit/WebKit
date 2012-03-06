@@ -28,7 +28,18 @@ ROOT_BUILD_DIR = $$replace(OUT_PWD, $$WEBKIT_SUBDIR,)
 pro_file_name = $$basename(_PRO_FILE_)
 !equals(pro_file_name, configure.pro): QMAKE_SYNCQT_OUTDIR = $$ROOT_BUILD_DIR
 
-load(default_pre) # Load Qt's defaults after we've resolved the build directory
+# Load Qt's defaults after we've resolved the build directory. This will also
+# run syncqt if there is a sync.profile in the $$_PRO_FILE_PWD_
+load(default_pre)
+
+# Load results of config tests (only supported in Qt 5)
+haveQt(5): include($${ROOT_BUILD_DIR}/Tools/qmake/.qmake.cache, , true)
+
+unix:config_test_gccdepends {
+    # We have a compiler that supports the -MD option (and neither
+    # teambuilder nor icecream is messing up the .d file output).
+    CONFIG += GNUmake gcc_MD_depends
+}
 
 equals(OUT_PWD, $${ROOT_BUILD_DIR}) {
     !recursive_include:CONFIG += root_project_file
