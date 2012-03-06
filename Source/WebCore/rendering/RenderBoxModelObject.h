@@ -40,6 +40,8 @@ enum BackgroundBleedAvoidance {
     BackgroundBleedUseTransparencyLayer
 };
 
+enum PaddingOptions { IncludeIntrinsicPadding, ExcludeIntrinsicPadding };
+
 // This class is the base for all objects that adhere to the CSS box model as described
 // at http://www.w3.org/TR/CSS21/box.html
 
@@ -78,14 +80,14 @@ public:
     virtual LayoutRect borderBoundingBox() const = 0;
 
     // Virtual since table cells override
-    virtual LayoutUnit paddingTop(bool includeIntrinsicPadding = true) const;
-    virtual LayoutUnit paddingBottom(bool includeIntrinsicPadding = true) const;
-    virtual LayoutUnit paddingLeft(bool includeIntrinsicPadding = true) const;
-    virtual LayoutUnit paddingRight(bool includeIntrinsicPadding = true) const;
-    virtual LayoutUnit paddingBefore(bool includeIntrinsicPadding = true) const;
-    virtual LayoutUnit paddingAfter(bool includeIntrinsicPadding = true) const;
-    virtual LayoutUnit paddingStart(bool includeIntrinsicPadding = true) const;
-    virtual LayoutUnit paddingEnd(bool includeIntrinsicPadding = true) const;
+    virtual LayoutUnit paddingTop(PaddingOptions = IncludeIntrinsicPadding) const;
+    virtual LayoutUnit paddingBottom(PaddingOptions = IncludeIntrinsicPadding) const;
+    virtual LayoutUnit paddingLeft(PaddingOptions = IncludeIntrinsicPadding) const;
+    virtual LayoutUnit paddingRight(PaddingOptions = IncludeIntrinsicPadding) const;
+    virtual LayoutUnit paddingBefore(PaddingOptions = IncludeIntrinsicPadding) const;
+    virtual LayoutUnit paddingAfter(PaddingOptions = IncludeIntrinsicPadding) const;
+    virtual LayoutUnit paddingStart(PaddingOptions = IncludeIntrinsicPadding) const;
+    virtual LayoutUnit paddingEnd(PaddingOptions = IncludeIntrinsicPadding) const;
 
     virtual int borderTop() const { return style()->borderTopWidth(); }
     virtual int borderBottom() const { return style()->borderBottomWidth(); }

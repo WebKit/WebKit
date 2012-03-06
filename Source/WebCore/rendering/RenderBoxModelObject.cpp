@@ -537,7 +537,7 @@ int RenderBoxModelObject::pixelSnappedOffsetHeight() const
     return offsetHeight();
 }
 
-LayoutUnit RenderBoxModelObject::paddingTop(bool) const
+LayoutUnit RenderBoxModelObject::paddingTop(PaddingOptions) const
 {
     LayoutUnit w = 0;
     Length padding = style()->paddingTop();
@@ -546,7 +546,7 @@ LayoutUnit RenderBoxModelObject::paddingTop(bool) const
     return padding.calcMinValue(w);
 }
 
-LayoutUnit RenderBoxModelObject::paddingBottom(bool) const
+LayoutUnit RenderBoxModelObject::paddingBottom(PaddingOptions) const
 {
     LayoutUnit w = 0;
     Length padding = style()->paddingBottom();
@@ -555,7 +555,7 @@ LayoutUnit RenderBoxModelObject::paddingBottom(bool) const
     return padding.calcMinValue(w);
 }
 
-LayoutUnit RenderBoxModelObject::paddingLeft(bool) const
+LayoutUnit RenderBoxModelObject::paddingLeft(PaddingOptions) const
 {
     LayoutUnit w = 0;
     Length padding = style()->paddingLeft();
@@ -564,7 +564,7 @@ LayoutUnit RenderBoxModelObject::paddingLeft(bool) const
     return padding.calcMinValue(w);
 }
 
-LayoutUnit RenderBoxModelObject::paddingRight(bool) const
+LayoutUnit RenderBoxModelObject::paddingRight(PaddingOptions) const
 {
     LayoutUnit w = 0;
     Length padding = style()->paddingRight();
@@ -573,7 +573,7 @@ LayoutUnit RenderBoxModelObject::paddingRight(bool) const
     return padding.calcMinValue(w);
 }
 
-LayoutUnit RenderBoxModelObject::paddingBefore(bool) const
+LayoutUnit RenderBoxModelObject::paddingBefore(PaddingOptions) const
 {
     LayoutUnit w = 0;
     Length padding = style()->paddingBefore();
@@ -582,7 +582,7 @@ LayoutUnit RenderBoxModelObject::paddingBefore(bool) const
     return padding.calcMinValue(w);
 }
 
-LayoutUnit RenderBoxModelObject::paddingAfter(bool) const
+LayoutUnit RenderBoxModelObject::paddingAfter(PaddingOptions) const
 {
     LayoutUnit w = 0;
     Length padding = style()->paddingAfter();
@@ -591,7 +591,7 @@ LayoutUnit RenderBoxModelObject::paddingAfter(bool) const
     return padding.calcMinValue(w);
 }
 
-LayoutUnit RenderBoxModelObject::paddingStart(bool) const
+LayoutUnit RenderBoxModelObject::paddingStart(PaddingOptions) const
 {
     LayoutUnit w = 0;
     Length padding = style()->paddingStart();
@@ -600,7 +600,7 @@ LayoutUnit RenderBoxModelObject::paddingStart(bool) const
     return padding.calcMinValue(w);
 }
 
-LayoutUnit RenderBoxModelObject::paddingEnd(bool) const
+LayoutUnit RenderBoxModelObject::paddingEnd(PaddingOptions) const
 {
     LayoutUnit w = 0;
     Length padding = style()->paddingEnd();

@@ -191,51 +191,51 @@ void RenderTableCell::layout()
     setCellWidthChanged(false);
 }
 
-LayoutUnit RenderTableCell::paddingTop(bool includeIntrinsicPadding) const
+LayoutUnit RenderTableCell::paddingTop(PaddingOptions paddingOption) const
 {
     LayoutUnit result = RenderBlock::paddingTop();
-    if (!includeIntrinsicPadding || !isHorizontalWritingMode())
+    if (paddingOption == ExcludeIntrinsicPadding || !isHorizontalWritingMode())
         return result;
     return result + (style()->writingMode() == TopToBottomWritingMode ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
 }
 
-LayoutUnit RenderTableCell::paddingBottom(bool includeIntrinsicPadding) const
+LayoutUnit RenderTableCell::paddingBottom(PaddingOptions paddingOption) const
 {
     LayoutUnit result = RenderBlock::paddingBottom();
-    if (!includeIntrinsicPadding || !isHorizontalWritingMode())
+    if (paddingOption == ExcludeIntrinsicPadding || !isHorizontalWritingMode())
         return result;
     return result + (style()->writingMode() == TopToBottomWritingMode ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
 }
 
-LayoutUnit RenderTableCell::paddingLeft(bool includeIntrinsicPadding) const
+LayoutUnit RenderTableCell::paddingLeft(PaddingOptions paddingOption) const
 {
     LayoutUnit result = RenderBlock::paddingLeft();
-    if (!includeIntrinsicPadding || isHorizontalWritingMode())
+    if (paddingOption == ExcludeIntrinsicPadding || isHorizontalWritingMode())
         return result;
     return result + (style()->writingMode() == LeftToRightWritingMode ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
     
 }
 
-LayoutUnit RenderTableCell::paddingRight(bool includeIntrinsicPadding) const
+LayoutUnit RenderTableCell::paddingRight(PaddingOptions paddingOption) const
 {   
     LayoutUnit result = RenderBlock::paddingRight();
-    if (!includeIntrinsicPadding || isHorizontalWritingMode())
+    if (paddingOption == ExcludeIntrinsicPadding || isHorizontalWritingMode())
         return result;
     return result + (style()->writingMode() == LeftToRightWritingMode ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
 }
 
-LayoutUnit RenderTableCell::paddingBefore(bool includeIntrinsicPadding) const
+LayoutUnit RenderTableCell::paddingBefore(PaddingOptions paddingOption) const
 {
     LayoutUnit result = RenderBlock::paddingBefore();
-    if (!includeIntrinsicPadding)
+    if (paddingOption == ExcludeIntrinsicPadding)
         return result;
     return result + intrinsicPaddingBefore();
 }
 
-LayoutUnit RenderTableCell::paddingAfter(bool includeIntrinsicPadding) const
+LayoutUnit RenderTableCell::paddingAfter(PaddingOptions paddingOption) const
 {
     LayoutUnit result = RenderBlock::paddingAfter();
-    if (!includeIntrinsicPadding)
+    if (paddingOption == ExcludeIntrinsicPadding)
         return result;
     return result + intrinsicPaddingAfter();
 }
@@ -328,7 +328,7 @@ LayoutUnit RenderTableCell::cellBaselinePosition() const
     LayoutUnit firstLineBaseline = firstLineBoxBaseline();
     if (firstLineBaseline != -1)
         return firstLineBaseline;
-    return paddingBefore() + borderBefore() + contentLogicalHeight();
+    return paddingBefore() + borderBefore() + contentLogicalHeight(IncludeIntrinsicPadding);
 }
 
 void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

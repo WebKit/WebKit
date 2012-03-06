@@ -1834,19 +1834,19 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return cssValuePool->createValue(style->overflowY());
         case CSSPropertyPaddingTop:
             if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingTop(false), style.get(), cssValuePool);
+                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingTop(ExcludeIntrinsicPadding), style.get(), cssValuePool);
             return zoomAdjustedPixelValueForLength(style->paddingTop(), style.get(), cssValuePool);
         case CSSPropertyPaddingRight:
             if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingRight(false), style.get(), cssValuePool);
+                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingRight(ExcludeIntrinsicPadding), style.get(), cssValuePool);
             return zoomAdjustedPixelValueForLength(style->paddingRight(), style.get(), cssValuePool);
         case CSSPropertyPaddingBottom:
             if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingBottom(false), style.get(), cssValuePool);
+                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingBottom(ExcludeIntrinsicPadding), style.get(), cssValuePool);
             return zoomAdjustedPixelValueForLength(style->paddingBottom(), style.get(), cssValuePool);
         case CSSPropertyPaddingLeft:
             if (renderer && renderer->isBox())
-                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingLeft(false), style.get(), cssValuePool);
+                return zoomAdjustedPixelValue(toRenderBox(renderer)->paddingLeft(ExcludeIntrinsicPadding), style.get(), cssValuePool);
             return zoomAdjustedPixelValueForLength(style->paddingLeft(), style.get(), cssValuePool);
         case CSSPropertyPageBreakAfter:
             return cssValuePool->createValue(style->pageBreakAfter());
