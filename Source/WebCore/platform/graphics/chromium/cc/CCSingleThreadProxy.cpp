@@ -80,10 +80,11 @@ bool CCSingleThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect
 
     m_layerTreeHostImpl->readback(pixels, rect);
 
-    didSwapFrame();
-
     if (m_layerTreeHostImpl->isContextLost())
         return false;
+
+    m_layerTreeHostImpl->swapBuffers();
+    didSwapFrame();
 
     return true;
 }
