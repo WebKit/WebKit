@@ -74,8 +74,6 @@ BUGWK79760 : media/video-poster-blocked-by-willsendrequest.html = PASS TEXT
 BUGWK72694 : fast/canvas/canvas-lineWidth.html = PASS TIMEOUT TEXT
 BUGWK73772 : fast/table/multiple-captions-display.xhtml = PASS TEXT
 
-BUGWK74279 : fullscreen/full-screen-iframe-legacy.html = PASS TEXT
-
 BUGWK74288 : fast/events/overflow-events.html = PASS TEXT
 
 BUGWK74297 DEBUG : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS TEXT
