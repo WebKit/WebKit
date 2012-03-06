@@ -71,6 +71,8 @@ TEST(WebKit2, NewFirstVisuallyNonEmptyLayoutFails)
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());
 
+    // This test is expected to fail because simple.html is a small document and the relevant painted
+    // objects take up less than 10% of the view.
     WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple", "html")).get());
 
     Util::run(&test1Done);

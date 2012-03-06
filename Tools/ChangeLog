@@ -1,3 +1,31 @@
+2012-03-06  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=80351
+        InlineTextBox is using the wrong origin when calling 
+        addRelevantRepaintedObject
+        -and corresponding-
+        <rdar://problem/10970221>
+
+        Reviewed by Sam Weinig.
+
+        This test has actually been broken since revision 109273. This change makes 
+        the test pass again, and it makes it specifically exercise the fix for this 
+        bug.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout.cpp:
+        (TestWebKitAPI::TEST):
+
+        Adjust comments in the other tests to reflect the API changes from 109273.
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFails.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp:
+        (TestWebKitAPI::NewFirstVisuallyNonEmptyLayoutFailsTest::didCreatePage):
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp:
+        (TestWebKitAPI::NewFirstVisuallyNonEmptyLayoutFramesTest::didCreatePage):
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout_Bundle.cpp:
+        (TestWebKitAPI::NewFirstVisuallyNonEmptyLayoutTest::didCreatePage):
+        * TestWebKitAPI/Tests/WebKit2/lots-of-text.html: Added.
+
 2012-03-06  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: add SpeechRecognitionError

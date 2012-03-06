@@ -41,8 +41,8 @@ public:
 
     virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
     {
-        // Set the painted objects counter to something small that will
-        // cause didNewFirstVisuallyNonEmptyLayout to fire.
+        // Setting the painted objects counter is necessary at this time to opt into
+        // the didNewFirstVisuallyNonEmptyLayout heuristic.
         WKBundlePageSetPaintedObjectsCounterThreshold(page, 1);
     }
     

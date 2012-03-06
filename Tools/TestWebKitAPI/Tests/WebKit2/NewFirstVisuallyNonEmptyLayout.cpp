@@ -54,7 +54,9 @@ TEST(WebKit2, NewFirstVisuallyNonEmptyLayout)
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());
 
-    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple", "html")).get());
+    // This test is expected to succeed because lots-of-text.html is a large document and the relevant painted
+    // objects take up more than 10% of the view.
+    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("lots-of-text", "html")).get());
 
     Util::run(&didNewFirstVisuallyNonEmptyLayoutSucceed);
     EXPECT_TRUE(didNewFirstVisuallyNonEmptyLayoutSucceed);
