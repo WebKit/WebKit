@@ -10,11 +10,19 @@ function test()
     function performanceTest(timer)
     {
 
-        var showPanelTimerCookie = timer.start("panel-update");
+        var transferTimerCookie;
+        var showTimerCookie;
+        var changeViewTimerCookie;
+        var clearTimerCookie;
+
+        var allTimerCookie = timer.start("summary-snapshot-time");
+        var backendTimerCookie = timer.start("take-snapshot");
         ProfilerAgent.takeHeapSnapshot(step0);
 
         function step0()
         {
+            timer.finish(backendTimerCookie);
+            transferTimerCookie = timer.start("transfer-snapshot");
             var profiles = WebInspector.panels.profiles.getProfiles("HEAP");
             WebInspector.panels.profiles.showProfile(profiles[profiles.length - 1]);
             InspectorTest.addSniffer(WebInspector.panels.profiles, "_finishHeapSnapshot", step1);
@@ -22,6 +30,8 @@ function test()
 
         function step1(uid)
         {
+            timer.finish(transferTimerCookie);
+            showTimerCookie = timer.start("show-snapshot");
             var panel = WebInspector.panels.profiles;
             var profile = panel._profilesIdMap[panel._makeKey(uid, WebInspector.DetailedHeapshotProfileType.TypeId)];
             InspectorTest.addSniffer(profile.proxy, "_callLoadCallbacks", step2);
@@ -29,19 +39,24 @@ function test()
 
         function step2()
         {
+            timer.finish(showTimerCookie);
+            timer.finish(allTimerCookie);
+            changeViewTimerCookie = timer.start("switch-to-containment-view");
             InspectorTest.switchToView("Containment", cleanup);
         }
 
         function cleanup()
         {
-            timer.finish(showPanelTimerCookie);
+            timer.finish(changeViewTimerCookie);
+            clearTimerCookie = timer.start("clear-snapshot");
             ProfilerAgent.clearProfiles(done);
             WebInspector.panels.profiles._reset();
         }
 
         function done()
         {
-            timer.done("take-snapshot");
+            timer.finish(clearTimerCookie);
+            timer.done("panel-update");
         }
     }
 

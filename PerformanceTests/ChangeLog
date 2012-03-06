@@ -1,3 +1,12 @@
+2012-03-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Heap Snapshot test: split overal time metric into separate metrics.
+        https://bugs.webkit.org/show_bug.cgi?id=80409
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/detailed-heapshots-smoke-test.html:
+
 2012-03-05  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: [chromium] introduce HeapSnapshot performance test.
