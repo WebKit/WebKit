@@ -950,7 +950,7 @@ void SpeculativeJIT::emitCall(Node& node)
     m_jit.storePtr(resultPayloadGPR, callFramePayloadSlot(RegisterFile::ScopeChain));
     m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), callFrameTagSlot(RegisterFile::ScopeChain));
 
-    m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
+    m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
 
     CodeOrigin codeOrigin = at(m_compileIndex).codeOrigin;
     CallBeginToken token = m_jit.beginJSCall();
@@ -961,12 +961,12 @@ void SpeculativeJIT::emitCall(Node& node)
 
     slowPath.link(&m_jit);
 
-    m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
     m_jit.poke(GPRInfo::argumentGPR0);
     token = m_jit.beginCall();
     JITCompiler::Call slowCall = m_jit.appendCall(slowCallFunction);
     m_jit.addFastExceptionCheck(slowCall, codeOrigin, token);
-    m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
+    m_jit.addPtr(TrustedImm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
     token = m_jit.beginJSCall();
     JITCompiler::Call theCall = m_jit.call(GPRInfo::returnValueGPR);
     m_jit.notifyCall(theCall, codeOrigin, token);
@@ -1390,10 +1390,10 @@ void SpeculativeJIT::compileObjectEquality(Node& node, const ClassInfo* classInf
     GPRReg resultPayloadGPR = resultPayload.gpr();
     
     MacroAssembler::Jump falseCase = m_jit.branchPtr(MacroAssembler::NotEqual, op1GPR, op2GPR);
-    m_jit.move(Imm32(1), resultPayloadGPR);
+    m_jit.move(TrustedImm32(1), resultPayloadGPR);
     MacroAssembler::Jump done = m_jit.jump();
     falseCase.link(&m_jit);
-    m_jit.move(Imm32(0), resultPayloadGPR);
+    m_jit.move(TrustedImm32(0), resultPayloadGPR);
     done.link(&m_jit);
 
     booleanResult(resultPayloadGPR, m_compileIndex);
@@ -1417,9 +1417,9 @@ void SpeculativeJIT::compileDoubleCompare(Node& node, MacroAssembler::DoubleCond
     SpeculateDoubleOperand op2(this, node.child2());
     GPRTemporary resultPayload(this);
     
-    m_jit.move(Imm32(1), resultPayload.gpr());
+    m_jit.move(TrustedImm32(1), resultPayload.gpr());
     MacroAssembler::Jump trueCase = m_jit.branchDouble(condition, op1.fpr(), op2.fpr());
-    m_jit.move(Imm32(0), resultPayload.gpr());
+    m_jit.move(TrustedImm32(0), resultPayload.gpr());
     trueCase.link(&m_jit);
     
     booleanResult(resultPayload.gpr(), m_compileIndex);
@@ -2543,9 +2543,9 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.store32(valueTagGPR, MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
         m_jit.store32(valuePayloadGPR, MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
         
-        m_jit.add32(Imm32(1), storageLengthGPR);
+        m_jit.add32(TrustedImm32(1), storageLengthGPR);
         m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)));
-        m_jit.add32(Imm32(1), MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
+        m_jit.add32(TrustedImm32(1), MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
         m_jit.move(Imm32(JSValue::Int32Tag), storageGPR);
         
         MacroAssembler::Jump done = m_jit.jump();
@@ -2583,7 +2583,7 @@ void SpeculativeJIT::compile(Node& node)
         
         MacroAssembler::Jump emptyArrayCase = m_jit.branchTest32(MacroAssembler::Zero, storageLengthGPR);
         
-        m_jit.sub32(Imm32(1), storageLengthGPR);
+        m_jit.sub32(TrustedImm32(1), storageLengthGPR);
         
         MacroAssembler::Jump slowCase = m_jit.branch32(MacroAssembler::AboveOrEqual, storageLengthGPR, MacroAssembler::Address(baseGPR, JSArray::vectorLengthOffset()));
         
@@ -2592,11 +2592,11 @@ void SpeculativeJIT::compile(Node& node)
         
         m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)));
 
-        MacroAssembler::Jump holeCase = m_jit.branch32(MacroAssembler::Equal, Imm32(JSValue::EmptyValueTag), valueTagGPR);
+        MacroAssembler::Jump holeCase = m_jit.branch32(MacroAssembler::Equal, TrustedImm32(JSValue::EmptyValueTag), valueTagGPR);
         
         m_jit.store32(TrustedImm32(JSValue::EmptyValueTag), MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
 
-        m_jit.sub32(MacroAssembler::Imm32(1), MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
+        m_jit.sub32(TrustedImm32(1), MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
         
         MacroAssembler::JumpList done;
         

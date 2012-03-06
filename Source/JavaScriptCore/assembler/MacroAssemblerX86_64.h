@@ -449,6 +449,12 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
+    Jump branchSubPtr(ResultCondition cond, RegisterID src1, TrustedImm32 src2, RegisterID dest)
+    {
+        move(src1, dest);
+        return branchSubPtr(cond, src2, dest);
+    }
+
     DataLabelPtr moveWithPatch(TrustedImmPtr initialValue, RegisterID dest)
     {
         m_assembler.movq_i64r(initialValue.asIntptr(), dest);
@@ -492,6 +498,8 @@ public:
     {
         return FunctionPtr(X86Assembler::readPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation()));
     }
+
+    static RegisterID scratchRegisterForBlinding() { return scratchRegister; }
 
 private:
     friend class LinkBuffer;

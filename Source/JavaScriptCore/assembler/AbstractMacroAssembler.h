@@ -28,6 +28,7 @@
 
 #include "CodeLocation.h"
 #include "MacroAssemblerCodeRef.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/UnusedParam.h>
 
@@ -232,7 +233,7 @@ public:
     };
 
 
-    struct Imm32 : public TrustedImm32 {
+    struct Imm32 : private TrustedImm32 {
         explicit Imm32(int32_t value)
             : TrustedImm32(value)
         {
@@ -243,6 +244,8 @@ public:
         {
         }
 #endif
+        const TrustedImm32& asTrustedImm32() const { return *this; }
+
     };
     
     // Section 2: MacroAssembler code buffer handles
@@ -535,13 +538,37 @@ public:
         return reinterpret_cast<ptrdiff_t>(b.executableAddress()) - reinterpret_cast<ptrdiff_t>(a.executableAddress());
     }
 
-    void beginUninterruptedSequence() { }
-    void endUninterruptedSequence() { }
+    void beginUninterruptedSequence() { m_inUninterruptedSequence = true; }
+    void endUninterruptedSequence() { m_inUninterruptedSequence = false; }
 
     unsigned debugOffset() { return m_assembler.debugOffset(); }
 
 protected:
+    AbstractMacroAssembler()
+        : m_inUninterruptedSequence(false)
+        , m_randomSource(cryptographicallyRandomNumber())
+    {
+    }
+
     AssemblerType m_assembler;
+
+    bool inUninterruptedSequence()
+    {
+        return m_inUninterruptedSequence;
+    }
+
+    bool m_inUninterruptedSequence;
+    
+    
+    uint32_t random()
+    {
+        return m_randomSource.getUint32();
+    }
+
+    WeakRandom m_randomSource;
+    
+    static bool scratchRegisterForBlinding() { return false; }
+    static bool shouldBlindForSpecificArch(uint32_t) { return true; }
 
     friend class LinkBuffer;
     friend class RepatchBuffer;

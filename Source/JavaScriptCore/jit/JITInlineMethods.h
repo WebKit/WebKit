@@ -269,7 +269,7 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
 #if USE(JSVALUE32_64)
         storePtr(TrustedImmPtr(m_codeBlock->instructions().begin() + m_bytecodeOffset + 1), intTagFor(RegisterFile::ArgumentCount));
 #else
-        store32(Imm32(m_bytecodeOffset + 1), intTagFor(RegisterFile::ArgumentCount));
+        store32(TrustedImm32(m_bytecodeOffset + 1), intTagFor(RegisterFile::ArgumentCount));
 #endif
     }
     storePtr(callFrameRegister, &m_globalData->topCallFrame);
@@ -557,7 +557,7 @@ inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
     }
     
     if (m_randomGenerator.getUint32() & 1)
-        add32(Imm32(1), bucketCounterRegister);
+        add32(TrustedImm32(1), bucketCounterRegister);
     else
         add32(Imm32(3), bucketCounterRegister);
     and32(Imm32(ValueProfile::bucketIndexMask), bucketCounterRegister);

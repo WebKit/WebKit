@@ -171,7 +171,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
 
         // Copy arguments.
         neg32(regT2);
-        end.append(branchAdd32(Zero, Imm32(1), regT2));
+        end.append(branchAdd32(Zero, TrustedImm32(1), regT2));
         // regT2: -argumentCount;
 
         Label copyLoop = label();
@@ -179,7 +179,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         load32(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) +(CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)))), regT1);
         store32(regT0, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) +(CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)))));
         store32(regT1, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) +(CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register)))));
-        branchAdd32(NonZero, Imm32(1), regT2).linkTo(copyLoop, this);
+        branchAdd32(NonZero, TrustedImm32(1), regT2).linkTo(copyLoop, this);
 
         end.append(jump());
     }

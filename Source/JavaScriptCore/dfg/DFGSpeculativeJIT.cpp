@@ -956,7 +956,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
     
     if (DFG_ENABLE_EDGE_CODE_VERIFICATION) {
         JITCompiler::Jump verificationSucceeded =
-            m_jit.branch32(JITCompiler::Equal, GPRInfo::regT0, Imm32(m_block));
+            m_jit.branch32(JITCompiler::Equal, GPRInfo::regT0, TrustedImm32(m_block));
         m_jit.breakpoint();
         verificationSucceeded.link(&m_jit);
     }
@@ -1233,7 +1233,7 @@ bool SpeculativeJIT::compile()
     checkArgumentTypes();
 
     if (DFG_ENABLE_EDGE_CODE_VERIFICATION)
-        m_jit.move(Imm32(0), GPRInfo::regT0);
+        m_jit.move(TrustedImm32(0), GPRInfo::regT0);
 
     ASSERT(!m_compileIndex);
     for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block)
@@ -2319,8 +2319,10 @@ void SpeculativeJIT::compileArithSub(Node& node)
             if (nodeCanTruncateInteger(node.arithNodeFlags())) {
                 m_jit.move(op1.gpr(), result.gpr());
                 m_jit.sub32(Imm32(imm2), result.gpr());
-            } else
-                speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
+            } else {
+                GPRTemporary scratch(this);
+                speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchSub32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr(), scratch.gpr()));
+            }
 
             integerResult(result.gpr(), m_compileIndex);
             return;
@@ -2535,18 +2537,18 @@ bool SpeculativeJIT::compileStrictEqForConstant(Node& node, NodeUse value, JSVal
     GPRReg resultGPR = result.gpr();
     m_jit.move(MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(ValueFalse)), resultGPR);
     MacroAssembler::Jump notEqual = m_jit.branchPtr(MacroAssembler::NotEqual, op1GPR, MacroAssembler::TrustedImmPtr(bitwise_cast<void*>(JSValue::encode(constant))));
-    m_jit.or32(MacroAssembler::Imm32(1), resultGPR);
+    m_jit.or32(MacroAssembler::TrustedImm32(1), resultGPR);
     notEqual.link(&m_jit);
     jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean);
 #else
     GPRReg op1PayloadGPR = op1.payloadGPR();
     GPRReg op1TagGPR = op1.tagGPR();
     GPRReg resultGPR = result.gpr();
-    m_jit.move(Imm32(0), resultGPR);
+    m_jit.move(TrustedImm32(0), resultGPR);
     MacroAssembler::JumpList notEqual;
     notEqual.append(m_jit.branch32(MacroAssembler::NotEqual, op1TagGPR, MacroAssembler::Imm32(constant.tag())));
     notEqual.append(m_jit.branch32(MacroAssembler::NotEqual, op1PayloadGPR, MacroAssembler::Imm32(constant.payload())));
-    m_jit.move(Imm32(1), resultGPR);
+    m_jit.move(TrustedImm32(1), resultGPR);
     notEqual.link(&m_jit);
     booleanResult(resultGPR, m_compileIndex);
 #endif

@@ -501,7 +501,7 @@ void JIT::privateCompileSlowCases()
         
 #if ENABLE(VALUE_PROFILER)
         if (m_canBeOptimized)
-            add32(Imm32(1), AbsoluteAddress(&rareCaseProfile->m_counter));
+            add32(TrustedImm32(1), AbsoluteAddress(&rareCaseProfile->m_counter));
 #endif
 
         emitJumpSlowToHot(jump(), 0);
@@ -573,7 +573,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
         }
 #endif
 
-        addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, regT1);
+        addPtr(TrustedImm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, regT1);
         registerFileCheck = branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->registerFile().addressOfEnd()), regT1);
     }
 
@@ -581,7 +581,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
     
 #if ENABLE(VALUE_PROFILER)
     if (m_canBeOptimized)
-        add32(Imm32(1), AbsoluteAddress(&m_codeBlock->m_executionEntryCount));
+        add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->m_executionEntryCount));
 #endif
 
     privateCompileMainPass();

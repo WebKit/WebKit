@@ -66,6 +66,8 @@ namespace JSC {
 class MacroAssembler : public MacroAssemblerBase {
 public:
 
+    using MacroAssemblerBase::add32;
+    using MacroAssemblerBase::and32;
     using MacroAssemblerBase::pop;
     using MacroAssemblerBase::jump;
     using MacroAssemblerBase::branch32;
@@ -73,6 +75,17 @@ public:
     using MacroAssemblerBase::branchPtr;
     using MacroAssemblerBase::branchTestPtr;
 #endif
+    using MacroAssemblerBase::branchAdd32;
+    using MacroAssemblerBase::branchMul32;
+    using MacroAssemblerBase::branchSub32;
+    using MacroAssemblerBase::lshift32;
+    using MacroAssemblerBase::move;
+    using MacroAssemblerBase::or32;
+    using MacroAssemblerBase::rshift32;
+    using MacroAssemblerBase::store32;
+    using MacroAssemblerBase::sub32;
+    using MacroAssemblerBase::urshift32;
+    using MacroAssemblerBase::xor32;
 
     // Utilities used by the DFG JIT.
 #if ENABLE(DFG_JIT)
@@ -148,24 +161,33 @@ public:
         loadPtr(Address(stackPointerRegister, (index * sizeof(void*))), dest);
     }
 
+    Address addressForPoke(int index)
+    {
+        return Address(stackPointerRegister, (index * sizeof(void*)));
+    }
+    
     void poke(RegisterID src, int index = 0)
     {
-        storePtr(src, Address(stackPointerRegister, (index * sizeof(void*))));
+        storePtr(src, addressForPoke(index));
     }
 
     void poke(TrustedImm32 value, int index = 0)
     {
-        store32(value, Address(stackPointerRegister, (index * sizeof(void*))));
+        store32(value, addressForPoke(index));
     }
 
     void poke(TrustedImmPtr imm, int index = 0)
     {
-        storePtr(imm, Address(stackPointerRegister, (index * sizeof(void*))));
+        storePtr(imm, addressForPoke(index));
     }
 
 
     // Backwards banches, these are currently all implemented using existing forwards branch mechanisms.
     void branchPtr(RelationalCondition cond, RegisterID op1, TrustedImmPtr imm, Label target)
+    {
+        branchPtr(cond, op1, imm).linkTo(target, this);
+    }
+    void branchPtr(RelationalCondition cond, RegisterID op1, ImmPtr imm, Label target)
     {
         branchPtr(cond, op1, imm).linkTo(target, this);
     }
@@ -179,6 +201,11 @@ public:
     {
         branch32(cond, op1, imm).linkTo(target, this);
     }
+    
+    void branch32(RelationalCondition cond, RegisterID op1, Imm32 imm, Label target)
+    {
+        branch32(cond, op1, imm).linkTo(target, this);
+    }
 
     void branch32(RelationalCondition cond, RegisterID left, Address right, Label target)
     {
@@ -186,6 +213,11 @@ public:
     }
 
     Jump branch32(RelationalCondition cond, TrustedImm32 left, RegisterID right)
+    {
+        return branch32(commute(cond), right, left);
+    }
+
+    Jump branch32(RelationalCondition cond, Imm32 left, RegisterID right)
     {
         return branch32(commute(cond), right, left);
     }
@@ -446,8 +478,373 @@ public:
     {
         return MacroAssemblerBase::branchTest8(cond, Address(address.base, address.offset), mask);
     }
-#endif // !CPU(X86_64)
+#else
 
+    using MacroAssemblerBase::addPtr;
+    using MacroAssemblerBase::andPtr;
+    using MacroAssemblerBase::branchSubPtr;
+    using MacroAssemblerBase::convertInt32ToDouble;
+    using MacroAssemblerBase::subPtr;
+    
+    void convertInt32ToDouble(Imm32 imm, FPRegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            RegisterID scratchRegister = (RegisterID)scratchRegisterForBlinding();
+            ASSERT(scratchRegister);
+            loadXorBlindedConstant(xorBlindConstant(imm), scratchRegister);
+            convertInt32ToDouble(scratchRegister, dest);
+        } else
+            convertInt32ToDouble(imm.asTrustedImm32(), dest);
+    }
+
+#endif // !CPU(X86_64)
+    
+    bool shouldBlind(Imm32 imm)
+    { 
+        ASSERT(!inUninterruptedSequence());
+#if !defined(NDEBUG)
+        UNUSED_PARAM(imm);
+        // Debug always blind all constants, if only so we know
+        // if we've broken blinding during patch development.
+        return true;
+#else
+
+        // First off we'll special case common, "safe" values to avoid hurting
+        // performance too much
+        uint32_t value = imm.asTrustedImm32().m_value;
+        switch (value) {
+        case 0xffff:
+        case 0xffffff:
+        case 0xffffffff:
+            return false;
+        default:
+            if (value <= 0xff)
+                return false;
+        }
+        return shouldBlindForSpecificArch(value);
+#endif
+    }
+
+    struct BlindedImm32 {
+        BlindedImm32(int32_t v1, int32_t v2)
+            : value1(v1)
+            , value2(v2)
+        {
+        }
+        TrustedImm32 value1;
+        TrustedImm32 value2;
+    };
+
+    uint32_t keyForConstant(uint32_t value, uint32_t& mask)
+    {
+        uint32_t key = random();
+        if (value <= 0xff)
+            mask = 0xff;
+        else if (value <= 0xffff)
+            mask = 0xffff;
+        else if (value <= 0xffffff)
+            mask = 0xffffff;
+        else
+            mask = 0xffffffff;
+        return key & mask;
+    }
+
+    uint32_t keyForConstant(uint32_t value)
+    {
+        uint32_t mask = 0;
+        return keyForConstant(value, mask);
+    }
+
+    BlindedImm32 xorBlindConstant(Imm32 imm)
+    {
+        uint32_t baseValue = imm.asTrustedImm32().m_value;
+        uint32_t key = keyForConstant(baseValue);
+        return BlindedImm32(baseValue ^ key, key);
+    }
+
+    BlindedImm32 additionBlindedConstant(Imm32 imm)
+    {
+        uint32_t baseValue = imm.asTrustedImm32().m_value;
+        uint32_t key = keyForConstant(baseValue);
+        if (key > baseValue)
+            key = key - baseValue;
+        return BlindedImm32(baseValue - key, key);
+    }
+    
+    BlindedImm32 andBlindedConstant(Imm32 imm)
+    {
+        uint32_t baseValue = imm.asTrustedImm32().m_value;
+        uint32_t mask = 0;
+        uint32_t key = keyForConstant(baseValue, mask);
+        ASSERT((baseValue & mask) == baseValue);
+        return BlindedImm32(((baseValue & key) | ~key) & mask, ((baseValue & ~key) | key) & mask);
+    }
+    
+    BlindedImm32 orBlindedConstant(Imm32 imm)
+    {
+        uint32_t baseValue = imm.asTrustedImm32().m_value;
+        uint32_t mask = 0;
+        uint32_t key = keyForConstant(baseValue, mask);
+        ASSERT((baseValue & mask) == baseValue);
+        return BlindedImm32((baseValue & key) & mask, (baseValue & ~key) & mask);
+    }
+    
+    void loadXorBlindedConstant(BlindedImm32 constant, RegisterID dest)
+    {
+        move(constant.value1, dest);
+        xor32(constant.value2, dest);
+    }
+    
+    void add32(Imm32 imm, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            BlindedImm32 key = additionBlindedConstant(imm);
+            add32(key.value1, dest);
+            add32(key.value2, dest);
+        } else
+            add32(imm.asTrustedImm32(), dest);
+    }
+    
+    void addPtr(Imm32 imm, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            BlindedImm32 key = additionBlindedConstant(imm);
+            addPtr(key.value1, dest);
+            addPtr(key.value2, dest);
+        } else
+            addPtr(imm.asTrustedImm32(), dest);
+    }
+
+    void and32(Imm32 imm, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            BlindedImm32 key = andBlindedConstant(imm);
+            and32(key.value1, dest);
+            and32(key.value2, dest);
+        } else
+            and32(imm.asTrustedImm32(), dest);
+    }
+
+    void andPtr(Imm32 imm, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            BlindedImm32 key = andBlindedConstant(imm);
+            andPtr(key.value1, dest);
+            andPtr(key.value2, dest);
+        } else
+            andPtr(imm.asTrustedImm32(), dest);
+    }
+    
+    void and32(Imm32 imm, RegisterID src, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            if (src == dest)
+                return and32(imm.asTrustedImm32(), dest);
+            loadXorBlindedConstant(xorBlindConstant(imm), dest);
+            and32(src, dest);
+        } else
+            and32(imm.asTrustedImm32(), src, dest);
+    }
+
+    void move(Imm32 imm, RegisterID dest)
+    {
+        if (shouldBlind(imm))
+            loadXorBlindedConstant(xorBlindConstant(imm), dest);
+        else
+            move(imm.asTrustedImm32(), dest);
+    }
+    
+    void or32(Imm32 imm, RegisterID src, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            if (src == dest)
+                return or32(imm, dest);
+            loadXorBlindedConstant(xorBlindConstant(imm), dest);
+            or32(src, dest);
+        } else
+            or32(imm.asTrustedImm32(), src, dest);
+    }
+    
+    void or32(Imm32 imm, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            BlindedImm32 key = orBlindedConstant(imm);
+            or32(key.value1, dest);
+            or32(key.value2, dest);
+        } else
+            or32(imm.asTrustedImm32(), dest);
+    }
+    
+    void poke(Imm32 value, int index = 0)
+    {
+        store32(value, addressForPoke(index));
+    }
+    
+    void store32(Imm32 imm, Address dest)
+    {
+        if (shouldBlind(imm)) {
+#if CPU(X86) || CPU(X86_64)
+            BlindedImm32 blind = xorBlindConstant(imm);
+            store32(blind.value1, dest);
+            xor32(blind.value2, dest);
+#else
+            RegisterID scratchRegister = (RegisterID)scratchRegisterForBlinding();
+            loadXorBlindedConstant(xorBlindConstant(imm), scratchRegister);
+            store32(scratchRegister, dest);
+#endif
+        } else
+            store32(imm.asTrustedImm32(), dest);
+    }
+    
+    void sub32(Imm32 imm, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            BlindedImm32 key = additionBlindedConstant(imm);
+            sub32(key.value1, dest);
+            sub32(key.value2, dest);
+        } else
+            sub32(imm.asTrustedImm32(), dest);
+    }
+    
+    void subPtr(Imm32 imm, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            BlindedImm32 key = additionBlindedConstant(imm);
+            subPtr(key.value1, dest);
+            subPtr(key.value2, dest);
+        } else
+            subPtr(imm.asTrustedImm32(), dest);
+    }
+    
+    void xor32(Imm32 imm, RegisterID src, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            BlindedImm32 blind = xorBlindConstant(imm);
+            xor32(blind.value1, src, dest);
+            xor32(blind.value2, dest);
+        } else
+            xor32(imm.asTrustedImm32(), src, dest);
+    }
+    
+    void xor32(Imm32 imm, RegisterID dest)
+    {
+        if (shouldBlind(imm)) {
+            BlindedImm32 blind = xorBlindConstant(imm);
+            xor32(blind.value1, dest);
+            xor32(blind.value2, dest);
+        } else
+            xor32(imm.asTrustedImm32(), dest);
+    }
+
+    Jump branch32(RelationalCondition cond, RegisterID left, Imm32 right)
+    {
+        if (shouldBlind(right)) {
+            if (RegisterID scratchRegister = (RegisterID)scratchRegisterForBlinding()) {
+                loadXorBlindedConstant(xorBlindConstant(right), scratchRegister);
+                return branch32(cond, left, scratchRegister);
+            }
+            // If we don't have a scratch register available for use, we'll just 
+            // place a random number of nops.
+            uint32_t nopCount = random() & 3;
+            while (nopCount--)
+                nop();
+            return branch32(cond, left, right.asTrustedImm32());
+        }
+        
+        return branch32(cond, left, right.asTrustedImm32());
+    }
+
+    Jump branchAdd32(ResultCondition cond, RegisterID src, Imm32 imm, RegisterID dest)
+    {
+        if (src == dest) {
+            if (!scratchRegisterForBlinding()) {
+                // Release mode ASSERT, if this fails we will perform incorrect codegen.
+                CRASH();
+            }
+        }
+        if (shouldBlind(imm)) {
+            if (src == dest) {
+                if (RegisterID scratchRegister = (RegisterID)scratchRegisterForBlinding()) {
+                    move(src, scratchRegister);
+                    src = scratchRegister;
+                }
+            }
+            loadXorBlindedConstant(xorBlindConstant(imm), dest);
+            return branchAdd32(cond, src, dest);  
+        }
+        return branchAdd32(cond, src, imm.asTrustedImm32(), dest);            
+    }
+    
+    Jump branchMul32(ResultCondition cond, Imm32 imm, RegisterID src, RegisterID dest)
+    {
+        if (src == dest) {
+            if (!scratchRegisterForBlinding()) {
+                // Release mode ASSERT, if this fails we will perform incorrect codegen.
+                CRASH();
+            }
+        }
+        if (shouldBlind(imm)) {
+            if (src == dest) {
+                if (RegisterID scratchRegister = (RegisterID)scratchRegisterForBlinding()) {
+                    move(src, scratchRegister);
+                    src = scratchRegister;
+                }
+            }
+            loadXorBlindedConstant(xorBlindConstant(imm), dest);
+            return branchMul32(cond, src, dest);  
+        }
+        return branchMul32(cond, imm.asTrustedImm32(), src, dest);
+    }
+
+    // branchSub32 takes a scratch register as 32 bit platforms make use of this,
+    // with src == dst, and on x86-32 we don't have a platform scratch register.
+    Jump branchSub32(ResultCondition cond, RegisterID src, Imm32 imm, RegisterID dest, RegisterID scratch)
+    {
+        if (shouldBlind(imm)) {
+            ASSERT(scratch != dest);
+            ASSERT(scratch != src);
+            loadXorBlindedConstant(xorBlindConstant(imm), scratch);
+            return branchSub32(cond, src, scratch, dest);
+        }
+        return branchSub32(cond, src, imm.asTrustedImm32(), dest);            
+    }
+    
+    // Immediate shifts only have 5 controllable bits
+    // so we'll consider them safe for now.
+    TrustedImm32 trustedImm32ForShift(Imm32 imm)
+    {
+        return TrustedImm32(imm.asTrustedImm32().m_value & 31);
+    }
+
+    void lshift32(Imm32 imm, RegisterID dest)
+    {
+        lshift32(trustedImm32ForShift(imm), dest);
+    }
+    
+    void lshift32(RegisterID src, Imm32 amount, RegisterID dest)
+    {
+        lshift32(src, trustedImm32ForShift(amount), dest);
+    }
+    
+    void rshift32(Imm32 imm, RegisterID dest)
+    {
+        rshift32(trustedImm32ForShift(imm), dest);
+    }
+    
+    void rshift32(RegisterID src, Imm32 amount, RegisterID dest)
+    {
+        rshift32(src, trustedImm32ForShift(amount), dest);
+    }
+    
+    void urshift32(Imm32 imm, RegisterID dest)
+    {
+        urshift32(trustedImm32ForShift(imm), dest);
+    }
+    
+    void urshift32(RegisterID src, Imm32 amount, RegisterID dest)
+    {
+        urshift32(src, trustedImm32ForShift(amount), dest);
+    }
 };
 
 } // namespace JSC

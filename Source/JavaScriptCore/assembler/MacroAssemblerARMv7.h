@@ -51,14 +51,7 @@ public:
     // Magic number is the biggest useful offset we can get on ARMv7 with
     // a LDR_imm_T2 encoding
     static const int MaximumCompactPtrAlignedAddressOffset = 124;
-
-    MacroAssemblerARMv7()
-        : m_inUninterruptedSequence(false)
-    {
-    }
     
-    void beginUninterruptedSequence() { m_inUninterruptedSequence = true; }
-    void endUninterruptedSequence() { m_inUninterruptedSequence = false; }
     Vector<LinkRecord>& jumpsToLink() { return m_assembler.jumpsToLink(); }
     void* unlinkedCode() { return m_assembler.unlinkedCode(); }
     bool canCompact(JumpType jumpType) { return m_assembler.canCompact(jumpType); }
@@ -530,6 +523,7 @@ private:
         unreachableForPlatform();
     }
 
+protected:
     void store32(RegisterID src, ArmAddress address)
     {
         if (address.type == ArmAddress::HasIndex)
@@ -544,6 +538,7 @@ private:
         }
     }
 
+private:
     void store8(RegisterID src, ArmAddress address)
     {
         if (address.type == ArmAddress::HasIndex)
@@ -726,6 +721,24 @@ public:
         store16(src, setupArmAddress(address));
     }
 
+    static RegisterID scratchRegisterForBlinding() { return dataTempRegister; }
+    static bool shouldBlindForSpecificArch(uint32_t value)
+    {
+        ARMThumbImmediate immediate = ARMThumbImmediate::makeEncodedImm(value);
+
+        // Couldn't be encoded as an immediate, so assume it's untrusted.
+        if (!immediate.isValid())
+            return true;
+        
+        // If we can encode the immediate, we have less than 16 attacker
+        // controlled bits.
+        if (immediate.isEncodedImm())
+            return false;
+
+        // Don't let any more than 12 bits of an instruction word
+        // be controlled by an attacker.
+        return !immediate.isUInt12();
+    }
 
     // Floating-point operations:
 
@@ -962,7 +975,7 @@ public:
         // clamped to 0x80000000, so 2x dest is zero in this case. In the case of
         // overflow the result will be equal to -2.
         Jump underflow = branchAdd32(Zero, dest, dest, dataTempRegister);
-        Jump noOverflow = branch32(NotEqual, dataTempRegister, Imm32(-2));
+        Jump noOverflow = branch32(NotEqual, dataTempRegister, TrustedImm32(-2));
 
         // For BranchIfTruncateSuccessful, we branch if 'noOverflow' jumps.
         underflow.link(this);
@@ -1601,10 +1614,6 @@ public:
     }
 
 protected:
-    bool inUninterruptedSequence()
-    {
-        return m_inUninterruptedSequence;
-    }
 
     ALWAYS_INLINE Jump jump()
     {
@@ -1712,8 +1721,7 @@ private:
     {
         ARMv7Assembler::relinkCall(call.dataLocation(), destination.executableAddress());
     }
-    
-    bool m_inUninterruptedSequence;
+
 };
 
 } // namespace JSC

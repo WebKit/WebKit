@@ -1123,7 +1123,7 @@ private:
     }
     JITCompiler::Call callOperation(J_DFGOperation_ESS operation, GPRReg result, int startConstant, int numConstants)
     {
-        m_jit.setupArgumentsWithExecState(Imm32(startConstant), Imm32(numConstants));
+        m_jit.setupArgumentsWithExecState(TrustedImm32(startConstant), TrustedImm32(numConstants));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EPP operation, GPRReg result, GPRReg arg1, void* pointer)
@@ -1186,12 +1186,12 @@ private:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, MacroAssembler::Imm32 imm)
+    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, MacroAssembler::TrustedImm32 imm)
     {
         m_jit.setupArgumentsWithExecState(arg1, MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, MacroAssembler::Imm32 imm, GPRReg arg2)
+    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, MacroAssembler::TrustedImm32 imm, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))), arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
@@ -1364,12 +1364,12 @@ private:
         m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2Payload, arg2Tag);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, MacroAssembler::Imm32 imm)
+    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, MacroAssembler::TrustedImm32 imm)
     {
         m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, imm, TrustedImm32(JSValue::Int32Tag));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
-    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg resultTag, GPRReg resultPayload, MacroAssembler::Imm32 imm, GPRReg arg2Tag, GPRReg arg2Payload)
+    JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg resultTag, GPRReg resultPayload, MacroAssembler::TrustedImm32 imm, GPRReg arg2Tag, GPRReg arg2Payload)
     {
         m_jit.setupArgumentsWithExecState(imm, TrustedImm32(JSValue::Int32Tag), arg2Payload, arg2Tag);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);

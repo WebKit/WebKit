@@ -44,7 +44,7 @@ void JITCompiler::linkOSRExits()
     for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
         OSRExit& exit = codeBlock()->osrExit(i);
         exit.m_check.initialJump().link(this);
-        store32(Imm32(i), &globalData()->osrExitIndex);
+        store32(TrustedImm32(i), &globalData()->osrExitIndex);
         beginUninterruptedSequence();
         exit.m_check.switchToLateJump(jump());
         endUninterruptedSequence();
@@ -75,7 +75,7 @@ void JITCompiler::compileBody(SpeculativeJIT& speculative)
     breakpoint();
 #endif
     
-    addPtr(Imm32(1), AbsoluteAddress(codeBlock()->addressOfSpeculativeSuccessCounter()));
+    addPtr(TrustedImm32(1), AbsoluteAddress(codeBlock()->addressOfSpeculativeSuccessCounter()));
 
     bool compiledSpeculative = speculative.compile();
     ASSERT_UNUSED(compiledSpeculative, compiledSpeculative);
@@ -225,7 +225,7 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     Label fromArityCheck(this);
     // Plant a check that sufficient space is available in the RegisterFile.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56291
-    addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
+    addPtr(TrustedImm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
     Jump registerFileCheck = branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->registerFile().addressOfEnd()), GPRInfo::regT1);
     // Return here after register file check.
     Label fromRegisterFileCheck = label();
@@ -261,7 +261,7 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     compileEntry();
 
     load32(AssemblyHelpers::payloadFor((VirtualRegister)RegisterFile::ArgumentCount), GPRInfo::regT1);
-    branch32(AboveOrEqual, GPRInfo::regT1, Imm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
+    branch32(AboveOrEqual, GPRInfo::regT1, TrustedImm32(m_codeBlock->numParameters())).linkTo(fromArityCheck, this);
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     token = beginCall();

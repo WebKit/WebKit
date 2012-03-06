@@ -817,7 +817,7 @@ void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEnt
 
     if (supportsFloatingPoint()) {
         // regT1 contains the tag from the hot path.
-        Jump notNumber = branch32(Above, regT1, Imm32(JSValue::LowestTag));
+        Jump notNumber = branch32(Above, regT1, TrustedImm32(JSValue::LowestTag));
 
         emitLoadDouble(cond, fpRegT0);
         emitJumpSlowToHot(branchDoubleZeroOrNaN(fpRegT0, fpRegT1), target);
@@ -853,7 +853,7 @@ void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntr
 
     if (supportsFloatingPoint()) {
         // regT1 contains the tag from the hot path.
-        Jump notNumber = branch32(Above, regT1, Imm32(JSValue::LowestTag));
+        Jump notNumber = branch32(Above, regT1, TrustedImm32(JSValue::LowestTag));
 
         emitLoadDouble(cond, fpRegT0);
         emitJumpSlowToHot(branchDoubleNonZero(fpRegT0, fpRegT1), target);

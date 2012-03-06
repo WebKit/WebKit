@@ -1748,7 +1748,7 @@ class YarrGenerator : private MacroAssembler {
                                 if (alternative->m_minimumSize)
                                     sub32(Imm32(alternative->m_minimumSize - 1), regT0);
                                 else
-                                    add32(Imm32(1), regT0);
+                                    add32(TrustedImm32(1), regT0);
                                 store32(regT0, Address(output));
                             }
                         }
@@ -1847,7 +1847,7 @@ class YarrGenerator : private MacroAssembler {
                 if (alternative->m_minimumSize == m_pattern.m_body->m_minimumSize) {
                     // If the last alternative had the same minimum size as the disjunction,
                     // just simply increment input pos by 1, no adjustment based on minimum size.
-                    add32(Imm32(1), index);
+                    add32(TrustedImm32(1), index);
                 } else {
                     // If the minumum for the last alternative was one greater than than that
                     // for the disjunction, we're already progressed by 1, nothing to do!

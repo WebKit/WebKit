@@ -833,13 +833,13 @@ void JIT::compileBinaryArithOp(OpcodeID opcodeID, unsigned, unsigned op1, unsign
             addSlowCase(branchMul32(Overflow, regT1, regT2));
             JumpList done;
             done.append(branchTest32(NonZero, regT2));
-            Jump negativeZero = branch32(LessThan, regT0, Imm32(0));
-            done.append(branch32(GreaterThanOrEqual, regT1, Imm32(0)));
+            Jump negativeZero = branch32(LessThan, regT0, TrustedImm32(0));
+            done.append(branch32(GreaterThanOrEqual, regT1, TrustedImm32(0)));
             negativeZero.link(this);
             // We only get here if we have a genuine negative zero. Record this,
             // so that the speculative JIT knows that we failed speculation
             // because of a negative zero.
-            add32(Imm32(1), AbsoluteAddress(&profile->m_counter));
+            add32(TrustedImm32(1), AbsoluteAddress(&profile->m_counter));
             addSlowCase(jump());
             done.link(this);
             move(regT2, regT0);
@@ -963,13 +963,13 @@ void JIT::emit_op_add(Instruction* currentInstruction)
     if (isOperandConstantImmediateInt(op1)) {
         emitGetVirtualRegister(op2, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
-        addSlowCase(branchAdd32(Overflow, Imm32(getConstantOperandImmediateInt(op1)), regT0));
-        emitFastArithIntToImmNoCheck(regT0, regT0);
+        addSlowCase(branchAdd32(Overflow, regT0, Imm32(getConstantOperandImmediateInt(op1)), regT1));
+        emitFastArithIntToImmNoCheck(regT1, regT0);
     } else if (isOperandConstantImmediateInt(op2)) {
         emitGetVirtualRegister(op1, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
-        addSlowCase(branchAdd32(Overflow, Imm32(getConstantOperandImmediateInt(op2)), regT0));
-        emitFastArithIntToImmNoCheck(regT0, regT0);
+        addSlowCase(branchAdd32(Overflow, regT0, Imm32(getConstantOperandImmediateInt(op2)), regT1));
+        emitFastArithIntToImmNoCheck(regT1, regT0);
     } else
         compileBinaryArithOp(op_add, result, op1, op2, types);
 
@@ -1009,8 +1009,8 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
 #endif
         emitGetVirtualRegister(op2, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
-        addSlowCase(branchMul32(Overflow, Imm32(value), regT0, regT0));
-        emitFastArithReTagImmediate(regT0, regT0);
+        addSlowCase(branchMul32(Overflow, Imm32(value), regT0, regT1));
+        emitFastArithReTagImmediate(regT1, regT0);
     } else if (isOperandConstantImmediateInt(op2) && ((value = getConstantOperandImmediateInt(op2)) > 0)) {
 #if ENABLE(VALUE_PROFILER)
         // Add a special fast case profile because the DFG JIT will expect one.
@@ -1018,8 +1018,8 @@ void JIT::emit_op_mul(Instruction* currentInstruction)
 #endif
         emitGetVirtualRegister(op1, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
-        addSlowCase(branchMul32(Overflow, Imm32(value), regT0, regT0));
-        emitFastArithReTagImmediate(regT0, regT0);
+        addSlowCase(branchMul32(Overflow, Imm32(value), regT0, regT1));
+        emitFastArithReTagImmediate(regT1, regT0);
     } else
         compileBinaryArithOp(op_mul, result, op1, op2, types);
 
@@ -1105,7 +1105,7 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     emitFastArithReTagImmediate(regT0, regT0);
     Jump isInteger = jump();
     notInteger.link(this);
-    add32(Imm32(1), AbsoluteAddress(&m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset)->m_counter));
+    add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset)->m_counter));
     moveDoubleToPtr(fpRegT0, regT0);
     subPtr(tagTypeNumberRegister, regT0);
     isInteger.link(this);

@@ -1,3 +1,133 @@
+2012-03-05  Oliver Hunt  <oliver@apple.com>
+
+        Add basic support for constant blinding to the JIT
+        https://bugs.webkit.org/show_bug.cgi?id=80354
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds basic constant blinding support to the JIT, at the
+        MacroAssembler level.  This means all JITs in JSC (Yarr, baseline, and DFG)
+        get constant blinding.  Woo!
+
+        This patch only introduces blinding for Imm32, a later patch will do similar
+        for ImmPtr.  In order to make misuse of Imm32 as a trusted type essentially
+        impossible, we make TrustedImm32 a private parent of Imm32 and add an explicit
+        accessor that's needed to access the actual value.  This also means you cannot
+        accidentally pass an untrusted value to a function that does not perform
+        blinding.
+
+        To make everything work sensibly, this patch also corrects some code that was using
+        Imm32 when TrustedImm32 could be used, and refactors a few callers that use
+        untrusted immediates, so that they call slightly different varaints of the functions
+        that they used previously.  This is largely necessary to deal with x86-32 not having
+        sufficient registers to handle the additional work required when we choose to blind
+        a constant.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Imm32::asTrustedImm32):
+        (Imm32):
+        (JSC::AbstractMacroAssembler::beginUninterruptedSequence):
+        (JSC::AbstractMacroAssembler::endUninterruptedSequence):
+        (JSC::AbstractMacroAssembler::AbstractMacroAssembler):
+        (AbstractMacroAssembler):
+        (JSC::AbstractMacroAssembler::inUninterruptedSequence):
+        (JSC::AbstractMacroAssembler::random):
+        (JSC::AbstractMacroAssembler::scratchRegisterForBlinding):
+        (JSC::AbstractMacroAssembler::shouldBlindForSpecificArch):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::addressForPoke):
+        (MacroAssembler):
+        (JSC::MacroAssembler::poke):
+        (JSC::MacroAssembler::branchPtr):
+        (JSC::MacroAssembler::branch32):
+        (JSC::MacroAssembler::convertInt32ToDouble):
+        (JSC::MacroAssembler::shouldBlind):
+        (JSC::MacroAssembler::BlindedImm32::BlindedImm32):
+        (BlindedImm32):
+        (JSC::MacroAssembler::keyForConstant):
+        (JSC::MacroAssembler::xorBlindConstant):
+        (JSC::MacroAssembler::additionBlindedConstant):
+        (JSC::MacroAssembler::andBlindedConstant):
+        (JSC::MacroAssembler::orBlindedConstant):
+        (JSC::MacroAssembler::loadXorBlindedConstant):
+        (JSC::MacroAssembler::add32):
+        (JSC::MacroAssembler::addPtr):
+        (JSC::MacroAssembler::and32):
+        (JSC::MacroAssembler::andPtr):
+        (JSC::MacroAssembler::move):
+        (JSC::MacroAssembler::or32):
+        (JSC::MacroAssembler::store32):
+        (JSC::MacroAssembler::sub32):
+        (JSC::MacroAssembler::subPtr):
+        (JSC::MacroAssembler::xor32):
+        (JSC::MacroAssembler::branchAdd32):
+        (JSC::MacroAssembler::branchMul32):
+        (JSC::MacroAssembler::branchSub32):
+        (JSC::MacroAssembler::trustedImm32ForShift):
+        (JSC::MacroAssembler::lshift32):
+        (JSC::MacroAssembler::rshift32):
+        (JSC::MacroAssembler::urshift32):
+        * assembler/MacroAssemblerARMv7.h:
+        (MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::scratchRegisterForBlinding):
+        (JSC::MacroAssemblerARMv7::shouldBlindForSpecificArch):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::branchSubPtr):
+        (MacroAssemblerX86_64):
+        (JSC::MacroAssemblerX86_64::scratchRegisterForBlinding):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::compileBody):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileStrictEqForConstant):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileDoubleCompare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileDoubleCompare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOp):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emit_op_div):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitAdd32Constant):
+        (JSC::JIT::emitSub32Constant):
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emit_op_div):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::updateTopCallFrame):
+        (JSC::JIT::emitValueProfilingSite):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_jfalse):
+        (JSC::JIT::emitSlow_op_jtrue):
+        * jit/JITStubCall.h:
+        (JITStubCall):
+        (JSC::JITStubCall::addArgument):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::backtrack):
+
 2012-03-05  Gavin Barraclough  <barraclough@apple.com>
 
         putByIndex should throw in strict mode
