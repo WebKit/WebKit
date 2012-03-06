@@ -38,13 +38,33 @@ function test()
         }
     }
 
-    InspectorTest.runAfterPendingDispatches(dumpConsoleMessages);
-
-    function dumpConsoleMessages()
+    InspectorTest.addSniffer(WebInspector.ArrayGroupingTreeElement.prototype, "onpopulate", populateCalled, true);
+    var populated = false;
+    function populateCalled()
     {
-        for (var i = 0; i < sections.length; ++i)
-            for (var j = 0; j < sections[i].propertiesTreeOutline.children.length; ++j)
-                sections[i].propertiesTreeOutline.children[j].expandRecursively();
+        populated = this._toIndex === 24;
+    }
+
+    InspectorTest.runAfterPendingDispatches(expandRecursively);
+
+    function expandRecursively()
+    {
+        for (var i = 0; i < sections.length; ++i) {
+            for (var j = 0; j < sections[i].propertiesTreeOutline.children.length; ++j) {
+                for (var treeElement = sections[i].propertiesTreeOutline.children[j]; treeElement; treeElement = treeElement.traverseNextTreeElement(false, null, false)) {
+                    if (treeElement.listItemElement.textContent.indexOf("__proto__") === -1)
+                        treeElement.expand();
+                }
+            }
+        }
+        if (populated)
+            InspectorTest.runAfterPendingDispatches(completeTest);
+        else
+            InspectorTest.runAfterPendingDispatches(expandRecursively);
+    }
+
+    function completeTest()
+    {
         InspectorTest.addResult(InspectorTest.textContentWithLineBreaks(WebInspector.consoleView.messagesElement));
         InspectorTest.completeTest();
     }

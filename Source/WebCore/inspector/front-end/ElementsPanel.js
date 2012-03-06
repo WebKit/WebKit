@@ -381,7 +381,7 @@ WebInspector.ElementsPanel.prototype = {
                 return;
             }
 
-            object.callFunctionJSON(dimensions, callback);
+            object.callFunctionJSON(dimensions, undefined, callback);
             object.release();
 
             function dimensions()

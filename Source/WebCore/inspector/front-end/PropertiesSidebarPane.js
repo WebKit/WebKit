@@ -65,7 +65,7 @@ WebInspector.PropertiesSidebarPane.prototype = {
                 }
                 return result;
             }
-            object.callFunction(protoList, nodePrototypesReady.bind(this));
+            object.callFunction(protoList, undefined, nodePrototypesReady.bind(this));
             object.release();
         }
 

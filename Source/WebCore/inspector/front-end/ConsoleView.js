@@ -409,7 +409,7 @@ WebInspector.ConsoleView.prototype = {
             }
 
             if (result.type === "object" || result.type === "function")
-                result.callFunctionJSON(getCompletions, receivedPropertyNames.bind(this));
+                result.callFunctionJSON(getCompletions, undefined, receivedPropertyNames.bind(this));
             else if (result.type === "string" || result.type === "number" || result.type === "boolean")
                 this.evalInInspectedWindow("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, receivedPropertyNamesFromEval.bind(this));
         }

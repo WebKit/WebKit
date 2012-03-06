@@ -48,6 +48,8 @@ WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPl
     WebInspector.PropertiesSection.call(this, title, subtitle);
 }
 
+WebInspector.ObjectPropertiesSection._arrayLoadThreshold = 100;
+
 WebInspector.ObjectPropertiesSection.prototype = {
     onpopulate: function()
     {
@@ -56,17 +58,23 @@ WebInspector.ObjectPropertiesSection.prototype = {
 
     update: function()
     {
-        var self = this;
+        if (this.object.arrayLength() > WebInspector.ObjectPropertiesSection._arrayLoadThreshold) {
+            this.propertiesTreeOutline.removeChildren();
+            WebInspector.ArrayGroupingTreeElement._populateArray(this.propertiesTreeOutline, this.object, 0, this.object.arrayLength() - 1);
+            return;
+        }
+
         function callback(properties)
         {
             if (!properties)
                 return;
-            self.updateProperties(properties);
+            this.updateProperties(properties);
         }
+
         if (this.ignoreHasOwnProperty)
-            this.object.getAllProperties(callback);
+            this.object.getAllProperties(callback.bind(this));
         else
-            this.object.getOwnProperties(callback);
+            this.object.getOwnProperties(callback.bind(this));
     },
 
     updateProperties: function(properties, rootTreeElementConstructor, rootPropertyComparer)
@@ -92,11 +100,6 @@ WebInspector.ObjectPropertiesSection.prototype = {
         }
 
         this.propertiesForTest = properties;
-
-        if (this.object && this.object.arrayLength() > WebInspector.ArrayGroupingTreeElement._bucketThreshold) {
-            WebInspector.ArrayGroupingTreeElement.populateAsArray(this.propertiesTreeOutline, rootTreeElementConstructor, properties);
-            return;
-        } 
 
         for (var i = 0; i < properties.length; ++i)
             this.propertiesTreeOutline.appendChild(new rootTreeElementConstructor(properties[i]));
@@ -161,6 +164,7 @@ WebInspector.ObjectPropertiesSection.CompareProperties = function(propertyA, pro
 /**
  * @constructor
  * @extends {TreeElement}
+ * @param {WebInspector.RemoteObjectProperty} property
  */
 WebInspector.ObjectPropertyTreeElement = function(property)
 {
@@ -178,15 +182,17 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         if (this.children.length && !this.shouldRefreshChildren)
             return;
 
-        var callback = function(properties) {
+        if (this.property.value.arrayLength() > WebInspector.ObjectPropertiesSection._arrayLoadThreshold) {
+            this.removeChildren();
+            WebInspector.ArrayGroupingTreeElement._populateArray(this, this.property.value, 0, this.property.value.arrayLength() - 1);
+            return;
+        }
+
+        function callback(properties)
+        {
             this.removeChildren();
             if (!properties)
                 return;
-
-            if (this.property.value.type === "array") {
-                WebInspector.ArrayGroupingTreeElement.populateAsArray(this, this.treeOutline.section.treeElementConstructor, properties);
-                return;
-            }
 
             properties.sort(WebInspector.ObjectPropertiesSection.CompareProperties);
             for (var i = 0; i < properties.length; ++i) {
@@ -195,7 +201,8 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
                 properties[i].parentObject = this.property.value;
                 this.appendChild(new this.treeOutline.section.treeElementConstructor(properties[i]));
             }
-        };
+        }
+
         this.property.value.getOwnProperties(callback.bind(this));
     },
 
@@ -418,80 +425,210 @@ WebInspector.ObjectPropertyTreeElement.prototype.__proto__ = TreeElement.prototy
 /**
  * @constructor
  * @extends {TreeElement}
+ * @param {WebInspector.RemoteObject} object
+ * @param {number} fromIndex
+ * @param {number} toIndex
+ * @param {number} propertyCount
  */
-WebInspector.ArrayGroupingTreeElement = function(treeElementConstructor, properties, fromIndex, toIndex)
+WebInspector.ArrayGroupingTreeElement = function(object, fromIndex, toIndex, propertyCount)
 {
-    this._properties = properties;
+    TreeElement.call(this, String.sprintf("[%d \u2026 %d]", fromIndex, toIndex), undefined, true);
     this._fromIndex = fromIndex;
     this._toIndex = toIndex;
-    this._treeElementConstructor = treeElementConstructor;
-
-    TreeElement.call(this, "[" + this._properties[fromIndex].name + " \u2026 " + this._properties[toIndex - 1].name + "]", null, true);
+    this._object = object;
+    this._readOnly = true;
+    this._propertyCount = propertyCount;
+    this._populated = false;
 }
 
 WebInspector.ArrayGroupingTreeElement._bucketThreshold = 20;
 
-WebInspector.ArrayGroupingTreeElement.populateAsArray = function(parentTreeElement, treeElementConstructor, properties)
+/**
+ * @param {TreeElement|TreeOutline} treeElement
+ * @param {WebInspector.RemoteObject} object
+ * @param {number} fromIndex
+ * @param {number} toIndex
+ */
+WebInspector.ArrayGroupingTreeElement._populateArray = function(treeElement, object, fromIndex, toIndex)
 {
-    var nonIndexProperties = [];
+    WebInspector.ArrayGroupingTreeElement._populateRanges(treeElement, object, fromIndex, toIndex, true);
+}
 
-    for (var i = properties.length - 1; i >= 0; --i) {
-        if (!isNaN(properties[i].name)) {
-            // We've reached index properties, trim properties and break.
-            properties.length = i + 1;
-            break;
+/**
+ * @param {TreeElement|TreeOutline} treeElement
+ * @param {WebInspector.RemoteObject} object
+ * @param {number} fromIndex
+ * @param {number} toIndex
+ * @param {boolean} topLevel
+ */
+WebInspector.ArrayGroupingTreeElement._populateRanges = function(treeElement, object, fromIndex, toIndex, topLevel)
+{
+    object.callFunctionJSON(packRanges, [{value: fromIndex}, {value: toIndex}, {value: WebInspector.ArrayGroupingTreeElement._bucketThreshold}], callback.bind(this));
+
+    function packRanges(fromIndex, toIndex, bucketThreshold)
+    {
+        var count = 0;
+        for (var i = fromIndex; i <= toIndex; ++i) {
+            var value = this[i];
+            if (typeof value !== "undefined")
+                ++count;
         }
 
-        nonIndexProperties.push(properties[i]);
+        var bucketSize;
+        if (count < bucketThreshold)
+            bucketSize = count;
+        else {
+            bucketSize = Math.ceil(count / bucketThreshold);
+            if (bucketSize < bucketThreshold)
+                bucketSize = Math.floor(Math.sqrt(count));
+        }
+
+        var ranges = [];
+        count = 0;
+        var groupStart = -1;
+        var groupEnd = 0;
+        for (var i = fromIndex; i <= toIndex; ++i) {
+            var value = this[i];
+            if (typeof value === "undefined")
+                continue;
+
+            if (groupStart === -1)
+                groupStart = i;
+
+            groupEnd = i;
+            if (++count === bucketSize) {
+                ranges.push([groupStart, groupEnd, count]);
+                count = 0;
+                groupStart = -1;
+            }
+        }
+
+        if (count > 0)
+            ranges.push([groupStart, groupEnd, count]);
+        return ranges;
     }
 
-    WebInspector.ArrayGroupingTreeElement._populate(parentTreeElement, treeElementConstructor, properties, 0, properties.length);
-
-    nonIndexProperties.sort(WebInspector.ObjectPropertiesSection.CompareProperties);
-    for (var i = 0; i < nonIndexProperties.length; ++i) {
-        var treeElement = new treeElementConstructor(nonIndexProperties[i]);
-        treeElement._readOnly = true; 
-        parentTreeElement.appendChild(treeElement);
+    function callback(ranges)
+    {
+        if (ranges.length == 1)
+            WebInspector.ArrayGroupingTreeElement._populateAsFragment(treeElement, object, ranges[0][0], ranges[0][1]);
+        else {
+            for (var i = 0; i < ranges.length; ++i) {
+                var fromIndex = ranges[i][0];
+                var toIndex = ranges[i][1];
+                var count = ranges[i][2];
+                if (fromIndex == toIndex)
+                    WebInspector.ArrayGroupingTreeElement._populateAsFragment(treeElement, object, fromIndex, toIndex);
+                else
+                    treeElement.appendChild(new WebInspector.ArrayGroupingTreeElement(object, fromIndex, toIndex, count));
+            }
+        }
+        if (topLevel)
+            WebInspector.ArrayGroupingTreeElement._populateNonIndexProperties(treeElement, object);
     }
 }
 
-WebInspector.ArrayGroupingTreeElement._populate = function(parentTreeElement, treeElementConstructor, properties, fromIndex, toIndex)
+/**
+ * @param {TreeElement|TreeOutline} treeElement
+ * @param {WebInspector.RemoteObject} object
+ * @param {number} fromIndex
+ * @param {number} toIndex
+ */
+WebInspector.ArrayGroupingTreeElement._populateAsFragment = function(treeElement, object, fromIndex, toIndex)
 {
-    parentTreeElement.removeChildren();
-    const bucketThreshold = WebInspector.ArrayGroupingTreeElement._bucketThreshold;
-    var range = toIndex - fromIndex;
+    object.callFunction(buildArrayFragment, [{value: fromIndex}, {value: toIndex}], processArrayFragment.bind(this));
 
-    function appendElement(i)
+    function buildArrayFragment(fromIndex, toIndex)
     {
-        var treeElement = new treeElementConstructor(properties[i]);
-        treeElement._readOnly = true;
-        parentTreeElement.appendChild(treeElement);
+        var result = Object.create(null);
+        for (var i = fromIndex; i <= toIndex; ++i) {
+            var value = this[i];
+            if (typeof value !== "undefined")
+                result[i] = value;
+        }
+        return result;
     }
 
-    if (range <= bucketThreshold) {
-        for (var i = fromIndex; i < toIndex; ++i)
-            appendElement(i);
-        return;
+    function processArrayFragment(arrayFragment)
+    {
+        arrayFragment.getAllProperties(processProperties.bind(this));
     }
 
-    var bucketSize = Math.ceil(range / bucketThreshold);
-    if (bucketSize < bucketThreshold)
-        bucketSize = Math.floor(Math.sqrt(range));
+    function processProperties(properties)
+    {
+        if (!properties)
+            return;
 
-    for (var i = fromIndex; i < toIndex; i += bucketSize) {
-        var to = Math.min(i + bucketSize, toIndex);
-        if (to - i > 1) {
-            var group = new WebInspector.ArrayGroupingTreeElement(treeElementConstructor, properties, i, to);
-            parentTreeElement.appendChild(group);
-        } else
-            appendElement(i);
+        properties.sort(WebInspector.ObjectPropertiesSection.CompareProperties);
+        for (var i = 0; i < properties.length; ++i) {
+            properties[i].parentObject = this._object;
+            var childTreeElement = new treeElement.treeOutline.section.treeElementConstructor(properties[i]);
+            childTreeElement._readOnly = true;
+            treeElement.appendChild(childTreeElement);
+        }
+    }
+}
+
+/**
+ * @param {TreeElement|TreeOutline} treeElement
+ * @param {WebInspector.RemoteObject} object
+ */
+WebInspector.ArrayGroupingTreeElement._populateNonIndexProperties = function(treeElement, object)
+{
+    object.callFunction(buildObjectFragment, undefined, processObjectFragment.bind(this));
+
+    function buildObjectFragment()
+    {
+        var result = Object.create(this.__proto__);
+        var names = Object.getOwnPropertyNames(this);
+        for (var i = 0; i < names.length; ++i) {
+            var name = names[i];
+            if (!isNaN(name))
+                continue;
+            var descriptor = Object.getOwnPropertyDescriptor(this, name);
+            Object.defineProperty(result, name, descriptor);
+        }
+        return result;
+    }
+
+    function processObjectFragment(arrayFragment)
+    {
+        arrayFragment.getOwnProperties(processProperties.bind(this));
+    }
+
+    function processProperties(properties)
+    {
+        if (!properties)
+            return;
+
+        properties.sort(WebInspector.ObjectPropertiesSection.CompareProperties);
+        for (var i = 0; i < properties.length; ++i) {
+            properties[i].parentObject = this._object;
+            var childTreeElement = new treeElement.treeOutline.section.treeElementConstructor(properties[i]);
+            childTreeElement._readOnly = true;
+            treeElement.appendChild(childTreeElement);
+        }
     }
 }
 
 WebInspector.ArrayGroupingTreeElement.prototype = {
     onpopulate: function()
     {
-        WebInspector.ArrayGroupingTreeElement._populate(this, this._treeElementConstructor, this._properties, this._fromIndex, this._toIndex);
+        if (this._populated)
+            return;
+        
+        this._populated = true;
+
+        if (this._propertyCount >= WebInspector.ArrayGroupingTreeElement._bucketThreshold) {
+            WebInspector.ArrayGroupingTreeElement._populateRanges(this, this._object, this._fromIndex, this._toIndex, false);
+            return;
+        }
+        WebInspector.ArrayGroupingTreeElement._populateAsFragment(this, this._object, this._fromIndex, this._toIndex);
+    },
+
+    onattach: function()
+    {
+        this.listItemElement.addStyleClass("name");
     }
 }
 

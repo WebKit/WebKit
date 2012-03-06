@@ -272,30 +272,32 @@ WebInspector.RemoteObject.prototype = {
 
     /**
      * @param {string} functionDeclaration
+     * @param {Array.<RuntimeAgent.CallArgument>} args
      * @param {function(?WebInspector.RemoteObject)} callback
      */
-    callFunction: function(functionDeclaration, callback)
+    callFunction: function(functionDeclaration, args, callback)
     {
         function mycallback(error, result, wasThrown)
         {
             callback((error || wasThrown) ? null : WebInspector.RemoteObject.fromPayload(result));
         }
 
-        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), undefined, undefined, mycallback);
+        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, undefined, mycallback);
     },
 
     /**
      * @param {string} functionDeclaration
+     * @param {Array.<RuntimeAgent.CallArgument>} args
      * @param {function(*)} callback
      */
-    callFunctionJSON: function(functionDeclaration, callback)
+    callFunctionJSON: function(functionDeclaration, args, callback)
     {
         function mycallback(error, result, wasThrown)
         {
             callback((error || wasThrown) ? null : result.value);
         }
 
-        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), undefined, true, mycallback);
+        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, mycallback);
     },
 
     release: function()

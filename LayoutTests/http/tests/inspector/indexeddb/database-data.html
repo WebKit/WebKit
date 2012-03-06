@@ -56,7 +56,7 @@ function test()
                     return;
                 }
                 entry = entries[index];
-                entry.value.callFunctionJSON(dumpMe, dumped.bind(this));
+                entry.value.callFunctionJSON(dumpMe, undefined, dumped.bind(this));
                 ++index;
             }
 
