@@ -471,7 +471,7 @@ void LayerRendererChromium::drawDebugBorderQuad(const CCDebugBorderDrawQuad* qua
     renderMatrix.translate(0.5 * layerRect.width() + layerRect.x(), 0.5 * layerRect.height() + layerRect.y());
     renderMatrix.scaleNonUniform(layerRect.width(), layerRect.height());
     LayerRendererChromium::toGLMatrix(&glMatrix[0], projectionMatrix() * renderMatrix);
-    GLC(context(), context()->uniformMatrix4fv(program->vertexShader().matrixLocation(), false, &glMatrix[0], 1));
+    GLC(context(), context()->uniformMatrix4fv(program->vertexShader().matrixLocation(), 1, false, &glMatrix[0]));
 
     GLC(context(), context()->uniform4f(program->fragmentShader().colorLocation(), quad->color().red() / 255.0, quad->color().green() / 255.0, quad->color().blue() / 255.0, quad->color().alpha() / 255.0));
 
@@ -626,7 +626,7 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
         float edge[24];
         deviceLayerEdges.toFloatArray(edge);
         deviceLayerBounds.toFloatArray(&edge[12]);
-        GLC(context(), context()->uniform3fv(uniforms.edgeLocation, edge, 8));
+        GLC(context(), context()->uniform3fv(uniforms.edgeLocation, 8, edge));
 
         GLC(context(), context()->uniform4f(uniforms.vertexTexTransformLocation, vertexTexTranslateX, vertexTexTranslateY, vertexTexScaleX, vertexTexScaleY));
         GLC(context(), context()->uniform4f(uniforms.fragmentTexTransformLocation, fragmentTexTranslateX, fragmentTexTranslateY, fragmentTexScaleX, fragmentTexScaleY));
@@ -745,8 +745,8 @@ void LayerRendererChromium::drawYUV(const CCVideoDrawQuad* quad)
     GLC(context(), context()->uniform1i(program->fragmentShader().uTextureLocation(), 2));
     GLC(context(), context()->uniform1i(program->fragmentShader().vTextureLocation(), 3));
 
-    GLC(context(), context()->uniformMatrix3fv(program->fragmentShader().ccMatrixLocation(), 0, const_cast<float*>(CCVideoLayerImpl::yuv2RGB), 1));
-    GLC(context(), context()->uniform3fv(program->fragmentShader().yuvAdjLocation(), const_cast<float*>(CCVideoLayerImpl::yuvAdjust), 1));
+    GLC(context(), context()->uniformMatrix3fv(program->fragmentShader().ccMatrixLocation(), 1, 0, const_cast<float*>(CCVideoLayerImpl::yuv2RGB)));
+    GLC(context(), context()->uniform3fv(program->fragmentShader().yuvAdjLocation(), 1, const_cast<float*>(CCVideoLayerImpl::yuvAdjust)));
 
     const IntSize& bounds = quad->quadRect().size();
     drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), FloatQuad(),
@@ -798,7 +798,7 @@ void LayerRendererChromium::drawStreamTexture(const CCVideoDrawQuad* quad)
     const CCVideoLayerImpl::StreamTextureProgram* program = streamTextureLayerProgram();
     GLC(context(), context()->useProgram(program->program()));
     ASSERT(quad->matrix());
-    GLC(context(), context()->uniformMatrix4fv(program->vertexShader().texMatrixLocation(), false, const_cast<float*>(quad->matrix()), 1));
+    GLC(context(), context()->uniformMatrix4fv(program->vertexShader().texMatrixLocation(), 1, false, const_cast<float*>(quad->matrix())));
 
     drawSingleTextureVideoQuad(quad, program, 1, quad->frame()->textureId(), Extensions3DChromium::GL_TEXTURE_EXTERNAL_OES);
 }
@@ -1013,7 +1013,7 @@ void LayerRendererChromium::drawTexturedQuad(const TransformationMatrix& drawMat
     // Apply the projection matrix before sending the transform over to the shader.
     toGLMatrix(&glMatrix[0], m_projectionMatrix * renderMatrix);
 
-    GLC(m_context, m_context->uniformMatrix4fv(matrixLocation, false, &glMatrix[0], 1));
+    GLC(m_context, m_context->uniformMatrix4fv(matrixLocation, 1, false, &glMatrix[0]));
 
     if (quadLocation != -1) {
         float point[8];
@@ -1025,7 +1025,7 @@ void LayerRendererChromium::drawTexturedQuad(const TransformationMatrix& drawMat
         point[5] = quad.p3().y();
         point[6] = quad.p4().x();
         point[7] = quad.p4().y();
-        GLC(m_context, m_context->uniform2fv(quadLocation, point, 4));
+        GLC(m_context, m_context->uniform2fv(quadLocation, 4, point));
     }
 
     if (alphaLocation != -1)

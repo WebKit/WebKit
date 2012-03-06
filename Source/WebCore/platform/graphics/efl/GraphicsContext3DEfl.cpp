@@ -554,7 +554,7 @@ void GraphicsContext3D::uniform1f(GC3Dint location, GC3Dfloat x)
     m_private->uniform1f(location, x);
 }
 
-void GraphicsContext3D::uniform1fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size)
+void GraphicsContext3D::uniform1fv(GC3Dint location, GGC3Dsizei size, C3Dfloat* v)
 {
     m_private->uniform1fv(location, size, v);
 }
@@ -564,7 +564,7 @@ void GraphicsContext3D::uniform1i(GC3Dint location, GC3Dint x)
     m_private->uniform1i(location, x);
 }
 
-void GraphicsContext3D::uniform1iv(GC3Dint location, GC3Dint* v, GC3Dsizei size)
+void GraphicsContext3D::uniform1iv(GC3Dint location, GGC3Dsizei size, C3Dint* v)
 {
     m_private->uniform1iv(location, size, v);
 }
@@ -574,7 +574,7 @@ void GraphicsContext3D::uniform2f(GC3Dint location, GC3Dfloat x, float y)
     m_private->uniform2f(location, x, y);
 }
 
-void GraphicsContext3D::uniform2fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size)
+void GraphicsContext3D::uniform2fv(GC3Dint location, GC3Dsizei size, GC3Dfloat* v)
 {
     m_private->uniform2fv(location, size, v);
 }
@@ -584,7 +584,7 @@ void GraphicsContext3D::uniform2i(GC3Dint location, GC3Dint x, GC3Dint y)
     m_private->uniform2i(location, x, y);
 }
 
-void GraphicsContext3D::uniform2iv(GC3Dint location, GC3Dint* v, GC3Dsizei size)
+void GraphicsContext3D::uniform2iv(GC3Dint location, GC3Dsizei size, GC3Dint* v)
 {
     m_private->uniform2iv(location, size, v);
 }
@@ -594,7 +594,7 @@ void GraphicsContext3D::uniform3f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC
     m_private->uniform3f(location, x, y, z);
 }
 
-void GraphicsContext3D::uniform3fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size)
+void GraphicsContext3D::uniform3fv(GC3Dint location, GC3Dsizei size, GC3Dfloat* v)
 {
     m_private->uniform3fv(location, size, v);
 }
@@ -604,7 +604,7 @@ void GraphicsContext3D::uniform3i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Din
     m_private->uniform3i(location, x, y, z);
 }
 
-void GraphicsContext3D::uniform3iv(GC3Dint location, GC3Dint* v, GC3Dsizei size)
+void GraphicsContext3D::uniform3iv(GC3Dint location, GC3Dsizei size, GC3Dint* v)
 {
     m_private->uniform3iv(location, size, v);
 }
@@ -614,7 +614,7 @@ void GraphicsContext3D::uniform4f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC
     m_private->uniform4f(location, x, y, z, w);
 }
 
-void GraphicsContext3D::uniform4fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size)
+void GraphicsContext3D::uniform4fv(GC3Dint location, GC3Dsizei size, GC3Dfloat* v)
 {
     m_private->uniform4fv(location, size, v);
 }
@@ -624,22 +624,22 @@ void GraphicsContext3D::uniform4i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Din
     m_private->uniform4i(location, x, y, z, w);
 }
 
-void GraphicsContext3D::uniform4iv(GC3Dint location, GC3Dint* v, GC3Dsizei size)
+void GraphicsContext3D::uniform4iv(GC3Dint location, GC3Dsizei size, GC3Dint* v)
 {
     m_private->uniform4iv(location, size, v);
 }
 
-void GraphicsContext3D::uniformMatrix2fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size)
+void GraphicsContext3D::uniformMatrix2fv(GC3Dint location, GC3Dsizei size, GC3Dboolean transpose, GC3Dfloat* value)
 {
     m_private->uniformMatrix2fv(location, size, transpose, value);
 }
 
-void GraphicsContext3D::uniformMatrix3fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size)
+void GraphicsContext3D::uniformMatrix3fv(GC3Dint location, GC3Dsizei size, GC3Dboolean transpose, GC3Dfloat* value)
 {
     m_private->uniformMatrix3fv(location, size, transpose, value);
 }
 
-void GraphicsContext3D::uniformMatrix4fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size)
+void GraphicsContext3D::uniformMatrix4fv(GC3Dint location, GC3Dsizei size, GC3Dboolean transpose, GC3Dfloat* value)
 {
     m_private->uniformMatrix4fv(location, size, transpose, value);
 }

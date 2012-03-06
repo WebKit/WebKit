@@ -3748,7 +3748,7 @@ void WebGLRenderingContext::uniform1fv(const WebGLUniformLocation* location, Flo
     if (isContextLost() || !validateUniformParameters("uniform1fv", location, v, 1))
         return;
 
-    m_context->uniform1fv(location->location(), v->data(), v->length());
+    m_context->uniform1fv(location->location(), v->length(), v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3758,7 +3758,7 @@ void WebGLRenderingContext::uniform1fv(const WebGLUniformLocation* location, GC3
     if (isContextLost() || !validateUniformParameters("uniform1fv", location, v, size, 1))
         return;
 
-    m_context->uniform1fv(location->location(), v, size);
+    m_context->uniform1fv(location->location(), size, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3783,7 +3783,7 @@ void WebGLRenderingContext::uniform1iv(const WebGLUniformLocation* location, Int
     if (isContextLost() || !validateUniformParameters("uniform1iv", location, v, 1))
         return;
 
-    m_context->uniform1iv(location->location(), v->data(), v->length());
+    m_context->uniform1iv(location->location(), v->length(), v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3793,7 +3793,7 @@ void WebGLRenderingContext::uniform1iv(const WebGLUniformLocation* location, GC3
     if (isContextLost() || !validateUniformParameters("uniform1iv", location, v, size, 1))
         return;
 
-    m_context->uniform1iv(location->location(), v, size);
+    m_context->uniform1iv(location->location(), size, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3818,7 +3818,7 @@ void WebGLRenderingContext::uniform2fv(const WebGLUniformLocation* location, Flo
     if (isContextLost() || !validateUniformParameters("uniform2fv", location, v, 2))
         return;
 
-    m_context->uniform2fv(location->location(), v->data(), v->length() / 2);
+    m_context->uniform2fv(location->location(), v->length() / 2, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3828,7 +3828,7 @@ void WebGLRenderingContext::uniform2fv(const WebGLUniformLocation* location, GC3
     if (isContextLost() || !validateUniformParameters("uniform2fv", location, v, size, 2))
         return;
 
-    m_context->uniform2fv(location->location(), v, size / 2);
+    m_context->uniform2fv(location->location(), size / 2, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3853,7 +3853,7 @@ void WebGLRenderingContext::uniform2iv(const WebGLUniformLocation* location, Int
     if (isContextLost() || !validateUniformParameters("uniform2iv", location, v, 2))
         return;
 
-    m_context->uniform2iv(location->location(), v->data(), v->length() / 2);
+    m_context->uniform2iv(location->location(), v->length() / 2, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3863,7 +3863,7 @@ void WebGLRenderingContext::uniform2iv(const WebGLUniformLocation* location, GC3
     if (isContextLost() || !validateUniformParameters("uniform2iv", location, v, size, 2))
         return;
 
-    m_context->uniform2iv(location->location(), v, size / 2);
+    m_context->uniform2iv(location->location(), size / 2, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3888,7 +3888,7 @@ void WebGLRenderingContext::uniform3fv(const WebGLUniformLocation* location, Flo
     if (isContextLost() || !validateUniformParameters("uniform3fv", location, v, 3))
         return;
 
-    m_context->uniform3fv(location->location(), v->data(), v->length() / 3);
+    m_context->uniform3fv(location->location(), v->length() / 3, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3898,7 +3898,7 @@ void WebGLRenderingContext::uniform3fv(const WebGLUniformLocation* location, GC3
     if (isContextLost() || !validateUniformParameters("uniform3fv", location, v, size, 3))
         return;
 
-    m_context->uniform3fv(location->location(), v, size / 3);
+    m_context->uniform3fv(location->location(), size / 3, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3923,7 +3923,7 @@ void WebGLRenderingContext::uniform3iv(const WebGLUniformLocation* location, Int
     if (isContextLost() || !validateUniformParameters("uniform3iv", location, v, 3))
         return;
 
-    m_context->uniform3iv(location->location(), v->data(), v->length() / 3);
+    m_context->uniform3iv(location->location(), v->length() / 3, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3933,7 +3933,7 @@ void WebGLRenderingContext::uniform3iv(const WebGLUniformLocation* location, GC3
     if (isContextLost() || !validateUniformParameters("uniform3iv", location, v, size, 3))
         return;
 
-    m_context->uniform3iv(location->location(), v, size / 3);
+    m_context->uniform3iv(location->location(), size / 3, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3958,7 +3958,7 @@ void WebGLRenderingContext::uniform4fv(const WebGLUniformLocation* location, Flo
     if (isContextLost() || !validateUniformParameters("uniform4fv", location, v, 4))
         return;
 
-    m_context->uniform4fv(location->location(), v->data(), v->length() / 4);
+    m_context->uniform4fv(location->location(), v->length() / 4, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3968,7 +3968,7 @@ void WebGLRenderingContext::uniform4fv(const WebGLUniformLocation* location, GC3
     if (isContextLost() || !validateUniformParameters("uniform4fv", location, v, size, 4))
         return;
 
-    m_context->uniform4fv(location->location(), v, size / 4);
+    m_context->uniform4fv(location->location(), size / 4, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3993,7 +3993,7 @@ void WebGLRenderingContext::uniform4iv(const WebGLUniformLocation* location, Int
     if (isContextLost() || !validateUniformParameters("uniform4iv", location, v, 4))
         return;
 
-    m_context->uniform4iv(location->location(), v->data(), v->length() / 4);
+    m_context->uniform4iv(location->location(), v->length() / 4, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -4003,7 +4003,7 @@ void WebGLRenderingContext::uniform4iv(const WebGLUniformLocation* location, GC3
     if (isContextLost() || !validateUniformParameters("uniform4iv", location, v, size, 4))
         return;
 
-    m_context->uniform4iv(location->location(), v, size / 4);
+    m_context->uniform4iv(location->location(), size / 4, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -4012,7 +4012,7 @@ void WebGLRenderingContext::uniformMatrix2fv(const WebGLUniformLocation* locatio
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateUniformMatrixParameters("uniformMatrix2fv", location, transpose, v, 4))
         return;
-    m_context->uniformMatrix2fv(location->location(), transpose, v->data(), v->length() / 4);
+    m_context->uniformMatrix2fv(location->location(), v->length() / 4, transpose, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -4021,7 +4021,7 @@ void WebGLRenderingContext::uniformMatrix2fv(const WebGLUniformLocation* locatio
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateUniformMatrixParameters("uniformMatrix2fv", location, transpose, v, size, 4))
         return;
-    m_context->uniformMatrix2fv(location->location(), transpose, v, size / 4);
+    m_context->uniformMatrix2fv(location->location(), size / 4, transpose, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -4030,7 +4030,7 @@ void WebGLRenderingContext::uniformMatrix3fv(const WebGLUniformLocation* locatio
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateUniformMatrixParameters("uniformMatrix3fv", location, transpose, v, 9))
         return;
-    m_context->uniformMatrix3fv(location->location(), transpose, v->data(), v->length() / 9);
+    m_context->uniformMatrix3fv(location->location(), v->length() / 9, transpose, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -4039,7 +4039,7 @@ void WebGLRenderingContext::uniformMatrix3fv(const WebGLUniformLocation* locatio
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateUniformMatrixParameters("uniformMatrix3fv", location, transpose, v, size, 9))
         return;
-    m_context->uniformMatrix3fv(location->location(), transpose, v, size / 9);
+    m_context->uniformMatrix3fv(location->location(), size / 9, transpose, v);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -4048,7 +4048,7 @@ void WebGLRenderingContext::uniformMatrix4fv(const WebGLUniformLocation* locatio
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateUniformMatrixParameters("uniformMatrix4fv", location, transpose, v, 16))
         return;
-    m_context->uniformMatrix4fv(location->location(), transpose, v->data(), v->length() / 16);
+    m_context->uniformMatrix4fv(location->location(), v->length() / 16, transpose, v->data());
     cleanupAfterGraphicsCall(false);
 }
 
@@ -4057,7 +4057,7 @@ void WebGLRenderingContext::uniformMatrix4fv(const WebGLUniformLocation* locatio
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateUniformMatrixParameters("uniformMatrix4fv", location, transpose, v, size, 16))
         return;
-    m_context->uniformMatrix4fv(location->location(), transpose, v, size / 16);
+    m_context->uniformMatrix4fv(location->location(), size / 16, transpose, v);
     cleanupAfterGraphicsCall(false);
 }
 

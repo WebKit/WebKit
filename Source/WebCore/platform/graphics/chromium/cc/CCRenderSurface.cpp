@@ -207,7 +207,7 @@ void CCRenderSurface::drawSurface(LayerRendererChromium* layerRenderer, CCLayerI
         float edge[24];
         layerQuad.toFloatArray(edge);
         deviceRect.toFloatArray(&edge[12]);
-        GLC(context3D, context3D->uniform3fv(shaderEdgeLocation, edge, 8));
+        GLC(context3D, context3D->uniform3fv(shaderEdgeLocation, 8, edge));
     }
 
     // Map device space quad to layer space.

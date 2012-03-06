@@ -672,71 +672,71 @@ void GraphicsContext3DPrivate::texSubImage2D(GC3Denum target, GC3Dint level, GC3
 
 DELEGATE_TO_IMPL_2(uniform1f, GC3Dint, GC3Dfloat)
 
-void GraphicsContext3DPrivate::uniform1fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size)
+void GraphicsContext3DPrivate::uniform1fv(GC3Dint location, GC3Dsizei size, GC3Dfloat* v)
 {
     m_impl->uniform1fv(location, size, v);
 }
 
 DELEGATE_TO_IMPL_2(uniform1i, GC3Dint, GC3Dint)
 
-void GraphicsContext3DPrivate::uniform1iv(GC3Dint location, GC3Dint* v, GC3Dsizei size)
+void GraphicsContext3DPrivate::uniform1iv(GC3Dint location, GC3Dsizei size, GC3Dint* v)
 {
     m_impl->uniform1iv(location, size, v);
 }
 
 DELEGATE_TO_IMPL_3(uniform2f, GC3Dint, GC3Dfloat, GC3Dfloat)
 
-void GraphicsContext3DPrivate::uniform2fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size)
+void GraphicsContext3DPrivate::uniform2fv(GC3Dint location, GC3Dsizei size, GC3Dfloat* v)
 {
     m_impl->uniform2fv(location, size, v);
 }
 
 DELEGATE_TO_IMPL_3(uniform2i, GC3Dint, GC3Dint, GC3Dint)
 
-void GraphicsContext3DPrivate::uniform2iv(GC3Dint location, GC3Dint* v, GC3Dsizei size)
+void GraphicsContext3DPrivate::uniform2iv(GC3Dint location, GC3Dsizei size, GC3Dint* v)
 {
     m_impl->uniform2iv(location, size, v);
 }
 
 DELEGATE_TO_IMPL_4(uniform3f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat)
 
-void GraphicsContext3DPrivate::uniform3fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size)
+void GraphicsContext3DPrivate::uniform3fv(GC3Dint location, GC3Dsizei size, GC3Dfloat* v)
 {
     m_impl->uniform3fv(location, size, v);
 }
 
 DELEGATE_TO_IMPL_4(uniform3i, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
 
-void GraphicsContext3DPrivate::uniform3iv(GC3Dint location, GC3Dint* v, GC3Dsizei size)
+void GraphicsContext3DPrivate::uniform3iv(GC3Dint location, GC3Dsizei size, GC3Dint* v)
 {
     m_impl->uniform3iv(location, size, v);
 }
 
 DELEGATE_TO_IMPL_5(uniform4f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat)
 
-void GraphicsContext3DPrivate::uniform4fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size)
+void GraphicsContext3DPrivate::uniform4fv(GC3Dint location, GC3Dsizei size, GC3Dfloat* v)
 {
     m_impl->uniform4fv(location, size, v);
 }
 
 DELEGATE_TO_IMPL_5(uniform4i, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
 
-void GraphicsContext3DPrivate::uniform4iv(GC3Dint location, GC3Dint* v, GC3Dsizei size)
+void GraphicsContext3DPrivate::uniform4iv(GC3Dint location, GC3Dsizei size, GC3Dint* v)
 {
     m_impl->uniform4iv(location, size, v);
 }
 
-void GraphicsContext3DPrivate::uniformMatrix2fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size)
+void GraphicsContext3DPrivate::uniformMatrix2fv(GC3Dint location, GC3Dsizei size, GC3Dboolean transpose, GC3Dfloat* value)
 {
     m_impl->uniformMatrix2fv(location, size, transpose, value);
 }
 
-void GraphicsContext3DPrivate::uniformMatrix3fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size)
+void GraphicsContext3DPrivate::uniformMatrix3fv(GC3Dint location, GC3Dsizei size, GC3Dboolean transpose, GC3Dfloat* value)
 {
     m_impl->uniformMatrix3fv(location, size, transpose, value);
 }
 
-void GraphicsContext3DPrivate::uniformMatrix4fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size)
+void GraphicsContext3DPrivate::uniformMatrix4fv(GC3Dint location, GC3Dsizei size, GC3Dboolean transpose, GC3Dfloat* value)
 {
     m_impl->uniformMatrix4fv(location, size, transpose, value);
 }
@@ -1176,24 +1176,24 @@ DELEGATE_TO_INTERNAL_3(texParameteri, GC3Denum, GC3Denum, GC3Dint)
 DELEGATE_TO_INTERNAL_9(texSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, const void*)
 
 DELEGATE_TO_INTERNAL_2(uniform1f, GC3Dint, GC3Dfloat)
-DELEGATE_TO_INTERNAL_3(uniform1fv, GC3Dint, GC3Dfloat*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_3(uniform1fv, GC3Dint, GC3Dsizei, GC3Dfloat*)
 DELEGATE_TO_INTERNAL_2(uniform1i, GC3Dint, GC3Dint)
-DELEGATE_TO_INTERNAL_3(uniform1iv, GC3Dint, GC3Dint*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_3(uniform1iv, GC3Dint, GC3Dsizei, GC3Dint*)
 DELEGATE_TO_INTERNAL_3(uniform2f, GC3Dint, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_INTERNAL_3(uniform2fv, GC3Dint, GC3Dfloat*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_3(uniform2fv, GC3Dint, GC3Dsizei, GC3Dfloat*)
 DELEGATE_TO_INTERNAL_3(uniform2i, GC3Dint, GC3Dint, GC3Dint)
-DELEGATE_TO_INTERNAL_3(uniform2iv, GC3Dint, GC3Dint*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_3(uniform2iv, GC3Dint, GC3Dsizei, GC3Dint*)
 DELEGATE_TO_INTERNAL_4(uniform3f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_INTERNAL_3(uniform3fv, GC3Dint, GC3Dfloat*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_3(uniform3fv, GC3Dint, GC3Dsizei, GC3Dfloat*)
 DELEGATE_TO_INTERNAL_4(uniform3i, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
-DELEGATE_TO_INTERNAL_3(uniform3iv, GC3Dint, GC3Dint*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_3(uniform3iv, GC3Dint, GC3Dsizei, GC3Dint*)
 DELEGATE_TO_INTERNAL_5(uniform4f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat)
-DELEGATE_TO_INTERNAL_3(uniform4fv, GC3Dint, GC3Dfloat*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_3(uniform4fv, GC3Dint, GC3Dsizei, GC3Dfloat*)
 DELEGATE_TO_INTERNAL_5(uniform4i, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
-DELEGATE_TO_INTERNAL_3(uniform4iv, GC3Dint, GC3Dint*, GC3Dsizei)
-DELEGATE_TO_INTERNAL_4(uniformMatrix2fv, GC3Dint, GC3Dboolean, GC3Dfloat*, GC3Dsizei)
-DELEGATE_TO_INTERNAL_4(uniformMatrix3fv, GC3Dint, GC3Dboolean, GC3Dfloat*, GC3Dsizei)
-DELEGATE_TO_INTERNAL_4(uniformMatrix4fv, GC3Dint, GC3Dboolean, GC3Dfloat*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_3(uniform4iv, GC3Dint, GC3Dsizei, GC3Dint*)
+DELEGATE_TO_INTERNAL_4(uniformMatrix2fv, GC3Dint, GC3Dsizei, GC3Dboolean, GC3Dfloat*)
+DELEGATE_TO_INTERNAL_4(uniformMatrix3fv, GC3Dint, GC3Dsizei, GC3Dboolean, GC3Dfloat*)
+DELEGATE_TO_INTERNAL_4(uniformMatrix4fv, GC3Dint, GC3Dsizei, GC3Dboolean, GC3Dfloat*)
 
 DELEGATE_TO_INTERNAL_1(useProgram, Platform3DObject)
 DELEGATE_TO_INTERNAL_1(validateProgram, Platform3DObject)

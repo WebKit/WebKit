@@ -1,3 +1,28 @@
+2012-03-05  Changhun Kang  <temoochin@company100.net>
+
+        Change the argument orders to match OpenGL's in GraphicsContext3D functions
+        https://bugs.webkit.org/show_bug.cgi?id=80120
+
+        Reviewed by Kenneth Russell.
+
+        No new tests because this patch just change the order of arguments.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DPrivate::uniform1fv):
+        (WebCore::GraphicsContext3DPrivate::uniform1iv):
+        (WebCore::GraphicsContext3DPrivate::uniform2fv):
+        (WebCore::GraphicsContext3DPrivate::uniform2iv):
+        (WebCore::GraphicsContext3DPrivate::uniform3fv):
+        (WebCore::GraphicsContext3DPrivate::uniform3iv):
+        (WebCore::GraphicsContext3DPrivate::uniform4fv):
+        (WebCore::GraphicsContext3DPrivate::uniform4iv):
+        (WebCore::GraphicsContext3DPrivate::uniformMatrix2fv):
+        (WebCore::GraphicsContext3DPrivate::uniformMatrix3fv):
+        (WebCore::GraphicsContext3DPrivate::uniformMatrix4fv):
+        (WebCore):
+        * src/GraphicsContext3DPrivate.h:
+        (GraphicsContext3DPrivate):
+
 2012-03-05  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Chromium] WebOptionElement should inherit WebElement instead of WebFormControlElement

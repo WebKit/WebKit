@@ -756,26 +756,25 @@ public:
     void texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param);
     void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels);
 
-    // FIXME: change the argument orders to match OpenGL's.
     void uniform1f(GC3Dint location, GC3Dfloat x);
-    void uniform1fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size);
+    void uniform1fv(GC3Dint location, GC3Dsizei, GC3Dfloat* v);
     void uniform1i(GC3Dint location, GC3Dint x);
-    void uniform1iv(GC3Dint location, GC3Dint* v, GC3Dsizei size);
-    void uniform2f(GC3Dint location, GC3Dfloat x, float y);
-    void uniform2fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size);
+    void uniform1iv(GC3Dint location, GC3Dsizei, GC3Dint* v);
+    void uniform2f(GC3Dint location, GC3Dfloat x, GC3Dfloat y);
+    void uniform2fv(GC3Dint location, GC3Dsizei, GC3Dfloat* v);
     void uniform2i(GC3Dint location, GC3Dint x, GC3Dint y);
-    void uniform2iv(GC3Dint location, GC3Dint* v, GC3Dsizei size);
+    void uniform2iv(GC3Dint location, GC3Dsizei, GC3Dint* v);
     void uniform3f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z);
-    void uniform3fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size);
+    void uniform3fv(GC3Dint location, GC3Dsizei, GC3Dfloat* v);
     void uniform3i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z);
-    void uniform3iv(GC3Dint location, GC3Dint* v, GC3Dsizei size);
+    void uniform3iv(GC3Dint location, GC3Dsizei, GC3Dint* v);
     void uniform4f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w);
-    void uniform4fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size);
+    void uniform4fv(GC3Dint location, GC3Dsizei, GC3Dfloat* v);
     void uniform4i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z, GC3Dint w);
-    void uniform4iv(GC3Dint location, GC3Dint* v, GC3Dsizei size);
-    void uniformMatrix2fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size);
-    void uniformMatrix3fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size);
-    void uniformMatrix4fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size);
+    void uniform4iv(GC3Dint location, GC3Dsizei, GC3Dint* v);
+    void uniformMatrix2fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, GC3Dfloat* value);
+    void uniformMatrix3fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, GC3Dfloat* value);
+    void uniformMatrix4fv(GC3Dint location, GC3Dsizei, GC3Dboolean transpose, GC3Dfloat* value);
 
     void useProgram(Platform3DObject);
     void validateProgram(Platform3DObject);
