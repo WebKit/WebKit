@@ -1,3 +1,35 @@
+2012-03-05  Gavin Barraclough  <barraclough@apple.com>
+
+        putByIndex should throw in strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=80335
+
+        Reviewed by Filip Pizlo.
+
+        We'll need to pass an additional parameter.
+
+        Part 1 - rename JSValue::put() for integer indices to JSValue::putByIndex()
+        to match the method in the MethodTable, make this take a parameter indicating
+        whether the put should throw. This fixes the cases where the base of the put
+        is a primitive.
+
+        * dfg/DFGOperations.cpp:
+        (DFG):
+        (JSC::DFG::putByVal):
+        (JSC::DFG::operationPutByValInternal):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSObject.h:
+        (JSC::JSValue::putByIndex):
+        * runtime/JSValue.cpp:
+        (JSC):
+        * runtime/JSValue.h:
+        (JSValue):
+
 2012-03-05  Sam Weinig  <sam@webkit.org>
 
         Add support for hosting layers in the window server in WebKit2

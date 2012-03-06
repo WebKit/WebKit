@@ -146,6 +146,7 @@ FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function)
 
 namespace JSC { namespace DFG {
 
+template<bool strict>
 static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, JSValue value)
 {
     JSGlobalData* globalData = &exec->globalData();
@@ -175,7 +176,7 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
         }
     }
 
-    baseValue.put(exec, index, value);
+    baseValue.putByIndex(exec, index, value, strict);
 }
 
 template<bool strict>
@@ -189,7 +190,7 @@ ALWAYS_INLINE static void DFG_OPERATION operationPutByValInternal(ExecState* exe
     JSValue value = JSValue::decode(encodedValue);
 
     if (LIKELY(property.isUInt32())) {
-        putByVal(exec, baseValue, property.asUInt32(), value);
+        putByVal<strict>(exec, baseValue, property.asUInt32(), value);
         return;
     }
 
@@ -197,7 +198,7 @@ ALWAYS_INLINE static void DFG_OPERATION operationPutByValInternal(ExecState* exe
         double propertyAsDouble = property.asDouble();
         uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
         if (propertyAsDouble == propertyAsUInt32) {
-            putByVal(exec, baseValue, propertyAsUInt32, value);
+            putByVal<strict>(exec, baseValue, propertyAsUInt32, value);
             return;
         }
     }

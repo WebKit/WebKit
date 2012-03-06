@@ -2568,9 +2568,9 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
                 }
             }
 
-            baseValue.put(callFrame, i, value);
+            baseValue.putByIndex(callFrame, i, value, callFrame->codeBlock()->isStrictMode());
         } else
-            baseValue.put(callFrame, i, value);
+            baseValue.putByIndex(callFrame, i, value, callFrame->codeBlock()->isStrictMode());
     } else {
         Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
         if (!stackFrame.globalData->exception) { // Don't put to an object if toString threw an exception.
@@ -2611,7 +2611,7 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val_byte_array)
 
         if (!isJSByteArray(baseValue))
             ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_put_by_val));
-        baseValue.put(callFrame, i, value);
+        baseValue.putByIndex(callFrame, i, value, callFrame->codeBlock()->isStrictMode());
     } else {
         Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
         if (!stackFrame.globalData->exception) { // Don't put to an object if toString threw an exception.
@@ -3402,7 +3402,9 @@ DEFINE_STUB_FUNCTION(void, op_put_by_index)
     CallFrame* callFrame = stackFrame.callFrame;
     unsigned property = stackFrame.args[1].int32();
 
-    stackFrame.args[0].jsValue().put(callFrame, property, stackFrame.args[2].jsValue());
+    JSValue arrayValue = stackFrame.args[0].jsValue();
+    ASSERT(isJSArray(arrayValue));
+    asArray(arrayValue)->putDirectIndex(callFrame, property, stackFrame.args[2].jsValue(), false);
 }
 
 DEFINE_STUB_FUNCTION(void*, op_switch_imm)

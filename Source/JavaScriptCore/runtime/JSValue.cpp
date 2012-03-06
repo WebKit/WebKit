@@ -91,19 +91,6 @@ JSObject* JSValue::toThisObjectSlowCase(ExecState* exec) const
     return exec->globalThisValue();
 }
 
-JSObject* JSValue::synthesizeObject(ExecState* exec) const
-{
-    ASSERT(!isCell());
-    if (isNumber())
-        return constructNumber(exec, exec->lexicalGlobalObject(), asValue());
-    if (isBoolean())
-        return constructBooleanFromImmediateBoolean(exec, exec->lexicalGlobalObject(), asValue());
-
-    ASSERT(isUndefinedOrNull());
-    throwError(exec, createNotAnObjectError(exec, *this));
-    return JSNotAnObject::create(exec);
-}
-
 JSObject* JSValue::synthesizePrototype(ExecState* exec) const
 {
     if (isCell()) {

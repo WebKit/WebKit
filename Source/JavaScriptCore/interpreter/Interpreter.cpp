@@ -1158,7 +1158,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
                 break;
             }
             case JSONPPathEntryTypeLookup: {
-                baseObject.put(callFrame, JSONPPath.last().m_pathIndex, JSONPValue);
+                baseObject.putByIndex(callFrame, JSONPPath.last().m_pathIndex, JSONPValue, slot.isStrictMode());
                 if (callFrame->hadException())
                     return jsUndefined();
                 break;
@@ -3790,9 +3790,9 @@ skip_id_custom_self:
                 else if (jsValue.isDouble())
                     jsByteArray->setIndex(i, jsValue.asDouble());
                 else
-                    baseValue.put(callFrame, i, jsValue);
+                    baseValue.putByIndex(callFrame, i, jsValue, codeBlock->isStrictMode());
             } else
-                baseValue.put(callFrame, i, callFrame->r(value).jsValue());
+                baseValue.putByIndex(callFrame, i, callFrame->r(value).jsValue(), codeBlock->isStrictMode());
         } else {
             Identifier property(callFrame, subscript.toString(callFrame)->value(callFrame));
             if (!globalData->exception) { // Don't put to an object if toString threw an exception.
@@ -3855,7 +3855,9 @@ skip_id_custom_self:
         unsigned property = vPC[2].u.operand;
         int value = vPC[3].u.operand;
 
-        callFrame->r(base).jsValue().put(callFrame, property, callFrame->r(value).jsValue());
+        JSValue arrayValue = callFrame->r(base).jsValue();
+        ASSERT(isJSArray(arrayValue));
+        asArray(arrayValue)->putDirectIndex(callFrame, property, callFrame->r(value).jsValue(), false);
 
         vPC += OPCODE_LENGTH(op_put_by_index);
         NEXT_INSTRUCTION();

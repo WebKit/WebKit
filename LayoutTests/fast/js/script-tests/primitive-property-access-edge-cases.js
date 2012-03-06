@@ -126,4 +126,90 @@ shouldThrow("checkWriteStrict(1, Number)");
 shouldThrow("checkWriteStrict('hello', String)");
 shouldThrow("checkWriteStrict(true, Boolean)");
 
+function checkNumericGet(x, constructor)
+{
+    checkOkay = false;
+    Object.defineProperty(constructor.prototype, 42, { get: function() { checkOkay = typeof this === 'object'; }, configurable: true });
+    x[42];
+    delete constructor.prototype[42];
+    return checkOkay;
+}
+
+function checkNumericSet(x, constructor)
+{
+    checkOkay = false;
+    Object.defineProperty(constructor.prototype, 42, { set: function() { checkOkay = typeof this === 'object'; }, configurable: true });
+    x[42] = null;
+    delete constructor.prototype[42];
+    return checkOkay;
+}
+
+function checkNumericGetStrict(x, constructor)
+{
+    checkOkay = false;
+    Object.defineProperty(constructor.prototype, 42, { get: function() { "use strict"; checkOkay = typeof this !== 'object'; }, configurable: true });
+    x[42];
+    delete constructor.prototype[42];
+    return checkOkay;
+}
+
+function checkNumericSetStrict(x, constructor)
+{
+    checkOkay = false;
+    Object.defineProperty(constructor.prototype, 42, { set: function() { "use strict"; checkOkay = typeof this !== 'object'; }, configurable: true });
+    x[42] = null;
+    delete constructor.prototype[42];
+    return checkOkay;
+}
+
+shouldBeTrue("checkNumericGet(1, Number)");
+shouldBeTrue("checkNumericGet('hello', String)");
+shouldBeTrue("checkNumericGet(true, Boolean)");
+shouldBeTrue("checkNumericSet(1, Number)");
+shouldBeTrue("checkNumericSet('hello', String)");
+shouldBeTrue("checkNumericSet(true, Boolean)");
+shouldBeTrue("checkNumericGetStrict(1, Number)");
+shouldBeTrue("checkNumericGetStrict('hello', String)");
+shouldBeTrue("checkNumericGetStrict(true, Boolean)");
+shouldBeTrue("checkNumericSetStrict(1, Number)");
+//shouldBeTrue("checkNumericSetStrict('hello', String)"); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=80335
+shouldBeTrue("checkNumericSetStrict(true, Boolean)");
+
+function checkNumericRead(x, constructor)
+{
+    return x[42] === undefined;
+}
+
+function checkNumericWrite(x, constructor)
+{
+    x[42] = null;
+    return x[42] === undefined;
+}
+
+function checkNumericReadStrict(x, constructor)
+{
+    "use strict";
+    return x[42] === undefined;
+}
+
+function checkNumericWriteStrict(x, constructor)
+{
+    "use strict";
+    x[42] = null;
+    return x[42] === undefined;
+}
+
+shouldBeTrue("checkNumericRead(1, Number)");
+shouldBeTrue("checkNumericRead('hello', String)");
+shouldBeTrue("checkNumericRead(true, Boolean)");
+shouldBeTrue("checkNumericWrite(1, Number)");
+shouldBeTrue("checkNumericWrite('hello', String)");
+shouldBeTrue("checkNumericWrite(true, Boolean)");
+shouldBeTrue("checkNumericReadStrict(1, Number)");
+shouldBeTrue("checkNumericReadStrict('hello', String)");
+shouldBeTrue("checkNumericReadStrict(true, Boolean)");
+shouldThrow("checkNumericWriteStrict(1, Number)");
+//shouldThrow("checkNumericWriteStrict('hello', String)"); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=80335
+shouldThrow("checkNumericWriteStrict(true, Boolean)");
+
 shouldBeTrue("didNotCrash");

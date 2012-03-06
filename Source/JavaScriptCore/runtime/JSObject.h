@@ -840,11 +840,11 @@ inline void JSValue::put(ExecState* exec, const Identifier& propertyName, JSValu
     asCell()->methodTable()->put(asCell(), exec, propertyName, value, slot);
 }
 
-inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValue value)
+inline void JSValue::putByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
 {
     if (UNLIKELY(!isCell())) {
-        JSObject* thisObject = synthesizeObject(exec);
-        thisObject->methodTable()->putByIndex(thisObject, exec, propertyName, value);
+        PutPropertySlot slot(shouldThrow);
+        putToPrimitive(exec, Identifier::from(exec, propertyName), value, slot);
         return;
     }
     asCell()->methodTable()->putByIndex(asCell(), exec, propertyName, value);

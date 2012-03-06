@@ -1059,7 +1059,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
                 LLINT_END();
             }
         }
-        baseValue.put(exec, i, value);
+        baseValue.putByIndex(exec, i, value, exec->codeBlock()->isStrictMode());
         LLINT_END();
     }
     
@@ -1099,7 +1099,9 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_val)
 LLINT_SLOW_PATH_DECL(slow_path_put_by_index)
 {
     LLINT_BEGIN();
-    LLINT_OP_C(1).jsValue().put(exec, pc[2].u.operand, LLINT_OP_C(3).jsValue());
+    JSValue arrayValue = LLINT_OP_C(1).jsValue();
+    ASSERT(isJSArray(arrayValue));
+    asArray(arrayValue)->putDirectIndex(exec, pc[2].u.operand, LLINT_OP_C(3).jsValue(), false);
     LLINT_END();
 }
 
