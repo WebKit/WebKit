@@ -1,0 +1,34 @@
+<script src="../../js/resources/js-test-pre.js"></script>
+<fieldset id="fs1" name="a"></fieldset>
+<script>
+description("This test checks fieldset.name attribute.");
+debug("Read from HTML");
+shouldBe('fs1.name', '"a"');
+shouldBe('fs1.getAttribute("name")', '"a"');
+
+debug('fs1.name="b"');
+fs1.name = "b";
+shouldBe('fs1.name', '"b"');
+shouldBe('fs1.getAttribute("name")', '"b"');
+
+debug('fs1.name=1234');
+fs1.name = 1234;
+shouldBe('fs1.name', '"1234"');
+shouldBe('fs1.getAttribute("name")', '"1234"');
+
+// FIXME: The specification doesn't have clear description for setting null to name.
+// We may need to update below once the specification fixed.
+debug('fs1.name=null');
+fs1.name = null;
+shouldBe('fs1.name', '""');
+shouldBeNull('fs1.getAttribute("name")');
+shouldBeFalse('fs1.hasAttribute("name")');
+
+debug('fs1.name=undefined');
+fs1.name = undefined;
+shouldBe('fs1.name', '"undefined"');
+shouldBe('fs1.getAttribute("name")', '"undefined"');
+shouldBeTrue('fs1.hasAttribute("name")');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+
