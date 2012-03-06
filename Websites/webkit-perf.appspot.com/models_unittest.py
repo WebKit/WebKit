@@ -489,16 +489,14 @@ class ReportLogTests(DataStoreTestsBase):
 
 class PersistentCacheTests(DataStoreTestsBase):
     def setUp(self):
-        self.testbed = testbed.Testbed()
-        self.testbed.activate()
-        self.testbed.init_datastore_v3_stub()
+        super(PersistentCacheTests, self).setUp()
         self.testbed.init_memcache_stub()
 
     def _assert_persistent_cache(self, name, value):
         self.assertEqual(PersistentCache.get_by_key_name(name).value, value)
         self.assertEqual(memcache.get(name), value)
 
-    def test_set(self):
+    def test_set_cache(self):
         self.assertThereIsNoInstanceOf(PersistentCache)
 
         PersistentCache.set_cache('some-cache', 'some data')
@@ -508,7 +506,7 @@ class PersistentCacheTests(DataStoreTestsBase):
 
         self._assert_persistent_cache('some-cache', 'some other data')
 
-    def test_get(self):
+    def test_get_cache(self):
         self.assertEqual(memcache.get('some-cache'), None)
         self.assertEqual(PersistentCache.get_cache('some-cache'), None)
 
@@ -523,6 +521,31 @@ class PersistentCacheTests(DataStoreTestsBase):
 
 
 class DashboardImageTests(DataStoreTestsBase):
+    def setUp(self):
+        super(DashboardImageTests, self).setUp()
+        self.testbed.init_memcache_stub()
+
+    def test_create(self):
+        self.assertEqual(memcache.get('dashboard-image:1:2:3:7'), None)
+        self.assertThereIsNoInstanceOf(DashboardImage)
+        image = DashboardImage.create(1, 2, 3, 7, 'blah')
+        self.assertOnlyInstance(image)
+        self.assertEqual(memcache.get('dashboard-image:1:2:3:7'), 'blah')
+
+    def test_get(self):
+        image = DashboardImage.create(1, 2, 3, 7, 'blah')
+        self.assertEqual(memcache.get('dashboard-image:1:2:3:7'), 'blah')
+        memcache.set('dashboard-image:1:2:3:7', 'new value')
+
+        # Check twice to make sure the first call doesn't clear memcache
+        self.assertEqual(DashboardImage.get_image(1, 2, 3, 7), 'new value')
+        self.assertEqual(DashboardImage.get_image(1, 2, 3, 7), 'new value')
+
+        memcache.delete('dashboard-image:1:2:3:7')
+        self.assertEqual(memcache.get('dashboard-image:1:2:3:7'), None)
+        self.assertEqual(DashboardImage.get_image(1, 2, 3, 7), 'blah')
+        self.assertEqual(memcache.get('dashboard-image:1:2:3:7'), 'blah')
+
     def test_needs_update(self):
         self.assertTrue(DashboardImage.needs_update(1, 2, 3, 7))
         self.assertTrue(DashboardImage.needs_update(1, 2, 3, 30))

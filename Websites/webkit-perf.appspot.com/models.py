@@ -303,16 +303,7 @@ class PersistentCache(db.Model):
     @staticmethod
     def set_cache(name, value):
         memcache.set(name, value)
-
-        def execute():
-            cache = PersistentCache.get_by_key_name(name)
-            if cache:
-                cache.value = value
-                cache.put()
-            else:
-                PersistentCache(key_name=name, value=value).put()
-
-        db.run_in_transaction(execute)
+        PersistentCache(key_name=name, value=value).put()
 
     @staticmethod
     def get_cache(name):
@@ -329,6 +320,24 @@ class PersistentCache(db.Model):
 class DashboardImage(db.Model):
     image = db.BlobProperty(required=True)
     createdAt = db.DateTimeProperty(required=True, auto_now=True)
+
+    @staticmethod
+    def create(branch_id, platform_id, test_id, display_days, image):
+        key_name = DashboardImage.key_name(branch_id, platform_id, test_id, display_days)
+        instance = DashboardImage(key_name=key_name, image=image)
+        instance.put()
+        memcache.set('dashboard-image:' + key_name, image)
+        return instance
+
+    @staticmethod
+    def get_image(branch_id, platform_id, test_id, display_days):
+        key_name = DashboardImage.key_name(branch_id, platform_id, test_id, display_days)
+        image = memcache.get('dashboard-image:' + key_name)
+        if not image:
+            instance = DashboardImage.get_by_key_name(key_name)
+            image = instance.image
+            memcache.set('dashboard-image:' + key_name, image)
+        return image
 
     @classmethod
     def needs_update(cls, branch_id, platform_id, test_id, display_days, now=datetime.now()):

@@ -43,10 +43,6 @@ from models import PersistentCache
 from models import model_from_numeric_id
 
 
-def cache_manifest(cache):
-    PersistentCache.set_cache('manifest', cache)
-
-
 def schedule_manifest_update():
     taskqueue.add(url='/api/test/update')
 
@@ -54,7 +50,7 @@ def schedule_manifest_update():
 class ManifestUpdateHandler(webapp2.RequestHandler):
     def post(self):
         self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
-        cache_manifest(ManifestJSONGenerator().to_json())
+        PersistentCache.set_cache('manifest', ManifestJSONGenerator().to_json())
         self.response.out.write('OK')
 
 
@@ -68,10 +64,6 @@ class CachedManifestHandler(webapp2.RequestHandler):
             schedule_manifest_update()
 
 
-def cache_dashboard(cache):
-    PersistentCache.set_cache('dashboard', cache)
-
-
 def schedule_dashboard_update():
     taskqueue.add(url='/api/test/dashboard/update')
 
@@ -79,7 +71,7 @@ def schedule_dashboard_update():
 class DashboardUpdateHandler(webapp2.RequestHandler):
     def post(self):
         self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
-        cache_dashboard(DashboardJSONGenerator().to_json())
+        PersistentCache.set_cache('dashboard', DashboardJSONGenerator().to_json())
         self.response.out.write('OK')
 
 
@@ -91,10 +83,6 @@ class CachedDashboardHandler(webapp2.RequestHandler):
             self.response.out.write(dashboard)
         else:
             schedule_dashboard_update()
-
-
-def cache_runs(test_id, branch_id, platform_id, cache):
-    PersistentCache.set_cache(Test.cache_key(test_id, branch_id, platform_id), cache)
 
 
 def schedule_runs_update(test_id, branch_id, platform_id):
@@ -117,9 +105,6 @@ def _get_test_branch_platform_ids(handler):
 
 
 class RunsUpdateHandler(webapp2.RequestHandler):
-    def get(self):
-        self.post()
-
     def post(self):
         self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
         test_id, branch_id, platform_id = _get_test_branch_platform_ids(self)
@@ -131,7 +116,7 @@ class RunsUpdateHandler(webapp2.RequestHandler):
         assert platform
         assert test
 
-        cache_runs(test_id, branch_id, platform_id, Runs(branch, platform, test.name).to_json())
+        PersistentCache.set_cache(Test.cache_key(test_id, branch_id, platform_id), Runs(branch, platform, test.name).to_json())
         self.response.out.write('OK')
 
 
@@ -148,9 +133,6 @@ class CachedRunsHandler(webapp2.RequestHandler):
 
 
 class RunsChartHandler(webapp2.RequestHandler):
-    def get(self):
-        self.post()
-
     def post(self):
         self.response.headers['Content-Type'] = 'text/plain; charset=utf-8'
         test_id, branch_id, platform_id = _get_test_branch_platform_ids(self)
@@ -166,8 +148,7 @@ class RunsChartHandler(webapp2.RequestHandler):
         params = Runs(branch, platform, test.name).chart_params(display_days)
         dashboard_chart_file = urllib.urlopen('http://chart.googleapis.com/chart', urllib.urlencode(params))
 
-        DashboardImage(key_name=DashboardImage.key_name(branch.id, platform.id, test.id, display_days),
-            image=dashboard_chart_file.read()).put()
+        DashboardImage.create(branch.id, platform.id, test.id, display_days, dashboard_chart_file.read())
 
 
 class DashboardImageHandler(webapp2.RequestHandler):
@@ -182,9 +163,7 @@ class DashboardImageHandler(webapp2.RequestHandler):
             self.response.out.write('Failed')
 
         self.response.headers['Content-Type'] = 'image/png'
-        image = DashboardImage.get_by_key_name(DashboardImage.key_name(branch_id, platform_id, test_id, display_days))
-        if image:
-            self.response.out.write(image.image)
+        self.response.out.write(DashboardImage.get_image(branch_id, platform_id, test_id, display_days))
 
 
 def schedule_report_process(log):
