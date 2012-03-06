@@ -18,16 +18,13 @@
     padding: 13px;
 }
 
-.hideTestsInDRT .tests {
-    display: none;
-}
-
 </style>
 </head>
 <body>
 <p>This tests selecting LTR/RTL text that spans multiple lines in RTL/LTR block (opposite directionality).
 To manually test, select text in each of editable regions below by dragging mouse from one edge to another.
 The entire line should be selected.</p>
+<div id="tests">
 <ol class="tests">
 <li><div contenteditable title="0 3, 4 6">abc<br>def</div></li>
 <li><div contenteditable title="0 3">ابص</div></li>
@@ -48,6 +45,7 @@ a</span></pre></li>
 
 a</span></pre></li>
 </ol>
+</div>
 <pre id="log"><script>
 
 function selectLineSafely(test, lineTop) {
@@ -95,7 +93,7 @@ if (window.layoutTestController) {
         }
     }
 
-    document.body.className = 'hideTestsInDRT';
+    document.getElementById('tests').style.display = 'none';
 } else {
     document.addEventListener('selectionchange', function () {
         var selection = window.getSelection();
