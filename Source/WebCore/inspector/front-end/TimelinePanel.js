@@ -100,6 +100,7 @@ WebInspector.TimelinePanel = function()
     this._hideShortRecordsTitleText = WebInspector.UIString("Hide the records that are shorter than %s", shortRecordThresholdTitle);
     this._createStatusbarButtons();
 
+    this._verticalOverview = false;
     this._boundariesAreValid = true;
     this._scrollTop = 0;
 
@@ -185,12 +186,8 @@ WebInspector.TimelinePanel.prototype = {
 
     get statusBarItems()
     {
-        var statusBarItems = [ this.toggleFilterButton.element, this.toggleTimelineButton.element, this.clearButton.element, this.garbageCollectButton.element, this._glueParentButton.element ];
+        var statusBarItems = [ this.toggleFilterButton.element, this.toggleTimelineButton.element, this.clearButton.element, this.garbageCollectButton.element, this._glueParentButton.element, this.statusBarFilters ];
 
-        if (WebInspector.experimentsSettings.timelineStartAtZero.isEnabled())
-            statusBarItems.push(this.toggleStartAtZeroButton.element);
-
-        statusBarItems.push(this.statusBarFilters);
         return statusBarItems;
     },
 
@@ -212,9 +209,6 @@ WebInspector.TimelinePanel.prototype = {
 
         this.garbageCollectButton = new WebInspector.StatusBarButton(WebInspector.UIString("Collect Garbage"), "garbage-collect-status-bar-item");
         this.garbageCollectButton.addEventListener("click", this._garbageCollectButtonClicked, this);
-
-        this.toggleStartAtZeroButton = new WebInspector.StatusBarButton(WebInspector.UIString("Display all top level events starting at zero"), "timeline-start-at-zero-status-bar-item");
-        this.toggleStartAtZeroButton.addEventListener("click", this._toggleStartAtZeroButtonClicked, this);
 
         this.recordsCounter = document.createElement("span");
         this.recordsCounter.className = "timeline-records-counter";
@@ -335,7 +329,7 @@ WebInspector.TimelinePanel.prototype = {
         var clientWidth = this._graphRowsElement.offsetWidth - this._expandOffset;
         var dividers = [];
         // Only show frames if we're zoomed close enough -- otherwise they'd be to dense to be useful and will overpopulate DOM.
-        var showFrames = this.calculator.boundarySpan < 1.0 && this._startAtZero;
+        var showFrames = this.calculator.boundarySpan < 1.0 && this._verticalOverview;
 
         for (var i = 0; i < this._timeStampRecords.length; ++i) {
             var record = this._timeStampRecords[i];
@@ -380,6 +374,17 @@ WebInspector.TimelinePanel.prototype = {
     _timelinesOverviewModeChanged: function(event)
     {
         var shouldShowMemory = event.data === WebInspector.TimelineOverviewPane.Mode.Memory;
+        var verticalOverview = event.data === WebInspector.TimelineOverviewPane.Mode.EventsVertical;
+        if (verticalOverview !== this._verticalOverview) {
+            this._verticalOverview = verticalOverview;
+            this._glueParentButton.disabled = verticalOverview;
+            if (verticalOverview)
+                this.element.addStyleClass("timeline-vertical-overview");
+            else
+                this.element.removeStyleClass("timeline-vertical-overview");
+            this._presentationModel.setGlueRecords(this._glueParentButton.toggled && !verticalOverview);
+            this._repopulateRecords();
+        }
         if (shouldShowMemory === this._memoryStatistics.visible())
             return;
         if (!shouldShowMemory) {
@@ -423,22 +428,8 @@ WebInspector.TimelinePanel.prototype = {
     _glueParentButtonClicked: function()
     {
         this._glueParentButton.toggled = !this._glueParentButton.toggled;
-        this._presentationModel.setGlueRecords(this._glueParentButton.toggled && !this.toggleStartAtZeroButton.toggled);
+        this._presentationModel.setGlueRecords(this._glueParentButton.toggled);
         this._repopulateRecords();
-    },
-
-    _toggleStartAtZeroButtonClicked: function()
-    {
-        var toggled = !this.toggleStartAtZeroButton.toggled
-        this._glueParentButton.disabled = toggled;
-        this.toggleStartAtZeroButton.toggled = toggled;
-        if (toggled)
-            this.element.addStyleClass("timeline-start-at-zero");
-        else
-            this.element.removeStyleClass("timeline-start-at-zero");
-        this._presentationModel.setGlueRecords(this._glueParentButton.toggled && !this.toggleStartAtZeroButton.toggled);
-        this._repopulateRecords();
-        this._overviewPane.setStartAtZero(toggled);
     },
 
     _repopulateRecords: function()
@@ -448,11 +439,6 @@ WebInspector.TimelinePanel.prototype = {
         for (var i = 0; i < records.length; ++i)
             this._innerAddRecordToTimeline(records[i], this._rootRecord());
         this._scheduleRefresh(false);
-    },
-
-    get _startAtZero()
-    {
-        return this.toggleStartAtZeroButton.toggled;
     },
 
     _onTimelineEventRecorded: function(event)
@@ -587,7 +573,7 @@ WebInspector.TimelinePanel.prototype = {
 
     revealRecordAt: function(time)
     {
-        if (this._startAtZero)
+        if (this._verticalOverview)
             return;
         var recordsInWindow = this._presentationModel.filteredRecords();
         var recordToReveal;

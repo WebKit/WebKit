@@ -522,7 +522,6 @@ select.status-bar-item:active {
     -webkit-mask-image: url(Images/statusbarButtonGlyphs.png);
 }
 
-
 button.dock-status-bar-item.status-bar-item .glyph {
     -webkit-mask-position: 0 -48px;
 }
@@ -540,7 +539,6 @@ button.settings-status-bar-item {
 .settings-status-bar-item .glyph {
     -webkit-mask-position: -160px -24px;
 }
-
 
 body.port-qt #dock-status-bar-item {
     display: none
@@ -1806,6 +1804,8 @@ button.edit-source-status-bar-item.toggled-on .glyph {
     height: 36px;
     padding: 0 5px 0 5px;
     white-space: nowrap;
+    overflow-x: hidden;
+    overflow-y: hidden;
     margin-top: 1px;
     line-height: 34px;
     border-top: 1px solid transparent;
