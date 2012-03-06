@@ -4908,20 +4908,12 @@ void WebPage::notifyPageResume()
 
 void WebPage::notifyPageBackground()
 {
-#if USE(ACCELERATED_COMPOSITING)
-    d->suspendRootLayerCommit();
-#endif
-
     FOR_EACH_PLUGINVIEW(d->m_pluginViews)
         (*it)->handleBackgroundEvent();
 }
 
 void WebPage::notifyPageForeground()
 {
-#if USE(ACCELERATED_COMPOSITING)
-    d->resumeRootLayerCommit();
-#endif
-
     FOR_EACH_PLUGINVIEW(d->m_pluginViews)
         (*it)->handleForegroundEvent();
 }
