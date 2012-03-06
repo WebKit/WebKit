@@ -38,6 +38,14 @@ SOURCES += \
     Modules/geolocation/GeolocationController.cpp \
     Modules/geolocation/NavigatorGeolocation.cpp \
     \
+    Modules/webdatabase/AbstractDatabase.cpp \
+    Modules/webdatabase/DOMWindowSQLDatabase.cpp \
+    Modules/webdatabase/Database.cpp \
+    Modules/webdatabase/DatabaseAuthorizer.cpp \
+    Modules/webdatabase/DatabaseContext.cpp \
+    Modules/webdatabase/DatabaseSync.cpp \
+    Modules/webdatabase/WorkerContextSQLDatabase.cpp \
+    \
     accessibility/AccessibilityImageMapLink.cpp \
     accessibility/AccessibilityMediaControls.cpp \
     accessibility/AccessibilityMenuList.cpp \
@@ -2944,16 +2952,10 @@ plugin_backend_xlib {
 
 contains(DEFINES, ENABLE_SQL_DATABASE=1) {
     SOURCES += \
-        Modules/webdatabase/AbstractDatabase.cpp \
         Modules/webdatabase/ChangeVersionWrapper.cpp \
-        Modules/webdatabase/Database.cpp \
-        Modules/webdatabase/DatabaseAuthorizer.cpp \
-        Modules/webdatabase/DatabaseContext.cpp \
-        Modules/webdatabase/DatabaseSync.cpp \
         Modules/webdatabase/DatabaseTask.cpp \
         Modules/webdatabase/DatabaseThread.cpp \
         Modules/webdatabase/DatabaseTracker.cpp \
-        Modules/webdatabase/DOMWindowSQLDatabase.cpp \
         Modules/webdatabase/OriginQuotaManager.cpp \
         Modules/webdatabase/OriginUsageRecord.cpp \
         Modules/webdatabase/SQLException.cpp \
@@ -2965,7 +2967,6 @@ contains(DEFINES, ENABLE_SQL_DATABASE=1) {
         Modules/webdatabase/SQLTransactionClient.cpp \
         Modules/webdatabase/SQLTransactionCoordinator.cpp \
         Modules/webdatabase/SQLTransactionSync.cpp \
-        Modules/webdatabase/WorkerContextSQLDatabase.cpp
 
     !v8 {
         SOURCES += \
