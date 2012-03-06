@@ -1,3 +1,16 @@
+2012-03-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Use correct define names for HAVE(FOO) style optional dependencies
+
+        Reviewed by Simon Hausmann.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/QtInitializeTestFonts.cpp:
+        (WebKit::initializeTestFonts):
+        * QtTestBrowser/QtTestBrowser.pro:
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * qmake/mkspecs/features/features.prf:
+
 2012-03-06  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Create EWS to build WebKit2

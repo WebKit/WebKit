@@ -50,7 +50,7 @@ QT += network
 macx:QT += xml
 haveQt(5): QT += printsupport widgets
 
-contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
+contains(DEFINES, WTF_HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
 
 contains(QT_CONFIG, opengl) {
     QT += opengl
