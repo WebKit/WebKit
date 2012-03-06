@@ -23,7 +23,7 @@ QT = core gui network testlib
 macx: QT += xml
 haveQt(5): QT += widgets printsupport
 
-contains(DEFINES, WTF_HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
+contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
 
 HEADERS += \
     $$PWD/../WorkQueue.h \
