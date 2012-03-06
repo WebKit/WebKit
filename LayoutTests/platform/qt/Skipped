@@ -587,6 +587,10 @@ http/tests/misc/xslt-bad-import.html
 # https://bugs.webkit.org/show_bug.cgi?id=72491
 http/tests/misc/onload-remove-iframe-crash-2.html
 
+#[Qt] Should raise SYNTAX_ERR when message contains unpaired surrogates fail
+#https://bugs.webkit.org/show_bug.cgi?id=80103
+http/tests/websocket/tests/hybi/unpaired-surrogates-in-close-reason.html
+http/tests/websocket/tests/hybi/unpaired-surrogates-in-message.html
 
 # =========================================================================== #
 #       Failing xmlhttprequest tests                                          #
@@ -1977,6 +1981,10 @@ fast/text/emphasis-overlap.html
 # [Qt] fast/text/emphasis-avoid-ruby.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=52155
 fast/text/emphasis-avoid-ruby.html
+
+# [Qt] fast/text/international/spaces-combined-in-vertical-text.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=80293
+fast/text/international/spaces-combined-in-vertical-text.html
 
 # viewport meta tag tests that differ from the Opera results
 fast/viewport/viewport-65.html
