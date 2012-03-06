@@ -1,3 +1,11 @@
+2012-03-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Unreviewed; fix the build after r109877.
+
+        * CMakeLists.txt: Add WebCore/Modules/webdatabase to the list of
+        include directories so that #include'ing DatabaseDetails.h and
+        friends still works.
+
 2012-03-04  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] upstream CredentialManager and CredentialTransformData implementation
