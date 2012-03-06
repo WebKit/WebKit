@@ -228,7 +228,9 @@ bool TiledBackingStore::visibleAreaIsCovered() const
 
 void TiledBackingStore::createTiles()
 {
-    ASSERT(!m_contentsFrozen);
+    // Guard here as as these can change before the timer fires.
+    if (isBackingStoreUpdatesSuspended())
+        return;
 
     // Update our backing store geometry.
     const IntRect previousRect = m_rect;
@@ -371,6 +373,16 @@ void TiledBackingStore::computeCoverAndKeepRect(const IntRect& visibleRect, IntR
     adjustForContentsRect(keepRect);
 }
 
+bool TiledBackingStore::isBackingStoreUpdatesSuspended() const
+{
+    return m_contentsFrozen;
+}
+
+bool TiledBackingStore::isTileBufferUpdatesSuspended() const
+{
+    return m_contentsFrozen || !m_client->tiledBackingStoreUpdatesAllowed();
+}
+
 bool TiledBackingStore::resizeEdgeTiles()
 {
     bool wasResized = false;
@@ -470,7 +482,7 @@ Tile::Coordinate TiledBackingStore::tileCoordinateForPoint(const IntPoint& point
 
 void TiledBackingStore::startTileBufferUpdateTimer()
 {
-    if (m_tileBufferUpdateTimer.isActive() || !m_client->tiledBackingStoreUpdatesAllowed() || m_contentsFrozen)
+    if (m_tileBufferUpdateTimer.isActive() || isTileBufferUpdatesSuspended())
         return;
     m_tileBufferUpdateTimer.startOneShot(0);
 }
@@ -482,7 +494,7 @@ void TiledBackingStore::tileBufferUpdateTimerFired(TileTimer*)
 
 void TiledBackingStore::startTileCreationTimer()
 {
-    if (m_tileCreationTimer.isActive() || m_contentsFrozen)
+    if (m_tileCreationTimer.isActive() || isBackingStoreUpdatesSuspended())
         return;
     m_tileCreationTimer.startOneShot(0);
 }

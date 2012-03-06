@@ -90,6 +90,9 @@ private:
     void createTiles();
     void computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const;
 
+    bool isBackingStoreUpdatesSuspended() const;
+    bool isTileBufferUpdatesSuspended() const;
+
     void commitScaleChange();
 
     bool resizeEdgeTiles();
