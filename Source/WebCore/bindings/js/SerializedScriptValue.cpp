@@ -1232,10 +1232,7 @@ private:
 
     void putProperty(JSArray* array, unsigned index, JSValue value)
     {
-        if (array->canSetIndex(index))
-            array->setIndex(m_exec->globalData(), index, value);
-        else
-            array->methodTable()->putByIndex(array, m_exec, index, value);
+        array->putDirectIndex(m_exec, index, value, false);
     }
 
     void putProperty(JSObject* object, const Identifier& property, JSValue value)

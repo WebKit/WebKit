@@ -1,3 +1,87 @@
+2012-03-05  Gavin Barraclough  <barraclough@apple.com>
+
+        putByIndex should throw in strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=80335
+
+        Reviewed by Filip Pizlo.
+
+        Make the MethodTable PutByIndex trap take a boolean 'shouldThrow' parameter.
+
+        This is a largely mechanical change, simply adding an extra parameter to a number
+        of functions. Some call sites need perform additional exception checks, and
+        operationPutByValBeyondArrayBounds needs to know whether it is strict or not.
+
+        This patch doesn't fix a missing throw from some cases of shift/unshift (this is
+        an existing bug), I'll follow up with a third patch to handle that.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectSetPropertyAtIndex):
+        * JSCTypedArrayStubs.h:
+        (JSC):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::putByIndex):
+        * runtime/Arguments.h:
+        (Arguments):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSort):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        * runtime/ClassInfo.h:
+        (MethodTable):
+        * runtime/JSArray.cpp:
+        (JSC::SparseArrayValueMap::put):
+        (JSC::JSArray::put):
+        (JSC::JSArray::putByIndex):
+        (JSC::JSArray::putByIndexBeyondVectorLength):
+        (JSC::JSArray::push):
+        (JSC::JSArray::shiftCount):
+        (JSC::JSArray::unshiftCount):
+        * runtime/JSArray.h:
+        (SparseArrayValueMap):
+        (JSArray):
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::putByIndex):
+        * runtime/JSByteArray.h:
+        (JSByteArray):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::putByIndex):
+        * runtime/JSCell.h:
+        (JSCell):
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::putByIndex):
+        * runtime/JSNotAnObject.h:
+        (JSNotAnObject):
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndex):
+        * runtime/JSObject.h:
+        (JSC::JSValue::putByIndex):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpMatchesArray::fillArrayInstance):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::putByIndex):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncSplit):
+
 2012-03-05  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         PredictNone is incorrectly treated as isDoublePrediction

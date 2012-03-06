@@ -185,9 +185,9 @@ void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName
     return;
 }
 
-void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)
+void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
 {
-    PutPropertySlot slot;
+    PutPropertySlot slot(shouldThrow);
     JSObject* thisObject = jsCast<JSObject*>(cell);
     thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
 }

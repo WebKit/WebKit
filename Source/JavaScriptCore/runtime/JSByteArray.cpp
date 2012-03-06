@@ -102,7 +102,7 @@ void JSByteArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyN
     JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-void JSByteArray::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)
+void JSByteArray::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool)
 {
     jsCast<JSByteArray*>(cell)->setIndex(exec, propertyName, value);
 }

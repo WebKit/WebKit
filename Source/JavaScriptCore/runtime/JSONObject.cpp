@@ -704,12 +704,8 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 JSValue filteredValue = callReviver(array, jsString(m_exec, UString::number(indexStack.last())), outValue);
                 if (filteredValue.isUndefined())
                     array->methodTable()->deletePropertyByIndex(array, m_exec, indexStack.last());
-                else {
-                    if (isJSArray(array) && array->canSetIndex(indexStack.last()))
-                        array->setIndex(m_exec->globalData(), indexStack.last(), filteredValue);
-                    else
-                        array->methodTable()->putByIndex(array, m_exec, indexStack.last(), filteredValue);
-                }
+                else
+                    array->putDirectIndex(m_exec, indexStack.last(), filteredValue, false);
                 if (m_exec->hadException())
                     return jsNull();
                 indexStack.last()++;

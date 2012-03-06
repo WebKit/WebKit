@@ -153,9 +153,9 @@ void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
     for (unsigned i = 0; i <= lastNumSubpatterns; ++i) {
         int start = m_regExpResult.ovector[2 * i];
         if (start >= 0)
-            JSArray::putByIndex(this, exec, i, jsSubstring(exec, m_regExpResult.input, start, m_regExpResult.ovector[2 * i + 1] - start));
+            putDirectIndex(exec, i, jsSubstring(exec, m_regExpResult.input, start, m_regExpResult.ovector[2 * i + 1] - start), false);
         else
-            JSArray::putByIndex(this, exec, i, jsUndefined());
+            putDirectIndex(exec, i, jsUndefined(), false);
     }
 
     PutPropertySlot slot;

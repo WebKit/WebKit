@@ -172,7 +172,7 @@ shouldBeTrue("checkNumericGetStrict(1, Number)");
 shouldBeTrue("checkNumericGetStrict('hello', String)");
 shouldBeTrue("checkNumericGetStrict(true, Boolean)");
 shouldBeTrue("checkNumericSetStrict(1, Number)");
-//shouldBeTrue("checkNumericSetStrict('hello', String)"); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=80335
+shouldBeTrue("checkNumericSetStrict('hello', String)");
 shouldBeTrue("checkNumericSetStrict(true, Boolean)");
 
 function checkNumericRead(x, constructor)
@@ -209,7 +209,7 @@ shouldBeTrue("checkNumericReadStrict(1, Number)");
 shouldBeTrue("checkNumericReadStrict('hello', String)");
 shouldBeTrue("checkNumericReadStrict(true, Boolean)");
 shouldThrow("checkNumericWriteStrict(1, Number)");
-//shouldThrow("checkNumericWriteStrict('hello', String)"); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=80335
+shouldThrow("checkNumericWriteStrict('hello', String)");
 shouldThrow("checkNumericWriteStrict(true, Boolean)");
 
 shouldBeTrue("didNotCrash");

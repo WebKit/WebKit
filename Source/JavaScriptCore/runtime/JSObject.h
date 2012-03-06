@@ -109,7 +109,7 @@ namespace JSC {
         bool allowsAccessFrom(ExecState*);
 
         JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
-        JS_EXPORT_PRIVATE static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
+        JS_EXPORT_PRIVATE static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
 
         // putDirect is effectively an unchecked vesion of 'defineOwnProperty':
         //  - the prototype chain is not consulted
@@ -847,7 +847,7 @@ inline void JSValue::putByIndex(ExecState* exec, unsigned propertyName, JSValue 
         putToPrimitive(exec, Identifier::from(exec, propertyName), value, slot);
         return;
     }
-    asCell()->methodTable()->putByIndex(asCell(), exec, propertyName, value);
+    asCell()->methodTable()->putByIndex(asCell(), exec, propertyName, value, shouldThrow);
 }
 
 // --- JSValue inlines ----------------------------

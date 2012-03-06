@@ -207,7 +207,7 @@ inline std::pair<SparseArrayValueMap::iterator, bool> SparseArrayValueMap::add(J
     return result;
 }
 
-inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i, JSValue value)
+inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i, JSValue value, bool shouldThrow)
 {
     std::pair<SparseArrayValueMap::iterator, bool> result = add(array, i);
     SparseArrayEntry& entry = result.first->second;
@@ -217,14 +217,15 @@ inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i
     // extensible, this is not the right thing to have done - so remove again.
     if (result.second && !array->isExtensible()) {
         remove(result.first);
-        // FIXME: should throw in strict mode.
+        if (shouldThrow)
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return;
     }
 
     if (!(entry.attributes & Accessor)) {
         if (entry.attributes & ReadOnly) {
-            // FIXME: should throw if being called from strict mode.
-            // throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            if (shouldThrow)
+                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return;
         }
 
@@ -237,8 +238,8 @@ inline void SparseArrayValueMap::put(ExecState* exec, JSArray* array, unsigned i
     JSObject* setter = asGetterSetter(accessor)->setter();
     
     if (!setter) {
-        // FIXME: should throw if being called from strict mode.
-        // throwTypeError(exec, "setting a property that has only a getter");
+        if (shouldThrow)
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return;
     }
 
@@ -725,7 +726,7 @@ void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName,
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex) {
-        putByIndex(thisObject, exec, i, value);
+        putByIndex(thisObject, exec, i, value, slot.isStrictMode());
         return;
     }
 
@@ -742,7 +743,7 @@ void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName,
     JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-void JSArray::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
+void JSArray::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value, bool shouldThrow)
 {
     JSArray* thisObject = jsCast<JSArray*>(cell);
     thisObject->checkConsistency();
@@ -769,17 +770,17 @@ void JSArray::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue valu
 
     // Handle 2^32-1 - this is not an array index (see ES5.1 15.4), and is treated as a regular property.
     if (UNLIKELY(i > MAX_ARRAY_INDEX)) {
-        PutPropertySlot slot;
+        PutPropertySlot slot(shouldThrow);
         thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, i), value, slot);
         return;
     }
 
     // For all other cases, call putByIndexBeyondVectorLength.
-    thisObject->putByIndexBeyondVectorLength(exec, i, value);
+    thisObject->putByIndexBeyondVectorLength(exec, i, value, shouldThrow);
     thisObject->checkConsistency();
 }
 
-void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue value)
+void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue value, bool shouldThrow)
 {
     JSGlobalData& globalData = exec->globalData();
 
@@ -810,7 +811,7 @@ void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue 
         // We don't want to, or can't use a vector to hold this property - allocate a sparse map & add the value.
         allocateSparseMap(exec->globalData());
         map = m_sparseValueMap;
-        map->put(exec, this, i, value);
+        map->put(exec, this, i, value, shouldThrow);
         return;
     }
 
@@ -819,7 +820,8 @@ void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue 
     if (i >= length) {
         // Prohibit growing the array if length is not writable.
         if (map->lengthIsReadOnly() || !isExtensible()) {
-            // FIXME: should throw in strict mode.
+            if (shouldThrow)
+                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return;
         }
         length = i + 1;
@@ -830,7 +832,7 @@ void JSArray::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue 
     // We will continue  to use a sparse map if SparseMode is set, a vector would be too sparse, or if allocation fails.
     unsigned numValuesInArray = storage->m_numValuesInVector + map->size();
     if (map->sparseMode() || !isDenseEnoughForVector(length, numValuesInArray) || !increaseVectorLength(exec->globalData(), length)) {
-        map->put(exec, this, i, value);
+        map->put(exec, this, i, value, shouldThrow);
         return;
     }
 
@@ -1295,14 +1297,15 @@ void JSArray::push(ExecState* exec, JSValue value)
 
     // Pushing to an array of length 2^32-1 stores the property, but throws a range error.
     if (UNLIKELY(storage->m_length == 0xFFFFFFFFu)) {
-        methodTable()->putByIndex(this, exec, storage->m_length, value);
+        methodTable()->putByIndex(this, exec, storage->m_length, value, true);
         // Per ES5.1 15.4.4.7 step 6 & 15.4.5.1 step 3.d.
-        throwError(exec, createRangeError(exec, "Invalid array length"));
+        if (!exec->hadException())
+            throwError(exec, createRangeError(exec, "Invalid array length"));
         return;
     }
 
     // Handled the same as putIndex.
-    putByIndexBeyondVectorLength(exec, storage->m_length, value);
+    putByIndexBeyondVectorLength(exec, storage->m_length, value, true);
     checkConsistency();
 }
 
@@ -1327,7 +1330,7 @@ void JSArray::shiftCount(ExecState* exec, unsigned count)
                 PropertySlot slot(this);
                 JSValue p = prototype();
                 if ((!p.isNull()) && (asObject(p)->getPropertySlot(exec, i, slot)))
-                    methodTable()->putByIndex(this, exec, i, slot.getValue(exec, i));
+                    methodTable()->putByIndex(this, exec, i, slot.getValue(exec, i), false); // FIXME https://bugs.webkit.org/show_bug.cgi?id=80335
             }
         }
 
@@ -1372,7 +1375,7 @@ void JSArray::unshiftCount(ExecState* exec, unsigned count)
                 PropertySlot slot(this);
                 JSValue p = prototype();
                 if ((!p.isNull()) && (asObject(p)->getPropertySlot(exec, i, slot)))
-                    methodTable()->putByIndex(this, exec, i, slot.getValue(exec, i));
+                    methodTable()->putByIndex(this, exec, i, slot.getValue(exec, i), false); // FIXME https://bugs.webkit.org/show_bug.cgi?id=80335
             }
         }
     }

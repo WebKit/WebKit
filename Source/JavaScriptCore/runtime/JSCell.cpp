@@ -105,10 +105,15 @@ void JSCell::put(JSCell* cell, ExecState* exec, const Identifier& identifier, JS
     thisObject->methodTable()->put(thisObject, exec, identifier, value, slot);
 }
 
-void JSCell::putByIndex(JSCell* cell, ExecState* exec, unsigned identifier, JSValue value)
+void JSCell::putByIndex(JSCell* cell, ExecState* exec, unsigned identifier, JSValue value, bool shouldThrow)
 {
+    if (cell->isString()) {
+        PutPropertySlot slot(shouldThrow);
+        JSValue(cell).putToPrimitive(exec, Identifier::from(exec, identifier), value, slot);
+        return;
+    }
     JSObject* thisObject = cell->toObject(exec, exec->lexicalGlobalObject());
-    thisObject->methodTable()->putByIndex(thisObject, exec, identifier, value);
+    thisObject->methodTable()->putByIndex(thisObject, exec, identifier, value, shouldThrow);
 }
 
 bool JSCell::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& identifier)

@@ -37,6 +37,7 @@ PASS checkNumericGetStrict(1, Number) is true
 PASS checkNumericGetStrict('hello', String) is true
 PASS checkNumericGetStrict(true, Boolean) is true
 PASS checkNumericSetStrict(1, Number) is true
+PASS checkNumericSetStrict('hello', String) is true
 PASS checkNumericSetStrict(true, Boolean) is true
 PASS checkNumericRead(1, Number) is true
 PASS checkNumericRead('hello', String) is true
@@ -48,6 +49,7 @@ PASS checkNumericReadStrict(1, Number) is true
 PASS checkNumericReadStrict('hello', String) is true
 PASS checkNumericReadStrict(true, Boolean) is true
 PASS checkNumericWriteStrict(1, Number) threw exception TypeError: Attempted to assign to readonly property..
+PASS checkNumericWriteStrict('hello', String) threw exception TypeError: Attempted to assign to readonly property..
 PASS checkNumericWriteStrict(true, Boolean) threw exception TypeError: Attempted to assign to readonly property..
 PASS didNotCrash is true
 PASS successfullyParsed is true

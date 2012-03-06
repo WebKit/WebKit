@@ -2379,7 +2379,7 @@ void SpeculativeJIT::compile(Node& node)
 
         // Code to handle put beyond array bounds.
         silentSpillAllRegisters(scratchReg);
-        callOperation(operationPutByValBeyondArrayBounds, baseReg, propertyReg, valueTagReg, valuePayloadReg);
+        callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict, baseReg, propertyReg, valueTagReg, valuePayloadReg);
         silentFillAllRegisters(scratchReg);
         JITCompiler::Jump wasBeyondArrayBounds = m_jit.jump();
 

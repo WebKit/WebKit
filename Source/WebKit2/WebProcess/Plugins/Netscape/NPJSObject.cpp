@@ -190,7 +190,7 @@ bool NPJSObject::setProperty(NPIdentifier propertyName, const NPVariant* value)
         PutPropertySlot slot;
         m_jsObject->methodTable()->put(m_jsObject.get(), exec, identifierFromIdentifierRep(exec, identifierRep), jsValue, slot);
     } else
-        m_jsObject->methodTable()->putByIndex(m_jsObject.get(), exec, identifierRep->number(), jsValue);
+        m_jsObject->methodTable()->putByIndex(m_jsObject.get(), exec, identifierRep->number(), jsValue, false);
     exec->clearException();
     
     return true;

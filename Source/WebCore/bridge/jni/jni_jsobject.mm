@@ -393,7 +393,7 @@ void JavaJSObject::setSlot(jint index, jobject value) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock(SilenceAssertionsOnly);
-    _imp->methodTable()->putByIndex(_imp, exec, (unsigned)index, convertJObjectToValue(exec, value));
+    _imp->methodTable()->putByIndex(_imp, exec, (unsigned)index, convertJObjectToValue(exec, value), false);
 }
 
 

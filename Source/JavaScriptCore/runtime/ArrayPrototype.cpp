@@ -426,12 +426,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
     for (unsigned n = 0; n < exec->argumentCount(); n++) {
         // Check for integer overflow; where safe we can do a fast put by index.
         if (length + n >= length)
-            thisObj->methodTable()->putByIndex(thisObj, exec, length + n, exec->argument(n));
+            thisObj->methodTable()->putByIndex(thisObj, exec, length + n, exec->argument(n), true);
         else {
             PutPropertySlot slot;
             Identifier propertyName(exec, JSValue(static_cast<int64_t>(length) + static_cast<int64_t>(n)).toString(exec)->value(exec));
             thisObj->methodTable()->put(thisObj, exec, propertyName, exec->argument(n), slot);
         }
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
     }
     JSValue newLength(static_cast<int64_t>(length) + static_cast<int64_t>(exec->argumentCount()));
     putProperty(exec, thisObj, exec->propertyNames().length, newLength);
@@ -456,14 +458,18 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
             return JSValue::encode(jsUndefined());
 
         if (obj2)
-            thisObj->methodTable()->putByIndex(thisObj, exec, k, obj2);
+            thisObj->methodTable()->putByIndex(thisObj, exec, k, obj2, true);
         else
             thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
 
         if (obj)
-            thisObj->methodTable()->putByIndex(thisObj, exec, lk1, obj);
+            thisObj->methodTable()->putByIndex(thisObj, exec, lk1, obj, true);
         else
             thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, lk1);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
     }
     return JSValue::encode(thisObj);
 }
@@ -489,9 +495,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec)
                 if (exec->hadException())
                     return JSValue::encode(jsUndefined());
                 if (obj)
-                    thisObj->methodTable()->putByIndex(thisObj, exec, k - 1, obj);
+                    thisObj->methodTable()->putByIndex(thisObj, exec, k - 1, obj, true);
                 else
                     thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k - 1);
+                if (exec->hadException())
+                    return JSValue::encode(jsUndefined());
             }
             thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, length - 1);
         }
@@ -580,8 +588,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
         }
         // Swap themin and i
         if (themin > i) {
-            thisObj->methodTable()->putByIndex(thisObj, exec, i, minObj);
-            thisObj->methodTable()->putByIndex(thisObj, exec, themin, iObj);
+            thisObj->methodTable()->putByIndex(thisObj, exec, i, minObj, true);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+            thisObj->methodTable()->putByIndex(thisObj, exec, themin, iObj, true);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
         }
     }
     return JSValue::encode(thisObj);
@@ -637,9 +649,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
                     if (exec->hadException())
                         return JSValue::encode(jsUndefined());
                     if (v)
-                        thisObj->methodTable()->putByIndex(thisObj, exec, k + additionalArgs, v);
+                        thisObj->methodTable()->putByIndex(thisObj, exec, k + additionalArgs, v, true);
                     else
                         thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k + additionalArgs);
+                    if (exec->hadException())
+                        return JSValue::encode(jsUndefined());
                 }
                 for (unsigned k = length; k > length - deleteCount + additionalArgs; --k)
                     thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k - 1);
@@ -653,15 +667,20 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
                     if (exec->hadException())
                         return JSValue::encode(jsUndefined());
                     if (obj)
-                        thisObj->methodTable()->putByIndex(thisObj, exec, k + additionalArgs - 1, obj);
+                        thisObj->methodTable()->putByIndex(thisObj, exec, k + additionalArgs - 1, obj, true);
                     else
                         thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k + additionalArgs - 1);
+                    if (exec->hadException())
+                        return JSValue::encode(jsUndefined());
                 }
             }
         }
     }
-    for (unsigned k = 0; k < additionalArgs; ++k)
-        thisObj->methodTable()->putByIndex(thisObj, exec, k + begin, exec->argument(k + 2));
+    for (unsigned k = 0; k < additionalArgs; ++k) {
+        thisObj->methodTable()->putByIndex(thisObj, exec, k + begin, exec->argument(k + 2), true);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+    }
 
     putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(length - deleteCount + additionalArgs));
     return JSValue::encode(result);
@@ -686,14 +705,19 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
                 if (exec->hadException())
                     return JSValue::encode(jsUndefined());
                 if (v)
-                    thisObj->methodTable()->putByIndex(thisObj, exec, k + nrArgs - 1, v);
+                    thisObj->methodTable()->putByIndex(thisObj, exec, k + nrArgs - 1, v, true);
                 else
                     thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k + nrArgs - 1);
+                if (exec->hadException())
+                    return JSValue::encode(jsUndefined());
             }
         }
     }
-    for (unsigned k = 0; k < nrArgs; ++k)
-        thisObj->methodTable()->putByIndex(thisObj, exec, k, exec->argument(k));
+    for (unsigned k = 0; k < nrArgs; ++k) {
+        thisObj->methodTable()->putByIndex(thisObj, exec, k, exec->argument(k), true);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+    }
     JSValue result = jsNumber(length + nrArgs);
     putProperty(exec, thisObj, exec->propertyNames().length, result);
     return JSValue::encode(result);

@@ -16,6 +16,7 @@ PASS "use strict"; var o = {}; Object.preventExtensions(o); o.__proto__ = { newP
 PASS Object.preventExtensions(Math); Math.sqrt(4) is 2
 PASS var arr = Object.preventExtensions([]); arr[0] = 42; arr[0] is undefined.
 PASS var arr = Object.preventExtensions([]); arr[0] = 42; arr.length is 0
+PASS "use strict"; var arr = Object.preventExtensions([]); arr[0] = 42; arr[0] threw exception TypeError: Attempted to assign to readonly property..
 PASS obj.foo is 1
 PASS array[0] is 0
 PASS Object.getOwnPropertyDescriptor(array, "length").writable is false

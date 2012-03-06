@@ -1044,7 +1044,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
             if (jsArray->canSetIndex(i))
                 jsArray->setIndex(globalData, i, value);
             else
-                JSArray::putByIndex(jsArray, exec, i, value);
+                JSArray::putByIndex(jsArray, exec, i, value, exec->codeBlock()->isStrictMode());
             LLINT_END();
         }
         if (isJSByteArray(baseValue)

@@ -206,9 +206,9 @@ protected:
         addConstructableFunction(globalData, "Float64Array", constructJSFloat64Array, 1);
 #endif
 
-        JSObject* array = constructEmptyArray(globalExec());
+        JSArray* array = constructEmptyArray(globalExec());
         for (size_t i = 0; i < arguments.size(); ++i)
-            array->methodTable()->putByIndex(array, globalExec(), i, jsString(globalExec(), arguments[i]));
+            array->putDirectIndex(globalExec(), i, jsString(globalExec(), arguments[i]), false);
         putDirect(globalData, Identifier(globalExec(), "arguments"), array);
     }
 

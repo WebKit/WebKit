@@ -171,3 +171,15 @@ delete Object.prototype.readOnly;
 shouldBeFalse("Object.getOwnPropertyDescriptor(Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return false; }, configurable: true}), 'foo', {value:false}), 'foo').writable");
 shouldBeFalse("Object.getOwnPropertyDescriptor(Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return false; }, configurable: true}), 'foo', {value:false, writable: false}), 'foo').writable");
 shouldBeTrue("Object.getOwnPropertyDescriptor(Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return false; }, configurable: true}), 'foo', {value:false, writable: true}), 'foo').writable");
+
+// If array length is read-only, [[Put]] should fail.
+shouldBeFalse("var a = Object.defineProperty([], 'length', {writable: false}); a[0] = 42; 0 in a;");
+shouldThrow("'use strict'; var a = Object.defineProperty([], 'length', {writable: false}); a[0] = 42; 0 in a;");
+
+// If array property is read-only, [[Put]] should fail.
+shouldBe("var a = Object.defineProperty([42], '0', {writable: false}); a[0] = false; a[0];", '42');
+shouldThrow("'use strict'; var a = Object.defineProperty([42], '0', {writable: false}); a[0] = false; a[0];");
+
+// If array property is an undefined setter, [[Put]] should fail.
+shouldBeUndefined("var a = Object.defineProperty([], '0', {set: undefined}); a[0] = 42; a[0];");
+shouldThrow("'use strict'; var a = Object.defineProperty([], '0', {set: undefined}); a[0] = 42; a[0];");

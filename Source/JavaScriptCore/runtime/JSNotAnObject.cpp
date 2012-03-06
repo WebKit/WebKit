@@ -70,7 +70,7 @@ void JSNotAnObject::put(JSCell*, ExecState* exec, const Identifier& , JSValue, P
     ASSERT_UNUSED(exec, exec->hadException());
 }
 
-void JSNotAnObject::putByIndex(JSCell*, ExecState* exec, unsigned, JSValue)
+void JSNotAnObject::putByIndex(JSCell*, ExecState* exec, unsigned, JSValue, bool)
 {
     ASSERT_UNUSED(exec, exec->hadException());
 }

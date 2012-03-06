@@ -157,7 +157,7 @@ void RuntimeArray::put(JSCell* cell, ExecState* exec, const Identifier& property
     JSObject::put(thisObject, exec, propertyName, value, slot);
 }
 
-void RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value)
+void RuntimeArray::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool)
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(cell);
     if (index >= thisObject->getLength()) {

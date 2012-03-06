@@ -82,12 +82,12 @@ namespace JSC {
             JSArray::put(thisObject, exec, propertyName, v, slot);
         }
         
-        static void putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue v)
+        static void putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue v, bool shouldThrow)
         {
             RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
             if (!thisObject->m_didFillArrayInstance)
                 thisObject->fillArrayInstance(exec);
-            JSArray::putByIndex(thisObject, exec, propertyName, v);
+            JSArray::putByIndex(thisObject, exec, propertyName, v, shouldThrow);
         }
 
         static bool deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)

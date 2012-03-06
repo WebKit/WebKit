@@ -119,7 +119,8 @@ void DFG_OPERATION operationPutByValStrict(ExecState*, EncodedJSValue encodedBas
 void DFG_OPERATION operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
 void DFG_OPERATION operationPutByValCellStrict(ExecState*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
 void DFG_OPERATION operationPutByValCellNonStrict(ExecState*, JSCell*, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
-void DFG_OPERATION operationPutByValBeyondArrayBounds(ExecState*, JSArray*, int32_t index, EncodedJSValue encodedValue);
+void DFG_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState*, JSArray*, int32_t index, EncodedJSValue encodedValue);
+void DFG_OPERATION operationPutByValBeyondArrayBoundsNonStrict(ExecState*, JSArray*, int32_t index, EncodedJSValue encodedValue);
 EncodedJSValue DFG_OPERATION operationArrayPush(ExecState*, EncodedJSValue encodedValue, JSArray*);
 EncodedJSValue DFG_OPERATION operationArrayPop(ExecState*, JSArray*);
 void DFG_OPERATION operationPutByIdStrict(ExecState*, EncodedJSValue encodedValue, JSCell* base, Identifier*);

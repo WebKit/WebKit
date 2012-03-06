@@ -196,7 +196,7 @@ void Arguments::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
     JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
+void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value, bool shouldThrow)
 {
     Arguments* thisObject = jsCast<Arguments*>(cell);
     if (i < static_cast<unsigned>(thisObject->d->numArguments) && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
@@ -204,7 +204,7 @@ void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue va
         return;
     }
 
-    PutPropertySlot slot;
+    PutPropertySlot slot(shouldThrow);
     JSObject::put(thisObject, exec, Identifier(exec, UString::number(i)), value, slot);
 }
 

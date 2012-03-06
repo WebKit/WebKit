@@ -151,7 +151,7 @@ void JS##name##Array::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSV
     m_impl->set(index, value.toNumber(exec));\
 }\
 \
-void JS##name##Array::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)\
+void JS##name##Array::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool)\
 {\
     JS##name##Array* thisObject = jsCast<JS##name##Array*>(cell);\
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\

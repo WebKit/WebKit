@@ -312,7 +312,7 @@ void JSObjectSetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned p
     JSObject* jsObject = toJS(object);
     JSValue jsValue = toJS(exec, value);
     
-    jsObject->methodTable()->putByIndex(jsObject, exec, propertyIndex, jsValue);
+    jsObject->methodTable()->putByIndex(jsObject, exec, propertyIndex, jsValue, false);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec, exec->exception());

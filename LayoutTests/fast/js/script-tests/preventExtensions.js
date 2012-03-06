@@ -78,6 +78,8 @@ shouldBe('Object.preventExtensions(Math); Math.sqrt(4)', '2');
 // Should not be able to add properties to a preventExtensions array.
 shouldBeUndefined('var arr = Object.preventExtensions([]); arr[0] = 42; arr[0]');
 shouldBe('var arr = Object.preventExtensions([]); arr[0] = 42; arr.length', '0');
+// In strict mode, this throws.
+shouldThrow('"use strict"; var arr = Object.preventExtensions([]); arr[0] = 42; arr[0]');
 
 // A read-only property on the prototype should prevent a [[Put]] .
 function Constructor() {}

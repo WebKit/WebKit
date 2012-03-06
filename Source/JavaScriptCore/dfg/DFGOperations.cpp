@@ -158,7 +158,7 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
             return;
         }
 
-        JSArray::putByIndex(array, exec, index, value);
+        JSArray::putByIndex(array, exec, index, value, strict);
         return;
     }
 
@@ -474,14 +474,24 @@ void DFG_OPERATION operationPutByValCellNonStrict(ExecState* exec, JSCell* cell,
     operationPutByValInternal<false>(exec, JSValue::encode(cell), encodedProperty, encodedValue);
 }
 
-void DFG_OPERATION operationPutByValBeyondArrayBounds(ExecState* exec, JSArray* array, int32_t index, EncodedJSValue encodedValue)
+void DFG_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState* exec, JSArray* array, int32_t index, EncodedJSValue encodedValue)
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
     // We should only get here if index is outside the existing vector.
     ASSERT(!array->canSetIndex(index));
-    JSArray::putByIndex(array, exec, index, JSValue::decode(encodedValue));
+    JSArray::putByIndex(array, exec, index, JSValue::decode(encodedValue), true);
+}
+
+void DFG_OPERATION operationPutByValBeyondArrayBoundsNonStrict(ExecState* exec, JSArray* array, int32_t index, EncodedJSValue encodedValue)
+{
+    JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
+    
+    // We should only get here if index is outside the existing vector.
+    ASSERT(!array->canSetIndex(index));
+    JSArray::putByIndex(array, exec, index, JSValue::decode(encodedValue), false);
 }
 
 EncodedJSValue DFG_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue encodedValue, JSArray* array)
