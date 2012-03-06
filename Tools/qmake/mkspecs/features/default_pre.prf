@@ -7,15 +7,6 @@
 
 load(functions)
 
-# Load results of config tests (only supported in Qt 5)
-haveQt(5): include($${ROOT_BUILD_DIR}/Tools/qmake/.qmake.cache, , true)
-
-unix:config_test_gccdepends {
-    # We have a compiler that supports the -MD option (and neither
-    # teambuilder nor icecream is messing up the .d file output).
-    CONFIG += GNUmake gcc_MD_depends
-}
-
 # FIXME: In this case we probably want to exit early so that we
 # don't load all of the custom build tweaks needlessly.
 pro_file = $$_PRO_FILE_ # Checking the variable directly does not work

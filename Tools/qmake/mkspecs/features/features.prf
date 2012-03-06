@@ -5,6 +5,9 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
+# Load results of config tests (only supported in Qt 5)
+haveQt(5): include($${ROOT_BUILD_DIR}/Tools/qmake/.qmake.cache, , true)
+
 CONFIG(minimal) {
     DEFINES += ENABLE_NETSCAPE_PLUGIN_API=0
 }

@@ -1,3 +1,19 @@
+2012-03-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r109733.
+        http://trac.webkit.org/changeset/109733
+        https://bugs.webkit.org/show_bug.cgi?id=80378
+
+        It broke Qt5 build system (Requested by Ossy on #webkit).
+
+        * Tools.pro:
+        * qmake/config.tests/gccdepends/empty.cpp: Removed.
+        * qmake/config.tests/gccdepends/gccdepends.pro: Removed.
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/features.prf:
+        * qmake/mkspecs/features/unix/default_pre.prf:
+        * qmake/sync.profile:
+
 2012-03-05  Eric Seidel  <eric@webkit.org>
 
         Update JavaScriptCore files to use fully-qualified WTF include path
