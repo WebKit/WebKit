@@ -8,6 +8,7 @@ Text
 Text
 Text
 --- COMPUTED STYLES ---
+<html> background: rgb(255, 255, 0)
 outer: rgb(0, 0, 0)
 sibling1: rgb(0, 0, 0)
 scope1: rgb(0, 128, 0)

@@ -20,6 +20,7 @@
 
             log('--- COMPUTED STYLES ---');
 
+            log('<html> background: ' + document.defaultView.getComputedStyle(document.documentElement, null).getPropertyValue('background-color'));
             test('outer');
             test('sibling1');
             test('scope1');
@@ -36,6 +37,7 @@
     </script>
     <style type="text/css">
         body { color: black; }
+        :scope { background-color: yellow; }
     </style>
 </head>
 <body onload="runTests();">
