@@ -26,9 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include "QtInitializeTestFonts.h"
 
-#if defined(HAVE_FONTCONFIG) && HAVE_FONTCONFIG
+#if HAVE(FONTCONFIG)
 #include <QByteArray>
 #include <QDir>
 #include <fontconfig/fontconfig.h>
@@ -38,7 +40,7 @@ namespace WebKit {
 
 void initializeTestFonts()
 {
-#if defined(HAVE_FONTCONFIG) && HAVE_FONTCONFIG
+#if HAVE(FONTCONFIG)
     static int numFonts = -1;
 
     FcInit();

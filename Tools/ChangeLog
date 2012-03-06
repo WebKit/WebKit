@@ -1,5 +1,19 @@
 2012-03-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Use correct define names for HAVE(FOO) style optional dependencies
+
+        Reviewed by Simon Hausmann.
+        Reviewed by Ossy.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/QtInitializeTestFonts.cpp:
+        (WebKit::initializeTestFonts):
+        * QtTestBrowser/QtTestBrowser.pro:
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * qmake/mkspecs/features/features.prf:
+
+2012-03-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Don't add recursive qmake_all target if there are no subdirs to recurse
 
         Reviewed by Ossy.
