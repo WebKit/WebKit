@@ -1,3 +1,22 @@
+2012-03-06  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Interaction Engine suspends content during pageload.
+        https://bugs.webkit.org/show_bug.cgi?id=80294
+
+        Only suspend content when viewport updates are deferred
+        for a non-instantanious interaction.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::ViewportUpdateDeferrer::ViewportUpdateDeferrer):
+        (WebKit::ViewportUpdateDeferrer::~ViewportUpdateDeferrer):
+        (WebKit::QtViewportInteractionEngine::QtViewportInteractionEngine):
+        (WebKit::QtViewportInteractionEngine::flickableMoveStarted):
+        (WebKit::QtViewportInteractionEngine::scaleAnimationStateChanged):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+
 2012-03-06  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Make QQuickWebView's url property work with a flickable webview

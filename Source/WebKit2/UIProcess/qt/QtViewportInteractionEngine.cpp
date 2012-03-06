@@ -61,13 +61,18 @@ static const int kScaleAnimationDurationMillis = 250;
 
 class ViewportUpdateDeferrer {
 public:
-    ViewportUpdateDeferrer(QtViewportInteractionEngine* engine)
+    enum SuspendContentFlag { DeferUpdate, DeferUpdateAndSuspendContent };
+    ViewportUpdateDeferrer(QtViewportInteractionEngine* engine, SuspendContentFlag suspendContentFlag = DeferUpdate)
         : engine(engine)
     {
-        if (engine->m_suspendCount++)
-            return;
+        engine->m_suspendCount++;
 
-        emit engine->contentSuspendRequested();
+        // There is no need to suspend content for immediate updates
+        // only during animations or longer gestures.
+        if (suspendContentFlag == DeferUpdateAndSuspendContent && !engine->m_hasSuspendedContent) {
+            engine->m_hasSuspendedContent = true;
+            emit engine->contentSuspendRequested();
+        }
     }
 
     ~ViewportUpdateDeferrer()
@@ -75,7 +80,10 @@ public:
         if (--(engine->m_suspendCount))
             return;
 
-        emit engine->contentResumeRequested();
+        if (engine->m_hasSuspendedContent) {
+            engine->m_hasSuspendedContent = false;
+            emit engine->contentResumeRequested();
+        }
 
         // Make sure that tiles all around the viewport will be requested.
         emit engine->contentWasMoved(QPointF());
@@ -117,6 +125,7 @@ QtViewportInteractionEngine::QtViewportInteractionEngine(QQuickWebView* viewport
     , m_content(content)
     , m_flickProvider(flickProvider)
     , m_suspendCount(0)
+    , m_hasSuspendedContent(false)
     , m_hadUserInteraction(false)
     , m_scaleAnimation(new ScaleAnimation(this))
     , m_pinchStartScale(-1)
@@ -191,7 +200,7 @@ bool QtViewportInteractionEngine::animateItemRectVisible(const QRectF& itemRect)
 void QtViewportInteractionEngine::flickableMoveStarted()
 {
     Q_ASSERT(m_flickProvider->isMoving());
-    m_scrollUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this));
+    m_scrollUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
 
     m_lastScrollPosition = m_flickProvider->contentPos();
     connect(m_flickProvider, SIGNAL(contentXChanged()), SLOT(flickableMovingPositionUpdate()));
@@ -223,7 +232,7 @@ void QtViewportInteractionEngine::scaleAnimationStateChanged(QAbstractAnimation:
     switch (newState) {
     case QAbstractAnimation::Running:
         if (!m_scaleUpdateDeferrer)
-            m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this));
+            m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
         break;
     case QAbstractAnimation::Stopped:
         m_scaleUpdateDeferrer.clear();

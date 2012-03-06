@@ -145,6 +145,7 @@ private:
     Constraints m_constraints;
 
     int m_suspendCount;
+    bool m_hasSuspendedContent;
     OwnPtr<ViewportUpdateDeferrer> m_scaleUpdateDeferrer;
     OwnPtr<ViewportUpdateDeferrer> m_scrollUpdateDeferrer;
 
