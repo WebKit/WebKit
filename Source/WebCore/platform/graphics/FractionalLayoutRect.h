@@ -65,6 +65,13 @@ public:
     FractionalLayoutUnit width() const { return m_size.width(); }
     FractionalLayoutUnit height() const { return m_size.height(); }
 
+    int pixelSnappedX() const { return x().round(); }
+    int pixelSnappedY() const { return y().round(); }
+    int pixelSnappedWidth() const { return snapSizeToPixel(width(), x()); }
+    int pixelSnappedHeight() const { return snapSizeToPixel(height(), y()); }
+    int pixelSnappedMaxX() const { return pixelSnappedX() + pixelSnappedWidth(); }
+    int pixelSnappedMaxY() const { return pixelSnappedY() + pixelSnappedHeight(); }
+
     void setX(FractionalLayoutUnit x) { m_location.setX(x); }
     void setY(FractionalLayoutUnit y) { m_location.setY(y); }
     void setWidth(FractionalLayoutUnit width) { m_size.setWidth(width); }

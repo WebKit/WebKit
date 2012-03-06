@@ -480,12 +480,12 @@ LayoutUnit RenderBox::clientHeight() const
 
 int RenderBox::pixelSnappedClientWidth() const
 {
-    return clientWidth();
+    return snapSizeToPixel(clientWidth(), clientLeft());
 }
 
 int RenderBox::pixelSnappedClientHeight() const
 {
-    return clientHeight();
+    return snapSizeToPixel(clientHeight(), clientTop());
 }
 
 int RenderBox::scrollWidth() const
@@ -532,7 +532,7 @@ void RenderBox::setScrollTop(int newTop)
 
 void RenderBox::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    rects.append(LayoutRect(accumulatedOffset, size()));
+    rects.append(pixelSnappedIntRect(accumulatedOffset, size()));
 }
 
 void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
@@ -581,10 +581,10 @@ LayoutRect RenderBox::outlineBoundsForRepaint(RenderBoxModelObject* repaintConta
     return box;
 }
 
-void RenderBox::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset)
+void RenderBox::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& additionalOffset)
 {
     if (!size().isEmpty())
-        rects.append(LayoutRect(additionalOffset, size()));
+        rects.append(pixelSnappedIntRect(additionalOffset, size()));
 }
 
 LayoutRect RenderBox::reflectionBox() const
@@ -1078,7 +1078,7 @@ void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, cons
 void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const LayoutRect& rect,
     BackgroundBleedAvoidance bleedAvoidance, CompositeOperator op, RenderObject* backgroundObject)
 {
-    paintFillLayerExtended(paintInfo, c, fillLayer, rect, bleedAvoidance, 0, IntSize(), op, backgroundObject);
+    paintFillLayerExtended(paintInfo, c, fillLayer, rect, bleedAvoidance, 0, LayoutSize(), op, backgroundObject);
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -1276,7 +1276,7 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
     LayoutUnit logicalTopPosition = logicalTop();
     LayoutUnit adjustedPageOffsetForContainingBlock = offsetFromLogicalTopOfFirstPage - logicalTop();
     if (region) {
-        LayoutUnit offsetFromLogicalTopOfRegion = region ? region->offsetFromLogicalTopOfFirstPage() - offsetFromLogicalTopOfFirstPage : 0;
+        LayoutUnit offsetFromLogicalTopOfRegion = region ? region->offsetFromLogicalTopOfFirstPage() - offsetFromLogicalTopOfFirstPage : zeroLayoutUnit;
         logicalTopPosition = max(logicalTopPosition, logicalTopPosition + offsetFromLogicalTopOfRegion);
         containingBlockRegion = cb->clampToStartAndEndRegions(region);
     }
@@ -1484,7 +1484,7 @@ void RenderBox::positionLineBox(InlineBox* box)
             // our object was inline originally, since otherwise it would have ended up underneath
             // the inlines.
             RootInlineBox* root = box->root();
-            root->block()->setStaticInlinePositionForChild(this, root->lineTopWithLeading(), lroundf(box->logicalLeft()));
+            root->block()->setStaticInlinePositionForChild(this, root->lineTopWithLeading(), roundedLayoutUnit(box->logicalLeft()));
             if (style()->hasStaticInlinePosition(box->isHorizontal()))
                 setChildNeedsLayout(true, false); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
         } else {
@@ -3895,7 +3895,7 @@ LayoutPoint RenderBox::flipForWritingModeForChild(const RenderBox* child, const 
     return LayoutPoint(point.x() + width() - child->width() - (2 * child->x()), point.y());
 }
 
-void RenderBox::flipForWritingMode(IntRect& rect) const
+void RenderBox::flipForWritingMode(LayoutRect& rect) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return;
@@ -3906,18 +3906,18 @@ void RenderBox::flipForWritingMode(IntRect& rect) const
         rect.setX(width() - rect.maxX());
 }
 
-int RenderBox::flipForWritingMode(int position) const
+LayoutUnit RenderBox::flipForWritingMode(LayoutUnit position) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return position;
     return logicalHeight() - position;
 }
 
-IntPoint RenderBox::flipForWritingMode(const IntPoint& position) const
+LayoutPoint RenderBox::flipForWritingMode(const LayoutPoint& position) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return position;
-    return isHorizontalWritingMode() ? IntPoint(position.x(), height() - position.y()) : IntPoint(width() - position.x(), position.y());
+    return isHorizontalWritingMode() ? LayoutPoint(position.x(), height() - position.y()) : LayoutPoint(width() - position.x(), position.y());
 }
 
 LayoutPoint RenderBox::flipForWritingModeIncludingColumns(const LayoutPoint& point) const
@@ -3927,11 +3927,11 @@ LayoutPoint RenderBox::flipForWritingModeIncludingColumns(const LayoutPoint& poi
     return toRenderBlock(this)->flipForWritingModeIncludingColumns(point);
 }
 
-IntSize RenderBox::flipForWritingMode(const IntSize& offset) const
+LayoutSize RenderBox::flipForWritingMode(const LayoutSize& offset) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return offset;
-    return isHorizontalWritingMode() ? IntSize(offset.width(), height() - offset.height()) : IntSize(width() - offset.width(), offset.height());
+    return isHorizontalWritingMode() ? LayoutSize(offset.width(), height() - offset.height()) : LayoutSize(width() - offset.width(), offset.height());
 }
 
 FloatPoint RenderBox::flipForWritingMode(const FloatPoint& position) const

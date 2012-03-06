@@ -103,6 +103,15 @@ public:
     int width() const { return m_size.width(); }
     int height() const { return m_size.height(); }
 
+    // FIXME: These methods are here only to ease the transition to sub-pixel layout. They should
+    // be removed when we close http://webkit.org/b/60318
+    int pixelSnappedX() const { return m_location.x(); }
+    int pixelSnappedY() const { return m_location.y(); }
+    int pixelSnappedMaxX() const { return x() + width(); }
+    int pixelSnappedMaxY() const { return y() + height(); }
+    int pixelSnappedWidth() const { return m_size.width(); }
+    int pixelSnappedHeight() const { return m_size.height(); }
+
     void setX(int x) { m_location.setX(x); }
     void setY(int y) { m_location.setY(y); }
     void setWidth(int width) { m_size.setWidth(width); }

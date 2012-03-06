@@ -127,8 +127,10 @@ public:
     LayoutRect frameRect() const { return m_frameRect; }
     void setFrameRect(const LayoutRect& rect) { m_frameRect = rect; }
 
+    // FIXME: We shouldn't be returning this as a LayoutRect, since it loses its position and won't properly pixel snap.
     LayoutRect borderBoxRect() const { return LayoutRect(LayoutPoint(), size()); }
-    virtual LayoutRect borderBoundingBox() const { return borderBoxRect(); } 
+    IntRect pixelSnappedBorderBoxRect() const { return IntRect(IntPoint(), IntSize(m_frameRect.pixelSnappedWidth(), m_frameRect.pixelSnappedHeight())); }
+    virtual IntRect borderBoundingBox() const { return pixelSnappedBorderBoxRect(); }
 
     // The content area of the box (excludes padding and border).
     LayoutRect contentBoxRect(PaddingOptions paddingOption = ExcludeIntrinsicPadding) const { return LayoutRect(borderLeft() + paddingLeft(paddingOption), borderTop() + paddingTop(paddingOption), contentWidth(paddingOption), contentHeight(paddingOption)); }
@@ -139,7 +141,7 @@ public:
 
     // Bounds of the outline box in absolute coords. Respects transforms
     virtual LayoutRect outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/, LayoutPoint* cachedOffsetToRepaintContainer) const;
-    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&);
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint&);
 
     // Use this with caution! No type checking is done!
     RenderBox* previousSiblingBox() const;
@@ -246,7 +248,7 @@ public:
     virtual LayoutUnit collapsedMarginBefore() const { return marginBefore(); }
     virtual LayoutUnit collapsedMarginAfter() const { return marginAfter(); }
 
-    virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const;
+    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const;
     
     LayoutRect reflectionBox() const;
@@ -321,7 +323,7 @@ public:
         return document()->inQuirksMode() && style()->logicalHeight().isAuto() && !isFloatingOrPositioned() && (isRoot() || isBody());
     }
 
-    virtual LayoutSize intrinsicSize() const { return LayoutSize(); }
+    virtual IntSize intrinsicSize() const { return IntSize(); }
     LayoutUnit intrinsicLogicalWidth() const { return style()->isHorizontalWritingMode() ? intrinsicSize().width() : intrinsicSize().height(); }
     LayoutUnit intrinsicLogicalHeight() const { return style()->isHorizontalWritingMode() ? intrinsicSize().height() : intrinsicSize().width(); }
 
@@ -424,11 +426,11 @@ public:
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
     LayoutPoint flipForWritingModeForChild(const RenderBox* child, const LayoutPoint&) const;
-    int flipForWritingMode(int position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
-    IntPoint flipForWritingMode(const IntPoint&) const;
+    LayoutUnit flipForWritingMode(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
+    LayoutPoint flipForWritingMode(const LayoutPoint&) const;
     LayoutPoint flipForWritingModeIncludingColumns(const LayoutPoint&) const;
-    IntSize flipForWritingMode(const IntSize&) const;
-    void flipForWritingMode(IntRect&) const;
+    LayoutSize flipForWritingMode(const LayoutSize&) const;
+    void flipForWritingMode(LayoutRect&) const;
     FloatPoint flipForWritingMode(const FloatPoint&) const;
     void flipForWritingMode(FloatRect&) const;
     // These represent your location relative to your container as a physical offset.

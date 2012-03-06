@@ -38,6 +38,7 @@
 
 #include "FloatRect.h"
 #include "IntRect.h"
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -63,9 +64,20 @@ inline IntRect pixelSnappedIntRect(LayoutUnit left, LayoutUnit top, LayoutUnit w
     return IntRect(left, top, width, height);
 }
 
+inline IntRect pixelSnappedIntRect(const LayoutPoint& location, const LayoutSize& size)
+{
+    return IntRect(location, size);
+}
+
 inline IntRect pixelSnappedIntRectFromEdges(LayoutUnit left, LayoutUnit top, LayoutUnit right, LayoutUnit bottom)
 {
     return IntRect(left, top, right - left, bottom - top);
+}
+
+inline int snapSizeToPixel(LayoutUnit size, LayoutUnit location) 
+{
+    UNUSED_PARAM(location);
+    return size;
 }
 
 inline IntSize roundedIntSize(const LayoutSize& s)
