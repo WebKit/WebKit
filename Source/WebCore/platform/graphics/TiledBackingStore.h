@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ Copyright (C) 2010-2012 Nokia Corporation and/or its subsidiary(-ies)
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -80,10 +80,10 @@ public:
 
 private:
     void startTileBufferUpdateTimer();
-    void startTileCreationTimer();
+    void startBackingStoreUpdateTimer();
 
     void tileBufferUpdateTimerFired(Timer<TiledBackingStore>*);
-    void tileCreationTimerFired(Timer<TiledBackingStore>*);
+    void backingStoreUpdateTimerFired(Timer<TiledBackingStore>*);
 
     void createTiles();
     void computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const;
@@ -115,7 +115,7 @@ private:
     TileMap m_tiles;
 
     Timer<TiledBackingStore> m_tileBufferUpdateTimer;
-    Timer<TiledBackingStore> m_tileCreationTimer;
+    Timer<TiledBackingStore> m_backingStoreUpdateTimer;
 
     IntSize m_tileSize;
     double m_tileCreationDelay;

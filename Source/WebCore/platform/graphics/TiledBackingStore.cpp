@@ -1,5 +1,5 @@
 /*
- Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ Copyright (C) 2010-2012 Nokia Corporation and/or its subsidiary(-ies)
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -39,7 +39,7 @@ TiledBackingStore::TiledBackingStore(TiledBackingStoreClient* client, PassOwnPtr
     : m_client(client)
     , m_backend(backend)
     , m_tileBufferUpdateTimer(this, &TiledBackingStore::tileBufferUpdateTimerFired)
-    , m_tileCreationTimer(this, &TiledBackingStore::tileCreationTimerFired)
+    , m_backingStoreUpdateTimer(this, &TiledBackingStore::backingStoreUpdateTimerFired)
     , m_tileSize(defaultTileDimension, defaultTileDimension)
     , m_tileCreationDelay(0.01)
     , m_coverAreaMultiplier(2.0f)
@@ -58,7 +58,7 @@ void TiledBackingStore::setTileSize(const IntSize& size)
 {
     m_tileSize = size;
     m_tiles.clear();
-    startTileCreationTimer();
+    startBackingStoreUpdateTimer();
 }
 
 void TiledBackingStore::setTileCreationDelay(double delay)
@@ -75,7 +75,7 @@ void TiledBackingStore::coverWithTilesIfNeeded(const FloatPoint& trajectoryVecto
     m_trajectoryVector = trajectoryVector;
     m_visibleRect = visibleRect;
 
-    startTileCreationTimer();
+    startBackingStoreUpdateTimer();
 }
 
 void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
@@ -296,7 +296,7 @@ void TiledBackingStore::createTiles()
 
     // Re-call createTiles on a timer to cover the visible area with the newest shortest distance.
     if (requiredTileCount)
-        m_tileCreationTimer.startOneShot(m_tileCreationDelay);
+        m_backingStoreUpdateTimer.startOneShot(m_tileCreationDelay);
 }
 
 void TiledBackingStore::adjustForContentsRect(IntRect& rect) const
@@ -492,14 +492,14 @@ void TiledBackingStore::tileBufferUpdateTimerFired(Timer<TiledBackingStore>*)
     updateTileBuffers();
 }
 
-void TiledBackingStore::startTileCreationTimer()
+void TiledBackingStore::startBackingStoreUpdateTimer()
 {
-    if (m_tileCreationTimer.isActive() || isBackingStoreUpdatesSuspended())
+    if (m_backingStoreUpdateTimer.isActive() || isBackingStoreUpdatesSuspended())
         return;
-    m_tileCreationTimer.startOneShot(0);
+    m_backingStoreUpdateTimer.startOneShot(0);
 }
 
-void TiledBackingStore::tileCreationTimerFired(Timer<TiledBackingStore>*)
+void TiledBackingStore::backingStoreUpdateTimerFired(Timer<TiledBackingStore>*)
 {
     createTiles();
 }
@@ -519,7 +519,7 @@ void TiledBackingStore::setContentsFrozen(bool freeze)
     if (m_pendingScale)
         commitScaleChange();
     else {
-        startTileCreationTimer();
+        startBackingStoreUpdateTimer();
         startTileBufferUpdateTimer();
     }
 }
