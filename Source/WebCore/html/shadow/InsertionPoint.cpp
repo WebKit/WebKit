@@ -48,31 +48,23 @@ InsertionPoint::~InsertionPoint()
 
 void InsertionPoint::attach()
 {
-    ShadowRoot* root = toShadowRoot(shadowTreeRootNode());
-
-    if (root) {
-        HTMLContentSelector* selector = root->tree()->ensureSelector();
-        selector->unselect(&m_selections);
-        selector->select(this, &m_selections);
+    if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
+        distributeHostChildren(root->tree());
+        attachDistributedNode();
     }
 
     HTMLElement::attach();
-
-    if (root) {
-        for (HTMLContentSelection* selection = m_selections.first(); selection; selection = selection->next())
-            selection->node()->attach();
-    }
 }
 
 void InsertionPoint::detach()
 {
     if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
-        if (HTMLContentSelector* selector = root->tree()->selector())
-            selector->unselect(&m_selections);
+        ShadowTree* tree = root->tree();
+        clearDistribution(tree);
 
         // When shadow element is detached, shadow tree should be recreated to re-calculate selector for
         // other insertion points.
-        root->tree()->setNeedsReattachHostChildrenAndShadow();
+        tree->setNeedsReattachHostChildrenAndShadow();
     }
 
     ASSERT(m_selections.isEmpty());
@@ -89,6 +81,25 @@ bool InsertionPoint::isShadowBoundary() const
 bool InsertionPoint::rendererIsNeeded(const NodeRenderingContext& context)
 {
     return !isShadowBoundary() && HTMLElement::rendererIsNeeded(context);
+}
+
+inline void InsertionPoint::distributeHostChildren(ShadowTree* tree)
+{
+    HTMLContentSelector* selector = tree->ensureSelector();
+    selector->unselect(&m_selections);
+    selector->select(this, &m_selections);
+}
+
+inline void InsertionPoint::clearDistribution(ShadowTree* tree)
+{
+    if (HTMLContentSelector* selector = tree->selector())
+        selector->unselect(&m_selections);
+}
+
+inline void InsertionPoint::attachDistributedNode()
+{
+    for (HTMLContentSelection* selection = m_selections.first(); selection; selection = selection->next())
+        selection->node()->attach();
 }
 
 } // namespace WebCore

@@ -54,6 +54,11 @@ protected:
     InsertionPoint(const QualifiedName&, Document*);
     virtual bool rendererIsNeeded(const NodeRenderingContext&) OVERRIDE;
 
+private:
+    void distributeHostChildren(ShadowTree*);
+    void clearDistribution(ShadowTree*);
+    void attachDistributedNode();
+
     HTMLContentSelectionList m_selections;
 };
 
