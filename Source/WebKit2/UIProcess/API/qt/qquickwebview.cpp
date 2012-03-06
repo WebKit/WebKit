@@ -574,6 +574,8 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
 
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
+
+    QQuickWebViewPrivate::onComponentComplete();
 }
 
 void QQuickWebViewFlickablePrivate::loadDidSucceed()

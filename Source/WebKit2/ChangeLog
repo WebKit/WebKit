@@ -1,3 +1,17 @@
+2012-03-06  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Make QQuickWebView's url property work with a flickable webview
+
+        Reviewed by Tor Arne Vestbø.
+
+        QQuickWebViewPrivate::onComponentComplete implements the deferred url loading
+        when the url property is set in the component instantiation. QQuickWebViewFlickablePrivate
+        is the private sub-class used for a flickable webview, which re-implemented onComponentComplete
+        but forgot to call the base implementation.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+
 2012-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix several documentation issues in WebKit2 GTK+ API
