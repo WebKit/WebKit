@@ -130,6 +130,7 @@ TestShell::TestShell(bool testShellMode)
     WebRuntimeFeatures::enableGamepad(true);
     WebRuntimeFeatures::enableShadowDOM(true);
     WebRuntimeFeatures::enableStyleScoped(true);
+    WebRuntimeFeatures::enableScriptedSpeech(true);
 
     m_webPermissions = adoptPtr(new WebPermissions(this));
     m_accessibilityController = adoptPtr(new AccessibilityController(this));

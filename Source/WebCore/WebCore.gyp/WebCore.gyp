@@ -56,6 +56,7 @@
       '../Modules/intents',
       '../Modules/indexeddb',
       '../Modules/mediastream',
+      '../Modules/speech',
       '../Modules/webdatabase',
       '../Modules/webdatabase/chromium',
       '../Modules/websockets',
