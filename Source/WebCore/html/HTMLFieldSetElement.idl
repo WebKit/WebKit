@@ -22,6 +22,9 @@ module html {
     interface HTMLFieldSetElement : HTMLElement {
         readonly attribute HTMLFormElement form;
         attribute [Reflect] DOMString name;
+
+        readonly attribute DOMString type;
+
         readonly attribute boolean         willValidate;
         readonly attribute ValidityState   validity;
         readonly attribute DOMString       validationMessage;
