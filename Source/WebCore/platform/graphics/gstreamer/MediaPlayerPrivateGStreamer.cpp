@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "GRefPtrGStreamer.h"
 #include "GStreamerGWorld.h"
 #include "GStreamerVersioning.h"
 #include "GraphicsContext.h"
@@ -260,11 +259,6 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (m_mediaLocations) {
         gst_structure_free(m_mediaLocations);
         m_mediaLocations = 0;
-    }
-
-    if (m_source) {
-        gst_object_unref(m_source);
-        m_source = 0;
     }
 
     if (m_videoSinkBin) {
@@ -958,9 +952,9 @@ unsigned MediaPlayerPrivateGStreamer::totalBytes() const
     GstFormat fmt = GST_FORMAT_BYTES;
     gint64 length = 0;
 #ifdef GST_API_VERSION_1
-    if (gst_element_query_duration(m_source, fmt, &length)) {
+    if (gst_element_query_duration(m_source.get(), fmt, &length)) {
 #else
-    if (gst_element_query_duration(m_source, &fmt, &length)) {
+    if (gst_element_query_duration(m_source.get(), &fmt, &length)) {
 #endif
         LOG_VERBOSE(Media, "totalBytes %" G_GINT64_FORMAT, length);
         return static_cast<unsigned>(length);
@@ -968,7 +962,7 @@ unsigned MediaPlayerPrivateGStreamer::totalBytes() const
 
     // Fall back to querying the source pads manually.
     // See also https://bugzilla.gnome.org/show_bug.cgi?id=638749
-    GstIterator* iter = gst_element_iterate_src_pads(m_source);
+    GstIterator* iter = gst_element_iterate_src_pads(m_source.get());
     bool done = false;
     while (!done) {
 #ifdef GST_API_VERSION_1
@@ -1036,7 +1030,7 @@ unsigned MediaPlayerPrivateGStreamer::audioDecodedByteCount() const
     GstQuery* query = gst_query_new_position(GST_FORMAT_BYTES);
     gint64 position = 0;
 
-    if (m_webkitAudioSink && gst_element_query(m_webkitAudioSink, query))
+    if (m_webkitAudioSink && gst_element_query(m_webkitAudioSink.get(), query))
         gst_query_parse_position(query, 0, &position);
 
     gst_query_unref(query);
@@ -1060,30 +1054,23 @@ void MediaPlayerPrivateGStreamer::updateAudioSink()
     if (!m_playBin)
         return;
 
-    GRefPtr<GstElement> element;
     GstElement* sinkPtr = 0;
 
     g_object_get(m_playBin, "audio-sink", &sinkPtr, NULL);
-    element = adoptGRef(sinkPtr);
+    m_webkitAudioSink = adoptGRef(sinkPtr);
 
-    gst_object_replace(reinterpret_cast<GstObject**>(&m_webkitAudioSink),
-                       reinterpret_cast<GstObject*>(element.get()));
 }
 
 
 void MediaPlayerPrivateGStreamer::sourceChanged()
 {
-    GRefPtr<GstElement> element;
     GstElement* srcPtr = 0;
 
     g_object_get(m_playBin, "source", &srcPtr, NULL);
-    element = adoptGRef(srcPtr);
+    m_source = adoptGRef(srcPtr);
 
-    gst_object_replace(reinterpret_cast<GstObject**>(&m_source),
-                       reinterpret_cast<GstObject*>(element.get()));
-
-    if (WEBKIT_IS_WEB_SRC(element.get()))
-        webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC(element.get()), m_player);
+    if (WEBKIT_IS_WEB_SRC(m_source.get()))
+        webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC(m_source.get()), m_player);
 }
 
 void MediaPlayerPrivateGStreamer::cancelLoad()
