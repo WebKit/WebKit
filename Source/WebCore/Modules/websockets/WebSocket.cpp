@@ -290,7 +290,7 @@ bool WebSocket::send(const String& message, ExceptionCode& ec)
     }
     // FIXME: check message is valid utf8.
     ASSERT(m_channel);
-    return m_channel->send(message) == ThreadableWebSocketChannel::SendSuccess;
+    return m_channel->send(message);
 }
 
 bool WebSocket::send(ArrayBuffer* binaryData, ExceptionCode& ec)
@@ -310,7 +310,7 @@ bool WebSocket::send(ArrayBuffer* binaryData, ExceptionCode& ec)
         return false;
     }
     ASSERT(m_channel);
-    return m_channel->send(*binaryData) == ThreadableWebSocketChannel::SendSuccess;
+    return m_channel->send(*binaryData);
 }
 
 bool WebSocket::send(Blob* binaryData, ExceptionCode& ec)
@@ -330,7 +330,7 @@ bool WebSocket::send(Blob* binaryData, ExceptionCode& ec)
         return false;
     }
     ASSERT(m_channel);
-    return m_channel->send(*binaryData) == ThreadableWebSocketChannel::SendSuccess;
+    return m_channel->send(*binaryData);
 }
 
 void WebSocket::close(int code, const String& reason, ExceptionCode& ec)

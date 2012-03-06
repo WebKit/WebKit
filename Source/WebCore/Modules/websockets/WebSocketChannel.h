@@ -44,7 +44,6 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -72,9 +71,9 @@ public:
     virtual void connect(const KURL&, const String& protocol) OVERRIDE;
     virtual String subprotocol() OVERRIDE;
     virtual String extensions() OVERRIDE;
-    virtual ThreadableWebSocketChannel::SendResult send(const String& message) OVERRIDE;
-    virtual ThreadableWebSocketChannel::SendResult send(const ArrayBuffer&) OVERRIDE;
-    virtual ThreadableWebSocketChannel::SendResult send(const Blob&) OVERRIDE;
+    virtual bool send(const String& message) OVERRIDE;
+    virtual bool send(const ArrayBuffer&) OVERRIDE;
+    virtual bool send(const Blob&) OVERRIDE;
     virtual unsigned long bufferedAmount() const OVERRIDE;
     virtual void close(int code, const String& reason) OVERRIDE; // Start closing handshake.
     virtual void fail(const String& reason) OVERRIDE;
@@ -161,11 +160,11 @@ private:
         WebSocketFrame::OpCode opCode;
         QueuedFrameType frameType;
         // Only one of the following items is used, according to the value of frameType.
-        CString stringData;
+        String stringData;
         Vector<char> vectorData;
         RefPtr<Blob> blobData;
     };
-    void enqueueTextFrame(const CString&);
+    void enqueueTextFrame(const String&);
     void enqueueRawFrame(WebSocketFrame::OpCode, const char* data, size_t dataLength);
     void enqueueBlobFrame(WebSocketFrame::OpCode, const Blob&);
 

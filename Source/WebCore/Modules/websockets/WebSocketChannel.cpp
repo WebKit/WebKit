@@ -157,37 +157,37 @@ String WebSocketChannel::extensions()
     return extensions;
 }
 
-ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const String& message)
+bool WebSocketChannel::send(const String& message)
 {
     LOG(Network, "WebSocketChannel %p send %s", this, message.utf8().data());
-    CString utf8 = message.utf8();
     if (m_useHixie76Protocol) {
-        return sendFrameHixie76(utf8.data(), utf8.length()) ? ThreadableWebSocketChannel::SendSuccess : ThreadableWebSocketChannel::SendFail;
+        CString utf8 = message.utf8();
+        return sendFrameHixie76(utf8.data(), utf8.length());
     }
-    enqueueTextFrame(utf8);
+    enqueueTextFrame(message);
     // According to WebSocket API specification, WebSocket.send() should return void instead
     // of boolean. However, our implementation still returns boolean due to compatibility
     // concern (see bug 65850).
     // m_channel->send() may happen later, thus it's not always possible to know whether
     // the message has been sent to the socket successfully. In this case, we have no choice
     // but to return true.
-    return ThreadableWebSocketChannel::SendSuccess;
+    return true;
 }
 
-ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const ArrayBuffer& binaryData)
+bool WebSocketChannel::send(const ArrayBuffer& binaryData)
 {
     LOG(Network, "WebSocketChannel %p send arraybuffer %p", this, &binaryData);
     ASSERT(!m_useHixie76Protocol);
     enqueueRawFrame(WebSocketFrame::OpCodeBinary, static_cast<const char*>(binaryData.data()), binaryData.byteLength());
-    return ThreadableWebSocketChannel::SendSuccess;
+    return true;
 }
 
-ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const Blob& binaryData)
+bool WebSocketChannel::send(const Blob& binaryData)
 {
     LOG(Network, "WebSocketChannel %p send blob %s", this, binaryData.url().string().utf8().data());
     ASSERT(!m_useHixie76Protocol);
     enqueueBlobFrame(WebSocketFrame::OpCodeBinary, binaryData);
-    return ThreadableWebSocketChannel::SendSuccess;
+    return true;
 }
 
 bool WebSocketChannel::send(const char* data, int length)
@@ -856,7 +856,7 @@ bool WebSocketChannel::processFrameHixie76()
     return false;
 }
 
-void WebSocketChannel::enqueueTextFrame(const CString& string)
+void WebSocketChannel::enqueueTextFrame(const String& string)
 {
     ASSERT(!m_useHixie76Protocol);
     ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
@@ -904,7 +904,8 @@ void WebSocketChannel::processOutgoingFrameQueue()
         OwnPtr<QueuedFrame> frame = m_outgoingFrameQueue.takeFirst();
         switch (frame->frameType) {
         case QueuedFrameTypeString: {
-            if (!sendFrame(frame->opCode, frame->stringData.data(), frame->stringData.length()))
+            CString utf8 = frame->stringData.utf8();
+            if (!sendFrame(frame->opCode, utf8.data(), utf8.length()))
                 fail("Failed to send WebSocket frame.");
             break;
         }

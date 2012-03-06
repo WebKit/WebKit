@@ -50,19 +50,13 @@ public:
     ThreadableWebSocketChannel() { }
     static PassRefPtr<ThreadableWebSocketChannel> create(ScriptExecutionContext*, WebSocketChannelClient*);
 
-    enum SendResult {
-        SendSuccess,
-        SendFail,
-        InvalidMessage
-    };
-
     virtual bool useHixie76Protocol() = 0;
     virtual void connect(const KURL&, const String& protocol) = 0;
     virtual String subprotocol() = 0; // Will be available after didConnect() callback is invoked.
     virtual String extensions() = 0; // Will be available after didConnect() callback is invoked.
-    virtual SendResult send(const String& message) = 0;
-    virtual SendResult send(const ArrayBuffer&) = 0;
-    virtual SendResult send(const Blob&) = 0;
+    virtual bool send(const String& message) = 0;
+    virtual bool send(const ArrayBuffer&) = 0;
+    virtual bool send(const Blob&) = 0;
     virtual unsigned long bufferedAmount() const = 0;
     virtual void close(int code, const String& reason) = 0;
     // Log the reason text and close the connection. Will call didClose().
