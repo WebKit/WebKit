@@ -1,3 +1,22 @@
+2012-03-05  Dirk Pranke  <dpranke@chromium.org>
+
+        flakiness dashboard doesn't display baselines for virtual tests correctly
+        https://bugs.webkit.org/show_bug.cgi?id=80341
+
+        Reviewed by Ojan Vafai.
+
+        If the test is part of a virtual test suite, we need to look for
+        baselines in the underlying fallback path for the actual test
+        being run, as well as baselines for the virtual version.
+
+        This patch adds code to handle both branches and also pulls the
+        mapping of the test suites up into a constant.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        (testLookupVirtualTestSuite):
+        (testBaseTest):
+
 2012-03-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r109760.

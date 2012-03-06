@@ -404,14 +404,17 @@ function testHtmlForTestTypeSwitcherGroup()
     assertEquals(group.children.length, 4);
 }
 
-function testLinkHTMLToOpenWindow()
+function testLookupVirtualTestSuite()
 {
-    var text = 'text';
-    // Test that we map regular tests and virtual tests properly.
-    self.assertEquals(linkHTMLToOpenWindow('http://localhost/fast/canvas/foo.html', text),
-                      '<a href="http://localhost/fast/canvas/foo.html" target="_blank">text</a>');
-    self.assertEquals(linkHTMLToOpenWindow('http://localhost/platform/chromium/virtual/gpu/fast/canvas/foo.html', text),
-                      '<a href="http://localhost/fast/canvas/foo.html" target="_blank">text</a>');
+    self.assertEquals(lookupVirtualTestSuite('fast/canvas/foo.html'), '');
+    self.assertEquals(lookupVirtualTestSuite('platform/chromium/virtual/gpu/fast/canvas/foo.html'),
+                      'platform/chromium/virtual/gpu/fast/canvas');
+}
+
+function testBaseTest()
+{
+    self.assertEquals(baseTest('fast/canvas/foo.html', ''), 'fast/canvas/foo.html');
+    self.assertEquals(baseTest('platform/chromium/virtual/gpu/fast/canvas/foo.html', 'platform/chromium/virtual/gpu/fast/canvas'), 'fast/canvas/foo.html');
 }
 
 function runTests()
