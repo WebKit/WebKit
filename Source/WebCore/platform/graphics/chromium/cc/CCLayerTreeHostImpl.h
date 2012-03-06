@@ -124,6 +124,9 @@ public:
     bool needsAnimateLayers() const { return m_needsAnimateLayers; }
     void setNeedsAnimateLayers() { m_needsAnimateLayers = true; }
 
+    // Notifies the layer tree that the context was lost and successfully restored.
+    void sendContextLostAndRestoredNotification();
+
 protected:
     CCLayerTreeHostImpl(const CCSettings&, CCLayerTreeHostImplClient*);
 
@@ -152,6 +155,7 @@ private:
     void optimizeRenderPasses(CCRenderPassList&);
     void animateLayersRecursive(CCLayerImpl*, double frameBeginTimeSecs, CCAnimationEventsVector&, bool& didAnimate, bool& needsAnimateLayers);
     IntSize contentSize() const;
+    void sendContextLostAndRestoredNotificationRecursive(CCLayerImpl*);
 
     OwnPtr<LayerRendererChromium> m_layerRenderer;
     OwnPtr<CCLayerImpl> m_rootLayerImpl;

@@ -700,4 +700,21 @@ void CCLayerTreeHostImpl::animateLayers(double frameBeginTimeMs)
         m_client->setNeedsRedrawOnImplThread();
 }
 
+void CCLayerTreeHostImpl::sendContextLostAndRestoredNotification()
+{
+    sendContextLostAndRestoredNotificationRecursive(m_rootLayerImpl.get());
+}
+
+void CCLayerTreeHostImpl::sendContextLostAndRestoredNotificationRecursive(CCLayerImpl* current)
+{
+    if (!current)
+        return;
+
+    current->didLoseAndRecreateGraphicsContext();
+    sendContextLostAndRestoredNotificationRecursive(current->maskLayer());
+    sendContextLostAndRestoredNotificationRecursive(current->replicaLayer());
+    for (size_t i = 0; i < current->children().size(); ++i)
+        sendContextLostAndRestoredNotificationRecursive(current->children()[i].get());
+}
+
 } // namespace WebCore

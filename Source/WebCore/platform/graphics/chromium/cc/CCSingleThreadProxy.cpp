@@ -159,8 +159,10 @@ bool CCSingleThreadProxy::recreateContext()
         DebugScopedSetImplThread impl;
         m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
         initialized = m_layerTreeHostImpl->initializeLayerRenderer(context);
-        if (initialized)
+        if (initialized) {
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
+            m_layerTreeHostImpl->sendContextLostAndRestoredNotification();
+        }
     }
 
     if (initialized)

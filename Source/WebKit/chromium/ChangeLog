@@ -1,3 +1,21 @@
+2012-03-05  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Notify CCLayerImpl tree of context loss and restoration
+        https://bugs.webkit.org/show_bug.cgi?id=80339
+
+        Reviewed by James Robinson.
+
+        Unit test for notification of context loss and restoration.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit):
+        (ContextLostNotificationCheckLayer):
+        (WebKit::ContextLostNotificationCheckLayer::create):
+        (WebKit::ContextLostNotificationCheckLayer::didLoseAndRecreateGraphicsContext):
+        (WebKit::ContextLostNotificationCheckLayer::didLoseAndRecreateGraphicsContextCalled):
+        (WebKit::ContextLostNotificationCheckLayer::ContextLostNotificationCheckLayer):
+        (WebKit::TEST_F):
+
 2012-03-05  Changhun Kang  <temoochin@company100.net>
 
         Change the argument orders to match OpenGL's in GraphicsContext3D functions

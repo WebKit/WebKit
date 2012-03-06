@@ -103,6 +103,16 @@ void CCPluginLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
     CCLayerImpl::dumpLayerProperties(ts, indent);
 }
 
+void CCPluginLayerImpl::didLoseAndRecreateGraphicsContext()
+{
+    if (m_ioSurfaceId) {
+        // We don't have a valid texture ID in the new context; however,
+        // the IOSurface is still valid.
+        m_ioSurfaceTextureId = 0;
+        m_ioSurfaceChanged = true;
+    }
+}
+
 void CCPluginLayerImpl::setIOSurfaceProperties(int width, int height, uint32_t ioSurfaceId)
 {
     if (m_ioSurfaceId != ioSurfaceId)

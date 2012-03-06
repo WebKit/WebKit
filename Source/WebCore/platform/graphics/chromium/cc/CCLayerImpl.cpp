@@ -529,6 +529,10 @@ void CCLayerImpl::setDoubleSided(bool doubleSided)
     noteLayerPropertyChangedForSubtree();
 }
 
+void CCLayerImpl::didLoseAndRecreateGraphicsContext()
+{
+}
+
 }
 
 

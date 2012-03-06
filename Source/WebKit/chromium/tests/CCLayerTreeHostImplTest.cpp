@@ -865,4 +865,51 @@ TEST_F(CCLayerTreeHostImplTest, visibilityChangeResetsDamage)
     EXPECT_EQ(expectedSwapRect.height(), actualSwapRect.height());
 }
 
+// Make sure that context lost notifications are propagated through the tree.
+class ContextLostNotificationCheckLayer : public CCLayerImpl {
+public:
+    static PassOwnPtr<ContextLostNotificationCheckLayer> create(int id) { return adoptPtr(new ContextLostNotificationCheckLayer(id)); }
+
+    virtual void didLoseAndRecreateGraphicsContext()
+    {
+        m_didLoseAndRecreateGraphicsContextCalled = true;
+    }
+
+    bool didLoseAndRecreateGraphicsContextCalled() const { return m_didLoseAndRecreateGraphicsContextCalled; }
+
+private:
+    explicit ContextLostNotificationCheckLayer(int id)
+        : CCLayerImpl(id)
+        , m_didLoseAndRecreateGraphicsContextCalled(false)
+    {
+    }
+
+    bool m_didLoseAndRecreateGraphicsContextCalled;
+};
+
+TEST_F(CCLayerTreeHostImplTest, contextLostAndRestoredNotificationSentToAllLayers)
+{
+    m_hostImpl->initializeLayerRenderer(createContext());
+    m_hostImpl->setViewportSize(IntSize(10, 10));
+
+    m_hostImpl->setRootLayer(ContextLostNotificationCheckLayer::create(0));
+    ContextLostNotificationCheckLayer* root = static_cast<ContextLostNotificationCheckLayer*>(m_hostImpl->rootLayer());
+
+    root->addChild(ContextLostNotificationCheckLayer::create(1));
+    ContextLostNotificationCheckLayer* layer1 = static_cast<ContextLostNotificationCheckLayer*>(root->children()[0].get());
+
+    layer1->addChild(ContextLostNotificationCheckLayer::create(2));
+    ContextLostNotificationCheckLayer* layer2 = static_cast<ContextLostNotificationCheckLayer*>(layer1->children()[0].get());
+
+    EXPECT_FALSE(root->didLoseAndRecreateGraphicsContextCalled());
+    EXPECT_FALSE(layer1->didLoseAndRecreateGraphicsContextCalled());
+    EXPECT_FALSE(layer2->didLoseAndRecreateGraphicsContextCalled());
+
+    m_hostImpl->sendContextLostAndRestoredNotification();
+
+    EXPECT_TRUE(root->didLoseAndRecreateGraphicsContextCalled());
+    EXPECT_TRUE(layer1->didLoseAndRecreateGraphicsContextCalled());
+    EXPECT_TRUE(layer2->didLoseAndRecreateGraphicsContextCalled());
+}
+
 } // namespace
