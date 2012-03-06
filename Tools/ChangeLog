@@ -1,3 +1,41 @@
+2012-03-05  Ojan Vafai  <ojan@chromium.org>
+
+        Add a mechanism to rebaseline new ports
+        https://bugs.webkit.org/show_bug.cgi?id=80355
+
+        Reviewed by Adam Barth.
+
+        For a test that's only failing on a new port, we want
+        to first copy the existing result into the location for the
+        port it's replacing in order to not break that port.
+
+        For example, bringing up the chromium-lion port, if we just
+        stick the results in the chromium-mac directory, the snow leopard
+        will start failing. Instead, we first copy the existing result
+        to the chromium-mac-snowleopard directory.
+
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        (builder_path_for_port_name):
+        (fallback_port_name_for_new_port):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest):
+        (RebaselineTest._copy_existing_baseline):
+        (RebaselineTest._rebaseline_test):
+        (RebaselineTest.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_rebaseline_test):
+        (TestRebaseline):
+        (TestRebaseline.test_rebaseline_and_copy_test):
+        (test_rebaseline_and_copy_test_no_existing_result):
+        (test_rebaseline_and_copy_test_with_lion_result):
+        (test_rebaseline_and_copy_no_overwrite_test):
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler.rebaseline):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (GardeningServerTest.test_rebaseline):
+        (GardeningServerTest):
+        (GardeningServerTest.test_rebaseline_new_port):
+
 2012-03-06  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=80351

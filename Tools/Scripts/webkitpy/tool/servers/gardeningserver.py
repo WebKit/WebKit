@@ -142,6 +142,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
             'rebaseline-test',
             builder,
             test,
+            builders.fallback_port_name_for_new_port(builder),
         ])
         self._serve_text('success')
 
