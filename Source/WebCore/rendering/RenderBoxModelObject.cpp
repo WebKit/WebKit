@@ -48,6 +48,7 @@ using namespace HTMLNames;
 
 bool RenderBoxModelObject::s_wasFloating = false;
 bool RenderBoxModelObject::s_hadLayer = false;
+bool RenderBoxModelObject::s_hadTransform = false;
 bool RenderBoxModelObject::s_layerWasSelfPainting = false;
 
 static const double cInterpolationCutoff = 800. * 800.;
@@ -302,6 +303,7 @@ void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderSty
 {
     s_wasFloating = isFloating();
     s_hadLayer = hasLayer();
+    s_hadTransform = hasTransform();
     if (s_hadLayer)
         s_layerWasSelfPainting = layer()->isSelfPaintingLayer();
 
@@ -377,6 +379,8 @@ void RenderBoxModelObject::styleDidChange(StyleDifference diff, const RenderStyl
         m_layer->removeOnlyThisLayer(); // calls destroyLayer() which clears m_layer
         if (s_wasFloating && isFloating())
             setChildNeedsLayout(true);
+        if (s_hadTransform)
+            setNeedsLayoutAndPrefWidthsRecalc();
     }
 
     if (layer()) {
