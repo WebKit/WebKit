@@ -46,7 +46,7 @@ ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper
     , m_client(client)
     , m_syncMethodDone(true)
     , m_useHixie76Protocol(true)
-    , m_sendRequestResult(false)
+    , m_sendRequestResult(ThreadableWebSocketChannel::SendFail)
     , m_bufferedAmount(0)
     , m_suspended(false)
 {
@@ -112,12 +112,12 @@ void ThreadableWebSocketChannelClientWrapper::setExtensions(const String& extens
         memcpy(m_extensions.data(), extensions.characters(), sizeof(UChar) * length);
 }
 
-bool ThreadableWebSocketChannelClientWrapper::sendRequestResult() const
+ThreadableWebSocketChannel::SendResult ThreadableWebSocketChannelClientWrapper::sendRequestResult() const
 {
     return m_sendRequestResult;
 }
 
-void ThreadableWebSocketChannelClientWrapper::setSendRequestResult(bool sendRequestResult)
+void ThreadableWebSocketChannelClientWrapper::setSendRequestResult(ThreadableWebSocketChannel::SendResult sendRequestResult)
 {
     m_sendRequestResult = sendRequestResult;
     m_syncMethodDone = true;
