@@ -95,6 +95,11 @@ InspectorFrontendAPI = {
         WebInspector.inspectorView.setCurrentPanel(WebInspector.panels.resources);
     },
 
+    setDockingUnavailable: function(unavailable)
+    {
+        WebInspector.setDockingUnavailable(unavailable);
+    },
+
     dispatch: function(signature)
     {
         if (WebInspector.panels) {

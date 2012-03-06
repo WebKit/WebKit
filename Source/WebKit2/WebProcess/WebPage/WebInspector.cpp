@@ -221,6 +221,12 @@ void WebInspector::stopPageProfiling()
         m_frontendClient->setTimelineProfilingEnabled(false);
 }
 
+void WebInspector::updateDockingAvailability()
+{
+    if (m_frontendClient)
+        m_frontendClient->setDockingUnavailable(!m_frontendClient->canAttachWindow());
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INSPECTOR)

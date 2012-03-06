@@ -47,6 +47,7 @@ class WebView;
 
 namespace WebCore {
 
+class Frame;
 class Page;
 
 }
@@ -62,6 +63,7 @@ public:
     virtual void openInspectorFrontend(WebCore::InspectorController*) OVERRIDE;
     virtual void closeInspectorFrontend() OVERRIDE;
     virtual void bringFrontendToFront() OVERRIDE;
+    virtual void didResizeMainFrame(WebCore::Frame*) OVERRIDE;
 
     virtual void highlight() OVERRIDE;
     virtual void hideHighlight() OVERRIDE;

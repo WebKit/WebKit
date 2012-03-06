@@ -1,3 +1,16 @@
+2012-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Hide dock button when not allowed to dock
+        https://bugs.webkit.org/show_bug.cgi?id=78575
+
+        Reviewed by Pavel Feldman.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        (WebCore):
+        (WebInspectorClient):
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::didResizeMainFrame):
+
 2012-03-05  Gavin Barraclough  <barraclough@apple.com>
 
         putByIndex should throw in strict mode

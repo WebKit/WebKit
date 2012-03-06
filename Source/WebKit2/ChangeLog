@@ -1,3 +1,17 @@
+2012-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Hide dock button when not allowed to dock
+        https://bugs.webkit.org/show_bug.cgi?id=78575
+
+        Reviewed by Pavel Feldman.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::didResizeMainFrame):
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::updateDockingAvailability):
+        * WebProcess/WebPage/WebInspector.h:
+
 2012-03-06  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Interaction Engine suspends content during pageload.

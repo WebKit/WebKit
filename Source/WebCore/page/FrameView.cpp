@@ -49,6 +49,8 @@
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInImageElement.h"
+#include "InspectorClient.h"
+#include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "OverflowEvent.h"
 #include "RenderArena.h"
@@ -2331,8 +2333,18 @@ void FrameView::performPostLayoutTasks()
         bool resized = !m_firstLayout && (currentSize != m_lastLayoutSize || currentZoomFactor != m_lastZoomFactor);
         m_lastLayoutSize = currentSize;
         m_lastZoomFactor = currentZoomFactor;
-        if (resized)
+        if (resized) {
             m_frame->eventHandler()->sendResizeEvent();
+
+            if (InspectorInstrumentation::hasFrontends()) {
+                if (Page* page = m_frame->page()) {
+                    if (page->mainFrame() == m_frame) {
+                        if (InspectorClient* inspectorClient = page->inspectorController()->inspectorClient())
+                            inspectorClient->didResizeMainFrame(m_frame.get());
+                    }
+                }
+            }
+        }
     }
 }
 

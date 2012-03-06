@@ -137,11 +137,6 @@ WebInspector.InspectorFrontendHostStub.prototype = {
         fr.readAsDataURL(blob);
     },
 
-    canAttachWindow: function()
-    {
-        return false;
-    },
-
     sendMessageToBackend: function(message)
     {
     },

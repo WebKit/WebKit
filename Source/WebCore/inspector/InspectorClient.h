@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class InspectorController;
-class Node;
+class Frame;
 class Page;
 
 class InspectorClient : public InspectorFrontendChannel, public InspectorStateClient {
@@ -46,6 +46,7 @@ public:
     virtual void openInspectorFrontend(InspectorController*) = 0;
     virtual void closeInspectorFrontend() = 0;
     virtual void bringFrontendToFront() = 0;
+    virtual void didResizeMainFrame(Frame*) { }
 
     virtual void highlight() = 0;
     virtual void hideHighlight() = 0;

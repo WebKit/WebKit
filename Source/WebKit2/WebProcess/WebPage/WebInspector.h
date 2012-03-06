@@ -102,6 +102,8 @@ private:
     void startJavaScriptProfiling();
     void stopJavaScriptProfiling();
 
+    void updateDockingAvailability();
+
     WebPage* m_page;
     WebPage* m_inspectorPage;
     WebInspectorFrontendClient* m_frontendClient;
