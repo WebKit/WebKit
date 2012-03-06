@@ -944,12 +944,62 @@ BUGWK64591 : compositing/repaint/become-overlay-composited-layer.html = PASS FAI
 // BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
 
 // We show reduced version of the entire SVN image rather than an image
-BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
+// BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
 
 // Text mismatch since r65370.
 // There was also an unnoticed image mismatch before this revision
 // (wrong baseline was committed). No idea about when it really started to fail.
-BUGCR52692 LINUX WIN : svg/W3C-SVG-1.1/animate-elem-80-t.svg = IMAGE
+// BUGCR52692 LINUX WIN : svg/W3C-SVG-1.1/animate-elem-80-t.svg = IMAGE
+
+// Still require rebaselining after r109097.
+// Appears elsewhere commented
+BUGWK79568 : svg/W3C-SVG-1.1/animate-elem-80-t.svg = FAIL
+// Appears elsewhere commented
+BUGWK79568 : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = FAIL
+BUGWK79568 : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
+BUGWK79568 : svg/W3C-SVG-1.1/animate-elem-77-t.svg = IMAGE
+// Appears elsewhere commented
+BUGWK79568 : svg/filters/filter-source-position.svg = IMAGE
+BUGWK79568 : svg/clip-path/clip-path-text-and-shape.svg = TEXT
+BUGWK79568 : svg/clip-path/clip-path-with-text-clipped.svg = TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-61-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-63-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-64-t.svg = IMAGE+TEXT
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-65-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-66-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-67-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-68-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-69-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-70-t.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE+TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE+TEXT
+// This may be unrelated.
+BUGWK75968 : svg/css/group-with-shadow.svg = IMAGE
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-36-t.svg = TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = TEXT
+// Appears elsewhere commented
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-40-t.svg = TEXT
+
+
+
 
 // Windows and Mac need rebaselining after 53378 patch.
 BUGWK53378 WIN MAC : svg/clip-path/clip-in-mask.svg = IMAGE
@@ -1531,23 +1581,23 @@ BUGCR99500 WIN : fast/borders/border-antialiasing.html = IMAGE
 BUGCR99500 WIN : fast/reflections/reflection-overflow-hidden.html = IMAGE
 BUGCR99500 WIN : fast/repaint/reflection-redraw.html = IMAGE
 BUGCR99500 WIN : printing/width-overflow.html = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-37-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-39-t.svg = IMAGE PASS
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-40-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-39-t.svg = IMAGE PASS
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-40-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-60-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-61-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-61-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-62-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-63-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-64-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-65-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-66-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-67-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-68-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-69-t.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-70-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-63-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-64-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-65-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-66-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-67-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-68-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-69-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-70-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-81-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-82-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/animate-elem-83-t.svg = IMAGE
@@ -1556,8 +1606,8 @@ BUGCR99500 WIN : svg/W3C-SVG-1.1/struct-frag-02-t.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/text-align-04-b.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/text-align-05-b.svg = IMAGE
 BUGCR99500 WIN : svg/W3C-SVG-1.1/text-align-06-b.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE
-BUGCR99500 WIN : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE
+// BUGCR99500 WIN : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE
 BUGCR99500 WIN : svg/as-background-image/svg-as-background-4.html = IMAGE
 BUGCR99500 WIN : svg/as-image/animated-svg-as-image-same-image.html = IMAGE
 BUGCR99500 WIN : svg/as-image/animated-svg-as-image.html = IMAGE
@@ -3330,7 +3380,7 @@ BUGWK73607 GPU LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = TIME
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = IMAGE
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
-BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
+// BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/masking-path-01-b.svg = IMAGE
 BUGWK73643 WIN MAC : svg/clip-path/clipper-placement-issue.svg = IMAGE
 BUGWK73643 WIN MAC : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE IMAGE+TEXT
@@ -3934,9 +3984,9 @@ BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = 
 // Need rebaselining after bug 75091
 BUGWK75091 : svg/carto.net/tabgroup.svg = FAIL
 BUGWK75091 : svg/carto.net/window.svg = FAIL
-BUGWK75091 : svg/custom/js-late-clipPath-and-object-creation.svg = FAIL
-BUGWK75091 : svg/custom/js-late-gradient-and-object-creation.svg = FAIL
-BUGWK75091 : svg/custom/js-late-pattern-and-object-creation.svg = FAIL
+BUGWK75091 : svg/custom/js-late-clipPath-and-object-creation.svg = FAIL PASS
+BUGWK75091 : svg/custom/js-late-gradient-and-object-creation.svg = FAIL PASS
+BUGWK75091 : svg/custom/js-late-pattern-and-object-creation.svg = FAIL PASS
 BUGWK75091 : svg/custom/text-ctm.svg = FAIL
 BUGWK75091 : svg/custom/use-detach.svg = FAIL
 BUGWK75091 : svg/hixie/perf/003.xml = FAIL
