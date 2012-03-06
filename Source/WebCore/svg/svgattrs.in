@@ -209,6 +209,7 @@ textLength
 title
 to
 transform
+transform-origin
 type
 u1
 u2

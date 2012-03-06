@@ -59,7 +59,10 @@ using namespace SVGNames;
 
 void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, int>* propertyNameToIdMap, const QualifiedName& attrName)
 {
+    // FIXME: when CSS supports "transform-origin" the special case for transform_originAttr can be removed.
     int propertyId = cssPropertyID(attrName.localName());
+    if (!propertyId && attrName == transform_originAttr)
+        propertyId = CSSPropertyWebkitTransformOrigin; // cssPropertyID("-webkit-transform-origin")
     ASSERT(propertyId > 0);
     propertyNameToIdMap->set(attrName.localName().impl(), propertyId);
 }
@@ -188,6 +191,7 @@ int SVGStyledElement::cssPropertyIdForSVGAttributeName(const QualifiedName& attr
         mapAttributeToCSSProperty(propertyNameToIdMap, text_anchorAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, text_decorationAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, text_renderingAttr);
+        mapAttributeToCSSProperty(propertyNameToIdMap, transform_originAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, unicode_bidiAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, vector_effectAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, visibilityAttr);
