@@ -454,6 +454,21 @@ function testSubarray(type, name) {
   }
 }
 
+function testSubarrayOffsetAndLengthClamping(type, name) {
+  running('test ' + name + ' Subarray offset and length clamping');
+  try {
+    var array = new type([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    var subarray1 = array.subarray(0, 5);
+    var subarray2 = subarray1.subarray(-2, 10);
+    assertEq('subarray2.length', 2, subarray2.length);
+    assertEq('Element ' + 0, 3, subarray2[0]);
+    assertEq('Element ' + 1, 4, subarray2[1]);
+    pass();
+  } catch (e) {
+    fail(e);
+  }
+}
+
 function negativeTestSubarray(type, name) {
   running('negativeTest ' + name + ' Subarray');
   try {
@@ -990,6 +1005,7 @@ function runTests() {
     testSetFromArray(type, name);
     negativeTestSetFromArray(type, name);
     testSubarray(type, name);
+    testSubarrayOffsetAndLengthClamping(type, name);
     negativeTestSubarray(type, name);
     testSetBoundaryConditions(type,
                               name,

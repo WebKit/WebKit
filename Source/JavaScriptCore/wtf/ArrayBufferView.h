@@ -186,6 +186,8 @@ void ArrayBufferView::calculateOffsetAndLength(int start, int end, unsigned arra
         end += arraySize;
     if (end < 0)
         end = 0;
+    if (static_cast<unsigned>(end) > arraySize)
+        end = arraySize;
     if (end < start)
         end = start;
     *offset = static_cast<unsigned>(start);
