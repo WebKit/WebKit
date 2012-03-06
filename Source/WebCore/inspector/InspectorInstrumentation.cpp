@@ -268,6 +268,12 @@ void InspectorInstrumentation::didRemoveTimerImpl(InstrumentingAgents* instrumen
         timelineAgent->didRemoveTimer(timerId);
 }
 
+void InspectorInstrumentation::didResizeMainFrameImpl(Frame* frame)
+{
+    if (Page* page = frame->page())
+        page->inspectorController()->updateDockingAvailability();
+}
+
 InspectorInstrumentationCookie InspectorInstrumentation::willCallFunctionImpl(InstrumentingAgents* instrumentingAgents, const String& scriptName, int scriptLine)
 {
     int timelineAgentId = 0;

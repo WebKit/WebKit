@@ -2331,8 +2331,13 @@ void FrameView::performPostLayoutTasks()
         bool resized = !m_firstLayout && (currentSize != m_lastLayoutSize || currentZoomFactor != m_lastZoomFactor);
         m_lastLayoutSize = currentSize;
         m_lastZoomFactor = currentZoomFactor;
-        if (resized)
+        if (resized) {
             m_frame->eventHandler()->sendResizeEvent();
+            if (Page* page = m_frame->page()) {
+                if (page->mainFrame() == m_frame)
+                    InspectorInstrumentation::didResizeMainFrame(m_frame.get());
+            }
+        }
     }
 }
 

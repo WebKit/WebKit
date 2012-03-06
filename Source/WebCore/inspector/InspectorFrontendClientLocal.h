@@ -76,7 +76,8 @@ public:
 
     virtual void sendMessageToBackend(const String& message);
 
-    bool canAttachWindow();
+    virtual bool canAttachWindow();
+    virtual void setDockingUnavailable(bool);
 
     static unsigned constrainedAttachedWindowHeight(unsigned preferredHeight, unsigned totalWindowHeight);
 

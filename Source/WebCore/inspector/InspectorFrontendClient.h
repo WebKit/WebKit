@@ -65,6 +65,9 @@ public:
     virtual void inspectedURLChanged(const String&) = 0;
 
     virtual void sendMessageToBackend(const String&) = 0;
+
+    virtual bool canAttachWindow() { return true; }
+    virtual void setDockingUnavailable(bool) { }
 };
 
 } // namespace WebCore
