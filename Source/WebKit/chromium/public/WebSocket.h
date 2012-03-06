@@ -80,6 +80,7 @@ public:
 
     virtual void connect(const WebURL&, const WebString& protocol) = 0;
     virtual WebString subprotocol() = 0;
+    virtual WebString extensions() = 0;
     virtual bool sendText(const WebString&) = 0;
     virtual bool sendArrayBuffer(const WebArrayBuffer&) = 0;
     virtual unsigned long bufferedAmount() const = 0;

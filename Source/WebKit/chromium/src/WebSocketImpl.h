@@ -57,6 +57,7 @@ public:
     virtual bool setBinaryType(BinaryType) OVERRIDE;
     virtual void connect(const WebURL&, const WebString& protocol) OVERRIDE;
     virtual WebString subprotocol() OVERRIDE;
+    virtual WebString extensions() OVERRIDE;
     virtual bool sendText(const WebString&) OVERRIDE;
     virtual bool sendArrayBuffer(const WebArrayBuffer&) OVERRIDE;
     virtual unsigned long bufferedAmount() const OVERRIDE;

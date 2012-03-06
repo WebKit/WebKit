@@ -105,6 +105,15 @@ WebString WebSocketImpl::subprotocol()
 #endif
 }
 
+WebString WebSocketImpl::extensions()
+{
+#if ENABLE(WEB_SOCKETS)
+    return m_private->extensions();
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
 bool WebSocketImpl::sendText(const WebString& message)
 {
 #if ENABLE(WEB_SOCKETS)
