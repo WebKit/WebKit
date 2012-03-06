@@ -92,6 +92,10 @@ typedef cairo_surface_t* NativeImagePtr;
 typedef WebCore::NativeImageSkia* NativeImagePtr;
 #elif OS(WINCE)
 typedef RefPtr<SharedBitmap> NativeImagePtr;
+#elif PLATFORM(BLACKBERRY)
+class ImageDecoder;
+typedef ImageDecoder* NativeImageSourcePtr;
+typedef void* NativeImagePtr;
 #endif
 #endif
 
