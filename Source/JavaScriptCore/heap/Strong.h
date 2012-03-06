@@ -26,7 +26,7 @@
 #ifndef Strong_h
 #define Strong_h
 
-#include <wtf/Assertions.h>
+#include "Assertions.h"
 #include "Handle.h"
 #include "HandleHeap.h"
 

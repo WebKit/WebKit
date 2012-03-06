@@ -26,11 +26,11 @@
 #ifndef HandleHeap_h
 #define HandleHeap_h
 
-#include <wtf/BlockStack.h>
+#include "BlockStack.h"
 #include "Handle.h"
-#include <wtf/HashCountedSet.h>
-#include <wtf/SentinelLinkedList.h>
-#include <wtf/SinglyLinkedList.h>
+#include "HashCountedSet.h"
+#include "SentinelLinkedList.h"
+#include "SinglyLinkedList.h"
 
 namespace JSC {
 

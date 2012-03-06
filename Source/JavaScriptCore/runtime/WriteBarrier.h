@@ -30,7 +30,7 @@
 #include "HandleTypes.h"
 #include "Heap.h"
 #include "SamplingCounter.h"
-#include <wtf/TypeTraits.h>
+#include "TypeTraits.h"
 
 namespace JSC {
 

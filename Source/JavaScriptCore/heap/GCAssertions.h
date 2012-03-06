@@ -26,7 +26,7 @@
 #ifndef GCAssertions_h
 #define GCAssertions_h
 
-#include <wtf/Assertions.h>
+#include "Assertions.h"
 
 #if ENABLE(GC_VALIDATION)
 #define ASSERT_GC_OBJECT_LOOKS_VALID(cell) do { \

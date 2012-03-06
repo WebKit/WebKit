@@ -26,8 +26,8 @@
 #ifndef HandleStack_h
 #define HandleStack_h
 
-#include <wtf/Assertions.h>
-#include <wtf/BlockStack.h>
+#include "Assertions.h"
+#include "BlockStack.h"
 #include "Handle.h"
 
 #include <wtf/UnusedParam.h>

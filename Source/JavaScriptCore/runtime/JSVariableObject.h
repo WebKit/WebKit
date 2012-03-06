@@ -32,7 +32,7 @@
 #include "JSObject.h"
 #include "Register.h"
 #include "SymbolTable.h"
-#include <wtf/UnusedParam.h>
+#include "UnusedParam.h"
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/UnusedParam.h>
 

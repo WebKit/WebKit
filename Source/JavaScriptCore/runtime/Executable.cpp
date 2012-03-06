@@ -34,7 +34,7 @@
 #include "JITDriver.h"
 #include "Parser.h"
 #include "UStringBuilder.h"
-#include <wtf/Vector.h>
+#include "Vector.h"
 
 namespace JSC {
 

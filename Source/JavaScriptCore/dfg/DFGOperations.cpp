@@ -31,7 +31,7 @@
 #include "DFGRepatch.h"
 #include "HostCallReturnValue.h"
 #include "GetterSetter.h"
-#include <wtf/InlineASM.h>
+#include "InlineASM.h"
 #include "Interpreter.h"
 #include "JSActivation.h"
 #include "JSByteArray.h"

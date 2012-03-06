@@ -29,7 +29,7 @@
 #include "ExceptionHelpers.h"
 #include "JSString.h"
 #include "UStringConcatenate.h"
-#include <wtf/Vector.h>
+#include "Vector.h"
 
 namespace JSC {
 

@@ -58,19 +58,6 @@ for %%d in (
     xcopy /y /d ..\..\%%d\*.h "%PrivateHeadersDirectory%" >NUL
 )
 
-echo Copying WTF headers...
-for %%d in (
-    wtf
-    wtf\dtoa
-    wtf\text
-    wtf\threads
-    wtf\unicode
-    wtf\unicode\icu
-) do (
-    mkdir "%PrivateHeadersDirectory%\%%d" 2>NUL
-    xcopy /y /d ..\..\%%d\*.h "%PrivateHeadersDirectory%\%%d" >NUL
-)
-
 echo Copying resources...
 mkdir "%ResourcesDirectory%" 2>NUL
 xcopy /y /d ..\JavaScriptCore.resources\* "%ResourcesDirectory%" >NUL

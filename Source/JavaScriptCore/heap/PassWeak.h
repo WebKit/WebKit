@@ -26,10 +26,10 @@
 #ifndef PassWeak_h
 #define PassWeak_h
 
-#include <wtf/Assertions.h>
+#include "Assertions.h"
 #include "Handle.h"
-#include <wtf/NullPtr.h>
-#include <wtf/TypeTraits.h>
+#include "NullPtr.h"
+#include "TypeTraits.h"
 
 namespace JSC {
 
