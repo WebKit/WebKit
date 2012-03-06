@@ -67,7 +67,7 @@ WebKitCommitters = (function() {
 
         // Convert unicode characters
         if (nameParam[3] == 'u') {
-            var unicode = /\\u([a-f\d]{4})/gi;
+            var unicode = /\\u([a-f\d]{4})/i;
             var match = unicode.exec(name);
             while (match) {
                 name = name.replace(match[0], String.fromCharCode(parseInt(match[1], 16)));

@@ -1,3 +1,18 @@
+2012-03-05  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        The Bugzilla autocompleter doesn't support multiple Unicode characters per name
+        https://bugs.webkit.org/show_bug.cgi?id=80319
+
+        Reviewed by Adam Barth.
+
+        The current regular expression for matching Unicode characters uses
+        the global modifier, which means that it will never enter its second
+        iteration of the match-loop. This patch fixes this by removing the
+        global modifier from the regex.
+
+        * committers-autocomplete.js:
+        (WebKitCommitters):
+
 2012-01-03  Ojan Vafai  <ojan@chromium.org>
 
         Increment the code-review.js version number to bust browser
