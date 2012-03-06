@@ -3500,7 +3500,7 @@
 		97B1F02E13B025CA00F5103F /* SharedBufferChunkReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37569E0013AF172C00CDBA8E /* SharedBufferChunkReader.cpp */; };
 		97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 37569E0213AF172C00CDBA8E /* SharedBufferChunkReader.h */; };
 		97BC69DA1505F076001B74AC /* AbstractDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69D61505F076001B74AC /* AbstractDatabase.cpp */; };
-		97BC69DB1505F076001B74AC /* AbstractDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69D71505F076001B74AC /* AbstractDatabase.h */; };
+		97BC69DB1505F076001B74AC /* AbstractDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69D71505F076001B74AC /* AbstractDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97BC69DC1505F076001B74AC /* ChangeVersionWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69D81505F076001B74AC /* ChangeVersionWrapper.cpp */; };
 		97BC69DD1505F076001B74AC /* ChangeVersionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69D91505F076001B74AC /* ChangeVersionWrapper.h */; };
 		97BC6A201505F081001B74AC /* Database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69DE1505F081001B74AC /* Database.cpp */; };
@@ -3509,8 +3509,8 @@
 		97BC6A241505F081001B74AC /* DatabaseAuthorizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E21505F081001B74AC /* DatabaseAuthorizer.h */; };
 		97BC6A251505F081001B74AC /* DatabaseCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E31505F081001B74AC /* DatabaseCallback.h */; };
 		97BC6A271505F081001B74AC /* DatabaseContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69E51505F081001B74AC /* DatabaseContext.cpp */; };
-		97BC6A281505F081001B74AC /* DatabaseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E61505F081001B74AC /* DatabaseContext.h */; };
-		97BC6A291505F081001B74AC /* DatabaseDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E71505F081001B74AC /* DatabaseDetails.h */; };
+		97BC6A281505F081001B74AC /* DatabaseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E61505F081001B74AC /* DatabaseContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		97BC6A291505F081001B74AC /* DatabaseDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E71505F081001B74AC /* DatabaseDetails.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97BC6A2A1505F081001B74AC /* DatabaseSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69E81505F081001B74AC /* DatabaseSync.cpp */; };
 		97BC6A2B1505F081001B74AC /* DatabaseSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69E91505F081001B74AC /* DatabaseSync.h */; };
 		97BC6A2D1505F081001B74AC /* DatabaseTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69EB1505F081001B74AC /* DatabaseTask.cpp */; };
@@ -3518,8 +3518,8 @@
 		97BC6A2F1505F081001B74AC /* DatabaseThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69ED1505F081001B74AC /* DatabaseThread.cpp */; };
 		97BC6A301505F081001B74AC /* DatabaseThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69EE1505F081001B74AC /* DatabaseThread.h */; };
 		97BC6A311505F081001B74AC /* DatabaseTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69EF1505F081001B74AC /* DatabaseTracker.cpp */; };
-		97BC6A321505F081001B74AC /* DatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F01505F081001B74AC /* DatabaseTracker.h */; };
-		97BC6A331505F081001B74AC /* DatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F11505F081001B74AC /* DatabaseTrackerClient.h */; };
+		97BC6A321505F081001B74AC /* DatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F01505F081001B74AC /* DatabaseTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		97BC6A331505F081001B74AC /* DatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F11505F081001B74AC /* DatabaseTrackerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97BC6A341505F081001B74AC /* DOMWindowSQLDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69F21505F081001B74AC /* DOMWindowSQLDatabase.cpp */; };
 		97BC6A351505F081001B74AC /* DOMWindowSQLDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F31505F081001B74AC /* DOMWindowSQLDatabase.h */; };
 		97BC6A371505F081001B74AC /* OriginQuotaManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69F51505F081001B74AC /* OriginQuotaManager.cpp */; };
