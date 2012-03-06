@@ -162,7 +162,7 @@ private:
     TestShell* m_shell;
 
     // Location of the touch point that initiated a gesture.
-    WebKit::WebPoint m_gestureStartLocation;
+    WebKit::WebPoint m_currentGestureLocation;
 
     // Location of last mouseMoveTo event.
     static WebKit::WebPoint lastMousePos;

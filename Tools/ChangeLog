@@ -1,3 +1,17 @@
+2012-03-05  Robert Kroeger  <rjkroege@chromium.org>
+
+        Correctly compute the positions of GestureScroll* events on
+        Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=80075
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::reset):
+        (EventSender::gestureEvent):
+        * DumpRenderTree/chromium/EventSender.h:
+        (EventSender):
+
 2012-03-05  Dirk Pranke  <dpranke@chromium.org>
 
         flakiness dashboard doesn't display baselines for virtual tests correctly

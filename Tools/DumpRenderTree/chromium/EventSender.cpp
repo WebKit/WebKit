@@ -330,7 +330,7 @@ void EventSender::reset()
     touchModifiers = 0;
     touchPoints.clear();
     m_taskList.revokeAll();
-    m_gestureStartLocation = WebPoint(0, 0);
+    m_currentGestureLocation = WebPoint(0, 0);
 }
 
 WebView* EventSender::webview()
@@ -1100,20 +1100,22 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
     case WebInputEvent::GestureScrollUpdate:
         event.deltaX = static_cast<float>(arguments[0].toDouble());
         event.deltaY = static_cast<float>(arguments[1].toDouble());
-        event.x = m_gestureStartLocation.x + event.deltaX;
-        event.y = m_gestureStartLocation.y + event.deltaY;
+        event.x = m_currentGestureLocation.x;
+        event.y = m_currentGestureLocation.y;
+        m_currentGestureLocation.x = m_currentGestureLocation.x + event.deltaX;
+        m_currentGestureLocation.y = m_currentGestureLocation.y + event.deltaY;
         break;
 
     case WebInputEvent::GestureScrollBegin:
-        m_gestureStartLocation = WebPoint(point.x, point.y);
-        event.x = m_gestureStartLocation.x;
-        event.y = m_gestureStartLocation.y;
+        m_currentGestureLocation = WebPoint(point.x, point.y);
+        event.x = m_currentGestureLocation.x;
+        event.y = m_currentGestureLocation.y;
         break;
     case WebInputEvent::GestureScrollEnd:
         event.deltaX = static_cast<float>(arguments[0].toDouble());
         event.deltaY = static_cast<float>(arguments[1].toDouble());
-        event.x = m_gestureStartLocation.x;
-        event.y = m_gestureStartLocation.y;
+        event.x = m_currentGestureLocation.x;
+        event.y = m_currentGestureLocation.y;
         break;
     case WebInputEvent::GestureTap:
         event.x = point.x;
