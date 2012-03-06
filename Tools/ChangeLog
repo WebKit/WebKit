@@ -1,3 +1,19 @@
+2012-03-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Revert r109900, it was completly busted
+
+        HAVE_FOO does _not_ have a WTF_ prefix, go figure.
+
+        We still leave in the HAVE(FOO) in QtInitializeTestFonts.cpp, instead
+        of manual define checks.
+
+        Reviewed by Ossy.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * QtTestBrowser/QtTestBrowser.pro:
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * qmake/mkspecs/features/features.prf:
+
 2012-03-05  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Use config test to determine if the compiler supports -MD
