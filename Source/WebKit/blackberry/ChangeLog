@@ -1,3 +1,22 @@
+2012-03-06  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] function rename issue after MediaPlayerPrivateBlackBerry.[cpp\h] upstream
+        https://bugs.webkit.org/show_bug.cgi?id=80377
+
+        Reviewed by Rob Buis.
+
+        As some of the function names changed in class MediaPlayerPrivate
+        with the upstream of MediaPlayerPrivateBlackBerry.[cpp|h], we
+        should update WebKit/blackberry/Api/WebPage.cpp which uses these
+        functions accordingly.
+        Renamed functions in class MediaPlayerPrivate:
+        windowGet() -> getWindow()
+        windowPositionGet() -> getWindowPosition()
+        mmrContextNameGet() -> mmrContextName()
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::enterFullscreenForNode):
+
 2012-03-05  Eli Fidler  <efidler@rim.com>
 
         The minimum font size WebSetting should actually change the LOGICAL font size in WebCore.

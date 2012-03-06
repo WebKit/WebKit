@@ -5414,14 +5414,14 @@ void WebPagePrivate::enterFullscreenForNode(Node* node)
     if (!mmrPlayer)
         return;
 
-    Platform::Graphics::Window* window = mmrPlayer->windowGet();
+    Platform::Graphics::Window* window = mmrPlayer->getWindow();
     if (!window)
         return;
 
     unsigned x, y, width, height;
-    mmrPlayer->windowPositionGet(x, y, width, height);
+    mmrPlayer->getWindowPosition(x, y, width, height);
 
-    const char* contextName = mmrPlayer->mmrContextNameGet();
+    const char* contextName = mmrPlayer->mmrContextName();
     if (!contextName)
         return;
 
