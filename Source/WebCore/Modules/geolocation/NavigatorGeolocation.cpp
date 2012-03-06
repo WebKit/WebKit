@@ -21,6 +21,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(GEOLOCATION)
+
 #include "NavigatorGeolocation.h"
 
 #include "Document.h"
@@ -63,3 +66,5 @@ Geolocation* NavigatorGeolocation::geolocation() const
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(GEOLOCATION)

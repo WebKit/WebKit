@@ -20,6 +20,8 @@
 #ifndef NavigatorGeolocation_h
 #define NavigatorGeolocation_h
 
+#if ENABLE(GEOLOCATION)
+
 #include "DOMWindowProperty.h"
 #include "Supplementable.h"
 
@@ -44,5 +46,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(GEOLOCATION)
 
 #endif // NavigatorGeolocation_h
