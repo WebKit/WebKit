@@ -415,50 +415,6 @@ SET(WebCore_SOURCES
     Modules/geolocation/GeolocationController.cpp
     Modules/geolocation/NavigatorGeolocation.cpp
 
-    Modules/indexeddb/DOMWindowIndexedDatabase.cpp
-    Modules/indexeddb/IDBAny.cpp
-    Modules/indexeddb/IDBDatabase.cpp
-    Modules/indexeddb/IDBDatabaseBackendImpl.cpp
-    Modules/indexeddb/IDBCursor.cpp
-    Modules/indexeddb/IDBCursorBackendImpl.cpp
-    Modules/indexeddb/IDBDatabaseException.cpp
-    Modules/indexeddb/IDBEventDispatcher.cpp
-    Modules/indexeddb/IDBIndex.cpp
-    Modules/indexeddb/IDBIndexBackendImpl.cpp
-    Modules/indexeddb/IDBKey.cpp
-    Modules/indexeddb/IDBKeyRange.cpp
-    Modules/indexeddb/IDBRequest.cpp
-    Modules/indexeddb/IDBObjectStore.cpp
-    Modules/indexeddb/IDBObjectStoreBackendImpl.cpp
-    Modules/indexeddb/IDBFactory.cpp
-    Modules/indexeddb/IDBFactoryBackendInterface.cpp
-    Modules/indexeddb/IDBFactoryBackendImpl.cpp
-    Modules/indexeddb/PageGroupIndexedDatabase.cpp
-    Modules/indexeddb/WorkerContextIndexedDatabase.cpp
-
-    Modules/webdatabase/AbstractDatabase.cpp
-    Modules/webdatabase/ChangeVersionWrapper.cpp
-    Modules/webdatabase/DOMWindowSQLDatabase.cpp
-    Modules/webdatabase/Database.cpp
-    Modules/webdatabase/DatabaseAuthorizer.cpp
-    Modules/webdatabase/DatabaseContext.cpp
-    Modules/webdatabase/DatabaseSync.cpp
-    Modules/webdatabase/DatabaseTask.cpp
-    Modules/webdatabase/DatabaseThread.cpp
-    Modules/webdatabase/DatabaseTracker.cpp
-    Modules/webdatabase/OriginQuotaManager.cpp
-    Modules/webdatabase/OriginUsageRecord.cpp
-    Modules/webdatabase/SQLException.cpp
-    Modules/webdatabase/SQLResultSet.cpp
-    Modules/webdatabase/SQLResultSetRowList.cpp
-    Modules/webdatabase/SQLStatement.cpp
-    Modules/webdatabase/SQLStatementSync.cpp
-    Modules/webdatabase/SQLTransaction.cpp
-    Modules/webdatabase/SQLTransactionClient.cpp
-    Modules/webdatabase/SQLTransactionCoordinator.cpp
-    Modules/webdatabase/SQLTransactionSync.cpp
-    Modules/webdatabase/WorkerContextSQLDatabase.cpp
-
     accessibility/AXObjectCache.cpp
     accessibility/AccessibilityARIAGrid.cpp
     accessibility/AccessibilityARIAGridCell.cpp
@@ -1512,6 +1468,30 @@ IF (ENABLE_BLOB)
 ENDIF ()
 
 IF (ENABLE_SQL_DATABASE)
+    LIST(APPEND WebCore_SOURCES
+        Modules/webdatabase/AbstractDatabase.cpp
+        Modules/webdatabase/ChangeVersionWrapper.cpp
+        Modules/webdatabase/DOMWindowSQLDatabase.cpp
+        Modules/webdatabase/Database.cpp
+        Modules/webdatabase/DatabaseAuthorizer.cpp
+        Modules/webdatabase/DatabaseContext.cpp
+        Modules/webdatabase/DatabaseSync.cpp
+        Modules/webdatabase/DatabaseTask.cpp
+        Modules/webdatabase/DatabaseThread.cpp
+        Modules/webdatabase/DatabaseTracker.cpp
+        Modules/webdatabase/OriginQuotaManager.cpp
+        Modules/webdatabase/OriginUsageRecord.cpp
+        Modules/webdatabase/SQLException.cpp
+        Modules/webdatabase/SQLResultSet.cpp
+        Modules/webdatabase/SQLResultSetRowList.cpp
+        Modules/webdatabase/SQLStatement.cpp
+        Modules/webdatabase/SQLStatementSync.cpp
+        Modules/webdatabase/SQLTransaction.cpp
+        Modules/webdatabase/SQLTransactionClient.cpp
+        Modules/webdatabase/SQLTransactionCoordinator.cpp
+        Modules/webdatabase/SQLTransactionSync.cpp
+    )
+
     LIST(APPEND WebCore_IDL_FILES
         Modules/webdatabase/DOMWindowSQLDatabase.idl
         Modules/webdatabase/Database.idl
@@ -1528,6 +1508,15 @@ IF (ENABLE_SQL_DATABASE)
         Modules/webdatabase/SQLTransactionErrorCallback.idl
         Modules/webdatabase/SQLTransactionSync.idl
         Modules/webdatabase/SQLTransactionSyncCallback.idl
+    )
+ENDIF ()
+
+IF (ENABLE_SQL_DATABASE AND ENABLE_WORKERS)
+    LIST(APPEND WebCore_SOURCES
+        Modules/webdatabase/WorkerContextSQLDatabase.cpp
+    )
+
+    LIST(APPEND WebCore_IDL_FILES
         Modules/webdatabase/WorkerContextSQLDatabase.idl
     )
 ENDIF ()
@@ -1544,6 +1533,28 @@ IF (ENABLE_DATA_TRANSFER_ITEMS)
 ENDIF ()
 
 IF (ENABLE_INDEXED_DATABASE)
+    LIST(APPEND WebCore_SOURCES
+        Modules/indexeddb/DOMWindowIndexedDatabase.cpp
+        Modules/indexeddb/IDBAny.cpp
+        Modules/indexeddb/IDBDatabase.cpp
+        Modules/indexeddb/IDBDatabaseBackendImpl.cpp
+        Modules/indexeddb/IDBCursor.cpp
+        Modules/indexeddb/IDBCursorBackendImpl.cpp
+        Modules/indexeddb/IDBDatabaseException.cpp
+        Modules/indexeddb/IDBEventDispatcher.cpp
+        Modules/indexeddb/IDBIndex.cpp
+        Modules/indexeddb/IDBIndexBackendImpl.cpp
+        Modules/indexeddb/IDBKey.cpp
+        Modules/indexeddb/IDBKeyRange.cpp
+        Modules/indexeddb/IDBRequest.cpp
+        Modules/indexeddb/IDBObjectStore.cpp
+        Modules/indexeddb/IDBObjectStoreBackendImpl.cpp
+        Modules/indexeddb/IDBFactory.cpp
+        Modules/indexeddb/IDBFactoryBackendInterface.cpp
+        Modules/indexeddb/IDBFactoryBackendImpl.cpp
+        Modules/indexeddb/PageGroupIndexedDatabase.cpp
+    )
+
     LIST(APPEND WebCore_IDL_FILES
         Modules/indexeddb/DOMWindowIndexedDatabase.idl
         Modules/indexeddb/IDBAny.idl
@@ -1558,6 +1569,15 @@ IF (ENABLE_INDEXED_DATABASE)
         Modules/indexeddb/IDBObjectStore.idl
         Modules/indexeddb/IDBRequest.idl
         Modules/indexeddb/IDBTransaction.idl
+    )
+ENDIF ()
+
+IF (ENABLE_INDEXED_DATABASE AND ENABLE_WORKERS)
+    LIST(APPEND WebCore_SOURCES
+        Modules/indexeddb/WorkerContextIndexedDatabase.cpp
+    )
+
+    LIST(APPEND WebCore_IDL_FILES
         Modules/indexeddb/WorkerContextIndexedDatabase.idl
     )
 ENDIF ()
