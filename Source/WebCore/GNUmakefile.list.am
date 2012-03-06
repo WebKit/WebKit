@@ -1058,6 +1058,60 @@ webcore_sources += \
 	Source/WebCore/Modules/mediastream/UserMediaController.cpp \
 	Source/WebCore/Modules/mediastream/UserMediaRequest.cpp \
 	Source/WebCore/Modules/mediastream/UserMediaRequest.h \
+	Source/WebCore/Modules/webdatabase/AbstractDatabase.cpp \
+	Source/WebCore/Modules/webdatabase/AbstractDatabase.h \
+	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.cpp \
+	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.h \
+	Source/WebCore/Modules/webdatabase/DOMWindowSQLDatabase.cpp \
+	Source/WebCore/Modules/webdatabase/DOMWindowSQLDatabase.h \
+	Source/WebCore/Modules/webdatabase/Database.cpp \
+	Source/WebCore/Modules/webdatabase/Database.h \
+	Source/WebCore/Modules/webdatabase/DatabaseAuthorizer.cpp \
+	Source/WebCore/Modules/webdatabase/DatabaseAuthorizer.h \
+	Source/WebCore/Modules/webdatabase/DatabaseCallback.h \
+	Source/WebCore/Modules/webdatabase/DatabaseContext.cpp \
+	Source/WebCore/Modules/webdatabase/DatabaseContext.h \
+	Source/WebCore/Modules/webdatabase/DatabaseDetails.h \
+	Source/WebCore/Modules/webdatabase/DatabaseSync.cpp \
+	Source/WebCore/Modules/webdatabase/DatabaseSync.h \
+	Source/WebCore/Modules/webdatabase/DatabaseTask.cpp \
+	Source/WebCore/Modules/webdatabase/DatabaseTask.h \
+	Source/WebCore/Modules/webdatabase/DatabaseThread.cpp \
+	Source/WebCore/Modules/webdatabase/DatabaseThread.h \
+	Source/WebCore/Modules/webdatabase/DatabaseTrackerClient.h \
+	Source/WebCore/Modules/webdatabase/DatabaseTracker.cpp \
+	Source/WebCore/Modules/webdatabase/DatabaseTracker.h \
+	Source/WebCore/Modules/webdatabase/OriginQuotaManager.cpp \
+	Source/WebCore/Modules/webdatabase/OriginQuotaManager.h \
+	Source/WebCore/Modules/webdatabase/OriginUsageRecord.cpp \
+	Source/WebCore/Modules/webdatabase/OriginUsageRecord.h \
+	Source/WebCore/Modules/webdatabase/SQLCallbackWrapper.h \
+	Source/WebCore/Modules/webdatabase/SQLError.h \
+	Source/WebCore/Modules/webdatabase/SQLException.cpp \
+	Source/WebCore/Modules/webdatabase/SQLException.h \
+	Source/WebCore/Modules/webdatabase/SQLResultSet.cpp \
+	Source/WebCore/Modules/webdatabase/SQLResultSet.h \
+	Source/WebCore/Modules/webdatabase/SQLResultSetRowList.cpp \
+	Source/WebCore/Modules/webdatabase/SQLResultSetRowList.h \
+	Source/WebCore/Modules/webdatabase/SQLStatementCallback.h \
+	Source/WebCore/Modules/webdatabase/SQLStatement.cpp \
+	Source/WebCore/Modules/webdatabase/SQLStatementErrorCallback.h \
+	Source/WebCore/Modules/webdatabase/SQLStatement.h \
+	Source/WebCore/Modules/webdatabase/SQLStatementSync.cpp \
+	Source/WebCore/Modules/webdatabase/SQLStatementSync.h \
+	Source/WebCore/Modules/webdatabase/SQLTransactionCallback.h \
+	Source/WebCore/Modules/webdatabase/SQLTransactionClient.cpp \
+	Source/WebCore/Modules/webdatabase/SQLTransactionClient.h \
+	Source/WebCore/Modules/webdatabase/SQLTransactionCoordinator.cpp \
+	Source/WebCore/Modules/webdatabase/SQLTransactionCoordinator.h \
+	Source/WebCore/Modules/webdatabase/SQLTransaction.cpp \
+	Source/WebCore/Modules/webdatabase/SQLTransactionErrorCallback.h \
+	Source/WebCore/Modules/webdatabase/SQLTransaction.h \
+	Source/WebCore/Modules/webdatabase/SQLTransactionSyncCallback.h \
+	Source/WebCore/Modules/webdatabase/SQLTransactionSync.cpp \
+	Source/WebCore/Modules/webdatabase/SQLTransactionSync.h \
+	Source/WebCore/Modules/webdatabase/WorkerContextSQLDatabase.cpp \
+	Source/WebCore/Modules/webdatabase/WorkerContextSQLDatabase.h \
 	Source/WebCore/Modules/websockets/CloseEvent.h \
 	Source/WebCore/Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp \
 	Source/WebCore/Modules/websockets/ThreadableWebSocketChannelClientWrapper.h \
@@ -3922,62 +3976,10 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/SVGTextRunRenderingContext.h \
 	Source/WebCore/rendering/TableLayout.h \
 	Source/WebCore/rendering/TrailingFloatsRootInlineBox.h \
-	Source/WebCore/storage/AbstractDatabase.cpp \
-	Source/WebCore/storage/AbstractDatabase.h \
-	Source/WebCore/storage/ChangeVersionWrapper.cpp \
-	Source/WebCore/storage/ChangeVersionWrapper.h \
-	Source/WebCore/storage/DOMWindowSQLDatabase.cpp \
-	Source/WebCore/storage/DOMWindowSQLDatabase.h \
-	Source/WebCore/storage/Database.cpp \
-	Source/WebCore/storage/Database.h \
-	Source/WebCore/storage/DatabaseAuthorizer.cpp \
-	Source/WebCore/storage/DatabaseAuthorizer.h \
-	Source/WebCore/storage/DatabaseCallback.h \
-	Source/WebCore/storage/DatabaseContext.cpp \
-	Source/WebCore/storage/DatabaseContext.h \
-	Source/WebCore/storage/DatabaseDetails.h \
-	Source/WebCore/storage/DatabaseSync.cpp \
-	Source/WebCore/storage/DatabaseSync.h \
-	Source/WebCore/storage/DatabaseTask.cpp \
-	Source/WebCore/storage/DatabaseTask.h \
-	Source/WebCore/storage/DatabaseThread.cpp \
-	Source/WebCore/storage/DatabaseThread.h \
-	Source/WebCore/storage/DatabaseTrackerClient.h \
-	Source/WebCore/storage/DatabaseTracker.cpp \
-	Source/WebCore/storage/DatabaseTracker.h \
 	Source/WebCore/storage/StorageTask.cpp \
 	Source/WebCore/storage/StorageTask.h \
 	Source/WebCore/storage/StorageThread.cpp \
 	Source/WebCore/storage/StorageThread.h \
-	Source/WebCore/storage/OriginQuotaManager.cpp \
-	Source/WebCore/storage/OriginQuotaManager.h \
-	Source/WebCore/storage/OriginUsageRecord.cpp \
-	Source/WebCore/storage/OriginUsageRecord.h \
-	Source/WebCore/storage/SQLCallbackWrapper.h \
-	Source/WebCore/storage/SQLError.h \
-	Source/WebCore/storage/SQLException.cpp \
-	Source/WebCore/storage/SQLException.h \
-	Source/WebCore/storage/SQLResultSet.cpp \
-	Source/WebCore/storage/SQLResultSet.h \
-	Source/WebCore/storage/SQLResultSetRowList.cpp \
-	Source/WebCore/storage/SQLResultSetRowList.h \
-	Source/WebCore/storage/SQLStatementCallback.h \
-	Source/WebCore/storage/SQLStatement.cpp \
-	Source/WebCore/storage/SQLStatementErrorCallback.h \
-	Source/WebCore/storage/SQLStatement.h \
-	Source/WebCore/storage/SQLStatementSync.cpp \
-	Source/WebCore/storage/SQLStatementSync.h \
-	Source/WebCore/storage/SQLTransactionCallback.h \
-	Source/WebCore/storage/SQLTransactionClient.cpp \
-	Source/WebCore/storage/SQLTransactionClient.h \
-	Source/WebCore/storage/SQLTransactionCoordinator.cpp \
-	Source/WebCore/storage/SQLTransactionCoordinator.h \
-	Source/WebCore/storage/SQLTransaction.cpp \
-	Source/WebCore/storage/SQLTransactionErrorCallback.h \
-	Source/WebCore/storage/SQLTransaction.h \
-	Source/WebCore/storage/SQLTransactionSyncCallback.h \
-	Source/WebCore/storage/SQLTransactionSync.cpp \
-	Source/WebCore/storage/SQLTransactionSync.h \
 	Source/WebCore/storage/StorageArea.h \
 	Source/WebCore/storage/StorageAreaImpl.cpp \
 	Source/WebCore/storage/StorageAreaImpl.h \
@@ -4005,8 +4007,6 @@ webcore_sources += \
 	Source/WebCore/storage/StorageTracker.cpp \
 	Source/WebCore/storage/StorageTracker.h \
 	Source/WebCore/storage/StorageTrackerClient.h \
-	Source/WebCore/storage/WorkerContextSQLDatabase.cpp \
-	Source/WebCore/storage/WorkerContextSQLDatabase.h \
 	Source/WebCore/svg/animation/SMILTimeContainer.cpp \
 	Source/WebCore/svg/animation/SMILTimeContainer.h \
 	Source/WebCore/svg/animation/SMILTime.cpp \
@@ -4735,22 +4735,22 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSQLTransactionSyncCallback.h
 
 dom_binding_idls += \
-	$(WebCore)/storage/DOMWindowSQLDatabase.idl \
-	$(WebCore)/storage/Database.idl \
-	$(WebCore)/storage/DatabaseCallback.idl \
-	$(WebCore)/storage/DatabaseSync.idl \
-	$(WebCore)/storage/SQLError.idl \
-	$(WebCore)/storage/SQLException.idl \
-	$(WebCore)/storage/SQLResultSet.idl \
-	$(WebCore)/storage/SQLResultSetRowList.idl \
-	$(WebCore)/storage/SQLStatementCallback.idl \
-	$(WebCore)/storage/SQLStatementErrorCallback.idl \
-	$(WebCore)/storage/SQLTransaction.idl \
-	$(WebCore)/storage/SQLTransactionCallback.idl \
-	$(WebCore)/storage/SQLTransactionErrorCallback.idl \
-	$(WebCore)/storage/SQLTransactionSync.idl \
-	$(WebCore)/storage/SQLTransactionSyncCallback.idl \
-	$(WebCore)/storage/WorkerContextSQLDatabase.idl
+	$(WebCore)/Modules/webdatabase/DOMWindowSQLDatabase.idl \
+	$(WebCore)/Modules/webdatabase/Database.idl \
+	$(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
+	$(WebCore)/Modules/webdatabase/DatabaseSync.idl \
+	$(WebCore)/Modules/webdatabase/SQLError.idl \
+	$(WebCore)/Modules/webdatabase/SQLException.idl \
+	$(WebCore)/Modules/webdatabase/SQLResultSet.idl \
+	$(WebCore)/Modules/webdatabase/SQLResultSetRowList.idl \
+	$(WebCore)/Modules/webdatabase/SQLStatementCallback.idl \
+	$(WebCore)/Modules/webdatabase/SQLStatementErrorCallback.idl \
+	$(WebCore)/Modules/webdatabase/SQLTransaction.idl \
+	$(WebCore)/Modules/webdatabase/SQLTransactionCallback.idl \
+	$(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
+	$(WebCore)/Modules/webdatabase/SQLTransactionSync.idl \
+	$(WebCore)/Modules/webdatabase/SQLTransactionSyncCallback.idl \
+	$(WebCore)/Modules/webdatabase/WorkerContextSQLDatabase.idl
 endif # END ENABLE_SQL_DATABASE
 
 # ----

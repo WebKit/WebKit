@@ -20,6 +20,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR \
     $$SOURCE_DIR/Modules/geolocation \
     $$SOURCE_DIR/Modules/indexeddb \
+    $$SOURCE_DIR/Modules/webdatabase \
     $$SOURCE_DIR/Modules/websockets \
     $$SOURCE_DIR/accessibility \
     $$SOURCE_DIR/bindings \

@@ -106,6 +106,22 @@ IDL_BINDINGS += \
     $$PWD/Modules/indexeddb/IDBRequest.idl \
     $$PWD/Modules/indexeddb/IDBTransaction.idl \
     $$PWD/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
+    $$PWD/Modules/webdatabase/DOMWindowSQLDatabase.idl \
+    $$PWD/Modules/webdatabase/Database.idl \
+    $$PWD/Modules/webdatabase/DatabaseCallback.idl \
+    $$PWD/Modules/webdatabase/DatabaseSync.idl \
+    $$PWD/Modules/webdatabase/SQLError.idl \
+    $$PWD/Modules/webdatabase/SQLException.idl \
+    $$PWD/Modules/webdatabase/SQLResultSet.idl \
+    $$PWD/Modules/webdatabase/SQLResultSetRowList.idl \
+    $$PWD/Modules/webdatabase/SQLStatementCallback.idl \
+    $$PWD/Modules/webdatabase/SQLStatementErrorCallback.idl \
+    $$PWD/Modules/webdatabase/SQLTransaction.idl \
+    $$PWD/Modules/webdatabase/SQLTransactionCallback.idl \
+    $$PWD/Modules/webdatabase/SQLTransactionErrorCallback.idl \
+    $$PWD/Modules/webdatabase/SQLTransactionSync.idl \
+    $$PWD/Modules/webdatabase/SQLTransactionSyncCallback.idl \
+    $$PWD/Modules/webdatabase/WorkerContextSQLDatabase.idl \
     $$PWD/Modules/websockets/CloseEvent.idl \
     $$PWD/Modules/websockets/DOMWindowWebSocket.idl \
     $$PWD/Modules/websockets/WebSocket.idl \
@@ -387,28 +403,12 @@ IDL_BINDINGS += \
     $$PWD/plugins/DOMMimeType.idl \
     $$PWD/plugins/DOMPluginArray.idl \
     $$PWD/plugins/DOMMimeTypeArray.idl \
-    $$PWD/storage/DOMWindowSQLDatabase.idl \
-    $$PWD/storage/Database.idl \
-    $$PWD/storage/DatabaseCallback.idl \
-    $$PWD/storage/DatabaseSync.idl \
     $$PWD/storage/Storage.idl \
     $$PWD/storage/StorageEvent.idl \
     $$PWD/storage/StorageInfo.idl \
     $$PWD/storage/StorageInfoErrorCallback.idl \
     $$PWD/storage/StorageInfoQuotaCallback.idl \
     $$PWD/storage/StorageInfoUsageCallback.idl \
-    $$PWD/storage/SQLError.idl \
-    $$PWD/storage/SQLException.idl \
-    $$PWD/storage/SQLResultSet.idl \
-    $$PWD/storage/SQLResultSetRowList.idl \
-    $$PWD/storage/SQLStatementCallback.idl \
-    $$PWD/storage/SQLStatementErrorCallback.idl \
-    $$PWD/storage/SQLTransaction.idl \
-    $$PWD/storage/SQLTransactionCallback.idl \
-    $$PWD/storage/SQLTransactionErrorCallback.idl \
-    $$PWD/storage/SQLTransactionSync.idl \
-    $$PWD/storage/SQLTransactionSyncCallback.idl \
-    $$PWD/storage/WorkerContextSQLDatabase.idl \
     $$PWD/testing/Internals.idl \
     $$PWD/testing/InternalSettings.idl \
     $$PWD/webaudio/AudioBuffer.idl \
@@ -693,6 +693,7 @@ generateBindings.commands = perl -I$$PWD/bindings/scripts $$generateBindings.scr
                             --generator $$generator \
                             --include $$PWD/Modules/geolocation \
                             --include $$PWD/Modules/indexeddb \
+                            --include $$PWD/Modules/webdatabase \
                             --include $$PWD/Modules/websockets \
                             --include $$PWD/dom \
                             --include $$PWD/fileapi \

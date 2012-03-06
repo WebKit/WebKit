@@ -1300,12 +1300,6 @@ SOURCES += \
     rendering/style/StyleSurroundData.cpp \
     rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \
-    storage/AbstractDatabase.cpp \
-    storage/DOMWindowSQLDatabase.cpp \
-    storage/Database.cpp \
-    storage/DatabaseAuthorizer.cpp \
-    storage/DatabaseContext.cpp \
-    storage/DatabaseSync.cpp \
     storage/StorageTask.cpp \
     storage/StorageThread.cpp \
     storage/Storage.cpp \
@@ -1318,7 +1312,6 @@ SOURCES += \
     storage/StorageNamespaceImpl.cpp \
     storage/StorageSyncManager.cpp \
     storage/StorageTracker.cpp \
-    storage/WorkerContextSQLDatabase.cpp \
     testing/Internals.cpp \
     testing/InternalSettings.cpp \
     xml/DOMParser.cpp \
@@ -1531,6 +1524,30 @@ HEADERS += \
     Modules/geolocation/PositionError.h \
     Modules/geolocation/PositionErrorCallback.h \
     Modules/geolocation/PositionOptions.h \
+    \
+    Modules/webdatabase/AbstractDatabase.h \
+    Modules/webdatabase/ChangeVersionWrapper.h \
+    Modules/webdatabase/DOMWindowSQLDatabase.h \
+    Modules/webdatabase/DatabaseAuthorizer.h \
+    Modules/webdatabase/Database.h \
+    Modules/webdatabase/DatabaseCallback.h \
+    Modules/webdatabase/DatabaseSync.h \
+    Modules/webdatabase/DatabaseTask.h \
+    Modules/webdatabase/DatabaseThread.h \
+    Modules/webdatabase/DatabaseTracker.h \
+    Modules/webdatabase/OriginQuotaManager.h \
+    Modules/webdatabase/OriginUsageRecord.h \
+    Modules/webdatabase/SQLCallbackWrapper.h \
+    Modules/webdatabase/SQLResultSet.h \
+    Modules/webdatabase/SQLResultSetRowList.h \
+    Modules/webdatabase/SQLStatement.h \
+    Modules/webdatabase/SQLStatementSync.h \
+    Modules/webdatabase/SQLTransaction.h \
+    Modules/webdatabase/SQLTransactionClient.h \
+    Modules/webdatabase/SQLTransactionCoordinator.h \
+    Modules/webdatabase/SQLTransactionSync.h \
+    Modules/webdatabase/SQLTransactionSyncCallback.h \
+    Modules/webdatabase/WorkerContextSQLDatabase.h \
     \
     css/CSSAspectRatioValue.h \
     css/CSSBorderImageSliceValue.h \
@@ -2513,43 +2530,20 @@ HEADERS += \
     rendering/svg/SVGTextMetricsBuilder.h \
     rendering/svg/SVGTextQuery.h \
     rendering/svg/SVGTextRunRenderingContext.h \
-    storage/AbstractDatabase.h \
-    storage/ChangeVersionWrapper.h \
-    storage/DOMWindowSQLDatabase.h \
-    storage/DatabaseAuthorizer.h \
-    storage/Database.h \
-    storage/DatabaseCallback.h \
-    storage/DatabaseSync.h \
-    storage/DatabaseTask.h \
-    storage/DatabaseThread.h \
-    storage/DatabaseTracker.h \
-    storage/StorageTask.h \
-    storage/StorageThread.h \
-    storage/OriginQuotaManager.h \
-    storage/OriginUsageRecord.h \
-    storage/SQLCallbackWrapper.h \
-    storage/SQLResultSet.h \
-    storage/SQLResultSetRowList.h \
-    storage/SQLStatement.h \
-    storage/SQLStatementSync.h \
-    storage/SQLTransaction.h \
-    storage/SQLTransactionClient.h \
-    storage/SQLTransactionCoordinator.h \
-    storage/SQLTransactionSync.h \
-    storage/SQLTransactionSyncCallback.h \
+    storage/Storage.h \
     storage/StorageArea.h \
     storage/StorageAreaImpl.h \
     storage/StorageAreaSync.h \
     storage/StorageEvent.h \
     storage/StorageEventDispatcher.h \
-    storage/Storage.h \
     storage/StorageMap.h \
     storage/StorageNamespace.h \
     storage/StorageNamespaceImpl.h \
     storage/StorageSyncManager.h \
+    storage/StorageTask.h \
+    storage/StorageThread.h \
     storage/StorageTracker.h \
     storage/StorageTrackerClient.h \
-    storage/WorkerContextSQLDatabase.h \
     svg/animation/SMILTimeContainer.h \
     svg/animation/SMILTime.h \
     svg/animation/SVGSMILElement.h \
@@ -2950,21 +2944,28 @@ plugin_backend_xlib {
 
 contains(DEFINES, ENABLE_SQL_DATABASE=1) {
     SOURCES += \
-        storage/ChangeVersionWrapper.cpp \
-        storage/DatabaseTask.cpp \
-        storage/DatabaseThread.cpp \
-        storage/DatabaseTracker.cpp \
-        storage/OriginQuotaManager.cpp \
-        storage/OriginUsageRecord.cpp \
-        storage/SQLException.cpp \
-        storage/SQLResultSet.cpp \
-        storage/SQLResultSetRowList.cpp \
-        storage/SQLStatement.cpp \
-        storage/SQLStatementSync.cpp \
-        storage/SQLTransaction.cpp \
-        storage/SQLTransactionClient.cpp \
-        storage/SQLTransactionCoordinator.cpp \
-        storage/SQLTransactionSync.cpp
+        Modules/webdatabase/AbstractDatabase.cpp \
+        Modules/webdatabase/ChangeVersionWrapper.cpp \
+        Modules/webdatabase/Database.cpp \
+        Modules/webdatabase/DatabaseAuthorizer.cpp \
+        Modules/webdatabase/DatabaseContext.cpp \
+        Modules/webdatabase/DatabaseSync.cpp \
+        Modules/webdatabase/DatabaseTask.cpp \
+        Modules/webdatabase/DatabaseThread.cpp \
+        Modules/webdatabase/DatabaseTracker.cpp \
+        Modules/webdatabase/DOMWindowSQLDatabase.cpp \
+        Modules/webdatabase/OriginQuotaManager.cpp \
+        Modules/webdatabase/OriginUsageRecord.cpp \
+        Modules/webdatabase/SQLException.cpp \
+        Modules/webdatabase/SQLResultSet.cpp \
+        Modules/webdatabase/SQLResultSetRowList.cpp \
+        Modules/webdatabase/SQLStatement.cpp \
+        Modules/webdatabase/SQLStatementSync.cpp \
+        Modules/webdatabase/SQLTransaction.cpp \
+        Modules/webdatabase/SQLTransactionClient.cpp \
+        Modules/webdatabase/SQLTransactionCoordinator.cpp \
+        Modules/webdatabase/SQLTransactionSync.cpp \
+        Modules/webdatabase/WorkerContextSQLDatabase.cpp
 
     !v8 {
         SOURCES += \

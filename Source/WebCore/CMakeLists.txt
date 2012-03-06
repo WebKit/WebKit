@@ -2,6 +2,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
+    "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/Modules/websockets"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/bindings"
@@ -93,6 +94,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
 SET(WebCore_IDL_INCLUDES
     Modules/geolocation
     Modules/indexeddb
+    Modules/webdatabase
     Modules/websockets
     bindings/generic
     css
@@ -433,6 +435,29 @@ SET(WebCore_SOURCES
     Modules/indexeddb/IDBFactoryBackendImpl.cpp
     Modules/indexeddb/PageGroupIndexedDatabase.cpp
     Modules/indexeddb/WorkerContextIndexedDatabase.cpp
+
+    Modules/webdatabase/AbstractDatabase.cpp
+    Modules/webdatabase/ChangeVersionWrapper.cpp
+    Modules/webdatabase/DOMWindowSQLDatabase.cpp
+    Modules/webdatabase/Database.cpp
+    Modules/webdatabase/DatabaseAuthorizer.cpp
+    Modules/webdatabase/DatabaseContext.cpp
+    Modules/webdatabase/DatabaseSync.cpp
+    Modules/webdatabase/DatabaseTask.cpp
+    Modules/webdatabase/DatabaseThread.cpp
+    Modules/webdatabase/DatabaseTracker.cpp
+    Modules/webdatabase/OriginQuotaManager.cpp
+    Modules/webdatabase/OriginUsageRecord.cpp
+    Modules/webdatabase/SQLException.cpp
+    Modules/webdatabase/SQLResultSet.cpp
+    Modules/webdatabase/SQLResultSetRowList.cpp
+    Modules/webdatabase/SQLStatement.cpp
+    Modules/webdatabase/SQLStatementSync.cpp
+    Modules/webdatabase/SQLTransaction.cpp
+    Modules/webdatabase/SQLTransactionClient.cpp
+    Modules/webdatabase/SQLTransactionCoordinator.cpp
+    Modules/webdatabase/SQLTransactionSync.cpp
+    Modules/webdatabase/WorkerContextSQLDatabase.cpp
 
     accessibility/AXObjectCache.cpp
     accessibility/AccessibilityARIAGrid.cpp
@@ -1403,29 +1428,8 @@ SET(WebCore_SOURCES
     rendering/style/StyleTransformData.cpp
     rendering/style/StyleVisualData.cpp
 
-    storage/AbstractDatabase.cpp
-    storage/ChangeVersionWrapper.cpp
-    storage/DOMWindowSQLDatabase.cpp
-    storage/Database.cpp
-    storage/DatabaseAuthorizer.cpp
-    storage/DatabaseContext.cpp
-    storage/DatabaseSync.cpp
-    storage/DatabaseTask.cpp
-    storage/DatabaseThread.cpp
-    storage/DatabaseTracker.cpp
     storage/StorageTask.cpp
     storage/StorageThread.cpp
-    storage/OriginQuotaManager.cpp
-    storage/OriginUsageRecord.cpp
-    storage/SQLException.cpp
-    storage/SQLResultSet.cpp
-    storage/SQLResultSetRowList.cpp
-    storage/SQLStatement.cpp
-    storage/SQLStatementSync.cpp
-    storage/SQLTransaction.cpp
-    storage/SQLTransactionClient.cpp
-    storage/SQLTransactionCoordinator.cpp
-    storage/SQLTransactionSync.cpp
     storage/Storage.cpp
     storage/StorageAreaImpl.cpp
     storage/StorageAreaSync.cpp
@@ -1437,7 +1441,6 @@ SET(WebCore_SOURCES
     storage/StorageNamespaceImpl.cpp
     storage/StorageSyncManager.cpp
     storage/StorageTracker.cpp
-    storage/WorkerContextSQLDatabase.cpp
 
     xml/DOMParser.cpp
     xml/NativeXPathNSResolver.cpp
@@ -1510,22 +1513,22 @@ ENDIF ()
 
 IF (ENABLE_SQL_DATABASE)
     LIST(APPEND WebCore_IDL_FILES
-        storage/DOMWindowSQLDatabase.idl
-        storage/Database.idl
-        storage/DatabaseCallback.idl
-        storage/DatabaseSync.idl
-        storage/SQLError.idl
-        storage/SQLException.idl
-        storage/SQLResultSet.idl
-        storage/SQLResultSetRowList.idl
-        storage/SQLStatementCallback.idl
-        storage/SQLStatementErrorCallback.idl
-        storage/SQLTransaction.idl
-        storage/SQLTransactionCallback.idl
-        storage/SQLTransactionErrorCallback.idl
-        storage/SQLTransactionSync.idl
-        storage/SQLTransactionSyncCallback.idl
-        storage/WorkerContextSQLDatabase.idl
+        Modules/webdatabase/DOMWindowSQLDatabase.idl
+        Modules/webdatabase/Database.idl
+        Modules/webdatabase/DatabaseCallback.idl
+        Modules/webdatabase/DatabaseSync.idl
+        Modules/webdatabase/SQLError.idl
+        Modules/webdatabase/SQLException.idl
+        Modules/webdatabase/SQLResultSet.idl
+        Modules/webdatabase/SQLResultSetRowList.idl
+        Modules/webdatabase/SQLStatementCallback.idl
+        Modules/webdatabase/SQLStatementErrorCallback.idl
+        Modules/webdatabase/SQLTransaction.idl
+        Modules/webdatabase/SQLTransactionCallback.idl
+        Modules/webdatabase/SQLTransactionErrorCallback.idl
+        Modules/webdatabase/SQLTransactionSync.idl
+        Modules/webdatabase/SQLTransactionSyncCallback.idl
+        Modules/webdatabase/WorkerContextSQLDatabase.idl
     )
 ENDIF ()
 

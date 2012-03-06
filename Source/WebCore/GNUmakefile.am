@@ -14,6 +14,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/Modules/geolocation \
 	-I$(srcdir)/Source/WebCore/Modules/indexeddb \
 	-I$(srcdir)/Source/WebCore/Modules/mediastream \
+	-I$(srcdir)/Source/WebCore/Modules/webdatabase \
 	-I$(srcdir)/Source/WebCore/Modules/websockets \
 	-I$(srcdir)/Source/WebCore/accessibility \
 	-I$(srcdir)/Source/WebCore/bindings \
@@ -780,6 +781,7 @@ IDL_PATH := \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
     $(WebCore)/Modules/mediastream \
+    $(WebCore)/Modules/webdatabase \
     $(WebCore)/Modules/websockets \
     $(WebCore)/bindings/js \
     $(WebCore)/css \
@@ -922,6 +924,7 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/geolocation/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/indexeddb/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \
+	$(shell ls $(srcdir)/Source/WebCore/Modules/webdatabase/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/websockets/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/css/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/dom/*.idl) \

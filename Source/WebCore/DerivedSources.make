@@ -30,6 +30,7 @@ VPATH = \
     $(WebCore) \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
+    $(WebCore)/Modules/webdatabase \
     $(WebCore)/Modules/websockets \
     $(WebCore)/bindings/generic \
     $(WebCore)/bindings/js \
@@ -76,6 +77,22 @@ BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/IDBRequest.idl \
     $(WebCore)/Modules/indexeddb/IDBTransaction.idl \
     $(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
+    $(WebCore)/Modules/webdatabase/DOMWindowSQLDatabase.idl \
+    $(WebCore)/Modules/webdatabase/Database.idl \
+    $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
+    $(WebCore)/Modules/webdatabase/DatabaseSync.idl \
+    $(WebCore)/Modules/webdatabase/SQLError.idl \
+    $(WebCore)/Modules/webdatabase/SQLException.idl \
+    $(WebCore)/Modules/webdatabase/SQLResultSet.idl \
+    $(WebCore)/Modules/webdatabase/SQLResultSetRowList.idl \
+    $(WebCore)/Modules/webdatabase/SQLStatementCallback.idl \
+    $(WebCore)/Modules/webdatabase/SQLStatementErrorCallback.idl \
+    $(WebCore)/Modules/webdatabase/SQLTransaction.idl \
+    $(WebCore)/Modules/webdatabase/SQLTransactionCallback.idl \
+    $(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
+    $(WebCore)/Modules/webdatabase/SQLTransactionSync.idl \
+    $(WebCore)/Modules/webdatabase/SQLTransactionSyncCallback.idl \
+    $(WebCore)/Modules/webdatabase/WorkerContextSQLDatabase.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/DOMWindowWebSocket.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
@@ -365,28 +382,12 @@ BINDING_IDLS = \
     $(WebCore)/plugins/DOMMimeTypeArray.idl \
     $(WebCore)/plugins/DOMPlugin.idl \
     $(WebCore)/plugins/DOMPluginArray.idl \
-    $(WebCore)/storage/DOMWindowSQLDatabase.idl \
-    $(WebCore)/storage/Database.idl \
-    $(WebCore)/storage/DatabaseCallback.idl \
-    $(WebCore)/storage/DatabaseSync.idl \
-    $(WebCore)/storage/SQLError.idl \
-    $(WebCore)/storage/SQLException.idl \
-    $(WebCore)/storage/SQLResultSet.idl \
-    $(WebCore)/storage/SQLResultSetRowList.idl \
-    $(WebCore)/storage/SQLStatementCallback.idl \
-    $(WebCore)/storage/SQLStatementErrorCallback.idl \
-    $(WebCore)/storage/SQLTransaction.idl \
-    $(WebCore)/storage/SQLTransactionCallback.idl \
-    $(WebCore)/storage/SQLTransactionErrorCallback.idl \
-    $(WebCore)/storage/SQLTransactionSync.idl \
-    $(WebCore)/storage/SQLTransactionSyncCallback.idl \
     $(WebCore)/storage/Storage.idl \
     $(WebCore)/storage/StorageEvent.idl \
     $(WebCore)/storage/StorageInfo.idl \
     $(WebCore)/storage/StorageInfoErrorCallback.idl \
     $(WebCore)/storage/StorageInfoQuotaCallback.idl \
     $(WebCore)/storage/StorageInfoUsageCallback.idl \
-    $(WebCore)/storage/WorkerContextSQLDatabase.idl \
     $(WebCore)/svg/ElementTimeControl.idl \
     $(WebCore)/svg/SVGAElement.idl \
     $(WebCore)/svg/SVGAltGlyphDefElement.idl \
