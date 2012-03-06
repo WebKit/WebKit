@@ -47,13 +47,28 @@ class WebWorkerClient;
 class WebCommonWorkerClient {
 public:
     // Called on the main webkit thread before opening a web database.
-    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) = 0;
+    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize)
+    {
+        return true;
+    }
 
     // Called on the main webkit thread before opening a file system.
-    virtual bool allowFileSystem() = 0;
+    virtual bool allowFileSystem()
+    {
+        return true;
+    }
 
     // Called on the main webkit thread before opening a file system.
-    virtual void openFileSystem(WebFileSystem::Type, long long size, bool create, WebFileSystemCallbacks*) = 0;
+    virtual void openFileSystem(WebFileSystem::Type, long long size, bool create, WebFileSystemCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+    }
+
+    // Called on the main webkit thread before opening an indexed database.
+    virtual bool allowIndexedDB(const WebString& name)
+    {
+        return true;
+    }
 };
 
 

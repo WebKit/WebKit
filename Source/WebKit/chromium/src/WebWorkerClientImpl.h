@@ -104,6 +104,7 @@ public:
     virtual bool allowFileSystem();
     virtual void openFileSystem(WebFileSystem::Type, long long size, bool create,
                                 WebFileSystemCallbacks*);
+    virtual bool allowIndexedDB(const WebString& name);
 
     // WebCommentWorkerBase methods:
     virtual WebCommonWorkerClient* commonClient() { return this; }

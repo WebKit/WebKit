@@ -214,6 +214,16 @@ bool WebWorkerClientImpl::allowDatabase(WebFrame*, const WebString& name, const 
         return false;
     return !webView->permissionClient() || webView->permissionClient()->allowDatabase(m_webFrame, name, displayName, estimatedSize);
 }
+
+bool WebWorkerClientImpl::allowIndexedDB(const WebString& name)
+{
+    if (m_proxy->askedToTerminate())
+        return false;
+    WebKit::WebViewImpl* webView = m_webFrame->viewImpl();
+    if (!webView)
+        return false;
+    return !webView->permissionClient() || webView->permissionClient()->allowIndexedDB(m_webFrame, name, WebSecurityOrigin());
+}
  
 WebView* WebWorkerClientImpl::view() const 
 {
