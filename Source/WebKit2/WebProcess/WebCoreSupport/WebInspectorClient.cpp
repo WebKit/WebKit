@@ -60,11 +60,6 @@ void WebInspectorClient::bringFrontendToFront()
     m_page->inspector()->bringToFront();
 }
 
-void WebInspectorClient::updateDockingAvailability()
-{
-    m_page->inspector()->updateDockingAvailability();
-}
-
 void WebInspectorClient::highlight()
 {
     if (!m_highlightOverlay) {

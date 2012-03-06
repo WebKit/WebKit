@@ -46,7 +46,6 @@ public:
     virtual void openInspectorFrontend(InspectorController*) = 0;
     virtual void closeInspectorFrontend() = 0;
     virtual void bringFrontendToFront() = 0;
-    virtual void updateDockingAvailability() { }
 
     virtual void highlight() = 0;
     virtual void hideHighlight() = 0;

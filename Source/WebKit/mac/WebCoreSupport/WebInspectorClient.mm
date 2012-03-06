@@ -111,11 +111,6 @@ void WebInspectorClient::bringFrontendToFront()
     m_frontendClient->bringToFront();
 }
 
-void WebInspectorClient::updateDockingAvailability()
-{
-    m_frontendClient->setDockingUnavailable(!m_frontendClient->canAttachWindow());
-}
-
 void WebInspectorClient::highlight()
 {
     [m_highlighter.get() highlight];

@@ -361,12 +361,8 @@ void InspectorController::resume()
         m_debuggerAgent->resume(&error);
     }
 }
-#endif
 
-void InspectorController::updateDockingAvailability()
-{
-    m_inspectorClient->updateDockingAvailability();
-}
+#endif
 
 void InspectorController::setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize)
 {

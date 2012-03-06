@@ -106,8 +106,6 @@ public:
     void resume();
 #endif
 
-    void updateDockingAvailability();
-
     void setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
 
     InspectorPageAgent* pageAgent() const { return m_pageAgent; }

@@ -106,8 +106,6 @@ public:
     static void didInstallTimer(ScriptExecutionContext*, int timerId, int timeout, bool singleShot);
     static void didRemoveTimer(ScriptExecutionContext*, int timerId);
 
-    static void didResizeMainFrame(Frame*);
-
     static InspectorInstrumentationCookie willCallFunction(ScriptExecutionContext*, const String& scriptName, int scriptLine);
     static void didCallFunction(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willChangeXHRReadyState(ScriptExecutionContext*, XMLHttpRequest* request);
@@ -260,8 +258,6 @@ private:
     static void didScheduleResourceRequestImpl(InstrumentingAgents*, const String& url);
     static void didInstallTimerImpl(InstrumentingAgents*, int timerId, int timeout, bool singleShot);
     static void didRemoveTimerImpl(InstrumentingAgents*, int timerId);
-
-    static void didResizeMainFrameImpl(Frame*);
 
     static InspectorInstrumentationCookie willCallFunctionImpl(InstrumentingAgents*, const String& scriptName, int scriptLine);
     static void didCallFunctionImpl(const InspectorInstrumentationCookie&);
@@ -579,14 +575,6 @@ inline void InspectorInstrumentation::didRemoveTimer(ScriptExecutionContext* con
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
         didRemoveTimerImpl(instrumentingAgents, timerId);
-#endif
-}
-
-inline void InspectorInstrumentation::didResizeMainFrame(Frame* frame)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    didResizeMainFrameImpl(frame);
 #endif
 }
 

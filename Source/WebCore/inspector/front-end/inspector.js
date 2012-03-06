@@ -73,7 +73,6 @@ var WebInspector = {
         this._dockToggleButton = new WebInspector.StatusBarButton(this._dockButtonTitle(), "dock-status-bar-item");
         this._dockToggleButton.addEventListener("click", this._toggleAttach.bind(this), false);
         this._dockToggleButton.toggled = !this.attached;
-        WebInspector.updateDockToggleButtonVisibility();
 
         this._settingsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Settings"), "settings-status-bar-item");
         this._settingsButton.addEventListener("click", this._toggleSettings.bind(this), false);
@@ -565,20 +564,6 @@ WebInspector.windowResize = function(event)
 WebInspector.setAttachedWindow = function(attached)
 {
     this.attached = attached;
-    WebInspector.updateDockToggleButtonVisibility();
-}
-
-WebInspector.setDockingUnavailable = function(unavailable)
-{
-    this._isDockingUnavailable = unavailable;
-    WebInspector.updateDockToggleButtonVisibility();
-}
-
-WebInspector.updateDockToggleButtonVisibility = function()
-{
-    if (!this._dockToggleButton)
-        return;
-    this._dockToggleButton.visible = this.attached ? true : !this._isDockingUnavailable;
 }
 
 WebInspector.close = function(event)

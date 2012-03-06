@@ -1,5 +1,9 @@
 2012-03-05  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed rollout of r109858 for restructuring.
+
+2012-03-05  Joseph Pecoraro  <pecoraro@apple.com>
+
         <http://webkit.org/b/78575> Web Inspector: Hide dock button when not allowed to dock
 
         Reviewed by Timothy Hatcher.

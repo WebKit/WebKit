@@ -138,7 +138,6 @@ void InspectorFrontendClientLocal::windowObjectCleared()
 void InspectorFrontendClientLocal::frontendLoaded()
 {
     bringToFront();
-    setDockingUnavailable(!canAttachWindow());
     m_frontendLoaded = true;
     for (Vector<String>::iterator it = m_evaluateOnLoad.begin(); it != m_evaluateOnLoad.end(); ++it)
         evaluateOnLoad(*it);
@@ -167,11 +166,6 @@ bool InspectorFrontendClientLocal::canAttachWindow()
     unsigned inspectedPageHeight = m_inspectorController->inspectedPage()->mainFrame()->view()->visibleHeight();
     unsigned maximumAttachedHeight = inspectedPageHeight * maximumAttachedHeightRatio;
     return minimumAttachedHeight <= maximumAttachedHeight && !isInspectorPage;
-}
-
-void InspectorFrontendClientLocal::setDockingUnavailable(bool unavailable)
-{
-    evaluateOnLoad(String::format("[\"setDockingUnavailable\", %s]", unavailable ? "true" : "false"));
 }
 
 void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
