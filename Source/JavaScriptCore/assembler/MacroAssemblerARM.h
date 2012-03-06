@@ -122,6 +122,15 @@ public:
             m_assembler.ands_r(dest, dest, w);
     }
 
+    void and32(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        ARMWord w = m_assembler.getImm(imm.m_value, ARMRegisters::S0, true);
+        if (w & ARMAssembler::OP2_INV_IMM)
+            m_assembler.bics_r(dest, src, w & ~ARMAssembler::OP2_INV_IMM);
+        else
+            m_assembler.ands_r(dest, src, w);
+    }
+
     void lshift32(RegisterID shift_amount, RegisterID dest)
     {
         ARMWord w = ARMAssembler::getOp2(0x1f);
