@@ -31,7 +31,7 @@ import unittest
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.rebaseline import *
-from webkitpy.tool.mocktool import MockTool
+from webkitpy.tool.mocktool import MockTool, MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
 
 
@@ -84,9 +84,8 @@ Retrieving results for chromium-win-win7 from Webkit Win7.
 Retrieving results for chromium-win-xp from Webkit Win.
     userscripts/another-test.html
     userscripts/images.svg
-Optimizing baselines for userscripts/another-test.html.
-Optimizing baselines for userscripts/images.svg.
 """
+
         expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux 32', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux 32', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux', 'userscripts/another-test.html'], cwd=/mock-checkout
@@ -101,8 +100,17 @@ MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win7', 'userscripts/anothe
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win7', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win', 'userscripts/images.svg'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/another-test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/images.svg'], cwd=/mock-checkout
 """
+
         command._tests_to_rebaseline = lambda port: [] if not port.name().find('-gpu-') == -1 else ['userscripts/another-test.html', 'userscripts/images.svg']
-        OutputCapture().assert_outputs(self, command.execute, [None, [], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=False), [], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+
+        expected_stdout_with_optimize = expected_stdout + (
+            "Optimizing baselines for userscripts/another-test.html.\n"
+            "Optimizing baselines for userscripts/images.svg.\n")
+        expected_stderr_with_optimize = expected_stderr + (
+            "MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/another-test.html'], cwd=/mock-checkout\n"
+            "MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/images.svg'], cwd=/mock-checkout\n")
+
+        command._tests_to_rebaseline = lambda port: [] if not port.name().find('-gpu-') == -1 else ['userscripts/another-test.html', 'userscripts/images.svg']
+        OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True), [], tool], expected_stdout=expected_stdout_with_optimize, expected_stderr=expected_stderr_with_optimize)

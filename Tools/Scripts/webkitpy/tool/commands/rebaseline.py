@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import optparse
 import os.path
 import re
 import shutil
@@ -150,6 +151,15 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
     name = "rebaseline-expectations"
     help_text = "Rebaselines the tests indicated in test_expectations.txt."
 
+    def __init__(self):
+        options = [
+            optparse.make_option('--no-optimize', dest='optimize', action='store_false', default=True,
+                help=('Do not optimize/de-dup the expectations after rebaselining '
+                      '(default is to de-dup automatically). '
+                      'You can use "webkit-patch optimize-baselines" to optimize separately.')),
+        ]
+        AbstractDeclarativeCommand.__init__(self, options=options)
+
     def _run_webkit_patch(self, args):
         try:
             self._tool.executive.run_command([self._tool.path()] + args, cwd=self._tool.scm().checkout_root)
@@ -192,6 +202,8 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
             self._rebaseline_port(port_name)
         for port_name in tool.port_factory.all_port_names():
             self._update_expectations_file(port_name)
+        if not options.optimize:
+            return
         for test_name in self._touched_test_names:
             print "Optimizing baselines for %s." % test_name
             self._run_webkit_patch(['optimize-baselines', test_name])

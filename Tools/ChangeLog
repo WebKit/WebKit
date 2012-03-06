@@ -1,3 +1,18 @@
+2012-03-05  Dirk Pranke  <dpranke@chromium.org>
+
+        There should be a way to disable optimizer in webkit-patch rebaseline-expectations
+        https://bugs.webkit.org/show_bug.cgi?id=69590
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a --no-optimize flag to webkit-patch rebaseline-expectations
+        to skip the 'optimize-expectations' step.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineExpectations.__init__):
+        (RebaselineExpectations.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+
 2012-03-05  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Add new popup type: PagePopup
