@@ -1,3 +1,14 @@
+2012-03-05  Eli Fidler  <efidler@rim.com>
+
+        The minimum font size WebSetting should actually change the LOGICAL font size in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=80312
+        RIM PR: 139874
+
+        Reviewed by George Staikos.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+
 2012-03-05  Jakob Petsovits  <jpetsovits@rim.com>
 
         Make accelerated compositing work again with direct rendering.

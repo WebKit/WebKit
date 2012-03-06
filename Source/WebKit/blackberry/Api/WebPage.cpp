@@ -5466,7 +5466,7 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setPrivateBrowsingEnabled(webSettings->isPrivateBrowsingEnabled());
     coreSettings->setDefaultFixedFontSize(webSettings->defaultFixedFontSize());
     coreSettings->setDefaultFontSize(webSettings->defaultFontSize());
-    coreSettings->setMinimumFontSize(webSettings->minimumFontSize());
+    coreSettings->setMinimumLogicalFontSize(webSettings->minimumFontSize());
     coreSettings->setSerifFontFamily(webSettings->serifFontFamily().impl());
     coreSettings->setFixedFontFamily(webSettings->fixedFontFamily().impl());
     coreSettings->setSansSerifFontFamily(webSettings->sansSerifFontFamily().impl());
