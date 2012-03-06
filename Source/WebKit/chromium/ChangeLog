@@ -1,3 +1,15 @@
+2012-03-05  Kent Tamura  <tkent@chromium.org>
+
+        Do not reformat strings in <input type=number> on platforms using LocalizedNumberICU.
+        https://bugs.webkit.org/show_bug.cgi?id=78326
+
+        Reviewed by Hajime Morita.
+
+        Add a test for WebCore/platform/text/LocalizedNumberICU.
+
+        * WebKit.gypi: Added LocalizedNumberICUTest.cpp
+        * tests/LocalizedNumberICUTest.cpp: Added.
+
 2012-03-05  Kenneth Russell  <kbr@google.com>
 
         [chromium] Notify CCLayerImpl tree of context loss and restoration

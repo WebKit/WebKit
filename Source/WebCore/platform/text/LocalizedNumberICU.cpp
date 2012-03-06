@@ -29,107 +29,240 @@
  */
 
 #include "config.h"
-#include "LocalizedNumber.h"
+#include "LocalizedNumberICU.h"
 
-#include <limits>
+#include "LocalizedNumber.h"
+#include <unicode/decimfmt.h>
 #include <unicode/numfmt.h>
-#include <unicode/parsepos.h>
-#include <wtf/MainThread.h>
-#include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/dtoa.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace icu;
-using namespace std;
 
 namespace WebCore {
 
-static PassOwnPtr<NumberFormat> createFormatterForCurrentLocale()
+ICULocale::ICULocale(const Locale& locale)
+    : m_locale(locale)
+    , m_didCreateDecimalFormat(false)
 {
+}
+
+PassOwnPtr<ICULocale> ICULocale::create(const char* localeString)
+{
+    return adoptPtr(new ICULocale(Locale::createCanonical(localeString)));
+}
+
+PassOwnPtr<ICULocale> ICULocale::createForCurrentLocale()
+{
+    return adoptPtr(new ICULocale(Locale::getDefault()));
+}
+
+void ICULocale::setDecimalSymbol(unsigned index, DecimalFormatSymbols::ENumberFormatSymbol symbol)
+{
+    UnicodeString ustring = m_decimalFormat->getDecimalFormatSymbols()->getSymbol(symbol);
+    m_decimalSymbols[index] = String(ustring.getBuffer(), ustring.length());
+}
+
+void ICULocale::initializeDecimalFormat()
+{
+    if (m_didCreateDecimalFormat)
+        return;
+    m_didCreateDecimalFormat = true;
     UErrorCode status = U_ZERO_ERROR;
-    OwnPtr<NumberFormat> formatter = adoptPtr(NumberFormat::createInstance(status));
-    return U_SUCCESS(status) ? formatter.release() : nullptr;
+    NumberFormat* format = NumberFormat::createInstance(m_locale, NumberFormat::kNumberStyle, status);
+    if (!U_SUCCESS(status))
+        return;
+    m_decimalFormat = adoptPtr(static_cast<DecimalFormat*>(format));
+
+    setDecimalSymbol(0, DecimalFormatSymbols::kZeroDigitSymbol);
+    setDecimalSymbol(1, DecimalFormatSymbols::kOneDigitSymbol);
+    setDecimalSymbol(2, DecimalFormatSymbols::kTwoDigitSymbol);
+    setDecimalSymbol(3, DecimalFormatSymbols::kThreeDigitSymbol);
+    setDecimalSymbol(4, DecimalFormatSymbols::kFourDigitSymbol);
+    setDecimalSymbol(5, DecimalFormatSymbols::kFiveDigitSymbol);
+    setDecimalSymbol(6, DecimalFormatSymbols::kSixDigitSymbol);
+    setDecimalSymbol(7, DecimalFormatSymbols::kSevenDigitSymbol);
+    setDecimalSymbol(8, DecimalFormatSymbols::kEightDigitSymbol);
+    setDecimalSymbol(9, DecimalFormatSymbols::kNineDigitSymbol);
+    setDecimalSymbol(DecimalSeparatorIndex, DecimalFormatSymbols::kDecimalSeparatorSymbol);
+    setDecimalSymbol(GroupSeparatorIndex, DecimalFormatSymbols::kGroupingSeparatorSymbol);
 }
 
-static PassOwnPtr<NumberFormat> createFormatterForCurrentLocaleToDisplay()
+String ICULocale::convertToLocalizedNumber(const String& input)
 {
-    OwnPtr<NumberFormat> formatter(createFormatterForCurrentLocale());
-    if (!formatter)
-        return nullptr;
+    initializeDecimalFormat();
+    if (!m_decimalFormat || input.isEmpty())
+        return input;
 
-    formatter->setGroupingUsed(FALSE);
-    return formatter.release();
+    unsigned i = 0;
+    bool isNegative = false;
+    UnicodeString ustring;
+
+    if (input[0] == '-') {
+        ++i;
+        isNegative = true;
+        m_decimalFormat->getNegativePrefix(ustring);
+    } else
+        m_decimalFormat->getPositivePrefix(ustring);
+    StringBuilder builder;
+    builder.reserveCapacity(input.length());
+    builder.append(ustring.getBuffer(), ustring.length());
+
+    for (; i < input.length(); ++i) {
+        switch (input[i]) {
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            builder.append(m_decimalSymbols[input[i] - '0']);
+            break;
+        case '.':
+            builder.append(m_decimalSymbols[DecimalSeparatorIndex]);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+
+    if (isNegative)
+        m_decimalFormat->getNegativeSuffix(ustring);
+    else
+        m_decimalFormat->getPositiveSuffix(ustring);
+    builder.append(ustring.getBuffer(), ustring.length());
+
+    return builder.toString();
 }
 
-// This might return 0.
-static NumberFormat* numberFormatterForParsing()
+template <class StringType> static bool matches(const String& text, unsigned position, const StringType& part)
 {
-    ASSERT(isMainThread());
-    static NumberFormat* formatter = createFormatterForCurrentLocale().leakPtr();
-    return formatter;
+    if (part.isEmpty())
+        return true;
+    if (position + part.length() > text.length())
+        return false;
+    for (unsigned i = 0; i < static_cast<unsigned>(part.length()); ++i) {
+        if (text[position + i] != part[i])
+            return false;
+    }
+    return true;
 }
 
-// This might return 0.
-static NumberFormat* numberFormatterForDisplay()
+static bool endsWith(const String& text, const UnicodeString& suffix)
 {
-    ASSERT(isMainThread());
-    static NumberFormat* formatter = createFormatterForCurrentLocaleToDisplay().leakPtr();
-    return formatter;
+    if (suffix.length() <= 0)
+        return true;
+    unsigned suffixLength = static_cast<unsigned>(suffix.length());
+    if (suffixLength > text.length())
+        return false;
+    unsigned start = text.length() - suffixLength;
+    for (unsigned i = 0; i < suffixLength; ++i) {
+        if (text[start + i] != suffix[i])
+            return false;
+    }
+    return true;
 }
 
-static double parseLocalizedNumber(const String& numberString)
+bool ICULocale::detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex)
 {
-    if (numberString.isEmpty())
-        return numeric_limits<double>::quiet_NaN();
-    NumberFormat* formatter = numberFormatterForParsing();
-    if (!formatter)
-        return numeric_limits<double>::quiet_NaN();
-    UnicodeString numberUnicodeString(numberString.characters(), numberString.length());
-    Formattable result;
-    ParsePosition position(0);
-    formatter->parse(numberUnicodeString, result, position);
-    if (position.getIndex() != numberUnicodeString.length())
-        return numeric_limits<double>::quiet_NaN();
-    UErrorCode status = U_ZERO_ERROR;
-    double numericResult = result.getDouble(status);
-    return U_SUCCESS(status) ? numericResult : numeric_limits<double>::quiet_NaN();
+    startIndex = 0;
+    endIndex = input.length();
+    UnicodeString prefix;
+    m_decimalFormat->getNegativePrefix(prefix);
+    UnicodeString suffix;
+    m_decimalFormat->getNegativeSuffix(suffix);
+    if (prefix.isEmpty() && suffix.isEmpty()) {
+        m_decimalFormat->getPositivePrefix(prefix);
+        m_decimalFormat->getPositiveSuffix(suffix);
+        ASSERT(!(prefix.isEmpty() && suffix.isEmpty()));
+        if (matches(input, 0, prefix) && endsWith(input, suffix)) {
+            isNegative = false;
+            startIndex = prefix.length();
+            endIndex -= suffix.length();
+        } else
+            isNegative = true;
+    } else {
+        if (matches(input, 0, prefix) && endsWith(input, suffix)) {
+            isNegative = true;
+            startIndex = prefix.length();
+            endIndex -= suffix.length();
+        } else {
+            isNegative = false;
+            m_decimalFormat->getPositivePrefix(prefix);
+            m_decimalFormat->getPositiveSuffix(suffix);
+            if (matches(input, 0, prefix) && endsWith(input, suffix)) {
+                startIndex = prefix.length();
+                endIndex -= suffix.length();
+            } else
+                return false;
+        }
+    }
+    return true;
 }
 
-static String formatLocalizedNumber(double number, unsigned fractionDigits)
+unsigned ICULocale::matchedDecimalSymbolIndex(const String& input, unsigned& position)
 {
-    NumberFormat* formatter = numberFormatterForDisplay();
-    if (!formatter)
-        return String();
-    UnicodeString result;
-    formatter->setMaximumFractionDigits(clampToInteger(fractionDigits));
-    formatter->format(number, result);
-    return String(result.getBuffer(), result.length());
+    for (unsigned symbolIndex = 0; symbolIndex < DecimalSymbolsSize; ++symbolIndex) {
+        if (m_decimalSymbols[symbolIndex].length() && matches(input, position, m_decimalSymbols[symbolIndex])) {
+            position += m_decimalSymbols[symbolIndex].length();
+            return symbolIndex;
+        }
+    }
+    return DecimalSymbolsSize;
+}
+
+String ICULocale::convertFromLocalizedNumber(const String& localized)
+{
+    initializeDecimalFormat();
+    String input = localized.stripWhiteSpace();
+    if (!m_decimalFormat || input.isEmpty())
+        return input;
+
+    bool isNegative;
+    unsigned startIndex;
+    unsigned endIndex;
+    if (!detectSignAndGetDigitRange(input, isNegative, startIndex, endIndex)) {
+        // Input is broken. Returning an invalid number string.
+        return "*";
+    }
+
+    StringBuilder builder;
+    builder.reserveCapacity(input.length());
+    if (isNegative)
+        builder.append("-");
+    for (unsigned i = startIndex; i < endIndex;) {
+        unsigned symbolIndex = matchedDecimalSymbolIndex(input, i);
+        if (symbolIndex >= DecimalSymbolsSize)
+            return "*";
+        if (symbolIndex == DecimalSeparatorIndex)
+            builder.append('.');
+        else if (symbolIndex == GroupSeparatorIndex) {
+            // Ignore group separators.
+
+        } else
+            builder.append(static_cast<UChar>('0' + symbolIndex));
+    }
+    return builder.toString();
+}
+
+static ICULocale* currentLocale()
+{
+    static ICULocale* currentICULocale = ICULocale::createForCurrentLocale().leakPtr();
+    return currentICULocale;
 }
 
 String convertToLocalizedNumber(const String& canonicalNumberString, unsigned fractionDigits)
 {
-    // FIXME: We should not do parse-then-format. It makes some
-    // problems such as removing leading zeros, changing trailing
-    // digits to zeros.
-    // FIXME: We should not use the fractionDigits argument.
-
-    double doubleValue = canonicalNumberString.toDouble();
-    // The input string must be valid.
-    return formatLocalizedNumber(doubleValue, fractionDigits);
-
+    return currentLocale()->convertToLocalizedNumber(canonicalNumberString);
 }
 
 String convertFromLocalizedNumber(const String& localizedNumberString)
 {
-    // FIXME: We should not do parse-then-format. It makes some
-    // problems such as removing leading zeros, changing trailing
-    // digits to zeros.
-
-    double doubleValue = parseLocalizedNumber(localizedNumberString);
-    if (!isfinite(doubleValue))
-        return localizedNumberString;
-    NumberToStringBuffer buffer;
-    return String(numberToString(doubleValue, buffer));
+    return currentLocale()->convertFromLocalizedNumber(localizedNumberString);
 }
 
 } // namespace WebCore

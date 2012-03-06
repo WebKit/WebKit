@@ -4213,6 +4213,7 @@
             'platform/text/LocalizedDateNone.cpp',
             'platform/text/LocalizedNumber.h',
             'platform/text/LocalizedNumberICU.cpp',
+            'platform/text/LocalizedNumberICU.h',
             'platform/text/LocalizedNumberNone.cpp',
             'platform/text/ParserUtilities.h',
             'platform/text/QuotedPrintable.h',
