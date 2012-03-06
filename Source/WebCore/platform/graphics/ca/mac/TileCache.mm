@@ -91,13 +91,13 @@ void TileCache::setNeedsDisplayInRect(const IntRect& rect)
     if (m_tiles.isEmpty())
         return;
 
-    IntRect scaledRect = rect;
+    FloatRect scaledRect(rect);
     scaledRect.scale(m_scale);
 
     // Find the tiles that need to be invalidated.
     TileIndex topLeft;
     TileIndex bottomRight;
-    getTileIndexRangeForRect(intersection(scaledRect, m_tileCoverageRect), topLeft, bottomRight);
+    getTileIndexRangeForRect(intersection(enclosingIntRect(scaledRect), m_tileCoverageRect), topLeft, bottomRight);
 
     for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
         for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
