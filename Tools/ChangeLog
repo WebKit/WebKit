@@ -1,3 +1,23 @@
+2012-03-06  Sami Kyostila  <skyostil@chromium.org>
+
+        Enable universal newlines in chromium android layout test runner
+        https://bugs.webkit.org/show_bug.cgi?id=80418
+
+        Reviewed by Adam Barth.
+
+        The Chromium Android layout test runner uses the 'adb' program to
+        communicate with the Android device. Adb uses CRLF ('\r\n') to delimit
+        output lines from the test runner, while the test expectation files are
+        written with LF ('\n') delimiters. This causes the results to have
+        spurious whitespace differences, making them more difficult to
+        interpret.
+
+        The fix is to enable universal newlines for the DumpRenderTree pipe,
+        causing the output to only contain LF newlines like on other platforms.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver._start):
+
 2012-03-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Revert r109900, it was completly busted

@@ -424,7 +424,8 @@ class ChromiumAndroidDriver(chromium.ChromiumDriver):
         while True:
             _log.debug('Starting adb shell for DumpRenderTree: ' + ' '.join(shell_cmd))
             executive = self._port.host.executive
-            self._proc = executive.Popen(shell_cmd, stdin=executive.PIPE, stdout=executive.PIPE, stderr=executive.STDOUT, close_fds=True)
+            self._proc = executive.popen(shell_cmd, stdin=executive.PIPE, stdout=executive.PIPE, stderr=executive.STDOUT,
+                                         close_fds=True, universal_newlines=True)
             # Read back the shell prompt to ensure adb shell ready.
             self._read_prompt()
             # Some tests rely on this to produce proper number format etc.,
