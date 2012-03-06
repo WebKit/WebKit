@@ -83,7 +83,7 @@ bool WebOptionElement::isEnabled() const
 }
 
 WebOptionElement::WebOptionElement(const PassRefPtr<HTMLOptionElement>& elem)
-    : WebFormControlElement(elem)
+    : WebElement(elem)
 {
 }
 

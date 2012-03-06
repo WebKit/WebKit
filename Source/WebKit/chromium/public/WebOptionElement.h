@@ -31,7 +31,7 @@
 #ifndef WebOptionElement_h
 #define WebOptionElement_h
 
-#include "WebFormControlElement.h"
+#include "WebElement.h"
 #include "platform/WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
@@ -41,17 +41,17 @@ namespace WebCore { class HTMLOptionElement; }
 namespace WebKit {
 
 // Provides readonly access to some properties of a DOM option element node.
-class WebOptionElement : public WebFormControlElement {
+class WebOptionElement : public WebElement {
 public:
-    WebOptionElement() : WebFormControlElement() { }
-    WebOptionElement(const WebOptionElement& element) : WebFormControlElement(element) { }
+    WebOptionElement() : WebElement() { }
+    WebOptionElement(const WebOptionElement& element) : WebElement(element) { }
 
     WebOptionElement& operator=(const WebOptionElement& element)
     {
-        WebFormControlElement::assign(element);
+        WebElement::assign(element);
         return *this;
     }
-    void assign(const WebOptionElement& element) { WebFormControlElement::assign(element); }
+    void assign(const WebOptionElement& element) { WebElement::assign(element); }
 
     WEBKIT_EXPORT void setValue(const WebString&);
     WEBKIT_EXPORT WebString value() const;

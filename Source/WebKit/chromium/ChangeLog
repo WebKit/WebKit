@@ -1,3 +1,19 @@
+2012-03-05  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Chromium] WebOptionElement should inherit WebElement instead of WebFormControlElement
+        https://bugs.webkit.org/show_bug.cgi?id=80089
+
+        Change class hierarchy of WebOptionElement to match with specification.
+
+        Reviewed by Darin Fisher.
+
+        * public/WebOptionElement.h: Replace to WebElement from WebFormControlElement 
+        (WebKit::WebOptionElement::WebOptionElement):
+        (WebKit::WebOptionElement::operator=):
+        (WebKit::WebOptionElement::assign):
+        * src/WebOptionElement.cpp:
+        (WebKit::WebOptionElement::WebOptionElement):
+
 2012-03-05  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Handle LevelDB database corruption
