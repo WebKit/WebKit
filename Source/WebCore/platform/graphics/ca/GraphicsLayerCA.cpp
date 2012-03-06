@@ -243,6 +243,18 @@ static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, 
     return false;
 }
 
+#if ENABLE(CSS_FILTERS)
+static inline bool supportsAcceleratedFilterAnimations()
+{
+// <rdar://problem/10907251> - WebKit2 doesn't support CA animations of CI filters on Lion and below
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
     return adoptPtr(new GraphicsLayerCA(client));
@@ -661,8 +673,10 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Int
     if (valueList.property() == AnimatedPropertyWebkitTransform)
         createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, animationName, timeOffset, boxSize);
 #if ENABLE(CSS_FILTERS)
-    else if (valueList.property() == AnimatedPropertyWebkitFilter)
-        createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, timeOffset);
+    else if (valueList.property() == AnimatedPropertyWebkitFilter) {
+        if (supportsAcceleratedFilterAnimations())
+            createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, timeOffset);
+    }
 #endif
     else
         createdAnimations = createAnimationFromKeyframes(valueList, anim, animationName, timeOffset);
@@ -1763,7 +1777,7 @@ void GraphicsLayerCA::updateContentsNeedsDisplay()
 
 bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, double timeOffset)
 {
-    ASSERT(valueList.property() != AnimatedPropertyWebkitTransform && valueList.property() != AnimatedPropertyWebkitFilter);
+    ASSERT(valueList.property() != AnimatedPropertyWebkitTransform && (!supportsAcceleratedFilterAnimations() || valueList.property() != AnimatedPropertyWebkitFilter));
     
     bool isKeyframe = valueList.size() > 2;
     bool valuesOK;

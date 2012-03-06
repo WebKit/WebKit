@@ -1559,6 +1559,12 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderObject* render
 
     if (AnimationController* animController = renderer->animation()) {
         return (animController->isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity) && inCompositingMode())
+#if ENABLE(CSS_FILTERS)
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+            // <rdar://problem/10907251> - WebKit2 doesn't support CA animations of CI filters on Lion and below
+            || animController->isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitFilter)
+#endif // !SNOW_LEOPARD && !LION
+#endif // CSS_FILTERS
             || animController->isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitTransform);
     }
     return false;
