@@ -6234,6 +6234,7 @@
             'inspector/front-end/Script.js',
             'inspector/front-end/ScriptFormatter.js',
             'inspector/front-end/ScriptFormatterWorker.js',
+            'inspector/front-end/ScriptMapping.js',
             'inspector/front-end/ScriptsNavigator.js',
             'inspector/front-end/ScriptsPanel.js',
             'inspector/front-end/ScriptsSearchScope.js',

@@ -30,7 +30,7 @@
 
 /**
  * @constructor
- * @extends {WebInspector.Object}
+ * @extends {WebInspector.ScriptMapping}
  */
 WebInspector.DebuggerPresentationModel = function()
 {
@@ -42,7 +42,7 @@ WebInspector.DebuggerPresentationModel = function()
     this._rawSourceCodeForDocumentURL = {};
     this._presentationCallFrames = [];
 
-    this._breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this._breakpointAdded.bind(this), this._breakpointRemoved.bind(this), WebInspector.debuggerModel);
+    this._breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this._breakpointAdded.bind(this), this._breakpointRemoved.bind(this), WebInspector.debuggerModel, this);
 
     this._pendingConsoleMessages = {};
     this._consoleMessageLiveLocations = [];
@@ -716,7 +716,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     }
 }
 
-WebInspector.DebuggerPresentationModel.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.DebuggerPresentationModel.prototype.__proto__ = WebInspector.ScriptMapping.prototype;
 
 /**
  * @constructor

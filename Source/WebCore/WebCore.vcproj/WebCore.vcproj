@@ -73233,6 +73233,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ScriptMapping.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ScriptsNavigator.js"
 					>
 				</File>

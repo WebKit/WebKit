@@ -118,6 +118,7 @@
     <file>Script.js</file>
     <file>ScriptFormatter.js</file>
     <file>ScriptFormatterWorker.js</file>
+    <file>ScriptMapping.js</file>
     <file>ScriptsPanel.js</file>
     <file>ScriptsNavigator.js</file>
     <file>ScriptsSearchScope.js</file>
