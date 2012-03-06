@@ -53,19 +53,15 @@ static const CGFloat windowContentBorderThickness = 55;
 
 @interface WKWebInspectorProxyObjCAdapter ()
 
-@property (assign) WebInspectorProxy* _inspectorProxy; // Not retained to prevent cycles
-
 - (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy;
 
 @end
 
 @implementation WKWebInspectorProxyObjCAdapter
 
-@synthesize _inspectorProxy;
-
 - (WKInspectorRef)inspectorRef
 {
-    return toAPI(_inspectorProxy);
+    return toAPI(static_cast<WebInspectorProxy*>(_inspectorProxy));
 }
 
 - (id)initWithWebInspectorProxy:(WebInspectorProxy*)inspectorProxy
@@ -75,19 +71,19 @@ static const CGFloat windowContentBorderThickness = 55;
     if (!(self = [super init]))
         return nil;
 
-    _inspectorProxy = inspectorProxy; // Not retained to prevent cycles
+    _inspectorProxy = static_cast<void*>(inspectorProxy); // Not retained to prevent cycles
 
     return self;
 }
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    _inspectorProxy->close();
+    static_cast<WebInspectorProxy*>(_inspectorProxy)->close();
 }
 
 - (void)inspectedViewFrameDidChange:(NSNotification *)notification
 {
-    _inspectorProxy->inspectedViewFrameDidChange();
+    static_cast<WebInspectorProxy*>(_inspectorProxy)->inspectedViewFrameDidChange();
 }
 
 @end
