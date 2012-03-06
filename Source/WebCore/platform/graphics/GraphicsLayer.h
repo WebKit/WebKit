@@ -343,7 +343,8 @@ public:
     virtual void setNeedsDisplay() = 0;
     // mark the given rect (in layer coords) as needing dispay. Never goes deep.
     virtual void setNeedsDisplayInRect(const FloatRect&) = 0;
-    
+    virtual bool needsDisplay() const { return false; }
+
     virtual void setContentsNeedsDisplay() { };
 
     // Set that the position/size of the contents (image or video).

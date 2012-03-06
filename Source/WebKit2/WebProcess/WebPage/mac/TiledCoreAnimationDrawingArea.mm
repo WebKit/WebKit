@@ -37,6 +37,8 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/Page.h>
+#import <WebCore/RenderLayerCompositor.h>
+#import <WebCore/RenderView.h>
 #import <WebCore/ScrollingCoordinator.h>
 #import <WebCore/Settings.h>
 
@@ -216,8 +218,12 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         m_pendingRootCompositingLayer = nullptr;
     }
 
-    if (m_pageOverlayLayer)
+    if (m_pageOverlayLayer) {
+        if (shouldRepaintPageOverlayLayer())
+            m_pageOverlayLayer->setNeedsDisplay();
+
         m_pageOverlayLayer->syncCompositingStateForThisLayerOnly();
+    }
 
     bool returnValue = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 
@@ -325,6 +331,22 @@ void TiledCoreAnimationDrawingArea::destroyPageOverlayLayer()
 
     [m_pageOverlayLayer->platformLayer() removeFromSuperlayer];
     m_pageOverlayLayer = nullptr;
+}
+
+bool TiledCoreAnimationDrawingArea::shouldRepaintPageOverlayLayer()
+{
+    RenderLayerCompositor* renderLayerCompositor = m_webPage->corePage()->mainFrame()->contentRenderer()->compositor();
+    GraphicsLayer* scrollLayer = renderLayerCompositor->scrollLayer();
+    if (m_mainFrameScrollLayerPosition != scrollLayer->position()) {
+        m_mainFrameScrollLayerPosition = scrollLayer->position();
+        return true;
+    }
+
+    GraphicsLayer* rootGraphicsLayer = renderLayerCompositor->rootRenderLayer()->backing()->graphicsLayer();
+    if (rootGraphicsLayer->needsDisplay())
+        return true;
+   
+    return false;
 }
 
 } // namespace WebKit

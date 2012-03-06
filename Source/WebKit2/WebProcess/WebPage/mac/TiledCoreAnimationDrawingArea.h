@@ -83,6 +83,8 @@ private:
     void createPageOverlayLayer();
     void destroyPageOverlayLayer();
 
+    bool shouldRepaintPageOverlayLayer();
+
     bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 
@@ -93,6 +95,7 @@ private:
     RetainPtr<CALayer> m_pendingRootCompositingLayer;
 
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
+    WebCore::FloatPoint m_mainFrameScrollLayerPosition;
 };
 
 } // namespace WebKit

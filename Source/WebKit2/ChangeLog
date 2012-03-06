@@ -1,3 +1,22 @@
+2012-03-05  Anders Carlsson  <andersca@apple.com>
+
+        Be more aggressive about repainting page overlays
+        https://bugs.webkit.org/show_bug.cgi?id=80336
+        <rdar://problem/10965943>
+
+        Reviewed by Simon Fraser.
+
+        Whenever we're flushing layers and we have a page overlay, check if the main frame
+        has scrolled or if the main frame root content layer needs to be repainted and force the
+        overlay layer to be repainted if either of those conditions are true.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::shouldRepaintPageOverlayLayer):
+        (WebKit):
+
 2012-03-05  Sam Weinig  <sam@webkit.org>
 
         Add support for hosting layers in the window server in WebKit2
