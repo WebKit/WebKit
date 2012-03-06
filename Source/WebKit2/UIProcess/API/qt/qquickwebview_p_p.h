@@ -116,6 +116,8 @@ public:
     bool renderToOffscreenBuffer() const { return m_renderToOffscreenBuffer; }
     void setNavigatorQtObjectEnabled(bool);
 
+    QRect visibleContentsRect() const;
+
     // PageClient.
     WebCore::IntSize viewSize() const;
     void didReceiveMessageFromNavigatorQtObject(const String& message);

@@ -460,6 +460,14 @@ void QQuickWebViewPrivate::setNavigatorQtObjectEnabled(bool enabled)
     context->setNavigatorQtObjectEnabled(webPageProxy.get(), enabled);
 }
 
+QRect QQuickWebViewPrivate::visibleContentsRect() const
+{
+    Q_Q(const QQuickWebView);
+    const QRectF visibleRect(q->boundingRect().intersected(pageView->boundingRect()));
+
+    return q->mapRectToWebContent(visibleRect).toAlignedRect();
+}
+
 WebCore::IntSize QQuickWebViewPrivate::viewSize() const
 {
     return WebCore::IntSize(pageView->width(), pageView->height());
@@ -638,16 +646,14 @@ void QQuickWebViewFlickablePrivate::_q_commitScaleChange()
         return;
 
     Q_Q(QQuickWebView);
-    const QRectF visibleRectInCSSCoordinates = q->mapRectToWebContent(q->boundingRect()).intersected(pageView->boundingRect());
-    float scale = pageView->contentsScale();
-
     // This is only for our QML ViewportInfo debugging API.
     q->experimental()->viewportInfo()->didUpdateCurrentScale();
 
-    QRect alignedVisibleContentRect = visibleRectInCSSCoordinates.toAlignedRect();
-    drawingArea->setVisibleContentsRectForScaling(alignedVisibleContentRect, scale);
+    const QRect visibleRect(visibleContentsRect());
+    float scale = pageView->contentsScale();
 
-    webPageProxy->setFixedVisibleContentRect(alignedVisibleContentRect);
+    drawingArea->setVisibleContentsRectForScaling(visibleRect, scale);
+    webPageProxy->setFixedVisibleContentRect(visibleRect);
 }
 
 void QQuickWebViewPrivate::_q_commitPositionChange(const QPointF& trajectoryVector)
@@ -656,16 +662,13 @@ void QQuickWebViewPrivate::_q_commitPositionChange(const QPointF& trajectoryVect
     if (!drawingArea)
         return;
 
-    Q_Q(QQuickWebView);
-    const QRectF visibleRectInCSSCoordinates = q->mapRectToWebContent(q->boundingRect()).intersected(pageView->boundingRect());
-
-    QRect alignedVisibleContentRect = visibleRectInCSSCoordinates.toAlignedRect();
-    drawingArea->setVisibleContentsRectForPanning(alignedVisibleContentRect, trajectoryVector);
+    const QRect visibleRect(visibleContentsRect());
+    drawingArea->setVisibleContentsRectForPanning(visibleRect, trajectoryVector);
 
     if (!trajectoryVector.isNull())
         return;
 
-    webPageProxy->setFixedVisibleContentRect(alignedVisibleContentRect);
+    webPageProxy->setFixedVisibleContentRect(visibleRect);
 }
 
 void QQuickWebViewFlickablePrivate::_q_suspend()

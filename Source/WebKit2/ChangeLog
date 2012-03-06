@@ -1,3 +1,19 @@
+2012-03-06  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        MiniBrowser --window-size 480x800 www.nytimes.com doesn't paint bottom tiles.
+        https://bugs.webkit.org/show_bug.cgi?id=80313
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix the math to get the visible rectangle and add a method to get it.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::visibleContentsRect):
+        (QQuickWebViewFlickablePrivate::_q_commitScaleChange):
+        (QQuickWebViewPrivate::_q_commitPositionChange):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+
 2012-03-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Hide dock button when not allowed to dock
