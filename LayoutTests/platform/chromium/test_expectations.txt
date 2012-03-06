@@ -1214,6 +1214,12 @@ BUGCR10343 SKIP LINUX : fast/text/large-text-composed-char.html = TIMEOUT FAIL
 // Missing text -- slow font path unimplemented?
 BUGCR10344 LINUX : fast/text/should-use-atsui.html = FAIL
 
+// Needs V8 fix. V8 bug: http://code.google.com/p/v8/issues/detail?id=1992
+BUGWK80335 : fast/js/mozilla/strict/15.4.4.8.html = TEXT
+BUGWK80335 : fast/js/mozilla/strict/15.4.4.9.html = TEXT
+BUGWK80335 : fast/js/mozilla/strict/15.4.4.12.html = TEXT
+BUGWK80335 : fast/js/mozilla/strict/15.4.4.13.html = TEXT
+
 // We print to stderr when a failure happens while importing XSL;
 // should disable this in libxml.
 BUGCR10347 MAC : fast/xsl/transform-xhr-doc.xhtml = FAIL
