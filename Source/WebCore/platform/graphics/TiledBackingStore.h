@@ -82,10 +82,8 @@ private:
     void startTileBufferUpdateTimer();
     void startTileCreationTimer();
 
-    typedef Timer<TiledBackingStore> TileTimer;
-
-    void tileBufferUpdateTimerFired(TileTimer*);
-    void tileCreationTimerFired(TileTimer*);
+    void tileBufferUpdateTimerFired(Timer<TiledBackingStore>*);
+    void tileCreationTimerFired(Timer<TiledBackingStore>*);
 
     void createTiles();
     void computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const;
@@ -116,8 +114,8 @@ private:
     typedef HashMap<Tile::Coordinate, RefPtr<Tile> > TileMap;
     TileMap m_tiles;
 
-    TileTimer m_tileBufferUpdateTimer;
-    TileTimer m_tileCreationTimer;
+    Timer<TiledBackingStore> m_tileBufferUpdateTimer;
+    Timer<TiledBackingStore> m_tileCreationTimer;
 
     IntSize m_tileSize;
     double m_tileCreationDelay;

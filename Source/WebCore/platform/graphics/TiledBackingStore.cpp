@@ -487,7 +487,7 @@ void TiledBackingStore::startTileBufferUpdateTimer()
     m_tileBufferUpdateTimer.startOneShot(0);
 }
 
-void TiledBackingStore::tileBufferUpdateTimerFired(TileTimer*)
+void TiledBackingStore::tileBufferUpdateTimerFired(Timer<TiledBackingStore>*)
 {
     updateTileBuffers();
 }
@@ -499,7 +499,7 @@ void TiledBackingStore::startTileCreationTimer()
     m_tileCreationTimer.startOneShot(0);
 }
 
-void TiledBackingStore::tileCreationTimerFired(TileTimer*)
+void TiledBackingStore::tileCreationTimerFired(Timer<TiledBackingStore>*)
 {
     createTiles();
 }
