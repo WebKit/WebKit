@@ -556,8 +556,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
             this._presentationCallFrames.push(new WebInspector.PresentationCallFrame(callFrame, i, this, rawSourceCode));
         }
         var details = WebInspector.debuggerModel.debuggerPausedDetails;
-        this.selectedCallFrame = this._presentationCallFrames[0];
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, { callFrames: this._presentationCallFrames, details: details });
+        this.selectedCallFrame = this._presentationCallFrames[0];
     },
 
     _debuggerResumed: function()

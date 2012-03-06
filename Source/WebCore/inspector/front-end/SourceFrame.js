@@ -97,6 +97,8 @@ WebInspector.SourceFrame.prototype = {
             this._textViewer.freeCachedElements();
 
         this._clearLineHighlight();
+        this._clearLineToReveal();
+        
         if (!this._textViewer.readOnly)
             this._wasHiddenWhileEditing = true;
         this.setReadOnly(true);
@@ -185,6 +187,7 @@ WebInspector.SourceFrame.prototype = {
 
     highlightLine: function(line)
     {
+        this._clearLineToReveal();
         if (this.loaded)
             this._textViewer.highlightLine(line);
         else
@@ -197,6 +200,20 @@ WebInspector.SourceFrame.prototype = {
             this._textViewer.clearLineHighlight();
         else
             delete this._lineToHighlight;
+    },
+
+    revealLine: function(line)
+    {
+        this._clearLineHighlight();
+        if (this.loaded)
+            this._textViewer.revealLine(line);
+        else
+            this._lineToReveal = line;
+    },
+
+    _clearLineToReveal: function()
+    {
+        delete this._lineToReveal;
     },
 
     _saveViewerState: function()
@@ -248,6 +265,11 @@ WebInspector.SourceFrame.prototype = {
         if (typeof this._lineToHighlight === "number") {
             this.highlightLine(this._lineToHighlight);
             delete this._lineToHighlight;
+        }
+
+        if (typeof this._lineToReveal === "number") {
+            this.revealLine(this._lineToReveal);
+            delete this._lineToReveal;
         }
 
         if (this._delayedFindSearchMatches) {

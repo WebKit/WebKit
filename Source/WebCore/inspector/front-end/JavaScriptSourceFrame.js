@@ -169,7 +169,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         if (typeof this._executionLineNumber === "number") {
             var newExecutionLineNumber = this._lineNumberAfterEditing(this._executionLineNumber, oldRange, newRange);
             this.clearExecutionLine();
-            this.setExecutionLine(newExecutionLineNumber, true);
+            this.setExecutionLine(newExecutionLineNumber);
         }
 
         // Adjust breakpoints.
@@ -460,16 +460,13 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     },
 
     /**
-     * @param {boolean=} skipRevealLine
+     * @param {number} lineNumber
      */
-    setExecutionLine: function(lineNumber, skipRevealLine)
+    setExecutionLine: function(lineNumber)
     {
         this._executionLineNumber = lineNumber;
-        if (this.loaded) {
+        if (this.loaded)
             this.textViewer.addDecoration(lineNumber, "webkit-execution-line");
-            if (!skipRevealLine)
-                this.textViewer.revealLine(lineNumber);
-        }
     },
 
     clearExecutionLine: function()

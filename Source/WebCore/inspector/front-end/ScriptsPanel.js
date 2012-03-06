@@ -347,9 +347,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._updateDebuggerButtons();
 
         WebInspector.inspectorView.setCurrentPanel(this);
-
         this.sidebarPanes.callstack.update(callFrames);
-        this._updateCallFrame(this._presentationModel.selectedCallFrame);
 
         if (details.reason === WebInspector.DebuggerModel.BreakReason.DOM) {
             this.sidebarPanes.domBreakpoints.highlightBreakpoint(details.auxData);
@@ -606,21 +604,20 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var uiLocation = event.data;
 
-        this._updateExecutionLine(uiLocation);
-    },
-
-    _updateExecutionLine: function(uiLocation)
-    {
         this._clearCurrentExecutionLine();
         if (!uiLocation)
             return;
-
-        // Anonymous scripts are not added to files select by default.
-        this._addUISourceCode(uiLocation.uiSourceCode);
-
-        var sourceFrame = this._showFile(uiLocation.uiSourceCode);
+        var sourceFrame = this._getOrCreateSourceFrame(uiLocation.uiSourceCode);
         sourceFrame.setExecutionLine(uiLocation.lineNumber);
         this._executionSourceFrame = sourceFrame;
+    },
+
+    _revealExecutionLine: function(uiLocation)
+    {
+        // Anonymous scripts are not added to files select by default.
+        this._addUISourceCode(uiLocation.uiSourceCode);
+        var sourceFrame = this._showFile(uiLocation.uiSourceCode);
+        sourceFrame.revealLine(uiLocation.lineNumber);
     },
 
     _callFrameSelected: function(event)
@@ -630,14 +627,10 @@ WebInspector.ScriptsPanel.prototype = {
         if (!callFrame)
             return;
 
-        this._updateCallFrame(callFrame);
-    },
-
-    _updateCallFrame: function(callFrame)
-    {
         this.sidebarPanes.scopechain.update(callFrame);
         this.sidebarPanes.watchExpressions.refreshExpressions();
         this.sidebarPanes.callstack.selectedCallFrame = callFrame;
+        callFrame.uiLocation(this._revealExecutionLine.bind(this));
     },
 
     _editorClosed: function(event)
