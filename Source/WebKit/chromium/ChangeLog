@@ -1,3 +1,14 @@
+2012-03-06  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, rolling out r109825.
+        http://trac.webkit.org/changeset/109825
+        https://bugs.webkit.org/show_bug.cgi?id=79413
+
+        Broke webkit_unit_tests on Chromium Win
+
+        * WebKit.gypi:
+        * tests/LevelDBTest.cpp: Removed.
+
 2012-03-06  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [Chromium] [WebSocket] Add WebSocket extensions query WebKit API

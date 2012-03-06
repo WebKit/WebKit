@@ -150,22 +150,6 @@ PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securit
         String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb.leveldb");
 
         db = LevelDBDatabase::open(path, comparator.get());
-
-        if (!db) {
-            LOG_ERROR("IndexedDB backing store open failed, attempting cleanup");
-            bool success = LevelDBDatabase::destroy(path);
-            if (!success) {
-                LOG_ERROR("IndexedDB backing store cleanup failed");
-                return PassRefPtr<IDBBackingStore>();
-            }
-
-            LOG_ERROR("IndexedDB backing store cleanup succeeded, reopening");
-            db = LevelDBDatabase::open(path, comparator.get());
-            if (!db) {
-                LOG_ERROR("IndexedDB backing store reopen after recovery failed");
-                return PassRefPtr<IDBBackingStore>();
-            }
-        }
     }
 
     if (!db)
