@@ -252,7 +252,7 @@ contains(TEMPLATE, subdirs):!no_recursive_qmake {
         recursive_qmake.depends += $${target_name}
     }
 
-    QMAKE_EXTRA_TARGETS += recursive_qmake
+    !isEmpty(recursive_qmake.depends): QMAKE_EXTRA_TARGETS += recursive_qmake
 }
 
 incremental.target = incremental
