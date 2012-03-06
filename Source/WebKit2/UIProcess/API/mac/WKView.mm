@@ -374,6 +374,7 @@ struct WKViewInterpretKeyEventsParameters {
 
     // Send back an empty string to the plug-in. This will disable text input.
     _data->_page->sendComplexTextInputToPlugin(_data->_pluginComplexTextInputIdentifier, String());
+    _data->_pluginComplexTextInputIdentifier = 0;   // Always reset the identifier when the plugin is disabled.
 }
 
 typedef HashMap<SEL, String> SelectorNameMap;
@@ -1263,8 +1264,10 @@ static const short kIOHIDEventTypeScroll = 6;
     if (string) {
         _data->_page->sendComplexTextInputToPlugin(_data->_pluginComplexTextInputIdentifier, string);
 
-        if (!usingLegacyCocoaTextInput)
+        if (!usingLegacyCocoaTextInput) {
             _data->_pluginComplexTextInputState = PluginComplexTextInputDisabled;
+            _data->_pluginComplexTextInputIdentifier = 0;   // Always reset the identifier when the plugin is disabled.
+        }
     }
 
     return didHandleEvent;

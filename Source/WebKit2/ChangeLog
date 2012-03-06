@@ -1,3 +1,18 @@
+2012-03-05  Enrica Casucci  <enrica@apple.com>
+
+        Can't type on some websites (plug-ins steal key events).
+        <rdar://problem/10892291>
+
+        When the plugin is disabled, it is necessary to reset _pluginComplexTextInputIdentifier
+        in order to return the correct input context. Failure to do so results in the inputContext
+        method to return the plugin input context instead of the context of the browser view.
+        
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setPluginComplexTextInputState:]):
+        (-[WKView _handlePluginComplexTextInputKeyDown:]):
+
 2012-03-05  Anders Carlsson  <andersca@apple.com>
 
         Be more aggressive about repainting page overlays
