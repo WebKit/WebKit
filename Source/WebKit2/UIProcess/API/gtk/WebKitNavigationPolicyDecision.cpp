@@ -38,7 +38,7 @@ using namespace WebKit;
  * @See_also: #WebKitPolicyDecision, #WebKitWebView
  *
  * WebKitNavigationPolicyDecision represents a policy decision for events associated with
- * navigations. If the value of WebKitNavigationPolicyDecision:mouse-button is not 0, then
+ * navigations. If the value of #WebKitNavigationPolicyDecision:mouse-button is not 0, then
  * the navigation was triggered by a mouse event.
  */
 
@@ -143,7 +143,7 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
      *
      * If the navigation associated with this policy decision was originally
      * triggered by a mouse event, this property contains a bitmask of various
-     * GdkModifierType values describing the modifiers used for that click.
+     * #GdkModifierType values describing the modifiers used for that click.
      * If the navigation was not triggered by a mouse event or no modifiers
      * were active, the value of this property will be zero.
      */
@@ -248,7 +248,7 @@ WebKitURIRequest* webkit_navigation_policy_decision_get_request(WebKitNavigation
  *
  * Gets the value of the #WebKitNavigationPolicyDecision:frame-name property.
  *
- * Returns: The name of the new frame this navigation action targets or %NULL 
+ * Returns: The name of the new frame this navigation action targets or %NULL
  */
 const char* webkit_navigation_policy_decision_get_frame_name(WebKitNavigationPolicyDecision* decision)
 {

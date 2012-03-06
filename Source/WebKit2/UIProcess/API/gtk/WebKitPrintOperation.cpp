@@ -367,7 +367,7 @@ void webkit_print_operation_set_page_setup(WebKitPrintOperation* printOperation,
  * the user. This method returns when the print dialog is closed.
  * If the print dialog is cancelled %WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL
  * is returned. If the user clicks on the print button, %WEBKIT_PRINT_OPERATION_RESPONSE_PRINT
- * is returned and the print operation starts. In this case, the WebKitPrintOperation::finished
+ * is returned and the print operation starts. In this case, the #WebKitPrintOperation::finished
  * signal is emitted when the operation finishes.
  * If the print dialog is not cancelled current print settings and page setup of @print_operation
  * are updated with options selected by the user when Print button is pressed in print dialog.
@@ -394,7 +394,7 @@ WebKitPrintOperationResponse webkit_print_operation_run_dialog(WebKitPrintOperat
  * are not set with webkit_print_operation_set_print_settings() and
  * webkit_print_operation_set_page_setup(), the default options will be used
  * and the print job will be sent to the default printer.
- * The WebKitPrintOperation::finished signal is emitted when the printing
+ * The #WebKitPrintOperation::finished signal is emitted when the printing
  * operation finishes.
  */
 void webkit_print_operation_print(WebKitPrintOperation* printOperation)
