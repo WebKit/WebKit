@@ -300,6 +300,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
         // Always true if filterData is just built (filterData->builded is false).
         if (!lastEffect->hasResult()) {
             lastEffect->apply();
+            lastEffect->correctFilterResultIfNeeded();
 #if !USE(CG)
             ImageBuffer* resultImage = lastEffect->asImageBuffer();
             if (resultImage)

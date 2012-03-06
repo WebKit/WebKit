@@ -116,6 +116,14 @@ bool FEComposite::setK4(float k4)
     return true;
 }
 
+void FEComposite::correctFilterResultIfNeeded()
+{
+    if (m_type != FECOMPOSITE_OPERATOR_ARITHMETIC)
+        return;
+
+    forceValidPreMultipliedPixels();
+}
+
 template <int b1, int b2, int b3, int b4>
 static inline void computeArithmeticPixels(unsigned char* source, unsigned char* destination, int pixelArrayLength,
                                     float k1, float k2, float k3, float k4)

@@ -86,6 +86,11 @@ public:
 
     void apply();
     
+    // Correct any invalid pixels, if necessary, in the result of a filter operation.
+    // This method is used to ensure valid pixel values on filter inputs and the final result.
+    // Only the arithmetic composite filter ever needs to perform correction.
+    virtual void correctFilterResultIfNeeded() { }
+
     virtual void platformApplySoftware() = 0;
 #if USE(SKIA)
     virtual bool platformApplySkia() { return false; }
@@ -130,6 +135,13 @@ protected:
     ImageBuffer* createImageBufferResult();
     ByteArray* createUnmultipliedImageResult();
     ByteArray* createPremultipliedImageResult();
+
+    // Return true if the filter will only operate correctly on valid RGBA values, with
+    // alpha in [0,255] and each color component in [0, alpha].
+    virtual bool requiresValidPreMultipliedPixels() { return true; }
+
+    // If a pre-multiplied image, check every pixel for validity and correct if necessary.
+    void forceValidPreMultipliedPixels();
 
 private:
     OwnPtr<ImageBuffer> m_imageBufferResult;

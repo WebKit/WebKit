@@ -102,6 +102,11 @@ void FilterEffect::apply()
             return;
     }
     determineAbsolutePaintRect();
+
+    if (requiresValidPreMultipliedPixels()) {
+        for (unsigned i = 0; i < size; ++i)
+            inputEffect(i)->correctFilterResultIfNeeded();
+    }
     
     // Add platform specific apply functions here and return earlier.
 #if USE(SKIA)
@@ -109,6 +114,35 @@ void FilterEffect::apply()
         return;
 #endif
     platformApplySoftware();
+}
+
+void FilterEffect::forceValidPreMultipliedPixels()
+{
+    // Must operate on pre-multiplied results; other formats cannot have invalid pixels.
+    if (!m_premultipliedImageResult)
+        return;
+
+    ByteArray* imageArray = m_premultipliedImageResult.get();
+    unsigned char* pixelData = imageArray->data();
+    int pixelArrayLength = imageArray->length();
+
+    // We must have four bytes per pixel, and complete pixels
+    ASSERT(!(pixelArrayLength % 4));
+    int numPixels = pixelArrayLength / 4;
+
+    // Iterate over each pixel, checking alpha and adjusting color components if necessary
+    while (--numPixels >= 0) {
+        // Alpha is the 4th byte in a pixel
+        unsigned char a = *(pixelData + 3);
+        // Clamp each component to alpha, and increment the pixel location
+        for (int i = 0; i < 3; ++i) {
+            if (*pixelData > a)
+                *pixelData = a;
+            ++pixelData;
+        }
+        // Increment for alpha
+        ++pixelData;
+    }
 }
 
 void FilterEffect::clearResult()
