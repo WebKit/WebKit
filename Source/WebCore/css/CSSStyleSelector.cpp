@@ -2521,19 +2521,17 @@ void RuleSet::shrinkToFit()
 // -------------------------------------------------------------------------------------
 // this is mostly boring stuff on how to apply a certain rule to the renderstyle...
 
-static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, bool toFloat, double multiplier = 1, bool *ok = 0)
+static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, bool toFloat, double multiplier = 1)
 {
     // This function is tolerant of a null style value. The only place style is used is in
     // length measurements, like 'ems' and 'px'. And in those cases style is only used
     // when the units are EMS or EXS. So we will just fail in those cases.
     Length l;
     if (!primitiveValue) {
-        if (ok)
-            *ok = false;
+        l = Length(Undefined);
     } else {
         if (!style && primitiveValue->isFontRelativeLength()) {
-            if (ok)
-                *ok = false;
+            l = Length(Undefined);
         } else if (primitiveValue->isLength()) {
             if (toFloat)
                 l = Length(primitiveValue->computeLength<double>(style, rootStyle, multiplier), Fixed);
@@ -2543,20 +2541,20 @@ static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* st
             l = Length(primitiveValue->getDoubleValue(), Percent);
         else if (primitiveValue->isNumber())
             l = Length(primitiveValue->getDoubleValue() * 100.0, Percent);
-        else if (ok)
-            *ok = false;
+        else
+            l = Length(Undefined);
     }
     return l;
 }
 
-static Length convertToIntLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier = 1, bool *ok = 0)
+static Length convertToIntLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier = 1)
 {
-    return convertToLength(primitiveValue, style, rootStyle, false, multiplier, ok);
+    return convertToLength(primitiveValue, style, rootStyle, false, multiplier);
 }
 
-static Length convertToFloatLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier = 1, bool *ok = 0)
+static Length convertToFloatLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier = 1)
 {
-    return convertToLength(primitiveValue, style, rootStyle, true, multiplier, ok);
+    return convertToLength(primitiveValue, style, rootStyle, true, multiplier);
 }
 
 template <bool applyFirst>
@@ -3482,9 +3480,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     break;
             }
         } else {
-            bool ok = true;
-            Length marqueeLength = convertToIntLength(primitiveValue, style(), m_rootElementStyle, 1, &ok);
-            if (ok)
+            Length marqueeLength = convertToIntLength(primitiveValue, style(), m_rootElementStyle, 1);
+            if (!marqueeLength.isUndefined())
                 m_style->setMarqueeIncrement(marqueeLength);
         }
         return;
@@ -5095,22 +5092,21 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
             case WebKitCSSTransformValue::TranslateTransformOperation:
             case WebKitCSSTransformValue::TranslateXTransformOperation:
             case WebKitCSSTransformValue::TranslateYTransformOperation: {
-                bool ok = true;
                 Length tx = Length(0, Fixed);
                 Length ty = Length(0, Fixed);
                 if (transformValue->operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
-                    ty = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                    ty = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
                 else {
-                    tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                    tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
                     if (transformValue->operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
                         if (transformValue->length() > 1) {
                             CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
-                            ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor, &ok);
+                            ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor);
                         }
                     }
                 }
 
-                if (!ok)
+                if (tx.isUndefined() || ty.isUndefined())
                     return false;
 
                 operations.operations().append(TranslateTransformOperation::create(tx, ty, Length(0, Fixed), getTransformOperationType(transformValue->operationType())));
@@ -5118,29 +5114,28 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
             }
             case WebKitCSSTransformValue::TranslateZTransformOperation:
             case WebKitCSSTransformValue::Translate3DTransformOperation: {
-                bool ok = true;
                 Length tx = Length(0, Fixed);
                 Length ty = Length(0, Fixed);
                 Length tz = Length(0, Fixed);
                 if (transformValue->operationType() == WebKitCSSTransformValue::TranslateZTransformOperation)
-                    tz = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                    tz = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
                 else if (transformValue->operationType() == WebKitCSSTransformValue::TranslateYTransformOperation)
-                    ty = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                    ty = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
                 else {
-                    tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                    tx = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
                     if (transformValue->operationType() != WebKitCSSTransformValue::TranslateXTransformOperation) {
                         if (transformValue->length() > 2) {
                             CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(2));
-                            tz = convertToFloatLength(thirdValue, style, rootStyle, zoomFactor, &ok);
+                            tz = convertToFloatLength(thirdValue, style, rootStyle, zoomFactor);
                         }
                         if (transformValue->length() > 1) {
                             CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(transformValue->itemWithoutBoundsCheck(1));
-                            ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor, &ok);
+                            ty = convertToFloatLength(secondValue, style, rootStyle, zoomFactor);
                         }
                     }
                 }
 
-                if (!ok)
+                if (tx.isUndefined() || ty.isUndefined() || tz.isUndefined())
                     return false;
 
                 operations.operations().append(TranslateTransformOperation::create(tx, ty, tz, getTransformOperationType(transformValue->operationType())));
@@ -5236,18 +5231,16 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                 break;
             }
             case WebKitCSSTransformValue::PerspectiveTransformOperation: {
-                bool ok = true;
                 Length p = Length(0, Fixed);
                 if (firstValue->isLength())
-                    p = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                    p = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
                 else {
                     // This is a quirk that should go away when 3d transforms are finalized.
                     double val = firstValue->getDoubleValue();
-                    ok = val >= 0;
-                    p = Length(clampToPositiveInteger(val), Fixed);
+                    p = val >= 0 ? Length(clampToPositiveInteger(val), Fixed) : Length(Undefined);
                 }
 
-                if (!ok)
+                if (p.isUndefined())
                     return false;
 
                 operations.operations().append(PerspectiveTransformOperation::create(p));
@@ -5593,12 +5586,11 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
             break;
         }
         case WebKitCSSFilterValue::BlurFilterOperation: {
-            bool ok = true;
             Length stdDeviation = Length(0, Fixed);
             if (filterValue->length() >= 1) {
-                stdDeviation = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                stdDeviation = convertToFloatLength(firstValue, style, rootStyle, zoomFactor);
             }
-            if (!ok)
+            if (stdDeviation.isUndefined())
                 return false;
 
             operations.operations().append(BlurFilterOperation::create(stdDeviation, operationType));
