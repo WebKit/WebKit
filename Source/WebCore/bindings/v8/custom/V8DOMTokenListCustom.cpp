@@ -45,11 +45,8 @@ v8::Handle<v8::Value> toV8(DOMTokenList* impl)
     v8::Handle<v8::Object> wrapper = V8DOMTokenList::wrap(impl);
     // Add a hidden reference from the element to the DOMTokenList.
     Element* element = impl->element();
-    if (!wrapper.IsEmpty() && element) {
-        v8::Handle<v8::Value> elementValue = toV8(element);
-        if (!elementValue.IsEmpty() && elementValue->IsObject())
-            V8DOMWrapper::setNamedHiddenReference(elementValue.As<v8::Object>(), "domTokenList", wrapper);
-    }
+    if (!wrapper.IsEmpty() && element)
+        toV8(element).As<v8::Object>()->SetHiddenValue(V8HiddenPropertyName::domTokenList(), wrapper);
     return wrapper;
 }
 
