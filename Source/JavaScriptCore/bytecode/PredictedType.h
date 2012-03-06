@@ -91,7 +91,7 @@ inline bool isFinalObjectOrOtherPrediction(PredictedType value)
 
 inline bool isFixedIndexedStorageObjectPrediction(PredictedType value)
 {
-    return (value & FixedIndexedStorageMask) == value;
+    return !!value && (value & FixedIndexedStorageMask) == value;
 }
 
 inline bool isStringPrediction(PredictedType value)
@@ -201,7 +201,7 @@ inline bool isDoubleRealPrediction(PredictedType value)
 
 inline bool isDoublePrediction(PredictedType value)
 {
-    return (value & PredictDouble) == value;
+    return !!value && (value & PredictDouble) == value;
 }
 
 inline bool isNumberPrediction(PredictedType value)

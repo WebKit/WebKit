@@ -1,3 +1,16 @@
+2012-03-05  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        PredictNone is incorrectly treated as isDoublePrediction
+        https://bugs.webkit.org/show_bug.cgi?id=80365
+
+        Reviewed by Filip Pizlo.
+
+        Also it is incorrectly treated as isFixedIndexedStorageObjectPrediction.
+
+        * bytecode/PredictedType.h:
+        (JSC::isFixedIndexedStorageObjectPrediction):
+        (JSC::isDoublePrediction):
+
 2012-03-05  Filip Pizlo  <fpizlo@apple.com>
 
         The LLInt should work even when the JIT is disabled
