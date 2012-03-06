@@ -314,10 +314,10 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
     }
 
     // Suspend document if this frame was created in suspended state.
-    if (activeDOMObjectsAndAnimationsSuspended()) {
-        document()->suspendScriptedAnimationControllerCallbacks();
-        animation()->suspendAnimationsForDocument(document());
-        document()->suspendActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
+    if (m_doc && activeDOMObjectsAndAnimationsSuspended()) {
+        m_doc->suspendScriptedAnimationControllerCallbacks();
+        m_animationController.suspendAnimationsForDocument(m_doc.get());
+        m_doc->suspendActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
     }
 }
 
