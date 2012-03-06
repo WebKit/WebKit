@@ -280,6 +280,10 @@ public:
         return result;
     }
 
+    static MacroAssemblerCodePtr createLLIntCodePtr(void (*function)())
+    {
+        return createFromExecutableAddress(bitwise_cast<void*>(function));
+    }
     explicit MacroAssemblerCodePtr(ReturnAddressPtr ra)
         : m_value(ra.value())
     {
@@ -338,6 +342,12 @@ public:
     static MacroAssemblerCodeRef createSelfManagedCodeRef(MacroAssemblerCodePtr codePtr)
     {
         return MacroAssemblerCodeRef(codePtr);
+    }
+    
+    // Helper for creating self-managed code refs from LLInt.
+    static MacroAssemblerCodeRef createLLIntCodeRef(void (*function)())
+    {
+        return createSelfManagedCodeRef(MacroAssemblerCodePtr::createFromExecutableAddress(bitwise_cast<void*>(function)));
     }
     
     ExecutableMemoryHandle* executableMemory() const

@@ -231,7 +231,7 @@ namespace JSC {
 
 #if !ENABLE(JIT)
         bool canUseJIT() { return false; } // interpreter only
-#elif !ENABLE(CLASSIC_INTERPRETER)
+#elif !ENABLE(CLASSIC_INTERPRETER) && !ENABLE(LLINT)
         bool canUseJIT() { return true; } // jit only
 #else
         bool canUseJIT() { return m_canUseJIT; }
@@ -369,7 +369,7 @@ namespace JSC {
         JSGlobalData(GlobalDataType, ThreadStackType, HeapSize);
         static JSGlobalData*& sharedInstanceInternal();
         void createNativeThunk();
-#if ENABLE(JIT) && ENABLE(CLASSIC_INTERPRETER)
+#if ENABLE(JIT) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
         bool m_canUseJIT;
 #endif
 #if ENABLE(GC_VALIDATION)

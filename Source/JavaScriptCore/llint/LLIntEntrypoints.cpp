@@ -39,14 +39,14 @@ void getFunctionEntrypoint(JSGlobalData& globalData, CodeSpecializationKind kind
 {
     if (!globalData.canUseJIT()) {
         if (kind == CodeForCall) {
-            jitCode = JITCode::HostFunction(MacroAssemblerCodeRef::createSelfManagedCodeRef(MacroAssemblerCodePtr(bitwise_cast<void*>(&llint_function_for_call_prologue))));
-            arityCheck = MacroAssemblerCodePtr(bitwise_cast<void*>(&llint_function_for_call_arity_check));
+            jitCode = JITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_function_for_call_prologue), JITCode::InterpreterThunk);
+            arityCheck = MacroAssemblerCodePtr::createLLIntCodePtr(llint_function_for_call_arity_check);
             return;
         }
 
         ASSERT(kind == CodeForConstruct);
-        jitCode = JITCode::HostFunction(MacroAssemblerCodeRef::createSelfManagedCodeRef(MacroAssemblerCodePtr(bitwise_cast<void*>(&llint_function_for_construct_prologue))));
-        arityCheck = MacroAssemblerCodePtr(bitwise_cast<void*>(&llint_function_for_construct_arity_check));
+        jitCode = JITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_function_for_construct_prologue), JITCode::InterpreterThunk);
+        arityCheck = MacroAssemblerCodePtr::createLLIntCodePtr(llint_function_for_construct_arity_check);
         return;
     }
     
@@ -64,7 +64,7 @@ void getFunctionEntrypoint(JSGlobalData& globalData, CodeSpecializationKind kind
 void getEvalEntrypoint(JSGlobalData& globalData, JITCode& jitCode)
 {
     if (!globalData.canUseJIT()) {
-        jitCode = JITCode::HostFunction(MacroAssemblerCodeRef::createSelfManagedCodeRef(MacroAssemblerCodePtr(bitwise_cast<void*>(&llint_eval_prologue))));
+        jitCode = JITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_eval_prologue), JITCode::InterpreterThunk);
         return;
     }
     
@@ -74,7 +74,7 @@ void getEvalEntrypoint(JSGlobalData& globalData, JITCode& jitCode)
 void getProgramEntrypoint(JSGlobalData& globalData, JITCode& jitCode)
 {
     if (!globalData.canUseJIT()) {
-        jitCode = JITCode::HostFunction(MacroAssemblerCodeRef::createSelfManagedCodeRef(MacroAssemblerCodePtr(bitwise_cast<void*>(&llint_program_prologue))));
+        jitCode = JITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_program_prologue), JITCode::InterpreterThunk);
         return;
     }
     

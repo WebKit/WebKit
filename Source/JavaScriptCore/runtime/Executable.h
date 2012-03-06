@@ -180,13 +180,14 @@ namespace JSC {
 
     class NativeExecutable : public ExecutableBase {
         friend class JIT;
+        friend class LLIntOffsetsExtractor;
     public:
         typedef ExecutableBase Base;
 
 #if ENABLE(JIT)
         static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodeRef callThunk, NativeFunction function, MacroAssemblerCodeRef constructThunk, NativeFunction constructor, Intrinsic intrinsic)
         {
-            ASSERT(globalData.canUseJIT());
+            ASSERT(!globalData.interpreter->classicEnabled());
             NativeExecutable* executable;
             if (!callThunk) {
                 executable = new (NotNull, allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
@@ -228,7 +229,7 @@ namespace JSC {
 #if ENABLE(JIT)
         void finishCreation(JSGlobalData& globalData, JITCode callThunk, JITCode constructThunk, Intrinsic intrinsic)
         {
-            ASSERT(globalData.canUseJIT());
+            ASSERT(!globalData.interpreter->classicEnabled());
             Base::finishCreation(globalData);
             m_jitCodeForCall = callThunk;
             m_jitCodeForConstruct = constructThunk;

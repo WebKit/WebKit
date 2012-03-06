@@ -30,6 +30,8 @@
 
 namespace JSC { namespace Options {
 
+extern bool useJIT;
+
 extern unsigned maximumOptimizationCandidateInstructionCount;
 
 extern unsigned maximumFunctionForCallInlineCandidateInstructionCount;

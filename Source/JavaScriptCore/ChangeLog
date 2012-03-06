@@ -1,3 +1,52 @@
+2012-03-05  Filip Pizlo  <fpizlo@apple.com>
+
+        The LLInt should work even when the JIT is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=80340
+        <rdar://problem/10922235>
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::createLLIntCodePtr):
+        (MacroAssemblerCodeRef):
+        (JSC::MacroAssemblerCodeRef::createLLIntCodeRef):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::initialize):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * jit/JIT.h:
+        (JSC::JIT::compileCTINativeCall):
+        * jit/JITStubs.h:
+        (JSC::JITThunks::ctiNativeCall):
+        (JSC::JITThunks::ctiNativeConstruct):
+        * llint/LLIntEntrypoints.cpp:
+        (JSC::LLInt::getFunctionEntrypoint):
+        (JSC::LLInt::getEvalEntrypoint):
+        (JSC::LLInt::getProgramEntrypoint):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (LLInt):
+        * llint/LLIntSlowPaths.h:
+        (LLInt):
+        * llint/LowLevelInterpreter.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * runtime/Executable.h:
+        (NativeExecutable):
+        (JSC::NativeExecutable::create):
+        (JSC::NativeExecutable::finishCreation):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/Options.cpp:
+        (Options):
+        (JSC::Options::parse):
+        (JSC::Options::initializeOptions):
+        * runtime/Options.h:
+        (Options):
+        * wtf/Platform.h:
+
 2012-03-05  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Checks for dead variables are not sufficient when fixing the expected

@@ -32,6 +32,7 @@
 
 #include "CallData.h"
 #include "Intrinsic.h"
+#include "LowLevelInterpreter.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
 #include "ThunkGenerators.h"
@@ -306,8 +307,22 @@ namespace JSC {
         MacroAssemblerCodePtr ctiVirtualConstructLink() { return m_trampolineStructure.ctiVirtualConstructLink; }
         MacroAssemblerCodePtr ctiVirtualCall() { return m_trampolineStructure.ctiVirtualCall; }
         MacroAssemblerCodePtr ctiVirtualConstruct() { return m_trampolineStructure.ctiVirtualConstruct; }
-        MacroAssemblerCodePtr ctiNativeCall() { return m_trampolineStructure.ctiNativeCall; }
-        MacroAssemblerCodePtr ctiNativeConstruct() { return m_trampolineStructure.ctiNativeConstruct; }
+        MacroAssemblerCodePtr ctiNativeCall()
+        {
+#if ENABLE(LLINT)
+            if (!m_executableMemory)
+                return MacroAssemblerCodePtr::createLLIntCodePtr(llint_native_call_trampoline);
+#endif
+            return m_trampolineStructure.ctiNativeCall;
+        }
+        MacroAssemblerCodePtr ctiNativeConstruct()
+        {
+#if ENABLE(LLINT)
+            if (!m_executableMemory)
+                return MacroAssemblerCodePtr::createLLIntCodePtr(llint_native_construct_trampoline);
+#endif
+            return m_trampolineStructure.ctiNativeConstruct;
+        }
         MacroAssemblerCodePtr ctiSoftModulo() { return m_trampolineStructure.ctiSoftModulo; }
 
         MacroAssemblerCodeRef ctiStub(JSGlobalData*, ThunkGenerator);

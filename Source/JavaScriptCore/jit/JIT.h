@@ -254,8 +254,13 @@ namespace JSC {
 
         static CodeRef compileCTINativeCall(JSGlobalData* globalData, NativeFunction func)
         {
-            if (!globalData->canUseJIT())
+            if (!globalData->canUseJIT()) {
+#if ENABLE(LLINT)
+                return CodeRef::createLLIntCodeRef(llint_native_call_trampoline);
+#else
                 return CodeRef();
+#endif
+            }
             JIT jit(globalData, 0);
             return jit.privateCompileCTINativeCall(globalData, func);
         }

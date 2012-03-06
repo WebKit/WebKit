@@ -560,31 +560,27 @@ void Interpreter::initialize(LLInt::Data* llintData, bool canUseJIT)
 {
     UNUSED_PARAM(llintData);
     UNUSED_PARAM(canUseJIT);
-#if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER) || ENABLE(LLINT)
-#if !ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
-    // Having LLInt enabled, but not being able to use the JIT, and not having
-    // a computed goto interpreter, is not supported. Not because we cannot
-    // support it, but because I decided to draw the line at the number of
-    // permutations of execution engines that I wanted this code to grok.
-    ASSERT(canUseJIT);
+
+    // If we have LLInt, then we shouldn't be building any kind of classic interpreter.
+#if ENABLE(LLINT) && ENABLE(CLASSIC_INTERPRETER)
+#error "Building both LLInt and the Classic Interpreter is not supported because it doesn't make sense."
 #endif
-    if (canUseJIT) {
+
 #if ENABLE(LLINT)
-        m_opcodeTable = llintData->opcodeMap();
-        for (int i = 0; i < numOpcodeIDs; ++i)
-            m_opcodeIDTable.add(m_opcodeTable[i], static_cast<OpcodeID>(i));
-#else
+    m_opcodeTable = llintData->opcodeMap();
+    for (int i = 0; i < numOpcodeIDs; ++i)
+        m_opcodeIDTable.add(m_opcodeTable[i], static_cast<OpcodeID>(i));
+    m_classicEnabled = false;
+#elif ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER)
+    if (canUseJIT) {
         // If the JIT is present, don't use jump destinations for opcodes.
         
         for (int i = 0; i < numOpcodeIDs; ++i) {
             Opcode opcode = bitwise_cast<void*>(static_cast<uintptr_t>(i));
             m_opcodeTable[i] = opcode;
         }
-#endif
+        m_classicEnabled = false;
     } else {
-#if ENABLE(LLINT)
-        m_opcodeTable = new Opcode[numOpcodeIDs];
-#endif
         privateExecute(InitializeAndReturn, 0, 0);
         
         for (int i = 0; i < numOpcodeIDs; ++i)
@@ -1198,7 +1194,7 @@ failedJSONP:
 
         m_reentryDepth++;  
 #if ENABLE(JIT)
-        if (callFrame->globalData().canUseJIT())
+        if (!classicEnabled())
             result = program->generatedJITCode().execute(&m_registerFile, newCallFrame, scopeChain->globalData);
         else
 #endif
@@ -1270,7 +1266,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
             m_reentryDepth++;  
 #if ENABLE(JIT)
-            if (callFrame->globalData().canUseJIT())
+            if (!classicEnabled())
                 result = callData.js.functionExecutable->generatedJITCodeForCall().execute(&m_registerFile, newCallFrame, callDataScopeChain->globalData);
             else
 #endif
@@ -1366,7 +1362,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
             m_reentryDepth++;  
 #if ENABLE(JIT)
-            if (callFrame->globalData().canUseJIT())
+            if (!classicEnabled())
                 result = constructData.js.functionExecutable->generatedJITCodeForConstruct().execute(&m_registerFile, newCallFrame, constructDataScopeChain->globalData);
             else
 #endif

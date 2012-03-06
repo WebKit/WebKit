@@ -193,7 +193,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 
     wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);
 
-#if ENABLE(JIT) && ENABLE(CLASSIC_INTERPRETER)
+#if ENABLE(JIT) && (ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
 #if USE(CF)
     CFStringRef canUseJITKey = CFStringCreateWithCString(0 , "JavaScriptCoreUseJIT", kCFStringEncodingMacRoman);
     CFBooleanRef canUseJIT = (CFBooleanRef)CFPreferencesCopyAppValue(canUseJITKey, kCFPreferencesCurrentApplication);
@@ -213,13 +213,16 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #endif
 #endif
 #if ENABLE(JIT)
-#if ENABLE(CLASSIC_INTERPRETER)
+#if ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT)
     if (m_canUseJIT)
         m_canUseJIT = executableAllocator.isValid();
+    
+    if (!Options::useJIT)
+        m_canUseJIT = false;
 #endif
     jitStubs = adoptPtr(new JITThunks(this));
 #endif
-
+    
     interpreter->initialize(&llintData, this->canUseJIT());
     
     initializeHostCallReturnValue(); // This is needed to convince the linker not to drop host call return support.

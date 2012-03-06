@@ -161,6 +161,7 @@ LLINT_SLOW_PATH_DECL(slow_path_throw_reference_error);
 LLINT_SLOW_PATH_DECL(slow_path_debug);
 LLINT_SLOW_PATH_DECL(slow_path_profile_will_call);
 LLINT_SLOW_PATH_DECL(slow_path_profile_did_call);
+LLINT_SLOW_PATH_DECL(throw_from_native_call);
 
 } } // namespace JSC::LLInt
 

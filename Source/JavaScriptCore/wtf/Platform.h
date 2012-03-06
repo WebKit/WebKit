@@ -610,8 +610,9 @@
     #define ENABLE_JIT 0
     #define ENABLE_YARR_JIT 0
 #else
-    #define ENABLE_CLASSIC_INTERPRETER 1
+    #define ENABLE_CLASSIC_INTERPRETER 0
     #define ENABLE_JIT 1
+    #define ENABLE_LLINT 1
     #define ENABLE_YARR_JIT 1
 #endif
 

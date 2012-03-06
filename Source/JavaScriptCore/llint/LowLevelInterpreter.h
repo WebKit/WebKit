@@ -48,6 +48,10 @@ extern "C" void llint_generic_return_point();
 extern "C" void llint_throw_from_slow_path_trampoline();
 extern "C" void llint_throw_during_call_trampoline();
 
+// Native call trampolines
+extern "C" void llint_native_call_trampoline();
+extern "C" void llint_native_construct_trampoline();
+
 #endif // ENABLE(LLINT)
 
 #endif // LowLevelInterpreter_h

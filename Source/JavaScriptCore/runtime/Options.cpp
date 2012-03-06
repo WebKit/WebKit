@@ -45,6 +45,8 @@
 
 namespace JSC { namespace Options {
 
+bool useJIT;
+
 unsigned maximumOptimizationCandidateInstructionCount;
 
 unsigned maximumFunctionForCallInlineCandidateInstructionCount;
@@ -93,6 +95,19 @@ unsigned numberOfGCMarkers;
 unsigned opaqueRootMergeThreshold;
 
 #if ENABLE(RUN_TIME_HEURISTICS)
+static bool parse(const char* string, bool& value)
+{
+    if (!strcasecmp(string, "true") || !strcasecmp(string, "yes") || !strcmp(string, "1")) {
+        value = true;
+        return true;
+    }
+    if (!strcasecmp(string, "false") || !strcasecmp(string, "no") || !strcmp(string, "0")) {
+        value = false;
+        return true;
+    }
+    return false;
+}
+
 static bool parse(const char* string, int32_t& value)
 {
     return sscanf(string, "%d", &value) == 1;
@@ -131,6 +146,8 @@ void setHeuristic(T& variable, const char* name, U value)
 
 void initializeOptions()
 {
+    SET(useJIT, true);
+    
     SET(maximumOptimizationCandidateInstructionCount, 1100);
     
     SET(maximumFunctionForCallInlineCandidateInstructionCount, 180);

@@ -2302,6 +2302,53 @@ _llint_throw_during_call_trampoline:
     jmp JSGlobalData::targetMachinePCForThrow[t1]
 
 
+macro nativeCallTrampoline(executableOffsetToFunction)
+    storep 0, CodeBlock[cfr]
+    loadp CallerFrame[cfr], t0
+    loadi ScopeChain + PayloadOffset[t0], t1
+    storei CellTag, ScopeChain + TagOffset[cfr]
+    storei t1, ScopeChain + PayloadOffset[cfr]
+    if X86
+        peek 0, t1
+        storep t1, ReturnPC[cfr]
+        move cfr, t2  # t2 = ecx
+        subp 16 - 4, sp
+        loadi Callee + PayloadOffset[cfr], t1
+        loadp JSFunction::m_executable[t1], t1
+        move t0, cfr
+        call executableOffsetToFunction[t1]
+        addp 16 - 4, sp
+        loadp JITStackFrame::globalData + 4[sp], t3
+    elsif ARMv7
+        move t0, t2
+        preserveReturnAddressAfterCall(t3)
+        storep t3, ReturnPC[cfr]
+        move cfr, t0
+        loadi Callee + PayloadOffset[cfr], t1
+        loadp JSFunction::m_executable[t1], t1
+        move t2, cfr
+        call executableOffsetToFunction[t1]
+        restoreReturnAddressBeforeReturn(t3)
+        loadp JITStackFrame::globalData[sp], t3
+    else  
+        error
+    end
+    bineq JSGlobalData::exception + TagOffset[t3], EmptyValueTag, .exception
+    ret
+.exception:
+    preserveReturnAddressAfterCall(t1) # This is really only needed on X86
+    callSlowPath(_llint_throw_from_native_call)
+    jmp _llint_throw_from_slow_path_trampoline
+end
+
+_llint_native_call_trampoline:
+    nativeCallTrampoline(NativeExecutable::m_function)
+
+
+_llint_native_construct_trampoline:
+    nativeCallTrampoline(NativeExecutable::m_constructor)
+
+
 # Lastly, make sure that we can link even though we don't support all opcodes.
 # These opcodes should never arise when using LLInt or either JIT. We assert
 # as much.

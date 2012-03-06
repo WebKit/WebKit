@@ -1576,6 +1576,13 @@ LLINT_SLOW_PATH_DECL(slow_path_profile_did_call)
     LLINT_END();
 }
 
+LLINT_SLOW_PATH_DECL(throw_from_native_call)
+{
+    LLINT_BEGIN();
+    ASSERT(globalData.exception);
+    LLINT_END();
+}
+
 } } // namespace JSC::LLInt
 
 #endif // ENABLE(LLINT)
