@@ -14,7 +14,6 @@ BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = CRASH
 // Flaky tests
 
 BUGWK68878 : media/video-playing-and-pause.html = PASS TEXT
-BUGWK36165 : media/video-played-collapse.html = PASS TEXT
 BUGWK54637 : media/video-display-toggle.html = PASS TEXT
 BUGWK54637 : media/video-controls-in-media-document.html = PASS TEXT
 BUGWK54637 : media/controls-after-reload.html = PASS TEXT

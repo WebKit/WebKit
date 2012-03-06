@@ -30,11 +30,16 @@ EVENT(pause)
 Test 10 OK
 Test 11 OK
 Test 12 OK
+
+Test looping
+RUN(video.loop = true)
 RUN(video.play())
 RUN(video.pause())
 EVENT(pause)
 Test 13 OK
 Test 14 OK
 Test 15 OK
+Test 16 OK
+Test 17 OK
 END OF TEST
 

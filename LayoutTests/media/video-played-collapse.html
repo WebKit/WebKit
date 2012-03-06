@@ -66,24 +66,30 @@
 
             function TestLoopingAndPassToTheEnd()
             {
-                playForMillisecs(100); // Triggers pause()
-                return;
                 consoleWrite("<br><b><em>Test looping</em></b>");
-    
-                var newTime = (video.duration - 0.05).toFixed(2);
-                runSilently("video.currentTime = " + newTime);
-                run("video.loop = true");
-                
-                currentTimeRange = 0; // We'll end in the very first time range
 
-                timeRangeCount++;
-                expectedStartTimes[timeRangeCount-1] = newTime;
-                expectedEndTimes[timeRangeCount-1] = video.duration.toFixed(2);
+                // Start playing near the end of the movie so it will loop quickly.
+                run("video.loop = true");
+                var startTime = (video.duration - 0.05).toFixed(2);
+                runSilently("video.currentTime = " + startTime);
+                
+                // We will end in the very first time range
+                currentTimeRange = 0; 
 
                 willPauseInExistingRange = true;
                 willExtendAnExistingRange = true;
 
-                playForMillisecs(100); // Triggers pause()
+                // Playing from near the end so we will create a new time range from startTime .. duration
+                timeRangeCount++;
+                expectedStartTimes[timeRangeCount-1] = startTime;
+                expectedEndTimes[timeRangeCount-1] = video.duration.toFixed(2);
+
+                // Have to play for long enough to loop and play into the existing range.
+                var playDuration = 1.25;
+
+                // Playback restarts from beginning, so expect the beginning of first time range to be 0.
+                expectedStartTimes[0] = 0;
+                playForMillisecs(secToMilli(playDuration)); // Triggers pause()
             }
 
         </script>
