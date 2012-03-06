@@ -53,6 +53,7 @@ namespace JSC {
 
         static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
         static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+        static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
 
         static const JS_EXPORTDATA ClassInfo s_info;
 

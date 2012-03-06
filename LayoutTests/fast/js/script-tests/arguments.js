@@ -623,7 +623,8 @@ shouldBe("descriptor.configurable", 'true');
     shouldBeTrue(String( a1 === 301 ));
     shouldBeTrue(String( arguments[1] === 201 ));
 
-    // When a2 is make read-only the value is set, but it is no longer live.
+    // When a2 is made read-only the value is set, but it is no longer live.
+    // (per 10.6 [[DefineOwnProperty]] 5.b.ii.1)
     shouldBeTrue(String( a2 === 202 ));
     shouldBeTrue(String( arguments[2] === 202 ));
     a2 = 302;
@@ -633,14 +634,15 @@ shouldBe("descriptor.configurable", 'true');
     shouldBeTrue(String( a2 === 302 ));
     shouldBeTrue(String( arguments[2] === 202 ));
 
-    // When a3 is make read-only it remains live.
+    // When a3 is made read-only, it is no longer live.
+    // (per 10.6 [[DefineOwnProperty]] 5.b.ii.1)
     shouldBeTrue(String( a3 === 103 ));
     shouldBeTrue(String( arguments[3] === 103 ));
     a3 = 303;
     shouldBeTrue(String( a3 === 303 ));
-    shouldBeTrue(String( arguments[3] === 303 ));
+    shouldBeTrue(String( arguments[3] === 103 ));
     arguments[3] = 403;
-    shouldBeTrue(String( a3 === 403 ));
-    shouldBeTrue(String( arguments[3] === 403 ));
+    shouldBeTrue(String( a3 === 303 ));
+    shouldBeTrue(String( arguments[3] === 103 ));
 
 })(100,101,102,103);

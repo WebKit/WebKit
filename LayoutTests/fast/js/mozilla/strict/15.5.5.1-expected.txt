@@ -1,4 +1,4 @@
-FAIL 'use strict'; var s = str(); s.length = 1; s.length should throw an instance of TypeError
+PASS 'use strict'; var s = str(); s.length = 1; s.length threw exception of type TypeError.
 PASS var s = str(); s.length = 1; s.length is 3
 PASS true === true
 PASS 'use strict'; var s = str(); delete s.length threw exception of type TypeError.

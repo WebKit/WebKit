@@ -21,6 +21,7 @@
 #include "config.h"
 #include "StringObject.h"
 
+#include "Error.h"
 #include "PropertyNameArray.h"
 
 namespace JSC {
@@ -68,9 +69,54 @@ bool StringObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, c
 
 void StringObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    if (propertyName == exec->propertyNames().length)
+    if (propertyName == exec->propertyNames().length) {
+        if (slot.isStrictMode())
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return;
+    }
     JSObject::put(cell, exec, propertyName, value, slot);
+}
+
+bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor, bool throwException)
+{
+    StringObject* thisObject = jsCast<StringObject*>(object);
+
+    if (propertyName == exec->propertyNames().length) {
+        if (!object->isExtensible()) {
+            if (throwException)
+                throwError(exec, createTypeError(exec, "Attempting to define property on object that is not extensible."));
+            return false;
+        }
+        if (descriptor.configurablePresent() && descriptor.configurable()) {
+            if (throwException)
+                throwError(exec, createTypeError(exec, "Attempting to configurable attribute of unconfigurable property."));
+            return false;
+        }
+        if (descriptor.enumerablePresent() && descriptor.enumerable()) {
+            if (throwException)
+                throwError(exec, createTypeError(exec, "Attempting to change enumerable attribute of unconfigurable property."));
+            return false;
+        }
+        if (descriptor.isAccessorDescriptor()) {
+            if (throwException)
+                throwError(exec, createTypeError(exec, "Attempting to change access mechanism for an unconfigurable property."));
+            return false;
+        }
+        if (descriptor.writablePresent() && descriptor.writable()) {
+            if (throwException)
+                throwError(exec, createTypeError(exec, "Attempting to change writable attribute of unconfigurable property."));
+            return false;
+        }
+        if (!descriptor.value())
+            return true;
+        if (propertyName == exec->propertyNames().length && sameValue(exec, descriptor.value(), jsNumber(thisObject->internalValue()->length())))
+            return true;
+        if (throwException)
+            throwError(exec, createTypeError(exec, "Attempting to change value of a readonly property."));
+        return false;
+    }
+
+    return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
 }
 
 bool StringObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
