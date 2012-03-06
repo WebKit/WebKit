@@ -297,12 +297,13 @@ public:
         // value of (None, []). But the old JIT may stash some values there. So we really
         // need (Top, TOP).
         for (size_t argument = 0; argument < basicBlock.variablesAtHead.numberOfArguments(); ++argument) {
-            if (basicBlock.variablesAtHead.argument(argument) == NoNode)
+            NodeIndex nodeIndex = basicBlock.variablesAtHead.argument(argument);
+            if (nodeIndex == NoNode || !m_graph[nodeIndex].shouldGenerate())
                 entry->m_expectedValues.argument(argument).makeTop();
         }
         for (size_t local = 0; local < basicBlock.variablesAtHead.numberOfLocals(); ++local) {
             NodeIndex nodeIndex = basicBlock.variablesAtHead.local(local);
-            if (nodeIndex == NoNode)
+            if (nodeIndex == NoNode || !m_graph[nodeIndex].shouldGenerate())
                 entry->m_expectedValues.local(local).makeTop();
             else if (m_graph[nodeIndex].variableAccessData()->shouldUseDoubleFormat())
                 entry->m_localsForcedDouble.set(local);

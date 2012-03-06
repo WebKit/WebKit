@@ -1,3 +1,22 @@
+2012-03-05  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Checks for dead variables are not sufficient when fixing the expected
+        values in DFG OSR entry
+        https://bugs.webkit.org/show_bug.cgi?id=80371
+
+        Reviewed by Filip Pizlo.
+
+        A dead variable should be identified when there's no node referencing it.
+        But we currently failed to catch the case where there are some nodes
+        referencing a variable but those nodes are actually not referenced by
+        others so will be ignored in code generation. In such case we should
+        also consider that variable to be a dead variable in the block and fix
+        the expected values.
+        This is performance neutral on SunSpider, V8 and Kraken.
+
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+
 2012-03-05  Oliver Hunt  <oliver@apple.com>
 
         Fix Qt build.
