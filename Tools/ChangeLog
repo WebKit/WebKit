@@ -1,3 +1,16 @@
+2012-03-06  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make sure clean builds are followed by make qmake && make if needed
+
+        On non-GNUmake systems we have to run make qmake so that the generated
+        sources are generated before we run qmake on the target pro files. This
+        is achieved by using the 'incremental' target.
+
+        Reviewed by Ossy.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
 2012-03-06  Filip Pizlo  <fpizlo@apple.com>
 
         DumpRenderTree should support preciseTime()

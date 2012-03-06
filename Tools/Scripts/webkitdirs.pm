@@ -2191,6 +2191,9 @@ sub buildQMakeProjects
             # to run config tests and generate the removed Tools/qmake/.qmake.cache again.
             qtFeatureDefaults(\@buildArgs);
         #}
+
+        # Still trigger an incremental build
+        $buildHint = "incremental";
     }
 
     # Save config up-front so we can detect changes to the build config even
