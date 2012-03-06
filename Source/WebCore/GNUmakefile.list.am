@@ -4749,7 +4749,8 @@ dom_binding_idls += \
 	$(WebCore)/storage/SQLTransactionCallback.idl \
 	$(WebCore)/storage/SQLTransactionErrorCallback.idl \
 	$(WebCore)/storage/SQLTransactionSync.idl \
-	$(WebCore)/storage/SQLTransactionSyncCallback.idl
+	$(WebCore)/storage/SQLTransactionSyncCallback.idl \
+	$(WebCore)/storage/WorkerContextSQLDatabase.idl
 endif # END ENABLE_SQL_DATABASE
 
 # ----
