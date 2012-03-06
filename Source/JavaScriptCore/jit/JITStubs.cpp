@@ -43,7 +43,7 @@
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
 #include "Heap.h"
-#include "InlineASM.h"
+#include <wtf/InlineASM.h>
 #include "JIT.h"
 #include "JITExceptions.h"
 #include "JSActivation.h"

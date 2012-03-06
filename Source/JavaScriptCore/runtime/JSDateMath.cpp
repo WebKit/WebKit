@@ -72,8 +72,6 @@
 #include "config.h"
 #include "JSDateMath.h"
 
-#include "Assertions.h"
-#include "ASCIICType.h"
 #include "CurrentTime.h"
 #include "JSObject.h"
 #include "MathExtras.h"
@@ -86,6 +84,8 @@
 #include <limits>
 #include <stdint.h>
 #include <time.h>
+#include <wtf/ASCIICType.h>
+#include <wtf/Assertions.h>
 #include <wtf/text/StringBuilder.h>
 
 #if HAVE(ERRNO_H)

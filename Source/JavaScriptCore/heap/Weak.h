@@ -26,7 +26,7 @@
 #ifndef Weak_h
 #define Weak_h
 
-#include "Assertions.h"
+#include <wtf/Assertions.h>
 #include "Handle.h"
 #include "HandleHeap.h"
 #include "JSGlobalData.h"

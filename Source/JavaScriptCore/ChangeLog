@@ -1,3 +1,54 @@
+2012-03-05  Eric Seidel  <eric@webkit.org>
+
+        Update JavaScriptCore files to use fully-qualified WTF include paths
+        https://bugs.webkit.org/show_bug.cgi?id=79960
+
+        Reviewed by Adam Barth.
+
+        This change does 5 small/related things:
+         1. Updates JavaScriptCore.xcodeproj to install WTF headers into $BUILD/usr/local/include
+            (WebCore, WebKit were already setup to look there, but JavaScriptCore.xcodeproj
+            was not installing headers there.)
+         2. Makes JavaScriptCore targets include $BUILD/usr/local/include in their
+            header search path, as that's where the WTF headers will be installed.
+         3. Similarly updates JavaScriptCore.vcproj/copy-files.cmd to copy WTF headers to PrivateHeaders/wtf/*
+            in addition to the current behavior of flattening all headers to PrivateHeaders/*.h.
+         4. Updates a bunch of JSC files to use #include <wtf/Foo.h> instead of #include "Foo.h"
+            since soon the WTF headers will not be part of the JavaScriptCore Xcode project.
+         5. Makes build-webkit build the WTF XCode project by default.
+
+        * API/tests/JSNode.c:
+        * API/tests/JSNodeList.c:
+        * Configurations/Base.xcconfig:
+        * assembler/MacroAssemblerCodeRef.h:
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGOperations.cpp:
+        * heap/GCAssertions.h:
+        * heap/HandleHeap.h:
+        * heap/HandleStack.h:
+        * heap/MarkedSpace.h:
+        * heap/PassWeak.h:
+        * heap/Strong.h:
+        * heap/Weak.h:
+        * jit/HostCallReturnValue.cpp:
+        * jit/JIT.cpp:
+        * jit/JITStubs.cpp:
+        * jit/ThunkGenerators.cpp:
+        * parser/Lexer.cpp:
+        * runtime/Completion.cpp:
+        * runtime/Executable.cpp:
+        * runtime/Identifier.h:
+        * runtime/InitializeThreading.cpp:
+        * runtime/JSDateMath.cpp:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/JSStringBuilder.h:
+        * runtime/JSVariableObject.h:
+        * runtime/NumberPrototype.cpp:
+        * runtime/WriteBarrier.h:
+        * tools/CodeProfile.cpp:
+        * tools/TieredMMapArray.h:
+        * yarr/YarrJIT.cpp:
+
 2012-03-05  Oliver Hunt  <oliver@apple.com>
 
         Add basic support for constant blinding to the JIT

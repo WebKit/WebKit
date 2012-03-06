@@ -29,7 +29,7 @@
 #include "JSString.h"
 #include "Operations.h"
 #include "Uint16WithFraction.h"
-#include "dtoa.h"
+#include <wtf/dtoa.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>

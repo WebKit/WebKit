@@ -1,3 +1,14 @@
+2012-03-05  Eric Seidel  <eric@webkit.org>
+
+        Update JavaScriptCore files to use fully-qualified WTF include path
+        https://bugs.webkit.org/show_bug.cgi?id=79960
+
+        Reviewed by Adam Barth.
+
+        Build WTF/WTF.xcodeproj by default on Mac.
+
+        * Scripts/build-webkit:
+
 2012-03-05  Dirk Pranke  <dpranke@chromium.org>
 
         There should be a way to disable optimizer in webkit-patch rebaseline-expectations

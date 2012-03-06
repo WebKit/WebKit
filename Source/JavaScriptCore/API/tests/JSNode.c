@@ -30,7 +30,7 @@
 #include "JSValueRef.h"
 #include "Node.h"
 #include "NodeList.h"
-#include "UnusedParam.h"
+#include <wtf/UnusedParam.h>
 #include <wtf/Assertions.h>
 
 static JSValueRef JSNode_appendChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
