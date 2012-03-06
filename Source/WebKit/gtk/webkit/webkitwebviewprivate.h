@@ -80,7 +80,7 @@ struct _WebKitWebViewPrivate {
 
     gboolean disposing;
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && !defined(GST_API_VERSION_1)
     FullscreenVideoController* fullscreenVideoController;
 #endif
 

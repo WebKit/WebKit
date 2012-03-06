@@ -20,7 +20,7 @@
 #include "config.h"
 #include "PlatformVideoWindow.h"
 
-#if USE(GSTREAMER)
+#if USE(GSTREAMER) && !defined(GST_API_VERSION_1)
 
 #include <gst/gst.h>
 
@@ -46,4 +46,4 @@ void PlatformVideoWindow::prepareForOverlay(GstMessage* message)
     }
 }
 
-#endif // USE(GSTREAMER)
+#endif // USE(GSTREAMER) && !defined(GST_API_VERSION_1)

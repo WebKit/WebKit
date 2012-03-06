@@ -43,7 +43,7 @@ class QTKitFullScreenVideoHandler;
 #endif
 
 // We do not use ENABLE or USE because moc does not expand these macros.
-#if defined(WTF_USE_GSTREAMER) && WTF_USE_GSTREAMER
+#if defined(WTF_USE_GSTREAMER) && WTF_USE_GSTREAMER && !defined(GST_API_VERSION_1)
 class FullScreenVideoWindow;
 
 class GStreamerFullScreenVideoHandler : public QObject {

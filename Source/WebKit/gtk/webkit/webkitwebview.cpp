@@ -5114,7 +5114,7 @@ void webViewEnterFullscreen(WebKitWebView* webView, Node* node)
     if (!node->hasTagName(HTMLNames::videoTag))
         return;
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && !defined(GST_API_VERSION_1)
     HTMLMediaElement* videoElement = static_cast<HTMLMediaElement*>(node);
     WebKitWebViewPrivate* priv = webView->priv;
 
@@ -5130,7 +5130,7 @@ void webViewEnterFullscreen(WebKitWebView* webView, Node* node)
 
 void webViewExitFullscreen(WebKitWebView* webView)
 {
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && !defined(GST_API_VERSION_1)
     WebKitWebViewPrivate* priv = webView->priv;
     if (priv->fullscreenVideoController)
         priv->fullscreenVideoController->exitFullscreen();

@@ -19,7 +19,7 @@
 
 #ifndef PlatformVideoWindow_h
 #define PlatformVideoWindow_h
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER) && !defined(GST_API_VERSION_1)
 
 #include "Widget.h"
 #include <wtf/PassRefPtr.h>
@@ -61,5 +61,5 @@ class PlatformVideoWindow : public RefCounted<PlatformVideoWindow> {
     };
 }
 
-#endif // USE(GSTREAMER)
+#endif // USE(GSTREAMER) && !defined(GST_API_VERSION_1)
 #endif

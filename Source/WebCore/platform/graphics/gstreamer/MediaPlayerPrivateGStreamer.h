@@ -180,7 +180,9 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             MediaPlayer::Preload m_preload;
             bool m_delayingLoad;
             bool m_mediaDurationKnown;
+#ifndef GST_API_VERSION_1
             RefPtr<GStreamerGWorld> m_gstGWorld;
+#endif
             guint m_volumeTimerHandler;
             guint m_muteTimerHandler;
             bool m_hasVideo;

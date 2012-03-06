@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && !defined(GST_API_VERSION_1)
 
 #include "FullscreenVideoController.h"
 

@@ -1,3 +1,24 @@
+2012-03-06  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] disable GStreamerGWorld when building against 0.11
+        https://bugs.webkit.org/show_bug.cgi?id=77088
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::~ChromeClientQt):
+        (WebCore):
+        * WebCoreSupport/FullScreenVideoQt.cpp:
+        (WebCore):
+        (WebCore::FullScreenVideoQt::FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::~FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::enterFullScreenForNode):
+        (WebCore::FullScreenVideoQt::exitFullScreenForNode):
+        (WebCore::FullScreenVideoQt::isValid):
+        * WebCoreSupport/FullScreenVideoQt.h:
+        (WebCore):
+
 2012-03-03  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix static_libs_as_shared build

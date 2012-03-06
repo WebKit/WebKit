@@ -1698,8 +1698,10 @@ bool MediaPlayerPrivateGStreamer::supportsFullscreen() const
 PlatformMedia MediaPlayerPrivateGStreamer::platformMedia() const
 {
     PlatformMedia p;
+#ifndef GST_API_VERSION_1
     p.type = PlatformMedia::GStreamerGWorldType;
     p.media.gstreamerGWorld = m_gstGWorld.get();
+#endif
     return p;
 }
 
@@ -1727,7 +1729,9 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     ASSERT(!m_playBin);
     m_playBin = gst_element_factory_make(gPlaybinName, "play");
 
+#ifndef GST_API_VERSION_1
     m_gstGWorld = GStreamerGWorld::createGWorld(m_playBin);
+#endif
 
     GstBus* bus = gst_pipeline_get_bus(GST_PIPELINE(m_playBin));
     gst_bus_add_signal_watch(bus);

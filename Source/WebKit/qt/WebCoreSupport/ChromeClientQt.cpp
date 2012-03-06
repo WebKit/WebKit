@@ -73,7 +73,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/qt/UtilsQt.h>
 
-#if ENABLE(VIDEO) && (USE(GSTREAMER) || USE(QT_MULTIMEDIA) || USE(QTKIT))
+#if ENABLE(VIDEO) && ((USE(GSTREAMER) && !defined(GST_API_VERSION_1)) || USE(QT_MULTIMEDIA) || USE(QTKIT))
 #include "FullScreenVideoQt.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
@@ -90,7 +90,7 @@ bool ChromeClientQt::dumpVisitedLinksCallbacks = false;
 ChromeClientQt::ChromeClientQt(QWebPage* webPage)
     : m_webPage(webPage)
     , m_eventLoop(0)
-#if ENABLE(VIDEO) && (USE(GSTREAMER) || USE(QT_MULTIMEDIA) || USE(QTKIT))
+#if ENABLE(VIDEO) && ((USE(GSTREAMER) && !defined(GST_API_VERSION_1)) || USE(QT_MULTIMEDIA) || USE(QTKIT))
     , m_fullScreenVideo(0)
 #endif
 {
@@ -102,7 +102,7 @@ ChromeClientQt::~ChromeClientQt()
     if (m_eventLoop)
         m_eventLoop->exit();
 
-#if ENABLE(VIDEO) && (USE(GSTREAMER) || USE(QT_MULTIMEDIA) || USE(QTKIT))
+#if ENABLE(VIDEO) && ((USE(GSTREAMER) && !defined(GST_API_VERSION_1)) || USE(QT_MULTIMEDIA) || USE(QTKIT))
     delete m_fullScreenVideo;
 #endif
 }
@@ -650,7 +650,7 @@ IntRect ChromeClientQt::visibleRectForTiledBackingStore() const
 }
 #endif
 
-#if ENABLE(VIDEO) && (USE(GSTREAMER) || USE(QT_MULTIMEDIA) || USE(QTKIT))
+#if ENABLE(VIDEO) && ((USE(GSTREAMER) && !defined(GST_API_VERSION_1)) || USE(QT_MULTIMEDIA) || USE(QTKIT))
 FullScreenVideoQt* ChromeClientQt::fullScreenVideo()
 {
     if (!m_fullScreenVideo)

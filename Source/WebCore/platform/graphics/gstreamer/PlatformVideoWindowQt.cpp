@@ -19,6 +19,7 @@
 
 #include "config.h"
 #include "PlatformVideoWindow.h"
+#if ENABLE(VIDEO) && USE(GSTREAMER) && !defined(GST_API_VERSION_1)
 
 #include "HTMLVideoElement.h"
 #include "PlatformVideoWindowPrivate.h"
@@ -150,3 +151,4 @@ PlatformVideoWindow::~PlatformVideoWindow()
 void PlatformVideoWindow::prepareForOverlay(GstMessage*)
 {
 }
+#endif // ENABLE(VIDEO) && USE(GSTREAMER) && !defined(GST_API_VERSION_1)

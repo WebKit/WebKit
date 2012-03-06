@@ -20,7 +20,7 @@
 
 #ifndef GStreamerGWorld_h
 #define GStreamerGWorld_h
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER) && !defined(GST_API_VERSION_1)
 
 #include "GOwnPtr.h"
 #include "PlatformVideoWindow.h"
@@ -65,5 +65,5 @@ private:
 };
 
 }
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER) && !defined(GST_API_VERSION_1)
 #endif
