@@ -551,7 +551,8 @@ void CSSStyleSelector::popScope(const ContainerNode* scope)
 
 void CSSStyleSelector::pushParentElement(Element* parent)
 {
-    const ContainerNode* parentsParent = parent->parentOrHostNode();
+    const ContainerNode* parentsParent = parent->parentOrHostElement();
+
     // We are not always invoked consistently. For example, script execution can cause us to enter
     // style recalc in the middle of tree building. We may also be invoked from somewhere within the tree.
     // Reset the stack in this case, or if we see a new root element.
@@ -560,7 +561,9 @@ void CSSStyleSelector::pushParentElement(Element* parent)
         m_checker.setupParentStack(parent);
     else
         m_checker.pushParent(parent);
-    pushScope(parent, parentsParent);
+
+    // Note: We mustn't skip ShadowRoot nodes for the scope stack.
+    pushScope(parent, parent->parentOrHostNode());
 }
 
 void CSSStyleSelector::popParentElement(Element* parent)
