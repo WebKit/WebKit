@@ -32,7 +32,6 @@
 #include "platform/WebKitPlatformSupport.h"
 #include "WebPluginContainer.h"
 #include "WebPluginParams.h"
-#include "WebViewClient.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
 
@@ -44,15 +43,29 @@ using namespace WebKit;
 #define GL_ONE                    1
 #define GL_TRIANGLES              0x0004
 #define GL_ONE_MINUS_SRC_ALPHA    0x0303
+#define GL_DEPTH_TEST             0x0B71
 #define GL_BLEND                  0x0BE2
+#define GL_SCISSOR_TEST           0x0B90
+#define GL_TEXTURE_2D             0x0DE1
 #define GL_FLOAT                  0x1406
+#define GL_RGBA                   0x1908
+#define GL_UNSIGNED_BYTE          0x1401
+#define GL_TEXTURE_MAG_FILTER     0x2800
+#define GL_TEXTURE_MIN_FILTER     0x2801
+#define GL_TEXTURE_WRAP_S         0x2802
+#define GL_TEXTURE_WRAP_T         0x2803
+#define GL_NEAREST                0x2600
 #define GL_COLOR_BUFFER_BIT       0x4000
+#define GL_CLAMP_TO_EDGE          0x812F
 #define GL_ARRAY_BUFFER           0x8892
 #define GL_STATIC_DRAW            0x88E4
 #define GL_FRAGMENT_SHADER        0x8B30
 #define GL_VERTEX_SHADER          0x8B31
 #define GL_COMPILE_STATUS         0x8B81
 #define GL_LINK_STATUS            0x8B82
+#define GL_COLOR_ATTACHMENT0      0x8CE0
+#define GL_FRAMEBUFFER_COMPLETE   0x8CD5
+#define GL_FRAMEBUFFER            0x8D40
 
 static void premultiplyAlpha(const unsigned colorIn[3], float alpha, float colorOut[4])
 {
@@ -62,11 +75,9 @@ static void premultiplyAlpha(const unsigned colorIn[3], float alpha, float color
     colorOut[3] = alpha;
 }
 
-TestWebPlugin::TestWebPlugin(WebKit::WebViewClient* webViewClient,
-                             WebKit::WebFrame* frame,
+TestWebPlugin::TestWebPlugin(WebKit::WebFrame* frame,
                              const WebKit::WebPluginParams& params)
-    : m_webViewClient(webViewClient)
-    , m_frame(frame)
+    : m_frame(frame)
     , m_container(0)
     , m_context(0)
 {
@@ -105,7 +116,7 @@ const WebString& TestWebPlugin::mimeType()
 bool TestWebPlugin::initialize(WebPluginContainer* container)
 {
     WebGraphicsContext3D::Attributes attrs;
-    m_context = m_webViewClient->createGraphicsContext3D(attrs, false);
+    m_context = webKitPlatformSupport()->createOffscreenGraphicsContext3D(attrs);
     if (!m_context)
         return false;
 
@@ -116,7 +127,7 @@ bool TestWebPlugin::initialize(WebPluginContainer* container)
         return false;
 
     m_container = container;
-    m_container->setBackingTextureId(m_context->getPlatformTextureId());
+    m_container->setBackingTextureId(m_colorTexture);
     return true;
 }
 
@@ -141,9 +152,20 @@ void TestWebPlugin::updateGeometry(const WebRect& frameRect,
     m_rect = clipRect;
 
     m_context->reshape(m_rect.width, m_rect.height);
-    drawScene();
-    m_context->prepareTexture();
+    m_context->viewport(0, 0, m_rect.width, m_rect.height);
 
+    m_context->bindTexture(GL_TEXTURE_2D, m_colorTexture);
+    m_context->texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    m_context->texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    m_context->texParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    m_context->texParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    m_context->texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_rect.width, m_rect.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    m_context->bindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+    m_context->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_colorTexture, 0);
+
+    drawScene();
+
+    m_context->flush();
     m_container->commitBackingTexture();
 }
 
@@ -189,6 +211,14 @@ bool TestWebPlugin::initScene()
 {
     float color[4];
     premultiplyAlpha(m_scene.backgroundColor, m_scene.opacity, color);
+
+    m_colorTexture = m_context->createTexture();
+    m_framebuffer = m_context->createFramebuffer();
+
+    m_context->viewport(0, 0, m_rect.width, m_rect.height);
+    m_context->disable(GL_DEPTH_TEST);
+    m_context->disable(GL_SCISSOR_TEST);
+
     m_context->clearColor(color[0], color[1], color[2], color[3]);
 
     m_context->enable(GL_BLEND);
@@ -215,6 +245,16 @@ void TestWebPlugin::destroyScene()
     if (m_scene.vbo) {
         m_context->deleteBuffer(m_scene.vbo);
         m_scene.vbo = 0;
+    }
+
+    if (m_framebuffer) {
+        m_context->deleteFramebuffer(m_framebuffer);
+        m_framebuffer = 0;
+    }
+
+    if (m_colorTexture) {
+        m_context->deleteTexture(m_colorTexture);
+        m_colorTexture = 0;
     }
 }
 

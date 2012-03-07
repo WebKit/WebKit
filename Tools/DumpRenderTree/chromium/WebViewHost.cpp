@@ -933,7 +933,7 @@ void WebViewHost::exitFullScreen()
 WebPlugin* WebViewHost::createPlugin(WebFrame* frame, const WebPluginParams& params)
 {
     if (params.mimeType == TestWebPlugin::mimeType())
-        return new TestWebPlugin(this, frame, params);
+        return new TestWebPlugin(frame, params);
 
     return webkit_support::CreateWebPlugin(frame, params);
 }

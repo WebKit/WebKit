@@ -1,3 +1,27 @@
+2012-03-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove the TestWebPlugin's use of implicit FBO for offscreen contexts
+        https://bugs.webkit.org/show_bug.cgi?id=80521
+
+        Reviewed by Kenneth Russell.
+
+        Switches TestWebPlugin from using a context created by WebViewClient::createGraphicsContext3D(..., false) over
+        to an explicitly offscreen context with explicitly managed texture / FBO, so we can deprecate the
+        renderDirectlyToHostWindow flag from WebViewClient::createGraphicsContext3D.
+
+        Covered by platform/chromium/compositing/plugins/*
+
+        * DumpRenderTree/chromium/TestWebPlugin.cpp:
+        (TestWebPlugin::TestWebPlugin):
+        (TestWebPlugin::initialize):
+        (TestWebPlugin::updateGeometry):
+        (TestWebPlugin::initScene):
+        (TestWebPlugin::destroyScene):
+        * DumpRenderTree/chromium/TestWebPlugin.h:
+        (TestWebPlugin):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createPlugin):
+
 2012-03-07  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] remove webkitpy dependency in run-gtk-tests
