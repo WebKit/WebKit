@@ -26,3 +26,27 @@ function createDOM(tagName, attributes)
     }
     return element;
 }
+
+function isShadowRoot(node)
+{
+    // FIXME: window.internals should have internals.isShadowRoot(node).
+    return node.host;
+}
+
+// You can spefify youngerShadowRoot by consecutive slashes.
+// See LayoutTests/fast/dom/shadow/get-element-by-id-in-shadow-root.html for actual usages.
+function getElementInShadowTreeStack(path)
+{
+    var ids = path.split('/');
+    var node = document.getElementById(ids[0]);
+    for (var i = 1; node != null && i < ids.length; ++i) {
+        if (isShadowRoot(node))
+            node = internals.youngerShadowRoot(node);
+        else
+            node = internals.oldestShadowRoot(node);
+        if (ids[i] != '')
+            node = internals.getElementByIdInShadowRoot(node, ids[i]);
+    }
+    return node;
+}
+

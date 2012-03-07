@@ -2,22 +2,11 @@
 <html>
 <head>
 <script src="../../js/resources/js-test-pre.js"></script>
-<script src="resources/create-dom.js"></script>
+<script src="resources/shadow-dom.js"></script>
 </head>
 <body>
 <script>
-description("Tests to ensure that internals.getElementByIdInTreeScope can get an element in TreeScope by its id. Can only run within DRT");
-
-function getElementInShadow(path)
-{
-    var ids = path.split('/');
-    var element = document.getElementById(ids[0]);
-    for (var i = 1; element != null && i < ids.length; ++i) {
-        var shadowRoot = internals.shadowRoot(element);
-        element = internals.getElementByIdInShadowRoot(shadowRoot, ids[i]);
-    }
-    return element;
-}
+description("Tests to ensure that internals.getElementByIdInShadowRoot can get an element in ShadowRoot by its id. Can only run within DRT");
 
 function prepareDomTree(parent)
 {
@@ -27,17 +16,29 @@ function prepareDomTree(parent)
                       createDOM('input', {'id': 'inputB'}),
                       createDOM('div', {'id': 'divC'},
                                 createShadowRoot(
-                                    createDOM('input', {'id': 'inputD'}))))));
+                                    createDOM('input', {'id': 'inputD'})),
+                                createShadowRoot(
+                                    createDOM('input', {'id': 'inputE'})),
+                                createShadowRoot(
+                                    createDOM('input', {'id': 'inputF'}))))));
 }
 
 function test()
 {
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
+    if (window.internals)
+        window.internals.setMultipleShadowSubtreesEnabled(true);
+
     prepareDomTree(document.body);
-    shouldBeEqualToString("getElementInShadow('divA/inputB').id", 'inputB');
-    shouldBeEqualToString("getElementInShadow('divA/divC').id", 'divC');
-    shouldBeEqualToString("getElementInShadow('divA/divC/inputD').id", 'inputD');
+    shouldBeEqualToString("getElementInShadowTreeStack('divA/inputB').id", 'inputB');
+    shouldBeEqualToString("getElementInShadowTreeStack('divA/divC').id", 'divC');
+    shouldBeEqualToString("getElementInShadowTreeStack('divA/divC/inputD').id", 'inputD');
+    shouldBeEqualToString("getElementInShadowTreeStack('divA/divC//inputE').id", 'inputE');
+    shouldBeEqualToString("getElementInShadowTreeStack('divA/divC///inputF').id", 'inputF');
+
+    if (window.internals)
+        window.internals.setMultipleShadowSubtreesEnabled(false);
 }
 
 test();

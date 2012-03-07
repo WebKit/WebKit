@@ -2,7 +2,7 @@
 <html>
 <head>
 <script src="../../js/resources/js-test-pre.js"></script>
-<script src="resources/create-dom.js"></script>
+<script src="resources/shadow-dom.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -64,17 +64,6 @@ function recordEvent(event)
     eventRecords[eventType].push(eventString);
 }
 
-function getElementInShadow(path)
-{
-    var ids = path.split('/');
-    var element = document.getElementById(ids[0]);
-    for (var i = 1; element != null && i < ids.length; ++i) {
-        var shadowRoot = internals.shadowRoot(element);
-        element = internals.getElementByIdInShadowRoot(shadowRoot, ids[i]);
-    }
-    return element;
-}
-
 function prepareDOMTree(parent)
 {
     parent.appendChild(
@@ -100,7 +89,7 @@ function prepareDOMTree(parent)
                'shadowD/shadowF/shadowG/divH', 'shadowD/shadowF/shadowG/divI',
                'shadowD/divJ', 'shadowD/shadowK', 'shadowD/shadowK/divL'];
     for (var i = 0; i < ids.length; ++i) {
-        var element = getElementInShadow(ids[i]);
+        var element = getElementInShadowTreeStack(ids[i]);
         element.addEventListener('mouseover', recordEvent, false);
         element.addEventListener('mouseout', recordEvent, false);
         element.addEventListener('focusin', recordEvent, false);
@@ -113,17 +102,17 @@ function prepareDOMTree(parent)
 function moveMouse(oldElementId, newElementId, message)
 {
     debug('\n' + message + '\n' + 'Moving mouse from ' + oldElementId + ' to ' + newElementId);
-    moveMouseOver(getElementInShadow(oldElementId));
+    moveMouseOver(getElementInShadowTreeStack(oldElementId));
     clearEventRecords();
-    moveMouseOver(getElementInShadow(newElementId));
+    moveMouseOver(getElementInShadowTreeStack(newElementId));
 }
 
 function moveFocus(oldElementId, newElementId, message)
 {
     debug('\n' + message + '\n' + 'Moving focus from ' + oldElementId + ' to ' + newElementId);
-    getElementInShadow(oldElementId).focus();
+    getElementInShadowTreeStack(oldElementId).focus();
     clearEventRecords();
-    getElementInShadow(newElementId).focus();
+    getElementInShadowTreeStack(newElementId).focus();
 }
 
 function test()

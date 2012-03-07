@@ -2,7 +2,7 @@
 <html>
 <head>
 <script src="../../js/resources/js-test-pre.js"></script>
-<script src="resources/create-dom.js"></script>
+<script src="resources/shadow-dom.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -44,17 +44,6 @@ function recordEvent(event)
     eventRecords[eventType].push(event.target.id);
 }
 
-function getElementInShadow(path)
-{
-    var ids = path.split('/');
-    var element = document.getElementById(ids[0]);
-    for (var i = 1; element != null && i < ids.length; ++i) {
-        var shadowRoot = internals.shadowRoot(element);
-        element = internals.getElementByIdInShadowRoot(shadowRoot, ids[i]);
-    }
-    return element;
-}
-
 function prepareDOMTree(parent)
 {
     parent.appendChild(
@@ -72,7 +61,7 @@ function prepareDOMTree(parent)
                'shadowC/inputD', 'shadowC/inputE',
                'shadowC/shadowF/inputG'];
     for (var i = 0; i < ids.length; ++i) {
-        var element = getElementInShadow(ids[i]);
+        var element = getElementInShadowTreeStack(ids[i]);
         element.addEventListener('focus', recordEvent, false);
     }
 }
@@ -93,12 +82,12 @@ function test()
     pressAccessKey('a');
     shouldBe('dispatchedEvent("focus")', '["inputE"]');
 
-    getElementInShadow('shadowC/inputD').focus();
+    getElementInShadowTreeStack('shadowC/inputD').focus();
     clearEventRecords();
     pressAccessKey('a');
     shouldBe('dispatchedEvent("focus")', '["inputE"]');
 
-    getElementInShadow('shadowC/shadowF/inputG').focus();
+    getElementInShadowTreeStack('shadowC/shadowF/inputG').focus();
     clearEventRecords();
     pressAccessKey('a');
     shouldBe('dispatchedEvent("focus")', '["inputE"]');
