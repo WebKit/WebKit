@@ -24,22 +24,22 @@
 #ifndef HTMLLegendElement_h
 #define HTMLLegendElement_h
 
-#include "HTMLFormControlElement.h"
+#include "HTMLElement.h"
 
 namespace WebCore {
 
-class HTMLLegendElement : public HTMLFormControlElement {
+class HTMLFormControlElement;
+
+class HTMLLegendElement : public HTMLElement {
 public:
-    static PassRefPtr<HTMLLegendElement> create(const QualifiedName&, Document*, HTMLFormElement*);
+    static PassRefPtr<HTMLLegendElement> create(const QualifiedName&, Document*);
 
 private:
-    HTMLLegendElement(const QualifiedName&, Document*, HTMLFormElement*);
+    HTMLLegendElement(const QualifiedName&, Document*);
 
     // Control in the legend's fieldset that gets focus and access key.
     HTMLFormControlElement* associatedControl();
 
-    virtual bool supportsFocus() const;
-    virtual const AtomicString& formControlType() const;
     virtual void accessKeyAction(bool sendMouseEvents);
     virtual void focus(bool restorePreviousSelection = true);
 };

@@ -74,7 +74,7 @@ kbd interfaceName=HTMLElement
 keygen constructorNeedsFormElement
 label
 layer interfaceName=HTMLElement
-legend constructorNeedsFormElement
+legend
 li interfaceName=HTMLLIElement
 link constructorNeedsCreatedByParser
 listing interfaceName=HTMLPreElement

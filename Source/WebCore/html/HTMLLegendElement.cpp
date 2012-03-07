@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLLegendElement.h"
 
+#include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include <wtf/StdLibExtras.h>
 
@@ -32,26 +33,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline HTMLLegendElement::HTMLLegendElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, document, form)
+
+inline HTMLLegendElement::HTMLLegendElement(const QualifiedName& tagName, Document* document)
+    : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(legendTag));
 }
 
-PassRefPtr<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+PassRefPtr<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tagName, Document* document)
 {
-    return adoptRef(new HTMLLegendElement(tagName, document, form));
-}
-
-bool HTMLLegendElement::supportsFocus() const
-{
-    return HTMLElement::supportsFocus();
-}
-
-const AtomicString& HTMLLegendElement::formControlType() const
-{
-    DEFINE_STATIC_LOCAL(const AtomicString, legend, ("legend"));
-    return legend;
+    return adoptRef(new HTMLLegendElement(tagName, document));
 }
 
 HTMLFormControlElement* HTMLLegendElement::associatedControl()
@@ -69,7 +60,7 @@ HTMLFormControlElement* HTMLLegendElement::associatedControl()
     while ((node = node->traverseNextNode(fieldset))) {
         if (node->isElementNode()) {
             Element* element = static_cast<Element*>(node);
-            if (!element->hasLocalName(legendTag) && element->isFormControlElement())
+            if (element->isFormControlElement())
                 return static_cast<HTMLFormControlElement*>(element);
         }
     }
