@@ -1,3 +1,9 @@
+2012-03-07  Mark Rowe  <mrowe@apple.com>
+
+        Teach make to build WTF.
+
+        * Makefile: Added.
+
 2012-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to send all JSC debug logging to a file

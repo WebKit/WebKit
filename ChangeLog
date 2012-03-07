@@ -1,3 +1,9 @@
+2012-03-07  Mark Rowe  <mrowe@apple.com>
+
+        Teach make to build WTF.
+
+        * Source/Makefile:
+
 2012-03-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Make the removal of transitive library dependencies work with CMake < 2.8.7.
