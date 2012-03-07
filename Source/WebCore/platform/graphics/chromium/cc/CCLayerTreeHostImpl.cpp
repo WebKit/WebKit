@@ -405,11 +405,9 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> 
     OwnPtr<LayerRendererChromium> layerRenderer;
     layerRenderer = LayerRendererChromium::create(this, context);
 
-    bool wasRecreate = false;
     if (m_layerRenderer) {
         m_layerRenderer->close();
         sendDidLoseContextRecursive(m_rootLayerImpl.get());
-        wasRecreate = true;
     }
 
     m_layerRenderer = layerRenderer.release();
