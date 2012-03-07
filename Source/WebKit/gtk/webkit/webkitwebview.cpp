@@ -2508,8 +2508,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * purpose, to make them not be catched by gtk-doc.
      */
 
-    /*
-     * WebKitWebView::document-load-finished
+    /**
+     * WebKitWebView::document-load-finished:
      * @web_view: the object which received the signal
      * @web_frame: the #WebKitWebFrame whose load dispatched this request
      *
@@ -2525,8 +2525,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_WEB_FRAME);
 
-    /*
-     * WebKitWebView::frame-created
+    /**
+     * WebKitWebView::frame-created:
      * @web_view: the object which received the signal
      * @web_frame: the #WebKitWebFrame which was just created.
      *
@@ -2655,11 +2655,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_VIEWPORT_ATTRIBUTES);
 
-    /*
-     * WebKitWebView::resource-response-received
-     * @webView: the object which received the signal
-     * @webFrame: the #WebKitWebFrame the response was received for
-     * @webResource: the #WebKitWebResource being loaded
+    /**
+     * WebKitWebView::resource-response-received:
+     * @web_view: the object which received the signal
+     * @web_frame: the #WebKitWebFrame the response was received for
+     * @web_resource: the #WebKitWebResource being loaded
      * @response: the #WebKitNetworkResponse that was received
      *
      * Emitted when the first byte of data arrives
@@ -2677,11 +2677,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_TYPE_WEB_RESOURCE,
             WEBKIT_TYPE_NETWORK_RESPONSE);
 
-    /*
-     * WebKitWebView::resource-load-finished
-     * @webView: the object which received the signal
-     * @webFrame: the #WebKitWebFrame the response was received for
-     * @webResource: the #WebKitWebResource that was loaded
+    /**
+     * WebKitWebView::resource-load-finished:
+     * @web_view: the object which received the signal
+     * @web_frame: the #WebKitWebFrame the response was received for
+     * @web_resource: the #WebKitWebResource that was loaded
      *
      * Emitted when all the data for the resource was loaded
      *
@@ -2697,15 +2697,17 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_TYPE_WEB_FRAME,
             WEBKIT_TYPE_WEB_RESOURCE);
 
-    /*
-     * WebKitWebView::resource-content-length-received
-     * @webView: the object which received the signal
-     * @webFrame: the #WebKitWebFrame the response was received for
-     * @webResource: the #WebKitWebResource that was loaded
-     * @lengthReceived: the resource data length in bytes
+    /**
+     * WebKitWebView::resource-content-length-received:
+     * @web_view: the object which received the signal
+     * @web_frame: the #WebKitWebFrame the response was received for
+     * @web_resource: the #WebKitWebResource that was loaded
+     * @length_received: the amount of data received since the last signal emission
      *
-     * Emitted when the HTTP Content-Length response header has been
-     * received and parsed successfully.
+     * Emitted when new resource data has been received. The
+     * @length_received variable stores the amount of bytes received
+     * since the last time this signal was emitted. This is useful to
+     * provide progress information about the resource load operation.
      *
      * Since: 1.7.5
      */
@@ -2720,12 +2722,12 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_TYPE_WEB_RESOURCE,
             G_TYPE_INT);
 
-    /*
-     * WebKitWebView::resource-load-failed
-     * @webView: the object which received the signal
-     * @webFrame: the #WebKitWebFrame the response was received for
-     * @webResource: the #WebKitWebResource that was loaded
-     * @webError: the #GError that was triggered
+    /**
+     * WebKitWebView::resource-load-failed:
+     * @web_view: the object which received the signal
+     * @web_frame: the #WebKitWebFrame the response was received for
+     * @web_resource: the #WebKitWebResource that was loaded
+     * @error: the #GError that was triggered
      *
      * Invoked when a resource failed to load
      *

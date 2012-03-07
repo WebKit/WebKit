@@ -351,13 +351,13 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             WEBKIT_TYPE_NETWORK_REQUEST,
             WEBKIT_TYPE_NETWORK_RESPONSE);
 
-    /*
-     * WebKitWebFrame::resource-response-received
-     * @webFrame: the #WebKitWebFrame the response was received for
-     * @webResource: the #WebKitWebResource being loaded
+    /**
+     * WebKitWebFrame::resource-response-received:
+     * @web_frame: the #WebKitWebFrame the response was received for
+     * @web_resource: the #WebKitWebResource being loaded
      * @response: the #WebKitNetworkResponse that was received.
      *
-     * Emitted when the first byte of data arrives
+     * Emitted when the response is received from the server.
      *
      * Since: 1.7.5
      */
@@ -371,10 +371,10 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             WEBKIT_TYPE_WEB_RESOURCE,
             WEBKIT_TYPE_NETWORK_RESPONSE);
 
-    /*
-     * WebKitWebFrame::resource-load-finished
-     * @webFrame: the #WebKitWebFrame the response was received for
-     * @webResource: the #WebKitWebResource being loaded
+    /**
+     * WebKitWebFrame::resource-load-finished:
+     * @web_frame: the #WebKitWebFrame the response was received for
+     * @web_resource: the #WebKitWebResource being loaded
      *
      * Emitted when all the data for the resource was loaded.
      *
@@ -389,13 +389,16 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_WEB_RESOURCE);
 
-    /*
-     * WebKitWebFrame::resource-content-length-received
-     * @webFrame: the #WebKitWebFrame the response was received for
-     * @webResource: the #WebKitWebResource that was loaded
-     * @lengthReceived: the resource data length in bytes
+    /**
+     * WebKitWebFrame::resource-content-length-received:
+     * @web_frame: the #WebKitWebFrame the response was received for
+     * @web_resource: the #WebKitWebResource that was loaded
+     * @length_received: the amount of data received since the last signal emission
      *
-     * Emitted when all the data for the resource was loaded.
+     * Emitted when new resource data has been received. The
+     * @length_received variable stores the amount of bytes received
+     * since the last time this signal was emitted. This is useful to
+     * provide progress information about the resource load operation.
      *
      * Since: 1.7.5
      */
@@ -409,11 +412,11 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             WEBKIT_TYPE_WEB_RESOURCE,
             G_TYPE_INT);
 
-    /*
-     * WebKitWebFrame::resource-load-failed
-     * @webFrame: the #WebKitWebFrame the response was received for
-     * @webResource: the #WebKitWebResource that was loaded
-     * @webError: the #GError that was triggered
+    /**
+     * WebKitWebFrame::resource-load-failed:
+     * @web_frame: the #WebKitWebFrame the response was received for
+     * @web_resource: the #WebKitWebResource that was loaded
+     * @error: the #GError that was triggered
      *
      * Invoked when a resource failed to load.
      *
