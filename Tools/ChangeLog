@@ -1,3 +1,21 @@
+2012-03-07  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Add qmake config tests for JPEG and PNG library
+        https://bugs.webkit.org/show_bug.cgi?id=80398
+
+        Add JPEG and PNG library tests to config.tests and
+        add error() abort to WebCore.pri if tests don't work.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/config.tests/libjpeg/libjpeg.cpp: Added.
+        (main):
+        * qmake/config.tests/libjpeg/libjpeg.pro: Added.
+        * qmake/config.tests/libpng/libpng.cpp: Added.
+        (main):
+        * qmake/config.tests/libpng/libpng.pro: Added.
+        * qmake/sync.profile:
+
 2012-03-07  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL] Build warning: Fix warn_unused_result warnings.

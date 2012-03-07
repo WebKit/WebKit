@@ -217,6 +217,12 @@ contains(DEFINES, WTF_USE_QT_IMAGE_DECODER=0) {
         $$SOURCE_DIR/platform/image-decoders/jpeg \
         $$SOURCE_DIR/platform/image-decoders/png
 
+    haveQt(5) {
+        # Qt5 allows us to use config tests to check for the presence of these libraries
+        !contains(config_test_libjpeg, yes): error("JPEG library not found!")
+        !contains(config_test_libpng, yes): error("PNG 1.2 library not found!")
+    }
+
     LIBS += -ljpeg -lpng12
 
     contains(DEFINES, WTF_USE_WEBP=1) {

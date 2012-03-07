@@ -2,4 +2,6 @@
 %configtests = (
     fontconfig => {},
     gccdepends => {},
+    libpng => {},
+    libjpeg => {},
 );
