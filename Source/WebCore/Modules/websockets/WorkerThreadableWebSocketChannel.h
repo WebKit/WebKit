@@ -65,9 +65,9 @@ public:
     virtual void connect(const KURL&, const String& protocol) OVERRIDE;
     virtual String subprotocol() OVERRIDE;
     virtual String extensions() OVERRIDE;
-    virtual bool send(const String& message) OVERRIDE;
-    virtual bool send(const ArrayBuffer&) OVERRIDE;
-    virtual bool send(const Blob&) OVERRIDE;
+    virtual ThreadableWebSocketChannel::SendResult send(const String& message) OVERRIDE;
+    virtual ThreadableWebSocketChannel::SendResult send(const ArrayBuffer&) OVERRIDE;
+    virtual ThreadableWebSocketChannel::SendResult send(const Blob&) OVERRIDE;
     virtual unsigned long bufferedAmount() const OVERRIDE;
     virtual void close(int code, const String& reason) OVERRIDE;
     virtual void fail(const String& reason) OVERRIDE;
@@ -132,9 +132,9 @@ private:
         }
         ~Bridge();
         void connect(const KURL&, const String& protocol);
-        bool send(const String& message);
-        bool send(const ArrayBuffer&);
-        bool send(const Blob&);
+        ThreadableWebSocketChannel::SendResult send(const String& message);
+        ThreadableWebSocketChannel::SendResult send(const ArrayBuffer&);
+        ThreadableWebSocketChannel::SendResult send(const Blob&);
         unsigned long bufferedAmount();
         void close(int code, const String& reason);
         void fail(const String& reason);

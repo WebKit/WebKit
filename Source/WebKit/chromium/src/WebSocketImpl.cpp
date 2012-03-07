@@ -117,7 +117,7 @@ WebString WebSocketImpl::extensions()
 bool WebSocketImpl::sendText(const WebString& message)
 {
 #if ENABLE(WEB_SOCKETS)
-    return m_private->send(message);
+    return m_private->send(message) == ThreadableWebSocketChannel::SendSuccess;
 #else
     ASSERT_NOT_REACHED();
 #endif
@@ -126,7 +126,7 @@ bool WebSocketImpl::sendText(const WebString& message)
 bool WebSocketImpl::sendArrayBuffer(const WebArrayBuffer& webArrayBuffer)
 {
 #if ENABLE(WEB_SOCKETS)
-    return m_private->send(*PassRefPtr<ArrayBuffer>(webArrayBuffer));
+    return m_private->send(*PassRefPtr<ArrayBuffer>(webArrayBuffer)) == ThreadableWebSocketChannel::SendSuccess;
 #else
     ASSERT_NOT_REACHED();
 #endif
