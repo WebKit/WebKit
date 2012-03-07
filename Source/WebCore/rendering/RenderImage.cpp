@@ -504,8 +504,8 @@ void RenderImage::updateAltText()
 
 LayoutUnit RenderImage::computeReplacedLogicalWidth(bool includeMaxWidth) const
 {
-    // If we've got an explicit width/height assigned, propagate it to the image resource.    
-    if (style()->logicalWidth().isFixed() && style()->logicalHeight().isFixed()) {
+    // If we've got an explicit width/height assigned, propagate it to the image resource.
+    if (style()->logicalWidth().isSpecified() && style()->logicalHeight().isSpecified()) {
         LayoutUnit width = RenderReplaced::computeReplacedLogicalWidth(includeMaxWidth);
         m_imageResource->setContainerSizeForRenderer(IntSize(width, computeReplacedLogicalHeight()));
         return width;
