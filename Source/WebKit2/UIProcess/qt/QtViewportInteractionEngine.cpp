@@ -509,7 +509,7 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
 
     m_hadUserInteraction = true;
 
-    m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this));
+    m_scaleUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
 
     m_lastPinchCenterInViewportCoordinates = pinchCenterInViewportCoordinates;
     m_pinchStartScale = m_content->contentsScale();

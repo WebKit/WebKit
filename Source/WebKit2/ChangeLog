@@ -1,3 +1,20 @@
+2012-03-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Pinch zoom acts weirdly on nytimes.com while loading
+        https://webkit.org/b/80508
+
+        Reviewed by Simon Hausmann.
+
+        Make sure to suspend the page while doing pinch zooming.
+        If the page is suspended (which happens while pinch zooming)
+        then do not send touch events to the page, even if it has
+        listeners.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleTouchEvent):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+
 2012-03-05  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] QWebNavigationRequest 'action' property should have an enum type instead of int

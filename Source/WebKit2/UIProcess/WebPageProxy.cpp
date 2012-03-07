@@ -1010,7 +1010,10 @@ void WebPageProxy::handleTouchEvent(const NativeWebTouchEvent& event)
     if (!isValid())
         return;
 
-    if (m_needTouchEvents) {
+    // If the page is suspended, which should be the case during panning, pinching
+    // and animation on the page itself (kinetic scrolling, tap to zoom) etc, then
+    // we do not send any of the events to the page even if is has listeners.
+    if (m_needTouchEvents && !m_isPageSuspended) {
         m_touchEventQueue.append(event);
         process()->responsivenessTimer()->start();
         if (m_shouldSendEventsSynchronously) {
