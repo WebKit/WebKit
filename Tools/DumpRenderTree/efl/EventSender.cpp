@@ -130,7 +130,7 @@ static EvasMouseButton translateMouseButtonNumber(int eventSenderButtonNumber)
     return EvasMouseButtonLeft;
 }
 
-static bool sendMouseEvent(Evas* evas, EvasMouseEvent event, int buttonNumber, EvasKeyModifier modifiers)
+static void sendMouseEvent(Evas* evas, EvasMouseEvent event, int buttonNumber, EvasKeyModifier modifiers)
 {
     unsigned timeStamp = 0;
 
@@ -155,13 +155,12 @@ static bool sendMouseEvent(Evas* evas, EvasMouseEvent event, int buttonNumber, E
         evas_event_feed_mouse_wheel(evas, 1, (event & EvasMouseEventScrollLeft) ? 10 : -10, timeStamp, 0);
 
     setEvasModifiers(evas, EvasKeyModifierNone);
-
-    return true;
 }
 
 static Eina_Bool sendClick(void*)
 {
-    return !!sendMouseEvent(evas_object_evas_get(browser->mainFrame()), EvasMouseEventClick, EvasMouseButtonLeft, EvasKeyModifierNone);
+    sendMouseEvent(evas_object_evas_get(browser->mainFrame()), EvasMouseEventClick, EvasMouseButtonLeft, EvasKeyModifierNone);
+    return ECORE_CALLBACK_CANCEL;
 }
 
 static JSValueRef scheduleAsynchronousClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -232,8 +231,7 @@ static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, 
     updateClickCount(button);
 
     EvasKeyModifier modifiers = argumentCount >= 2 ? modifiersFromJSValue(context, arguments[1]) : EvasKeyModifierNone;
-    if (!sendMouseEvent(evas_object_evas_get(browser->mainFrame()), EvasMouseEventDown, button, modifiers))
-        return JSValueMakeUndefined(context);
+    sendMouseEvent(evas_object_evas_get(browser->mainFrame()), EvasMouseEventDown, button, modifiers);
 
     gButtonCurrentlyDown = button;
     return JSValueMakeUndefined(context);

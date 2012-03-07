@@ -554,25 +554,6 @@ editing/selection/doubleclick-whitespace-crash.html
 editing/selection/doubleclick-whitespace-img-crash.html
 editing/selection/doubleclick-whitespace.html
 
-# EFL's LayoutTestController does not implement setPopupBlockingEnabled
-fast/events/open-window-from-another-frame.html
-fast/events/popup-allowed-from-gesture-initiated-event.html
-fast/events/popup-allowed-from-gesture-initiated-form-submit.html
-fast/events/popup-blocked-from-fake-button-click.html
-fast/events/popup-blocked-from-fake-focus.html
-fast/events/popup-blocked-from-fake-user-gesture.html
-fast/events/popup-blocked-from-history-reload.html
-fast/events/popup-blocked-from-iframe-script.html
-fast/events/popup-blocked-from-iframe-src.html
-fast/events/popup-blocked-from-mousemove.html
-fast/events/popup-blocked-from-untrusted-click-event-on-anchor.html
-fast/events/popup-blocked-from-untrusted-mouse-click.html
-fast/events/popup-blocked-from-window-open.html
-fast/events/popup-blocked-to-post-blank.html
-fast/events/popup-blocking-click-in-iframe.html
-fast/events/popup-blocking-timers.html
-fast/events/popup-when-select-change.html
-
 # EFL's LayoutTestController does not implement elementDoesAutoCompleteForElementWithId
 security/set-form-autocomplete-attribute.html
 

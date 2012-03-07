@@ -1,3 +1,24 @@
+2012-03-06  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL][DRT] Implements LayoutTestController's setPopupBlockingEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=80137
+
+        Reviewed by Eric Seidel.
+
+        Adds implementation LayoutTestController's setPopupBlockingEnabled.
+        To pass popup-blocking-click-in-iframe.html EventSender should not
+        repeat click events in idler's function. EventSender allows to
+        asynchronously send click event through ecore_idler_add.
+        This event will be called repeatedly as long as it return true.
+        Click event should be called only once by returning ECORE_CALLBACK_CANCEL.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (sendMouseEvent): Changed return value from bool to void because it always returns true.
+        (sendClick): Idler is deleted by returning ECORE_CALLBACK_CANCEL.
+        (mouseDownCallback): Remove unnecessary checking of return value.
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::setPopupBlockingEnabled):
+
 2012-03-06  Dirk Pranke  <dpranke@chromium.org>
 
         rebaseline_chromium_webkit_tests is obsolete and should be removed

@@ -436,9 +436,9 @@ void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool)
     notImplemented();
 }
 
-void LayoutTestController::setPopupBlockingEnabled(bool)
+void LayoutTestController::setPopupBlockingEnabled(bool flag)
 {
-    notImplemented();
+    ewk_view_setting_scripts_can_open_windows_set(browser->mainView(), !flag);
 }
 
 void LayoutTestController::setPluginsEnabled(bool flag)
