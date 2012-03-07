@@ -4167,3 +4167,6 @@ BUGWK80481 MAC : http/tests/css/font-face-src-loading.html = CRASH PASS
 
 // worker-multi-startup.html is flaky on win
 BUGWK80498 WIN : fast/workers/worker-multi-startup.html = CRASH PASS
+
+// flaky
+BUGSENORBLANCO : platform/chromium/fast/events/rtl-scrollbar.html = TEXT PASS
