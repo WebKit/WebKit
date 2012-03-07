@@ -34,12 +34,12 @@ use lib $FindBin::Bin;
 use Getopt::Long;
 use VCSUtils;
 
-use constant {    
+use constant {
     STYLE_PLAIN => 0,
     STYLE_HEADER => 1,
     STYLE_SUCCESS => 2,
     STYLE_ALERT => 3,
-    
+
     HTML_HEADER =><<HTMLHEADER,
 <html>
     <head>
@@ -121,7 +121,7 @@ my $buildFinished;
 my $buildFailed = 0;
 while (my $line = <>) {
     print UNFILTERED_OUTPUT_HANDLE $line if $logUnfilteredOutput;
-    
+
     chomp($line);
 
     next if $line =~ /^\s*$/;
@@ -138,6 +138,9 @@ while (my $line = <>) {
     next if $line =~ /^# Lower case all the values, as CSS values are case-insensitive$/;
     next if $line =~ /^if sort /;
     next if $line =~ /^    /;
+    next if $line =~ /^printf /;
+    next if $line =~ /^offlineasm: Nothing changed/;
+    next if $line =~ /^Showing first/;
 
     if ($line =~ /^={10}/) {
         printLine($line, STYLE_SUCCESS);
@@ -148,8 +151,20 @@ while (my $line = <>) {
         printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
         printLine("Build Succeeded", STYLE_SUCCESS);
-    } elsif ($line =~ /^(PhaseScriptExecution|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze) ("[^"]+"|\S+)/) {
+    } elsif ($line =~ /^(PhaseScriptExecution|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|ProcessProductPackaging|CodeSign|SymLink|Updating|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile) ("[^"]+"|\S+)?/) {
         my ($command, $path) = ($1, basename($2));
+        $path =~ s/"//g;
+        printLine("$command $path", STYLE_PLAIN);
+    } elsif ($line =~ /^\/\S+?(strip|WebCoreExportFileGenerator) .*?(\/|\> )(\S+)/) {
+        my ($command, $path) = (basename($1), basename($3));
+        printLine("$command $path", STYLE_PLAIN);
+    } elsif ($line =~ /^offlineasm\: /) {
+        printLine($line, STYLE_PLAIN);
+    } elsif ($line =~ /^Generating message.*(header|receiver) for (\S+)\.\.\./) {
+        my ($command, $path) = ($1, basename($2));
+        printLine("Generating message $command $path", STYLE_PLAIN);
+    } elsif ($line =~ /^(\S+\/cc).*?(\S+)\.(out|exp)/) {
+        my ($command, $path) = (basename($1), basename($2));
         printLine("$command $path", STYLE_PLAIN);
     } else {
         # This only gets hit if stderr is redirected to stdout.
@@ -170,7 +185,7 @@ exit $buildFailed;
 sub printLine($$)
 {
     my ($line, $style) = @_;
-    
+
     if ($outputFormat eq "html") {
         $line = escapeHTML($line);
         if    ($style == STYLE_HEADER)  { print OUTPUT_HANDLE "<h2>$line</h2>"; }
