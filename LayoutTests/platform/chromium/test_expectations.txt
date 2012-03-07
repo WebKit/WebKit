@@ -3698,7 +3698,7 @@ BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop.
 BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop.html = IMAGE
 BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html = IMAGE
 BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
-BUGWK80517 MAC WIN DEBUG : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
+BUGWK80517 DEBUG : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE PASS
 
 // Test is acting extra flakey on Mac and Win Debug
 BUGCR114777 MAC : compositing/culling/filter-occlusion-blur-large.html = PASS IMAGE
