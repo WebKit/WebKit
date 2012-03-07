@@ -384,7 +384,6 @@ void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
             m_contentsLayerPurpose = ContentsLayerForCanvas;
             childrenChanged = true;
         }
-        m_contentsLayer->setNeedsDisplay();
         updateContentsRect();
     } else {
         if (m_contentsLayer) {
@@ -434,7 +433,6 @@ void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
             m_contentsLayerPurpose = ContentsLayerForVideo;
             childrenChanged = true;
         }
-        layer->setNeedsDisplay();
         updateContentsRect();
     } else {
         if (m_contentsLayer) {
