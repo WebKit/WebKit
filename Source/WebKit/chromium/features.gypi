@@ -120,7 +120,6 @@
       'enable_svg%': 1,
       'enable_viewport%': 0,
       'enable_touch_events%': 1,
-      'use_skia%': 0,
       'enable_touch_icon_loading%' : 0,
       'enable_mutation_observers%': 1,
     },
@@ -128,7 +127,6 @@
     'enable_skia_text%': '<(enable_skia_text)',
     'enable_svg%': '<(enable_svg)',
     'enable_touch_events%': '<(enable_touch_events)',
-    'use_skia%': '<(use_skia)',
     'conditions': [
       ['OS=="android"', {
         'feature_defines': [
@@ -145,7 +143,7 @@
           'ENABLE_3D_RENDERING=1',
         ],
       }],
-      ['use_accelerated_compositing==1 and (OS!="mac" or use_skia==1)', {
+      ['use_accelerated_compositing==1', {
         'feature_defines': [
           'ENABLE_ACCELERATED_2D_CANVAS=1',
         ],
@@ -155,7 +153,6 @@
         'feature_defines': [
           'WTF_USE_WEBAUDIO_FFMPEG=1',
         ],
-        'use_skia%': 1,
       }],
       ['enable_register_protocol_handler==1', {
         'feature_defines': [
@@ -170,7 +167,7 @@
       ['OS=="mac"', {
         'feature_defines': [
           'ENABLE_RUBBER_BANDING=1',
-          'WTF_USE_SKIA_ON_MAC_CHROMIUM=<(use_skia)',
+          'WTF_USE_SKIA_ON_MAC_CHROMIUM=1',
         ],
       }],
     ],

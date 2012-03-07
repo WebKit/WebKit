@@ -826,20 +826,13 @@
                         ['exclude', '/android/'],
                     ],
                 }],
+                # TODO: we exclude CG.cpp on both sides of the below conditional. Move elsewhere?
                 ['OS=="mac"', {
                     'include_dirs': [
                         'public/mac',
                     ],
-                    'conditions': [
-                        ['use_skia==0', {
-                            'sources/': [
-                                ['exclude', 'Skia\\.cpp$'],
-                            ],
-                        },{ # use_skia
-                            'sources/': [
-                                ['exclude', 'CG\\.cpp$'],
-                            ],
-                        }],
+                    'sources/': [
+                        ['exclude', 'CG\\.cpp$'],
                     ],
                 }, { # else: OS!="mac"
                     'sources/': [
