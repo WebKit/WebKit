@@ -4088,7 +4088,7 @@ BUGWK79455 DEBUG : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = PASS IM
 // Flaky for DEBUG
 BUGWK79456 DEBUG : svg/repaint/image-with-clip-path.svg = PASS IMAGE
 
-BUGWK79540 DEBUG : fast/files/workers/worker-apply-blob-url-to-xhr.html = PASS CRASH
+BUGWK79540 : fast/files/workers/worker-apply-blob-url-to-xhr.html = PASS CRASH
 BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-async.html = PASS CRASH
 BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-sync.html = PASS CRASH
 BUGWK79540 LEOPARD DEBUG : fast/files/workers/worker-read-file-async.html = PASS CRASH
