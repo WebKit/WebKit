@@ -49,6 +49,7 @@ HEADERS += \
     Shared/API/c/WKMutableDictionary.h \
     Shared/API/c/WKNumber.h \
     Shared/API/c/WKPageLoadTypes.h \
+    Shared/API/c/WKRenderObject.h \
     Shared/API/c/WKSecurityOrigin.h \
     Shared/API/c/WKSerializedScriptValue.h \
     Shared/API/c/WKSharedAPICast.h \
@@ -112,6 +113,7 @@ HEADERS += \
     Shared/WebPopupItem.h \
     Shared/WebPreferencesStore.h \
     Shared/WebProcessCreationParameters.h \
+    Shared/WebRenderObject.h \
     Shared/WebURLRequest.h \
     Shared/WebURLResponse.h \
     Shared/WebUserContentURLPattern.h \
@@ -393,6 +395,7 @@ SOURCES += \
     Shared/API/c/WKImage.cpp \
     Shared/API/c/WKMutableDictionary.cpp \
     Shared/API/c/WKNumber.cpp \
+    Shared/API/c/WKRenderObject.cpp \
     Shared/API/c/WKSecurityOrigin.cpp \
     Shared/API/c/WKSerializedScriptValue.cpp \
     Shared/API/c/WKString.cpp \
@@ -455,6 +458,7 @@ SOURCES += \
     Shared/WebPopupItem.cpp \
     Shared/WebPreferencesStore.cpp \
     Shared/WebProcessCreationParameters.cpp \
+    Shared/WebRenderObject.cpp \
     Shared/WebTouchEvent.cpp \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \

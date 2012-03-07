@@ -787,6 +787,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebRenderObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebRenderObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebSecurityOrigin.h"
 				>
 			</File>
@@ -967,6 +975,14 @@
 				</File>
 				<File
 					RelativePath="..\Shared\API\c\WKPageLoadTypes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKRenderObject.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKRenderObject.h"
 					>
 				</File>
 				<File

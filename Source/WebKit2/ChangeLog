@@ -1,3 +1,57 @@
+2012-03-07  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/8494396> WebKit2 lacks API for obtaining a representation of the render tree of a page, like WebRenderNode
+        https://bugs.webkit.org/show_bug.cgi?id=80230
+
+        Reviewed by Beth Dakin.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+
+        * Shared/API/c/WKBase.h: Added a type definition of WKRenderObjectRef.
+
+        * Shared/API/c/WKRenderObject.cpp: Added.
+        (WKRenderObjectGetTypeID): Added. Returns the WKRenderObject type ID.
+        (WKRenderObjectCopyName): Added this getter wrapper.
+        (WKRenderObjectGetAbsolutePosition): Ditto.
+        (WKRenderObjectGetFrameRect): Ditto.
+        (WKRenderObjectGetChildren): Ditto.
+
+        * Shared/API/c/WKRenderObject.h: Added.
+
+        * Shared/APIObject.h: Added TypeRenderObject to the APIObject::Type enum.
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode): Added WebRenderObject encoding.
+        (WebKit::UserMessageDecoder::baseDecode): Added WebRenderObject decoding.
+        * Shared/WebRenderObject.cpp: Added.
+        (WebKit::WebRenderObject::create): Added. Creates a WebRenderObject for the page’s main
+        frame content renderer.
+        (WebKit::WebRenderObject::WebRenderObject): Added. Constructs a WebRenderObject with the
+        name, metrics and children of the given RenderObject, following the rules used in WebKit1
+        WebRenderNode. In particular, a RenderWidget representing a frame gets the frame’s content
+        renderer as a child.
+
+        * Shared/WebRenderObject.h: Added.
+        (WebKit::WebRenderObject::create):
+        (WebKit::WebRenderObject::children):
+        (WebKit::WebRenderObject::name):
+        (WebKit::WebRenderObject::absolutePosition):
+        (WebKit::WebRenderObject::frameRect):
+        (WebKit::WebRenderObject::WebRenderObject):
+
+        * Target.pri:
+
+        * UIProcess/API/C/WKAPICast.h: Added a mapping between WKRenderObjectRef and WebRenderObject.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added WebRenderObject.{cpp,h} and WKRenderObject.{cpp.h}.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyRenderTree): Added this bundle API for getting the render tree.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
+        * win/WebKit2.vcproj:
+
 2012-03-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Pinch zoom acts weirdly on nytimes.com while loading

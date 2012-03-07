@@ -38,6 +38,7 @@
 #include "WebGeometry.h"
 #include "WebImage.h"
 #include "WebNumber.h"
+#include "WebRenderObject.h"
 #include "WebSerializedScriptValue.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -56,6 +57,7 @@ namespace WebKit {
 //   - WebData -> WebData
 //   - WebDouble -> WebDouble
 //   - WebImage -> WebImage
+//   - WebRenderObject -> WebRenderObject
 //   - WebUInt64 -> WebUInt64
 //   - WebURL -> WebURL
 //   - WebURLRequest -> WebURLRequest
@@ -137,6 +139,14 @@ public:
             encoder->encode(rectObject->rect().origin.y);
             encoder->encode(rectObject->rect().size.width);
             encoder->encode(rectObject->rect().size.height);
+            return true;
+        }
+        case APIObject::TypeRenderObject: {
+            WebRenderObject* renderObject = static_cast<WebRenderObject*>(m_root);
+            encoder->encode(renderObject->name());
+            encoder->encode(renderObject->absolutePosition());
+            encoder->encode(renderObject->frameRect());
+            encoder->encode(Owner(renderObject->children().get()));
             return true;
         }
         case APIObject::TypeURL: {
@@ -336,6 +346,26 @@ public:
             if (!decoder->decode(height))
                 return false;
             coder.m_root = WebRect::create(WKRectMake(x, y, width, height));
+            break;
+        }
+        case APIObject::TypeRenderObject: {
+            String name;
+            WebCore::IntPoint absolutePosition;
+            WebCore::IntRect frameRect;
+            RefPtr<APIObject> children;
+            
+            if (!decoder->decode(name))
+                return false;
+            if (!decoder->decode(absolutePosition))
+                return false;
+            if (!decoder->decode(frameRect))
+                return false;
+            Owner messageCoder(coder, children);
+            if (!decoder->decode(messageCoder))
+                return false;
+            if (children->type() != APIObject::TypeArray)
+                return false;
+            coder.m_root = WebRenderObject::create(name, absolutePosition, frameRect, WTF::static_pointer_cast<MutableArray>(children));
             break;
         }
         case APIObject::TypeURL: {

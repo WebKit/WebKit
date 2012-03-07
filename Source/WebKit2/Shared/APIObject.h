@@ -48,6 +48,7 @@ public:
         TypeGraphicsContext,
         TypeImage,
         TypeProtectionSpace,
+        TypeRenderObject,
         TypeSecurityOrigin,
         TypeSerializedScriptValue,
         TypeString,

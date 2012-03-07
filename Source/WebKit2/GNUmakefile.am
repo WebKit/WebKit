@@ -19,6 +19,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 	$(WebKit2)/Shared/API/c/WKMutableDictionary.h \
 	$(WebKit2)/Shared/API/c/WKNumber.h \
 	$(WebKit2)/Shared/API/c/WKPageLoadTypes.h \
+	$(WebKit2)/Shared/API/c/WKRenderObject.h \
 	$(WebKit2)/Shared/API/c/WKSecurityOrigin.h \
 	$(WebKit2)/Shared/API/c/WKSerializedScriptValue.h \
 	$(WebKit2)/Shared/API/c/WKSerializedScriptValuePrivate.h \
@@ -288,6 +289,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/API/c/WKNumber.cpp \
 	Source/WebKit2/Shared/API/c/WKNumber.h \
 	Source/WebKit2/Shared/API/c/WKPageLoadTypes.h \
+	Source/WebKit2/Shared/API/c/WKRenderObject.cpp \
+	Source/WebKit2/Shared/API/c/WKRenderObject.h \
 	Source/WebKit2/Shared/API/c/WKSecurityOrigin.cpp \
 	Source/WebKit2/Shared/API/c/WKSecurityOrigin.h \
 	Source/WebKit2/Shared/API/c/WKSerializedScriptValue.cpp \
@@ -435,6 +438,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebPreferencesStore.h \
 	Source/WebKit2/Shared/WebProcessCreationParameters.cpp \
 	Source/WebKit2/Shared/WebProcessCreationParameters.h \
+	Source/WebKit2/Shared/WebRenderObject.cpp \
+	Source/WebKit2/Shared/WebRenderObject.h \
 	Source/WebKit2/Shared/WebSecurityOrigin.h \
 	Source/WebKit2/Shared/WebSerializedScriptValue.h \
 	Source/WebKit2/Shared/WebString.h \
