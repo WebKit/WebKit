@@ -1,3 +1,19 @@
+2012-03-07  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 109594
+
+    2012-03-02  Maciej Stachowiak  <mjs@apple.com>
+
+            REGRESSION(r97353): Crash when accessing location or history properties inside a navigated window
+            https://bugs.webkit.org/show_bug.cgi?id=80133
+
+            Reviewed by Antti Koivisto.
+
+            * fast/dom/Window/navigated-window-properties-expected.txt: Added.
+            * fast/dom/Window/navigated-window-properties.html: Added.
+            * fast/dom/Window/resources/navigated-window-prop-subframe1.html: Added.
+            * fast/dom/Window/resources/navigated-window-prop-subframe2.html: Added.
+
 2011-02-13  Lucas Forschler  <lforschler@apple.com>
 
     Merge 107496
