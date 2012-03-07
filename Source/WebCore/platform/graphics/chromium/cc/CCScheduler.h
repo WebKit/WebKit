@@ -44,6 +44,7 @@ public:
     virtual void scheduledActionDrawAndSwap() = 0;
     virtual void scheduledActionUpdateMoreResources() = 0;
     virtual void scheduledActionCommit() = 0;
+    virtual void scheduledActionBeginContextRecreation() = 0;
 
 protected:
     virtual ~CCSchedulerClient() { }
@@ -71,7 +72,9 @@ public:
 
     void setMaxFramesPending(int);
     void didSwapBuffersComplete();
-    void didSwapBuffersAbort();
+
+    void didLoseContext();
+    void didRecreateContext();
 
     bool commitPending() const { return m_stateMachine.commitPending(); }
     bool redrawPending() const { return m_stateMachine.redrawPending(); }

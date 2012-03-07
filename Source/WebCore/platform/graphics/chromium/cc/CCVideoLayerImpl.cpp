@@ -34,6 +34,7 @@
 #include "LayerRendererChromium.h"
 #include "NotImplemented.h"
 #include "ProgramBinding.h"
+#include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"
 #include "cc/CCVideoDrawQuad.h"
 #include <wtf/text/WTFString.h>

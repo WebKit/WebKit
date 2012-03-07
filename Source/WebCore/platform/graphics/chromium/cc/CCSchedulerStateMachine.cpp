@@ -38,27 +38,60 @@ CCSchedulerStateMachine::CCSchedulerStateMachine()
     , m_updateMoreResourcesPending(false)
     , m_insideVSync(false)
     , m_visible(false)
-    , m_canDraw(true) { }
+    , m_canDraw(true)
+    , m_contextState(CONTEXT_ACTIVE)
+{
+}
+
+bool CCSchedulerStateMachine::hasDrawnThisFrame() const
+{
+    return m_currentFrameNumber == m_lastFrameNumberWhereDrawWasCalled;
+}
+
+bool CCSchedulerStateMachine::shouldDraw() const
+{
+    if (m_needsForcedRedraw)
+        return true;
+
+    if (!m_needsRedraw)
+        return false;
+    if (!m_insideVSync)
+        return false;
+    if (!m_visible)
+        return false;
+    if (hasDrawnThisFrame())
+        return false;
+    if (!m_canDraw)
+        return false;
+    if (m_contextState != CONTEXT_ACTIVE)
+        return false;
+    return true;
+}
 
 CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction() const
 {
-    bool canDraw = m_currentFrameNumber != m_lastFrameNumberWhereDrawWasCalled;
-    bool shouldDraw = (m_needsRedraw && m_insideVSync && m_visible && canDraw && m_canDraw) || m_needsForcedRedraw;
+
     switch (m_commitState) {
     case COMMIT_STATE_IDLE:
-        if (shouldDraw)
+        if (m_contextState != CONTEXT_ACTIVE && m_needsForcedRedraw)
+            return ACTION_DRAW;
+        if (m_contextState == CONTEXT_LOST)
+            return ACTION_BEGIN_CONTEXT_RECREATION;
+        if (m_contextState == CONTEXT_RECREATING)
+            return ACTION_NONE;
+        if (shouldDraw())
             return ACTION_DRAW;
         if (m_needsCommit && m_visible)
             return ACTION_BEGIN_FRAME;
         return ACTION_NONE;
 
     case COMMIT_STATE_FRAME_IN_PROGRESS:
-        if (shouldDraw)
+        if (shouldDraw())
             return ACTION_DRAW;
         return ACTION_NONE;
 
     case COMMIT_STATE_UPDATING_RESOURCES:
-        if (shouldDraw)
+        if (shouldDraw())
             return ACTION_DRAW;
         if (!m_updateMoreResourcesPending)
             return ACTION_BEGIN_UPDATE_MORE_RESOURCES;
@@ -68,7 +101,7 @@ CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction() const
         return ACTION_COMMIT;
 
     case COMMIT_STATE_WAITING_FOR_FIRST_DRAW:
-        if (shouldDraw)
+        if (shouldDraw() || m_contextState == CONTEXT_LOST)
             return ACTION_DRAW;
         // COMMIT_STATE_WAITING_FOR_FIRST_DRAW wants to enforce a draw. If m_canDraw is false,
         // proceed to the next step (similar as in COMMIT_STATE_IDLE).
@@ -115,12 +148,18 @@ void CCSchedulerStateMachine::updateState(Action action)
             m_commitState = COMMIT_STATE_IDLE;
         }
         return;
+
+    case ACTION_BEGIN_CONTEXT_RECREATION:
+        ASSERT(m_commitState == COMMIT_STATE_IDLE);
+        ASSERT(m_contextState == CONTEXT_LOST);
+        m_contextState = CONTEXT_RECREATING;
+        return;
     }
 }
 
 bool CCSchedulerStateMachine::vsyncCallbackNeeded() const
 {
-    if (!m_visible) {
+    if (!m_visible || m_contextState != CONTEXT_ACTIVE) {
         if (m_needsForcedRedraw)
             return true;
 
@@ -174,6 +213,20 @@ void CCSchedulerStateMachine::beginUpdateMoreResourcesComplete(bool morePending)
     m_updateMoreResourcesPending = false;
     if (!morePending)
         m_commitState = COMMIT_STATE_READY_TO_COMMIT;
+}
+
+void CCSchedulerStateMachine::didLoseContext()
+{
+    if (m_contextState == CONTEXT_LOST || m_contextState == CONTEXT_RECREATING)
+        return;
+    m_contextState = CONTEXT_LOST;
+}
+
+void CCSchedulerStateMachine::didRecreateContext()
+{
+    ASSERT(m_contextState == CONTEXT_RECREATING);
+    m_contextState = CONTEXT_ACTIVE;
+    setNeedsCommit();
 }
 
 }

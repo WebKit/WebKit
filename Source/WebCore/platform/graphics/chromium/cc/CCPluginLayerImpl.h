@@ -50,7 +50,7 @@ public:
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectFlipAlpha> TexRectProgramFlip;
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
-    virtual void didLoseAndRecreateGraphicsContext();
+    virtual void didLoseContext();
 
     void setTextureId(unsigned id) { m_textureId = id; }
     void setFlipped(bool flipped) { m_flipped = flipped; }

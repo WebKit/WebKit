@@ -604,4 +604,178 @@ TEST(CCSchedulerStateMachineTest, TestGoesInvisibleMidCommit)
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
 }
 
+TEST(CCSchedulerStateMachineTest, TestContextLostWhenCompletelyIdle)
+{
+    StateMachine state;
+    state.setVisible(true);
+
+    state.didLoseContext();
+
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_CONTEXT_RECREATION, state.nextAction());
+    state.updateState(state.nextAction());
+
+    // Once context recreation begins, nothing should happen.
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+
+    // Recreate the context
+    state.didRecreateContext();
+
+    // When the context is recreated, we should begin a commit
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction());
+    state.updateState(state.nextAction());
+}
+
+TEST(CCSchedulerStateMachineTest, TestContextLostWhenIdleAndCommitRequestedWhileRecreating)
+{
+    StateMachine state;
+    state.setVisible(true);
+
+    state.didLoseContext();
+
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_CONTEXT_RECREATION, state.nextAction());
+    state.updateState(state.nextAction());
+
+    // Once context recreation begins, nothing should happen.
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+
+    // While context is recreating, commits shouldn't begin.
+    state.setNeedsCommit(true);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+
+    // Recreate the context
+    state.didRecreateContext();
+
+    // When the context is recreated, we should begin a commit
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction());
+    state.updateState(state.nextAction());
+
+    // Once the context is recreated, whether we draw should be based on
+    // setCanDraw.
+    state.setNeedsRedraw(true);
+    state.didEnterVSync();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
+    state.setCanDraw(false);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+    state.setCanDraw(true);
+    state.didLeaveVSync();
+}
+
+TEST(CCSchedulerStateMachineTest, TestContextLostWhileCommitInProgress)
+{
+    StateMachine state;
+    state.setVisible(true);
+
+    // Get a commit in flight.
+    state.setNeedsCommit(true);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction());
+    state.updateState(state.nextAction());
+
+    // Set damage and expect a draw.
+    state.setNeedsRedraw(true);
+    state.didEnterVSync();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
+    state.updateState(state.nextAction());
+    state.didLeaveVSync();
+
+    // Cause a lost context while the begin frame is in flight.
+    state.didLoseContext();
+
+    // Ask for another draw. Expect nothing happens.
+    state.setNeedsRedraw(true);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+
+    // Finish the frame, update resources, and commit.
+    state.beginFrameComplete();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
+    state.updateState(state.nextAction());
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+    state.beginUpdateMoreResourcesComplete(false);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
+    state.updateState(state.nextAction());
+
+    // Expect to be told to begin context recreation, independent of vsync state
+    state.didEnterVSync();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_CONTEXT_RECREATION, state.nextAction());
+    state.didLeaveVSync();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_CONTEXT_RECREATION, state.nextAction());
+}
+
+TEST(CCSchedulerStateMachineTest, TestContextLostWhileCommitInProgressAndAnotherCommitRequested)
+{
+    StateMachine state;
+    state.setVisible(true);
+
+    // Get a commit in flight.
+    state.setNeedsCommit(true);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction());
+    state.updateState(state.nextAction());
+
+    // Set damage and expect a draw.
+    state.setNeedsRedraw(true);
+    state.didEnterVSync();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
+    state.updateState(state.nextAction());
+    state.didLeaveVSync();
+
+    // Cause a lost context while the begin frame is in flight.
+    state.didLoseContext();
+
+    // Ask for another draw and also set needs commit. Expect nothing happens.
+    // Setting another commit will put us into
+    // COMMIT_STATE_WAITING_FOR_FIRST_DRAW after we finish the frame on the main
+    // thread.
+    state.setNeedsRedraw(true);
+    state.setNeedsCommit(true);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+
+    // Finish the frame, update resources, and commit.
+    state.beginFrameComplete();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
+    state.updateState(state.nextAction());
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+    state.beginUpdateMoreResourcesComplete(false);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
+    state.updateState(state.nextAction());
+
+    EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_WAITING_FOR_FIRST_DRAW, state.commitState());
+
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
+    state.updateState(state.nextAction());
+
+    // Expect to be told to begin context recreation, independent of vsync state
+    state.didEnterVSync();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_CONTEXT_RECREATION, state.nextAction());
+    state.didLeaveVSync();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_CONTEXT_RECREATION, state.nextAction());
+}
+
+
+TEST(CCSchedulerStateMachineTest, TestFinishAllRenderingWhileContextLost)
+{
+    StateMachine state;
+    state.setVisible(true);
+
+    // Cause a lost context lost.
+    state.didLoseContext();
+
+    // Ask a forced redraw and verify it ocurrs.
+    state.setNeedsForcedRedraw(true);
+    state.didEnterVSync();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
+    state.didLeaveVSync();
+
+    // Clear the forced redraw bit.
+    state.setNeedsForcedRedraw(false);
+
+    // Expect to be told to begin context recreation, independent of vsync state
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_CONTEXT_RECREATION, state.nextAction());
+    state.updateState(state.nextAction());
+
+    // Ask a forced redraw and verify it ocurrs.
+    state.setNeedsForcedRedraw(true);
+    state.didEnterVSync();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
+    state.didLeaveVSync();
+}
+
 }

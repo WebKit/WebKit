@@ -31,6 +31,7 @@
 #include "cc/CCProxy.h"
 #include "cc/CCScheduler.h"
 #include "cc/CCThread.h"
+#include "cc/CCTimer.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -41,6 +42,7 @@ class CCScheduler;
 class CCScopedThreadProxy;
 class CCTextureUpdater;
 class CCThread;
+class CCThreadProxyContextRecreationTimer;
 
 class CCThreadProxy : public CCProxy, CCLayerTreeHostImplClient, CCSchedulerClient {
 public:
@@ -69,6 +71,7 @@ public:
     virtual size_t maxPartialTextureUpdates() const;
 
     // CCLayerTreeHostImplClient implementation
+    virtual void didLoseContextOnImplThread();
     virtual void onSwapBuffersCompleteOnImplThread();
     virtual void setNeedsRedrawOnImplThread();
     virtual void setNeedsCommitOnImplThread();
@@ -81,15 +84,19 @@ public:
     virtual void scheduledActionDrawAndSwap();
     virtual void scheduledActionUpdateMoreResources();
     virtual void scheduledActionCommit();
+    virtual void scheduledActionBeginContextRecreation();
 
 private:
     explicit CCThreadProxy(CCLayerTreeHost*);
+    friend class CCThreadProxyContextRecreationTimer;
 
     // Called on main thread
     void beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollAndScaleSet>);
     void didCommitAndDrawFrame();
     void didCompleteSwapBuffers();
     void setAnimationEvents(PassOwnPtr<CCAnimationEventsVector>);
+    void beginContextRecreation();
+    void tryToRecreateContext();
 
     // Called on impl thread
     struct ReadbackRequest {
@@ -110,10 +117,13 @@ private:
     void setVisibleOnImplThread(CCCompletionEvent*, bool visible);
     void layerTreeHostClosedOnImplThread(CCCompletionEvent*);
     void setFullRootLayerDamageOnImplThread();
+    void recreateContextOnImplThread(CCCompletionEvent*, GraphicsContext3D*, bool* recreateSucceeded, LayerRendererCapabilities*);
 
     // Accessed on main thread only.
     bool m_animateRequested;
     bool m_commitRequested;
+    bool m_contextLost;
+    OwnPtr<CCThreadProxyContextRecreationTimer> m_contextRecreationTimer;
     CCLayerTreeHost* m_layerTreeHost;
     int m_compositorIdentifier;
     bool m_layerRendererInitialized;

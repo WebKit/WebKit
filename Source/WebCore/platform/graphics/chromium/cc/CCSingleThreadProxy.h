@@ -62,6 +62,7 @@ public:
     virtual size_t maxPartialTextureUpdates() const { return std::numeric_limits<size_t>::max(); }
 
     // CCLayerTreeHostImplClient implementation
+    virtual void didLoseContextOnImplThread() { }
     virtual void onSwapBuffersCompleteOnImplThread() { ASSERT_NOT_REACHED(); }
     virtual void setNeedsRedrawOnImplThread() { m_layerTreeHost->setNeedsCommit(); }
     virtual void setNeedsCommitOnImplThread() { m_layerTreeHost->setNeedsCommit(); }

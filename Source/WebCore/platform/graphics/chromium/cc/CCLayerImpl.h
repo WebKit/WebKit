@@ -218,7 +218,7 @@ public:
     // Indicates that the context previously used to render this layer
     // was lost and that a new one has been created. Won't be called
     // until the new context has been created successfully.
-    virtual void didLoseAndRecreateGraphicsContext();
+    virtual void didLoseContext();
 
 protected:
     explicit CCLayerImpl(int);

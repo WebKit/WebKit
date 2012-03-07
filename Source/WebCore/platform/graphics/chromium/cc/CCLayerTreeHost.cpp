@@ -134,7 +134,7 @@ void CCLayerTreeHost::initializeLayerRenderer()
     m_layerRendererInitialized = true;
 }
 
-void CCLayerTreeHost::recreateContext()
+CCLayerTreeHost::RecreateResult CCLayerTreeHost::recreateContext()
 {
     TRACE_EVENT0("cc", "CCLayerTreeHost::recreateContext");
     ASSERT(m_contextLost);
@@ -148,20 +148,25 @@ void CCLayerTreeHost::recreateContext()
     if (recreated) {
         m_client->didRecreateContext(true);
         m_contextLost = false;
-        return;
+        return RecreateSucceeded;
     }
 
     // Tolerate a certain number of recreation failures to work around races
     // in the context-lost machinery.
     m_numFailedRecreateAttempts++;
     if (m_numFailedRecreateAttempts < 5) {
-        setNeedsCommit();
-        return;
+        // FIXME: The single thread does not self-schedule context
+        // recreation. So force another recreation attempt to happen by requesting
+        // another commit.
+        if (!CCProxy::hasImplThread())
+            setNeedsCommit();
+        return RecreateFailedButTryAgain;
     }
 
     // We have tried too many times to recreate the context. Tell the host to fall
     // back to software rendering.
     m_client->didRecreateContext(false);
+    return RecreateFailedAndGaveUp;
 }
 
 void CCLayerTreeHost::deleteContentsTexturesOnImplThread(TextureAllocator* allocator)
@@ -255,8 +260,7 @@ bool CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
             return false;
     }
     if (m_contextLost) {
-        recreateContext();
-        if (m_contextLost)
+        if (recreateContext() != RecreateSucceeded)
             return false;
     }
     m_triggerIdlePaints = false;
@@ -419,8 +423,7 @@ bool CCLayerTreeHost::updateLayers()
             return false;
     }
     if (m_contextLost) {
-        recreateContext();
-        if (m_contextLost)
+        if (recreateContext() != RecreateSucceeded)
             return false;
     }
 

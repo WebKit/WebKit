@@ -51,6 +51,11 @@ public:
         COMMIT_STATE_WAITING_FOR_FIRST_DRAW,
     };
 
+    enum ContextState {
+        CONTEXT_ACTIVE,
+        CONTEXT_LOST,
+        CONTEXT_RECREATING,
+    };
     bool commitPending() const
     {
         return m_commitState != COMMIT_STATE_IDLE;
@@ -64,6 +69,7 @@ public:
         ACTION_BEGIN_UPDATE_MORE_RESOURCES,
         ACTION_COMMIT,
         ACTION_DRAW,
+        ACTION_BEGIN_CONTEXT_RECREATION
     };
     Action nextAction() const;
     void updateState(Action);
@@ -107,7 +113,13 @@ public:
     // when such behavior would be undesirable.
     void setCanDraw(bool can) { m_canDraw = can; }
 
+    void didLoseContext();
+    void didRecreateContext();
+
 protected:
+    bool shouldDraw() const;
+    bool hasDrawnThisFrame() const;
+
     CommitState m_commitState;
 
     int m_currentFrameNumber;
@@ -119,6 +131,7 @@ protected:
     bool m_insideVSync;
     bool m_visible;
     bool m_canDraw;
+    ContextState m_contextState;
 };
 
 }

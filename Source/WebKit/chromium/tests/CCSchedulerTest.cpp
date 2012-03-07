@@ -59,6 +59,7 @@ public:
     virtual void scheduledActionDrawAndSwap() { m_actions.push_back("scheduledActionDrawAndSwap"); }
     virtual void scheduledActionUpdateMoreResources() { m_actions.push_back("scheduledActionUpdateMoreResources"); }
     virtual void scheduledActionCommit() { m_actions.push_back("scheduledActionCommit"); }
+    virtual void scheduledActionBeginContextRecreation() { m_actions.push_back("scheduledActionBeginContextRecreation"); }
 
 protected:
     bool m_hasMoreResourceUpdates;
@@ -158,6 +159,7 @@ public:
 
     virtual void scheduledActionUpdateMoreResources() { }
     virtual void scheduledActionCommit() { }
+    virtual void scheduledActionBeginContextRecreation() { }
 
 protected:
     int m_numDraws;
@@ -215,6 +217,7 @@ public:
 
     virtual void scheduledActionUpdateMoreResources() { }
     virtual void scheduledActionCommit() { }
+    virtual void scheduledActionBeginContextRecreation() { }
 
 protected:
     int m_numDraws;

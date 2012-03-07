@@ -175,18 +175,18 @@ private:
 };
 
 
-PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHostImpl* owner, PassRefPtr<GraphicsContext3D> context)
+PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context)
 {
-    OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(owner, context)));
+    OwnPtr<LayerRendererChromium> layerRenderer(adoptPtr(new LayerRendererChromium(client, context)));
     if (!layerRenderer->initialize())
         return nullptr;
 
     return layerRenderer.release();
 }
 
-LayerRendererChromium::LayerRendererChromium(CCLayerTreeHostImpl* owner,
+LayerRendererChromium::LayerRendererChromium(LayerRendererChromiumClient* client,
                                              PassRefPtr<GraphicsContext3D> context)
-    : m_owner(owner)
+    : m_client(client)
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
     , m_context(context)
@@ -196,10 +196,31 @@ LayerRendererChromium::LayerRendererChromium(CCLayerTreeHostImpl* owner,
 {
 }
 
+class ContextLostCallbackAdapter : public GraphicsContext3D::ContextLostCallback {
+public:
+    static PassOwnPtr<ContextLostCallbackAdapter> create(LayerRendererChromiumClient* client)
+    {
+        return adoptPtr(new ContextLostCallbackAdapter(client));
+    }
+
+    virtual void onContextLost()
+    {
+        m_client->didLoseContext();
+    }
+
+private:
+    explicit ContextLostCallbackAdapter(LayerRendererChromiumClient* client)
+        : m_client(client) { }
+
+    LayerRendererChromiumClient* m_client;
+};
+
 bool LayerRendererChromium::initialize()
 {
     if (!m_context->makeContextCurrent())
         return false;
+
+    m_context->setContextLostCallback(ContextLostCallbackAdapter::create(m_client));
 
 #if USE(SKIA)
     if (settings().acceleratePainting && contextSupportsAcceleratedPainting(m_context.get()))
@@ -306,11 +327,6 @@ void LayerRendererChromium::setVisible(bool visible)
     if (m_capabilities.usingSetVisibility) {
         Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(m_context->getExtensions());
         extensions3DChromium->setVisibilityCHROMIUM(visible);
-
-        // Reset the damage tracker because the front/back buffers may have been damaged by the GPU
-        // process on visibility change.
-        if (visible && m_capabilities.usingPartialSwap)
-            m_owner->setFullRootLayerDamage();
     }
 }
 
@@ -1062,7 +1078,7 @@ void LayerRendererChromium::swapBuffers(const IntRect& subBuffer)
 
 void LayerRendererChromium::onSwapBuffersComplete()
 {
-    m_owner->onSwapBuffersComplete();
+    m_client->onSwapBuffersComplete();
 }
 
 void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& rect)

@@ -49,6 +49,7 @@ public:
         m_hostImpl = CCLayerTreeHostImpl::create(settings, this);
     }
 
+    virtual void didLoseContextOnImplThread() { }
     virtual void onSwapBuffersCompleteOnImplThread() { }
     virtual void setNeedsRedrawOnImplThread() { m_didRequestRedraw = true; }
     virtual void setNeedsCommitOnImplThread() { m_didRequestCommit = true; }
@@ -870,21 +871,21 @@ class ContextLostNotificationCheckLayer : public CCLayerImpl {
 public:
     static PassOwnPtr<ContextLostNotificationCheckLayer> create(int id) { return adoptPtr(new ContextLostNotificationCheckLayer(id)); }
 
-    virtual void didLoseAndRecreateGraphicsContext()
+    virtual void didLoseContext()
     {
-        m_didLoseAndRecreateGraphicsContextCalled = true;
+        m_didLoseContextCalled = true;
     }
 
-    bool didLoseAndRecreateGraphicsContextCalled() const { return m_didLoseAndRecreateGraphicsContextCalled; }
+    bool didLoseContextCalled() const { return m_didLoseContextCalled; }
 
 private:
     explicit ContextLostNotificationCheckLayer(int id)
         : CCLayerImpl(id)
-        , m_didLoseAndRecreateGraphicsContextCalled(false)
+        , m_didLoseContextCalled(false)
     {
     }
 
-    bool m_didLoseAndRecreateGraphicsContextCalled;
+    bool m_didLoseContextCalled;
 };
 
 TEST_F(CCLayerTreeHostImplTest, contextLostAndRestoredNotificationSentToAllLayers)
@@ -901,15 +902,15 @@ TEST_F(CCLayerTreeHostImplTest, contextLostAndRestoredNotificationSentToAllLayer
     layer1->addChild(ContextLostNotificationCheckLayer::create(2));
     ContextLostNotificationCheckLayer* layer2 = static_cast<ContextLostNotificationCheckLayer*>(layer1->children()[0].get());
 
-    EXPECT_FALSE(root->didLoseAndRecreateGraphicsContextCalled());
-    EXPECT_FALSE(layer1->didLoseAndRecreateGraphicsContextCalled());
-    EXPECT_FALSE(layer2->didLoseAndRecreateGraphicsContextCalled());
+    EXPECT_FALSE(root->didLoseContextCalled());
+    EXPECT_FALSE(layer1->didLoseContextCalled());
+    EXPECT_FALSE(layer2->didLoseContextCalled());
 
-    m_hostImpl->sendContextLostAndRestoredNotification();
+    m_hostImpl->initializeLayerRenderer(createContext());
 
-    EXPECT_TRUE(root->didLoseAndRecreateGraphicsContextCalled());
-    EXPECT_TRUE(layer1->didLoseAndRecreateGraphicsContextCalled());
-    EXPECT_TRUE(layer2->didLoseAndRecreateGraphicsContextCalled());
+    EXPECT_TRUE(root->didLoseContextCalled());
+    EXPECT_TRUE(layer1->didLoseContextCalled());
+    EXPECT_TRUE(layer2->didLoseContextCalled());
 }
 
 class FakeWebGraphicsContext3DMakeCurrentFails : public FakeWebGraphicsContext3D {

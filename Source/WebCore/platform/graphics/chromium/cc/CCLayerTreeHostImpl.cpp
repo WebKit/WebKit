@@ -340,8 +340,13 @@ TextureAllocator* CCLayerTreeHostImpl::contentsTextureAllocator() const
 
 void CCLayerTreeHostImpl::swapBuffers()
 {
-    ASSERT(m_layerRenderer && !isContextLost());
+    ASSERT(m_layerRenderer);
     m_layerRenderer->swapBuffers(enclosingIntRect(m_rootDamageRect));
+}
+
+void CCLayerTreeHostImpl::didLoseContext()
+{
+    m_client->didLoseContextOnImplThread();
 }
 
 void CCLayerTreeHostImpl::onSwapBuffersComplete()
@@ -351,7 +356,7 @@ void CCLayerTreeHostImpl::onSwapBuffersComplete()
 
 void CCLayerTreeHostImpl::readback(void* pixels, const IntRect& rect)
 {
-    ASSERT(m_layerRenderer && !isContextLost());
+    ASSERT(m_layerRenderer);
     m_layerRenderer->getFramebufferPixels(pixels, rect);
 }
 
@@ -388,6 +393,11 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
 
     if (m_layerRenderer)
         m_layerRenderer->setVisible(visible);
+
+    // Reset the damage tracker because the front/back buffers may have been damaged by the GPU
+    // process on visibility change.
+    if (visible && m_layerRenderer->capabilities().usingPartialSwap)
+        setFullRootLayerDamage();
 }
 
 bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> context)
@@ -395,8 +405,12 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> 
     OwnPtr<LayerRendererChromium> layerRenderer;
     layerRenderer = LayerRendererChromium::create(this, context);
 
-    if (m_layerRenderer)
+    bool wasRecreate = false;
+    if (m_layerRenderer) {
         m_layerRenderer->close();
+        sendDidLoseContextRecursive(m_rootLayerImpl.get());
+        wasRecreate = true;
+    }
 
     m_layerRenderer = layerRenderer.release();
     return m_layerRenderer;
@@ -701,21 +715,16 @@ void CCLayerTreeHostImpl::animateLayers(double frameBeginTimeMs)
         m_client->setNeedsRedrawOnImplThread();
 }
 
-void CCLayerTreeHostImpl::sendContextLostAndRestoredNotification()
-{
-    sendContextLostAndRestoredNotificationRecursive(m_rootLayerImpl.get());
-}
-
-void CCLayerTreeHostImpl::sendContextLostAndRestoredNotificationRecursive(CCLayerImpl* current)
+void CCLayerTreeHostImpl::sendDidLoseContextRecursive(CCLayerImpl* current)
 {
     if (!current)
         return;
 
-    current->didLoseAndRecreateGraphicsContext();
-    sendContextLostAndRestoredNotificationRecursive(current->maskLayer());
-    sendContextLostAndRestoredNotificationRecursive(current->replicaLayer());
+    current->didLoseContext();
+    sendDidLoseContextRecursive(current->maskLayer());
+    sendDidLoseContextRecursive(current->replicaLayer());
     for (size_t i = 0; i < current->children().size(); ++i)
-        sendContextLostAndRestoredNotificationRecursive(current->children()[i].get());
+        sendDidLoseContextRecursive(current->children()[i].get());
 }
 
 } // namespace WebCore

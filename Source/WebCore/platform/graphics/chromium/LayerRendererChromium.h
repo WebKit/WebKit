@@ -42,7 +42,7 @@
 #include "VideoLayerChromium.h"
 #include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCHeadsUpDisplay.h"
-#include "cc/CCLayerTreeHostImpl.h"
+#include "cc/CCLayerTreeHost.h"
 #include "cc/CCPluginLayerImpl.h"
 #include "cc/CCVideoLayerImpl.h"
 #include <wtf/HashMap.h>
@@ -60,34 +60,43 @@ namespace WebCore {
 
 class CCHeadsUpDisplay;
 class CCLayerImpl;
-class CCLayerTreeHostImpl;
 class CCRenderPass;
 class GeometryBinding;
 class GraphicsContext3D;
 class TrackingTextureAllocator;
 class LayerRendererSwapBuffersCompleteCallbackAdapter;
 
+class LayerRendererChromiumClient {
+public:
+    virtual const IntSize& viewportSize() const = 0;
+    virtual const CCSettings& settings() const = 0;
+    virtual CCLayerImpl* rootLayer() = 0;
+    virtual const CCLayerImpl* rootLayer() const = 0;
+    virtual void didLoseContext() = 0;
+    virtual void onSwapBuffersComplete() = 0;
+};
+
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium {
     WTF_MAKE_NONCOPYABLE(LayerRendererChromium);
 public:
-    static PassOwnPtr<LayerRendererChromium> create(CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
+    static PassOwnPtr<LayerRendererChromium> create(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>);
 
     // Must be called in order to allow the LayerRendererChromium to destruct
     void close();
 
     ~LayerRendererChromium();
 
-    const CCSettings& settings() const { return m_owner->settings(); }
+    const CCSettings& settings() const { return m_client->settings(); }
     const LayerRendererCapabilities& capabilities() const { return m_capabilities; }
 
-    CCLayerImpl* rootLayer() { return m_owner->rootLayer(); }
-    const CCLayerImpl* rootLayer() const { return m_owner->rootLayer(); }
+    CCLayerImpl* rootLayer() { return m_client->rootLayer(); }
+    const CCLayerImpl* rootLayer() const { return m_client->rootLayer(); }
 
     GraphicsContext3D* context();
     bool contextSupportsMapSub() const { return m_capabilities.usingMapSub; }
 
-    const IntSize& viewportSize() { return m_owner->viewportSize(); }
+    const IntSize& viewportSize() { return m_client->viewportSize(); }
     int viewportWidth() { return viewportSize().width(); }
     int viewportHeight() { return viewportSize().height(); }
 
@@ -156,7 +165,7 @@ public:
                           int matrixLocation, int alphaLocation, int quadLocation);
 
 private:
-    LayerRendererChromium(CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
+    LayerRendererChromium(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>);
     bool initialize();
 
     void drawQuad(const CCDrawQuad*, const FloatRect& surfaceDamageRect);
@@ -200,7 +209,7 @@ private:
     friend class LayerRendererSwapBuffersCompleteCallbackAdapter;
     void onSwapBuffersComplete();
 
-    CCLayerTreeHostImpl* m_owner;
+    LayerRendererChromiumClient* m_client;
 
     LayerRendererCapabilities m_capabilities;
 

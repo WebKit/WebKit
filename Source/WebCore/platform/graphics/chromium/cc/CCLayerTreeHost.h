@@ -134,6 +134,12 @@ public:
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
     void didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl*);
     void didLoseContext();
+    enum RecreateResult {
+        RecreateSucceeded,
+        RecreateFailedButTryAgain,
+        RecreateFailedAndGaveUp,
+    };
+    RecreateResult recreateContext();
     void didCommitAndDrawFrame() { m_client->didCommitAndDrawFrame(); }
     void didCompleteSwapBuffers() { m_client->didCompleteSwapBuffers(); }
     void deleteContentsTexturesOnImplThread(TextureAllocator*);
@@ -206,7 +212,6 @@ private:
     typedef Vector<OwnPtr<ManagedTexture> > TextureList;
 
     void initializeLayerRenderer();
-    void recreateContext();
 
     enum PaintType { PaintVisible, PaintIdle };
     static void paintContentsIfDirty(LayerChromium*, PaintType, const Region& occludedScreenSpace);

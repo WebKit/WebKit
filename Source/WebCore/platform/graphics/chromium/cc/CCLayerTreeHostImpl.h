@@ -25,6 +25,7 @@
 #ifndef CCLayerTreeHostImpl_h
 #define CCLayerTreeHostImpl_h
 
+#include "LayerRendererChromium.h"
 #include "cc/CCAnimationEvents.h"
 #include "cc/CCInputHandler.h"
 #include "cc/CCLayerSorter.h"
@@ -39,7 +40,6 @@ namespace WebCore {
 class CCCompletionEvent;
 class CCPageScaleAnimation;
 class CCLayerImpl;
-class LayerRendererChromium;
 class TextureAllocator;
 struct LayerRendererCapabilities;
 class TransformationMatrix;
@@ -47,6 +47,7 @@ class TransformationMatrix;
 // CCLayerTreeHost->CCProxy callback interface.
 class CCLayerTreeHostImplClient {
 public:
+    virtual void didLoseContextOnImplThread() = 0;
     virtual void onSwapBuffersCompleteOnImplThread() = 0;
     virtual void setNeedsRedrawOnImplThread() = 0;
     virtual void setNeedsCommitOnImplThread() = 0;
@@ -54,7 +55,7 @@ public:
 };
 
 // CCLayerTreeHostImpl owns the CCLayerImpl tree as well as associated rendering state
-class CCLayerTreeHostImpl : public CCInputHandlerClient {
+class CCLayerTreeHostImpl : public CCInputHandlerClient, LayerRendererChromiumClient {
     WTF_MAKE_NONCOPYABLE(CCLayerTreeHostImpl);
 public:
     static PassOwnPtr<CCLayerTreeHostImpl> create(const CCSettings&, CCLayerTreeHostImplClient*);
@@ -76,6 +77,15 @@ public:
     virtual void animate(double frameDisplayTimeMs);
     virtual void drawLayers();
 
+    // LayerRendererChromiumClient implementation
+    virtual const IntSize& viewportSize() const { return m_viewportSize; }
+    virtual const CCSettings& settings() const { return m_settings; }
+    virtual CCLayerImpl* rootLayer() { return m_rootLayerImpl.get(); }
+    virtual const CCLayerImpl* rootLayer() const  { return m_rootLayerImpl.get(); }
+    virtual void didLoseContext();
+    virtual void onSwapBuffersComplete();
+
+    // Implementation
     bool canDraw();
     GraphicsContext3D* context();
 
@@ -89,11 +99,9 @@ public:
     TextureAllocator* contentsTextureAllocator() const;
 
     void swapBuffers();
-    void onSwapBuffersComplete();
 
     void readback(void* pixels, const IntRect&);
 
-    CCLayerImpl* rootLayer() const { return m_rootLayerImpl.get(); }
     void setRootLayer(PassOwnPtr<CCLayerImpl>);
     PassOwnPtr<CCLayerImpl> releaseRootLayer() { return m_rootLayerImpl.release(); }
 
@@ -106,12 +114,9 @@ public:
     void setSourceFrameNumber(int frameNumber) { m_sourceFrameNumber = frameNumber; }
 
     void setViewportSize(const IntSize&);
-    const IntSize& viewportSize() const { return m_viewportSize; }
 
     void setPageScaleFactorAndLimits(float pageScale, float minPageScale, float maxPageScale);
     float pageScale() const { return m_pageScale; }
-
-    const CCSettings& settings() const { return m_settings; }
 
     PassOwnPtr<CCScrollAndScaleSet> processScrollDeltas();
 
@@ -123,9 +128,6 @@ public:
 
     bool needsAnimateLayers() const { return m_needsAnimateLayers; }
     void setNeedsAnimateLayers() { m_needsAnimateLayers = true; }
-
-    // Notifies the layer tree that the context was lost and successfully restored.
-    void sendContextLostAndRestoredNotification();
 
 protected:
     CCLayerTreeHostImpl(const CCSettings&, CCLayerTreeHostImplClient*);
@@ -155,7 +157,7 @@ private:
     void optimizeRenderPasses(CCRenderPassList&);
     void animateLayersRecursive(CCLayerImpl*, double frameBeginTimeSecs, CCAnimationEventsVector&, bool& didAnimate, bool& needsAnimateLayers);
     IntSize contentSize() const;
-    void sendContextLostAndRestoredNotificationRecursive(CCLayerImpl*);
+    void sendDidLoseContextRecursive(CCLayerImpl*);
 
     OwnPtr<LayerRendererChromium> m_layerRenderer;
     OwnPtr<CCLayerImpl> m_rootLayerImpl;

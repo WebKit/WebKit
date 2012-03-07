@@ -162,7 +162,6 @@ bool CCSingleThreadProxy::recreateContext()
         initialized = m_layerTreeHostImpl->initializeLayerRenderer(context);
         if (initialized) {
             m_layerRendererCapabilitiesForMainThread = m_layerTreeHostImpl->layerRendererCapabilities();
-            m_layerTreeHostImpl->sendContextLostAndRestoredNotification();
         }
     }
 

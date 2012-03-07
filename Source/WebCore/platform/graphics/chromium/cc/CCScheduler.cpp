@@ -86,10 +86,19 @@ void CCScheduler::didSwapBuffersComplete()
     m_frameRateController->didFinishFrame();
 }
 
-void CCScheduler::didSwapBuffersAbort()
+void CCScheduler::didLoseContext()
 {
-    TRACE_EVENT("CCScheduler::didSwapBuffersAbort", this, 0);
+    TRACE_EVENT("CCScheduler::didLoseContext", this, 0);
     m_frameRateController->didAbortAllPendingFrames();
+    m_stateMachine.didLoseContext();
+    processScheduledActions();
+}
+
+void CCScheduler::didRecreateContext()
+{
+    TRACE_EVENT("CCScheduler::didRecreateContext", this, 0);
+    m_stateMachine.didRecreateContext();
+    processScheduledActions();
 }
 
 void CCScheduler::beginFrame()
@@ -150,6 +159,9 @@ void CCScheduler::processScheduledActions()
         case CCSchedulerStateMachine::ACTION_DRAW:
             m_client->scheduledActionDrawAndSwap();
             m_frameRateController->didBeginFrame();
+            break;
+        case CCSchedulerStateMachine::ACTION_BEGIN_CONTEXT_RECREATION:
+            m_client->scheduledActionBeginContextRecreation();
             break;
         }
     } while (action != CCSchedulerStateMachine::ACTION_NONE);

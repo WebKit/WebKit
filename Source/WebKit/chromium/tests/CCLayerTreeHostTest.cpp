@@ -69,6 +69,8 @@ public:
     virtual void applyScrollAndScale(const IntSize&, float) { }
     virtual void updateAnimations(double frameBeginTime) { }
     virtual void layout() { }
+    virtual void didRecreateContext(bool succeded) { }
+    virtual void didCommitAndDrawFrame() { }
 
     // Implementation of CCLayerAnimationDelegate
     virtual void notifyAnimationStarted(double time) { }
@@ -239,14 +241,16 @@ public:
 
     virtual void didCommitAndDrawFrame()
     {
+        m_testHooks->didCommitAndDrawFrame();
     }
 
     virtual void didCompleteSwapBuffers()
     {
     }
 
-    virtual void didRecreateContext(bool)
+    virtual void didRecreateContext(bool succeeded)
     {
+        m_testHooks->didRecreateContext(succeeded);
     }
 
     virtual void scheduleComposite()
@@ -1903,5 +1907,73 @@ public:
 };
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestManySurfaces)
+
+// A loseContext(1) should lead to a didRecreateContext(true)
+class CCLayerTreeHostTestSetSingleLostContext : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestSetSingleLostContext()
+    {
+    }
+
+    virtual void beginTest()
+    {
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void didCommitAndDrawFrame()
+    {
+        m_layerTreeHost->loseContext(1);
+    }
+
+    virtual void didRecreateContext(bool succeeded)
+    {
+        EXPECT_TRUE(succeeded);
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+};
+
+TEST_F(CCLayerTreeHostTestSetSingleLostContext, runMultiThread)
+{
+    runTestThreaded();
+}
+
+// A loseContext(10) should lead to a didRecreateContext(false), and
+// a finishAllRendering() should not hang.
+class CCLayerTreeHostTestSetRepeatedLostContext : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestSetRepeatedLostContext()
+    {
+    }
+
+    virtual void beginTest()
+    {
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void didCommitAndDrawFrame()
+    {
+        m_layerTreeHost->loseContext(10);
+    }
+
+    virtual void didRecreateContext(bool succeeded)
+    {
+        EXPECT_FALSE(succeeded);
+        m_layerTreeHost->finishAllRendering();
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+};
+
+TEST_F(CCLayerTreeHostTestSetRepeatedLostContext, runMultiThread)
+{
+    runTestThreaded();
+}
 
 } // namespace

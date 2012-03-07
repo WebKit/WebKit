@@ -59,6 +59,7 @@ PassOwnPtr<CCProxy> CCThreadProxy::create(CCLayerTreeHost* layerTreeHost)
 CCThreadProxy::CCThreadProxy(CCLayerTreeHost* layerTreeHost)
     : m_animateRequested(false)
     , m_commitRequested(false)
+    , m_contextLost(false)
     , m_layerTreeHost(layerTreeHost)
     , m_compositorIdentifier(-1)
     , m_layerRendererInitialized(false)
@@ -193,9 +194,9 @@ bool CCThreadProxy::initializeLayerRenderer()
     bool initializeSucceeded = false;
     LayerRendererCapabilities capabilities;
     CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::initializeLayerRendererOnImplThread,
-                                          AllowCrossThreadAccess(&completion),
-                                          AllowCrossThreadAccess(&initializeSucceeded),
-                                          AllowCrossThreadAccess(&capabilities)));
+                                                       AllowCrossThreadAccess(&completion),
+                                                       AllowCrossThreadAccess(&initializeSucceeded),
+                                                       AllowCrossThreadAccess(&capabilities)));
     completion.wait();
 
     if (initializeSucceeded) {
@@ -207,8 +208,35 @@ bool CCThreadProxy::initializeLayerRenderer()
 
 bool CCThreadProxy::recreateContext()
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    TRACE_EVENT0("cc", "CCThreadProxy::recreateContext");
+    ASSERT(isMainThread());
+
+    // Try to create the context.
+    RefPtr<GraphicsContext3D> context = m_layerTreeHost->createContext();
+    if (!context)
+        return false;
+    ASSERT(context->hasOneRef());
+
+    // Leak the context pointer so we can transfer ownership of it to the other side...
+    GraphicsContext3D* contextPtr = context.release().leakRef();
+    ASSERT(contextPtr->hasOneRef());
+
+    // Make a blocking call to recreateContextOnImplThread. The results of that
+    // call are pushed into the recreateSucceeded and capabilities local
+    // variables.
+    CCCompletionEvent completion;
+    bool recreateSucceeded = false;
+    LayerRendererCapabilities capabilities;
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::recreateContextOnImplThread,
+                                                       AllowCrossThreadAccess(&completion),
+                                                       AllowCrossThreadAccess(contextPtr),
+                                                       AllowCrossThreadAccess(&recreateSucceeded),
+                                                       AllowCrossThreadAccess(&capabilities)));
+    completion.wait();
+
+    if (recreateSucceeded)
+        m_layerRendererCapabilitiesMainThreadCopy = capabilities;
+    return recreateSucceeded;
 }
 
 int CCThreadProxy::compositorIdentifier() const
@@ -225,7 +253,7 @@ const LayerRendererCapabilities& CCThreadProxy::layerRendererCapabilities() cons
 
 void CCThreadProxy::loseContext()
 {
-    ASSERT_NOT_REACHED();
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::didLoseContextOnImplThread));
 }
 
 void CCThreadProxy::setNeedsAnimate()
@@ -248,6 +276,13 @@ void CCThreadProxy::setNeedsCommit()
     TRACE_EVENT("CCThreadProxy::setNeedsCommit", this, 0);
     m_commitRequested = true;
     CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::setNeedsCommitOnImplThread));
+}
+
+void CCThreadProxy::didLoseContextOnImplThread()
+{
+    ASSERT(isImplThread());
+    TRACE_EVENT0("cc", "CCThreadProxy::didLoseContextOnImplThread");
+    m_schedulerOnImplThread->didLoseContext();
 }
 
 void CCThreadProxy::onSwapBuffersCompleteOnImplThread()
@@ -517,6 +552,12 @@ void CCThreadProxy::scheduledActionCommit()
     m_commitCompletionEventOnImplThread = 0;
 }
 
+void CCThreadProxy::scheduledActionBeginContextRecreation()
+{
+    ASSERT(isImplThread());
+    m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::beginContextRecreation));
+}
+
 void CCThreadProxy::scheduledActionDrawAndSwap()
 {
     TRACE_EVENT("CCThreadProxy::scheduledActionDrawAndSwap", this, 0);
@@ -540,10 +581,6 @@ void CCThreadProxy::scheduledActionDrawAndSwap()
     }
 
     m_layerTreeHostImpl->swapBuffers();
-
-    // FIXME: handle case where m_layerTreeHostImpl->isContextLost.
-    // FIXME: pass didSwapBuffersAbort if m_layerTreeHostImpl->isContextLost.
-    ASSERT(!m_layerTreeHostImpl->isContextLost());
 
     // Process any finish request
     if (m_finishAllRenderingCompletionEventOnImplThread) {
@@ -577,10 +614,53 @@ void CCThreadProxy::didCompleteSwapBuffers()
 
 void CCThreadProxy::setAnimationEvents(PassOwnPtr<CCAnimationEventsVector> events)
 {
+    TRACE_EVENT0("cc", "CCThreadProxy::setAnimationEvents");
     ASSERT(isMainThread());
     if (!m_layerTreeHost)
         return;
     m_layerTreeHost->setAnimationEvents(events);
+}
+
+class CCThreadProxyContextRecreationTimer : public CCTimer, CCTimerClient {
+public:
+    static PassOwnPtr<CCThreadProxyContextRecreationTimer> create(CCThreadProxy* proxy) { return adoptPtr(new CCThreadProxyContextRecreationTimer(proxy)); }
+
+    virtual void onTimerFired()
+    {
+        m_proxy->tryToRecreateContext();
+    }
+
+    enum Recreation { RecreationTickRateMs = 30 };
+
+private:
+    explicit CCThreadProxyContextRecreationTimer(CCThreadProxy* proxy)
+        : CCTimer(CCProxy::mainThread(), this)
+        , m_proxy(proxy)
+    {
+    }
+
+    CCThreadProxy* m_proxy;
+};
+
+void CCThreadProxy::beginContextRecreation()
+{
+    TRACE_EVENT0("cc", "CCThreadProxy::beginContextRecreation");
+    ASSERT(isMainThread());
+    ASSERT(!m_contextRecreationTimer);
+    m_contextRecreationTimer = CCThreadProxyContextRecreationTimer::create(this);
+    m_layerTreeHost->didLoseContext();
+    m_contextRecreationTimer->startOneShot(CCThreadProxyContextRecreationTimer::RecreationTickRateMs);
+}
+
+void CCThreadProxy::tryToRecreateContext()
+{
+    ASSERT(isMainThread());
+    ASSERT(m_layerTreeHost);
+    CCLayerTreeHost::RecreateResult result = m_layerTreeHost->recreateContext();
+    if (result == CCLayerTreeHost::RecreateFailedButTryAgain)
+        m_contextRecreationTimer->startOneShot(CCThreadProxyContextRecreationTimer::RecreationTickRateMs);
+    else if (result == CCLayerTreeHost::RecreateSucceeded)
+        m_contextRecreationTimer.clear();
 }
 
 void CCThreadProxy::initializeImplOnImplThread(CCCompletionEvent* completion)
@@ -641,6 +721,19 @@ void CCThreadProxy::setFullRootLayerDamageOnImplThread()
 size_t CCThreadProxy::maxPartialTextureUpdates() const
 {
     return textureUpdatesPerFrame;
+}
+
+void CCThreadProxy::recreateContextOnImplThread(CCCompletionEvent* completion, GraphicsContext3D* contextPtr, bool* recreateSucceeded, LayerRendererCapabilities* capabilities)
+{
+    TRACE_EVENT0("cc", "CCThreadProxy::recreateContextOnImplThread");
+    ASSERT(isImplThread());
+    m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->contentsTextureAllocator());
+    *recreateSucceeded = m_layerTreeHostImpl->initializeLayerRenderer(adoptRef(contextPtr));
+    if (*recreateSucceeded) {
+        *capabilities = m_layerTreeHostImpl->layerRendererCapabilities();
+        m_schedulerOnImplThread->didRecreateContext();
+    }
+    completion->signal();
 }
 
 } // namespace WebCore
