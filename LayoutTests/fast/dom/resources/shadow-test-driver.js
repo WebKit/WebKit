@@ -70,6 +70,14 @@ function createContentWithSelect(select, fallbackText) {
     return content;
 }
 
+function createContentWithText(fallbackText) {
+    var content = internals.createContentElement(document);
+    if (fallbackText)
+        content.innerHTML = fallbackText;
+
+    return content;
+}
+
 function appendShadow(target, select) {
     var root = internals.ensureShadowRoot(target);
 

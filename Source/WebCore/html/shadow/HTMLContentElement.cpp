@@ -31,6 +31,7 @@
 #include "HTMLContentSelector.h"
 #include "HTMLNames.h"
 #include "QualifiedName.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
 #include "ShadowTree.h"
 #include <wtf/StdLibExtras.h>
@@ -42,6 +43,8 @@ using HTMLNames::selectAttr;
 static const QualifiedName& contentTagName()
 {
 #if ENABLE(SHADOW_DOM)
+    if (!RuntimeEnabledFeatures::shadowDOMEnabled())
+        return HTMLNames::webkitShadowContentTag;
     return HTMLNames::contentTag;
 #else
     return HTMLNames::webkitShadowContentTag;

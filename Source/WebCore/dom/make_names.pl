@@ -185,7 +185,8 @@ sub defaultTagPropertyHash
         'JSInterfaceName' => defaultInterfaceName($_[0]),
         'mapToTagName' => '',
         'wrapperOnlyIfMediaIsAvailable' => 0,
-        'conditional' => 0
+        'conditional' => 0,
+        'runtimeConditional' => 0
     );
 }
 
@@ -368,8 +369,17 @@ sub printConstructorInterior
         print F <<END
     Settings* settings = document->settings();
     if (!MediaPlayer::isAvailable() || (settings && !settings->isMediaEnabled()))
-        return HTMLElement::create($constructorTagName, document);
+        return 0;
     
+END
+;
+    }
+
+    my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
+    if ($runtimeConditional) {
+        print F <<END
+    if (!RuntimeEnabledFeatures::${runtimeConditional}Enabled())
+        return 0;
 END
 ;
     }
@@ -794,6 +804,8 @@ printConditionalElementIncludes($F);
 
 print F <<END
 
+#include "RuntimeEnabledFeatures.h"
+
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(VIDEO)
 #include "Document.h"
 #include "Settings.h"
@@ -869,16 +881,22 @@ END
 print F <<END
     if (!gFunctionMap)
         createFunctionMap();
-    if (ConstructorFunction function = gFunctionMap->get(qName.localName().impl()))
+    if (ConstructorFunction function = gFunctionMap->get(qName.localName().impl())) {
 END
 ;
 
 if ($parameters{namespace} eq "HTML") {
-    print F "        return function(qName, document, formElement, createdByParser);\n";
+    print F "        if (PassRefPtr<$parameters{namespace}Element> element = function(qName, document, formElement, createdByParser))\n";
+    print F "            return element;\n";
 } else {
-    print F "        return function(qName, document, createdByParser);\n";
+    print F "        if (PassRefPtr<$parameters{namespace}Element> element = function(qName, document, createdByParser))\n";
+    print F "            return element;\n";
 }
+print F <<END
+    }
 
+END
+;
 print F "    return $parameters{fallbackInterfaceName}::create(qName, document);\n";
 
 print F <<END
@@ -990,6 +1008,20 @@ static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGloba
 
 END
 ;
+            } elsif ($enabledTags{$tagName}{runtimeConditional}) {
+                my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
+                print F <<END
+static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
+{
+    if (!RuntimeEnabledFeatures::${runtimeConditional}Enabled()) {
+        ASSERT(!element || element->is$parameters{fallbackInterfaceName}());
+        return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackInterfaceName}, element.get());
+    }
+
+    return CREATE_DOM_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
+}
+END
+;
             } else {
                 print F <<END
 static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
@@ -1011,6 +1043,17 @@ static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespa
     return toV8(static_cast<${JSInterfaceName}*>(element));
 }
 
+END
+;
+            } elsif ($enabledTags{$tagName}{runtimeConditional}) {
+                my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
+                print F <<END
+static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element)
+{
+    if (!RuntimeEnabledFeatures::${runtimeConditional}Enabled())
+        return V8$parameters{fallbackInterfaceName}::wrap(to$parameters{fallbackInterfaceName}(element));
+    return toV8(static_cast<${JSInterfaceName}*>(element));
+}
 END
 ;
             } elsif (${JSInterfaceName} eq "HTMLElement") {
@@ -1067,6 +1110,8 @@ sub printWrapperFactoryCppFile
     printConditionalElementIncludes($F, $wrapperFactoryType);
 
     print F <<END
+
+#include "RuntimeEnabledFeatures.h"
 
 #if ENABLE(VIDEO)
 #include "Document.h"

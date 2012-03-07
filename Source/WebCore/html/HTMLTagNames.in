@@ -31,7 +31,7 @@ code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
 command interfaceName=HTMLElement
-content interfaceName=HTMLContentElement, conditional=SHADOW_DOM
+content interfaceName=HTMLContentElement, conditional=SHADOW_DOM, runtimeConditional=shadowDOM
 webkitShadowContent interfaceName=HTMLElement, noConstructor
 datalist interfaceName=HTMLDataListElement, conditional=DATALIST
 dd interfaceName=HTMLElement
@@ -94,7 +94,7 @@ ol interfaceName=HTMLOListElement
 optgroup interfaceName=HTMLOptGroupElement
 option constructorNeedsFormElement
 output constructorNeedsFormElement
-shadow interfaceName=HTMLShadowElement, conditional=SHADOW_DOM
+shadow interfaceName=HTMLShadowElement, conditional=SHADOW_DOM, runtimeConditional=shadowDOM
 p interfaceName=HTMLParagraphElement
 param
 plaintext interfaceName=HTMLElement

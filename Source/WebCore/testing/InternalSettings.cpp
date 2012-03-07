@@ -34,6 +34,7 @@
 #include "InspectorController.h"
 #include "Language.h"
 #include "Page.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 
 #if ENABLE(INPUT_COLOR)
@@ -92,6 +93,10 @@ InternalSettings::InternalSettings(Frame* frame)
     : FrameDestructionObserver(frame)
     , m_originalPasswordEchoDurationInSeconds(settings()->passwordEchoDurationInSeconds())
     , m_originalPasswordEchoEnabled(settings()->passwordEchoEnabled())
+#if ENABLE(SHADOW_DOM)
+    , m_originalShadowDOMEnabled(RuntimeEnabledFeatures::shadowDOMEnabled())
+#endif
+
 
 {
 }
@@ -100,6 +105,9 @@ void InternalSettings::restoreTo(Settings* settings)
 {
     settings->setPasswordEchoDurationInSeconds(m_originalPasswordEchoDurationInSeconds);
     settings->setPasswordEchoEnabled(m_originalPasswordEchoEnabled);
+#if ENABLE(SHADOW_DOM)
+    RuntimeEnabledFeatures::setShadowDOMEnabled(m_originalShadowDOMEnabled);
+#endif
 }
 
 Settings* InternalSettings::settings() const
@@ -210,6 +218,19 @@ void InternalSettings::setPerTileDrawingEnabled(bool enabled, ExceptionCode& ec)
 {
     InternalSettingsGuardForSettings();
     settings()->setPerTileDrawingEnabled(enabled);
+}
+
+void InternalSettings::setShadowDOMEnabled(bool enabled, ExceptionCode& ec)
+{
+#if ENABLE(SHADOW_DOM)
+    UNUSED_PARAM(ec);
+    RuntimeEnabledFeatures::setShadowDOMEnabled(enabled);
+#else
+    // Even SHADOW_DOM is off, InternalSettings allows setShadowDOMEnabled(false) to
+    // have broader test coverage. But it cannot be setShadowDOMEnabled(true).
+    if (enabled)
+        ec = INVALID_ACCESS_ERR;
+#endif
 }
 
 void InternalSettings::setTouchEventEmulationEnabled(bool enabled, ExceptionCode& ec)

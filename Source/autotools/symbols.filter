@@ -101,6 +101,7 @@ _ZN7WebCore24FrameDestructionObserver14frameDestroyedEv;
 _ZN7WebCore24FrameDestructionObserver14willDetachPageEv;
 _ZN7WebCore22RuntimeEnabledFeatures31isMultipleShadowSubtreesEnabledE;
 _ZN7WebCore22RuntimeEnabledFeatures32setMultipleShadowSubtreesEnabledEb;
+_ZN7WebCore22RuntimeEnabledFeatures18isShadowDOMEnabledE;
 local:
 _Z*;
 cti*;
