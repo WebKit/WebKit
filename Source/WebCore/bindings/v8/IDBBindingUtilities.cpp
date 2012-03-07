@@ -151,7 +151,7 @@ v8::Handle<v8::Value> ensureNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, 
 PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value, const Vector<String>& keyPath)
 {
     IDB_TRACE("createIDBKeyFromSerializedValueAndKeyPath");
-    V8LocalContext localContext;
+    V8AuxiliaryContext context;
     v8::Handle<v8::Value> v8Value(value->deserialize());
     v8::Handle<v8::Value> v8Key(getNthValueOnKeyPath(v8Value, keyPath, keyPath.size()));
     if (v8Key.IsEmpty())
@@ -162,7 +162,7 @@ PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<Serializ
 PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const Vector<String>& keyPath)
 {
     IDB_TRACE("injectIDBKeyIntoSerializedValue");
-    V8LocalContext localContext;
+    V8AuxiliaryContext context;
     if (!keyPath.size())
         return 0;
 

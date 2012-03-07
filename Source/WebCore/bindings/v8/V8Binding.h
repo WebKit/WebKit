@@ -129,6 +129,7 @@ namespace WebCore {
         DOMDataList& allStores() { return m_domDataList; }
 
         V8HiddenPropertyName* hiddenPropertyName() { return &m_hiddenPropertyName; }
+        v8::Persistent<v8::Context>& auxiliaryContext() { return m_auxiliaryContext; }
 
         void registerDOMDataStore(DOMDataStore* domDataStore) 
         {
@@ -169,6 +170,7 @@ namespace WebCore {
         DOMDataStore* m_domDataStore;
 
         V8HiddenPropertyName m_hiddenPropertyName;
+        v8::Persistent<v8::Context> m_auxiliaryContext;
 
         bool m_constructorMode;
         friend class ConstructorMode;

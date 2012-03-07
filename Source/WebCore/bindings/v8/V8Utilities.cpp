@@ -53,18 +53,22 @@
 
 namespace WebCore {
 
-V8LocalContext::V8LocalContext()
-    : m_context(v8::Context::New())
+V8AuxiliaryContext::V8AuxiliaryContext()
 {
-    V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
-    m_context->Enter();
+    auxiliaryContext()->Enter();
 }
 
-
-V8LocalContext::~V8LocalContext()
+V8AuxiliaryContext::~V8AuxiliaryContext()
 {
-    m_context->Exit();
-    m_context.Dispose();
+    auxiliaryContext()->Exit();
+}
+
+v8::Persistent<v8::Context>& V8AuxiliaryContext::auxiliaryContext()
+{
+    v8::Persistent<v8::Context>& context = V8BindingPerIsolateData::current()->auxiliaryContext();
+    if (context.IsEmpty())
+        context = v8::Context::New();
+    return context;
 }
 
 // Use an array to hold dependents. It works like a ref-counted scheme.

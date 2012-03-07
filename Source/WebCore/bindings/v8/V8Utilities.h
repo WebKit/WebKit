@@ -70,13 +70,13 @@ namespace WebCore {
 
     typedef unsigned CallbackAllowedValueFlags;
 
-    class V8LocalContext {
+    class V8AuxiliaryContext {
     public:
-        V8LocalContext();
-        virtual ~V8LocalContext();
+        V8AuxiliaryContext();
+        virtual ~V8AuxiliaryContext();
     private:
         v8::HandleScope m_handleScope;
-        v8::Persistent<v8::Context> m_context;
+        static v8::Persistent<v8::Context>& auxiliaryContext();
     };
 
     typedef WTF::Vector<RefPtr<MessagePort>, 1> MessagePortArray;
