@@ -59,7 +59,8 @@ ParsedCookie* CookieMap::addOrReplaceCookie(ParsedCookie* cookie)
     CookieLog("CookieMap - Attempting to add cookie - %s", cookie->name().utf8().data());
 
     ParsedCookie* prevCookie = 0;
-    for (int i = 0; i < m_cookieVector.size(); i++) {
+    size_t cookieCount = m_cookieVector.size();
+    for (size_t i = 0; i < cookieCount; i++) {
         if (m_cookieVector[i]->name() == cookie->name() && m_cookieVector[i]->path() == cookie->path()) {
             prevCookie = m_cookieVector[i];
             m_cookieVector[i] = cookie;
@@ -101,7 +102,7 @@ ParsedCookie* CookieMap::removeCookieAtIndex(int position, const ParsedCookie* c
 ParsedCookie* CookieMap::removeCookie(const ParsedCookie* cookie)
 {
     size_t cookieCount = m_cookieVector.size();
-    for (int position = 0; position < cookieCount; ++position) {
+    for (size_t position = 0; position < cookieCount; ++position) {
         if (m_cookieVector[position]->name() == cookie->name() && m_cookieVector[position]->path() == cookie->path())
             return removeCookieAtIndex(position, cookie);
     }
@@ -129,7 +130,7 @@ void CookieMap::getAllCookies(Vector<ParsedCookie*>* stackOfCookies)
 
     stackOfCookies->reserveCapacity(stackOfCookies->size() + m_cookieVector.size());
 
-    int position = 0;
+    size_t position = 0;
     while (position < m_cookieVector.size()) {
         ParsedCookie* newCookie = m_cookieVector[position];
         if (newCookie->hasExpired()) {
@@ -186,7 +187,7 @@ void CookieMap::updateOldestCookie()
     }
 
     m_oldestCookie = m_cookieVector[0];
-    for (int i = 1; i < size; ++i) {
+    for (size_t i = 1; i < size; ++i) {
         if (m_oldestCookie->lastAccessed() > m_cookieVector[i]->lastAccessed())
             m_oldestCookie = m_cookieVector[i];
     }
