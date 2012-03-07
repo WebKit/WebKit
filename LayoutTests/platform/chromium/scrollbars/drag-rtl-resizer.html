@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bug 9223</title>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body dir="rtl" style="margin:0px">
+<div id="overflow" dir="rtl" style="border:2px solid black; overflow:auto; width: 400px; height: 400px; resize:both;">
+<div style="background-color:red;height:720px"></div>
+<div style="background-color:green;height:1600px"></div>
+</div>
+<script>
+description('Test that an RTL element renders a resizer to its bottom-left corner and ' +
+            'dragging this resizer to the left changes its width. ' +
+            'To test manually, dragging the resizer of the below element to left, and ' +
+            'see this element increases its width.');
+
+// This test must be async because it needs to wait for WebKit to finish re-layouting elements
+// after sending mouse events.
+jsTestIsAsync = true;
+
+function finished()
+{
+    shouldBeTrue('document.getElementById(\'overflow\').offsetWidth > offsetWidth');
+    finishJSTest();
+}
+
+var offsetWidth = document.getElementById('overflow').offsetWidth;
+
+if (window.eventSender) {
+    var node = document.getElementById('overflow');
+    var offsetLeft = node.offsetLeft + 5;
+    var offsetTop = node.offsetTop + node.offsetHeight - 5;
+    eventSender.mouseMoveTo(offsetLeft, offsetTop);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(offsetLeft - 30, offsetTop);
+    eventSender.mouseUp();
+    setTimeout(finished, 0);
+}
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

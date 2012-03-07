@@ -1,0 +1,10 @@
+Test that an RTL element renders a resizer to its bottom-left corner and dragging this resizer to the left changes its width. To test manually, dragging the resizer of the below element to left, and see this element increases its width.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('overflow').offsetWidth > offsetWidth is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
