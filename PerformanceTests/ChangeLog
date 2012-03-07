@@ -1,3 +1,19 @@
+2012-03-06  Kentaro Hara  <haraken@chromium.org>
+
+        [Perf tests] Reduce the number of loops in dom-attributes.html
+        https://bugs.webkit.org/show_bug.cgi?id=80077
+
+        Reviewed by Ryosuke Niwa.
+
+        dom-attributes.html takes 100~ seconds in the perf bots. This patch reduces
+        the time by reducing the number of loops.
+
+        This is just a temporary fix. After more detailed investigation, I will reduce
+        the number of tests in dom-attributes.html, and revert back the number of loops
+        to guarantee the reliability of the perf test results.
+
+        * Bindings/dom-attributes.html:
+
 2012-03-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Heap Snapshot test: split overal time metric into separate metrics.
