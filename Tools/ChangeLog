@@ -1,3 +1,18 @@
+2012-03-07  Ojan Vafai  <ojan@chromium.org>
+
+        garden-o-matic rebaseline is broken for ports that don't have a fallback port
+        https://bugs.webkit.org/show_bug.cgi?id=80526
+
+        Reviewed by Adam Barth.
+
+        Passing "None" as the fallback port throws an error in "webkit-patch rebaseline-test"
+        since there is no "None" port.
+
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler.rebaseline):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (GardeningServerTest.test_rebaseline):
+
 2012-03-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove the TestWebPlugin's use of implicit FBO for offscreen contexts

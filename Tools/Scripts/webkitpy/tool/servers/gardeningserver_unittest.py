@@ -184,7 +184,7 @@ class GardeningServerTest(unittest.TestCase):
 
     def test_rebaseline(self):
         builders._exact_matches = {"MOCK builder": {"port_name": "mock-port-name", "specifiers": set(["mock-specifier"])}}
-        expected_stderr = "MOCK run_command: ['echo', 'rebaseline-test', 'MOCK builder', 'user-scripts/another-test.html', None], cwd=/mock-checkout\n"
+        expected_stderr = "MOCK run_command: ['echo', 'rebaseline-test', 'MOCK builder', 'user-scripts/another-test.html'], cwd=/mock-checkout\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
         self._post_to_path("/rebaseline?builder=MOCK+builder&test=user-scripts/another-test.html", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 

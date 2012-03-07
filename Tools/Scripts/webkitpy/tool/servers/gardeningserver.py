@@ -137,13 +137,15 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
 
     def rebaseline(self):
         builder = self.query['builder'][0]
-        test = self.query['test'][0]
-        self._run_webkit_patch([
+        command = [
             'rebaseline-test',
             builder,
-            test,
-            builders.fallback_port_name_for_new_port(builder),
-        ])
+            self.query['test'][0],
+        ]
+        fallback_port = builders.fallback_port_name_for_new_port(builder)
+        if fallback_port:
+            command.append(fallback_port)
+        self._run_webkit_patch(command)
         self._serve_text('success')
 
     def optimizebaselines(self):
