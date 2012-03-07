@@ -20,7 +20,6 @@ var skippedProperties = [
     "objCController",
     "objCPlugin",
     "objCPluginFunction",
-    "plainText",
     "textInputController",
 
     // Skip our test property

@@ -23,7 +23,6 @@
 #include <atk/atk.h>
 #include <glib.h>
 #include <webkit/webkitdefines.h>
-#include <webkit/webkitdomdefines.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
@@ -58,8 +57,6 @@ public:
     static void dumpConfigurationForViewport(WebKitWebView* webView, gint deviceDPI, gint deviceWidth, gint deviceHeight, gint availableWidth, gint availableHeight);
 
     static void clearOpener(WebKitWebFrame*);
-
-    static WebKitDOMRange* jsValueToDOMRange(JSContextRef, JSValueRef);
 
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.
     static GSList* getFrameChildren(WebKitWebFrame*);

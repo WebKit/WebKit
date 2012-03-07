@@ -46,7 +46,6 @@
 #include "JSElement.h"
 #include "JSLock.h"
 #include "JSNodeList.h"
-#include "JSRange.h"
 #include "JSValue.h"
 #include "NodeList.h"
 #include "PageGroup.h"
@@ -60,7 +59,6 @@
 #include "Settings.h"
 #include "TextIterator.h"
 #include "WebKitAccessibleWrapperAtk.h"
-#include "WebKitDOMRangePrivate.h"
 #include "WebKitMutationObserver.h"
 #include "WorkerThread.h"
 #include "webkitglobalsprivate.h"
@@ -129,20 +127,6 @@ JSValueRef DumpRenderTreeSupportGtk::nodesFromRect(JSContextRef context, JSValue
     Document* document = jsDocument->impl();
     RefPtr<NodeList> nodes = document->nodesFromRect(x, y, top, right, bottom, left, ignoreClipping);
     return toRef(exec, toJS(exec, jsDocument->globalObject(), nodes.get()));
-}
-
-WebKitDOMRange* DumpRenderTreeSupportGtk::jsValueToDOMRange(JSContextRef context, JSValueRef value)
-{
-    if (!value)
-        return 0;
-
-    JSLock lock(SilenceAssertionsOnly);
-    ExecState* exec = toJS(context);
-
-    Range* range = toRange(toJS(exec, value));
-    if (!range)
-        return 0;
-    return kit(range);
 }
 
 /**

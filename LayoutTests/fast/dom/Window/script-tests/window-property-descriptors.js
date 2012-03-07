@@ -21,7 +21,6 @@ var __skip__ = {
     "objCController" : 1,
     "objCPlugin" : 1,
     "objCPluginFunction" : 1,
-    "plainText" : 1,
     "textInputController" : 1,
 
     // Don't log these properties because they do not exist in all implementations. They will need to be tested separately.

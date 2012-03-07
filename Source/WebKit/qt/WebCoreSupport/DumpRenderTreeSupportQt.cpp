@@ -992,15 +992,6 @@ void DumpRenderTreeSupportQt::simulateDesktopNotificationClick(const QString& ti
 #endif
 }
 
-QString DumpRenderTreeSupportQt::plainText(const QVariant& range)
-{
-    QMap<QString, QVariant> map = range.toMap();
-    QVariant startContainer  = map.value(QLatin1String("startContainer"));
-    map = startContainer.toMap();
-
-    return map.value(QLatin1String("innerText")).toString();
-}
-
 QVariantList DumpRenderTreeSupportQt::nodesFromRect(const QWebElement& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping)
 {
     QVariantList res;

@@ -1,3 +1,18 @@
+2012-03-07  Kangil Han  <kangil.han@samsung.com>
+
+        [DRT] Remove PlainTextController implementations.
+        https://bugs.webkit.org/show_bug.cgi?id=79959
+
+        Reviewed by Hajime Morita.
+
+        PlainTextController usages in existing tests have been
+        replaced by internals API by bug 78570.
+        So this patch will remove PlainTextController implementations
+        to avoid further usage in new tests.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2012-03-06  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] disable GStreamerGWorld when building against 0.11

@@ -33,7 +33,6 @@ HEADERS += \
     WorkQueueItemQt.h \
     LayoutTestControllerQt.h \
     GCControllerQt.h \
-    PlainTextControllerQt.h \
     QtInitializeTestFonts.h \
     testplugin.h
 
@@ -43,7 +42,6 @@ SOURCES += \
     DumpRenderTreeQt.cpp \
     EventSenderQt.cpp \
     TextInputControllerQt.cpp \
-    PlainTextControllerQt.cpp \
     WorkQueueItemQt.cpp \
     LayoutTestControllerQt.cpp \
     GCControllerQt.cpp \

@@ -37,7 +37,6 @@
 #include "GCControllerQt.h"
 #include "LayoutTestControllerQt.h"
 #include "TextInputControllerQt.h"
-#include "PlainTextControllerQt.h"
 #include "QtInitializeTestFonts.h"
 #include "testplugin.h"
 #include "WorkQueue.h"
@@ -440,7 +439,6 @@ DumpRenderTree::DumpRenderTree()
     connect(m_controller, SIGNAL(done()), this, SLOT(dump()));
     m_eventSender = new EventSender(m_page);
     m_textInputController = new TextInputController(m_page);
-    m_plainTextController = new PlainTextController(m_page);
     m_gcController = new GCController(m_page);
 
     // now connect our different signals
@@ -751,7 +749,6 @@ void DumpRenderTree::initJSObjects()
     frame->addToJavaScriptWindowObject(QLatin1String("eventSender"), m_eventSender);
     frame->addToJavaScriptWindowObject(QLatin1String("textInputController"), m_textInputController);
     frame->addToJavaScriptWindowObject(QLatin1String("GCController"), m_gcController);
-    frame->addToJavaScriptWindowObject(QLatin1String("plainText"), m_plainTextController);
     DumpRenderTreeSupportQt::injectInternalsObject(frame);
 }
 

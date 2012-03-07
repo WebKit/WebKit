@@ -36,7 +36,6 @@
 #include "GamepadController.h"
 #include "LayoutTestController.h"
 #include "NotificationPresenter.h"
-#include "PlainTextController.h"
 #include "TestEventPrinter.h"
 #include "TextInputController.h"
 #include "WebPreferences.h"
@@ -215,7 +214,6 @@ private:
     OwnPtr<GamepadController> m_gamepadController;
     OwnPtr<EventSender> m_eventSender;
     OwnPtr<LayoutTestController> m_layoutTestController;
-    OwnPtr<PlainTextController> m_plainTextController;
     OwnPtr<TextInputController> m_textInputController;
     OwnPtr<NotificationPresenter> m_notificationPresenter;
     OwnPtr<WebViewHost> m_webViewHost;

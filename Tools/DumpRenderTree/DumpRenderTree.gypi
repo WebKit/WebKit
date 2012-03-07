@@ -26,8 +26,6 @@
             'chromium/MockWebSpeechInputController.h',
             'chromium/NotificationPresenter.h',
             'chromium/NotificationPresenter.cpp',
-            'chromium/PlainTextController.cpp',
-            'chromium/PlainTextController.h',
             'chromium/Task.h',
             'chromium/Task.cpp',
             'chromium/TestEventPrinter.h',

@@ -39,7 +39,6 @@
 #include "GOwnPtr.h"
 #include "LayoutTestController.h"
 #include "PixelDumpSupport.h"
-#include "PlainTextController.h"
 #include "SelfScrollingWebKitWebView.h"
 #include "TextInputController.h"
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
@@ -835,7 +834,6 @@ static void webViewWindowObjectCleared(WebKitWebView* view, WebKitWebFrame* fram
     ASSERT(!exception);
 
     addControllerToWindow(context, windowObject, "eventSender", makeEventSender(context, !webkit_web_frame_get_parent(frame)));
-    addControllerToWindow(context, windowObject, "plainText", makePlainTextController(context));
     addControllerToWindow(context, windowObject, "textInputController", makeTextInputController(context));
     WebCoreTestSupport::injectInternalsObject(context);
 }

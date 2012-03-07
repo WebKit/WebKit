@@ -80,8 +80,6 @@
 		80045AED147718E7008290A8 /* AccessibilityNotificationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 80045AEB147718E7008290A8 /* AccessibilityNotificationHandler.h */; };
 		80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */; };
 		8465E2C70FFA8DF2003B8342 /* PixelDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8465E2C60FFA8DF2003B8342 /* PixelDumpSupport.cpp */; };
-		933BF5AB0F93FA5C000F0441 /* PlainTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 933BF5A90F93FA5C000F0441 /* PlainTextController.h */; };
-		933BF5AC0F93FA5C000F0441 /* PlainTextController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 933BF5AA0F93FA5C000F0441 /* PlainTextController.mm */; };
 		9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */; };
 		9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
 		A817090008B163EF00CCB9FB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
@@ -264,8 +262,6 @@
 		80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityNotificationHandler.mm; path = mac/AccessibilityNotificationHandler.mm; sourceTree = "<group>"; };
 		8465E2C60FFA8DF2003B8342 /* PixelDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PixelDumpSupport.cpp; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		933BF5A90F93FA5C000F0441 /* PlainTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlainTextController.h; path = mac/PlainTextController.h; sourceTree = "<group>"; };
-		933BF5AA0F93FA5C000F0441 /* PlainTextController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlainTextController.mm; path = mac/PlainTextController.mm; sourceTree = "<group>"; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DumpRenderTree.h; sourceTree = "<group>"; };
 		A817090308B164D300CCB9FB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -469,8 +465,6 @@
 				BCA18B6E0C9B08DB00114369 /* NavigationController.m */,
 				BCA18B2F0C9B01B400114369 /* ObjCController.h */,
 				BCA18B300C9B01B400114369 /* ObjCController.m */,
-				933BF5A90F93FA5C000F0441 /* PlainTextController.h */,
-				933BF5AA0F93FA5C000F0441 /* PlainTextController.mm */,
 				BCA18B3A0C9B024900114369 /* TextInputController.h */,
 				BCA18B480C9B02C400114369 /* TextInputController.m */,
 			);
@@ -672,7 +666,6 @@
 				BCA18B7F0C9B08F100114369 /* ObjCPluginFunction.h in Headers */,
 				BCB284C70CFA83C4007E533E /* PixelDumpSupport.h in Headers */,
 				BCB284D00CFA83CC007E533E /* PixelDumpSupportCG.h in Headers */,
-				933BF5AB0F93FA5C000F0441 /* PlainTextController.h in Headers */,
 				BCA18B650C9B08C200114369 /* PolicyDelegate.h in Headers */,
 				BCA18B670C9B08C200114369 /* ResourceLoadDelegate.h in Headers */,
 				BCA18B3C0C9B024900114369 /* TextInputController.h in Headers */,
@@ -872,7 +865,6 @@
 				8465E2C70FFA8DF2003B8342 /* PixelDumpSupport.cpp in Sources */,
 				BCB284CD0CFA83C8007E533E /* PixelDumpSupportCG.cpp in Sources */,
 				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
-				933BF5AC0F93FA5C000F0441 /* PlainTextController.mm in Sources */,
 				BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */,
 				BCA18B680C9B08C200114369 /* ResourceLoadDelegate.mm in Sources */,
 				BCA18B490C9B02C400114369 /* TextInputController.m in Sources */,

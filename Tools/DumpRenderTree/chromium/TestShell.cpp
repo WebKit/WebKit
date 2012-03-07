@@ -137,7 +137,6 @@ TestShell::TestShell(bool testShellMode)
     m_gamepadController = adoptPtr(new GamepadController(this));
     m_layoutTestController = adoptPtr(new LayoutTestController(this));
     m_eventSender = adoptPtr(new EventSender(this));
-    m_plainTextController = adoptPtr(new PlainTextController());
     m_textInputController = adoptPtr(new TextInputController(this));
 #if ENABLE(NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
@@ -698,7 +697,6 @@ void TestShell::bindJSObjectsToWindow(WebFrame* frame)
     m_gamepadController->bindToJavascript(frame, WebString::fromUTF8("gamepadController"));
     m_layoutTestController->bindToJavascript(frame, WebString::fromUTF8("layoutTestController"));
     m_eventSender->bindToJavascript(frame, WebString::fromUTF8("eventSender"));
-    m_plainTextController->bindToJavascript(frame, WebString::fromUTF8("plainText"));
     m_textInputController->bindToJavascript(frame, WebString::fromUTF8("textInputController"));
 }
 

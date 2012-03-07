@@ -40,7 +40,6 @@
 #import "ObjCController.h"
 #import "ObjCPlugin.h"
 #import "ObjCPluginFunction.h"
-#import "PlainTextController.h"
 #import "TextInputController.h"
 #import "WebCoreTestSupport.h"
 #import "WorkQueue.h"
@@ -297,8 +296,6 @@
     ObjCPluginFunction *pluginFunction = [[ObjCPluginFunction alloc] init];
     [obj setValue:pluginFunction forKey:@"objCPluginFunction"];
     [pluginFunction release];
-
-    [obj setValue:[PlainTextController sharedPlainTextController] forKey:@"plainText"];
 
     TextInputController *tic = [[TextInputController alloc] initWithWebView:webView];
     [obj setValue:tic forKey:@"textInputController"];
