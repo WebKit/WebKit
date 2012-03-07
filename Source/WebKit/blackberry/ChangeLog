@@ -1,3 +1,25 @@
+2012-03-07  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] WebKit rendering problem when show/hide VKB
+        https://bugs.webkit.org/show_bug.cgi?id=80448
+        RIM PR: 141727
+
+        Reviewed by Antonio Gomes.
+
+        When setting viewport size, layout happens inside
+        WebPagePrivate::setDefaultLayoutSize(), in this way, the layout is
+        outside of the code path of "needsLayout" so that the contents are
+        not rendered into the backing store. This is a regression of r108718,
+        switch back to do the layout inside the public API
+        WebPage::setDefaultLayoutSize().
+
+        We haven't upstreamed the manual tests directory yet, therefore,
+        the new manual test case will be upstreamed later.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setDefaultLayoutSize):
+        (BlackBerry::WebKit::WebPage::setDefaultLayoutSize):
+
 2012-03-06  Lianghui Chen  <liachen@rim.com>
 
         [BlackBerry] Set correct ResourceRequest target type.

@@ -3378,25 +3378,24 @@ void WebPage::setViewportSize(const Platform::IntSize& viewportSize, bool ensure
 
 void WebPagePrivate::setDefaultLayoutSize(const IntSize& size)
 {
-    if (size == m_defaultLayoutSize)
-        return;
-
     IntSize screenSize = Platform::Graphics::Screen::primaryScreen()->size();
     ASSERT(size.width() <= screenSize.width() && size.height() <= screenSize.height());
     m_defaultLayoutSize = size.expandedTo(minimumLayoutSize).shrunkTo(screenSize);
-
-    bool needsLayout = setViewMode(viewMode());
-    if (needsLayout) {
-        setNeedsLayout();
-        if (!isLoading())
-            requestLayoutIfNeeded();
-    }
 }
 
 void WebPage::setDefaultLayoutSize(int width, int height)
 {
     IntSize size(width, height);
+    if (size == d->m_defaultLayoutSize)
+        return;
+
     d->setDefaultLayoutSize(size);
+    bool needsLayout = d->setViewMode(d->viewMode());
+    if (needsLayout) {
+        d->setNeedsLayout();
+        if (!d->isLoading())
+            d->requestLayoutIfNeeded();
+    }
 }
 
 bool WebPage::mouseEvent(const Platform::MouseEvent& mouseEvent, bool* wheelDeltaAccepted)
