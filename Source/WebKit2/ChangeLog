@@ -1,3 +1,25 @@
+2012-03-07  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt] Authentication dialog does not work
+        https://bugs.webkit.org/show_bug.cgi?id=79738
+
+        Reviewed by Simon Hausmann.
+
+        QQuickWebView should accept touch events only if there is
+        no active dialog.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::runJavaScriptAlert):
+        (QQuickWebViewPrivate::runJavaScriptConfirm):
+        (QQuickWebViewPrivate::runJavaScriptPrompt):
+        (QQuickWebViewPrivate::handleAuthenticationRequiredRequest):
+        (QQuickWebViewPrivate::handleProxyAuthenticationRequiredRequest):
+        (QQuickWebViewPrivate::handleCertificateVerificationRequest):
+        (QQuickWebView::touchEvent):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+
 2012-03-07  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/8494396> WebKit2 lacks API for obtaining a representation of the render tree of a page, like WebRenderNode

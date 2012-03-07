@@ -81,6 +81,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , m_navigatorQtObjectEnabled(false)
     , m_renderToOffscreenBuffer(false)
     , m_loadStartedSignalSent(false)
+    , m_dialogRunnerActive(false)
 {
     viewport->setFlags(QQuickItem::ItemClipsChildrenToShape);
     QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
@@ -267,7 +268,10 @@ void QQuickWebViewPrivate::runJavaScriptAlert(const QString& alertText)
     setViewInAttachedProperties(dialogRunner.dialog());
 
     disableMouseEvents();
+    m_dialogRunnerActive = true;
+
     dialogRunner.exec();
+    m_dialogRunnerActive = false;
     enableMouseEvents();
 }
 
@@ -283,7 +287,10 @@ bool QQuickWebViewPrivate::runJavaScriptConfirm(const QString& message)
     setViewInAttachedProperties(dialogRunner.dialog());
 
     disableMouseEvents();
+    m_dialogRunnerActive = true;
+
     dialogRunner.exec();
+    m_dialogRunnerActive = false;
     enableMouseEvents();
 
     return dialogRunner.wasAccepted();
@@ -305,7 +312,10 @@ QString QQuickWebViewPrivate::runJavaScriptPrompt(const QString& message, const 
     setViewInAttachedProperties(dialogRunner.dialog());
 
     disableMouseEvents();
+    m_dialogRunnerActive = true;
+
     dialogRunner.exec();
+    m_dialogRunnerActive = false;
     enableMouseEvents();
 
     ok = dialogRunner.wasAccepted();
@@ -325,7 +335,10 @@ void QQuickWebViewPrivate::handleAuthenticationRequiredRequest(const QString& ho
     setViewInAttachedProperties(dialogRunner.dialog());
 
     disableMouseEvents();
+    m_dialogRunnerActive = true;
+
     dialogRunner.exec();
+    m_dialogRunnerActive = false;
     enableMouseEvents();
 
     username = dialogRunner.username();
@@ -344,7 +357,10 @@ void QQuickWebViewPrivate::handleProxyAuthenticationRequiredRequest(const QStrin
 
     setViewInAttachedProperties(dialogRunner.dialog());
     disableMouseEvents();
+    m_dialogRunnerActive = true;
+
     dialogRunner.exec();
+    m_dialogRunnerActive = false;
     enableMouseEvents();
 
     username = dialogRunner.username();
@@ -364,7 +380,10 @@ bool QQuickWebViewPrivate::handleCertificateVerificationRequest(const QString& h
     setViewInAttachedProperties(dialogRunner.dialog());
 
     disableMouseEvents();
+    m_dialogRunnerActive = true;
+
     dialogRunner.exec();
+    m_dialogRunnerActive = false;
     enableMouseEvents();
 
     return dialogRunner.wasAccepted();
@@ -1343,6 +1362,11 @@ void QQuickWebView::focusOutEvent(QFocusEvent* event)
 void QQuickWebView::touchEvent(QTouchEvent* event)
 {
     Q_D(QQuickWebView);
+    if (d->m_dialogRunnerActive) {
+        event->ignore();
+        return;
+    }
+
     forceActiveFocus();
     d->pageView->eventHandler()->handleTouchEvent(event);
 }

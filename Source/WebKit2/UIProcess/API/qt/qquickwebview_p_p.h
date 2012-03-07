@@ -163,6 +163,7 @@ protected:
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;
     bool m_loadStartedSignalSent;
+    bool m_dialogRunnerActive;
     QUrl m_iconURL;
     QUrl m_deferedUrlToLoad;
 };
