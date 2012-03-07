@@ -89,10 +89,11 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
         GraphicsContextStateSaver stateSaver(*ctx);
         ctx->clip(rectBeingDrawn);
         
-        layerContents->platformCALayerPaintContents(*ctx, enclosedIntRect(rectBeingDrawn));
+        layerContents->platformCALayerPaintContents(*ctx, enclosingIntRect(rectBeingDrawn));
     });
+
 #else
-    IntRect clip(enclosedIntRect(clipBounds));
+    IntRect clip(enclosingIntRect(clipBounds));
     layerContents->platformCALayerPaintContents(graphicsContext, clip);
 #endif
 
