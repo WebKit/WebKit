@@ -116,7 +116,7 @@ static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, SlotVisitor& v
         }
     #if ENABLE(VIDEO)
         else if (node->hasTagName(audioTag)) {
-            if (!static_cast<HTMLAudioElement*>(node)->paused())
+            if (!static_cast<HTMLAudioElement*>(node)->hasPendingActivity())
                 return true;
         }
     #endif
