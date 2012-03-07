@@ -31,7 +31,6 @@ import unittest
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
-from webkitpy.layout_tests.port import chromium_gpu
 from webkitpy.layout_tests.port import chromium_linux
 from webkitpy.layout_tests.port import chromium_mac
 from webkitpy.layout_tests.port import chromium_win
@@ -95,23 +94,6 @@ class FactoryTest(unittest.TestCase):
 
     def test_qt(self):
         self.assert_port(port_name='qt', cls=qt.QtPort)
-
-    def test_chromium_gpu(self):
-        self.assert_port(port_name='chromium-gpu', os_name='mac', os_version='leopard',
-                         cls=chromium_gpu.ChromiumGpuMacPort)
-        self.assert_port(port_name='chromium-gpu', os_name='win', os_version='xp',
-                         cls=chromium_gpu.ChromiumGpuWinPort)
-        self.assert_port(port_name='chromium-gpu', os_name='linux', os_version='lucid',
-                         cls=chromium_gpu.ChromiumGpuLinuxPort)
-
-    def test_chromium_gpu_linux(self):
-        self.assert_port(port_name='chromium-gpu-linux', cls=chromium_gpu.ChromiumGpuLinuxPort)
-
-    def test_chromium_gpu_mac(self):
-        self.assert_port(port_name='chromium-gpu-mac-leopard', cls=chromium_gpu.ChromiumGpuMacPort)
-
-    def test_chromium_gpu_win(self):
-        self.assert_port(port_name='chromium-gpu-win-xp', cls=chromium_gpu.ChromiumGpuWinPort)
 
     def test_chromium_mac(self):
         self.assert_port(port_name='chromium-mac-leopard', cls=chromium_mac.ChromiumMacPort)

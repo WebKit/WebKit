@@ -75,7 +75,6 @@ class ChromiumPort(Port):
         'chromium-mac-lion', 'chromium-mac-snowleopard', 'chromium-mac-leopard',
         'chromium-win-win7', 'chromium-win-vista', 'chromium-win-xp',
         'chromium-linux-x86_64', 'chromium-linux-x86',
-        'chromium-gpu-mac-snowleopard', 'chromium-gpu-win-win7', 'chromium-gpu-linux-x86_64',
     ]
 
     CONFIGURATION_SPECIFIER_MACROS = {

@@ -112,10 +112,7 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         # Don't enable logging until after we create the mock expectation files as some Port.__init__'s run subcommands.
         tool.executive = MockExecutive(should_log=True)
 
-        expected_stdout = """Retrieving results for chromium-gpu-mac-snowleopard from Webkit Mac10.6 - GPU.
-Retrieving results for chromium-gpu-win-win7 from Webkit Win7 - GPU.
-Retrieving results for chromium-gpu-win-xp from Webkit Win - GPU.
-Retrieving results for chromium-linux-x86 from Webkit Linux 32.
+        expected_stdout = """Retrieving results for chromium-linux-x86 from Webkit Linux 32.
     userscripts/another-test.html
     userscripts/images.svg
 Retrieving results for chromium-linux-x86_64 from Webkit Linux.
@@ -159,7 +156,7 @@ MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win', 'userscripts/another
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win', 'userscripts/images.svg'], cwd=/mock-checkout
 """
 
-        command._tests_to_rebaseline = lambda port: [] if not port.name().find('-gpu-') == -1 else ['userscripts/another-test.html', 'userscripts/images.svg']
+        command._tests_to_rebaseline = lambda port: ['userscripts/another-test.html', 'userscripts/images.svg']
         OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=False), [], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
 
         expected_stdout_with_optimize = expected_stdout + (
