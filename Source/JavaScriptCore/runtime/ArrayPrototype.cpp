@@ -166,6 +166,90 @@ static unsigned argumentClampedIndexFromStartOrEnd(ExecState* exec, int argument
     return indexDouble > length ? length : static_cast<unsigned>(indexDouble);
 }
 
+
+// The shift/unshift function implement the shift/unshift behaviour required
+// by the corresponding array prototype methods, and by splice. In both cases,
+// the methods are operating an an array or array like object.
+//
+//  header  currentCount  (remainder)
+// [------][------------][-----------]
+//  header  resultCount  (remainder)
+// [------][-----------][-----------]
+//
+// The set of properties in the range 'header' must be unchanged. The set of
+// properties in the range 'remainder' (where remainder = length - header -
+// currentCount) will be shifted to the left or right as appropriate; in the
+// case of shift this must be removing values, in the case of unshift this
+// must be introducing new values.
+static inline void shift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned currentCount, unsigned resultCount, unsigned length)
+{
+    ASSERT(currentCount > resultCount);
+    unsigned count = currentCount - resultCount;
+
+    ASSERT(header <= length);
+    ASSERT(currentCount <= (length - header));
+
+    if (!header && isJSArray(thisObj) && asArray(thisObj)->shiftCount(exec, count))
+        return;
+
+    for (unsigned k = header; k < length - currentCount; ++k) {
+        unsigned from = k + currentCount;
+        unsigned to = k + resultCount;
+        PropertySlot slot(thisObj);
+        if (thisObj->getPropertySlot(exec, from, slot)) {
+            JSValue value = slot.getValue(exec, from);
+            if (exec->hadException())
+                return;
+            thisObj->methodTable()->putByIndex(thisObj, exec, to, value, true);
+            if (exec->hadException())
+                return;
+        } else if (!thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, to)) {
+            throwTypeError(exec, "Unable to delete property.");
+            return;
+        }
+    }
+    for (unsigned k = length; k > length - count; --k) {
+        if (!thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k - 1)) {
+            throwTypeError(exec, "Unable to delete property.");
+            return;
+        }
+    }
+}
+static inline void unshift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned currentCount, unsigned resultCount, unsigned length)
+{
+    ASSERT(resultCount > currentCount);
+    unsigned count = resultCount - currentCount;
+
+    ASSERT(header <= length);
+    ASSERT(currentCount <= (length - header));
+
+    // Guard against overflow.
+    if (count > (UINT_MAX - length)) {
+        throwOutOfMemoryError(exec);
+        return;
+    }
+
+    if (!header && isJSArray(thisObj) && asArray(thisObj)->unshiftCount(exec, count))
+        return;
+
+    for (unsigned k = length - currentCount; k > header; --k) {
+        unsigned from = k + currentCount - 1;
+        unsigned to = k + resultCount - 1;
+        PropertySlot slot(thisObj);
+        if (thisObj->getPropertySlot(exec, from, slot)) {
+            JSValue value = slot.getValue(exec, from);
+            if (exec->hadException())
+                return;
+            thisObj->methodTable()->putByIndex(thisObj, exec, to, value, true);
+        } else if (!thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, to)) {
+            throwTypeError(exec, "Unable to delete property.");
+            return;
+        }
+        if (exec->hadException())
+            return;
+    }
+}
+
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
@@ -402,7 +486,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
         result = jsUndefined();
     } else {
         result = thisObj->get(exec, length - 1);
-        thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, length - 1);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+        if (!thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, length - 1)) {
+            throwTypeError(exec, "Unable to delete property.");
+            return JSValue::encode(jsUndefined());
+        }
         putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(length - 1));
     }
     return JSValue::encode(result);
@@ -457,19 +546,23 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
 
-        if (obj2)
+        if (obj2) {
             thisObj->methodTable()->putByIndex(thisObj, exec, k, obj2, true);
-        else
-            thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k);
-        if (exec->hadException())
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+        } else if (!thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k)) {
+            throwTypeError(exec, "Unable to delete property.");
             return JSValue::encode(jsUndefined());
+        }
 
-        if (obj)
+        if (obj) {
             thisObj->methodTable()->putByIndex(thisObj, exec, lk1, obj, true);
-        else
-            thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, lk1);
-        if (exec->hadException())
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
+        } else if (!thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, lk1)) {
+            throwTypeError(exec, "Unable to delete property.");
             return JSValue::encode(jsUndefined());
+        }
     }
     return JSValue::encode(thisObj);
 }
@@ -487,22 +580,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec)
         result = jsUndefined();
     } else {
         result = thisObj->get(exec, 0);
-        if (isJSArray(thisObj))
-            ((JSArray *)thisObj)->shiftCount(exec, 1);
-        else {
-            for (unsigned k = 1; k < length; k++) {
-                JSValue obj = getProperty(exec, thisObj, k);
-                if (exec->hadException())
-                    return JSValue::encode(jsUndefined());
-                if (obj)
-                    thisObj->methodTable()->putByIndex(thisObj, exec, k - 1, obj, true);
-                else
-                    thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k - 1);
-                if (exec->hadException())
-                    return JSValue::encode(jsUndefined());
-            }
-            thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, length - 1);
-        }
+        shift(exec, thisObj, 0, 1, 0, length);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
         putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(length - 1));
     }
     return JSValue::encode(result);
@@ -639,42 +719,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     resObj->completeInitialization(deleteCount);
 
     unsigned additionalArgs = std::max<int>(exec->argumentCount() - 2, 0);
-    if (additionalArgs != deleteCount) {
-        if (additionalArgs < deleteCount) {
-            if ((!begin) && (isJSArray(thisObj)))
-                ((JSArray *)thisObj)->shiftCount(exec, deleteCount - additionalArgs);
-            else {
-                for (unsigned k = begin; k < length - deleteCount; ++k) {
-                    JSValue v = getProperty(exec, thisObj, k + deleteCount);
-                    if (exec->hadException())
-                        return JSValue::encode(jsUndefined());
-                    if (v)
-                        thisObj->methodTable()->putByIndex(thisObj, exec, k + additionalArgs, v, true);
-                    else
-                        thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k + additionalArgs);
-                    if (exec->hadException())
-                        return JSValue::encode(jsUndefined());
-                }
-                for (unsigned k = length; k > length - deleteCount + additionalArgs; --k)
-                    thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k - 1);
-            }
-        } else {
-            if ((!begin) && (isJSArray(thisObj)))
-                ((JSArray *)thisObj)->unshiftCount(exec, additionalArgs - deleteCount);
-            else {
-                for (unsigned k = length - deleteCount; k > begin; --k) {
-                    JSValue obj = getProperty(exec, thisObj, k + deleteCount - 1);
-                    if (exec->hadException())
-                        return JSValue::encode(jsUndefined());
-                    if (obj)
-                        thisObj->methodTable()->putByIndex(thisObj, exec, k + additionalArgs - 1, obj, true);
-                    else
-                        thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k + additionalArgs - 1);
-                    if (exec->hadException())
-                        return JSValue::encode(jsUndefined());
-                }
-            }
-        }
+    if (additionalArgs < deleteCount) {
+        shift(exec, thisObj, begin, deleteCount, additionalArgs, length);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+    } else if (additionalArgs > deleteCount) {
+        unshift(exec, thisObj, begin, deleteCount, additionalArgs, length);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
     }
     for (unsigned k = 0; k < additionalArgs; ++k) {
         thisObj->methodTable()->putByIndex(thisObj, exec, k + begin, exec->argument(k + 2), true);
@@ -696,22 +748,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     unsigned nrArgs = exec->argumentCount();
-    if ((nrArgs) && (length)) {
-        if (isJSArray(thisObj))
-            ((JSArray *)thisObj)->unshiftCount(exec, nrArgs);
-        else {
-            for (unsigned k = length; k > 0; --k) {
-                JSValue v = getProperty(exec, thisObj, k - 1);
-                if (exec->hadException())
-                    return JSValue::encode(jsUndefined());
-                if (v)
-                    thisObj->methodTable()->putByIndex(thisObj, exec, k + nrArgs - 1, v, true);
-                else
-                    thisObj->methodTable()->deletePropertyByIndex(thisObj, exec, k + nrArgs - 1);
-                if (exec->hadException())
-                    return JSValue::encode(jsUndefined());
-            }
-        }
+    if (nrArgs) {
+        unshift(exec, thisObj, 0, 0, nrArgs, length);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
     }
     for (unsigned k = 0; k < nrArgs; ++k) {
         thisObj->methodTable()->putByIndex(thisObj, exec, k, exec->argument(k), true);

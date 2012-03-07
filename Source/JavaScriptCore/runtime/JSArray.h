@@ -187,8 +187,8 @@ namespace JSC {
         void push(ExecState*, JSValue);
         JSValue pop(ExecState*);
 
-        void shiftCount(ExecState*, unsigned count);
-        void unshiftCount(ExecState*, unsigned count);
+        bool shiftCount(ExecState*, unsigned count);
+        bool unshiftCount(ExecState*, unsigned count);
 
         bool canGetIndex(unsigned i) { return i < m_vectorLength && m_storage->m_vector[i]; }
         JSValue getIndex(unsigned i)

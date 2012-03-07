@@ -1,3 +1,38 @@
+2012-03-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Array.prototype functions should throw if delete fails
+        https://bugs.webkit.org/show_bug.cgi?id=80467
+
+        Reviewed by Oliver Hunt.
+
+        All calls to [[Delete]] from Array.prototype are specified to pass 'true' as the value of Throw.
+        In the case of shift/unshift, these are also missing a throw from the 'put' in the implementations
+        in JSArray.cpp. There are effectively three copies of each of the generic shift/unshift routines,
+        one in splice, one in ArrayPrototype's shift/unshift methods, and one in JSArray's shift/unshift
+        routines, for handling arrays with holes. These three copies should be unified.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::shift):
+        (JSC::unshift):
+            - Added - shared copies of the shift/unshift functionality.
+        (JSC::arrayProtoFuncPop):
+            - should throw if the delete fails.
+        (JSC::arrayProtoFuncReverse):
+            - should throw if the delete fails.
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+            - use shift/unshift.
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::shiftCount):
+        (JSC::JSArray::unshiftCount):
+            - Don't try to handle arrays with holes; return a value indicating
+              the generic routine should be used instead.
+        * runtime/JSArray.h:
+            - declaration for shiftCount/unshiftCount changed.
+        * tests/mozilla/js1_6/Array/regress-304828.js:
+            - this was asserting incorrect behaviour.
+
 2012-03-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [CMake] Make the removal of transitive library dependencies work with CMake < 2.8.7.

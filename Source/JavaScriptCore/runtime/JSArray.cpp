@@ -1309,7 +1309,7 @@ void JSArray::push(ExecState* exec, JSValue value)
     checkConsistency();
 }
 
-void JSArray::shiftCount(ExecState* exec, unsigned count)
+bool JSArray::shiftCount(ExecState*, unsigned count)
 {
     ASSERT(count > 0);
     
@@ -1317,32 +1317,15 @@ void JSArray::shiftCount(ExecState* exec, unsigned count)
     
     unsigned oldLength = storage->m_length;
     
+    // If the array contains holes or is otherwise in an abnormal state,
+    // use the generic algorithm in ArrayPrototype.
+    if (oldLength != storage->m_numValuesInVector || inSparseMode())
+        return false;
+
     if (!oldLength)
-        return;
+        return true;
     
-    if (oldLength != storage->m_numValuesInVector) {
-        // If m_length and m_numValuesInVector aren't the same, we have a sparse vector
-        // which means we need to go through each entry looking for the the "empty"
-        // slots and then fill them with possible properties.  See ECMA spec.
-        // 15.4.4.9 steps 11 through 13.
-        for (unsigned i = count; i < oldLength; ++i) {
-            if ((i >= m_vectorLength) || (!m_storage->m_vector[i])) {
-                PropertySlot slot(this);
-                JSValue p = prototype();
-                if ((!p.isNull()) && (asObject(p)->getPropertySlot(exec, i, slot)))
-                    methodTable()->putByIndex(this, exec, i, slot.getValue(exec, i), false); // FIXME https://bugs.webkit.org/show_bug.cgi?id=80335
-            }
-        }
-
-        storage = m_storage; // The put() above could have grown the vector and realloc'ed storage.
-
-        // Need to decrement numValuesInvector based on number of real entries
-        for (unsigned i = 0; i < (unsigned)count; ++i)
-            if ((i < m_vectorLength) && (storage->m_vector[i]))
-                --storage->m_numValuesInVector;
-    } else
-        storage->m_numValuesInVector -= count;
-    
+    storage->m_numValuesInVector -= count;
     storage->m_length -= count;
     
     if (m_vectorLength) {
@@ -1358,30 +1341,20 @@ void JSArray::shiftCount(ExecState* exec, unsigned count)
             m_indexBias += count;
         }
     }
+    return true;
 }
-    
-void JSArray::unshiftCount(ExecState* exec, unsigned count)
+
+// Returns true if the unshift can be handled, false to fallback.    
+bool JSArray::unshiftCount(ExecState* exec, unsigned count)
 {
     ArrayStorage* storage = m_storage;
     unsigned length = storage->m_length;
 
-    if (length != storage->m_numValuesInVector) {
-        // If m_length and m_numValuesInVector aren't the same, we have a sparse vector
-        // which means we need to go through each entry looking for the the "empty"
-        // slots and then fill them with possible properties.  See ECMA spec.
-        // 15.4.4.13 steps 8 through 10.
-        for (unsigned i = 0; i < length; ++i) {
-            if ((i >= m_vectorLength) || (!m_storage->m_vector[i])) {
-                PropertySlot slot(this);
-                JSValue p = prototype();
-                if ((!p.isNull()) && (asObject(p)->getPropertySlot(exec, i, slot)))
-                    methodTable()->putByIndex(this, exec, i, slot.getValue(exec, i), false); // FIXME https://bugs.webkit.org/show_bug.cgi?id=80335
-            }
-        }
-    }
-    
-    storage = m_storage; // The put() above could have grown the vector and realloc'ed storage.
-    
+    // If the array contains holes or is otherwise in an abnormal state,
+    // use the generic algorithm in ArrayPrototype.
+    if (length != storage->m_numValuesInVector || inSparseMode())
+        return false;
+
     if (m_indexBias >= count) {
         m_indexBias -= count;
         char* newBaseStorage = reinterpret_cast<char*>(storage) - count * sizeof(WriteBarrier<Unknown>);
@@ -1390,12 +1363,13 @@ void JSArray::unshiftCount(ExecState* exec, unsigned count)
         m_vectorLength += count;
     } else if (!unshiftCountSlowCase(exec->globalData(), count)) {
         throwOutOfMemoryError(exec);
-        return;
+        return true;
     }
 
     WriteBarrier<Unknown>* vector = m_storage->m_vector;
     for (unsigned i = 0; i < count; i++)
         vector[i].clear();
+    return true;
 }
 
 void JSArray::visitChildren(JSCell* cell, SlotVisitor& visitor)

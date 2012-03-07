@@ -100,7 +100,7 @@ reportCompare('abc', value, summary + ': push');
 
 // pop
 value  = 'abc';
-expect = 'c';
+expect = 'TypeError: Unable to delete property.';
 try
 {
   actual = Array.prototype.pop.call(value);
@@ -128,7 +128,7 @@ reportCompare('def', value, summary + ': unshift');
 
 // shift
 value  = 'abc';
-expect = 'a';
+expect = 'TypeError: Unable to delete property.';
 try
 {
   actual = Array.prototype.shift.call(value);
@@ -142,7 +142,7 @@ reportCompare('abc', value, summary + ': shift');
 
 // splice
 value  = 'abc';
-expect = 'b';
+expect = 'TypeError: Unable to delete property.';
 try
 {
   actual = Array.prototype.splice.call(value, 1, 1) + '';
