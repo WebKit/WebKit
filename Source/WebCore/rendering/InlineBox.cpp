@@ -365,14 +365,14 @@ FloatPoint InlineBox::flipForWritingMode(const FloatPoint& point)
     return root()->block()->flipForWritingMode(point);
 }
 
-void InlineBox::flipForWritingMode(IntRect& rect)
+void InlineBox::flipForWritingMode(LayoutRect& rect)
 {
     if (!renderer()->style()->isFlippedBlocksWritingMode())
         return;
     root()->block()->flipForWritingMode(rect);
 }
 
-IntPoint InlineBox::flipForWritingMode(const IntPoint& point)
+LayoutPoint InlineBox::flipForWritingMode(const LayoutPoint& point)
 {
     if (!renderer()->style()->isFlippedBlocksWritingMode())
         return point;

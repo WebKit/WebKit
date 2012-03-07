@@ -56,9 +56,9 @@ InlineFlowBox::~InlineFlowBox()
 
 #endif
 
-int InlineFlowBox::getFlowSpacingLogicalWidth()
+LayoutUnit InlineFlowBox::getFlowSpacingLogicalWidth()
 {
-    int totWidth = marginBorderPaddingLogicalLeft() + marginBorderPaddingLogicalRight();
+    LayoutUnit totWidth = marginBorderPaddingLogicalLeft() + marginBorderPaddingLogicalRight();
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->isInlineFlowBox())
             totWidth += toInlineFlowBox(curr)->getFlowSpacingLogicalWidth();
@@ -397,8 +397,8 @@ float InlineFlowBox::placeBoxesInInlineDirection(float logicalLeft, bool& needsW
             } else if (!curr->renderer()->isListMarker() || toRenderListMarker(curr->renderer())->isInside()) {
                 // The box can have a different writing-mode than the overall line, so this is a bit complicated.
                 // Just get all the physical margin and overflow values by hand based off |isVertical|.
-                int logicalLeftMargin = isHorizontal() ? curr->boxModelObject()->marginLeft() : curr->boxModelObject()->marginTop();
-                int logicalRightMargin = isHorizontal() ? curr->boxModelObject()->marginRight() : curr->boxModelObject()->marginBottom();
+                LayoutUnit logicalLeftMargin = isHorizontal() ? curr->boxModelObject()->marginLeft() : curr->boxModelObject()->marginTop();
+                LayoutUnit logicalRightMargin = isHorizontal() ? curr->boxModelObject()->marginRight() : curr->boxModelObject()->marginBottom();
                 
                 logicalLeft += logicalLeftMargin;
                 curr->setLogicalLeft(logicalLeft);
@@ -700,10 +700,10 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
                 lineTop = pixelSnappedLogicalTop();
                 lineTopIncludingMargins = lineTop;
             } else {
-                lineTop = min(lineTop, pixelSnappedLogicalTop());
+                lineTop = min<LayoutUnit>(lineTop, pixelSnappedLogicalTop());
                 lineTopIncludingMargins = min(lineTop, lineTopIncludingMargins);
             }
-            lineBottom = max(lineBottom, pixelSnappedLogicalBottom());
+            lineBottom = max<LayoutUnit>(lineBottom, pixelSnappedLogicalBottom());
             lineBottomIncludingMargins = max(lineBottom, lineBottomIncludingMargins);
         }
         
@@ -1118,8 +1118,8 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
         }
         LayoutUnit stripX = rect.x() - (isHorizontal() ? logicalOffsetOnLine : zeroLayoutUnit);
         LayoutUnit stripY = rect.y() - (isHorizontal() ? zeroLayoutUnit : logicalOffsetOnLine);
-        LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : width();
-        LayoutUnit stripHeight = isHorizontal() ? height() : totalLogicalWidth;
+        LayoutUnit stripWidth = isHorizontal() ? totalLogicalWidth : static_cast<LayoutUnit>(width());
+        LayoutUnit stripHeight = isHorizontal() ? static_cast<LayoutUnit>(height()) : totalLogicalWidth;
 
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         paintInfo.context->clip(LayoutRect(rect.x(), rect.y(), width(), height()));

@@ -317,8 +317,8 @@ public:
     FloatPoint locationIncludingFlipping();
     void flipForWritingMode(FloatRect&);
     FloatPoint flipForWritingMode(const FloatPoint&);
-    void flipForWritingMode(IntRect&);
-    IntPoint flipForWritingMode(const IntPoint&);
+    void flipForWritingMode(LayoutRect&);
+    LayoutPoint flipForWritingMode(const LayoutPoint&);
 
     bool knownToHaveNoOverflow() const { return m_knownToHaveNoOverflow; }
     void clearKnownToHaveNoOverflow();
