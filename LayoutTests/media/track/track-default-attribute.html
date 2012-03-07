@@ -12,6 +12,7 @@
                 consoleWrite("EVENT(load)");
                 testExpected("event.target.readyState", HTMLTrackElement.LOADED);
                 testExpected("event.target.id", "default");
+                testExpected("event.target.default", true);
                 consoleWrite("");
 
                 // End the test after a brief pause so we allow other tracks to load if they will.

@@ -32,7 +32,7 @@ module html {
         attribute DOMString kind;
         attribute DOMString srclang;
         attribute DOMString label;
-        attribute [Reflect=default] boolean isDefault;
+        attribute [Reflect] boolean default;
 
         const unsigned short NONE = 0;
         const unsigned short LOADING = 1;
