@@ -107,7 +107,7 @@ class TestRunner:
         self._timed_out = True
         return True
 
-    def _ensure_accessibility_daemon_is_running(self, jhbuild_path):
+    def _ensure_accessibility_daemon_is_running(self, jhbuild_path, test_env):
         a11y_registryd_path = self._lookup_atspi2_binary(jhbuild_path, 'at-spi2-registryd')
         if a11y_registryd_path:
             try:
@@ -148,7 +148,7 @@ class TestRunner:
         self._start_time = time.time()
 
         def run_tests():
-            self._ensure_accessibility_daemon_is_running(jhbuild_path)
+            self._ensure_accessibility_daemon_is_running(jhbuild_path, test_env)
 
             for test in self._tests:
                 out = self._executive.run_command([jhbuild_path ,'gtester', test], env=test_env,

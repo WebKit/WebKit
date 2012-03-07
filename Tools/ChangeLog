@@ -1,5 +1,14 @@
 2012-03-07  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK build fix after r110059.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._check_if_tests_have_timed_out):
+        (TestRunner.run.run_tests):
+        (TestRunner):
+
+2012-03-07  Philippe Normand  <pnormand@igalia.com>
+
         [GTK] race condition in run-gtk-tests
         https://bugs.webkit.org/show_bug.cgi?id=80495
 
