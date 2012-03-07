@@ -61,6 +61,7 @@ BUGWK77523 WIN SLOW : media/media-fragments/TC0050-TC0059.html = PASS
 BUGWK77523 WIN RELEASE SLOW : media/media-fragments/TC0080-TC0089.html = PASS
 
 BUGWK79679 DEBUG GPU SLOW : fast/canvas/getPutImageDataPairTest.html = PASS
+BUGWK79679 DEBUG SLOW : platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html = PASS
 
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
@@ -102,6 +103,8 @@ BUGCR10395 SKIP : http/tests/webarchive = PASS FAIL
 // This will soon be fixed after implementing webkitLineDash for V8.
 BUGWK63933 : fast/canvas/canvas-webkitLineDash.html = FAIL
 BUGWK63933 : fast/canvas/canvas-webkitLineDash-invalid.html = FAIL
+BUGWK63933 : platform/chromium/virtual/gpu/fast/canvas/canvas-webkitLineDash.html = FAIL
+BUGWK63933 : platform/chromium/virtual/gpu/fast/canvas/canvas-webkitLineDash-invalid.html = FAIL
 
 // Microdata DOM API is not yet enabled.
 BUGWK68610 SKIP : fast/dom/MicroData = PASS
@@ -293,10 +296,12 @@ WONTFIX SKIP : plugins/set-status.html = TEXT
 // Test had to be decommissioned to fix https://bugs.webkit.org/show_bug.cgi?id=65709
 // We can re-enable the test when it gets changed upstream to become spec-compliant
 WONTFIX : canvas/philip/tests/2d.drawImage.outsidesource.html = TEXT
+WONTFIX : platform/chromium/virtual/gpu/canvas/philip/tests/2d.drawImage.outsidesource.html = TEXT
 
 // We don't care about dashboard compatibility mode.
 WONTFIX SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = FAIL
 WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
+WONTFIX SKIP : platform/chromium/virtual/gpu/fast/canvas/canvas-gradient-addStop-error.html = FAIL
 
 // Chrome uses different keyboard accelerators from those used by Safari, so
 // this test will always fail.
@@ -915,6 +920,8 @@ BUGCR23270 LINUX WIN : fast/css/font-smoothing.html = FAIL
 // Make canvas shadow work with drawImage.
 BUGCR11153 LINUX WIN : fast/canvas/canvas-incremental-repaint-2.html = FAIL
 BUGCR11153 LINUX WIN : fast/canvas/canvas-incremental-repaint.html = FAIL
+BUGCR11153 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = FAIL
+BUGCR11153 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html = FAIL
 
 // test_shell, DRT do not correctly schedule paints when invalidating.
 BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
@@ -1158,9 +1165,11 @@ BUGWK73912 SNOWLEOPARD : accessibility/aria-checkbox-sends-notification.html = T
 
 // This test is slow due to Mesa slowness.
 WONTFIX GPU : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
+WONTFIX : platform/chromium/virtual/gpu/canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 
 // This test is overly-finicky about pixel values.
 BUGWK64876 LINUX WIN GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
+BUGWK64876 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
 
 BUGWK75276 CPU : fast/repaint/shadow-multiple-horizontal.html = IMAGE
 BUGWK75276 CPU : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
@@ -1208,6 +1217,7 @@ BUGCR24209 : fast/js/pic/cached-prototype-setter.html = FAIL
 // We're much closer now. To fully pass this we need encoders for jpg
 // and gif, which is a low priority.
 BUGCR10318 : fast/canvas/toDataURL-supportedTypes.html = FAIL
+BUGCR10318 : platform/chromium/virtual/gpu/fast/canvas/toDataURL-supportedTypes.html = FAIL
 
 // Regression from the 41362:41402 merge.
 BUGCR8402 MAC : fast/forms/drag-out-of-textarea.html = FAIL
@@ -1379,6 +1389,7 @@ BUGCR23488 LEOPARD RELEASE : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUGCR23488 SLOW LEOPARD DEBUG : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUGCR23488 LEOPARD : fast/block/float/float-avoidance.html = IMAGE
 BUGCR23488 MAC : fast/canvas/canvas-incremental-repaint-2.html = IMAGE
+BUGCR23488 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = IMAGE
 BUGCR23488 LEOPARD : fast/frames/content-opacity-1.html = IMAGE
 BUGCR23488 LEOPARD : fast/frames/content-opacity-2.html = IMAGE
 BUGCR23488 MAC : fast/layers/add-layer-with-nested-stacking.html = IMAGE
@@ -1395,7 +1406,10 @@ BUGCR23489 MAC : fast/table/empty-section-crash.html = IMAGE
 // Various drawing tests that are broken
 BUGCR23477 MAC : fast/backgrounds/bgCompositeCopy.html = IMAGE
 BUGCR23477 MAC : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
+BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
 BUGCR23477 MAC : fast/canvas/canvas-incremental-repaint.html = IMAGE
+BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html = IMAGE
+BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
 BUGCR23477 MAC : fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
 BUGCR23477 MAC : fast/dynamic/containing-block-change.html = IMAGE
 
@@ -1976,17 +1990,33 @@ BUGCR43890 WIN : http/tests/loading/basic.html = PASS TEXT
 // The following tests fail on all platforms and need further investigation.
 // Many of these are skipped on the Mac platform
 BUGWK45991 : canvas/philip/tests/2d.drawImage.broken.html = TEXT
+BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.drawImage.broken.html = TEXT
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
+BUGWK45991 WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
 BUGWK45991 LINUX RELEASE : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
+BUGWK45991 LINUX RELEASE : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
 BUGWK45991 LINUX DEBUG : canvas/philip/tests/2d.gradient.radial.cone.top.html = TIMEOUT TEXT
+BUGWK45991 LINUX DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top.html = TIMEOUT TEXT
+
 BUGWK39212 : canvas/philip/tests/2d.imageData.create1.type.html = TEXT
 BUGWK39212 : canvas/philip/tests/2d.imageData.create2.type.html = TEXT
 BUGWK39212 : canvas/philip/tests/2d.imageData.get.type.html = TEXT
+BUGWK39212 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.create1.type.html = TEXT
+BUGWK39212 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.create2.type.html = TEXT
+BUGWK39212 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.get.type.html = TEXT
+
 BUGWK40272 : canvas/philip/tests/2d.imageData.object.round.html = TEXT
 BUGWK40272 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
+BUGWK40272 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.object.round.html = TEXT
+BUGWK40272 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
+
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
+BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.image.broken.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
+
 BUGWK50797 : canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
+BUGWK50797 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
 
 // Update canvas/philip in WK r71481
 BUGCR62301 : canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
@@ -1994,30 +2024,62 @@ BUGCR62301 : canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT
 BUGCR62301 : canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = TEXT
 BUGCR62301 : canvas/philip/tests/2d.pattern.image.incomplete.empty.html = TEXT
 BUGCR62301 : canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
+BUGCR62301 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
+BUGCR62301 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT
+BUGCR62301 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = TEXT
+BUGCR62301 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.image.incomplete.empty.html = TEXT
+BUGCR62301 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
 
 BUGWK48288 : canvas/philip/tests/2d.composite.operation.clear.html = TEXT
+BUGWK48288 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.composite.operation.clear.html = TEXT
+
 BUGWK48289 : canvas/philip/tests/2d.composite.operation.darker.html = TEXT
+BUGWK48289 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.composite.operation.darker.html = TEXT
+
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT
+BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
+BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
+BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT
+
 BUGWK38463 : canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT
+BUGWK38463 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT
+
 BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.other.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT
+BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
+BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html = TEXT
+BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.other.html = TEXT
+BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
+BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT
+
 BUGWK50859 : canvas/philip/tests/2d.text.font.parse.basic.html = TEXT
 BUGWK50859 : canvas/philip/tests/2d.text.font.parse.complex.html = TEXT
 BUGWK50859 : canvas/philip/tests/2d.text.font.parse.invalid.html = TEXT
 BUGWK50859 : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = TEXT
 BUGWK50859 : canvas/philip/tests/2d.text.font.parse.size.percentage.html = TEXT
 BUGWK50859 : canvas/philip/tests/2d.text.font.parse.system.html = TEXT
+BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.basic.html = TEXT
+BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.complex.html = TEXT
+BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.invalid.html = TEXT
+BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = TEXT
+BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.size.percentage.html = TEXT
+BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.system.html = TEXT
+
 BUGWK45991 : canvas/philip/tests/2d.text.measure.width.space.html = TEXT
+BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.measure.width.space.html = TEXT
 
 // These tests fail everywhere we use skia and are most likely skia bugs
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.behind.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.behind.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
+BUGWK45991 WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGWK45991 LINUX CPU : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.shape2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
@@ -2034,9 +2096,22 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html 
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
 BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.shape2.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch1.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch3.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGWK45991 MAC GPU : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
+BUGWK45991 MAC : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
+BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 BUGWK45991 MAC GPU : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
+BUGWK45991 MAC : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
 // These SVG tests have been flaky on Win from quite some time.
 // Hard to pin down which roll introduced the flakiness.
@@ -2183,22 +2258,33 @@ BUGWK60092 SLOW LINUX WIN DEBUG : fast/forms/select-set-length-with-mutation-rem
 BUGWK60093 SLOW LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = PASS
 
 BUGWEBGL WIN : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = PASS TIMEOUT
+BUGWEBGL WIN : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = PASS CRASH
 BUGWEBGL : fast/canvas/webgl/read-pixels-test.html = TIMEOUT
+BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/read-pixels-test.html = TIMEOUT
 
 // These three failures are due to Mesa bugs
 BUGWEBGL : fast/canvas/webgl/framebuffer-object-attachment.html = TEXT
 BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TIMEOUT TEXT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
+BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/framebuffer-object-attachment.html = TEXT
+BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-uniform-arrays.html = TIMEOUT TEXT
+BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/point-size.html = TEXT
 BUGWEBGL LINUX MAC : fast/canvas/webgl/gl-object-get-calls.html = TEXT
+BUGWEBGL LINUX MAC : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-object-get-calls.html = TEXT
 
 BUGWEBGL LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = PASS TEXT
+BUGWEBGL LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = PASS TEXT
 
 BUGWEBGL SLOW WIN DEBUG GPU : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = PASS
+BUGWEBGL SLOW WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = PASS
 BUGWEBGL SLOW WIN DEBUG GPU : fast/canvas/webgl/index-validation-with-resized-buffer.html = PASS
+BUGWEBGL SLOW WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/index-validation-with-resized-buffer.html = PASS
 
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
 BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = PASS TIMEOUT TEXT
+BUGCR60651 WIN : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-object-get-calls.html = PASS TIMEOUT TEXT
 BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
+BUGCR60651 : platform/chromium/virtual/gpu/fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 
 // nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
 BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
@@ -2310,6 +2396,7 @@ BUGCR61739 WIN RELEASE : animations/suspend-resume-animation-events.html = TEXT 
 BUGWK52509 LINUX WIN : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
 BUGWK52509 LEOPARD : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
 BUGCR63921 : fast/canvas/canvas-fillPath-shadow.html = TEXT
+BUGCR63921 : platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html = TEXT
 
 // Mainly flaky with mac debug, but also intermittent crashes seen on linux and windows
 BUGCR64129 : fast/files/revoke-blob-url.html = PASS CRASH
@@ -2392,6 +2479,7 @@ BUGCR66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
 BUGCR66099 SKIP : fast/js/array-sort-modifying-tostring.html = CRASH TIMEOUT TEXT
 
 BUGCR66683 LINUX WIN : fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
+BUGCR66683 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
 BUGCR66686 : fast/loader/user-stylesheet-fast-path.html = TEXT
 
 BUGCR66751 : http/tests/local/link-stylesheet-load-order-preload.html = PASS TIMEOUT TEXT
@@ -2415,6 +2503,7 @@ BUGCR67540 LINUX WIN : fast/repaint/text-emphasis-h.html = FAIL
 BUGCR67540 LINUX WIN : fast/repaint/text-emphasis-v.html = IMAGE
 
 BUGCR67442 LINUX WIN : fast/canvas/fillText-shadow.html = TEXT
+BUGCR67442 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/fillText-shadow.html = TEXT
 
 BUGWK51720 DEBUG : http/tests/incremental/split-hex-entities.pl = PASS CRASH
 
@@ -2507,6 +2596,7 @@ BUGCR71783 MAC : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 // Combination of unpremul plus gradient computation at half-integer coords causes
 // this to fail.
 BUGWK77550 GPU : canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
+BUGWK77550 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
 
 // These will have slight differences on the edges of antialiased paths and need rebaseling
 BUGBSALOMON GPU : fast/canvas/arc360.html = IMAGE
@@ -2515,6 +2605,12 @@ BUGBSALOMON GPU : fast/canvas/canvas-composite.html = IMAGE
 BUGBSALOMON GPU : fast/canvas/canvas-transform-skewed.html = IMAGE
 BUGBSALOMON GPU : fast/canvas/image-object-in-canvas.html = IMAGE
 BUGBSALOMON GPU : fast/canvas/image-pattern-rotate.html = IMAGE
+BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/arc360.html = IMAGE
+BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite-transformclip.html = IMAGE
+BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite.html = IMAGE
+BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-transform-skewed.html = IMAGE
+BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas.html = IMAGE
+BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate.html = IMAGE
 
 // Will need windows and linux baselines
 
@@ -2553,6 +2649,7 @@ BUGWK49629 SKIP : platform/chromium/compositing/lots-of-img-layers-with-opacity.
 BUGWK49629 SKIP : compositing/iframes/page-cache-layer-tree.html = PASS
 
 BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
+BUGNONE SLOW WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-getImageData.html = PASS
 
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
 BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
@@ -2586,6 +2683,7 @@ BUGV8_1168 : fast/js/mozilla/strict/8.12.5.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/B.1.2.html = TEXT
 
 BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
+BUGV8_1203 DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-get-calls.html = PASS CRASH
 
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 
@@ -2618,6 +2716,8 @@ BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS
 
 // Flaky
 BUGCR76610 MAC WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
+BUGCR76610 MAC WIN DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
+
 BUGCR76716 LINUX WIN DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
 
 // New in WebKit r81404. Text orientation is wrong and emphasis marks are wrong.
@@ -2890,6 +2990,7 @@ BUGCR83290 WIN : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS T
 
 // Started crashing after seemingly unrelated r85786
 BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = PASS CRASH
+BUGCR83325 MAC DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.put.created.html = PASS CRASH
 
 // Appears to be a configuration error in the Mac 10.6 deps
 // Has been going on for at least a few weeks (as of 20/5/2011)
@@ -2930,6 +3031,7 @@ BUGWK66320 DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE IMAGE+TEXT
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
 
 BUGCR84157 WIN GPU : fast/canvas/canvas-currentColor.html = TEXT
+BUGCR84157 WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
 
 BUGWK62255 LEOPARD DEBUG : animations/animation-iteration-event-destroy-renderer.html = PASS TIMEOUT
 
@@ -3136,6 +3238,8 @@ BUGWK66873 SLOW WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TE
 BUGWK66900 LINUX DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 
 BUGWK66908 GPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
+BUGWK66908 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
+
 BUGWK66908 : fast/css/font-face-woff.html = PASS IMAGE+TEXT
 BUGWK66908 : svg/custom/svg-fonts-fallback.xhtml = PASS IMAGE+TEXT IMAGE
 BUGWK66908 WIN SNOWLEOPARD : fast/css/font-face-multiple-faces.html = PASS IMAGE+TEXT
@@ -3173,6 +3277,7 @@ BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 
 // Tests that are known to exhibit TEXT failures on Mac10.5 with Skia (CPU and/or GPU) graphics.
 BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD GPU : fast/canvas/set-colors.html = TEXT
+BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD : platform/chromium/virtual/gpu/fast/canvas/set-colors.html = TEXT
 // Failures introduced by USE_NEW_BUILDER in Skia.
 BUGCR33287 CPU : fast/canvas/set-colors.html = TEXT
 
@@ -3183,6 +3288,12 @@ BUGWK68437 LEOPARD GPU : fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/fillrect_gradient.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/patternfill-repeat.html = IMAGE
 BUGWK68437 LEOPARD GPU : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
+BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment.html = IMAGE
+BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-during-path.html = IMAGE
+BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
+BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient.html = IMAGE
+BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/patternfill-repeat.html = IMAGE
+BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
 
 // Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with CPU-Skia graphics.
 BUGWK68437 LEOPARD CPU : printing/return-from-printing-mode.html = IMAGE
@@ -3314,6 +3425,7 @@ BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
 BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 
 BUGWK71211 GPU LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
+BUGWK71211 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/shadow-offset-3.html = PASS CRASH
 
 BUGWK71673 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = TEXT IMAGE IMAGE+TEXT
 BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS IMAGE IMAGE+TEXT
@@ -3335,6 +3447,7 @@ BUGWK72053 MAC DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl
 BUGWK72053 MAC DEBUG : fast/borders/block-mask-overlay-image-outset.html = PASS CRASH
 
 BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
+BUG_SENORBLANCO : platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 BUGWK66953 : transitions/default-timing-function.html = PASS FAIL
 
@@ -3379,6 +3492,7 @@ BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-per
 BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT PASS
 
 BUGWK73607 GPU LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
+BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
 
 // Tests needing rebaseline after bug 73643 patch
 BUGWK73643 WIN MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE
@@ -3419,6 +3533,7 @@ BUGWK74050 : compositing/reflections/simple-composited-reflections.html = IMAGE 
 BUGWK74050 : compositing/reflections/nested-reflection-mask-change.html = IMAGE PASS
 
 BUGWK74055 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
+BUGWK74055 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/canvas-largedraws.html = TIMEOUT
 
 BUGWK74157 SNOWLEOPARD : animations/cross-fade-border-image-source.html = IMAGE
 BUGWK74157 SNOWLEOPARD : transitions/cross-fade-border-image.html = IMAGE+TEXT IMAGE
@@ -3501,8 +3616,10 @@ BUGWK76558 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TE
 
 // This test is passing, but it doesn't seem possible to add GPU+Leopard specific baselines.
 BUGJAMESR LEOPARD GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
+BUGJAMESR LEOPARD : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
 
 BUGWK77187 WIN GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
+BUGWK77187 WIN : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
 
 BUGWK76511 : compositing/geometry/video-opacity-overlay.html = IMAGE PASS
 BUGWK76511 : compositing/geometry/video-fixed-scrolling.html = IMAGE
@@ -3547,6 +3664,7 @@ BUGABARTH : fast/html/marquee-alternate.html = PASS TEXT
 BUGWK77061 XP DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE+TEXT
 
 BUGWK77188 MAC GPU : fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
+BUGWK77188 MAC : platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
 
 BUGWK77303 : fast/js/reserved-words-strict.html = TEXT
 BUGWK77303 : fast/js/keywords-and-reserved_words.html = TEXT
@@ -3595,6 +3713,7 @@ BUGWK78422 WIN LINUX : svg/animations/animate-text-nested-transforms.html = TEXT
 BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
 
 BUGWK78529 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGWK78529 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment.html = IMAGE
 
 BUGWK78561 WIN : css3/filters/crash-hw-sw-switch.html = MISSING
 BUGWK78561 WIN : css3/filters/filter-empty-element-crash.html = MISSING
@@ -3981,6 +4100,7 @@ BUGCR113063 LEOPARD DEBUG : storage/indexeddb/basics-workers.html = PASS CRASH
 BUGCR115073 SLOW LINUX DEBUG : inspector/debugger/script-formatter-breakpoints.html = PASS CRASH
 
 BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
+BUGWK79224 VISTA WIN7 : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 
 // Need rebaselining after bug 75091
 BUGWK75091 : svg/carto.net/tabgroup.svg = FAIL
@@ -4036,117 +4156,6 @@ BUGWK80067 DEBUG : media/track/track-cues-pause-on-exit.html = PASS TEXT
 BUGWK80068 WIN DEBUG : media/video-source-error.html = PASS TEXT
 
 BUGV8_1973 : fast/js/caller-property.html = TEXT
-
-// FIXME: sort these in next to the non-virtual expectations.
-BUGWK79679 DEBUG SLOW : platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html = PASS
-BUGWK63933 : platform/chromium/virtual/gpu/fast/canvas/canvas-webkitLineDash.html = FAIL
-BUGWK63933 : platform/chromium/virtual/gpu/fast/canvas/canvas-webkitLineDash-invalid.html = FAIL
-WONTFIX SKIP : platform/chromium/virtual/gpu/fast/canvas/canvas-gradient-addStop-error.html = FAIL
-BUGCR11153 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = FAIL
-BUGCR11153 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html = FAIL
-BUGWK64876 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
-BUGCR10318 : platform/chromium/virtual/gpu/fast/canvas/toDataURL-supportedTypes.html = FAIL
-BUGCR23488 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = IMAGE
-BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
-BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html = IMAGE
-BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
-BUGWEBGL WIN : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = PASS CRASH
-BUGWEBGL WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/texture-complete.html = PASS TEXT
-BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/read-pixels-test.html = TIMEOUT
-BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/framebuffer-object-attachment.html = TEXT
-BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-uniform-arrays.html = TIMEOUT TEXT
-BUGWEBGL : platform/chromium/virtual/gpu/fast/canvas/webgl/point-size.html = TEXT
-BUGWEBGL LINUX MAC : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-object-get-calls.html = TEXT
-BUGWEBGL LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = PASS TEXT
-BUGWEBGL SLOW WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = PASS
-BUGWEBGL SLOW WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/index-validation-with-resized-buffer.html = PASS
-BUGCR60651 WIN : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-object-get-calls.html = PASS TIMEOUT TEXT
-BUGCR60651 : platform/chromium/virtual/gpu/fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
-BUGCR63921 : platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html = TEXT
-BUGCR66683 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
-BUGCR67442 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/fillText-shadow.html = TEXT
-BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/arc360.html = IMAGE
-BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite-transformclip.html = IMAGE
-BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite.html = IMAGE
-BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-transform-skewed.html = IMAGE
-BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas.html = IMAGE
-BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate.html = IMAGE
-BUGNONE SLOW WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-getImageData.html = PASS
-BUGV8_1203 DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-get-calls.html = PASS CRASH
-BUGCR84157 WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
-BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD : platform/chromium/virtual/gpu/fast/canvas/set-colors.html = TEXT
-BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment.html = IMAGE
-BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-during-path.html = IMAGE
-BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
-BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient.html = IMAGE
-BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/patternfill-repeat.html = IMAGE
-BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
-BUGWK71211 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/shadow-offset-3.html = PASS CRASH
-BUG_SENORBLANCO : platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
-BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
-BUGWK74055 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/canvas-largedraws.html = TIMEOUT
-BUGJAMESR LEOPARD : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
-BUGWK77187 WIN : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
-BUGWK77188 MAC : platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
-BUGWK78529 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment.html = IMAGE
-BUGWK79224 VISTA WIN7 : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
-WONTFIX : platform/chromium/virtual/gpu/canvas/philip/tests/2d.drawImage.outsidesource.html = TEXT
-WONTFIX : platform/chromium/virtual/gpu/canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
-BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.drawImage.broken.html = TEXT
-BUGWK45991 WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
-BUGWK45991 LINUX RELEASE : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
-BUGWK45991 LINUX DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top.html = TIMEOUT TEXT
-BUGWK39212 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.create1.type.html = TEXT
-BUGWK39212 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.create2.type.html = TEXT
-BUGWK39212 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.get.type.html = TEXT
-BUGWK40272 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.object.round.html = TEXT
-BUGWK40272 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
-BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.image.broken.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
-BUGWK50797 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
-BUGCR62301 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
-BUGCR62301 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html = TEXT
-BUGCR62301 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html = TEXT
-BUGCR62301 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.image.incomplete.empty.html = TEXT
-BUGCR62301 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
-BUGWK48288 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.composite.operation.clear.html = TEXT
-BUGWK48289 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.composite.operation.darker.html = TEXT
-BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
-BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
-BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT
-BUGWK38463 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT
-BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
-BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html = TEXT
-BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.other.html = TEXT
-BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
-BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT
-BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.basic.html = TEXT
-BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.complex.html = TEXT
-BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.invalid.html = TEXT
-BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = TEXT
-BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.size.percentage.html = TEXT
-BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.system.html = TEXT
-BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.measure.width.space.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.behind.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
-BUGWK45991 WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.shape2.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch1.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch3.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
-BUGWK45991 MAC : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
-BUGWK45991 MAC : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
-BUGWK77550 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
-BUGCR76610 MAC WIN DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
-BUGCR83325 MAC DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.imageData.put.created.html = PASS CRASH
-BUGWK66908 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
 
 //NEED REBASELINING
 BUGWK78684 : fast/block/basic/fieldset-stretch-to-legend.html = FAIL
