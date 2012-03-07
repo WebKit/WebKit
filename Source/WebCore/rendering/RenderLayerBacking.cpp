@@ -227,6 +227,26 @@ static bool layerOrAncestorIsFullScreen(RenderLayer* layer)
 }
 #endif
 
+bool RenderLayerBacking::shouldClipCompositedBounds() const
+{
+    if (m_usingTiledCacheLayer)
+        return true;
+
+    if (!compositor()->compositingConsultsOverlap())
+        return false;
+
+    if (layerOrAncestorIsTransformed(m_owningLayer))
+        return false;
+
+#if ENABLE(FULLSCREEN_API)
+    if (layerOrAncestorIsFullScreen(m_owningLayer))
+        return false;
+#endif
+
+    return true;
+}
+
+
 void RenderLayerBacking::updateCompositedBounds()
 {
     IntRect layerBounds = compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer);
@@ -236,11 +256,7 @@ void RenderLayerBacking::updateCompositedBounds()
     // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.  If this
     // is a fullscreen renderer, don't clip to the viewport, as the renderer will be asked to
     // display outside of the viewport bounds.
-    if (compositor()->compositingConsultsOverlap() && (!layerOrAncestorIsTransformed(m_owningLayer) || m_usingTiledCacheLayer)
-#if ENABLE(FULLSCREEN_API)
-        && !layerOrAncestorIsFullScreen(m_owningLayer)
-#endif
-        ) {
+    if (shouldClipCompositedBounds()) {
         RenderView* view = m_owningLayer->renderer()->view();
         RenderLayer* rootLayer = view->layer();
 

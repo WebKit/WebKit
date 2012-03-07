@@ -199,7 +199,9 @@ private:
 
     bool containsNonEmptyRenderers() const;
     bool hasVisibleNonCompositingDescendantLayers() const;
-    
+
+    bool shouldClipCompositedBounds() const;
+
     void paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect, PaintBehavior, GraphicsLayerPaintingPhase, RenderObject* paintingRoot);
 
     static int graphicsLayerToCSSProperty(AnimatedPropertyID);
