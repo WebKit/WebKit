@@ -179,11 +179,11 @@ class Lighttpd(http_server_base.HttpServerBase):
         # bug that mod_alias.so loads it from the hard coded path.
         if sys.platform == 'darwin':
             tmp_module_path = '/tmp/lighttpd/lib'
-            if not os.path.exists(tmp_module_path):
-                os.makedirs(tmp_module_path)
+            if not self._filesystem.exists(tmp_module_path):
+                self._filesystem.maybe_make_directory(tmp_module_path)
             lib_file = 'liblightcomp.dylib'
-            self._filesystem.copyfile(os.path.join(module_path, lib_file),
-                                      os.path.join(tmp_module_path, lib_file))
+            self._filesystem.copyfile(self._filesystem.join(module_path, lib_file),
+                                      self._filesystem.join(tmp_module_path, lib_file))
 
         self._start_cmd = start_cmd
         self._env = self._port_obj.setup_environ_for_server('lighttpd')
