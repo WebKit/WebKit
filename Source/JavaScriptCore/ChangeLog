@@ -1,3 +1,18 @@
+2012-03-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        ARM build fix.
+
+        Reviewed by Zoltan Herczeg.
+
+        Implement three-argument branch(Add,Sub)32.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::add32):
+        (MacroAssemblerARM):
+        (JSC::MacroAssemblerARM::sub32):
+        (JSC::MacroAssemblerARM::branchAdd32):
+        (JSC::MacroAssemblerARM::branchSub32):
+
 2012-03-07  Andy Wingo  <wingo@igalia.com>
 
         Parser: Inline ScopeNodeData into ScopeNode

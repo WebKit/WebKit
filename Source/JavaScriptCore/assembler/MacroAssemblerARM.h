@@ -108,6 +108,11 @@ public:
         add32(ARMRegisters::S1, dest);
     }
 
+    void add32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.adds_r(dest, src, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
+    }
+
     void and32(RegisterID src, RegisterID dest)
     {
         m_assembler.ands_r(dest, dest, src);
@@ -234,6 +239,11 @@ public:
     {
         load32(src, ARMRegisters::S1);
         sub32(ARMRegisters::S1, dest);
+    }
+
+    void sub32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.subs_r(dest, src, m_assembler.getImm(imm.m_value, ARMRegisters::S0));
     }
 
     void xor32(RegisterID src, RegisterID dest)
@@ -554,6 +564,13 @@ public:
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
+    Jump branchAdd32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        add32(src, imm, dest);
+        return Jump(m_assembler.jmp(ARMCondition(cond)));
+    }
+
     void mull32(RegisterID src1, RegisterID src2, RegisterID dest)
     {
         if (src1 == dest) {
@@ -600,6 +617,13 @@ public:
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         sub32(imm, dest);
+        return Jump(m_assembler.jmp(ARMCondition(cond)));
+    }
+
+    Jump branchSub32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        sub32(src, imm, dest);
         return Jump(m_assembler.jmp(ARMCondition(cond)));
     }
 
