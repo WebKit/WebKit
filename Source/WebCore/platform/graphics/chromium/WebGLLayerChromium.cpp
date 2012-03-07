@@ -54,6 +54,7 @@ WebGLLayerChromium::WebGLLayerChromium()
     , m_textureId(0)
     , m_textureChanged(true)
     , m_textureUpdated(false)
+    , m_contextLost(false)
     , m_drawingBuffer(0)
 {
 }
@@ -66,17 +67,23 @@ WebGLLayerChromium::~WebGLLayerChromium()
 
 bool WebGLLayerChromium::drawsContent() const
 {
-    return LayerChromium::drawsContent() && context() && (context()->getExtensions()->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR);
+    return LayerChromium::drawsContent() && !m_contextLost;
+}
+
+void WebGLLayerChromium::paintContentsIfDirty(const Region&)
+{
+    if (!drawsContent() || !m_needsDisplay || !m_textureUpdated)
+        return;
+
+    drawingBuffer()->publishToPlatformLayer();
+    context()->markLayerComposited();
+    m_needsDisplay = false;
+    m_textureUpdated = false;
+    m_contextLost = context()->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
 }
 
 void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererContext, CCTextureUpdater&)
 {
-    if (!drawsContent())
-        return;
-
-    if (!m_needsDisplay)
-        return;
-
     if (m_textureChanged) {
         rendererContext->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
         // Set the min-mag filters to linear and wrap modes to GL_CLAMP_TO_EDGE
@@ -86,14 +93,6 @@ void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererCo
         rendererContext->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
         rendererContext->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
         m_textureChanged = false;
-    }
-    // Update the contents of the texture used by the compositor.
-    if (m_needsDisplay && m_textureUpdated) {
-        // publishToPlatformLayer prepares the contents of the off-screen render target for use by the compositor.
-        drawingBuffer()->publishToPlatformLayer();
-        context()->markLayerComposited();
-        m_needsDisplay = false;
-        m_textureUpdated = false;
     }
 }
 
@@ -163,6 +162,7 @@ void WebGLLayerChromium::setDrawingBuffer(DrawingBuffer* drawingBuffer)
     GraphicsContext3D::Attributes attributes = context()->getContextAttributes();
     m_hasAlpha = attributes.alpha;
     m_premultipliedAlpha = attributes.premultipliedAlpha;
+    m_contextLost = context()->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
 }
 
 GraphicsContext3D* WebGLLayerChromium::context() const
