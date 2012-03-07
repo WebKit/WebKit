@@ -169,6 +169,7 @@ public:
 #endif
 
     virtual String mediaPlayerReferrer() const { return String(); }
+    virtual String mediaPlayerUserAgent() const { return String(); }
 };
 
 class MediaPlayer {
@@ -336,6 +337,7 @@ public:
 #endif
 
     String referrer() const;
+    String userAgent() const;
 
 private:
     MediaPlayer(MediaPlayerClient*);

@@ -4062,6 +4062,16 @@ String HTMLMediaElement::mediaPlayerReferrer() const
     return SecurityPolicy::generateReferrerHeader(document()->referrerPolicy(), m_currentSrc, frame->loader()->outgoingReferrer());
 }
 
+String HTMLMediaElement::mediaPlayerUserAgent() const
+{
+    Frame* frame = document()->frame();
+    if (!frame)
+        return String();
+
+    return frame->loader()->userAgent(m_currentSrc);
+
+}
+
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 {
     m_restrictions = NoRestrictions;

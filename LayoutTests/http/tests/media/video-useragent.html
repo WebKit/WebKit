@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-file.js></script>
+        <script>
+            function loadMediaFrame() 
+            {
+                findMediaElement();
+
+                var movie = findMediaFile('video', 'test');
+                var type = mimeTypeForExtension(movie.split('.').pop());
+                var frame = document.createElement('iframe');
+                frame.width = 0;
+                frame.height = 0;
+                frame.addEventListener('load', function () {
+                        source = document.getElementById('source');
+                        source.src = 'http://127.0.0.1:8000/media/resources/video-check-useragent.php?name=' + movie + '&type=' + type;
+                        source.type = type;
+        
+                        waitForEventAndFail('error');
+                        waitForEventAndEnd('canplay');
+                        video.load();
+                });
+        
+                frame.src = "data:text/html,<b>test</b>";
+                document.body.appendChild(frame);
+            }
+        </script>
+    </head>
+
+    <body onload="loadMediaFrame()">
+        <video id="video">
+            <source id="source">
+        </video>
+        <br>
+        Tests that the media player sends the WebKit User Agent string when requesting a media file.
+    </body>
+</html>

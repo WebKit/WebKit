@@ -937,6 +937,14 @@ String MediaPlayer::referrer() const
     return m_mediaPlayerClient->mediaPlayerReferrer();
 }
 
+String MediaPlayer::userAgent() const
+{
+    if (!m_mediaPlayerClient)
+        return String();
+    
+    return m_mediaPlayerClient->mediaPlayerUserAgent();
+}
+
 }
 
 #endif

@@ -390,6 +390,7 @@ private:
 #endif
 
     virtual String mediaPlayerReferrer() const OVERRIDE;
+    virtual String mediaPlayerUserAgent() const OVERRIDE;
 
     void loadTimerFired(Timer<HTMLMediaElement>*);
     void progressEventTimerFired(Timer<HTMLMediaElement>*);

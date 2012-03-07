@@ -261,12 +261,18 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     [options.get() setObject:[NSNumber numberWithInt:AVAssetReferenceRestrictionForbidRemoteReferenceToLocal | AVAssetReferenceRestrictionForbidLocalReferenceToRemote] forKey:AVURLAssetReferenceRestrictionsKey];
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+    RetainPtr<NSMutableDictionary> headerFields(AdoptNS, [[NSMutableDictionary alloc] init]);
+
     String referrer = player()->referrer();
-    if (!referrer.isEmpty()) {
-        RetainPtr<NSMutableDictionary> headerFields(AdoptNS, [[NSMutableDictionary alloc] init]);
+    if (!referrer.isEmpty())
         [headerFields.get() setObject:referrer forKey:@"Referer"];
+
+    String userAgent = player()->userAgent();
+    if (!userAgent.isEmpty())
+        [headerFields.get() setObject:userAgent forKey:@"User-Agent"];
+
+    if ([headerFields.get() count])
         [options.get() setObject:headerFields.get() forKey:@"AVURLAssetHTTPHeaderFieldsKey"];
-    }
 #endif
 
     NSURL *cocoaURL = KURL(ParsedURLString, url);
