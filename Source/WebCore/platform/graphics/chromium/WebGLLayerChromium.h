@@ -67,8 +67,6 @@ private:
     WebGLLayerChromium();
     friend class WebGLLayerChromiumRateLimitTask;
 
-    GraphicsContext3D* layerRendererContext();
-
     bool m_hasAlpha;
     bool m_premultipliedAlpha;
     unsigned m_textureId;

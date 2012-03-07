@@ -108,20 +108,26 @@ void WebGLLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 
 bool WebGLLayerChromium::paintRenderedResultsToCanvas(ImageBuffer* imageBuffer)
 {
-    if (m_textureUpdated || !layerRendererContext() || !drawsContent())
+    if (m_textureUpdated || !m_drawingBuffer || !drawsContent())
         return false;
 
     IntSize framebufferSize = context()->getInternalFramebufferSize();
-    ASSERT(layerRendererContext());
 
-    // This would ideally be done in the webgl context, but that isn't possible yet.
-    Platform3DObject framebuffer = layerRendererContext()->createFramebuffer();
-    layerRendererContext()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, framebuffer);
-    layerRendererContext()->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_textureId, 0);
+    // Since we're using the same context as WebGL, we have to restore any state we change (in this case, just the framebuffer binding).
+    // FIXME: The WebGLRenderingContext tracks the current framebuffer binding, it would be slightly more efficient to use this value
+    // rather than querying it off of the context.
+    GC3Dint previousFramebuffer = 0;
+    context()->getIntegerv(GraphicsContext3D::FRAMEBUFFER_BINDING, &previousFramebuffer);
 
-    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(layerRendererContext()->getExtensions());
+    Platform3DObject framebuffer = context()->createFramebuffer();
+    context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, framebuffer);
+    context()->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_textureId, 0);
+
+    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context()->getExtensions());
     extensions->paintFramebufferToCanvas(framebuffer, framebufferSize.width(), framebufferSize.height(), !context()->getContextAttributes().premultipliedAlpha, imageBuffer);
-    layerRendererContext()->deleteFramebuffer(framebuffer);
+    context()->deleteFramebuffer(framebuffer);
+
+    context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, previousFramebuffer);
     return true;
 }
 
@@ -171,15 +177,6 @@ GraphicsContext3D* WebGLLayerChromium::context() const
         return drawingBuffer()->graphicsContext3D().get();
 
     return 0;
-}
-
-GraphicsContext3D* WebGLLayerChromium::layerRendererContext()
-{
-    // FIXME: In the threaded case, paintRenderedResultsToCanvas must be
-    // refactored to be asynchronous. Currently this is unimplemented.
-    if (!layerTreeHost() || CCProxy::hasImplThread())
-        return 0;
-    return layerTreeHost()->context();
 }
 
 }
