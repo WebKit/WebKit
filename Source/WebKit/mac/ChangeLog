@@ -1,3 +1,12 @@
+2012-03-06  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Mac] Update the configuration files for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=80435
+
+        Reviewed by David Kilzer.
+
+        * Configurations/WebKit.xcconfig:
+
 2012-03-06  Eric Seidel  <eric@webkit.org>
 
         Make WTF public headers use fully-qualified include paths and remove ForwardingHeaders/wtf
