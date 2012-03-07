@@ -3692,12 +3692,13 @@ WONTFIX : fast/js/stack-trace.html = TEXT
 // These require more investigation. There is a small change, probably two pixels, in the filter offset
 // when comparing the former and new results. This may be due to bad test design or may be revealing a bug
 // in the code. Turbulence results are very different.
-BUGWK78219 : svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html = IMAGE
-BUGWK78219 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
+BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr.html = IMAGE
+BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr.html = IMAGE
+BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop.html = IMAGE
+BUGWK80517 : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop.html = IMAGE
+BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html = IMAGE
+BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
+BUGWK80517 MAC WIN DEBUG : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 
 // Test is acting extra flakey on Mac and Win Debug
 BUGCR114777 MAC : compositing/culling/filter-occlusion-blur-large.html = PASS IMAGE
