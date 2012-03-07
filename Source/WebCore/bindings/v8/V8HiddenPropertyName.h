@@ -35,27 +35,22 @@
 
 namespace WebCore {
 
-#define V8_HIDDEN_PROPERTY_PREFIX "WebCore::HiddenProperty::"
-#define V8_HIDDEN_REFERENCE_PREFIX "WebCore::HiddenReference::"
-
 #define V8_HIDDEN_PROPERTIES(V) \
-    V(objectPrototype, V8_HIDDEN_PROPERTY_PREFIX) \
-    V(listener, V8_HIDDEN_PROPERTY_PREFIX) \
-    V(attributeListener, V8_HIDDEN_PROPERTY_PREFIX) \
-    V(scriptState, V8_HIDDEN_PROPERTY_PREFIX) \
-    V(devtoolsInjectedScript, V8_HIDDEN_PROPERTY_PREFIX) \
-    V(sleepFunction, V8_HIDDEN_PROPERTY_PREFIX) \
-    V(toStringString, V8_HIDDEN_PROPERTY_PREFIX) \
-    V(event, V8_HIDDEN_PROPERTY_PREFIX) \
-    V(state, V8_HIDDEN_PROPERTY_PREFIX) \
-    V(domStringMap, V8_HIDDEN_REFERENCE_PREFIX) \
-    V(domTokenList, V8_HIDDEN_REFERENCE_PREFIX) \
-    V(ownerNode, V8_HIDDEN_REFERENCE_PREFIX)
+    V(objectPrototype) \
+    V(listener) \
+    V(attributeListener) \
+    V(scriptState) \
+    V(devtoolsInjectedScript) \
+    V(sleepFunction) \
+    V(toStringString) \
+    V(event) \
+    V(state)
+
 
     class V8HiddenPropertyName {
     public:
         V8HiddenPropertyName() { }
-#define V8_DECLARE_PROPERTY(name, prefix) static v8::Handle<v8::String> name();
+#define V8_DECLARE_PROPERTY(name) static v8::Handle<v8::String> name();
         V8_HIDDEN_PROPERTIES(V8_DECLARE_PROPERTY);
 #undef V8_DECLARE_PROPERTY
 
@@ -63,6 +58,9 @@ namespace WebCore {
 
     private:
         static v8::Persistent<v8::String> createString(const char* key);
+#define V8_DECLARE_FIELD(name) v8::Persistent<v8::String> m_##name;
+        V8_HIDDEN_PROPERTIES(V8_DECLARE_FIELD);
+#undef V8_DECLARE_FIELD
     };
 
 }
