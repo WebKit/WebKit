@@ -1837,3 +1837,6 @@ fast/table/overflowHidden.html
 fast/table/spanOverlapRepaint.html
 fast/table/text-field-baseline.html
 tables/mozilla/bugs/bug1188.html
+
+# Bug 80531
+fast/forms/textfield-overflow.html

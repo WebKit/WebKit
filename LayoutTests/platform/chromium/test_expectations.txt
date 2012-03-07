@@ -3854,8 +3854,6 @@ BUGWK75568 MAC : fast/block/lineboxcontain/block-glyphs-replaced.html = TEXT
 BUGWK75568 MAC : fast/block/lineboxcontain/glyphs.html = TEXT
 BUGWK75568 MAC : fast/clip/011.html = TEXT
 BUGWK75568 MAC : fast/clip/012.html = TEXT
-BUGWK75568 WIN MAC : fast/forms/input-text-double-click.html = TEXT
-BUGWK75568 : http/tests/navigation/javascriptlink-frames.html = TEXT
 
 // Those tests need a text baseline after lazily allocating layers.
 // The change should only be layer removal.
@@ -4014,4 +4012,5 @@ BUGWK75568 : fast/table/overflowHidden.html = TEXT
 BUGWK75568 : fast/table/spanOverlapRepaint.html = TEXT
 BUGWK75568 : fast/table/text-field-baseline.html = TEXT
 BUGWK75568 : tables/mozilla/bugs/bug1188.html = TEXT
-BUGWK75568 : fast/repaint/search-field-cancel.html = TEXT
+
+BUGWK80531 : fast/forms/textfield-overflow.html = IMAGE+TEXT

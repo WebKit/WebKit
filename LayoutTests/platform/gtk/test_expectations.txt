@@ -289,3 +289,5 @@ BUGWK75568 : fast/table/overflowHidden.html = TEXT
 BUGWK75568 : fast/table/spanOverlapRepaint.html = TEXT
 BUGWK75568 : fast/table/text-field-baseline.html = TEXT
 BUGWK75568 : tables/mozilla/bugs/bug1188.html = TEXT
+
+BUGWK80531 : fast/forms/textfield-overflow.html = IMAGE+TEXT
