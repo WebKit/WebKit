@@ -71,12 +71,13 @@ private:
     LayoutUnit mainAxisContentExtent() const;
     WritingMode transformedWritingMode() const;
     LayoutUnit flowAwareBorderStart() const;
-    LayoutUnit flowAwareBorderBefore() const;
     LayoutUnit flowAwareBorderEnd() const;
-    LayoutUnit crossAxisBorderAndPaddingExtent() const;
+    LayoutUnit flowAwareBorderBefore() const;
+    LayoutUnit flowAwareBorderAfter() const;
     LayoutUnit flowAwarePaddingStart() const;
-    LayoutUnit flowAwarePaddingBefore() const;
     LayoutUnit flowAwarePaddingEnd() const;
+    LayoutUnit flowAwarePaddingBefore() const;
+    LayoutUnit flowAwarePaddingAfter() const;
     LayoutUnit flowAwareMarginStartForChild(RenderBox* child) const;
     LayoutUnit flowAwareMarginEndForChild(RenderBox* child) const;
     LayoutUnit flowAwareMarginBeforeForChild(RenderBox* child) const;
@@ -97,7 +98,7 @@ private:
     float negativeFlexForChild(RenderBox* child) const;
 
     LayoutUnit availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, RenderBox*);
-    LayoutUnit marginBoxAscent(RenderBox*);
+    LayoutUnit marginBoxAscentForChild(RenderBox*);
 
     void computeMainAxisPreferredSizes(bool relayoutChildren, FlexOrderHashSet&);
     bool computeNextFlexLine(FlexOrderIterator&, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalPositiveFlexibility, float& totalNegativeFlexibility);

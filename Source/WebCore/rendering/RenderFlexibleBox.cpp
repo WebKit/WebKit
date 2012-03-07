@@ -383,9 +383,20 @@ LayoutUnit RenderFlexibleBox::flowAwareBorderBefore() const
     return borderTop();
 }
 
-LayoutUnit RenderFlexibleBox::crossAxisBorderAndPaddingExtent() const
+LayoutUnit RenderFlexibleBox::flowAwareBorderAfter() const
 {
-    return isHorizontalFlow() ? borderAndPaddingHeight() : borderAndPaddingWidth();
+    switch (transformedWritingMode()) {
+    case TopToBottomWritingMode:
+        return borderBottom();
+    case BottomToTopWritingMode:
+        return borderTop();
+    case LeftToRightWritingMode:
+        return borderRight();
+    case RightToLeftWritingMode:
+        return borderLeft();
+    }
+    ASSERT_NOT_REACHED();
+    return borderTop();
 }
 
 LayoutUnit RenderFlexibleBox::flowAwarePaddingStart() const
@@ -413,6 +424,22 @@ LayoutUnit RenderFlexibleBox::flowAwarePaddingBefore() const
         return paddingLeft();
     case RightToLeftWritingMode:
         return paddingRight();
+    }
+    ASSERT_NOT_REACHED();
+    return paddingTop();
+}
+
+LayoutUnit RenderFlexibleBox::flowAwarePaddingAfter() const
+{
+    switch (transformedWritingMode()) {
+    case TopToBottomWritingMode:
+        return paddingBottom();
+    case BottomToTopWritingMode:
+        return paddingTop();
+    case LeftToRightWritingMode:
+        return paddingRight();
+    case RightToLeftWritingMode:
+        return paddingLeft();
     }
     ASSERT_NOT_REACHED();
     return paddingTop();
@@ -552,7 +579,7 @@ LayoutUnit RenderFlexibleBox::availableAlignmentSpaceForChild(LayoutUnit lineCro
     return lineCrossAxisExtent - childCrossExtent;
 }
 
-LayoutUnit RenderFlexibleBox::marginBoxAscent(RenderBox* child)
+LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(RenderBox* child)
 {
     LayoutUnit ascent = child->firstLineBoxBaseline();
     if (ascent == -1)
@@ -756,7 +783,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
 
         LayoutUnit childCrossAxisExtent;
         if (flexAlignForChild(child) == AlignBaseline) {
-            LayoutUnit ascent = marginBoxAscent(child);
+            LayoutUnit ascent = marginBoxAscentForChild(child);
             LayoutUnit descent = (crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child)) - ascent;
 
             maxAscent = std::max(maxAscent, ascent);
@@ -766,7 +793,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
         } else
             childCrossAxisExtent =  crossAxisExtentForChild(child);
         if (crossAxisLength().isAuto())
-            setCrossAxisExtent(std::max(crossAxisExtent(), crossAxisOffset - flowAwareBorderBefore() - flowAwarePaddingBefore() + crossAxisBorderAndPaddingExtent() + crossAxisMarginExtentForChild(child) + childCrossAxisExtent + crossAxisScrollbarExtent()));
+            setCrossAxisExtent(std::max(crossAxisExtent(), crossAxisOffset + flowAwareBorderAfter() + flowAwarePaddingAfter() + crossAxisMarginExtentForChild(child) + childCrossAxisExtent + crossAxisScrollbarExtent()));
         maxChildCrossAxisExtent = std::max(maxChildCrossAxisExtent, childCrossAxisExtent + crossAxisMarginExtentForChild(child));
 
         mainAxisOffset += flowAwareMarginStartForChild(child);
@@ -878,7 +905,7 @@ void RenderFlexibleBox::alignChildren(const OrderedFlexItemList& children, Layou
             adjustAlignmentForChild(child, availableAlignmentSpaceForChild(lineCrossAxisExtent, child) / 2);
             break;
         case AlignBaseline: {
-            LayoutUnit ascent = marginBoxAscent(child);
+            LayoutUnit ascent = marginBoxAscentForChild(child);
             adjustAlignmentForChild(child, maxAscent - ascent);
             break;
         }
