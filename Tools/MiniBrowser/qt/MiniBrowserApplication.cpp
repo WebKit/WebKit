@@ -159,6 +159,7 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
             } else {
                 touchPoint.setState(Qt::TouchPointPressed);
                 touchType = QEvent::TouchBegin;
+                m_startScreenPos = mouseEvent->screenPos();
             }
             break;
         case QEvent::MouseMove:
@@ -191,6 +192,9 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
         default:
             Q_ASSERT_X(false, "multi-touch mocking", "unhandled event type");
         }
+
+        // Set the screen pos as the scene pos as canvas translates the touch events.
+        touchPoint.setStartScenePos(m_startScreenPos);
 
         // Update current touch-point
         m_touchPoints.insert(touchPoint.id(), touchPoint);

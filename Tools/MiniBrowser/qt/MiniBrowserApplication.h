@@ -111,6 +111,7 @@ private:
 
     QPointF m_lastPos;
     QPointF m_lastScreenPos;
+    QPointF m_startScreenPos;
 
     QHash<int, QTouchEvent::TouchPoint> m_touchPoints;
     QSet<int> m_heldTouchPoints;

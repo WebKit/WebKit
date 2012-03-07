@@ -1,3 +1,17 @@
+2012-03-07  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt] REGRESSION(r109575) Broke tap-to-zoom gesture
+        https://bugs.webkit.org/show_bug.cgi?id=80425
+
+        Reviewed by Simon Hausmann.
+
+        Set startScreenPos in mock touch point
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::notify):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (MiniBrowserApplication):
+
 2012-03-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Windows build fix.
