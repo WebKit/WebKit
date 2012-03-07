@@ -449,28 +449,22 @@ LayoutUnit RenderTextControlSingleLine::preferredContentWidth(float charWidth) c
     return result;
 }
 
-void RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight(LayoutUnit lineHeight)
+LayoutUnit RenderTextControlSingleLine::computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const
 {
     HTMLElement* resultsButton = resultsButtonElement();
     if (RenderBox* resultsRenderer = resultsButton ? resultsButton->renderBox() : 0) {
         resultsRenderer->computeLogicalHeight();
-        setHeight(max(height(),
-                  resultsRenderer->borderTop() + resultsRenderer->borderBottom() +
-                  resultsRenderer->paddingTop() + resultsRenderer->paddingBottom() +
-                  resultsRenderer->marginTop() + resultsRenderer->marginBottom()));
+        nonContentHeight = max(nonContentHeight, resultsRenderer->borderAndPaddingHeight() + resultsRenderer->marginTop() + resultsRenderer->marginBottom());
         lineHeight = max(lineHeight, resultsRenderer->height());
     }
     HTMLElement* cancelButton = cancelButtonElement();
     if (RenderBox* cancelRenderer = cancelButton ? cancelButton->renderBox() : 0) {
         cancelRenderer->computeLogicalHeight();
-        setHeight(max(height(),
-                  cancelRenderer->borderTop() + cancelRenderer->borderBottom() +
-                  cancelRenderer->paddingTop() + cancelRenderer->paddingBottom() +
-                  cancelRenderer->marginTop() + cancelRenderer->marginBottom()));
+        nonContentHeight = max(nonContentHeight, cancelRenderer->borderAndPaddingHeight() + cancelRenderer->marginTop() + cancelRenderer->marginBottom());
         lineHeight = max(lineHeight, cancelRenderer->height());
     }
 
-    setHeight(height() + lineHeight);
+    return lineHeight + nonContentHeight;
 }
 
 void RenderTextControlSingleLine::updateFromElement()

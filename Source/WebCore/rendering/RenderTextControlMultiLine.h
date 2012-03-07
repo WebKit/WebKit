@@ -38,7 +38,7 @@ private:
 
     virtual float getAvgCharWidth(AtomicString family);
     virtual LayoutUnit preferredContentWidth(float charWidth) const;
-    virtual void adjustControlHeightBasedOnLineHeight(LayoutUnit lineHeight);
+    virtual LayoutUnit computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const OVERRIDE;
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
     virtual RenderStyle* textBaseStyle() const;

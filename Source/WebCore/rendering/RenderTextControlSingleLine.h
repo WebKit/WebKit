@@ -78,8 +78,8 @@ private:
     int textBlockWidth() const;
     virtual float getAvgCharWidth(AtomicString family);
     virtual LayoutUnit preferredContentWidth(float charWidth) const;
-    virtual void adjustControlHeightBasedOnLineHeight(LayoutUnit lineHeight);
-
+    virtual LayoutUnit computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const OVERRIDE;
+    
     virtual void updateFromElement();
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

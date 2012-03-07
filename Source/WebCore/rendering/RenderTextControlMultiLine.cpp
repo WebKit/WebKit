@@ -70,9 +70,9 @@ LayoutUnit RenderTextControlMultiLine::preferredContentWidth(float charWidth) co
     return static_cast<LayoutUnit>(ceilf(charWidth * factor)) + scrollbarThickness();
 }
 
-void RenderTextControlMultiLine::adjustControlHeightBasedOnLineHeight(LayoutUnit lineHeight)
+LayoutUnit RenderTextControlMultiLine::computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const
 {
-    setHeight(height() + lineHeight * static_cast<HTMLTextAreaElement*>(node())->rows());
+    return lineHeight * static_cast<HTMLTextAreaElement*>(node())->rows() + nonContentHeight;
 }
 
 LayoutUnit RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
