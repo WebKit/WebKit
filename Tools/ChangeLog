@@ -1,3 +1,23 @@
+2012-03-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] race condition in run-gtk-tests
+        https://bugs.webkit.org/show_bug.cgi?id=80495
+
+        Reviewed by Martin Robinson.
+
+        Refactored the script to wait the a11y dbus service becomes
+        available before starting the tests.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._lookup_atspi2_binary):
+        (TestRunner):
+        (TestRunner._wait_dbus_service_and_run):
+        (TestRunner._wait_dbus_service_and_run.on_name_appeared):
+        (TestRunner._wait_dbus_service_and_run.on_name_vanished):
+        (TestRunner.run):
+        (TestRunner.run.bailout):
+        (TestRunner.run.run_for_real):
+
 2012-03-07  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt] REGRESSION(r109575) Broke tap-to-zoom gesture
