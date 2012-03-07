@@ -984,7 +984,7 @@ inline void AbstractState::clobberStructures(unsigned indexInBlock)
     PROFILE(FLAG_FOR_STRUCTURE_CLOBBERING);
     if (!m_haveStructures)
         return;
-    for (size_t i = indexInBlock + 1; i-- > m_block->startExcludingPhis;)
+    for (size_t i = indexInBlock + 1; i--;)
         forNode(m_block->at(i)).clobberStructures();
     for (size_t i = 0; i < m_variables.numberOfArguments(); ++i)
         m_variables.argument(i).clobberStructures();
@@ -1143,7 +1143,7 @@ inline bool AbstractState::mergeVariableBetweenBlocks(AbstractValue& destination
 void AbstractState::dump(FILE* out)
 {
     bool first = true;
-    for (size_t i = m_block->startExcludingPhis; i < m_block->size(); ++i) {
+    for (size_t i = 0; i < m_block->size(); ++i) {
         NodeIndex index = m_block->at(i);
         AbstractValue& value = m_nodes[index];
         if (value.isClear())

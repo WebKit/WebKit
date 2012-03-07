@@ -82,7 +82,7 @@ private:
         dumpOperands(block->valuesAtHead, WTF::dataFile());
         dataLog("\n");
 #endif
-        for (unsigned i = block->startExcludingPhis; i < block->size(); ++i) {
+        for (unsigned i = 0; i < block->size(); ++i) {
             NodeIndex nodeIndex = block->at(i);
             if (!m_graph[nodeIndex].shouldGenerate())
                 continue;

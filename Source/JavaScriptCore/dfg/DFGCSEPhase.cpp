@@ -88,7 +88,7 @@ private:
         NodeIndex child2 = canonicalize(node.child2());
         NodeIndex child3 = canonicalize(node.child3());
         
-        for (unsigned i = endIndexForPureCSE(); i-- > m_currentBlock->startExcludingPhis;) {
+        for (unsigned i = endIndexForPureCSE(); i--;) {
             NodeIndex index = m_currentBlock->at(i);
             if (index == child1 || index == child2 || index == child3)
                 break;
@@ -175,7 +175,7 @@ private:
         NodeIndex child2 = canonicalize(node.child2());
         NodeIndex child3 = canonicalize(node.child3());
         
-        for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
+        for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             if (index == child1 || index == child2 || index == child3)
                 break;
@@ -207,7 +207,7 @@ private:
     
     NodeIndex globalVarLoadElimination(unsigned varNumber, JSGlobalObject* globalObject)
     {
-        for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
+        for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
             switch (node.op) {
@@ -230,7 +230,7 @@ private:
     
     NodeIndex getByValLoadElimination(NodeIndex child1, NodeIndex child2)
     {
-        for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
+        for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             if (index == child1 || index == canonicalize(child2)) 
                 break;
@@ -274,7 +274,7 @@ private:
 
     bool checkFunctionElimination(JSFunction* function, NodeIndex child1)
     {
-        for (unsigned i = endIndexForPureCSE(); i-- > m_currentBlock->startExcludingPhis;) {
+        for (unsigned i = endIndexForPureCSE(); i--;) {
             NodeIndex index = m_currentBlock->at(i);
             if (index == child1) 
                 break;
@@ -288,7 +288,7 @@ private:
 
     bool checkStructureLoadElimination(const StructureSet& structureSet, NodeIndex child1)
     {
-        for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
+        for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             if (index == child1) 
                 break;
@@ -334,7 +334,7 @@ private:
     
     NodeIndex getByOffsetLoadElimination(unsigned identifierNumber, NodeIndex child1)
     {
-        for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
+        for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             if (index == child1) 
                 break;
@@ -380,7 +380,7 @@ private:
     
     NodeIndex getPropertyStorageLoadElimination(NodeIndex child1)
     {
-        for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
+        for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             if (index == child1) 
                 break;
@@ -419,7 +419,7 @@ private:
 
     NodeIndex getIndexedPropertyStorageLoadElimination(NodeIndex child1, bool hasIntegerIndexPrediction)
     {
-        for (unsigned i = m_indexInBlock; i-- > m_currentBlock->startExcludingPhis;) {
+        for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             if (index == child1) 
                 break;
@@ -460,7 +460,7 @@ private:
     
     NodeIndex getScopeChainLoadElimination(unsigned depth)
     {
-        for (unsigned i = endIndexForPureCSE(); i-- > m_currentBlock->startExcludingPhis;) {
+        for (unsigned i = endIndexForPureCSE(); i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
             if (node.op == GetScopeChain
@@ -681,7 +681,7 @@ private:
         for (unsigned i = 0; i < LastNodeId; ++i)
             m_lastSeen[i] = UINT_MAX;
 
-        for (m_indexInBlock = block.startExcludingPhis; m_indexInBlock < block.size(); ++m_indexInBlock) {
+        for (m_indexInBlock = 0; m_indexInBlock < block.size(); ++m_indexInBlock) {
             m_compileIndex = block[m_indexInBlock];
             performNodeCSE(m_graph[m_compileIndex]);
         }

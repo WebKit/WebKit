@@ -48,7 +48,6 @@ struct BasicBlock : Vector<NodeIndex, 8> {
         , isLinked(false)
 #endif
         , isReachable(false)
-        , startExcludingPhis(0)
         , variablesAtHead(numArguments, numLocals)
         , variablesAtTail(numArguments, numLocals)
         , valuesAtHead(numArguments, numLocals)
@@ -75,8 +74,8 @@ struct BasicBlock : Vector<NodeIndex, 8> {
     bool isLinked;
 #endif
     bool isReachable;
-    unsigned startExcludingPhis;
     
+    Vector<NodeIndex> phis;
     PredecessorList m_predecessors;
     
     Operands<NodeIndex, NodeIndexTraits> variablesAtHead;

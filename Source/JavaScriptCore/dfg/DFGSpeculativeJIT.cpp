@@ -961,7 +961,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
         verificationSucceeded.link(&m_jit);
     }
 
-    for (m_indexInBlock = block.startExcludingPhis; m_indexInBlock < block.size(); ++m_indexInBlock) {
+    for (m_indexInBlock = 0; m_indexInBlock < block.size(); ++m_indexInBlock) {
         m_compileIndex = block[m_indexInBlock];
         Node& node = at(m_compileIndex);
         m_codeOriginForOSR = node.codeOrigin;

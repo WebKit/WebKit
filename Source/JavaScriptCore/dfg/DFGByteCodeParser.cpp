@@ -569,6 +569,7 @@ private:
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
         m_graph.append(Node(op, currentCodeOrigin(), child1, child2, child3));
+        ASSERT(op != Phi);
         m_currentBlock->append(resultIndex);
 
         if (op & NodeMustGenerate)
@@ -579,7 +580,10 @@ private:
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
         m_graph.append(Node(op, currentCodeOrigin(), info, child1, child2, child3));
-        m_currentBlock->append(resultIndex);
+        if (op == Phi)
+            m_currentBlock->phis.append(resultIndex);
+        else
+            m_currentBlock->append(resultIndex);
 
         if (op & NodeMustGenerate)
             m_graph.ref(resultIndex);
@@ -589,6 +593,7 @@ private:
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
         m_graph.append(Node(op, currentCodeOrigin(), info1, info2, child1, child2, child3));
+        ASSERT(op != Phi);
         m_currentBlock->append(resultIndex);
 
         if (op & NodeMustGenerate)
@@ -600,6 +605,7 @@ private:
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
         m_graph.append(Node(Node::VarArg, op, currentCodeOrigin(), info1, info2, m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs));
+        ASSERT(op != Phi);
         m_currentBlock->append(resultIndex);
         
         m_numPassedVarArgs = 0;
@@ -613,8 +619,7 @@ private:
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
         m_graph.append(Node(Phi, currentCodeOrigin(), info));
-        block->prepend(resultIndex);
-        ++block->startExcludingPhis;
+        block->phis.append(resultIndex);
 
         return resultIndex;
     }
