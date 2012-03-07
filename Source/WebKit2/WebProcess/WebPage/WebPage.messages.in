@@ -179,9 +179,11 @@ messages -> WebPage {
     SetSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled);
 #endif
 
+#if ENABLE(GEOLOCATION)
     # Geolocation
     DidReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
-    
+#endif
+
     # Notification
     DidReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed)
 

@@ -324,7 +324,10 @@ public:
     TapHighlightController& tapHighlightController() { return m_tapHighlightController; }
 #endif
 
+#if ENABLE(GEOLOCATION)
     GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
+#endif
+
     NotificationPermissionRequestManager* notificationPermissionRequestManager();
 
     void pageDidScroll();
@@ -635,6 +638,7 @@ private:
 #endif
 
     void didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed);
+
     void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);
 
     void advanceToNextMisspelling(bool startBeforeSelection);
@@ -745,8 +749,11 @@ private:
     RefPtr<WebPopupMenu> m_activePopupMenu;
     RefPtr<WebContextMenu> m_contextMenu;
     RefPtr<WebOpenPanelResultListener> m_activeOpenPanelResultListener;
-    GeolocationPermissionRequestManager m_geolocationPermissionRequestManager;
     RefPtr<NotificationPermissionRequestManager> m_notificationPermissionRequestManager;
+
+#if ENABLE(GEOLOCATION)
+    GeolocationPermissionRequestManager m_geolocationPermissionRequestManager;
+#endif
 
     OwnPtr<WebCore::PrintContext> m_printContext;
 #if PLATFORM(GTK)

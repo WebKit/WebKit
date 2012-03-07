@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GeolocationPermissionRequestManager.h"
 
+#if ENABLE(GEOLOCATION)
+
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -89,3 +91,5 @@ void GeolocationPermissionRequestManager::didReceiveGeolocationPermissionDecisio
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(GEOLOCATION)

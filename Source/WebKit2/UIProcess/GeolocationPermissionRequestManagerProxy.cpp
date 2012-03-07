@@ -63,7 +63,10 @@ void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDe
     if (it == m_pendingRequests.end())
         return;
 
+#if ENABLE(GEOLOCATION)
     m_page->process()->send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, allowed), m_page->pageID());
+#endif
+
     m_pendingRequests.remove(it);
 }
 

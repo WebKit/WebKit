@@ -374,7 +374,10 @@ void WebPageProxy::close()
         m_openPanelResultListener = 0;
     }
 
+#if ENABLE(GEOLOCATION)
     m_geolocationPermissionRequestManager.invalidateRequests();
+#endif
+
     m_notificationPermissionRequestManager.invalidateRequests();
 
     m_toolTip = String();
@@ -3248,7 +3251,10 @@ void WebPageProxy::processDidCrash()
         m_openPanelResultListener = nullptr;
     }
 
+#if ENABLE(GEOLOCATION)
     m_geolocationPermissionRequestManager.invalidateRequests();
+#endif
+
     m_notificationPermissionRequestManager.invalidateRequests();
 
     m_toolTip = String();

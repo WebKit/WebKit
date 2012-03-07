@@ -199,7 +199,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if PLATFORM(QT)
     , m_tapHighlightController(this)
 #endif
+#if ENABLE(GEOLOCATION)
     , m_geolocationPermissionRequestManager(this)
+#endif
     , m_pageID(pageID)
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
     , m_canRunModal(parameters.canRunModal)
@@ -2254,10 +2256,12 @@ void WebPage::extendSandboxForFileFromOpenPanel(const SandboxExtension::Handle& 
 }
 #endif
 
+#if ENABLE(GEOLOCATION)
 void WebPage::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
 {
     m_geolocationPermissionRequestManager.didReceiveGeolocationPermissionDecision(geolocationID, allowed);
 }
+#endif
 
 void WebPage::didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed)
 {
