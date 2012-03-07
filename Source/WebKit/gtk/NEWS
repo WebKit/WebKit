@@ -1,4 +1,16 @@
 =================
+WebKitGTK+ 1.7.91
+=================
+
+What's new in WebKitGTK+ 1.7.91?
+
+ - Properly advertise flac support for the audio tag.
+ - Fix a WebProcess segmentation fault related to clipboard handling.
+ - Add a Find API for WebKit2.
+ - Add zoom-text-only setting to WebKit2 GTK+ API.
+ - Miscellaneous build fixes.
+
+=================
 WebKitGTK+ 1.7.90
 =================
 
