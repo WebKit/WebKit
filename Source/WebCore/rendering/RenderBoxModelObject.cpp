@@ -354,18 +354,28 @@ void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderSty
     RenderObject::styleWillChange(diff, newStyle);
 }
 
+void RenderBoxModelObject::ensureLayer()
+{
+    if (m_layer)
+        return;
+
+    m_layer = new (renderArena()) RenderLayer(this);
+    setHasLayer(true);
+    m_layer->insertOnlyThisLayer();
+}
+
 void RenderBoxModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderObject::styleDidChange(diff, oldStyle);
     updateBoxModelInfoFromStyle();
-    
+
     if (requiresLayer()) {
         if (!layer() && layerCreationAllowedForSubtree()) {
             if (s_wasFloating && isFloating())
                 setChildNeedsLayout(true);
-            m_layer = new (renderArena()) RenderLayer(this);
-            setHasLayer(true);
-            m_layer->insertOnlyThisLayer();
+
+            ensureLayer();
+
             if (parent() && !needsLayout() && containingBlock()) {
                 m_layer->setRepaintStatus(NeedsFullRepaint);
                 // There is only one layer to update, it is not worth using |cachedOffset| since
@@ -387,6 +397,8 @@ void RenderBoxModelObject::styleDidChange(StyleDifference diff, const RenderStyl
         layer()->styleChanged(diff, oldStyle);
         if (s_hadLayer && layer()->isSelfPaintingLayer() != s_layerWasSelfPainting)
             setChildNeedsLayout(true);
+        if (hasOverflowClip())
+            toRenderBox(this)->updateCachedSizeForOverflowClip();
     }
 }
 

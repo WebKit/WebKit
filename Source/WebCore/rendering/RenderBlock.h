@@ -381,6 +381,8 @@ public:
 protected:
     virtual void willBeDestroyed();
 
+    void updateScrollInfoAfterLayout();
+
     // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
     // Since they are typically called only to move objects around within anonymous blocks (which only have layers in
     // the case of column spans), the default for fullRemoveInsert is false rather than true.
@@ -841,8 +843,6 @@ private:
     void makeChildrenAnonymousColumnBlocks(RenderObject* beforeChild, RenderBlock* newBlockBox, RenderObject* newChild);
 
     bool expandsToEncloseOverhangingFloats() const;
-
-    void updateScrollInfoAfterLayout();
 
     RenderObject* splitAnonymousBlocksAroundChild(RenderObject* beforeChild);
     RenderObject* splitTablePartsAroundChild(RenderObject* beforeChild);
