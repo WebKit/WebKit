@@ -49,6 +49,7 @@ private:
     virtual bool appendFormData(FormDataList&, bool);
 
     virtual bool isEnumeratable() const { return true; } 
+    virtual bool isLabelable() const OVERRIDE { return true; }
 
     virtual bool isSuccessfulSubmitButton() const;
     virtual bool isActivatedSubmit() const;

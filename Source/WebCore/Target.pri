@@ -811,6 +811,7 @@ SOURCES += \
     html/ImageDocument.cpp \
     html/ImageInputType.cpp \
     html/InputType.cpp \
+    html/LabelableElement.cpp \
     html/LabelsNodeList.cpp \
     html/LinkRelAttribute.cpp \
     html/MediaDocument.cpp \
@@ -1925,6 +1926,7 @@ HEADERS += \
     html/HTMLViewSourceDocument.h \
     html/ImageData.h \
     html/ImageDocument.h \
+    html/LabelableElement.h \
     html/LabelsNodeList.h \
     html/LinkRelAttribute.h \
     html/MediaController.h \

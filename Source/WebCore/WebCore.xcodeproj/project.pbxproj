@@ -1168,6 +1168,8 @@
 		44A28AAC12DFB8AC00AE923B /* MathMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A28AAB12DFB8AC00AE923B /* MathMLElementFactory.h */; };
 		44A28AAF12DFB8BF00AE923B /* MathMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A28AAE12DFB8BF00AE923B /* MathMLNames.h */; };
 		45099C411370A7800058D513 /* IconURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45099C401370A7800058D513 /* IconURL.cpp */; };
+		450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 450CEBEE15073BBE002BB149 /* LabelableElement.cpp */; };
+		450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 450CEBEF15073BBE002BB149 /* LabelableElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 45BAC2AF1360BBAB005DA258 /* IconURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4614A1FE0B23A8D600446E1C /* copyCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 4614A1FD0B23A8D600446E1C /* copyCursor.png */; };
 		46700ED0127B96CB00F5D5D6 /* FileWriterSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46700ECE127B96CB00F5D5D6 /* FileWriterSync.cpp */; };
@@ -8054,6 +8056,8 @@
 		44D8DA98139545BE00337B75 /* SVGMPathElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGMPathElement.idl; sourceTree = "<group>"; };
 		44D8DA9A139545CD00337B75 /* SVGAnimateMotionElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGAnimateMotionElement.idl; sourceTree = "<group>"; };
 		45099C401370A7800058D513 /* IconURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconURL.cpp; sourceTree = "<group>"; };
+		450CEBEE15073BBE002BB149 /* LabelableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelableElement.cpp; sourceTree = "<group>"; };
+		450CEBEF15073BBE002BB149 /* LabelableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelableElement.h; sourceTree = "<group>"; };
 		45BAC2AF1360BBAB005DA258 /* IconURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconURL.h; sourceTree = "<group>"; };
 		4614A1FD0B23A8D600446E1C /* copyCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copyCursor.png; sourceTree = "<group>"; };
 		46700ECE127B96CB00F5D5D6 /* FileWriterSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileWriterSync.cpp; path = fileapi/FileWriterSync.cpp; sourceTree = "<group>"; };
@@ -16959,6 +16963,8 @@
 				F55B3D8E1251F12D003EF269 /* ImageInputType.h */,
 				37E3524A12450C5200BAF5D9 /* InputType.cpp */,
 				37E3524C12450C6600BAF5D9 /* InputType.h */,
+				450CEBEE15073BBE002BB149 /* LabelableElement.cpp */,
+				450CEBEF15073BBE002BB149 /* LabelableElement.h */,
 				A456FA2411AD4A830020B420 /* LabelsNodeList.cpp */,
 				A456FA2511AD4A830020B420 /* LabelsNodeList.h */,
 				985BB96B13A94058007A0B69 /* LinkRelAttribute.cpp */,
@@ -24539,6 +24545,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27512,6 +27519,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

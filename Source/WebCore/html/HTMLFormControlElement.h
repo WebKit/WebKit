@@ -25,7 +25,7 @@
 #define HTMLFormControlElement_h
 
 #include "FormAssociatedElement.h"
-#include "HTMLElement.h"
+#include "LabelableElement.h"
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ class ValidityState;
 // HTMLFormControlElement is the default implementation of FormAssociatedElement,
 // and form-associated element implementations should use HTMLFormControlElement
 // unless there is a special reason.
-class HTMLFormControlElement : public HTMLElement, public FormAssociatedElement {
+class HTMLFormControlElement : public LabelableElement, public FormAssociatedElement {
 public:
     virtual ~HTMLFormControlElement();
 
@@ -99,9 +99,6 @@ public:
     // This must be called when a validation constraint or control value is changed.
     void setNeedsValidityCheck();
     void setCustomValidity(const String&);
-
-    bool isLabelable() const;
-    PassRefPtr<NodeList> labels();
 
     bool readOnly() const { return m_readOnly; }
 

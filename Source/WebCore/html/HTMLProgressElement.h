@@ -51,6 +51,8 @@ private:
     HTMLProgressElement(const QualifiedName&, Document*, HTMLFormElement*);
     virtual ~HTMLProgressElement();
 
+    virtual bool isLabelable() const OVERRIDE { return true; }
+
     virtual bool supportsFocus() const;
 
     virtual bool recalcWillValidate() const { return false; }

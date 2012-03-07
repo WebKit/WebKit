@@ -65,6 +65,8 @@ private:
     HTMLMeterElement(const QualifiedName&, Document*, HTMLFormElement*);
     virtual ~HTMLMeterElement();
 
+    virtual bool isLabelable() const OVERRIDE { return true; }
+
     virtual bool supportsFocus() const;
 
     virtual bool recalcWillValidate() const { return false; }

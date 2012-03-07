@@ -61414,6 +61414,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\LabelableElement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\LabelableElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\LabelsNodeList.cpp"
 				>
 			</File>

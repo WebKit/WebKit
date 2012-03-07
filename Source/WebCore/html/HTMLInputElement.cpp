@@ -1760,6 +1760,12 @@ bool HTMLInputElement::isEnumeratable() const
     return m_inputType->isEnumeratable();
 }
 
+bool HTMLInputElement::isLabelable() const
+{
+    // FIXME: We should return false for type="hidden".
+    return true;
+}
+
 bool HTMLInputElement::shouldAppearChecked() const
 {
     return checked() && m_inputType->isCheckable();
