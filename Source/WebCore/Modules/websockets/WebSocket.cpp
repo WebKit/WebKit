@@ -288,9 +288,14 @@ bool WebSocket::send(const String& message, ExceptionCode& ec)
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return false;
     }
-    // FIXME: check message is valid utf8.
     ASSERT(m_channel);
-    return m_channel->send(message) == ThreadableWebSocketChannel::SendSuccess;
+    ThreadableWebSocketChannel::SendResult result = m_channel->send(message);
+    if (result == ThreadableWebSocketChannel::InvalidMessage) {
+        scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Websocket message contains invalid character(s).");
+        ec = SYNTAX_ERR;
+        return false;
+    }
+    return result == ThreadableWebSocketChannel::SendSuccess;
 }
 
 bool WebSocket::send(ArrayBuffer* binaryData, ExceptionCode& ec)
@@ -343,8 +348,15 @@ void WebSocket::close(int code, const String& reason, ExceptionCode& ec)
             ec = INVALID_ACCESS_ERR;
             return;
         }
-        // FIXME: if reason contains any unpaired surrogates, raise SYNTAX_ERR.
-        if (reason.utf8().length() > maxReasonSizeInBytes) {
+        CString utf8 = reason.utf8(true);
+        if (utf8.length() > maxReasonSizeInBytes) {
+            scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "WebSocket close message is too long.");
+            ec = SYNTAX_ERR;
+            return;
+        }
+        // Checks whether reason is valid utf8.
+        if (utf8.isNull() && reason.length()) {
+            scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "WebSocket close message contains invalid character(s).");
             ec = SYNTAX_ERR;
             return;
         }

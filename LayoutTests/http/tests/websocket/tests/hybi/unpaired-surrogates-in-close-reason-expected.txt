@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: WebSocket close message contains invalid character(s).
+Checks whether SYNTAX_ERR is thrown when attemping to close the connection with unpaired surrogates.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Connected.
+PASS SYNTAX_ERR was thrown.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

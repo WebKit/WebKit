@@ -160,7 +160,9 @@ String WebSocketChannel::extensions()
 ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const String& message)
 {
     LOG(Network, "WebSocketChannel %p send %s", this, message.utf8().data());
-    CString utf8 = message.utf8();
+    CString utf8 = message.utf8(true);
+    if (utf8.isNull() && message.length())
+        return InvalidMessage;
     if (m_useHixie76Protocol) {
         return sendFrameHixie76(utf8.data(), utf8.length()) ? ThreadableWebSocketChannel::SendSuccess : ThreadableWebSocketChannel::SendFail;
     }
