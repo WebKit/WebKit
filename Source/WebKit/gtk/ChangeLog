@@ -1,3 +1,12 @@
+2012-03-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix a compilation warning encountered during the GTK+ build.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * tests/testcopyandpaste.c:
+        (test_copy_and_paste): Cast the WebKitWebView to a GtkWidget.
+
 2012-03-06  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] FrameLoader signals: gtk-doc fixes
