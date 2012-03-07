@@ -31,8 +31,8 @@
 #include "ResourceLoader.h"
 
 #include "ApplicationCacheHost.h"
+#include "AsyncFileStream.h"
 #include "DocumentLoader.h"
-#include "FileStreamProxy.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -559,8 +559,8 @@ void ResourceLoader::willCacheResponse(ResourceHandle*, CacheStoragePolicy& poli
 #if ENABLE(BLOB)
 AsyncFileStream* ResourceLoader::createAsyncFileStream(FileStreamClient* client)
 {
-    // It is OK to simply return a pointer since FileStreamProxy::create adds an extra ref.
-    return FileStreamProxy::create(m_frame->document()->scriptExecutionContext(), client).get();
+    // It is OK to simply return a pointer since AsyncFileStream::create adds an extra ref.
+    return AsyncFileStream::create(m_frame->document()->scriptExecutionContext(), client).get();
 }
 #endif
 

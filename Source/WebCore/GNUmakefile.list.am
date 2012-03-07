@@ -2031,6 +2031,8 @@ webcore_sources += \
 	Source/WebCore/editing/WrapContentsInDummySpanCommand.cpp \
 	Source/WebCore/editing/WrapContentsInDummySpanCommand.h \
 	Source/WebCore/editing/WritingDirection.h \
+	Source/WebCore/fileapi/AsyncFileStream.cpp \
+	Source/WebCore/fileapi/AsyncFileStream.h \
 	Source/WebCore/fileapi/AsyncFileWriter.h \
 	Source/WebCore/fileapi/AsyncFileWriterClient.h \
 	Source/WebCore/fileapi/Blob.cpp \
@@ -2088,8 +2090,6 @@ webcore_sources += \
 	Source/WebCore/fileapi/FileReaderLoaderClient.h \
 	Source/WebCore/fileapi/FileReaderSync.cpp \
 	Source/WebCore/fileapi/FileReaderSync.h \
-	Source/WebCore/fileapi/FileStreamProxy.cpp \
-	Source/WebCore/fileapi/FileStreamProxy.h \
 	Source/WebCore/fileapi/FileSystemCallback.h \
 	Source/WebCore/fileapi/FileSystemCallbacks.cpp \
 	Source/WebCore/fileapi/FileSystemCallbacks.h \
@@ -2985,7 +2985,6 @@ webcore_sources += \
 	Source/WebCore/platform/animation/TimingFunction.h \
 	Source/WebCore/platform/Arena.cpp \
 	Source/WebCore/platform/Arena.h \
-	Source/WebCore/platform/AsyncFileStream.h \
 	Source/WebCore/platform/AsyncFileSystem.cpp \
 	Source/WebCore/platform/AsyncFileSystem.h \
 	Source/WebCore/platform/AutodrainedPool.h \

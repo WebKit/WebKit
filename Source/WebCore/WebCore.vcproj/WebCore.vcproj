@@ -27154,10 +27154,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\AsyncFileStream.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\AsyncFileSystem.cpp"
 				>
 			</File>
@@ -56906,6 +56902,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\AsyncFileStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\AsyncFileStream.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\EntriesCallback.h"
 				>
 			</File>
@@ -57035,14 +57039,6 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\FileReaderSync.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileStreamProxy.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileStreamProxy.h"
 				>
 			</File>
 			<File

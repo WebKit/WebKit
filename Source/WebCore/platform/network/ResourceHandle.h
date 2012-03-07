@@ -217,6 +217,9 @@ public:
     void handleDataArray(CFArrayRef dataArray);
 #endif
 
+    typedef PassRefPtr<ResourceHandle> (*BuiltinConstructor)(const ResourceRequest& request, ResourceHandleClient* client);
+    static void registerBuiltinConstructor(const AtomicString& protocol, BuiltinConstructor);
+
 protected:
     ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
 

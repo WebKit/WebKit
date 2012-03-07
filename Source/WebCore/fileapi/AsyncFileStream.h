@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc.  All rights reserved.
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,45 +29,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileStreamProxy_h
-#define FileStreamProxy_h
+#ifndef AsyncFileStream_h
+#define AsyncFileStream_h
 
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 
-#include "AsyncFileStream.h"
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class FileStreamClient;
 class FileStream;
 class FileThread;
 class KURL;
 class ScriptExecutionContext;
 
-// A proxy module that asynchronously calls corresponding FileStream methods on the file thread.  Note: you must call stop() first and then release the reference to destruct the FileStreamProxy instance.
-// FIXME: Logically, this class is part of platform. ScriptExecutionContext is what keeps it outside for now.
-class FileStreamProxy : public AsyncFileStream {
+class AsyncFileStream : public RefCounted<AsyncFileStream> {
 public:
-    static PassRefPtr<FileStreamProxy> create(ScriptExecutionContext*, FileStreamClient*);
-    virtual ~FileStreamProxy();
+    static PassRefPtr<AsyncFileStream> create(ScriptExecutionContext*, FileStreamClient*);
+    ~AsyncFileStream();
 
-    virtual void getSize(const String& path, double expectedModificationTime);
-    virtual void openForRead(const String& path, long long offset, long long length);
-    virtual void openForWrite(const String& path);
-    virtual void close();
-    virtual void read(char* buffer, int length);
-    virtual void write(const KURL& blobURL, long long position, int length);
-    virtual void truncate(long long position);
+    void getSize(const String& path, double expectedModificationTime);
+    void openForRead(const String& path, long long offset, long long length);
+    void openForWrite(const String& path);
+    void close();
+    void read(char* buffer, int length);
+    void write(const KURL& blobURL, long long position, int length);
+    void truncate(long long position);
 
     // Stops the proxy and schedules it to be destructed. All the pending tasks will be aborted and the file stream will be closed.
     // Note: the caller should deref the instance immediately after calling stop().
-    virtual void stop();
+    void stop();
+
+    FileStreamClient* client() const { return m_client; }
+    void setClient(FileStreamClient* client) { m_client = client; }
 
 private:
-    FileStreamProxy(ScriptExecutionContext*, FileStreamClient*);
+    AsyncFileStream(ScriptExecutionContext*, FileStreamClient*);
 
     FileThread* fileThread();
 
@@ -84,10 +84,12 @@ private:
 
     RefPtr<ScriptExecutionContext> m_context;
     RefPtr<FileStream> m_stream;
+
+    FileStreamClient* m_client;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 
-#endif // FileStreamProxy_h
+#endif // AsyncFileStream_h

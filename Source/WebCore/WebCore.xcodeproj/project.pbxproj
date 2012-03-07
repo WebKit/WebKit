@@ -823,7 +823,6 @@
 		2EDF369F122C94C8002F7D4E /* FileException.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDF369E122C94C8002F7D4E /* FileException.h */; };
 		2EF1BFEA121C9F4200C27627 /* FileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EF1BFE8121C9F4200C27627 /* FileStream.cpp */; };
 		2EF1BFEB121C9F4200C27627 /* FileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFE9121C9F4200C27627 /* FileStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2EF1BFF7121CB0BD00C27627 /* AsyncFileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFF6121CB0BD00C27627 /* AsyncFileStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2EF1BFF9121CB0CE00C27627 /* FileStreamClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFF8121CB0CE00C27627 /* FileStreamClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3106036F14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3106036C14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp */; };
 		3106037014327D2E00ABF4BA /* WebKitCSSFilterValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3106036D14327D2E00ABF4BA /* WebKitCSSFilterValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3417,8 +3416,6 @@
 		976D6C86122B8A3D001FD1F7 /* FileList.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C67122B8A3D001FD1F7 /* FileList.h */; };
 		976D6C88122B8A3D001FD1F7 /* FileReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 976D6C69122B8A3D001FD1F7 /* FileReader.cpp */; };
 		976D6C89122B8A3D001FD1F7 /* FileReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C6A122B8A3D001FD1F7 /* FileReader.h */; };
-		976D6C8B122B8A3D001FD1F7 /* FileStreamProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 976D6C6C122B8A3D001FD1F7 /* FileStreamProxy.cpp */; };
-		976D6C8C122B8A3D001FD1F7 /* FileStreamProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C6D122B8A3D001FD1F7 /* FileStreamProxy.h */; };
 		976D6C8D122B8A3D001FD1F7 /* FileThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 976D6C6E122B8A3D001FD1F7 /* FileThread.cpp */; };
 		976D6C8E122B8A3D001FD1F7 /* FileThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C6F122B8A3D001FD1F7 /* FileThread.h */; };
 		976D6C8F122B8A3D001FD1F7 /* FileThreadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 976D6C70122B8A3D001FD1F7 /* FileThreadTask.h */; };
@@ -5869,6 +5866,8 @@
 		E1C8BE5D0E8BD15A0064CB7D /* JSWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C8BE5C0E8BD15A0064CB7D /* JSWorker.cpp */; };
 		E1CA5CBC0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1CA5CBB0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp */; };
 		E1CAA5C60E8BD23600A73ECA /* JSWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CAA5C50E8BD23600A73ECA /* JSWorker.h */; };
+		E1CDE92015018ED000862CC5 /* AsyncFileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1CDE91F15018ED000862CC5 /* AsyncFileStream.cpp */; };
+		E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CDE9211501916900862CC5 /* AsyncFileStream.h */; };
 		E1E1BF00115FF6FB006F52CA /* WindowsKeyboardCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1E6EEA40B628DA8005F2F70 /* JSHTMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */; };
 		E1E6EEA80B628DB3005F2F70 /* JSHTMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */; };
@@ -7664,7 +7663,6 @@
 		2EDF369E122C94C8002F7D4E /* FileException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileException.h; path = fileapi/FileException.h; sourceTree = "<group>"; };
 		2EF1BFE8121C9F4200C27627 /* FileStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileStream.cpp; sourceTree = "<group>"; };
 		2EF1BFE9121C9F4200C27627 /* FileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStream.h; sourceTree = "<group>"; };
-		2EF1BFF6121CB0BD00C27627 /* AsyncFileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncFileStream.h; sourceTree = "<group>"; };
 		2EF1BFF8121CB0CE00C27627 /* FileStreamClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStreamClient.h; sourceTree = "<group>"; };
 		3106036C14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSFilterValue.cpp; sourceTree = "<group>"; };
 		3106036D14327D2E00ABF4BA /* WebKitCSSFilterValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSFilterValue.h; sourceTree = "<group>"; };
@@ -10355,8 +10353,6 @@
 		976D6C67122B8A3D001FD1F7 /* FileList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileList.h; path = fileapi/FileList.h; sourceTree = "<group>"; };
 		976D6C69122B8A3D001FD1F7 /* FileReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileReader.cpp; path = fileapi/FileReader.cpp; sourceTree = "<group>"; };
 		976D6C6A122B8A3D001FD1F7 /* FileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileReader.h; path = fileapi/FileReader.h; sourceTree = "<group>"; };
-		976D6C6C122B8A3D001FD1F7 /* FileStreamProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileStreamProxy.cpp; path = fileapi/FileStreamProxy.cpp; sourceTree = "<group>"; };
-		976D6C6D122B8A3D001FD1F7 /* FileStreamProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileStreamProxy.h; path = fileapi/FileStreamProxy.h; sourceTree = "<group>"; };
 		976D6C6E122B8A3D001FD1F7 /* FileThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileThread.cpp; path = fileapi/FileThread.cpp; sourceTree = "<group>"; };
 		976D6C6F122B8A3D001FD1F7 /* FileThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileThread.h; path = fileapi/FileThread.h; sourceTree = "<group>"; };
 		976D6C70122B8A3D001FD1F7 /* FileThreadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileThreadTask.h; path = fileapi/FileThreadTask.h; sourceTree = "<group>"; };
@@ -12956,6 +12952,8 @@
 		E1C8BE5C0E8BD15A0064CB7D /* JSWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorker.cpp; sourceTree = "<group>"; };
 		E1CA5CBB0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerCustom.cpp; sourceTree = "<group>"; };
 		E1CAA5C50E8BD23600A73ECA /* JSWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorker.h; sourceTree = "<group>"; };
+		E1CDE91F15018ED000862CC5 /* AsyncFileStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AsyncFileStream.cpp; path = fileapi/AsyncFileStream.cpp; sourceTree = "<group>"; };
+		E1CDE9211501916900862CC5 /* AsyncFileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncFileStream.h; path = fileapi/AsyncFileStream.h; sourceTree = "<group>"; };
 		E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowsKeyboardCodes.h; sourceTree = "<group>"; };
 		E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSelectElement.cpp; sourceTree = "<group>"; };
 		E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JSHTMLSelectElement.h; sourceTree = "<group>"; };
@@ -17173,6 +17171,8 @@
 		976D6C57122B8A18001FD1F7 /* fileapi */ = {
 			isa = PBXGroup;
 			children = (
+				E1CDE91F15018ED000862CC5 /* AsyncFileStream.cpp */,
+				E1CDE9211501916900862CC5 /* AsyncFileStream.h */,
 				976D6C58122B8A3D001FD1F7 /* AsyncFileWriter.h */,
 				976D6C74122B8A3D001FD1F7 /* AsyncFileWriterClient.h */,
 				976D6C59122B8A3D001FD1F7 /* Blob.cpp */,
@@ -17252,8 +17252,6 @@
 				2EDF369A122C94B4002F7D4E /* FileReaderSync.cpp */,
 				2EDF369B122C94B4002F7D4E /* FileReaderSync.h */,
 				E1AB1EBD14E9E3A800449E13 /* FileReaderSync.idl */,
-				976D6C6C122B8A3D001FD1F7 /* FileStreamProxy.cpp */,
-				976D6C6D122B8A3D001FD1F7 /* FileStreamProxy.h */,
 				8987854A122CA064003AABDA /* FileSystemCallback.h */,
 				E1AB1EBE14E9E3B200449E13 /* FileSystemCallback.idl */,
 				8987854B122CA064003AABDA /* FileSystemCallbacks.cpp */,
@@ -19987,7 +19985,6 @@
 				B2C3D9EC0D006C1D00EF6F26 /* text */,
 				BCFB2F74097A2E1A00BA703D /* Arena.cpp */,
 				BCFB2F75097A2E1A00BA703D /* Arena.h */,
-				2EF1BFF6121CB0BD00C27627 /* AsyncFileStream.h */,
 				89D08D9C12228451001241DF /* AsyncFileSystem.cpp */,
 				89D08D9D12228451001241DF /* AsyncFileSystem.h */,
 				89D08D9E12228451001241DF /* AsyncFileSystemCallbacks.h */,
@@ -21439,7 +21436,6 @@
 				512DD8F80D91E6AF000F89EE /* ArchiveResourceCollection.h in Headers */,
 				BCFB2F77097A2E1A00BA703D /* Arena.h in Headers */,
 				FD5686CA13AC180200B69C68 /* AsyncAudioDecoder.h in Headers */,
-				2EF1BFF7121CB0BD00C27627 /* AsyncFileStream.h in Headers */,
 				89D08DA012228451001241DF /* AsyncFileSystem.h in Headers */,
 				89D08DA112228451001241DF /* AsyncFileSystemCallbacks.h in Headers */,
 				976D6C77122B8A3D001FD1F7 /* AsyncFileWriter.h in Headers */,
@@ -22499,7 +22495,6 @@
 				2EDF369D122C94B4002F7D4E /* FileReaderSync.h in Headers */,
 				2EF1BFEB121C9F4200C27627 /* FileStream.h in Headers */,
 				2EF1BFF9121CB0CE00C27627 /* FileStreamClient.h in Headers */,
-				976D6C8C122B8A3D001FD1F7 /* FileStreamProxy.h in Headers */,
 				514B3F730C722047000530DF /* FileSystem.h in Headers */,
 				89878563122CA064003AABDA /* FileSystemCallback.h in Headers */,
 				89878565122CA064003AABDA /* FileSystemCallbacks.h in Headers */,
@@ -24545,6 +24540,9 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */,
+				7728694F14F8882500F484DC /* EXTTextureFilterAnisotropic.h in Headers */,
+				7728698414FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.h in Headers */,
 				450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -25608,7 +25606,6 @@
 				2E75841D12779ADA0062628B /* FileReaderLoader.cpp in Sources */,
 				2EDF369C122C94B4002F7D4E /* FileReaderSync.cpp in Sources */,
 				2EF1BFEA121C9F4200C27627 /* FileStream.cpp in Sources */,
-				976D6C8B122B8A3D001FD1F7 /* FileStreamProxy.cpp in Sources */,
 				C57FEDE11212EE9C0097BE65 /* FileSystem.cpp in Sources */,
 				89878564122CA064003AABDA /* FileSystemCallbacks.cpp in Sources */,
 				5160306C0CC4362300C8AC25 /* FileSystemCF.cpp in Sources */,
@@ -27519,6 +27516,9 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				E1CDE92015018ED000862CC5 /* AsyncFileStream.cpp in Sources */,
+				7728694E14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp in Sources */,
+				7728698314FD9ADA00F484DC /* JSEXTTextureFilterAnisotropic.cpp in Sources */,
 				450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

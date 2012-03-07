@@ -1455,11 +1455,11 @@ SET(WebCore_USER_AGENT_STYLE_SHEETS
 
 IF (ENABLE_BLOB)
     LIST(APPEND WebCore_SOURCES
+        fileapi/AsyncFileStream.cpp
         fileapi/FileReader.cpp
         fileapi/FileReaderLoader.cpp
         fileapi/FileReaderSync.cpp
         fileapi/FileThread.cpp
-        fileapi/FileStreamProxy.cpp
         platform/FileStream.cpp
     )
 

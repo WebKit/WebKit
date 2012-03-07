@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc.  All rights reserved.
- * Copyright (C) 2012 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,7 +33,7 @@
 
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 
-#include "FileStreamProxy.h"
+#include "AsyncFileStream.h"
 
 #include "Blob.h"
 #include "CrossThreadTask.h"
@@ -46,44 +46,44 @@
 
 namespace WebCore {
 
-inline FileStreamProxy::FileStreamProxy(ScriptExecutionContext* context, FileStreamClient* client)
-    : AsyncFileStream(client)
-    , m_context(context)
+inline AsyncFileStream::AsyncFileStream(ScriptExecutionContext* context, FileStreamClient* client)
+    : m_context(context)
     , m_stream(FileStream::create())
+    , m_client(client)
 {
 }
 
-PassRefPtr<FileStreamProxy> FileStreamProxy::create(ScriptExecutionContext* context, FileStreamClient* client)
+PassRefPtr<AsyncFileStream> AsyncFileStream::create(ScriptExecutionContext* context, FileStreamClient* client)
 {
-    RefPtr<FileStreamProxy> proxy = adoptRef(new FileStreamProxy(context, client));
+    RefPtr<AsyncFileStream> proxy = adoptRef(new AsyncFileStream(context, client));
 
     // Hold a reference so that the instance will not get deleted while there are tasks on the file thread.
     // This is balanced by the deref in derefProxyOnContext below.
     proxy->ref();
 
-    proxy->fileThread()->postTask(createFileThreadTask(proxy.get(), &FileStreamProxy::startOnFileThread));
+    proxy->fileThread()->postTask(createFileThreadTask(proxy.get(), &AsyncFileStream::startOnFileThread));
 
     return proxy.release();
 }
 
-FileStreamProxy::~FileStreamProxy()
+AsyncFileStream::~AsyncFileStream()
 {
 }
 
-FileThread* FileStreamProxy::fileThread()
+FileThread* AsyncFileStream::fileThread()
 {
     ASSERT(m_context->isContextThread());
     ASSERT(m_context->fileThread());
     return m_context->fileThread();
 }
 
-static void didStart(ScriptExecutionContext*, FileStreamProxy* proxy)
+static void didStart(ScriptExecutionContext*, AsyncFileStream* proxy)
 {
     if (proxy->client())
         proxy->client()->didStart();
 }
 
-void FileStreamProxy::startOnFileThread()
+void AsyncFileStream::startOnFileThread()
 {
     if (!client())
         return;
@@ -91,132 +91,132 @@ void FileStreamProxy::startOnFileThread()
     m_context->postTask(createCallbackTask(&didStart, AllowCrossThreadAccess(this)));
 }
 
-void FileStreamProxy::stop()
+void AsyncFileStream::stop()
 {
     // Clear the client so that we won't be calling callbacks on the client.
     setClient(0);
 
     fileThread()->unscheduleTasks(m_stream.get());
-    fileThread()->postTask(createFileThreadTask(this, &FileStreamProxy::stopOnFileThread));
+    fileThread()->postTask(createFileThreadTask(this, &AsyncFileStream::stopOnFileThread));
 }
 
-static void derefProxyOnContext(ScriptExecutionContext*, FileStreamProxy* proxy)
+static void derefProxyOnContext(ScriptExecutionContext*, AsyncFileStream* proxy)
 {
     ASSERT(proxy->hasOneRef());
     proxy->deref();
 }
 
-void FileStreamProxy::stopOnFileThread()
+void AsyncFileStream::stopOnFileThread()
 {
     m_stream->stop();
     m_context->postTask(createCallbackTask(&derefProxyOnContext, AllowCrossThreadAccess(this)));
 }
 
-static void didGetSize(ScriptExecutionContext*, FileStreamProxy* proxy, long long size)
+static void didGetSize(ScriptExecutionContext*, AsyncFileStream* proxy, long long size)
 {
     if (proxy->client())
         proxy->client()->didGetSize(size);
 }
 
-void FileStreamProxy::getSize(const String& path, double expectedModificationTime)
+void AsyncFileStream::getSize(const String& path, double expectedModificationTime)
 {
-    fileThread()->postTask(createFileThreadTask(this, &FileStreamProxy::getSizeOnFileThread, path, expectedModificationTime));
+    fileThread()->postTask(createFileThreadTask(this, &AsyncFileStream::getSizeOnFileThread, path, expectedModificationTime));
 }
 
-void FileStreamProxy::getSizeOnFileThread(const String& path, double expectedModificationTime)
+void AsyncFileStream::getSizeOnFileThread(const String& path, double expectedModificationTime)
 {
     long long size = m_stream->getSize(path, expectedModificationTime);
     m_context->postTask(createCallbackTask(&didGetSize, AllowCrossThreadAccess(this), size));
 }
 
-static void didOpen(ScriptExecutionContext*, FileStreamProxy* proxy, bool success)
+static void didOpen(ScriptExecutionContext*, AsyncFileStream* proxy, bool success)
 {
     if (proxy->client())
         proxy->client()->didOpen(success);
 }
 
-void FileStreamProxy::openForRead(const String& path, long long offset, long long length)
+void AsyncFileStream::openForRead(const String& path, long long offset, long long length)
 {
-    fileThread()->postTask(createFileThreadTask(this, &FileStreamProxy::openForReadOnFileThread, path, offset, length));
+    fileThread()->postTask(createFileThreadTask(this, &AsyncFileStream::openForReadOnFileThread, path, offset, length));
 }
 
-void FileStreamProxy::openForReadOnFileThread(const String& path, long long offset, long long length)
+void AsyncFileStream::openForReadOnFileThread(const String& path, long long offset, long long length)
 {
     bool success = m_stream->openForRead(path, offset, length);
     m_context->postTask(createCallbackTask(&didOpen, AllowCrossThreadAccess(this), success));
 }
 
-void FileStreamProxy::openForWrite(const String& path)
+void AsyncFileStream::openForWrite(const String& path)
 {
     fileThread()->postTask(
         createFileThreadTask(this,
-                             &FileStreamProxy::openForWriteOnFileThread, path));
+                             &AsyncFileStream::openForWriteOnFileThread, path));
 }
 
-void FileStreamProxy::openForWriteOnFileThread(const String& path)
+void AsyncFileStream::openForWriteOnFileThread(const String& path)
 {
     bool success = m_stream->openForWrite(path);
     m_context->postTask(createCallbackTask(&didOpen, AllowCrossThreadAccess(this), success));
 }
 
-void FileStreamProxy::close()
+void AsyncFileStream::close()
 {
-    fileThread()->postTask(createFileThreadTask(this, &FileStreamProxy::closeOnFileThread));
+    fileThread()->postTask(createFileThreadTask(this, &AsyncFileStream::closeOnFileThread));
 }
 
-void FileStreamProxy::closeOnFileThread()
+void AsyncFileStream::closeOnFileThread()
 {
     m_stream->close();
 }
 
-static void didRead(ScriptExecutionContext*, FileStreamProxy* proxy, int bytesRead)
+static void didRead(ScriptExecutionContext*, AsyncFileStream* proxy, int bytesRead)
 {
     if (proxy->client())
         proxy->client()->didRead(bytesRead);
 }
 
-void FileStreamProxy::read(char* buffer, int length)
+void AsyncFileStream::read(char* buffer, int length)
 {
     fileThread()->postTask(
-        createFileThreadTask(this, &FileStreamProxy::readOnFileThread,
+        createFileThreadTask(this, &AsyncFileStream::readOnFileThread,
                              AllowCrossThreadAccess(buffer), length));
 }
 
-void FileStreamProxy::readOnFileThread(char* buffer, int length)
+void AsyncFileStream::readOnFileThread(char* buffer, int length)
 {
     int bytesRead = m_stream->read(buffer, length);
     m_context->postTask(createCallbackTask(&didRead, AllowCrossThreadAccess(this), bytesRead));
 }
 
-static void didWrite(ScriptExecutionContext*, FileStreamProxy* proxy, int bytesWritten)
+static void didWrite(ScriptExecutionContext*, AsyncFileStream* proxy, int bytesWritten)
 {
     if (proxy->client())
         proxy->client()->didWrite(bytesWritten);
 }
 
-void FileStreamProxy::write(const KURL& blobURL, long long position, int length)
+void AsyncFileStream::write(const KURL& blobURL, long long position, int length)
 {
-    fileThread()->postTask(createFileThreadTask(this, &FileStreamProxy::writeOnFileThread, blobURL, position, length));
+    fileThread()->postTask(createFileThreadTask(this, &AsyncFileStream::writeOnFileThread, blobURL, position, length));
 }
 
-void FileStreamProxy::writeOnFileThread(const KURL& blobURL, long long position, int length)
+void AsyncFileStream::writeOnFileThread(const KURL& blobURL, long long position, int length)
 {
     int bytesWritten = m_stream->write(blobURL, position, length);
     m_context->postTask(createCallbackTask(&didWrite, AllowCrossThreadAccess(this), bytesWritten));
 }
 
-static void didTruncate(ScriptExecutionContext*, FileStreamProxy* proxy, bool success)
+static void didTruncate(ScriptExecutionContext*, AsyncFileStream* proxy, bool success)
 {
     if (proxy->client())
         proxy->client()->didTruncate(success);
 }
 
-void FileStreamProxy::truncate(long long position)
+void AsyncFileStream::truncate(long long position)
 {
-    fileThread()->postTask(createFileThreadTask(this, &FileStreamProxy::truncateOnFileThread, position));
+    fileThread()->postTask(createFileThreadTask(this, &AsyncFileStream::truncateOnFileThread, position));
 }
 
-void FileStreamProxy::truncateOnFileThread(long long position)
+void AsyncFileStream::truncateOnFileThread(long long position)
 {
     bool success = m_stream->truncate(position);
     m_context->postTask(createCallbackTask(&didTruncate, AllowCrossThreadAccess(this), success));

@@ -661,6 +661,8 @@ SOURCES += \
     editing/VisibleSelection.cpp \
     editing/visible_units.cpp \
     editing/WrapContentsInDummySpanCommand.cpp \
+    fileapi/AsyncFileStream.cpp \
+    fileapi/AsyncFileStream.cpp \
     fileapi/Blob.cpp \
     fileapi/BlobURL.cpp \
     fileapi/DOMFilePath.cpp \
@@ -685,8 +687,6 @@ SOURCES += \
     fileapi/FileReader.cpp \
     fileapi/FileReaderLoader.cpp \
     fileapi/FileReaderSync.cpp \
-    fileapi/FileStreamProxy.cpp \
-    fileapi/FileSystemCallbacks.cpp \
     fileapi/FileThread.cpp \
     fileapi/FileWriter.cpp \
     fileapi/FileWriterBase.cpp \
@@ -2136,7 +2136,6 @@ HEADERS += \
     platform/animation/AnimationList.h \
     platform/animation/AnimationUtilities.h \
     platform/Arena.h \
-    platform/AsyncFileStream.h \
     platform/CalculationValue.h \
     platform/Clock.h \
     platform/ClockGeneric.h \

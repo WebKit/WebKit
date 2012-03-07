@@ -52,6 +52,26 @@ BlobRegistry& blobRegistry()
     DEFINE_STATIC_LOCAL(BlobRegistryImpl, instance, ());
     return instance;
 }
+
+static PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
+{
+    return static_cast<BlobRegistryImpl&>(blobRegistry()).createResourceHandle(request, client);
+}
+
+static void registerBlobResourceHandleConstructor()
+{
+    static bool didRegister = false;
+    if (!didRegister) {
+        ResourceHandle::registerBuiltinConstructor("blob", createResourceHandle);
+        didRegister = true;
+    }
+}
+
+#else
+
+static void registerBlobResourceHandleConstructor()
+{
+}
 #endif
 
 bool BlobRegistryImpl::shouldLoadResource(const ResourceRequest& request) const
@@ -125,6 +145,7 @@ void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, cons
 void BlobRegistryImpl::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> blobData)
 {
     ASSERT(isMainThread());
+    registerBlobResourceHandleConstructor();
 
     RefPtr<BlobStorageData> blobStorageData = BlobStorageData::create(blobData->contentType(), blobData->contentDisposition());
 
@@ -154,6 +175,7 @@ void BlobRegistryImpl::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> blo
 void BlobRegistryImpl::registerBlobURL(const KURL& url, const KURL& srcURL)
 {
     ASSERT(isMainThread());
+    registerBlobResourceHandleConstructor();
 
     RefPtr<BlobStorageData> src = m_blobs.get(srcURL.string());
     ASSERT(src);
