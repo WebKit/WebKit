@@ -39,6 +39,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,100) size 335x36
                   text run at (0,100) width 335: "that we can use for testing"
                 RenderTextControl {INPUT} at (337,112) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderBlock {DIV} at (3,3) size 187x18
                 RenderBR {BR} at (532,129) size 0x0
                 RenderBlock {INPUT} at (4,153) size 16x16
                 RenderText {#text} at (24,138) size 74x36
@@ -101,8 +102,6 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (3,3) size 187x18
             RenderText {#text} at (1,0) size 193x17
               text run at (1,0) width 193: "Initial text before user input"
-        layer at (348,416) size 187x18
-          RenderBlock {DIV} at (3,3) size 187x18
         layer at (10,621) size 292x186 clip at (11,622) size 290x184
           RenderTextControl {TEXTAREA} at (2,320) size 292x186 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 286x36
