@@ -17,7 +17,6 @@
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-from webkitpy.common.system.executive import Executive
 import subprocess
 import os
 import sys
@@ -37,7 +36,6 @@ class TestRunner:
                 "WebKit2APITests/TestDownloads" ]
 
     def __init__(self):
-        self._executive = Executive()
 
         # FIXME: webkit-build-directory --configuration always returns
         # Release because we never call set-webkit-configuration.
@@ -76,7 +74,9 @@ class TestRunner:
                     self._tests.append(test_path)
 
     def _lookup_atspi2_binary(self, jhbuild_path, filename):
-        exec_prefix = self._executive.run_command([jhbuild_path ,'pkg-config', '--variable=exec_prefix', 'atspi-2']).rstrip('\r\n')
+        process = subprocess.Popen([jhbuild_path ,'pkg-config', '--variable=exec_prefix', 'atspi-2'], stdout=subprocess.PIPE)
+        stdout = process.communicate()[0]
+        exec_prefix = stdout.rstrip('\r\n')
         paths_to_check = [ 'libexec',
                            'lib/at-spi2-core',
                            'lib32/at-spi2-core',
@@ -111,7 +111,7 @@ class TestRunner:
         a11y_registryd_path = self._lookup_atspi2_binary(jhbuild_path, 'at-spi2-registryd')
         if a11y_registryd_path:
             try:
-                self._a11y_registryd = Executive().popen([a11y_registryd_path], env=test_env)
+                self._a11y_registryd = subprocess.Popen([a11y_registryd_path], env=test_env)
             except:
                 sys.stderr.write("Failed to run the accessibility registry\n")
                 sys.stderr.flush()
@@ -129,8 +129,6 @@ class TestRunner:
         test_env['GSETTINGS_BACKEND'] = 'memory'
 
         failed_tests = []
-        def _error_handler(error):
-            failed_tests.append(error.script_args[2])
 
         jhbuild_path = os.path.join(self._gtk_tools_directory, "run-with-jhbuild")
 
@@ -138,7 +136,7 @@ class TestRunner:
         a11y_bus_launcher_path = self._lookup_atspi2_binary(jhbuild_path, 'at-spi-bus-launcher')
         assert(a11y_bus_launcher_path)
         try:
-            a11y_bus_launcher = Executive().popen([a11y_bus_launcher_path], env=test_env)
+            a11y_bus_launcher = subprocess.Popen([a11y_bus_launcher_path], env=test_env)
         except:
             sys.stderr.write("Failed to launch the accessibility bus\n")
             sys.stderr.flush()
@@ -151,10 +149,9 @@ class TestRunner:
             self._ensure_accessibility_daemon_is_running(jhbuild_path, test_env)
 
             for test in self._tests:
-                out = self._executive.run_command([jhbuild_path ,'gtester', test], env=test_env,
-                                                  error_handler=_error_handler)
-                sys.stdout.write(out)
-                sys.stdout.flush()
+                process = subprocess.Popen([jhbuild_path ,'gtester', test], env=test_env)
+                if process.wait():
+                    failed_tests.append(test)
 
                 if self._check_if_tests_have_timed_out():
                     break
@@ -178,7 +175,7 @@ class TestRunner:
 
 if __name__ == "__main__":
     try:
-        xvfb = Executive().popen(["Xvfb", ":55", "-screen", "0", "800x600x24", "-nolisten", "tcp"],
+        xvfb = subprocess.Popen(["Xvfb", ":55", "-screen", "0", "800x600x24", "-nolisten", "tcp"],
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except:
         sys.stderr.write("Failed to run Xvfb\n")

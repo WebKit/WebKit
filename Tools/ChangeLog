@@ -1,5 +1,20 @@
 2012-03-07  Philippe Normand  <pnormand@igalia.com>
 
+        [GTK] remove webkitpy dependency in run-gtk-tests
+        https://bugs.webkit.org/show_bug.cgi?id=80500
+
+        Reviewed by Martin Robinson.
+
+        Replace Executive calls with bare subprocess calls.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+        (TestRunner._lookup_atspi2_binary):
+        (TestRunner.run):
+        (TestRunner.run.run_for_real):
+
+2012-03-07  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK build fix after r110059.
 
         * Scripts/run-gtk-tests:
