@@ -41,7 +41,7 @@ public:
     QUrl url;
     Qt::MouseButton mouseButton;
     Qt::KeyboardModifiers keyboardModifiers;
-    int action;
+    QQuickWebView::NavigationRequestAction action;
     QQuickWebView::NavigationType navigationType;
 };
 
@@ -56,7 +56,7 @@ QWebNavigationRequest::~QWebNavigationRequest()
     delete d;
 }
 
-void QWebNavigationRequest::setAction(int action)
+void QWebNavigationRequest::setAction(QQuickWebView::NavigationRequestAction action)
 {
     if (d->action == action)
         return;
@@ -80,7 +80,7 @@ int QWebNavigationRequest::keyboardModifiers() const
     return int(d->keyboardModifiers);
 }
 
-int QWebNavigationRequest::action() const
+QQuickWebView::NavigationRequestAction QWebNavigationRequest::action() const
 {
     return d->action;
 }

@@ -82,7 +82,8 @@ class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
 public:
     enum NavigationRequestAction {
         AcceptRequest,
-        IgnoreRequest
+        // Make room in the valid range of the enum for extra actions exposed in Experimental.
+        IgnoreRequest = 0xFF
     };
     enum LoadStatus {
         LoadStartedStatus,
@@ -249,11 +250,11 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_PROPERTY(QWebViewportInfo* viewportInfo READ viewportInfo CONSTANT FINAL)
     Q_PROPERTY(QDeclarativeListProperty<QQuickUrlSchemeDelegate> urlSchemeDelegates READ schemeDelegates)
-    Q_ENUMS(NavigationRequestAction)
+    Q_ENUMS(NavigationRequestActionExperimental)
 
 public:
-    enum NavigationRequestAction {
-        DownloadRequest = 2
+    enum NavigationRequestActionExperimental {
+        DownloadRequest = QQuickWebView::IgnoreRequest - 1
     };
 
     QQuickWebViewExperimental(QQuickWebView* webView);

@@ -1,3 +1,23 @@
+2012-03-05  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] QWebNavigationRequest 'action' property should have an enum type instead of int
+        https://bugs.webkit.org/show_bug.cgi?id=80164
+
+        Reviewed by Simon Hausmann.
+
+        Use the appropriate enum type instead of int. Make IgnoreRequest have a bigger
+        value that give some room for us to put Experimental values in the middle. This
+        way the Experimental values are in a valid range for the original enumeration. To
+        avoid confusion, the Experimental enumeration was renamed.
+
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qwebnavigationrequest.cpp:
+        (QWebNavigationRequestPrivate):
+        (QWebNavigationRequest::setAction):
+        (QWebNavigationRequest::action):
+        * UIProcess/API/qt/qwebnavigationrequest_p.h:
+        * UIProcess/API/qt/tests/publicapi/tst_publicapi.cpp:
+
 2012-03-07  Andras Becsi  <andras.becsi@nokia.com>
 
         [WK2] Make it possible to build without geolocation support
