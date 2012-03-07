@@ -209,8 +209,15 @@ static void printImage(Evas_Object* image)
 
             unsigned char buffer[2048];
             ssize_t bytesRead;
-            while ((bytesRead = read(tempImageFd, buffer, sizeof(buffer))) > 0)
-                write(1, buffer, bytesRead);
+            while ((bytesRead = read(tempImageFd, buffer, sizeof(buffer))) > 0) {
+                ssize_t bytesWritten = 0;
+                ssize_t count;
+                do {
+                    if ((count = write(1, buffer + bytesWritten, bytesRead - bytesWritten)) <= 0)
+                        break;
+                    bytesWritten += count;
+                } while (bytesWritten < bytesRead);
+            }
         }
     }
     close(tempImageFd);

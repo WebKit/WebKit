@@ -61,10 +61,10 @@ PassRefPtr<SharedBuffer> SharedBuffer::createWithContentsOfFile(const String& fi
         return 0;
     }
 
-    fread(result->m_buffer.data(), 1, fileStat.st_size, file);
+    const size_t bytesRead = fread(result->m_buffer.data(), 1, fileStat.st_size, file);
     fclose(file);
 
-    return result.release();
+    return bytesRead == static_cast<unsigned>(fileStat.st_size) ? result.release() : 0;
 }
 
 } // namespace WebCore
