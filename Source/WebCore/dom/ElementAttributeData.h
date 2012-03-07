@@ -26,6 +26,7 @@
 #ifndef ElementAttributeData_h
 #define ElementAttributeData_h
 
+#include "Attr.h"
 #include "Attribute.h"
 #include "SpaceSplitString.h"
 #include "StylePropertySet.h"
@@ -100,6 +101,9 @@ public:
     size_t length() const { return m_attributes.size(); }
     bool isEmpty() const { return m_attributes.isEmpty(); }
 
+    PassRefPtr<Attr> getAttributeNode(const String&, bool shouldIgnoreAttributeCase, Element*) const;
+    PassRefPtr<Attr> getAttributeNode(const QualifiedName&, Element*) const;
+
     // Internal interface.
     Attribute* attributeItem(unsigned index) const { return m_attributes.attributeItem(index); }
     Attribute* getAttributeItem(const QualifiedName& name) const { return m_attributes.getAttributeItem(name); }
@@ -147,6 +151,24 @@ inline void ElementAttributeData::removeAttribute(const QualifiedName& name, Ele
         return;
 
     removeAttribute(index, element);
+}
+
+inline PassRefPtr<Attr> ElementAttributeData::getAttributeNode(const String& name, bool shouldIgnoreAttributeCase, Element* element) const
+{
+    ASSERT(element);
+    Attribute* attribute = getAttributeItem(name, shouldIgnoreAttributeCase);
+    if (!attribute)
+        return 0;
+    return attribute->createAttrIfNeeded(element);
+}
+
+inline PassRefPtr<Attr> ElementAttributeData::getAttributeNode(const QualifiedName& name, Element* element) const
+{
+    ASSERT(element);
+    Attribute* attribute = getAttributeItem(name);
+    if (!attribute)
+        return 0;
+    return attribute->createAttrIfNeeded(element);
 }
 
 inline Attribute* ElementAttributeData::getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const

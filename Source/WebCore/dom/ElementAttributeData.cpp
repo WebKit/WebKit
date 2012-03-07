@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ElementAttributeData.h"
 
-#include "Attr.h"
 #include "StyledElement.h"
 
 namespace WebCore {

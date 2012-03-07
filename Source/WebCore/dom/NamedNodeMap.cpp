@@ -54,16 +54,12 @@ void NamedNodeMap::deref()
 
 PassRefPtr<Node> NamedNodeMap::getNamedItem(const String& name) const
 {
-    Attribute* a = m_attributeData.getAttributeItem(name, shouldIgnoreAttributeCase(m_element));
-    if (!a)
-        return 0;
-    
-    return a->createAttrIfNeeded(m_element);
+    return m_attributeData.getAttributeNode(name, shouldIgnoreAttributeCase(m_element), m_element);
 }
 
 PassRefPtr<Node> NamedNodeMap::getNamedItemNS(const String& namespaceURI, const String& localName) const
 {
-    return getNamedItem(QualifiedName(nullAtom, localName, namespaceURI));
+    return m_attributeData.getAttributeNode(QualifiedName(nullAtom, localName, namespaceURI), m_element);
 }
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItem(const String& name, ExceptionCode& ec)
@@ -82,15 +78,6 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItem(const String& name, ExceptionCode
 PassRefPtr<Node> NamedNodeMap::removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode& ec)
 {
     return removeNamedItem(QualifiedName(nullAtom, localName, namespaceURI), ec);
-}
-
-PassRefPtr<Node> NamedNodeMap::getNamedItem(const QualifiedName& name) const
-{
-    Attribute* a = m_attributeData.getAttributeItem(name);
-    if (!a)
-        return 0;
-
-    return a->createAttrIfNeeded(m_element);
 }
 
 PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)

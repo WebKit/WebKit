@@ -53,7 +53,6 @@ public:
     PassRefPtr<Node> getNamedItemNS(const String& namespaceURI, const String& localName) const;
     PassRefPtr<Node> removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode&);
 
-    PassRefPtr<Node> getNamedItem(const QualifiedName& name) const;
     PassRefPtr<Node> removeNamedItem(const QualifiedName& name, ExceptionCode&);
     PassRefPtr<Node> setNamedItem(Node*, ExceptionCode&);
     PassRefPtr<Node> setNamedItemNS(Node*, ExceptionCode&);

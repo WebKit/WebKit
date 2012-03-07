@@ -1469,19 +1469,18 @@ void Element::removeAttributeNS(const String& namespaceURI, const String& localN
 
 PassRefPtr<Attr> Element::getAttributeNode(const String& name)
 {
-    NamedNodeMap* attrs = updatedAttributes();
-    if (!attrs)
+    ElementAttributeData* attributeData = updatedAttributeData();
+    if (!attributeData)
         return 0;
-    String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
-    return static_pointer_cast<Attr>(attrs->getNamedItem(localName));
+    return attributeData->getAttributeNode(name, shouldIgnoreAttributeCase(this), this);
 }
 
 PassRefPtr<Attr> Element::getAttributeNodeNS(const String& namespaceURI, const String& localName)
 {
-    NamedNodeMap* attrs = updatedAttributes();
-    if (!attrs)
+    ElementAttributeData* attributeData = updatedAttributeData();
+    if (!attributeData)
         return 0;
-    return static_pointer_cast<Attr>(attrs->getNamedItem(QualifiedName(nullAtom, localName, namespaceURI)));
+    return attributeData->getAttributeNode(QualifiedName(nullAtom, localName, namespaceURI), this);
 }
 
 bool Element::hasAttribute(const String& name) const
