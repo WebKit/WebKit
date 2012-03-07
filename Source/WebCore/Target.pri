@@ -3682,22 +3682,26 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
         Modules/websockets/WebSocketChannel.h \
         Modules/websockets/WebSocketChannelClient.h \
         Modules/websockets/WebSocketDeflateFramer.h \
+        Modules/websockets/WebSocketDeflater.h \
         Modules/websockets/WebSocketExtensionDispatcher.h \
         Modules/websockets/WebSocketExtensionProcessor.h \
         Modules/websockets/WebSocketFrame.h \
         Modules/websockets/WebSocketHandshake.h \
         Modules/websockets/WebSocketHandshakeRequest.h \
         Modules/websockets/WebSocketHandshakeResponse.h \
+        Modules/websockets/WorkerThreadableWebSocketChannel.h \
         platform/network/qt/SocketStreamHandlePrivate.h
 
     SOURCES += \
         Modules/websockets/WebSocket.cpp \
         Modules/websockets/WebSocketChannel.cpp \
         Modules/websockets/WebSocketDeflateFramer.cpp \
+        Modules/websockets/WebSocketDeflater.cpp \
         Modules/websockets/WebSocketExtensionDispatcher.cpp \
         Modules/websockets/WebSocketHandshake.cpp \
         Modules/websockets/WebSocketHandshakeRequest.cpp \
         Modules/websockets/WebSocketHandshakeResponse.cpp \
+        Modules/websockets/WorkerThreadableWebSocketChannel.cpp \
         Modules/websockets/ThreadableWebSocketChannel.cpp \
         Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp \
         platform/network/SocketStreamErrorBase.cpp \
