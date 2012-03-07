@@ -162,6 +162,12 @@ public:
     void removeResourcesWithOrigin(SecurityOrigin*);
     void getOriginsWithCache(SecurityOriginSet& origins);
 
+    unsigned minDeadCapacity() const { return m_minDeadCapacity; }
+    unsigned maxDeadCapacity() const { return m_maxDeadCapacity; }
+    unsigned capacity() const { return m_capacity; }
+    unsigned liveSize() const { return m_liveSize; }
+    unsigned deadSize() const { return m_deadSize; }
+
 private:
     MemoryCache();
     ~MemoryCache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.

@@ -31,14 +31,9 @@
 #include "config.h"
 #include "WebCache.h"
 
-// Instead of providing accessors, we make all members of MemoryCache public.
-// This will make it easier to track WebCore changes to the MemoryCache class.
-// FIXME: We should introduce public getters on the MemoryCache class.
-#define private public
 #include "MemoryCache.h"
-#undef private
 
-using namespace WebCore;
+using WebCore::MemoryCache;
 
 namespace WebKit {
 
@@ -83,11 +78,11 @@ void WebCache::getUsageStats(UsageStats* result)
 
     MemoryCache* cache = WebCore::memoryCache();
     if (cache) {
-        result->minDeadCapacity = cache->m_minDeadCapacity;
-        result->maxDeadCapacity = cache->m_maxDeadCapacity;
-        result->capacity = cache->m_capacity;
-        result->liveSize = cache->m_liveSize;
-        result->deadSize = cache->m_deadSize;
+        result->minDeadCapacity = cache->minDeadCapacity();
+        result->maxDeadCapacity = cache->maxDeadCapacity();
+        result->capacity = cache->capacity();
+        result->liveSize = cache->liveSize();
+        result->deadSize = cache->deadSize();
     } else
         memset(result, 0, sizeof(UsageStats));
 }
