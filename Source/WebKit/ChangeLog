@@ -1,5 +1,15 @@
 2012-03-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [CMake] Make the removal of transitive library dependencies work with CMake < 2.8.7.
+        https://bugs.webkit.org/show_bug.cgi?id=80469
+
+        Reviewed by Antonio Gomes.
+
+        * CMakeLists.txt: Manually set the LINK_INTERFACE_LIBRARIES target
+        property on the library being created.
+
+2012-03-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Unreviewed; fix the build after r109877.
 
         * CMakeLists.txt: Add WebCore/Modules/webdatabase to the list of
