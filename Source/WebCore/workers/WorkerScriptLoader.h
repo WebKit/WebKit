@@ -72,7 +72,7 @@ namespace WebCore {
         virtual void didFail(const ResourceError&);
         virtual void didFailRedirectCheck();
 
-#if PLATFORM(CHROMIUM)
+#if PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)
         void setTargetType(ResourceRequest::TargetType targetType) { m_targetType = targetType; }
 #endif
 

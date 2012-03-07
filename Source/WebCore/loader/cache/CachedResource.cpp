@@ -91,7 +91,7 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
     return ResourceLoadPriorityLow;
 }
 
-#if PLATFORM(CHROMIUM)
+#if PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)
 static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource::Type type)
 {
     switch (type) {
@@ -191,7 +191,7 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
     m_options = options;
     m_loading = true;
 
-#if PLATFORM(CHROMIUM)
+#if PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)
     if (m_resourceRequest.targetType() == ResourceRequest::TargetIsUnspecified)
         m_resourceRequest.setTargetType(cachedResourceTypeToTargetType(type()));
 #endif

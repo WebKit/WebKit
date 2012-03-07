@@ -969,12 +969,6 @@ void FrameLoaderClientBlackBerry::dispatchWillSendRequest(DocumentLoader* docLoa
             finalUrl.characters(), finalUrl.length());
     }
 
-    // FIXME: Update the request type. See PR #119792.
-    if (docLoader->frameLoader()->isLoadingMainFrame())
-        request.setTargetType(ResourceRequest::TargetIsMainFrame);
-    else
-        request.setTargetType(ResourceRequest::TargetIsSubframe);
-
     FrameLoader* loader = m_frame->loader();
     ASSERT(loader);
     if (isBackForwardLoadType(loader->loadType())) {
