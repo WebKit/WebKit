@@ -133,7 +133,7 @@ static void setup_keyevent_test(KeyEventFixture* fixture, gconstpointer data, GC
     gtk_widget_show(fixture->window);
     gtk_widget_show(GTK_WIDGET(fixture->webView));
     gtk_window_present(GTK_WINDOW(fixture->window));
-    gtk_widget_grab_focus(fixture->webView);
+    gtk_widget_grab_focus(GTK_WIDGET(fixture->webView));
 
     g_signal_connect(fixture->webView, "notify::load-status",
                      load_event_callback, fixture);
