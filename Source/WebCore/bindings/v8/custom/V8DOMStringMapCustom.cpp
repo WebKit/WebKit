@@ -91,11 +91,8 @@ v8::Handle<v8::Value> toV8(DOMStringMap* impl)
     v8::Handle<v8::Object> wrapper = V8DOMStringMap::wrap(impl);
     // Add a hidden reference from the element to the DOMStringMap.
     Element* element = impl->element();
-    if (!wrapper.IsEmpty() && element) {
-        v8::Handle<v8::Value> elementValue = toV8(element);
-        if (!elementValue.IsEmpty() && elementValue->IsObject())
-            elementValue.As<v8::Object>()->SetHiddenValue(V8HiddenPropertyName::domStringMap(), wrapper);
-    }
+    if (!wrapper.IsEmpty() && element)
+        toV8(element).As<v8::Object>()->SetHiddenValue(V8HiddenPropertyName::domStringMap(), wrapper);
     return wrapper;
 }
 
