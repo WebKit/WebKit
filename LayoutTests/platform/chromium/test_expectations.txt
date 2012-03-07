@@ -1479,7 +1479,6 @@ BUGCR23473 MAC : fast/repaint/selection-clear.html = IMAGE
 BUGCR23473 MAC : fast/repaint/selection-gap-overflow-scroll.html = IMAGE
 BUGCR23473 MAC : fast/repaint/stacked-diacritics.html = IMAGE
 BUGCR23473 MAC : fast/repaint/static-to-positioned.html = IMAGE
-BUGCR23473 MAC : fast/repaint/subtree-root-skipped.html = IMAGE
 BUGCR23473 MAC : fast/repaint/table-cell-move.html = IMAGE
 BUGCR23473 MAC : fast/repaint/table-cell-overflow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/table-col-background.html = IMAGE
@@ -3630,7 +3629,8 @@ BUGWK77324 WIN MAC DEBUG SLOW : fast/js/dfg-int32array.html = PASS
 BUGWK77397 : plugins/crash-restoring-plugin-page-from-page-cache.html = TIMEOUT TEXT
 
 // Started failing at WK r106383 or r106384.
-BUGWK77494 MAC : fast/replaced/width100percent-searchfield.html = IMAGE
+// FIXME_JCHAFFRAIX:  Restore to just IMAGE after WK75568 text rebaselines land
+// BUGWK77494 MAC : fast/replaced/width100percent-searchfield.html = IMAGE
 
 // Started crashing at WK r106422.
 BUGWK77508 SKIP : platform/mac/fast/events/non-roman-key-code.html = FAIL
@@ -3860,8 +3860,8 @@ BUGWK75568 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE+TEXT
 // FIXME:  keep SLOW here
 // BUGWK75568 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = PASS
 BUGWK75568 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE+TEXT
-BUGWK75568 MAC : fast/clip/008.html = IMAGE+TEXT
-BUGWK75568 MAC : fast/replaced/width100percent-textfield.html = IMAGE+TEXT
+BUGWK75568 MAC : fast/clip/008.html = TEXT
+BUGWK75568 MAC : fast/replaced/width100percent-textfield.html = TEXT
 
 // Those tests need a text baseline after lazily allocating layers.
 // The change should only be layer removal.
