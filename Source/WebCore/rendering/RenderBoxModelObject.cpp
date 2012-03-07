@@ -391,14 +391,14 @@ void RenderBoxModelObject::styleDidChange(StyleDifference diff, const RenderStyl
             setChildNeedsLayout(true);
         if (s_hadTransform)
             setNeedsLayoutAndPrefWidthsRecalc();
+        if (hasOverflowClip())
+            toRenderBox(this)->updateCachedSizeForOverflowClip();
     }
 
     if (layer()) {
         layer()->styleChanged(diff, oldStyle);
         if (s_hadLayer && layer()->isSelfPaintingLayer() != s_layerWasSelfPainting)
             setChildNeedsLayout(true);
-        if (hasOverflowClip())
-            toRenderBox(this)->updateCachedSizeForOverflowClip();
     }
 }
 
