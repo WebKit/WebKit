@@ -177,6 +177,17 @@ String keyIdentifierForEvasKeyName(String& keyName)
     return keyName;
 }
 
+String singleCharacterString(const String& keyName)
+{
+    if (keyName == "Return")
+        return String("\r");
+    if (keyName == "BackSpace")
+        return String("\x8");
+    if (keyName == "Tab")
+        return String("\t");
+    return keyName;
+}
+
 int windowsKeyCodeForEvasKeyName(String& keyName)
 {
     if (windowsKeyMap().isEmpty())

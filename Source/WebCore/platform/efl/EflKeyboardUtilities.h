@@ -35,6 +35,7 @@ class String;
 namespace WebCore {
 
 WTF::String keyIdentifierForEvasKeyName(WTF::String&);
+WTF::String singleCharacterString(const WTF::String&);
 int windowsKeyCodeForEvasKeyName(WTF::String&);
 
 } // namespace WebCore

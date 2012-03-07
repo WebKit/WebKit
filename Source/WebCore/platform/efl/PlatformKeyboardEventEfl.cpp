@@ -42,8 +42,8 @@ namespace WebCore {
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Down* event)
     : PlatformEvent(PlatformEvent::KeyDown, evas_key_modifier_is_set(event->modifiers, "Shift"), evas_key_modifier_is_set(event->modifiers, "Control"), evas_key_modifier_is_set(event->modifiers, "Alt"), evas_key_modifier_is_set(event->modifiers, "Meta"), currentTime())
-    , m_text(String::fromUTF8(event->string))
-    , m_unmodifiedText(String::fromUTF8(event->string))
+    , m_text(singleCharacterString(String::fromUTF8(event->string)))
+    , m_unmodifiedText(singleCharacterString(String::fromUTF8(event->string)))
 {
     String keyName = String(event->key);
     m_keyIdentifier = keyIdentifierForEvasKeyName(keyName);
@@ -56,7 +56,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Down* event)
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Up* event)
     : PlatformEvent(PlatformEvent::KeyUp, evas_key_modifier_is_set(event->modifiers, "Shift"), evas_key_modifier_is_set(event->modifiers, "Control"), evas_key_modifier_is_set(event->modifiers, "Alt"), evas_key_modifier_is_set(event->modifiers, "Meta"), currentTime())
-    , m_text(String::fromUTF8(event->string))
+    , m_text(singleCharacterString(String::fromUTF8(event->string)))
 {
     String keyName = String(event->key);
     m_keyIdentifier = keyIdentifierForEvasKeyName(keyName);
