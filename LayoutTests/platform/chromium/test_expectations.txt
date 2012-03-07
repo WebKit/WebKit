@@ -2034,14 +2034,14 @@ BUGWK48288 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.composite.oper
 BUGWK48289 : canvas/philip/tests/2d.composite.operation.darker.html = TEXT
 BUGWK48289 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.composite.operation.darker.html = TEXT
 
-BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT
 
-BUGWK38463 : canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT
+BUGWK38463 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT
 BUGWK38463 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT
 
 BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
@@ -2698,7 +2698,7 @@ BUGCR76550 MAC DEBUG : fast/dom/Window/window-function-frame-getter-precedence.h
 BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS TEXT
 
 // Flaky
-BUGCR76610 MAC WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
+BUGCR76610 WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGCR76610 MAC WIN DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 
 BUGCR76716 LINUX WIN DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
@@ -4144,20 +4144,20 @@ BUGWK50192 : compositing/shadows/shadow-drawing.html = IMAGE
 BUGWK50192 : fast/repaint/block-selection-gap-in-composited-layer.html = IMAGE
 
 // Since r109914, flaky crash
-BUGWK80481 MAC : canvas/philip/tests/2d.text-custom-font-load-crash.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.center.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.end.ltr.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.end.rtl.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.left.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.right.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.start.ltr.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.start.rtl.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.alphabetic.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.bottom.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.hanging.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.middle.html = CRASH
-BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.top.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text-custom-font-load-crash.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.center.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.end.ltr.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.end.rtl.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.left.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.right.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.start.ltr.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.start.rtl.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.alphabetic.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.bottom.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.hanging.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.middle.html = CRASH PASS
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.top.html = CRASH PASS
 BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.fill.maxWidth.bound.html = CRASH
 BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html = CRASH
 BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.fontface.html = CRASH
