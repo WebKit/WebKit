@@ -235,9 +235,12 @@ void ScrollAnimatorNone::PerAxisData::reset()
 
 bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(float step, float multiplier, float scrollableSize, double currentTime, Parameters* parameters)
 {
-    if (!m_startTime)
+    float delta = step * multiplier;
+    if (!m_startTime || !delta || (delta < 0) != (m_desiredPosition - *m_currentPosition < 0)) {
         m_desiredPosition = *m_currentPosition;
-    float newPosition = m_desiredPosition + (step * multiplier);
+        m_startTime = 0;
+    }
+    float newPosition = m_desiredPosition + delta;
 
     if (newPosition < 0 || newPosition > scrollableSize)
         newPosition = max(min(newPosition, scrollableSize), 0.0f);

@@ -231,7 +231,8 @@ void ScrollAnimatorNoneTest::reset()
 
 bool ScrollAnimatorNoneTest::updateDataFromParameters(float step, float multiplier, float scrollableSize, double currentTime, ScrollAnimatorNone::Parameters* parameters)
 {
-    m_scrollingDown = (step * multiplier > 0);
+    if (step * multiplier)
+        m_scrollingDown = (step * multiplier > 0);
 
     double oldVelocity = m_data->m_currentVelocity;
     double oldDesiredVelocity = m_data->m_desiredVelocity;
@@ -249,16 +250,18 @@ bool ScrollAnimatorNoneTest::updateDataFromParameters(float step, float multipli
     double sustainTimeLeft = max(0., timeLeft - releaseTimeLeft - attackTimeLeft);
 
     // If we're getting near the finish, the desired velocity can decrease since the time left gets increased.
-    double allowedVelocityDecreaseFactor = 0.99 * oldTimeLeft / timeLeft;
-    allowedVelocityDecreaseFactor *= allowedVelocityDecreaseFactor;
-    if (m_scrollingDown)
-        EXPECT_LE(oldDesiredVelocity * allowedVelocityDecreaseFactor, m_data->m_desiredVelocity);
-    else
-        EXPECT_GE(oldDesiredVelocity * allowedVelocityDecreaseFactor, m_data->m_desiredVelocity);
+    if (step * multiplier) {
+        double allowedVelocityDecreaseFactor = 0.99 * oldTimeLeft / timeLeft;
+        allowedVelocityDecreaseFactor *= allowedVelocityDecreaseFactor;
+        if (m_scrollingDown)
+            EXPECT_LE(oldDesiredVelocity * allowedVelocityDecreaseFactor, m_data->m_desiredVelocity);
+        else
+            EXPECT_GE(oldDesiredVelocity * allowedVelocityDecreaseFactor, m_data->m_desiredVelocity);
 
-    double startPosition = attackTimeLeft ? m_data->m_attackPosition : m_currentPosition;
-    double expectedReleasePosition = startPosition + sustainTimeLeft * m_data->m_desiredVelocity;
-    EXPECT_NEAR(expectedReleasePosition, m_data->m_releasePosition, result ? .0001 : 1);
+        double startPosition = attackTimeLeft ? m_data->m_attackPosition : m_currentPosition;
+        double expectedReleasePosition = startPosition + sustainTimeLeft * m_data->m_desiredVelocity;
+        EXPECT_NEAR(expectedReleasePosition, m_data->m_releasePosition, result ? .0001 : 1);
+    }
 
     return result;
 }
@@ -427,7 +430,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollOnceLinear)
 {
     ScrollAnimatorNone::Parameters parameters(true, 7 * kTickTime, 0, ScrollAnimatorNone::Linear, 3 * kTickTime, ScrollAnimatorNone::Linear, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 1000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 1000, kStartTime, &parameters));
     bool result = true;
     for (double t = kStartTime; result && t < kEndTime; t += kAnimationTime)
         result = animateScroll(t);
@@ -437,7 +440,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollOnceQuadratic)
 {
     ScrollAnimatorNone::Parameters parameters(true, 7 * kTickTime, 0, ScrollAnimatorNone::Quadratic, 3 * kTickTime, ScrollAnimatorNone::Quadratic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 1000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 1000, kStartTime, &parameters));
     bool result = true;
     for (double t = kStartTime; result && t < kEndTime; t += kAnimationTime)
         result = animateScroll(t);
@@ -447,7 +450,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollLongQuadratic)
 {
     ScrollAnimatorNone::Parameters parameters(true, 20 * kTickTime, 0, ScrollAnimatorNone::Quadratic, 3 * kTickTime, ScrollAnimatorNone::Quadratic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 1000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 1000, kStartTime, &parameters));
     bool result = true;
     for (double t = kStartTime; result && t < kEndTime; t += kAnimationTime)
         result = animateScroll(t);
@@ -457,7 +460,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollQuadraticNoSustain)
 {
     ScrollAnimatorNone::Parameters parameters(true, 8 * kTickTime, 0, ScrollAnimatorNone::Quadratic, 4 * kTickTime, ScrollAnimatorNone::Quadratic, 4 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 1000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 1000, kStartTime, &parameters));
     bool result = true;
     for (double t = kStartTime; result && t < kEndTime; t += kAnimationTime)
         result = animateScroll(t);
@@ -467,7 +470,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollQuadraticSmoothed)
 {
     ScrollAnimatorNone::Parameters parameters(true, 8 * kTickTime, 8 * kTickTime, ScrollAnimatorNone::Quadratic, 4 * kTickTime, ScrollAnimatorNone::Quadratic, 4 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 1000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 1000, kStartTime, &parameters));
     bool result = true;
     for (double t = kStartTime; result && t < kEndTime; t += kAnimationTime)
         result = animateScroll(t);
@@ -477,7 +480,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollOnceCubic)
 {
     ScrollAnimatorNone::Parameters parameters(true, 7 * kTickTime, 0, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 1000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 1000, kStartTime, &parameters));
     bool result = true;
     for (double t = kStartTime; result && t < kEndTime; t += kAnimationTime)
         result = animateScroll(t);
@@ -487,7 +490,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollOnceQuartic)
 {
     ScrollAnimatorNone::Parameters parameters(true, 7 * kTickTime, 0, ScrollAnimatorNone::Quartic, 3 * kTickTime, ScrollAnimatorNone::Quartic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 1000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 1000, kStartTime, &parameters));
     bool result = true;
     for (double t = kStartTime; result && t < kEndTime; t += kAnimationTime)
         result = animateScroll(t);
@@ -497,7 +500,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollOnceShort)
 {
     ScrollAnimatorNone::Parameters parameters(true, 7 * kTickTime, 0, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 1000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 1000, kStartTime, &parameters));
     bool result = true;
     for (double t = kStartTime; result && t < kEndTime; t += kTickTime)
         result = animateScroll(t);
@@ -507,7 +510,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollTwiceQuadratic)
 {
     ScrollAnimatorNone::Parameters parameters(true, 7 * kTickTime, 0, ScrollAnimatorNone::Quadratic, 3 * kTickTime, ScrollAnimatorNone::Quadratic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 1000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 1000, kStartTime, &parameters));
     bool result = true;
     double t;
     for (t = kStartTime; result && t < kStartTime + 1.5 * kTickTime; t += kAnimationTime)
@@ -538,7 +541,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollLotsQuadratic)
 {
     ScrollAnimatorNone::Parameters parameters(true, 7 * kTickTime, 0, ScrollAnimatorNone::Quadratic, 3 * kTickTime, ScrollAnimatorNone::Quadratic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 10000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 10000, kStartTime, &parameters));
     bool result = true;
     double t;
     for (t = kStartTime; result && t < kStartTime + 1.5 * kTickTime; t += kAnimationTime)
@@ -559,7 +562,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollLotsQuadraticSmoothed)
 {
     ScrollAnimatorNone::Parameters parameters(true, 10 * kTickTime, 6 * kTickTime, ScrollAnimatorNone::Quadratic, 3 * kTickTime, ScrollAnimatorNone::Quadratic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 10000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 10000, kStartTime, &parameters));
     bool result = true;
     double t;
     for (t = kStartTime; result && t < kStartTime + 1.5 * kTickTime; t += kAnimationTime)
@@ -580,7 +583,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollTwiceCubic)
 {
     ScrollAnimatorNone::Parameters parameters(true, 7 * kTickTime, 0, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 1000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 1000, kStartTime, &parameters));
     bool result = true;
     double t;
     for (t = kStartTime; result && t < kStartTime + 1.5 * kTickTime; t += kAnimationTime)
@@ -611,7 +614,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollLotsCubic)
 {
     ScrollAnimatorNone::Parameters parameters(true, 7 * kTickTime, 0, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 10000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 10000, kStartTime, &parameters));
     bool result = true;
     double t;
     for (t = kStartTime; result && t < kStartTime + 1.5 * kTickTime; t += kAnimationTime)
@@ -632,7 +635,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollLotsCubicSmoothed)
 {
     ScrollAnimatorNone::Parameters parameters(true, 10 * kTickTime, 6 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 40, 10000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 10000, kStartTime, &parameters));
     bool result = true;
     double t;
     for (t = kStartTime; result && t < kStartTime + 1.5 * kTickTime; t += kAnimationTime)
@@ -761,7 +764,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollDownToBumper)
 {
     ScrollAnimatorNone::Parameters parameters(true, 10 * kTickTime, 7 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, 20, 200, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 20, 200, kStartTime, &parameters));
     bool result = true;
     double t = kStartTime;
     for (int i = 0; i < 10; ++i) {
@@ -781,7 +784,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollUpToBumper)
 {
     ScrollAnimatorNone::Parameters parameters(true, 10 * kTickTime, 7 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
-    updateDataFromParameters(1, -20, 200, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, -20, 200, kStartTime, &parameters));
     bool result = true;
     double t = kStartTime;
     for (int i = 0; i < 10; ++i) {
@@ -802,7 +805,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollUpToBumperCoast)
     ScrollAnimatorNone::Parameters parameters(true, 11 * kTickTime, 2 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 1);
 
     m_currentPosition = 40000;
-    updateDataFromParameters(1, -10000, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, -10000, 50000, kStartTime, &parameters));
     bool result = true;
     double t = kStartTime;
     for (int i = 0; i < 10; ++i) {
@@ -823,7 +826,7 @@ TEST_F(ScrollAnimatorNoneTest, ScrollDownToBumperCoast)
     ScrollAnimatorNone::Parameters parameters(true, 11 * kTickTime, 2 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 1);
 
     m_currentPosition = 10000;
-    updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters));
     bool result = true;
     double t = kStartTime;
     for (int i = 0; i < 10; ++i) {
@@ -844,27 +847,27 @@ TEST_F(ScrollAnimatorNoneTest, VaryingInputsEquivalency)
     ScrollAnimatorNone::Parameters parameters(true, 15 * kTickTime, 10 * kTickTime, ScrollAnimatorNone::Cubic, 5 * kTickTime, ScrollAnimatorNone::Cubic, 5 * kTickTime, ScrollAnimatorNone::Linear, 0);
 
     reset();
-    updateDataFromParameters(1, 300, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 300, 50000, kStartTime, &parameters));
     SavePerAxisData dataSingle(*m_data);
 
     reset();
-    updateDataFromParameters(1, 150, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 150, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 150, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 150, 50000, kStartTime, &parameters));
     SavePerAxisData dataDouble(*m_data);
 
     reset();
-    updateDataFromParameters(1, 100, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 100, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 100, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 100, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 100, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 100, 50000, kStartTime, &parameters));
     SavePerAxisData dataTriple(*m_data);
 
     reset();
-    updateDataFromParameters(1, 50, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 50, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 50, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 50, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 50, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 50, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 50, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 50, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 50, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 50, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 50, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 50, 50000, kStartTime, &parameters));
     SavePerAxisData dataMany(*m_data);
 
     EXPECT_EQ(dataSingle, dataDouble);
@@ -910,27 +913,27 @@ TEST_F(ScrollAnimatorNoneTest, VaryingInputsEquivalencyCoastLarge)
     ScrollAnimatorNone::Parameters parameters(true, 15 * kTickTime, 10 * kTickTime, ScrollAnimatorNone::Cubic, 5 * kTickTime, ScrollAnimatorNone::Cubic, 5 * kTickTime, ScrollAnimatorNone::Linear, 1);
 
     reset();
-    updateDataFromParameters(1, 30000, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 30000, 50000, kStartTime, &parameters));
     SavePerAxisData dataSingle(*m_data);
 
     reset();
-    updateDataFromParameters(1, 15000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 15000, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 15000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 15000, 50000, kStartTime, &parameters));
     SavePerAxisData dataDouble(*m_data);
 
     reset();
-    updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters));
     SavePerAxisData dataTriple(*m_data);
 
     reset();
-    updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters));
     SavePerAxisData dataMany(*m_data);
 
     EXPECT_EQ(dataSingle, dataDouble);
@@ -943,27 +946,27 @@ TEST_F(ScrollAnimatorNoneTest, VaryingInputsEquivalencyCoastSteep)
     ScrollAnimatorNone::Parameters parameters(true, 15 * kTickTime, 10 * kTickTime, ScrollAnimatorNone::Cubic, 5 * kTickTime, ScrollAnimatorNone::Cubic, 5 * kTickTime, ScrollAnimatorNone::Quadratic, 1);
 
     reset();
-    updateDataFromParameters(1, 30000, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 30000, 50000, kStartTime, &parameters));
     SavePerAxisData dataSingle(*m_data);
 
     reset();
-    updateDataFromParameters(1, 15000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 15000, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 15000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 15000, 50000, kStartTime, &parameters));
     SavePerAxisData dataDouble(*m_data);
 
     reset();
-    updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 10000, 50000, kStartTime, &parameters));
     SavePerAxisData dataTriple(*m_data);
 
     reset();
-    updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters);
-    updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters);
+    EXPECT_TRUE(updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters));
+    EXPECT_TRUE(updateDataFromParameters(1, 5000, 50000, kStartTime, &parameters));
     SavePerAxisData dataMany(*m_data);
 
     EXPECT_EQ(dataSingle, dataDouble);
@@ -971,5 +974,50 @@ TEST_F(ScrollAnimatorNoneTest, VaryingInputsEquivalencyCoastSteep)
     EXPECT_EQ(dataSingle, dataMany);
 }
 
+TEST_F(ScrollAnimatorNoneTest, ScrollStopInMiddle)
+{
+    ScrollAnimatorNone::Parameters parameters(true, 7 * kTickTime, 0, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
+
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 1000, kStartTime, &parameters));
+    bool result = true;
+    double t;
+    for (t = kStartTime; result && t < kStartTime + 1.5 * kTickTime; t += kAnimationTime)
+        result = animateScroll(t);
+
+    result = result && animateScroll(t);
+    EXPECT_TRUE(result);
+    double before = m_currentPosition;
+    result = result && updateDataFromParameters(0, 0, 1000, t, &parameters);
+    EXPECT_FALSE(result);
+    result = result && animateScroll(t);
+    double after = m_currentPosition;
+    EXPECT_EQ(before, after);
+    checkDesiredPosition(after);
+}
+
+TEST_F(ScrollAnimatorNoneTest, ReverseInMiddle)
+{
+    ScrollAnimatorNone::Parameters parameters(true, 7 * kTickTime, 0, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Cubic, 3 * kTickTime, ScrollAnimatorNone::Linear, 0);
+
+    EXPECT_TRUE(updateDataFromParameters(1, 40, 1000, kStartTime, &parameters));
+    bool result = true;
+    double t;
+    for (t = kStartTime; result && t < kStartTime + 1.5 * kTickTime; t += kAnimationTime)
+        result = animateScroll(t);
+
+    result = result && animateScroll(t);
+    EXPECT_TRUE(result);
+    double before = m_currentPosition;
+    result = result && updateDataFromParameters(1, -10, 1000, t, &parameters);
+    EXPECT_TRUE(result);
+    result = result && animateScroll(t);
+    double after = m_currentPosition;
+    EXPECT_GE(before, after);
+
+    t += kAnimationTime;
+    for (; result && t < kEndTime; t += kAnimationTime)
+        result = result && animateScroll(t);
+    EXPECT_GE(before, m_currentPosition);
+}
 
 #endif // ENABLE(SMOOTH_SCROLLING)
