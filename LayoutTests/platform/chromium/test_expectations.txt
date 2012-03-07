@@ -3799,20 +3799,6 @@ BUGWK78684 : fast/forms/fieldset-legend-padding-unclipped-fieldset-border.html =
 // New test; landed at r109779 but results look wrong on most Chrome platforms.
 BUGSENORBLANCO : http/tests/incremental/partial-jpeg.html = FAIL
 
-// Needs rebaselining. Layers are merged, and rotated text drawn better.
-BUGWK50192 : compositing/geometry/limit-layer-bounds-fixed-positioned.html = TEXT
-BUGWK50192 : compositing/geometry/limit-layer-bounds-overflow-root.html = TEXT
-BUGWK50192 : compositing/geometry/limit-layer-bounds-positioned-transition.html = TEXT
-BUGWK50192 : compositing/geometry/limit-layer-bounds-positioned.html = TEXT
-BUGWK50192 WIN LINUX : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
-BUGWK50192 MAC LEOPARD : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TEXT
-BUGWK50192 : compositing/geometry/limit-layer-bounds-transformed.html = TEXT
-BUGWK50192 : compositing/geometry/fixed-position-transform-composited-page-scale-down.html = IMAGE
-BUGWK50192 LINUX MAC : compositing/geometry/fixed-position-transform-composited-page-scale.html = IMAGE
-BUGWK50192 : compositing/reflections/reflection-on-composited.html = IMAGE
-BUGWK50192 : compositing/shadows/shadow-drawing.html = IMAGE
-BUGWK50192 : fast/repaint/block-selection-gap-in-composited-layer.html = IMAGE
-
 // Since r109914, flaky crash
 BUGWK80481 MAC : canvas/philip/tests/2d.text-custom-font-load-crash.html = CRASH PASS
 BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.center.html = CRASH PASS

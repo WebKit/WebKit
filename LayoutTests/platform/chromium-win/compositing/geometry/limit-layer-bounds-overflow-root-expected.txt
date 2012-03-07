@@ -16,13 +16,6 @@
         (GraphicsLayer
           (bounds 142.00 142.00)
           (drawsContent 1)
-          (children 1
-            (GraphicsLayer
-              (position 21.00 21.00)
-              (bounds 100.00 100.00)
-              (drawsContent 1)
-            )
-          )
         )
         (GraphicsLayer
           (position 0.00 13.00)
