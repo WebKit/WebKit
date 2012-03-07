@@ -4142,4 +4142,24 @@ BUGWK50192 : compositing/reflections/reflection-on-composited.html = IMAGE
 BUGWK50192 : compositing/shadows/shadow-drawing.html = IMAGE
 BUGWK50192 : fast/repaint/block-selection-gap-in-composited-layer.html = IMAGE
 
-
+// Since r109914, flaky crash
+BUGWK80481 MAC : canvas/philip/tests/2d.text-custom-font-load-crash.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.center.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.end.ltr.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.end.rtl.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.left.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.right.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.start.ltr.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.align.start.rtl.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.alphabetic.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.bottom.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.hanging.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.middle.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.baseline.top.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.fill.maxWidth.bound.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.fontface.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.fontface.repeat.html = CRASH
+BUGWK80481 MAC : canvas/philip/tests/2d.text.draw.space.basic.html = CRASH
+BUGWK80481 MAC : http/tests/css/font-face-src-loading.html = CRASH
