@@ -1,3 +1,24 @@
+2012-03-07  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [NRWT] Fix --platform=qt-5.0 --new-baseline combo
+        https://bugs.webkit.org/show_bug.cgi?id=72489
+
+        Reviewed by Dirk Pranke.
+
+        NRWT: The default platform name for Qt combined with --webkit-test-runner is now
+        "qt-5.0-wk2" instead of "qt-linux" and that name is now prefered for tests.
+        --platform will override the platform name and then we'll use it.
+
+        ORWT: We check for qt version and use platform name "qt-4.8" if the version is lower
+        than 5.0.0, and then we choose between "qt-5.0-wk1" and "qt-5.0-wk2". --platform will
+        override it in the end.
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort):
+        (QtPort.determine_full_port_name):
+        (QtPort.baseline_search_path):
+
 2012-03-07  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [Qt][WK2] MiniBrowser on desktop does not react to click events
