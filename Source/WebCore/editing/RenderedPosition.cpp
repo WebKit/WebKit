@@ -137,7 +137,7 @@ RenderedPosition RenderedPosition::leftBoundaryOfBidiRun(unsigned char bidiLevel
 
     InlineBox* box = m_inlineBox;
     do {
-        InlineBox* prev = box->prevLeafChild();
+        InlineBox* prev = box->prevLeafChildIgnoringLineBreak();
         if (!prev || prev->bidiLevel() < bidiLevelOfRun)
             return RenderedPosition(box->renderer(), box, box->caretLeftmostOffset());
         box = prev;
@@ -154,7 +154,7 @@ RenderedPosition RenderedPosition::rightBoundaryOfBidiRun(unsigned char bidiLeve
 
     InlineBox* box = m_inlineBox;
     do {
-        InlineBox* next = box->nextLeafChild();
+        InlineBox* next = box->nextLeafChildIgnoringLineBreak();
         if (!next || next->bidiLevel() < bidiLevelOfRun)
             return RenderedPosition(box->renderer(), box, box->caretRightmostOffset());
         box = next;
