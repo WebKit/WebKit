@@ -455,7 +455,9 @@ END
 }
 END
 
-    if (!($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"V8CustomToJSObject"})) {
+    if ($interfaceName eq 'Element') {
+        # Do not generate toV8() for performance optimization.
+    } elsif (!($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"V8CustomToJSObject"})) {
         push(@headerContent, <<END);
 
 inline v8::Handle<v8::Value> toV8(${nativeType}* impl${forceNewObjectParameter})

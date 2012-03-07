@@ -2014,7 +2014,6 @@
             'bindings/v8/custom/V8DirectoryEntrySyncCustom.cpp',
             'bindings/v8/custom/V8DocumentCustom.cpp',
             'bindings/v8/custom/V8DocumentLocationCustom.cpp',
-            'bindings/v8/custom/V8ElementCustom.cpp',
             'bindings/v8/custom/V8EntryCustom.cpp',
             'bindings/v8/custom/V8EntrySyncCustom.cpp',
             'bindings/v8/custom/V8EventCustom.cpp',

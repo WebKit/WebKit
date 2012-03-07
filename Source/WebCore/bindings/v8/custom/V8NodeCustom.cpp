@@ -48,11 +48,16 @@
 #include "V8Entity.h"
 #include "V8EntityReference.h"
 #include "V8EventListener.h"
+#include "V8HTMLElement.h"
 #include "V8Node.h"
 #include "V8Notation.h"
 #include "V8ProcessingInstruction.h"
 #include "V8Proxy.h"
 #include "V8Text.h"
+
+#if ENABLE(SVG)
+#include "V8SVGElement.h"
+#endif
 
 #include <wtf/RefPtr.h>
 
@@ -143,7 +148,13 @@ v8::Handle<v8::Value> toV8Slow(Node* impl, bool forceNewObject)
     }
     switch (impl->nodeType()) {
     case Node::ELEMENT_NODE:
-        return toV8(static_cast<Element*>(impl), forceNewObject);
+        if (impl->isHTMLElement())
+            return toV8(toHTMLElement(impl), forceNewObject);
+#if ENABLE(SVG)
+        if (impl->isSVGElement())
+            return toV8(static_cast<SVGElement*>(impl), forceNewObject);
+#endif
+        return V8Element::wrap(static_cast<Element*>(impl), forceNewObject);
     case Node::ATTRIBUTE_NODE:
         return toV8(static_cast<Attr*>(impl), forceNewObject);
     case Node::TEXT_NODE:
