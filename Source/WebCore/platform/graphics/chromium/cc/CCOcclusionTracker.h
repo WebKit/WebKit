@@ -36,6 +36,15 @@ class CCRenderSurface;
 class LayerChromium;
 class RenderSurfaceChromium;
 
+template<typename RenderSurfaceType>
+class CCOcclusionTrackerDamageClientBase {
+public:
+    virtual FloatRect damageRect(const RenderSurfaceType*) const = 0;
+};
+
+typedef CCOcclusionTrackerDamageClientBase<RenderSurfaceChromium> CCOcclusionTrackerDamageClient;
+typedef CCOcclusionTrackerDamageClientBase<CCRenderSurface> CCOcclusionTrackerDamageClientImpl;
+
 // This class is used to track occlusion of layers while traversing them in a front-to-back order. As each layer is visited, one of the
 // methods in this class is called to notify it about the current target surface.
 // Then, occlusion in the content space of the current layer may be queried, via methods such as occluded() and unoccludedContentRect().
@@ -43,8 +52,11 @@ class RenderSurfaceChromium;
 // Finally, once finished with the layer, occlusion behind the layer should be marked by calling markOccludedBehindLayer().
 template<typename LayerType, typename RenderSurfaceType>
 class CCOcclusionTrackerBase {
+    WTF_MAKE_NONCOPYABLE(CCOcclusionTrackerBase);
+    typedef CCOcclusionTrackerDamageClientBase<RenderSurfaceType> DamageClientType;
 public:
-    CCOcclusionTrackerBase() { }
+    CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace);
+    CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, const DamageClientType*);
 
     // Called when visiting a layer representing itself. If the target was not already current, then this indicates we have entered a new surface subtree.
     void enterTargetRenderSurface(const RenderSurfaceType* newTarget);
@@ -64,11 +76,6 @@ public:
     bool occluded(const LayerType*, const IntRect& contentRect) const;
     // Gives an unoccluded sub-rect of |contentRect| in the content space of the layer. Used when considering occlusion for a layer that paints/draws something.
     IntRect unoccludedContentRect(const LayerType*, const IntRect& contentRect) const;
-
-    // Returns true if the given rect in content space for the RenderSurface owned by the layer is fully occluded in either screen space or the layer's target surface.
-    bool surfaceOccluded(const LayerType*, const IntRect& contentRect) const;
-    // Gives an unoccluded sub-rect of |contentRect| in the content space of the RenderSurface owned by the layer. Used when considering occlusion for a target surface.
-    IntRect surfaceUnoccludedContentRect(const LayerType*, const IntRect& contentRect) const;
 
     // FIXME: Remove these in future, they are to make CLs for transitioning to this easier.
     const Region& currentOcclusionInScreenSpace() const;
@@ -90,8 +97,12 @@ protected:
     // We merge the occlusion at the top of the stack with the new current subtree. This new target is pushed onto the stack if not already there.
     Vector<StackObject, 1> m_stack;
 
+    // Allow tests to override this.
+    virtual IntRect layerScissorRectInTargetSurface(const LayerType*) const;
+
 private:
-    WTF_MAKE_NONCOPYABLE(CCOcclusionTrackerBase);
+    IntRect m_scissorRectInScreenSpace;
+    const DamageClientType* m_surfaceDamageClient;
 };
 
 typedef CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium> CCOcclusionTracker;

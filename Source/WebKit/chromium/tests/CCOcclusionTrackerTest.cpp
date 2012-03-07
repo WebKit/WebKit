@@ -68,17 +68,51 @@ public:
 // A subclass to expose the total current occlusion.
 class TestCCOcclusionTracker : public CCOcclusionTracker {
 public:
+    TestCCOcclusionTracker(IntRect screenScissorRect)
+        : CCOcclusionTracker(screenScissorRect)
+        , m_overrideLayerScissorRect(false)
+    {
+    }
+
+    TestCCOcclusionTracker(IntRect screenScissorRect, const CCOcclusionTrackerDamageClient* damageClient)
+        : CCOcclusionTracker(screenScissorRect, damageClient)
+        , m_overrideLayerScissorRect(false)
+    {
+    }
+
     Region occlusionInScreenSpace() const { return CCOcclusionTracker::m_stack.last().occlusionInScreen; }
     Region occlusionInTargetSurface() const { return CCOcclusionTracker::m_stack.last().occlusionInTarget; }
 
     void setOcclusionInScreenSpace(const Region& region) { CCOcclusionTracker::m_stack.last().occlusionInScreen = region; }
     void setOcclusionInTargetSurface(const Region& region) { CCOcclusionTracker::m_stack.last().occlusionInTarget = region; }
+
+    void setLayerScissorRect(const IntRect& rect) { m_overrideLayerScissorRect = true; m_layerScissorRect = rect;}
+    void useDefaultLayerScissorRect() { m_overrideLayerScissorRect = false; }
+
+protected:
+    virtual IntRect layerScissorRectInTargetSurface(const LayerChromium* layer) const { return m_overrideLayerScissorRect ? m_layerScissorRect : CCOcclusionTracker::layerScissorRectInTargetSurface(layer); }
+
+private:
+    bool m_overrideLayerScissorRect;
+    IntRect m_layerScissorRect;
+};
+
+class TestDamageClient : public CCOcclusionTrackerDamageClient {
+public:
+    // The interface
+    virtual FloatRect damageRect(const RenderSurfaceChromium*) const { return m_damageRect; }
+
+    // Testing stuff
+    TestDamageClient(const FloatRect& damageRect) : m_damageRect(damageRect) { }
+    void setDamageRect(const FloatRect& damageRect) { m_damageRect = damageRect; }
+
+private:
+    FloatRect m_damageRect;
 };
 
 TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegion)
 {
     // This tests that the right transforms are being used.
-    TestCCOcclusionTracker occlusion;
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
@@ -98,6 +132,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegion)
 
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+
     occlusion.enterTargetRenderSurface(parent->renderSurface());
     occlusion.markOccludedBehindLayer(layer.get());
     EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
@@ -110,6 +147,14 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegion)
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 29, 70, 70)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(31, 30, 70, 70)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 31, 70, 70)));
+
+    occlusion.useDefaultLayerScissorRect();
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(29, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 29, 70, 70)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(31, 30, 70, 70)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 31, 70, 70)));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(30, 30, 70, 70)).isEmpty());
     EXPECT_EQ_RECT(IntRect(29, 30, 1, 70), occlusion.unoccludedContentRect(parent.get(), IntRect(29, 30, 70, 70)));
@@ -125,7 +170,6 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegion)
 TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotation)
 {
     // This tests that the right transforms are being used.
-    TestCCOcclusionTracker occlusion;
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
@@ -150,6 +194,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotation)
 
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+
     occlusion.enterTargetRenderSurface(parent->renderSurface());
     occlusion.markOccludedBehindLayer(layer.get());
     EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
@@ -162,6 +209,14 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotation)
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 29, 70, 70)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(31, 30, 70, 70)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 31, 70, 70)));
+
+    occlusion.useDefaultLayerScissorRect();
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(29, 30, 70, 70)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 29, 70, 70)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(31, 30, 70, 70)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 31, 70, 70)));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(30, 30, 70, 70)).isEmpty());
     EXPECT_EQ_RECT(IntRect(29, 30, 1, 70), occlusion.unoccludedContentRect(parent.get(), IntRect(29, 30, 70, 70)));
@@ -177,7 +232,6 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotation)
 TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithTranslation)
 {
     // This tests that the right transforms are being used.
-    TestCCOcclusionTracker occlusion;
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
@@ -200,6 +254,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithTranslation)
 
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+
     occlusion.enterTargetRenderSurface(parent->renderSurface());
     occlusion.markOccludedBehindLayer(layer.get());
     EXPECT_EQ_RECT(IntRect(50, 50, 50, 50), occlusion.occlusionInScreenSpace().bounds());
@@ -213,6 +270,14 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithTranslation)
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(51, 50, 50, 50)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(50, 51, 50, 50)));
 
+    occlusion.useDefaultLayerScissorRect();
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(50, 50, 50, 50)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(49, 50, 50, 50)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(50, 49, 50, 50)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(51, 50, 50, 50)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(50, 51, 50, 50)));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(50, 50, 50, 50)).isEmpty());
     EXPECT_EQ_RECT(IntRect(49, 50, 1, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(49, 50, 50, 50)));
     EXPECT_EQ_RECT(IntRect(49, 49, 50, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(49, 49, 50, 50)));
@@ -222,12 +287,23 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithTranslation)
     EXPECT_EQ_RECT(IntRect(51, 51, 50, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(51, 51, 50, 50)));
     EXPECT_EQ_RECT(IntRect(50, 100, 50, 1), occlusion.unoccludedContentRect(parent.get(), IntRect(50, 51, 50, 50)));
     EXPECT_EQ_RECT(IntRect(49, 51, 50, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(49, 51, 50, 50)));
+
+    occlusion.useDefaultLayerScissorRect();
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(50, 50, 50, 50)).isEmpty());
+    EXPECT_EQ_RECT(IntRect(49, 50, 1, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(49, 50, 50, 50)));
+    EXPECT_EQ_RECT(IntRect(49, 49, 50, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(49, 49, 50, 50)));
+    EXPECT_EQ_RECT(IntRect(50, 49, 50, 1), occlusion.unoccludedContentRect(parent.get(), IntRect(50, 49, 50, 50)));
+    EXPECT_EQ_RECT(IntRect(51, 49, 49, 1), occlusion.unoccludedContentRect(parent.get(), IntRect(51, 49, 50, 50)));
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(51, 50, 50, 50)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(51, 51, 50, 50)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(50, 51, 50, 50)).isEmpty());
+    EXPECT_EQ_RECT(IntRect(49, 51, 1, 49), occlusion.unoccludedContentRect(parent.get(), IntRect(49, 51, 50, 50)));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 }
 
 TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedSurface)
 {
     // This tests that the right transforms are being used.
-    TestCCOcclusionTracker occlusion;
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> child = LayerChromium::create();
@@ -257,6 +333,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedSurface)
 
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+
     occlusion.enterTargetRenderSurface(child->renderSurface());
     occlusion.markOccludedBehindLayer(layer.get());
 
@@ -271,6 +350,14 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedSurface)
     EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(10, 430, 61, 70)));
     EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(10, 430, 60, 71)));
 
+    occlusion.useDefaultLayerScissorRect();
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(10, 430, 60, 70)));
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(9, 430, 60, 70)));
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(10, 429, 60, 70)));
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(10, 430, 61, 70)));
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(10, 430, 60, 71)));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+
     occlusion.markOccludedBehindLayer(child.get());
     occlusion.finishedTargetRenderSurface(child.get(), child->renderSurface());
     occlusion.leaveToTargetRenderSurface(parent->renderSurface());
@@ -283,6 +370,16 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedSurface)
     EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 40, 70, 60)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(29, 40, 70, 60)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 39, 70, 60)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(31, 40, 70, 60)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 41, 70, 60)));
+
+    occlusion.useDefaultLayerScissorRect();
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 40, 70, 60)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(29, 40, 70, 60)));
+    EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(30, 39, 70, 60)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(31, 40, 70, 60)));
+    EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(30, 41, 70, 60)));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
 
     /* Justification for the above occlusion from |layer|:
@@ -314,7 +411,6 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedSurface)
 TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithSurfaceAlreadyOnStack)
 {
     // This tests that the right transforms are being used.
-    TestCCOcclusionTracker occlusion;
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> child = LayerChromium::create();
@@ -350,6 +446,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithSurfaceAlreadyOnStack
 
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(-10, -10, 1000, 1000));
+
     occlusion.enterTargetRenderSurface(parent->renderSurface());
     occlusion.markOccludedBehindLayer(child2.get());
 
@@ -372,6 +471,14 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithSurfaceAlreadyOnStack
     EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(11, 430, 60, 70)));
     EXPECT_FALSE(occlusion.occluded(child.get(), IntRect(10, 431, 60, 70)));
 
+    occlusion.useDefaultLayerScissorRect();
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(10, 430, 60, 70)));
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(9, 430, 60, 70)));
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(10, 429, 60, 70)));
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(11, 430, 60, 70)));
+    EXPECT_TRUE(occlusion.occluded(child.get(), IntRect(10, 431, 60, 70)));
+    occlusion.setLayerScissorRect(IntRect(-10, -10, 1000, 1000));
+
     EXPECT_TRUE(occlusion.unoccludedContentRect(child.get(), IntRect(10, 430, 60, 70)).isEmpty());
     // This is the little piece not occluded by child2
     EXPECT_EQ_RECT(IntRect(9, 430, 1, 10), occlusion.unoccludedContentRect(child.get(), IntRect(9, 430, 60, 70)));
@@ -387,8 +494,16 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithSurfaceAlreadyOnStack
     EXPECT_EQ_RECT(IntRect(70, 430, 1, 70), occlusion.unoccludedContentRect(child.get(), IntRect(11, 430, 60, 70)));
     EXPECT_EQ_RECT(IntRect(10, 500, 60, 1), occlusion.unoccludedContentRect(child.get(), IntRect(10, 431, 60, 70)));
 
-    // Surface is not occluded by things that draw into itself.
-    EXPECT_EQ_RECT(IntRect(10, 430, 60, 70), occlusion.surfaceUnoccludedContentRect(child.get(), IntRect(10, 430, 60, 70)));
+    occlusion.useDefaultLayerScissorRect();
+    EXPECT_TRUE(occlusion.unoccludedContentRect(child.get(), IntRect(10, 430, 60, 70)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(child.get(), IntRect(9, 430, 60, 70)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(child.get(), IntRect(9, 430, 60, 80)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(child.get(), IntRect(-10, 430, 60, 70)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(child.get(), IntRect(-10, 430, 60, 80)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(child.get(), IntRect(10, 429, 60, 70)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(child.get(), IntRect(11, 430, 60, 70)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(child.get(), IntRect(10, 431, 60, 70)).isEmpty());
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 
     occlusion.markOccludedBehindLayer(child.get());
     // |child2| should get merged with the surface we are leaving now
@@ -433,10 +548,6 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithSurfaceAlreadyOnStack
     EXPECT_EQ_RECT(IntRect(100, 40, 1, 60), occlusion.unoccludedContentRect(parent.get(), IntRect(31, 40, 70, 60)));
     EXPECT_EQ_RECT(IntRect(30, 100, 70, 1), occlusion.unoccludedContentRect(parent.get(), IntRect(30, 41, 70, 60)));
 
-    // Surface is not occluded by things that draw into itself.
-    EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.surfaceUnoccludedContentRect(parent.get(), IntRect(30, 40, 70, 60)));
-
-
     /* Justification for the above occlusion from |layer|:
                100
       +---------------------+                                      +---------------------+
@@ -465,7 +576,6 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithSurfaceAlreadyOnStack
 
 TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedOffAxisSurface)
 {
-    TestCCOcclusionTracker occlusion;
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> child = LayerChromium::create();
@@ -501,6 +611,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedOffAxisSurface
 
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+
     IntRect clippedLayerInChild = layerTransform.mapRect(layer->visibleLayerRect());
 
     occlusion.enterTargetRenderSurface(child->renderSurface());
@@ -530,9 +643,6 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedOffAxisSurface
     EXPECT_FALSE(occlusion.unoccludedContentRect(parent.get(), clippedLayerInChild).isEmpty());
     clippedLayerInChild.move(0, -1);
 
-    // Surface is not occluded by things that draw into itself.
-    EXPECT_EQ_RECT(IntRect(0, 0, 500, 500), occlusion.surfaceUnoccludedContentRect(child.get(), IntRect(0, 0, 500, 500)));
-
     occlusion.markOccludedBehindLayer(child.get());
     occlusion.finishedTargetRenderSurface(child.get(), child->renderSurface());
     occlusion.leaveToTargetRenderSurface(parent->renderSurface());
@@ -544,15 +654,11 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedOffAxisSurface
 
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(75, 55, 1, 1)));
     EXPECT_EQ_RECT(IntRect(75, 55, 1, 1), occlusion.unoccludedContentRect(parent.get(), IntRect(75, 55, 1, 1)));
-
-    // Surface is not occluded by things that draw into itself.
-    EXPECT_EQ_RECT(IntRect(0, 0, 100, 100), occlusion.surfaceUnoccludedContentRect(parent.get(), IntRect(0, 0, 100, 100)));
 }
 
 TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithMultipleOpaqueLayers)
 {
     // This is similar to the previous test but now we make a few opaque layers inside of |child| so that the occluded parts of child are not a simple rect.
-    TestCCOcclusionTracker occlusion;
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> child = LayerChromium::create();
@@ -585,6 +691,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithMultipleOpaqueLayers)
 
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+
     occlusion.enterTargetRenderSurface(child->renderSurface());
     occlusion.markOccludedBehindLayer(layer2.get());
     occlusion.markOccludedBehindLayer(layer1.get());
@@ -606,9 +715,6 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithMultipleOpaqueLayers)
     EXPECT_EQ_RECT(IntRect(70, 430, 1, 70), occlusion.unoccludedContentRect(child.get(), IntRect(11, 430, 60, 70)));
     EXPECT_EQ_RECT(IntRect(10, 500, 60, 1), occlusion.unoccludedContentRect(child.get(), IntRect(10, 431, 60, 70)));
 
-    // Surface is not occluded by things that draw into itself.
-    EXPECT_EQ_RECT(IntRect(10, 430, 60, 70), occlusion.surfaceUnoccludedContentRect(child.get(), IntRect(10, 430, 60, 70)));
-
     occlusion.markOccludedBehindLayer(child.get());
     occlusion.finishedTargetRenderSurface(child.get(), child->renderSurface());
     occlusion.leaveToTargetRenderSurface(parent->renderSurface());
@@ -627,10 +733,6 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithMultipleOpaqueLayers)
     EXPECT_EQ_RECT(IntRect(30, 39, 70, 1), occlusion.unoccludedContentRect(parent.get(), IntRect(30, 39, 70, 60)));
     EXPECT_EQ_RECT(IntRect(100, 40, 1, 60), occlusion.unoccludedContentRect(parent.get(), IntRect(31, 40, 70, 60)));
     EXPECT_EQ_RECT(IntRect(30, 100, 70, 1), occlusion.unoccludedContentRect(parent.get(), IntRect(30, 41, 70, 60)));
-
-    // Surface is not occluded by things that draw into itself.
-    EXPECT_EQ_RECT(IntRect(30, 40, 70, 60), occlusion.surfaceUnoccludedContentRect(parent.get(), IntRect(30, 40, 70, 60)));
-
 
     /* Justification for the above occlusion from |layer1| and |layer2|:
 
@@ -661,7 +763,6 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithMultipleOpaqueLayers)
 TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
 {
     // This tests that the right transforms are being used.
-    TestCCOcclusionTracker occlusion;
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> child1 = LayerChromium::create();
@@ -698,6 +799,9 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
 
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(-10, -10, 1000, 1000));
+
     occlusion.enterTargetRenderSurface(child2->renderSurface());
     occlusion.markOccludedBehindLayer(layer2.get());
 
@@ -711,9 +815,6 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
     EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(0, 419, 60, 80)));
     EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(0, 420, 61, 80)));
     EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(0, 420, 60, 81)));
-
-    // Surface is not occluded by things that draw into itself.
-    EXPECT_EQ_RECT(IntRect(0, 420, 60, 80), occlusion.surfaceUnoccludedContentRect(child2.get(), IntRect(0, 420, 60, 80)));
 
     occlusion.markOccludedBehindLayer(child2.get());
     occlusion.finishedTargetRenderSurface(child2.get(), child2->renderSurface());
@@ -731,9 +832,6 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
     EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(0, 429, 70, 70)));
     EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(0, 430, 71, 70)));
     EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(0, 430, 70, 71)));
-
-    // Surface is not occluded by things that draw into itself, but the |child1| surface should be occluded by the |child2| surface.
-    EXPECT_EQ_RECT(IntRect(0, 430, 10, 70), occlusion.surfaceUnoccludedContentRect(child1.get(), IntRect(0, 430, 70, 70)));
 
     occlusion.markOccludedBehindLayer(child1.get());
     occlusion.finishedTargetRenderSurface(child1.get(), child1->renderSurface());
@@ -753,10 +851,6 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
     EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(20, 40, 80, 60)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(19, 40, 80, 60)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(20, 39, 80, 60)));
-
-    // |child1| and |child2| both draw into parent so they should not occlude it.
-    EXPECT_EQ_RECT(IntRect(20, 30, 80, 70), occlusion.surfaceUnoccludedContentRect(parent.get(), IntRect(20, 30, 80, 70)));
-
 
     /* Justification for the above occlusion:
                100
@@ -787,7 +881,6 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
 TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
 {
     // This tests that the right transforms are being used.
-    TestCCOcclusionTracker occlusion;
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> child1 = LayerChromium::create();
@@ -831,6 +924,9 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
 
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(-20, -20, 1000, 1000));
+
     occlusion.enterTargetRenderSurface(child2->renderSurface());
     occlusion.markOccludedBehindLayer(layer2.get());
 
@@ -845,9 +941,13 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
     EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-10, 420, 71, 80)));
     EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-10, 420, 70, 81)));
 
-    // Surface is not occluded by things that draw into itself.
-    EXPECT_EQ_RECT(IntRect(-10, 420, 70, 80), occlusion.surfaceUnoccludedContentRect(child2.get(), IntRect(-10, 420, 70, 80)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(child2.get(), IntRect(30, 250, 1, 1)));
+    occlusion.useDefaultLayerScissorRect();
+    EXPECT_TRUE(occlusion.occluded(child2.get(), IntRect(-10, 420, 70, 80)));
+    EXPECT_TRUE(occlusion.occluded(child2.get(), IntRect(-11, 420, 70, 80)));
+    EXPECT_TRUE(occlusion.occluded(child2.get(), IntRect(-10, 419, 70, 80)));
+    EXPECT_TRUE(occlusion.occluded(child2.get(), IntRect(-10, 420, 71, 80)));
+    EXPECT_TRUE(occlusion.occluded(child2.get(), IntRect(-10, 420, 70, 81)));
+    occlusion.setLayerScissorRect(IntRect(-20, -20, 1000, 1000));
 
     occlusion.markOccludedBehindLayer(child2.get());
     occlusion.finishedTargetRenderSurface(child2.get(), child2->renderSurface());
@@ -865,14 +965,6 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
     EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(-10, 429, 80, 70)));
     EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(-10, 430, 81, 70)));
     EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(-10, 430, 80, 71)));
-
-    // Surface is not occluded by things that draw into itself, but the |child1| surface should be occluded by the |child2| surface.
-    EXPECT_EQ_RECT(IntRect(-10, 430, 10, 80), occlusion.surfaceUnoccludedContentRect(child1.get(), IntRect(-10, 430, 70, 80)));
-    EXPECT_TRUE(occlusion.surfaceOccluded(child1.get(), IntRect(0, 430, 70, 80)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(-1, 430, 70, 80)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(0, 429, 70, 80)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(1, 430, 70, 80)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(0, 431, 70, 80)));
 
     occlusion.markOccludedBehindLayer(child1.get());
     occlusion.finishedTargetRenderSurface(child1.get(), child1->renderSurface());
@@ -892,11 +984,6 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
     EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(20, 30, 80, 70)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(19, 30, 80, 70)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(20, 29, 80, 70)));
-
-    // |child1| and |child2| both draw into parent so they should not occlude it.
-    EXPECT_EQ_RECT(IntRect(20, 20, 80, 80), occlusion.surfaceUnoccludedContentRect(parent.get(), IntRect(20, 20, 80, 80)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(parent.get(), IntRect(50, 50, 1, 1)));
-
 
     /* Justification for the above occlusion:
                100
@@ -926,7 +1013,6 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
 TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpaceDifferentTransforms)
 {
     // This tests that the right transforms are being used.
-    TestCCOcclusionTracker occlusion;
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> child1 = LayerChromium::create();
@@ -975,6 +1061,9 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpaceDifferentTransforms)
 
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(-30, -30, 1000, 1000));
+
     occlusion.enterTargetRenderSurface(child2->renderSurface());
     occlusion.markOccludedBehindLayer(layer2.get());
 
@@ -988,10 +1077,6 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpaceDifferentTransforms)
     EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-10, 419, 70, 80)));
     EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-10, 420, 71, 80)));
     EXPECT_FALSE(occlusion.occluded(child2.get(), IntRect(-10, 420, 70, 81)));
-
-    // Surface is not occluded by things that draw into itself.
-    EXPECT_EQ_RECT(IntRect(-10, 420, 70, 80), occlusion.surfaceUnoccludedContentRect(child2.get(), IntRect(-10, 420, 70, 80)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(child2.get(), IntRect(30, 250, 1, 1)));
 
     occlusion.markOccludedBehindLayer(child2.get());
     occlusion.finishedTargetRenderSurface(child2.get(), child2->renderSurface());
@@ -1010,16 +1095,6 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpaceDifferentTransforms)
     EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(420, -19, 80, 90)));
     EXPECT_FALSE(occlusion.occluded(child1.get(), IntRect(421, -20, 80, 90)));
 
-    // Surface is not occluded by things that draw into itself, but the |child1| surface should be occluded by the |child2| surface.
-    EXPECT_EQ_RECT(IntRect(420, -20, 80, 90), occlusion.surfaceUnoccludedContentRect(child1.get(), IntRect(420, -20, 80, 90)));
-    EXPECT_EQ_RECT(IntRect(490, -10, 10, 80), occlusion.surfaceUnoccludedContentRect(child1.get(), IntRect(420, -10, 80, 80)));
-    EXPECT_EQ_RECT(IntRect(420, -20, 70, 10), occlusion.surfaceUnoccludedContentRect(child1.get(), IntRect(420, -20, 70, 90)));
-    EXPECT_TRUE(occlusion.surfaceOccluded(child1.get(), IntRect(420, -10, 70, 80)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(419, -10, 70, 80)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(420, -11, 70, 80)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(421, -10, 70, 80)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(child1.get(), IntRect(420, -9, 70, 80)));
-
     occlusion.markOccludedBehindLayer(child1.get());
     occlusion.finishedTargetRenderSurface(child1.get(), child1->renderSurface());
     occlusion.leaveToTargetRenderSurface(parent->renderSurface());
@@ -1034,14 +1109,6 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpaceDifferentTransforms)
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(10, 19, 90, 80)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(11, 20, 90, 80)));
     EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(10, 21, 90, 80)));
-
-    // |child1| and |child2| both draw into parent so they should not occlude it.
-    EXPECT_EQ_RECT(IntRect(10, 20, 90, 80), occlusion.surfaceUnoccludedContentRect(parent.get(), IntRect(10, 20, 90, 80)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(parent.get(), IntRect(10, 20, 1, 1)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(parent.get(), IntRect(99, 20, 1, 1)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(parent.get(), IntRect(10, 9, 1, 1)));
-    EXPECT_FALSE(occlusion.surfaceOccluded(parent.get(), IntRect(99, 99, 1, 1)));
-
 
     /* Justification for the above occlusion:
                100
@@ -1071,7 +1138,6 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpaceDifferentTransforms)
 TEST(CCOcclusionTrackerTest, occlusionInteractionWithFilters)
 {
     // This tests that the right transforms are being used.
-    TestCCOcclusionTracker occlusion;
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromiumWithForcedDrawsContent> blurLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
@@ -1121,6 +1187,9 @@ TEST(CCOcclusionTrackerTest, occlusionInteractionWithFilters)
 
     CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
 
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+
     // Opacity layer won't contribute to occlusion.
     occlusion.enterTargetRenderSurface(opacityLayer->renderSurface());
     occlusion.markOccludedBehindLayer(opacityLayer.get());
@@ -1168,6 +1237,780 @@ TEST(CCOcclusionTrackerTest, occlusionInteractionWithFilters)
     EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
     EXPECT_EQ_RECT(IntRect(30, 30, 70, 70), occlusion.occlusionInTargetSurface().bounds());
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+}
+
+TEST(CCOcclusionTrackerTest, layerScissorRectOverTile)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(200, 100, 100, 100));
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(200, 100, 100, 100)));
+
+    occlusion.useDefaultLayerScissorRect();
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(200, 100, 100, 100)));
+    occlusion.setLayerScissorRect(IntRect(200, 100, 100, 100));
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(parentLayer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 200, 100, 100)));
+
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_EQ_RECT(IntRect(200, 100, 100, 100), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)));
+}
+
+TEST(CCOcclusionTrackerTest, screenScissorRectOverTile)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestCCOcclusionTracker occlusion(IntRect(200, 100, 100, 100));
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+
+    // Occluded since its outside the surface bounds.
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(200, 100, 100, 100)));
+
+    // Test without any scissors.
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(200, 100, 100, 100)));
+    occlusion.useDefaultLayerScissorRect();
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(parentLayer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 200, 100, 100)));
+
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_EQ_RECT(IntRect(200, 100, 100, 100), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)));
+}
+
+TEST(CCOcclusionTrackerTest, layerScissorRectOverCulledTile)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(100, 100, 100, 100));
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(parentLayer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 200, 100, 100)));
+
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)).isEmpty());
+}
+
+TEST(CCOcclusionTrackerTest, screenScissorRectOverCulledTile)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestCCOcclusionTracker occlusion(IntRect(100, 100, 100, 100));
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(parentLayer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 200, 100, 100)));
+
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)).isEmpty());
+}
+
+TEST(CCOcclusionTrackerTest, layerScissorRectOverPartialTiles)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(50, 50, 200, 200));
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(parentLayer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(100, 200, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 200, 100, 100)));
+
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_EQ_RECT(IntRect(50, 50, 200, 200), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)));
+    EXPECT_EQ_RECT(IntRect(200, 50, 50, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 100)));
+    EXPECT_EQ_RECT(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 100, 300, 100)));
+    EXPECT_EQ_RECT(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_EQ_RECT(IntRect(100, 200, 100, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(100, 200, 100, 100)));
+}
+
+TEST(CCOcclusionTrackerTest, screenScissorRectOverPartialTiles)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestCCOcclusionTracker occlusion(IntRect(50, 50, 200, 200));
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(parentLayer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(100, 200, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 200, 100, 100)));
+
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_EQ_RECT(IntRect(50, 50, 200, 200), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)));
+    EXPECT_EQ_RECT(IntRect(200, 50, 50, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 100)));
+    EXPECT_EQ_RECT(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 100, 300, 100)));
+    EXPECT_EQ_RECT(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_EQ_RECT(IntRect(100, 200, 100, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(100, 200, 100, 100)));
+}
+
+TEST(CCOcclusionTrackerTest, layerScissorRectOverNoTiles)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+    occlusion.setLayerScissorRect(IntRect(500, 500, 100, 100));
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(parentLayer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 200, 100, 100)));
+
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 100)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 100, 300, 100)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(200, 100, 100, 100)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(100, 200, 100, 100)).isEmpty());
+}
+
+TEST(CCOcclusionTrackerTest, screenScissorRectOverNoTiles)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestCCOcclusionTracker occlusion(IntRect(500, 500, 100, 100));
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(parentLayer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 200, 100, 100)));
+
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 100)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 100, 300, 100)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(200, 100, 100, 100)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(100, 200, 100, 100)).isEmpty());
+}
+
+TEST(CCOcclusionTrackerTest, layerScissorRectForLayerOffOrigin)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(100, 100), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    // This layer is translated when drawn into its target. So if the scissor rect given from the target surface
+    // is not in that target space, then after translating these query rects into the target, they will fall outside
+    // the scissor and be considered occluded.
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+}
+
+TEST(CCOcclusionTrackerTest, damageRectOverTile)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestDamageClient damage(FloatRect(200, 100, 100, 100));
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000), &damage);
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+
+    // Outside the layer's clip rect.
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(200, 100, 100, 100)));
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(parentLayer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 200, 100, 100)));
+
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_EQ_RECT(IntRect(200, 100, 100, 100), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)));
+}
+
+TEST(CCOcclusionTrackerTest, damageRectOverCulledTile)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestDamageClient damage(FloatRect(100, 100, 100, 100));
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000), &damage);
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(parentLayer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 200, 100, 100)));
+
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)).isEmpty());
+}
+
+TEST(CCOcclusionTrackerTest, damageRectOverPartialTiles)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestDamageClient damage(FloatRect(50, 50, 200, 200));
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000), &damage);
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(parentLayer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(100, 200, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 200, 100, 100)));
+
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_EQ_RECT(IntRect(50, 50, 200, 200), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)));
+    EXPECT_EQ_RECT(IntRect(200, 50, 50, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 100)));
+    EXPECT_EQ_RECT(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 100, 300, 100)));
+    EXPECT_EQ_RECT(IntRect(200, 100, 50, 100), occlusion.unoccludedContentRect(parent.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_EQ_RECT(IntRect(100, 200, 100, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(100, 200, 100, 100)));
+}
+
+TEST(CCOcclusionTrackerTest, damageRectOverNoTiles)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> parentLayer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(parentLayer);
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    parentLayer->setFilters(filters);
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestDamageClient damage(FloatRect(500, 500, 100, 100));
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000), &damage);
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+    occlusion.enterTargetRenderSurface(parentLayer->renderSurface());
+
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 200, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 200, 100, 100)));
+
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 100)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 100, 300, 100)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(200, 100, 100, 100)).isEmpty());
+    EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(100, 200, 100, 100)).isEmpty());
 }
 
 } // namespace

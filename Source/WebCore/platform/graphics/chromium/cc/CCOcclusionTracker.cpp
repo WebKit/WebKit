@@ -39,6 +39,20 @@ using namespace std;
 namespace WebCore {
 
 template<typename LayerType, typename RenderSurfaceType>
+CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace)
+    : m_scissorRectInScreenSpace(scissorRectInScreenSpace)
+    , m_surfaceDamageClient(0)
+{
+}
+
+template<typename LayerType, typename RenderSurfaceType>
+CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, const DamageClientType* surfaceDamageClient)
+    : m_scissorRectInScreenSpace(scissorRectInScreenSpace)
+    , m_surfaceDamageClient(surfaceDamageClient)
+{
+}
+
+template<typename LayerType, typename RenderSurfaceType>
 void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::enterTargetRenderSurface(const RenderSurfaceType* newTarget)
 {
     if (!m_stack.isEmpty() && m_stack.last().surface == newTarget)
@@ -191,6 +205,8 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
 {
     ASSERT(!m_stack.isEmpty());
     ASSERT(layer->targetRenderSurface() == m_stack.last().surface);
+    if (m_stack.isEmpty())
+        return;
 
     if (layer->drawOpacity() != 1)
         return;
@@ -202,41 +218,26 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
     m_stack.last().occlusionInTarget.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToTargetSurface));
 }
 
-static inline bool testContentRectOccluded(const IntRect& contentRect, const TransformationMatrix& contentSpaceTransform, const Region& occlusion)
+static inline bool testContentRectOccluded(const IntRect& contentRect, const TransformationMatrix& contentSpaceTransform, const IntRect& scissorRect, const Region& occlusion)
 {
-    FloatQuad transformedQuad = contentSpaceTransform.mapQuad(FloatQuad(contentRect));
-    return occlusion.contains(transformedQuad.enclosingBoundingBox());
+    FloatRect transformedRect = contentSpaceTransform.mapRect(FloatRect(contentRect));
+    // Take the enclosingIntRect, as we want to include partial pixels in the test.
+    IntRect targetRect = intersection(enclosingIntRect(transformedRect), scissorRect);
+    return targetRect.isEmpty() || occlusion.contains(targetRect);
 }
 
 template<typename LayerType, typename RenderSurfaceType>
 bool CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::occluded(const LayerType* layer, const IntRect& contentRect) const
 {
+    ASSERT(!m_stack.isEmpty());
     if (m_stack.isEmpty())
         return false;
 
     ASSERT(layer->targetRenderSurface() == m_stack.last().surface);
 
-    if (testContentRectOccluded(contentRect, contentToScreenSpaceTransform<LayerType>(layer), m_stack.last().occlusionInScreen))
+    if (testContentRectOccluded(contentRect, contentToScreenSpaceTransform<LayerType>(layer), m_scissorRectInScreenSpace, m_stack.last().occlusionInScreen))
         return true;
-    if (testContentRectOccluded(contentRect, contentToTargetSurfaceTransform<LayerType>(layer), m_stack.last().occlusionInTarget))
-        return true;
-    return false;
-}
-
-template<typename LayerType, typename RenderSurfaceType>
-bool CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::surfaceOccluded(const LayerType* layer, const IntRect& surfaceContentRect) const
-{
-    // A surface is not occluded by layers drawing into itself, so we need to use occlusion from one spot down on the stack.
-    if (m_stack.size() < 2)
-        return false;
-
-    ASSERT(layer->renderSurface());
-    ASSERT(layer->renderSurface() == m_stack.last().surface);
-
-    TransformationMatrix surfaceContentToScreenSpace = contentToScreenSpaceTransform<LayerType>(layer);
-
-    const StackObject& secondLast = m_stack[m_stack.size()-2];
-    if (testContentRectOccluded(surfaceContentRect, surfaceContentToScreenSpace, secondLast.occlusionInScreen))
+    if (testContentRectOccluded(contentRect, contentToTargetSurfaceTransform<LayerType>(layer), layerScissorRectInTargetSurface(layer), m_stack.last().occlusionInTarget))
         return true;
     return false;
 }
@@ -256,22 +257,20 @@ static inline IntRect rectSubtractRegion(const IntRect& rect, const Region& regi
     return boundsRect;
 }
 
-static IntRect computeUnoccludedContentRect(const IntRect& contentRect, const TransformationMatrix& contentSpaceTransform, const Region& occlusion)
+static inline IntRect computeUnoccludedContentRect(const IntRect& contentRect, const TransformationMatrix& contentSpaceTransform, const IntRect& scissorRect, const Region& occlusion)
 {
-    FloatQuad transformedQuad = contentSpaceTransform.mapQuad(FloatQuad(contentRect));
-    if (!transformedQuad.isRectilinear())
-        return contentRect;
-    // Take the enclosingIntRect at each step here, as we want to contain any unoccluded partial pixels in the resulting IntRect.
-    IntRect shrunkRect = rectSubtractRegion(enclosingIntRect(transformedQuad.boundingBox()), occlusion);
+    FloatRect transformedRect = contentSpaceTransform.mapRect(FloatRect(contentRect));
+    // Take the enclosingIntRect at each step, as we want to contain any unoccluded partial pixels in the resulting IntRect.
+    IntRect shrunkRect = rectSubtractRegion(intersection(enclosingIntRect(transformedRect), scissorRect), occlusion);
     IntRect unoccludedRect = enclosingIntRect(contentSpaceTransform.inverse().mapRect(FloatRect(shrunkRect)));
-    // The use of enclosingIntRect, with floating point rounding, can give us a result that is not a sub-rect of contentRect, but our
-    // return value should be a sub-rect.
+    // The rect back in content space is a bounding box and may extend outside of the original contentRect, so clamp it to the contentRectBounds.
     return intersection(unoccludedRect, contentRect);
 }
 
 template<typename LayerType, typename RenderSurfaceType>
 IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::unoccludedContentRect(const LayerType* layer, const IntRect& contentRect) const
 {
+    ASSERT(!m_stack.isEmpty());
     if (m_stack.isEmpty())
         return contentRect;
 
@@ -281,31 +280,24 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::unoccludedContentR
     TransformationMatrix contentToScreenSpace = contentToScreenSpaceTransform<LayerType>(layer);
     TransformationMatrix contentToTargetSurface = contentToTargetSurfaceTransform<LayerType>(layer);
 
-    IntRect unoccludedInScreen = computeUnoccludedContentRect(contentRect, contentToScreenSpace, m_stack.last().occlusionInScreen);
-    IntRect unoccludedInTarget = computeUnoccludedContentRect(contentRect, contentToTargetSurface, m_stack.last().occlusionInTarget);
+    IntRect unoccludedInScreen = computeUnoccludedContentRect(contentRect, contentToScreenSpace, m_scissorRectInScreenSpace, m_stack.last().occlusionInScreen);
+    if (unoccludedInScreen.isEmpty())
+        return IntRect();
+    IntRect unoccludedInTarget = computeUnoccludedContentRect(contentRect, contentToTargetSurface, layerScissorRectInTargetSurface(layer), m_stack.last().occlusionInTarget);
 
     return intersection(unoccludedInScreen, unoccludedInTarget);
 }
 
 template<typename LayerType, typename RenderSurfaceType>
-IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::surfaceUnoccludedContentRect(const LayerType* layer, const IntRect& surfaceContentRect) const
+IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::layerScissorRectInTargetSurface(const LayerType* layer) const
 {
-    // A surface is not occluded by layers drawing into itself, so we need to use occlusion from one spot down on the stack.
-    if (m_stack.size() < 2)
-        return surfaceContentRect;
-
-    ASSERT(layer->renderSurface());
-    ASSERT(layer->renderSurface() == m_stack.last().surface);
-
-    // We want to return a rect that contains all the visible parts of |contentRect| in both screen space and in the target surface.
-    // So we find the visible parts of |contentRect| in each space, and take the intersection.
-
-    TransformationMatrix contentToScreenSpace = contentToScreenSpaceTransform<LayerType>(layer);
-
-    const StackObject& secondLast = m_stack[m_stack.size()-2];
-    IntRect unoccludedInScreen = computeUnoccludedContentRect(surfaceContentRect, contentToScreenSpace, secondLast.occlusionInScreen);
-
-    return unoccludedInScreen;
+    const RenderSurfaceType* targetSurface = m_stack.last().surface;
+    FloatRect totalScissor = targetSurface->contentRect();
+    if (m_surfaceDamageClient)
+        totalScissor.intersect(m_surfaceDamageClient->damageRect(targetSurface));
+    if (!layer->clipRect().isEmpty())
+        totalScissor.intersect(layer->clipRect());
+    return enclosingIntRect(totalScissor);
 }
 
 template<typename LayerType, typename RenderSurfaceType>
@@ -324,27 +316,29 @@ const Region& CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::currentOcclu
 
 
 // Declare the possible functions here for the linker.
+template CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace);
+template CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, const CCOcclusionTrackerDamageClient* surfaceDamageClient);
 template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::enterTargetRenderSurface(const RenderSurfaceChromium* newTarget);
 template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::finishedTargetRenderSurface(const LayerChromium* owningLayer, const RenderSurfaceChromium* finishedTarget);
 template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::leaveToTargetRenderSurface(const RenderSurfaceChromium* newTarget);
 template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::markOccludedBehindLayer(const LayerChromium*);
 template bool CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::occluded(const LayerChromium*, const IntRect& contentRect) const;
-template bool CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::surfaceOccluded(const LayerChromium*, const IntRect& surfaceContentRect) const;
 template IntRect CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::unoccludedContentRect(const LayerChromium*, const IntRect& contentRect) const;
-template IntRect CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::surfaceUnoccludedContentRect(const LayerChromium*, const IntRect& surfaceContentRect) const;
 template const Region& CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::currentOcclusionInScreenSpace() const;
 template const Region& CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::currentOcclusionInTargetSurface() const;
+template IntRect CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::layerScissorRectInTargetSurface(const LayerChromium*) const;
 
+template CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace);
+template CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, const CCOcclusionTrackerDamageClientImpl* surfaceDamageClient);
 template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::enterTargetRenderSurface(const CCRenderSurface* newTarget);
 template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::finishedTargetRenderSurface(const CCLayerImpl* owningLayer, const CCRenderSurface* finishedTarget);
 template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::leaveToTargetRenderSurface(const CCRenderSurface* newTarget);
 template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::markOccludedBehindLayer(const CCLayerImpl*);
 template bool CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::occluded(const CCLayerImpl*, const IntRect& contentRect) const;
-template bool CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::surfaceOccluded(const CCLayerImpl*, const IntRect& surfaceContentRect) const;
 template IntRect CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::unoccludedContentRect(const CCLayerImpl*, const IntRect& contentRect) const;
-template IntRect CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::surfaceUnoccludedContentRect(const CCLayerImpl*, const IntRect& surfaceContentRect) const;
 template const Region& CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::currentOcclusionInScreenSpace() const;
 template const Region& CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::currentOcclusionInTargetSurface() const;
+template IntRect CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::layerScissorRectInTargetSurface(const CCLayerImpl*) const;
 
 
 } // namespace WebCore
