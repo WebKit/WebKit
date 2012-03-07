@@ -912,4 +912,16 @@ TEST_F(CCLayerTreeHostImplTest, contextLostAndRestoredNotificationSentToAllLayer
     EXPECT_TRUE(layer2->didLoseAndRecreateGraphicsContextCalled());
 }
 
+class FakeWebGraphicsContext3DMakeCurrentFails : public FakeWebGraphicsContext3D {
+public:
+    virtual bool makeContextCurrent() { return false; }
+};
+
+TEST_F(CCLayerTreeHostImplTest, finishAllRenderingAfterContextLost)
+{
+    // The context initialization will fail, but we should still be able to call finishAllRendering() without any ill effects.
+    m_hostImpl->initializeLayerRenderer(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new FakeWebGraphicsContext3DMakeCurrentFails), GraphicsContext3D::RenderDirectlyToHostWindow));
+    m_hostImpl->finishAllRendering();
+}
+
 } // namespace

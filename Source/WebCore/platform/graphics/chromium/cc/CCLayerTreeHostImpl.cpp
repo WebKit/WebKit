@@ -319,7 +319,8 @@ void CCLayerTreeHostImpl::drawLayers()
 
 void CCLayerTreeHostImpl::finishAllRendering()
 {
-    m_layerRenderer->finish();
+    if (m_layerRenderer)
+        m_layerRenderer->finish();
 }
 
 bool CCLayerTreeHostImpl::isContextLost()
