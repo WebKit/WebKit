@@ -59,7 +59,7 @@
 #ifndef Threading_h
 #define Threading_h
 
-#include "Platform.h"
+#include <wtf/Platform.h>
 
 #include <stdint.h>
 #include <wtf/Assertions.h>

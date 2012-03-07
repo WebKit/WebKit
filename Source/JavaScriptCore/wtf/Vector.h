@@ -21,13 +21,13 @@
 #ifndef WTF_Vector_h
 #define WTF_Vector_h
 
-#include "Alignment.h"
-#include "FastAllocBase.h"
-#include "Noncopyable.h"
-#include "NotFound.h"
-#include "StdLibExtras.h"
-#include "ValueCheck.h"
-#include "VectorTraits.h"
+#include <wtf/Alignment.h>
+#include <wtf/FastAllocBase.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/NotFound.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/ValueCheck.h>
+#include <wtf/VectorTraits.h>
 #include <limits>
 #include <utility>
 

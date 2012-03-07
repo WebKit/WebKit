@@ -24,8 +24,8 @@
 #define WTF_RefPtr_h
 
 #include <algorithm>
-#include "FastAllocBase.h"
-#include "PassRefPtr.h"
+#include <wtf/FastAllocBase.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WTF {
 

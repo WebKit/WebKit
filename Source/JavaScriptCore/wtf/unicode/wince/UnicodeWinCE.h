@@ -24,8 +24,8 @@
 #ifndef WTF_UnicodeWinCE_h
 #define WTF_UnicodeWinCE_h
 
-#include "ScriptCodesFromICU.h"
-#include "UnicodeMacrosFromICU.h"
+#include <wtf/unicode/ScriptCodesFromICU.h>
+#include <wtf/unicode/UnicodeMacrosFromICU.h>
 
 #include "ce_unicode.h"
 

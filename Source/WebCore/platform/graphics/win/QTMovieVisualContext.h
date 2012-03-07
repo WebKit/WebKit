@@ -35,8 +35,8 @@
 #include "QTMovie.h"
 #include "QTMovieTask.h"
 #include "QTPixelBuffer.h"
-#include <WTF/OwnPtr.h>
-#include <WTF/RefCounted.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/RefCounted.h>
 
 typedef const struct __CFDictionary* CFDictionaryRef;
 typedef struct OpaqueQTVisualContext*   QTVisualContextRef;

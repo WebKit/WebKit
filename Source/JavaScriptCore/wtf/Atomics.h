@@ -59,9 +59,9 @@
 #ifndef Atomics_h
 #define Atomics_h
 
-#include "Platform.h"
-#include "StdLibExtras.h"
-#include "UnusedParam.h"
+#include <wtf/Platform.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/UnusedParam.h>
 
 #if OS(WINDOWS)
 #include <windows.h>

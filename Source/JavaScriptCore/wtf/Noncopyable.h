@@ -21,7 +21,7 @@
 #ifndef WTF_Noncopyable_h
 #define WTF_Noncopyable_h
 
-#include "Compiler.h"
+#include <wtf/Compiler.h>
 
 #if COMPILER_SUPPORTS(CXX_DELETED_FUNCTIONS)
     #define WTF_MAKE_NONCOPYABLE(ClassName) \

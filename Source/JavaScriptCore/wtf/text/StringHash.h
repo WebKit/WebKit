@@ -22,8 +22,8 @@
 #ifndef StringHash_h
 #define StringHash_h
 
-#include "AtomicString.h"
-#include "WTFString.h"
+#include <wtf/text/AtomicString.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/Forward.h>
 #include <wtf/HashTraits.h>
 #include <wtf/StringHasher.h>

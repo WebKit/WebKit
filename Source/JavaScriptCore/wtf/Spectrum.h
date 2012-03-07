@@ -26,8 +26,8 @@
 #ifndef Spectrum_h
 #define Spectrum_h
 
-#include "HashMap.h"
-#include "Vector.h"
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 #include <algorithm>
 
 namespace WTF {

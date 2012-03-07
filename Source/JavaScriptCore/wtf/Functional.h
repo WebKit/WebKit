@@ -26,10 +26,10 @@
 #ifndef WTF_Functional_h
 #define WTF_Functional_h
 
-#include "Assertions.h"
-#include "PassRefPtr.h"
-#include "RefPtr.h"
-#include "ThreadSafeRefCounted.h"
+#include <wtf/Assertions.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(MAC) && COMPILER_SUPPORTS(BLOCKS)
 #include <objc/objc-runtime.h>

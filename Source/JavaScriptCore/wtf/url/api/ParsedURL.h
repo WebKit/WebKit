@@ -28,8 +28,8 @@
 
 #if USE(WTFURL)
 
-#include "URLSegments.h"
-#include "URLString.h"
+#include <wtf/url/api/URLSegments.h>
+#include <wtf/url/api/URLString.h>
 
 namespace WTF {
 

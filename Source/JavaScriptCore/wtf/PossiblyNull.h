@@ -26,7 +26,7 @@
 #ifndef PossiblyNull_h
 #define PossiblyNull_h
 
-#include "Assertions.h"
+#include <wtf/Assertions.h>
 
 namespace WTF {
 

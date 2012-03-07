@@ -22,13 +22,13 @@
 #ifndef WTF_HashTable_h
 #define WTF_HashTable_h
 
-#include "Alignment.h"
-#include "Assertions.h"
-#include "FastMalloc.h"
-#include "HashTraits.h"
-#include "StdLibExtras.h"
-#include "Threading.h"
-#include "ValueCheck.h"
+#include <wtf/Alignment.h>
+#include <wtf/Assertions.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/HashTraits.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/Threading.h>
+#include <wtf/ValueCheck.h>
 
 namespace WTF {
 
@@ -1244,6 +1244,6 @@ namespace WTF {
 
 } // namespace WTF
 
-#include "HashIterators.h"
+#include <wtf/HashIterators.h>
 
 #endif // WTF_HashTable_h

@@ -42,7 +42,7 @@
    http://msdn2.microsoft.com/en-us/library/ms177415(VS.80).aspx
 */
 
-#include "Platform.h"
+#include <wtf/Platform.h>
 
 #include <stddef.h>
 

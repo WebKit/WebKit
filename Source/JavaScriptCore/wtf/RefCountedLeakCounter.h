@@ -21,8 +21,8 @@
 #ifndef RefCountedLeakCounter_h
 #define RefCountedLeakCounter_h
  
-#include "Assertions.h"
-#include "Threading.h"
+#include <wtf/Assertions.h>
+#include <wtf/Threading.h>
 
 namespace WTF {
     

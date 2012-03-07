@@ -30,7 +30,7 @@
 #include "Interpreter.h"
 #include "Parser.h"
 #include "Debugger.h"
-#include "WTFThreadData.h"
+#include <wtf/WTFThreadData.h>
 #include <stdio.h>
 
 namespace JSC {

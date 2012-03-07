@@ -21,7 +21,7 @@
 #ifndef AtomicStringImpl_h
 #define AtomicStringImpl_h
 
-#include "StringImpl.h"
+#include <wtf/text/StringImpl.h>
 
 namespace WTF {
 

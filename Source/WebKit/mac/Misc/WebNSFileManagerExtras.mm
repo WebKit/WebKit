@@ -31,7 +31,7 @@
 #import "WebKitNSStringExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 #import <WebKitSystemInterface.h>
 #import <sys/stat.h>
 #import <wtf/RetainPtr.h>

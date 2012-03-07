@@ -21,10 +21,10 @@
 #ifndef WTF_OwnPtr_h
 #define WTF_OwnPtr_h
 
-#include "Assertions.h"
-#include "NullPtr.h"
-#include "OwnPtrCommon.h"
-#include "TypeTraits.h"
+#include <wtf/Assertions.h>
+#include <wtf/NullPtr.h>
+#include <wtf/OwnPtrCommon.h>
+#include <wtf/TypeTraits.h>
 #include <algorithm>
 #include <memory>
 

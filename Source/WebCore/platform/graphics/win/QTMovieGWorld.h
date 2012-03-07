@@ -28,9 +28,8 @@
 
 
 #include "QTMovie.h"
-#include <Unicode.h>
-#include <WTF/RefCounted.h>
-#include <WTF/RefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <windows.h>
 
 #ifdef QTMOVIEWIN_EXPORTS

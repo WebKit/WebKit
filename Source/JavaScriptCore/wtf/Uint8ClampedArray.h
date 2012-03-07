@@ -28,7 +28,7 @@
 #ifndef Uint8ClampedArray_h
 #define Uint8ClampedArray_h
 
-#include "Uint8Array.h"
+#include <wtf/Uint8Array.h>
 
 namespace WTF {
 

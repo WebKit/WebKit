@@ -26,7 +26,7 @@
 #ifndef TemporaryChange_h
 #define TemporaryChange_h
 
-#include "Noncopyable.h"
+#include <wtf/Noncopyable.h>
 
 namespace WTF {
 

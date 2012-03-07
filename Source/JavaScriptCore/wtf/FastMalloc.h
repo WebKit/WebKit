@@ -21,8 +21,8 @@
 #ifndef WTF_FastMalloc_h
 #define WTF_FastMalloc_h
 
-#include "Platform.h"
-#include "PossiblyNull.h"
+#include <wtf/Platform.h>
+#include <wtf/PossiblyNull.h>
 #include <stdlib.h>
 #include <new>
 

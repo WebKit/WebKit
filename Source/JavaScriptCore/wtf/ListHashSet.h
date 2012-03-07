@@ -22,9 +22,9 @@
 #ifndef WTF_ListHashSet_h
 #define WTF_ListHashSet_h
 
-#include "HashSet.h"
-#include "OwnPtr.h"
-#include "PassOwnPtr.h"
+#include <wtf/HashSet.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WTF {
 

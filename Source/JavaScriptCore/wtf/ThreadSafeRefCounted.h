@@ -59,7 +59,7 @@
 #ifndef ThreadSafeRefCounted_h
 #define ThreadSafeRefCounted_h
 
-#include "Platform.h"
+#include <wtf/Platform.h>
 
 #include <wtf/Atomics.h>
 #include <wtf/DynamicAnnotations.h>

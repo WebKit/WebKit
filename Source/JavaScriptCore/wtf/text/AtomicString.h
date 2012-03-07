@@ -21,8 +21,8 @@
 #ifndef AtomicString_h
 #define AtomicString_h
 
-#include "AtomicStringImpl.h"
-#include "WTFString.h"
+#include <wtf/text/AtomicStringImpl.h>
+#include <wtf/text/WTFString.h>
 
 // Define 'NO_IMPLICIT_ATOMICSTRING' before including this header,
 // to disallow (expensive) implicit String-->AtomicString conversions.
@@ -213,5 +213,5 @@ using WTF::xmlAtom;
 using WTF::xmlnsAtom;
 #endif
 
-#include "StringConcatenate.h"
+#include <wtf/text/StringConcatenate.h>
 #endif // AtomicString_h

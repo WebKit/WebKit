@@ -27,7 +27,7 @@
 #include "ThunkGenerators.h"
 
 #include "CodeBlock.h"
-#include "InlineASM.h"
+#include <wtf/InlineASM.h>
 #include "SpecializedThunkJIT.h"
 #include <wtf/text/StringImpl.h>
 

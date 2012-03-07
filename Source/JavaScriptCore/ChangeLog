@@ -1,3 +1,152 @@
+2012-03-06  Eric Seidel  <eric@webkit.org>
+
+        Make WTF public headers use fully-qualified include paths and remove ForwardingHeaders/wtf
+        https://bugs.webkit.org/show_bug.cgi?id=80363
+
+        Reviewed by Mark Rowe.
+
+        Historically WTF has been part of JavaScriptCore, and on Mac and Windows
+        its headers have appeared as part of the "private" headers exported by
+        JavaScriptCore.  All of the WTF headers there are "flattened" into a single
+        private headers directory, and WebCore, WebKit and WebKit2 have used "ForwardingHeaders"
+        to re-map fully-qualified <wtf/text/Foo.h> includes to simple <JavaScriptCore/Foo.h> includes.
+
+        However, very soon, we are moving the WTF source code out of JavaScriptCore into its
+        own directory and project.  As part of such, the WTF headers will no longer be part of
+        the JavaScriptCore private interfaces.
+        In preparation for that, this change makes both the Mac and Win builds export
+        WTF headers in a non-flattened manner.  On Mac, that means into usr/local/include/wtf
+        (and subdirectories), on Windows for now that means JavaScriptCore/wtf (and subdirectories).
+
+        There are 5 parts to this change.
+        1.  Updates the JavaScriptCore XCode and VCProj files to actually install these headers
+            (and header directories) into the appropriate places in the build directory.
+        2.  Updates JavaScriptCore.xcodeproj to look for these WTF headers in this install location
+            (WebCore, WebKit, etc. had already been taught to look in previous patches).
+        3.  Fixes all JavaScriptCore source files, and WTF headers to include WTF headers
+            using fully qualified paths.
+        4.  Stops the Mac and Win builds from installing these WTF headers in their old "flattened" location.
+        5.  Removes WebCore and WebKit ForwardingHeaders/wtf directories now that the flattened headers no longer exist.
+
+        Unfortunately we see no way to do this change in smaller parts, since all of these steps are interdependant.
+        It is possible there are internal Apple projects which depend on JavaScriptCore/Foo.h working for WTF
+        headers, those will have to be updated to use <wtf/Foo.h> after this change.
+        I've discussed this proposed change at length with Mark Rowe, and my understanding is they
+        are ready for (and interested in) this change happening.
+
+        * API/tests/JSNode.c:
+        * API/tests/JSNodeList.c:
+        * Configurations/Base.xcconfig:
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerCodeRef.h:
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGOperations.cpp:
+        * heap/GCAssertions.h:
+        * heap/HandleHeap.h:
+        * heap/HandleStack.h:
+        * heap/MarkedSpace.h:
+        * heap/PassWeak.h:
+        * heap/Strong.h:
+        * heap/Weak.h:
+        * jit/HostCallReturnValue.cpp:
+        * jit/JIT.cpp:
+        * jit/JITStubs.cpp:
+        * jit/ThunkGenerators.cpp:
+        * parser/Lexer.cpp:
+        * runtime/Completion.cpp:
+        * runtime/Executable.cpp:
+        * runtime/Identifier.h:
+        * runtime/InitializeThreading.cpp:
+        * runtime/JSDateMath.cpp:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/JSStringBuilder.h:
+        * runtime/JSVariableObject.h:
+        * runtime/NumberPrototype.cpp:
+        * runtime/WriteBarrier.h:
+        * tools/CodeProfile.cpp:
+        * tools/TieredMMapArray.h:
+        * wtf/AVLTree.h:
+        * wtf/Alignment.h:
+        * wtf/AlwaysInline.h:
+        * wtf/ArrayBufferView.h:
+        * wtf/Assertions.h:
+        * wtf/Atomics.h:
+        * wtf/Bitmap.h:
+        * wtf/BoundsCheckedPointer.h:
+        * wtf/CheckedArithmetic.h:
+        * wtf/Deque.h:
+        * wtf/ExportMacros.h:
+        * wtf/FastAllocBase.h:
+        * wtf/FastMalloc.h:
+        * wtf/Float32Array.h:
+        * wtf/Float64Array.h:
+        * wtf/Functional.h:
+        * wtf/HashCountedSet.h:
+        * wtf/HashFunctions.h:
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+        * wtf/HashTable.h:
+        * wtf/HashTraits.h:
+        * wtf/Int16Array.h:
+        * wtf/Int32Array.h:
+        * wtf/Int8Array.h:
+        * wtf/IntegralTypedArrayBase.h:
+        * wtf/ListHashSet.h:
+        * wtf/MainThread.h:
+        * wtf/MetaAllocator.h:
+        * wtf/Noncopyable.h:
+        * wtf/OwnArrayPtr.h:
+        * wtf/OwnPtr.h:
+        * wtf/PackedIntVector.h:
+        * wtf/ParallelJobs.h:
+        * wtf/PassOwnArrayPtr.h:
+        * wtf/PassOwnPtr.h:
+        * wtf/PassRefPtr.h:
+        * wtf/PassTraits.h:
+        * wtf/Platform.h:
+        * wtf/PossiblyNull.h:
+        * wtf/RefCounted.h:
+        * wtf/RefCountedLeakCounter.h:
+        * wtf/RefPtr.h:
+        * wtf/RetainPtr.h:
+        * wtf/SimpleStats.h:
+        * wtf/Spectrum.h:
+        * wtf/StdLibExtras.h:
+        * wtf/TCPageMap.h:
+        * wtf/TemporaryChange.h:
+        * wtf/ThreadSafeRefCounted.h:
+        * wtf/Threading.h:
+        * wtf/ThreadingPrimitives.h:
+        * wtf/TypeTraits.h:
+        * wtf/TypedArrayBase.h:
+        * wtf/Uint16Array.h:
+        * wtf/Uint32Array.h:
+        * wtf/Uint8Array.h:
+        * wtf/Uint8ClampedArray.h:
+        * wtf/UnusedParam.h:
+        * wtf/Vector.h:
+        * wtf/VectorTraits.h:
+        * wtf/dtoa/double-conversion.h:
+        * wtf/dtoa/utils.h:
+        * wtf/gobject/GRefPtr.h:
+        * wtf/gobject/GlibUtilities.h:
+        * wtf/text/AtomicString.h:
+        * wtf/text/AtomicStringImpl.h:
+        * wtf/text/CString.h:
+        * wtf/text/StringConcatenate.h:
+        * wtf/text/StringHash.h:
+        * wtf/text/WTFString.h:
+        * wtf/unicode/CharacterNames.h:
+        * wtf/unicode/UTF8.h:
+        * wtf/unicode/glib/UnicodeGLib.h:
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        * wtf/unicode/wince/UnicodeWinCE.h:
+        * wtf/url/api/ParsedURL.h:
+        * wtf/url/api/URLString.h:
+        * wtf/wince/FastMallocWinCE.h:
+        * yarr/YarrJIT.cpp:
+
 2012-03-06  Gavin Barraclough  <barraclough@apple.com>
 
         Array.prototype functions should throw if delete fails

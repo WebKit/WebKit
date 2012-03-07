@@ -29,8 +29,8 @@
 #ifndef WTF_PassTraits_h
 #define WTF_PassTraits_h
 
-#include "OwnPtr.h"
-#include "RefPtr.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
 
 // The PassTraits template exists to help optimize (or make possible) use
 // of WTF data structures with WTF smart pointers that have a Pass

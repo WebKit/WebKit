@@ -21,8 +21,8 @@
 #ifndef WTF_PassRefPtr_h
 #define WTF_PassRefPtr_h
 
-#include "AlwaysInline.h"
-#include "NullPtr.h"
+#include <wtf/AlwaysInline.h>
+#include <wtf/NullPtr.h>
 
 namespace WTF {
 

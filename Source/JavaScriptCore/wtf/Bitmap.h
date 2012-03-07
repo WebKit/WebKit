@@ -19,9 +19,9 @@
 #ifndef Bitmap_h
 #define Bitmap_h
 
-#include "Atomics.h"
-#include "FixedArray.h"
-#include "StdLibExtras.h"
+#include <wtf/Atomics.h>
+#include <wtf/FixedArray.h>
+#include <wtf/StdLibExtras.h>
 #include <stdint.h>
 #include <string.h>
 

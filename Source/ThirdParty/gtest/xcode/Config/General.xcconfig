@@ -12,7 +12,7 @@
 // Not building PowerPC any more
 ARCHS = i386 x86_64
 
-HEADER_SEARCH_PATHS = $(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders ../ ../include/
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders ../ ../include/
 
 // Zerolink prevents link warnings so turn it off
 ZERO_LINK = NO

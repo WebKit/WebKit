@@ -26,7 +26,7 @@
 #ifndef Int16Array_h
 #define Int16Array_h
 
-#include "IntegralTypedArrayBase.h"
+#include <wtf/IntegralTypedArrayBase.h>
 
 namespace WTF {
 

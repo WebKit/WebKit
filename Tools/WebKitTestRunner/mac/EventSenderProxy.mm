@@ -30,7 +30,7 @@
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
 #import "TestController.h"
-#import <JavaScriptCore/RetainPtr.h>
+#import <wtf/RetainPtr.h>
 #import <WebKit2/WKString.h>
 
 namespace WTR {

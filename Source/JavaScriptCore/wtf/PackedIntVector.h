@@ -26,7 +26,7 @@
 #ifndef PackedIntVector_h
 #define PackedIntVector_h
 
-#include "BitVector.h"
+#include <wtf/BitVector.h>
 
 namespace WTF {
 

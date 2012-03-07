@@ -30,7 +30,7 @@
 #ifndef ExportMacros_h
 #define ExportMacros_h
 
-#include "Platform.h"
+#include <wtf/Platform.h>
 
 // See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)

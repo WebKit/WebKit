@@ -34,7 +34,7 @@
 
 #include "QTPixelBuffer.h"
 
-#include <WTF/PassOwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 class QTDecompressionSessionClient;
 typedef struct OpaqueICMDecompressionSession*  ICMDecompressionSessionRef;

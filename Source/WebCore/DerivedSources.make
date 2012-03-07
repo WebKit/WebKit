@@ -639,13 +639,15 @@ ifeq ($(OS),MACOS)
 
 FRAMEWORK_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
 
-ifeq ($(shell $(CC) -E -P -dM $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_DASHBOARD_SUPPORT | cut -d' ' -f3), 1)
+WTF_HEADERS_INCLUDE_PATH="$(BUILT_PRODUCTS_DIR)/usr/local/include"
+
+ifeq ($(shell $(CC) -E -P -dM $(FRAMEWORK_FLAGS) -I$(WTF_HEADERS_INCLUDE_PATH) $(WTF_HEADERS_INCLUDE_PATH)/wtf/Platform.h | grep ENABLE_DASHBOARD_SUPPORT | cut -d' ' -f3), 1)
     ENABLE_DASHBOARD_SUPPORT = 1
 else
     ENABLE_DASHBOARD_SUPPORT = 0
 endif
 
-ifeq ($(shell $(CC) -E -P -dM $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_ORIENTATION_EVENTS | cut -d' ' -f3), 1)
+ifeq ($(shell $(CC) -E -P -dM $(FRAMEWORK_FLAGS) -I$(WTF_HEADERS_INCLUDE_PATH) $(WTF_HEADERS_INCLUDE_PATH)/wtf/Platform.h | grep ENABLE_ORIENTATION_EVENTS | cut -d' ' -f3), 1)
     ENABLE_ORIENTATION_EVENTS = 1
 else
     ENABLE_ORIENTATION_EVENTS = 0

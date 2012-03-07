@@ -23,8 +23,8 @@
 #ifndef WTF_UNICODE_QT4_H
 #define WTF_UNICODE_QT4_H
 
-#include "ScriptCodesFromICU.h"
-#include "UnicodeMacrosFromICU.h"
+#include <wtf/unicode/ScriptCodesFromICU.h>
+#include <wtf/unicode/UnicodeMacrosFromICU.h>
 
 #include <QChar>
 #include <QString>

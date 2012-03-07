@@ -26,7 +26,7 @@
 #ifndef ArrayBufferView_h
 #define ArrayBufferView_h
 
-#include "ArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
 
 #include <algorithm>
 #include <limits.h>

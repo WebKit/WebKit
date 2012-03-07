@@ -25,8 +25,8 @@
 // This file would be called String.h, but that conflicts with <string.h>
 // on systems without case-sensitive file systems.
 
-#include "ASCIIFastPath.h"
-#include "StringImpl.h"
+#include <wtf/text/ASCIIFastPath.h>
+#include <wtf/text/StringImpl.h>
 
 #ifdef __OBJC__
 #include <objc/objc.h>
@@ -646,5 +646,5 @@ using WTF::isSpaceOrNewline;
 using WTF::reverseFind;
 using WTF::ShouldRoundDecimalPlaces;
 
-#include "AtomicString.h"
+#include <wtf/text/AtomicString.h>
 #endif

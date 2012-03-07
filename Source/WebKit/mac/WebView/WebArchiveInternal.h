@@ -27,7 +27,7 @@
  */
 
 #import "WebArchive.h"
-#import <JavaScriptCore/Forward.h>
+#import <wtf/Forward.h>
 
 namespace WebCore {
     class LegacyWebArchive;

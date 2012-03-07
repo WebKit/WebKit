@@ -54,7 +54,7 @@
 #endif
 
 #include <string.h>
-#include "Assertions.h"
+#include <wtf/Assertions.h>
 
 // Single-level array
 template <int BITS>

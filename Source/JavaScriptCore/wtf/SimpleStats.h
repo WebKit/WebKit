@@ -26,8 +26,8 @@
 #ifndef SimpleStats_h
 #define SimpleStats_h
 
-#include "MathExtras.h"
-#include "StdLibExtras.h"
+#include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WTF {
 

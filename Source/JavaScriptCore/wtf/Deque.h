@@ -33,8 +33,8 @@
 // FIXME: Could move what Vector and Deque share into a separate file.
 // Deque doesn't actually use Vector.
 
-#include "PassTraits.h"
-#include "Vector.h"
+#include <wtf/PassTraits.h>
+#include <wtf/Vector.h>
 
 namespace WTF {
 

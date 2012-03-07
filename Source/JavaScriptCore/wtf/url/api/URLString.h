@@ -28,7 +28,7 @@
 
 #if USE(WTFURL)
 
-#include "WTFString.h"
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 

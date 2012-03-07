@@ -26,8 +26,8 @@
 #ifndef CheckedArithmetic_h
 #define CheckedArithmetic_h
 
-#include "Assertions.h"
-#include "TypeTraits.h"
+#include <wtf/Assertions.h>
+#include <wtf/TypeTraits.h>
 
 #include <limits>
 #include <stdint.h>

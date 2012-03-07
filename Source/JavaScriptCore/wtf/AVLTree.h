@@ -32,7 +32,7 @@
 #ifndef AVL_TREE_H_
 #define AVL_TREE_H_
 
-#include "Assertions.h"
+#include <wtf/Assertions.h>
 #include <wtf/FixedArray.h>
 
 namespace WTF {

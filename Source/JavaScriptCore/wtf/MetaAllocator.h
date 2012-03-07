@@ -29,15 +29,15 @@
 #ifndef WTF_MetaAllocator_h
 #define WTF_MetaAllocator_h
 
-#include "Assertions.h"
-#include "HashMap.h"
-#include "MetaAllocatorHandle.h"
-#include "Noncopyable.h"
-#include "PageBlock.h"
-#include "RedBlackTree.h"
-#include "RefCounted.h"
-#include "RefPtr.h"
-#include "TCSpinLock.h"
+#include <wtf/Assertions.h>
+#include <wtf/HashMap.h>
+#include <wtf/MetaAllocatorHandle.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/PageBlock.h>
+#include <wtf/RedBlackTree.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/TCSpinLock.h>
 
 namespace WTF {
 

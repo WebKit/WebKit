@@ -1,3 +1,51 @@
+2012-03-06  Eric Seidel  <eric@webkit.org>
+
+        Make WTF public headers use fully-qualified include paths and remove ForwardingHeaders/wtf
+        https://bugs.webkit.org/show_bug.cgi?id=80363
+
+        Reviewed by Mark Rowe.
+
+        ForwardingHeaders/wtf is no longer necessary (or functional) now that JavaScriptCore
+        no longer includes the WTF headers as private headers.
+
+        * ForwardingHeaders/wtf/ASCIICType.h: Removed.
+        * ForwardingHeaders/wtf/AlwaysInline.h: Removed.
+        * ForwardingHeaders/wtf/Assertions.h: Removed.
+        * ForwardingHeaders/wtf/Deque.h: Removed.
+        * ForwardingHeaders/wtf/DisallowCType.h: Removed.
+        * ForwardingHeaders/wtf/FastMalloc.h: Removed.
+        * ForwardingHeaders/wtf/Forward.h: Removed.
+        * ForwardingHeaders/wtf/GetPtr.h: Removed.
+        * ForwardingHeaders/wtf/HashCountedSet.h: Removed.
+        * ForwardingHeaders/wtf/HashMap.h: Removed.
+        * ForwardingHeaders/wtf/HashSet.h: Removed.
+        * ForwardingHeaders/wtf/HashTraits.h: Removed.
+        * ForwardingHeaders/wtf/ListHashSet.h: Removed.
+        * ForwardingHeaders/wtf/ListRefPtr.h: Removed.
+        * ForwardingHeaders/wtf/Locker.h: Removed.
+        * ForwardingHeaders/wtf/MathExtras.h: Removed.
+        * ForwardingHeaders/wtf/Noncopyable.h: Removed.
+        * ForwardingHeaders/wtf/OwnArrayPtr.h: Removed.
+        * ForwardingHeaders/wtf/OwnPtr.h: Removed.
+        * ForwardingHeaders/wtf/OwnPtrCommon.h: Removed.
+        * ForwardingHeaders/wtf/PassOwnPtr.h: Removed.
+        * ForwardingHeaders/wtf/PassRefPtr.h: Removed.
+        * ForwardingHeaders/wtf/Platform.h: Removed.
+        * ForwardingHeaders/wtf/RefCounted.h: Removed.
+        * ForwardingHeaders/wtf/RefCountedLeakCounter.h: Removed.
+        * ForwardingHeaders/wtf/RefPtr.h: Removed.
+        * ForwardingHeaders/wtf/RetainPtr.h: Removed.
+        * ForwardingHeaders/wtf/StdLibExtras.h: Removed.
+        * ForwardingHeaders/wtf/TemporaryChange.h: Removed.
+        * ForwardingHeaders/wtf/Threading.h: Removed.
+        * ForwardingHeaders/wtf/UnusedParam.h: Removed.
+        * ForwardingHeaders/wtf/VMTags.h: Removed.
+        * ForwardingHeaders/wtf/ValueCheck.h: Removed.
+        * ForwardingHeaders/wtf/Vector.h: Removed.
+        * ForwardingHeaders/wtf/VectorTraits.h: Removed.
+        * ForwardingHeaders/wtf/unicode/Unicode.h: Removed.
+        * ForwardingHeaders/wtf/unicode/icu/UnicodeIcu.h: Removed.
+
 2012-03-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Hide dock button when not allowed to dock

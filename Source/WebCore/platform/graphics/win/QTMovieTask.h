@@ -26,7 +26,7 @@
 #ifndef QTMovieTask_h
 #define QTMovieTask_h
 
-#include <WTF/HashSet.h>
+#include <wtf/HashSet.h>
 
 #ifdef QTMOVIEWIN_EXPORTS
 #define QTMOVIEWIN_API __declspec(dllexport)

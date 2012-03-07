@@ -26,10 +26,10 @@
 #ifndef WTF_PassOwnPtr_h
 #define WTF_PassOwnPtr_h
 
-#include "Assertions.h"
-#include "NullPtr.h"
-#include "OwnPtrCommon.h"
-#include "TypeTraits.h"
+#include <wtf/Assertions.h>
+#include <wtf/NullPtr.h>
+#include <wtf/OwnPtrCommon.h>
+#include <wtf/TypeTraits.h>
 
 namespace WTF {
 

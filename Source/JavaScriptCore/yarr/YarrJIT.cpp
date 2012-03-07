@@ -26,7 +26,7 @@
 #include "config.h"
 #include "YarrJIT.h"
 
-#include "ASCIICType.h"
+#include <wtf/ASCIICType.h>
 #include "LinkBuffer.h"
 #include "Yarr.h"
 

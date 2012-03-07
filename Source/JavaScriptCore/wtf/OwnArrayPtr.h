@@ -21,10 +21,10 @@
 #ifndef WTF_OwnArrayPtr_h
 #define WTF_OwnArrayPtr_h
 
-#include "Assertions.h"
-#include "Noncopyable.h"
-#include "NullPtr.h"
-#include "PassOwnArrayPtr.h"
+#include <wtf/Assertions.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/NullPtr.h>
+#include <wtf/PassOwnArrayPtr.h>
 #include <algorithm>
 
 namespace WTF {

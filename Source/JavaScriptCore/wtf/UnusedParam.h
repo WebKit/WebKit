@@ -24,7 +24,7 @@
 /* don't use this for C++, it should only be used in plain C files or
    ObjC methods, where leaving off the parameter name is not allowed. */
 
-#include "Platform.h"
+#include <wtf/Platform.h>
 
 #if COMPILER(INTEL) && !OS(WINDOWS) || COMPILER(RVCT)
 template<typename T>

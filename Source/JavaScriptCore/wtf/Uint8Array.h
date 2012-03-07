@@ -27,7 +27,7 @@
 #ifndef Uint8Array_h
 #define Uint8Array_h
 
-#include "IntegralTypedArrayBase.h"
+#include <wtf/IntegralTypedArrayBase.h>
 
 namespace WTF {
 

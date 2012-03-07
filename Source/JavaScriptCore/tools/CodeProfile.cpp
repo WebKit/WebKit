@@ -30,7 +30,7 @@
 #include "CodeProfiling.h"
 #include "LinkBuffer.h"
 #include "ProfileTreeNode.h"
-#include "Vector.h"
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)

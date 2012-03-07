@@ -27,7 +27,7 @@
 #define StringConcatenate_h
 
 #ifndef WTFString_h
-#include "AtomicString.h"
+#include <wtf/text/AtomicString.h>
 #endif
 
 // This macro is helpful for testing how many intermediate Strings are created while evaluating an
@@ -960,5 +960,5 @@ String makeString(StringType1 string1, StringType2 string2, StringType3 string3,
 
 using WTF::makeString;
 
-#include "StringOperators.h"
+#include <wtf/text/StringOperators.h>
 #endif

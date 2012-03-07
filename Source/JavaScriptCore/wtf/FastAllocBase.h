@@ -88,10 +88,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Assertions.h"
-#include "FastMalloc.h"
-#include "StdLibExtras.h"
-#include "TypeTraits.h"
+#include <wtf/Assertions.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/TypeTraits.h>
 
 #define WTF_MAKE_FAST_ALLOCATED \
 public: \

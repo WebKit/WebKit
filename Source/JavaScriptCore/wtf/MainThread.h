@@ -30,7 +30,7 @@
 #ifndef MainThread_h
 #define MainThread_h
 
-#include "Platform.h"
+#include <wtf/Platform.h>
 
 #include <stdint.h>
 

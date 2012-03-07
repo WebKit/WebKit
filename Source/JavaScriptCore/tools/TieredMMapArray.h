@@ -26,7 +26,7 @@
 #ifndef TieredMMapArray_h
 #define TieredMMapArray_h
 
-#include "OSAllocator.h"
+#include <wtf/OSAllocator.h>
 
 namespace JSC {
 

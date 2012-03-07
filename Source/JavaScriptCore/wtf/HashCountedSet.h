@@ -21,9 +21,9 @@
 #ifndef WTF_HashCountedSet_h
 #define WTF_HashCountedSet_h
 
-#include "Assertions.h"
-#include "HashMap.h"
-#include "Vector.h"
+#include <wtf/Assertions.h>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 namespace WTF {
 

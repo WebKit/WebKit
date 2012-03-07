@@ -26,12 +26,10 @@
 #ifndef QTTrack_h
 #define QTTrack_h
 
-#include <Unicode.h>
 #include <windows.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-// We must include this after <Unicode.h>, or the definition of OSErr will change:
 #include <CoreGraphics/CGAffineTransform.h>
 
 #ifdef QTMOVIEWIN_EXPORTS

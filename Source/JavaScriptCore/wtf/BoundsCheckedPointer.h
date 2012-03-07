@@ -29,8 +29,8 @@
 #ifndef WTF_BoundsCheckedPointer_h
 #define WTF_BoundsCheckedPointer_h
 
-#include "Assertions.h"
-#include "UnusedParam.h"
+#include <wtf/Assertions.h>
+#include <wtf/UnusedParam.h>
 
 namespace WTF {
 

@@ -25,9 +25,8 @@
 
 #if ENABLE(GLIB_SUPPORT)
 
-#include "AlwaysInline.h"
-#include "GRefPtr.h"
-#include "RefPtr.h"
+#include <wtf/AlwaysInline.h>
+#include <wtf/RefPtr.h>
 #include <algorithm>
 
 extern "C" void g_object_unref(gpointer);

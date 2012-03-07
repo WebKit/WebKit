@@ -28,7 +28,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "WebTypesInternal.h"
-#import <JavaScriptCore/Vector.h>
+#import <wtf/Vector.h>
 #import <WebCore/RunLoop.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/WebCoreObjCExtras.h>

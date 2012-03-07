@@ -31,7 +31,7 @@
 #ifndef ThreadingPrimitives_h
 #define ThreadingPrimitives_h
 
-#include "Platform.h"
+#include <wtf/Platform.h>
 
 #include <wtf/Assertions.h>
 #include <wtf/FastAllocBase.h>

@@ -32,7 +32,7 @@
 #define BytecodeGenerator_h
 
 #include "CodeBlock.h"
-#include "HashTraits.h"
+#include <wtf/HashTraits.h>
 #include "Instruction.h"
 #include "Label.h"
 #include "LabelScope.h"

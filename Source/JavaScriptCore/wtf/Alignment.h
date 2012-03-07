@@ -21,7 +21,7 @@
 #ifndef WTF_Alignment_h
 #define WTF_Alignment_h
 
-#include "Platform.h"
+#include <wtf/Platform.h>
 #include <algorithm>
 
 namespace WTF {

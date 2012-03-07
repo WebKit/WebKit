@@ -27,7 +27,7 @@
 #include "HostCallReturnValue.h"
 
 #include "CallFrame.h"
-#include "InlineASM.h"
+#include <wtf/InlineASM.h>
 #include "JSObject.h"
 #include "JSValueInlineMethods.h"
 #include "ScopeChain.h"

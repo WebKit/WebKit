@@ -21,9 +21,9 @@
 #ifndef RetainPtr_h
 #define RetainPtr_h
 
-#include "HashTraits.h"
-#include "NullPtr.h"
-#include "TypeTraits.h"
+#include <wtf/HashTraits.h>
+#include <wtf/NullPtr.h>
+#include <wtf/TypeTraits.h>
 #include <algorithm>
 
 #if USE(CF)

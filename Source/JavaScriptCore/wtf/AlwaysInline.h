@@ -20,4 +20,4 @@
 
 /* This file is no longer necessary, since all the functionality has been moved to Compiler.h. */
 
-#include "Platform.h"
+#include <wtf/Platform.h>

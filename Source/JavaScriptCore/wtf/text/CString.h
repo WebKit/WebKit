@@ -26,9 +26,9 @@
 #ifndef CString_h
 #define CString_h
 
-#include "PassRefPtr.h"
-#include "RefCounted.h"
-#include "Vector.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WTF {
 

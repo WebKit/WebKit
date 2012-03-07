@@ -21,9 +21,9 @@
 #ifndef WTF_VectorTraits_h
 #define WTF_VectorTraits_h
 
-#include "OwnPtr.h"
-#include "RefPtr.h"
-#include "TypeTraits.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/TypeTraits.h>
 #include <utility>
 #include <memory>
 

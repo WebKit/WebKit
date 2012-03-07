@@ -35,7 +35,7 @@
 #import "WebPDFDocumentExtras.h"
 #import "WebPDFView.h"
 #import "WebTypesInternal.h"
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>

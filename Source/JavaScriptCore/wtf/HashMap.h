@@ -21,7 +21,7 @@
 #ifndef WTF_HashMap_h
 #define WTF_HashMap_h
 
-#include "HashTable.h"
+#include <wtf/HashTable.h>
 
 namespace WTF {
 
@@ -486,6 +486,6 @@ namespace WTF {
 
 using WTF::HashMap;
 
-#include "RefPtrHashMap.h"
+#include <wtf/RefPtrHashMap.h>
 
 #endif /* WTF_HashMap_h */

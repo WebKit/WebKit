@@ -47,15 +47,22 @@ for %%d in (
     parser
     profiler
     runtime
+    yarr
+) do (
+    xcopy /y /d ..\..\%%d\*.h "%PrivateHeadersDirectory%" >NUL
+)
+
+echo Copying WTF headers...
+for %%d in (
     wtf
     wtf\dtoa
     wtf\text
     wtf\threads
     wtf\unicode
     wtf\unicode\icu
-    yarr
 ) do (
-    xcopy /y /d ..\..\%%d\*.h "%PrivateHeadersDirectory%" >NUL
+    mkdir "%PrivateHeadersDirectory%\%%d" 2>NUL
+    xcopy /y /d ..\..\%%d\*.h "%PrivateHeadersDirectory%\%%d" >NUL
 )
 
 echo Copying resources...

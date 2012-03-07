@@ -26,7 +26,7 @@
 
 #ifdef __cplusplus
 #include <new>
-#include "MemoryManager.h"
+#include <wtf/wince/MemoryManager.h>
 extern "C" {
 #endif
 

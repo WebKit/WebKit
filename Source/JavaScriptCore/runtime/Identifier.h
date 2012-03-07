@@ -22,7 +22,7 @@
 #define Identifier_h
 
 #include "JSGlobalData.h"
-#include "ThreadSpecific.h"
+#include <wtf/ThreadSpecific.h>
 #include "UString.h"
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/CString.h>

@@ -35,7 +35,7 @@
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
 #import <JavaScriptCore/InitializeThreading.h>
-#import <JavaScriptCore/PassRefPtr.h>
+#import <wtf/PassRefPtr.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/RunLoop.h>
