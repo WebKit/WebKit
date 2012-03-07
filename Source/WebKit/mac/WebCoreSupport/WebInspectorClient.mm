@@ -113,7 +113,8 @@ void WebInspectorClient::bringFrontendToFront()
 
 void WebInspectorClient::didResizeMainFrame(Frame*)
 {
-    m_frontendClient->setDockingUnavailable(!m_frontendClient->canAttachWindow());
+    if (m_frontendClient)
+        m_frontendClient->setDockingUnavailable(!m_frontendClient->canAttachWindow());
 }
 
 void WebInspectorClient::highlight()

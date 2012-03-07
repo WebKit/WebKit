@@ -1,3 +1,12 @@
+2012-03-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        <http://webkit.org/b/80510> Web Inspector crash (iCab)
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::didResizeMainFrame):
+
 2012-03-06  Benjamin Poulain  <bpoulain@apple.com>
 
         [Mac] Update the configuration files for iOS
