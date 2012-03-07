@@ -21,11 +21,7 @@ haveQt(5): QT += widgets
 
 CONFIG += qtwebkit
 
-haveQt(5) {
-    QT += declarative quick1
-} else {
-    contains(QT_CONFIG, declarative): QT += declarative
-}
+haveQt(4): haveQtModule(declarative): QT += declarative
 
 # This define is used by some tests to look up resources in the source tree
 DEFINES += TESTS_SOURCE_DIR=\\\"$$PWD/\\\"

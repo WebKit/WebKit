@@ -1,3 +1,16 @@
+2012-03-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix compilation without QtQuick1
+        https://bugs.webkit.org/show_bug.cgi?id=80503
+
+        Reviewed by Tor Arne Vestbø.
+
+        Introduce HAVE_QQUICK1 as feature and added haveQtModule
+        as convenience function.
+
+        * qmake/mkspecs/features/features.prf:
+        * qmake/mkspecs/features/functions.prf:
+
 2012-03-07  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Add qmake config tests for JPEG and PNG library

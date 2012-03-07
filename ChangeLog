@@ -1,3 +1,12 @@
+2012-03-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix compilation without QtQuick1
+        https://bugs.webkit.org/show_bug.cgi?id=80503
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/tests.pri: Compile qml1 tests only with Qt 4 for the moment.
+
 2012-03-07  Mark Rowe  <mrowe@apple.com>
 
         Teach make to build WTF.

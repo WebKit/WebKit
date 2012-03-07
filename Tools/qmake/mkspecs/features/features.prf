@@ -221,6 +221,12 @@ contains(DEFINES, ENABLE_INSPECTOR=0) {
     DEFINES += ENABLE_JAVASCRIPT_DEBUGGER=0
 }
 
+haveQt(4) {
+    haveQtModule(declarative): DEFINES += HAVE_QQUICK1=1
+}
+### FIXME: Add Qt 5 QQuick1 support once QDeclarativeEngine in QQuick2
+### is called QmlEngine and it is safe for us to use QQuick1 again.
+
 ## Forward enabled feature macros to JavaScript enabled features macros
 FEATURE_DEFINES_JAVASCRIPT = LANGUAGE_JAVASCRIPT=1
 v8: FEATURE_DEFINES_JAVASCRIPT += V8_BINDING=1

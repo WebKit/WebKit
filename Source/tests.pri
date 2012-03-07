@@ -7,6 +7,8 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
+load(features)
+
 WEBKIT_TESTS_DIR = $$PWD/WebKit/qt/tests
 
 SUBDIRS += \
@@ -26,9 +28,7 @@ linux-* {
     SUBDIRS += $$WEBKIT_TESTS_DIR/MIMESniffing
 }
 
-contains(QT_CONFIG, declarative)|contains(QT_CONFIG, qtquick1) {
-    SUBDIRS += $$WEBKIT_TESTS_DIR/qdeclarativewebview
-}
+contains(DEFINES, HAVE_QQUICK1=1): SUBDIRS += $$WEBKIT_TESTS_DIR/qdeclarativewebview
 
 # Benchmarks
 SUBDIRS += \

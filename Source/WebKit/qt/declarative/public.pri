@@ -27,7 +27,12 @@ wince*:LIBS += $$QMAKE_LIBS_GUI
 CONFIG += qtwebkit qtwebkit-private
 
 QT += declarative
-haveQt(5): QT += widgets quick quick1
+haveQt(5): QT += widgets quick
+
+contains(DEFINES, HAVE_QQUICK1=1) {
+    SOURCES += qdeclarativewebview.cpp
+    HEADERS += qdeclarativewebview_p.h
+}
 
 DESTDIR = $${ROOT_BUILD_DIR}/imports/$${TARGET.module_name}
 
@@ -40,8 +45,7 @@ INCLUDEPATH += \
     ../../../JavaScriptCore/runtime \
     ../../../JavaScriptCore/wtf
 
-SOURCES += qdeclarativewebview.cpp plugin.cpp
-HEADERS += qdeclarativewebview_p.h
+SOURCES += plugin.cpp
 
 !no_webkit2: {
     DEFINES += HAVE_WEBKIT2
