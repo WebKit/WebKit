@@ -3537,9 +3537,6 @@ BUGWK76647 WIN LINUX : tables/mozilla_expected_failures/bugs/97619.html = IMAGE+
 BUGWK69714 WIN LINUX : svg/clip-path/clip-path-tspan-and-stroke.svg = IMAGE+TEXT
 BUGWK77103 MAC : svg/repaint/image-href-change.svg = IMAGE
 
-// Need rebaseline
-BUGWK78326 : fast/speech/input-appearance-numberandspeech.html = FAIL
-
 // Need to implement file name logging.
 BUGWK76572 : http/tests/download = FAIL
 
