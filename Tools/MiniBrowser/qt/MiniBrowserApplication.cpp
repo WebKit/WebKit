@@ -279,6 +279,9 @@ void MiniBrowserApplication::handleUserOptions()
     }
 
     const bool useDesktopBehavior = takeOptionFlag(&args, "--desktop");
+    if (useDesktopBehavior)
+        windowOptions()->setTouchMockingEnabled(false);
+
     QQuickWebViewExperimental::setFlickableViewportEnabled(!useDesktopBehavior);
     if (!useDesktopBehavior)
         qputenv("QT_WEBKIT_USE_MOBILE_THEME", QByteArray("1"));
