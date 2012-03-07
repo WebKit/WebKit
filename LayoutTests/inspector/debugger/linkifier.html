@@ -34,7 +34,7 @@ function test()
     function debuggerTest()
     {
         linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
-        rawSourceCode = WebInspector.debuggerPresentationModel._rawSourceCodeForURL[WebInspector.inspectedPageURL];
+        rawSourceCode = WebInspector.debuggerPresentationModel._scriptMapping._rawSourceCodeForURL[WebInspector.inspectedPageURL];
 
         var count1 = listenersCount(rawSourceCode);
         link = linkifier.linkifyLocation(WebInspector.inspectedPageURL, 20, 0, "dummy-class");

@@ -34,7 +34,7 @@
  * @param {function(WebInspector.Breakpoint)} breakpointAddedDelegate
  * @param {function(WebInspector.Breakpoint)} breakpointRemovedDelegate
  * @param {WebInspector.DebuggerModel} debuggerModel
- * @param {WebInspector.ScriptMapping} scriptMapping
+ * @param {WebInspector.MainScriptMapping} scriptMapping
  */
 WebInspector.BreakpointManager = function(breakpointStorage, breakpointAddedDelegate, breakpointRemovedDelegate, debuggerModel, scriptMapping)
 {

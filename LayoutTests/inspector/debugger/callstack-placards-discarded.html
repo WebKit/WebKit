@@ -21,7 +21,7 @@ var test = function()
                 InspectorTest.addResult("Received DebuggerPaused event.");
                 var callFrame = event.data.callFrames[0];
                 InspectorTest.addResult("Function name: " + callFrame._callFrame.functionName);
-                var rawSourceCode = WebInspector.debuggerPresentationModel._rawSourceCodeForScriptId[callFrame._callFrame.location.scriptId];
+                var rawSourceCode = WebInspector.debuggerPresentationModel._scriptMapping._rawSourceCodeForScriptId[callFrame._callFrame.location.scriptId];
                 var listeners = rawSourceCode._listeners[WebInspector.RawSourceCode.Events.UISourceCodeListChanged];
                 InspectorTest.addResult("Listeners length: " + listeners.length);
                 if (previousListenerLength !== undefined && listeners.length !== previousListenerLength)
