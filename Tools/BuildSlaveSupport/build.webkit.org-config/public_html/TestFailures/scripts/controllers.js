@@ -87,6 +87,7 @@ controllers.ResultsDetails = base.extends(Object, {
     onRebaseline: function()
     {
         rebaselineWithStatusUpdates(this._failureInfoList());
+        this._view.nextTest();
     },
     onUpdateExpectations: function()
     {

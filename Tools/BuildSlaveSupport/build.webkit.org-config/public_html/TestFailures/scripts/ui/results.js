@@ -339,6 +339,14 @@ ui.results.View = base.extends('div', {
     {
         return this._testSelector.previousResult();
     },
+    nextTest: function()
+    {
+        return this._testSelector.nextTest();
+    },
+    previousTest: function()
+    {
+        return this._testSelector.previousTest();
+    },
     firstResult: function()
     {
         this._testSelector.firstResult()
