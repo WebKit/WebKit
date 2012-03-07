@@ -40,6 +40,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameLoaderStateMachine.h"
+#include "HistogramSupport.h"
 #include "HistoryItem.h"
 #include "Logging.h"
 #include "Page.h"
@@ -56,12 +57,36 @@ namespace WebCore {
 
 static const double autoreleaseInterval = 3;
 
-#ifndef NDEBUG
+#if PLATFORM(CHROMIUM) || !defined(NDEBUG)
 
 #define PCLOG(...) LOG(PageCache, "%*s%s", indentLevel*4, "", makeString(__VA_ARGS__).utf8().data())
     
-static bool logCanCacheFrameDecision(Frame* frame, int indentLevel)
+// Used in histograms, please only add at the end, and do not remove elements (renaming e.g. to "FooEnumUnused1" is fine).
+// This is because statistics may be gathered from histograms between versions over time, and re-using values causes collisions.
+enum ReasonFrameCannotBeInPageCache {
+    NoDocumentLoader = 0,
+    MainDocumentError,
+    IsErrorPage,
+    HasPlugins,
+    IsHttpsAndCacheControlled,
+    HasUnloadListener,
+    HasDatabaseHandles,
+    HasSharedWorkers,
+    NoHistoryItem,
+    QuickRedirectComing,
+    IsLoadingInAPISense,
+    IsStopping,
+    CanSuspendActiveDOMObjects,
+    DocumentLoaderUsesApplicationCache,
+    ClientDeniesCaching,
+    NumberOfReasonsFramesCannotBeInPageCache,
+};
+
+static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
 {
+#ifdef NDEBUG
+    UNUSED_PARAM(indentLevel);
+#endif
     // Only bother logging for frames that have actually loaded and have content.
     if (frame->loader()->stateMachine()->creatingInitialEmptyDocument())
         return false;
@@ -75,87 +100,110 @@ static bool logCanCacheFrameDecision(Frame* frame, int indentLevel)
         PCLOG(" Determining if frame can be cached navigating from (", currentURL.string(), ") to (", newURL.string(), "):");
     else
         PCLOG(" Determining if subframe with URL (", currentURL.string(), ") can be cached:");
-    
-    bool cannotCache = false;
+     
+    unsigned rejectReasons = 0;
     
     if (!frame->loader()->documentLoader()) {
         PCLOG("   -There is no DocumentLoader object");
-        cannotCache = true;
+        rejectReasons |= 1 << NoDocumentLoader;
     } else {
         if (!frame->loader()->documentLoader()->mainDocumentError().isNull()) {
             PCLOG("   -Main document has an error");
-            cannotCache = true;
+            rejectReasons |= 1 << MainDocumentError;
         }
         if (frame->loader()->documentLoader()->substituteData().isValid() && frame->loader()->documentLoader()->substituteData().failingURL().isEmpty()) {
             PCLOG("   -Frame is an error page");
-            cannotCache = true;
+            rejectReasons |= 1 << IsErrorPage;
         }
         if (frame->loader()->subframeLoader()->containsPlugins() && !frame->page()->settings()->pageCacheSupportsPlugins()) {
             PCLOG("   -Frame contains plugins");
-            cannotCache = true;
+            rejectReasons |= 1 << HasPlugins;
         }
         if (frame->document()->url().protocolIs("https")
             && (frame->loader()->documentLoader()->response().cacheControlContainsNoCache()
                 || frame->loader()->documentLoader()->response().cacheControlContainsNoStore())) {
             PCLOG("   -Frame is HTTPS, and cache control prohibits caching or storing");
-            cannotCache = true;
+            rejectReasons |= 1 << IsHttpsAndCacheControlled;
         }
         if (frame->domWindow() && frame->domWindow()->hasEventListeners(eventNames().unloadEvent)) {
             PCLOG("   -Frame has an unload event listener");
-            cannotCache = true;
+            rejectReasons |= 1 << HasUnloadListener;
         }
 #if ENABLE(SQL_DATABASE)
         if (DatabaseContext::hasOpenDatabases(frame->document())) {
             PCLOG("   -Frame has open database handles");
-            cannotCache = true;
+            rejectReasons |= 1 << HasDatabaseHandles;
         }
 #endif
 #if ENABLE(SHARED_WORKERS)
         if (SharedWorkerRepository::hasSharedWorkers(frame->document())) {
             PCLOG("   -Frame has associated SharedWorkers");
-            cannotCache = true;
+            rejectReasons |= 1 << HasSharedWorkers;
         }
 #endif
         if (!frame->loader()->history()->currentItem()) {
             PCLOG("   -No current history item");
-            cannotCache = true;
+            rejectReasons |= 1 << NoHistoryItem;
         }
         if (frame->loader()->quickRedirectComing()) {
             PCLOG("   -Quick redirect is coming");
-            cannotCache = true;
+            rejectReasons |= 1 << QuickRedirectComing;
         }
         if (frame->loader()->documentLoader()->isLoadingInAPISense()) {
             PCLOG("   -DocumentLoader is still loading in API sense");
-            cannotCache = true;
+            rejectReasons |= 1 << IsLoadingInAPISense;
         }
         if (frame->loader()->documentLoader()->isStopping()) {
             PCLOG("   -DocumentLoader is in the middle of stopping");
-            cannotCache = true;
+            rejectReasons |= 1 << IsStopping;
         }
         if (!frame->document()->canSuspendActiveDOMObjects()) {
             PCLOG("   -The document cannot suspect its active DOM Objects");
-            cannotCache = true;
+            rejectReasons |= 1 << CanSuspendActiveDOMObjects;
         }
         if (!frame->loader()->documentLoader()->applicationCacheHost()->canCacheInPageCache()) {
             PCLOG("   -The DocumentLoader uses an application cache");
-            cannotCache = true;
+            rejectReasons |= 1 << DocumentLoaderUsesApplicationCache;
         }
         if (!frame->loader()->client()->canCachePage()) {
             PCLOG("   -The client says this frame cannot be cached");
-            cannotCache = true; 
+            rejectReasons |= 1 << ClientDeniesCaching;
         }
     }
-    
+
+    HistogramSupport::histogramEnumeration("PageCache.FrameCacheable", !rejectReasons, 2);
+    int reasonCount = 0;
+    for (int i = 0; i < NumberOfReasonsFramesCannotBeInPageCache; ++i) {
+        if (rejectReasons & (1 << i)) {
+            ++reasonCount;
+            HistogramSupport::histogramEnumeration("PageCache.FrameRejectReason", i, NumberOfReasonsFramesCannotBeInPageCache);
+        }
+    }
+    HistogramSupport::histogramEnumeration("PageCache.FrameRejectReasonCount", reasonCount, 1 + NumberOfReasonsFramesCannotBeInPageCache);
+
     for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        if (!logCanCacheFrameDecision(child, indentLevel + 1))
-            cannotCache = true;
+        rejectReasons |= logCanCacheFrameDecision(child, indentLevel + 1);
     
-    PCLOG(cannotCache ? " Frame CANNOT be cached" : " Frame CAN be cached");
+    PCLOG(rejectReasons ? " Frame CANNOT be cached" : " Frame CAN be cached");
     PCLOG("+---");
     
-    return !cannotCache;
+    return rejectReasons;
 }
-    
+
+// Used in histograms, please only add at the end, and do not remove elements (renaming e.g. to "FooEnumUnused1" is fine).
+// This is because statistics may be gathered from histograms between versions over time, and re-using values causes collisions.
+enum ReasonPageCannotBeInPageCache {
+    FrameCannotBeInPageCache = 0,
+    DisabledBackForwardList,
+    DisabledPageCache,
+    UsesDeviceMotion,
+    UsesDeviceOrientation,
+    IsReload,
+    IsReloadFromOrigin,
+    IsSameLoad,
+    NumberOfReasonsPagesCannotBeInPageCache,
+};
+
 static void logCanCachePageDecision(Page* page)
 {
     // Only bother logging for main frames that have actually loaded and have content.
@@ -168,41 +216,66 @@ static void logCanCachePageDecision(Page* page)
     int indentLevel = 0;    
     PCLOG("--------\n Determining if page can be cached:");
     
-    bool cannotCache = !logCanCacheFrameDecision(page->mainFrame(), 1);
+    unsigned rejectReasons = 0;
+    unsigned frameRejectReasons = logCanCacheFrameDecision(page->mainFrame(), indentLevel+1);
+    if (frameRejectReasons)
+        rejectReasons |= 1 << FrameCannotBeInPageCache;
     
     if (!page->backForward()->isActive()) {
         PCLOG("   -The back/forward list is disabled or has 0 capacity");
-        cannotCache = true;
+        rejectReasons |= 1 << DisabledBackForwardList;
     }
     if (!page->settings()->usesPageCache()) {
         PCLOG("   -Page settings says b/f cache disabled");
-        cannotCache = true;
+        rejectReasons |= 1 << DisabledPageCache;
     }
 #if ENABLE(DEVICE_ORIENTATION)
     if (DeviceMotionController::isActiveAt(page)) {
         PCLOG("   -Page is using DeviceMotion");
-        cannotCache = true;
+        rejectReasons |= 1 << UsesDeviceMotion;
     }
     if (DeviceOrientationController::isActiveAt(page)) {
         PCLOG("   -Page is using DeviceOrientation");
-        cannotCache = true;
+        rejectReasons |= 1 << UsesDeviceOrientation;
     }
 #endif
     FrameLoadType loadType = page->mainFrame()->loader()->loadType();
     if (loadType == FrameLoadTypeReload) {
         PCLOG("   -Load type is: Reload");
-        cannotCache = true;
+        rejectReasons |= 1 << IsReload;
     }
     if (loadType == FrameLoadTypeReloadFromOrigin) {
         PCLOG("   -Load type is: Reload from origin");
-        cannotCache = true;
+        rejectReasons |= 1 << IsReloadFromOrigin;
     }
     if (loadType == FrameLoadTypeSame) {
         PCLOG("   -Load type is: Same");
-        cannotCache = true;
+        rejectReasons |= 1 << IsSameLoad;
     }
     
-    PCLOG(cannotCache ? " Page CANNOT be cached\n--------" : " Page CAN be cached\n--------");
+    PCLOG(rejectReasons ? " Page CANNOT be cached\n--------" : " Page CAN be cached\n--------");
+
+    HistogramSupport::histogramEnumeration("PageCache.PageCacheable", !rejectReasons, 2);
+    int reasonCount = 0;
+    for (int i = 0; i < NumberOfReasonsPagesCannotBeInPageCache; ++i) {
+        if (rejectReasons & (1 << i)) {
+            ++reasonCount;
+            HistogramSupport::histogramEnumeration("PageCache.PageRejectReason", i, NumberOfReasonsPagesCannotBeInPageCache);
+        }
+    }
+    HistogramSupport::histogramEnumeration("PageCache.PageRejectReasonCount", reasonCount, 1 + NumberOfReasonsPagesCannotBeInPageCache);
+
+    // Report also on the frame reasons by page; this is distinct from the per frame statistics since it coalesces the
+    // causes from all subframes together.
+    HistogramSupport::histogramEnumeration("PageCache.FrameCacheableByPage", !frameRejectReasons, 2);
+    int frameReasonCount = 0;
+    for (int i = 0; i <= NumberOfReasonsFramesCannotBeInPageCache; ++i) {
+        if (frameRejectReasons & (1 << i)) {
+            ++frameReasonCount;
+            HistogramSupport::histogramEnumeration("PageCache.FrameRejectReasonByPage", i, NumberOfReasonsFramesCannotBeInPageCache);
+        }
+    }
+    HistogramSupport::histogramEnumeration("PageCache.FrameRejectReasonCountByPage", frameReasonCount, 1 + NumberOfReasonsFramesCannotBeInPageCache);
 }
 
 #endif 
@@ -265,7 +338,7 @@ bool PageCache::canCache(Page* page)
     if (!page)
         return false;
     
-#ifndef NDEBUG
+#if PLATFORM(CHROMIUM) || !defined(NDEBUG)
     logCanCachePageDecision(page);
 #endif
     
