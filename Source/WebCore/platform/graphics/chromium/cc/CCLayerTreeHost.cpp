@@ -35,6 +35,7 @@
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCLayerTreeHostImpl.h"
+#include "cc/CCOcclusionTracker.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCThread.h"
 #include "cc/CCThreadProxy.h"
@@ -506,7 +507,7 @@ void CCLayerTreeHost::paintContentsIfDirty(LayerChromium* layer, PaintType paint
     if (PaintVisible == paintType)
         layer->paintContentsIfDirty(occludedScreenSpace);
     else
-        layer->idlePaintContentsIfDirty();
+        layer->idlePaintContentsIfDirty(occludedScreenSpace);
 }
 
 void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderSurfaceLayer, PaintType paintType)
@@ -534,83 +535,28 @@ void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderS
     }
 }
 
-struct RenderSurfaceRegion {
-    RenderSurfaceChromium* surface;
-    Region occludedInScreen;
-};
-
-// Add the surface to the top of the stack and copy the occlusion from the old top of the stack to the new.
-static void enterTargetRenderSurface(Vector<RenderSurfaceRegion>& stack, RenderSurfaceChromium* newTarget)
-{
-    if (stack.isEmpty()) {
-        stack.append(RenderSurfaceRegion());
-        stack.last().surface = newTarget;
-    } else if (stack.last().surface != newTarget) {
-        // If we are entering a subtree that is going to move pixels around, then the occlusion we've computed
-        // so far won't apply to the pixels we're drawing here in the same way. We discard the occlusion thus
-        // far to be safe, and ensure we don't cull any pixels that are moved such that they become visible.
-        const RenderSurfaceChromium* oldAncestorThatMovesPixels = stack.last().surface->nearestAncestorThatMovesPixels();
-        const RenderSurfaceChromium* newAncestorThatMovesPixels = newTarget->nearestAncestorThatMovesPixels();
-        bool enteringSubtreeThatMovesPixels = newAncestorThatMovesPixels && newAncestorThatMovesPixels != oldAncestorThatMovesPixels;
-
-        stack.append(RenderSurfaceRegion());
-        stack.last().surface = newTarget;
-        int lastIndex = stack.size() - 1;
-        if (!enteringSubtreeThatMovesPixels)
-            stack[lastIndex].occludedInScreen = stack[lastIndex - 1].occludedInScreen;
-    }
-}
-
-// Pop the top of the stack off, push on the new surface, and merge the old top's occlusion into the new top surface.
-static void leaveTargetRenderSurface(Vector<RenderSurfaceRegion>& stack, RenderSurfaceChromium* newTarget)
-{
-    int lastIndex = stack.size() - 1;
-    bool surfaceWillBeAtTopAfterPop = stack.size() > 1 && stack[lastIndex - 1].surface == newTarget;
-
-    if (surfaceWillBeAtTopAfterPop) {
-        // Merge the top of the stack down.
-        stack[lastIndex - 1].occludedInScreen.unite(stack[lastIndex].occludedInScreen);
-        stack.removeLast();
-    } else {
-        // Replace the top of the stack with the new pushed surface. Copy the occluded region to the top.
-        stack.last().surface = newTarget;
-    }
-}
-
 void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList, PaintType paintType)
 {
     // Use FrontToBack to allow for testing occlusion and performing culling during the tree walk.
     typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
 
-    // The stack holds occluded regions for subtrees in the RenderSurface-Layer tree, so that when we leave a subtree we may
-    // apply a mask to it, but not to the parts outside the subtree.
-    // - The first time we see a new subtree under a target, we add that target to the top of the stack. This can happen as a layer representing itself, or as a target surface.
-    // - When we visit a target surface, we apply its mask to its subtree, which is at the top of the stack.
-    // - When we visit a layer representing itself, we add its occlusion to the current subtree, which is at the top of the stack.
-    // - When we visit a layer representing a contributing surface, the current target will never be the top of the stack since we just came from the contributing surface.
-    // We merge the occlusion at the top of the stack with the new current subtree. This new target is pushed onto the stack if not already there.
-    Vector<RenderSurfaceRegion> targetSurfaceStack;
+    CCOcclusionTracker occlusionTracker(IntRect(IntPoint(), viewportSize()));
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
         if (it.representsTargetRenderSurface()) {
             ASSERT(it->renderSurface()->drawOpacity());
 
-            enterTargetRenderSurface(targetSurfaceStack, it->renderSurface());
+            occlusionTracker.finishedTargetRenderSurface(*it, it->renderSurface());
             paintMaskAndReplicaForRenderSurface(*it, paintType);
-            // FIXME: add the replica layer to the current occlusion
-
-            if (it->maskLayer() || it->renderSurface()->drawOpacity() < 1 || it->renderSurface()->filters().hasFilterThatAffectsOpacity())
-                targetSurfaceStack.last().occludedInScreen = Region();
         } else if (it.representsItself()) {
             ASSERT(!it->bounds().isEmpty());
 
-            enterTargetRenderSurface(targetSurfaceStack, it->targetRenderSurface());
-            paintContentsIfDirty(*it, paintType, targetSurfaceStack.last().occludedInScreen);
-            it->addSelfToOccludedScreenSpace(targetSurfaceStack.last().occludedInScreen);
-        } else {
-            leaveTargetRenderSurface(targetSurfaceStack, it.targetRenderSurfaceLayer()->renderSurface());
-        }
+            occlusionTracker.enterTargetRenderSurface(it->targetRenderSurface());
+            paintContentsIfDirty(*it, paintType, occlusionTracker.currentOcclusionInScreenSpace());
+            occlusionTracker.markOccludedBehindLayer(*it);
+        } else
+            occlusionTracker.leaveToTargetRenderSurface(it.targetRenderSurfaceLayer()->renderSurface());
     }
 }
 

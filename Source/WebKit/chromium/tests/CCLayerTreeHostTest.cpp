@@ -1179,9 +1179,9 @@ public:
         m_paintContentsCount++;
     }
 
-    virtual void idlePaintContentsIfDirty()
+    virtual void idlePaintContentsIfDirty(const Region& occluded)
     {
-        ContentLayerChromium::idlePaintContentsIfDirty();
+        ContentLayerChromium::idlePaintContentsIfDirty(occluded);
         m_idlePaintContentsCount++;
     }
 

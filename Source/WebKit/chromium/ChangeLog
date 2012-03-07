@@ -1,3 +1,25 @@
+2012-03-07  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Cull occluded tiles during paint
+        https://bugs.webkit.org/show_bug.cgi?id=76838
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::ContentLayerChromiumWithUpdateTracking::idlePaintContentsIfDirty):
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeLayerTextureUpdater::Texture::prepareRect):
+        (WTF::FakeLayerTextureUpdater::FakeLayerTextureUpdater):
+        (FakeLayerTextureUpdater):
+        (WTF::FakeLayerTextureUpdater::prepareRectCount):
+        (WTF::FakeLayerTextureUpdater::clearPrepareRectCount):
+        (WTF::FakeLayerTextureUpdater::prepareRect):
+        (WTF::FakeTiledLayerChromium::prepareToUpdate):
+        (WTF::FakeTiledLayerChromium::prepareToUpdateIdle):
+        (WTF::FakeTiledLayerChromium::paintContentsIfDirty):
+        (WTF::TEST):
+        (WTF):
+
 2012-03-07  Elliot Poger  <epoger@google.com>
 
         [Chromium] Remove use_skia option from GYP

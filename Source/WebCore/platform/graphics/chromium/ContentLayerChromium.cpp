@@ -93,7 +93,7 @@ bool ContentLayerChromium::drawsContent() const
     return TiledLayerChromium::drawsContent() && m_delegate;
 }
 
-void ContentLayerChromium::paintContentsIfDirty(const Region& /* occludedScreenSpace */)
+void ContentLayerChromium::paintContentsIfDirty(const Region& occludedScreenSpace)
 {
     updateTileSizeAndTilingOption();
     createTextureUpdaterIfNeeded();
@@ -105,11 +105,11 @@ void ContentLayerChromium::paintContentsIfDirty(const Region& /* occludedScreenS
     if (drawsContent())
         layerRect = visibleLayerRect();
 
-    prepareToUpdate(layerRect);
+    prepareToUpdate(layerRect, occludedScreenSpace);
     m_needsDisplay = false;
 }
 
-void ContentLayerChromium::idlePaintContentsIfDirty()
+void ContentLayerChromium::idlePaintContentsIfDirty(const Region& occludedScreenSpace)
 {
     if (!drawsContent())
         return;
@@ -118,7 +118,7 @@ void ContentLayerChromium::idlePaintContentsIfDirty()
     if (layerRect.isEmpty())
         return;
 
-    prepareToUpdateIdle(layerRect);
+    prepareToUpdateIdle(layerRect, occludedScreenSpace);
     if (needsIdlePaint(layerRect))
         setNeedsCommit();
 }

@@ -161,7 +161,7 @@ public:
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return m_isDrawable; }
     virtual void paintContentsIfDirty(const Region& /* occludedScreenSpace */) { }
-    virtual void idlePaintContentsIfDirty() { }
+    virtual void idlePaintContentsIfDirty(const Region& /* occludedScreenSpace */) { }
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&) { }
     virtual void setIsMask(bool) { }
     virtual void unreserveContentsTexture() { }
@@ -200,11 +200,6 @@ public:
     float contentsScale() const { return m_contentsScale; }
     void setContentsScale(float);
 
-    TransformationMatrix contentToScreenSpaceTransform() const;
-
-    // Adds any opaque visible pixels to the occluded region.
-    virtual void addSelfToOccludedScreenSpace(Region& occludedScreenSpace);
-
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantDrawsContent();
 
@@ -238,8 +233,6 @@ protected:
     friend class TreeSynchronizer;
 
     LayerChromium();
-
-    bool isPaintedAxisAlignedInScreen() const;
 
     void setNeedsCommit();
 

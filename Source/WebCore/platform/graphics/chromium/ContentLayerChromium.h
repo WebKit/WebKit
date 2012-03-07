@@ -60,7 +60,7 @@ public:
 
     virtual bool drawsContent() const;
     virtual void paintContentsIfDirty(const Region& occludedScreenSpace);
-    virtual void idlePaintContentsIfDirty();
+    virtual void idlePaintContentsIfDirty(const Region& occludedScreenSpace);
 
     virtual void setOpaque(bool);
 
