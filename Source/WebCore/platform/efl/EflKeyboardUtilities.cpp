@@ -166,7 +166,7 @@ static void createWindowsKeyMap()
     }
 }
 
-String keyIdentifierForEvasKeyName(String& keyName)
+String keyIdentifierForEvasKeyName(const String& keyName)
 {
     if (keyMap().isEmpty())
         createKeyMap();
@@ -188,7 +188,7 @@ String singleCharacterString(const String& keyName)
     return keyName;
 }
 
-int windowsKeyCodeForEvasKeyName(String& keyName)
+int windowsKeyCodeForEvasKeyName(const String& keyName)
 {
     if (windowsKeyMap().isEmpty())
         createWindowsKeyMap();

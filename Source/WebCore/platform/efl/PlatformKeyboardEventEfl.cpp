@@ -44,27 +44,28 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Down* event)
     : PlatformEvent(PlatformEvent::KeyDown, evas_key_modifier_is_set(event->modifiers, "Shift"), evas_key_modifier_is_set(event->modifiers, "Control"), evas_key_modifier_is_set(event->modifiers, "Alt"), evas_key_modifier_is_set(event->modifiers, "Meta"), currentTime())
     , m_text(singleCharacterString(String::fromUTF8(event->string)))
     , m_unmodifiedText(singleCharacterString(String::fromUTF8(event->string)))
+    , m_keyIdentifier(keyIdentifierForEvasKeyName(String(event->key)))
+    , m_windowsVirtualKeyCode(windowsKeyCodeForEvasKeyName(String(event->key)))
+    , m_nativeVirtualKeyCode(0)
+    , m_macCharCode(0)
+    , m_autoRepeat(false)
+    , m_isKeypad(false)
+    , m_isSystemKey(false)
 {
-    String keyName = String(event->key);
-    m_keyIdentifier = keyIdentifierForEvasKeyName(keyName);
-    m_windowsVirtualKeyCode = windowsKeyCodeForEvasKeyName(keyName);
-
-    // FIXME:
-    m_isKeypad = false;
-    m_autoRepeat = false;
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Up* event)
     : PlatformEvent(PlatformEvent::KeyUp, evas_key_modifier_is_set(event->modifiers, "Shift"), evas_key_modifier_is_set(event->modifiers, "Control"), evas_key_modifier_is_set(event->modifiers, "Alt"), evas_key_modifier_is_set(event->modifiers, "Meta"), currentTime())
     , m_text(singleCharacterString(String::fromUTF8(event->string)))
+    , m_unmodifiedText(singleCharacterString(String::fromUTF8(event->string)))
+    , m_keyIdentifier(keyIdentifierForEvasKeyName(String(event->key)))
+    , m_windowsVirtualKeyCode(windowsKeyCodeForEvasKeyName(String(event->key)))
+    , m_nativeVirtualKeyCode(0)
+    , m_macCharCode(0)
+    , m_autoRepeat(false)
+    , m_isKeypad(false)
+    , m_isSystemKey(false)
 {
-    String keyName = String(event->key);
-    m_keyIdentifier = keyIdentifierForEvasKeyName(keyName);
-    m_windowsVirtualKeyCode = windowsKeyCodeForEvasKeyName(keyName);
-
-    // FIXME:
-    m_isKeypad = false;
-    m_autoRepeat = false;
 }
 
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool)
