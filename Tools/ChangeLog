@@ -1,3 +1,22 @@
+2012-03-06  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        undefined reference to JSC::IdentifierTable::~IdentifierTable() on EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=80282
+
+        Reviewed by Antonio Gomes.
+
+        Remove transitive library dependencies; they are especially
+        dangerous when one ends up linking against WTF, JSC and then WTF
+        again, since some symbols will not be defined.
+
+        Passing --no-copy-dt-needed-entries and --as-needed to the linker
+        (which some recent Linux distros do by default) makes the issue
+        even more evident.
+
+        * DumpRenderTree/efl/CMakeLists.txt: Do not link directly to WTF,
+        as the other libraries have the needed symbols. Explicitly link
+        against fontconfig.
+
 2012-03-06  Dean Jackson  <dino@apple.com>
 
         filter-build-webkit needs more filters
