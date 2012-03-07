@@ -2765,7 +2765,7 @@ BUGCR77619 SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
 BUGCR77574 LINUX : fast/writing-mode/fallback-orientation.html = IMAGE
 
 // Regression in r82056.
-BUGWK57302 LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE IMAGE+TEXT
+BUGWK56519 LEOPARD SNOWLEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE IMAGE+TEXT
 BUGWK57302 LEOPARD : fast/text/international/text-combine-image-test.html = IMAGE IMAGE+TEXT
 
 // New test added in r82152 and test expectation updated in r82189.
