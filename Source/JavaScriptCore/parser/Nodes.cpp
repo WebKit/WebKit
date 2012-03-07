@@ -73,13 +73,26 @@ StatementNode* SourceElements::singleStatement() const
     return size == 1 ? m_statements[0] : 0;
 }
 
-// -----------------------------ScopeNodeData ---------------------------
+// ------------------------------ ScopeNode -----------------------------
 
-ScopeNodeData::ScopeNodeData(ParserArena& arena, SourceElements* statements, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, int numConstants)
-    : m_numConstants(numConstants)
-    , m_statements(statements)
+ScopeNode::ScopeNode(JSGlobalData* globalData, int lineNumber, bool inStrictContext)
+    : StatementNode(lineNumber)
+    , ParserArenaRefCounted(globalData)
+    , m_features(inStrictContext ? StrictModeFeature : NoFeatures)
+    , m_numConstants(0)
+    , m_statements(0)
 {
-    m_arena.swap(arena);
+}
+
+ScopeNode::ScopeNode(JSGlobalData* globalData, int lineNumber, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, CodeFeatures features, int numConstants)
+    : StatementNode(lineNumber)
+    , ParserArenaRefCounted(globalData)
+    , m_features(features)
+    , m_source(source)
+    , m_numConstants(numConstants)
+    , m_statements(children)
+{
+    m_arena.swap(*globalData->parserArena);
     if (varStack)
         m_varStack.swap(*varStack);
     if (funcStack)
@@ -87,27 +100,9 @@ ScopeNodeData::ScopeNodeData(ParserArena& arena, SourceElements* statements, Var
     m_capturedVariables.swap(capturedVariables);
 }
 
-// ------------------------------ ScopeNode -----------------------------
-
-ScopeNode::ScopeNode(JSGlobalData* globalData, int lineNumber, bool inStrictContext)
-    : StatementNode(lineNumber)
-    , ParserArenaRefCounted(globalData)
-    , m_features(inStrictContext ? StrictModeFeature : NoFeatures)
-{
-}
-
-ScopeNode::ScopeNode(JSGlobalData* globalData, int lineNumber, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, CodeFeatures features, int numConstants)
-    : StatementNode(lineNumber)
-    , ParserArenaRefCounted(globalData)
-    , m_data(adoptPtr(new ScopeNodeData(*globalData->parserArena, children, varStack, funcStack, capturedVariables, numConstants)))
-    , m_features(features)
-    , m_source(source)
-{
-}
-
 StatementNode* ScopeNode::singleStatement() const
 {
-    return m_data->m_statements ? m_data->m_statements->singleStatement() : 0;
+    return m_statements ? m_statements->singleStatement() : 0;
 }
 
 // ------------------------------ ProgramNode -----------------------------
@@ -121,9 +116,9 @@ PassRefPtr<ProgramNode> ProgramNode::create(JSGlobalData* globalData, int lineNu
 {
     RefPtr<ProgramNode> node = new ProgramNode(globalData, lineNumber, children, varStack, funcStack,  capturedVariables, source, features, numConstants);
 
-    ASSERT(node->data()->m_arena.last() == node);
-    node->data()->m_arena.removeLast();
-    ASSERT(!node->data()->m_arena.contains(node.get()));
+    ASSERT(node->m_arena.last() == node);
+    node->m_arena.removeLast();
+    ASSERT(!node->m_arena.contains(node.get()));
 
     return node.release();
 }
@@ -139,9 +134,9 @@ PassRefPtr<EvalNode> EvalNode::create(JSGlobalData* globalData, int lineNumber, 
 {
     RefPtr<EvalNode> node = new EvalNode(globalData, lineNumber, children, varStack, funcStack, capturedVariables, source, features, numConstants);
 
-    ASSERT(node->data()->m_arena.last() == node);
-    node->data()->m_arena.removeLast();
-    ASSERT(!node->data()->m_arena.contains(node.get()));
+    ASSERT(node->m_arena.last() == node);
+    node->m_arena.removeLast();
+    ASSERT(!node->m_arena.contains(node.get()));
 
     return node.release();
 }
@@ -186,9 +181,9 @@ PassRefPtr<FunctionBodyNode> FunctionBodyNode::create(JSGlobalData* globalData, 
 {
     RefPtr<FunctionBodyNode> node = new FunctionBodyNode(globalData, lineNumber, children, varStack, funcStack, capturedVariables, sourceCode, features, numConstants);
 
-    ASSERT(node->data()->m_arena.last() == node);
-    node->data()->m_arena.removeLast();
-    ASSERT(!node->data()->m_arena.contains(node.get()));
+    ASSERT(node->m_arena.last() == node);
+    node->m_arena.removeLast();
+    ASSERT(!node->m_arena.contains(node.get()));
 
     return node.release();
 }

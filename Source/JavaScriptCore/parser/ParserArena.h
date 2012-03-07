@@ -161,7 +161,12 @@ namespace JSC {
         bool isEmpty() const;
         JS_EXPORT_PRIVATE void reset();
 
-        IdentifierArena& identifierArena() { return *m_identifierArena; }
+        IdentifierArena& identifierArena()
+        {
+            if (UNLIKELY (!m_identifierArena))
+                m_identifierArena = adoptPtr(new IdentifierArena);
+            return *m_identifierArena;
+        }
 
     private:
         static const size_t freeablePoolSize = 8000;

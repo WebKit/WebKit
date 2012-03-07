@@ -1,3 +1,46 @@
+2012-03-07  Andy Wingo  <wingo@igalia.com>
+
+        Parser: Inline ScopeNodeData into ScopeNode
+        https://bugs.webkit.org/show_bug.cgi?id=79776
+
+        Reviewed by Geoffrey Garen.
+
+        It used to be that some ScopeNode members were kept in a separate
+        structure because sometimes they wouldn't be needed, and
+        allocating a ParserArena was expensive.  This patch makes
+        ParserArena lazily allocate its IdentifierArena, allowing the
+        members to be included directly, which is simpler and easier to
+        reason about.
+
+        * parser/ParserArena.cpp:
+        (JSC::ParserArena::ParserArena):
+        (JSC::ParserArena::reset):
+        (JSC::ParserArena::isEmpty):
+        * parser/ParserArena.h:
+        (JSC::ParserArena::identifierArena): Lazily allocate the
+        IdentifierArena.
+
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ScopeNode::singleStatement):
+        (JSC::ProgramNode::create):
+        (JSC::EvalNode::create):
+        (JSC::FunctionBodyNode::create):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::destroyData):
+        (JSC::ScopeNode::needsActivationForMoreThanVariables):
+        (JSC::ScopeNode::needsActivation):
+        (JSC::ScopeNode::hasCapturedVariables):
+        (JSC::ScopeNode::capturedVariableCount):
+        (JSC::ScopeNode::captures):
+        (JSC::ScopeNode::varStack):
+        (JSC::ScopeNode::functionStack):
+        (JSC::ScopeNode::neededConstants):
+        (ScopeNode):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ScopeNode::emitStatementsBytecode): Inline ScopeNodeData
+        into ScopeNode.  Adapt accessors.
+
 2012-03-06  Eric Seidel  <eric@webkit.org>
 
         Make WTF public headers use fully-qualified include paths and remove ForwardingHeaders/wtf

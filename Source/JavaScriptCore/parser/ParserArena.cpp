@@ -34,7 +34,6 @@ namespace JSC {
 ParserArena::ParserArena()
     : m_freeableMemory(0)
     , m_freeablePoolEnd(0)
-    , m_identifierArena(adoptPtr(new IdentifierArena))
 {
 }
 
@@ -88,7 +87,8 @@ void ParserArena::reset()
 
     m_freeableMemory = 0;
     m_freeablePoolEnd = 0;
-    m_identifierArena->clear();
+    if (m_identifierArena)
+        m_identifierArena->clear();
     m_freeablePools.clear();
     m_deletableObjects.clear();
     m_refCountedObjects.clear();
@@ -108,7 +108,7 @@ void ParserArena::allocateFreeablePool()
 bool ParserArena::isEmpty() const
 {
     return !m_freeablePoolEnd
-        && m_identifierArena->isEmpty()
+        && (!m_identifierArena || m_identifierArena->isEmpty())
         && m_freeablePools.isEmpty()
         && m_deletableObjects.isEmpty()
         && m_refCountedObjects.isEmpty();

@@ -1378,22 +1378,6 @@ namespace JSC {
         ParameterNode* m_next;
     };
 
-    struct ScopeNodeData {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        typedef DeclarationStacks::VarStack VarStack;
-        typedef DeclarationStacks::FunctionStack FunctionStack;
-
-        ScopeNodeData(ParserArena&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, int numConstants);
-
-        ParserArena m_arena;
-        VarStack m_varStack;
-        FunctionStack m_functionStack;
-        int m_numConstants;
-        SourceElements* m_statements;
-        IdentifierSet m_capturedVariables;
-    };
-
     class ScopeNode : public StatementNode, public ParserArenaRefCounted {
     public:
         typedef DeclarationStacks::VarStack VarStack;
@@ -1404,8 +1388,14 @@ namespace JSC {
 
         using ParserArenaRefCounted::operator new;
 
-        ScopeNodeData* data() const { return m_data.get(); }
-        void destroyData() { m_data.clear(); }
+        void destroyData()
+        {
+            m_arena.reset();
+            m_varStack.clear();
+            m_functionStack.clear();
+            m_statements = 0;
+            m_capturedVariables.clear();
+        }
 
         const SourceCode& source() const { return m_source; }
         const UString& sourceURL() const { return m_source.provider()->url(); }
@@ -1419,21 +1409,20 @@ namespace JSC {
         bool isStrictMode() const { return m_features & StrictModeFeature; }
         void setUsesArguments() { m_features |= ArgumentsFeature; }
         bool usesThis() const { return m_features & ThisFeature; }
-        bool needsActivationForMoreThanVariables() const { ASSERT(m_data); return m_features & (EvalFeature | WithFeature | CatchFeature); }
-        bool needsActivation() const { ASSERT(m_data); return (hasCapturedVariables()) || (m_features & (EvalFeature | WithFeature | CatchFeature)); }
-        bool hasCapturedVariables() const { return !!m_data->m_capturedVariables.size(); }
-        size_t capturedVariableCount() const { return m_data->m_capturedVariables.size(); }
-        bool captures(const Identifier& ident) { return m_data->m_capturedVariables.contains(ident.impl()); }
+        bool needsActivationForMoreThanVariables() const { return m_features & (EvalFeature | WithFeature | CatchFeature); }
+        bool needsActivation() const { return (hasCapturedVariables()) || (m_features & (EvalFeature | WithFeature | CatchFeature)); }
+        bool hasCapturedVariables() const { return !!m_capturedVariables.size(); }
+        size_t capturedVariableCount() const { return m_capturedVariables.size(); }
+        bool captures(const Identifier& ident) { return m_capturedVariables.contains(ident.impl()); }
 
-        VarStack& varStack() { ASSERT(m_data); return m_data->m_varStack; }
-        FunctionStack& functionStack() { ASSERT(m_data); return m_data->m_functionStack; }
+        VarStack& varStack() { return m_varStack; }
+        FunctionStack& functionStack() { return m_functionStack; }
 
         int neededConstants()
         {
-            ASSERT(m_data);
             // We may need 2 more constants than the count given by the parser,
             // because of the various uses of jsUndefined() and jsNull().
-            return m_data->m_numConstants + 2;
+            return m_numConstants + 2;
         }
 
         StatementNode* singleStatement() const;
@@ -1442,11 +1431,16 @@ namespace JSC {
 
     protected:
         void setSource(const SourceCode& source) { m_source = source; }
+        ParserArena m_arena;
 
     private:
-        OwnPtr<ScopeNodeData> m_data;
         CodeFeatures m_features;
         SourceCode m_source;
+        VarStack m_varStack;
+        FunctionStack m_functionStack;
+        int m_numConstants;
+        SourceElements* m_statements;
+        IdentifierSet m_capturedVariables;
     };
 
     class ProgramNode : public ScopeNode {
