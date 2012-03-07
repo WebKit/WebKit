@@ -60,7 +60,6 @@ BUGWK76270 SKIP : http/tests/appcache/abort-cache-onprogress.html = FAIL
 BUGWK77523 WIN SLOW : media/media-fragments/TC0050-TC0059.html = PASS
 BUGWK77523 WIN RELEASE SLOW : media/media-fragments/TC0080-TC0089.html = PASS
 
-BUGWK79679 DEBUG GPU SLOW : fast/canvas/getPutImageDataPairTest.html = PASS
 BUGWK79679 DEBUG SLOW : platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html = PASS
 
 // -----------------------------------------------------------------
@@ -1164,26 +1163,24 @@ BUGWK73912 SNOWLEOPARD : accessibility/aria-checkbox-sends-notification.html = T
 // -----------------------------------------------------------------
 
 // This test is slow due to Mesa slowness.
-WONTFIX GPU : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 WONTFIX : platform/chromium/virtual/gpu/canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 
 // This test is overly-finicky about pixel values.
-BUGWK64876 LINUX WIN GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
 BUGWK64876 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
 
-BUGWK75276 CPU : fast/repaint/shadow-multiple-horizontal.html = IMAGE
-BUGWK75276 CPU : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
-BUGWK75276 CPU : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
+BUGWK75276 : fast/repaint/shadow-multiple-horizontal.html = IMAGE
+BUGWK75276 : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
+BUGWK75276 : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
 
 // Rebaseline after SK_ENABLE_FAST_SHADERMASK is enabled in skia.gyp
 // the image change should be very slight (only in low-bits of color components)
 //
-BUGCR105305 CPU : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE
-BUGCR105305 LINUX MAC CPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGCR105305 LINUX MAC CPU : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
-BUGCR105305 CPU : svg/css/composite-shadow-text.svg = IMAGE
-BUGCR105305 CPU : svg/css/text-gradient-shadow.svg = IMAGE
-BUGCR105305 LINUX MAC CPU : svg/text/text-gradient-positioning.svg = IMAGE
+BUGCR105305 : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE
+BUGCR105305 LINUX MAC : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGCR105305 LINUX MAC : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
+BUGCR105305 : svg/css/composite-shadow-text.svg = IMAGE
+BUGCR105305 : svg/css/text-gradient-shadow.svg = IMAGE
+BUGCR105305 LINUX MAC : svg/text/text-gradient-positioning.svg = IMAGE
 BUGCR105305 : svg/text/selection-background-color.xhtml = PASS CRASH IMAGE
 BUGCR105305 : svg/text/selection-styles.xhtml = PASS CRASH IMAGE
 BUGCR105305 MAC LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE PASS
@@ -1527,28 +1524,28 @@ BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
 // Rebaseline to take advantage of skia ColorFilter optimization.
 // Note that two of tests below are broken on Leopard for other reasons (search
 // elsewhere within this file) and thus should not be blindly rebaselined there.
-BUGCR104128 CPU : fast/box-shadow/box-shadow-radius.html = IMAGE
-BUGCR104128 CPU : fast/box-shadow/inset-box-shadow-radius.html = IMAGE
-BUGCR104128 CPU : fast/box-shadow/shadow-buffer-partial.html = IMAGE
-BUGCR104128 CPU : fast/canvas/shadow-offset-4.html = IMAGE
-BUGCR104128 CPU : fast/canvas/shadow-offset-5.html = IMAGE
-BUGCR104128 CPU : fast/canvas/shadow-offset-6.html = IMAGE
-BUGCR104128 CPU : fast/canvas/shadow-offset-7.html = IMAGE
-BUGCR104128 CPU : fast/repaint/box-shadow-h.html = IMAGE
-BUGCR104128 CPU : fast/repaint/box-shadow-v.html = IMAGE
-BUGCR104128 LINUX MAC CPU : fast/repaint/text-shadow-horizontal.html = IMAGE
-BUGCR104128 LINUX MAC CPU : fast/repaint/text-shadow.html = IMAGE
-BUGCR104128 LINUX MAC CPU : fast/text/shadow-no-blur.html = IMAGE
-BUGCR104128 WIN LINUX SNOWLEOPARD CPU : fast/text/shadow-translucent-fill.html = IMAGE
-BUGCR104128 CPU : fast/text/stroking-decorations.html = IMAGE
-BUGCR104128 WIN LINUX SNOWLEOPARD CPU : fast/text/stroking.html = IMAGE
-BUGCR104128 CPU : fast/writing-mode/english-lr-text.html = IMAGE
-BUGCR104128 CPU : svg/css/shadow-with-large-radius.svg = IMAGE
-BUGCR104128 CPU : svg/css/shadow-with-negative-offset.svg = IMAGE
-BUGCR104128 CPU : transitions/svg-text-shadow-transition.html = IMAGE
+BUGCR104128 : fast/box-shadow/box-shadow-radius.html = IMAGE
+BUGCR104128 : fast/box-shadow/inset-box-shadow-radius.html = IMAGE
+BUGCR104128 : fast/box-shadow/shadow-buffer-partial.html = IMAGE
+BUGCR104128 : fast/canvas/shadow-offset-4.html = IMAGE
+BUGCR104128 : fast/canvas/shadow-offset-5.html = IMAGE
+BUGCR104128 : fast/canvas/shadow-offset-6.html = IMAGE
+BUGCR104128 : fast/canvas/shadow-offset-7.html = IMAGE
+BUGCR104128 : fast/repaint/box-shadow-h.html = IMAGE
+BUGCR104128 : fast/repaint/box-shadow-v.html = IMAGE
+BUGCR104128 LINUX MAC : fast/repaint/text-shadow-horizontal.html = IMAGE
+BUGCR104128 LINUX MAC : fast/repaint/text-shadow.html = IMAGE
+BUGCR104128 LINUX MAC : fast/text/shadow-no-blur.html = IMAGE
+BUGCR104128 WIN LINUX SNOWLEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
+BUGCR104128 : fast/text/stroking-decorations.html = IMAGE
+BUGCR104128 WIN LINUX SNOWLEOPARD : fast/text/stroking.html = IMAGE
+BUGCR104128 : fast/writing-mode/english-lr-text.html = IMAGE
+BUGCR104128 : svg/css/shadow-with-large-radius.svg = IMAGE
+BUGCR104128 : svg/css/shadow-with-negative-offset.svg = IMAGE
+BUGCR104128 : transitions/svg-text-shadow-transition.html = IMAGE
 
 // Appears to be a regression from Skia rev. 2735 (improved luminance computation)
-BUGCR105271 WIN CPU : fast/css/shadow-multiple.html = IMAGE
+BUGCR105271 WIN : fast/css/shadow-multiple.html = IMAGE
 
 // Linux pixeltest failure: alpha=0.5 red (1,0,0) atop yellow (1,1,0) is
 // coming out with with a slightly-less-than-100% red channel. This test fails
@@ -1696,11 +1693,11 @@ BUGCR15270 LINUX MAC DEBUG : fast/js/excessive-comma-usage.html = CRASH TIMEOUT 
 BUGCR15270 WIN : fast/js/excessive-comma-usage.html = CRASH TIMEOUT FAIL
 
 // rebaseline after skia rev. 2527 lands
-BUGCR101797 CPU : fast/backgrounds/size/contain-and-cover.html = IMAGE
-BUGCR101797 SLOW CPU DEBUG : svg/as-background-image/svg-as-background-5.html = IMAGE
-BUGCR101797 CPU RELEASE : svg/as-background-image/svg-as-background-5.html = IMAGE
-BUGCR101797 CPU : svg/filters/subRegion-one-effect.svg = IMAGE
-BUGCR101797 CPU : svg/filters/subRegion-two-effects.svg = IMAGE
+BUGCR101797 : fast/backgrounds/size/contain-and-cover.html = IMAGE
+BUGCR101797 SLOW DEBUG : svg/as-background-image/svg-as-background-5.html = IMAGE
+BUGCR101797 RELEASE : svg/as-background-image/svg-as-background-5.html = IMAGE
+BUGCR101797 : svg/filters/subRegion-one-effect.svg = IMAGE
+BUGCR101797 : svg/filters/subRegion-two-effects.svg = IMAGE
 
 // Flaky for a while; also related to BUGCR17974
 BUGCR15267 LINUX WIN : transitions/cancel-transition.html = PASS FAIL
@@ -1781,9 +1778,9 @@ BUGCR28005 LINUX WIN : fast/css/color-correction-on-backgrounds.html = IMAGE+TEX
 BUGCR28005 LINUX WIN : fast/css/color-correction-on-text.html = IMAGE+TEXT
 BUGCR28005 LINUX WIN : fast/css/color-correction.html = IMAGE+TEXT
 BUGCR28005 LINUX WIN : fast/css/color-correction-on-box-shadow.html = IMAGE+TEXT
-BUGCR28005 MAC CPU : fast/css/color-correction-on-box-shadow.html = IMAGE
+BUGCR28005 MAC : fast/css/color-correction-on-box-shadow.html = IMAGE
 BUGCR28005 LINUX WIN : fast/css/color-correction-on-text-shadow.html = IMAGE+TEXT
-BUGCR28005 MAC CPU : fast/css/color-correction-on-text-shadow.html = IMAGE
+BUGCR28005 MAC : fast/css/color-correction-on-text-shadow.html = IMAGE
 BUGCR28005 LINUX WIN : fast/css/color-correction-on-background-image.html = FAIL
 BUGCR28005 LINUX WIN : fast/css/color-correction-untagged-images.html = IMAGE+TEXT
 
@@ -1791,7 +1788,7 @@ BUGCR28005 LINUX WIN : fast/css/color-correction-untagged-images.html = IMAGE+TE
 // WebKit merge 50756:50820, possibly due to WebKit r50808/r50786 and Chromium r31715
 BUGCR27553 WIN : fast/text/atsui-partial-selection.html = IMAGE
 
-BUGCR22700 LINUX WIN CPU : fast/canvas/canvas-shadow.html = TEXT
+BUGCR22700 LINUX WIN : fast/canvas/canvas-shadow.html = TEXT
 
 // Failures from merge 50972:51042
 // The test requires DRT/Test Shell to support error page handling.
@@ -2080,21 +2077,21 @@ BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.grad
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGWK45991 WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
-BUGWK45991 LINUX CPU : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
+BUGWK45991 LINUX : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.shape2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch3.html = TEXT
-BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.line.width.basic.html = TEXT
-BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.line.width.transformed.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.line.width.basic.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.line.width.transformed.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
-BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.path.arcTo.shape.curve1.html = TEXT
-BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.path.arcTo.shape.curve2.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arcTo.shape.curve1.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arcTo.shape.curve2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
-BUGWK45991 LINUX WIN CPU : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
+BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.shape2.html = TEXT
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
@@ -2106,11 +2103,9 @@ BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.patt
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
-BUGWK45991 MAC GPU : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGWK45991 MAC : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
-BUGWK45991 MAC GPU : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 BUGWK45991 MAC : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
 // These SVG tests have been flaky on Win from quite some time.
@@ -2275,9 +2270,7 @@ BUGWEBGL LINUX MAC : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-object-g
 BUGWEBGL LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = PASS TEXT
 BUGWEBGL LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = PASS TEXT
 
-BUGWEBGL SLOW WIN DEBUG GPU : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = PASS
 BUGWEBGL SLOW WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = PASS
-BUGWEBGL SLOW WIN DEBUG GPU : fast/canvas/webgl/index-validation-with-resized-buffer.html = PASS
 BUGWEBGL SLOW WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/index-validation-with-resized-buffer.html = PASS
 
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
@@ -2341,7 +2334,7 @@ BUGJAMESR LEOPARD : fast/text/international/vertical-text-glyph-test.html = IMAG
 BUGJAMESR LINUX WIN : fast/text/international/vertical-text-metrics-test.html = TEXT
 
 // Added in WebKit r69755, failed immediately.
-BUGCR81837 LINUX WIN CPU : fast/canvas/canvas-currentColor.html = TEXT
+BUGCR81837 LINUX WIN : fast/canvas/canvas-currentColor.html = TEXT
 
 // Added in Webkit r69707 without expected results.
 // Expected result file added in r83450. Still no match.
@@ -2595,16 +2588,9 @@ BUGCR71783 MAC : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
 // Combination of unpremul plus gradient computation at half-integer coords causes
 // this to fail.
-BUGWK77550 GPU : canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
 BUGWK77550 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
 
 // These will have slight differences on the edges of antialiased paths and need rebaseling
-BUGBSALOMON GPU : fast/canvas/arc360.html = IMAGE
-BUGBSALOMON GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
-BUGBSALOMON GPU : fast/canvas/canvas-composite.html = IMAGE
-BUGBSALOMON GPU : fast/canvas/canvas-transform-skewed.html = IMAGE
-BUGBSALOMON GPU : fast/canvas/image-object-in-canvas.html = IMAGE
-BUGBSALOMON GPU : fast/canvas/image-pattern-rotate.html = IMAGE
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/arc360.html = IMAGE
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite-transformclip.html = IMAGE
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite.html = IMAGE
@@ -2648,11 +2634,7 @@ BUGWK49629 SKIP : platform/chromium/compositing/lots-of-img-layers.html = PASS
 BUGWK49629 SKIP : platform/chromium/compositing/lots-of-img-layers-with-opacity.html = PASS
 BUGWK49629 SKIP : compositing/iframes/page-cache-layer-tree.html = PASS
 
-BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 BUGNONE SLOW WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-getImageData.html = PASS
-
-// Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
-BUGCR74979 SKIP MAC GPU : media/video-canvas-alpha.html = IMAGE
 
 BUGWK55968 MAC WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
@@ -2725,7 +2707,7 @@ BUGCR76616 LINUX WIN : fast/text/emphasis-combined-text.html = IMAGE+TEXT
 // Needs leopard baseline.
 BUGCR76616 LEOPARD : fast/text/emphasis-combined-text.html = IMAGE
 // Flaky on snowleopard.
-BUGCR76616 SNOWLEOPARD CPU : fast/text/emphasis-combined-text.html = PASS IMAGE
+BUGCR76616 SNOWLEOPARD : fast/text/emphasis-combined-text.html = PASS IMAGE
 
 // New CSS3 feature in r81684. Some tests fail outside Mac.
 BUGCR77095 LINUX WIN : fast/block/lineboxcontain/block-glyphs-replaced.html = IMAGE+TEXT
@@ -2880,7 +2862,7 @@ BUGDPRANKE LINUX MAC : transitions/interrupt-zero-duration.html = PASS TEXT
 
 // pulled in from downstream during webkit roll 84350:84431
 BUGCASEQ LINUX WIN : fast/forms/input-text-drag-down.html = IMAGE+TEXT
-BUGCASEQ LEOPARD CPU : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGCASEQ LEOPARD : fast/canvas/image-object-in-canvas.html = IMAGE
 
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = PASS TEXT
 BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = PASS CRASH
@@ -2919,12 +2901,12 @@ BUGCR86338 : fast/loader/file-protocol-fragment.html = TEXT
 BUGCR86340 : fast/filesystem/file-writer-write-overlapped.html = PASS CRASH TEXT
 
 // flakiness on deps bots (noted ~ r83108)
-BUGDPRANKE WIN DEBUG CPU : http/tests/eventsource/eventsource-reconnect.html = PASS TEXT
+BUGDPRANKE WIN DEBUG : http/tests/eventsource/eventsource-reconnect.html = PASS TEXT
 BUGDPRANKE WIN : http/tests/navigation/ping-same-origin.html = PASS TIMEOUT TEXT
 
 // These seem to be minor debug-only differences.
-BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-line-breaks.html = IMAGE
-BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-baht-space.html = PASS IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD DEBUG : fast/text/international/thai-line-breaks.html = IMAGE
+BUGWK60135 SNOWLEOPARD DEBUG : fast/text/international/thai-baht-space.html = PASS IMAGE+TEXT
 BUGWK78544 LINUX : fast/text/international/thai-baht-space.html = PASS IMAGE IMAGE+TEXT
 
 BUGWK60133 DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = PASS TIMEOUT
@@ -3022,7 +3004,7 @@ BUGCR83865 : fast/forms/color = PASS FAIL
 // New test added in r87324
 BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html = TEXT
 
-BUGCR84032 WIN CPU : fast/dom/object-plugin-hides-properties.html = PASS TIMEOUT
+BUGCR84032 WIN : fast/dom/object-plugin-hides-properties.html = PASS TIMEOUT
 
 BUGCR84093 VISTA : http/tests/history/redirect-200-refresh-2-seconds.pl = PASS TIMEOUT
 
@@ -3030,7 +3012,6 @@ BUGWK66320 DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE IMAGE+TEXT
 
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
 
-BUGCR84157 WIN GPU : fast/canvas/canvas-currentColor.html = TEXT
 BUGCR84157 WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-currentColor.html = TEXT
 
 BUGWK62255 LEOPARD DEBUG : animations/animation-iteration-event-destroy-renderer.html = PASS TIMEOUT
@@ -3237,7 +3218,6 @@ BUGWK66873 SLOW WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TE
 
 BUGWK66900 LINUX DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 
-BUGWK66908 GPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
 BUGWK66908 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
 
 BUGWK66908 : fast/css/font-face-woff.html = PASS IMAGE+TEXT
@@ -3270,24 +3250,17 @@ BUGWK73030 MAC DEBUG : http/tests/loading/307-after-303-after-post.html = PASS T
 
 BUG_LEVIN MAC DEBUG : svg/custom/object-no-size-attributes.xhtml = PASS IMAGE+TEXT
 
-// Tests that are known to fail on Mac10.6 with CPU-Skia graphics.
-BUGWK68436 SNOWLEOPARD CPU DEBUG : fast/repaint/background-clip-text.html = TIMEOUT
-BUGWK68436 SNOWLEOPARD CPU : fast/repaint/text-emphasis-h.html = TIMEOUT IMAGE
-BUGWK68436 SNOWLEOPARD CPU : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
+// Tests that are known to fail on Mac10.6 with Skia graphics.
+BUGWK68436 SNOWLEOPARD DEBUG : fast/repaint/background-clip-text.html = TIMEOUT
+BUGWK68436 SNOWLEOPARD : fast/repaint/text-emphasis-h.html = TIMEOUT IMAGE
+BUGWK68436 SNOWLEOPARD : svg/W3C-SVG-1.1/paths-data-12-t.svg = IMAGE+TEXT
 
-// Tests that are known to exhibit TEXT failures on Mac10.5 with Skia (CPU and/or GPU) graphics.
-BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD GPU : fast/canvas/set-colors.html = TEXT
+// Tests that are known to exhibit TEXT failures on Mac10.5 with Skia graphics.
 BUGWK68437 BUGWK54322 LEOPARD SNOWLEOPARD : platform/chromium/virtual/gpu/fast/canvas/set-colors.html = TEXT
 // Failures introduced by USE_NEW_BUILDER in Skia.
-BUGCR33287 CPU : fast/canvas/set-colors.html = TEXT
+BUGCR33287 : fast/canvas/set-colors.html = TEXT
 
 // Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with GPU-Skia graphics.
-BUGWK68437 LEOPARD GPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/canvas-transforms-during-path.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/fillrect_gradient.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/patternfill-repeat.html = IMAGE
-BUGWK68437 LEOPARD GPU : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
 BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-during-path.html = IMAGE
 BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
@@ -3295,8 +3268,8 @@ BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient
 BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/patternfill-repeat.html = IMAGE
 BUGWK68437 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
 
-// Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with CPU-Skia graphics.
-BUGWK68437 LEOPARD CPU : printing/return-from-printing-mode.html = IMAGE
+// Tests that are known to exhibit IMAGE or IMAGE+TEXT failures on Mac10.5 with Skia graphics.
+BUGWK68437 LEOPARD : printing/return-from-printing-mode.html = IMAGE
 
 // These should fall under BUGWK68270, but they were listed as flaky elsewhere
 // in the file. Once BUGWK68270 is fixed, these should return to being flaky as
@@ -3319,7 +3292,7 @@ BUGWK68270 MAC DEBUG : fast/css/only-child-pseudo-class.html = IMAGE IMAGE+TEXT 
 BUGWK68270 MAC DEBUG : fast/css/only-of-type-pseudo-class.html = IMAGE IMAGE+TEXT TEXT
 
 // Tests that have become flaky (causing regressions, but only sometimes)
-BUG_EPOGER SNOWLEOPARD CPU DEBUG : fast/js/try-catch-crash.html = PASS TIMEOUT
+BUG_EPOGER SNOWLEOPARD DEBUG : fast/js/try-catch-crash.html = PASS TIMEOUT
 
 BUGWK68674 : fast/js/function-bind.html = TEXT
 
@@ -3388,14 +3361,12 @@ BUGWK70298 : plugins/hidden-iframe-with-swf-plugin.html = FAIL TIMEOUT PASS
 BUGWK70298 WIN LINUX SNOWLEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS
 BUGWK70298 LEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE
 
-BUGCR101024 MAC CPU : fast/events/reveal-link-when-focused.html = IMAGE
+BUGCR101024 MAC : fast/events/reveal-link-when-focused.html = IMAGE
 
 BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-lr/rules-with-border-before.html = PASS TEXT
 BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-rl/rules-with-border-before.html = PASS TEXT
 
 BUGWK70641 SNOWLEOPARD : fast/frames/sandboxed-iframe-scripting.html = PASS CRASH
-
-BUGWK70749 SNOWLEOPARD CPU GPU : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT PASS
 
 BUGWK70837 : compositing/video/video-poster.html = PASS TIMEOUT TEXT
 
@@ -3424,7 +3395,6 @@ BUGWK70988 SNOWLEOPARD : http/tests/navigation/navigation-interrupted-by-fragmen
 BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
 BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 
-BUGWK71211 GPU LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
 BUGWK71211 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/shadow-offset-3.html = PASS CRASH
 
 BUGWK71673 MAC : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = TEXT IMAGE IMAGE+TEXT
@@ -3446,7 +3416,6 @@ BUGRICOW : fast/js/toString-overrides.html = TEXT
 BUGWK72053 MAC DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = PASS CRASH
 BUGWK72053 MAC DEBUG : fast/borders/block-mask-overlay-image-outset.html = PASS CRASH
 
-BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 BUG_SENORBLANCO : platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 BUGWK66953 : transitions/default-timing-function.html = PASS FAIL
@@ -3491,7 +3460,6 @@ BUGWK73872 LINUX : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
 BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-permanently.html = TIMEOUT
 BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT PASS
 
-BUGWK73607 GPU LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
 BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
 
 // Tests needing rebaseline after bug 73643 patch
@@ -3563,8 +3531,7 @@ BUGWK77136 WIN RELEASE : fast/workers/storage/interrupt-database.html = PASS TIM
 
 BUGWK75110 WIN : fast/filesystem/op-restricted-chars.html = TEXT
 
-BUGWK75161 GPU : media/video-poster-blocked-by-willsendrequest.html = PASS TEXT
-BUGWK75161 CPU : media/video-poster-blocked-by-willsendrequest.html = TEXT
+BUGWK75161 : media/video-poster-blocked-by-willsendrequest.html = TEXT
 
 BUGWK75367 : svg/css/composite-shadow-example.html = PASS TEXT
 BUGWK75367 : svg/css/composite-shadow-with-opacity.html = PASS TEXT
@@ -3615,10 +3582,8 @@ BUGKW76557 : svg/custom/transform-with-shadow-and-gradient.svg = IMAGE
 BUGWK76558 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TEXT
 
 // This test is passing, but it doesn't seem possible to add GPU+Leopard specific baselines.
-BUGJAMESR LEOPARD GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
 BUGJAMESR LEOPARD : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
 
-BUGWK77187 WIN GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
 BUGWK77187 WIN : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
 
 BUGWK76511 : compositing/geometry/video-opacity-overlay.html = IMAGE PASS
@@ -3663,7 +3628,6 @@ BUGABARTH : fast/html/marquee-alternate.html = PASS TEXT
 
 BUGWK77061 XP DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE+TEXT
 
-BUGWK77188 MAC GPU : fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
 BUGWK77188 MAC : platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
 
 BUGWK77303 : fast/js/reserved-words-strict.html = TEXT
@@ -3712,7 +3676,6 @@ BUGWK78422 WIN LINUX : svg/animations/animate-text-nested-transforms.html = TEXT
 
 BUGV8_1948 : fast/js/dfg-put-by-id-prototype-check.html = TEXT
 
-BUGWK78529 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK78529 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment.html = IMAGE
 
 BUGWK78561 WIN : css3/filters/crash-hw-sw-switch.html = MISSING
