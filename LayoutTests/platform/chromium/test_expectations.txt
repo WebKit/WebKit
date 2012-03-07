@@ -957,7 +957,7 @@ BUGWK79568 : svg/W3C-SVG-1.1/animate-elem-80-t.svg = FAIL
 // Appears elsewhere commented
 BUGWK79568 : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = FAIL
 BUGWK79568 : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
-BUGWK79568 : svg/W3C-SVG-1.1/animate-elem-77-t.svg = IMAGE
+BUGWK79568 : svg/W3C-SVG-1.1/animate-elem-77-t.svg = IMAGE+TEXT TEXT 
 // Appears elsewhere commented
 BUGWK79568 : svg/filters/filter-source-position.svg = IMAGE
 BUGWK79568 : svg/clip-path/clip-path-text-and-shape.svg = TEXT
@@ -965,7 +965,7 @@ BUGWK79568 : svg/clip-path/clip-path-with-text-clipped.svg = TEXT
 // Appears elsewhere commented
 BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-41-t.svg = IMAGE+TEXT
 // Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE+TEXT
+BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-46-t.svg = IMAGE+TEXT TEXT
 // Appears elsewhere commented
 BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-61-t.svg = IMAGE+TEXT
 // Appears elsewhere commented
@@ -984,11 +984,11 @@ BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-69-t.svg = IMAGE+TEXT
 // Appears elsewhere commented
 BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-70-t.svg = IMAGE+TEXT
 // Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE+TEXT
+BUGWK75968 : svg/W3C-SVG-1.1/filters-morph-01-f.svg = IMAGE+TEXT IMAGE
 // Appears elsewhere commented
 BUGWK75968 : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE+TEXT
 // Appears elsewhere commented
-BUGWK75968 : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE+TEXT
+BUGWK75968 : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE+TEXT TEXT
 // This may be unrelated.
 BUGWK75968 : svg/css/group-with-shadow.svg = IMAGE
 // Appears elsewhere commented
@@ -997,6 +997,10 @@ BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-36-t.svg = TEXT
 BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = TEXT
 // Appears elsewhere commented
 BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-40-t.svg = TEXT
+BUGWK75968 MAC : svg/batik/paints/patternPreserveAspectRatioA.svg = TEXT
+BUGWK75968 MAC : svg/batik/text/textProperties.svg = TEXT
+BUGWK75968 MAC : svg/batik/text/textStyles.svg = TEXT
+BUGWK75968 MAC : svg/text/text-text-05-t.svg = TEXT
 
 
 
@@ -4168,3 +4172,5 @@ BUGWK50192 LINUX MAC : compositing/geometry/fixed-position-transform-composited-
 BUGWK50192 : compositing/reflections/reflection-on-composited.html = IMAGE
 BUGWK50192 : compositing/shadows/shadow-drawing.html = IMAGE
 BUGWK50192 : fast/repaint/block-selection-gap-in-composited-layer.html = IMAGE
+
+
