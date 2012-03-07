@@ -103,6 +103,16 @@ void ElementAttributeData::removeAttribute(size_t index, Element* element)
         element->didRemoveAttribute(attribute.get());
 }
 
+PassRefPtr<Attr> ElementAttributeData::takeAttribute(size_t index, Element* element)
+{
+    ASSERT(index < length());
+    ASSERT(element);
+
+    RefPtr<Attr> attr = m_attributes[index]->createAttrIfNeeded(element);
+    removeAttribute(index, element);
+    return attr.release();
+}
+
 bool ElementAttributeData::isEquivalent(const ElementAttributeData* other) const
 {
     if (!other)

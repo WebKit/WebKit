@@ -160,7 +160,6 @@ public:
     size_t attributeCount() const;
     Attribute* attributeItem(unsigned index) const;
     Attribute* getAttributeItem(const QualifiedName&) const;
-    void removeAttribute(unsigned index);
 
     void scrollIntoView(bool alignToTop = true);
     void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
@@ -671,12 +670,6 @@ inline Attribute* Element::getAttributeItem(const QualifiedName& name) const
 {
     ASSERT(m_attributeMap);
     return m_attributeMap->attributeData()->getAttributeItem(name);
-}
-
-inline void Element::removeAttribute(unsigned index)
-{
-    ASSERT(m_attributeMap);
-    m_attributeMap->removeAttribute(index);
 }
 
 inline void Element::updateInvalidAttributes() const

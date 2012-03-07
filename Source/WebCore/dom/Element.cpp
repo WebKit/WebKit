@@ -186,10 +186,9 @@ void Element::copyNonAttributeProperties(const Element*)
 
 void Element::removeAttribute(const QualifiedName& name)
 {
-    if (!m_attributeMap)
+    if (!attributeData())
         return;
-
-    m_attributeMap->removeAttribute(name);
+    attributeData()->removeAttribute(name, this);
 }
 
 void Element::setBooleanAttribute(const QualifiedName& name, bool value)
@@ -1417,11 +1416,17 @@ PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
 
     ASSERT(document() == attr->document());
 
-    NamedNodeMap* attrs = updatedAttributes();
-    if (!attrs)
+    ElementAttributeData* attributeData = updatedAttributeData();
+    if (!attributeData)
         return 0;
 
-    return static_pointer_cast<Attr>(attrs->removeNamedItem(attr->qualifiedName(), ec));
+    size_t index = attributeData->getAttributeItemIndex(attr->qualifiedName());
+    if (index == notFound) {
+        ec = NOT_FOUND_ERR;
+        return 0;
+    }
+
+    return attributeData->takeAttribute(index, this);
 }
 
 void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicString& qualifiedName, const AtomicString& value, ExceptionCode& ec, FragmentScriptingPermission scriptingPermission)

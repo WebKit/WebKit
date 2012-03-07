@@ -68,13 +68,15 @@ PassRefPtr<Node> NamedNodeMap::getNamedItemNS(const String& namespaceURI, const 
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItem(const String& name, ExceptionCode& ec)
 {
-    Attribute* a = m_attributeData.getAttributeItem(name, shouldIgnoreAttributeCase(m_element));
-    if (!a) {
+    ASSERT(m_element);
+
+    size_t index = m_attributeData.getAttributeItemIndex(name, shouldIgnoreAttributeCase(m_element));
+    if (index == notFound) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
     
-    return removeNamedItem(a->name(), ec);
+    return m_attributeData.takeAttribute(index, m_element);
 }
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode& ec)
@@ -122,11 +124,7 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItem(const QualifiedName& name, Except
         return 0;
     }
 
-    RefPtr<Attr> attr = m_attributeData.m_attributes[index]->createAttrIfNeeded(m_element);
-
-    removeAttribute(index);
-
-    return attr.release();
+    return m_attributeData.takeAttribute(index, m_element);
 }
 
 PassRefPtr<Node> NamedNodeMap::item(unsigned index) const

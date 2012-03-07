@@ -65,8 +65,6 @@ public:
 
     // These functions do no error checking.
     void addAttribute(PassRefPtr<Attribute> attribute) { m_attributeData.addAttribute(attribute, m_element); }
-    void removeAttribute(const QualifiedName& name) { m_attributeData.removeAttribute(name, m_element); }
-    void removeAttribute(size_t index) { m_attributeData.removeAttribute(index, m_element); }
 
     Element* element() const { return m_element; }
 
