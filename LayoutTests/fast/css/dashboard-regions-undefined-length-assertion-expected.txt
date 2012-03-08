@@ -1,0 +1,1 @@
+The test passes if it does not cause an assertion failure.

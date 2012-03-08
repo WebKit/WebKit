@@ -3543,6 +3543,16 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             Length right = convertToIntLength(region->right(), style(), m_rootElementStyle);
             Length bottom = convertToIntLength(region->bottom(), style(), m_rootElementStyle);
             Length left = convertToIntLength(region->left(), style(), m_rootElementStyle);
+
+            if (top.isUndefined())
+                top = Length();
+            if (right.isUndefined())
+                right = Length();
+            if (bottom.isUndefined())
+                bottom = Length();
+            if (left.isUndefined())
+                left = Length();
+
             if (region->m_isCircle)
                 m_style->setDashboardRegion(StyleDashboardRegion::Circle, region->m_label, top, right, bottom, left, region == first ? false : true);
             else if (region->m_isRectangle)
