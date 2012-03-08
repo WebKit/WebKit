@@ -671,8 +671,13 @@ IDL_ATTRIBUTES_FILE = $$PWD/bindings/scripts/IDLAttributes.txt
 preprocessIdls.input = IDL_ATTRIBUTES_FILE
 preprocessIdls.script = $$PREPROCESS_IDLS_SCRIPT
 # FIXME : We need to use only perl at some point.
-preprocessIdls.commands = echo $$IDL_BINDINGS | tr \' \' \'\\n\' > $$IDL_FILES_TMP && \
-                               perl -I$$PWD/bindings/scripts $$preprocessIdls.script \
+EOC = $$escape_expand(\\n\\t)
+unix: preprocessIdls.commands = echo -n > $$IDL_FILES_TMP $$EOC
+else: preprocessIdls.commands = type nul > $$IDL_FILES_TMP $$EOC
+for(binding, IDL_BINDINGS) {
+    preprocessIdls.commands += echo $$binding >> $$IDL_FILES_TMP $$EOC
+}
+preprocessIdls.commands += perl -I$$PWD/bindings/scripts $$preprocessIdls.script \
                                --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
                                --idlFilesList $$IDL_FILES_TMP \
                                --supplementalDependencyFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
