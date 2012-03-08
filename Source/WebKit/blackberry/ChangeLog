@@ -1,3 +1,15 @@
+2012-03-08  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Block file-to-file access by default
+        https://bugs.webkit.org/show_bug.cgi?id=80605
+
+        Reviewed by Rob Buis.
+
+        Turn off allowFileAccessFromFileURLs() by default.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+
 2012-03-08  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Always use the current focused node when processing focus changes
