@@ -1,3 +1,13 @@
+2012-03-08  Chao-ying Fu  <fu@mips.com>
+
+        Update MIPS patchOffsetGetByIdSlowCaseCall
+        https://bugs.webkit.org/show_bug.cgi?id=80302
+
+        Reviewed by Oliver Hunt.
+
+        * jit/JIT.h:
+        (JIT):
+
 2012-03-08  Oliver Hunt  <oliver@apple.com>
 
         Missing some places where we should be blinding 64bit values (and blinding something we shouldn't)
