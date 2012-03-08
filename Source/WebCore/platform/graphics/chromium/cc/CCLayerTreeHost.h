@@ -153,6 +153,8 @@ public:
     // Only used when compositing on the main thread.
     void composite();
 
+    // NOTE: The returned value can only be used to make GL calls or make the
+    // context current on the thread the compositor is running on!
     GraphicsContext3D* context();
 
     // Composites and attempts to read back the result into the provided

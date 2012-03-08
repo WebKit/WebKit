@@ -155,13 +155,12 @@ public:
     // This can have a significant performance impact and should be used with care.
     WEBKIT_EXPORT void finishAllRendering();
 
+    // Returns the context being used for rendering this view. In threaded compositing mode, it is
+    // not safe to use this context for anything on the main thread, other than passing the pointer to
+    // the compositor thread.
+    WEBKIT_EXPORT WebGraphicsContext3D* context();
 
     // Debugging / dangerous ---------------------------------------------
-
-    // Returns the context being used for rendering this view. In threaded compositing mode, it is
-    // not safe to use this context at all on the main thread.
-    // FIXME: Remove this API as soon as possible, it's very bug-prone in threaded mode.
-    WEBKIT_EXPORT WebGraphicsContext3D* context();
 
     // Simulates a lost context. For testing only.
     WEBKIT_EXPORT void loseCompositorContext(int numTimes);

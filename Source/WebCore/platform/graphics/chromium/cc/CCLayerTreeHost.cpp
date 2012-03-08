@@ -249,7 +249,6 @@ void CCLayerTreeHost::didLoseContext()
 // Temporary hack until WebViewImpl context creation gets simplified
 GraphicsContext3D* CCLayerTreeHost::context()
 {
-    ASSERT(!CCProxy::hasImplThread());
     return m_proxy->context();
 }
 
