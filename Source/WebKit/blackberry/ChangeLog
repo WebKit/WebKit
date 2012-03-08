@@ -1,3 +1,25 @@
+2012-03-08  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Always use the current focused node when processing focus changes
+        https://bugs.webkit.org/show_bug.cgi?id=80594
+
+        Reviewed by Antonio Gomes.
+
+        Update InputHandler focused node handling to strictly use
+        the currently focused node.  This prevents a handling loop
+        when JS is modifying the focus and we get a late notification
+        of a past change from ChromeClientBlackBerry with the previously
+        unfocused node.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::focusedNodeChanged):
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::shouldChangeSelectedRange):
+        (WebCore::EditorClientBlackBerry::setInputMethodState):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::focusedNodeChanged):
+        * WebKitSupport/InputHandler.h:
+
 2012-03-07  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] WebKit rendering problem when show/hide VKB

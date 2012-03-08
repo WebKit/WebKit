@@ -193,11 +193,9 @@ bool EditorClientBlackBerry::shouldChangeSelectedRange(Range* fromRange, Range* 
         if (frame->document()->focusedNode() && frame->document()->focusedNode()->hasTagName(HTMLNames::selectTag))
             return false;
 
-        // Update the focus state to re-show the keyboard if needed.
-        // FIXME, this should be removed and strictly be a show keyboard call if
-        // focus is active.
-        if (m_webPagePrivate->m_inputHandler->isInputMode())
-            m_webPagePrivate->m_inputHandler->nodeFocused(frame->document()->focusedNode());
+        // Check if this change does not represent a focus change and input is active and if so ensure the keyboard is visible.
+        if (m_webPagePrivate->m_inputHandler->isInputMode() && (fromRange->startContainer() == toRange->startContainer()))
+            m_webPagePrivate->m_inputHandler->notifyClientOfKeyboardVisibilityChange(true);
     }
 
     return true;
@@ -604,25 +602,9 @@ void EditorClientBlackBerry::willSetInputMethodState()
     notImplemented();
 }
 
-void EditorClientBlackBerry::setInputMethodState(bool active)
+void EditorClientBlackBerry::setInputMethodState(bool)
 {
-    Frame* frame = m_webPagePrivate->focusedOrMainFrame();
-    // Determines whether or not to provide input assistance. Password fields
-    // do not have this flag active, so it needs to be overridden.
-    if (frame && frame->document()) {
-        if (Node* focusNode = frame->document()->focusedNode()) {
-            if (!active && focusNode->hasTagName(HTMLNames::inputTag)
-                && static_cast<HTMLInputElement*>(focusNode)->isPasswordField())
-                    active = true;
-
-            if (active) {
-                m_webPagePrivate->m_inputHandler->nodeFocused(focusNode);
-                return;
-            }
-        }
-    }
-    // No frame or document or a node that doesn't support IME.
-    m_webPagePrivate->m_inputHandler->nodeFocused(0);
+    m_webPagePrivate->m_inputHandler->focusedNodeChanged();
 }
 
 } // namespace WebCore

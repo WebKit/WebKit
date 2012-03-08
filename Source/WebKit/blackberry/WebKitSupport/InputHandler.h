@@ -57,7 +57,7 @@ public:
     enum FocusElementType { TextEdit, TextPopup /* Date/Time & Color */, SelectPopup, Plugin };
     enum CaretScrollType { CenterAlways, CenterIfNeeded, EdgeIfNeeded };
 
-    void nodeFocused(WebCore::Node*);
+    void focusedNodeChanged();
     void nodeTextChanged(const WebCore::Node*);
     void selectionChanged();
     void frameUnloaded(const WebCore::Frame*);

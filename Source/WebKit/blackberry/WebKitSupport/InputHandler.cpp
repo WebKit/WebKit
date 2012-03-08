@@ -222,8 +222,15 @@ BlackBerryInputType InputHandler::elementType(Element* element) const
     return InputTypeTextArea;
 }
 
-void InputHandler::nodeFocused(Node* node)
+void InputHandler::focusedNodeChanged()
 {
+    ASSERT(m_webPage->m_page->focusController());
+    Frame* frame = m_webPage->m_page->focusController()->focusedOrMainFrame();
+    if (!frame || !frame->document())
+        return;
+
+    Node* node = frame->document()->focusedNode();
+
     if (isActiveTextEdit() && m_currentFocusElement == node) {
         notifyClientOfKeyboardVisibilityChange(true);
         return;
