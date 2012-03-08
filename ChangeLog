@@ -1,3 +1,49 @@
+2012-03-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Turn Runs class into a proper model to implement incremental JSON update
+        https://bugs.webkit.org/show_bug.cgi?id=80364
+
+        Reviewed by Hajime Morita.
+
+        Move Runs from json_generators.py to models.py and turn it into a proper Model.
+
+        Now most JSON responses are held by Runs objects instead of PersistentCache.
+        Added some tests around update_or_insert and json_by_ids to test PersistentCache-like
+        behavior but there should be no user-visible behavioral differences.
+
+        * Websites/webkit-perf.appspot.com/controller.py:
+        (RunsUpdateHandler.post):
+        (CachedRunsHandler.get):
+        (RunsChartHandler.post):
+        * Websites/webkit-perf.appspot.com/json_generators.py:
+        (ManifestJSONGenerator.value):
+        * Websites/webkit-perf.appspot.com/json_generators_unittest.py:
+        (ManifestJSONGeneratorTest.test_value_two_tests):
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Test):
+        (Runs):
+        (Runs._generate_runs):
+        (Runs._entry_from_build_and_result):
+        (Runs._key_name):
+        (Runs.update_or_insert):
+        (Runs.json_by_ids):
+        (Runs.to_json):
+        (Runs.chart_params):
+        * Websites/webkit-perf.appspot.com/models_unittest.py:
+        (RunsTest):
+        (RunsTest.setUp):
+        (RunsTest._create_results):
+        (RunsTest.test_generate_runs):
+        (RunsTest.test_update_or_insert):
+        (RunsTest.test_json_by_ids):
+        (RunsTest.test_to_json_without_results):
+        (RunsTest.test_to_json_with_results):
+        (RunsTest._assert_entry):
+        (RunsTest.test_run_from_build_and_result):
+        (RunsTest.test_run_from_build_and_result.create_build):
+        (RunsTest.test_chart_params_with_value):
+        (RunsTest.test_chart_params_with_value.split_as_int):
+
 2012-03-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix compilation without QtQuick1

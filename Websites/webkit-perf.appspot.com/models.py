@@ -150,10 +150,6 @@ class Test(db.Model):
     platforms = db.ListProperty(db.Key)
 
     @staticmethod
-    def cache_key(test_id, branch_id, platform_id):
-        return 'runs:%d,%d,%d' % (test_id, branch_id, platform_id)
-
-    @staticmethod
     def update_or_insert(test_name, branch, platform):
         existing_test = [None]
 
@@ -315,6 +311,127 @@ class PersistentCache(db.Model):
             return None
         memcache.set(name, cache.value)
         return cache.value
+
+
+class Runs(db.Model):
+    branch = db.ReferenceProperty(Branch, required=True, collection_name='runs_branch')
+    platform = db.ReferenceProperty(Platform, required=True, collection_name='runs_platform')
+    test = db.ReferenceProperty(Test, required=True, collection_name='runs_test')
+    json_runs = db.TextProperty()
+    json_averages = db.TextProperty()
+    json_min = db.FloatProperty()
+    json_max = db.FloatProperty()
+
+    @staticmethod
+    def _generate_runs(branch, platform, test_name):
+        builds = Build.all()
+        builds.filter('branch =', branch)
+        builds.filter('platform =', platform)
+
+        for build in builds:
+            results = TestResult.all()
+            results.filter('name =', test_name)
+            results.filter('build =', build)
+            for result in results:
+                yield build, result
+        raise StopIteration
+
+    @staticmethod
+    def _entry_from_build_and_result(build, result):
+        builder_id = build.builder.key().id()
+        timestamp = mktime(build.timestamp.timetuple())
+        statistics = None
+        supplementary_revisions = None
+
+        if result.valueStdev != None and result.valueMin != None and result.valueMax != None:
+            statistics = {'stdev': result.valueStdev, 'min': result.valueMin, 'max': result.valueMax}
+
+        if build.chromiumRevision != None:
+            supplementary_revisions = {'Chromium': build.chromiumRevision}
+
+        return [result.key().id(),
+            [build.key().id(), build.buildNumber, build.revision, supplementary_revisions],
+            timestamp, result.value, 0,  # runNumber
+            [],  # annotations
+            builder_id, statistics]
+
+    @staticmethod
+    def _key_name(branch_id, platform_id, test_id):
+        return 'runs:%d,%d,%d' % (test_id, branch_id, platform_id)
+
+    @classmethod
+    def update_or_insert(cls, branch, platform, test):
+        test_runs = []
+        averages = {}
+        values = []
+
+        for build, result in cls._generate_runs(branch, platform, test.name):
+            test_runs.append(cls._entry_from_build_and_result(build, result))
+            # FIXME: Calculate the average. In practice, we wouldn't have more than one value for a given revision.
+            averages[build.revision] = result.value
+            values.append(result.value)
+
+        min_value = min(values) if values else None
+        max_value = max(values) if values else None
+
+        key_name = cls._key_name(branch.id, platform.id, test.id)
+        runs = Runs(key_name=key_name, branch=branch, platform=platform, test=test,
+            json_runs=json.dumps(test_runs)[1:-1], json_averages=json.dumps(averages)[1:-1], json_min=min_value, json_max=max_value)
+        runs.put()
+        memcache.set(key_name, runs.to_json())
+        return runs
+
+    @classmethod
+    def json_by_ids(cls, branch_id, platform_id, test_id):
+        key_name = cls._key_name(branch_id, platform_id, test_id)
+        runs_json = memcache.get(key_name)
+        if not runs_json:
+            runs = cls.get_by_key_name(key_name)
+            if not runs:
+                return None
+            runs_json = runs.to_json()
+            memcache.set(key_name, runs_json)
+        return runs_json
+
+    def to_json(self):
+        # date_range is never used by common.js.
+        return '{"test_runs": [%s], "averages": {%s}, "min": %s, "max": %s, "date_range": null, "stat": "ok"}' % (self.json_runs,
+            self.json_averages, str(self.json_min) if self.json_min else 'null', str(self.json_max) if self.json_max else 'null')
+
+    # FIXME: Use data in JSON to compute values to avoid iterating through the datastore.
+    def chart_params(self, display_days, now=datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)):
+        chart_data_x = []
+        chart_data_y = []
+        end_time = now
+        start_timestamp = mktime((end_time - timedelta(display_days)).timetuple())
+        end_timestamp = mktime(end_time.timetuple())
+
+        for build, result in self._generate_runs(self.branch, self.platform, self.test.name):
+            timestamp = mktime(build.timestamp.timetuple())
+            if timestamp < start_timestamp or timestamp > end_timestamp:
+                continue
+            chart_data_x.append(timestamp)
+            chart_data_y.append(result.value)
+
+        dates = [end_time - timedelta(display_days / 7.0 * (7 - i)) for i in range(0, 8)]
+
+        y_max = max(chart_data_y) * 1.1
+        y_axis_label_step = int(y_max / 5 + 0.5)  # This won't work for decimal numbers
+
+        return {
+            'cht': 'lxy',  # Specify with X and Y coordinates
+            'chxt': 'x,y',  # Display both X and Y axies
+            'chxl': '0:|' + '|'.join([date.strftime('%b %d') for date in dates]),  # X-axis labels
+            'chxr': '1,0,%f,%f' % (int(y_max + 0.5), y_axis_label_step),  # Y-axis range: min=0, max, step
+            'chds': '%f,%f,%f,%f' % (start_timestamp, end_timestamp, 0, y_max),  # X, Y data range
+            'chxs': '1,676767,11.167,0,l,676767',  # Y-axis label: 1,color,font-size,centerd on tick,axis line/no ticks, tick color
+            'chs': '360x240',  # Image size: 360px by 240px
+            'chco': 'ff0000',  # Plot line color
+            'chg': '%f,20,0,0' % (100 / (len(dates) - 1)),  # X, Y grid line step sizes - max is 100.
+            'chls': '3',  # Line thickness
+            'chf': 'bg,s,eff6fd',  # Transparent background
+            'chd': 't:' + ','.join([str(x) for x in chart_data_x]) + '|' + ','.join([str(y) for y in chart_data_y]),  # X, Y data
+        }
 
 
 class DashboardImage(db.Model):

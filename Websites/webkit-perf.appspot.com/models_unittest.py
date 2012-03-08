@@ -27,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import models
 import unittest
 
@@ -45,6 +46,7 @@ from models import Test
 from models import TestResult
 from models import ReportLog
 from models import PersistentCache
+from models import Runs
 from models import DashboardImage
 from models import create_in_transaction_with_numeric_id_holder
 from models import delete_model_with_numeric_id_holder
@@ -518,6 +520,220 @@ class PersistentCacheTests(DataStoreTestsBase):
         memcache.delete('some-cache')
         self.assertEqual(memcache.get('some-cache'), None)
         self.assertEqual(PersistentCache.get_cache('some-cache'), 'some data')
+
+
+class RunsTest(DataStoreTestsBase):
+    def setUp(self):
+        super(RunsTest, self).setUp()
+        self.testbed.init_memcache_stub()
+
+    def _create_results(self, branch, platform, builder, test_name, values, timestamps=None):
+        results = []
+        for i, value in enumerate(values):
+            build = Build(branch=branch, platform=platform, builder=builder,
+                buildNumber=i, revision=100 + i, timestamp=timestamps[i] if timestamps else datetime.now())
+            build.put()
+            result = TestResult(name=test_name, build=build, value=value)
+            result.put()
+            results.append(result)
+        return results
+
+    def test_generate_runs(self):
+        some_branch = Branch.create_if_possible('some-branch', 'Some Branch')
+        some_platform = Platform.create_if_possible('some-platform', 'Some Platform')
+        some_builder = Builder.get(Builder.create('some-builder', 'Some Builder'))
+        some_test = Test.update_or_insert('some-test', some_branch, some_platform)
+
+        results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0, 51.0, 52.0, 49.0, 48.0])
+        last_i = 0
+        for i, (build, result) in enumerate(Runs._generate_runs(some_branch, some_platform, some_test)):
+            self.assertEqual(build.buildNumber, i)
+            self.assertEqual(build.revision, 100 + i)
+            self.assertEqual(result.name, 'some-test')
+            self.assertEqual(result.value, results[i].value)
+            last_i = i
+        self.assertTrue(last_i + 1, len(results))
+
+    def test_update_or_insert(self):
+        some_branch = Branch.create_if_possible('some-branch', 'Some Branch')
+        some_platform = Platform.create_if_possible('some-platform', 'Some Platform')
+        some_builder = Builder.get(Builder.create('some-builder', 'Some Builder'))
+        some_test = Test.update_or_insert('some-test', some_branch, some_platform)
+        self.assertThereIsNoInstanceOf(Runs)
+
+        runs = Runs.update_or_insert(some_branch, some_platform, some_test)
+        self.assertOnlyInstance(runs)
+        self.assertEqual(runs.json_runs, '')
+        self.assertEqual(runs.json_averages, '')
+        self.assertEqual(runs.json_min, None)
+        self.assertEqual(runs.json_max, None)
+        old_memcache_value = memcache.get(Runs._key_name(some_branch.id, some_platform.id, some_test.id))
+        self.assertTrue(old_memcache_value)
+
+        runs.delete()
+        self.assertThereIsNoInstanceOf(Runs)
+
+        results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0])
+        runs = Runs.update_or_insert(some_branch, some_platform, some_test)
+        self.assertOnlyInstance(runs)
+        self.assertTrue(runs.json_runs.startswith('[5, [4, 0, 100, null],'))
+        self.assertEqual(runs.json_averages, '"100": 50.0')
+        self.assertEqual(runs.json_min, 50.0)
+        self.assertEqual(runs.json_max, 50.0)
+        self.assertNotEqual(memcache.get(Runs._key_name(some_branch.id, some_platform.id, some_test.id)), old_memcache_value)
+
+    def test_json_by_ids(self):
+        some_branch = Branch.create_if_possible('some-branch', 'Some Branch')
+        some_platform = Platform.create_if_possible('some-platform', 'Some Platform')
+        some_builder = Builder.get(Builder.create('some-builder', 'Some Builder'))
+        some_test = Test.update_or_insert('some-test', some_branch, some_platform)
+
+        self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0])
+        runs = Runs.update_or_insert(some_branch, some_platform, some_test)
+        runs_json = runs.to_json()
+
+        key_name = Runs._key_name(some_branch.id, some_platform.id, some_test.id)
+        self.assertEqual(Runs.json_by_ids(some_branch.id, some_platform.id, some_test.id), runs_json)
+        self.assertEqual(memcache.get(key_name), runs_json)
+
+        memcache.set(key_name, 'blah')
+        self.assertEqual(Runs.json_by_ids(some_branch.id, some_platform.id, some_test.id), 'blah')
+
+        memcache.delete(key_name)
+        self.assertEqual(Runs.json_by_ids(some_branch.id, some_platform.id, some_test.id), runs_json)
+        self.assertEqual(memcache.get(key_name), runs_json)
+
+    def test_to_json_without_results(self):
+        some_branch = Branch.create_if_possible('some-branch', 'Some Branch')
+        some_platform = Platform.create_if_possible('some-platform', 'Some Platform')
+        some_test = Test.update_or_insert('some-test', some_branch, some_platform)
+        self.assertOnlyInstance(some_test)
+        self.assertThereIsNoInstanceOf(TestResult)
+        self.assertEqual(json.loads(Runs.update_or_insert(some_branch, some_platform, some_test).to_json()), {
+            'test_runs': [],
+            'averages': {},
+            'min': None,
+            'max': None,
+            'date_range': None,
+            'stat': 'ok'})
+
+    def test_to_json_with_results(self):
+        some_branch = Branch.create_if_possible('some-branch', 'Some Branch')
+        some_platform = Platform.create_if_possible('some-platform', 'Some Platform')
+        some_builder = Builder.get(Builder.create('some-builder', 'Some Builder'))
+        some_test = Test.update_or_insert('some-test', some_branch, some_platform)
+        results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0, 51.0, 52.0, 49.0, 48.0])
+
+        value = json.loads(Runs.update_or_insert(some_branch, some_platform, some_test).to_json())
+        self.assertEqualUnorderedList(value.keys(), ['test_runs', 'averages', 'min', 'max', 'date_range', 'stat'])
+        self.assertEqual(value['stat'], 'ok')
+        self.assertEqual(value['min'], 48.0)
+        self.assertEqual(value['max'], 52.0)
+        self.assertEqual(value['date_range'], None)  # date_range is never given
+
+        self.assertEqual(len(value['test_runs']), len(results))
+        for i, run in enumerate(value['test_runs']):
+            result = results[i]
+            self.assertEqual(run[0], result.key().id())
+            self.assertEqual(run[1][1], i)  # Build number
+            self.assertEqual(run[1][2], 100 + i)  # Revision
+            self.assertEqual(run[1][3], None)  # Supplementary revision
+            self.assertEqual(run[3], result.value)
+            self.assertEqual(run[6], some_builder.key().id())
+            self.assertEqual(run[7], None)  # Statistics
+
+    def _assert_entry(self, entry, build, result, value, statistics=None, supplementary_revisions=None):
+        entry = entry[:]
+        entry[2] = None  # timestamp
+        self.assertEqual(entry, [result.key().id(), [build.key().id(), build.buildNumber, build.revision, supplementary_revisions],
+            None,  # timestamp
+            value, 0,  # runNumber
+            [],  # annotations
+            build.builder.key().id(), statistics])
+
+    def test_run_from_build_and_result(self):
+        branch = Branch.create_if_possible('some-branch', 'Some Branch')
+        platform = Platform.create_if_possible('some-platform', 'Some Platform')
+        builder = Builder.get(Builder.create('some-builder', 'Some Builder'))
+        test_name = ' some-test'
+
+        def create_build(build_number, revision):
+            timestamp = datetime.now().replace(microsecond=0)
+            build = Build(branch=branch, platform=platform, builder=builder, buildNumber=build_number,
+                revision=revision, timestamp=timestamp)
+            build.put()
+            return build
+
+        build = create_build(1, 101)
+        result = TestResult(name=test_name, value=123.0, build=build)
+        result.put()
+        self._assert_entry(Runs._entry_from_build_and_result(build, result), build, result, 123.0)
+
+        build = create_build(2, 102)
+        result = TestResult(name=test_name, value=456.0, valueMedian=789.0, build=build)
+        result.put()
+        self._assert_entry(Runs._entry_from_build_and_result(build, result), build, result, 456.0)
+
+        result.valueStdev = 7.0
+        result.put()
+        self._assert_entry(Runs._entry_from_build_and_result(build, result), build, result, 456.0)
+
+        result.valueStdev = None
+        result.valueMin = 123.0
+        result.valueMax = 789.0
+        result.put()
+        self._assert_entry(Runs._entry_from_build_and_result(build, result), build, result, 456.0)
+
+        result.valueStdev = 8.0
+        result.valueMin = 123.0
+        result.valueMax = 789.0
+        result.put()
+        self._assert_entry(Runs._entry_from_build_and_result(build, result), build, result, 456.0,
+            statistics={'stdev': 8.0, 'min': 123.0, 'max': 789.0})
+
+        result.valueMedian = 345.0  # Median is never used by the frontend.
+        result.valueStdev = 8.0
+        result.valueMin = 123.0
+        result.valueMax = 789.0
+        result.put()
+        self._assert_entry(Runs._entry_from_build_and_result(build, result), build, result, 456.0,
+            statistics={'stdev': 8.0, 'min': 123.0, 'max': 789.0})
+
+    def test_chart_params_with_value(self):
+        some_branch = Branch.create_if_possible('some-branch', 'Some Branch')
+        some_platform = Platform.create_if_possible('some-platform', 'Some Platform')
+        some_builder = Builder.get(Builder.create('some-builder', 'Some Builder'))
+        some_test = Test.update_or_insert('some-test', some_branch, some_platform)
+
+        start_time = datetime(2011, 2, 21, 12, 0, 0)
+        end_time = datetime(2011, 2, 28, 12, 0, 0)
+        results = self._create_results(some_branch, some_platform, some_builder, 'some-test',
+            [50.0, 51.0, 52.0, 49.0, 48.0, 51.9, 50.7, 51.1],
+            [start_time + timedelta(day) for day in range(0, 8)])
+
+        # Use int despite of its impreciseness since tests may fail due to rounding errors otherwise.
+        def split_as_int(string):
+            return [int(float(value)) for value in string.split(',')]
+
+        params = Runs.update_or_insert(some_branch, some_platform, some_test).chart_params(7, end_time)
+        self.assertEqual(params['chxl'], '0:|Feb 21|Feb 22|Feb 23|Feb 24|Feb 25|Feb 26|Feb 27|Feb 28')
+        self.assertEqual(split_as_int(params['chxr']), [1, 0, 57, int(52 * 1.1 / 5 + 0.5)])
+        x_min, x_max, y_min, y_max = split_as_int(params['chds'])
+        self.assertEqual(datetime.fromtimestamp(x_min), start_time)
+        self.assertEqual(datetime.fromtimestamp(x_max), end_time)
+        self.assertEqual(y_min, 0)
+        self.assertEqual(y_max, int(52 * 1.1))
+        self.assertEqual(split_as_int(params['chg']), [int(100 / 7), 20, 0, 0])
+
+        params = Runs.update_or_insert(some_branch, some_platform, some_test).chart_params(14, end_time)
+        self.assertEqual(params['chxl'], '0:|Feb 14|Feb 16|Feb 18|Feb 20|Feb 22|Feb 24|Feb 26|Feb 28')
+        self.assertEqual(split_as_int(params['chxr']), [1, 0, 57, int(52 * 1.1 / 5 + 0.5)])
+        x_min, x_max, y_min, y_max = split_as_int(params['chds'])
+        self.assertEqual(datetime.fromtimestamp(x_min), datetime(2011, 2, 14, 12, 0, 0))
+        self.assertEqual(datetime.fromtimestamp(x_max), end_time)
+        self.assertEqual(y_min, 0)
+        self.assertEqual(y_max, int(52 * 1.1))
+        self.assertEqual(split_as_int(params['chg']), [int(100 / 7), 20, 0, 0])
 
 
 class DashboardImageTests(DataStoreTestsBase):

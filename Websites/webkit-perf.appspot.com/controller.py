@@ -34,12 +34,12 @@ from google.appengine.ext import db
 
 from json_generators import DashboardJSONGenerator
 from json_generators import ManifestJSONGenerator
-from json_generators import Runs
 from models import Branch
 from models import DashboardImage
-from models import Platform
-from models import Test
 from models import PersistentCache
+from models import Platform
+from models import Runs
+from models import Test
 from models import model_from_numeric_id
 
 
@@ -116,7 +116,7 @@ class RunsUpdateHandler(webapp2.RequestHandler):
         assert platform
         assert test
 
-        PersistentCache.set_cache(Test.cache_key(test_id, branch_id, platform_id), Runs(branch, platform, test.name).to_json())
+        Runs.update_or_insert(branch, platform, test)
         self.response.out.write('OK')
 
 
@@ -125,10 +125,10 @@ class CachedRunsHandler(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
 
         test_id, branch_id, platform_id = _get_test_branch_platform_ids(self)
-        runs = PersistentCache.get_cache(Test.cache_key(test_id, branch_id, platform_id))
+        runs = Runs.json_by_ids(branch_id, platform_id, test_id)
         if runs:
             self.response.out.write(runs)
-        else:
+        elif model_from_numeric_id(branch_id, Branch) and model_from_numeric_id(platform_id, Platform) and model_from_numeric_id(test_id, Test):
             schedule_runs_update(test_id, branch_id, platform_id)
 
 
@@ -145,7 +145,7 @@ class RunsChartHandler(webapp2.RequestHandler):
         assert platform
         assert test
 
-        params = Runs(branch, platform, test.name).chart_params(display_days)
+        params = Runs.update_or_insert(branch, platform, test).chart_params(display_days)
         dashboard_chart_file = urllib.urlopen('http://chart.googleapis.com/chart', urllib.urlencode(params))
 
         DashboardImage.create(branch.id, platform.id, test.id, display_days, dashboard_chart_file.read())
