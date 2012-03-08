@@ -1,3 +1,14 @@
+2012-03-08  Antti Koivisto  <antti@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=80370
+        Enable matched declaration caching for elements with a style attribute
+
+        Reviewed by Andreas Kling
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+        (QWebElement::setStyleProperty):
+
 2012-03-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix compilation without QtQuick1

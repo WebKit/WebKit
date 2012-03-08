@@ -844,7 +844,7 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
     if (!propID)
         return QString();
 
-    StylePropertySet* style = static_cast<StyledElement*>(m_element)->ensureInlineStyleDecl();
+    const StylePropertySet* style = static_cast<StyledElement*>(m_element)->ensureInlineStyle();
 
     if (strategy == InlineStyle)
         return style->getPropertyValue(propID);
@@ -909,11 +909,7 @@ void QWebElement::setStyleProperty(const QString &name, const QString &value)
         return;
 
     int propID = cssPropertyID(name);
-    StylePropertySet* style = static_cast<StyledElement*>(m_element)->ensureInlineStyleDecl();
-    if (!propID || !style)
-        return;
-
-    style->setProperty(propID, value);
+    static_cast<StyledElement*>(m_element)->setInlineStyleProperty(propID, value);
 }
 
 /*!
