@@ -2631,14 +2631,6 @@ void RenderObject::addDashboardRegions(Vector<DashboardRegionValue>& regions)
         region.bounds.setX(absPos.x() + styleRegion.offset.left().value());
         region.bounds.setY(absPos.y() + styleRegion.offset.top().value());
 
-        if (frame()) {
-            float deviceScaleFactor = frame()->page()->deviceScaleFactor();
-            if (deviceScaleFactor != 1.0f) {
-                region.bounds.scale(deviceScaleFactor);
-                region.clip.scale(deviceScaleFactor);
-            }
-        }
-
         regions.append(region);
     }
 }

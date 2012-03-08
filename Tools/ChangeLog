@@ -1,3 +1,15 @@
+2012-03-08  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10981173> Dashboard regions should not be in device space
+
+        Reviewed by John Sullivan.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/DeviceScaleFactorInDashboardRegions.mm: Added.
+        (-[DeviceScaleFactorInDashboardRegionsUIDelegate webView:dashboardRegionsChanged:]):
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-03-08  Dirk Pranke  <dpranke@chromium.org>
 
         webkit-patch works oddly on local Git branches
