@@ -3866,7 +3866,7 @@ BUGWK75568 MAC : fast/replaced/width100percent-textfield.html = TEXT
 // Those tests need a text baseline after lazily allocating layers.
 // The change should only be layer removal.
 BUGWK75568 : compositing/geometry/object-clip-rects-assertion.html = TEXT
-BUGWK75568 : compositing/overflow/ancestor-overflow.html = TEXT
+BUGWK75568 : compositing/overflow/ancestor-overflow.html = TEXT IMAGE+TEXT
 BUGWK75568 : editing/inserting/before-after-input-element.html = TEXT
 BUGWK75568 : editing/pasteboard/4806874.html = TEXT
 BUGWK75568 : editing/pasteboard/drop-text-without-selection.html = TEXT
@@ -4026,3 +4026,7 @@ BUGWK75568 : http/tests/navigation/javascriptlink-frames.html = TEXT
 
 BUGWK80531 : fast/repaint/search-field-cancel.html = TEXT IMAGE+TEXT
 BUGWK80531 : fast/forms/textfield-overflow.html = IMAGE+TEXT
+
+BUG_SENORBLANCO LEOPARD : css2.1/t1202-counter-04-b.html = TEXT
+BUG_SENORBLANCO LEOPARD : css2.1/t1202-counters-04-b.html = TEXT
+BUG_SENORBLANCO LEOPARD : editing/pasteboard/paste-table-cells.html = IMAGE
