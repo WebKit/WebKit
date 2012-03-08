@@ -534,9 +534,9 @@ public:
         UNUSED_PARAM(imm);
         // Debug always blind all constants, if only so we know
         // if we've broken blinding during patch development.
-        return true;
-#else
-        
+        return true;        
+#endif
+
         // First off we'll special case common, "safe" values to avoid hurting
         // performance too much
         uintptr_t value = imm.asTrustedImmPtr().asIntptr();
@@ -565,7 +565,6 @@ public:
         }
         }
         return shouldBlindForSpecificArch(value);
-#endif
     }
     
     struct RotatedImmPtr {
@@ -643,7 +642,7 @@ public:
         // Debug always blind all constants, if only so we know
         // if we've broken blinding during patch development.
         return true;
-#else
+#endif
 
         // First off we'll special case common, "safe" values to avoid hurting
         // performance too much
@@ -658,7 +657,6 @@ public:
                 return false;
         }
         return shouldBlindForSpecificArch(value);
-#endif
     }
 
     struct BlindedImm32 {

@@ -1,5 +1,15 @@
 2012-03-08  Oliver Hunt  <oliver@apple.com>
 
+        Build fix.  That day is not today.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::shouldBlind):
+        * assembler/MacroAssemblerX86Common.h:
+        (MacroAssemblerX86Common):
+        (JSC::MacroAssemblerX86Common::shouldBlindForSpecificArch):
+
+2012-03-08  Oliver Hunt  <oliver@apple.com>
+
         Build fix. One of these days I'll manage to commit something that works everywhere.
 
         * assembler/AbstractMacroAssembler.h:

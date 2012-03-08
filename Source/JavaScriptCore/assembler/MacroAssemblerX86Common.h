@@ -93,7 +93,9 @@ public:
 
 #if ENABLE(JIT_CONSTANT_BLINDING)
     static bool shouldBlindForSpecificArch(uint32_t value) { return value >= 0x00ffffff; }
-    static bool shouldBlindForSpecificArch(uint64_t value) { return value >= 0x00ffffff; }
+#if CPU(X86_64)
+    static bool shouldBlindForSpecificArch(uintptr_t value) { return value >= 0x00ffffff; }
+#endif
 #endif
 
     // Integer arithmetic operations:
