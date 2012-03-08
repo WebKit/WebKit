@@ -80,9 +80,7 @@ public:
     void didEnterFullScreen();
     void willExitFullScreen();
     void didExitFullScreen();
-    void beginEnterFullScreenAnimation(float duration) { } // FIXME: Remove
-    void beginExitFullScreenAnimation(float duration) { } // FIXME: Remove
-    void disposeOfLayerClient() { } // FIXME: Remove
+    void setAnimatingFullScreen(bool);
 
 private:
     WebFullScreenManagerProxy(WebPageProxy*);
@@ -90,6 +88,8 @@ private:
     void supportsFullScreen(bool withKeyboard, bool&);
     void enterFullScreen();
     void exitFullScreen();
+    void beganEnterFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
+    void beganExitFullScreen(const WebCore::IntRect& initialFrame, const WebCore::IntRect& finalFrame);
 
     WebPageProxy* m_page;
     PlatformWebView* m_webView;

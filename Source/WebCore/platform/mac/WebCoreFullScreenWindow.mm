@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,54 +24,46 @@
  */
 
 #import "config.h"
-#import "WebFullScreenManagerProxy.h"
+#import "WebCoreFullScreenWindow.h"
 
-#import "LayerTreeContext.h"
-#import "WKFullScreenWindowController.h"
-#import "WKViewInternal.h"
-#import <WebCore/IntRect.h>
+@implementation WebCoreFullScreenWindow
 
-#if ENABLE(FULLSCREEN_API)
-
-using namespace WebCore;
-
-namespace WebKit {
-
-void WebFullScreenManagerProxy::invalidate()
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag
 {
-    if (!m_webView)
-        return;
-    
-    [m_webView closeFullScreenWindowController];
-    m_webView = 0;
-}
-
-void WebFullScreenManagerProxy::enterFullScreen()
-{
-    if (!m_webView)
-        return;
-    [[m_webView fullScreenWindowController] enterFullScreen:nil];
-}
-
-void WebFullScreenManagerProxy::exitFullScreen()
-{
-    if (!m_webView)
-        return;
-    [[m_webView fullScreenWindowController] exitFullScreen];
-}
-    
-void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
-{
-    if (m_webView)
-        [[m_webView fullScreenWindowController] beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
-}
-
-void WebFullScreenManagerProxy::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
-{
-    if (m_webView)
-        [[m_webView fullScreenWindowController] beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
-}
-
-} // namespace WebKit
-
+    self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag];
+    if (!self)
+        return nil;
+    [self setOpaque:NO];
+    [self setBackgroundColor:[NSColor clearColor]];
+    [self setIgnoresMouseEvents:NO];
+    [self setAcceptsMouseMovedEvents:YES];
+    [self setReleasedWhenClosed:NO];
+    [self setHasShadow:NO];
+#ifndef BUILDING_ON_LEOPARD
+    [self setMovable:NO];
+#else
+    [self setMovableByWindowBackground:NO];
 #endif
+    [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
+    
+    return self;
+}
+
+- (BOOL)canBecomeKeyWindow
+{
+    return YES;
+}
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+    if ([[theEvent charactersIgnoringModifiers] isEqual:@"\e"]) // Esacpe key-code
+        [self cancelOperation:self];
+    else [super keyDown:theEvent];
+}
+
+- (void)cancelOperation:(id)sender
+{
+    [[self windowController] cancelOperation:sender];
+}
+@end
+

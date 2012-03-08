@@ -5671,6 +5671,8 @@
 		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CAE9F90F146441F000C245B0 /* CSSAspectRatioValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */; };
 		CAE9F910146441F000C245B0 /* CSSAspectRatioValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */; };
+		CD127DED14F3097D00E84779 /* WebCoreFullScreenWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD127DEB14F3097900E84779 /* WebCoreFullScreenWindow.mm */; };
+		CD127DEE14F3098400E84779 /* WebCoreFullScreenWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD27F6E51457685A0078207D /* JSMediaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD27F6E2145767580078207D /* JSMediaController.cpp */; };
 		CD27F6E7145770D30078207D /* MediaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD27F6E6145770D30078207D /* MediaController.cpp */; };
 		CD4AC52A1496AE9A0087C4EF /* Composite.wav in Copy Audio Resources */ = {isa = PBXBuildFile; fileRef = CD4AC5281496AE2F0087C4EF /* Composite.wav */; };
@@ -5678,7 +5680,7 @@
 		CD82030B1395AB6A00F956C6 /* WebVideoFullscreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */; settings = {COMPILER_FLAGS = "-Wno-undef"; }; };
 		CD82030C1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8203081395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD82030D1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8203091395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm */; };
-		CD8203101395ACE700F956C6 /* WebWindowAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */; };
+		CD8203101395ACE700F956C6 /* WebWindowAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD8203111395ACE700F956C6 /* WebWindowAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */; };
 		CDAA8D0A14D71B2E0061EA60 /* PlatformClockCM.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDAA8D0814D385600061EA60 /* PlatformClockCM.mm */; };
 		CDD525D7145B6DD0008D204D /* JSHTMLMediaElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF65CCC145B6AFE00C4C7AA /* JSHTMLMediaElementCustom.cpp */; };
@@ -12712,6 +12714,8 @@
 		CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimator.h; sourceTree = "<group>"; };
 		CAE9F90D146441F000C245B0 /* CSSAspectRatioValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSAspectRatioValue.cpp; sourceTree = "<group>"; };
 		CAE9F90E146441F000C245B0 /* CSSAspectRatioValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSAspectRatioValue.h; sourceTree = "<group>"; };
+		CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreFullScreenWindow.h; sourceTree = "<group>"; };
+		CD127DEB14F3097900E84779 /* WebCoreFullScreenWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreFullScreenWindow.mm; sourceTree = "<group>"; };
 		CD27F6E014575C1B0078207D /* MediaController.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaController.idl; sourceTree = "<group>"; };
 		CD27F6E2145767580078207D /* JSMediaController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaController.cpp; sourceTree = "<group>"; };
 		CD27F6E3145767580078207D /* JSMediaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaController.h; sourceTree = "<group>"; };
@@ -15061,6 +15065,8 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */,
+				CD127DEB14F3097900E84779 /* WebCoreFullScreenWindow.mm */,
 				51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */,
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
@@ -24403,6 +24409,7 @@
 				37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */,
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,
 				BC6DADEF0A195FDF00E5CD14 /* WebFontCache.h in Headers */,
+				CD127DEE14F3098400E84779 /* WebCoreFullScreenWindow.h in Headers */,
 				A7D20F6D107F438B00A80392 /* WebGLActiveInfo.h in Headers */,
 				49C7B9C91042D32F0009D447 /* WebGLBuffer.h in Headers */,
 				6E3FAE8F14733FDB00E42306 /* WebGLCompressedTextureS3TC.h in Headers */,
@@ -27390,6 +27397,7 @@
 				37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */,
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				BC6DADFA0A19602B00E5CD14 /* WebFontCache.mm in Sources */,
+				CD127DED14F3097D00E84779 /* WebCoreFullScreenWindow.mm in Sources */,
 				49C7B9C81042D32F0009D447 /* WebGLBuffer.cpp in Sources */,
 				6E3FAE8E14733FDB00E42306 /* WebGLCompressedTextureS3TC.cpp in Sources */,
 				6E4E91AE10F7FB3100A2779C /* WebGLContextAttributes.cpp in Sources */,

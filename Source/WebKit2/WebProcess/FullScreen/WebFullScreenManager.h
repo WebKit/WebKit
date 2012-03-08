@@ -68,10 +68,12 @@ public:
 protected:
     WebFullScreenManager(WebPage*);
 
+    void setAnimatingFullScreen(bool);
 
     void didReceiveWebFullScreenManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     WebCore::IntRect m_initialFrame;
+    WebCore::IntRect m_finalFrame;
     RefPtr<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;
 };

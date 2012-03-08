@@ -36,11 +36,26 @@
 #include <WebCore/Color.h>
 #include <WebCore/Element.h>
 #include <WebCore/Page.h>
+#include <WebCore/RenderLayer.h>
+#include <WebCore/RenderLayerBacking.h>
+#include <WebCore/RenderObject.h>
+#include <WebCore/RenderView.h>
 #include <WebCore/Settings.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+static IntRect screenRectOfContents(Element* element)
+{
+    ASSERT(element);
+    if (element->renderer() && element->renderer()->hasLayer() && element->renderer()->enclosingLayer()->isComposited()) {
+        FloatQuad contentsBox = static_cast<FloatRect>(element->renderer()->enclosingLayer()->backing()->contentsBox());
+        contentsBox = element->renderer()->localToAbsoluteQuad(contentsBox);
+        return element->renderer()->view()->frameView()->contentsToScreen(contentsBox.enclosingBoundingBox());
+    }
+    return element->screenRect();
+}
 
 PassRefPtr<WebFullScreenManager> WebFullScreenManager::create(WebPage* page)
 {
@@ -72,14 +87,13 @@ bool WebFullScreenManager::supportsFullScreen(bool withKeyboard)
         return false;
 
     return m_page->injectedBundleFullScreenClient().supportsFullScreen(m_page.get(), withKeyboard);
-
 }
 
 void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 {
     ASSERT(element);
     m_element = element;
-    m_initialFrame = m_element->screenRect();
+    m_initialFrame = screenRectOfContents(m_element.get());
     m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.get(), element);
 }
 
@@ -94,30 +108,37 @@ void WebFullScreenManager::willEnterFullScreen()
 {
     ASSERT(m_element);
     m_element->document()->webkitWillEnterFullScreenForElement(m_element.get());
-    m_element->document()->setFullScreenRendererBackgroundColor(Color::transparent);
+    m_element->document()->updateLayout();
+    m_page->forceRepaintWithoutCallback();
+    m_finalFrame = screenRectOfContents(m_element.get());
+    m_page->send(Messages::WebFullScreenManagerProxy::BeganEnterFullScreen(m_initialFrame, m_finalFrame));
 }
 
 void WebFullScreenManager::didEnterFullScreen()
 {
     ASSERT(m_element);
-    m_element->document()->setFullScreenRendererBackgroundColor(Color::black);
     m_element->document()->webkitDidEnterFullScreenForElement(m_element.get());
 }
 
 void WebFullScreenManager::willExitFullScreen()
 {
     ASSERT(m_element);
+    m_finalFrame = screenRectOfContents(m_element.get());
     m_element->document()->webkitWillExitFullScreenForElement(m_element.get());
-    m_element->document()->setFullScreenRendererBackgroundColor(Color::transparent);
+    m_page->send(Messages::WebFullScreenManagerProxy::BeganExitFullScreen(m_finalFrame, m_initialFrame));
 }
 
 void WebFullScreenManager::didExitFullScreen()
 {
     ASSERT(m_element);
     m_element->document()->webkitDidExitFullScreenForElement(m_element.get());
-    m_element->document()->setFullScreenRendererBackgroundColor(Color::black);
 }
 
+void WebFullScreenManager::setAnimatingFullScreen(bool animating)
+{
+    ASSERT(m_element);
+    m_element->document()->setAnimatingFullScreen(animating);
+}
 
 } // namespace WebKit
 

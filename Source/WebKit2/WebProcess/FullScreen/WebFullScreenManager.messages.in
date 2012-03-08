@@ -26,5 +26,6 @@ messages -> WebFullScreenManager {
     DidEnterFullScreen()
     WillExitFullScreen()
     DidExitFullScreen()
+    SetAnimatingFullScreen(bool animating)
 }
 #endif

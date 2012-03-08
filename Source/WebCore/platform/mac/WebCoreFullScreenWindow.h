@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(FULLSCREEN_API)
+#ifndef WebCoreFullScreenWindow_h
+#define WebCoreFullScreenWindow_h
 
-#import <wtf/OwnPtr.h>
-#import <wtf/RetainPtr.h>
-
-namespace WebKit { 
-class LayerTreeContext;
-}
-
-namespace WebCore {
-class DisplaySleepDisabler;
-class IntRect;
-}
-
-@class WKView;
-@class WebWindowScaleAnimation;
-@class WebWindowFadeAnimation;
-
-@interface WKFullScreenWindowController : NSWindowController {
-@private
-    WKView *_webView;
-    RetainPtr<NSImageView> _webViewPlaceholder;
-    RetainPtr<WebWindowScaleAnimation> _scaleAnimation;
-    RetainPtr<WebWindowFadeAnimation> _fadeAnimation;
-    RetainPtr<NSWindow> _backgroundWindow;
-    NSRect _initialFrame;
-    NSRect _finalFrame;
-    
-    BOOL _isEnteringFullScreen;
-    BOOL _isExitingFullScreen;
-    BOOL _isFullScreen;
-    BOOL _isPlaying;
-}
-
-- (WKView*)webView;
-- (void)setWebView:(WKView*)webView;
-
-- (void)enterFullScreen:(NSScreen *)screen;
-- (void)exitFullScreen;
-- (void)close;
-- (void)beganEnterFullScreenWithInitialFrame:(const WebCore::IntRect&)initialFrame finalFrame:(const WebCore::IntRect&)finalFrame;
-- (void)beganExitFullScreenWithInitialFrame:(const WebCore::IntRect&)initialFrame finalFrame:(const WebCore::IntRect&)finalFrame;
-
+@interface WebCoreFullScreenWindow : NSWindow
 @end
 
-#endif
+#endif // WebCoreFullScreenWindow_h

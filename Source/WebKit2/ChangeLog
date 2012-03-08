@@ -1,5 +1,57 @@
 2012-03-08  Jer Noble  <jer.noble@apple.com>
 
+        Full Screen Refactor Part 3: Animate into Full Screen mode using new animation classes.
+        https://bugs.webkit.org/show_bug.cgi?id=78928
+
+        Reviewed by Anders Carlsson.
+
+        Boilerplate changes to WebKit2 IPC messages and supporting functions.
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::setAnimatingFullScreen): Added boilerplate.
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/WebFullScreenManagerProxy.messages.in:
+        * UIProcess/mac/WebFullScreenManagerProxyMac.mm:
+        (WebKit::WebFullScreenManagerProxy::beganEnterFullScreen): Added boilerplate.
+        (WebKit::WebFullScreenManagerProxy::beganExitFullScreen): Added boilerplate.
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::screenRectOfContents): Added.  Calculates the screen rect of an element's contents.
+        (WebKit::WebFullScreenManager::enterFullScreenForElement): Use screenRectOfContents()
+        (WebKit::WebFullScreenManager::willEnterFullScreen): Ditto. Do not set the background color. Call new BeganEnterFullScreen
+            XPC message.
+        (WebKit::WebFullScreenManager::didEnterFullScreen): Do not set the background color.
+        (WebKit::WebFullScreenManager::willExitFullScreen): Use screenRectOfContents. Do not set the background color. Call new
+            BeganExitFullScreen XPC message.
+        (WebKit::WebFullScreenManager::didExitFullScreen): Do not set the background color.
+        (WebKit::WebFullScreenManager::setAnimatingFullScreen): Added boilerplate.
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        * WebProcess/FullScreen/WebFullScreenManager.messages.in:
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController cancelOperation:]): Renamed from _requestExitWithAnimation:.
+        (-[WKFullScreenWindowController applicationDidResignActive:]): Call cancelOperation: instead
+            of _requestExitWithAnimation.
+        (-[WKFullScreenWindowController applicationDidChangeScreenParameters:]): Set the frame of
+            both the full screen window and the background window.
+        (-[WKFullScreenWindowController enterFullScreen:]): Save a rendered image of the current
+            page to use in the placeholder.
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:WebCore::finalFrame:WebCore::]): Renamed from 
+            beganEnterFullScreenAnimation.
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]): No need to swap 
+            placeholder views here, as they were already swapped in beganEnter...:.
+        (-[WKFullScreenWindowController exitFullScreen]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:WebCore::finalFrame:WebCore::]): Renamed from 
+            beganExitFullScreenAnimation.
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]): Swap web view back into place.
+        (-[WKFullScreenWindowController close]):
+        (-[WKFullScreenWindowController animationDidEnd:]): Added.
+        (createBackgroundFullscreenWindow): Added.
+        (windowFrameFromApparentFrames): Added.
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]): Added.
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]): Added.
+
+2012-03-08  Jer Noble  <jer.noble@apple.com>
+
         Full Screen Refactor Part 2: Remove unnecessary WebKit2 APIs for Full Screen made
         https://bugs.webkit.org/show_bug.cgi?id=78926
 
