@@ -44,8 +44,7 @@
 #else
     [self setMovableByWindowBackground:NO];
 #endif
-    [self setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
-    
+
     return self;
 }
 
