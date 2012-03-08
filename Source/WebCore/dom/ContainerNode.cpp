@@ -785,13 +785,17 @@ void ContainerNode::insertedIntoDocument()
     Node::insertedIntoDocument();
     insertedIntoTree(false);
 
-    for (RefPtr<Node> child = m_firstChild; child; child = child->nextSibling()) {
-        // Guard against mutation during re-parenting.
-        if (!inDocument()) // Check for self being removed from document while reparenting.
+    NodeVector children;
+    collectNodes(this, children);
+    for (size_t i = 0; i < children.size(); ++i) {
+        // If we have been removed from the document during this loop, then
+        // we don't want to tell the rest of our children that they've been
+        // inserted into the document because they haven't.
+        if (!inDocument())
             break;
-        if (child->parentNode() != this) // Check for child being removed from subtree while reparenting.
-            break;
-        child->insertedIntoDocument();
+        if (children[i]->parentNode() != this)
+            continue;
+        children[i]->insertedIntoDocument();
     }
 }
 
@@ -802,8 +806,19 @@ void ContainerNode::removedFromDocument()
         document()->setCSSTarget(0); 
     clearInDocument();
     removedFromTree(false);
-    for (Node* child = m_firstChild; child; child = child->nextSibling())
-        child->removedFromDocument();
+
+    NodeVector children;
+    collectNodes(this, children);
+    for (size_t i = 0; i < children.size(); ++i) {
+        // If we have been added to the document during this loop, then we
+        // don't want to tell the rest of our children that they've been
+        // removed from the document because they haven't.
+        if (inDocument())
+            break;
+        if (children[i]->parentNode() != this)
+            continue;
+        children[i]->removedFromDocument();
+    }
 }
 
 void ContainerNode::insertedIntoTree(bool deep)
