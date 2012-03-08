@@ -32,6 +32,8 @@
 #include <WebCore/FullScreenController.h>
 #include <WebCore/IntRect.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
 void WebFullScreenManagerProxy::invalidate()

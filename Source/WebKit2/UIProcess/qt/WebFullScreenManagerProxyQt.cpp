@@ -29,6 +29,8 @@
 
 #include <WebCore/NotImplemented.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
 void WebFullScreenManagerProxy::invalidate()
