@@ -51,6 +51,8 @@
 		06D358B40DAADAAA003B174E /* MainThreadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06D358A10DAAD9C4003B174E /* MainThreadMac.mm */; };
 		088FA5BB0EF76D4300578E6F /* RandomNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088FA5B90EF76D4300578E6F /* RandomNumber.cpp */; };
 		08DDA5C11264631700751732 /* UStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 08DDA5BB12645F1D00751732 /* UStringBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0A4337BB1506218800991C95 /* DFGRedundantPhiEliminationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0A4337BA1506218800991C95 /* DFGRedundantPhiEliminationPhase.cpp */; };
+		0A4337BE1506219B00991C95 /* DFGRedundantPhiEliminationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A4337BD1506219B00991C95 /* DFGRedundantPhiEliminationPhase.h */; };
 		0B330C270F38C62300692DE3 /* TypeTraits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B330C260F38C62300692DE3 /* TypeTraits.cpp */; };
 		0BF28A2911A33DC300638F84 /* SizeLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BF28A2811A33DC300638F84 /* SizeLimits.cpp */; };
 		0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0776BD14FF002800102332 /* JITCompilationEffort.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -756,6 +758,8 @@
 		0896C29E1265AB0900B1CDD3 /* StringConcatenate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringConcatenate.h; path = text/StringConcatenate.h; sourceTree = "<group>"; };
 		08DDA5BB12645F1D00751732 /* UStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UStringBuilder.h; sourceTree = "<group>"; };
 		08E279E80EF83B10007DB523 /* RandomNumberSeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumberSeed.h; sourceTree = "<group>"; };
+		0A4337BA1506218800991C95 /* DFGRedundantPhiEliminationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGRedundantPhiEliminationPhase.cpp; path = dfg/DFGRedundantPhiEliminationPhase.cpp; sourceTree = "<group>"; };
+		0A4337BD1506219B00991C95 /* DFGRedundantPhiEliminationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGRedundantPhiEliminationPhase.h; path = dfg/DFGRedundantPhiEliminationPhase.h; sourceTree = "<group>"; };
 		0B330C260F38C62300692DE3 /* TypeTraits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeTraits.cpp; sourceTree = "<group>"; };
 		0B4D7E620F319AC800AD7E58 /* TypeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeTraits.h; sourceTree = "<group>"; };
 		0BAC949E1338728400CF135B /* ThreadRestrictionVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadRestrictionVerifier.h; sourceTree = "<group>"; };
@@ -2548,6 +2552,8 @@
 				0FFFC95014EF909500C72532 /* DFGPhase.h */,
 				0FFFC95114EF909500C72532 /* DFGPredictionPropagationPhase.cpp */,
 				0FFFC95214EF909500C72532 /* DFGPredictionPropagationPhase.h */,
+				0A4337BA1506218800991C95 /* DFGRedundantPhiEliminationPhase.cpp */,
+				0A4337BD1506219B00991C95 /* DFGRedundantPhiEliminationPhase.h */,
 				86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */,
 				86BB09BE138E381B0056702F /* DFGRepatch.cpp */,
 				86BB09BF138E381B0056702F /* DFGRepatch.h */,
@@ -3082,6 +3088,7 @@
 				0FB5467B14F5C7E1002C2989 /* MethodOfGettingAValueProfile.h in Headers */,
 				0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */,
 				0F56A1D315000F35002992B1 /* ExecutionCounter.h in Headers */,
+				0A4337BE1506219B00991C95 /* DFGRedundantPhiEliminationPhase.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3707,6 +3714,7 @@
 				0FB5467914F5C46B002C2989 /* LazyOperandValueProfile.cpp in Sources */,
 				0FB5467D14F5CFD6002C2989 /* MethodOfGettingAValueProfile.cpp in Sources */,
 				0F56A1D515001CF4002992B1 /* ExecutionCounter.cpp in Sources */,
+				0A4337BB1506218800991C95 /* DFGRedundantPhiEliminationPhase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

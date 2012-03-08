@@ -266,8 +266,11 @@ void Graph::dump()
         BasicBlock* block = m_blocks[b].get();
         dataLog("Block #%u (bc#%u): %s%s\n", (int)b, block->bytecodeBegin, block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "");
         dataLog("  Phi Nodes:\n");
-        for (size_t i = 0; i < block->phis.size(); ++i)
-            dump(block->phis[i]);
+        for (size_t i = 0; i < block->phis.size(); ++i) {
+            // Dumping the dead Phi nodes is just annoying!
+            if (at(block->phis[i]).refCount())
+                dump(block->phis[i]);
+        }
         dataLog("  vars before: ");
         if (block->cfaHasVisited)
             dumpOperands(block->valuesAtHead, WTF::dataFile());

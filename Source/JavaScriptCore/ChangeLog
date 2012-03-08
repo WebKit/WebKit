@@ -1,3 +1,38 @@
+2012-03-07  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Eliminate redundant Phis in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=80415
+
+        Reviewed by Filip Pizlo.
+
+        Although this may not have any advantage at current stage, this is towards
+        minimal SSA to make more high level optimizations (like bug 76770) easier.
+        We have the choices either to build minimal SSA from scratch or to
+        keep current simple Phi insertion mechanism and remove the redundancy
+        in another phase. Currently we choose the latter because the change
+        could be smaller.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGRedundantPhiEliminationPhase.cpp: Added.
+        (DFG):
+        (RedundantPhiEliminationPhase):
+        (JSC::DFG::RedundantPhiEliminationPhase::RedundantPhiEliminationPhase):
+        (JSC::DFG::RedundantPhiEliminationPhase::run):
+        (JSC::DFG::RedundantPhiEliminationPhase::getRedundantReplacement):
+        (JSC::DFG::RedundantPhiEliminationPhase::replacePhiChild):
+        (JSC::DFG::RedundantPhiEliminationPhase::fixupPhis):
+        (JSC::DFG::RedundantPhiEliminationPhase::updateBlockVariableInformation):
+        (JSC::DFG::performRedundantPhiElimination):
+        * dfg/DFGRedundantPhiEliminationPhase.h: Added.
+        (DFG):
+
 2012-03-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Refactor recompileAllJSFunctions() to be less expensive

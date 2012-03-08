@@ -34,6 +34,7 @@
 #include "DFGCSEPhase.h"
 #include "DFGJITCompiler.h"
 #include "DFGPredictionPropagationPhase.h"
+#include "DFGRedundantPhiEliminationPhase.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
 
 namespace JSC { namespace DFG {
@@ -58,6 +59,7 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
     if (compileMode == CompileFunction)
         dfg.predictArgumentTypes();
 
+    performRedundantPhiElimination(dfg);
     performArithNodeFlagsInference(dfg);
     performPredictionPropagation(dfg);
     performCSE(dfg);
