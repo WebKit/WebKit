@@ -275,10 +275,10 @@ void RenderTextControl::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderTextControl::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset)
+void RenderTextControl::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& additionalOffset)
 {
     if (!size().isEmpty())
-        rects.append(LayoutRect(additionalOffset, size()));
+        rects.append(pixelSnappedIntRect(additionalOffset, size()));
 }
 
 RenderObject* RenderTextControl::layoutSpecialExcludedChild(bool relayoutChildren)

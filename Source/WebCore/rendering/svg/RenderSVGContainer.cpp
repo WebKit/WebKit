@@ -140,9 +140,9 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
 }
 
 // addFocusRingRects is called from paintOutline and needs to be in the same coordinates as the paintOuline call
-void RenderSVGContainer::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint&)
+void RenderSVGContainer::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&)
 {
-    LayoutRect paintRectInParent = enclosingLayoutRect(localToParentTransform().mapRect(repaintRectInLocalCoordinates()));
+    IntRect paintRectInParent = enclosingIntRect(localToParentTransform().mapRect(repaintRectInLocalCoordinates()));
     if (!paintRectInParent.isEmpty())
         rects.append(paintRectInParent);
 }

@@ -507,15 +507,15 @@ void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     m_lineBoxes.paint(this, paintInfo, paintOffset);
 }
 
-void RenderInline::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
+void RenderInline::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
     if (!alwaysCreateLineBoxes())
         culledInlineAbsoluteRects(this, rects, toLayoutSize(accumulatedOffset));
     else if (InlineFlowBox* curr = firstLineBox()) {
         for (; curr; curr = curr->nextLineBox())
-            rects.append(enclosingLayoutRect(FloatRect(accumulatedOffset + curr->topLeft(), curr->size())));
+            rects.append(enclosingIntRect(FloatRect(accumulatedOffset + curr->topLeft(), curr->size())));
     } else
-        rects.append(LayoutRect(accumulatedOffset, LayoutSize()));
+        rects.append(IntRect(roundedIntPoint(accumulatedOffset), IntSize()));
 
     if (continuation()) {
         if (continuation()->isBox()) {
@@ -526,7 +526,7 @@ void RenderInline::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& a
     }
 }
 
-void RenderInline::culledInlineAbsoluteRects(const RenderInline* container, Vector<LayoutRect>& rects, const LayoutSize& offset) const
+void RenderInline::culledInlineAbsoluteRects(const RenderInline* container, Vector<IntRect>& rects, const LayoutSize& offset) const
 {
     if (!culledInlineFirstLineBox()) {
         rects.append(IntRect(offset.width(), offset.height(), 0, 0));
@@ -1368,13 +1368,13 @@ void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
     repaint();
 }
 
-void RenderInline::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset)
+void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& additionalOffset)
 {
     if (!alwaysCreateLineBoxes())
         culledInlineAbsoluteRects(this, rects, toLayoutSize(additionalOffset));
     else {
         for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-            rects.append(enclosingLayoutRect(FloatRect(additionalOffset.x() + curr->x(), additionalOffset.y() + curr->y(), curr->width(), curr->height())));
+            rects.append(enclosingIntRect(FloatRect(additionalOffset.x() + curr->x(), additionalOffset.y() + curr->y(), curr->width(), curr->height())));
     }
 
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {

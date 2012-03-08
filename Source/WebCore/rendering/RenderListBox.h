@@ -77,7 +77,7 @@ private:
 
     virtual void layout();
 
-    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&);
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint&);
 
     virtual bool canBeProgramaticallyScrolled() const { return true; }
     virtual void autoscroll();

@@ -72,10 +72,10 @@ LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(RenderBoxModelObject* r
     return containerRelativeQuad.enclosingBoundingBox();
 }
 
-void RenderSVGModelObject::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
+void RenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    LayoutRect rect = enclosingLayoutRect(strokeBoundingBox());
-    rect.moveBy(accumulatedOffset);
+    IntRect rect = enclosingIntRect(strokeBoundingBox());
+    rect.moveBy(roundedIntPoint(accumulatedOffset));
     rects.append(rect);
 }
 

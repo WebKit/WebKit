@@ -38,7 +38,7 @@ private:
     virtual void setStyle(PassRefPtr<RenderStyle>);
     virtual void updateBoxModelInfoFromStyle();
 
-    virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const;
+    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
 
     virtual void willBeDestroyed();
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);

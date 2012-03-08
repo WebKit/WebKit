@@ -356,9 +356,9 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const IntPoint&)
 
 // This method is called from inside paintOutline() since we call paintOutline()
 // while transformed to our coord system, return local coords
-void RenderSVGShape::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint&)
+void RenderSVGShape::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&)
 {
-    LayoutRect rect = enclosingLayoutRect(repaintRectInLocalCoordinates());
+    IntRect rect = enclosingIntRect(repaintRectInLocalCoordinates());
     if (!rect.isEmpty())
         rects.append(rect);
 }

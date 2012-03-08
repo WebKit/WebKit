@@ -805,7 +805,7 @@ bool Node::hasNonEmptyBoundingBox() const
     if (!box->borderBoundingBox().isEmpty())
         return true;
 
-    Vector<LayoutRect> rects;
+    Vector<IntRect> rects;
     FloatPoint absPos = renderer()->localToAbsolute();
     renderer()->absoluteRects(rects, flooredLayoutPoint(absPos));
     size_t n = rects.size();

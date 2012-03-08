@@ -46,7 +46,7 @@ public:
     virtual LayoutUnit marginStart() const;
     virtual LayoutUnit marginEnd() const;
 
-    virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const;
+    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const;
 
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&) const;
@@ -73,7 +73,7 @@ public:
     
     LayoutSize relativePositionedInlineOffset(const RenderBox* child) const;
 
-    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&);
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint&);
     void paintOutline(GraphicsContext*, const LayoutPoint&);
 
     using RenderBoxModelObject::continuation;
@@ -102,7 +102,7 @@ private:
     LayoutRect culledInlineVisualOverflowBoundingBox() const;
     InlineBox* culledInlineFirstLineBox() const;
     InlineBox* culledInlineLastLineBox() const;
-    void culledInlineAbsoluteRects(const RenderInline* container, Vector<LayoutRect>&, const LayoutSize&) const;
+    void culledInlineAbsoluteRects(const RenderInline* container, Vector<IntRect>&, const LayoutSize&) const;
     void culledInlineAbsoluteQuads(const RenderInline* container, Vector<FloatQuad>&) const;
 
     void addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild);

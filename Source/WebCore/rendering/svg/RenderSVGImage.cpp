@@ -183,10 +183,10 @@ void RenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
     repaint();
 }
 
-void RenderSVGImage::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint&)
+void RenderSVGImage::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&)
 {
     // this is called from paint() after the localTransform has already been applied
-    LayoutRect contentRect = enclosingLayoutRect(repaintRectInLocalCoordinates());
+    IntRect contentRect = enclosingIntRect(repaintRectInLocalCoordinates());
     if (!contentRect.isEmpty())
         rects.append(contentRect);
 }

@@ -303,10 +303,10 @@ PassRefPtr<StringImpl> RenderText::originalText() const
     return (e && e->isTextNode()) ? toText(e)->dataImpl() : 0;
 }
 
-void RenderText::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
+void RenderText::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        rects.append(enclosingLayoutRect(FloatRect(accumulatedOffset + box->topLeft(), box->size())));
+        rects.append(enclosingIntRect(FloatRect(accumulatedOffset + box->topLeft(), box->size())));
 }
 
 static FloatRect localQuadForTextBox(InlineTextBox* box, unsigned start, unsigned end, bool useSelectionHeight)
@@ -330,7 +330,7 @@ static FloatRect localQuadForTextBox(InlineTextBox* box, unsigned start, unsigne
     return FloatRect();
 }
 
-void RenderText::absoluteRectsForRange(Vector<LayoutRect>& rects, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed)
+void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, unsigned end, bool useSelectionHeight, bool* wasFixed)
 {
     // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
     // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this 
@@ -347,7 +347,6 @@ void RenderText::absoluteRectsForRange(Vector<LayoutRect>& rects, unsigned start
         if (start <= box->start() && box->end() < end) {
             FloatRect r = box->calculateBoundaries();
             if (useSelectionHeight) {
-                // FIXME: localSelectionRect should switch to return FloatRect soon with the subpixellayout branch.
                 IntRect selectionRect = box->localSelectionRect(start, end);
                 if (box->isHorizontal()) {
                     r.setHeight(selectionRect.height());

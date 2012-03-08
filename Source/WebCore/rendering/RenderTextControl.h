@@ -72,7 +72,7 @@ private:
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual bool avoidsFloats() const { return true; }
     
-    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&);
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint&);
 
     virtual bool canBeProgramaticallyScrolled() const { return true; }
 

@@ -651,11 +651,11 @@ public:
     // Return the offset from an object up the container() chain. Asserts that none of the intermediate objects have transforms.
     LayoutSize offsetFromAncestorContainer(RenderObject*) const;
     
-    virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint&) const { }
+    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint&) const { }
 
     // FIXME: useTransforms should go away eventually
-    LayoutRect absoluteBoundingBoxRect(bool useTransform = true) const;
-    LayoutRect absoluteBoundingBoxRectIgnoringTransforms() const { return absoluteBoundingBoxRect(false); }
+    IntRect absoluteBoundingBoxRect(bool useTransform = true) const;
+    IntRect absoluteBoundingBoxRectIgnoringTransforms() const { return absoluteBoundingBoxRect(false); }
 
     // Build an array of quads in absolute coords for line boxes
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* /*wasFixed*/ = 0) const { }
@@ -837,7 +837,7 @@ public:
     bool shouldUseTransformFromContainer(const RenderObject* container) const;
     void getTransformFromContainer(const RenderObject* container, const LayoutSize& offsetInContainer, TransformationMatrix&) const;
     
-    virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&) { };
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint&) { };
 
     LayoutRect absoluteOutlineBounds() const
     {

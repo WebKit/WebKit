@@ -1110,7 +1110,7 @@ void RenderObject::drawArcForBoxSide(GraphicsContext* graphicsContext, int x, in
     
 void RenderObject::paintFocusRing(GraphicsContext* context, const LayoutPoint& paintOffset, RenderStyle* style)
 {
-    Vector<LayoutRect> focusRingRects;
+    Vector<IntRect> focusRingRects;
     addFocusRingRects(focusRingRects, paintOffset);
     if (style->outlineStyleIsAuto())
         context->drawFocusRing(focusRingRects, style->outlineWidth(), style->outlineOffset(), style->visitedDependentColor(CSSPropertyOutlineColor));
@@ -1197,7 +1197,7 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRe
         graphicsContext->endTransparencyLayer();
 }
 
-LayoutRect RenderObject::absoluteBoundingBoxRect(bool useTransforms) const
+IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms) const
 {
     if (useTransforms) {
         Vector<FloatQuad> quads;
@@ -1207,29 +1207,29 @@ LayoutRect RenderObject::absoluteBoundingBoxRect(bool useTransforms) const
         if (!n)
             return IntRect();
     
-        LayoutRect result = quads[0].enclosingBoundingBox();
+        IntRect result = quads[0].enclosingBoundingBox();
         for (size_t i = 1; i < n; ++i)
             result.unite(quads[i].enclosingBoundingBox());
         return result;
     }
 
     FloatPoint absPos = localToAbsolute();
-    Vector<LayoutRect> rects;
+    Vector<IntRect> rects;
     absoluteRects(rects, flooredLayoutPoint(absPos));
 
     size_t n = rects.size();
     if (!n)
-        return LayoutRect();
+        return IntRect();
 
     LayoutRect result = rects[0];
     for (size_t i = 1; i < n; ++i)
         result.unite(rects[i]);
-    return result;
+    return pixelSnappedIntRect(result);
 }
 
 void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
 {
-    Vector<LayoutRect> rects;
+    Vector<IntRect> rects;
     // FIXME: addFocusRingRects() needs to be passed this transform-unaware
     // localToAbsolute() offset here because RenderInline::addFocusRingRects()
     // implicitly assumes that. This doesn't work correctly with transformed
@@ -1238,7 +1238,7 @@ void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
     addFocusRingRects(rects, flooredLayoutPoint(absolutePoint));
     size_t count = rects.size(); 
     for (size_t i = 0; i < count; ++i) {
-        LayoutRect rect = rects[i];
+        IntRect rect = rects[i];
         rect.move(-absolutePoint.x(), -absolutePoint.y());
         quads.append(localToAbsoluteQuad(FloatQuad(rect)));
     }
