@@ -371,11 +371,14 @@ void ContainerNode::willRemove()
 {
     RefPtr<Node> protect(this);
 
-    for (RefPtr<Node> child = firstChild(); child; child = child->nextSibling()) {
-        if (child->parentNode() != this) // Check for child being removed from subtree while removing.
-            break;
-        child->willRemove();
+    NodeVector children;
+    collectNodes(this, children);
+    for (size_t i = 0; i < children.size(); ++i) {
+        if (children[i]->parentNode() != this) // Check for child being removed from subtree while removing.
+            continue;
+        children[i]->willRemove();
     }
+
     Node::willRemove();
 }
 
