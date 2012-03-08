@@ -22,6 +22,7 @@
 #define qquickwebview_p_p_h
 
 #include "DrawingAreaProxy.h"
+#include "QtDialogRunner.h"
 #include "QtFlickProvider.h"
 #include "QtPageClient.h"
 #include "QtViewportInteractionEngine.h"
@@ -107,6 +108,8 @@ public:
     void handleAuthenticationRequiredRequest(const QString& hostname, const QString& realm, const QString& prefilledUsername, QString& username, QString& password);
     bool handleCertificateVerificationRequest(const QString& hostname);
     void handleProxyAuthenticationRequiredRequest(const QString& hostname, uint16_t port, const QString& prefilledUsername, QString& username, QString& password);
+
+    void execDialogRunner(QtDialogRunner&);
 
     void setRenderToOffscreenBuffer(bool enable) { m_renderToOffscreenBuffer = enable; }
     void setViewInAttachedProperties(QObject*);

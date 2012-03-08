@@ -1,3 +1,23 @@
+2012-03-08  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt WK2] Remove duplicate code related to dialog handling in QQuickWebView
+        https://bugs.webkit.org/show_bug.cgi?id=80557
+
+        Reviewed by Simon Hausmann.
+
+        Move common code related to running QtDialogRunner into a separate function
+ 
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::runJavaScriptAlert):
+        (QQuickWebViewPrivate::runJavaScriptConfirm):
+        (QQuickWebViewPrivate::runJavaScriptPrompt):
+        (QQuickWebViewPrivate::handleAuthenticationRequiredRequest):
+        (QQuickWebViewPrivate::handleProxyAuthenticationRequiredRequest):
+        (QQuickWebViewPrivate::handleCertificateVerificationRequest):
+        (QQuickWebViewPrivate::execDialogRunner):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+
 2012-03-07  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt] Authentication dialog does not work

@@ -23,7 +23,6 @@
 
 #include "DownloadProxy.h"
 #include "DrawingAreaProxyImpl.h"
-#include "QtDialogRunner.h"
 #include "QtDownloadManager.h"
 #include "QtWebContext.h"
 #include "QtWebIconDatabaseClient.h"
@@ -265,14 +264,8 @@ void QQuickWebViewPrivate::runJavaScriptAlert(const QString& alertText)
     QtDialogRunner dialogRunner;
     if (!dialogRunner.initForAlert(alertDialog, q, alertText))
         return;
-    setViewInAttachedProperties(dialogRunner.dialog());
 
-    disableMouseEvents();
-    m_dialogRunnerActive = true;
-
-    dialogRunner.exec();
-    m_dialogRunnerActive = false;
-    enableMouseEvents();
+    execDialogRunner(dialogRunner);
 }
 
 bool QQuickWebViewPrivate::runJavaScriptConfirm(const QString& message)
@@ -284,14 +277,8 @@ bool QQuickWebViewPrivate::runJavaScriptConfirm(const QString& message)
     QtDialogRunner dialogRunner;
     if (!dialogRunner.initForConfirm(confirmDialog, q, message))
         return true;
-    setViewInAttachedProperties(dialogRunner.dialog());
 
-    disableMouseEvents();
-    m_dialogRunnerActive = true;
-
-    dialogRunner.exec();
-    m_dialogRunnerActive = false;
-    enableMouseEvents();
+    execDialogRunner(dialogRunner);
 
     return dialogRunner.wasAccepted();
 }
@@ -309,14 +296,8 @@ QString QQuickWebViewPrivate::runJavaScriptPrompt(const QString& message, const 
         ok = true;
         return defaultValue;
     }
-    setViewInAttachedProperties(dialogRunner.dialog());
 
-    disableMouseEvents();
-    m_dialogRunnerActive = true;
-
-    dialogRunner.exec();
-    m_dialogRunnerActive = false;
-    enableMouseEvents();
+    execDialogRunner(dialogRunner);
 
     ok = dialogRunner.wasAccepted();
     return dialogRunner.result();
@@ -332,14 +313,7 @@ void QQuickWebViewPrivate::handleAuthenticationRequiredRequest(const QString& ho
     if (!dialogRunner.initForAuthentication(authenticationDialog, q, hostname, realm, prefilledUsername))
         return;
 
-    setViewInAttachedProperties(dialogRunner.dialog());
-
-    disableMouseEvents();
-    m_dialogRunnerActive = true;
-
-    dialogRunner.exec();
-    m_dialogRunnerActive = false;
-    enableMouseEvents();
+    execDialogRunner(dialogRunner);
 
     username = dialogRunner.username();
     password = dialogRunner.password();
@@ -355,13 +329,7 @@ void QQuickWebViewPrivate::handleProxyAuthenticationRequiredRequest(const QStrin
     if (!dialogRunner.initForProxyAuthentication(proxyAuthenticationDialog, q, hostname, port, prefilledUsername))
         return;
 
-    setViewInAttachedProperties(dialogRunner.dialog());
-    disableMouseEvents();
-    m_dialogRunnerActive = true;
-
-    dialogRunner.exec();
-    m_dialogRunnerActive = false;
-    enableMouseEvents();
+    execDialogRunner(dialogRunner);
 
     username = dialogRunner.username();
     password = dialogRunner.password();
@@ -377,6 +345,13 @@ bool QQuickWebViewPrivate::handleCertificateVerificationRequest(const QString& h
     if (!dialogRunner.initForCertificateVerification(certificateVerificationDialog, q, hostname))
         return false;
 
+    execDialogRunner(dialogRunner);
+
+    return dialogRunner.wasAccepted();
+}
+
+void QQuickWebViewPrivate::execDialogRunner(QtDialogRunner& dialogRunner)
+{
     setViewInAttachedProperties(dialogRunner.dialog());
 
     disableMouseEvents();
@@ -385,8 +360,6 @@ bool QQuickWebViewPrivate::handleCertificateVerificationRequest(const QString& h
     dialogRunner.exec();
     m_dialogRunnerActive = false;
     enableMouseEvents();
-
-    return dialogRunner.wasAccepted();
 }
 
 void QQuickWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, QtWebPageUIClient::FileChooserType type)
