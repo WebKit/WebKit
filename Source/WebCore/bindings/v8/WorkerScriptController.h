@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -66,6 +66,7 @@ namespace WebCore {
         // forbidExecution()/isExecutionForbidden() to guard against reentry into JS.
         // Can be called from any thread.
         void scheduleExecutionTermination();
+        bool isExecutionTerminating() const;
 
         // Called on Worker thread when JS exits with termination exception caused by forbidExecution() request,
         // or by Worker thread termination code to prevent future entry into JS.
@@ -83,6 +84,8 @@ namespace WebCore {
         v8::Isolate* m_isolate;
         ScopedDOMDataStore m_DOMDataStore;
         bool m_executionForbidden;
+        bool m_executionScheduledToTerminate;
+        mutable Mutex m_scheduledTerminationMutex;
     };
 
 } // namespace WebCore

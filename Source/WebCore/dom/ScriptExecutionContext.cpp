@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,6 +92,8 @@ ScriptExecutionContext::ScriptExecutionContext()
     , m_inDestructor(false)
     , m_inDispatchErrorEvent(false)
     , m_activeDOMObjectsAreSuspended(false)
+    , m_reasonForSuspendingActiveDOMObjects(static_cast<ActiveDOMObject::ReasonForSuspension>(-1))
+    , m_activeDOMObjectsAreStopped(false)
 {
 }
 
@@ -214,6 +217,7 @@ void ScriptExecutionContext::resumeActiveDOMObjects()
 
 void ScriptExecutionContext::stopActiveDOMObjects()
 {
+    m_activeDOMObjectsAreStopped = true;
     // No protection against m_activeDOMObjects changing during iteration: stop() shouldn't execute arbitrary JS.
     m_iteratingActiveDOMObjects = true;
     HashMap<ActiveDOMObject*, void*>::iterator activeObjectsEnd = m_activeDOMObjects.end();

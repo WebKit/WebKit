@@ -87,7 +87,8 @@ bool V8TestCallback::callbackWithClass1Param(Class1* class1Param)
 
     v8::Handle<v8::Value> class1ParamHandle = toV8(class1Param);
     if (class1ParamHandle.IsEmpty()) {
-        CRASH();
+        if (!isScriptControllerTerminating())
+            CRASH();
         return true;
     }
 
@@ -114,12 +115,14 @@ bool V8TestCallback::callbackWithClass2Param(Class2* class2Param, const String& 
 
     v8::Handle<v8::Value> class2ParamHandle = toV8(class2Param);
     if (class2ParamHandle.IsEmpty()) {
-        CRASH();
+        if (!isScriptControllerTerminating())
+            CRASH();
         return true;
     }
     v8::Handle<v8::Value> strArgHandle = v8String(strArg);
     if (strArgHandle.IsEmpty()) {
-        CRASH();
+        if (!isScriptControllerTerminating())
+            CRASH();
         return true;
     }
 
@@ -147,7 +150,8 @@ bool V8TestCallback::callbackWithStringList(RefPtr<DOMStringList> listParam)
 
     v8::Handle<v8::Value> listParamHandle = toV8(listParam);
     if (listParamHandle.IsEmpty()) {
-        CRASH();
+        if (!isScriptControllerTerminating())
+            CRASH();
         return true;
     }
 

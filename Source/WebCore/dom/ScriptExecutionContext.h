@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,6 +98,7 @@ public:
     virtual void stopActiveDOMObjects();
 
     bool activeDOMObjectsAreSuspended() const { return m_activeDOMObjectsAreSuspended; }
+    bool activeDOMObjectsAreStopped() const { return m_activeDOMObjectsAreStopped; }
 
     // Called from the constructor and destructors of ActiveDOMObject.
     void didCreateActiveDOMObject(ActiveDOMObject*, void* upcastPointer);
@@ -210,6 +212,7 @@ private:
 
     bool m_activeDOMObjectsAreSuspended;
     ActiveDOMObject::ReasonForSuspension m_reasonForSuspendingActiveDOMObjects;
+    bool m_activeDOMObjectsAreStopped;
 
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
     RefPtr<FileThread> m_fileThread;

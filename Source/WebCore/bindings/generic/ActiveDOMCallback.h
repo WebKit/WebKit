@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,26 +31,27 @@
 #ifndef ActiveDOMCallback_h
 #define ActiveDOMCallback_h
 
+#include "ContextDestructionObserver.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class ActiveDOMObjectCallbackImpl;
 class ScriptExecutionContext;
 
-// A class that allows callbacks to behave like ActiveDOMObjects, and also
-// be destroyed on the context thread or any other thread.
-class ActiveDOMCallback {
+// A base class that prevents binding callbacks from executing when
+// active dom objects are stopped or suspended, and is used by the
+// generated callback v8 bindings code to avoid erroneously CRASH()'ing
+// after script execution on a worker has been scheduled to terminate.
+//
+// Should only be created, used, and destroyed on the script execution
+// context thread.
+class ActiveDOMCallback : public ContextDestructionObserver {
 public:
     ActiveDOMCallback(ScriptExecutionContext* context);
-    ~ActiveDOMCallback();
+    virtual ~ActiveDOMCallback();
 
     bool canInvokeCallback() const;
-    ScriptExecutionContext* scriptExecutionContext() const;
-
-private:
-    // The ActiveDOMObject part of the callback.
-    OwnPtr<ActiveDOMObjectCallbackImpl> m_impl;
+    bool isScriptControllerTerminating() const;
 };
 
 } // namespace WebCore

@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
 # Copyright (C) 2006 Apple Computer, Inc.
-# Copyright (C) 2007, 2008, 2009 Google Inc.
+# Copyright (C) 2007, 2008, 2009, 2012 Google Inc.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 # Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -2998,7 +2998,8 @@ END
                 my $paramName = $param->name;
                 push(@implContent, "    v8::Handle<v8::Value> ${paramName}Handle = " . NativeToJSValue($param, $paramName) . ";\n");
                 push(@implContent, "    if (${paramName}Handle.IsEmpty()) {\n");
-                push(@implContent, "        CRASH();\n");
+                push(@implContent, "        if (!isScriptControllerTerminating())\n");
+                push(@implContent, "            CRASH();\n");
                 push(@implContent, "        return true;\n");
                 push(@implContent, "    }\n");
                 push(@args, "        ${paramName}Handle");

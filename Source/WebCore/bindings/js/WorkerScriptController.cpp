@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc. All Rights Reserved.
- * Copyright (C) 2011 Google Inc. All Rights Reserved.
+ * Copyright (C) 2011, 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -162,7 +162,18 @@ void WorkerScriptController::setException(ScriptValue exception)
 
 void WorkerScriptController::scheduleExecutionTermination()
 {
+    // The mutex provides a memory barrier to ensure that once
+    // termination is scheduled, isExecutionTerminating will
+    // accurately reflect that state when called from another thread.
+    MutexLocker locker(m_scheduledTerminationMutex);
     m_globalData->terminator.terminateSoon();
+}
+
+bool WorkerScriptController::isExecutionTerminating() const
+{
+    // See comments in scheduleExecutionTermination regarding mutex usage.
+    MutexLocker locker(m_scheduledTerminationMutex);
+    return m_globalData->terminator.shouldTerminate();
 }
 
 void WorkerScriptController::forbidExecution()

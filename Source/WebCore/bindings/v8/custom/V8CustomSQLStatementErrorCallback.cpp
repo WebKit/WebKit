@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Google Inc. All rights reserved.
+ * Copyright (c) 2009, 2012 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -59,7 +59,8 @@ bool V8SQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLEr
     v8::Handle<v8::Value> transactionHandle = toV8(transaction);
     v8::Handle<v8::Value> errorHandle = toV8(error);
     if (transactionHandle.IsEmpty() || errorHandle.IsEmpty()) {
-        CRASH();
+        if (!isScriptControllerTerminating())
+            CRASH();
         return true;
     }
 

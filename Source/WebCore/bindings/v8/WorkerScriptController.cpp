@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -53,6 +53,7 @@ WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
     : m_workerContext(workerContext)
     , m_isolate(v8::Isolate::New())
     , m_executionForbidden(false)
+    , m_executionScheduledToTerminate(false)
 {
     V8BindingPerIsolateData* data = V8BindingPerIsolateData::create(m_isolate);
     data->allStores().append(&m_DOMDataStore);
@@ -92,7 +93,21 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Script
 
 void WorkerScriptController::scheduleExecutionTermination()
 {
+    // The mutex provides a memory barrier to ensure that once
+    // termination is scheduled, isExecutionTerminating will
+    // accurately reflect that state when called from another thread.
+    {
+        MutexLocker locker(m_scheduledTerminationMutex);
+        m_executionScheduledToTerminate = true;
+    }
     v8::V8::TerminateExecution(m_isolate);
+}
+
+bool WorkerScriptController::isExecutionTerminating() const
+{
+    // See comments in scheduleExecutionTermination regarding mutex usage.
+    MutexLocker locker(m_scheduledTerminationMutex);
+    return m_executionScheduledToTerminate;
 }
 
 void WorkerScriptController::forbidExecution()
