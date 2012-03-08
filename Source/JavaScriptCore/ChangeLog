@@ -1,3 +1,14 @@
+2012-03-08  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix line endings for copy-files.cmd.
+        
+        If a cmd file doesn't have Windows line endings, it doesn't work properly.
+        In this case, the label :clean wasn't found, breaking the clean build.
+        
+        Reviewed by Jessie Berlin.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd:
+
 2012-03-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CFA incorrectly handles ValueToInt32
