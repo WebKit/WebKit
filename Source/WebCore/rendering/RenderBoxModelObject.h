@@ -116,6 +116,8 @@ public:
     virtual LayoutUnit marginAfter() const = 0;
     virtual LayoutUnit marginStart() const = 0;
     virtual LayoutUnit marginEnd() const = 0;
+    LayoutUnit marginHeight() const { return marginTop() + marginBottom(); }
+    LayoutUnit marginWidth() const { return marginLeft() + marginRight(); }
 
     bool hasInlineDirectionBordersPaddingOrMargin() const { return hasInlineDirectionBordersOrPadding() || marginStart()|| marginEnd(); }
     bool hasInlineDirectionBordersOrPadding() const { return borderStart() || borderEnd() || paddingStart()|| paddingEnd(); }

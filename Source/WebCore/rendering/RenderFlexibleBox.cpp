@@ -492,7 +492,7 @@ LayoutUnit RenderFlexibleBox::flowAwareMarginAfterForChild(RenderBox* child) con
 
 LayoutUnit RenderFlexibleBox::crossAxisMarginExtentForChild(RenderBox* child) const
 {
-    return isHorizontalFlow() ? child->marginTop() + child->marginBottom() : child->marginLeft() + child->marginRight();
+    return isHorizontalFlow() ? child->marginHeight() : child->marginWidth();
 }
 
 LayoutUnit RenderFlexibleBox::crossAxisScrollbarExtent() const
@@ -632,9 +632,9 @@ bool RenderFlexibleBox::computeNextFlexLine(FlexOrderIterator& iterator, Ordered
 
         LayoutUnit childMainAxisExtent = mainAxisBorderAndPaddingExtentForChild(child) + preferredMainAxisContentExtentForChild(child);
         if (isHorizontalFlow())
-            childMainAxisExtent += child->marginLeft() + child->marginRight();
+            childMainAxisExtent += child->marginWidth();
         else
-            childMainAxisExtent += child->marginTop() + child->marginBottom();
+            childMainAxisExtent += child->marginHeight();
 
         if (isMultiline() && preferredMainAxisExtent + childMainAxisExtent > mainAxisContentExtent() && orderedChildren.size() > 0)
             break;

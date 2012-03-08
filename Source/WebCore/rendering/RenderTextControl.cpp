@@ -143,7 +143,7 @@ void RenderTextControl::computeLogicalHeight()
     HTMLElement* innerText = innerTextElement();
     ASSERT(innerText);
     RenderBox* innerTextBox = innerText->renderBox();
-    LayoutUnit nonContentHeight = innerTextBox->borderAndPaddingHeight() + innerTextBox->marginTop() + innerTextBox->marginBottom();
+    LayoutUnit nonContentHeight = innerTextBox->borderAndPaddingHeight() + innerTextBox->marginHeight();
     setHeight(computeControlHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight) + borderAndPaddingHeight());
 
     // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.

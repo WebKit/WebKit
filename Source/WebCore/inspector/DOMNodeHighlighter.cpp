@@ -414,7 +414,7 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* high
             borderBox = LayoutRect(paddingBox.x() - renderBox->borderLeft(), paddingBox.y() - renderBox->borderTop(),
                     paddingBox.width() + renderBox->borderLeft() + renderBox->borderRight(), paddingBox.height() + renderBox->borderTop() + renderBox->borderBottom());
             marginBox = LayoutRect(borderBox.x() - renderBox->marginLeft(), borderBox.y() - renderBox->marginTop(),
-                    borderBox.width() + renderBox->marginLeft() + renderBox->marginRight(), borderBox.height() + renderBox->marginTop() + renderBox->marginBottom());
+                    borderBox.width() + renderBox->marginWidth(), borderBox.height() + renderBox->marginHeight());
         } else {
             RenderInline* renderInline = toRenderInline(renderer);
 
@@ -426,7 +426,7 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* high
                     paddingBox.width() - renderInline->paddingLeft() - renderInline->paddingRight(), paddingBox.height() - renderInline->paddingTop() - renderInline->paddingBottom());
             // Ignore marginTop and marginBottom for inlines.
             marginBox = LayoutRect(borderBox.x() - renderInline->marginLeft(), borderBox.y(),
-                    borderBox.width() + renderInline->marginLeft() + renderInline->marginRight(), borderBox.height());
+                    borderBox.width() + renderInline->marginWidth(), borderBox.height());
         }
 
         FloatQuad absContentQuad = renderer->localToAbsoluteQuad(FloatRect(contentBox));
