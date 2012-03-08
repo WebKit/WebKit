@@ -41,9 +41,11 @@
                 testExpected("currentCue.id", currentCueNumber);
                 testExpected("video.paused", currentCueNumber % 2 == 0);
 
-                if (currentCueNumber % 2 == 0) {
+                if (currentCueNumber % 2 == 0)
                     run("video.play()");
-                }
+
+                if (currentCueNumber == 3)
+                    endTest();
 
                 currentCueNumber++;
             }
@@ -61,10 +63,8 @@
                 video.src = findMediaFile("video", "../content/test");
             }
 
-            waitForEvent('ended', endTest);
-
             waitForEvent('canplaythrough', function() {
-                video.currentTime = 4.70;
+                video.currentTime = 4.00;
                 videoCanPlayThrough = true;
 
                 runTests();

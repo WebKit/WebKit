@@ -23,6 +23,5 @@ RUN(video.play())
 EVENT(exit)
 EXPECTED (currentCue.id == '3') OK
 EXPECTED (video.paused == 'false') OK
-EVENT(ended)
 END OF TEST
 
