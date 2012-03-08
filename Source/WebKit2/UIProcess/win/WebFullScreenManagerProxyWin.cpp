@@ -57,6 +57,16 @@ void WebFullScreenManagerProxy::exitFullScreen()
     m_webView->fullScreenController()->exitFullScreen();
 }
 
+void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
+{
+    // No-op.
+}
+
+void WebFullScreenManagerProxy::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
+{
+    // No-op.
+}
+
 } // namespace WebKit
 
 #endif

@@ -46,6 +46,16 @@ void WebFullScreenManagerProxy::exitFullScreen()
     notImplemented();
 }
 
+void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
+{
+    notImplemented();
+}
+
+void WebFullScreenManagerProxy::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
+{
+    notImplemented();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(FULLSCREEN_API)

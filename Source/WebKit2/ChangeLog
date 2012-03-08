@@ -1,3 +1,20 @@
+2012-03-08  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix.
+        
+        Add stub implementations of beganEnterFullScreen and beganExitFullScreen
+        to platform-specific WebFullScreenManagerProxy implementations.
+
+        * UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp:
+        (WebKit::WebFullScreenManagerProxy::beganEnterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::beganExitFullScreen):
+        * UIProcess/qt/WebFullScreenManagerProxyQt.cpp:
+        (WebKit::WebFullScreenManagerProxy::beganEnterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::beganExitFullScreen):
+        * UIProcess/win/WebFullScreenManagerProxyWin.cpp:
+        (WebKit::WebFullScreenManagerProxy::beganEnterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::beganExitFullScreen):
+
 2012-03-07  Jon Lee  <jonlee@apple.com>
 
         Add support for ENABLE(LEGACY_NOTIFICATIONS)
