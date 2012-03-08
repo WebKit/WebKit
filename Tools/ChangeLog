@@ -1,3 +1,9 @@
+2012-03-08  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Added myself to watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-03-07  Jessie Berlin  <jberlin@apple.com>
 
         Clean Windows build fails after r110033

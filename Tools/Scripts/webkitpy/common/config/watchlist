@@ -157,7 +157,7 @@
         "StyleChecker": [ "levin@chromium.org", ],
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
-        "V8Bindings|BindingsScripts": [ "abarth@webkit.org", "japhet@chromium.org" ],
+        "V8Bindings|BindingsScripts": [ "abarth@webkit.org", "japhet@chromium.org", "haraken@chromium.org" ],
         "FrameLoader": [ "abarth@webkit.org", "japhet@chromium.org" ],
         "Loader": [ "japhet@chromium.org" ],
         "SecurityCritical": [ "abarth@webkit.org" ],
