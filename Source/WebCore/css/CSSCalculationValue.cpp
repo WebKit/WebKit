@@ -114,6 +114,25 @@ public:
         return m_value->cssText();
     }
 
+    virtual PassOwnPtr<CalcExpressionNode> toCalcValue(RenderStyle* style, RenderStyle* rootStyle, double zoom) const
+    {
+        switch (m_category) {
+        case CalcNumber:
+            return adoptPtr(new CalcExpressionNumber(m_value->getFloatValue()));
+        case CalcLength:
+            return adoptPtr(new CalcExpressionNumber(m_value->computeLength<float>(style, rootStyle, zoom)));
+        case CalcPercent:
+        case CalcPercentLength:
+            return adoptPtr(new CalcExpressionLength(CSSStyleSelector::convertToFloatLength(m_value.get(), style, rootStyle, zoom)));
+        // Only types that could be part of a Length expression can be converted
+        // to a CalcExpressionNode. CalcPercentNumber makes no sense as a Length.
+        case CalcPercentNumber:
+        case CalcOther:
+            ASSERT_NOT_REACHED();
+        }
+        return nullptr;
+    }
+
     virtual double doubleValue() const
     {
         switch (m_category) {
@@ -206,6 +225,17 @@ public:
     virtual bool isZero() const
     {
         return !doubleValue();
+    }
+
+    virtual PassOwnPtr<CalcExpressionNode> toCalcValue(RenderStyle* style, RenderStyle* rootStyle, double zoom) const
+    {
+        OwnPtr<CalcExpressionNode> left(m_leftSide->toCalcValue(style, rootStyle, zoom));
+        if (!left)
+            return nullptr;
+        OwnPtr<CalcExpressionNode> right(m_rightSide->toCalcValue(style, rootStyle, zoom));
+        if (!right)
+            return nullptr;
+        return adoptPtr(new CalcExpressionBinaryOperation(left.release(), right.release(), m_operator));
     }
 
     virtual double doubleValue() const 

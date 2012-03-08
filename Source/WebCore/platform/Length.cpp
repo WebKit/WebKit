@@ -25,6 +25,7 @@
 #include "config.h"
 #include "Length.h"
 
+#include "CalculationValue.h"
 #include "PlatformString.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
@@ -147,6 +148,88 @@ PassOwnArrayPtr<Length> newLengthArray(const String& string, int& len)
         len--;
 
     return r.release();
+}
+        
+class CalculationValueHandleMap {
+public:
+    CalculationValueHandleMap() 
+        : m_index(1) 
+    {
+    }
+    
+    int insert(PassRefPtr<CalculationValue> calcValue)
+    {
+        ASSERT(m_index);
+        // FIXME calc(): https://bugs.webkit.org/show_bug.cgi?id=80489
+        // This monotonically increasing handle generation scheme is potentially wasteful
+        // of the handle space. Consider reusing empty handles.
+        while (m_map.contains(m_index))
+            m_index++;
+        
+        m_map.set(m_index, calcValue);       
+        
+        return m_index;
+    }
+
+    void remove(int index)
+    {
+        ASSERT(m_map.contains(index));
+        m_map.remove(index);
+    }
+    
+    PassRefPtr<CalculationValue> get(int index)
+    {
+        ASSERT(m_map.contains(index));
+        return m_map.get(index);
+    }
+    
+private:        
+    int m_index;
+    HashMap<int, RefPtr<CalculationValue> > m_map;
+};
+    
+static CalculationValueHandleMap& calcHandles()
+{
+    DEFINE_STATIC_LOCAL(CalculationValueHandleMap, handleMap, ());
+    return handleMap;
+}
+
+Length::Length(PassRefPtr<CalculationValue> calc)
+    : m_quirk(false)
+    , m_type(Calculated)
+    , m_isFloat(false)
+{
+    m_intValue = calcHandles().insert(calc);
+}
+    
+PassRefPtr<CalculationValue> Length::calculationValue() const
+{
+    ASSERT(isCalculated());
+    return calcHandles().get(calculationHandle());
+}
+    
+void Length::incrementCalculatedRef() const
+{
+    ASSERT(isCalculated());
+    calculationValue()->ref();
+}
+
+void Length::decrementCalculatedRef() const
+{
+    ASSERT(isCalculated());
+    RefPtr<CalculationValue> calcLength = calculationValue();
+    if (calcLength->hasOneRef())
+        calcHandles().remove(calculationHandle());
+    calcLength->deref();
+}    
+
+float Length::nonNanCalculatedValue(int maxValue) const
+{
+    ASSERT(isCalculated());
+    float result = calculationValue()->evaluate(maxValue);
+    if (isnan(result))
+        return 0;
+    return result;
 }
 
 class SameSizeAsLength {
