@@ -18,26 +18,26 @@ PASS computedMarginLeft("simple-bottom") is "0px"
 PASS computedMarginTop("simple-bottom") is "0px"
 PASS computedMarginRight("simple-bottom") is "0px"
 PASS computedMarginBottom("simple-bottom") is "25px"
-FAIL computedMarginLeft("percent-all") should be 25px. Was 0px.
-FAIL computedMarginTop("percent-all") should be 25px. Was 0px.
-FAIL computedMarginRight("percent-all") should be 25px. Was 0px.
-FAIL computedMarginBottom("percent-all") should be 25px. Was 0px.
-FAIL computedMarginLeft("percent-left") should be 25px. Was 0px.
+PASS computedMarginLeft("percent-all") is "25px"
+PASS computedMarginTop("percent-all") is "25px"
+PASS computedMarginRight("percent-all") is "25px"
+PASS computedMarginBottom("percent-all") is "25px"
+PASS computedMarginLeft("percent-left") is "25px"
 PASS computedMarginTop("percent-left") is "0px"
 PASS computedMarginRight("percent-left") is "0px"
 PASS computedMarginBottom("percent-left") is "0px"
 PASS computedMarginLeft("percent-right") is "0px"
 PASS computedMarginTop("percent-right") is "0px"
-FAIL computedMarginRight("percent-right") should be 25px. Was 0px.
+PASS computedMarginRight("percent-right") is "25px"
 PASS computedMarginBottom("percent-right") is "0px"
 PASS computedMarginLeft("percent-top") is "0px"
-FAIL computedMarginTop("percent-top") should be 25px. Was 0px.
+PASS computedMarginTop("percent-top") is "25px"
 PASS computedMarginRight("percent-top") is "0px"
 PASS computedMarginBottom("percent-top") is "0px"
 PASS computedMarginLeft("percent-bottom") is "0px"
 PASS computedMarginTop("percent-bottom") is "0px"
 PASS computedMarginRight("percent-bottom") is "0px"
-FAIL computedMarginBottom("percent-bottom") should be 25px. Was 0px.
+PASS computedMarginBottom("percent-bottom") is "25px"
 PASS successfullyParsed is true
 
 TEST COMPLETE
