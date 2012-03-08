@@ -210,7 +210,7 @@ public:
 
     virtual intptr_t GetHash()
     {
-        return reinterpret_cast<intptr_t>(m_object);
+        return PtrHash<void*>::hash(m_object);
     }
     
     virtual const char* GetLabel()
