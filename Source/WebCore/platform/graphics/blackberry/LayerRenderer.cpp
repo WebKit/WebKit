@@ -324,6 +324,11 @@ void LayerRenderer::drawLayers(const FloatRect& visibleRect, const IntRect& layo
 
     m_context->swapBuffers();
 
+#if ENABLE_SCISSOR
+    glDisable(GL_SCISSOR_TEST);
+#endif
+    glDisable(GL_STENCIL_TEST);
+
     LayerSet::iterator iter = m_layersLockingTextureResources.begin();
     for (; iter != m_layersLockingTextureResources.end(); ++iter)
         (*iter)->releaseTextureResources();
