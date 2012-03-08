@@ -57,7 +57,7 @@ void JIT::emit_op_put_by_index(Instruction* currentInstruction)
     
     JITStubCall stubCall(this, cti_op_put_by_index);
     stubCall.addArgument(base);
-    stubCall.addArgument(Imm32(property));
+    stubCall.addArgument(TrustedImm32(property));
     stubCall.addArgument(value);
     stubCall.call();
 }

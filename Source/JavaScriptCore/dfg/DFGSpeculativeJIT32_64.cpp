@@ -2546,7 +2546,7 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.add32(TrustedImm32(1), storageLengthGPR);
         m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)));
         m_jit.add32(TrustedImm32(1), MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
-        m_jit.move(Imm32(JSValue::Int32Tag), storageGPR);
+        m_jit.move(TrustedImm32(JSValue::Int32Tag), storageGPR);
         
         MacroAssembler::Jump done = m_jit.jump();
         
@@ -2604,8 +2604,8 @@ void SpeculativeJIT::compile(Node& node)
         
         holeCase.link(&m_jit);
         emptyArrayCase.link(&m_jit);
-        m_jit.move(MacroAssembler::Imm32(jsUndefined().tag()), valueTagGPR);
-        m_jit.move(MacroAssembler::Imm32(jsUndefined().payload()), valuePayloadGPR);
+        m_jit.move(MacroAssembler::TrustedImm32(jsUndefined().tag()), valueTagGPR);
+        m_jit.move(MacroAssembler::TrustedImm32(jsUndefined().payload()), valuePayloadGPR);
         done.append(m_jit.jump());
         
         slowCase.link(&m_jit);

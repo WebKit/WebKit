@@ -216,6 +216,11 @@ public:
         move(src, dest);
         orPtr(imm, dest);
     }
+    
+    void rotateRightPtr(TrustedImm32 imm, RegisterID srcDst)
+    {
+        m_assembler.rorq_i8r(imm.m_value, srcDst);
+    }
 
     void subPtr(RegisterID src, RegisterID dest)
     {
@@ -237,12 +242,16 @@ public:
     {
         m_assembler.xorq_rr(src, dest);
     }
+    
+    void xorPtr(RegisterID src, Address dest)
+    {
+        m_assembler.xorq_rm(src, dest.offset, dest.base);
+    }
 
     void xorPtr(TrustedImm32 imm, RegisterID srcDest)
     {
         m_assembler.xorq_ir(imm.m_value, srcDest);
     }
-
 
     void loadPtr(ImplicitAddress address, RegisterID dest)
     {

@@ -102,7 +102,7 @@ void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
     Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? Options::executionCounterIncrementForLoop : Options::executionCounterIncrementForReturn), AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter()));
     JITStubCall stubCall(this, kind == LoopOptimizationCheck ? cti_optimize_from_loop : cti_optimize_from_ret);
     if (kind == LoopOptimizationCheck)
-        stubCall.addArgument(Imm32(m_bytecodeOffset));
+        stubCall.addArgument(TrustedImm32(m_bytecodeOffset));
     stubCall.call();
     skipOptimize.link(this);
 }

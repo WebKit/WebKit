@@ -1259,7 +1259,7 @@ void SpeculativeJIT::createOSREntries()
         }
         
         m_osrEntryHeads.append(m_jit.label());
-        m_jit.move(Imm32(blockIndex), GPRInfo::regT0);
+        m_jit.move(TrustedImm32(blockIndex), GPRInfo::regT0);
         m_jit.jump().linkTo(m_blockHeads[blockIndex], &m_jit);
     }
 }

@@ -1,3 +1,111 @@
+2012-03-06  Oliver Hunt  <oliver@apple.com>
+
+        Further harden 64-bit JIT
+        https://bugs.webkit.org/show_bug.cgi?id=80457
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements blinding for ImmPtr.  Rather than xor based blinding
+        we perform randomised pointer rotations in order to avoid the significant
+        cost in executable memory that would otherwise be necessary (and to avoid
+        the need for an additional scratch register in some cases).
+
+        As with the prior blinding patch there's a moderate amount of noise as we
+        correct the use of ImmPtr vs. TrustedImmPtr.
+
+        * assembler/AbstractMacroAssembler.h:
+        (ImmPtr):
+        (JSC::AbstractMacroAssembler::ImmPtr::asTrustedImmPtr):
+        * assembler/MacroAssembler.h:
+        (MacroAssembler):
+        (JSC::MacroAssembler::storePtr):
+        (JSC::MacroAssembler::branchPtr):
+        (JSC::MacroAssembler::shouldBlind):
+        (JSC::MacroAssembler::RotatedImmPtr::RotatedImmPtr):
+        (RotatedImmPtr):
+        (JSC::MacroAssembler::rotationBlindConstant):
+        (JSC::MacroAssembler::loadRotationBlindedConstant):
+        (JSC::MacroAssembler::convertInt32ToDouble):
+        (JSC::MacroAssembler::move):
+        (JSC::MacroAssembler::poke):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::storeDouble):
+        (JSC::MacroAssemblerARMv7::branchAdd32):
+        * assembler/MacroAssemblerX86_64.h:
+        (MacroAssemblerX86_64):
+        (JSC::MacroAssemblerX86_64::rotateRightPtr):
+        (JSC::MacroAssemblerX86_64::xorPtr):
+        * assembler/X86Assembler.h:
+        (X86Assembler):
+        (JSC::X86Assembler::xorq_rm):
+        (JSC::X86Assembler::rorq_i8r):
+        * dfg/DFGCCallHelpers.h:
+        (CCallHelpers):
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::createOSREntries):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::silentFillGPR):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::emitEdgeCode):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillDouble):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitOptimizationCheck):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitSlow_op_post_inc):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitValueProfilingSite):
+        (JSC::JIT::emitGetVirtualRegister):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_mov):
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_strcat):
+        (JSC::JIT::emit_op_ensure_property_exists):
+        (JSC::JIT::emit_op_resolve_skip):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emit_op_resolve_with_base):
+        (JSC::JIT::emit_op_resolve_with_this):
+        (JSC::JIT::emit_op_jmp_scopes):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        (JSC::JIT::emit_op_throw_reference_error):
+        (JSC::JIT::emit_op_debug):
+        (JSC::JIT::emitSlow_op_resolve_global_dynamic):
+        (JSC::JIT::emit_op_new_array):
+        (JSC::JIT::emitSlow_op_new_array):
+        (JSC::JIT::emit_op_new_array_buffer):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_strcat):
+        (JSC::JIT::emit_op_ensure_property_exists):
+        (JSC::JIT::emit_op_resolve_skip):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emit_op_resolve_with_base):
+        (JSC::JIT::emit_op_resolve_with_this):
+        (JSC::JIT::emit_op_jmp_scopes):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        (JSC::JIT::emit_op_switch_string):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_by_index):
+        * jit/JITStubCall.h:
+        (JITStubCall):
+        (JSC::JITStubCall::addArgument):
+
 2012-03-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         ARM build fix.

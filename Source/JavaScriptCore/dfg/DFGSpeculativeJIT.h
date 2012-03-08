@@ -452,7 +452,7 @@ private:
             ASSERT(info.gpr() == target);
             if (node.hasConstant()) {
                 ASSERT(isBooleanConstant(nodeIndex));
-                m_jit.move(Imm32(valueOfBooleanConstant(nodeIndex)), target);
+                m_jit.move(TrustedImm32(valueOfBooleanConstant(nodeIndex)), target);
             } else
                 m_jit.load32(JITCompiler::payloadFor(spillMe), target);
 #endif
@@ -464,7 +464,7 @@ private:
             if (node.hasConstant()) {
                 JSValue value = valueOfJSConstant(nodeIndex);
                 ASSERT(value.isCell());
-                m_jit.move(ImmPtr(value.asCell()), target);
+                m_jit.move(TrustedImmPtr(value.asCell()), target);
             } else
                 m_jit.loadPtr(JITCompiler::payloadFor(spillMe), target);
             return;
@@ -479,9 +479,12 @@ private:
         ASSERT(registerFormat & DataFormatJS);
 #if USE(JSVALUE64)
         ASSERT(info.gpr() == target);
-        if (node.hasConstant())
-            m_jit.move(valueOfJSConstantAsImmPtr(nodeIndex), target);
-        else if (info.spillFormat() == DataFormatInteger) {
+        if (node.hasConstant()) {
+            if (valueOfJSConstant(nodeIndex).isCell())
+                m_jit.move(valueOfJSConstantAsImmPtr(nodeIndex).asTrustedImmPtr(), target);
+            else
+                m_jit.move(valueOfJSConstantAsImmPtr(nodeIndex), target);
+        } else if (info.spillFormat() == DataFormatInteger) {
             ASSERT(registerFormat == DataFormatJSInteger);
             m_jit.load32(JITCompiler::payloadFor(spillMe), target);
             m_jit.orPtr(GPRInfo::tagTypeNumberRegister, target);
@@ -1188,12 +1191,12 @@ private:
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, MacroAssembler::TrustedImm32 imm)
     {
-        m_jit.setupArgumentsWithExecState(arg1, MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))));
+        m_jit.setupArgumentsWithExecState(arg1, MacroAssembler::TrustedImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, MacroAssembler::TrustedImm32 imm, GPRReg arg2)
     {
-        m_jit.setupArgumentsWithExecState(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))), arg2);
+        m_jit.setupArgumentsWithExecState(MacroAssembler::TrustedImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))), arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_ECJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
@@ -1296,7 +1299,7 @@ private:
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, void* pointer)
     {
-        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, ImmPtr(pointer));
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, TrustedImmPtr(pointer));
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(J_DFGOperation_EJP operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2)
@@ -1639,7 +1642,7 @@ private:
     {
         if (!DFG_ENABLE_EDGE_CODE_VERIFICATION)
             return;
-        m_jit.move(Imm32(destination), GPRInfo::regT0);
+        m_jit.move(TrustedImm32(destination), GPRInfo::regT0);
     }
 
     void addBranch(const MacroAssembler::Jump& jump, BlockIndex destination)

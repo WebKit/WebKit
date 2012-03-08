@@ -116,6 +116,12 @@ namespace JSC {
             m_jit->poke(argument, m_stackIndex);
             m_stackIndex += stackIndexStep;
         }
+        
+        void addArgument(JIT::ImmPtr argument)
+        {
+            m_jit->poke(argument, m_stackIndex);
+            m_stackIndex += stackIndexStep;
+        }
 
         void addArgument(JIT::RegisterID argument)
         {

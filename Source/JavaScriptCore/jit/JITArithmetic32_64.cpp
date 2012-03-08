@@ -479,7 +479,7 @@ void JIT::emitSlow_op_post_inc(Instruction* currentInstruction, Vector<SlowCaseE
 
     JITStubCall stubCall(this, cti_op_post_inc);
     stubCall.addArgument(srcDst);
-    stubCall.addArgument(Imm32(srcDst));
+    stubCall.addArgument(TrustedImm32(srcDst));
     stubCall.call(dst);
 }
 

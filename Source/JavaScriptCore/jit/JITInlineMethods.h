@@ -559,9 +559,9 @@ inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
     if (m_randomGenerator.getUint32() & 1)
         add32(TrustedImm32(1), bucketCounterRegister);
     else
-        add32(Imm32(3), bucketCounterRegister);
-    and32(Imm32(ValueProfile::bucketIndexMask), bucketCounterRegister);
-    move(ImmPtr(valueProfile->m_buckets), scratch);
+        add32(TrustedImm32(3), bucketCounterRegister);
+    and32(TrustedImm32(ValueProfile::bucketIndexMask), bucketCounterRegister);
+    move(TrustedImmPtr(valueProfile->m_buckets), scratch);
 #if USE(JSVALUE64)
     storePtr(value, BaseIndex(scratch, bucketCounterRegister, TimesEight));
 #elif USE(JSVALUE32_64)
@@ -868,7 +868,10 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(int src, RegisterID dst)
     // TODO: we want to reuse values that are already in registers if we can - add a register allocator!
     if (m_codeBlock->isConstantRegisterIndex(src)) {
         JSValue value = m_codeBlock->getConstant(src);
-        move(ImmPtr(JSValue::encode(value)), dst);
+        if (!value.isNumber())
+            move(TrustedImmPtr(JSValue::encode(value)), dst);
+        else
+            move(ImmPtr(JSValue::encode(value)), dst);
         killLastResultRegister();
         return;
     }

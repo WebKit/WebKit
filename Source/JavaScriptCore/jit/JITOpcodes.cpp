@@ -358,7 +358,10 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
         emitPutVirtualRegister(dst);
     } else {
         if (m_codeBlock->isConstantRegisterIndex(src)) {
-            storePtr(ImmPtr(JSValue::encode(getConstantOperand(src))), Address(callFrameRegister, dst * sizeof(Register)));
+            if (!getConstantOperand(src).isNumber())
+                storePtr(TrustedImmPtr(JSValue::encode(getConstantOperand(src))), Address(callFrameRegister, dst * sizeof(Register)));
+            else
+                storePtr(ImmPtr(JSValue::encode(getConstantOperand(src))), Address(callFrameRegister, dst * sizeof(Register)));
             if (dst == m_lastResultBytecodeRegister)
                 killLastResultRegister();
         } else if ((src == m_lastResultBytecodeRegister) || (dst == m_lastResultBytecodeRegister)) {
@@ -390,7 +393,7 @@ void JIT::emit_op_jmp(Instruction* currentInstruction)
 
 void JIT::emit_op_new_object(Instruction* currentInstruction)
 {
-    emitAllocateJSFinalObject(ImmPtr(m_codeBlock->globalObject()->emptyObjectStructure()), regT0, regT1);
+    emitAllocateJSFinalObject(TrustedImmPtr(m_codeBlock->globalObject()->emptyObjectStructure()), regT0, regT1);
     
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
@@ -595,8 +598,8 @@ void JIT::emit_op_to_primitive(Instruction* currentInstruction)
 void JIT::emit_op_strcat(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_strcat);
-    stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
     stubCall.call(currentInstruction[1].u.operand);
 }
 
@@ -610,7 +613,7 @@ void JIT::emit_op_resolve_base(Instruction* currentInstruction)
 void JIT::emit_op_ensure_property_exists(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_ensure_property_exists);
-    stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
 }
@@ -619,7 +622,7 @@ void JIT::emit_op_resolve_skip(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_resolve_skip);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
     stubCall.callWithValueProfiling(currentInstruction[1].u.operand);
 }
 
@@ -655,7 +658,7 @@ void JIT::emitSlow_op_resolve_global(Instruction* currentInstruction, Vector<Slo
     linkSlowCase(iter);
     JITStubCall stubCall(this, cti_op_resolve_global);
     stubCall.addArgument(TrustedImmPtr(ident));
-    stubCall.addArgument(Imm32(currentIndex));
+    stubCall.addArgument(TrustedImm32(currentIndex));
     stubCall.addArgument(regT0);
     stubCall.callWithValueProfiling(dst);
 }
@@ -768,7 +771,7 @@ void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_resolve_with_base);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
-    stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
     stubCall.callWithValueProfiling(currentInstruction[2].u.operand);
 }
 
@@ -776,7 +779,7 @@ void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_resolve_with_this);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
-    stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
     stubCall.callWithValueProfiling(currentInstruction[2].u.operand);
 }
 
@@ -1034,7 +1037,7 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
 void JIT::emit_op_jmp_scopes(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_jmp_scopes);
-    stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
     stubCall.call();
     addJump(jump(), currentInstruction[2].u.operand);
 }
@@ -1052,7 +1055,7 @@ void JIT::emit_op_switch_imm(Instruction* currentInstruction)
 
     JITStubCall stubCall(this, cti_op_switch_imm);
     stubCall.addArgument(scrutinee, regT2);
-    stubCall.addArgument(Imm32(tableIndex));
+    stubCall.addArgument(TrustedImm32(tableIndex));
     stubCall.call();
     jump(regT0);
 }
@@ -1070,7 +1073,7 @@ void JIT::emit_op_switch_char(Instruction* currentInstruction)
 
     JITStubCall stubCall(this, cti_op_switch_char);
     stubCall.addArgument(scrutinee, regT2);
-    stubCall.addArgument(Imm32(tableIndex));
+    stubCall.addArgument(TrustedImm32(tableIndex));
     stubCall.call();
     jump(regT0);
 }
@@ -1087,7 +1090,7 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
 
     JITStubCall stubCall(this, cti_op_switch_string);
     stubCall.addArgument(scrutinee, regT2);
-    stubCall.addArgument(Imm32(tableIndex));
+    stubCall.addArgument(TrustedImm32(tableIndex));
     stubCall.call();
     jump(regT0);
 }
@@ -1095,7 +1098,10 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
 void JIT::emit_op_throw_reference_error(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_throw_reference_error);
-    stubCall.addArgument(ImmPtr(JSValue::encode(m_codeBlock->getConstant(currentInstruction[1].u.operand))));
+    if (!m_codeBlock->getConstant(currentInstruction[1].u.operand).isNumber())
+        stubCall.addArgument(TrustedImmPtr(JSValue::encode(m_codeBlock->getConstant(currentInstruction[1].u.operand))));
+    else
+        stubCall.addArgument(ImmPtr(JSValue::encode(m_codeBlock->getConstant(currentInstruction[1].u.operand))));
     stubCall.call();
 }
 
@@ -1106,9 +1112,9 @@ void JIT::emit_op_debug(Instruction* currentInstruction)
     breakpoint();
 #else
     JITStubCall stubCall(this, cti_op_debug);
-    stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
-    stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
     stubCall.call();
 #endif
 }
@@ -1559,7 +1565,7 @@ void JIT::emitSlow_op_resolve_global_dynamic(Instruction* currentInstruction, Ve
     linkSlowCase(iter); // We managed to skip all the nodes in the scope chain, but the cache missed.
     JITStubCall stubCall(this, cti_op_resolve_global);
     stubCall.addArgument(TrustedImmPtr(ident));
-    stubCall.addArgument(Imm32(currentIndex));
+    stubCall.addArgument(TrustedImm32(currentIndex));
     stubCall.addArgument(regT0);
     stubCall.callWithValueProfiling(dst);
 }
@@ -1642,8 +1648,8 @@ void JIT::emit_op_new_array(Instruction* currentInstruction)
     int length = currentInstruction[3].u.operand;
     if (CopiedSpace::isOversize(JSArray::storageSize(length))) {
         JITStubCall stubCall(this, cti_op_new_array);
-        stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
-        stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
+        stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
+        stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
         stubCall.call(currentInstruction[1].u.operand);
         return;
     }
@@ -1662,16 +1668,16 @@ void JIT::emitSlow_op_new_array(Instruction* currentInstruction, Vector<SlowCase
     linkSlowCase(iter); // Not enough space in MarkedSpace for cell.
     linkSlowCase(iter); // Not enough space in CopiedSpace for storage.
     JITStubCall stubCall(this, cti_op_new_array);
-    stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
     stubCall.call(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_new_array_buffer(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_new_array_buffer);
-    stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
+    stubCall.addArgument(TrustedImm32(currentInstruction[3].u.operand));
     stubCall.call(currentInstruction[1].u.operand);
 }
 

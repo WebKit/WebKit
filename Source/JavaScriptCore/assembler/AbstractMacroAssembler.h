@@ -196,11 +196,19 @@ public:
         const void* m_value;
     };
 
-    struct ImmPtr : public TrustedImmPtr {
+    struct ImmPtr : 
+#if ENABLE(JIT_CONSTANT_BLINDING)
+        private TrustedImmPtr 
+#else
+        public TrustedImmPtr
+#endif
+    {
         explicit ImmPtr(const void* value)
             : TrustedImmPtr(value)
         {
         }
+
+        TrustedImmPtr asTrustedImmPtr() { return *this; }
     };
 
     // TrustedImm32:

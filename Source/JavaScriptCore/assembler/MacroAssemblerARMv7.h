@@ -805,7 +805,7 @@ public:
 
     void storeDouble(FPRegisterID src, const void* address)
     {
-        move(ImmPtr(address), addressTempRegister);
+        move(TrustedImmPtr(address), addressTempRegister);
         storeDouble(src, addressTempRegister);
     }
 
@@ -1377,7 +1377,7 @@ public:
     {
         // Move the high bits of the address into addressTempRegister,
         // and load the value into dataTempRegister.
-        move(ImmPtr(dest.m_ptr), addressTempRegister);
+        move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
         m_assembler.ldr(dataTempRegister, addressTempRegister, ARMThumbImmediate::makeUInt16(0));
 
         // Do the add.
@@ -1390,7 +1390,7 @@ public:
             // we'll need to reload it with the high bits of the address afterwards.
             move(imm, addressTempRegister);
             m_assembler.add_S(dataTempRegister, dataTempRegister, addressTempRegister);
-            move(ImmPtr(dest.m_ptr), addressTempRegister);
+            move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
         }
 
         // Store the result.

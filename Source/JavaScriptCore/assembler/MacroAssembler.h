@@ -72,6 +72,7 @@ public:
     using MacroAssemblerBase::branchPtr;
     using MacroAssemblerBase::branchTestPtr;
 #endif
+    using MacroAssemblerBase::move;
 
 #if ENABLE(JIT_CONSTANT_BLINDING)
     using MacroAssemblerBase::add32;
@@ -80,7 +81,6 @@ public:
     using MacroAssemblerBase::branchMul32;
     using MacroAssemblerBase::branchSub32;
     using MacroAssemblerBase::lshift32;
-    using MacroAssemblerBase::move;
     using MacroAssemblerBase::or32;
     using MacroAssemblerBase::rshift32;
     using MacroAssemblerBase::store32;
@@ -374,6 +374,11 @@ public:
         return load32WithCompactAddressOffsetPatch(address, dest);
     }
 
+    void move(ImmPtr imm, RegisterID dest)
+    {
+        move(Imm32(imm.asTrustedImmPtr()), dest);
+    }
+
     void comparePtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
         compare32(cond, left, right, dest);
@@ -398,6 +403,11 @@ public:
     {
         store32(TrustedImm32(imm), address);
     }
+    
+    void storePtr(ImmPtr imm, Address address)
+    {
+        store32(Imm32(imm.asTrustedImmPtr()), address);
+    }
 
     void storePtr(TrustedImmPtr imm, void* address)
     {
@@ -409,7 +419,6 @@ public:
         return store32WithAddressOffsetPatch(src, address);
     }
 
-
     Jump branchPtr(RelationalCondition cond, RegisterID left, RegisterID right)
     {
         return branch32(cond, left, right);
@@ -418,6 +427,11 @@ public:
     Jump branchPtr(RelationalCondition cond, RegisterID left, TrustedImmPtr right)
     {
         return branch32(cond, left, TrustedImm32(right));
+    }
+    
+    Jump branchPtr(RelationalCondition cond, RegisterID left, ImmPtr right)
+    {
+        return branch32(cond, left, Imm32(right.asTrustedImmPtr()));
     }
 
     Jump branchPtr(RelationalCondition cond, RegisterID left, Address right)
@@ -439,7 +453,7 @@ public:
     {
         return branch32(cond, left, TrustedImm32(right));
     }
-
+    
     Jump branchPtr(RelationalCondition cond, AbsoluteAddress left, TrustedImmPtr right)
     {
         return branch32(cond, left, TrustedImm32(right));
@@ -465,7 +479,6 @@ public:
         return branchTest32(cond, address, mask);
     }
 
-
     Jump branchAddPtr(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         return branchAdd32(cond, src, dest);
@@ -487,18 +500,102 @@ public:
     using MacroAssemblerBase::andPtr;
     using MacroAssemblerBase::branchSubPtr;
     using MacroAssemblerBase::convertInt32ToDouble;
+    using MacroAssemblerBase::storePtr;
     using MacroAssemblerBase::subPtr;
+    using MacroAssemblerBase::xorPtr;
     
+    bool shouldBlind(ImmPtr imm)
+    { 
+        ASSERT(!inUninterruptedSequence());
+#if !defined(NDEBUG)
+        UNUSED_PARAM(imm);
+        // Debug always blind all constants, if only so we know
+        // if we've broken blinding during patch development.
+        return true;
+#else
+        
+        // First off we'll special case common, "safe" values to avoid hurting
+        // performance too much
+        uintptr_t value = imm.asTrustedImmPtr().asIntptr();
+        switch (value) {
+        case 0xffff:
+        case 0xffffff:
+        case 0xffffffffL:
+        case 0xffffffffffL:
+        case 0xffffffffffffL:
+        case 0xffffffffffffffL:
+        case 0xffffffffffffffffL:
+            return false;
+        default:
+            if (value <= 0xff)
+                return false;
+        }
+        return shouldBlindForSpecificArch(value);
+#endif
+    }
+    
+    struct RotatedImmPtr {
+        RotatedImmPtr(uintptr_t v1, uint8_t v2)
+            : value(v1)
+            , rotation(v2)
+        {
+        }
+        TrustedImmPtr value;
+        TrustedImm32 rotation;
+    };
+    
+    RotatedImmPtr rotationBlindConstant(ImmPtr imm)
+    {
+        uint8_t rotation = random() % (sizeof(void*) * 8);
+        uintptr_t value = imm.asTrustedImmPtr().asIntptr();
+        value = (value << rotation) | (value >> (sizeof(void*) * 8 - rotation));
+        return RotatedImmPtr(value, rotation);
+    }
+    
+    void loadRotationBlindedConstant(RotatedImmPtr constant, RegisterID dest)
+    {
+        move(constant.value, dest);
+        rotateRightPtr(constant.rotation, dest);
+    }
+
     void convertInt32ToDouble(Imm32 imm, FPRegisterID dest)
     {
         if (shouldBlind(imm)) {
-            RegisterID scratchRegister = (RegisterID)scratchRegisterForBlinding();
-            ASSERT(scratchRegister);
+            RegisterID scratchRegister = scratchRegisterForBlinding();
             loadXorBlindedConstant(xorBlindConstant(imm), scratchRegister);
             convertInt32ToDouble(scratchRegister, dest);
         } else
             convertInt32ToDouble(imm.asTrustedImm32(), dest);
     }
+
+    void move(ImmPtr imm, RegisterID dest)
+    {
+        if (shouldBlind(imm))
+            loadRotationBlindedConstant(rotationBlindConstant(imm), dest);
+        else
+            move(imm.asTrustedImmPtr(), dest);
+    }
+
+    Jump branchPtr(RelationalCondition cond, RegisterID left, ImmPtr right)
+    {
+        if (shouldBlind(right)) {
+            RegisterID scratchRegister = scratchRegisterForBlinding();
+            loadRotationBlindedConstant(rotationBlindConstant(right), scratchRegister);
+            return branchPtr(cond, left, scratchRegister);
+        }
+        return branchPtr(cond, left, right.asTrustedImmPtr());
+    }
+    
+    void storePtr(ImmPtr imm, Address dest)
+    {
+        if (shouldBlind(imm)) {
+            RegisterID scratchRegister = scratchRegisterForBlinding();
+            loadRotationBlindedConstant(rotationBlindConstant(imm), scratchRegister);
+            storePtr(scratchRegister, dest);
+        } else
+            storePtr(imm.asTrustedImmPtr(), dest);
+    }
+
 #endif
 
 #endif // !CPU(X86_64)
@@ -683,6 +780,11 @@ public:
     void poke(Imm32 value, int index = 0)
     {
         store32(value, addressForPoke(index));
+    }
+    
+    void poke(ImmPtr value, int index = 0)
+    {
+        storePtr(value, addressForPoke(index));
     }
     
     void store32(Imm32 imm, Address dest)

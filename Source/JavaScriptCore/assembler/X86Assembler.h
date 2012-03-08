@@ -216,7 +216,12 @@ private:
         GROUP1_OP_CMP = 7,
 
         GROUP1A_OP_POP = 0,
-
+        
+        GROUP2_OP_ROL = 0,
+        GROUP2_OP_ROR = 1,
+        GROUP2_OP_RCL = 2,
+        GROUP2_OP_RCR = 3,
+        
         GROUP2_OP_SHL = 4,
         GROUP2_OP_SHR = 5,
         GROUP2_OP_SAR = 7,
@@ -636,6 +641,22 @@ public:
             m_formatter.immediate32(imm);
         }
     }
+    
+    void xorq_rm(RegisterID src, int offset, RegisterID base)
+    {
+        m_formatter.oneByteOp64(OP_XOR_EvGv, src, base, offset);
+    }
+    
+    void rorq_i8r(int imm, RegisterID dst)
+    {
+        if (imm == 1)
+            m_formatter.oneByteOp64(OP_GROUP2_Ev1, GROUP2_OP_ROR, dst);
+        else {
+            m_formatter.oneByteOp64(OP_GROUP2_EvIb, GROUP2_OP_ROR, dst);
+            m_formatter.immediate8(imm);
+        }
+    }
+
 #endif
 
     void sarl_i8r(int imm, RegisterID dst)
