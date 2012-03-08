@@ -103,6 +103,7 @@ public:
     CookieStorageAcceptPolicy cookiePolicy() const { return m_policy; }
     void setPrivateMode(const bool);
 
+    String generateHtmlFragmentForCookies();
     String getCookie(const KURL& requestURL, CookieFilter) const;
 
     // Returns all cookies that are associated with the specified URL as raw cookies.

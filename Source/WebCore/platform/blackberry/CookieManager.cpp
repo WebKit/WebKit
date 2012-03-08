@@ -218,6 +218,41 @@ String CookieManager::getCookie(const KURL& url, CookieFilter filter) const
     return cookieStringBuilder.toString();
 }
 
+String CookieManager::generateHtmlFragmentForCookies()
+{
+    CookieLog("CookieManager - generateHtmlFragmentForCookies\n");
+
+    Vector<ParsedCookie*> cookieCandidates;
+    for (HashMap<String, CookieMap*>::iterator it = m_managerMap.begin(); it != m_managerMap.end(); ++it)
+        it->second->getAllChildCookies(&cookieCandidates);
+
+    String result;
+    ParsedCookie* cookie = 0;
+    result.append(String("<table style=\"word-wrap:break-word\" cellSpacing=\"0\" cellPadding=\"0\" border=\"1\"><tr><th>Domain</th><th>Path</th><th>Protocol</th><th>Name</th><th>Value</th><th>Secure</th><th>HttpOnly</th><th>Session</th></tr>"));
+    for (size_t i = 0; i < cookieCandidates.size(); ++i) {
+        cookie = cookieCandidates[i];
+        result.append(String("<tr><td align=\"center\">"));
+        result.append(cookie->domain());
+        result.append(String("<td align=\"center\">"));
+        result.append(cookie->path());
+        result.append(String("<td align=\"center\">"));
+        result.append(cookie->protocol());
+        result.append(String("<td align=\"center\">"));
+        result.append(cookie->name());
+        result.append(String("<td align=\"center\" style= \"word-break:break-all\">"));
+        result.append(cookie->value());
+        result.append(String("<td align=\"center\">"));
+        result.append(String(cookie->isSecure() ? "Yes" : "No"));
+        result.append(String("<td align=\"center\">"));
+        result.append(String(cookie->isHttpOnly() ? "Yes" : "No"));
+        result.append(String("<td align=\"center\">"));
+        result.append(String(cookie->isSession() ? "Yes" : "No"));
+        result.append(String("</td></tr>"));
+    }
+    result.append(String("</table>"));
+    return result;
+}
+
 void CookieManager::getRawCookies(Vector<ParsedCookie*> &stackOfCookies, const KURL& requestURL, CookieFilter filter) const
 {
     CookieLog("CookieManager - getRawCookies - processing url with domain - %s & protocol: %s & path: %s\n", requestURL.host().utf8().data(), requestURL.protocol().utf8().data(), requestURL.path().utf8().data());

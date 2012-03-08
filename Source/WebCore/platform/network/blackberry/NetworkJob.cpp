@@ -941,6 +941,11 @@ void NetworkJob::handleAbout()
         client->setDiskCacheEnabled(true);
         result.append(String("<html><head><title>BlackBerry Browser Disk Cache</title></head><body>Http disk cache is enabled.</body></html>"));
         handled = true;
+    } else if (equalIgnoringCase(aboutWhat, "cookie")) {
+        result.append(String("<html><head><title>BlackBerry Browser cookie information</title></head><body>"));
+        result.append(cookieManager().generateHtmlFragmentForCookies());
+        result.append(String("</body></html>"));
+        handled = true;
     } else if (equalIgnoringCase(aboutWhat, "version")) {
         result.append(String("<html><meta name=\"viewport\" content=\"width=device-width, user-scalable=no\"></head><body>"));
         result.append(String(BlackBerry::Platform::BUILDTIME));
