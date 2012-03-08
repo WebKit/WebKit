@@ -36,7 +36,6 @@ BUGWK69210: fast/repaint/transform-absolute-in-positioned-container.html = TEXT
 
 // Those tests need a text baseline after lazily allocating layers.
 // The change should only be layer removal.
-BUGWK75568 : animations/combo-transform-translate+scale.html = TEXT
 BUGWK75568 : fast/layers/add-layer-with-nested-stacking.html = TEXT
 BUGWK75568 : fast/layers/remove-layer-with-nested-stacking.html = TEXT
 BUGWK75568 : fast/repaint/iframe-scroll-repaint.html = TEXT
@@ -51,7 +50,6 @@ BUGWK75568 : fast/repaint/subtree-root-skipped.html = TEXT
 BUGWK75568 : fast/replaced/replaced-breaking.html = TEXT
 BUGWK75568 : fast/replaced/width100percent-searchfield.html = TEXT
 BUGWK75568 : fast/text/textIteratorNilRenderer.html = TEXT
-BUGWK75568 : compositing/geometry/object-clip-rects-assertion.html = TEXT
 BUGWK75568 : compositing/overflow/ancestor-overflow.html = TEXT
 BUGWK75568 : editing/pasteboard/4806874.html = TEXT
 BUGWK75568 : editing/pasteboard/input-field-1.html = TEXT
@@ -102,7 +100,6 @@ BUGWK75568 : fast/forms/input-appearance-disabled.html = TEXT
 BUGWK75568 : fast/forms/input-appearance-focus.html = TEXT
 BUGWK75568 : fast/forms/input-appearance-preventDefault.html = TEXT
 BUGWK75568 : fast/forms/input-appearance-readonly.html = TEXT
-BUGWK75568 : fast/forms/input-appearance-selection.html = TEXT
 BUGWK75568 : fast/forms/input-appearance-visibility.html = TEXT
 BUGWK75568 : fast/forms/input-baseline.html = TEXT
 BUGWK75568 : fast/forms/input-double-click-selection-gap-bug.html = TEXT
@@ -174,4 +171,3 @@ BUGWK75568 : fast/table/spanOverlapRepaint.html = TEXT
 BUGWK75568 : fast/table/text-field-baseline.html = TEXT
 BUGWK75568 : tables/mozilla/bugs/bug1188.html = TEXT
 
-BUGWK80531 : fast/forms/textfield-overflow.html = IMAGE+TEXT
