@@ -1,3 +1,19 @@
+2012-03-08  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] Webkit fails to link when compiled with force_static_libs_as_shared
+        https://bugs.webkit.org/show_bug.cgi?id=80524
+
+        Reviewed by Simon Hausmann.
+
+        Move IdentifierTable methods defintion to WTFThreadData.cpp to fix linking 
+        of WTF library.
+
+        * runtime/Identifier.cpp:
+        * wtf/WTFThreadData.cpp:
+        (JSC):
+        (JSC::IdentifierTable::~IdentifierTable):
+        (JSC::IdentifierTable::add):
+
 2012-03-08  Filip Pizlo  <fpizlo@apple.com>
 
         DFG instruction count threshold should be lifted to 10000

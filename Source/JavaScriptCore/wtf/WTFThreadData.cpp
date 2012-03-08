@@ -51,4 +51,25 @@ WTFThreadData::~WTFThreadData()
 #endif
 }
 
+} // namespace WTF
+
+#if USE(JSC)
+namespace JSC {
+
+IdentifierTable::~IdentifierTable()
+{
+    HashSet<StringImpl*>::iterator end = m_table.end();
+    for (HashSet<StringImpl*>::iterator iter = m_table.begin(); iter != end; ++iter)
+        (*iter)->setIsIdentifier(false);
 }
+
+std::pair<HashSet<StringImpl*>::iterator, bool> IdentifierTable::add(StringImpl* value)
+{
+    std::pair<HashSet<StringImpl*>::iterator, bool> result = m_table.add(value);
+    (*result.first)->setIsIdentifier(true);
+    return result;
+}
+
+} // namespace JSC
+#endif
+
