@@ -1,3 +1,13 @@
+2012-03-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG instruction count threshold should be lifted to 10000
+        https://bugs.webkit.org/show_bug.cgi?id=80579
+
+        Reviewed by Gavin Barraclough.
+
+        * runtime/Options.cpp:
+        (JSC::Options::initializeOptions):
+
 2012-03-07  Filip Pizlo  <fpizlo@apple.com>
 
         Incorrect tracking of abstract values of variables forced double

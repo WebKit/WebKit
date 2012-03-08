@@ -148,7 +148,7 @@ void initializeOptions()
 {
     SET(useJIT, true);
     
-    SET(maximumOptimizationCandidateInstructionCount, 1100);
+    SET(maximumOptimizationCandidateInstructionCount, 10000);
     
     SET(maximumFunctionForCallInlineCandidateInstructionCount, 180);
     SET(maximumFunctionForConstructInlineCandidateInstructionCount, 100);
