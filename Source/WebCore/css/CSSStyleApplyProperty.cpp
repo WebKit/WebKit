@@ -1216,14 +1216,22 @@ private:
     static Length inchLength(double inch) { return CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN)->computeLength<Length>(0, 0); }
     static bool getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
     {
-        static const Length a5Width = mmLength(148), a5Height = mmLength(210);
-        static const Length a4Width = mmLength(210), a4Height = mmLength(297);
-        static const Length a3Width = mmLength(297), a3Height = mmLength(420);
-        static const Length b5Width = mmLength(176), b5Height = mmLength(250);
-        static const Length b4Width = mmLength(250), b4Height = mmLength(353);
-        static const Length letterWidth = inchLength(8.5), letterHeight = inchLength(11);
-        static const Length legalWidth = inchLength(8.5), legalHeight = inchLength(14);
-        static const Length ledgerWidth = inchLength(11), ledgerHeight = inchLength(17);
+        DEFINE_STATIC_LOCAL(Length, a5Width, (mmLength(148)));
+        DEFINE_STATIC_LOCAL(Length, a5Height, (mmLength(210)));
+        DEFINE_STATIC_LOCAL(Length, a4Width, (mmLength(210)));
+        DEFINE_STATIC_LOCAL(Length, a4Height, (mmLength(297)));
+        DEFINE_STATIC_LOCAL(Length, a3Width, (mmLength(297)));
+        DEFINE_STATIC_LOCAL(Length, a3Height, (mmLength(420)));
+        DEFINE_STATIC_LOCAL(Length, b5Width, (mmLength(176)));
+        DEFINE_STATIC_LOCAL(Length, b5Height, (mmLength(250)));
+        DEFINE_STATIC_LOCAL(Length, b4Width, (mmLength(250)));
+        DEFINE_STATIC_LOCAL(Length, b4Height, (mmLength(353)));
+        DEFINE_STATIC_LOCAL(Length, letterWidth, (inchLength(8.5)));
+        DEFINE_STATIC_LOCAL(Length, letterHeight, (inchLength(11)));
+        DEFINE_STATIC_LOCAL(Length, legalWidth, (inchLength(8.5)));
+        DEFINE_STATIC_LOCAL(Length, legalHeight, (inchLength(14)));
+        DEFINE_STATIC_LOCAL(Length, ledgerWidth, (inchLength(11)));
+        DEFINE_STATIC_LOCAL(Length, ledgerHeight, (inchLength(17)));
 
         if (!pageSizeName)
             return false;
