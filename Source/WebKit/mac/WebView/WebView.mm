@@ -6304,21 +6304,14 @@ bool LayerFlushController::flushLayers()
 
     [_private->newFullscreenController setElement:element];
     [_private->newFullscreenController setWebView:self];
-    [_private->newFullscreenController enterFullscreen:[[self window] screen]];        
+    [_private->newFullscreenController enterFullScreen:[[self window] screen]];        
 }
 
 - (void)_exitFullScreenForElement:(WebCore::Element*)element
 {
     if (!_private->newFullscreenController)
         return;
-    [_private->newFullscreenController exitFullscreen];
-}
-
-- (void)_fullScreenRendererChanged:(WebCore::RenderBox*)renderer
-{
-    if (!_private->newFullscreenController)
-        _private->newFullscreenController = [[WebFullScreenController alloc] init];
-    [_private->newFullscreenController setRenderer:renderer];
+    [_private->newFullscreenController exitFullScreen];
 }
 #endif
 

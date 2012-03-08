@@ -1,3 +1,45 @@
+2012-02-20  Jer Noble  <jer.noble@apple.com>
+
+        Full Screen Refactor Part 4: Animate into Full Screen mode using new animation classes, WebKit edition.
+        https://bugs.webkit.org/show_bug.cgi?id=78930
+
+        Reviewed by Anders Carlsson.
+
+        Revise WebFullScreenController to have the same general functionality and code path as WKFullScreenWindowController
+        in WebKit2.  As such, the following functions are copies of their equivalents in WKFullScreenWindowController:
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController init]):
+        (-[WebFullScreenController dealloc]):
+        (-[WebFullScreenController windowDidLoad]):
+        (-[WebFullScreenController cancelOperation:]):
+        (-[WebFullScreenController applicationDidResignActive:]):
+        (-[WebFullScreenController applicationDidChangeScreenParameters:]):
+        (-[WebFullScreenController finishedEnterFullScreenAnimation:]):
+        (-[WebFullScreenController finishedExitFullScreenAnimation:]):
+        (-[WebFullScreenController close]):
+        (-[WebFullScreenController animationDidEnd:]):
+        (-[WebFullScreenController _updateMenuAndDockForFullScreen]):
+        (-[WebFullScreenController _swapView:with:]):
+        (createBackgroundFullscreenWindow):
+        (windowFrameFromApparentFrames):
+        (-[WebFullScreenController _startEnterFullScreenAnimationWithDuration:]):
+        (-[WebFullScreenController _startExitFullScreenAnimationWithDuration:]):
+
+        The following is a copy of the equivalent function in WebFullScreenManager:
+        * WebView/WebFullScreenController.mm:
+        (screenRectOfContents):        
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::fullScreenRendererChanged): No longer tell the WebView the renderer changed (as it doesn't care.)
+        * WebView/WebFullScreenController.h:
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController setElement:]): No need to add event listeners to the media element.
+        (-[WebFullScreenController enterFullScreen:]): Same as WKFullScreenWindowController, but not asynchronous.
+        (-[WebFullScreenController exitFullScreen]): Ditto.
+        * WebView/WebView.mm:
+        (-[WebView _enterFullScreenForElement:WebCore::]): Fullscreen -> FullScreen.
+        (-[WebView _exitFullScreenForElement:WebCore::]): Ditto.
+
 2012-03-08  Matt Lilek  <mrl@apple.com>
 
         Don't enable VIDEO_TRACK on all OS X platforms

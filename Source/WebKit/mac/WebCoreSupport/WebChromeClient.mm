@@ -954,8 +954,6 @@ void WebChromeClient::fullScreenRendererChanged(RenderBox* renderer)
     SEL selector = @selector(webView:fullScreenRendererChanged:);
     if ([[m_webView UIDelegate] respondsToSelector:selector])
         CallUIDelegate(m_webView, selector, (id)renderer);
-    else
-        [m_webView _fullScreenRendererChanged:renderer];
 }
 
 @implementation WebKitFullScreenListener

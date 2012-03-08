@@ -27,8 +27,10 @@
 
 #import <wtf/OwnPtr.h>
 #import <wtf/RefPtr.h>
+#import <wtf/RetainPtr.h>
 
 @class WebWindowFadeAnimation;
+@class WebWindowScaleAnimation;
 @class WebView;
 namespace WebCore {
     class DisplaySleepDisabler;
@@ -40,16 +42,18 @@ namespace WebCore {
 @interface WebFullScreenController : NSWindowController {
 @private
     RefPtr<WebCore::Element> _element;
-    WebCore::RenderBox* _renderer; // (set)
     WebView *_webView;
-    NSView* _placeholderView;
-    RefPtr<WebCore::EventListener> _mediaEventListener; 
+    RetainPtr<NSView> _webViewPlaceholder;
+    RetainPtr<WebWindowScaleAnimation> _scaleAnimation;
+    RetainPtr<WebWindowFadeAnimation> _fadeAnimation;
+    RetainPtr<NSWindow> _backgroundWindow;
+    NSRect _initialFrame;
+    NSRect _finalFrame;
 
-    BOOL _isAnimating;
-    BOOL _isFullscreen;
-    BOOL _forceDisableAnimation;
-    OwnPtr<WebCore::DisplaySleepDisabler> _displaySleepDisabler;
-    CGRect _initialFrame;
+    BOOL _isEnteringFullScreen;
+    BOOL _isExitingFullScreen;
+    BOOL _isFullScreen;
+    BOOL _isPlaying;
 }
 
 - (WebView*)webView;
@@ -58,12 +62,9 @@ namespace WebCore {
 - (void)setElement:(PassRefPtr<WebCore::Element>)element;
 - (WebCore::Element*)element;
 
-- (void)setRenderer:(WebCore::RenderBox*)renderer;
-- (WebCore::RenderBox*)renderer;
-
-- (void)enterFullscreen:(NSScreen *)screen;
-- (void)exitFullscreen;
-
+- (void)enterFullScreen:(NSScreen *)screen;
+- (void)exitFullScreen;
+- (void)close;
 @end
 
 #endif // ENABLE(FULLSCREEN_API)
