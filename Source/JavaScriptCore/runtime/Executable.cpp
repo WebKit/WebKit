@@ -146,6 +146,8 @@ FunctionExecutable::FunctionExecutable(JSGlobalData& globalData, const Identifie
     , m_name(name)
     , m_inferredName(inferredName.isNull() ? globalData.propertyNames->emptyIdentifier : inferredName)
     , m_symbolTable(0)
+    , m_next(0)
+    , m_prev(0)
 {
 }
 
@@ -157,6 +159,8 @@ FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, 
     , m_name(name)
     , m_inferredName(inferredName.isNull() ? exec->globalData().propertyNames->emptyIdentifier : inferredName)
     , m_symbolTable(0)
+    , m_next(0)
+    , m_prev(0)
 {
 }
 
@@ -654,7 +658,9 @@ void FunctionExecutable::discardCode()
 
 void FunctionExecutable::finalize(JSCell* cell)
 {
-    jsCast<FunctionExecutable*>(cell)->clearCode();
+    FunctionExecutable* executable = jsCast<FunctionExecutable*>(cell);
+    Heap::heap(executable)->removeFunctionExecutable(executable);
+    executable->clearCode();
 }
 
 inline void FunctionExecutable::clearCode()

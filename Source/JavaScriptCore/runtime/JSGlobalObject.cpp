@@ -460,7 +460,7 @@ DynamicGlobalObjectScope::DynamicGlobalObjectScope(JSGlobalData& globalData, JSG
     if (!m_dynamicGlobalObjectSlot) {
 #if ENABLE(ASSEMBLER)
         if (ExecutableAllocator::underMemoryPressure())
-            globalData.recompileAllJSFunctions();
+            globalData.heap.discardAllCompiledCode();
 #endif
 
         m_dynamicGlobalObjectSlot = dynamicGlobalObject;
