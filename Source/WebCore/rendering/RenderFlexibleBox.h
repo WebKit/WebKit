@@ -56,6 +56,8 @@ private:
     typedef WTF::HashMap<const RenderBox*, LayoutUnit> InflexibleFlexItemSize;
     typedef WTF::Vector<RenderBox*> OrderedFlexItemList;
 
+    struct WrapReverseContext;
+
     bool hasOrthogonalFlow(RenderBox* child) const;
     bool isColumnFlow() const;
     bool isLeftToRightFlow() const;
@@ -109,6 +111,7 @@ private:
     void layoutColumnReverse(const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace);
     void alignChildren(const OrderedFlexItemList&, LayoutUnit lineCrossAxisExtent, LayoutUnit maxAscent);
     void flipForRightToLeftColumn(FlexOrderIterator&);
+    void flipForWrapReverse(FlexOrderIterator&, const WrapReverseContext&);
 };
 
 } // namespace WebCore

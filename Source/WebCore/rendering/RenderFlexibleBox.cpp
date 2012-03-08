@@ -34,6 +34,7 @@
 #include "LayoutRepainter.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include <limits>
 
 namespace WebCore {
 
@@ -99,6 +100,40 @@ private:
     RenderBox* m_currentChild;
     Vector<int> m_orderValues;
     Vector<int>::const_iterator m_orderValuesIterator;
+};
+
+struct RenderFlexibleBox::WrapReverseContext {
+    explicit WrapReverseContext(EFlexWrap flexWrap)
+        : isWrapReverse(flexWrap == FlexWrapReverse)
+    {
+    }
+
+    void addCrossAxisOffset(LayoutUnit offset)
+    {
+        if (!isWrapReverse)
+            return;
+        crossAxisOffsets.append(offset);
+    }
+
+    void addNumberOfChildrenOnLine(size_t numberOfChildren)
+    {
+        if (!isWrapReverse)
+            return;
+        childrenPerLine.append(numberOfChildren);
+    }
+
+    LayoutUnit lineCrossAxisDelta(size_t line, LayoutUnit crossAxisContentExtent) const
+    {
+        ASSERT(line + 1 < crossAxisOffsets.size());
+        LayoutUnit lineHeight = crossAxisOffsets[line + 1] - crossAxisOffsets[line];
+        LayoutUnit originalOffset = crossAxisOffsets[line] - crossAxisOffsets[0];
+        LayoutUnit newOffset = crossAxisContentExtent - originalOffset - lineHeight;
+        return newOffset - originalOffset;
+    }
+
+    WTF::Vector<LayoutUnit> crossAxisOffsets;
+    WTF::Vector<size_t> childrenPerLine;
+    bool isWrapReverse;
 };
 
 
@@ -544,6 +579,10 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     float totalNegativeFlexibility;
     FlexOrderIterator flexIterator(this, flexOrderValues);
 
+    // For wrap-reverse, we need to layout as wrap, then reverse the lines. The next two arrays
+    // are some extra information so it's possible to reverse the lines.
+    WrapReverseContext wrapReverseContext(style()->flexWrap());
+
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
     LayoutUnit mainAxisFlexibleSpace = mainAxisContentExtent();
     while (computeNextFlexLine(flexIterator, orderedChildren, preferredMainAxisExtent, totalPositiveFlexibility, totalNegativeFlexibility)) {
@@ -555,7 +594,14 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
             ASSERT(inflexibleItems.size() > 0);
         }
 
+        wrapReverseContext.addNumberOfChildrenOnLine(orderedChildren.size());
+        wrapReverseContext.addCrossAxisOffset(crossAxisOffset);
         layoutAndPlaceChildren(crossAxisOffset, orderedChildren, childSizes, availableFreeSpace);
+    }
+
+    if (wrapReverseContext.isWrapReverse) {
+        wrapReverseContext.addCrossAxisOffset(crossAxisOffset);
+        flipForWrapReverse(flexIterator, wrapReverseContext);
     }
 
     // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
@@ -753,7 +799,15 @@ static EFlexAlign flexAlignForChild(RenderBox* child)
 {
     EFlexAlign align = child->style()->flexItemAlign();
     if (align == AlignAuto)
-        return child->parent()->style()->flexAlign();
+        align = child->parent()->style()->flexAlign();
+
+    if (child->parent()->style()->flexWrap() == FlexWrapReverse) {
+        if (align == AlignStart)
+            align = AlignEnd;
+        else if (align == AlignEnd)
+            align = AlignStart;
+    }
+
     return align;
 }
 
@@ -867,6 +921,8 @@ void RenderFlexibleBox::adjustAlignmentForChild(RenderBox* child, LayoutUnit del
 
 void RenderFlexibleBox::alignChildren(const OrderedFlexItemList& children, LayoutUnit lineCrossAxisExtent, LayoutUnit maxAscent)
 {
+    LayoutUnit minMarginAfterBaseline = std::numeric_limits<LayoutUnit>::max();
+
     for (size_t i = 0; i < children.size(); ++i) {
         RenderBox* child = children[i];
         switch (flexAlignForChild(child)) {
@@ -893,6 +949,9 @@ void RenderFlexibleBox::alignChildren(const OrderedFlexItemList& children, Layou
                 child->setChildNeedsLayout(true);
                 child->layoutIfNeeded();
             }
+            // Since wrap-reverse flips cross start and cross end, strech children should be aligned with the cross end.
+            if (style()->flexWrap() == FlexWrapReverse)
+                adjustAlignmentForChild(child, availableAlignmentSpaceForChild(lineCrossAxisExtent, child));
             break;
         }
         case AlignStart:
@@ -905,9 +964,23 @@ void RenderFlexibleBox::alignChildren(const OrderedFlexItemList& children, Layou
             break;
         case AlignBaseline: {
             LayoutUnit ascent = marginBoxAscentForChild(child);
-            adjustAlignmentForChild(child, maxAscent - ascent);
+            LayoutUnit startOffset = maxAscent - ascent;
+            adjustAlignmentForChild(child, startOffset);
+
+            if (style()->flexWrap() == FlexWrapReverse)
+                minMarginAfterBaseline = std::min(minMarginAfterBaseline, availableAlignmentSpaceForChild(lineCrossAxisExtent, child) - startOffset);
             break;
         }
+        }
+    }
+
+    // wrap-reverse flips the cross axis start and end. For baseline alignment, this means we
+    // need to align the after edge of baseline elements with the after edge of the flex line.
+    if (style()->flexWrap() == FlexWrapReverse && minMarginAfterBaseline) {
+        for (size_t i = 0; i < children.size(); ++i) {
+            RenderBox* child = children[i];
+            if (flexAlignForChild(child) == AlignBaseline)
+                adjustAlignmentForChild(child, minMarginAfterBaseline);
         }
     }
 }
@@ -922,6 +995,30 @@ void RenderFlexibleBox::flipForRightToLeftColumn(FlexOrderIterator& iterator)
         LayoutPoint location = flowAwareLocationForChild(child);
         location.setY(crossExtent - crossAxisExtentForChild(child) - location.y());
         setFlowAwareLocationForChild(child, location);
+    }
+}
+
+void RenderFlexibleBox::flipForWrapReverse(FlexOrderIterator& iterator, const WrapReverseContext& wrapReverseContext)
+{
+    if (!isColumnFlow())
+        computeLogicalHeight();
+
+    size_t currentChild = 0;
+    size_t lineNumber = 0;
+    LayoutUnit contentExtent = crossAxisContentExtent();
+    for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+        LayoutPoint location = flowAwareLocationForChild(child);
+        location.setY(location.y() + wrapReverseContext.lineCrossAxisDelta(lineNumber, contentExtent));
+
+        LayoutRect oldRect = child->frameRect();
+        setFlowAwareLocationForChild(child, location);
+        if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
+            child->repaintDuringLayoutIfMoved(oldRect);
+
+        if (++currentChild == wrapReverseContext.childrenPerLine[lineNumber]) {
+            ++lineNumber;
+            currentChild = 0;
+        }
     }
 }
 
