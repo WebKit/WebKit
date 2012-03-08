@@ -1,3 +1,13 @@
+2012-03-08  Max Vujovic  <mvujovic@adobe.com>
+
+        Add a method to window.internals to enable testing of inspector highlight rects
+        https://bugs.webkit.org/show_bug.cgi?id=80338
+
+        Reviewed by Pavel Feldman.
+
+        * win/WebKit2.def: Export symbols for win.
+        * win/WebKit2CFLite.def: Same as above.
+
 2012-03-08  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt WK2] Remove duplicate code related to dialog handling in QQuickWebView

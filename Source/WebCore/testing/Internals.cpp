@@ -28,6 +28,8 @@
 
 #include "CachedResourceLoader.h"
 #include "ClientRect.h"
+#include "ClientRectList.h"
+#include "DOMNodeHighlighter.h"
 #include "Document.h"
 #include "DocumentMarker.h"
 #include "DocumentMarkerController.h"
@@ -333,6 +335,18 @@ PassRefPtr<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& e
     if (!renderer)
         return ClientRect::create();
     return ClientRect::create(renderer->absoluteBoundingBoxRectIgnoringTransforms());
+}
+
+PassRefPtr<ClientRectList> Internals::inspectorHighlightRects(Document* document, ExceptionCode& ec)
+{
+    if (!document || !document->page() || !document->page()->inspectorController()) {
+        ec = INVALID_ACCESS_ERR;
+        return ClientRectList::create();
+    }
+
+    Highlight highlight;
+    document->page()->inspectorController()->getHighlight(&highlight);
+    return ClientRectList::create(highlight.quads);
 }
 
 unsigned Internals::markerCountForNode(Node* node, const String& markerType, ExceptionCode& ec)
