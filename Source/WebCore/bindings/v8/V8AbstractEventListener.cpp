@@ -34,6 +34,7 @@
 #include "DateExtension.h"
 #include "Document.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "InspectorCounters.h"
 #include "V8Binding.h"
@@ -140,7 +141,7 @@ void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context
     v8::Local<v8::Value> returnValue;
 
     // In beforeunload/unload handlers, we want to avoid sleeps which do tight loops of calling Date.getTime().
-    if (event->type() == "beforeunload" || event->type() == "unload")
+    if (event->type() == eventNames().beforeunloadEvent || event->type() == eventNames().unloadEvent)
         DateExtension::get()->setAllowSleep(false);
 
     {
@@ -177,7 +178,7 @@ void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context
         tryCatch.Reset();
     }
 
-    if (event->type() == "beforeunload" || event->type() == "unload")
+    if (event->type() == eventNames().beforeunloadEvent || event->type() == eventNames().unloadEvent)
         DateExtension::get()->setAllowSleep(true);
 
     ASSERT(!V8Proxy::handleOutOfMemory() || returnValue.IsEmpty());
