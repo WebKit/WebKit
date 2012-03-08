@@ -4025,9 +4025,15 @@ BUGWK75568 : http/tests/navigation/javascriptlink-frames.html = TEXT
 BUGWK80531 : fast/repaint/search-field-cancel.html = TEXT IMAGE+TEXT
 BUGWK80531 : fast/forms/textfield-overflow.html = IMAGE+TEXT
 
-BUG_SENORBLANCO LEOPARD : css2.1/t1202-counter-04-b.html = TEXT
-BUG_SENORBLANCO LEOPARD : css2.1/t1202-counters-04-b.html = TEXT
-BUG_SENORBLANCO LEOPARD : editing/pasteboard/paste-table-cells.html = IMAGE
+BUGWK80588 LEOPARD : css2.1/t1202-counter-04-b.html = TEXT
+BUGWK80588 LEOPARD : css2.1/t1202-counters-04-b.html = TEXT
+BUGWK80588 LEOPARD : editing/pasteboard/paste-table-cells.html = IMAGE
+BUGWK80588 LEOPARD : fast/block/basic/014.html = IMAGE
+BUGWK80588 LEOPARD : fast/block/basic/020.html = IMAGE
+BUGWK80588 LEOPARD : fast/block/float/dynamic-unfloat-pref-width.html = IMAGE
+BUGWK80588 LEOPARD : fast/block/margin-collapse/044.html = IMAGE
+BUGWK80588 LEOPARD : fast/block/margin-collapse/045.html = IMAGE
+BUGWK80588 LEOPARD : fast/block/positioning/054.html = IMAGE
 
 BUGWK80563 : css3/filters/effect-combined-hw.html = PASS IMAGE
 BUGWK80563 : css3/filters/effect-hue-rotate-hw.html = PASS IMAGE
