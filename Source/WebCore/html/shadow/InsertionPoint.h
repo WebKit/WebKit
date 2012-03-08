@@ -46,9 +46,12 @@ public:
     bool isShadowBoundary() const;
 
     virtual const AtomicString& select() const = 0;
+    virtual bool isSelectValid() const = 0;
 
     virtual void attach();
     virtual void detach();
+
+    virtual bool isInsertionPoint() const OVERRIDE { return true; }
 
 protected:
     InsertionPoint(const QualifiedName&, Document*);
@@ -64,9 +67,10 @@ private:
 
 inline bool isInsertionPoint(Node* node)
 {
-    // FIXME: <shadow> should also be InsertionPoint.
-    // https://bugs.webkit.org/show_bug.cgi?id=78596
-    if (!node || node->isContentElement())
+    if (!node)
+        return true;
+
+    if (node->isHTMLElement() && toHTMLElement(node)->isInsertionPoint())
         return true;
 
     return false;

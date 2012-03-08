@@ -217,10 +217,6 @@ public:
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
     bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
-    virtual bool isContentElement() const { return false; }
-#if ENABLE(SHADOW_DOM)
-    virtual bool isShadowElement() const { return false; }
-#endif
 
     Node* shadowAncestorNode() const;
     // Returns 0, a ShadowRoot, or a legacy shadow root.

@@ -101,6 +101,8 @@ public:
     virtual bool isHTMLUnknownElement() const { return false; }
 #endif
 
+    virtual bool isInsertionPoint() const { return false; }
+
 protected:
     HTMLElement(const QualifiedName& tagName, Document*);
 

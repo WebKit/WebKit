@@ -45,7 +45,7 @@ public:
 
 private:
     SummaryContentElement(Document* document)
-        : HTMLContentElement(HTMLNames::divTag, document)
+        : HTMLContentElement(HTMLNames::webkitShadowContentTag, document)
     {
     }
 };

@@ -154,14 +154,14 @@ Element* Internals::getElementByIdInShadowRoot(Node* shadowRoot, const String& i
     return toShadowRoot(shadowRoot)->getElementById(id);
 }
 
-bool Internals::isValidContentSelect(Element* contentElement, ExceptionCode& ec)
+bool Internals::isValidContentSelect(Element* insertionPoint, ExceptionCode& ec)
 {
-    if (!contentElement || !contentElement->isContentElement()) {
+    if (!insertionPoint || !isInsertionPoint(insertionPoint)) {
         ec = INVALID_ACCESS_ERR;
         return false;
     }
 
-    return toHTMLContentElement(contentElement)->isSelectValid();
+    return toInsertionPoint(insertionPoint)->isSelectValid();
 }
 
 bool Internals::attached(Node* node, ExceptionCode& ec)

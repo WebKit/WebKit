@@ -78,7 +78,7 @@ public:
     String shadowPseudoId(Element*, ExceptionCode&);
     PassRefPtr<Element> createContentElement(Document*, ExceptionCode&);
     Element* getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode&);
-    bool isValidContentSelect(Element* contentElement, ExceptionCode&);
+    bool isValidContentSelect(Element* insertionPoint, ExceptionCode&);
 
     bool attached(Node*, ExceptionCode&);
 
