@@ -4038,3 +4038,4 @@ BUGWK80588 LEOPARD : fast/block/positioning/054.html = IMAGE
 BUGWK80563 : css3/filters/effect-combined-hw.html = PASS IMAGE
 BUGWK80563 : css3/filters/effect-hue-rotate-hw.html = PASS IMAGE
 BUGWK80563 : css3/filters/effect-opacity-hw.html = PASS IMAGE
+BUGWK80563 : compositing/reflections/nested-reflection-opacity.html = PASS IMAGE
