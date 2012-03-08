@@ -58,7 +58,7 @@ bool RetainedDOMInfo::IsEquivalent(v8::RetainedObjectInfo* other)
 
 intptr_t RetainedDOMInfo::GetHash()
 {
-    return reinterpret_cast<intptr_t>(m_root);
+    return PtrHash<void*>::hash(m_root);
 }
     
 const char* RetainedDOMInfo::GetGroupLabel()
