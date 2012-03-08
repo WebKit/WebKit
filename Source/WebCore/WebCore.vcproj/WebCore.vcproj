@@ -24503,7 +24503,7 @@
 				<File
 					RelativePath="..\Modules\webdatabase\WorkerContextSQLDatabase.h"
 					>
-			</File>
+				</File>
 			</Filter>
 			<Filter
 				Name="websockets"
@@ -56614,6 +56614,14 @@
 			Name="html"
 			>
 			<File
+				RelativePath="..\fileapi\AsyncFileStream.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\AsyncFileStream.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\AsyncFileWriter.h"
 				>
 			</File>
@@ -56899,14 +56907,6 @@
 			</File>
 			<File
 				RelativePath="..\html\EmailInputType.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\AsyncFileStream.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\AsyncFileStream.h"
 				>
 			</File>
 			<File
@@ -71690,15 +71690,15 @@
 			Name="strings"
 			>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\AtomicString.cpp"
+				RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf\text\AtomicString.cpp"
 				>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\StringImpl.cpp"
+				RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf\text\StringImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\WTFString.cpp"
+				RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf\text\WTFString.cpp"
 				>
 			</File>
 		</Filter>
@@ -73549,11 +73549,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
 					>
 				</File>
 				<File

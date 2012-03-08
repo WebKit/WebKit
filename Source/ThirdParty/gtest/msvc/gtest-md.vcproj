@@ -20,7 +20,7 @@
 			OutputDirectory="$(ConfigurationBuildDir)\lib"
 			IntermediateDirectory="$(ConfigurationBuildDir)\obj\$(ProjectName)"
 			ConfigurationType="4"
-			InheritedPropertySheets="&quot;$(ProjectDir)\..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops&quot;"
+			InheritedPropertySheets="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -40,8 +40,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;;&quot;$(ConfigurationBuildDir)\include\private\JavaScriptCore&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -166,8 +166,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -355,8 +355,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

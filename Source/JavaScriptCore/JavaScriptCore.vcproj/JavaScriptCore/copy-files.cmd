@@ -77,7 +77,7 @@ for %%f in (
     wtf\text\StringImpl.cpp
     wtf\text\WTFString.cpp
 ) do (
-    xcopy /y /d ..\..\%%f "%PrivateHeadersDirectory%" >NUL
+    echo F | xcopy /y /d ..\..\%%f "%PrivateHeadersDirectory%\%%f" >NUL
 )
 
 goto :EOF

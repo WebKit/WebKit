@@ -1,3 +1,18 @@
+2012-03-07  Jessie Berlin  <jberlin@apple.com>
+
+        Clean Windows build fails after r110033
+        https://bugs.webkit.org/show_bug.cgi?id=80553
+
+        Rubber-stamped by Jon Honeycutt and Eric Seidel.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd:
+        Place the implementation files next to their header files in the wtf/text subdirectory.
+        Use echo -F to tell xcopy that these are files (since there is apparently no flag).
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        Update the path to those implementation files.
+        * JavaScriptCore.vcproj/testRegExp/testRegExp.vcproj:
+        Ditto.
+
 2012-03-07  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Eliminate redundant Phis in DFG

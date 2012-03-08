@@ -1,3 +1,16 @@
+2012-03-07  Jessie Berlin  <jberlin@apple.com>
+
+        Clean Windows build fails after r110033
+        https://bugs.webkit.org/show_bug.cgi?id=80553
+
+        Rubber-stamped by Jon Honeycutt and Eric Seidel.
+
+        Add the new JavaScriptCore include directory to some more vsprops files.
+
+        * DumpRenderTree/win/ImageDiffCommon.vsprops:
+        * WebKitTestRunner/Configurations/InjectedBundleCommon.vsprops:
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops:
+
 2012-03-07  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [NRWT] Fix --platform=qt-5.0 --new-baseline combo

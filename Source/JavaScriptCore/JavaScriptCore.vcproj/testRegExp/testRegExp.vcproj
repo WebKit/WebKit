@@ -448,15 +448,15 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\AtomicString.cpp"
+			RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf\text\AtomicString.cpp"
 			>
 		</File>
 		<File
-			RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\StringBuilder.cpp"
+			RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf\text\StringBuilder.cpp"
 			>
 		</File>
 		<File
-			RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\StringImpl.cpp"
+			RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf\text\StringImpl.cpp"
 			>
 		</File>
 		<File
@@ -464,7 +464,7 @@
 			>
 		</File>
 		<File
-			RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\WTFString.cpp"
+			RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf\text\WTFString.cpp"
 			>
 		</File>
 	</Files>
