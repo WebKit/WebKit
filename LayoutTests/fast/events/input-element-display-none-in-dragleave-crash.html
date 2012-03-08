@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        function test()
+        {
+            var dropTarget = document.getElementById("drop-target");
+            dropTarget.addEventListener("dragleave", function() {
+                dropTarget.style.display = "none";
+            }, false);
+
+            if (window.eventSender) {
+                eventSender.beginDragWithFiles(["resources/abe.png"]);
+                var x = dropTarget.offsetLeft + dropTarget.offsetWidth / 2;
+                var y = dropTarget.offsetTop + dropTarget.offsetHeight / 2;
+                eventSender.mouseMoveTo(x, y);
+                eventSender.mouseMoveTo(0, 0);
+            }
+            
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    </script>
+</head>
+<body onload="test()">
+    <p>This test passes if there is no crash when dragging a file over and then away from the file input element below.</p>
+    <input type="file" id="drop-target">
+</body>
+</html>
