@@ -73,6 +73,24 @@ extern "C" {
 using namespace std;
 
 namespace WebCore {
+    
+static CGColorSpaceRef createLinearSRGBColorSpace()
+{
+    // If we fail to load the linearized sRGB ICC profile, fall back to DeviceRGB.
+    CGColorSpaceRef linearSRGBSpace = deviceRGBColorSpaceRef();
+    
+    CFBundleRef webCoreBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
+    RetainPtr<CFURLRef> iccProfileURL(CFBundleCopyResourceURL(webCoreBundle, CFSTR("linearSRGB"), CFSTR("icc"), 0));
+    CFDataRef iccProfileData;
+    
+    if (iccProfileURL && CFURLCreateDataAndPropertiesFromResource(0, iccProfileURL.get(), &iccProfileData, 0, 0, 0))
+        linearSRGBSpace = CGColorSpaceCreateWithICCProfile(iccProfileData);
+    
+    if (iccProfileData)
+        CFRelease(iccProfileData);
+    
+    return linearSRGBSpace;
+}
 
 static void setCGFillColor(CGContextRef context, const Color& color, ColorSpace colorSpace)
 {
@@ -103,12 +121,12 @@ CGColorSpaceRef sRGBColorSpaceRef()
 
 CGColorSpaceRef linearRGBColorSpaceRef()
 {
-    // FIXME: Windows should be able to use kCGColorSpaceGenericRGBLinear, this is tracked by http://webkit.org/b/31363.
+    // FIXME: Windows should be able to use linear sRGB, this is tracked by http://webkit.org/b/80000.
 #if PLATFORM(WIN)
     return deviceRGBColorSpaceRef();
 #else
-    static CGColorSpaceRef linearRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
-    return linearRGBSpace;
+    static CGColorSpaceRef linearSRGBSpace = createLinearSRGBColorSpace();
+    return linearSRGBSpace;
 #endif
 }
 
