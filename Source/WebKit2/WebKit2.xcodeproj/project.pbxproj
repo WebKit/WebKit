@@ -880,7 +880,6 @@
 		CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */; };
 		CDCA85D5132AC2B300E961DF /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDCA85D4132AC2B300E961DF /* IOKit.framework */; };
 		CDCA85EE132AD70100E961DF /* WebFullScreenManagerProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCA85DE132AD05300E961DF /* WebFullScreenManagerProxyMac.mm */; };
-		CDCA8603132ADC0500E961DF /* WebFullScreenManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCA85E6132AD33000E961DF /* WebFullScreenManagerMac.mm */; };
 		D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */; };
 		D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484311FF4B6500032B39 /* WebPopupMenu.h */; };
 		D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */; };
@@ -1930,8 +1929,6 @@
 		CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFullScreenWindowController.h; sourceTree = "<group>"; };
 		CDCA85D4132AC2B300E961DF /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		CDCA85DE132AD05300E961DF /* WebFullScreenManagerProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFullScreenManagerProxyMac.mm; sourceTree = "<group>"; };
-		CDCA85E5132AD33000E961DF /* WebFullScreenManagerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenManagerMac.h; sourceTree = "<group>"; };
-		CDCA85E6132AD33000E961DF /* WebFullScreenManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFullScreenManagerMac.mm; sourceTree = "<group>"; };
 		D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPopupMenu.cpp; sourceTree = "<group>"; };
 		D3B9484311FF4B6500032B39 /* WebPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPopupMenu.h; sourceTree = "<group>"; };
 		D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSearchPopupMenu.cpp; sourceTree = "<group>"; };
@@ -3680,8 +3677,6 @@
 		CDCA85E4132AD33000E961DF /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				CDCA85E5132AD33000E961DF /* WebFullScreenManagerMac.h */,
-				CDCA85E6132AD33000E961DF /* WebFullScreenManagerMac.mm */,
 			);
 			name = mac;
 			path = FullScreen/mac;
@@ -4707,7 +4702,6 @@
 				BCB9F6A11123A84B00A137E0 /* WebFramePolicyListenerProxy.cpp in Sources */,
 				BC111B0E112F5E4F00337BAB /* WebFrameProxy.cpp in Sources */,
 				CD73BA53131B645B00EEDED2 /* WebFullScreenManager.cpp in Sources */,
-				CDCA8603132ADC0500E961DF /* WebFullScreenManagerMac.mm in Sources */,
 				CD73BA4E131ACDB700EEDED2 /* WebFullScreenManagerMessageReceiver.cpp in Sources */,
 				CD6F75F4131B66D000D6B21E /* WebFullScreenManagerProxy.cpp in Sources */,
 				CDCA85EE132AD70100E961DF /* WebFullScreenManagerProxyMac.mm in Sources */,

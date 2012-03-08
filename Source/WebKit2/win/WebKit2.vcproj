@@ -2717,18 +2717,6 @@
 					RelativePath="..\WebProcess\FullScreen\WebFullScreenManager.h"
 					>
 				</File>
-				<Filter
-					Name="win"
-					>
-					<File
-						RelativePath="..\WebProcess\FullScreen\win\WebFullScreenManagerWin.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\WebProcess\FullScreen\win\WebFullScreenManagerWin.h"
-						>
-					</File>
-				</Filter>
 			</Filter>
 			<Filter
 				Name="Notifications (User)"

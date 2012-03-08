@@ -57,55 +57,6 @@ void WebFullScreenManagerProxy::exitFullScreen()
     m_webView->fullScreenController()->exitFullScreen();
 }
 
-void WebFullScreenManagerProxy::beganEnterFullScreenAnimation()
-{
-    if (!m_webView)
-        return;
-    // FIXME: Implement
-}
-
-void WebFullScreenManagerProxy::finishedEnterFullScreenAnimation(bool completed)
-{
-    if (!m_webView)
-        return;
-    // FIXME: Implement
-}
-
-void WebFullScreenManagerProxy::beganExitFullScreenAnimation()
-{
-    if (!m_webView)
-        return;
-    // FIXME: Implement
-}
-
-void WebFullScreenManagerProxy::finishedExitFullScreenAnimation(bool completed)
-{
-    if (!m_webView)
-        return;
-    // FIXME: Implement
-}
-    
-void WebFullScreenManagerProxy::enterAcceleratedCompositingMode(const LayerTreeContext& context)
-{
-    if (!m_webView)
-        return;
-    // FIXME: Implement
-}
-
-void WebFullScreenManagerProxy::exitAcceleratedCompositingMode()
-{
-    if (!m_webView)
-        return;
-    // FIXME: Implement
-}
-
-void WebFullScreenManagerProxy::getFullScreenRect(WebCore::IntRect& rect)
-{
-    if (!m_webView)
-        return;
-    // FIXME: Implement
-}
-
 } // namespace WebKit
 
 #endif

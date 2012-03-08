@@ -285,7 +285,6 @@ HEADERS += \
     WebProcess/Downloads/DownloadManager.h \
     WebProcess/Downloads/qt/QtFileDownloader.h \
     WebProcess/FullScreen/WebFullScreenManager.h \
-    WebProcess/FullScreen/qt/WebFullScreenManagerQt.h \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
     WebProcess/Geolocation/WebGeolocationManager.h \
     WebProcess/IconDatabase/WebIconDatabaseProxy.h \
@@ -625,7 +624,6 @@ SOURCES += \
     WebProcess/Downloads/qt/DownloadQt.cpp \
     WebProcess/Downloads/qt/QtFileDownloader.cpp \
     WebProcess/FullScreen/WebFullScreenManager.cpp \
-    WebProcess/FullScreen/qt/WebFullScreenManagerQt.cpp \
     WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
     WebProcess/Geolocation/WebGeolocationManager.cpp \
     WebProcess/IconDatabase/WebIconDatabaseProxy.cpp \

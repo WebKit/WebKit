@@ -202,7 +202,6 @@ private:
     virtual bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard) OVERRIDE;
     virtual void enterFullScreenForElement(WebCore::Element*) OVERRIDE;
     virtual void exitFullScreenForElement(WebCore::Element*) OVERRIDE;
-    virtual void setRootFullScreenLayer(WebCore::GraphicsLayer*) OVERRIDE;
 #endif
 
 #if PLATFORM(MAC)

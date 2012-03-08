@@ -42,6 +42,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+PassRefPtr<WebFullScreenManager> WebFullScreenManager::create(WebPage* page)
+{
+    return adoptRef(new WebFullScreenManager(page));
+}
+
 WebFullScreenManager::WebFullScreenManager(WebPage* page)
     : m_page(page)
 {
@@ -49,7 +54,6 @@ WebFullScreenManager::WebFullScreenManager(WebPage* page)
     
 WebFullScreenManager::~WebFullScreenManager()
 {
-    
 }
 
 WebCore::Element* WebFullScreenManager::element() 
@@ -84,33 +88,6 @@ void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
     ASSERT(element);
     ASSERT(m_element == element);
     m_page->injectedBundleFullScreenClient().exitFullScreenForElement(m_page.get(), element);
-}
-
-void WebFullScreenManager::beganEnterFullScreenAnimation()
-{
-    m_page->send(Messages::WebFullScreenManagerProxy::BeganEnterFullScreenAnimation());
-}
-
-void WebFullScreenManager::finishedEnterFullScreenAnimation(bool completed)
-{
-    m_page->send(Messages::WebFullScreenManagerProxy::FinishedEnterFullScreenAnimation(completed));
-}
-
-void WebFullScreenManager::beganExitFullScreenAnimation()
-{
-    m_page->send(Messages::WebFullScreenManagerProxy::BeganExitFullScreenAnimation());
-}
-
-void WebFullScreenManager::finishedExitFullScreenAnimation(bool completed)
-{
-    m_page->send(Messages::WebFullScreenManagerProxy::FinishedExitFullScreenAnimation(completed));
-}
-    
-IntRect WebFullScreenManager::getFullScreenRect()
-{
-    IntRect rect;
-    m_page->sendSync(Messages::WebFullScreenManagerProxy::GetFullScreenRect(), Messages::WebFullScreenManagerProxy::GetFullScreenRect::Reply(rect));
-    return rect;
 }
 
 void WebFullScreenManager::willEnterFullScreen()

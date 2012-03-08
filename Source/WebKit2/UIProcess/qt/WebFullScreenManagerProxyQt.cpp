@@ -46,41 +46,6 @@ void WebFullScreenManagerProxy::exitFullScreen()
     notImplemented();
 }
 
-void WebFullScreenManagerProxy::beganEnterFullScreenAnimation()
-{
-    notImplemented();
-}
-
-void WebFullScreenManagerProxy::finishedEnterFullScreenAnimation(bool completed)
-{
-    notImplemented();
-}
-
-void WebFullScreenManagerProxy::beganExitFullScreenAnimation()
-{
-    notImplemented();
-}
-
-void WebFullScreenManagerProxy::finishedExitFullScreenAnimation(bool completed)
-{
-    notImplemented();
-}
-
-void WebFullScreenManagerProxy::enterAcceleratedCompositingMode(const LayerTreeContext& context)
-{
-    notImplemented();
-}
-
-void WebFullScreenManagerProxy::exitAcceleratedCompositingMode()
-{
-    notImplemented();
-}
-
-void WebFullScreenManagerProxy::getFullScreenRect(WebCore::IntRect& rect)
-{
-    notImplemented();
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(FULLSCREEN_API)

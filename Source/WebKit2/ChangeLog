@@ -1,3 +1,57 @@
+2012-03-08  Jer Noble  <jer.noble@apple.com>
+
+        Full Screen Refactor Part 2: Remove unnecessary WebKit2 APIs for Full Screen made
+        https://bugs.webkit.org/show_bug.cgi?id=78926
+
+        Reviewed by John Sullivan.
+
+        The following functions (and also their Proxy versions) were removed completely:
+        WebFullScreenManager::enterAcceleratedCompositingMode(const LayerTreeContext&)
+        WebFullScreenManager::exitAcceleratedCompositingMode()
+        WebFullScreenManager::beganEnterFullScreenAnimation()
+        WebFullScreenManager::finishedEnterFullScreenAnimation(bool)
+        WebFullScreenManager::beganExitFullScreenAnimation()
+        WebFullScreenManager::finishedExitFullScreenAnimation(bool)
+        WebFullScreenManager::getFullScreenRect(WebCore::IntRect&)
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        * UIProcess/WebFullScreenManagerProxy.h:
+        (WebKit::WebFullScreenManagerProxy::beginEnterFullScreenAnimation):
+        (WebKit::WebFullScreenManagerProxy::beginExitFullScreenAnimation):
+        (WebKit::WebFullScreenManagerProxy::disposeOfLayerClient):
+        (WebFullScreenManagerProxy):
+        * UIProcess/WebFullScreenManagerProxy.messages.in:
+        * UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp:
+        * UIProcess/mac/WebFullScreenManagerProxyMac.mm:
+        * UIProcess/qt/WebFullScreenManagerProxyQt.cpp:
+        * UIProcess/win/WebFullScreenManagerProxyWin.cpp:
+        (WebKit::WebFullScreenManagerProxy::finishedExitFullScreenAnimation):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::create):
+        (WebKit::WebFullScreenManager::~WebFullScreenManager):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        (WebFullScreenManager):
+        * WebProcess/FullScreen/WebFullScreenManager.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exitFullScreenForElement):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+
+        Additionally, the platform-specific WebFullScreenManager subclasses were removed, as no
+        platform-specific implementations remained after the above functions were removed:
+        * GNUmakefile.am:
+        * Target.pri:
+        * win/WebKit2.vcproj:
+        * WebProcess/FullScreen/gtk/WebFullScreenManagerGtk.cpp: Removed.
+        * WebProcess/FullScreen/gtk/WebFullScreenManagerGtk.h: Removed.
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.h: Removed.
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm: Removed.
+        * WebProcess/FullScreen/qt/WebFullScreenManagerQt.cpp: Removed.
+        * WebProcess/FullScreen/qt/WebFullScreenManagerQt.h: Removed.
+        * WebProcess/FullScreen/win/WebFullScreenManagerWin.cpp: Removed.
+        * WebProcess/FullScreen/win/WebFullScreenManagerWin.h: Removed.
+
 2012-03-08  Matt Lilek  <mrl@apple.com>
 
         Don't enable VIDEO_TRACK on all OS X platforms

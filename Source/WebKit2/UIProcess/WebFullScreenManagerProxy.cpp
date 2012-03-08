@@ -84,20 +84,6 @@ void WebFullScreenManagerProxy::didExitFullScreen()
     m_page->process()->send(Messages::WebFullScreenManager::DidExitFullScreen(), m_page->pageID());
 }
 
-void WebFullScreenManagerProxy::beginEnterFullScreenAnimation(float duration)
-{
-    m_page->process()->send(Messages::WebFullScreenManager::BeginEnterFullScreenAnimation(duration), m_page->pageID());
-}
-
-void WebFullScreenManagerProxy::beginExitFullScreenAnimation(float duration)
-{
-    m_page->process()->send(Messages::WebFullScreenManager::BeginExitFullScreenAnimation(duration), m_page->pageID());
-}
-
-void WebFullScreenManagerProxy::disposeOfLayerClient()
-{
-    m_page->process()->send(Messages::WebFullScreenManager::DisposeOfLayerClient(), m_page->pageID());
-}
 
 void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, bool& supports)
 {

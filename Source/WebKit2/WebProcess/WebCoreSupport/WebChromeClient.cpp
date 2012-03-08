@@ -712,12 +712,6 @@ void WebChromeClient::exitFullScreenForElement(WebCore::Element* element)
 {
     m_page->fullScreenManager()->exitFullScreenForElement(element);
 }
-    
-void WebChromeClient::setRootFullScreenLayer(GraphicsLayer* layer)
-{
-    m_page->fullScreenManager()->setRootFullScreenLayer(layer);
-}
-
 #endif
 
 void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArguments& args) const

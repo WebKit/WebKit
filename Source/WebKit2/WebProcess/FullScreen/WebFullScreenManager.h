@@ -57,11 +57,6 @@ public:
     bool supportsFullScreen(bool withKeyboard);
     void enterFullScreenForElement(WebCore::Element*);
     void exitFullScreenForElement(WebCore::Element*);
-    void beganEnterFullScreenAnimation();
-    void finishedEnterFullScreenAnimation(bool completed);
-    void beganExitFullScreenAnimation();
-    void finishedExitFullScreenAnimation(bool completed);
-    virtual void setRootFullScreenLayer(WebCore::GraphicsLayer*) = 0;
 
     void willEnterFullScreen();
     void didEnterFullScreen();
@@ -73,10 +68,6 @@ public:
 protected:
     WebFullScreenManager(WebPage*);
 
-    virtual void beginEnterFullScreenAnimation(float duration) = 0;
-    virtual void beginExitFullScreenAnimation(float duration) = 0;
-    virtual void disposeOfLayerClient() { }
-    WebCore::IntRect getFullScreenRect();
 
     void didReceiveWebFullScreenManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
