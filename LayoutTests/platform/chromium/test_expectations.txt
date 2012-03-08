@@ -4030,3 +4030,5 @@ BUGWK80531 : fast/forms/textfield-overflow.html = IMAGE+TEXT
 BUG_SENORBLANCO LEOPARD : css2.1/t1202-counter-04-b.html = TEXT
 BUG_SENORBLANCO LEOPARD : css2.1/t1202-counters-04-b.html = TEXT
 BUG_SENORBLANCO LEOPARD : editing/pasteboard/paste-table-cells.html = IMAGE
+
+BUGWK80563 : css3/filters/effect-combined-hw.html = PASS IMAGE
