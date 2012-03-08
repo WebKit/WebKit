@@ -409,10 +409,13 @@ void FrameView::setFrameRect(const IntRect& newRect)
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-void FrameView::scheduleAnimation()
+bool FrameView::scheduleAnimation()
 {
-    if (hostWindow())
+    if (hostWindow()) {
         hostWindow()->scheduleAnimation();
+        return true;
+    }
+    return false;
 }
 #endif
 
@@ -2105,6 +2108,8 @@ void FrameView::unscheduleRelayout()
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 void FrameView::serviceScriptedAnimations(DOMTimeStamp time)
 {
+    serviceScrollAnimations();
+
     Vector<AnimationController*> animations;
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext())
         frame->animation()->serviceAnimations();

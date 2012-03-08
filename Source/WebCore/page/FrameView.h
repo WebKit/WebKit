@@ -69,7 +69,7 @@ public:
     virtual void setFrameRect(const IntRect&);
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    void scheduleAnimation();
+    virtual bool scheduleAnimation();
 #endif
 
     Frame* frame() const { return m_frame.get(); }

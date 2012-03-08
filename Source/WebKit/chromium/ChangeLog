@@ -1,3 +1,17 @@
+2012-03-08  Scott Byer  <scottbyer@chromium.org>
+
+        Have ScrollAnimatorNone use requestAnimationFrame
+        https://bugs.webkit.org/show_bug.cgi?id=78938
+
+        Reviewed by James Robinson.
+
+        * src/ScrollbarGroup.h:
+        (WebCore):
+        (WebKit::ScrollbarGroup::hostWindow):
+        (ScrollbarGroup):
+        * tests/ScrollAnimatorNoneTest.cpp:
+        (MockScrollableArea::hostWindow):
+
 2012-03-08  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Make elements with attributes smaller by eliminating the m_element back pointer in NamedNodeMap

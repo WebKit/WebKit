@@ -342,4 +342,9 @@ bool ScrollableArea::hasLayerForScrollCorner() const
 #endif
 }
 
+void ScrollableArea::serviceScrollAnimations()
+{
+    scrollAnimator()->serviceScrollAnimations();
+}
+
 } // namespace WebCore

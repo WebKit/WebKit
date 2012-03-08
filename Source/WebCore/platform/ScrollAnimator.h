@@ -73,6 +73,7 @@ public:
     FloatPoint currentPosition() const;
 
     virtual void cancelAnimations() { }
+    virtual void serviceScrollAnimations() { }
 
     virtual void contentAreaWillPaint() const { }
     virtual void mouseEnteredContentArea() const { }

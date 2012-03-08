@@ -33,6 +33,10 @@
 
 #if ENABLE(SMOOTH_SCROLLING)
 
+#if !ENABLE(REQUEST_ANIMATION_FRAME)
+#error "SMOOTH_SCROLLING requires REQUEST_ANIMATION_FRAME to be enabled."
+#endif
+
 #include "ScrollAnimator.h"
 #include "Timer.h"
 
@@ -49,6 +53,9 @@ public:
 
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
+
+    virtual void cancelAnimations();
+    virtual void serviceScrollAnimations();
 
     virtual void willEndLiveResize();
     virtual void didAddVerticalScrollbar(Scrollbar*);
@@ -126,15 +133,18 @@ protected:
         int m_visibleLength;
     };
 
-    void animationTimerFired(Timer<ScrollAnimatorNone>*);
+    void startNextTimer();
+    void animationTimerFired();
+
     void stopAnimationTimerIfNeeded();
+    bool animationTimerActive();
     void updateVisibleLengths();
 
     PerAxisData m_horizontalData;
     PerAxisData m_verticalData;
 
     double m_startTime;
-    Timer<ScrollAnimatorNone> m_animationTimer;
+    bool m_animationActive;
 };
 
 } // namespace WebCore

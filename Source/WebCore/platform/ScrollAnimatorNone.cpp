@@ -378,7 +378,7 @@ ScrollAnimatorNone::ScrollAnimatorNone(ScrollableArea* scrollableArea)
     : ScrollAnimator(scrollableArea)
     , m_horizontalData(this, &m_currentPosX, scrollableArea->visibleWidth())
     , m_verticalData(this, &m_currentPosY, scrollableArea->visibleHeight())
-    , m_animationTimer(this, &ScrollAnimatorNone::animationTimerFired)
+    , m_animationActive(false)
 {
 }
 
@@ -425,9 +425,9 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
 
     PerAxisData& data = (orientation == VerticalScrollbar) ? m_verticalData : m_horizontalData;
     bool needToScroll = data.updateDataFromParameters(step, multiplier, scrollableSize, WTF::monotonicallyIncreasingTime(), &parameters);
-    if (needToScroll && !m_animationTimer.isActive()) {
+    if (needToScroll && !animationTimerActive()) {
         m_startTime = data.m_startTime;
-        animationTimerFired(&m_animationTimer);
+        animationTimerFired();
     }
     return needToScroll;
 }
@@ -445,6 +445,17 @@ void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset
     m_verticalData.m_desiredPosition = offset.y();
 
     notifyPositionChanged();
+}
+
+void ScrollAnimatorNone::cancelAnimations()
+{
+    m_animationActive = false;
+}
+
+void ScrollAnimatorNone::serviceScrollAnimations()
+{
+    if (m_animationActive)
+        animationTimerFired();
 }
 
 void ScrollAnimatorNone::willEndLiveResize()
@@ -468,7 +479,7 @@ void ScrollAnimatorNone::updateVisibleLengths()
     m_verticalData.updateVisibleLength(scrollableArea()->visibleHeight());
 }
 
-void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>* timer)
+void ScrollAnimatorNone::animationTimerFired()
 {
 #if PLATFORM(CHROMIUM)
     TRACE_EVENT("ScrollAnimatorNone::animationTimerFired", this, 0);
@@ -476,17 +487,18 @@ void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>* timer)
 
     double currentTime = WTF::monotonicallyIncreasingTime();
     double deltaToNextFrame = ceil((currentTime - m_startTime) * kFrameRate) / kFrameRate - (currentTime - m_startTime);
+    currentTime += deltaToNextFrame;
 
     bool continueAnimation = false;
-    if (m_horizontalData.m_startTime && m_horizontalData.animateScroll(currentTime + deltaToNextFrame))
+    if (m_horizontalData.m_startTime && m_horizontalData.animateScroll(currentTime))
         continueAnimation = true;
-    if (m_verticalData.m_startTime && m_verticalData.animateScroll(currentTime + deltaToNextFrame))
+    if (m_verticalData.m_startTime && m_verticalData.animateScroll(currentTime))
         continueAnimation = true;
 
-    if (continueAnimation) {
-        double nextTimerInterval = max(kMinimumTimerInterval, deltaToNextFrame);
-        timer->startOneShot(nextTimerInterval);
-    }
+    if (continueAnimation)
+        startNextTimer();
+    else
+        m_animationActive = false;
 
 #if PLATFORM(CHROMIUM)
     TRACE_EVENT("ScrollAnimatorNone::notifyPositionChanged", this, 0);
@@ -494,10 +506,21 @@ void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>* timer)
     notifyPositionChanged();
 }
 
+void ScrollAnimatorNone::startNextTimer()
+{
+    if (scrollableArea()->scheduleAnimation())
+        m_animationActive = true;
+}
+
+bool ScrollAnimatorNone::animationTimerActive()
+{
+    return m_animationActive;
+}
+
 void ScrollAnimatorNone::stopAnimationTimerIfNeeded()
 {
-    if (m_animationTimer.isActive())
-        m_animationTimer.stop();
+    if (animationTimerActive())
+        m_animationActive = false;
 }
 
 } // namespace WebCore
