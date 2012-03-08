@@ -613,22 +613,18 @@ int RenderTextControlSingleLine::clientInsetRight() const
 LayoutUnit RenderTextControlSingleLine::clientPaddingLeft() const
 {
     LayoutUnit padding = paddingLeft();
-
-    HTMLElement* resultsButton = resultsButtonElement();
-    if (RenderBox* resultsRenderer = resultsButton ? resultsButton->renderBox() : 0)
-        padding += resultsRenderer->width() + resultsRenderer->marginLeft() + resultsRenderer->paddingLeft() + resultsRenderer->marginRight() + resultsRenderer->paddingRight();
-
+    if (RenderBox* box = innerBlockElement() ? innerBlockElement()->renderBox() : 0)
+        padding += box->x();
     return padding;
 }
 
 LayoutUnit RenderTextControlSingleLine::clientPaddingRight() const
 {
     LayoutUnit padding = paddingRight();
-
-    HTMLElement* cancelButton = cancelButtonElement();
-    if (RenderBox* cancelRenderer = cancelButton ? cancelButton->renderBox() : 0)
-        padding += cancelRenderer->width() + cancelRenderer->marginLeft() + cancelRenderer->paddingLeft() + cancelRenderer->marginRight() + cancelRenderer->paddingRight();
-
+    if (RenderBox* containerBox = containerElement() ? containerElement()->renderBox() : 0) {
+        if (RenderBox* innerBlockBox = innerBlockElement() ? innerBlockElement()->renderBox() : 0)
+            padding += containerBox->width() - (innerBlockBox->x() + innerBlockBox->width());
+    }
     return padding;
 }
 
