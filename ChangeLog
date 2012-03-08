@@ -1,3 +1,33 @@
+2012-03-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        perf-o-matic should incrementally update JSON responses
+        https://bugs.webkit.org/show_bug.cgi?id=79898
+
+        Reviewed by Eric Seidel.
+
+        Now that Runs object store test_runs and averages separately,
+        we can update JSON data incrementally without degrading values.
+
+        Also fixed the order of arguments passed to DashboardImage.needs_update
+        in schedule_runs_update. This bug had caused all chart images to be
+        updated on every new report.
+
+        * Websites/webkit-perf.appspot.com/controller.py:
+        (schedule_runs_update):
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Runs.update_or_insert):
+        (Runs.update_incrementally):
+        (Runs):
+        (Runs.get_by_objects):
+        * Websites/webkit-perf.appspot.com/models_unittest.py:
+        (RunsTest._create_results):
+        (RunsTest.test_generate_runs):
+        (RunsTest.test_update_or_insert):
+        (RunsTest.test_update_incrementally):
+        (RunsTest.test_to_json_with_results):
+        * Websites/webkit-perf.appspot.com/report_process_handler.py:
+        (ReportProcessHandler.post):
+
 2012-03-08  Max Vujovic  <mvujovic@adobe.com>
 
         Add a method to window.internals to enable testing of inspector highlight rects

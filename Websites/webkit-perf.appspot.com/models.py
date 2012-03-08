@@ -361,25 +361,44 @@ class Runs(db.Model):
 
     @classmethod
     def update_or_insert(cls, branch, platform, test):
-        test_runs = []
-        averages = {}
-        values = []
+        key_name = cls._key_name(branch.id, platform.id, test.id)
+        runs = Runs(key_name=key_name, branch=branch, platform=platform, test=test, json_runs='', json_averages='')
 
         for build, result in cls._generate_runs(branch, platform, test.name):
-            test_runs.append(cls._entry_from_build_and_result(build, result))
-            # FIXME: Calculate the average. In practice, we wouldn't have more than one value for a given revision.
-            averages[build.revision] = result.value
-            values.append(result.value)
+            runs.update_incrementally(build, result, check_duplicates_and_save=False)
 
-        min_value = min(values) if values else None
-        max_value = max(values) if values else None
-
-        key_name = cls._key_name(branch.id, platform.id, test.id)
-        runs = Runs(key_name=key_name, branch=branch, platform=platform, test=test,
-            json_runs=json.dumps(test_runs)[1:-1], json_averages=json.dumps(averages)[1:-1], json_min=min_value, json_max=max_value)
         runs.put()
         memcache.set(key_name, runs.to_json())
         return runs
+
+    def update_incrementally(self, build, result, check_duplicates_and_save=True):
+        new_entry = Runs._entry_from_build_and_result(build, result)
+
+        # Check for duplicate entries
+        if check_duplicates_and_save:
+            revision_is_in_runs = str(build.revision) in json.loads('{' + self.json_averages + '}')
+            if revision_is_in_runs and new_entry[1] in [entry[1] for entry in json.loads('[' + self.json_runs + ']')]:
+                return
+
+        if self.json_runs:
+            self.json_runs += ','
+
+        if self.json_averages:
+            self.json_averages += ','
+
+        self.json_runs += json.dumps(new_entry)
+        # FIXME: Calculate the average. In practice, we wouldn't have more than one value for a given revision.
+        self.json_averages += '"%d": %f' % (build.revision, result.value)
+        self.json_min = min(self.json_min, result.value) if self.json_min != None else result.value
+        self.json_max = max(self.json_max, result.value)
+
+        if check_duplicates_and_save:
+            self.put()
+            memcache.set(self.key().name(), self.to_json())
+
+    @staticmethod
+    def get_by_objects(branch, platform, test):
+        return Runs.get_by_key_name(Runs._key_name(branch.id, platform.id, test.id))
 
     @classmethod
     def json_by_ids(cls, branch_id, platform_id, test_id):

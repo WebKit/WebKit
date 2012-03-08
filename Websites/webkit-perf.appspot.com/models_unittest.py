@@ -527,16 +527,18 @@ class RunsTest(DataStoreTestsBase):
         super(RunsTest, self).setUp()
         self.testbed.init_memcache_stub()
 
-    def _create_results(self, branch, platform, builder, test_name, values, timestamps=None):
+    def _create_results(self, branch, platform, builder, test_name, values, timestamps=None, starting_revision=100):
+        builds = []
         results = []
         for i, value in enumerate(values):
             build = Build(branch=branch, platform=platform, builder=builder,
-                buildNumber=i, revision=100 + i, timestamp=timestamps[i] if timestamps else datetime.now())
+                buildNumber=i, revision=starting_revision + i, timestamp=timestamps[i] if timestamps else datetime.now())
             build.put()
             result = TestResult(name=test_name, build=build, value=value)
             result.put()
+            builds.append(build)
             results.append(result)
-        return results
+        return builds, results
 
     def test_generate_runs(self):
         some_branch = Branch.create_if_possible('some-branch', 'Some Branch')
@@ -544,7 +546,7 @@ class RunsTest(DataStoreTestsBase):
         some_builder = Builder.get(Builder.create('some-builder', 'Some Builder'))
         some_test = Test.update_or_insert('some-test', some_branch, some_platform)
 
-        results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0, 51.0, 52.0, 49.0, 48.0])
+        builds, results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0, 51.0, 52.0, 49.0, 48.0])
         last_i = 0
         for i, (build, result) in enumerate(Runs._generate_runs(some_branch, some_platform, some_test)):
             self.assertEqual(build.buildNumber, i)
@@ -573,14 +575,46 @@ class RunsTest(DataStoreTestsBase):
         runs.delete()
         self.assertThereIsNoInstanceOf(Runs)
 
-        results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0])
+        builds, results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0])
         runs = Runs.update_or_insert(some_branch, some_platform, some_test)
         self.assertOnlyInstance(runs)
         self.assertTrue(runs.json_runs.startswith('[5, [4, 0, 100, null],'))
-        self.assertEqual(runs.json_averages, '"100": 50.0')
+        self.assertEqual(json.loads('{' + runs.json_averages + '}'), {"100": 50.0})
         self.assertEqual(runs.json_min, 50.0)
         self.assertEqual(runs.json_max, 50.0)
         self.assertNotEqual(memcache.get(Runs._key_name(some_branch.id, some_platform.id, some_test.id)), old_memcache_value)
+
+    def test_update_incrementally(self):
+        some_branch = Branch.create_if_possible('some-branch', 'Some Branch')
+        some_platform = Platform.create_if_possible('some-platform', 'Some Platform')
+        some_builder = Builder.get(Builder.create('some-builder', 'Some Builder'))
+        some_test = Test.update_or_insert('some-test', some_branch, some_platform)
+        self.assertThereIsNoInstanceOf(Runs)
+
+        timestamps = [datetime.now(), datetime.now()]
+        builds, results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0, 52.0], timestamps)
+        runs = Runs.update_or_insert(some_branch, some_platform, some_test)
+        self.assertOnlyInstance(runs)
+        self.assertEqual(json.loads('[' + runs.json_runs + ']'),
+            [[5, [4, 0, 100, None], mktime(timestamps[0].timetuple()), 50.0, 0, [], None, None],
+            [7, [6, 1, 101, None], mktime(timestamps[1].timetuple()), 52.0, 0, [], None, None]])
+        self.assertEqual(json.loads('{' + runs.json_averages + '}'), {"100": 50.0, "101": 52.0})
+        self.assertEqual(runs.json_min, 50.0)
+        self.assertEqual(runs.json_max, 52.0)
+
+        timestamps.append(datetime.now())
+        builds, results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [48.0],
+            timestamps[2:], starting_revision=102)
+        runs.update_incrementally(builds[0], results[0])
+
+        self.assertOnlyInstance(runs)
+        self.assertEqual(json.loads('[' + runs.json_runs + ']'),
+            [[5, [4, 0, 100, None], mktime(timestamps[0].timetuple()), 50.0, 0, [], None, None],
+            [7, [6, 1, 101, None], mktime(timestamps[1].timetuple()), 52.0, 0, [], None, None],
+            [9, [8, 0, 102, None], mktime(timestamps[2].timetuple()), 48.0, 0, [], None, None]])
+        self.assertEqual(json.loads('{' + runs.json_averages + '}'), {"100": 50.0, "101": 52.0, "102": 48.0})
+        self.assertEqual(runs.json_min, 48.0)
+        self.assertEqual(runs.json_max, 52.0)
 
     def test_json_by_ids(self):
         some_branch = Branch.create_if_possible('some-branch', 'Some Branch')
@@ -622,7 +656,7 @@ class RunsTest(DataStoreTestsBase):
         some_platform = Platform.create_if_possible('some-platform', 'Some Platform')
         some_builder = Builder.get(Builder.create('some-builder', 'Some Builder'))
         some_test = Test.update_or_insert('some-test', some_branch, some_platform)
-        results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0, 51.0, 52.0, 49.0, 48.0])
+        builds, results = self._create_results(some_branch, some_platform, some_builder, 'some-test', [50.0, 51.0, 52.0, 49.0, 48.0])
 
         value = json.loads(Runs.update_or_insert(some_branch, some_platform, some_test).to_json())
         self.assertEqualUnorderedList(value.keys(), ['test_runs', 'averages', 'min', 'max', 'date_range', 'stat'])

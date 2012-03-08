@@ -37,6 +37,7 @@ from controller import schedule_dashboard_update
 from controller import schedule_manifest_update
 from models import Build
 from models import ReportLog
+from models import Runs
 from models import Test
 from models import TestResult
 
@@ -56,10 +57,15 @@ class ReportProcessHandler(webapp2.RequestHandler):
         platform = log.platform()
         build = Build.get_or_insert_from_log(log)
 
-        for test_name, result in log.results().iteritems():
+        for test_name, result_value in log.results().iteritems():
             test = Test.update_or_insert(test_name, branch, platform)
-            TestResult.get_or_insert_from_parsed_json(test_name, build, result)
-            schedule_runs_update(test.id, branch.id, platform.id)
+            result = TestResult.get_or_insert_from_parsed_json(test_name, build, result_value)
+            runs = Runs.get_by_objects(branch, platform, test)
+            regenerate_runs = True
+            if runs:
+                runs.update_incrementally(build, result)
+                regenerate_runs = False
+            schedule_runs_update(test.id, branch.id, platform.id, regenerate_runs)
 
         log = ReportLog.get(log.key())
         log.delete()
