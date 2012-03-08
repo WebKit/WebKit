@@ -42,7 +42,6 @@ namespace JSC {
 
     class CopiedSpace;
     class CodeBlock;
-    class FunctionExecutable;
     class GCActivityCallback;
     class GlobalCodeBlock;
     class Heap;
@@ -106,8 +105,6 @@ namespace JSC {
 
         typedef void (*Finalizer)(JSCell*);
         JS_EXPORT_PRIVATE void addFinalizer(JSCell*, Finalizer);
-        void addFunctionExecutable(FunctionExecutable*);
-        void removeFunctionExecutable(FunctionExecutable*);
 
         void notifyIsSafeToCollect() { m_isSafeToCollect = true; }
         JS_EXPORT_PRIVATE void collectAllGarbage();
@@ -142,8 +139,6 @@ namespace JSC {
         void getConservativeRegisterRoots(HashSet<JSCell*>& roots);
 
         double lastGCLength() { return m_lastGCLength; }
-
-        void discardAllCompiledCode();
 
     private:
         friend class CodeBlock;
@@ -244,8 +239,6 @@ namespace JSC {
 
         JSGlobalData* m_globalData;
         double m_lastGCLength;
-
-        DoublyLinkedList<FunctionExecutable> m_functions;
     };
 
     bool Heap::isBusy()

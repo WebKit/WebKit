@@ -324,7 +324,7 @@ namespace JSC {
         JS_EXPORT_PRIVATE void startSampling();
         JS_EXPORT_PRIVATE void stopSampling();
         JS_EXPORT_PRIVATE void dumpSampleData(ExecState* exec);
-        void discardAllCompiledCode();
+        void recompileAllJSFunctions();
         RegExpCache* regExpCache() { return m_regExpCache; }
 #if ENABLE(REGEXP_TRACING)
         void addRegExpToTrace(PassRefPtr<RegExp> regExp);

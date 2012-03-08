@@ -68,6 +68,27 @@
 
 using namespace WTF;
 
+namespace {
+
+using namespace JSC;
+
+class Recompiler : public MarkedBlock::VoidFunctor {
+public:
+    void operator()(JSCell*);
+};
+
+inline void Recompiler::operator()(JSCell* cell)
+{
+    if (!cell->inherits(&JSFunction::s_info))
+        return;
+    JSFunction* function = asFunction(cell);
+    if (!function->executable() || function->executable()->isHostFunction())
+        return;
+    function->jsExecutable()->discardCode();
+}
+
+} // namespace
+
 namespace JSC {
 
 extern const HashTable arrayConstructorTable;
@@ -420,6 +441,15 @@ void JSGlobalData::dumpSampleData(ExecState* exec)
 #if ENABLE(ASSEMBLER)
     ExecutableAllocator::dumpProfile();
 #endif
+}
+
+void JSGlobalData::recompileAllJSFunctions()
+{
+    // If JavaScript is running, it's not safe to recompile, since we'll end
+    // up throwing away code that is live on the stack.
+    ASSERT(!dynamicGlobalObject);
+    
+    heap.objectSpace().forEachCell<Recompiler>();
 }
 
 struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {

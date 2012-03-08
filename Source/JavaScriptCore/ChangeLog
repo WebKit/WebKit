@@ -1,3 +1,33 @@
+2012-03-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r110127.
+        http://trac.webkit.org/changeset/110127
+        https://bugs.webkit.org/show_bug.cgi?id=80562
+
+        compile failed on AppleWin (Requested by ukai on #webkit).
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAllGarbage):
+        * heap/Heap.h:
+        (JSC):
+        (Heap):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::finalize):
+        * runtime/Executable.h:
+        (FunctionExecutable):
+        (JSC::FunctionExecutable::create):
+        * runtime/JSGlobalData.cpp:
+        (WTF):
+        (Recompiler):
+        (WTF::Recompiler::operator()):
+        (JSC::JSGlobalData::recompileAllJSFunctions):
+        (JSC):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::DynamicGlobalObjectScope::DynamicGlobalObjectScope):
+
 2012-03-07  Hojong Han  <hojong.han@samsung.com>
 
         The end atom of the marked block considered to filter invalid cells
