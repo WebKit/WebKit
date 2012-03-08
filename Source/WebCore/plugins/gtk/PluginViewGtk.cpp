@@ -884,7 +884,11 @@ bool PluginView::platformStart()
         } else
             setPlatformWidget(gtk_xtbin_new(pageClient, 0));
 #else
+#if OS(WINDOWS) && !defined(GTK_API_VERSION_2)
+        setPlatformWidget(0);
+#else
         setPlatformWidget(gtk_socket_new());
+#endif
         gtk_container_add(GTK_CONTAINER(pageClient), platformPluginWidget());
 #endif
     } else {
