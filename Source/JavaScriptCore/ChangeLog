@@ -1,3 +1,16 @@
+2012-03-07  Hojong Han  <hojong.han@samsung.com>
+
+        The end atom of the marked block considered to filter invalid cells
+        https://bugs.webkit.org/show_bug.cgi?id=79191
+
+        Reviewed by Geoffrey Garen.
+
+        Register file could have stale pointers beyond the end atom of marked block.
+        Those pointers can weasel out of filtering in-middle-of-cell pointer.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isLiveCell):
+
 2012-03-07  Jessie Berlin  <jberlin@apple.com>
 
         Clean Windows build fails after r110033

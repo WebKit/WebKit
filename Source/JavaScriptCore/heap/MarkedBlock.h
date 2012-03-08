@@ -321,6 +321,8 @@ namespace JSC {
             return false;
         if ((atomNumber - firstAtom) % m_atomsPerCell) // Filters pointers into cell middles.
             return false;
+        if (atomNumber >= m_endAtom) // Filters pointers into invalid cells out of the range.
+            return false;
 
         return isLive(static_cast<const JSCell*>(p));
     }
