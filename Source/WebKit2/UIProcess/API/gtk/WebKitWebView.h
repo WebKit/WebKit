@@ -78,7 +78,7 @@ typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
  *   or to block the transfer of resources entirely.
  *
  * Enum values used for determining the type of a policy decision during
- * WebKitWebView::decide-policy.
+ * #WebKitWebView::decide-policy.
  */
 typedef enum {
     WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION,
@@ -87,7 +87,7 @@ typedef enum {
 } WebKitPolicyDecisionType;
 
 /**
- * WebKitLoadEvent
+ * WebKitLoadEvent:
  * @WEBKIT_LOAD_STARTED: A new load request has been made.
  * No data has been received yet, empty structures have
  * been allocated to perform the load; the load may still
@@ -100,6 +100,9 @@ typedef enum {
  * load is being performed.
  * @WEBKIT_LOAD_FINISHED: Load completed. All resources are done loading
  * or there was an error during the load operation.
+ *
+ * Enum values used to denote the different events that happen during a
+ * #WebKitWebView load operation.
  */
 typedef enum {
     WEBKIT_LOAD_STARTED,

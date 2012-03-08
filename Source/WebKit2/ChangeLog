@@ -1,3 +1,16 @@
+2012-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix several documentation issues in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=80281
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitFindController.cpp:
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:
+        (webkit_navigation_policy_decision_class_init):
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        * UIProcess/API/gtk/WebKitWebView.h:
+
 2012-03-05  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add GMainLoop and GMainContext to be handled by GRefPtr

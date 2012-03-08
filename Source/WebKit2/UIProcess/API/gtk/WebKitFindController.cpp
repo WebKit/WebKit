@@ -380,13 +380,13 @@ static inline void webKitFindControllerSetSearchData(WebKitFindController* findC
  *
  * To look for the next or previous occurrences of the same text
  * with the same find options use webkit_find_controller_search_next()
- * and/or webkit_find_options_previous(). The
+ * and/or webkit_find_controller_search_previous(). The
  * #WebKitFindController will use the same text and options for the
  * following searches unless they are modified by another call to this
  * method.
  *
  * Note that if the number of matches is higher than @max_match_count
- * then WebKitFindController::found-text will report G_MAXUINT matches
+ * then #WebKitFindController::found-text will report %G_MAXUINT matches
  * instead of the actual number.
  *
  * Callers should call webkit_find_controller_search_finish() to
