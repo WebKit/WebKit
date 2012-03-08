@@ -1088,8 +1088,13 @@ void CSSStyleSelector::matchAllRules(MatchResult& result)
         matchAuthorRules(result, false);
 
     // Now check our inline style attribute.
-    if (m_matchAuthorAndUserStyles && m_styledElement)
-        addElementStyleProperties(result, m_styledElement->inlineStyleDecl(), false /* isCacheable */);
+    if (m_matchAuthorAndUserStyles && m_styledElement && m_styledElement->inlineStyle()) {
+        // Inline style is immutable as long as there is no CSSOM wrapper.
+        // FIXME: Media control shadow trees seem to have problems with caching.
+        bool isInlineStyleCacheable = !m_styledElement->inlineStyle()->hasCSSOMWrapper() && !m_styledElement->isInShadowTree();
+        // FIXME: Constify.
+        addElementStyleProperties(result, const_cast<StylePropertySet*>(m_styledElement->inlineStyle()), isInlineStyleCacheable);
+    }
 
 #if ENABLE(SVG)
     // Now check SMIL animation override style.
@@ -1149,7 +1154,7 @@ Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned& visitedNodeC
         return 0;
 #endif
     StyledElement* p = static_cast<StyledElement*>(parent);
-    if (p->inlineStyleDecl())
+    if (p->inlineStyle())
         return 0;
 #if ENABLE(SVG)
     if (p->isSVGElement() && static_cast<SVGElement*>(p)->animatedSMILStyleProperties())
@@ -1294,7 +1299,7 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element->hasClass() != m_element->hasClass())
         return false;
-    if (element->inlineStyleDecl())
+    if (element->inlineStyle())
         return false;
 #if ENABLE(SVG)
     if (element->isSVGElement() && static_cast<SVGElement*>(element)->animatedSMILStyleProperties())
@@ -1408,7 +1413,7 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
     if (!m_styledElement || !m_parentStyle)
         return 0;
     // If the element has inline style it is probably unique.
-    if (m_styledElement->inlineStyleDecl())
+    if (m_styledElement->inlineStyle())
         return 0;
 #if ENABLE(SVG)
     if (m_styledElement->isSVGElement() && static_cast<SVGElement*>(m_styledElement)->animatedSMILStyleProperties())
@@ -2705,8 +2710,11 @@ void CSSStyleSelector::invalidateMatchedPropertiesCache()
     m_matchedPropertiesCache.clear();
 }
 
-static bool isCacheableInMatchedPropertiesCache(const RenderStyle* style, const RenderStyle* parentStyle)
+static bool isCacheableInMatchedPropertiesCache(const Element* element, const RenderStyle* style, const RenderStyle* parentStyle)
 {
+    // FIXME: CSSPropertyWebkitWritingMode modifies state when applying to document element. We can't skip the applying by caching.
+    if (element == element->document()->documentElement() && element->document()->writingModeSetOnDocumentElement())
+        return false;
     if (style->unique() || (style->styleType() != NOPSEUDO && parentStyle->unique()))
         return false;
     if (style->hasAppearance())
@@ -2788,7 +2796,7 @@ void CSSStyleSelector::applyMatchedProperties(const MatchResult& matchResult)
     
     if (cacheItem || !cacheHash)
         return;
-    if (!isCacheableInMatchedPropertiesCache(m_style.get(), m_parentStyle))
+    if (!isCacheableInMatchedPropertiesCache(m_element, m_style.get(), m_parentStyle))
         return;
     addToMatchedPropertiesCache(m_style.get(), m_parentStyle, cacheHash, matchResult);
 }
@@ -3727,6 +3735,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     // CSS Text Layout Module Level 3: Vertical writing support
     case CSSPropertyWebkitWritingMode: {
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(writingMode, WritingMode)
+        // FIXME: It is not ok to modify document state while applying style.
         if (!isInherit && !isInitial && m_element && m_element == m_element->document()->documentElement())
             m_element->document()->setWritingModeSetOnDocumentElement(true);
         FontDescription fontDescription = m_style->fontDescription();

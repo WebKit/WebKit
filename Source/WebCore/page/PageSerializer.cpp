@@ -228,7 +228,7 @@ void PageSerializer::serializeFrame(Frame* frame)
         Element* element = toElement(node);
         // We have to process in-line style as it might contain some resources (typically background images).
         if (element->isStyledElement())
-            retrieveResourcesForProperties(static_cast<StyledElement*>(element)->inlineStyleDecl(), document);
+            retrieveResourcesForProperties(static_cast<StyledElement*>(element)->inlineStyle(), document);
 
         if (element->hasTagName(HTMLNames::imgTag)) {
             HTMLImageElement* imageElement = static_cast<HTMLImageElement*>(element);
@@ -308,7 +308,7 @@ void PageSerializer::retrieveResourcesForRule(StyleRule* rule, Document* documen
     retrieveResourcesForProperties(rule->properties(), document);
 }
 
-void PageSerializer::retrieveResourcesForProperties(StylePropertySet* styleDeclaration, Document* document)
+void PageSerializer::retrieveResourcesForProperties(const StylePropertySet* styleDeclaration, Document* document)
 {
     if (!styleDeclaration)
         return;

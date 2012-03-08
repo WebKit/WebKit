@@ -484,7 +484,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
 
         StyledElement* element = static_cast<StyledElement*>(node.get());
 
-        StylePropertySet* inlineStyle = element->inlineStyleDecl();
+        const StylePropertySet* inlineStyle = element->inlineStyle();
         RefPtr<EditingStyle> newInlineStyle = EditingStyle::create(inlineStyle);
         if (inlineStyle) {
             ContainerNode* context = element->parentNode();
@@ -703,7 +703,7 @@ void ReplaceSelectionCommand::handleStyleSpans(InsertedNodes& insertedNodes)
     if (!wrappingStyleSpan)
         return;
 
-    RefPtr<EditingStyle> style = EditingStyle::create(wrappingStyleSpan->ensureInlineStyleDecl());
+    RefPtr<EditingStyle> style = EditingStyle::create(wrappingStyleSpan->ensureInlineStyle());
     ContainerNode* context = wrappingStyleSpan->parentNode();
 
     // If Mail wraps the fragment with a Paste as Quotation blockquote, or if you're pasting into a quoted region,

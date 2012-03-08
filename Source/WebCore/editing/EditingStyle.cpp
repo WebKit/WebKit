@@ -125,7 +125,7 @@ public:
     virtual ~HTMLElementEquivalent() { }
     virtual bool matches(const Element* element) const { return !m_tagName || element->hasTagName(*m_tagName); }
     virtual bool hasAttribute() const { return false; }
-    virtual bool propertyExistsInStyle(StylePropertySet* style) const { return style && style->getPropertyCSSValue(m_propertyID); }
+    virtual bool propertyExistsInStyle(const StylePropertySet* style) const { return style && style->getPropertyCSSValue(m_propertyID); }
     virtual bool valueIsPresentInStyle(Element*, StylePropertySet*) const;
     virtual void addToStyle(Element*, EditingStyle*) const;
 
@@ -175,7 +175,7 @@ public:
     {
         return adoptPtr(new HTMLTextDecorationEquivalent(primitiveValue, tagName));
     }
-    virtual bool propertyExistsInStyle(StylePropertySet*) const;
+    virtual bool propertyExistsInStyle(const StylePropertySet*) const;
     virtual bool valueIsPresentInStyle(Element*, StylePropertySet*) const;
 
 private:
@@ -188,7 +188,7 @@ HTMLTextDecorationEquivalent::HTMLTextDecorationEquivalent(int primitiveValue, c
 {
 }
 
-bool HTMLTextDecorationEquivalent::propertyExistsInStyle(StylePropertySet* style) const
+bool HTMLTextDecorationEquivalent::propertyExistsInStyle(const StylePropertySet* style) const
 {
     return style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect) || style->getPropertyCSSValue(CSSPropertyTextDecoration);
 }
@@ -664,7 +664,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Edi
     ASSERT(element);
     ASSERT(!conflictingProperties || conflictingProperties->isEmpty());
 
-    StylePropertySet* inlineStyle = element->inlineStyleDecl();
+    const StylePropertySet* inlineStyle = element->inlineStyle();
     if (!m_mutableStyle || !inlineStyle)
         return false;
 
@@ -850,7 +850,7 @@ bool EditingStyle::elementIsStyledSpanOrHTMLEquivalent(const HTMLElement* elemen
         matchedAttributes++;
 
     if (element->hasAttribute(HTMLNames::styleAttr)) {
-        if (StylePropertySet* style = element->inlineStyleDecl()) {
+        if (const StylePropertySet* style = element->inlineStyle()) {
             unsigned propertyCount = style->propertyCount();
             for (unsigned i = 0; i < propertyCount; ++i) {
                 if (!isEditingProperty(style->propertyAt(i).id()))
@@ -912,18 +912,18 @@ void EditingStyle::mergeTypingStyle(Document* document)
 void EditingStyle::mergeInlineStyleOfElement(StyledElement* element, CSSPropertyOverrideMode mode, PropertiesToInclude propertiesToInclude)
 {
     ASSERT(element);
-    if (!element->inlineStyleDecl())
+    if (!element->inlineStyle())
         return;
 
     switch (propertiesToInclude) {
     case AllProperties:
-        mergeStyle(element->inlineStyleDecl(), mode);
+        mergeStyle(element->inlineStyle(), mode);
         return;
     case OnlyEditingInheritableProperties:
-        mergeStyle(copyEditingProperties(element->inlineStyleDecl(), OnlyInheritableEditingProperties).get(), mode);
+        mergeStyle(copyEditingProperties(element->inlineStyle(), OnlyInheritableEditingProperties).get(), mode);
         return;
     case EditingPropertiesInEffect:
-        mergeStyle(copyEditingProperties(element->inlineStyleDecl(), AllEditingProperties).get(), mode);
+        mergeStyle(copyEditingProperties(element->inlineStyle(), AllEditingProperties).get(), mode);
         return;
     }
 }
@@ -931,7 +931,7 @@ void EditingStyle::mergeInlineStyleOfElement(StyledElement* element, CSSProperty
 static inline bool elementMatchesAndPropertyIsNotInInlineStyleDecl(const HTMLElementEquivalent* equivalent, const StyledElement* element,
     EditingStyle::CSSPropertyOverrideMode mode, StylePropertySet* style)
 {
-    return equivalent->matches(element) && !equivalent->propertyExistsInStyle(element->inlineStyleDecl())
+    return equivalent->matches(element) && !equivalent->propertyExistsInStyle(element->inlineStyle())
         && (mode == EditingStyle::OverrideValues || !equivalent->propertyExistsInStyle(style));
 }
 
@@ -997,7 +997,7 @@ static void mergeTextDecorationValues(CSSValueList* mergedValue, const CSSValueL
         mergedValue->append(lineThrough.get());
 }
 
-void EditingStyle::mergeStyle(StylePropertySet* style, CSSPropertyOverrideMode mode)
+void EditingStyle::mergeStyle(const StylePropertySet* style, CSSPropertyOverrideMode mode)
 {
     if (!style)
         return;

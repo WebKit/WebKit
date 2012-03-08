@@ -310,8 +310,8 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, Element* element
         } else
             newInlineStyle = EditingStyle::create();
 
-        if (element->isStyledElement() && static_cast<StyledElement*>(element)->inlineStyleDecl())
-            newInlineStyle->overrideWithStyle(static_cast<StyledElement*>(element)->inlineStyleDecl());
+        if (element->isStyledElement() && static_cast<StyledElement*>(element)->inlineStyle())
+            newInlineStyle->overrideWithStyle(static_cast<StyledElement*>(element)->inlineStyle());
 
         if (shouldAnnotateOrForceInline) {
             if (shouldAnnotate())
@@ -495,7 +495,7 @@ static PassRefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(const Node* n
     // FIXME: Having to const_cast here is ugly, but it is quite a bit of work to untangle
     // the non-const-ness of styleFromMatchedRulesForElement.
     HTMLElement* element = const_cast<HTMLElement*>(static_cast<const HTMLElement*>(node));
-    RefPtr<EditingStyle> style = EditingStyle::create(element->inlineStyleDecl());
+    RefPtr<EditingStyle> style = EditingStyle::create(element->inlineStyle());
     style->mergeStyleFromRules(element);
     return style.release();
 }

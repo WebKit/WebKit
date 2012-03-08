@@ -43,7 +43,7 @@ RemoveCSSPropertyCommand::RemoveCSSPropertyCommand(Document* document, PassRefPt
 
 void RemoveCSSPropertyCommand::doApply()
 {
-    StylePropertySet* style = m_element->inlineStyleDecl();
+    const StylePropertySet* style = m_element->inlineStyle();
     m_oldValue = style->getPropertyValue(m_property);
     m_important = style->propertyIsImportant(m_property);
 

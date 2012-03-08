@@ -96,9 +96,11 @@ public:
     const AtomicString& idForStyleResolution() const { return m_idForStyleResolution; }
     void setIdForStyleResolution(const AtomicString& newId) { m_idForStyleResolution = newId; }
 
-    StylePropertySet* inlineStyleDecl() { return m_inlineStyleDecl.get(); }
-    StylePropertySet* ensureInlineStyleDecl(StyledElement*);
-    void destroyInlineStyleDecl(StyledElement* element);
+    StylePropertySet* inlineStyle() { return m_inlineStyleDecl.get(); }
+    StylePropertySet* ensureInlineStyle(StyledElement*);
+    StylePropertySet* ensureMutableInlineStyle(StyledElement*);
+    void updateInlineStyleAvoidingMutation(StyledElement*, const String& text);
+    void destroyInlineStyle(StyledElement*);
 
     StylePropertySet* attributeStyle() const { return m_attributeStyle.get(); }
     void setAttributeStyle(PassRefPtr<StylePropertySet> style) { m_attributeStyle = style; }

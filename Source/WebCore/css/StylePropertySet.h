@@ -107,6 +107,8 @@ public:
     CSSStyleDeclaration* ensureCSSStyleDeclaration() const;
     CSSStyleDeclaration* ensureRuleCSSStyleDeclaration(const CSSRule* parentRule) const;
     CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(const StyledElement* parentElement) const;
+    
+    bool hasCSSOMWrapper() const { return m_hasCSSOMWrapper; }
 
 private:
     StylePropertySet();

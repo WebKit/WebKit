@@ -1106,12 +1106,12 @@ void StyledElement::copyNonAttributeProperties(const Element* sourceElement)
     ASSERT(sourceElement->isStyledElement());
 
     const StyledElement* source = static_cast<const StyledElement*>(sourceElement);
-    if (!source->inlineStyleDecl())
+    if (!source->inlineStyle())
         return;
 
-    StylePropertySet* inlineStyle = ensureInlineStyleDecl();
-    inlineStyle->copyPropertiesFrom(*source->inlineStyleDecl());
-    inlineStyle->setStrictParsing(source->inlineStyleDecl()->useStrictParsing());
+    StylePropertySet* inlineStyle = ensureAttributeData()->ensureMutableInlineStyle(this);
+    inlineStyle->copyPropertiesFrom(*source->inlineStyle());
+    inlineStyle->setStrictParsing(source->inlineStyle()->useStrictParsing());
 
     setIsStyleAttributeValid(source->isStyleAttributeValid());
 

@@ -51,8 +51,8 @@ void ElementAttributeData::setClass(const String& className, bool shouldFoldCase
 {
     m_classNames.set(className, shouldFoldCase);
 }
-
-StylePropertySet* ElementAttributeData::ensureInlineStyleDecl(StyledElement* element)
+    
+StylePropertySet* ElementAttributeData::ensureInlineStyle(StyledElement* element)
 {
     if (!m_inlineStyleDecl) {
         ASSERT(element->isStyledElement());
@@ -62,7 +62,30 @@ StylePropertySet* ElementAttributeData::ensureInlineStyleDecl(StyledElement* ele
     return m_inlineStyleDecl.get();
 }
 
-void ElementAttributeData::destroyInlineStyleDecl(StyledElement* element)
+StylePropertySet* ElementAttributeData::ensureMutableInlineStyle(StyledElement* element)
+{
+    if (m_inlineStyleDecl && !m_inlineStyleDecl->hasCSSOMWrapper()) {
+        m_inlineStyleDecl = m_inlineStyleDecl->copy();
+        m_inlineStyleDecl->setStrictParsing(element->isHTMLElement() && !element->document()->inQuirksMode());
+        return m_inlineStyleDecl.get();
+    }
+    return ensureInlineStyle(element);
+}
+    
+void ElementAttributeData::updateInlineStyleAvoidingMutation(StyledElement* element, const String& text)
+{
+    // We reconstruct the property set instead of mutating if there is no CSSOM wrapper.
+    // This makes wrapperless property sets immutable and so cacheable.
+    if (m_inlineStyleDecl && !m_inlineStyleDecl->hasCSSOMWrapper())
+        m_inlineStyleDecl.clear();
+    if (!m_inlineStyleDecl) {
+        m_inlineStyleDecl = StylePropertySet::create();
+        m_inlineStyleDecl->setStrictParsing(element->isHTMLElement() && !element->document()->inQuirksMode());
+    }
+    m_inlineStyleDecl->parseDeclaration(text, element->document()->elementSheet());
+}
+
+void ElementAttributeData::destroyInlineStyle(StyledElement* element)
 {
     if (!m_inlineStyleDecl)
         return;

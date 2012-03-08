@@ -78,7 +78,7 @@ private:
     void serializeCSSStyleSheet(CSSStyleSheet*, const KURL&);
 
     void addImageToResources(CachedImage*, RenderObject*, const KURL&);
-    void retrieveResourcesForProperties(StylePropertySet*, Document*);
+    void retrieveResourcesForProperties(const StylePropertySet*, Document*);
     void retrieveResourcesForRule(StyleRule*, Document*);
 
     Vector<Resource>* m_resources;
