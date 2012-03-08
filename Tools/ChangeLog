@@ -1,3 +1,26 @@
+2012-03-08  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=80463
+        RenderImage is using the wrong origin when calling addRelevantRepaintedObject
+        -and corresponding-
+        <rdar://problem/10970221>
+
+        Reviewed by Dan Bernstein.
+
+        New test!
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutForImages.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::didNewFirstVisuallyNonEmptyLayout):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp: Added.
+        (TestWebKitAPI):
+        (NewFirstVisuallyNonEmptyLayoutForImagesTest):
+        (TestWebKitAPI::NewFirstVisuallyNonEmptyLayoutForImagesTest::NewFirstVisuallyNonEmptyLayoutForImagesTest):
+        (TestWebKitAPI::NewFirstVisuallyNonEmptyLayoutForImagesTest::didCreatePage):
+        * TestWebKitAPI/Tests/WebKit2/lots-of-images.html: Added.
+
 2012-03-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Prospective Windows build fix

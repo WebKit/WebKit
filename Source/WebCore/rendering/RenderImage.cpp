@@ -338,15 +338,6 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             return;
         }
 
-    if (cachedImage() && page && paintInfo.phase == PaintPhaseForeground) {
-        // For now, count images as unpainted if they are still progressively loading. We may want 
-        // to refine this in the future to account for the portion of the image that has painted.
-        if (cachedImage()->isLoading())
-            page->addRelevantUnpaintedObject(this, visualOverflowRect());
-        else
-            page->addRelevantRepaintedObject(this, visualOverflowRect());
-    }
-
 #if PLATFORM(MAC)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
             paintCustomHighlight(toPoint(paintOffset - location()), style()->highlight(), true);
@@ -356,6 +347,15 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         LayoutPoint contentLocation = paintOffset;
         contentLocation.move(leftBorder + leftPad, topBorder + topPad);
         paintIntoRect(context, LayoutRect(contentLocation, contentSize));
+        
+        if (cachedImage() && page && paintInfo.phase == PaintPhaseForeground) {
+            // For now, count images as unpainted if they are still progressively loading. We may want 
+            // to refine this in the future to account for the portion of the image that has painted.
+            if (cachedImage()->isLoading())
+                page->addRelevantUnpaintedObject(this, LayoutRect(contentLocation, contentSize));
+            else
+                page->addRelevantRepaintedObject(this, LayoutRect(contentLocation, contentSize));
+        }
     }
 }
 

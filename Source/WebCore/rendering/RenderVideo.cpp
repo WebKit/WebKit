@@ -220,7 +220,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     rect.moveBy(paintOffset);
 
     if (page && paintInfo.phase == PaintPhaseForeground)
-        page->addRelevantRepaintedObject(this, visualOverflowRect());
+        page->addRelevantRepaintedObject(this, rect);
 
     if (displayingPoster)
         paintIntoRect(paintInfo.context, rect);
