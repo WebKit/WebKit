@@ -443,6 +443,7 @@ public:
             , preserveDrawingBuffer(false)
             , noExtensions(false)
             , shareResources(true)
+            , preferDiscreteGPU(false)
         {
         }
 
@@ -455,6 +456,7 @@ public:
         bool preserveDrawingBuffer;
         bool noExtensions;
         bool shareResources;
+        bool preferDiscreteGPU;
     };
 
     enum RenderStyle {

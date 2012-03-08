@@ -94,7 +94,7 @@ public:
             , canRecoverFromContextLoss(true)
             , noExtensions(false)
             , shareResources(true)
-            , forUseOnAnotherThread(false)
+            , preferDiscreteGPU(false)
         {
         }
 
@@ -106,7 +106,7 @@ public:
         bool canRecoverFromContextLoss;
         bool noExtensions;
         bool shareResources;
-        bool forUseOnAnotherThread;
+        bool preferDiscreteGPU;
     };
 
     class WebGraphicsContextLostCallback {

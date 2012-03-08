@@ -38,6 +38,7 @@ GraphicsContext3D* SharedGraphicsContext3D::get()
     attributes.antialias = false;
     attributes.canRecoverFromContextLoss = false; // Canvas contexts can not handle lost contexts.
     attributes.shareResources = true;
+    attributes.preferDiscreteGPU = true;
     static GraphicsContext3D* context = GraphicsContext3D::create(attributes, 0).leakRef();
     if (context && !context->makeContextCurrent())
         context = 0;

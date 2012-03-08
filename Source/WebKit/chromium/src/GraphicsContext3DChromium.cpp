@@ -573,6 +573,7 @@ GraphicsContext3D::Attributes GraphicsContext3DPrivate::getContextAttributes()
     attributes.antialias = webAttributes.antialias;
     attributes.premultipliedAlpha = webAttributes.premultipliedAlpha;
     attributes.preserveDrawingBuffer = m_preserveDrawingBuffer;
+    attributes.preferDiscreteGPU = webAttributes.preferDiscreteGPU;
     return attributes;
 }
 
@@ -1017,6 +1018,7 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     webAttributes.canRecoverFromContextLoss = attrs.canRecoverFromContextLoss;
     webAttributes.noExtensions = attrs.noExtensions;
     webAttributes.shareResources = attrs.shareResources;
+    webAttributes.preferDiscreteGPU = attrs.preferDiscreteGPU;
 
     OwnPtr<WebKit::WebGraphicsContext3D> webContext = adoptPtr(WebKit::webKitPlatformSupport()->createOffscreenGraphicsContext3D(webAttributes));
     if (!webContext)

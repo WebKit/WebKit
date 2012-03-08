@@ -1,3 +1,17 @@
+2012-03-08  James Robinson  <jamesr@chromium.org>
+
+        Use an explicit attribute to signal that a context prefers to use a discrete GPU
+        https://bugs.webkit.org/show_bug.cgi?id=80639
+
+        Reviewed by Stephen White.
+
+        Adds preferDiscreteGPU attribute to WebGraphicsContext3D::Attributes. Also remove the forUseOnAnotherThread
+        attribute, this has been dead code for a while now.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::Attributes::Attributes):
+        (Attributes):
+
 2012-02-24  James Robinson  <jamesr@chromium.org>
 
         [chromium] WebKit::setColorNames is a client API

@@ -171,27 +171,6 @@
 using namespace WebCore;
 using namespace std;
 
-namespace {
-
-WebKit::WebGraphicsContext3D::Attributes getCompositorContextAttributes(bool threaded)
-{
-    // Explicitly disable antialiasing for the compositor. As of the time of
-    // this writing, the only platform that supported antialiasing for the
-    // compositor was Mac OS X, because the on-screen OpenGL context creation
-    // code paths on Windows and Linux didn't yet have multisampling support.
-    // Mac OS X essentially always behaves as though it's rendering offscreen.
-    // Multisampling has a heavy cost especially on devices with relatively low
-    // fill rate like most notebooks, and the Mac implementation would need to
-    // be optimized to resolve directly into the IOSurface shared between the
-    // GPU and browser processes. For these reasons and to avoid platform
-    // disparities we explicitly disable antialiasing.
-    WebKit::WebGraphicsContext3D::Attributes attributes;
-    attributes.antialias = false;
-    attributes.shareResources = true;
-    attributes.forUseOnAnotherThread = threaded;
-    return attributes;
-}
-
 // The following constants control parameters for automated scaling of webpages
 // (such as due to a double tap gesture or find in page etc.). These are
 // experimentally determined.
@@ -199,8 +178,6 @@ static const int touchPointPadding = 32;
 static const float minScaleDifference = 0.01;
 static const float doubleTapZoomContentDefaultMargin = 5;
 static const float doubleTapZoomContentMinimumMargin = 2;
-
-} // anonymous namespace
 
 namespace WebKit {
 
@@ -3221,7 +3198,20 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
 PassOwnPtr<WebKit::WebGraphicsContext3D> WebViewImpl::createCompositorGraphicsContext3D()
 {
-    WebKit::WebGraphicsContext3D::Attributes attributes = getCompositorContextAttributes(CCProxy::hasImplThread());
+    // Explicitly disable antialiasing for the compositor. As of the time of
+    // this writing, the only platform that supported antialiasing for the
+    // compositor was Mac OS X, because the on-screen OpenGL context creation
+    // code paths on Windows and Linux didn't yet have multisampling support.
+    // Mac OS X essentially always behaves as though it's rendering offscreen.
+    // Multisampling has a heavy cost especially on devices with relatively low
+    // fill rate like most notebooks, and the Mac implementation would need to
+    // be optimized to resolve directly into the IOSurface shared between the
+    // GPU and browser processes. For these reasons and to avoid platform
+    // disparities we explicitly disable antialiasing.
+    WebKit::WebGraphicsContext3D::Attributes attributes;
+    attributes.antialias = false;
+    attributes.shareResources = true;
+
     OwnPtr<WebGraphicsContext3D> webContext = adoptPtr(client()->createGraphicsContext3D(attributes, true /* renderDirectlyToHostWindow */));
     if (!webContext)
         return nullptr;

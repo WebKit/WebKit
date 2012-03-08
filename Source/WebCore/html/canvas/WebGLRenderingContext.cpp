@@ -403,6 +403,7 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
 #else
     attributes.shareResources = false;
 #endif
+    attributes.preferDiscreteGPU = true;
 
 
     RefPtr<GraphicsContext3D> context(GraphicsContext3D::create(attributes, hostWindow));
