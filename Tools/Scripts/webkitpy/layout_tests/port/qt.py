@@ -47,7 +47,6 @@ class QtPort(WebKitPort):
     ALL_VERSIONS = ['linux', 'win', 'mac']
     port_name = "qt"
 
-    @classmethod
     def _wk2_port_name(self):
         return "qt-5.0-wk2"
 
@@ -58,8 +57,6 @@ class QtPort(WebKitPort):
     def determine_full_port_name(cls, host, options, port_name):
         if port_name and port_name != cls.port_name:
             return port_name
-        if hasattr(options, 'webkit_test_runner') and getattr(options, 'webkit_test_runner'):
-            return cls._wk2_port_name()
         return port_name + '-' + host.platform.os_name
 
     # sys_platform exists only for unit testing.
@@ -111,6 +108,8 @@ class QtPort(WebKitPort):
 
     def baseline_search_path(self):
         search_paths = []
+        if self.get_option('webkit_test_runner'):
+            search_paths.append(self._wk2_port_name())
         search_paths.append(self.name())
         version = self.qt_version()
         if '4.8' in version:
