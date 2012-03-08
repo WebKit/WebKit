@@ -673,7 +673,7 @@ preprocessIdls.script = $$PREPROCESS_IDLS_SCRIPT
 # FIXME : We need to use only perl at some point.
 EOC = $$escape_expand(\\n\\t)
 win_cmd_shell: preprocessIdls.commands = type nul > $$IDL_FILES_TMP $$EOC
-else: preprocessIdls.commands = echo -n > $$IDL_FILES_TMP $$EOC
+else: preprocessIdls.commands = cat /dev/null > $$IDL_FILES_TMP $$EOC
 for(binding, IDL_BINDINGS) {
     preprocessIdls.commands += echo $$binding >> $$IDL_FILES_TMP $$EOC
 }
