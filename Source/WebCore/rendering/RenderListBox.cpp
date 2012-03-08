@@ -643,10 +643,10 @@ int RenderListBox::verticalScrollbarWidth() const
 
 // FIXME: We ignore padding in the vertical direction as far as these values are concerned, since that's
 // how the control currently paints.
-LayoutUnit RenderListBox::scrollWidth() const
+int RenderListBox::scrollWidth() const
 {
     // There is no horizontal scrolling allowed.
-    return clientWidth();
+    return pixelSnappedClientWidth();
 }
 
 int RenderListBox::scrollHeight() const

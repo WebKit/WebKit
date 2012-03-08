@@ -280,10 +280,8 @@ public:
 
     LayoutRect rect() const { return LayoutRect(location(), size()); }
 
-    LayoutUnit scrollWidth();
-    LayoutUnit scrollHeight();
-    int pixelSnappedScrollWidth();
-    int pixelSnappedScrollHeight();
+    int scrollWidth();
+    int scrollHeight();
 
     void panScrollFromPoint(const LayoutPoint&);
 
@@ -293,15 +291,15 @@ public:
     };
 
     // Scrolling methods for layers that can scroll their overflow.
-    void scrollByRecursively(LayoutUnit xDelta, LayoutUnit yDelta, ScrollOffsetClamping = ScrollOffsetUnclamped);
+    void scrollByRecursively(int xDelta, int yDelta, ScrollOffsetClamping = ScrollOffsetUnclamped);
 
     int scrollXOffset() const { return m_scrollOffset.width() + scrollOrigin().x(); }
     int scrollYOffset() const { return m_scrollOffset.height() + scrollOrigin().y(); }
     IntSize scrollOffset() const { return IntSize(scrollXOffset(), scrollYOffset()); }
 
-    void scrollToOffset(LayoutUnit, LayoutUnit, ScrollOffsetClamping = ScrollOffsetUnclamped);
-    void scrollToXOffset(LayoutUnit x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(x, scrollYOffset(), clamp); }
-    void scrollToYOffset(LayoutUnit y, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(scrollXOffset(), y, clamp); }
+    void scrollToOffset(int, int, ScrollOffsetClamping = ScrollOffsetUnclamped);
+    void scrollToXOffset(int x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(x, scrollYOffset(), clamp); }
+    void scrollToYOffset(int y, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(scrollXOffset(), y, clamp); }
 
     void scrollRectToVisible(const LayoutRect&, const ScrollAlignment& alignX = ScrollAlignment::alignCenterIfNeeded, const ScrollAlignment& alignY = ScrollAlignment::alignCenterIfNeeded);
 
@@ -819,7 +817,7 @@ protected:
     // Our scroll offsets if the view is scrolled.
     IntSize m_scrollOffset;
 
-    LayoutSize m_scrollOverflow;
+    IntSize m_scrollOverflow;
     
     // The width/height of our scrolled area.
     LayoutSize m_scrollSize;
