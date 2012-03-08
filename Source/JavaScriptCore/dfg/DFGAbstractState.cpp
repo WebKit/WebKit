@@ -998,7 +998,7 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     if (nodeIndex == NoNode)
         return false;
         
-    AbstractValue* source;
+    AbstractValue source;
         
     Node& node = m_graph[nodeIndex];
     if (!node.refCount())
@@ -1013,7 +1013,7 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     case SetArgument:
     case Flush:
         // The block transfers the value from head to tail.
-        source = &inVariable;
+        source = inVariable;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("          Transfering from head to tail.\n");
 #endif
@@ -1021,7 +1021,7 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
             
     case GetLocal:
         // The block refines the value with additional speculations.
-        source = &forNode(nodeIndex);
+        source = forNode(nodeIndex);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("          Refining.\n");
 #endif
@@ -1030,7 +1030,10 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     case SetLocal:
         // The block sets the variable, and potentially refines it, both
         // before and after setting it.
-        source = &forNode(node.child1());
+        if (node.variableAccessData()->shouldUseDoubleFormat())
+            source.set(PredictDouble);
+        else
+            source = forNode(node.child1());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("          Setting.\n");
 #endif
@@ -1038,11 +1041,10 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         
     default:
         ASSERT_NOT_REACHED();
-        source = 0;
         break;
     }
     
-    if (destination == *source) {
+    if (destination == source) {
         // Abstract execution did not change the output value of the variable, for this
         // basic block, on this iteration.
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -1054,7 +1056,7 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     // Abstract execution reached a new conclusion about the speculations reached about
     // this variable after execution of this basic block. Update the state, and return
     // true to indicate that the fixpoint must go on!
-    destination = *source;
+    destination = source;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
     dataLog("          Changed!\n");
 #endif
