@@ -26,7 +26,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnArrayPtr.h>
 
@@ -35,10 +34,8 @@ namespace WebCore {
 const int intMaxForLength = 0x7ffffff; // max value for a 28-bit int
 const int intMinForLength = (-0x7ffffff - 1); // min value for a 28-bit int
 
-enum LengthType { Auto, Relative, Percent, Fixed, Intrinsic, MinIntrinsic, Calculated, Undefined };
- 
-class CalculationValue;    
-    
+enum LengthType { Auto, Relative, Percent, Fixed, Intrinsic, MinIntrinsic, Undefined };
+
 struct Length {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -68,35 +65,11 @@ public:
         m_floatValue = static_cast<float>(v);    
     }
 
-    explicit Length(PassRefPtr<CalculationValue>);
-
-    Length(const Length& length)
-    {
-        initFromLength(length);
-    }
-    
-    Length& operator=(const Length& length)
-    {
-        initFromLength(length);
-        return *this;
-    }
-    
-    ~Length()
-    {
-        if (isCalculated())
-            decrementCalculatedRef();
-    }  
-    
     bool operator==(const Length& o) const { return (m_type == o.m_type) && (m_quirk == o.m_quirk) && (isUndefined() || (getFloatValue() == o.getFloatValue())); }
     bool operator!=(const Length& o) const { return !(*this == o); }
 
     const Length& operator*=(float v)
-    {       
-        if (isCalculated()) {
-            ASSERT_NOT_REACHED();
-            return *this;
-        }
-        
+    {        
         if (m_isFloat)
             m_floatValue = static_cast<float>(m_floatValue * v);
         else        
@@ -107,10 +80,6 @@ public:
     
     int value() const
     {
-        if (isCalculated()) {
-            ASSERT_NOT_REACHED();
-            return 0;
-        }
         return getIntValue();
     }
 
@@ -119,8 +88,6 @@ public:
         ASSERT(type() == Percent);
         return getFloatValue();
     }
-
-    PassRefPtr<CalculationValue> calculationValue() const;
 
     LengthType type() const { return static_cast<LengthType>(m_type); }
     bool quirk() const { return m_quirk; }
@@ -139,10 +106,6 @@ public:
 
     void setValue(int value)
     {
-        if (isCalculated()) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
         setValue(Fixed, value);
     }
 
@@ -158,12 +121,13 @@ public:
         *this = Length(value, Fixed);
     }
 
+    // Note: May only be called for Fixed, Percent and Auto lengths.
+    // Other types will ASSERT in order to catch invalid length calculations.
     int calcValue(int maxValue, bool roundPercentages = false) const
     {
         switch (type()) {
             case Fixed:
             case Percent:
-            case Calculated:
                 return calcMinValue(maxValue, roundPercentages);
             case Auto:
                 return maxValue;
@@ -188,8 +152,6 @@ public:
                     return static_cast<int>(round(maxValue * percent() / 100.0f));
                 // Don't remove the extra cast to float. It is needed for rounding on 32-bit Intel machines that use the FPU stack.
                 return static_cast<int>(static_cast<float>(maxValue * percent() / 100.0f));
-            case Calculated:
-                return nonNanCalculatedValue(maxValue);
             case Auto:
                 return 0;
             case Relative:
@@ -212,8 +174,6 @@ public:
                 return static_cast<float>(maxValue * percent() / 100.0f);
             case Auto:
                 return static_cast<float>(maxValue);
-            case Calculated:
-                return nonNanCalculatedValue(maxValue);                
             case Relative:
             case Intrinsic:
             case MinIntrinsic:
@@ -226,43 +186,21 @@ public:
     }
 
     bool isUndefined() const { return type() == Undefined; }
-
-    // FIXME calc: https://bugs.webkit.org/show_bug.cgi?id=80357. A calculated Length 
-    // always contains a percentage, and without a maxValue passed to these functions
-    // it's impossible to determine the sign or zero-ness. We assume all calc values
-    // are positive and non-zero for now.    
     bool isZero() const 
     {
         ASSERT(!isUndefined());
-        if (isCalculated())
-            return false;
-            
         return m_isFloat ? !m_floatValue : !m_intValue;
     }
-    bool isPositive() const
-    {
-        if (isUndefined())
-            return false;
-        if (isCalculated())
-            return true;
-                
-        return getFloatValue() > 0;
-    }
-    bool isNegative() const
-    {
-        if (isUndefined() || isCalculated())
-            return false;
-            
-        return getFloatValue() < 0;
-    }
     
+    bool isPositive() const { return isUndefined() ? false : getFloatValue() > 0; }
+    bool isNegative() const { return isUndefined() ? false : getFloatValue() < 0; }
+
     bool isAuto() const { return type() == Auto; }
     bool isRelative() const { return type() == Relative; }
-    bool isPercent() const { return type() == Percent || type() == Calculated; }
+    bool isPercent() const { return type() == Percent; }
     bool isFixed() const { return type() == Fixed; }
     bool isIntrinsicOrAuto() const { return type() == Auto || type() == MinIntrinsic || type() == Intrinsic; }
-    bool isSpecified() const { return type() == Fixed || type() == Percent || type() == Calculated; }
-    bool isCalculated() const { return type() == Calculated; }
+    bool isSpecified() const { return type() == Fixed || type() == Percent; }
 
     Length blend(const Length& from, double progress) const
     {
@@ -301,30 +239,6 @@ private:
         return m_isFloat ? m_floatValue : m_intValue;
     }
 
-    void initFromLength(const Length &length) 
-    {
-        m_quirk = length.m_quirk;
-        m_type = length.m_type;
-        m_isFloat = length.m_isFloat;
-        
-        if (m_isFloat)
-            m_floatValue = length.m_floatValue;
-        else
-            m_intValue = length.m_intValue;
-        
-        if (isCalculated())
-            incrementCalculatedRef();
-    }
-    
-    float nonNanCalculatedValue(int maxValue) const;
-    int calculationHandle() const
-    {
-        ASSERT(isCalculated());
-        return getIntValue();
-    }
-    void incrementCalculatedRef() const;
-    void decrementCalculatedRef() const;    
-    
     union {
         int m_intValue;
         float m_floatValue;

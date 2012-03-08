@@ -30,12 +30,10 @@
 
 #include "Attribute.h"
 #include "CachedImage.h"
-#include "CalculationValue.h"
 #include "ContentData.h"
 #include "Counter.h"
 #include "CounterContent.h"
 #include "CSSBorderImage.h"
-#include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontSelector.h"
@@ -2549,12 +2547,12 @@ static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* st
     return l;
 }
 
-Length CSSStyleSelector::convertToIntLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier)
+static Length convertToIntLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier = 1)
 {
     return convertToLength(primitiveValue, style, rootStyle, false, multiplier);
 }
 
-Length CSSStyleSelector::convertToFloatLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier)
+static Length convertToFloatLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier = 1)
 {
     return convertToLength(primitiveValue, style, rootStyle, true, multiplier);
 }

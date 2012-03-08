@@ -266,7 +266,6 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
             ASSERT(isfinite(length.percent()));
             m_value.num = length.percent();
             break;
-        case Calculated:
         case Relative:
         case Undefined:
             ASSERT_NOT_REACHED();

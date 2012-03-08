@@ -20,10 +20,10 @@ control => PASS
 10px* (5 * 2) => PASS
 50px + 10px * 5 (operation order) => PASS
 100%/2 (where 100% is 200px) => PASS
-100% + -100px (where 100% is 200px) => PASS
-80% - 60px (where 100% is 200px) => PASS
-300px - 100% (where 100% is 200px) => PASS
--100px + 100% (where 100% is 200px) => PASS
+100% + -100px (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+80% - 60px (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+300px - 100% (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+-100px + 100% (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
 20% + 30% (where 100% is 200px) => PASS
 80% - 30% (where 100% is 200px) => PASS
 10% * 5 (where 100% is 200px) => PASS

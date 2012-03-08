@@ -43,7 +43,7 @@ namespace WebCore {
 class CSSParserValueList;
 class CSSValueList;
 class RenderStyle;
-class CalculationValue;
+class CalcValue;
 class CalcExpressionNode;
 
 enum CalculationCategory {
@@ -58,9 +58,8 @@ enum CalculationCategory {
 class CSSCalcExpressionNode : public RefCounted<CSSCalcExpressionNode> {
 public:
     
-    virtual ~CSSCalcExpressionNode() = 0;
+    virtual ~CSSCalcExpressionNode() = 0;  
     virtual bool isZero() const = 0;
-    virtual PassOwnPtr<CalcExpressionNode> toCalcValue(RenderStyle*, RenderStyle* rootStyle, double zoom = 1.0) const = 0;    
     virtual double doubleValue() const = 0;
     virtual double computeLengthPx(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const = 0;
     
@@ -81,12 +80,7 @@ protected:
 class CSSCalcValue : public CSSValue {
 public:
     static PassRefPtr<CSSCalcValue> create(CSSParserString name, CSSParserValueList*, CalculationPermittedValueRange);
-    static PassRefPtr<CSSCalcValue> create(CalculationValue*);
 
-    PassRefPtr<CalculationValue> toCalcValue(RenderStyle* style, RenderStyle* rootStyle, double zoom = 1.0) const
-    {
-        return CalculationValue::create(m_expression->toCalcValue(style, rootStyle, zoom), m_nonNegative ? CalculationRangeNonNegative : CalculationRangeAll);
-    }
     CalculationCategory category() const { return m_expression->category(); }
     bool isInt() const { return m_expression->isInteger(); }    
     double doubleValue() const;

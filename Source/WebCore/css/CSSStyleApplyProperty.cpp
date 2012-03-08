@@ -26,7 +26,6 @@
 #include "CSSStyleApplyProperty.h"
 
 #include "CSSAspectRatioValue.h"
-#include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFlexValue.h"
 #include "CSSPrimitiveValueMappings.h"
@@ -390,8 +389,6 @@ public:
                 setValue(selector->style(), length);
             } else if (primitiveValue->isPercentage())
                 setValue(selector->style(), Length(primitiveValue->getDoubleValue(), Percent));
-            else if (primitiveValue->isCalculatedPercentageWithLength())
-                setValue(selector->style(), Length(primitiveValue->cssCalcValue()->toCalcValue(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom())));            
         }
     }
 

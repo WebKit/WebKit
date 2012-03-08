@@ -31,43 +31,6 @@
 #include "config.h"
 #include "CalculationValue.h"
 
-#include <limits>
-
 namespace WebCore {
-
-float CalcExpressionBinaryOperation::evaluate(float maxValue) const
-{
-    float left = m_leftSide->evaluate(maxValue);
-    float right = m_rightSide->evaluate(maxValue);
-    switch (m_operator) {
-    case CalcAdd:
-        return left + right;
-    case CalcSubtract:
-        return left - right;
-    case CalcMultiply:
-        return left * right;
-    case CalcDivide:
-        if (!right)
-            return std::numeric_limits<float>::quiet_NaN();
-        return left / right;
-    }
-    ASSERT_NOT_REACHED();
-    return std::numeric_limits<float>::quiet_NaN();
-}
-
-PassRefPtr<CalculationValue> CalculationValue::create(PassOwnPtr<CalcExpressionNode> value, CalculationPermittedValueRange range)
-{
-    return adoptRef(new CalculationValue(value, range));
-}
-
-float CalculationValue::evaluate(float maxValue) const
-{
-    float result = m_value->evaluate(maxValue);
-    // FIXME calc https://webkit.org/b/80411 : result is NaN when there is a division 
-    // by zero which isn't found at parse time. 
-    if (isnan(result))
-        return 0;
-    return m_isNonNegative && result < 0 ? 0 : result;
-}
 
 } // namespace WebCore
