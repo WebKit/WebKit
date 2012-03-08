@@ -120,8 +120,6 @@
 #include "HTMLPropertiesCollection.h"
 #endif
 
-#define DUMP_NODE_STATISTICS 0
-
 using namespace std;
 
 namespace WebCore {
@@ -161,7 +159,8 @@ void Node::dumpStatistics()
 
     size_t attributes = 0;
     size_t attributesWithAttr = 0;
-    size_t attrMaps = 0;
+    size_t elementsWithAttributeStorage = 0;
+    size_t elementsWithNamedNodeMap = 0;
 
     for (HashSet<Node*>::iterator it = liveNodeSet.begin(); it != liveNodeSet.end(); ++it) {
         Node* node = *it;
@@ -179,12 +178,13 @@ void Node::dumpStatistics()
                 if (!result.second)
                     result.first->second++;
 
-                // AttributeMap stats
-                if (NamedNodeMap* attrMap = element->attributes(true)) {
-                    attributes += attrMap->length();
-                    ++attrMaps;
-                    for (unsigned i = 0; i < attrMap->length(); ++i) {
-                        Attribute* attr = attrMap->attributeItem(i);
+                if (ElementAttributeData* attributeData = element->attributeData()) {
+                    attributes += attributeData->length();
+                    ++elementsWithAttributeStorage;
+                    // FIXME: This will change once attribute storage goes out of NamedNodeMap.
+                    ++elementsWithNamedNodeMap;
+                    for (unsigned i = 0; i < attributeData->length(); ++i) {
+                        Attribute* attr = attributeData->attributeItem(i);
                         if (attr->attr())
                             ++attributesWithAttr;
                     }
@@ -248,7 +248,7 @@ void Node::dumpStatistics()
     printf("Number of Nodes: %d\n\n", liveNodeSet.size());
     printf("Number of Nodes with RareData: %zu\n\n", nodesWithRareData);
 
-    printf("NodeType distrubution:\n");
+    printf("NodeType distribution:\n");
     printf("  Number of Element nodes: %zu\n", elementNodes);
     printf("  Number of Attribute nodes: %zu\n", attrNodes);
     printf("  Number of Text nodes: %zu\n", textNodes);
@@ -268,10 +268,11 @@ void Node::dumpStatistics()
     for (HashMap<String, size_t>::iterator it = perTagCount.begin(); it != perTagCount.end(); ++it)
         printf("  Number of <%s> tags: %zu\n", it->first.utf8().data(), it->second);
 
-    printf("Attribute Maps:\n");
+    printf("Attributes:\n");
     printf("  Number of Attributes (non-Node and Node): %zu [%zu]\n", attributes, sizeof(Attribute));
     printf("  Number of Attributes with an Attr: %zu\n", attributesWithAttr);
-    printf("  Number of NamedNodeMaps: %zu [%zu]\n", attrMaps, sizeof(NamedNodeMap));
+    printf("  Number of Elements with attribute storage: %zu [%zu]\n", elementsWithAttributeStorage, sizeof(ElementAttributeData));
+    printf("  Number of Elements with NamedNodeMap: %zu [%zu]\n", elementsWithNamedNodeMap, sizeof(NamedNodeMap));
 #endif
 }
 
