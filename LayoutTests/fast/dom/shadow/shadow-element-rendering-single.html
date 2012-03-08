@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/* relative positioning ensures underlying RenderLayer */
+.container {
+    position: relative;
+}
+
+.span {
+    display: boxed-inline;
+    margin: 2px;
+    border: solid;
+}
+</style>
+<script src="../resources/shadow-test-driver.js"></script>
+<script>
+function setUpOnce() {
+    internals.setMultipleShadowSubtreesEnabled(true);
+}
+
+function tearDownOnce() {
+    internals.setMultipleShadowSubtreesEnabled(false);
+}
+
+var testFuncs = [];
+
+testFuncs.push(function renderingSingleShadowRoot(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>BEFORE</span><span>MID</span><span>AFTER</span></div>";
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('MID'));
+
+    var sr = new WebKitShadowRoot(root);
+    sr.appendChild(createSpanWithText('BEFORE'));
+    sr.appendChild(document.createElement('shadow'));
+    sr.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+    callIfDone();
+});
+
+testFuncs.push(function renderingNotFallbacked(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>BEFORE</span><span>MID</span><span>AFTER</span></div>";
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('MID'));
+
+    var shadow = document.createElement('shadow');
+    shadow.appendChild(createSpanWithText('FALLBACK'));
+    var sr = new WebKitShadowRoot(root);
+    sr.appendChild(createSpanWithText('BEFORE'));
+    sr.appendChild(shadow);
+    sr.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+    callIfDone();
+});
+
+testFuncs.push(function renderingFallbacked(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>BEFORE</span><span>FALLBACK</span><span>AFTER</span></div>";
+
+    var root = document.createElement('div');
+
+    var shadow = document.createElement('shadow');
+    shadow.appendChild(createSpanWithText('FALLBACK'));
+    var sr = new WebKitShadowRoot(root);
+    sr.appendChild(createSpanWithText('BEFORE'));
+    sr.appendChild(shadow);
+    sr.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+    callIfDone();
+});
+
+testFuncs.push(function renderingMixedOfFallbackAndNonFallback(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>BEFORE</span><span>MID</span><span>FALLBACK 2</span><span>AFTER</span></div>";
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('MID'));
+
+    var shadow1 = document.createElement('shadow');
+    shadow1.appendChild(createSpanWithText('FALLBACK 1'));
+    var shadow2 = document.createElement('shadow');
+    shadow2.appendChild(createSpanWithText('FALLBACK 2'));
+
+    var sr = new WebKitShadowRoot(root);
+    sr.appendChild(createSpanWithText('BEFORE'));
+    sr.appendChild(shadow1);
+    sr.appendChild(shadow2);
+    sr.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+    callIfDone();
+});
+
+testFuncs.push(function renderingShadowRootBeforeContent(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>BEFORE</span><span>MID</span><span>M 1</span><span>CONTENT FALLBACK</span><span>M 2</span><span>AFTER</span></div>";
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('MID'));
+
+    var shadow = document.createElement('shadow');
+    shadow.appendChild(createSpanWithText('SHADOW FALLBACK'));
+    var sr = new WebKitShadowRoot(root);
+    sr.appendChild(createSpanWithText('BEFORE'));
+    sr.appendChild(shadow);
+    sr.appendChild(createSpanWithText('M 1'));
+    sr.appendChild(createContentWithSelect('span', 'CONTENT FALLBACK'));
+    sr.appendChild(createSpanWithText('M 2'));
+    sr.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+    callIfDone();
+});
+
+testFuncs.push(function renderingShadowRootAfterContent(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>BEFORE</span><span>MID</span><span>M 1</span><span>SHADOW FALLBACK</span><span>M 2</span><span>AFTER</span></div>";
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('MID'));
+
+    var shadow = document.createElement('shadow');
+    shadow.appendChild(createSpanWithText('SHADOW FALLBACK'));
+    var sr = new WebKitShadowRoot(root);
+    sr.appendChild(createSpanWithText('BEFORE'));
+    sr.appendChild(createContentWithSelect('span', 'CONTENT FALLBACK'));
+    sr.appendChild(createSpanWithText('M 1'));
+    sr.appendChild(shadow);
+    sr.appendChild(createSpanWithText('M 2'));
+    sr.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+    callIfDone();
+});
+
+testFuncs.push(function renderingShadowElementDynamicallyAdded(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>BEFORE</span><span>MID</span><span>AFTER</span></div>"
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('AFTER'));
+
+    var sr = new WebKitShadowRoot(root);
+    sr.appendChild(createSpanWithText('BEFORE'));
+    sr.appendChild(createSpanWithText('MID'));
+
+    document.getElementById('actual-container').appendChild(root);
+
+    var f = (function(callIfDone, root, sr) { return function() {
+        var shadow = document.createElement('shadow');
+        sr.appendChild(shadow);
+        callIfDone();
+    }})(callIfDone, root, sr);
+
+    setTimeout(f, 0);
+});
+
+testFuncs.push(function renderingShadowElementDynamicallyRemoved(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>BEFORE</span><span>AFTER</span></div>"
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('SHOULD NOT BE RENDERED'));
+
+    var shadow = document.createElement('shadow');
+
+    var sr = new WebKitShadowRoot(root);
+    sr.appendChild(createSpanWithText('BEFORE'));
+    sr.appendChild(shadow);
+    sr.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+
+    var f = (function(callIfDone, sr, shadow) { return function() {
+        sr.removeChild(shadow);
+        callIfDone();
+    }})(callIfDone, sr, shadow);
+
+    setTimeout(f, 0);
+});
+
+testFuncs.push(function renderingLightChildrenDynamicallyAdded(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>BEFORE</span><span>MID</span><span>AFTER</span></div>"
+
+    var root = document.createElement('div');
+
+    var sr = new WebKitShadowRoot(root);
+    sr.appendChild(createSpanWithText('BEFORE'));
+    sr.appendChild(document.createElement('shadow'));
+    sr.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+
+    var f = (function(callIfDone, root) { return function() {
+        root.appendChild(createSpanWithText('MID'));
+        callIfDone();
+    }})(callIfDone, root);
+
+    setTimeout(f, 0);
+});
+
+testFuncs.push(function renderingLightChildrenDynamicallyRemoved(callIfDone) {
+    document.getElementById('expect-container').innerHTML =
+        "<div><span>BEFORE</span><span>MID</span><span>AFTER</span></div>"
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('SHOULD NOT BE RENDERED'));
+
+    var shadow = document.createElement('shadow');
+    shadow.appendChild(createSpanWithText('MID'));
+
+    var sr = new WebKitShadowRoot(root);
+    sr.appendChild(createSpanWithText('BEFORE'));
+    sr.appendChild(shadow);
+    sr.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+
+    var f = (function(callIfDone, root) { return function() {
+        root.removeChild(root.firstChild);
+        callIfDone();
+    }})(callIfDone, root);
+
+    setTimeout(f, 0);
+});
+
+</script>
+</head>
+<body onload="doTest(testFuncs)">
+
+<div id="actual-container" class="container"></div>
+<div id="expect-container" class="container"></div>
+<pre id="console"></pre>
+
+</body>
+</html>

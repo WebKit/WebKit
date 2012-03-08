@@ -29,19 +29,18 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SHADOW_DOM)
-
 #include "HTMLShadowElement.h"
 
 #include "HTMLNames.h"
+#include "ShadowRoot.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
 class Document;
 
 inline HTMLShadowElement::HTMLShadowElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+    : InsertionPoint(tagName, document)
 {
     ASSERT(hasTagName(HTMLNames::shadowTag));
 }
@@ -55,6 +54,18 @@ HTMLShadowElement::~HTMLShadowElement()
 {
 }
 
-} // namespace WebCore
+const AtomicString& HTMLShadowElement::select() const
+{
+     return nullAtom;
+}
 
-#endif // ENABLE(SHADOW_DOM)
+bool HTMLShadowElement::doesSelectFromHostChildren() const
+{
+    TreeScope* scope = treeScope();
+
+    if (scope->isShadowRoot())
+        return toShadowRoot(scope)->isOldest();
+    return false;
+}
+
+} // namespace WebCore

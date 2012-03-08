@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "HTMLContentSelector.h"
+#include "HTMLShadowElement.h"
 #include "InspectorInstrumentation.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
@@ -198,17 +199,21 @@ void ShadowTree::detachHost(Element* host)
 
 InsertionPoint* ShadowTree::insertionPointFor(Node* node) const
 {
+    ASSERT(node && node->parentNode());
+
+    if (node->parentNode()->isShadowRoot()) {
+        if (InsertionPoint* insertionPoint = toShadowRoot(node->parentNode())->assignedTo())
+            return insertionPoint;
+
+        return 0;
+    }
+
     if (!m_selector)
         return 0;
     HTMLContentSelection* found = m_selector->findFor(node);
     if (!found)
         return 0;
     return found->insertionPoint();
-}
-
-bool ShadowTree::isSelectorActive() const
-{
-    return m_selector && m_selector->hasCandidates();
 }
 
 void ShadowTree::reattach()

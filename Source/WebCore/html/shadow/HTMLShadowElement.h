@@ -31,25 +31,25 @@
 #ifndef HTMLShadowElement_h
 #define HTMLShadowElement_h
 
-#if ENABLE(SHADOW_DOM)
-
-#include "HTMLElement.h"
+#include "InsertionPoint.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class HTMLShadowElement : public HTMLElement {
+class HTMLShadowElement : public InsertionPoint {
 public:
     static PassRefPtr<HTMLShadowElement> create(const QualifiedName&, Document*);
 
     virtual ~HTMLShadowElement();
 
+    const AtomicString& select() const;
+    bool isSelectValid() const OVERRIDE { return true; }
+    bool doesSelectFromHostChildren() const;
+
 private:
     HTMLShadowElement(const QualifiedName&, Document*);
-    virtual bool isShadowElement() const { return true; }
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SHADOW_DOM)
 
 #endif // HTMLShadowElement_h

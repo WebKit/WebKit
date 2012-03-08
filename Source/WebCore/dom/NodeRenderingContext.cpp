@@ -29,6 +29,8 @@
 #include "ContainerNode.h"
 #include "HTMLContentElement.h"
 #include "HTMLContentSelector.h"
+#include "HTMLNames.h"
+#include "HTMLShadowElement.h"
 #include "Node.h"
 #include "RenderFlowThread.h"
 #include "RenderFullScreen.h"
@@ -42,6 +44,8 @@
 #endif
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 static RenderObject* firstRendererOf(Node*);
 static RenderObject* lastRendererOf(Node*);
@@ -59,26 +63,21 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     if (!parent)
         return;
 
-    if (parent->isShadowRoot()) {
-        // FIXME: We don't support <shadow> yet, so the non-youngest shadow won't be rendered.
-        // https://bugs.webkit.org/shod_bugs.cgi?id=78596
-        if (toShadowRoot(parent)->isYoungest())
-            m_phase = AttachingShadowChild;
-        else
-            m_phase = AttachingNotDistributed;
+    if (parent->isShadowRoot() && toShadowRoot(parent)->isYoungest()) {
+        m_phase = AttachingShadowChild;
         m_parentNodeForRenderingAndStyle = parent->shadowHost();
         return;
     }
 
-    if (parent->isElementNode()) {
-        if (toElement(parent)->hasShadowRoot()) {
+    if (parent->isElementNode() || parent->isShadowRoot()) {
+        if (parent->isElementNode() && toElement(parent)->hasShadowRoot())
             m_visualParentShadowTree = toElement(parent)->shadowTree();
-            if ((m_insertionPoint = m_visualParentShadowTree->insertionPointFor(m_node))
-                && m_visualParentShadowTree->isSelectorActive()) {
+        else if (parent->isShadowRoot())
+            m_visualParentShadowTree = toShadowRoot(parent)->tree();
 
-                // FIXME: We don't support <shadow> yet, so the non-youngest shadow won't be rendered.
-                // https://bugs.webkit.org/show_bugs.cgi?id=78596
-                if (toShadowRoot(m_insertionPoint->shadowTreeRootNode())->isYoungest()) {
+        if (m_visualParentShadowTree) {
+            if ((m_insertionPoint = m_visualParentShadowTree->insertionPointFor(m_node))) {
+                if (toShadowRoot(m_insertionPoint->shadowTreeRootNode())->isUsedForRendering()) {
                     m_phase = AttachingDistributed;
                     m_parentNodeForRenderingAndStyle = NodeRenderingContext(m_insertionPoint).parentNodeForRenderingAndStyle();
                     return;
@@ -91,9 +90,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
         }
 
         if (isShadowBoundary(parent)) {
-            // FIXME: We don't support <shadow> yet, so the non-youngest shadow won't be rendered.
-            // https://bugs.webkit.org/show_bugs.cgi?id=78596
-            if (!toShadowRoot(parent->shadowTreeRootNode())->isYoungest()) {
+            if (!toShadowRoot(parent->shadowTreeRootNode())->isUsedForRendering()) {
                 m_phase = AttachingNotDistributed;
                 m_parentNodeForRenderingAndStyle = parent;
                 return;

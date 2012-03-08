@@ -82,8 +82,6 @@ public:
     HTMLContentSelector* selector() const;
     HTMLContentSelector* ensureSelector();
 
-    bool isSelectorActive() const;
-
 private:
     Element* host() const;
 

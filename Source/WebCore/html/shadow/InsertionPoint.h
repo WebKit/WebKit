@@ -33,6 +33,7 @@
 
 #include "HTMLContentSelector.h"
 #include "HTMLElement.h"
+#include "HTMLNames.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -47,11 +48,13 @@ public:
 
     virtual const AtomicString& select() const = 0;
     virtual bool isSelectValid() const = 0;
+    virtual bool doesSelectFromHostChildren() const = 0;
 
     virtual void attach();
     virtual void detach();
 
     virtual bool isInsertionPoint() const OVERRIDE { return true; }
+    ShadowRoot* assignedFrom() const;
 
 protected:
     InsertionPoint(const QualifiedName&, Document*);
@@ -61,6 +64,9 @@ private:
     void distributeHostChildren(ShadowTree*);
     void clearDistribution(ShadowTree*);
     void attachDistributedNode();
+
+    void assignShadowRoot(ShadowRoot*);
+    void clearAssignment(ShadowRoot*);
 
     HTMLContentSelectionList m_selections;
 };

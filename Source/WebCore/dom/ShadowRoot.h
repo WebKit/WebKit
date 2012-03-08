@@ -83,6 +83,10 @@ public:
 
     virtual void attach();
 
+    bool isUsedForRendering() const;
+    InsertionPoint* assignedTo() const;
+    void setAssignedTo(InsertionPoint*);
+
 private:
     ShadowRoot(Document*);
     virtual ~ShadowRoot();
@@ -94,7 +98,24 @@ private:
     ShadowRoot* m_prev;
     ShadowRoot* m_next;
     bool m_applyAuthorSheets : 1;
+    InsertionPoint* m_insertionPointAssignedTo;
 };
+
+inline InsertionPoint* ShadowRoot::assignedTo() const
+{
+    return m_insertionPointAssignedTo;
+}
+
+inline void ShadowRoot::setAssignedTo(InsertionPoint* insertionPoint)
+{
+    ASSERT(!m_insertionPointAssignedTo || !insertionPoint);
+    m_insertionPointAssignedTo = insertionPoint;
+}
+
+inline bool ShadowRoot::isUsedForRendering() const
+{
+    return isYoungest() || assignedTo();
+}
 
 inline const ShadowRoot* toShadowRoot(const Node* node)
 {
@@ -105,6 +126,12 @@ inline const ShadowRoot* toShadowRoot(const Node* node)
 inline ShadowRoot* toShadowRoot(Node* node)
 {
     return const_cast<ShadowRoot*>(toShadowRoot(static_cast<const Node*>(node)));
+}
+
+inline ShadowRoot* toShadowRoot(TreeScope* scope)
+{
+    ASSERT(!scope || scope->isShadowRoot());
+    return static_cast<ShadowRoot*>(scope);
 }
 
 // Put this TreeScope method here to inline it.

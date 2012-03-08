@@ -48,9 +48,17 @@ InsertionPoint::~InsertionPoint()
 
 void InsertionPoint::attach()
 {
-    if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
-        distributeHostChildren(root->tree());
-        attachDistributedNode();
+    TreeScope* scope = treeScope();
+    if (scope->isShadowRoot()) {
+        ShadowRoot* root = toShadowRoot(scope);
+        if (doesSelectFromHostChildren()) {
+            distributeHostChildren(root->tree());
+            attachDistributedNode();
+        } else if (!root->olderShadowRoot()->assignedTo()) {
+            ASSERT(!root->olderShadowRoot()->attached());
+            assignShadowRoot(root->olderShadowRoot());
+            root->olderShadowRoot()->attach();
+        }
     }
 
     HTMLElement::attach();
@@ -60,7 +68,11 @@ void InsertionPoint::detach()
 {
     if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
         ShadowTree* tree = root->tree();
-        clearDistribution(tree);
+
+        if (doesSelectFromHostChildren())
+            clearDistribution(tree);
+        else if (ShadowRoot* assignedShadowRoot = assignedFrom())
+            clearAssignment(assignedShadowRoot);
 
         // When shadow element is detached, shadow tree should be recreated to re-calculate selector for
         // other insertion points.
@@ -69,6 +81,18 @@ void InsertionPoint::detach()
 
     ASSERT(m_selections.isEmpty());
     HTMLElement::detach();
+}
+
+ShadowRoot* InsertionPoint::assignedFrom() const
+{
+    TreeScope* scope = treeScope();
+    if (!scope->isShadowRoot())
+        return 0;
+
+    ShadowRoot* olderShadowRoot = toShadowRoot(scope)->olderShadowRoot();
+    if (olderShadowRoot && olderShadowRoot->assignedTo() == this)
+        return olderShadowRoot;
+    return 0;
 }
 
 bool InsertionPoint::isShadowBoundary() const
@@ -100,6 +124,20 @@ inline void InsertionPoint::attachDistributedNode()
 {
     for (HTMLContentSelection* selection = m_selections.first(); selection; selection = selection->next())
         selection->node()->attach();
+}
+
+inline void InsertionPoint::assignShadowRoot(ShadowRoot* shadowRoot)
+{
+    shadowRoot->setAssignedTo(this);
+    m_selections.clear();
+    for (Node* node = shadowRoot->firstChild(); node; node = node->nextSibling())
+        m_selections.append(HTMLContentSelection::create(this, node));
+}
+
+inline void InsertionPoint::clearAssignment(ShadowRoot* shadowRoot)
+{
+    shadowRoot->setAssignedTo(0);
+    m_selections.clear();
 }
 
 } // namespace WebCore

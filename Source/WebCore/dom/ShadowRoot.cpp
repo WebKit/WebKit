@@ -52,6 +52,7 @@ ShadowRoot::ShadowRoot(Document* document)
     , m_prev(0)
     , m_next(0)
     , m_applyAuthorSheets(false)
+    , m_insertionPointAssignedTo(0)
 {
     ASSERT(document);
     
