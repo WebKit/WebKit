@@ -1,3 +1,9 @@
+2012-03-08  Jessie Berlin  <jberlin@apple.com>
+
+        More Windows build fixing.
+
+        * gtest/msvc/gtest-md.vcproj:
+
 2012-03-07  Jessie Berlin  <jberlin@apple.com>
 
         Clean Windows build fails after r110033
