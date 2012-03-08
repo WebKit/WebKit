@@ -717,7 +717,6 @@ WebInspector.documentKeyDown = function(event)
     }
 
     var isMac = WebInspector.isMac();
-    var hasCtrlOrMeta = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event);
     switch (event.keyIdentifier) {
         case "U+001B": // Escape key
             if (event.target.hasStyleClass("text-prompt") || !WebInspector.isInEditMode(event)) {
@@ -739,23 +738,27 @@ WebInspector.documentKeyDown = function(event)
             break;
     }
 
+    var isValidZoomShortcut = WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) &&
+        !event.shiftKey &&
+        !event.altKey &&
+        !InspectorFrontendHost.isStub;
     switch (event.keyCode) {
         case 107: // +
         case 187: // +
-            if (hasCtrlOrMeta && !InspectorFrontendHost.isStub) {
+            if (isValidZoomShortcut) {
                 WebInspector._zoomIn();
                 event.preventDefault();
             }
             break;
         case 109: // -
         case 189: // -
-            if (hasCtrlOrMeta && !InspectorFrontendHost.isStub) {
+            if (isValidZoomShortcut) {
                 WebInspector._zoomOut();
                 event.preventDefault();
             }
             break;
         case 48: // 0
-            if (hasCtrlOrMeta && !InspectorFrontendHost.isStub) {
+            if (isValidZoomShortcut) {
                 WebInspector._resetZoom();
                 event.preventDefault();
             }
