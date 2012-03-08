@@ -631,13 +631,6 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#if ENABLE(FULLSCREEN_API)
-static bool isDocumentRunningFullScreenAnimation(Document* document)
-{
-    return document->webkitIsFullScreen() && document->fullScreenRenderer() && document->isAnimatingFullScreen();
-}
-#endif
-
 void FrameView::updateCompositingLayers()
 {
     RenderView* root = rootRenderer(this);
@@ -647,12 +640,6 @@ void FrameView::updateCompositingLayers()
     // This call will make sure the cached hasAcceleratedCompositing is updated from the pref
     root->compositor()->cacheAcceleratedCompositingFlags();
     root->compositor()->updateCompositingLayers(CompositingUpdateAfterLayoutOrStyleChange);
-    
-#if ENABLE(FULLSCREEN_API)
-    Document* document = m_frame->document();
-    if (isDocumentRunningFullScreenAnimation(document))
-        root->compositor()->updateCompositingLayers(CompositingUpdateAfterLayoutOrStyleChange, document->fullScreenRenderer()->layer());
-#endif
 }
 
 void FrameView::clearBackingStores()
@@ -727,20 +714,6 @@ bool FrameView::syncCompositingStateForThisFrame(Frame* rootFrameForSync)
 
     root->compositor()->flushPendingLayerChanges(rootFrameForSync == m_frame);
 
-#if ENABLE(FULLSCREEN_API)
-    // The fullScreenRenderer's graphicsLayer has been re-parented, and the above recursive syncCompositingState
-    // call will not cause the subtree under it to repaint.  Explicitly call the syncCompositingState on 
-    // the fullScreenRenderer's graphicsLayer here:
-    Document* document = m_frame->document();
-    if (isDocumentRunningFullScreenAnimation(document)) {
-        RenderLayerBacking* backing = document->fullScreenRenderer()->layer()->backing();
-        if (GraphicsLayer* fullScreenLayer = backing->graphicsLayer()) {
-            // FIXME: Passing frameRect() is correct only when RenderLayerCompositor uses a ScrollLayer (as in WebKit2)
-            // otherwise, the passed clip rect needs to take scrolling into account
-            fullScreenLayer->syncCompositingState(frameRect());
-        }
-    }
-#endif
     return true;
 }
 

@@ -991,13 +991,6 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vect
             }
         }
 
-#if ENABLE(FULLSCREEN_API)
-        // For the sake of clients of the full screen renderer, don't reparent
-        // the full screen layer out from under them if they're in the middle of
-        // animating.
-        if (layer->renderer()->isRenderFullScreen() && m_renderView->document()->isAnimatingFullScreen())
-            return;
-#endif
         childLayersOfEnclosingLayer.append(layerBacking->childForSuperlayers());
     }
 }
@@ -1390,7 +1383,6 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
              || (canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden)
              || clipsCompositingDescendants(layer)
              || requiresCompositingForAnimation(renderer)
-             || requiresCompositingForFullScreen(renderer)
              || requiresCompositingForFilters(renderer)
              || requiresCompositingForPosition(renderer, layer);
 }
@@ -1573,16 +1565,6 @@ bool RenderLayerCompositor::requiresCompositingWhenDescendantsAreCompositing(Ren
     return renderer->hasTransform() || renderer->isTransparent() || renderer->hasMask() || renderer->hasReflection() || renderer->hasFilter();
 }
     
-bool RenderLayerCompositor::requiresCompositingForFullScreen(RenderObject* renderer) const
-{
-#if ENABLE(FULLSCREEN_API)
-    return renderer->isRenderFullScreen() && m_renderView->document()->isAnimatingFullScreen();
-#else
-    UNUSED_PARAM(renderer);
-    return false;
-#endif
-}
-
 bool RenderLayerCompositor::requiresCompositingForFilters(RenderObject* renderer) const
 {
 #if ENABLE(CSS_FILTERS)

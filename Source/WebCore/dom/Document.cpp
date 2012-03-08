@@ -5111,28 +5111,12 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
     
     recalcStyle(Force);
-    
-    if (m_fullScreenRenderer) {
-        setAnimatingFullScreen(true);
-#if USE(ACCELERATED_COMPOSITING)
-        view()->updateCompositingLayers();
-        if (m_fullScreenRenderer->layer() && m_fullScreenRenderer->layer()->isComposited())
-            page()->chrome()->client()->setRootFullScreenLayer(m_fullScreenRenderer->layer()->backing()->graphicsLayer());
-#endif
-    }
 }
     
 void Document::webkitDidEnterFullScreenForElement(Element*)
 {
     m_fullScreenElement->didBecomeFullscreenElement();
 
-    if (m_fullScreenRenderer) {
-        setAnimatingFullScreen(false);
-#if USE(ACCELERATED_COMPOSITING)
-        view()->updateCompositingLayers();
-        page()->chrome()->client()->setRootFullScreenLayer(0);
-#endif
-    }
     m_fullScreenChangeEventTargetQueue.append(m_fullScreenElement);
     m_fullScreenChangeDelayTimer.startOneShot(0);
 }
@@ -5142,29 +5126,16 @@ void Document::webkitWillExitFullScreenForElement(Element*)
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
     
     m_fullScreenElement->willStopBeingFullscreenElement();
-
-    if (m_fullScreenRenderer) {
-        setAnimatingFullScreen(true);
-#if USE(ACCELERATED_COMPOSITING)
-        view()->updateCompositingLayers();
-        if (m_fullScreenRenderer->layer() && m_fullScreenRenderer->layer()->isComposited())
-            page()->chrome()->client()->setRootFullScreenLayer(m_fullScreenRenderer->layer()->backing()->graphicsLayer());
-#endif
-    }
 }
 
 void Document::webkitDidExitFullScreenForElement(Element*)
 {
     m_areKeysEnabledInFullScreen = false;
-    setAnimatingFullScreen(false);
     
     if (m_fullScreenRenderer)
         m_fullScreenRenderer->unwrapRenderer();
 
     m_fullScreenChangeEventTargetQueue.append(m_fullScreenElement.release());
-#if USE(ACCELERATED_COMPOSITING)
-    page()->chrome()->client()->setRootFullScreenLayer(0);
-#endif
     scheduleForcedStyleRecalc();
     
     m_fullScreenChangeDelayTimer.startOneShot(0);
@@ -5291,15 +5262,6 @@ void Document::setAnimatingFullScreen(bool flag)
         m_fullScreenElement->setNeedsStyleRecalc();
         scheduleForcedStyleRecalc();
     }
-
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_fullScreenRenderer && m_fullScreenRenderer->layer()) {
-        m_fullScreenRenderer->layer()->contentChanged(RenderLayer::FullScreenChanged);
-        // Clearing the layer's backing will force the compositor to reparent
-        // the layer the next time layers are synchronized.
-        m_fullScreenRenderer->layer()->clearBacking();
-    }
-#endif
 }
 #endif
 
