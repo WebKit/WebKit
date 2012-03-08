@@ -1,3 +1,13 @@
+2012-03-08  John Sullivan  <sullivan@apple.com>
+
+        Made extract-localizable-strings ignore NSLocalizedFileSizeDescription
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/extract-localizable-strings:
+        Added NSLocalizedFileSizeDescription to allowed list of tokens that start
+        with NSLocalized. Also improved an error message to include the troublesome token.
+
 2012-03-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r110115.
