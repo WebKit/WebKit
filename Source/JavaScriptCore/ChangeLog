@@ -1,3 +1,19 @@
+2012-03-07  Chao-yng Fu  <fu@mips.com>
+
+        [Qt] Fix the MIPS/SH4 build after r109834
+        https://bugs.webkit.org/show_bug.cgi?id=80492
+
+        Reviewed by Oliver Hunt.
+
+        Implement three-argument branch(Add,Sub)32.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::add32):
+        (MacroAssemblerMIPS):
+        (JSC::MacroAssemblerMIPS::sub32):
+        (JSC::MacroAssemblerMIPS::branchAdd32):
+        (JSC::MacroAssemblerMIPS::branchSub32):
+
 2012-03-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r110127.

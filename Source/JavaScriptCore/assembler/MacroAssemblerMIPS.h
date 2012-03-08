@@ -132,6 +132,11 @@ public:
         }
     }
 
+    void add32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        add32(imm, src, dest);
+    }
+
     void add32(TrustedImm32 imm, Address address)
     {
         if (address.offset >= -32768 && address.offset <= 32767
@@ -365,6 +370,24 @@ public:
             */
             move(imm, immTempRegister);
             m_assembler.subu(dest, dest, immTempRegister);
+        }
+    }
+
+    void sub32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        if (!imm.m_isPointer && imm.m_value >= -32767 && imm.m_value <= 32768
+            && !m_fixedWidth) {
+            /*
+              addiu     dest, src, imm
+            */
+            m_assembler.addiu(dest, src, -imm.m_value);
+        } else {
+            /*
+              li        immTemp, imm
+              subu      dest, src, immTemp
+            */
+            move(imm, immTempRegister);
+            m_assembler.subu(dest, src, immTempRegister);
         }
     }
 
@@ -1203,6 +1226,13 @@ public:
         return branchAdd32(cond, immTempRegister, dest);
     }
 
+    Jump branchAdd32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        move(imm, immTempRegister);
+        move(src, dest);
+        return branchAdd32(cond, immTempRegister, dest);
+    }
+
     Jump branchMul32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
@@ -1305,6 +1335,13 @@ public:
     Jump branchSub32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
         move(imm, immTempRegister);
+        return branchSub32(cond, immTempRegister, dest);
+    }
+
+    Jump branchSub32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        move(imm, immTempRegister);
+        move(src, dest);
         return branchSub32(cond, immTempRegister, dest);
     }
 
