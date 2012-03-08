@@ -1,3 +1,40 @@
+2012-03-08  Dirk Pranke  <dpranke@chromium.org>
+
+        webkit-patch works oddly on local Git branches
+        https://bugs.webkit.org/show_bug.cgi?id=76958
+
+        Reviewed by Ojan Vafai.
+
+        This change makes the '-g' flag to webkit-patch behave a
+        little more consistently with git. The 'HEAD..' syntax
+        is changed to 'HEAD....' (four dots), so as to not
+        collide with the underlying git syntax. We also generalize
+        the syntax to support any refname, so 'foo....' means
+        diff against foo and include working copy changes.
+
+        This change also adds the 'UPSTREAM' shortcut to identify
+        whatever the current upstream/tracking branch is; this is
+        useful if you have multiple local branches stacked up.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git._branch_from_ref):
+        (Git):
+        (Git._current_branch):
+        (Git._upstream_branch):
+        (Git.merge_base):
+        (Git._commit_on_branch):
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (GitSVNTest._second_local_commit):
+        (GitSVNTest._two_local_commits):
+        (GitSVNTest.test_commit_with_message_git_commit_range):
+        (GitSVNTest.test_upstream_branch):
+        (GitSVNTest.test_create_patch_working_copy_only):
+        (GitSVNTest.test_changed_files_local_plus_working_copy):
+        (GitSVNTest.test_changed_files_working_copy_only):
+        (GitSVNTest.test_changed_files_upstream):
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options):
+
 2012-03-08  John Sullivan  <sullivan@apple.com>
 
         Made extract-localizable-strings ignore NSLocalizedFileSizeDescription

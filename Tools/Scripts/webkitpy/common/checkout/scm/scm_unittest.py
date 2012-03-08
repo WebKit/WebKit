@@ -1167,9 +1167,12 @@ class GitSVNTest(SCMTest):
         write_into_file_at_path('test_file_commit2', 'still more test content')
         run_command(['git', 'add', 'test_file_commit2'])
 
+    def _second_local_commit(self):
+        self._local_commit('test_file_commit2', 'still more test content', 'yet another test commit')
+
     def _two_local_commits(self):
         self._one_local_commit()
-        self._local_commit('test_file_commit2', 'still more test content', 'yet another test commit')
+        self._second_local_commt()
 
     def _three_local_commits(self):
         self._local_commit('test_file_commit0', 'more test content', 'another test commit')
@@ -1211,13 +1214,6 @@ class GitSVNTest(SCMTest):
         svn_log = run_command(['git', 'svn', 'log', '--limit=1', '--verbose'])
         self.assertFalse(re.search(r'test_file_commit0', svn_log))
         self.assertTrue(re.search(r'test_file_commit1', svn_log))
-        self.assertTrue(re.search(r'test_file_commit2', svn_log))
-
-    def test_changed_files_working_copy_only(self):
-        self._one_local_commit_plus_working_copy_changes()
-        scm = detect_scm_system(self.git_checkout_path)
-        commit_text = scm.commit_with_message("another test commit", git_commit="HEAD..")
-        self.assertFalse(re.search(r'test_file_commit1', svn_log))
         self.assertTrue(re.search(r'test_file_commit2', svn_log))
 
     def test_commit_with_message_only_local_commit(self):
@@ -1291,6 +1287,11 @@ class GitSVNTest(SCMTest):
         # There's a conflict between trunk and the test_file2 modification.
         self.assertRaises(ScriptError, scm.commit_with_message, "another test commit", force_squash=True)
 
+    def test_upstream_branch(self):
+        run_command(['git', 'checkout', '-t', '-b', 'my-branch'])
+        run_command(['git', 'checkout', '-t', '-b', 'my-second-branch'])
+        self.assertEquals(self.scm._upstream_branch(), 'my-branch')
+
     def test_remote_branch_ref(self):
         self.assertEqual(self.scm.remote_branch_ref(), 'refs/remotes/trunk')
 
@@ -1360,7 +1361,7 @@ class GitSVNTest(SCMTest):
     def test_create_patch_working_copy_only(self):
         self._one_local_commit_plus_working_copy_changes()
         scm = detect_scm_system(self.git_checkout_path)
-        patch = scm.create_patch(git_commit="HEAD..")
+        patch = scm.create_patch(git_commit="HEAD....")
         self.assertFalse(re.search(r'test_file_commit1', patch))
         self.assertTrue(re.search(r'test_file_commit2', patch))
 
@@ -1413,6 +1414,16 @@ class GitSVNTest(SCMTest):
         self.assertTrue('test_file_commit1' in files)
         self.assertTrue('test_file_commit2' in files)
 
+        # working copy should *not* be in the list.
+        files = scm.changed_files('trunk..')
+        self.assertTrue('test_file_commit1' in files)
+        self.assertFalse('test_file_commit2' in files)
+
+        # working copy *should* be in the list.
+        files = scm.changed_files('trunk....')
+        self.assertTrue('test_file_commit1' in files)
+        self.assertTrue('test_file_commit2' in files)
+
     def test_changed_files_git_commit(self):
         self._two_local_commits()
         scm = detect_scm_system(self.git_checkout_path)
@@ -1431,7 +1442,7 @@ class GitSVNTest(SCMTest):
     def test_changed_files_working_copy_only(self):
         self._one_local_commit_plus_working_copy_changes()
         scm = detect_scm_system(self.git_checkout_path)
-        files = scm.changed_files(git_commit="HEAD..")
+        files = scm.changed_files(git_commit="HEAD....")
         self.assertFalse('test_file_commit1' in files)
         self.assertTrue('test_file_commit2' in files)
 
@@ -1465,6 +1476,26 @@ class GitSVNTest(SCMTest):
 
     def test_changed_files_for_revision(self):
         self._shared_test_changed_files_for_revision()
+
+    def test_changed_files_upstream(self):
+        run_command(['git', 'checkout', '-t', '-b', 'my-branch'])
+        self._one_local_commit()
+        run_command(['git', 'checkout', '-t', '-b', 'my-second-branch'])
+        self._second_local_commit()
+        write_into_file_at_path('test_file_commit0', 'more test content')
+        run_command(['git', 'add', 'test_file_commit0'])
+
+        # equivalent to 'git diff my-branch..HEAD, should not include working changes
+        files = self.scm.changed_files(git_commit='UPSTREAM..')
+        self.assertFalse('test_file_commit1' in files)
+        self.assertTrue('test_file_commit2' in files)
+        self.assertFalse('test_file_commit0' in files)
+
+        # equivalent to 'git diff my-branch', *should* include working changes
+        files = self.scm.changed_files(git_commit='UPSTREAM....')
+        self.assertFalse('test_file_commit1' in files)
+        self.assertTrue('test_file_commit2' in files)
+        self.assertTrue('test_file_commit0' in files)
 
     def test_contents_at_revision(self):
         self._shared_test_contents_at_revision()

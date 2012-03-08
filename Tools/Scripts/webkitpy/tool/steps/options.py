@@ -1,9 +1,9 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -44,7 +44,7 @@ class Options(object):
     description = make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment")
     email = make_option("--email", action="store", type="string", dest="email", help="Email address to use in ChangeLogs.")
     force_clean = make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)")
-    git_commit = make_option("-g", "--git-commit", action="store", dest="git_commit", help="Operate on a local commit. If a range, the commits are squashed into one. HEAD.. operates on working copy changes only.")
+    git_commit = make_option("-g", "--git-commit", action="store", dest="git_commit", help="Operate on a local commit. If a range, the commits are squashed into one. <ref>.... includes the working copy changes. UPSTREAM can be used for the upstream/tracking branch.")
     local_commit = make_option("--local-commit", action="store_true", dest="local_commit", default=False, help="Make a local commit for each applied patch")
     non_interactive = make_option("--non-interactive", action="store_true", dest="non_interactive", default=False, help="Never prompt the user, fail as fast as possible.")
     obsolete_patches = make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting this one.")
