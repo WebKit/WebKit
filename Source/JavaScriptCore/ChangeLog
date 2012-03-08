@@ -1,3 +1,16 @@
+2012-03-07  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CFA incorrectly handles ValueToInt32
+        https://bugs.webkit.org/show_bug.cgi?id=80568
+
+        Reviewed by Gavin Barraclough.
+        
+        Changed it match exactly the decision pattern used in
+        DFG::SpeculativeJIT::compileValueToInt32
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+
 2012-03-08  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK2] Webkit fails to link when compiled with force_static_libs_as_shared
