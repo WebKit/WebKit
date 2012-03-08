@@ -1,0 +1,5 @@
+PASS document.getElementById("speechInput1").offsetWidth is document.getElementById("input1").offsetWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

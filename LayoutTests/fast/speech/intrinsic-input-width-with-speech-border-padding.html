@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+input::-webkit-input-speech-button {
+    border: 10px solid lime;
+    padding: 10px;
+}
+</style>
+<body>
+<script src="../js/resources/js-test-pre.js"></script>
+
+<input id="input1">
+<input x-webkit-speech id="speechInput1">
+<script>
+shouldBe('document.getElementById("speechInput1").offsetWidth', 'document.getElementById("input1").offsetWidth');
+</script>
+
+<script src="../js/resources/js-test-post.js"></script>
+</body>

@@ -1,3 +1,17 @@
+2012-03-07  Kent Tamura  <tkent@chromium.org>
+
+        Remove meaningless code in RenderTextControlSingleLine::preferredContentWidth()
+        https://bugs.webkit.org/show_bug.cgi?id=80493
+
+        Reviewed by Hajime Morita.
+
+        * src/WebInputElement.cpp:
+        RenderTextControlSingleLine::speechButtonElement() is removed. The
+        following functions get it from HTMLInputElement.
+        (WebKit::WebInputElement::getSpeechInputState):
+        (WebKit::WebInputElement::startSpeechInput):
+        (WebKit::WebInputElement::stopSpeechInput):
+
 2012-03-07  Adam Barth  <abarth@webkit.org>
 
         Remove #define private public from WebCache.cpp

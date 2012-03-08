@@ -361,13 +361,6 @@ void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
     }
 }
 
-#if ENABLE(INPUT_SPEECH)
-HTMLElement* RenderTextControlSingleLine::speechButtonElement() const
-{
-    return inputElement()->speechButtonElement();
-}
-#endif
-
 bool RenderTextControlSingleLine::hasControlClip() const
 {
     // Apply control clip for text fields with decorations.
@@ -418,16 +411,6 @@ LayoutUnit RenderTextControlSingleLine::preferredContentWidth(float charWidth) c
     if (maxCharWidth > 0.f)
         result += maxCharWidth - charWidth;
 
-    HTMLElement* resultsButton = resultsButtonElement();
-    if (RenderBox* resultsRenderer = resultsButton ? resultsButton->renderBox() : 0)
-        result += resultsRenderer->borderLeft() + resultsRenderer->borderRight() +
-                  resultsRenderer->paddingLeft() + resultsRenderer->paddingRight();
-
-    HTMLElement* cancelButton = cancelButtonElement();
-    if (RenderBox* cancelRenderer = cancelButton ? cancelButton->renderBox() : 0)
-        result += cancelRenderer->borderLeft() + cancelRenderer->borderRight() +
-                  cancelRenderer->paddingLeft() + cancelRenderer->paddingRight();
-
     if (includesDecoration) {
         HTMLElement* spinButton = innerSpinButtonElement();
         if (RenderBox* spinRenderer = spinButton ? spinButton->renderBox() : 0) {
@@ -439,13 +422,6 @@ LayoutUnit RenderTextControlSingleLine::preferredContentWidth(float charWidth) c
         }
     }
 
-#if ENABLE(INPUT_SPEECH)
-    HTMLElement* speechButton = speechButtonElement();
-    if (RenderBox* speechRenderer = speechButton ? speechButton->renderBox() : 0) {
-        result += speechRenderer->borderLeft() + speechRenderer->borderRight() +
-                  speechRenderer->paddingLeft() + speechRenderer->paddingRight();
-    }
-#endif
     return result;
 }
 

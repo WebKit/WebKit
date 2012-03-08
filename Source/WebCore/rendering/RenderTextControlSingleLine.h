@@ -49,10 +49,6 @@ public:
 
     void capsLockStateMayHaveChanged();
 
-#if ENABLE(INPUT_SPEECH)
-    HTMLElement* speechButtonElement() const;
-#endif
-
 private:
     virtual bool hasControlClip() const;
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;
