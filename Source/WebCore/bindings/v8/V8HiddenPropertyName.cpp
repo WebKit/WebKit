@@ -33,6 +33,7 @@
 
 #include "V8Binding.h"
 #include <string.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -40,24 +41,24 @@ namespace WebCore {
 #define V8_AS_STRING(x) V8_AS_STRING_IMPL(x)
 #define V8_AS_STRING_IMPL(x) #x
 
-#define V8_DEFINE_PROPERTY(name) \
+#define V8_HIDDEN_PROPERTY_PREFIX "WebCore::HiddenProperty::"
+
+#define V8_DEFINE_HIDDEN_PROPERTY(name) \
 v8::Handle<v8::String> V8HiddenPropertyName::name() \
 { \
     V8HiddenPropertyName* hiddenPropertyName = V8BindingPerIsolateData::current()->hiddenPropertyName(); \
     if (hiddenPropertyName->m_##name.IsEmpty()) { \
-        hiddenPropertyName->m_##name = createString("WebCore::HiddenProperty::" V8_AS_STRING(name)); \
+        hiddenPropertyName->m_##name = createString(V8_HIDDEN_PROPERTY_PREFIX V8_AS_STRING(name)); \
     } \
     return hiddenPropertyName->m_##name; \
 }
 
-V8_HIDDEN_PROPERTIES(V8_DEFINE_PROPERTY);
-
-static const char hiddenReferenceNamePrefix[] = "WebCore::HiddenReference::";
+V8_HIDDEN_PROPERTIES(V8_DEFINE_HIDDEN_PROPERTY);
 
 v8::Handle<v8::String> V8HiddenPropertyName::hiddenReferenceName(const char* name)
 {
     Vector<char, 64> prefixedName;
-    prefixedName.append(hiddenReferenceNamePrefix, sizeof(hiddenReferenceNamePrefix) - 1);
+    prefixedName.append(V8_HIDDEN_PROPERTY_PREFIX, sizeof(V8_HIDDEN_PROPERTY_PREFIX) - 1);
     ASSERT(name && strlen(name));
     prefixedName.append(name, strlen(name));
     return v8::String::NewSymbol(prefixedName.data(), static_cast<int>(prefixedName.size()));

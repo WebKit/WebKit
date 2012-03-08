@@ -94,7 +94,7 @@ v8::Handle<v8::Value> toV8(DOMStringMap* impl)
     if (!wrapper.IsEmpty() && element) {
         v8::Handle<v8::Value> elementValue = toV8(element);
         if (!elementValue.IsEmpty() && elementValue->IsObject())
-            V8DOMWrapper::setNamedHiddenReference(elementValue.As<v8::Object>(), "domStringMap", wrapper);
+            elementValue.As<v8::Object>()->SetHiddenValue(V8HiddenPropertyName::domStringMap(), wrapper);
     }
     return wrapper;
 }
