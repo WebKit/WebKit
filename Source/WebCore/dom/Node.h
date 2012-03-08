@@ -314,8 +314,6 @@ public:
     void setHasName(bool f) { setFlag(f, HasNameFlag); }
     void setChildNeedsStyleRecalc() { setFlag(ChildNeedsStyleRecalcFlag); }
     void clearChildNeedsStyleRecalc() { clearFlag(ChildNeedsStyleRecalcFlag); }
-    void setInDocument() { setFlag(InDocumentFlag); }
-    void clearInDocument() { clearFlag(InDocumentFlag); }
 
     void setInActiveChain() { setFlag(InActiveChainFlag); }
     void clearInActiveChain() { clearFlag(InActiveChainFlag); }
@@ -693,7 +691,8 @@ protected:
         CreateShadowRoot = CreateContainer | IsShadowRootFlag,
         CreateStyledElement = CreateElement | IsStyledElementFlag, 
         CreateHTMLElement = CreateStyledElement | IsHTMLFlag, 
-        CreateSVGElement = CreateStyledElement | IsSVGFlag
+        CreateSVGElement = CreateStyledElement | IsSVGFlag,
+        CreateDocument = CreateContainer | InDocumentFlag
     };
     Node(Document*, ConstructionType);
 

@@ -380,7 +380,7 @@ private:
 uint64_t Document::s_globalTreeVersion = 0;
 
 Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
-    : ContainerNode(0)
+    : ContainerNode(0, CreateDocument)
     , TreeScope(this)
     , m_guardRefCount(0)
     , m_compatibilityMode(NoQuirksMode)
@@ -471,7 +471,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 
     m_textColor = Color::black;
     m_listenerTypes = 0;
-    setInDocument();
     m_inStyleRecalc = false;
     m_closeAfterStyleRecalc = false;
 

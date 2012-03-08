@@ -804,7 +804,6 @@ void ContainerNode::removedFromDocument()
     Node::removedFromDocument();
     if (document()->cssTarget() == this) 
         document()->setCSSTarget(0); 
-    clearInDocument();
     removedFromTree(false);
 
     NodeVector children;

@@ -2441,12 +2441,12 @@ ScriptExecutionContext* Node::scriptExecutionContext() const
 
 void Node::insertedIntoDocument()
 {
-    setInDocument();
+    setFlag(InDocumentFlag);
 }
 
 void Node::removedFromDocument()
 {
-    clearInDocument();
+    clearFlag(InDocumentFlag);
 }
 
 void Node::didMoveToNewDocument(Document* oldDocument)
