@@ -1,3 +1,12 @@
+2012-03-08  Matt Lilek  <mrl@apple.com>
+
+        Don't enable VIDEO_TRACK on all OS X platforms
+        https://bugs.webkit.org/show_bug.cgi?id=80635
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-03-08  Oliver Hunt  <oliver@apple.com>
 
         Build fix.  That day is not today.
