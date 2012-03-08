@@ -1,3 +1,26 @@
+2012-03-08  Oliver Hunt  <oliver@apple.com>
+
+        Missing some places where we should be blinding 64bit values (and blinding something we shouldn't)
+        https://bugs.webkit.org/show_bug.cgi?id=80633
+
+        Reviewed by Gavin Barraclough.
+
+        Add 64-bit trap for shouldBlindForSpecificArch, so that we always blind
+        if there isn't a machine specific implementation (otherwise the 64bit value
+        got truncated and 32bit checks were used -- leaving 32bits untested).
+        Also add a bit of logic to ensure that we don't try to blind a few common
+        constants that go through the ImmPtr paths -- encoded numeric JSValues and
+        unencoded doubles with common "safe" values.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::shouldBlindForSpecificArch):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::shouldBlindDouble):
+        (MacroAssembler):
+        (JSC::MacroAssembler::shouldBlind):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::shouldBlindForSpecificArch):
+
 2012-03-08  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/11012572> Ensure that the staged frameworks path is in the search path for JavaScriptCore

@@ -504,6 +504,29 @@ public:
     using MacroAssemblerBase::subPtr;
     using MacroAssemblerBase::xorPtr;
     
+    bool shouldBlindDouble(double value)
+    {
+        // Don't trust NaN or +/-Infinity
+        if (!isfinite(value))
+            return true;
+
+        // Try to force normalisation, and check that there's no change
+        // in the bit pattern
+        if (bitwise_cast<uintptr_t>(value * 1.0) != bitwise_cast<uintptr_t>(value))
+            return true;
+
+        value = abs(value);
+        // Only allow a limited set of fractional components
+        double scaledValue = value * 8;
+        if (scaledValue / 8 != value)
+            return true;
+        double frac = scaledValue - floor(scaledValue);
+        if (frac != 0.0)
+            return true;
+
+        return value > 0xff;
+    }
+    
     bool shouldBlind(ImmPtr imm)
     { 
         ASSERT(!inUninterruptedSequence());
@@ -526,9 +549,20 @@ public:
         case 0xffffffffffffffL:
         case 0xffffffffffffffffL:
             return false;
-        default:
+        default: {
             if (value <= 0xff)
                 return false;
+#if CPU(X86_64)
+            JSValue jsValue = JSValue::decode(reinterpret_cast<void*>(value));
+            if (jsValue.isInt32())
+                return shouldBlind(Imm32(jsValue.asInt32()));
+            if (jsValue.isDouble() && !shouldBlindDouble(jsValue.asDouble()))
+                return false;
+
+            if (!shouldBlindDouble(bitwise_cast<double>(value)))
+                return false;
+#endif 
+        }
         }
         return shouldBlindForSpecificArch(value);
 #endif

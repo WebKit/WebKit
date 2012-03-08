@@ -92,6 +92,7 @@ public:
     static const RegisterID stackPointerRegister = X86Registers::esp;
     
     static bool shouldBlindForSpecificArch(uint32_t value) { return value >= 0x00ffffff; }
+    static bool shouldBlindForSpecificArch(uintptr_t value) { return value >= 0x00ffffff; }
 
     // Integer arithmetic operations:
     //
