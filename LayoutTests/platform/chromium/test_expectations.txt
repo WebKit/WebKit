@@ -3688,10 +3688,8 @@ BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-pro
 BUGWK80517 DEBUG : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE PASS
 
 // Test is acting extra flakey on Mac and Win Debug
-BUGCR114777 MAC : compositing/culling/filter-occlusion-blur-large.html = PASS IMAGE
-BUGCR114777 MAC : compositing/culling/filter-occlusion-blur.html = PASS IMAGE
-BUGCR114777 WIN DEBUG : compositing/culling/filter-occlusion-blur-large.html = PASS IMAGE
-BUGCR114777 WIN DEBUG : compositing/culling/filter-occlusion-blur.html = PASS IMAGE
+BUGCR114777 : compositing/culling/filter-occlusion-blur-large.html = PASS IMAGE
+BUGCR114777 : compositing/culling/filter-occlusion-blur.html = PASS IMAGE
 
 // Needs rebaseline
 BUGWK78878 : media/audio-repaint.html = IMAGE
@@ -4032,3 +4030,5 @@ BUG_SENORBLANCO LEOPARD : css2.1/t1202-counters-04-b.html = TEXT
 BUG_SENORBLANCO LEOPARD : editing/pasteboard/paste-table-cells.html = IMAGE
 
 BUGWK80563 : css3/filters/effect-combined-hw.html = PASS IMAGE
+BUGWK80563 : css3/filters/effect-hue-rotate-hw.html = PASS IMAGE
+BUGWK80563 : css3/filters/effect-opacity-hw.html = PASS IMAGE
