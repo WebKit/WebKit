@@ -160,13 +160,20 @@ void Node::dumpStatistics()
     size_t attributes = 0;
     size_t attributesWithAttr = 0;
     size_t elementsWithAttributeStorage = 0;
+    size_t elementsWithRareData = 0;
     size_t elementsWithNamedNodeMap = 0;
 
     for (HashSet<Node*>::iterator it = liveNodeSet.begin(); it != liveNodeSet.end(); ++it) {
         Node* node = *it;
 
-        if (node->hasRareData())
+        if (node->hasRareData()) {
             ++nodesWithRareData;
+            if (node->isElementNode()) {
+                ++elementsWithRareData;
+                if (toElement(node)->hasNamedNodeMap())
+                    ++elementsWithNamedNodeMap;
+            }
+        }
 
         switch (node->nodeType()) {
             case ELEMENT_NODE: {
@@ -181,8 +188,6 @@ void Node::dumpStatistics()
                 if (ElementAttributeData* attributeData = element->attributeData()) {
                     attributes += attributeData->length();
                     ++elementsWithAttributeStorage;
-                    // FIXME: This will change once attribute storage goes out of NamedNodeMap.
-                    ++elementsWithNamedNodeMap;
                     for (unsigned i = 0; i < attributeData->length(); ++i) {
                         Attribute* attr = attributeData->attributeItem(i);
                         if (attr->attr())
@@ -272,6 +277,7 @@ void Node::dumpStatistics()
     printf("  Number of Attributes (non-Node and Node): %zu [%zu]\n", attributes, sizeof(Attribute));
     printf("  Number of Attributes with an Attr: %zu\n", attributesWithAttr);
     printf("  Number of Elements with attribute storage: %zu [%zu]\n", elementsWithAttributeStorage, sizeof(ElementAttributeData));
+    printf("  Number of Elements with RareData: %zu\n", elementsWithRareData);
     printf("  Number of Elements with NamedNodeMap: %zu [%zu]\n", elementsWithNamedNodeMap, sizeof(NamedNodeMap));
 #endif
 }
@@ -1803,19 +1809,7 @@ bool Node::isEqualNode(Node* other) const
         if (documentTypeThis->internalSubset() != documentTypeOther->internalSubset())
             return false;
 
-        NamedNodeMap* entities = documentTypeThis->entities();
-        NamedNodeMap* otherEntities = documentTypeOther->entities();
-        if (!entities && otherEntities)
-            return false;
-        if (entities && !entities->mapsEquivalent(otherEntities))
-            return false;
-
-        NamedNodeMap* notations = documentTypeThis->notations();
-        NamedNodeMap* otherNotations = documentTypeOther->notations();
-        if (!notations && otherNotations)
-            return false;
-        if (notations && !notations->mapsEquivalent(otherNotations))
-            return false;
+        // FIXME: We don't compare entities or notations because currently both are always empty.
     }
     
     return true;
@@ -2114,7 +2108,7 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
     if (attr1 && attr2 && start1 == start2 && start1) {
         // We are comparing two attributes on the same node. Crawl our attribute map and see which one we hit first.
         Element* owner1 = attr1->ownerElement();
-        owner1->updatedAttributes(); // Force update invalid attributes.
+        owner1->updatedAttributeData(); // Force update invalid attributes.
         unsigned length = owner1->attributeCount();
         for (unsigned i = 0; i < length; ++i) {
             // If neither of the two determining nodes is a child node and nodeType is the same for both determining nodes, then an 

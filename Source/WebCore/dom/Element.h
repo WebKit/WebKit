@@ -27,9 +27,9 @@
 
 #include "CollectionType.h"
 #include "Document.h"
+#include "ElementAttributeData.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLNames.h"
-#include "NamedNodeMap.h"
 #include "ScrollTypes.h"
 
 namespace WebCore {
@@ -130,6 +130,9 @@ public:
     bool fastAttributeLookupAllowed(const QualifiedName&) const;
 #endif
 
+#ifdef DUMP_NODE_STATISTICS
+    bool hasNamedNodeMap() const;
+#endif
     bool hasAttributes() const;
     // This variant will not update the potentially invalid attributes. To be used when not interested
     // in style attribute or one of the SVG animation attributes.
@@ -229,15 +232,13 @@ public:
     // For exposing to DOM only.
     NamedNodeMap* attributes() const;
 
-    NamedNodeMap* updatedAttributes() const;
-
     // This method is called whenever an attribute is added, changed or removed.
     virtual void attributeChanged(Attribute*);
 
     // Only called by the parser immediately after element construction.
     void parserSetAttributes(PassOwnPtr<AttributeVector>, FragmentScriptingPermission);
 
-    ElementAttributeData* attributeData() const { return m_attributeMap ? m_attributeMap->attributeData() : 0; }
+    ElementAttributeData* attributeData() const { return m_attributeData.get(); }
     ElementAttributeData* ensureAttributeData() const;
     ElementAttributeData* updatedAttributeData() const;
     ElementAttributeData* ensureUpdatedAttributeData() const;
@@ -436,7 +437,7 @@ private:
 
     bool pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle);
 
-    void createAttributeMap() const;
+    void createAttributeData() const;
 
     virtual void updateStyleAttribute() const { }
 
@@ -468,7 +469,7 @@ private:
     void updateExtraNamedItemRegistration(const AtomicString& oldName, const AtomicString& newName);
 
 private:
-    mutable OwnPtr<NamedNodeMap> m_attributeMap;
+    mutable OwnPtr<ElementAttributeData> m_attributeData;
 };
     
 inline Element* toElement(Node* node)
@@ -528,25 +529,11 @@ inline Element* Element::nextElementSibling() const
     return static_cast<Element*>(n);
 }
 
-inline NamedNodeMap* Element::attributes() const
-{
-    updateInvalidAttributes();
-    if (!m_attributeMap)
-        createAttributeMap();
-    return m_attributeMap.get();
-}
-
-inline NamedNodeMap* Element::updatedAttributes() const
-{
-    updateInvalidAttributes();
-    return m_attributeMap.get();
-}
-
 inline ElementAttributeData* Element::ensureAttributeData() const
 {
-    if (!m_attributeMap)
-        createAttributeMap();
-    return m_attributeMap->attributeData();
+    if (!m_attributeData)
+        createAttributeData();
+    return m_attributeData.get();
 }
 
 inline ElementAttributeData* Element::updatedAttributeData() const
@@ -606,13 +593,13 @@ inline void Element::willRemoveAttribute(const QualifiedName& name, const Atomic
 inline bool Element::fastHasAttribute(const QualifiedName& name) const
 {
     ASSERT(fastAttributeLookupAllowed(name));
-    return m_attributeMap && getAttributeItem(name);
+    return m_attributeData && getAttributeItem(name);
 }
 
 inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) const
 {
     ASSERT(fastAttributeLookupAllowed(name));
-    if (m_attributeMap) {
+    if (m_attributeData) {
         if (Attribute* attribute = getAttributeItem(name))
             return attribute->value();
     }
@@ -621,13 +608,13 @@ inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) 
 
 inline bool Element::hasAttributesWithoutUpdate() const
 {
-    return m_attributeMap && !m_attributeMap->attributeData()->isEmpty();
+    return m_attributeData && !m_attributeData->isEmpty();
 }
 
 inline const AtomicString& Element::idForStyleResolution() const
 {
     ASSERT(hasID());
-    return attributeData()->idForStyleResolution();
+    return m_attributeData->idForStyleResolution();
 }
 
 inline bool Element::isIdAttributeName(const QualifiedName& attributeName) const
@@ -656,20 +643,20 @@ inline void Element::setIdAttribute(const AtomicString& value)
 
 inline size_t Element::attributeCount() const
 {
-    ASSERT(m_attributeMap);
-    return m_attributeMap->length();
+    ASSERT(m_attributeData);
+    return m_attributeData->length();
 }
 
 inline Attribute* Element::attributeItem(unsigned index) const
 {
-    ASSERT(m_attributeMap);
-    return m_attributeMap->attributeData()->attributeItem(index);
+    ASSERT(m_attributeData);
+    return m_attributeData->attributeItem(index);
 }
 
 inline Attribute* Element::getAttributeItem(const QualifiedName& name) const
 {
-    ASSERT(m_attributeMap);
-    return m_attributeMap->attributeData()->getAttributeItem(name);
+    ASSERT(m_attributeData);
+    return m_attributeData->getAttributeItem(name);
 }
 
 inline void Element::updateInvalidAttributes() const

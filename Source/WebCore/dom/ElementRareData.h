@@ -26,6 +26,7 @@
 #include "DatasetDOMStringMap.h"
 #include "Element.h"
 #include "HTMLCollection.h"
+#include "NamedNodeMap.h"
 #include "NodeRareData.h"
 #include "ShadowTree.h"
 #include <wtf/OwnPtr.h>
@@ -69,6 +70,7 @@ public:
     OwnPtr<DatasetDOMStringMap> m_datasetDOMStringMap;
     OwnPtr<ClassList> m_classList;
     OwnPtr<ShadowTree> m_shadowTree;
+    OwnPtr<NamedNodeMap> m_attributeMap;
 
     bool m_styleAffectedByEmpty;
 

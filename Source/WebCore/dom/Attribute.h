@@ -31,7 +31,6 @@ namespace WebCore {
 
 class Attr;
 class Element;
-class NamedNodeMap;
 
 // This has no counterpart in DOM.
 // It is an internal representation of the node value of an Attr.

@@ -25,19 +25,21 @@
 #ifndef NamedNodeMap_h
 #define NamedNodeMap_h
 
-#include "ElementAttributeData.h"
-#include "SpaceSplitString.h"
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class Node;
+class Element;
 
 typedef int ExceptionCode;
 
 class NamedNodeMap {
     friend class Element;
 public:
-    static PassOwnPtr<NamedNodeMap> create(Element* element = 0)
+    static PassOwnPtr<NamedNodeMap> create(Element* element)
     {
         return adoptPtr(new NamedNodeMap(element));
     }
@@ -53,36 +55,21 @@ public:
     PassRefPtr<Node> getNamedItemNS(const String& namespaceURI, const String& localName) const;
     PassRefPtr<Node> removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode&);
 
-    PassRefPtr<Node> removeNamedItem(const QualifiedName& name, ExceptionCode&);
     PassRefPtr<Node> setNamedItem(Node*, ExceptionCode&);
     PassRefPtr<Node> setNamedItemNS(Node*, ExceptionCode&);
 
     PassRefPtr<Node> item(unsigned index) const;
-    size_t length() const { return m_attributeData.length(); }
-
-    bool mapsEquivalent(const NamedNodeMap* otherMap) const;
-
-    // These functions do no error checking.
-    void addAttribute(PassRefPtr<Attribute> attribute) { m_attributeData.addAttribute(attribute, m_element); }
+    size_t length() const;
 
     Element* element() const { return m_element; }
-
-    ElementAttributeData* attributeData() { return &m_attributeData; }
-    const ElementAttributeData* attributeData() const { return &m_attributeData; }
 
 private:
     NamedNodeMap(Element* element)
         : m_element(element)
     {
+        // Only supports NamedNodeMaps with Element associated, DocumentType.entities and DocumentType.notations are not supported yet.
+        ASSERT(m_element);
     }
-
-    void detachFromElement();
-    Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const { return m_attributeData.getAttributeItem(name, shouldIgnoreAttributeCase); }
-
-    // FIXME: NamedNodeMap is being broken up into two classes, one containing data
-    //        for elements with attributes, and one for exposure to the DOM.
-    //        See <http://webkit.org/b/75069> for more information.
-    ElementAttributeData m_attributeData;
 
     Element* m_element;
 };

@@ -1,3 +1,12 @@
+2012-03-08  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Make elements with attributes smaller by eliminating the m_element back pointer in NamedNodeMap
+        https://bugs.webkit.org/show_bug.cgi?id=75069
+
+        Reviewed by Ryosuke Niwa.
+
+        * src/WebElement.cpp: Include NamedNodeMap.h since Element.h doesn't include it anymore.
+
 2012-03-07  Kent Tamura  <tkent@chromium.org>
 
         Remove meaningless code in RenderTextControlSingleLine::preferredContentWidth()

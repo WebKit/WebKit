@@ -52,6 +52,7 @@
 #include "InspectorInstrumentation.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
+#include "NamedNodeMap.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
 #include "NodeRenderingContext.h"
@@ -125,8 +126,8 @@ Element::~Element()
 {
     if (shadowTree())
         rareData()->m_shadowTree.clear();
-    if (m_attributeMap)
-        m_attributeMap->detachFromElement();
+    if (m_attributeData)
+        m_attributeData->clearAttributes();
 }
 
 inline ElementRareData* Element::rareData() const
@@ -199,6 +200,17 @@ void Element::setBooleanAttribute(const QualifiedName& name, bool value)
         removeAttribute(name);
 }
 
+NamedNodeMap* Element::attributes() const
+{
+    ensureUpdatedAttributeData();
+    ElementRareData* rareData = const_cast<Element*>(this)->ensureRareData();
+    if (NamedNodeMap* attributeMap = rareData->m_attributeMap.get())
+        return attributeMap;
+
+    rareData->m_attributeMap = NamedNodeMap::create(const_cast<Element*>(this));
+    return rareData->m_attributeMap.get();
+}
+
 Node::NodeType Element::nodeType() const
 {
     return ELEMENT_NODE;
@@ -219,7 +231,7 @@ const AtomicString& Element::getAttribute(const QualifiedName& name) const
         updateAnimatedSVGAttribute(name);
 #endif
 
-    if (m_attributeMap) {
+    if (m_attributeData) {
         if (Attribute* attribute = getAttributeItem(name))
             return attribute->value();
     }
@@ -596,8 +608,8 @@ const AtomicString& Element::getAttribute(const String& name) const
     }
 #endif
 
-    if (m_attributeMap) {
-        if (Attribute* attribute = m_attributeMap->attributeData()->getAttributeItem(name, ignoreCase))
+    if (m_attributeData) {
+        if (Attribute* attribute = m_attributeData->getAttributeItem(name, ignoreCase))
             return attribute->value();
     }
 
@@ -630,16 +642,15 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 
 inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value, bool notifyChanged)
 {
-    ElementAttributeData* attributeData = &m_attributeMap->m_attributeData;
-    Attribute* old = index != notFound ? attributeData->attributeItem(index) : 0;
+    Attribute* old = index != notFound ? m_attributeData->attributeItem(index) : 0;
     if (value.isNull()) {
         if (old)
-            attributeData->removeAttribute(index, this);
+            m_attributeData->removeAttribute(index, this);
         return;
     }
 
     if (!old) {
-        attributeData->addAttribute(Attribute::create(name, value), this);
+        m_attributeData->addAttribute(Attribute::create(name, value), this);
         return;
     }
 
@@ -733,37 +744,35 @@ void Element::parserSetAttributes(PassOwnPtr<AttributeVector> attributeVector, F
 
     document()->incDOMTreeVersion();
 
-    ASSERT(!m_attributeMap);
+    ASSERT(!m_attributeData);
 
     if (!attributeVector)
         return;
 
-    m_attributeMap = NamedNodeMap::create(this);
-    ElementAttributeData* attributeData = m_attributeMap->attributeData();
-    attributeData->m_attributes.swap(*attributeVector);
+    createAttributeData();
+    m_attributeData->m_attributes.swap(*attributeVector);
 
-    m_attributeMap->m_element = this;
     // If the element is created as result of a paste or drag-n-drop operation
     // we want to remove all the script and event handlers.
     if (scriptingPermission == FragmentScriptingNotAllowed) {
         unsigned i = 0;
-        while (i < m_attributeMap->length()) {
-            const QualifiedName& attributeName = attributeData->m_attributes[i]->name();
+        while (i < m_attributeData->length()) {
+            const QualifiedName& attributeName = m_attributeData->m_attributes[i]->name();
             if (isEventHandlerAttribute(attributeName)) {
-                attributeData->m_attributes.remove(i);
+                m_attributeData->m_attributes.remove(i);
                 continue;
             }
 
-            if (isAttributeToRemove(attributeName, attributeData->m_attributes[i]->value()))
-                attributeData->m_attributes[i]->setValue(nullAtom);
+            if (isAttributeToRemove(attributeName, m_attributeData->m_attributes[i]->value()))
+                m_attributeData->m_attributes[i]->setValue(nullAtom);
             i++;
         }
     }
 
     // Store the set of attributes that changed on the stack in case
-    // attributeChanged mutates m_attributeMap.
+    // attributeChanged mutates m_attributeData.
     Vector<RefPtr<Attribute> > attributes;
-    attributeData->copyAttributesToVector(attributes);
+    m_attributeData->copyAttributesToVector(attributes);
     for (Vector<RefPtr<Attribute> >::iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
         attributeChanged(iter->get());
 }
@@ -771,7 +780,7 @@ void Element::parserSetAttributes(PassOwnPtr<AttributeVector> attributeVector, F
 bool Element::hasAttributes() const
 {
     updateInvalidAttributes();
-    return m_attributeMap && m_attributeMap->length();
+    return m_attributeData && m_attributeData->length();
 }
 
 bool Element::hasEquivalentAttributes(const Element* other) const
@@ -823,9 +832,9 @@ KURL Element::baseURI() const
     return KURL(parentBase, baseAttribute);
 }
 
-void Element::createAttributeMap() const
+void Element::createAttributeData() const
 {
-    m_attributeMap = NamedNodeMap::create(const_cast<Element*>(this));
+    m_attributeData = ElementAttributeData::create();
 }
 
 bool Element::isURLAttribute(Attribute*) const
@@ -878,7 +887,7 @@ void Element::insertedIntoDocument()
     if (ShadowTree* tree = shadowTree())
         tree->insertedIntoDocument();
 
-    if (m_attributeMap) {
+    if (m_attributeData) {
         if (hasID()) {
             Attribute* idItem = getAttributeItem(document()->idAttributeName());
             if (idItem && !idItem->isNull())
@@ -894,7 +903,7 @@ void Element::insertedIntoDocument()
 
 void Element::removedFromDocument()
 {
-    if (m_attributeMap) {
+    if (m_attributeData) {
         if (hasID()) {
             Attribute* idItem = getAttributeItem(document()->idAttributeName());
             if (idItem && !idItem->isNull())
@@ -1789,7 +1798,7 @@ DOMStringMap* Element::dataset()
 KURL Element::getURLAttribute(const QualifiedName& name) const
 {
 #if !ASSERT_DISABLED
-    if (m_attributeMap) {
+    if (m_attributeData) {
         if (Attribute* attribute = getAttributeItem(name))
             ASSERT(isURLAttribute(attribute));
     }
@@ -1800,7 +1809,7 @@ KURL Element::getURLAttribute(const QualifiedName& name) const
 KURL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
 {
 #if !ASSERT_DISABLED
-    if (m_attributeMap) {
+    if (m_attributeData) {
         if (Attribute* attribute = getAttributeItem(name))
             ASSERT(isURLAttribute(attribute));
     }
@@ -1965,6 +1974,13 @@ bool Element::fastAttributeLookupAllowed(const QualifiedName& name) const
 #endif
 
     return true;
+}
+#endif
+
+#ifdef DUMP_NODE_STATISTICS
+bool Element::hasNamedNodeMap() const
+{
+    return hasRareData() && rareData()->m_attributeMap;
 }
 #endif
 

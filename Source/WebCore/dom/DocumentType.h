@@ -37,6 +37,7 @@ public:
         return adoptRef(new DocumentType(document, name, publicId, systemId));
     }
 
+    // FIXME: We never fill m_entities and m_notations. Current implementation of NamedNodeMap doesn't work without an associated Element yet.
     NamedNodeMap* entities() const { return m_entities.get(); }
     NamedNodeMap* notations() const { return m_notations.get(); }
 

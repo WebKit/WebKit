@@ -82,6 +82,11 @@ inline void AttributeVector::insertAttribute(PassRefPtr<Attribute> newAttribute)
 
 class ElementAttributeData {
 public:
+    static PassOwnPtr<ElementAttributeData> create()
+    {
+        return adoptPtr(new ElementAttributeData);
+    }
+
     ~ElementAttributeData();
 
     void clearClass() { m_classNames.clear(); }
@@ -108,6 +113,7 @@ public:
     Attribute* attributeItem(unsigned index) const { return m_attributes.attributeItem(index); }
     Attribute* getAttributeItem(const QualifiedName& name) const { return m_attributes.getAttributeItem(name); }
     size_t getAttributeItemIndex(const QualifiedName& name) const { return m_attributes.getAttributeItemIndex(name); }
+    size_t getAttributeItemIndex(const String& name, bool shouldIgnoreAttributeCase) const;
 
     // These functions do no error checking.
     void addAttribute(PassRefPtr<Attribute>, Element*);
@@ -122,7 +128,6 @@ public:
 
 private:
     friend class Element;
-    friend class NamedNodeMap;
 
     ElementAttributeData()
     {
@@ -131,7 +136,6 @@ private:
     void detachAttributesFromElement();
     void copyAttributesToVector(Vector<RefPtr<Attribute> >&);
     Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const;
-    size_t getAttributeItemIndex(const String& name, bool shouldIgnoreAttributeCase) const;
     size_t getAttributeItemIndexSlowCase(const String& name, bool shouldIgnoreAttributeCase) const;
     void setAttributes(const ElementAttributeData& other, Element*);
     void clearAttributes();

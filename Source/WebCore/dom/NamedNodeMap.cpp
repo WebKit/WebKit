@@ -42,47 +42,53 @@ static inline bool shouldIgnoreAttributeCase(const Element* e)
 
 void NamedNodeMap::ref()
 {
-    ASSERT(m_element);
     m_element->ref();
 }
 
 void NamedNodeMap::deref()
 {
-    ASSERT(m_element);
     m_element->deref();
 }
 
 PassRefPtr<Node> NamedNodeMap::getNamedItem(const String& name) const
 {
-    return m_attributeData.getAttributeNode(name, shouldIgnoreAttributeCase(m_element), m_element);
+    return m_element->attributeData()->getAttributeNode(name, shouldIgnoreAttributeCase(m_element), m_element);
 }
 
 PassRefPtr<Node> NamedNodeMap::getNamedItemNS(const String& namespaceURI, const String& localName) const
 {
-    return m_attributeData.getAttributeNode(QualifiedName(nullAtom, localName, namespaceURI), m_element);
+    return m_element->attributeData()->getAttributeNode(QualifiedName(nullAtom, localName, namespaceURI), m_element);
 }
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItem(const String& name, ExceptionCode& ec)
 {
-    ASSERT(m_element);
+    ElementAttributeData* attributeData = m_element->attributeData();
 
-    size_t index = m_attributeData.getAttributeItemIndex(name, shouldIgnoreAttributeCase(m_element));
+    size_t index = attributeData->getAttributeItemIndex(name, shouldIgnoreAttributeCase(m_element));
     if (index == notFound) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
     
-    return m_attributeData.takeAttribute(index, m_element);
+    return attributeData->takeAttribute(index, m_element);
 }
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode& ec)
 {
-    return removeNamedItem(QualifiedName(nullAtom, localName, namespaceURI), ec);
+    ElementAttributeData* attributeData = m_element->attributeData();
+
+    size_t index = attributeData->getAttributeItemIndex(QualifiedName(nullAtom, localName, namespaceURI));
+    if (index == notFound) {
+        ec = NOT_FOUND_ERR;
+        return 0;
+    }
+
+    return attributeData->takeAttribute(index, m_element);
 }
 
 PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
 {
-    if (!m_element || !node) {
+    if (!node) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
@@ -101,42 +107,16 @@ PassRefPtr<Node> NamedNodeMap::setNamedItemNS(Node* node, ExceptionCode& ec)
     return setNamedItem(node, ec);
 }
 
-PassRefPtr<Node> NamedNodeMap::removeNamedItem(const QualifiedName& name, ExceptionCode& ec)
-{
-    ASSERT(m_element);
-
-    size_t index = m_attributeData.getAttributeItemIndex(name);
-    if (index == notFound) {
-        ec = NOT_FOUND_ERR;
-        return 0;
-    }
-
-    return m_attributeData.takeAttribute(index, m_element);
-}
-
 PassRefPtr<Node> NamedNodeMap::item(unsigned index) const
 {
     if (index >= length())
         return 0;
-
-    return m_attributeData.m_attributes[index]->createAttrIfNeeded(m_element);
+    return m_element->attributeItem(index)->createAttrIfNeeded(m_element);
 }
 
-void NamedNodeMap::detachFromElement()
+size_t NamedNodeMap::length() const
 {
-    // This can't happen if the holder of the map is JavaScript, because we mark the
-    // element if the map is alive. So it has no impact on web page behavior. Because
-    // of that, we can simply clear all the attributes to avoid accessing stale
-    // pointers to do things like create Attr objects.
-    m_element = 0;
-    m_attributeData.clearAttributes();
-}
-
-bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const
-{
-    if (!otherMap)
-        return m_attributeData.isEmpty();
-    return m_attributeData.isEquivalent(otherMap->attributeData());
+    return m_element->attributeCount();
 }
 
 } // namespace WebCore

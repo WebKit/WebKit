@@ -44,7 +44,6 @@ namespace WebCore {
 class ContainerNode;
 class DOMEditor;
 class Document;
-class NamedNodeMap;
 class Node;
 
 #if ENABLE(INSPECTOR)
