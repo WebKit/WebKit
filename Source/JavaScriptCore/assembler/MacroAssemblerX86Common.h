@@ -90,9 +90,11 @@ public:
         DoubleConditionBits_should_not_interfere_with_X86Assembler_Condition_codes);
 
     static const RegisterID stackPointerRegister = X86Registers::esp;
-    
+
+#if ENABLE(JIT_CONSTANT_BLINDING)
     static bool shouldBlindForSpecificArch(uint32_t value) { return value >= 0x00ffffff; }
-    static bool shouldBlindForSpecificArch(uintptr_t value) { return value >= 0x00ffffff; }
+    static bool shouldBlindForSpecificArch(uint64_t value) { return value >= 0x00ffffff; }
+#endif
 
     // Integer arithmetic operations:
     //

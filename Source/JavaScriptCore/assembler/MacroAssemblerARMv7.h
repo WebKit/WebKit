@@ -721,6 +721,7 @@ public:
         store16(src, setupArmAddress(address));
     }
 
+#if ENABLE(JIT_CONSTANT_BLINDING)
     static RegisterID scratchRegisterForBlinding() { return dataTempRegister; }
     static bool shouldBlindForSpecificArch(uint32_t value)
     {
@@ -739,6 +740,7 @@ public:
         // be controlled by an attacker.
         return !immediate.isUInt12();
     }
+#endif
 
     // Floating-point operations:
 

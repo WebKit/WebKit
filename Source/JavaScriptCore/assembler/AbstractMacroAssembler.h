@@ -589,10 +589,12 @@ protected:
     }
 
     WeakRandom m_randomSource;
-    
+
+#if ENABLE(JIT_CONSTANT_BLINDING)
     static bool scratchRegisterForBlinding() { return false; }
     static bool shouldBlindForSpecificArch(uint32_t) { return true; }
     static bool shouldBlindForSpecificArch(uint64_t) { return true; }
+#endif
 
     friend class LinkBuffer;
     friend class RepatchBuffer;

@@ -1,3 +1,15 @@
+2012-03-08  Oliver Hunt  <oliver@apple.com>
+
+        Build fix. One of these days I'll manage to commit something that works everywhere.
+
+        * assembler/AbstractMacroAssembler.h:
+        (AbstractMacroAssembler):
+        * assembler/MacroAssemblerARMv7.h:
+        (MacroAssemblerARMv7):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::shouldBlindForSpecificArch):
+        (MacroAssemblerX86Common):
+
 2012-03-08  Chao-ying Fu  <fu@mips.com>
 
         Update MIPS patchOffsetGetByIdSlowCaseCall
