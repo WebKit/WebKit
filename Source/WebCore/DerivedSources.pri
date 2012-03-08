@@ -672,8 +672,8 @@ preprocessIdls.input = IDL_ATTRIBUTES_FILE
 preprocessIdls.script = $$PREPROCESS_IDLS_SCRIPT
 # FIXME : We need to use only perl at some point.
 EOC = $$escape_expand(\\n\\t)
-unix: preprocessIdls.commands = echo -n > $$IDL_FILES_TMP $$EOC
-else: preprocessIdls.commands = type nul > $$IDL_FILES_TMP $$EOC
+win_cmd_shell: preprocessIdls.commands = type nul > $$IDL_FILES_TMP $$EOC
+else: preprocessIdls.commands = echo -n > $$IDL_FILES_TMP $$EOC
 for(binding, IDL_BINDINGS) {
     preprocessIdls.commands += echo $$binding >> $$IDL_FILES_TMP $$EOC
 }

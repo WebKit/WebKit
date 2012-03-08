@@ -1,3 +1,11 @@
+2012-03-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Prospective Windows build fix
+
+        Don't assume that windows-builds will always run inside a cmd.exe shell.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-03-08  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10981173> Dashboard regions should not be in device space

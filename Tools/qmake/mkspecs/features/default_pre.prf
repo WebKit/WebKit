@@ -53,18 +53,16 @@ equals(OUT_PWD, $${ROOT_BUILD_DIR}) {
     BUILD_ROOT_RELATIVE_TO_OUT_PWD = $$join(BUILD_ROOT_RELATIVE_TO_OUT_PWD, $${QMAKE_DIR_SEP})
 }
 
-# Make sure QMAKEPATH is set for recursive targets
+# Try to detect if we're running under Windows cmd.exe or not
 win32* {
     pwd = $$(PWD) # Normally empty for cmd.exe
-    is_building_under_cygwin = $$find(pwd, ^/)
-    !isEmpty(is_building_under_cygwin) {
-        QMAKE_QMAKE = QMAKEPATH=$$(QMAKEPATH) $$QMAKE_QMAKE
-    } else {
-        QMAKE_QMAKE = \(set QMAKEPATH=$$(QMAKEPATH)\) && $$QMAKE_QMAKE
-    }
-} else {
-    QMAKE_QMAKE = QMAKEPATH=$$(QMAKEPATH) $$QMAKE_QMAKE
+    pwd_starts_with_slash = $$find(pwd, ^/)
+    isEmpty(pwd_starts_with_slash): CONFIG += win_cmd_shell
 }
+
+# Make sure QMAKEPATH is set for recursive targets
+win_cmd_shell: QMAKE_QMAKE = \(set QMAKEPATH=$$(QMAKEPATH)\) && $$QMAKE_QMAKE
+else: QMAKE_QMAKE = QMAKEPATH=$$(QMAKEPATH) $$QMAKE_QMAKE
 
 # Default location of generated sources
 GENERATED_SOURCES_DESTDIR = generated
@@ -72,11 +70,7 @@ GENERATED_SOURCES_DESTDIR = generated
 QUOTE = ""
 DOUBLE_ESCAPED_QUOTE = ""
 ESCAPE = ""
-win32-msvc* {
-    ESCAPE = "^"
-} else:win32-g++*:isEmpty(QMAKE_SH) {
-    # MinGW's make will run makefile commands using sh, even if make
-    # was run from the Windows shell, if it finds sh in the path.
+win_cmd_shell {
     ESCAPE = "^"
 } else {
     QUOTE = "\'"
