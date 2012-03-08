@@ -89,7 +89,9 @@ public:
 
     PassRefPtr<ClientRect> boundingBox(Element*, ExceptionCode&);
 
+#if ENABLE(INSPECTOR)
     PassRefPtr<ClientRectList> inspectorHighlightRects(Document*, ExceptionCode&);
+#endif
 
     unsigned markerCountForNode(Node*, const String&, ExceptionCode&);
     PassRefPtr<Range> markerRangeForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);

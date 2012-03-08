@@ -337,6 +337,7 @@ PassRefPtr<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& e
     return ClientRect::create(renderer->absoluteBoundingBoxRectIgnoringTransforms());
 }
 
+#if ENABLE(INSPECTOR)
 PassRefPtr<ClientRectList> Internals::inspectorHighlightRects(Document* document, ExceptionCode& ec)
 {
     if (!document || !document->page() || !document->page()->inspectorController()) {
@@ -348,6 +349,7 @@ PassRefPtr<ClientRectList> Internals::inspectorHighlightRects(Document* document
     document->page()->inspectorController()->getHighlight(&highlight);
     return ClientRectList::create(highlight.quads);
 }
+#endif
 
 unsigned Internals::markerCountForNode(Node* node, const String& markerType, ExceptionCode& ec)
 {
