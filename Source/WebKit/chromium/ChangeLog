@@ -1,3 +1,16 @@
+2012-03-08  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Replace completelyContains with Region::contains()
+        https://bugs.webkit.org/show_bug.cgi?id=80617
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTestCommon.cpp:
+        (CCLayerTestCommon):
+        (CCLayerTestCommon::verifyQuadsExactlyCoverRect):
+        * tests/CCLayerTestCommon.h:
+        (CCLayerTestCommon):
+
 2012-03-08  James Robinson  <jamesr@chromium.org>
 
         Use an explicit attribute to signal that a context prefers to use a discrete GPU

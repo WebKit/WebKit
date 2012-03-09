@@ -36,15 +36,6 @@ namespace CCLayerTestCommon {
 // Align with expected and actual output
 const char* quadString = "    Quad: ";
 
-bool completelyContains(const Region& container, const IntRect& rect)
-{
-    Region tester(rect);
-    Vector<IntRect> rects = container.rects();
-    for (size_t i = 0; i < rects.size(); ++i)
-        tester.subtract(rects[i]);
-    return tester.isEmpty();
-}
-
 void verifyQuadsExactlyCoverRect(const CCQuadList& quads, const IntRect& rect)
 {
     Region remaining(rect);
@@ -53,7 +44,7 @@ void verifyQuadsExactlyCoverRect(const CCQuadList& quads, const IntRect& rect)
         CCDrawQuad* quad = quads[i].get();
 
         EXPECT_TRUE(rect.contains(quad->quadRect())) << quadString << i;
-        EXPECT_TRUE(completelyContains(remaining, quad->quadRect())) << quadString << i;
+        EXPECT_TRUE(remaining.contains(quad->quadRect())) << quadString << i;
         remaining.subtract(Region(quad->quadRect()));
     }
 

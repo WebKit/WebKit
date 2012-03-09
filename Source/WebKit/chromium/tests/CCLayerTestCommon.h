@@ -33,7 +33,6 @@ namespace CCLayerTestCommon {
 
 extern const char* quadString;
 
-bool completelyContains(const WebCore::Region&, const WebCore::IntRect&);
 void verifyQuadsExactlyCoverRect(const WebCore::CCQuadList&, const WebCore::IntRect&);
 
 } // namespace CCLayerTestCommon
