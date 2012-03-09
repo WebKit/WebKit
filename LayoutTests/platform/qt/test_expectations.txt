@@ -20,34 +20,3 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 BUGWK62662 DEBUG : inspector/cookie-parser.html = CRASH PASS
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
-
-// Needs baseline
-BUGWK76118 : fast/css/text-overflow-input.html = MISSING
-
-// Those tests need a text baseline after lazily allocating layers.
-// The change should only be layer removal.
-
-BUGWK75568 : fast/replaced/replaced-breaking.html = TEXT
-BUGWK75568 : fast/text/textIteratorNilRenderer.html = TEXT
-BUGWK75568 : editing/selection/3690703-2.html = TEXT
-BUGWK75568 : editing/selection/3690703.html = TEXT
-BUGWK75568 : editing/selection/3690719.html = TEXT
-BUGWK75568 : fast/events/mouse-relative-position.html = TEXT
-BUGWK75568 : fast/forms/basic-inputs.html = TEXT
-BUGWK75568 : svg/custom/inline-svg-in-xhtml.xml = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug18359.html = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug2479-2.html = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug2479-3.html = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug2479-4.html = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug28928.html = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug4382.html = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug44505.html = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug4527.html = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug46368-1.html = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug46368-2.html = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug51037.html = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug7342.html = TEXT
-BUGWK75568 : tables/mozilla/dom/tableDom.html = TEXT
-BUGWK75568 : tables/mozilla/other/move_row.html = TEXT
-BUGWK75568 : tables/mozilla/bugs/bug1188.html = TEXT
-

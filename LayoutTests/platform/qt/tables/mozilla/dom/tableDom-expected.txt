@@ -3,51 +3,51 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {FORM} at (0,0) size 784x35
-        RenderMenuList {SELECT} at (2,5) size 110x26 [bgcolor=#FFFFFF]
+      RenderBlock {FORM} at (0,0) size 784x37
+        RenderMenuList {SELECT} at (2,6) size 112x26 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (4,2) size 84x21
             RenderText at (0,0) size 83x21
               text run at (0,0) width 83: "append cell"
-        RenderText {#text} at (114,7) size 55x21
-          text run at (114,7) width 55: "   tbody "
-        RenderTextControl {INPUT} at (171,5) size 51x25
+        RenderText {#text} at (116,8) size 55x21
+          text run at (116,8) width 55: "   tbody "
+        RenderTextControl {INPUT} at (173,6) size 51x25
           RenderBlock {DIV} at (2,2) size 47x21
             RenderText {#text} at (1,0) size 9x21
               text run at (1,0) width 9: "0"
-        RenderText {#text} at (224,7) size 42x21
-          text run at (224,7) width 42: "   row "
-        RenderTextControl {INPUT} at (268,5) size 51x25
+        RenderText {#text} at (226,8) size 42x21
+          text run at (226,8) width 42: "   row "
+        RenderTextControl {INPUT} at (270,6) size 51x25
           RenderBlock {DIV} at (2,2) size 47x21
             RenderText {#text} at (1,0) size 9x21
               text run at (1,0) width 9: "0"
-        RenderText {#text} at (321,7) size 37x21
-          text run at (321,7) width 37: "   col "
-        RenderTextControl {INPUT} at (360,5) size 51x25
+        RenderText {#text} at (323,8) size 37x21
+          text run at (323,8) width 37: "   col "
+        RenderTextControl {INPUT} at (362,6) size 51x25
           RenderBlock {DIV} at (2,2) size 47x21
             RenderText {#text} at (1,0) size 9x21
               text run at (1,0) width 9: "0"
-        RenderText {#text} at (413,7) size 81x21
-          text run at (413,7) width 81: "   row span "
-        RenderTextControl {INPUT} at (496,5) size 51x25
+        RenderText {#text} at (415,8) size 81x21
+          text run at (415,8) width 81: "   row span "
+        RenderTextControl {INPUT} at (498,6) size 51x25
           RenderBlock {DIV} at (2,2) size 47x21
             RenderText {#text} at (1,0) size 9x21
               text run at (1,0) width 9: "1"
-        RenderText {#text} at (549,7) size 76x21
-          text run at (549,7) width 76: "   col span "
-        RenderTextControl {INPUT} at (627,5) size 51x25
+        RenderText {#text} at (551,8) size 76x21
+          text run at (551,8) width 76: "   col span "
+        RenderTextControl {INPUT} at (629,6) size 51x25
           RenderBlock {DIV} at (2,2) size 47x21
             RenderText {#text} at (1,0) size 9x21
               text run at (1,0) width 9: "1"
-        RenderText {#text} at (680,7) size 20x21
-          text run at (680,7) width 20: "     "
-        RenderButton {INPUT} at (702,2) size 43x31 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (5,5) size 33x21
+        RenderText {#text} at (682,8) size 20x21
+          text run at (682,8) width 20: "     "
+        RenderButton {INPUT} at (704,2) size 45x33 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 33x21
             RenderText at (0,0) size 33x21
               text run at (0,0) width 33: "Do It"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,51) size 784x21
+      RenderBlock (anonymous) at (0,53) size 784x21
         RenderBR {BR} at (0,0) size 0x21
-      RenderTable {TABLE} at (0,72) size 68x58 [bgcolor=#FFA500] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,74) size 68x58 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 66x56
           RenderTableRow {TR} at (0,2) size 66x25
             RenderTableCell {TD} at (2,2) size 30x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -60,5 +60,5 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (34,29) size 30x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x21
                 text run at (2,2) width 26: "c22"
-      RenderBlock (anonymous) at (0,130) size 784x21
+      RenderBlock (anonymous) at (0,132) size 784x21
         RenderBR {BR} at (0,0) size 0x21

@@ -31,21 +31,21 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 299: "This status update contains information on"
                 text run at (2,23) width 235: "MailNews, XML/DOM, XPToolkit,"
                 text run at (2,44) width 309: "Architecture, Bidi, Necko/Imglib, and more..."
-      RenderBlock (anonymous) at (0,124) size 784x56
+      RenderBlock (anonymous) at (0,124) size 784x58
         RenderBR {BR} at (0,0) size 0x21
-        RenderButton {INPUT} at (2,23) size 62x31 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (5,5) size 52x21
+        RenderButton {INPUT} at (2,23) size 64x33 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 52x21
             RenderText at (0,0) size 52x21
               text run at (0,0) width 52: "Reload"
-        RenderText {#text} at (66,28) size 8x21
-          text run at (66,28) width 8: "  "
-        RenderButton {INPUT} at (76,23) size 103x31 [bgcolor=#C0C0C0]
-          RenderBlock (anonymous) at (5,5) size 93x21
+        RenderText {#text} at (68,29) size 8x21
+          text run at (68,29) width 8: "  "
+        RenderButton {INPUT} at (78,23) size 105x33 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 93x21
             RenderText at (0,0) size 93x21
               text run at (0,0) width 93: "Change Font"
-        RenderText {#text} at (181,28) size 8x21
-          text run at (181,28) width 8: "  "
-        RenderTextControl {INPUT} at (191,26) size 186x25
+        RenderText {#text} at (185,29) size 8x21
+          text run at (185,29) width 8: "  "
+        RenderTextControl {INPUT} at (195,27) size 186x25
           RenderBlock {DIV} at (2,2) size 182x21
             RenderText {#text} at (1,0) size 9x21
               text run at (1,0) width 9: "6"

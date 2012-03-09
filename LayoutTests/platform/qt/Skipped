@@ -2727,3 +2727,8 @@ transitions/cancel-transition.html
 # REGRESSION, r109105 made it fail
 # https://bugs.webkit.org/show_bug.cgi?id=79555
 fast/events/dispatch-message-string-data.html
+
+# Still failing tests - no baseline problem
+# https://bugs.webkit.org/show_bug.cgi?id=75568
+plugins/mouse-click-plugin-clears-selection.html
+fast/events/mouse-relative-position.html
