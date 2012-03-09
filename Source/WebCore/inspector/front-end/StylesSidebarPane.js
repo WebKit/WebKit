@@ -977,6 +977,7 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
     var openBrace = document.createElement("span");
     openBrace.textContent = " {";
     selectorContainer.appendChild(openBrace);
+    selectorContainer.addEventListener("mousedown", this._handleEmptySpaceMouseDown.bind(this), false);
     selectorContainer.addEventListener("click", this._handleSelectorContainerClick.bind(this), false);
 
     var closeBrace = document.createElement("div");
@@ -1175,8 +1176,17 @@ WebInspector.StylePropertiesSection.prototype = {
         return null;
     },
 
+    _checkWillCancelEditing: function()
+    {
+        var willCauseCancelEditing = this._willCauseCancelEditing;
+        delete this._willCauseCancelEditing;
+        return willCauseCancelEditing;
+    },
+
     _handleSelectorContainerClick: function(event)
     {
+        if (this._checkWillCancelEditing())
+            return;
         if (event.target === this._selectorContainer)
             this.addNewBlankProperty(0).startEditing();
     },
@@ -1230,9 +1240,7 @@ WebInspector.StylePropertiesSection.prototype = {
 
     _handleEmptySpaceClick: function(event)
     {
-        var willCauseCancelEditing = this._willCauseCancelEditing;
-        delete this._willCauseCancelEditing;
-        if (willCauseCancelEditing)
+        if (this._checkWillCancelEditing())
             return;
 
         if (event.target.hasStyleClass("header") || this.element.hasStyleClass("read-only") || event.target.enclosingNodeOrSelfWithClass("media")) {
@@ -1629,7 +1637,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.updateTitle();
         this.listItemElement.addEventListener("mousedown", this._mouseDown.bind(this));
         this.listItemElement.addEventListener("mouseup", this._resetMouseDownElement.bind(this));
-        this.listItemElement.addEventListener("click", this._startEditing.bind(this));
+        this.listItemElement.addEventListener("click", this._mouseClick.bind(this));
     },
 
     _mouseDown: function(event)
@@ -2014,12 +2022,14 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.listItemElement.insertBefore(this.nameElement, this.listItemElement.firstChild);
     },
 
-    _startEditing: function(event)
+    _mouseClick: function(event)
     {
         event.stopPropagation();
         event.preventDefault();
 
         if (event.target === this.listItemElement) {
+            if (this.section._checkWillCancelEditing())
+                return;
             this.section.addNewBlankProperty(this.property.index + 1).startEditing();
             return;
         }
