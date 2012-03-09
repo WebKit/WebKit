@@ -40,6 +40,8 @@ namespace WebCore {
 class CCCompletionEvent;
 class CCPageScaleAnimation;
 class CCLayerImpl;
+class CCLayerTreeHostImplTimeSourceAdapter;
+class LayerRendererChromium;
 class TextureAllocator;
 struct LayerRendererCapabilities;
 class TransformationMatrix;
@@ -177,6 +179,9 @@ private:
     IntPoint m_previousPinchAnchor;
 
     OwnPtr<CCPageScaleAnimation> m_pageScaleAnimation;
+
+    // This is used for ticking animations slowly when hidden.
+    OwnPtr<CCLayerTreeHostImplTimeSourceAdapter> m_timeSourceClientAdapter;
 
     CCLayerSorter m_layerSorter;
 

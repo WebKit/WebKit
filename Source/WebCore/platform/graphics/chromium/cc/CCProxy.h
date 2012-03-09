@@ -53,6 +53,9 @@ public:
     static void setImplThread(CCThread*);
     static CCThread* implThread();
 
+    // Returns 0 if the current thread is neither the main thread nor the impl thread.
+    static CCThread* currentThread();
+
     virtual ~CCProxy();
 
     virtual bool compositeAndReadback(void *pixels, const IntRect&) = 0;

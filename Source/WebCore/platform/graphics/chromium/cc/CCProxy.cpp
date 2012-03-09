@@ -69,28 +69,38 @@ CCThread* CCProxy::implThread()
     return s_implThread;
 }
 
+CCThread* CCProxy::currentThread()
+{
+    ThreadIdentifier currentThreadIdentifier = WTF::currentThread();
+    if (s_mainThread && s_mainThread->threadID() == currentThreadIdentifier)
+        return s_mainThread;
+    if (s_implThread && s_implThread->threadID() == currentThreadIdentifier)
+        return s_implThread;
+    return 0;
+}
+
 #ifndef NDEBUG
 bool CCProxy::isMainThread()
 {
     ASSERT(s_mainThread);
-    if (implThreadIsOverridden && currentThread() == threadIDOverridenToBeImplThread)
+    if (implThreadIsOverridden && WTF::currentThread() == threadIDOverridenToBeImplThread)
         return false;
-    return currentThread() == s_mainThread->threadID();
+    return WTF::currentThread() == s_mainThread->threadID();
 }
 
 bool CCProxy::isImplThread()
 {
     WTF::ThreadIdentifier implThreadID = s_implThread ? s_implThread->threadID() : 0;
-    if (implThreadIsOverridden && currentThread() == threadIDOverridenToBeImplThread)
+    if (implThreadIsOverridden && WTF::currentThread() == threadIDOverridenToBeImplThread)
         return true;
-    return currentThread() == implThreadID;
+    return WTF::currentThread() == implThreadID;
 }
 
 void CCProxy::setCurrentThreadIsImplThread(bool isImplThread)
 {
     implThreadIsOverridden = isImplThread;
     if (isImplThread)
-        threadIDOverridenToBeImplThread = currentThread();
+        threadIDOverridenToBeImplThread = WTF::currentThread();
 }
 #endif
 

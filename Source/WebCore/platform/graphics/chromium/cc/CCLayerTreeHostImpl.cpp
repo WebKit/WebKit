@@ -31,6 +31,7 @@
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include "cc/CCDamageTracker.h"
+#include "cc/CCDelayBasedTimeSource.h"
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostCommon.h"
@@ -39,7 +40,47 @@
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
 
+namespace {
+const double lowFrequencyAnimationInterval = 1;
+} // namespace
+
 namespace WebCore {
+
+class CCLayerTreeHostImplTimeSourceAdapter : public CCTimeSourceClient {
+    WTF_MAKE_NONCOPYABLE(CCLayerTreeHostImplTimeSourceAdapter);
+public:
+    static PassOwnPtr<CCLayerTreeHostImplTimeSourceAdapter> create(CCLayerTreeHostImpl* layerTreeHostImpl, PassRefPtr<CCDelayBasedTimeSource> timeSource)
+    {
+        return adoptPtr(new CCLayerTreeHostImplTimeSourceAdapter(layerTreeHostImpl, timeSource));
+    }
+    virtual ~CCLayerTreeHostImplTimeSourceAdapter()
+    {
+        m_timeSource->setClient(0);
+        m_timeSource->setActive(false);
+    }
+
+    virtual void onTimerTick()
+    {
+        m_layerTreeHostImpl->animate(monotonicallyIncreasingTime() * 1000.0);
+    }
+
+    void setActive(bool active)
+    {
+        if (active != m_timeSource->active())
+            m_timeSource->setActive(active);
+    }
+
+private:
+    CCLayerTreeHostImplTimeSourceAdapter(CCLayerTreeHostImpl* layerTreeHostImpl, PassRefPtr<CCDelayBasedTimeSource> timeSource)
+        : m_layerTreeHostImpl(layerTreeHostImpl)
+        , m_timeSource(timeSource)
+    {
+        m_timeSource->setClient(this);
+    }
+
+    CCLayerTreeHostImpl* m_layerTreeHostImpl;
+    RefPtr<CCDelayBasedTimeSource> m_timeSource;
+};
 
 PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHostImpl::create(const CCSettings& settings, CCLayerTreeHostImplClient* client)
 {
@@ -60,6 +101,7 @@ CCLayerTreeHostImpl::CCLayerTreeHostImpl(const CCSettings& settings, CCLayerTree
     , m_maxPageScale(0)
     , m_needsAnimateLayers(false)
     , m_pinchGestureActive(false)
+    , m_timeSourceClientAdapter(CCLayerTreeHostImplTimeSourceAdapter::create(this, CCDelayBasedTimeSource::create(lowFrequencyAnimationInterval * 1000.0, CCProxy::currentThread())))
 {
     ASSERT(CCProxy::isImplThread());
 }
@@ -398,6 +440,9 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
     // process on visibility change.
     if (visible && m_layerRenderer->capabilities().usingPartialSwap)
         setFullRootLayerDamage();
+
+    const bool shouldTickInBackground = !visible && m_needsAnimateLayers;
+    m_timeSourceClientAdapter->setActive(shouldTickInBackground);
 }
 
 bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> context)
@@ -711,6 +756,9 @@ void CCLayerTreeHostImpl::animateLayers(double frameBeginTimeMs)
 
     if (didAnimate)
         m_client->setNeedsRedrawOnImplThread();
+
+    const bool shouldTickInBackground = m_needsAnimateLayers && !m_visible;
+    m_timeSourceClientAdapter->setActive(shouldTickInBackground);
 }
 
 void CCLayerTreeHostImpl::sendDidLoseContextRecursive(CCLayerImpl* current)

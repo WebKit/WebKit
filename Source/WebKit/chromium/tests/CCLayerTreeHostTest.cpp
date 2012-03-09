@@ -290,6 +290,11 @@ public:
         callOnMainThread(CCLayerTreeHostTest::dispatchAddAnimation, this);
     }
 
+    void postAddInstantAnimationToMainThread()
+    {
+        callOnMainThread(CCLayerTreeHostTest::dispatchAddInstantAnimation, this);
+    }
+
     void postSetNeedsCommitToMainThread()
     {
         callOnMainThread(CCLayerTreeHostTest::dispatchSetNeedsCommit, this);
@@ -347,13 +352,22 @@ protected:
           test->m_layerTreeHost->setNeedsAnimate();
     }
 
-    static void dispatchAddAnimation(void* self)
+    static void dispatchAddInstantAnimation(void* self)
     {
       ASSERT(isMainThread());
       CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
       ASSERT(test);
       if (test->m_layerTreeHost && test->m_layerTreeHost->rootLayer())
           addOpacityTransitionToLayer(*test->m_layerTreeHost->rootLayer(), 0, 0, 1);
+    }
+
+    static void dispatchAddAnimation(void* self)
+    {
+      ASSERT(isMainThread());
+      CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
+      ASSERT(test);
+      if (test->m_layerTreeHost && test->m_layerTreeHost->rootLayer())
+          addOpacityTransitionToLayer(*test->m_layerTreeHost->rootLayer(), 10000, 0, 1);
     }
 
     static void dispatchSetNeedsAnimateAndCommit(void* self)
@@ -845,7 +859,7 @@ public:
 
     virtual void beginTest()
     {
-        postAddAnimationToMainThread();
+        postAddInstantAnimationToMainThread();
     }
 
     virtual void animateLayers(CCLayerTreeHostImpl* layerTreeHostImpl)
@@ -883,6 +897,43 @@ private:
 };
 
 TEST_F(CCLayerTreeHostTestAddAnimation, runMultiThread)
+{
+    runTestThreaded();
+}
+
+// Ensures that animations continue to be ticked when we are backgrounded.
+class CCLayerTreeHostTestTickAnimationWhileBackgrounded : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestTickAnimationWhileBackgrounded()
+        : m_numAnimates(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        postAddAnimationToMainThread();
+    }
+
+    virtual void animateLayers(CCLayerTreeHostImpl* layerTreeHostImpl)
+    {
+        if (!m_numAnimates) {
+            // We have a long animation running. It should continue to tick even if we are not visible.
+            postSetVisibleToMainThread(false);
+            m_numAnimates++;
+            return;
+        }
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+    int m_numAnimates;
+};
+
+TEST_F(CCLayerTreeHostTestTickAnimationWhileBackgrounded, runMultiThread)
 {
     runTestThreaded();
 }

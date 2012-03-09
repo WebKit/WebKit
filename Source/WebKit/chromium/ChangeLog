@@ -1,3 +1,24 @@
+2012-03-08  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Ensure that the cc thread animation framework continues to tick when the tab is backgrounded
+        https://bugs.webkit.org/show_bug.cgi?id=77668
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::postAddInstantAnimationToMainThread):
+        (CCLayerTreeHostTest):
+        (WTF::CCLayerTreeHostTest::dispatchAddInstantAnimation):
+        (WTF::CCLayerTreeHostTest::dispatchAddAnimation):
+        (WTF::CCLayerTreeHostTestAddAnimation::beginTest):
+        (WTF):
+        (CCLayerTreeHostTestTickAnimationWhileBackgrounded):
+        (WTF::CCLayerTreeHostTestTickAnimationWhileBackgrounded::CCLayerTreeHostTestTickAnimationWhileBackgrounded):
+        (WTF::CCLayerTreeHostTestTickAnimationWhileBackgrounded::beginTest):
+        (WTF::CCLayerTreeHostTestTickAnimationWhileBackgrounded::animateLayers):
+        (WTF::CCLayerTreeHostTestTickAnimationWhileBackgrounded::afterTest):
+        (WTF::TEST_F):
+
 2012-03-08  Jeff Timanus  <twiz@chromium.org>
 
         [chromium] Force the Canvas2D GPU texture cache to 0 bytes for backgrounded tabs.
