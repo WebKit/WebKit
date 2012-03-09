@@ -115,19 +115,6 @@ double AnimationControllerPrivate::updateAnimations(SetChanged callSetChanged/* 
     return timeToNextService;
 }
 
-void AnimationControllerPrivate::updateAnimationTimerForRenderer(RenderObject* renderer)
-{
-    double timeToNextService = 0;
-
-    RefPtr<CompositeAnimation> compAnim = m_compositeAnimations.get(renderer);
-    if (!compAnim->suspended() && compAnim->hasAnimations())
-        timeToNextService = compAnim->timeToNextService();
-
-    if (m_animationTimer.isActive())
-        m_animationTimer.stop();
-    m_animationTimer.startOneShot(timeToNextService);
-}
-
 void AnimationControllerPrivate::updateAnimationTimer(SetChanged callSetChanged/* = DoNotCallSetChanged*/)
 {
     double timeToNextService = updateAnimations(callSetChanged);
@@ -530,7 +517,7 @@ PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderObject* rend
     RefPtr<RenderStyle> blendedStyle = rendererAnimations->animate(renderer, oldStyle, newStyle);
 
     if (renderer->parent() || newStyle->animations() || (oldStyle && oldStyle->animations())) {
-        m_data->updateAnimationTimerForRenderer(renderer);
+        m_data->updateAnimationTimer();
 #if ENABLE(REQUEST_ANIMATION_FRAME)
         if (FrameView* view = renderer->document()->view())
             view->scheduleAnimation();
