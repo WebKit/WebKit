@@ -1,3 +1,14 @@
+2012-03-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Fix compilation without QtQuick1
+        https://bugs.webkit.org/show_bug.cgi?id=80503
+
+        Qt 4.8 API test fix after r110050.
+
+        Reviewed by Zoltan Herczeg.
+
+        * declarative/public.pri: Add load(features) to ensure HAVE_QQUICK1=1 is set.
+
 2012-03-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Use Qt's module system for install rules and depending on QtWebKit

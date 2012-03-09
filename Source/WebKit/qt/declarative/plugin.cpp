@@ -76,4 +76,3 @@ QT_END_NAMESPACE
 #include "plugin.moc"
 
 Q_EXPORT_PLUGIN2(qmlwebkitplugin, QT_PREPEND_NAMESPACE(WebKitQmlPlugin));
-
