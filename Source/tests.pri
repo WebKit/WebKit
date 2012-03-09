@@ -35,9 +35,12 @@ SUBDIRS += \
     $$WEBKIT_TESTS_DIR/benchmarks/painting \
     $$WEBKIT_TESTS_DIR/benchmarks/loading
 
-contains(DEFINES, ENABLE_WEBGL=1) {
-    SUBDIRS += $$WEBKIT_TESTS_DIR/benchmarks/webgl
-}
+# WebGL performance tests are disabled temporarily.
+# https://bugs.webkit.org/show_bug.cgi?id=80503
+#
+#contains(DEFINES, ENABLE_WEBGL=1) {
+#    SUBDIRS += $$WEBKIT_TESTS_DIR/benchmarks/webgl
+#}
 
 !no_webkit2 {
     WEBKIT2_TESTS_DIR = $$PWD/WebKit2/UIProcess/API/qt/tests
