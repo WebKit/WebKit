@@ -28,20 +28,28 @@
 #include "TreeSynchronizer.h"
 
 #include "LayerChromium.h"
+#include "ScrollbarLayerChromium.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCScrollbarLayerImpl.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 PassOwnPtr<CCLayerImpl> TreeSynchronizer::synchronizeTrees(LayerChromium* layerChromiumRoot, PassOwnPtr<CCLayerImpl> oldCCLayerImplRoot)
 {
-    CCLayerImplMap map;
-    collectExistingCCLayerImplRecursive(map, oldCCLayerImplRoot);
+    OwnPtrCCLayerImplMap oldLayers;
+    RawPtrCCLayerImplMap newLayers;
 
-    return synchronizeTreeRecursive(map, layerChromiumRoot);
+    collectExistingCCLayerImplRecursive(oldLayers, oldCCLayerImplRoot);
+
+    OwnPtr<CCLayerImpl> newTree = synchronizeTreeRecursive(newLayers, oldLayers, layerChromiumRoot);
+
+    updateScrollbarLayerPointersRecursive(newLayers, layerChromiumRoot);
+
+    return newTree.release();
 }
 
-void TreeSynchronizer::collectExistingCCLayerImplRecursive(CCLayerImplMap& map, PassOwnPtr<CCLayerImpl> popCCLayerImpl)
+void TreeSynchronizer::collectExistingCCLayerImplRecursive(OwnPtrCCLayerImplMap& oldLayers, PassOwnPtr<CCLayerImpl> popCCLayerImpl)
 {
     OwnPtr<CCLayerImpl> ccLayerImpl = popCCLayerImpl;
 
@@ -50,42 +58,58 @@ void TreeSynchronizer::collectExistingCCLayerImplRecursive(CCLayerImplMap& map, 
 
     Vector<OwnPtr<CCLayerImpl> >& children = ccLayerImpl->m_children;
     for (size_t i = 0; i < children.size(); ++i)
-        collectExistingCCLayerImplRecursive(map, children[i].release());
+        collectExistingCCLayerImplRecursive(oldLayers, children[i].release());
 
-    collectExistingCCLayerImplRecursive(map, ccLayerImpl->m_maskLayer.release());
-    collectExistingCCLayerImplRecursive(map, ccLayerImpl->m_replicaLayer.release());
+    collectExistingCCLayerImplRecursive(oldLayers, ccLayerImpl->m_maskLayer.release());
+    collectExistingCCLayerImplRecursive(oldLayers, ccLayerImpl->m_replicaLayer.release());
 
     int id = ccLayerImpl->id();
-    map.set(id, ccLayerImpl.release());
+    oldLayers.set(id, ccLayerImpl.release());
 }
 
-PassOwnPtr<CCLayerImpl> TreeSynchronizer::reuseOrCreateCCLayerImpl(CCLayerImplMap& map, LayerChromium* layer)
+PassOwnPtr<CCLayerImpl> TreeSynchronizer::reuseOrCreateCCLayerImpl(RawPtrCCLayerImplMap& newLayers, OwnPtrCCLayerImplMap& oldLayers, LayerChromium* layer)
 {
-    OwnPtr<CCLayerImpl> ccLayerImpl = map.take(layer->id());
+    OwnPtr<CCLayerImpl> ccLayerImpl = oldLayers.take(layer->id());
 
     if (!ccLayerImpl)
-        return layer->createCCLayerImpl();
+        ccLayerImpl = layer->createCCLayerImpl();
 
+    newLayers.set(layer->id(), ccLayerImpl.get());
     return ccLayerImpl.release();
 }
 
-PassOwnPtr<CCLayerImpl> TreeSynchronizer::synchronizeTreeRecursive(CCLayerImplMap& map, LayerChromium* layer)
+PassOwnPtr<CCLayerImpl> TreeSynchronizer::synchronizeTreeRecursive(RawPtrCCLayerImplMap& newLayers, OwnPtrCCLayerImplMap& oldLayers, LayerChromium* layer)
 {
     if (!layer)
         return nullptr;
 
-    OwnPtr<CCLayerImpl> ccLayerImpl = reuseOrCreateCCLayerImpl(map, layer);
+    OwnPtr<CCLayerImpl> ccLayerImpl = reuseOrCreateCCLayerImpl(newLayers, oldLayers, layer);
 
     ccLayerImpl->clearChildList();
     const Vector<RefPtr<LayerChromium> >& children = layer->children();
     for (size_t i = 0; i < children.size(); ++i)
-        ccLayerImpl->addChild(synchronizeTreeRecursive(map, children[i].get()));
+        ccLayerImpl->addChild(synchronizeTreeRecursive(newLayers, oldLayers, children[i].get()));
 
-    ccLayerImpl->setMaskLayer(synchronizeTreeRecursive(map, layer->maskLayer()));
-    ccLayerImpl->setReplicaLayer(synchronizeTreeRecursive(map, layer->replicaLayer()));
+    ccLayerImpl->setMaskLayer(synchronizeTreeRecursive(newLayers, oldLayers, layer->maskLayer()));
+    ccLayerImpl->setReplicaLayer(synchronizeTreeRecursive(newLayers, oldLayers, layer->replicaLayer()));
 
     layer->pushPropertiesTo(ccLayerImpl.get());
     return ccLayerImpl.release();
+}
+
+void TreeSynchronizer::updateScrollbarLayerPointersRecursive(const RawPtrCCLayerImplMap& newLayers, LayerChromium* layer)
+{
+    const Vector<RefPtr<LayerChromium> >& children = layer->children();
+    for (size_t i = 0; i < children.size(); ++i)
+        updateScrollbarLayerPointersRecursive(newLayers, children[i].get());
+
+    ScrollbarLayerChromium* scrollbarLayer = layer->toScrollbarLayerChromium();
+    if (!scrollbarLayer)
+        return;
+
+    CCScrollbarLayerImpl* ccScrollbarLayerImpl = static_cast<CCScrollbarLayerImpl*>(newLayers.get(scrollbarLayer->id()));
+    ASSERT(ccScrollbarLayerImpl);
+    ccScrollbarLayerImpl->setScrollLayer(newLayers.get(scrollbarLayer->scrollLayerId()));
 }
 
 } // namespace WebCore

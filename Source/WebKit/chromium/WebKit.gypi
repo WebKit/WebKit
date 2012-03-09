@@ -114,6 +114,7 @@
             'tests/PODIntervalTreeTest.cpp',
             'tests/PODRedBlackTreeTest.cpp',
             'tests/RenderTableCellTest.cpp',
+            'tests/ScrollbarLayerChromiumTest.cpp',
             'tests/TextureManagerTest.cpp',
             'tests/TiledLayerChromiumTest.cpp',
             'tests/TilingDataTest.cpp',

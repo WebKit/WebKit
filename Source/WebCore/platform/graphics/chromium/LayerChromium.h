@@ -61,6 +61,7 @@ class CCLayerImpl;
 class CCLayerTreeHost;
 class CCTextureUpdater;
 class GraphicsContext3D;
+class ScrollbarLayerChromium;
 
 // Base class for composited layers. Special layer types are derived from
 // this class.
@@ -228,6 +229,8 @@ public:
     void setAnimationEvent(const CCAnimationEvent&, double wallClockTime);
 
     virtual Region opaqueContentsRegion() const { return Region(); };
+
+    virtual ScrollbarLayerChromium* toScrollbarLayerChromium() { return 0; }
 
 protected:
     friend class CCLayerImpl;

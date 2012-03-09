@@ -27,8 +27,15 @@
 
 #include "ScrollingCoordinator.h"
 
+#include "Frame.h"
+#include "FrameView.h"
 #include "LayerChromium.h"
 #include "Region.h"
+#include "RenderLayerCompositor.h"
+#include "RenderView.h"
+#include "ScrollbarLayerChromium.h"
+#include "ScrollbarTheme.h"
+#include "cc/CCProxy.h"
 
 namespace WebCore {
 
@@ -58,14 +65,61 @@ ScrollingCoordinator::~ScrollingCoordinator()
     delete m_private;
 }
 
-void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer* horizontalScrollbarLayer)
+static GraphicsLayer* scrollLayerForFrameView(FrameView* frameView)
 {
-    // FIXME: Implement!
+#if USE(ACCELERATED_COMPOSITING)
+    Frame* frame = frameView->frame();
+    if (!frame)
+        return 0;
+
+    RenderView* renderView = frame->contentRenderer();
+    if (!renderView)
+        return 0;
+    return renderView->compositor()->scrollLayer();
+#else
+    return 0;
+#endif
 }
 
-void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView*, GraphicsLayer* verticalScrollbarLayer)
+static void scrollbarLayerDidChange(Scrollbar* scrollbar, LayerChromium* scrollLayer, GraphicsLayer* scrollbarGraphicsLayer)
 {
-    // FIXME: Implement!
+    ASSERT(scrollbar);
+    ASSERT(scrollLayer);
+    ASSERT(scrollbarGraphicsLayer);
+
+    if (scrollbar->isCustomScrollbar() || !CCProxy::hasImplThread()) {
+        scrollbarGraphicsLayer->setContentsToMedia(0);
+        scrollbarGraphicsLayer->setDrawsContent(true);
+        return;
+    }
+
+    RefPtr<ScrollbarLayerChromium> scrollbarLayer = ScrollbarLayerChromium::create(scrollbar, scrollLayer->id());
+    scrollbarGraphicsLayer->setContentsToMedia(scrollbarLayer.get());
+    scrollbarGraphicsLayer->setDrawsContent(false);
+}
+
+void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer* horizontalScrollbarLayer)
+{
+    if (!horizontalScrollbarLayer || !coordinatesScrollingForFrameView(frameView))
+        return;
+
+    LayerChromium* scrollLayer = m_private->scrollLayer();
+    if (!scrollLayer) // FIXME: sometimes we get called before setScrollLayer, workaround by finding the scroll layout ourselves.
+        scrollLayer = scrollLayerForFrameView(frameView)->platformLayer();
+
+    scrollbarLayerDidChange(frameView->horizontalScrollbar(), scrollLayer, horizontalScrollbarLayer);
+}
+
+void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer* verticalScrollbarLayer)
+{
+    if (!verticalScrollbarLayer || !coordinatesScrollingForFrameView(frameView))
+        return;
+
+    LayerChromium* scrollLayer = m_private->scrollLayer();
+    if (!scrollLayer) // FIXME: sometimes we get called before setScrollLayer, workaround by finding the scroll layout ourselves.
+        scrollLayer = scrollLayerForFrameView(frameView)->platformLayer();
+
+    scrollbarLayerDidChange(frameView->verticalScrollbar(), scrollLayer, verticalScrollbarLayer);
 }
 
 void ScrollingCoordinator::setScrollLayer(GraphicsLayer* scrollLayer)

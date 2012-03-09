@@ -542,6 +542,10 @@ void CCLayerTreeHostImpl::updateMaxScrollPosition()
         return;
 
     FloatSize viewBounds = m_viewportSize;
+    if (CCLayerImpl* clipLayer = m_scrollLayerImpl->parent()) {
+        if (clipLayer->masksToBounds())
+            viewBounds = clipLayer->bounds();
+    }
     viewBounds.scale(1 / m_pageScaleDelta);
 
     IntSize maxScroll = contentSize() - expandedIntSize(viewBounds);

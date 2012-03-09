@@ -1,3 +1,50 @@
+2012-03-09  Tien-Ren Chen  <trchen@chromium.org>
+
+        [chromium] ScrollbarLayerChromium/CCScrollbarLayerImpl for CC-side scrollbar painting
+        https://bugs.webkit.org/show_bug.cgi?id=78872
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/ScrollbarLayerChromiumTest.cpp: Added.
+        (WebCore):
+        (MockScrollbar):
+        (WebCore::MockScrollbar::x):
+        (WebCore::MockScrollbar::y):
+        (WebCore::MockScrollbar::width):
+        (WebCore::MockScrollbar::height):
+        (WebCore::MockScrollbar::size):
+        (WebCore::MockScrollbar::location):
+        (WebCore::MockScrollbar::parent):
+        (WebCore::MockScrollbar::root):
+        (WebCore::MockScrollbar::setFrameRect):
+        (WebCore::MockScrollbar::frameRect):
+        (WebCore::MockScrollbar::invalidate):
+        (WebCore::MockScrollbar::invalidateRect):
+        (WebCore::MockScrollbar::scrollbarOverlayStyle):
+        (WebCore::MockScrollbar::getTickmarks):
+        (WebCore::MockScrollbar::isScrollableAreaActive):
+        (WebCore::MockScrollbar::isScrollViewScrollbar):
+        (WebCore::MockScrollbar::convertFromContainingWindow):
+        (WebCore::MockScrollbar::isCustomScrollbar):
+        (WebCore::MockScrollbar::orientation):
+        (WebCore::MockScrollbar::value):
+        (WebCore::MockScrollbar::currentPos):
+        (WebCore::MockScrollbar::visibleSize):
+        (WebCore::MockScrollbar::totalSize):
+        (WebCore::MockScrollbar::maximum):
+        (WebCore::MockScrollbar::controlSize):
+        (WebCore::MockScrollbar::lineStep):
+        (WebCore::MockScrollbar::pageStep):
+        (WebCore::MockScrollbar::pressedPart):
+        (WebCore::MockScrollbar::hoveredPart):
+        (WebCore::MockScrollbar::styleChanged):
+        (WebCore::MockScrollbar::enabled):
+        (WebCore::MockScrollbar::setEnabled):
+        (WebCore::MockScrollbar::MockScrollbar):
+        (WebCore::MockScrollbar::~MockScrollbar):
+        (WebCore::TEST):
+
 2012-03-08  James Robinson  <jamesr@chromium.org>
 
         [chromium] Expose the shared graphics context on WebView so callers can allocate resources on the main thread for the compositor to use

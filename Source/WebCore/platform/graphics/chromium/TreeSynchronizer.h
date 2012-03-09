@@ -46,12 +46,14 @@ public:
 private:
     TreeSynchronizer(); // Not instantiable.
 
-    typedef HashMap<int, OwnPtr<CCLayerImpl> > CCLayerImplMap;
+    typedef HashMap<int, OwnPtr<CCLayerImpl> > OwnPtrCCLayerImplMap;
+    typedef HashMap<int, CCLayerImpl*> RawPtrCCLayerImplMap;
 
     // Declared as static member functions so they can access functions on LayerChromium as a friend class.
-    static PassOwnPtr<CCLayerImpl> reuseOrCreateCCLayerImpl(CCLayerImplMap&, LayerChromium*);
-    static void collectExistingCCLayerImplRecursive(CCLayerImplMap&, PassOwnPtr<CCLayerImpl>);
-    static PassOwnPtr<CCLayerImpl> synchronizeTreeRecursive(CCLayerImplMap&, LayerChromium*);
+    static PassOwnPtr<CCLayerImpl> reuseOrCreateCCLayerImpl(RawPtrCCLayerImplMap& newLayers, OwnPtrCCLayerImplMap& oldLayers, LayerChromium*);
+    static void collectExistingCCLayerImplRecursive(OwnPtrCCLayerImplMap& oldLayers, PassOwnPtr<CCLayerImpl>);
+    static PassOwnPtr<CCLayerImpl> synchronizeTreeRecursive(RawPtrCCLayerImplMap& newLayers, OwnPtrCCLayerImplMap& oldLayers, LayerChromium*);
+    static void updateScrollbarLayerPointersRecursive(const RawPtrCCLayerImplMap& newLayers, LayerChromium*);
 };
 
 } // namespace WebCore
