@@ -576,6 +576,14 @@ AC_ARG_ENABLE(channel_messaging,
               [],[enable_channel_messaging="yes"])
 AC_MSG_RESULT([$enable_channel_messaging])
 
+# check whether to enable legacy notifications
+AC_MSG_CHECKING([whether to enable legacy notifications])
+AC_ARG_ENABLE(legacy_notifications,
+              AC_HELP_STRING([--enable-legacy-notifications],
+                             [enable legacy notifications [default=no]]),
+              [],[enable_legacy_notifications="no"])
+AC_MSG_RESULT([$enable_legacy_notifications])
+
 # check whether to enable notifications
 AC_MSG_CHECKING([whether to enable notifications])
 AC_ARG_ENABLE(notifications,
@@ -1358,6 +1366,7 @@ AM_CONDITIONAL([ENABLE_MEDIA_STATISTICS],[test "$enable_media_statistics" = "yes
 AM_CONDITIONAL([ENABLE_VIDEO_TRACK],[test "$enable_video_track" = "yes"])
 AM_CONDITIONAL([ENABLE_FULLSCREEN_API],[test "$enable_fullscreen_api" = "yes"])
 AM_CONDITIONAL([ENABLE_MEDIA_STREAM],[test "$enable_media_stream" = "yes"])
+AM_CONDITIONAL([ENABLE_LEGACY_NOTIFICATIONS],[test "$enable_legacy_notifications" = "yes"])
 AM_CONDITIONAL([ENABLE_NOTIFICATIONS],[test "$enable_notifications" = "yes"])
 AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])

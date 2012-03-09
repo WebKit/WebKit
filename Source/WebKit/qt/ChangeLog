@@ -1,3 +1,13 @@
+2012-03-09  Jon Lee  <jonlee@apple.com>
+
+        Add support for ENABLE(LEGACY_NOTIFICATIONS)
+        https://bugs.webkit.org/show_bug.cgi?id=80497
+
+        Reviewed by Adam Barth.
+
+        Prep for b80472: Update API for Web Notifications
+        * examples/platformplugin/platformplugin.pro:
+
 2012-03-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Fix compilation without QtQuick1

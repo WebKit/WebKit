@@ -31,4 +31,5 @@ HEADERS += \
     qwebkitplatformplugin.h \
     WebNotificationPresenter.h
 
+!contains(DEFINES, ENABLE_LEGACY_NOTIFICATIONS=.): DEFINES += ENABLE_LEGACY_NOTIFICATIONS=1
 !contains(DEFINES, ENABLE_NOTIFICATIONS=.): DEFINES += ENABLE_NOTIFICATIONS=1

@@ -103,6 +103,7 @@ my (
     $inputTypeTimeSupport,
     $inputTypeWeekSupport,
     $javaScriptDebuggerSupport,
+    $legacyNotificationsSupport,
     $linkPrefetchSupport,
     $mathmlSupport,
     $mediaSourceSupport,
@@ -255,6 +256,9 @@ my @features = (
 
     { option => "javascript-debugger", desc => "Toggle JavaScript Debugger/Profiler support",
       define => "ENABLE_JAVASCRIPT_DEBUGGER", default => 1, value => \$javaScriptDebuggerSupport },
+
+    { option => "legacy-notifications", desc => "Toggle Legacy Desktop Notifications Support",
+      define => "ENABLE_LEGACY_NOTIFICATIONS", default => isBlackBerry(), value => \$legacyNotificationsSupport },
 
     { option => "link-prefetch", desc => "Toggle pre fetching support",
       define => "ENABLE_LINK_PREFETCH", default => 0, value => \$linkPrefetchSupport },
