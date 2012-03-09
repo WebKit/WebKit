@@ -42,6 +42,7 @@ using namespace AudioUtilities;
     
 DynamicsCompressor::DynamicsCompressor(float sampleRate, unsigned numberOfChannels)
     : m_numberOfChannels(numberOfChannels)
+    , m_sampleRate(sampleRate)
     , m_compressor(sampleRate, numberOfChannels)
 {
     // Uninitialized state - for parameter recalculation.
