@@ -1,3 +1,13 @@
+2012-03-09  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Implement scroll physics architecture for impl/main thread
+        https://bugs.webkit.org/show_bug.cgi?id=79827
+
+        Reviewed by James Robinson.
+
+        * WebKit.gypi:
+        * tests/PlatformGestureCurveTest.cpp: Added.
+
 2012-03-09  Tien-Ren Chen  <trchen@chromium.org>
 
         [chromium] ScrollbarLayerChromium/CCScrollbarLayerImpl for CC-side scrollbar painting

@@ -109,6 +109,7 @@
             'tests/LayerTextureUpdaterTest.cpp',
             'tests/LocalizedNumberICUTest.cpp',
             'tests/PaintAggregatorTest.cpp',
+            'tests/PlatformGestureCurveTest.cpp',
             'tests/PlatformContextSkiaTest.cpp',
             'tests/PODArenaTest.cpp',
             'tests/PODIntervalTreeTest.cpp',
