@@ -424,7 +424,103 @@ void RenderTableSection::layout()
     setNeedsLayout(false);
 }
 
-int RenderTableSection::layoutRows(int toAdd)
+int RenderTableSection::distributeExtraLogicalHeightToPercentRows(int extraLogicalHeight, int totalPercent)
+{
+    if (!totalPercent)
+        return extraLogicalHeight;
+
+    unsigned totalRows = m_grid.size();
+    int totalHeight = m_rowPos[totalRows] + extraLogicalHeight;
+    int add = 0;
+    totalPercent = min(totalPercent, 100);
+    int rowHeight = m_rowPos[1] - m_rowPos[0];
+    for (unsigned r = 0; r < totalRows; ++r) {
+        if (totalPercent > 0 && m_grid[r].logicalHeight.isPercent()) {
+            int toAdd = min<int>(extraLogicalHeight, (totalHeight * m_grid[r].logicalHeight.percent() / 100) - rowHeight);
+            // If toAdd is negative, then we don't want to shrink the row (this bug
+            // affected Outlook Web Access).
+            toAdd = max(0, toAdd);
+            add += toAdd;
+            extraLogicalHeight -= toAdd;
+            totalPercent -= m_grid[r].logicalHeight.percent();
+        }
+        ASSERT(totalRows >= 1);
+        if (r < totalRows - 1)
+            rowHeight = m_rowPos[r + 2] - m_rowPos[r + 1];
+        m_rowPos[r + 1] += add;
+    }
+    return extraLogicalHeight;
+}
+
+int RenderTableSection::distributeExtraLogicalHeightToAutoRows(int extraLogicalHeight, unsigned autoRowsCount)
+{
+    if (!autoRowsCount)
+        return extraLogicalHeight;
+
+    int add = 0;
+    for (unsigned r = 0; r < m_grid.size(); ++r) {
+        if (autoRowsCount > 0 && m_grid[r].logicalHeight.isAuto()) {
+            // Recomputing |extraLogicalHeightForRow| guarantees that we properly ditribute round |extraLogicalHeight|.
+            int extraLogicalHeightForRow = extraLogicalHeight / autoRowsCount;
+            add += extraLogicalHeightForRow;
+            extraLogicalHeight -= extraLogicalHeightForRow;
+            --autoRowsCount;
+        }
+        m_rowPos[r + 1] += add;
+    }
+    return extraLogicalHeight;
+}
+
+int RenderTableSection::distributeRemainingExtraLogicalHeight(int extraLogicalHeight)
+{
+    unsigned totalRows = m_grid.size();
+
+    if (extraLogicalHeight <= 0 || !m_rowPos[totalRows])
+        return extraLogicalHeight;
+
+    // FIXME: m_rowPos[totalRows] - m_rowPos[0] is the total rows' size.
+    int totalRowSize = m_rowPos[totalRows];
+    int add = 0;
+    int previousRowPosition = m_rowPos[0];
+    for (unsigned r = 0; r < totalRows; r++) {
+        // weight with the original height
+        add += extraLogicalHeight * (m_rowPos[r + 1] - previousRowPosition) / totalRowSize;
+        previousRowPosition = m_rowPos[r + 1];
+        m_rowPos[r + 1] += add;
+    }
+
+    return extraLogicalHeight;
+}
+
+int RenderTableSection::distributeExtraLogicalHeightToRows(int extraLogicalHeight)
+{
+    if (!extraLogicalHeight)
+        return extraLogicalHeight;
+
+    unsigned totalRows = m_grid.size();
+    if (!totalRows)
+        return extraLogicalHeight;
+
+    if (!m_rowPos[totalRows] && nextSibling())
+        return extraLogicalHeight;
+
+    unsigned autoRowsCount = 0;
+    int totalPercent = 0;
+    for (unsigned r = 0; r < totalRows; r++) {
+        if (m_grid[r].logicalHeight.isAuto())
+            ++autoRowsCount;
+        else if (m_grid[r].logicalHeight.isPercent())
+            totalPercent += m_grid[r].logicalHeight.percent();
+    }
+
+    int remainingExtraLogicalHeight = extraLogicalHeight;
+    remainingExtraLogicalHeight = distributeExtraLogicalHeightToPercentRows(remainingExtraLogicalHeight, totalPercent);
+    remainingExtraLogicalHeight = distributeExtraLogicalHeightToAutoRows(remainingExtraLogicalHeight, autoRowsCount);
+    remainingExtraLogicalHeight = distributeRemainingExtraLogicalHeight(remainingExtraLogicalHeight);
+    return remainingExtraLogicalHeight;
+}
+
+int RenderTableSection::layoutRows(int extraLogicalHeight)
 {
 #ifndef NDEBUG
     setNeedsLayoutIsForbidden(true);
@@ -442,65 +538,7 @@ int RenderTableSection::layoutRows(int toAdd)
     m_overflowingCells.clear();
     m_forceSlowPaintPathWithOverflowingCell = false;
 
-    if (toAdd && totalRows && (m_rowPos[totalRows] || !nextSibling())) {
-        int totalHeight = m_rowPos[totalRows] + toAdd;
-
-        int dh = toAdd;
-        int totalPercent = 0;
-        int numAuto = 0;
-        for (unsigned r = 0; r < totalRows; r++) {
-            if (m_grid[r].logicalHeight.isAuto())
-                numAuto++;
-            else if (m_grid[r].logicalHeight.isPercent())
-                totalPercent += m_grid[r].logicalHeight.percent();
-        }
-        if (totalPercent) {
-            // try to satisfy percent
-            int add = 0;
-            totalPercent = min(totalPercent, 100);
-            int rh = m_rowPos[1] - m_rowPos[0];
-            for (unsigned r = 0; r < totalRows; r++) {
-                if (totalPercent > 0 && m_grid[r].logicalHeight.isPercent()) {
-                    int toAdd = min<int>(dh, (totalHeight * m_grid[r].logicalHeight.percent() / 100) - rh);
-                    // If toAdd is negative, then we don't want to shrink the row (this bug
-                    // affected Outlook Web Access).
-                    toAdd = max(0, toAdd);
-                    add += toAdd;
-                    dh -= toAdd;
-                    totalPercent -= m_grid[r].logicalHeight.percent();
-                }
-                ASSERT(totalRows >= 1);
-                if (r < totalRows - 1)
-                    rh = m_rowPos[r + 2] - m_rowPos[r + 1];
-                m_rowPos[r + 1] += add;
-            }
-        }
-        if (numAuto) {
-            // distribute over variable cols
-            int add = 0;
-            for (unsigned r = 0; r < totalRows; r++) {
-                if (numAuto > 0 && m_grid[r].logicalHeight.isAuto()) {
-                    int toAdd = dh / numAuto;
-                    add += toAdd;
-                    dh -= toAdd;
-                    numAuto--;
-                }
-                m_rowPos[r + 1] += add;
-            }
-        }
-        if (dh > 0 && m_rowPos[totalRows]) {
-            // if some left overs, distribute equally.
-            int tot = m_rowPos[totalRows];
-            int add = 0;
-            int prev = m_rowPos[0];
-            for (unsigned r = 0; r < totalRows; r++) {
-                // weight with the original height
-                add += dh * (m_rowPos[r + 1] - prev) / tot;
-                prev = m_rowPos[r + 1];
-                m_rowPos[r + 1] += add;
-            }
-        }
-    }
+    extraLogicalHeight = distributeExtraLogicalHeightToRows(extraLogicalHeight);
 
     int hspacing = table()->hBorderSpacing();
     int vspacing = table()->vBorderSpacing();

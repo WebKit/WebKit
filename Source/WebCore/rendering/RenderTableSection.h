@@ -185,6 +185,13 @@ private:
 
     void ensureRows(unsigned);
 
+    // Those methods return the remaining extra logical height.
+    // FIXME: We may want to introduce a structure holding the in-flux layout information.
+    int distributeExtraLogicalHeightToRows(int extraLogicalHeight);
+    int distributeExtraLogicalHeightToPercentRows(int extraLogicalHeight, int totalPercent);
+    int distributeExtraLogicalHeightToAutoRows(int extraLogicalHeight, unsigned autoRowsCount);
+    int distributeRemainingExtraLogicalHeight(int extraLogicalHeight);
+
     bool hasOverflowingCell() const { return m_overflowingCells.size() || m_forceSlowPaintPathWithOverflowingCell; }
 
     CellSpan fullTableRowSpan() const { return CellSpan(0, m_grid.size()); }
