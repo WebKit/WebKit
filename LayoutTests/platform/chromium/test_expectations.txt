@@ -2463,7 +2463,7 @@ BUGCR66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
 BUGCR66099 SKIP : fast/js/array-sort-modifying-tostring.html = CRASH TIMEOUT TEXT
 
 BUGCR66683 LINUX WIN : fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
-BUGCR66683 LINUX WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
+BUGCR66683 : platform/chromium/virtual/gpu/fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
 BUGCR66686 : fast/loader/user-stylesheet-fast-path.html = TEXT
 
 BUGCR66751 : http/tests/local/link-stylesheet-load-order-preload.html = PASS TIMEOUT TEXT
@@ -3770,7 +3770,7 @@ BUGWK79862 : fast/js/read-modify-eval.html = TEXT
 
 
 // EPOGER: To be rebaselined after skia rev. 3283 lands in webkit
-BUGCR116252 LINUX : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
+BUGCR116252 LINUX : platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE IMAGE+TEXT
 
 BUGWK80058 WIN RELEASE : fast/workers/stress-js-execution.html = CRASH PASS
 
@@ -3876,6 +3876,16 @@ BUGWK80588 LEOPARD : fast/table/010.html = IMAGE
 BUGWK80588 LEOPARD : fast/table/013.html = IMAGE
 BUGWK80588 LEOPARD : fast/table/015.html = IMAGE
 BUGWK80588 LEOPARD : fast/table/022.html = IMAGE
+BUGWK80588 LEOPARD : scrollbars/basic-scrollbar.html = IMAGE
+BUGWK80588 LEOPARD : scrollbars/disabled-scrollbar.html = IMAGE
+BUGWK80588 LEOPARD : scrollbars/scrollbar-buttons.html = IMAGE
+BUGWK80588 LEOPARD : scrollbars/scrollbar-orientation.html = IMAGE
+BUGWK80588 SNOWLEOPARD : fast/forms/number/input-appearance-spinbutton-layer.html = IMAGE
+
+// Started failing (returning an empty render tree) at
+// http://trac.webkit.org/changeset/110262; flaky in debug.
+BUG_SENORBLANCO RELEASE : css3/filters/composited-during-animation-layertree.html = TEXT
+BUG_SENORBLANCO DEBUG : css3/filters/composited-during-animation-layertree.html = TEXT PASS
 
 // New test, crashing as of r110224:110226.
 BUG_SENORBLANCO : fast/events/input-focus-no-duplicate-events.html = CRASH
