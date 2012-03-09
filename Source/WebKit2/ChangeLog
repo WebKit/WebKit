@@ -1,3 +1,21 @@
+2012-03-09  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Pass sandbox profiles through preprocessor
+        https://bugs.webkit.org/show_bug.cgi?id=80651
+
+        Reviewed by Mark Rowe.
+
+        * DerivedSources.make: Preprocess sandbox profiles.
+
+        * PluginProcess/mac/com.apple.WebKit.PluginProcess.sb: Removed.
+        * PluginProcess/mac/com.apple.WebKit.PluginProcess.sb.in: Copied from Source/WebKit2/PluginProcess/mac/com.apple.WebKit.PluginProcess.sb.
+        * WebProcess/com.apple.WebProcess.sb: Removed.
+        * WebProcess/com.apple.WebProcess.sb.in: Copied from Source/WebKit2/WebProcess/com.apple.WebProcess.sb.
+        Renamed to avoid make finding the wrong original in default paths.
+
+        * WebKit2.xcodeproj/project.pbxproj: Copy preprocessed files to Resources, not originals.
+        Also, changed DerivedSources target to use BaseTarget.xcconfig to have correct include paths.
+
 2012-03-09  Jon Lee  <jonlee@apple.com>
 
         Add support for ENABLE(LEGACY_NOTIFICATIONS)

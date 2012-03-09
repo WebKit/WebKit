@@ -23,6 +23,7 @@
 VPATH = \
     $(WebKit2) \
     $(WebKit2)/PluginProcess \
+    $(WebKit2)/PluginProcess/mac \
     $(WebKit2)/Shared/Plugins \
     $(WebKit2)/WebProcess/ApplicationCache \
     $(WebKit2)/WebProcess/Authentication \
@@ -109,6 +110,25 @@ all : \
 %Messages.h : %.messages.in $(SCRIPTS)
 	@echo Generating message receiver for $*...
 	@python $(WebKit2)/Scripts/generate-messages-header.py $< > $@
+
+# Mac-specific rules
+
+ifeq ($(OS),MACOS)
+
+FRAMEWORK_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
+HEADER_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) | perl -e 'print "-I" . join(" -I", split(" ", <>));')
+
+SANDBOX_PROFILES = \
+	com.apple.WebProcess.sb \
+	com.apple.WebKit.PluginProcess.sb
+
+all: $(SANDBOX_PROFILES)
+
+%.sb : %.sb.in
+	@echo Pre-processing $* sandbox profile...
+	$(CC) -E -P -w -x c -std=c89 $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" $< > $@
+
+endif # MACOS
 
 # ------------------------
 
