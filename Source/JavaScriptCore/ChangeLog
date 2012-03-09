@@ -1,3 +1,39 @@
+2012-03-08  Steve Falkenburg  <sfalken@apple.com>
+
+        Separate WTF parts of JavaScriptCoreGenerated into WTFGenerated for Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=80657
+        
+        Preparation for WTF separation from JavaScriptCore.
+        The "Generated" vcproj files on Windows are necessary so Visual Studio can calculate correct
+        dependencies for generated files.
+        
+        This also removes the PGO build targets from the WTF code, since we can't build instrumentation/optimization
+        versions of the WTF code independent of the JavaScriptCore code.
+
+        Reviewed by Jessie Berlin.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Add WTFGenerated, update dependent projects.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make: Removed WTF specific parts.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj: Removed WTF specific parts.
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh: Removed WTF specific parts.
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd: Removed WTF specific parts.
+        * JavaScriptCore.vcproj/JavaScriptCore/work-around-vs-dependency-tracking-bugs.py: Removed.
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln: Add WTFGenerated, update dependent projects.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Remove PGO targets from WTF.
+        * JavaScriptCore.vcproj/WTF/WTFGenerated.make: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make.
+        * JavaScriptCore.vcproj/WTF/WTFGenerated.vcproj: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedCommon.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedCommon.vsprops.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedDebug.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedDebug.vsprops.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedDebugAll.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedDebugAll.vsprops.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedDebugCairoCFLite.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedDebugCairoCFLite.vsprops.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedProduction.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedProduction.vsprops.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedRelease.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedRelease.vsprops.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedReleaseCairoCFLite.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedReleaseCairoCFLite.vsprops.
+        * JavaScriptCore.vcproj/WTF/WTFReleasePGO.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/build-generated-files.sh: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh.
+        * JavaScriptCore.vcproj/WTF/copy-files.cmd: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd.
+        * JavaScriptCore.vcproj/WTF/work-around-vs-dependency-tracking-bugs.py: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/work-around-vs-dependency-tracking-bugs.py.
+
 2012-03-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the build of WebKit with WTFURL following the removal of ForwardingHeaders/wtf

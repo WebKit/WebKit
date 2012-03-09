@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="JavaScriptCoreGenerated"
-	ProjectGUID="{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}"
-	RootNamespace="JavaScriptCoreGenerated"
+	Name="WTFGenerated"
+	ProjectGUID="{5AE5F5E4-782D-4F63-B4D7-3977B52B9950}"
+	RootNamespace="WTFGenerated"
 	Keyword="MakeFileProj"
 	>
 	<Platforms>
@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedDebug.vsprops"
+			InheritedPropertySheets=".\WTFGeneratedDebug.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
@@ -27,7 +27,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedDebugAll.vsprops"
+			InheritedPropertySheets=".\WTFGeneratedDebugAll.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
@@ -36,7 +36,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedRelease.vsprops"
+			InheritedPropertySheets=".\WTFGeneratedRelease.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
@@ -45,7 +45,7 @@
 		<Configuration
 			Name="Production|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedProduction.vsprops"
+			InheritedPropertySheets=".\WTFGeneratedProduction.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
@@ -54,7 +54,7 @@
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedReleaseCairoCFLite.vsprops"
+			InheritedPropertySheets=".\WTFGeneratedReleaseCairoCFLite.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
@@ -63,7 +63,7 @@
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedDebugCairoCFLite.vsprops"
+			InheritedPropertySheets=".\WTFGeneratedDebugCairoCFLite.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
@@ -82,11 +82,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\DerivedSources.make"
+			RelativePath=".\work-around-vs-dependency-tracking-bugs.py"
 			>
 		</File>
 		<File
-			RelativePath=".\JavaScriptCoreGenerated.make"
+			RelativePath=".\WTFGenerated.make"
 			>
 		</File>
 	</Files>

@@ -52,33 +52,9 @@ for %%d in (
     xcopy /y /d ..\..\%%d\*.h "%PrivateHeadersDirectory%" >NUL
 )
 
-echo Copying WTF headers...
-for %%d in (
-    wtf
-    wtf\dtoa
-    wtf\text
-    wtf\threads
-    wtf\unicode
-    wtf\unicode\icu
-) do (
-    mkdir "%PrivateHeadersDirectory%\%%d" 2>NUL
-    xcopy /y /d ..\..\%%d\*.h "%PrivateHeadersDirectory%\%%d" >NUL
-)
-
 echo Copying resources...
 mkdir "%ResourcesDirectory%" 2>NUL
 xcopy /y /d ..\JavaScriptCore.resources\* "%ResourcesDirectory%" >NUL
-
-echo Copying other files...
-for %%f in (
-    create_hash_table
-    wtf\text\AtomicString.cpp
-    wtf\text\StringBuilder.cpp
-    wtf\text\StringImpl.cpp
-    wtf\text\WTFString.cpp
-) do (
-    echo F | xcopy /y /d ..\..\%%f "%PrivateHeadersDirectory%\%%f" >NUL
-)
 
 goto :EOF
 

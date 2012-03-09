@@ -1,3 +1,16 @@
+2012-03-08  Steve Falkenburg  <sfalken@apple.com>
+
+        Separate WTF parts of JavaScriptCoreGenerated into WTFGenerated for Windows build
+        https://bugs.webkit.org/show_bug.cgi?id=80657
+
+        Preparation for WTF separation from JavaScriptCore.
+        The "Generated" vcproj files on Windows are necessary so Visual Studio can calculate correct
+        dependencies for generated files.
+
+        Reviewed by Jessie Berlin.
+
+        * WebKit.vcproj/WebKit.sln: Add WTFGenerated, update dependent projects.
+
 2012-03-03  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove the redundant method KURL::protocolInHTTPFamily()
