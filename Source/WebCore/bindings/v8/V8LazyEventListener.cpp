@@ -146,17 +146,12 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     code.append("return function(");
     code.append(m_eventParameterName);
     code.append(") {");
-
-    int codePrexixLength = code.length();
-
     code.append(m_code);
     // Insert '\n' otherwise //-style comments could break the handler.
     code.append("\n};}}}})");
     v8::Handle<v8::String> codeExternalString = v8ExternalString(code);
 
-    TextPosition adjustedPosition(m_position.m_line, OrdinalNumber::fromZeroBasedInt(m_position.m_column.zeroBasedInt() - codePrexixLength));
-
-    v8::Handle<v8::Script> script = V8Proxy::compileScript(codeExternalString, m_sourceURL, adjustedPosition);
+    v8::Handle<v8::Script> script = V8Proxy::compileScript(codeExternalString, m_sourceURL, m_position);
     if (script.IsEmpty())
         return;
 
