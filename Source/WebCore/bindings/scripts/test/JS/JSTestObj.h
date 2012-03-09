@@ -65,6 +65,7 @@ public:
     // Custom functions
     JSC::JSValue customMethod(JSC::ExecState*);
     JSC::JSValue customMethodWithArgs(JSC::ExecState*);
+    static JSC::JSValue classMethod2(JSC::ExecState*);
     TestObj* impl() const { return m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
@@ -196,6 +197,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(J
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod2(JSC::ExecState*);
 #if ENABLE(Condition1)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(JSC::ExecState*);
 #endif

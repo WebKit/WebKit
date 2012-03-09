@@ -206,6 +206,7 @@ enum {
 #endif
 - (void)classMethod;
 - (int)classMethodWithOptional:(int)arg;
+- (void)classMethod2:(int)arg;
 #if ENABLE(Condition1)
 - (void)overloadedMethod1:(int)arg;
 #endif

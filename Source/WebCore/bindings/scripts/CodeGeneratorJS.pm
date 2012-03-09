@@ -891,7 +891,7 @@ sub GenerateHeader
             my $conditionalString = GenerateConditionalString($function->signature);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementedAs"} || $codeGenerator->WK_lcfirst($function->signature->name);
-            push(@headerContent, "    JSC::JSValue " . $functionImplementationName . "(JSC::ExecState*);\n");
+            push(@headerContent, "    " . ($function->isStatic ? "static " : "") . "JSC::JSValue " . $functionImplementationName . "(JSC::ExecState*);\n");
             push(@headerContent, "#endif\n") if $conditionalString;
         }
     }
@@ -2077,63 +2077,79 @@ sub GenerateImplementation
 
             $implIncludes{"<runtime/Error.h>"} = 1;
 
-            if ($interfaceName eq "DOMWindow") {
-                push(@implContent, "    $className* castedThis = toJSDOMWindow(exec->hostThisValue().toThisObject(exec));\n");
-                push(@implContent, "    if (!castedThis)\n");
-                push(@implContent, "        return throwVMTypeError(exec);\n");
-            } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
-                push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThisObject(exec));\n");
-                push(@implContent, "    if (!castedThis)\n");
-                push(@implContent, "        return throwVMTypeError(exec);\n");
-            } elsif (!$function->isStatic) {
-                push(@implContent, "    JSValue thisValue = exec->hostThisValue();\n");
-                push(@implContent, "    if (!thisValue.inherits(&${className}::s_info))\n");
-                push(@implContent, "        return throwVMTypeError(exec);\n");
-                push(@implContent, "    $className* castedThis = static_cast<$className*>(asObject(thisValue));\n");
-            }
-
-            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, &${className}::s_info);\n") unless ($function->isStatic);
-
-            if ($dataNode->extendedAttributes->{"CheckSecurity"} and
-                !$function->signature->extendedAttributes->{"DoNotCheckSecurity"} and
-                !$function->isStatic) {
-                push(@implContent, "    if (!castedThis->allowsAccessFrom(exec))\n");
-                push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-            }
-
-            if ($isCustom) {
-                push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(exec));\n") unless ($function->isStatic);
-            } else {
-                push(@implContent, "    $implType* impl = static_cast<$implType*>(castedThis->impl());\n") unless ($function->isStatic);
-                if ($svgPropertyType and !$function->isStatic) {
-                    push(@implContent, "    if (impl->role() == AnimValRole) {\n");
-                    push(@implContent, "        setDOMException(exec, NO_MODIFICATION_ALLOWED_ERR);\n");
-                    push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-                    push(@implContent, "    }\n");
-                    push(@implContent, "    $svgPropertyType& podImpl = impl->propertyReference();\n");
-                    $implIncludes{"ExceptionCode.h"} = 1;
-                }
-
-                GenerateArgumentsCountCheck(\@implContent, $function, $dataNode);
-
-                if (@{$function->raisesExceptions}) {
-                    push(@implContent, "    ExceptionCode ec = 0;\n");
-                }
-
-                if ($function->signature->extendedAttributes->{"CheckSecurityForNode"} and !$function->isStatic) {
-                    push(@implContent, "    if (!shouldAllowAccessToNode(exec, impl->" . $function->signature->name . "(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
-                    push(@implContent, "        return JSValue::encode(jsUndefined());\n");
-                    $implIncludes{"JSDOMBinding.h"} = 1;
-                }
-
-                if ($function->signature->name eq "addEventListener") {
-                    push(@implContent, GenerateEventListenerCall($className, "add"));
-                } elsif ($function->signature->name eq "removeEventListener") {
-                    push(@implContent, GenerateEventListenerCall($className, "remove"));
+            if ($function->isStatic) {
+                if ($isCustom) {
+                    GenerateArgumentsCountCheck(\@implContent, $function, $dataNode);
+                    push(@implContent, "    return JSValue::encode(${className}::" . $functionImplementationName . "(exec));\n");
                 } else {
+                    GenerateArgumentsCountCheck(\@implContent, $function, $dataNode);
+
+                    if (@{$function->raisesExceptions}) {
+                        push(@implContent, "    ExceptionCode ec = 0;\n");
+                    }
+
                     my $numParameters = @{$function->parameters};
                     my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $dataNode, $numParameters, $implClassName, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
                     GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $implClassName);
+                }
+            } else {
+                if ($interfaceName eq "DOMWindow") {
+                    push(@implContent, "    $className* castedThis = toJSDOMWindow(exec->hostThisValue().toThisObject(exec));\n");
+                    push(@implContent, "    if (!castedThis)\n");
+                    push(@implContent, "        return throwVMTypeError(exec);\n");
+                } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
+                    push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThisObject(exec));\n");
+                    push(@implContent, "    if (!castedThis)\n");
+                    push(@implContent, "        return throwVMTypeError(exec);\n");
+                } else {
+                    push(@implContent, "    JSValue thisValue = exec->hostThisValue();\n");
+                    push(@implContent, "    if (!thisValue.inherits(&${className}::s_info))\n");
+                    push(@implContent, "        return throwVMTypeError(exec);\n");
+                    push(@implContent, "    $className* castedThis = static_cast<$className*>(asObject(thisValue));\n");
+                }
+
+                push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, &${className}::s_info);\n");
+
+                if ($dataNode->extendedAttributes->{"CheckSecurity"} and
+                    !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
+                    push(@implContent, "    if (!castedThis->allowsAccessFrom(exec))\n");
+                    push(@implContent, "        return JSValue::encode(jsUndefined());\n");
+                }
+
+                if ($isCustom) {
+                    push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(exec));\n");
+                } else {
+                    push(@implContent, "    $implType* impl = static_cast<$implType*>(castedThis->impl());\n");
+                    if ($svgPropertyType) {
+                        push(@implContent, "    if (impl->role() == AnimValRole) {\n");
+                        push(@implContent, "        setDOMException(exec, NO_MODIFICATION_ALLOWED_ERR);\n");
+                        push(@implContent, "        return JSValue::encode(jsUndefined());\n");
+                        push(@implContent, "    }\n");
+                        push(@implContent, "    $svgPropertyType& podImpl = impl->propertyReference();\n");
+                        $implIncludes{"ExceptionCode.h"} = 1;
+                    }
+
+                    GenerateArgumentsCountCheck(\@implContent, $function, $dataNode);
+
+                    if (@{$function->raisesExceptions}) {
+                        push(@implContent, "    ExceptionCode ec = 0;\n");
+                    }
+
+                    if ($function->signature->extendedAttributes->{"CheckSecurityForNode"}) {
+                        push(@implContent, "    if (!shouldAllowAccessToNode(exec, impl->" . $function->signature->name . "(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
+                        push(@implContent, "        return JSValue::encode(jsUndefined());\n");
+                        $implIncludes{"JSDOMBinding.h"} = 1;
+                    }
+
+                    if ($function->signature->name eq "addEventListener") {
+                        push(@implContent, GenerateEventListenerCall($className, "add"));
+                    } elsif ($function->signature->name eq "removeEventListener") {
+                        push(@implContent, GenerateEventListenerCall($className, "remove"));
+                    } else {
+                        my $numParameters = @{$function->parameters};
+                        my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $dataNode, $numParameters, $implClassName, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
+                        GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $implClassName);
+                    }
                 }
             }
 

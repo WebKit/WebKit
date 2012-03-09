@@ -932,6 +932,12 @@
     return IMPL->classMethodWithOptional(arg);
 }
 
+- (void)classMethod2:(int)arg
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->classMethod2(arg);
+}
+
 
 #if ENABLE(Condition1)
 - (void)overloadedMethod1:(int)arg

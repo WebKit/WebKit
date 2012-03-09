@@ -172,9 +172,9 @@ module test {
         // Class methods within JavaScript (like what's used for IDBKeyRange).
         static void classMethod();
         static long classMethodWithOptional(in [Optional] long arg);
+        [Custom] static void classMethod2(in long arg);
 
         // Static method with conditional on overloaded methods
-
         [Conditional=Condition1] static void overloadedMethod1(in long arg);
         [Conditional=Condition1] static void overloadedMethod1(in DOMString type);
 

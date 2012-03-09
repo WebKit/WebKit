@@ -163,6 +163,7 @@ static const HashTableValue JSTestObjConstructorTableValues[] =
     { "CONST_JAVASCRIPT", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_JAVASCRIPT), (intptr_t)0, NoIntrinsic },
     { "classMethod", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionClassMethod), (intptr_t)0, NoIntrinsic },
     { "classMethodWithOptional", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionClassMethodWithOptional), (intptr_t)1, NoIntrinsic },
+    { "classMethod2", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionClassMethod2), (intptr_t)1, NoIntrinsic },
 #if ENABLE(Condition1)
     { "overloadedMethod1", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionOverloadedMethod1), (intptr_t)1, NoIntrinsic },
 #endif
@@ -2080,6 +2081,13 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional
 
     JSC::JSValue result = jsNumber(TestObj::classMethodWithOptional(arg));
     return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod2(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
+    return JSValue::encode(JSTestObj::classMethod2(exec));
 }
 
 #if ENABLE(Condition1)
