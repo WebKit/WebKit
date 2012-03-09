@@ -1,3 +1,25 @@
+2012-03-09  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Web Notification not working after rebase
+        https://bugs.webkit.org/show_bug.cgi?id=80690
+
+        Reviewed by George Staikos.
+
+        1. NotificationPresenterImpl should be in namespace WebCore
+        2. Need to connect NotificationPresenterImpl to webcore the new way:
+           WebCore::provideNotification(Page*, NotificationPresenter*)
+        3. Remove the old way of connecting the Notification:
+           ChromeClientBlackBerry::notificationPresenter()
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore):
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+        * WebCoreSupport/NotificationPresenterImpl.cpp:
+        * WebCoreSupport/NotificationPresenterImpl.h:
+
 2012-03-08  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Always use the current focused node when processing focus changes

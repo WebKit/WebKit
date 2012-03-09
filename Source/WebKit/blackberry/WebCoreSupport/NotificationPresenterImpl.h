@@ -29,7 +29,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/text/StringHash.h>
 
-namespace WebKit {
+namespace WebCore {
 
 class NotificationPresenterImpl : public WebCore::NotificationPresenter, public BlackBerry::Platform::NotificationAckListener {
 public:

@@ -128,10 +128,6 @@ public:
     virtual void requestWebGLPermission(Frame*);
 #endif
 
-#if ENABLE(NOTIFICATIONS)
-    virtual NotificationPresenter* notificationPresenter() const;
-#endif
-
 #if ENABLE(SVG)
     virtual void didSetSVGZoomAndPan(Frame*, unsigned short zoomAndPan);
 #endif

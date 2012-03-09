@@ -26,9 +26,8 @@
 #include <ScriptExecutionContext.h>
 #include <UUID.h>
 
-using namespace WebCore;
 
-namespace WebKit {
+namespace WebCore {
 
 NotificationPresenter* NotificationPresenterImpl::instance()
 {

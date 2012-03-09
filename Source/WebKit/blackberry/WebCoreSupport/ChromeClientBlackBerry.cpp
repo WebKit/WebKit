@@ -43,7 +43,6 @@
 #include "KURL.h"
 #include "Node.h"
 #include "NotImplemented.h"
-#include "NotificationPresenterImpl.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PageGroupLoadDeferrer.h"
@@ -722,13 +721,6 @@ void ChromeClientBlackBerry::didSetSVGZoomAndPan(Frame* frame, unsigned short zo
         }
         didReceiveViewportArguments(frame, arguments);
     }
-}
-#endif
-
-#if ENABLE(NOTIFICATIONS)
-NotificationPresenter* ChromeClientBlackBerry::notificationPresenter() const
-{
-    return WebKit::NotificationPresenterImpl::instance();
 }
 #endif
 

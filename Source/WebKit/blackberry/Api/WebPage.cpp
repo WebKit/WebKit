@@ -72,6 +72,9 @@
 #include "LayerWebKitThread.h"
 #include "NetworkManager.h"
 #include "NodeRenderStyle.h"
+#if ENABLE(NOTIFICATIONS)
+#include "NotificationPresenterImpl.h"
+#endif
 #include "Page.h"
 #include "PageCache.h"
 #include "PageGroup.h"
@@ -427,6 +430,10 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     pageClients.deviceMotionClient = new DeviceMotionClientBlackBerry(this);
     pageClients.deviceOrientationClient = new DeviceOrientationClientBlackBerry(this);
     m_page = new Page(pageClients);
+
+#if ENABLE(NOTIFICATIONS)
+    WebCore::provideNotification(m_page, NotificationPresenterImpl::instance());
+#endif
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION) && ENABLE_DRT
     // In case running in DumpRenderTree mode set the controller to mock provider.
