@@ -194,7 +194,7 @@ bool EditorClientBlackBerry::shouldChangeSelectedRange(Range* fromRange, Range* 
             return false;
 
         // Check if this change does not represent a focus change and input is active and if so ensure the keyboard is visible.
-        if (m_webPagePrivate->m_inputHandler->isInputMode() && (fromRange->startContainer() == toRange->startContainer()))
+        if (m_webPagePrivate->m_inputHandler->isInputMode() && fromRange && toRange && (fromRange->startContainer() == toRange->startContainer()))
             m_webPagePrivate->m_inputHandler->notifyClientOfKeyboardVisibilityChange(true);
     }
 
