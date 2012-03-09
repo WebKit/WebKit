@@ -23,9 +23,9 @@
 #include <QMetaProperty>
 #include <QMetaType>
 #include <QtTest/QtTest>
-#include <qquickwebview_p.h>
-#include <qwebloadrequest_p.h>
-#include <qwebnavigationrequest_p.h>
+#include <private/qquickwebview_p.h>
+#include <private/qwebloadrequest_p.h>
+#include <private/qwebnavigationrequest_p.h>
 
 class tst_publicapi : public QObject {
     Q_OBJECT

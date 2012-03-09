@@ -18,8 +18,8 @@
 */
 
 #include "util.h"
-#include "qquickwebview_p.h"
-#include "qwebloadrequest_p.h"
+#include "private/qquickwebview_p.h"
+#include "private/qwebloadrequest_p.h"
 #include <stdio.h>
 
 void addQtWebProcessToPath()

@@ -25,11 +25,11 @@
 #include <QtDeclarative/qdeclarativeextensionplugin.h>
 
 #if defined(HAVE_WEBKIT2)
-#include "qquickwebpage_p.h"
-#include "qquickwebview_p.h"
-#include "qwebiconimageprovider_p.h"
-#include "qwebloadrequest_p.h"
-#include "qwebnavigationrequest_p.h"
+#include "private/qquickwebpage_p.h"
+#include "private/qquickwebview_p.h"
+#include "private/qwebiconimageprovider_p.h"
+#include "private/qwebloadrequest_p.h"
+#include "private/qwebnavigationrequest_p.h"
 
 #include <QtDeclarative/qdeclarativeengine.h>
 #include <QtNetwork/qnetworkreply.h>

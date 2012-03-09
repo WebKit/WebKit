@@ -10,69 +10,6 @@
 # or include() and a CONFIG += feature.
 CONFIG += config_step
 
-# In addition to the main shared QtWebKit library we also
-# need to link to any intermediate shared libraries. We do
-# this check here instead of in qtwebkit.prf to take advantage
-# of the WEBKIT variable processing below.
-CONFIG(qtwebkit):force_static_libs_as_shared {
-    WEBKIT += wtf webcore
-    !v8: WEBKIT += javascriptcore
-    !no_webkit2: WEBKIT += webkit2
-}
-
-# Reorder libraries so that the link and include order is correct,
-# and make sure the case matches the original case.
-libraries = WebKit2 WebCore JavaScriptCore WTF
-for(library, libraries) {
-    contains(WEBKIT, $$lower($$library)) {
-        WEBKIT -= $$lower($$library)
-        WEBKIT *= $$library
-    }
-}
-
-defineTest(needToLink) {
-    # The main dynamic library always needs to link in the intermediate libraries
-    contains(TARGET, QtWebKit): return(true)
-
-    force_static_libs_as_shared {
-        # So do the individual libraries if they are dynamic
-        contains(libraries, $$TARGET): return(true)
-
-        # Or anything that uses QtWebKit in this special config
-        CONFIG(qtwebkit): return(true)
-    }
-
-    # Lastly, we allow apps (jsc) to link directly to the intermediate
-    # libraries intead of using the exported symbols from QtWebKit.
-    contains(TEMPLATE, app):!CONFIG(qtwebkit): return(true)
-
-    # Anything else should just get include paths, etc, not link
-    return(false)
-}
-
-for(library, WEBKIT) {
-    # Juggle LIBS to keep the static link order correct
-    existing_libs = $$LIBS
-    unset(LIBS)
-
-    # We definitly need include paths and such (this will set
-    # SOURCE_DIR to the right path so we can use it below).
-    library_identifier = $$lower($$library)
-    include(../modules/$${library_identifier}.prf)
-
-    # More juggling
-    dependent_libs = $$LIBS
-    unset(LIBS)
-
-    # But we might also need to link against it
-    needToLink() {
-        linkAgainstLibrary($$library, $$eval(WEBKIT.$${library_identifier}.root_source_dir))
-        LIBS += $$dependent_libs
-    }
-
-    LIBS = $$existing_libs $$LIBS
-}
-
 # Help keep the build tree clean
 MOC_DIR = moc
 RCC_DIR = rcc
@@ -187,8 +124,9 @@ contains(TEMPLATE, lib) {
     # Build both debug and release configurations
     mac: CONFIG += build_all
 
-    # Prevent name clashes when building both debug and release
-    debug_and_release: TARGET = $$qtLibraryTarget($$TARGET)
+    # Prevent name clashes when building both debug and release. Qt5's module
+    # system already takes care of this for the top level QtWebKit library.
+    !module:debug_and_release: TARGET = $$qtLibraryTarget($$TARGET)
 
     isEmpty(DESTDIR): DESTDIR = $$activeBuildConfig()
 
@@ -200,6 +138,74 @@ contains(TEMPLATE, lib) {
         !linux-g++*:contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
         unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
     }
+}
+
+contains(QT, webkit) {
+    haveQt(4) {
+        # Qt 4 still uses custom rules to depend on QtWebKit
+        load(qtwebkit)
+    }
+
+    # In addition to the main shared QtWebKit library we also
+    # need to link to any intermediate shared libraries.
+    force_static_libs_as_shared {
+        WEBKIT += wtf webcore
+        !v8: WEBKIT += javascriptcore
+        !no_webkit2: WEBKIT += webkit2
+    }
+}
+
+# Reorder libraries so that the link and include order is correct,
+# and make sure the case matches the original case.
+libraries = WebKit2 WebCore JavaScriptCore WTF
+for(library, libraries) {
+    contains(WEBKIT, $$lower($$library)) {
+        WEBKIT -= $$lower($$library)
+        WEBKIT *= $$library
+    }
+}
+
+defineTest(needToLink) {
+    # The main dynamic library always needs to link in the intermediate libraries
+    contains(TARGET, $$resolveFinalLibraryName($${QT.webkit.name})): return(true)
+
+    force_static_libs_as_shared {
+        # So do the individual libraries if they are dynamic
+        contains(libraries, $$TARGET): return(true)
+
+        # Or anything that uses QtWebKit in this special config
+        contains(QT, webkit): return(true)
+    }
+
+    # Lastly, we allow apps (jsc) to link directly to the intermediate
+    # libraries intead of using the exported symbols from QtWebKit.
+    contains(TEMPLATE, app):!contains(QT, webkit): return(true)
+
+    # Anything else should just get include paths, etc, not link
+    return(false)
+}
+
+for(library, WEBKIT) {
+    # Juggle LIBS to keep the static link order correct
+    existing_libs = $$LIBS
+    unset(LIBS)
+
+    # We definitly need include paths and such (this will set
+    # SOURCE_DIR to the right path so we can use it below).
+    library_identifier = $$lower($$library)
+    include(../modules/$${library_identifier}.prf)
+
+    # More juggling
+    dependent_libs = $$LIBS
+    unset(LIBS)
+
+    # But we might also need to link against it
+    needToLink() {
+        linkAgainstLibrary($$library, $$eval(WEBKIT.$${library_identifier}.root_source_dir))
+        LIBS += $$dependent_libs
+    }
+
+    LIBS = $$existing_libs $$LIBS
 }
 
 equals(_PRO_FILE_, $${ROOT_WEBKIT_DIR}/WebKit.pro):!isEmpty(OVERRIDE_SUBDIRS) {
@@ -291,5 +297,10 @@ for(target, $$list($$unique(DEFAULT_TARGETS))) {
 # that also contains either of those two words, so we make DESTDIR
 # relative.
 DESTDIR = $$replace(DESTDIR, ^$${ROOT_BUILD_DIR}, $${BUILD_ROOT_RELATIVE_TO_OUT_PWD})
+
+# Since we loaded our own rules for depending on QtWebKit, and we
+# have no more logic that checks contains(QT, webkit), we unset it
+# here so that Qt will not add its own include and library paths.
+haveQt(4): QT -= webkit webkit-private
 
 load(default_post) # Load Qt's defaults

@@ -27,7 +27,7 @@
  */
 
 #include "UrlLoader.h"
-#include "qquickwebview_p.h"
+#include "private/qquickwebview_p.h"
 
 #include <QDebug>
 #include <QFile>

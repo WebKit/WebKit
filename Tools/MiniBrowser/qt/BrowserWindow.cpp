@@ -28,8 +28,8 @@
 
 #include "BrowserWindow.h"
 
-#include "qquickwebpage_p.h"
-#include "qquickwebview_p.h"
+#include "private/qquickwebpage_p.h"
+#include "private/qquickwebview_p.h"
 #include "utils.h"
 
 #include <QDeclarativeEngine>

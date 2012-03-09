@@ -41,11 +41,9 @@ HEADERS += \
 
 WEBKIT += wtf webcore
 
-CONFIG += qtwebkit
-
 DESTDIR = $$ROOT_BUILD_DIR/bin
 
-QT += network
+QT += network webkit
 
 macx:QT += xml
 haveQt(5): QT += printsupport widgets

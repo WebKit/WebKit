@@ -11,9 +11,7 @@ DESTDIR = $${ROOT_BUILD_DIR}/bin
 
 SOURCES += qt/MainQt.cpp
 
-CONFIG += qtwebkit
-
-QT += network
+QT += network webkit
 macx: QT += xml
 
 contains(QT_CONFIG, opengl) {

@@ -20,7 +20,7 @@
 #include "../bytearraytestdata.h"
 #include "../util.h"
 
-#include "qquickwebview_p.h"
+#include "private/qquickwebview_p.h"
 #include <QGuiApplication>
 #include <QVarLengthArray>
 #include <QtQuickTest/quicktest.h>

@@ -3,7 +3,7 @@ SOURCES += tst_qmltests.cpp
 TARGET = tst_qmltests_DesktopBehavior
 OBJECTS_DIR = obj_DesktopBehavior/$$activeBuildConfig()
 
-CONFIG += qtwebkit-private
+QT += webkit-private
 CONFIG += warn_on testcase
 
 QT -= testlib

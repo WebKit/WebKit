@@ -1,3 +1,3 @@
 include(../tests.pri)
 SOURCES += $${TARGET}.cpp
-CONFIG += qtwebkit-private
+QT += webkit-private

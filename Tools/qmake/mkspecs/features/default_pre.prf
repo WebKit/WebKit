@@ -29,8 +29,13 @@ pro_file_name = $$basename(_PRO_FILE_)
 !equals(pro_file_name, configure.pro): QMAKE_SYNCQT_OUTDIR = $$ROOT_BUILD_DIR
 
 # Load Qt's defaults after we've resolved the build directory. This will also
-# run syncqt if there is a sync.profile in the $$_PRO_FILE_PWD_
+# run syncqt if there is a sync.profile in the $$_PRO_FILE_PWD_. We never want
+# to enable Qt's concept of a developer-build, since we take care of installing
+# our own module file. See api.pri for details about how we utilize this.
+old_qtdir=$$QTDIR
+QTDIR=no-developer-build-please
 load(default_pre)
+QTDIR=$$old_qtdir
 
 # Load results of config tests (only supported in Qt 5)
 haveQt(5): include($${ROOT_BUILD_DIR}/Tools/qmake/.qmake.cache, , true)
@@ -100,9 +105,12 @@ haveQt(5): {
     }
 }
 
-QT.webkit.modulefile = $${ROOT_WEBKIT_DIR}/Tools/qmake/mkspecs/modules/qt_webkit.pri
-include($$QT.webkit.modulefile)
-VERSION = $${QT.webkit.VERSION}
+haveQt(4) {
+    # Qt5 will automatically load the module files for us, but for Qt4
+    # we have to do it manually so that the various QT.webkit.foo names
+    # are available.
+    include($${ROOT_WEBKIT_DIR}/Tools/qmake/qt_webkit.pri)
+}
 
 # Set some defaults for specific platforms
 CONFIG += include_webinspector

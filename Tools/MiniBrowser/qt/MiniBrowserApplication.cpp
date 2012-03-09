@@ -29,7 +29,7 @@
 #include "MiniBrowserApplication.h"
 
 #include "BrowserWindow.h"
-#include "qquickwebview_p.h"
+#include "private/qquickwebview_p.h"
 #include "utils.h"
 #include <QRegExp>
 #include <QEvent>

@@ -25,13 +25,11 @@ SOURCES += \
 
 DESTDIR = $${ROOT_BUILD_DIR}/bin
 
-QT = core gui widgets network declarative testlib quick
+QT = core gui widgets network declarative testlib quick webkit
 
 load(features)
 
 WEBKIT += wtf javascriptcore webkit2
-
-CONFIG += qtwebkit
 
 DEFINES += USE_SYSTEM_MALLOC=1
 

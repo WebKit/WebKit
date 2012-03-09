@@ -9,9 +9,7 @@ SOURCES += ../util.cpp \
            ../bytearraytestdata.cpp
 INCLUDEPATH += $$PWD
 
-QT += testlib declarative quick
-
-CONFIG += qtwebkit
+QT += testlib declarative quick webkit
 
 DEFINES += TESTS_SOURCE_DIR=\\\"$$PWD\\\" \
            QWP_PATH=\\\"$${ROOT_BUILD_DIR}/bin\\\"

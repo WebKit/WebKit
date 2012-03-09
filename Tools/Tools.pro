@@ -27,6 +27,7 @@ OTHER_FILES = \
     qmake/README \
     qmake/configure.pro \
     qmake/sync.profile \
+    qmake/qt_webkit.pri \
     qmake/config.tests/README \
     qmake/config.tests/fontconfig/* \
     qmake/config.tests/gccdepends/* \

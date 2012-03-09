@@ -50,13 +50,13 @@ HEADERS += \
 
 DESTDIR = $${ROOT_BUILD_DIR}/lib
 
-QT += declarative widgets
+QT += declarative widgets webkit
 
 load(features)
 
 WEBKIT += wtf javascriptcore webcore
 
-CONFIG += plugin qtwebkit rpath
+CONFIG += plugin rpath
 
 contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
 
