@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 600x250
+  RenderSVGRoot {svg} at (0,0) size 600x250
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="Default"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="Fitted"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
+        [feImage image-size="100x100"]
+      RenderSVGResourceFilter {filter} [id="Shifted"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feImage image-size="100x100"]
+    RenderSVGRect {rect} at (0,0) size 600x250 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=598.00] [height=248.00]
+    RenderSVGContainer {g} at (40,5) size 520x241
+      RenderSVGRect {rect} at (40,5) size 120x241 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=25.00] [width=100.00] [height=200.00]
+        [filter="Default"] RenderSVGResourceFilter {filter} at (40,5) size 120x240
+      RenderSVGRect {rect} at (49,24) size 102x202 [stroke={[type=SOLID] [color=#008000]}] [x=50.00] [y=25.00] [width=100.00] [height=200.00]
+      RenderSVGRect {rect} at (240,5) size 120x241 [fill={[type=SOLID] [color=#000000]}] [x=250.00] [y=25.00] [width=100.00] [height=200.00]
+        [filter="Fitted"] RenderSVGResourceFilter {filter} at (240,5) size 120x240
+      RenderSVGRect {rect} at (249,24) size 102x202 [stroke={[type=SOLID] [color=#008000]}] [x=250.00] [y=25.00] [width=100.00] [height=200.00]
+      RenderSVGRect {rect} at (440,5) size 120x241 [fill={[type=SOLID] [color=#000000]}] [x=450.00] [y=25.00] [width=100.00] [height=200.00]
+        [filter="Shifted"] RenderSVGResourceFilter {filter} at (440,5) size 120x240
+      RenderSVGRect {rect} at (449,24) size 102x202 [stroke={[type=SOLID] [color=#008000]}] [x=450.00] [y=25.00] [width=100.00] [height=200.00]
