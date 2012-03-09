@@ -1,0 +1,18 @@
+This tests the activeElement property of a ShadowRoot.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+PASS shadowRoot.activeElement is defined.
+PASS shadowRootInside.activeElement is defined.
+PASS firstChildInTreeOne.focus();shadowRoot.activeElement is firstChildInTreeOne
+PASS secondChildInTreeOne.focus();shadowRoot.activeElement is secondChildInTreeOne
+PASS secondChildInTreeOne.blur();shadowRoot.activeElement is document.body
+PASS firstChildInTreeTwo.focus();shadowRootInside.activeElement is firstChildInTreeTwo
+PASS secondChildInTreeTwo.focus();shadowRootInside.activeElement is secondChildInTreeTwo
+PASS secondChildInTreeTwo.blur();shadowRootInside.activeElement is document.body
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

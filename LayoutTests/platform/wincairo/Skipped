@@ -1971,6 +1971,7 @@ fast/dom/shadow/content-element-api.html
 fast/dom/shadow/content-element-outside-shadow.html
 fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-disable.html
+fast/dom/shadow/shadow-root-activeElement.html
 fast/dom/shadow/shadow-root-attached.html
 fast/dom/shadow/shadow-root-innerHTML.html
 fast/dom/shadow/shadow-root-new.html

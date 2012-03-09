@@ -27,6 +27,7 @@
 #ifndef ShadowRoot_h
 #define ShadowRoot_h
 
+#include "Document.h"
 #include "DocumentFragment.h"
 #include "ExceptionCode.h"
 #include "TreeScope.h"
@@ -73,6 +74,8 @@ public:
     String innerHTML() const;
     void setInnerHTML(const String&, ExceptionCode&);
 
+    Element* activeElement() const;
+
     ShadowRoot* youngerShadowRoot() const { return prev(); }
     ShadowRoot* olderShadowRoot() const { return next(); }
 
@@ -115,6 +118,13 @@ inline void ShadowRoot::setAssignedTo(InsertionPoint* insertionPoint)
 inline bool ShadowRoot::isUsedForRendering() const
 {
     return isYoungest() || assignedTo();
+}
+
+inline Element* ShadowRoot::activeElement() const
+{
+    if (document()->isHTMLDocument())
+        return treeScope()->activeElement();
+    return 0;
 }
 
 inline const ShadowRoot* toShadowRoot(const Node* node)

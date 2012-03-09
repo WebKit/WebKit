@@ -33,6 +33,7 @@ module core {
         ConstructorRaisesException
     ] ShadowRoot : DocumentFragment {
         readonly attribute Element host;
+        readonly attribute Element activeElement;
 
         attribute [TreatNullAs=NullString] DOMString innerHTML
             setter raises(DOMException);

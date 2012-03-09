@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="console">
+</div>
+<script>
+description("This tests the activeElement property of a ShadowRoot.");
+
+if (!window.internals)
+    debug('This test runs on DRT only');
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+
+
+// First ShodowHost
+shadowHost = document.createElement("div");
+document.body.appendChild(shadowHost);
+shadowRoot = new WebKitShadowRoot(shadowHost);
+
+// Second ShadowHost
+shadowHostInside = document.createElement("div");
+shadowRoot.appendChild(shadowHostInside);
+shadowRootInside = new WebKitShadowRoot(shadowHostInside);
+
+// Add two children inside first Shadow host
+var firstChildInTreeOne = document.createElement("p");
+firstChildInTreeOne.setAttribute("id", "firstChildInTreeOne");
+firstChildInTreeOne.tabIndex = "1";
+shadowRoot.appendChild(firstChildInTreeOne);
+
+var secondChildInTreeOne = document.createElement("p");
+secondChildInTreeOne.setAttribute("id", "secondChildInTreeOne");
+secondChildInTreeOne.tabIndex = "2";
+shadowRoot.appendChild(secondChildInTreeOne);
+
+// Add two children inside second shadow host
+var firstChildInTreeTwo = document.createElement("p");
+firstChildInTreeTwo.setAttribute("id", "firstChildInTreeTwo");
+firstChildInTreeTwo.tabIndex = "3";
+shadowRootInside.appendChild(firstChildInTreeTwo);
+
+var secondChildInTreeTwo = document.createElement("p");
+secondChildInTreeTwo.setAttribute("id", "secondChildInTreeTwo");
+secondChildInTreeTwo.tabIndex = "4";
+shadowRootInside.appendChild(secondChildInTreeTwo);
+
+shouldBeDefined("shadowRoot.activeElement");
+shouldBeDefined("shadowRootInside.activeElement");
+shouldBe("firstChildInTreeOne.focus();shadowRoot.activeElement", "firstChildInTreeOne");
+shouldBe("secondChildInTreeOne.focus();shadowRoot.activeElement", "secondChildInTreeOne");
+shouldBe("secondChildInTreeOne.blur();shadowRoot.activeElement", "document.body");
+shouldBe("firstChildInTreeTwo.focus();shadowRootInside.activeElement", "firstChildInTreeTwo");
+shouldBe("secondChildInTreeTwo.focus();shadowRootInside.activeElement", "secondChildInTreeTwo");
+shouldBe("secondChildInTreeTwo.blur();shadowRootInside.activeElement", "document.body");
+
+}
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
