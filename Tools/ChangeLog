@@ -1,3 +1,12 @@
+2012-03-09  Ionut Biru  <ibiru@archlinux.org>
+
+        [BUILD] use detected python to run generate-gtkdoc
+        https://bugs.webkit.org/show_bug.cgi?id=80695
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Use $(PYTHON) instead of plain `python`
+
 2012-03-09  Nat Duca  <nduca@chromium.org>
 
         Make check-webkit-style complain about "no new tests" lines in changelogs

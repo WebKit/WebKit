@@ -324,7 +324,7 @@ if ENABLE_WEBKIT2
 	  fi; \
 	fi
 endif
-	$(srcdir)/Tools/gtk/generate-gtkdoc --rebase --virtual-root=$${DESTDIR}
+	@(AM_V_GEN)$(PYTHON) $(srcdir)/Tools/gtk/generate-gtkdoc --rebase --virtual-root=$${DESTDIR}
 
 uninstall-local:
 	@DOC_MODULE_VERSION=`cat ./Documentation/webkitgtk/version.xml`; \
