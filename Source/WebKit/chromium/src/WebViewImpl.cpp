@@ -104,6 +104,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
+#include "SharedGraphicsContext3D.h"
 #include "SpeechInputClientImpl.h"
 #include "TextIterator.h"
 #include "Timer.h"
@@ -3335,6 +3336,14 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
     }
 #endif
     return 0;
+}
+
+WebGraphicsContext3D* WebViewImpl::sharedGraphicsContext3D()
+{
+    if (!m_page->settings()->acceleratedCompositingEnabled() || !allowsAcceleratedCompositing())
+        return 0;
+
+    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(SharedGraphicsContext3D::get());
 }
 
 void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,

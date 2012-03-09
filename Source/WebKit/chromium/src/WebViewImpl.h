@@ -457,6 +457,8 @@ public:
     // we could not successfully instantiate a context.
     virtual WebGraphicsContext3D* graphicsContext3D();
 
+    virtual WebGraphicsContext3D* sharedGraphicsContext3D();
+
     PassOwnPtr<WebGraphicsContext3D> createCompositorGraphicsContext3D();
 
     virtual void setVisibilityState(WebPageVisibilityState, bool);

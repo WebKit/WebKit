@@ -430,6 +430,10 @@ public:
     // APIs.
     virtual WebGraphicsContext3D* graphicsContext3D() = 0;
 
+    // Context that's in the compositor's share group, but is not the compositor context itself.
+    // Can be used for allocating resources that the compositor will later access.
+    virtual WebGraphicsContext3D* sharedGraphicsContext3D() = 0;
+
     // Visibility -----------------------------------------------------------
 
     // Sets the visibility of the WebView.

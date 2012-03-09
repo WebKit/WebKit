@@ -1,3 +1,24 @@
+2012-03-08  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Expose the shared graphics context on WebView so callers can allocate resources on the main thread for the compositor to use
+        https://bugs.webkit.org/show_bug.cgi?id=80670
+
+        Reviewed by Stephen White.
+
+        This exposes a context on WebView that is in the compositor's share group and can be used directly from the main
+        thread. This is useful for content that needs to allocate resources for the compositor to use, but cannot
+        directly use the compositor's context either because it cannot access the correct thread or because it needs to
+        initialize in situations where we cannot initialize a compositor (view) context - for instance before the native
+        window is created.
+
+        * public/WebView.h:
+        (WebView):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::sharedGraphicsContext3D):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-03-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Use opaque paints in CCOcclusionTracker
