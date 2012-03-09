@@ -403,12 +403,12 @@ class ChromiumDriver(Driver):
         Driver.__init__(self, port, worker_number, pixel_tests, no_timeout)
         self._proc = None
         self._image_path = None
-        if self._pixel_tests:
-            self._image_path = self._port._filesystem.join(self._port.results_directory(), 'png_result%s.png' % self._worker_number)
 
     def _wrapper_options(self, pixel_tests):
         cmd = []
         if pixel_tests or self._pixel_tests:
+            if not self._image_path:
+                self._image_path = self._port._filesystem.join(self._port.results_directory(), 'png_result%s.png' % self._worker_number)
             # See note above in diff_image() for why we need _convert_path().
             cmd.append("--pixel-tests=" + self._port._convert_path(self._image_path))
         # FIXME: This is not None shouldn't be necessary, unless --js-flags="''" changes behavior somehow?

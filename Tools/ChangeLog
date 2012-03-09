@@ -1,3 +1,14 @@
+2012-03-08  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Exception running reftest with --no-pixel-tests
+        https://bugs.webkit.org/show_bug.cgi?id=80642
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.__init__):
+        (ChromiumDriver._wrapper_options):
+
 2012-03-08  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [NRWT] Fix --platform=qt-5.0 --new-baseline combo
