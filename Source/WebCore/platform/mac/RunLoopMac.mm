@@ -116,7 +116,7 @@ void RunLoop::stop()
     ASSERT(m_runLoop == CFRunLoopGetCurrent());
     
     if (m_runLoop == main()->m_runLoop && m_nestingLevel == 1) {
-        [NSApp stop:nil];
+        [[NSApplication sharedApplication] stop:nil];
         NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined
                                             location:NSMakePoint(0, 0)
                                        modifierFlags:0
