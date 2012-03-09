@@ -1,3 +1,15 @@
+2012-03-08  Jeff Timanus  <twiz@chromium.org>
+
+        [chromium] Force the Canvas2D GPU texture cache to 0 bytes for backgrounded tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=79948
+
+        Reviewed by Stephen White.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GrMemoryAllocationChangedCallback::onGpuMemoryAllocationChanged):
+        (WebCore::GraphicsContext3DPrivate::grContext):
+        (WebCore::GraphicsContext3DPrivate::setVisibilityCHROMIUM):
+
 2012-03-08  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Replace completelyContains with Region::contains()

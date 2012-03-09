@@ -67,6 +67,15 @@
 #include "GrGLInterface.h"
 #endif
 
+namespace {
+
+// The limit of the number of textures we hold in the GrContext's bitmap->texture cache.
+const int maxGaneshTextureCacheCount = 512;
+// The limit of the bytes allocated toward textures in the GrContext's bitmap->texture cache.
+const size_t maxGaneshTextureCacheBytes = 96 * 1024 * 1024;
+
+}
+
 // There are two levels of delegation in this file:
 //
 //   1. GraphicsContext3D delegates to GraphicsContext3DPrivate. This is done
@@ -167,8 +176,15 @@ public:
 
     virtual void onGpuMemoryAllocationChanged(size_t gpuResourceSizeInBytes)
     {
-        if (!gpuResourceSizeInBytes && m_context->grContext())
-            m_context->grContext()->freeGpuResources();
+        GrContext* context = m_context->grContext();
+        if (!context)
+            return;
+
+        if (!gpuResourceSizeInBytes) {
+            context->freeGpuResources();
+            context->setTextureCacheLimits(0, 0);
+        } else
+            context->setTextureCacheLimits(maxGaneshTextureCacheCount, maxGaneshTextureCacheBytes);
     }
 
 private:
@@ -177,16 +193,11 @@ private:
 
 GrContext* GraphicsContext3DPrivate::grContext()
 {
-    // Limit the number of textures we hold in the bitmap->texture cache.
-    static const int maxTextureCacheCount = 512;
-    // Limit the bytes allocated toward textures in the bitmap->texture cache.
-    static const size_t maxTextureCacheBytes = 96 * 1024 * 1024;
-
     if (!m_grContext) {
         SkAutoTUnref<GrGLInterface> interface(m_impl->createGrGLInterface());
         m_grContext = GrContext::Create(kOpenGL_Shaders_GrEngine, reinterpret_cast<GrPlatform3DContext>(interface.get()));
         if (m_grContext) {
-            m_grContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);
+            m_grContext->setTextureCacheLimits(maxGaneshTextureCacheCount, maxGaneshTextureCacheBytes);
             Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(getExtensions());
             if (extensions3DChromium->supports("GL_CHROMIUM_gpu_memory_manager"))
                 extensions3DChromium->setGpuMemoryAllocationChangedCallbackCHROMIUM(adoptPtr(new GrMemoryAllocationChangedCallback(this)));
