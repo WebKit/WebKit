@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class ClientRect;
-class ClientRectList;
 class Document;
 class DocumentMarker;
 class Element;
@@ -88,10 +87,6 @@ public:
 #endif
 
     PassRefPtr<ClientRect> boundingBox(Element*, ExceptionCode&);
-
-#if ENABLE(INSPECTOR)
-    PassRefPtr<ClientRectList> inspectorHighlightRects(Document*, ExceptionCode&);
-#endif
 
     unsigned markerCountForNode(Node*, const String&, ExceptionCode&);
     PassRefPtr<Range> markerRangeForNode(Node*, const String& markerType, unsigned index, ExceptionCode&);

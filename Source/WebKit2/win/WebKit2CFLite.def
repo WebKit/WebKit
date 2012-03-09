@@ -135,9 +135,6 @@ EXPORTS
         ?toNode@WebCore@@YAPAVNode@1@VJSValue@JSC@@@Z
         ??0ClientRect@WebCore@@AAE@ABVIntRect@1@@Z
         ??0ClientRect@WebCore@@AAE@XZ
-        ??0ClientRectList@WebCore@@AAE@XZ
-        ??0ClientRectList@WebCore@@AAE@ABV?$Vector@VFloatQuad@WebCore@@$0A@@WTF@@@Z
-        ??1ClientRectList@WebCore@@QAE@XZ
         ??0String@WTF@@QAE@PBD@Z
         ??0String@WTF@@QAE@PB_W@Z
         ??1FrameDestructionObserver@WebCore@@MAE@XZ
@@ -160,7 +157,6 @@ EXPORTS
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
         ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
         ?getElementById@TreeScope@WebCore@@QBEPAVElement@2@ABVAtomicString@WTF@@@Z
-        ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z
         ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVElement@2@PBVRange@2@AAI2@Z
         ?hasShadowRoot@Element@WebCore@@QBE_NXZ
         ?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z
@@ -194,7 +190,6 @@ EXPORTS
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRect@1@@Z
-        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRectList@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVRange@1@@Z
         ?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z
