@@ -3897,3 +3897,5 @@ BUGWK80563 : compositing/reflections/nested-reflection-opacity.html = PASS IMAGE
 
 BUGWK80665 : fast/js/string-match.html = TEXT
 BUGWK80665 : fast/js/string-replace-2.html = TEXT
+
+BUGABARTH SNOWLEOPARD : fast/events/input-image-scrolled-x-y.html = PASS CRASH
