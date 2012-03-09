@@ -357,8 +357,10 @@ void LayerChromium::setMaskLayer(LayerChromium* maskLayer)
     if (m_maskLayer)
         m_maskLayer->setLayerTreeHost(0);
     m_maskLayer = maskLayer;
-    if (m_maskLayer)
+    if (m_maskLayer) {
         m_maskLayer->setLayerTreeHost(m_layerTreeHost.get());
+        m_maskLayer->setIsMask(true);
+    }
     setNeedsCommit();
 }
 
