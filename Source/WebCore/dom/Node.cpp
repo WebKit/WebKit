@@ -2776,10 +2776,6 @@ bool Node::dispatchEvent(PassRefPtr<Event> event)
 
 void Node::dispatchSubtreeModifiedEvent()
 {
-    // FIXME: This call shouldn't be necessary, since it should have already been
-    // called whenever any child is inserted or removed, or an attribute changed.
-    document()->incDOMTreeVersion();
-
     if (isInShadowTree())
         return;
 

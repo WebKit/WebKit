@@ -54,8 +54,8 @@ bool HTMLScriptElement::isURLAttribute(Attribute* attr) const
 
 void HTMLScriptElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    ScriptElement::childrenChanged();
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    ScriptElement::childrenChanged();
 }
 
 void HTMLScriptElement::parseAttribute(Attribute* attr)

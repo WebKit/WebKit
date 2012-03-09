@@ -668,6 +668,8 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
 
 void Element::attributeChanged(Attribute* attr)
 {
+    document()->incDOMTreeVersion();
+
     if (isIdAttributeName(attr->name()))
         idAttributeChanged(attr);
     else if (attr->name() == HTMLNames::nameAttr)
@@ -741,8 +743,6 @@ void Element::parserSetAttributes(PassOwnPtr<AttributeVector> attributeVector, F
 {
     ASSERT(!inDocument());
     ASSERT(!parentNode());
-
-    document()->incDOMTreeVersion();
 
     ASSERT(!m_attributeData);
 
@@ -1990,8 +1990,6 @@ bool Element::hasNamedNodeMap() const
 
 void Element::willModifyAttribute(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue)
 {
-    document()->incDOMTreeVersion();
-
     if (isIdAttributeName(name))
         updateId(oldValue, newValue);
     else if (name == HTMLNames::nameAttr)

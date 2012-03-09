@@ -58,10 +58,10 @@ void HTMLTitleElement::removedFromDocument()
 
 void HTMLTitleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
+    HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     m_title = textWithDirection();
     if (inDocument())
         document()->setTitleElement(m_title, this);
-    HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 
 String HTMLTitleElement::text() const

@@ -386,7 +386,6 @@ static void willRemoveChild(Node* child)
 {
     // update auxiliary doc info (e.g. iterators) to note that node is being removed
     child->document()->nodeWillBeRemoved(child);
-    child->document()->incDOMTreeVersion();
 
     // fire removed from document mutation events.
     dispatchChildRemovalEvents(child);
@@ -396,7 +395,6 @@ static void willRemoveChild(Node* child)
 static void willRemoveChildren(ContainerNode* container)
 {
     container->document()->nodeChildrenWillBeRemoved(container);
-    container->document()->incDOMTreeVersion();
 
     NodeVector children;
     collectNodes(container, children);
@@ -449,7 +447,6 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 #if ENABLE(FULLSCREEN_API)
     document()->removeFullScreenElementOfSubtree(child.get());
 #endif
-
 
     // Events fired when blurring currently focused node might have moved this
     // child into a different parent.
@@ -687,7 +684,6 @@ void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
     allowEventDispatch();
 
     // FIXME: Why doesn't this use notifyChildInserted(newChild) instead?
-    document()->incDOMTreeVersion();
     if (inDocument())
         newChild->insertedIntoDocument();
     childrenChanged(true, last, 0, 1);
@@ -842,6 +838,7 @@ void ContainerNode::removedFromTree(bool deep)
 
 void ContainerNode::childrenChanged(bool changedByParser, Node*, Node*, int childCountDelta)
 {
+    document()->incDOMTreeVersion();
     if (!changedByParser && childCountDelta)
         document()->updateRangesAfterChildrenChanged(this);
     invalidateNodeListsCacheAfterChildrenChanged();
@@ -1102,8 +1099,6 @@ static void notifyChildInserted(Node* child)
         c->insertedIntoDocument();
     else if (c->isContainerNode())
         toContainerNode(c.get())->insertedIntoTree(true);
-
-    document->incDOMTreeVersion();
 }
 
 static void dispatchChildInsertionEvents(Node* child)

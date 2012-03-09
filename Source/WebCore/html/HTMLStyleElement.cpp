@@ -190,8 +190,8 @@ void HTMLStyleElement::willRemove()
 
 void HTMLStyleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    StyleElement::childrenChanged(this);
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    StyleElement::childrenChanged(this);
 }
 
 const AtomicString& HTMLStyleElement::media() const

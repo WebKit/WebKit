@@ -144,8 +144,8 @@ void SVGScriptElement::insertedIntoDocument()
 
 void SVGScriptElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    ScriptElement::childrenChanged();
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    ScriptElement::childrenChanged();
 }
 
 bool SVGScriptElement::isURLAttribute(Attribute* attr) const

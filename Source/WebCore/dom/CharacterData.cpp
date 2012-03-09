@@ -81,6 +81,7 @@ unsigned CharacterData::parserAppendData(const UChar* data, unsigned dataLength,
     m_data.append(data, end);
 
     updateRenderer(oldLength, 0);
+    document()->incDOMTreeVersion();
     // We don't call dispatchModifiedEvent here because we don't want the
     // parser to dispatch DOM mutation events.
     if (parentNode())
@@ -178,6 +179,7 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     String oldData = m_data;
     m_data = newData;
     updateRenderer(offsetOfReplacedData, oldLength);
+    document()->incDOMTreeVersion();
     dispatchModifiedEvent(oldData);
 }
 

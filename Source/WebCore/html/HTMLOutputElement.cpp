@@ -81,6 +81,8 @@ void HTMLOutputElement::setFor(const String& value)
 
 void HTMLOutputElement::childrenChanged(bool createdByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
+    HTMLFormControlElement::childrenChanged(createdByParser, beforeChange, afterChange, childCountDelta);
+
     if (createdByParser || m_isSetTextContentInProgress) {
         m_isSetTextContentInProgress = false;
         return;
@@ -88,7 +90,6 @@ void HTMLOutputElement::childrenChanged(bool createdByParser, Node* beforeChange
 
     if (m_isDefaultValueMode)
         m_defaultValue = textContent();
-    HTMLFormControlElement::childrenChanged(createdByParser, beforeChange, afterChange, childCountDelta);
 }
 
 void HTMLOutputElement::reset()
