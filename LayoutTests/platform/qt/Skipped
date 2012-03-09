@@ -2360,6 +2360,40 @@ fast/line-grid/line-grid-contains-value.html
 fast/borders/border-image-slice-constrained.html
 fast/borders/scaled-border-image.html
 
+# new tests without expected files, need investigation
+css3/filters/composited-during-animation-layertree.html
+css3/filters/composited-during-transition-layertree.html
+css3/filters/composited-during-animation.html
+svg/foreignObject/fO-parent-display-none-with-relative-pos-content.svg
+svg/foreignObject/fO-parent-of-parent-display-none.svg
+svg/foreignObject/fO-parent-display-none.svg
+svg/foreignObject/fO-display-none-with-relative-pos-content.svg
+svg/foreignObject/fO-display-none.svg
+svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content.svg
+svg/foreignObject/fO-parent-display-changes.svg
+fast/forms/fieldset-legend-padding-unclipped-fieldset-border.html
+fast/line-grid/line-align-left-edges.html
+fast/line-grid/line-align-right-edges.html
+fast/speech/input-appearance-speechbutton.html
+fast/speech/input-appearance-searchandspeech.html
+fast/speech/speech-bidi-rendering.html
+fast/css/relative-positioned-block-nested-with-inline-parent-dynamic-removed.html
+fast/css/non-empty-span.html
+fast/css/relative-positioned-block-with-inline-parent-keeps-style.html
+fast/css/font-face-weight-matching.html
+fast/css/relative-positioned-block-nested-with-inline-parent-multiple-descendant-blocks-dynamic.html
+fast/css/relative-positioned-block-with-inline-parent-dynamic-removed.html
+fast/css/relative-positioned-block-with-inline-ancestor-dynamic.html
+fast/css/relative-positioned-block-with-inline-ancestor-and-parent-dynamic.html
+fast/css/relative-positioned-block-nested-with-inline-parent-dynamic.html
+fast/css/relative-positioned-block-nested-with-inline-parent.html
+fast/css/relative-positioned-block-with-inline-ancestor-dynamic-removed.html
+fast/css/relative-positioned-block-with-inline-parent-dynamic.html
+fast/css/font-face-synthetic-bold-italic.html
+fast/css/relative-positioned-block-with-inline-ancestor.html
+fast/repaint/transform-rotate-and-remove.html
+compositing/overflow/ancestor-overflow.html
+
 # ============================================================================= #
 # Qt 4.7 related bugs
 # ============================================================================= #
