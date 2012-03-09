@@ -39,39 +39,39 @@ public:
     // Construct with the starting page scale and scroll offset (which is in
     // pageScaleStart space). The window size is the user-viewable area
     // in pixels.
-    static PassOwnPtr<CCPageScaleAnimation> create(const IntSize& scrollStart, float pageScaleStart, const IntSize& windowSize, const IntSize& contentSize, double startTimeMs);
+    static PassOwnPtr<CCPageScaleAnimation> create(const IntSize& scrollStart, float pageScaleStart, const IntSize& windowSize, const IntSize& contentSize, double startTime);
 
     // The following methods initialize the animation. Call one of them
     // immediately after construction to set the final scroll and page scale.
 
     // Zoom while explicitly specifying the top-left scroll position. The
     // scroll offset is in finalPageScale coordinates.
-    void zoomTo(const IntSize& finalScroll, float finalPageScale, double durationMs);
+    void zoomTo(const IntSize& finalScroll, float finalPageScale, double duration);
 
     // Zoom based on a specified onscreen anchor, which will remain at the same
     // position on the screen throughout the animation. The anchor is in local
     // space relative to scrollStart.
-    void zoomWithAnchor(const IntSize& anchor, float finalPageScale, double durationMs);
+    void zoomWithAnchor(const IntSize& anchor, float finalPageScale, double duration);
 
     // Call these functions while the animation is in progress to output the
     // current state.
-    IntSize scrollOffsetAtTime(double timeMs) const;
-    float pageScaleAtTime(double timeMs) const;
-    bool isAnimationCompleteAtTime(double timeMs) const;
+    IntSize scrollOffsetAtTime(double time) const;
+    float pageScaleAtTime(double time) const;
+    bool isAnimationCompleteAtTime(double time) const;
 
     // The following methods return state which is invariant throughout the
     // course of the animation.
-    double startTimeMs() const { return m_startTimeMs; }
-    double durationMs() const { return m_durationMs; }
-    double endTimeMs() const { return m_startTimeMs + m_durationMs; }
+    double startTime() const { return m_startTime; }
+    double duration() const { return m_duration; }
+    double endTime() const { return m_startTime + m_duration; }
     const IntSize& finalScrollOffset() const { return m_scrollEnd; }
     float finalPageScale() const { return m_pageScaleEnd; }
 
 protected:
-    CCPageScaleAnimation(const IntSize& scrollStart, float pageScaleStart, const IntSize& windowSize, const IntSize& contentSize, double startTimeMs);
+    CCPageScaleAnimation(const IntSize& scrollStart, float pageScaleStart, const IntSize& windowSize, const IntSize& contentSize, double startTime);
 
 private:
-    float progressRatioForTime(double timeMs) const;
+    float progressRatioForTime(double time) const;
     IntSize scrollOffsetAtRatio(float ratio) const;
     float pageScaleAtRatio(float ratio) const;
 
@@ -85,8 +85,8 @@ private:
     IntSize m_scrollEnd;
     float m_pageScaleEnd;
 
-    double m_startTimeMs;
-    double m_durationMs;
+    double m_startTime;
+    double m_duration;
 };
 
 } // namespace WebCore

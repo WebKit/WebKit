@@ -61,7 +61,7 @@ public:
 
     virtual ~CCLayerAnimationControllerImpl();
 
-    void animate(double frameBeginTimeSecs, CCAnimationEventsVector&);
+    void animate(double monotonicTime, CCAnimationEventsVector&);
 
     void add(PassOwnPtr<CCActiveAnimation>);
 
@@ -78,13 +78,13 @@ private:
     // The animator is owned by the layer.
     explicit CCLayerAnimationControllerImpl(CCLayerAnimationControllerImplClient*);
 
-    void startAnimationsWaitingForNextTick(double now, CCAnimationEventsVector&);
-    void startAnimationsWaitingForStartTime(double now, CCAnimationEventsVector&);
-    void startAnimationsWaitingForTargetAvailability(double now, CCAnimationEventsVector&);
-    void resolveConflicts(double now);
+    void startAnimationsWaitingForNextTick(double monotonicTime, CCAnimationEventsVector&);
+    void startAnimationsWaitingForStartTime(double monotonicTime, CCAnimationEventsVector&);
+    void startAnimationsWaitingForTargetAvailability(double monotonicTime, CCAnimationEventsVector&);
+    void resolveConflicts(double monotonicTime);
     void purgeFinishedAnimations(CCAnimationEventsVector&);
 
-    void tickAnimations(double now);
+    void tickAnimations(double monotonicTime);
 
     CCLayerAnimationControllerImplClient* m_client;
     Vector<OwnPtr<CCActiveAnimation> > m_activeAnimations;

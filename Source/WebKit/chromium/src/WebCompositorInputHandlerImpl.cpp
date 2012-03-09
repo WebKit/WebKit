@@ -206,7 +206,7 @@ int WebCompositorInputHandlerImpl::identifier() const
     return m_identifier;
 }
 
-void WebCompositorInputHandlerImpl::willDraw(double frameBeginTimeMs)
+void WebCompositorInputHandlerImpl::willDraw(double monotonicTime)
 {
 }
 

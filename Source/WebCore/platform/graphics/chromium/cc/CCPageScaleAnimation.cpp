@@ -22,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -36,13 +36,13 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCPageScaleAnimation> CCPageScaleAnimation::create(const IntSize& scrollStart, float pageScaleStart, const IntSize& windowSize, const IntSize& contentSize, double startTimeMs)
+PassOwnPtr<CCPageScaleAnimation> CCPageScaleAnimation::create(const IntSize& scrollStart, float pageScaleStart, const IntSize& windowSize, const IntSize& contentSize, double startTime)
 {
-    return adoptPtr(new CCPageScaleAnimation(scrollStart, pageScaleStart, windowSize, contentSize, startTimeMs));
+    return adoptPtr(new CCPageScaleAnimation(scrollStart, pageScaleStart, windowSize, contentSize, startTime));
 }
 
 
-CCPageScaleAnimation::CCPageScaleAnimation(const IntSize& scrollStart, float pageScaleStart, const IntSize& windowSize, const IntSize& contentSize, double startTimeMs)
+CCPageScaleAnimation::CCPageScaleAnimation(const IntSize& scrollStart, float pageScaleStart, const IntSize& windowSize, const IntSize& contentSize, double startTime)
     : m_scrollStart(scrollStart)
     , m_pageScaleStart(pageScaleStart)
     , m_windowSize(windowSize)
@@ -50,11 +50,11 @@ CCPageScaleAnimation::CCPageScaleAnimation(const IntSize& scrollStart, float pag
     , m_anchorMode(false)
     , m_scrollEnd(scrollStart)
     , m_pageScaleEnd(pageScaleStart)
-    , m_startTimeMs(startTimeMs)
+    , m_startTime(startTime)
 {
 }
 
-void CCPageScaleAnimation::zoomTo(const IntSize& finalScroll, float finalPageScale, double durationMs)
+void CCPageScaleAnimation::zoomTo(const IntSize& finalScroll, float finalPageScale, double duration)
 {
     if (m_pageScaleStart != finalPageScale) {
         // For uniform-looking zooming, infer the anchor (point that remains in
@@ -78,18 +78,18 @@ void CCPageScaleAnimation::zoomTo(const IntSize& finalScroll, float finalPageSca
         float ratioY = (startRect.y() - endRect.y()) / (endRect.height() - startRect.height());
 
         IntSize anchor(m_windowSize.width() * ratioX, m_windowSize.height() * ratioY);
-        zoomWithAnchor(anchor, finalPageScale, durationMs);
+        zoomWithAnchor(anchor, finalPageScale, duration);
     } else {
         // If this is a pure translation, then there exists no anchor. Linearly
         // interpolate the scroll offset instead.
         m_scrollEnd = finalScroll;
         m_pageScaleEnd = finalPageScale;
-        m_durationMs = durationMs;
+        m_duration = duration;
         m_anchorMode = false;
     }
 }
 
-void CCPageScaleAnimation::zoomWithAnchor(const IntSize& anchor, float finalPageScale, double durationMs)
+void CCPageScaleAnimation::zoomWithAnchor(const IntSize& anchor, float finalPageScale, double duration)
 {
     m_scrollEnd = m_scrollStart + anchor;
     m_scrollEnd.scale(finalPageScale / m_pageScaleStart);
@@ -103,31 +103,31 @@ void CCPageScaleAnimation::zoomWithAnchor(const IntSize& anchor, float finalPage
 
     m_anchor = anchor;
     m_pageScaleEnd = finalPageScale;
-    m_durationMs = durationMs;
+    m_duration = duration;
     m_anchorMode = true;
 }
 
-IntSize CCPageScaleAnimation::scrollOffsetAtTime(double timeMs) const
+IntSize CCPageScaleAnimation::scrollOffsetAtTime(double time) const
 {
-    return scrollOffsetAtRatio(progressRatioForTime(timeMs));
+    return scrollOffsetAtRatio(progressRatioForTime(time));
 }
 
-float CCPageScaleAnimation::pageScaleAtTime(double timeMs) const
+float CCPageScaleAnimation::pageScaleAtTime(double time) const
 {
-    return pageScaleAtRatio(progressRatioForTime(timeMs));
+    return pageScaleAtRatio(progressRatioForTime(time));
 }
 
-bool CCPageScaleAnimation::isAnimationCompleteAtTime(double timeMs) const
+bool CCPageScaleAnimation::isAnimationCompleteAtTime(double time) const
 {
-    return timeMs >= endTimeMs();
+    return time >= endTime();
 }
 
-float CCPageScaleAnimation::progressRatioForTime(double timeMs) const
+float CCPageScaleAnimation::progressRatioForTime(double time) const
 {
-    if (isAnimationCompleteAtTime(timeMs))
+    if (isAnimationCompleteAtTime(time))
         return 1;
 
-    return (timeMs - m_startTimeMs) / m_durationMs;
+    return (time - m_startTime) / m_duration;
 }
 
 IntSize CCPageScaleAnimation::scrollOffsetAtRatio(float ratio) const

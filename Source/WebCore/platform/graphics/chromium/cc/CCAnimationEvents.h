@@ -56,18 +56,14 @@ private:
 // Indicates that an animation has started on a particular layer.
 class CCAnimationStartedEvent : public CCAnimationEvent {
 public:
-    static PassOwnPtr<CCAnimationStartedEvent> create(int layerId, double startTime);
+    static PassOwnPtr<CCAnimationStartedEvent> create(int layerId);
 
     virtual ~CCAnimationStartedEvent();
 
     virtual Type type() const;
 
-    double startTime() const { return m_startTime; }
-
 private:
-    CCAnimationStartedEvent(int layerId, double startTime);
-
-    double m_startTime;
+    explicit CCAnimationStartedEvent(int layerId);
 };
 
 // Indicates that an animation has started on a particular layer.

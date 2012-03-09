@@ -53,7 +53,7 @@ public:
     virtual void onSwapBuffersCompleteOnImplThread() { }
     virtual void setNeedsRedrawOnImplThread() { m_didRequestRedraw = true; }
     virtual void setNeedsCommitOnImplThread() { m_didRequestCommit = true; }
-    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>) { }
+    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) { }
 
     static void expectClearedScrollDeltasRecursive(CCLayerImpl* layer)
     {
@@ -350,8 +350,10 @@ TEST_F(CCLayerTreeHostImplTest, pageScaleAnimation)
     ASSERT(scrollLayer);
 
     const float minPageScale = 0.5, maxPageScale = 4;
-    const double startTimeMs = 1000;
-    const double durationMs = 100;
+    const double startTime = 1;
+    const double duration = 0.1;
+    const double halfwayThroughAnimation = startTime + duration / 2;
+    const double endTime = startTime + duration;
 
     // Non-anchor zoom-in
     {
@@ -359,10 +361,10 @@ TEST_F(CCLayerTreeHostImplTest, pageScaleAnimation)
         scrollLayer->setPageScaleDelta(1);
         scrollLayer->setScrollPosition(IntPoint(50, 50));
 
-        m_hostImpl->startPageScaleAnimation(IntSize(0, 0), false, 2, startTimeMs, durationMs);
-        m_hostImpl->animate(startTimeMs + durationMs / 2);
+        m_hostImpl->startPageScaleAnimation(IntSize(0, 0), false, 2, startTime, duration);
+        m_hostImpl->animate(halfwayThroughAnimation, halfwayThroughAnimation);
         EXPECT_TRUE(m_didRequestRedraw);
-        m_hostImpl->animate(startTimeMs + durationMs);
+        m_hostImpl->animate(endTime, endTime);
         EXPECT_TRUE(m_didRequestCommit);
 
         OwnPtr<CCScrollAndScaleSet> scrollInfo = m_hostImpl->processScrollDeltas();
@@ -376,8 +378,8 @@ TEST_F(CCLayerTreeHostImplTest, pageScaleAnimation)
         scrollLayer->setPageScaleDelta(1);
         scrollLayer->setScrollPosition(IntPoint(50, 50));
 
-        m_hostImpl->startPageScaleAnimation(IntSize(25, 25), true, minPageScale, startTimeMs, durationMs);
-        m_hostImpl->animate(startTimeMs + durationMs);
+        m_hostImpl->startPageScaleAnimation(IntSize(25, 25), true, minPageScale, startTime, duration);
+        m_hostImpl->animate(endTime, endTime);
         EXPECT_TRUE(m_didRequestRedraw);
         EXPECT_TRUE(m_didRequestCommit);
 
@@ -847,7 +849,7 @@ TEST_F(CCLayerTreeHostImplTest, visibilityChangeResetsDamage)
     // First frame: ignore.
     layerTreeHostImpl->drawLayers();
     layerTreeHostImpl->swapBuffers();
- 
+
     // Second frame: nothing has changed --- so we souldn't push anything with partial swap.
     layerTreeHostImpl->drawLayers();
     layerTreeHostImpl->swapBuffers();

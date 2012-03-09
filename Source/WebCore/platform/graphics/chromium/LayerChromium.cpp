@@ -142,13 +142,12 @@ bool LayerChromium::hasActiveAnimation() const
     return m_layerAnimationController->hasActiveAnimation();
 }
 
-void LayerChromium::setAnimationEvent(const CCAnimationEvent& event)
+void LayerChromium::setAnimationEvent(const CCAnimationEvent& event, double wallClockTime)
 {
     switch (event.type()) {
 
     case CCAnimationEvent::Started: {
-        const CCAnimationStartedEvent* startedEvent = event.toAnimationStartedEvent();
-        m_layerAnimationDelegate->notifyAnimationStarted(startedEvent->startTime());
+        m_layerAnimationDelegate->notifyAnimationStarted(wallClockTime);
         break;
     }
 

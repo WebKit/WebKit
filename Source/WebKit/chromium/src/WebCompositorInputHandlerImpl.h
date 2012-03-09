@@ -61,7 +61,7 @@ public:
 
     // WebCore::CCInputHandler implementation
     virtual int identifier() const;
-    virtual void willDraw(double frameBeginTimeMs);
+    virtual void willDraw(double monotonicTime);
 
 private:
     explicit WebCompositorInputHandlerImpl(WebCore::CCInputHandlerClient*);

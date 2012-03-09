@@ -43,7 +43,7 @@ public:
 
     // CCProxy implementation
     virtual bool compositeAndReadback(void *pixels, const IntRect&);
-    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec);
+    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double duration);
     virtual GraphicsContext3D* context();
     virtual void finishAllRendering();
     virtual bool isStarted() const;
@@ -66,7 +66,7 @@ public:
     virtual void onSwapBuffersCompleteOnImplThread() { ASSERT_NOT_REACHED(); }
     virtual void setNeedsRedrawOnImplThread() { m_layerTreeHost->setNeedsCommit(); }
     virtual void setNeedsCommitOnImplThread() { m_layerTreeHost->setNeedsCommit(); }
-    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>);
+    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime);
 
     // Called by the legacy path where RenderWidget does the scheduling.
     void compositeImmediately();

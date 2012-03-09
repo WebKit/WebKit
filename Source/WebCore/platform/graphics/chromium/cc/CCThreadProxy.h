@@ -52,7 +52,7 @@ public:
 
     // CCProxy implementation
     virtual bool compositeAndReadback(void *pixels, const IntRect&);
-    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec);
+    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double duration);
     virtual GraphicsContext3D* context();
     virtual void finishAllRendering();
     virtual bool isStarted() const;
@@ -75,7 +75,7 @@ public:
     virtual void onSwapBuffersCompleteOnImplThread();
     virtual void setNeedsRedrawOnImplThread();
     virtual void setNeedsCommitOnImplThread();
-    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>);
+    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime);
 
     // CCSchedulerClient implementation
     virtual bool canDraw();
@@ -94,7 +94,7 @@ private:
     void beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollAndScaleSet>);
     void didCommitAndDrawFrame();
     void didCompleteSwapBuffers();
-    void setAnimationEvents(PassOwnPtr<CCAnimationEventsVector>);
+    void setAnimationEvents(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime);
     void beginContextRecreation();
     void tryToRecreateContext();
 

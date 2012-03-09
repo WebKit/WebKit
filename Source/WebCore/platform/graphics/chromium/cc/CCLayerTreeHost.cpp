@@ -302,10 +302,10 @@ void CCLayerTreeHost::setNeedsRedraw()
         m_client->scheduleComposite();
 }
 
-void CCLayerTreeHost::setAnimationEvents(PassOwnPtr<CCAnimationEventsVector> events)
+void CCLayerTreeHost::setAnimationEvents(PassOwnPtr<CCAnimationEventsVector> events, double wallClockTime)
 {
     ASSERT(CCThreadProxy::isMainThread());
-    setAnimationEventsRecursive(*events, m_rootLayer.get());
+    setAnimationEventsRecursive(*events, m_rootLayer.get(), wallClockTime);
 }
 
 void CCLayerTreeHost::setRootLayer(PassRefPtr<LayerChromium> rootLayer)
@@ -640,15 +640,15 @@ void CCLayerTreeHost::deleteTextureAfterCommit(PassOwnPtr<ManagedTexture> textur
     m_deleteTextureAfterCommitList.append(texture);
 }
 
-void CCLayerTreeHost::setAnimationEventsRecursive(const CCAnimationEventsVector& events, LayerChromium* layer)
+void CCLayerTreeHost::setAnimationEventsRecursive(const CCAnimationEventsVector& events, LayerChromium* layer, double wallClockTime)
 {
     for (size_t eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
         if (layer->id() == events[eventIndex]->layerId())
-            layer->setAnimationEvent(*events[eventIndex]);
+            layer->setAnimationEvent(*events[eventIndex], wallClockTime);
     }
 
     for (size_t childIndex = 0; childIndex < layer->children().size(); ++childIndex)
-        setAnimationEventsRecursive(events, layer->children()[childIndex].get());
+        setAnimationEventsRecursive(events, layer->children()[childIndex].get(), wallClockTime);
 }
 
 } // namespace WebCore

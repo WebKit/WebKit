@@ -51,14 +51,13 @@ const CCAnimationFinishedEvent* CCAnimationEvent::toAnimationFinishedEvent() con
     return static_cast<const CCAnimationFinishedEvent*>(this);
 }
 
-PassOwnPtr<CCAnimationStartedEvent> CCAnimationStartedEvent::create(int layerId, double startTime)
+PassOwnPtr<CCAnimationStartedEvent> CCAnimationStartedEvent::create(int layerId)
 {
-    return adoptPtr(new CCAnimationStartedEvent(layerId, startTime));
+    return adoptPtr(new CCAnimationStartedEvent(layerId));
 }
 
-CCAnimationStartedEvent::CCAnimationStartedEvent(int layerId, double startTime)
+CCAnimationStartedEvent::CCAnimationStartedEvent(int layerId)
     : CCAnimationEvent(layerId)
-    , m_startTime(startTime)
 {
 }
 

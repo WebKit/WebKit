@@ -176,7 +176,7 @@ public:
     virtual void setNeedsCommit();
     void setNeedsRedraw();
 
-    void setAnimationEvents(PassOwnPtr<CCAnimationEventsVector>);
+    void setAnimationEvents(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime);
 
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
     const LayerChromium* rootLayer() const { return m_rootLayer.get(); }
@@ -225,7 +225,7 @@ private:
     void reserveTextures();
     void clearPendingUpdate();
 
-    void setAnimationEventsRecursive(const CCAnimationEventsVector&, LayerChromium*);
+    void setAnimationEventsRecursive(const CCAnimationEventsVector&, LayerChromium*, double wallClockTime);
 
     int m_compositorIdentifier;
 

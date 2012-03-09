@@ -1,3 +1,27 @@
+2012-03-09  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Ensure we use the correct time when notifying animation started
+        https://bugs.webkit.org/show_bug.cgi?id=79537
+
+        Reviewed by James Robinson
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::willDraw):
+        * src/WebCompositorInputHandlerImpl.h:
+        (WebCompositorInputHandlerImpl):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::CCLayerTreeHostImplTest::postAnimationEventsToMainThreadOnImplThread):
+        (WebKit::TEST_F):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TestHooks::animateLayers):
+        (WTF::TestHooks::updateAnimations):
+        (WTF::MockLayerTreeHostImpl::animateLayers):
+        (WTF::MockLayerTreeHostClient::updateAnimations):
+        (WTF::CCLayerTreeHostTestAddAnimation::CCLayerTreeHostTestAddAnimation):
+        (WTF::CCLayerTreeHostTestAddAnimation::animateLayers):
+        (WTF::CCLayerTreeHostTestAddAnimation::notifyAnimationStarted):
+        (CCLayerTreeHostTestAddAnimation):
+
 2012-03-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r110191, r110202, and r110279.

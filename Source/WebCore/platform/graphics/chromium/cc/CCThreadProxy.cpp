@@ -134,17 +134,17 @@ void CCThreadProxy::requestReadbackOnImplThread(ReadbackRequest* request)
     m_schedulerOnImplThread->setNeedsForcedRedraw();
 }
 
-void CCThreadProxy::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec)
+void CCThreadProxy::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double duration)
 {
     ASSERT(CCProxy::isMainThread());
-    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::requestStartPageScaleAnimationOnImplThread, targetPosition, useAnchor, scale, durationSec));
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::requestStartPageScaleAnimationOnImplThread, targetPosition, useAnchor, scale, duration));
 }
 
-void CCThreadProxy::requestStartPageScaleAnimationOnImplThread(IntSize targetPosition, bool useAnchor, float scale, double durationSec)
+void CCThreadProxy::requestStartPageScaleAnimationOnImplThread(IntSize targetPosition, bool useAnchor, float scale, double duration)
 {
     ASSERT(CCProxy::isImplThread());
     if (m_layerTreeHostImpl)
-        m_layerTreeHostImpl->startPageScaleAnimation(targetPosition, useAnchor, scale, monotonicallyIncreasingTime() * 1000.0, durationSec * 1000.0);
+        m_layerTreeHostImpl->startPageScaleAnimation(targetPosition, useAnchor, scale, monotonicallyIncreasingTime(), duration);
 }
 
 GraphicsContext3D* CCThreadProxy::context()
@@ -300,11 +300,11 @@ void CCThreadProxy::setNeedsCommitOnImplThread()
     m_schedulerOnImplThread->setNeedsCommit();
 }
 
-void CCThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector> events)
+void CCThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector> events, double wallClockTime)
 {
     ASSERT(isImplThread());
     TRACE_EVENT("CCThreadProxy::postAnimationEventsToMainThreadOnImplThread", this, 0);
-    m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::setAnimationEvents, events));
+    m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::setAnimationEvents, events, wallClockTime));
 }
 
 void CCThreadProxy::setNeedsRedraw()
@@ -566,18 +566,19 @@ void CCThreadProxy::scheduledActionDrawAndSwap()
         return;
 
     // FIXME: compute the frame display time more intelligently
-    double frameDisplayTimeMs = monotonicallyIncreasingTime() * 1000.0;
+    double monotonicTime = monotonicallyIncreasingTime();
+    double wallClockTime = currentTime();
 
-    m_inputHandlerOnImplThread->willDraw(frameDisplayTimeMs);
-    m_layerTreeHostImpl->animate(frameDisplayTimeMs);
+    m_inputHandlerOnImplThread->willDraw(monotonicTime);
+    m_layerTreeHostImpl->animate(monotonicTime, wallClockTime);
     m_layerTreeHostImpl->drawLayers();
 
     // Check for a pending compositeAndReadback.
     if (m_readbackRequestOnImplThread) {
-      m_layerTreeHostImpl->readback(m_readbackRequestOnImplThread->pixels, m_readbackRequestOnImplThread->rect);
-      m_readbackRequestOnImplThread->success = !m_layerTreeHostImpl->isContextLost();
-      m_readbackRequestOnImplThread->completion.signal();
-      m_readbackRequestOnImplThread = 0;
+        m_layerTreeHostImpl->readback(m_readbackRequestOnImplThread->pixels, m_readbackRequestOnImplThread->rect);
+        m_readbackRequestOnImplThread->success = !m_layerTreeHostImpl->isContextLost();
+        m_readbackRequestOnImplThread->completion.signal();
+        m_readbackRequestOnImplThread = 0;
     }
 
     m_layerTreeHostImpl->swapBuffers();
@@ -612,13 +613,13 @@ void CCThreadProxy::didCompleteSwapBuffers()
     m_layerTreeHost->didCompleteSwapBuffers();
 }
 
-void CCThreadProxy::setAnimationEvents(PassOwnPtr<CCAnimationEventsVector> events)
+void CCThreadProxy::setAnimationEvents(PassOwnPtr<CCAnimationEventsVector> events, double wallClockTime)
 {
     TRACE_EVENT0("cc", "CCThreadProxy::setAnimationEvents");
     ASSERT(isMainThread());
     if (!m_layerTreeHost)
         return;
-    m_layerTreeHost->setAnimationEvents(events);
+    m_layerTreeHost->setAnimationEvents(events, wallClockTime);
 }
 
 class CCThreadProxyContextRecreationTimer : public CCTimer, CCTimerClient {

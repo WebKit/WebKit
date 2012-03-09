@@ -72,8 +72,8 @@ public:
     virtual void startPageScaleAnimation(const IntSize& targetPosition,
                                          bool anchorPoint,
                                          float pageScale,
-                                         double startTimeMs,
-                                         double durationMs) = 0;
+                                         double startTime,
+                                         double duration) = 0;
 
 protected:
     CCInputHandlerClient() { }
@@ -87,7 +87,7 @@ public:
     virtual ~CCInputHandler() { }
 
     virtual int identifier() const = 0;
-    virtual void willDraw(double frameDisplayTimeMs) = 0;
+    virtual void willDraw(double monotonicTime) = 0;
 
 protected:
     CCInputHandler() { }

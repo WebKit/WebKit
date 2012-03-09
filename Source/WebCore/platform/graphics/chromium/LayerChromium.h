@@ -225,7 +225,7 @@ public:
 
     bool hasActiveAnimation() const;
 
-    void setAnimationEvent(const CCAnimationEvent&);
+    void setAnimationEvent(const CCAnimationEvent&, double wallClockTime);
 
 protected:
     friend class CCLayerImpl;

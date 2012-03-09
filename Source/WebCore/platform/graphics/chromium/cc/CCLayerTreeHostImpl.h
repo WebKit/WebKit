@@ -53,7 +53,7 @@ public:
     virtual void onSwapBuffersCompleteOnImplThread() = 0;
     virtual void setNeedsRedrawOnImplThread() = 0;
     virtual void setNeedsCommitOnImplThread() = 0;
-    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>) = 0;
+    virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) = 0;
 };
 
 // CCLayerTreeHostImpl owns the CCLayerImpl tree as well as associated rendering state
@@ -71,12 +71,12 @@ public:
     virtual void pinchGestureBegin();
     virtual void pinchGestureUpdate(float, const IntPoint&);
     virtual void pinchGestureEnd();
-    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTimeMs, double durationMs);
+    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTime, double duration);
 
     // Virtual for testing.
     virtual void beginCommit();
     virtual void commitComplete();
-    virtual void animate(double frameDisplayTimeMs);
+    virtual void animate(double monotonicTime, double wallClockTime);
     virtual void drawLayers();
 
     // LayerRendererChromiumClient implementation
@@ -134,10 +134,10 @@ public:
 protected:
     CCLayerTreeHostImpl(const CCSettings&, CCLayerTreeHostImplClient*);
 
-    void animatePageScale(double frameBeginTimeMs);
+    void animatePageScale(double monotonicTime);
 
     // Virtual for testing.
-    virtual void animateLayers(double frameBeginTimeMs);
+    virtual void animateLayers(double monotonicTime, double wallClockTime);
 
     CCLayerTreeHostImplClient* m_client;
     int m_sourceFrameNumber;
@@ -157,7 +157,7 @@ private:
     void trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
     void calculateRenderPasses(CCRenderPassList&, CCLayerList& renderSurfaceLayerList);
     void optimizeRenderPasses(CCRenderPassList&);
-    void animateLayersRecursive(CCLayerImpl*, double frameBeginTimeSecs, CCAnimationEventsVector&, bool& didAnimate, bool& needsAnimateLayers);
+    void animateLayersRecursive(CCLayerImpl*, double monotonicTime, double wallClockTime, CCAnimationEventsVector&, bool& didAnimate, bool& needsAnimateLayers);
     IntSize contentSize() const;
     void sendDidLoseContextRecursive(CCLayerImpl*);
 

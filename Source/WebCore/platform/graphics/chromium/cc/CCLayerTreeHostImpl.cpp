@@ -61,7 +61,7 @@ public:
 
     virtual void onTimerTick()
     {
-        m_layerTreeHostImpl->animate(monotonicallyIncreasingTime() * 1000.0);
+        m_layerTreeHostImpl->animate(monotonicallyIncreasingTime(), currentTime());
     }
 
     void setActive(bool active)
@@ -139,13 +139,13 @@ GraphicsContext3D* CCLayerTreeHostImpl::context()
     return m_layerRenderer ? m_layerRenderer->context() : 0;
 }
 
-void CCLayerTreeHostImpl::animate(double frameBeginTimeMs)
+void CCLayerTreeHostImpl::animate(double monotonicTime, double wallClockTime)
 {
-    animatePageScale(frameBeginTimeMs);
-    animateLayers(frameBeginTimeMs);
+    animatePageScale(monotonicTime);
+    animateLayers(monotonicTime, wallClockTime);
 }
 
-void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTimeMs, double durationMs)
+void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTime, double duration)
 {
     if (!m_scrollLayerImpl)
         return;
@@ -156,15 +156,15 @@ void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition,
     IntSize scaledContentSize = contentSize();
     scaledContentSize.scale(m_pageScaleDelta);
 
-    m_pageScaleAnimation = CCPageScaleAnimation::create(scrollTotal, scaleTotal, m_viewportSize, scaledContentSize, startTimeMs);
+    m_pageScaleAnimation = CCPageScaleAnimation::create(scrollTotal, scaleTotal, m_viewportSize, scaledContentSize, startTime);
 
     if (anchorPoint) {
         IntSize windowAnchor(targetPosition);
         windowAnchor.scale(scaleTotal / pageScale);
         windowAnchor -= scrollTotal;
-        m_pageScaleAnimation->zoomWithAnchor(windowAnchor, pageScale, durationMs);
+        m_pageScaleAnimation->zoomWithAnchor(windowAnchor, pageScale, duration);
     } else
-        m_pageScaleAnimation->zoomTo(targetPosition, pageScale, durationMs);
+        m_pageScaleAnimation->zoomTo(targetPosition, pageScale, duration);
 
     m_client->setNeedsRedrawOnImplThread();
     m_client->setNeedsCommitOnImplThread();
@@ -289,14 +289,14 @@ void CCLayerTreeHostImpl::optimizeRenderPasses(CCRenderPassList& passes)
     PlatformSupport::histogramCustomCounts("Renderer4.pixelOverdrawCulled", static_cast<int>(normalization * overdrawCounts.m_pixelsCulled), 100, 1000000, 50);
 }
 
-void CCLayerTreeHostImpl::animateLayersRecursive(CCLayerImpl* current, double frameBeginTimeSecs, CCAnimationEventsVector& events, bool& didAnimate, bool& needsAnimateLayers)
+void CCLayerTreeHostImpl::animateLayersRecursive(CCLayerImpl* current, double monotonicTime, double wallClockTime, CCAnimationEventsVector& events, bool& didAnimate, bool& needsAnimateLayers)
 {
     bool subtreeNeedsAnimateLayers = false;
 
     CCLayerAnimationControllerImpl* currentController = current->layerAnimationController();
 
     bool hadActiveAnimation = currentController->hasActiveAnimation();
-    currentController->animate(frameBeginTimeSecs, events);
+    currentController->animate(monotonicTime, events);
     bool startedAnimation = events.size() > 0;
 
     // We animated if we either ticked a running animation, or started a new animation.
@@ -309,7 +309,7 @@ void CCLayerTreeHostImpl::animateLayersRecursive(CCLayerImpl* current, double fr
 
     for (size_t i = 0; i < current->children().size(); ++i) {
         bool childNeedsAnimateLayers = false;
-        animateLayersRecursive(current->children()[i].get(), frameBeginTimeSecs, events, didAnimate, childNeedsAnimateLayers);
+        animateLayersRecursive(current->children()[i].get(), monotonicTime, wallClockTime, events, didAnimate, childNeedsAnimateLayers);
         if (childNeedsAnimateLayers)
             subtreeNeedsAnimateLayers = true;
     }
@@ -726,26 +726,26 @@ void CCLayerTreeHostImpl::setFullRootLayerDamage()
     }
 }
 
-void CCLayerTreeHostImpl::animatePageScale(double frameBeginTimeMs)
+void CCLayerTreeHostImpl::animatePageScale(double monotonicTime)
 {
     if (!m_pageScaleAnimation)
         return;
 
     IntSize scrollTotal = toSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
 
-    setPageScaleDelta(m_pageScaleAnimation->pageScaleAtTime(frameBeginTimeMs) / m_pageScale);
-    IntSize nextScroll = m_pageScaleAnimation->scrollOffsetAtTime(frameBeginTimeMs);
+    setPageScaleDelta(m_pageScaleAnimation->pageScaleAtTime(monotonicTime) / m_pageScale);
+    IntSize nextScroll = m_pageScaleAnimation->scrollOffsetAtTime(monotonicTime);
     nextScroll.scale(1 / m_pageScaleDelta);
     m_scrollLayerImpl->scrollBy(nextScroll - scrollTotal);
     m_client->setNeedsRedrawOnImplThread();
 
-    if (m_pageScaleAnimation->isAnimationCompleteAtTime(frameBeginTimeMs)) {
+    if (m_pageScaleAnimation->isAnimationCompleteAtTime(monotonicTime)) {
         m_pageScaleAnimation.clear();
         m_client->setNeedsCommitOnImplThread();
     }
 }
 
-void CCLayerTreeHostImpl::animateLayers(double frameBeginTimeMs)
+void CCLayerTreeHostImpl::animateLayers(double monotonicTime, double wallClockTime)
 {
     if (!m_settings.threadedAnimationEnabled || !m_needsAnimateLayers || !m_rootLayerImpl)
         return;
@@ -755,10 +755,10 @@ void CCLayerTreeHostImpl::animateLayers(double frameBeginTimeMs)
     OwnPtr<CCAnimationEventsVector> events(adoptPtr(new CCAnimationEventsVector));
 
     bool didAnimate = false;
-    animateLayersRecursive(m_rootLayerImpl.get(), frameBeginTimeMs / 1000, *events, didAnimate, m_needsAnimateLayers);
+    animateLayersRecursive(m_rootLayerImpl.get(), monotonicTime, wallClockTime, *events, didAnimate, m_needsAnimateLayers);
 
     if (!events->isEmpty())
-        m_client->postAnimationEventsToMainThreadOnImplThread(events.release());
+        m_client->postAnimationEventsToMainThreadOnImplThread(events.release(), wallClockTime);
 
     if (didAnimate)
         m_client->setNeedsRedrawOnImplThread();

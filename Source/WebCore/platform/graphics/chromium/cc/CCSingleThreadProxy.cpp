@@ -89,9 +89,9 @@ bool CCSingleThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect
     return true;
 }
 
-void CCSingleThreadProxy::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec)
+void CCSingleThreadProxy::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double duration)
 {
-    m_layerTreeHostImpl->startPageScaleAnimation(targetPosition, useAnchor, scale, monotonicallyIncreasingTime() * 1000.0, durationSec * 1000.0);
+    m_layerTreeHostImpl->startPageScaleAnimation(targetPosition, useAnchor, scale, monotonicallyIncreasingTime(), duration);
 }
 
 GraphicsContext3D* CCSingleThreadProxy::context()
@@ -259,11 +259,11 @@ void CCSingleThreadProxy::stop()
     m_layerTreeHost = 0;
 }
 
-void CCSingleThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector> events)
+void CCSingleThreadProxy::postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector> events, double wallClockTime)
 {
     ASSERT(CCProxy::isImplThread());
     DebugScopedSetMainThread main;
-    m_layerTreeHost->setAnimationEvents(events);
+    m_layerTreeHost->setAnimationEvents(events, wallClockTime);
 }
 
 // Called by the legacy scheduling path (e.g. where render_widget does the scheduling)
@@ -294,8 +294,10 @@ bool CCSingleThreadProxy::doComposite()
     ASSERT(!m_contextLost);
     {
       DebugScopedSetImplThread impl;
-      double frameDisplayTimeMs = monotonicallyIncreasingTime() * 1000.0;
-      m_layerTreeHostImpl->animate(frameDisplayTimeMs);
+      double monotonicTime = monotonicallyIncreasingTime();
+      double wallClockTime = currentTime();
+
+      m_layerTreeHostImpl->animate(monotonicTime, wallClockTime);
       m_layerTreeHostImpl->drawLayers();
     }
 
