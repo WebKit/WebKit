@@ -1,3 +1,14 @@
+2012-03-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the build of WebKit with WTFURL following the removal of ForwardingHeaders/wtf
+        https://bugs.webkit.org/show_bug.cgi?id=80652
+
+        Reviewed by Eric Seidel.
+
+        Fix the header, URLSegments.h is not part of the API.
+
+        * wtf/url/api/ParsedURL.h:
+
 2012-03-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac build fix for micro data API.

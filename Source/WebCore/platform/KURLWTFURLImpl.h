@@ -32,7 +32,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/url/ParsedURL.h>
+#include <wtf/url/api/ParsedURL.h>
 
 namespace WebCore {
 
