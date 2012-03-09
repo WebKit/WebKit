@@ -237,7 +237,7 @@ void CCLayerTreeHostImpl::optimizeRenderPasses(CCRenderPassList& passes)
     // FIXME: compute overdraw metrics only occasionally, not every frame.
     CCOverdrawCounts overdrawCounts;
     for (unsigned i = 0; i < passes.size(); ++i) {
-        FloatRect damageRect = passes[i]->targetSurface()->damageTracker()->currentDamageRect();
+        FloatRect damageRect = passes[i]->surfaceDamageRect();
         passes[i]->optimizeQuads(haveDamageRect, damageRect, &overdrawCounts);
     }
 
