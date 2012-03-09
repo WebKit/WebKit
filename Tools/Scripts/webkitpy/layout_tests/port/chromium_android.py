@@ -395,14 +395,13 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 class ChromiumAndroidDriver(chromium.ChromiumDriver):
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         chromium.ChromiumDriver.__init__(self, port, worker_number, pixel_tests, no_timeout)
-        if self._image_path:
-            self._device_image_path = DEVICE_DRT_DIR + port.host.filesystem.basename(self._image_path)
+        self._device_image_path = None
 
-    def _start(self):
+    def _start(self, pixel_tests, per_test_args):
         # Convert the original command line into to two parts:
         # - the 'adb shell' command line to start an interactive adb shell;
         # - the DumpRenderTree command line to send to the adb shell.
-        original_cmd = self.cmd_line()
+        original_cmd = self.cmd_line(pixel_tests, per_test_args)
         shell_cmd = []
         drt_args = []
         path_to_driver = self._port._path_to_driver()
@@ -415,6 +414,8 @@ class ChromiumAndroidDriver(chromium.ChromiumDriver):
                     shell_cmd.append(param)
             else:
                 if param.startswith('--pixel-tests='):
+                    if not self._device_image_path:
+                        self._device_image_path = DEVICE_DRT_DIR + self._port.host.filesystem.basename(self._image_path)
                     param = '--pixel-tests=' + self._device_image_path
                 drt_args.append(param)
 
