@@ -221,26 +221,23 @@ static ImageQualityController* imageQualityController()
     return gImageQualityController;
 }
 
-void RenderBoxModelObject::setSelectionState(SelectionState s)
+void RenderBoxModelObject::setSelectionState(SelectionState state)
 {
-    if (selectionState() == s)
-        return;
-    
-    if (s == SelectionInside && selectionState() != SelectionNone)
+    if (state == SelectionInside && selectionState() != SelectionNone)
         return;
 
-    if ((s == SelectionStart && selectionState() == SelectionEnd)
-        || (s == SelectionEnd && selectionState() == SelectionStart))
+    if ((state == SelectionStart && selectionState() == SelectionEnd)
+        || (state == SelectionEnd && selectionState() == SelectionStart))
         RenderObject::setSelectionState(SelectionBoth);
     else
-        RenderObject::setSelectionState(s);
-    
-    // FIXME:
-    // We should consider whether it is OK propagating to ancestor RenderInlines.
+        RenderObject::setSelectionState(state);
+
+    // FIXME: We should consider whether it is OK propagating to ancestor RenderInlines.
     // This is a workaround for http://webkit.org/b/32123
-    RenderBlock* cb = containingBlock();
-    if (cb && !cb->isRenderView())
-        cb->setSelectionState(s);
+    // The containing block can be null in case of an orphaned tree.
+    RenderBlock* containingBlock = this->containingBlock();
+    if (containingBlock && !containingBlock->isRenderView())
+        containingBlock->setSelectionState(state);
 }
 
 bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext* context, Image* image, const void* layer, const LayoutSize& size)

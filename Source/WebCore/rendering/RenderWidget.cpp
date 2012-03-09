@@ -359,11 +359,11 @@ IntRect RenderWidget::windowClipRect() const
 
 void RenderWidget::setSelectionState(SelectionState state)
 {
-    if (selectionState() != state) {
-        RenderReplaced::setSelectionState(state);
-        if (m_widget)
-            m_widget->setIsSelected(isSelected());
-    }
+    // The selection state for our containing block hierarchy is updated by the base class call.
+    RenderReplaced::setSelectionState(state);
+
+    if (m_widget)
+        m_widget->setIsSelected(isSelected());
 }
 
 void RenderWidget::clearWidget()

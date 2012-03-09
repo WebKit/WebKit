@@ -501,7 +501,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     // Now clear the selection.
     SelectedObjectMap::iterator oldObjectsEnd = oldSelectedObjects.end();
     for (SelectedObjectMap::iterator i = oldSelectedObjects.begin(); i != oldObjectsEnd; ++i)
-        i->first->setSelectionState(SelectionNone);
+        i->first->setSelectionStateIfNeeded(SelectionNone);
 
     // set selection start and end
     m_selectionStart = start;
@@ -511,12 +511,12 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
 
     // Update the selection status of all objects between m_selectionStart and m_selectionEnd
     if (start && start == end)
-        start->setSelectionState(SelectionBoth);
+        start->setSelectionStateIfNeeded(SelectionBoth);
     else {
         if (start)
-            start->setSelectionState(SelectionStart);
+            start->setSelectionStateIfNeeded(SelectionStart);
         if (end)
-            end->setSelectionState(SelectionEnd);
+            end->setSelectionStateIfNeeded(SelectionEnd);
     }
 
     RenderObject* o = start;
@@ -524,7 +524,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
 
     while (o && o != stop) {
         if (o != start && o != end && o->canBeSelectionLeaf())
-            o->setSelectionState(SelectionInside);
+            o->setSelectionStateIfNeeded(SelectionInside);
         o = o->nextInPreOrder();
     }
 

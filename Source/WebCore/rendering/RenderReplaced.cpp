@@ -504,14 +504,14 @@ IntRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
     return IntRect(newLogicalTop, 0, root->selectionHeight(), height());
 }
 
-void RenderReplaced::setSelectionState(SelectionState s)
+void RenderReplaced::setSelectionState(SelectionState state)
 {
-    RenderBox::setSelectionState(s); // The selection state for our containing block hierarchy is updated by the base class call.
-    if (m_inlineBoxWrapper) {
-        RootInlineBox* line = m_inlineBoxWrapper->root();
-        if (line)
-            line->setHasSelectedChildren(isSelected());
-    }
+    // The selection state for our containing block hierarchy is updated by the base class call.
+    RenderBox::setSelectionState(state);
+
+    if (m_inlineBoxWrapper && canUpdateSelectionOnRootLineBoxes())
+        if (RootInlineBox* root = m_inlineBoxWrapper->root())
+            root->setHasSelectedChildren(isSelected());
 }
 
 bool RenderReplaced::isSelected() const

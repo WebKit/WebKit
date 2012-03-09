@@ -1126,39 +1126,41 @@ float RenderText::firstRunY() const
     
 void RenderText::setSelectionState(SelectionState state)
 {
-    InlineTextBox* box;
-
     RenderObject::setSelectionState(state);
-    if (state == SelectionStart || state == SelectionEnd || state == SelectionBoth) {
-        int startPos, endPos;
-        selectionStartEnd(startPos, endPos);
-        if (selectionState() == SelectionStart) {
-            endPos = textLength();
 
-            // to handle selection from end of text to end of line
-            if (startPos != 0 && startPos == endPos)
-                startPos = endPos - 1;
-        } else if (selectionState() == SelectionEnd)
-            startPos = 0;
+    if (canUpdateSelectionOnRootLineBoxes()) {
+        if (state == SelectionStart || state == SelectionEnd || state == SelectionBoth) {
+            int startPos, endPos;
+            selectionStartEnd(startPos, endPos);
+            if (selectionState() == SelectionStart) {
+                endPos = textLength();
 
-        for (box = firstTextBox(); box; box = box->nextTextBox()) {
-            if (box->isSelected(startPos, endPos)) {
-                RootInlineBox* line = box->root();
-                if (line)
-                    line->setHasSelectedChildren(true);
+                // to handle selection from end of text to end of line
+                if (startPos && startPos == endPos)
+                    startPos = endPos - 1;
+            } else if (selectionState() == SelectionEnd)
+                startPos = 0;
+
+            for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
+                if (box->isSelected(startPos, endPos)) {
+                    RootInlineBox* root = box->root();
+                    if (root)
+                        root->setHasSelectedChildren(true);
+                }
             }
-        }
-    } else {
-        for (box = firstTextBox(); box; box = box->nextTextBox()) {
-            RootInlineBox* line = box->root();
-            if (line)
-                line->setHasSelectedChildren(state == SelectionInside);
+        } else {
+            for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
+                RootInlineBox* root = box->root();
+                if (root)
+                    root->setHasSelectedChildren(state == SelectionInside);
+            }
         }
     }
 
-    // The returned value can be null in case of an orphaned tree.
-    if (RenderBlock* cb = containingBlock())
-        cb->setSelectionState(state);
+    // The containing block can be null in case of an orphaned tree.
+    RenderBlock* containingBlock = this->containingBlock();
+    if (containingBlock && !containingBlock->isRenderView())
+        containingBlock->setSelectionState(state);
 }
 
 void RenderText::setTextWithOffset(PassRefPtr<StringImpl> text, unsigned offset, unsigned len, bool force)
