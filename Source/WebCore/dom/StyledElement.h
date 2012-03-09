@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class Attribute;
+struct PresentationAttributeCacheKey;
 
 class StyledElement : public Element {
 public:
@@ -82,6 +83,7 @@ private:
     virtual void updateStyleAttribute() const;
     void inlineStyleChanged();
 
+    void makePresentationAttributeCacheKey(PresentationAttributeCacheKey&) const;
     void updateAttributeStyle();
 
     void destroyInlineStyle()
