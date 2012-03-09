@@ -38,18 +38,18 @@ from webkitpy.tool.mocktool import MockOptions
 
 
 class QtPortTest(port_testcase.PortTestCase):
-    port_name = 'qt-mac'
+    port_name = 'qt'
     port_maker = QtPort
 
-    def _assert_search_path(self, search_paths, os_name=None, use_webkit2=False, qt_version='4.8'):
+    def _assert_search_path(self, search_paths, os_name=None, override_platform=None, use_webkit2=False, qt_version='4.8'):
         # FIXME: Port constructors should not "parse" the port name, but
         # rather be passed components (directly or via setters).  Once
         # we fix that, this method will need a re-write.
         host = MockSystemHost(os_name=os_name)
         host.executive = MockExecutive2(self._qt_version(qt_version))
-        port_name = 'qt-' + os_name
-        port = self.make_port(host=host, qt_version=qt_version, port_name=port_name,
-                              options=MockOptions(webkit_test_runner=use_webkit2, platform='qt'))
+        options = MockOptions(webkit_test_runner=use_webkit2, platform='qt')
+        port_name = QtPort.determine_full_port_name(host=host, options=options, port_name=override_platform)
+        port = self.make_port(host=host, qt_version=qt_version, port_name=port_name, options=options)
         absolute_search_paths = map(port._webkit_baseline_path, search_paths)
         self.assertEquals(port.baseline_search_path(), absolute_search_paths)
 
@@ -60,17 +60,25 @@ class QtPortTest(port_testcase.PortTestCase):
             return 'QMake version 2.01a\nUsing Qt version 5.0.0 in /usr/local/Trolltech/Qt-5.0.0/lib'
 
     def test_baseline_search_path(self):
-        self._assert_search_path(['qt-mac', 'qt-4.8', 'qt'], 'mac', qt_version='4.8')
-        self._assert_search_path(['qt-win', 'qt-4.8', 'qt'], 'win', qt_version='4.8')
-        self._assert_search_path(['qt-linux', 'qt-4.8', 'qt'], 'linux', qt_version='4.8')
+        self._assert_search_path(['qt-mac', 'qt-4.8', 'qt'], os_name='mac', qt_version='4.8')
+        self._assert_search_path(['qt-win', 'qt-4.8', 'qt'], os_name='win', qt_version='4.8')
+        self._assert_search_path(['qt-linux', 'qt-4.8', 'qt'], os_name='linux', qt_version='4.8')
 
-        self._assert_search_path(['qt-mac', 'qt-4.8', 'qt'], 'mac')
-        self._assert_search_path(['qt-win', 'qt-4.8', 'qt'], 'win')
-        self._assert_search_path(['qt-linux', 'qt-4.8', 'qt'], 'linux')
+        self._assert_search_path(['qt-4.8', 'qt-4.8', 'qt'], os_name='mac', override_platform='qt-4.8', qt_version='4.8')
+        self._assert_search_path(['qt-4.8', 'qt-4.8', 'qt'], os_name='win', override_platform='qt-4.8', qt_version='4.8')
+        self._assert_search_path(['qt-4.8', 'qt-4.8', 'qt'], os_name='linux', override_platform='qt-4.8', qt_version='4.8')
 
-        self._assert_search_path(['qt-5.0-wk2', 'qt-mac', 'qt-5.0', 'qt'], 'mac', use_webkit2=True, qt_version='5.0')
-        self._assert_search_path(['qt-5.0-wk2', 'qt-win', 'qt-5.0', 'qt'], 'win', use_webkit2=True, qt_version='5.0')
-        self._assert_search_path(['qt-5.0-wk2', 'qt-linux', 'qt-5.0', 'qt'], 'linux', use_webkit2=True, qt_version='5.0')
+        self._assert_search_path(['qt-mac', 'qt-4.8', 'qt'], os_name='mac')
+        self._assert_search_path(['qt-win', 'qt-4.8', 'qt'], os_name='win')
+        self._assert_search_path(['qt-linux', 'qt-4.8', 'qt'], os_name='linux')
+
+        self._assert_search_path(['qt-5.0-wk2', 'qt-5.0', 'qt'], os_name='mac', use_webkit2=True, qt_version='5.0')
+        self._assert_search_path(['qt-5.0-wk2', 'qt-5.0', 'qt'], os_name='win', use_webkit2=True, qt_version='5.0')
+        self._assert_search_path(['qt-5.0-wk2', 'qt-5.0', 'qt'], os_name='linux', use_webkit2=True, qt_version='5.0')
+
+        self._assert_search_path(['qt-mac', 'qt-5.0', 'qt'], os_name='mac', override_platform='qt-mac', use_webkit2=True, qt_version='5.0')
+        self._assert_search_path(['qt-win', 'qt-5.0', 'qt'], os_name='win', override_platform='qt-win', use_webkit2=True, qt_version='5.0')
+        self._assert_search_path(['qt-linux', 'qt-5.0', 'qt'], os_name='linux', override_platform='qt-linux', use_webkit2=True, qt_version='5.0')
 
     def test_show_results_html_file(self):
         port = self.make_port()

@@ -232,7 +232,11 @@ if (isAppleMacWebKit()) {
         $platform = "mac";
     }
 } elsif (isQt()) {
-    $platform = "qt";
+    if (getQtVersion() lt "5.0") {
+        $platform = "qt-4.8";
+    } else {
+        $platform = "qt-5.0-wk1";
+    }
 } elsif (isGtk()) {
     $platform = "gtk";
 } elsif (isWx()) {
@@ -328,6 +332,23 @@ EOF
 
 setConfiguration();
 
+if ($useWebKitTestRunner) {
+    if (isAppleMacWebKit()) {
+        $realPlatform = $platform;
+        $platform = "mac-wk2";
+    } elsif (isAppleWinWebKit()) {
+        $stripEditingCallbacks = 0 unless defined $stripEditingCallbacks;
+        $realPlatform = $platform;
+        $platform = "win-wk2";
+    } elsif (isQt()) {
+        $realPlatform = $platform;
+        $platform = "qt-5.0-wk2";
+    } elsif (isGtk()) {
+        $realPlatform = $platform;
+        $platform = "gtk-wk2";
+    }
+}
+
 my $getOptionsResult = GetOptions(
     'add-platform-exceptions' => \$addPlatformExceptions,
     'additional-platform-directory=s' => \@additionalPlatformDirectories,
@@ -380,23 +401,6 @@ my $getOptionsResult = GetOptions(
 if (!$getOptionsResult || $showHelp) {
     print STDERR $usage;
     exit 1;
-}
-
-if ($useWebKitTestRunner) {
-    if (isAppleMacWebKit()) {
-        $realPlatform = $platform;
-        $platform = "mac-wk2";
-    } elsif (isAppleWinWebKit()) {
-        $stripEditingCallbacks = 0 unless defined $stripEditingCallbacks;
-        $realPlatform = $platform;
-        $platform = "win-wk2";
-    } elsif (isQt()) {
-        $realPlatform = $platform;
-        $platform = "qt-5.0-wk2";
-    } elsif (isGtk()) {
-        $realPlatform = $platform;
-        $platform = "gtk-wk2";
-    }
 }
 
 $timeoutSeconds *= 10 if $guardMalloc;
