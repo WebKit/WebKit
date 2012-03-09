@@ -266,37 +266,75 @@ static CSSPropertyInfo cssPropertyIDForJSCSSPropertyName(const Identifier& prope
     return propertyInfo;
 }
 
-static bool isCSSPropertyName(const Identifier& propertyIdentifier)
+static inline JSValue getPropertyValueFallback(ExecState* exec, JSCSSStyleDeclaration* thisObj, unsigned index)
 {
-    CSSPropertyInfo propertyInfo = cssPropertyIDForJSCSSPropertyName(propertyIdentifier);
-    return propertyInfo.propertyID;
+    // If the property is a shorthand property (such as "padding"),
+    // it can only be accessed using getPropertyValue.
+    return jsString(exec, thisObj->impl()->getPropertyValueInternal(static_cast<CSSPropertyID>(index)));
 }
 
-bool JSCSSStyleDeclaration::canGetItemsForName(ExecState*, CSSStyleDeclaration*, const Identifier& propertyName)
+static inline JSValue cssPropertyGetterPixelOrPosPrefix(ExecState* exec, JSCSSStyleDeclaration* thisObj, unsigned propertyID)
 {
-    return isCSSPropertyName(propertyName);
-}
-
-JSValue JSCSSStyleDeclaration::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
-{
-    JSCSSStyleDeclaration* thisObj = static_cast<JSCSSStyleDeclaration*>(asObject(slotBase));
-
     // Set up pixelOrPos boolean to handle the fact that
     // pixelTop returns "CSS Top" as number value in unit pixels
     // posTop returns "CSS top" as number value in unit pixels _if_ its a
     // positioned element. if it is not a positioned element, return 0
     // from MSIE documentation FIXME: IMPLEMENT THAT (Dirk)
-    CSSPropertyInfo propertyInfo = cssPropertyIDForJSCSSPropertyName(propertyName);
-    RefPtr<CSSValue> v = thisObj->impl()->getPropertyCSSValueInternal(static_cast<CSSPropertyID>(propertyInfo.propertyID));
+    RefPtr<CSSValue> v = thisObj->impl()->getPropertyCSSValueInternal(static_cast<CSSPropertyID>(propertyID));
     if (v) {
-        if (propertyInfo.hadPixelOrPosPrefix && v->isPrimitiveValue())
+        if (v->isPrimitiveValue())
             return jsNumber(static_pointer_cast<CSSPrimitiveValue>(v)->getFloatValue(CSSPrimitiveValue::CSS_PX));
         return jsStringOrNull(exec, v->cssText());
     }
 
-    // If the property is a shorthand property (such as "padding"), 
-    // it can only be accessed using getPropertyValue.
-    return jsString(exec, thisObj->impl()->getPropertyValueInternal(static_cast<CSSPropertyID>(propertyInfo.propertyID)));
+    return getPropertyValueFallback(exec, thisObj, propertyID);
+}
+
+static JSValue cssPropertyGetterPixelOrPosPrefixCallback(ExecState* exec, JSValue slotBase, unsigned propertyID)
+{
+    return cssPropertyGetterPixelOrPosPrefix(exec, static_cast<JSCSSStyleDeclaration*>(asObject(slotBase)), propertyID);
+}
+
+static inline JSValue cssPropertyGetter(ExecState* exec, JSCSSStyleDeclaration* thisObj, unsigned propertyID)
+{
+    RefPtr<CSSValue> v = thisObj->impl()->getPropertyCSSValueInternal(static_cast<CSSPropertyID>(propertyID));
+    if (v)
+        return jsStringOrNull(exec, v->cssText());
+
+    return getPropertyValueFallback(exec, thisObj, propertyID);
+}
+
+static JSValue cssPropertyGetterCallback(ExecState* exec, JSValue slotBase, unsigned propertyID)
+{
+    return cssPropertyGetter(exec, static_cast<JSCSSStyleDeclaration*>(asObject(slotBase)), propertyID);
+}
+
+bool JSCSSStyleDeclaration::getOwnPropertySlotDelegate(ExecState*, const Identifier& propertyIdentifier, PropertySlot& slot)
+{
+    CSSPropertyInfo propertyInfo = cssPropertyIDForJSCSSPropertyName(propertyIdentifier);
+    if (!propertyInfo.propertyID)
+        return false;
+
+    if (propertyInfo.hadPixelOrPosPrefix)
+        slot.setCustomIndex(this, static_cast<unsigned>(propertyInfo.propertyID), cssPropertyGetterPixelOrPosPrefixCallback);
+    else
+        slot.setCustomIndex(this, static_cast<unsigned>(propertyInfo.propertyID), cssPropertyGetterCallback);
+    return true;
+}
+
+bool JSCSSStyleDeclaration::getOwnPropertyDescriptorDelegate(JSC::ExecState* exec, const JSC::Identifier& propertyIdentifier, JSC::PropertyDescriptor& descriptor)
+{
+    CSSPropertyInfo propertyInfo = cssPropertyIDForJSCSSPropertyName(propertyIdentifier);
+    if (!propertyInfo.propertyID)
+        return false;
+
+    JSValue value;
+    if (propertyInfo.hadPixelOrPosPrefix)
+        value = cssPropertyGetterPixelOrPosPrefix(exec, this, propertyInfo.propertyID);
+    else
+        value = cssPropertyGetter(exec, this, propertyInfo.propertyID);
+    descriptor.setDescriptor(value, ReadOnly | DontDelete | DontEnum);
+    return true;
 }
 
 bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)

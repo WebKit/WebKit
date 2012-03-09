@@ -24,8 +24,11 @@ module css {
     interface [
         JSCustomMarkFunction,
         JSGenerateIsReachable,
+        JSCustomGetOwnPropertySlotAndDescriptor,
         CustomNamedSetter,
+#if defined(V8_BINDING) && V8_BINDING
         NamedGetter,
+#endif
         IndexedGetter,
         CustomEnumerateProperty,
         V8DependentLifetime
