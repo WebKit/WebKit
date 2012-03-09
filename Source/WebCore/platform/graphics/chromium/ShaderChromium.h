@@ -29,10 +29,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "PlatformString.h"
-
-#if USE(SKIA)
 #include "SkColorPriv.h"
-#endif
 
 namespace WebCore {
 

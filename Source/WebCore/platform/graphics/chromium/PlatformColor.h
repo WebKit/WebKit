@@ -28,10 +28,7 @@
 
 #include "Extensions3D.h"
 #include "GraphicsContext3D.h"
-
-#if USE(SKIA)
 #include "SkTypes.h" 
-#endif
 
 namespace WebCore {
 
@@ -39,11 +36,7 @@ class PlatformColor {
 public:
     static GraphicsContext3D::SourceDataFormat format()
     {
-#if USE(SKIA)
         return SK_B32_SHIFT ? GraphicsContext3D::SourceFormatRGBA8 : GraphicsContext3D::SourceFormatBGRA8;
-#elif USE(CG)
-        return GraphicsContext3D::SourceFormatBGRA8;
-#endif
     }
 
     // Returns the most efficient texture format for this platform.

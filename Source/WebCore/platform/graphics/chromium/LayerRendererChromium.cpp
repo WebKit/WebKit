@@ -64,13 +64,9 @@
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
 #include "cc/CCVideoDrawQuad.h"
-#if USE(SKIA)
 #include "Extensions3D.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
-#elif USE(CG)
-#include <CoreGraphics/CGBitmapContext.h>
-#endif
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
@@ -114,7 +110,6 @@ static TransformationMatrix screenMatrix(int x, int y, int width, int height)
     return screen;
 }
 
-#if USE(SKIA)
 bool contextSupportsAcceleratedPainting(GraphicsContext3D* context)
 {
     WebCore::Extensions3D* extensions = context->getExtensions();
@@ -133,7 +128,6 @@ bool contextSupportsAcceleratedPainting(GraphicsContext3D* context)
 
     return true;
 }
-#endif
 
 bool needsLionIOSurfaceReadbackWorkaround()
 {
@@ -222,10 +216,8 @@ bool LayerRendererChromium::initialize()
 
     m_context->setContextLostCallback(ContextLostCallbackAdapter::create(m_client));
 
-#if USE(SKIA)
     if (settings().acceleratePainting && contextSupportsAcceleratedPainting(m_context.get()))
         m_capabilities.usingAcceleratedPainting = true;
-#endif
 
     WebCore::Extensions3D* extensions = m_context->getExtensions();
     m_capabilities.contextHasCachedFrontBuffer = extensions->supports("GL_CHROMIUM_front_buffer_cached");

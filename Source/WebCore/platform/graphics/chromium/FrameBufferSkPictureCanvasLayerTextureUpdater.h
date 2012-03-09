@@ -28,7 +28,6 @@
 #define FrameBufferSkPictureCanvasLayerTextureUpdater_h
 
 #if USE(ACCELERATED_COMPOSITING)
-#if USE(SKIA)
 
 #include "SkPictureCanvasLayerTextureUpdater.h"
 
@@ -63,6 +62,5 @@ private:
     explicit FrameBufferSkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);
 };
 } // namespace WebCore
-#endif // USE(SKIA)
 #endif // USE(ACCELERATED_COMPOSITING)
 #endif // FrameBufferSkPictureCanvasLayerTextureUpdater_h

@@ -27,7 +27,6 @@
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-#if USE(SKIA)
 
 #include "SkPictureCanvasLayerTextureUpdater.h"
 
@@ -75,5 +74,4 @@ void SkPictureCanvasLayerTextureUpdater::setOpaque(bool opaque)
 }
 
 } // namespace WebCore
-#endif // USE(SKIA)
 #endif // USE(ACCELERATED_COMPOSITING)

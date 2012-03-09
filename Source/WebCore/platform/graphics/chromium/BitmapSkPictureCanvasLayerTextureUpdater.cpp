@@ -27,7 +27,6 @@
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-#if USE(SKIA)
 
 #include "BitmapSkPictureCanvasLayerTextureUpdater.h"
 
@@ -110,5 +109,4 @@ void BitmapSkPictureCanvasLayerTextureUpdater::updateTextureRect(GraphicsContext
 }
 
 } // namespace WebCore
-#endif // USE(SKIA)
 #endif // USE(ACCELERATED_COMPOSITING)

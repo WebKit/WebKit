@@ -127,13 +127,11 @@ void ContentLayerChromium::createTextureUpdaterIfNeeded()
 {
     if (m_textureUpdater)
         return;
-#if USE(SKIA)
     if (layerTreeHost()->settings().acceleratePainting)
         m_textureUpdater = FrameBufferSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate));
     else if (layerTreeHost()->settings().perTilePainting)
         m_textureUpdater = BitmapSkPictureCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate), layerTreeHost()->layerRendererCapabilities().usingMapSub);
     else
-#endif // USE(SKIA)
         m_textureUpdater = BitmapCanvasLayerTextureUpdater::create(ContentLayerPainter::create(m_delegate), layerTreeHost()->layerRendererCapabilities().usingMapSub);
     m_textureUpdater->setOpaque(opaque());
 

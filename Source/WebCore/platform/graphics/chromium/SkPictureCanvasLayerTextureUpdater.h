@@ -28,7 +28,6 @@
 #define SkPictureCanvasLayerTextureUpdater_h
 
 #if USE(ACCELERATED_COMPOSITING)
-#if USE(SKIA)
 
 #include "CanvasLayerTextureUpdater.h"
 #include "SkPicture.h"
@@ -66,6 +65,5 @@ private:
 };
 
 } // namespace WebCore
-#endif // USE(SKIA)
 #endif // USE(ACCELERATED_COMPOSITING)
 #endif // SkPictureCanvasLayerTextureUpdater_h

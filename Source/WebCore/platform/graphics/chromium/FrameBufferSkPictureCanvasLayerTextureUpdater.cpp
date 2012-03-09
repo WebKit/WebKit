@@ -27,7 +27,6 @@
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-#if USE(SKIA)
 
 #include "FrameBufferSkPictureCanvasLayerTextureUpdater.h"
 
@@ -99,9 +98,9 @@ LayerTextureUpdater::SampledTexelFormat FrameBufferSkPictureCanvasLayerTextureUp
 
 void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
-    // Make sure SKIA uses the correct GL context.
+    // Make sure ganesh uses the correct GL context.
     context->makeContextCurrent();
-    // Notify SKIA to sync its internal GL state.
+    // Notify ganesh to sync its internal GL state.
     context->grContext()->resetContext();
 
     // Create an accelerated canvas to draw on.
@@ -120,10 +119,9 @@ void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(GraphicsCo
                       contentRect().y() - sourceRect.y() + destRect.y());
     drawPicture(canvas.get());
 
-    // Flush SKIA context so that all the rendered stuff appears on the texture.
+    // Flush ganesh context so that all the rendered stuff appears on the texture.
     context->grContext()->flush();
 }
 
 } // namespace WebCore
-#endif // USE(SKIA)
 #endif // USE(ACCELERATED_COMPOSITING)

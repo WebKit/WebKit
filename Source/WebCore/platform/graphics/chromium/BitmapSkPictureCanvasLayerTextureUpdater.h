@@ -28,8 +28,6 @@
 #define BitmapSkPictureCanvasLayerTextureUpdater_h
 
 #if USE(ACCELERATED_COMPOSITING)
-#if USE(SKIA)
-
 #include "LayerTextureSubImage.h"
 #include "PlatformColor.h"
 #include "SkBitmap.h"
@@ -70,6 +68,5 @@ private:
     LayerTextureSubImage m_texSubImage;
 };
 } // namespace WebCore
-#endif // USE(SKIA)
 #endif // USE(ACCELERATED_COMPOSITING)
 #endif // BitmapSkPictureCanvasLayerTextureUpdater_h

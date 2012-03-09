@@ -33,17 +33,15 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "LayerChromium.h"
 
+#include "NativeImageSkia.h"
+#include "PlatformContextSkia.h"
+#include "RenderLayerBacking.h"
+#include "TextStream.h"
 #include "cc/CCAnimationEvents.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerAnimationDelegate.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHost.h"
-#if USE(SKIA)
-#include "NativeImageSkia.h"
-#include "PlatformContextSkia.h"
-#endif
-#include "RenderLayerBacking.h"
-#include "TextStream.h"
 #include "skia/ext/platform_canvas.h"
 
 namespace WebCore {

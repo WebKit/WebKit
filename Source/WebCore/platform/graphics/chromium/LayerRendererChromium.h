@@ -51,11 +51,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
-#if USE(CG)
-#include <CoreGraphics/CGContext.h>
-#include <wtf/RetainPtr.h>
-#endif
-
 namespace WebCore {
 
 class CCHeadsUpDisplay;
