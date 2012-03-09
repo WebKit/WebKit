@@ -273,10 +273,8 @@ void WebVTTParser::createNewCue()
     if (!m_currentContent.length())
         return;
 
-    RefPtr<DocumentFragment> attachmentRoot = createDocumentFragmentFromCueText(m_currentContent.toString());
-    
     RefPtr<TextTrackCue> cue = TextTrackCue::create(m_scriptExecutionContext, m_currentId, m_currentStartTime, m_currentEndTime, m_currentContent.toString(), m_currentSettings, false);
-    cue->setCueHTML(attachmentRoot);
+
     m_cuelist.append(cue);
     if (m_client)
         m_client->newCuesParsed();

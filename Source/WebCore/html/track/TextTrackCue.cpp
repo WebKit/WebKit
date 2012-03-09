@@ -358,15 +358,18 @@ void TextTrackCue::invalidateCueIndex()
 
 PassRefPtr<DocumentFragment> TextTrackCue::getCueAsHTML()
 {
+    RefPtr<DocumentFragment> clonedFragment;
+    Document* document;
+
     if (!m_documentFragment)
         m_documentFragment = WebVTTParser::create(0, m_scriptExecutionContext)->createDocumentFragmentFromCueText(m_content);
 
-    return m_documentFragment;
-}
+    document = static_cast<Document*>(m_scriptExecutionContext);
 
-void TextTrackCue::setCueHTML(PassRefPtr<DocumentFragment> fragment)
-{
-    m_documentFragment = fragment;
+    clonedFragment = DocumentFragment::create(document);
+    m_documentFragment->cloneChildNodes(clonedFragment.get());
+
+    return clonedFragment.release();
 }
 
 bool TextTrackCue::dispatchEvent(PassRefPtr<Event> event)

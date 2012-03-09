@@ -1,0 +1,32 @@
+Test that cue text is mutable.
+
+Fragment 1
+
+Different text ipsum dolor sit amet,
+Fragment 2
+
+Lorem ipsum dolor sit amet,
+RUN(testCue = testTrack.track.cues[0])
+
+** Test initial cue contents
+EXPECTED (testCue.text == 'Lorem ipsum dolor sit amet,') OK
+
+** Cue getCueAsHTML() should return a correct fragment
+EXPECTED (fragment.isEqualNode(testCue.getCueAsHTML()) == 'true') OK
+
+** Appending getCuesAsHTML() twice to the DOM should be succesful
+RUN(document.getElementsByTagName('div')[0].appendChild(testCue.getCueAsHTML()))
+RUN(document.getElementsByTagName('div')[1].appendChild(testCue.getCueAsHTML()))
+EXPECTED (fragment.isEqualNode(document.getElementsByTagName('div')[0]) == 'true') OK
+EXPECTED (fragment.isEqualNode(document.getElementsByTagName('div')[1]) == 'true') OK
+
+** The fragment returned by getCuesAsHTML() should be independently mutable
+RUN(document.getElementsByTagName('div')[0].firstChild.textContent = 'Different text ')
+EXPECTED (fragment.isEqualNode(document.getElementsByTagName('div')[0]) == 'false') OK
+EXPECTED (fragment.isEqualNode(document.getElementsByTagName('div')[1]) == 'true') OK
+
+** Calling twice getCueAsHTML() should not return the same fragment
+EXPECTED (testCue.getCueAsHTML() == testCue.getCueAsHTML() == 'false') OK
+
+END OF TEST
+

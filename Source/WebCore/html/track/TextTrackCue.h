@@ -93,7 +93,6 @@ public:
     void invalidateCueIndex();
 
     PassRefPtr<DocumentFragment> getCueAsHTML();
-    void setCueHTML(PassRefPtr<DocumentFragment>);
 
     virtual bool dispatchEvent(PassRefPtr<Event>);
     bool dispatchEvent(PassRefPtr<Event>, ExceptionCode&);
