@@ -1,3 +1,9 @@
+2012-03-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac build fix for micro data API.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-03-08  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed Snow Leopard build fix.

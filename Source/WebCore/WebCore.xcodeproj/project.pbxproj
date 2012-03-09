@@ -3580,6 +3580,7 @@
 		98EB1F951313FE0500D0E1EA /* NotImplemented.h in Headers */ = {isa = PBXBuildFile; fileRef = 98EB1F941313FE0500D0E1EA /* NotImplemented.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B0FB191140DB5790022588F /* HTTPValidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B0FB18F140DB5790022588F /* HTTPValidation.cpp */; };
 		9B0FB192140DB5790022588F /* HTTPValidation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B0FB190140DB5790022588F /* HTTPValidation.h */; };
+		9B2B7AC11509850A008932CC /* MicroDataItemValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B2F7CF714562120007F8B50 /* MicroDataItemValue.cpp */; };
 		9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B2D8A7814997CCF00ECEF3E /* UndoStep.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B32CDA913DF7FA900F34D13 /* RenderedPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B32CDA713DF7FA900F34D13 /* RenderedPosition.h */; };
 		9B32CDAA13DF7FA900F34D13 /* RenderedPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B32CDA813DF7FA900F34D13 /* RenderedPosition.cpp */; };
@@ -27528,6 +27529,7 @@
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				E1CDE92015018ED000862CC5 /* AsyncFileStream.cpp in Sources */,
 				450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */,
+				9B2B7AC11509850A008932CC /* MicroDataItemValue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

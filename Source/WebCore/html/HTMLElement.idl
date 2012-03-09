@@ -69,6 +69,7 @@ module html {
 
                  attribute boolean spellcheck;
 
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C // No Objective-C bindings yet.
                  attribute [Conditional=MICRODATA, Reflect] boolean itemScope;
         readonly attribute [Conditional=MICRODATA] DOMSettableTokenList itemType;
                  attribute [Conditional=MICRODATA, Reflect, URL] DOMString itemId;
@@ -78,6 +79,7 @@ module html {
 
 #if defined(ENABLE_MICRODATA) && ENABLE_MICRODATA
         readonly attribute [Conditional=MICRODATA] HTMLPropertiesCollection properties;
+#endif
 #endif
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP

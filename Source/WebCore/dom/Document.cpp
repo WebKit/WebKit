@@ -5421,7 +5421,6 @@ void Document::removeCachedMicroDataItemList(MicroDataItemList* list, const Stri
 {
     ASSERT(rareData());
     ASSERT(rareData()->nodeLists());
-    ASSERT_UNUSED(list, list->hasOwnCaches());
 
     NodeListsNodeData* data = rareData()->nodeLists();
 
