@@ -1,3 +1,19 @@
+2012-03-08  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION (r109022): Files dragged onto input controls cannot be read due to sandbox violation.
+        https://bugs.webkit.org/show_bug.cgi?id=80203
+        <rdar://problem/10976643>
+
+        Reviewed by Alexey Proskuryakov.
+
+        This patch reverts a small part fo r109022, leaving access to
+        NSPasteboard in the WebProcess when retrieving pathnames for
+        files being dragged. This avoid the sandbox violation until we
+        implement a mechanism to provide a sandbox extension to the WebProcess.
+        
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::getPathnamesForType):
+
 2012-03-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r110191, r110202, and r110279.

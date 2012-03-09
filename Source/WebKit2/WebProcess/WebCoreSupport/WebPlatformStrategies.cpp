@@ -155,8 +155,11 @@ PassRefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const Str
 
 void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
 {
-    WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPasteboardPathnamesForType(pasteboardName, pasteboardType),
-                                                Messages::WebContext::GetPasteboardPathnamesForType::Reply(pathnames), 0);
+    // FIXME: this needs to be replaced with the code below, once we resolve the sandboxing issue.
+    // WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPasteboardPathnamesForType(pasteboardName, pasteboardType),
+    //                                             Messages::WebContext::GetPasteboardPathnamesForType::Reply(pathnames), 0);
+    
+    PlatformPasteboard(pasteboardName).getPathnamesForType(pathnames, pasteboardType);
 }
 
 String WebPlatformStrategies::stringForType(const String& pasteboardType, const String& pasteboardName)
