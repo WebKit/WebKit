@@ -603,8 +603,6 @@ public:
     virtual EventTargetData* ensureEventTargetData();
 
 #if ENABLE(MICRODATA)
-    void itemTypeAttributeChanged();
-
     DOMSettableTokenList* itemProp();
     DOMSettableTokenList* itemRef();
     DOMSettableTokenList* itemType();
