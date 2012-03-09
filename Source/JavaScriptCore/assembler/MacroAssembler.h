@@ -642,7 +642,7 @@ public:
         // Debug always blind all constants, if only so we know
         // if we've broken blinding during patch development.
         return true;
-#endif
+#else
 
         // First off we'll special case common, "safe" values to avoid hurting
         // performance too much
@@ -657,6 +657,7 @@ public:
                 return false;
         }
         return shouldBlindForSpecificArch(value);
+#endif
     }
 
     struct BlindedImm32 {

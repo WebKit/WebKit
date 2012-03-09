@@ -1,3 +1,11 @@
+2012-03-09  Jessie Berlin  <jberlin@apple.com>
+
+        Windows debug build fix.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::shouldBlind):
+        Fix unreachable code warnings (which we treat as errors).
+
 2012-03-09  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
 
         Reviewed by Zoltan Herczeg.
