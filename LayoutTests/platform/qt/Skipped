@@ -373,6 +373,8 @@ fast/dom/Window/window-postmessage-clone-frames.html
 fast/dom/Window/window-postmessage-clone.html
 fast/events/drag-file-crash.html
 fast/events/drag-to-navigate.html
+fast/events/file-input-hidden-in-ondrop.html
+fast/events/input-element-display-none-in-dragleave-crash.html
 fast/events/prevent-drag-to-navigate.html
 fast/files/file-reader-directory-crash.html
 fast/forms/file/file-input-change-event.html
@@ -1987,6 +1989,10 @@ fast/text/emphasis-avoid-ruby.html
 # [Qt] fast/text/international/spaces-combined-in-vertical-text.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=80293
 fast/text/international/spaces-combined-in-vertical-text.html
+
+# [Qt] fast/css/resize-single-axis.html timeout
+# https://bugs.webkit.org/show_bug.cgi?id=80604
+fast/css/resize-single-axis.html
 
 # viewport meta tag tests that differ from the Opera results
 fast/viewport/viewport-65.html
