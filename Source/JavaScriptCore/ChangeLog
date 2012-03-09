@@ -1,3 +1,29 @@
+2012-03-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        Allocate the RegExpObject's data with the Cell
+        https://bugs.webkit.org/show_bug.cgi?id=80654
+
+        Reviewed by Gavin Barraclough.
+
+        This patch removes the creation of RegExpObject's data to avoid the overhead
+        create by the allocation and destruction.
+
+        We RegExp are created repeatedly, this provides some performance improvment.
+        The PeaceKeeper test stringDetectBrowser improves by 10%.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::RegExpObject):
+        (JSC::RegExpObject::visitChildren):
+        (JSC::RegExpObject::getOwnPropertyDescriptor):
+        (JSC::RegExpObject::defineOwnProperty):
+        (JSC::RegExpObject::match):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::setRegExp):
+        (JSC::RegExpObject::regExp):
+        (JSC::RegExpObject::setLastIndex):
+        (JSC::RegExpObject::getLastIndex):
+        (RegExpObject):
+
 2012-03-08  Steve Falkenburg  <sfalken@apple.com>
 
         Separate WTF parts of JavaScriptCoreGenerated into WTFGenerated for Windows build

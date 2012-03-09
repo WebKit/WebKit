@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2012 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -62,19 +62,16 @@ const ClassInfo RegExpObject::s_info = { "RegExp", &JSNonFinalObject::s_info, 0,
 
 RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
     : JSNonFinalObject(globalObject->globalData(), structure)
-    , d(adoptPtr(new RegExpObjectData(globalObject->globalData(), this, regExp)))
+    , m_regExp(globalObject->globalData(), this, regExp)
+    , m_lastIndexIsWritable(true)
 {
+    m_lastIndex.setWithoutWriteBarrier(jsNumber(0));
 }
 
 void RegExpObject::finishCreation(JSGlobalObject* globalObject)
 {
     Base::finishCreation(globalObject->globalData());
     ASSERT(inherits(&s_info));
-}
-
-void RegExpObject::destroy(JSCell* cell)
-{
-    jsCast<RegExpObject*>(cell)->RegExpObject::~RegExpObject();
 }
 
 void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -84,10 +81,10 @@ void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
-    if (thisObject->d->regExp)
-        visitor.append(&thisObject->d->regExp);
-    if (UNLIKELY(!thisObject->d->lastIndex.get().isInt32()))
-        visitor.append(&thisObject->d->lastIndex);
+    if (thisObject->m_regExp)
+        visitor.append(&thisObject->m_regExp);
+    if (UNLIKELY(!thisObject->m_lastIndex.get().isInt32()))
+        visitor.append(&thisObject->m_lastIndex);
 }
 
 bool RegExpObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -104,7 +101,7 @@ bool RegExpObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, c
 {
     if (propertyName == exec->propertyNames().lastIndex) {
         RegExpObject* regExp = asRegExpObject(object);
-        descriptor.setDescriptor(regExp->getLastIndex(), regExp->d->lastIndexIsWritable ? DontDelete | DontEnum : DontDelete | DontEnum | ReadOnly);
+        descriptor.setDescriptor(regExp->getLastIndex(), regExp->m_lastIndexIsWritable ? DontDelete | DontEnum : DontDelete | DontEnum | ReadOnly);
         return true;
     }
     return getStaticValueDescriptor<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), jsCast<RegExpObject*>(object), propertyName, descriptor);
@@ -148,7 +145,7 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, const Id
             return reject(exec, shouldThrow, "Attempting to change enumerable attribute of unconfigurable property.");
         if (descriptor.isAccessorDescriptor())
             return reject(exec, shouldThrow, "Attempting to change access mechanism for an unconfigurable property.");
-        if (!regExp->d->lastIndexIsWritable) {
+        if (!regExp->m_lastIndexIsWritable) {
             if (descriptor.writablePresent() && descriptor.writable())
                 return reject(exec, shouldThrow, "Attempting to change writable attribute of unconfigurable property.");
             if (!sameValue(exec, regExp->getLastIndex(), descriptor.value()))
@@ -156,7 +153,7 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, const Id
             return true;
         }
         if (descriptor.writablePresent() && !descriptor.writable())
-            regExp->d->lastIndexIsWritable = false;
+            regExp->m_lastIndexIsWritable = false;
         if (descriptor.value())
             regExp->setLastIndex(exec, descriptor.value(), false);
         return true;
@@ -300,7 +297,7 @@ bool RegExpObject::match(ExecState* exec)
     if (!regExp()->global()) {
         int position;
         int length;
-        regExpConstructor->performMatch(*globalData, d->regExp.get(), input, 0, position, length);
+        regExpConstructor->performMatch(*globalData, m_regExp.get(), input, 0, position, length);
         return position >= 0;
     }
 
@@ -323,7 +320,7 @@ bool RegExpObject::match(ExecState* exec)
 
     int position;
     int length = 0;
-    regExpConstructor->performMatch(*globalData, d->regExp.get(), input, lastIndex, position, length);
+    regExpConstructor->performMatch(*globalData, m_regExp.get(), input, lastIndex, position, length);
     if (position < 0) {
         setLastIndex(exec, 0);
         return false;
