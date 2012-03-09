@@ -92,7 +92,6 @@ LayerTreeHostQt::LayerTreeHostQt(WebPage* webPage)
     m_nonCompositedContentLayer->setName("LayerTreeHostQt non-composited content");
 #endif
     m_nonCompositedContentLayer->setDrawsContent(true);
-    m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
     m_nonCompositedContentLayer->setSize(m_webPage->size());
 
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
@@ -140,6 +139,7 @@ void LayerTreeHostQt::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAft
 void LayerTreeHostQt::setRootCompositingLayer(WebCore::GraphicsLayer* graphicsLayer)
 {
     m_nonCompositedContentLayer->removeAllChildren();
+    m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
 
     // Add the accelerated layer tree hierarchy.
     if (graphicsLayer)

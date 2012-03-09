@@ -112,11 +112,13 @@ public:
     void execDialogRunner(QtDialogRunner&);
 
     void setRenderToOffscreenBuffer(bool enable) { m_renderToOffscreenBuffer = enable; }
+    void setTransparentBackground(bool);
     void setViewInAttachedProperties(QObject*);
     void setIcon(const QUrl&);
 
     bool navigatorQtObjectEnabled() const;
     bool renderToOffscreenBuffer() const { return m_renderToOffscreenBuffer; }
+    bool transparentBackground() const;
     void setNavigatorQtObjectEnabled(bool);
 
     QRect visibleContentsRect() const;

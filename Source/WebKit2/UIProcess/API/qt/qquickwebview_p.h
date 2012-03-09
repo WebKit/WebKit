@@ -238,6 +238,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(qreal contentY READ contentY WRITE setContentY NOTIFY contentYChanged)
     Q_PROPERTY(QQuickItem* contentItem READ contentItem CONSTANT)
     Q_PROPERTY(QDeclarativeListProperty<QObject> flickableData READ flickableData)
+    Q_PROPERTY(bool transparentBackground WRITE setTransparentBackground READ transparentBackground)
 
     Q_PROPERTY(QWebNavigationHistory* navigationHistory READ navigationHistory CONSTANT FINAL)
     Q_PROPERTY(QDeclarativeComponent* alertDialog READ alertDialog WRITE setAlertDialog NOTIFY alertDialogChanged)
@@ -299,6 +300,8 @@ public:
     void setContentX(qreal);
     qreal contentY() const;
     void setContentY(qreal);
+    bool transparentBackground() const;
+    void setTransparentBackground(bool);
 
     // C++ only
     bool renderToOffscreenBuffer() const;

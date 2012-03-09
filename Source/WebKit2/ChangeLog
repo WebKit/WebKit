@@ -1,3 +1,32 @@
+2012-03-08  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][WK2] Allow transparent WebViews
+        https://bugs.webkit.org/show_bug.cgi?id=80608
+
+        Reviewed by Tor Arne Vestbø.
+
+        Added support for transparentBackground in QQuickWebViewExperimental.
+        This uses the existing drawsTransparentBackground property in WebKit2.
+        Also, changed LayerTreeHostQt to set the contentsOpaque flag when the root layer changes,
+        otherwise the change doesn't take effect.
+
+        A new API test was added.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::setTransparentBackground):
+        (QQuickWebViewPrivate::transparentBackground):
+        (QQuickWebViewExperimental::transparentBackground):
+        (QQuickWebViewExperimental::setTransparentBackground):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView):
+        (tst_QQuickWebView::transparentWebViews):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::LayerTreeHostQt):
+        (WebKit::LayerTreeHostQt::setRootCompositingLayer):
+
 2012-03-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         GTK+ build fix. Only try to get the backing from the layer in when

@@ -55,6 +55,7 @@ private slots:
     void removeFromCanvas();
     void multipleWebViewWindows();
     void multipleWebViews();
+    void transparentWebViews();
 
 private:
     void prepareWebViewComponent();
@@ -341,6 +342,33 @@ void tst_QQuickWebView::multipleWebViews()
     QVERIFY(waitForLoadSucceeded(webView2.data()));
     webView2->setVisible(true);
     QTest::qWait(200);
+}
+
+void tst_QQuickWebView::transparentWebViews()
+{
+    showWebView();
+
+    // This should not crash.
+    QScopedPointer<QQuickWebView> webView1(newWebView());
+    webView1->setParentItem(m_window->rootItem());
+    QScopedPointer<QQuickWebView> webView2(newWebView());
+    webView2->setParentItem(m_window->rootItem());
+    QVERIFY(!webView1->experimental()->transparentBackground());
+    webView2->experimental()->setTransparentBackground(true);
+    QVERIFY(webView2->experimental()->transparentBackground());
+
+    webView1->setSize(QSizeF(300, 400));
+    webView1->loadHtml("<html><body bgcolor=\"red\"></body></html>");
+    QVERIFY(waitForLoadSucceeded(webView1.data()));
+    webView1->setVisible(true);
+
+    webView2->setSize(QSizeF(300, 400));
+    webView2->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    QVERIFY(waitForLoadSucceeded(webView2.data()));
+    webView2->setVisible(true);
+
+    QTest::qWait(200);
+    // FIXME: test actual rendering results; https://bugs.webkit.org/show_bug.cgi?id=80609.
 }
 
 void tst_QQuickWebView::scrollRequest()

@@ -125,6 +125,16 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     webPageProxy->initializeWebPage();
 }
 
+void QQuickWebViewPrivate::setTransparentBackground(bool enable)
+{
+    webPageProxy->setDrawsTransparentBackground(enable);
+}
+
+bool QQuickWebViewPrivate::transparentBackground() const
+{
+    return webPageProxy->drawsTransparentBackground();
+}
+
 void QQuickWebViewPrivate::enableMouseEvents()
 {
     Q_Q(QQuickWebView);
@@ -810,6 +820,17 @@ bool QQuickWebViewExperimental::renderToOffscreenBuffer() const
 {
     Q_D(const QQuickWebView);
     return d->renderToOffscreenBuffer();
+}
+
+bool QQuickWebViewExperimental::transparentBackground() const
+{
+    Q_D(const QQuickWebView);
+    return d->transparentBackground();
+}
+void QQuickWebViewExperimental::setTransparentBackground(bool enable)
+{
+    Q_D(QQuickWebView);
+    d->setTransparentBackground(enable);
 }
 
 void QQuickWebViewExperimental::setFlickableViewportEnabled(bool enable)
