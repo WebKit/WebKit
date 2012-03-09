@@ -70,7 +70,6 @@ public:
 
 private:
     SVGImageCache(SVGImage*);
-    void redraw();
     void redrawTimerFired(Timer<SVGImageCache>*);
 
     struct ImageData {

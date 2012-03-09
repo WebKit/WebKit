@@ -21,7 +21,6 @@
 #include "SVGImageCache.h"
 
 #if ENABLE(SVG)
-#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "RenderSVGRoot.h"
@@ -82,18 +81,13 @@ void SVGImageCache::imageContentChanged()
     for (ImageDataMap::iterator it = m_imageDataMap.begin(); it != end; ++it)
         it->second.imageNeedsUpdate = true;
 
-    // If we're in the middle of layout, start redrawing dirty
-    // images on a timer; otherwise it's safe to draw immediately.
-
-    FrameView* frameView = m_svgImage->frameView();
-    if (frameView && frameView->needsLayout()) {
-        if (!m_redrawTimer.isActive())
-            m_redrawTimer.startOneShot(0);
-    } else
-       redraw();
+    // Start redrawing dirty images with a timer, as imageContentChanged() may be called
+    // by the FrameView of the SVGImage which is currently in FrameView::layout().
+    if (!m_redrawTimer.isActive())
+        m_redrawTimer.startOneShot(0);
 }
 
-void SVGImageCache::redraw()
+void SVGImageCache::redrawTimerFired(Timer<SVGImageCache>*)
 {
     ImageDataMap::iterator end = m_imageDataMap.end();
     for (ImageDataMap::iterator it = m_imageDataMap.begin(); it != end; ++it) {
@@ -109,11 +103,6 @@ void SVGImageCache::redraw()
     }
     ASSERT(m_svgImage->imageObserver());
     m_svgImage->imageObserver()->animationAdvanced(m_svgImage);
-}
-
-void SVGImageCache::redrawTimerFired(Timer<SVGImageCache>*)
-{
-    redraw();
 }
 
 Image* SVGImageCache::lookupOrCreateBitmapImageForRenderer(const RenderObject* renderer)

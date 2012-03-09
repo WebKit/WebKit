@@ -298,10 +298,7 @@ bool RenderView::shouldRepaint(const IntRect& r) const
 
     if (!m_frameView)
         return false;
-
-    if (m_frameView->repaintsDisabled())
-        return false;
-
+    
     return true;
 }
 
