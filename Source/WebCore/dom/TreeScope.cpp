@@ -173,7 +173,6 @@ Element* TreeScope::activeElement()
     if (!node)
         return document->body();
 
-    ASSERT(node->document() == this);
     TreeScope* treeScope = node->treeScope();
 
     while (treeScope != this && treeScope != document) {
