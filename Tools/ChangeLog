@@ -1,3 +1,17 @@
+2012-03-09  Ashod Nakashian  <ashodnakashian@yahoo.com>
+
+        Bash scripts should support LF endings only
+        https://bugs.webkit.org/show_bug.cgi?id=79509
+
+        Reviewed by David Kilzer.
+
+        * EWSTools/boot.sh: Added properties svn:executable and svn:eol-style.
+        * EWSTools/start-queue.sh: Added property svn:eol-style.
+        * Scripts/webkit-tools-completion.sh: Added properties svn:executable and svn:eol-style.
+        * WebKitTestRunner/win/build-generated-files.sh: Added properties svn:executable and svn:eol-style.
+        * iExploder/iexploder-1.7.2/tools/release_src.sh: Added property svn:eol-style.
+        * iExploder/iexploder-1.7.2/tools/update_html_tags_from_sources.sh: Added property svn:eol-style.
+
 2012-03-09  Ionut Biru  <ibiru@archlinux.org>
 
         [BUILD] use detected python to run generate-gtkdoc

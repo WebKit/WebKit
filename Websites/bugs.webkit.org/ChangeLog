@@ -1,3 +1,12 @@
+2012-03-09  Ashod Nakashian  <ashodnakashian@yahoo.com>
+
+        Bash scripts should support LF endings only
+        https://bugs.webkit.org/show_bug.cgi?id=79509
+
+        Reviewed by David Kilzer.
+
+        * contrib/yp_nomail.sh: Added property svn:executable.
+
 2012-03-05  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         The Bugzilla autocompleter doesn't support multiple Unicode characters per name

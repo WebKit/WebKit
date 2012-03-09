@@ -1,3 +1,12 @@
+2012-03-09  Ashod Nakashian  <ashodnakashian@yahoo.com>
+
+        Bash scripts should support LF endings only
+        https://bugs.webkit.org/show_bug.cgi?id=79509
+
+        Reviewed by David Kilzer.
+
+        * win/tools/scripts/feature-defines.sh: Modified property svn:eol-style.
+
 2012-03-05  Sam Weinig  <sam@webkit.org>
 
         Fix the SnowLeoaprd build.
