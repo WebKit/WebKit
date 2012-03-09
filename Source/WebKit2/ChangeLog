@@ -1,5 +1,14 @@
 2012-03-08  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed Snow Leopard build fix.
+
+        On Leopard and Snow Leopard, provide an implementation for -[NSWindow convertRectToScreen:].
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[NSWindow convertRectToScreen:]):
+
+2012-03-08  Jer Noble  <jer.noble@apple.com>
+
         Further unreviewed build fix.
 
         Add in the WebCore namespace, so that IntRect is pulled in.

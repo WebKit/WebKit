@@ -1,3 +1,12 @@
+2012-03-08  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed Snow Leopard build fix.
+
+        On Leopard and Snow Leopard, provide an implementation for -[NSWindow convertRectToScreen:].
+
+        * WebView/WebFullScreenController.mm:
+        (-[NSWindow convertRectToScreen:]):
+
 2012-03-07  Jon Lee  <jonlee@apple.com>
 
         Add support for ENABLE(LEGACY_NOTIFICATIONS)

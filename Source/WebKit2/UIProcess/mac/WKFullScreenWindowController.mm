@@ -61,6 +61,22 @@ static const CFTimeInterval defaultAnimationDuration = 0.5;
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 @end
 
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+@interface NSWindow(convertRectToScreenForLeopardAndSnowLeopard)
+- (NSRect)convertRectToScreen:(NSRect)aRect;
+@end
+
+@implementation NSWindow(convertRectToScreenForLeopardAndSnowLeopard)
+- (NSRect)convertRectToScreen:(NSRect)rect
+{
+    NSRect frame = [self frame];
+    rect.origin.x += frame.origin.x;
+    rect.origin.y += frame.origin.y;
+    return rect;
+}
+@end
+#endif
+
 @interface NSWindow(IsOnActiveSpaceAdditionForTigerAndLeopard)
 - (BOOL)isOnActiveSpace;
 @end
