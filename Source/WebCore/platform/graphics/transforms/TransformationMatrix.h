@@ -28,6 +28,7 @@
 
 #include "FloatPoint.h"
 #include "IntPoint.h"
+#include "LayoutTypes.h"
 #include <string.h> //for memcpy
 #include <wtf/FastAllocBase.h>
 
@@ -60,6 +61,7 @@ namespace WebCore {
 
 class AffineTransform;
 class IntRect;
+class FractionalLayoutRect;
 class FloatPoint3D;
 class FloatRect;
 class FloatQuad;
@@ -146,6 +148,7 @@ public:
     // Rounds the resulting mapped rectangle out. This is helpful for bounding
     // box computations but may not be what is wanted in other contexts.
     IntRect mapRect(const IntRect&) const;
+    FractionalLayoutRect mapRect(const FractionalLayoutRect&) const;
 
     // If the matrix has 3D components, the z component of the result is
     // dropped, effectively projecting the quad into the z=0 plane
@@ -161,7 +164,7 @@ public:
     FloatQuad projectQuad(const FloatQuad&) const;
     // Projects the four corners of the quad and takes a bounding box,
     // while sanitizing values created when the w component is negative.
-    IntRect clampedBoundsOfProjectedQuad(const FloatQuad&) const;
+    LayoutRect clampedBoundsOfProjectedQuad(const FloatQuad&) const;
 
     double m11() const { return m_matrix[0][0]; }
     void setM11(double f) { m_matrix[0][0] = f; }

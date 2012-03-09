@@ -145,6 +145,11 @@ inline LayoutUnit layoutMod(const LayoutUnit& numerator, const LayoutUnit& denom
     return numerator % denominator;
 }
 
+inline LayoutUnit clampToLayoutUnit(double value)
+{
+    return clampToInteger(value);
+}
+
 } // namespace WebCore
 
 #endif // LayoutTypes_h

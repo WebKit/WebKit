@@ -30,6 +30,7 @@
 #include "FloatPoint.h"
 #include "FloatQuad.h"
 #include "IntSize.h"
+#include "LayoutTypes.h"
 #include "TransformationMatrix.h"
 #include <wtf/OwnPtr.h>
 
@@ -74,12 +75,12 @@ public:
     
     void setQuad(const FloatQuad& quad) { m_lastPlanarQuad = quad; }
     
-    void move(const IntSize& s, TransformAccumulation accumulate = FlattenTransform)
+    void move(const LayoutSize& s, TransformAccumulation accumulate = FlattenTransform)
     {
         move(s.width(), s.height(), accumulate);
     }
     
-    void move(int x, int y, TransformAccumulation = FlattenTransform);
+    void move(LayoutUnit x, LayoutUnit y, TransformAccumulation = FlattenTransform);
     void applyTransform(const AffineTransform& transformFromContainer, TransformAccumulation = FlattenTransform);
     void applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation = FlattenTransform);
     void flatten();

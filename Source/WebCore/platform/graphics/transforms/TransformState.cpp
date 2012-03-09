@@ -49,7 +49,7 @@ TransformState& TransformState::operator=(const TransformState& other)
     return *this;
 }
 
-void TransformState::move(int x, int y, TransformAccumulation accumulate)
+void TransformState::move(LayoutUnit x, LayoutUnit y, TransformAccumulation accumulate)
 {
     if (m_accumulatingTransform && m_accumulatedTransform) {
         // If we're accumulating into an existing transform, apply the translation.
