@@ -3,32 +3,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {CENTER} at (0,0) size 784x74
-        RenderBlock {FORM} at (0,0) size 784x37
-          RenderTable {TABLE} at (0,0) size 784x37
-            RenderTableSection {TBODY} at (0,0) size 784x37
-              RenderTableRow {TR} at (0,0) size 784x37
-                RenderTableCell {TD} at (0,8) size 136x21 [r=0 c=0 rs=2 cs=1]
+      RenderBlock {CENTER} at (0,0) size 784x72
+        RenderBlock {FORM} at (0,0) size 784x35
+          RenderTable {TABLE} at (0,0) size 784x35
+            RenderTableSection {TBODY} at (0,0) size 784x35
+              RenderTableRow {TR} at (0,0) size 784x35
+                RenderTableCell {TD} at (0,7) size 138x21 [r=0 c=0 rs=2 cs=1]
                   RenderText {#text} at (0,0) size 4x21
                     text run at (0,0) width 4: " "
-                RenderTableCell {TD} at (136,4) size 370x29 [r=0 c=1 rs=1 cs=1]
+                RenderTableCell {TD} at (138,3) size 370x29 [r=0 c=1 rs=1 cs=1]
                   RenderTextControl {INPUT} at (2,2) size 366x25
+                    RenderBlock {DIV} at (2,2) size 362x21
                   RenderText {#text} at (0,0) size 0x0
-                RenderTableCell {TD} at (506,0) size 126x37 [r=0 c=2 rs=1 cs=1]
-                  RenderButton {INPUT} at (2,2) size 122x33 [bgcolor=#C0C0C0]
-                    RenderBlock (anonymous) at (6,6) size 110x21
+                RenderTableCell {TD} at (508,0) size 124x35 [r=0 c=2 rs=1 cs=1]
+                  RenderButton {INPUT} at (2,2) size 120x31 [bgcolor=#C0C0C0]
+                    RenderBlock (anonymous) at (5,5) size 110x21
                       RenderText at (0,0) size 110x21
                         text run at (0,0) width 110: "Search Froogle"
                   RenderText {#text} at (0,0) size 0x0
-                RenderTableCell {TD} at (632,9) size 152x19 [r=0 c=3 rs=2 cs=1]
-                  RenderInline {LABEL} at (0,0) size 128x13
+                RenderTableCell {TD} at (632,9) size 152x17 [r=0 c=3 rs=2 cs=1]
+                  RenderInline {LABEL} at (0,0) size 126x13
                     RenderText {#text} at (0,0) size 0x0
-                    RenderBlock {INPUT} at (12,3) size 13x13
-                    RenderText {#text} at (27,4) size 111x13
-                      text run at (27,4) width 111: " Remember this location"
+                    RenderBlock {INPUT} at (12,3) size 11x11
+                    RenderText {#text} at (25,2) size 111x13
+                      text run at (25,2) width 111: " Remember this location"
                   RenderText {#text} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,53) size 784x21
+        RenderBlock (anonymous) at (0,51) size 784x21
           RenderBR {BR} at (392,0) size 0x21
-layer at (148,16) size 362x21
-  RenderBlock {DIV} at (2,2) size 362x21
 caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 2 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {FORM} of child 1 {CENTER} of body

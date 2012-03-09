@@ -39,46 +39,43 @@ layer at (0,0) size 800x600
         RenderText {#text} at (200,5) size 29x21
           text run at (200,5) width 29: "text "
         RenderTextControl {INPUT} at (231,3) size 186x25
+          RenderBlock {DIV} at (2,2) size 182x21 [color=#545454]
+            RenderText {#text} at (1,0) size 22x21
+              text run at (1,0) width 22: "foo"
         RenderText {#text} at (419,5) size 22x21
           text run at (419,5) width 13: "b "
           text run at (432,5) width 9: "a"
         RenderTextControl {INPUT} at (3,32) size 186x25
+          RenderBlock {DIV} at (2,2) size 182x21
+            RenderText {#text} at (1,0) size 18x21
+              text run at (1,0) width 18: "\x{2022}\x{2022}\x{2022}"
         RenderText {#text} at (191,34) size 69x21
           text run at (191,34) width 69: "password"
         RenderTextControl {INPUT} at (3,61) size 186x25
+          RenderBlock {DIV} at (2,2) size 182x21 [color=#545454]
+            RenderText {#text} at (1,0) size 18x21
+              text run at (1,0) width 18: "\x{2022}\x{2022}\x{2022}"
         RenderText {#text} at (191,63) size 9x21
           text run at (191,63) width 9: "b"
       RenderBlock {DIV} at (10,466) size 450x23 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 9x21
           text run at (1,1) width 9: "a"
-        RenderBlock {INPUT} at (14,6) size 13x13
-        RenderText {#text} at (31,1) size 72x21
-          text run at (31,1) width 72: "checkbox "
-        RenderBlock {INPUT} at (107,6) size 13x13
-        RenderText {#text} at (124,1) size 9x21
-          text run at (124,1) width 9: "b"
+        RenderBlock {INPUT} at (14,8) size 11x11
+        RenderText {#text} at (29,1) size 72x21
+          text run at (29,1) width 72: "checkbox "
+        RenderBlock {INPUT} at (105,8) size 11x11
+        RenderText {#text} at (120,1) size 9x21
+          text run at (120,1) width 9: "b"
       RenderBlock {DIV} at (10,499) size 450x23 [border: (1px solid #FF0000)]
         RenderText {#text} at (1,1) size 9x21
           text run at (1,1) width 9: "a"
-        RenderBlock {INPUT} at (14,7) size 12x12
-        RenderText {#text} at (30,1) size 40x21
-          text run at (30,1) width 40: "radio "
-        RenderBlock {INPUT} at (74,7) size 12x12
-        RenderText {#text} at (90,1) size 9x21
-          text run at (90,1) width 9: "b"
+        RenderBlock {INPUT} at (14,9) size 10x10
+        RenderText {#text} at (28,1) size 40x21
+          text run at (28,1) width 40: "radio "
+        RenderBlock {INPUT} at (72,9) size 10x10
+        RenderText {#text} at (86,1) size 9x21
+          text run at (86,1) width 9: "b"
 layer at (32,380) size 182x21 scrollWidth 215
   RenderBlock {DIV} at (2,2) size 182x21
     RenderText {#text} at (1,0) size 213x21
       text run at (1,0) width 213: "foobarbazfoobarbazfoobarbaz"
-layer at (251,380) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21 [color=#545454]
-    RenderText {#text} at (1,0) size 22x21
-      text run at (1,0) width 22: "foo"
-layer at (23,409) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21
-    RenderText {#text} at (1,0) size 18x21
-      text run at (1,0) width 18: "\x{2022}\x{2022}\x{2022}"
-layer at (23,438) size 182x21
-  RenderBlock {DIV} at (2,2) size 182x21 [color=#545454]
-    RenderText {#text} at (1,0) size 18x21
-      text run at (1,0) width 18: "\x{2022}\x{2022}\x{2022}"
