@@ -1,3 +1,22 @@
+2012-03-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r110250.
+        http://trac.webkit.org/changeset/110250
+        https://bugs.webkit.org/show_bug.cgi?id=80682
+
+        It made NRWT ignore test_expectations.txt on Qt-WK2 and ignore
+        qt-linux at all. (Requested by Ossy on #webkit).
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort):
+        (QtPort.determine_full_port_name):
+        (QtPort.baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest):
+        (QtPortTest._assert_search_path):
+        (QtPortTest.test_baseline_search_path):
+
 2012-03-08  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Use Qt's module system for install rules and depending on QtWebKit
