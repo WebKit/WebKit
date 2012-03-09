@@ -298,8 +298,7 @@ void SVGFontFaceElement::rebuildFontFace()
 
     // Parse in-memory CSS rules
     CSSProperty srcProperty(CSSPropertySrc, list);
-    const CSSProperty* srcPropertyRef = &srcProperty;
-    m_fontFaceRule->declaration()->addParsedProperties(&srcPropertyRef, 1);
+    m_fontFaceRule->declaration()->addParsedProperties(&srcProperty, 1);
 
     if (describesParentFont) {    
         // Traverse parsed CSS values and associate CSSFontFaceSrcValue elements with ourselves.

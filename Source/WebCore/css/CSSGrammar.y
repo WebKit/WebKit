@@ -326,9 +326,9 @@ webkit_value:
         CSSParser* p = static_cast<CSSParser*>(parser);
         if ($4) {
             p->m_valueList = p->sinkFloatingValueList($4);
-            int oldParsedProperties = p->m_numParsedProperties;
+            int oldParsedProperties = p->m_parsedProperties.size();
             if (!p->parseValue(p->m_id, p->m_important))
-                p->rollbackLastProperties(p->m_numParsedProperties - oldParsedProperties);
+                p->rollbackLastProperties(p->m_parsedProperties.size() - oldParsedProperties);
             p->m_valueList = nullptr;
         }
     }
@@ -1300,10 +1300,10 @@ declaration:
         bool isPropertyParsed = false;
         if ($1 && $4) {
             p->m_valueList = p->sinkFloatingValueList($4);
-            int oldParsedProperties = p->m_numParsedProperties;
+            int oldParsedProperties = p->m_parsedProperties.size();
             $$ = p->parseValue($1, $5);
             if (!$$)
-                p->rollbackLastProperties(p->m_numParsedProperties - oldParsedProperties);
+                p->rollbackLastProperties(p->m_parsedProperties.size() - oldParsedProperties);
             else
                 isPropertyParsed = true;
             p->m_valueList = nullptr;

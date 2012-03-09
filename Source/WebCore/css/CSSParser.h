@@ -26,6 +26,7 @@
 #include "CSSCalculationValue.h"
 #include "CSSGradientValue.h"
 #include "CSSParserValues.h"
+#include "CSSProperty.h"
 #include "CSSPropertySourceData.h"
 #include "CSSSelector.h"
 #include "Color.h"
@@ -83,7 +84,7 @@ public:
 
     void addProperty(int propId, PassRefPtr<CSSValue>, bool important, bool implicit = false);
     void rollbackLastProperties(int num);
-    bool hasProperties() const { return m_numParsedProperties > 0; }
+    bool hasProperties() const { return !m_parsedProperties.isEmpty(); }
 
     bool parseValue(int propId, bool important);
     bool parseShorthand(int propId, const int* properties, int numProperties, bool important);
@@ -284,12 +285,10 @@ public:
     RefPtr<WebKitCSSKeyframeRule> m_keyframe;
     OwnPtr<MediaQuery> m_mediaQuery;
     OwnPtr<CSSParserValueList> m_valueList;
-    CSSProperty** m_parsedProperties;
+    Vector<CSSProperty, 256> m_parsedProperties;
     CSSSelectorList* m_selectorListForParseSelector;
 
     RefPtr<CSSValuePool> m_cssValuePool;
-    unsigned m_numParsedProperties;
-    unsigned m_maxParsedProperties;
     unsigned m_numParsedPropertiesBeforeMarginBox;
 
     int m_inParseShorthand;

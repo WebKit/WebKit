@@ -57,26 +57,27 @@ StylePropertySet::StylePropertySet(const Vector<CSSProperty>& properties)
     m_properties.shrinkToFit();
 }
 
-StylePropertySet::StylePropertySet(const CSSProperty* const * properties, int numProperties, bool useStrictParsing)
+StylePropertySet::StylePropertySet(const CSSProperty* properties, int numProperties, bool useStrictParsing)
     : m_strictParsing(useStrictParsing)
     , m_hasCSSOMWrapper(false)
 {
+    // FIXME: This logic belongs in CSSParser.
+
     m_properties.reserveInitialCapacity(numProperties);
     HashMap<int, bool> candidates;
     for (int i = 0; i < numProperties; ++i) {
-        const CSSProperty *property = properties[i];
-        ASSERT(property);
-        bool important = property->isImportant();
+        const CSSProperty& property = properties[i];
+        bool important = property.isImportant();
 
-        HashMap<int, bool>::iterator it = candidates.find(property->id());
+        HashMap<int, bool>::iterator it = candidates.find(property.id());
         if (it != candidates.end()) {
             if (!important && it->second)
                 continue;
-            removeProperty(property->id());
+            removeProperty(property.id());
         }
 
-        m_properties.append(*property);
-        candidates.set(property->id(), important);
+        m_properties.append(property);
+        candidates.set(property.id(), important);
     }
 }
 
@@ -628,11 +629,11 @@ void StylePropertySet::parseDeclaration(const String& styleDeclaration, CSSStyle
     parser.parseDeclaration(this, styleDeclaration, 0, contextStyleSheet);
 }
 
-void StylePropertySet::addParsedProperties(const CSSProperty* const* properties, int numProperties)
+void StylePropertySet::addParsedProperties(const CSSProperty* properties, int numProperties)
 {
     m_properties.reserveCapacity(numProperties);
     for (int i = 0; i < numProperties; ++i)
-        addParsedProperty(*properties[i]);
+        addParsedProperty(properties[i]);
 }
 
 void StylePropertySet::addParsedProperty(const CSSProperty& property)
