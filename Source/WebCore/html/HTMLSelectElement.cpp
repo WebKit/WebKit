@@ -331,6 +331,13 @@ bool HTMLSelectElement::childShouldCreateRenderer(const NodeRenderingContext& ch
     return childContext.isOnEncapsulationBoundary() && HTMLFormControlElementWithState::childShouldCreateRenderer(childContext);
 }
 
+HTMLCollection* HTMLSelectElement::selectedOptions()
+{
+    if (!m_selectedOptionsCollection)
+        m_selectedOptionsCollection = HTMLCollection::create(this, SelectedOptions);
+    return m_selectedOptionsCollection.get();
+}
+
 HTMLOptionsCollection* HTMLSelectElement::options()
 {
     if (!m_optionsCollection)

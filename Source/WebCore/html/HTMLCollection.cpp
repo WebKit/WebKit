@@ -61,6 +61,7 @@ bool HTMLCollection::shouldIncludeChildren(CollectionType type)
     case MapAreas:
     case OtherCollection:
     case SelectOptions:
+    case SelectedOptions:
     case DataListOptions:
     case WindowNamedItems:
 #if ENABLE(MICRODATA)
@@ -114,6 +115,13 @@ inline bool HTMLCollection::isAcceptableElement(Element* element) const
         return element->hasLocalName(trTag);
     case SelectOptions:
         return element->hasLocalName(optionTag);
+    case SelectedOptions:
+        if (element->hasLocalName(optionTag)) {
+            HTMLOptionElement* option = static_cast<HTMLOptionElement*>(element);
+            if (option->selected())
+                return true;
+        }
+        return false;
     case DataListOptions:
         if (element->hasLocalName(optionTag)) {
             HTMLOptionElement* option = static_cast<HTMLOptionElement*>(element);

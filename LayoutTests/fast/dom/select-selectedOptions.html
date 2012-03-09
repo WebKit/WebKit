@@ -1,0 +1,83 @@
+<select id="test" size="3">
+</select>
+<div id="console"></div>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+function reset(mySelect) {
+  mySelect.length = 0;
+  mySelect.multiple = true;
+  mySelect.options[mySelect.length] = new Option("one", "value", false);
+  mySelect.options[mySelect.length] = new Option("two", "value", false);
+}
+
+var mySelect = document.getElementById("test");
+reset(mySelect);
+var i = 0;
+
+debug((++i) + ") Initial there is no selected options.");
+shouldBe("mySelect.options.length", "2");
+shouldBe("mySelect.selectedOptions.length", "0");
+
+debug((++i) + ") Select an option should update the selected options collection.");
+mySelect.options[0].selected = true;
+shouldBe("mySelect.options.length", "2");
+shouldBe("mySelect.selectedOptions.length", "1");
+shouldBe("mySelect.selectedOptions[0].text", "'one'");
+
+debug((++i) + ") Adding a non selected option should not change the selected options collection.");
+mySelect.options[mySelect.length] = new Option("three", "value", false);
+shouldBe("mySelect.options.length", "3");
+shouldBe("mySelect.selectedOptions.length", "1");
+shouldBe("mySelect.selectedOptions[0].text", "'one'");
+
+debug((++i) + ") Adding a selected option should change the selected options collection.");
+mySelect.options[mySelect.length] = new Option("five", "value", true, true);
+shouldBe("mySelect.options.length", "4");
+shouldBe("mySelect.selectedOptions.length", "2");
+shouldBe("mySelect.selectedOptions[0].text", "'one'");
+shouldBe("mySelect.selectedOptions[1].text", "'five'");
+
+debug((++i) + ") Unselect an option should update the selected options collection.");
+mySelect.options[0].selected = false;
+shouldBe("mySelect.options.length", "4");
+shouldBe("mySelect.selectedOptions.length", "1");
+shouldBe("mySelect.selectedOptions[0].text", "'five'");
+
+debug((++i) + ") Remove an option unselected should not update the selected options collection.");
+mySelect.remove(0);
+shouldBe("mySelect.options.length", "3");
+shouldBe("mySelect.selectedOptions.length", "1");
+shouldBe("mySelect.selectedOptions[0].text", "'five'");
+
+debug((++i) + ") Remove an option selected should update the selected options collection.");
+mySelect.remove(2);
+shouldBe("mySelect.options.length", "2");
+shouldBe("mySelect.selectedOptions.length", "0");
+
+mySelect.options[0].selected = true;
+mySelect.options[1].selected = true;
+debug((++i) + ") Change multiple attribute to false should update selectedOptions.");
+mySelect.multiple = false;
+shouldBe("mySelect.options.length", "2");
+shouldBe("mySelect.selectedOptions.length", "1");
+shouldBe("mySelect.selectedOptions[0].text", "'two'");
+
+reset(mySelect);
+debug((++i) + ") Even with an option disabled selectedOptions should be updated.");
+mySelect.options[0].disabled = true;
+mySelect.options[0].selected = true;
+shouldBe("mySelect.options.length", "2");
+shouldBe("mySelect.selectedOptions.length", "1");
+shouldBe("mySelect.selectedOptions[0].text", "'one'");
+
+debug((++i) + ") Even with select element disabled, the selectedOptions should be updated.");
+mySelect.disabled = true;
+mySelect.options[1].selected = true;
+shouldBe("mySelect.options.length", "2");
+shouldBe("mySelect.selectedOptions.length", "2");
+shouldBe("mySelect.selectedOptions[0].text", "'one'");
+shouldBe("mySelect.selectedOptions[1].text", "'two'");
+
+debug("");
+</script>
+<script src="../js/resources/js-test-post.js"></script>

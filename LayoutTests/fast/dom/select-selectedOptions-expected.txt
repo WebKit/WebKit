@@ -1,0 +1,46 @@
+
+1) Initial there is no selected options.
+PASS mySelect.options.length is 2
+PASS mySelect.selectedOptions.length is 0
+2) Select an option should update the selected options collection.
+PASS mySelect.options.length is 2
+PASS mySelect.selectedOptions.length is 1
+PASS mySelect.selectedOptions[0].text is 'one'
+3) Adding a non selected option should not change the selected options collection.
+PASS mySelect.options.length is 3
+PASS mySelect.selectedOptions.length is 1
+PASS mySelect.selectedOptions[0].text is 'one'
+4) Adding a selected option should change the selected options collection.
+PASS mySelect.options.length is 4
+PASS mySelect.selectedOptions.length is 2
+PASS mySelect.selectedOptions[0].text is 'one'
+PASS mySelect.selectedOptions[1].text is 'five'
+5) Unselect an option should update the selected options collection.
+PASS mySelect.options.length is 4
+PASS mySelect.selectedOptions.length is 1
+PASS mySelect.selectedOptions[0].text is 'five'
+6) Remove an option unselected should not update the selected options collection.
+PASS mySelect.options.length is 3
+PASS mySelect.selectedOptions.length is 1
+PASS mySelect.selectedOptions[0].text is 'five'
+7) Remove an option selected should update the selected options collection.
+PASS mySelect.options.length is 2
+PASS mySelect.selectedOptions.length is 0
+8) Change multiple attribute to false should update selectedOptions.
+PASS mySelect.options.length is 2
+PASS mySelect.selectedOptions.length is 1
+PASS mySelect.selectedOptions[0].text is 'two'
+9) Even with an option disabled selectedOptions should be updated.
+PASS mySelect.options.length is 2
+PASS mySelect.selectedOptions.length is 1
+PASS mySelect.selectedOptions[0].text is 'one'
+10) Even with select element disabled, the selectedOptions should be updated.
+PASS mySelect.options.length is 2
+PASS mySelect.selectedOptions.length is 2
+PASS mySelect.selectedOptions[0].text is 'one'
+PASS mySelect.selectedOptions[1].text is 'two'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
