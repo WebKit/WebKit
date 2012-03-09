@@ -1565,6 +1565,33 @@ public:
         return branchAdd32(cond, scratchReg3, dest);
     }
 
+    Jump branchAdd32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+
+        if (src != dest)
+            move(src, dest);
+
+        if (cond == Overflow) {
+            move(imm, scratchReg3);
+            m_assembler.addvlRegReg(scratchReg3, dest);
+            return branchTrue();
+        }
+
+        add32(imm, dest);
+
+        if (cond == Signed) {
+            m_assembler.cmppz(dest);
+            return branchFalse();
+        }
+
+        compare32(0, dest, Equal);
+
+        if (cond == NotEqual)
+            return branchFalse();
+        return branchTrue();
+    }
+
     Jump branchMul32(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
@@ -1639,6 +1666,14 @@ public:
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
 
         move(imm, scratchReg3);
+        return branchSub32(cond, scratchReg3, dest);
+    }
+
+    Jump branchSub32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        move(imm, scratchReg3);
+        if (src != dest)
+            move(src, dest);
         return branchSub32(cond, scratchReg3, dest);
     }
 
