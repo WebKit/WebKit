@@ -352,10 +352,7 @@ void CCLayerTreeHost::setVisible(bool visible)
 
     m_visible = visible;
 
-    if (!m_layerRendererInitialized)
-        return;
-
-    if (!visible) {
+    if (!visible && m_layerRendererInitialized) {
         m_contentsTextureManager->reduceMemoryToLimit(TextureManager::lowLimitBytes(viewportSize()));
         m_contentsTextureManager->unprotectAllTextures();
     }
@@ -369,6 +366,9 @@ void CCLayerTreeHost::setVisible(bool visible)
 void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostImpl)
 {
     ASSERT(CCProxy::isImplThread());
+    if (!m_layerRendererInitialized)
+        return;
+
     if (m_proxy->layerRendererCapabilities().contextHasCachedFrontBuffer)
         contentsTextureManager()->evictAndDeleteAllTextures(hostImpl->contentsTextureAllocator());
     else {

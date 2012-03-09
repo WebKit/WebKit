@@ -433,8 +433,10 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
         return;
     m_visible = visible;
 
-    if (m_layerRenderer)
-        m_layerRenderer->setVisible(visible);
+    if (!m_layerRenderer)
+        return;
+
+    m_layerRenderer->setVisible(visible);
 
     // Reset the damage tracker because the front/back buffers may have been damaged by the GPU
     // process on visibility change.
@@ -456,6 +458,10 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassRefPtr<GraphicsContext3D> 
     }
 
     m_layerRenderer = layerRenderer.release();
+
+    if (!m_visible && m_layerRenderer)
+         m_layerRenderer->setVisible(m_visible);
+
     return m_layerRenderer;
 }
 

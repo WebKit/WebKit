@@ -236,12 +236,14 @@ void CCSingleThreadProxy::setNeedsRedraw()
 
 void CCSingleThreadProxy::setVisible(bool visible)
 {
+    m_layerTreeHostImpl->setVisible(visible);
+
     if (!visible) {
         DebugScopedSetImplThread impl;
         m_layerTreeHost->didBecomeInvisibleOnImplThread(m_layerTreeHostImpl.get());
-        m_layerTreeHostImpl->setVisible(false);
         return;
     }
+
     setNeedsCommit();
 }
 
