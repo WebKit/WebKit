@@ -97,9 +97,6 @@ namespace JSC {
     private:
         bool match(ExecState*);
 
-#if COMPILER(MSVC)
-        friend void WTF::deleteOwnedPtr<RegExpObjectData>(RegExpObjectData*);
-#endif
         WriteBarrier<RegExp> m_regExp;
         WriteBarrier<Unknown> m_lastIndex;
         bool m_lastIndexIsWritable;

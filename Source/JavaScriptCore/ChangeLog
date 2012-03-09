@@ -1,5 +1,14 @@
 2012-03-08  Benjamin Poulain  <bpoulain@apple.com>
 
+        Build fix for MSVC after r110266
+
+        Unreviewed. A #ifdef for MSVC was left over in r110266.
+
+        * runtime/RegExpObject.h:
+        (RegExpObject):
+
+2012-03-08  Benjamin Poulain  <bpoulain@apple.com>
+
         Allocate the RegExpObject's data with the Cell
         https://bugs.webkit.org/show_bug.cgi?id=80654
 
