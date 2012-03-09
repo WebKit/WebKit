@@ -40,6 +40,11 @@ static PlatformEvent::Type touchEventType(BlackBerry::Platform::TouchEvent* even
     case BlackBerry::Platform::TouchEvent::TouchCancel:
         return PlatformEvent::TouchCancel;
     }
+
+    ASSERT_NOT_REACHED();
+    // Returning TouchCancel just to satisfy the compiler's wish to return a valid type in a non-void function.
+    // This code should not be reached.
+    return PlatformEvent::TouchCancel;
 }
 
 PlatformTouchEvent::PlatformTouchEvent(BlackBerry::Platform::TouchEvent* event)
