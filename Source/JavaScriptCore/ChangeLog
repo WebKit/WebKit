@@ -1,3 +1,20 @@
+2012-03-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKit compiled by gcc (Xcode 3.2.6) hangs while running DOM/Accessors.html
+        https://bugs.webkit.org/show_bug.cgi?id=80080
+
+        Reviewed by Filip Pizlo.
+
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingRegion::Locker::Locker):
+        (JSC::SamplingRegion::Locker::~Locker):
+        * bytecode/SamplingTool.h:
+        (JSC::SamplingRegion::exchangeCurrent):
+        * wtf/Atomics.h:
+        (WTF):
+        (WTF::weakCompareAndSwap):
+        (WTF::weakCompareAndSwapUIntPtr):
+
 2012-03-09  Gavin Barraclough  <barraclough@apple.com>
 
         REGRESSION: Date.parse("Tue Nov 23 20:40:05 2010 GMT") returns NaN

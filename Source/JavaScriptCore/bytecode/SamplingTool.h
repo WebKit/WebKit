@@ -148,7 +148,7 @@ namespace JSC {
                 if (previousPtr)
                     *previousPtr = bitwise_cast<SamplingRegion*>(previous);
                 
-                if (WTF::weakCompareAndSwap(&s_currentOrReserved, previous, bitwise_cast<uintptr_t>(current)))
+                if (WTF::weakCompareAndSwapUIntPtr(&s_currentOrReserved, previous, bitwise_cast<uintptr_t>(current)))
                     break;
             }
         }

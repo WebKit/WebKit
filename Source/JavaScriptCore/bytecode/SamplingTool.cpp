@@ -100,7 +100,7 @@ SamplingRegion::Locker::Locker()
 #endif
             continue;
         }
-        if (WTF::weakCompareAndSwap(&s_currentOrReserved, previous, previous | 1))
+        if (WTF::weakCompareAndSwapUIntPtr(&s_currentOrReserved, previous, previous | 1))
             break;
     }
 }
@@ -113,7 +113,7 @@ SamplingRegion::Locker::~Locker()
     uintptr_t previous;
     do {
         previous = s_currentOrReserved;
-    } while (!WTF::weakCompareAndSwap(&s_currentOrReserved, previous, previous & ~1));
+    } while (!WTF::weakCompareAndSwapUIntPtr(&s_currentOrReserved, previous, previous & ~1));
 }
 
 void SamplingRegion::sample()

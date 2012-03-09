@@ -118,7 +118,11 @@ inline int atomicDecrement(int volatile* addend) { return __gnu_cxx::__exchange_
 
 #endif
 
+#if COMPILER(GCC) && !COMPILER(CLANG) // Work around a gcc bug 
+inline bool weakCompareAndSwap(volatile unsigned* location, unsigned expected, unsigned newValue) 
+#else
 inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned newValue)
+#endif
 {
 #if ENABLE(COMPARE_AND_SWAP)
     bool result;
@@ -181,7 +185,7 @@ inline bool weakCompareAndSwap(void*volatile* location, void* expected, void* ne
 #endif // ENABLE(COMPARE_AND_SWAP)
 }
 
-inline bool weakCompareAndSwap(volatile uintptr_t* location, uintptr_t expected, uintptr_t newValue)
+inline bool weakCompareAndSwapUIntPtr(volatile uintptr_t* location, uintptr_t expected, uintptr_t newValue)
 {
     return weakCompareAndSwap(reinterpret_cast<void*volatile*>(location), reinterpret_cast<void*>(expected), reinterpret_cast<void*>(newValue));
 }
