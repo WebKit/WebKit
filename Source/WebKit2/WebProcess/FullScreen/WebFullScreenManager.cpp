@@ -49,11 +49,13 @@ namespace WebKit {
 static IntRect screenRectOfContents(Element* element)
 {
     ASSERT(element);
+#if USE(ACCELERATED_COMPOSITING)
     if (element->renderer() && element->renderer()->hasLayer() && element->renderer()->enclosingLayer()->isComposited()) {
         FloatQuad contentsBox = static_cast<FloatRect>(element->renderer()->enclosingLayer()->backing()->contentsBox());
         contentsBox = element->renderer()->localToAbsoluteQuad(contentsBox);
         return element->renderer()->view()->frameView()->contentsToScreen(contentsBox.enclosingBoundingBox());
     }
+#endif
     return element->screenRect();
 }
 

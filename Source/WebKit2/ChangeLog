@@ -1,3 +1,13 @@
+2012-03-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        GTK+ build fix. Only try to get the backing from the layer in when
+        ACCELERATED_COMPOSITING is enabled.
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::screenRectOfContents):
+
 2012-03-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac build fix for micro data API.
