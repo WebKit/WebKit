@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+description('Tests the basics of SpeechGrammar and SpeechGrammarList');
+
+function run() {
+    window.base = document.baseURI.substring(0, document.baseURI.lastIndexOf('/') + 1);
+
+    // Check availability of constructors.
+    shouldBeTrue("'webkitSpeechGrammar' in window");
+    shouldBeFalse("webkitSpeechGrammar == null");
+    shouldBeTrue("'webkitSpeechGrammarList' in window");
+    shouldBeFalse("webkitSpeechGrammarList == null");
+
+    // Test creating a grammar explicitly.
+    evalAndLog("window.g = new webkitSpeechGrammar()");
+    shouldBeFalse("g == null");
+    shouldBe("g.weight", "1.0");
+    shouldBe("g.src", "''");
+
+    // Test setting the attributes.
+    evalAndLog("g.weight = 2");
+    shouldBe("g.weight", "2.0");
+    evalAndLog("g.src = 'grammar.xml'");
+    shouldBe("g.src", "base + 'grammar.xml'");
+    evalAndLog("g.src = 'http://example.tld/grammar.xml'");
+    shouldBe("g.src", "'http://example.tld/grammar.xml'");
+    evalAndLog("g.src = 'foo bar'");
+    shouldBe("g.src", "base + 'foo%20bar'");
+
+    // Test creating a grammar list.
+    evalAndLog("window.gs = new webkitSpeechGrammarList()");
+    shouldBeFalse("gs == null");
+    shouldBe("gs.length", "0");
+    shouldBeTrue("gs.item(0) == null");
+    shouldBeTrue("gs[0] == undefined");
+    shouldThrow("gs.item(-1)");
+    shouldBeTrue("gs[-1] == undefined");
+
+    evalAndLog("gs.addFromUri('grammar', 2)");
+    shouldBe("gs.length", "1");
+    shouldBeTrue("gs.item(1) == null");
+    shouldBeTrue("gs[1] == undefined");
+    shouldThrow("gs.item(-1)");
+    shouldBeTrue("gs[-1] == undefined");
+    shouldBe("gs[0]", "gs.item(0)");
+    shouldBe("gs.item(0).src", "base + 'grammar'");
+    shouldBe("gs.item(0).weight", "2");
+
+    evalAndLog("gs.addFromUri('http://foo.tld/grammar.xml', 3)");
+    shouldBe("gs.length", "2");
+    shouldBe("gs[1]", "gs.item(1)");
+    shouldBe("gs.item(1).src", "'http://foo.tld/grammar.xml'");
+    shouldBe("gs.item(1).weight", "3");
+
+    evalAndLog("gs.addFromString('<grammar>foo</grammar>', 4)");
+    shouldBe("gs.length", "3");
+    shouldBe("gs[2]", "gs.item(2)");
+    shouldBe("gs.item(2).src", "'data:application/xml,%3Cgrammar%3Efoo%3C/grammar%3E'");
+    shouldBe("gs.item(2).weight", "4");
+    shouldBe("gs[2].src", "'data:application/xml,%3Cgrammar%3Efoo%3C/grammar%3E'");
+    shouldBe("gs[2].weight", "4");
+    finishJSTest();
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

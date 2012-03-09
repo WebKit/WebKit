@@ -29,5 +29,7 @@ module window {
         Supplemental=DOMWindow
     ] DOMWindowSpeech {
         attribute [V8EnabledAtRuntime] SpeechRecognitionErrorConstructor webkitSpeechRecognitionError;
+        attribute [V8EnabledAtRuntime] SpeechGrammarConstructor webkitSpeechGrammar;
+        attribute [V8EnabledAtRuntime] SpeechGrammarListConstructor webkitSpeechGrammarList;
     };
 }
