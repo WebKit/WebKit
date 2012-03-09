@@ -48,7 +48,7 @@ bool BaseCheckableInputType::saveFormControlState(String& result) const
     return true;
 }
 
-void BaseCheckableInputType::restoreFormControlState(const String& state) const
+void BaseCheckableInputType::restoreFormControlState(const String& state)
 {
     element()->setChecked(state == "on");
 }

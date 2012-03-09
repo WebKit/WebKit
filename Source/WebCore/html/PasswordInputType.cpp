@@ -54,7 +54,7 @@ bool PasswordInputType::saveFormControlState(String&) const
     return false;
 }
 
-void PasswordInputType::restoreFormControlState(const String&) const
+void PasswordInputType::restoreFormControlState(const String&)
 {
     // Should never save/restore password fields.
     ASSERT_NOT_REACHED();

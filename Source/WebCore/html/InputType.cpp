@@ -160,7 +160,7 @@ bool InputType::saveFormControlState(String& result) const
     return true;
 }
 
-void InputType::restoreFormControlState(const String& state) const
+void InputType::restoreFormControlState(const String& state)
 {
     element()->setValue(state);
 }

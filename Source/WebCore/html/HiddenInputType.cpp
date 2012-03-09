@@ -57,7 +57,7 @@ bool HiddenInputType::saveFormControlState(String& result) const
     return true;
 }
 
-void HiddenInputType::restoreFormControlState(const String& string) const
+void HiddenInputType::restoreFormControlState(const String& string)
 {
     element()->setAttribute(valueAttr, string);
 }

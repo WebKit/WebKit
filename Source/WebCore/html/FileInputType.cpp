@@ -99,6 +99,26 @@ const AtomicString& FileInputType::formControlType() const
     return InputTypeNames::file();
 }
 
+bool FileInputType::saveFormControlState(String& result) const
+{
+    if (m_fileList->isEmpty())
+        return false;
+    result = String();
+    unsigned numFiles = m_fileList->length();
+    for (unsigned i = 0; i < numFiles; ++i) {
+        result.append(m_fileList->item(i)->path());
+        result.append('\0');
+    }
+    return true;
+}
+
+void FileInputType::restoreFormControlState(const String& state)
+{
+    Vector<String> files;
+    state.split('\0', files);
+    filesChosen(files);
+}
+
 bool FileInputType::appendFormData(FormDataList& encoding, bool multipart) const
 {
     FileList* fileList = element()->files();

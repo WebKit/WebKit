@@ -48,6 +48,8 @@ public:
 private:
     FileInputType(HTMLInputElement*);
     virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool saveFormControlState(String&) const OVERRIDE;
+    virtual void restoreFormControlState(const String&) OVERRIDE;
     virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;
     virtual bool valueMissing(const String&) const OVERRIDE;
     virtual String valueMissingText() const OVERRIDE;
