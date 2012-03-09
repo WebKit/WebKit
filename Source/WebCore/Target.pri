@@ -2522,6 +2522,7 @@ HEADERS += \
     rendering/svg/SVGPathData.h \
     rendering/svg/SVGRenderSupport.h \
     rendering/svg/SVGRenderTreeAsText.h \
+    rendering/svg/SVGRenderingContext.h \
     rendering/svg/SVGResources.h \
     rendering/svg/SVGResourcesCache.h \
     rendering/svg/SVGResourcesCycleSolver.h \
@@ -3465,6 +3466,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               rendering/svg/SVGPathData.cpp \
               rendering/svg/SVGRenderSupport.cpp \
               rendering/svg/SVGRenderTreeAsText.cpp \
+              rendering/svg/SVGRenderingContext.cpp \
               rendering/svg/SVGResources.cpp \
               rendering/svg/SVGResourcesCache.cpp \
               rendering/svg/SVGResourcesCycleSolver.cpp \

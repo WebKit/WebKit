@@ -355,6 +355,7 @@
 		18F831B80FD48C7800D8C56B /* WorkerLoaderProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 18F831B70FD48C7800D8C56B /* WorkerLoaderProxy.h */; };
 		1921327411C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */; };
 		1921327511C0E6BB00456238 /* SVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */; };
+		197B180C1506353200E4ADA8 /* SVGRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 197B180B150634C000E4ADA8 /* SVGRenderingContext.h */; };
 		19BFF64B11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */; };
 		19BFF64C11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 19BFF64711C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm */; };
 		19BFF64D11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */; };
@@ -7152,6 +7153,8 @@
 		1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEConvolveMatrixElement.cpp; sourceTree = "<group>"; };
 		1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		1921327311C0E6BB00456238 /* SVGFEConvolveMatrixElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGFEConvolveMatrixElement.idl; sourceTree = "<group>"; };
+		197B180A150634C000E4ADA8 /* SVGRenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderingContext.cpp; sourceTree = "<group>"; };
+		197B180B150634C000E4ADA8 /* SVGRenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGRenderingContext.h; sourceTree = "<group>"; };
 		19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		19BFF64711C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGFEConvolveMatrixElement.mm; sourceTree = "<group>"; };
 		19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEConvolveMatrixElementInternal.h; sourceTree = "<group>"; };
@@ -13726,6 +13729,8 @@
 				436708B312D9CA4B00044234 /* SVGRenderSupport.h */,
 				436708B412D9CA4B00044234 /* SVGRenderTreeAsText.cpp */,
 				436708B512D9CA4B00044234 /* SVGRenderTreeAsText.h */,
+				197B180A150634C000E4ADA8 /* SVGRenderingContext.cpp */,
+				197B180B150634C000E4ADA8 /* SVGRenderingContext.h */,
 				436708B612D9CA4B00044234 /* SVGResources.cpp */,
 				436708B712D9CA4B00044234 /* SVGResources.h */,
 				436708B812D9CA4B00044234 /* SVGResourcesCache.cpp */,
@@ -24239,6 +24244,7 @@
 				BC22747B0E8366E200E7F975 /* SVGRenderStyleDefs.h in Headers */,
 				436708F212D9CA4B00044234 /* SVGRenderSupport.h in Headers */,
 				436708F412D9CA4B00044234 /* SVGRenderTreeAsText.h in Headers */,
+				197B180C1506353200E4ADA8 /* SVGRenderingContext.h in Headers */,
 				436708F612D9CA4B00044234 /* SVGResources.h in Headers */,
 				436708F812D9CA4B00044234 /* SVGResourcesCache.h in Headers */,
 				436708FA12D9CA4B00044234 /* SVGResourcesCycleSolver.h in Headers */,

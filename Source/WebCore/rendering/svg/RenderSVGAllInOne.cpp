@@ -62,6 +62,7 @@
 #include "SVGPathData.cpp"
 #include "SVGRenderSupport.cpp"
 #include "SVGRenderTreeAsText.cpp"
+#include "SVGRenderingContext.cpp"
 #include "SVGResources.cpp"
 #include "SVGResourcesCache.cpp"
 #include "SVGResourcesCycleSolver.cpp"

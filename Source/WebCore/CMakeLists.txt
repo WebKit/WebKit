@@ -1733,6 +1733,7 @@ IF (ENABLE_SVG)
         rendering/svg/SVGPathData.cpp
         rendering/svg/SVGRenderSupport.cpp
         rendering/svg/SVGRenderTreeAsText.cpp
+        rendering/svg/SVGRenderingContext.cpp
         rendering/svg/SVGResources.cpp
         rendering/svg/SVGResourcesCache.cpp
         rendering/svg/SVGResourcesCycleSolver.cpp

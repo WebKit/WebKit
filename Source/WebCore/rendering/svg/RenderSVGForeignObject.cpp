@@ -29,7 +29,7 @@
 #include "RenderSVGResource.h"
 #include "RenderView.h"
 #include "SVGForeignObjectElement.h"
-#include "SVGRenderSupport.h"
+#include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include "SVGSVGElement.h"
 #include "TransformState.h"
@@ -59,9 +59,12 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
     if (SVGRenderSupport::isOverflowHidden(this))
         childPaintInfo.context->clip(m_viewport);
 
+    SVGRenderingContext renderingContext;
     bool continueRendering = true;
-    if (paintInfo.phase == PaintPhaseForeground)
-        continueRendering = SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo);
+    if (paintInfo.phase == PaintPhaseForeground) {
+        renderingContext.prepareToRenderSVGContent(this, childPaintInfo);
+        continueRendering = renderingContext.isRenderingPrepared();
+    }
 
     if (continueRendering) {
         // Paint all phases of FO elements atomically, as though the FO element established its
@@ -81,9 +84,6 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint&)
             RenderBlock::paint(childPaintInfo, childPoint);
         }
     }
-
-    if (paintInfo.phase == PaintPhaseForeground)
-        SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, paintInfo.context);
 }
 
 LayoutRect RenderSVGForeignObject::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const

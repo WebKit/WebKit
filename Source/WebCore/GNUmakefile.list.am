@@ -3943,6 +3943,8 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/SVGRenderSupport.h \
 	Source/WebCore/rendering/svg/SVGRenderTreeAsText.cpp \
 	Source/WebCore/rendering/svg/SVGRenderTreeAsText.h \
+	Source/WebCore/rendering/svg/SVGRenderingContext.cpp \
+	Source/WebCore/rendering/svg/SVGRenderingContext.h \
 	Source/WebCore/rendering/svg/SVGResourcesCache.cpp \
 	Source/WebCore/rendering/svg/SVGResourcesCache.h \
 	Source/WebCore/rendering/svg/SVGResources.cpp \

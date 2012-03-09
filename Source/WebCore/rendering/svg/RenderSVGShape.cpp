@@ -41,7 +41,7 @@
 #include "RenderSVGResourceSolidColor.h"
 #include "SVGPathData.h"
 #include "SVGPathElement.h"
-#include "SVGRenderSupport.h"
+#include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGStyledTransformableElement.h"
@@ -333,9 +333,9 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const IntPoint&)
         childPaintInfo.applyTransform(m_localTransform);
 
         if (childPaintInfo.phase == PaintPhaseForeground) {
-            PaintInfo savedInfo(childPaintInfo);
+            SVGRenderingContext renderingContext(this, childPaintInfo);
 
-            if (SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo)) {
+            if (renderingContext.isRenderingPrepared()) {
                 const SVGRenderStyle* svgStyle = style()->svgStyle();
                 if (svgStyle->shapeRendering() == SR_CRISPEDGES)
                     childPaintInfo.context->setShouldAntialias(false);
@@ -345,8 +345,6 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const IntPoint&)
                 if (svgStyle->hasMarkers())
                     m_markerLayoutInfo.drawMarkers(childPaintInfo);
             }
-
-            SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, savedInfo.context);
         }
 
         if (drawsOutline)

@@ -38,7 +38,7 @@
 #include "RenderSVGResource.h"
 #include "RenderView.h"
 #include "SVGLength.h"
-#include "SVGRenderSupport.h"
+#include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGSVGElement.h"
@@ -277,15 +277,15 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& adjus
     // Transform from our paint container's coordinate system to our local coords.
     childPaintInfo.applyTransform(AffineTransform::translation(adjustedPaintOffset.x() - x(), adjustedPaintOffset.y() - y()) * localToParentTransform());
 
+    SVGRenderingContext renderingContext;
     bool continueRendering = true;
-    if (childPaintInfo.phase == PaintPhaseForeground)
-        continueRendering = SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo);
+    if (childPaintInfo.phase == PaintPhaseForeground) {
+        renderingContext.prepareToRenderSVGContent(this, childPaintInfo);
+        continueRendering = renderingContext.isRenderingPrepared();
+    }
 
     if (continueRendering)
         RenderBox::paint(childPaintInfo, LayoutPoint());
-
-    if (childPaintInfo.phase == PaintPhaseForeground)
-        SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, paintInfo.context);
 
     childPaintInfo.context->restore();
 }

@@ -41,7 +41,7 @@
 #include "SVGImageElement.h"
 #include "SVGLength.h"
 #include "SVGPreserveAspectRatio.h"
-#include "SVGRenderSupport.h"
+#include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 
@@ -124,9 +124,9 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
         childPaintInfo.applyTransform(m_localTransform);
 
         if (childPaintInfo.phase == PaintPhaseForeground) {
-            PaintInfo savedInfo(childPaintInfo);
+            SVGRenderingContext renderingContext(this, childPaintInfo);
 
-            if (SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo)) {
+            if (renderingContext.isRenderingPrepared()) {
                 RefPtr<Image> image = m_imageResource->image();
                 FloatRect destRect = m_objectBoundingBox;
                 FloatRect srcRect(0, 0, image->width(), image->height());
@@ -136,8 +136,6 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
 
                 childPaintInfo.context->drawImage(image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
             }
-
-            SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, savedInfo.context);
         }
 
         if (drawsOutline)

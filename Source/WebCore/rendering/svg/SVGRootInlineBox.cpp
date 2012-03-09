@@ -31,7 +31,7 @@
 #include "SVGInlineFlowBox.h"
 #include "SVGInlineTextBox.h"
 #include "SVGNames.h"
-#include "SVGRenderSupport.h"
+#include "SVGRenderingContext.h"
 #include "SVGTextPositioningElement.h"
 
 namespace WebCore {
@@ -57,18 +57,15 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
         }
     }
 
-    GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
-
-    if (SVGRenderSupport::prepareToRenderSVGContent(boxRenderer, childPaintInfo)) {
+    SVGRenderingContext renderingContext(boxRenderer, paintInfo, SVGRenderingContext::SaveGraphicsContext);
+    if (renderingContext.isRenderingPrepared()) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
             if (child->isSVGInlineTextBox())
                 SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(toRenderSVGInlineText(static_cast<SVGInlineTextBox*>(child)->textRenderer()));
 
-            child->paint(childPaintInfo, LayoutPoint(), 0, 0);
+            child->paint(paintInfo, LayoutPoint(), 0, 0);
         }
     }
-
-    SVGRenderSupport::finishRenderSVGContent(boxRenderer, childPaintInfo, paintInfo.context);
 }
 
 void SVGRootInlineBox::computePerCharacterLayoutInformation()

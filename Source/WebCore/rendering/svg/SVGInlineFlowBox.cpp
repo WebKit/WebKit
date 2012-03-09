@@ -29,7 +29,7 @@
 #include "RenderSVGInlineText.h"
 #include "RenderedDocumentMarker.h"
 #include "SVGInlineTextBox.h"
-#include "SVGRenderSupport.h"
+#include "SVGRenderingContext.h"
 
 using namespace std;
 
@@ -57,19 +57,15 @@ void SVGInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
     RenderObject* boxRenderer = renderer();
     ASSERT(boxRenderer);
 
-    PaintInfo childPaintInfo(paintInfo);
-    GraphicsContextStateSaver stateSaver(*childPaintInfo.context);
-
-    if (SVGRenderSupport::prepareToRenderSVGContent(boxRenderer, childPaintInfo)) {
+    SVGRenderingContext renderingContext(boxRenderer, paintInfo, SVGRenderingContext::SaveGraphicsContext);
+    if (renderingContext.isRenderingPrepared()) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
             if (child->isSVGInlineTextBox())
                 computeTextMatchMarkerRectForRenderer(toRenderSVGInlineText(static_cast<SVGInlineTextBox*>(child)->textRenderer()));
 
-            child->paint(childPaintInfo, LayoutPoint(), 0, 0);
+            child->paint(paintInfo, LayoutPoint(), 0, 0);
         }
     }
-
-    SVGRenderSupport::finishRenderSVGContent(boxRenderer, childPaintInfo, paintInfo.context);
 }
 
 FloatRect SVGInlineFlowBox::calculateBoundaries() const

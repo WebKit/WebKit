@@ -27,12 +27,8 @@
 #if ENABLE(SVG)
 #include "SVGRenderSupport.h"
 
-#include "Frame.h"
-#include "FrameView.h"
-#include "ImageBuffer.h"
 #include "NodeRenderStyle.h"
 #include "RenderLayer.h"
-#include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
@@ -78,106 +74,6 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBox
 {
     transformState.applyTransform(object->localToParentTransform());
     object->parent()->mapLocalToContainer(repaintContainer, false, true, transformState, wasFixed);
-}
-
-static inline bool isRenderingMaskImage(RenderObject* object)
-{
-    if (object->frame() && object->frame()->view())
-        return object->frame()->view()->paintBehavior() & PaintBehaviorRenderingSVGMask;
-    return false;
-}
-
-bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo& paintInfo)
-{
-    ASSERT(object);
-
-    RenderStyle* style = object->style();
-    ASSERT(style);
-
-    const SVGRenderStyle* svgStyle = style->svgStyle();
-    ASSERT(svgStyle);
-
-    // Setup transparency layers before setting up SVG resources!
-    bool isRenderingMask = isRenderingMaskImage(object);
-    float opacity = isRenderingMask ? 1 : style->opacity();
-    const ShadowData* shadow = svgStyle->shadow();
-    if (opacity < 1 || shadow) {
-        FloatRect repaintRect = object->repaintRectInLocalCoordinates();
-
-        if (opacity < 1) {
-            paintInfo.context->clip(repaintRect);
-            paintInfo.context->beginTransparencyLayer(opacity);
-        }
-
-        if (shadow) {
-            paintInfo.context->clip(repaintRect);
-            paintInfo.context->setShadow(IntSize(roundToInt(shadow->x()), roundToInt(shadow->y())), shadow->blur(), shadow->color(), style->colorSpace());
-            paintInfo.context->beginTransparencyLayer(1);
-        }
-    }
-
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
-    if (!resources) {
-#if ENABLE(FILTERS)
-        if (svgStyle->hasFilter())
-            return false;
-#endif
-        return true;
-    }
-
-    if (!isRenderingMask) {
-        if (RenderSVGResourceMasker* masker = resources->masker()) {
-            if (!masker->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
-                return false;
-        }
-    }
-
-    if (RenderSVGResourceClipper* clipper = resources->clipper()) {
-        if (!clipper->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
-            return false;
-    }
-
-#if ENABLE(FILTERS)
-    if (!isRenderingMask) {
-        if (RenderSVGResourceFilter* filter = resources->filter()) {
-            if (!filter->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
-                return false;
-        }
-    }
-#endif
-
-    return true;
-}
-
-void SVGRenderSupport::finishRenderSVGContent(RenderObject* object, PaintInfo& paintInfo, GraphicsContext* savedContext)
-{
-#if !ENABLE(FILTERS)
-    UNUSED_PARAM(savedContext);
-#endif
-
-    ASSERT(object);
-
-    const RenderStyle* style = object->style();
-    ASSERT(style);
-
-    const SVGRenderStyle* svgStyle = style->svgStyle();
-    ASSERT(svgStyle);
-
-#if ENABLE(FILTERS)
-    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
-    if (resources) {
-        if (RenderSVGResourceFilter* filter = resources->filter()) {
-            filter->postApplyResource(static_cast<RenderSVGShape*>(object), paintInfo.context, ApplyToDefaultMode, 0, 0);
-            paintInfo.context = savedContext;
-        }
-    }
-#endif
-
-    if (style->opacity() < 1 && !isRenderingMaskImage(object))
-        paintInfo.context->endTransparencyLayer();
-
-    if (svgStyle->shadow())
-        paintInfo.context->endTransparencyLayer();
 }
 
 void SVGRenderSupport::computeContainerBoundingBoxes(const RenderObject* container, FloatRect& objectBoundingBox, FloatRect& strokeBoundingBox, FloatRect& repaintBoundingBox)
