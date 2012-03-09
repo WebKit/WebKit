@@ -206,6 +206,11 @@ testDateParse("Dec 25 1995 12:30 PM+01:00", "819891000000");
 testDateParse("Anf 25 1995 GMT", "NaN");
 
 testDateParse("Wed Dec 25 1995 1:30 GMT", "819855000000");
+testDateParse("Wed Dec 25 1:30 1995 GMT", "819855000000");
+testDateParseExact("Wed Dec 25 1:30 1995GMT", "819855000000");
+testDateParseExact("Wed Dec 25 1:30 1995 2010 GMT", "NaN");
+testDateParseExact("Wed Dec 25 1:30 1995r GMT", "NaN");
+testDateParseExact("Wed 1:30 Dec 25 GMT", "NaN");
 
 // RFC 2822
 testDateParse("Wed Dec 25 1995 01:30 +0000", "819855000000");

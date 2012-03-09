@@ -1,3 +1,16 @@
+2012-03-09  Gavin Barraclough  <barraclough@apple.com>
+
+        REGRESSION: Date.parse("Tue Nov 23 20:40:05 2010 GMT") returns NaN
+        https://bugs.webkit.org/show_bug.cgi?id=49989
+
+        Reviewed by Oliver Hunt.
+
+        Patch originally by chris reiss <christopher.reiss@nokia.com>,
+        allow the year to appear before the timezone in date strings.
+
+        * wtf/DateMath.cpp:
+        (WTF::parseDateFromNullTerminatedCharacters):
+
 2012-03-09  Mark Rowe  <mrowe@apple.com>
 
         Ensure that the WTF headers are copied at installhdrs time.
