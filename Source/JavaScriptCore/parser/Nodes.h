@@ -47,19 +47,31 @@ namespace JSC {
     class ScopeChainNode;
     class ScopeNode;
 
-    typedef unsigned CodeFeatures;
+    typedef unsigned short ScopeFlags;
 
-    const CodeFeatures NoFeatures = 0;
-    const CodeFeatures EvalFeature = 1 << 0;
-    const CodeFeatures ArgumentsFeature = 1 << 1;
-    const CodeFeatures WithFeature = 1 << 2;
-    const CodeFeatures CatchFeature = 1 << 3;
-    const CodeFeatures ThisFeature = 1 << 4;
-    const CodeFeatures StrictModeFeature = 1 << 5;
-    const CodeFeatures ShadowsArgumentsFeature = 1 << 6;
+    const ScopeFlags NoScopeFlags = 0;
+
+    // Some scope flags propagate down the parse tree from parent scopes, like
+    // strict mode. They are modal to an entire set of nested scopes.
+    const ScopeFlags StrictModeFlag = 1 << 0;
+    const ScopeFlags FunctionModeFlag = 1 << 1;
+    const ScopeFlags AllScopeModeFlags = StrictModeFlag | FunctionModeFlag;
+
+    // Some scope flags refer only to a specific scope, and don't propagate down
+    // or up.
+    const ScopeFlags BlockScopeFlag = 1 << 4;
+    const ScopeFlags AllScopeKindFlags = BlockScopeFlag;
+
+    // Other flags reflect uses within nested scopes, and so propagate up
+    // from the leaves.
+    const ScopeFlags UsesEvalFlag = 1 << 8;
+    const ScopeFlags UsesArgumentsFlag = 1 << 9;
+    const ScopeFlags UsesWithFlag = 1 << 10;
+    const ScopeFlags UsesCatchFlag = 1 << 11;
+    const ScopeFlags UsesThisFlag = 1 << 12;
+    const ScopeFlags ShadowsArgumentsFlag = 1 << 13;
+    const ScopeFlags AllScopeUsesFlags = UsesEvalFlag | UsesArgumentsFlag | UsesWithFlag | UsesCatchFlag | UsesThisFlag | ShadowsArgumentsFlag;
     
-    const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | CatchFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature;
-
     enum Operator {
         OpEqual,
         OpPlusEq,
@@ -1383,8 +1395,8 @@ namespace JSC {
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        ScopeNode(JSGlobalData*, int, bool inStrictContext);
-        ScopeNode(JSGlobalData*, int, const SourceCode&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, CodeFeatures, int numConstants);
+        ScopeNode(JSGlobalData*, int, ScopeFlags);
+        ScopeNode(JSGlobalData*, int, const SourceCode&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, ScopeFlags, int numConstants);
 
         using ParserArenaRefCounted::operator new;
 
@@ -1397,23 +1409,25 @@ namespace JSC {
             m_capturedVariables.clear();
         }
 
-        const SourceCode& source() const { return m_source; }
-        const UString& sourceURL() const { return m_source.provider()->url(); }
-        intptr_t sourceID() const { return m_source.provider()->asID(); }
-
-        void setFeatures(CodeFeatures features) { m_features = features; }
-        CodeFeatures features() { return m_features; }
-
-        bool usesEval() const { return m_features & EvalFeature; }
-        bool usesArguments() const { return (m_features & ArgumentsFeature) && !(m_features & ShadowsArgumentsFeature); }
-        bool isStrictMode() const { return m_features & StrictModeFeature; }
-        void setUsesArguments() { m_features |= ArgumentsFeature; }
-        bool usesThis() const { return m_features & ThisFeature; }
-        bool needsActivationForMoreThanVariables() const { return m_features & (EvalFeature | WithFeature | CatchFeature); }
-        bool needsActivation() const { return (hasCapturedVariables()) || (m_features & (EvalFeature | WithFeature | CatchFeature)); }
         bool hasCapturedVariables() const { return !!m_capturedVariables.size(); }
         size_t capturedVariableCount() const { return m_capturedVariables.size(); }
         bool captures(const Identifier& ident) { return m_capturedVariables.contains(ident.impl()); }
+
+        void addScopeFlags(ScopeFlags scopeFlags) { m_scopeFlags |= scopeFlags; }
+        ScopeFlags scopeFlags() const { return m_scopeFlags; }
+
+        bool isStrictMode() const { return m_scopeFlags & StrictModeFlag; }
+        bool usesEval() const { return m_scopeFlags & UsesEvalFlag; }
+        bool usesArguments() const { return (m_scopeFlags & UsesArgumentsFlag) && !(m_scopeFlags & ShadowsArgumentsFlag); }
+        void setUsesArguments() { m_scopeFlags |= UsesArgumentsFlag; }
+        bool usesThis() const { return m_scopeFlags & UsesThisFlag; }
+
+        bool needsActivationForMoreThanVariables() const { return m_scopeFlags & (UsesEvalFlag | UsesWithFlag | UsesCatchFlag); }
+        bool needsActivation() const { return hasCapturedVariables() || needsActivationForMoreThanVariables(); }
+
+        const SourceCode& source() const { return m_source; }
+        const UString& sourceURL() const { return m_source.provider()->url(); }
+        intptr_t sourceID() const { return m_source.provider()->asID(); }
 
         VarStack& varStack() { return m_varStack; }
         FunctionStack& functionStack() { return m_functionStack; }
@@ -1434,7 +1448,7 @@ namespace JSC {
         ParserArena m_arena;
 
     private:
-        CodeFeatures m_features;
+        ScopeFlags m_scopeFlags;
         SourceCode m_source;
         VarStack m_varStack;
         FunctionStack m_functionStack;
@@ -1446,12 +1460,12 @@ namespace JSC {
     class ProgramNode : public ScopeNode {
     public:
         static const bool isFunctionNode = false;
-        static PassRefPtr<ProgramNode> create(JSGlobalData*, int, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
+        static PassRefPtr<ProgramNode> create(JSGlobalData*, int, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, ScopeFlags, int numConstants);
 
         static const bool scopeIsFunction = false;
 
     private:
-        ProgramNode(JSGlobalData*, int, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
+        ProgramNode(JSGlobalData*, int, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, ScopeFlags, int numConstants);
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
     };
@@ -1459,12 +1473,12 @@ namespace JSC {
     class EvalNode : public ScopeNode {
     public:
         static const bool isFunctionNode = false;
-        static PassRefPtr<EvalNode> create(JSGlobalData*, int, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
+        static PassRefPtr<EvalNode> create(JSGlobalData*, int, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, ScopeFlags, int numConstants);
 
         static const bool scopeIsFunction = false;
 
     private:
-        EvalNode(JSGlobalData*, int, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
+        EvalNode(JSGlobalData*, int, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, ScopeFlags, int numConstants);
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
     };
@@ -1481,8 +1495,8 @@ namespace JSC {
     class FunctionBodyNode : public ScopeNode {
     public:
         static const bool isFunctionNode = true;
-        static FunctionBodyNode* create(JSGlobalData*, int, bool isStrictMode);
-        static PassRefPtr<FunctionBodyNode> create(JSGlobalData*, int, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
+        static FunctionBodyNode* create(JSGlobalData*, int, ScopeFlags);
+        static PassRefPtr<FunctionBodyNode> create(JSGlobalData*, int, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, ScopeFlags, int numConstants);
 
         FunctionParameters* parameters() const { return m_parameters.get(); }
         size_t parameterCount() const { return m_parameters->size(); }
@@ -1499,8 +1513,8 @@ namespace JSC {
         static const bool scopeIsFunction = true;
 
     private:
-        FunctionBodyNode(JSGlobalData*, int, bool inStrictContext);
-        FunctionBodyNode(JSGlobalData*, int, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
+        FunctionBodyNode(JSGlobalData*, int, ScopeFlags);
+        FunctionBodyNode(JSGlobalData*, int, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, ScopeFlags, int numConstants);
 
         Identifier m_ident;
         Identifier m_inferredName;

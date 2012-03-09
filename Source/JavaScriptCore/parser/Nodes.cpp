@@ -75,19 +75,19 @@ StatementNode* SourceElements::singleStatement() const
 
 // ------------------------------ ScopeNode -----------------------------
 
-ScopeNode::ScopeNode(JSGlobalData* globalData, int lineNumber, bool inStrictContext)
+ScopeNode::ScopeNode(JSGlobalData* globalData, int lineNumber, ScopeFlags scopeFlags)
     : StatementNode(lineNumber)
     , ParserArenaRefCounted(globalData)
-    , m_features(inStrictContext ? StrictModeFeature : NoFeatures)
+    , m_scopeFlags(scopeFlags)
     , m_numConstants(0)
     , m_statements(0)
 {
 }
 
-ScopeNode::ScopeNode(JSGlobalData* globalData, int lineNumber, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, CodeFeatures features, int numConstants)
+ScopeNode::ScopeNode(JSGlobalData* globalData, int lineNumber, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, ScopeFlags scopeFlags, int numConstants)
     : StatementNode(lineNumber)
     , ParserArenaRefCounted(globalData)
-    , m_features(features)
+    , m_scopeFlags(scopeFlags)
     , m_source(source)
     , m_numConstants(numConstants)
     , m_statements(children)
@@ -107,14 +107,14 @@ StatementNode* ScopeNode::singleStatement() const
 
 // ------------------------------ ProgramNode -----------------------------
 
-inline ProgramNode::ProgramNode(JSGlobalData* globalData, int lineNumber, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
-    : ScopeNode(globalData, lineNumber, source, children, varStack, funcStack, capturedVariables, features, numConstants)
+inline ProgramNode::ProgramNode(JSGlobalData* globalData, int lineNumber, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, ScopeFlags scopeFlags, int numConstants)
+    : ScopeNode(globalData, lineNumber, source, children, varStack, funcStack, capturedVariables, scopeFlags, numConstants)
 {
 }
 
-PassRefPtr<ProgramNode> ProgramNode::create(JSGlobalData* globalData, int lineNumber, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
+PassRefPtr<ProgramNode> ProgramNode::create(JSGlobalData* globalData, int lineNumber, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, ScopeFlags scopeFlags, int numConstants)
 {
-    RefPtr<ProgramNode> node = new ProgramNode(globalData, lineNumber, children, varStack, funcStack,  capturedVariables, source, features, numConstants);
+    RefPtr<ProgramNode> node = new ProgramNode(globalData, lineNumber, children, varStack, funcStack,  capturedVariables, source, scopeFlags, numConstants);
 
     ASSERT(node->m_arena.last() == node);
     node->m_arena.removeLast();
@@ -125,14 +125,14 @@ PassRefPtr<ProgramNode> ProgramNode::create(JSGlobalData* globalData, int lineNu
 
 // ------------------------------ EvalNode -----------------------------
 
-inline EvalNode::EvalNode(JSGlobalData* globalData, int lineNumber, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
-    : ScopeNode(globalData, lineNumber, source, children, varStack, funcStack, capturedVariables, features, numConstants)
+inline EvalNode::EvalNode(JSGlobalData* globalData, int lineNumber, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, ScopeFlags scopeFlags, int numConstants)
+    : ScopeNode(globalData, lineNumber, source, children, varStack, funcStack, capturedVariables, scopeFlags, numConstants)
 {
 }
 
-PassRefPtr<EvalNode> EvalNode::create(JSGlobalData* globalData, int lineNumber, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
+PassRefPtr<EvalNode> EvalNode::create(JSGlobalData* globalData, int lineNumber, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, ScopeFlags scopeFlags, int numConstants)
 {
-    RefPtr<EvalNode> node = new EvalNode(globalData, lineNumber, children, varStack, funcStack, capturedVariables, source, features, numConstants);
+    RefPtr<EvalNode> node = new EvalNode(globalData, lineNumber, children, varStack, funcStack, capturedVariables, source, scopeFlags, numConstants);
 
     ASSERT(node->m_arena.last() == node);
     node->m_arena.removeLast();
@@ -149,13 +149,13 @@ FunctionParameters::FunctionParameters(ParameterNode* firstParameter)
         append(parameter->ident());
 }
 
-inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, int lineNumber, bool inStrictContext)
-    : ScopeNode(globalData, lineNumber, inStrictContext)
+inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, int lineNumber, ScopeFlags scopeFlags)
+    : ScopeNode(globalData, lineNumber, scopeFlags)
 {
 }
 
-inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, int lineNumber, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
-    : ScopeNode(globalData, lineNumber, sourceCode, children, varStack, funcStack, capturedVariables, features, numConstants)
+inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, int lineNumber, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, ScopeFlags scopeFlags, int numConstants)
+    : ScopeNode(globalData, lineNumber, sourceCode, children, varStack, funcStack, capturedVariables, scopeFlags, numConstants)
 {
 }
 
@@ -172,14 +172,14 @@ void FunctionBodyNode::finishParsing(PassRefPtr<FunctionParameters> parameters, 
     m_ident = ident;
 }
 
-FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, int lineNumber, bool inStrictContext)
+FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, int lineNumber, ScopeFlags scopeFlags)
 {
-    return new FunctionBodyNode(globalData, lineNumber, inStrictContext);
+    return new FunctionBodyNode(globalData, lineNumber, scopeFlags);
 }
 
-PassRefPtr<FunctionBodyNode> FunctionBodyNode::create(JSGlobalData* globalData, int lineNumber, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
+PassRefPtr<FunctionBodyNode> FunctionBodyNode::create(JSGlobalData* globalData, int lineNumber, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, ScopeFlags scopeFlags, int numConstants)
 {
-    RefPtr<FunctionBodyNode> node = new FunctionBodyNode(globalData, lineNumber, children, varStack, funcStack, capturedVariables, sourceCode, features, numConstants);
+    RefPtr<FunctionBodyNode> node = new FunctionBodyNode(globalData, lineNumber, children, varStack, funcStack, capturedVariables, sourceCode, scopeFlags, numConstants);
 
     ASSERT(node->m_arena.last() == node);
     node->m_arena.removeLast();

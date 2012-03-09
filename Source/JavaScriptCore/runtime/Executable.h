@@ -271,14 +271,14 @@ namespace JSC {
         ScriptExecutable(Structure* structure, JSGlobalData& globalData, const SourceCode& source, bool isInStrictContext)
             : ExecutableBase(globalData, structure, NUM_PARAMETERS_NOT_COMPILED)
             , m_source(source)
-            , m_features(isInStrictContext ? StrictModeFeature : 0)
+            , m_scopeFlags(isInStrictContext ? StrictModeFlag : NoScopeFlags)
         {
         }
 
         ScriptExecutable(Structure* structure, ExecState* exec, const SourceCode& source, bool isInStrictContext)
             : ExecutableBase(exec->globalData(), structure, NUM_PARAMETERS_NOT_COMPILED)
             , m_source(source)
-            , m_features(isInStrictContext ? StrictModeFeature : 0)
+            , m_scopeFlags(isInStrictContext ? StrictModeFlag : NoScopeFlags)
         {
         }
 
@@ -292,10 +292,10 @@ namespace JSC {
         int lineNo() const { return m_firstLine; }
         int lastLine() const { return m_lastLine; }
 
-        bool usesEval() const { return m_features & EvalFeature; }
-        bool usesArguments() const { return m_features & ArgumentsFeature; }
-        bool needsActivation() const { return m_hasCapturedVariables || m_features & (EvalFeature | WithFeature | CatchFeature); }
-        bool isStrictMode() const { return m_features & StrictModeFeature; }
+        bool usesEval() const { return m_scopeFlags & UsesEvalFlag; }
+        bool usesArguments() const { return m_scopeFlags & UsesArgumentsFlag; }
+        bool needsActivation() const { return m_hasCapturedVariables || m_scopeFlags & (UsesEvalFlag | UsesWithFlag | UsesCatchFlag); }
+        bool isStrictMode() const { return m_scopeFlags & StrictModeFlag; }
 
         void unlinkCalls();
         
@@ -311,16 +311,16 @@ namespace JSC {
 #endif
         }
 
-        void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine)
+        void recordParse(ScopeFlags scopeFlags, bool hasCapturedVariables, int firstLine, int lastLine)
         {
-            m_features = features;
+            m_scopeFlags = scopeFlags;
             m_hasCapturedVariables = hasCapturedVariables;
             m_firstLine = firstLine;
             m_lastLine = lastLine;
         }
 
         SourceCode m_source;
-        CodeFeatures m_features;
+        ScopeFlags m_scopeFlags;
         bool m_hasCapturedVariables;
         int m_firstLine;
         int m_lastLine;

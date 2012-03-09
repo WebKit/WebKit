@@ -130,30 +130,19 @@ struct ScopeLabelInfo {
 };
 
 struct Scope {
-    Scope(const JSGlobalData* globalData, bool isFunction, bool strictMode)
+    Scope(const JSGlobalData* globalData, ScopeFlags scopeFlags)
         : m_globalData(globalData)
-        , m_shadowsArguments(false)
-        , m_usesEval(false)
-        , m_needsFullActivation(false)
-        , m_allowsNewDecls(true)
-        , m_strictMode(strictMode)
-        , m_isFunction(isFunction)
-        , m_isFunctionBoundary(false)
+        , m_scopeFlags(scopeFlags)
         , m_isValidStrictMode(true)
         , m_loopDepth(0)
         , m_switchDepth(0)
     {
+        ASSERT(!(scopeFlags & ~AllScopeModeFlags));
     }
 
     Scope(const Scope& rhs)
         : m_globalData(rhs.m_globalData)
-        , m_shadowsArguments(rhs.m_shadowsArguments)
-        , m_usesEval(rhs.m_usesEval)
-        , m_needsFullActivation(rhs.m_needsFullActivation)
-        , m_allowsNewDecls(rhs.m_allowsNewDecls)
-        , m_strictMode(rhs.m_strictMode)
-        , m_isFunction(rhs.m_isFunction)
-        , m_isFunctionBoundary(rhs.m_isFunctionBoundary)
+        , m_scopeFlags(rhs.m_scopeFlags)
         , m_isValidStrictMode(rhs.m_isValidStrictMode)
         , m_loopDepth(rhs.m_loopDepth)
         , m_switchDepth(rhs.m_switchDepth)
@@ -167,6 +156,22 @@ struct Scope {
                 m_labels->append(ScopeLabelInfo(it->m_ident, it->m_isLoop));
         }
     }
+
+    ALWAYS_INLINE ScopeFlags scopeFlags() const { return m_scopeFlags; }
+    ALWAYS_INLINE ScopeFlags modeFlags() const { return m_scopeFlags & AllScopeModeFlags; }
+    ALWAYS_INLINE ScopeFlags usesFlags() const { return m_scopeFlags & AllScopeUsesFlags; }
+    ALWAYS_INLINE void setFlags(ScopeFlags scopeFlags) { m_scopeFlags |= scopeFlags; }
+
+    ALWAYS_INLINE bool needsFullActivation() const { return m_scopeFlags & (UsesEvalFlag | UsesWithFlag | UsesCatchFlag); }
+    ALWAYS_INLINE bool strictMode() const { return m_scopeFlags & StrictModeFlag; }
+    ALWAYS_INLINE bool shadowsArguments() const { return m_scopeFlags & ShadowsArgumentsFlag; }
+    ALWAYS_INLINE bool isFunction() const { return m_scopeFlags & FunctionModeFlag; }
+    ALWAYS_INLINE bool isBlockScope() const { return m_scopeFlags & BlockScopeFlag; }
+    ALWAYS_INLINE bool isFunctionBoundary() const { return isFunction() && !isBlockScope(); }
+
+    ALWAYS_INLINE bool allowsNewDecls() const { return !isBlockScope(); }
+
+    ALWAYS_INLINE bool isValidStrictMode() const { return m_isValidStrictMode; }
 
     void startSwitch() { m_switchDepth++; }
     void endSwitch() { m_switchDepth--; }
@@ -201,14 +206,6 @@ struct Scope {
         return 0;
     }
 
-    void setIsFunction()
-    {
-        m_isFunction = true;
-        m_isFunctionBoundary = true;
-    }
-    bool isFunction() { return m_isFunction; }
-    bool isFunctionBoundary() { return m_isFunctionBoundary; }
-
     bool declareVariable(const Identifier* ident)
     {
         bool isValidStrictMode = m_globalData->propertyNames->eval != *ident && m_globalData->propertyNames->arguments != *ident;
@@ -219,12 +216,9 @@ struct Scope {
 
     void declareWrite(const Identifier* ident)
     {
-        ASSERT(m_strictMode);
+        ASSERT(strictMode());
         m_writtenVariables.add(ident->impl());
     }
-
-    void preventNewDecls() { m_allowsNewDecls = false; }
-    bool allowsNewDecls() const { return m_allowsNewDecls; }
 
     bool declareParameter(const Identifier* ident)
     {
@@ -232,22 +226,18 @@ struct Scope {
         bool isValidStrictMode = m_declaredVariables.add(ident->ustring().impl()).second && m_globalData->propertyNames->eval != *ident && !isArguments;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         if (isArguments)
-            m_shadowsArguments = true;
+            setFlags(ShadowsArgumentsFlag);
         return isValidStrictMode;
     }
 
-    void useVariable(const Identifier* ident, bool isEval)
+    void useVariable(const Identifier* ident)
     {
-        m_usesEval |= isEval;
         m_usedVariables.add(ident->ustring().impl());
     }
 
-    void setNeedsFullActivation() { m_needsFullActivation = true; }
-
     bool collectFreeVariables(Scope* nestedScope, bool shouldTrackClosedVariables)
     {
-        if (nestedScope->m_usesEval)
-            m_usesEval = true;
+        setFlags(nestedScope->usesFlags());
         IdentifierSet::iterator end = nestedScope->m_usedVariables.end();
         for (IdentifierSet::iterator ptr = nestedScope->m_usedVariables.begin(); ptr != end; ++ptr) {
             if (nestedScope->m_declaredVariables.contains(*ptr))
@@ -279,7 +269,7 @@ struct Scope {
 
     void getCapturedVariables(IdentifierSet& capturedVariables)
     {
-        if (m_needsFullActivation || m_usesEval) {
+        if (needsFullActivation()) {
             capturedVariables.swap(m_declaredVariables);
             return;
         }
@@ -289,11 +279,6 @@ struct Scope {
             capturedVariables.add(*ptr);
         }
     }
-    void setStrictMode() { m_strictMode = true; }
-    bool strictMode() const { return m_strictMode; }
-    bool isValidStrictMode() const { return m_isValidStrictMode; }
-    bool shadowsArguments() const { return m_shadowsArguments; }
-
     void copyCapturedVariablesToVector(const IdentifierSet& capturedVariables, Vector<RefPtr<StringImpl> >& vector)
     {
         IdentifierSet::iterator end = capturedVariables.end();
@@ -307,20 +292,16 @@ struct Scope {
 
     void saveFunctionInfo(SourceProviderCacheItem* info)
     {
-        ASSERT(m_isFunction);
-        info->usesEval = m_usesEval;
-        info->strictMode = m_strictMode;
-        info->needsFullActivation = m_needsFullActivation;
+        ASSERT(isFunction());
+        info->scopeFlags = m_scopeFlags;
         copyCapturedVariablesToVector(m_writtenVariables, info->writtenVariables);
         copyCapturedVariablesToVector(m_usedVariables, info->usedVariables);
     }
 
     void restoreFunctionInfo(const SourceProviderCacheItem* info)
     {
-        ASSERT(m_isFunction);
-        m_usesEval = info->usesEval;
-        m_strictMode = info->strictMode;
-        m_needsFullActivation = info->needsFullActivation;
+        ASSERT(isFunction());
+        m_scopeFlags |= info->scopeFlags;
         unsigned size = info->usedVariables.size();
         for (unsigned i = 0; i < size; ++i)
             m_usedVariables.add(info->usedVariables[i]);
@@ -331,13 +312,7 @@ struct Scope {
 
 private:
     const JSGlobalData* m_globalData;
-    bool m_shadowsArguments : 1;
-    bool m_usesEval : 1;
-    bool m_needsFullActivation : 1;
-    bool m_allowsNewDecls : 1;
-    bool m_strictMode : 1;
-    bool m_isFunction : 1;
-    bool m_isFunctionBoundary : 1;
+    ScopeFlags m_scopeFlags;
     bool m_isValidStrictMode : 1;
     int m_loopDepth;
     int m_switchDepth;
@@ -427,20 +402,14 @@ private:
         Parser* m_parser;
     };
 
-    ScopeRef currentScope()
+    ALWAYS_INLINE ScopeRef currentScope()
     {
         return ScopeRef(&m_scopeStack, m_scopeStack.size() - 1);
     }
     
-    ScopeRef pushScope()
+    ScopeRef pushScope(ScopeFlags scopeFlags)
     {
-        bool isFunction = false;
-        bool isStrict = false;
-        if (!m_scopeStack.isEmpty()) {
-            isStrict = m_scopeStack.last().strictMode();
-            isFunction = m_scopeStack.last().isFunction();
-        }
-        m_scopeStack.append(Scope(m_globalData, isFunction, isStrict));
+        m_scopeStack.append(Scope(m_globalData, scopeFlags));
         return currentScope();
     }
     
@@ -492,7 +461,7 @@ private:
     UString parseInner();
 
     void didFinishParsing(SourceElements*, ParserArenaData<DeclarationStacks::VarStack>*, 
-                          ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures,
+                          ParserArenaData<DeclarationStacks::FunctionStack>*, ScopeFlags,
                           int, int, IdentifierSet&);
 
     // Used to determine type of error to report.
@@ -823,14 +792,13 @@ private:
         m_errorMessage = UString(msg);
     }
     
-    void startLoop() { currentScope()->startLoop(); }
-    void endLoop() { currentScope()->endLoop(); }
-    void startSwitch() { currentScope()->startSwitch(); }
-    void endSwitch() { currentScope()->endSwitch(); }
-    void setStrictMode() { currentScope()->setStrictMode(); }
-    bool strictMode() { return currentScope()->strictMode(); }
-    bool isValidStrictMode() { return currentScope()->isValidStrictMode(); }
-    bool declareParameter(const Identifier* ident) { return currentScope()->declareParameter(ident); }
+    ALWAYS_INLINE void startLoop() { currentScope()->startLoop(); }
+    ALWAYS_INLINE void endLoop() { currentScope()->endLoop(); }
+    ALWAYS_INLINE void startSwitch() { currentScope()->startSwitch(); }
+    ALWAYS_INLINE void endSwitch() { currentScope()->endSwitch(); }
+    ALWAYS_INLINE bool strictMode() { return currentScope()->strictMode(); }
+    ALWAYS_INLINE bool isValidStrictMode() { return currentScope()->isValidStrictMode(); }
+    ALWAYS_INLINE bool declareParameter(const Identifier* ident) { return currentScope()->declareParameter(ident); }
     bool breakIsValid()
     {
         ScopeRef current = currentScope();
@@ -949,7 +917,7 @@ private:
     ParserArenaData<DeclarationStacks::VarStack>* m_varDeclarations;
     ParserArenaData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
     IdentifierSet m_capturedVariables;
-    CodeFeatures m_features;
+    ScopeFlags m_scopeFlags;
     int m_numConstants;
     
     struct DepthManager {
@@ -1010,7 +978,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObj
                                     m_funcDeclarations ? &m_funcDeclarations->data : 0,
                                     m_capturedVariables,
                                     *m_source,
-                                    m_features,
+                                    m_scopeFlags,
                                     m_numConstants);
         result->setLoc(m_source->firstLine(), m_lastLine);
     } else if (lexicalGlobalObject) {

@@ -1,3 +1,116 @@
+2012-03-09  Andy Wingo  <wingo@igalia.com>
+
+        Refactor code feature analysis in the parser
+        https://bugs.webkit.org/show_bug.cgi?id=79112
+
+        Reviewed by Geoffrey Garen.
+
+        This commit refactors the parser to more uniformly propagate flag
+        bits down and up the parse process, as the parser descends and
+        returns into nested blocks.  Some flags get passed town to
+        subscopes, some apply to specific scopes only, and some get
+        unioned up after parsing subscopes.
+
+        The goal is to eventually be very precise with scoping
+        information, once we have block scopes: one block scope might use
+        `eval', which would require the emission of a symbol table within
+        that block and containing blocks, whereas another block in the
+        same function might not, allowing us to not emit a symbol table.
+
+        * parser/Nodes.h:
+        (JSC::ScopeFlags): Rename from CodeFeatures.
+        (JSC::ScopeNode::addScopeFlags):
+        (JSC::ScopeNode::scopeFlags): New accessors for m_scopeFlags.
+        (JSC::ScopeNode::isStrictMode):
+        (JSC::ScopeNode::usesEval):
+        (JSC::ScopeNode::usesArguments):
+        (JSC::ScopeNode::setUsesArguments):
+        (JSC::ScopeNode::usesThis):
+        (JSC::ScopeNode::needsActivationForMoreThanVariables):
+        (JSC::ScopeNode::needsActivation): Refactor these accessors to
+        operate on the m_scopeFlags member.
+        (JSC::ScopeNode::source):
+        (JSC::ScopeNode::sourceURL):
+        (JSC::ScopeNode::sourceID): Shuffle these definitions around; no
+        semantic change.
+        (JSC::ScopeNode::ScopeNode)
+        (JSC::ProgramNode::ProgramNode)
+        (JSC::EvalNode::EvalNode)
+        (JSC::FunctionBodyNode::FunctionBodyNode): Have these constructors
+        take a ScopeFlags as an argument, instead of a bool inStrictContext.
+
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ProgramNode::create):
+        (JSC::EvalNode::EvalNode):
+        (JSC::EvalNode::create):
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::create): Adapt constructors to change.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::ASTBuilder):
+        (JSC::ASTBuilder::thisExpr):
+        (JSC::ASTBuilder::createResolve):
+        (JSC::ASTBuilder::createFunctionBody):
+        (JSC::ASTBuilder::createFuncDeclStatement):
+        (JSC::ASTBuilder::createTryStatement):
+        (JSC::ASTBuilder::createWithStatement):
+        (JSC::ASTBuilder::addVar):
+        (JSC::ASTBuilder::Scope::Scope):
+        (Scope):
+        (ASTBuilder):
+        (JSC::ASTBuilder::makeFunctionCallNode): Don't track scope
+        features here.  Instead rely on the base Parser mechanism to track
+        features.
+
+        * parser/NodeInfo.h (NodeInfo, NodeDeclarationInfo): "ScopeFlags".
+
+        * parser/Parser.h:
+        (JSC::Scope::Scope): Manage scope through flags, not
+        bit-booleans.  This lets us uniformly propagate them up and down.
+        (JSC::Scope::declareWrite):
+        (JSC::Scope::declareParameter):
+        (JSC::Scope::useVariable):
+        (JSC::Scope::collectFreeVariables):
+        (JSC::Scope::getCapturedVariables):
+        (JSC::Scope::saveFunctionInfo):
+        (JSC::Scope::restoreFunctionInfo):
+        (JSC::Parser::pushScope): Adapt to use scope flags and their
+        accessors instead of bit-booleans.
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        (JSC::::parseInner):
+        (JSC::::didFinishParsing):
+        (JSC::::parseSourceElements):
+        (JSC::::parseVarDeclarationList):
+        (JSC::::parseConstDeclarationList):
+        (JSC::::parseWithStatement):
+        (JSC::::parseTryStatement):
+        (JSC::::parseFunctionBody):
+        (JSC::::parseFunctionInfo):
+        (JSC::::parseFunctionDeclaration):
+        (JSC::::parsePrimaryExpression): Hoist some of the flag handling
+        out of the "context" (ASTBuilder or SyntaxChecker) and to here.
+        Does not seem to have a performance impact.
+
+        * parser/SourceProviderCacheItem.h (SourceProviderCacheItem):
+        Cache the scopeflags.
+        * parser/SyntaxChecker.h: Remove evalCount() decl.
+
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::produceCodeBlockFor):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::ScriptExecutable::usesEval):
+        (JSC::ScriptExecutable::usesArguments):
+        (JSC::ScriptExecutable::needsActivation):
+        (JSC::ScriptExecutable::isStrictMode):
+        (JSC::ScriptExecutable::recordParse):
+        (ScriptExecutable): ScopeFlags, not features.
+
 2012-03-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Build fix for MSVC after r110266

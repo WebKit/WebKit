@@ -221,7 +221,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
             ASSERT(exception);
             return exception;
         }
-        recordParse(evalNode->features(), evalNode->hasCapturedVariables(), evalNode->lineNo(), evalNode->lastLine());
+        recordParse(evalNode->scopeFlags(), evalNode->hasCapturedVariables(), evalNode->lineNo(), evalNode->lastLine());
         
         JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
         
@@ -353,7 +353,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
             ASSERT(exception);
             return exception;
         }
-        recordParse(programNode->features(), programNode->hasCapturedVariables(), programNode->lineNo(), programNode->lastLine());
+        recordParse(programNode->scopeFlags(), programNode->hasCapturedVariables(), programNode->lineNo(), programNode->lastLine());
 
         JSGlobalObject* globalObject = scopeChainNode->globalObject.get();
     
@@ -508,7 +508,7 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(ScopeChain
     if (m_forceUsesArguments)
         body->setUsesArguments();
     body->finishParsing(m_parameters, m_name);
-    recordParse(body->features(), body->hasCapturedVariables(), body->lineNo(), body->lastLine());
+    recordParse(body->scopeFlags(), body->hasCapturedVariables(), body->lineNo(), body->lastLine());
 
     OwnPtr<FunctionCodeBlock> result;
     ASSERT((compilationKind == FirstCompilation) == !codeBlockFor(specializationKind));
