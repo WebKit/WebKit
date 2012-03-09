@@ -1,3 +1,15 @@
+2012-03-09  Nat Duca  <nduca@chromium.org>
+
+        Make check-webkit-style complain about "no new tests" lines in changelogs
+        https://bugs.webkit.org/show_bug.cgi?id=80582
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/style/checkers/changelog.py:
+        (ChangeLogChecker.check_entry):
+        * Scripts/webkitpy/style/checkers/changelog_unittest.py:
+        (ChangeLogCheckerTest.test_no_new_tests):
+
 2012-03-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r110250.

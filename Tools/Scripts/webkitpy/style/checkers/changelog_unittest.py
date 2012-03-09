@@ -121,6 +121,14 @@ class ChangeLogCheckerTest(unittest.TestCase):
                           '        *  Source/Tools/random-script.py:Fixed\n'
                           '        *  Source/Tools/one-morefile:\n')
 
+    def test_no_new_tests(self):
+        self.assert_error(5, range(1, 20), 'changelog/nonewtests',
+                          '2011-01-01 Dmitry Lomov  <dslomov@google.com>\n'
+                          '        ExampleBug\n'
+                          '        http://bugs.webkit.org/show_bug.cgi?id=12345\n'
+                          '\n'
+                          '        No new tests. (OOPS!)\n'
+                          '        *  Source/Tools/random-script.py: Fixed')
 
     def test_no_error(self):
         self.assert_no_error([],
