@@ -455,11 +455,19 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
     unsigned sourceLen = source.length();
     if (exec->hadException())
         return JSValue::encode(JSValue());
-    RegExp* regExp = asRegExpObject(searchValue)->regExp();
+    RegExpObject* regExpObject = asRegExpObject(searchValue);
+    RegExp* regExp = regExpObject->regExp();
     bool global = regExp->global();
 
-    if (global && callType == CallTypeNone && !replacementString.length())
-        return removeUsingRegExpSearch(exec, string, source, regExp);
+    if (global) {
+        // ES5.1 15.5.4.10 step 8.a.
+        regExpObject->setLastIndex(exec, 0);
+        if (exec->hadException())
+            return JSValue::encode(JSValue());
+
+        if (callType == CallTypeNone && !replacementString.length())
+            return removeUsingRegExpSearch(exec, string, source, regExp);
+    }
 
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
 
@@ -808,9 +816,17 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     JSValue a0 = exec->argument(0);
 
     RegExp* reg;
-    if (a0.inherits(&RegExpObject::s_info))
-        reg = asRegExpObject(a0)->regExp();
-    else {
+    bool global = false;
+    if (a0.inherits(&RegExpObject::s_info)) {
+        RegExpObject* regExpObject = asRegExpObject(a0);
+        reg = regExpObject->regExp();
+        if ((global = reg->global())) {
+            // ES5.1 15.5.4.10 step 8.a.
+            regExpObject->setLastIndex(exec, 0);
+            if (exec->hadException())
+                return JSValue::encode(JSValue());
+        }
+    } else {
         /*
          *  ECMA 15.5.4.12 String.prototype.search (regexp)
          *  If regexp is not an object whose [[Class]] property is "RegExp", it is
@@ -825,7 +841,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     int pos;
     int matchLength = 0;
     regExpConstructor->performMatch(*globalData, reg, s, 0, pos, matchLength);
-    if (!(reg->global())) {
+    if (!global) {
         // case without 'g' flag is handled like RegExp.prototype.exec
         if (pos < 0)
             return JSValue::encode(jsNull());
