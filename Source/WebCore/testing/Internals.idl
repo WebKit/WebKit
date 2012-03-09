@@ -64,7 +64,9 @@ module window {
 
         ClientRect boundingBox(in Element element) raises(DOMException);
 
+#if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
         ClientRectList inspectorHighlightRects(in Document document) raises (DOMException);
+#endif
 
         unsigned long markerCountForNode(in Node node, in DOMString markerType) raises(DOMException);
         Range markerRangeForNode(in Node node, in DOMString markerType, in unsigned long index) raises(DOMException);
