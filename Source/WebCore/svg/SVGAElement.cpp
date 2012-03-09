@@ -40,6 +40,7 @@
 #include "NodeRenderingContext.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSVGInline.h"
+#include "RenderSVGText.h"
 #include "RenderSVGTransformableContainer.h"
 #include "ResourceRequest.h"
 #include "SVGElementInstance.h"
@@ -235,6 +236,19 @@ bool SVGAElement::childShouldCreateRenderer(const NodeRenderingContext& childCon
         return parentNode()->childShouldCreateRenderer(childContext);
 
     return SVGElement::childShouldCreateRenderer(childContext);
+}
+
+void SVGAElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+{
+    SVGStyledTransformableElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+
+    if (changedByParser || !renderer())
+        return;
+
+    // Invalidate the TextPosition cache in SVGTextLayoutAttributesBuilder as it may now point
+    // to no-longer existing SVGTextPositioningElements and thus needs to be rebuilt.
+    if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(renderer()))
+        textRenderer->textDOMChanged();
 }
 
 } // namespace WebCore
