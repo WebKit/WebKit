@@ -42,6 +42,7 @@ template<typename LayerType, typename RenderSurfaceType>
 CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace)
     : m_scissorRectInScreenSpace(scissorRectInScreenSpace)
     , m_surfaceDamageClient(0)
+    , m_usePaintTracking(true) // FIXME: Remove this when paint tracking is on for paint culling.
 {
 }
 
@@ -49,6 +50,7 @@ template<typename LayerType, typename RenderSurfaceType>
 CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, const DamageClientType* surfaceDamageClient)
     : m_scissorRectInScreenSpace(scissorRectInScreenSpace)
     , m_surfaceDamageClient(surfaceDamageClient)
+    , m_usePaintTracking(true) // FIXME: Remove this when paint tracking is on for paint culling.
 {
 }
 
@@ -184,8 +186,9 @@ static inline TransformationMatrix contentToTargetSurfaceTransform(const LayerTy
     return transform;
 }
 
+// FIXME: Remove usePaintTracking when paint tracking is on for paint culling.
 template<typename LayerType>
-static inline Region computeOcclusionBehindLayer(const LayerType* layer, const TransformationMatrix& transform)
+static inline Region computeOcclusionBehindLayer(const LayerType* layer, const TransformationMatrix& transform, bool usePaintTracking)
 {
     Region opaqueRegion;
 
@@ -196,7 +199,14 @@ static inline Region computeOcclusionBehindLayer(const LayerType* layer, const T
 
     if (layer->opaque())
         opaqueRegion = enclosedIntRect(unoccludedQuad.boundingBox());
-    // FIXME: Capture opaque paints: else opaqueRegion = layer->opaqueContentsRegion(transform);
+    else if (usePaintTracking && transform.isIdentity())
+        opaqueRegion = layer->opaqueContentsRegion();
+    else if (usePaintTracking) {
+        Region contentRegion = layer->opaqueContentsRegion();
+        Vector<IntRect> contentRects = contentRegion.rects();
+        for (size_t i = 0; i < contentRects.size(); ++i)
+            opaqueRegion.unite(enclosedIntRect(transform.mapRect(FloatRect(contentRects[i]))));
+    }
     return opaqueRegion;
 }
 
@@ -214,8 +224,9 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
     TransformationMatrix contentToScreenSpace = contentToScreenSpaceTransform<LayerType>(layer);
     TransformationMatrix contentToTargetSurface = contentToTargetSurfaceTransform<LayerType>(layer);
 
-    m_stack.last().occlusionInScreen.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToScreenSpace));
-    m_stack.last().occlusionInTarget.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToTargetSurface));
+    // FIXME: Remove m_usePaintTracking when paint tracking is on for paint culling.
+    m_stack.last().occlusionInScreen.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToScreenSpace, m_usePaintTracking));
+    m_stack.last().occlusionInTarget.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToTargetSurface, m_usePaintTracking));
 }
 
 static inline bool testContentRectOccluded(const IntRect& contentRect, const TransformationMatrix& contentSpaceTransform, const IntRect& scissorRect, const Region& occlusion)

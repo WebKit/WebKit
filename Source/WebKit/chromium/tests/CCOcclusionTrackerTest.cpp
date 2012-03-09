@@ -45,16 +45,6 @@ using namespace WebCore;
 
 namespace {
 
-void setLayerPropertiesForTesting(LayerChromium* layer, const TransformationMatrix& transform, const TransformationMatrix& sublayerTransform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool opaque)
-{
-    layer->setTransform(transform);
-    layer->setSublayerTransform(sublayerTransform);
-    layer->setAnchorPoint(anchor);
-    layer->setPosition(position);
-    layer->setBounds(bounds);
-    layer->setOpaque(opaque);
-}
-
 class LayerChromiumWithForcedDrawsContent : public LayerChromium {
 public:
     LayerChromiumWithForcedDrawsContent()
@@ -63,7 +53,39 @@ public:
     }
 
     virtual bool drawsContent() const { return true; }
+    virtual Region opaqueContentsRegion() const
+    {
+        return intersection(m_opaquePaintRect, visibleLayerRect());
+    }
+
+    void setOpaquePaintRect(const IntRect& opaquePaintRect) { m_opaquePaintRect = opaquePaintRect; }
+
+private:
+    IntRect m_opaquePaintRect;
 };
+
+void setLayerPropertiesForTesting(LayerChromium* layer, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
+{
+    layer->setTransform(transform);
+    layer->setSublayerTransform(TransformationMatrix());
+    layer->setAnchorPoint(FloatPoint(0, 0));
+    layer->setPosition(position);
+    layer->setBounds(bounds);
+}
+
+void setLayerPropertiesForTesting(LayerChromiumWithForcedDrawsContent* layer, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds, bool opaque, bool opaqueLayers)
+{
+    setLayerPropertiesForTesting(layer, transform, position, bounds);
+    if (opaqueLayers)
+        layer->setOpaque(opaque);
+    else {
+        layer->setOpaque(false);
+        if (opaque)
+            layer->setOpaquePaintRect(IntRect(IntPoint(), bounds));
+        else
+            layer->setOpaquePaintRect(IntRect());
+    }
+}
 
 // A subclass to expose the total current occlusion.
 class TestCCOcclusionTracker : public CCOcclusionTracker {
@@ -110,7 +132,17 @@ private:
     FloatRect m_damageRect;
 };
 
-TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegion)
+#define TEST_OPAQUE_AND_PAINTED_OPAQUE(FULLTESTNAME, SHORTTESTNAME) \
+    TEST(FULLTESTNAME, opaqueLayer)                                 \
+    {                                                               \
+        SHORTTESTNAME(true);                                        \
+    }                                                               \
+    TEST(FULLTESTNAME, opaquePaintRect)                             \
+    {                                                               \
+        SHORTTESTNAME(false);                                       \
+    }
+
+void layerAddedToOccludedRegion(bool opaqueLayers)
 {
     // This tests that the right transforms are being used.
     const TransformationMatrix identityMatrix;
@@ -119,8 +151,8 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegion)
     parent->createRenderSurface();
     parent->addChild(layer);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(30, 30), IntSize(500, 500), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -167,7 +199,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegion)
     EXPECT_EQ_RECT(IntRect(29, 31, 70, 70), occlusion.unoccludedContentRect(parent.get(), IntRect(29, 31, 70, 70)));
 }
 
-TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotation)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_layerAddedToOccludedRegion, layerAddedToOccludedRegion);
+
+void layerAddedToOccludedRegionWithRotation(bool opaqueLayers)
 {
     // This tests that the right transforms are being used.
     const TransformationMatrix identityMatrix;
@@ -181,8 +215,8 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotation)
     layerTransform.rotate(90);
     layerTransform.translate(-250, -250);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
-    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+    setLayerPropertiesForTesting(layer.get(), layerTransform, FloatPoint(30, 30), IntSize(500, 500), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -229,7 +263,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotation)
     EXPECT_EQ_RECT(IntRect(29, 31, 70, 70), occlusion.unoccludedContentRect(parent.get(), IntRect(29, 31, 70, 70)));
 }
 
-TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithTranslation)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_layerAddedToOccludedRegionWithRotation, layerAddedToOccludedRegionWithRotation);
+
+void layerAddedToOccludedRegionWithTranslation(bool opaqueLayers)
 {
     // This tests that the right transforms are being used.
     const TransformationMatrix identityMatrix;
@@ -241,8 +277,8 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithTranslation)
     TransformationMatrix layerTransform;
     layerTransform.translate(20, 20);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
-    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+    setLayerPropertiesForTesting(layer.get(), layerTransform, FloatPoint(30, 30), IntSize(500, 500), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -301,7 +337,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithTranslation)
     occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
 }
 
-TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedSurface)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_layerAddedToOccludedRegionWithTranslation, layerAddedToOccludedRegionWithTranslation);
+
+void layerAddedToOccludedRegionWithRotatedSurface(bool opaqueLayers)
 {
     // This tests that the right transforms are being used.
     const TransformationMatrix identityMatrix;
@@ -317,9 +355,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedSurface)
     childTransform.rotate(90);
     childTransform.translate(-250, -250);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
-    setLayerPropertiesForTesting(child.get(), childTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+    setLayerPropertiesForTesting(child.get(), childTransform, FloatPoint(30, 30), IntSize(500, 500));
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(10, 10), IntSize(500, 500), true, opaqueLayers);
 
     child->setMasksToBounds(true);
 
@@ -408,7 +446,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedSurface)
      */
 }
 
-TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithSurfaceAlreadyOnStack)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_layerAddedToOccludedRegionWithRotatedSurface, layerAddedToOccludedRegionWithRotatedSurface);
+
+void layerAddedToOccludedRegionWithSurfaceAlreadyOnStack(bool opaqueLayers)
 {
     // This tests that the right transforms are being used.
     const TransformationMatrix identityMatrix;
@@ -426,13 +466,13 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithSurfaceAlreadyOnStack
     childTransform.rotate(90);
     childTransform.translate(-250, -250);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
-    setLayerPropertiesForTesting(child.get(), childTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+    setLayerPropertiesForTesting(child.get(), childTransform, FloatPoint(30, 30), IntSize(500, 500));
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(10, 10), IntSize(500, 500), true, opaqueLayers);
 
     // |child2| makes |parent|'s surface get considered by CCOcclusionTracker first, instead of |child|'s. This exercises different code in
     // leaveToTargetRenderSurface, as the target surface has already been seen.
-    setLayerPropertiesForTesting(child2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(60, 20), true);
+    setLayerPropertiesForTesting(child2.get(), identityMatrix, FloatPoint(30, 30), IntSize(60, 20), true, opaqueLayers);
 
     child->setMasksToBounds(true);
 
@@ -574,7 +614,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithSurfaceAlreadyOnStack
      */
 }
 
-TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedOffAxisSurface)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_layerAddedToOccludedRegionWithSurfaceAlreadyOnStack, layerAddedToOccludedRegionWithSurfaceAlreadyOnStack);
+
+void layerAddedToOccludedRegionWithRotatedOffAxisSurface(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -595,9 +637,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedOffAxisSurface
     TransformationMatrix layerTransform;
     layerTransform.translate(10, 10);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
-    setLayerPropertiesForTesting(child.get(), childTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), false);
-    setLayerPropertiesForTesting(layer.get(), layerTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(500, 500), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+    setLayerPropertiesForTesting(child.get(), childTransform, FloatPoint(30, 30), IntSize(500, 500));
+    setLayerPropertiesForTesting(layer.get(), layerTransform, FloatPoint(0, 0), IntSize(500, 500), true, opaqueLayers);
 
     child->setMasksToBounds(true);
 
@@ -656,7 +698,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithRotatedOffAxisSurface
     EXPECT_EQ_RECT(IntRect(75, 55, 1, 1), occlusion.unoccludedContentRect(parent.get(), IntRect(75, 55, 1, 1)));
 }
 
-TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithMultipleOpaqueLayers)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_layerAddedToOccludedRegionWithRotatedOffAxisSurface, layerAddedToOccludedRegionWithRotatedOffAxisSurface);
+
+void layerAddedToOccludedRegionWithMultipleOpaqueLayers(bool opaqueLayers)
 {
     // This is similar to the previous test but now we make a few opaque layers inside of |child| so that the occluded parts of child are not a simple rect.
     const TransformationMatrix identityMatrix;
@@ -674,10 +718,10 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithMultipleOpaqueLayers)
     childTransform.rotate(90);
     childTransform.translate(-250, -250);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
-    setLayerPropertiesForTesting(child.get(), childTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), false);
-    setLayerPropertiesForTesting(layer1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 440), true);
-    setLayerPropertiesForTesting(layer2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(10, 450), IntSize(500, 60), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+    setLayerPropertiesForTesting(child.get(), childTransform, FloatPoint(30, 30), IntSize(500, 500));
+    setLayerPropertiesForTesting(layer1.get(), identityMatrix, FloatPoint(10, 10), IntSize(500, 440), true, opaqueLayers);
+    setLayerPropertiesForTesting(layer2.get(), identityMatrix, FloatPoint(10, 450), IntSize(500, 60), true, opaqueLayers);
 
     child->setMasksToBounds(true);
 
@@ -760,7 +804,9 @@ TEST(CCOcclusionTrackerTest, layerAddedToOccludedRegionWithMultipleOpaqueLayers)
      */
 }
 
-TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_layerAddedToOccludedRegionWithMultipleOpaqueLayers, layerAddedToOccludedRegionWithMultipleOpaqueLayers);
+
+void surfaceOcclusionWithOverlappingSiblingSurfaces(bool opaqueLayers)
 {
     // This tests that the right transforms are being used.
     const TransformationMatrix identityMatrix;
@@ -780,11 +826,11 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
     childTransform.rotate(90);
     childTransform.translate(-250, -250);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
-    setLayerPropertiesForTesting(child1.get(), childTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), false);
-    setLayerPropertiesForTesting(layer1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(500, 500), true);
-    setLayerPropertiesForTesting(child2.get(), childTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(20, 40), IntSize(500, 500), false);
-    setLayerPropertiesForTesting(layer2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(500, 500), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+    setLayerPropertiesForTesting(child1.get(), childTransform, FloatPoint(30, 30), IntSize(500, 500));
+    setLayerPropertiesForTesting(layer1.get(), identityMatrix, FloatPoint(0, 0), IntSize(500, 500), true, opaqueLayers);
+    setLayerPropertiesForTesting(child2.get(), childTransform, FloatPoint(20, 40), IntSize(500, 500));
+    setLayerPropertiesForTesting(layer2.get(), identityMatrix, FloatPoint(0, 0), IntSize(500, 500), true, opaqueLayers);
 
     child1->setMasksToBounds(true);
     child2->setMasksToBounds(true);
@@ -878,7 +924,9 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionWithOverlappingSiblingSurfaces)
      */
 }
 
-TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_surfaceOcclusionWithOverlappingSiblingSurfaces, surfaceOcclusionWithOverlappingSiblingSurfaces);
+
+void surfaceOcclusionInScreenSpace(bool opaqueLayers)
 {
     // This tests that the right transforms are being used.
     const TransformationMatrix identityMatrix;
@@ -899,11 +947,11 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
     childTransform.translate(-250, -250);
 
     // The owning layers have very different bounds from the surfaces that they own.
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
-    setLayerPropertiesForTesting(child1.get(), childTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(layer1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(-10, -10), IntSize(510, 510), true);
-    setLayerPropertiesForTesting(child2.get(), childTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(20, 40), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(layer2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(-10, -10), IntSize(510, 510), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+    setLayerPropertiesForTesting(child1.get(), childTransform, FloatPoint(30, 30), IntSize(10, 10));
+    setLayerPropertiesForTesting(layer1.get(), identityMatrix, FloatPoint(-10, -10), IntSize(510, 510), true, opaqueLayers);
+    setLayerPropertiesForTesting(child2.get(), childTransform, FloatPoint(20, 40), IntSize(10, 10));
+    setLayerPropertiesForTesting(layer2.get(), identityMatrix, FloatPoint(-10, -10), IntSize(510, 510), true, opaqueLayers);
 
     // Make them both render surfaces
     FilterOperations filters;
@@ -1010,7 +1058,9 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpace)
      */
 }
 
-TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpaceDifferentTransforms)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_surfaceOcclusionInScreenSpace, surfaceOcclusionInScreenSpace);
+
+void surfaceOcclusionInScreenSpaceDifferentTransforms(bool opaqueLayers)
 {
     // This tests that the right transforms are being used.
     const TransformationMatrix identityMatrix;
@@ -1036,11 +1086,11 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpaceDifferentTransforms)
     child2Transform.translate(-250, -250);
 
     // The owning layers have very different bounds from the surfaces that they own.
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
-    setLayerPropertiesForTesting(child1.get(), child1Transform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 20), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(layer1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(-10, -20), IntSize(510, 520), true);
-    setLayerPropertiesForTesting(child2.get(), child2Transform, identityMatrix, FloatPoint(0, 0), FloatPoint(20, 40), IntSize(10, 10), false);
-    setLayerPropertiesForTesting(layer2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(-10, -10), IntSize(510, 510), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+    setLayerPropertiesForTesting(child1.get(), child1Transform, FloatPoint(30, 20), IntSize(10, 10));
+    setLayerPropertiesForTesting(layer1.get(), identityMatrix, FloatPoint(-10, -20), IntSize(510, 520), true, opaqueLayers);
+    setLayerPropertiesForTesting(child2.get(), child2Transform, FloatPoint(20, 40), IntSize(10, 10));
+    setLayerPropertiesForTesting(layer2.get(), identityMatrix, FloatPoint(-10, -10), IntSize(510, 510), true, opaqueLayers);
 
     // Make them both render surfaces
     FilterOperations filters;
@@ -1135,7 +1185,9 @@ TEST(CCOcclusionTrackerTest, surfaceOcclusionInScreenSpaceDifferentTransforms)
      */
 }
 
-TEST(CCOcclusionTrackerTest, occlusionInteractionWithFilters)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_surfaceOcclusionInScreenSpaceDifferentTransforms, surfaceOcclusionInScreenSpaceDifferentTransforms);
+
+void occlusionInteractionWithFilters(bool opaqueLayers)
 {
     // This tests that the right transforms are being used.
     const TransformationMatrix identityMatrix;
@@ -1153,10 +1205,10 @@ TEST(CCOcclusionTrackerTest, occlusionInteractionWithFilters)
     layerTransform.rotate(90);
     layerTransform.translate(-250, -250);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), false);
-    setLayerPropertiesForTesting(blurLayer.get(), layerTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
-    setLayerPropertiesForTesting(opaqueLayer.get(), layerTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
-    setLayerPropertiesForTesting(opacityLayer.get(), layerTransform, identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(500, 500), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(100, 100));
+    setLayerPropertiesForTesting(blurLayer.get(), layerTransform, FloatPoint(30, 30), IntSize(500, 500), true, opaqueLayers);
+    setLayerPropertiesForTesting(opaqueLayer.get(), layerTransform, FloatPoint(30, 30), IntSize(500, 500), true, opaqueLayers);
+    setLayerPropertiesForTesting(opacityLayer.get(), layerTransform, FloatPoint(30, 30), IntSize(500, 500), true, opaqueLayers);
 
     {
         FilterOperations filters;
@@ -1239,7 +1291,9 @@ TEST(CCOcclusionTrackerTest, occlusionInteractionWithFilters)
     EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 }
 
-TEST(CCOcclusionTrackerTest, layerScissorRectOverTile)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_occlusionInteractionWithFilters, occlusionInteractionWithFilters);
+
+void layerScissorRectOverTile(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1254,9 +1308,9 @@ TEST(CCOcclusionTrackerTest, layerScissorRectOverTile)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1302,7 +1356,9 @@ TEST(CCOcclusionTrackerTest, layerScissorRectOverTile)
     EXPECT_EQ_RECT(IntRect(200, 100, 100, 100), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)));
 }
 
-TEST(CCOcclusionTrackerTest, screenScissorRectOverTile)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_layerScissorRectOverTile, layerScissorRectOverTile);
+
+void screenScissorRectOverTile(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1317,9 +1373,9 @@ TEST(CCOcclusionTrackerTest, screenScissorRectOverTile)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1367,7 +1423,9 @@ TEST(CCOcclusionTrackerTest, screenScissorRectOverTile)
     EXPECT_EQ_RECT(IntRect(200, 100, 100, 100), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)));
 }
 
-TEST(CCOcclusionTrackerTest, layerScissorRectOverCulledTile)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_screenScissorRectOverTile, screenScissorRectOverTile);
+
+void layerScissorRectOverCulledTile(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1382,9 +1440,9 @@ TEST(CCOcclusionTrackerTest, layerScissorRectOverCulledTile)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1425,7 +1483,9 @@ TEST(CCOcclusionTrackerTest, layerScissorRectOverCulledTile)
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)).isEmpty());
 }
 
-TEST(CCOcclusionTrackerTest, screenScissorRectOverCulledTile)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_layerScissorRectOverCulledTile, layerScissorRectOverCulledTile);
+
+void screenScissorRectOverCulledTile(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1440,9 +1500,9 @@ TEST(CCOcclusionTrackerTest, screenScissorRectOverCulledTile)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1482,7 +1542,9 @@ TEST(CCOcclusionTrackerTest, screenScissorRectOverCulledTile)
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)).isEmpty());
 }
 
-TEST(CCOcclusionTrackerTest, layerScissorRectOverPartialTiles)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_screenScissorRectOverCulledTile, screenScissorRectOverCulledTile);
+
+void layerScissorRectOverPartialTiles(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1497,9 +1559,9 @@ TEST(CCOcclusionTrackerTest, layerScissorRectOverPartialTiles)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1544,7 +1606,9 @@ TEST(CCOcclusionTrackerTest, layerScissorRectOverPartialTiles)
     EXPECT_EQ_RECT(IntRect(100, 200, 100, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(100, 200, 100, 100)));
 }
 
-TEST(CCOcclusionTrackerTest, screenScissorRectOverPartialTiles)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_layerScissorRectOverPartialTiles, layerScissorRectOverPartialTiles);
+
+void screenScissorRectOverPartialTiles(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1559,9 +1623,9 @@ TEST(CCOcclusionTrackerTest, screenScissorRectOverPartialTiles)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1605,7 +1669,9 @@ TEST(CCOcclusionTrackerTest, screenScissorRectOverPartialTiles)
     EXPECT_EQ_RECT(IntRect(100, 200, 100, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(100, 200, 100, 100)));
 }
 
-TEST(CCOcclusionTrackerTest, layerScissorRectOverNoTiles)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_screenScissorRectOverPartialTiles, screenScissorRectOverPartialTiles);
+
+void layerScissorRectOverNoTiles(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1620,9 +1686,9 @@ TEST(CCOcclusionTrackerTest, layerScissorRectOverNoTiles)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1667,7 +1733,9 @@ TEST(CCOcclusionTrackerTest, layerScissorRectOverNoTiles)
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(100, 200, 100, 100)).isEmpty());
 }
 
-TEST(CCOcclusionTrackerTest, screenScissorRectOverNoTiles)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_layerScissorRectOverNoTiles, layerScissorRectOverNoTiles);
+
+void screenScissorRectOverNoTiles(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1682,9 +1750,9 @@ TEST(CCOcclusionTrackerTest, screenScissorRectOverNoTiles)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1728,7 +1796,9 @@ TEST(CCOcclusionTrackerTest, screenScissorRectOverNoTiles)
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(100, 200, 100, 100)).isEmpty());
 }
 
-TEST(CCOcclusionTrackerTest, layerScissorRectForLayerOffOrigin)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_screenScissorRectOverNoTiles, screenScissorRectOverNoTiles);
+
+void layerScissorRectForLayerOffOrigin(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1743,9 +1813,9 @@ TEST(CCOcclusionTrackerTest, layerScissorRectForLayerOffOrigin)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(100, 100), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(100, 100), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1770,7 +1840,9 @@ TEST(CCOcclusionTrackerTest, layerScissorRectForLayerOffOrigin)
     EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
 }
 
-TEST(CCOcclusionTrackerTest, damageRectOverTile)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_layerScissorRectForLayerOffOrigin, layerScissorRectForLayerOffOrigin);
+
+void damageRectOverTile(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1785,9 +1857,9 @@ TEST(CCOcclusionTrackerTest, damageRectOverTile)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1819,7 +1891,7 @@ TEST(CCOcclusionTrackerTest, damageRectOverTile)
     EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 0, 100, 100)));
     EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
     EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 0, 100, 100)));
-    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(100, 100, 100, 100)));
     EXPECT_FALSE(occlusion.occluded(parentLayer.get(), IntRect(200, 100, 100, 100)));
     EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(200, 0, 100, 100)));
     EXPECT_TRUE(occlusion.occluded(parentLayer.get(), IntRect(0, 200, 100, 100)));
@@ -1831,7 +1903,9 @@ TEST(CCOcclusionTrackerTest, damageRectOverTile)
     EXPECT_EQ_RECT(IntRect(200, 100, 100, 100), occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)));
 }
 
-TEST(CCOcclusionTrackerTest, damageRectOverCulledTile)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_damageRectOverTile, damageRectOverTile);
+
+void damageRectOverCulledTile(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1846,9 +1920,9 @@ TEST(CCOcclusionTrackerTest, damageRectOverCulledTile)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1889,7 +1963,9 @@ TEST(CCOcclusionTrackerTest, damageRectOverCulledTile)
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 0, 300, 300)).isEmpty());
 }
 
-TEST(CCOcclusionTrackerTest, damageRectOverPartialTiles)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_damageRectOverCulledTile, damageRectOverCulledTile);
+
+void damageRectOverPartialTiles(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1904,9 +1980,9 @@ TEST(CCOcclusionTrackerTest, damageRectOverPartialTiles)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -1951,7 +2027,9 @@ TEST(CCOcclusionTrackerTest, damageRectOverPartialTiles)
     EXPECT_EQ_RECT(IntRect(100, 200, 100, 50), occlusion.unoccludedContentRect(parent.get(), IntRect(100, 200, 100, 100)));
 }
 
-TEST(CCOcclusionTrackerTest, damageRectOverNoTiles)
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_damageRectOverPartialTiles, damageRectOverPartialTiles);
+
+void damageRectOverNoTiles(bool opaqueLayers)
 {
     const TransformationMatrix identityMatrix;
     RefPtr<LayerChromium> parent = LayerChromium::create();
@@ -1966,9 +2044,9 @@ TEST(CCOcclusionTrackerTest, damageRectOverNoTiles)
     parentLayer->setFilters(filters);
     layer->setFilters(filters);
 
-    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(300, 300), false);
-    setLayerPropertiesForTesting(layer.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(200, 200), true);
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(parentLayer.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300), false, opaqueLayers);
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true, opaqueLayers);
 
     Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
     Vector<RefPtr<LayerChromium> > dummyLayerList;
@@ -2011,6 +2089,124 @@ TEST(CCOcclusionTrackerTest, damageRectOverNoTiles)
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(0, 100, 300, 100)).isEmpty());
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(200, 100, 100, 100)).isEmpty());
     EXPECT_TRUE(occlusion.unoccludedContentRect(parent.get(), IntRect(100, 200, 100, 100)).isEmpty());
+}
+
+TEST_OPAQUE_AND_PAINTED_OPAQUE(CCOcclusionTrackerTest_damageRectOverNoTiles, damageRectOverNoTiles);
+
+TEST(CCOcclusionTrackerTest, opaqueContentsRegionEmpty)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(layer);
+
+    FilterOperations filters;
+    filters.operations().append(BasicComponentTransferFilterOperation::create(0.5, FilterOperation::GRAYSCALE));
+    layer->setFilters(filters);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(0, 0), IntSize(200, 200), false, false);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+
+    occlusion.enterTargetRenderSurface(layer->renderSurface());
+
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(0, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 0, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(0, 100, 100, 100)));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(100, 100, 100, 100)));
+
+    // Occluded since its outside the surface bounds.
+    EXPECT_TRUE(occlusion.occluded(layer.get(), IntRect(200, 100, 100, 100)));
+
+    // Test without any scissors.
+    occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+    EXPECT_FALSE(occlusion.occluded(layer.get(), IntRect(200, 100, 100, 100)));
+    occlusion.useDefaultLayerScissorRect();
+
+    occlusion.markOccludedBehindLayer(layer.get());
+    occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+    EXPECT_TRUE(occlusion.occlusionInScreenSpace().bounds().isEmpty());
+    EXPECT_EQ(0u, occlusion.occlusionInScreenSpace().rects().size());
+}
+
+TEST(CCOcclusionTrackerTest, opaqueContentsRegionNonEmpty)
+{
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> layer = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(layer);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+    setLayerPropertiesForTesting(layer.get(), identityMatrix, FloatPoint(100, 100), IntSize(200, 200), false, false);
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    parent->renderSurface()->setContentRect(IntRect(IntPoint::zero(), parent->bounds()));
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    {
+        TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+        layer->setOpaquePaintRect(IntRect(0, 0, 100, 100));
+
+        occlusion.enterTargetRenderSurface(parent->renderSurface());
+        occlusion.markOccludedBehindLayer(layer.get());
+
+        EXPECT_EQ_RECT(IntRect(100, 100, 100, 100), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+
+        EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(0, 100, 100, 100)));
+        EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(100, 100, 100, 100)));
+        EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(200, 200, 100, 100)));
+    }
+
+    {
+        TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+        layer->setOpaquePaintRect(IntRect(20, 20, 180, 180));
+
+        occlusion.enterTargetRenderSurface(parent->renderSurface());
+        occlusion.markOccludedBehindLayer(layer.get());
+
+        EXPECT_EQ_RECT(IntRect(120, 120, 180, 180), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+
+        EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(0, 100, 100, 100)));
+        EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(100, 100, 100, 100)));
+        EXPECT_TRUE(occlusion.occluded(parent.get(), IntRect(200, 200, 100, 100)));
+    }
+
+    {
+        TestCCOcclusionTracker occlusion(IntRect(0, 0, 1000, 1000));
+        layer->setOpaquePaintRect(IntRect(150, 150, 100, 100));
+
+        occlusion.enterTargetRenderSurface(parent->renderSurface());
+        occlusion.markOccludedBehindLayer(layer.get());
+
+        EXPECT_EQ_RECT(IntRect(250, 250, 50, 50), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+
+        EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(0, 100, 100, 100)));
+        EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(100, 100, 100, 100)));
+        EXPECT_FALSE(occlusion.occluded(parent.get(), IntRect(200, 200, 100, 100)));
+    }
 }
 
 } // namespace

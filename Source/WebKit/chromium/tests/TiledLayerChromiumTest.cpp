@@ -957,4 +957,64 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     EXPECT_EQ(9-1, layer->fakeLayerTextureUpdater()->prepareRectCount());
 }
 
+TEST(TiledLayerChromiumTest, opaqueContentsRegion)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+
+    // The tile size is 100x100, so this invalidates and then paints two tiles in various ways.
+
+    IntRect opaquePaintRect;
+    Region opaqueContents;
+    Region noOcclusion;
+
+    IntRect contentBounds = IntRect(0, 0, 100, 200);
+    IntRect visibleBounds = IntRect(0, 0, 100, 150);
+
+    layer->setBounds(contentBounds.size());
+    layer->setVisibleLayerRect(visibleBounds);
+    layer->setDrawOpacity(1);
+
+    // If the layer doesn't paint opaque content, then the opaqueContentsRegion should be empty.
+    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(opaquePaintRect);
+    layer->invalidateRect(contentBounds);
+    layer->prepareToUpdate(contentBounds, noOcclusion);
+    opaqueContents = layer->opaqueContentsRegion();
+    EXPECT_TRUE(opaqueContents.isEmpty());
+
+    // opaqueContentsRegion should match the visible part of what is painted opaque.
+    opaquePaintRect = IntRect(10, 10, 90, 190);
+    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(opaquePaintRect);
+    layer->invalidateRect(contentBounds);
+    layer->prepareToUpdate(contentBounds, noOcclusion);
+    opaqueContents = layer->opaqueContentsRegion();
+    EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
+    EXPECT_EQ(1u, opaqueContents.rects().size());
+
+    // If we paint again without invalidating, the same stuff should be opaque.
+    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
+    layer->prepareToUpdate(contentBounds, noOcclusion);
+    opaqueContents = layer->opaqueContentsRegion();
+    EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
+    EXPECT_EQ(1u, opaqueContents.rects().size());
+
+    // If we repaint a non-opaque part of the tile, then it shouldn't lose its opaque-ness. And other tiles should
+    // not be affected.
+    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
+    layer->invalidateRect(IntRect(0, 0, 1, 1));
+    layer->prepareToUpdate(contentBounds, noOcclusion);
+    opaqueContents = layer->opaqueContentsRegion();
+    EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
+    EXPECT_EQ(1u, opaqueContents.rects().size());
+
+    // If we repaint an opaque part of the tile, then it should lose its opaque-ness. But other tiles should still
+    // not be affected.
+    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
+    layer->invalidateRect(IntRect(10, 10, 1, 1));
+    layer->prepareToUpdate(contentBounds, noOcclusion);
+    opaqueContents = layer->opaqueContentsRegion();
+    EXPECT_EQ_RECT(intersection(IntRect(10, 100, 90, 100), visibleBounds), opaqueContents.bounds());
+    EXPECT_EQ(1u, opaqueContents.rects().size());
+}
+
 } // namespace

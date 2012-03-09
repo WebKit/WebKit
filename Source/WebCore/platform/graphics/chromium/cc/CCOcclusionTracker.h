@@ -77,6 +77,9 @@ public:
     // Gives an unoccluded sub-rect of |contentRect| in the content space of the layer. Used when considering occlusion for a layer that paints/draws something.
     IntRect unoccludedContentRect(const LayerType*, const IntRect& contentRect) const;
 
+    // FIXME: Remove this when paint tracking is on for paint culling.
+    void setUsePaintTracking(bool use) { m_usePaintTracking = use; }
+
     // FIXME: Remove these in future, they are to make CLs for transitioning to this easier.
     const Region& currentOcclusionInScreenSpace() const;
     const Region& currentOcclusionInTargetSurface() const;
@@ -103,6 +106,7 @@ protected:
 private:
     IntRect m_scissorRectInScreenSpace;
     const DamageClientType* m_surfaceDamageClient;
+    bool m_usePaintTracking; // FIXME: Remove this when paint tracking is on for paint culling.
 };
 
 typedef CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium> CCOcclusionTracker;

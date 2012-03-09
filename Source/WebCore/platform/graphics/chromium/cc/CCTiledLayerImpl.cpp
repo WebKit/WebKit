@@ -52,14 +52,10 @@ public:
     Platform3DObject textureId() const { return m_textureId; }
     void setTextureId(Platform3DObject textureId) { m_textureId = textureId; }
 
-    const IntRect& opaqueRect() const { return m_opaqueRect; }
-    void setOpaqueRect(const IntRect& opaqueRect) { m_opaqueRect = opaqueRect; }
-
 private:
     DrawableTile() : m_textureId(0) { }
 
     Platform3DObject m_textureId;
-    IntRect m_opaqueRect;
 };
 
 CCTiledLayerImpl::CCTiledLayerImpl(int id)
@@ -201,6 +197,14 @@ void CCTiledLayerImpl::pushTileProperties(int i, int j, Platform3DObject texture
         tile = createTile(i, j);
     tile->setTextureId(textureId);
     tile->setOpaqueRect(opaqueRect);
+}
+
+Region CCTiledLayerImpl::opaqueContentsRegion() const
+{
+    if (m_skipsDraw)
+        return Region();
+
+    return m_tiler->opaqueRegionInLayerRect(visibleLayerRect());
 }
 
 } // namespace WebCore

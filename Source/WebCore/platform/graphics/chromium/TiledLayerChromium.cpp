@@ -72,7 +72,6 @@ public:
 
     IntRect m_dirtyRect;
     IntRect m_updateRect;
-    IntRect m_opaqueRect;
     bool m_partialUpdate;
 private:
     explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture)
@@ -268,7 +267,7 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         if (tile->isDirtyForCurrentFrame())
             continue;
 
-        tiledLayer->pushTileProperties(i, j, tile->managedTexture()->textureId(), tile->m_opaqueRect);
+        tiledLayer->pushTileProperties(i, j, tile->managedTexture()->textureId(), tile->opaqueRect());
     }
     for (Vector<UpdatableTile*>::const_iterator iter = invalidTiles.begin(); iter != invalidTiles.end(); ++iter)
         m_tiler->takeTile((*iter)->i(), (*iter)->j());
@@ -503,12 +502,12 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             IntRect tilePaintedRect = intersection(tileRect, m_paintRect);
             IntRect tilePaintedOpaqueRect = intersection(tileRect, paintedOpaqueRect);
             if (!tilePaintedRect.isEmpty()) {
-                IntRect paintInsideTileOpaqueRect = intersection(tile->m_opaqueRect, tilePaintedRect);
+                IntRect paintInsideTileOpaqueRect = intersection(tile->opaqueRect(), tilePaintedRect);
                 bool paintInsideTileOpaqueRectIsNonOpaque = !tilePaintedOpaqueRect.contains(paintInsideTileOpaqueRect);
-                bool opaquePaintNotInsideTileOpaqueRect = !tilePaintedOpaqueRect.isEmpty() && !tile->m_opaqueRect.contains(tilePaintedOpaqueRect);
+                bool opaquePaintNotInsideTileOpaqueRect = !tilePaintedOpaqueRect.isEmpty() && !tile->opaqueRect().contains(tilePaintedOpaqueRect);
 
                 if (paintInsideTileOpaqueRectIsNonOpaque || opaquePaintNotInsideTileOpaqueRect)
-                    tile->m_opaqueRect = tilePaintedOpaqueRect;
+                    tile->setOpaqueRect(tilePaintedOpaqueRect);
             }
 
             // sourceRect starts as a full-sized tile with border texels included.
@@ -552,6 +551,14 @@ void TiledLayerChromium::reserveTextures()
                 return;
         }
     }
+}
+
+Region TiledLayerChromium::opaqueContentsRegion() const
+{
+    if (m_skipsDraw)
+        return Region();
+
+    return m_tiler->opaqueRegionInLayerRect(visibleLayerRect());
 }
 
 void TiledLayerChromium::resetUpdateState()

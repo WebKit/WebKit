@@ -112,6 +112,24 @@ IntRect CCLayerTilingData::tileRect(const Tile* tile) const
     return tileRect;
 }
 
+Region CCLayerTilingData::opaqueRegionInLayerRect(const IntRect& layerRect) const
+{
+    Region opaqueRegion;
+    int left, top, right, bottom;
+    layerRectToTileIndices(layerRect, left, top, right, bottom);
+    for (int j = top; j <= bottom; ++j) {
+        for (int i = left; i <= right; ++i) {
+            Tile* tile = tileAt(i, j);
+            if (!tile)
+                continue;
+
+            IntRect tileOpaqueRect = intersection(layerRect, tile->opaqueRect());
+            opaqueRegion.unite(tileOpaqueRect);
+        }
+    }
+    return opaqueRegion;
+}
+
 void CCLayerTilingData::setBounds(const IntSize& size)
 {
     m_tilingData.setTotalSize(size.width(), size.height());

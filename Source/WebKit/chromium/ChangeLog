@@ -1,3 +1,45 @@
+2012-03-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Use opaque paints in CCOcclusionTracker
+        https://bugs.webkit.org/show_bug.cgi?id=80173
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebCore::LayerChromiumWithForcedDrawsContent::opaqueContentsRegion):
+        (LayerChromiumWithForcedDrawsContent):
+        (WebCore::LayerChromiumWithForcedDrawsContent::setOpaquePaintRect):
+        (WebCore::setLayerPropertiesForTesting):
+        (WebCore):
+        (WebCore::layerAddedToOccludedRegion):
+        (WebCore::layerAddedToOccludedRegionWithRotation):
+        (WebCore::layerAddedToOccludedRegionWithTranslation):
+        (WebCore::layerAddedToOccludedRegionWithRotatedSurface):
+        (WebCore::layerAddedToOccludedRegionWithSurfaceAlreadyOnStack):
+        (WebCore::layerAddedToOccludedRegionWithRotatedOffAxisSurface):
+        (WebCore::layerAddedToOccludedRegionWithMultipleOpaqueLayers):
+        (WebCore::surfaceOcclusionWithOverlappingSiblingSurfaces):
+        (WebCore::surfaceOcclusionInScreenSpace):
+        (WebCore::surfaceOcclusionInScreenSpaceDifferentTransforms):
+        (WebCore::occlusionInteractionWithFilters):
+        (WebCore::layerScissorRectOverTile):
+        (WebCore::screenScissorRectOverTile):
+        (WebCore::layerScissorRectOverCulledTile):
+        (WebCore::screenScissorRectOverCulledTile):
+        (WebCore::layerScissorRectOverPartialTiles):
+        (WebCore::screenScissorRectOverPartialTiles):
+        (WebCore::layerScissorRectOverNoTiles):
+        (WebCore::screenScissorRectOverNoTiles):
+        (WebCore::layerScissorRectForLayerOffOrigin):
+        (WebCore::damageRectOverTile):
+        (WebCore::damageRectOverCulledTile):
+        (WebCore::damageRectOverPartialTiles):
+        (WebCore::damageRectOverNoTiles):
+        (WebCore::TEST):
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+        (WTF):
+
 2012-03-09  Jon Lee  <jonlee@apple.com>
 
         Add support for ENABLE(LEGACY_NOTIFICATIONS)

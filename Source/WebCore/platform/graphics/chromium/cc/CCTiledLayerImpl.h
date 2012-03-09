@@ -56,6 +56,8 @@ public:
     void setContentsSwizzled(bool contentsSwizzled) { m_contentsSwizzled = contentsSwizzled; }
     bool contentsSwizzled() const { return m_contentsSwizzled; }
 
+    virtual Region opaqueContentsRegion() const;
+
     typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexAlpha> Program;
     // Shader program that swaps red and blue components of texture.
     // Used when texture format does not match native color format.

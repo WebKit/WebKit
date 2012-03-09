@@ -30,6 +30,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "IntRect.h"
+#include "Region.h"
 #include "TilingData.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
@@ -69,9 +70,13 @@ public:
         int i() const { return m_i; }
         int j() const { return m_j; }
         void moveTo(int i, int j) { m_i = i; m_j = j; }
+
+        const IntRect& opaqueRect() const { return m_opaqueRect; }
+        void setOpaqueRect(const IntRect& opaqueRect) { m_opaqueRect = opaqueRect; }
     private:
         int m_i;
         int m_j;
+        IntRect m_opaqueRect;
     };
     // Default hash key traits for integers disallow 0 and -1 as a key, so
     // use a custom hash trait which disallows -1 and -2 instead.
@@ -95,6 +100,8 @@ public:
 
     void layerRectToTileIndices(const IntRect&, int &left, int &top, int &right, int &bottom) const;
     IntRect tileRect(const Tile*) const;
+
+    Region opaqueRegionInLayerRect(const IntRect&) const;
 
     void reset();
 

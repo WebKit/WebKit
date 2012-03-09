@@ -227,6 +227,8 @@ public:
 
     void setAnimationEvent(const CCAnimationEvent&, double wallClockTime);
 
+    virtual Region opaqueContentsRegion() const { return Region(); };
+
 protected:
     friend class CCLayerImpl;
     friend class LayerTilerChromium;

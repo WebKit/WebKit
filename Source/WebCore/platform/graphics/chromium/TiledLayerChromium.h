@@ -66,6 +66,8 @@ public:
 
     virtual void reserveTextures();
 
+    virtual Region opaqueContentsRegion() const;
+
 protected:
     TiledLayerChromium();
 
