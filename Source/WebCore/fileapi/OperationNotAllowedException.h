@@ -31,7 +31,7 @@
 #ifndef OperationNotAllowedException_h
 #define OperationNotAllowedException_h
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(BLOB)
 
 #include "ExceptionBase.h"
 
@@ -62,6 +62,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#endif // ENABLE(BLOB)
 
 #endif // OperationNotAllowedException_h

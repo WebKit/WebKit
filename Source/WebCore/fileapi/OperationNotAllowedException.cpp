@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(BLOB)
 
 #include "OperationNotAllowedException.h"
 
@@ -65,4 +65,4 @@ bool OperationNotAllowedException::initializeDescription(ExceptionCode ec, Excep
 
 } // namespace WebCore
 
-#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#endif // ENABLE(BLOB)

@@ -112,13 +112,11 @@ ScriptExecutionContext::~ScriptExecutionContext()
         ASSERT((*iter)->scriptExecutionContext() == this);
         (*iter)->contextDestroyed();
     }
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(BLOB)
     if (m_fileThread) {
         m_fileThread->stop();
         m_fileThread = 0;
     }
-#endif
-#if ENABLE(BLOB)
     if (m_publicURLManager)
         m_publicURLManager->contextDestroyed();
 #endif
@@ -359,7 +357,7 @@ DOMTimer* ScriptExecutionContext::findTimeout(int timeoutId)
     return m_timeouts.get(timeoutId);
 }
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(BLOB)
 FileThread* ScriptExecutionContext::fileThread()
 {
     if (!m_fileThread) {
@@ -369,9 +367,7 @@ FileThread* ScriptExecutionContext::fileThread()
     }
     return m_fileThread.get();
 }
-#endif
 
-#if ENABLE(BLOB)
 PublicURLManager& ScriptExecutionContext::publicURLManager()
 {
     if (!m_publicURLManager)

@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(BLOB)
 
 #include "FileThread.h"
 
@@ -114,4 +114,4 @@ void FileThread::runLoop()
 
 } // namespace WebCore
 
-#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#endif // ENABLE(BLOB)

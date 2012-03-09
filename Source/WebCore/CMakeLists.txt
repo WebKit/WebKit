@@ -1464,7 +1464,9 @@ IF (ENABLE_BLOB)
     )
 
     LIST(APPEND WebCore_IDL_FILES
+        fileapi/FileException.idl
         fileapi/FileReaderSync.idl
+        fileapi/OperationNotAllowedException.idl
     )
 ENDIF ()
 
@@ -1682,13 +1684,6 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/Metadata.idl
         fileapi/MetadataCallback.idl
         fileapi/WorkerContextFileSystem.idl
-    )
-ENDIF ()
-
-IF (ENABLE_BLOB OR ENABLE_FILE_SYSTEM)
-    LIST(APPEND WebCore_IDL_FILES
-        fileapi/FileException.idl
-        fileapi/OperationNotAllowedException.idl
     )
 ENDIF ()
 

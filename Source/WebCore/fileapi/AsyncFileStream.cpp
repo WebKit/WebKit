@@ -31,7 +31,7 @@
 
 #include "config.h"
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(BLOB)
 
 #include "AsyncFileStream.h"
 
@@ -224,4 +224,4 @@ void AsyncFileStream::truncateOnFileThread(long long position)
 
 } // namespace WebCore
 
-#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#endif // ENABLE(BLOB)

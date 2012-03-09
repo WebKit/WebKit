@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(BLOB)
 
 #include "FileStream.h"
 
@@ -147,4 +147,4 @@ bool FileStream::truncate(long long)
 
 } // namespace WebCore
 
-#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#endif // ENABLE(BLOB)

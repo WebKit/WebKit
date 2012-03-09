@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 #include "config.h"
@@ -100,16 +100,14 @@ static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes()
 {
     DEFINE_STATIC_LOCAL(URLSchemesMap, canDisplayOnlyIfCanRequestSchemes, ());
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
-    if (canDisplayOnlyIfCanRequestSchemes.isEmpty()) {
 #if ENABLE(BLOB)
+    if (canDisplayOnlyIfCanRequestSchemes.isEmpty()) {
         canDisplayOnlyIfCanRequestSchemes.add("blob");
-#endif
 #if ENABLE(FILE_SYSTEM)
         canDisplayOnlyIfCanRequestSchemes.add("filesystem");
 #endif
     }
-#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#endif // ENABLE(BLOB)
 
     return canDisplayOnlyIfCanRequestSchemes;
 }
@@ -155,7 +153,7 @@ static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
 
 static URLSchemesMap& CORSEnabledSchemes()
 {
-    // FIXME: http://bugs.webkit.org/show_bug.cgi?id=77160  
+    // FIXME: http://bugs.webkit.org/show_bug.cgi?id=77160
     DEFINE_STATIC_LOCAL(URLSchemesMap, CORSEnabledSchemes, ());
 
     if (CORSEnabledSchemes.isEmpty()) {
@@ -251,7 +249,7 @@ void SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(const String& scheme)
     canDisplayOnlyIfCanRequestSchemes().add(scheme);
 }
 
-void SchemeRegistry::registerURLSchemeAsNotAllowingJavascriptURLs(const String& scheme) 
+void SchemeRegistry::registerURLSchemeAsNotAllowingJavascriptURLs(const String& scheme)
 {
     notAllowingJavascriptURLsSchemes().add(scheme);
 }

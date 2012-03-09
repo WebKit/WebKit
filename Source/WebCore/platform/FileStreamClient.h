@@ -31,7 +31,7 @@
 #ifndef FileStreamClient_h
 #define FileStreamClient_h
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(BLOB)
 
 namespace WebCore {
 
@@ -53,6 +53,6 @@ protected:
 
 } // namespace WebCore
 
-#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#endif // ENABLE(BLOB)
 
 #endif // FileStreamClient_h

@@ -31,7 +31,7 @@
 #ifndef FileThread_h
 #define FileThread_h
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(BLOB)
 
 #include <wtf/MessageQueue.h>
 #include <wtf/PassOwnPtr.h>
@@ -84,6 +84,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#endif // ENABLE(BLOB)
 
 #endif // FileThread_h

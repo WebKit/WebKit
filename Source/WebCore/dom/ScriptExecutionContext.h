@@ -59,7 +59,7 @@ class MessagePort;
 class PublicURLManager;
 #endif
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(BLOB)
 class FileThread;
 #endif
 
@@ -147,7 +147,7 @@ public:
     JSC::JSGlobalData* globalData();
 #endif
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(BLOB)
     FileThread* fileThread();
     void stopFileThread();
 #endif
@@ -214,7 +214,7 @@ private:
     ActiveDOMObject::ReasonForSuspension m_reasonForSuspendingActiveDOMObjects;
     bool m_activeDOMObjectsAreStopped;
 
-#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#if ENABLE(BLOB)
     RefPtr<FileThread> m_fileThread;
 #endif
 };
