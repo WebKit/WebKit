@@ -90,13 +90,19 @@ String SVGStyledElement::title() const
 
     // Walk up the tree, to find out whether we're inside a <use> shadow tree, to find the right title.
     if (isInShadowTree()) {
-        SVGUseElement* useElement = static_cast<SVGUseElement*>(treeScope()->rootNode()->shadowHost());
-        ASSERT(useElement);
-
-        // If the <use> title is not empty we found the title to use.
-        String useTitle(useElement->title());
-        if (!useTitle.isEmpty())
-            return useTitle;
+        Element* shadowHostElement = treeScope()->rootNode()->shadowHost();
+        // At this time, SVG nodes are not allowed in non-<use> shadow trees, so any shadow root we do
+        // have should be a use. The assert and following test is here to catch future shadow DOM changes
+        // that do enable SVG in a shadow tree.
+        ASSERT(!shadowHostElement || shadowHostElement->hasTagName(SVGNames::useTag));
+        if (shadowHostElement && shadowHostElement->hasTagName(SVGNames::useTag)) {
+            SVGUseElement* useElement = static_cast<SVGUseElement*>(shadowHostElement);
+ 
+            // If the <use> title is not empty we found the title to use.
+            String useTitle(useElement->title());
+            if (!useTitle.isEmpty())
+               return useTitle;
+        }
     }
 
     // If we aren't an instance in a <use> or the <use> title was not found, then find the first
