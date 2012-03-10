@@ -39,6 +39,15 @@
 
 namespace WebCore {
 
+class ShadowRootVector : public Vector<RefPtr<ShadowRoot> > {
+public:
+    explicit ShadowRootVector(ShadowTree* tree)
+    {
+        for (ShadowRoot* root = tree->youngestShadowRoot(); root; root = root->olderShadowRoot())
+            append(root);
+    }
+};
+
 ShadowTree::ShadowTree()
     : m_needsRecalculateContent(false)
 {
@@ -100,6 +109,7 @@ void ShadowTree::removeAllShadowRoots()
     if (!hasShadowRoot())
         return;
 
+    // Dont protect this ref count.
     Element* shadowHost = host();
 
     while (RefPtr<ShadowRoot> oldRoot = m_shadowRoots.removeHead()) {
@@ -125,32 +135,37 @@ void ShadowTree::removeAllShadowRoots()
 
 void ShadowTree::insertedIntoDocument()
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        root->insertedIntoDocument();
+    ShadowRootVector roots(this);
+    for (size_t i = 0; i < roots.size(); ++i)
+        roots[i]->insertedIntoDocument();
 }
 
 void ShadowTree::removedFromDocument()
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        root->removedFromDocument();
+    ShadowRootVector roots(this);
+    for (size_t i = 0; i < roots.size(); ++i)
+        roots[i]->removedFromDocument();
 }
 
 void ShadowTree::insertedIntoTree(bool deep)
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        root->insertedIntoTree(deep);
+    ShadowRootVector roots(this);
+    for (size_t i = 0; i < roots.size(); ++i)
+        roots[i]->insertedIntoTree(deep);
 }
 
 void ShadowTree::removedFromTree(bool deep)
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        root->removedFromTree(deep);
+    ShadowRootVector roots(this);
+    for (size_t i = 0; i < roots.size(); ++i)
+        roots[i]->removedFromTree(deep);
 }
 
 void ShadowTree::willRemove()
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
-        root->willRemove();
+    ShadowRootVector roots(this);
+    for (size_t i = 0; i < roots.size(); ++i)
+        roots[i]->willRemove();
 }
 
 void ShadowTree::setParentTreeScope(TreeScope* scope)
@@ -180,7 +195,6 @@ void ShadowTree::attachHost(Element* host)
     host->attachChildrenIfNeeded();
     host->attachAsNode();
 }
-
 
 void ShadowTree::detach()
 {
