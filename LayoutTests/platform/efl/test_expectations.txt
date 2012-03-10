@@ -60,7 +60,6 @@ BUGWK75568 : fast/css/invalidation-errors-2.html = TEXT
 BUGWK75568 : fast/css/invalidation-errors.html = TEXT
 BUGWK75568 : fast/css/line-height.html = TEXT
 BUGWK75568 : fast/css/nested-layers-with-hover.html = TEXT
-BUGWK75568 : fast/css/resize-single-axis.html = TEXT
 BUGWK75568 : fast/css/text-input-with-webkit-border-radius.html = TEXT
 BUGWK75568 : fast/dom/isindex-001.html = TEXT
 BUGWK75568 : fast/dom/isindex-002.html = TEXT

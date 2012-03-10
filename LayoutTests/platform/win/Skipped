@@ -1723,7 +1723,6 @@ fast/css/invalidation-errors-2.html
 fast/css/invalidation-errors.html
 fast/css/line-height.html
 fast/css/nested-layers-with-hover.html
-fast/css/resize-single-axis.html
 fast/css/text-input-with-webkit-border-radius.html
 fast/css/text-overflow-input.html
 fast/dom/isindex-001.html

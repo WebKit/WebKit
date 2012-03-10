@@ -616,6 +616,10 @@ inline bool RenderBox::requiresLayerForOverflowClip() const
     if (!hasOverflowClip())
         return false;
 
+    // The resizer is attached to the RenderLayer so we need one.
+    if (style()->resize() != RESIZE_NONE)
+        return true;
+
     // FIXME: overflow: auto could also lazily create its layer but some repainting
     // issues are arising from that.
     bool onlyOverflowHidden = style()->overflowX() == OHIDDEN && style()->overflowY() == OHIDDEN;
