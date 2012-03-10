@@ -204,6 +204,7 @@ inline MetaAllocator::~MetaAllocator()
         freeFreeSpaceNode(node);
         node = next;
     }
+    m_lock.Finalize();
 #ifndef NDEBUG
     ASSERT(!m_mallocBalance);
 #endif

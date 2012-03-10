@@ -104,6 +104,10 @@ ExecutableAllocator::ExecutableAllocator(JSGlobalData&)
     ASSERT(allocator);
 }
 
+ExecutableAllocator::~ExecutableAllocator()
+{
+}
+
 bool ExecutableAllocator::isValid() const
 {
     return !!allocator->bytesReserved();

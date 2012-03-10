@@ -1,3 +1,41 @@
+2012-03-10  Yong Li  <yoli@rim.com>
+
+        Web Worker crashes with WX_EXCLUSIVE
+        https://bugs.webkit.org/show_bug.cgi?id=80532
+
+        Let each JS global object own a meta allocator
+        for WX_EXCLUSIVE to avoid conflicts from Web Worker.
+        Also fix a mutex leak in MetaAllocator's dtor.
+
+        Reviewed by Filip Pizlo.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::DemandExecutableAllocator::DemandExecutableAllocator):
+        (JSC::DemandExecutableAllocator::~DemandExecutableAllocator):
+        (JSC::DemandExecutableAllocator::bytesAllocatedByAllAllocators):
+        (DemandExecutableAllocator):
+        (JSC::DemandExecutableAllocator::bytesCommittedByAllocactors):
+        (JSC::DemandExecutableAllocator::dumpProfileFromAllAllocators):
+        (JSC::DemandExecutableAllocator::allocateNewSpace):
+        (JSC::DemandExecutableAllocator::allocators):
+        (JSC::DemandExecutableAllocator::allocatorsMutex):
+        (JSC):
+        (JSC::ExecutableAllocator::initializeAllocator):
+        (JSC::ExecutableAllocator::ExecutableAllocator):
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutableAllocator::memoryPressureMultiplier):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableAllocator::committedByteCount):
+        (JSC::ExecutableAllocator::dumpProfile):
+        * jit/ExecutableAllocator.h:
+        (JSC):
+        (ExecutableAllocator):
+        (JSC::ExecutableAllocator::allocator):
+        * wtf/MetaAllocator.h:
+        (WTF::MetaAllocator::~MetaAllocator): Finalize the spin lock.
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SpinLock::Finalize): Add empty Finalize() to some implementations.
+
 2012-03-09  Gavin Barraclough  <barraclough@apple.com>
 
         Array.prototype.toLocaleString visits elements in wrong order under certain conditions
