@@ -113,6 +113,7 @@ bool ResourceLoader::init(const ResourceRequest& r)
     
     ResourceRequest clientRequest(r);
     
+    m_defersLoading = m_frame->page()->defersLoading();
     if (m_options.securityCheck == DoSecurityCheck && !m_frame->document()->securityOrigin()->canDisplay(clientRequest.url())) {
         FrameLoader::reportLocalLoadFailed(m_frame.get(), clientRequest.url().string());
         releaseResources();
