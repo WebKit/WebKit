@@ -107,7 +107,6 @@
             'tests/KURLTest.cpp',
             'tests/LayerChromiumTest.cpp',
             'tests/LayerTextureUpdaterTest.cpp',
-            'tests/LevelDBTest.cpp',
             'tests/LocalizedNumberICUTest.cpp',
             'tests/PaintAggregatorTest.cpp',
             'tests/PlatformGestureCurveTest.cpp',

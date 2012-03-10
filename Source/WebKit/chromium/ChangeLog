@@ -1,5 +1,18 @@
 2012-03-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r110363.
+        http://trac.webkit.org/changeset/110363
+        https://bugs.webkit.org/show_bug.cgi?id=80757
+
+        link error in chromium: unresolved external symbol
+        webkit_support::CreateScopedTempDirectory(void) (Requested by
+        ukai_home on #webkit).
+
+        * WebKit.gypi:
+        * tests/LevelDBTest.cpp: Removed.
+
+2012-03-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r110353.
         http://trac.webkit.org/changeset/110353
         https://bugs.webkit.org/show_bug.cgi?id=80752
