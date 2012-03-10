@@ -1140,6 +1140,7 @@ QQuickWebView::QQuickWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRe
 {
     Q_D(QQuickWebView);
     d->initialize(contextRef, pageGroupRef);
+    setClip(true);
 }
 
 QQuickWebView::~QQuickWebView()

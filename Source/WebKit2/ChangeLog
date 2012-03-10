@@ -1,3 +1,25 @@
+2012-03-09  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] Shouldn't use item for clipping rect calculation in paint node.
+        https://bugs.webkit.org/show_bug.cgi?id=80714
+
+        Reviewed by Noam Rosenthal.
+
+        Replace item based clip-rect calculation with clipping-nodes based calculation.
+        This is required for threaded rendering, since we don't have access to the QSGItems
+        from the render thread.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::QQuickWebPage):
+        (QQuickWebPagePrivate::paintToCurrentGLContext):
+        (PageProxyNode::render):
+        (PageProxyNode::clipRect):
+        (PageProxyNode):
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::QQuickWebView):
+
 2012-03-09  Enrica Casucci  <enrica@apple.com>
 
         Move WebNSURLExtras code down to WebCore.

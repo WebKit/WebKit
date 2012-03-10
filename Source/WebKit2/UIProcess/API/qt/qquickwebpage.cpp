@@ -26,6 +26,7 @@
 #include "TransformationMatrix.h"
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p.h"
+#include <QPolygonF>
 #include <QtQuick/QQuickCanvas>
 #include <QtQuick/QSGGeometryNode>
 #include <QtQuick/QSGMaterial>
@@ -36,6 +37,7 @@ QQuickWebPage::QQuickWebPage(QQuickWebView* viewportItem)
     , d(new QQuickWebPagePrivate(this, viewportItem))
 {
     setFlag(ItemHasContents);
+    setClip(true);
 
     // We do the transform from the top left so the viewport can assume the position 0, 0
     // is always where rendering starts.
@@ -77,12 +79,10 @@ void QQuickWebPagePrivate::paint(QPainter* painter)
         webPageProxy->drawingArea()->paintLayerTree(painter);
 }
 
-void QQuickWebPagePrivate::paintToCurrentGLContext(const QTransform& transform, float opacity)
+void QQuickWebPagePrivate::paintToCurrentGLContext(const QTransform& transform, float opacity, const QRectF& clipRect)
 {
     if (!q->isVisible())
         return;
-
-    QRectF clipRect = viewportItem->mapRectToScene(viewportItem->boundingRect());
 
     if (!clipRect.isValid())
         return;
@@ -110,13 +110,56 @@ struct PageProxyNode : public QSGRenderNode {
         if (!m_pagePrivate)
             return;
         QTransform transform = matrix() ? matrix()->toTransform() : QTransform();
-        m_pagePrivate->paintToCurrentGLContext(transform, inheritedOpacity());
+
+        // FIXME: Support non-rectangular clippings.
+        m_pagePrivate->paintToCurrentGLContext(transform, inheritedOpacity(), clipRect());
     }
 
     ~PageProxyNode()
     {
         if (m_pagePrivate)
             m_pagePrivate->resetPaintNode();
+    }
+
+    QRectF clipRect() const
+    {
+        // Start with an invalid rect.
+        QRectF resultRect(0, 0, -1, -1);
+
+        for (const QSGClipNode* clip = clipList(); clip; clip = clip->clipList()) {
+            QMatrix4x4 clipMatrix;
+            if (clip->matrix())
+                clipMatrix = *clip->matrix();
+            QRectF currentClip;
+
+            if (clip->isRectangular())
+                currentClip = clipMatrix.mapRect(clip->clipRect());
+            else {
+                const QSGGeometry* geometry = clip->geometry();
+                // Assume here that clipNode has only coordinate data.
+                const QSGGeometry::Point2D* geometryPoints = geometry->vertexDataAsPoint2D();
+
+                // Clip region should be at least triangle to make valid clip.
+                if (geometry->vertexCount() < 3)
+                    continue;
+
+                QPolygonF polygon;
+
+                for (int i = 0; i < geometry->vertexCount(); i++)
+                    polygon.append(clipMatrix.map(QPoint(geometryPoints[i].x, geometryPoints[i].y)));
+                currentClip = polygon.boundingRect();
+            }
+
+            if (currentClip.isEmpty())
+                continue;
+
+            if (resultRect.isValid())
+                resultRect &= currentClip;
+            else
+                resultRect = currentClip;
+        }
+
+        return resultRect;
     }
 
     QQuickWebPagePrivate* m_pagePrivate;
