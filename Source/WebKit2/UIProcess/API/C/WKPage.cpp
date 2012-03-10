@@ -660,6 +660,11 @@ void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, WKPrintInfo printInf
 {
     toImpl(page)->drawPagesToPDF(toImpl(frame), printInfoFromWKPrintInfo(printInfo), first, count, DataCallback::create(context, callback));
 }
+
+void WKPageEndPrinting(WKPageRef page)
+{
+    toImpl(page)->endPrinting();
+}
 #endif
 
 WKImageRef WKPageCreateSnapshotOfVisibleContent(WKPageRef)
