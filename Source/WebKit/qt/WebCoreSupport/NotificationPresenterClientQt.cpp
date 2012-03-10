@@ -337,9 +337,9 @@ void NotificationPresenterClientQt::requestPermission(ScriptExecutionContext* co
     }
 }
 
-NotificationPresenter::Permission NotificationPresenterClientQt::checkPermission(ScriptExecutionContext* context)
+NotificationClient::Permission NotificationPresenterClientQt::checkPermission(ScriptExecutionContext* context)
 {
-    return m_cachedPermissions.value(context, NotificationPresenter::PermissionNotAllowed);
+    return m_cachedPermissions.value(context, NotificationClient::PermissionNotAllowed);
 }
 
 void NotificationPresenterClientQt::cancelRequestsForPermission(ScriptExecutionContext* context)
@@ -367,7 +367,7 @@ void NotificationPresenterClientQt::cancelRequestsForPermission(ScriptExecutionC
 
 void NotificationPresenterClientQt::allowNotificationForFrame(Frame* frame)
 {
-    m_cachedPermissions.insert(frame->document(), NotificationPresenter::PermissionAllowed);
+    m_cachedPermissions.insert(frame->document(), NotificationClient::PermissionAllowed);
 
     QHash<ScriptExecutionContext*,  CallbacksInfo>::iterator iter = m_pendingPermissionRequests.begin();
     while (iter != m_pendingPermissionRequests.end()) {

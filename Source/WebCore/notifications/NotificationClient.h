@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,11 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NotificationPresenter_h
-#define NotificationPresenter_h
+#ifndef NotificationClient_h
+#define NotificationClient_h
 
-#include <wtf/PassRefPtr.h>
 #include "VoidCallback.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -43,7 +43,7 @@ class KURL;
 class Page;
 class ScriptExecutionContext;
 
-class NotificationPresenter {
+class NotificationClient {
 
 public:
     enum Permission {
@@ -82,11 +82,11 @@ public:
     virtual Permission checkPermission(ScriptExecutionContext*) = 0;
 
 protected:
-    virtual ~NotificationPresenter() { }
+    virtual ~NotificationClient() { }
 };
 
-void provideNotification(Page*, NotificationPresenter*);
+void provideNotification(Page*, NotificationClient*);
 
 } // namespace WebCore
 
-#endif // NotificationPresenter_h
+#endif // NotificationClient_h

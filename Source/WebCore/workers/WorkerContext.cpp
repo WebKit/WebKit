@@ -298,7 +298,7 @@ void WorkerContext::addMessageToWorkerConsole(MessageSource source, MessageType 
 NotificationCenter* WorkerContext::webkitNotifications() const
 {
     if (!m_notifications)
-        m_notifications = NotificationCenter::create(scriptExecutionContext(), m_thread->getNotificationPresenter());
+        m_notifications = NotificationCenter::create(scriptExecutionContext(), m_thread->getNotificationClient());
     return m_notifications.get();
 }
 #endif

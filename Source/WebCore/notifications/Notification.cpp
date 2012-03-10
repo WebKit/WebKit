@@ -39,8 +39,8 @@
 #include "ErrorEvent.h"
 #include "EventNames.h"
 #include "NotificationCenter.h"
+#include "NotificationClient.h"
 #include "NotificationContents.h"
-#include "NotificationPresenter.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ThreadableLoader.h"
@@ -59,8 +59,8 @@ Notification::Notification(const KURL& url, ScriptExecutionContext* context, Exc
     , m_state(Idle)
     , m_notificationCenter(provider)
 {
-    ASSERT(m_notificationCenter->presenter());
-    if (m_notificationCenter->presenter()->checkPermission(context) != NotificationPresenter::PermissionAllowed) {
+    ASSERT(m_notificationCenter->client());
+    if (m_notificationCenter->client()->checkPermission(context) != NotificationClient::PermissionAllowed) {
         ec = SECURITY_ERR;
         return;
     }
@@ -80,8 +80,8 @@ Notification::Notification(const NotificationContents& contents, ScriptExecution
     , m_state(Idle)
     , m_notificationCenter(provider)
 {
-    ASSERT(m_notificationCenter->presenter());
-    if (m_notificationCenter->presenter()->checkPermission(context) != NotificationPresenter::PermissionAllowed) {
+    ASSERT(m_notificationCenter->client());
+    if (m_notificationCenter->client()->checkPermission(context) != NotificationClient::PermissionAllowed) {
         ec = SECURITY_ERR;
         return;
     }
@@ -127,19 +127,19 @@ void Notification::show()
         // handling of ondisplay may rely on that.
         if (m_state == Idle) {
             m_state = Showing;
-            if (m_notificationCenter->presenter())
-                m_notificationCenter->presenter()->show(this);
+            if (m_notificationCenter->client())
+                m_notificationCenter->client()->show(this);
         }
     } else
         startLoading();
 #elif PLATFORM(MAC)
-    if (m_state == Idle && m_notificationCenter->presenter()) {
-        m_notificationCenter->presenter()->show(this);
+    if (m_state == Idle && m_notificationCenter->client()) {
+        m_notificationCenter->client()->show(this);
         m_state = Showing;
     }
 #else
     // prevent double-showing
-    if (m_state == Idle && m_notificationCenter->presenter() && m_notificationCenter->presenter()->show(this))
+    if (m_state == Idle && m_notificationCenter->client() && m_notificationCenter->client()->show(this))
         m_state = Showing;
 #endif
 }
@@ -154,8 +154,8 @@ void Notification::cancel()
         stopLoading();
         break;
     case Showing:
-        if (m_notificationCenter->presenter())
-            m_notificationCenter->presenter()->cancel(this);
+        if (m_notificationCenter->client())
+            m_notificationCenter->client()->cancel(this);
         break;
     case Cancelled:
         break;
@@ -175,8 +175,8 @@ EventTargetData* Notification::ensureEventTargetData()
 void Notification::contextDestroyed()
 {
     ActiveDOMObject::contextDestroyed();
-    if (m_notificationCenter->presenter())
-        m_notificationCenter->presenter()->notificationObjectDestroyed(this);
+    if (m_notificationCenter->client())
+        m_notificationCenter->client()->notificationObjectDestroyed(this);
 }
 
 void Notification::startLoading()
@@ -234,7 +234,7 @@ void Notification::didFailRedirectCheck()
 void Notification::finishLoading()
 {
     if (m_state == Loading) {
-        if (m_notificationCenter->presenter() && m_notificationCenter->presenter()->show(this))
+        if (m_notificationCenter->client() && m_notificationCenter->client()->show(this))
             m_state = Showing;
     }
     unsetPendingActivity(this);

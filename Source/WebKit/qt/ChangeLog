@@ -1,3 +1,18 @@
+2012-03-09  Jon Lee  <jonlee@apple.com>
+
+        Rename NotificationPresenter to NotificationClient
+        https://bugs.webkit.org/show_bug.cgi?id=80488
+        <rdar://problem/10965558>
+
+        Reviewed by Kentaro Hara.
+
+        Refactor to use renamed WebCore::NotificationClient.
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationPresenterClientQt::checkPermission):
+        (WebCore::NotificationPresenterClientQt::allowNotificationForFrame):
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+        (NotificationPresenterClientQt):
+
 2012-03-09  Emil A Eklund  <eae@chromium.org>
 
         Add roundedPoint to HitTestResult and change platform code to use it

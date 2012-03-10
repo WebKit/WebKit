@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/NotificationPresenter.h>
+#import <WebCore/NotificationClient.h>
 
 #if ENABLE(NOTIFICATIONS)
 #import <WebCore/Notification.h>
@@ -41,7 +41,7 @@ class VoidCallback;
 @class WebNotification;
 @class WebView;
 
-class WebNotificationClient : public WebCore::NotificationPresenter {
+class WebNotificationClient : public WebCore::NotificationClient {
 public:
     WebNotificationClient(WebView *);
     WebView *webView() { return m_webView; }
@@ -54,7 +54,7 @@ private:
     virtual void notificationControllerDestroyed() OVERRIDE;
     virtual void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::VoidCallback>) OVERRIDE;
     virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) OVERRIDE { }
-    virtual WebCore::NotificationPresenter::Permission checkPermission(WebCore::ScriptExecutionContext*) OVERRIDE;
+    virtual WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) OVERRIDE;
 
     WebView *m_webView;
 #if ENABLE(NOTIFICATIONS)

@@ -106,7 +106,7 @@ typedef enum {
     WebPaginationModeVertical,
 } WebPaginationMode;
 
-// This needs to be in sync with WebCore::NotificationPresenter::Permission
+// This needs to be in sync with WebCore::NotificationClient::Permission
 typedef enum {
     WebNotificationPermissionAllowed,
     WebNotificationPermissionNotAllowed,

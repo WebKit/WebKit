@@ -31,7 +31,7 @@
 #ifndef NotificationPresenterImpl_h
 #define NotificationPresenterImpl_h
 
-#include "NotificationPresenter.h"
+#include "NotificationClient.h"
 #include "VoidCallback.h"
 
 #include <wtf/HashMap.h>
@@ -43,7 +43,7 @@ namespace WebKit {
 
 class WebNotificationPresenter;
 
-class NotificationPresenterImpl : public WebCore::NotificationPresenter {
+class NotificationPresenterImpl : public WebCore::NotificationClient {
 public:
     NotificationPresenterImpl() : m_presenter(0) { }
 
@@ -55,7 +55,7 @@ public:
     virtual void cancel(WebCore::Notification* object);
     virtual void notificationObjectDestroyed(WebCore::Notification* object);
     virtual void notificationControllerDestroyed();
-    virtual WebCore::NotificationPresenter::Permission checkPermission(WebCore::ScriptExecutionContext*);
+    virtual WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*);
     virtual void requestPermission(WebCore::ScriptExecutionContext* , WTF::PassRefPtr<WebCore::VoidCallback> callback);
     virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) {}
 

@@ -53594,11 +53594,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\notifications\NotificationContents.h"
+				RelativePath="..\notifications\NotificationClient.h"
 				>
 			</File>
 			<File
-				RelativePath="..\notifications\NotificationPresenter.h"
+				RelativePath="..\notifications\NotificationContents.h"
 				>
 			</File>
 		</Filter>

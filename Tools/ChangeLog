@@ -1,3 +1,15 @@
+2012-03-09  Jon Lee  <jonlee@apple.com>
+
+        Rename NotificationPresenter to NotificationClient
+        https://bugs.webkit.org/show_bug.cgi?id=80488
+        <rdar://problem/10965558>
+
+        Reviewed by Kentaro Hara.
+
+        Refactor to use renamed WebCore::NotificationClient.
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.cpp:
+        (DRTDesktopNotificationPresenter::checkNotificationPermission):
+
 2012-03-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Deprecate renderDirectlyToWebView parameter of WebViewClient::createGraphicsContext3D()

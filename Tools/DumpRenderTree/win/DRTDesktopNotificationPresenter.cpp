@@ -35,7 +35,7 @@
 #include "LayoutTestController.h"
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
-#include <WebCore/NotificationPresenter.h>
+#include <WebCore/NotificationClient.h>
 
 DRTDesktopNotificationPresenter::DRTDesktopNotificationPresenter()
     : m_refCount(1) {} 
@@ -128,9 +128,9 @@ HRESULT STDMETHODCALLTYPE DRTDesktopNotificationPresenter::checkNotificationPerm
     bool allowed = ::gLayoutTestController->checkDesktopNotificationPermission(jsOrigin);
 
     if (allowed)
-        *result = WebCore::NotificationPresenter::PermissionAllowed;
+        *result = WebCore::NotificationClient::PermissionAllowed;
     else
-        *result = WebCore::NotificationPresenter::PermissionDenied;
+        *result = WebCore::NotificationClient::PermissionDenied;
 
     JSStringRelease(jsOrigin);
 #endif

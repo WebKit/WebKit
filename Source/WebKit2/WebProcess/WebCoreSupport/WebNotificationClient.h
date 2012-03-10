@@ -28,7 +28,7 @@
 
 #if ENABLE(NOTIFICATIONS)
 
-#include <WebCore/NotificationPresenter.h>
+#include <WebCore/NotificationClient.h>
 
 namespace WebCore {
 class ScriptExecutionContext;
@@ -39,7 +39,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebNotificationClient : public WebCore::NotificationPresenter {
+class WebNotificationClient : public WebCore::NotificationClient {
 public:
     WebNotificationClient(WebPage*);
     virtual ~WebNotificationClient();
@@ -52,7 +52,7 @@ private:
     virtual void notificationControllerDestroyed() OVERRIDE;
     virtual void requestPermission(WebCore::ScriptExecutionContext*, PassRefPtr<WebCore::VoidCallback>) OVERRIDE;
     virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*) OVERRIDE;
-    virtual NotificationPresenter::Permission checkPermission(WebCore::ScriptExecutionContext*) OVERRIDE;
+    virtual NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) OVERRIDE;
     
     WebPage* m_page;
 };

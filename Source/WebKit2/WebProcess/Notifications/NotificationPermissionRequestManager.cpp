@@ -62,7 +62,7 @@ NotificationPermissionRequestManager::NotificationPermissionRequestManager(WebPa
 void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, PassRefPtr<VoidCallback> callback)
 {
 #if ENABLE(NOTIFICATIONS)
-    if (permissionLevel(origin) != NotificationPresenter::PermissionNotAllowed) {
+    if (permissionLevel(origin) != NotificationClient::PermissionNotAllowed) {
         callback->handleEvent();
         return;
     }
@@ -92,16 +92,16 @@ void NotificationPermissionRequestManager::cancelRequest(SecurityOrigin* origin)
 #endif
 }
 
-NotificationPresenter::Permission NotificationPermissionRequestManager::permissionLevel(SecurityOrigin* securityOrigin)
+NotificationClient::Permission NotificationPermissionRequestManager::permissionLevel(SecurityOrigin* securityOrigin)
 {
 #if ENABLE(NOTIFICATIONS)
     if (!m_page->corePage()->settings()->notificationsEnabled())
-        return NotificationPresenter::PermissionDenied;
+        return NotificationClient::PermissionDenied;
     
     return WebProcess::shared().notificationManager().policyForOrigin(securityOrigin);
 #else
     UNUSED_PARAM(securityOrigin);
-    return NotificationPresenter::PermissionDenied;
+    return NotificationClient::PermissionDenied;
 #endif
 }
 

@@ -29,7 +29,7 @@
 #include "PopupMenu.h"
 
 #if ENABLE(NOTIFICATIONS)
-#include "NotificationPresenter.h"
+#include "NotificationClient.h"
 #endif
 
 typedef struct _Evas_Object Evas_Object;
@@ -115,7 +115,7 @@ public:
 #endif
 
 #if ENABLE(NOTIFICATIONS)
-    virtual WebCore::NotificationPresenter* notificationPresenter() const;
+    virtual WebCore::NotificationClient* notificationPresenter() const;
 #endif
 
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);

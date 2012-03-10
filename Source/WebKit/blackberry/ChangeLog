@@ -1,3 +1,19 @@
+2012-03-09  Jon Lee  <jonlee@apple.com>
+
+        Rename NotificationPresenter to NotificationClient
+        https://bugs.webkit.org/show_bug.cgi?id=80488
+        <rdar://problem/10965558>
+
+        Reviewed by Kentaro Hara.
+
+        Refactor to use renamed WebCore::NotificationClient.
+        * WebCoreSupport/NotificationPresenterImpl.cpp:
+        (WebCore::NotificationPresenterImpl::instance):
+        (WebCore::NotificationPresenterImpl::show):
+        (WebCore::NotificationPresenterImpl::checkPermission):
+        * WebCoreSupport/NotificationPresenterImpl.h:
+        (NotificationPresenterImpl):
+
 2012-03-09  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Web Notification not working after rebase

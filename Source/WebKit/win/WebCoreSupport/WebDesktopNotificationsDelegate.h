@@ -30,7 +30,7 @@
 
 #include <WebCore/COMPtr.h>
 #include <WebCore/Notification.h>
-#include <WebCore/NotificationPresenter.h>
+#include <WebCore/NotificationClient.h>
 
 #if ENABLE(NOTIFICATIONS)
 
@@ -41,18 +41,18 @@ class Document;
 class KURL;
 }
 
-class WebDesktopNotificationsDelegate : public WebCore::NotificationPresenter {
+class WebDesktopNotificationsDelegate : public WebCore::NotificationClient {
 public:
     WebDesktopNotificationsDelegate(WebView* view);
 
-    /* WebCore::NotificationPresenter interface */
+    /* WebCore::NotificationClient interface */
     virtual bool show(WebCore::Notification* object);
     virtual void cancel(WebCore::Notification* object);
     virtual void notificationObjectDestroyed(WebCore::Notification* object);
     virtual void notificationControllerDestroyed();
     virtual void requestPermission(WebCore::SecurityOrigin* origin, PassRefPtr<WebCore::VoidCallback> callback);
     virtual void cancelRequestsForPermission(WebCore::ScriptExecutionContext*);
-    virtual WebCore::NotificationPresenter::Permission checkPermission(const KURL& url);
+    virtual WebCore::NotificationClient::Permission checkPermission(const KURL&);
 
 private:
     bool hasNotificationDelegate();

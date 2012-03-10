@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,46 +36,46 @@
 #include "NotificationCenter.h"
 
 #include "Document.h"
-#include "NotificationPresenter.h"
+#include "NotificationClient.h"
 #include "VoidCallback.h"
 #include "WorkerContext.h"
 
 namespace WebCore {
 
-PassRefPtr<NotificationCenter> NotificationCenter::create(ScriptExecutionContext* context, NotificationPresenter* presenter)
+PassRefPtr<NotificationCenter> NotificationCenter::create(ScriptExecutionContext* context, NotificationClient* client)
 {
-    RefPtr<NotificationCenter> notificationCenter(adoptRef(new NotificationCenter(context, presenter)));
+    RefPtr<NotificationCenter> notificationCenter(adoptRef(new NotificationCenter(context, client)));
     notificationCenter->suspendIfNeeded();
     return notificationCenter.release();
 }
 
-NotificationCenter::NotificationCenter(ScriptExecutionContext* context, NotificationPresenter* presenter)
+NotificationCenter::NotificationCenter(ScriptExecutionContext* context, NotificationClient* client)
     : ActiveDOMObject(context, this)
-    , m_notificationPresenter(presenter) {}
+    , m_client(client) { }
 
 int NotificationCenter::checkPermission()
 {
-    if (!presenter() || !scriptExecutionContext())
-        return NotificationPresenter::PermissionDenied;
-    return m_notificationPresenter->checkPermission(scriptExecutionContext());
+    if (!client() || !scriptExecutionContext())
+        return NotificationClient::PermissionDenied;
+    return m_client->checkPermission(scriptExecutionContext());
 }
 
 void NotificationCenter::requestPermission(PassRefPtr<VoidCallback> callback)
 {
-    if (!presenter() || !scriptExecutionContext())
+    if (!client() || !scriptExecutionContext())
         return;
-    m_notificationPresenter->requestPermission(scriptExecutionContext(), callback);
+    m_client->requestPermission(scriptExecutionContext(), callback);
 }
 
 void NotificationCenter::disconnectFrame()
 {
     // Can be 0 if iframe was transferred into another page. In this case
     // this method is invoked more then once.
-    if (!m_notificationPresenter)
+    if (!m_client)
         return;
-    m_notificationPresenter->cancelRequestsForPermission(scriptExecutionContext());
-    m_notificationPresenter->clearNotifications(scriptExecutionContext());
-    m_notificationPresenter = 0;
+    m_client->cancelRequestsForPermission(scriptExecutionContext());
+    m_client->clearNotifications(scriptExecutionContext());
+    m_client = 0;
 }
 
 } // namespace WebCore

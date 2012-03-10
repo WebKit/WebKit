@@ -27,7 +27,7 @@
 #define WebNotificationManager_h
 
 #include "MessageID.h"
-#include <WebCore/NotificationPresenter.h>
+#include <WebCore/NotificationClient.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -66,7 +66,7 @@ public:
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     
     // Looks in local cache for permission. If not found, returns DefaultDenied.
-    WebCore::NotificationPresenter::Permission policyForOrigin(WebCore::SecurityOrigin*) const;
+    WebCore::NotificationClient::Permission policyForOrigin(WebCore::SecurityOrigin*) const;
 
 private:
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp

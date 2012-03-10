@@ -171,29 +171,29 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext* context, P
 #endif
 }
 
-NotificationPresenter::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)
+NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)
 {
 #if ENABLE(NOTIFICATIONS)
     if (!context || !context->isDocument())
-        return NotificationPresenter::PermissionDenied;
+        return NotificationClient::PermissionDenied;
     if (![[m_webView preferences] notificationsEnabled])
-        return NotificationPresenter::PermissionDenied;
+        return NotificationClient::PermissionDenied;
     WebSecurityOrigin *webOrigin = [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context->securityOrigin()];
     WebNotificationPermission permission = [[m_webView _notificationProvider] policyForOrigin:webOrigin];
     [webOrigin release];
     switch (permission) {
         case WebNotificationPermissionAllowed:
-            return NotificationPresenter::PermissionAllowed;
+            return NotificationClient::PermissionAllowed;
         case WebNotificationPermissionDenied:
-            return NotificationPresenter::PermissionDenied;
+            return NotificationClient::PermissionDenied;
         case WebNotificationPermissionNotAllowed:
-            return NotificationPresenter::PermissionNotAllowed;
+            return NotificationClient::PermissionNotAllowed;
         default:
-            return NotificationPresenter::PermissionNotAllowed;
+            return NotificationClient::PermissionNotAllowed;
     }
 #else
     UNUSED_PARAM(context);
-    return NotificationPresenter::PermissionDenied;
+    return NotificationClient::PermissionDenied;
 #endif
 }
 

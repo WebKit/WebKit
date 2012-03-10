@@ -28,12 +28,12 @@
 
 #if ENABLE(NOTIFICATIONS)
 
-#include "NotificationPresenter.h"
+#include "NotificationClient.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-NotificationController::NotificationController(Page* page, NotificationPresenter* client)
+NotificationController::NotificationController(Page* page, NotificationClient* client)
     : m_page(page)
     , m_client(client)
 {
@@ -45,12 +45,12 @@ NotificationController::~NotificationController()
         m_client->notificationControllerDestroyed();
 }
 
-PassOwnPtr<NotificationController> NotificationController::create(Page* page, NotificationPresenter* client)
+PassOwnPtr<NotificationController> NotificationController::create(Page* page, NotificationClient* client)
 {
     return adoptPtr(new NotificationController(page, client));
 }
 
-NotificationPresenter* NotificationController::clientFrom(Page* page)
+NotificationClient* NotificationController::clientFrom(Page* page)
 {
     if (NotificationController* controller = NotificationController::from(page))
         return controller->client();
@@ -63,7 +63,7 @@ const AtomicString& NotificationController::supplementName()
     return name;
 }
 
-void provideNotification(Page* page, NotificationPresenter* client)
+void provideNotification(Page* page, NotificationClient* client)
 {
     NotificationController::provideTo(page, NotificationController::supplementName(), NotificationController::create(page, client));
 }

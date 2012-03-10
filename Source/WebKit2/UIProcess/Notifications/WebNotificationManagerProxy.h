@@ -29,7 +29,7 @@
 #include "APIObject.h"
 #include "MessageID.h"
 #include "WebNotificationProvider.h"
-#include <WebCore/NotificationPresenter.h>
+#include <WebCore/NotificationClient.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>

@@ -418,7 +418,7 @@ void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& database
 #endif
 
 #if ENABLE(NOTIFICATIONS)
-NotificationPresenter* ChromeClientEfl::notificationPresenter() const
+NotificationClient* ChromeClientEfl::notificationPresenter() const
 {
     notImplemented();
     return 0;

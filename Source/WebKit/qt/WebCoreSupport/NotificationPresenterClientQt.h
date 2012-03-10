@@ -33,7 +33,7 @@
 #define NotificationPresenterClientQt_h
 
 #include "Notification.h"
-#include "NotificationPresenter.h"
+#include "NotificationClient.h"
 #include "QtPlatformPlugin.h"
 #include "Timer.h"
 
@@ -81,18 +81,18 @@ public:
 
 typedef QHash <Notification*, NotificationWrapper*> NotificationsQueue;
 
-class NotificationPresenterClientQt : public NotificationPresenter {
+class NotificationPresenterClientQt : public NotificationClient {
 public:
     NotificationPresenterClientQt();
     ~NotificationPresenterClientQt();
 
-    /* WebCore::NotificationPresenter interface */
+    /* WebCore::NotificationClient interface */
     virtual bool show(Notification*);
     virtual void cancel(Notification*);
     virtual void notificationObjectDestroyed(Notification*);
     virtual void notificationControllerDestroyed();
     virtual void requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>);
-    virtual NotificationPresenter::Permission checkPermission(ScriptExecutionContext*);
+    virtual NotificationClient::Permission checkPermission(ScriptExecutionContext*);
     virtual void cancelRequestsForPermission(ScriptExecutionContext*);
 
     void cancel(NotificationWrapper*);
@@ -125,7 +125,7 @@ private:
         QList<RefPtr<VoidCallback> > m_callbacks;
     };
     QHash<ScriptExecutionContext*,  CallbacksInfo > m_pendingPermissionRequests;
-    QHash<ScriptExecutionContext*, NotificationPresenter::Permission> m_cachedPermissions;
+    QHash<ScriptExecutionContext*, NotificationClient::Permission> m_cachedPermissions;
 
     NotificationsQueue m_notifications;
     QtPlatformPlugin m_platformPlugin;

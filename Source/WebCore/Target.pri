@@ -2078,7 +2078,7 @@ HEADERS += \
     mathml/MathMLTextElement.h \
     notifications/Notification.h \
     notifications/NotificationCenter.h \
-    notifications/NotificationPresenter.h \
+    notifications/NotificationClient.h \
     notifications/NotificationContents.h \
     notifications/NotificationController.h \
     page/animation/AnimationBase.h \

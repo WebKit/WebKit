@@ -98,10 +98,10 @@ void NotificationPresenterImpl::notificationControllerDestroyed()
 {
 }
 
-NotificationPresenter::Permission NotificationPresenterImpl::checkPermission(ScriptExecutionContext* context)
+NotificationClient::Permission NotificationPresenterImpl::checkPermission(ScriptExecutionContext* context)
 {
     int result = m_presenter->checkPermission(WebSecurityOrigin(context->securityOrigin()));
-    return static_cast<NotificationPresenter::Permission>(result);
+    return static_cast<NotificationClient::Permission>(result);
 }
 
 void NotificationPresenterImpl::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)

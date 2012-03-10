@@ -180,13 +180,13 @@ void WebDesktopNotificationsDelegate::cancelRequestsForPermission(ScriptExecutio
 {
 }
 
-NotificationPresenter::Permission WebDesktopNotificationsDelegate::checkPermission(const KURL& url)
+NotificationClient::Permission WebDesktopNotificationsDelegate::checkPermission(const KURL& url)
 {
     int out = 0;
     BString org(SecurityOrigin::create(url)->toString());
     if (hasNotificationDelegate())
         notificationDelegate()->checkNotificationPermission(org, &out);
-    return (NotificationPresenter::Permission) out;
+    return (NotificationClient::Permission) out;
 }
 
 bool WebDesktopNotificationsDelegate::hasNotificationDelegate()

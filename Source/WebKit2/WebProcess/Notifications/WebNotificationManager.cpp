@@ -90,18 +90,18 @@ void WebNotificationManager::didRemoveNotificationDecisions(const Vector<String>
 #endif
 }
 
-NotificationPresenter::Permission WebNotificationManager::policyForOrigin(WebCore::SecurityOrigin *origin) const
+NotificationClient::Permission WebNotificationManager::policyForOrigin(WebCore::SecurityOrigin *origin) const
 {
 #if ENABLE(NOTIFICATIONS)
     if (!origin)
-        return NotificationPresenter::PermissionNotAllowed;
+        return NotificationClient::PermissionNotAllowed;
     
     HashMap<String, bool>::const_iterator it = m_permissionsMap.find(origin->toString());
     if (it != m_permissionsMap.end())
-        return it->second ? NotificationPresenter::PermissionAllowed : NotificationPresenter::PermissionDenied;
+        return it->second ? NotificationClient::PermissionAllowed : NotificationClient::PermissionDenied;
 #endif
     
-    return NotificationPresenter::PermissionNotAllowed;
+    return NotificationClient::PermissionNotAllowed;
 }
 
 bool WebNotificationManager::show(Notification* notification, WebPage* page)

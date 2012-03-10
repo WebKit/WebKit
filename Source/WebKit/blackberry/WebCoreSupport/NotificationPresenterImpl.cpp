@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-NotificationPresenter* NotificationPresenterImpl::instance()
+NotificationClient* NotificationPresenterImpl::instance()
 {
     static NotificationPresenterImpl* s_instance = 0;
     if (!s_instance)
@@ -54,7 +54,7 @@ bool NotificationPresenterImpl::show(Notification* notification)
     if (m_notifications.contains(n))
         return false;
 
-    if (checkPermission(notification->scriptExecutionContext()) != NotificationPresenter::PermissionAllowed)
+    if (checkPermission(notification->scriptExecutionContext()) != NotificationClient::PermissionAllowed)
         return false;
 
     String uuid = createCanonicalUUIDString();
@@ -127,14 +127,14 @@ void NotificationPresenterImpl::cancelRequestsForPermission(ScriptExecutionConte
     // Because we are using modal dialogs to request permission, it's impossible to cancel them.
 }
 
-NotificationPresenter::Permission NotificationPresenterImpl::checkPermission(ScriptExecutionContext* context)
+NotificationClient::Permission NotificationPresenterImpl::checkPermission(ScriptExecutionContext* context)
 {
     ASSERT(context);
     // FIXME: Should store the permission information into file permanently instead of in m_allowedDomains.
     // The suggested place to do this is in m_platformPresenter->checkPermission().
     if (m_allowedDomains.contains(context->url().host()))
-        return NotificationPresenter::PermissionAllowed;
-    return NotificationPresenter::PermissionNotAllowed;
+        return NotificationClient::PermissionAllowed;
+    return NotificationClient::PermissionNotAllowed;
 }
 
 // This function is called in platform side.

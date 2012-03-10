@@ -911,7 +911,7 @@
 		31FB1A6C120A5D6900DC02A0 /* JSDeviceMotionEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31FB1A6B120A5D6900DC02A0 /* JSDeviceMotionEventCustom.cpp */; };
 		3314ACEB10892086000F0E56 /* JSExceptionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3314ACE910892086000F0E56 /* JSExceptionBase.cpp */; };
 		3314ACEC10892086000F0E56 /* JSExceptionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3314ACEA10892086000F0E56 /* JSExceptionBase.h */; };
-		33503C9A10179A74003B47E1 /* NotificationPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503C9910179A74003B47E1 /* NotificationPresenter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		33503C9A10179A74003B47E1 /* NotificationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503C9910179A74003B47E1 /* NotificationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33503CA310179AD7003B47E1 /* JSNotification.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33503C9F10179AD7003B47E1 /* JSNotification.cpp */; };
 		33503CA410179AD7003B47E1 /* JSNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 33503CA010179AD7003B47E1 /* JSNotification.h */; };
 		33503CA510179AD7003B47E1 /* JSNotificationCenter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33503CA110179AD7003B47E1 /* JSNotificationCenter.cpp */; };
@@ -7769,7 +7769,7 @@
 		3314ACEA10892086000F0E56 /* JSExceptionBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExceptionBase.h; sourceTree = "<group>"; };
 		333F704E0FB49CA2008E12A6 /* Notification.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Notification.idl; path = notifications/Notification.idl; sourceTree = "<group>"; };
 		333F704F0FB49CA2008E12A6 /* Notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Notification.h; path = notifications/Notification.h; sourceTree = "<group>"; };
-		33503C9910179A74003B47E1 /* NotificationPresenter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NotificationPresenter.h; path = notifications/NotificationPresenter.h; sourceTree = "<group>"; };
+		33503C9910179A74003B47E1 /* NotificationClient.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NotificationClient.h; path = notifications/NotificationClient.h; sourceTree = "<group>"; };
 		33503C9F10179AD7003B47E1 /* JSNotification.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotification.cpp; sourceTree = "<group>"; };
 		33503CA010179AD7003B47E1 /* JSNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotification.h; sourceTree = "<group>"; };
 		33503CA110179AD7003B47E1 /* JSNotificationCenter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotificationCenter.cpp; sourceTree = "<group>"; };
@@ -14391,10 +14391,10 @@
 				3390CA510FFC157B00921962 /* NotificationCenter.cpp */,
 				3390CA520FFC157B00921962 /* NotificationCenter.h */,
 				3390CA530FFC157B00921962 /* NotificationCenter.idl */,
+				33503C9910179A74003B47E1 /* NotificationClient.h */,
 				3390CA540FFC157B00921962 /* NotificationContents.h */,
 				3128CA67147331520074C72A /* NotificationController.cpp */,
 				3128CA6A147331630074C72A /* NotificationController.h */,
-				33503C9910179A74003B47E1 /* NotificationPresenter.h */,
 			);
 			name = notifications;
 			sourceTree = "<group>";
@@ -23569,7 +23569,7 @@
 				3390CA560FFC157B00921962 /* NotificationCenter.h in Headers */,
 				3390CA580FFC157B00921962 /* NotificationContents.h in Headers */,
 				3128CA6B147331630074C72A /* NotificationController.h in Headers */,
-				33503C9A10179A74003B47E1 /* NotificationPresenter.h in Headers */,
+				33503C9A10179A74003B47E1 /* NotificationClient.h in Headers */,
 				98EB1F951313FE0500D0E1EA /* NotImplemented.h in Headers */,
 				1A569D0B0D7E2B82007C3983 /* NP_jsobject.h in Headers */,
 				1A927FD21416A15B003A83C8 /* npapi.h in Headers */,

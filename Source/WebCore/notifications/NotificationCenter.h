@@ -45,16 +45,16 @@
 
 namespace WebCore {
 
-class NotificationPresenter;
+class NotificationClient;
 class VoidCallback;
 
 class NotificationCenter : public RefCounted<NotificationCenter>, public ActiveDOMObject {
 public:
-    static PassRefPtr<NotificationCenter> create(ScriptExecutionContext*, NotificationPresenter*);
+    static PassRefPtr<NotificationCenter> create(ScriptExecutionContext*, NotificationClient*);
 
     PassRefPtr<Notification> createHTMLNotification(const String& URI, ExceptionCode& ec)
     {
-        if (!presenter()) {
+        if (!client()) {
             ec = INVALID_STATE_ERR;
             return 0;
         }
@@ -67,7 +67,7 @@ public:
 
     PassRefPtr<Notification> createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)
     {
-        if (!presenter()) {
+        if (!client()) {
             ec = INVALID_STATE_ERR;
             return 0;
         }
@@ -75,7 +75,7 @@ public:
         return Notification::create(contents, scriptExecutionContext(), ec, this);
     }
 
-    NotificationPresenter* presenter() const { return m_notificationPresenter; }
+    NotificationClient* client() const { return m_client; }
 
     int checkPermission();
     void requestPermission(PassRefPtr<VoidCallback>);
@@ -83,9 +83,9 @@ public:
     void disconnectFrame();
 
 private:
-    NotificationCenter(ScriptExecutionContext*, NotificationPresenter*);
+    NotificationCenter(ScriptExecutionContext*, NotificationClient*);
 
-    NotificationPresenter* m_notificationPresenter;
+    NotificationClient* m_client;
 };
 
 } // namespace WebCore

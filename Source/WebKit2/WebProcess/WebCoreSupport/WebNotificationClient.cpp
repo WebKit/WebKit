@@ -82,10 +82,10 @@ void WebNotificationClient::cancelRequestsForPermission(ScriptExecutionContext* 
     m_page->notificationPermissionRequestManager()->cancelRequest(context->securityOrigin());
 }
 
-NotificationPresenter::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)
+NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)
 {
     if (!context || !context->isDocument())
-        return NotificationPresenter::PermissionDenied;
+        return NotificationClient::PermissionDenied;
     return m_page->notificationPermissionRequestManager()->permissionLevel(context->securityOrigin());
 }
 

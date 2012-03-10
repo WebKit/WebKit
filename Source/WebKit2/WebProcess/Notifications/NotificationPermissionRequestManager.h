@@ -26,7 +26,7 @@
 #ifndef NotificationPermissionRequestManager_h
 #define NotificationPermissionRequestManager_h
 
-#include <WebCore/NotificationPresenter.h>
+#include <WebCore/NotificationClient.h>
 #include <WebCore/VoidCallback.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -50,7 +50,7 @@ public:
     void cancelRequest(WebCore::SecurityOrigin*);
     
     // Synchronous call to retrieve permission level for given security origin
-    WebCore::NotificationPresenter::Permission permissionLevel(WebCore::SecurityOrigin*);
+    WebCore::NotificationClient::Permission permissionLevel(WebCore::SecurityOrigin*);
     
     void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);
     
