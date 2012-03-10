@@ -1,3 +1,14 @@
+2012-03-09  Tim Dresser  <tdresser@chromium.org>
+
+        [chromium] Increase size of Combo Box Options for touch and high DPI devices
+        https://bugs.webkit.org/show_bug.cgi?id=80027
+
+        Reviewed by Darin Fisher.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::gestureEvent):
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+
 2012-03-09  James Robinson  <jamesr@chromium.org>
 
         [chromium] Roll chromium DEPS to r125600

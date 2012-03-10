@@ -602,8 +602,25 @@ bool WebViewImpl::mouseWheel(const WebMouseWheelEvent& event)
 #if ENABLE(GESTURE_EVENTS)
 bool WebViewImpl::gestureEvent(const WebGestureEvent& event)
 {
+    RefPtr<WebCore::PopupContainer> selectPopup;
     PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-    return mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
+    if (event.type == WebInputEvent::GestureTap) {
+        selectPopup = m_selectPopup;
+        hideSelectPopup();
+        ASSERT(!m_selectPopup);
+    }
+
+    bool gestureHandled = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
+
+    if (m_selectPopup && m_selectPopup == selectPopup) {
+        // That tap triggered a select popup which is the same as the one that
+        // was showing before the tap. It means the user tapped the select
+        // while the popup was showing, and as a result we first closed then
+        // immediately reopened the select popup. It needs to be closed.
+        hideSelectPopup();
+    }
+
+    return gestureHandled;
 }
 
 void WebViewImpl::startPageScaleAnimation(const IntPoint& scroll, bool useAnchor, float newScale, double durationSec)
@@ -2691,9 +2708,14 @@ void WebViewImpl::applyAutofillSuggestions(
         inputElem, names, labels, icons, uniqueIDs, separatorIndex);
 
     if (!m_autofillPopup) {
+        PopupContainerSettings popupSettings = autofillPopupSettings;
+        popupSettings.defaultDeviceScaleFactor =
+            m_page->settings()->defaultDeviceScaleFactor();
+        if (!popupSettings.defaultDeviceScaleFactor)
+            popupSettings.defaultDeviceScaleFactor = 1;
         m_autofillPopup = PopupContainer::create(m_autofillPopupClient.get(),
                                                  PopupContainer::Suggestion,
-                                                 autofillPopupSettings);
+                                                 popupSettings);
     }
 
     if (m_autofillPopupShowing) {

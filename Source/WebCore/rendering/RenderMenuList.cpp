@@ -43,6 +43,7 @@
 #include "RenderBR.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
+#include "Settings.h"
 #include "TextRun.h"
 #include <math.h>
 
@@ -308,6 +309,9 @@ void RenderMenuList::showPopup()
     // the actual width of the element to size the popup.
     FloatPoint absTopLeft = localToAbsolute(FloatPoint(), false, true);
     LayoutRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
+    int scale = document()->page()->settings()->defaultDeviceScaleFactor();
+    if (scale && scale != 1)
+        absBounds.scale(scale);
     absBounds.setLocation(roundedLayoutPoint(absTopLeft));
     HTMLSelectElement* select = toHTMLSelectElement(node());
     m_popup->show(absBounds, document()->view(), select->optionToListIndex(select->selectedIndex()));
