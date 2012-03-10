@@ -194,6 +194,10 @@ String encodeForFileName(const String&);
 RetainPtr<CFURLRef> pathAsURL(const String&);
 #endif
 
+#if PLATFORM(MAC)
+void setMetadataURL(String& URLString, const String& referrer, const String& path);
+#endif
+
 #if PLATFORM(GTK)
 String filenameToString(const char*);
 String filenameForDisplay(const String&);

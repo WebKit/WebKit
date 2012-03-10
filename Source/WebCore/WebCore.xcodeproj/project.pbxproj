@@ -5650,6 +5650,8 @@
 		C598902E14E9B0F800E8D18B /* PlatformPasteboardMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5F765BA14E1ECF4006C899B /* PlatformPasteboardMac.mm */; };
 		C598905714E9C28000E8D18B /* PasteboardStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F765B414E1D414006C899B /* PasteboardStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C598905814E9C29900E8D18B /* PlatformPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C5B4C24D1509236C00A6EF37 /* WebCoreNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = C5B4C24B1509236C00A6EF37 /* WebCoreNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C5B4C24E1509236C00A6EF37 /* WebCoreNSURLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5B4C24C1509236C00A6EF37 /* WebCoreNSURLExtras.mm */; };
 		C5D4AA7A116BAFB60069CA93 /* GlyphMetricsMap.h in Headers */ = {isa = PBXBuildFile; fileRef = C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5E9B67710697E1300C7BB1A /* StorageEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */; };
 		C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */; };
@@ -12690,6 +12692,8 @@
 		C585A67911D4FB07004C3E4B /* JSIDBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBRequest.h; sourceTree = "<group>"; };
 		C585A69411D4FB13004C3E4B /* JSIDBFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBFactory.cpp; sourceTree = "<group>"; };
 		C585A69511D4FB13004C3E4B /* JSIDBFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBFactory.h; sourceTree = "<group>"; };
+		C5B4C24B1509236C00A6EF37 /* WebCoreNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreNSURLExtras.h; sourceTree = "<group>"; };
+		C5B4C24C1509236C00A6EF37 /* WebCoreNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSURLExtras.mm; sourceTree = "<group>"; };
 		C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformPasteboard.h; sourceTree = "<group>"; };
 		C5D4AA78116BAFB60069CA93 /* GlyphMetricsMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlyphMetricsMap.h; sourceTree = "<group>"; };
 		C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageEventDispatcher.cpp; sourceTree = "<group>"; };
@@ -15142,6 +15146,8 @@
 				51DF6D7F0B92A18E00C2DC85 /* ThreadCheck.mm */,
 				934D9BA60B8C1175007B42A9 /* WebCoreNSStringExtras.h */,
 				934D9BA40B8C116B007B42A9 /* WebCoreNSStringExtras.mm */,
+				C5B4C24B1509236C00A6EF37 /* WebCoreNSURLExtras.h */,
+				C5B4C24C1509236C00A6EF37 /* WebCoreNSURLExtras.mm */,
 				DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */,
 				B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */,
 				93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */,
@@ -24559,6 +24565,7 @@
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */,
 				450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */,
+				C5B4C24D1509236C00A6EF37 /* WebCoreNSURLExtras.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27535,6 +27542,7 @@
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				E1CDE92015018ED000862CC5 /* AsyncFileStream.cpp in Sources */,
 				450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */,
+				C5B4C24E1509236C00A6EF37 /* WebCoreNSURLExtras.mm in Sources */,
 				9B2B7AC11509850A008932CC /* MicroDataItemValue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

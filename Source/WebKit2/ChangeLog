@@ -1,3 +1,13 @@
+2012-03-09  Enrica Casucci  <enrica@apple.com>
+
+        Move WebNSURLExtras code down to WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=80611
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2012-03-09  Jeff Miller  <jeffm@apple.com>
 
         Add WKPageEndPrinting() to balance WKPageBeginPrinting()
@@ -174,6 +184,7 @@
 
         * Configurations/FeatureDefines.xcconfig:
 
+>>>>>>> .r110352
 2012-03-08  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed Snow Leopard build fix.

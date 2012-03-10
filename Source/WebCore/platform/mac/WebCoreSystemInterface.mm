@@ -176,6 +176,7 @@ CFURLRef (*wkGetCFURLResponseURL)(CFURLResponseRef);
 CFHTTPMessageRef (*wkGetCFURLResponseHTTPResponse)(CFURLResponseRef);
 CFStringRef (*wkCopyCFURLResponseSuggestedFilename)(CFURLResponseRef);
 void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);
+void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSString *path);
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);

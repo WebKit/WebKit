@@ -41,6 +41,11 @@ BOOL hasCaseInsensitiveSuffix(NSString *string, NSString *suffix)
     return [string rangeOfString:suffix options:(NSCaseInsensitiveSearch | NSBackwardsSearch | NSAnchoredSearch)].location != NSNotFound;
 }
 
+BOOL hasCaseInsensitivePrefix(NSString *string, NSString *prefix)
+{
+    return [string rangeOfString:prefix options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound;
+}
+
 BOOL hasCaseInsensitiveSubstring(NSString *string, NSString *substring)
 {
     return [string rangeOfString:substring options:NSCaseInsensitiveSearch].location != NSNotFound;

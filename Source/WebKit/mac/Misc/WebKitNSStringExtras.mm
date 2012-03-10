@@ -184,7 +184,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 
 -(BOOL)_webkit_hasCaseInsensitivePrefix:(NSString *)prefix
 {
-    return [self rangeOfString:prefix options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound;
+    return hasCaseInsensitivePrefix(self, prefix);
 }
 
 -(BOOL)_webkit_hasCaseInsensitiveSuffix:(NSString *)suffix

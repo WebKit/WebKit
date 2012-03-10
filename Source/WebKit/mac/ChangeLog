@@ -1,3 +1,41 @@
+2012-03-09  Enrica Casucci  <enrica@apple.com>
+
+        Move WebNSURLExtras code down to WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=80611
+
+        Reviewed by Alexey Proskuryakov.
+
+        Changed the implementation to use newly moved WebCore functions.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _webkit_hasCaseInsensitivePrefix:]):
+        * Misc/WebNSURLExtras.mm:
+        (+[NSURL _web_URLWithUserTypedString:]):
+        (+[NSURL _web_URLWithDataAsString:relativeToURL:]):
+        (+[NSURL _web_URLWithData:]):
+        (+[NSURL _web_URLWithData:relativeToURL:]):
+        (-[NSURL _web_originalData]):
+        (-[NSURL _web_originalDataAsString]):
+        (-[NSURL _web_userVisibleString]):
+        (-[NSURL _web_isEmpty]):
+        (-[NSURL _web_URLCString]):
+        (-[NSURL _web_URLByTruncatingOneCharacterBeforeComponent:]):
+        (-[NSURL _webkit_URLByRemovingFragment]):
+        (-[NSURL _webkit_URLByRemovingResourceSpecifier]):
+        (-[NSURL _web_URLByRemovingUserInfo]):
+        (-[NSURL _web_dataForURLComponentType:]):
+        (-[NSURL _web_schemeData]):
+        (-[NSURL _web_hostData]):
+        (-[NSString _web_isUserVisibleURL]):
+        (-[NSString _web_hostNameNeedsDecodingWithRange:]):
+        (-[NSString _web_hostNameNeedsEncodingWithRange:]):
+        (-[NSString _web_decodeHostNameWithRange:]):
+        (-[NSString _web_encodeHostNameWithRange:]):
+        (-[NSString _web_decodeHostName]):
+        (-[NSString _web_encodeHostName]):
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2012-03-09  Emil A Eklund  <eae@chromium.org>
 
         Add roundedPoint to HitTestResult and change platform code to use it

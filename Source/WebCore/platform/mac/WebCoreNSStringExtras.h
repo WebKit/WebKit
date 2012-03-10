@@ -40,9 +40,10 @@ extern "C" {
 #endif
 
 BOOL stringIsCaseInsensitiveEqualToString(NSString *first, NSString *second);
-BOOL hasCaseInsensitiveSuffix(NSString *string, NSString *suffix);
-BOOL hasCaseInsensitiveSubstring(NSString *string, NSString *substring);
-NSString *filenameByFixingIllegalCharacters(NSString *string);
+BOOL hasCaseInsensitiveSuffix(NSString *, NSString *suffix);
+BOOL hasCaseInsensitivePrefix(NSString *, NSString *prefix);
+BOOL hasCaseInsensitiveSubstring(NSString *, NSString *substring);
+NSString *filenameByFixingIllegalCharacters(NSString *);
 #if !PLATFORM(IOS)
 CFStringEncoding stringEncodingForResource(Handle resource);
 #endif

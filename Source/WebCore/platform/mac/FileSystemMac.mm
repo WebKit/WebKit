@@ -30,6 +30,9 @@
 #import "FileSystem.h"
 
 #import "PlatformString.h"
+//#import "WebCoreNSStringExtras.h"
+#import "WebCoreNSURLExtras.h"
+#import "WebCoreSystemInterface.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 
@@ -63,6 +66,47 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileH
         return String();
 
     return String::fromUTF8(temporaryFilePath.data());
+}
+
+typedef struct MetaDataInfo
+{
+    String URLString;
+    String referrer;
+    String path;
+} MetaDataInfo;
+
+static void* setMetaData(void* context)
+{
+    MetaDataInfo *info = (MetaDataInfo *)context;
+    wkSetMetadataURL((NSString *)info->URLString, (NSString *)info->referrer, (NSString *)fileSystemRepresentation(info->path).data());
+    
+    delete info;
+    
+    return 0;
+}
+
+void setMetadataURL(String& URLString, const String& referrer, const String& path)
+{
+    NSURL *URL = URLWithUserTypedString(URLString, nil);
+    if (URL)
+        URLString = userVisibleString(URLByRemovingUserInfo(URL));
+    
+    // Spawn a background thread for WKSetMetadataURL because this function will not return until mds has
+    // journaled the data we're're trying to set. Depending on what other I/O is going on, it can take some
+    // time. 
+    pthread_t tid;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    
+    MetaDataInfo *info = new MetaDataInfo;
+    
+    info->URLString = URLString;
+    info->referrer = referrer;
+    info->path = path;
+    
+    pthread_create(&tid, &attr, setMetaData, info);
+    pthread_attr_destroy(&attr);
 }
 
 #if !PLATFORM(IOS)
