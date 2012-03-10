@@ -1,3 +1,14 @@
+2012-03-09  Eric Seidel  <eric@webkit.org>
+
+        build-webkit should build Source/WTF on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=80728
+
+        Reviewed by Adam Barth.
+
+        We'll add other ports to this list in future commits.
+
+        * Scripts/build-webkit:
+
 2012-03-09  Jon Lee  <jonlee@apple.com>
 
         Add support for ENABLE(LEGACY_NOTIFICATIONS)
