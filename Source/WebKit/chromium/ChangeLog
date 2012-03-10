@@ -1,3 +1,18 @@
+2012-03-09  Emil A Eklund  <eae@chromium.org>
+
+        Add roundedPoint to HitTestResult and change platform code to use it
+        https://bugs.webkit.org/show_bug.cgi?id=80715
+
+        Reviewed by James Robinson.
+
+        Change ports to use roundedPoint to avoid exposing subpixel types to
+        platform code.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::mouseDidMoveOverElement):
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2012-03-09  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Implement scroll physics architecture for impl/main thread

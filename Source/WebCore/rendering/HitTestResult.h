@@ -57,6 +57,7 @@ public:
     Node* innerNode() const { return m_innerNode.get(); }
     Node* innerNonSharedNode() const { return m_innerNonSharedNode.get(); }
     LayoutPoint point() const { return m_point; }
+    IntPoint roundedPoint() const { return roundedIntPoint(m_point); }
     LayoutPoint localPoint() const { return m_localPoint; }
     Element* URLElement() const { return m_innerURLElement.get(); }
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }

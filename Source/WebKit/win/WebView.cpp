@@ -1349,7 +1349,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     if (!view)
         return false;
 
-    POINT point(view->contentsToWindow(contextMenuController->hitTestResult().point()));
+    POINT point(view->contentsToWindow(contextMenuController->hitTestResult().roundedPoint()));
 
     // Translate the point to screen coordinates
     if (!::ClientToScreen(m_viewWindow, &point))

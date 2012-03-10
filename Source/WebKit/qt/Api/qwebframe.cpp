@@ -1750,7 +1750,7 @@ QWebHitTestResultPrivate::QWebHitTestResultPrivate(const WebCore::HitTestResult 
 {
     if (!hitTest.innerNode())
         return;
-    pos = hitTest.point();
+    pos = hitTest.roundedPoint();
     WebCore::TextDirection dir;
     title = hitTest.title(dir);
     linkText = hitTest.textContent();

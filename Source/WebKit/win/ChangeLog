@@ -1,3 +1,16 @@
+2012-03-09  Emil A Eklund  <eae@chromium.org>
+
+        Add roundedPoint to HitTestResult and change platform code to use it
+        https://bugs.webkit.org/show_bug.cgi?id=80715
+
+        Reviewed by James Robinson.
+
+        Change ports to use roundedPoint to avoid exposing subpixel types to
+        platform code.
+
+        * WebView.cpp:
+        (WebView::handleContextMenuEvent):
+
 2012-03-08  Steve Falkenburg  <sfalken@apple.com>
 
         Separate WTF parts of JavaScriptCoreGenerated into WTFGenerated for Windows build
