@@ -158,6 +158,7 @@ private:
     OwnPtr<ResourceResponse> m_multipartResponse;
     Timer<NetworkJob> m_deleteJobTimer;
     String m_contentType;
+    String m_sniffedMimeType;
     String m_contentDisposition;
     BlackBerry::Platform::NetworkStreamFactory* m_streamFactory;
     bool m_isFile;
@@ -175,6 +176,7 @@ private:
     bool m_callingClient;
     bool m_isXHR; // FIXME - After 7.0, remove this. Only the Qt port reports HTTP error statuses as didFails, so we probably shouldn't.
     bool m_needsRetryAsFTPDirectory;
+    bool m_isOverrideContentType;
 
     // If an HTTP status code is received, m_extendedStatusCode and m_response.httpStatusCode will both be set to it.
     // If a platform error code is received, m_extendedStatusCode will be set to it and m_response.httpStatusCode will be set to 404.

@@ -27,6 +27,7 @@
 #include "FrameLoaderClientBlackBerry.h"
 #include "HTTPParsers.h"
 #include "KURL.h"
+#include "MIMESniffing.h"
 #include "MIMETypeRegistry.h"
 #include "NetworkManager.h"
 #include "ResourceHandleClient.h"
@@ -107,6 +108,7 @@ NetworkJob::NetworkJob()
     , m_callingClient(false)
     , m_isXHR(false)
     , m_needsRetryAsFTPDirectory(false)
+    , m_isOverrideContentType(false)
     , m_extendedStatusCode(0)
     , m_redirectCount(0)
     , m_deferredData(*this)
@@ -151,8 +153,10 @@ bool NetworkJob::initialize(int playerId,
 
     // We don't need to explicitly call notifyHeaderReceived, as the Content-Type
     // will ultimately get parsed when sendResponseIfNeeded gets called.
-    if (!request.getOverrideContentType().empty())
+    if (!request.getOverrideContentType().empty()) {
         m_contentType = String(request.getOverrideContentType().c_str());
+        m_isOverrideContentType = true;
+    }
 
     // No need to create the streams for data and about.
     if (m_isData || m_isAbout)
@@ -382,6 +386,32 @@ void NetworkJob::handleNotifyDataReceived(const char* buf, size_t len)
     if (!buf || !len)
         return;
 
+    // The loadFile API sets the override content type,
+    // this will always be used as the content type and should not be overridden.
+    if (!m_dataReceived && !m_isOverrideContentType) {
+        bool shouldSniff = true;
+
+        // Don't bother sniffing the content type of a file that
+        // is on a file system if it has a MIME mappable file extension.
+        // The file extension is likely to be correct.
+        if (m_isFile) {
+            String urlFilename = m_response.url().lastPathComponent();
+            size_t pos = urlFilename.reverseFind('.');
+            if (pos != WTF::notFound) {
+                String extension = urlFilename.substring(pos + 1);
+                String mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
+                if (!mimeType.isEmpty())
+                    shouldSniff = false;
+            }
+        }
+
+        if (shouldSniff) {
+            MIMESniffer sniffer = MIMESniffer(m_contentType.latin1().data(), MIMETypeRegistry::isSupportedImageResourceMIMEType(m_contentType));
+            if (const char* type = sniffer.sniff(buf, std::min(len, sniffer.dataSize())))
+                m_sniffedMimeType = String(type);
+        }
+    }
+
     m_dataReceived = true;
 
     // Protect against reentrancy.
@@ -583,11 +613,9 @@ void NetworkJob::sendResponseIfNeeded()
     // Get the MIME type that was set by the content sniffer
     // if there's no custom sniffer header, try to set it from the Content-Type header
     // if this fails, guess it from extension.
-    String mimeType;
+    String mimeType = m_sniffedMimeType;
     if (m_isFTP && m_isFTPDir)
         mimeType = "application/x-ftp-directory";
-    else
-        mimeType = m_response.httpHeaderField(BlackBerry::Platform::NetworkRequest::HEADER_RIM_SNIFFED_MIME_TYPE);
     if (mimeType.isNull())
         mimeType = extractMIMETypeFromMediaType(m_contentType);
     if (mimeType.isNull())
