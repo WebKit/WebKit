@@ -83,6 +83,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TemporaryChange.h>
 
 #if ENABLE(GESTURE_EVENTS)
 #include "PlatformGestureEvent.h"
@@ -232,29 +233,28 @@ public:
 };
 #endif
 
-static inline bool scrollNode(float delta, WheelEvent::Granularity granularity, ScrollDirection positiveDirection, ScrollDirection negativeDirection, Node* node, Node** stopNode)
+static inline ScrollGranularity wheelGranularityToScrollGranularity(WheelEvent::Granularity granularity)
+{
+    switch (granularity) {
+    case WheelEvent::Page:
+        return ScrollByPage;
+    case WheelEvent::Line:
+        return ScrollByLine;
+    case WheelEvent::Pixel:
+        return ScrollByPixel;
+    }
+    return ScrollByPixel;
+}
+
+static inline bool scrollNode(float delta, ScrollGranularity granularity, ScrollDirection positiveDirection, ScrollDirection negativeDirection, Node* node, Node** stopNode)
 {
     if (!delta)
         return false;
-    
     if (!node->renderer())
         return false;
-    
-    // Find the nearest enclosing box.
     RenderBox* enclosingBox = node->renderer()->enclosingBox();
-
     float absDelta = delta > 0 ? delta : -delta;
-    
-    if (granularity == WheelEvent::Page)
-        return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPage, absDelta, stopNode);
-
-    if (granularity == WheelEvent::Line)
-        return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByLine, absDelta, stopNode);
-
-    if (granularity == WheelEvent::Pixel)
-        return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPixel, absDelta, stopNode);
-        
-    return false;
+    return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, stopNode);
 }
 
 #if !PLATFORM(MAC)
@@ -312,6 +312,7 @@ EventHandler::EventHandler(Frame* frame)
     , m_touchPressed(false)
 #endif
     , m_maxMouseMovedDuration(0)
+    , m_baseEventType(PlatformEvent::NoType)
 {
 }
 
@@ -359,6 +360,9 @@ void EventHandler::clear()
     m_originatingTouchPointTargets.clear();
 #endif
     m_maxMouseMovedDuration = 0;
+#if ENABLE(GESTURE_EVENTS)
+    m_baseEventType = PlatformEvent::NoType;
+#endif
 }
 
 void EventHandler::nodeWillBeRemoved(Node* nodeToBeRemoved)
@@ -2313,7 +2317,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     // Instead, the handlers should know convert vertical scrolls
     // appropriately.
     PlatformWheelEvent event = e;
-    if (shouldTurnVerticalTicksIntoHorizontal(result))
+    if (m_baseEventType != PlatformEvent::NoType && shouldTurnVerticalTicksIntoHorizontal(result))
         event = event.copyTurningVerticalTicksIntoHorizontalTicks();
 
     if (node) {
@@ -2339,20 +2343,21 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     
     return view->wheelEvent(event);
 }
-    
+
 void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEvent)
 {
     if (!startNode || !wheelEvent)
         return;
     
     Node* stopNode = m_previousWheelScrolledNode.get();
+    ScrollGranularity granularity = m_baseEventType == PlatformEvent::GestureScrollEnd ? ScrollByPixelVelocity : wheelGranularityToScrollGranularity(wheelEvent->granularity());
     
     // Break up into two scrolls if we need to.  Diagonal movement on 
     // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
-    if (scrollNode(wheelEvent->rawDeltaX(), wheelEvent->granularity(), ScrollLeft, ScrollRight, startNode, &stopNode))
+    if (scrollNode(wheelEvent->rawDeltaX(), granularity, ScrollLeft, ScrollRight, startNode, &stopNode))
         wheelEvent->setDefaultHandled();
     
-    if (scrollNode(wheelEvent->rawDeltaY(), wheelEvent->granularity(), ScrollUp, ScrollDown, startNode, &stopNode))
+    if (scrollNode(wheelEvent->rawDeltaY(), granularity, ScrollUp, ScrollDown, startNode, &stopNode))
         wheelEvent->setDefaultHandled();
     
     if (!m_useLatchedWheelEventNode)
@@ -2362,32 +2367,34 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
 #if ENABLE(GESTURE_EVENTS)
 bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 {
-    // FIXME: This should hit test and go to the correct subframe rather than 
-    // always sending gestures to the main frame only. We should also ensure
-    // that if a frame gets a gesture begin gesture, it gets the corresponding
-    // end gesture as well.
+    // FIXME: A more general scroll system (https://bugs.webkit.org/show_bug.cgi?id=80596) will
+    // eliminate the need for this.
+    TemporaryChange<PlatformEvent::Type> baseEventType(m_baseEventType, gestureEvent.type());
 
     switch (gestureEvent.type()) {
     case PlatformEvent::GestureTapDown:
+        // FIXME: Stop animation here.
         break;
     case PlatformEvent::GestureTap:
         return handleGestureTap(gestureEvent);
     case PlatformEvent::GestureScrollUpdate:
         return handleGestureScrollUpdate(gestureEvent);
     case PlatformEvent::GestureDoubleTap:
-    case PlatformEvent::GestureScrollBegin:
-    case PlatformEvent::GestureScrollEnd:
         break;
+    case PlatformEvent::GestureScrollBegin:
+        return handleGestureScrollCore(gestureEvent, ScrollByPixelWheelEvent, false);
+    case PlatformEvent::GestureScrollEnd:
+        return handleGestureScrollCore(gestureEvent, ScrollByPixelVelocityWheelEvent, true);
     default:
         ASSERT_NOT_REACHED();
     }
-    return true;
+
+    return false;
 }
 
 bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
 {
-    // FIXME: Refactor this code to not hit test multiple times once hit testing
-    // has been corrected as suggested above in handleGestureEvent().
+    // FIXME: Refactor this code to not hit test multiple times.
     bool defaultPrevented = false;
     PlatformMouseEvent fakeMouseMove(gestureEvent.position(), gestureEvent.globalPosition(), NoButton, PlatformEvent::MouseMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
     PlatformMouseEvent fakeMouseDown(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, PlatformEvent::MousePressed, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
@@ -2400,14 +2407,20 @@ bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
 
 bool EventHandler::handleGestureScrollUpdate(const PlatformGestureEvent& gestureEvent)
 {
+    return handleGestureScrollCore(gestureEvent, ScrollByPixelWheelEvent, true);
+}
+
+bool EventHandler::handleGestureScrollCore(const PlatformGestureEvent& gestureEvent, PlatformWheelEventGranularity granularity, bool latchedWheel)
+{
+    TemporaryChange<bool> latched(m_useLatchedWheelEventNode, latchedWheel);
     const float tickDivisor = (float)WheelEvent::tickMultiplier;
-    // FIXME: Replace this interim implementation once the above fixme in handleGestureEvent() has been addressed.
-    bool defaultPrevented = false;
     IntPoint point(gestureEvent.position().x(), gestureEvent.position().y());
     IntPoint globalPoint(gestureEvent.globalPosition().x(), gestureEvent.globalPosition().y());
-    PlatformWheelEvent syntheticWheelEvent(point, globalPoint, gestureEvent.deltaX(), gestureEvent.deltaY(), gestureEvent.deltaX() / tickDivisor, gestureEvent.deltaY() / tickDivisor, ScrollByPixelWheelEvent, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
-    defaultPrevented |= handleWheelEvent(syntheticWheelEvent);
-    return defaultPrevented;
+    PlatformWheelEvent syntheticWheelEvent(point, globalPoint,
+        gestureEvent.deltaX(), gestureEvent.deltaY(), gestureEvent.deltaX() / tickDivisor, gestureEvent.deltaY() / tickDivisor,
+        granularity,
+        gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
+    return handleWheelEvent(syntheticWheelEvent);
 }
 #endif
 

@@ -64,7 +64,8 @@ namespace WebCore {
     // up and down (you get the same behavior as if the user was clicking in a scrollbar track to page up or page down).
     enum PlatformWheelEventGranularity {
         ScrollByPageWheelEvent,
-        ScrollByPixelWheelEvent
+        ScrollByPixelWheelEvent,
+        ScrollByPixelVelocityWheelEvent
     };
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))

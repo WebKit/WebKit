@@ -41,10 +41,6 @@ class FloatPoint;
 class ScrollableArea;
 class Scrollbar;
 
-#if ENABLE(GESTURE_EVENTS)
-class PlatformGestureEvent;
-#endif
-
 class ScrollAnimator {
 public:
     static PassOwnPtr<ScrollAnimator> create(ScrollableArea*);

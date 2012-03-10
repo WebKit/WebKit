@@ -98,6 +98,12 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
         || (deltaY < 0 && maxForwardScrollDelta.height() > 0)
         || (deltaY > 0 && maxBackwardScrollDelta.height() > 0)) {
         handled = true;
+        if (e.granularity() == ScrollByPixelVelocityWheelEvent) {
+            scroll(VerticalScrollbar, ScrollByPixelVelocity, 0, -deltaY);
+            scroll(HorizontalScrollbar, ScrollByPixelVelocity, 0, -deltaX);
+            return handled;
+        }
+
         if (deltaY) {
             if (e.granularity() == ScrollByPageWheelEvent) {
                 bool negative = deltaY < 0;
@@ -118,7 +124,6 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
             scroll(HorizontalScrollbar, ScrollByPixel, horizontalScrollbar->pixelStep(), -deltaX);
         }
     }
-
     return handled;
 }
 

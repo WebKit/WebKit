@@ -81,6 +81,9 @@ public:
     float currentX() { return m_currentPosX; }
     float currentY() { return m_currentPosY; }
 
+    FloatPoint m_fp;
+    int m_count;
+
     void reset()
     {
         stopAnimationTimerIfNeeded();
@@ -88,6 +91,14 @@ public:
         m_currentPosY = 0;
         m_horizontalData.reset();
         m_verticalData.reset();
+        m_fp = FloatPoint::zero();
+        m_count = 0;
+    }
+
+    virtual void fireUpAnAnimation(FloatPoint fp)
+    {
+        m_fp = fp;
+        m_count++;
     }
 
     MOCK_METHOD1(scrollToOffsetWithoutAnimation, void(const FloatPoint&));
@@ -119,6 +130,30 @@ TEST(ScrollAnimatorEnabled, Enabled)
     EXPECT_EQ(0, scrollAnimatorNone.currentY());
     scrollAnimatorNone.reset();
 }
+
+TEST(ScrollAnimatorEnabled, flingScrollEncoding)
+{
+    MockScrollableArea scrollableArea(true);
+    MockScrollAnimatorNone scrollAnimatorNone(&scrollableArea);
+
+    scrollAnimatorNone.reset();
+
+    scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByPixelVelocity, 111, -42);
+    scrollAnimatorNone.scroll(VerticalScrollbar, ScrollByPixelVelocity, 222, 42);
+    EXPECT_EQ(-42, scrollAnimatorNone.m_fp.x());
+    EXPECT_EQ(42, scrollAnimatorNone.m_fp.y());
+    EXPECT_EQ(1, scrollAnimatorNone.m_count);
+    scrollAnimatorNone.reset();
+
+    scrollAnimatorNone.scroll(VerticalScrollbar, ScrollByPixelVelocity, 222, 42);
+    scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByPixelVelocity, 111, -42);
+    EXPECT_EQ(-42, scrollAnimatorNone.m_fp.x());
+    EXPECT_EQ(42, scrollAnimatorNone.m_fp.y());
+    EXPECT_EQ(1, scrollAnimatorNone.m_count);
+    scrollAnimatorNone.reset();
+}
+
+
 
 TEST(ScrollAnimatorEnabled, Disabled)
 {

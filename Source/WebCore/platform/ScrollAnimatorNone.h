@@ -37,6 +37,7 @@
 #error "SMOOTH_SCROLLING requires REQUEST_ANIMATION_FRAME to be enabled."
 #endif
 
+#include "FloatPoint.h"
 #include "ScrollAnimator.h"
 #include "Timer.h"
 
@@ -139,12 +140,17 @@ protected:
     void stopAnimationTimerIfNeeded();
     bool animationTimerActive();
     void updateVisibleLengths();
+    virtual void fireUpAnAnimation(FloatPoint);
 
     PerAxisData m_horizontalData;
     PerAxisData m_verticalData;
 
     double m_startTime;
     bool m_animationActive;
+
+    float m_firstVelocity;
+    bool m_firstVelocitySet;
+    bool m_firstVelocityIsVertical;
 };
 
 } // namespace WebCore

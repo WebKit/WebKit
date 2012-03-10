@@ -14,10 +14,9 @@ second gesture
 wheel event 0+> [object HTMLDivElement]
 wheel event 1+> [object HTMLDivElement]
 received element removing keypress
-wheel event 2+> [object HTMLDivElement]
 PASS movingdiv.scrollTop is 0
 PASS movingdiv.scrollLeft is 0
-PASS wheelEventsOccurred is 3
+PASS wheelEventsOccurred is 2
 scroll event 0+> [object HTMLDivElement]
 PASS scrollEventsOccurred is 1
 PASS successfullyParsed is true

@@ -379,12 +379,20 @@ ScrollAnimatorNone::ScrollAnimatorNone(ScrollableArea* scrollableArea)
     , m_horizontalData(this, &m_currentPosX, scrollableArea->visibleWidth())
     , m_verticalData(this, &m_currentPosY, scrollableArea->visibleHeight())
     , m_animationActive(false)
+    , m_firstVelocity(0)
+    , m_firstVelocitySet(false)
+    , m_firstVelocityIsVertical(false)
 {
 }
 
 ScrollAnimatorNone::~ScrollAnimatorNone()
 {
     stopAnimationTimerIfNeeded();
+}
+
+void ScrollAnimatorNone::fireUpAnAnimation(FloatPoint fp)
+{
+    UNUSED_PARAM(fp);
 }
 
 bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
@@ -412,8 +420,21 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
     case ScrollByPixel:
         parameters = Parameters(true, 11 * kTickTime, 2 * kTickTime, Cubic, 3 * kTickTime, Cubic, 3 * kTickTime, Quadratic, 1.25);
         break;
-    default:
-        break;
+    case ScrollByPixelVelocity:
+        // FIXME: Generalize the scroll interface to support a richer set of parameters.
+        if (m_firstVelocitySet) {
+            float x = m_firstVelocityIsVertical ? multiplier : m_firstVelocity;
+            float y = m_firstVelocityIsVertical ? m_firstVelocity : multiplier;
+            FloatPoint fp(x, y);
+            fireUpAnAnimation(fp);
+            m_firstVelocitySet = false;
+            m_firstVelocityIsVertical = false;
+        } else {
+            m_firstVelocitySet = true;
+            m_firstVelocityIsVertical = orientation == VerticalScrollbar;
+            m_firstVelocity = multiplier;
+        }
+        return true;
     }
 
     // If the individual input setting is disabled, bail.
