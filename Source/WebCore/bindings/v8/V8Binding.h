@@ -329,7 +329,10 @@ namespace WebCore {
         return v8ValueToWebCoreString(object);
     }
 
-    String toWebCoreString(const v8::Arguments&, int index);
+    inline String toWebCoreString(const v8::Arguments& args, int index)
+    {
+        return v8ValueToWebCoreString(args[index]);
+    }
 
     // The string returned by this function is still owned by the argument
     // and will be deallocated when the argument is deallocated.
@@ -338,27 +341,62 @@ namespace WebCore {
         return reinterpret_cast<const uint16_t*>(str.characters());
     }
 
-    bool isUndefinedOrNull(v8::Handle<v8::Value> value);
+    inline bool isUndefinedOrNull(v8::Handle<v8::Value> value)
+    {
+        return value->IsNull() || value->IsUndefined();
+    }
 
     // Returns true if the provided object is to be considered a 'host object', as used in the
     // HTML5 structured clone algorithm.
-    bool isHostObject(v8::Handle<v8::Object>);
+    inline bool isHostObject(v8::Handle<v8::Object> object)
+    {
+        // If the object has any internal fields, then we won't be able to serialize or deserialize
+        // them; conveniently, this is also a quick way to detect DOM wrapper objects, because
+        // the mechanism for these relies on data stored in these fields. We should
+        // catch external array data and external pixel data as a special case (noting that CanvasPixelArrays
+        // can't be serialized without being wrapped by ImageData according to the standard).
+        return object->InternalFieldCount() || object->HasIndexedPropertiesInPixelData() || object->HasIndexedPropertiesInExternalArrayData();
+    }
 
-    v8::Handle<v8::Boolean> v8Boolean(bool value);
+    inline v8::Handle<v8::Boolean> v8Boolean(bool value)
+    {
+        return value ? v8::True() : v8::False();
+    }
 
-    String toWebCoreStringWithNullCheck(v8::Handle<v8::Value> value);
+    inline String toWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
+    {
+        return value->IsNull() ? String() : v8ValueToWebCoreString(value);
+    }
 
-    AtomicString toAtomicWebCoreStringWithNullCheck(v8::Handle<v8::Value> value);
+    inline AtomicString toAtomicWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
+    {
+        return value->IsNull() ? AtomicString() : v8ValueToAtomicWebCoreString(value);
+    }
 
-    String toWebCoreStringWithNullOrUndefinedCheck(v8::Handle<v8::Value> value);
+    inline String toWebCoreStringWithNullOrUndefinedCheck(v8::Handle<v8::Value> value)
+    {
+        return (value->IsNull() || value->IsUndefined()) ? String() : toWebCoreString(value);
+    }
 
-    v8::Handle<v8::String> v8UndetectableString(const String& str);
+    inline v8::Handle<v8::String> v8UndetectableString(const String& str)
+    {
+        return v8::String::NewUndetectable(fromWebCoreString(str), str.length());
+    }
 
-    v8::Handle<v8::Value> v8StringOrNull(const String& str);
+    inline v8::Handle<v8::Value> v8StringOrNull(const String& str)
+    {
+        return str.isNull() ? v8::Handle<v8::Value>(v8::Null()) : v8::Handle<v8::Value>(v8String(str));
+    }
 
-    v8::Handle<v8::Value> v8StringOrUndefined(const String& str);
+    inline v8::Handle<v8::Value> v8StringOrUndefined(const String& str)
+    {
+        return str.isNull() ? v8::Handle<v8::Value>(v8::Undefined()) : v8::Handle<v8::Value>(v8String(str));
+    }
 
-    v8::Handle<v8::Value> v8StringOrFalse(const String& str);
+    inline v8::Handle<v8::Value> v8StringOrFalse(const String& str)
+    {
+        return str.isNull() ? v8::Handle<v8::Value>(v8::False()) : v8::Handle<v8::Value>(v8String(str));
+    }
 
     template <class T> v8::Handle<v8::Value> v8NumberArray(const Vector<T>& values)
     {
@@ -369,9 +407,15 @@ namespace WebCore {
         return result;
     }
 
-    double toWebCoreDate(v8::Handle<v8::Value> object);
+    inline double toWebCoreDate(v8::Handle<v8::Value> object)
+    {
+        return (object->IsDate() || object->IsNumber()) ? object->NumberValue() : std::numeric_limits<double>::quiet_NaN();
+    }
 
-    v8::Handle<v8::Value> v8DateOrNull(double value);
+    inline v8::Handle<v8::Value> v8DateOrNull(double value)
+    {
+        return isfinite(value) ? v8::Date::New(value) : v8::Handle<v8::Value>(v8::Null());
+    }
 
     v8::Persistent<v8::FunctionTemplate> createRawTemplate();
 
