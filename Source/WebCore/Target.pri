@@ -1812,7 +1812,6 @@ HEADERS += \
     fileapi/FileReaderLoader.h \
     fileapi/FileReaderLoaderClient.h \
     fileapi/FileReaderSync.h \
-    fileapi/FileStreamProxy.h \
     fileapi/FileThread.h \
     fileapi/FileThreadTask.h \
     fileapi/OperationNotAllowedException.h \
