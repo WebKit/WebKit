@@ -112,6 +112,13 @@ static leveldb::Status openDB(leveldb::Comparator* comparator, leveldb::Env* env
     return leveldb::DB::Open(options, path.utf8().data(), db);
 }
 
+bool LevelDBDatabase::destroy(const String& fileName)
+{
+    leveldb::Options options;
+    const leveldb::Status s = leveldb::DestroyDB(fileName.utf8().data(), options);
+    return s.ok();
+}
+
 PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const LevelDBComparator* comparator)
 {
     OwnPtr<ComparatorAdapter> comparatorAdapter = adoptPtr(new ComparatorAdapter(comparator));

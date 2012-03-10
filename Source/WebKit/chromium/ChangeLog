@@ -1,3 +1,19 @@
+2012-03-09  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Handle LevelDB database corruption
+        https://bugs.webkit.org/show_bug.cgi?id=79413
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gypi:
+        * tests/LevelDBTest.cpp: Added.
+        (WebCore):
+        (SimpleComparator):
+        (WebCore::SimpleComparator::compare):
+        (WebCore::SimpleComparator::name):
+        (WebCore::encodeString):
+        (WebCore::TEST):
+
 2012-03-09  Tim Dresser  <tdresser@chromium.org>
 
         [chromium] Increase size of Combo Box Options for touch and high DPI devices
