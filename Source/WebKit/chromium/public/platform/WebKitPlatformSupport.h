@@ -58,7 +58,6 @@ class WebClipboard;
 class WebCookieJar;
 class WebFileSystem;
 class WebFileUtilities;
-class WebGraphicsContext3D;
 class WebIDBFactory; // FIXME: Does this belong in platform?
 class WebIDBKey; // FIXME: Does this belong in platform?
 class WebMediaStreamCenter;
@@ -386,8 +385,6 @@ public:
     // May return null if GPU is not supported.
     // Returns newly allocated and initialized offscreen WebGraphicsContext3D instance.
     virtual WebGraphicsContext3D* createOffscreenGraphicsContext3D(const WebGraphicsContext3D::Attributes&) { return 0; }
-    // Deprecated.
-    virtual WebGraphicsContext3D* createGraphicsContext3D() { return 0; }
 
     // Audio --------------------------------------------------------------
 

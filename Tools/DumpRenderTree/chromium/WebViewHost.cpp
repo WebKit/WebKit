@@ -277,11 +277,11 @@ WebStorageNamespace* WebViewHost::createSessionStorageNamespace(unsigned quota)
     return webkit_support::CreateSessionStorageNamespace(quota);
 }
 
-WebKit::WebGraphicsContext3D* WebViewHost::createGraphicsContext3D(const WebKit::WebGraphicsContext3D::Attributes& attributes, bool direct)
+WebKit::WebGraphicsContext3D* WebViewHost::createGraphicsContext3D(const WebKit::WebGraphicsContext3D::Attributes& attributes)
 {
     if (!webView())
         return 0;
-    return webkit_support::CreateGraphicsContext3D(attributes, webView(), direct);
+    return webkit_support::CreateGraphicsContext3D(attributes, webView(), true);
 }
 
 void WebViewHost::didAddMessageToConsole(const WebConsoleMessage& message, const WebString& sourceName, unsigned sourceLine)

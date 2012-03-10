@@ -3235,7 +3235,7 @@ PassOwnPtr<WebKit::WebGraphicsContext3D> WebViewImpl::createCompositorGraphicsCo
     attributes.antialias = false;
     attributes.shareResources = true;
 
-    OwnPtr<WebGraphicsContext3D> webContext = adoptPtr(client()->createGraphicsContext3D(attributes, true /* renderDirectlyToHostWindow */));
+    OwnPtr<WebGraphicsContext3D> webContext = adoptPtr(client()->createGraphicsContext3D(attributes));
     if (!webContext)
         return nullptr;
 

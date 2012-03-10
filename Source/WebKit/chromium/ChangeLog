@@ -1,3 +1,18 @@
+2012-03-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Deprecate renderDirectlyToWebView parameter of WebViewClient::createGraphicsContext3D()
+        https://bugs.webkit.org/show_bug.cgi?id=80523
+
+        Reviewed by Darin Fisher.
+
+        * public/WebViewClient.h:
+        (WebViewClient):
+        (WebKit::WebViewClient::createGraphicsContext3D):
+        * public/platform/WebKitPlatformSupport.h:
+        (WebKit):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::createCompositorGraphicsContext3D):
+
 2012-03-09  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Handle LevelDB database corruption

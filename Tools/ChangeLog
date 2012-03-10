@@ -1,3 +1,15 @@
+2012-03-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Deprecate renderDirectlyToWebView parameter of WebViewClient::createGraphicsContext3D()
+        https://bugs.webkit.org/show_bug.cgi?id=80523
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createGraphicsContext3D):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-03-09  Eric Seidel  <eric@webkit.org>
 
         build-webkit should build Source/WTF on Mac
