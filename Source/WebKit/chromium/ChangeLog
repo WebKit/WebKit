@@ -1,3 +1,12 @@
+2012-03-09  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Roll chromium DEPS to r125600
+        https://bugs.webkit.org/show_bug.cgi?id=80722
+
+        Unreviewed
+
+        * DEPS:
+
 2012-03-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Clean up culling tests and templatize to test impl constructs
