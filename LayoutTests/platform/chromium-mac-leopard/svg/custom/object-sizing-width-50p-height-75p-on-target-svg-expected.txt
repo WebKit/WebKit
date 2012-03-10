@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 500x154 layerType: background only
+layer at (0,0) size 125x112
+  RenderBlock (positioned) zI: -1 {div} at (0,0) size 125x112 [bgcolor=#FF0000]
+layer at (0,0) size 500x154 layerType: foreground only
+  RenderBlock {html} at (0,0) size 500x154
+    RenderBody {body} at (0,0) size 500x154
+      RenderBlock {p} at (0,0) size 500x154
+        RenderEmbeddedObject {object} at (0,0) size 250x150
+          layer at (0,0) size 250x150
+            RenderView at (0,0) size 250x150
+          layer at (0,0) size 125x112
+            RenderSVGRoot {svg} at (0,0) size 125x112
+              RenderSVGRect {rect} at (0,0) size 125x112 [fill={[type=SOLID] [color=#ADD8E6]}] [x=0.00] [y=0.00] [width=125.00] [height=112.00]
+              RenderSVGRect {rect} at (6,5) size 113x102 [fill={[type=SOLID] [color=#008000]}] [x=6.25] [y=5.60] [width=112.50] [height=100.80]
+layer at (0,117) size 125x112
+  RenderSVGRoot {svg} at (0,117) size 125x112
+    RenderSVGRect {rect} at (0,117) size 125x112 [fill={[type=SOLID] [color=#ADD8E6]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (6,122) size 113x102 [fill={[type=SOLID] [color=#008000]}] [x=5.00] [y=5.00] [width=90.00] [height=90.00]
