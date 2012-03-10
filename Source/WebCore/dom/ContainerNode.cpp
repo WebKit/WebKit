@@ -26,6 +26,7 @@
 #include "ChildListMutationScope.h"
 #include "ContainerNodeAlgorithms.h"
 #include "DeleteButtonController.h"
+#include "DocumentFragment.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FloatRect.h"
@@ -61,8 +62,9 @@ static NodeCallbackQueue* s_postAttachCallbackQueue;
 static size_t s_attachDepth;
 static bool s_shouldReEnableMemoryCacheCallsAfterAttach;
 
-static inline void collectNodes(Node* node, NodeVector& nodes)
+static inline void collectNodes(ContainerNode* node, NodeVector& nodes)
 {
+    nodes.reserveCapacity(nodes.size() + node->childNodeCount());
     for (Node* child = node->firstChild(); child; child = child->nextSibling())
         nodes.append(child);
 }
@@ -73,7 +75,7 @@ static void collectTargetNodes(Node* node, NodeVector& nodes)
         nodes.append(node);
         return;
     }
-    collectNodes(node, nodes);
+    collectNodes(static_cast<DocumentFragment*>(node), nodes);
 }
 
 void ContainerNode::removeAllChildren()
