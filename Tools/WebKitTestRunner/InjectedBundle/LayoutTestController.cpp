@@ -150,7 +150,8 @@ void LayoutTestController::waitForPolicyDelegate()
 void LayoutTestController::waitUntilDone()
 {
     m_waitToDump = true;
-    initializeWaitToDumpWatchdogTimerIfNeeded();
+    if (InjectedBundle::shared().useWaitToDumpWatchdogTimer())
+        initializeWaitToDumpWatchdogTimerIfNeeded();
 }
 
 void LayoutTestController::waitToDumpWatchdogTimerFired()

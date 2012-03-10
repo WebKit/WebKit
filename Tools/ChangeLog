@@ -1,3 +1,51 @@
+2012-03-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        [WK2] run-perf-tests should be able to run with WTR
+        https://bugs.webkit.org/show_bug.cgi?id=80042
+
+        Reviewed by Martin Robinson.
+
+        Add an option to PerfTestRunner to use WebKitTestRunner instead of
+        DumpRenderTree and add the '--no-timeout' flag to WebKitTestRunner
+        to avoid timing out when running performance tests.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::InjectedBundle): Initialize m_useWaitToDumpWatchdogTimer
+        to true.
+        (WTR::InjectedBundle::didReceiveMessage): Unpack the 'BeginTest' message
+        as a dictionary containing DumpPixels and UseWaitToDumpWatchdogTimer keys.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+        (WTR::InjectedBundle::useWaitToDumpWatchdogTimer): Make m_useWaitToDumpWatchdogTimer
+        publicly accessible.
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::waitUntilDone): Only initialize the watchdog if it
+        is required.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController): Initialize m_useWaitToDumpWatchdogTimer
+        to true.
+        (WTR::TestController::initialize): Set m_useWaitToDumpWatchdogTimer to false
+        if '--no-timeout' option is present.
+        (WTR::TestController::runUntil): Translate TimeoutDuration to a proper timeout
+        value, or -1.0 if timeout should not occur.
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::useWaitToDumpWatchdogTimer): Make m_useWaitToDumpWatchdogTimer
+        publicly accessible.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke): Pack the 'BeginTest' message as a dictionary,
+        containing DumpPixels and UseWaitToDumpWatchdogTimer keys and corresponding values.
+        Waiting for final message should not time out if not necessary.
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformRunUntil): Only set up a timeout if necessary.
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::TestController::platformRunUntil): Ditto.
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformRunUntil): Add a FIXME, indicating functionality
+        is missing.
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::platformRunUntil): Ditto.
+
 2012-03-09  Jon Lee  <jonlee@apple.com>
 
         Rename NotificationPresenter to NotificationClient

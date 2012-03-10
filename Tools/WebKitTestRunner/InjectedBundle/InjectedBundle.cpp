@@ -51,6 +51,7 @@ InjectedBundle::InjectedBundle()
     , m_topLoadingFrame(0)
     , m_state(Idle)
     , m_dumpPixels(false)
+    , m_useWaitToDumpWatchdogTimer(true)
 {
 }
 
@@ -131,8 +132,14 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
 {
     if (WKStringIsEqualToUTF8CString(messageName, "BeginTest")) {
         ASSERT(messageBody);
-        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
-        m_dumpPixels = WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody));
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+
+        WKRetainPtr<WKStringRef> dumpPixelsKey(AdoptWK, WKStringCreateWithUTF8CString("DumpPixels"));
+        m_dumpPixels = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, dumpPixelsKey.get())));
+
+        WKRetainPtr<WKStringRef> useWaitToDumpWatchdogTimerKey(AdoptWK, WKStringCreateWithUTF8CString("UseWaitToDumpWatchdogTimer"));
+        m_useWaitToDumpWatchdogTimer = WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, useWaitToDumpWatchdogTimerKey.get())));
 
         WKRetainPtr<WKStringRef> ackMessageName(AdoptWK, WKStringCreateWithUTF8CString("Ack"));
         WKRetainPtr<WKStringRef> ackMessageBody(AdoptWK, WKStringCreateWithUTF8CString("BeginTest"));

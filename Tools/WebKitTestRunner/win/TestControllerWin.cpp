@@ -172,6 +172,7 @@ static RunLoopResult runRunLoopUntil(bool& condition, HANDLE object, double time
 
 void TestController::platformRunUntil(bool& done, double timeout)
 {
+    // FIXME: No timeout should occur if timeout is equal to m_noTimeout (necessary when running performance tests).
     RunLoopResult result = runRunLoopUntil(done, webProcessCrashingEvent, timeout);
     if (result == TimedOut || result == ConditionSatisfied)
         return;

@@ -46,6 +46,7 @@ namespace WTR {
 
 static const double defaultLongTimeout = 30;
 static const double defaultShortTimeout = 5;
+static const double defaultNoTimeout = -1;
 
 static WKURLRef blankURL()
 {
@@ -72,6 +73,8 @@ TestController::TestController(int argc, const char* argv[])
     , m_doneResetting(false)
     , m_longTimeout(defaultLongTimeout)
     , m_shortTimeout(defaultShortTimeout)
+    , m_noTimeout(defaultNoTimeout)
+    , m_useWaitToDumpWatchdogTimer(true)
     , m_didPrintWebProcessCrashedMessage(false)
     , m_shouldExitWhenWebProcessCrashes(true)
     , m_beforeUnloadReturnValue(true)
@@ -245,6 +248,11 @@ void TestController::initialize(int argc, const char* argv[])
             m_longTimeout = atoi(argv[++i]);
             // Scale up the short timeout to match.
             m_shortTimeout = defaultShortTimeout * m_longTimeout / defaultLongTimeout;
+            continue;
+        }
+
+        if (argument == "--no-timeout") {
+            m_useWaitToDumpWatchdogTimer = false;
             continue;
         }
 
@@ -537,7 +545,21 @@ void TestController::run()
 
 void TestController::runUntil(bool& done, TimeoutDuration timeoutDuration)
 {
-    platformRunUntil(done, timeoutDuration == ShortTimeout ? m_shortTimeout : m_longTimeout);
+    double timeout;
+    switch (timeoutDuration) {
+    case ShortTimeout:
+        timeout = m_shortTimeout;
+        break;
+    case LongTimeout:
+        timeout = m_longTimeout;
+        break;
+    case NoTimeout:
+    default:
+        timeout = m_noTimeout;
+        break;
+    }
+
+    platformRunUntil(done, timeout);
 }
 
 // WKContextInjectedBundleClient

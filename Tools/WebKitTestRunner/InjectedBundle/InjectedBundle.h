@@ -76,6 +76,7 @@ public:
     void setTopLoadingFrame(WKBundleFrameRef frame) { m_topLoadingFrame = frame; }
 
     bool shouldDumpPixels() const { return m_dumpPixels; }
+    bool useWaitToDumpWatchdogTimer() const { return m_useWaitToDumpWatchdogTimer; }
     
     void postNewBeforeUnloadReturnValue(bool);
     void postAddChromeInputField();
@@ -125,6 +126,7 @@ private:
     State m_state;
 
     bool m_dumpPixels;
+    bool m_useWaitToDumpWatchdogTimer;
 
     WKRetainPtr<WKImageRef> m_pixelResult;
     WKRetainPtr<WKArrayRef> m_repaintRects;

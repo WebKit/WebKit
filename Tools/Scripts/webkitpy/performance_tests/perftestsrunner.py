@@ -99,6 +99,8 @@ class PerfTestsRunner(object):
                 help="Path to a JSON file to be merged into the JSON file when --output-json-path is present"),
             optparse.make_option("--test-results-server",
                 help="Upload the generated JSON file to the specified server when --output-json-path is present"),
+            optparse.make_option("--webkit-test-runner", "-2", action="store_true",
+                help="Use WebKitTestRunner rather than DumpRenderTree."),
             ]
 
         option_list = (perf_option_list + print_options)

@@ -53,6 +53,7 @@ void TestController::initializeTestPluginDirectory()
 
 void TestController::platformRunUntil(bool& done, double timeout)
 {
+    // FIXME: No timeout should occur if timeout is equal to m_noTimeout (necessary when running performance tests).
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent() + timeout;
     CFDateRef endDate = CFDateCreate(0, end);
     while (!done && CFAbsoluteTimeGetCurrent() < end)
