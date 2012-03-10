@@ -2,7 +2,7 @@ description(
 'This is a test case for <a https://bugs.webkit.org/show_bug.cgi?id=64679">bug 64679</a>.'
 );
 
-// These calls pass undefined as this value, and as such should show in toObject.
+// These calls pass undefined as this value, and as such should throw in toObject.
 shouldThrow("Array.prototype.toString.call(undefined)");
 shouldThrow("Array.prototype.toLocaleString.call(undefined)");
 shouldThrow("Array.prototype.concat.call(undefined, [])");
@@ -24,3 +24,6 @@ shouldThrow("Array.prototype.filter.call(undefined, toString)");
 shouldThrow("Array.prototype.reduce.call(undefined, toString)");
 shouldThrow("Array.prototype.reduceRight.call(undefined, toString)");
 shouldThrow("Array.prototype.map.call(undefined, toString)");
+
+// Test exception ordering in Array.prototype.toLocaleString ( https://bugs.webkit.org/show_bug.cgi?id=80663 )
+shouldThrow("[{toLocaleString:function(){throw 1}},{toLocaleString:function(){throw 2}}].toLocaleString()", '1');

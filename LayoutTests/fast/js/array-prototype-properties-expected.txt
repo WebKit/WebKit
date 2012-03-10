@@ -24,6 +24,7 @@ PASS Array.prototype.filter.call(undefined, toString) threw exception TypeError:
 PASS Array.prototype.reduce.call(undefined, toString) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.reduce.call(undefined, toString)').
 PASS Array.prototype.reduceRight.call(undefined, toString) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.reduceRight.call(undefined, toString)').
 PASS Array.prototype.map.call(undefined, toString) threw exception TypeError: 'undefined' is not an object (evaluating 'Array.prototype.map.call(undefined, toString)').
+PASS [{toLocaleString:function(){throw 1}},{toLocaleString:function(){throw 2}}].toLocaleString() threw exception 1.
 PASS successfullyParsed is true
 
 TEST COMPLETE

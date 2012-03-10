@@ -349,9 +349,13 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
             strBuffer.append(',');
 
         JSValue element = thisObj->get(exec, k);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
         if (!element.isUndefinedOrNull()) {
             JSObject* o = element.toObject(exec);
             JSValue conversionFunction = o->get(exec, exec->propertyNames().toLocaleString);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
             UString str;
             CallData callData;
             CallType callType = getCallData(conversionFunction, callData);
@@ -359,6 +363,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
                 str = call(exec, conversionFunction, callType, callData, element, exec->emptyList()).toString(exec)->value(exec);
             else
                 str = element.toString(exec)->value(exec);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
             strBuffer.append(str);
         }
     }

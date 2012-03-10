@@ -1,3 +1,16 @@
+2012-03-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Array.prototype.toLocaleString visits elements in wrong order under certain conditions
+        https://bugs.webkit.org/show_bug.cgi?id=80663
+
+        Reviewed by Michael Saboff.
+
+        The bug here is actually that we're continuing to process the array after an exception
+        has been thrown, and that the second value throw is overriding the first.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToLocaleString):
+
 2012-03-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKit compiled by gcc (Xcode 3.2.6) hangs while running DOM/Accessors.html
