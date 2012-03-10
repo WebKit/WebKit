@@ -48,13 +48,13 @@ static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp* now, co
  
 DisplayRefreshMonitor::~DisplayRefreshMonitor()
 {
-    cancelCallOnMainThread(DisplayRefreshMonitor::refreshDisplayOnMainThread, this);
-    
     if (m_displayLink) {
         CVDisplayLinkStop(m_displayLink);
         CVDisplayLinkRelease(m_displayLink);
         m_displayLink = 0;
     }
+
+    cancelCallOnMainThread(DisplayRefreshMonitor::refreshDisplayOnMainThread, this);
 }
 
 bool DisplayRefreshMonitor::requestRefreshCallback()
