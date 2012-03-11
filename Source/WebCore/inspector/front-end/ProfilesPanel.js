@@ -859,7 +859,7 @@ WebInspector.ProfilesPanel.prototype = {
     _reportHeapSnapshotProgress: function(done, total)
     {
         if (this.hasTemporaryProfile(WebInspector.DetailedHeapshotProfileType.TypeId)) {
-            this._temporaryRecordingProfile.sidebarElement.subtitle = WebInspector.UIString("%.2f%%", (done / total) * 100);
+            this._temporaryRecordingProfile.sidebarElement.subtitle = WebInspector.UIString("%.2f%", (done / total) * 100);
             this._temporaryRecordingProfile.sidebarElement.wait = true;
             if (done >= total)
                 this._removeTemporaryProfile();

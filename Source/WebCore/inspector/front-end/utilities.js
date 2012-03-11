@@ -758,7 +758,7 @@ String.sprintf = function(format, var_arg)
     return String.vsprintf(format, Array.prototype.slice.call(arguments, 1));
 }
 
-String.tokenizeFormatString = function(format)
+String.tokenizeFormatString = function(format, formatters)
 {
     var tokens = [];
     var substitutionIndex = 0;
@@ -773,22 +773,22 @@ String.tokenizeFormatString = function(format)
         tokens.push({ type: "specifier", specifier: specifier, precision: precision, substitutionIndex: substitutionIndex });
     }
 
+    function isDigit(c)
+    {
+        return !!/[0-9]/.exec(c);
+    }
+
     var index = 0;
     for (var precentIndex = format.indexOf("%", index); precentIndex !== -1; precentIndex = format.indexOf("%", index)) {
         addStringToken(format.substring(index, precentIndex));
         index = precentIndex + 1;
 
-        if (format[index] === "%") {
-            addStringToken("%");
-            ++index;
-            continue;
-        }
-
-        if (!isNaN(format[index])) {
+        if (isDigit(format[index])) {
             // The first character is a number, it might be a substitution index.
             var number = parseInt(format.substring(index), 10);
-            while (!isNaN(format[index]))
+            while (isDigit(format[index]))
                 ++index;
+
             // If the number is greater than zero and ends with a "$",
             // then this is a substitution index.
             if (number > 0 && format[index] === "$") {
@@ -805,8 +805,15 @@ String.tokenizeFormatString = function(format)
             precision = parseInt(format.substring(index), 10);
             if (isNaN(precision))
                 precision = 0;
-            while (!isNaN(format[index]))
+
+            while (isDigit(format[index]))
                 ++index;
+        }
+
+        if (!(format[index] in formatters)) {
+            addStringToken(format.substring(precentIndex, index + 1));
+            ++index;
+            continue;
         }
 
         addSpecifierToken(format[index], precision, substitutionIndex);
@@ -865,7 +872,7 @@ String.format = function(format, substitutions, formatters, initialValue, append
     }
 
     var result = initialValue;
-    var tokens = String.tokenizeFormatString(format);
+    var tokens = String.tokenizeFormatString(format, formatters);
     var usedSubstitutionIndexes = {};
 
     for (var i = 0; i < tokens.length; ++i) {

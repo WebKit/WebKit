@@ -358,7 +358,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     var pctUnused = Math.round(100 * unusedStylesheetSize / stylesheetSize);
                     if (!summary)
                         summary = result.addChild("", true);
-                    var entry = summary.addFormatted("%s: %s (%d%%) is not used by the current page.", url, Number.bytesToString(unusedStylesheetSize), pctUnused);
+                    var entry = summary.addFormatted("%s: %s (%d%) is not used by the current page.", url, Number.bytesToString(unusedStylesheetSize), pctUnused);
 
                     for (var j = 0; j < unusedRules.length; ++j)
                         entry.addSnippet(unusedRules[j]);
@@ -370,7 +370,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     return callback(null);
 
                 var totalUnusedPercent = Math.round(100 * totalUnusedStylesheetSize / totalStylesheetSize);
-                summary.value = String.sprintf("%s (%d%%) of CSS is not used by the current page.", Number.bytesToString(totalUnusedStylesheetSize), totalUnusedPercent);
+                summary.value = String.sprintf("%s (%d%) of CSS is not used by the current page.", Number.bytesToString(totalUnusedStylesheetSize), totalUnusedPercent);
 
                 callback(result);
             }

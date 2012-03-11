@@ -59,17 +59,17 @@ WebInspector.ProfileDataGridNode.prototype = {
         data["calls"] = this.numberOfCalls;
 
         if (this.profileView.showSelfTimeAsPercent.get())
-            data["self"] = WebInspector.UIString("%.2f%%", this.selfPercent);
+            data["self"] = WebInspector.UIString("%.2f%", this.selfPercent);
         else
             data["self"] = formatMilliseconds(this.selfTime);
 
         if (this.profileView.showTotalTimeAsPercent.get())
-            data["total"] = WebInspector.UIString("%.2f%%", this.totalPercent);
+            data["total"] = WebInspector.UIString("%.2f%", this.totalPercent);
         else
             data["total"] = formatMilliseconds(this.totalTime);
 
         if (this.profileView.showAverageTimeAsPercent.get())
-            data["average"] = WebInspector.UIString("%.2f%%", this.averagePercent);
+            data["average"] = WebInspector.UIString("%.2f%", this.averagePercent);
         else
             data["average"] = formatMilliseconds(this.averageTime);
 
