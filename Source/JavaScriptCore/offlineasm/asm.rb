@@ -167,6 +167,7 @@ File.open(outputFlnm, "w") {
         forSettings(computeSettingsCombinations(ast)[configIndex], ast) {
             | concreteSettings, lowLevelAST, backend |
             lowLevelAST = lowLevelAST.resolve(*buildOffsetsMap(lowLevelAST, offsetsList))
+            lowLevelAST.validate
             emitCodeInConfiguration(concreteSettings, lowLevelAST, backend) {
                 $asm.inAsm {
                     lowLevelAST.lower(backend)

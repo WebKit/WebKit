@@ -328,6 +328,44 @@ class NegImmediate
     end
 end
 
+class OrImmediates
+    def fold
+        @left = @left.fold
+        @right = @right.fold
+        return self unless @left.is_a? Immediate
+        return self unless @right.is_a? Immediate
+        Immediate.new(codeOrigin, @left.value | @right.value)
+    end
+end
+
+class AndImmediates
+    def fold
+        @left = @left.fold
+        @right = @right.fold
+        return self unless @left.is_a? Immediate
+        return self unless @right.is_a? Immediate
+        Immediate.new(codeOrigin, @left.value & @right.value)
+    end
+end
+
+class XorImmediates
+    def fold
+        @left = @left.fold
+        @right = @right.fold
+        return self unless @left.is_a? Immediate
+        return self unless @right.is_a? Immediate
+        Immediate.new(codeOrigin, @left.value ^ @right.value)
+    end
+end
+
+class BitnotImmediate
+    def fold
+        @child = @child.fold
+        return self unless @child.is_a? Immediate
+        Immediate.new(codeOrigin, ~@child.value)
+    end
+end
+
 #
 # node.resolveAfterSettings(offsets, sizes)
 #
@@ -337,6 +375,100 @@ end
 class Node
     def resolve(offsets, sizes)
         demacroify({}).resolveOffsets(offsets, sizes).fold
+    end
+end
+
+#
+# node.validate
+#
+# Checks that the node is ready for backend compilation.
+#
+
+class Node
+    def validate
+        raise "Unresolved #{dump} at #{codeOriginString}"
+    end
+    
+    def validateChildren
+        children.each {
+            | node |
+            node.validate
+        }
+    end
+end
+
+class Sequence
+    def validate
+        validateChildren
+    end
+end
+
+class Immediate
+    def validate
+    end
+end
+
+class RegisterID
+    def validate
+    end
+end
+
+class FPRegisterID
+    def validate
+    end
+end
+
+class Address
+    def validate
+        validateChildren
+    end
+end
+
+class BaseIndex
+    def validate
+        validateChildren
+    end
+end
+
+class AbsoluteAddress
+    def validate
+        validateChildren
+    end
+end
+
+class Instruction
+    def validate
+        validateChildren
+    end
+end
+
+class Error
+    def validate
+    end
+end
+
+class Label
+    def validate
+    end
+end
+
+class LocalLabel
+    def validate
+    end
+end
+
+class LabelReference
+    def validate
+    end
+end
+
+class LocalLabelReference
+    def validate
+    end
+end
+
+class Skip
+    def validate
     end
 end
 

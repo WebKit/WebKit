@@ -72,6 +72,7 @@ void Data::performAssertions(JSGlobalData& globalData)
     ASSERT(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag) == 4);
     ASSERT(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload) == 0);
 #endif
+#if USE(JSVALUE32_64)
     ASSERT(JSValue::Int32Tag == -1);
     ASSERT(JSValue::BooleanTag == -2);
     ASSERT(JSValue::NullTag == -3);
@@ -80,12 +81,26 @@ void Data::performAssertions(JSGlobalData& globalData)
     ASSERT(JSValue::EmptyValueTag == -6);
     ASSERT(JSValue::DeletedValueTag == -7);
     ASSERT(JSValue::LowestTag == -7);
+#else
+    ASSERT(TagBitTypeOther == 0x2);
+    ASSERT(TagBitBool == 0x4);
+    ASSERT(TagBitUndefined == 0x8);
+    ASSERT(ValueEmpty == 0x0);
+    ASSERT(ValueFalse == (TagBitTypeOther | TagBitBool));
+    ASSERT(ValueTrue == (TagBitTypeOther | TagBitBool | 1));
+    ASSERT(ValueUndefined == (TagBitTypeOther | TagBitUndefined));
+    ASSERT(ValueNull == TagBitTypeOther);
+#endif
     ASSERT(StringType == 5);
     ASSERT(ObjectType == 13);
     ASSERT(MasqueradesAsUndefined == 1);
     ASSERT(ImplementsHasInstance == 2);
     ASSERT(ImplementsDefaultHasInstance == 8);
+#if USE(JSVALUE64)
+    ASSERT(&globalData.heap.allocatorForObjectWithoutDestructor(sizeof(JSFinalObject)) - &globalData.heap.firstAllocatorWithoutDestructors() == 1);
+#else
     ASSERT(&globalData.heap.allocatorForObjectWithoutDestructor(sizeof(JSFinalObject)) - &globalData.heap.firstAllocatorWithoutDestructors() == 3);
+#endif
     ASSERT(FirstConstantRegisterIndex == 0x40000000);
     ASSERT(GlobalCode == 0);
     ASSERT(EvalCode == 1);

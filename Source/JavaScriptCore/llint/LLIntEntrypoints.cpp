@@ -30,8 +30,10 @@
 
 #include "JITCode.h"
 #include "JSGlobalData.h"
+#include "JSObject.h"
 #include "LLIntThunks.h"
 #include "LowLevelInterpreter.h"
+#include "ScopeChain.h"
 
 namespace JSC { namespace LLInt {
 

@@ -33,28 +33,8 @@ class Node
 end
 
 class SpecialRegister < NoChildren
-    def initialize(name)
-        @name = name
-    end
-    
     def armV7Operand
         @name
-    end
-    
-    def address?
-        false
-    end
-    
-    def label?
-        false
-    end
-    
-    def immediate?
-        false
-    end
-    
-    def register?
-        true
     end
 end
 
@@ -228,7 +208,7 @@ def armV7LowerShiftOps(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
-            when "lshifti", "rshifti", "urshifti"
+            when "lshifti", "rshifti", "urshifti", "lshiftp", "rshiftp", "urshiftp"
                 if node.operands.size == 2
                     newList << Instruction.new(node.codeOrigin, node.opcode, [armV7SanitizeShift(node.operands[0], newList), node.operands[1]])
                 else
@@ -469,7 +449,7 @@ def armV7LowerMalformedImmediates(list)
                 else
                     newList << node.armV7LowerMalformedImmediatesRecurse(newList)
                 end
-            when "muli"
+            when "muli", "mulp"
                 if node.operands[0].is_a? Immediate
                     tmp = Tmp.new(codeOrigin, :gpr)
                     newList << Instruction.new(node.codeOrigin, "move", [node.operands[0], tmp])
@@ -535,9 +515,9 @@ def armV7LowerMisplacedAddresses(list)
         if node.is_a? Instruction
             postInstructions = []
             case node.opcode
-            when "addi", "addp", "addis", "andi", "andp", "lshifti", "muli", "negi", "noti", "ori", "oris",
-                "orp", "rshifti", "urshifti", "subi", "subp", "subis", "xori", "xorp", /^bi/, /^bp/, /^bti/,
-                /^btp/, /^ci/, /^cp/, /^ti/
+            when "addi", "addp", "addis", "andi", "andp", "lshifti", "lshiftp", "muli", "mulp", "negi",
+                "negp", "noti", "ori", "oris", "orp", "rshifti", "urshifti", "rshiftp", "urshiftp", "subi",
+                "subp", "subis", "xori", "xorp", /^bi/, /^bp/, /^bti/, /^btp/, /^ci/, /^cp/, /^ti/
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
                                            armV7AsRegisters(newList, postInstructions, node.operands, "i"))
@@ -649,7 +629,7 @@ end
 #
 
 class Sequence
-    def lowerARMv7
+    def getModifiedListARMv7
         myList = @list
         
         # Verify that we will only see instructions and labels.
@@ -673,10 +653,8 @@ class Sequence
         myList = armV7LowerRegisterReuse(myList)
         myList = assignRegistersToTemporaries(myList, :gpr, ARMv7_EXTRA_GPRS)
         myList = assignRegistersToTemporaries(myList, :fpr, ARMv7_EXTRA_FPRS)
-        myList.each {
-            | node |
-            node.lower("ARMv7")
-        }
+        
+        return myList
     end
 end
 
@@ -792,13 +770,13 @@ class Instruction
             emitArmV7Compact("orrs", "orrs", operands)
         when "xori", "xorp"
             emitArmV7Compact("eors", "eor", operands)
-        when "lshifti"
+        when "lshifti", "lshiftp"
             emitArmV7Compact("lsls", "lsls", operands)
-        when "rshifti"
+        when "rshifti", "rshiftp"
             emitArmV7Compact("asrs", "asrs", operands)
-        when "urshifti"
+        when "urshifti", "urshiftp"
             emitArmV7Compact("lsrs", "lsrs", operands)
-        when "muli"
+        when "muli", "mulp"
             if operands.size == 2 or operands[0] == operands[2] or operands[1] == operands[2]
                 emitArmV7("muls", operands)
             else
@@ -807,11 +785,11 @@ class Instruction
             end
         when "subi", "subp", "subis"
             emitArmV7Compact("subs", "subs", operands)
-        when "negi"
+        when "negi", "negp"
             $asm.puts "rsbs #{operands[0].armV7Operand}, #{operands[0].armV7Operand}, \#0"
         when "noti"
             $asm.puts "mvns #{operands[0].armV7Operand}, #{operands[0].armV7Operand}"
-        when "loadi", "loadp"
+        when "loadi", "loadis", "loadp"
             $asm.puts "ldr #{armV7FlippedOperands(operands)}"
         when "storei", "storep"
             $asm.puts "str #{armV7Operands(operands)}"

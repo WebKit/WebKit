@@ -32,13 +32,37 @@ def isX64
     end
 end
 
+class SpecialRegister < NoChildren
+    def x86Operand(kind)
+        raise unless @name =~ /^r/
+        raise unless isX64
+        case kind
+        when :half
+            "%" + @name + "w"
+        when :int
+            "%" + @name + "d"
+        when :ptr
+            "%" + @name
+        else
+            raise
+        end
+    end
+    def x86CallOperand(kind)
+        "*#{x86Operand(kind)}"
+    end
+end
+
+X64_SCRATCH_REGISTER = SpecialRegister.new("r11")
+
 class RegisterID
     def supports8BitOnX86
         case name
         when "t0", "a0", "r0", "t1", "a1", "r1", "t2", "t3"
             true
-        when "t4", "cfr"
+        when "cfr", "ttnr", "tmr"
             false
+        when "t4", "t5"
+            isX64
         else
             raise
         end
@@ -112,17 +136,30 @@ class RegisterID
                 raise
             end
         when "cfr"
-            case kind
-            when :byte
-                "%dil"
-            when :half
-                "%di"
-            when :int
-                "%edi"
-            when :ptr
-                isX64 ? "%rdi" : "%edi"
+            if isX64
+                case kind
+                when :half
+                    "%r13w"
+                when :int
+                    "%r13d"
+                when :ptr
+                    "%r13"
+                else
+                    raise
+                end
             else
-                raise
+                case kind
+                when :byte
+                    "%dil"
+                when :half
+                    "%di"
+                when :int
+                    "%edi"
+                when :ptr
+                    "%edi"
+                else
+                    raise
+                end
             end
         when "sp"
             case kind
@@ -136,6 +173,48 @@ class RegisterID
                 isX64 ? "%rsp" : "%esp"
             else
                 raise
+            end
+        when "t5"
+            raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64
+            case kind
+            when :byte
+                "%dil"
+            when :half
+                "%di"
+            when :int
+                "%edi"
+            when :ptr
+                "%rdi"
+            end
+        when "t6"
+            raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64
+            case kind
+            when :half
+                "%r10w"
+            when :int
+                "%r10d"
+            when :ptr
+                "%r10"
+            end
+        when "csr1"
+            raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64
+            case kind
+            when :half
+                "%r14w"
+            when :int
+                "%r14d"
+            when :ptr
+                "%r14"
+            end
+        when "csr2"
+            raise "Cannot use #{name} in 32-bit X86 at #{codeOriginString}" unless isX64
+            case kind
+            when :half
+                "%r15w"
+            when :int
+                "%r15d"
+            when :ptr
+                "%r15"
             end
         else
             raise "Bad register #{name} for X86 at #{codeOriginString}"
@@ -172,6 +251,13 @@ class FPRegisterID
 end
 
 class Immediate
+    def validX86Immediate?
+        if isX64
+            value >= -0x80000000 and value <= 0x7fffffff
+        else
+            true
+        end
+    end
     def x86Operand(kind)
         "$#{value}"
     end
@@ -210,7 +296,7 @@ class BaseIndex
     end
 
     def x86CallOperand(kind)
-        "*#{x86operand(kind)}"
+        "*#{x86Operand(kind)}"
     end
 end
 
@@ -241,6 +327,47 @@ end
 class LocalLabelReference
     def x86CallOperand(kind)
         asmLabel
+    end
+end
+
+class Sequence
+    def getModifiedListX86_64
+        newList = []
+        
+        @list.each {
+            | node |
+            newNode = node
+            if node.is_a? Instruction
+                unless node.opcode == "move"
+                    usedScratch = false
+                    newOperands = node.operands.map {
+                        | operand |
+                        if operand.immediate? and not operand.validX86Immediate?
+                            if usedScratch
+                                raise "Attempt to use scratch register twice at #{operand.codeOriginString}"
+                            end
+                            newList << Instruction.new(operand.codeOrigin, "move", [operand, X64_SCRATCH_REGISTER])
+                            usedScratch = true
+                            X64_SCRATCH_REGISTER
+                        else
+                            operand
+                        end
+                    }
+                    newNode = Instruction.new(node.codeOrigin, node.opcode, newOperands)
+                end
+            else
+                unless node.is_a? Label or
+                        node.is_a? LocalLabel or
+                        node.is_a? Skip
+                    raise "Unexpected #{node.inspect} at #{node.codeOrigin}" 
+                end
+            end
+            if newNode
+                newList << newNode
+            end
+        }
+        
+        return newList
     end
 end
 
@@ -458,6 +585,16 @@ class Instruction
         end
     end
     
+    def handleX86Mul(kind)
+        if operands.size == 3 and operands[0].is_a? Immediate
+            $asm.puts "imul#{x86Suffix(kind)} #{x86Operands(kind, kind, kind)}"
+        else
+            # FIXME: could do some peephole in case the left operand is immediate and it's
+            # a power of two.
+            handleX86Op("imul#{x86Suffix(kind)}", kind)
+        end
+    end
+    
     def handleMove
         if Immediate.new(nil, 0) == operands[0] and operands[1].is_a? RegisterID
             $asm.puts "xor#{x86Suffix(:ptr)} #{operands[1].x86Operand(:ptr)}, #{operands[1].x86Operand(:ptr)}"
@@ -489,16 +626,16 @@ class Instruction
             handleX86Op("and#{x86Suffix(:ptr)}", :ptr)
         when "lshifti"
             handleX86Shift("sall", :int)
+        when "lshiftp"
+            handleX86Shift("sal#{x86Suffix(:ptr)}", :ptr)
         when "muli"
-            if operands.size == 3 and operands[0].is_a? Immediate
-                $asm.puts "imull #{x86Operands(:int, :int, :int)}"
-            else
-                # FIXME: could do some peephole in case the left operand is immediate and it's
-                # a power of two.
-                handleX86Op("imull", :int)
-            end
+            handleX86Mul(:int)
+        when "mulp"
+            handleX86Mul(:ptr)
         when "negi"
             $asm.puts "negl #{x86Operands(:int)}"
+        when "negp"
+            $asm.puts "neg#{x86Suffix(:ptr)} #{x86Operands(:ptr)}"
         when "noti"
             $asm.puts "notl #{x86Operands(:int)}"
         when "ori"
@@ -507,8 +644,12 @@ class Instruction
             handleX86Op("or#{x86Suffix(:ptr)}", :ptr)
         when "rshifti"
             handleX86Shift("sarl", :int)
+        when "rshiftp"
+            handleX86Shift("sar#{x86Suffix(:ptr)}", :ptr)
         when "urshifti"
             handleX86Shift("shrl", :int)
+        when "urshiftp"
+            handleX86Shift("shr#{x86Suffix(:ptr)}", :ptr)
         when "subi"
             handleX86Sub(:int)
         when "subp"
@@ -516,9 +657,15 @@ class Instruction
         when "xori"
             handleX86Op("xorl", :int)
         when "xorp"
-            handleX86Op("xor#{x86Suffix(:ptr)}", :int)
+            handleX86Op("xor#{x86Suffix(:ptr)}", :ptr)
         when "loadi", "storei"
             $asm.puts "movl #{x86Operands(:int, :int)}"
+        when "loadis"
+            if isX64
+                $asm.puts "movslq #{x86Operands(:int, :ptr)}"
+            else
+                $asm.puts "movl #{x86Operands(:int, :int)}"
+            end
         when "loadp", "storep"
             $asm.puts "mov#{x86Suffix(:ptr)} #{x86Operands(:ptr, :ptr)}"
         when "loadb"
@@ -701,7 +848,7 @@ class Instruction
         when "btbnz"
             handleX86BranchTest("jnz", :byte)
         when "jmp"
-            $asm.puts "jmp #{operands[0].x86CallOperand(:int)}"
+            $asm.puts "jmp #{operands[0].x86CallOperand(:ptr)}"
         when "baddio"
             handleX86OpBranch("addl", "jo", :int)
         when "baddpo"
@@ -825,9 +972,9 @@ class Instruction
             $asm.puts "psrlq $32, %xmm7"
             $asm.puts "movsd %xmm7, #{operands[2].x86Operand(:int)}"
         when "fp2d"
-            $asm.puts "movd #{operands[0].x86Operands(:ptr)}, #{operands[1].x86Operand(:double)}"
+            $asm.puts "movd #{operands[0].x86Operand(:ptr)}, #{operands[1].x86Operand(:double)}"
         when "fd2p"
-            $asm.puts "movd #{operands[0].x86Operands(:double)}, #{operands[1].x86Operand(:ptr)}"
+            $asm.puts "movd #{operands[0].x86Operand(:double)}, #{operands[1].x86Operand(:ptr)}"
         when "bo"
             $asm.puts "jo #{operands[0].asmLabel}"
         when "bs"

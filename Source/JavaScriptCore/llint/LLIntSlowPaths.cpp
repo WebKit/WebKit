@@ -65,16 +65,7 @@ namespace JSC { namespace LLInt {
 #define LLINT_OP_C(index) (exec->r(pc[index].u.operand))
 
 #define LLINT_RETURN_TWO(first, second) do {       \
-        union {                                    \
-            struct {                               \
-                void* a;                           \
-                void* b;                           \
-            } pair;                                \
-            int64_t i;                             \
-        } __rt_u;                                  \
-        __rt_u.pair.a = first;                     \
-        __rt_u.pair.b = second;                    \
-        return __rt_u.i;                           \
+        return encodeResult(first, second);        \
     } while (false)
 
 #define LLINT_END_IMPL() LLINT_RETURN_TWO(pc, exec)
@@ -167,7 +158,6 @@ extern "C" SlowPathReturnType llint_trace_operand(ExecState* exec, Instruction* 
 
 extern "C" SlowPathReturnType llint_trace_value(ExecState* exec, Instruction* pc, int fromWhere, int operand)
 {
-    LLINT_BEGIN();
     JSValue value = LLINT_OP_C(operand).jsValue();
     union {
         struct {
@@ -188,14 +178,13 @@ extern "C" SlowPathReturnType llint_trace_value(ExecState* exec, Instruction* pc
             u.bits.tag,
             u.bits.payload,
             value.description());
-    LLINT_END();
+    LLINT_END_IMPL();
 }
 
 LLINT_SLOW_PATH_DECL(trace_prologue)
 {
-    LLINT_BEGIN();
     dataLog("%p / %p: in prologue.\n", exec->codeBlock(), exec);
-    LLINT_END();
+    LLINT_END_IMPL();
 }
 
 static void traceFunctionPrologue(ExecState* exec, const char* comment, CodeSpecializationKind kind)
@@ -211,54 +200,52 @@ static void traceFunctionPrologue(ExecState* exec, const char* comment, CodeSpec
 
 LLINT_SLOW_PATH_DECL(trace_prologue_function_for_call)
 {
-    LLINT_BEGIN();
     traceFunctionPrologue(exec, "call prologue", CodeForCall);
-    LLINT_END();
+    LLINT_END_IMPL();
 }
 
 LLINT_SLOW_PATH_DECL(trace_prologue_function_for_construct)
 {
-    LLINT_BEGIN();
     traceFunctionPrologue(exec, "construct prologue", CodeForConstruct);
-    LLINT_END();
+    LLINT_END_IMPL();
 }
 
 LLINT_SLOW_PATH_DECL(trace_arityCheck_for_call)
 {
-    LLINT_BEGIN();
     traceFunctionPrologue(exec, "call arity check", CodeForCall);
-    LLINT_END();
+    LLINT_END_IMPL();
 }
 
 LLINT_SLOW_PATH_DECL(trace_arityCheck_for_construct)
 {
-    LLINT_BEGIN();
     traceFunctionPrologue(exec, "construct arity check", CodeForConstruct);
-    LLINT_END();
+    LLINT_END_IMPL();
 }
 
 LLINT_SLOW_PATH_DECL(trace)
 {
-    LLINT_BEGIN();
     dataLog("%p / %p: executing bc#%zu, %s, scope %p\n",
             exec->codeBlock(),
             exec,
             static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
             opcodeNames[exec->globalData().interpreter->getOpcodeID(pc[0].u.opcode)],
             exec->scopeChain());
-    LLINT_END();
+    if (exec->globalData().interpreter->getOpcodeID(pc[0].u.opcode) == op_ret) {
+        dataLog("Will be returning to %p\n", exec->returnPC().value());
+        dataLog("The new cfr will be %p\n", exec->callerFrame());
+    }
+    LLINT_END_IMPL();
 }
 
 LLINT_SLOW_PATH_DECL(special_trace)
 {
-    LLINT_BEGIN();
     dataLog("%p / %p: executing special case bc#%zu, op#%u, return PC is %p\n",
             exec->codeBlock(),
             exec,
             static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
             exec->globalData().interpreter->getOpcodeID(pc[0].u.opcode),
             exec->returnPC().value());
-    LLINT_END();
+    LLINT_END_IMPL();
 }
 
 inline bool shouldJIT(ExecState* exec)
@@ -298,6 +285,8 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
         codeBlock->jitSoon();
         return true;
     }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 enum EntryKind { Prologue, ArityCheck };
@@ -1407,7 +1396,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
     
     execCallee->uncheckedR(RegisterFile::Callee) = calleeAsValue;
     execCallee->setCallerFrame(exec);
-    exec->uncheckedR(RegisterFile::ArgumentCount).tag() = bitwise_cast<int32_t>(pc + OPCODE_LENGTH(op_call_varargs));
+    exec->setCurrentVPC(pc + OPCODE_LENGTH(op_call_varargs));
     
     return setUpCall(execCallee, pc, CodeForCall, calleeAsValue);
 }
@@ -1425,7 +1414,7 @@ LLINT_SLOW_PATH_DECL(slow_path_call_eval)
     execCallee->setScopeChain(exec->scopeChain());
     execCallee->setReturnPC(bitwise_cast<Instruction*>(&llint_generic_return_point));
     execCallee->setCodeBlock(0);
-    exec->uncheckedR(RegisterFile::ArgumentCount).tag() = bitwise_cast<int32_t>(pc + OPCODE_LENGTH(op_call_eval));
+    exec->setCurrentVPC(pc + OPCODE_LENGTH(op_call_eval));
     
     if (!isHostFunction(calleeAsValue, globalFuncEval))
         return setUpCall(execCallee, pc, CodeForCall, calleeAsValue);

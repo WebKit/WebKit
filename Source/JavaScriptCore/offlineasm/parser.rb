@@ -104,7 +104,7 @@ def lex(str, fileName)
             result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
         when /\A::/
             result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
-        when /\A[:,\(\)\[\]=\+\-*]/
+        when /\A[:,\(\)\[\]=\+\-~\|&^*]/
             result << Token.new(CodeOrigin.new(fileName, lineNumber), $&)
         else
             raise "Lexer error at #{CodeOrigin.new(fileName, lineNumber).to_s}, unexpected sequence #{str[0..20].inspect}"
@@ -322,6 +322,9 @@ class Parser
         if @tokens[@idx] == "-"
             @idx += 1
             NegImmediate.new(@tokens[@idx - 1].codeOrigin, parseExpressionAtom)
+        elsif @tokens[@idx] == "~"
+            @idx += 1
+            BitnotImmediate.new(@tokens[@idx - 1].codeOrigin, parseExpressionAtom)
         elsif @tokens[@idx] == "("
             @idx += 1
             result = parseExpression
@@ -365,10 +368,10 @@ class Parser
     end
     
     def couldBeExpression
-        @tokens[@idx] == "-" or @tokens[@idx] == "sizeof" or isInteger(@tokens[@idx]) or isVariable(@tokens[@idx]) or @tokens[@idx] == "("
+        @tokens[@idx] == "-" or @tokens[@idx] == "~" or @tokens[@idx] == "sizeof" or isInteger(@tokens[@idx]) or isVariable(@tokens[@idx]) or @tokens[@idx] == "("
     end
     
-    def parseExpression
+    def parseExpressionAdd
         skipNewLine
         result = parseExpressionMul
         while @tokens[@idx] == "+" or @tokens[@idx] == "-"
@@ -378,6 +381,33 @@ class Parser
             elsif @tokens[@idx] == "-"
                 @idx += 1
                 result = SubImmediates.new(@tokens[@idx - 1].codeOrigin, result, parseExpressionMul)
+            else
+                raise
+            end
+        end
+        result
+    end
+    
+    def parseExpressionAnd
+        skipNewLine
+        result = parseExpressionAdd
+        while @tokens[@idx] == "&"
+            @idx += 1
+            result = AndImmediates.new(@tokens[@idx - 1].codeOrigin, result, parseExpressionAdd)
+        end
+        result
+    end
+    
+    def parseExpression
+        skipNewLine
+        result = parseExpressionAnd
+        while @tokens[@idx] == "|" or @tokens[@idx] == "^"
+            if @tokens[@idx] == "|"
+                @idx += 1
+                result = OrImmediates.new(@tokens[@idx - 1].codeOrigin, result, parseExpressionAnd)
+            elsif @tokens[@idx] == "^"
+                @idx += 1
+                result = XorImmediates.new(@tokens[@idx - 1].codeOrigin, result, parseExpressionAnd)
             else
                 raise
             end

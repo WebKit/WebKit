@@ -383,6 +383,157 @@ class NegImmediate < Node
     end
 end
 
+class OrImmediates < Node
+    attr_reader :left, :right
+    
+    def initialize(codeOrigin, left, right)
+        super(codeOrigin)
+        @left = left
+        @right = right
+    end
+    
+    def children
+        [@left, @right]
+    end
+    
+    def mapChildren
+        OrImmediates.new(codeOrigin, (yield @left), (yield @right))
+    end
+    
+    def dump
+        "(#{left.dump} | #{right.dump})"
+    end
+    
+    def address?
+        false
+    end
+    
+    def label?
+        false
+    end
+    
+    def immediate?
+        true
+    end
+    
+    def register?
+        false
+    end
+end
+
+class AndImmediates < Node
+    attr_reader :left, :right
+    
+    def initialize(codeOrigin, left, right)
+        super(codeOrigin)
+        @left = left
+        @right = right
+    end
+    
+    def children
+        [@left, @right]
+    end
+    
+    def mapChildren
+        AndImmediates.new(codeOrigin, (yield @left), (yield @right))
+    end
+    
+    def dump
+        "(#{left.dump} & #{right.dump})"
+    end
+    
+    def address?
+        false
+    end
+    
+    def label?
+        false
+    end
+    
+    def immediate?
+        true
+    end
+    
+    def register?
+        false
+    end
+end
+
+class XorImmediates < Node
+    attr_reader :left, :right
+    
+    def initialize(codeOrigin, left, right)
+        super(codeOrigin)
+        @left = left
+        @right = right
+    end
+    
+    def children
+        [@left, @right]
+    end
+    
+    def mapChildren
+        XorImmediates.new(codeOrigin, (yield @left), (yield @right))
+    end
+    
+    def dump
+        "(#{left.dump} ^ #{right.dump})"
+    end
+    
+    def address?
+        false
+    end
+    
+    def label?
+        false
+    end
+    
+    def immediate?
+        true
+    end
+    
+    def register?
+        false
+    end
+end
+
+class BitnotImmediate < Node
+    attr_reader :child
+    
+    def initialize(codeOrigin, child)
+        super(codeOrigin)
+        @child = child
+    end
+    
+    def children
+        [@child]
+    end
+    
+    def mapChildren
+        BitnotImmediate.new(codeOrigin, (yield @child))
+    end
+    
+    def dump
+        "(~#{@child.dump})"
+    end
+    
+    def address?
+        false
+    end
+    
+    def label?
+        false
+    end
+    
+    def immediate?
+        true
+    end
+    
+    def register?
+        false
+    end
+end
+
 class RegisterID < NoChildren
     attr_reader :name
     
@@ -459,6 +610,28 @@ class FPRegisterID < NoChildren
     end
 end
 
+class SpecialRegister < NoChildren
+    def initialize(name)
+        @name = name
+    end
+    
+    def address?
+        false
+    end
+    
+    def label?
+        false
+    end
+    
+    def immediate?
+        false
+    end
+    
+    def register?
+        true
+    end
+end
+
 class Variable < NoChildren
     attr_reader :name
     
@@ -478,6 +651,10 @@ class Variable < NoChildren
     
     def dump
         name
+    end
+    
+    def inspect
+        "<variable #{name} at #{codeOriginString}>"
     end
 end
 
@@ -757,6 +934,10 @@ class LabelReference < Node
     def label?
         true
     end
+    
+    def immediate?
+        false
+    end
 end
 
 class LocalLabelReference < NoChildren
@@ -789,6 +970,10 @@ class LocalLabelReference < NoChildren
     
     def label?
         true
+    end
+    
+    def immediate?
+        false
     end
 end
 

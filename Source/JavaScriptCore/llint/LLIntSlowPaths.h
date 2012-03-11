@@ -38,7 +38,39 @@ struct Instruction;
 
 namespace LLInt {
 
+#if USE(JSVALUE64)
+struct SlowPathReturnType {
+    void* a;
+    void* b;
+    
+    SlowPathReturnType(void* a, void* b)
+        : a(a)
+        , b(b)
+    {
+    }
+};
+
+inline SlowPathReturnType encodeResult(void* a, void* b)
+{
+    return SlowPathReturnType(a, b);
+}
+#else
 typedef int64_t SlowPathReturnType;
+
+inline SlowPathReturnType encodeResult(void* a, void* b)
+{
+    union {
+        struct {
+            void* a;
+            void* b;
+        } pair;
+        int64_t i;
+    } u;
+    u.pair.a = a;
+    u.pair.b = b;
+    return u.i;
+}
+#endif
 
 extern "C" SlowPathReturnType llint_trace_operand(ExecState*, Instruction*, int fromWhere, int operand);
 extern "C" SlowPathReturnType llint_trace_value(ExecState*, Instruction*, int fromWhere, int operand);
