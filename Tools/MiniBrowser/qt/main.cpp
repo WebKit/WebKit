@@ -39,9 +39,6 @@
 
 int main(int argc, char** argv)
 {
-    // FIXME: We must add support for the threaded rendering as it is the default.
-    qputenv("QML_NO_THREADED_RENDERER", QByteArray("1"));
-
     MiniBrowserApplication app(argc, argv);
 
     if (app.isRobotized()) {

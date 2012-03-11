@@ -24,6 +24,7 @@
 #include "LayerTreeHostProxy.h"
 #include "QtWebPageEventHandler.h"
 #include "TransformationMatrix.h"
+#include "WebLayerTreeRenderer.h"
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p.h"
 #include <QPolygonF>
@@ -79,24 +80,10 @@ void QQuickWebPagePrivate::paint(QPainter* painter)
         webPageProxy->drawingArea()->paintLayerTree(painter);
 }
 
-void QQuickWebPagePrivate::paintToCurrentGLContext(const QTransform& transform, float opacity, const QRectF& clipRect)
-{
-    if (!q->isVisible())
-        return;
-
-    if (!clipRect.isValid())
-        return;
-
-    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
-    if (!drawingArea)
-        return;
-
-    drawingArea->paintToCurrentGLContext(QTransform(transform).scale(contentsScale, contentsScale), opacity, clipRect);
-}
-
 struct PageProxyNode : public QSGRenderNode {
-    PageProxyNode(QQuickWebPagePrivate* page)
-        : m_pagePrivate(page)
+    PageProxyNode(PassRefPtr<WebLayerTreeRenderer> renderer)
+        : m_renderer(renderer)
+        , m_scale(1)
     {
     }
 
@@ -107,20 +94,25 @@ struct PageProxyNode : public QSGRenderNode {
 
     virtual void render(const RenderState&)
     {
-        if (!m_pagePrivate)
-            return;
-        QTransform transform = matrix() ? matrix()->toTransform() : QTransform();
+        QMatrix4x4 renderMatrix = matrix() ? *matrix() : QMatrix4x4();
+
+        // Have to apply render scale manualy because it is not applied on page item.
+        // http://trac.webkit.org/changeset/104450
+        renderMatrix.scale(m_scale);
 
         // FIXME: Support non-rectangular clippings.
-        m_pagePrivate->paintToCurrentGLContext(transform, inheritedOpacity(), clipRect());
+        layerTreeRenderer()->paintToCurrentGLContext(renderMatrix, inheritedOpacity(), clipRect());
     }
 
     ~PageProxyNode()
     {
-        if (m_pagePrivate)
-            m_pagePrivate->resetPaintNode();
+        layerTreeRenderer()->purgeGLResources();
     }
 
+    WebLayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
+    void setScale(float scale) { m_scale = scale; }
+
+private:
     QRectF clipRect() const
     {
         // Start with an invalid rect.
@@ -162,24 +154,35 @@ struct PageProxyNode : public QSGRenderNode {
         return resultRect;
     }
 
-    QQuickWebPagePrivate* m_pagePrivate;
+    RefPtr<WebLayerTreeRenderer> m_renderer;
+    float m_scale;
 };
 
 QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 {
-    if (!(flags() & ItemHasContents)) {
-        if (oldNode)
-            delete oldNode;
-        return 0;
+    if (!d->webPageProxy->drawingArea())
+        return oldNode;
+
+    LayerTreeHostProxy* layerTreeHostProxy = d->webPageProxy->drawingArea()->layerTreeHostProxy();
+    WebLayerTreeRenderer* renderer = layerTreeHostProxy->layerTreeRenderer();
+
+    PageProxyNode* node = static_cast<PageProxyNode*>(oldNode);
+
+    if (node && node->layerTreeRenderer() != renderer) {
+        // This means that LayerTreeHostProxy was deleted and recreated while old paint node survived.
+        // This could happen if web process have crashed. In this case we have to recreate paint node.
+        delete node;
+        node = 0;
     }
 
-    PageProxyNode* proxyNode = static_cast<PageProxyNode*>(oldNode);
-    if (!proxyNode) {
-        proxyNode = new PageProxyNode(d);
-        d->m_paintNode = proxyNode;
-    }
+    renderer->syncRemoteContent();
 
-    return proxyNode;
+    if (!node)
+        node = new PageProxyNode(renderer);
+
+    node->setScale(d->contentsScale);
+
+    return node;
 }
 
 QtWebPageEventHandler* QQuickWebPage::eventHandler() const
@@ -233,18 +236,8 @@ void QQuickWebPagePrivate::updateSize()
     viewportItem->updateContentsSize(scaledSize);
 }
 
-void QQuickWebPagePrivate::resetPaintNode()
-{
-    m_paintNode = 0;
-    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
-    if (drawingArea && drawingArea->layerTreeHostProxy())
-        drawingArea->layerTreeHostProxy()->purgeGLResources();
-}
-
 QQuickWebPagePrivate::~QQuickWebPagePrivate()
 {
-    if (m_paintNode)
-        static_cast<PageProxyNode*>(m_paintNode)->m_pagePrivate = 0;
 }
 
 #include "moc_qquickwebpage_p.cpp"

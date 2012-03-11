@@ -1,3 +1,15 @@
+2012-03-11  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] Support threaded renderer in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=76661
+
+        Remove disabling of threaded rendering.
+
+        Reviewed by Noam Rosenthal.
+
+        * MiniBrowser/qt/main.cpp:
+        (main):
+
 2012-03-09  Zan Dobersek  <zandobersek@gmail.com>
 
         [WK2] run-perf-tests should be able to run with WTR

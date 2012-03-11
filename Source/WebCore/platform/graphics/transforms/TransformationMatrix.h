@@ -42,6 +42,7 @@ typedef struct CGAffineTransform CGAffineTransform;
 #elif PLATFORM(OPENVG)
 #include "VGUtils.h"
 #elif PLATFORM(QT)
+#include <QMatrix4x4>
 #include <QTransform>
 #elif USE(SKIA)
 #include <SkMatrix.h>
@@ -84,6 +85,7 @@ public:
 
 #if PLATFORM(QT)
     TransformationMatrix(const QTransform&);
+    TransformationMatrix(const QMatrix4x4&);
 #endif
 
     void setMatrix(double a, double b, double c, double d, double e, double f)
@@ -331,6 +333,7 @@ public:
     operator VGMatrix() const;
 #elif PLATFORM(QT)
     operator QTransform() const;
+    operator QMatrix4x4() const;
 #elif USE(SKIA)
     operator SkMatrix() const;
 #elif PLATFORM(WX) && USE(WXGC)

@@ -244,6 +244,7 @@ HEADERS += \
     UIProcess/WebIconDatabaseClient.h \
     UIProcess/WebInspectorProxy.h \
     UIProcess/WebKeyValueStorageManagerProxy.h \
+    UIProcess/WebLayerTreeRenderer.h \
     UIProcess/WebLoaderClient.h \
     UIProcess/WebMediaCacheManagerProxy.h \
     UIProcess/WebNavigationData.h \
@@ -535,6 +536,7 @@ SOURCES += \
     UIProcess/Launcher/ThreadLauncher.cpp \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \
     UIProcess/Launcher/qt/ThreadLauncherQt.cpp \
+    UIProcess/LayerTreeHostProxy.cpp \
     UIProcess/Notifications/NotificationPermissionRequest.cpp \
     UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp \
     UIProcess/Notifications/WebNotification.cpp \
@@ -575,6 +577,7 @@ SOURCES += \
     UIProcess/WebIconDatabaseClient.cpp \
     UIProcess/WebInspectorProxy.cpp \
     UIProcess/WebKeyValueStorageManagerProxy.cpp \
+    UIProcess/WebLayerTreeRenderer.cpp \
     UIProcess/WebLoaderClient.cpp \
     UIProcess/WebMediaCacheManagerProxy.cpp \
     UIProcess/WebNavigationData.cpp \
@@ -590,7 +593,6 @@ SOURCES += \
     UIProcess/WebUIClient.cpp \
     UIProcess/qt/QtWebContext.cpp \
     UIProcess/qt/LayerBackingStore.cpp \
-    UIProcess/qt/LayerTreeHostProxyQt.cpp \
     UIProcess/qt/QtWebPageEventHandler.cpp \
     UIProcess/qt/QtGestureRecognizer.cpp \
     UIProcess/qt/QtPanGestureRecognizer.cpp \

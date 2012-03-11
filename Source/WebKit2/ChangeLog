@@ -1,3 +1,103 @@
+2012-03-11  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] Support threaded renderer in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=76661
+
+        Reviewed by Noam Rosenthal.
+
+        Implement Qt5 threaded rendering support for Qt WebKit2.
+        Parts of LayerTreeHostProxy which contain layer tree and layer painting objects 
+        are moved to separate class called WebLayerTreeRenderer. WebLayerTreeRenderer is 
+        thread safe ref counted and referenced by LayerTreeHostProxy and paint node.
+        All layer tree and graphics objects are created, accessed and deallocated from Qt 
+        Scenegraph's paint thread only.
+        Layer tree updates from render queue are fetched in updatePaintNode call stack when 
+        main thread is locked.
+        Messages from paint thread to web process are passed through MainThreadGuardedInvoker 
+        call gate (implemented by Noam Rosenthal and previously reviewed by Kenneth Rohde 
+        Christiansen).
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (PageProxyNode::PageProxyNode):
+        (PageProxyNode::render):
+        (PageProxyNode::~PageProxyNode):
+        (PageProxyNode::layerTreeRenderer):
+        (PageProxyNode):
+        (PageProxyNode::setScale):
+        (QQuickWebPage::updatePaintNode):
+        (QQuickWebPagePrivate::~QQuickWebPagePrivate):
+        * UIProcess/LayerTreeHostProxy.cpp: Added.
+        (WebKit):
+        (WebKit::LayerTreeHostProxy::LayerTreeHostProxy):
+        (WebKit::LayerTreeHostProxy::~LayerTreeHostProxy):
+        (WebKit::LayerTreeHostProxy::paintToCurrentGLContext):
+        (WebKit::LayerTreeHostProxy::paintToGraphicsContext):
+        (WebKit::LayerTreeHostProxy::updateViewport):
+        (WebKit::LayerTreeHostProxy::dispatchUpdate):
+        (WebKit::LayerTreeHostProxy::createTileForLayer):
+        (WebKit::LayerTreeHostProxy::updateTileForLayer):
+        (WebKit::LayerTreeHostProxy::removeTileForLayer):
+        (WebKit::LayerTreeHostProxy::deleteCompositingLayer):
+        (WebKit::LayerTreeHostProxy::setRootCompositingLayer):
+        (WebKit::LayerTreeHostProxy::syncCompositingLayerState):
+        (WebKit::LayerTreeHostProxy::didRenderFrame):
+        (WebKit::LayerTreeHostProxy::createDirectlyCompositedImage):
+        (WebKit::LayerTreeHostProxy::destroyDirectlyCompositedImage):
+        (WebKit::LayerTreeHostProxy::setVisibleContentsRectForPanning):
+        (WebKit::LayerTreeHostProxy::setVisibleContentsRectForScaling):
+        (WebKit::LayerTreeHostProxy::renderNextFrame):
+        (WebKit::LayerTreeHostProxy::purgeBackingStores):
+        * UIProcess/LayerTreeHostProxy.h:
+        (WebKit):
+        (LayerTreeHostProxy):
+        (WebKit::LayerTreeHostProxy::layerTreeRenderer):
+        * UIProcess/WebLayerTreeRenderer.cpp: Renamed from Source/WebKit2/UIProcess/qt/LayerTreeHostProxyQt.cpp.
+        (WebKit):
+        (MainThreadGuardedInvoker):
+        (WebKit::MainThreadGuardedInvoker::call):
+        (WebKit::MainThreadGuardedInvoker::MainThreadGuardedInvoker):
+        (WebKit::MainThreadGuardedInvoker::invoke):
+        (WebKit::WebLayerTreeRenderer::callOnMainTread):
+        (WebKit::WebLayerTreeRenderer::WebLayerTreeRenderer):
+        (WebKit::WebLayerTreeRenderer::~WebLayerTreeRenderer):
+        (WebKit::WebLayerTreeRenderer::createLayer):
+        (WebKit::WebLayerTreeRenderer::paintToCurrentGLContext):
+        (WebKit::WebLayerTreeRenderer::syncAnimations):
+        (WebKit::WebLayerTreeRenderer::paintToGraphicsContext):
+        (WebKit::WebLayerTreeRenderer::setVisibleContentsRectForScaling):
+        (WebKit::WebLayerTreeRenderer::updateViewport):
+        (WebKit::WebLayerTreeRenderer::syncLayerParameters):
+        (WebKit::WebLayerTreeRenderer::deleteLayer):
+        (WebKit::WebLayerTreeRenderer::ensureLayer):
+        (WebKit::WebLayerTreeRenderer::setRootLayerID):
+        (WebKit::WebLayerTreeRenderer::getBackingStore):
+        (WebKit::WebLayerTreeRenderer::createTile):
+        (WebKit::WebLayerTreeRenderer::removeTile):
+        (WebKit::WebLayerTreeRenderer::updateTile):
+        (WebKit::WebLayerTreeRenderer::createImage):
+        (WebKit::WebLayerTreeRenderer::destroyImage):
+        (WebKit::WebLayerTreeRenderer::assignImageToLayer):
+        (WebKit::WebLayerTreeRenderer::swapBuffers):
+        (WebKit::WebLayerTreeRenderer::flushLayerChanges):
+        (WebKit::WebLayerTreeRenderer::renderNextFrame):
+        (WebKit::WebLayerTreeRenderer::ensureRootLayer):
+        (WebKit::WebLayerTreeRenderer::syncRemoteContent):
+        (WebKit::WebLayerTreeRenderer::purgeGLResources):
+        (WebKit::WebLayerTreeRenderer::purgeBackingStores):
+        (WebKit::WebLayerTreeRenderer::detach):
+        (WebKit::WebLayerTreeRenderer::appendUpdate):
+        * UIProcess/WebLayerTreeRenderer.h: Copied from Source/WebKit2/UIProcess/LayerTreeHostProxy.h.
+        (WebKit):
+        (WebLayerTreeRenderer):
+        (WebKit::WebLayerTreeRenderer::layerByID):
+        (WebKit::WebLayerTreeRenderer::rootLayer):
+        (WebKit::WebLayerTreeRenderer::notifyAnimationStarted):
+        (WebKit::WebLayerTreeRenderer::notifySyncRequired):
+        (WebKit::WebLayerTreeRenderer::showDebugBorders):
+        (WebKit::WebLayerTreeRenderer::showRepaintCounter):
+        (WebKit::WebLayerTreeRenderer::paintContents):
+
 2012-03-09  Jon Lee  <jonlee@apple.com>
 
         Rename NotificationPresenter to NotificationClient
