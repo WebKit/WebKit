@@ -1,3 +1,75 @@
+2012-03-11  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 lacks API for obtaining a representation of the RenderLayer tree of a page, like WebRenderLayer
+        <http://webkit.org/b/80791>
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+
+        * Shared/API/c/WKBase.h: Added a type definition of WKRenderLayerRef.
+
+        * Shared/API/c/WKRenderLayer.cpp: Added.
+        (WKRenderLayerGetTypeID): Added. Returns the WKRenderLayer type ID.
+        (WKRenderLayerCopyRendererName): Added this getter wrapper.
+        (WKRenderLayerCopyElementTagName): Ditto.
+        (WKRenderLayerCopyElementID): Ditto.
+        (WKRenderLayerGetElementClassNames): Ditto.
+        (WKRenderLayerGetAbsoluteBounds): Ditto.
+        (WKRenderLayerIsClipping): Ditto.
+        (WKRenderLayerIsClipped): Ditto.
+        (WKRenderLayerIsReflection): Ditto.
+        (WKRenderLayerGetCompositingLayerType): Ditto.
+        (WKRenderLayerGetNegativeZOrderList): Ditto.
+        (WKRenderLayerGetNormalFlowList): Ditto.
+        (WKRenderLayerGetPositiveZOrderList): Ditto.
+
+        * Shared/API/c/WKRenderLayer.h: Added.
+
+        * Shared/APIObject.h: Added TypeRenderLayer to the APIObject::Type enum.
+
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode): Added WebRenderLayer encoding.
+        (WebKit::UserMessageDecoder::baseDecode): Added WebRenderLayer decoding.
+
+        * Shared/WebRenderLayer.cpp: Added.
+        (WebKit::WebRenderLayer::create): Added. Creates a WebRenderLayer for the page’s main
+        frame’s root layer.
+        (WebKit::WebRenderLayer::createArrayFromLayerList): Added this helper function.
+        (WebKit::WebRenderLayer::WebRenderLayer): Added. Constructs a WebRenderLayer with the
+        renderer name, element tag, ID and class names, metrics, child lists, and compositing
+        layer properties of the given RenderLayer.
+
+        * Shared/WebRenderLayer.h: Added.
+        (WebKit::WebRenderLayer::create):
+        (WebKit::WebRenderLayer::negativeZOrderList):
+        (WebKit::WebRenderLayer::normalFlowList):
+        (WebKit::WebRenderLayer::positiveZOrderList):
+        (WebKit::WebRenderLayer::renderObjectName):
+        (WebKit::WebRenderLayer::elementTagName):
+        (WebKit::WebRenderLayer::elementID):
+        (WebKit::WebRenderLayer::elementClassNames):
+        (WebKit::WebRenderLayer::isReflection):
+        (WebKit::WebRenderLayer::isClipping):
+        (WebKit::WebRenderLayer::isClipped):
+        (WebKit::WebRenderLayer::compositingLayerType):
+        (WebKit::WebRenderLayer::absoluteBoundingBox):
+        (WebKit::WebRenderLayer::WebRenderLayer):
+
+        * Target.pri
+
+        * UIProcess/API/C/WKAPICast.h: Added a mapping between WKRenderLayerRef and WebRenderLayer.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added WebRenderLayer.{cpp,h} and WKRenderLayer.{cpp,h}.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyRenderLayerTree): Added this bundle API for getting the layer tree.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
+        * win/WebKit2.vcproj:
+
 2012-03-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         <http://webkit.org/b/80782> Web Inspector: Crash using released frontendClient when resizing window with closed inspector

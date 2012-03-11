@@ -34,6 +34,7 @@
 #include "WebFullScreenManager.h"
 #include "WebImage.h"
 #include "WebPage.h"
+#include "WebRenderLayer.h"
 #include "WebRenderObject.h"
 #include "WebURL.h"
 #include "WebURLRequest.h"
@@ -332,6 +333,11 @@ uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef pageRef)
 WKRenderObjectRef WKBundlePageCopyRenderTree(WKBundlePageRef pageRef)
 {
     return toAPI(WebRenderObject::create(toImpl(pageRef)).leakRef());
+}
+
+WKRenderLayerRef WKBundlePageCopyRenderLayerTree(WKBundlePageRef pageRef)
+{
+    return toAPI(WebRenderLayer::create(toImpl(pageRef)).leakRef());
 }
 
 void WKBundlePageSetPaintedObjectsCounterThreshold(WKBundlePageRef page, uint64_t threshold)

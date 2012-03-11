@@ -155,6 +155,7 @@ SET(WebKit2_SOURCES
     Shared/WebPopupItem.cpp
     Shared/WebPreferencesStore.cpp
     Shared/WebProcessCreationParameters.cpp
+    Shared/WebRenderLayer.cpp
     Shared/WebRenderObject.cpp
     Shared/WebTouchEvent.cpp
     Shared/WebURLRequest.cpp
@@ -174,6 +175,7 @@ SET(WebKit2_SOURCES
     Shared/API/c/WKMutableArray.cpp
     Shared/API/c/WKMutableDictionary.cpp
     Shared/API/c/WKNumber.cpp
+    Shared/API/c/WKRenderLayer.cpp
     Shared/API/c/WKRenderObject.cpp
     Shared/API/c/WKSecurityOrigin.cpp
     Shared/API/c/WKSerializedScriptValue.cpp
