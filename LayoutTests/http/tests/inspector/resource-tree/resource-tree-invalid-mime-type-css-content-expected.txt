@@ -1,0 +1,9 @@
+Tests that content is correctly shown for css loaded with invalid mime type in quirks mode.
+
+Bug 80528
+http://127.0.0.1:8000/inspector/resource-tree/resources/stylesheet-text-plain.php
+Resource.content: body {
+    background-color: green:
+}
+
+
