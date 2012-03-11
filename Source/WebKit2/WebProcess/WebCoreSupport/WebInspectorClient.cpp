@@ -51,8 +51,10 @@ void WebInspectorClient::openInspectorFrontend(InspectorController*)
 
 void WebInspectorClient::closeInspectorFrontend()
 {
-    if (m_page->inspector())
+    if (m_page->inspector()) {
         m_page->inspector()->didClose();
+        m_page->inspector()->destroyInspectorPage();
+    }
 }
 
 void WebInspectorClient::bringFrontendToFront()
@@ -62,7 +64,8 @@ void WebInspectorClient::bringFrontendToFront()
 
 void WebInspectorClient::didResizeMainFrame(Frame*)
 {
-    m_page->inspector()->updateDockingAvailability();
+    if (m_page->inspector())
+        m_page->inspector()->updateDockingAvailability();
 }
 
 void WebInspectorClient::highlight()

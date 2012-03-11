@@ -75,6 +75,7 @@ private:
 
     // Called from WebInspectorClient
     WebPage* createInspectorPage();
+    void destroyInspectorPage();
 
     // Called from WebInspectorFrontendClient
     void didLoadInspectorPage();

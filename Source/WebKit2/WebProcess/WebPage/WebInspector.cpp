@@ -59,6 +59,9 @@ WebPage* WebInspector::createInspectorPage()
     if (!m_page)
         return 0;
 
+    ASSERT(!m_inspectorPage);
+    ASSERT(!m_frontendClient);
+
     uint64_t inspectorPageID = 0;
     WebPageCreationParameters parameters;
 
@@ -79,6 +82,12 @@ WebPage* WebInspector::createInspectorPage()
     m_frontendClient = frontendClient.get();
     m_inspectorPage->corePage()->inspectorController()->setInspectorFrontendClient(frontendClient.release());
     return m_inspectorPage;
+}
+
+void WebInspector::destroyInspectorPage()
+{
+    m_inspectorPage = 0;
+    m_frontendClient = 0;
 }
 
 // Called from WebInspectorFrontendClient
