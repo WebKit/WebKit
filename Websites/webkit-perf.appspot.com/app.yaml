@@ -1,5 +1,5 @@
 application: webkit-perf
-version: 15
+version: 16
 runtime: python27
 api_version: 1
 threadsafe: false
