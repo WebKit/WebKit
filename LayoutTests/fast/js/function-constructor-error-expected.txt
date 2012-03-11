@@ -1,0 +1,11 @@
+This test checks that the Function constructor detects some syntax errors correctly (bug#59795).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Function('(i + (j)') threw exception SyntaxError: Expected token ')'.
+PASS Function('return (i + (j)') threw exception SyntaxError: Expected token ')'.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
