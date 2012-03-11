@@ -131,20 +131,18 @@ static bool hasTextContent(CachedResource* cachedResource)
     return type == InspectorPageAgent::StylesheetResource || type == InspectorPageAgent::ScriptResource || type == InspectorPageAgent::XHRResource;
 }
 
-// static
-PassRefPtr<TextResourceDecoder> InspectorPageAgent::createDecoder(const String& mimeType, const String& textEncodingName)
+static PassRefPtr<TextResourceDecoder> createXHRTextDecoder(const String& mimeType, const String& textEncodingName)
 {
     RefPtr<TextResourceDecoder> decoder;
     if (!textEncodingName.isEmpty())
         decoder = TextResourceDecoder::create("text/plain", textEncodingName);
-    else if (mimeType == "text/plain")
-        decoder = TextResourceDecoder::create("text/plain", "ISO-8859-1");
-    else if (mimeType == "text/html")
-        decoder = TextResourceDecoder::create("text/html", "UTF-8");
-    else if (DOMImplementation::isXMLMIMEType(mimeType)) {
+    else if (DOMImplementation::isXMLMIMEType(mimeType.lower())) {
         decoder = TextResourceDecoder::create("application/xml");
         decoder->useLenientXMLDecoding();
-    }
+    } else if (equalIgnoringCase(mimeType, "text/html"))
+        decoder = TextResourceDecoder::create("text/html", "UTF-8");
+    else
+        decoder = TextResourceDecoder::create("text/plain", "UTF-8");
     return decoder;
 }
 
@@ -183,7 +181,7 @@ bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, S
             SharedBuffer* buffer = cachedResource->data();
             if (!buffer)
                 return false;
-            RefPtr<TextResourceDecoder> decoder = InspectorPageAgent::createDecoder(cachedResource->response().mimeType(), cachedResource->response().textEncodingName());
+            RefPtr<TextResourceDecoder> decoder = createXHRTextDecoder(cachedResource->response().mimeType(), cachedResource->response().textEncodingName());
             // We show content for raw resources only for certain mime types (text, html and xml). Otherwise decoder will be null.
             if (!decoder)
                 return false;
