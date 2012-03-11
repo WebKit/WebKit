@@ -36,6 +36,7 @@ my $showHelp = 0;
 my $runShark = 0;
 my $runShark20 = 0;
 my $runSharkCache = 0;
+my $runInstruments = 0;
 my $ubench = 0;
 my $v8suite = 0;
 my $suite = "";
@@ -58,6 +59,7 @@ Usage: $programName --shell=[path] [options]
   --shark           Sample execution time with the Mac OS X "Shark" performance testing tool (implies --runs=1)
   --shark20         Like --shark, but with a 20 microsecond sampling interval
   --shark-cache     Like --shark, but performs a L2 cache-miss sample instead of time sample
+  --instruments     Sample execution time with the Mac OS X "Instruments" tool (Time Profile) (implies --runs=1)
   --suite           Select a specific benchmark suite. The default is sunspider-1.0
   --ubench          Use microbenchmark suite instead of regular tests. Same as --suite=ubench
   --v8-suite        Use the V8 benchmark suite. Same as --suite=v8-v4
@@ -71,6 +73,7 @@ GetOptions('runs=i' => \$testRuns,
            'shark' => \$runShark,
            'shark20' => \$runShark20,
            'shark-cache' => \$runSharkCache,
+           'instruments' => \$runInstruments,
            'suite=s' => \$suite,
            'ubench' => \$ubench,
            'v8-suite' => \$v8suite,
@@ -91,7 +94,7 @@ $suitePath = "tests/" . $suitePath unless ($suite =~ /\//);
 
 $runShark = 1 if $runSharkCache;
 $runShark = 20 if $runShark20;
-$testRuns = 1 if $runShark;
+$testRuns = 1 if $runShark || $runInstruments;
 if ($runShark && ! -x "/usr/bin/shark") {
     die "Please install CHUD tools from http://developer.apple.com/tools/download/\n";
 }
@@ -162,15 +165,17 @@ sub writePrefixFile()
     dumpToFile($prefix, $prefixFile);
 }
 
-sub runTestsOnce($)
+sub runTestsOnce($$)
 {
-    my ($useShark) = @_;
+    my ($useShark, $useInstruments) = @_;
     my $shellArgs = $jsShellArgs . " -f $prefixFile -f resources/sunspider-standalone-driver.js 2> " . File::Spec->devnull();
     my $output;
     if ($useShark) {
         my $intervalArg = $useShark == 20 ? "-I 20u" : "";
         my $cacheArg = $runSharkCache ? "-c $sharkCacheProfileIndex" : "";
         $output = `shark $intervalArg $cacheArg -i -1-q "$jsShellPath" $shellArgs`;
+    } elsif ($useInstruments) {
+        $output = `instruments -t "resources/TimeProfile20us.tracetemplate" "$jsShellPath" $shellArgs`;
     } else {
         $output = `"$jsShellPath" $shellArgs | grep -v break`;
     }
@@ -205,10 +210,10 @@ if ($testsPattern) {
     print STDERR "Found " . scalar(@tests) . " tests\n";
 }
 die "No tests to run"  unless scalar(@tests);
-print STDERR "Running SunSpider once for warmup, then " . ($runShark ? "under Shark" : "$testRuns time" . ($testRuns == 1 ? "" : "s")) . "\n";
+print STDERR "Running SunSpider once for warmup, then " . ($runShark ? "under Shark" : ($runInstruments ? "under Instruments" : "$testRuns time" . ($testRuns == 1 ? "" : "s"))) . "\n";
 writePrefixFile();
 
-runTestsOnce(0);
+runTestsOnce(0, 0);
 print "Discarded first run.\n";
 
 my $result;
@@ -217,7 +222,7 @@ my @results = ();
 my $total = 0;
 print "[";
 while ($count++ < $testRuns) {
-    $result = runTestsOnce($runShark);
+    $result = runTestsOnce($runShark, $runInstruments);
     $result =~ s/\r\n/\n/g;
     chomp $result;
     push @results, $result;
@@ -239,6 +244,15 @@ if ($runShark) {
     if ($newestMShark) {
         my $profileFile = "$resultDirectory/sunspider-profile-$timeString.mshark";
         rename $newestMShark, $profileFile or die;
+        exec "/usr/bin/open", $profileFile;
+    }
+}
+
+if ($runInstruments) {
+    my $newestTrace = newestFile(".", qr/\.trace$/);
+    if ($newestTrace) {
+        my $profileFile = "$resultDirectory/sunspider-profile-$timeString.trace";
+        rename $newestTrace, $profileFile or die;
         exec "/usr/bin/open", $profileFile;
     }
 }

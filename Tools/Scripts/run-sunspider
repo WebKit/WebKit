@@ -41,6 +41,7 @@ my $testRuns = 10; # This number may be different from what sunspider defaults t
 my $runShark = 0;
 my $runShark20 = 0;
 my $runSharkCache = 0;
+my $runInstruments = 0;
 my $suite = "";
 my $ubench = 0;
 my $v8suite = 0;
@@ -61,6 +62,7 @@ Usage: $programName [options] [options to pass to build system]
   --shark           Sample with the Mac OS X "Shark" performance testing tool (implies --runs=1)
   --shark20         Like --shark, but with a 20 microsecond sampling interval
   --shark-cache     Like --shark, but performs a L2 cache-miss sample instead of time sample
+  --instruments     Sample with the Mac OS X "Instruments" tool (Time Profile) (implies --runs=1)
   --suite           Select a specific benchmark suite. The default is sunspider-0.9.1
   --ubench          Use microbenchmark suite instead of regular tests. Same as --suite=ubench
   --v8-suite        Use the V8 benchmark suite. Same as --suite=v8-v4
@@ -74,6 +76,7 @@ GetOptions('root=s' => sub { my ($x, $value) = @_; $root = $value; setConfigurat
            'shark' => \$runShark,
            'shark20' => \$runShark20,
            'shark-cache' => \$runSharkCache,
+           'instruments' => \$runInstruments,
            'suite=s' => \$suite,
            'ubench' => \$ubench,
            'v8-suite' => \$v8suite,
@@ -125,6 +128,7 @@ push @args, "--set-baseline" if $setBaseline;
 push @args, "--shark" if $runShark;
 push @args, "--shark20" if $runShark20;
 push @args, "--shark-cache" if $runSharkCache;
+push @args, "--instruments" if $runInstruments;
 push @args, "--suite=${suite}" if $suite;
 push @args, "--ubench" if $ubench;
 push @args, "--v8-suite" if $v8suite;

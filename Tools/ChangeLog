@@ -1,3 +1,12 @@
+2012-03-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Add --instruments option to sunspider to profile with Instruments
+        https://bugs.webkit.org/show_bug.cgi?id=80783
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/run-sunspider:
+
 2012-03-11  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK2] Support threaded renderer in WK2

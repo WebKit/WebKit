@@ -1,3 +1,14 @@
+2012-03-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Add --instruments option to sunspider to profile with Instruments
+        https://bugs.webkit.org/show_bug.cgi?id=80783
+
+        Reviewed by Filip Pizlo.
+
+        * resources/TimeProfile20us.tracetemplate: Added.
+        * sunspider:
+        (runTestsOnce):
+
 2011-11-15  Andy Wingo  <wingo@igalia.com>
 
         Extend sunspider driver to be able to run kraken
