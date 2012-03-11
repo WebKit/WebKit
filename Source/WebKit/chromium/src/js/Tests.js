@@ -579,6 +579,50 @@ TestSuite.prototype.waitForTestResultsInConsole = function()
     this.takeControl();
 };
 
+TestSuite.prototype.checkLogAndErrorMessages = function()
+{
+    var messages = WebInspector.console.messages;
+
+    var matchesCount = 0;
+    function validMessage(message)
+    {
+        if (message.text === "log" && message.level === WebInspector.ConsoleMessage.MessageLevel.Log) {
+            ++matchesCount;
+            return true;
+        }
+
+        if (message.text === "error" && message.level === WebInspector.ConsoleMessage.MessageLevel.Error) {
+            ++matchesCount;
+            return true;
+        }
+        return false;
+    }
+
+    for (var i = 0; i < messages.length; ++i) {
+        if (validMessage(messages[i]))
+            continue;
+        this.fail(messages[i].text + ":" + messages[i].level); // This will throw.
+    }
+
+    if (matchesCount === 2)
+        return;
+
+    // Wait for more messages.
+    function onConsoleMessage(event)
+    {
+        var message = event.data;
+        if (validMessage(message)) {
+            if (matchesCount === 2) {
+                this.releaseControl();
+                return;
+            }
+        } else
+            this.fail(message.text + ":" + messages[i].level);
+    }
+
+    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, onConsoleMessage, this);
+    this.takeControl();
+};
 
 /**
  * Serializes array of uiSourceCodes to string.
