@@ -1,3 +1,13 @@
+2012-03-10  Daniel Bates  <dbates@webkit.org>
+
+        Switch from HTTP to HTTPS for Xcode developer.apple.com hyperlinks
+
+        The Debugging and Analyzing Your Code page cannot be viewed at <http://developer.apple.com/library/mac/#documentation/ToolsLanguages/Conceptual/Xcode4UserGuide/Debugging/Debugging.html#//apple_ref/doc/uid/TP40010215-CH3-SW1> (1) as this URL redirects to the Mac OS X Developer Library <https://developer.apple.com/library/mac/navigation/>.
+        Substituting https for http in (1) returns the expected page. 
+
+        * building/debug-mac-uiprocess.html:
+        * building/debug.html:
+
 2012-03-01  Seo Sanghyeon  <sh4.seo@samsung.com>
 
         Add a link to the EFL wiki page
