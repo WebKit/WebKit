@@ -81,6 +81,22 @@
 
 2012-03-09  Gavin Barraclough  <barraclough@apple.com>
 
+        Object.freeze broken on latest Nightly
+        https://bugs.webkit.org/show_bug.cgi?id=80577
+
+        Reviewed by Oliver Hunt.
+
+        The problem here is that deleteProperty rejects deletion of prototype.
+        This is correct in most cases, however defineOwnPropery is presently
+        implemented internally to ensure the attributes change by deleting the
+        old property, and creating a new one.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::deleteProperty):
+            - If deletePropery is called via defineOwnPropery, allow old prototype to be removed.
+
+2012-03-09  Gavin Barraclough  <barraclough@apple.com>
+
         Array.prototype.toLocaleString visits elements in wrong order under certain conditions
         https://bugs.webkit.org/show_bug.cgi?id=80663
 

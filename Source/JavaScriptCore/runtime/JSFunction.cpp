@@ -348,9 +348,12 @@ void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
 bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
-    if (thisObject->isHostFunction())
-        return Base::deleteProperty(thisObject, exec, propertyName);
-    if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().length || propertyName == exec->propertyNames().prototype || propertyName == exec->propertyNames().caller)
+    // For non-host functions, don't let these properties by deleted - except by DefineOwnProperty.
+    if (!thisObject->isHostFunction() && !exec->globalData().isInDefineOwnProperty()
+        && (propertyName == exec->propertyNames().arguments
+            || propertyName == exec->propertyNames().length
+            || propertyName == exec->propertyNames().prototype
+            || propertyName == exec->propertyNames().caller))
         return false;
     return Base::deleteProperty(thisObject, exec, propertyName);
 }

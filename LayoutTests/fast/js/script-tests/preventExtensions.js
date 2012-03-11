@@ -89,14 +89,23 @@ var obj = new Constructor();
 obj.foo = 2;
 shouldBe('obj.foo', '1');
 
+// Check that freezing a function works correctly.
+var func = freeze(function foo(){});
+shouldBeTrue('Object.isFrozen(func)')
+func.prototype = 42;
+shouldBeFalse('func.prototype === 42');
+shouldBeFalse('Object.getOwnPropertyDescriptor(func, "prototype").writable')
+
 // Check that freezing array objects works correctly.
 var array = freeze([0,1,2]);
+shouldBeTrue('Object.isFrozen(array)')
 array[0] = 3;
 shouldBe('array[0]', '0');
 shouldBeFalse('Object.getOwnPropertyDescriptor(array, "length").writable')
 
 // Check that freezing arguments objects works correctly.
 var args = freeze((function(){ return arguments; })(0,1,2));
+shouldBeTrue('Object.isFrozen(args)')
 args[0] = 3;
 shouldBe('args[0]', '0');
 shouldBeFalse('Object.getOwnPropertyDescriptor(args, "length").writable')

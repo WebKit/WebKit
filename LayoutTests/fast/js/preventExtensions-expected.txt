@@ -18,8 +18,13 @@ PASS var arr = Object.preventExtensions([]); arr[0] = 42; arr[0] is undefined.
 PASS var arr = Object.preventExtensions([]); arr[0] = 42; arr.length is 0
 PASS "use strict"; var arr = Object.preventExtensions([]); arr[0] = 42; arr[0] threw exception TypeError: Attempted to assign to readonly property..
 PASS obj.foo is 1
+PASS Object.isFrozen(func) is true
+PASS func.prototype === 42 is false
+PASS Object.getOwnPropertyDescriptor(func, "prototype").writable is false
+PASS Object.isFrozen(array) is true
 PASS array[0] is 0
 PASS Object.getOwnPropertyDescriptor(array, "length").writable is false
+PASS Object.isFrozen(args) is true
 PASS args[0] is 0
 PASS Object.getOwnPropertyDescriptor(args, "length").writable is false
 PASS Object.getOwnPropertyDescriptor(args, "callee").writable is false
