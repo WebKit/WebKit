@@ -1,3 +1,52 @@
+2012-03-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r110384.
+        http://trac.webkit.org/changeset/110384
+        https://bugs.webkit.org/show_bug.cgi?id=80774
+
+        compile failed on Chromium Win Release (Requested by ukai_home
+        on #webkit).
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebCore::LayerChromiumWithForcedDrawsContent::LayerChromiumWithForcedDrawsContent):
+        (WebCore::LayerChromiumWithForcedDrawsContent::opaqueContentsRegion):
+        (WebCore::LayerChromiumWithForcedDrawsContent::setOpaquePaintRect):
+        (LayerChromiumWithForcedDrawsContent):
+        (WebCore::setLayerPropertiesForTesting):
+        (WebCore):
+        (WebCore::TestCCOcclusionTracker::TestCCOcclusionTracker):
+        (WebCore::TestCCOcclusionTracker::occlusionInScreenSpace):
+        (WebCore::TestCCOcclusionTracker::occlusionInTargetSurface):
+        (WebCore::TestCCOcclusionTracker::setOcclusionInScreenSpace):
+        (WebCore::TestCCOcclusionTracker::setOcclusionInTargetSurface):
+        (WebCore::TestCCOcclusionTracker::layerScissorRectInTargetSurface):
+        (WebCore::TestDamageClient::damageRect):
+        (WebCore::layerAddedToOccludedRegion):
+        (WebCore::layerAddedToOccludedRegionWithRotation):
+        (WebCore::layerAddedToOccludedRegionWithTranslation):
+        (WebCore::layerAddedToOccludedRegionWithRotatedSurface):
+        (WebCore::layerAddedToOccludedRegionWithSurfaceAlreadyOnStack):
+        (WebCore::layerAddedToOccludedRegionWithRotatedOffAxisSurface):
+        (WebCore::layerAddedToOccludedRegionWithMultipleOpaqueLayers):
+        (WebCore::surfaceOcclusionWithOverlappingSiblingSurfaces):
+        (WebCore::surfaceOcclusionInScreenSpace):
+        (WebCore::surfaceOcclusionInScreenSpaceDifferentTransforms):
+        (WebCore::occlusionInteractionWithFilters):
+        (WebCore::layerScissorRectOverTile):
+        (WebCore::screenScissorRectOverTile):
+        (WebCore::layerScissorRectOverCulledTile):
+        (WebCore::screenScissorRectOverCulledTile):
+        (WebCore::layerScissorRectOverPartialTiles):
+        (WebCore::screenScissorRectOverPartialTiles):
+        (WebCore::layerScissorRectOverNoTiles):
+        (WebCore::screenScissorRectOverNoTiles):
+        (WebCore::layerScissorRectForLayerOffOrigin):
+        (WebCore::damageRectOverTile):
+        (WebCore::damageRectOverCulledTile):
+        (WebCore::damageRectOverPartialTiles):
+        (WebCore::damageRectOverNoTiles):
+        (WebCore::TEST):
+
 2012-03-10  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Clean up culling tests and templatize to test impl constructs
