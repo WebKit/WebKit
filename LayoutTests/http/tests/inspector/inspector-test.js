@@ -173,10 +173,10 @@ InspectorTest.dump = function(value, customFormatters, prefix, prefixWithName)
         InspectorTest.addResult(prefixWithName + value);
 }
 
-InspectorTest.assertGreaterOrEqual = function(expected, actual, message)
+InspectorTest.assertGreaterOrEqual = function(a, b, message)
 {
-    if (actual < expected)
-        InspectorTest.addResult("FAILED: " + (message ? message + ": " : "") + actual + " < " + expected);
+    if (a < b)
+        InspectorTest.addResult("FAILED: " + (message ? message + ": " : "") + a + " < " + b);
 }
 
 InspectorTest.navigate = function(url, callback)

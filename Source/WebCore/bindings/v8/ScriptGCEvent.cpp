@@ -90,13 +90,13 @@ size_t ScriptGCEvent::getUsedHeapSize()
 
 void ScriptGCEvent::gcPrologueCallback(v8::GCType type, v8::GCCallbackFlags flags)
 {
-    s_startTime = WTF::currentTimeMS();
+    s_startTime = WTF::monotonicallyIncreasingTime();
     s_usedHeapSize = getUsedHeapSize();
 }
 
 void ScriptGCEvent::gcEpilogueCallback(v8::GCType type, v8::GCCallbackFlags flags)
 {
-    double endTime = WTF::currentTimeMS();
+    double endTime = WTF::monotonicallyIncreasingTime();
     size_t collectedBytes = s_usedHeapSize - getUsedHeapSize();
     GCEventListeners listeners(eventListeners());
     for (GCEventListeners::iterator i = listeners.begin(); i != listeners.end(); ++i)

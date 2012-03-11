@@ -156,7 +156,11 @@ private:
     void pushGCEventRecords();
     void clearRecordStack();
 
+    double timestamp();
+    double timestampFromMicroseconds(double microseconds);
+
     InspectorFrontend::Timeline* m_frontend;
+    double m_timestampOffset;
 
     Vector<TimelineRecordEntry> m_recordStack;
 

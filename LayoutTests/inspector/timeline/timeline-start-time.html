@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    console.timeStamp("time is an illusion");
+}
+
+function test()
+{
+    var beforeStart = Date.now();
+    InspectorTest.startTimeline();
+    InspectorTest.waitForRecordType("TimeStamp", onTimeStamp);
+    InspectorTest.evaluateInPage("performActions()");
+
+    function onTimeStamp(record)
+    {
+        var now = Date.now();
+        var eventTime = record.startTime;
+        InspectorTest.assertGreaterOrEqual(eventTime, beforeStart, "event time should be after timeline start time");
+        InspectorTest.assertGreaterOrEqual(now, eventTime, "event time should be before now");
+        InspectorTest.addResult("done");
+        InspectorTest.stopTimeline(InspectorTest.completeTest.bind(InspectorTest));
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests sanity of timeline timestamps.
+</p>
+
+</body>
+</html>
