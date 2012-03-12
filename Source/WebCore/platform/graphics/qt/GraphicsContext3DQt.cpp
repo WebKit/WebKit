@@ -124,7 +124,8 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
     if (textureMapper->accelerationMode() == TextureMapper::OpenGLMode) {
         TextureMapperGL* texmapGL = static_cast<TextureMapperGL*>(textureMapper);
         TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture | (m_context->m_attrs.alpha ? TextureMapperGL::SupportsBlending : 0);
-        texmapGL->drawTexture(m_context->m_texture, flags, targetRect, matrix, opacity, mask);
+        IntSize textureSize(m_context->m_currentWidth, m_context->m_currentHeight);
+        texmapGL->drawTexture(m_context->m_texture, flags, textureSize, targetRect, matrix, opacity, mask);
         return;
     }
 

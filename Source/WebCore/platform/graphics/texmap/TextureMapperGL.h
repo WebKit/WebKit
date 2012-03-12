@@ -49,7 +49,7 @@ public:
 
     // reimps from TextureMapper
     virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
-    virtual void drawTexture(uint32_t texture, Flags, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
+    virtual void drawTexture(uint32_t texture, Flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture);
     virtual void bindSurface(BitmapTexture* surface);
     virtual void beginClip(const TransformationMatrix&, const FloatRect&);
     virtual void beginPainting();
@@ -82,6 +82,7 @@ public:
     void initializeStencil();
     ~BitmapTextureGL();
     virtual uint32_t id() const { return m_id; }
+    IntSize textureSize() const { return m_textureSize; }
     void setTextureMapper(TextureMapperGL* texmap) { m_textureMapper = texmap; }
     void updateContents(Image*, const IntRect&, const IntRect&, PixelFormat);
     void updateContents(const void*, const IntRect&);
