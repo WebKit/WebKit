@@ -31,9 +31,10 @@
 #ifndef LocalizedNumberICU_h
 #define LocalizedNumberICU_h
 
-#include <unicode/decimfmt.h>
+#include <unicode/unum.h>
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,19 +44,21 @@ class ICULocale {
 public:
     static PassOwnPtr<ICULocale> create(const char* localeString);
     static PassOwnPtr<ICULocale> createForCurrentLocale();
+    ~ICULocale();
     String convertToLocalizedNumber(const String&);
     String convertFromLocalizedNumber(const String&);
 
 private:
-    explicit ICULocale(const icu::Locale&);
-    void setDecimalSymbol(unsigned index, icu::DecimalFormatSymbols::ENumberFormatSymbol);
+    explicit ICULocale(const char*);
+    void setDecimalSymbol(unsigned index, UNumberFormatSymbol);
+    void setDecimalTextAttribute(String&, UNumberFormatTextAttribute);
     void initializeDecimalFormat();
 
     bool detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex);
     unsigned matchedDecimalSymbolIndex(const String& input, unsigned& position);
 
-    icu::Locale m_locale;
-    OwnPtr<icu::DecimalFormat> m_decimalFormat;
+    CString m_locale;
+    UNumberFormat* m_numberFormat;
     enum {
         // 0-9 for digits.
         DecimalSeparatorIndex = 10,
@@ -63,6 +66,10 @@ private:
         DecimalSymbolsSize
     };
     String m_decimalSymbols[DecimalSymbolsSize];
+    String m_positivePrefix;
+    String m_positiveSuffix;
+    String m_negativePrefix;
+    String m_negativeSuffix;
     bool m_didCreateDecimalFormat;
 };
 

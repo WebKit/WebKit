@@ -32,8 +32,6 @@
 #include "LocalizedNumberICU.h"
 
 #include "LocalizedNumber.h"
-#include <unicode/decimfmt.h>
-#include <unicode/numfmt.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -41,26 +39,57 @@ using namespace icu;
 
 namespace WebCore {
 
-ICULocale::ICULocale(const Locale& locale)
+ICULocale::ICULocale(const char* locale)
     : m_locale(locale)
+    , m_numberFormat(0)
     , m_didCreateDecimalFormat(false)
 {
 }
 
+ICULocale::~ICULocale()
+{
+    unum_close(m_numberFormat);
+}
+
 PassOwnPtr<ICULocale> ICULocale::create(const char* localeString)
 {
-    return adoptPtr(new ICULocale(Locale::createCanonical(localeString)));
+    return adoptPtr(new ICULocale(localeString));
 }
 
 PassOwnPtr<ICULocale> ICULocale::createForCurrentLocale()
 {
-    return adoptPtr(new ICULocale(Locale::getDefault()));
+    return adoptPtr(new ICULocale(0));
 }
 
-void ICULocale::setDecimalSymbol(unsigned index, DecimalFormatSymbols::ENumberFormatSymbol symbol)
+void ICULocale::setDecimalSymbol(unsigned index, UNumberFormatSymbol symbol)
 {
-    UnicodeString ustring = m_decimalFormat->getDecimalFormatSymbols()->getSymbol(symbol);
-    m_decimalSymbols[index] = String(ustring.getBuffer(), ustring.length());
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t bufferLength = unum_getSymbol(m_numberFormat, symbol, 0, 0, &status);
+    ASSERT(U_SUCCESS(status) || status == U_BUFFER_OVERFLOW_ERROR);
+    if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
+        return;
+    Vector<UChar> buffer(bufferLength);
+    status = U_ZERO_ERROR;
+    unum_getSymbol(m_numberFormat, symbol, buffer.data(), bufferLength, &status);
+    if (U_FAILURE(status))
+        return;
+    m_decimalSymbols[index] = String::adopt(buffer);
+}
+
+void ICULocale::setDecimalTextAttribute(String& destination, UNumberFormatTextAttribute tag)
+{
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t bufferLength = unum_getTextAttribute(m_numberFormat, tag, 0, 0, &status);
+    ASSERT(U_SUCCESS(status) || status == U_BUFFER_OVERFLOW_ERROR);
+    if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR)
+        return;
+    Vector<UChar> buffer(bufferLength);
+    status = U_ZERO_ERROR;
+    unum_getTextAttribute(m_numberFormat, tag, buffer.data(), bufferLength, &status);
+    ASSERT(U_SUCCESS(status));
+    if (U_FAILURE(status))
+        return;
+    destination = String::adopt(buffer);
 }
 
 void ICULocale::initializeDecimalFormat()
@@ -69,44 +98,47 @@ void ICULocale::initializeDecimalFormat()
         return;
     m_didCreateDecimalFormat = true;
     UErrorCode status = U_ZERO_ERROR;
-    NumberFormat* format = NumberFormat::createInstance(m_locale, NumberFormat::kNumberStyle, status);
+    m_numberFormat = unum_open(UNUM_DECIMAL, 0, 0, m_locale.data(), 0, &status);
     if (!U_SUCCESS(status))
         return;
-    m_decimalFormat = adoptPtr(static_cast<DecimalFormat*>(format));
 
-    setDecimalSymbol(0, DecimalFormatSymbols::kZeroDigitSymbol);
-    setDecimalSymbol(1, DecimalFormatSymbols::kOneDigitSymbol);
-    setDecimalSymbol(2, DecimalFormatSymbols::kTwoDigitSymbol);
-    setDecimalSymbol(3, DecimalFormatSymbols::kThreeDigitSymbol);
-    setDecimalSymbol(4, DecimalFormatSymbols::kFourDigitSymbol);
-    setDecimalSymbol(5, DecimalFormatSymbols::kFiveDigitSymbol);
-    setDecimalSymbol(6, DecimalFormatSymbols::kSixDigitSymbol);
-    setDecimalSymbol(7, DecimalFormatSymbols::kSevenDigitSymbol);
-    setDecimalSymbol(8, DecimalFormatSymbols::kEightDigitSymbol);
-    setDecimalSymbol(9, DecimalFormatSymbols::kNineDigitSymbol);
-    setDecimalSymbol(DecimalSeparatorIndex, DecimalFormatSymbols::kDecimalSeparatorSymbol);
-    setDecimalSymbol(GroupSeparatorIndex, DecimalFormatSymbols::kGroupingSeparatorSymbol);
+    setDecimalSymbol(0, UNUM_ZERO_DIGIT_SYMBOL);
+    setDecimalSymbol(1, UNUM_ONE_DIGIT_SYMBOL);
+    setDecimalSymbol(2, UNUM_TWO_DIGIT_SYMBOL);
+    setDecimalSymbol(3, UNUM_THREE_DIGIT_SYMBOL);
+    setDecimalSymbol(4, UNUM_FOUR_DIGIT_SYMBOL);
+    setDecimalSymbol(5, UNUM_FIVE_DIGIT_SYMBOL);
+    setDecimalSymbol(6, UNUM_SIX_DIGIT_SYMBOL);
+    setDecimalSymbol(7, UNUM_SEVEN_DIGIT_SYMBOL);
+    setDecimalSymbol(8, UNUM_EIGHT_DIGIT_SYMBOL);
+    setDecimalSymbol(9, UNUM_NINE_DIGIT_SYMBOL);
+    setDecimalSymbol(DecimalSeparatorIndex, UNUM_DECIMAL_SEPARATOR_SYMBOL);
+    setDecimalSymbol(GroupSeparatorIndex, UNUM_GROUPING_SEPARATOR_SYMBOL);
+    setDecimalTextAttribute(m_positivePrefix, UNUM_POSITIVE_PREFIX);
+    setDecimalTextAttribute(m_positiveSuffix, UNUM_POSITIVE_SUFFIX);
+    setDecimalTextAttribute(m_negativePrefix, UNUM_NEGATIVE_PREFIX);
+    setDecimalTextAttribute(m_negativeSuffix, UNUM_NEGATIVE_SUFFIX);
+    ASSERT(!m_positivePrefix.isEmpty() || !m_positiveSuffix.isEmpty() || !m_negativePrefix.isEmpty() || !m_negativeSuffix.isEmpty());
 }
 
 String ICULocale::convertToLocalizedNumber(const String& input)
 {
     initializeDecimalFormat();
-    if (!m_decimalFormat || input.isEmpty())
+    if (!m_numberFormat || input.isEmpty())
         return input;
 
     unsigned i = 0;
     bool isNegative = false;
     UnicodeString ustring;
+    StringBuilder builder;
+    builder.reserveCapacity(input.length());
 
     if (input[0] == '-') {
         ++i;
         isNegative = true;
-        m_decimalFormat->getNegativePrefix(ustring);
+        builder.append(m_negativePrefix);
     } else
-        m_decimalFormat->getPositivePrefix(ustring);
-    StringBuilder builder;
-    builder.reserveCapacity(input.length());
-    builder.append(ustring.getBuffer(), ustring.length());
+        builder.append(m_positivePrefix);
 
     for (; i < input.length(); ++i) {
         switch (input[i]) {
@@ -130,38 +162,19 @@ String ICULocale::convertToLocalizedNumber(const String& input)
         }
     }
 
-    if (isNegative)
-        m_decimalFormat->getNegativeSuffix(ustring);
-    else
-        m_decimalFormat->getPositiveSuffix(ustring);
-    builder.append(ustring.getBuffer(), ustring.length());
+    builder.append(isNegative ? m_negativeSuffix : m_positiveSuffix);
 
     return builder.toString();
 }
 
-template <class StringType> static bool matches(const String& text, unsigned position, const StringType& part)
+static bool matches(const String& text, unsigned position, const String& part)
 {
     if (part.isEmpty())
         return true;
     if (position + part.length() > text.length())
         return false;
-    for (unsigned i = 0; i < static_cast<unsigned>(part.length()); ++i) {
+    for (unsigned i = 0; i < part.length(); ++i) {
         if (text[position + i] != part[i])
-            return false;
-    }
-    return true;
-}
-
-static bool endsWith(const String& text, const UnicodeString& suffix)
-{
-    if (suffix.length() <= 0)
-        return true;
-    unsigned suffixLength = static_cast<unsigned>(suffix.length());
-    if (suffixLength > text.length())
-        return false;
-    unsigned start = text.length() - suffixLength;
-    for (unsigned i = 0; i < suffixLength; ++i) {
-        if (text[start + i] != suffix[i])
             return false;
     }
     return true;
@@ -171,32 +184,23 @@ bool ICULocale::detectSignAndGetDigitRange(const String& input, bool& isNegative
 {
     startIndex = 0;
     endIndex = input.length();
-    UnicodeString prefix;
-    m_decimalFormat->getNegativePrefix(prefix);
-    UnicodeString suffix;
-    m_decimalFormat->getNegativeSuffix(suffix);
-    if (prefix.isEmpty() && suffix.isEmpty()) {
-        m_decimalFormat->getPositivePrefix(prefix);
-        m_decimalFormat->getPositiveSuffix(suffix);
-        ASSERT(!(prefix.isEmpty() && suffix.isEmpty()));
-        if (matches(input, 0, prefix) && endsWith(input, suffix)) {
+    if (m_negativePrefix.isEmpty() && m_negativeSuffix.isEmpty()) {
+        if (input.startsWith(m_positivePrefix) && input.endsWith(m_positiveSuffix)) {
             isNegative = false;
-            startIndex = prefix.length();
-            endIndex -= suffix.length();
+            startIndex = m_positivePrefix.length();
+            endIndex -= m_positiveSuffix.length();
         } else
             isNegative = true;
     } else {
-        if (matches(input, 0, prefix) && endsWith(input, suffix)) {
+        if (input.startsWith(m_negativePrefix) && input.endsWith(m_negativeSuffix)) {
             isNegative = true;
-            startIndex = prefix.length();
-            endIndex -= suffix.length();
+            startIndex = m_negativePrefix.length();
+            endIndex -= m_negativeSuffix.length();
         } else {
             isNegative = false;
-            m_decimalFormat->getPositivePrefix(prefix);
-            m_decimalFormat->getPositiveSuffix(suffix);
-            if (matches(input, 0, prefix) && endsWith(input, suffix)) {
-                startIndex = prefix.length();
-                endIndex -= suffix.length();
+            if (input.startsWith(m_positivePrefix) && input.endsWith(m_positiveSuffix)) {
+                startIndex = m_positivePrefix.length();
+                endIndex -= m_positiveSuffix.length();
             } else
                 return false;
         }
@@ -219,7 +223,7 @@ String ICULocale::convertFromLocalizedNumber(const String& localized)
 {
     initializeDecimalFormat();
     String input = localized.stripWhiteSpace();
-    if (!m_decimalFormat || input.isEmpty())
+    if (!m_numberFormat || input.isEmpty())
         return input;
 
     bool isNegative;
