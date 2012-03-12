@@ -487,7 +487,7 @@ NSView* RenderThemeMac::documentViewFor(RenderObject* o) const
 bool RenderThemeMac::isControlStyled(const RenderStyle* style, const BorderData& border,
                                      const FillLayer& background, const Color& backgroundColor) const
 {
-    if (style->appearance() == TextFieldPart || style->appearance() == TextAreaPart || style->appearance() == ListboxPart)
+    if (style->appearance() == TextAreaPart || style->appearance() == ListboxPart)
         return style->border() != border;
         
     // FIXME: This is horrible, but there is not much else that can be done.  Menu lists cannot draw properly when
@@ -2137,11 +2137,6 @@ NSTextFieldCell* RenderThemeMac::textField() const
         [m_textField.get() setBezeled:YES];
         [m_textField.get() setEditable:YES];
         [m_textField.get() setFocusRingType:NSFocusRingTypeExterior];
-
-        // Setting a clear background on the cell is necessary for CSS-styled backgrounds
-        // to show through. Ideally, there would be a better way to do this.
-        [m_textField.get() setDrawsBackground:YES];
-        [m_textField.get() setBackgroundColor:[NSColor clearColor]];
     }
 
     return m_textField.get();
