@@ -1,5 +1,6 @@
 SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}"
+    "${WEBCORE_DIR}/Modules/filesystem"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/webdatabase"
@@ -92,6 +93,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
 )
 
 SET(WebCore_IDL_INCLUDES
+    Modules/filesystem
     Modules/geolocation
     Modules/indexeddb
     Modules/webdatabase
@@ -1636,10 +1638,10 @@ ENDIF ()
 
 if (ENABLE_FILE_SYSTEM)
     LIST(APPEND WebCore_SOURCES
-        fileapi/DirectoryEntry.cpp
-        fileapi/DirectoryEntrySync.cpp
-        fileapi/DirectoryReader.cpp
-        fileapi/DirectoryReaderSync.cpp
+        Modules/filesystem/DirectoryEntry.cpp
+        Modules/filesystem/DirectoryEntrySync.cpp
+        Modules/filesystem/DirectoryReader.cpp
+        Modules/filesystem/DirectoryReaderSync.cpp
         fileapi/DOMFilePath.cpp
         fileapi/DOMFileSystem.cpp
         fileapi/DOMFileSystemBase.cpp
@@ -1661,10 +1663,10 @@ if (ENABLE_FILE_SYSTEM)
         platform/AsyncFileSystem.cpp
     )
     LIST(APPEND WebCore_IDL_FILES
-        fileapi/DirectoryEntry.idl
-        fileapi/DirectoryEntrySync.idl
-        fileapi/DirectoryReader.idl
-        fileapi/DirectoryReaderSync.idl
+        Modules/filesystem/DirectoryEntry.idl
+        Modules/filesystem/DirectoryEntrySync.idl
+        Modules/filesystem/DirectoryReader.idl
+        Modules/filesystem/DirectoryReaderSync.idl
         fileapi/DOMFileSystem.idl
         fileapi/DOMFileSystemSync.idl
         fileapi/DOMWindowFileSystem.idl

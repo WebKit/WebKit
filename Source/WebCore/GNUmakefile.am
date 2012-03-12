@@ -11,6 +11,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include/GLSLANG \
 	-I$(srcdir)/Source/WebCore \
+	-I$(srcdir)/Source/WebCore/Modules/filesystem \
 	-I$(srcdir)/Source/WebCore/Modules/geolocation \
 	-I$(srcdir)/Source/WebCore/Modules/indexeddb \
 	-I$(srcdir)/Source/WebCore/Modules/mediastream \
@@ -473,7 +474,7 @@ FEATURE_DEFINES += ENABLE_MATHML=1
 webcore_cppflags += -DENABLE_MATHML=1
 endif # END ENABLE_MATHML
 
-# MathML tag and attribute names, and element factory 
+# MathML tag and attribute names, and element factory
 DerivedSources/WebCore/MathMLElementFactory.h: DerivedSources/WebCore/MathMLElementFactory.cpp
 DerivedSources/WebCore/MathMLNames.h: DerivedSources/WebCore/MathMLNames.cpp
 DerivedSources/WebCore/MathMLElementFactory.cpp DerivedSources/WebCore/MathMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/mathml/mathtags.in $(WebCore)/mathml/mathattrs.in
@@ -495,7 +496,7 @@ endif # END ENABLE_NOTIFICATIONS
 if ENABLE_SVG
 FEATURE_DEFINES += ENABLE_SVG=1
 webcore_cppflags += -DENABLE_SVG=1
-WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in 
+WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in
 WEBCORE_CSS_VALUE_KEYWORDS += $(WebCore)/css/SVGCSSValueKeywords.in
 
 # SVG Features
@@ -778,6 +779,7 @@ DerivedSources/ANGLE/glslang_tab.cpp: Source/ThirdParty/ANGLE/src/compiler/glsla
 DerivedSources/ANGLE/glslang_tab.h: DerivedSources/ANGLE/glslang_tab.cpp
 
 IDL_PATH := \
+    $(WebCore)/Modules/filesystem \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
     $(WebCore)/Modules/mediastream \
@@ -827,7 +829,7 @@ DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator JS --supplementalDependencyFile $(supplemental_dependency_file) $<
 
 # See https://bugs.webkit.org/show_bug.cgi?id=76388
-# We need to introduce a manual dependency to prevent non-generated sources from 
+# We need to introduce a manual dependency to prevent non-generated sources from
 # trying to build before the generated ones. This can happen if the supplemental
 # IDL generation takes a long time. The pipe represents an order-only dependency,
 # which means that GNUmake will only try to build the dependencies first, but

@@ -28,6 +28,7 @@
 
 VPATH = \
     $(WebCore) \
+    $(WebCore)/Modules/filesystem \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
     $(WebCore)/Modules/webdatabase \
@@ -195,10 +196,10 @@ BINDING_IDLS = \
     $(WebCore)/fileapi/DOMFileSystem.idl \
     $(WebCore)/fileapi/DOMFileSystemSync.idl \
     $(WebCore)/fileapi/DOMWindowFileSystem.idl \
-    $(WebCore)/fileapi/DirectoryEntry.idl \
-    $(WebCore)/fileapi/DirectoryEntrySync.idl \
-    $(WebCore)/fileapi/DirectoryReader.idl \
-    $(WebCore)/fileapi/DirectoryReaderSync.idl \
+    $(WebCore)/Modules/filesystem/DirectoryEntry.idl \
+    $(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
+    $(WebCore)/Modules/filesystem/DirectoryReader.idl \
+    $(WebCore)/Modules/filesystem/DirectoryReaderSync.idl \
     $(WebCore)/fileapi/EntriesCallback.idl \
     $(WebCore)/fileapi/Entry.idl \
     $(WebCore)/fileapi/EntryArray.idl \
