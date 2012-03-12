@@ -41,9 +41,12 @@
 #import "WebViewInternal.h"
 #import <WebCore/InspectorController.h>
 #import <WebCore/Page.h>
+#import <WebCore/SoftLinking.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/PassOwnPtr.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(WebInspector)
 
 using namespace WebCore;
 
@@ -162,6 +165,9 @@ void WebInspectorFrontendClient::frontendLoaded()
 
 static bool useWebKitWebInspector()
 {
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorLibrary();
+
     return [[NSUserDefaults standardUserDefaults] boolForKey:@"UseWebKitWebInspector"] ||
         ![[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"];
 }
