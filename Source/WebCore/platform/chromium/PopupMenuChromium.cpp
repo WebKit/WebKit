@@ -31,17 +31,11 @@
 
 #include "config.h"
 #include "PopupMenuChromium.h"
-
-#include "Frame.h"
-#include "FrameView.h"
-#include "Page.h"
 #include "PopupContainer.h"
-#include "Settings.h"
 
 namespace WebCore {
 
 int PopupMenuChromium::s_minimumRowHeight = 0;
-int PopupMenuChromium::s_optionPaddingForTouch = 30;
 
 // The settings used for the drop down menu.
 // This is the delegate used if none is provided.
@@ -68,14 +62,8 @@ PopupMenuChromium::~PopupMenuChromium()
 
 void PopupMenuChromium::show(const IntRect& r, FrameView* v, int index)
 {
-    if (!p.popup) {
-        PopupContainerSettings popupSettings = dropDownSettings;
-        popupSettings.defaultDeviceScaleFactor =
-            v->frame()->page()->settings()->defaultDeviceScaleFactor();
-        if (!popupSettings.defaultDeviceScaleFactor)
-            popupSettings.defaultDeviceScaleFactor = 1;
-        p.popup = PopupContainer::create(client(), PopupContainer::Select, popupSettings);
-    }
+    if (!p.popup)
+        p.popup = PopupContainer::create(client(), PopupContainer::Select, dropDownSettings);
     p.popup->showInRect(r, v, index);
 }
 

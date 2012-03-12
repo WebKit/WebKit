@@ -1,3 +1,16 @@
+2012-03-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r110359.
+        http://trac.webkit.org/changeset/110359
+        https://bugs.webkit.org/show_bug.cgi?id=80799
+
+        SelectPopupMenuTest.ClickItem failure (Requested by ukai on
+        #webkit).
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::gestureEvent):
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+
 2012-03-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: [chromium] add provisional test for the downstream sanity test.
