@@ -40,9 +40,14 @@
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8Database.h"
+#include "V8Float32Array.h"
+#include "V8Float64Array.h"
 #include "V8HTMLAllCollection.h"
 #include "V8HTMLCollection.h"
 #include "V8HiddenPropertyName.h"
+#include "V8Int16Array.h"
+#include "V8Int32Array.h"
+#include "V8Int8Array.h"
 #include "V8NodeList.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
@@ -131,6 +136,10 @@ v8::Handle<v8::Value> V8InjectedScriptHost::typeCallback(const v8::Arguments& ar
     if (V8NodeList::HasInstance(value))
         return v8::String::New("array");
     if (V8HTMLCollection::HasInstance(value))
+        return v8::String::New("array");
+    if (V8Int8Array::HasInstance(value) || V8Int16Array::HasInstance(value) || V8Int32Array::HasInstance(value))
+        return v8::String::New("array");
+    if (V8Float32Array::HasInstance(value) || V8Float64Array::HasInstance(value))
         return v8::String::New("array");
     return v8::Undefined();
 }

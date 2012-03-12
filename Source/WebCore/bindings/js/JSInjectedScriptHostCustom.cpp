@@ -44,8 +44,13 @@
 #include "InjectedScriptHost.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorValues.h"
+#include "JSFloat32Array.h"
+#include "JSFloat64Array.h"
 #include "JSHTMLAllCollection.h"
 #include "JSHTMLCollection.h"
+#include "JSInt16Array.h"
+#include "JSInt32Array.h"
+#include "JSInt8Array.h"
 #include "JSNode.h"
 #include "JSNodeList.h"
 #include "JSStorage.h"
@@ -131,6 +136,10 @@ JSValue JSInjectedScriptHost::type(ExecState* exec)
     if (value.inherits(&JSNodeList::s_info))
         return jsString(exec, String("array"));
     if (value.inherits(&JSHTMLCollection::s_info))
+        return jsString(exec, String("array"));
+    if (value.inherits(&JSInt8Array::s_info) || value.inherits(&JSInt16Array::s_info) || value.inherits(&JSInt32Array::s_info))
+        return jsString(exec, String("array"));
+    if (value.inherits(&JSFloat32Array::s_info) || value.inherits(&JSFloat64Array::s_info))
         return jsString(exec, String("array"));
     return jsUndefined();
 }

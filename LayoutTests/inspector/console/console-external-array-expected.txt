@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: line 9: [object Int8Array]
+CONSOLE MESSAGE: line 10: [object Int16Array]
+CONSOLE MESSAGE: line 11: [object Int32Array]
+CONSOLE MESSAGE: line 12: [object Float32Array]
+CONSOLE MESSAGE: line 13: [object Float64Array]
+CONSOLE MESSAGE: line 15: [object Int8Array]
+CONSOLE MESSAGE: line 16: [object Int16Array]
+CONSOLE MESSAGE: line 17: [object Int32Array]
+CONSOLE MESSAGE: line 18: [object Float32Array]
+CONSOLE MESSAGE: line 19: [object Float64Array]
+Tests that console logging detects external arrays as arrays.
+
+console-external-array.html:9[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+console-external-array.html:10[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+console-external-array.html:11[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+console-external-array.html:12[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+console-external-array.html:13[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+console-external-array.html:15Int8Array[10]
+console-external-array.html:16Int16Array[10]
+console-external-array.html:17Int32Array[10]
+console-external-array.html:18Float32Array[10]
+console-external-array.html:19Float64Array[10]
+
