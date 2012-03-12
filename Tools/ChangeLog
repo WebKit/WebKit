@@ -1,3 +1,19 @@
+2012-03-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix build with newer Qt 5.
+
+        Reviewed by Tor Arne Vestbø.
+
+        Newer Qt 5 renames QDeclarativeFoo to QQmlFoo and provides backwards compatible
+        renames, which however do trigger a #warning. Until we _require_ a newer Qt 5
+        we should disable -Werror.
+
+        Also load(moc) for the availability of QMAKE_MOC in various derived sources. The
+        implicit load was removed recently.
+
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-03-11  Maciej Stachowiak  <mjs@apple.com>
 
         Add --instruments option to sunspider to profile with Instruments
