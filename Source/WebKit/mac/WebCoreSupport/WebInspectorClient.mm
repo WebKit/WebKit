@@ -160,10 +160,17 @@ void WebInspectorFrontendClient::frontendLoaded()
     setAttachedWindow(attached);
 }
 
+static bool useWebKitWebInspector()
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"UseWebKitWebInspector"] ||
+        ![[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"];
+}
+
 String WebInspectorFrontendClient::localizedStringsURL()
 {
-    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"localizedStrings" ofType:@"js"];
-    if (path)
+    NSBundle *bundle = useWebKitWebInspector() ? [NSBundle bundleWithIdentifier:@"com.apple.WebCore"] : [NSBundle bundleWithIdentifier:@"com.apple.WebInspector"]; 
+    NSString *path = [bundle pathForResource:@"localizedStrings" ofType:@"js"];
+    if ([path length])
         return [[NSURL fileURLWithPath:path] absoluteString];
     return String();
 }
@@ -258,7 +265,14 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 
     [preferences release];
 
-    NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
+    NSString *path;
+    if (useWebKitWebInspector())
+        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
+    else
+        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"];
+
+    ASSERT([path length]);
+
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:path]];
     [[_webView mainFrame] loadRequest:request];
     [request release];
@@ -295,18 +309,22 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     if (window)
         return window;
 
+    bool useTexturedWindow = useWebKitWebInspector();
+
     NSUInteger styleMask = (NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask);
 
-    styleMask |= NSTexturedBackgroundWindowMask;
+    if (useTexturedWindow)
+        styleMask |= NSTexturedBackgroundWindowMask;
 
     window = [[NSWindow alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 750.0, 650.0) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
     [window setDelegate:self];
     [window setMinSize:NSMakeSize(400.0, 400.0)];
 
-    [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
-    [window setContentBorderThickness:55. forEdge:NSMaxYEdge];
-
-    WKNSWindowMakeBottomCornersSquare(window);
+    if (useTexturedWindow) {
+        [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
+        [window setContentBorderThickness:55. forEdge:NSMaxYEdge];
+        WKNSWindowMakeBottomCornersSquare(window);
+    }
 
     [self setWindow:window];
     [window release];

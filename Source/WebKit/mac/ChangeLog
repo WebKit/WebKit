@@ -1,3 +1,19 @@
+2012-03-11  Timothy Hatcher  <timothy@apple.com>
+
+        Update how the Web Inspector resources are loaded.
+
+        https://bugs.webkit.org/show_bug.cgi?id=80798
+        rdar://problem/10359959
+
+        Reviewed by Brian Weinstein.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (useWebKitWebInspector): Return if we are using the WebCore resources for compatibility
+        with local and nightly builds.
+        (WebInspectorFrontendClient::localizedStringsURL): Decide what path to use.
+        (-[WebInspectorWindowController init]): Ditto.
+        (-[WebInspectorWindowController window]): Decide if the window is textured or not.
+
 2012-03-09  Jon Lee  <jonlee@apple.com>
 
         Rename NotificationPresenter to NotificationClient
