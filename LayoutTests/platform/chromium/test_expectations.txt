@@ -3036,7 +3036,6 @@ BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions.html 
 
 // Need to evaluate and update regions and exclusions tests.
 BUGWK74137 : fast/regions/bottom-overflow-out-of-first-region.html = PASS FAIL MISSING
-BUGWK74137 : fast/regions/floats-basic-in-variable-width-regions.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/flow-content-basic-vertical-rl.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/flow-content-basic-vertical.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/flow-content-basic.html = PASS FAIL MISSING
