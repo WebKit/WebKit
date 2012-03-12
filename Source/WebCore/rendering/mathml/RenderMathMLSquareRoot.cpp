@@ -75,8 +75,8 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, const LayoutPoint& paintOffs
     
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location());
 
-    LayoutUnit maxHeight = 0;
-    LayoutUnit width = 0;
+    int maxHeight = 0;
+    int width = 0;
     RenderObject* current = firstChild();
     while (current) {
         if (current->isBoxModelObject()) {
@@ -84,9 +84,9 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, const LayoutPoint& paintOffs
             RenderBoxModelObject* box = toRenderBoxModelObject(current);
             
             // Check to see if this box has a larger height
-            if (box->offsetHeight() > maxHeight)
-                maxHeight = box->offsetHeight();
-            width += box->offsetWidth();
+            if (box->pixelSnappedOffsetHeight() > maxHeight)
+                maxHeight = box->pixelSnappedOffsetHeight();
+            width += box->pixelSnappedOffsetWidth();
         }
         current = current->nextSibling();
     }
@@ -160,15 +160,15 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, const LayoutPoint& paintOffs
 
 void RenderMathMLSquareRoot::layout()
 {
-    LayoutUnit maxHeight = 0;
+    int maxHeight = 0;
     
     RenderObject* current = firstChild();
     while (current) {
         if (current->isBoxModelObject()) {
             RenderBoxModelObject* box = toRenderBoxModelObject(current);
             
-            if (box->offsetHeight() > maxHeight)
-                maxHeight = box->offsetHeight();
+            if (box->pixelSnappedOffsetHeight() > maxHeight)
+                maxHeight = box->pixelSnappedOffsetHeight();
             
             box->style()->setVerticalAlign(BASELINE);
         }
@@ -179,8 +179,8 @@ void RenderMathMLSquareRoot::layout()
         maxHeight = style()->fontSize();
 
     
-    if (maxHeight > static_cast<LayoutUnit>(gThresholdBaseHeight * style()->fontSize()))
-        style()->setPaddingBottom(Length(static_cast<LayoutUnit>(gRootBottomPadding * style()->fontSize()), Fixed));
+    if (maxHeight > static_cast<int>(gThresholdBaseHeight * style()->fontSize()))
+        style()->setPaddingBottom(Length(static_cast<int>(gRootBottomPadding * style()->fontSize()), Fixed));
 
     
     RenderBlock::layout();

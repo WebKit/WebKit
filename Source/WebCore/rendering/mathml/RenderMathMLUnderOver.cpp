@@ -131,7 +131,7 @@ inline int getOffsetHeight(RenderObject* obj)
 {
     if (obj->isBoxModelObject()) {
         RenderBoxModelObject* box = toRenderBoxModelObject(obj);
-        return box->offsetHeight();
+        return box->pixelSnappedOffsetHeight();
     }
    
     return 0;
@@ -185,7 +185,7 @@ void RenderMathMLUnderOver::layout()
         // base row wrapper
         base = firstChild();
         if (base) {
-            LayoutUnit baseHeight = getOffsetHeight(base);
+            int baseHeight = getOffsetHeight(base);
             // actual base
             base = base->firstChild();
             if (!base || !base->isBoxModelObject())
@@ -226,7 +226,7 @@ void RenderMathMLUnderOver::layout()
                 // We need to calculate the baseline of the base versus the start of the under block and
                 // adjust the placement of the under block.
                 
-                LayoutUnit baseHeight = getOffsetHeight(base);
+                int baseHeight = getOffsetHeight(base);
                 // actual base
                 base = base->firstChild();
                 if (!base || !base->isBoxModelObject())

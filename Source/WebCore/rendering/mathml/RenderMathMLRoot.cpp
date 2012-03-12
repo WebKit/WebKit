@@ -108,18 +108,18 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     
     RenderBoxModelObject* indexBox = toRenderBoxModelObject(lastChild());
     
-    LayoutUnit maxHeight = indexBox->offsetHeight();
+    int maxHeight = indexBox->pixelSnappedOffsetHeight();
     // default to the font size in pixels if we're empty
     if (!maxHeight)
         maxHeight = style()->fontSize();
-    LayoutUnit width = indexBox->offsetWidth();
+    int width = indexBox->pixelSnappedOffsetWidth();
     
-    LayoutUnit indexWidth = 0;
+    int indexWidth = 0;
     RenderObject* current = firstChild();
     while (current != lastChild()) {
         if (current->isBoxModelObject()) {
             RenderBoxModelObject* box = toRenderBoxModelObject(current);
-            indexWidth += box->offsetWidth();
+            indexWidth += box->pixelSnappedOffsetWidth();
         }
         current = current->nextSibling();
     }
@@ -139,7 +139,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     width += topStartShift;
     
     int rootPad = static_cast<int>(gRootPadding * style()->fontSize());
-    LayoutUnit start = adjustedPaintOffset.x() + indexWidth + gRadicalLeftMargin + style()->paddingLeft().value() - rootPad;
+    int start = adjustedPaintOffset.x() + indexWidth + gRadicalLeftMargin + style()->paddingLeft().value() - rootPad;
     adjustedPaintOffset.setY(adjustedPaintOffset.y() + style()->paddingTop().value() - rootPad);
     
     FloatPoint topStart(start - topStartShift, adjustedPaintOffset.y());
@@ -199,7 +199,7 @@ void RenderMathMLRoot::layout()
     if (!firstChild() || !lastChild())
         return;
 
-    LayoutUnit maxHeight = toRenderBoxModelObject(lastChild())->offsetHeight();
+    int maxHeight = toRenderBoxModelObject(lastChild())->pixelSnappedOffsetHeight();
     
     RenderObject* current = lastChild()->firstChild();
     if (current)
@@ -209,17 +209,17 @@ void RenderMathMLRoot::layout()
         maxHeight = style()->fontSize();
     
     // Base height above which the shape of the root changes
-    LayoutUnit thresholdHeight = static_cast<LayoutUnit>(gThresholdBaseHeight * style()->fontSize());
-    LayoutUnit topStartShift = 0;
+    int thresholdHeight = static_cast<int>(gThresholdBaseHeight * style()->fontSize());
+    int topStartShift = 0;
     
     if (maxHeight > thresholdHeight && thresholdHeight) {
         float shift = (maxHeight - thresholdHeight) / static_cast<float>(thresholdHeight);
         if (shift > 1.)
             shift = 1.0f;
-        LayoutUnit frontWidth = static_cast<LayoutUnit>(style()->fontSize() * gRadicalWidth);
-        topStartShift = static_cast<LayoutUnit>(gRadicalBottomPointXPos * frontWidth * shift);
+        int frontWidth = static_cast<int>(style()->fontSize() * gRadicalWidth);
+        topStartShift = static_cast<int>(gRadicalBottomPointXPos * frontWidth * shift);
         
-        style()->setPaddingBottom(Length(static_cast<LayoutUnit>(gRootBottomPadding * style()->fontSize()), Fixed));
+        style()->setPaddingBottom(Length(static_cast<int>(gRootBottomPadding * style()->fontSize()), Fixed));
     }
     
     // Positioning of the index
@@ -230,14 +230,14 @@ void RenderMathMLRoot::layout()
     if (!indexBox)
         return;
     
-    LayoutUnit indexShift = indexBox->offsetWidth() + topStartShift;
-    LayoutUnit radicalHeight = static_cast<LayoutUnit>((1 - gRadicalTopLeftPointYPos) * maxHeight);
-    LayoutUnit rootMarginTop = radicalHeight + style()->paddingBottom().value() + indexBox->offsetHeight()
-        - (maxHeight + static_cast<LayoutUnit>(gRootPadding * style()->fontSize()));
+    int indexShift = indexBox->pixelSnappedOffsetWidth() + topStartShift;
+    int radicalHeight = static_cast<int>((1 - gRadicalTopLeftPointYPos) * maxHeight);
+    int rootMarginTop = radicalHeight + style()->paddingBottom().value() + indexBox->pixelSnappedOffsetHeight()
+        - (maxHeight + static_cast<int>(gRootPadding * style()->fontSize()));
     
     style()->setPaddingLeft(Length(indexShift, Fixed));
     if (rootMarginTop > 0)
-        style()->setPaddingTop(Length(rootMarginTop + static_cast<LayoutUnit>(gRootPadding * style()->fontSize()), Fixed));
+        style()->setPaddingTop(Length(rootMarginTop + static_cast<int>(gRootPadding * style()->fontSize()), Fixed));
     
     setNeedsLayout(true);
     setPreferredLogicalWidthsDirty(true, false);

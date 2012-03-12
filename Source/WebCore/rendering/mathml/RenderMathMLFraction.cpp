@@ -151,7 +151,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
     if (!firstChild() ||!m_lineThickness)
         return;
 
-    LayoutUnit verticalOffset = 0;
+    int verticalOffset = 0;
     // The children are always RenderMathMLBlock instances
     if (firstChild()->isRenderMathMLBlock()) {
         int adjustForThickness = m_lineThickness > 1 ? int(m_lineThickness / 2) : 1;
@@ -159,9 +159,9 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
             adjustForThickness++;
         RenderMathMLBlock* numerator = toRenderMathMLBlock(firstChild());
         if (numerator->isRenderMathMLRow())
-            verticalOffset = numerator->offsetHeight() + adjustForThickness;
+            verticalOffset = numerator->pixelSnappedOffsetHeight() + adjustForThickness;
         else 
-            verticalOffset = numerator->offsetHeight();        
+            verticalOffset = numerator->pixelSnappedOffsetHeight();        
     }
     
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location());
@@ -173,7 +173,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
     info.context->setStrokeStyle(SolidStroke);
     info.context->setStrokeColor(style()->visitedDependentColor(CSSPropertyColor), ColorSpaceSRGB);
     
-    info.context->drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y()));
+    info.context->drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y()));
 }
 
 LayoutUnit RenderMathMLFraction::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const
@@ -186,7 +186,7 @@ LayoutUnit RenderMathMLFraction::baselinePosition(FontBaseline, bool firstLine, 
         else if (nextSibling())
             refStyle = nextSibling()->style();
         int shift = int(ceil((refStyle->fontMetrics().xHeight() + 1) / 2));
-        return numerator->offsetHeight() + shift;
+        return numerator->pixelSnappedOffsetHeight() + shift;
     }
     return RenderBlock::baselinePosition(AlphabeticBaseline, firstLine, lineDirection, linePositionMode);
 }

@@ -45,7 +45,7 @@ void RenderMathMLRow::layout()
 {
     RenderBlock::layout();
     
-    LayoutUnit maxHeight = 0;
+    int maxHeight = 0;
 
     // Calculate the non-operator max height of the row.
     for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
@@ -56,8 +56,8 @@ void RenderMathMLRow::layout()
         } else if (current->isBoxModelObject()) {
             RenderBoxModelObject* box = toRenderBoxModelObject(current);
             // Check to see if this box has a larger height.
-            if (box->offsetHeight() > maxHeight)
-                maxHeight = box->offsetHeight();
+            if (box->pixelSnappedOffsetHeight() > maxHeight)
+                maxHeight = box->pixelSnappedOffsetHeight();
         }
     }
     
