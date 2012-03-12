@@ -90,8 +90,16 @@ private:
     explicit CCThreadProxy(CCLayerTreeHost*);
     friend class CCThreadProxyContextRecreationTimer;
 
+    // Set on impl thread, read on main thread.
+    struct BeginFrameAndCommitState {
+        BeginFrameAndCommitState() : frameBeginTime(0) { }
+        double frameBeginTime;
+        OwnPtr<CCScrollAndScaleSet> scrollInfo;
+    };
+    OwnPtr<BeginFrameAndCommitState> m_pendingBeginFrameRequest;
+
     // Called on main thread
-    void beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollAndScaleSet>);
+    void beginFrame();
     void didCommitAndDrawFrame();
     void didCompleteSwapBuffers();
     void setAnimationEvents(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime);
@@ -105,8 +113,7 @@ private:
         void* pixels;
         IntRect rect;
     };
-    PassOwnPtr<CCThread::Task> createBeginFrameAndCommitTaskOnImplThread();
-    void obtainBeginFrameAndCommitTaskFromCCThread(CCCompletionEvent*, CCThread::Task**);
+    void forceBeginFrameOnImplThread(CCCompletionEvent*);
     void beginFrameCompleteOnImplThread(CCCompletionEvent*);
     void requestReadbackOnImplThread(ReadbackRequest*);
     void requestStartPageScaleAnimationOnImplThread(IntSize targetPosition, bool useAnchor, float scale, double durationSec);
@@ -129,11 +136,9 @@ private:
     bool m_layerRendererInitialized;
     LayerRendererCapabilities m_layerRendererCapabilitiesMainThreadCopy;
     bool m_started;
-    int m_lastExecutedBeginFrameAndCommitSequenceNumber;
 
     // Used on the CCThread only.
     OwnPtr<CCLayerTreeHostImpl> m_layerTreeHostImpl;
-    int m_numBeginFrameAndCommitsIssuedOnImplThread;
 
     OwnPtr<CCInputHandler> m_inputHandlerOnImplThread;
 
@@ -144,6 +149,9 @@ private:
     // Holds on to the GraphicsContext3D we might use for compositing in between initializeContext()
     // and initializeLayerRenderer() calls.
     RefPtr<GraphicsContext3D> m_contextBeforeInitializationOnImplThread;
+
+    // Set when the main thread is waiting on a scheduledActionBeginFrame to be issued.
+    CCCompletionEvent* m_beginFrameCompletionEventOnImplThread;
 
     // Set when the main thread is waiing on a readback.
     ReadbackRequest* m_readbackRequestOnImplThread;

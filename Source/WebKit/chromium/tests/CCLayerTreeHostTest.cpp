@@ -806,6 +806,46 @@ TEST_F(CCLayerTreeHostTestSetNeedsRedraw, runMultiThread)
     runTestThreaded();
 }
 
+// A compositeAndReadback while invisible should force a normal commit without assertion.
+class CCLayerTreeHostTestCompositeAndReadbackWhileInvisible : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestCompositeAndReadbackWhileInvisible()
+        : m_numCommits(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+    }
+
+    virtual void didCommitAndDrawFrame()
+    {
+        m_numCommits++;
+        if (m_numCommits == 1) {
+            m_layerTreeHost->setVisible(false);
+            m_layerTreeHost->setNeedsCommit();
+            m_layerTreeHost->setNeedsCommit();
+            OwnArrayPtr<char> pixels(adoptArrayPtr(new char[4]));
+            m_layerTreeHost->compositeAndReadback(static_cast<void*>(pixels.get()), IntRect(0, 0, 1, 1));
+        } else
+            endTest();
+
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+    int m_numCommits;
+};
+
+TEST_F(CCLayerTreeHostTestCompositeAndReadbackWhileInvisible, runMultiThread)
+{
+    runTestThreaded();
+}
+
+
 // Trigger a frame with setNeedsCommit. Then, inside the resulting animate
 // callback, requet another frame using setNeedsAnimate. End the test when
 // animate gets called yet-again, indicating that the proxy is correctly

@@ -56,6 +56,7 @@ public:
         CONTEXT_LOST,
         CONTEXT_RECREATING,
     };
+
     bool commitPending() const
     {
         return m_commitState != COMMIT_STATE_IDLE;
@@ -99,6 +100,10 @@ public:
     // thread to main.
     void setNeedsCommit();
 
+    // As setNeedsCommit(), but ensures the beginFrame will definitely happen even if
+    // we are not visible.
+    void setNeedsForcedCommit();
+
     // Call this only in response to receiving an ACTION_BEGIN_FRAME
     // from nextState. Indicates that all painting is complete and that
     // updating of compositor resources can begin.
@@ -127,6 +132,7 @@ protected:
     bool m_needsRedraw;
     bool m_needsForcedRedraw;
     bool m_needsCommit;
+    bool m_needsForcedCommit;
     bool m_updateMoreResourcesPending;
     bool m_insideVSync;
     bool m_visible;

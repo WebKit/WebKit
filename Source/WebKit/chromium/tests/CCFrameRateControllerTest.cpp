@@ -39,13 +39,13 @@ class FakeCCFrameRateControllerClient : public WebCore::CCFrameRateControllerCli
 public:
     FakeCCFrameRateControllerClient() { reset(); }
 
-    void reset() { m_frameBegun = false; }
-    bool frameBegun() const { return m_frameBegun; }
+    void reset() { m_vsyncTicked = false; }
+    bool vsyncTicked() const { return m_vsyncTicked; }
 
-    virtual void beginFrame() { m_frameBegun = true; }
+    virtual void vsyncTick() { m_vsyncTicked = true; }
 
 protected:
-    bool m_frameBegun;
+    bool m_vsyncTicked;
 };
 
 
@@ -65,7 +65,7 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_ImmediateAck)
     elapsed += thread.pendingDelay();
     timeSource->setMonotonicallyIncreasingTimeMs(elapsed);
     thread.runPendingTask();
-    EXPECT_TRUE(client.frameBegun());
+    EXPECT_TRUE(client.vsyncTicked());
     client.reset();
 
     // Tell the controller we drew
@@ -80,7 +80,7 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_ImmediateAck)
     EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTimeMs()); // Sanity check that previous code didn't move time backward.
     timeSource->setMonotonicallyIncreasingTimeMs(elapsed);
     thread.runPendingTask();
-    EXPECT_TRUE(client.frameBegun());
+    EXPECT_TRUE(client.vsyncTicked());
 }
 
 TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
@@ -100,7 +100,7 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
     elapsed += thread.pendingDelay();
     timeSource->setMonotonicallyIncreasingTimeMs(elapsed);
     thread.runPendingTask();
-    EXPECT_TRUE(client.frameBegun());
+    EXPECT_TRUE(client.vsyncTicked());
     client.reset();
 
     // Tell the controller we drew
@@ -111,7 +111,7 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
     EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTimeMs()); // Sanity check that previous code didn't move time backward.
     timeSource->setMonotonicallyIncreasingTimeMs(elapsed);
     thread.runPendingTask();
-    EXPECT_TRUE(client.frameBegun());
+    EXPECT_TRUE(client.vsyncTicked());
     client.reset();
 
     // Tell the controller we drew, again.
@@ -122,21 +122,21 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
     EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTimeMs()); // Sanity check that previous code didn't move time backward.
     timeSource->setMonotonicallyIncreasingTimeMs(elapsed);
     thread.runPendingTask();
-    EXPECT_FALSE(client.frameBegun());
+    EXPECT_FALSE(client.vsyncTicked());
 
     // Tell the controller the first frame ended 5ms later
     timeSource->setMonotonicallyIncreasingTimeMs(timeSource->monotonicallyIncreasingTimeMs() + 5);
     controller.didFinishFrame();
 
     // Tick should not have been called
-    EXPECT_FALSE(client.frameBegun());
+    EXPECT_FALSE(client.vsyncTicked());
 
     // Trigger yet another frame. Since one frames is pending, another vsync callback should run.
     elapsed += thread.pendingDelay();
     EXPECT_TRUE(elapsed >= timeSource->monotonicallyIncreasingTimeMs()); // Sanity check that previous code didn't move time backward.
     timeSource->setMonotonicallyIncreasingTimeMs(elapsed);
     thread.runPendingTask();
-    EXPECT_TRUE(client.frameBegun());
+    EXPECT_TRUE(client.vsyncTicked());
 }
 
 }

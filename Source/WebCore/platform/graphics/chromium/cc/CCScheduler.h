@@ -63,9 +63,13 @@ public:
     void setVisible(bool);
 
     void setNeedsCommit();
+
+    // Like setNeedsCommit(), but ensures a commit will definitely happen even if we are not visible.
+    void setNeedsForcedCommit();
+
     void setNeedsRedraw();
 
-    // As setNeedsRedraw(), but ensures the draw will definitely happen even if we are not visible.
+    // Like setNeedsRedraw(), but ensures the draw will definitely happen even if we are not visible.
     void setNeedsForcedRedraw();
 
     void beginFrameComplete();
@@ -80,7 +84,7 @@ public:
     bool redrawPending() const { return m_stateMachine.redrawPending(); }
 
     // CCFrameRateControllerClient implementation
-    virtual void beginFrame();
+    virtual void vsyncTick();
 
 private:
     CCScheduler(CCSchedulerClient*, PassOwnPtr<CCFrameRateController>);

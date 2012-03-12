@@ -87,7 +87,7 @@ void CCFrameRateController::onTimerTick()
     }
 
     if (m_client)
-        m_client->beginFrame();
+        m_client->vsyncTick();
 }
 
 void CCFrameRateController::didBeginFrame()

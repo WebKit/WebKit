@@ -64,9 +64,8 @@ CCThreadProxy::CCThreadProxy(CCLayerTreeHost* layerTreeHost)
     , m_compositorIdentifier(-1)
     , m_layerRendererInitialized(false)
     , m_started(false)
-    , m_lastExecutedBeginFrameAndCommitSequenceNumber(-1)
-    , m_numBeginFrameAndCommitsIssuedOnImplThread(0)
     , m_mainThreadProxy(CCScopedThreadProxy::create(CCProxy::mainThread()))
+    , m_beginFrameCompletionEventOnImplThread(0)
     , m_readbackRequestOnImplThread(0)
     , m_finishAllRenderingCompletionEventOnImplThread(0)
     , m_commitCompletionEventOnImplThread(0)
@@ -94,25 +93,14 @@ bool CCThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect)
         return false;
     }
 
-    // If a commit is pending, perform the commit first.
-    if (m_commitRequested)  {
-        // This bit of code is uglier than it should be because returning
-        // pointers via the CCThread task model is really messy. Effectively, we
-        // are making a blocking call to createBeginFrameAndCommitTaskOnImplThread,
-        // and trying to get the CCMainThread::Task it returns so we can run it.
-        OwnPtr<CCThread::Task> beginFrameAndCommitTask;
-        {
-            CCThread::Task* taskPtr = 0;
-            CCCompletionEvent completion;
-            CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::obtainBeginFrameAndCommitTaskFromCCThread, AllowCrossThreadAccess(&completion), AllowCrossThreadAccess(&taskPtr)));
-            completion.wait();
-            beginFrameAndCommitTask = adoptPtr(taskPtr);
-        }
 
-        beginFrameAndCommitTask->performTask();
-    }
+    // Perform a synchronous commit.
+    CCCompletionEvent beginFrameCompletion;
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::forceBeginFrameOnImplThread, AllowCrossThreadAccess(&beginFrameCompletion)));
+    beginFrameCompletion.wait();
+    beginFrame();
 
-    // Draw using the new tree and read back the results.
+    // Perform a synchronous readback.
     ReadbackRequest request;
     request.rect = rect;
     request.pixels = pixels;
@@ -131,6 +119,7 @@ void CCThreadProxy::requestReadbackOnImplThread(ReadbackRequest* request)
         return;
     }
     m_readbackRequestOnImplThread = request;
+    m_schedulerOnImplThread->setNeedsRedraw();
     m_schedulerOnImplThread->setNeedsForcedRedraw();
 }
 
@@ -385,54 +374,50 @@ void CCThreadProxy::finishAllRenderingOnImplThread(CCCompletionEvent* completion
     m_schedulerOnImplThread->setNeedsForcedRedraw();
 }
 
+void CCThreadProxy::forceBeginFrameOnImplThread(CCCompletionEvent* completion)
+{
+    TRACE_EVENT0("cc", "CCThreadProxy::forceBeginFrameOnImplThread");
+    ASSERT(!m_beginFrameCompletionEventOnImplThread);
+
+    if (m_schedulerOnImplThread->commitPending()) {
+        completion->signal();
+        return;
+    }
+
+    m_beginFrameCompletionEventOnImplThread = completion;
+    m_schedulerOnImplThread->setNeedsCommit();
+    m_schedulerOnImplThread->setNeedsForcedCommit();
+}
+
 void CCThreadProxy::scheduledActionBeginFrame()
 {
-    TRACE_EVENT("CCThreadProxy::scheduledActionBeginFrame", this, 0);
-    m_mainThreadProxy->postTask(createBeginFrameAndCommitTaskOnImplThread());
+    TRACE_EVENT0("cc", "CCThreadProxy::scheduledActionBeginFrame");
+    ASSERT(!m_pendingBeginFrameRequest);
+    m_pendingBeginFrameRequest = adoptPtr(new BeginFrameAndCommitState());
+    m_pendingBeginFrameRequest->frameBeginTime = 0;
+    m_pendingBeginFrameRequest->scrollInfo = m_layerTreeHostImpl->processScrollDeltas();
+
+    m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::beginFrame));
+
+    if (m_beginFrameCompletionEventOnImplThread) {
+        m_beginFrameCompletionEventOnImplThread->signal();
+        m_beginFrameCompletionEventOnImplThread = 0;
+    }
 }
 
-void CCThreadProxy::obtainBeginFrameAndCommitTaskFromCCThread(CCCompletionEvent* completion, CCThread::Task** taskPtr)
+void CCThreadProxy::beginFrame()
 {
-    OwnPtr<CCThread::Task> task = createBeginFrameAndCommitTaskOnImplThread();
-    *taskPtr = task.leakPtr();
-    completion->signal();
-}
-
-PassOwnPtr<CCThread::Task> CCThreadProxy::createBeginFrameAndCommitTaskOnImplThread()
-{
-    TRACE_EVENT("CCThreadProxy::createBeginFrameAndCommitTaskOnImplThread", this, 0);
-    ASSERT(isImplThread());
-    double frameBeginTime = currentTime();
-
-    // NOTE, it is possible to receieve a request for a
-    // beginFrameAndCommitOnImplThread from finishAllRendering while a
-    // beginFrameAndCommitOnImplThread is enqueued. Since CCThread doesn't
-    // provide a threadsafe way to cancel tasks, it is important that
-    // beginFrameAndCommit be structured to understand that it may get called at
-    // a point that it shouldn't. We do this by assigning a sequence number to
-    // every new beginFrameAndCommit task. Then, beginFrameAndCommit tracks the
-    // last executed sequence number, dropping beginFrameAndCommit with sequence
-    // numbers below the last executed one.
-    int thisTaskSequenceNumber = m_numBeginFrameAndCommitsIssuedOnImplThread;
-    m_numBeginFrameAndCommitsIssuedOnImplThread++;
-    OwnPtr<CCScrollAndScaleSet> scrollInfo = m_layerTreeHostImpl->processScrollDeltas();
-    return createCCThreadTask(this, &CCThreadProxy::beginFrameAndCommit, thisTaskSequenceNumber, frameBeginTime, scrollInfo.release());
-}
-
-void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTime, PassOwnPtr<CCScrollAndScaleSet> scrollInfo)
-{
-    TRACE_EVENT("CCThreadProxy::beginFrameAndCommit", this, 0);
+    TRACE_EVENT0("cc", "CCThreadProxy::beginFrame");
     ASSERT(isMainThread());
     if (!m_layerTreeHost)
         return;
 
-    // Drop beginFrameAndCommit calls that occur out of sequence. See createBeginFrameAndCommitTaskOnImplThread for
-    // an explanation of how out-of-sequence beginFrameAndCommit tasks can occur.
-    if (sequenceNumber < m_lastExecutedBeginFrameAndCommitSequenceNumber) {
-        TRACE_EVENT("EarlyOut_StaleBeginFrameAndCommit", this, 0);
+    if (!m_pendingBeginFrameRequest) {
+        TRACE_EVENT0("cc", "EarlyOut_StaleBeginFrameMessage");
         return;
     }
-    m_lastExecutedBeginFrameAndCommitSequenceNumber = sequenceNumber;
+
+    OwnPtr<BeginFrameAndCommitState> request(m_pendingBeginFrameRequest.release());
 
     // Do not notify the impl thread of commit requests that occur during
     // the apply/animate/layout part of the beginFrameAndCommit process since
@@ -448,13 +433,11 @@ void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTim
 
     // FIXME: technically, scroll deltas need to be applied for dropped commits as well.
     // Re-do the commit flow so that we don't send the scrollInfo on the BFAC message.
-    m_layerTreeHost->applyScrollAndScale(*scrollInfo);
+    m_layerTreeHost->applyScrollAndScale(*request->scrollInfo);
 
     // FIXME: recreate the context if it was requested by the impl thread.
-    m_layerTreeHost->updateAnimations(frameBeginTime);
+    m_layerTreeHost->updateAnimations(request->frameBeginTime);
     m_layerTreeHost->layout();
-
-    ASSERT(m_lastExecutedBeginFrameAndCommitSequenceNumber == sequenceNumber);
 
     // Clear the commit flag after updating animations and layout here --- objects that only
     // layout when painted will trigger another setNeedsCommit inside
@@ -482,8 +465,6 @@ void CCThreadProxy::beginFrameAndCommit(int sequenceNumber, double frameBeginTim
     }
 
     m_layerTreeHost->commitComplete();
-
-    ASSERT(m_lastExecutedBeginFrameAndCommitSequenceNumber == sequenceNumber);
 }
 
 void CCThreadProxy::beginFrameCompleteOnImplThread(CCCompletionEvent* completion)

@@ -56,6 +56,12 @@ void CCScheduler::setNeedsCommit()
     processScheduledActions();
 }
 
+void CCScheduler::setNeedsForcedCommit()
+{
+    m_stateMachine.setNeedsForcedCommit();
+    processScheduledActions();
+}
+
 void CCScheduler::setNeedsRedraw()
 {
     m_stateMachine.setNeedsRedraw();
@@ -101,13 +107,13 @@ void CCScheduler::didRecreateContext()
     processScheduledActions();
 }
 
-void CCScheduler::beginFrame()
+void CCScheduler::vsyncTick()
 {
     if (m_updateMoreResourcesPending) {
         m_updateMoreResourcesPending = false;
         m_stateMachine.beginUpdateMoreResourcesComplete(m_client->hasMoreResourceUpdates());
     }
-    TRACE_EVENT("CCScheduler::beginFrame", this, 0);
+    TRACE_EVENT("CCScheduler::vsyncTick", this, 0);
 
     m_stateMachine.didEnterVSync();
     processScheduledActions();

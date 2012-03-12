@@ -52,6 +52,9 @@ public:
     void setNeedsCommit(bool b) { m_needsCommit = b; }
     bool needsCommit() const { return m_needsCommit; }
 
+    void setNeedsForcedCommit(bool b) { m_needsForcedCommit = b; }
+    bool needsForcedCommit() const { return m_needsForcedCommit; }
+
     void setNeedsRedraw(bool b) { m_needsRedraw = b; }
     bool needsRedraw() const { return m_needsRedraw; }
 
@@ -776,6 +779,46 @@ TEST(CCSchedulerStateMachineTest, TestFinishAllRenderingWhileContextLost)
     state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
     state.didLeaveVSync();
+}
+
+TEST(CCSchedulerStateMachineTest, TestBeginFrameWhenInvisibleAndForceCommit)
+{
+    StateMachine state;
+    state.setVisible(true);
+    state.setNeedsCommit(true);
+    state.setNeedsForcedCommit(true);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction());
+}
+
+TEST(CCSchedulerStateMachineTest, TestBeginFrameWhenCommitInProgress)
+{
+    StateMachine state;
+    state.setVisible(false);
+    state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_FRAME_IN_PROGRESS);
+    state.setNeedsCommit(true);
+    state.setNeedsForcedCommit(true);
+
+    state.beginFrameComplete();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_UPDATE_MORE_RESOURCES, state.nextAction());
+    state.updateState(state.nextAction());
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_NONE, state.nextAction());
+    state.beginUpdateMoreResourcesComplete(false);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
+    state.updateState(state.nextAction());
+
+    EXPECT_EQ(CCSchedulerStateMachine::COMMIT_STATE_IDLE, state.commitState());
+
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction());
+}
+
+TEST(CCSchedulerStateMachineTest, TestBeginFrameWhenContextLost)
+{
+    StateMachine state;
+    state.setVisible(true);
+    state.setNeedsCommit(true);
+    state.setNeedsForcedCommit(true);
+    state.didLoseContext();
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction());
 }
 
 }

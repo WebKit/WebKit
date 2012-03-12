@@ -1,3 +1,31 @@
+2012-03-12  Nat Duca  <nduca@chromium.org>
+
+        [Chromium] Force compositeAndReadback through regular scheduling flow
+        https://bugs.webkit.org/show_bug.cgi?id=77049
+
+        Reviewed by James Robinson.
+
+        * tests/CCFrameRateControllerTest.cpp:
+        (WebKitTests::FakeCCFrameRateControllerClient::reset):
+        (WebKitTests::FakeCCFrameRateControllerClient::vsyncTicked):
+        (WebKitTests::FakeCCFrameRateControllerClient::vsyncTick):
+        (FakeCCFrameRateControllerClient):
+        (WebKitTests::TEST):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF):
+        (CCLayerTreeHostTestCompositeAndReadbackWhileInvisible):
+        (WTF::CCLayerTreeHostTestCompositeAndReadbackWhileInvisible::CCLayerTreeHostTestCompositeAndReadbackWhileInvisible):
+        (WTF::CCLayerTreeHostTestCompositeAndReadbackWhileInvisible::beginTest):
+        (WTF::CCLayerTreeHostTestCompositeAndReadbackWhileInvisible::didCommitAndDrawFrame):
+        (WTF::CCLayerTreeHostTestCompositeAndReadbackWhileInvisible::afterTest):
+        (WTF::TEST_F):
+        * tests/CCSchedulerStateMachineTest.cpp:
+        (WebCore::StateMachine::setNeedsForcedCommit):
+        (WebCore::StateMachine::needsForcedCommit):
+        (StateMachine):
+        (WebCore::TEST):
+        (WebCore):
+
 2012-03-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Handle LevelDB database corruption

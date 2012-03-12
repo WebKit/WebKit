@@ -35,7 +35,7 @@ namespace WebCore {
 
 class CCFrameRateControllerClient {
 public:
-    virtual void beginFrame() = 0;
+    virtual void vsyncTick() = 0;
 
 protected:
     virtual ~CCFrameRateControllerClient() { }

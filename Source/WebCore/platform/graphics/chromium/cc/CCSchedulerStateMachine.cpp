@@ -35,6 +35,7 @@ CCSchedulerStateMachine::CCSchedulerStateMachine()
     , m_needsRedraw(false)
     , m_needsForcedRedraw(false)
     , m_needsCommit(false)
+    , m_needsForcedCommit(false)
     , m_updateMoreResourcesPending(false)
     , m_insideVSync(false)
     , m_visible(false)
@@ -75,13 +76,15 @@ CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction() const
     case COMMIT_STATE_IDLE:
         if (m_contextState != CONTEXT_ACTIVE && m_needsForcedRedraw)
             return ACTION_DRAW;
+        if (m_contextState != CONTEXT_ACTIVE && m_needsForcedCommit)
+            return ACTION_BEGIN_FRAME;
         if (m_contextState == CONTEXT_LOST)
             return ACTION_BEGIN_CONTEXT_RECREATION;
         if (m_contextState == CONTEXT_RECREATING)
             return ACTION_NONE;
         if (shouldDraw())
             return ACTION_DRAW;
-        if (m_needsCommit && m_visible)
+        if (m_needsCommit && (m_visible || m_needsForcedCommit))
             return ACTION_BEGIN_FRAME;
         return ACTION_NONE;
 
@@ -105,7 +108,7 @@ CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction() const
             return ACTION_DRAW;
         // COMMIT_STATE_WAITING_FOR_FIRST_DRAW wants to enforce a draw. If m_canDraw is false,
         // proceed to the next step (similar as in COMMIT_STATE_IDLE).
-        if (!m_canDraw && m_needsCommit && m_visible)
+        if (!m_canDraw && m_needsCommit && (m_visible || m_needsForcedCommit))
             return ACTION_BEGIN_FRAME;
         return ACTION_NONE;
     }
@@ -120,9 +123,10 @@ void CCSchedulerStateMachine::updateState(Action action)
         return;
 
     case ACTION_BEGIN_FRAME:
-        ASSERT(m_visible);
+        ASSERT(m_visible || m_needsForcedCommit);
         m_commitState = COMMIT_STATE_FRAME_IN_PROGRESS;
         m_needsCommit = false;
+        m_needsForcedCommit = false;
         return;
 
     case ACTION_BEGIN_UPDATE_MORE_RESOURCES:
@@ -131,7 +135,7 @@ void CCSchedulerStateMachine::updateState(Action action)
         return;
 
     case ACTION_COMMIT:
-        if (m_needsCommit || !m_visible)
+        if ((m_needsCommit || !m_visible) && !m_needsForcedCommit)
             m_commitState = COMMIT_STATE_WAITING_FOR_FIRST_DRAW;
         else
             m_commitState = COMMIT_STATE_IDLE;
@@ -198,6 +202,11 @@ void CCSchedulerStateMachine::setNeedsForcedRedraw()
 void CCSchedulerStateMachine::setNeedsCommit()
 {
     m_needsCommit = true;
+}
+
+void CCSchedulerStateMachine::setNeedsForcedCommit()
+{
+    m_needsForcedCommit = true;
 }
 
 void CCSchedulerStateMachine::beginFrameComplete()
