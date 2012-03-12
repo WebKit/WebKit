@@ -1670,9 +1670,6 @@ BUGCR11251 LINUX WIN DEBUG : fast/forms/text-control-intrinsic-widths.html = FAI
 BUGCR11251 LINUX WIN : svg/custom/svg-fonts-in-text-controls.html = FAIL
 BUGCR11251 LINUX WIN : fast/forms/textarea-metrics.html = FAIL
 
-// Regresssions from WebKit Merge 43114:43242 that just need to be re-baselined.
-BUGCR11483 LINUX : svg/text/foreignObject-repaint.xml = FAIL
-
 // WebKit 45017:45086
 BUGCR15217 : fast/js/dictionary-no-cache.html = FAIL
 
@@ -3853,7 +3850,7 @@ BUGWK80588 LEOPARD : fast/block/float/dynamic-unfloat-pref-width.html = IMAGE
 BUGWK80588 LEOPARD : fast/block/margin-collapse/044.html = IMAGE
 BUGWK80588 LEOPARD : fast/block/margin-collapse/045.html = IMAGE
 BUGWK80588 LEOPARD : fast/block/positioning/054.html = IMAGE
-BUGWK80588 LEOPARD :  fast/forms/disabled-select-change-index.html = TEXT
+BUGWK80588 LEOPARD : fast/forms/disabled-select-change-index.html = TEXT
 BUGWK80588 LEOPARD : fast/css/pseudo-element-line-break.html = IMAGE
 BUGWK80588 LEOPARD : fast/events/onload-re-entry.html = IMAGE
 BUGWK80588 LEOPARD : fast/forms/select-writing-direction-natural.html = IMAGE
