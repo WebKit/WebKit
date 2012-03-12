@@ -103,6 +103,7 @@ haveQt(5) {
         }
     }
 } else {
+    VERSION = $$QT_VERSION
     DESTDIR = $$WEBKIT_DESTDIR
 }
 

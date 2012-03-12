@@ -1,3 +1,13 @@
+2012-03-12  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make sure we set the right library version for Qt 4
+
+        r110272 accedentally pruned the variable that ensures this.
+
+        Reviewed by Simon Hausmann.
+
+        * Source/api.pri:
+
 2012-03-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Increment the perf-o-matic app version.
