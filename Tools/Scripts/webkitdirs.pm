@@ -2302,6 +2302,13 @@ sub buildChromiumMakefile($$@)
         $command .= "bash -c \"source " . sourceDir() . "/Source/WebKit/chromium/build/android/envsetup.sh && ";
         $ENV{ANDROID_NDK_ROOT} = sourceDir() . "/Source/WebKit/chromium/android-ndk-r7";
         $ENV{WEBKIT_ANDROID_BUILD} = 1;
+
+        # FIXME: Remove the build-fix once the Chromium-side fix rolled in.
+        # https://bugs.webkit.org/show_bug.cgi?id=80861
+        my $binaryPrefix = $ENV{ANDROID_NDK_ROOT} . "/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin/arm-linux-androideabi";
+        $command .= qq(CC="$binaryPrefix-gcc" CXX="$binaryPrefix-g++" );
+        $command .= qq(LINK="$binaryPrefix-gcc" AR="$binaryPrefix-ar" );
+        $command .= qq(RANLIB="$binaryPrefix-ranlib" );
     }
 
     $command .= "make -fMakefile.chromium $makeArgs BUILDTYPE=$config $target";

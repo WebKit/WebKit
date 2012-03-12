@@ -1,3 +1,18 @@
+2012-03-12  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Temporary build-fix for the Android bot
+        https://bugs.webkit.org/show_bug.cgi?id=80862
+
+        Reviewed by Adam Barth.
+
+        Manually set the environmental variables required to compile source
+        files through the Android NDK instead of relying on the envsetup.sh
+        script. A proper fix will be landed to Chromium ASAP, and following
+        a Chromium roll into WebKit this code will be removed.
+
+        * Scripts/webkitdirs.pm:
+        (buildChromiumMakefile):
+
 2012-03-12  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Use right construct to detect config_test_gccdepends
