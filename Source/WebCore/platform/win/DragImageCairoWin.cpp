@@ -31,7 +31,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsContextPlatformPrivateCairo.h"
 #include "Image.h"
-#include "RetainPtr.h"
+#include <wtf/RetainPtr.h>
 #include <cairo-win32.h>
 #include <windows.h>
 

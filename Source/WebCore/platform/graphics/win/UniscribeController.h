@@ -29,7 +29,7 @@
 #include <usp10.h>
 #include "Font.h"
 #include "GlyphBuffer.h"
-#include "Vector.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

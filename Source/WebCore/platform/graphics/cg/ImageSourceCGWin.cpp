@@ -26,8 +26,8 @@
 #include "config.h"
 #include "ImageSourceCG.h"
 
-#include "StdLibExtras.h" 
 #include <wtf/HashMap.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

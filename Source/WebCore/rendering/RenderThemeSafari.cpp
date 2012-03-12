@@ -40,10 +40,10 @@
 #include "RenderMediaControls.h"
 #include "RenderSlider.h"
 #include "RenderView.h"
-#include "RetainPtr.h"
 #include "SoftLinking.h"
 #include "cssstyleselector.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <wtf/RetainPtr.h>
  
 using std::min;
 

@@ -35,11 +35,11 @@
 #include "GraphicsContext.h"
 #include "HWndDC.h"
 #include "Image.h"
-#include "RetainPtr.h"
 #include "Settings.h"
 #include "StringTruncator.h"
 #include "TextRun.h"
 #include "WebCoreTextRenderer.h"
+#include <wtf/RetainPtr.h>
 
 #include <windows.h>
 

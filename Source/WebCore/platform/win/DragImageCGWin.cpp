@@ -31,9 +31,9 @@
 #include "GraphicsContextCG.h"
 #include "HWndDC.h"
 #include "Image.h"
-#include "RetainPtr.h"
 
 #include <CoreGraphics/CoreGraphics.h>
+#include <wtf/RetainPtr.h>
 
 #include <windows.h>
 
