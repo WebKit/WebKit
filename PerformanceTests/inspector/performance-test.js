@@ -86,6 +86,23 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
     InspectorTest.timer._runTest();
 }
 
+InspectorTest.measureFunction = function(object, functionName)
+{
+    function measure() {
+        var timer = InspectorTest.timer;
+        var cookie;
+        if (timer)
+            cookie = timer.start(functionName);
+        var result = func.apply(this, arguments);
+
+        if (timer)
+            timer.finish(cookie);
+        return result;
+    }
+    var func = object[functionName];
+    object[functionName] = measure;
+}
+
 InspectorTest.mark = function(markerName)
 {
     var timer = InspectorTest.timer;

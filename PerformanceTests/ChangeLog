@@ -1,3 +1,14 @@
+2012-03-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: chromium: increase heap snapshot performance coverage.
+        https://bugs.webkit.org/show_bug.cgi?id=80829
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/detailed-heapshots-smoke-test.html:
+        * inspector/performance-test.js:
+        (initialize_TimeTracker.InspectorTest.measureFunction):
+
 2012-03-06  Kentaro Hara  <haraken@chromium.org>
 
         [Perf tests] Reduce the number of loops in dom-attributes.html

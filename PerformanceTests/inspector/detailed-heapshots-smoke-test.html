@@ -9,18 +9,26 @@ function test()
 {
     function performanceTest(timer)
     {
-
         var transferTimerCookie;
         var showTimerCookie;
         var changeViewTimerCookie;
         var clearTimerCookie;
 
-        var allTimerCookie = timer.start("summary-snapshot-time");
+        var fullTimerCookie = timer.start("full-summary-snapshot-time");
         var backendTimerCookie = timer.start("take-snapshot");
         ProfilerAgent.takeHeapSnapshot(step0);
 
         function step0()
         {
+            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildRetainers");
+            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildDominatedNodes");
+            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateFlags");
+            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildAggregates");
+            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_calculateObjectToWindowDistance");
+            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_buildNodeIndex");
+            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markDetachedDOMTreeNodes");
+            InspectorTest.measureFunction(WebInspector.HeapSnapshot.prototype, "_markQueriableHeapObjects");
+
             timer.finish(backendTimerCookie);
             transferTimerCookie = timer.start("transfer-snapshot");
             var profiles = WebInspector.panels.profiles.getProfiles("HEAP");
@@ -40,7 +48,6 @@ function test()
         function step2()
         {
             timer.finish(showTimerCookie);
-            timer.finish(allTimerCookie);
             changeViewTimerCookie = timer.start("switch-to-containment-view");
             InspectorTest.switchToView("Containment", cleanup);
         }
@@ -48,6 +55,7 @@ function test()
         function cleanup()
         {
             timer.finish(changeViewTimerCookie);
+            timer.finish(fullTimerCookie);
             clearTimerCookie = timer.start("clear-snapshot");
             ProfilerAgent.clearProfiles(done);
             WebInspector.panels.profiles._reset();
@@ -56,12 +64,32 @@ function test()
         function done()
         {
             timer.finish(clearTimerCookie);
-            timer.done("panel-update");
+            timer.done("heap-snapshot");
         }
     }
 
-    InspectorTest.runPerformanceTest(performanceTest, 25000);
+    InspectorTest.runPerformanceTest(performanceTest, 60000);
 }
+
+var counter = 0;
+
+function makeObjectsTree(deep)
+{
+    var node = {};
+    node.text = "some text " + counter;
+    if (deep === 0)
+        return node;
+    for (var i = 0; i < 2; ++i)
+        node[counter++] = makeObjectsTree(deep - 1);
+    return node;
+}
+
+function makeObjectsTree2(name, deep)
+{
+    window[name] = makeObjectsTree(deep);
+}
+
+makeObjectsTree2("t", 14);
 
 </script>
 </head>
