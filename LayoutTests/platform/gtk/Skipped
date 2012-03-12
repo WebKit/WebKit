@@ -64,10 +64,6 @@ fast/text/large-text-composed-char-dos.html
 # https://bugs.webkit.org/show_bug.cgi?id=58972
 media/adopt-node-crash.html
 
-# Timing out in the 64-bit GTK bot after r85586
-# https://bugs.webkit.org/show_bug.cgi?id=60055
-media/video-volume-slider.html
-
 ###############################################################################
 # TESTS CRASHING
 ###############################################################################
@@ -1431,7 +1427,7 @@ http/tests/security/mixedContent/insecure-css-in-iframe.html
 http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
 
 # ASSERT(!needsLayout()) in frame flattening test
-# https://bugs.webkit.org/show_bug.cgi?id=65530
+# https://bugs.webkit.org/show_bug.cgi?id=80155
 fast/frames/flattening/iframe-flattening-nested.html
 fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling.html
 
