@@ -3710,18 +3710,28 @@ template<> inline CSSPrimitiveValue::operator WrapThrough() const
     }
 }
 
-enum LengthConversion { UnsupportedConversion = 0, FixedConversion = 1, AutoConversion = 2, PercentConversion = 4, FractionConversion = 8};
+enum LengthConversion {
+    FixedIntegerConversion = 1 << 0,
+    FixedFloatConversion = 1 << 1,
+    AutoConversion = 1 << 2,
+    PercentConversion = 1 << 3,
+    FractionConversion = 1 << 4
+};
+
 template<int supported> Length CSSPrimitiveValue::convertToLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
 {
-    if ((supported & FixedConversion) && isLength())
+    if (((supported & FixedIntegerConversion) || (supported & FixedFloatConversion)) && isFontRelativeLength() && (!style || !rootStyle))
+        return Length(Undefined);
+    if ((supported & FixedIntegerConversion) && isLength())
         return computeLength<Length>(style, rootStyle, multiplier, computingFontSize);
+    if ((supported & FixedFloatConversion) && isLength())
+        return Length(computeLength<double>(style, rootStyle, multiplier), Fixed);
     if ((supported & PercentConversion) && isPercentage())
         return Length(getDoubleValue(), Percent);
     if ((supported & FractionConversion) && isNumber())
         return Length(getDoubleValue() * 100.0, Percent);
     if ((supported & AutoConversion) && getIdent() == CSSValueAuto)
         return Length(Auto);
-    ASSERT_NOT_REACHED();
     return Length(Undefined);
 }
 

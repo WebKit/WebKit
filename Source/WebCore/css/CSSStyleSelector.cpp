@@ -2528,40 +2528,14 @@ void RuleSet::shrinkToFit()
 // -------------------------------------------------------------------------------------
 // this is mostly boring stuff on how to apply a certain rule to the renderstyle...
 
-static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, bool toFloat, double multiplier = 1)
-{
-    // This function is tolerant of a null style value. The only place style is used is in
-    // length measurements, like 'ems' and 'px'. And in those cases style is only used
-    // when the units are EMS or EXS. So we will just fail in those cases.
-    Length l;
-    if (!primitiveValue) {
-        l = Length(Undefined);
-    } else {
-        if (!style && primitiveValue->isFontRelativeLength()) {
-            l = Length(Undefined);
-        } else if (primitiveValue->isLength()) {
-            if (toFloat)
-                l = Length(primitiveValue->computeLength<double>(style, rootStyle, multiplier), Fixed);
-            else
-                l = primitiveValue->computeLength<Length>(style, rootStyle, multiplier);
-        } else if (primitiveValue->isPercentage())
-            l = Length(primitiveValue->getDoubleValue(), Percent);
-        else if (primitiveValue->isNumber())
-            l = Length(primitiveValue->getDoubleValue() * 100.0, Percent);
-        else
-            l = Length(Undefined);
-    }
-    return l;
-}
-
 Length CSSStyleSelector::convertToIntLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier)
 {
-    return convertToLength(primitiveValue, style, rootStyle, false, multiplier);
+    return primitiveValue ? primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | FractionConversion>(style, rootStyle, multiplier) : Length(Undefined);
 }
 
 Length CSSStyleSelector::convertToFloatLength(CSSPrimitiveValue* primitiveValue, RenderStyle* style, RenderStyle* rootStyle, double multiplier)
 {
-    return convertToLength(primitiveValue, style, rootStyle, true, multiplier);
+    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | FractionConversion>(style, rootStyle, multiplier) : Length(Undefined);
 }
 
 template <bool applyFirst>
@@ -3490,7 +3464,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     break;
             }
         } else {
-            Length marqueeLength = convertToIntLength(primitiveValue, style(), m_rootElementStyle, 1);
+            Length marqueeLength = convertToIntLength(primitiveValue, style(), m_rootElementStyle);
             if (!marqueeLength.isUndefined())
                 m_style->setMarqueeIncrement(marqueeLength);
         }

@@ -221,7 +221,7 @@ class ApplyPropertyClip {
 private:
     static Length convertToLength(CSSStyleSelector* selector, CSSPrimitiveValue* value)
     {
-        return value->convertToLength<FixedConversion | PercentConversion | FractionConversion | AutoConversion>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
+        return value->convertToLength<FixedIntegerConversion | PercentConversion | FractionConversion | AutoConversion>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
     }
 public:
     static void applyInheritValue(CSSStyleSelector* selector)
