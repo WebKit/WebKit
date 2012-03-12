@@ -86,7 +86,7 @@ private:
     void revalidateTiles();
 
     WebTileLayer* tileLayerAtIndex(const TileIndex&) const;
-    RetainPtr<WebTileLayer> createTileLayer();
+    RetainPtr<WebTileLayer> createTileLayer(const IntRect&);
 
     bool shouldShowRepaintCounters() const;
 

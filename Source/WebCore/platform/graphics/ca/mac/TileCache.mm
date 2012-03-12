@@ -237,7 +237,10 @@ IntRect TileCache::bounds() const
 
 IntRect TileCache::rectForTileIndex(const TileIndex& tileIndex) const
 {
-    return IntRect(IntPoint(tileIndex.x() * m_tileSize.width(), tileIndex.y() * m_tileSize.height()), m_tileSize);
+    IntRect rect(tileIndex.x() * m_tileSize.width(), tileIndex.y() * m_tileSize.height(), m_tileSize.width(), m_tileSize.height());
+    rect.intersect(bounds());
+
+    return rect;
 }
 
 void TileCache::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft, TileIndex& bottomRight)
@@ -310,24 +313,29 @@ void TileCache::revalidateTiles()
     TileIndex bottomRight;
     getTileIndexRangeForRect(tileCoverageRect, topLeft, bottomRight);
 
-    bool didCreateNewTiles = false;
+    bool didCreateOrResizeTiles = false;
 
     for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
         for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
             TileIndex tileIndex(x, y);
 
+            IntRect tileRect = rectForTileIndex(tileIndex);
             RetainPtr<WebTileLayer>& tileLayer = m_tiles.add(tileIndex, 0).first->second;
             if (tileLayer) {
-                // We already have a layer for this tile.
+                // We already have a layer for this tile. Ensure that its size is correct.
+                if (!CGSizeEqualToSize([tileLayer.get() frame].size, tileRect.size())) {
+                    [tileLayer.get() setFrame:tileRect];
+                    [tileLayer.get() setNeedsDisplay];
+                    didCreateOrResizeTiles = true;
+                }
                 continue;
             }
 
-            didCreateNewTiles = true;
+            didCreateOrResizeTiles = true;
 
-            tileLayer = createTileLayer();
+            tileLayer = createTileLayer(tileRect);
 
             [tileLayer.get() setNeedsDisplay];
-            [tileLayer.get() setPosition:CGPointMake(x * m_tileSize.width(), y * m_tileSize.height())];
             [m_tileContainerLayer.get() addSublayer:tileLayer.get()];
         }
     }
@@ -339,7 +347,7 @@ void TileCache::revalidateTiles()
         m_tileCoverageRect.unite(rectForTileIndex(tileIndex));
     }
 
-    if (!didCreateNewTiles)
+    if (!didCreateOrResizeTiles)
         return;
 
     platformLayer->owner()->platformCALayerDidCreateTiles();
@@ -350,11 +358,11 @@ WebTileLayer* TileCache::tileLayerAtIndex(const TileIndex& index) const
     return m_tiles.get(index).get();
 }
 
-RetainPtr<WebTileLayer> TileCache::createTileLayer()
+RetainPtr<WebTileLayer> TileCache::createTileLayer(const IntRect& tileRect)
 {
     RetainPtr<WebTileLayer> layer = adoptNS([[WebTileLayer alloc] init]);
-    [layer.get() setBounds:CGRectMake(0, 0, m_tileSize.width(), m_tileSize.height())];
     [layer.get() setAnchorPoint:CGPointZero];
+    [layer.get() setFrame:tileRect];
     [layer.get() setTileCache:this];
     [layer.get() setBorderColor:m_tileDebugBorderColor.get()];
     [layer.get() setBorderWidth:m_tileDebugBorderWidth];
