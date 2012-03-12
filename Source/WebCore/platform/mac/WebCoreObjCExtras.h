@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <CoreFoundation/CFBase.h>
 #include <objc/objc.h>
 
 #ifdef __cplusplus
