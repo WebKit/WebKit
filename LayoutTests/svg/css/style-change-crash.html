@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+   <g>
+       <rect id="rect"/>
+   </g>
+   <br/>
+<script>
+
+function write_br() {
+    document.write("<br/>");
+    GCController.collect();
+}
+
+document.body.offsetHeight;
+window.addEventListener("DOMSubtreeModified", write_br);
+document.getElementById("rect").style.WebkitWrap="both 2147483519";
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    alert("PASS. WebKit didn't crash");
+} else
+    alert("This test requires GCController.");
+
+</script>
+</svg>

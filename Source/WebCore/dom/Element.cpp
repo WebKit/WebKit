@@ -632,29 +632,29 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 
     size_t index = ensureUpdatedAttributeData()->getAttributeItemIndex(localName, false);
     const QualifiedName& qName = index != notFound ? attributeItem(index)->name() : QualifiedName(nullAtom, localName, nullAtom);
-    setAttributeInternal(index, qName, value);
+    setAttributeInternal(index, qName, value, NotInUpdateStyleAttribute);
 }
 
-void Element::setAttribute(const QualifiedName& name, const AtomicString& value, bool notifyChanged)
+void Element::setAttribute(const QualifiedName& name, const AtomicString& value, EInUpdateStyleAttribute inUpdateStyleAttribute)
 {
-    setAttributeInternal(ensureUpdatedAttributeData()->getAttributeItemIndex(name), name, value, notifyChanged);
+    setAttributeInternal(ensureUpdatedAttributeData()->getAttributeItemIndex(name), name, value, inUpdateStyleAttribute);
 }
 
-inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value, bool notifyChanged)
+inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value, EInUpdateStyleAttribute inUpdateStyleAttribute)
 {
     Attribute* old = index != notFound ? m_attributeData->attributeItem(index) : 0;
     if (value.isNull()) {
         if (old)
-            m_attributeData->removeAttribute(index, this);
+            m_attributeData->removeAttribute(index, this, inUpdateStyleAttribute);
         return;
     }
 
     if (!old) {
-        m_attributeData->addAttribute(Attribute::create(name, value), this);
+        m_attributeData->addAttribute(Attribute::create(name, value), this, inUpdateStyleAttribute);
         return;
     }
 
-    if (notifyChanged)
+    if (inUpdateStyleAttribute == NotInUpdateStyleAttribute)
         willModifyAttribute(name, old ? old->value() : nullAtom, value);
 
     if (Attr* attrNode = old->attr())
@@ -662,7 +662,7 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
     else
         old->setValue(value);
 
-    if (notifyChanged)
+    if (inUpdateStyleAttribute == NotInUpdateStyleAttribute)
         didModifyAttribute(old);
 }
 

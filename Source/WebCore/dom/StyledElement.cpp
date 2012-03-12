@@ -78,7 +78,7 @@ void StyledElement::updateStyleAttribute() const
     ASSERT(!isStyleAttributeValid());
     setIsStyleAttributeValid();
     if (const StylePropertySet* inlineStyle = this->inlineStyle())
-        const_cast<StyledElement*>(this)->setAttribute(styleAttr, inlineStyle->asText(), /*notifyChanged*/ false);
+        const_cast<StyledElement*>(this)->setAttribute(styleAttr, inlineStyle->asText(), InUpdateStyleAttribute);
 }
 
 StyledElement::~StyledElement()

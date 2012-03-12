@@ -93,35 +93,35 @@ void ElementAttributeData::destroyInlineStyle(StyledElement* element)
     m_inlineStyleDecl = 0;
 }
 
-void ElementAttributeData::addAttribute(PassRefPtr<Attribute> prpAttribute, Element* element)
+void ElementAttributeData::addAttribute(PassRefPtr<Attribute> prpAttribute, Element* element, EInUpdateStyleAttribute inUpdateStyleAttribute)
 {
     RefPtr<Attribute> attribute = prpAttribute;
 
-    if (element)
+    if (element && inUpdateStyleAttribute == NotInUpdateStyleAttribute)
         element->willModifyAttribute(attribute->name(), nullAtom, attribute->value());
 
     m_attributes.append(attribute);
     if (Attr* attr = attribute->attr())
         attr->m_element = element;
 
-    if (element)
+    if (element && inUpdateStyleAttribute == NotInUpdateStyleAttribute)
         element->didModifyAttribute(attribute.get());
 }
 
-void ElementAttributeData::removeAttribute(size_t index, Element* element)
+void ElementAttributeData::removeAttribute(size_t index, Element* element, EInUpdateStyleAttribute inUpdateStyleAttribute)
 {
     ASSERT(index < length());
 
     RefPtr<Attribute> attribute = m_attributes[index];
 
-    if (element)
+    if (element && inUpdateStyleAttribute == NotInUpdateStyleAttribute)
         element->willRemoveAttribute(attribute->name(), attribute->value());
 
     if (Attr* attr = attribute->attr())
         attr->m_element = 0;
     m_attributes.remove(index);
 
-    if (element)
+    if (element && inUpdateStyleAttribute == NotInUpdateStyleAttribute)
         element->didRemoveAttribute(attribute.get());
 }
 

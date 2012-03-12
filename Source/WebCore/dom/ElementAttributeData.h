@@ -80,6 +80,8 @@ inline void AttributeVector::insertAttribute(PassRefPtr<Attribute> newAttribute)
         append(newAttribute);
 }
 
+enum EInUpdateStyleAttribute { NotInUpdateStyleAttribute, InUpdateStyleAttribute };
+
 class ElementAttributeData {
 public:
     static PassOwnPtr<ElementAttributeData> create()
@@ -118,9 +120,9 @@ public:
     size_t getAttributeItemIndex(const String& name, bool shouldIgnoreAttributeCase) const;
 
     // These functions do no error checking.
-    void addAttribute(PassRefPtr<Attribute>, Element*);
+    void addAttribute(PassRefPtr<Attribute>, Element*, EInUpdateStyleAttribute = NotInUpdateStyleAttribute);
     void removeAttribute(const QualifiedName&, Element*);
-    void removeAttribute(size_t index, Element*);
+    void removeAttribute(size_t index, Element*, EInUpdateStyleAttribute = NotInUpdateStyleAttribute);
     PassRefPtr<Attr> takeAttribute(size_t index, Element*);
 
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
