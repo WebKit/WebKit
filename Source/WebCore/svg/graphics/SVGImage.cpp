@@ -177,10 +177,15 @@ void SVGImage::drawSVGToImageBuffer(ImageBuffer* buffer, const IntSize& size, fl
     ImageObserver* observer = imageObserver();
     ASSERT(observer);
 
-    // Temporarily reset image observer, we don't want to receive any changeInRect() calls due this relayout.
+    // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
     setImageObserver(0);
+
+    // Disable repainting; we don't want deferred repaints to schedule any timers due to this relayout.
+    frame->view()->beginDisableRepaints();
+
     renderer->setContainerSize(size);
     frame->view()->resize(this->size());
+
     if (zoom != 1)
         frame->setPageZoomFactor(zoom);
 
@@ -202,7 +207,9 @@ void SVGImage::drawSVGToImageBuffer(ImageBuffer* buffer, const IntSize& size, fl
     if (frame->view()->needsLayout())
         frame->view()->layout();
 
-    setImageObserver(observer); 
+    setImageObserver(observer);
+
+    frame->view()->endDisableRepaints();
 }
 
 void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)
@@ -210,7 +217,7 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
     if (!m_page)
         return;
 
-    FrameView* view = m_page->mainFrame()->view();
+    FrameView* view = frameView();
 
     GraphicsContextStateSaver stateSaver(*context);
     context->setCompositeOperation(compositeOp);
@@ -253,6 +260,14 @@ RenderBox* SVGImage::embeddedContentBox() const
     if (!rootElement)
         return 0;
     return toRenderBox(rootElement->renderer());
+}
+
+FrameView* SVGImage::frameView() const
+{
+    if (!m_page)
+        return 0;
+
+    return m_page->mainFrame()->view();
 }
 
 bool SVGImage::hasRelativeWidth() const
