@@ -21,7 +21,7 @@ function test()
         var now = Date.now();
         var eventTime = record.startTime;
         InspectorTest.assertGreaterOrEqual(eventTime, beforeStart, "event time should be after timeline start time");
-        InspectorTest.assertGreaterOrEqual(now, eventTime, "event time should be before now");
+        InspectorTest.assertGreaterOrEqual(now, Math.floor(eventTime), "event time should be before now");
         InspectorTest.addResult("done");
         InspectorTest.stopTimeline(InspectorTest.completeTest.bind(InspectorTest));
     }
