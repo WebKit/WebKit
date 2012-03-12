@@ -45,7 +45,7 @@ namespace WebCore {
 // exceed the global cap will instead clear the buffer.
 #if PLATFORM(CHROMIUM) // Currently, this cap only exists for chromium.
 static int s_maximumResourceUsePixels = 16 * 1024 * 1024;
-#else
+#elif !PLATFORM(BLACKBERRY)
 static int s_maximumResourceUsePixels = 0;
 #endif
 static int s_currentResourceUsePixels = 0;
