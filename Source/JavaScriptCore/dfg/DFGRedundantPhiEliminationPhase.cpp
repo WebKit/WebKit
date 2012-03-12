@@ -55,7 +55,7 @@ public:
             if (!node.shouldGenerate())
                 continue;
 
-            switch (node.op) {
+            switch (node.op()) {
             case GetLocal:
                 replacePhiChild(node, 0);
                 break;
@@ -95,7 +95,7 @@ private:
 
         bool replaced = false;
         NodeIndex child = node.children.child(childIndex).indexUnchecked();
-        if (child != NoNode && m_graph[child].op == Phi) {
+        if (child != NoNode && m_graph[child].op() == Phi) {
             NodeIndex childReplacement = getRedundantReplacement(child);
             if (childReplacement != NoNode) {
                 node.children.child(childIndex).setIndex(childReplacement);
@@ -138,7 +138,7 @@ private:
 
             for (size_t arg = 0; arg < basicBlock->variablesAtHead.numberOfArguments(); ++arg) {
                 NodeIndex nodeIndex = basicBlock->variablesAtHead.argument(arg);
-                if (nodeIndex != NoNode && m_graph[nodeIndex].op == Phi && !m_graph[nodeIndex].refCount()) {
+                if (nodeIndex != NoNode && m_graph[nodeIndex].op() == Phi && !m_graph[nodeIndex].refCount()) {
                     NodeIndex replacement = getRedundantReplacement(nodeIndex);
                     if (replacement != NoNode) {
                         // This argument must be unused in this block.
@@ -151,7 +151,7 @@ private:
 
             for (size_t local = 0; local < basicBlock->variablesAtHead.numberOfLocals(); ++local) {
                 NodeIndex nodeIndex = basicBlock->variablesAtHead.local(local);
-                if (nodeIndex != NoNode && m_graph[nodeIndex].op == Phi && !m_graph[nodeIndex].refCount()) {
+                if (nodeIndex != NoNode && m_graph[nodeIndex].op() == Phi && !m_graph[nodeIndex].refCount()) {
                     NodeIndex replacement = getRedundantReplacement(nodeIndex);
                     if (replacement != NoNode) {
                         // This local variable must be unused in this block.

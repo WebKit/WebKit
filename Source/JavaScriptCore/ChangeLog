@@ -1,3 +1,149 @@
+2012-03-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Node::op and Node::flags should be private
+        https://bugs.webkit.org/show_bug.cgi?id=80824
+        <rdar://problem/11033435>
+
+        Reviewed by Gavin Barraclough.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        (JSC::DFG::AbstractState::mergeToSuccessors):
+        * dfg/DFGArithNodeFlagsInferencePhase.cpp:
+        (JSC::DFG::ArithNodeFlagsInferencePhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::injectLazyOperandPrediction):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::flushArgument):
+        (JSC::DFG::ByteCodeParser::toInt32):
+        (JSC::DFG::ByteCodeParser::isJSConstant):
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::makeDivSafe):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        (JSC::DFG::ByteCodeParser::linkBlock):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::canonicalize):
+        (JSC::DFG::CSEPhase::endIndexForPureCSE):
+        (JSC::DFG::CSEPhase::pureCSE):
+        (JSC::DFG::CSEPhase::byValIsPure):
+        (JSC::DFG::CSEPhase::clobbersWorld):
+        (JSC::DFG::CSEPhase::impureCSE):
+        (JSC::DFG::CSEPhase::globalVarLoadElimination):
+        (JSC::DFG::CSEPhase::getByValLoadElimination):
+        (JSC::DFG::CSEPhase::checkFunctionElimination):
+        (JSC::DFG::CSEPhase::checkStructureLoadElimination):
+        (JSC::DFG::CSEPhase::getByOffsetLoadElimination):
+        (JSC::DFG::CSEPhase::getPropertyStorageLoadElimination):
+        (JSC::DFG::CSEPhase::getIndexedPropertyStorageLoadElimination):
+        (JSC::DFG::CSEPhase::getScopeChainLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (DFG):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addShouldSpeculateInteger):
+        (JSC::DFG::Graph::negateShouldSpeculateInteger):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGNode.cpp: Removed.
+        * dfg/DFGNode.h:
+        (DFG):
+        (JSC::DFG::Node::Node):
+        (Node):
+        (JSC::DFG::Node::op):
+        (JSC::DFG::Node::flags):
+        (JSC::DFG::Node::setOp):
+        (JSC::DFG::Node::setFlags):
+        (JSC::DFG::Node::mergeFlags):
+        (JSC::DFG::Node::filterFlags):
+        (JSC::DFG::Node::clearFlags):
+        (JSC::DFG::Node::setOpAndDefaultFlags):
+        (JSC::DFG::Node::mustGenerate):
+        (JSC::DFG::Node::isConstant):
+        (JSC::DFG::Node::isWeakConstant):
+        (JSC::DFG::Node::valueOfJSConstant):
+        (JSC::DFG::Node::hasVariableAccessData):
+        (JSC::DFG::Node::hasIdentifier):
+        (JSC::DFG::Node::resolveGlobalDataIndex):
+        (JSC::DFG::Node::hasArithNodeFlags):
+        (JSC::DFG::Node::arithNodeFlags):
+        (JSC::DFG::Node::setArithNodeFlag):
+        (JSC::DFG::Node::mergeArithNodeFlags):
+        (JSC::DFG::Node::hasConstantBuffer):
+        (JSC::DFG::Node::hasRegexpIndex):
+        (JSC::DFG::Node::hasVarNumber):
+        (JSC::DFG::Node::hasScopeChainDepth):
+        (JSC::DFG::Node::hasResult):
+        (JSC::DFG::Node::hasInt32Result):
+        (JSC::DFG::Node::hasNumberResult):
+        (JSC::DFG::Node::hasJSResult):
+        (JSC::DFG::Node::hasBooleanResult):
+        (JSC::DFG::Node::isJump):
+        (JSC::DFG::Node::isBranch):
+        (JSC::DFG::Node::isTerminal):
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasFunctionCheckData):
+        (JSC::DFG::Node::hasStructureTransitionData):
+        (JSC::DFG::Node::hasStructureSet):
+        (JSC::DFG::Node::hasStorageAccessData):
+        (JSC::DFG::Node::hasFunctionDeclIndex):
+        (JSC::DFG::Node::hasFunctionExprIndex):
+        (JSC::DFG::Node::child1):
+        (JSC::DFG::Node::child2):
+        (JSC::DFG::Node::child3):
+        (JSC::DFG::Node::firstChild):
+        (JSC::DFG::Node::numChildren):
+        * dfg/DFGNodeFlags.cpp: Copied from Source/JavaScriptCore/dfg/DFGNode.cpp.
+        * dfg/DFGNodeFlags.h: Added.
+        (DFG):
+        (JSC::DFG::nodeUsedAsNumber):
+        (JSC::DFG::nodeCanTruncateInteger):
+        (JSC::DFG::nodeCanIgnoreNegativeZero):
+        (JSC::DFG::nodeMayOverflow):
+        (JSC::DFG::nodeCanSpeculateInteger):
+        * dfg/DFGNodeType.h: Added.
+        (DFG):
+        (JSC::DFG::defaultFlags):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::vote):
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        (JSC::DFG::PredictionPropagationPhase::fixupNode):
+        * dfg/DFGRedundantPhiEliminationPhase.cpp:
+        (JSC::DFG::RedundantPhiEliminationPhase::run):
+        (JSC::DFG::RedundantPhiEliminationPhase::replacePhiChild):
+        (JSC::DFG::RedundantPhiEliminationPhase::updateBlockVariableInformation):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::useChildren):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compileMovHint):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        (JSC::DFG::SpeculativeJIT::compileUInt32ToNumber):
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (JSC::DFG::SpeculativeJIT::compare):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::detectPeepHoleBranch):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+
 2012-03-12  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Minor DataLog fixes

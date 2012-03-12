@@ -80,8 +80,8 @@ private:
         if (!node.shouldGenerate())
             return;
         
-        NodeType op = static_cast<NodeType>(node.op);
-        NodeFlags flags = node.flags;
+        NodeType op = node.op();
+        NodeFlags flags = node.flags();
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("   %s @%u: %s ", Graph::opName(op), m_compileIndex, arithNodeFlagsAsString(flags));
@@ -175,7 +175,7 @@ private:
             
         default:
             flags |= NodeUsedAsNumber | NodeNeedsNegZero;
-            if (node.flags & NodeHasVarArgs) {
+            if (node.flags() & NodeHasVarArgs) {
                 for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
                     changed |= m_graph[m_graph.m_varArgChildren[childIdx]].mergeArithNodeFlags(flags);
             } else {

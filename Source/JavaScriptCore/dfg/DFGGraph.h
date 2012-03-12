@@ -164,7 +164,7 @@ public:
     
     bool addShouldSpeculateInteger(Node& add)
     {
-        ASSERT(add.op == ValueAdd || add.op == ArithAdd || add.op == ArithSub);
+        ASSERT(add.op() == ValueAdd || add.op() == ArithAdd || add.op() == ArithSub);
         
         Node& left = at(add.child1());
         Node& right = at(add.child2());
@@ -179,7 +179,7 @@ public:
     
     bool negateShouldSpeculateInteger(Node& negate)
     {
-        ASSERT(negate.op == ArithNegate);
+        ASSERT(negate.op() == ArithNegate);
         return at(negate.child1()).shouldSpeculateInteger() && negate.canSpeculateInteger();
     }
     
@@ -301,7 +301,7 @@ public:
         Node& node = at(nodeIndex);
         CodeBlock* profiledBlock = baselineCodeBlockFor(node.codeOrigin);
         
-        if (node.op == GetLocal) {
+        if (node.op() == GetLocal) {
             return MethodOfGettingAValueProfile::fromLazyOperand(
                 profiledBlock,
                 LazyOperandValueProfileKey(

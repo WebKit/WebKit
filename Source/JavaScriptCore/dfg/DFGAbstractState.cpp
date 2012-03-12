@@ -100,7 +100,7 @@ void AbstractState::initialize(Graph& graph)
     root->cfaShouldRevisit = true;
     for (size_t i = 0; i < root->valuesAtHead.numberOfArguments(); ++i) {
         Node& node = graph[root->variablesAtHead.argument(i)];
-        ASSERT(node.op == SetArgument);
+        ASSERT(node.op() == SetArgument);
         if (!node.shouldGenerate()) {
             // The argument is dead. We don't do any checks for such arguments, and so
             // for the purpose of the analysis, they contain no value.
@@ -222,7 +222,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     if (!node.shouldGenerate())
         return true;
         
-    switch (node.op) {
+    switch (node.op()) {
     case JSConstant:
     case WeakJSConstant: {
         JSValue value = m_graph.valueOfJSConstant(nodeIndex);
@@ -314,7 +314,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(nodeIndex).set(PredictDouble);
             break;
         }
-        if (node.op == ValueAdd) {
+        if (node.op() == ValueAdd) {
             clobberStructures(indexInBlock);
             forNode(nodeIndex).set(PredictString | PredictInt32 | PredictNumber);
             break;
@@ -422,9 +422,9 @@ bool AbstractState::execute(unsigned indexInBlock)
             filter = PredictInt32;
         else if (Node::shouldSpeculateNumber(left, right))
             filter = PredictNumber;
-        else if (node.op == CompareEq && Node::shouldSpeculateFinalObject(left, right))
+        else if (node.op() == CompareEq && Node::shouldSpeculateFinalObject(left, right))
             filter = PredictFinalObject;
-        else if (node.op == CompareEq && Node::shouldSpeculateArray(left, right))
+        else if (node.op() == CompareEq && Node::shouldSpeculateArray(left, right))
             filter = PredictArray;
         else {
             filter = PredictTop;
@@ -543,7 +543,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             break;
         }
         if (!m_graph[node.child2()].shouldSpeculateInteger() || !isActionableMutableArrayPrediction(m_graph[node.child1()].prediction())) {
-            ASSERT(node.op == PutByVal);
+            ASSERT(node.op() == PutByVal);
             clobberStructures(indexInBlock);
             forNode(nodeIndex).makeTop();
             break;
@@ -974,6 +974,10 @@ bool AbstractState::execute(unsigned indexInBlock)
     case InlineStart:
     case Nop:
         break;
+        
+    case LastNodeType:
+        ASSERT_NOT_REACHED();
+        break;
     }
     
     return m_isValid;
@@ -1005,10 +1009,10 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         return false;
     
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("          It's live, node @%u.\n", nodeIndex);
+    dataLog("          It's live, node @%u.\n", nodeIndex);
 #endif
-
-    switch (node.op) {
+    
+    switch (node.op()) {
     case Phi:
     case SetArgument:
     case Flush:
@@ -1110,7 +1114,7 @@ inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBloc
     
     ASSERT(terminal.isTerminal());
     
-    switch (terminal.op) {
+    switch (terminal.op()) {
     case Jump:
         return merge(basicBlock, graph.m_blocks[terminal.takenBlockIndex()].get());
         

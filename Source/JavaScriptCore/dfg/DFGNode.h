@@ -33,14 +33,14 @@
 #include "CodeBlock.h"
 #include "CodeOrigin.h"
 #include "DFGCommon.h"
+#include "DFGNodeFlags.h"
 #include "DFGNodeReferenceBlob.h"
+#include "DFGNodeType.h"
 #include "DFGOperands.h"
 #include "DFGVariableAccessData.h"
 #include "JSValue.h"
 #include "PredictedType.h"
 #include "ValueProfile.h"
-#include <wtf/BoundsCheckedPointer.h>
-#include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
 
@@ -56,240 +56,6 @@ struct StructureTransitionData {
     {
     }
 };
-
-// Entries in the NodeType enum (below) are composed of an id, a result type (possibly none)
-// and some additional informative flags (must generate, is constant, etc).
-#define NodeResultMask       0xF
-#define NodeResultJS         0x1
-#define NodeResultNumber     0x2
-#define NodeResultInt32      0x3
-#define NodeResultBoolean    0x4
-#define NodeResultStorage    0x5
-#define NodeMustGenerate    0x10 // set on nodes that have side effects, and may not trivially be removed by DCE.
-#define NodeHasVarArgs      0x20
-#define NodeClobbersWorld   0x40
-#define NodeMightClobber    0x80
-#define NodeArithMask      0xF00
-#define NodeUseBottom      0x000
-#define NodeUsedAsNumber   0x100
-#define NodeNeedsNegZero   0x200
-#define NodeUsedAsMask     0x300
-#define NodeMayOverflow    0x400
-#define NodeMayNegZero     0x800
-#define NodeBehaviorMask   0xc00
-
-typedef uint16_t NodeFlags;
-
-static inline bool nodeUsedAsNumber(NodeFlags flags)
-{
-    return !!(flags & NodeUsedAsNumber);
-}
-
-static inline bool nodeCanTruncateInteger(NodeFlags flags)
-{
-    return !nodeUsedAsNumber(flags);
-}
-
-static inline bool nodeCanIgnoreNegativeZero(NodeFlags flags)
-{
-    return !(flags & NodeNeedsNegZero);
-}
-
-static inline bool nodeMayOverflow(NodeFlags flags)
-{
-    return !!(flags & NodeMayOverflow);
-}
-
-static inline bool nodeCanSpeculateInteger(NodeFlags flags)
-{
-    if (flags & NodeMayOverflow)
-        return !nodeUsedAsNumber(flags);
-    
-    if (flags & NodeMayNegZero)
-        return nodeCanIgnoreNegativeZero(flags);
-    
-    return true;
-}
-
-const char* arithNodeFlagsAsString(NodeFlags);
-
-// This macro defines a set of information about all known node types, used to populate NodeId, NodeType below.
-#define FOR_EACH_DFG_OP(macro) \
-    /* A constant in the CodeBlock's constant pool. */\
-    macro(JSConstant, NodeResultJS) \
-    \
-    /* A constant not in the CodeBlock's constant pool. Uses get patched to jumps that exit the */\
-    /* code block. */\
-    macro(WeakJSConstant, NodeResultJS) \
-    \
-    /* Nodes for handling functions (both as call and as construct). */\
-    macro(ConvertThis, NodeResultJS) \
-    macro(CreateThis, NodeResultJS) /* Note this is not MustGenerate since we're returning it anyway. */ \
-    macro(GetCallee, NodeResultJS) \
-    \
-    /* Nodes for local variable access. */\
-    macro(GetLocal, NodeResultJS) \
-    macro(SetLocal, 0) \
-    macro(Phantom, NodeMustGenerate) \
-    macro(Nop, 0) \
-    macro(Phi, 0) \
-    macro(Flush, NodeMustGenerate) \
-    \
-    /* Marker for arguments being set. */\
-    macro(SetArgument, 0) \
-    \
-    /* Hint that inlining begins here. No code is generated for this node. It's only */\
-    /* used for copying OSR data into inline frame data, to support reification of */\
-    /* call frames of inlined functions. */\
-    macro(InlineStart, 0) \
-    \
-    /* Nodes for bitwise operations. */\
-    macro(BitAnd, NodeResultInt32) \
-    macro(BitOr, NodeResultInt32) \
-    macro(BitXor, NodeResultInt32) \
-    macro(BitLShift, NodeResultInt32) \
-    macro(BitRShift, NodeResultInt32) \
-    macro(BitURShift, NodeResultInt32) \
-    /* Bitwise operators call ToInt32 on their operands. */\
-    macro(ValueToInt32, NodeResultInt32 | NodeMustGenerate) \
-    /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
-    macro(UInt32ToNumber, NodeResultNumber) \
-    \
-    /* Nodes for arithmetic operations. */\
-    macro(ArithAdd, NodeResultNumber) \
-    macro(ArithSub, NodeResultNumber) \
-    macro(ArithNegate, NodeResultNumber) \
-    macro(ArithMul, NodeResultNumber) \
-    macro(ArithDiv, NodeResultNumber) \
-    macro(ArithMod, NodeResultNumber) \
-    macro(ArithAbs, NodeResultNumber) \
-    macro(ArithMin, NodeResultNumber) \
-    macro(ArithMax, NodeResultNumber) \
-    macro(ArithSqrt, NodeResultNumber) \
-    \
-    /* Add of values may either be arithmetic, or result in string concatenation. */\
-    macro(ValueAdd, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
-    \
-    /* Property access. */\
-    /* PutByValAlias indicates a 'put' aliases a prior write to the same property. */\
-    /* Since a put to 'length' may invalidate optimizations here, */\
-    /* this must be the directly subsequent property put. */\
-    macro(GetByVal, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
-    macro(PutByVal, NodeMustGenerate | NodeClobbersWorld) \
-    macro(PutByValAlias, NodeMustGenerate | NodeClobbersWorld) \
-    macro(GetById, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(GetByIdFlush, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(PutById, NodeMustGenerate | NodeClobbersWorld) \
-    macro(PutByIdDirect, NodeMustGenerate | NodeClobbersWorld) \
-    macro(CheckStructure, NodeMustGenerate) \
-    macro(PutStructure, NodeMustGenerate | NodeClobbersWorld) \
-    macro(GetPropertyStorage, NodeResultStorage) \
-    macro(GetIndexedPropertyStorage, NodeMustGenerate | NodeResultStorage) \
-    macro(GetByOffset, NodeResultJS) \
-    macro(PutByOffset, NodeMustGenerate | NodeClobbersWorld) \
-    macro(GetArrayLength, NodeResultInt32) \
-    macro(GetStringLength, NodeResultInt32) \
-    macro(GetByteArrayLength, NodeResultInt32) \
-    macro(GetInt8ArrayLength, NodeResultInt32) \
-    macro(GetInt16ArrayLength, NodeResultInt32) \
-    macro(GetInt32ArrayLength, NodeResultInt32) \
-    macro(GetUint8ArrayLength, NodeResultInt32) \
-    macro(GetUint8ClampedArrayLength, NodeResultInt32) \
-    macro(GetUint16ArrayLength, NodeResultInt32) \
-    macro(GetUint32ArrayLength, NodeResultInt32) \
-    macro(GetFloat32ArrayLength, NodeResultInt32) \
-    macro(GetFloat64ArrayLength, NodeResultInt32) \
-    macro(GetScopeChain, NodeResultJS) \
-    macro(GetScopedVar, NodeResultJS | NodeMustGenerate) \
-    macro(PutScopedVar, NodeMustGenerate | NodeClobbersWorld) \
-    macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
-    macro(PutGlobalVar, NodeMustGenerate | NodeClobbersWorld) \
-    macro(CheckFunction, NodeMustGenerate) \
-    \
-    /* Optimizations for array mutation. */\
-    macro(ArrayPush, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(ArrayPop, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    \
-    /* Optimizations for string access */ \
-    macro(StringCharCodeAt, NodeResultInt32) \
-    macro(StringCharAt, NodeResultJS) \
-    \
-    /* Nodes for comparison operations. */\
-    macro(CompareLess, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
-    macro(CompareLessEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
-    macro(CompareGreater, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
-    macro(CompareGreaterEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
-    macro(CompareEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
-    macro(CompareStrictEq, NodeResultBoolean) \
-    \
-    /* Calls. */\
-    macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
-    macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
-    \
-    /* Allocations. */\
-    macro(NewObject, NodeResultJS) \
-    macro(NewArray, NodeResultJS | NodeHasVarArgs) \
-    macro(NewArrayBuffer, NodeResultJS) \
-    macro(NewRegexp, NodeResultJS) \
-    \
-    /* Resolve nodes. */\
-    macro(Resolve, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(ResolveBase, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(ResolveBaseStrictPut, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(ResolveGlobal, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    \
-    /* Nodes for misc operations. */\
-    macro(Breakpoint, NodeMustGenerate | NodeClobbersWorld) \
-    macro(CheckHasInstance, NodeMustGenerate) \
-    macro(InstanceOf, NodeResultBoolean) \
-    macro(LogicalNot, NodeResultBoolean | NodeMightClobber) \
-    macro(ToPrimitive, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(StrCat, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
-    \
-    /* Nodes used for activations. Activation support works by having it anchored at */\
-    /* epilgoues via TearOffActivation, and all CreateActivation nodes kept alive by */\
-    /* being threaded with each other. */\
-    macro(CreateActivation, NodeResultJS) \
-    macro(TearOffActivation, NodeMustGenerate) \
-    \
-    /* Nodes for creating functions. */\
-    macro(NewFunctionNoCheck, NodeResultJS) \
-    macro(NewFunction, NodeResultJS) \
-    macro(NewFunctionExpression, NodeResultJS) \
-    \
-    /* Block terminals. */\
-    macro(Jump, NodeMustGenerate) \
-    macro(Branch, NodeMustGenerate) \
-    macro(Return, NodeMustGenerate) \
-    macro(Throw, NodeMustGenerate) \
-    macro(ThrowReferenceError, NodeMustGenerate) \
-    \
-    /* This is a pseudo-terminal. It means that execution should fall out of DFG at */\
-    /* this point, but execution does continue in the basic block - just in a */\
-    /* different compiler. */\
-    macro(ForceOSRExit, NodeMustGenerate)
-
-// This enum generates a monotonically increasing id for all Node types,
-// and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).
-enum NodeType {
-#define DFG_OP_ENUM(opcode, flags) opcode,
-    FOR_EACH_DFG_OP(DFG_OP_ENUM)
-#undef DFG_OP_ENUM
-    LastNodeType
-};
-
-// Specifies the default flags for each node.
-inline NodeFlags defaultFlags(NodeType op)
-{
-    switch (op) {
-#define DFG_OP_ENUM(opcode, flags) case opcode: return flags;
-    FOR_EACH_DFG_OP(DFG_OP_ENUM)
-#undef DFG_OP_ENUM
-    default:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-}
 
 // This type used in passing an immediate argument to Node constructor;
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
@@ -319,7 +85,7 @@ struct Node {
         , m_prediction(PredictNone)
     {
         setOpAndDefaultFlags(op);
-        ASSERT(!(flags & NodeHasVarArgs));
+        ASSERT(!(m_flags & NodeHasVarArgs));
     }
 
     // Construct a node with up to 3 children and an immediate value.
@@ -332,7 +98,7 @@ struct Node {
         , m_prediction(PredictNone)
     {
         setOpAndDefaultFlags(op);
-        ASSERT(!(flags & NodeHasVarArgs));
+        ASSERT(!(m_flags & NodeHasVarArgs));
     }
 
     // Construct a node with up to 3 children and two immediate values.
@@ -346,7 +112,7 @@ struct Node {
         , m_prediction(PredictNone)
     {
         setOpAndDefaultFlags(op);
-        ASSERT(!(flags & NodeHasVarArgs));
+        ASSERT(!(m_flags & NodeHasVarArgs));
     }
     
     // Construct a node with a variable number of children and two immediate values.
@@ -360,28 +126,64 @@ struct Node {
         , m_prediction(PredictNone)
     {
         setOpAndDefaultFlags(op);
-        ASSERT(flags & NodeHasVarArgs);
+        ASSERT(m_flags & NodeHasVarArgs);
+    }
+    
+    NodeType op() const { return static_cast<NodeType>(m_op); }
+    NodeFlags flags() const { return m_flags; }
+    
+    void setOp(NodeType op)
+    {
+        m_op = op;
+    }
+    
+    void setFlags(NodeFlags flags)
+    {
+        m_flags = flags;
+    }
+    
+    bool mergeFlags(NodeFlags flags)
+    {
+        NodeFlags newFlags = m_flags | flags;
+        if (newFlags == m_flags)
+            return false;
+        m_flags = newFlags;
+        return true;
+    }
+    
+    bool filterFlags(NodeFlags flags)
+    {
+        NodeFlags newFlags = m_flags & flags;
+        if (newFlags == m_flags)
+            return false;
+        m_flags = newFlags;
+        return true;
+    }
+    
+    bool clearFlags(NodeFlags flags)
+    {
+        return filterFlags(~flags);
     }
     
     void setOpAndDefaultFlags(NodeType op)
     {
-        this->op = op;
-        flags = defaultFlags(op);
+        m_op = op;
+        m_flags = defaultFlags(op);
     }
 
     bool mustGenerate()
     {
-        return flags & NodeMustGenerate;
+        return m_flags & NodeMustGenerate;
     }
 
     bool isConstant()
     {
-        return op == JSConstant;
+        return op() == JSConstant;
     }
     
     bool isWeakConstant()
     {
-        return op == WeakJSConstant;
+        return op() == WeakJSConstant;
     }
     
     bool hasConstant()
@@ -402,7 +204,7 @@ struct Node {
     
     JSValue valueOfJSConstant(CodeBlock* codeBlock)
     {
-        if (op == WeakJSConstant)
+        if (op() == WeakJSConstant)
             return JSValue(weakConstant());
         return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
     }
@@ -434,7 +236,7 @@ struct Node {
     
     bool hasVariableAccessData()
     {
-        switch (op) {
+        switch (op()) {
         case GetLocal:
         case SetLocal:
         case Phi:
@@ -464,7 +266,7 @@ struct Node {
     
     bool hasIdentifier()
     {
-        switch (op) {
+        switch (op()) {
         case GetById:
         case GetByIdFlush:
         case PutById:
@@ -486,13 +288,13 @@ struct Node {
     
     unsigned resolveGlobalDataIndex()
     {
-        ASSERT(op == ResolveGlobal);
+        ASSERT(op() == ResolveGlobal);
         return m_opInfo;
     }
 
     bool hasArithNodeFlags()
     {
-        switch (op) {
+        switch (op()) {
         case UInt32ToNumber:
         case ArithAdd:
         case ArithSub:
@@ -515,8 +317,8 @@ struct Node {
     // to know if it can speculate on negative zero.
     NodeFlags arithNodeFlags()
     {
-        NodeFlags result = flags & NodeArithMask;
-        if (op == ArithMul)
+        NodeFlags result = m_flags & NodeArithMask;
+        if (op() == ArithMul)
             return result;
         return result & ~NodeNeedsNegZero;
     }
@@ -525,23 +327,23 @@ struct Node {
     {
         ASSERT(!(newFlags & ~NodeArithMask));
         
-        flags &= ~NodeArithMask;
-        flags |= newFlags;
+        m_flags &= ~NodeArithMask;
+        m_flags |= newFlags;
     }
     
     bool mergeArithNodeFlags(NodeFlags newFlags)
     {
         ASSERT(!(newFlags & ~NodeArithMask));
-        newFlags = flags | newFlags;
-        if (newFlags == flags)
+        newFlags = m_flags | newFlags;
+        if (newFlags == m_flags)
             return false;
-        flags = newFlags;
+        m_flags = newFlags;
         return true;
     }
     
     bool hasConstantBuffer()
     {
-        return op == NewArrayBuffer;
+        return op() == NewArrayBuffer;
     }
     
     unsigned startConstant()
@@ -558,7 +360,7 @@ struct Node {
     
     bool hasRegexpIndex()
     {
-        return op == NewRegexp;
+        return op() == NewRegexp;
     }
     
     unsigned regexpIndex()
@@ -569,7 +371,7 @@ struct Node {
     
     bool hasVarNumber()
     {
-        return op == GetGlobalVar || op == PutGlobalVar || op == GetScopedVar || op == PutScopedVar;
+        return op() == GetGlobalVar || op() == PutGlobalVar || op() == GetScopedVar || op() == PutScopedVar;
     }
 
     unsigned varNumber()
@@ -580,7 +382,7 @@ struct Node {
 
     bool hasScopeChainDepth()
     {
-        return op == GetScopeChain;
+        return op() == GetScopeChain;
     }
     
     unsigned scopeChainDepth()
@@ -591,42 +393,42 @@ struct Node {
 
     bool hasResult()
     {
-        return flags & NodeResultMask;
+        return m_flags & NodeResultMask;
     }
 
     bool hasInt32Result()
     {
-        return (flags & NodeResultMask) == NodeResultInt32;
+        return (m_flags & NodeResultMask) == NodeResultInt32;
     }
     
     bool hasNumberResult()
     {
-        return (flags & NodeResultMask) == NodeResultNumber;
+        return (m_flags & NodeResultMask) == NodeResultNumber;
     }
     
     bool hasJSResult()
     {
-        return (flags & NodeResultMask) == NodeResultJS;
+        return (m_flags & NodeResultMask) == NodeResultJS;
     }
     
     bool hasBooleanResult()
     {
-        return (flags & NodeResultMask) == NodeResultBoolean;
+        return (m_flags & NodeResultMask) == NodeResultBoolean;
     }
 
     bool isJump()
     {
-        return op == Jump;
+        return op() == Jump;
     }
 
     bool isBranch()
     {
-        return op == Branch;
+        return op() == Branch;
     }
 
     bool isTerminal()
     {
-        switch (op) {
+        switch (op()) {
         case Jump:
         case Branch:
         case Return:
@@ -676,7 +478,7 @@ struct Node {
     
     bool hasHeapPrediction()
     {
-        switch (op) {
+        switch (op()) {
         case GetById:
         case GetByIdFlush:
         case GetByVal:
@@ -711,7 +513,7 @@ struct Node {
     
     bool hasFunctionCheckData()
     {
-        return op == CheckFunction;
+        return op() == CheckFunction;
     }
 
     JSFunction* function()
@@ -722,7 +524,7 @@ struct Node {
 
     bool hasStructureTransitionData()
     {
-        return op == PutStructure;
+        return op() == PutStructure;
     }
     
     StructureTransitionData& structureTransitionData()
@@ -733,7 +535,7 @@ struct Node {
     
     bool hasStructureSet()
     {
-        return op == CheckStructure;
+        return op() == CheckStructure;
     }
     
     StructureSet& structureSet()
@@ -744,7 +546,7 @@ struct Node {
     
     bool hasStorageAccessData()
     {
-        return op == GetByOffset || op == PutByOffset;
+        return op() == GetByOffset || op() == PutByOffset;
     }
     
     unsigned storageAccessDataIndex()
@@ -755,8 +557,8 @@ struct Node {
     
     bool hasFunctionDeclIndex()
     {
-        return op == NewFunction
-            || op == NewFunctionNoCheck;
+        return op() == NewFunction
+            || op() == NewFunctionNoCheck;
     }
     
     unsigned functionDeclIndex()
@@ -767,7 +569,7 @@ struct Node {
     
     bool hasFunctionExprIndex()
     {
-        return op == NewFunctionExpression;
+        return op() == NewFunctionExpression;
     }
     
     unsigned functionExprIndex()
@@ -832,7 +634,7 @@ struct Node {
     
     NodeUse child1()
     {
-        ASSERT(!(flags & NodeHasVarArgs));
+        ASSERT(!(m_flags & NodeHasVarArgs));
         return children.child1();
     }
     
@@ -846,25 +648,25 @@ struct Node {
 
     NodeUse child2()
     {
-        ASSERT(!(flags & NodeHasVarArgs));
+        ASSERT(!(m_flags & NodeHasVarArgs));
         return children.child2();
     }
 
     NodeUse child3()
     {
-        ASSERT(!(flags & NodeHasVarArgs));
+        ASSERT(!(m_flags & NodeHasVarArgs));
         return children.child3();
     }
     
     unsigned firstChild()
     {
-        ASSERT(flags & NodeHasVarArgs);
+        ASSERT(m_flags & NodeHasVarArgs);
         return children.firstChild();
     }
     
     unsigned numChildren()
     {
-        ASSERT(flags & NodeHasVarArgs);
+        ASSERT(m_flags & NodeHasVarArgs);
         return children.numChildren();
     }
     
@@ -1030,14 +832,14 @@ struct Node {
         fprintf(out, ", @%u", child3().index());
     }
     
-    uint16_t op; // real type is NodeType
-    NodeFlags flags;
     // Used to look up exception handling information (currently implemented as a bytecode index).
     CodeOrigin codeOrigin;
     // References to up to 3 children, or links to a variable length set of children.
     NodeReferenceBlob children;
 
 private:
+    uint16_t m_op; // real type is NodeType
+    NodeFlags m_flags;
     // The virtual register number (spill location) associated with this .
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).

@@ -105,7 +105,7 @@ private:
         if (!node.shouldGenerate())
             return;
         
-        NodeType op = static_cast<NodeType>(node.op);
+        NodeType op = node.op();
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("   %s @%u: ", Graph::opName(op), m_compileIndex);
@@ -505,7 +505,7 @@ private:
 
     void vote(NodeUse nodeUse, VariableAccessData::Ballot ballot)
     {
-        switch (m_graph[nodeUse].op) {
+        switch (m_graph[nodeUse].op()) {
         case ValueToInt32:
         case UInt32ToNumber:
             nodeUse = m_graph[nodeUse].child1();
@@ -514,13 +514,13 @@ private:
             break;
         }
         
-        if (m_graph[nodeUse].op == GetLocal)
+        if (m_graph[nodeUse].op() == GetLocal)
             m_graph[nodeUse].variableAccessData()->vote(ballot);
     }
     
     void vote(Node& node, VariableAccessData::Ballot ballot)
     {
-        if (node.flags & NodeHasVarArgs) {
+        if (node.flags() & NodeHasVarArgs) {
             for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
                 vote(m_graph.m_varArgChildren[childIdx], ballot);
             return;
@@ -546,7 +546,7 @@ private:
             m_graph.m_variableAccessData[i].find()->clearVotes();
         for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex) {
             Node& node = m_graph[m_compileIndex];
-            switch (node.op) {
+            switch (node.op()) {
             case ValueAdd:
             case ArithAdd:
             case ArithSub: {
@@ -628,7 +628,7 @@ private:
         if (!node.shouldGenerate())
             return;
         
-        NodeType op = static_cast<NodeType>(node.op);
+        NodeType op = node.op();
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("   %s @%u: ", Graph::opName(op), m_compileIndex);
@@ -659,34 +659,34 @@ private:
             dataLog("  @%u -> %s", m_compileIndex, isArray ? "GetArrayLength" : "GetStringLength");
 #endif
             if (isArray)
-                node.op = GetArrayLength;
+                node.setOp(GetArrayLength);
             else if (isString)
-                node.op = GetStringLength;
+                node.setOp(GetStringLength);
             else if (isByteArray)
-                node.op = GetByteArrayLength;
+                node.setOp(GetByteArrayLength);
             else if (isInt8Array)
-                node.op = GetInt8ArrayLength;
+                node.setOp(GetInt8ArrayLength);
             else if (isInt16Array)
-                node.op = GetInt16ArrayLength;
+                node.setOp(GetInt16ArrayLength);
             else if (isInt32Array)
-                node.op = GetInt32ArrayLength;
+                node.setOp(GetInt32ArrayLength);
             else if (isUint8Array)
-                node.op = GetUint8ArrayLength;
+                node.setOp(GetUint8ArrayLength);
             else if (isUint8ClampedArray)
-                node.op = GetUint8ClampedArrayLength;
+                node.setOp(GetUint8ClampedArrayLength);
             else if (isUint16Array)
-                node.op = GetUint16ArrayLength;
+                node.setOp(GetUint16ArrayLength);
             else if (isUint32Array)
-                node.op = GetUint32ArrayLength;
+                node.setOp(GetUint32ArrayLength);
             else if (isFloat32Array)
-                node.op = GetFloat32ArrayLength;
+                node.setOp(GetFloat32ArrayLength);
             else if (isFloat64Array)
-                node.op = GetFloat64ArrayLength;
+                node.setOp(GetFloat64ArrayLength);
             else
                 ASSERT_NOT_REACHED();
             // No longer MustGenerate
-            ASSERT(node.flags & NodeMustGenerate);
-            node.flags &= ~NodeMustGenerate;
+            ASSERT(node.flags() & NodeMustGenerate);
+            node.clearFlags(NodeMustGenerate);
             m_graph.deref(m_compileIndex);
             break;
         }
@@ -704,7 +704,7 @@ private:
         case GetByVal:
         case StringCharAt:
         case StringCharCodeAt: {
-            if (!!node.child3() && m_graph[node.child3()].op == Nop)
+            if (!!node.child3() && m_graph[node.child3()].op() == Nop)
                 node.children.child3() = NodeUse();
             break;
         }

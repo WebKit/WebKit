@@ -162,7 +162,7 @@ private:
     NodeIndex injectLazyOperandPrediction(NodeIndex nodeIndex)
     {
         Node& node = m_graph[nodeIndex];
-        ASSERT(node.op == GetLocal);
+        ASSERT(node.op() == GetLocal);
         ASSERT(node.codeOrigin.bytecodeIndex == m_currentIndex);
         PredictedType prediction = 
             m_inlineStackTop->m_lazyOperands.prediction(
@@ -182,13 +182,13 @@ private:
         
         if (nodeIndex != NoNode) {
             Node* nodePtr = &m_graph[nodeIndex];
-            if (nodePtr->op == Flush) {
+            if (nodePtr->op() == Flush) {
                 // Two possibilities: either the block wants the local to be live
                 // but has not loaded its value, or it has loaded its value, in
                 // which case we're done.
                 nodeIndex = nodePtr->child1().index();
                 Node& flushChild = m_graph[nodeIndex];
-                if (flushChild.op == Phi) {
+                if (flushChild.op() == Phi) {
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
                     nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodeIndex));
                     m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
@@ -198,7 +198,7 @@ private:
             }
             
             ASSERT(&m_graph[nodeIndex] == nodePtr);
-            ASSERT(nodePtr->op != Flush);
+            ASSERT(nodePtr->op() != Flush);
 
             if (m_graph.localIsCaptured(operand)) {
                 // We wish to use the same variable access data as the previous access,
@@ -206,15 +206,15 @@ private:
                 // know, at this stage of compilation, the local has been clobbered.
                 
                 // Make sure we link to the Phi node, not to the GetLocal.
-                if (nodePtr->op == GetLocal)
+                if (nodePtr->op() == GetLocal)
                     nodeIndex = nodePtr->child1().index();
                 
                 return injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
             }
             
-            if (nodePtr->op == GetLocal)
+            if (nodePtr->op() == GetLocal)
                 return nodeIndex;
-            ASSERT(nodePtr->op == SetLocal);
+            ASSERT(nodePtr->op() == SetLocal);
             return nodePtr->child1().index();
         }
 
@@ -252,13 +252,13 @@ private:
 
         if (nodeIndex != NoNode) {
             Node* nodePtr = &m_graph[nodeIndex];
-            if (nodePtr->op == Flush) {
+            if (nodePtr->op() == Flush) {
                 // Two possibilities: either the block wants the local to be live
                 // but has not loaded its value, or it has loaded its value, in
                 // which case we're done.
                 nodeIndex = nodePtr->child1().index();
                 Node& flushChild = m_graph[nodeIndex];
-                if (flushChild.op == Phi) {
+                if (flushChild.op() == Phi) {
                     VariableAccessData* variableAccessData = flushChild.variableAccessData();
                     nodeIndex = injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(variableAccessData), nodeIndex));
                     m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
@@ -268,9 +268,9 @@ private:
             }
             
             ASSERT(&m_graph[nodeIndex] == nodePtr);
-            ASSERT(nodePtr->op != Flush);
+            ASSERT(nodePtr->op() != Flush);
             
-            if (nodePtr->op == SetArgument) {
+            if (nodePtr->op() == SetArgument) {
                 // We're getting an argument in the first basic block; link
                 // the GetLocal to the SetArgument.
                 ASSERT(nodePtr->local() == static_cast<VirtualRegister>(operand));
@@ -280,15 +280,15 @@ private:
             }
             
             if (m_graph.argumentIsCaptured(argument)) {
-                if (nodePtr->op == GetLocal)
+                if (nodePtr->op() == GetLocal)
                     nodeIndex = nodePtr->child1().index();
                 return injectLazyOperandPrediction(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
             }
             
-            if (nodePtr->op == GetLocal)
+            if (nodePtr->op() == GetLocal)
                 return nodeIndex;
             
-            ASSERT(nodePtr->op == SetLocal);
+            ASSERT(nodePtr->op() == SetLocal);
             return nodePtr->child1().index();
         }
         
@@ -337,10 +337,10 @@ private:
         
         if (nodeIndex != NoNode) {
             Node& node = m_graph[nodeIndex];
-            if (node.op == Flush)
+            if (node.op() == Flush)
                 nodeIndex = node.child1().index();
             
-            ASSERT(m_graph[nodeIndex].op != Flush);
+            ASSERT(m_graph[nodeIndex].op() != Flush);
             
             // Emit a Flush regardless of whether we already flushed it.
             // This gives us guidance to see that the variable also needs to be flushed
@@ -377,11 +377,11 @@ private:
         if (node.hasInt32Result())
             return index;
 
-        if (node.op == UInt32ToNumber)
+        if (node.op() == UInt32ToNumber)
             return node.child1().index();
 
         // Check for numeric constants boxed as JSValues.
-        if (node.op == JSConstant) {
+        if (node.op() == JSConstant) {
             JSValue v = valueOfJSConstant(index);
             if (v.isInt32())
                 return getJSConstant(node.constantNumber());
@@ -427,7 +427,7 @@ private:
     // Convenience methods for checking nodes for constants.
     bool isJSConstant(NodeIndex index)
     {
-        return m_graph[index].op == JSConstant;
+        return m_graph[index].op() == JSConstant;
     }
     bool isInt32Constant(NodeIndex nodeIndex)
     {
@@ -699,10 +699,10 @@ private:
             return nodeIndex;
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Making %s @%u safe at bc#%u because slow-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(static_cast<NodeType>(m_graph[nodeIndex].op)), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
+        dataLog("Making %s @%u safe at bc#%u because slow-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op()), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
 #endif
         
-        switch (m_graph[nodeIndex].op) {
+        switch (m_graph[nodeIndex].op()) {
         case UInt32ToNumber:
         case ArithAdd:
         case ArithSub:
@@ -738,7 +738,7 @@ private:
     
     NodeIndex makeDivSafe(NodeIndex nodeIndex)
     {
-        ASSERT(m_graph[nodeIndex].op == ArithDiv);
+        ASSERT(m_graph[nodeIndex].op() == ArithDiv);
         
         // The main slow case counter for op_div in the old JIT counts only when
         // the operands are not numbers. We don't care about that since we already
@@ -752,7 +752,7 @@ private:
             return nodeIndex;
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Making %s @%u safe at bc#%u because special fast-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(static_cast<NodeType>(m_graph[nodeIndex].op)), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
+        dataLog("Making %s @%u safe at bc#%u because special fast-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op()), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
 #endif
         
         // FIXME: It might be possible to make this more granular. The DFG certainly can
@@ -1222,7 +1222,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
         BasicBlock* block = m_graph.m_blocks[inlineStackEntry.m_unlinkedBlocks[i].m_blockIndex].get();
         ASSERT(!block->isLinked);
         Node& node = m_graph[block->last()];
-        ASSERT(node.op == Jump);
+        ASSERT(node.op() == Jump);
         ASSERT(node.takenBlockIndex() == NoBlock);
         node.setTakenBlockIndex(m_graph.m_blocks.size());
         inlineStackEntry.m_unlinkedBlocks[i].m_needsEarlyReturnLinking = false;
@@ -1449,7 +1449,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_convert_this: {
             NodeIndex op1 = getThis();
-            if (m_graph[op1].op == ConvertThis)
+            if (m_graph[op1].op() == ConvertThis)
                 setThis(op1);
             else
                 setThis(addToGraph(ConvertThis, op1));
@@ -2340,7 +2340,7 @@ void ByteCodeParser::processPhiStack()
                 else
                     predecessorBlock->variablesAtHead.setLocalFirstTime(varNo, valueInPredecessor);
                 phiStack.append(PhiStackEntry(predecessorBlock, valueInPredecessor, varNo));
-            } else if (m_graph[valueInPredecessor].op == GetLocal) {
+            } else if (m_graph[valueInPredecessor].op() == GetLocal) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 dataLog("      Found GetLocal @%u.\n", valueInPredecessor);
 #endif
@@ -2357,10 +2357,10 @@ void ByteCodeParser::processPhiStack()
                 dataLog("      Found @%u.\n", valueInPredecessor);
 #endif
             }
-            ASSERT(m_graph[valueInPredecessor].op == SetLocal
-                   || m_graph[valueInPredecessor].op == Phi
-                   || m_graph[valueInPredecessor].op == Flush
-                   || (m_graph[valueInPredecessor].op == SetArgument
+            ASSERT(m_graph[valueInPredecessor].op() == SetLocal
+                   || m_graph[valueInPredecessor].op() == Phi
+                   || m_graph[valueInPredecessor].op() == Flush
+                   || (m_graph[valueInPredecessor].op() == SetArgument
                        && stackType == ArgumentPhiStack));
             
             VariableAccessData* dataForPredecessor = m_graph[valueInPredecessor].variableAccessData();
@@ -2460,7 +2460,7 @@ void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BlockIndex>& possibleTa
     Node& node = m_graph[block->last()];
     ASSERT(node.isTerminal());
     
-    switch (node.op) {
+    switch (node.op()) {
     case Jump:
         node.setTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(possibleTargets, node.takenBytecodeOffsetDuringParsing()));
 #if DFG_ENABLE(DEBUG_VERBOSE)

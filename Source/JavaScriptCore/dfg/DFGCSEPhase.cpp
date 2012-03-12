@@ -58,7 +58,7 @@ private:
         if (nodeIndex == NoNode)
             return NoNode;
         
-        if (m_graph[nodeIndex].op == ValueToInt32)
+        if (m_graph[nodeIndex].op() == ValueToInt32)
             nodeIndex = m_graph[nodeIndex].child1().index();
         
         return nodeIndex;
@@ -70,7 +70,7 @@ private:
     
     unsigned endIndexForPureCSE()
     {
-        unsigned result = m_lastSeen[m_graph[m_compileIndex].op];
+        unsigned result = m_lastSeen[m_graph[m_compileIndex].op()];
         if (result == UINT_MAX)
             result = 0;
         else
@@ -94,7 +94,7 @@ private:
                 break;
 
             Node& otherNode = m_graph[index];
-            if (node.op != otherNode.op)
+            if (node.op() != otherNode.op())
                 continue;
             
             if (node.arithNodeFlags() != otherNode.arithNodeFlags())
@@ -139,7 +139,7 @@ private:
     bool byValIsPure(Node& node)
     {
         return m_graph[node.child2()].shouldSpeculateInteger()
-            && ((node.op == PutByVal || node.op == PutByValAlias)
+            && ((node.op() == PutByVal || node.op() == PutByValAlias)
                 ? isActionableMutableArrayPrediction(m_graph[node.child1()].prediction())
                 : isActionableArrayPrediction(m_graph[node.child1()].prediction()));
     }
@@ -147,11 +147,11 @@ private:
     bool clobbersWorld(NodeIndex nodeIndex)
     {
         Node& node = m_graph[nodeIndex];
-        if (node.flags & NodeClobbersWorld)
+        if (node.flags() & NodeClobbersWorld)
             return true;
-        if (!(node.flags & NodeMightClobber))
+        if (!(node.flags() & NodeMightClobber))
             return false;
-        switch (node.op) {
+        switch (node.op()) {
         case ValueAdd:
         case CompareLess:
         case CompareLessEq:
@@ -181,7 +181,7 @@ private:
                 break;
 
             Node& otherNode = m_graph[index];
-            if (node.op == otherNode.op
+            if (node.op() == otherNode.op()
                 && node.arithNodeFlags() == otherNode.arithNodeFlags()) {
                 NodeIndex otherChild = canonicalize(otherNode.child1());
                 if (otherChild == NoNode)
@@ -210,7 +210,7 @@ private:
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
-            switch (node.op) {
+            switch (node.op()) {
             case GetGlobalVar:
                 if (node.varNumber() == varNumber && codeBlock()->globalObjectFor(node.codeOrigin) == globalObject)
                     return index;
@@ -236,7 +236,7 @@ private:
                 break;
 
             Node& node = m_graph[index];
-            switch (node.op) {
+            switch (node.op()) {
             case GetByVal:
                 if (!byValIsPure(node))
                     return NoNode;
@@ -280,7 +280,7 @@ private:
                 break;
 
             Node& node = m_graph[index];
-            if (node.op == CheckFunction && node.child1() == child1 && node.function() == function)
+            if (node.op() == CheckFunction && node.child1() == child1 && node.function() == function)
                 return true;
         }
         return false;
@@ -294,7 +294,7 @@ private:
                 break;
 
             Node& node = m_graph[index];
-            switch (node.op) {
+            switch (node.op()) {
             case CheckStructure:
                 if (node.child1() == child1
                     && structureSet.isSupersetOf(node.structureSet()))
@@ -340,7 +340,7 @@ private:
                 break;
 
             Node& node = m_graph[index];
-            switch (node.op) {
+            switch (node.op()) {
             case GetByOffset:
                 if (node.child1() == child1
                     && m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber == identifierNumber)
@@ -386,7 +386,7 @@ private:
                 break;
 
             Node& node = m_graph[index];
-            switch (node.op) {
+            switch (node.op()) {
             case GetPropertyStorage:
                 if (node.child1() == child1)
                     return index;
@@ -425,7 +425,7 @@ private:
                 break;
 
             Node& node = m_graph[index];
-            switch (node.op) {
+            switch (node.op()) {
             case GetIndexedPropertyStorage: {
                 PredictedType basePrediction = m_graph[node.child2()].prediction();
                 bool nodeHasIntegerIndexPrediction = !(!(basePrediction & PredictInt32) && basePrediction);
@@ -463,7 +463,7 @@ private:
         for (unsigned i = endIndexForPureCSE(); i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
-            if (node.op == GetScopeChain
+            if (node.op() == GetScopeChain
                 && node.scopeChainDepth() == depth)
                 return index;
         }
@@ -529,7 +529,7 @@ private:
     {
         bool shouldGenerate = node.shouldGenerate();
 
-        if (node.flags & NodeHasVarArgs) {
+        if (node.flags() & NodeHasVarArgs) {
             for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
                 performSubstitution(m_graph.m_varArgChildren[childIdx], shouldGenerate);
         } else {
@@ -542,7 +542,7 @@ private:
             return;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   %s @%u: ", Graph::opName(static_cast<NodeType>(m_graph[m_compileIndex].op)), m_compileIndex);
+        dataLog("   %s @%u: ", Graph::opName(m_graph[m_compileIndex].op()), m_compileIndex);
 #endif
         
         // NOTE: there are some nodes that we deliberately don't CSE even though we
@@ -554,7 +554,7 @@ private:
         // ToPrimitive, but we could change that with some speculations if we really
         // needed to.
         
-        switch (node.op) {
+        switch (node.op()) {
         
         // Handle the pure nodes. These nodes never have any side-effects.
         case BitAnd:
@@ -636,7 +636,7 @@ private:
             
         case PutByVal:
             if (byValIsPure(node) && getByValLoadElimination(node.child1().index(), node.child2().index()) != NoNode)
-                node.op = PutByValAlias;
+                node.setOp(PutByValAlias);
             break;
             
         case CheckStructure:
@@ -669,7 +669,7 @@ private:
             break;
         }
         
-        m_lastSeen[node.op] = m_indexInBlock;
+        m_lastSeen[node.op()] = m_indexInBlock;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("\n");
 #endif

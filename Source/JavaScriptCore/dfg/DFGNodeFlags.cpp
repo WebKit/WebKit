@@ -24,9 +24,11 @@
  */
 
 #include "config.h"
-#include "DFGNode.h"
+#include "DFGNodeFlags.h"
 
 #if ENABLE(DFG_JIT)
+
+#include <wtf/BoundsCheckedPointer.h>
 
 namespace JSC { namespace DFG {
 

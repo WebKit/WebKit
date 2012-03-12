@@ -890,7 +890,7 @@ private:
 
         // Check if the lastNode is a branch on this node.
         Node& lastNode = at(block->last());
-        return lastNode.op == Branch && lastNode.child1().index() == m_compileIndex ? block->size() - 1 : UINT_MAX;
+        return lastNode.op() == Branch && lastNode.child1().index() == m_compileIndex ? block->size() - 1 : UINT_MAX;
     }
     
     void nonSpeculativeValueToNumber(Node&);

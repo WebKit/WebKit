@@ -68,7 +68,7 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGDriver.cpp
     dfg/DFGGraph.cpp
     dfg/DFGJITCompiler.cpp
-    dfg/DFGNode.cpp
+    dfg/DFGNodeFlags.cpp
     dfg/DFGOSREntry.cpp
     dfg/DFGOSRExit.cpp
     dfg/DFGOSRExitCompiler.cpp

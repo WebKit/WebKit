@@ -83,7 +83,7 @@ GPRReg SpeculativeJIT::fillStorage(NodeIndex nodeIndex)
 
 void SpeculativeJIT::useChildren(Node& node)
 {
-    if (node.flags & NodeHasVarArgs) {
+    if (node.flags() & NodeHasVarArgs) {
         for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
             use(m_jit.graph().m_varArgChildren[childIdx]);
     } else {
@@ -890,11 +890,11 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node& node, MacroAssembler::Relationa
             compilePeepHoleDoubleBranch(node, branchNodeIndex, doubleCondition);
             use(node.child1());
             use(node.child2());
-        } else if (node.op == CompareEq && Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2()))) {
+        } else if (node.op() == CompareEq && Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2()))) {
             compilePeepHoleObjectEquality(node, branchNodeIndex, &JSFinalObject::s_info, isFinalObjectPrediction);
             use(node.child1());
             use(node.child2());
-        } else if (node.op == CompareEq && Node::shouldSpeculateArray(at(node.child1()), at(node.child2()))) {
+        } else if (node.op() == CompareEq && Node::shouldSpeculateArray(at(node.child1()), at(node.child2()))) {
             compilePeepHoleObjectEquality(node, branchNodeIndex, &JSArray::s_info, isArrayPrediction);
             use(node.child1());
             use(node.child2());
@@ -910,7 +910,7 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node& node, MacroAssembler::Relationa
 
 void SpeculativeJIT::compileMovHint(Node& node)
 {
-    ASSERT(node.op == SetLocal);
+    ASSERT(node.op() == SetLocal);
     
     setNodeIndexForOperand(node.child1().index(), node.local());
     m_lastSetOperand = node.local();
@@ -969,7 +969,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
 #if DFG_ENABLE(DEBUG_VERBOSE)
             dataLog("SpeculativeJIT skipping Node @%d (bc#%u) at JIT offset 0x%x     ", (int)m_compileIndex, node.codeOrigin.bytecodeIndex, m_jit.debugOffset());
 #endif
-            switch (node.op) {
+            switch (node.op()) {
             case SetLocal:
                 compileMovHint(node);
                 break;
@@ -1076,7 +1076,7 @@ void SpeculativeJIT::checkArgumentTypes()
     for (int i = 0; i < m_jit.codeBlock()->numParameters(); ++i) {
         NodeIndex nodeIndex = m_jit.graph().m_arguments[i];
         Node& node = at(nodeIndex);
-        ASSERT(node.op == SetArgument);
+        ASSERT(node.op() == SetArgument);
         if (!node.shouldGenerate()) {
             // The argument is dead. We don't do any checks for such arguments.
             continue;
@@ -1322,7 +1322,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
         
             bool found = false;
         
-            if (nodePtr->op == UInt32ToNumber) {
+            if (nodePtr->op() == UInt32ToNumber) {
                 NodeIndex nodeIndex = nodePtr->child1().index();
                 nodePtr = &at(nodeIndex);
                 infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
@@ -1343,7 +1343,7 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
                     Node& node = at(info.nodeIndex());
                     if (node.child1Unchecked() != valueSource.nodeIndex())
                         continue;
-                    switch (node.op) {
+                    switch (node.op()) {
                     case ValueToInt32:
                         valueToInt32Index = info.nodeIndex();
                         break;
@@ -1550,7 +1550,9 @@ void SpeculativeJIT::compileUInt32ToNumber(Node& node)
     speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::LessThan, op1.gpr(), TrustedImm32(0)));
         
     // Verify that we can do roll forward.
-    ASSERT(at(m_compileIndex + 1).op == SetLocal);
+    // FIXME: This isn't right, since the next node in the graph may not actually be the next
+    // node in the basic block's execution sequence.
+    ASSERT(at(m_compileIndex + 1).op() == SetLocal);
     ASSERT(at(m_compileIndex + 1).codeOrigin == node.codeOrigin);
     ASSERT(at(m_compileIndex + 2).codeOrigin != node.codeOrigin);
         
@@ -2299,7 +2301,7 @@ void SpeculativeJIT::compileAdd(Node& node)
         return;
     }
 
-    if (node.op == ValueAdd) {
+    if (node.op() == ValueAdd) {
         compileValueAdd(node);
         return;
     }
@@ -2477,9 +2479,9 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
         compileIntegerCompare(node, condition);
     else if (Node::shouldSpeculateNumber(at(node.child1()), at(node.child2())))
         compileDoubleCompare(node, doubleCondition);
-    else if (node.op == CompareEq && Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2())))
+    else if (node.op() == CompareEq && Node::shouldSpeculateFinalObject(at(node.child1()), at(node.child2())))
         compileObjectEquality(node, &JSFinalObject::s_info, isFinalObjectPrediction);
-    else if (node.op == CompareEq && Node::shouldSpeculateArray(at(node.child1()), at(node.child2())))
+    else if (node.op() == CompareEq && Node::shouldSpeculateArray(at(node.child1()), at(node.child2())))
         compileObjectEquality(node, &JSArray::s_info, isArrayPrediction);
     else
         nonSpeculativeNonPeepholeCompare(node, condition, operation);

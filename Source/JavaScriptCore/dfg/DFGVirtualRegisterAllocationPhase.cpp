@@ -64,17 +64,17 @@ public:
 #endif
                 Node& node = m_graph[nodeIndex];
         
-                if (!node.shouldGenerate() || node.op == Phi || node.op == Flush)
+                if (!node.shouldGenerate() || node.op() == Phi || node.op() == Flush)
                     continue;
             
                 // GetLocal nodes are effectively phi nodes in the graph, referencing
                 // results from prior blocks.
-                if (node.op != GetLocal) {
+                if (node.op() != GetLocal) {
                     // First, call use on all of the current node's children, then
                     // allocate a VirtualRegister for this node. We do so in this
                     // order so that if a child is on its last use, and a
                     // VirtualRegister is freed, then it may be reused for node.
-                    if (node.flags & NodeHasVarArgs) {
+                    if (node.flags() & NodeHasVarArgs) {
                         for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
                             scoreBoard.use(m_graph.m_varArgChildren[childIdx]);
                     } else {

@@ -916,18 +916,18 @@ void SpeculativeJIT::emitCall(Node& node)
 {
     P_DFGOperation_E slowCallFunction;
 
-    if (node.op == Call)
+    if (node.op() == Call)
         slowCallFunction = operationLinkCall;
     else {
-        ASSERT(node.op == Construct);
+        ASSERT(node.op() == Construct);
         slowCallFunction = operationLinkConstruct;
     }
 
     // For constructors, the this argument is not passed but we have to make space
     // for it.
-    int dummyThisArgument = node.op == Call ? 0 : 1;
+    int dummyThisArgument = node.op() == Call ? 0 : 1;
     
-    CallLinkInfo::CallType callType = node.op == Call ? CallLinkInfo::Call : CallLinkInfo::Construct;
+    CallLinkInfo::CallType callType = node.op() == Call ? CallLinkInfo::Call : CallLinkInfo::Construct;
     
     NodeUse calleeNodeUse = m_jit.graph().m_varArgChildren[node.firstChild()];
     JSValueOperand callee(this, calleeNodeUse);
@@ -1744,7 +1744,7 @@ void SpeculativeJIT::emitBranch(Node& node)
 
 void SpeculativeJIT::compile(Node& node)
 {
-    NodeType op = static_cast<NodeType>(node.op);
+    NodeType op = node.op();
 
     switch (op) {
     case JSConstant:

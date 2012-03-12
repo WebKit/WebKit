@@ -27,6 +27,7 @@
 #include "DFGGraph.h"
 
 #include "CodeBlock.h"
+#include <wtf/BoundsCheckedPointer.h>
 
 #if ENABLE(DFG_JIT)
 
@@ -120,7 +121,7 @@ void Graph::dumpCodeOrigin(NodeIndex nodeIndex)
 void Graph::dump(NodeIndex nodeIndex)
 {
     Node& node = at(nodeIndex);
-    NodeType op = static_cast<NodeType>(node.op);
+    NodeType op = node.op();
 
     unsigned refCount = node.refCount();
     bool skipped = !refCount;
@@ -157,7 +158,7 @@ void Graph::dump(NodeIndex nodeIndex)
         dataLog("-");
     dataLog(">\t%s(", opName(op));
     bool hasPrinted = false;
-    if (node.flags & NodeHasVarArgs) {
+    if (node.flags() & NodeHasVarArgs) {
         for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++) {
             if (hasPrinted)
                 dataLog(", ");
@@ -294,7 +295,7 @@ void Graph::dump()
 // FIXME: Convert this to be iterative, not recursive.
 #define DO_TO_CHILDREN(node, thingToDo) do {                            \
         Node& _node = (node);                                           \
-        if (_node.flags & NodeHasVarArgs) {                             \
+        if (_node.flags() & NodeHasVarArgs) {                           \
             for (unsigned _childIdx = _node.firstChild();               \
                  _childIdx < _node.firstChild() + _node.numChildren();  \
                  _childIdx++)                                           \
