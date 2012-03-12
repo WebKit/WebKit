@@ -119,7 +119,7 @@ static void resolveColorSpace(const SkBitmap& bitmap, CGColorSpaceRef colorSpace
 {
     int width = bitmap.width();
     int height = bitmap.height();
-    CGImageRef srcImage = SkCreateCGImageRefWithColorspace(bitmap, colorSpace);
+    RetainPtr<CGImageRef> srcImage(AdoptCF, SkCreateCGImageRefWithColorspace(bitmap, colorSpace));
     SkAutoLockPixels lock(bitmap);
     void* pixels = bitmap.getPixels();
     RetainPtr<CGContextRef> cgBitmap(AdoptCF, CGBitmapContextCreate(pixels, width, height, 8, width * 4, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedFirst));
@@ -127,7 +127,7 @@ static void resolveColorSpace(const SkBitmap& bitmap, CGColorSpaceRef colorSpace
         return;
     CGContextSetBlendMode(cgBitmap.get(), kCGBlendModeCopy);
     CGRect bounds = { {0, 0}, {width, height} };
-    CGContextDrawImage(cgBitmap.get(), bounds, srcImage);
+    CGContextDrawImage(cgBitmap.get(), bounds, srcImage.get());
 }
 
 static CGColorSpaceRef createColorSpace(const ColorProfile& colorProfile)
