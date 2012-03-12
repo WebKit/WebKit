@@ -1,3 +1,12 @@
+2012-03-12  C Anthony Risinger  <anthony@xtfx.me>
+
+        [GTK] r110296 included an extra $ in @$(AM_V_GEN)
+        https://bugs.webkit.org/show_bug.cgi?id=80809
+
+        Reviewed by Philippe Normand.
+
+        * GNUmakefile.am: Add `$` to @(AM_V_GEN), else /bin/sh syntax error
+
 2012-03-12  Ming Xie  <mxie@rim.com>
 
         [BlackBerry] build-webkit doesn't recognize "--cmakearg" for the BlackBerry port
