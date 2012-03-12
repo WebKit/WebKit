@@ -662,4 +662,14 @@ unsigned Internals::wheelEventHandlerCount(Document* document, ExceptionCode& ec
     return document->wheelEventHandlerCount();
 }
 
+unsigned Internals::touchEventHandlerCount(Document* document, ExceptionCode& ec)
+{
+    if (!document) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return document->touchEventHandlerCount();
+}
+
 }

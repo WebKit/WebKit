@@ -120,6 +120,7 @@ public:
     bool shouldDisplayTrackKind(Document*, const String& kind, ExceptionCode&);
 
     unsigned wheelEventHandlerCount(Document*, ExceptionCode&);
+    unsigned touchEventHandlerCount(Document*, ExceptionCode&);
 
     static const char* internalsId;
 

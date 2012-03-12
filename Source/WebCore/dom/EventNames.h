@@ -231,6 +231,11 @@ namespace WebCore {
         DOM_EVENT_INTERFACES_FOR_EACH(DOM_EVENT_INTERFACE_DECLARE)
         DOM_EVENT_TARGET_INTERFACES_FOR_EACH(DOM_EVENT_INTERFACE_DECLARE)
         #undef DOM_EVENT_INTERFACE_DECLARE
+
+        inline bool isTouchEventType(const AtomicString& eventType) const
+        {
+            return eventType == touchstartEvent || eventType == touchmoveEvent || eventType == touchendEvent || eventType == touchcancelEvent;
+        }
     };
 
     inline EventNames& eventNames()

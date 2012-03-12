@@ -1476,6 +1476,8 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, PassRefPtr<Event
         document->addListenerTypeIfNeeded(eventType);
         if (eventType == eventNames().mousewheelEvent)
             document->didAddWheelEventHandler();
+        else if (eventNames().isTouchEventType(eventType))
+            document->didAddTouchEventHandler();
     }
 
     if (eventType == eventNames().unloadEvent)
@@ -1503,6 +1505,8 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
     if (Document* document = this->document()) {
         if (eventType == eventNames().mousewheelEvent)
             document->didRemoveWheelEventHandler();
+        else if (eventNames().isTouchEventType(eventType))
+            document->didRemoveTouchEventHandler();
     }
 
     if (eventType == eventNames().unloadEvent)

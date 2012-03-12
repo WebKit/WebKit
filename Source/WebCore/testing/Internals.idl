@@ -96,6 +96,7 @@ module window {
         attribute [Custom] Array userPreferredLanguages;
 
         unsigned long wheelEventHandlerCount(in Document document) raises (DOMException);
+        unsigned long touchEventHandlerCount(in Document document) raises (DOMException);
 
         readonly attribute InternalSettings settings;
     };

@@ -2467,11 +2467,6 @@ static inline HashSet<SVGElementInstance*> instancesForSVGElement(Node* node)
 }
 #endif
 
-static inline bool isTouchEventType(const AtomicString& eventType)
-{
-    return eventType == eventNames().touchstartEvent || eventType == eventNames().touchmoveEvent || eventType == eventNames().touchendEvent || eventType == eventNames().touchcancelEvent;
-}
-
 static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     if (!targetNode->EventTarget::addEventListener(eventType, listener, useCapture))
@@ -2481,7 +2476,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
         document->addListenerTypeIfNeeded(eventType);
         if (eventType == eventNames().mousewheelEvent)
             document->didAddWheelEventHandler();
-        else if (isTouchEventType(eventType))
+        else if (eventNames().isTouchEventType(eventType))
             document->didAddTouchEventHandler();
     }
         
@@ -2532,7 +2527,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
     if (Document* document = targetNode->document()) {
         if (eventType == eventNames().mousewheelEvent)
             document->didRemoveWheelEventHandler();
-        else if (isTouchEventType(eventType))
+        else if (eventNames().isTouchEventType(eventType))
             document->didRemoveTouchEventHandler();
     }
     
