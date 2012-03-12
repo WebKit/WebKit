@@ -543,7 +543,7 @@ void BitmapTextureGL::bind()
     m_textureMapper->beginClip(TransformationMatrix(), FloatRect(IntPoint::zero(), contentSize()));
 }
 
-void BitmapTextureGL::destroy()
+BitmapTextureGL::~BitmapTextureGL()
 {
     if (m_id)
         GL_CMD(glDeleteTextures(1, &m_id))
@@ -553,12 +553,6 @@ void BitmapTextureGL::destroy()
 
     if (m_rbo)
         GL_CMD(glDeleteRenderbuffers(1, &m_rbo))
-
-    m_fbo = 0;
-    m_rbo = 0;
-    m_id = 0;
-    m_textureSize = IntSize();
-    m_relativeSize = FloatSize(1, 1);
 }
 
 bool BitmapTextureGL::isValid() const

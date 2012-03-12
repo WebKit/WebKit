@@ -64,7 +64,6 @@ public:
     }
 
     virtual ~BitmapTexture() { }
-    virtual void destroy() { }
 
     virtual IntSize size() const = 0;
     virtual void updateContents(Image*, const IntRect&, const IntRect&, BitmapTexture::PixelFormat) = 0;

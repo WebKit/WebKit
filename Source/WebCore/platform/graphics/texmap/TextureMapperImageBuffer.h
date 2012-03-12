@@ -30,8 +30,6 @@ class BitmapTextureImageBuffer : public BitmapTexture {
     friend class TextureMapperImageBuffer;
 public:
     static PassRefPtr<BitmapTexture> create() { return adoptRef(new BitmapTextureImageBuffer); }
-    ~BitmapTextureImageBuffer() { destroy(); }
-    virtual void destroy() { m_image.clear(); }
     virtual IntSize size() const { return m_image->internalSize(); }
     virtual void didReset();
     virtual bool isValid() const { return m_image; }

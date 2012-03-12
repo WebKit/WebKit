@@ -75,13 +75,12 @@ private:
 
 class BitmapTextureGL : public BitmapTexture {
 public:
-    virtual void destroy();
     virtual IntSize size() const;
     virtual bool isValid() const;
     virtual void didReset();
     void bind();
     void initializeStencil();
-    ~BitmapTextureGL() { destroy(); }
+    ~BitmapTextureGL();
     virtual uint32_t id() const { return m_id; }
     inline FloatSize relativeSize() const { return m_relativeSize; }
     void setTextureMapper(TextureMapperGL* texmap) { m_textureMapper = texmap; }
