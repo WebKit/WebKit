@@ -979,7 +979,6 @@ sub blackberryCMakeArguments()
     }
 
     my @cmakeArgs;
-    push @cmakeArgs, "-DPUBLIC_BUILD=0";
     push @cmakeArgs, '-DCMAKE_SYSTEM_NAME="QNX"';
     push @cmakeArgs, "-DCMAKE_SYSTEM_PROCESSOR=\"$cpuDir\"";
     push @cmakeArgs, '-DCMAKE_SYSTEM_VERSION="1"';

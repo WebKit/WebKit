@@ -678,7 +678,7 @@ if (isBlackBerry()) {
     }
     $makeArgs .= ($makeArgs ? " " : "") . "-j" . $numberOfJobs if $makeArgs !~ /-j\s*\d+/;
     $prefixPath = $ENV{"STAGE_DIR"} unless $prefixPath;
-    buildCMakeProjectOrExit($clean, "BlackBerry", $prefixPath, $makeArgs, (cmakeBasedPortArguments(), cMakeArgsFromFeatures()));
+    buildCMakeProjectOrExit($clean, "BlackBerry", $prefixPath, $makeArgs, (cmakeBasedPortArguments(), cMakeArgsFromFeatures()), $cmakeArgs);
 }
 
 if (isQt()) {

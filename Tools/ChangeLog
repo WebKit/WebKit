@@ -1,3 +1,15 @@
+2012-03-12  Ming Xie  <mxie@rim.com>
+
+        [BlackBerry] build-webkit doesn't recognize "--cmakearg" for the BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=80812
+
+        Reviewed by Rob Buis.
+
+        * Scripts/build-webkit: Add $cmakeArgs to buildCMakeProjectOrExit()
+        * Scripts/webkitdirs.pm:
+        (blackberryCMakeArguments): Remove "PUBLIC_BUILD=0" define
+
+
 2012-03-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix build with newer Qt 5.
