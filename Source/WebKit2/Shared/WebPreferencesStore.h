@@ -95,6 +95,7 @@ namespace WebKit {
     macro(MediaPlaybackRequiresUserGesture, mediaPlaybackRequiresUserGesture, Bool, bool, false) \
     macro(MediaPlaybackAllowsInline, mediaPlaybackAllowsInline, Bool, bool, true) \
     macro(InspectorStartsAttached, inspectorStartsAttached, Bool, bool, true) \
+    macro(InspectorUsesWebKitUserInterface, inspectorUsesWebKitUserInterface, Bool, bool, false) \
     macro(ShowsToolTipOverTruncatedText, showsToolTipOverTruncatedText, Bool, bool, false) \
     macro(MockScrollbarsEnabled, mockScrollbarsEnabled, Bool, bool, false) \
     macro(WebAudioEnabled, webAudioEnabled, Bool, bool, false) \

@@ -26,27 +26,38 @@
 #import "config.h"
 #import "WebInspector.h"
 
-#import <wtf/text/WTFString.h>
+#import <WebCore/SoftLinking.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(WebInspector)
 
 namespace WebKit {
 
-static String& globalInspectorLocalizedStringsURL()
+static bool inspectorReallyUsesWebKitUserInterface(bool preference)
 {
-    DEFINE_STATIC_LOCAL(String, inspectorLocalizedStringsURL, ());
-    return inspectorLocalizedStringsURL;
+    // This matches a similar check in WebInspectorProxyMac.mm. Keep them in sync.
+
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorLibrary();
+
+    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"])
+        return true;
+
+    return preference;
 }
 
-void WebInspector::setLocalizedStringsPath(const String& path)
+void WebInspector::setInspectorUsesWebKitUserInterface(bool flag)
 {
-    if (!path.isEmpty())
-        globalInspectorLocalizedStringsURL() = [[NSURL fileURLWithPath:path] absoluteString];
+    NSString *bundleIdentifier = inspectorReallyUsesWebKitUserInterface(flag) ? @"com.apple.WebCore" : @"com.apple.WebInspector";
+    NSString *path = [[NSBundle bundleWithIdentifier:bundleIdentifier] pathForResource:@"localizedStrings" ofType:@"js"];
+    if ([path length])
+        m_localizedStringsURL = [[NSURL fileURLWithPath:path] absoluteString];
     else
-        globalInspectorLocalizedStringsURL() = String();
+        m_localizedStringsURL = String();
 }
 
 String WebInspector::localizedStringsURL() const
 {
-    return globalInspectorLocalizedStringsURL();
+    return m_localizedStringsURL;
 }
 
 } // namespace WebKit

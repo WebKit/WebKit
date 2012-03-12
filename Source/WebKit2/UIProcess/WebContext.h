@@ -174,14 +174,6 @@ public:
     String iconDatabasePath() const;
     void setLocalStorageDirectory(const String& dir) { m_overrideLocalStorageDirectory = dir; }
 
-    String overrideWebInspectorBaseDirectory() const { return m_overrideWebInspectorBaseDirectory; }
-    void setOverrideWebInspectorBaseDirectory(const String& path) { m_overrideWebInspectorBaseDirectory = path; }
-
-    String overrideWebInspectorPagePath() const { return m_overrideWebInspectorPagePath; }
-    void setOverrideWebInspectorPagePath(const String& path) { m_overrideWebInspectorPagePath = path; }
-
-    void setOverrideWebInspectorLocalizedStringsPath(const String& path) { m_overrideWebInspectorLocalizedStringsPath = path; }
-
     void ensureWebProcess();
     void warmInitialProcess();
 
@@ -315,9 +307,6 @@ private:
     String m_overrideDatabaseDirectory;
     String m_overrideIconDatabasePath;
     String m_overrideLocalStorageDirectory;
-    String m_overrideWebInspectorBaseDirectory;
-    String m_overrideWebInspectorPagePath;
-    String m_overrideWebInspectorLocalizedStringsPath;
 
     bool m_processTerminationEnabled;
     

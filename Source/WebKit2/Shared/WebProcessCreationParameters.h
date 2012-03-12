@@ -57,7 +57,6 @@ struct WebProcessCreationParameters {
     String applicationCacheDirectory;    
     String databaseDirectory;
     String localStorageDirectory;
-    String webInspectorLocalizedStringsPath;
 
     Vector<String> urlSchemesRegistererdAsEmptyDocument;
     Vector<String> urlSchemesRegisteredAsSecure;

@@ -30,8 +30,8 @@
 
 #include "APIObject.h"
 #include "Connection.h"
-#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -62,7 +62,7 @@ public:
     void stopPageProfiling();
 
 #if PLATFORM(MAC)
-    static void setLocalizedStringsPath(const String&);
+    void setInspectorUsesWebKitUserInterface(bool);
 #endif
 
 private:
@@ -108,6 +108,9 @@ private:
     WebPage* m_page;
     WebPage* m_inspectorPage;
     WebInspectorFrontendClient* m_frontendClient;
+#if PLATFORM(MAC)
+    String m_localizedStringsURL;
+#endif
 };
 
 } // namespace WebKit

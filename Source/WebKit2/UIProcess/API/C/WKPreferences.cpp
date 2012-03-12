@@ -678,6 +678,16 @@ bool WKPreferencesGetApplicationChromeModeEnabled(WKPreferencesRef preferencesRe
     return toImpl(preferencesRef)->applicationChromeMode();
 }
 
+void WKPreferencesSetInspectorUsesWebKitUserInterface(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setInspectorUsesWebKitUserInterface(enabled);
+}
+
+bool WKPreferencesGetInspectorUsesWebKitUserInterface(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->inspectorUsesWebKitUserInterface();
+}
+
 void WKPreferencesSetSuppressesIncrementalRendering(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setSuppressesIncrementalRendering(enabled);

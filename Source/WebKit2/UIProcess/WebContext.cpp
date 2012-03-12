@@ -259,10 +259,8 @@ void WebContext::ensureWebProcess()
     parameters.applicationCacheDirectory = applicationCacheDirectory();
     parameters.databaseDirectory = databaseDirectory();
     parameters.localStorageDirectory = localStorageDirectory();
-    parameters.webInspectorLocalizedStringsPath = m_overrideWebInspectorLocalizedStringsPath;
 
 #if PLATFORM(MAC)
-    parameters.webInspectorBaseDirectory = m_overrideWebInspectorBaseDirectory;
     parameters.presenterApplicationPid = getpid();
 #endif
 

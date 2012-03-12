@@ -249,10 +249,8 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
         [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
     }
 
-    WebInspector::setLocalizedStringsPath(parameters.webInspectorLocalizedStringsPath);
-
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
-    
+
 #if ENABLE(NOTIFICATIONS)
     m_notificationManager.initialize(parameters.notificationPermissions);
 #endif

@@ -35,7 +35,9 @@
 #import "WebEvent.h"
 #import "WebEventConversion.h"
 #import "WebFrame.h"
+#import "WebInspector.h"
 #import "WebPageProxyMessages.h"
+#import "WebPreferencesStore.h"
 #import "WebProcess.h"
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/FocusController.h>
@@ -83,8 +85,10 @@ void WebPage::platformInitialize()
     m_mockAccessibilityElement = mockAccessibilityElement;
 }
 
-void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
+void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
 {
+    if (WebInspector* inspector = this->inspector())
+        inspector->setInspectorUsesWebKitUserInterface(store.getBoolValueForKey(WebPreferencesKey::inspectorUsesWebKitUserInterfaceKey()));
 }
 
 typedef HashMap<String, String> SelectorNameMap;

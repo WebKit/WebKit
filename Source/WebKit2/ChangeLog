@@ -1,3 +1,45 @@
+2012-03-11  Timothy Hatcher  <timothy@apple.com>
+
+        Update how the Web Inspector resources are loaded.
+
+        https://bugs.webkit.org/show_bug.cgi?id=80814
+        rdar://problem/10359959
+
+        Reviewed by John Sullivan.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit): Added InspectorUsesWebKitUserInterface.
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Removed webInspectorLocalizedStringsPath.
+        (WebKit::WebProcessCreationParameters::decode): Ditto.
+        * Shared/WebProcessCreationParameters.h: Ditto.
+        (WebProcessCreationParameters): Ditto.
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetInspectorUsesWebKitUserInterface): Added.
+        (WKPreferencesGetInspectorUsesWebKitUserInterface): Added.
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess): Removed webInspectorLocalizedStringsPath.
+        * UIProcess/WebContext.h:
+        (WebContext): Ditto.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::inspectorReallyUsesWebKitUserInterface): Added.
+        (WebKit::WebInspectorProxy::createInspectorWindow): Use inspectorReallyUsesWebKitUserInterface
+        to determine if texture should be used.
+        (WebKit::WebInspectorProxy::inspectorPageURL): Choose the right path.
+        (WebKit::WebInspectorProxy::inspectorBaseURL): Ditto.
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/mac/WebInspectorMac.mm:
+        (WebKit::inspectorReallyUsesWebKitUserInterface):
+        (WebKit::WebInspector::setInspectorUsesWebKitUserInterface): Added.
+        (WebKit::WebInspector::localizedStringsURL):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformPreferencesDidChange): Call WebInspector::setInspectorUsesWebKitUserInterface.
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Removed call to WebInspector::setLocalizedStringsPath.
+
 2012-03-11  Andy Estes  <aestes@apple.com>
 
         Remove unnecessary call to NSSizeToCGSize().

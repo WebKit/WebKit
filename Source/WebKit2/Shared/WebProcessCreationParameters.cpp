@@ -54,7 +54,6 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(applicationCacheDirectory);
     encoder->encode(databaseDirectory);
     encoder->encode(localStorageDirectory);
-    encoder->encode(webInspectorLocalizedStringsPath);
     encoder->encode(urlSchemesRegistererdAsEmptyDocument);
     encoder->encode(urlSchemesRegisteredAsSecure);
     encoder->encode(urlSchemesForWhichDomainRelaxationIsForbidden);
@@ -116,8 +115,6 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.databaseDirectory))
         return false;
     if (!decoder->decode(parameters.localStorageDirectory))
-        return false;
-    if (!decoder->decode(parameters.webInspectorLocalizedStringsPath))
         return false;
     if (!decoder->decode(parameters.urlSchemesRegistererdAsEmptyDocument))
         return false;

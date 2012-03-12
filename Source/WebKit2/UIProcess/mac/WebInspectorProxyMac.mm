@@ -39,8 +39,10 @@
 #import <WebKitSystemInterface.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/NotImplemented.h>
+#import <WebCore/SoftLinking.h>
 #import <wtf/text/WTFString.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(WebInspector)
 
 using namespace WebCore;
 using namespace WebKit;
@@ -102,11 +104,24 @@ static const CGFloat windowContentBorderThickness = 55;
 
 namespace WebKit {
 
+static bool inspectorReallyUsesWebKitUserInterface(WebPreferences* preferences)
+{
+    // This matches a similar check in WebInspectorMac.mm. Keep them in sync.
+
+    // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.
+    WebInspectorLibrary();
+
+    if (![[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"])
+        return true;
+
+    return preferences->inspectorUsesWebKitUserInterface();
+}
+
 void WebInspectorProxy::createInspectorWindow()
 {
     ASSERT(!m_inspectorWindow);
 
-    bool useTexturedWindow = page()->process()->context()->overrideWebInspectorPagePath().isEmpty();
+    bool useTexturedWindow = inspectorReallyUsesWebKitUserInterface(page()->pageGroup()->preferences());
 
     NSUInteger styleMask = (NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask);
     if (useTexturedWindow)
@@ -302,9 +317,11 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
 
 String WebInspectorProxy::inspectorPageURL() const
 {
-    NSString *path = page()->process()->context()->overrideWebInspectorPagePath();
-    if (![path length])
+    NSString *path;
+    if (inspectorReallyUsesWebKitUserInterface(page()->pageGroup()->preferences()))
         path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
+    else
+        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] pathForResource:@"Main" ofType:@"html"];
 
     ASSERT([path length]);
 
@@ -313,11 +330,11 @@ String WebInspectorProxy::inspectorPageURL() const
 
 String WebInspectorProxy::inspectorBaseURL() const
 {
-    NSString *path = page()->process()->context()->overrideWebInspectorBaseDirectory();
-    if (![path length]) {
-        // WebCore's Web Inspector uses localized strings, which are not contained within inspector directory.
+    NSString *path;
+    if (inspectorReallyUsesWebKitUserInterface(page()->pageGroup()->preferences()))
         path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] resourcePath];
-    }
+    else
+        path = [[NSBundle bundleWithIdentifier:@"com.apple.WebInspector"] resourcePath];
 
     ASSERT([path length]);
 
