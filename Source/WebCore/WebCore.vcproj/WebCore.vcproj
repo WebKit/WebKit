@@ -27526,11 +27526,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\ScrollAnimatorWin.cpp"
+				RelativePath="..\platform\ScrollAnimatorNone.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\platform\ScrollAnimatorWin.h"
+				RelativePath="..\platform\ScrollAnimatorNone.h"
 				>
 			</File>
 			<File
