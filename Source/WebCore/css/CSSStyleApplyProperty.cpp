@@ -739,6 +739,8 @@ public:
                 size = primitiveValue->computeLength<float>(selector->parentStyle(), selector->rootElementStyle(), 1.0, true);
             else if (primitiveValue->isPercentage())
                 size = (primitiveValue->getFloatValue() * parentSize) / 100.0f;
+            else if (primitiveValue->isCalculatedPercentageWithLength())
+                size = primitiveValue->cssCalcValue()->toCalcValue(selector->parentStyle(), selector->rootElementStyle())->evaluate(parentSize);                
             else
                 return;
         }

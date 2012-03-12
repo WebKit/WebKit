@@ -10,7 +10,7 @@ PASS getComputedStyle(document.getElementById("calc-height"), null).fontSize is 
 PASS getComputedStyle(document.getElementById("calc-both"), null).lineHeight is "63px"
 PASS getComputedStyle(document.getElementById("calc-both"), null).fontSize is "24px"
 PASS getComputedStyle(document.getElementById("calc-percent-size"), null).lineHeight is "63px"
-FAIL getComputedStyle(document.getElementById("calc-percent-size"), null).fontSize should be 24px. Was 16px.
+PASS getComputedStyle(document.getElementById("calc-percent-size"), null).fontSize is "24px"
 PASS successfullyParsed is true
 
 TEST COMPLETE
