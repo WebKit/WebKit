@@ -1,3 +1,13 @@
+2012-03-12  Enrica Casucci  <enrica@apple.com>
+
+        WebKit2: remove NSPasteboard access for promised data from the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=80073
+
+        * WebKitSystemInterface.h: Touched the file to make build system happy.
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2012-03-09  Jon Lee  <jonlee@apple.com>
 
         Add support for ENABLE(LEGACY_NOTIFICATIONS)

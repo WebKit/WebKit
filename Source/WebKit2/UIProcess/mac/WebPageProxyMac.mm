@@ -38,6 +38,7 @@
 #import "TextChecker.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
+#import <WebCore/SharedBuffer.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/text/StringConcatenate.h>
 
@@ -285,6 +286,20 @@ void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const S
         return;
     
     m_pageClient->setDragImage(clientPosition, dragImage.release(), isLinkDrag);
+}
+
+void WebPageProxy::setPromisedData(const String& pasteboardName, const SharedMemory::Handle& imageHandle, uint64_t imageSize, const String& filename, const String& extension,
+                                   const String& title, const String& url, const String& visibleURL, const SharedMemory::Handle& archiveHandle, uint64_t archiveSize)
+{
+    RefPtr<SharedMemory> sharedMemoryImage = SharedMemory::create(imageHandle, SharedMemory::ReadOnly);
+    RefPtr<SharedBuffer> imageBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryImage->data()), imageSize);
+    RefPtr<SharedBuffer> archiveBuffer;
+    
+    if (!archiveHandle.isNull()) {
+        RefPtr<SharedMemory> sharedMemoryArchive = SharedMemory::create(archiveHandle, SharedMemory::ReadOnly);;
+        archiveBuffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryArchive->data()), archiveSize);
+    }
+    m_pageClient->setPromisedData(pasteboardName, imageBuffer, filename, extension, title, url, visibleURL, archiveBuffer);
 }
 
 void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)

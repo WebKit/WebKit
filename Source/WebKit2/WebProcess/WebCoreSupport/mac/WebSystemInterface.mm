@@ -115,6 +115,8 @@ void InitWebCoreSystemInterface(void)
         INIT(SetHTTPCookiesForURL);
         INIT(DeleteHTTPCookie);
 
+        INIT(SetMetadataURL);
+        
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
         INIT(IOSurfaceContextCreate);
         INIT(IOSurfaceContextCreateImage);

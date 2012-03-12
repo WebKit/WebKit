@@ -58,12 +58,6 @@ void WebDragClient::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Cl
 }
 #endif
 
-#if !PLATFORM(MAC)
-void WebDragClient::dragEnded()
-{
-}
-#endif
-
 void WebDragClient::dragControllerDestroyed()
 {
     delete this;

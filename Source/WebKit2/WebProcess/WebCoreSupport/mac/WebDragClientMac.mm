@@ -54,28 +54,6 @@
 using namespace WebCore;
 using namespace WebKit;
 
-// Internal AppKit class. If the pasteboard handling was in the same process
-// that called the dragImage method, this would be created automatically.
-// Create it explicitly because dragImage is called in the UI process.
-@interface NSFilePromiseDragSource : NSObject
-{
-    id _dragSource;
-    char _unknownFields[256];
-}
-- (id)initWithSource:(id)dragSource;
-- (void)setTypes:(NSArray *)types onPasteboard:(NSPasteboard *)pasteboard;
-@end
-
-@interface WKPasteboardFilePromiseOwner : NSFilePromiseDragSource
-@end
-
-@interface WKPasteboardOwner : NSObject
-{
-    CachedResourceHandle<WebCore::CachedImage> _image;
-}
-- (id)initWithImage:(WebCore::CachedImage*)image;
-@end
-
 namespace WebKit {
 
 static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const IntSize& size)
@@ -119,12 +97,6 @@ static WebCore::CachedImage* cachedImage(Element* element)
     return image;
 }
 
-static NSArray *arrayForURLsWithTitles(NSURL *URL, NSString *title)
-{
-    return [NSArray arrayWithObjects:[NSArray arrayWithObject:[URL _web_originalDataAsString]],
-        [NSArray arrayWithObject:[title _webkit_stringByTrimmingWhitespace]], nil];
-}
-
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, DOMElement *element, NSURL *URL, NSString *title, WebCore::Frame*)
 {
     ASSERT(element);
@@ -149,190 +121,27 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, DOMEl
 
     RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(coreElement);
 
-    RetainPtr<NSMutableArray> types(AdoptNS, [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil]);
-    [types.get() addObjectsFromArray:archive ? PasteboardTypes::forImagesWithArchive() : PasteboardTypes::forImages()];
-
-    m_pasteboardOwner.adoptNS([[WKPasteboardOwner alloc] initWithImage:image]);
-    m_filePromiseOwner.adoptNS([(WKPasteboardFilePromiseOwner *)[WKPasteboardFilePromiseOwner alloc] initWithSource:m_pasteboardOwner.get()]);
-
-    NSPasteboard* pasteboard = [NSPasteboard pasteboardWithName:pasteboardName];
-    [pasteboard declareTypes:types.get() owner:m_pasteboardOwner.leakRef()];    
-
-    [pasteboard setPropertyList:[NSArray arrayWithObject:extension] forType:NSFilesPromisePboardType];
-
-    [m_filePromiseOwner.get() setTypes:[pasteboard propertyListForType:NSFilesPromisePboardType] onPasteboard:pasteboard];
-
-    [URL writeToPasteboard:pasteboard];
-
-    [pasteboard setString:[URL _web_originalDataAsString] forType:PasteboardTypes::WebURLPboardType];
-
-    [pasteboard setString:title forType:PasteboardTypes::WebURLNamePboardType];
-
-    [pasteboard setString:[URL _web_userVisibleString] forType:NSStringPboardType];
-
-    [pasteboard setPropertyList:arrayForURLsWithTitles(URL, title) forType:PasteboardTypes::WebURLsWithTitlesPboardType];
-
-    if (archive)
-        [pasteboard setData:(NSData *)archive->rawDataRepresentation().get() forType:PasteboardTypes::WebArchivePboardType];
-}
-
-void WebDragClient::dragEnded()
-{
-    // The draggedImage method releases its responder; we must retain the WKPasteboardFilePromiseOwner an extra time to balance the release
-    // inside of the function.
-    [m_filePromiseOwner.get() retain];
-
-    // The drag source we care about here is NSFilePromiseDragSource, which doesn't look at
-    // the arguments. It's OK to just pass arbitrary constant values, so we just pass all zeroes.
-    [m_filePromiseOwner.get() draggedImage:nil endedAt:NSZeroPoint operation:NSDragOperationNone];
+    NSURLResponse *response = image->response().nsURLResponse();
     
-    m_pasteboardOwner = nullptr;
-    m_filePromiseOwner = nullptr;
+    RefPtr<SharedBuffer> imageBuffer = image->image()->data();
+    size_t imageSize = imageBuffer->size();
+    SharedMemory::Handle imageHandle;
+    
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(imageBuffer->size());
+    memcpy(sharedMemoryBuffer->data(), imageBuffer->data(), imageSize);
+    sharedMemoryBuffer->createHandle(imageHandle, SharedMemory::ReadOnly);
+    
+    RetainPtr<CFDataRef> data = archive ? archive->rawDataRepresentation() : 0;
+    SharedMemory::Handle archiveHandle;
+    size_t archiveSize = 0;
+    if (data) {
+        RefPtr<SharedBuffer> buffer = SharedBuffer::wrapNSData((NSData *)data.get());
+        RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(buffer->size());
+        archiveSize = buffer->size();
+        memcpy(sharedMemoryBuffer->data(), buffer->data(), archiveSize);
+        sharedMemoryBuffer->createHandle(archiveHandle, SharedMemory::ReadOnly);            
+    }
+    m_page->send(Messages::WebPageProxy::SetPromisedData(pasteboardName, imageHandle, imageSize, String([response suggestedFilename]), String(extension), String(title), String([[response URL] absoluteString]), String([URL _web_userVisibleString]), archiveHandle, archiveSize));
 }
 
 } // namespace WebKit
-
-@implementation WKPasteboardFilePromiseOwner
-
-- (id)initWithSource:(id)dragSource
-{
-    self = [super initWithSource:dragSource];
-    if (!self)
-        return nil;
-    [_dragSource retain];
-    return self;
-}
-
-- (void)dealloc
-{
-    [_dragSource release];
-    [super dealloc];
-}
-
-// The AppKit implementation of copyDropDirectory gets the current pasteboard in
-// a way that only works in the process where the drag is initiated. We supply
-// an implementation that gets the pasteboard by name instead.
-- (CFURLRef)copyDropDirectory
-{
-    PasteboardRef pasteboard;
-    OSStatus status = PasteboardCreate((CFStringRef)NSDragPboard, &pasteboard);
-    if (status != noErr || !pasteboard)
-        return 0;
-    CFURLRef location = 0;
-    status = PasteboardCopyPasteLocation(pasteboard, &location);
-    CFRelease(pasteboard);
-    if (status != noErr || !location)
-        return 0;
-    CFMakeCollectable(location);
-    return location;
-}
-
-@end
-
-@implementation WKPasteboardOwner
-
-static CachedImageClient* promisedDataClient()
-{
-    static CachedImageClient* client = new CachedImageClient;
-    return client;
-}
-
-- (void)clearImage
-{
-    if (!_image)
-        return;
-    _image->removeClient(promisedDataClient());
-    _image = 0;
-}
-
-- (id)initWithImage:(WebCore::CachedImage*)image
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _image = image;
-    if (image)
-        image->addClient(promisedDataClient());
-    return self;
-}
-
-- (void)dealloc
-{
-    [self clearImage];
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    [self clearImage];
-    [super finalize];
-}
-
-- (void)pasteboard:(NSPasteboard *)pasteboard provideDataForType:(NSString *)type
-{
-    if ([type isEqual:NSTIFFPboardType]) {
-        if (_image) {
-            if (Image* image = _image->image())
-                [pasteboard setData:(NSData *)image->getTIFFRepresentation() forType:NSTIFFPboardType];
-            [self clearImage];
-        }
-        return;
-    }
-    // FIXME: Handle RTFD here.
-}
-
-- (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
-{
-    [self clearImage];
-    CFRelease(self); // Balanced by the leakRef that WebDragClient::declareAndWriteDragImage does when making this pasteboard owner.
-}
-
-static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension)
-{
-    NSString *extensionAsSuffix = [@"." stringByAppendingString:extension];
-    return [filename _webkit_hasCaseInsensitiveSuffix:extensionAsSuffix]
-        || ([extension _webkit_isCaseInsensitiveEqualToString:@"jpeg"]
-            && [filename _webkit_hasCaseInsensitiveSuffix:@".jpg"]);
-}
-
-- (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
-{
-    NSFileWrapper *wrapper = nil;
-    NSURL *draggingImageURL = nil;
-    
-    if (_image) {
-        if (SharedBuffer* buffer = _image->CachedResource::data()) {
-            NSData *data = buffer->createNSData();
-            NSURLResponse *response = _image->response().nsURLResponse();
-            draggingImageURL = [response URL];
-            wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
-            NSString* filename = [response suggestedFilename];
-            NSString* trueExtension(_image->image()->filenameExtension());
-            if (!matchesExtensionOrEquivalent(filename, trueExtension))
-                filename = [[filename stringByAppendingString:@"."] stringByAppendingString:trueExtension];
-            [wrapper setPreferredFilename:filename];
-        }
-    }
-
-    // FIXME: Do we need to handle the case where we do not have a CachedImage?
-    // WebKit1 had code for this case.
-    
-    if (!wrapper) {
-        LOG_ERROR("Failed to create image file.");
-        return nil;
-    }
-
-    // FIXME: Report an error if we fail to create a file.
-    NSString *path = [[dropDestination path] stringByAppendingPathComponent:[wrapper preferredFilename]];
-    path = [[NSFileManager defaultManager] _webkit_pathWithUniqueFilenameForPath:path];
-    if (![wrapper writeToFile:path atomically:NO updateFilenames:YES])
-        LOG_ERROR("Failed to create image file via -[NSFileWrapper writeToFile:atomically:updateFilenames:] at path %@", path);
-
-    if (draggingImageURL)
-        [[NSFileManager defaultManager] _webkit_setMetadataURL:[draggingImageURL absoluteString] referrer:nil atPath:path];
-
-    return [NSArray arrayWithObject:[path lastPathComponent]];
-}
-
-@end
