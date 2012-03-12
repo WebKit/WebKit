@@ -161,7 +161,7 @@ protected:
 
     typename Types::ContentLayerType* createRoot(const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
     {
-        typename Types::ContentLayerPtrType layer = Types::createContentLayer();
+        typename Types::ContentLayerPtrType layer(Types::createContentLayer());
         typename Types::ContentLayerType* layerPtr = layer.get();
         setProperties(layerPtr, transform, position, bounds);
 
@@ -172,7 +172,7 @@ protected:
 
     typename Types::LayerType* createLayer(typename Types::LayerType* parent, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds)
     {
-        typename Types::LayerPtrType layer = Types::createLayer();
+        typename Types::LayerPtrType layer(Types::createLayer());
         typename Types::LayerType* layerPtr = layer.get();
         setProperties(layerPtr, transform, position, bounds);
         parent->addChild(layer.release());
@@ -190,7 +190,7 @@ protected:
 
     typename Types::ContentLayerType* createDrawingLayer(typename Types::LayerType* parent, const TransformationMatrix& transform, const FloatPoint& position, const IntSize& bounds, bool opaque)
     {
-        typename Types::ContentLayerPtrType layer = Types::createContentLayer();
+        typename Types::ContentLayerPtrType layer(Types::createContentLayer());
         typename Types::ContentLayerType* layerPtr = layer.get();
         setProperties(layerPtr, transform, position, bounds);
 

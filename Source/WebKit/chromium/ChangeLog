@@ -1,3 +1,15 @@
+2012-03-12  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Fix clang build for CCOcclusionTracker tests
+        https://bugs.webkit.org/show_bug.cgi?id=80891
+
+        Reviewed by Adam Barth.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebCore::CCOcclusionTrackerTest::createRoot):
+        (WebCore::CCOcclusionTrackerTest::createLayer):
+        (WebCore::CCOcclusionTrackerTest::createDrawingLayer):
+
 2012-03-12  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Restore canvas2D acceleration after context loss.
