@@ -420,7 +420,8 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
             // The RenderLayer's needs to update repaint rects here, because the target
             // repaintContainer may have changed after becoming a composited layer.
             // https://bugs.webkit.org/show_bug.cgi?id=80641
-            layer->computeRepaintRects();
+            if (layer->parent())
+                layer->computeRepaintRects();
 
 #if PLATFORM(MAC) && USE(CA)
             Settings* settings = m_renderView->document()->settings();
