@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's behavior deleting entry with no key");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -45,13 +43,14 @@ function cleanDatabaseAndCreateObjectStore()
     deleteAllObjectStores(db);
     objectStore = evalAndLog("objectStore = db.createObjectStore('bar');");
     evalAndExpectException("objectStore.delete(null);", "webkitIDBDatabaseException.DATA_ERR");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

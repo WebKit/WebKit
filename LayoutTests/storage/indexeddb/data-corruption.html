@@ -9,8 +9,6 @@
 <script>
 
 description("Test that data inserted into IndexedDB does not get corrupted on disk.");
-if (window.layoutTestController) 
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -65,12 +63,13 @@ function getData()
 function doCheck()
 {
     shouldBeTrue("event.target.result.x.toString() == testDate.toString()");
-    done();
+    finishJSTest();
 }
 
 test();
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

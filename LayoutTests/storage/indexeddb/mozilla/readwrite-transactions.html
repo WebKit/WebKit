@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's read/write transactions");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -116,13 +114,14 @@ function postDelete()
 function postDelete2()
 {
     shouldBe("event.target.transaction.mode", "IDBTransaction.READ_WRITE");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

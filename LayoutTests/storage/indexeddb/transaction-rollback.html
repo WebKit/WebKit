@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB transaction rollback.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -93,12 +91,13 @@ function getSuccess()
     shouldBe("event.target.result", "undefined");
 
     shouldBe("cursor.value", "'rollbackValue'");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

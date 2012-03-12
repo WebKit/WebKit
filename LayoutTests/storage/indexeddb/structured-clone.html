@@ -10,8 +10,6 @@
 <script>
 
 description("Test structured clone permutations in IndexedDB. File/FileList tests require DumpRenderTree.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 if (window.eventSender) {
     var fileInput = document.getElementById("fileInput");
@@ -347,7 +345,7 @@ function readBlobAsText(blob, callback)
     };
     reader.onerror = function(e) {
         testFailed("Error reading blob as text: " + e);
-        done();
+        finishJSTest();
     };
     reader.readAsText(blob);
 }
@@ -526,7 +524,7 @@ function testBadTypes()
     evalAndLog("store = transaction.objectStore('storeName')");
     transaction.onerror = unexpectedErrorCallback;
     transaction.oncomplete = unexpectedCompleteCallback;
-    transaction.onabort = done;
+    transaction.onabort = finishJSTest;
 
     debug("");
     debug("Other JavaScript object types:");
@@ -543,5 +541,6 @@ function testBadTypes()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

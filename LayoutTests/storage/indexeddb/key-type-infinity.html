@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB key types");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -61,12 +59,13 @@ function testGroup2()
 
 function testGroup3()
 {
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

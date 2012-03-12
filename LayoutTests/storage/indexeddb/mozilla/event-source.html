@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's event.target.source in success callbacks");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -60,13 +58,14 @@ function areWeDoneYet()
 {
     source = evalAndLog("source = event.target.source;");
     shouldBe("source", "objectStore");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

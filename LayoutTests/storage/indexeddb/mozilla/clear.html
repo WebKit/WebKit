@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's clearing an object store");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -67,13 +65,14 @@ function areWeClearYet()
 {
     cursor = evalAndLog("cursor = request.result;");
     shouldBe("cursor", "null");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

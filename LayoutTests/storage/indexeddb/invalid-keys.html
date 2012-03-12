@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB invalid keys");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -69,12 +67,13 @@ function testInvalidKeys()
         evalAndExpectException("request = objectStore.put('value', " + key + ")", "IDBDatabaseException.DATA_ERR");
     });
     
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

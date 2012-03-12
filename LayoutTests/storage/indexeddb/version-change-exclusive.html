@@ -9,8 +9,6 @@
 <script>
 
 description("Ensure VERSION_CHANGE transaction doesn't run concurrently with other transactions");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 
 function test() {
@@ -73,12 +71,13 @@ function openAgainSuccess()
 {
     debug("open() callback - this should appear after VERSION_CHANGE transaction ends");
     shouldBeEqualToString("window.state", "VERSION_CHANGE finished");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

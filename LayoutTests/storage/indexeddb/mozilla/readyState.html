@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB readyState property during different operations");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -79,13 +77,14 @@ function finalCheck()
     debug("finalCheck():");
     shouldBe("request.readyState", "IDBRequest.DONE");
     shouldBeFalse("event.target.result == null");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB createObjectStore null handling");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -46,12 +44,13 @@ function createAndPopulateObjectStore()
 
     objectStore = evalAndLog("db.createObjectStore(null);");
     shouldBe("objectStore.name", "'null'");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

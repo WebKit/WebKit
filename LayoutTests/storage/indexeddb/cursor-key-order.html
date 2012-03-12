@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB keys ordering and readback from cursors.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -188,7 +186,7 @@ function checkStore()
 function finishUp()
 {
     testKeyCompare();
-    done();
+    finishJSTest();
 }
 
 function testKeyCompare()
@@ -237,5 +235,6 @@ function testKeyCompare()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

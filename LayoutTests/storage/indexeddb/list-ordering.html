@@ -10,8 +10,6 @@
 <script>
 
 description("Test string list ordering in IndexedDB.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 var expected_order = [
   "",
@@ -87,7 +85,7 @@ function testStoresAndIndexes()
 
                 shouldBeTrue("areArraysEqual(store.indexNames, expected_order)");
 
-                trans.oncomplete = done;
+                trans.oncomplete = finishJSTest;
             };
         };
     };
@@ -96,5 +94,6 @@ function testStoresAndIndexes()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

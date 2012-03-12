@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's putting and getting values in an object store");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -111,13 +109,14 @@ function postAddIntAutoIncrement()
 function postGetIntAutoIncrement()
 {
     shouldBe("event.target.result", "testInt.value");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

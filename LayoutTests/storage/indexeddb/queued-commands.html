@@ -9,8 +9,6 @@
 <script>
 
 description("Verify that queuing up several commands works (and they all fire).");
-if (window.layoutTestController) 
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -60,7 +58,7 @@ function verifyAdd(expected)
     shouldBe("" + addCount++, "" + expected);
 
     if (addCount == 3)
-        done();
+        finishJSTest();
     if (addCount > 3)
         testFailed("Unexpected call to verifyAdd!");
 }
@@ -69,5 +67,6 @@ test();
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

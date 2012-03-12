@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's openCursor.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 test();
 
@@ -107,10 +105,11 @@ function deleteObject()
 function verifyObjectDeleted()
 {
     shouldBe("event.target.result", "undefined");
-    done();
+    finishJSTest();
 }
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

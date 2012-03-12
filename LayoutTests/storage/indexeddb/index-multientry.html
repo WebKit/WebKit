@@ -9,8 +9,6 @@
 <script>
 
 description("Test features of IndexedDB's multiEntry indices.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -140,7 +138,7 @@ function createIndexOnStoreWithData()
         var trans = evalAndLog("trans = event.target.result");
         shouldBeTrue("trans !== null");
         trans.onabort = unexpectedAbortCallback;
-        trans.oncomplete = function() { verifyIndexes('index-new', done); };
+        trans.oncomplete = function() { verifyIndexes('index-new', finishJSTest); };
 
         store = evalAndLog("store = trans.objectStore('store')");
         evalAndLog("store.createIndex('index-new', 'x', {multiEntry: true})");
@@ -150,6 +148,7 @@ function createIndexOnStoreWithData()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

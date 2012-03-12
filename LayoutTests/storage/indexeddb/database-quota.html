@@ -9,8 +9,6 @@
 <script>
 
 description("Tests IndexedDB's quota enforcing mechanism.");
-if (window.layoutTestController) 
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -79,7 +77,7 @@ function addData()
             store = event.target.source;
     } else {
         testFailed("added more than quota");
-        done();
+        finishJSTest();
         return;
     }
     dataAdded += 65536;
@@ -97,12 +95,13 @@ function logError()
 function testComplete()
 {
     testPassed("Adding data failed due to quota error. Data added was about " + Math.round(dataAdded / 1024 / 1024) + " MB");
-    done();
+    finishJSTest();
 }
 
 test();
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

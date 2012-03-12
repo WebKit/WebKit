@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's IDBObjectStore auto-increment feature.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -163,7 +161,7 @@ function testLongKeyPath()
     debug("testLongKeyPath():");
     trans = evalAndLog("trans = db.transaction('StoreWithLongKeyPath', webkitIDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = done;
+    trans.oncomplete = finishJSTest;
 
     store = evalAndLog("store = trans.objectStore('StoreWithLongKeyPath')");
     request = evalAndLog("store.add({foo: 'bar'})");
@@ -201,5 +199,6 @@ test();
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

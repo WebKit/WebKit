@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's cursor skips deleted entries.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 var names = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo', 'Foxtrot', 'Golf',
              'Hotel', 'India', 'Juliet', 'Kilo', 'Lima', 'Mike', 'November',
@@ -196,10 +194,11 @@ function indexCursorTest()
 function transactionComplete()
 {
     debug("transactionComplete():");
-    done();
+    finishJSTest();
 }
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

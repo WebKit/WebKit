@@ -10,8 +10,6 @@
 <script>
 
 description("Test for valid and invalid keypaths");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -101,12 +99,13 @@ function testInvalidKeyPaths()
         deleteAllObjectStores(db);
     });
 
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

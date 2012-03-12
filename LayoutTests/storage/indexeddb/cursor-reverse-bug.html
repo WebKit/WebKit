@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB keys ordering and readback from cursors.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -72,7 +70,7 @@ function testCursor()
 
     if (tests.length === 0) {
         debug("No more tests.");
-        done();
+        finishJSTest();
         return;
     }
 
@@ -115,6 +113,7 @@ function testCursor()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

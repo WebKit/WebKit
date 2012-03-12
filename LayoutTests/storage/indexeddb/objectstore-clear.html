@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's webkitIDBObjectStore.clear().");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -98,11 +96,12 @@ function getSuccess()
 {
     shouldBeEqualToString("event.target.result", "value");
 
-    done();
+    finishJSTest();
 }
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's transaction and objectStore calls");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -126,11 +124,12 @@ function afterComplete()
     evalAndExpectException("trans.objectStore('store')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
     evalAndExpectException("store.index('index')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
 
-    done();
+    finishJSTest();
 }
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

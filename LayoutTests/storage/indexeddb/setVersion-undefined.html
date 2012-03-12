@@ -10,8 +10,6 @@
 <script> 
  
 description("Test IndexedDB version string is required");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
  
 function test()
 {
@@ -36,12 +34,13 @@ function openSuccess()
     db = evalAndLog("db = event.target.result");
  
     shouldThrow("db.setVersion();");
-    done();
+    finishJSTest();
 }
  
  
 test();
  
-</script> 
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body> 
 </html>

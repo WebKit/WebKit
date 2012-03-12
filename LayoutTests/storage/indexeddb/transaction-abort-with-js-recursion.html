@@ -14,8 +14,6 @@ var db;
 var body = document.getElementsByTagName("body")[0];
 
 description("Test that pending transactions are not aborted during recursive JS calls until all JS is finished.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function setup() {
     shouldBeTrue("'webkitIndexedDB' in window");
@@ -59,11 +57,12 @@ function test()
 function abortCallback()
 {
     debug("Pending transaction aborted");
-    done();
+    finishJSTest();
 }
 
 setup();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

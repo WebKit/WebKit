@@ -10,8 +10,6 @@
 <script>
 
 description("Ensure that IDBVersionChangeRequest objects are not GC'd if they have pending events");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test() {
     evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
@@ -70,11 +68,12 @@ function testSetVersion()
 function versionSuccess()
 {
     testPassed("setVersion's IDBVersionChangeRequest.onsuccess event fired");
-    done();
+    finishJSTest();
 }
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

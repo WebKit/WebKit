@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB cursor.update required arguments");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -81,7 +79,7 @@ function testGroup3()
         } else {
             testFailed("cursor was null");
         }
-        done();
+        finishJSTest();
     }
 }
 
@@ -89,6 +87,7 @@ function testGroup3()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

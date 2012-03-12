@@ -9,8 +9,6 @@
 <script>
 
 description("Verify that you can put the same data in 2 different databases without uniqueness constraints firing.");
-if (window.layoutTestController) 
-    layoutTestController.waitUntilDone();
 
 testCount = 0;
 function test()
@@ -166,12 +164,13 @@ function last()
     if (testCount == 1)
         test();
     else
-        done();
+        finishJSTest();
 }
 
 test();
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

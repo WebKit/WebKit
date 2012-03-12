@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB: iterating through index cursors with keys and key ranges");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -1015,7 +1013,7 @@ function testGroup30()
         }
         else {
             shouldBe("keyIndex", "objectStoreDataNameSort.length");
-            done();
+            finishJSTest();
         }
     }
 }
@@ -1024,6 +1022,7 @@ function testGroup30()
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's createObjectStore's various options");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -79,12 +77,13 @@ function checkB()
 {
     shouldBe("event.target.result.a", "{a: 0}");
 
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's index cursors");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -70,7 +68,7 @@ function postAdd()
             shouldBe("event.target.result.value.name", "'Ben'");
             if (++indexesFinished == numIndexes) {
                 if (autoIncrement) {
-                    done();
+                    finishJSTest();
                 } else {
                     setupAutoIncrement();
                 }
@@ -96,6 +94,7 @@ function setupAutoIncrement()
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

@@ -9,8 +9,6 @@
 <script> 
 
 description("Test IndexedDB's webkitIDBIndex.openCursor + the cursor it produces in depth.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
  
 // In order of how it should be sorted by IndexedDB.
 window.testData = [
@@ -240,7 +238,7 @@ function testNullKeyRange()
         window.expectedIndex = upper;
         window.nullKeyRangeStep = 2;
     } else {
-        done();
+        finishJSTest();
         return;
     }
 
@@ -255,5 +253,6 @@ function testNullKeyRange()
 openDatabase(); // The first step.
  
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

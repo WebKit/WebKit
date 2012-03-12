@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB deleteObjectStore required argument");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -46,12 +44,13 @@ function createAndPopulateObjectStore()
 
     evalAndLog("db.createObjectStore('null');");
     evalAndLog("db.deleteObjectStore(null);");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

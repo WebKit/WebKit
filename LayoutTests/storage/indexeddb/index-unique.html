@@ -9,8 +9,6 @@
 <script>
 
 description("Test features of IndexedDB's unique indices.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -136,13 +134,14 @@ function finalAddSuccess() {
     // An overwrite should be ok.
     request = evalAndLog("transaction.objectStore('store').put({x: 1}, 'baz')");
     request.onerror = unexpectedErrorCallback;
-    request.onsuccess = done;
+    request.onsuccess = finishJSTest;
 }
 
 test();
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

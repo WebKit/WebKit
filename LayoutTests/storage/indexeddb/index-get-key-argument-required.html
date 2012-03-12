@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB index .get() required argument");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -48,12 +46,13 @@ function createAndPopulateObjectStore()
     index = evalAndLog("index = objectStore.createIndex('first', 'first');");
     shouldThrow("index.get();");
     shouldThrow("index.getKey();");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

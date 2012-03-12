@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB odd value datatypes");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -40,12 +38,13 @@ function openNextDatabase()
     debug("opening a database named " + testData[nextToOpen].description);
     request = evalAndLog("indexedDB.open(testData[nextToOpen].name, testData[nextToOpen].description)");
     request.onerror = unexpectedErrorCallback;
-    request.onsuccess = ++nextToOpen < testData.length ? openNextDatabase : done;
+    request.onsuccess = ++nextToOpen < testData.length ? openNextDatabase : finishJSTest;
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

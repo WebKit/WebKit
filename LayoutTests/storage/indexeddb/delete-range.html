@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's IDBObjectStore.delete(IDBKeyRange) method.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -92,7 +90,7 @@ function runTests()
             trans.onabort = unexpectedAbortCallback;
             trans.oncomplete = nextTest;
         } else {
-            done();
+            finishJSTest();
             return;
         }
     }
@@ -102,5 +100,6 @@ function runTests()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

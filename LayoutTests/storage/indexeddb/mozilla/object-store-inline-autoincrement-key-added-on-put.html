@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB adding an autoincremented key and retrieving it successfully");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -69,13 +67,14 @@ function getSuccess()
 {
     shouldBe("event.target.result.name", "test.storedObject.name");
     shouldBe("event.target.result.id", "id");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

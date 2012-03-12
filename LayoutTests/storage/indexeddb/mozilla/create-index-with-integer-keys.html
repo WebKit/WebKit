@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's creating index with integer keys");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -63,13 +61,14 @@ function verifyKeyCursor()
     shouldBeFalse("cursor == null");
     shouldBe("cursor.key", "data.num");
     shouldBe("cursor.primaryKey", "data.id");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

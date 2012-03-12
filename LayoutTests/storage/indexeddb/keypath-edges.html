@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB keyPath edge cases");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -117,11 +115,12 @@ function testKeyPathsAndGenerator()
     };
 
     transaction.onabort = unexpectedAbortCallback;
-    transaction.oncomplete = done;
+    transaction.oncomplete = finishJSTest;
 }
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

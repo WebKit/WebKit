@@ -9,8 +9,6 @@
 <script>
 
 description("Test mutating an IndexedDB's objectstore from a cursor.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 test();
 
@@ -134,10 +132,11 @@ function reverseCursor()
 function reverseCursorComplete()
 {
     debug("reverseCursorComplete()");
-    done();
+    finishJSTest();
 }
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

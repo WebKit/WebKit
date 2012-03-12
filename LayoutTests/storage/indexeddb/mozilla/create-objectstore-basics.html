@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's creating object store and updating properties");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -73,13 +71,14 @@ function cleanDatabase()
         shouldBe("event.target.transaction.mode", "IDBTransaction.VERSION_CHANGE");
     }
 
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB object store required arguments");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -53,12 +51,13 @@ function createAndPopulateObjectStore()
     shouldThrow("objectStore.createIndex('foo');");
     shouldThrow("objectStore.index();");
     shouldThrow("objectStore.deleteIndex();");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

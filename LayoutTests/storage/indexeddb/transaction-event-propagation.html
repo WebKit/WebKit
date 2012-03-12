@@ -9,8 +9,6 @@
 <script>
 
 description("Test event propogation on IDBTransaction.");
-if (window.layoutTestController) 
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -136,7 +134,7 @@ function completeFiredCallback()
     shouldBe("event.currentTarget", "trans");
     completeFired = true;
     debug("");
-    done();
+    finishJSTest();
 }
 
 function dbCompleteBubbleCallback()
@@ -151,5 +149,6 @@ test();
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

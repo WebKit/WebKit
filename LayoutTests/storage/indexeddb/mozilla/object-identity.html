@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB: object identity");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -69,12 +67,13 @@ function testIdentitySomeMore()
     shouldBeFalse("index3 === index1");
     shouldBeFalse("index4 === index2");
 
-    done();
+    finishJSTest();
 }
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

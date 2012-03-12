@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's webkitIndexedDB.deleteDatabase().");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -91,10 +89,11 @@ function verifyNotFound()
 {
     shouldBe("db.objectStoreNames.length", "0");
 
-    done();
+    finishJSTest();
 }
 
 test();
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

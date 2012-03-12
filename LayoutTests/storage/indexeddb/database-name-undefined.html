@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB undefined as record value");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -25,12 +23,13 @@ function test()
     shouldBeFalse("IDBKeyRange == null");
 
     shouldThrow("indexedDB.open();");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

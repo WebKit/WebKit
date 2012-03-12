@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB: request result persists in setTimeout callback");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -126,12 +124,13 @@ function deleteRecord()
 function deleteSuccess()
 {
     debug("deleteSuccess():");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

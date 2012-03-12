@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB deleting an object store");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -114,13 +112,14 @@ function postSetVersion3()
 function deleteThirdObjectStore()
 {
     evalAndLog("db.deleteObjectStore(objectStoreName);");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

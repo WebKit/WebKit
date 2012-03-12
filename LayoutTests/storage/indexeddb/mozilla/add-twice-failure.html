@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB behavior adding the same property twice");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -64,13 +62,14 @@ function addFirstSuccess()
 function addSecondExpectedError()
 {
     shouldBe("event.target.errorCode", "IDBDatabaseException.CONSTRAINT_ERR");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

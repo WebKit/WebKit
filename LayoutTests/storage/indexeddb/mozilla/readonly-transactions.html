@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's readonly transactions");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -58,13 +56,14 @@ function cleanDatabase()
     evalAndExpectException("db.transaction(osName).objectStore(osName).put({}, key1);", "IDBDatabaseException.READ_ONLY_ERR");
     evalAndExpectException("db.transaction([osName]).objectStore(osName).delete(key1);", "IDBDatabaseException.READ_ONLY_ERR");
     evalAndExpectException("db.transaction(osName).objectStore(osName).delete(key2);", "IDBDatabaseException.READ_ONLY_ERR");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

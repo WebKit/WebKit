@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB: adds, gets, deletes, and re-gets a record in a variety of different object store configurations");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -74,7 +72,7 @@ function setVersion()
         request.onsuccess = createObjectStore;
         request.onerror = unexpectedErrorCallback;
     } else {
-        done();
+        finishJSTest();
     }
 }
 
@@ -131,6 +129,7 @@ function finalCheck()
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

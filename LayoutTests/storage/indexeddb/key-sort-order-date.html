@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB key comparison");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -89,7 +87,7 @@ function openACursor()
             evalAndLog("keyIndex++;");
         }
         else {
-            done();
+            finishJSTest();
         }
     }
 }
@@ -98,5 +96,6 @@ function openACursor()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

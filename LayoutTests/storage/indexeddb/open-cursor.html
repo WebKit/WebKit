@@ -9,14 +9,12 @@
 <script>
 
 description("Test IndexedDB's openCursor.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function emptyCursorSuccess()
 {
     debug("Empty cursor opened successfully.")
     // FIXME: check that we can iterate the cursor.
-    done();
+    finishJSTest();
 }
 
 function openEmptyCursor()
@@ -91,5 +89,6 @@ test();
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

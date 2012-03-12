@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's KeyRange.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function checkSingleKeyRange(value)
 {
@@ -190,8 +188,9 @@ function test()
 
 test();
 
-done();
+finishJSTest();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB: mutating records with a r/w cursor updates indexes on those records");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -63,7 +61,7 @@ function setVersion()
         request.onsuccess = setupObjectStoreAndCreateIndexAndAdd;
         request.onerror = unexpectedErrorCallback;
     } else {
-        done();
+        finishJSTest();
     }
 }
 
@@ -128,6 +126,7 @@ function checkIndex2()
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

@@ -9,8 +9,6 @@
 <script>
 
 description("Test exceptions in IDBRequest handlers cause aborts.");
-if (window.layoutTestController) 
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -121,12 +119,13 @@ function transactionCompleted2()
     debug("");
     testPassed("The transaction completed.");
     debug("");
-    done();
+    finishJSTest();
 }
 
 test();
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

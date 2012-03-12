@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's IDBObjectStore.count().");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -118,7 +116,7 @@ function verifyCountWithKey()
     trans = evalAndLog("trans = db.transaction('storeName', IDBTransaction.READ_ONLY)");
     shouldBeTrue("trans != null");
     trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = done;
+    trans.oncomplete = finishJSTest;
 
     store = evalAndLog("store = trans.objectStore('storeName')");
     shouldBeTrue("store != null");
@@ -154,5 +152,6 @@ function verifyCountWithKey()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

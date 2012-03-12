@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB transaction does not crash on abort.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -36,12 +34,13 @@ function setVersionSuccess()
     evalAndLog("db.createObjectStore('foo')");
     evalAndLog("db.transaction('foo')");
     evalAndLog("window.gc()");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

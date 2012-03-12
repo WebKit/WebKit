@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB: result property after deleting existing and non-existing record");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -67,11 +65,12 @@ function deleteRecord2()
 function finalCheck()
 {
     shouldBe("event.target.result", "undefined");
-    done();
+    finishJSTest();
 }
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

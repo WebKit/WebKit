@@ -10,8 +10,6 @@
 <script>
 
 description("Ensure that aborted VERSION_CHANGE transactions are completely rolled back");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 
 function test() {
@@ -96,11 +94,12 @@ function setVersion2Abort()
     shouldBeTrue("db.objectStoreNames.contains('store1')");
     shouldBeFalse("db.objectStoreNames.contains('store2')");
 
-    done();
+    finishJSTest();
 }
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

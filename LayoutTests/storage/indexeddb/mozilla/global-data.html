@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's opening DB more than once");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -74,13 +72,14 @@ function open2Success()
     shouldBe("objectStore2.name", "objectStoreName");
     shouldBe("objectStore2.keyPath", "objectStoreOptions.keyPath");
 
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

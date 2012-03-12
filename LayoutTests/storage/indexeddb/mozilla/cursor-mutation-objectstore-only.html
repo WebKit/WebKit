@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's cursor mutation during object store cursor iteration");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -148,12 +146,13 @@ function checkMutatingCursorResults()
     shouldBe("count", "objectStoreData.length");
     shouldBe("sawAdded", "true");
     shouldBe("sawRemoved", "true");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

@@ -9,8 +9,6 @@
 <script>
 
 description("Test behavior when the same connection calls setVersion twice");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 
 function test() {
@@ -100,7 +98,7 @@ function checkResults() {
         req.onerror = unexpectedErrorCallback;
         req.onsuccess = function (e) {
             shouldBeEqualToString("event.target.result", "bbb");
-            done();    
+            finishJSTest();
         };
     };
 }
@@ -109,5 +107,6 @@ function checkResults() {
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

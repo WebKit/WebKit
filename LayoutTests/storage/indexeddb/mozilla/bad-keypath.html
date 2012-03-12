@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB adding property with invalid keypath");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -55,13 +53,14 @@ function cleanDatabase()
 function addFirstSuccess()
 {
     evalAndExpectException("request = objectStore.add({});", "IDBDatabaseException.DATA_ERR");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

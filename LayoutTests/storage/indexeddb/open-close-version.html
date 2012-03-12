@@ -9,8 +9,6 @@
 <script>
 
 description("Test interleaved open/close/setVersion calls in various permutations");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function Connection(id) {
     id = String(id);
@@ -285,12 +283,13 @@ function test6() {
                                "h1.setVersion.onsuccess",
                                "h1.setVersion.transaction-complete"
                                ].toString());
-        done();
+        finishJSTest();
     }
 }
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

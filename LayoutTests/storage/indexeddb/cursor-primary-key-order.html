@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB primary key ordering and readback from cursors.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -104,7 +102,7 @@ function checkStore()
             cursor.continue();
         } else {
             shouldBeTrue("count === keys.length");
-            done();
+            finishJSTest();
         }
     };
 }
@@ -112,5 +110,6 @@ function checkStore()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

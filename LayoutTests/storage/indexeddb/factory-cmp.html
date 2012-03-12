@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB key comparison using IDBFactory.cmp().");
-if (window.layoutTestController) 
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -24,7 +22,7 @@ function test()
     testValidKeys();
     testInvalidKeys();
     testIdenticalKeys();
-    done();
+    finishJSTest();
 }
 
 function testValidKeys()
@@ -152,5 +150,6 @@ function testIdenticalKeys()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

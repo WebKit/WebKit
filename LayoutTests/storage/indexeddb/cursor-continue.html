@@ -9,8 +9,6 @@
 <script> 
 
 description("Test IndexedDB's IDBCursor.continue() with a key parameter.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 var date = new Date();
 
@@ -276,11 +274,12 @@ function descendingErrorTestEqual()
 function onTransactionComplete()
 {
     evalAndExpectException("cursor.continue()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
-    done();
+    finishJSTest();
 }
 
 test();
  
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

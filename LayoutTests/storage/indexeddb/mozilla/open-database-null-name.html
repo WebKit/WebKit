@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB: should NOT throw when opening a database with a null name");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -38,13 +36,14 @@ function openSuccess()
 {
     db = evalAndLog("db = event.target.result");
     shouldBe("db.name", "'null'");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

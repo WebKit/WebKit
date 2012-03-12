@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB keyrange required arguments");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -30,12 +28,13 @@ function test()
     shouldThrow("IDBKeyRange.bound(1);");
     shouldThrow("IDBKeyRange.bound();");
 
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

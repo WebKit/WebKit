@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's creating and deleting indexes");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -58,13 +56,14 @@ function createAndDeleteIndex()
     evalAndLog("objectStore.deleteIndex(indexName);");
     shouldBe("objectStore.indexNames.length", "0");
 
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

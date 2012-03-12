@@ -9,8 +9,6 @@
 <script>
 
 description("Test read-only transactions in IndexedDB.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -60,12 +58,13 @@ function gotCursor()
     shouldBeFalse("!event.target.result");
     evalAndExpectException("event.target.result.delete()", "webkitIDBDatabaseException.READ_ONLY_ERR");
 
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

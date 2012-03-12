@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's cursor update.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 test();
 
@@ -218,10 +216,11 @@ function keyCursor()
 function transactionComplete()
 {
     debug("transactionComplete()");
-    done();
+    finishJSTest();
 }
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

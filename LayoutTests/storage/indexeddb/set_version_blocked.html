@@ -9,8 +9,6 @@
 <script>
 
 description("An open connection blocks a separate connection's setVersion call");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 connections = []
 function test()
@@ -60,12 +58,13 @@ function inSetVersion()
     debug("in setVersion.onsuccess");
     shouldBeTrue("seen_blocked_event");
     deleteAllObjectStores(connections[0]);
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

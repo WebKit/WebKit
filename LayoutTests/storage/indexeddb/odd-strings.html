@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB odd value datatypes");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -109,7 +107,7 @@ function openCursorSuccess()
         debug("");
         verifyNextDatabase();
     } else {
-        done();
+        finishJSTest();
     }
 }
 
@@ -117,5 +115,6 @@ function openCursorSuccess()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

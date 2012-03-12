@@ -9,8 +9,6 @@
 <script>
 
 description("Test consistency of IndexedDB's cursor objects.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 test();
 
@@ -87,10 +85,11 @@ function checkCursor()
 function transactionComplete()
 {
     debug("transactionComplete()");
-    done();
+    finishJSTest();
 }
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

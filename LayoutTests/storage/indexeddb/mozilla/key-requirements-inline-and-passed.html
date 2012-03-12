@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's behavior adding inline and passed key simultaneously");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -47,12 +45,13 @@ function cleanDatabase()
     deleteAllObjectStores(db);
     objectStore = evalAndLog("objectStore = db.createObjectStore('baz', { keyPath: 'id' });");
     evalAndExpectException("objectStore.add({id: 5}, 5);", "webkitIDBDatabaseException.DATA_ERR");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB keyPaths");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -90,7 +88,7 @@ function checkCursor()
     if (++nextToOpen < testData.length) {
         createAndPopulateObjectStore();
     } else {
-        done();
+        finishJSTest();
     }
 }
 
@@ -98,5 +96,6 @@ function checkCursor()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

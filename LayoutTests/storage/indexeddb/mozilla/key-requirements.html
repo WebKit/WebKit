@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's event.target.result after add() and put()");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -78,13 +76,14 @@ function postPut2()
 function postPut3()
 {
     shouldBe("event.target.result", "key2");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

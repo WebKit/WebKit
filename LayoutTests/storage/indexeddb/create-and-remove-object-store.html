@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's create and removeObjectStore");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -62,12 +60,13 @@ function tryOnceMore()
     debug("Trying remove with store that already exists");
     evalAndExpectException("db.deleteObjectStore('tmp')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
 
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

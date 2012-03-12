@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's key generator behavior.");
-if (window.layoutTestController) 
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -40,7 +38,7 @@ function runTests() {
 
     function nextTest() {
         if (!tests.length) {
-            done();
+            finishJSTest();
             return;
         }
 
@@ -219,5 +217,6 @@ defineTest(
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

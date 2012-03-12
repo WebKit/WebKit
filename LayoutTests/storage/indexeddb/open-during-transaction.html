@@ -10,8 +10,6 @@
 <script>
 
 description("Test IndexedDB opening database connections during transactions");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -54,7 +52,7 @@ function startTransaction()
     trans.oncomplete = function (e) {
         debug("transaction complete");
         shouldBeEqualToString("state", "open3complete");
-        done();
+        finishJSTest();
     };
 
     debug("");
@@ -90,5 +88,6 @@ function tryOpens()
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

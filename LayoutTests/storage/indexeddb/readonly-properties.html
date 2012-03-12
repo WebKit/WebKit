@@ -9,8 +9,6 @@
 <div id="console"></div>
 <script>
 description("Test IndexedDB readonly properties");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function setReadonlyProperty(property, value)
 {
@@ -57,12 +55,13 @@ function createAndPopulateObjectStore()
     deleteAllObjectStores(db);
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo');");
     setReadonlyProperty("objectStore.transaction", "this");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

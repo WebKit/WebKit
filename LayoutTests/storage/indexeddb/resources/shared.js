@@ -24,41 +24,34 @@ if (self.importScripts && !self.postMessage) {
     };
 }
 
-function done()
-{
-    isSuccessfullyParsed();
-    if (self.layoutTestController)
-        layoutTestController.notifyDone()
-}
-
 function unexpectedSuccessCallback()
 {
     testFailed("Success function called unexpectedly.");
-    done();
+    finishJSTest();
 }
 
 function unexpectedErrorCallback(event)
 {
     testFailed("Error function called unexpectedly: (" + event.target.errorCode + ") " + event.target.webkitErrorMessage);
-    done();
+    finishJSTest();
 }
 
 function unexpectedAbortCallback()
 {
     testFailed("Abort function called unexpectedly!");
-    done();
+    finishJSTest();
 }
 
 function unexpectedCompleteCallback()
 {
     testFailed("oncomplete function called unexpectedly!");
-    done();
+    finishJSTest();
 }
 
 function unexpectedBlockedCallback()
 {
     testFailed("onblocked called unexpectedly");
-    done();
+    finishJSTest();
 }
 
 function evalAndExpectException(cmd, expected)

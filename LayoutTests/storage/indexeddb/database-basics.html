@@ -9,8 +9,6 @@
 <script>
 
 description("Test the basics of IndexedDB's IDBDatabase.");
-if (window.layoutTestController) 
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -119,12 +117,13 @@ function testClose()
     evalAndExpectException("db.transaction('test123')", "IDBDatabaseException.NOT_ALLOWED_ERR");
     debug("Call twice, make sure it's harmless");
     evalAndLog("db.close()");
-    done();
+    finishJSTest();
 }
 
 test();
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

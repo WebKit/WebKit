@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's behavior put()ing with null key");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -47,13 +45,14 @@ function cleanDatabase()
     deleteAllObjectStores(db);
     objectStore = evalAndLog("objectStore = db.createObjectStore('bar');");
     evalAndExpectException("objectStore.put({}, null);", "IDBDatabaseException.DATA_ERR");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

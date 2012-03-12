@@ -9,8 +9,6 @@
 <script>
 
 description("Test event propogation on IDBRequest.");
-if (window.layoutTestController) 
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -266,7 +264,7 @@ function transactionComplete()
     shouldBeFalse("dbBubbleFired");
     debug("");
 
-    done();
+    finishJSTest();
     return;
 }
 
@@ -274,5 +272,6 @@ test();
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

@@ -10,8 +10,6 @@
 <script> 
  
 description("Test IndexedDB with null version string");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
  
 function test()
 {
@@ -43,12 +41,13 @@ function openSuccess()
 function postSetVersion()
 {
     shouldBe("db.version", "'null'");
-    done();
+    finishJSTest();
 }
  
  
 test();
  
-</script> 
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body> 
 </html>

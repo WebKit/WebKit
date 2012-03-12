@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB indexes against autoincrementing keys");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -89,13 +87,14 @@ function checkSecondIndexAndPrepareThird()
 function checkThirdIndex()
 {
     shouldBe("event.target.result.id", "key");
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 

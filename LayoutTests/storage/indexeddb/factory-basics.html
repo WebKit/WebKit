@@ -9,8 +9,6 @@
 <script>
 
 description("Test the basics of IndexedDB's IDBFactory.");
-if (window.layoutTestController) 
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -84,12 +82,13 @@ function getDatabaseNamesSuccess3()
 
 function deleteDatabaseSuccess2()
 {
-    done();
+    finishJSTest();
 }
 
 test();
 
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

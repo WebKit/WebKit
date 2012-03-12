@@ -9,8 +9,6 @@
 <script>
 
 description("Test IndexedDB's webkitIDBObjectStore.deleteObjectStore().");
-if (window.layoutTestController) 
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -97,11 +95,12 @@ function verifyNotFound()
     shouldBe("event.target.result", "undefined");
     shouldBeFalse("event.target.source.indexNames.contains('indexName')");
 
-    done();
+    finishJSTest();
 }
 
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

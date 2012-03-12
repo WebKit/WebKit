@@ -9,8 +9,6 @@
 <script>
 
 description("Test closing a database connection in IndexedDB.");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -78,7 +76,7 @@ function onSecondOpen() {
     request = evalAndLog("request = store.put('1', '2')");
     request.onsuccess = onFinalPutSuccess;
     request.onerror = unexpectedErrorCallback;
-    currentTransaction.oncomplete = done;
+    currentTransaction.oncomplete = finishJSTest;
     currentTransaction.onabort = unexpectedAbortCallback;
 }
 
@@ -90,5 +88,6 @@ function onFinalPutSuccess() {
 test();
 
 </script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

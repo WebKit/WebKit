@@ -16,8 +16,6 @@
 <script>
 
 description("Test IndexedDB's creating object store with null name");
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
 
 function test()
 {
@@ -49,13 +47,14 @@ function cleanDatabase()
     objectStore = evalAndLog("objectStore = db.createObjectStore(null);");
     shouldBe("objectStore.name", "'null'");
 
-    done();
+    finishJSTest();
 }
 
 
 test();
 
 </script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
 
