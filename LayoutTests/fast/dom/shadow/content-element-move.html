@@ -366,7 +366,7 @@ function testInsertBeforeFallback(callIfDone) {
     document.getElementById('actual-container').appendChild(target);
 
     var span1 = document.createElement('span');
-    var root = new WebKitShadowRoot(span1);
+    var root = internals.ensureShadowRoot(span1);
     root.appendChild(createContentWithText("FALLBACK"));
 
     target.appendChild(createSpanWithText('BEFORE'));
