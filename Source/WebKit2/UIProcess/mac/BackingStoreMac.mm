@@ -143,7 +143,7 @@ CGContextRef BackingStore::backingStoreContext()
 
     // Try to create a layer.
     if (CGContextRef containingWindowContext = m_webPageProxy->containingWindowGraphicsContext()) {
-        m_cgLayer.adoptCF(CGLayerCreateWithContext(containingWindowContext, NSSizeToCGSize(m_size), 0));
+        m_cgLayer.adoptCF(CGLayerCreateWithContext(containingWindowContext, m_size, 0));
         CGContextRef layerContext = CGLayerGetContext(m_cgLayer.get());
         
         CGContextSetBlendMode(layerContext, kCGBlendModeCopy);

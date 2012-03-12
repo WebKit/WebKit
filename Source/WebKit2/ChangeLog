@@ -1,3 +1,17 @@
+2012-03-11  Andy Estes  <aestes@apple.com>
+
+        Remove unnecessary call to NSSizeToCGSize().
+        https://bugs.webkit.org/show_bug.cgi?id=80817
+
+        Reviewed by Dan Bernstein.
+
+        There is no need to call NSSizeToCGSize() to convert an IntSize to a
+        CGSize. IntSize defines a conversion function to CGSize that will do
+        this for us implicitly.
+
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::backingStoreContext): Do not call NSSizeToCGSize().
+
 2012-03-11  Dan Bernstein  <mitz@apple.com>
 
         WebKit2 lacks API for obtaining a representation of the RenderLayer tree of a page, like WebRenderLayer
