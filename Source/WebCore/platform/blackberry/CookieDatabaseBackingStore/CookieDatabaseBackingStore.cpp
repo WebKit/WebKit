@@ -416,7 +416,7 @@ void CookieDatabaseBackingStore::sendChangesToDatabase(int nextInterval)
         CookieLog("CookieBackingStore - Starting one shot send to database");
         m_dbTimer.start(nextInterval);
     } else {
-#if !NDEBUG
+#ifndef NDEBUG
         CookieLog("CookieBackingStore - Timer already running, skipping this request");
 #endif
     }
