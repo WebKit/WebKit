@@ -1,5 +1,13 @@
 2012-03-12  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
+        [Qt] Use right construct to detect config_test_gccdepends
+
+        Reviewed by Andreas Kling.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
+2012-03-12  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
         [Qt] Expose location of WebKit's bin and imports dir through module file
 
         Reviewed by Andreas Kling.
