@@ -1592,3 +1592,6 @@ plugins/netscape-plugin-page-cache-works.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=80534
 fast/events/autoscroll-in-textfield.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=80825
+platform/gtk/scrollbars/overflow-scrollbar-horizontal-wheel-scroll.html

@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
           layer at (40,164) size 300x1
             RenderVideo {VIDEO} at (40,164) size 300x1
           layer at (40,164) size 300x1
-            RenderBlock (relative positioned) {DIV} at (0,0) size 300x1
+            RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x1
           layer at (40,164) size 300x1 scrollHeight 20
             RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x1
               RenderButton {INPUT} at (0,-19) size 20x20
