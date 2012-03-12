@@ -3720,7 +3720,7 @@ enum LengthConversion {
 
 template<int supported> Length CSSPrimitiveValue::convertToLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
 {
-    if (((supported & FixedIntegerConversion) || (supported & FixedFloatConversion)) && isFontRelativeLength() && (!style || !rootStyle))
+    if ((supported & (FixedIntegerConversion | FixedFloatConversion)) && isFontRelativeLength() && (!style || !rootStyle))
         return Length(Undefined);
     if ((supported & FixedIntegerConversion) && isLength())
         return computeLength<Length>(style, rootStyle, multiplier, computingFontSize);
