@@ -49,7 +49,7 @@ public:
 
     // reimps from TextureMapper
     virtual void drawTexture(const BitmapTexture&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
-    virtual void drawTexture(uint32_t texture, Flags, const FloatSize&, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
+    virtual void drawTexture(uint32_t texture, Flags, const FloatRect&, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture);
     virtual void bindSurface(BitmapTexture* surface);
     virtual void beginClip(const TransformationMatrix&, const FloatRect&);
     virtual void beginPainting();
@@ -82,14 +82,12 @@ public:
     void initializeStencil();
     ~BitmapTextureGL();
     virtual uint32_t id() const { return m_id; }
-    inline FloatSize relativeSize() const { return m_relativeSize; }
     void setTextureMapper(TextureMapperGL* texmap) { m_textureMapper = texmap; }
     void updateContents(Image*, const IntRect&, const IntRect&, PixelFormat);
     void updateContents(const void*, const IntRect&);
 
 private:
     GLuint m_id;
-    FloatSize m_relativeSize;
     IntSize m_textureSize;
     IntRect m_dirtyRect;
     GLuint m_fbo;
@@ -107,23 +105,6 @@ private:
 
     friend class TextureMapperGL;
 };
-
-// An offscreen buffer to be rendered by software.
-static inline int nextPowerOfTwo(int num)
-{
-    for (int i = 0x10000000; i > 0; i >>= 1) {
-        if (num == i)
-            return num;
-        if (num & i)
-            return (i << 1);
-    }
-    return 1;
-}
-
-static inline IntSize nextPowerOfTwo(const IntSize& size)
-{
-    return IntSize(nextPowerOfTwo(size.width()), nextPowerOfTwo(size.height()));
-}
 
 typedef uint64_t ImageUID;
 ImageUID uidForImage(Image*);

@@ -89,7 +89,6 @@ class TextureMapperShaderProgramOpacityAndMask : public TextureMapperShaderProgr
 public:
     static PassRefPtr<TextureMapperShaderProgramOpacityAndMask> create();
     virtual void prepare(float opacity, const BitmapTexture*);
-    GLint maskMatrixVariable() const { return m_maskMatrixVariable; }
     GLint maskTextureVariable() const { return m_maskTextureVariable; }
 
 private:
@@ -97,7 +96,6 @@ private:
     virtual const char* vertexShaderSource() const;
     virtual const char* fragmentShaderSource() const;
     TextureMapperShaderProgramOpacityAndMask();
-    GLint m_maskMatrixVariable;
     GLint m_maskTextureVariable;
 };
 

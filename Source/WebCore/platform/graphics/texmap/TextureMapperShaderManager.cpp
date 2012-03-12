@@ -57,13 +57,13 @@ static const char* fragmentShaderSourceOpacityAndMask =
 
 static const char* vertexShaderSourceOpacityAndMask =
     VERTEX_SHADER(
-        uniform mat4 InMatrix, InSourceMatrix, InMaskMatrix;
+        uniform mat4 InMatrix, InSourceMatrix;
         attribute vec4 InVertex;
         varying highp vec2 OutTexCoordSource, OutTexCoordMask;
         void main(void)
         {
             OutTexCoordSource = vec2(InSourceMatrix * InVertex);
-            OutTexCoordMask = vec2(InMaskMatrix * InVertex);
+            OutTexCoordMask = vec2(InVertex);
             gl_Position = InMatrix * InVertex;
         }
     );
@@ -171,7 +171,6 @@ TextureMapperShaderProgramOpacityAndMask::TextureMapperShaderProgramOpacityAndMa
     initializeProgram();
     getUniformLocation(m_matrixVariable, "InMatrix");
     getUniformLocation(m_sourceMatrixVariable, "InSourceMatrix");
-    getUniformLocation(m_maskMatrixVariable, "InMaskMatrix");
     getUniformLocation(m_sourceTextureVariable, "SourceTexture");
     getUniformLocation(m_maskTextureVariable, "MaskTexture");
     getUniformLocation(m_opacityVariable, "Opacity");
@@ -196,11 +195,6 @@ void TextureMapperShaderProgramOpacityAndMask::prepare(float opacity, const Bitm
     const BitmapTextureGL* maskTextureGL = static_cast<const BitmapTextureGL*>(maskTexture);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, maskTextureGL->id());
-    const GLfloat m4mask[] = {maskTextureGL->relativeSize().width(), 0, 0, 0,
-                                     0, maskTextureGL->relativeSize().height(), 0, 0,
-                                     0, 0, 1, 0,
-                                     0, 0, 0, 1};
-    glUniformMatrix4fv(m_maskMatrixVariable, 1, GL_FALSE, m4mask);
     glUniform1i(m_maskTextureVariable, 1);
     glActiveTexture(GL_TEXTURE0);
 }

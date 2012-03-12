@@ -313,10 +313,10 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
         return;
 
     const BitmapTextureGL& textureGL = static_cast<const BitmapTextureGL&>(texture);
-    drawTexture(textureGL.id(), textureGL.isOpaque() ? 0 : SupportsBlending, textureGL.relativeSize(), targetRect, matrix, opacity, mask);
+    drawTexture(textureGL.id(), textureGL.isOpaque() ? 0 : SupportsBlending, targetRect, matrix, opacity, mask);
 }
 
-void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const FloatSize& relativeSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
+void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, const BitmapTexture* maskTexture)
 {
     RefPtr<TextureMapperShaderProgram> shaderInfo;
     if (maskTexture)
@@ -344,10 +344,12 @@ void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const FloatSize
         matrix.m31(), matrix.m32(), matrix.m33(), matrix.m34(),
         matrix.m41(), matrix.m42(), matrix.m43(), matrix.m44()
     };
-    const GLfloat m4src[] = {relativeSize.width(), 0, 0, 0,
-                                     0, relativeSize.height() * ((flags & ShouldFlipTexture) ? -1 : 1), 0, 0,
-                                     0, 0, 1, 0,
-                                     0, (flags & ShouldFlipTexture) ? relativeSize.height() : 0, 0, 1};
+
+    const GLfloat m4src[] = {
+        1, 0, 0, 0,
+        0, (flags & ShouldFlipTexture) ? -1 : 1, 0, 0,
+        0, 0, 1, 0,
+        0, (flags & ShouldFlipTexture) ? 1 : 0, 0, 1};
 
     GL_CMD(glUniformMatrix4fv(shaderInfo->matrixVariable(), 1, GL_FALSE, m4))
     GL_CMD(glUniformMatrix4fv(shaderInfo->sourceMatrixVariable(), 1, GL_FALSE, m4src))
@@ -374,15 +376,11 @@ const char* TextureMapperGL::type() const
 
 void BitmapTextureGL::didReset()
 {
-    IntSize newTextureSize = nextPowerOfTwo(contentSize());
-    bool justCreated = false;
-    if (!m_id) {
+    if (!m_id)
         GL_CMD(glGenTextures(1, &m_id))
-        justCreated = true;
-    }
 
-    if (justCreated || newTextureSize.width() > m_textureSize.width() || newTextureSize.height() > m_textureSize.height()) {
-        m_textureSize = newTextureSize;
+    if (m_textureSize != contentSize()) {
+        m_textureSize = contentSize();
         GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
         GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR))
         GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR))
@@ -391,8 +389,6 @@ void BitmapTextureGL::didReset()
         GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0))
     }
 
-    // We decrease the size by one, since this is used as rectangle coordinates and not as size.
-    m_relativeSize = FloatSize(float(contentSize().width() - 1) / m_textureSize.width(), float(contentSize().height() - 1) / m_textureSize.height());
     m_surfaceNeedsReset = true;
 }
 
