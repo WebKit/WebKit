@@ -34,7 +34,12 @@ namespace WebCore {
 
 class SharedGraphicsContext3D {
 public:
-    static GraphicsContext3D* get();
+    // The caller may ref this pointer, and hang onto it as long as they like.
+    // However, the context should be checked periodically to determine if it
+    // has been lost. The easiest way to do that is to simply call this
+    // function again. Note that the return value may be 0 if the
+    // GPU is unavailable.
+    static PassRefPtr<GraphicsContext3D> get();
 };
 
 }

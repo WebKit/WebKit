@@ -27,22 +27,43 @@
 #include "config.h"
 
 #include "SharedGraphicsContext3D.h"
+#include "Extensions3D.h"
 
 namespace WebCore {
 
-GraphicsContext3D* SharedGraphicsContext3D::get()
+class SharedGraphicsContext3DImpl {
+public:
+    SharedGraphicsContext3DImpl() : m_context(0) { }
+    PassRefPtr<GraphicsContext3D> get()
+    {
+        // If we lost the context, or can't make it current, create a new one.
+        if (m_context && (!m_context->makeContextCurrent() || (m_context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR)))
+            m_context.clear();
+
+        if (!m_context) {
+            GraphicsContext3D::Attributes attributes;
+            attributes.depth = false;
+            attributes.stencil = true;
+            attributes.antialias = false;
+            attributes.canRecoverFromContextLoss = false;
+            attributes.shareResources = true;
+            attributes.preferDiscreteGPU = true;
+            m_context = GraphicsContext3D::create(attributes, 0);
+        }
+
+        if (m_context && !m_context->makeContextCurrent())
+            m_context.clear();
+
+        return m_context;
+    }
+private:
+    RefPtr<GraphicsContext3D> m_context;
+};
+
+PassRefPtr<GraphicsContext3D> SharedGraphicsContext3D::get()
 {
-    GraphicsContext3D::Attributes attributes;
-    attributes.depth = false;
-    attributes.stencil = true;
-    attributes.antialias = false;
-    attributes.canRecoverFromContextLoss = false; // Canvas contexts can not handle lost contexts.
-    attributes.shareResources = true;
-    attributes.preferDiscreteGPU = true;
-    static GraphicsContext3D* context = GraphicsContext3D::create(attributes, 0).leakRef();
-    if (context && !context->makeContextCurrent())
-        context = 0;
-    return context;
+    DEFINE_STATIC_LOCAL(SharedGraphicsContext3DImpl, impl, ());
+    return impl.get();
 }
 
 }

@@ -1,3 +1,16 @@
+2012-03-12  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Restore canvas2D acceleration after context loss.
+        https://bugs.webkit.org/show_bug.cgi?id=80629
+
+        Reviewed by James Robinson.
+
+        Covered by existing canvas tests, and manual testing (killing the GPU
+        process).
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::sharedGraphicsContext3D):
+
 2012-03-12  Nat Duca  <nduca@chromium.org>
 
         [Chromium] Force compositeAndReadback through regular scheduling flow

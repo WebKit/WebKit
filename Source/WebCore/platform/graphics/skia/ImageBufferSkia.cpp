@@ -85,7 +85,7 @@ private:
 
 static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* data, DeferralMode deferralMode)
 {
-    GraphicsContext3D* context3D = SharedGraphicsContext3D::get();
+    RefPtr<GraphicsContext3D> context3D = SharedGraphicsContext3D::get();
     if (!context3D)
         return 0;
     GrContext* gr = context3D->grContext();
@@ -104,13 +104,13 @@ static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* d
     SkCanvas* canvas;
     SkAutoTUnref<SkDevice> device(new SkGpuDevice(gr, texture.get()));
     if (deferralMode == Deferred) {
-        SkAutoTUnref<AcceleratedDeviceContext> deviceContext(new AcceleratedDeviceContext(context3D));
+        SkAutoTUnref<AcceleratedDeviceContext> deviceContext(new AcceleratedDeviceContext(context3D.get()));
         canvas = new SkDeferredCanvas(device.get(), deviceContext.get());
     } else
         canvas = new SkCanvas(device.get());
-    data->m_platformContext.setGraphicsContext3D(context3D);
+    data->m_platformContext.setAccelerated(true);
 #if USE(ACCELERATED_COMPOSITING)
-    data->m_platformLayer = Canvas2DLayerChromium::create(context3D, size);
+    data->m_platformLayer = Canvas2DLayerChromium::create(context3D.release(), size);
     data->m_platformLayer->setTextureId(texture.get()->getTextureHandle());
     data->m_platformLayer->setCanvas(canvas);
 #endif

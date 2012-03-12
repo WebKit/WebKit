@@ -225,7 +225,7 @@ SkBitmap CCRenderSurface::applyFilters(LayerRendererChromium* layerRenderer)
         return SkBitmap();
 
     layerRenderer->context()->flush();
-    return CCRenderSurfaceFilters::apply(m_filters, m_contentsTexture->textureId(), m_contentRect.size(), SharedGraphicsContext3D::get());
+    return CCRenderSurfaceFilters::apply(m_filters, m_contentsTexture->textureId(), m_contentRect.size(), SharedGraphicsContext3D::get().get());
 }
 
 String CCRenderSurface::name() const

@@ -45,14 +45,15 @@
 
 namespace WebCore {
 
-PassRefPtr<Canvas2DLayerChromium> Canvas2DLayerChromium::create(GraphicsContext3D* context, const IntSize& size)
+PassRefPtr<Canvas2DLayerChromium> Canvas2DLayerChromium::create(PassRefPtr<GraphicsContext3D> context, const IntSize& size)
 {
     return adoptRef(new Canvas2DLayerChromium(context, size));
 }
 
-Canvas2DLayerChromium::Canvas2DLayerChromium(GraphicsContext3D* context, const IntSize& size)
+Canvas2DLayerChromium::Canvas2DLayerChromium(PassRefPtr<GraphicsContext3D> context, const IntSize& size)
     : CanvasLayerChromium()
     , m_context(context)
+    , m_contextLost(false)
     , m_size(size)
     , m_backTextureId(0)
     , m_fbo(0)
@@ -67,6 +68,8 @@ Canvas2DLayerChromium::~Canvas2DLayerChromium()
 {
     if (m_useDoubleBuffering && m_fbo)
        GLC(m_context, m_context->deleteFramebuffer(m_fbo));
+    if (m_context && layerTreeHost())
+        layerTreeHost()->stopRateLimiter(m_context.get());
 }
 
 void Canvas2DLayerChromium::setTextureId(unsigned textureId)
@@ -80,13 +83,13 @@ void Canvas2DLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
     LayerChromium::setNeedsDisplayRect(dirtyRect);
 
     if (layerTreeHost())
-        layerTreeHost()->startRateLimiter(m_context);
+        layerTreeHost()->startRateLimiter(m_context.get());
 }
 
 bool Canvas2DLayerChromium::drawsContent() const
 {
     return LayerChromium::drawsContent() && m_backTextureId && !m_size.isEmpty()
-        && m_context && (m_context->getExtensions()->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR);
+        && !m_contextLost;
 }
 
 void Canvas2DLayerChromium::setCanvas(SkCanvas* canvas)
@@ -110,6 +113,10 @@ void Canvas2DLayerChromium::paintContentsIfDirty(const Region& /* occludedScreen
 
     bool success = m_context->makeContextCurrent();
     ASSERT_UNUSED(success, success);
+
+    m_contextLost = m_context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
+    if (m_contextLost)
+        return;
 
     if (m_canvas) {
         TRACE_EVENT("SkDeferredCanvas::flush", m_canvas, 0);

@@ -181,9 +181,9 @@ PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
     : m_canvas(canvas)
     , m_trackOpaqueRegion(false)
     , m_printing(false)
+    , m_accelerated(false)
     , m_deferred(false)
     , m_drawingToImageBuffer(false)
-    , m_gpuContext(0)
 {
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
@@ -600,11 +600,6 @@ void PlatformContextSkia::applyClipFromImage(const SkRect& rect, const SkBitmap&
     m_canvas->resetMatrix();
     m_canvas->drawBitmapRect(imageBuffer, 0, rect, &paint);
     m_canvas->restore();
-}
-
-void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context)
-{
-    m_gpuContext = context;
 }
 
 void PlatformContextSkia::didDrawRect(const SkRect& rect, const SkPaint& paint, const SkBitmap* bitmap)

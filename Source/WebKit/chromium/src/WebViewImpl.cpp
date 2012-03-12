@@ -3343,7 +3343,7 @@ WebGraphicsContext3D* WebViewImpl::sharedGraphicsContext3D()
     if (!m_page->settings()->acceleratedCompositingEnabled() || !allowsAcceleratedCompositing())
         return 0;
 
-    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(SharedGraphicsContext3D::get());
+    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(SharedGraphicsContext3D::get().get());
 }
 
 void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
