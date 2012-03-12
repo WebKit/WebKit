@@ -83,7 +83,7 @@ public:
     void glyphsForRange(int from, int to, int& fromGlyph, int& glyphLength);
 
     // Return the length of the array returned by |glyphs|
-    const unsigned length() const { return m_item.num_glyphs; }
+    unsigned length() const { return m_item.num_glyphs; }
 
     // Return the offset for each of the glyphs. Note that this is translated
     // by the current x offset and that the x offset is updated for each script
@@ -91,10 +91,10 @@ public:
     const SkPoint* positions() const { return m_positions; }
 
     // return the number of code points in the current script run
-    const unsigned numCodePoints() const { return m_item.item.length; }
+    unsigned numCodePoints() const { return m_item.item.length; }
 
     // Return the current pixel position of the controller.
-    const unsigned offsetX() const { return m_offsetX; }
+    unsigned offsetX() const { return m_offsetX; }
 
     const FontPlatformData* fontPlatformDataForScriptRun() { return reinterpret_cast<FontPlatformData*>(m_item.font->userData); }
 
