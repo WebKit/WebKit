@@ -1,3 +1,26 @@
+2012-03-12  Andy Chen  <andchen@rim.com>
+
+        [Blackberry] Make the process of marking all matches interruptible and asynchronous for find-in-page
+        https://bugs.webkit.org/show_bug.cgi?id=80831
+
+        Reviewed by Antonio Gomes.
+
+        * WebKitSupport/InPageSearchManager.cpp:
+        (BlackBerry::WebKit::InPageSearchManager::DeferredScopeStringMatches::DeferredScopeStringMatches):
+        (BlackBerry::WebKit::InPageSearchManager::DeferredScopeStringMatches::doTimeout):
+        (BlackBerry::WebKit::InPageSearchManager::InPageSearchManager):
+        (BlackBerry::WebKit::InPageSearchManager::~InPageSearchManager):
+        (BlackBerry::WebKit::InPageSearchManager::findNextString):
+        (BlackBerry::WebKit::InPageSearchManager::shouldSearchForText):
+        (BlackBerry::WebKit::InPageSearchManager::findAndMarkText):
+        (BlackBerry::WebKit::InPageSearchManager::clearTextMatches):
+        (BlackBerry::WebKit::InPageSearchManager::frameUnloaded):
+        (BlackBerry::WebKit::InPageSearchManager::scopeStringMatches):
+        (BlackBerry::WebKit::InPageSearchManager::scopeStringMatchesSoon):
+        (BlackBerry::WebKit::InPageSearchManager::callScopeStringMatches):
+        (BlackBerry::WebKit::InPageSearchManager::cancelPendingScopingEffort):
+        * WebKitSupport/InPageSearchManager.h:
+
 2012-03-09  Jon Lee  <jonlee@apple.com>
 
         Rename NotificationPresenter to NotificationClient
