@@ -43,6 +43,7 @@ namespace WebCore {
 class DocumentFragment;
 class ScriptExecutionContext;
 class TextTrack;
+class HTMLDivElement;
 
 class TextTrackCue : public RefCounted<TextTrackCue>, public EventTarget {
 public:
@@ -100,6 +101,8 @@ public:
     bool isActive();
     void setIsActive(bool);
 
+    PassRefPtr<HTMLDivElement> getDisplayTree();
+
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
@@ -110,7 +113,6 @@ public:
     using RefCounted<TextTrackCue>::deref;
 
 protected:
-
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
@@ -118,6 +120,8 @@ private:
     TextTrackCue(ScriptExecutionContext*, const String& id, double start, double end, const String& content, const String& settings, bool pauseOnExit);
 
     void parseSettings(const String&);
+    void determineDisplayParameters();
+
     void cueWillChange();
     void cueDidChange();
 
@@ -148,6 +152,9 @@ private:
     bool m_isActive;
     bool m_pauseOnExit;
     bool m_snapToLines;
+
+    bool m_displayTreeShouldChange;
+    RefPtr<HTMLDivElement> m_displayTree;
 };
 
 } // namespace WebCore

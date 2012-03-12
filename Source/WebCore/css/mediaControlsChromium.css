@@ -41,7 +41,7 @@ audio:-webkit-full-page-media, video:-webkit-full-page-media {
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     -webkit-user-select: none;
-    position: absolute;
+    position: relative;
     overflow: visible;
     bottom: 0;
     width: 100%;

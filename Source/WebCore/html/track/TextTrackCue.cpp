@@ -35,8 +35,12 @@
 
 #include "TextTrackCue.h"
 
-#include "Event.h"
+#include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "DocumentFragment.h"
+#include "Event.h"
+#include "HTMLDivElement.h"
+#include "Text.h"
 #include "TextTrack.h"
 #include "TextTrackCueList.h"
 #include "WebVTTParser.h"
@@ -111,7 +115,10 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, const String& id, do
     , m_isActive(false)
     , m_pauseOnExit(pauseOnExit)
     , m_snapToLines(true)
+    , m_displayTreeShouldChange(true)
+    , m_displayTree(HTMLDivElement::create(static_cast<Document*>(context)))
 {
+    ASSERT(m_scriptExecutionContext->isDocument());
     parseSettings(settings);
 }
 
@@ -129,6 +136,8 @@ void TextTrackCue::cueDidChange()
 {
     if (m_track)
         m_track->cueDidChange(this);
+
+    m_displayTreeShouldChange = true;
 }
 
 TextTrack* TextTrackCue::track() const
@@ -394,6 +403,63 @@ bool TextTrackCue::isActive()
 void TextTrackCue::setIsActive(bool active)
 {
     m_isActive = active;
+
+    if (!active) {
+        // Remove the display tree as soon as the cue becomes inactive.
+        ExceptionCode ec;
+        m_displayTree->remove(ec);
+    }
+}
+
+void TextTrackCue::determineDisplayParameters()
+{
+    // FIXME(BUG 79749): Determine the text direction using the BIDI algorithm.
+    // Steps 10.2, 10.3
+
+    // FIXME(BUG 79747): Determine the display parameters from the rules.
+    // Steps 10.1, 10.4 - 10.10
+}
+
+PassRefPtr<HTMLDivElement> TextTrackCue::getDisplayTree()
+{
+    if (!m_displayTreeShouldChange)
+        return m_displayTree;
+
+    // 10.1 - 10.10
+    determineDisplayParameters();
+
+    // 10.11. Apply the terms of the CSS specifications to nodes within the
+    // following constraints, thus obtaining a set of CSS boxes positioned
+    // relative to an initial containing block:
+    m_displayTree->removeChildren();
+
+    // The document tree is the tree of WebVTT Node Objects rooted at nodes.
+
+    // The children of the nodes must be wrapped in an anonymous box whose
+    // 'display' property has the value 'inline'. This is the WebVTT cue
+    // background box.
+    m_displayTree->setShadowPseudoId(AtomicString("-webkit-media-text-track-display"), ASSERT_NO_EXCEPTION);
+    m_displayTree->appendChild(getCueAsHTML(), ASSERT_NO_EXCEPTION, true);
+
+    // FIXME(BUG 79916): Runs of children of WebVTT Ruby Objects that are not
+    // WebVTT Ruby Text Objects must be wrapped in anonymous boxes whose
+    // 'display' property has the value 'ruby-base'.
+
+    // FIXME(BUG 79916): Text runs must be wrapped according to the CSS
+    // line-wrapping rules, except that additionally, regardless of the value of
+    // the 'white-space' property, lines must be wrapped at the edge of their
+    // containing blocks, even if doing so requires splitting a word where there
+    // is no line breaking opportunity. (Thus, normally text wraps as needed,
+    // but if there is a particularly long word, it does not overflow as it
+    // normally would in CSS, it is instead forcibly wrapped at the box's edge.)
+
+    // FIXME(BUG 79750, 79751): Steps 10.12 - 10.14
+
+    m_displayTreeShouldChange = false;
+
+    // 10.15. Let cue's text track cue display state have the CSS boxes in
+    // boxes.
+    return m_displayTree;
 }
 
 void TextTrackCue::parseSettings(const String& input)

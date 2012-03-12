@@ -2,7 +2,6 @@
 function mediaControlsElement(first, id)
 {
     for (var element = first; element; element = element.nextSibling) {
-
         // Not every element in the media controls has a shadow pseudo ID, eg. the
         // text nodes for the time values, so guard against exceptions.
         try {
@@ -35,9 +34,20 @@ function mediaControlsButtonCoordinates(element, id)
 
 function textTrackDisplayElement(parentElement, id)
 {
-    var controlID = "-webkit-media-text-track-" + id;
-    var displayElement = mediaControlsElement(internals.shadowRoot(parentElement).firstChild, controlID);
+    var textTrackContainerID = "-webkit-media-text-track-container";
+    var containerElement = mediaControlsElement(internals.shadowRoot(parentElement).firstChild, "-webkit-media-text-track-container");
+
+    if (!containerElement)
+        throw "Failed to find text track container element";
+
+    if (!id)
+        return containerElement;
+
+    var controlID = "-webkit-media-text-track-" + arguments[1];
+
+    var displayElement = mediaControlsElement(containerElement.firstChild, controlID);
     if (!displayElement)
-        throw "Failed to find media control element ID '" + controlID + "'";
+        throw "No text track cue with display id '" + controlID + "' is currently visible";
+
     return displayElement;
 }

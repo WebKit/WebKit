@@ -3,7 +3,7 @@ Test that cues are rendered and removed.
 EVENT(canplaythrough)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '0.5') OK
-EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
+No text track cue with display id '-webkit-media-text-track-display' is currently visible
 
 RUN(video.currentTime = 1.5)
 EVENT(seeked)
@@ -14,7 +14,7 @@ EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem ipsum do
 RUN(video.currentTime = 2.5)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '2.5') OK
-EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
+No text track cue with display id '-webkit-media-text-track-display' is currently visible
 
 RUN(video.currentTime = 3.3)
 EVENT(seeked)
@@ -25,7 +25,7 @@ EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'consectetuer a
 RUN(video.currentTime = 0.6)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '0.6') OK
-EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
+No text track cue with display id '-webkit-media-text-track-display' is currently visible
 
 RUN(video.currentTime = 5.9)
 EVENT(seeked)
@@ -36,7 +36,7 @@ EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'sed diam nonum
 RUN(video.currentTime = 4.4)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '4.4') OK
-EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
+No text track cue with display id '-webkit-media-text-track-display' is currently visible
 
 RUN(video.currentTime = 7.9)
 EVENT(seeked)

@@ -122,6 +122,10 @@ private:
     void continueDrag(const LayoutPoint& eventLocation);
     void endDrag();
 
+    void startTimer();
+    void stopTimer();
+    void transitionTimerFired(Timer<MediaControlPanelElement>*);
+
     void setPosition(const LayoutPoint&);
 
     bool m_canBeDragged;
@@ -129,6 +133,8 @@ private:
     bool m_opaque;
     LayoutPoint m_dragStartPosition;
     LayoutPoint m_dragStartEventLocation;
+
+    Timer<MediaControlPanelElement> m_transitionTimer;
 };
 
 // ----------------------------
@@ -491,9 +497,9 @@ private:
 #if ENABLE(VIDEO_TRACK)
 class MediaControlTextTrackContainerElement : public MediaControlElement {
 public:
-    
     static PassRefPtr<MediaControlTextTrackContainerElement> create(Document*);
-    
+
+    void updateDisplay();
     void updateSizes();
 
 private:
@@ -505,23 +511,9 @@ private:
 
     IntRect m_videoDisplaySize;
     float m_fontSize;
-    LayoutUnit m_bottom;
 };
 
-// ----------------------------
-
-class MediaControlTextTrackDisplayElement : public MediaControlElement {
-public:
-    static PassRefPtr<MediaControlTextTrackDisplayElement> create(Document*);
-
-private:
-    MediaControlTextTrackDisplayElement(Document*);
-
-    virtual MediaControlElementType displayType() const { return MediaTextTrackDisplay; }
-    virtual const AtomicString& shadowPseudoId() const;
-};
 #endif
-
 // ----------------------------
 
 } // namespace WebCore

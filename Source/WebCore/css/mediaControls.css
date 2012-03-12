@@ -37,8 +37,11 @@ audio {
     width: inherit;
     height: inherit;
     position: relative;
-    display: block;
+    display: -webkit-box;
     direction: ltr;
+    -webkit-box-align: start;
+    -webkit-box-pack: end;
+    -webkit-box-orient: vertical;
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
@@ -46,7 +49,7 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     -webkit-box-orient: horizontal;
     -webkit-box-align: center;
     -webkit-user-select: none;
-    position: absolute;
+    position: relative;
     bottom: 0;
     width: 100%;
     z-index: 0;
@@ -201,15 +204,16 @@ audio::-webkit-media-controls-fullscreen-volume-max-button, video::-webkit-media
 }
 
 video::-webkit-media-text-track-container {
-    position: absolute;
+    position: relative;
     width: 100%;
     overflow: hidden;
+    padding-bottom: 5px;
 
     font-size: 22px;
     font-family: sans-serif;
     text-align: center;
     color: rgba(255, 255, 255, 0);
-    
+
     letter-spacing: normal;
     word-spacing: normal;
     text-transform: none;
@@ -222,6 +226,6 @@ video::-webkit-media-text-track-container {
 video::-webkit-media-text-track-display {
     display: inline;
     background-color: rgba(0, 0, 0, 0.8);
-    color: yellow;
+    color: rgba(255, 255, 255, 1);
     padding: 0px 2px;
 }
