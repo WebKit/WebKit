@@ -73,6 +73,7 @@
 		0F0FC45A14BD15F500B81154 /* LLIntCallLinkInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F16D726142C39C000CF784A /* BitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F16D724142C39A200CF784A /* BitVector.cpp */; };
+		0F1D0861150C5A860074D109 /* DFGNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F1D085F150C5A800074D109 /* DFGNode.cpp */; };
 		0F21C26814BE5F6800ADC64B /* JITDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C26614BE5F5E00ADC64B /* JITDriver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F21C27C14BE727600ADC64B /* ExecutionHarness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C27A14BE727300ADC64B /* ExecutionHarness.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F21C27D14BE727A00ADC64B /* CodeSpecializationKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -783,6 +784,7 @@
 		0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLIntCallLinkInfo.h; sourceTree = "<group>"; };
 		0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonSlowPaths.h; sourceTree = "<group>"; };
 		0F16D724142C39A200CF784A /* BitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitVector.cpp; sourceTree = "<group>"; };
+		0F1D085F150C5A800074D109 /* DFGNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNode.cpp; path = dfg/DFGNode.cpp; sourceTree = "<group>"; };
 		0F21C26614BE5F5E00ADC64B /* JITDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITDriver.h; sourceTree = "<group>"; };
 		0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeSpecializationKind.h; sourceTree = "<group>"; };
 		0F21C27A14BE727300ADC64B /* ExecutionHarness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutionHarness.h; sourceTree = "<group>"; };
@@ -2504,6 +2506,7 @@
 		86EC9DB31328DF44002B2AD7 /* dfg */ = {
 			isa = PBXGroup;
 			children = (
+				0F1D085F150C5A800074D109 /* DFGNode.cpp */,
 				0FFFC94914EF909500C72532 /* DFGArithNodeFlagsInferencePhase.cpp */,
 				0FFFC94A14EF909500C72532 /* DFGArithNodeFlagsInferencePhase.h */,
 				0F62016D143FCD2F0068B77C /* DFGAbstractState.cpp */,
@@ -3715,6 +3718,7 @@
 				0FB5467D14F5CFD6002C2989 /* MethodOfGettingAValueProfile.cpp in Sources */,
 				0F56A1D515001CF4002992B1 /* ExecutionCounter.cpp in Sources */,
 				0A4337BB1506218800991C95 /* DFGRedundantPhiEliminationPhase.cpp in Sources */,
+				0F1D0861150C5A860074D109 /* DFGNode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -169,6 +169,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGGraph.h \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
+	Source/JavaScriptCore/dfg/DFGNode.cpp \
 	Source/JavaScriptCore/dfg/DFGNode.h \
 	Source/JavaScriptCore/dfg/DFGNodeReferenceBlob.h \
 	Source/JavaScriptCore/dfg/DFGNodeUse.h \

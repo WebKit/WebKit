@@ -58,14 +58,27 @@ public:
         }
     }
 
-#if DFG_ENABLE(CONSISTENCY_CHECK)
     ~ScoreBoard()
     {
-        // For every entry in the used list the use count of the virtual register should be zero.
-        for (size_t i = 0; i < m_free.size(); ++i)
-            ASSERT(!m_used[i] || m_used[i] == max());
+        assertClear();
     }
+    
+    void assertClear()
+    {
+#if !ASSERT_DISABLED
+        // For every entry in the used list the use count of the virtual register should be zero, or max, due to it being a preserved local.
+        for (size_t i = 0; i < m_used.size(); ++i)
+            ASSERT(!m_used[i] || m_used[i] == max());
+        // For every entry in the free list, the use count should be zero.
+        for (size_t i = 0; i < m_free.size(); ++i)
+            ASSERT(!m_used[m_free[i]]);
+        // There must not be duplicates in the free list.
+        for (size_t i = 0; i < m_free.size(); ++i) {
+            for (size_t j = i + 1; j < m_free.size(); ++j)
+                ASSERT(m_free[i] != m_free[j]);
+        }
 #endif
+    }
 
     VirtualRegister allocate()
     {
@@ -99,6 +112,9 @@ public:
         uint32_t index = node.virtualRegister();
         ASSERT(m_used[index] != max());
         if (node.refCount() == ++m_used[index]) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLog(" Freeing virtual register %u.", index);
+#endif
             // If the use count in the scoreboard reaches the use count for the node,
             // then this was its last use; the virtual register is now free.
             // Clear the use count & add to the free list.

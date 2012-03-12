@@ -1,3 +1,111 @@
+2012-03-12  Filip Pizlo  <fpizlo@apple.com>
+
+        All DFG nodes should have a mutable set of flags
+        https://bugs.webkit.org/show_bug.cgi?id=80779
+        <rdar://problem/11026218>
+
+        Reviewed by Gavin Barraclough.
+        
+        Got rid of NodeId, and placed all of the flags that distinguished NodeId
+        from NodeType into a separate Node::flags field. Combined what was previously
+        ArithNodeFlags into Node::flags.
+        
+        In the process of debugging, I found that the debug support in the virtual
+        register allocator was lacking, so I improved it. I also realized that the
+        virtual register allocator was assuming that the nodes in a basic block were
+        contiguous, which is no longer the case. So I fixed that. The fix also made
+        it natural to have more extreme assertions, so I added them. I suspect this
+        will make it easier to catch virtual register allocation bugs in the future.
+        
+        This is mostly performance neutral; if anything it looks like a slight
+        speed-up.
+        
+        This patch does leave some work for future refactorings; for example, Node::op
+        is unencapsulated. This was already the case, though now it feels even more
+        like it should be. I avoided doing that because this patch has already grown
+        way bigger than I wanted.
+        
+        Finally, this patch creates a DFGNode.cpp file and makes a slight effort to
+        move some unnecessarily inline stuff out of DFGNode.h.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGArithNodeFlagsInferencePhase.cpp:
+        (JSC::DFG::ArithNodeFlagsInferencePhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::makeDivSafe):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::endIndexForPureCSE):
+        (JSC::DFG::CSEPhase::pureCSE):
+        (JSC::DFG::CSEPhase::clobbersWorld):
+        (JSC::DFG::CSEPhase::impureCSE):
+        (JSC::DFG::CSEPhase::setReplacement):
+        (JSC::DFG::CSEPhase::eliminate):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        (JSC::DFG::CSEPhase::performBlockCSE):
+        (CSEPhase):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::opName):
+        (JSC::DFG::Graph::dump):
+        (DFG):
+        * dfg/DFGNode.cpp: Added.
+        (DFG):
+        (JSC::DFG::arithNodeFlagsAsString):
+        * dfg/DFGNode.h:
+        (DFG):
+        (JSC::DFG::nodeUsedAsNumber):
+        (JSC::DFG::nodeCanTruncateInteger):
+        (JSC::DFG::nodeCanIgnoreNegativeZero):
+        (JSC::DFG::nodeMayOverflow):
+        (JSC::DFG::nodeCanSpeculateInteger):
+        (JSC::DFG::defaultFlags):
+        (JSC::DFG::Node::Node):
+        (Node):
+        (JSC::DFG::Node::setOpAndDefaultFlags):
+        (JSC::DFG::Node::mustGenerate):
+        (JSC::DFG::Node::arithNodeFlags):
+        (JSC::DFG::Node::setArithNodeFlag):
+        (JSC::DFG::Node::mergeArithNodeFlags):
+        (JSC::DFG::Node::hasResult):
+        (JSC::DFG::Node::hasInt32Result):
+        (JSC::DFG::Node::hasNumberResult):
+        (JSC::DFG::Node::hasJSResult):
+        (JSC::DFG::Node::hasBooleanResult):
+        (JSC::DFG::Node::isJump):
+        (JSC::DFG::Node::isBranch):
+        (JSC::DFG::Node::isTerminal):
+        (JSC::DFG::Node::child1):
+        (JSC::DFG::Node::child2):
+        (JSC::DFG::Node::child3):
+        (JSC::DFG::Node::firstChild):
+        (JSC::DFG::Node::numChildren):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::vote):
+        (JSC::DFG::PredictionPropagationPhase::fixupNode):
+        * dfg/DFGScoreBoard.h:
+        (ScoreBoard):
+        (JSC::DFG::ScoreBoard::~ScoreBoard):
+        (JSC::DFG::ScoreBoard::assertClear):
+        (JSC::DFG::ScoreBoard::use):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::useChildren):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+
 2012-03-10  Filip Pizlo  <fpizlo@apple.com>
 
         LLInt should support JSVALUE64

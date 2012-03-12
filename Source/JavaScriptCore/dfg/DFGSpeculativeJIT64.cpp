@@ -1744,7 +1744,7 @@ void SpeculativeJIT::emitBranch(Node& node)
 
 void SpeculativeJIT::compile(Node& node)
 {
-    NodeType op = node.op;
+    NodeType op = static_cast<NodeType>(node.op);
 
     switch (op) {
     case JSConstant:
@@ -3550,6 +3550,10 @@ void SpeculativeJIT::compile(Node& node)
         
     case InlineStart:
     case Nop:
+        ASSERT_NOT_REACHED();
+        break;
+        
+    case LastNodeType:
         ASSERT_NOT_REACHED();
         break;
     }

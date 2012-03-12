@@ -105,7 +105,7 @@ private:
         if (!node.shouldGenerate())
             return;
         
-        NodeType op = node.op;
+        NodeType op = static_cast<NodeType>(node.op);
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("   %s @%u: ", Graph::opName(op), m_compileIndex);
@@ -468,6 +468,10 @@ private:
         case InlineStart:
         case Nop:
             break;
+            
+        case LastNodeType:
+            ASSERT_NOT_REACHED();
+            break;
 #else
         default:
             break;
@@ -516,7 +520,7 @@ private:
     
     void vote(Node& node, VariableAccessData::Ballot ballot)
     {
-        if (node.op & NodeHasVarArgs) {
+        if (node.flags & NodeHasVarArgs) {
             for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
                 vote(m_graph.m_varArgChildren[childIdx], ballot);
             return;
@@ -624,7 +628,7 @@ private:
         if (!node.shouldGenerate())
             return;
         
-        NodeType op = node.op;
+        NodeType op = static_cast<NodeType>(node.op);
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("   %s @%u: ", Graph::opName(op), m_compileIndex);
@@ -680,13 +684,16 @@ private:
                 node.op = GetFloat64ArrayLength;
             else
                 ASSERT_NOT_REACHED();
-            m_graph.deref(m_compileIndex); // No longer MustGenerate
+            // No longer MustGenerate
+            ASSERT(node.flags & NodeMustGenerate);
+            node.flags &= ~NodeMustGenerate;
+            m_graph.deref(m_compileIndex);
             break;
         }
         case GetIndexedPropertyStorage: {
             PredictedType basePrediction = m_graph[node.child2()].prediction();
             if (!(basePrediction & PredictInt32) && basePrediction) {
-                node.op = Nop;
+                node.setOpAndDefaultFlags(Nop);
                 m_graph.clearAndDerefChild1(node);
                 m_graph.clearAndDerefChild2(node);
                 m_graph.clearAndDerefChild3(node);

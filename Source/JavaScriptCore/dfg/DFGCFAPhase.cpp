@@ -87,7 +87,7 @@ private:
             if (!m_graph[nodeIndex].shouldGenerate())
                 continue;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("      %s @%u: ", Graph::opName(m_graph[nodeIndex].op), nodeIndex);
+            dataLog("      %s @%u: ", Graph::opName(static_cast<NodeType>(m_graph[nodeIndex].op)), nodeIndex);
             m_state.dump(WTF::dataFile());
             dataLog("\n");
 #endif

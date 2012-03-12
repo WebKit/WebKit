@@ -572,7 +572,7 @@ private:
         ASSERT(op != Phi);
         m_currentBlock->append(resultIndex);
 
-        if (op & NodeMustGenerate)
+        if (defaultFlags(op) & NodeMustGenerate)
             m_graph.ref(resultIndex);
         return resultIndex;
     }
@@ -585,7 +585,7 @@ private:
         else
             m_currentBlock->append(resultIndex);
 
-        if (op & NodeMustGenerate)
+        if (defaultFlags(op) & NodeMustGenerate)
             m_graph.ref(resultIndex);
         return resultIndex;
     }
@@ -596,7 +596,7 @@ private:
         ASSERT(op != Phi);
         m_currentBlock->append(resultIndex);
 
-        if (op & NodeMustGenerate)
+        if (defaultFlags(op) & NodeMustGenerate)
             m_graph.ref(resultIndex);
         return resultIndex;
     }
@@ -610,7 +610,7 @@ private:
         
         m_numPassedVarArgs = 0;
         
-        if (op & NodeMustGenerate)
+        if (defaultFlags(op) & NodeMustGenerate)
             m_graph.ref(resultIndex);
         return resultIndex;
     }
@@ -699,7 +699,7 @@ private:
             return nodeIndex;
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Making %s @%u safe at bc#%u because slow-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
+        dataLog("Making %s @%u safe at bc#%u because slow-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(static_cast<NodeType>(m_graph[nodeIndex].op)), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
 #endif
         
         switch (m_graph[nodeIndex].op) {
@@ -752,7 +752,7 @@ private:
             return nodeIndex;
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Making %s @%u safe at bc#%u because special fast-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
+        dataLog("Making %s @%u safe at bc#%u because special fast-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(static_cast<NodeType>(m_graph[nodeIndex].op)), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
 #endif
         
         // FIXME: It might be possible to make this more granular. The DFG certainly can
@@ -1267,7 +1267,7 @@ bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType o
     }
     
     if (argumentCountIncludingThis == 3) { // Math.min(x, y)
-        set(resultOperand, addToGraph(op, OpInfo(NodeUseBottom), get(registerOffset + argumentToOperand(1)), get(registerOffset + argumentToOperand(2))));
+        set(resultOperand, addToGraph(op, get(registerOffset + argumentToOperand(1)), get(registerOffset + argumentToOperand(2))));
         return true;
     }
     
@@ -1295,7 +1295,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         if (!MacroAssembler::supportsFloatingPointAbs())
             return false;
 
-        NodeIndex nodeIndex = addToGraph(ArithAbs, OpInfo(NodeUseBottom), get(registerOffset + argumentToOperand(1)));
+        NodeIndex nodeIndex = addToGraph(ArithAbs, get(registerOffset + argumentToOperand(1)));
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
             m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow);
         set(resultOperand, nodeIndex);
@@ -1562,11 +1562,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 if (valueOfInt32Constant(op2) & 0x1f)
                     result = addToGraph(BitURShift, op1, op2);
                 else
-                    result = makeSafe(addToGraph(UInt32ToNumber, OpInfo(NodeUseBottom), op1));
+                    result = makeSafe(addToGraph(UInt32ToNumber, op1));
             }  else {
                 // Cannot optimize at this stage; shift & potentially rebox as a double.
                 result = addToGraph(BitURShift, op1, op2);
-                result = makeSafe(addToGraph(UInt32ToNumber, OpInfo(NodeUseBottom), result));
+                result = makeSafe(addToGraph(UInt32ToNumber, result));
             }
             set(currentInstruction[1].u.operand, result);
             NEXT_OPCODE(op_urshift);
@@ -1577,7 +1577,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_pre_inc: {
             unsigned srcDst = currentInstruction[1].u.operand;
             NodeIndex op = get(srcDst);
-            set(srcDst, makeSafe(addToGraph(ArithAdd, OpInfo(NodeUseBottom), op, one())));
+            set(srcDst, makeSafe(addToGraph(ArithAdd, op, one())));
             NEXT_OPCODE(op_pre_inc);
         }
 
@@ -1587,14 +1587,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             ASSERT(result != srcDst); // Required for assumptions we make during OSR.
             NodeIndex op = get(srcDst);
             set(result, op);
-            set(srcDst, makeSafe(addToGraph(ArithAdd, OpInfo(NodeUseBottom), op, one())));
+            set(srcDst, makeSafe(addToGraph(ArithAdd, op, one())));
             NEXT_OPCODE(op_post_inc);
         }
 
         case op_pre_dec: {
             unsigned srcDst = currentInstruction[1].u.operand;
             NodeIndex op = get(srcDst);
-            set(srcDst, makeSafe(addToGraph(ArithSub, OpInfo(NodeUseBottom), op, one())));
+            set(srcDst, makeSafe(addToGraph(ArithSub, op, one())));
             NEXT_OPCODE(op_pre_dec);
         }
 
@@ -1603,7 +1603,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned srcDst = currentInstruction[2].u.operand;
             NodeIndex op = get(srcDst);
             set(result, op);
-            set(srcDst, makeSafe(addToGraph(ArithSub, OpInfo(NodeUseBottom), op, one())));
+            set(srcDst, makeSafe(addToGraph(ArithSub, op, one())));
             NEXT_OPCODE(op_post_dec);
         }
 
@@ -1613,22 +1613,22 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             if (m_graph[op1].hasNumberResult() && m_graph[op2].hasNumberResult())
-                set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithAdd, OpInfo(NodeUseBottom), op1, op2)));
+                set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithAdd, op1, op2)));
             else
-                set(currentInstruction[1].u.operand, makeSafe(addToGraph(ValueAdd, OpInfo(NodeUseBottom), op1, op2)));
+                set(currentInstruction[1].u.operand, makeSafe(addToGraph(ValueAdd, op1, op2)));
             NEXT_OPCODE(op_add);
         }
 
         case op_sub: {
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
-            set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithSub, OpInfo(NodeUseBottom), op1, op2)));
+            set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithSub, op1, op2)));
             NEXT_OPCODE(op_sub);
         }
 
         case op_negate: {
             NodeIndex op1 = get(currentInstruction[2].u.operand);
-            set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithNegate, OpInfo(NodeUseBottom), op1)));
+            set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithNegate, op1)));
             NEXT_OPCODE(op_negate);
         }
 
@@ -1636,21 +1636,21 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // Multiply requires that the inputs are not truncated, unfortunately.
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
-            set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithMul, OpInfo(NodeUseBottom), op1, op2)));
+            set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithMul, op1, op2)));
             NEXT_OPCODE(op_mul);
         }
 
         case op_mod: {
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
-            set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithMod, OpInfo(NodeUseBottom), op1, op2)));
+            set(currentInstruction[1].u.operand, makeSafe(addToGraph(ArithMod, op1, op2)));
             NEXT_OPCODE(op_mod);
         }
 
         case op_div: {
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
-            set(currentInstruction[1].u.operand, makeDivSafe(addToGraph(ArithDiv, OpInfo(NodeUseBottom), op1, op2)));
+            set(currentInstruction[1].u.operand, makeDivSafe(addToGraph(ArithDiv, op1, op2)));
             NEXT_OPCODE(op_div);
         }
 

@@ -70,7 +70,7 @@ private:
     
     unsigned endIndexForPureCSE()
     {
-        unsigned result = m_lastSeen[m_graph[m_compileIndex].op & NodeIdMask];
+        unsigned result = m_lastSeen[m_graph[m_compileIndex].op];
         if (result == UINT_MAX)
             result = 0;
         else
@@ -97,7 +97,7 @@ private:
             if (node.op != otherNode.op)
                 continue;
             
-            if (node.arithNodeFlagsForCompare() != otherNode.arithNodeFlagsForCompare())
+            if (node.arithNodeFlags() != otherNode.arithNodeFlags())
                 continue;
             
             NodeIndex otherChild = canonicalize(otherNode.child1());
@@ -147,9 +147,9 @@ private:
     bool clobbersWorld(NodeIndex nodeIndex)
     {
         Node& node = m_graph[nodeIndex];
-        if (node.op & NodeClobbersWorld)
+        if (node.flags & NodeClobbersWorld)
             return true;
-        if (!(node.op & NodeMightClobber))
+        if (!(node.flags & NodeMightClobber))
             return false;
         switch (node.op) {
         case ValueAdd:
@@ -182,7 +182,7 @@ private:
 
             Node& otherNode = m_graph[index];
             if (node.op == otherNode.op
-                && node.arithNodeFlagsForCompare() == otherNode.arithNodeFlagsForCompare()) {
+                && node.arithNodeFlags() == otherNode.arithNodeFlags()) {
                 NodeIndex otherChild = canonicalize(otherNode.child1());
                 if (otherChild == NoNode)
                     return index;
@@ -506,7 +506,7 @@ private:
 #endif
         
         Node& node = m_graph[m_compileIndex];
-        node.op = Phantom;
+        node.setOpAndDefaultFlags(Phantom);
         node.setRefCount(1);
         
         // At this point we will eliminate all references to this node.
@@ -522,14 +522,14 @@ private:
         Node& node = m_graph[m_compileIndex];
         ASSERT(node.refCount() == 1);
         ASSERT(node.mustGenerate());
-        node.op = Phantom;
+        node.setOpAndDefaultFlags(Phantom);
     }
     
     void performNodeCSE(Node& node)
     {
         bool shouldGenerate = node.shouldGenerate();
 
-        if (node.op & NodeHasVarArgs) {
+        if (node.flags & NodeHasVarArgs) {
             for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
                 performSubstitution(m_graph.m_varArgChildren[childIdx], shouldGenerate);
         } else {
@@ -542,7 +542,7 @@ private:
             return;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   %s @%u: ", Graph::opName(m_graph[m_compileIndex].op), m_compileIndex);
+        dataLog("   %s @%u: ", Graph::opName(static_cast<NodeType>(m_graph[m_compileIndex].op)), m_compileIndex);
 #endif
         
         // NOTE: there are some nodes that we deliberately don't CSE even though we
@@ -669,7 +669,7 @@ private:
             break;
         }
         
-        m_lastSeen[node.op & NodeIdMask] = m_indexInBlock;
+        m_lastSeen[node.op] = m_indexInBlock;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("\n");
 #endif
@@ -678,7 +678,7 @@ private:
     void performBlockCSE(BasicBlock& block)
     {
         m_currentBlock = &block;
-        for (unsigned i = 0; i < LastNodeId; ++i)
+        for (unsigned i = 0; i < LastNodeType; ++i)
             m_lastSeen[i] = UINT_MAX;
 
         for (m_indexInBlock = 0; m_indexInBlock < block.size(); ++m_indexInBlock) {
@@ -691,7 +691,7 @@ private:
     NodeIndex m_compileIndex;
     unsigned m_indexInBlock;
     Vector<NodeIndex, 16> m_replacements;
-    FixedArray<unsigned, LastNodeId> m_lastSeen;
+    FixedArray<unsigned, LastNodeType> m_lastSeen;
 };
 
 void performCSE(Graph& graph)

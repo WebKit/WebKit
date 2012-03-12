@@ -83,7 +83,7 @@ GPRReg SpeculativeJIT::fillStorage(NodeIndex nodeIndex)
 
 void SpeculativeJIT::useChildren(Node& node)
 {
-    if (node.op & NodeHasVarArgs) {
+    if (node.flags & NodeHasVarArgs) {
         for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
             use(m_jit.graph().m_varArgChildren[childIdx]);
     } else {

@@ -95,6 +95,7 @@ SOURCES += \
     dfg/DFGDriver.cpp \
     dfg/DFGGraph.cpp \
     dfg/DFGJITCompiler.cpp \
+    dfg/DFGNode.cpp \
     dfg/DFGOperations.cpp \
     dfg/DFGOSREntry.cpp \
     dfg/DFGOSRExit.cpp \

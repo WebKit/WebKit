@@ -48,38 +48,62 @@ public:
         dataLog("\n");
 #endif
         ScoreBoard scoreBoard(m_graph, m_graph.m_preservedVars);
-        for (size_t i = 0; i < m_graph.size(); ++i) {
-            Node& node = m_graph[i];
+        scoreBoard.assertClear();
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        bool needsNewLine = false;
+#endif
+        for (size_t blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
+            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+            for (size_t indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
+                NodeIndex nodeIndex = block->at(indexInBlock);
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                if (needsNewLine)
+                    dataLog("\n");
+                dataLog("   @%u:", nodeIndex);
+                needsNewLine = true;
+#endif
+                Node& node = m_graph[nodeIndex];
         
-            if (!node.shouldGenerate() || node.op == Phi || node.op == Flush)
-                continue;
+                if (!node.shouldGenerate() || node.op == Phi || node.op == Flush)
+                    continue;
             
-            // GetLocal nodes are effectively phi nodes in the graph, referencing
-            // results from prior blocks.
-            if (node.op != GetLocal) {
-                // First, call use on all of the current node's children, then
-                // allocate a VirtualRegister for this node. We do so in this
-                // order so that if a child is on its last use, and a
-                // VirtualRegister is freed, then it may be reused for node.
-                if (node.op & NodeHasVarArgs) {
-                    for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
-                        scoreBoard.use(m_graph.m_varArgChildren[childIdx]);
-                } else {
-                    scoreBoard.use(node.child1());
-                    scoreBoard.use(node.child2());
-                    scoreBoard.use(node.child3());
+                // GetLocal nodes are effectively phi nodes in the graph, referencing
+                // results from prior blocks.
+                if (node.op != GetLocal) {
+                    // First, call use on all of the current node's children, then
+                    // allocate a VirtualRegister for this node. We do so in this
+                    // order so that if a child is on its last use, and a
+                    // VirtualRegister is freed, then it may be reused for node.
+                    if (node.flags & NodeHasVarArgs) {
+                        for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
+                            scoreBoard.use(m_graph.m_varArgChildren[childIdx]);
+                    } else {
+                        scoreBoard.use(node.child1());
+                        scoreBoard.use(node.child2());
+                        scoreBoard.use(node.child3());
+                    }
                 }
+
+                if (!node.hasResult())
+                    continue;
+
+                VirtualRegister virtualRegister = scoreBoard.allocate();
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                dataLog(" Assigning virtual register %u to node %u.",
+                        virtualRegister, nodeIndex);
+#endif
+                node.setVirtualRegister(virtualRegister);
+                // 'mustGenerate' nodes have their useCount artificially elevated,
+                // call use now to account for this.
+                if (node.mustGenerate())
+                    scoreBoard.use(nodeIndex);
             }
-
-            if (!node.hasResult())
-                continue;
-
-            node.setVirtualRegister(scoreBoard.allocate());
-            // 'mustGenerate' nodes have their useCount artificially elevated,
-            // call use now to account for this.
-            if (node.mustGenerate())
-                scoreBoard.use(i);
+            scoreBoard.assertClear();
         }
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        if (needsNewLine)
+            dataLog("\n");
+#endif
 
         // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
         // for the function (and checked for on entry). Since we perform a new and

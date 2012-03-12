@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,36 +57,50 @@ struct StructureTransitionData {
     }
 };
 
-typedef unsigned ArithNodeFlags;
-#define NodeUseBottom      0x00
-#define NodeUsedAsNumber   0x01
-#define NodeNeedsNegZero   0x02
-#define NodeUsedAsMask     0x03
-#define NodeMayOverflow    0x04
-#define NodeMayNegZero     0x08
-#define NodeBehaviorMask   0x0c
+// Entries in the NodeType enum (below) are composed of an id, a result type (possibly none)
+// and some additional informative flags (must generate, is constant, etc).
+#define NodeResultMask       0xF
+#define NodeResultJS         0x1
+#define NodeResultNumber     0x2
+#define NodeResultInt32      0x3
+#define NodeResultBoolean    0x4
+#define NodeResultStorage    0x5
+#define NodeMustGenerate    0x10 // set on nodes that have side effects, and may not trivially be removed by DCE.
+#define NodeHasVarArgs      0x20
+#define NodeClobbersWorld   0x40
+#define NodeMightClobber    0x80
+#define NodeArithMask      0xF00
+#define NodeUseBottom      0x000
+#define NodeUsedAsNumber   0x100
+#define NodeNeedsNegZero   0x200
+#define NodeUsedAsMask     0x300
+#define NodeMayOverflow    0x400
+#define NodeMayNegZero     0x800
+#define NodeBehaviorMask   0xc00
 
-static inline bool nodeUsedAsNumber(ArithNodeFlags flags)
+typedef uint16_t NodeFlags;
+
+static inline bool nodeUsedAsNumber(NodeFlags flags)
 {
     return !!(flags & NodeUsedAsNumber);
 }
 
-static inline bool nodeCanTruncateInteger(ArithNodeFlags flags)
+static inline bool nodeCanTruncateInteger(NodeFlags flags)
 {
     return !nodeUsedAsNumber(flags);
 }
 
-static inline bool nodeCanIgnoreNegativeZero(ArithNodeFlags flags)
+static inline bool nodeCanIgnoreNegativeZero(NodeFlags flags)
 {
     return !(flags & NodeNeedsNegZero);
 }
 
-static inline bool nodeMayOverflow(ArithNodeFlags flags)
+static inline bool nodeMayOverflow(NodeFlags flags)
 {
     return !!(flags & NodeMayOverflow);
 }
 
-static inline bool nodeCanSpeculateInteger(ArithNodeFlags flags)
+static inline bool nodeCanSpeculateInteger(NodeFlags flags)
 {
     if (flags & NodeMayOverflow)
         return !nodeUsedAsNumber(flags);
@@ -97,67 +111,7 @@ static inline bool nodeCanSpeculateInteger(ArithNodeFlags flags)
     return true;
 }
 
-static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
-{
-    if (!flags)
-        return "<empty>";
-
-    static const int size = 64;
-    static char description[size];
-    BoundsCheckedPointer<char> ptr(description, size);
-    
-    bool hasPrinted = false;
-    
-    if (flags & NodeUsedAsNumber) {
-        ptr.strcat("UsedAsNum");
-        hasPrinted = true;
-    }
-    
-    if (flags & NodeNeedsNegZero) {
-        if (hasPrinted)
-            ptr.strcat("|");
-        ptr.strcat("NeedsNegZero");
-        hasPrinted = true;
-    }
-    
-    if (flags & NodeMayOverflow) {
-        if (hasPrinted)
-            ptr.strcat("|");
-        ptr.strcat("MayOverflow");
-        hasPrinted = true;
-    }
-    
-    if (flags & NodeMayNegZero) {
-        if (hasPrinted)
-            ptr.strcat("|");
-        ptr.strcat("MayNegZero");
-        hasPrinted = true;
-    }
-    
-    *ptr++ = 0;
-    
-    return description;
-}
-
-// Entries in the NodeType enum (below) are composed of an id, a result type (possibly none)
-// and some additional informative flags (must generate, is constant, etc).
-#define NodeIdMask           0xFFF
-#define NodeResultMask      0xF000
-#define NodeMustGenerate   0x10000 // set on nodes that have side effects, and may not trivially be removed by DCE.
-#define NodeIsConstant     0x20000
-#define NodeIsJump         0x40000
-#define NodeIsBranch       0x80000
-#define NodeIsTerminal    0x100000
-#define NodeHasVarArgs    0x200000
-#define NodeClobbersWorld 0x400000
-#define NodeMightClobber  0x800000
-
-// These values record the result type of the node (as checked by NodeResultMask, above), 0 for no result.
-#define NodeResultJS        0x1000
-#define NodeResultNumber    0x2000
-#define NodeResultInt32     0x3000
-#define NodeResultBoolean   0x4000
-#define NodeResultStorage   0x5000
+const char* arithNodeFlagsAsString(NodeFlags);
 
 // This macro defines a set of information about all known node types, used to populate NodeId, NodeType below.
 #define FOR_EACH_DFG_OP(macro) \
@@ -304,11 +258,11 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(NewFunctionExpression, NodeResultJS) \
     \
     /* Block terminals. */\
-    macro(Jump, NodeMustGenerate | NodeIsTerminal | NodeIsJump) \
-    macro(Branch, NodeMustGenerate | NodeIsTerminal | NodeIsBranch) \
-    macro(Return, NodeMustGenerate | NodeIsTerminal) \
-    macro(Throw, NodeMustGenerate | NodeIsTerminal) \
-    macro(ThrowReferenceError, NodeMustGenerate | NodeIsTerminal) \
+    macro(Jump, NodeMustGenerate) \
+    macro(Branch, NodeMustGenerate) \
+    macro(Return, NodeMustGenerate) \
+    macro(Throw, NodeMustGenerate) \
+    macro(ThrowReferenceError, NodeMustGenerate) \
     \
     /* This is a pseudo-terminal. It means that execution should fall out of DFG at */\
     /* this point, but execution does continue in the basic block - just in a */\
@@ -317,20 +271,25 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).
-enum NodeId {
-#define DFG_OP_ENUM(opcode, flags) opcode##_id,
+enum NodeType {
+#define DFG_OP_ENUM(opcode, flags) opcode,
     FOR_EACH_DFG_OP(DFG_OP_ENUM)
 #undef DFG_OP_ENUM
-    LastNodeId
+    LastNodeType
 };
 
-// Entries in this enum describe all Node types.
-// The enum value contains a monotonically increasing id, a result type, and additional flags.
-enum NodeType {
-#define DFG_OP_ENUM(opcode, flags) opcode = opcode##_id | (flags),
+// Specifies the default flags for each node.
+inline NodeFlags defaultFlags(NodeType op)
+{
+    switch (op) {
+#define DFG_OP_ENUM(opcode, flags) case opcode: return flags;
     FOR_EACH_DFG_OP(DFG_OP_ENUM)
 #undef DFG_OP_ENUM
-};
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
 
 // This type used in passing an immediate argument to Node constructor;
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
@@ -353,34 +312,32 @@ struct Node {
 
     // Construct a node with up to 3 children, no immediate value.
     Node(NodeType op, CodeOrigin codeOrigin, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
-        : op(op)
-        , codeOrigin(codeOrigin)
+        : codeOrigin(codeOrigin)
         , children(NodeReferenceBlob::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_prediction(PredictNone)
     {
-        ASSERT(!(op & NodeHasVarArgs));
-        ASSERT(!hasArithNodeFlags());
+        setOpAndDefaultFlags(op);
+        ASSERT(!(flags & NodeHasVarArgs));
     }
 
     // Construct a node with up to 3 children and an immediate value.
     Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
-        : op(op)
-        , codeOrigin(codeOrigin)
+        : codeOrigin(codeOrigin)
         , children(NodeReferenceBlob::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm.m_value)
         , m_prediction(PredictNone)
     {
-        ASSERT(!(op & NodeHasVarArgs));
+        setOpAndDefaultFlags(op);
+        ASSERT(!(flags & NodeHasVarArgs));
     }
 
     // Construct a node with up to 3 children and two immediate values.
     Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm1, OpInfo imm2, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
-        : op(op)
-        , codeOrigin(codeOrigin)
+        : codeOrigin(codeOrigin)
         , children(NodeReferenceBlob::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
@@ -388,13 +345,13 @@ struct Node {
         , m_opInfo2(safeCast<unsigned>(imm2.m_value))
         , m_prediction(PredictNone)
     {
-        ASSERT(!(op & NodeHasVarArgs));
+        setOpAndDefaultFlags(op);
+        ASSERT(!(flags & NodeHasVarArgs));
     }
     
     // Construct a node with a variable number of children and two immediate values.
     Node(VarArgTag, NodeType op, CodeOrigin codeOrigin, OpInfo imm1, OpInfo imm2, unsigned firstChild, unsigned numChildren)
-        : op(op)
-        , codeOrigin(codeOrigin)
+        : codeOrigin(codeOrigin)
         , children(NodeReferenceBlob::Variable, firstChild, numChildren)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
@@ -402,12 +359,19 @@ struct Node {
         , m_opInfo2(safeCast<unsigned>(imm2.m_value))
         , m_prediction(PredictNone)
     {
-        ASSERT(op & NodeHasVarArgs);
+        setOpAndDefaultFlags(op);
+        ASSERT(flags & NodeHasVarArgs);
+    }
+    
+    void setOpAndDefaultFlags(NodeType op)
+    {
+        this->op = op;
+        flags = defaultFlags(op);
     }
 
     bool mustGenerate()
     {
-        return op & NodeMustGenerate;
+        return flags & NodeMustGenerate;
     }
 
     bool isConstant()
@@ -546,44 +510,32 @@ struct Node {
         }
     }
     
-    ArithNodeFlags rawArithNodeFlags()
-    {
-        ASSERT(hasArithNodeFlags());
-        return m_opInfo;
-    }
-    
     // This corrects the arithmetic node flags, so that irrelevant bits are
     // ignored. In particular, anything other than ArithMul does not need
     // to know if it can speculate on negative zero.
-    ArithNodeFlags arithNodeFlags()
+    NodeFlags arithNodeFlags()
     {
-        ArithNodeFlags result = rawArithNodeFlags();
+        NodeFlags result = flags & NodeArithMask;
         if (op == ArithMul)
             return result;
         return result & ~NodeNeedsNegZero;
     }
     
-    ArithNodeFlags arithNodeFlagsForCompare()
+    void setArithNodeFlag(NodeFlags newFlags)
     {
-        if (hasArithNodeFlags())
-            return arithNodeFlags();
-        return 0;
+        ASSERT(!(newFlags & ~NodeArithMask));
+        
+        flags &= ~NodeArithMask;
+        flags |= newFlags;
     }
     
-    void setArithNodeFlag(ArithNodeFlags flags)
+    bool mergeArithNodeFlags(NodeFlags newFlags)
     {
-        ASSERT(hasArithNodeFlags());
-        m_opInfo = flags;
-    }
-    
-    bool mergeArithNodeFlags(ArithNodeFlags flags)
-    {
-        if (!hasArithNodeFlags())
+        ASSERT(!(newFlags & ~NodeArithMask));
+        newFlags = flags | newFlags;
+        if (newFlags == flags)
             return false;
-        ArithNodeFlags newFlags = m_opInfo | flags;
-        if (newFlags == m_opInfo)
-            return false;
-        m_opInfo = newFlags;
+        flags = newFlags;
         return true;
     }
     
@@ -639,42 +591,51 @@ struct Node {
 
     bool hasResult()
     {
-        return op & NodeResultMask;
+        return flags & NodeResultMask;
     }
 
     bool hasInt32Result()
     {
-        return (op & NodeResultMask) == NodeResultInt32;
+        return (flags & NodeResultMask) == NodeResultInt32;
     }
     
     bool hasNumberResult()
     {
-        return (op & NodeResultMask) == NodeResultNumber;
+        return (flags & NodeResultMask) == NodeResultNumber;
     }
     
     bool hasJSResult()
     {
-        return (op & NodeResultMask) == NodeResultJS;
+        return (flags & NodeResultMask) == NodeResultJS;
     }
     
     bool hasBooleanResult()
     {
-        return (op & NodeResultMask) == NodeResultBoolean;
+        return (flags & NodeResultMask) == NodeResultBoolean;
     }
 
     bool isJump()
     {
-        return op & NodeIsJump;
+        return op == Jump;
     }
 
     bool isBranch()
     {
-        return op & NodeIsBranch;
+        return op == Branch;
     }
 
     bool isTerminal()
     {
-        return op & NodeIsTerminal;
+        switch (op) {
+        case Jump:
+        case Branch:
+        case Return:
+        case Throw:
+        case ThrowReferenceError:
+            return true;
+        default:
+            return false;
+        }
     }
 
     unsigned takenBytecodeOffsetDuringParsing()
@@ -871,7 +832,7 @@ struct Node {
     
     NodeUse child1()
     {
-        ASSERT(!(op & NodeHasVarArgs));
+        ASSERT(!(flags & NodeHasVarArgs));
         return children.child1();
     }
     
@@ -885,25 +846,25 @@ struct Node {
 
     NodeUse child2()
     {
-        ASSERT(!(op & NodeHasVarArgs));
+        ASSERT(!(flags & NodeHasVarArgs));
         return children.child2();
     }
 
     NodeUse child3()
     {
-        ASSERT(!(op & NodeHasVarArgs));
+        ASSERT(!(flags & NodeHasVarArgs));
         return children.child3();
     }
     
     unsigned firstChild()
     {
-        ASSERT(op & NodeHasVarArgs);
+        ASSERT(flags & NodeHasVarArgs);
         return children.firstChild();
     }
     
     unsigned numChildren()
     {
-        ASSERT(op & NodeHasVarArgs);
+        ASSERT(flags & NodeHasVarArgs);
         return children.numChildren();
     }
     
@@ -1069,8 +1030,8 @@ struct Node {
         fprintf(out, ", @%u", child3().index());
     }
     
-    // This enum value describes the type of the node.
-    NodeType op;
+    uint16_t op; // real type is NodeType
+    NodeFlags flags;
     // Used to look up exception handling information (currently implemented as a bytecode index).
     CodeOrigin codeOrigin;
     // References to up to 3 children, or links to a variable length set of children.
