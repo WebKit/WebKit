@@ -62,7 +62,7 @@
 #include "RegExp.h"
 #endif
 
-#if PLATFORM(MAC)
+#if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 

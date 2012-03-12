@@ -1,3 +1,11 @@
+2012-03-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed prospective Qt/Mac build fix
+
+        * runtime/JSGlobalData.cpp: use #USE(CF) instead of PLATFORM(MAC) to determine
+        whether to include CoreFoundation headers, used for JIT configuration in JSGlobalData
+        constructor.
+
 2012-03-12  Filip Pizlo  <fpizlo@apple.com>
 
         All DFG nodes should have a mutable set of flags
