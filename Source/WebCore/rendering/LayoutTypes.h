@@ -150,6 +150,11 @@ inline LayoutUnit clampToLayoutUnit(double value)
     return clampToInteger(value);
 }
 
+inline bool isIntegerValue(const LayoutUnit)
+{
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // LayoutTypes_h
