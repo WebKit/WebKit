@@ -40,6 +40,9 @@ class DOMWindow;
 class IDBKeyRange;
 class Storage;
 class TrackBase;
+class SpeechRecognitionError;
+class SpeechRecognitionResult;
+class SpeechRecognitionResultList;
 
 class OptionsObject {
 public:
@@ -57,6 +60,7 @@ public:
     bool get(const String&, double&) const;
     bool get(const String&, String&) const;
     bool get(const String&, ScriptValue&) const;
+    bool get(const String&, short&) const;
     bool get(const String&, unsigned short&) const;
     bool get(const String&, unsigned&) const;
     bool get(const String&, unsigned long long&) const;
@@ -65,6 +69,11 @@ public:
     bool get(const String&, MessagePortArray&) const;
 #if ENABLE(VIDEO_TRACK)
     bool get(const String&, RefPtr<TrackBase>&) const;
+#endif
+#if ENABLE(SCRIPTED_SPEECH)
+    bool get(const String&, RefPtr<SpeechRecognitionError>&) const;
+    bool get(const String&, RefPtr<SpeechRecognitionResult>&) const;
+    bool get(const String&, RefPtr<SpeechRecognitionResultList>&) const;
 #endif
     bool get(const String&, HashSet<AtomicString>&) const;
 

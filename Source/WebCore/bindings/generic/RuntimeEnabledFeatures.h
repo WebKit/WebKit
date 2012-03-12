@@ -152,6 +152,7 @@ public:
     static bool scriptedSpeechEnabled() { return isScriptedSpeechEnabled; }
     static bool webkitSpeechRecognitionEnabled() { return isScriptedSpeechEnabled; }
     static bool webkitSpeechRecognitionErrorEnabled() { return isScriptedSpeechEnabled; }
+    static bool webkitSpeechRecognitionEventEnabled() { return isScriptedSpeechEnabled; }
     static bool webkitSpeechGrammarEnabled() { return isScriptedSpeechEnabled; }
     static bool webkitSpeechGrammarListEnabled() { return isScriptedSpeechEnabled; }
 #endif

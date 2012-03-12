@@ -185,6 +185,18 @@ namespace WebCore {
     \
     macro(webkitspeechchange) \
     \
+    macro(audiostart) \
+    macro(soundstart) \
+    macro(speechstart) \
+    macro(speechend) \
+    macro(soundend) \
+    macro(audioend) \
+    macro(result) \
+    macro(nomatch) \
+    macro(resultdeleted) \
+    macro(start) \
+    macro(end) \
+    \
     macro(webglcontextlost) \
     macro(webglcontextrestored) \
     macro(webglcontextcreationerror) \

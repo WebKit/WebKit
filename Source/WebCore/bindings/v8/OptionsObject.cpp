@@ -43,6 +43,15 @@
 #include "V8TextTrack.h"
 #endif
 
+#if ENABLE(SCRIPTED_SPEECH)
+#include "SpeechRecognitionError.h"
+#include "SpeechRecognitionResult.h"
+#include "SpeechRecognitionResultList.h"
+#include "V8SpeechRecognitionError.h"
+#include "V8SpeechRecognitionResult.h"
+#include "V8SpeechRecognitionResultList.h"
+#endif
+
 namespace WebCore {
 
 OptionsObject::OptionsObject()
@@ -165,6 +174,19 @@ bool OptionsObject::get(const String& key, unsigned short& value) const
     if (v8Int32.IsEmpty())
         return false;
     value = static_cast<unsigned short>(v8Int32->Value());
+    return true;
+}
+
+bool OptionsObject::get(const String& key, short& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    v8::Local<v8::Int32> v8Int32 = v8Value->ToInt32();
+    if (v8Int32.IsEmpty())
+        return false;
+    value = static_cast<short>(v8Int32->Value());
     return true;
 }
 
@@ -291,6 +313,60 @@ bool OptionsObject::get(const String& key, RefPtr<TrackBase>& value) const
     value = source;
     return true;
 }
+#endif
+
+#if ENABLE(SCRIPTED_SPEECH)
+bool OptionsObject::get(const String& key, RefPtr<SpeechRecognitionError>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    SpeechRecognitionError* source = 0;
+    if (v8Value->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+        v8::Handle<v8::Object> speechRecognitionError = V8DOMWrapper::lookupDOMWrapper(V8SpeechRecognitionError::GetTemplate(), wrapper);
+        if (!speechRecognitionError.IsEmpty())
+            source = V8SpeechRecognitionError::toNative(speechRecognitionError);
+    }
+    value = source;
+    return true;
+}
+
+bool OptionsObject::get(const String& key, RefPtr<SpeechRecognitionResult>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    SpeechRecognitionResult* source = 0;
+    if (v8Value->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+        v8::Handle<v8::Object> speechRecognitionResult = V8DOMWrapper::lookupDOMWrapper(V8SpeechRecognitionResult::GetTemplate(), wrapper);
+        if (!speechRecognitionResult.IsEmpty())
+            source = V8SpeechRecognitionResult::toNative(speechRecognitionResult);
+    }
+    value = source;
+    return true;
+}
+
+bool OptionsObject::get(const String& key, RefPtr<SpeechRecognitionResultList>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    SpeechRecognitionResultList* source = 0;
+    if (v8Value->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+        v8::Handle<v8::Object> speechRecognitionResultList = V8DOMWrapper::lookupDOMWrapper(V8SpeechRecognitionResultList::GetTemplate(), wrapper);
+        if (!speechRecognitionResultList.IsEmpty())
+            source = V8SpeechRecognitionResultList::toNative(speechRecognitionResultList);
+    }
+    value = source;
+    return true;
+}
+
 #endif
 
 } // namespace WebCore

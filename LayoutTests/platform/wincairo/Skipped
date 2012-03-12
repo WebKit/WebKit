@@ -1690,6 +1690,9 @@ gamepad/
 # Speech input is not yet enabled.
 fast/speech
 
+# Speech JavaScript API is not yet enabled.
+fast/events/constructors/speech-recognition-event-constructor.html
+
 # Media Stream API is not yet enabled.
 fast/dom/MediaStream
 
