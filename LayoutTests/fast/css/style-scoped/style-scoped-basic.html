@@ -63,8 +63,8 @@
                 p { color: green; }
                 div .bar { color: blue; }
                 #foo .baz { color: rgb(10, 10, 10); } /* should NOT apply! */
-                sib + * { color: rgb(20, 20, 20); } /* should NOT apply! */
-                sib ~ * { color: rgb(30, 30, 30); } /* should NOT apply! */
+                #sib + * { color: rgb(20, 20, 20); } /* should NOT apply! */
+                #sib ~ * { color: rgb(30, 30, 30); } /* should NOT apply! */
                 div div { color: rgb(40, 40, 40); } /* should NOT apply! */ 
             </style>
             <span id="S2">Text</span>
