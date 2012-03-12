@@ -7,37 +7,37 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS getDataResultType is "string"
 FAIL getDataResult should be http://test.com/. Was http://test.com.
 --- Test set/get 'URL' with multiple URLs:
-FAIL getDataResultType should be string. Was undefined.
-FAIL getDataResult should be http://test.com/ (of type string). Was undefined (of type undefined).
+PASS getDataResultType is "string"
+FAIL getDataResult should be http://test.com/. Was .
 --- Test set/get 'text/uri-list':
-FAIL getDataResultType should be string. Was undefined.
+PASS getDataResultType is "string"
 FAIL getDataResult should be http://test.com
-http://check.com (of type string). Was undefined (of type undefined).
+http://check.com. Was .
 --- Test set/get 'text/uri-list' using '\n':
-FAIL getDataResultType should be string. Was undefined.
+PASS getDataResultType is "string"
 FAIL getDataResult should be http://test.com
-http://check.com (of type string). Was undefined (of type undefined).
+http://check.com. Was .
 --- Test set 'text/uri-list', get 'URL':
-FAIL getDataResultType should be string. Was undefined.
-FAIL getDataResult should be http://test.com/ (of type string). Was undefined (of type undefined).
+PASS getDataResultType is "string"
+FAIL getDataResult should be http://test.com/. Was .
 --- Test set 'URL', get 'text/uri-list':
-FAIL getDataResultType should be string. Was undefined.
+PASS getDataResultType is "string"
 FAIL getDataResult should be http://test.com
-http://check.com (of type string). Was undefined (of type undefined).
+http://check.com. Was .
 --- Test set 'text/uri-list', get 'URL', using only '\n':
-FAIL getDataResultType should be string. Was undefined.
-FAIL getDataResult should be http://test.com/ (of type string). Was undefined (of type undefined).
+PASS getDataResultType is "string"
+FAIL getDataResult should be http://test.com/. Was .
 --- Test set/get 'text/uri-list' with comments:
-FAIL getDataResultType should be string. Was undefined.
+PASS getDataResultType is "string"
 FAIL getDataResult should be # comment
 http://test.com
-http://check.com (of type string). Was undefined (of type undefined).
+http://check.com. Was .
 --- Test set 'text/uri-list', get 'URL' with comments:
-FAIL getDataResultType should be string. Was undefined.
-FAIL getDataResult should be http://test.com/ (of type string). Was undefined (of type undefined).
+PASS getDataResultType is "string"
+FAIL getDataResult should be http://test.com/. Was .
 --- Test set 'text/uri-list', get 'URL' with only comments:
-FAIL getDataResultType should be string. Was undefined.
-FAIL getDataResult should be  (of type string). Was undefined (of type undefined).
+PASS getDataResultType is "string"
+PASS getDataResult is ""
 --- Test set/get 'text/plain':
 PASS getDataResultType is "string"
 PASS getDataResult is "Lorem ipsum dolor sit amet."
