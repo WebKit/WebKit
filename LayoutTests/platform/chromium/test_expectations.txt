@@ -3543,8 +3543,6 @@ BUGWK75111 : fast/workers/storage/use-same-database-in-page-and-workers.html = P
 BUGWK77136 DEBUG : fast/workers/storage/interrupt-database.html = PASS CRASH
 BUGWK77136 WIN RELEASE : fast/workers/storage/interrupt-database.html = PASS TIMEOUT
 
-BUGWK75110 WIN : fast/filesystem/op-restricted-chars.html = TEXT
-
 BUGWK75161 : media/video-poster-blocked-by-willsendrequest.html = TEXT
 
 BUGWK75367 : svg/css/composite-shadow-example.html = PASS TEXT
