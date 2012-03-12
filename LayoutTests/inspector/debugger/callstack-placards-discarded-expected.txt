@@ -7,13 +7,11 @@ Script source was shown.
 Set timer for test function.
 Received DebuggerPaused event.
 Function name: testFunction
-Listeners length: 2
 Script execution paused.
 Script execution resumed.
 Set timer for test function.
 Received DebuggerPaused event.
 Function name: testFunction
-Listeners length: 2
 Script execution paused.
 Script execution resumed.
 Debugger was disabled.

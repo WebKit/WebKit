@@ -10,7 +10,6 @@ function test()
 
     var linkifier;
     var link;
-    var rawSourceCode;
 
     function waitForScripts()
     {
@@ -34,11 +33,10 @@ function test()
     function debuggerTest()
     {
         linkifier = WebInspector.debuggerPresentationModel.createLinkifier();
-        rawSourceCode = WebInspector.debuggerPresentationModel._scriptMapping._rawSourceCodeForURL[WebInspector.inspectedPageURL];
 
-        var count1 = listenersCount(rawSourceCode);
+        var count1 = liveLocationsCount();
         link = linkifier.linkifyLocation(WebInspector.inspectedPageURL, 20, 0, "dummy-class");
-        var count2 = listenersCount(rawSourceCode);
+        var count2 = liveLocationsCount();
 
         InspectorTest.addResult("listeners added on raw source code: " + (count2 - count1));
         InspectorTest.addResult("original location: " + link.textContent);
@@ -58,23 +56,21 @@ function test()
     {
         InspectorTest.addResult("reverted location: " + link.textContent);
 
-        var count1 = listenersCount(rawSourceCode);
+        var count1 = liveLocationsCount();
         linkifier.reset();
-        var count2 = listenersCount(rawSourceCode);
+        var count2 = liveLocationsCount();
 
         InspectorTest.addResult("listeners removed from raw source code: " + (count1 - count2));
 
         InspectorTest.completeDebuggerTest();
     }
 
-    function listenersCount(object)
+    function liveLocationsCount()
     {
-        var listeners = object._listeners;
+        var locations = WebInspector.debuggerPresentationModel._scriptMapping._liveLocationsForScriptId;
         var count = 0;
-        for (var eventTypes in listeners) {
-            var listenersArray = listeners[eventTypes];
-            count += listenersArray.length;
-        }
+        for (id in locations)
+            count += locations[id].length;
         return count;
     }
 }

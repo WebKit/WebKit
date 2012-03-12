@@ -56,13 +56,6 @@ WebInspector.ScriptMapping.prototype = {
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber) {},
 
     /**
-     * @param {DebuggerAgent.Location} rawLocation
-     * @param {function(WebInspector.UILocation)} updateDelegate
-     * @return {WebInspector.RawSourceCode.LiveLocation}
-     */
-    createLiveLocation: function(rawLocation, updateDelegate) {},
-
-    /**
      * @return {Array.<WebInspector.UISourceCode>}
      */
     uiSourceCodeList: function() {}
@@ -83,6 +76,7 @@ WebInspector.MainScriptMapping = function()
     this._rawSourceCodeForUISourceCode = new Map();
     this._formatter = new WebInspector.ScriptFormatter();
     this._formatSource = false;
+    this._liveLocationsForScriptId = {};
 }
 
 WebInspector.MainScriptMapping.Events = {
@@ -115,12 +109,31 @@ WebInspector.MainScriptMapping.prototype = {
     /**
      * @param {DebuggerAgent.Location} rawLocation
      * @param {function(WebInspector.UILocation)} updateDelegate
-     * @return {WebInspector.RawSourceCode.LiveLocation}
+     * @return {WebInspector.LiveLocation}
      */
     createLiveLocation: function(rawLocation, updateDelegate)
     {
-        var rawSourceCode = this._rawSourceCodeForScriptId[rawLocation.scriptId];
-        return new WebInspector.RawSourceCode.LiveLocation(rawSourceCode, rawLocation, updateDelegate);
+        return new WebInspector.LiveLocation(this, rawLocation, updateDelegate);
+    },
+
+    _registerLiveLocation: function(scriptId, liveLocation)
+    {
+        this._liveLocationsForScriptId[scriptId].push(liveLocation)
+        liveLocation._update();
+    },
+
+    _unregisterLiveLocation: function(scriptId, liveLocation)
+    {
+        this._liveLocationsForScriptId[scriptId].remove(liveLocation);
+    },
+
+    _updateLiveLocations: function(scriptIds)
+    {
+        for (var i = 0; i < scriptIds.length; ++i) {
+            var liveLocations = this._liveLocationsForScriptId[scriptIds[i]];
+            for (var j = 0; j < liveLocations.length; ++j)
+                liveLocations[j]._update();
+        }
     },
 
     /**
@@ -142,6 +155,8 @@ WebInspector.MainScriptMapping.prototype = {
      */
     addScript: function(script)
     {
+        this._liveLocationsForScriptId[script.scriptId] = [];
+
         var resource = null;
         var isInlineScript = false;
         if (script.isInlineScript()) {
@@ -195,6 +210,11 @@ WebInspector.MainScriptMapping.prototype = {
         for (var i = 0; i < addedItems.length; ++i)
             this._rawSourceCodeForUISourceCode.put(addedItems[i], rawSourceCode);
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, { removedItems: removedItems, addedItems: addedItems });
+
+        var scriptIds = [];
+        for (var i = 0; i < rawSourceCode._scripts.length; ++i)
+            scriptIds.push(rawSourceCode._scripts[i].scriptId);
+        this._updateLiveLocations(scriptIds);
     },
 
     /**
@@ -241,7 +261,40 @@ WebInspector.MainScriptMapping.prototype = {
         this._rawSourceCodeForURL = {};
         this._rawSourceCodeForDocumentURL = {};
         this._rawSourceCodeForUISourceCode.clear();
+        this._liveLocationsForScriptId = {};
     }
 }
 
 WebInspector.MainScriptMapping.prototype.__proto__ = WebInspector.Object.prototype;
+
+/**
+ * @constructor
+ * @param {WebInspector.MainScriptMapping} scriptMapping
+ * @param {DebuggerAgent.Location} rawLocation
+ * @param {function(WebInspector.UILocation)} updateDelegate
+ */
+WebInspector.LiveLocation = function(scriptMapping, rawLocation, updateDelegate)
+{
+    this._scriptMapping = scriptMapping;
+    this._rawLocation = rawLocation;
+    this._updateDelegate = updateDelegate;
+}
+
+WebInspector.LiveLocation.prototype = {
+    init: function()
+    {
+        this._scriptMapping._registerLiveLocation(this._rawLocation.scriptId, this);
+    },
+
+    dispose: function()
+    {
+        this._scriptMapping._unregisterLiveLocation(this._rawLocation.scriptId, this);
+    },
+
+    _update: function()
+    {
+        var uiLocation = this._scriptMapping.rawLocationToUILocation(this._rawLocation);
+        if (uiLocation)
+            this._updateDelegate(uiLocation);
+    }
+}

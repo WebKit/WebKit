@@ -15,18 +15,16 @@ var test = function()
         function testCallStackPlacardsDiscarded(next)
         {
             WebInspector.debuggerPresentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, didPause, this);
-            var previousListenerLength = undefined;
+            var previousCount = undefined;
             function didPause(event)
             {
                 InspectorTest.addResult("Received DebuggerPaused event.");
                 var callFrame = event.data.callFrames[0];
                 InspectorTest.addResult("Function name: " + callFrame._callFrame.functionName);
-                var rawSourceCode = WebInspector.debuggerPresentationModel._scriptMapping._rawSourceCodeForScriptId[callFrame._callFrame.location.scriptId];
-                var listeners = rawSourceCode._listeners[WebInspector.RawSourceCode.Events.UISourceCodeListChanged];
-                InspectorTest.addResult("Listeners length: " + listeners.length);
-                if (previousListenerLength !== undefined && listeners.length !== previousListenerLength)
-                    InspectorTest.addResult("FAILED: RawSourceCode listeners count has changed!");
-                previousListenerLength = listeners.length;
+                var count = liveLocationsCount();
+                if (previousCount !== undefined && count !== previousCount)
+                    InspectorTest.addResult("FAILED: Live locations count has changed!");
+                previousCount = count;
             }
 
             InspectorTest.showScriptSource("callstack-placards-discarded.html", didShowScriptSource);
@@ -53,6 +51,15 @@ var test = function()
             }
         },
     ]);
+
+    function liveLocationsCount()
+    {
+        var locations = WebInspector.debuggerPresentationModel._scriptMapping._liveLocationsForScriptId;
+        var count = 0;
+        for (id in locations)
+            count += locations[id].length;
+        return count;
+    }
 }
 
 </script>

@@ -108,11 +108,6 @@ WebInspector.RawSourceCode.prototype = {
         return [];
     },
 
-    createLiveLocation: function(rawLocation, updateDelegate)
-    {
-        return new WebInspector.RawSourceCode.LiveLocation(this, rawLocation, updateDelegate);
-    },
-
     /**
      * @param {boolean} formatted
      */
@@ -282,39 +277,6 @@ WebInspector.RawSourceCode.prototype = {
 }
 
 WebInspector.RawSourceCode.prototype.__proto__ = WebInspector.Object.prototype;
-
-/**
- * @constructor
- * @param {WebInspector.RawSourceCode} rawSourceCode
- * @param {DebuggerAgent.Location} rawLocation
- * @param {function(WebInspector.UILocation)} updateDelegate
- */
-WebInspector.RawSourceCode.LiveLocation = function(rawSourceCode, rawLocation, updateDelegate)
-{
-    this._rawSourceCode = rawSourceCode;
-    this._rawLocation = rawLocation;
-    this._updateDelegate = updateDelegate;
-}
-
-WebInspector.RawSourceCode.LiveLocation.prototype = {
-    init: function()
-    {
-        this._rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeListChanged, this._update, this);
-        this._update();
-    },
-
-    dispose: function()
-    {
-        this._rawSourceCode.removeEventListener(WebInspector.RawSourceCode.Events.UISourceCodeListChanged, this._update, this);
-    },
-
-    _update: function()
-    {
-        var uiLocation = this._rawSourceCode.rawLocationToUILocation(this._rawLocation);
-        if (uiLocation)
-            this._updateDelegate(uiLocation);
-    }
-}
 
 /**
  * @interface

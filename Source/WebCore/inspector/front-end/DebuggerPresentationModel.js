@@ -88,7 +88,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     createPlacard: function(callFrame)
     {
-        return new WebInspector.DebuggerPresentationModel.CallFramePlacard(callFrame, this._scriptMapping);
+        return new WebInspector.DebuggerPresentationModel.CallFramePlacard(callFrame, this);
     },
 
     /**
@@ -114,7 +114,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     /**
      * @param {DebuggerAgent.Location} rawLocation
      * @param {function(WebInspector.UILocation)} updateDelegate
-     * @return {WebInspector.RawSourceCode.LiveLocation}
+     * @return {WebInspector.LiveLocation}
      */
     createLiveLocation: function(rawLocation, updateDelegate)
     {
@@ -482,7 +482,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         for (var i = 0; i < callFrames.length; ++i) {
             var callFrame = callFrames[i];
             if (WebInspector.debuggerModel.scriptForSourceID(callFrame.location.scriptId))
-                this._presentationCallFrames.push(new WebInspector.PresentationCallFrame(callFrame, i, this._scriptMapping));
+                this._presentationCallFrames.push(new WebInspector.PresentationCallFrame(callFrame, i, this));
         }
         var details = WebInspector.debuggerModel.debuggerPausedDetails;
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, { callFrames: this._presentationCallFrames, details: details });
@@ -630,13 +630,13 @@ WebInspector.PresentationConsoleMessage = function(uiSourceCode, lineNumber, ori
  * @constructor
  * @param {DebuggerAgent.CallFrame} callFrame
  * @param {number} index
- * @param {WebInspector.MainScriptMapping} scriptMapping
+ * @param {WebInspector.DebuggerPresentationModel} model
  */
-WebInspector.PresentationCallFrame = function(callFrame, index, scriptMapping)
+WebInspector.PresentationCallFrame = function(callFrame, index, model)
 {
     this._callFrame = callFrame;
     this._index = index;
-    this._scriptMapping = scriptMapping;
+    this._model = model;
 }
 
 WebInspector.PresentationCallFrame.prototype = {
@@ -709,7 +709,7 @@ WebInspector.PresentationCallFrame.prototype = {
             callback(uiLocation);
             liveLocation.dispose();
         }
-        var liveLocation = this._scriptMapping.createLiveLocation(this._callFrame.location, locationUpdated.bind(this));
+        var liveLocation = this._model.createLiveLocation(this._callFrame.location, locationUpdated.bind(this));
         liveLocation.init();
     }
 }
@@ -718,12 +718,12 @@ WebInspector.PresentationCallFrame.prototype = {
  * @constructor
  * @extends {WebInspector.Placard}
  * @param {WebInspector.PresentationCallFrame} callFrame
- * @param {WebInspector.MainScriptMapping} scriptMapping
+ * @param {WebInspector.DebuggerPresentationModel} model
  */
-WebInspector.DebuggerPresentationModel.CallFramePlacard = function(callFrame, scriptMapping)
+WebInspector.DebuggerPresentationModel.CallFramePlacard = function(callFrame, model)
 {
     WebInspector.Placard.call(this, callFrame._callFrame.functionName || WebInspector.UIString("(anonymous function)"), "");
-    this._liveLocation = scriptMapping.createLiveLocation(callFrame._callFrame.location, this._update.bind(this));
+    this._liveLocation = model.createLiveLocation(callFrame._callFrame.location, this._update.bind(this));
     this._liveLocation.init();
 }
 
