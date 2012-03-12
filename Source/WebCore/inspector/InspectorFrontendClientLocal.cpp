@@ -211,7 +211,7 @@ void InspectorFrontendClientLocal::moveWindowBy(float x, float y)
 
 void InspectorFrontendClientLocal::setAttachedWindow(bool attached)
 {
-    evaluateAsBoolean(String::format("InspectorFrontendAPI.setAttachedWindow(%s)", attached ? "true" : "false"));
+    evaluateOnLoad(String::format("[\"setAttachedWindow\", %s]", attached ? "true" : "false"));
 }
 
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
