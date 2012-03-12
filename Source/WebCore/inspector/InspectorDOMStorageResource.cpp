@@ -42,6 +42,7 @@
 #include "InspectorValues.h"
 #include "SecurityOrigin.h"
 #include "Storage.h"
+#include "StorageArea.h"
 #include "StorageEvent.h"
 
 using namespace JSC;
@@ -50,9 +51,9 @@ namespace WebCore {
 
 int InspectorDOMStorageResource::s_nextUnusedId = 1;
 
-InspectorDOMStorageResource::InspectorDOMStorageResource(Storage* domStorage, bool isLocalStorage, Frame* frame)
+InspectorDOMStorageResource::InspectorDOMStorageResource(StorageArea* storageArea, bool isLocalStorage, Frame* frame)
     :  EventListener(InspectorDOMStorageResourceType)
-    , m_domStorage(domStorage)
+    , m_storageArea(storageArea)
     , m_isLocalStorage(isLocalStorage)
     , m_frame(frame)
     , m_frontend(0)

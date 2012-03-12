@@ -111,17 +111,21 @@ void InspectorDOMStorageAgent::disable(ErrorString*)
 void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>& entries)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
-    if (storageResource) {
-        storageResource->startReportingChangesToFrontend();
-        Storage* domStorage = storageResource->domStorage();
-        for (unsigned i = 0; i < domStorage->length(); ++i) {
-            String name(domStorage->key(i));
-            String value(domStorage->getItem(name));
-            RefPtr<InspectorArray> entry = InspectorArray::create();
-            entry->pushString(name);
-            entry->pushString(value);
-            entries->pushArray(entry);
-        }
+    if (!storageResource)
+        return;
+    Frame* frame = storageResource->frame();
+    if (!frame)
+        return;
+        
+    storageResource->startReportingChangesToFrontend();
+    StorageArea* storageArea = storageResource->storageArea();
+    for (unsigned i = 0; i < storageArea->length(frame); ++i) {
+        String name(storageArea->key(i, frame));
+        String value(storageArea->getItem(name, frame));
+        RefPtr<InspectorArray> entry = InspectorArray::create();
+        entry->pushString(name);
+        entry->pushString(value);
+        entries->pushArray(entry);
     }
 }
 
@@ -130,7 +134,7 @@ void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString*, int storageId, co
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
         ExceptionCode exception = 0;
-        storageResource->domStorage()->setItem(key, value, exception);
+        storageResource->storageArea()->setItem(key, value, exception, storageResource->frame());
         *success = !exception;
     }
 }
@@ -139,7 +143,7 @@ void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString*, int storageId,
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
-        storageResource->domStorage()->removeItem(key);
+        storageResource->storageArea()->removeItem(key, storageResource->frame());
         *success = true;
     }
 }
@@ -174,8 +178,7 @@ void InspectorDOMStorageAgent::didUseDOMStorage(StorageArea* storageArea, bool i
             return;
     }
 
-    RefPtr<Storage> domStorage = Storage::create(frame, storageArea);
-    RefPtr<InspectorDOMStorageResource> resource = InspectorDOMStorageResource::create(domStorage.get(), isLocalStorage, frame);
+    RefPtr<InspectorDOMStorageResource> resource = InspectorDOMStorageResource::create(storageArea, isLocalStorage, frame);
 
     m_resources.set(resource->id(), resource);
 
