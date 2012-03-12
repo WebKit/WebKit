@@ -243,6 +243,8 @@ bool CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::occluded(const LayerT
     ASSERT(!m_stack.isEmpty());
     if (m_stack.isEmpty())
         return false;
+    if (contentRect.isEmpty())
+        return true;
 
     ASSERT(layer->targetRenderSurface() == m_stack.last().surface);
 
@@ -283,6 +285,8 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::unoccludedContentR
 {
     ASSERT(!m_stack.isEmpty());
     if (m_stack.isEmpty())
+        return contentRect;
+    if (contentRect.isEmpty())
         return contentRect;
 
     // We want to return a rect that contains all the visible parts of |contentRect| in both screen space and in the target surface.
