@@ -748,6 +748,7 @@
                                 # functions defined only in !WEBKIT_IMPLEMENTATION.
                                 'tests/AssociatedURLLoaderTest.cpp',
                                 'tests/FrameTestHelpers.cpp',
+                                'tests/LevelDBTest.cpp',
                                 'tests/PopupMenuTest.cpp',
                                 'tests/RenderTableCellTest.cpp',
                                 'tests/WebFrameTest.cpp',
