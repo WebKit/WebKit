@@ -3426,7 +3426,7 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
                                        GC3Dsizei width, GC3Dsizei height, GC3Dint border,
                                        GC3Denum format, GC3Denum type, ArrayBufferView* pixels, ExceptionCode& ec)
 {
-    if (isContextLost() || !validateTexFuncData("texImage2D", width, height, format, type, pixels))
+    if (isContextLost() || !validateTexFuncData("texImage2D", width, height, format, type, pixels, NullAllowed))
         return;
     void* data = pixels ? pixels->baseAddress() : 0;
     Vector<uint8_t> tempData;
@@ -3639,9 +3639,9 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
                                           GC3Dsizei width, GC3Dsizei height,
                                           GC3Denum format, GC3Denum type, ArrayBufferView* pixels, ExceptionCode& ec)
 {
-    if (isContextLost() || !validateTexFuncData("texSubImage2D", width, height, format, type, pixels))
+    if (isContextLost() || !validateTexFuncData("texSubImage2D", width, height, format, type, pixels, NullNotAllowed))
         return;
-    void* data = pixels ? pixels->baseAddress() : 0;
+    void* data = pixels->baseAddress();
     Vector<uint8_t> tempData;
     bool changeUnpackAlignment = false;
     if (data && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
@@ -4715,10 +4715,15 @@ bool WebGLRenderingContext::validateTexFuncParameters(const char* functionName,
 bool WebGLRenderingContext::validateTexFuncData(const char* functionName,
                                                 GC3Dsizei width, GC3Dsizei height,
                                                 GC3Denum format, GC3Denum type,
-                                                ArrayBufferView* pixels)
+                                                ArrayBufferView* pixels,
+                                                NullDisposition disposition)
 {
-    if (!pixels)
-        return true;
+    if (!pixels) {
+        if (disposition == NullAllowed)
+            return true;
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no pixels");
+        return false;
+    }
 
     if (!validateTexFuncFormatAndType(functionName, format, type))
         return false;

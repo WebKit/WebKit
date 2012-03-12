@@ -587,13 +587,19 @@ public:
                                    GC3Dsizei width, GC3Dsizei height, GC3Dint border,
                                    GC3Denum format, GC3Denum type);
 
+    enum NullDisposition {
+        NullAllowed,
+        NullNotAllowed
+    };
+
     // Helper function to validate that the given ArrayBufferView
     // is of the correct type and contains enough data for the texImage call.
     // Generates GL error and returns false if parameters are invalid.
     bool validateTexFuncData(const char* functionName,
                              GC3Dsizei width, GC3Dsizei height,
                              GC3Denum format, GC3Denum type,
-                             ArrayBufferView* pixels);
+                             ArrayBufferView* pixels,
+                             NullDisposition);
 
     // Helper function to validate compressed texture data is correct size
     // for the given format and dimensions.

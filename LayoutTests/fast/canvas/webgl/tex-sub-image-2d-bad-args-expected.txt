@@ -4,6 +4,7 @@ Tests texSubImage2D with bad arguments
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 PASS getError was expected value: NO_ERROR : Setup should succeed
+PASS getError was expected value: INVALID_VALUE : null argument
 PASS getError was expected value: INVALID_VALUE : y + height > texture height
 PASS getError was expected value: INVALID_VALUE : x + width > texture width
 PASS getError was expected value: INVALID_VALUE : negative x
