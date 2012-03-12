@@ -594,12 +594,12 @@ WebInspector.ConsoleMessageImpl.prototype = {
         return this._messageText;
     },
 
-    get location()
+    location: function()
     {
         // FIXME(62725): stack trace line/column numbers are one-based.
         var lineNumber = this.stackTrace ? this.stackTrace[0].lineNumber - 1 : this.line - 1;
         var columnNumber = this.stackTrace ? this.stackTrace[0].columnNumber - 1 : 0;
-        return new WebInspector.DebuggerModel.Location(lineNumber, columnNumber);
+        return WebInspector.debuggerModel.createRawLocationByURL(this.url, lineNumber, columnNumber);
     },
 
     isEqual: function(msg)

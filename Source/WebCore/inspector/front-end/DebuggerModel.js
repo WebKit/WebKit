@@ -61,11 +61,13 @@ WebInspector.DebuggerPausedDetails = function(callFrames, reason, auxData)
 /**
  * @constructor
  * @extends {DebuggerAgent.Location}
+ * @param {WebInspector.Script} script
  * @param {number} lineNumber
  * @param {number} columnNumber
  */
-WebInspector.DebuggerModel.Location = function(lineNumber, columnNumber)
+WebInspector.DebuggerModel.Location = function(script, lineNumber, columnNumber)
 {
+    this.scriptId = script.scriptId;
     this.lineNumber = lineNumber;
     this.columnNumber = columnNumber;
 }
@@ -242,28 +244,6 @@ WebInspector.DebuggerModel.prototype = {
     },
 
     /**
-     * @param {string} url
-     */
-    scriptsForURL: function(url)
-    {
-        return this.queryScripts(function(s) { return s.sourceURL === url; });
-    },
-
-    /**
-     * @param {function(WebInspector.Script):boolean} filter
-     */
-    queryScripts: function(filter)
-    {
-        var scripts = [];
-        for (var scriptId in this._scripts) {
-            var script = this._scripts[scriptId];
-            if (filter(script))
-                scripts.push(script);
-        }
-        return scripts;
-    },
-
-    /**
      * @param {DebuggerAgent.ScriptId} scriptId
      * @param {string} newSource
      * @param {function(?Protocol.Error)} callback
@@ -288,7 +268,7 @@ WebInspector.DebuggerModel.prototype = {
     },
 
     /**
-     * @return {Array.<DebuggerAgent.CallFrame>} 
+     * @return {Array.<DebuggerAgent.CallFrame>}
      */
     get callFrames()
     {
@@ -296,7 +276,7 @@ WebInspector.DebuggerModel.prototype = {
     },
 
     /**
-     * @return {?WebInspector.DebuggerPausedDetails} 
+     * @return {?WebInspector.DebuggerPausedDetails}
      */
     get debuggerPausedDetails()
     {
@@ -347,6 +327,44 @@ WebInspector.DebuggerModel.prototype = {
     {
         var script = new WebInspector.Script("", sourceURL, startingLine, 0, 0, 0, false);
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, script);
+    },
+
+    /**
+     * @param {WebInspector.Script} script
+     * @param {number} lineNumber
+     * @param {number} columnNumber
+     * @return {DebuggerAgent.Location}
+     */
+    createRawLocation: function(script, lineNumber, columnNumber)
+    {
+        if (script.sourceURL)
+            return this.createRawLocationByURL(script.sourceURL, lineNumber, columnNumber)
+        return new WebInspector.DebuggerModel.Location(script, lineNumber, columnNumber);
+    },
+
+    /**
+     * @param {string} sourceURL
+     * @param {number} lineNumber
+     * @param {number} columnNumber
+     * @return {DebuggerAgent.Location}
+     */
+    createRawLocationByURL: function(sourceURL, lineNumber, columnNumber)
+    {
+        var closestScript = null;
+        for (var scriptId in this._scripts) {
+            var script = this._scripts[scriptId];
+            if (script.sourceURL !== sourceURL)
+                continue;
+            if (!closestScript)
+                closestScript = script;
+            if (script.lineOffset > lineNumber || (script.lineOffset === lineNumber && script.columnOffset > columnNumber))
+                continue;
+            if (script.endLine < lineNumber || (script.endLine === lineNumber && script.endColumn <= columnNumber))
+                continue;
+            closestScript = script;
+            break;
+        }
+        return closestScript ? new WebInspector.DebuggerModel.Location(closestScript, lineNumber, columnNumber) : null;
     }
 }
 

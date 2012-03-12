@@ -46,7 +46,7 @@ WebInspector.CompilerSourceMapping.prototype = {
     /**
      * @param {string} sourceURL
      * @param {number} lineNumber
-     * @return {DebuggerAgent.Location}
+     * @return {Array.<number>}
      */
     sourceLocationToCompiledLocation: function(sourceURL, lineNumber) { },
 
@@ -124,7 +124,7 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
         for ( ; lineNumber < mappings.length; ++lineNumber) {
             var mapping = mappings[lineNumber];
             if (mapping)
-                return { lineNumber: mapping[0], columnNumber: mapping[1] };
+                return [mapping[0], mapping[1]];
         }
     },
 

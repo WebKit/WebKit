@@ -24,7 +24,7 @@ function test()
     function step3()
     {
         var url = "http://127.0.0.1:8000/inspector/search/resources/search-concatenated.html";
-        var scripts = WebInspector.debuggerModel.scriptsForURL(url);
+        var scripts = InspectorTest.queryScripts(function(s) { return s.sourceURL === url; });
         var contentProvider = new WebInspector.ConcatenatedScriptsContentProvider(scripts);
         InspectorTest.addResult(url);
         contentProvider.searchInContent(text, false, false, step4);

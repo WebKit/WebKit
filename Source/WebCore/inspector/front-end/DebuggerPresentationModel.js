@@ -286,18 +286,18 @@ WebInspector.DebuggerPresentationModel.prototype = {
         if (!message.url || !message.isErrorOrWarning())
             return;
 
-        var script = this._scriptForURLAndLocation(message.url, message.location);
-        if (script)
-            this._addConsoleMessageToScript(message, script);
+        var rawLocation = message.location();
+        if (rawLocation)
+            this._addConsoleMessageToScript(message, rawLocation);
         else
             this._addPendingConsoleMessage(message);
     },
 
     /**
      * @param {WebInspector.ConsoleMessage} message
-     * @param {WebInspector.Script} script
+     * @param {DebuggerAgent.Location} rawLocation
      */
-    _addConsoleMessageToScript: function(message, script)
+    _addConsoleMessageToScript: function(message, rawLocation)
     {
         function updateLocation(uiLocation)
         {
@@ -305,8 +305,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
             this._presentationConsoleMessages.push(presentationMessage);
             this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleMessageAdded, presentationMessage);
         }
-        var rawLocation = new WebInspector.DebuggerModel.Location(message.location.lineNumber, message.location.columnNumber);
-        rawLocation.scriptId = script.scriptId;
         var liveLocation = this.createLiveLocation(rawLocation, updateLocation.bind(this));
         liveLocation.init();
         this._consoleMessageLiveLocations.push(liveLocation);
@@ -334,8 +332,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
         var pendingMessages = [];
         for (var i = 0; i < messages.length; i++) {
             var message = messages[i];
-            if (script === this._scriptForURLAndLocation(message.url, message.location))
-                this._addConsoleMessageToScript(messages, script);
+            var rawLocation = message.location();
+            if (script.scriptId === rawLocation.scriptId)
+                this._addConsoleMessageToScript(messages, rawLocation);
             else
                 pendingMessages.push(message);
         }
@@ -579,25 +578,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         }
     },
 
-    /**
-     * @param {string} url
-     * @param {DebuggerAgent.Location} rawLocation
-     * @return {WebInspector.Script}
-     */
-    _scriptForURLAndLocation: function(url, rawLocation)
-    {
-        var scripts = WebInspector.debuggerModel.scriptsForURL(url);
-        for (var i = 0; i < scripts.length; ++i) {
-            var script = scripts[i];
-            if (script.lineOffset > rawLocation.lineNumber || (script.lineOffset === rawLocation.lineNumber && script.columnOffset > rawLocation.columnNumber))
-                continue;
-            if (script.endLine < rawLocation.lineNumber || (script.endLine === rawLocation.lineNumber && script.endColumn <= rawLocation.columnNumber))
-                continue;
-            return script;
-        }
-        return null;
-    },
-
     _debuggerReset: function()
     {
         this._scriptMapping.reset();
@@ -788,11 +768,9 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
      */
     _uiSourceCodeForResource: function(resource)
     {
-        var script = WebInspector.debuggerModel.scriptsForURL(resource.url)[0];
-        if (!script)
+        var rawLocation = WebInspector.debuggerModel.createRawLocationByURL(resource.url, 0, 0);
+        if (!rawLocation)
             return null;
-        var rawLocation = new WebInspector.DebuggerModel.Location(0, 0);
-        rawLocation.scriptId = script.scriptId;
         var uiLocation = this._presentationModel.rawLocationToUILocation(rawLocation);
         return uiLocation ? uiLocation.uiSourceCode : null;
     },
@@ -887,16 +865,14 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
      */
     linkifyLocation: function(sourceURL, lineNumber, columnNumber, classes)
     {
-        var rawLocation = new WebInspector.DebuggerModel.Location(lineNumber, columnNumber || 0);
-        var script = this._model._scriptForURLAndLocation(sourceURL, rawLocation);
-        if (!script)
+        var rawLocation = WebInspector.debuggerModel.createRawLocationByURL(sourceURL, lineNumber, columnNumber || 0);
+        if (!rawLocation)
             return WebInspector.linkifyResourceAsNode(sourceURL, lineNumber, classes);
-        rawLocation.scriptId = script.scriptId;
         return this.linkifyRawLocation(rawLocation, classes);
     },
 
     /**
-     * @param {WebInspector.DebuggerModel.Location} rawLocation
+     * @param {DebuggerAgent.Location} rawLocation
      * @param {string=} classes
      */
     linkifyRawLocation: function(rawLocation, classes)

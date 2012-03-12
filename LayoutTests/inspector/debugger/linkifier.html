@@ -26,7 +26,7 @@ function test()
             }
         }
 
-        WebInspector.debuggerModel.queryScripts(function(script) { scriptAdded({ data: script }) });
+        InspectorTest.queryScripts(function(script) { scriptAdded({ data: script }) });
         WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, scriptAdded);
     }
 

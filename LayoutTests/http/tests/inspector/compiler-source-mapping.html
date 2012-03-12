@@ -17,8 +17,8 @@ function test()
     function checkReverseMapping(compiledLineNumber, compiledColumnNumber, sourceURL, sourceLineNumber, mapping)
     {
         var compiledLocation = mapping.sourceLocationToCompiledLocation(sourceURL, sourceLineNumber);
-        InspectorTest.assertEquals(compiledLineNumber, compiledLocation.lineNumber);
-        InspectorTest.assertEquals(compiledColumnNumber, compiledLocation.columnNumber);
+        InspectorTest.assertEquals(compiledLineNumber, compiledLocation[0]);
+        InspectorTest.assertEquals(compiledColumnNumber, compiledLocation[1]);
     }
 
     InspectorTest.runTestSuite([

@@ -11,8 +11,9 @@ function test()
         var lineCount = source.lineEndings().length;
         var endLine = startLine + lineCount - 1;
         var endColumn = lineCount === 1 ? startColumn + source.length : source.length - source.lineEndings()[lineCount - 2];
-        var script = new WebInspector.Script(null, url, startLine, startColumn, endLine, endColumn, isContentScript);
+        var script = new WebInspector.Script(1, url, startLine, startColumn, endLine, endColumn, isContentScript);
         script.requestSource = function(callback) { callback(source); };
+        WebInspector.debuggerModel._scripts[1] = script;
         return script;
     }
 
@@ -32,25 +33,12 @@ function test()
 
     function createScriptFormatterMock()
     {
-        var rawSourceCode = {
-            originalToFormatted: function(location)
-            {
-                var formattedLocation = {};
-                formattedLocation.lineNumber = location.lineNumber * 2;
-                formattedLocation.columnNumber = location.columnNumber * 2;
-                return formattedLocation;
-            },
-
-            formattedToOriginal: function(location)
-            {
-                var originalLocation = {};
-                originalLocation.lineNumber = Math.floor(location.lineNumber / 2);
-                originalLocation.columnNumber = Math.floor(location.columnNumber / 2);
-                return originalLocation;
-            }
+        var mapping = {
+            originalToFormatted: function(lineNumber, columnNumber) { return [lineNumber * 2, columnNumber * 2]; },
+            formattedToOriginal: function(lineNumber, columnNumber) { return [Math.floor(lineNumber / 2), Math.floor(columnNumber / 2)]; }
         };
         var formatter = {
-            formatContent: function(mimeType, content, callback) { formatter._callback = callback.bind(null, "<formatted> " + content, rawSourceCode); },
+            formatContent: function(mimeType, content, callback) { formatter._callback = callback.bind(null, "<formatted> " + content, mapping); },
             finish: function() { formatter._callback(); }
         };
         return formatter;
@@ -338,8 +326,8 @@ function test()
                 sourceLocationToCompiledLocation: function(sourceURL, lineNumber)
                 {
                     if (sourceURL === "source1.js")
-                        return { lineNumber: Math.floor(lineNumber / 2), columnNumber: 0 };
-                    return { lineNumber: Math.floor(lineNumber / 2) + 10, columnNumber: 0 };
+                        return [Math.floor(lineNumber / 2), 0];
+                    return [Math.floor(lineNumber / 2) + 10, 0];
                 },
                 sources: function() { return ["source1.js", "source2.js"]; },
                 load: function() { return true; },

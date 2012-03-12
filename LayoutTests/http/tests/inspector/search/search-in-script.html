@@ -22,7 +22,8 @@ function test()
 
     function step3()
     {
-        var scripts = WebInspector.debuggerModel.scriptsForURL("http://127.0.0.1:8000/inspector/search/resources/search.js");
+        var url = "http://127.0.0.1:8000/inspector/search/resources/search.js";
+        var scripts = InspectorTest.queryScripts(function(s) { return s.sourceURL === url; });
         script = scripts[0];
         InspectorTest.addResult(script.sourceURL);
 
