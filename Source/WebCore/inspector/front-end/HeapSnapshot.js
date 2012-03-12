@@ -28,6 +28,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+WebInspector.Int32Array = function(size)
+{
+    const preallocateSize = 1000;
+    size = size || preallocateSize;
+    this._usedSize = 0;
+    this._array = new Int32Array(preallocateSize);
+}
+
+WebInspector.Int32Array.prototype = {
+    push: function(value)
+    {
+        if (this._usedSize + 1 > this._array.length) {
+            var tempArray = new Int32Array(this._array.length * 2);
+            tempArray.set(this._array);
+            this._array = tempArray;
+        }
+        this._array[this._usedSize++] = value;
+    },
+
+    get array()
+    {
+        return this._array.subarray(0, this._usedSize);
+    }
+}
+
 WebInspector.HeapSnapshotLoader = function()
 {
     this._json = "";
@@ -76,8 +101,7 @@ WebInspector.HeapSnapshotLoader.prototype = {
                     break;
                 else if (code === closingBracket) {
                     this._json = this._json.slice(index + 1);
-                    // Shave off provisionally allocated space.
-                    this._snapshot.nodes = this._snapshot.nodes.slice(0);
+                    this._snapshot.nodes = this._nodes.array;
                     return false;
                 }
                 ++index;
@@ -97,7 +121,7 @@ WebInspector.HeapSnapshotLoader.prototype = {
                 this._json = this._json.slice(startIndex);
                 return true;
             }
-            this._snapshot.nodes.push(parseInt(this._json.slice(startIndex, index)));
+            this._nodes.push(parseInt(this._json.slice(startIndex, index)));
         }
     },
 
@@ -151,7 +175,9 @@ WebInspector.HeapSnapshotLoader.prototype = {
             var closingBracketIndex = this._findBalancedCurlyBrackets();
             if (closingBracketIndex === -1)
                 return;
-            this._snapshot.nodes = [JSON.parse(this._json.slice(0, closingBracketIndex))];
+            this._nodes = new WebInspector.Int32Array();
+            this._nodes.push(0);
+            this._snapshot.metaNode = JSON.parse(this._json.slice(0, closingBracketIndex));
             this._json = this._json.slice(closingBracketIndex);
             this._state = "parse-nodes";
             this.pushJSONChunk("");
@@ -202,7 +228,7 @@ WebInspector.HeapSnapshotArraySlice.prototype = {
     {
         if (typeof end === "undefined")
             end = start + this._start + this.length;
-        return this._snapshot[this._arrayName].slice(this._start + start, end);
+        return this._snapshot[this._arrayName].subarray(this._start + start, end);
     }
 }
 
@@ -709,6 +735,7 @@ WebInspector.HeapSnapshot = function(profile)
 {
     this.uid = profile.snapshot.uid;
     this._nodes = profile.nodes;
+    this._metaNode = profile.metaNode;
     this._strings = profile.strings;
 
     this._init();
@@ -717,9 +744,8 @@ WebInspector.HeapSnapshot = function(profile)
 WebInspector.HeapSnapshot.prototype = {
     _init: function()
     {
-        this._metaNodeIndex = 0;
         this._rootNodeIndex = 1;
-        var meta = this._nodes[this._metaNodeIndex];
+        var meta = this._metaNode;
         this._nodeTypeOffset = meta.fields.indexOf("type");
         this._nodeNameOffset = meta.fields.indexOf("name");
         this._nodeIdOffset = meta.fields.indexOf("id");
@@ -895,7 +921,7 @@ WebInspector.HeapSnapshot.prototype = {
         //    interval (can be empty) with corresponding back references.
         //  - "indexArray" is an array of indexes in the "backRefsArray"
         //    with the same positions as in the _nodeIndex.
-        var indexArray = this[indexArrayName] = new Array(this._nodeIndex.length);
+        var indexArray = this[indexArrayName] = new Int32Array(this._nodeIndex.length);
         for (var i = 0, l = indexArray.length; i < l; ++i)
             indexArray[i] = 0;
         for (var nodesIter = this._allNodes; nodesIter.hasNext(); nodesIter.next()) {
@@ -904,7 +930,7 @@ WebInspector.HeapSnapshot.prototype = {
         var backRefsCount = 0;
         for (i = 0, l = indexArray.length; i < l; ++i)
             backRefsCount += indexArray[i];
-        var backRefsArray = this[backRefsArrayName] = new Array(backRefsCount + 1);
+        var backRefsArray = this[backRefsArrayName] = new Int32Array(backRefsCount + 1);
         // Put in the first slot of each backRefsArray slice the count of entries
         // that will be filled.
         var backRefsPosition = 0;
@@ -1057,7 +1083,7 @@ WebInspector.HeapSnapshot.prototype = {
     _buildNodeIndex: function()
     {
         var count = this.nodeCount;
-        this._nodeIndex = new Array(count + 1);
+        this._nodeIndex = new Int32Array(count + 1);
         count = 0;
         for (var nodesIter = this._allNodes; nodesIter.hasNext(); nodesIter.next(), ++count)
             this._nodeIndex[count] = nodesIter.index;
