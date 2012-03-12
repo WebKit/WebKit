@@ -3898,3 +3898,7 @@ BUGWK80665 : fast/js/string-match.html = TEXT
 BUGWK80665 : fast/js/string-replace-2.html = TEXT
 
 BUGABARTH SNOWLEOPARD : fast/events/input-image-scrolled-x-y.html = PASS CRASH
+
+BUGWK80801 : fast/js/function-constructor-error.html = TEXT
+BUGWK80803 : inspector/timeline/timeline-start-time.html = TEXT
+BUGWK80804 DEBUG : fast/table/table-row-compositing-repaint-crash.html = CRASH
