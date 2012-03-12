@@ -397,6 +397,21 @@ http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 #Vibration API support not yet. http://webkit.org/b/72010
 fast/dom/navigator-vibration.html
 
+# DumpRenderTree code to enable Java is currently a no-op
+java
+
+# Directory upload is not enabled.
+fast/forms/file/input-file-directory-upload.html
+
+# Microdata DOM API is not yet enabled.
+fast/dom/MicroData
+
+# Web Intents is not yet enabled.
+webintents/
+
+# Pointer Lock is not implemented.
+pointer-lock/
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################
@@ -736,9 +751,6 @@ fast/forms/restore-selection-after-layout.html
 # See https://bugs.webkit.org/show_bug.cgi?id=35300
 http/tests/loading/307-after-303-after-post.html
 
-# DumpRenderTree code to enable Java is currently a no-op
-java
-
 # https://bugs.webkit.org/show_bug.cgi?id=36003
 # mouseScrollBy() and continuousMouseScrollBy() are not yet implemented in the GTK EventSender API.
 fast/events/remove-child-onscroll.html
@@ -972,9 +984,6 @@ editing/pasteboard/5761530-1.html
 
 # Missing DRT API.
 http/tests/loading/preload-slow-loading.php
-
-# Directory upload is not enabled.
-fast/forms/file/input-file-directory-upload.html
 
 # Need setPrinting. See https://bugs.webkit.org/show_bug.cgi?id=20011
 printing/setPrinting.html
@@ -1303,13 +1312,24 @@ fast/events/dropzone-005.html
 # https://bugs.webkit.org/show_bug.cgi?id=64085
 http/tests/misc/iframe-reparenting-id-collision.html
 
-# NWRT. Skip inspector/ and http/tests/inspector while we figure out
-# what happens to them in the bots; the debug bots are failing only a
-# few tests, but the release bot is getting timeouts in pretty much
-# all of them.
-http/tests/inspector
-http/tests/inspector-enabled
-inspector/
+# These inspector tests fell out of the radar after the transition to NRWT
+# Some time out and some are flaky or present different baselines.
+inspector/timeline/timeline-paint.html
+inspector/timeline/timeline-animation-frame.html
+inspector/timeline/timeline-receive-response-event.html
+inspector/elements/elements-inspect-iframe-from-different-domain.html
+inspector/extensions/extensions-reload.html
+inspector/debugger/source-frame.html
+inspector/debugger/scripts-panel.html
+http/tests/inspector/console-resource-errors.html
+http/tests/inspector/console-cross-origin-iframe-logging.html
+http/tests/inspector/extensions-network-redirect.html
+http/tests/inspector/inspect-element.html
+http/tests/inspector/resource-har-conversion.html
+http/tests/inspector/resource-har-pages.html
+http/tests/inspector/resource-main-cookies.php
+http/tests/inspector/resource-parameters.html
+
 
 # Text shadow extents are calculated incorrectly
 # https://bugs.webkit.org/show_bug.cgi?id=65035
@@ -1362,9 +1382,6 @@ editing/pasteboard/smart-paste-008.html
 
 # Fails because it does not throw a couple of expected exceptions
 http/tests/local/fileapi/send-sliced-dragged-file.html
-
-# Microdata DOM API is not yet enabled.
-fast/dom/MicroData
 
 # https://bugs.webkit.org/show_bug.cgi?id=70485
 fast/events/drag-selects-image.html
@@ -1420,12 +1437,6 @@ fast/frames/flattening/iframe-flattening-fixed-width-and-height-no-scrolling.htm
 
 # https://bugs.webkit.org/show_bug.cgi?id=72248
 editing/spelling/spelling-unified-emulation.html
-
-# Web Intents is not yet enabled.
-webintents/
-
-# Pointer Lock is not implemented.
-pointer-lock/
 
 # fast/dom/Window/window-postmessage-arrays.html fails on JSC platforms
 # https://bugs.webkit.org/show_bug.cgi?id=72363
