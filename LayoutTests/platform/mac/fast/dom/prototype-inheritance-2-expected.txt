@@ -115,6 +115,7 @@ PASS HTMLCanvasElement from inner.document.getElementsByTagName("canvas")[0].get
 PASS HTMLCanvasElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.constructor
 PASS HTMLCanvasElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.__proto__
 PASS HTMLCollection from inner.document.testForm
+PASS HTMLCollectionPrototype from inner.document.forms.testForm.0.0.children.__proto__
 PASS HTMLDListElement from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling
 PASS HTMLDListElementConstructor from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.constructor
 PASS HTMLDListElementPrototype from inner.document.getElementsByTagName("canvas")[0].getContext("2d").canvas.nextElementSibling.__proto__
@@ -175,6 +176,7 @@ PASS MimeTypeArrayPrototype from inner.document.forms.testForm.0.ownerDocument.d
 PASS MimeTypeConstructor from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.constructor
 PASS MimeTypePrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.mimeTypes.0.__proto__
 PASS NamedNodeMap from inner.document.forms.testForm.0.parentNode.attributes
+PASS NamedNodeMapPrototype from inner.document.forms.testForm.0.parentNode.attributes.__proto__
 PASS Navigator from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation
 PASS NavigatorPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.clientInformation.__proto__
 PASS NodeList from inner.document.forms.testForm
@@ -452,11 +454,12 @@ Never found StyleSheet
 Never found TextMetrics
 Never found TextTrackCue
 Never found TextTrackCueList
-Never found WebKitCSSFilterValue
 Never found URL
+Never found WebKitCSSFilterValue
 Never found WebKitCSSMatrix
 Never found WebKitCSSRegionRule
 Never found WebKitCSSTransformValue
+Never found WebKitMutationObserver
 Never found WebKitPoint
 Never found WebSocket
 Never found Worker
