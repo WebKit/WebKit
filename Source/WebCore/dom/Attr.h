@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class CSSStyleDeclaration;
+class StylePropertySet;
 
 // Attr can have Text and EntityReference children
 // therefore it has to be a fullblown Node. The plan
@@ -58,9 +59,7 @@ public:
 
     bool isId() const;
 
-    // A deprecated extension to get presentational information for attributes.
-    // We have to keep it around because it's exposed in the Obj-C DOM API.
-    CSSStyleDeclaration* style() { return 0; }
+    CSSStyleDeclaration* style();
 
     void setSpecified(bool specified) { m_specified = specified; }
 
@@ -93,6 +92,7 @@ private:
 
     Element* m_element;
     RefPtr<Attribute> m_attribute;
+    RefPtr<StylePropertySet> m_style;
     unsigned m_ignoreChildrenChanged : 31;
     bool m_specified : 1;
 };

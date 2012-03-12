@@ -23,10 +23,10 @@
 #include "config.h"
 #include "Attr.h"
 
-#include "Element.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "ScopedEventQueue.h"
+#include "StyledElement.h"
 #include "Text.h"
 #include "XMLNSNames.h"
 #include <wtf/text/AtomicString.h>
@@ -194,6 +194,16 @@ void Attr::childrenChanged(bool, Node*, Node*, int)
 bool Attr::isId() const
 {
     return qualifiedName().matches(document()->idAttributeName());
+}
+
+CSSStyleDeclaration* Attr::style()
+{
+    // This function only exists to support the Obj-C bindings.
+    if (!m_element->isStyledElement())
+        return 0;
+    m_style = StylePropertySet::create();
+    static_cast<StyledElement*>(m_element)->collectStyleForAttribute(m_attribute.get(), m_style.get());
+    return m_style->ensureCSSStyleDeclaration();
 }
 
 }

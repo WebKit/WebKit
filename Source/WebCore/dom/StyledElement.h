@@ -55,6 +55,8 @@ public:
 
     const SpaceSplitString& classNames() const;
 
+    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) { }
+
 protected:
     StyledElement(const QualifiedName& name, Document* document, ConstructionType type)
         : Element(name, document, type)
@@ -66,7 +68,6 @@ protected:
     virtual void copyNonAttributeProperties(const Element*);
 
     virtual bool isPresentationAttribute(const QualifiedName&) const { return false; }
-    virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) { }
 
     void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, int identifier);
     void addPropertyToAttributeStyle(StylePropertySet*, int propertyID, double value, CSSPrimitiveValue::UnitTypes);
