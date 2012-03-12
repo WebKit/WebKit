@@ -41,7 +41,7 @@ static FILE* file;
 static void initializeLogFileOnce()
 {
 #ifdef DATA_LOG_FILENAME
-    const char* filename = DATA_LOG_FILENAME
+    const char* filename = DATA_LOG_FILENAME;
 #else
     const char* filename = getenv("WTF_DATA_LOG_FILENAME");
 #endif

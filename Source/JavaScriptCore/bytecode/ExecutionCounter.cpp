@@ -28,7 +28,6 @@
 
 #include "CodeBlock.h"
 #include "ExecutableAllocator.h"
-#include <wtf/DataLog.h>
 
 namespace JSC {
 

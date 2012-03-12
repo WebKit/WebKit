@@ -29,7 +29,6 @@
 
 #if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
 #include "CodeProfiling.h"
-#include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
 #include <wtf/MetaAllocator.h>
 #include <wtf/PageReservation.h>

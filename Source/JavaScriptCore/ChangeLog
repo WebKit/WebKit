@@ -1,3 +1,23 @@
+2012-03-12  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Minor DataLog fixes
+        https://bugs.webkit.org/show_bug.cgi?id=80826
+
+        Reviewed by Andreas Kling.
+
+        * bytecode/ExecutionCounter.cpp:
+        Do not include DataLog.h, it is not used.
+        
+        * jit/ExecutableAllocator.cpp:
+        Ditto.
+
+        * wtf/DataLog.cpp:
+        (WTF::initializeLogFileOnce):
+        Add missing semi-colon to the code path where DATA_LOG_FILENAME is defined.
+
+        * wtf/HashTable.cpp:
+        Include DataLog as it is used.
+
 2012-03-12  SangGyu Lee  <sg5.lee@samsung.com>
 
         Integer overflow check code in arithmetic operation in classic interpreter
