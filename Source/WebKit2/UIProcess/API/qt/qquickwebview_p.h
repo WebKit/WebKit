@@ -59,6 +59,7 @@ typedef const struct OpaqueWKPage* WKPageRef;
 QT_BEGIN_NAMESPACE
 class QPainter;
 class QUrl;
+class QQuickFlickable;
 QT_END_NAMESPACE
 
 
@@ -236,6 +237,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(qreal contentHeight READ contentHeight WRITE setContentHeight NOTIFY contentHeightChanged)
     Q_PROPERTY(qreal contentX READ contentX WRITE setContentX NOTIFY contentXChanged)
     Q_PROPERTY(qreal contentY READ contentY WRITE setContentY NOTIFY contentYChanged)
+    Q_PROPERTY(QQuickFlickable* flickable READ flickable NOTIFY flickableChanged)
     Q_PROPERTY(QQuickItem* contentItem READ contentItem CONSTANT)
     Q_PROPERTY(QDeclarativeListProperty<QObject> flickableData READ flickableData)
     Q_PROPERTY(bool transparentBackground WRITE setTransparentBackground READ transparentBackground)
@@ -291,6 +293,7 @@ public:
     void invokeApplicationSchemeHandler(WTF::PassRefPtr<WebKit::QtRefCountedNetworkRequestData>);
     void sendApplicationSchemeReply(QQuickNetworkReply*);
 
+    QQuickFlickable* flickable();
     QQuickItem* contentItem();
     qreal contentWidth() const;
     void setContentWidth(qreal);
@@ -315,6 +318,7 @@ public Q_SLOTS:
     void postMessage(const QString&);
 
 Q_SIGNALS:
+    void flickableChanged();
     void contentWidthChanged();
     void contentHeightChanged();
     void contentXChanged();

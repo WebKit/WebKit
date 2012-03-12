@@ -312,6 +312,10 @@ Rectangle {
         experimental.promptDialog: PromptDialog { }
         experimental.authenticationDialog: AuthenticationDialog { }
         experimental.proxyAuthenticationDialog: ProxyAuthenticationDialog { }
+
+        ScrollIndicator {
+            flickableItem: webView.experimental.flickable
+        }
     }
 
     ViewportInfoItem {

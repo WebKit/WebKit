@@ -44,6 +44,7 @@
 #include "qwebpreferences_p_p.h"
 #include "qwebviewportinfo_p.h"
 
+#include <private/qquickflickable_p.h>
 #include <JavaScriptCore/InitializeThreading.h>
 #include <QDeclarativeEngine>
 #include <QFileDialog>
@@ -561,7 +562,7 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
     flickProvider = new QtFlickProvider(q, pageView.data());
 
     // Propagate flickable signals.
-    const QQuickWebViewExperimental* experimental = q->experimental();
+    QQuickWebViewExperimental* experimental = q->experimental();
     QObject::connect(flickProvider, SIGNAL(contentWidthChanged()), experimental, SIGNAL(contentWidthChanged()));
     QObject::connect(flickProvider, SIGNAL(contentHeightChanged()), experimental, SIGNAL(contentHeightChanged()));
     QObject::connect(flickProvider, SIGNAL(contentXChanged()), experimental, SIGNAL(contentXChanged()));
@@ -586,6 +587,8 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
     _q_onVisibleChanged();
 
     QQuickWebViewPrivate::onComponentComplete();
+
+    emit experimental->flickableChanged();
 }
 
 void QQuickWebViewFlickablePrivate::loadDidSucceed()
@@ -1057,6 +1060,19 @@ QDeclarativeListProperty<QObject> QQuickWebViewExperimental::flickableData()
     Q_D(const QQuickWebView);
     ASSERT(d->flickProvider);
     return d->flickProvider->flickableData();
+}
+
+QQuickFlickable* QQuickWebViewExperimental::flickable()
+{
+    Q_D(QQuickWebView);
+    if (!d->flickProvider)
+        return 0;
+
+    QQuickFlickable* flickableItem = qobject_cast<QQuickFlickable*>(contentItem()->parentItem());
+
+    ASSERT(flickableItem);
+
+    return flickableItem;
 }
 
 QQuickItem* QQuickWebViewExperimental::contentItem()

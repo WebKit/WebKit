@@ -1,3 +1,17 @@
+2012-03-12  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Add support for rudimentary scroll indicators in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=80832
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add a basic scroll indicator component to MiniBrowser so that it
+        behaves similar to the ScrollDecorator QML component.
+
+        * MiniBrowser/qt/MiniBrowser.qrc:
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * MiniBrowser/qt/qml/ScrollIndicator.qml: Added.
+
 2012-03-12  C Anthony Risinger  <anthony@xtfx.me>
 
         [GTK] r110296 included an extra $ in @$(AM_V_GEN)
