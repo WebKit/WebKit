@@ -1,5 +1,19 @@
 2012-03-12  Dirk Pranke  <dpranke@chromium.org>
 
+        remove the 'gpu' group from the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=80353
+
+        Reviewed by Adam Barth.
+
+        Since those bots are obsolete, we don't need this any more.
+
+        * TestResultServer/static-dashboards/builders.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+        (testPlatformAndBuildType):
+        (testHtmlForTestTypeSwitcherGroup):
+
+2012-03-12  Dirk Pranke  <dpranke@chromium.org>
+
         remove graphics_type from webkitpy.layout_tests.models.test_configuration
         https://bugs.webkit.org/show_bug.cgi?id=80643
 

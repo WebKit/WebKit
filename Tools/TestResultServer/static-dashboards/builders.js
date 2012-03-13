@@ -137,28 +137,10 @@ var WEBKIT_TOT_BUILDERS = [
 ];
 associateBuildersWithMaster(WEBKIT_TOT_BUILDERS, WEBKIT_BUILDER_MASTER);
 
-var CHROMIUM_GPU_MESA_BUILDERS = [
-    ['Webkit Win - GPU', BuilderGroup.DEFAULT_BUILDER],
-    ['Webkit Vista - GPU'],
-    ['Webkit Win7 - GPU'],
-    ['Webkit Win (dbg)(1) - GPU'],
-    ['Webkit Win (dbg)(2) - GPU'],
-    ['Webkit Linux - GPU', BuilderGroup.EXPECTATIONS_BUILDER],
-    ['Webkit Linux 32 - GPU'],
-    ['Webkit Linux (dbg) - GPU'],
-    ['Webkit Mac10.5 - GPU'],
-    ['Webkit Mac10.5 (dbg)(1) - GPU'],
-    ['Webkit Mac10.5 (dbg)(2) - GPU'],
-    ['Webkit Mac10.6 - GPU'],
-    ['Webkit Mac10.6 (dbg) - GPU'],
-];
-associateBuildersWithMaster(CHROMIUM_GPU_MESA_BUILDERS, CHROMIUM_WEBKIT_BUILDER_MASTER);
-
 var LAYOUT_TESTS_BUILDER_GROUPS = {
     '@DEPS - chromium.org': new BuilderGroup(BuilderGroup.DEPS_WEBKIT, CHROMIUM_LAYOUT_DEPS_BUILDERS),
     '@ToT - chromium.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, CHROMIUM_LAYOUT_TOT_BUILDERS),
     '@ToT - webkit.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, WEBKIT_TOT_BUILDERS),
-    '@ToT GPU Mesa - chromium.org': new BuilderGroup(BuilderGroup.TOT_WEBKIT, CHROMIUM_GPU_MESA_BUILDERS)
 };
 
 var CHROMIUM_GPU_GTESTS_DEPS_BUILDERS = [

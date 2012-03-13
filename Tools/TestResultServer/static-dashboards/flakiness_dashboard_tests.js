@@ -196,36 +196,6 @@ function testPlatformAndBuildType()
     runPlatformAndBuildTypeTest('Webkit Mac10.5 (dbg)(2)', 'LEOPARD', 'DEBUG');
     runPlatformAndBuildTypeTest('Webkit Mac10.6', 'SNOWLEOPARD', 'RELEASE');
     runPlatformAndBuildTypeTest('Webkit Mac10.6 (dbg)', 'SNOWLEOPARD', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Win - GPU', 'XP', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Vista - GPU', 'VISTA', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Win7 - GPU', 'WIN7', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Win (dbg)(1) - GPU', 'XP', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Win (dbg)(2) - GPU', 'XP', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Linux - GPU', 'LUCID', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Linux 32 - GPU', 'LUCID', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Linux (dbg)(1) - GPU', 'LUCID', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Linux (dbg)(2) - GPU', 'LUCID', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Mac10.5 - GPU', 'LEOPARD', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Mac10.5 (dbg)(1) - GPU', 'LEOPARD', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Mac10.5 (dbg)(2) - GPU', 'LEOPARD', 'DEBUG');
-    runPlatformAndBuildTypeTest('Webkit Mac10.6 - GPU', 'SNOWLEOPARD', 'RELEASE');
-    runPlatformAndBuildTypeTest('Webkit Mac10.6 (dbg) - GPU', 'SNOWLEOPARD', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Win7 Tests - GPU', 'WIN7', 'RELEASE');
-    runPlatformAndBuildTypeTest('GPU Win7 Tests (dbg)(1) - GPU', 'WIN7', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Win7 Tests (dbg)(2) - GPU', 'WIN7', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Win7 x64 Tests (dbg)(1) - GPU', 'WIN7', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Win7 x64 Tests (dbg)(2) - GPU', 'WIN7', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Vista Tests (dbg)(1) - GPU', 'VISTA', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Vista Tests (dbg)(2) - GPU', 'VISTA', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Vista x64 Tests (dbg) - GPU', 'VISTA', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Mac 10.6 Tests - GPU', 'SNOWLEOPARD', 'RELEASE');
-    runPlatformAndBuildTypeTest('GPU Mac 10.6 Tests (dbg) - GPU', 'SNOWLEOPARD', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Mac 10.5 Tests (dbg) - GPU', 'LEOPARD', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Linux Tests (dbg)(1) - GPU', 'LUCID', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Linux Tests (dbg)(2) - GPU', 'LUCID', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Win7 Tests (dbg)(1) - GPU', 'WIN7', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Win7 Tests (dbg)(2) - GPU', 'WIN7', 'DEBUG');
-    runPlatformAndBuildTypeTest('GPU Linux Tests x64 - GPU', 'LUCID', 'RELEASE');
     runPlatformAndBuildTypeTest('XP Tests', 'XP', 'RELEASE');
     runPlatformAndBuildTypeTest('Interactive Tests (dbg)', 'XP', 'DEBUG');
     
@@ -401,7 +371,7 @@ function testHtmlForTestTypeSwitcherGroup()
     assertEquals(selects.length, 3);
     var group = selects[2];
     assertEquals(group.parentNode.textContent.indexOf('Group:'), 0);
-    assertEquals(group.children.length, 4);
+    assertEquals(group.children.length, 3);
 }
 
 function testLookupVirtualTestSuite()
