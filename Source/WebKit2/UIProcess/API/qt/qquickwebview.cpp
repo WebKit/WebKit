@@ -735,10 +735,11 @@ QtViewportInteractionEngine::Constraints QQuickWebViewFlickablePrivate::computeV
 
     WebPreferences* wkPrefs = webPageProxy->pageGroup()->preferences();
 
-    // FIXME: Remove later; Hardcode some values for now to make sure the DPI adjustment is being tested.
+    // FIXME: Remove later; Hardcode a value for now to make sure the DPI adjustment is being tested.
     wkPrefs->setDeviceDPI(240);
-    wkPrefs->setDeviceWidth(480);
-    wkPrefs->setDeviceHeight(720);
+
+    wkPrefs->setDeviceWidth(availableSize.width());
+    wkPrefs->setDeviceHeight(availableSize.height());
 
     int minimumLayoutFallbackWidth = qMax<int>(wkPrefs->layoutFallbackWidth(), availableSize.width());
 

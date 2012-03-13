@@ -1,3 +1,13 @@
+2012-03-13  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Set correct device width and height.
+        https://bugs.webkit.org/show_bug.cgi?id=80980
+
+        Reviewed by Tor Arne Vestbø.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::computeViewportConstraints):
+
 2012-03-12  Sam Weinig  <sam@webkit.org>
 
         Fix typo in PageClientImpl where we were overriding viewLayerHostingMode with
