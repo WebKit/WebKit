@@ -2,6 +2,12 @@
 
         More Windows build fixing.
 
+        * DumpRenderTree/win/WorkQueueItemWin.cpp:
+
+2012-03-12  Jessie Berlin  <jberlin@apple.com>
+
+        More Windows build fixing.
+
         * DumpRenderTree/win/AccessibilityControllerWin.cpp:
         * DumpRenderTree/win/EditingDelegate.cpp:
         * DumpRenderTree/win/EventSender.cpp:
