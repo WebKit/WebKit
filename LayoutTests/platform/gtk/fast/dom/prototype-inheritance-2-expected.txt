@@ -242,6 +242,7 @@ Never found Clipboard
 Never found DOMParser
 Never found DOMSettableTokenList
 Never found DOMStringList
+Never found DeprecatedPeerConnection
 Never found Document
 Never found DocumentFragment
 Never found DocumentType
@@ -304,7 +305,6 @@ Never found Node
 Never found NodeFilter
 Never found Notation
 Never found Option
-Never found PeerConnection
 Never found ProcessingInstruction
 Never found Range
 Never found SVGAElement
