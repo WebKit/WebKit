@@ -20,6 +20,14 @@
                 var y = dropTarget.offsetTop + dropTarget.offsetHeight / 2;
                 eventSender.mouseMoveTo(x, y);
                 eventSender.mouseMoveTo(0, 0);
+
+                // The test harness wants us to call eventSender.mouseUp() before finishing,
+                // but we need to not navigate when that happens, so add a drop handler that
+                // prevents navigation.
+                window.addEventListener("drop", function() {
+                  event.preventDefault();
+                }, false);
+                eventSender.mouseUp();
             }
             
             if (window.layoutTestController)
