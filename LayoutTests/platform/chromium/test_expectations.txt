@@ -3909,6 +3909,8 @@ BUGWK80807 MAC : fast/events/invalid-001.html = PASS CRASH
 BUGWK80807 MAC : fast/events/invalid-002.html = PASS CRASH
 BUGWK80807 MAC : fast/events/invalid-003.html = PASS CRASH
 
+BUGWK81050 : fast/forms/file/recover-file-input-in-unposted-form.html = PASS TEXT
+
 BUGWK80976 SNOWLEOPARD : svg/as-image/svg-nested.html = PASS CRASH
 BUGWK80976 SNOWLEOPARD : svg/custom/fill-opacity-rgba.svg = PASS CRASH
 BUGWK80976 SNOWLEOPARD : tables/mozilla_expected_failures/marvin/table_overflow_td_align_right.html = PASS CRASH
