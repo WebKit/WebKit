@@ -69,9 +69,6 @@
 
 namespace WebCore {
 
-typedef HashMap<Node*, v8::Object*> DOMNodeMap;
-typedef HashMap<void*, v8::Object*> DOMObjectMap;
-
 static ALWAYS_INLINE v8::Handle<v8::Object> getExistingWrapperInline(Node* node)
 {
     V8IsolatedContext* context = V8IsolatedContext::getEntered();

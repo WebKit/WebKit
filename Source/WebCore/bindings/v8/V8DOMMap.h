@@ -141,9 +141,6 @@ namespace WebCore {
         DOMWrapperMap(v8::WeakReferenceCallback callback) : WeakReferenceMap<KeyType, v8::Object>(callback) { }
     };
 
-    // An opaque class that represents a set of DOM wrappers.
-    class DOMDataStore;
-
     // A utility class to manage the lifetime of set of DOM wrappers.
     class DOMDataStoreHandle {
     public:

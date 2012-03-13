@@ -32,7 +32,6 @@
 #define DOMDataStore_h
 
 #include "V8DOMMap.h"
-#include "V8Node.h"
 
 #include <v8.h>
 #include <wtf/HashMap.h>
@@ -98,7 +97,7 @@ namespace WebCore {
 #if ENABLE(SVG)
         static void weakSVGElementInstanceCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
 #endif
-        
+
         DOMNodeMapping* m_domNodeMap;
         DOMNodeMapping* m_activeDomNodeMap;
         DOMWrapperMap<void>* m_domObjectMap;
