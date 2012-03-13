@@ -240,6 +240,10 @@ inspector/debugger/live-edit.html
 # https://bugs.webkit.org/show_bug.cgi?id=53003
 http/tests/inspector/compiler-source-mapping-debug.html
 
+#[Qt] inspector/styles/svg-style.xhtml fails
+# https://bugs.webkit.org/show_bug.cgi?id=79068
+inspector/styles/svg-style.xhtml
+
 # Needs rebaseline
 fast/repaint/scale-page-shrink.html
 
@@ -252,10 +256,13 @@ fast/dom/MicroData
 
 # ENABLE(MUTATION_OBSERVERS) is disabled
 fast/mutation/callback-second-argument.html
+fast/mutation/create-during-delivery.html
 fast/mutation/cross-document.html
 fast/mutation/database-callback-delivery.html
+fast/mutation/delivery-order.html
 fast/mutation/disconnect-cancel-pending.html
 fast/mutation/inline-event-listener.html
+fast/mutation/mutate-during-delivery.html
 fast/mutation/mutation-observer-constructor.html
 fast/mutation/mutation-callback-non-element-crash.html
 fast/mutation/observe-attributes.html
@@ -2022,6 +2029,10 @@ fast/writing-mode/border-styles-vertical-rl.html
 # [Qt] fast/viewport/viewport-133.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=80689
 fast/viewport/viewport-133.html
+
+#[Qt] New fast/forms/label/labelable-elements.html fails
+#https://bugs.webkit.org/show_bug.cgi?id=80985
+fast/forms/label/labelable-elements.html
 
 # ============================================================================= #
 # failing fonts tests
