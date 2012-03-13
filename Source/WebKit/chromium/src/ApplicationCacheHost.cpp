@@ -193,7 +193,7 @@ void ApplicationCacheHost::maybeLoadFallbackSynchronously(const ResourceRequest&
     // N/A to the chromium port
 }
 
-bool ApplicationCacheHost::canCacheInPageCache() const
+bool ApplicationCacheHost::canCacheInPageCache()
 {
     // N/A to the chromium port which doesn't use the page cache.
     return false;

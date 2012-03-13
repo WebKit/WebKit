@@ -1,3 +1,16 @@
+2012-03-13  Gavin Peters  <gavinp@chromium.org>
+
+        Make ApplicationCacheHost::canCacheInPageCache() non-const.
+        https://bugs.webkit.org/show_bug.cgi?id=80904
+
+        Reviewed by Alexey Proskuryakov.
+
+        A const pointer to a large object like ApplicationCacheHost is not our standard
+        practice; so remove this (implicit) one.  See also https://bugs.webkit.org/show_bug.cgi?id=80898
+
+        * src/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::canCacheInPageCache):
+
 2012-03-13  Kinuko Yasuda  <kinuko@chromium.org>
 
         Allow WebFileChooser to return extra file info (like displayName) in addition to mere file paths
