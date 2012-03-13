@@ -2754,7 +2754,8 @@ sub GenerateImplementationFunctionCall()
 
         push(@implContent, $indent . "return JSValue::encode(jsUndefined());\n");
     } else {
-        push(@implContent, "\n" . $indent . "JSC::JSValue result = " . NativeToJSValue($function->signature, 1, $implClassName, $functionString, "castedThis") . ";\n");
+        my $thisObject = $function->isStatic ? 0 : "castedThis";
+        push(@implContent, "\n" . $indent . "JSC::JSValue result = " . NativeToJSValue($function->signature, 1, $implClassName, $functionString, $thisObject) . ";\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
 
         if ($codeGenerator->ExtendedAttributeContains($function->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
@@ -2787,7 +2788,8 @@ my %nativeType = (
     "DOMObject" => "ScriptValue",
     "NodeFilter" => "RefPtr<NodeFilter>",
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
-    "IDBKey" => "RefPtr<IDBKey>",
+    "IDBKey" => "PassRefPtr<IDBKey>",
+    "OptionsObject" => "OptionsObject",
     "boolean" => "bool",
     "double" => "double",
     "float" => "float",
@@ -2923,6 +2925,12 @@ sub JSValueToNative
         return "createIDBKeyFromValue(exec, $value)";
     }
 
+    if ($type eq "OptionsObject") {
+        AddToImplIncludes("IDBBindingUtilities.h", $conditional);
+        AddToImplIncludes("OptionsObject.h", $conditional);
+        return "createOptionsObjectFromValue(exec, $value)";
+    }
+
     if ($type eq "DOMString[]") {
         AddToImplIncludes("JSDOMStringList.h", $conditional);
         return "toDOMStringList($value)";
@@ -2983,7 +2991,10 @@ sub NativeToJSValue
         return "jsString(exec, $value)";
     }
 
-    my $globalObject = "$thisValue->globalObject()";
+    my $globalObject;
+    if ($thisValue) {
+        $globalObject = "$thisValue->globalObject()";
+    }
 
     if ($type eq "CSSStyleDeclaration") {
         AddToImplIncludes("StylePropertySet.h", $conditional);
@@ -3060,8 +3071,11 @@ sub NativeToJSValue
             $value = "${tearOffType}::create($value)";
         }
     }
-
-    return "toJS(exec, $globalObject, WTF::getPtr($value))";
+    if ($globalObject) {
+        return "toJS(exec, $globalObject, WTF::getPtr($value))";
+    } else {
+        return "toJS(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), WTF::getPtr($value))";
+    }
 }
 
 sub ceilingToPowerOf2

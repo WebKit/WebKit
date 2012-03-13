@@ -28,6 +28,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBindingUtilities.h"
+#include "NotImplemented.h"
 
 #include "IDBKey.h"
 
@@ -36,13 +37,19 @@ namespace WebCore {
 PassRefPtr<IDBKey> createIDBKeyFromValue(JSC::ExecState* exec, JSC::JSValue value)
 {
     if (value.isNull())
-        return IDBKey::create();
+        return IDBKey::createInvalid();
     if (value.isInt32())
-        return IDBKey::create(value.toInt32(exec));
+        return IDBKey::createNumber(value.toNumber(exec));
     if (value.isString())
-        return IDBKey::create(ustringToString(value.toString(exec)->value(exec)));
+        return IDBKey::createString(ustringToString(value.toString(exec)->value(exec)));
     // FIXME: Implement dates.
     return 0;
+}
+
+OptionsObject createOptionsObjectFromValue(JSC::ExecState*, JSC::JSValue)
+{
+    // FIXME: Implement Database Options.
+    return OptionsObject();
 }
 
 } // namespace WebCore

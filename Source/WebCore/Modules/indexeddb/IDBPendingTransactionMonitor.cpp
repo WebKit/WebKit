@@ -34,7 +34,7 @@ using WTF::ThreadSpecific;
 
 namespace WebCore {
 
-ThreadSpecific<Vector<IDBTransactionBackendInterface*> >& transactions()
+static ThreadSpecific<Vector<IDBTransactionBackendInterface*> >& transactions()
 {
     // FIXME: Move the Vector to ScriptExecutionContext to avoid dealing with
     // thread-local storage.

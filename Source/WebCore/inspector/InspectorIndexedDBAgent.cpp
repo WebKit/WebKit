@@ -108,7 +108,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) { }
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) { }
     virtual void onSuccessWithContinuation() { }
-    virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >& keys, const Vector<RefPtr<IDBKey> >& primaryKeys, const Vector<RefPtr<SerializedScriptValue> >& values) { }
+    virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) { }
     virtual void onBlocked() { }
 };
 

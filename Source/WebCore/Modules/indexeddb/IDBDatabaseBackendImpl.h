@@ -28,6 +28,7 @@
 
 #include "IDBCallbacks.h"
 #include "IDBDatabase.h"
+#include <stdint.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -92,7 +93,7 @@ private:
     static void resetVersion(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& version);
 
     RefPtr<IDBBackingStore> m_backingStore;
-    int64 m_id;
+    int64_t m_id;
     String m_name;
     String m_version;
 

@@ -129,7 +129,7 @@ bool IDBRequest::resetReadyState(IDBTransaction* transaction)
 {
     ASSERT(!m_requestFinished);
     ASSERT(scriptExecutionContext());
-    ASSERT(transaction == m_transaction);
+    ASSERT_UNUSED(transaction, transaction == m_transaction);
     if (m_readyState != DONE)
         return false;
 

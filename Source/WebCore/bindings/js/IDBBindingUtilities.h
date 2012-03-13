@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "OptionsObject.h"
 #include "ScriptValue.h" 
 #include <wtf/Forward.h>
 
@@ -36,6 +37,7 @@ namespace WebCore {
 class IDBKey;
 
 PassRefPtr<IDBKey> createIDBKeyFromValue(JSC::ExecState*, JSC::JSValue);
+OptionsObject createOptionsObjectFromValue(JSC::ExecState*, JSC::JSValue);
 
 }
 

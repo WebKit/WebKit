@@ -30,6 +30,7 @@
 #include "IDBFactoryBackendImpl.h"
 
 #include "DOMStringList.h"
+#include "IDBBackingStore.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
 #include "IDBLevelDBBackingStore.h"
@@ -144,6 +145,7 @@ PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<S
 #if USE(LEVELDB)
         backingStore = IDBLevelDBBackingStore::open(securityOrigin.get(), dataDirectory, fileIdentifier, this);
 #else
+        UNUSED_PARAM(dataDirectory);
         ASSERT_NOT_REACHED();
 #endif
     }

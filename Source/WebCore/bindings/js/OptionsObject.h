@@ -26,6 +26,46 @@
 #ifndef OptionsObject_h
 #define OptionsObject_h
 
+#include "SerializedScriptValue.h"
+#include <wtf/HashSet.h>
+#include <wtf/text/AtomicString.h>
+
+namespace WebCore {
+
+class DOMStringList;
+class DOMWindow;
+class IDBKeyRange;
+class ScriptValue;
+class Storage;
+class TrackBase;
+
 // FIXME: Implement.
+class OptionsObject {
+public:
+    OptionsObject() { }
+
+    bool isObject() const { return false; }
+    bool isUndefinedOrNull() const { return false; }
+
+    bool get(const String&, bool&) const { return false; }
+    bool get(const String&, int32_t&) const { return false; }
+    bool get(const String&, double&) const { return false; }
+    bool get(const String&, String&) const { return false; }
+    bool get(const String&, ScriptValue&) const { return false; }
+    bool get(const String&, unsigned short&) const { return false; }
+    bool get(const String&, unsigned&) const { return false; }
+    bool get(const String&, unsigned long long&) const { return false; }
+    bool get(const String&, RefPtr<DOMWindow>&) const { return false; }
+    bool get(const String&, RefPtr<Storage>&) const { return false; }
+    bool get(const String&, MessagePortArray&) const { return false; }
+#if ENABLE(VIDEO_TRACK)
+    bool get(const String&, RefPtr<TrackBase>&) const { return false; }
+#endif
+    bool get(const String&, HashSet<AtomicString>&) const { return false; }
+
+    bool getWithUndefinedOrNullCheck(const String&, String&) const { return false; }
+};
+
+}
 
 #endif // OptionsObject_h

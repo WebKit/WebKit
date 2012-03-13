@@ -50,6 +50,7 @@
 #include "JSUint32Array.h"
 #include "JSUint8Array.h"
 #include "JSUint8ClampedArray.h"
+#include "NotImplemented.h"
 #include "ScriptValue.h"
 #include "SharedBuffer.h"
 #include <limits>
@@ -1731,6 +1732,37 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(const String& st
         return 0;
     return adoptRef(new SerializedScriptValue(buffer));
 }
+
+#if ENABLE(INDEXED_DATABASE)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSC::ExecState*, JSC::JSValue)
+{
+    notImplemented();
+    return PassRefPtr<SerializedScriptValue>();
+}
+
+String SerializedScriptValue::toWireString() const
+{
+    notImplemented();
+    return String();
+}
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(const String&)
+{
+    notImplemented();
+    return PassRefPtr<SerializedScriptValue>();
+}
+
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::numberValue(double)
+{
+    notImplemented();
+    return PassRefPtr<SerializedScriptValue>();
+}
+
+JSValue SerializedScriptValue::deserialize(JSC::ExecState*, JSC::JSGlobalObject*)
+{
+    notImplemented();
+    return JSValue();
+}
+#endif
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef originContext, JSValueRef apiValue, 
                                                                 MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers,

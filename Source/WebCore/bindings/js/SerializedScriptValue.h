@@ -58,7 +58,12 @@ enum SerializationErrorMode { NonThrowing, Throwing };
 class ScriptValue;
 class SharedBuffer;
 
-class SerializedScriptValue : public RefCounted<SerializedScriptValue> {
+class SerializedScriptValue :
+#if ENABLE(INDEXED_DATABASE)
+    public ThreadSafeRefCounted<SerializedScriptValue> {
+#else
+    public RefCounted<SerializedScriptValue> {
+#endif
 public:
     static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue, MessagePortArray*, ArrayBufferArray*,
                                                     SerializationErrorMode = Throwing);
@@ -87,6 +92,14 @@ public:
 #endif
 
     const Vector<uint8_t>& data() { return m_data; }
+
+#if ENABLE(INDEXED_DATABASE)
+    static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue);
+    static PassRefPtr<SerializedScriptValue> createFromWire(const String& data);
+    String toWireString() const;
+    static PassRefPtr<SerializedScriptValue> numberValue(double value);
+    JSC::JSValue deserialize(JSC::ExecState*, JSC::JSGlobalObject*);
+#endif
 
     ~SerializedScriptValue();
 

@@ -26,21 +26,29 @@
 #include "config.h"
 #include "IDBKeyPathBackendImpl.h"
 
+#include "IDBKey.h"
+#include "SerializedScriptValue.h"
+
+
 #if PLATFORM(CHROMIUM)
 #error "Chromium should not compile this file and instead define its own version of this factory that navigates the multi-process boundry."
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
 
-void IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue>&, 0> values, const String& keyPath, Vector<RefPtr<IDBKey>, 0>& keys)
+namespace WebCore {
+
+void IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue>, 0>&, const String&, Vector<RefPtr<IDBKey>, 0>&)
 {
     // FIXME: Implement this method once JSC supports WireFormat for SerializedScriptValue.
 }
 
-PassRefPtr<SerializedScriptValue> IDBKeyPathBackendImpl::injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
+PassRefPtr<SerializedScriptValue> IDBKeyPathBackendImpl::injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>, const String&)
 {
     // FIXME: Implement this method once JSC supports WireFormat for SerializedScriptValue.
-    return 0;
+    return PassRefPtr<SerializedScriptValue>();
+}
+
 }
 
 #endif // ENABLE(INDEXED_DATABASE)
