@@ -289,7 +289,7 @@ sub GenerateHeader
 
     push(@headerContent, "\n");
     push(@headerContent, "class FloatRect;\n") if $svgPropertyType && $svgPropertyType eq "FloatRect";
-    push(@headerContent, "class OptionsObject;\n") if IsConstructorTemplate($dataNode, "Event");
+    push(@headerContent, "class Dictionary;\n") if IsConstructorTemplate($dataNode, "Event");
 
     my $nativeType = GetNativeTypeForConversions($dataNode, $interfaceName);
     if ($dataNode->extendedAttributes->{"NamedConstructor"}) {
@@ -492,7 +492,7 @@ END
     }
 
     if (IsConstructorTemplate($dataNode, "Event")) {
-        push(@headerContent, "\nbool fill${implClassName}Init(${implClassName}Init&, const OptionsObject&);\n");
+        push(@headerContent, "\nbool fill${implClassName}Init(${implClassName}Init&, const Dictionary&);\n");
     }
 
     push(@headerContent, "\n}\n\n");
@@ -1591,7 +1591,7 @@ sub GenerateParametersCheck
             }
             $parameterCheckString .= "    EXCEPTION_BLOCK($nativeType, $parameterName, " .
                  JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)") . ");\n";
-            if ($nativeType eq 'OptionsObject') {
+            if ($nativeType eq 'Dictionary') {
                $parameterCheckString .= "    if (args.Length() > $paramIndex && !$parameterName.isUndefinedOrNull() && !$parameterName.isObject()) {\n";
                $parameterCheckString .= "        ec = TYPE_MISMATCH_ERR;\n";
                $parameterCheckString .= "        V8Proxy::setDOMException(ec);\n";
@@ -1716,7 +1716,7 @@ sub GenerateEventConstructorCallback
     my $dataNode = shift;
     my $implClassName = shift;
 
-    AddToImplIncludes("OptionsObject.h");
+    AddToImplIncludes("Dictionary.h");
     AddToImplIncludes("V8BindingMacros.h");
     push(@implContent, <<END);
 v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Arguments& args)
@@ -1735,7 +1735,7 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
     ${implClassName}Init eventInit;
     if (args.Length() >= 2) {
-        EXCEPTION_BLOCK(OptionsObject, options, args[1]);
+        EXCEPTION_BLOCK(Dictionary, options, args[1]);
         if (!fill${implClassName}Init(eventInit, options))
             return v8::Undefined();
     }
@@ -1746,7 +1746,7 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
     return toV8(event.release(), args.Holder());
 }
 
-bool fill${implClassName}Init(${implClassName}Init& eventInit, const OptionsObject& options)
+bool fill${implClassName}Init(${implClassName}Init& eventInit, const Dictionary& options)
 {
 END
 
@@ -3355,7 +3355,7 @@ sub GetNativeType
     return "Node*" if $type eq "EventTarget" and $isParameter;
     return "double" if $type eq "Date";
     return "ScriptValue" if $type eq "DOMObject";
-    return "OptionsObject" if $type eq "OptionsObject";
+    return "Dictionary" if $type eq "Dictionary";
 
     return "String" if $type eq "DOMUserData";  # FIXME: Temporary hack?
 
@@ -3458,8 +3458,8 @@ sub JSValueToNative
         return "createIDBKeyFromValue($value)";
     }
 
-    if ($type eq "OptionsObject") {
-        AddToImplIncludes("OptionsObject.h");
+    if ($type eq "Dictionary") {
+        AddToImplIncludes("Dictionary.h");
         return $value;
     }
 
@@ -3607,7 +3607,7 @@ my %non_wrapper_types = (
     'NodeFilter' => 1,
     'EventListener' => 1,
     'IDBKey' => 1,
-    'OptionsObject' => 1,
+    'Dictionary' => 1,
     'Date' => 1,
     'MediaQueryListListener' => 1
 );

@@ -46,10 +46,10 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(JSC::ExecState* exec, JSC::JSValue valu
     return 0;
 }
 
-OptionsObject createOptionsObjectFromValue(JSC::ExecState*, JSC::JSValue)
+Dictionary createDictionaryFromValue(JSC::ExecState*, JSC::JSValue)
 {
     // FIXME: Implement Database Options.
-    return OptionsObject();
+    return Dictionary();
 }
 
 } // namespace WebCore

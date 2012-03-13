@@ -153,14 +153,14 @@ webkit_dom_test_obj_idb_key(WebKitDOMTestObj* self, WebKitDOMIDBKey* key);
 /**
  * webkit_dom_test_obj_options_object:
  * @self: A #WebKitDOMTestObj
- * @oo: A #WebKitDOMOptionsObject
- * @ooo: A #WebKitDOMOptionsObject
+ * @oo: A #WebKitDOMDictionary
+ * @ooo: A #WebKitDOMDictionary
  *
  * Returns:
  *
 **/
 WEBKIT_API void
-webkit_dom_test_obj_options_object(WebKitDOMTestObj* self, WebKitDOMOptionsObject* oo, WebKitDOMOptionsObject* ooo);
+webkit_dom_test_obj_options_object(WebKitDOMTestObj* self, WebKitDOMDictionary* oo, WebKitDOMDictionary* ooo);
 
 /**
  * webkit_dom_test_obj_method_with_exception:

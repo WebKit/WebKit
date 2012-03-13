@@ -32,11 +32,11 @@
 #import "DOMBlobInternal.h"
 #import "DOMCSSRuleInternal.h"
 #import "DOMCSSValueInternal.h"
+#import "DOMDictionaryInternal.h"
 #import "DOMDocumentInternal.h"
 #import "DOMEventInternal.h"
 #import "DOMIDBKeyInternal.h"
 #import "DOMNodeInternal.h"
-#import "DOMOptionsObjectInternal.h"
 #import "DOMSVGDocumentInternal.h"
 #import "DOMSVGPointInternal.h"
 #import "DOMStyleSheetInternal.h"
@@ -50,6 +50,7 @@
 #import "DOMcInternal.h"
 #import "DOMdInternal.h"
 #import "DOMeInternal.h"
+#import "Dictionary.h"
 #import "Document.h"
 #import "EventListener.h"
 #import "ExceptionHandlers.h"
@@ -58,7 +59,6 @@
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
 #import "ObjCEventListener.h"
-#import "OptionsObject.h"
 #import "SVGDocument.h"
 #import "SVGStaticPropertyTearOff.h"
 #import "SerializedScriptValue.h"
@@ -752,7 +752,7 @@
     IMPL->idbKey(core(key));
 }
 
-- (void)optionsObject:(DOMOptionsObject *)oo ooo:(DOMOptionsObject *)ooo
+- (void)optionsObject:(DOMDictionary *)oo ooo:(DOMDictionary *)ooo
 {
     WebCore::JSMainThreadNullState state;
     IMPL->optionsObject(core(oo), core(ooo));

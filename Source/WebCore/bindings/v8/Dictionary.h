@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OptionsObject_h
-#define OptionsObject_h
+#ifndef Dictionary_h
+#define Dictionary_h
 
 #include "MessagePort.h"
 #include "PlatformString.h"
@@ -44,13 +44,13 @@ class SpeechRecognitionError;
 class SpeechRecognitionResult;
 class SpeechRecognitionResultList;
 
-class OptionsObject {
+class Dictionary {
 public:
-    OptionsObject();
-    OptionsObject(const v8::Local<v8::Value>& options);
-    ~OptionsObject();
+    Dictionary();
+    Dictionary(const v8::Local<v8::Value>& options);
+    ~Dictionary();
 
-    OptionsObject& operator=(const OptionsObject&);
+    Dictionary& operator=(const Dictionary&);
 
     bool isObject() const;
     bool isUndefinedOrNull() const;
@@ -92,4 +92,4 @@ private:
 
 }
 
-#endif // OptionsObject_h
+#endif // Dictionary_h

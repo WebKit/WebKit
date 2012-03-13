@@ -21,11 +21,11 @@
 #include "config.h"
 #include "V8TestObj.h"
 
+#include "Dictionary.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "IDBBindingUtilities.h"
 #include "IDBKey.h"
-#include "OptionsObject.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGPropertyTearOff.h"
 #include "SVGStaticPropertyTearOff.h"
@@ -1086,7 +1086,7 @@ static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
     if (args.Length() < 1)
         return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(OptionsObject, oo, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    EXCEPTION_BLOCK(Dictionary, oo, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     if (args.Length() > 0 && !oo.isUndefinedOrNull() && !oo.isObject()) {
         ec = TYPE_MISMATCH_ERR;
         V8Proxy::setDOMException(ec);
@@ -1096,7 +1096,7 @@ static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
         imp->optionsObject(oo);
         return v8::Handle<v8::Value>();
     }
-    EXCEPTION_BLOCK(OptionsObject, ooo, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    EXCEPTION_BLOCK(Dictionary, ooo, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     if (args.Length() > 1 && !ooo.isUndefinedOrNull() && !ooo.isObject()) {
         ec = TYPE_MISMATCH_ERR;
         V8Proxy::setDOMException(ec);

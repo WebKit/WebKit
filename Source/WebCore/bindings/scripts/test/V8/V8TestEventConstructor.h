@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class OptionsObject;
+class Dictionary;
 class V8TestEventConstructor {
 public:
     static const bool hasDependentLifetime = false;
@@ -69,7 +69,7 @@ inline v8::Handle<v8::Value> toV8(PassRefPtr< TestEventConstructor > impl)
     return toV8(impl.get());
 }
 
-bool fillTestEventConstructorInit(TestEventConstructorInit&, const OptionsObject&);
+bool fillTestEventConstructorInit(TestEventConstructorInit&, const Dictionary&);
 
 }
 

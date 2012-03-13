@@ -28,9 +28,9 @@
 
 #if WEBKIT_VERSION_MAX_ALLOWED >= WEBKIT_VERSION_LATEST
 
+@class DOMDictionary;
 @class DOMDocument;
 @class DOMIDBKey;
-@class DOMOptionsObject;
 @class DOMSVGDocument;
 @class DOMSVGPoint;
 @class DOMTestObj;
@@ -174,7 +174,7 @@ enum {
 - (DOMTestObj *)methodThatRequiresAllArgsAndThrows:(NSString *)strArg objArg:(DOMTestObj *)objArg;
 - (void)serializedValue:(NSString *)serializedArg;
 - (void)idbKey:(DOMIDBKey *)key;
-- (void)optionsObject:(DOMOptionsObject *)oo ooo:(DOMOptionsObject *)ooo;
+- (void)optionsObject:(DOMDictionary *)oo ooo:(DOMDictionary *)ooo;
 - (void)methodWithException;
 - (void)customMethod;
 - (void)customMethodWithArgs:(int)intArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;

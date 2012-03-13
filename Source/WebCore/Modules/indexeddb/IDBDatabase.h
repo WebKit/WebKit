@@ -28,13 +28,13 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMStringList.h"
+#include "Dictionary.h"
 #include "Event.h"
 #include "EventTarget.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseCallbacksImpl.h"
 #include "IDBObjectStore.h"
 #include "IDBTransaction.h"
-#include "OptionsObject.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -62,8 +62,8 @@ public:
     PassRefPtr<DOMStringList> objectStoreNames() const { return m_backend->objectStoreNames(); }
 
     // FIXME: Try to modify the code generator so this is unneeded.
-    PassRefPtr<IDBObjectStore> createObjectStore(const String& name, ExceptionCode& ec) { return createObjectStore(name, OptionsObject(), ec); }
-    PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const OptionsObject&, ExceptionCode&);
+    PassRefPtr<IDBObjectStore> createObjectStore(const String& name, ExceptionCode& ec) { return createObjectStore(name, Dictionary(), ec); }
+    PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCode&);
     PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, PassRefPtr<DOMStringList>, unsigned short mode, ExceptionCode&);
     PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, unsigned short mode, ExceptionCode&);
     void deleteObjectStore(const String& name, ExceptionCode&);

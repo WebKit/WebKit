@@ -1386,7 +1386,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
 	Source/WebCore/bindings/js/JavaScriptCallFrame.cpp \
 	Source/WebCore/bindings/js/JavaScriptCallFrame.h \
-	Source/WebCore/bindings/js/OptionsObject.h \
+	Source/WebCore/bindings/js/Dictionary.h \
 	Source/WebCore/bindings/js/PageScriptDebugServer.cpp \
 	Source/WebCore/bindings/js/PageScriptDebugServer.h \
 	Source/WebCore/bindings/js/ScheduledAction.cpp \

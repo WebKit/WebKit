@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestObj.h"
 
+#include "Dictionary.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
@@ -30,7 +31,6 @@
 #include "JSDOMStringList.h"
 #include "JSDocument.h"
 #include "JSEventListener.h"
-#include "JSOptionsObject.h"
 #include "JSSVGDocument.h"
 #include "JSSVGPoint.h"
 #include "JSTestCallback.h"
@@ -1418,7 +1418,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionIdbKey(ExecState* exec)
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
-    RefPtr<IDBKey> key(createIDBKeyFromValue(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
+    PassRefPtr<IDBKey> key(createIDBKeyFromValue(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->idbKey(key);
@@ -1435,7 +1435,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
-    OptionsObject* oo(toOptionsObject(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
+    Dictionary oo(createDictionaryFromValue(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -1445,7 +1445,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
         return JSValue::encode(jsUndefined());
     }
 
-    OptionsObject* ooo(toOptionsObject(MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined)));
+    Dictionary ooo(createDictionaryFromValue(exec, MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->optionsObject(oo, ooo);

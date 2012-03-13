@@ -34,8 +34,8 @@
 
 #include "V8WebKitMutationObserver.h"
 
+#include "Dictionary.h"
 #include "ExceptionCode.h"
-#include "OptionsObject.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
 #include "V8DOMWrapper.h"
@@ -91,7 +91,7 @@ v8::Handle<v8::Value> V8WebKitMutationObserver::observeCallback(const v8::Argume
     if (!args[1]->IsObject())
         return throwError(TYPE_MISMATCH_ERR);
 
-    OptionsObject optionsObject(args[1]);
+    Dictionary optionsObject(args[1]);
     unsigned options = 0;
     HashSet<AtomicString> attributeFilter;
     bool option;

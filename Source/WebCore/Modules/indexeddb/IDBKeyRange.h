@@ -28,8 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "Dictionary.h"
 #include "IDBKey.h"
-#include "OptionsObject.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 

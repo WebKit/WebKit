@@ -26,6 +26,7 @@
 #ifndef IDBObjectStore_h
 #define IDBObjectStore_h
 
+#include "Dictionary.h"
 #include "IDBCursor.h"
 #include "IDBIndex.h"
 #include "IDBKey.h"
@@ -33,7 +34,6 @@
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
-#include "OptionsObject.h"
 #include "PlatformString.h"
 #include "SerializedScriptValue.h"
 #include <wtf/PassRefPtr.h>
@@ -63,7 +63,7 @@ public:
     // FIXME: Try to modify the code generator so this is unneeded.
     PassRefPtr<IDBRequest> add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, ExceptionCode& ec) { return add(context, value, 0, ec);  }
     PassRefPtr<IDBRequest> put(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, ExceptionCode& ec) { return put(context, value, 0, ec);  }
-    PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, ExceptionCode& ec) { return createIndex(name, keyPath, OptionsObject(), ec); }
+    PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, ExceptionCode& ec) { return createIndex(name, keyPath, Dictionary(), ec); }
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) { return openCursor(context, 0, ec); } 
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec) { return openCursor(context, keyRange, IDBCursor::NEXT, ec); } 
 
@@ -74,7 +74,7 @@ public:
     PassRefPtr<IDBRequest> deleteFunction(ScriptExecutionContext*, PassRefPtr<IDBKey> key, ExceptionCode&);
     PassRefPtr<IDBRequest> clear(ScriptExecutionContext*, ExceptionCode&);
 
-    PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, const OptionsObject&, ExceptionCode&);
+    PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, const Dictionary&, ExceptionCode&);
     PassRefPtr<IDBIndex> index(const String& name, ExceptionCode&);
     void deleteIndex(const String& name, ExceptionCode&);
 
@@ -101,4 +101,3 @@ private:
 #endif
 
 #endif // IDBObjectStore_h
-

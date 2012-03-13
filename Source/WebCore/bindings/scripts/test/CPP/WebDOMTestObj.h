@@ -30,10 +30,10 @@ namespace WebCore {
 class TestObj;
 };
 
+class WebDOMDictionary;
 class WebDOMDocument;
 class WebDOMEventListener;
 class WebDOMIDBKey;
-class WebDOMOptionsObject;
 class WebDOMSVGPoint;
 class WebDOMString;
 class WebDOMTestObj;
@@ -150,7 +150,7 @@ public:
     WebDOMTestObj methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg);
     void serializedValue(const WebDOMString& serializedArg);
     void idbKey(const WebDOMIDBKey& key);
-    void optionsObject(const WebDOMOptionsObject& oo, const WebDOMOptionsObject& ooo);
+    void optionsObject(const WebDOMDictionary& oo, const WebDOMDictionary& ooo);
     void methodWithException();
     void addEventListener(const WebDOMString& type, const WebDOMEventListener& listener, bool useCapture);
     void removeEventListener(const WebDOMString& type, const WebDOMEventListener& listener, bool useCapture);

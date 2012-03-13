@@ -109,7 +109,7 @@ v8 {
         bindings/v8/DOMDataStore.cpp \
         bindings/v8/NPV8Object.cpp \
         bindings/v8/NPObjectWrapper.cpp \
-        bindings/v8/OptionsObject.cpp \
+        bindings/v8/Dictionary.cpp \
         bindings/v8/PageScriptDebugServer.cpp \
         bindings/v8/RetainedDOMInfo.cpp \
         bindings/v8/ScheduledAction.cpp \

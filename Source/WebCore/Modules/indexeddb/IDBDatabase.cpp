@@ -85,7 +85,7 @@ void IDBDatabase::clearVersionChangeTransaction(IDBTransaction* transaction)
     m_versionChangeTransaction = 0;
 }
 
-PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const OptionsObject& options, ExceptionCode& ec)
+PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const Dictionary& options, ExceptionCode& ec)
 {
     if (!m_versionChangeTransaction) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;

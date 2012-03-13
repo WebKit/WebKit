@@ -21,7 +21,7 @@
 #include "config.h"
 #include "V8TestEventConstructor.h"
 
-#include "OptionsObject.h"
+#include "Dictionary.h"
 #include "RuntimeEnabledFeatures.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
@@ -78,7 +78,7 @@ v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Argu
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
     TestEventConstructorInit eventInit;
     if (args.Length() >= 2) {
-        EXCEPTION_BLOCK(OptionsObject, options, args[1]);
+        EXCEPTION_BLOCK(Dictionary, options, args[1]);
         if (!fillTestEventConstructorInit(eventInit, options))
             return v8::Undefined();
     }
@@ -89,7 +89,7 @@ v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Argu
     return toV8(event.release(), args.Holder());
 }
 
-bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, const OptionsObject& options)
+bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, const Dictionary& options)
 {
     options.get("attr2", eventInit.attr2);
     return true;

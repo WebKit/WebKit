@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "OptionsObject.h"
+#include "Dictionary.h"
 
 #include "DOMStringList.h"
 #include "V8Binding.h"
@@ -54,38 +54,38 @@
 
 namespace WebCore {
 
-OptionsObject::OptionsObject()
+Dictionary::Dictionary()
 {
 }
 
-OptionsObject::OptionsObject(const v8::Local<v8::Value>& options)
+Dictionary::Dictionary(const v8::Local<v8::Value>& options)
     : m_options(options)
 {
 }
 
-OptionsObject::~OptionsObject()
+Dictionary::~Dictionary()
 {
 }
 
-OptionsObject& OptionsObject::operator=(const OptionsObject& optionsObject)
+Dictionary& Dictionary::operator=(const Dictionary& optionsObject)
 {
     m_options = optionsObject.m_options;
     return *this;
 }
 
-bool OptionsObject::isObject() const
+bool Dictionary::isObject() const
 {
     return !isUndefinedOrNull() && m_options->IsObject();
 }
 
-bool OptionsObject::isUndefinedOrNull() const
+bool Dictionary::isUndefinedOrNull() const
 {
     if (m_options.IsEmpty())
         return true;
     return WebCore::isUndefinedOrNull(m_options);
 }
 
-bool OptionsObject::getKey(const String& key, v8::Local<v8::Value>& value) const
+bool Dictionary::getKey(const String& key, v8::Local<v8::Value>& value) const
 {
     if (isUndefinedOrNull())
         return false;
@@ -101,7 +101,7 @@ bool OptionsObject::getKey(const String& key, v8::Local<v8::Value>& value) const
     return true;
 }
 
-bool OptionsObject::get(const String& key, bool& value) const
+bool Dictionary::get(const String& key, bool& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -114,7 +114,7 @@ bool OptionsObject::get(const String& key, bool& value) const
     return true;
 }
 
-bool OptionsObject::get(const String& key, int32_t& value) const
+bool Dictionary::get(const String& key, int32_t& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -127,7 +127,7 @@ bool OptionsObject::get(const String& key, int32_t& value) const
     return true;
 }
 
-bool OptionsObject::get(const String& key, double& value) const
+bool Dictionary::get(const String& key, double& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -140,7 +140,7 @@ bool OptionsObject::get(const String& key, double& value) const
     return true;
 }
 
-bool OptionsObject::get(const String& key, String& value) const
+bool Dictionary::get(const String& key, String& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -154,7 +154,7 @@ bool OptionsObject::get(const String& key, String& value) const
     return true;
 }
 
-bool OptionsObject::get(const String& key, ScriptValue& value) const
+bool Dictionary::get(const String& key, ScriptValue& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -164,7 +164,7 @@ bool OptionsObject::get(const String& key, ScriptValue& value) const
     return true;
 }
 
-bool OptionsObject::get(const String& key, unsigned short& value) const
+bool Dictionary::get(const String& key, unsigned short& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -177,7 +177,7 @@ bool OptionsObject::get(const String& key, unsigned short& value) const
     return true;
 }
 
-bool OptionsObject::get(const String& key, short& value) const
+bool Dictionary::get(const String& key, short& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -190,7 +190,7 @@ bool OptionsObject::get(const String& key, short& value) const
     return true;
 }
 
-bool OptionsObject::get(const String& key, unsigned& value) const
+bool Dictionary::get(const String& key, unsigned& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -203,7 +203,7 @@ bool OptionsObject::get(const String& key, unsigned& value) const
     return true;
 }
 
-bool OptionsObject::get(const String& key, unsigned long long& value) const
+bool Dictionary::get(const String& key, unsigned long long& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -217,7 +217,7 @@ bool OptionsObject::get(const String& key, unsigned long long& value) const
     return true;
 }
 
-bool OptionsObject::get(const String& key, RefPtr<DOMWindow>& value) const
+bool Dictionary::get(const String& key, RefPtr<DOMWindow>& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -234,7 +234,7 @@ bool OptionsObject::get(const String& key, RefPtr<DOMWindow>& value) const
     return true;
 }
 
-bool OptionsObject::get(const String& key, RefPtr<Storage>& value) const
+bool Dictionary::get(const String& key, RefPtr<Storage>& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -251,7 +251,7 @@ bool OptionsObject::get(const String& key, RefPtr<Storage>& value) const
     return true;
 }
 
-bool OptionsObject::get(const String& key, MessagePortArray& value) const
+bool Dictionary::get(const String& key, MessagePortArray& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -260,7 +260,7 @@ bool OptionsObject::get(const String& key, MessagePortArray& value) const
     return getMessagePortArray(v8Value, value);
 }
 
-bool OptionsObject::get(const String& key, HashSet<AtomicString>& value) const
+bool Dictionary::get(const String& key, HashSet<AtomicString>& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -279,7 +279,7 @@ bool OptionsObject::get(const String& key, HashSet<AtomicString>& value) const
     return true;
 }
 
-bool OptionsObject::getWithUndefinedOrNullCheck(const String& key, String& value) const
+bool Dictionary::getWithUndefinedOrNullCheck(const String& key, String& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value) || v8Value->IsNull() || v8Value->IsUndefined())
@@ -294,7 +294,7 @@ bool OptionsObject::getWithUndefinedOrNullCheck(const String& key, String& value
 }
 
 #if ENABLE(VIDEO_TRACK)
-bool OptionsObject::get(const String& key, RefPtr<TrackBase>& value) const
+bool Dictionary::get(const String& key, RefPtr<TrackBase>& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -316,7 +316,7 @@ bool OptionsObject::get(const String& key, RefPtr<TrackBase>& value) const
 #endif
 
 #if ENABLE(SCRIPTED_SPEECH)
-bool OptionsObject::get(const String& key, RefPtr<SpeechRecognitionError>& value) const
+bool Dictionary::get(const String& key, RefPtr<SpeechRecognitionError>& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -333,7 +333,7 @@ bool OptionsObject::get(const String& key, RefPtr<SpeechRecognitionError>& value
     return true;
 }
 
-bool OptionsObject::get(const String& key, RefPtr<SpeechRecognitionResult>& value) const
+bool Dictionary::get(const String& key, RefPtr<SpeechRecognitionResult>& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))
@@ -350,7 +350,7 @@ bool OptionsObject::get(const String& key, RefPtr<SpeechRecognitionResult>& valu
     return true;
 }
 
-bool OptionsObject::get(const String& key, RefPtr<SpeechRecognitionResultList>& value) const
+bool Dictionary::get(const String& key, RefPtr<SpeechRecognitionResultList>& value) const
 {
     v8::Local<v8::Value> v8Value;
     if (!getKey(key, v8Value))

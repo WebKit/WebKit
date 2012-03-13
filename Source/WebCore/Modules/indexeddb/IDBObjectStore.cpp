@@ -175,7 +175,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, Ex
     return request.release();
 }
 
-PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const String& keyPath, const OptionsObject& options, ExceptionCode& ec)
+PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const String& keyPath, const Dictionary& options, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::createIndex");
     if (!IDBIsValidKeyPath(keyPath)) {

@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OptionsObject_h
-#define OptionsObject_h
+#ifndef Dictionary_h
+#define Dictionary_h
 
 #include "SerializedScriptValue.h"
 #include <wtf/HashSet.h>
@@ -40,9 +40,9 @@ class Storage;
 class TrackBase;
 
 // FIXME: Implement.
-class OptionsObject {
+class Dictionary {
 public:
-    OptionsObject() { }
+    Dictionary() { }
 
     bool isObject() const { return false; }
     bool isUndefinedOrNull() const { return false; }
@@ -68,4 +68,4 @@ public:
 
 }
 
-#endif // OptionsObject_h
+#endif // Dictionary_h
