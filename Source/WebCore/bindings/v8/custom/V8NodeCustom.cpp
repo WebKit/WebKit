@@ -142,7 +142,7 @@ v8::Handle<v8::Value> toV8Slow(Node* impl, bool forceNewObject)
         return v8::Null();
 
     if (!forceNewObject) {
-        v8::Handle<v8::Value> wrapper = V8DOMWrapper::getExistingWrapper(impl);
+        v8::Handle<v8::Value> wrapper = V8DOMWrapper::getCachedWrapper(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
     }

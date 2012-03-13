@@ -494,7 +494,7 @@ END
 ALWAYS_INLINE v8::Handle<v8::Object> ${className}::existingWrapper(${nativeType}* impl)
 {
 END
-    my $getWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getExistingWrapper(impl)" : "${domMapFunction}.get(impl)";
+    my $getWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getCachedWrapper(impl)" : "${domMapFunction}.get(impl)";
     push(@headerContent, <<END);
     return ${getWrapper};
 }
@@ -542,7 +542,7 @@ inline v8::Handle<v8::Value> toV8(Node* impl, bool forceNewObject = false)
         return v8::Null();
     if (UNLIKELY(forceNewObject))
         return toV8Slow(impl, forceNewObject);
-    v8::Handle<v8::Value> wrapper = V8DOMWrapper::getWrapper(impl);
+    v8::Handle<v8::Value> wrapper = V8DOMWrapper::getCachedWrapper(impl);
     if (!wrapper.IsEmpty())
         return wrapper;
     return toV8Slow(impl, false);

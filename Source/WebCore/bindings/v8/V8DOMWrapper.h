@@ -124,7 +124,7 @@ namespace WebCore {
 
         static v8::Local<v8::Object> instantiateV8Object(V8Proxy* proxy, WrapperTypeInfo*, void* impl);
 
-        static v8::Handle<v8::Object> getExistingWrapper(Node* node)
+        static v8::Handle<v8::Object> getCachedWrapper(Node* node)
         {
             ASSERT(isMainThread());
             if (LIKELY(!IsolatedWorld::count())) {
@@ -132,23 +132,11 @@ namespace WebCore {
                 if (LIKELY(!!wrapper))
                     return *wrapper;
             }
-            return getExistingWrapperSlow(node);
-        }
-
-        static v8::Handle<v8::Value> getWrapper(Node* node)
-        {
-            ASSERT(isMainThread());
-            if (LIKELY(!IsolatedWorld::count())) {
-                v8::Persistent<v8::Object>* wrapper = node->wrapper();
-                if (LIKELY(!!wrapper))
-                    return *wrapper;
-            }
-            return getWrapperSlow(node);
+            return getCachedWrapperSlow(node);
         }
 
     private:
-        static v8::Handle<v8::Object> getExistingWrapperSlow(Node*);
-        static v8::Handle<v8::Value> getWrapperSlow(Node*);
+        static v8::Handle<v8::Object> getCachedWrapperSlow(Node*);
     };
 
 }

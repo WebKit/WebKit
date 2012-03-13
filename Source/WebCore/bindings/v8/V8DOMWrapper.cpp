@@ -69,7 +69,7 @@
 
 namespace WebCore {
 
-static ALWAYS_INLINE v8::Handle<v8::Object> getExistingWrapperInline(Node* node)
+static ALWAYS_INLINE v8::Handle<v8::Object> getCachedWrapperInline(Node* node)
 {
     V8IsolatedContext* context = V8IsolatedContext::getEntered();
     if (LIKELY(!context)) {
@@ -303,14 +303,9 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
     return typeInfo == type;
 }
 
-v8::Handle<v8::Object> V8DOMWrapper::getExistingWrapperSlow(Node* node)
+v8::Handle<v8::Object> V8DOMWrapper::getCachedWrapperSlow(Node* node)
 {
-    return getExistingWrapperInline(node);
-}
-
-v8::Handle<v8::Value> V8DOMWrapper::getWrapperSlow(Node* node)
-{
-    return getExistingWrapperInline(node);
+    return getCachedWrapperInline(node);
 }
 
 #define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
