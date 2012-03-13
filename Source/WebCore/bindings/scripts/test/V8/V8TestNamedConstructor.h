@@ -52,20 +52,13 @@ public:
     static WrapperTypeInfo info;
     static ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object>);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
-    static v8::Handle<v8::Object> existingWrapper(TestNamedConstructor*);
-
 private:
     static v8::Handle<v8::Object> wrapSlow(TestNamedConstructor*);
 };
 
-ALWAYS_INLINE v8::Handle<v8::Object> V8TestNamedConstructor::existingWrapper(TestNamedConstructor* impl)
-{
-    return getActiveDOMObjectMap().get(impl);
-}
-
 v8::Handle<v8::Object> V8TestNamedConstructor::wrap(TestNamedConstructor* impl)
 {
-        v8::Handle<v8::Object> wrapper = existingWrapper(impl);
+        v8::Handle<v8::Object> wrapper = getActiveDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
     return V8TestNamedConstructor::wrapSlow(impl);

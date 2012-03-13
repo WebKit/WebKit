@@ -46,20 +46,13 @@ public:
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> namedPropertyGetter(v8::Local<v8::String>, const v8::AccessorInfo&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
-    static v8::Handle<v8::Object> existingWrapper(TestCustomNamedGetter*);
-
 private:
     static v8::Handle<v8::Object> wrapSlow(TestCustomNamedGetter*);
 };
 
-ALWAYS_INLINE v8::Handle<v8::Object> V8TestCustomNamedGetter::existingWrapper(TestCustomNamedGetter* impl)
-{
-    return getDOMObjectMap().get(impl);
-}
-
 v8::Handle<v8::Object> V8TestCustomNamedGetter::wrap(TestCustomNamedGetter* impl)
 {
-        v8::Handle<v8::Object> wrapper = existingWrapper(impl);
+        v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
     return V8TestCustomNamedGetter::wrapSlow(impl);

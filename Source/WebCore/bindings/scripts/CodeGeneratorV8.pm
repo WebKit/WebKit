@@ -482,8 +482,6 @@ END
     }
 
     push(@headerContent, <<END);
-    static v8::Handle<v8::Object> existingWrapper(${nativeType}*);
-
 private:
     static v8::Handle<v8::Object> wrapSlow(${nativeType}*);
 };
@@ -491,20 +489,13 @@ private:
 END
 
     push(@headerContent, <<END);
-ALWAYS_INLINE v8::Handle<v8::Object> ${className}::existingWrapper(${nativeType}* impl)
-{
-END
-    my $getWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getCachedWrapper(impl)" : "${domMapFunction}.get(impl)";
-    push(@headerContent, <<END);
-    return ${getWrapper};
-}
-
 v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl${forceNewObjectInput})
 {
 END
     push(@headerContent, "    if (!forceNewObject) {\n") if IsDOMNodeType($interfaceName);
+    my $getCachedWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getCachedWrapper(impl)" : "${domMapFunction}.get(impl)";
     push(@headerContent, <<END);
-        v8::Handle<v8::Object> wrapper = existingWrapper(impl);
+        v8::Handle<v8::Object> wrapper = $getCachedWrapper;
         if (!wrapper.IsEmpty())
             return wrapper;
 END
@@ -995,7 +986,8 @@ END
         # Check for a wrapper in the wrapper cache. If there is one, we know that a hidden reference has already
         # been created. If we don't find a wrapper, we create both a wrapper and a hidden reference.
         push(@implContentDecls, "    RefPtr<$returnType> result = ${getterString};\n");
-        push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? V8${returnType}::existingWrapper(result.get()) : v8::Handle<v8::Object>();\n");
+        my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
+        push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? ${domMapFunction}.get(result.get()) : v8::Handle<v8::Object>();\n");
         push(@implContentDecls, "    if (wrapper.IsEmpty()) {\n");
         push(@implContentDecls, "        wrapper = toV8(result.get());\n");
         push(@implContentDecls, "        if (!wrapper.IsEmpty())\n");

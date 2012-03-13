@@ -47,20 +47,13 @@ public:
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
-    static v8::Handle<v8::Object> existingWrapper(Float64Array*);
-
 private:
     static v8::Handle<v8::Object> wrapSlow(Float64Array*);
 };
 
-ALWAYS_INLINE v8::Handle<v8::Object> V8Float64Array::existingWrapper(Float64Array* impl)
-{
-    return getDOMObjectMap().get(impl);
-}
-
 v8::Handle<v8::Object> V8Float64Array::wrap(Float64Array* impl)
 {
-        v8::Handle<v8::Object> wrapper = existingWrapper(impl);
+        v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
     return V8Float64Array::wrapSlow(impl);

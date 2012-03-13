@@ -47,20 +47,13 @@ public:
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
-    static v8::Handle<v8::Object> existingWrapper(TestEventConstructor*);
-
 private:
     static v8::Handle<v8::Object> wrapSlow(TestEventConstructor*);
 };
 
-ALWAYS_INLINE v8::Handle<v8::Object> V8TestEventConstructor::existingWrapper(TestEventConstructor* impl)
-{
-    return getDOMObjectMap().get(impl);
-}
-
 v8::Handle<v8::Object> V8TestEventConstructor::wrap(TestEventConstructor* impl)
 {
-        v8::Handle<v8::Object> wrapper = existingWrapper(impl);
+        v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
     return V8TestEventConstructor::wrapSlow(impl);

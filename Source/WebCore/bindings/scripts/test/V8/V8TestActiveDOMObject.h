@@ -47,20 +47,13 @@ public:
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
     static bool namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType, v8::Local<v8::Value> data);
     static bool indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType, v8::Local<v8::Value> data);
-    static v8::Handle<v8::Object> existingWrapper(TestActiveDOMObject*);
-
 private:
     static v8::Handle<v8::Object> wrapSlow(TestActiveDOMObject*);
 };
 
-ALWAYS_INLINE v8::Handle<v8::Object> V8TestActiveDOMObject::existingWrapper(TestActiveDOMObject* impl)
-{
-    return getDOMObjectMap().get(impl);
-}
-
 v8::Handle<v8::Object> V8TestActiveDOMObject::wrap(TestActiveDOMObject* impl)
 {
-        v8::Handle<v8::Object> wrapper = existingWrapper(impl);
+        v8::Handle<v8::Object> wrapper = getDOMObjectMap().get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
     return V8TestActiveDOMObject::wrapSlow(impl);
