@@ -656,13 +656,13 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
         CCLayerQuad::Edge rightEdge(topRight, bottomRight);
 
         // Only apply anti-aliasing to edges not clipped during culling.
-        if (quad->topEdgeAA() && quad->quadVisibleRect().y() == quad->quadRect().y())
+        if (quad->topEdgeAA() && tileRect.y() == quad->quadRect().y())
             topEdge = deviceLayerEdges.top();
-        if (quad->leftEdgeAA() && quad->quadVisibleRect().x() == quad->quadRect().x())
+        if (quad->leftEdgeAA() && tileRect.x() == quad->quadRect().x())
             leftEdge = deviceLayerEdges.left();
-        if (quad->rightEdgeAA() && quad->quadVisibleRect().maxX() == quad->quadRect().maxX())
+        if (quad->rightEdgeAA() && tileRect.maxX() == quad->quadRect().maxX())
             rightEdge = deviceLayerEdges.right();
-        if (quad->bottomEdgeAA() && quad->quadVisibleRect().maxY() == quad->quadRect().maxY())
+        if (quad->bottomEdgeAA() && tileRect.maxY() == quad->quadRect().maxY())
             bottomEdge = deviceLayerEdges.bottom();
 
         float sign = FloatQuad(tileRect).isCounterclockwise() ? -1 : 1;
