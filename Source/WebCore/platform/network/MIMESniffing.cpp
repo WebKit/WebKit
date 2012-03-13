@@ -223,7 +223,7 @@ const size_t imageTypesSize = sizeof(imageTypes) / sizeof(imageTypes[0]);
 static inline size_t dataSizeNeededForImageSniffing()
 {
     size_t result = 0;
-    for (int i = 0; i < imageTypesSize; ++i) {
+    for (size_t i = 0; i < imageTypesSize; ++i) {
         if (imageTypes[i].size > result)
             result = imageTypes[i].size;
     }
