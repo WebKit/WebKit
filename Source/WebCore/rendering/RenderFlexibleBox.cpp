@@ -188,11 +188,19 @@ void RenderFlexibleBox::computePreferredLogicalWidths()
             minPreferredLogicalWidth += margin;
             maxPreferredLogicalWidth += margin;
             if (!isColumnFlow()) {
-                m_minPreferredLogicalWidth += minPreferredLogicalWidth;
                 m_maxPreferredLogicalWidth += maxPreferredLogicalWidth;
+                if (isMultiline()) {
+                    // For multiline, the min preferred width is if you put a break between each item.
+                    m_minPreferredLogicalWidth = std::max(m_minPreferredLogicalWidth, minPreferredLogicalWidth);
+                } else
+                    m_minPreferredLogicalWidth += minPreferredLogicalWidth;
             } else {
                 m_minPreferredLogicalWidth = std::max(minPreferredLogicalWidth, m_minPreferredLogicalWidth);
-                m_maxPreferredLogicalWidth = std::max(maxPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+                if (isMultiline()) {
+                    // For multiline, the max preferred width is if you put a break between each item.
+                    m_maxPreferredLogicalWidth += maxPreferredLogicalWidth;
+                } else
+                    m_maxPreferredLogicalWidth = std::max(maxPreferredLogicalWidth, m_maxPreferredLogicalWidth);
             }
         }
 
@@ -682,6 +690,9 @@ bool RenderFlexibleBox::computeNextFlexLine(FlexOrderIterator& iterator, Ordered
         else
             childMainAxisExtent += child->marginHeight();
 
+        // FIXME: For auto sized column flexbox, mainAxisContentExtent (the height) hasn't been computed yet so we break
+        // after the first child. If the height is auto, we need to look at max-height to determine the line breaks.
+        // https://bugs.webkit.org/show_bug.cgi?id=80929
         if (isMultiline() && preferredMainAxisExtent + childMainAxisExtent > mainAxisContentExtent() && orderedChildren.size() > 0)
             break;
         orderedChildren.append(child);
@@ -845,8 +856,8 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
             childCrossAxisMarginBoxExtent = maxAscent + maxDescent;
         } else
             childCrossAxisMarginBoxExtent = crossAxisExtentForChild(child) + crossAxisMarginExtentForChild(child);
-        if (crossAxisLength().isAuto())
-            setCrossAxisExtent(std::max(crossAxisExtent(), crossAxisOffset + flowAwareBorderAfter() + flowAwarePaddingAfter() + childCrossAxisMarginBoxExtent + crossAxisScrollbarExtent()));
+        if (!isColumnFlow() && style()->logicalHeight().isAuto())
+            setLogicalHeight(std::max(logicalHeight(), crossAxisOffset + flowAwareBorderAfter() + flowAwarePaddingAfter() + childCrossAxisMarginBoxExtent + crossAxisScrollbarExtent()));
         maxChildCrossAxisExtent = std::max(maxChildCrossAxisExtent, childCrossAxisMarginBoxExtent);
 
         mainAxisOffset += flowAwareMarginStartForChild(child);
