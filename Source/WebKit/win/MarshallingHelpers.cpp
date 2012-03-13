@@ -26,11 +26,11 @@
 #include "config.h"
 #include "WebKitDLL.h"
 #include "MarshallingHelpers.h"
-#include "MathExtras.h"
 
 #include <WebCore/IntRect.h>
 #include <WebCore/KURL.h>
 #include <WebCore/PlatformString.h>
+#include <wtf/MathExtras.h>
 
 using namespace WebCore;
 

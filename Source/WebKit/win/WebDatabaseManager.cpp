@@ -38,12 +38,12 @@
 #include "WebNotificationCenter.h"
 #include "WebSecurityOrigin.h"
 
-#include <JavaScriptCore/MainThread.h>
 #include <WebCore/BString.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/SecurityOrigin.h>
+#include <wtf/MainThread.h>
 
 using namespace WebCore;
 
