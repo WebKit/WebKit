@@ -59,7 +59,7 @@ class TestRebaseline(unittest.TestCase):
         expected_stdout = """Copying baseline from /mock-checkout/LayoutTests/userscripts/another-test-expected.txt to /mock-checkout/LayoutTests/platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt.
 Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.
 """
-        OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Mac10.7", "userscripts/another-test.html", "chromium-mac-snowleopard", "txt"], expected_stdout=expected_stdout)
+        OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt"], expected_stdout=expected_stdout)
 
     def test_rebaseline_and_copy_test_no_existing_result(self):
         command = RebaselineTest()
@@ -69,7 +69,7 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         expected_stdout = """No existing baseline for userscripts/another-test.html.
 Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.
 """
-        OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Mac10.7", "userscripts/another-test.html", "chromium-mac-snowleopard", "txt"], expected_stdout=expected_stdout)
+        OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt"], expected_stdout=expected_stdout)
 
     def test_rebaseline_and_copy_test_with_lion_result(self):
         command = RebaselineTest()
@@ -80,9 +80,10 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         tool.filesystem.write_text_file(os.path.join(lion_port.baseline_path(), "userscripts/another-test-expected.txt"), "Dummy expected result")
 
         expected_stdout = """Copying baseline from /mock-checkout/LayoutTests/platform/chromium-mac/userscripts/another-test-expected.txt to /mock-checkout/LayoutTests/platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt.
+Copying baseline from /mock-checkout/LayoutTests/platform/chromium-mac/userscripts/another-test-expected.txt to /mock-checkout/LayoutTests/platform/chromium-mac-leopard/userscripts/another-test-expected.txt.
 Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.
 """
-        OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Mac10.7", "userscripts/another-test.html", "chromium-mac-snowleopard", "txt"], expected_stdout=expected_stdout)
+        OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard", "chromium-mac-leopard"], "txt"], expected_stdout=expected_stdout)
 
     def test_rebaseline_and_copy_no_overwrite_test(self):
         command = RebaselineTest()
@@ -98,7 +99,7 @@ Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-resu
         expected_stdout = """Existing baseline at /mock-checkout/LayoutTests/platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt, not copying over it.
 Retrieving http://example.com/f/builders/Webkit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.
 """
-        OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Mac10.7", "userscripts/another-test.html", "chromium-mac-snowleopard", "txt"], expected_stdout=expected_stdout)
+        OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt"], expected_stdout=expected_stdout)
 
     def test_rebaseline_expectations(self):
         command = RebaselineExpectations()

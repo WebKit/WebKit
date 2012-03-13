@@ -1,3 +1,27 @@
+2012-03-13  Ojan Vafai  <ojan@chromium.org>
+
+        Rebaselining for a new port doesn't work right with multiple fallback ports
+        https://bugs.webkit.org/show_bug.cgi?id=80932
+
+        Reviewed by Adam Barth.
+
+        Since chromium-leopard also falls back to mac-leopard, we need to
+        copy the existing result for both chromium-leopard and chromium-snowleopard
+        before doing lion rebaselines.
+
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        (fallback_port_names_for_new_port):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest):
+        (RebaselineTest._copy_existing_baseline):
+        (RebaselineTest._rebaseline_test):
+        (RebaselineTest.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler.rebaseline):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (GardeningServerTest.test_rebaseline_new_port):
+
 2012-03-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Tweak minibrowser UI

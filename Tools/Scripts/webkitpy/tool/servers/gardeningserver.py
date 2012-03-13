@@ -142,9 +142,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
             builder,
             self.query['test'][0],
         ]
-        fallback_port = builders.fallback_port_name_for_new_port(builder)
-        if fallback_port:
-            command.append(fallback_port)
+        command.extend(builders.fallback_port_names_for_new_port(builder))
         self._run_webkit_patch(command)
         self._serve_text('success')
 

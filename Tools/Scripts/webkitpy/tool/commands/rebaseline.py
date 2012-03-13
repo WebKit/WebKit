@@ -57,7 +57,7 @@ def _baseline_name(fs, test_name, suffix):
 class RebaselineTest(AbstractDeclarativeCommand):
     name = "rebaseline-test"
     help_text = "Rebaseline a single test from a buildbot.  (Currently works only with build.chromium.org buildbots.)"
-    argument_names = "BUILDER_NAME TEST_NAME [PLATFORM_TO_MOVE_EXISTING_BASELINES_TO]"
+    argument_names = "BUILDER_NAME TEST_NAME [PLATFORMS_TO_MOVE_EXISTING_BASELINES_TO]"
 
     def _results_url(self, builder_name):
         # FIXME: Generalize this command to work with non-build.chromium.org builders.
@@ -68,17 +68,31 @@ class RebaselineTest(AbstractDeclarativeCommand):
         port = self._tool.port_factory.get_from_builder_name(builder_name)
         return port.baseline_path()
 
-    def _copy_existing_baseline(self, platform_to_move_existing_baselines_to, test_name, suffix):
-        port = self._tool.port_factory.get(platform_to_move_existing_baselines_to)
-        old_baseline = port.expected_filename(test_name, "." + suffix)
-        if not self._tool.filesystem.exists(old_baseline):
-            print("No existing baseline for %s." % test_name)
-            return
+    def _copy_existing_baseline(self, platforms_to_move_existing_baselines_to, test_name, suffix):
+        old_baselines = []
+        new_baselines = []
 
-        new_baseline = self._tool.filesystem.join(port.baseline_path(), self._file_name_for_expected_result(test_name, suffix))
-        if self._tool.filesystem.exists(new_baseline):
-            print("Existing baseline at %s, not copying over it." % new_baseline)
-        else:
+        # Need to gather all the baseline paths before modifying the filesystem since
+        # the modifications can affect the results of port.expected_filename.
+        for platform in platforms_to_move_existing_baselines_to:
+            port = self._tool.port_factory.get(platform)
+            old_baseline = port.expected_filename(test_name, "." + suffix)
+            if not self._tool.filesystem.exists(old_baseline):
+                print("No existing baseline for %s." % test_name)
+                continue
+
+            new_baseline = self._tool.filesystem.join(port.baseline_path(), self._file_name_for_expected_result(test_name, suffix))
+            if self._tool.filesystem.exists(new_baseline):
+                print("Existing baseline at %s, not copying over it." % new_baseline)
+                continue
+
+            old_baselines.append(old_baseline)
+            new_baselines.append(new_baseline)
+
+        for i in range(len(old_baselines)):
+            old_baseline = old_baselines[i]
+            new_baseline = new_baselines[i]
+
             print("Copying baseline from %s to %s." % (old_baseline, new_baseline))
             self._tool.filesystem.maybe_make_directory(self._tool.filesystem.dirname(new_baseline))
             self._tool.filesystem.copyfile(old_baseline, new_baseline)
@@ -103,15 +117,15 @@ class RebaselineTest(AbstractDeclarativeCommand):
     def _file_name_for_expected_result(self, test_name, suffix):
         return "%s-expected.%s" % (self._test_root(test_name), suffix)
 
-    def _rebaseline_test(self, builder_name, test_name, platform_to_move_existing_baselines_to, suffix):
+    def _rebaseline_test(self, builder_name, test_name, platforms_to_move_existing_baselines_to, suffix):
         results_url = self._results_url(builder_name)
         baseline_directory = self._baseline_directory(builder_name)
 
         source_baseline = "%s/%s" % (results_url, self._file_name_for_actual_result(test_name, suffix))
         target_baseline = self._tool.filesystem.join(baseline_directory, self._file_name_for_expected_result(test_name, suffix))
 
-        if platform_to_move_existing_baselines_to:
-            self._copy_existing_baseline(platform_to_move_existing_baselines_to, test_name, suffix)
+        if platforms_to_move_existing_baselines_to:
+            self._copy_existing_baseline(platforms_to_move_existing_baselines_to, test_name, suffix)
 
         print "Retrieving %s." % source_baseline
         self._save_baseline(self._tool.web.get_binary(source_baseline, convert_404_to_None=True), target_baseline)
@@ -119,11 +133,10 @@ class RebaselineTest(AbstractDeclarativeCommand):
     def execute(self, options, args, tool):
         for suffix in _baseline_suffix_list:
             if len(args) > 2:
-                platform_to_move_existing_baselines_to = args[2]
+                platforms_to_move_existing_baselines_to = args[2:]
             else:
-                platform_to_move_existing_baselines_to = None
-
-            self._rebaseline_test(args[0], args[1], platform_to_move_existing_baselines_to, suffix)
+                platforms_to_move_existing_baselines_to = None
+            self._rebaseline_test(args[0], args[1], platforms_to_move_existing_baselines_to, suffix)
 
 
 class OptimizeBaselines(AbstractDeclarativeCommand):
