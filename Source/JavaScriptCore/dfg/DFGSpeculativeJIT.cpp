@@ -1547,23 +1547,7 @@ void SpeculativeJIT::compileUInt32ToNumber(Node& node)
     // instruction that follows us, rather than the one we're executing right now. We have
     // to do this because by this point, the original values necessary to compile whatever
     // operation the UInt32ToNumber originated from might be dead.
-    speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::LessThan, op1.gpr(), TrustedImm32(0)));
-        
-    // Verify that we can do roll forward.
-    // FIXME: This isn't right, since the next node in the graph may not actually be the next
-    // node in the basic block's execution sequence.
-    ASSERT(at(m_compileIndex + 1).op() == SetLocal);
-    ASSERT(at(m_compileIndex + 1).codeOrigin == node.codeOrigin);
-    ASSERT(at(m_compileIndex + 2).codeOrigin != node.codeOrigin);
-        
-    // Now do the magic.
-    OSRExit& exit = m_jit.codeBlock()->lastOSRExit();
-    Node& setLocal = at(m_compileIndex + 1);
-    exit.m_codeOrigin = at(m_compileIndex + 2).codeOrigin;
-    exit.m_lastSetOperand = setLocal.local();
-        
-    // Create the value recovery, and stuff it into the right place.
-    exit.valueRecoveryForOperand(setLocal.local()) = ValueRecovery::uint32InGPR(op1.gpr());
+    forwardSpeculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::LessThan, op1.gpr(), TrustedImm32(0)), ValueRecovery::uint32InGPR(op1.gpr()));
 
     m_jit.move(op1.gpr(), result.gpr());
     integerResult(result.gpr(), m_compileIndex, op1.format());
@@ -1760,16 +1744,24 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(const TypedArrayDescriptor& 
         ASSERT_NOT_REACHED();
     }
     outOfBounds.link(&m_jit);
-    if (elementSize < 4 || signedness == SignedTypedArray)
+    if (elementSize < 4 || signedness == SignedTypedArray) {
         integerResult(resultReg, m_compileIndex);
-    else {
-        FPRTemporary fresult(this);
-        m_jit.convertInt32ToDouble(resultReg, fresult.fpr());
-        JITCompiler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, resultReg, TrustedImm32(0));
-        m_jit.addDouble(JITCompiler::AbsoluteAddress(&AssemblyHelpers::twoToThe32), fresult.fpr());
-        positive.link(&m_jit);
-        doubleResult(fresult.fpr(), m_compileIndex);
+        return;
     }
+    
+    ASSERT(elementSize == 4 && signedness == UnsignedTypedArray);
+    if (node.shouldSpeculateInteger()) {
+        forwardSpeculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::LessThan, resultReg, TrustedImm32(0)), ValueRecovery::uint32InGPR(resultReg));
+        integerResult(resultReg, m_compileIndex);
+        return;
+    }
+    
+    FPRTemporary fresult(this);
+    m_jit.convertInt32ToDouble(resultReg, fresult.fpr());
+    JITCompiler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, resultReg, TrustedImm32(0));
+    m_jit.addDouble(JITCompiler::AbsoluteAddress(&AssemblyHelpers::twoToThe32), fresult.fpr());
+    positive.link(&m_jit);
+    doubleResult(fresult.fpr(), m_compileIndex);
 }
 
 void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor& descriptor, GPRReg base, GPRReg property, Node& node, size_t elementSize, TypedArraySpeculationRequirements speculationRequirements, TypedArraySignedness signedness, TypedArrayRounding rounding)

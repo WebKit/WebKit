@@ -514,7 +514,10 @@ bool AbstractState::execute(unsigned indexInBlock)
         if (m_graph[node.child1()].shouldSpeculateUint32Array()) {
             forNode(node.child1()).filter(PredictUint32Array);
             forNode(node.child2()).filter(PredictInt32);
-            forNode(nodeIndex).set(PredictDouble);
+            if (node.shouldSpeculateInteger())
+                forNode(nodeIndex).set(PredictInt32);
+            else
+                forNode(nodeIndex).set(PredictDouble);
             break;
         }
         if (m_graph[node.child1()].shouldSpeculateFloat32Array()) {

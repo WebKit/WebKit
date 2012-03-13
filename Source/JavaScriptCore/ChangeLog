@@ -1,3 +1,31 @@
+2012-03-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Loads from UInt32Arrays should not result in a double up-convert if it isn't necessary
+        https://bugs.webkit.org/show_bug.cgi?id=80979
+        <rdar://problem/11036848>
+
+        Reviewed by Oliver Hunt.
+        
+        Also improved DFG IR dumping to include type information in a somewhat more
+        intuitive way.
+
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToAbbreviatedString):
+        (JSC):
+        * bytecode/PredictedType.h:
+        (JSC):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileUInt32ToNumber):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::forwardSpeculationCheck):
+
 2012-03-13  George Staikos  <staikos@webkit.org>
 
         The callback is only used if SA_RESTART is defined.  Compile it out

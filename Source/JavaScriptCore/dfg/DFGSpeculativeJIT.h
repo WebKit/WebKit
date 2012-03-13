@@ -1823,6 +1823,22 @@ private:
     {
         speculationCheck(kind, jsValueSource, nodeUse.index(), jumpToFail, recovery);
     }
+    void forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const ValueRecovery& valueRecovery)
+    {
+        speculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
+        
+        Node& setLocal = at(m_jit.graph().m_blocks[m_block]->at(m_indexInBlock + 1));
+        Node& nextNode = at(m_jit.graph().m_blocks[m_block]->at(m_indexInBlock + 2));
+        ASSERT(setLocal.op() == SetLocal);
+        ASSERT(setLocal.codeOrigin == at(m_compileIndex).codeOrigin);
+        ASSERT(nextNode.codeOrigin != at(m_compileIndex).codeOrigin);
+        
+        OSRExit& exit = m_jit.codeBlock()->lastOSRExit();
+        exit.m_codeOrigin = nextNode.codeOrigin;
+        exit.m_lastSetOperand = setLocal.local();
+        
+        exit.valueRecoveryForOperand(setLocal.local()) = valueRecovery;
+    }
 
     // Called when we statically determine that a speculation will fail.
     void terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, NodeIndex nodeIndex)

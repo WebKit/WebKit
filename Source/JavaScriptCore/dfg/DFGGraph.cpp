@@ -164,15 +164,15 @@ void Graph::dump(NodeIndex nodeIndex)
                 dataLog(", ");
             else
                 hasPrinted = true;
-            dataLog("@%u", m_varArgChildren[childIdx].index());
+            dataLog("@%u%s", m_varArgChildren[childIdx].index(), predictionToAbbreviatedString(at(childIdx).prediction()));
         }
     } else {
         if (!!node.child1())
-            dataLog("@%u", node.child1().index());
+            dataLog("@%u%s", node.child1().index(), predictionToAbbreviatedString(at(node.child1()).prediction()));
         if (!!node.child2())
-            dataLog(", @%u", node.child2().index());
+            dataLog(", @%u%s", node.child2().index(), predictionToAbbreviatedString(at(node.child2()).prediction()));
         if (!!node.child3())
-            dataLog(", @%u", node.child3().index());
+            dataLog(", @%u%s", node.child3().index(), predictionToAbbreviatedString(at(node.child3()).prediction()));
         hasPrinted = !!node.child1();
     }
 

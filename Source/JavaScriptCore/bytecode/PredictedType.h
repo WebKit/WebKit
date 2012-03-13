@@ -225,6 +225,7 @@ inline bool isEmptyPrediction(PredictedType value)
 }
 
 const char* predictionToString(PredictedType value);
+const char* predictionToAbbreviatedString(PredictedType value);
 
 // Merge two predictions. Note that currently this just does left | right. It may
 // seem tempting to do so directly, but you would be doing so at your own peril,
