@@ -486,16 +486,6 @@ void* SlotVisitor::allocateNewSpace(void* ptr, size_t bytes)
     return CopiedSpace::allocateFromBlock(m_copyBlock, bytes);
 }
 
-void SlotVisitor::copy(void** ptr, size_t bytes)
-{
-    void* newPtr = 0;
-    if (!(newPtr = allocateNewSpace(*ptr, bytes)))
-        return;
-
-    memcpy(newPtr, *ptr, bytes);
-    *ptr = newPtr;
-}
-
 void SlotVisitor::copyAndAppend(void** ptr, size_t bytes, JSValue* values, unsigned length)
 {
     void* oldPtr = *ptr;

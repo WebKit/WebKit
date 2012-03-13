@@ -62,7 +62,6 @@ public:
     void finalizeUnconditionalFinalizers();
 
     void startCopying();
-    void copy(void**, size_t);
     void copyAndAppend(void**, size_t, JSValue*, unsigned);
     void doneCopying(); 
         

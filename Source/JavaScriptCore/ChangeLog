@@ -1,3 +1,15 @@
+2012-03-13  Kwonjin Jeong  <gram@company100.net>
+
+        Remove SlotVisitor::copy() method.
+        https://bugs.webkit.org/show_bug.cgi?id=80973
+
+        Reviewed by Geoffrey Garen.
+
+        SlotVisitor::copy() method isn't called anywhere.
+
+        * heap/MarkStack.cpp: Remove definition of SlotVisitor::copy() method.
+        * heap/SlotVisitor.h: Remove declaration of SlotVisitor::copy() method.
+
 2012-03-12  Hojong Han  <hojong.han@samsung.com>
 
         Fix test cases for RegExp multiline
