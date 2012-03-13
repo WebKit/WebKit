@@ -2039,14 +2039,14 @@ webcore_sources += \
 	Source/WebCore/fileapi/Blob.h \
 	Source/WebCore/fileapi/BlobURL.cpp \
 	Source/WebCore/fileapi/BlobURL.h \
-	Source/WebCore/Modules/filesystem/DirectoryEntry.cpp \
-	Source/WebCore/Modules/filesystem/DirectoryEntry.h \
-	Source/WebCore/Modules/filesystem/DirectoryEntrySync.cpp \
-	Source/WebCore/Modules/filesystem/DirectoryEntrySync.h \
-	Source/WebCore/Modules/filesystem/DirectoryReader.cpp \
-	Source/WebCore/Modules/filesystem/DirectoryReader.h \
-	Source/WebCore/Modules/filesystem/DirectoryReaderSync.cpp \
-	Source/WebCore/Modules/filesystem/DirectoryReaderSync.h \
+	Source/WebCore/fileapi/DirectoryEntry.cpp \
+	Source/WebCore/fileapi/DirectoryEntry.h \
+	Source/WebCore/fileapi/DirectoryEntrySync.cpp \
+	Source/WebCore/fileapi/DirectoryEntrySync.h \
+	Source/WebCore/fileapi/DirectoryReader.cpp \
+	Source/WebCore/fileapi/DirectoryReader.h \
+	Source/WebCore/fileapi/DirectoryReaderSync.cpp \
+	Source/WebCore/fileapi/DirectoryReaderSync.h \
 	Source/WebCore/fileapi/DOMFilePath.cpp \
 	Source/WebCore/fileapi/DOMFilePath.h \
 	Source/WebCore/fileapi/DOMFileSystem.cpp \
@@ -4873,10 +4873,10 @@ dom_binding_idls += \
 	$(WebCore)/fileapi/DOMFileSystem.idl \
 	$(WebCore)/fileapi/DOMFileSystemSync.idl \
 	$(WebCore)/fileapi/DOMWindowFileSystem.idl \
-	$(WebCore)/Modules/filesystem/DirectoryEntry.idl \
-	$(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
-	$(WebCore)/Modules/filesystem/DirectoryReader.idl \
-	$(WebCore)/Modules/filesystem/DirectoryReaderSync.idl \
+	$(WebCore)/fileapi/DirectoryEntry.idl \
+	$(WebCore)/fileapi/DirectoryEntrySync.idl \
+	$(WebCore)/fileapi/DirectoryReader.idl \
+	$(WebCore)/fileapi/DirectoryReaderSync.idl \
 	$(WebCore)/fileapi/EntriesCallback.idl \
 	$(WebCore)/fileapi/Entry.idl \
 	$(WebCore)/fileapi/EntryArray.idl \
@@ -5824,7 +5824,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/texmap/TextureMapperImageBuffer.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperLayer.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperLayer.h \
-	Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayer.h
+	Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayer.h 
 webcoregtk_sources += \
 	Source/WebCore/platform/graphics/cairo/TextureMapperCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/TextureMapperCairo.h

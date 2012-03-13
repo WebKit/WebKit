@@ -669,10 +669,10 @@ SOURCES += \
     fileapi/DOMFileSystemBase.cpp \
     fileapi/DOMFileSystemSync.cpp \
     fileapi/DOMWindowFileSystem.cpp \
-    Modules/filesystem/DirectoryEntry.cpp \
-    Modules/filesystem/DirectoryEntrySync.cpp \
-    Modules/filesystem/DirectoryReader.cpp \
-    Modules/filesystem/DirectoryReaderSync.cpp \
+    fileapi/DirectoryEntry.cpp \
+    fileapi/DirectoryEntrySync.cpp \
+    fileapi/DirectoryReader.cpp \
+    fileapi/DirectoryReaderSync.cpp \
     fileapi/Entry.cpp \
     fileapi/EntryArray.cpp \
     fileapi/EntryArraySync.cpp \
@@ -3060,11 +3060,11 @@ contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1) {
 contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
     HEADERS += \
         fileapi/AsyncFileWriter.h \
-        Modules/filesystem/DirectoryEntry.h \
-        Modules/filesystem/DirectoryEntrySync.h \
-        Modules/filesystem/DirectoryReader.h \
-        Modules/filesystem/DirectoryReaderBase.h \
-        Modules/filesystem/DirectoryReaderSync.h \
+        fileapi/DirectoryEntry.h \
+        fileapi/DirectoryEntrySync.h \
+        fileapi/DirectoryReader.h \
+        fileapi/DirectoryReaderBase.h \
+        fileapi/DirectoryReaderSync.h \
         fileapi/DOMFilePath.h \
         fileapi/DOMFileSystem.h \
         fileapi/DOMFileSystemBase.h \

@@ -51,7 +51,6 @@
     'webcore_include_dirs': [
       '../',
       '../..',
-      '../Modules/filesystem',
       '../Modules/gamepad',
       '../Modules/geolocation',
       '../Modules/intents',

@@ -216,10 +216,10 @@ IDL_BINDINGS += \
     $$PWD/dom/WebKitTransitionEvent.idl \
     $$PWD/dom/WheelEvent.idl \
     $$PWD/fileapi/Blob.idl \
-    $$PWD/Modules/filesystem/DirectoryEntry.idl \
-    $$PWD/Modules/filesystem/DirectoryEntrySync.idl \
-    $$PWD/Modules/filesystem/DirectoryReader.idl \
-    $$PWD/Modules/filesystem/DirectoryReaderSync.idl \
+    $$PWD/fileapi/DirectoryEntry.idl \
+    $$PWD/fileapi/DirectoryEntrySync.idl \
+    $$PWD/fileapi/DirectoryReader.idl \
+    $$PWD/fileapi/DirectoryReaderSync.idl \
     $$PWD/fileapi/DOMFileSystem.idl \
     $$PWD/fileapi/DOMFileSystemSync.idl \
     $$PWD/fileapi/DOMWindowFileSystem.idl \
@@ -696,7 +696,6 @@ else: generator = JS
 generateBindings.commands = perl -I$$PWD/bindings/scripts $$generateBindings.script \
                             --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
                             --generator $$generator \
-                            --include $$PWD/Modules/filesystem \
                             --include $$PWD/Modules/geolocation \
                             --include $$PWD/Modules/indexeddb \
                             --include $$PWD/Modules/webdatabase \
