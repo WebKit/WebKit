@@ -1,3 +1,14 @@
+2012-03-13  Nat Duca  <nduca@chromium.org>
+
+        [chromium] vsync ticks are needed in invisible tabs when we are still updating resources
+        https://bugs.webkit.org/show_bug.cgi?id=80910
+
+        Reviewed by James Robinson.
+
+        * tests/CCSchedulerStateMachineTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+
 2012-03-13  Dana Jansens  <danakj@chromium.org>
 
         Region::contains(IntPoint) is slow

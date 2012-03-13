@@ -159,30 +159,12 @@ TEST(CCSchedulerStateMachineTest, TestNextActionDrawsOnVSync)
             } else
                 state.setVisible(true);
 
-            // Case 1: needsCommit=false updateMoreResourcesPending=false.
+            // Case 1: needsCommit=false
             state.setNeedsCommit(false);
-            state.setUpdateMoreResourcesPending(false);
-            EXPECT_FALSE(state.vsyncCallbackNeeded());
             EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
 
-            // Case 2: needsCommit=false updateMoreResourcesPending=true.
-            state.setNeedsCommit(false);
-            state.setUpdateMoreResourcesPending(true);
-            if (visible)
-                EXPECT_TRUE(state.vsyncCallbackNeeded());
-            EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
-
-            // Case 3: needsCommit=true updateMoreResourcesPending=false.
+            // Case 2: needsCommit=true
             state.setNeedsCommit(true);
-            state.setUpdateMoreResourcesPending(false);
-            EXPECT_FALSE(state.vsyncCallbackNeeded());
-            EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
-
-            // Case 4: needsCommit=true updateMoreResourcesPending=true.
-            state.setNeedsCommit(true);
-            state.setUpdateMoreResourcesPending(true);
-            if (visible)
-                EXPECT_TRUE(state.vsyncCallbackNeeded());
             EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
         }
     }
@@ -369,6 +351,20 @@ TEST(CCSchedulerStateMachineTest, TestUpdates_NoRedraw_TwoRoundsOfUpdates)
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
     state.didEnterVSync();
     EXPECT_EQ(CCSchedulerStateMachine::ACTION_COMMIT, state.nextAction());
+}
+
+
+TEST(CCSchedulerStateMachineTest, TestVSyncNeededWhenUpdatesPendingButInvisible)
+{
+    StateMachine state;
+    state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_UPDATING_RESOURCES);
+    state.setNeedsRedraw(false);
+    state.setVisible(false);
+    state.setUpdateMoreResourcesPending(true);
+    EXPECT_TRUE(state.vsyncCallbackNeeded());
+
+    state.setUpdateMoreResourcesPending(false);
+    EXPECT_TRUE(state.vsyncCallbackNeeded());
 }
 
 TEST(CCSchedulerStateMachineTest, TestUpdates_WithRedraw_OneRoundOfUpdates)

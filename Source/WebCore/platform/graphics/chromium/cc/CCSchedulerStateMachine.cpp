@@ -164,13 +164,13 @@ void CCSchedulerStateMachine::updateState(Action action)
 bool CCSchedulerStateMachine::vsyncCallbackNeeded() const
 {
     if (!m_visible || m_contextState != CONTEXT_ACTIVE) {
-        if (m_needsForcedRedraw)
+        if (m_needsForcedRedraw || m_commitState == COMMIT_STATE_UPDATING_RESOURCES)
             return true;
 
         return false;
     }
 
-    return m_needsRedraw || m_needsForcedRedraw || m_updateMoreResourcesPending;
+    return m_needsRedraw || m_needsForcedRedraw || m_commitState == COMMIT_STATE_UPDATING_RESOURCES;
 }
 
 void CCSchedulerStateMachine::didEnterVSync()
