@@ -40,10 +40,13 @@ public:
     virtual void pan(double azimuth, double elevation, const AudioBus* inputBus, AudioBus* outputBus, size_t framesToProcess);
     virtual void reset();
 
-    size_t fftSize() { return fftSizeForSampleRate(m_sampleRate); }
+    size_t fftSize() const { return fftSizeForSampleRate(m_sampleRate); }
     static size_t fftSizeForSampleRate(float sampleRate);
 
     float sampleRate() const { return m_sampleRate; }
+
+    virtual double tailTime() const OVERRIDE;
+    virtual double latencyTime() const OVERRIDE;
 
 private:
     // Given an azimuth angle in the range -180 -> +180, returns the corresponding azimuth index for the database,

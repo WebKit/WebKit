@@ -51,6 +51,9 @@ public:
     virtual void checkNumberOfChannelsForInput(AudioNodeInput*);
 
 private:
+    virtual double tailTime() const OVERRIDE { return 0; }
+    virtual double latencyTime() const OVERRIDE { return 0; }
+
     AudioChannelMerger(AudioContext*, float sampleRate);
 };
 

@@ -124,6 +124,9 @@ public:
     AudioGain* distanceGain() { return m_distanceGain.get(); }                                        
     AudioGain* coneGain() { return m_coneGain.get(); }                                        
 
+    virtual double tailTime() const OVERRIDE { return m_panner ? m_panner->tailTime() : 0; }
+    virtual double latencyTime() const OVERRIDE { return m_panner ? m_panner->latencyTime() : 0; }
+
 private:
     AudioPannerNode(AudioContext*, float sampleRate);
 

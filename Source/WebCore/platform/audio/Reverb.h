@@ -48,7 +48,8 @@ public:
     void process(const AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess);
     void reset();
 
-    unsigned impulseResponseLength() const { return m_impulseResponseLength; }
+    size_t impulseResponseLength() const { return m_impulseResponseLength; }
+    size_t latencyFrames() const;
 
 private:
     void initialize(AudioBus* impulseResponseBuffer, size_t renderSliceSize, size_t maxFFTSize, size_t numberOfChannels, bool useBackgroundThreads);

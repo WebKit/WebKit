@@ -294,6 +294,21 @@ void HRTFPanner::pan(double desiredAzimuth, double elevation, const AudioBus* in
     }
 }
 
+double HRTFPanner::tailTime() const
+{
+    // Because HRTFPanner is implemented with a DelayKernel and a FFTConvolver, the tailTime of the HRTFPanner
+    // is the sum of the tailTime of the DelayKernel and the tailTime of the FFTConvolver, which is MaxDelayTimeSeconds
+    // and fftSize() / 2, respectively.
+    return MaxDelayTimeSeconds + (fftSize() / 2) / static_cast<double>(sampleRate());
+}
+
+double HRTFPanner::latencyTime() const
+{
+    // The latency of a FFTConvolver is also fftSize() / 2, and is in addition to its tailTime of the
+    // same value.
+    return (fftSize() / 2) / static_cast<double>(sampleRate());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

@@ -63,6 +63,9 @@ public:
     AudioDSPKernelProcessor* processor() { return m_kernelProcessor; }
     const AudioDSPKernelProcessor* processor() const { return m_kernelProcessor; }
 
+    virtual double tailTime() const = 0;
+    virtual double latencyTime() const = 0;
+
 protected:
     AudioDSPKernelProcessor* m_kernelProcessor;
     float m_sampleRate;

@@ -106,6 +106,16 @@ void DynamicsCompressorNode::uninitialize()
     AudioNode::uninitialize();
 }
 
+double DynamicsCompressorNode::tailTime() const
+{
+    return m_dynamicsCompressor->tailTime();
+}
+
+double DynamicsCompressorNode::latencyTime() const
+{
+    return m_dynamicsCompressor->latencyTime();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

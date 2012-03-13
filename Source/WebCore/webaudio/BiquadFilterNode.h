@@ -63,6 +63,7 @@ public:
     void getFrequencyResponse(const Float32Array* frequencyHz,
                               Float32Array* magResponse,
                               Float32Array* phaseResponse);
+
 private:
     BiquadFilterNode(AudioContext*, float sampleRate);
 

@@ -57,6 +57,9 @@ public:
 
     virtual void reset() = 0;
 
+    virtual double tailTime() const = 0;
+    virtual double latencyTime() const = 0;
+
 protected:
     Panner(PanningModel model) : m_panningModel(model) { }
 

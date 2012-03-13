@@ -44,6 +44,9 @@ public:
     virtual void reset();
 
 private:
+    virtual double tailTime() const OVERRIDE { return 0; }
+    virtual double latencyTime() const OVERRIDE { return 0; }
+
     AudioChannelSplitter(AudioContext*, float sampleRate);
 };
 

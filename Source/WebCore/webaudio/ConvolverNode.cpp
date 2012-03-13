@@ -151,6 +151,16 @@ AudioBuffer* ConvolverNode::buffer()
     return m_buffer.get();
 }
 
+double ConvolverNode::tailTime() const
+{
+    return m_reverb ? m_reverb->impulseResponseLength() / static_cast<double>(sampleRate()) : 0;
+}
+
+double ConvolverNode::latencyTime() const
+{
+    return m_reverb ? m_reverb->latencyFrames() / static_cast<double>(sampleRate()) : 0;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

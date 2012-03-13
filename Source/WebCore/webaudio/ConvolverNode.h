@@ -56,8 +56,12 @@ public:
 
     bool normalize() const { return m_normalize; }
     void setNormalize(bool normalize) { m_normalize = normalize; }
+
 private:
     ConvolverNode(AudioContext*, float sampleRate);
+
+    virtual double tailTime() const OVERRIDE;
+    virtual double latencyTime() const OVERRIDE;
 
     OwnPtr<Reverb> m_reverb;
     RefPtr<AudioBuffer> m_buffer;

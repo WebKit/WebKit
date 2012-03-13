@@ -44,6 +44,8 @@ public:
     // AudioDSPKernel
     virtual void process(const float* source, float* dest, size_t framesToProcess);
     virtual void reset() { }
+    virtual double tailTime() const OVERRIDE { return 0; }
+    virtual double latencyTime() const OVERRIDE { return 0; }
     
 protected:
     WaveShaperProcessor* waveShaperProcessor() { return static_cast<WaveShaperProcessor*>(processor()); }

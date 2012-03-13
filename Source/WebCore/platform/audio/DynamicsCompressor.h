@@ -78,6 +78,9 @@ public:
     float sampleRate() const { return m_sampleRate; }
     float nyquist() const { return m_sampleRate / 2; }
 
+    double tailTime() const { return 0; }
+    double latencyTime() const { return m_compressor.latencyFrames() / static_cast<double>(sampleRate()); }
+
 protected:
     unsigned m_numberOfChannels;
 

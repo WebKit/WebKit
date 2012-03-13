@@ -54,6 +54,9 @@ public:
     virtual void startRendering() = 0;
     
 protected:
+    virtual double tailTime() const OVERRIDE { return 0; }
+    virtual double latencyTime() const OVERRIDE { return 0; }
+
     // Counts the number of sample-frames processed by the destination.
     size_t m_currentSampleFrame;
 };

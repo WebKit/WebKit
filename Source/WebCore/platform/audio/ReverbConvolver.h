@@ -62,6 +62,7 @@ public:
     bool useBackgroundThreads() const { return m_useBackgroundThreads; }
     void backgroundThreadEntry();
 
+    size_t latencyFrames() const;
 private:
     Vector<OwnPtr<ReverbConvolverStage> > m_stages;
     Vector<OwnPtr<ReverbConvolverStage> > m_backgroundStages;

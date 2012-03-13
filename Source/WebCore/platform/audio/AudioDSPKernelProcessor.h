@@ -65,6 +65,9 @@ public:
 
     unsigned numberOfChannels() const { return m_numberOfChannels; }
 
+    virtual double tailTime() const OVERRIDE;
+    virtual double latencyTime() const OVERRIDE;
+
 protected:
     unsigned m_numberOfChannels;
     Vector<OwnPtr<AudioDSPKernel> > m_kernels;

@@ -55,6 +55,9 @@ public:
     unsigned numberOfChannels();
 
 protected:
+    virtual double tailTime() const OVERRIDE;
+    virtual double latencyTime() const OVERRIDE;
+
     AudioProcessor* processor() { return m_processor.get(); }
     OwnPtr<AudioProcessor> m_processor;
 };

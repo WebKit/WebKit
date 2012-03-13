@@ -115,6 +115,18 @@ void AudioDSPKernelProcessor::setNumberOfChannels(unsigned numberOfChannels)
         m_numberOfChannels = numberOfChannels;
 }
 
+double AudioDSPKernelProcessor::tailTime() const
+{
+    // It is expected that all the kernels have the same tailTime.
+    return !m_kernels.isEmpty() ? m_kernels.first()->tailTime() : 0;
+}
+
+double AudioDSPKernelProcessor::latencyTime() const
+{
+    // It is expected that all the kernels have the same latencyTime.
+    return !m_kernels.isEmpty() ? m_kernels.first()->latencyTime() : 0;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

@@ -65,6 +65,9 @@ public:
 
     float sampleRate() const { return m_sampleRate; }
 
+    virtual double tailTime() const = 0;
+    virtual double latencyTime() const = 0;
+
 protected:
     bool m_initialized;
     float m_sampleRate;

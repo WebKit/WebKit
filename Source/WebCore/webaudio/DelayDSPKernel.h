@@ -44,7 +44,10 @@ public:
     double maxDelayTime() const { return m_maxDelayTime; }
     
     void setDelayFrames(double numberOfFrames) { m_desiredDelayFrames = numberOfFrames; }
-    
+
+    virtual double tailTime() const OVERRIDE;
+    virtual double latencyTime() const OVERRIDE;
+
 private:
     AudioFloatArray m_buffer;
     double m_maxDelayTime;

@@ -136,6 +136,16 @@ unsigned AudioBasicProcessorNode::numberOfChannels()
     return output(0)->numberOfChannels();
 }
 
+double AudioBasicProcessorNode::tailTime() const
+{
+    return m_processor->tailTime();
+}
+
+double AudioBasicProcessorNode::latencyTime() const
+{
+    return m_processor->latencyTime();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

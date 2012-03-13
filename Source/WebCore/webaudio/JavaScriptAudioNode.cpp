@@ -267,6 +267,16 @@ ScriptExecutionContext* JavaScriptAudioNode::scriptExecutionContext() const
     return const_cast<JavaScriptAudioNode*>(this)->context()->document();
 }
 
+double JavaScriptAudioNode::tailTime() const
+{
+    return std::numeric_limits<double>::infinity();
+}
+
+double JavaScriptAudioNode::latencyTime() const
+{
+    return std::numeric_limits<double>::infinity();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

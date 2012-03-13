@@ -57,6 +57,9 @@ public:
     AudioParam* reduction() { return m_reduction.get(); }
 
 private:
+    virtual double tailTime() const OVERRIDE;
+    virtual double latencyTime() const OVERRIDE;
+
     DynamicsCompressorNode(AudioContext*, float sampleRate);
 
     OwnPtr<DynamicsCompressor> m_dynamicsCompressor;

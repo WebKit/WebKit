@@ -134,6 +134,16 @@ void DelayDSPKernel::reset()
     m_buffer.zero();
 }
 
+double DelayDSPKernel::tailTime() const
+{
+    return m_maxDelayTime;
+}
+
+double DelayDSPKernel::latencyTime() const
+{
+    return 0;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

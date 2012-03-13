@@ -55,6 +55,9 @@ public:
     AudioGain* gain() { return m_gain.get(); }                                   
     
 private:
+    virtual double tailTime() const OVERRIDE { return 0; }
+    virtual double latencyTime() const OVERRIDE { return 0; }
+
     AudioGainNode(AudioContext*, float sampleRate);
 
     float m_lastGain; // for de-zippering

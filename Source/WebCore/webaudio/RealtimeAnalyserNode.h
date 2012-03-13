@@ -65,6 +65,9 @@ public:
     void getByteTimeDomainData(Uint8Array* array) { m_analyser.getByteTimeDomainData(array); }
 
 private:
+    virtual double tailTime() const OVERRIDE { return 0; }
+    virtual double latencyTime() const OVERRIDE { return 0; }
+
     RealtimeAnalyserNode(AudioContext*, float sampleRate);
 
     RealtimeAnalyser m_analyser;

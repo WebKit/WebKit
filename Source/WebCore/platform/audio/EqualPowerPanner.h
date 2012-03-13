@@ -39,6 +39,9 @@ public:
 
     virtual void reset() { m_isFirstRender = true; }
 
+    virtual double tailTime() const OVERRIDE { return 0; }
+    virtual double latencyTime() const OVERRIDE { return 0; }
+
 private:
     // For smoothing / de-zippering
     bool m_isFirstRender;

@@ -46,6 +46,7 @@ public:
 
     double maxDelayTime() { return m_maxDelayTime; }
 private:
+
     RefPtr<AudioParam> m_delayTime;
     double m_maxDelayTime;
 };

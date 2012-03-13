@@ -78,6 +78,9 @@ public:
     using AudioNode::deref;
     
 private:
+    virtual double tailTime() const OVERRIDE;
+    virtual double latencyTime() const OVERRIDE;
+
     JavaScriptAudioNode(AudioContext*, float sampleRate, size_t bufferSize, unsigned numberOfInputs, unsigned numberOfOutputs);
 
     static void fireProcessEventDispatch(void* userData);

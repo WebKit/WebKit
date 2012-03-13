@@ -52,6 +52,10 @@ public:
                               const float* frequencyHz,
                               float* magResponse,
                               float* phaseResponse);
+
+    virtual double tailTime() const OVERRIDE;
+    virtual double latencyTime() const OVERRIDE;
+
 protected:
     Biquad m_biquad;
     BiquadProcessor* biquadProcessor() { return static_cast<BiquadProcessor*>(processor()); }

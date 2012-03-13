@@ -30,9 +30,16 @@
 
 #include "BiquadProcessor.h"
 #include "FloatConversion.h"
+#include <limits.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+// FIXME: As a recursive linear filter, depending on its parameters, a biquad filter can have
+// an infinite tailTime. In practice, Biquad filters do not usually (except for very high resonance values) 
+// have a tailTime of longer than approx. 200ms. This value could possibly be calculated based on the
+// settings of the Biquad.
+static const double MaxBiquadDelayTime = 0.2;
 
 void BiquadDSPKernel::updateCoefficientsIfNecessary(bool useSmoothing, bool forceUpdate)
 {
@@ -132,6 +139,16 @@ void BiquadDSPKernel::getFrequencyResponse(int nFrequencies,
     updateCoefficientsIfNecessary(false, true);
 
     m_biquad.getFrequencyResponse(nFrequencies, frequency.data(), magResponse, phaseResponse);
+}
+
+double BiquadDSPKernel::tailTime() const
+{
+    return MaxBiquadDelayTime;
+}
+
+double BiquadDSPKernel::latencyTime() const
+{
+    return 0;
 }
 
 } // namespace WebCore
