@@ -2,6 +2,8 @@
 <html>
 <head>
 <script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+<script src="../resources/label-test-util.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -9,39 +11,21 @@
 <script>
 description('Test that the labels list of a form control is dynamically updated when adding a label whose htmlFor points to that control. ');
 
-var parent = document.createElement('div');
+var tester = setupLabelsTest();
+for (var name in tester.dataSet) {
+    var data = tester.getLabelableElementData(name);
+    if (data == null)
+        continue;
 
-parent.innerHTML = '<div id="div1"></div><div id="div2"><button id="id1"><button><input id="id2"><select id="id3"></select><textarea id="id4"></textarea></div>';
+    debug('Check ' + data.name);
+    var element = data.element;
+    shouldBe('element.labels.length', '0');
 
-document.body.appendChild(parent);
-
-labels = document.getElementById("id1").labels;
-shouldBe('labels.length', '0');
-label = document.createElement("label");
-label.htmlFor = "id1";
-document.getElementById("div1").appendChild(label);
-shouldBe('labels.length', '1');
-
-labels = document.getElementById("id2").labels;
-shouldBe('labels.length', '0');
-label = document.createElement("label");
-label.htmlFor = "id2";
-document.getElementById("div1").appendChild(label);
-shouldBe('labels.length', '1');
-
-labels = document.getElementById("id3").labels;
-shouldBe('labels.length', '0');
-label = document.createElement("label");
-label.htmlFor = "id3";
-document.getElementById("div1").appendChild(label);
-shouldBe('labels.length', '1');
-
-labels = document.getElementById("id4").labels;
-shouldBe('labels.length', '0');
-label = document.createElement("label");
-label.htmlFor = "id4";
-document.getElementById("div1").appendChild(label);
-shouldBe('labels.length', '1');
+    var label = document.createElement("label");
+    label.htmlFor = element.id;
+    tester.outerElement.appendChild(label);
+    shouldBe('element.labels.length', '1');
+}
 </script>
 <script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>

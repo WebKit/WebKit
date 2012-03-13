@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+<script src="../resources/label-test-util.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Test labelable elements have labels attribute and others do not.');
+
+var tester = setupLabelsTest(withParentLabel);
+for (var name in tester.dataSet) {
+    var data = tester.dataSet[name];
+    var element = data.element;
+    if (!data.isSupported && !data.inputType) {
+        debug('\nUnsupported: ' + name + ' ' + element);
+        shouldBeUndefined('element.labels');
+        shouldNotBe('element.labels', 'null');
+    } else if (!data.isLabelable) {
+        debug('\nNot labelable: ' + name + ' ' + element);
+        shouldBeUndefined('element.labels');
+        shouldNotBe('element.labels', 'null');
+    } else {
+        debug('\nLabelable: ' + name + ' ' + element);
+        shouldBe('element.labels.length', '1');
+    }
+}
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

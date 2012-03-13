@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+<script src="../resources/label-test-util.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Test that the labels list of a form control contains both parent label and sibling label.');
+
+var tester = setupLabelsTest(withParentLabel | withSiblingLabel);
+for (var name in tester.dataSet) {
+    var data = tester.getLabelableElementData(name);
+    if (data == null)
+        continue;
+
+    debug('Check ' + data.name);
+    var element = data.element;
+    shouldBe('element.labels.length', '2');
+}
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

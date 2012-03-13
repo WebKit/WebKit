@@ -2,6 +2,8 @@
 <html>
 <head>
 <script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+<script src="../resources/label-test-util.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -9,36 +11,20 @@
 <script>
 description('Test that the labels list of a form control is dynamically updated when the htmlFor attribute of a label changes to point to that control. ');
 
-var parent = document.createElement('div');
+var tester = setupLabelsTest(withNoLabel, '<label id="labelId"></label>');
+for (var name in tester.dataSet) {
+    var data = tester.getLabelableElementData(name);
+    if (data == null)
+        continue;
 
-parent.innerHTML = '<div id="div1"></div><div id="div2"><label id="labelId"></label><button id="id1"></button><input id="id2"><select id="id3"></select><textarea id="id4"></textarea></div>';
+    debug('Check ' + data.name);
+    var element = data.element;
+    shouldBe('element.labels.length', '0');
 
-document.body.appendChild(parent);
-
-label = document.getElementById("labelId");
-labels = document.getElementById("id1").labels;
-shouldBe('labels.length', '0');
-label.setAttribute("for", "id1");
-shouldBe('labels.length', '1');
-
-label = document.getElementById("labelId");
-labels = document.getElementById("id2").labels;
-shouldBe('labels.length', '0');
-label.setAttribute("for", "id2");
-shouldBe('labels.length', '1');
-
-label = document.getElementById("labelId");
-labels = document.getElementById("id3").labels;
-shouldBe('labels.length', '0');
-label.setAttribute("for", "id3");
-shouldBe('labels.length', '1');
-
-label = document.getElementById("labelId");
-labels = document.getElementById("id4").labels;
-shouldBe('labels.length', '0');
-label.setAttribute("for", "id4");
-shouldBe('labels.length', '1');
-
+    var label = document.getElementById("labelId");
+    label.htmlFor = element.id;
+    shouldBe('element.labels.length', '1');
+}
 </script>
 <script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>
