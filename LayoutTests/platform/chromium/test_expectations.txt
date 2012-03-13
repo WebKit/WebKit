@@ -213,18 +213,19 @@ BUGCR108798 LINUX WIN : fast/filesystem/workers/file-writer-events.html = CRASH 
 // loaded pages alive in memory to be able to quickly substitute them when user clicks History buttons.
 // Chromium wants those to be separate navigations made via browser process to be able to make decision
 // on which renderer process to use for each of them.
-WONTFIX SKIP : fast/harness/use-page-cache.html = TIMEOUT FAIL
 WONTFIX SKIP : fast/dom/Window/timer-resume-on-navigation-back.html = TIMEOUT FAIL
 WONTFIX SKIP : fast/events/pagehide-timeout.html = TIMEOUT
-WONTFIX SKIP : fast/events/pageshow-pagehide-on-back-cached.html = TIMEOUT FAIL
 WONTFIX SKIP : fast/events/pageshow-pagehide-on-back-cached-with-frames.html = TIMEOUT
+WONTFIX SKIP : fast/events/pageshow-pagehide-on-back-cached.html = TIMEOUT FAIL
 WONTFIX SKIP : fast/events/suspend-timers.html = TIMEOUT
-WONTFIX SKIP : media/restore-from-page-cache.html = TIMEOUT
-WONTFIX SKIP : loader/go-back-to-different-window-size.html = TIMEOUT TEXT
-WONTFIX SKIP : fast/loader/crash-copying-backforwardlist.html = TEXT
 WONTFIX SKIP : fast/harness/page-cache-crash-on-data-urls.html = TEXT
+WONTFIX SKIP : fast/harness/use-page-cache.html = TIMEOUT FAIL
+WONTFIX SKIP : fast/loader/crash-copying-backforwardlist.html = TEXT
+WONTFIX SKIP : fast/loader/window-properties-restored-from-page-cache.html = TEXT
 WONTFIX SKIP : fast/overflow/horizontal-scroll-after-back.html = TIMEOUT
 WONTFIX SKIP : http/tests/navigation/https-in-page-cache.html = FAIL
+WONTFIX SKIP : loader/go-back-to-different-window-size.html = TIMEOUT TEXT
+WONTFIX SKIP : media/restore-from-page-cache.html = TIMEOUT
 
 // Tests that rely on cross-process MessagePorts.  No point in running them in
 // test_shell, since we'd have to use a completely different implementation from
