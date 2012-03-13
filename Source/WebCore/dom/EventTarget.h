@@ -60,7 +60,6 @@ namespace WebCore {
     class MessagePort;
     class Node;
     class Notification;
-    class PeerConnection;
     class SVGElementInstance;
     class ScriptExecutionContext;
     class SharedWorker;

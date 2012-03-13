@@ -1,54 +1,54 @@
-Tests the acceptable types for arguments to method for PeerToPeerConnection defination.
+Tests the acceptable types for arguments to method for DeprecatedPeerConnection defination.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS typeof webkitPeerConnection== 'function' is true
-PASS new webkitPeerConnection() threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("STUN 203.0.113.2:2478") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("STUN relay.example.net:3478") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("STUN example.net") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("STUNS 203.0.113.2:2478") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("STUNS relay.example.net:3478") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("STUNS example.net") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("TURN 203.0.113.2:2478") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("TURN relay.example.net:3478") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("TURN example.net") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("TURNS 203.0.113.2:2478") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("TURNS relay.example.net:3478") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("TURNS example.net") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("TURN NONE") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("TURNS NONE") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("STUN NONE") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("STUNS NONE") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("undefined") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("null") threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection({}) threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection(42) threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection(Infinity) threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection(-Infinity) threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection(emptyFunction) threw exception TypeError: Not enough arguments.
-PASS new webkitPeerConnection("STUN 203.0.113.2:2478",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("STUN relay.example.net:3478",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("STUN example.net",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("STUNS 203.0.113.2:2478",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("STUNS relay.example.net:3478",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("STUNS example.net",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("TURN 203.0.113.2:2478",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("TURN relay.example.net:3478",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("TURN example.net",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("TURNS 203.0.113.2:2478",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("TURNS relay.example.net:3478",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("TURNS example.net",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("TURN NONE",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("TURNS NONE",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("STUN NONE",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("STUNS NONE",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection("TURN NONE",undefined) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS new webkitPeerConnection("TURNS NONE",{}) did not throw exception.
-PASS new webkitPeerConnection("STUN NONE",42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS new webkitPeerConnection("STUNS NONE",Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS new webkitPeerConnection("STUNS NONE",-Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS typeof webkitDeprecatedPeerConnection== 'function' is true
+PASS new webkitDeprecatedPeerConnection() threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("STUN 203.0.113.2:2478") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("STUN relay.example.net:3478") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("STUN example.net") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("STUNS 203.0.113.2:2478") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("STUNS relay.example.net:3478") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("STUNS example.net") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("TURN 203.0.113.2:2478") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("TURN relay.example.net:3478") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("TURN example.net") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("TURNS 203.0.113.2:2478") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("TURNS relay.example.net:3478") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("TURNS example.net") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("TURN NONE") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("TURNS NONE") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("STUN NONE") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("STUNS NONE") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("undefined") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("null") threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection({}) threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection(42) threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection(Infinity) threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection(-Infinity) threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection(emptyFunction) threw exception TypeError: Not enough arguments.
+PASS new webkitDeprecatedPeerConnection("STUN 203.0.113.2:2478",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("STUN relay.example.net:3478",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("STUN example.net",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("STUNS 203.0.113.2:2478",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("STUNS relay.example.net:3478",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("STUNS example.net",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("TURN 203.0.113.2:2478",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("TURN relay.example.net:3478",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("TURN example.net",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("TURNS 203.0.113.2:2478",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("TURNS relay.example.net:3478",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("TURNS example.net",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("TURN NONE",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("TURNS NONE",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("STUN NONE",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("STUNS NONE",emptyFunction) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("TURN NONE",undefined) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS new webkitDeprecatedPeerConnection("TURNS NONE",{}) did not throw exception.
+PASS new webkitDeprecatedPeerConnection("STUN NONE",42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS new webkitDeprecatedPeerConnection("STUNS NONE",Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS new webkitDeprecatedPeerConnection("STUNS NONE",-Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS successfullyParsed is true
 
 TEST COMPLETE

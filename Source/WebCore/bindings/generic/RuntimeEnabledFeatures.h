@@ -178,7 +178,7 @@ public:
     static bool mediaStreamEnabled() { return isMediaStreamEnabled; }
     static void setMediaStreamEnabled(bool isEnabled) { isMediaStreamEnabled = isEnabled; }
     static bool webkitGetUserMediaEnabled() { return isMediaStreamEnabled; }
-    static bool webkitPeerConnectionEnabled() { return isMediaStreamEnabled; }
+    static bool webkitDeprecatedPeerConnectionEnabled() { return isMediaStreamEnabled; }
 #endif
 
 #if ENABLE(GAMEPAD)

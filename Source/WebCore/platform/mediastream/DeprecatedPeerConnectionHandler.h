@@ -28,54 +28,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef DeprecatedPeerConnectionHandler_h
+#define DeprecatedPeerConnectionHandler_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "PeerConnectionHandler.h"
-
-#include "PeerConnectionHandlerClient.h"
+#include "MediaStreamDescriptor.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-PassOwnPtr<PeerConnectionHandler> PeerConnectionHandler::create(PeerConnectionHandlerClient* client, const String& serverConfiguration, const String& username)
-{
-    return adoptPtr(new PeerConnectionHandler(client, serverConfiguration, username));
-}
+class DeprecatedPeerConnectionHandlerClient;
 
-// Empty implementations for ports that build with MEDIA_STREAM enabled by default.
-PeerConnectionHandler::PeerConnectionHandler(PeerConnectionHandlerClient*, const String&, const String&)
-{
-}
+#if PLATFORM(CHROMIUM)
+class DeprecatedPeerConnectionHandlerInternal;
+#endif
 
-PeerConnectionHandler::~PeerConnectionHandler()
-{
-}
+class DeprecatedPeerConnectionHandler {
+    WTF_MAKE_NONCOPYABLE(DeprecatedPeerConnectionHandler);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static PassOwnPtr<DeprecatedPeerConnectionHandler> create(DeprecatedPeerConnectionHandlerClient*, const String& serverConfiguration, const String& username);
+    ~DeprecatedPeerConnectionHandler();
 
-void PeerConnectionHandler::produceInitialOffer(const MediaStreamDescriptorVector&)
-{
-}
+    void produceInitialOffer(const MediaStreamDescriptorVector& pendingAddStreams);
+    void handleInitialOffer(const String& sdp);
+    void processSDP(const String& sdp);
+    void processPendingStreams(const MediaStreamDescriptorVector& pendingAddStreams, const MediaStreamDescriptorVector& pendingRemoveStreams);
+    void sendDataStreamMessage(const char* data, size_t length);
 
-void PeerConnectionHandler::handleInitialOffer(const String&)
-{
-}
+    void stop();
 
-void PeerConnectionHandler::processSDP(const String&)
-{
-}
+private:
+    DeprecatedPeerConnectionHandler(DeprecatedPeerConnectionHandlerClient*, const String& serverConfiguration, const String& username);
 
-void PeerConnectionHandler::processPendingStreams(const MediaStreamDescriptorVector&, const MediaStreamDescriptorVector&)
-{
-}
-
-void PeerConnectionHandler::sendDataStreamMessage(const char*, size_t)
-{
-}
-
-void PeerConnectionHandler::stop()
-{
-}
+#if PLATFORM(CHROMIUM)
+    OwnPtr<DeprecatedPeerConnectionHandlerInternal> m_private;
+#elif USE(GSTREAMER)
+    DeprecatedPeerConnectionHandlerClient* m_client;
+#endif
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
+
+#endif // DeprecatedPeerConnectionHandler_h

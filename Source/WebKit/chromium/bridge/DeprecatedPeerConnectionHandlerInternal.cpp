@@ -32,9 +32,9 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "PeerConnectionHandlerInternal.h"
+#include "DeprecatedPeerConnectionHandlerInternal.h"
 
-#include "PeerConnectionHandlerClient.h"
+#include "DeprecatedPeerConnectionHandlerClient.h"
 #include "SecurityOrigin.h"
 #include "WebKit.h"
 #include "platform/WebKitPlatformSupport.h"
@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-PeerConnectionHandlerInternal::PeerConnectionHandlerInternal(PeerConnectionHandlerClient* client, const String& serverConfiguration, const String& username)
+DeprecatedPeerConnectionHandlerInternal::DeprecatedPeerConnectionHandlerInternal(DeprecatedPeerConnectionHandlerClient* client, const String& serverConfiguration, const String& username)
     : m_client(client)
 {
     ASSERT(m_client);
@@ -62,71 +62,71 @@ PeerConnectionHandlerInternal::PeerConnectionHandlerInternal(PeerConnectionHandl
     }
 }
 
-PeerConnectionHandlerInternal::~PeerConnectionHandlerInternal()
+DeprecatedPeerConnectionHandlerInternal::~DeprecatedPeerConnectionHandlerInternal()
 {
 }
 
-void PeerConnectionHandlerInternal::produceInitialOffer(const MediaStreamDescriptorVector& pendingAddStreams)
+void DeprecatedPeerConnectionHandlerInternal::produceInitialOffer(const MediaStreamDescriptorVector& pendingAddStreams)
 {
     if (m_webHandler)
         m_webHandler->produceInitialOffer(pendingAddStreams);
 }
 
-void PeerConnectionHandlerInternal::handleInitialOffer(const String& sdp)
+void DeprecatedPeerConnectionHandlerInternal::handleInitialOffer(const String& sdp)
 {
     if (m_webHandler)
         m_webHandler->handleInitialOffer(sdp);
 }
 
-void PeerConnectionHandlerInternal::processSDP(const String& sdp)
+void DeprecatedPeerConnectionHandlerInternal::processSDP(const String& sdp)
 {
     if (m_webHandler)
         m_webHandler->processSDP(sdp);
 }
 
-void PeerConnectionHandlerInternal::processPendingStreams(const MediaStreamDescriptorVector& pendingAddStreams, const MediaStreamDescriptorVector& pendingRemoveStreams)
+void DeprecatedPeerConnectionHandlerInternal::processPendingStreams(const MediaStreamDescriptorVector& pendingAddStreams, const MediaStreamDescriptorVector& pendingRemoveStreams)
 {
     if (m_webHandler)
         m_webHandler->processPendingStreams(pendingAddStreams, pendingRemoveStreams);
 }
 
-void PeerConnectionHandlerInternal::sendDataStreamMessage(const char* data, size_t length)
+void DeprecatedPeerConnectionHandlerInternal::sendDataStreamMessage(const char* data, size_t length)
 {
     if (m_webHandler)
         m_webHandler->sendDataStreamMessage(data, length);
 }
 
-void PeerConnectionHandlerInternal::stop()
+void DeprecatedPeerConnectionHandlerInternal::stop()
 {
     if (m_webHandler)
         m_webHandler->stop();
 }
 
-void PeerConnectionHandlerInternal::didCompleteICEProcessing()
+void DeprecatedPeerConnectionHandlerInternal::didCompleteICEProcessing()
 {
     if (m_webHandler)
         m_client->didCompleteICEProcessing();
 }
 
-void PeerConnectionHandlerInternal::didGenerateSDP(const WebKit::WebString& sdp)
+void DeprecatedPeerConnectionHandlerInternal::didGenerateSDP(const WebKit::WebString& sdp)
 {
     if (m_webHandler)
         m_client->didGenerateSDP(sdp);
 }
 
-void PeerConnectionHandlerInternal::didReceiveDataStreamMessage(const char* data, size_t length)
+void DeprecatedPeerConnectionHandlerInternal::didReceiveDataStreamMessage(const char* data, size_t length)
 {
     if (m_webHandler)
         m_client->didReceiveDataStreamMessage(data, length);
 }
 
-void PeerConnectionHandlerInternal::didAddRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)
+void DeprecatedPeerConnectionHandlerInternal::didAddRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)
 {
     if (m_webHandler)
         m_client->didAddRemoteStream(webMediaStreamDescriptor);
 }
 
-void PeerConnectionHandlerInternal::didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)
+void DeprecatedPeerConnectionHandlerInternal::didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor& webMediaStreamDescriptor)
 {
     if (m_webHandler)
         m_client->didRemoveRemoteStream(webMediaStreamDescriptor);

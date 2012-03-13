@@ -1,3 +1,45 @@
+2012-03-13  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Rename PeerConnection to DeprecatedPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=80692
+
+        Reviewed by Adam Barth.
+
+        First patch in a series of patches to change the PeerConnection from ROAP to JSEP,
+        see bug 80589 for more information.
+
+        * WebKit.gyp:
+        * bridge/DeprecatedPeerConnectionHandler.cpp: Renamed from Source/WebKit/chromium/bridge/PeerConnectionHandler.cpp.
+        (WebCore):
+        (WebCore::DeprecatedPeerConnectionHandler::create):
+        (WebCore::DeprecatedPeerConnectionHandler::DeprecatedPeerConnectionHandler):
+        (WebCore::DeprecatedPeerConnectionHandler::~DeprecatedPeerConnectionHandler):
+        (WebCore::DeprecatedPeerConnectionHandler::produceInitialOffer):
+        (WebCore::DeprecatedPeerConnectionHandler::handleInitialOffer):
+        (WebCore::DeprecatedPeerConnectionHandler::processSDP):
+        (WebCore::DeprecatedPeerConnectionHandler::processPendingStreams):
+        (WebCore::DeprecatedPeerConnectionHandler::sendDataStreamMessage):
+        (WebCore::DeprecatedPeerConnectionHandler::stop):
+        * bridge/DeprecatedPeerConnectionHandlerInternal.cpp: Renamed from Source/WebKit/chromium/bridge/PeerConnectionHandlerInternal.cpp.
+        (WebCore):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::DeprecatedPeerConnectionHandlerInternal):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::~DeprecatedPeerConnectionHandlerInternal):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::produceInitialOffer):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::handleInitialOffer):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::processSDP):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::processPendingStreams):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::sendDataStreamMessage):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::stop):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::didCompleteICEProcessing):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::didGenerateSDP):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::didReceiveDataStreamMessage):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::didAddRemoteStream):
+        (WebCore::DeprecatedPeerConnectionHandlerInternal::didRemoveRemoteStream):
+        * bridge/DeprecatedPeerConnectionHandlerInternal.h: Renamed from Source/WebKit/chromium/bridge/PeerConnectionHandlerInternal.h.
+        (WebKit):
+        (WebCore):
+        (DeprecatedPeerConnectionHandlerInternal):
+
 2012-03-13  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Use projectQuad to apply inverse mapRect

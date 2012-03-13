@@ -23,18 +23,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PeerConnection_h
-#define PeerConnection_h
+#ifndef DeprecatedPeerConnection_h
+#define DeprecatedPeerConnection_h
 
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
+#include "DeprecatedPeerConnectionHandler.h"
+#include "DeprecatedPeerConnectionHandlerClient.h"
 #include "EventTarget.h"
 #include "ExceptionBase.h"
 #include "MediaStream.h"
 #include "MediaStreamList.h"
-#include "PeerConnectionHandler.h"
-#include "PeerConnectionHandlerClient.h"
 #include "SignalingCallback.h"
 #include "Timer.h"
 #include <wtf/OwnPtr.h>
@@ -51,10 +51,10 @@ namespace WebCore {
 // http://tools.ietf.org/html/rfc4566
 // http://en.wikipedia.org/wiki/Session_Description_Protocol
 
-class PeerConnection : public RefCounted<PeerConnection>, public PeerConnectionHandlerClient, public EventTarget, public ActiveDOMObject {
+class DeprecatedPeerConnection : public RefCounted<DeprecatedPeerConnection>, public DeprecatedPeerConnectionHandlerClient, public EventTarget, public ActiveDOMObject {
 public:
-    static PassRefPtr<PeerConnection> create(ScriptExecutionContext*, const String& serverConfiguration, PassRefPtr<SignalingCallback>);
-    ~PeerConnection();
+    static PassRefPtr<DeprecatedPeerConnection> create(ScriptExecutionContext*, const String& serverConfiguration, PassRefPtr<SignalingCallback>);
+    ~DeprecatedPeerConnection();
 
     void processSignalingMessage(const String& message, ExceptionCode&);
 
@@ -89,11 +89,11 @@ public:
     // ActiveDOMObject
     virtual void stop();
 
-    using RefCounted<PeerConnection>::ref;
-    using RefCounted<PeerConnection>::deref;
+    using RefCounted<DeprecatedPeerConnection>::ref;
+    using RefCounted<DeprecatedPeerConnection>::deref;
 
 private:
-    PeerConnection(ScriptExecutionContext*, const String& serverConfiguration, PassRefPtr<SignalingCallback>);
+    DeprecatedPeerConnection(ScriptExecutionContext*, const String& serverConfiguration, PassRefPtr<SignalingCallback>);
 
     // EventTarget implementation.
     virtual EventTargetData* eventTargetData();
@@ -102,11 +102,11 @@ private:
     virtual void derefEventTarget() { deref(); }
 
     void scheduleInitialNegotiation();
-    void initialNegotiationTimerFired(Timer<PeerConnection>*);
+    void initialNegotiationTimerFired(Timer<DeprecatedPeerConnection>*);
     void ensureStreamChangeScheduled();
-    void streamChangeTimerFired(Timer<PeerConnection>*);
+    void streamChangeTimerFired(Timer<DeprecatedPeerConnection>*);
     void scheduleReadyStateChange(ReadyState);
-    void readyStateChangeTimerFired(Timer<PeerConnection>*);
+    void readyStateChangeTimerFired(Timer<DeprecatedPeerConnection>*);
 
     void changeReadyState(ReadyState);
 
@@ -121,19 +121,19 @@ private:
     // EventTarget implementation.
     EventTargetData m_eventTargetData;
 
-    Timer<PeerConnection> m_initialNegotiationTimer;
-    Timer<PeerConnection> m_streamChangeTimer;
-    Timer<PeerConnection> m_readyStateChangeTimer;
+    Timer<DeprecatedPeerConnection> m_initialNegotiationTimer;
+    Timer<DeprecatedPeerConnection> m_streamChangeTimer;
+    Timer<DeprecatedPeerConnection> m_readyStateChangeTimer;
 
     MediaStreamDescriptorVector m_pendingAddStreams;
     MediaStreamDescriptorVector m_pendingRemoveStreams;
     Vector<ReadyState> m_pendingReadyStates;
 
-    OwnPtr<PeerConnectionHandler> m_peerHandler;
+    OwnPtr<DeprecatedPeerConnectionHandler> m_peerHandler;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // PeerConnection_h
+#endif // DeprecatedPeerConnection_h

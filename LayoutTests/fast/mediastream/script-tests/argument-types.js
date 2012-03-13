@@ -1,4 +1,4 @@
-description("Tests the acceptable types for arguments to method for PeerToPeerConnection defination.");
+description("Tests the acceptable types for arguments to method for DeprecatedPeerConnection defination.");
 
 function shouldNotThrow(expression)
 {
@@ -31,58 +31,58 @@ ObjectThrowingException.prototype.toString = function() {
 }
 var objectThrowingException = new ObjectThrowingException();
 
-shouldBeTrue("typeof webkitPeerConnection== 'function'");
+shouldBeTrue("typeof webkitDeprecatedPeerConnection== 'function'");
 
 // 0 Argument
-test('new webkitPeerConnection()', true,'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection()', true,'TypeError: Not enough arguments');
 
-// 1 Argument (new webkitPeerConnection requires at least 2 arguments).
-test('new webkitPeerConnection("STUN 203.0.113.2:2478")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("STUN relay.example.net:3478")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("STUN example.net")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("STUNS 203.0.113.2:2478")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("STUNS relay.example.net:3478")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("STUNS example.net")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("TURN 203.0.113.2:2478")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("TURN relay.example.net:3478")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("TURN example.net")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("TURNS 203.0.113.2:2478")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("TURNS relay.example.net:3478")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("TURNS example.net")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("TURN NONE")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("TURNS NONE")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("STUN NONE")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("STUNS NONE")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("undefined")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection("null")', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection({})', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection(42)', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection(Infinity)', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection(-Infinity)', true, 'TypeError: Not enough arguments');
-test('new webkitPeerConnection(emptyFunction)', true, 'TypeError: Not enough arguments');
+// 1 Argument (new webkitDeprecatedPeerConnection requires at least 2 arguments).
+test('new webkitDeprecatedPeerConnection("STUN 203.0.113.2:2478")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("STUN relay.example.net:3478")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("STUN example.net")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("STUNS 203.0.113.2:2478")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("STUNS relay.example.net:3478")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("STUNS example.net")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("TURN 203.0.113.2:2478")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("TURN relay.example.net:3478")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("TURN example.net")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("TURNS 203.0.113.2:2478")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("TURNS relay.example.net:3478")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("TURNS example.net")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("TURN NONE")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("TURNS NONE")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("STUN NONE")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("STUNS NONE")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("undefined")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection("null")', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection({})', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection(42)', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection(Infinity)', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection(-Infinity)', true, 'TypeError: Not enough arguments');
+test('new webkitDeprecatedPeerConnection(emptyFunction)', true, 'TypeError: Not enough arguments');
 
 //2 Argument
-test('new webkitPeerConnection("STUN 203.0.113.2:2478",emptyFunction)', false);
-test('new webkitPeerConnection("STUN relay.example.net:3478",emptyFunction)', false);
-test('new webkitPeerConnection("STUN example.net",emptyFunction)',false);
-test('new webkitPeerConnection("STUNS 203.0.113.2:2478",emptyFunction)', false);
-test('new webkitPeerConnection("STUNS relay.example.net:3478",emptyFunction)', false);
-test('new webkitPeerConnection("STUNS example.net",emptyFunction)', false);
-test('new webkitPeerConnection("TURN 203.0.113.2:2478",emptyFunction)', false);
-test('new webkitPeerConnection("TURN relay.example.net:3478",emptyFunction)', false);
-test('new webkitPeerConnection("TURN example.net",emptyFunction)', false);
-test('new webkitPeerConnection("TURNS 203.0.113.2:2478",emptyFunction)', false);
-test('new webkitPeerConnection("TURNS relay.example.net:3478",emptyFunction)', false);
-test('new webkitPeerConnection("TURNS example.net",emptyFunction)', false);
-test('new webkitPeerConnection("TURN NONE",emptyFunction)', false);
-test('new webkitPeerConnection("TURNS NONE",emptyFunction)',false);
-test('new webkitPeerConnection("STUN NONE",emptyFunction)', false);
-test('new webkitPeerConnection("STUNS NONE",emptyFunction)', false);
-test('new webkitPeerConnection("TURN NONE",undefined)',  true);
-test('new webkitPeerConnection("TURNS NONE",{})', false);
-test('new webkitPeerConnection("STUN NONE",42)',  true);
-test('new webkitPeerConnection("STUNS NONE",Infinity)', true);
-test('new webkitPeerConnection("STUNS NONE",-Infinity)', true);
+test('new webkitDeprecatedPeerConnection("STUN 203.0.113.2:2478",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("STUN relay.example.net:3478",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("STUN example.net",emptyFunction)',false);
+test('new webkitDeprecatedPeerConnection("STUNS 203.0.113.2:2478",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("STUNS relay.example.net:3478",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("STUNS example.net",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("TURN 203.0.113.2:2478",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("TURN relay.example.net:3478",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("TURN example.net",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("TURNS 203.0.113.2:2478",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("TURNS relay.example.net:3478",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("TURNS example.net",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("TURN NONE",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("TURNS NONE",emptyFunction)',false);
+test('new webkitDeprecatedPeerConnection("STUN NONE",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("STUNS NONE",emptyFunction)', false);
+test('new webkitDeprecatedPeerConnection("TURN NONE",undefined)',  true);
+test('new webkitDeprecatedPeerConnection("TURNS NONE",{})', false);
+test('new webkitDeprecatedPeerConnection("STUN NONE",42)',  true);
+test('new webkitDeprecatedPeerConnection("STUNS NONE",Infinity)', true);
+test('new webkitDeprecatedPeerConnection("STUNS NONE",-Infinity)', true);
 
 
 

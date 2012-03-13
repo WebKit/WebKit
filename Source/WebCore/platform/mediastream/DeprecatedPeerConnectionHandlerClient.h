@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PeerConnectionHandlerClient_h
-#define PeerConnectionHandlerClient_h
+#ifndef DeprecatedPeerConnectionHandlerClient_h
+#define DeprecatedPeerConnectionHandlerClient_h
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -40,7 +40,7 @@ namespace WebCore {
 
 class MediaStreamDescriptor;
 
-class PeerConnectionHandlerClient {
+class DeprecatedPeerConnectionHandlerClient {
 public:
     // Name and values of the enum must match the corressponding constants in the PeerConnection.idl file.
     enum ReadyState {
@@ -50,7 +50,7 @@ public:
         CLOSED = 3
     };
 
-    virtual ~PeerConnectionHandlerClient() { }
+    virtual ~DeprecatedPeerConnectionHandlerClient() { }
 
     virtual void didCompleteICEProcessing() = 0;
     virtual void didGenerateSDP(const String& sdp) = 0;
@@ -64,4 +64,4 @@ public:
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // PeerConnectionHandlerClient_h
+#endif // DeprecatedPeerConnectionHandlerClient_h

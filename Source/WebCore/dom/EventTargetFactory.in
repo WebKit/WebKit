@@ -4,6 +4,7 @@ AudioContext conditional=WEB_AUDIO
 DedicatedWorkerContext conditional=WORKERS
 DOMApplicationCache
 DOMWindow
+DeprecatedPeerConnection conditional=MEDIA_STREAM
 EventSource
 FileReader conditional=BLOB
 FileWriter conditional=FILE_SYSTEM
@@ -18,7 +19,6 @@ MediaStream conditional=MEDIA_STREAM
 MessagePort
 Node
 Notification conditional=NOTIFICATIONS
-PeerConnection conditional=MEDIA_STREAM
 SharedWorker conditional=SHARED_WORKERS
 SharedWorkerContext conditional=SHARED_WORKERS
 SVGElementInstance conditional=SVG

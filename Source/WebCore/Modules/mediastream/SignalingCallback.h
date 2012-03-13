@@ -31,12 +31,12 @@
 
 namespace WebCore {
 
-class PeerConnection;
+class DeprecatedPeerConnection;
 
 class SignalingCallback : public RefCounted<SignalingCallback> {
 public:
     virtual ~SignalingCallback() { }
-    virtual bool handleEvent(const String&, PeerConnection*) = 0;
+    virtual bool handleEvent(const String&, DeprecatedPeerConnection*) = 0;
 };
 
 } // namespace WebCore

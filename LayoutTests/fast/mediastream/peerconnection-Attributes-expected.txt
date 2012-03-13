@@ -1,4 +1,4 @@
-Tests PeerToPeerConnection related Attributes according to http://www.w3.org/TR/webrtc/
+Tests DeprecatedPeerConnection related Attributes according to http://www.w3.org/TR/webrtc/
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

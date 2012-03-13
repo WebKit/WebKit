@@ -109,6 +109,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDataView.h \
 	DerivedSources/WebCore/JSDedicatedWorkerContext.cpp \
 	DerivedSources/WebCore/JSDedicatedWorkerContext.h \
+	DerivedSources/WebCore/JSDeprecatedPeerConnection.cpp \
+	DerivedSources/WebCore/JSDeprecatedPeerConnection.h \
 	DerivedSources/WebCore/JSDeviceMotionEvent.cpp \
 	DerivedSources/WebCore/JSDeviceMotionEvent.h \
 	DerivedSources/WebCore/JSDeviceOrientationEvent.cpp \
@@ -432,8 +434,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSOverflowEvent.h \
 	DerivedSources/WebCore/JSPageTransitionEvent.cpp \
 	DerivedSources/WebCore/JSPageTransitionEvent.h \
-	DerivedSources/WebCore/JSPeerConnection.cpp \
-	DerivedSources/WebCore/JSPeerConnection.h \
 	DerivedSources/WebCore/JSPerformance.cpp \
 	DerivedSources/WebCore/JSPerformance.h \
 	DerivedSources/WebCore/JSPerformanceNavigation.cpp \
@@ -658,6 +658,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/geolocation/PositionCallback.idl \
 	$(WebCore)/Modules/geolocation/PositionError.idl \
 	$(WebCore)/Modules/geolocation/PositionErrorCallback.idl \
+	$(WebCore)/Modules/mediastream/DeprecatedPeerConnection.idl \
 	$(WebCore)/Modules/mediastream/DOMWindowMediaStream.idl \
 	$(WebCore)/Modules/mediastream/LocalMediaStream.idl \
 	$(WebCore)/Modules/mediastream/MediaStream.idl \
@@ -669,7 +670,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaError.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaErrorCallback.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaSuccessCallback.idl \
-	$(WebCore)/Modules/mediastream/PeerConnection.idl \
 	$(WebCore)/Modules/mediastream/SignalingCallback.idl \
 	$(WebCore)/css/CSSCharsetRule.idl \
 	$(WebCore)/css/CSSFontFaceRule.idl \
@@ -1031,6 +1031,8 @@ webcore_sources += \
 	Source/WebCore/Modules/indexeddb/PageGroupIndexedDatabase.h \
 	Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.cpp \
 	Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.h \
+	Source/WebCore/Modules/mediastream/DeprecatedPeerConnection.cpp \
+	Source/WebCore/Modules/mediastream/DeprecatedPeerConnection.h \
 	Source/WebCore/Modules/mediastream/LocalMediaStream.cpp \
 	Source/WebCore/Modules/mediastream/LocalMediaStream.h \
 	Source/WebCore/Modules/mediastream/MediaStream.cpp \
@@ -1050,8 +1052,6 @@ webcore_sources += \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaError.h \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaErrorCallback.h \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaSuccessCallback.h \
-	Source/WebCore/Modules/mediastream/PeerConnection.cpp \
-	Source/WebCore/Modules/mediastream/PeerConnection.h \
 	Source/WebCore/Modules/mediastream/SignalingCallback.h \
 	Source/WebCore/Modules/mediastream/UserMediaClient.h \
 	Source/WebCore/Modules/mediastream/UserMediaController.h \
@@ -1259,6 +1259,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSDOMWrapper.h \
 	Source/WebCore/bindings/js/JSDataViewCustom.cpp \
 	Source/WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
+	Source/WebCore/bindings/js/JSDeprecatedPeerConnectionCustom.cpp \
 	Source/WebCore/bindings/js/JSDeviceMotionEventCustom.cpp \
 	Source/WebCore/bindings/js/JSDeviceOrientationEventCustom.cpp \
 	Source/WebCore/bindings/js/JSDirectoryEntryCustom.cpp \
@@ -1336,7 +1337,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSNodeFilterCustom.cpp \
 	Source/WebCore/bindings/js/JSNodeIteratorCustom.cpp \
 	Source/WebCore/bindings/js/JSNodeListCustom.cpp \
-	Source/WebCore/bindings/js/JSPeerConnectionCustom.cpp \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.h \
 	Source/WebCore/bindings/js/JSPopStateEventCustom.cpp \
@@ -3324,14 +3324,14 @@ webcore_sources += \
 	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h \
 	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
+	Source/WebCore/platform/mediastream/DeprecatedPeerConnectionHandler.h \
+	Source/WebCore/platform/mediastream/DeprecatedPeerConnectionHandlerClient.h \
 	Source/WebCore/platform/mediastream/MediaStreamCenter.cpp \
 	Source/WebCore/platform/mediastream/MediaStreamCenter.h \
 	Source/WebCore/platform/mediastream/MediaStreamComponent.h \
 	Source/WebCore/platform/mediastream/MediaStreamDescriptor.h \
 	Source/WebCore/platform/mediastream/MediaStreamSource.h \
-	Source/WebCore/platform/mediastream/PeerConnectionHandler.h \
-	Source/WebCore/platform/mediastream/PeerConnectionHandlerClient.h \
-	Source/WebCore/platform/mediastream/gstreamer/PeerConnectionHandler.cpp \
+	Source/WebCore/platform/mediastream/gstreamer/DeprecatedPeerConnectionHandler.cpp \
 	Source/WebCore/platform/mock/DeviceOrientationClientMock.cpp \
 	Source/WebCore/platform/mock/DeviceOrientationClientMock.h \
 	Source/WebCore/platform/mock/GeolocationClientMock.cpp \

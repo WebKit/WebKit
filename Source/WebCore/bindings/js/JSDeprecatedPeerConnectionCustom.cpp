@@ -27,23 +27,23 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "JSPeerConnection.h"
+#include "JSDeprecatedPeerConnection.h"
 
 #include "CallbackFunction.h"
+#include "DeprecatedPeerConnection.h"
 #include "JSSignalingCallback.h"
-#include "PeerConnection.h"
 #include <runtime/Error.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-EncodedJSValue JSC_HOST_CALL JSPeerConnectionConstructor::constructJSPeerConnection(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL JSDeprecatedPeerConnectionConstructor::constructJSDeprecatedPeerConnection(ExecState* exec)
 {
-    JSPeerConnectionConstructor* jsConstructor = static_cast<JSPeerConnectionConstructor*>(exec->callee());
+    JSDeprecatedPeerConnectionConstructor* jsConstructor = static_cast<JSDeprecatedPeerConnectionConstructor*>(exec->callee());
     ScriptExecutionContext* context = jsConstructor->scriptExecutionContext();
     if (!context)
-        return throwVMError(exec, createReferenceError(exec, "PeerConnection constructor associated document is unavailable"));
+        return throwVMError(exec, createReferenceError(exec, "DeprecatedPeerConnection constructor associated document is unavailable"));
 
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
@@ -56,8 +56,8 @@ EncodedJSValue JSC_HOST_CALL JSPeerConnectionConstructor::constructJSPeerConnect
     if (exec->hadException())
         return JSValue::encode(JSValue());
 
-    RefPtr<PeerConnection> peerConnection = PeerConnection::create(context, serverConfiguration, signalingCallback.release());
-    return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), PeerConnection, peerConnection.get()));
+    RefPtr<DeprecatedPeerConnection> peerConnection = DeprecatedPeerConnection::create(context, serverConfiguration, signalingCallback.release());
+    return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), DeprecatedPeerConnection, peerConnection.get()));
 }
 
 } // namespace WebCore

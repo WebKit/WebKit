@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PeerConnectionHandlerInternal_h
-#define PeerConnectionHandlerInternal_h
+#ifndef DeprecatedPeerConnectionHandlerInternal_h
+#define DeprecatedPeerConnectionHandlerInternal_h
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -47,12 +47,12 @@ class WebMediaStreamDescriptor;
 
 namespace WebCore {
 
-class PeerConnectionHandlerClient;
+class DeprecatedPeerConnectionHandlerClient;
 
-class PeerConnectionHandlerInternal : public WebKit::WebPeerConnectionHandlerClient {
+class DeprecatedPeerConnectionHandlerInternal : public WebKit::WebPeerConnectionHandlerClient {
 public:
-    PeerConnectionHandlerInternal(PeerConnectionHandlerClient*, const String& serverConfiguration, const String& username);
-    ~PeerConnectionHandlerInternal();
+    DeprecatedPeerConnectionHandlerInternal(DeprecatedPeerConnectionHandlerClient*, const String& serverConfiguration, const String& username);
+    ~DeprecatedPeerConnectionHandlerInternal();
 
     virtual void produceInitialOffer(const MediaStreamDescriptorVector& pendingAddStreams);
     virtual void handleInitialOffer(const String& sdp);
@@ -70,11 +70,11 @@ public:
 
 private:
     OwnPtr<WebKit::WebPeerConnectionHandler> m_webHandler;
-    PeerConnectionHandlerClient* m_client;
+    DeprecatedPeerConnectionHandlerClient* m_client;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // PeerConnectionHandlerInternal_h
+#endif // DeprecatedPeerConnectionHandlerInternal_h

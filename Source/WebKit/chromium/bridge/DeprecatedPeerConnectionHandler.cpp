@@ -32,53 +32,53 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "PeerConnectionHandler.h"
+#include "DeprecatedPeerConnectionHandler.h"
 
-#include "PeerConnectionHandlerClient.h"
-#include "PeerConnectionHandlerInternal.h"
+#include "DeprecatedPeerConnectionHandlerClient.h"
+#include "DeprecatedPeerConnectionHandlerInternal.h"
 
 namespace WebCore {
 
-PassOwnPtr<PeerConnectionHandler> PeerConnectionHandler::create(PeerConnectionHandlerClient* client, const String& serverConfiguration, const String& username)
+PassOwnPtr<DeprecatedPeerConnectionHandler> DeprecatedPeerConnectionHandler::create(DeprecatedPeerConnectionHandlerClient* client, const String& serverConfiguration, const String& username)
 {
-    return adoptPtr(new PeerConnectionHandler(client, serverConfiguration, username));
+    return adoptPtr(new DeprecatedPeerConnectionHandler(client, serverConfiguration, username));
 }
 
-PeerConnectionHandler::PeerConnectionHandler(PeerConnectionHandlerClient* client, const String& serverConfiguration, const String& username)
-    : m_private(adoptPtr(new PeerConnectionHandlerInternal(client, serverConfiguration, username)))
-{
-}
-
-PeerConnectionHandler::~PeerConnectionHandler()
+DeprecatedPeerConnectionHandler::DeprecatedPeerConnectionHandler(DeprecatedPeerConnectionHandlerClient* client, const String& serverConfiguration, const String& username)
+    : m_private(adoptPtr(new DeprecatedPeerConnectionHandlerInternal(client, serverConfiguration, username)))
 {
 }
 
-void PeerConnectionHandler::produceInitialOffer(const MediaStreamDescriptorVector& pendingAddStreams)
+DeprecatedPeerConnectionHandler::~DeprecatedPeerConnectionHandler()
+{
+}
+
+void DeprecatedPeerConnectionHandler::produceInitialOffer(const MediaStreamDescriptorVector& pendingAddStreams)
 {
     m_private->produceInitialOffer(pendingAddStreams);
 }
 
-void PeerConnectionHandler::handleInitialOffer(const String& sdp)
+void DeprecatedPeerConnectionHandler::handleInitialOffer(const String& sdp)
 {
     m_private->handleInitialOffer(sdp);
 }
 
-void PeerConnectionHandler::processSDP(const String& sdp)
+void DeprecatedPeerConnectionHandler::processSDP(const String& sdp)
 {
     m_private->processSDP(sdp);
 }
 
-void PeerConnectionHandler::processPendingStreams(const MediaStreamDescriptorVector& pendingAddStreams, const MediaStreamDescriptorVector& pendingRemoveStreams)
+void DeprecatedPeerConnectionHandler::processPendingStreams(const MediaStreamDescriptorVector& pendingAddStreams, const MediaStreamDescriptorVector& pendingRemoveStreams)
 {
     m_private->processPendingStreams(pendingAddStreams, pendingRemoveStreams);
 }
 
-void PeerConnectionHandler::sendDataStreamMessage(const char* data, size_t length)
+void DeprecatedPeerConnectionHandler::sendDataStreamMessage(const char* data, size_t length)
 {
     m_private->sendDataStreamMessage(data, length);
 }
 
-void PeerConnectionHandler::stop()
+void DeprecatedPeerConnectionHandler::stop()
 {
     m_private->stop();
 }

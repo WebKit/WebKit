@@ -27,11 +27,12 @@ module p2p {
     interface [
         Conditional=MEDIA_STREAM,
         ActiveDOMObject,
+        ConstructorParameters=2,
         Constructor(in DOMString serverConfiguration, in [Callback] SignalingCallback signalingCallback),
         CallWith=ScriptExecutionContext,
         JSCustomConstructor,
         EventTarget
-    ] PeerConnection {
+    ] DeprecatedPeerConnection {
         void processSignalingMessage(in DOMString message)
             raises(DOMException);
 

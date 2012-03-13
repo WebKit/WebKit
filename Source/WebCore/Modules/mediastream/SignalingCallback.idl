@@ -28,7 +28,7 @@ module p2p {
         Conditional=MEDIA_STREAM,
         Callback
     ] SignalingCallback {
-        boolean handleEvent(in DOMString message, in PeerConnection source);
+        boolean handleEvent(in DOMString message, in DeprecatedPeerConnection source);
     };
 
 }

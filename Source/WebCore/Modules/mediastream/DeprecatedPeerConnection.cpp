@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PeerConnection.h"
+#include "DeprecatedPeerConnection.h"
 
 #if ENABLE(MEDIA_STREAM)
 
@@ -36,9 +36,9 @@
 
 namespace WebCore {
 
-PassRefPtr<PeerConnection> PeerConnection::create(ScriptExecutionContext* context, const String& serverConfiguration, PassRefPtr<SignalingCallback> signalingCallback)
+PassRefPtr<DeprecatedPeerConnection> DeprecatedPeerConnection::create(ScriptExecutionContext* context, const String& serverConfiguration, PassRefPtr<SignalingCallback> signalingCallback)
 {
-    RefPtr<PeerConnection> connection = adoptRef(new PeerConnection(context, serverConfiguration, signalingCallback));
+    RefPtr<DeprecatedPeerConnection> connection = adoptRef(new DeprecatedPeerConnection(context, serverConfiguration, signalingCallback));
     connection->setPendingActivity(connection.get());
     connection->scheduleInitialNegotiation();
     connection->suspendIfNeeded();
@@ -46,25 +46,25 @@ PassRefPtr<PeerConnection> PeerConnection::create(ScriptExecutionContext* contex
     return connection.release();
 }
 
-PeerConnection::PeerConnection(ScriptExecutionContext* context, const String& serverConfiguration, PassRefPtr<SignalingCallback> signalingCallback)
+DeprecatedPeerConnection::DeprecatedPeerConnection(ScriptExecutionContext* context, const String& serverConfiguration, PassRefPtr<SignalingCallback> signalingCallback)
     : ActiveDOMObject(context, this)
     , m_signalingCallback(signalingCallback)
     , m_readyState(NEW)
     , m_iceStarted(false)
     , m_localStreams(MediaStreamList::create())
     , m_remoteStreams(MediaStreamList::create())
-    , m_initialNegotiationTimer(this, &PeerConnection::initialNegotiationTimerFired)
-    , m_streamChangeTimer(this, &PeerConnection::streamChangeTimerFired)
-    , m_readyStateChangeTimer(this, &PeerConnection::readyStateChangeTimerFired)
-    , m_peerHandler(PeerConnectionHandler::create(this, serverConfiguration, context->securityOrigin()->toString()))
+    , m_initialNegotiationTimer(this, &DeprecatedPeerConnection::initialNegotiationTimerFired)
+    , m_streamChangeTimer(this, &DeprecatedPeerConnection::streamChangeTimerFired)
+    , m_readyStateChangeTimer(this, &DeprecatedPeerConnection::readyStateChangeTimerFired)
+    , m_peerHandler(DeprecatedPeerConnectionHandler::create(this, serverConfiguration, context->securityOrigin()->toString()))
 {
 }
 
-PeerConnection::~PeerConnection()
+DeprecatedPeerConnection::~DeprecatedPeerConnection()
 {
 }
 
-void PeerConnection::processSignalingMessage(const String& message, ExceptionCode& ec)
+void DeprecatedPeerConnection::processSignalingMessage(const String& message, ExceptionCode& ec)
 {
     if (m_readyState == CLOSED) {
         ec = INVALID_STATE_ERR;
@@ -90,12 +90,12 @@ void PeerConnection::processSignalingMessage(const String& message, ExceptionCod
     scheduleReadyStateChange(NEGOTIATING);
 }
 
-PeerConnection::ReadyState PeerConnection::readyState() const
+DeprecatedPeerConnection::ReadyState DeprecatedPeerConnection::readyState() const
 {
     return m_readyState;
 }
 
-void PeerConnection::send(const String& text, ExceptionCode& ec)
+void DeprecatedPeerConnection::send(const String& text, ExceptionCode& ec)
 {
     if (m_readyState == CLOSED) {
         ec = INVALID_STATE_ERR;
@@ -114,7 +114,7 @@ void PeerConnection::send(const String& text, ExceptionCode& ec)
         m_peerHandler->sendDataStreamMessage(data.data(), length);
 }
 
-void PeerConnection::addStream(PassRefPtr<MediaStream> prpStream, ExceptionCode& ec)
+void DeprecatedPeerConnection::addStream(PassRefPtr<MediaStream> prpStream, ExceptionCode& ec)
 {
     RefPtr<MediaStream> stream = prpStream;
     if (!stream) {
@@ -144,7 +144,7 @@ void PeerConnection::addStream(PassRefPtr<MediaStream> prpStream, ExceptionCode&
         ensureStreamChangeScheduled();
 }
 
-void PeerConnection::removeStream(MediaStream* stream, ExceptionCode& ec)
+void DeprecatedPeerConnection::removeStream(MediaStream* stream, ExceptionCode& ec)
 {
     if (m_readyState == CLOSED) {
         ec = INVALID_STATE_ERR;
@@ -173,17 +173,17 @@ void PeerConnection::removeStream(MediaStream* stream, ExceptionCode& ec)
         ensureStreamChangeScheduled();
 }
 
-MediaStreamList* PeerConnection::localStreams() const
+MediaStreamList* DeprecatedPeerConnection::localStreams() const
 {
     return m_localStreams.get();
 }
 
-MediaStreamList* PeerConnection::remoteStreams() const
+MediaStreamList* DeprecatedPeerConnection::remoteStreams() const
 {
     return m_remoteStreams.get();
 }
 
-void PeerConnection::close(ExceptionCode& ec)
+void DeprecatedPeerConnection::close(ExceptionCode& ec)
 {
     if (m_readyState == CLOSED) {
         ec = INVALID_STATE_ERR;
@@ -193,26 +193,26 @@ void PeerConnection::close(ExceptionCode& ec)
     stop();
 }
 
-void PeerConnection::didCompleteICEProcessing()
+void DeprecatedPeerConnection::didCompleteICEProcessing()
 {
     ASSERT(scriptExecutionContext()->isContextThread());
     changeReadyState(ACTIVE);
 }
 
-void PeerConnection::didGenerateSDP(const String& sdp)
+void DeprecatedPeerConnection::didGenerateSDP(const String& sdp)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
     m_signalingCallback->handleEvent("SDP\n" + sdp, this);
 }
 
-void PeerConnection::didReceiveDataStreamMessage(const char* data, size_t length)
+void DeprecatedPeerConnection::didReceiveDataStreamMessage(const char* data, size_t length)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
     const String& message = String::fromUTF8(data, length);
     dispatchEvent(MessageEvent::create(PassOwnPtr<MessagePortArray>(), SerializedScriptValue::create(message)));
 }
 
-void PeerConnection::didAddRemoteStream(PassRefPtr<MediaStreamDescriptor> streamDescriptor)
+void DeprecatedPeerConnection::didAddRemoteStream(PassRefPtr<MediaStreamDescriptor> streamDescriptor)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
 
@@ -225,7 +225,7 @@ void PeerConnection::didAddRemoteStream(PassRefPtr<MediaStreamDescriptor> stream
     dispatchEvent(MediaStreamEvent::create(eventNames().addstreamEvent, false, false, stream.release()));
 }
 
-void PeerConnection::didRemoveRemoteStream(MediaStreamDescriptor* streamDescriptor)
+void DeprecatedPeerConnection::didRemoveRemoteStream(MediaStreamDescriptor* streamDescriptor)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
     ASSERT(streamDescriptor->owner());
@@ -242,17 +242,17 @@ void PeerConnection::didRemoveRemoteStream(MediaStreamDescriptor* streamDescript
     dispatchEvent(MediaStreamEvent::create(eventNames().removestreamEvent, false, false, stream.release()));
 }
 
-const AtomicString& PeerConnection::interfaceName() const
+const AtomicString& DeprecatedPeerConnection::interfaceName() const
 {
-    return eventNames().interfaceForPeerConnection;
+    return eventNames().interfaceForDeprecatedPeerConnection;
 }
 
-ScriptExecutionContext* PeerConnection::scriptExecutionContext() const
+ScriptExecutionContext* DeprecatedPeerConnection::scriptExecutionContext() const
 {
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-void PeerConnection::stop()
+void DeprecatedPeerConnection::stop()
 {
     if (m_readyState == CLOSED)
         return;
@@ -270,24 +270,24 @@ void PeerConnection::stop()
     changeReadyState(CLOSED);
 }
 
-EventTargetData* PeerConnection::eventTargetData()
+EventTargetData* DeprecatedPeerConnection::eventTargetData()
 {
     return &m_eventTargetData;
 }
 
-EventTargetData* PeerConnection::ensureEventTargetData()
+EventTargetData* DeprecatedPeerConnection::ensureEventTargetData()
 {
     return &m_eventTargetData;
 }
 
-void PeerConnection::scheduleInitialNegotiation()
+void DeprecatedPeerConnection::scheduleInitialNegotiation()
 {
     ASSERT(!m_initialNegotiationTimer.isActive());
 
     m_initialNegotiationTimer.startOneShot(0);
 }
 
-void PeerConnection::initialNegotiationTimerFired(Timer<PeerConnection>* timer)
+void DeprecatedPeerConnection::initialNegotiationTimerFired(Timer<DeprecatedPeerConnection>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_initialNegotiationTimer);
 
@@ -304,13 +304,13 @@ void PeerConnection::initialNegotiationTimerFired(Timer<PeerConnection>* timer)
     changeReadyState(NEGOTIATING);
 }
 
-void PeerConnection::ensureStreamChangeScheduled()
+void DeprecatedPeerConnection::ensureStreamChangeScheduled()
 {
     if (!m_streamChangeTimer.isActive())
         m_streamChangeTimer.startOneShot(0);
 }
 
-void PeerConnection::streamChangeTimerFired(Timer<PeerConnection>* timer)
+void DeprecatedPeerConnection::streamChangeTimerFired(Timer<DeprecatedPeerConnection>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_streamChangeTimer);
 
@@ -330,14 +330,14 @@ void PeerConnection::streamChangeTimerFired(Timer<PeerConnection>* timer)
         changeReadyState(NEGOTIATING);
 }
 
-void PeerConnection::scheduleReadyStateChange(ReadyState readyState)
+void DeprecatedPeerConnection::scheduleReadyStateChange(ReadyState readyState)
 {
     m_pendingReadyStates.append(readyState);
     if (!m_readyStateChangeTimer.isActive())
         m_readyStateChangeTimer.startOneShot(0);
 }
 
-void PeerConnection::readyStateChangeTimerFired(Timer<PeerConnection>* timer)
+void DeprecatedPeerConnection::readyStateChangeTimerFired(Timer<DeprecatedPeerConnection>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_readyStateChangeTimer);
 
@@ -348,7 +348,7 @@ void PeerConnection::readyStateChangeTimerFired(Timer<PeerConnection>* timer)
         changeReadyState(pendingReadyStates[i]);
 }
 
-void PeerConnection::changeReadyState(ReadyState readyState)
+void DeprecatedPeerConnection::changeReadyState(ReadyState readyState)
 {
     if (readyState == m_readyState)
         return;

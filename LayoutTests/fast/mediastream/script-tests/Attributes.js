@@ -1,4 +1,4 @@
-description("Tests PeerToPeerConnection related Attributes according to http://www.w3.org/TR/webrtc/");
+description("Tests DeprecatedPeerConnection related Attributes according to http://www.w3.org/TR/webrtc/");
 var stream;
 function shouldNotThrow(expression)
 {
@@ -69,7 +69,7 @@ function gotStreamFailed(error) {
 }
 
 
-var pc=new webkitPeerConnection("STUN NONE", emptyFunction);
+var pc=new webkitDeprecatedPeerConnection("STUN NONE", emptyFunction);
 //method
 shouldBeTrueA("typeof pc.addStream == 'function'");
 shouldBeTrueA("typeof pc.removeStream == 'function'");
