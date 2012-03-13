@@ -55,7 +55,7 @@ private:
     virtual bool isViewFocused();
     virtual bool isViewVisible();
     virtual bool isViewInWindow();
-    virtual LayerHostingMode layerHostingMode();
+    virtual LayerHostingMode viewLayerHostingMode() OVERRIDE;
 
     virtual void processDidCrash();
     virtual void pageClosed();

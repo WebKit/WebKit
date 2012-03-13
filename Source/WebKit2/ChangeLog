@@ -1,3 +1,15 @@
+2012-03-12  Sam Weinig  <sam@webkit.org>
+
+        Fix typo in PageClientImpl where we were overriding viewLayerHostingMode with
+        a function called layerHostingMode.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::viewLayerHostingMode):
+        Update name and add OVERRIDE to catch this in the future.
+
 2012-03-12  Enrica Casucci  <enrica@apple.com>
 
         WebKit2: remove NSPasteboard access for promised data from the WebProcess

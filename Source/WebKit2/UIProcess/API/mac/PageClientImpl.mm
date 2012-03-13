@@ -193,7 +193,7 @@ bool PageClientImpl::isViewInWindow()
     return [m_wkView window];
 }
 
-LayerHostingMode PageClientImpl::layerHostingMode()
+LayerHostingMode PageClientImpl::viewLayerHostingMode()
 {
 #if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
     if (![m_wkView window])
