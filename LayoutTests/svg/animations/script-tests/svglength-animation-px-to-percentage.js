@@ -29,12 +29,12 @@ function sample1() {
 
 function sample2() {
     shouldBeCloseEnough("rect.width.animVal.value", "350");
-    shouldBeCloseEnough("rect.width.baseVal.value", "350");
+    shouldBe("rect.width.baseVal.value", "100");
 }
 
 function sample3() {
     shouldBeCloseEnough("rect.width.animVal.value", "600", 1);
-    shouldBeCloseEnough("rect.width.baseVal.value", "600", 1);
+    shouldBe("rect.width.baseVal.value", "100");
 }
 
 function executeTest() {

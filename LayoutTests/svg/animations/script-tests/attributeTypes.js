@@ -4,60 +4,60 @@ embedSVGTestCase("resources/attributeTypes.svg");
 // Setup animation test
 function sample1() {
     shouldBeCloseEnough("rect1.width.animVal.value", "10");
-    //shouldBe("rect1.width.baseVal.value", "10");
+    shouldBe("rect1.width.baseVal.value", "10");
     shouldBeEqualToString("getComputedStyle(rect1).fill", "#008000");
 
     shouldBe("rect2.width.animVal.value", "100");
-    //shouldBe("rect2.width.baseVal.value", "100");
+    shouldBe("rect2.width.baseVal.value", "100");
     shouldBeEqualToString("getComputedStyle(rect2).fill", "#008000");
 
     shouldBe("rect3.width.animVal.value", "100");
-    //shouldBe("rect3.width.baseVal.value", "100");
+    shouldBe("rect3.width.baseVal.value", "100");
     shouldBeEqualToString("getComputedStyle(rect3).fill", "#ff0000");
     shouldBeEqualToString("rect3.getAttribute('fill')", "red");
 
     shouldBe("rect4.width.animVal.value", "100");
-    //shouldBe("rect4.width.baseVal.value", "100");
+    shouldBe("rect4.width.baseVal.value", "100");
     shouldBeEqualToString("getComputedStyle(rect4).fill", "#ff0000");
     shouldBeEqualToString("rect4.getAttribute('fill')", "red");
 }
 
 function sample2() {
     shouldBeCloseEnough("rect1.width.animVal.value", "55");
-    //shouldBe("rect1.width.baseVal.value", "10");
+    shouldBe("rect1.width.baseVal.value", "10");
     shouldBeEqualToString("getComputedStyle(rect1).fill", "#008000");
 
     shouldBe("rect2.width.animVal.value", "100");
-    //shouldBe("rect2.width.baseVal.value", "100");
+    shouldBe("rect2.width.baseVal.value", "100");
     shouldBeEqualToString("getComputedStyle(rect2).fill", "#008000");
 
     shouldBe("rect3.width.animVal.value", "100");
-    //shouldBe("rect3.width.baseVal.value", "100");
+    shouldBe("rect3.width.baseVal.value", "100");
     shouldBeEqualToString("getComputedStyle(rect3).fill", "#804000");
     shouldBeEqualToString("rect3.getAttribute('fill')", "red");
 
     shouldBe("rect4.width.animVal.value", "100");
-    //shouldBe("rect4.width.baseVal.value", "100");
+    shouldBe("rect4.width.baseVal.value", "100");
     shouldBeEqualToString("getComputedStyle(rect4).fill", "#804000");
     shouldBeEqualToString("rect4.getAttribute('fill')", "red");
 }
 
 function sample3() {
     shouldBeCloseEnough("rect1.width.animVal.value", "100");
-    //shouldBe("rect1.width.baseVal.value", "10");
+    shouldBe("rect1.width.baseVal.value", "10");
     shouldBeEqualToString("getComputedStyle(rect1).fill", "#008000");
 
     shouldBe("rect2.width.animVal.value", "100");
-    //shouldBe("rect2.width.baseVal.value", "100");
+    shouldBe("rect2.width.baseVal.value", "100");
     shouldBeEqualToString("getComputedStyle(rect2).fill", "#008000");
 
     shouldBe("rect3.width.animVal.value", "100");
-    //shouldBe("rect3.width.baseVal.value", "100");
+    shouldBe("rect3.width.baseVal.value", "100");
     shouldBeEqualToString("getComputedStyle(rect3).fill", "#008000");
     shouldBeEqualToString("rect3.getAttribute('fill')", "red");
 
     shouldBe("rect4.width.animVal.value", "100");
-    //shouldBe("rect4.width.baseVal.value", "100");
+    shouldBe("rect4.width.baseVal.value", "100");
     shouldBeEqualToString("getComputedStyle(rect4).fill", "#008000");
     shouldBeEqualToString("rect4.getAttribute('fill')", "red");
 }

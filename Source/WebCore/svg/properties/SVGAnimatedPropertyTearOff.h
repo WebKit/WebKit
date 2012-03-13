@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedProperty.h"
+#include "SVGAnimatedType.h"
 #include "SVGPropertyTearOff.h"
 
 namespace WebCore {
@@ -43,10 +44,10 @@ public:
         return m_animVal.get();
     }
 
-    static PassRefPtr<SVGAnimatedPropertyTearOff<PropertyType> > create(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& property)
+    static PassRefPtr<SVGAnimatedPropertyTearOff<PropertyType> > create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
     {
         ASSERT(contextElement);
-        return adoptRef(new SVGAnimatedPropertyTearOff<PropertyType>(contextElement, attributeName, property));
+        return adoptRef(new SVGAnimatedPropertyTearOff<PropertyType>(contextElement, attributeName, animatedPropertyType, property));
     }
 
     bool isAnimating() const { return m_isAnimating; }
@@ -58,25 +59,50 @@ public:
         return static_cast<SVGPropertyTearOff<PropertyType>*>(m_animVal.get())->propertyReference();
     }
 
-    virtual void updateAnimVal(void* value)
+    virtual SVGGenericAnimatedType* currentBaseValue(AnimatedPropertyType expectedPropertyType) const
     {
-        if (value) {
-            static_cast<SVGPropertyTearOff<PropertyType>*>(animVal())->updateAnimVal(reinterpret_cast<PropertyType*>(value));
-            m_isAnimating = true;
-            return;
-        }
+        ASSERT_UNUSED(expectedPropertyType, animatedPropertyType() == expectedPropertyType);
+        return reinterpret_cast<SVGGenericAnimatedType*>(&m_property);
+    }
 
-        static_cast<SVGPropertyTearOff<PropertyType>*>(animVal())->updateAnimVal(&m_property);
+    virtual void animationStarted(SVGAnimatedType* animatedType)
+    {
+        ASSERT(animatedType);
+        ASSERT(animatedType->type() == animatedPropertyType());
+        static_cast<SVGPropertyTearOff<PropertyType>*>(animVal())->setValue(*reinterpret_cast<PropertyType*>(animatedType->variantValue()));
+        m_isAnimating = true;
+    }
+
+    virtual void animationEnded()
+    {
+        ASSERT(m_isAnimating);
+        static_cast<SVGPropertyTearOff<PropertyType>*>(animVal())->setValue(m_property);
         m_isAnimating = false;
+
+        ASSERT(contextElement());
+        contextElement()->svgAttributeChanged(attributeName());
+    }
+
+    virtual void animationValueChanged()
+    {
+        ASSERT(contextElement());
+        contextElement()->svgAttributeChanged(attributeName());
     }
 
 private:
-    SVGAnimatedPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& property)
-        : SVGAnimatedProperty(contextElement, attributeName)
+    SVGAnimatedPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
+        : SVGAnimatedProperty(contextElement, attributeName, animatedPropertyType)
         , m_property(property)
         , m_isAnimating(false)
     {
     }
+
+#ifndef NDEBUG
+    virtual ~SVGAnimatedPropertyTearOff()
+    {
+        ASSERT(!m_isAnimating);
+    }
+#endif
 
     PropertyType& m_property;
     bool m_isAnimating;

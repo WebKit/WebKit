@@ -49,7 +49,6 @@ public:
     PropertyType& propertyReference() { return *m_value; }
     SVGAnimatedProperty* animatedProperty() const { return m_animatedProperty.get(); }
 
-    // Used only by the list tear offs!
     void setValue(PropertyType& value)
     {
         if (m_valueIsCopy)
@@ -92,13 +91,6 @@ public:
     }
 
     virtual SVGPropertyRole role() const { return m_role; }
-
-    void updateAnimVal(PropertyType* value)
-    {
-        ASSERT(!m_valueIsCopy);
-        ASSERT(m_role == AnimValRole);
-        m_value = value;
-    }
 
 protected:
     SVGPropertyTearOff(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, PropertyType& value)

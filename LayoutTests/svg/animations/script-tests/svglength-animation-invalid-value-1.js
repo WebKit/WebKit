@@ -29,7 +29,7 @@ function sample1() {
 
 function sample2() {
     shouldBe("rect.width.animVal.value", "0");
-    shouldBe("rect.width.baseVal.value", "0");
+    shouldBe("rect.width.baseVal.value", "100");
 }
 
 function executeTest() {

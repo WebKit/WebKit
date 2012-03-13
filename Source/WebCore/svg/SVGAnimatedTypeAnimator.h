@@ -27,12 +27,15 @@
 namespace WebCore {
 
 class SVGAnimationElement;
+class SVGGenericAnimatedType;
 
 class SVGAnimatedTypeAnimator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~SVGAnimatedTypeAnimator() { }
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&) = 0;
+    // FIXME: Make this pure once all types implement this. Its needed for animVal, and currently only SVGLengthAnimator implements this.
+    virtual PassOwnPtr<SVGAnimatedType> constructFromCopy(SVGGenericAnimatedType*) { return PassOwnPtr<SVGAnimatedType>(); }
     
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString) = 0;
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString) = 0;

@@ -32,13 +32,13 @@ function sample1() {
 function sample2() {
     // Check half-time conditions
     shouldBeCloseEnough("rect.x.animVal.value", "18.8");
-    shouldBeCloseEnough("rect.x.baseVal.value", "18.8");
+    shouldBe("rect.x.baseVal.value", "100");
 }
 
 function sample3() {
     // Check just before-end conditions
     shouldBeCloseEnough("rect.x.animVal.value", "0");
-    shouldBeCloseEnough("rect.x.baseVal.value", "0");
+    shouldBe("rect.x.baseVal.value", "100");
 }
 
 function executeTest() {

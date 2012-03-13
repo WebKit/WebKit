@@ -28,6 +28,7 @@ namespace WebCore {
 class Color;
 class FloatRect;
 class SVGAngle;
+class SVGGenericAnimatedType;
 class SVGLength;
 class SVGLengthList;
 class SVGNumberList;
@@ -54,6 +55,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createPreserveAspectRatio(SVGPreserveAspectRatio*);
     static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);
     static PassOwnPtr<SVGAnimatedType> createString(String*);
+    static bool supportsAnimVal(AnimatedPropertyType);
 
     AnimatedPropertyType type() const { return m_type; }
 
@@ -71,6 +73,10 @@ public:
     SVGPreserveAspectRatio& preserveAspectRatio();
     FloatRect& rect();
     String& string();
+
+    // Use with care, the actual type of the generic animated object has to be equal to our type().
+    void setVariantValue(SVGGenericAnimatedType*);
+    SVGGenericAnimatedType* variantValue() const { return m_data.variant; }
 
     String valueAsString();
     bool setValueAsString(const QualifiedName&, const String&);
@@ -103,6 +109,7 @@ private:
         SVGPointList* pointList;
         FloatRect* rect;
         String* string;
+        SVGGenericAnimatedType* variant;
     } m_data;
 };
     

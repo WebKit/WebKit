@@ -65,15 +65,13 @@ protected:
     virtual void applyResultsToTarget();
     virtual float calculateDistance(const String& fromString, const String& toString);
 
-    virtual void endedActiveInterval();
-    virtual void targetElementDidChange(SVGElement* targetElement) OVERRIDE;
+    virtual void targetElementWillChange(SVGElement* currentTarget, SVGElement* oldTarget) OVERRIDE;
 
 private:
     SVGAnimatedTypeAnimator* ensureAnimator();
     
     virtual bool hasValidAttributeType();
     AnimatedPropertyType m_animatedPropertyType;
-    bool m_aboutToStopAnimation;
 
     AnimatedPropertyValueType m_fromPropertyValueType;
     AnimatedPropertyValueType m_toPropertyValueType;

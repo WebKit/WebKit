@@ -4,25 +4,25 @@ embedSVGTestCase("../W3C-SVG-1.1/animate-elem-10-t.svg");
 // Setup animation test
 function sample1() {
     shouldBeCloseEnough("rect1.height.animVal.value", "210");
-    //shouldBe("rect1.height.baseVal.value", "210");
+    shouldBe("rect1.height.baseVal.value", "210");
     expectTranslationMatrix("rootSVGElement.getTransformToElement(rect2)", "-250", "-250");
 }
 
 function sample2() {
     shouldBeCloseEnough("rect1.height.animVal.value", "177");
-    //shouldBe("rect1.height.baseVal.value", "210");
+    shouldBe("rect1.height.baseVal.value", "210");
     expectTranslationMatrix("rootSVGElement.getTransformToElement(rect2)", "-250", "-217");
 }
 
 function sample3() {
     shouldBeCloseEnough("rect1.height.animVal.value", "121");
-    //shouldBe("rect1.height.baseVal.value", "210");
+    shouldBe("rect1.height.baseVal.value", "210");
     expectTranslationMatrix("rootSVGElement.getTransformToElement(rect2)", "-250", "-161");
 }
 
 function sample4() {
     shouldBeCloseEnough("rect1.height.animVal.value", "10");
-    //shouldBe("rect1.height.baseVal.value", "210");
+    shouldBe("rect1.height.baseVal.value", "210");
     expectTranslationMatrix("rootSVGElement.getTransformToElement(rect2)", "-250", "-50");
 }
 

@@ -28,22 +28,22 @@ function sample1() {
 
 function sample2() {
     shouldBe("rect.width.animVal.value", "130");
-    shouldBe("rect.width.baseVal.value", "130");
+    shouldBe("rect.width.baseVal.value", "100");
 }
 
 function sample3() {
     shouldBeCloseEnough("rect.width.animVal.value", "151.2");
-    shouldBeCloseEnough("rect.width.baseVal.value", "151.2");
+    shouldBe("rect.width.baseVal.value", "100");
 }
 
 function sample4() {
     shouldBe("rect.width.animVal.value", "576");
-    shouldBe("rect.width.baseVal.value", "576");
+    shouldBe("rect.width.baseVal.value", "100");
 }
 
 function sample5() {
     shouldBeCloseEnough("rect.width.animVal.value", "267");
-    shouldBeCloseEnough("rect.width.baseVal.value", "267");
+    shouldBe("rect.width.baseVal.value", "100");
 }
 
 function executeTest() {

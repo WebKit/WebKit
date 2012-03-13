@@ -427,7 +427,64 @@ void SVGAnimatedType::setPreserveAspectRatioBaseValue(const SVGPreserveAspectRat
     *m_data.preserveAspectRatio = preserveAspectRatio;
 }
 
-    
+bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
+{
+    // FIXME: This lists the current state of our animVal support: only SVGLength is supported for now.
+    switch (type) {
+    case AnimatedLength:
+        return true;
+    case AnimatedAngle:
+    case AnimatedBoolean:
+    case AnimatedColor:
+    case AnimatedEnumeration:
+    case AnimatedInteger:
+    case AnimatedLengthList:
+    case AnimatedNumber:
+    case AnimatedNumberList:
+    case AnimatedNumberOptionalNumber:
+    case AnimatedPath:
+    case AnimatedPoints:
+    case AnimatedPreserveAspectRatio:
+    case AnimatedRect:
+    case AnimatedString:
+    case AnimatedTransformList:
+    case AnimatedUnknown:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void SVGAnimatedType::setVariantValue(SVGGenericAnimatedType* type)
+{
+    // FIXME: This lists the current state of our animVal support: only SVGLength is supported for now.
+    switch (m_type) {
+    case AnimatedLength:
+        *m_data.length = *reinterpret_cast<SVGLength*>(type);
+        return;
+    case AnimatedAngle:
+    case AnimatedBoolean:
+    case AnimatedColor:
+    case AnimatedEnumeration:
+    case AnimatedInteger:
+    case AnimatedLengthList:
+    case AnimatedNumber:
+    case AnimatedNumberList:
+    case AnimatedNumberOptionalNumber:
+    case AnimatedPath:
+    case AnimatedPoints:
+    case AnimatedPreserveAspectRatio:
+    case AnimatedRect:
+    case AnimatedString:
+    case AnimatedTransformList:
+    case AnimatedUnknown:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

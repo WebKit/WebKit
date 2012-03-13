@@ -4,46 +4,46 @@ embedSVGTestCase("../W3C-SVG-1.1/animate-elem-02-t.svg");
 // Setup animation test
 function sampleAfterBegin() {
     shouldBe("rect1.height.animVal.value", "200");
-    //shouldBe("rect1.height.baseVal.value", "20");
+    shouldBe("rect1.height.baseVal.value", "20");
 
     shouldBe("rect2.height.animVal.value", "220");
-    //shouldBe("rect2.height.baseVal.value", "20");
+    shouldBe("rect2.height.baseVal.value", "20");
 
     shouldBe("rect3.height.animVal.value", "200");
-    //shouldBe("rect3.height.baseVal.value", "20");
+    shouldBe("rect3.height.baseVal.value", "20");
 }
 
 function sampleAfterMid() {
     shouldBe("rect1.height.animVal.value", "20");
-    //shouldBe("rect1.height.baseVal.value", "20");
+    shouldBe("rect1.height.baseVal.value", "20");
 
     shouldBe("rect2.height.animVal.value", "40");
-    //shouldBe("rect2.height.baseVal.value", "20");
+    shouldBe("rect2.height.baseVal.value", "20");
 
     shouldBe("rect3.height.animVal.value", "20");
-    //shouldBe("rect3.height.baseVal.value", "20");
+    shouldBe("rect3.height.baseVal.value", "20");
 }
 
 function sampleAfterBeginOfFirstRepetition() {
     shouldBe("rect1.height.animVal.value", "200");
-    //shouldBe("rect1.height.baseVal.value", "20");
+    shouldBe("rect1.height.baseVal.value", "20");
 
     shouldBe("rect2.height.animVal.value", "220");
-    //shouldBe("rect2.height.baseVal.value", "20");
+    shouldBe("rect2.height.baseVal.value", "20");
 
     shouldBe("rect3.height.animVal.value", "220");
-    //shouldBe("rect3.height.baseVal.value", "20");
+    shouldBe("rect3.height.baseVal.value", "20");
 }
 
 function sampleAfterMidOfFirstRepetition() {
     shouldBe("rect1.height.animVal.value", "20");
-    //shouldBe("rect1.height.baseVal.value", "20");
+    shouldBe("rect1.height.baseVal.value", "20");
 
     shouldBe("rect2.height.animVal.value", "40");
-    //shouldBe("rect2.height.baseVal.value", "20");
+    shouldBe("rect2.height.baseVal.value", "20");
 
     shouldBe("rect3.height.animVal.value", "40");
-    //shouldBe("rect3.height.baseVal.value", "20");
+    shouldBe("rect3.height.baseVal.value", "20");
 }
 
 function executeTest() {

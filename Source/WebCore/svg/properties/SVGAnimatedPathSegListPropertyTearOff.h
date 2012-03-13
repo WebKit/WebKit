@@ -51,15 +51,15 @@ public:
         return static_pointer_cast<SVGPathSegListPropertyTearOff>(m_baseVal)->removeItemFromList(segment, shouldSynchronizeWrappers);
     }
 
-    static PassRefPtr<SVGAnimatedPathSegListPropertyTearOff> create(SVGElement* contextElement, const QualifiedName& attributeName, SVGPathSegList& values)
+    static PassRefPtr<SVGAnimatedPathSegListPropertyTearOff> create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, SVGPathSegList& values)
     {
         ASSERT(contextElement);
-        return adoptRef(new SVGAnimatedPathSegListPropertyTearOff(contextElement, attributeName, values));
+        return adoptRef(new SVGAnimatedPathSegListPropertyTearOff(contextElement, attributeName, animatedPropertyType, values));
     }
 
 private:
-    SVGAnimatedPathSegListPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, SVGPathSegList& values)
-        : SVGAnimatedListPropertyTearOff<SVGPathSegList>(contextElement, attributeName, values)
+    SVGAnimatedPathSegListPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, SVGPathSegList& values)
+        : SVGAnimatedListPropertyTearOff<SVGPathSegList>(contextElement, attributeName, animatedPropertyType, values)
     {
     }
 };

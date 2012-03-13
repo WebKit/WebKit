@@ -24,14 +24,17 @@ rootSVGElement.appendChild(rect);
 function sample1() {
     // Check initial/end conditions
     shouldBe("rect.width.animVal.unitType", "SVGLength.SVG_LENGTHTYPE_NUMBER");
+    shouldBe("rect.width.baseVal.unitType", "SVGLength.SVG_LENGTHTYPE_NUMBER");
 }
 
 function sample2() {
     shouldBe("rect.width.animVal.unitType", "SVGLength.SVG_LENGTHTYPE_NUMBER");
+    shouldBe("rect.width.baseVal.unitType", "SVGLength.SVG_LENGTHTYPE_NUMBER");
 }
 
 function sample3() {
     shouldBe("rect.width.animVal.unitType", "SVGLength.SVG_LENGTHTYPE_PX");
+    shouldBe("rect.width.baseVal.unitType", "SVGLength.SVG_LENGTHTYPE_NUMBER");
 }
 
 function executeTest() {

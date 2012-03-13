@@ -8,9 +8,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS rect.width.animVal.value is 200
 PASS rect.width.baseVal.value is 200
 PASS rect.width.animVal.value is 150
-PASS rect.width.baseVal.value is 150
+PASS rect.width.baseVal.value is 200
 PASS rect.width.animVal.value is 100
-PASS rect.width.baseVal.value is 100
+PASS rect.width.baseVal.value is 200
 PASS rect.width.animVal.value is 200
 PASS rect.width.baseVal.value is 200
 PASS successfullyParsed is true

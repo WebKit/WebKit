@@ -33,12 +33,12 @@ function sample1() {
 
 function sample2() {
     shouldBeCloseEnough("circle.r.animVal.value", "132.5");
-    shouldBeCloseEnough("circle.r.baseVal.value", "132.5");
+    shouldBe("circle.r.baseVal.value", "10");
 }
 
 function sample3() {
     shouldBeCloseEnough("circle.r.animVal.value", "254.9");
-    shouldBeCloseEnough("circle.r.baseVal.value", "254.9");
+    shouldBe("circle.r.baseVal.value", "10");
 }
 
 function executeTest() {

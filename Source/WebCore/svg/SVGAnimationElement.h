@@ -57,6 +57,7 @@ enum CalcMode {
 
 class ConditionEventListener;
 class TimeContainer;
+class SVGAnimatedType;
 
 class SVGAnimationElement : public SVGSMILElement,
                             public SVGTests,
@@ -86,6 +87,7 @@ protected:
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(Attribute*) OVERRIDE;
+    virtual void svgAttributeChanged(const QualifiedName&) OVERRIDE;
 
     enum AttributeType {
         AttributeTypeCSS,
@@ -98,17 +100,19 @@ protected:
     String byValue() const;
     String fromValue() const;
 
-    String targetAttributeBaseValue() const;
-    void setTargetAttributeAnimatedValue(const String&);
+    String targetAttributeBaseValue();
+    void setTargetAttributeAnimatedValue(SVGAnimatedType*);
+    SVGAnimatedProperty* animatedPropertyForType(AnimatedPropertyType);
+
+    void animationStarted(SVGAnimatedProperty*, SVGAnimatedType*);
+    void animationEnded(SVGAnimatedProperty*);
 
     // from SVGSMILElement
     virtual void startedActiveInterval();
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement);
 
-    void resetAnimationState(const String& baseValue);
-
 private:
-    virtual void attributeChanged(Attribute*) OVERRIDE;
+    virtual void animationAttributeChanged() OVERRIDE;
 
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
     virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
@@ -131,6 +135,7 @@ private:
     };
 
     ShouldApplyAnimation shouldApplyAnimation(SVGElement* targetElement, const QualifiedName& attributeName);
+    void applyAnimatedValue(ShouldApplyAnimation, SVGElement* targetElement, const QualifiedName& attributeName, SVGAnimatedType*);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAnimationElement)
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)

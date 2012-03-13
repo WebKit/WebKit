@@ -28,12 +28,15 @@
 
 namespace WebCore {
 
+class SVGAnimatedType;
 class SVGElement;
+class SVGGenericAnimatedType;
 
 class SVGAnimatedProperty : public RefCounted<SVGAnimatedProperty> {
 public:
     SVGElement* contextElement() const { return m_contextElement.get(); }
     const QualifiedName& attributeName() const { return m_attributeName; }
+    AnimatedPropertyType animatedPropertyType() const { return m_animatedPropertyType; }
 
     void commitChange()
     {
@@ -43,7 +46,15 @@ public:
     }
 
     virtual bool isAnimatedListTearOff() const { return false; }
-    virtual void updateAnimVal(void*) { ASSERT_NOT_REACHED(); }
+
+    virtual void animationStarted(SVGAnimatedType*) { ASSERT_NOT_REACHED(); }
+    virtual void animationEnded() { ASSERT_NOT_REACHED(); }
+    virtual void animationValueChanged() { ASSERT_NOT_REACHED(); }
+    virtual SVGGenericAnimatedType* currentBaseValue(AnimatedPropertyType) const
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
 
     // Caching facilities.
     typedef HashMap<SVGAnimatedPropertyDescription, RefPtr<SVGAnimatedProperty>, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits> Cache;
@@ -82,7 +93,7 @@ public:
             SVGAnimatedPropertyDescription key(element, info->propertyIdentifier);
             RefPtr<SVGAnimatedProperty> wrapper = animatedPropertyCache()->get(key);
             if (!wrapper) {
-                wrapper = TearOffType::create(element, info->attributeName, property);
+                wrapper = TearOffType::create(element, info->attributeName, info->animatedPropertyType, property);
                 animatedPropertyCache()->set(key, wrapper);
             }
             return static_pointer_cast<TearOffType>(wrapper).release();
@@ -124,9 +135,10 @@ public:
     }
 
 protected:
-    SVGAnimatedProperty(SVGElement* contextElement, const QualifiedName& attributeName)
+    SVGAnimatedProperty(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType)
         : m_contextElement(contextElement)
         , m_attributeName(attributeName)
+        , m_animatedPropertyType(animatedPropertyType)
     {
     }
 
@@ -139,6 +151,7 @@ private:
 
     RefPtr<SVGElement> m_contextElement;
     const QualifiedName& m_attributeName;
+    AnimatedPropertyType m_animatedPropertyType;
 };
 
 }

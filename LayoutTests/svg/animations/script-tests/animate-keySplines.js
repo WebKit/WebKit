@@ -25,20 +25,20 @@ rootSVGElement.appendChild(rect);
 // Setup animation test
 function sample1() {
     // Check initial/end conditions
-    shouldBe("rect.height.baseVal.value", "167");
-    shouldBe("rect.height.animVal.value", "167");
+    shouldBeCloseEnough("rect.height.animVal.value", "167");
+    shouldBe("rect.height.baseVal.value", "100");
 }
 
 function sample2() {
     // Check half-time conditions
-    shouldBe("rect.height.baseVal.value", "111");
-    shouldBe("rect.height.animVal.value", "111");
+    shouldBeCloseEnough("rect.height.animVal.value", "111");
+    shouldBe("rect.height.baseVal.value", "100");
 }
 
 function sample3() {
     // Check just before-end conditions
+    shouldBeCloseEnough("rect.height.animVal.value", "100");
     shouldBe("rect.height.baseVal.value", "100");
-    shouldBe("rect.height.animVal.value", "100");
 }
 
 function executeTest() {

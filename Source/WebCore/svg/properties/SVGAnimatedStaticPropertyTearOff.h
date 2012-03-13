@@ -49,15 +49,15 @@ public:
     bool isAnimating() const { return false; }
     PropertyType& currentAnimatedValue() { return m_property; }
 
-    static PassRefPtr<SVGAnimatedStaticPropertyTearOff<PropertyType> > create(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& property)
+    static PassRefPtr<SVGAnimatedStaticPropertyTearOff<PropertyType> > create(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
     {
         ASSERT(contextElement);
-        return adoptRef(new SVGAnimatedStaticPropertyTearOff<PropertyType>(contextElement, attributeName, property));
+        return adoptRef(new SVGAnimatedStaticPropertyTearOff<PropertyType>(contextElement, attributeName, animatedPropertyType, property));
     }
 
 protected:
-    SVGAnimatedStaticPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& property)
-        : SVGAnimatedProperty(contextElement, attributeName)
+    SVGAnimatedStaticPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
+        : SVGAnimatedProperty(contextElement, attributeName, animatedPropertyType)
         , m_property(property)
     {
     }

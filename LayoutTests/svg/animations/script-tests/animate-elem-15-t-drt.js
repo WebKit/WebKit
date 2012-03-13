@@ -4,22 +4,22 @@ embedSVGTestCase("../W3C-SVG-1.1/animate-elem-15-t.svg");
 // Setup animation test
 function sample1() { // From 0s to 2.25s
     shouldBeCloseEnough("rect.width.animVal.value", "300");
-    //shouldBe("rect.width.baseVal.value", "300");
+    shouldBe("rect.width.baseVal.value", "300");
 }
 
 function sample2() { // From 2.25s to 4.5s
     shouldBeCloseEnough("rect.width.animVal.value", "232.5");
-    //shouldBe("rect.width.baseVal.value", "300");
+    shouldBe("rect.width.baseVal.value", "300");
 }
 
 function sample3() { // From 4.5s to 9s
     shouldBeCloseEnough("rect.width.animVal.value", "165");
-    //shouldBe("rect.width.baseVal.value", "300");
+    shouldBe("rect.width.baseVal.value", "300");
 }
 
 function sample4() { // From 9s to 9s
     shouldBeCloseEnough("rect.width.animVal.value", "30");
-    //shouldBe("rect.width.baseVal.value", "300");
+    shouldBe("rect.width.baseVal.value", "300");
 }
 
 function executeTest() {

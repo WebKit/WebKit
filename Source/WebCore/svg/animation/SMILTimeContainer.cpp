@@ -265,6 +265,10 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
             if (!animation->hasValidAttributeType())
                 continue;
             resultElement = animation;
+            // FIXME: As soon as we stop mutating the DOM, we can stop passing the cached baseValue here.
+            // Caching the baseValue results in wrong additive="sum" behaviour. Reason: the m_savedBaseValues
+            // is NEVER reset, it always contains the state of the baseValue, at the point where we first
+            // called baseValueFor(), typically at the beginning of the animation.
             resultElement->resetToBaseValue(baseValueFor(key));
             resultsElements.add(key, resultElement);
         }
