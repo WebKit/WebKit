@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,10) size 784x582
+      RenderBlock {DIV} at (10,0) size 206x206 [border:]
+      RenderBlock {DIV} at (10,216) size 206x206 [border:]
+      RenderBlock {DIV} at (0,432) size 784x36
+        RenderText {#text} at (0,0) size 593x18
+          text run at (0,0) width 593: "PASS - \"border-image-source\" property for \"box\" element at 0.5s saw something close to: 0.5"
+        RenderBR {BR} at (593,14) size 0x0
+        RenderText {#text} at (0,18) size 658x18
+          text run at (0,18) width 658: "PASS - \"border-image-source\" property for \"boxShorthand\" element at 0.5s saw something close to: 0.5"
+        RenderBR {BR} at (658,32) size 0x0
