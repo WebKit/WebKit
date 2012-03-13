@@ -27,7 +27,7 @@
 /**
  * @constructor
  * @extends {WebInspector.PropertiesSection}
- * @param {*=} object
+ * @param {WebInspector.RemoteObject=} object
  * @param {string=} title
  * @param {string=} subtitle
  * @param {string=} emptyPlaceholder
@@ -465,6 +465,7 @@ WebInspector.ArrayGroupingTreeElement._populateRanges = function(treeElement, ob
 {
     object.callFunctionJSON(packRanges, [{value: fromIndex}, {value: toIndex}, {value: WebInspector.ArrayGroupingTreeElement._bucketThreshold}], callback.bind(this));
 
+    /** @this {Object} */
     function packRanges(fromIndex, toIndex, bucketThreshold)
     {
         var count = 0;
@@ -538,6 +539,7 @@ WebInspector.ArrayGroupingTreeElement._populateAsFragment = function(treeElement
 {
     object.callFunction(buildArrayFragment, [{value: fromIndex}, {value: toIndex}], processArrayFragment.bind(this));
 
+    /** @this {Object} */
     function buildArrayFragment(fromIndex, toIndex)
     {
         var result = Object.create(null);
@@ -554,6 +556,7 @@ WebInspector.ArrayGroupingTreeElement._populateAsFragment = function(treeElement
         arrayFragment.getAllProperties(processProperties.bind(this));
     }
 
+    /** @this {WebInspector.ArrayGroupingTreeElement} */
     function processProperties(properties)
     {
         if (!properties)
@@ -577,6 +580,7 @@ WebInspector.ArrayGroupingTreeElement._populateNonIndexProperties = function(tre
 {
     object.callFunction(buildObjectFragment, undefined, processObjectFragment.bind(this));
 
+    /** @this {Object} */
     function buildObjectFragment()
     {
         var result = Object.create(this.__proto__);
@@ -586,7 +590,8 @@ WebInspector.ArrayGroupingTreeElement._populateNonIndexProperties = function(tre
             if (!isNaN(name))
                 continue;
             var descriptor = Object.getOwnPropertyDescriptor(this, name);
-            Object.defineProperty(result, name, descriptor);
+            if (descriptor)
+                Object.defineProperty(result, name, descriptor);
         }
         return result;
     }
@@ -596,6 +601,7 @@ WebInspector.ArrayGroupingTreeElement._populateNonIndexProperties = function(tre
         arrayFragment.getOwnProperties(processProperties.bind(this));
     }
 
+    /** @this {WebInspector.ArrayGroupingTreeElement} */
     function processProperties(properties)
     {
         if (!properties)

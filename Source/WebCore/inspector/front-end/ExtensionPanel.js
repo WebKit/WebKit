@@ -302,7 +302,7 @@ WebInspector.ExtensionSidebarPane.prototype = {
     },
 
     /**
-     * @param {Object} object
+     * @param {WebInspector.RemoteObject} object
      * @param {string} title
      * @param {function(?string=)} callback
      */
