@@ -96,6 +96,7 @@ typedef HANDLE PlatformThread;
 typedef pthread_t PlatformThread;
 static const int SigThreadSuspendResume = SIGUSR2;
 
+#if defined(SA_RESTART)
 static void pthreadSignalHandlerSuspendResume(int signo)
 {
     sigset_t signalSet;
@@ -103,6 +104,7 @@ static void pthreadSignalHandlerSuspendResume(int signo)
     sigaddset(&signalSet, SigThreadSuspendResume);
     sigsuspend(&signalSet);
 }
+#endif
 #endif
 
 class MachineThreads::Thread {
