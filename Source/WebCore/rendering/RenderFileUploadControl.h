@@ -55,6 +55,8 @@ private:
     virtual VisiblePosition positionForPoint(const LayoutPoint&);
 
     HTMLInputElement* uploadButton() const;
+
+    bool m_canReceiveDroppedFiles;
 };
 
 inline RenderFileUploadControl* toRenderFileUploadControl(RenderObject* object)
