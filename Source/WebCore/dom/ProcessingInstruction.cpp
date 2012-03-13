@@ -134,6 +134,9 @@ void ProcessingInstruction::checkStyleSheet()
         m_title = attrs.get("title");
         m_media = attrs.get("media");
 
+        if (m_alternate && m_title.isEmpty())
+            return;
+
         if (href.length() > 1 && href[0] == '#') {
             m_localHref = href.substring(1);
 #if ENABLE(XSLT)
