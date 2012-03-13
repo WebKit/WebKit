@@ -1229,11 +1229,6 @@ http/tests/globalhistory
 # PasteBoard::plainText() does not support file names.
 editing/pasteboard/drag-files-to-editable-element.html
 
-# Fails because MutationObservers are not notified at end-of-task
-# https://bugs.webkit.org/show_bug.cgi?id=78290
-fast/mutation/end-of-task-delivery.html
-fast/mutation/inline-event-listener.html
-
 # Fails because of the security policy of the user agent?
 # http://webkit.org/b/79604
 fast/mutation/database-callback-delivery.html

@@ -1,3 +1,25 @@
+2012-03-13  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [EFL] [DRT] Implement scheduleAsynchronousKeyDown.
+        https://bugs.webkit.org/show_bug.cgi?id=79601
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Extracted shareable code from keyDownCallback and then added createKeyEventInfo.
+        createKeyEventInfo creates a new structure KeyEventInfo that has keyName and modifiers
+        and is taken over to sendKeyDown.
+        Added sendKeyDown and sendAsynchronousKeyDown to evaluate keyDown event directly
+        and asynchronously. Eventually, sendAsynchronousKeyDown calls sendKeyDown.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (KeyEventInfo::KeyEventInfo):
+        (KeyEventInfo):
+        (createKeyEventInfo):
+        (sendKeyDown):
+        (keyDownCallback):
+        (sendAsynchronousKeyDown):
+        (scheduleAsynchronousKeyDownCallback):
+
 2012-03-12  Ojan Vafai  <ojan@chromium.org>
 
         webkit-patch optimize-baselines sometimes creates a mac-future result

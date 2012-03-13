@@ -79,6 +79,8 @@ public:
     static void setMockScrollbarsEnabled(bool);
 
     static void dumpConfigurationForViewport(Evas_Object* ewkView, int deviceDPI, const WebCore::IntSize& deviceSize, const WebCore::IntSize& availableSize);
+
+    static void deliverAllMutationsIfNecessary();
 };
 
 #endif // DumpRenderTreeSupportEfl_h
