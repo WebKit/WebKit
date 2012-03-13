@@ -57,6 +57,8 @@ public:
     enum FocusElementType { TextEdit, TextPopup /* Date/Time & Color */, SelectPopup, Plugin };
     enum CaretScrollType { CenterAlways, CenterIfNeeded, EdgeIfNeeded };
 
+    void enableInputMode(bool inputModeAllowed = true);
+
     void focusedNodeChanged();
     void nodeTextChanged(const WebCore::Node*);
     void selectionChanged();
@@ -115,8 +117,6 @@ public:
     int32_t finishComposition();
     int32_t setComposingText(spannable_string_t*, int32_t relativeCursorPosition);
     int32_t commitText(spannable_string_t*, int32_t relativeCursorPosition);
-
-    bool shouldAcceptInputFocus();
 
 private:
     enum PendingKeyboardStateChange { NoChange, Visible, NotVisible };
@@ -177,6 +177,7 @@ private:
     WebPagePrivate* m_webPage;
 
     RefPtr<WebCore::Element> m_currentFocusElement;
+    bool m_inputModeEnabled;
 
     bool m_processingChange;
     bool m_changingFocus;

@@ -129,7 +129,7 @@ public:
     virtual void drawTapHighlight(const Platform::IntRectRegion&, int red, int green, int blue, int alpha, bool hideAfterScroll) = 0;
     virtual void hideTapHighlight() = 0;
 
-    virtual void inputFocusGained(Platform::BlackBerryInputType, int inputStyle, bool waitForExplicitKeyboardShowCall) = 0;
+    virtual void inputFocusGained(Platform::BlackBerryInputType, int inputStyle) = 0;
     virtual void inputFocusLost() = 0;
     virtual void inputTextChanged() = 0;
     virtual void inputSelectionChanged(unsigned selectionStart, unsigned selectionEnd) = 0;

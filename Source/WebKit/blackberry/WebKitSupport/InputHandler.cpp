@@ -109,6 +109,7 @@ private:
 InputHandler::InputHandler(WebPagePrivate* page)
     : m_webPage(page)
     , m_currentFocusElement(0)
+    , m_inputModeEnabled(false)
     , m_processingChange(false)
     , m_changingFocus(false)
     , m_currentFocusElementType(TextEdit)
@@ -406,6 +407,10 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
 
         m_webPage->m_client->inputFocusLost();
         m_webPage->m_selectionHandler->selectionPositionChanged();
+
+        // If the frame selection isn't focused, focus it.
+        if (!m_currentFocusElement->document()->frame()->selection()->isFocused())
+            m_currentFocusElement->document()->frame()->selection()->setFocused(true);
     }
 
     // Clear the node details.
@@ -413,43 +418,22 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
     m_currentFocusElementType = TextEdit;
 }
 
-bool InputHandler::shouldAcceptInputFocus()
+void InputHandler::enableInputMode(bool inputModeAllowed)
 {
-    // If the DRT is running, always accept focus.
-    if (m_webPage->m_dumpRenderTree)
-        return true;
+    FocusLog(LogLevelInfo, "InputHandler::enableInputMode %s, override is %s"
+             , inputModeAllowed ? "true" : "false"
+            , m_webPage->m_dumpRenderTree || Platform::Settings::get()->alwaysShowKeyboardOnFocus() ? "true" : "false");
 
-    if (Platform::Settings::get()->alwaysShowKeyboardOnFocus()) {
-        FocusLog(LogLevelInfo, "InputHandler::shouldAcceptInputFocus alwaysShowKeyboardOnFocus is active.");
-        return true;
-    }
+    m_inputModeEnabled = inputModeAllowed;
 
-    Frame* focusedFrame = m_webPage->focusedOrMainFrame();
-    if (!focusedFrame) {
-        FocusLog(LogLevelInfo, "InputHandler::shouldAcceptInputFocus Frame not valid.");
-        return false;
-    }
+    // If DRT is running or always show keyboard setting is active, do not delay
+    // showing the keyboard.
+    if (m_webPage->m_dumpRenderTree || Platform::Settings::get()->alwaysShowKeyboardOnFocus())
+        m_inputModeEnabled = true;
 
-    // Any user action should be respected. Mouse will be down when touch is
-    // used to focus.
-    if (focusedFrame->eventHandler()->mousePressed()) {
-        FocusLog(LogLevelInfo, "InputHandler::shouldAcceptInputFocus Mouse is pressed focusing.");
-        return true;
-    }
-
-    if (!m_webPage->m_client->hasKeyboardFocus()) {
-        FocusLog(LogLevelInfo, "InputHandler::shouldAcceptInputFocus Client does not have input focus.");
-        return false;
-    }
-
-    if (m_webPage->isLoading()) {
-        FocusLog(LogLevelInfo, "InputHandler::shouldAcceptInputFocus Webpage is loading.");
-        return false;
-    }
-
-    // Make sure the focused frame is not processing load events.
-    FocusLog(LogLevelInfo, "InputHandler::shouldAcceptInputFocus returning state of processingLoadEvent (%s).", !focusedFrame->document()->processingLoadEvent() ? "true" : "false");
-    return !focusedFrame->document()->processingLoadEvent();
+    // If the frame selection isn't focused, focus it.
+    if (m_inputModeEnabled && isActiveTextEdit() && !m_currentFocusElement->document()->frame()->selection()->isFocused())
+        m_currentFocusElement->document()->frame()->selection()->setFocused(true);
 }
 
 void InputHandler::setElementFocused(Element* element)
@@ -457,17 +441,8 @@ void InputHandler::setElementFocused(Element* element)
     ASSERT(DOMSupport::isTextBasedContentEditableElement(element));
     ASSERT(element->document() && element->document()->frame());
 
-    if (!m_changingFocus && !shouldAcceptInputFocus()) {
-        // Remove the focus from this element, but guard against recursion by
-        // allowing a refocus during the blur to continue.
-        // THIS IS A HACK that needs to be fixed. Instead of blur the field,
-        // the frame or frame selection should be blurred. Google bypasses these
-        // though so it can't be done right now.
-        m_changingFocus = true;
-        element->blur();
-        m_changingFocus = false;
-        return;
-    }
+    if (element->document()->frame()->selection()->isFocused() != m_inputModeEnabled)
+        element->document()->frame()->selection()->setFocused(m_inputModeEnabled);
 
     // Clear the existing focus node details.
     setElementUnfocused(true /*refocusOccuring*/);
@@ -481,12 +456,12 @@ void InputHandler::setElementFocused(Element* element)
     m_currentFocusElementTextEditMask = inputStyle(type, element);
 
     FocusLog(LogLevelInfo, "InputHandler::setElementFocused, Type=%d, Style=%d", type, m_currentFocusElementTextEditMask);
-
-    m_webPage->m_client->inputFocusGained(type,
-                                          m_currentFocusElementTextEditMask,
-                                          m_delayKeyboardVisibilityChange /* wait for explicit keyboard show call */);
+    m_webPage->m_client->inputFocusGained(type, m_currentFocusElementTextEditMask);
 
     handleInputLocaleChanged(m_webPage->m_webSettings->isWritingDirectionRTL());
+
+    if (!m_delayKeyboardVisibilityChange)
+        notifyClientOfKeyboardVisibilityChange(true);
 }
 
 bool InputHandler::openDatePopup(HTMLInputElement* element, BlackBerryInputType type)
@@ -552,7 +527,7 @@ void InputHandler::nodeTextChanged(const Node* node)
 
 void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
 {
-    if (!m_currentFocusElement || !m_currentFocusElement->document())
+    if (!m_inputModeEnabled || !m_currentFocusElement || !m_currentFocusElement->document())
         return;
 
     if (!Platform::Settings::get()->allowCenterScrollAdjustmentForInputFields() && scrollType != EdgeIfNeeded)
@@ -754,6 +729,10 @@ void InputHandler::processPendingKeyboardVisibilityChange()
 
 void InputHandler::notifyClientOfKeyboardVisibilityChange(bool visible)
 {
+    // If we aren't ready for input, keyboard changes should be ignored.
+    if (!m_inputModeEnabled && visible)
+        return;
+
     if (!m_delayKeyboardVisibilityChange) {
         m_webPage->showVirtualKeyboard(visible);
         return;
@@ -908,6 +887,9 @@ void InputHandler::cancelSelection()
 bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEvent, bool changeIsPartOfComposition)
 {
     InputLog(LogLevelInfo, "InputHandler::handleKeyboardInput received character=%lc, type=%d", keyboardEvent.character(), keyboardEvent.type());
+
+    // Enable input mode if we are processing a key event.
+    enableInputMode();
 
     // If we aren't specifically part of a composition, fail, IMF should never send key input
     // while composing text. If IMF has failed, we should have already finished the
@@ -1688,6 +1670,9 @@ int32_t InputHandler::setComposingText(spannable_string_t* spannableString, int3
         return -1;
 
     InputLog(LogLevelInfo, "InputHandler::setComposingText at relativeCursorPosition: %d", relativeCursorPosition);
+
+    // Enable input mode if we are processing a key event.
+    enableInputMode();
 
     return setSpannableTextAndRelativeCursor(spannableString, relativeCursorPosition, true /* markTextAsComposing */) ? 0 : -1;
 }

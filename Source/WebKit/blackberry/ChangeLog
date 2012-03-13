@@ -1,3 +1,44 @@
+2012-03-13  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Input focus state should unfocus the frame selection instead of the field.
+        https://bugs.webkit.org/show_bug.cgi?id=81023
+
+        Reviewed by Antonio Gomes.
+
+        PR 137400.
+
+        Prevent cursor drawing by unfocusing the frame selection
+        when input mode is not ready.
+
+        Greatly simplify the decision to focus input fields by removing
+        all ties to the page load state and base it on input.  Input mode
+        is disabled when a page load begins and enabled on any user input.
+
+        The field is focused and ready for input immediately, only the
+        frame selection (or cursor) is unfocused.
+
+        Reviewed Internally by Gen Mak, Antonio Gomes and Nima Ghanavatian.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::handleMouseEvent):
+        * Api/WebPageClient.h:
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::shouldBeginEditing):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::setElementUnfocused):
+        (BlackBerry::WebKit::InputHandler::enableInputMode):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+        (BlackBerry::WebKit::InputHandler::notifyClientOfKeyboardVisibilityChange):
+        (BlackBerry::WebKit::InputHandler::handleKeyboardInput):
+        (BlackBerry::WebKit::InputHandler::setComposingText):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2012-03-13  Adam Barth  <abarth@webkit.org> && Benjamin Poulain  <bpoulain@apple.com>
 
         Always enable ENABLE(CLIENT_BASED_GEOLOCATION)

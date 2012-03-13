@@ -842,6 +842,9 @@ void WebPagePrivate::setLoadState(LoadState state)
             toggleTextReflowIfEnabledForBlockZoomOnly();
 #endif
 
+            // Notify InputHandler of state change.
+            m_inputHandler->enableInputMode(false);
+
             // Set the scroll to origin here and notify the client since we'll be
             // zooming below without any real contents yet thus the contents size
             // we report to the client could make our current scroll position invalid.
@@ -3528,6 +3531,7 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
     }
 
     if (mouseEvent.eventType() == MouseEventPressed) {
+        m_inputHandler->enableInputMode();
         if (m_inputHandler->willOpenPopupForNode(node)) {
             // Do not allow any human generated mouse or keyboard events to select <option>s in the list box
             // because we use a pop up dialog to handle the actual selections. This prevents options from
