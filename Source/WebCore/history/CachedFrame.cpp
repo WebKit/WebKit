@@ -27,6 +27,7 @@
 #include "CachedPage.h"
 
 #include "CachedFramePlatformData.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "ExceptionCode.h"
