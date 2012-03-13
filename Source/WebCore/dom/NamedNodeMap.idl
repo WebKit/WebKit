@@ -21,11 +21,10 @@
 module core {
 
     interface [
-        JSGenerateIsReachable=ImplElementRoot,
-        JSCustomMarkFunction,
+        GenerateIsReachable=ImplElementRoot,
         IndexedGetter,
-        NamedGetter,
-        V8CustomToJSObject
+        JSCustomMarkFunction,
+        NamedGetter
     ] NamedNodeMap {
 
         Node getNamedItem(in [Optional=DefaultIsUndefined] DOMString name);

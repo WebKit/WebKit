@@ -73,7 +73,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8AudioContextCustom.cpp
     bindings/v8/custom/V8CSSRuleCustom.cpp
     bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp
-    bindings/v8/custom/V8CSSStyleSheetCustom.cpp
     bindings/v8/custom/V8CSSValueCustom.cpp
     bindings/v8/custom/V8CanvasPixelArrayCustom.cpp
     bindings/v8/custom/V8CanvasRenderingContext2DCustom.cpp
@@ -85,7 +84,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8CustomXPathNSResolver.cpp
     bindings/v8/custom/V8DOMFormDataCustom.cpp
     bindings/v8/custom/V8DOMStringMapCustom.cpp
-    bindings/v8/custom/V8DOMTokenListCustom.cpp
     bindings/v8/custom/V8DOMWindowCustom.cpp
     bindings/v8/custom/V8DataViewCustom.cpp
     bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp
