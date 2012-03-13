@@ -1,3 +1,15 @@
+2012-03-13  Dana Jansens  <danakj@chromium.org>
+
+        Region::contains(IntPoint) is slow
+        https://bugs.webkit.org/show_bug.cgi?id=81008
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.gypi:
+        * tests/RegionTest.cpp: Added.
+        (WebCore):
+        (WebCore::TEST):
+
 2012-03-13  Gavin Peters  <gavinp@chromium.org>
 
         Implement ApplicationCacheHost::canCacheInPageCache() for chromium.
