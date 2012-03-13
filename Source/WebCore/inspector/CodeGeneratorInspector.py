@@ -1851,11 +1851,15 @@ $methodDeclarations
     InspectorFrontendChannel* m_inspectorFrontendChannel;
 $fieldDeclarations
 
+    template<typename R, typename V, typename V0>
+    static R getPropertyValueImpl(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors, V0 initial_value, bool (*as_method)(InspectorValue*, V*), const char* type_name);
+
     static int getInt(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static String getString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static bool getBoolean(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static PassRefPtr<InspectorObject> getObject(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
     static PassRefPtr<InspectorArray> getArray(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+
     void sendResponse(long callId, PassRefPtr<InspectorObject> result, const String& errorMessage, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError);
 
 };
@@ -1982,19 +1986,20 @@ void InspectorBackendDispatcherImpl::reportProtocolError(const long* const callI
         m_inspectorFrontendChannel->sendMessageToFrontend(message->toJSONString());
 }
 
-int InspectorBackendDispatcherImpl::getInt(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
+template<typename R, typename V, typename V0>
+R InspectorBackendDispatcherImpl::getPropertyValueImpl(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors, V0 initial_value, bool (*as_method)(InspectorValue*, V*), const char* type_name)
 {
     ASSERT(protocolErrors);
 
     if (valueFound)
         *valueFound = false;
 
-    int value = 0;
+    V value = initial_value;
 
     if (!object) {
         if (!valueFound) {
             // Required parameter in missing params container.
-            protocolErrors->pushString(String::format("'params' object must contain required parameter '%s' with type 'Number'.", name.utf8().data()));
+            protocolErrors->pushString(String::format("'params' object must contain required parameter '%s' with type '%s'.", name.utf8().data(), type_name));
         }
         return value;
     }
@@ -2004,152 +2009,49 @@ int InspectorBackendDispatcherImpl::getInt(InspectorObject* object, const String
 
     if (valueIterator == end) {
         if (!valueFound)
-            protocolErrors->pushString(String::format("Parameter '%s' with type 'Number' was not found.", name.utf8().data()));
+            protocolErrors->pushString(String::format("Parameter '%s' with type '%s' was not found.", name.utf8().data(), type_name));
         return value;
     }
 
-    if (!valueIterator->second->asNumber(&value))
-        protocolErrors->pushString(String::format("Parameter '%s' has wrong type. It must be 'Number'.", name.utf8().data()));
+    if (!as_method(valueIterator->second.get(), &value))
+        protocolErrors->pushString(String::format("Parameter '%s' has wrong type. It must be '%s'.", name.utf8().data(), type_name));
     else
         if (valueFound)
             *valueFound = true;
     return value;
+}
+
+struct AsMethodBridges {
+    static bool asInt(InspectorValue* value, int* output) { return value->asNumber(output); }
+    static bool asString(InspectorValue* value, String* output) { return value->asString(output); }
+    static bool asBoolean(InspectorValue* value, bool* output) { return value->asBoolean(output); }
+    static bool asObject(InspectorValue* value, RefPtr<InspectorObject>* output) { return value->asObject(output); }
+    static bool asArray(InspectorValue* value, RefPtr<InspectorArray>* output) { return value->asArray(output); }
+};
+
+int InspectorBackendDispatcherImpl::getInt(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
+{
+    return getPropertyValueImpl<int, int, int>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asInt, "Number");
 }
 
 String InspectorBackendDispatcherImpl::getString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
-    ASSERT(protocolErrors);
-
-    if (valueFound)
-        *valueFound = false;
-
-    String value = "";
-
-    if (!object) {
-        if (!valueFound) {
-            // Required parameter in missing params container.
-            protocolErrors->pushString(String::format("'params' object must contain required parameter '%s' with type 'String'.", name.utf8().data()));
-        }
-        return value;
-    }
-
-    InspectorObject::const_iterator end = object->end();
-    InspectorObject::const_iterator valueIterator = object->find(name);
-
-    if (valueIterator == end) {
-        if (!valueFound)
-            protocolErrors->pushString(String::format("Parameter '%s' with type 'String' was not found.", name.utf8().data()));
-        return value;
-    }
-
-    if (!valueIterator->second->asString(&value))
-        protocolErrors->pushString(String::format("Parameter '%s' has wrong type. It must be 'String'.", name.utf8().data()));
-    else
-        if (valueFound)
-            *valueFound = true;
-    return value;
+    return getPropertyValueImpl<String, String, String>(object, name, valueFound, protocolErrors, "", AsMethodBridges::asString, "String");
 }
 
 bool InspectorBackendDispatcherImpl::getBoolean(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
-    ASSERT(protocolErrors);
-
-    if (valueFound)
-        *valueFound = false;
-
-    bool value = false;
-
-    if (!object) {
-        if (!valueFound) {
-            // Required parameter in missing params container.
-            protocolErrors->pushString(String::format("'params' object must contain required parameter '%s' with type 'Boolean'.", name.utf8().data()));
-        }
-        return value;
-    }
-
-    InspectorObject::const_iterator end = object->end();
-    InspectorObject::const_iterator valueIterator = object->find(name);
-
-    if (valueIterator == end) {
-        if (!valueFound)
-            protocolErrors->pushString(String::format("Parameter '%s' with type 'Boolean' was not found.", name.utf8().data()));
-        return value;
-    }
-
-    if (!valueIterator->second->asBoolean(&value))
-        protocolErrors->pushString(String::format("Parameter '%s' has wrong type. It must be 'Boolean'.", name.utf8().data()));
-    else
-        if (valueFound)
-            *valueFound = true;
-    return value;
+    return getPropertyValueImpl<bool, bool, bool>(object, name, valueFound, protocolErrors, false, AsMethodBridges::asBoolean, "Boolean");
 }
 
 PassRefPtr<InspectorObject> InspectorBackendDispatcherImpl::getObject(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
-    ASSERT(protocolErrors);
-
-    if (valueFound)
-        *valueFound = false;
-
-    RefPtr<InspectorObject> value = InspectorObject::create();
-
-    if (!object) {
-        if (!valueFound) {
-            // Required parameter in missing params container.
-            protocolErrors->pushString(String::format("'params' object must contain required parameter '%s' with type 'Object'.", name.utf8().data()));
-        }
-        return value;
-    }
-
-    InspectorObject::const_iterator end = object->end();
-    InspectorObject::const_iterator valueIterator = object->find(name);
-
-    if (valueIterator == end) {
-        if (!valueFound)
-            protocolErrors->pushString(String::format("Parameter '%s' with type 'Object' was not found.", name.utf8().data()));
-        return value;
-    }
-
-    if (!valueIterator->second->asObject(&value))
-        protocolErrors->pushString(String::format("Parameter '%s' has wrong type. It must be 'Object'.", name.utf8().data()));
-    else
-        if (valueFound)
-            *valueFound = true;
-    return value;
+    return getPropertyValueImpl<PassRefPtr<InspectorObject>, RefPtr<InspectorObject>, InspectorObject*>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asObject, "Object");
 }
 
 PassRefPtr<InspectorArray> InspectorBackendDispatcherImpl::getArray(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
-    ASSERT(protocolErrors);
-
-    if (valueFound)
-        *valueFound = false;
-
-    RefPtr<InspectorArray> value = InspectorArray::create();
-
-    if (!object) {
-        if (!valueFound) {
-            // Required parameter in missing params container.
-            protocolErrors->pushString(String::format("'params' object must contain required parameter '%s' with type 'Array'.", name.utf8().data()));
-        }
-        return value;
-    }
-
-    InspectorObject::const_iterator end = object->end();
-    InspectorObject::const_iterator valueIterator = object->find(name);
-
-    if (valueIterator == end) {
-        if (!valueFound)
-            protocolErrors->pushString(String::format("Parameter '%s' with type 'Array' was not found.", name.utf8().data()));
-        return value;
-    }
-
-    if (!valueIterator->second->asArray(&value))
-        protocolErrors->pushString(String::format("Parameter '%s' has wrong type. It must be 'Array'.", name.utf8().data()));
-    else
-        if (valueFound)
-            *valueFound = true;
-    return value;
+    return getPropertyValueImpl<PassRefPtr<InspectorArray>, RefPtr<InspectorArray>, InspectorArray*>(object, name, valueFound, protocolErrors, 0, AsMethodBridges::asArray, "Array");
 }
 
 bool InspectorBackendDispatcher::getCommandName(const String& message, String* result)
