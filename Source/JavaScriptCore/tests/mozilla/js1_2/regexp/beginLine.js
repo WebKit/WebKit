@@ -60,8 +60,8 @@
 
     RegExp.multiline = true;
     // 'abc\n123xyz'.match(new RegExp('^\d+')) <multiline==true>
-	testcases[count++] = new TestCase ( SECTION, "'abc\n123xyz'.match(new RegExp('^\\d+'))",
-	                                    String(['123']), String('abc\n123xyz'.match(new RegExp('^\\d+'))));
+    testcases[count++] = new TestCase ( SECTION, "'abc\n123xyz'.match(new RegExp('^\\d+','m'))",
+                                        String(['123']), String('abc\n123xyz'.match(new RegExp('^\\d+','m'))));
 
 	function test()
 	{

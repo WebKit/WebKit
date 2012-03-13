@@ -1,3 +1,15 @@
+2012-03-12  Hojong Han  <hojong.han@samsung.com>
+
+        Fix test cases for RegExp multiline
+        https://bugs.webkit.org/show_bug.cgi?id=80822
+
+        Reviewed by Gavin Barraclough.
+
+        * tests/mozilla/js1_2/regexp/RegExp_multiline.js:
+        * tests/mozilla/js1_2/regexp/RegExp_multiline_as_array.js:
+        * tests/mozilla/js1_2/regexp/beginLine.js:
+        * tests/mozilla/js1_2/regexp/endLine.js:
+
 2012-03-12  Filip Pizlo  <fpizlo@apple.com>
 
         Arithmetic use inference should be procedure-global and should run in tandem
