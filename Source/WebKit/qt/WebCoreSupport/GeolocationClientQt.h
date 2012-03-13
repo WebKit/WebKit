@@ -26,6 +26,8 @@
 #ifndef GeolocationClientQt_h
 #define GeolocationClientQt_h
 
+#if ENABLE(GEOLOCATION)
+
 #include "GeolocationClient.h"
 
 #include <QObject>
@@ -75,5 +77,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(GEOLOCATION)
 
 #endif // GeolocationClientQt_h
