@@ -2056,6 +2056,7 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     
     m_frame->setDocument(document);
     m_frame->setDOMWindow(cachedFrame.domWindow());
+    m_frame->domWindow()->resumeFromPageCache();
     m_frame->domWindow()->setURL(document->url());
     m_frame->domWindow()->setSecurityOrigin(document->securityOrigin());
 

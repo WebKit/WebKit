@@ -390,44 +390,49 @@ bool DOMWindow::canShowModalDialogNow(const Frame* frame)
 DOMWindow::DOMWindow(Frame* frame)
     : FrameDestructionObserver(frame)
     , m_shouldPrintWhenFinishedLoading(false)
+    , m_suspendedForPageCache(false)
 {
 }
 
 DOMWindow::~DOMWindow()
 {
-    ASSERT(!m_screen);
-    ASSERT(!m_selection);
-    ASSERT(!m_history);
-    ASSERT(!m_crypto);
-    ASSERT(!m_locationbar);
-    ASSERT(!m_menubar);
-    ASSERT(!m_personalbar);
-    ASSERT(!m_scrollbars);
-    ASSERT(!m_statusbar);
-    ASSERT(!m_toolbar);
-    ASSERT(!m_console);
-    ASSERT(!m_navigator);
+#ifndef NDEBUG
+    if (!m_suspendedForPageCache) {
+        ASSERT(!m_screen);
+        ASSERT(!m_selection);
+        ASSERT(!m_history);
+        ASSERT(!m_crypto);
+        ASSERT(!m_locationbar);
+        ASSERT(!m_menubar);
+        ASSERT(!m_personalbar);
+        ASSERT(!m_scrollbars);
+        ASSERT(!m_statusbar);
+        ASSERT(!m_toolbar);
+        ASSERT(!m_console);
+        ASSERT(!m_navigator);
 #if ENABLE(WEB_TIMING)
-    ASSERT(!m_performance);
+        ASSERT(!m_performance);
 #endif
-    ASSERT(!m_location);
-    ASSERT(!m_media);
-    ASSERT(!m_sessionStorage);
-    ASSERT(!m_localStorage);
-    ASSERT(!m_applicationCache);
+        ASSERT(!m_location);
+        ASSERT(!m_media);
+        ASSERT(!m_sessionStorage);
+        ASSERT(!m_localStorage);
+        ASSERT(!m_applicationCache);
 #if ENABLE(NOTIFICATIONS)
-    ASSERT(!m_notifications);
+        ASSERT(!m_notifications);
 #endif
 #if ENABLE(BLOB)
-    ASSERT(!m_domURL);
+        ASSERT(!m_domURL);
 #endif
 #if ENABLE(QUOTA)
-    ASSERT(!m_storageInfo);
+        ASSERT(!m_storageInfo);
+#endif
+    }
 #endif
 
-    // This clear should be unnessary given the ASSERTs above, but we don't
-    // want any of these objects to hang around after we've been destroyed.
-    clear();
+    // As the ASSERTs above indicate, this clear should only be necesary if this DOMWindow is suspended for the page cache.
+    // But we don't want to risk any of these objects hanging around after we've been destroyed.
+    clearDOMWindowProperties();
 
     removeAllUnloadEventListeners(this);
     removeAllBeforeUnloadEventListeners(this);
@@ -466,7 +471,7 @@ Page* DOMWindow::page()
 void DOMWindow::frameDestroyed()
 {
     FrameDestructionObserver::frameDestroyed();
-    clear();
+    clearDOMWindowProperties();
 }
 
 void DOMWindow::willDetachPage()
@@ -496,9 +501,54 @@ void DOMWindow::unregisterProperty(DOMWindowProperty* property)
 
 void DOMWindow::clear()
 {
+    // The main frame will always try to clear its DOMWindow when a new load is committed, even if that
+    // DOMWindow is suspended in the page cache.
+    // In those cases we need to make sure we don't actually clear it.
+    if (m_suspendedForPageCache)
+        return;
+    
+    clearDOMWindowProperties();
+}
+
+void DOMWindow::suspendForPageCache()
+{
+    disconnectDOMWindowProperties();
+    m_suspendedForPageCache = true;
+}
+
+void DOMWindow::resumeFromPageCache()
+{
+    reconnectDOMWindowProperties();
+    m_suspendedForPageCache = false;
+}
+
+void DOMWindow::disconnectDOMWindowProperties()
+{
     HashSet<DOMWindowProperty*>::iterator stop = m_properties.end();
     for (HashSet<DOMWindowProperty*>::iterator it = m_properties.begin(); it != stop; ++it)
         (*it)->disconnectFrame();
+
+#if ENABLE(NOTIFICATIONS)
+    // FIXME: Notifications shouldn't have different disconnection logic than
+    // the rest of the DOMWindowProperties.
+    // There is currently no way to reconnect them in resumeFromPageCache() so
+    // they will be broken after returning to a cached page.
+    // This should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=79636
+    resetNotifications();
+#endif
+}
+
+void DOMWindow::reconnectDOMWindowProperties()
+{
+    ASSERT(m_suspendedForPageCache);
+    HashSet<DOMWindowProperty*>::iterator stop = m_properties.end();
+    for (HashSet<DOMWindowProperty*>::iterator it = m_properties.begin(); it != stop; ++it)
+        (*it)->reconnectFrame(m_frame);
+}
+
+void DOMWindow::clearDOMWindowProperties()
+{
+    disconnectDOMWindowProperties();
     m_properties.clear();
 
     m_screen = 0;
@@ -551,84 +601,108 @@ int DOMWindow::orientation() const
 
 Screen* DOMWindow::screen() const
 {
-    if (!m_screen && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_screen)
         m_screen = Screen::create(m_frame);
     return m_screen.get();
 }
 
 History* DOMWindow::history() const
 {
-    if (!m_history && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_history)
         m_history = History::create(m_frame);
     return m_history.get();
 }
 
 Crypto* DOMWindow::crypto() const
 {
-    if (!m_crypto && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_crypto)
         m_crypto = Crypto::create();
     return m_crypto.get();
 }
 
 BarInfo* DOMWindow::locationbar() const
 {
-    if (!m_locationbar && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_locationbar)
         m_locationbar = BarInfo::create(m_frame, BarInfo::Locationbar);
     return m_locationbar.get();
 }
 
 BarInfo* DOMWindow::menubar() const
 {
-    if (!m_menubar && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_menubar)
         m_menubar = BarInfo::create(m_frame, BarInfo::Menubar);
     return m_menubar.get();
 }
 
 BarInfo* DOMWindow::personalbar() const
 {
-    if (!m_personalbar && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_personalbar)
         m_personalbar = BarInfo::create(m_frame, BarInfo::Personalbar);
     return m_personalbar.get();
 }
 
 BarInfo* DOMWindow::scrollbars() const
 {
-    if (!m_scrollbars && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_scrollbars)
         m_scrollbars = BarInfo::create(m_frame, BarInfo::Scrollbars);
     return m_scrollbars.get();
 }
 
 BarInfo* DOMWindow::statusbar() const
 {
-    if (!m_statusbar && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_statusbar)
         m_statusbar = BarInfo::create(m_frame, BarInfo::Statusbar);
     return m_statusbar.get();
 }
 
 BarInfo* DOMWindow::toolbar() const
 {
-    if (!m_toolbar && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_toolbar)
         m_toolbar = BarInfo::create(m_frame, BarInfo::Toolbar);
     return m_toolbar.get();
 }
 
 Console* DOMWindow::console() const
 {
-    if (!m_console && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_console)
         m_console = Console::create(m_frame);
     return m_console.get();
 }
 
 DOMApplicationCache* DOMWindow::applicationCache() const
 {
-    if (!m_applicationCache && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_applicationCache)
         m_applicationCache = DOMApplicationCache::create(m_frame);
     return m_applicationCache.get();
 }
 
 Navigator* DOMWindow::navigator() const
 {
-    if (!m_navigator && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_navigator)
         m_navigator = Navigator::create(m_frame);
     return m_navigator.get();
 }
@@ -636,7 +710,9 @@ Navigator* DOMWindow::navigator() const
 #if ENABLE(WEB_TIMING)
 Performance* DOMWindow::performance() const
 {
-    if (!m_performance && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_performance)
         m_performance = Performance::create(m_frame);
     return m_performance.get();
 }
@@ -644,14 +720,18 @@ Performance* DOMWindow::performance() const
 
 Location* DOMWindow::location() const
 {
-    if (!m_location && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_location)
         m_location = Location::create(m_frame);
     return m_location.get();
 }
 
 Storage* DOMWindow::sessionStorage(ExceptionCode& ec) const
 {
-    if (m_sessionStorage || !isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (m_sessionStorage)
         return m_sessionStorage.get();
 
     Document* document = this->document();
@@ -676,7 +756,9 @@ Storage* DOMWindow::sessionStorage(ExceptionCode& ec) const
 
 Storage* DOMWindow::localStorage(ExceptionCode& ec) const
 {
-    if (m_localStorage || !isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (m_localStorage)
         return m_localStorage.get();
 
     Document* document = this->document();
@@ -705,7 +787,9 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
 #if ENABLE(NOTIFICATIONS)
 NotificationCenter* DOMWindow::webkitNotifications() const
 {
-    if (m_notifications || !isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (m_notifications)
         return m_notifications.get();
 
     Document* document = this->document();
@@ -788,7 +872,7 @@ void DOMWindow::postMessageTimerFired(PassOwnPtr<PostMessageTimer> t)
 {
     OwnPtr<PostMessageTimer> timer(t);
 
-    if (!document())
+    if (!document() || !isCurrentlyDisplayedInFrame())
         return;
 
     RefPtr<MessageEvent> event = timer->event(document());
@@ -796,7 +880,7 @@ void DOMWindow::postMessageTimerFired(PassOwnPtr<PostMessageTimer> t)
     // Give the embedder a chance to intercept this postMessage because this
     // DOMWindow might be a proxy for another in browsers that support
     // postMessage calls across WebKit instances.
-    if (isCurrentlyDisplayedInFrame() && m_frame->loader()->client()->willCheckAndDispatchMessageEvent(timer->targetOrigin(), event.get()))
+    if (m_frame->loader()->client()->willCheckAndDispatchMessageEvent(timer->targetOrigin(), event.get()))
         return;
 
     if (timer->targetOrigin()) {
@@ -814,7 +898,9 @@ void DOMWindow::postMessageTimerFired(PassOwnPtr<PostMessageTimer> t)
 
 DOMSelection* DOMWindow::getSelection()
 {
-    if (!m_selection && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_selection)
         m_selection = DOMSelection::create(m_frame);
     return m_selection.get();
 }
@@ -1233,7 +1319,9 @@ Document* DOMWindow::document() const
 
 PassRefPtr<StyleMedia> DOMWindow::styleMedia() const
 {
-    if (!m_media && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_media)
         m_media = StyleMedia::create(m_frame);
     return m_media.get();
 }
@@ -1832,7 +1920,9 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
 #if ENABLE(QUOTA)
 StorageInfo* DOMWindow::webkitStorageInfo() const
 {
-    if (!m_storageInfo && isCurrentlyDisplayedInFrame())
+    if (!isCurrentlyDisplayedInFrame())
+        return 0;
+    if (!m_storageInfo)
         m_storageInfo = StorageInfo::create();
     return m_storageInfo.get();
 }

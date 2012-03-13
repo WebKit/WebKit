@@ -48,6 +48,7 @@ public:
     ~DOMApplicationCache() { ASSERT(!m_frame); }
 
     virtual void disconnectFrame() OVERRIDE;
+    virtual void reconnectFrame(Frame*) OVERRIDE;
 
     unsigned short status() const;
     void update(ExceptionCode&);

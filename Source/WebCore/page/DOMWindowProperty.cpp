@@ -49,6 +49,13 @@ void DOMWindowProperty::disconnectFrame()
     m_frame = 0;
 }
 
+void DOMWindowProperty::reconnectFrame(Frame* frame)
+{
+    ASSERT(frame);
+    ASSERT(!m_frame);
+    m_frame = frame;
+}
+
 void DOMWindowProperty::willDetachPage()
 {
     // Subclasses should override this function to handle this notification.

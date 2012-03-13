@@ -55,6 +55,14 @@ void DOMApplicationCache::disconnectFrame()
     DOMWindowProperty::disconnectFrame();
 }
 
+void DOMApplicationCache::reconnectFrame(Frame* frame)
+{
+    DOMWindowProperty::reconnectFrame(frame);
+    ApplicationCacheHost* cacheHost = applicationCacheHost();
+    if (cacheHost)
+        cacheHost->setDOMApplicationCache(this);
+}
+
 ApplicationCacheHost* DOMApplicationCache::applicationCacheHost() const
 {
     if (!m_frame || !m_frame->loader()->documentLoader())

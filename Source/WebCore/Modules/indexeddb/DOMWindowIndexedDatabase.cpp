@@ -60,8 +60,14 @@ DOMWindowIndexedDatabase* DOMWindowIndexedDatabase::from(DOMWindow* window)
 
 void DOMWindowIndexedDatabase::disconnectFrame()
 {
-    m_idbFactory = 0;
+    m_suspendedIDBFactory = m_idbFactory.release();
     DOMWindowProperty::disconnectFrame();
+}
+
+void DOMWindowIndexedDatabase::reconnectFrame(Frame* frame)
+{
+    DOMWindowProperty::reconnectFrame(frame);
+    m_idbFactory = m_suspendedIDBFactory.release();
 }
 
 IDBFactory* DOMWindowIndexedDatabase::webkitIndexedDB(DOMWindow* window)
@@ -82,7 +88,10 @@ IDBFactory* DOMWindowIndexedDatabase::webkitIndexedDB()
     if (!document->securityOrigin()->canAccessDatabase())
         return 0;
 
-    if (!m_idbFactory && m_window->isCurrentlyDisplayedInFrame())
+    if (!m_window->isCurrentlyDisplayedInFrame())
+        return 0;
+
+    if (!m_idbFactory)
         m_idbFactory = IDBFactory::create(PageGroupIndexedDatabase::from(page->group())->factoryBackend());
     return m_idbFactory.get();
 }

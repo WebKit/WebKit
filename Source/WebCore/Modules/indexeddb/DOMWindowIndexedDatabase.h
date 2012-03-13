@@ -44,6 +44,7 @@ public:
     static IDBFactory* webkitIndexedDB(DOMWindow*);
 
     virtual void disconnectFrame() OVERRIDE;
+    virtual void reconnectFrame(Frame*) OVERRIDE;
 
 private:
     explicit DOMWindowIndexedDatabase(DOMWindow*);
@@ -52,6 +53,7 @@ private:
 
     DOMWindow* m_window;
     RefPtr<IDBFactory> m_idbFactory;
+    RefPtr<IDBFactory> m_suspendedIDBFactory;
 };
 
 } // namespace WebCore

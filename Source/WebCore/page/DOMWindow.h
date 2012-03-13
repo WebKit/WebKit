@@ -95,6 +95,8 @@ namespace WebCore {
         void unregisterProperty(DOMWindowProperty*);
 
         void clear();
+        void suspendForPageCache();
+        void resumeFromPageCache();
 
         PassRefPtr<MediaQueryList> matchMedia(const String&);
 
@@ -412,10 +414,15 @@ namespace WebCore {
             PrepareDialogFunction = 0, void* functionContext = 0);
         bool isInsecureScriptAccess(DOMWindow* activeWindow, const String& urlString);
 
+        void clearDOMWindowProperties();
+        void disconnectDOMWindowProperties();
+        void reconnectDOMWindowProperties();
+
         RefPtr<SecurityOrigin> m_securityOrigin;
         KURL m_url;
 
         bool m_shouldPrintWhenFinishedLoading;
+        bool m_suspendedForPageCache;
 
         HashSet<DOMWindowProperty*> m_properties;
 
