@@ -537,18 +537,13 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
     }
 
-    if (existingResource->type() == CachedResource::RawResource && !static_cast<CachedRawResource*>(existingResource)->canReuse())
+    if (existingResource->type() == CachedResource::RawResource && !static_cast<CachedRawResource*>(existingResource)->canReuse(request))
          return Reload;
 
     // Certain requests (e.g., XHRs) might have manually set headers that require revalidation.
     // FIXME: In theory, this should be a Revalidate case. In practice, the MemoryCache revalidation path assumes a whole bunch
     // of things about how revalidation works that manual headers violate, so punt to Reload instead.
     if (request.isConditional())
-        return Reload;
-
-    // Re-using resources in the case of a Range header is very simple if the headers are identical and
-    // much tougher if they aren't.
-    if (existingResource->resourceRequest().httpHeaderField("Range") != request.httpHeaderField("Range"))
         return Reload;
     
     // Don't reload resources while pasting.
