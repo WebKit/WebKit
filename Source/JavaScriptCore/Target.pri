@@ -86,7 +86,6 @@ SOURCES += \
     debugger/Debugger.cpp \
     dfg/DFGAbstractState.cpp \
     dfg/DFGAssemblyHelpers.cpp \
-    dfg/DFGArithNodeFlagsInferencePhase.cpp \
     dfg/DFGByteCodeParser.cpp \
     dfg/DFGCapabilities.cpp \
     dfg/DFGCFAPhase.cpp \

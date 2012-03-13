@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,16 +100,34 @@ private:
         return m_graph[m_compileIndex].predict(prediction);
     }
     
+    bool isNotNegZero(NodeIndex nodeIndex)
+    {
+        if (!m_graph.isNumberConstant(nodeIndex))
+            return false;
+        double value = m_graph.valueOfNumberConstant(nodeIndex);
+        return !value && 1.0 / value < 0.0;
+    }
+    
+    bool isNotZero(NodeIndex nodeIndex)
+    {
+        if (!m_graph.isNumberConstant(nodeIndex))
+            return false;
+        return !!m_graph.valueOfNumberConstant(nodeIndex);
+    }
+    
     void propagate(Node& node)
     {
         if (!node.shouldGenerate())
             return;
         
         NodeType op = node.op();
+        NodeFlags flags = node.flags();
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   %s @%u: ", Graph::opName(op), m_compileIndex);
+        dataLog("   %s @%u: %s ", Graph::opName(op), m_compileIndex, arithNodeFlagsAsString(flags));
 #endif
+        
+        flags &= NodeUsedAsMask;
         
         bool changed = false;
         
@@ -121,14 +139,26 @@ private:
         }
             
         case GetLocal: {
-            PredictedType prediction = node.variableAccessData()->prediction();
+            VariableAccessData* variableAccessData = node.variableAccessData();
+            PredictedType prediction = variableAccessData->prediction();
             if (prediction)
                 changed |= mergePrediction(prediction);
+            
+            changed |= variableAccessData->mergeFlags(flags);
             break;
         }
             
         case SetLocal: {
-            changed |= node.variableAccessData()->predict(m_graph[node.child1()].prediction());
+            VariableAccessData* variableAccessData = node.variableAccessData();
+            changed |= variableAccessData->predict(m_graph[node.child1()].prediction());
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(variableAccessData->flags());
+            break;
+        }
+            
+        case Flush: {
+            // Make sure that the analysis knows that flushed locals escape.
+            VariableAccessData* variableAccessData = node.variableAccessData();
+            variableAccessData->mergeFlags(NodeUsedAsNumber | NodeNeedsNegZero);
             break;
         }
             
@@ -143,15 +173,22 @@ private:
             break;
         }
             
-        case ArrayPop:
-        case ArrayPush: {
+        case ArrayPop: {
             if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());
             break;
         }
 
+        case ArrayPush: {
+            if (node.getHeapPrediction())
+                changed |= mergePrediction(node.getHeapPrediction());
+            changed |= mergeDefaultArithFlags(node, flags);
+            break;
+        }
+
         case StringCharCodeAt: {
             changed |= mergePrediction(PredictInt32);
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
 
@@ -165,6 +202,8 @@ private:
                 else
                     changed |= mergePrediction(PredictDouble);
             }
+            
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
             
@@ -173,6 +212,8 @@ private:
                 changed |= setPrediction(PredictInt32);
             else
                 changed |= setPrediction(PredictNumber);
+            
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
             break;
         }
 
@@ -192,10 +233,34 @@ private:
                 } else
                     changed |= mergePrediction(PredictString | PredictInt32 | PredictDouble);
             }
+            
+            if (isNotNegZero(node.child1().index()) || isNotNegZero(node.child2().index()))
+                flags &= ~NodeNeedsNegZero;
+            
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
             break;
         }
             
-        case ArithAdd:
+        case ArithAdd: {
+            PredictedType left = m_graph[node.child1()].prediction();
+            PredictedType right = m_graph[node.child2()].prediction();
+            
+            if (left && right) {
+                if (m_graph.addShouldSpeculateInteger(node))
+                    changed |= mergePrediction(PredictInt32);
+                else
+                    changed |= mergePrediction(PredictDouble);
+            }
+            
+            if (isNotNegZero(node.child1().index()) || isNotNegZero(node.child2().index()))
+                flags &= ~NodeNeedsNegZero;
+            
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            break;
+        }
+            
         case ArithSub: {
             PredictedType left = m_graph[node.child1()].prediction();
             PredictedType right = m_graph[node.child2()].prediction();
@@ -206,6 +271,12 @@ private:
                 else
                     changed |= mergePrediction(PredictDouble);
             }
+
+            if (isNotZero(node.child1().index()) || isNotZero(node.child2().index()))
+                flags &= ~NodeNeedsNegZero;
+            
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
             break;
         }
             
@@ -216,11 +287,29 @@ private:
                 else
                     changed |= mergePrediction(PredictDouble);
             }
+
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
             break;
             
-        case ArithMul:
         case ArithMin:
-        case ArithMax:
+        case ArithMax: {
+            PredictedType left = m_graph[node.child1()].prediction();
+            PredictedType right = m_graph[node.child2()].prediction();
+            
+            if (left && right) {
+                if (isInt32Prediction(mergePredictions(left, right)) && nodeCanSpeculateInteger(node.arithNodeFlags()))
+                    changed |= mergePrediction(PredictInt32);
+                else
+                    changed |= mergePrediction(PredictDouble);
+            }
+
+            flags |= NodeUsedAsNumber;
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            break;
+        }
+            
+        case ArithMul:
         case ArithDiv: {
             PredictedType left = m_graph[node.child1()].prediction();
             PredictedType right = m_graph[node.child2()].prediction();
@@ -231,11 +320,21 @@ private:
                 else
                     changed |= mergePrediction(PredictDouble);
             }
+
+            // As soon as a multiply happens, we can easily end up in the part
+            // of the double domain where the point at which you do truncation
+            // can change the outcome. So, ArithMul always checks for overflow
+            // no matter what, and always forces its inputs to check as well.
+            
+            flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
             break;
         }
             
         case ArithSqrt: {
             changed |= setPrediction(PredictDouble);
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
             
@@ -247,6 +346,9 @@ private:
                 else
                     changed |= setPrediction(PredictDouble);
             }
+
+            flags &= ~NodeNeedsNegZero;
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
             break;
         }
             
@@ -259,6 +361,7 @@ private:
         case CompareStrictEq:
         case InstanceOf: {
             changed |= setPrediction(PredictBoolean);
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
             
@@ -283,12 +386,14 @@ private:
                 if (isArray || isString || isByteArray || isInt8Array || isInt16Array || isInt32Array || isUint8Array || isUint8ClampedArray || isUint16Array || isUint32Array || isFloat32Array || isFloat64Array)
                     changed |= mergePrediction(PredictInt32);
             }
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
             
         case GetByIdFlush:
             if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
             
         case GetByVal: {
@@ -296,18 +401,23 @@ private:
                 changed |= mergePrediction(PredictDouble);
             else if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());
+
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags | NodeUsedAsNumber);
             break;
         }
             
         case GetPropertyStorage: 
         case GetIndexedPropertyStorage: {
             changed |= setPrediction(PredictOther);
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
 
         case GetByOffset: {
             if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
             
@@ -315,6 +425,7 @@ private:
         case Construct: {
             if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
             
@@ -327,6 +438,7 @@ private:
                 }
                 changed |= mergePrediction(prediction);
             }
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
             
@@ -339,6 +451,7 @@ private:
             
         case PutGlobalVar: {
             changed |= m_graph.predictGlobalVar(node.varNumber(), m_graph[node.child1()].prediction());
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
             
@@ -366,12 +479,14 @@ private:
         case CreateThis:
         case NewObject: {
             changed |= setPrediction(PredictFinalObject);
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
             
         case NewArray:
         case NewArrayBuffer: {
             changed |= setPrediction(PredictArray);
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
             
@@ -383,6 +498,7 @@ private:
         case StringCharAt:
         case StrCat: {
             changed |= setPrediction(PredictString);
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
         }
             
@@ -403,6 +519,7 @@ private:
                 } else
                     changed |= mergePrediction(child);
             }
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
             break;
         }
             
@@ -436,7 +553,10 @@ private:
             break;
         }
         
-        case Flush:
+        case PutByVal:
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags | NodeUsedAsNumber);
+            changed |= m_graph[node.child3()].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
             break;
 
 #ifndef NDEBUG
@@ -452,7 +572,6 @@ private:
         case ThrowReferenceError:
         case ForceOSRExit:
         case SetArgument:
-        case PutByVal:
         case PutByValAlias:
         case PutById:
         case PutByIdDirect:
@@ -461,6 +580,7 @@ private:
         case PutStructure:
         case PutByOffset:
         case TearOffActivation:
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
             
         // These gets ignored because it doesn't do anything.
@@ -474,6 +594,7 @@ private:
             break;
 #else
         default:
+            changed |= mergeDefaultArithFlags(node, flags);
             break;
 #endif
         }
@@ -483,6 +604,27 @@ private:
 #endif
         
         m_changed |= changed;
+    }
+    
+    bool mergeDefaultArithFlags(Node& node, NodeFlags flags)
+    {
+        bool changed = false;
+        flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+        if (node.flags() & NodeHasVarArgs) {
+            for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
+                changed |= m_graph[m_graph.m_varArgChildren[childIdx]].mergeArithNodeFlags(flags);
+        } else {
+            if (!node.child1())
+                return changed;
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
+            if (!node.child2())
+                return changed;
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
+            if (!node.child3())
+                return changed;
+            changed |= m_graph[node.child3()].mergeArithNodeFlags(flags);
+        }
+        return changed;
     }
     
     void propagateForward()

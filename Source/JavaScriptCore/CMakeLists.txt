@@ -58,7 +58,6 @@ SET(JavaScriptCore_SOURCES
     bytecompiler/NodesCodegen.cpp
 
     dfg/DFGAbstractState.cpp
-    dfg/DFGArithNodeFlagsInferencePhase.cpp
     dfg/DFGAssemblyHelpers.cpp
     dfg/DFGByteCodeParser.cpp
     dfg/DFGCapabilities.cpp

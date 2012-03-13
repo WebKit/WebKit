@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGArithNodeFlagsInferencePhase.h"
 #include "DFGByteCodeParser.h"
 #include "DFGCFAPhase.h"
 #include "DFGCSEPhase.h"
@@ -60,7 +59,6 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
         dfg.predictArgumentTypes();
 
     performRedundantPhiElimination(dfg);
-    performArithNodeFlagsInference(dfg);
     performPredictionPropagation(dfg);
     performCSE(dfg);
     performVirtualRegisterAllocation(dfg);

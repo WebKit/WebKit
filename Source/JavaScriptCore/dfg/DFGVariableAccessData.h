@@ -26,6 +26,7 @@
 #ifndef DFGVariableAccessData_h
 #define DFGVariableAccessData_h
 
+#include "DFGNodeFlags.h"
 #include "DFGOperands.h"
 #include "PredictedType.h"
 #include "VirtualRegister.h"
@@ -41,6 +42,7 @@ public:
     VariableAccessData()
         : m_local(static_cast<VirtualRegister>(std::numeric_limits<int>::min()))
         , m_prediction(PredictNone)
+        , m_flags(0)
         , m_shouldUseDoubleFormat(false)
     {
         clearVotes();
@@ -49,6 +51,7 @@ public:
     VariableAccessData(VirtualRegister local)
         : m_local(local)
         , m_prediction(PredictNone)
+        , m_flags(0)
         , m_shouldUseDoubleFormat(false)
     {
         clearVotes();
@@ -130,6 +133,17 @@ public:
         return true;
     }
     
+    NodeFlags flags() const { return m_flags; }
+    
+    bool mergeFlags(NodeFlags newFlags)
+    {
+        newFlags |= m_flags;
+        if (newFlags == m_flags)
+            return false;
+        m_flags = newFlags;
+        return true;
+    }
+    
 private:
     // This is slightly space-inefficient, since anything we're unified with
     // will have the same operand and should have the same prediction. But
@@ -138,6 +152,7 @@ private:
 
     VirtualRegister m_local;
     PredictedType m_prediction;
+    NodeFlags m_flags;
     
     float m_votes[2];
     bool m_shouldUseDoubleFormat;
