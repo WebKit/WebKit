@@ -41,6 +41,7 @@ SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* doc
     , m_animatedPropertyType(AnimatedString)
     , m_fromPropertyValueType(RegularPropertyValue)
     , m_toPropertyValueType(RegularPropertyValue)
+    , m_animatedProperty(0)
 {
     ASSERT(hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::setTag) || hasTagName(SVGNames::animateColorTag));
 }
@@ -219,13 +220,15 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     // In that case we don't need any base value strings, but can directly operate on these
     // SVG DOM primitives, like SVGLength.
     SVGAnimatedTypeAnimator* animator = ensureAnimator();
-    if (SVGAnimatedProperty* animatedProperty = animatedPropertyForType(animator->type())) {
+    m_animatedProperty = animatedPropertyForType(animator->type());
+    if (m_animatedProperty) {
         if (!m_animatedType) {
-            m_animatedType = animator->constructFromCopy(animatedProperty->currentBaseValue(animator->type()));
-            animationStarted(animatedProperty, m_animatedType.get());
+            m_animatedType = animator->constructFromCopy(m_animatedProperty->currentBaseValue(animator->type()));
+            animationStarted(m_animatedProperty, m_animatedType.get());
         } else
-            m_animatedType->setVariantValue(animatedProperty->currentBaseValue(m_animator->type()));
+            m_animatedType->setVariantValue(m_animatedProperty->currentBaseValue(m_animator->type()));
         ASSERT(m_animatedPropertyType == animator->type());
+        ASSERT(m_animatedPropertyType == m_animatedProperty->animatedPropertyType());
         return;
     }
 
@@ -259,11 +262,9 @@ void SVGAnimateElement::targetElementWillChange(SVGElement* currentTarget, SVGEl
 {
     SVGSMILElement::targetElementWillChange(currentTarget, newTarget);
 
-    // Be sure to never execute any of this, while the target element is being removed from the document or destructed.
-    if (currentTarget && currentTarget->inDocument() && currentTarget->parentNode()) {
-        ASSERT(!currentTarget->m_deletionHasBegun);
-        if (SVGAnimatedProperty* animatedProperty = animatedPropertyForType(m_animatedPropertyType))
-            animationEnded(animatedProperty);
+    if (m_animatedProperty) {
+        animationEnded(m_animatedProperty);
+        m_animatedProperty = 0;
     }
 
     m_animatedType.clear();

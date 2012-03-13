@@ -40,6 +40,8 @@ enum AnimatedPropertyValueType {
     InheritValue
 };
 
+class SVGAnimatedProperty;
+
 class SVGAnimateElement : public SVGAnimationElement {
 public:
     static PassRefPtr<SVGAnimateElement> create(const QualifiedName&, Document*);
@@ -79,7 +81,8 @@ private:
     OwnPtr<SVGAnimatedType> m_fromType;
     OwnPtr<SVGAnimatedType> m_toType;
     OwnPtr<SVGAnimatedType> m_animatedType;
-    
+
+    SVGAnimatedProperty* m_animatedProperty;
     OwnPtr<SVGAnimatedTypeAnimator> m_animator;
 };
 

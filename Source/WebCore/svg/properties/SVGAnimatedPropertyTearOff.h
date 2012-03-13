@@ -79,8 +79,11 @@ public:
         static_cast<SVGPropertyTearOff<PropertyType>*>(animVal())->setValue(m_property);
         m_isAnimating = false;
 
-        ASSERT(contextElement());
-        contextElement()->svgAttributeChanged(attributeName());
+        SVGElement* element = contextElement();
+        if (!element || !element->inDocument() || !element->parentNode())
+            return;
+        ASSERT(!element->m_deletionHasBegun);
+        element->svgAttributeChanged(attributeName());
     }
 
     virtual void animationValueChanged()
