@@ -81,6 +81,7 @@ modules = [
             "Script.js",
             "ScriptFormatter.js",
             "ScriptMapping.js",
+            "SnippetsModel.js",
             "TimelineManager.js",
             "TimelineModel.js",
             "TimelinePresentationModel.js",

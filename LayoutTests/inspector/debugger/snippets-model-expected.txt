@@ -1,0 +1,35 @@
+Tests how snippets model stores, saves and loads snippets
+
+Dumping saved snippets:
+Dumping model snippets:
+Snippet created.
+Dumping saved snippets:
+    Snippet: id = 1, name = 'Snippet #1', content = ''.
+Dumping model snippets:
+    Snippet: id = 1, name = 'Snippet #1', content = ''.
+Snippet renamed.
+Dumping saved snippets:
+    Snippet: id = 1, name = 'New snippet name', content = ''.
+Dumping model snippets:
+    Snippet: id = 1, name = 'New snippet name', content = ''.
+Snippet content changed.
+Dumping saved snippets:
+    Snippet: id = 1, name = 'New snippet name', content = 'New snippet content'.
+Dumping model snippets:
+    Snippet: id = 1, name = 'New snippet name', content = 'New snippet content'.
+Another snippet created.
+Dumping saved snippets:
+    Snippet: id = 1, name = 'New snippet name', content = 'New snippet content'.
+    Snippet: id = 2, name = 'Snippet #2', content = ''.
+Dumping model snippets:
+    Snippet: id = 1, name = 'New snippet name', content = 'New snippet content'.
+    Snippet: id = 2, name = 'Snippet #2', content = ''.
+Snippet deleted.
+Dumping saved snippets:
+    Snippet: id = 2, name = 'Snippet #2', content = ''.
+Dumping model snippets:
+    Snippet: id = 2, name = 'Snippet #2', content = ''.
+Another snippet deleted.
+Dumping saved snippets:
+Dumping model snippets:
+

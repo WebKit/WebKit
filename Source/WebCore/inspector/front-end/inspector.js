@@ -406,6 +406,8 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._updateErrorAndWarningCounts, this);
 
     this.debuggerModel = new WebInspector.DebuggerModel();
+    if (WebInspector.experimentsSettings.snippetsSupport.isEnabled())
+        this.snippetsModel = new WebInspector.SnippetsModel();
     this.debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
 
     this.drawer = new WebInspector.Drawer();

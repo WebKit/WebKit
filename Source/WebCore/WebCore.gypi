@@ -6288,6 +6288,7 @@
             'inspector/front-end/SidebarOverlay.js',
             'inspector/front-end/SidebarPane.js',
             'inspector/front-end/SidebarTreeElement.js',
+            'inspector/front-end/SnippetsModel.js',
             'inspector/front-end/SoftContextMenu.js',
             'inspector/front-end/SourceCSSTokenizer.js',
             'inspector/front-end/SourceFrame.js',

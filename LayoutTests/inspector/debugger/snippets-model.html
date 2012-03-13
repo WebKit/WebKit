@@ -1,0 +1,65 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test()
+{
+    function dumpSnippets(snippets)
+    {
+        for (var i = 0; i < snippets.length; ++i) {
+            var snippet = snippets[i];
+            InspectorTest.addResult("    Snippet: id = " + snippet.id + ", name = '" + snippet.name + "', content = '" + snippet.content + "'.");
+        }
+    }
+
+    function dumpSavedSnippets()
+    {
+        InspectorTest.addResult("Dumping saved snippets:");
+        dumpSnippets(WebInspector.snippetsModel._snippetsSetting.get());
+    }
+
+    function dumpModelSnippets()
+    {
+        InspectorTest.addResult("Dumping model snippets:");
+        dumpSnippets(WebInspector.snippetsModel.snippets);
+    }
+
+    // FIXME: Remove once snippets are taken out of experiments.
+    if (!WebInspector.experimentsSettings.snippetsSupport.isEnabled())
+        WebInspector.snippetsModel = new WebInspector.SnippetsModel();
+
+    dumpSavedSnippets();
+    dumpModelSnippets();
+    var snippet = WebInspector.snippetsModel.createSnippet();
+    InspectorTest.addResult("Snippet created.");
+    dumpSavedSnippets();
+    dumpModelSnippets();
+    snippet.name = "New snippet name";
+    InspectorTest.addResult("Snippet renamed.");
+    dumpSavedSnippets();
+    dumpModelSnippets();
+    snippet.content = "New snippet content";
+    InspectorTest.addResult("Snippet content changed.");
+    dumpSavedSnippets();
+    dumpModelSnippets();
+    var anotherSnippet = WebInspector.snippetsModel.createSnippet();
+    InspectorTest.addResult("Another snippet created.");
+    dumpSavedSnippets();
+    dumpModelSnippets();
+    WebInspector.snippetsModel.deleteSnippet(snippet);
+    InspectorTest.addResult("Snippet deleted.");
+    dumpSavedSnippets();
+    dumpModelSnippets();
+    WebInspector.snippetsModel.deleteSnippet(anotherSnippet);
+    InspectorTest.addResult("Another snippet deleted.");
+    dumpSavedSnippets();
+    dumpModelSnippets();
+
+    InspectorTest.completeTest();
+};
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests how snippets model stores, saves and loads snippets</p>
+</body>
+</html>
