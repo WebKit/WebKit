@@ -39,11 +39,11 @@
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
 #include <WebCore/COMPtr.h>
-#include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebKit/WebKit.h>
 #include <stdio.h>
 #include <string>
+#include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 

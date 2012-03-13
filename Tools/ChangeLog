@@ -1,3 +1,14 @@
+2012-03-12  Jessie Berlin  <jberlin@apple.com>
+
+        More Windows build fixing.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        * DumpRenderTree/win/EditingDelegate.cpp:
+        * DumpRenderTree/win/EventSender.cpp:
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        * DumpRenderTree/win/UIDelegate.cpp:
+
 2012-03-12  Dirk Pranke  <dpranke@chromium.org>
 
         remove the 'gpu' group from the flakiness dashboard

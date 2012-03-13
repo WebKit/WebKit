@@ -35,7 +35,6 @@
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
 #include <CoreFoundation/CoreFoundation.h>
-#include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <JavaScriptCore/JavaScriptCore.h>
@@ -47,6 +46,7 @@
 #include <shlguid.h>
 #include <shobjidl.h>
 #include <string>
+#include <wtf/Assertions.h>
 #include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>

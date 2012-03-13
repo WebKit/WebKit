@@ -29,13 +29,13 @@
 #include "AccessibilityUIElement.h"
 #include "DumpRenderTree.h"
 #include "FrameLoadDelegate.h"
-#include <JavaScriptCore/Assertions.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <WebCore/COMPtr.h>
 #include <WebKit/WebKit.h>
 #include <oleacc.h>
 #include <string>
+#include <wtf/Assertions.h>
 
 using namespace std;
 

@@ -32,8 +32,8 @@
 #include "DumpRenderTree.h"
 #include "LayoutTestController.h"
 #include <WebCore/COMPtr.h>
+#include <wtf/Assertions.h>
 #include <wtf/Platform.h>
-#include <JavaScriptCore/Assertions.h>
 #include <string>
 #include <tchar.h>
 

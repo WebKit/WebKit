@@ -34,9 +34,9 @@
 
 #include <WebCore/COMPtr.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/Assertions.h>
 #include <wtf/Platform.h>
 #include <JavaScriptCore/JavaScriptCore.h>
-#include <JavaScriptCore/Assertions.h>
 #include <WebKit/WebKit.h>
 #include <windows.h>
 
