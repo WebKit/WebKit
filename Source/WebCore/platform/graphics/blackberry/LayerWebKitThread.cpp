@@ -306,8 +306,8 @@ void LayerWebKitThread::addSublayer(PassRefPtr<LayerWebKitThread> sublayer)
 
 void LayerWebKitThread::insertSublayer(PassRefPtr<LayerWebKitThread> sublayer, size_t index)
 {
-    index = min(index, m_sublayers.size());
     sublayer->removeFromSuperlayer();
+    index = min(index, m_sublayers.size());
     sublayer->setSuperlayer(this);
     m_sublayers.insert(index, sublayer);
 
