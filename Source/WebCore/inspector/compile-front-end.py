@@ -198,7 +198,7 @@ modules = [
         ]
     },
     {
-        "target_name": "sources",
+        "target_name": "scripts",
         "dependencies": ["components"],
         "sources": [
             "CallStackSidebarPane.js",
