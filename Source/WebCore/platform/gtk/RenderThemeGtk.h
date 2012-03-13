@@ -181,7 +181,7 @@ protected:
     virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
 
 private:
-    virtual String fileListNameForWidth(const Vector<String>& filenames, const Font&, int width, bool multipleFilesAllowed) const;
+    virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const OVERRIDE;
 
     void platformInit();
     static void setTextInputBorders(RenderStyle*);

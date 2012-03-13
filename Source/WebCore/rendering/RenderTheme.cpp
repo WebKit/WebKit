@@ -24,6 +24,7 @@
 
 #include "CSSValueKeywords.h"
 #include "Document.h"
+#include "FileList.h"
 #include "FileSystem.h"
 #include "FloatConversion.h"
 #include "FocusController.h"
@@ -1137,18 +1138,18 @@ String RenderTheme::fileListDefaultLabel(bool multipleFilesAllowed) const
     return fileButtonNoFileSelectedLabel();
 }
 
-String RenderTheme::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width, bool multipleFilesAllowed) const
+String RenderTheme::fileListNameForWidth(const FileList* fileList, const Font& font, int width, bool multipleFilesAllowed) const
 {
     if (width <= 0)
         return String();
 
     String string;
-    if (filenames.isEmpty())
+    if (fileList->isEmpty())
         string = fileListDefaultLabel(multipleFilesAllowed);
-    else if (filenames.size() == 1)
-        string = pathGetFileName(filenames[0]);
+    else if (fileList->length() == 1)
+        string = fileList->item(0)->name();
     else
-        return StringTruncator::rightTruncate(multipleFileUploadText(filenames.size()), width, font, StringTruncator::EnableRoundingHacks);
+        return StringTruncator::rightTruncate(multipleFileUploadText(fileList->length()), width, font, StringTruncator::EnableRoundingHacks);
 
     return StringTruncator::centerTruncate(string, width, font, StringTruncator::EnableRoundingHacks);
 }

@@ -35,6 +35,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Color.h"
+#include "FileList.h"
 #include "Font.h"
 #include "FontSelector.h"
 #include "GraphicsContext.h"
@@ -868,20 +869,20 @@ double RenderThemeQt::caretBlinkInterval() const
     return static_cast<QGuiApplication*>(qApp)->styleHints()->cursorFlashTime() / 1000.0 / 2.0;
 }
 
-String RenderThemeQt::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width) const
+String RenderThemeQt::fileListNameForWidth(const FileList* fileList, const Font& font, int width) const
 {
     if (width <= 0)
         return String();
 
     String string;
-    if (filenames.isEmpty())
+    if (fileList->isEmpty())
         string = fileButtonNoFileSelectedLabel();
-    else if (filenames.size() == 1) {
-        String fname = filenames[0];
+    else if (fileList->length() == 1) {
+        String fname = fileList->item(0)->path();
         QFontMetrics fm(font.font());
         string = fm.elidedText(fname, Qt::ElideLeft, width);
     } else {
-        int n = filenames.size();
+        int n = fileList->length();
         string = QCoreApplication::translate("QWebPage", "%n file(s)",
                                              "number of chosen file",
                                              QCoreApplication::DefaultCodec, n);

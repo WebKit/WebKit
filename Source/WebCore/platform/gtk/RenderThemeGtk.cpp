@@ -26,6 +26,7 @@
 #include "RenderThemeGtk.h"
 
 #include "CSSValueKeywords.h"
+#include "FileList.h"
 #include "FileSystem.h"
 #include "GOwnPtr.h"
 #include "Gradient.h"
@@ -701,7 +702,7 @@ static bool stringByAdoptingFileSystemRepresentation(gchar* systemFilename, Stri
     return true;
 }
 
-String RenderThemeGtk::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width, bool multipleFilesAllowed) const
+String RenderThemeGtk::fileListNameForWidth(const FileList* fileList, const Font& font, int width, bool multipleFilesAllowed) const
 {
     if (width <= 0)
         return String();
@@ -710,12 +711,11 @@ String RenderThemeGtk::fileListNameForWidth(const Vector<String>& filenames, con
     if (multipleFilesAllowed)
         string = fileButtonNoFilesSelectedLabel();
 
-    if (filenames.size() == 1) {
-        CString systemFilename = fileSystemRepresentation(filenames[0]);
+    if (fileList->length() == 1) {
+        CString systemFilename = fileSystemRepresentation(fileList->item(0)->path());
         gchar* systemBasename = g_path_get_basename(systemFilename.data());
-        stringByAdoptingFileSystemRepresentation(systemBasename, string);
-    } else if (filenames.size() > 1)
-        return StringTruncator::rightTruncate(multipleFileUploadText(filenames.size()), width, font, StringTruncator::EnableRoundingHacks);
+    } else if (fileList->length() > 1)
+        return StringTruncator::rightTruncate(multipleFileUploadText(fileList->length()), width, font, StringTruncator::EnableRoundingHacks);
 
     return StringTruncator::centerTruncate(string, width, font, StringTruncator::EnableRoundingHacks);
 }

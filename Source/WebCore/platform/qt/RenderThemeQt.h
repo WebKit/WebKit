@@ -155,7 +155,7 @@ protected:
 #endif
     virtual void computeSizeBasedOnStyle(RenderStyle*) const = 0;
 
-    virtual String fileListNameForWidth(const Vector<String>& filenames, const Font&, int width) const;
+    virtual String fileListNameForWidth(const FileList*, const Font&, int width) const OVERRIDE;
 
     virtual QRect inflateButtonRect(const QRect& originalRect) const;
 

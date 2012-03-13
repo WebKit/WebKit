@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class Element;
+class FileList;
 class HTMLInputElement;
 class PopupMenu;
 class RenderMenuList;
@@ -215,7 +216,7 @@ public:
     virtual bool popsMenuBySpaceOrReturn() const { return false; }
 
     virtual String fileListDefaultLabel(bool multipleFilesAllowed) const;
-    virtual String fileListNameForWidth(const Vector<String>& filenames, const Font&, int width, bool multipleFilesAllowed) const;
+    virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const;
 
 protected:
     // The platform selection color.

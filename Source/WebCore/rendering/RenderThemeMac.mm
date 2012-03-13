@@ -26,6 +26,7 @@
 #import "CSSValueKeywords.h"
 #import "Document.h"
 #import "Element.h"
+#import "FileList.h"
 #import "FrameView.h"
 #import "GraphicsContextCG.h"
 #import "HTMLInputElement.h"
@@ -2142,18 +2143,18 @@ NSTextFieldCell* RenderThemeMac::textField() const
     return m_textField.get();
 }
 
-String RenderThemeMac::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width, bool multipleFilesAllowed) const
+String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font& font, int width, bool multipleFilesAllowed) const
 {
     if (width <= 0)
         return String();
 
     String strToTruncate;
-    if (filenames.isEmpty())
+    if (fileList->isEmpty())
         strToTruncate = fileListDefaultLabel(multipleFilesAllowed);
-    else if (filenames.size() == 1)
-        strToTruncate = [[NSFileManager defaultManager] displayNameAtPath:(filenames[0])];
+    else if (fileList->length() == 1)
+        strToTruncate = [[NSFileManager defaultManager] displayNameAtPath:(fileList->item(0)->path())];
     else
-        return StringTruncator::rightTruncate(multipleFileUploadText(filenames.size()), width, font, StringTruncator::EnableRoundingHacks);
+        return StringTruncator::rightTruncate(multipleFileUploadText(fileList->length()), width, font, StringTruncator::EnableRoundingHacks);
 
     return StringTruncator::centerTruncate(strToTruncate, width, font, StringTruncator::EnableRoundingHacks);
 }
