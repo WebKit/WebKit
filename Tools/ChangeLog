@@ -1,3 +1,15 @@
+2012-03-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Tweak minibrowser UI
+
+        Add some margins to the scroll indicators, and set a dark background
+        color so you see the page dimensions.
+
+        Reviewed by Antonio Gomes.
+
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * MiniBrowser/qt/qml/ScrollIndicator.qml:
+
 2012-03-13  ChangSeok Oh  <shivamidow@gmail.com>
 
         [EFL] [DRT] Implement scheduleAsynchronousKeyDown.

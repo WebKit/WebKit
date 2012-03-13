@@ -31,7 +31,10 @@ Item {
     id: root
     z: 1
 
-    anchors.fill: parent
+    anchors {
+        fill: parent
+        margins: 5
+    }
 
     property Flickable flickableItem
 
@@ -58,7 +61,7 @@ Item {
             radius: 10
             color: "black"
             border.color: "gray"
-            border.width: 2
+            border.width: 1
             opacity: 0.5
             smooth: true
 
@@ -104,7 +107,7 @@ Item {
             radius: 10
             color: "black"
             border.color: "gray"
-            border.width: 2
+            border.width: 1
             opacity: 0.5
             smooth: true;
 

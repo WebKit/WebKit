@@ -34,6 +34,7 @@ Rectangle {
     // Do not define anchors or an initial size here! This would mess up with QSGView::SizeRootObjectToView.
 
     property alias webview: webView
+    color: "#333"
 
     signal pageTitleChanged(string title)
     signal newWindow(string url)
