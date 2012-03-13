@@ -35,8 +35,7 @@ def _baseline_search_hypergraph(host):
 
     # These edges in the hypergraph aren't visible on build.webkit.org,
     # but they impose constraints on how we optimize baselines.
-    hypergraph['mac-future'] = ['LayoutTests/platform/mac-future', 'LayoutTests/platform/mac', 'LayoutTests']
-    hypergraph['qt-unknown'] = ['LayoutTests/platform/qt-unknown', 'LayoutTests/platform/qt', 'LayoutTests']
+    hypergraph.update(_VIRTUAL_PORTS)
 
     # FIXME: Should we get this constant from somewhere?
     fallback_path = ['LayoutTests']
@@ -49,6 +48,12 @@ def _baseline_search_hypergraph(host):
         if search_path:
             hypergraph[port_name] = [host.filesystem.relpath(path, webkit_base) for path in search_path] + fallback_path
     return hypergraph
+
+
+_VIRTUAL_PORTS = {
+    'mac-future': ['LayoutTests/platform/mac-future', 'LayoutTests/platform/mac', 'LayoutTests'],
+    'qt-unknown': ['LayoutTests/platform/qt-unknown', 'LayoutTests/platform/qt', 'LayoutTests'],
+}
 
 
 # FIXME: Should this function be somewhere more general?
@@ -130,7 +135,17 @@ class BaselineOptimizer(object):
                 break  # Frowns. We do not appear to be converging.
             unsatisfied_port_names_by_result = new_unsatisfied_port_names_by_result
 
+        self._filter_virtual_ports(new_results_by_directory)
         return results_by_directory, new_results_by_directory
+
+    def _filter_virtual_ports(self, new_results_by_directory):
+        for port in _VIRTUAL_PORTS:
+            virtual_directory = _VIRTUAL_PORTS[port][0]
+            if virtual_directory in new_results_by_directory:
+                real_directory = _VIRTUAL_PORTS[port][1]
+                if real_directory not in new_results_by_directory:
+                    new_results_by_directory[real_directory] = new_results_by_directory[virtual_directory]
+                del new_results_by_directory[virtual_directory]
 
     def _move_baselines(self, baseline_name, results_by_directory, new_results_by_directory):
         data_for_result = {}

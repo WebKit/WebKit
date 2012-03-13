@@ -1,3 +1,17 @@
+2012-03-12  Ojan Vafai  <ojan@chromium.org>
+
+        webkit-patch optimize-baselines sometimes creates a mac-future result
+        https://bugs.webkit.org/show_bug.cgi?id=80717
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        (_baseline_search_hypergraph):
+        (BaselineOptimizer._find_optimal_result_placement):
+        (BaselineOptimizer._filter_virtual_ports):
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        (BaselineOptimizerTest.test_no_add_mac_future):
+
 2012-03-12  Jessie Berlin  <jberlin@apple.com>
 
         More Windows build fixing.

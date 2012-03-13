@@ -75,6 +75,19 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
         })
 
+    def test_no_add_mac_future(self):
+        self._assertOptimization({
+            'LayoutTests/platform/mac': '29a1715a6470d5dd9486a142f609708de84cdac8',
+            'LayoutTests/platform/win': '453e67177a75b2e79905154ece0efba6e5bfb65d',
+            'LayoutTests/platform/mac-snowleopard': 'c43eaeb358f49d5e835236ae23b7e49d7f2b089f',
+            'LayoutTests/platform/chromium-mac': 'a9ba153c700a94ae1b206d8e4a75a621a89b4554',
+        }, {
+            'LayoutTests/platform/mac': '29a1715a6470d5dd9486a142f609708de84cdac8',
+            'LayoutTests/platform/win': '453e67177a75b2e79905154ece0efba6e5bfb65d',
+            'LayoutTests/platform/mac-snowleopard': 'c43eaeb358f49d5e835236ae23b7e49d7f2b089f',
+            'LayoutTests/platform/chromium-mac': 'a9ba153c700a94ae1b206d8e4a75a621a89b4554',
+        })
+
     def test_chromium_covers_mac_win_linux(self):
         self._assertOptimization({
             'LayoutTests/platform/chromium-mac': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
