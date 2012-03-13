@@ -289,46 +289,11 @@ svg/text/caret-in-svg-text.xhtml
 # EFL's LayoutTestController does not implement setMediaType
 fast/media/print-restores-previous-mediatype.html
 
-# EFL's LayoutTestController does not implement shadowRoot
-editing/text-iterator/range-to-from-location-and-length.html
-fast/css/webkit-mask-crash-fieldset-legend.html
-fast/css/webkit-mask-crash-figure.html
-fast/css/webkit-mask-crash-table.html
-fast/css/webkit-mask-crash-td.html
-fast/css/webkit-mask-crash-td-2.html
-fast/dom/HTMLKeygenElement/keygen.html
-fast/dom/HTMLMeterElement/meter-clone.html
-fast/dom/HTMLMeterElement/meter-element-markup.html
-fast/dom/HTMLProgressElement/progress-clone.html
-fast/dom/HTMLProgressElement/progress-element-markup.html
-fast/dom/scroll-element-to-rect-centered.html
-fast/dom/scroll-element-to-rect.html
+# ENABLE(SHADOW_DOM) is disabled
 fast/dom/shadow
-fast/forms/file/file-style-inheritance.html
-fast/forms/file/input-file-label.html
-fast/forms/suggested-value-after-setvalue.html
-fast/forms/suggested-value.html
-fast/forms/textfield-lastchange-was-useredit.html
-fast/forms/validation-message-clone.html
-fast/forms/validation-message-on-checkbox.html
-fast/forms/validation-message-on-listbox.html
-fast/forms/validation-message-on-menulist.html
-fast/forms/validation-message-on-radio.html
-fast/forms/validation-message-on-textarea.html
+
 fast/forms/color/input-color-onchange-event.html
-fast/harness/internals-object.html
-fast/html/clone-keygen.html
-fast/html/clone-range.html
 fast/html/details-clone.html
-fast/parser/object-with-textarea-fallback.html
-fast/preloader/scan-body-from-head-import.html
-fast/preloader/scan-body-from-head-script.html
-fullscreen/video-controls-override.html
-media/audio-controls-do-not-fade-out.html
-media/audio-delete-while-slider-thumb-clicked.html
-media/controls-drag-timebar.html
-media/media-controls-invalid-url.html
-media/video-controls-visible-audio-only.html
 
 # EFL's LayoutTestController does not implement nodesFromRect
 fast/dom/nodesFromRect-basic.html

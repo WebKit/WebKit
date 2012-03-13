@@ -1,3 +1,17 @@
+2012-03-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL][DRT] Expose window.internals object
+        https://bugs.webkit.org/show_bug.cgi?id=79900
+
+        Exposes window.internals for EFL's DRT. Makes possible to
+        remove some tests from the skip list.
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/CMakeLists.txt:
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onWindowObjectCleared):
+
 2012-03-13  Adam Barth  <abarth@webkit.org> && Benjamin Poulain  <bpoulain@apple.com>
 
         Always enable ENABLE(CLIENT_BASED_GEOLOCATION)

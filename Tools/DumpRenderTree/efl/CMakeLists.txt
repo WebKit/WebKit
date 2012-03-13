@@ -24,6 +24,7 @@ SET(ImageDiff_SOURCES
 
 SET(DumpRenderTree_LIBRARIES
     ${JavaScriptCore_LIBRARY_NAME}
+    ${WebCoreTestSupport_LIBRARY_NAME}
     ${WebCore_LIBRARY_NAME}
     ${WebKit_LIBRARY_NAME}
     ${Cairo_LIBRARIES}
@@ -88,6 +89,7 @@ SET(DumpRenderTree_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
     ${DERIVED_SOURCES_WEBCORE_DIR}
     ${WEBCORE_DIR}/bindings/js
+    ${WEBCORE_DIR}/testing/js
     ${Cairo_INCLUDE_DIRS}
     ${EDJE_INCLUDE_DIRS}
     ${EFLDEPS_INCLUDE_DIRS}

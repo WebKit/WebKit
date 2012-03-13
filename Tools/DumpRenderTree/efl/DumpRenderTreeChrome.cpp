@@ -34,6 +34,7 @@
 #include "LayoutTestController.h"
 #include "NotImplemented.h"
 #include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
+#include "WebCoreTestSupport.h"
 #include "WorkQueue.h"
 #include "ewk_private.h" // FIXME: create some WebCoreSupport/DumpRenderTree.cpp instead
 
@@ -210,6 +211,8 @@ void DumpRenderTreeChrome::onWindowObjectCleared(void* userData, Evas_Object*, v
                         controllerName.get(),
                         makeEventSender(objectClearedInfo->context, !DumpRenderTreeSupportEfl::frameParent(objectClearedInfo->frame)),
                         kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
+
+    WebCoreTestSupport::injectInternalsObject(objectClearedInfo->context);
 }
 
 void DumpRenderTreeChrome::onLoadStarted(void*, Evas_Object* view, void*)
