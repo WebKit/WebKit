@@ -24053,6 +24053,46 @@
 		<Filter
 			Name="Modules"
 			>
+                        <Filter
+                                Name="filesystem"
+                                >
+        		        <File
+        			        RelativePath="..\Modules\filesystem\DirectoryEntry.cpp"
+	        		        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DirectoryEntry.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DirectoryEntrySync.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DirectoryEntrySync.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DirectoryReader.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DirectoryReader.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DirectoryReaderBase.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DirectoryReaderSync.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DirectoryReaderSync.h"
+				        >
+			        </File>
+                        </Filter>
 			<Filter
 				Name="geolocation"
 				>
@@ -56855,42 +56895,6 @@
 			</File>
 			<File
 				RelativePath="..\html\DateTimeLocalInputType.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DirectoryEntry.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DirectoryEntry.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DirectoryEntrySync.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DirectoryEntrySync.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DirectoryReader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DirectoryReader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DirectoryReaderBase.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DirectoryReaderSync.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DirectoryReaderSync.h"
 				>
 			</File>
 			<File
