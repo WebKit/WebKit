@@ -3197,6 +3197,7 @@ void Document::collectActiveStylesheets(Vector<RefPtr<StyleSheet> >& sheets)
             // Check to see if this sheet belongs to a styleset
             // (thus making it PREFERRED or ALTERNATE rather than
             // PERSISTENT).
+            AtomicString rel = e->getAttribute(relAttr);
             if (!enabledViaScript && !title.isEmpty()) {
                 // Yes, we have a title.
                 if (m_preferredStylesheetSet.isEmpty()) {
@@ -3204,13 +3205,15 @@ void Document::collectActiveStylesheets(Vector<RefPtr<StyleSheet> >& sheets)
                     // we are NOT an alternate sheet, then establish
                     // us as the preferred set.  Otherwise, just ignore
                     // this sheet.
-                    AtomicString rel = e->getAttribute(relAttr);
                     if (e->hasLocalName(styleTag) || !rel.contains("alternate"))
                         m_preferredStylesheetSet = m_selectedStylesheetSet = title;
                 }
                 if (title != m_preferredStylesheetSet)
                     sheet = 0;
             }
+
+            if (rel.contains("alternate") && title.isEmpty())
+                sheet = 0;
         }
         if (sheet)
             sheets.append(sheet);
