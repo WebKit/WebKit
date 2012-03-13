@@ -117,8 +117,6 @@ void HTMLImageElement::parseAttribute(Attribute* attr)
         m_imageLoader.updateFromElementIgnoringPreviousError();
     else if (attrName == usemapAttr)
         setIsLink(!attr->isNull());
-    else if (attrName == onabortAttr)
-        setAttributeEventListener(eventNames().abortEvent, createAttributeEventListener(this, attr));
     else if (attrName == onloadAttr)
         setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
     else if (attrName == onbeforeloadAttr)
