@@ -43,6 +43,7 @@ public:
     }
     inline static v8::Handle<v8::Object> wrap(Float64Array*);
     static void derefObject(void*);
+    static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     static WrapperTypeInfo info;
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;

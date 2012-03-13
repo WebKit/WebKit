@@ -31,7 +31,8 @@ module html {
         IndexedGetter,
         EventTarget,
         JSCustomMarkFunction,
-        JSCustomIsReachable
+        JSCustomIsReachable,
+        V8GenerateIsReachable=ImplOwnerRoot
     ] TextTrackList {
         readonly attribute unsigned long length;
         TextTrack item(in unsigned long index);

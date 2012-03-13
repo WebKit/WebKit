@@ -336,6 +336,9 @@ public:
 
     void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
     {
+        WrapperTypeInfo* info = V8DOMWrapper::domWrapperType(wrapper);
+        if (info->domWrapperVisitorFunction)
+            info->domWrapperVisitorFunction(store, object, wrapper);
     }
 
     void applyGrouping()
