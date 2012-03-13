@@ -69,7 +69,6 @@ class ChromiumLinuxPortTest(port_testcase.PortTestCase):
         # FIXME: Check that, for now, these are illegal port names.
         # Eventually we should be able to do the right thing here.
         self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort, MockSystemHost(), port_name='chromium-x86-linux')
-        self.assertRaises(AssertionError, chromium_linux.ChromiumLinuxPort, MockSystemHost(), port_name='chromium-linux-x86-gpu')
 
     def test_determine_architecture_fails(self):
         # Test that we default to 'x86' if the driver doesn't exist.

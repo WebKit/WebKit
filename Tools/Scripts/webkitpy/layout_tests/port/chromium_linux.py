@@ -112,11 +112,9 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     def __init__(self, host, port_name, **kwargs):
         chromium.ChromiumPort.__init__(self, host, port_name, **kwargs)
         (base, arch) = port_name.rsplit('-', 1)
-        assert base in ('chromium-linux', 'chromium-gpu-linux')
+        assert base == 'chromium-linux'
         assert arch in self.SUPPORTED_ARCHITECTURES
-        assert port_name in ('chromium-linux', 'chromium-gpu-linux',
-                             'chromium-linux-x86', 'chromium-linux-x86_64',
-                             'chromium-gpu-linux-x86', 'chromium-gpu-linux-x86_64')
+        assert port_name in ('chromium-linux', 'chromium-linux-x86', 'chromium-linux-x86_64')
         self._version = 'lucid'  # We only support lucid right now.
         self._architecture = arch
 

@@ -462,12 +462,10 @@ class TestPort(Port):
         test_configurations = []
         for version, architecture in self._all_systems():
             for build_type in self._all_build_types():
-                for graphics_type in self._all_graphics_types():
-                    test_configurations.append(TestConfiguration(
-                        version=version,
-                        architecture=architecture,
-                        build_type=build_type,
-                        graphics_type=graphics_type))
+                test_configurations.append(TestConfiguration(
+                    version=version,
+                    architecture=architecture,
+                    build_type=build_type))
         return test_configurations
 
     def _all_systems(self):
@@ -481,9 +479,6 @@ class TestPort(Port):
 
     def _all_build_types(self):
         return ('debug', 'release')
-
-    def _all_graphics_types(self):
-        return ('cpu', 'gpu')
 
     def configuration_specifier_macros(self):
         """To avoid surprises when introducing new macros, these are intentionally fixed in time."""

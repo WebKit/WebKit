@@ -37,9 +37,9 @@ from webkitpy.common.memoized import memoized
 # * specifiers -- a set of specifiers, representing configurations covered by this builder.
 _exact_matches = {
     # These builders are on build.chromium.org.
-    "Webkit Win": {"port_name": "chromium-win-xp", "specifiers": set(["xp", "release", "cpu"])},
+    "Webkit Win": {"port_name": "chromium-win-xp", "specifiers": set(["xp", "release"])},
     "Webkit Vista": {"port_name": "chromium-win-vista", "specifiers": set(["vista"])},
-    "Webkit Win7": {"port_name": "chromium-win-win7", "specifiers": set(["win7", "cpu"])},
+    "Webkit Win7": {"port_name": "chromium-win-win7", "specifiers": set(["win7"])},
     "Webkit Win (dbg)(1)": {"port_name": "chromium-win-xp", "specifiers": set(["win", "debug"])},
     "Webkit Win (dbg)(2)": {"port_name": "chromium-win-xp", "specifiers": set(["win", "debug"])},
     "Webkit Linux": {"port_name": "chromium-linux-x86_64", "specifiers": set(["linux", "x86_64", "release"])},

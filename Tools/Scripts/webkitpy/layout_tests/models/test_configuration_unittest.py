@@ -37,8 +37,7 @@ def make_mock_all_test_configurations_set():
     all_test_configurations = set()
     for version, architecture in (('snowleopard', 'x86'), ('xp', 'x86'), ('win7', 'x86'), ('lucid', 'x86'), ('lucid', 'x86_64')):
         for build_type in ('debug', 'release'):
-            for graphics_type in ('cpu', 'gpu'):
-                all_test_configurations.add(TestConfiguration(version, architecture, build_type, graphics_type))
+            all_test_configurations.add(TestConfiguration(version, architecture, build_type))
     return all_test_configurations
 
 MOCK_MACROS = {
@@ -50,58 +49,55 @@ MOCK_MACROS = {
 
 class TestConfigurationTest(unittest.TestCase):
     def test_items(self):
-        config = TestConfiguration('xp', 'x86', 'release', 'cpu')
+        config = TestConfiguration('xp', 'x86', 'release')
         result_config_dict = {}
         for category, specifier in config.items():
             result_config_dict[category] = specifier
-        self.assertEquals({'version': 'xp', 'architecture': 'x86', 'build_type': 'release', 'graphics_type': 'cpu'}, result_config_dict)
+        self.assertEquals({'version': 'xp', 'architecture': 'x86', 'build_type': 'release'}, result_config_dict)
 
     def test_keys(self):
-        config = TestConfiguration('xp', 'x86', 'release', 'cpu')
+        config = TestConfiguration('xp', 'x86', 'release')
         result_config_keys = []
         for category in config.keys():
             result_config_keys.append(category)
-        self.assertEquals(set(['graphics_type', 'version', 'architecture', 'build_type']), set(result_config_keys))
+        self.assertEquals(set(['version', 'architecture', 'build_type']), set(result_config_keys))
 
     def test_str(self):
-        config = TestConfiguration('xp', 'x86', 'release', 'cpu')
-        self.assertEquals('<xp, x86, release, cpu>', str(config))
+        config = TestConfiguration('xp', 'x86', 'release')
+        self.assertEquals('<xp, x86, release>', str(config))
 
     def test_repr(self):
-        config = TestConfiguration('xp', 'x86', 'release', 'cpu')
-        self.assertEquals("TestConfig(version='xp', architecture='x86', build_type='release', graphics_type='cpu')", repr(config))
+        config = TestConfiguration('xp', 'x86', 'release')
+        self.assertEquals("TestConfig(version='xp', architecture='x86', build_type='release')", repr(config))
 
     def test_hash(self):
         config_dict = {}
-        config_dict[TestConfiguration('xp', 'x86', 'release', 'cpu')] = True
-        self.assertTrue(TestConfiguration('xp', 'x86', 'release', 'cpu') in config_dict)
-        self.assertTrue(config_dict[TestConfiguration('xp', 'x86', 'release', 'cpu')])
-        config_dict[TestConfiguration('xp', 'x86', 'release', 'gpu')] = False
-        self.assertFalse(config_dict[TestConfiguration('xp', 'x86', 'release', 'gpu')])
+        config_dict[TestConfiguration('xp', 'x86', 'release')] = True
+        self.assertTrue(TestConfiguration('xp', 'x86', 'release') in config_dict)
+        self.assertTrue(config_dict[TestConfiguration('xp', 'x86', 'release')])
 
         def query_unknown_key():
-            config_dict[TestConfiguration('xp', 'x86', 'debug', 'gpu')]
+            config_dict[TestConfiguration('xp', 'x86', 'debug')]
 
         self.assertRaises(KeyError, query_unknown_key)
-        self.assertTrue(TestConfiguration('xp', 'x86', 'release', 'gpu') in config_dict)
-        self.assertFalse(TestConfiguration('xp', 'x86', 'debug', 'gpu') in config_dict)
-        configs_list = [TestConfiguration('xp', 'x86', 'release', 'gpu'), TestConfiguration('xp', 'x86', 'debug', 'gpu'), TestConfiguration('xp', 'x86', 'debug', 'gpu')]
+        self.assertTrue(TestConfiguration('xp', 'x86', 'release') in config_dict)
+        self.assertFalse(TestConfiguration('xp', 'x86', 'debug') in config_dict)
+        configs_list = [TestConfiguration('xp', 'x86', 'release'), TestConfiguration('xp', 'x86', 'debug'), TestConfiguration('xp', 'x86', 'debug')]
         self.assertEquals(len(configs_list), 3)
         self.assertEquals(len(set(configs_list)), 2)
 
     def test_eq(self):
-        self.assertEquals(TestConfiguration('xp', 'x86', 'release', 'cpu'), TestConfiguration('xp', 'x86', 'release', 'cpu'))
+        self.assertEquals(TestConfiguration('xp', 'x86', 'release'), TestConfiguration('xp', 'x86', 'release'))
         host = MockHost()
         test_port = host.port_factory.get('test-win-xp', None)
-        self.assertNotEquals(TestConfiguration('xp', 'x86', 'release', 'gpu'), TestConfiguration('xp', 'x86', 'release', 'cpu'))
-        self.assertNotEquals(TestConfiguration('xp', 'x86', 'debug', 'cpu'), TestConfiguration('xp', 'x86', 'release', 'cpu'))
+        self.assertNotEquals(TestConfiguration('xp', 'x86', 'release'), TestConfiguration('xp', 'x86', 'debug'))
 
     def test_values(self):
-        config = TestConfiguration('xp', 'x86', 'release', 'cpu')
+        config = TestConfiguration('xp', 'x86', 'release')
         result_config_values = []
         for value in config.values():
             result_config_values.append(value)
-        self.assertEquals(set(['xp', 'x86', 'release', 'cpu']), set(result_config_values))
+        self.assertEquals(set(['xp', 'x86', 'release']), set(result_config_values))
 
 
 class SpecifierSorterTest(unittest.TestCase):
@@ -143,7 +139,6 @@ class SpecifierSorterTest(unittest.TestCase):
     def test_specifier_priority(self):
         sorter = SpecifierSorter(self._all_test_configurations)
         self.assertEquals(sorter.specifier_priority('x86'), 1)
-        self.assertEquals(sorter.specifier_priority('gpu'), 3)
         self.assertEquals(sorter.specifier_priority('snowleopard'), 0)
 
     def test_sort_specifiers(self):
@@ -151,9 +146,9 @@ class SpecifierSorterTest(unittest.TestCase):
         self.assertEquals(sorter.sort_specifiers(set()), [])
         self.assertEquals(sorter.sort_specifiers(set(['x86'])), ['x86'])
         self.assertEquals(sorter.sort_specifiers(set(['x86', 'win7'])), ['win7', 'x86'])
-        self.assertEquals(sorter.sort_specifiers(set(['gpu', 'x86', 'debug', 'win7'])), ['win7', 'x86', 'debug', 'gpu'])
-        self.assertEquals(sorter.sort_specifiers(set(['gpu', 'snowleopard', 'x86', 'debug', 'win7'])), ['snowleopard', 'win7', 'x86', 'debug', 'gpu'])
-        self.assertEquals(sorter.sort_specifiers(set(['gpu', 'x86', 'mac', 'debug', 'win7'])), ['mac', 'win7', 'x86', 'debug', 'gpu'])
+        self.assertEquals(sorter.sort_specifiers(set(['x86', 'debug', 'win7'])), ['win7', 'x86', 'debug'])
+        self.assertEquals(sorter.sort_specifiers(set(['snowleopard', 'x86', 'debug', 'win7'])), ['snowleopard', 'win7', 'x86', 'debug'])
+        self.assertEquals(sorter.sort_specifiers(set(['x86', 'mac', 'debug', 'win7'])), ['mac', 'win7', 'x86', 'debug'])
 
 
 class TestConfigurationConverterTest(unittest.TestCase):
@@ -177,88 +172,73 @@ class TestConfigurationConverterTest(unittest.TestCase):
         self.assertEquals(converter.to_config_set(set(['xp', 'x86_64'])), set())
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('xp', 'x86', 'release', 'cpu'),
+            TestConfiguration('xp', 'x86', 'release'),
         ])
         self.assertEquals(converter.to_config_set(set(['xp', 'release'])), configs_to_match)
 
         configs_to_match = set([
-            TestConfiguration('snowleopard', 'x86', 'release', 'gpu'),
-            TestConfiguration('win7', 'x86', 'release', 'gpu'),
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('lucid', 'x86', 'release', 'gpu'),
-            TestConfiguration('lucid', 'x86_64', 'release', 'gpu'),
+            TestConfiguration('snowleopard', 'x86', 'release'),
+            TestConfiguration('win7', 'x86', 'release'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('lucid', 'x86', 'release'),
+            TestConfiguration('lucid', 'x86_64', 'release'),
        ])
-        self.assertEquals(converter.to_config_set(set(['gpu', 'release'])), configs_to_match)
+        self.assertEquals(converter.to_config_set(set(['release'])), configs_to_match)
 
         configs_to_match = set([
-             TestConfiguration('lucid', 'x86_64', 'release', 'gpu'),
-             TestConfiguration('lucid', 'x86_64', 'debug', 'gpu'),
-             TestConfiguration('lucid', 'x86_64', 'release', 'cpu'),
-             TestConfiguration('lucid', 'x86_64', 'debug', 'cpu'),
+             TestConfiguration('lucid', 'x86_64', 'release'),
+             TestConfiguration('lucid', 'x86_64', 'debug'),
         ])
         self.assertEquals(converter.to_config_set(set(['x86_64'])), configs_to_match)
 
         configs_to_match = set([
-            TestConfiguration('lucid', 'x86_64', 'release', 'gpu'),
-            TestConfiguration('lucid', 'x86_64', 'debug', 'gpu'),
-            TestConfiguration('lucid', 'x86_64', 'release', 'cpu'),
-            TestConfiguration('lucid', 'x86_64', 'debug', 'cpu'),
-            TestConfiguration('lucid', 'x86', 'release', 'gpu'),
-            TestConfiguration('lucid', 'x86', 'debug', 'gpu'),
-            TestConfiguration('lucid', 'x86', 'release', 'cpu'),
-            TestConfiguration('lucid', 'x86', 'debug', 'cpu'),
-            TestConfiguration('snowleopard', 'x86', 'release', 'gpu'),
-            TestConfiguration('snowleopard', 'x86', 'debug', 'gpu'),
-            TestConfiguration('snowleopard', 'x86', 'release', 'cpu'),
-            TestConfiguration('snowleopard', 'x86', 'debug', 'cpu'),
+            TestConfiguration('lucid', 'x86_64', 'release'),
+            TestConfiguration('lucid', 'x86_64', 'debug'),
+            TestConfiguration('lucid', 'x86', 'release'),
+            TestConfiguration('lucid', 'x86', 'debug'),
+            TestConfiguration('snowleopard', 'x86', 'release'),
+            TestConfiguration('snowleopard', 'x86', 'debug'),
         ])
         self.assertEquals(converter.to_config_set(set(['lucid', 'snowleopard'])), configs_to_match)
 
         configs_to_match = set([
-            TestConfiguration('lucid', 'x86', 'release', 'gpu'),
-            TestConfiguration('lucid', 'x86', 'debug', 'gpu'),
-            TestConfiguration('lucid', 'x86', 'release', 'cpu'),
-            TestConfiguration('lucid', 'x86', 'debug', 'cpu'),
-            TestConfiguration('snowleopard', 'x86', 'release', 'gpu'),
-            TestConfiguration('snowleopard', 'x86', 'debug', 'gpu'),
-            TestConfiguration('snowleopard', 'x86', 'release', 'cpu'),
-            TestConfiguration('snowleopard', 'x86', 'debug', 'cpu'),
+            TestConfiguration('lucid', 'x86', 'release'),
+            TestConfiguration('lucid', 'x86', 'debug'),
+            TestConfiguration('snowleopard', 'x86', 'release'),
+            TestConfiguration('snowleopard', 'x86', 'debug'),
         ])
         self.assertEquals(converter.to_config_set(set(['lucid', 'snowleopard', 'x86'])), configs_to_match)
 
         configs_to_match = set([
-            TestConfiguration('lucid', 'x86_64', 'release', 'cpu'),
-            TestConfiguration('lucid', 'x86', 'release', 'cpu'),
-            TestConfiguration('snowleopard', 'x86', 'release', 'cpu'),
+            TestConfiguration('lucid', 'x86_64', 'release'),
+            TestConfiguration('lucid', 'x86', 'release'),
+            TestConfiguration('snowleopard', 'x86', 'release'),
         ])
-        self.assertEquals(converter.to_config_set(set(['lucid', 'snowleopard', 'release', 'cpu'])), configs_to_match)
+        self.assertEquals(converter.to_config_set(set(['lucid', 'snowleopard', 'release'])), configs_to_match)
 
     def test_macro_expansion(self):
         converter = TestConfigurationConverter(self._all_test_configurations, MOCK_MACROS)
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('xp', 'x86', 'release', 'cpu'),
-            TestConfiguration('win7', 'x86', 'release', 'gpu'),
-            TestConfiguration('win7', 'x86', 'release', 'cpu'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('win7', 'x86', 'release'),
         ])
         self.assertEquals(converter.to_config_set(set(['win', 'release'])), configs_to_match)
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('win7', 'x86', 'release', 'gpu'),
-            TestConfiguration('lucid', 'x86', 'release', 'gpu'),
-            TestConfiguration('lucid', 'x86_64', 'release', 'gpu'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('win7', 'x86', 'release'),
+            TestConfiguration('lucid', 'x86', 'release'),
+            TestConfiguration('lucid', 'x86_64', 'release'),
         ])
-        self.assertEquals(converter.to_config_set(set(['win', 'lucid', 'release', 'gpu'])), configs_to_match)
+        self.assertEquals(converter.to_config_set(set(['win', 'lucid', 'release'])), configs_to_match)
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('win7', 'x86', 'release', 'gpu'),
-            TestConfiguration('snowleopard', 'x86', 'release', 'gpu'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('win7', 'x86', 'release'),
+            TestConfiguration('snowleopard', 'x86', 'release'),
         ])
-        self.assertEquals(converter.to_config_set(set(['win', 'mac', 'release', 'gpu'])), configs_to_match)
+        self.assertEquals(converter.to_config_set(set(['win', 'mac', 'release'])), configs_to_match)
 
     def test_to_specifier_lists(self):
         converter = TestConfigurationConverter(self._all_test_configurations)
@@ -267,58 +247,55 @@ class TestConfigurationConverterTest(unittest.TestCase):
         self.assertEquals(converter.to_specifiers_list(set()), [])
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('xp', 'x86', 'release', 'cpu'),
+            TestConfiguration('xp', 'x86', 'release'),
         ])
         self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['release', 'xp'])])
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('xp', 'x86', 'release', 'cpu'),
-            TestConfiguration('xp', 'x86', 'debug', 'gpu'),
-            TestConfiguration('xp', 'x86', 'debug', 'cpu'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('xp', 'x86', 'debug'),
         ])
         self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['xp'])])
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('lucid', 'x86_64', 'debug', 'cpu'),
+            TestConfiguration('lucid', 'x86_64', 'debug'),
+            TestConfiguration('xp', 'x86', 'release'),
         ])
-        self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['debug', 'x86_64', 'lucid', 'cpu']), set(['release', 'gpu', 'xp'])])
+        self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['debug', 'x86_64', 'lucid']), set(['release', 'xp'])])
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('xp', 'x86', 'release', 'cpu'),
-            TestConfiguration('lucid', 'x86_64', 'debug', 'cpu'),
-            TestConfiguration('lucid', 'x86', 'debug', 'cpu'),
-            TestConfiguration('lucid', 'x86_64', 'debug', 'gpu'),
-            TestConfiguration('lucid', 'x86', 'debug', 'gpu'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('lucid', 'x86_64', 'debug'),
+            TestConfiguration('lucid', 'x86', 'debug'),
+            TestConfiguration('lucid', 'x86_64', 'debug'),
+            TestConfiguration('lucid', 'x86', 'debug'),
         ])
         self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['release', 'xp']), set(['debug', 'lucid'])])
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('snowleopard', 'x86', 'release', 'gpu'),
-            TestConfiguration('win7', 'x86', 'release', 'gpu'),
-            TestConfiguration('lucid', 'x86', 'release', 'gpu'),
-            TestConfiguration('lucid', 'x86_64', 'release', 'gpu'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('snowleopard', 'x86', 'release'),
+            TestConfiguration('win7', 'x86', 'release'),
+            TestConfiguration('lucid', 'x86', 'release'),
+            TestConfiguration('lucid', 'x86_64', 'release'),
         ])
-        self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['release', 'gpu'])])
+        self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['release'])])
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('snowleopard', 'x86', 'release', 'gpu'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('snowleopard', 'x86', 'release'),
         ])
-        self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['xp', 'snowleopard', 'release', 'gpu'])])
+        self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['xp', 'snowleopard', 'release'])])
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('snowleopard', 'x86', 'release', 'gpu'),
-            TestConfiguration('win7', 'x86', 'release', 'gpu'),
-            TestConfiguration('win7', 'x86', 'debug', 'gpu'),
-            TestConfiguration('lucid', 'x86', 'release', 'gpu'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('snowleopard', 'x86', 'release'),
+            TestConfiguration('win7', 'x86', 'release'),
+            TestConfiguration('win7', 'x86', 'debug'),
+            TestConfiguration('lucid', 'x86', 'release'),
         ])
-        self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['release', 'gpu', 'lucid', 'x86']), set(['gpu', 'win7']), set(['release', 'gpu', 'xp', 'snowleopard'])])
+        self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['release', 'lucid', 'x86']), set(['win7']), set(['release', 'xp', 'snowleopard'])])
 
     def test_macro_collapsing(self):
         macros = {'foo': ['bar', 'baz'], 'people': ['bob', 'alice', 'john']}
@@ -343,27 +320,25 @@ class TestConfigurationConverterTest(unittest.TestCase):
         converter = TestConfigurationConverter(self._all_test_configurations, MOCK_MACROS)
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('xp', 'x86', 'release', 'cpu'),
-            TestConfiguration('win7', 'x86', 'release', 'gpu'),
-            TestConfiguration('win7', 'x86', 'release', 'cpu'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('win7', 'x86', 'release'),
         ])
         self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['win', 'release'])])
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('win7', 'x86', 'release', 'gpu'),
-            TestConfiguration('lucid', 'x86', 'release', 'gpu'),
-            TestConfiguration('lucid', 'x86_64', 'release', 'gpu'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('win7', 'x86', 'release'),
+            TestConfiguration('lucid', 'x86', 'release'),
+            TestConfiguration('lucid', 'x86_64', 'release'),
         ])
-        self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['win', 'linux', 'release', 'gpu'])])
+        self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['win', 'linux', 'release'])])
 
         configs_to_match = set([
-            TestConfiguration('xp', 'x86', 'release', 'gpu'),
-            TestConfiguration('win7', 'x86', 'release', 'gpu'),
-            TestConfiguration('snowleopard', 'x86', 'release', 'gpu'),
+            TestConfiguration('xp', 'x86', 'release'),
+            TestConfiguration('win7', 'x86', 'release'),
+            TestConfiguration('snowleopard', 'x86', 'release'),
         ])
-        self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['win', 'mac', 'release', 'gpu'])])
+        self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['win', 'mac', 'release'])])
 
     def test_specifier_converter_access(self):
         specifier_sorter = TestConfigurationConverter(self._all_test_configurations, MOCK_MACROS).specifier_sorter()

@@ -89,12 +89,10 @@ class BuildCoverageExtrapolatorTest(unittest.TestCase):
         port = host.port_factory.get('chromium-win-win7', None)
         converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
         extrapolator = BuildCoverageExtrapolator(converter)
-        self.assertEquals(extrapolator.extrapolate_test_configurations("Webkit Win"), set([TestConfiguration(version='xp', architecture='x86', build_type='release', graphics_type='cpu')]))
+        self.assertEquals(extrapolator.extrapolate_test_configurations("Webkit Win"), set([TestConfiguration(version='xp', architecture='x86', build_type='release')]))
         self.assertEquals(extrapolator.extrapolate_test_configurations("Webkit Vista"), set([
-            TestConfiguration(version='vista', architecture='x86', build_type='debug', graphics_type='cpu'),
-            TestConfiguration(version='vista', architecture='x86', build_type='debug', graphics_type='gpu'),
-            TestConfiguration(version='vista', architecture='x86', build_type='release', graphics_type='gpu'),
-            TestConfiguration(version='vista', architecture='x86', build_type='release', graphics_type='cpu')]))
+            TestConfiguration(version='vista', architecture='x86', build_type='debug'),
+            TestConfiguration(version='vista', architecture='x86', build_type='release')]))
         self.assertRaises(KeyError, extrapolator.extrapolate_test_configurations, "Potato")
 
 
@@ -136,37 +134,38 @@ class GardeningExpectationsUpdaterTest(unittest.TestCase):
     def test_unknown_failure_type(self):
         failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["IMAGE", "EXPLODE"]}]
         expectations_before = ""
-        expectations_after = "\nBUG_NEW XP RELEASE CPU : failures/expected/image.html = IMAGE"
+        expectations_after = "\nBUG_NEW XP RELEASE : failures/expected/image.html = IMAGE"
         self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
 
     def test_add_new_expectation(self):
         failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["IMAGE"]}]
         expectations_before = ""
-        expectations_after = "\nBUG_NEW XP RELEASE CPU : failures/expected/image.html = IMAGE"
+        expectations_after = "\nBUG_NEW XP RELEASE : failures/expected/image.html = IMAGE"
         self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
 
     def test_replace_old_expectation(self):
         failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["IMAGE"]}]
-        expectations_before = "BUG_OLD XP RELEASE CPU : failures/expected/image.html = TEXT"
-        expectations_after = "BUG_NEW XP RELEASE CPU : failures/expected/image.html = IMAGE"
+        expectations_before = "BUG_OLD XP RELEASE : failures/expected/image.html = TEXT"
+        expectations_after = "BUG_NEW XP RELEASE : failures/expected/image.html = IMAGE"
         self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
 
     def test_pass_expectation(self):
         failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["PASS"]}]
-        expectations_before = "BUG_OLD XP RELEASE CPU : failures/expected/image.html = TEXT"
+        expectations_before = "BUG_OLD XP RELEASE : failures/expected/image.html = TEXT"
         expectations_after = ""
         self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
 
     def test_supplement_old_expectation(self):
         failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["IMAGE"]}]
-        expectations_before = "BUG_OLD XP RELEASE :  failures/expected/image.html = TEXT"
-        expectations_after = "BUG_OLD XP RELEASE GPU : failures/expected/image.html = TEXT\nBUG_NEW XP RELEASE CPU : failures/expected/image.html = IMAGE"
+        expectations_before = "BUG_OLD XP RELEASE :  failures/expected/text.html = TEXT"
+        expectations_after = ("BUG_OLD XP RELEASE :  failures/expected/text.html = TEXT\n"
+                              "BUG_NEW XP RELEASE : failures/expected/image.html = IMAGE")
         self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
 
     def test_spurious_updates(self):
         failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["IMAGE"]}]
-        expectations_before = "BUG_OLDER MAC LINUX : failures/expected/image.html = IMAGE+TEXT\nBUG_OLD XP RELEASE CPU :  failures/expected/image.html = TEXT"
-        expectations_after = "BUG_OLDER MAC LINUX : failures/expected/image.html = IMAGE+TEXT\nBUG_NEW XP RELEASE CPU : failures/expected/image.html = IMAGE"
+        expectations_before = "BUG_OLDER MAC LINUX : failures/expected/image.html = IMAGE+TEXT\nBUG_OLD XP RELEASE :  failures/expected/image.html = TEXT"
+        expectations_after = "BUG_OLDER MAC LINUX : failures/expected/image.html = IMAGE+TEXT\nBUG_NEW XP RELEASE : failures/expected/image.html = IMAGE"
         self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
 
 

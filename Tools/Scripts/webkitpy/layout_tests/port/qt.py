@@ -74,7 +74,7 @@ class QtPort(WebKitPort):
         configurations = []
         for version in self.ALL_VERSIONS:
             for build_type in self.ALL_BUILD_TYPES:
-                configurations.append(TestConfiguration(version=version, architecture='x86', build_type=build_type, graphics_type='cpu'))
+                configurations.append(TestConfiguration(version=version, architecture='x86', build_type=build_type))
         return configurations
 
     def _build_driver(self):

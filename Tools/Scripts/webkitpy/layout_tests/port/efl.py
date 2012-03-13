@@ -44,7 +44,7 @@ class EflPort(WebKitPort):
         return "--efl"
 
     def _generate_all_test_configurations(self):
-        return [TestConfiguration(version=self._version, architecture='x86', build_type=build_type, graphics_type='cpu') for build_type in self.ALL_BUILD_TYPES]
+        return [TestConfiguration(version=self._version, architecture='x86', build_type=build_type) for build_type in self.ALL_BUILD_TYPES]
 
     def _path_to_driver(self):
         return self._build_path('bin', self.driver_name())

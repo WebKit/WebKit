@@ -90,7 +90,6 @@ class ApplePort(WebKitPort):
                 version = self.FUTURE_VERSION
 
             for build_type in self.ALL_BUILD_TYPES:
-                # Win and Mac ports both happen to only exist on x86 architectures and always use cpu graphics (gpu graphics is a chromium-only hack).
                 # But at some later point we may need to make these configurable by the MacPort and WinPort subclasses.
-                configurations.append(TestConfiguration(version=version, architecture='x86', build_type=build_type, graphics_type='cpu'))
+                configurations.append(TestConfiguration(version=version, architecture='x86', build_type=build_type))
         return configurations

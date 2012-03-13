@@ -100,7 +100,6 @@ class Port(object):
         # These are default values that should be overridden in a subclasses.
         self._version = ''
         self._architecture = 'x86'
-        self._graphics_type = 'cpu'
 
         # FIXME: Ideally we'd have a package-wide way to get a
         # well-formed options object that had all of the necessary
@@ -625,7 +624,7 @@ class Port(object):
 
     def name(self):
         """Returns a name that uniquely identifies this particular type of port
-        (e.g., "mac-snowleopard" or "chromium-gpu-linux-x86_x64" and can be passed
+        (e.g., "mac-snowleopard" or "chromium-linux-x86_x64" and can be passed
         to factory.get() to instantiate the port."""
         return self._name
 
@@ -640,10 +639,6 @@ class Port(object):
         This is used to help identify the exact port when parsing test
         expectations, determining search paths, and logging information."""
         return self._version
-
-    def graphics_type(self):
-        """Returns whether the port uses accelerated graphics ('gpu') or not ('cpu')."""
-        return self._graphics_type
 
     def architecture(self):
         return self._architecture
@@ -828,7 +823,7 @@ class Port(object):
     def test_configuration(self):
         """Returns the current TestConfiguration for the port."""
         if not self._test_configuration:
-            self._test_configuration = TestConfiguration(self._version, self._architecture, self._options.configuration.lower(), self._graphics_type)
+            self._test_configuration = TestConfiguration(self._version, self._architecture, self._options.configuration.lower())
         return self._test_configuration
 
     # FIXME: Belongs on a Platform object.

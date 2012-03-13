@@ -29,16 +29,15 @@
 import itertools
 
 class TestConfiguration(object):
-    def __init__(self, version, architecture, build_type, graphics_type):
+    def __init__(self, version, architecture, build_type):
         self.version = version
         self.architecture = architecture
         self.build_type = build_type
-        self.graphics_type = graphics_type
 
     @classmethod
     def category_order(cls):
         """The most common human-readable order in which the configuration properties are listed."""
-        return ['version', 'architecture', 'build_type', 'graphics_type']
+        return ['version', 'architecture', 'build_type']
 
     def items(self):
         return self.__dict__.items()
@@ -47,14 +46,14 @@ class TestConfiguration(object):
         return self.__dict__.keys()
 
     def __str__(self):
-        return ("<%(version)s, %(architecture)s, %(build_type)s, %(graphics_type)s>" %
+        return ("<%(version)s, %(architecture)s, %(build_type)s>" %
                 self.__dict__)
 
     def __repr__(self):
-        return "TestConfig(version='%(version)s', architecture='%(architecture)s', build_type='%(build_type)s', graphics_type='%(graphics_type)s')" % self.__dict__
+        return "TestConfig(version='%(version)s', architecture='%(architecture)s', build_type='%(build_type)s')" % self.__dict__
 
     def __hash__(self):
-        return hash(self.version + self.architecture + self.build_type + self.graphics_type)
+        return hash(self.version + self.architecture + self.build_type)
 
     def __eq__(self, other):
         return self.__hash__() == other.__hash__()
@@ -207,7 +206,7 @@ class TestConfigurationConverter(object):
             return False
 
         # 2) Collapse specifier sets with common specifiers:
-        #   (xp, release, gpu), (xp, release, cpu) --> (xp, x86, release)
+        #   (xp, release), (xp, debug) --> (xp, x86)
         for size, collapsing_sets in self._collapsing_sets_by_size.items():
             while try_collapsing(size, collapsing_sets):
                 pass

@@ -1,5 +1,83 @@
 2012-03-12  Dirk Pranke  <dpranke@chromium.org>
 
+        remove graphics_type from webkitpy.layout_tests.models.test_configuration
+        https://bugs.webkit.org/show_bug.cgi?id=80643
+
+        Reviewed by Ojan Vafai.
+
+        Now that the chromium-gpu ports are gone, there's no need for
+        the graphics_type CPU/GPU distinction. Most of this change is
+        just updating tests accordingly.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_expectations_editor_unittest.py:
+        (TestExpectationEditorTests):
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py:
+        (TestConfiguration.__init__):
+        (TestConfiguration.category_order):
+        (TestConfiguration.__str__):
+        (TestConfiguration.__repr__):
+        (TestConfiguration.__hash__):
+        (TestConfigurationConverter.to_specifiers_list):
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py:
+        (make_mock_all_test_configurations_set):
+        (TestConfigurationTest.test_items):
+        (TestConfigurationTest.test_keys):
+        (TestConfigurationTest.test_str):
+        (TestConfigurationTest.test_repr):
+        (TestConfigurationTest.test_hash):
+        (TestConfigurationTest.test_hash.query_unknown_key):
+        (TestConfigurationTest.test_eq):
+        (TestConfigurationTest.test_values):
+        (SpecifierSorterTest.test_specifier_priority):
+        (SpecifierSorterTest.test_sort_specifiers):
+        (TestConfigurationConverterTest.test_to_config_set):
+        (TestConfigurationConverterTest.test_macro_expansion):
+        (TestConfigurationConverterTest.test_to_specifier_lists):
+        (TestConfigurationConverterTest.test_converter_macro_collapsing):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (test_error_on_different_build_type):
+        (TestExpectationSerializerTests.test_parsed_to_string):
+        (TestExpectationSerializerTests.test_reconstitute_only_these):
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort._generate_all_test_configurations):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__):
+        (Port.name):
+        (Port.version):
+        (Port.test_configuration):
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort):
+        (ChromiumPort._generate_all_test_configurations):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        (ChromiumLinuxPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+        (ChromiumLinuxPortTest.test_check_illegal_port_names):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest.test_baseline_path):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumPortTest.test_all_test_configurations):
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort._generate_all_test_configurations):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort._generate_all_test_configurations):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort._generate_all_test_configurations):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.all_test_configurations):
+        (TestPort._all_build_types):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (BuildCoverageExtrapolatorTest.test_extrapolate):
+        (GardeningExpectationsUpdaterTest.test_unknown_failure_type):
+        (GardeningExpectationsUpdaterTest.test_add_new_expectation):
+        (GardeningExpectationsUpdaterTest.test_replace_old_expectation):
+        (GardeningExpectationsUpdaterTest.test_pass_expectation):
+        (GardeningExpectationsUpdaterTest.test_supplement_old_expectation):
+        (GardeningExpectationsUpdaterTest.test_spurious_updates):
+
+2012-03-12  Dirk Pranke  <dpranke@chromium.org>
+
         _runtime_feature_list isn't supported on Apple Mac DRT
         https://bugs.webkit.org/show_bug.cgi?id=80906
 

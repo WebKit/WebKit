@@ -225,12 +225,6 @@ SKIP : failures/expected/image.html""", is_lint_mode=True)
             'BUG_TEST DEBUG : failures/expected/text.html = TEXT\nBUG_TEST DEBUG : failures/expected/text.html = TEXT',
             is_lint_mode=True)
 
-    def test_error_on_different_graphics_type(self):
-        # parse_exp uses a CPU port. Assert errors on GPU show up in lint mode.
-        self.assertRaises(ParseError, self.parse_exp,
-            'BUG_TEST GPU : failures/expected/text.html = TEXT\nBUG_TEST GPU : failures/expected/text.html = TEXT',
-            is_lint_mode=True)
-
     def test_overrides(self):
         self.parse_exp("BUG_EXP: failures/expected/text.html = TEXT",
                        "BUG_OVERRIDE : failures/expected/text.html = IMAGE")
@@ -525,12 +519,10 @@ class TestExpectationSerializerTests(unittest.TestCase):
         expectation_line.name = 'test/name/for/realz.html'
         expectation_line.parsed_expectations = set([IMAGE])
         self.assertEqual(self._serializer.to_string(expectation_line), None)
-        expectation_line.matching_configurations = set([TestConfiguration('xp', 'x86', 'release', 'cpu')])
-        self.assertEqual(self._serializer.to_string(expectation_line), 'BUGX XP RELEASE CPU : test/name/for/realz.html = IMAGE')
-        expectation_line.matching_configurations = set([TestConfiguration('xp', 'x86', 'release', 'cpu'), TestConfiguration('xp', 'x86', 'release', 'gpu')])
+        expectation_line.matching_configurations = set([TestConfiguration('xp', 'x86', 'release')])
         self.assertEqual(self._serializer.to_string(expectation_line), 'BUGX XP RELEASE : test/name/for/realz.html = IMAGE')
-        expectation_line.matching_configurations = set([TestConfiguration('xp', 'x86', 'release', 'cpu'), TestConfiguration('xp', 'x86', 'debug', 'gpu')])
-        self.assertEqual(self._serializer.to_string(expectation_line), 'BUGX XP RELEASE CPU : test/name/for/realz.html = IMAGE\nBUGX XP DEBUG GPU : test/name/for/realz.html = IMAGE')
+        expectation_line.matching_configurations = set([TestConfiguration('xp', 'x86', 'release'), TestConfiguration('xp', 'x86', 'debug')])
+        self.assertEqual(self._serializer.to_string(expectation_line), 'BUGX XP : test/name/for/realz.html = IMAGE')
 
     def test_parsed_expectations_string(self):
         expectation_line = TestExpectationLine()
@@ -610,13 +602,12 @@ class TestExpectationSerializerTests(unittest.TestCase):
             if reconstitute:
                 reconstitute_only_these.append(expectation_line)
 
-        add_line(set([TestConfiguration('xp', 'x86', 'release', 'cpu')]), False)
-        add_line(set([TestConfiguration('xp', 'x86', 'release', 'cpu'), TestConfiguration('xp', 'x86', 'release', 'gpu')]), True)
-        add_line(set([TestConfiguration('xp', 'x86', 'release', 'cpu'), TestConfiguration('xp', 'x86', 'debug', 'gpu')]), False)
+        add_line(set([TestConfiguration('xp', 'x86', 'release')]), True)
+        add_line(set([TestConfiguration('xp', 'x86', 'release'), TestConfiguration('xp', 'x86', 'debug')]), False)
         serialized = TestExpectationSerializer.list_to_string(lines, self._converter)
-        self.assertEquals(serialized, "BUGX XP RELEASE CPU : Yay = IMAGE\nBUGX XP RELEASE : Yay = IMAGE\nBUGX XP RELEASE CPU : Yay = IMAGE\nBUGX XP DEBUG GPU : Yay = IMAGE")
+        self.assertEquals(serialized, "BUGX XP RELEASE : Yay = IMAGE\nBUGX XP : Yay = IMAGE")
         serialized = TestExpectationSerializer.list_to_string(lines, self._converter, reconstitute_only_these=reconstitute_only_these)
-        self.assertEquals(serialized, "Nay\nBUGX XP RELEASE : Yay = IMAGE\nNay")
+        self.assertEquals(serialized, "BUGX XP RELEASE : Yay = IMAGE\nNay")
 
     def test_string_whitespace_stripping(self):
         self.assert_round_trip('\n', '')

@@ -166,5 +166,5 @@ MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win', 'userscripts/images.
             "MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/another-test.html'], cwd=/mock-checkout\n"
             "MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/images.svg'], cwd=/mock-checkout\n")
 
-        command._tests_to_rebaseline = lambda port: [] if not port.name().find('-gpu-') == -1 else ['userscripts/another-test.html', 'userscripts/images.svg']
+        command._tests_to_rebaseline = lambda port: ['userscripts/another-test.html', 'userscripts/images.svg']
         OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True), [], tool], expected_stdout=expected_stdout_with_optimize, expected_stderr=expected_stderr_with_optimize)
