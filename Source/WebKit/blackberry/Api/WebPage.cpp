@@ -57,6 +57,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTTPParsers.h"
@@ -1992,9 +1993,9 @@ bool WebPagePrivate::useFixedLayout() const
     return true;
 }
 
-ActiveNodeContext WebPagePrivate::activeNodeContext(TargetDetectionStrategy strategy)
+Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy)
 {
-    ActiveNodeContext context;
+    Platform::WebContext context;
 
     RefPtr<Node> node = contextNode(strategy);
     m_currentContextNode = node;
@@ -2013,10 +2014,10 @@ ActiveNodeContext WebPagePrivate::activeNodeContext(TargetDetectionStrategy stra
 
         String pattern = findPatternStringForUrl(href);
         if (!pattern.isEmpty())
-            context.setPattern(pattern);
+            context.setPattern(pattern.utf8().data());
 
         if (!href.string().isEmpty()) {
-            context.setUrl(href.string());
+            context.setUrl(href.string().utf8().data());
 
             // Links are non-selectable by default, but selection should be allowed
             // providing the page is selectable, use the parent to determine it.
@@ -2026,58 +2027,75 @@ ActiveNodeContext WebPagePrivate::activeNodeContext(TargetDetectionStrategy stra
     }
 
     if (!nodeAllowSelectionOverride && !node->canStartSelection())
-        context.resetFlag(ActiveNodeContext::IsSelectable);
+        context.resetFlag(Platform::WebContext::IsSelectable);
 
     if (node->isHTMLElement()) {
         HTMLImageElement* imageElement = 0;
+        HTMLMediaElement* mediaElement = 0;
+
         if (node->hasTagName(HTMLNames::imgTag))
             imageElement = static_cast<HTMLImageElement*>(node.get());
         else if (node->hasTagName(HTMLNames::areaTag))
             imageElement = static_cast<HTMLAreaElement*>(node.get())->imageElement();
+
+        if (static_cast<HTMLElement*>(node.get())->isMediaElement())
+            mediaElement = static_cast<HTMLMediaElement*>(node.get());
+
         if (imageElement && imageElement->renderer()) {
+            context.setFlag(Platform::WebContext::IsImage);
             // FIXME: At the mean time, we only show "Save Image" when the image data is available.
             if (CachedResource* cachedResource = imageElement->cachedImage()) {
                 if (cachedResource->isLoaded() && cachedResource->data()) {
                     String url = stripLeadingAndTrailingHTMLSpaces(imageElement->getAttribute(HTMLNames::srcAttr).string());
-                    context.setImageSrc(node->document()->completeURL(url).string());
+                    context.setSrc(node->document()->completeURL(url).string().utf8().data());
                 }
             }
             String alt = imageElement->altText();
             if (!alt.isNull())
-                context.setImageAlt(alt);
+                context.setAlt(alt.utf8().data());
+        }
+
+        if (mediaElement) {
+            if (mediaElement->hasAudio())
+                context.setFlag(Platform::WebContext::IsAudio);
+            if (mediaElement->hasVideo())
+                context.setFlag(Platform::WebContext::IsVideo);
+
+            String src = stripLeadingAndTrailingHTMLSpaces(mediaElement->getAttribute(HTMLNames::srcAttr).string());
+            context.setSrc(node->document()->completeURL(src).string().utf8().data());
         }
     }
 
     if (node->isTextNode()) {
         Text* curText = static_cast<Text*>(node.get());
         if (!curText->wholeText().isEmpty())
-            context.setText(curText->wholeText());
+            context.setText(curText->wholeText().utf8().data());
     }
 
     if (node->isElementNode()) {
         Element* element = static_cast<Element*>(node->shadowAncestorNode());
         if (DOMSupport::isTextBasedContentEditableElement(element)) {
-            context.setFlag(ActiveNodeContext::IsInput);
+            context.setFlag(Platform::WebContext::IsInput);
             if (element->hasTagName(HTMLNames::inputTag))
-                context.setFlag(ActiveNodeContext::IsSingleLine);
+                context.setFlag(Platform::WebContext::IsSingleLine);
             if (DOMSupport::isPasswordElement(element))
-                context.setFlag(ActiveNodeContext::IsPassword);
+                context.setFlag(Platform::WebContext::IsPassword);
 
             String elementText(DOMSupport::inputElementText(element));
             if (!elementText.stripWhiteSpace().isEmpty())
-                context.setText(elementText);
+                context.setText(elementText.utf8().data());
         }
     }
 
     if (node->isFocusable())
-        context.setFlag(ActiveNodeContext::IsFocusable);
+        context.setFlag(Platform::WebContext::IsFocusable);
 
     return context;
 }
 
-ActiveNodeContext WebPage::activeNodeContext(TargetDetectionStrategy strategy) const
+Platform::WebContext WebPage::webContext(TargetDetectionStrategy strategy) const
 {
-    return d->activeNodeContext(strategy);
+    return d->webContext(strategy);
 }
 
 void WebPagePrivate::updateCursor()

@@ -1,3 +1,25 @@
+2012-03-13  Mike Lattanzio  <mlattanzio@rim.com>
+
+        Remove ActiveNodeContext in favour of BlackBerry::Platform::WebContext
+        https://bugs.webkit.org/show_bug.cgi?id=80984
+
+        Remove ActiveNodeContext, and switch the implementation to
+        provide a BlackBerry::Platform::WebContext. The new object
+        adds an explicit IsImage flag, as well as IsAudio and IsVideo
+        for the HTML5 elements.
+
+        Note that for many videos both IsVideo and IsAudio will be true,
+        as videos typically have audio streams as well.
+
+        Reviewed by George Staikos.
+
+        * Api/ActiveNodeContext.h: Removed.
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        (BlackBerry::WebKit::WebPage::webContext):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+
 2012-03-12  Andy Chen  <andchen@rim.com>
 
         [Blackberry] Make the process of marking all matches interruptible and asynchronous for find-in-page
