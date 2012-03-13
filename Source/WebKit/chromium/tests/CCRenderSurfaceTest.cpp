@@ -26,7 +26,9 @@
 
 #include "cc/CCRenderSurface.h"
 
+#include "TransformationMatrix.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCSharedQuadState.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -87,6 +89,40 @@ TEST(CCRenderSurfaceTest, verifySurfaceChangesAreTrackedProperly)
     EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->setSkipsDraw(true));
     EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->clearLayerList());
     EXECUTE_AND_VERIFY_SURFACE_DID_NOT_CHANGE(renderSurface->setMaskLayer(dummyMask.get()));
+}
+
+TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
+{
+    // This will fake that we are on the correct thread for testing purposes.
+    DebugScopedSetImplThread setImplThread;
+
+    OwnPtr<CCLayerImpl> owningLayer = CCLayerImpl::create(0);
+    owningLayer->createRenderSurface();
+    ASSERT_TRUE(owningLayer->renderSurface());
+    CCRenderSurface* renderSurface = owningLayer->renderSurface();
+
+    IntRect contentRect = IntRect(IntPoint::zero(), IntSize(50, 50));
+    IntRect clipRect = IntRect(IntPoint(5, 5), IntSize(40, 40));
+    TransformationMatrix draw;
+    TransformationMatrix origin;
+
+    draw.translate(30, 40);
+
+    renderSurface->setDrawTransform(draw);
+    renderSurface->setOriginTransform(origin);
+    renderSurface->setContentRect(contentRect);
+    renderSurface->setClipRect(clipRect);
+    renderSurface->setDrawOpacity(1);
+
+    OwnPtr<CCSharedQuadState> sharedQuadState = renderSurface->createSharedQuadState();
+
+    EXPECT_TRUE(sharedQuadState->quadTransform().isIdentity());
+    EXPECT_EQ(30, sharedQuadState->layerTransform().m41());
+    EXPECT_EQ(40, sharedQuadState->layerTransform().m42());
+    EXPECT_EQ(contentRect, sharedQuadState->layerRect());
+    EXPECT_EQ(clipRect, sharedQuadState->clipRect());
+    EXPECT_EQ(1, sharedQuadState->opacity());
+    EXPECT_FALSE(sharedQuadState->isOpaque());
 }
 
 } // namespace

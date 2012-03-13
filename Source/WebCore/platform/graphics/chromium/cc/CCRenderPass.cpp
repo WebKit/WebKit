@@ -61,8 +61,7 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer)
     // FIXME: render surface layers should be a CCLayerImpl-derived class and
     // not be handled specially here.
     CCRenderSurface* surface = layer->renderSurface();
-    bool isOpaque = false;
-    OwnPtr<CCSharedQuadState> sharedQuadState = CCSharedQuadState::create(surface->drawTransform(), surface->drawTransform(), surface->contentRect(), surface->clipRect(), surface->drawOpacity(), isOpaque);
+    OwnPtr<CCSharedQuadState> sharedQuadState = surface->createSharedQuadState();
     m_quadList.append(CCRenderSurfaceDrawQuad::create(sharedQuadState.get(), surface->contentRect(), layer, surfaceDamageRect()));
     m_sharedQuadStateList.append(sharedQuadState.release());
 }

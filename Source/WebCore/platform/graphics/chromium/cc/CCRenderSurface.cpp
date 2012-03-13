@@ -41,6 +41,7 @@
 #include "cc/CCLayerImpl.h"
 #include "cc/CCProxy.h"
 #include "cc/CCRenderSurfaceFilters.h"
+#include "cc/CCSharedQuadState.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -299,6 +300,12 @@ bool CCRenderSurface::surfacePropertyChanged() const
 bool CCRenderSurface::surfacePropertyChangedOnlyFromDescendant() const
 {
     return m_surfacePropertyChanged && !m_owningLayer->layerPropertyChanged();
+}
+
+PassOwnPtr<CCSharedQuadState> CCRenderSurface::createSharedQuadState() const
+{
+    bool isOpaque = false;
+    return CCSharedQuadState::create(originTransform(), drawTransform(), contentRect(), clipRect(), drawOpacity(), isOpaque);
 }
 
 }

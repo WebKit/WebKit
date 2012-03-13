@@ -43,6 +43,7 @@
 namespace WebCore {
 
 class CCDamageTracker;
+class CCSharedQuadState;
 class CCLayerImpl;
 class LayerRendererChromium;
 class ManagedTexture;
@@ -113,6 +114,8 @@ public:
     bool surfacePropertyChangedOnlyFromDescendant() const;
 
     CCDamageTracker* damageTracker() const { return m_damageTracker.get(); }
+
+    PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
 
 private:
     void drawLayer(LayerRendererChromium*, CCLayerImpl*, const TransformationMatrix&, const SkBitmap& filterBitmap);
