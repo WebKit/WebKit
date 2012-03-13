@@ -1,0 +1,8 @@
+Test to make sure that wrap-reverse starts at the cross start edge if sizing is not auto.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
