@@ -1,3 +1,24 @@
+2012-03-13  JungJik Lee  <jungjik.lee@samsung.com>
+
+        [EFL] Remove a duplicate allocation of matrix entry.
+        https://bugs.webkit.org/show_bug.cgi?id=79362
+
+        Reviewed by Zoltan Herczeg.
+
+        A matrix entry is created when calling ewk_matrix_new.
+        Another matrix is created inside ewk_tile_matrix_zoom_level_set.
+        This patch is for getting rid of a duplicated creation of the matrix.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (_Ewk_Tiled_Backing_Store_Item):
+        (_ewk_tiled_backing_store_zoom_set_internal):
+        * ewk/ewk_tiled_matrix.cpp:
+        (ewk_tile_matrix_new):
+        (ewk_tile_matrix_zoom_level_set):
+        (ewk_tile_matrix_entry_new):
+        (ewk_tile_matrix_size_get):
+        * ewk/ewk_tiled_matrix.h:
+
 2012-03-09  Jon Lee  <jonlee@apple.com>
 
         Rename NotificationPresenter to NotificationClient

@@ -1501,7 +1501,11 @@ static Eina_Bool _ewk_tiled_backing_store_zoom_set_internal(Ewk_Tiled_Backing_St
     priv->view.offset.zoomCenter.x = currentX;
     priv->view.offset.zoomCenter.y = currentY;
 
-    ewk_tile_matrix_zoom_level_set(priv->model.matrix, *zoom);
+    unsigned long columns, rows;
+    ewk_tile_matrix_size_get(priv->model.matrix, &columns, &rows);
+    if (!ewk_tile_matrix_zoom_level_set(priv->model.matrix, *zoom))
+        ewk_tile_matrix_entry_new(priv->model.matrix, *zoom);
+    ewk_tile_matrix_resize(priv->model.matrix, columns, rows);
 
     if (!priv->view.width || !priv->view.height) {
         priv->view.offset.base.x = 0;

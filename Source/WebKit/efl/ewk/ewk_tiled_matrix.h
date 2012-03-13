@@ -27,10 +27,12 @@
 
 /* matrix of tiles */
 Ewk_Tile_Matrix *ewk_tile_matrix_new(Ewk_Tile_Unused_Cache *tuc, unsigned long cols, unsigned long rows, float zoom_level, Evas_Colorspace color_space, void (*render_callback)(void *data, Ewk_Tile *t, const Eina_Rectangle *update), const void *render_data);
+void ewk_tile_matrix_entry_new(Ewk_Tile_Matrix *tm, float zoom);
 void ewk_tile_matrix_free(Ewk_Tile_Matrix *tm);
 
 void ewk_tile_matrix_resize(Ewk_Tile_Matrix *tm, unsigned long cols, unsigned long rows);
-void ewk_tile_matrix_zoom_level_set(Ewk_Tile_Matrix *tm, float zoom);
+void ewk_tile_matrix_size_get(Ewk_Tile_Matrix *tm, unsigned long *cols, unsigned long *rows);
+bool ewk_tile_matrix_zoom_level_set(Ewk_Tile_Matrix *tm, float zoom);
 void ewk_tile_matrix_invalidate(Ewk_Tile_Matrix *tm);
 
 Ewk_Tile_Unused_Cache *ewk_tile_matrix_unused_cache_get(const Ewk_Tile_Matrix *tm);

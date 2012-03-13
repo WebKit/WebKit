@@ -201,14 +201,10 @@ Ewk_Tile_Matrix* ewk_tile_matrix_new(Ewk_Tile_Unused_Cache* tileUnusedCache, uns
 {
     OwnPtr<Ewk_Tile_Matrix> tileMatrix = adoptPtr(new Ewk_Tile_Matrix);
 
-    tileMatrix->matrix = eina_matrixsparse_new(rows, columns, _ewk_tile_matrix_cell_free, tileMatrix.get());
-    if (!tileMatrix->matrix) {
-        ERR("could not create sparse matrix.");
-        return 0;
-    }
-
     tileMatrix->matrices = 0;
-    ewk_tile_matrix_zoom_level_set(tileMatrix.get(), zoomLevel);
+    if (!ewk_tile_matrix_zoom_level_set(tileMatrix.get(), zoomLevel))
+        ewk_tile_matrix_entry_new(tileMatrix.get(), zoomLevel);
+    ewk_tile_matrix_resize(tileMatrix.get(), columns, rows);
 
     if (tileUnusedCache)
         tileMatrix->tileUnusedCache = ewk_tile_unused_cache_ref(tileUnusedCache);
@@ -238,38 +234,48 @@ Ewk_Tile_Matrix* ewk_tile_matrix_new(Ewk_Tile_Unused_Cache* tileUnusedCache, uns
     return tileMatrix.leakPtr();
 }
 
-void ewk_tile_matrix_zoom_level_set(Ewk_Tile_Matrix* tileMatrix, float zoom)
+/**
+ * Find the matrix with the same zoom and set it as current matrix.
+ *
+ * @param tileMatrix tile matrix to search the matrix in.
+ * @param zoom zoom factor to find the same matrix with it in matrices.
+ *
+ * @return @c true if found, @c false otherwise.
+ */
+bool ewk_tile_matrix_zoom_level_set(Ewk_Tile_Matrix* tileMatrix, float zoom)
 {
-    EINA_SAFETY_ON_NULL_RETURN(tileMatrix);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(tileMatrix, false);
     Ewk_Tile_Matrix_Entry* iterator = 0;
     Ewk_Tile_Matrix_Entry* entry = 0;
-    unsigned long rows = 0, columns = 0;
-
-    eina_matrixsparse_size_get(tileMatrix->matrix, &rows, &columns);
 
     EINA_INLIST_FOREACH(tileMatrix->matrices, iterator) {
         if (iterator->zoom != zoom)
             continue;
         entry = iterator;
         tileMatrix->matrices = eina_inlist_promote(tileMatrix->matrices, EINA_INLIST_GET(entry));
-        eina_matrixsparse_size_set(entry->matrix, rows, columns);
+        tileMatrix->matrix = entry->matrix;
+        return true;
     }
+    return false;
+}
 
-    if (!entry) {
-        entry = new Ewk_Tile_Matrix_Entry;
-        memset(entry, 0, sizeof(Ewk_Tile_Matrix_Entry));
-        entry->matrix = eina_matrixsparse_new(rows, columns, _ewk_tile_matrix_cell_free, tileMatrix);
-        entry->count = 0;
+void ewk_tile_matrix_entry_new(Ewk_Tile_Matrix* tileMatrix, float zoom)
+{
+    EINA_SAFETY_ON_NULL_RETURN(tileMatrix);
+
+    Ewk_Tile_Matrix_Entry* entry = new Ewk_Tile_Matrix_Entry;
+    if (entry) {
         entry->zoom = zoom;
+        entry->count = 0;
+        entry->matrix = eina_matrixsparse_new(1, 1, _ewk_tile_matrix_cell_free, tileMatrix);
         if (!entry->matrix) {
             ERR("could not create sparse matrix.");
             delete entry;
             return;
         }
         tileMatrix->matrices = eina_inlist_prepend(tileMatrix->matrices, EINA_INLIST_GET(entry));
+        tileMatrix->matrix = entry->matrix;
     }
-
-    tileMatrix->matrix = entry->matrix;
 }
 
 void ewk_tile_matrix_invalidate(Ewk_Tile_Matrix* tileMatrix)
@@ -354,6 +360,12 @@ void ewk_tile_matrix_resize(Ewk_Tile_Matrix* tileMatrix, unsigned long cols, uns
 {
     EINA_SAFETY_ON_NULL_RETURN(tileMatrix);
     eina_matrixsparse_size_set(tileMatrix->matrix, rows, cols);
+}
+
+void ewk_tile_matrix_size_get(Ewk_Tile_Matrix* tileMatrix, unsigned long* columns, unsigned long* rows)
+{
+    EINA_SAFETY_ON_NULL_RETURN(tileMatrix);
+    eina_matrixsparse_size_get(tileMatrix->matrix, rows, columns);
 }
 
 /**
