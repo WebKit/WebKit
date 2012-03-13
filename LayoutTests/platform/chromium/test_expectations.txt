@@ -1076,7 +1076,7 @@ BUGCR3244 LINUX WIN : fast/backgrounds/repeat/mask-negative-offset-repeat.html =
 // or might be expected and that we should either go with the buildbot output
 // or change the test upstream to specify explicitly what font to use.
 // The mask part of this test is totally wrong.
-BUGCR3244 LEOPARD LINUX WIN : svg/as-background-image/svg-as-background-6.html = FAIL
+BUGCR3244 : svg/as-background-image/svg-as-background-6.html = FAIL
 
 // Our gradients are wrong here.
 BUGCR19559 LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
@@ -3793,6 +3793,11 @@ BUGWK79703 : fast/regex/overflow.html = TEXT
 
 BUGWK79823 : compositing/repaint/opacity-between-absolute.html = PASS IMAGE
 BUGWK79823 : compositing/reflections/masked-reflection-on-composited.html = PASS IMAGE
+BUGWK79823 : compositing/reflections/reflection-on-composited.html = PASS IMAGE
+BUGWK79823 : compositing/geometry/fixed-position.html = PASS IMAGE
+BUGWK79823 : compositing/reflections/compositing-change-inside-reflection.html = PASS IMAGE
+BUGWK79823 : compositing/webgl/webgl-reflection.html = PASS IMAGE
+BUGWK79823 : platform/chromium/compositing/render-surface-alpha-blending.html = PASS IMAGE
 // Already associated with bug 47949 on Mac.
 BUGWK79823 WIN LINUX : compositing/reflections/nested-reflection.html = PASS IMAGE
 
@@ -3904,9 +3909,6 @@ BUGWK80807 MAC : fast/events/invalid-001.html = PASS CRASH
 BUGWK80807 MAC : fast/events/invalid-002.html = PASS CRASH
 BUGWK80807 MAC : fast/events/invalid-003.html = PASS CRASH
 
-
-//BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = TIMEOUT IMAGE
-BUGWK80976 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = PASS CRASH
 BUGWK80976 SNOWLEOPARD : svg/as-image/svg-nested.html = PASS CRASH
 BUGWK80976 SNOWLEOPARD : svg/custom/fill-opacity-rgba.svg = PASS CRASH
 BUGWK80976 SNOWLEOPARD : tables/mozilla_expected_failures/marvin/table_overflow_td_align_right.html = PASS CRASH
