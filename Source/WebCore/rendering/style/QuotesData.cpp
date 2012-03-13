@@ -28,10 +28,10 @@ QuotesData* QuotesData::create(int stringCount)
     char* tmp = new char[sizeof(QuotesData)+sizeof(String)*stringCount];
     if (!tmp)
         return 0;
-    new (tmp) QuotesData(stringCount);
+    QuotesData* ret = new (tmp) QuotesData(stringCount);
     for (int i = 0; i < stringCount; ++i)
         new (tmp +sizeof(QuotesData) + sizeof(String)*i) String();
-    return reinterpret_cast<QuotesData*>(tmp);
+    return ret;
 }
 
 bool QuotesData::equal(const QuotesData* quotesData1, const QuotesData* quotesData2)
