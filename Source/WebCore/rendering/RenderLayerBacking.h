@@ -186,6 +186,9 @@ private:
     
     bool isMainFrameRenderViewLayer() const;
     
+    bool paintsBoxDecorations() const;
+    bool paintsChildren() const;
+
     // Returns true if this compositing layer has no visible content.
     bool isSimpleContainerCompositingLayer() const;
     // Returns true if this layer has content that needs to be rendered by painting into the backing store.

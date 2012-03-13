@@ -786,6 +786,31 @@ void RenderLayerBacking::updateBackgroundColor()
     m_graphicsLayer->setContentsToBackgroundColor(rendererBackgroundColor());
 }
 
+bool RenderLayerBacking::paintsBoxDecorations() const
+{
+    if (!m_owningLayer->hasVisibleContent())
+        return false;
+
+    if (hasBoxDecorationsOrBackground(renderer()))
+        return true;
+
+    if (m_owningLayer->hasOverflowControls())
+        return true;
+
+    return false;
+}
+
+bool RenderLayerBacking::paintsChildren() const
+{
+    if (m_owningLayer->hasVisibleContent() && containsNonEmptyRenderers())
+        return true;
+        
+    if (hasVisibleNonCompositingDescendantLayers())
+        return true;
+
+    return false;
+}
+
 // A "simple container layer" is a RenderLayer which has no visible content to render.
 // It may have no children, or all its children may be themselves composited.
 // This is a useful optimization, because it allows us to avoid allocating backing store.
@@ -796,21 +821,8 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         renderObject->hasMask())            // masks require special treatment
         return false;
 
-    RenderStyle* style = renderObject->style();
-    bool isVisible = m_owningLayer->hasVisibleContent();
-
-    // Reject anything that has a border, a border-radius or outline,
-    // or any background (color or image).
-    // FIXME: we could optimize layers for simple backgrounds.
-    if (isVisible && hasBoxDecorationsOrBackground(renderObject))
+    if (paintsBoxDecorations() || paintsChildren())
         return false;
-
-    if (isVisible && m_owningLayer->hasOverflowControls())
-        return false;
-
-    // If we have got this far and the renderer has no children, then we're ok.
-    if (!renderObject->firstChild())
-        return true;
     
     if (renderObject->node() && renderObject->node()->isDocumentNode()) {
         // Look to see if the root object has a non-simple background
@@ -818,7 +830,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
         if (!rootObject)
             return false;
         
-        style = rootObject->style();
+        RenderStyle* style = rootObject->style();
         
         // Reject anything that has a border, a border-radius or outline,
         // or is not a simple background (no background, or solid color).
@@ -837,13 +849,6 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
             return false;
     }
 
-    // Check to see if all the renderer's children are compositing layers.
-    if (isVisible && containsNonEmptyRenderers())
-        return false;
-        
-    if (hasVisibleNonCompositingDescendantLayers())
-        return false;
-    
     return true;
 }
 
