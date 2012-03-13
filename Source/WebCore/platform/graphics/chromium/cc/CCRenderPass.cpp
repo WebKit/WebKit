@@ -46,11 +46,13 @@ CCRenderPass::CCRenderPass(CCRenderSurface* targetSurface)
     ASSERT(m_targetSurface);
 }
 
-void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer)
+void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker, CCOverdrawCounts* overdrawCounts)
 {
+    CCQuadCuller quadCuller(m_quadList, layer, occlusionTracker, overdrawCounts);
+
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
-    layer->appendQuads(m_quadList, sharedQuadState.get());
-    layer->appendDebugBorderQuad(m_quadList, sharedQuadState.get());
+    layer->appendQuads(quadCuller, sharedQuadState.get());
+    layer->appendDebugBorderQuad(quadCuller, sharedQuadState.get());
     m_sharedQuadStateList.append(sharedQuadState.release());
 }
 
@@ -63,11 +65,6 @@ void CCRenderPass::appendQuadsForRenderSurfaceLayer(CCLayerImpl* layer)
     OwnPtr<CCSharedQuadState> sharedQuadState = CCSharedQuadState::create(surface->drawTransform(), surface->drawTransform(), surface->contentRect(), surface->clipRect(), surface->drawOpacity(), isOpaque);
     m_quadList.append(CCRenderSurfaceDrawQuad::create(sharedQuadState.get(), surface->contentRect(), layer, surfaceDamageRect()));
     m_sharedQuadStateList.append(sharedQuadState.release());
-}
-
-void CCRenderPass::optimizeQuads(bool haveDamageRect, const FloatRect& damageRect, CCOverdrawCounts* overdraw)
-{
-    CCQuadCuller::cullOccludedQuads(m_quadList, haveDamageRect, damageRect, overdraw);
 }
 
 }

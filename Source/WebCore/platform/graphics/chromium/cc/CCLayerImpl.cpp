@@ -35,6 +35,7 @@
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerAnimationControllerImpl.h"
 #include "cc/CCLayerSorter.h"
+#include "cc/CCQuadCuller.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include <wtf/text/WTFString.h>
 
@@ -133,12 +134,12 @@ PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
     return CCSharedQuadState::create(quadTransform(), drawTransform(), visibleLayerRect(), layerClipRect, drawOpacity(), opaque());
 }
 
-void CCLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
+void CCLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
 {
     appendGutterQuads(quadList, sharedQuadState);
 }
 
-void CCLayerImpl::appendGutterQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
+void CCLayerImpl::appendGutterQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
 {
     if (!backgroundCoversViewport() || !backgroundColor().isValid())
         return;
@@ -170,7 +171,7 @@ void CCLayerImpl::appendGutterQuads(CCQuadList& quadList, const CCSharedQuadStat
     }
 }
 
-void CCLayerImpl::appendDebugBorderQuad(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState) const
+void CCLayerImpl::appendDebugBorderQuad(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState) const
 {
     if (!hasDebugBorders())
         return;

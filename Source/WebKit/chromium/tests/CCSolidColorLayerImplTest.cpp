@@ -27,6 +27,7 @@
 #include "cc/CCSolidColorLayerImpl.h"
 
 #include "CCLayerTestCommon.h"
+#include "MockCCQuadCuller.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCSolidColorDrawQuad.h"
 
@@ -42,7 +43,7 @@ TEST(CCSolidColorLayerImplTest, verifyTilingCompleteAndNoOverlap)
 {
     DebugScopedSetImplThread scopedImplThread;
 
-    CCQuadList quadList;
+    MockCCQuadCuller quadCuller;
     IntSize layerSize = IntSize(800, 600);
     IntRect visibleLayerRect = IntRect(IntPoint(), layerSize);
 
@@ -51,9 +52,9 @@ TEST(CCSolidColorLayerImplTest, verifyTilingCompleteAndNoOverlap)
     layer->setBounds(layerSize);
 
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
-    layer->appendQuads(quadList, sharedQuadState.get());
+    layer->appendQuads(quadCuller, sharedQuadState.get());
 
-    verifyQuadsExactlyCoverRect(quadList, visibleLayerRect);
+    verifyQuadsExactlyCoverRect(quadCuller.quadList(), visibleLayerRect);
 }
 
 TEST(CCSolidColorLayerImplTest, verifyCorrectBackgroundColorInQuad)
@@ -62,7 +63,7 @@ TEST(CCSolidColorLayerImplTest, verifyCorrectBackgroundColorInQuad)
 
     const Color testColor = 0xFFA55AFF;
 
-    CCQuadList quadList;
+    MockCCQuadCuller quadCuller;
     IntSize layerSize = IntSize(100, 100);
     IntRect visibleLayerRect = IntRect(IntPoint(), layerSize);
 
@@ -72,10 +73,10 @@ TEST(CCSolidColorLayerImplTest, verifyCorrectBackgroundColorInQuad)
     layer->setBackgroundColor(testColor);
 
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
-    layer->appendQuads(quadList, sharedQuadState.get());
+    layer->appendQuads(quadCuller, sharedQuadState.get());
 
-    ASSERT_EQ(quadList.size(), 1U);
-    EXPECT_EQ(quadList[0]->toSolidColorDrawQuad()->color(), testColor);
+    ASSERT_EQ(quadCuller.quadList().size(), 1U);
+    EXPECT_EQ(quadCuller.quadList()[0]->toSolidColorDrawQuad()->color(), testColor);
 }
 
 } // namespace

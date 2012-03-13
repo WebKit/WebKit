@@ -30,6 +30,7 @@
 #include "cc/CCSolidColorLayerImpl.h"
 
 #include "LayerRendererChromium.h"
+#include "cc/CCQuadCuller.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
@@ -56,7 +57,7 @@ TransformationMatrix CCSolidColorLayerImpl::quadTransform() const
     return solidColorTransform;
 }
 
-void CCSolidColorLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
+void CCSolidColorLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
 {
     // We create a series of smaller quads instead of just one large one so that the
     // culler can reduce the total pixels drawn.

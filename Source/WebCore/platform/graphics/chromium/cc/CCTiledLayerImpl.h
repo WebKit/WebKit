@@ -43,7 +43,7 @@ public:
     }
     virtual ~CCTiledLayerImpl();
 
-    virtual void appendQuads(CCQuadList&, const CCSharedQuadState*);
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*);
 
     virtual void bindContentsTexture(LayerRendererChromium*);
 

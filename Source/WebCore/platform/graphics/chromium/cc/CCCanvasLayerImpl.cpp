@@ -33,6 +33,7 @@
 #include "LayerRendererChromium.h"
 #include "cc/CCCanvasDrawQuad.h"
 #include "cc/CCProxy.h"
+#include "cc/CCQuadCuller.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -49,7 +50,7 @@ CCCanvasLayerImpl::~CCCanvasLayerImpl()
 {
 }
 
-void CCCanvasLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
+void CCCanvasLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
 {
     IntRect quadRect(IntPoint(), bounds());
     quadList.append(CCCanvasDrawQuad::create(sharedQuadState, quadRect, m_textureId, m_hasAlpha, m_premultipliedAlpha));

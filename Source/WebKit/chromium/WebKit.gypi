@@ -109,6 +109,7 @@
             'tests/LayerTextureUpdaterTest.cpp',
             'tests/LevelDBTest.cpp',
             'tests/LocalizedNumberICUTest.cpp',
+            'tests/MockCCQuadCuller.h',
             'tests/PaintAggregatorTest.cpp',
             'tests/PlatformGestureCurveTest.cpp',
             'tests/PlatformContextSkiaTest.cpp',

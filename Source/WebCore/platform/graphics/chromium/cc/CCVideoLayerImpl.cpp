@@ -36,6 +36,7 @@
 #include "ProgramBinding.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCProxy.h"
+#include "cc/CCQuadCuller.h"
 #include "cc/CCVideoDrawQuad.h"
 #include <wtf/text/WTFString.h>
 
@@ -153,7 +154,7 @@ void CCVideoLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
     }
 }
 
-void CCVideoLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
+void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
 {
     IntRect quadRect(IntPoint(), bounds());
     OwnPtr<CCVideoDrawQuad> videoQuad = CCVideoDrawQuad::create(sharedQuadState, quadRect, m_textures, m_frame, m_format);

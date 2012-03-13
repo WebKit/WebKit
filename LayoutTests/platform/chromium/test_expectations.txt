@@ -3883,6 +3883,11 @@ BUG_SENORBLANCO DEBUG : css3/filters/composited-during-animation-layertree.html 
 // New test, crashing as of r110224:110226.
 BUG_SENORBLANCO : fast/events/input-focus-no-duplicate-events.html = CRASH
 
+// May require rebaseline after this patch lands.
+BUGWK80743 WIN MAC : compositing/geometry/vertical-scroll-composited.html = PASS IMAGE
+BUGWK80743 WIN MAC : compositing/direct-image-compositing.html = PASS IMAGE
+BUGWK80743 WIN MAC : platform/chromium/compositing/huge-layer-rotated.html = PASS IMAGE
+
 BUGWK80563 : css3/filters/effect-combined-hw.html = PASS IMAGE
 BUGWK80563 : css3/filters/effect-hue-rotate-hw.html = PASS IMAGE
 BUGWK80563 : css3/filters/effect-opacity-hw.html = PASS IMAGE

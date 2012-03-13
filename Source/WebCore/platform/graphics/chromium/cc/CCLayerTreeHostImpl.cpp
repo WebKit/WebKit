@@ -221,6 +221,8 @@ static FloatRect damageInSurfaceSpace(CCLayerImpl* renderSurfaceLayer, const Flo
 
 void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLayerList& renderSurfaceLayerList)
 {
+    TRACE_EVENT1("webkit", "CCLayerTreeHostImpl::calculateRenderPasses", "renderSurfaceLayerList.size()", static_cast<long long unsigned>(renderSurfaceLayerList.size()));
+
     renderSurfaceLayerList.append(rootLayer());
 
     if (!rootLayer()->renderSurface())
@@ -240,6 +242,8 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         trackDamageForAllSurfaces(rootLayer(), renderSurfaceLayerList);
     m_rootDamageRect = rootLayer()->renderSurface()->damageTracker()->currentDamageRect();
 
+    // Create the render passes in dependency order.
+    HashMap<CCRenderSurface*, CCRenderPass*> surfacePassMap;
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
         CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex];
         CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
@@ -251,36 +255,48 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
             surfaceDamageRect = damageInSurfaceSpace(renderSurfaceLayer, m_rootDamageRect);
         pass->setSurfaceDamageRect(surfaceDamageRect);
 
-        const CCLayerList& layerList = renderSurface->layerList();
-        for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
-            CCLayerImpl* layer = layerList[layerIndex];
-            if (layer->visibleLayerRect().isEmpty())
-                continue;
-
-            if (CCLayerTreeHostCommon::renderSurfaceContributesToTarget(layer, renderSurfaceLayer->id())) {
-                pass->appendQuadsForRenderSurfaceLayer(layer);
-                continue;
-            }
-
-            layer->willDraw(m_layerRenderer.get());
-            pass->appendQuadsForLayer(layer);
-        }
-
+        surfacePassMap.add(renderSurface, pass.get());
         passes.append(pass.release());
     }
-}
-
-void CCLayerTreeHostImpl::optimizeRenderPasses(CCRenderPassList& passes)
-{
-    TRACE_EVENT1("webkit", "CCLayerTreeHostImpl::optimizeRenderPasses", "passes.size()", static_cast<long long unsigned>(passes.size()));
-
-    bool haveDamageRect = layerRendererCapabilities().usingPartialSwap;
 
     // FIXME: compute overdraw metrics only occasionally, not every frame.
     CCOverdrawCounts overdrawCounts;
-    for (unsigned i = 0; i < passes.size(); ++i) {
-        FloatRect damageRect = passes[i]->surfaceDamageRect();
-        passes[i]->optimizeQuads(haveDamageRect, damageRect, &overdrawCounts);
+
+    IntRect scissorRect;
+    if (layerRendererCapabilities().usingPartialSwap)
+        scissorRect = enclosingIntRect(m_rootDamageRect);
+    else
+        scissorRect = IntRect(IntPoint(), viewportSize());
+    CCOcclusionTrackerImpl occlusionTracker(scissorRect);
+
+    // Add quads to the Render passes in FrontToBack order to allow for testing occlusion and performing culling during the tree walk.
+    typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
+
+    CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
+    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
+        CCRenderSurface* renderSurface = it.targetRenderSurfaceLayer()->renderSurface();
+
+        if (it.representsItself())
+            occlusionTracker.enterTargetRenderSurface(renderSurface);
+        else if (it.representsTargetRenderSurface())
+            occlusionTracker.finishedTargetRenderSurface(*it, renderSurface);
+        else
+            occlusionTracker.leaveToTargetRenderSurface(renderSurface);
+
+        if (it.representsTargetRenderSurface())
+            continue;
+        if (it->visibleLayerRect().isEmpty())
+            continue;
+
+        CCRenderPass* pass = surfacePassMap.get(renderSurface);
+        if (it.representsContributingRenderSurface()) {
+            pass->appendQuadsForRenderSurfaceLayer(*it);
+            continue;
+        }
+
+        it->willDraw(m_layerRenderer.get());
+        pass->appendQuadsForLayer(*it, &occlusionTracker, &overdrawCounts);
+        occlusionTracker.markOccludedBehindLayer(*it);
     }
 
     float normalization = 1000.f / (m_layerRenderer->viewportWidth() * m_layerRenderer->viewportHeight());
@@ -337,8 +353,6 @@ void CCLayerTreeHostImpl::drawLayers()
     CCRenderPassList passes;
     CCLayerList renderSurfaceLayerList;
     calculateRenderPasses(passes, renderSurfaceLayerList);
-
-    optimizeRenderPasses(passes);
 
     m_layerRenderer->beginDrawingFrame();
     for (size_t i = 0; i < passes.size(); ++i)

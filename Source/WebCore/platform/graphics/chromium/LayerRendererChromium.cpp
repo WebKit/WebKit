@@ -412,8 +412,8 @@ void LayerRendererChromium::drawRenderPass(const CCRenderPass* renderPass)
     clearRenderSurface(renderSurface, m_defaultRenderSurface, renderPass->surfaceDamageRect());
 
     const CCQuadList& quadList = renderPass->quadList();
-    for (size_t i = 0; i < quadList.size(); ++i)
-        drawQuad(quadList[i].get(), renderPass->surfaceDamageRect());
+    for (CCQuadList::constBackToFrontIterator it = quadList.backToFrontBegin(); it != quadList.backToFrontEnd(); ++it)
+        drawQuad(it->get(), renderPass->surfaceDamageRect());
 }
 
 void LayerRendererChromium::drawQuad(const CCDrawQuad* quad, const FloatRect& surfaceDamageRect)

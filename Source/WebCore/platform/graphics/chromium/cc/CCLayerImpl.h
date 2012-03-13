@@ -34,8 +34,8 @@
 #include "TextStream.h"
 #include "TransformationMatrix.h"
 #include "cc/CCLayerAnimationControllerImpl.h"
-#include "cc/CCRenderPass.h"
 #include "cc/CCRenderSurface.h"
+#include "cc/CCSharedQuadState.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -44,6 +44,7 @@
 namespace WebCore {
 
 class CCLayerSorter;
+class CCQuadCuller;
 class LayerChromium;
 class LayerRendererChromium;
 
@@ -83,9 +84,9 @@ public:
 
     PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
     virtual void willDraw(LayerRendererChromium*) { }
-    virtual void appendQuads(CCQuadList&, const CCSharedQuadState*);
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*);
     virtual void didDraw() { }
-    void appendDebugBorderQuad(CCQuadList&, const CCSharedQuadState*) const;
+    void appendDebugBorderQuad(CCQuadCuller&, const CCSharedQuadState*) const;
 
     void unreserveContentsTexture();
     virtual void bindContentsTexture(LayerRendererChromium*);
@@ -231,7 +232,7 @@ protected:
     // Transformation used to transform quads provided in appendQuads.
     virtual TransformationMatrix quadTransform() const;
 
-    void appendGutterQuads(CCQuadList&, const CCSharedQuadState*);
+    void appendGutterQuads(CCQuadCuller&, const CCSharedQuadState*);
 
 private:
     void setParent(CCLayerImpl* parent) { m_parent = parent; }

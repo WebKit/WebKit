@@ -1,3 +1,33 @@
+2012-03-13  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Use CCOcclusionTracker for draw culling
+        https://bugs.webkit.org/show_bug.cgi?id=80743
+
+        Reviewed by Adrienne Walker.
+
+        * WebKit.gypi:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::BlendStateCheckLayer::appendQuads):
+        * tests/CCQuadCullerTest.cpp:
+        (TestCCOcclusionTrackerImpl):
+        (WebCore::TestCCOcclusionTrackerImpl::TestCCOcclusionTrackerImpl):
+        (WebCore::TestCCOcclusionTrackerImpl::layerScissorRectInTargetSurface):
+        (WebCore::makeLayer):
+        (WebCore::appendQuads):
+        (WebCore):
+        (WebCore::TEST):
+        * tests/CCSolidColorLayerImplTest.cpp:
+        (CCLayerTestCommon::TEST):
+        * tests/CCTiledLayerImplTest.cpp:
+        (CCLayerTestCommon::TEST):
+        (CCLayerTestCommon::getQuads):
+        * tests/MockCCQuadCuller.h: Added.
+        (WebCore):
+        (MockCCQuadCuller):
+        (WebCore::MockCCQuadCuller::MockCCQuadCuller):
+        (WebCore::MockCCQuadCuller::append):
+        (WebCore::MockCCQuadCuller::quadList):
+
 2012-03-13  Adam Barth  <abarth@webkit.org> && Benjamin Poulain  <bpoulain@apple.com>
 
         Always enable ENABLE(CLIENT_BASED_GEOLOCATION)

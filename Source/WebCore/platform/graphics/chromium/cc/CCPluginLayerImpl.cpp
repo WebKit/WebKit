@@ -34,6 +34,7 @@
 #include "LayerRendererChromium.h"
 #include "cc/CCPluginDrawQuad.h"
 #include "cc/CCProxy.h"
+#include "cc/CCQuadCuller.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -90,7 +91,7 @@ void CCPluginLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
     }
 }
 
-void CCPluginLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
+void CCPluginLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
 {
     IntRect quadRect(IntPoint(), bounds());
     quadList.append(CCPluginDrawQuad::create(sharedQuadState, quadRect, m_uvRect, m_textureId, m_flipped, m_ioSurfaceWidth, m_ioSurfaceHeight, m_ioSurfaceTextureId));

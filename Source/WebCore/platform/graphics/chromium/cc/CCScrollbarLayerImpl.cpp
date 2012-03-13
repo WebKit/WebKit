@@ -34,6 +34,7 @@
 #include "ManagedTexture.h"
 #include "PlatformCanvas.h"
 #include "ScrollbarTheme.h"
+#include "cc/CCQuadCuller.h"
 
 namespace WebCore {
 
@@ -78,7 +79,7 @@ void CCScrollbarLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
     }
 }
 
-void CCScrollbarLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
+void CCScrollbarLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
 {
     if (!m_texture->isReserved())
         return;

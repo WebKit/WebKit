@@ -42,7 +42,7 @@ public:
     virtual ~CCPluginLayerImpl();
 
     virtual void willDraw(LayerRendererChromium*);
-    virtual void appendQuads(CCQuadList&, const CCSharedQuadState*);
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*);
 
     typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexAlpha> Program;
     typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexFlipAlpha> ProgramFlip;

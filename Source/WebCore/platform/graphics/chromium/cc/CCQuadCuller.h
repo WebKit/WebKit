@@ -29,16 +29,21 @@
 #include "cc/CCRenderPass.h"
 
 namespace WebCore {
+class CCLayerImpl;
 
 class CCQuadCuller {
 public:
     // Passing 0 for CCOverdrawCounts* is valid, and disable the extra computation
     // done to estimate over draw statistics.
-    static void cullOccludedQuads(CCQuadList&, bool haveDamageRect, const FloatRect& damageRect, CCOverdrawCounts*);
+    CCQuadCuller(CCQuadList&, CCLayerImpl*, CCOcclusionTrackerImpl*, CCOverdrawCounts*);
+
+    virtual void append(PassOwnPtr<CCDrawQuad> passDrawQuad);
 
 private:
-    // Make non-instantiable.
-    CCQuadCuller() { }
+    CCQuadList& m_quadList;
+    CCLayerImpl* m_layer;
+    CCOcclusionTrackerImpl* m_occlusionTracker;
+    CCOverdrawCounts* m_overdrawCounts;
 };
 
 }

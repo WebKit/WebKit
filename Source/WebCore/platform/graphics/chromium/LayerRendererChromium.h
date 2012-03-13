@@ -41,6 +41,7 @@
 #include "TrackingTextureAllocator.h"
 #include "VideoLayerChromium.h"
 #include "cc/CCCanvasLayerImpl.h"
+#include "cc/CCDrawQuad.h"
 #include "cc/CCHeadsUpDisplay.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCPluginLayerImpl.h"
