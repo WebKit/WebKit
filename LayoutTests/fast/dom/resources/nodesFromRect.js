@@ -5,13 +5,13 @@
 
 function check(x, y, topPadding, rightPadding, bottomPadding, leftPadding, list, doc)
 {
-  if (!window.layoutTestController)
+  if (!window.internals)
     return;
 
   if (!doc)
     doc = document;
 
-  var nodes = layoutTestController.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */);
+  var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */);
   if (!nodes)
     return;
 

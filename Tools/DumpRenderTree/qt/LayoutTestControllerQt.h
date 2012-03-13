@@ -243,8 +243,6 @@ public slots:
     void abortModal() {}
     bool hasSpellingMarker(int from, int length);
 
-    QVariantList nodesFromRect(const QWebElement& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
-
     void addURLToRedirect(const QString& origin, const QString& destination);
 
     /*

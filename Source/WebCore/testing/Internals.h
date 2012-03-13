@@ -27,6 +27,7 @@
 #define Internals_h
 
 #include "FrameDestructionObserver.h"
+#include "NodeList.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -124,6 +125,9 @@ public:
 
     unsigned wheelEventHandlerCount(Document*, ExceptionCode&);
     unsigned touchEventHandlerCount(Document*, ExceptionCode&);
+
+    PassRefPtr<NodeList> nodesFromRect(Document*, int x, int y, unsigned topPadding, unsigned rightPadding,
+        unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, ExceptionCode&) const;
 
     static const char* internalsId;
 

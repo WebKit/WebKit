@@ -692,4 +692,15 @@ unsigned Internals::touchEventHandlerCount(Document* document, ExceptionCode& ec
     return document->touchEventHandlerCount();
 }
 
+PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int x, int y, unsigned topPadding, unsigned rightPadding,
+    unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, ExceptionCode& ec) const
+{
+    if (!document || !document->frame() || !document->frame()->view()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return document->nodesFromRect(x, y, topPadding, rightPadding, bottomPadding, leftPadding, ignoreClipping);
+}
+
 }

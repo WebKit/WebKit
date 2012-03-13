@@ -723,12 +723,6 @@ bool LayoutTestController::hasSpellingMarker(int from, int length)
     return mainFrame->editor()->selectionStartHasMarkerFor(WebCore::DocumentMarker::Spelling, from, length);
 }
 
-JSValueRef LayoutTestController::nodesFromRect(JSContextRef context, JSValueRef value, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping)
-{
-    notImplemented();
-    return JSValueMakeUndefined(context);
-}
-
 void LayoutTestController::setSerializeHTTPLoads(bool)
 {
     // FIXME: Implement if needed for https://bugs.webkit.org/show_bug.cgi?id=50758.

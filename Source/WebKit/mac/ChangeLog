@@ -1,3 +1,17 @@
+2012-03-12  Antonio Gomes  <agomes@rim.com>
+
+        Convert nodesFromRect tests to use Internals interface
+        https://bugs.webkit.org/show_bug.cgi?id=80886
+
+        Reviewed by Ryosuke Niwa.
+
+        Removed mac specific support for nodesFromRect for testing purposes only,
+        since it can work in a cross-port way through the Internals interface.
+
+        * WebKit.order:
+        * WebView/WebView.mm:
+        * WebView/WebViewPrivate.h:
+
 2012-03-13  Anders Carlsson  <andersca@apple.com>
 
         Remove a nonexistent WebUIDelegate method from WebUIDelegatePrivate.h
