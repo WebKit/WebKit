@@ -2094,7 +2094,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             const AnimationList* t = style->animations();
             if (t) {
                 for (size_t i = 0; i < t->size(); ++i) {
-                    int iterationCount = t->animation(i)->iterationCount();
+                    double iterationCount = t->animation(i)->iterationCount();
                     if (iterationCount == Animation::IterationCountInfinite)
                         list->append(cssValuePool->createIdentifierValue(CSSValueInfinite));
                     else

@@ -1688,8 +1688,11 @@ double AnimationBase::fractionalTime(double scale, double elapsedTime, double of
         fractionalTime = 0;
 
     int integralTime = static_cast<int>(fractionalTime);
-    if (m_animation->iterationCount() != Animation::IterationCountInfinite)
-        integralTime = min(integralTime, m_animation->iterationCount() - 1);
+    const int integralIterationCount = static_cast<int>(m_animation->iterationCount());
+    const bool iterationCountHasFractional = m_animation->iterationCount() - integralIterationCount;
+    if (m_animation->iterationCount() != Animation::IterationCountInfinite && !iterationCountHasFractional)
+        integralTime = min(integralTime, integralIterationCount - 1);
+
     fractionalTime -= integralTime;
 
     if (((m_animation->direction() == Animation::AnimationDirectionAlternate) && (integralTime & 1))
@@ -1716,8 +1719,11 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
 
     if (postActive() || !m_animation->duration())
         return 1.0;
-    if (m_animation->iterationCount() > 0 && elapsedTime >= dur)
-        return (m_animation->iterationCount() % 2) ? 1.0 : 0.0;
+    if (m_animation->iterationCount() > 0 && elapsedTime >= dur) {
+        const int integralIterationCount = static_cast<int>(m_animation->iterationCount());
+        const bool iterationCountHasFractional = m_animation->iterationCount() - integralIterationCount;
+        return (integralIterationCount % 2 || iterationCountHasFractional) ? 1.0 : 0.0;
+    }
 
     const double fractionalTime = this->fractionalTime(scale, elapsedTime, offset);
 

@@ -4396,7 +4396,7 @@ void CSSStyleSelector::mapAnimationIterationCount(Animation* animation, CSSValue
     if (primitiveValue->getIdent() == CSSValueInfinite)
         animation->setIterationCount(-1);
     else
-        animation->setIterationCount(int(primitiveValue->getFloatValue()));
+        animation->setIterationCount(primitiveValue->getFloatValue());
 }
 
 void CSSStyleSelector::mapAnimationName(Animation* layer, CSSValue* value)

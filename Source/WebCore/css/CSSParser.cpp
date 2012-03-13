@@ -3425,7 +3425,7 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationIterationCount()
     CSSParserValue* value = m_valueList->current();
     if (value->id == CSSValueInfinite)
         return cssValuePool()->createIdentifierValue(value->id);
-    if (validUnit(value, FInteger | FNonNeg, m_strict))
+    if (validUnit(value, FNumber | FNonNeg, m_strict))
         return createPrimitiveNumericValue(value);
     return 0;
 }
