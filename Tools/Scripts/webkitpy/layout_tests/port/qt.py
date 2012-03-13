@@ -132,9 +132,6 @@ class QtPort(WebKitPort):
                 search_paths.add('qt-5.0-wk1')
         return search_paths
 
-    def _runtime_feature_list(self):
-        return None
-
     def setup_environ_for_server(self, server_name=None):
         clean_env = WebKitPort.setup_environ_for_server(self, server_name)
         clean_env['QTWEBKIT_PLUGIN_PATH'] = self._build_path('lib/plugins')

@@ -1,3 +1,34 @@
+2012-03-12  Dirk Pranke  <dpranke@chromium.org>
+
+        _runtime_feature_list isn't supported on Apple Mac DRT
+        https://bugs.webkit.org/show_bug.cgi?id=80906
+
+        Reviewed by Eric Seidel.
+
+        It looks like this feature is actually only supported on the Win
+        DRT port, so this patch reworks the code to make that clearer
+        and reduce unnecessary overrides.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort._path_to_webcore_library):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort._path_to_webcore_library):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort._skipped_file_search_paths):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._runtime_feature_list):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (TestWebKitPort.__init__):
+        (TestWebKitPort.all_test_configurations):
+        (test_skipped_directories_for_features):
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort):
+        (WinPort._runtime_feature_list):
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        (WinPortTest.test_operating_system):
+        (WinPortTest):
+        (WinPortTest.test_runtime_feature_list):
+
 2012-03-12  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Temporary build-fix for the Android bot

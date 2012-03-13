@@ -136,9 +136,6 @@ class GtkPort(WebKitPort):
                 return full_library
         return None
 
-    def _runtime_feature_list(self):
-        return None
-
     # FIXME: We should find a way to share this implmentation with Gtk,
     # or teach run-launcher how to call run-safari and move this down to WebKitPort.
     def show_results_html_file(self, results_filename):

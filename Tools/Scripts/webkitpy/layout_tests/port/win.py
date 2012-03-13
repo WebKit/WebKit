@@ -30,7 +30,7 @@ import logging
 import re
 import sys
 
-from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.system.executive import ScriptError, Executive
 from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.layout_tests.port.apple import ApplePort
 
@@ -80,3 +80,17 @@ class WinPort(ApplePort):
     # FIXME: webkitperl/httpd.pm installs /usr/lib/apache/libphp4.dll on cycwin automatically
     # as part of running old-run-webkit-tests.  That's bad design, but we may need some similar hack.
     # We might use setup_environ_for_server for such a hack (or modify apache_http_server.py).
+
+    def _runtime_feature_list(self):
+        supported_features_command = [self._path_to_driver(), '--print-supported-features']
+        try:
+            output = self._executive.run_command(supported_features_command, error_handler=Executive.ignore_error)
+        except OSError, e:
+            _log.warn("Exception running driver: %s, %s.  Driver must be built before calling WebKitPort.test_expectations()." % (supported_features_command, e))
+            return None
+
+        # Note: win/DumpRenderTree.cpp does not print a leading space before the features_string.
+        match_object = re.match("SupportedFeatures:\s*(?P<features_string>.*)\s*", output)
+        if not match_object:
+            return None
+        return match_object.group('features_string').split(' ')

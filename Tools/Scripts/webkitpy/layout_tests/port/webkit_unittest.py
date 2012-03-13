@@ -41,19 +41,15 @@ from webkitpy.tool.mocktool import MockOptions
 class TestWebKitPort(WebKitPort):
     port_name = "testwebkitport"
 
-    def __init__(self, symbols_string=None, feature_list=None,
+    def __init__(self, symbols_string=None,
                  expectations_file=None, skips_file=None, host=None,
                  **kwargs):
         self.symbols_string = symbols_string  # Passing "" disables all staticly-detectable features.
-        self.feature_list = feature_list  # Passing [] disables all runtime-detectable features.
         host = host or MockSystemHost()
         WebKitPort.__init__(self, host=host, **kwargs)
 
     def all_test_configurations(self):
         return [self.test_configuration()]
-
-    def _runtime_feature_list(self):
-        return self.feature_list
 
     def _webcore_symbols_string(self):
         return self.symbols_string
@@ -125,18 +121,12 @@ class WebKitPortTest(port_testcase.PortTestCase):
         result_directories = set(TestWebKitPort(symbols_string, None)._skipped_tests_for_unsupported_features(test_list=['mathml/foo.html']))
         self.assertEqual(result_directories, expected_directories)
 
-    def test_runtime_feature_list(self):
-        port = WebKitPort(MockSystemHost())
-        port._executive.run_command = lambda command, cwd=None, error_handler=None: "Nonsense"
-        # runtime_features_list returns None when its results are meaningless (it couldn't run DRT or parse the output, etc.)
-        self.assertEquals(port._runtime_feature_list(), None)
-        port._executive.run_command = lambda command, cwd=None, error_handler=None: "SupportedFeatures:foo bar"
-        self.assertEquals(port._runtime_feature_list(), ['foo', 'bar'])
-
     def test_skipped_directories_for_features(self):
         supported_features = ["Accelerated Compositing", "Foo Feature"]
         expected_directories = set(["animations/3d", "transforms/3d"])
-        result_directories = set(TestWebKitPort(None, supported_features)._skipped_tests_for_unsupported_features(test_list=["animations/3d/foo.html"]))
+        port = TestWebKitPort(None, supported_features)
+        port._runtime_feature_list = lambda: supported_features
+        result_directories = set(port._skipped_tests_for_unsupported_features(test_list=["animations/3d/foo.html"]))
         self.assertEqual(result_directories, expected_directories)
 
     def test_skipped_directories_for_features_no_matching_tests_in_test_list(self):

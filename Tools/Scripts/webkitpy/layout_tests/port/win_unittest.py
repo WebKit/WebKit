@@ -95,3 +95,11 @@ class WinPortTest(port_testcase.PortTestCase):
 
     def test_operating_system(self):
         self.assertEqual('win', self.make_port().operating_system())
+
+    def test_runtime_feature_list(self):
+        port = self.make_port()
+        port._executive.run_command = lambda command, cwd=None, error_handler=None: "Nonsense"
+        # runtime_features_list returns None when its results are meaningless (it couldn't run DRT or parse the output, etc.)
+        self.assertEquals(port._runtime_feature_list(), None)
+        port._executive.run_command = lambda command, cwd=None, error_handler=None: "SupportedFeatures:foo bar"
+        self.assertEquals(port._runtime_feature_list(), ['foo', 'bar'])
