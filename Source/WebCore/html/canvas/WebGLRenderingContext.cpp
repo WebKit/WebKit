@@ -752,6 +752,11 @@ void WebGLRenderingContext::reshape(int width, int height)
         m_drawingBuffer->reset(IntSize(width, height));
     else
         m_context->reshape(width, height);
+
+    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, objectOrZero(m_textureUnits[m_activeTextureUnit].m_texture2DBinding.get()));
+    m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, objectOrZero(m_renderbufferBinding.get()));
+    if (m_framebufferBinding)
+      m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, objectOrZero(m_framebufferBinding.get()));
 }
 
 int WebGLRenderingContext::drawingBufferWidth() const
