@@ -2986,8 +2986,6 @@
 		8AA61CFF144D595B00F37350 /* WebKitCSSRegionRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AA61CFD144D595B00F37350 /* WebKitCSSRegionRule.cpp */; };
 		8AA61D00144D595B00F37350 /* WebKitCSSRegionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AA61CFE144D595B00F37350 /* WebKitCSSRegionRule.h */; };
 		8AB4BC77126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AB4BC76126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h */; };
-		8ABAFB9F14F5107500A4984B /* RegionNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8ABAFB9D14F5107500A4984B /* RegionNodeList.cpp */; };
-		8ABAFBA014F5107500A4984B /* RegionNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ABAFB9E14F5107500A4984B /* RegionNodeList.h */; };
 		8AD0A59414C88336000D83C5 /* JSWebKitCSSRegionRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC24CD148E24B200EFCC0D /* JSWebKitCSSRegionRule.cpp */; };
 		8AD0A59514C88336000D83C5 /* JSWebKitCSSRegionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ACC24CE148E24B200EFCC0D /* JSWebKitCSSRegionRule.h */; };
 		8AD0A59614C88358000D83C5 /* DOMWebKitCSSRegionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ACC2817148E47E700EFCC0D /* DOMWebKitCSSRegionRule.h */; };
@@ -9906,8 +9904,6 @@
 		8AA61CFD144D595B00F37350 /* WebKitCSSRegionRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSRegionRule.cpp; sourceTree = "<group>"; };
 		8AA61CFE144D595B00F37350 /* WebKitCSSRegionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSRegionRule.h; sourceTree = "<group>"; };
 		8AB4BC76126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IgnoreDestructiveWriteCountIncrementer.h; sourceTree = "<group>"; };
-		8ABAFB9D14F5107500A4984B /* RegionNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegionNodeList.cpp; sourceTree = "<group>"; };
-		8ABAFB9E14F5107500A4984B /* RegionNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegionNodeList.h; sourceTree = "<group>"; };
 		8ACC24CD148E24B200EFCC0D /* JSWebKitCSSRegionRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSRegionRule.cpp; sourceTree = "<group>"; };
 		8ACC24CE148E24B200EFCC0D /* JSWebKitCSSRegionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSRegionRule.h; sourceTree = "<group>"; };
 		8ACC2817148E47E700EFCC0D /* DOMWebKitCSSRegionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSRegionRule.h; sourceTree = "<group>"; };
@@ -21023,8 +21019,6 @@
 				D23CA56B0AB0EB8D005108A5 /* RangeException.h */,
 				D23CA5480AB0E983005108A5 /* RangeException.idl */,
 				A84D827B11D333ED00972990 /* RawDataDocumentParser.h */,
-				8ABAFB9D14F5107500A4984B /* RegionNodeList.cpp */,
-				8ABAFB9E14F5107500A4984B /* RegionNodeList.h */,
 				85031B350A44EFC700F992E0 /* RegisteredEventListener.cpp */,
 				85031B360A44EFC700F992E0 /* RegisteredEventListener.h */,
 				A76E5F7E135E0DCF00A69837 /* RenderedDocumentMarker.h */,
@@ -23720,7 +23714,6 @@
 				FD31603E12B0267600C1A359 /* RealtimeAnalyserNode.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
 				BCAB418213E356E800D8AAF3 /* Region.h in Headers */,
-				8ABAFBA014F5107500A4984B /* RegionNodeList.h in Headers */,
 				85031B4C0A44EFC700F992E0 /* RegisteredEventListener.h in Headers */,
 				B2C3DA2D0D006C1D00EF6F26 /* RegularExpression.h in Headers */,
 				93309E01099E64920056E581 /* RemoveCSSPropertyCommand.h in Headers */,
@@ -26861,7 +26854,6 @@
 				FD31603B12B0267600C1A359 /* RealtimeAnalyser.cpp in Sources */,
 				FD31603D12B0267600C1A359 /* RealtimeAnalyserNode.cpp in Sources */,
 				BCAB418113E356E800D8AAF3 /* Region.cpp in Sources */,
-				8ABAFB9F14F5107500A4984B /* RegionNodeList.cpp in Sources */,
 				85031B4B0A44EFC700F992E0 /* RegisteredEventListener.cpp in Sources */,
 				B2C3DA2C0D006C1D00EF6F26 /* RegularExpression.cpp in Sources */,
 				93309E00099E64920056E581 /* RemoveCSSPropertyCommand.cpp in Sources */,

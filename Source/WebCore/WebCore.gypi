@@ -5174,8 +5174,6 @@
             'dom/Range.cpp',
             'dom/RangeException.cpp',
             'dom/RangeException.h',
-            'dom/RegionNodeList.cpp',
-            'dom/RegionNodeList.h',
             'dom/RawDataDocumentParser.h',
             'dom/RegisteredEventListener.cpp',
             'dom/RequestAnimationFrameCallback.h',

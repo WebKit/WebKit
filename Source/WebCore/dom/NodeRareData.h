@@ -29,7 +29,6 @@
 #include "MutationObserverRegistration.h"
 #include "NameNodeList.h"
 #include "QualifiedName.h"
-#include "RegionNodeList.h"
 #include "TagNodeList.h"
 #include "WebKitMutationObserver.h"
 #include <wtf/HashSet.h>
@@ -73,9 +72,6 @@ public:
 
     LabelsNodeList* m_labelsNodeListCache;
 
-    typedef HashMap<AtomicString, RegionNodeList*> RegionNodeListCache;
-    RegionNodeListCache m_regionNodeListCache;
- 
     static PassOwnPtr<NodeListsNodeData> create()
     {
         return adoptPtr(new NodeListsNodeData);

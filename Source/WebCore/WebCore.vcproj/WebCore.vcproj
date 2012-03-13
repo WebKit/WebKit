@@ -51574,14 +51574,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\RegionNodeList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\dom\RegionNodeList.h"
-				>
-			</File>
-			<File
 				RelativePath="..\dom\RegisteredEventListener.cpp"
 				>
 				<FileConfiguration

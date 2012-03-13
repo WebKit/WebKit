@@ -611,7 +611,6 @@ SET(WebCore_SOURCES
     dom/QualifiedName.cpp
     dom/Range.cpp
     dom/RangeException.cpp
-    dom/RegionNodeList.cpp
     dom/RegisteredEventListener.cpp
     dom/ScopedEventQueue.cpp
     dom/ScriptableDocumentParser.cpp

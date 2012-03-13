@@ -1838,8 +1838,6 @@ webcore_sources += \
 	Source/WebCore/dom/RangeException.h \
 	Source/WebCore/dom/Range.h \
 	Source/WebCore/dom/RawDataDocumentParser.h \
-	Source/WebCore/dom/RegionNodeList.cpp \
-	Source/WebCore/dom/RegionNodeList.h \
 	Source/WebCore/dom/RegisteredEventListener.cpp \
 	Source/WebCore/dom/RegisteredEventListener.h \
 	Source/WebCore/dom/RenderedDocumentMarker.h \

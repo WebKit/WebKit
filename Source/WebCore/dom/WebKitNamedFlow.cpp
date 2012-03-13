@@ -30,8 +30,6 @@
 #include "config.h"
 #include "WebKitNamedFlow.h"
 
-#include "Node.h"
-#include "NodeList.h"
 #include "RenderFlowThread.h"
 
 namespace WebCore {
@@ -49,14 +47,6 @@ bool WebKitNamedFlow::overflow() const
 {
     m_parentFlowThread->document()->updateLayoutIgnorePendingStylesheets();
     return m_parentFlowThread->overflow();
-}
-
-PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContentNode(Node* contentNode)
-{
-    if (!contentNode)
-        return 0;
-    m_parentFlowThread->document()->updateLayoutIgnorePendingStylesheets(); 
-    return contentNode->getRegionsByContentNode(m_parentFlowThread->flowThread());
 }
 
 } // namespace WebCore

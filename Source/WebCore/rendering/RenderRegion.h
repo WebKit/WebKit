@@ -56,7 +56,6 @@ public:
     void attachRegion();
     void detachRegion();
 
-    RenderFlowThread* flowThread() const { return m_flowThread; }
     RenderFlowThread* parentFlowThread() const { return m_parentFlowThread; }
 
     // Valid regions do not create circular dependencies with other flows.
