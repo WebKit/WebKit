@@ -76,7 +76,7 @@ enum ReasonFrameCannotBeInPageCache {
     QuickRedirectComing,
     IsLoadingInAPISense,
     IsStopping,
-    CanSuspendActiveDOMObjects,
+    CannotSuspendActiveDOMObjects,
     DocumentLoaderUsesApplicationCache,
     ClientDeniesCaching,
     NumberOfReasonsFramesCannotBeInPageCache,
@@ -159,7 +159,7 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
         }
         if (!frame->document()->canSuspendActiveDOMObjects()) {
             PCLOG("   -The document cannot suspect its active DOM Objects");
-            rejectReasons |= 1 << CanSuspendActiveDOMObjects;
+            rejectReasons |= 1 << CannotSuspendActiveDOMObjects;
         }
         if (!frame->loader()->documentLoader()->applicationCacheHost()->canCacheInPageCache()) {
             PCLOG("   -The DocumentLoader uses an application cache");
