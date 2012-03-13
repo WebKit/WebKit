@@ -32,7 +32,6 @@
 #include "V8DOMWrapper.h"
 
 #include "ArrayBufferView.h"
-#include "DOMDataStore.h"
 #include "DocumentLoader.h"
 #include "EventTargetHeaders.h"
 #include "EventTargetInterfaces.h"
@@ -41,13 +40,11 @@
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
 #include "V8Collection.h"
-#include "V8DOMMap.h"
 #include "V8EventListener.h"
 #include "V8EventListenerList.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
 #include "V8HiddenPropertyName.h"
-#include "V8IsolatedContext.h"
 #include "V8Location.h"
 #include "V8NamedNodeMap.h"
 #include "V8NodeFilterCondition.h"
@@ -68,20 +65,6 @@
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
-
-static ALWAYS_INLINE v8::Handle<v8::Object> getCachedWrapperInline(Node* node)
-{
-    V8IsolatedContext* context = V8IsolatedContext::getEntered();
-    if (LIKELY(!context)) {
-        v8::Persistent<v8::Object>* wrapper = node->wrapper();
-        if (!wrapper)
-            return v8::Handle<v8::Object>();
-        return *wrapper;
-    }
-    DOMDataStore* store = context->world()->domDataStore();
-    DOMNodeMapping& domNodeMap = node->isActiveNode() ? store->activeDomNodeMap() : store->domNodeMap();
-    return domNodeMap.get(node);
-}
 
 // The caller must have increased obj's ref count.
 void V8DOMWrapper::setJSWrapperForDOMObject(void* object, v8::Persistent<v8::Object> wrapper)
@@ -301,11 +284,6 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
 
     WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(object->GetPointerFromInternalField(v8DOMWrapperTypeIndex));
     return typeInfo == type;
-}
-
-v8::Handle<v8::Object> V8DOMWrapper::getCachedWrapperSlow(Node* node)
-{
-    return getCachedWrapperInline(node);
 }
 
 #define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \

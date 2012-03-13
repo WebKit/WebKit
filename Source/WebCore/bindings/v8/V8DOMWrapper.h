@@ -31,6 +31,7 @@
 #ifndef V8DOMWrapper_h
 #define V8DOMWrapper_h
 
+#include "DOMDataStore.h"
 #include "Event.h"
 #include "IsolatedWorld.h"
 #include "Node.h"
@@ -38,6 +39,7 @@
 #include "PlatformString.h"
 #include "V8CustomXPathNSResolver.h"
 #include "V8Event.h"
+#include "V8IsolatedContext.h"
 #include "V8Utilities.h"
 #include "V8XPathNSResolver.h"
 #include "WrapperTypeInfo.h"
@@ -132,11 +134,18 @@ namespace WebCore {
                 if (LIKELY(!!wrapper))
                     return *wrapper;
             }
-            return getCachedWrapperSlow(node);
-        }
 
-    private:
-        static v8::Handle<v8::Object> getCachedWrapperSlow(Node*);
+            V8IsolatedContext* context = V8IsolatedContext::getEntered();
+            if (LIKELY(!context)) {
+                v8::Persistent<v8::Object>* wrapper = node->wrapper();
+                if (!wrapper)
+                    return v8::Handle<v8::Object>();
+                return *wrapper;
+            }
+            DOMDataStore* store = context->world()->domDataStore();
+            DOMNodeMapping& domNodeMap = node->isActiveNode() ? store->activeDomNodeMap() : store->domNodeMap();
+            return domNodeMap.get(node);
+        }
     };
 
 }
