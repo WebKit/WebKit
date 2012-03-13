@@ -125,6 +125,28 @@ PASS var a = Object.defineProperty([42], '0', {writable: false}); a[0] = false; 
 PASS 'use strict'; var a = Object.defineProperty([42], '0', {writable: false}); a[0] = false; a[0]; threw exception TypeError: Attempted to assign to readonly property..
 PASS var a = Object.defineProperty([], '0', {set: undefined}); a[0] = 42; a[0]; is undefined.
 PASS 'use strict'; var a = Object.defineProperty([], '0', {set: undefined}); a[0] = 42; a[0]; threw exception TypeError: Attempted to assign to readonly property..
+PASS anObj.slot1 is "foo"
+PASS anObj.slot2 is "bar"
+PASS anObj.propertyIsEnumerable('slot1') is true
+PASS anObj.propertyIsEnumerable('slot2') is false
+PASS anObj.slot4 is "goo"
+PASS anObj.slot5 is 123
+PASS anObj._Slot5 is 123
+PASS Object.getOwnPropertyDescriptor(anObj, 'slot5') is undefined.
+PASS anObj.slot5 is 456
+PASS anObj._Slot5 is 123
+PASS Object.getOwnPropertyDescriptor(anObj, 'slot5').value is 456
+PASS anObj.slot1 is "foo"
+PASS anObj.slot2 is "bar"
+PASS anObj.propertyIsEnumerable('slot1') is true
+PASS anObj.propertyIsEnumerable('slot2') is false
+PASS anObj.slot4 is "goo"
+PASS anObj.slot5 is 123
+PASS anObj._Slot5 is 123
+PASS Object.getOwnPropertyDescriptor(anObj, 'slot5') is undefined.
+PASS anObj.slot5 is 456
+PASS anObj._Slot5 is 123
+PASS Object.getOwnPropertyDescriptor(anObj, 'slot5').value is 456
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -183,3 +183,34 @@ shouldThrow("'use strict'; var a = Object.defineProperty([42], '0', {writable: f
 // If array property is an undefined setter, [[Put]] should fail.
 shouldBeUndefined("var a = Object.defineProperty([], '0', {set: undefined}); a[0] = 42; a[0];");
 shouldThrow("'use strict'; var a = Object.defineProperty([], '0', {set: undefined}); a[0] = 42; a[0];");
+
+function testObject()
+{
+    // Test case from https://bugs.webkit.org/show_bug.cgi?id=38636
+    Object.defineProperty(anObj, 'slot1', {value: 'foo', enumerable: true});
+    Object.defineProperty(anObj, 'slot2', {value: 'bar', writable: true}); 
+    Object.defineProperty(anObj, 'slot3', {value: 'baz', enumerable: false}); 
+    Object.defineProperty(anObj, 'slot4', {value: 'goo', configurable: false}); 
+    shouldBe("anObj.slot1", '"foo"');
+    shouldBe("anObj.slot2", '"bar"');
+    anObj.slot2 = 'bad value';
+    shouldBeTrue("anObj.propertyIsEnumerable('slot1')");
+    shouldBeFalse("anObj.propertyIsEnumerable('slot2')");
+    delete anObj.slot4;
+    shouldBe("anObj.slot4", '"goo"');
+
+    // Test case from https://bugs.webkit.org/show_bug.cgi?id=48911
+    Object.defineProperty(Object.getPrototypeOf(anObj), 'slot5', {get: function() { return this._Slot5; }, set: function(v) { this._Slot5 = v; }, configurable: false}); 
+    anObj.slot5 = 123;
+    shouldBe("anObj.slot5", '123');
+    shouldBe("anObj._Slot5", '123');
+    shouldBeUndefined("Object.getOwnPropertyDescriptor(anObj, 'slot5')");
+    Object.defineProperty(anObj, 'slot5', { value: 456 });
+    shouldBe("anObj.slot5", '456');
+    shouldBe("anObj._Slot5", '123');
+    shouldBe("Object.getOwnPropertyDescriptor(anObj, 'slot5').value", '456');
+}
+var anObj = {};
+testObject();
+var anObj = this;
+testObject();
