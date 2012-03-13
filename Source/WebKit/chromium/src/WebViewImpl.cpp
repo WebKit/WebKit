@@ -176,7 +176,7 @@ using namespace std;
 // (such as due to a double tap gesture or find in page etc.). These are
 // experimentally determined.
 static const int touchPointPadding = 32;
-static const float minScaleDifference = 0.01;
+static const float minScaleDifference = 0.01f;
 static const float doubleTapZoomContentDefaultMargin = 5;
 static const float doubleTapZoomContentMinimumMargin = 2;
 

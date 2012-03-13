@@ -1,3 +1,9 @@
+2012-03-12  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed Windows build fix.
+
+        * src/WebViewImpl.cpp:
+
 2012-03-12  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Use projectQuad to apply inverse mapRect
