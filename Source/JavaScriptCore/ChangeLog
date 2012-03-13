@@ -1,3 +1,13 @@
+2012-03-13  Hojong Han  <hojong.han@samsung.com>
+
+        Dump the generated code for ARM_TRADITIONAL
+        https://bugs.webkit.org/show_bug.cgi?id=80975
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::dumpCode):
+
 2012-03-13  Adam Barth  <abarth@webkit.org> && Benjamin Poulain  <bpoulain@apple.com>
 
         Always enable ENABLE(CLIENT_BASED_GEOLOCATION)

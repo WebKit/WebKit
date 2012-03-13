@@ -374,6 +374,23 @@ private:
         
         for (unsigned i = 0; i < tsize; i++)
             dataLog("\t.short\t0x%x\n", tcode[i]);
+#elif CPU(ARM_TRADITIONAL)
+        //   gcc -c jit.s
+        //   objdump -D jit.o
+        static unsigned codeCount = 0;
+        unsigned int* tcode = static_cast<unsigned int*>(code);
+        size_t tsize = size / sizeof(unsigned int);
+        char nameBuf[128];
+        snprintf(nameBuf, sizeof(nameBuf), "_jsc_jit%u", codeCount++);
+        dataLog("\t.globl\t%s\n"
+                    "\t.align 4\n"
+                    "\t.code 32\n"
+                    "\t.text\n"
+                    "# %p\n"
+                    "%s:\n", nameBuf, code, nameBuf);
+
+        for (unsigned i = 0; i < tsize; i++)
+            dataLog("\t.long\t0x%x\n", tcode[i]);
 #endif
     }
 #endif
