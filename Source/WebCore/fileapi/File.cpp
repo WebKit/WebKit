@@ -50,8 +50,7 @@ static PassOwnPtr<BlobData> createBlobDataForFile(const String& path)
     return createBlobDataForFileWithType(path, type);
 }
 
-#if ENABLE(FILE_SYSTEM)
-static PassOwnPtr<BlobData> createBlobDataForFileSystemFile(const String& path, const String& fileSystemName)
+static PassOwnPtr<BlobData> createBlobDataForFileWithName(const String& path, const String& fileSystemName)
 {
     String type;
     int index = fileSystemName.reverseFind('.');
@@ -59,7 +58,6 @@ static PassOwnPtr<BlobData> createBlobDataForFileSystemFile(const String& path, 
         type = MIMETypeRegistry::getWellKnownMIMETypeForExtension(fileSystemName.substring(index + 1));
     return createBlobDataForFileWithType(path, type);
 }
-#endif
 
 #if ENABLE(DIRECTORY_UPLOAD)
 PassRefPtr<File> File::createWithRelativePath(const String& path, const String& relativePath)
@@ -87,14 +85,12 @@ File::File(const String& path, const KURL& url, const String& type)
     // See SerializedScriptValue.cpp for js and v8.
 }
 
-#if ENABLE(FILE_SYSTEM)
 File::File(const String& path, const String& name)
-    : Blob(createBlobDataForFileSystemFile(path, name), -1)
+    : Blob(createBlobDataForFileWithName(path, name), -1)
     , m_path(path)
     , m_name(name)
 {
 }
-#endif
 
 double File::lastModifiedDate() const
 {

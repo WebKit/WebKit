@@ -31,18 +31,36 @@
 #ifndef WebFileChooserCompletion_h
 #define WebFileChooserCompletion_h
 
+#include "platform/WebString.h"
+
 namespace WebKit {
 
-class WebString;
 template <typename T> class WebVector;
 
 // Gets called back when WebViewClient finished choosing a file.
 class WebFileChooserCompletion {
 public:
+    struct SelectedFileInfo {
+        // The actual path of the selected file.
+        WebString path;
+
+        // The display name of the file that is to be exposed as File.name in
+        // the DOM layer. If it is empty the base part of the |path| is used.
+        WebString displayName;
+    };
+
     // Called with zero or more file names. Zero-lengthed vector means that
     // the user cancelled or that file choosing failed. The callback instance
     // is destroyed when this method is called.
     virtual void didChooseFile(const WebVector<WebString>& fileNames) = 0;
+
+    // Called with zero or more files, given as a vector of SelectedFileInfo.
+    // Zero-lengthed vector means that the user cancelled or that file
+    // choosing failed. The callback instance is destroyed when this method
+    // is called.
+    // FIXME: Deprecate either one of the didChooseFile (and rename it to
+    // didChooseFile*s*).
+    virtual void didChooseFile(const WebVector<SelectedFileInfo>&) { }
 protected:
     virtual ~WebFileChooserCompletion() {}
 };

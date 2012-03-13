@@ -49,6 +49,7 @@ public:
     WebFileChooserCompletionImpl(PassRefPtr<WebCore::FileChooser> chooser);
     ~WebFileChooserCompletionImpl();
     virtual void didChooseFile(const WebVector<WebString>& fileNames);
+    virtual void didChooseFile(const WebVector<SelectedFileInfo>& files);
 private:
     RefPtr<WebCore::FileChooser> m_fileChooser;
 };

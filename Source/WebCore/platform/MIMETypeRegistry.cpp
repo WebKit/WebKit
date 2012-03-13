@@ -139,7 +139,6 @@ static const TypeExtensionPair commonMediaTypes[] = {
     { "audio/x-wav", "wav" }
 };
 
-#if ENABLE(FILE_SYSTEM)
 static const char textPlain[] = "text/plain";
 static const char textHtml[] = "text/html";
 static const char imageJpeg[] = "image/jpeg";
@@ -181,7 +180,6 @@ static const TypeExtensionPair wellKnownMimeTypes[] = {
     { "application/rdf+xml", "rdf" },
     { "application/x-shockwave-flash", "swf" },
 };
-#endif
 
 static HashSet<String>* supportedImageResourceMIMETypes;
 static HashSet<String>* supportedImageMIMETypes;
@@ -474,7 +472,6 @@ static void initializeMIMETypeRegistry()
     initializeUnsupportedTextMIMETypes();
 }
 
-#if ENABLE(FILE_SYSTEM)
 static String findMimeType(const TypeExtensionPair* pairs, unsigned numPairs, const String& extension)
 {
     if (!extension.isEmpty()) {
@@ -494,7 +491,6 @@ String MIMETypeRegistry::getWellKnownMIMETypeForExtension(const String& extensio
         return found;
     return findMimeType(commonMediaTypes, sizeof(commonMediaTypes) / sizeof(commonMediaTypes[0]), extension);
 }
-#endif
 
 String MIMETypeRegistry::getMIMETypeForPath(const String& path)
 {

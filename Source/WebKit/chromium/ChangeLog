@@ -1,3 +1,21 @@
+2012-03-13  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Allow WebFileChooser to return extra file info (like displayName) in addition to mere file paths
+        https://bugs.webkit.org/show_bug.cgi?id=80719
+
+        Reviewed by Kent Tamura.
+
+        * public/WebFileChooserCompletion.h:
+        (SelectedFileInfo): Added.
+        (WebFileChooserCompletion):
+        (WebKit::WebFileChooserCompletion::didChooseFile): Added an overloaded
+        method that takes SelectedFileInfo.
+        * src/WebFileChooserCompletionImpl.cpp:
+        (WebKit::WebFileChooserCompletionImpl::didChooseFile): Ditto.
+        (WebKit):
+        * src/WebFileChooserCompletionImpl.h:
+        (WebFileChooserCompletionImpl):
+
 2012-03-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r110529.

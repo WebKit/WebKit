@@ -44,14 +44,20 @@ WebFileChooserCompletionImpl::~WebFileChooserCompletionImpl()
 
 void WebFileChooserCompletionImpl::didChooseFile(const WebVector<WebString>& fileNames)
 {
-    if (fileNames.size() == 1)
-        m_fileChooser->chooseFile(fileNames[0]);
-    else if (fileNames.size() > 0) {
-        Vector<WTF::String> paths;
-        for (size_t i = 0; i < fileNames.size(); ++i)
-            paths.append(fileNames[i]);
-        m_fileChooser->chooseFiles(paths);
-    }
+    Vector<WebCore::FileChooserFileInfo> fileInfo;
+    for (size_t i = 0; i < fileNames.size(); ++i)
+        fileInfo.append(WebCore::FileChooserFileInfo(fileNames[i]));
+    m_fileChooser->chooseFiles(fileInfo);
+    // This object is no longer needed.
+    delete this;
+}
+
+void WebFileChooserCompletionImpl::didChooseFile(const WebVector<SelectedFileInfo>& files)
+{
+    Vector<WebCore::FileChooserFileInfo> fileInfo;
+    for (size_t i = 0; i < files.size(); ++i)
+        fileInfo.append(WebCore::FileChooserFileInfo(files[i].path, files[i].displayName));
+    m_fileChooser->chooseFiles(fileInfo);
     // This object is no longer needed.
     delete this;
 }

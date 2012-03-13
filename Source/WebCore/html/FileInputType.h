@@ -69,12 +69,12 @@ private:
     virtual String defaultToolTip() const OVERRIDE;
 
     // FileChooserClient implementation.
-    virtual void filesChosen(const Vector<String>&) OVERRIDE;
+    virtual void filesChosen(const Vector<FileChooserFileInfo>&) OVERRIDE;
 
     // FileIconLoaderClient implementation.
     virtual void updateRendering(PassRefPtr<Icon>) OVERRIDE;
 
-    void setFileList(const Vector<String>& paths);
+    void setFileList(const Vector<FileChooserFileInfo>&);
 #if ENABLE(DIRECTORY_UPLOAD)
     void receiveDropForDirectoryUpload(const Vector<String>&);
 #endif

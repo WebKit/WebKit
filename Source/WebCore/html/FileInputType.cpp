@@ -107,6 +107,8 @@ bool FileInputType::saveFormControlState(String& result) const
     unsigned numFiles = m_fileList->length();
     for (unsigned i = 0; i < numFiles; ++i) {
         result.append(m_fileList->item(i)->path());
+        result.append('\1');
+        result.append(m_fileList->item(i)->name());
         result.append('\0');
     }
     return true;
@@ -114,8 +116,17 @@ bool FileInputType::saveFormControlState(String& result) const
 
 void FileInputType::restoreFormControlState(const String& state)
 {
-    Vector<String> files;
-    state.split('\0', files);
+    Vector<FileChooserFileInfo> files;
+    Vector<String> paths;
+    state.split('\0', paths);
+    for (unsigned i = 0; i < paths.size(); ++i) {
+        Vector<String> pathAndName;
+        paths[i].split('\1', pathAndName);
+        if (pathAndName.size() > 1)
+            files.append(FileChooserFileInfo(pathAndName[0], pathAndName[1]));
+        else
+            files.append(FileChooserFileInfo(paths[i]));
+    }
     filesChosen(files);
 }
 
@@ -240,10 +251,10 @@ void FileInputType::setValue(const String&, bool, TextFieldEventBehavior)
     element()->setNeedsStyleRecalc();
 }
 
-void FileInputType::setFileList(const Vector<String>& paths)
+void FileInputType::setFileList(const Vector<FileChooserFileInfo>& files)
 {
     m_fileList->clear();
-    size_t size = paths.size();
+    size_t size = files.size();
 
 #if ENABLE(DIRECTORY_UPLOAD)
     // If a directory is being selected, the UI allows a directory to be chosen
@@ -251,9 +262,9 @@ void FileInputType::setFileList(const Vector<String>& paths)
     // we want to store only the relative paths from that point.
     if (size && element()->fastHasAttribute(webkitdirectoryAttr)) {
         // Find the common root path.
-        String rootPath = directoryName(paths[0]);
+        String rootPath = directoryName(files[0].path);
         for (size_t i = 1; i < size; i++) {
-            while (!paths[i].startsWith(rootPath))
+            while (!files[i].path.startsWith(rootPath))
                 rootPath = directoryName(rootPath);
         }
         rootPath = directoryName(rootPath);
@@ -263,15 +274,15 @@ void FileInputType::setFileList(const Vector<String>& paths)
             rootLength += 1;
         for (size_t i = 0; i < size; i++) {
             // Normalize backslashes to slashes before exposing the relative path to script.
-            String relativePath = paths[i].substring(rootLength).replace('\\', '/');
-            m_fileList->append(File::createWithRelativePath(paths[i], relativePath));
+            String relativePath = files[i].path.substring(rootLength).replace('\\', '/');
+            m_fileList->append(File::createWithRelativePath(files[i].path, relativePath));
         }
         return;
     }
 #endif
 
     for (size_t i = 0; i < size; i++)
-        m_fileList->append(File::create(paths[i]));
+        m_fileList->append(File::createWithName(files[i].path, files[i].displayName));
 }
 
 bool FileInputType::isFileUpload() const
@@ -303,28 +314,31 @@ void FileInputType::requestIcon(const Vector<String>& paths)
         chrome->loadIconForFiles(paths, newFileIconLoader());
 }
 
-void FileInputType::filesChosen(const Vector<String>& paths)
+void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& files)
 {
     RefPtr<HTMLInputElement> input = element();
 
     bool pathsChanged = false;
-    if (paths.size() != m_fileList->length())
+    if (files.size() != m_fileList->length())
         pathsChanged = true;
     else {
-        for (unsigned i = 0; i < paths.size(); ++i) {
-            if (paths[i] != m_fileList->item(i)->path()) {
+        for (unsigned i = 0; i < files.size(); ++i) {
+            if (files[i].path != m_fileList->item(i)->path()) {
                 pathsChanged = true;
                 break;
             }
         }
     }
 
-    setFileList(paths);
+    setFileList(files);
 
     input->setFormControlValueMatchesRenderer(true);
     input->notifyFormStateChanged();
     input->setNeedsValidityCheck();
 
+    Vector<String> paths;
+    for (unsigned i = 0; i < files.size(); ++i)
+        paths.append(files[i].path);
     requestIcon(paths);
 
     if (input->renderer())
@@ -373,12 +387,16 @@ void FileInputType::receiveDroppedFiles(const Vector<String>& paths)
     }
 #endif
 
+    Vector<FileChooserFileInfo> files;
+    for (unsigned i = 0; i < paths.size(); ++i)
+        files.append(FileChooserFileInfo(paths[i]));
+
     if (input->fastHasAttribute(multipleAttr))
-        filesChosen(paths);
+        filesChosen(files);
     else {
-        Vector<String> firstPathOnly;
-        firstPathOnly.append(paths[0]);
-        filesChosen(firstPathOnly);
+        Vector<FileChooserFileInfo> firstFileOnly;
+        firstFileOnly.append(files[0]);
+        filesChosen(firstFileOnly);
     }
 }
 

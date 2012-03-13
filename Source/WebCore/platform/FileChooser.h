@@ -38,6 +38,17 @@ namespace WebCore {
 
 class FileChooser;
 
+struct FileChooserFileInfo {
+    FileChooserFileInfo(const String& path, const String& displayName = String())
+        : path(path)
+        , displayName(displayName)
+    {
+    }
+
+    const String path;
+    const String displayName;
+};
+
 struct FileChooserSettings {
     bool allowsMultipleFiles;
 #if ENABLE(DIRECTORY_UPLOAD)
@@ -49,7 +60,7 @@ struct FileChooserSettings {
 
 class FileChooserClient {
 public:
-    virtual void filesChosen(const Vector<String>&) = 0;
+    virtual void filesChosen(const Vector<FileChooserFileInfo>&) = 0;
     virtual ~FileChooserClient();
 
 protected:
@@ -70,6 +81,9 @@ public:
 
     void chooseFile(const String& path);
     void chooseFiles(const Vector<String>& paths);
+
+    // FIXME: We should probably just pass file paths that could be virtual paths with proper display names rather than passing structs.
+    void chooseFiles(const Vector<FileChooserFileInfo>& files);
 
     const FileChooserSettings& settings() const { return m_settings; }
 

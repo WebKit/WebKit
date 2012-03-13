@@ -78,8 +78,25 @@ void FileChooser::chooseFiles(const Vector<String>& filenames)
     if (m_settings.selectedFiles == filenames)
         return;
 
+    if (m_client) {
+        Vector<FileChooserFileInfo> files;
+        for (unsigned i = 0; i < filenames.size(); ++i)
+            files.append(FileChooserFileInfo(filenames[i]));
+        m_client->filesChosen(files);
+    }
+}
+
+void FileChooser::chooseFiles(const Vector<FileChooserFileInfo>& files)
+{
+    // FIXME: This is inelegant. We should not be looking at settings here.
+    Vector<String> paths;
+    for (unsigned i = 0; i < files.size(); ++i)
+        paths.append(files[i].path);
+    if (m_settings.selectedFiles == paths)
+        return;
+
     if (m_client)
-        m_client->filesChosen(filenames);
+        m_client->filesChosen(files);
 }
 
 }
