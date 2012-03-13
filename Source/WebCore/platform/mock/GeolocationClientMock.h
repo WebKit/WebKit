@@ -31,8 +31,6 @@
 #ifndef GeolocationClientMock_h
 #define GeolocationClientMock_h
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-
 #include "GeolocationClient.h"
 #include "PlatformString.h"
 #include "Timer.h"
@@ -94,7 +92,5 @@ private:
 };
 
 }
-
-#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
 
 #endif

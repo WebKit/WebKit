@@ -3025,8 +3025,6 @@ webcore_sources += \
 	Source/WebCore/platform/FileSystem.h \
 	Source/WebCore/platform/FloatConversion.h \
 	Source/WebCore/platform/FractionalLayoutUnit.h \
-	Source/WebCore/platform/GeolocationService.cpp \
-	Source/WebCore/platform/GeolocationService.h \
 	Source/WebCore/platform/HashTools.h \
 	Source/WebCore/platform/HistogramSupport.cpp \
 	Source/WebCore/platform/HistogramSupport.h \
@@ -3336,8 +3334,6 @@ webcore_sources += \
 	Source/WebCore/platform/mock/DeviceOrientationClientMock.h \
 	Source/WebCore/platform/mock/GeolocationClientMock.cpp \
 	Source/WebCore/platform/mock/GeolocationClientMock.h \
-	Source/WebCore/platform/mock/GeolocationServiceMock.cpp \
-	Source/WebCore/platform/mock/GeolocationServiceMock.h \
 	Source/WebCore/platform/mock/ScrollbarThemeMock.cpp \
 	Source/WebCore/platform/mock/ScrollbarThemeMock.h \
 	Source/WebCore/platform/network/AuthenticationChallengeBase.cpp \

@@ -27358,14 +27358,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\GeolocationService.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\GeolocationService.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\HistogramSupport.cpp"
 				>
 			</File>
@@ -33598,14 +33590,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\mock\GeolocationClientMock.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\mock\GeolocationServiceMock.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\mock\GeolocationServiceMock.h"
 					>
 				</File>
 				<File

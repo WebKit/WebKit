@@ -585,16 +585,6 @@ bool WebChromeClient::paintCustomOverhangArea(GraphicsContext* context, const In
     return true;
 }
 
-void WebChromeClient::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
-{
-    notImplemented();
-}
-
-void WebChromeClient::cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*)
-{
-    notImplemented();
-}
-
 void WebChromeClient::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileChooser)
 {
     if (m_page->activeOpenPanelResultListener())

@@ -147,8 +147,6 @@ public:
 
     virtual void scrollRectIntoView(const IntRect&) const { }
 
-    virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
-    virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*);
     virtual void cancelGeolocationPermissionForFrame(Frame*, Geolocation*);
 
     virtual void invalidateContents(const IntRect&, bool);

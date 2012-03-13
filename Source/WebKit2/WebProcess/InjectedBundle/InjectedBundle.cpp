@@ -195,11 +195,11 @@ void InjectedBundle::setFrameFlatteningEnabled(WebPageGroupProxy* pageGroup, boo
 
 void InjectedBundle::setGeoLocationPermission(WebPageGroupProxy* pageGroup, bool enabled)
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
     for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
         static_cast<GeolocationClientMock*>((*iter)->geolocationController()->client())->setPermission(enabled);
-#endif
+#endif // ENABLE(GEOLOCATION)
 }
 
 void InjectedBundle::setJavaScriptCanAccessClipboard(WebPageGroupProxy* pageGroup, bool enabled)

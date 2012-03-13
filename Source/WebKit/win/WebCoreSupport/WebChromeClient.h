@@ -144,11 +144,6 @@ public:
 
     virtual void scrollRectIntoView(const WebCore::IntRect&) const { }
 
-    // FIXME: Remove once all ports are using client-based geolocation. https://bugs.webkit.org/show_bug.cgi?id=40373
-    // For client-based geolocation, these two methods have been moved to WebGeolocationClient. https://bugs.webkit.org/show_bug.cgi?id=50061
-    virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*) { }
-    virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*, WebCore::Geolocation*) { }
-
 #if ENABLE(VIDEO)
     virtual bool supportsFullscreenForNode(const WebCore::Node*);
     virtual void enterFullscreenForNode(WebCore::Node*);

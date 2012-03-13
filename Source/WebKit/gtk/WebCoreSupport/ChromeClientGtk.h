@@ -134,8 +134,6 @@ namespace WebKit {
         virtual void setCursorHiddenUntilMouseMoves(bool);
 
         virtual void scrollRectIntoView(const IntRect&) const { }
-        virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
-        virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*);
 
         virtual bool selectItemWritingDirectionIsNatural();
         virtual bool selectItemAlignmentFollowsMenuWritingDirection();

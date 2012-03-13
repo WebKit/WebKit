@@ -46,12 +46,10 @@
 #include "EditorClientBlackBerry.h"
 #include "FocusController.h"
 #include "FrameLoaderClientBlackBerry.h"
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 #if ENABLE_DRT
 #include "GeolocationClientMock.h"
 #endif
 #include "GeolocationControllerClientBlackBerry.h"
-#endif
 #include "GroupSettings.h"
 #include "HTMLAreaElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -416,7 +414,6 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     pageClients.dragClient = dragClient;
     pageClients.inspectorClient = inspectorClient;
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     // Note the object will be destroyed when the page is destroyed.
 #if ENABLE_DRT
     if (getenv("drtRun"))
@@ -426,7 +423,6 @@ void WebPagePrivate::init(const WebString& pageGroupName)
         pageClients.geolocationClient = m_geolocationClient = new GeolocationControllerClientBlackBerry(this);
 #else
     pageClients.geolocationClient = m_geolocationClient;
-#endif
 
     pageClients.deviceMotionClient = new DeviceMotionClientBlackBerry(this);
     pageClients.deviceOrientationClient = new DeviceOrientationClientBlackBerry(this);
@@ -436,7 +432,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     WebCore::provideNotification(m_page, NotificationPresenterImpl::instance());
 #endif
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION) && ENABLE_DRT
+#if ENABLE_DRT
     // In case running in DumpRenderTree mode set the controller to mock provider.
     if (getenv("drtRun"))
         static_cast<GeolocationClientMock*>(pageClients.geolocationClient)->setController(m_page->geolocationController());

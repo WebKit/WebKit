@@ -1,3 +1,13 @@
+2012-03-13  Adam Barth  <abarth@webkit.org> && Benjamin Poulain  <bpoulain@apple.com>
+
+        Always enable ENABLE(CLIENT_BASED_GEOLOCATION)
+        https://bugs.webkit.org/show_bug.cgi?id=78853
+
+        Reviewed by Adam Barth.
+
+        * Scripts/build-webkit:
+        * qmake/mkspecs/features/features.prf:
+
 2012-03-12  Antonio Gomes  <agomes@rim.com>
 
         Convert nodesFromRect tests to use Internals interface

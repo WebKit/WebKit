@@ -66,7 +66,6 @@ void WebGeolocationClient::stopUpdating()
 
 GeolocationPosition* WebGeolocationClient::lastPosition()
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     COMPtr<IWebGeolocationProvider> provider;
     if (FAILED(m_webView->geolocationProvider(&provider)))
         return 0;
@@ -74,9 +73,6 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
     if (FAILED(provider->lastPosition(&position)))
         return 0;
     return core(position.get());
-#else
-    return 0;
-#endif
 }
 
 void WebGeolocationClient::requestPermission(Geolocation* geolocation)

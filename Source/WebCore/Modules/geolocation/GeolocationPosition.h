@@ -26,8 +26,6 @@
 #ifndef GeolocationPosition_h
 #define GeolocationPosition_h
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -105,7 +103,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
 
 #endif // GeolocationPosition_h

@@ -37,10 +37,6 @@
 #include "JSPositionErrorCallback.h"
 #include "PositionOptions.h"
 
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
-#include "GeolocationService.h"
-#endif
-
 using namespace JSC;
 using namespace std;
 

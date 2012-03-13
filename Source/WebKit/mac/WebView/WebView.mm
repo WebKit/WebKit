@@ -129,6 +129,8 @@
 #import <WebCore/FrameTree.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GCController.h>
+#import <WebCore/GeolocationController.h>
+#import <WebCore/GeolocationError.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HistoryItem.h>
@@ -186,11 +188,6 @@
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #import <WebKit/WebDashboardRegion.h>
-#endif
-
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-#import <WebCore/GeolocationController.h>
-#import <WebCore/GeolocationError.h>
 #endif
 
 #if ENABLE(GLIB_SUPPORT)
@@ -739,7 +736,7 @@ static NSString *leakOutlookQuirksUserScriptContents()
     pageClients.editorClient = new WebEditorClient(self);
     pageClients.dragClient = new WebDragClient(self);
     pageClients.inspectorClient = new WebInspectorClient(self);
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
     pageClients.geolocationClient = new WebGeolocationClient(self);
 #endif
     _private->page = new Page(pageClients);
@@ -6387,20 +6384,20 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 
 - (void)_geolocationDidChangePosition:(WebGeolocationPosition *)position
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
     if (_private && _private->page)
         _private->page->geolocationController()->positionChanged(core(position));
-#endif
+#endif // ENABLE(GEOLOCATION)
 }
 
 - (void)_geolocationDidFailWithError:(NSError *)error
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
     if (_private && _private->page) {
         RefPtr<GeolocationError> geolocatioError = GeolocationError::create(GeolocationError::PositionUnavailable, [error localizedDescription]);
         _private->page->geolocationController()->errorOccurred(geolocatioError.get());
     }
-#endif
+#endif // ENABLE(GEOLOCATION)
 }
 
 @end

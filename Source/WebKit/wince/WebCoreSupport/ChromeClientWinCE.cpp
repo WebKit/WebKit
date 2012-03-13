@@ -369,16 +369,6 @@ void ChromeClientWinCE::formStateDidChange(const Node*)
     notImplemented();
 }
 
-void ChromeClientWinCE::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
-{
-    notImplemented();
-}
-
-void ChromeClientWinCE::cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*)
-{
-    notImplemented();
-}
-
 bool ChromeClientWinCE::selectItemWritingDirectionIsNatural()
 {
     return false;

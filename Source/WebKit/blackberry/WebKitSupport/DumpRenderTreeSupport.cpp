@@ -40,13 +40,11 @@ using namespace JSC;
 
 bool DumpRenderTreeSupport::s_linksIncludedInTabChain = true;
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 GeolocationClientMock* toGeolocationClientMock(GeolocationClient* client)
 {
      ASSERT(getenv("drtRun"));
      return static_cast<GeolocationClientMock*>(client);
 }
-#endif
 
 DumpRenderTreeSupport::DumpRenderTreeSupport()
 {
@@ -98,26 +96,18 @@ void DumpRenderTreeSupport::dumpConfigurationForViewport(Frame* mainFrame, int d
 
 int DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests(WebPage* webPage)
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     GeolocationClientMock* mockClient = toGeolocationClientMock(corePage(webPage)->geolocationController()->client());
     return mockClient->numberOfPendingPermissionRequests();
-#else
-    UNUSED_PARAM(webPage);
-    return -1;
-#endif
 }
 
 void DumpRenderTreeSupport::resetGeolocationMock(WebPage* webPage)
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     GeolocationClientMock* mockClient = toGeolocationClientMock(corePage(webPage)->geolocationController()->client());
     mockClient->reset();
-#endif
 }
 
 void DumpRenderTreeSupport::setMockGeolocationError(WebPage* webPage, int errorCode, const String message)
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     GeolocationError::ErrorCode code = GeolocationError::PositionUnavailable;
     switch (errorCode) {
     case PositionError::PERMISSION_DENIED:
@@ -130,23 +120,18 @@ void DumpRenderTreeSupport::setMockGeolocationError(WebPage* webPage, int errorC
 
     GeolocationClientMock* mockClient = static_cast<GeolocationClientMock*>(corePage(webPage)->geolocationController()->client());
     mockClient->setError(GeolocationError::create(code, message));
-#endif
 }
 
 void DumpRenderTreeSupport::setMockGeolocationPermission(WebPage* webPage, bool allowed)
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     GeolocationClientMock* mockClient = toGeolocationClientMock(corePage(webPage)->geolocationController()->client());
     mockClient->setPermission(allowed);
-#endif
 }
 
 void DumpRenderTreeSupport::setMockGeolocationPosition(WebPage* webPage, double latitude, double longitude, double accuracy)
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     GeolocationClientMock* mockClient = toGeolocationClientMock(corePage(webPage)->geolocationController()->client());
     mockClient->setPosition(GeolocationPosition::create(currentTime(), latitude, longitude, accuracy));
-#endif
 }
 
 void DumpRenderTreeSupport::scalePageBy(WebPage* webPage, float scaleFactor, float x, float y)

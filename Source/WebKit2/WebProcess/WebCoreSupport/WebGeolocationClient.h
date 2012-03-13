@@ -26,8 +26,6 @@
 #ifndef WebGeolocationClient_h
 #define WebGeolocationClient_h
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-
 #include <WebCore/GeolocationClient.h>
 
 namespace WebKit {
@@ -60,7 +58,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
 
 #endif // WebGeolocationClient_h

@@ -48,19 +48,13 @@ public:
     // IWebGeolocationPosition
     virtual HRESULT STDMETHODCALLTYPE initWithTimestamp(double timestamp, double latitude, double longitude, double accuracy);
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     WebCore::GeolocationPosition* impl() const { return m_position.get(); }
-#endif
 
 private:
     ULONG m_refCount;
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     RefPtr<WebCore::GeolocationPosition> m_position;
-#endif
 };
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 WebCore::GeolocationPosition* core(IWebGeolocationPosition*);
-#endif
 
 #endif // WebGeolocationPosition_h

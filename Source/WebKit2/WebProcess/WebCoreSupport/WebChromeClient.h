@@ -153,11 +153,6 @@ private:
     
     virtual bool paintCustomOverhangArea(WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&) OVERRIDE;
 
-    // This is an asynchronous call. The ChromeClient can display UI asking the user for permission
-    // to use Geolococation. The ChromeClient must call Geolocation::setShouldClearCache() appropriately.
-    virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*) OVERRIDE;
-    virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*, WebCore::Geolocation*) OVERRIDE;
-
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>) OVERRIDE;
     virtual void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader*) OVERRIDE;
 

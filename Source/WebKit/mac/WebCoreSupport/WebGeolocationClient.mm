@@ -25,6 +25,8 @@
 
 #import "WebGeolocationClient.h"
 
+#if ENABLE(GEOLOCATION)
+
 #import "WebDelegateImplementationCaching.h"
 #import "WebFrameInternal.h"
 #import "WebGeolocationPositionInternal.h"
@@ -88,11 +90,7 @@ void WebGeolocationClient::requestPermission(Geolocation* geolocation)
 
 GeolocationPosition* WebGeolocationClient::lastPosition()
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     return core([[m_webView _geolocationProvider] lastPosition]);
-#else
-    return 0;
-#endif
 }
 
 @implementation WebGeolocationPolicyListener
@@ -117,3 +115,4 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
 
 @end
 
+#endif // ENABLE(GEOLOCATION)

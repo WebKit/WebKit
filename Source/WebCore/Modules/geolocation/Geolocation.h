@@ -27,6 +27,8 @@
 #ifndef Geolocation_h
 #define Geolocation_h
 
+#if ENABLE(GEOLOCATION)
+
 #include "ActiveDOMObject.h"
 #include "Geoposition.h"
 #include "PositionCallback.h"
@@ -35,25 +37,16 @@
 #include "PositionOptions.h"
 #include "Timer.h"
 
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
-#include "GeolocationService.h"
-#endif
-
 namespace WebCore {
 
 class Document;
 class Frame;
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 class GeolocationPosition;
 class GeolocationError;
-#endif
 class Page;
 class ScriptExecutionContext;
 
 class Geolocation : public RefCounted<Geolocation>, public ActiveDOMObject
-#if !ENABLE(CLIENT_BASED_GEOLOCATION) && ENABLE(GEOLOCATION)
-    , public GeolocationServiceClient
-#endif
 {
 public:
     static PassRefPtr<Geolocation> create(ScriptExecutionContext*);
@@ -69,12 +62,8 @@ public:
 
     void setIsAllowed(bool);
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     void positionChanged();
     void setError(GeolocationError*);
-#else
-    GeolocationService* getGeolocationService() const { return m_service.get(); }
-#endif
 
 private:
     Geoposition* lastPosition();
@@ -158,12 +147,6 @@ private:
     void handlePendingPermissionNotifiers();
 #endif
 
-#if !ENABLE(CLIENT_BASED_GEOLOCATION) && ENABLE(GEOLOCATION)
-    // GeolocationServiceClient
-    virtual void geolocationServicePositionChanged(GeolocationService*);
-    virtual void geolocationServiceErrorOccurred(GeolocationService*);
-#endif
-
     PassRefPtr<GeoNotifier> startRequest(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
 
     void fatalErrorOccurred(GeoNotifier*);
@@ -174,9 +157,6 @@ private:
 
     GeoNotifierSet m_oneShots;
     Watchers m_watchers;
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
-    OwnPtr<GeolocationService> m_service;
-#endif
 #if USE(PREEMPT_GEOLOCATION_PERMISSION)
     GeoNotifierSet m_pendingForPermissionNotifiers;
 #endif
@@ -189,13 +169,13 @@ private:
         No
     } m_allowGeolocation;
 
-#if ENABLE(GEOLOCATION)
     RefPtr<Geoposition> m_cachedPosition;
-#endif
     GeoNotifierSet m_requestsAwaitingCachedPosition;
 };
     
 } // namespace WebCore
+
+#endif // ENABLE(GEOLOCATION)
 
 #endif // Geolocation_h
 

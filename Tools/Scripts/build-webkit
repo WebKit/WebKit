@@ -72,7 +72,6 @@ my (
     $animationAPISupport,
     $blobSupport,
     $channelMessagingSupport,
-    $clientBasedGeolocationSupport,
     $coverageSupport,
     $cssFiltersSupport,
     $cssGridLayoutSupport,
@@ -166,9 +165,6 @@ my @features = (
 
     { option => "channel-messaging", desc => "Toggle MessageChannel and MessagePort support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
-
-    { option => "client-based-geolocation", desc => "Toggle client-based Geolocation support",
-      define => "ENABLE_CLIENT_BASED_GEOLOCATION", default => (isAppleWebKit() || isGtk() || isBlackBerry()), value => \$clientBasedGeolocationSupport },
 
     { option => "css-filters", desc => "Toggle CSS Filters support",
       define => "ENABLE_CSS_FILTERS", default => isAppleWebKit(), value => \$cssFiltersSupport },

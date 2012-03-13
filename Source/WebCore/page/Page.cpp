@@ -43,6 +43,7 @@
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "GeolocationController.h"
 #include "HTMLElement.h"
 #include "HistoryItem.h"
 #include "InspectorController.h"
@@ -74,10 +75,6 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
-
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-#include "GeolocationController.h"
-#endif
 
 namespace WebCore {
 
@@ -125,7 +122,7 @@ Page::Page(PageClients& pageClients)
 #if ENABLE(INSPECTOR)
     , m_inspectorController(InspectorController::create(this, pageClients.inspectorClient))
 #endif
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
     , m_geolocationController(GeolocationController::create(this, pageClients.geolocationClient))
 #endif
 #if ENABLE(POINTER_LOCK)

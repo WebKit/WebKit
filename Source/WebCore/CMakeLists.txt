@@ -1089,7 +1089,6 @@ SET(WebCore_SOURCES
     platform/FileIconLoader.cpp
     platform/FileSystem.cpp
     platform/ClockGeneric.cpp
-    platform/GeolocationService.cpp
     platform/HistogramSupport.cpp
     platform/KURL.cpp
     platform/KillRingNone.cpp
@@ -1211,7 +1210,6 @@ SET(WebCore_SOURCES
 
     platform/mock/DeviceOrientationClientMock.cpp
     platform/mock/GeolocationClientMock.cpp
-    platform/mock/GeolocationServiceMock.cpp
     platform/mock/ScrollbarThemeMock.cpp
 
     platform/network/AuthenticationChallengeBase.cpp

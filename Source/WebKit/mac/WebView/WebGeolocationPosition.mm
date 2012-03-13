@@ -29,26 +29,21 @@
 #import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 #import <WebCore/GeolocationPosition.h>
 
 using namespace WebCore;
-#endif
 
 @interface WebGeolocationPositionInternal : NSObject
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 {
 @public
     RefPtr<GeolocationPosition> _position;
 }
 
 - (id)initWithCoreGeolocationPosition:(PassRefPtr<GeolocationPosition>)coreGeolocationPosition;
-#endif
 @end
 
 @implementation WebGeolocationPositionInternal
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 - (id)initWithCoreGeolocationPosition:(PassRefPtr<GeolocationPosition>)coreGeolocationPosition
 {
     self = [super init];
@@ -57,29 +52,22 @@ using namespace WebCore;
     _position = coreGeolocationPosition;
     return self;
 }
-#endif
 
 @end
 
 @implementation WebGeolocationPosition
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 GeolocationPosition* core(WebGeolocationPosition *position)
 {
     return position ? position->_internal->_position.get() : 0;
 }
-#endif
 
 - (id)initWithTimestamp:(double)timestamp latitude:(double)latitude longitude:(double)longitude accuracy:(double)accuracy
 {
     self = [super init];
     if (!self)
         return nil;
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     _internal = [[WebGeolocationPositionInternal alloc] initWithCoreGeolocationPosition:GeolocationPosition::create(timestamp, latitude, longitude, accuracy)];
-#else
-    _internal = [[WebGeolocationPositionInternal alloc] init];
-#endif
     return self;
 }
 

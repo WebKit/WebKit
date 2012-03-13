@@ -167,7 +167,7 @@ namespace WebCore {
 #if ENABLE(INSPECTOR)
         InspectorController* inspectorController() const { return m_inspectorController.get(); }
 #endif
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
         GeolocationController* geolocationController() const { return m_geolocationController.get(); }
 #endif
 #if ENABLE(POINTER_LOCK)
@@ -358,7 +358,7 @@ namespace WebCore {
 #if ENABLE(INSPECTOR)
         OwnPtr<InspectorController> m_inspectorController;
 #endif
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
         OwnPtr<GeolocationController> m_geolocationController;
 #endif
 #if ENABLE(POINTER_LOCK)

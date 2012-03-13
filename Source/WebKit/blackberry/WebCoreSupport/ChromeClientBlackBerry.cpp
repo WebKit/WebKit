@@ -458,26 +458,6 @@ void ChromeClientBlackBerry::exceededDatabaseQuota(Frame* frame, const String& n
 #endif
 }
 
-void ChromeClientBlackBerry::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
-{
-    if (!m_webPagePrivate->m_webSettings->isGeolocationEnabled()) {
-        geolocation->setIsAllowed(false);
-        return;
-    }
-    DOMWindow* window = frame->domWindow();
-    if (!window)
-        return;
-
-    CString latinOrigin = frameOrigin(frame);
-
-    m_webPagePrivate->m_client->requestGeolocationPermission(m_webPagePrivate->m_geolocationClient, geolocation, latinOrigin.data(), latinOrigin.length());
-}
-
-void ChromeClientBlackBerry::cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation* geolocation)
-{
-    m_webPagePrivate->m_client->cancelGeolocationPermission(m_webPagePrivate->m_geolocationClient, geolocation);
-}
-
 void ChromeClientBlackBerry::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
 {
     SharedArray<WebString> initialFiles;

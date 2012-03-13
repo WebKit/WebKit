@@ -47,7 +47,7 @@ class QWebPage;
 
 namespace WebCore {
 
-// This class provides an implementation of a GeolocationService for QtWebkit.
+// This class provides an implementation of a GeolocationClient for QtWebkit.
 class GeolocationClientQt : public QObject, public GeolocationClient {
     Q_OBJECT
 

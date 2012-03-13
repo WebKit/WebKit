@@ -38,13 +38,11 @@
 #include "Page.h"
 #include <wtf/CurrentTime.h>
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 #include "Coordinates.h"
 #include "GeolocationController.h"
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
 #include "PositionError.h"
-#endif
 
 namespace WebCore {
 
@@ -53,8 +51,6 @@ static const char failedToStartServiceErrorMessage[] = "Failed to start Geolocat
 static const char framelessDocumentErrorMessage[] = "Geolocation cannot be used in frameless documents";
 
 static const int firstAvailableWatchId = 1;
-
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 
 static PassRefPtr<Geoposition> createGeoposition(GeolocationPosition* position)
 {
@@ -81,7 +77,6 @@ static PassRefPtr<PositionError> createPositionError(GeolocationError* error)
 
     return PositionError::create(code, error->message());
 }
-#endif
 
 Geolocation::GeoNotifier::GeoNotifier(Geolocation* geolocation, PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
     : m_geolocation(geolocation)
@@ -234,9 +229,6 @@ PassRefPtr<Geolocation> Geolocation::create(ScriptExecutionContext* context)
 
 Geolocation::Geolocation(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
-    , m_service(GeolocationService::create(this))
-#endif
     , m_allowGeolocation(Unknown)
 {
 }
@@ -271,13 +263,8 @@ void Geolocation::stop()
     // and https://bugs.webkit.org/show_bug.cgi?id=52877
 
     Page* page = this->page();
-    if (page && m_allowGeolocation == InProgress) {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    if (page && m_allowGeolocation == InProgress)
         page->geolocationController()->cancelPermissionRequest(this);
-#else
-        page->chrome()->client()->cancelGeolocationPermissionRequestForFrame(frame(), this);
-#endif
-    }
     // The frame may be moving to a new page and we want to get the permissions from the new page's client.
     m_allowGeolocation = Unknown;
     cancelAllRequests();
@@ -289,15 +276,11 @@ void Geolocation::stop()
 
 Geoposition* Geolocation::lastPosition()
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     Page* page = this->page();
     if (!page)
         return 0;
 
     m_lastPosition = createGeoposition(page->geolocationController()->lastPosition());
-#else
-    m_lastPosition = m_service->lastPosition();
-#endif
 
     return m_lastPosition.get();
 }
@@ -627,11 +610,7 @@ void Geolocation::requestPermission()
     m_allowGeolocation = InProgress;
 
     // Ask the embedder: it maintains the geolocation challenge policy itself.
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     page->geolocationController()->requestPermission(this);
-#else
-    page->chrome()->client()->requestGeolocationPermissionForFrame(frame(), this);
-#endif
 }
 
 void Geolocation::positionChangedInternal()
@@ -676,8 +655,6 @@ void Geolocation::makeSuccessCallbacks()
         stopUpdating();
 }
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-
 void Geolocation::positionChanged()
 {
     positionChangedInternal();
@@ -689,54 +666,23 @@ void Geolocation::setError(GeolocationError* error)
     handleError(positionError.get());
 }
 
-#else
-
-void Geolocation::geolocationServicePositionChanged(GeolocationService* service)
-{
-    ASSERT_UNUSED(service, service == m_service);
-    ASSERT(m_service->lastPosition());
-
-    positionChangedInternal();
-}
-
-void Geolocation::geolocationServiceErrorOccurred(GeolocationService* service)
-{
-    ASSERT(service->lastError());
-
-    // Note that we do not stop timers here. For one-shots, the request is
-    // cleared in handleError. For watchers, the spec requires that the timer is
-    // not cleared.
-    handleError(service->lastError());
-}
-
-#endif
-
 bool Geolocation::startUpdating(GeoNotifier* notifier)
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     Page* page = this->page();
     if (!page)
         return false;
 
     page->geolocationController()->addObserver(this, notifier->m_options->enableHighAccuracy());
     return true;
-#else
-    return m_service->startUpdating(notifier->m_options.get());
-#endif
 }
 
 void Geolocation::stopUpdating()
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     Page* page = this->page();
     if (!page)
         return;
 
     page->geolocationController()->removeObserver(this);
-#else
-    m_service->stopUpdating();
-#endif
-
 }
 
 #if USE(PREEMPT_GEOLOCATION_PERMISSION)
@@ -762,17 +708,5 @@ void Geolocation::handlePendingPermissionNotifiers()
 #endif
 
 } // namespace WebCore
-
-#else
-
-namespace WebCore {
-
-void Geolocation::clearWatch(int) { }
-void Geolocation::stop() { }
-Geolocation::Geolocation(ScriptExecutionContext* context) : ActiveDOMObject(context, this) { }
-Geolocation::~Geolocation() { }
-void Geolocation::setIsAllowed(bool) { }
-
-}
                                                         
 #endif // ENABLE(GEOLOCATION)

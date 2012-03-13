@@ -137,8 +137,6 @@ public:
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded);
     virtual bool paintCustomOverhangArea(WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&);
-    virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
-    virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*, WebCore::Geolocation*);
 #if ENABLE(INPUT_COLOR)
     virtual PassOwnPtr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient*, const WebCore::Color&) OVERRIDE;
 #endif

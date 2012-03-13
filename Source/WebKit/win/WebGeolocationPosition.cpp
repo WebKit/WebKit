@@ -27,11 +27,9 @@
 #include "WebGeolocationPosition.h"
 #include <WebCore/COMPtr.h>
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 #include <WebCore/GeolocationPosition.h>
 
 using namespace WebCore;
-#endif
 
 COMPtr<WebGeolocationPosition> WebGeolocationPosition::createInstance()
 {
@@ -83,15 +81,10 @@ ULONG WebGeolocationPosition::Release()
 
 HRESULT WebGeolocationPosition::initWithTimestamp(double timestamp, double latitude, double longitude, double accuracy)
 {
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     m_position = GeolocationPosition::create(timestamp, latitude, longitude, accuracy);
     return S_OK;
-#else
-    return E_FAIL;
-#endif
 }
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 GeolocationPosition* core(IWebGeolocationPosition* position)
 {
     if (!position)
@@ -103,4 +96,3 @@ GeolocationPosition* core(IWebGeolocationPosition* position)
 
     return webGeolocationPosition->impl();
 }
-#endif

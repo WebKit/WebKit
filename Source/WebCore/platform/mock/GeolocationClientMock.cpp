@@ -31,7 +31,7 @@
 #include "config.h"
 #include "GeolocationClientMock.h"
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
 
 #include "GeolocationController.h"
 #include "GeolocationError.h"
@@ -179,4 +179,4 @@ void GeolocationClientMock::controllerTimerFired(Timer<GeolocationClientMock>* t
 
 } // WebCore
 
-#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
+#endif // ENABLE(GEOLOCATION)

@@ -90,8 +90,6 @@ public:
     virtual void numWheelEventHandlersChanged(unsigned) { }
     virtual void print(Frame*);
     virtual void exceededDatabaseQuota(Frame*, const String&);
-    virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
-    virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*);
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*);
     virtual void setCursor(const Cursor&);

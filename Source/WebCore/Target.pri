@@ -1065,7 +1065,6 @@ SOURCES += \
     platform/FileIconLoader.cpp \
     platform/FileStream.cpp \
     platform/FileSystem.cpp \
-    platform/GeolocationService.cpp \
     platform/HistogramSupport.cpp \
     platform/image-decoders/qt/ImageFrameQt.cpp \
     platform/graphics/FontDescription.cpp \
@@ -1131,7 +1130,6 @@ SOURCES += \
     platform/MIMETypeRegistry.cpp \
     platform/mock/DeviceOrientationClientMock.cpp \
     platform/mock/GeolocationClientMock.cpp \
-    platform/mock/GeolocationServiceMock.cpp \
     platform/mock/ScrollbarThemeMock.cpp \
     platform/network/AuthenticationChallengeBase.cpp \
     platform/network/BlobData.cpp \
@@ -2149,12 +2147,10 @@ HEADERS += \
     platform/FileStream.h \
     platform/FileStreamClient.h \
     platform/FileSystem.h \
-    platform/GeolocationService.h \
     platform/HistogramSupport.h \
     platform/image-decoders/ImageDecoder.h \
     platform/mock/DeviceOrientationClientMock.h \
     platform/mock/GeolocationClientMock.cpp \
-    platform/mock/GeolocationServiceMock.h \
     platform/mock/ScrollbarThemeMock.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \

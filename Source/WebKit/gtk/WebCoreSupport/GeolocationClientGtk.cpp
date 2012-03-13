@@ -21,7 +21,7 @@
 #include "config.h"
 #include "GeolocationClientGtk.h"
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
 
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -29,6 +29,8 @@
 #include "GeolocationController.h"
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
+#include "webkitgeolocationpolicydecisionprivate.h"
+#include "webkitwebframeprivate.h"
 #include "webkitwebviewprivate.h"
 #include <glib/gi18n-lib.h>
 
@@ -138,12 +140,18 @@ WebCore::GeolocationPosition* GeolocationClient::lastPosition()
 
 void GeolocationClient::requestPermission(WebCore::Geolocation* geolocation)
 {
-    core(m_webView)->chrome()->client()->requestGeolocationPermissionForFrame(geolocation->frame(), geolocation);
+    WebKitWebFrame* webFrame = kit(geolocation->frame());
+    GRefPtr<WebKitGeolocationPolicyDecision> policyDecision(adoptGRef(webkit_geolocation_policy_decision_new(webFrame, geolocation)));
+
+    gboolean isHandled = FALSE;
+    g_signal_emit_by_name(m_webView, "geolocation-policy-decision-requested", webFrame, policyDecision.get(), &isHandled);
+    if (!isHandled)
+        webkit_geolocation_policy_deny(policyDecision.get());
 }
 
 void GeolocationClient::cancelPermissionRequest(WebCore::Geolocation* geolocation)
 {
-    core(m_webView)->chrome()->client()->cancelGeolocationPermissionRequestForFrame(geolocation->frame(), geolocation);
+    g_signal_emit_by_name(m_webView, "geolocation-policy-decision-cancelled", kit(geolocation->frame()));
 }
 
 void GeolocationClient::positionChanged(GeocluePosition*, GeocluePositionFields fields, int timestamp, double latitude, double longitude, double altitude, GeoclueAccuracy* accuracy)
@@ -178,4 +186,4 @@ void GeolocationClient::errorOccured(const char* message)
 
 }
 
-#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
+#endif // ENABLE(GEOLOCATION)

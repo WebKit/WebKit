@@ -26,7 +26,7 @@
 #ifndef GeolocationController_h
 #define GeolocationController_h
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
 
 #include "Geolocation.h"
 #include <wtf/HashSet.h>
@@ -75,6 +75,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
+#endif // ENABLE(GEOLOCATION)
 
 #endif // GeolocationController_h

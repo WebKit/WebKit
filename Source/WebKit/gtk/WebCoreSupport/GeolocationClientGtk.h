@@ -21,7 +21,7 @@
 #ifndef GeolocationClientGtk_h
 #define GeolocationClientGtk_h
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
 
 #include "GRefPtr.h"
 #include "GeolocationClient.h"
@@ -75,8 +75,9 @@ private:
     bool m_enableHighAccuracy;
     bool m_isUpdating;
 };
+
 } // namespace WebKit
 
-#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
+#endif // ENABLE(GEOLOCATION)
 
 #endif // GeolocationClientGtk_h

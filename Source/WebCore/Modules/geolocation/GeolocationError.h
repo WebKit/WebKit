@@ -26,8 +26,6 @@
 #ifndef GeolocationError_h
 #define GeolocationError_h
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
-
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -59,7 +57,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
 
 #endif // GeolocationError_h

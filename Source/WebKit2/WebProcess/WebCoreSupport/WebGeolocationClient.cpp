@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebGeolocationClient.h"
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
 
 #include "WebGeolocationManager.h"
 #include "WebPage.h"
@@ -80,4 +80,4 @@ void WebGeolocationClient::cancelPermissionRequest(Geolocation* geolocation)
 
 } // namespace WebKit
 
-#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
+#endif // ENABLE(GEOLOCATION)

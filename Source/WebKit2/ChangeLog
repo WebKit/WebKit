@@ -1,3 +1,28 @@
+2012-03-13  Adam Barth  <abarth@webkit.org> && Benjamin Poulain  <bpoulain@apple.com>
+
+        Always enable ENABLE(CLIENT_BASED_GEOLOCATION)
+        https://bugs.webkit.org/show_bug.cgi?id=78853
+
+        Reviewed by Adam Barth.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::registerWebPage):
+        (WebKit::WebGeolocationManager::unregisterWebPage):
+        (WebKit::WebGeolocationManager::didChangePosition):
+        (WebKit::WebGeolocationManager::didFailToDeterminePosition):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setGeoLocationPermission):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+        * WebProcess/WebCoreSupport/WebGeolocationClient.cpp:
+        * WebProcess/WebCoreSupport/WebGeolocationClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * mac/WebKit2.order:
+
 2012-03-13  Max Vujovic  <mvujovic@adobe.com>
 
         Add a method to window.internals to enable testing of inspector highlight rects

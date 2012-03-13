@@ -25,11 +25,11 @@
 
 #include "config.h"
 #include "GeolocationController.h"
-#include "GeolocationPosition.h"
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#if ENABLE(GEOLOCATION)
 
 #include "GeolocationClient.h"
+#include "GeolocationPosition.h"
 
 namespace WebCore {
 
@@ -127,4 +127,4 @@ GeolocationPosition* GeolocationController::lastPosition()
 
 } // namespace WebCore
 
-#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
+#endif // ENABLE(GEOLOCATION)

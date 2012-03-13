@@ -51,7 +51,6 @@
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
 #include "Geolocation.h"
-#include "GeolocationService.h"
 #include "GraphicsLayer.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
@@ -886,20 +885,6 @@ bool ChromeClientImpl::paintCustomOverhangArea(GraphicsContext* context, const I
     if (pluginContainer)
         return pluginContainer->paintCustomOverhangArea(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
     return false;
-}
-
-// FIXME: Remove ChromeClientImpl::requestGeolocationPermissionForFrame and ChromeClientImpl::cancelGeolocationPermissionRequestForFrame
-// once all ports have moved to client-based geolocation (see https://bugs.webkit.org/show_bug.cgi?id=40373 ).
-// For client-based geolocation, these methods are now implemented as WebGeolocationClient::requestPermission and WebGeolocationClient::cancelPermissionRequest.
-// (see https://bugs.webkit.org/show_bug.cgi?id=50061 ).
-void ChromeClientImpl::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void ChromeClientImpl::cancelGeolocationPermissionRequestForFrame(Frame* frame, Geolocation* geolocation)
-{
-    ASSERT_NOT_REACHED();
 }
 
 #if USE(ACCELERATED_COMPOSITING)

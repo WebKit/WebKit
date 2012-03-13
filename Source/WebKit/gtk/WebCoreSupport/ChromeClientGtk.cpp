@@ -862,22 +862,6 @@ void ChromeClient::setCursorHiddenUntilMouseMoves(bool)
     notImplemented();
 }
 
-void ChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
-{
-    WebKitWebFrame* webFrame = kit(frame);
-    GRefPtr<WebKitGeolocationPolicyDecision> policyDecision(adoptGRef(webkit_geolocation_policy_decision_new(webFrame, geolocation)));
-
-    gboolean isHandled = FALSE;
-    g_signal_emit_by_name(m_webView, "geolocation-policy-decision-requested", webFrame, policyDecision.get(), &isHandled);
-    if (!isHandled)
-        webkit_geolocation_policy_deny(policyDecision.get());
-}
-
-void ChromeClient::cancelGeolocationPermissionRequestForFrame(WebCore::Frame* frame, WebCore::Geolocation*)
-{
-    g_signal_emit_by_name(m_webView, "geolocation-policy-decision-cancelled", kit(frame));
-}
-
 bool ChromeClient::selectItemWritingDirectionIsNatural()
 {
     return false;

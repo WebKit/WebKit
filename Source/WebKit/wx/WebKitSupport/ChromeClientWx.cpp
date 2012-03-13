@@ -465,12 +465,6 @@ void ChromeClientWx::setCursor(const Cursor& cursor)
         m_webView->SetCursor(*cursor.impl());
 }
 
-void ChromeClientWx::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
-{
-    // See the comment in WebCore/page/ChromeClient.h
-    notImplemented();
-}
-
 bool ChromeClientWx::selectItemWritingDirectionIsNatural()
 {
     return false;
