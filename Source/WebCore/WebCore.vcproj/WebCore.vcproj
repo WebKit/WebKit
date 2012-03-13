@@ -73765,6 +73765,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ResourceScriptMapping.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ResourceTimingView.js"
 					>
 				</File>

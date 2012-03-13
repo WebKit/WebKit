@@ -45,7 +45,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
         --js Source/WebCore/inspector/front-end/HandlerRegistry.js \
         --js Source/WebCore/inspector/front-end/InspectorFrontendHostStub.js \
-    --module jsmodule_sdk:34:jsmodule_common \
+    --module jsmodule_sdk:35:jsmodule_common \
         --js Source/WebCore/inspector/front-end/InspectorBackend.js \
         --js Source/WebCore/inspector/front-end/ApplicationCacheModel.js \
         --js Source/WebCore/inspector/front-end/Color.js \
@@ -76,6 +76,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/RemoteObject.js \
         --js Source/WebCore/inspector/front-end/Resource.js \
         --js Source/WebCore/inspector/front-end/ResourceCategory.js \
+        --js Source/WebCore/inspector/front-end/ResourceScriptMapping.js \
         --js Source/WebCore/inspector/front-end/ResourceTreeModel.js \
         --js Source/WebCore/inspector/front-end/ResourceUtils.js \
         --js Source/WebCore/inspector/front-end/NetworkManager.js \

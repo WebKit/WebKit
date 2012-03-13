@@ -109,6 +109,7 @@
     <file>ResourceHeadersView.js</file>
     <file>ResourcePreviewView.js</file>
     <file>ResourceResponseView.js</file>
+    <file>ResourceScriptMapping.js</file>
     <file>ResourceTimingView.js</file>
     <file>ResourceTreeModel.js</file>
     <file>ResourceUtils.js</file>
