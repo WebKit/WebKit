@@ -1,5 +1,12 @@
 2012-03-13  Benjamin Poulain  <bpoulain@apple.com>
 
+        Attempt to fix QtMinimal bot after r110595
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+
+2012-03-13  Benjamin Poulain  <bpoulain@apple.com>
+
         Another attempt at fixing QtMinimal bot after r110595
 
         Blind fix, unreviewed.
