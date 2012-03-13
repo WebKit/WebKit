@@ -475,8 +475,8 @@ public:
     LayoutRect boundingBox(const RenderLayer* rootLayer) const;
     // Bounding box in the coordinates of this layer.
     LayoutRect localBoundingBox() const;
-    // Bounding box relative to the root.
-    LayoutRect absoluteBoundingBox() const;
+    // Pixel snapped bounding box relative to the root.
+    IntRect absoluteBoundingBox() const;
 
     void updateHoverActiveState(const HitTestRequest&, HitTestResult&);
 

@@ -3919,9 +3919,9 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer) const
     return result;
 }
 
-LayoutRect RenderLayer::absoluteBoundingBox() const
+IntRect RenderLayer::absoluteBoundingBox() const
 {
-    return boundingBox(root());
+    return pixelSnappedIntRect(boundingBox(root()));
 }
 
 void RenderLayer::clearClipRectsIncludingDescendants()
