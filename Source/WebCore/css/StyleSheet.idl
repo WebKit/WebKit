@@ -26,8 +26,7 @@ module stylesheets {
         JSGenerateIsReachable,
         CustomToJSObject,
         ObjCPolymorphic,
-        V8DependentLifetime,
-        V8GenerateIsReachable=ImplOwnerNodeRoot
+        V8DependentLifetime
     ] StyleSheet {
         readonly attribute [TreatReturnedNullStringAs=Null] DOMString        type;
                  attribute boolean          disabled;

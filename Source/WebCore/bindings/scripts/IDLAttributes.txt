@@ -38,7 +38,6 @@ CustomEnumerateProperty
 CustomGetOwnPropertySlot
 CustomGetter
 CustomIndexedSetter
-CustomIsReachable
 CustomNamedGetter
 CustomNamedSetter
 CustomPutFunction
@@ -52,12 +51,11 @@ DoNotCheckSecurityOnGetter
 DoNotCheckSecurityOnSetter
 EventTarget
 ExtendsDOMGlobalObject
-GenerateIsReachable=|Impl|ImplContext|ImplDocument|ImplElementRoot|ImplFrame
 Immutable
 ImplementedAs=*
 IndexedGetter
-InitializedByEventConstructor
 InterfaceName=*
+InitializedByEventConstructor
 IsIndex
 IsWorkerContext
 JSCustom
@@ -106,12 +104,10 @@ URL
 V8Custom
 V8CustomConstructor
 V8CustomGetter
-V8CustomIsReachable
 V8CustomSetter
 V8CustomToJSObject
 V8DependentLifetime
 V8DoNotCheckSignature
 V8EnabledAtRuntime=*
-V8GenerateIsReachable=|ImplElementRoot|ImplOwnerRoot|ImplOwnerNodeRoot
 V8ReadOnly
 V8Unforgeable

@@ -381,18 +381,6 @@ sub prototypeHashTableAccessor
     }
 }
 
-sub GetGenerateIsReachable
-{
-    my $dataNode = shift;
-    return $dataNode->extendedAttributes->{"GenerateIsReachable"} || $dataNode->extendedAttributes->{"JSGenerateIsReachable"};
-}
-
-sub GetCustomIsReachable
-{
-    my $dataNode = shift;
-    return $dataNode->extendedAttributes->{"CustomIsReachable"} || $dataNode->extendedAttributes->{"JSCustomIsReachable"};
-}
-
 sub GenerateConditionalString
 {
     my $node = shift;
@@ -992,8 +980,8 @@ sub GenerateHeader
     }
 
     if (!$hasParent ||
-        GetGenerateIsReachable($dataNode) ||
-        GetCustomIsReachable($dataNode) ||
+        $dataNode->extendedAttributes->{"JSGenerateIsReachable"} || 
+        $dataNode->extendedAttributes->{"JSCustomIsReachable"} || 
         $dataNode->extendedAttributes->{"JSCustomFinalize"} ||
         $dataNode->extendedAttributes->{"ActiveDOMObject"}) {
         push(@headerContent, "class JS${implClassName}Owner : public JSC::WeakHandleOwner {\n");
@@ -2280,7 +2268,7 @@ sub GenerateImplementation
         }
     }
 
-    if ((!$hasParent && !GetCustomIsReachable($dataNode))|| GetGenerateIsReachable($dataNode) || $dataNode->extendedAttributes->{"ActiveDOMObject"}) {
+    if ((!$hasParent && !$dataNode->extendedAttributes->{"JSCustomIsReachable"})|| $dataNode->extendedAttributes->{"JSGenerateIsReachable"} || $dataNode->extendedAttributes->{"ActiveDOMObject"}) {
         push(@implContent, "static inline bool isObservable(JS${implClassName}* js${implClassName})\n");
         push(@implContent, "{\n");
         push(@implContent, "    if (js${implClassName}->hasCustomProperties())\n");
@@ -2308,21 +2296,21 @@ sub GenerateImplementation
         }
         push(@implContent, "    if (!isObservable(js${implClassName}))\n");
         push(@implContent, "        return false;\n");
-        if (GetGenerateIsReachable($dataNode)) {
+        if ($dataNode->extendedAttributes->{"JSGenerateIsReachable"}) {
             my $rootString;
-            if (GetGenerateIsReachable($dataNode) eq "Impl") {
+            if ($dataNode->extendedAttributes->{"JSGenerateIsReachable"} eq "Impl") {
                 $rootString  = "    ${implType}* root = js${implClassName}->impl();\n";
-            } elsif (GetGenerateIsReachable($dataNode) eq "ImplContext") {
+            } elsif ($dataNode->extendedAttributes->{"JSGenerateIsReachable"} eq "ImplContext") {
                 $rootString  = "    WebGLRenderingContext* root = js${implClassName}->impl()->context();\n";
-            } elsif (GetGenerateIsReachable($dataNode) eq "ImplFrame") {
+            } elsif ($dataNode->extendedAttributes->{"JSGenerateIsReachable"} eq "ImplFrame") {
                 $rootString  = "    Frame* root = js${implClassName}->impl()->frame();\n";
                 $rootString .= "    if (!root)\n";
                 $rootString .= "        return false;\n";
-            } elsif (GetGenerateIsReachable($dataNode) eq "ImplDocument") {
+            } elsif ($dataNode->extendedAttributes->{"JSGenerateIsReachable"} eq "ImplDocument") {
                 $rootString  = "    Document* root = js${implClassName}->impl()->document();\n";
                 $rootString .= "    if (!root)\n";
                 $rootString .= "        return false;\n";
-            } elsif (GetGenerateIsReachable($dataNode) eq "ImplElementRoot") {
+            } elsif ($dataNode->extendedAttributes->{"JSGenerateIsReachable"} eq "ImplElementRoot") {
                 $rootString  = "    Element* element = js${implClassName}->impl()->element();\n";
                 $rootString .= "    if (!element)\n";
                 $rootString .= "        return false;\n";
@@ -2346,8 +2334,8 @@ sub GenerateImplementation
 
     if (!$dataNode->extendedAttributes->{"JSCustomFinalize"} &&
         (!$hasParent ||
-         GetGenerateIsReachable($dataNode) ||
-         GetCustomIsReachable($dataNode) ||
+         $dataNode->extendedAttributes->{"JSGenerateIsReachable"} ||
+         $dataNode->extendedAttributes->{"JSCustomIsReachable"} ||
          $dataNode->extendedAttributes->{"ActiveDOMObject"})) {
         push(@implContent, "void JS${implClassName}Owner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)\n");
         push(@implContent, "{\n");
