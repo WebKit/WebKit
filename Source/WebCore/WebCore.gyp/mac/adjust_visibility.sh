@@ -63,6 +63,11 @@ fi
 OUTPUT_NAME="output.a"
 
 for ARCH in ${ARCHS} ; do
+  if [ "${ARCH}" = "ppc" -o "${ARCH}" = "ppc64" ] ; then
+    echo "Please |lipo -remove ppc -remove ppc64| from ${INPUT}."
+    echo "Xcode 4.3's ld can no longer relink ppc files."
+    exit 1
+  fi
   # Get a thin version of fat input by running lipo.  If the input is already
   # thin, just copy it into place.  The extra copy isn't strictly necessary
   # but it simplifies the script.
