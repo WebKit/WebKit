@@ -322,10 +322,12 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     pageClients.editorClient = new EditorClientQt(q);
     pageClients.dragClient = new DragClientQt(q);
     pageClients.inspectorClient = new InspectorClientQt(q);
+#if ENABLE(GEOLOCATION)
     if (useMock)
         pageClients.geolocationClient = new GeolocationClientMock;
     else
         pageClients.geolocationClient = new GeolocationClientQt(q);
+#endif
     page = new Page(pageClients);
 #if ENABLE(DEVICE_ORIENTATION)
     if (useMock)
@@ -346,8 +348,10 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     page->setGroupName("Default Group");
 
     // In case running in DumpRenderTree mode set the controller to mock provider.
+#if ENABLE(GEOLOCATION)
     if (QWebPagePrivate::drtRun)
         static_cast<GeolocationClientMock*>(pageClients.geolocationClient)->setController(page->geolocationController());
+#endif
     settings = new QWebSettings(page->settings());
 
     history.d = new QWebHistoryPrivate(static_cast<WebCore::BackForwardListImpl*>(page->backForwardList()));

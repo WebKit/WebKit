@@ -1,3 +1,19 @@
+2012-03-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        Attempt to fix QtMinimal bot after r110595
+
+        Blind fix, unreviewed.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::resetGeolocationMock):
+        (DumpRenderTreeSupportQt::setMockGeolocationPermission):
+        (DumpRenderTreeSupportQt::setMockGeolocationPosition):
+        (DumpRenderTreeSupportQt::setMockGeolocationError):
+        (DumpRenderTreeSupportQt::numberOfPendingGeolocationPermissionRequests):
+        * WebCoreSupport/GeolocationPermissionClientQt.h:
+
 2012-03-13  Adam Barth  <abarth@webkit.org> && Benjamin Poulain  <bpoulain@apple.com>
 
         Always enable ENABLE(CLIENT_BASED_GEOLOCATION)

@@ -31,6 +31,8 @@
 #ifndef GeolocationPermissionClientQt_h
 #define GeolocationPermissionClientQt_h
 
+#if ENABLE(GEOLOCATION)
+
 #include "Geolocation.h"
 #include "qwebpage.h"
 
@@ -56,5 +58,7 @@ private:
 };
 
 }
+
+#endif // ENABLE(GEOLOCATION)
 
 #endif
