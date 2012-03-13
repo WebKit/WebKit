@@ -1,0 +1,7 @@
+This test verifies the position and size of the highlight rectangles overlayed on an inspected div.
+
+margin rect is 260 x 260 at (0, 0)
+border rect is 250 x 250 at (5, 5)
+padding rect is 230 x 230 at (15, 15)
+content rect is 200 x 200 at (30, 30)
+
