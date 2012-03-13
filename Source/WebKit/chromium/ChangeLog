@@ -1,3 +1,16 @@
+2012-03-13  Gavin Peters  <gavinp@chromium.org>
+
+        Implement ApplicationCacheHost::canCacheInPageCache() for chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=80905
+
+        Reviewed by Eric Seidel.
+
+        This won't cause chrome to use the PageCache, but it will cause our histogram statistics
+        describing PageCache use to be more accurate.
+
+        * src/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::canCacheInPageCache):
+
 2012-03-13  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Use CCOcclusionTracker for draw culling
