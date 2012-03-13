@@ -1,3 +1,14 @@
+2012-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Remove a nonexistent WebUIDelegate method from WebUIDelegatePrivate.h
+        https://bugs.webkit.org/show_bug.cgi?id=81014
+
+        Reviewed by Sam Weinig.
+
+        Remove a plug-in halter related WebUIDelegate method.
+
+        * WebView/WebUIDelegatePrivate.h:
+
 2012-03-13  Shinya Kawanaka  <shinyak@chromium.org>
 
         REGRESSION: Spellcheck tests hit assertions on Mac.
