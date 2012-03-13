@@ -755,8 +755,6 @@ BUGCR19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline
 // match that in the <select> option lists.
 // Low priority, unclear if test expectations are correct (see bug)
 BUGCR6139 LINUX WIN : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
-// FIXME_OJAN:  Restore or remove this expectation after WK80588 rebaseline
-// BUGCR6139 LEOPARD : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
 BUGCR64733 : editing/text-iterator/findString.html = TEXT
 
 // Selection is wrong.
@@ -1417,8 +1415,6 @@ BUGCR23476 MAC : fast/text/font-initial.html = IMAGE
 BUGCR23476 BUGWK70765 MAC : fast/forms/listbox-clip.html = IMAGE IMAGE+TEXT
 
 // Disagreeing XML parsing error messages
-// FIXME_OJAN:  Restore or remove this expectation after WK80588 rebaseline.
-// BUGCR88911 LEOPARD : fast/parser/xhtml-alternate-entities.xml = IMAGE+TEXT
 BUGCR88911 LEOPARD : fast/xsl/xslt-extra-content-at-end.xml = IMAGE+TEXT
 
 // Repaint tests failing on Mac.  Need to be manually triaged.
@@ -2368,10 +2364,6 @@ BUGWK53451 LINUX : fast/text/international/text-combine-image-test.html = IMAGE+
 BUGWK61161 LINUX WIN : fast/writing-mode/border-image-horizontal-bt.html = IMAGE+TEXT
 BUGWK61161 LINUX WIN : fast/writing-mode/border-image-vertical-rl.html = IMAGE+TEXT
 BUGWK61161 LINUX WIN : fast/writing-mode/border-image-vertical-lr.html = IMAGE+TEXT
-
-// These tests started failing presumably after r70850
-// FIXME_OJAN:  restore or remove this expectation after WK80588 rebaseline
-// BUGCR88911 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE+TEXT
 
 // New test; was added in http://trac.webkit.org/changeset/68520
 BUGWK46735 SKIP WONTFIX WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = CRASH TEXT
@@ -3882,43 +3874,6 @@ BUGWK75568 : fast/events/mouse-relative-position.html = TEXT
 
 BUGWK80531 : fast/repaint/search-field-cancel.html = TEXT IMAGE+TEXT
 BUGWK80531 : fast/forms/textfield-overflow.html = IMAGE+TEXT
-
-BUGWK80588 LEOPARD : css2.1/t1202-counter-04-b.html = TEXT
-BUGWK80588 LEOPARD : css2.1/t1202-counters-04-b.html = TEXT
-BUGWK80588 LEOPARD : editing/pasteboard/paste-table-cells.html = IMAGE
-BUGWK80588 LEOPARD : fast/block/basic/014.html = IMAGE
-BUGWK80588 LEOPARD : fast/block/basic/020.html = IMAGE
-BUGWK80588 LEOPARD : fast/block/float/dynamic-unfloat-pref-width.html = IMAGE
-BUGWK80588 LEOPARD : fast/block/margin-collapse/044.html = IMAGE
-BUGWK80588 LEOPARD : fast/block/margin-collapse/045.html = IMAGE
-BUGWK80588 LEOPARD : fast/block/positioning/054.html = IMAGE
-BUGWK80588 LEOPARD : fast/forms/disabled-select-change-index.html = TEXT
-BUGWK80588 LEOPARD : fast/css/pseudo-element-line-break.html = IMAGE
-BUGWK80588 LEOPARD : fast/events/onload-re-entry.html = IMAGE
-BUGWK80588 LEOPARD : fast/forms/select-writing-direction-natural.html = IMAGE
-BUGWK80588 LEOPARD : fast/inline/002.html = IMAGE
-BUGWK80588 LEOPARD : fast/inline/vertical-align-text-bottom.html = IMAGE
-BUGWK80588 LEOPARD : fast/invalid/002.html = IMAGE
-BUGWK80588 LEOPARD : fast/invalid/005.html = IMAGE
-BUGWK80588 LEOPARD : fast/invalid/007.html = IMAGE
-BUGWK80588 LEOPARD : fast/invalid/020.xml = IMAGE
-BUGWK80588 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE
-BUGWK80588 LEOPARD : fast/lists/006.html = IMAGE
-BUGWK80588 LEOPARD : fast/loader/text-document-wrapping.html = IMAGE
-BUGWK80588 LEOPARD : fast/parser/tabs-in-scripts.html = IMAGE
-BUGWK80588 LEOPARD : fast/parser/xhtml-alternate-entities.xml = IMAGE
-BUGWK80588 LEOPARD : fast/replaced/three-selects-break.html = IMAGE
-BUGWK80588 LEOPARD : fast/selectors/002.html = IMAGE
-BUGWK80588 LEOPARD : fast/table/001.html = IMAGE
-BUGWK80588 LEOPARD : fast/table/010.html = IMAGE
-BUGWK80588 LEOPARD : fast/table/013.html = IMAGE
-BUGWK80588 LEOPARD : fast/table/015.html = IMAGE
-BUGWK80588 LEOPARD : fast/table/022.html = IMAGE
-BUGWK80588 LEOPARD : scrollbars/basic-scrollbar.html = IMAGE
-BUGWK80588 LEOPARD : scrollbars/disabled-scrollbar.html = IMAGE
-BUGWK80588 LEOPARD : scrollbars/scrollbar-buttons.html = IMAGE
-BUGWK80588 LEOPARD : scrollbars/scrollbar-orientation.html = IMAGE
-BUGWK80588 SNOWLEOPARD : fast/forms/number/input-appearance-spinbutton-layer.html = IMAGE
 
 // Started failing (returning an empty render tree) at
 // http://trac.webkit.org/changeset/110262; flaky in debug.
