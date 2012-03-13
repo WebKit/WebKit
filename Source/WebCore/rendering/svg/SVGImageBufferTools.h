@@ -42,7 +42,7 @@ public:
     static bool createImageBufferForPattern(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>&, ColorSpace, RenderingMode);
 
     static void renderSubtreeToImageBuffer(ImageBuffer*, RenderObject*, const AffineTransform&);
-    static void clipToImageBuffer(GraphicsContext*, const AffineTransform& absoluteTransform, const FloatRect& targetRect, OwnPtr<ImageBuffer>&);
+    static void clipToImageBuffer(GraphicsContext*, const AffineTransform& absoluteTransform, const FloatRect& targetRect, OwnPtr<ImageBuffer>&, bool safeToClear);
 
     static void calculateTransformationToOutermostSVGCoordinateSystem(const RenderObject*, AffineTransform& absoluteTransform);
     static IntSize clampedAbsoluteSize(const IntSize&);

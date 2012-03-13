@@ -155,7 +155,8 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext* context, const 
 bool RenderSVGResourceClipper::applyClippingToContext(RenderObject* object, const FloatRect& objectBoundingBox,
                                                       const FloatRect& repaintRect, GraphicsContext* context)
 {
-    if (!m_clipper.contains(object))
+    bool missingClipperData = !m_clipper.contains(object);
+    if (missingClipperData)
         m_clipper.set(object, new ClipperData);
 
     bool shouldCreateClipData = false;
@@ -201,7 +202,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderObject* object, cons
     if (!clipperData->clipMaskImage)
         return false;
 
-    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, repaintRect, clipperData->clipMaskImage);
+    SVGImageBufferTools::clipToImageBuffer(context, absoluteTransform, repaintRect, clipperData->clipMaskImage, missingClipperData);
     return true;
 }
 
