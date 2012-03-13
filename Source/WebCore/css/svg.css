@@ -26,6 +26,7 @@
  */
 
 @namespace "http://www.w3.org/2000/svg";
+@namespace html "http://www.w3.org/1999/xhtml";
 
 /*
     When an outermost SVG 'svg' element is stand-alone or embedded inline within a parent XML grammar 
@@ -62,4 +63,14 @@ text, tspan, tref {
 
 :focus {
     outline: auto 5px -webkit-focus-ring-color
+}
+
+/* CSS transform specification: "transform-origin 0 0 for SVG elements without associated CSS layout box, 50% 50% for all other elements". */
+ 
+* {
+    -webkit-transform-origin: 0 0;
+}
+
+html|* > svg {
+    -webkit-transform-origin: 50% 50%;
 }

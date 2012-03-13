@@ -930,6 +930,9 @@ BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 // SVG TESTS
 // -----------------------------------------------------------------
 
+// Chromium failure needs investigation
+BUGWK79068 : svg/transforms/transform-origin-css-property.xhtml = FAIL
+
 // New test requires rebaseline
 BUGWK77535 : svg/repaint/inner-svg-change-viewPort-relative.svg = IMAGE IMAGE+TEXT
 

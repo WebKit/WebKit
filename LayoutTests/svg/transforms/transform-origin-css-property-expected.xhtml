@@ -1,0 +1,45 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<style>
+#transformOriginDiv {
+   position: absolute;
+   width: 30px;
+   height: 30px;
+   background: green;
+   -webkit-transform: rotate(90deg);
+}
+</style>
+
+<body>
+  <div id="divRoot"></div>
+
+  <script><![CDATA[
+
+    function addTransformOriginDiv(x, y, transformOrigin)
+    {
+       var div = document.createElement("div");
+       div.setAttribute("id", "transformOriginDiv");
+       div.setAttribute("style", "top: " + y + "px; left: "+ x + "px; -webkit-transform-origin: " + transformOrigin + ";");
+       document.getElementById("divRoot").appendChild(div);
+    }
+
+    var transformOrigins = [
+         "50% 50%",
+         "0% 0%",
+         "0% 50%",
+         "100% 0%",
+         "0% 50%",
+         "100% 50%",
+         "0% 100%",
+         "50% 100%",
+         "100% 100%",
+     ];
+
+     for (var i = 0; i < transformOrigins.length; i++)  {
+         var x = 60 + (i %  4) * 60;
+         var y = 60 + Math.floor(i / 4) * 60;
+         addTransformOriginDiv(x, y, transformOrigins[i]);
+     }
+
+  ]]></script>
+</body>
+</html>

@@ -2,6 +2,7 @@
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
     Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
     Copyright (C) 2011 Rik Cabanier (cabanier@adobe.com)
+    Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -203,6 +204,7 @@ public:
         return 0;
     }
 
+    // FIXME: when subpixel layout is supported this copy of calcFloatValue() can be removed. See bug 71143.
     float calcFloatValue(int maxValue) const
     {
         switch (type()) {
@@ -220,6 +222,28 @@ public:
             case Undefined:
                 ASSERT_NOT_REACHED();
                 return 0;
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    float calcFloatValue(float maxValue) const
+    {
+        switch (type()) {
+        case Fixed:
+            return getFloatValue();
+        case Percent:
+            return static_cast<float>(maxValue * percent() / 100.0f);
+        case Auto:
+            return static_cast<float>(maxValue);
+        case Calculated:
+            return nonNanCalculatedValue(maxValue);
+        case Relative:
+        case Intrinsic:
+        case MinIntrinsic:
+        case Undefined:
+            ASSERT_NOT_REACHED();
+            return 0;
         }
         ASSERT_NOT_REACHED();
         return 0;

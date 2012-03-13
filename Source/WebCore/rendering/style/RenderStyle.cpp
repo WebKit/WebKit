@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -769,39 +770,70 @@ void RenderStyle::setContent(QuoteType quote, bool add)
 
     rareNonInheritedData.access()->m_content = ContentData::create(quote);
 }
-
-void RenderStyle::applyTransform(TransformationMatrix& transform, const LayoutSize& borderBoxSize, ApplyTransformOrigin applyOrigin) const
+    
+inline bool requireTransformOrigin(const Vector<RefPtr<TransformOperation> >& transformOperations, RenderStyle::ApplyTransformOrigin applyOrigin)
 {
     // transform-origin brackets the transform with translate operations.
     // Optimize for the case where the only transform is a translation, since the transform-origin is irrelevant
     // in that case.
-    bool applyTransformOrigin = false;
-    unsigned s = rareNonInheritedData->m_transform->m_operations.operations().size();
-    unsigned i;
-    if (applyOrigin == IncludeTransformOrigin) {
-        for (i = 0; i < s; i++) {
-            TransformOperation::OperationType type = rareNonInheritedData->m_transform->m_operations.operations()[i]->getOperationType();
-            if (type != TransformOperation::TRANSLATE_X
-                    && type != TransformOperation::TRANSLATE_Y
-                    && type != TransformOperation::TRANSLATE 
-                    && type != TransformOperation::TRANSLATE_Z
-                    && type != TransformOperation::TRANSLATE_3D
-                    ) {
-                applyTransformOrigin = true;
-                break;
-            }
-        }
-    }
+    if (applyOrigin != RenderStyle::IncludeTransformOrigin)
+        return false;
 
-    if (applyTransformOrigin) {
+    unsigned size = transformOperations.size();
+    for (unsigned i = 0; i < size; ++i) {
+        TransformOperation::OperationType type = transformOperations[i]->getOperationType();
+        if (type != TransformOperation::TRANSLATE_X
+            && type != TransformOperation::TRANSLATE_Y
+            && type != TransformOperation::TRANSLATE 
+            && type != TransformOperation::TRANSLATE_Z
+            && type != TransformOperation::TRANSLATE_3D)
+            return true;
+    }
+    
+    return false;
+}
+
+void RenderStyle::applyTransform(TransformationMatrix& transform, const LayoutSize& borderBoxSize, ApplyTransformOrigin applyOrigin) const
+{
+    // FIXME: when subpixel layout is supported (bug 71143) the body of this function could be replaced by
+    // applyTransform(transform, FloatRect(FloatPoint(), borderBoxSize), applyOrigin);
+    
+    const Vector<RefPtr<TransformOperation> >& transformOperations = rareNonInheritedData->m_transform->m_operations.operations();
+    bool applyTransformOrigin = requireTransformOrigin(transformOperations, applyOrigin);
+
+    if (applyTransformOrigin)
         transform.translate3d(transformOriginX().calcFloatValue(borderBoxSize.width()), transformOriginY().calcFloatValue(borderBoxSize.height()), transformOriginZ());
-    }
 
-    for (i = 0; i < s; i++)
-        rareNonInheritedData->m_transform->m_operations.operations()[i]->apply(transform, borderBoxSize);
+    unsigned size = transformOperations.size();
+    for (unsigned i = 0; i < size; ++i)
+        transformOperations[i]->apply(transform, borderBoxSize);
 
+    if (applyTransformOrigin)
+        transform.translate3d(-transformOriginX().calcFloatValue(borderBoxSize.width()), -transformOriginY().calcFloatValue(borderBoxSize.height()), -transformOriginZ()); 
+}
+
+void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, ApplyTransformOrigin applyOrigin) const
+{
+    const Vector<RefPtr<TransformOperation> >& transformOperations = rareNonInheritedData->m_transform->m_operations.operations();
+    bool applyTransformOrigin = requireTransformOrigin(transformOperations, applyOrigin);
+    
+    float offsetX = transformOriginX().type() == Percent ? boundingBox.x() : 0;
+    float offsetY = transformOriginY().type() == Percent ? boundingBox.y() : 0;
+    
     if (applyTransformOrigin) {
-        transform.translate3d(-transformOriginX().calcFloatValue(borderBoxSize.width()), -transformOriginY().calcFloatValue(borderBoxSize.height()), -transformOriginZ());
+        transform.translate3d(transformOriginX().calcFloatValue(boundingBox.width()) + offsetX,
+                              transformOriginY().calcFloatValue(boundingBox.height()) + offsetY,
+                              transformOriginZ());
+    }
+    
+    unsigned size = transformOperations.size();
+    for (unsigned i = 0; i < size; ++i)
+        transformOperations[i]->apply(transform, boundingBox.size());
+    
+    if (applyTransformOrigin) {
+        transform.translate3d(-transformOriginX().calcFloatValue(boundingBox.width()) - offsetX,
+                              -transformOriginY().calcFloatValue(boundingBox.height()) - offsetY,
+                              -transformOriginZ());
     }
 }
 
