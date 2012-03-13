@@ -270,34 +270,12 @@ static inline IntRect rectSubtractRegion(const IntRect& rect, const Region& regi
     return boundsRect;
 }
 
-static FloatQuad projectQuad(const TransformationMatrix& transform, const FloatQuad& q, bool& clamped)
-{
-    FloatQuad projectedQuad;
-    bool clampedPoint;
-    projectedQuad.setP1(transform.projectPoint(q.p1(), &clampedPoint));
-    clamped = clampedPoint;
-    projectedQuad.setP2(transform.projectPoint(q.p2(), &clampedPoint));
-    clamped |= clampedPoint;
-    projectedQuad.setP3(transform.projectPoint(q.p3(), &clampedPoint));
-    clamped |= clampedPoint;
-    projectedQuad.setP4(transform.projectPoint(q.p4(), &clampedPoint));
-    clamped |= clampedPoint;
-
-    return projectedQuad;
-}
-
 static inline IntRect computeUnoccludedContentRect(const IntRect& contentRect, const TransformationMatrix& contentSpaceTransform, const IntRect& scissorRect, const Region& occlusion)
 {
-    if (!contentSpaceTransform.isInvertible())
-        return contentRect;
-
     FloatRect transformedRect = contentSpaceTransform.mapRect(FloatRect(contentRect));
     // Take the enclosingIntRect at each step, as we want to contain any unoccluded partial pixels in the resulting IntRect.
     IntRect shrunkRect = rectSubtractRegion(intersection(enclosingIntRect(transformedRect), scissorRect), occlusion);
-    bool clamped; // FIXME: projectQuad returns invalid results when a point gets clamped. To be fixed in bug https://bugs.webkit.org/show_bug.cgi?id=80806.
-    IntRect unoccludedRect = enclosingIntRect(projectQuad(contentSpaceTransform.inverse(), FloatQuad(FloatRect(shrunkRect)), clamped).boundingBox());
-    if (clamped)
-        return contentRect;
+    IntRect unoccludedRect = enclosingIntRect(contentSpaceTransform.inverse().mapRect(FloatRect(shrunkRect)));
     // The rect back in content space is a bounding box and may extend outside of the original contentRect, so clamp it to the contentRectBounds.
     return intersection(unoccludedRect, contentRect);
 }
