@@ -1,3 +1,19 @@
+2012-03-13  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Use projectQuad to apply inverse mapRect
+        https://bugs.webkit.org/show_bug.cgi?id=80741
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebCore):
+        (CCOcclusionTrackerTest3dTransform):
+        (WebCore::CCOcclusionTrackerTest3dTransform::runMyTest):
+        (CCOcclusionTrackerTestPerspectiveTransform):
+        (WebCore::CCOcclusionTrackerTestPerspectiveTransform::runMyTest):
+        (CCOcclusionTrackerTestPerspectiveTransformBehindCamera):
+        (WebCore::CCOcclusionTrackerTestPerspectiveTransformBehindCamera::runMyTest):
+
 2012-03-13  Gavin Peters  <gavinp@chromium.org>
 
         Make ApplicationCacheHost::canCacheInPageCache() non-const.

@@ -314,6 +314,9 @@ private:
     RUN_TEST_IMPL_THREAD_OPAQUE_LAYERS(ClassName) \
     RUN_TEST_IMPL_THREAD_OPAQUE_PAINTS(ClassName)
 
+#define MAIN_THREAD_TEST(ClassName) \
+    RUN_TEST_MAIN_THREAD_OPAQUE_LAYERS(ClassName)
+
 #define MAIN_AND_IMPL_THREAD_TEST(ClassName) \
     RUN_TEST_MAIN_THREAD_OPAQUE_LAYERS(ClassName) \
     RUN_TEST_IMPL_THREAD_OPAQUE_LAYERS(ClassName)
@@ -1711,5 +1714,84 @@ protected:
 };
 
 MAIN_AND_IMPL_THREAD_TEST(CCOcclusionTrackerTestOpaqueContentsRegionNonEmpty);
+
+template<class Types, bool opaqueLayers>
+class CCOcclusionTrackerTest3dTransform : public CCOcclusionTrackerTest<Types, opaqueLayers> {
+protected:
+    void runMyTest()
+    {
+        TransformationMatrix transform;
+        transform.rotate3d(0, 30, 0);
+
+        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+        typename Types::LayerType* container = this->createLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+        typename Types::ContentLayerType* layer = this->createDrawingSurface(container, transform, FloatPoint(100, 100), IntSize(200, 200), true);
+        this->calcDrawEtc(parent);
+
+        TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
+        occlusion.enterTargetRenderSurface(parent->renderSurface());
+
+        EXPECT_EQ_RECT(IntRect(0, 0, 200, 200), occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)));
+    }
+};
+
+MAIN_AND_IMPL_THREAD_TEST(CCOcclusionTrackerTest3dTransform);
+
+template<class Types, bool opaqueLayers>
+class CCOcclusionTrackerTestPerspectiveTransform : public CCOcclusionTrackerTest<Types, opaqueLayers> {
+protected:
+    void runMyTest()
+    {
+        TransformationMatrix transform;
+        transform.translate(150, 150);
+        transform.applyPerspective(400);
+        transform.rotate3d(1, 0, 0, -30);
+        transform.translate(-150, -150);
+
+        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+        typename Types::LayerType* container = this->createLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+        typename Types::ContentLayerType* layer = this->createDrawingSurface(container, transform, FloatPoint(100, 100), IntSize(200, 200), true);
+        container->setPreserves3D(true);
+        this->calcDrawEtc(parent);
+
+        TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
+        occlusion.enterTargetRenderSurface(parent->renderSurface());
+
+        EXPECT_EQ_RECT(IntRect(0, 0, 200, 200), occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)));
+    }
+};
+
+MAIN_THREAD_TEST(CCOcclusionTrackerTestPerspectiveTransform);
+
+template<class Types, bool opaqueLayers>
+class CCOcclusionTrackerTestPerspectiveTransformBehindCamera : public CCOcclusionTrackerTest<Types, opaqueLayers> {
+protected:
+    void runMyTest()
+    {
+        // This test is based on the platform/chromium/compositing/3d-corners.html layout test.
+        TransformationMatrix transform;
+        transform.translate(250, 50);
+        transform.applyPerspective(10);
+        transform.translate(-250, -50);
+        transform.translate(250, 50);
+        transform.rotate3d(1, 0, 0, -167);
+        transform.translate(-250, -50);
+
+        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(500, 100));
+        typename Types::LayerType* container = this->createLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(500, 500));
+        typename Types::ContentLayerType* layer = this->createDrawingLayer(container, transform, FloatPoint(0, 0), IntSize(500, 500), true);
+        container->setPreserves3D(true);
+        this->calcDrawEtc(parent);
+
+        TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
+        occlusion.enterTargetRenderSurface(parent->renderSurface());
+
+        // The bottom 11 pixel rows of this layer remain visible inside the container, after translation to the target surface. When translated back,
+        // this will include many more pixels but must include at least the bottom 11 rows.
+        EXPECT_TRUE(occlusion.unoccludedContentRect(layer, IntRect(0, 0, 500, 500)).contains(IntRect(0, 489, 500, 11)));
+    }
+};
+
+MAIN_THREAD_TEST(CCOcclusionTrackerTestPerspectiveTransformBehindCamera);
 
 } // namespace
