@@ -504,6 +504,15 @@ void WebPageProxy::loadPlainTextString(const String& string)
     process()->responsivenessTimer()->start();
 }
 
+void WebPageProxy::loadWebArchiveData(const WebData* webArchiveData)
+{
+    if (!isValid())
+        reattachToWebProcess();
+
+    process()->send(Messages::WebPage::LoadWebArchiveData(webArchiveData->dataReference()), m_pageID);
+    process()->responsivenessTimer()->start();
+}
+
 void WebPageProxy::stopLoading()
 {
     if (!isValid())

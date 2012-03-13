@@ -82,6 +82,11 @@ void WKPageLoadPlainTextString(WKPageRef pageRef, WKStringRef plainTextStringRef
     toImpl(pageRef)->loadPlainTextString(toWTFString(plainTextStringRef));    
 }
 
+void WKPageLoadWebArchiveData(WKPageRef pageRef, WKDataRef webArchiveDataRef)
+{
+    toImpl(pageRef)->loadWebArchiveData(toImpl(webArchiveDataRef));
+}
+
 void WKPageStopLoading(WKPageRef pageRef)
 {
     toImpl(pageRef)->stopLoading();

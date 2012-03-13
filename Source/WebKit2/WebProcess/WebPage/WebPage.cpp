@@ -682,6 +682,12 @@ void WebPage::loadPlainTextString(const String& string)
     loadData(sharedBuffer, "text/plain", "utf-16", blankURL(), KURL());
 }
 
+void WebPage::loadWebArchiveData(const CoreIPC::DataReference& webArchiveData)
+{
+    RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(webArchiveData.data()), webArchiveData.size() * sizeof(uint8_t));
+    loadData(sharedBuffer, "application/x-webarchive", "utf-16", blankURL(), KURL());
+}
+
 void WebPage::linkClicked(const String& url, const WebMouseEvent& event)
 {
     Frame* frame = m_page->mainFrame();

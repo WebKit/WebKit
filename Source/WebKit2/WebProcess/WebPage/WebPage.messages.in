@@ -57,6 +57,7 @@ messages -> WebPage {
     LoadHTMLString(WTF::String htmlString, WTF::String baseURL)
     LoadAlternateHTMLString(WTF::String htmlString, WTF::String baseURL, WTF::String unreachableURL); 
     LoadPlainTextString(WTF::String string)
+    LoadWebArchiveData(CoreIPC::DataReference webArchiveData)
     LoadURL(WTF::String url, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     LoadURLRequest(WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     LinkClicked(WTF::String url, WebKit::WebMouseEvent event)
