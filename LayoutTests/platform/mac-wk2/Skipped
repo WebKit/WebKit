@@ -195,6 +195,15 @@ editing/selection/select-across-readonly-input-3.html
 editing/selection/select-across-readonly-input-4.html
 editing/selection/select-across-readonly-input-5.html
 
+# WKTR needs an implementation of setAsynchronousSpellCheckingEnabled.
+# https://bugs.webkit.org/show_bug.cgi?id=81042
+editing/spelling/grammar-paste.html
+editing/spelling/spellcheck-async-mutation.html
+editing/spelling/spellcheck-async.html
+editing/spelling/spellcheck-queue.html
+editing/spelling/spellcheck-sequencenum.html
+editing/spelling/spelling-marker-description.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
