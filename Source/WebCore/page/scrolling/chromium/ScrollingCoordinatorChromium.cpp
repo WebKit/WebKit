@@ -81,11 +81,22 @@ static GraphicsLayer* scrollLayerForFrameView(FrameView* frameView)
 #endif
 }
 
-static void scrollbarLayerDidChange(Scrollbar* scrollbar, LayerChromium* scrollLayer, GraphicsLayer* scrollbarGraphicsLayer)
+static void scrollbarLayerDidChange(Scrollbar* scrollbar, LayerChromium* scrollLayer, GraphicsLayer* scrollbarGraphicsLayer, FrameView* frameView)
 {
     ASSERT(scrollbar);
-    ASSERT(scrollLayer);
     ASSERT(scrollbarGraphicsLayer);
+
+    if (!scrollLayer) {
+        // FIXME: sometimes we get called before setScrollLayer, workaround by finding the scroll layout ourselves.
+        scrollLayer = scrollLayerForFrameView(frameView)->platformLayer();
+        ASSERT(scrollLayer);
+    }
+
+    // Root layer non-overlay scrollbars should be marked opaque to disable
+    // blending.
+    bool isOpaqueRootScrollbar = !frameView->parent() && !scrollbar->isOverlayScrollbar();
+    if (!scrollbarGraphicsLayer->contentsOpaque())
+        scrollbarGraphicsLayer->setContentsOpaque(isOpaqueRootScrollbar);
 
     if (scrollbar->isCustomScrollbar() || !CCProxy::hasImplThread()) {
         scrollbarGraphicsLayer->setContentsToMedia(0);
@@ -96,6 +107,7 @@ static void scrollbarLayerDidChange(Scrollbar* scrollbar, LayerChromium* scrollL
     RefPtr<ScrollbarLayerChromium> scrollbarLayer = ScrollbarLayerChromium::create(scrollbar, scrollLayer->id());
     scrollbarGraphicsLayer->setContentsToMedia(scrollbarLayer.get());
     scrollbarGraphicsLayer->setDrawsContent(false);
+    scrollbarLayer->setOpaque(scrollbarGraphicsLayer->contentsOpaque());
 }
 
 void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer* horizontalScrollbarLayer)
@@ -103,11 +115,7 @@ void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView*
     if (!horizontalScrollbarLayer || !coordinatesScrollingForFrameView(frameView))
         return;
 
-    LayerChromium* scrollLayer = m_private->scrollLayer();
-    if (!scrollLayer) // FIXME: sometimes we get called before setScrollLayer, workaround by finding the scroll layout ourselves.
-        scrollLayer = scrollLayerForFrameView(frameView)->platformLayer();
-
-    scrollbarLayerDidChange(frameView->horizontalScrollbar(), scrollLayer, horizontalScrollbarLayer);
+    scrollbarLayerDidChange(frameView->horizontalScrollbar(), m_private->scrollLayer(), horizontalScrollbarLayer, frameView);
 }
 
 void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer* verticalScrollbarLayer)
@@ -115,11 +123,7 @@ void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView* f
     if (!verticalScrollbarLayer || !coordinatesScrollingForFrameView(frameView))
         return;
 
-    LayerChromium* scrollLayer = m_private->scrollLayer();
-    if (!scrollLayer) // FIXME: sometimes we get called before setScrollLayer, workaround by finding the scroll layout ourselves.
-        scrollLayer = scrollLayerForFrameView(frameView)->platformLayer();
-
-    scrollbarLayerDidChange(frameView->verticalScrollbar(), scrollLayer, verticalScrollbarLayer);
+    scrollbarLayerDidChange(frameView->verticalScrollbar(), m_private->scrollLayer(), verticalScrollbarLayer, frameView);
 }
 
 void ScrollingCoordinator::setScrollLayer(GraphicsLayer* scrollLayer)
