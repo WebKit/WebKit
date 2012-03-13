@@ -483,7 +483,10 @@ inline v8::Handle<v8::Value> toV8(Node* impl, bool forceNewObject = false)
         return v8::Null();
     if (UNLIKELY(forceNewObject))
         return toV8Slow(impl, forceNewObject);
-    return V8DOMWrapper::getWrapper(impl);
+    v8::Handle<v8::Value> wrapper = V8DOMWrapper::getWrapper(impl);
+    if (!wrapper.IsEmpty())
+        return wrapper;
+    return toV8Slow(impl, false);
 }
 END
     }

@@ -310,10 +310,7 @@ v8::Handle<v8::Object> V8DOMWrapper::getExistingWrapperSlow(Node* node)
 
 v8::Handle<v8::Value> V8DOMWrapper::getWrapperSlow(Node* node)
 {
-    v8::Handle<v8::Object> wrapper = getExistingWrapperInline(node);
-    if (!wrapper.IsEmpty())
-        return wrapper;
-    return toV8Slow(node, false);
+    return getExistingWrapperInline(node);
 }
 
 #define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
