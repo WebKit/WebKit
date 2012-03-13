@@ -20,7 +20,7 @@ window.addEventListener("beforeunload", function() {
             document.getElementById("console").innerHTML = "FAIL";
             if (window.layoutTestController)
                 layoutTestController.notifyDone();
-        }, 0);
+        }, 1000);
 
         document.forms[0].submit();
     }, 0);
