@@ -40,9 +40,9 @@ function executeTest() {
     const expectedValues = [
         // [animationId, time, sampleCallback]
         ["animation", 1.999, sample1],
-        ["animation", 2.0,   sample2],
+        ["animation", 2.001, sample2],
         ["animation", 5.999, sample3],
-        ["animation", 6.0,   sample1]
+        ["animation", 6.001, sample1]
     ];
 
     runAnimationTest(expectedValues);

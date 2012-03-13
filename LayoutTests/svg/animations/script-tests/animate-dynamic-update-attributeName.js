@@ -24,26 +24,34 @@ rootSVGElement.appendChild(rect);
 
 // Setup animation test
 function sample1() {
-    shouldBe("getComputedStyle(rect).color", "'rgb(0, 128, 0)'");
+    expectColor(rect, 255, 0, 0);
     shouldBeEqualToString("rect.style.color", "");
 }
 
+
 function sample2() {
+    expectColor(rect, 0, 128, 0);
+    shouldBeEqualToString("rect.style.color", "");
+}
+
+function sample3() {
     // Set 'attributeName' from 'color' to 'fill'
     animate.setAttribute("attributeName", "fill");
 }
 
-function sample3() {
-    shouldBe("getComputedStyle(rect).fill", "'#008000'");
+function sample4() {
+    expectFillColor(rect, 0, 128, 0);
+    shouldBeEqualToString("rect.style.color", "");
     shouldBeEqualToString("rect.style.fill", "");
 }
 
 function executeTest() {
     const expectedValues = [
         // [animationId, time, sampleCallback]
-        ["animation", 0.001, sample1],
-        ["animation", 1.5, sample2],
-        ["animation", 3.0, sample3],
+        ["animation", 0.0,   sample1],
+        ["animation", 0.001, sample2],
+        ["animation", 1.5,   sample3],
+        ["animation", 3.0,   sample4],
     ];
 
     runAnimationTest(expectedValues);

@@ -22,13 +22,13 @@ rootSVGElement.appendChild(path);
 // Setup animation test
 function sample1() {
     // Check initial/end conditions
-    shouldBe("path.pathSegList.getItem(0).x", "40");
-    shouldBe("path.pathSegList.getItem(0).y", "40");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).x", "40");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).y", "40");
 }
 
 function sample2() {
-    shouldBe("path.pathSegList.getItem(0).x", "20");
-    shouldBe("path.pathSegList.getItem(0).y", "20");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).x", "20");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).y", "20");
 }
 
 function sample3() {
@@ -42,7 +42,7 @@ function executeTest() {
         ["animation", 0.0,   sample1],
         ["animation", 2.0,   sample2],
         ["animation", 3.999, sample3],
-        ["animation", 4.0,   sample1]
+        ["animation", 4.001, sample1]
     ];
 
     runAnimationTest(expectedValues);

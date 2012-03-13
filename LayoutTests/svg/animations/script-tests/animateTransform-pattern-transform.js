@@ -41,14 +41,14 @@ rootSVGElement.appendChild(rect);
 // Setup animation test
 function sample1() {
     // Check initial/end conditions
-    shouldBe("pattern.patternTransform.animVal.getItem(0).matrix.a", "1");
-    shouldBe("pattern.patternTransform.baseVal.getItem(0).matrix.a", "1");
+    shouldBeCloseEnough("pattern.patternTransform.animVal.getItem(0).matrix.a", "1");
+    shouldBeCloseEnough("pattern.patternTransform.baseVal.getItem(0).matrix.a", "1");
 }
 
 function sample2() {
     // Check half-time conditions
-    shouldBe("pattern.patternTransform.animVal.getItem(0).matrix.a", "1.5");
-    shouldBe("pattern.patternTransform.baseVal.getItem(0).matrix.a", "1.5");
+    shouldBeCloseEnough("pattern.patternTransform.animVal.getItem(0).matrix.a", "1.5");
+    shouldBeCloseEnough("pattern.patternTransform.baseVal.getItem(0).matrix.a", "1.5");
 }
 
 function sample3() {
@@ -62,7 +62,7 @@ function executeTest() {
         ["animation", 0.0,   sample1],
         ["animation", 2.0,   sample2],
         ["animation", 3.999, sample3],
-        ["animation", 4.0,   sample1]
+        ["animation", 4.001, sample1]
     ];
 
     runAnimationTest(expectedValues);

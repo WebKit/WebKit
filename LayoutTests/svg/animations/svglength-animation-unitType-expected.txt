@@ -11,6 +11,8 @@ PASS rect.width.animVal.unitType is SVGLength.SVG_LENGTHTYPE_NUMBER
 PASS rect.width.baseVal.unitType is SVGLength.SVG_LENGTHTYPE_NUMBER
 PASS rect.width.animVal.unitType is SVGLength.SVG_LENGTHTYPE_PX
 PASS rect.width.baseVal.unitType is SVGLength.SVG_LENGTHTYPE_NUMBER
+PASS rect.width.animVal.unitType is SVGLength.SVG_LENGTHTYPE_PX
+PASS rect.width.baseVal.unitType is SVGLength.SVG_LENGTHTYPE_NUMBER
 PASS rect.width.animVal.unitType is SVGLength.SVG_LENGTHTYPE_NUMBER
 PASS rect.width.baseVal.unitType is SVGLength.SVG_LENGTHTYPE_NUMBER
 PASS successfullyParsed is true

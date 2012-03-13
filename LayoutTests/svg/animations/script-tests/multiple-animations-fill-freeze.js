@@ -6,10 +6,10 @@ function sample1() {
     shouldBeCloseEnough("rect1.x.animVal.value", "0");
     shouldBe("rect1.x.baseVal.value", "0");
 
-	shouldBeCloseEnough("rect2.x.animVal.value", "0");
+    shouldBeCloseEnough("rect2.x.animVal.value", "0");
     shouldBe("rect2.x.baseVal.value", "0");
 
-	shouldBeCloseEnough("rect3.x.animVal.value", "0");
+    shouldBeCloseEnough("rect3.x.animVal.value", "0");
     shouldBe("rect3.x.baseVal.value", "0");
 }
 
@@ -17,10 +17,10 @@ function sample2() {
     shouldBeCloseEnough("rect1.x.animVal.value", "50");
     shouldBe("rect1.x.baseVal.value", "0");
 
-	shouldBeCloseEnough("rect2.x.animVal.value", "50");
+    shouldBeCloseEnough("rect2.x.animVal.value", "50");
     shouldBe("rect2.x.baseVal.value", "0");
 
-	shouldBeCloseEnough("rect3.x.animVal.value", "50");
+    shouldBeCloseEnough("rect3.x.animVal.value", "50");
     shouldBe("rect3.x.baseVal.value", "0");
 }
 
@@ -28,32 +28,32 @@ function sample3() {
     shouldBeCloseEnough("rect1.x.animVal.value", "100");
     shouldBe("rect1.x.baseVal.value", "0");
 
-	shouldBeCloseEnough("rect2.x.animVal.value", "100");
-	shouldBe("rect2.x.baseVal.value", "0");
+    shouldBeCloseEnough("rect2.x.animVal.value", "100");
+    shouldBe("rect2.x.baseVal.value", "0");
 
-	shouldBeCloseEnough("rect3.x.animVal.value", "100");
+    shouldBeCloseEnough("rect3.x.animVal.value", "100");
     shouldBe("rect3.x.baseVal.value", "0");
 }
 
 function sample4() {
-    shouldBe("rect1.x.animVal.value", "100");
+    shouldBeCloseEnough("rect1.x.animVal.value", "100");
     shouldBe("rect1.x.baseVal.value", "0");
 
-	shouldBe("rect2.x.animVal.value", "0");
-	shouldBe("rect2.x.baseVal.value", "0");
+    shouldBeCloseEnough("rect2.x.animVal.value", "0");
+    shouldBe("rect2.x.baseVal.value", "0");
 
-	shouldBe("rect3.x.animVal.value", "100");
-	shouldBe("rect3.x.baseVal.value", "0");
+    shouldBeCloseEnough("rect3.x.animVal.value", "100");
+    shouldBe("rect3.x.baseVal.value", "0");
 }
 
 function sample5() {
     shouldBeCloseEnough("rect1.x.animVal.value", "150");
     shouldBe("rect1.x.baseVal.value", "0");
 
-	shouldBeCloseEnough("rect2.x.animVal.value", "150");
+    shouldBeCloseEnough("rect2.x.animVal.value", "150");
     shouldBe("rect2.x.baseVal.value", "0");
 
-	shouldBeCloseEnough("rect3.x.animVal.value", "150");
+    shouldBeCloseEnough("rect3.x.animVal.value", "150");
     shouldBe("rect3.x.baseVal.value", "0");
 }
 
@@ -61,10 +61,10 @@ function sample6() {
     shouldBeCloseEnough("rect1.x.animVal.value", "200");
     shouldBe("rect1.x.baseVal.value", "0");
 
-	shouldBeCloseEnough("rect2.x.animVal.value", "200");
+    shouldBeCloseEnough("rect2.x.animVal.value", "200");
     shouldBe("rect2.x.baseVal.value", "0");
 
-	shouldBeCloseEnough("rect3.x.animVal.value", "200");
+    shouldBeCloseEnough("rect3.x.animVal.value", "200");
     shouldBe("rect3.x.baseVal.value", "0");
 }
 
@@ -72,10 +72,10 @@ function sample7() {
     shouldBeCloseEnough("rect1.x.animVal.value", "250");
     shouldBe("rect1.x.baseVal.value", "0");
 
-	shouldBeCloseEnough("rect2.x.animVal.value", "250");
+    shouldBeCloseEnough("rect2.x.animVal.value", "250");
     shouldBe("rect2.x.baseVal.value", "0");
 
-	shouldBeCloseEnough("rect3.x.animVal.value", "250");
+    shouldBeCloseEnough("rect3.x.animVal.value", "250");
     shouldBe("rect3.x.baseVal.value", "0");
 }
 
@@ -83,10 +83,10 @@ function sample8() {
     shouldBe("rect1.x.animVal.value", "250");
     shouldBe("rect1.x.baseVal.value", "0");
 
-	shouldBe("rect2.x.animVal.value", "250");
+    shouldBe("rect2.x.animVal.value", "250");
     shouldBe("rect2.x.baseVal.value", "0");
 
-	shouldBe("rect3.x.animVal.value", "100");
+    shouldBe("rect3.x.animVal.value", "100");
     shouldBe("rect3.x.baseVal.value", "0");
 }
 

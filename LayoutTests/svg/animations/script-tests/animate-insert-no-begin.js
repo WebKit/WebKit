@@ -1,7 +1,6 @@
 description("Test behavior of dynamically inserting animate without begin attribute");
 createSVGTestCase();
 
-
 // Setup test document
 var rect = createSVGElement("rect");
 rect.setAttribute("id", "rect");
@@ -23,12 +22,12 @@ rootSVGElement.appendChild(rect);
 
 // Setup animation test
 function sample1() {
-    shouldBe("rect.x.animVal.value", "0");
+    shouldBeCloseEnough("rect.x.animVal.value", "0");
     shouldBe("rect.x.baseVal.value", "0");
 }
 
 function sample2() {
-    shouldBe("rect.x.animVal.value", "90");
+    shouldBeCloseEnough("rect.x.animVal.value", "90");
     shouldBe("rect.x.baseVal.value", "0");
 }
 
@@ -36,7 +35,7 @@ function executeTest() {
     const expectedValues = [
         // [animationId, time, sampleCallback]
         ["animation", 0.0, sample1],
-        ["animation", 3.0, sample2],
+        ["animation", 3.0, sample2]
     ];
 
     runAnimationTest(expectedValues);

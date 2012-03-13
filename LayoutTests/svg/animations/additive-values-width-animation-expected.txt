@@ -18,8 +18,6 @@ PASS rect.width.animVal.value is 160
 PASS rect.width.baseVal.value is 60
 PASS rect.width.animVal.value is 160
 PASS rect.width.baseVal.value is 60
-PASS rect.width.animVal.value is 160
-PASS rect.width.baseVal.value is 60
 PASS successfullyParsed is true
 
 TEST COMPLETE

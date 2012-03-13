@@ -25,7 +25,7 @@ rootSVGElement.appendChild(rect);
 
 function sample1() {
     // Check half-time conditions
-    shouldBe("rect.x.animVal.value", "50");
+    shouldBeCloseEnough("rect.x.animVal.value", "50");
     shouldBe("rect.x.baseVal.value", "0");
 }
 

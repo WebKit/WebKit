@@ -21,13 +21,11 @@ rootSVGElement.appendChild(rect);
 
 // Setup animation test
 function expectTransparent() {
-    shouldBe("getComputedStyle(rect).fill", "'#00ff00'");
-    shouldBeEqualToString("rect.style.fill", "");
+    expectFillColor(rect, 0, 255, 0);
 }
 
 function expectOtherColor() {
-    shouldBe("getComputedStyle(rect).fill", "'#7f0000'");
-    shouldBeEqualToString("rect.style.fill", "");
+    expectFillColor(rect, 127, 0, 0);
 }
 
 function executeTest() {

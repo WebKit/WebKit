@@ -44,19 +44,19 @@ rootSVGElement.appendChild(rect);
 // Setup animation test
 function sample1() {
     // Check initial conditions
-    shouldBe("gradient.gradientTransform.baseVal.consolidate().matrix.e", "0");
+    shouldBeCloseEnough("gradient.gradientTransform.baseVal.consolidate().matrix.e", "0");
     shouldThrow("gradient.gradientTransform.animVal.consolidate().matrix.e");
 }
 
 function sample2() {
     // Check half-time conditions
-    shouldBe("gradient.gradientTransform.baseVal.consolidate().matrix.e", "100");
+    shouldBeCloseEnough("gradient.gradientTransform.baseVal.consolidate().matrix.e", "100");
     shouldThrow("gradient.gradientTransform.animVal.consolidate().matrix.e");
 }
 
 function sample3() {
     // Check end conditions
-    shouldBe("gradient.gradientTransform.baseVal.consolidate().matrix.e", "200");
+    shouldBeCloseEnough("gradient.gradientTransform.baseVal.consolidate().matrix.e", "200");
     shouldThrow("gradient.gradientTransform.animVal.consolidate().matrix.e");
 }
 

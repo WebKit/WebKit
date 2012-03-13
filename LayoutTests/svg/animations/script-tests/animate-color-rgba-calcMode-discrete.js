@@ -21,17 +21,32 @@ animate.setAttribute("calcMode", "discrete");
 rect.appendChild(animate);
 rootSVGElement.appendChild(rect);
 
+function parseAlphaFromColor() {
+    // As alpha is not exposed via CSS OM, we have to parse it from the color string, to be able
+    // to use shouldBeCloseEnough() - otherwise we can't allow tolerances, and this test is flaky.
+    colorString = getComputedStyle(rect).getPropertyValue('color');
+    return colorString.replace(/rgba.*\,/, "").replace(/\)$/, "");
+}
+
+function expectRGBAColor(red, green, blue, alpha) {
+    rgbColor = getComputedStyle(rect).getPropertyCSSValue('color').getRGBColorValue();
+    shouldBeCloseEnough("rgbColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "" + red, 1);
+    shouldBeCloseEnough("rgbColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "" + green, 1);
+    shouldBeCloseEnough("rgbColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "" + blue, 1);
+    shouldBeCloseEnough("parseAlphaFromColor()", "" + alpha, 0.1);
+}
+
 // Setup animation test
 function sample1() {
-    shouldBeEqualToString("document.defaultView.getComputedStyle(rect).getPropertyValue('color')", "rgba(255, 0, 0, 0.597656)");
+    expectRGBAColor(255, 0, 0, 0.6);
 }
 
 function sample2() {
-    shouldBeEqualToString("document.defaultView.getComputedStyle(rect).getPropertyValue('color')", "rgba(0, 255, 255, 0.796875)");
+    expectRGBAColor(0, 255, 255, 0.8);
 }
 
 function sample3() {
-    shouldBeEqualToString("document.defaultView.getComputedStyle(rect).getPropertyValue('color')", "rgba(0, 255, 255, 0.398438)");
+    expectRGBAColor(0, 255, 255, 0.4);
 }
 
 function executeTest() {
@@ -42,7 +57,7 @@ function executeTest() {
         ["animation", 1.0,   sample1],
         ["animation", 3.0,   sample2],
         ["animation", 3.999, sample2],
-        ["animation", 4.0,   sample3]
+        ["animation", 4.001, sample3]
     ];
 
     runAnimationTest(expectedValues);

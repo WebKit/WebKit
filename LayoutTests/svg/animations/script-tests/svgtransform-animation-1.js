@@ -29,15 +29,15 @@ function sample1() {
     // Check initial/end conditions
     shouldBe("rect.transform.animVal.numberOfItems", "1");
     shouldBe("rect.transform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_SCALE");
-    shouldBe("rect.transform.animVal.getItem(0).matrix.a", "0");
-    shouldBe("rect.transform.animVal.getItem(0).matrix.d", "0");
+    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.a", "0");
+    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.d", "0");
 }
 
 function sample2() {
     shouldBe("rect.transform.animVal.numberOfItems", "1");
     shouldBe("rect.transform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_SCALE");
-    shouldBe("rect.transform.animVal.getItem(0).matrix.a", "1");
-    shouldBe("rect.transform.animVal.getItem(0).matrix.d", "1");
+    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.a", "1");
+    shouldBeCloseEnough("rect.transform.animVal.getItem(0).matrix.d", "1");
 }
 
 function sample3() {

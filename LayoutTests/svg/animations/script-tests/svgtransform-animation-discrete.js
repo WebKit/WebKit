@@ -29,8 +29,6 @@ rootSVGElement.appendChild(rect);
 function sample1() {
     // Check initial/end conditions
     shouldBe("rect.transform.animVal.numberOfItems", "0");
-    shouldBeCloseEnough("document.defaultView.getComputedStyle(rect).getPropertyValue('x')", "0");
-    shouldBeCloseEnough("document.defaultView.getComputedStyle(rect).getPropertyValue('y')", "0");
 }
 
 function sample2() {
@@ -56,7 +54,7 @@ function executeTest() {
         ["animation", 1.0,   sample2],
         ["animation", 3.0,   sample3],
         ["animation", 3.999, sample3],
-        ["animation", 4.0,   sample1]
+        ["animation", 4.001, sample1]
     ];
 
     runAnimationTest(expectedValues);

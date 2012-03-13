@@ -9,6 +9,8 @@ PASS rect.width.animVal.value is 100
 PASS rect.width.baseVal.value is 100
 PASS rect.width.animVal.value is 0
 PASS rect.width.baseVal.value is 100
+PASS rect.width.animVal.value is 0
+PASS rect.width.baseVal.value is 100
 PASS rect.width.animVal.value is 100
 PASS rect.width.baseVal.value is 100
 PASS successfullyParsed is true

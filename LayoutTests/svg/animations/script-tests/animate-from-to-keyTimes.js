@@ -1,3 +1,4 @@
+description("Tests discrete from-to-keyTimes animations");
 createSVGTestCase();
 
 // Setup test document

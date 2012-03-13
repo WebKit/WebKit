@@ -5,12 +5,15 @@ Tests animation on 'currentColor'.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS getComputedStyle(rect).fill is '#ff0000'
-PASS rect.style.fill is ""
-PASS getComputedStyle(rect).fill is '#804000'
-PASS rect.style.fill is ""
-PASS getComputedStyle(rect).fill is '#008000'
-PASS rect.style.fill is ""
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 64
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

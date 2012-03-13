@@ -9,6 +9,8 @@ PASS rect.height.animVal.value is 167
 PASS rect.height.baseVal.value is 100
 PASS rect.height.animVal.value is 111
 PASS rect.height.baseVal.value is 100
+PASS rect.height.animVal.value is 0
+PASS rect.height.baseVal.value is 100
 PASS rect.height.animVal.value is 100
 PASS rect.height.baseVal.value is 100
 PASS successfullyParsed is true

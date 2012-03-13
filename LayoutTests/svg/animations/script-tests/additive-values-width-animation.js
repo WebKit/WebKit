@@ -43,7 +43,6 @@ function executeTest() {
         ["an1", 4.999, sample3],
         ["an1", 5.0,   changeBaseVal],
         ["an1", 5.001, sample4],
-        ["an1", 6.0,   sample5],
         ["an1", 6.001, sample5],
         ["an1", 60.0,  sample5]
     ];

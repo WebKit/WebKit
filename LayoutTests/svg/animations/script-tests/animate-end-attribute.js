@@ -1,3 +1,4 @@
+description("Tests end conditions are respected properly");
 createSVGTestCase();
 
 // Setup test document
@@ -22,12 +23,12 @@ rootSVGElement.appendChild(rect);
 
 // Setup animation test
 function sample1() {
-    shouldBe("rect.x.animVal.value", "100");
+    shouldBeCloseEnough("rect.x.animVal.value", "100");
     shouldBe("rect.x.baseVal.value", "100");
 }
 
 function sample2() {
-    shouldBe("rect.x.animVal.value", "50");
+    shouldBeCloseEnough("rect.x.animVal.value", "50");
     shouldBe("rect.x.baseVal.value", "100");
 }
 

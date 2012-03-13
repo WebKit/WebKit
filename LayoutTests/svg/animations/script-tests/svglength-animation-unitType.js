@@ -40,10 +40,11 @@ function sample3() {
 function executeTest() {
     const expectedValues = [
         // [animationId, time, sampleCallback]
-        ["animation", 0.0, sample1],
-        ["animation", 1.5, sample2],
-        ["animation", 2.5, sample3],
-        ["animation", 4.0, sample1]
+        ["animation", 0.0,   sample1],
+        ["animation", 1.5,   sample2],
+        ["animation", 2.5,   sample3],
+        ["animation", 3.999, sample3],
+        ["animation", 4.001, sample1]
     ];
 
     runAnimationTest(expectedValues);

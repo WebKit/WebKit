@@ -6,14 +6,22 @@ A copy of the corresponding W3C-SVG-1.1 test, which dumps the animation at certa
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS getComputedStyle(text).fontSize is "40px"
-PASS getComputedStyle(text).fill is "#0000ff"
-PASS getComputedStyle(text).fontSize is "60px"
-PASS getComputedStyle(text).fill is "#003b80"
-PASS getComputedStyle(text).fontSize is "80px"
-PASS getComputedStyle(text).fill is "#007700"
-PASS getComputedStyle(text).fontSize is "80px"
-PASS getComputedStyle(text).fill is "#007700"
+PASS parseFontSizeFromString() is 40
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS parseFontSizeFromString() is 60
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 59
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS parseFontSizeFromString() is 80
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 119
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS parseFontSizeFromString() is 80
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 119
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

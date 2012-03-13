@@ -23,12 +23,12 @@ rootSVGElement.appendChild(rect);
 
 // Setup animation test
 function sample1() {
-    shouldBe("rect.x.animVal.value", "0");
+    shouldBeCloseEnough("rect.x.animVal.value", "0");
     shouldBe("rect.x.baseVal.value", "0");
 }
 
 function sample2() {
-    shouldBe("rect.x.animVal.value", "90");
+    shouldBeCloseEnough("rect.x.animVal.value", "90");
     shouldBe("rect.x.baseVal.value", "0");
 }
 

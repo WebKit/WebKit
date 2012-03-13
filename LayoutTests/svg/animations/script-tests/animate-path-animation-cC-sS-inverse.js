@@ -24,56 +24,56 @@ rootSVGElement.appendChild(path);
 function sample1() {
     // Check initial/end conditions
     shouldBe("path.pathSegList.getItem(0).pathSegTypeAsLetter", "'M'");
-    shouldBe("path.pathSegList.getItem(0).x", "-20");
-    shouldBe("path.pathSegList.getItem(0).y", "-20");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).x", "-20");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).y", "-20");
     shouldBe("path.pathSegList.getItem(1).pathSegTypeAsLetter", "'c'");
-    shouldBe("path.pathSegList.getItem(1).x", "40");
-    shouldBe("path.pathSegList.getItem(1).y", "40");
-    shouldBe("path.pathSegList.getItem(1).x1", "0");
-    shouldBe("path.pathSegList.getItem(1).y1", "40");
-    shouldBe("path.pathSegList.getItem(1).x2", "0");
-    shouldBe("path.pathSegList.getItem(1).y2", "40");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x", "40");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).y", "40");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x1", "0");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).y1", "40");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x2", "0");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).y2", "40");
     shouldBe("path.pathSegList.getItem(2).pathSegTypeAsLetter", "'s'");
-    shouldBe("path.pathSegList.getItem(2).x", "0");
-    shouldBe("path.pathSegList.getItem(2).y", "-40");
-    shouldBe("path.pathSegList.getItem(2).x2", "40");
-    shouldBe("path.pathSegList.getItem(2).y2", "0");
+    shouldBeCloseEnough("path.pathSegList.getItem(2).x", "0");
+    shouldBeCloseEnough("path.pathSegList.getItem(2).y", "-40");
+    shouldBeCloseEnough("path.pathSegList.getItem(2).x2", "40");
+    shouldBeCloseEnough("path.pathSegList.getItem(2).y2", "0");
 }
 
 function sample2() {
     shouldBe("path.pathSegList.getItem(0).pathSegTypeAsLetter", "'M'");
-    shouldBe("path.pathSegList.getItem(0).x", "-20");
-    shouldBe("path.pathSegList.getItem(0).y", "-20");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).x", "-20");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).y", "-20");
     shouldBe("path.pathSegList.getItem(1).pathSegTypeAsLetter", "'c'");
-    shouldBe("path.pathSegList.getItem(1).x", "40");
-    shouldBe("path.pathSegList.getItem(1).y", "40");
-    shouldBe("path.pathSegList.getItem(1).x1", "10");
-    shouldBe("path.pathSegList.getItem(1).y1", "30");
-    shouldBe("path.pathSegList.getItem(1).x2", "10");
-    shouldBe("path.pathSegList.getItem(1).y2", "30");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x", "40");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).y", "40");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x1", "10");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).y1", "30");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x2", "10");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).y2", "30");
     shouldBe("path.pathSegList.getItem(2).pathSegTypeAsLetter", "'s'");
-    shouldBe("path.pathSegList.getItem(2).x", "-10");
-    shouldBe("path.pathSegList.getItem(2).y", "-30");
-    shouldBe("path.pathSegList.getItem(2).x2", "30");
-    shouldBe("path.pathSegList.getItem(2).y2", "5");
+    shouldBeCloseEnough("path.pathSegList.getItem(2).x", "-10");
+    shouldBeCloseEnough("path.pathSegList.getItem(2).y", "-30");
+    shouldBeCloseEnough("path.pathSegList.getItem(2).x2", "30");
+    shouldBeCloseEnough("path.pathSegList.getItem(2).y2", "5");
 }
 
 function sample3() {
     shouldBe("path.pathSegList.getItem(0).pathSegTypeAsLetter", "'M'");
-    shouldBe("path.pathSegList.getItem(0).x", "-20");
-    shouldBe("path.pathSegList.getItem(0).y", "-20");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).x", "-20");
+    shouldBeCloseEnough("path.pathSegList.getItem(0).y", "-20");
     shouldBe("path.pathSegList.getItem(1).pathSegTypeAsLetter", "'C'");
-    shouldBe("path.pathSegList.getItem(1).x", "20");
-    shouldBe("path.pathSegList.getItem(1).y", "20");
-    shouldBe("path.pathSegList.getItem(1).x1", "10");
-    shouldBe("path.pathSegList.getItem(1).y1", "-10");
-    shouldBe("path.pathSegList.getItem(1).x2", "10");
-    shouldBe("path.pathSegList.getItem(1).y2", "-10");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x", "20");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).y", "20");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x1", "10");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).y1", "-10");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).x2", "10");
+    shouldBeCloseEnough("path.pathSegList.getItem(1).y2", "-10");
     shouldBe("path.pathSegList.getItem(2).pathSegTypeAsLetter", "'S'");
-    shouldBe("path.pathSegList.getItem(2).x", "-10");
-    shouldBe("path.pathSegList.getItem(2).y", "10");
-    shouldBe("path.pathSegList.getItem(2).x2", "30");
-    shouldBe("path.pathSegList.getItem(2).y2", "35");
+    shouldBeCloseEnough("path.pathSegList.getItem(2).x", "-10");
+    shouldBeCloseEnough("path.pathSegList.getItem(2).y", "10");
+    shouldBeCloseEnough("path.pathSegList.getItem(2).x2", "30");
+    shouldBeCloseEnough("path.pathSegList.getItem(2).y2", "35");
 }
 
 function sample4() {
@@ -101,7 +101,7 @@ function executeTest() {
         ["animation", 1.0,   sample2],
         ["animation", 3.0,   sample3],
         ["animation", 3.999, sample4],
-        ["animation", 4.0,   sample1]
+        ["animation", 4.001, sample1]
     ];
 
     runAnimationTest(expectedValues);

@@ -1461,17 +1461,6 @@ svg/zoom/page/zoom-svg-as-relative-image.html
 svg/zoom/page/zoom-svg-float-border-padding.xml
 svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
 
-# [Qt] svg/animations/animate-elem-08-t-drt.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=80157
-svg/animations/animate-elem-08-t-drt.html
-
-# [Qt] svg/animations tests are very flaky
-# https://bugs.webkit.org/show_bug.cgi?id=80703
-svg/animations/animate-currentColor.html
-svg/animations/animate-gradient-transform.html
-svg/animations/animate-inherit-css-property.html
-svg/animations/svgstring-animation-fallback-to-discrete.html
-svg/animations/svglengthlist-animation-3.html
 
 # ============================================================================= #
 # Failing CSS Tests

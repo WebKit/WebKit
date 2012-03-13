@@ -37,6 +37,12 @@ function sample2() {
 
 function sample3() {
     // Check just before-end conditions
+    shouldBeCloseEnough("rect.height.animVal.value", "0");
+    shouldBe("rect.height.baseVal.value", "100");
+}
+
+function sample4() {
+    // Check end conditions
     shouldBeCloseEnough("rect.height.animVal.value", "100");
     shouldBe("rect.height.baseVal.value", "100");
 }
@@ -44,9 +50,10 @@ function sample3() {
 function executeTest() {
     const expectedValues = [
         // [animationId, time, sampleCallback]
-        ["animation", 3.0, sample1],
-        ["animation", 6.0, sample2],
-        ["animation", 9.0, sample3]
+        ["animation", 3.0,   sample1],
+        ["animation", 6.0,   sample2],
+        ["animation", 8.999, sample3],
+        ["animation", 9.001, sample4]
     ];
 
     runAnimationTest(expectedValues);

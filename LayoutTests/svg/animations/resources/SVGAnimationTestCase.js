@@ -44,6 +44,24 @@ function expectTranslationMatrix(actualMatrix, expectedE, expectedF, tolerance) 
     shouldBeCloseEnough(actualMatrix + ".f", expectedF, tolerance);
 }
 
+function expectColor(element, red, green, blue, property) {
+    if (typeof property != "string")
+        color = getComputedStyle(element).getPropertyCSSValue("color").getRGBColorValue();
+    else {
+        fillPaint = getComputedStyle(element).getPropertyCSSValue(property);
+        color = getComputedStyle(element).getPropertyCSSValue(property).rgbColor;
+    }
+
+    // Allow a tolerance of 1 for color values, as they are integers.
+    shouldBeCloseEnough("color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "" + red, 1);
+    shouldBeCloseEnough("color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "" + green, 1);
+    shouldBeCloseEnough("color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "" + blue, 1);
+}
+
+function expectFillColor(element, red, green, blue) {
+    expectColor(element, red, green, blue, "fill");
+}
+
 function moveAnimationTimelineAndSample(index) {
     var animationId = expectedResults[index][0];
     var time = expectedResults[index][1];
@@ -54,8 +72,6 @@ function moveAnimationTimelineAndSample(index) {
     newTime = time;
 
     try {
-        if (newTime == animation.getSimpleDuration())
-            newTime += 0.01;
         newTime += animation.getStartTime();
     } catch(e) {
         debug('Exception thrown: ' + e);

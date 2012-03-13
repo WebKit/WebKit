@@ -36,12 +36,12 @@ feConvlveMatrix.appendChild(animate);
 
 // Setup animation test
 function sample1() {
-    shouldBe("feConvolveMatrix.targetX.animVal", "0");
+    shouldBeCloseEnough("feConvolveMatrix.targetX.animVal", "0");
     // shouldBe("feConvolveMatrix.targetX.baseVal", "0");
 }
 
 function sample2() {
-    shouldBe("feConvolveMatrix.targetX.animVal", "1");
+    shouldBeCloseEnough("feConvolveMatrix.targetX.animVal", "1");
     // shouldBe("feConvolveMatrix.targetX.baseVal", "0");
 }
 
@@ -56,7 +56,7 @@ function executeTest() {
         ["animation", 0.0,   sample1],
         ["animation", 2.0,   sample2],
         ["animation", 3.999, sample3],
-        ["animation", 4.0,   sample1]
+        ["animation", 4.001, sample1]
     ];
 
     runAnimationTest(expectedValues);

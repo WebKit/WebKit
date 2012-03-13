@@ -23,21 +23,18 @@ rootSVGElement.appendChild(rect);
 
 // Setup animation test
 function sample1() {
-    // Check initial/end conditions
-    shouldBe("getComputedStyle(rect).fill", "'#ff0000'");
-    shouldBeEqualToString("rect.style.fill", "");
+    // Check initial conditions
+    expectFillColor(rect, 255, 0, 0);
 }
 
 function sample2() {
     // Check half-time conditions
-    shouldBe("getComputedStyle(rect).fill", "'#804000'");
-    shouldBeEqualToString("rect.style.fill", "");
+    expectFillColor(rect, 128, 64, 0);
 }
 
 function sample3() {
-    // Check half-time conditions
-    shouldBe("getComputedStyle(rect).fill", "'#008000'");
-    shouldBeEqualToString("rect.style.fill", "");
+    // Check end condition
+    expectFillColor(rect, 0, 128, 0);
 }
 
 function executeTest() {

@@ -21,40 +21,35 @@ animateColor.setAttribute("fill", "freeze");
 rect.appendChild(animateColor);
 rootSVGElement.appendChild(rect);
 
-function checkFillColor(red, green, blue, hex) {
-    shouldBeEqualToString("document.defaultView.getComputedStyle(rect).getPropertyValue('fill')", hex);
-
-    try {
-        shouldBeEqualToString("(fillPaint = document.defaultView.getComputedStyle(rect).getPropertyCSSValue('fill')).toString()", "[object SVGPaint]");
-        shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR");
-        shouldBeEqualToString("fillPaint.uri", "");
-        shouldBe("fillPaint.colorType", "SVGColor.SVG_COLORTYPE_CURRENTCOLOR");
-        shouldBeEqualToString("(fillColor = fillPaint.rgbColor).toString()", "[object RGBColor]");
-        shouldBe("fillColor.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "" + red);
-        shouldBe("fillColor.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "" + green);
-        shouldBe("fillColor.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "" + blue);
-    } catch(e) {
-        // Opera doesn't support getPropertyCSSValue - no way to compare to their SVGPaint/SVGColor objects :(
-    }
-}
-
 // Setup animation test
 function sample1() {
     debug("");
     debug("Initial condition:");
-    checkFillColor(255, 0, 0, "#ff0000");
+
+    expectFillColor(rect, 255, 0, 0);
+    shouldBeEqualToString("fillPaint.uri", "");
+    shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR");
+    shouldBe("fillPaint.colorType", "SVGColor.SVG_COLORTYPE_CURRENTCOLOR");
 }
 
 function sample2() {
     debug("");
     debug("Half-time condition:");
-    checkFillColor(128, 64, 0, "#804000");
+
+    expectFillColor(rect, 128, 64, 0);
+    shouldBeEqualToString("fillPaint.uri", "");
+    shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR");
+    shouldBe("fillPaint.colorType", "SVGColor.SVG_COLORTYPE_CURRENTCOLOR");
 }
 
 function sample3() {
     debug("");
     debug("End condition:");
-    checkFillColor(0, 128, 0, "#008000");
+
+    expectFillColor(rect, 0, 128, 0);
+    shouldBeEqualToString("fillPaint.uri", "");
+    shouldBe("fillPaint.paintType", "SVGPaint.SVG_PAINTTYPE_CURRENTCOLOR");
+    shouldBe("fillPaint.colorType", "SVGColor.SVG_COLORTYPE_CURRENTCOLOR");
 }
 
 function executeTest() {

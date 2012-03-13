@@ -23,17 +23,17 @@ rootSVGElement.appendChild(text);
 
 // Setup animation test
 function sample1() {
-    shouldBe("text.rotate.animVal.getItem(0).value", "0");
-    shouldBe("text.rotate.animVal.getItem(1).value", "0");
-    shouldBe("text.rotate.animVal.getItem(2).value", "0");
-    shouldBe("text.rotate.animVal.getItem(3).value", "0");
+    shouldBeCloseEnough("text.rotate.animVal.getItem(0).value", "0");
+    shouldBeCloseEnough("text.rotate.animVal.getItem(1).value", "0");
+    shouldBeCloseEnough("text.rotate.animVal.getItem(2).value", "0");
+    shouldBeCloseEnough("text.rotate.animVal.getItem(3).value", "0");
 }
 
 function sample2() {
-    shouldBe("text.rotate.animVal.getItem(0).value", "22.5");
-    shouldBe("text.rotate.animVal.getItem(1).value", "45");
-    shouldBe("text.rotate.animVal.getItem(2).value", "67.5");
-    shouldBe("text.rotate.animVal.getItem(3).value", "90");
+    shouldBeCloseEnough("text.rotate.animVal.getItem(0).value", "22.5");
+    shouldBeCloseEnough("text.rotate.animVal.getItem(1).value", "45");
+    shouldBeCloseEnough("text.rotate.animVal.getItem(2).value", "67.5");
+    shouldBeCloseEnough("text.rotate.animVal.getItem(3).value", "90");
 }
 
 function sample3() {
@@ -49,7 +49,7 @@ function executeTest() {
         ["animation", 0.0,   sample1],
         ["animation", 2.0,   sample2],
         ["animation", 3.999, sample3],
-        ["animation", 4.0,   sample1]
+        ["animation", 4.001, sample1]
     ];
 
     runAnimationTest(expectedValues);

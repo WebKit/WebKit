@@ -5,10 +5,10 @@ Test for SVGNumber animation.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS computedStyle.getPropertyCSSValue('opacity').getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS computedStyle.getPropertyCSSValue('opacity').getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0.5
-PASS computedStyle.getPropertyCSSValue('opacity').getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 1
-PASS computedStyle.getPropertyCSSValue('opacity').getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS getComputedStyle(rect).getPropertyCSSValue('opacity').getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS getComputedStyle(rect).getPropertyCSSValue('opacity').getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0.5
+PASS getComputedStyle(rect).getPropertyCSSValue('opacity').getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 1
+PASS getComputedStyle(rect).getPropertyCSSValue('opacity').getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

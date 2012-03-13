@@ -40,13 +40,13 @@ feGaussianBlur.appendChild(animate);
 
 // Setup animation test
 function sample1() {
-    shouldBe("feGaussianBlur.stdDeviationX.animVal", "40");
-    shouldBe("feGaussianBlur.stdDeviationY.animVal", "10");
+    shouldBeCloseEnough("feGaussianBlur.stdDeviationX.animVal", "40");
+    shouldBeCloseEnough("feGaussianBlur.stdDeviationY.animVal", "10");
 }
 
 function sample2() {
-    shouldBe("feGaussianBlur.stdDeviationX.animVal", "22.5");
-    shouldBe("feGaussianBlur.stdDeviationY.animVal", "7.5");
+    shouldBeCloseEnough("feGaussianBlur.stdDeviationX.animVal", "22.5");
+    shouldBeCloseEnough("feGaussianBlur.stdDeviationY.animVal", "7.5");
 }
 
 function sample3() {
@@ -60,7 +60,7 @@ function executeTest() {
         ["animation", 0.0,   sample1],
         ["animation", 2.0,   sample2],
         ["animation", 3.999, sample3],
-        ["animation", 4.0,   sample1]
+        ["animation", 4.001, sample1]
     ];
 
     runAnimationTest(expectedValues);
