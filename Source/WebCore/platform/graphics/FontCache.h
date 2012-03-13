@@ -130,6 +130,9 @@ private:
     // Don't purge if this count is > 0;
     int m_purgePreventCount;
 
+#if USE(CORE_TEXT)
+    friend class ComplexTextController;
+#endif
     friend class SimpleFontData; // For getCachedFontData(const FontPlatformData*)
     friend class FontFallbackList;
 };
