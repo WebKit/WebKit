@@ -264,6 +264,8 @@ static void logCanCachePageDecision(Page* page)
         }
     }
     HistogramSupport::histogramEnumeration("PageCache.PageRejectReasonCount", reasonCount, 1 + NumberOfReasonsPagesCannotBeInPageCache);
+    const bool settingsDisabledPageCache = rejectReasons & (1 << DisabledPageCache);
+    HistogramSupport::histogramEnumeration("PageCache.PageRejectReasonCountExcludingSettings", reasonCount - settingsDisabledPageCache, NumberOfReasonsPagesCannotBeInPageCache);
 
     // Report also on the frame reasons by page; this is distinct from the per frame statistics since it coalesces the
     // causes from all subframes together.
