@@ -68,7 +68,7 @@ void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild
     // Note: The RenderMathMLBlock only allows element children to be added.
     Element* childElement = toElement(child->node());
 
-    if (!childElement->previousElementSibling()) {
+    if (childElement && !childElement->previousElementSibling()) {
         // Position 1 is always the base of the msub/msup/msubsup.
         RenderMathMLBlock* wrapper = new (renderArena()) RenderMathMLBlock(node());
         RefPtr<RenderStyle> wrapperStyle = RenderStyle::create();
@@ -95,6 +95,10 @@ void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild
         }
     } else {
         if (m_kind == SubSup) {
+            ASSERT(childElement);
+            if (!childElement)
+                return;
+
             RenderBlock* script = new (renderArena()) RenderMathMLBlock(node());
             RefPtr<RenderStyle> scriptStyle = RenderStyle::create();
             scriptStyle->inheritFrom(m_scripts->style());
