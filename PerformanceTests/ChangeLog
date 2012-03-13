@@ -1,3 +1,20 @@
+2012-03-13  Kentaro Hara  <haraken@chromium.org>
+
+        Dromaeo perf-tests results are wrong
+        https://bugs.webkit.org/show_bug.cgi?id=80974
+
+        Reviewed by Hajime Morita.
+
+        Dromaeo perf-tests had reported the sum of runs/seconds as "ms".
+        This patch fixes them to report the execution time per run.
+
+        At present, they report "0.0ms" for "stdev". This is because
+        dromaeorunner.js can just know stdev of "runs/seconds"
+        and cannot calculate stdev of "ms" from that. We can fix it later.
+
+        * Dromaeo/resources/dromaeorunner.js:
+        (.):
+
 2012-03-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: chromium: increase heap snapshot performance coverage.
