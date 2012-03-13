@@ -1,3 +1,12 @@
+2012-03-13  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/11025225> Assertion failure in RenderView::computeRectForRepaint() (!repaintContainer || repaintContainer == this) at store.apple.com
+        https://bugs.webkit.org/show_bug.cgi?id=81051
+
+        Reviewed by Simon Fraser.
+
+        * ManualTests/inline-repaint-container.html: Added.
+
 2012-03-13  Adam Barth  <abarth@webkit.org> && Benjamin Poulain  <bpoulain@apple.com>
 
         Always enable ENABLE(CLIENT_BASED_GEOLOCATION)

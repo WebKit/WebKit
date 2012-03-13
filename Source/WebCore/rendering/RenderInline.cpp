@@ -1011,17 +1011,26 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* rep
 
     // Now invalidate a rectangle.
     LayoutUnit ow = style() ? style()->outlineSize() : 0;
-    
+
+    bool hitRepaintContainer = false;
+
     // We need to add in the relative position offsets of any inlines (including us) up to our
     // containing block.
     RenderBlock* cb = containingBlock();
     for (const RenderObject* inlineFlow = this; inlineFlow && inlineFlow->isRenderInline() && inlineFlow != cb;
          inlineFlow = inlineFlow->parent()) {
-         if (inlineFlow->style()->position() == RelativePosition && inlineFlow->hasLayer())
+         if (inlineFlow == repaintContainer) {
+            hitRepaintContainer = true;
+            break;
+        }
+        if (inlineFlow->style()->position() == RelativePosition && inlineFlow->hasLayer())
             toRenderInline(inlineFlow)->layer()->relativePositionOffset(left, top);
     }
 
     LayoutRect r(-ow + left, -ow + top, boundingBox.width() + ow * 2, boundingBox.height() + ow * 2);
+
+    if (hitRepaintContainer)
+        return r;
 
     if (cb->hasColumns())
         cb->adjustRectForColumns(r);
@@ -1036,11 +1045,8 @@ LayoutRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* rep
         LayoutRect boxRect(LayoutPoint(), cb->cachedSizeForOverflowClip());
         r = intersection(repaintRect, boxRect);
     }
-    
-    // FIXME: need to ensure that we compute the correct repaint rect when the repaint container
-    // is an inline.
-    if (repaintContainer != this)
-        cb->computeRectForRepaint(repaintContainer, r);
+
+    cb->computeRectForRepaint(repaintContainer, r);
 
     if (ow) {
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
