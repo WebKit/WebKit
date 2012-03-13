@@ -1,3 +1,19 @@
+2012-03-13  Shinya Kawanaka  <shinyak@chromium.org>
+
+        REGRESSION: Spellcheck tests hit assertions on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=80883
+
+        Reviewed by Ryosuke Niwa.
+
+        The bug was caused by the closure object created in requestCheckingOfString accessing
+        request's member variables even though the request object is not an NSObject or allocated
+        in stack. This resulted in the closure not being able to access those variables when invoked.
+
+        Fixed the bug by making local copies of those member variables.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::requestCheckingOfString):
+
 2012-03-11  Timothy Hatcher  <timothy@apple.com>
 
         Update how the Web Inspector resources are loaded.

@@ -18,11 +18,11 @@ testEditable.setAttribute("contentEditable", "true");
 testRoot.appendChild(testEditable);
 
 var testSourcePlain = document.createElement("div");
-testSourcePlain.innerHTML = "foo bar";
+testSourcePlain.innerHTML = "zz apple";
 testRoot.appendChild(testSourcePlain);
 
 var testSourceDecorated = document.createElement("div");
-testSourceDecorated.innerHTML = "fo<b>o ba</b>r";
+testSourceDecorated.innerHTML = "z<b>z appl</b>e";
 testRoot.appendChild(testSourceDecorated);
 
 var testSourceMulti = document.createElement("div");
@@ -83,7 +83,7 @@ function pasteAndVerify(source, dest, expectedMarked)
 
         nretry--;
         if (0 == nretry) {
-            testFailed(dest.tagName + " should have a marker on for '" + source.innerHTML + "'");
+            testFailed(dest.tagName + " should have a marker on '" + source.innerHTML + "'");
             done();
             return;
         }
@@ -97,14 +97,16 @@ function pasteAndVerify(source, dest, expectedMarked)
 if (window.layoutTestController)
     layoutTestController.setAsynchronousSpellCheckingEnabled(true);
 
-tests.push(function() { pasteAndVerify(testSourcePlain, testInput, [[0, 3]]); });
-tests.push(function() { pasteAndVerify(testSourceDecorated, testInput, [[0, 3]]); });
+tests.push(function() { pasteAndVerify(testSourcePlain, testInput, [[0, 2]]); });
+tests.push(function() { pasteAndVerify(testSourceDecorated, testInput, [[0, 2]]); });
 tests.push(function() { pasteAndVerify(testSourceMulti, testInput, [[0, 2], [3, 2]]); });
-tests.push(function() { pasteAndVerify(testSourcePlain, testTextArea, [[0, 3]]); });
-tests.push(function() { pasteAndVerify(testSourceDecorated, testTextArea, [[0, 3]]); });
+
+tests.push(function() { pasteAndVerify(testSourcePlain, testTextArea, [[0, 2]]); });
+tests.push(function() { pasteAndVerify(testSourceDecorated, testTextArea, [[0, 2]]); });
 tests.push(function() { pasteAndVerify(testSourceMulti, testTextArea, [[0, 2], [3, 2]]); });
-tests.push(function() { pasteAndVerify(testSourcePlain, testEditable, [[0, 3]]); });
-tests.push(function() { pasteAndVerify(testSourceDecorated, testEditable, [[0, 2]]); }); // To check "fo" part of foo.
+
+tests.push(function() { pasteAndVerify(testSourcePlain, testEditable, [[0, 2]]); });
+tests.push(function() { pasteAndVerify(testSourceDecorated, testEditable, [[0, 1]]); }); // To check "fo" part of foo.
 tests.push(function() { pasteAndVerify(testSourceMulti, testEditable, [[0, 2], [3, 2]]); });
 done();
 

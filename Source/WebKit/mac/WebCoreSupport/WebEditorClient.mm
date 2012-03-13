@@ -977,10 +977,12 @@ void WebEditorClient::requestCheckingOfString(WebCore::SpellChecker* sender, con
 #ifndef BUILDING_ON_LEOPARD
     NSRange range = NSMakeRange(0, request.text().length());
     NSRunLoop* currentLoop = [NSRunLoop currentRunLoop];
+    int sequence = request.sequence();
+    TextCheckingTypeMask types = request.mask();
     [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:request.text() range:range types:NSTextCheckingAllSystemTypes options:0 inSpellDocumentWithTag:0
                                          completionHandler:^(NSInteger, NSArray* results, NSOrthography*, NSInteger) {
             [currentLoop performSelector:@selector(perform) 
-                                  target:[[[WebEditorSpellCheckResponder alloc] initWithSender:sender sequence:request.sequence() types:request.mask() results:results] autorelease]
+                                  target:[[[WebEditorSpellCheckResponder alloc] initWithSender:sender sequence:sequence types:types results:results] autorelease]
                                 argument:nil order:0 modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
         }];
 #endif
