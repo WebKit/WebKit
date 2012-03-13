@@ -7,8 +7,13 @@ element.style  { ()
 ======== Matched CSS Rules ========
 [expanded] 
 media="all" (svg-style.xhtml)
-rect  { (svg-style.xhtml:30)
+rect  { (svg-style.xhtml:38)
 fill: red;
+
+[expanded] 
+*  { (user agent stylesheet)
+-webkit-transform-origin-x: 0px;
+-webkit-transform-origin-y: 0px;
 
 
 
