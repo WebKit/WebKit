@@ -116,8 +116,6 @@ public:
     // Creates a graphics context that renders to the client's WebView.
     virtual WebGraphicsContext3D* createGraphicsContext3D(const WebGraphicsContext3D::Attributes&) { return 0; }
 
-    // Deprecated, use the first version of this function. If you want an offscreen context, use WebKitPlatformSupport::createOffscreenGraphicsContext3D().
-    virtual WebGraphicsContext3D* createGraphicsContext3D(const WebGraphicsContext3D::Attributes&, bool renderDirectlyToWebView) { return 0; }
 
     // Misc ----------------------------------------------------------------
 
