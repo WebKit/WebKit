@@ -91,13 +91,13 @@ void RenderFileUploadControl::updateFromElement()
 
 static int nodeWidth(Node* node)
 {
-    return node ? node->renderBox()->width() : zeroLayoutUnit;
+    return node ? node->renderBox()->pixelSnappedWidth() : 0;
 }
 
 int RenderFileUploadControl::maxFilenameWidth() const
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
-    return max(0, contentWidth() - nodeWidth(uploadButton()) - afterButtonSpacing
+    return max(0, contentBoxRect().pixelSnappedWidth() - nodeWidth(uploadButton()) - afterButtonSpacing
         - (input->icon() ? iconWidth + iconFilenameSpacing : 0));
 }
 
@@ -109,7 +109,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
     // Push a clip.
     GraphicsContextStateSaver stateSaver(*paintInfo.context, false);
     if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
-        LayoutRect clipRect(paintOffset.x() + borderLeft(), paintOffset.y() + borderTop(),
+        IntRect clipRect = pixelSnappedIntRect(paintOffset.x() + borderLeft(), paintOffset.y() + borderTop(),
                          width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop() + buttonShadowHeight);
         if (clipRect.isEmpty())
             return;
@@ -147,7 +147,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
         paintInfo.context->setFillColor(style()->visitedDependentColor(CSSPropertyColor), style()->colorSpace());
         
         // Draw the filename
-        paintInfo.context->drawBidiText(font, textRun, LayoutPoint(textX, textY));
+        paintInfo.context->drawBidiText(font, textRun, IntPoint(roundToInt(textX), roundToInt(textY)));
         
         if (input->icon()) {
             // Determine where the icon should be placed
@@ -159,7 +159,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
                 iconX = contentLeft + contentWidth() - buttonWidth - afterButtonSpacing - iconWidth;
 
             // Draw the file icon
-            input->icon()->paint(paintInfo.context, LayoutRect(iconX, iconY, iconWidth, iconHeight));
+            input->icon()->paint(paintInfo.context, IntRect(roundToInt(iconX), roundToInt(iconY), iconWidth, iconHeight));
         }
     }
 
