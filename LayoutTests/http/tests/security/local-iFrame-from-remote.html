@@ -17,7 +17,7 @@
 
             var result = document.getElementById("result");
             var myFrameDocument = document.getElementById("myFrame").contentDocument;
-            if (myFrameDocument)
+            if (myFrameDocument !== null)
                 result.innerHTML = "Test Failed: Local page remotely loaded into iFrame.";
             else
                 result.innerHTML = "Test Passed. Local page not remotely loaded into iFrame.";
