@@ -3798,6 +3798,7 @@ BUGWK79823 : compositing/reflections/reflection-on-composited.html = PASS IMAGE
 BUGWK79823 : compositing/geometry/fixed-position.html = PASS IMAGE
 BUGWK79823 : compositing/reflections/compositing-change-inside-reflection.html = PASS IMAGE
 BUGWK79823 : compositing/webgl/webgl-reflection.html = PASS IMAGE
+BUGWK79823 : compositing/masks/direct-image-mask.html = PASS IMAGE
 BUGWK79823 : platform/chromium/compositing/render-surface-alpha-blending.html = PASS IMAGE
 BUGWK79823 : platform/chromium/compositing/child-layer-3d-sorting.html = PASS IMAGE
 BUGWK79823 : platform/chromium/compositing/plugins/webplugin-reflection.html = PASS IMAGE
