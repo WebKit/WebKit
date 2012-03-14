@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class RenderObject;
+class RenderStyle;
 
 class RenderObjectChildList {
 public:
@@ -60,6 +61,8 @@ public:
     RenderObject* afterPseudoElementRenderer(const RenderObject* owner) const;
 
 private:
+    void updateBeforeAfterStyle(RenderObject* child, PseudoId type, RenderStyle* pseudoElementStyle);
+
     RenderObject* m_firstChild;
     RenderObject* m_lastChild;
 };

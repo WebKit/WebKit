@@ -345,6 +345,88 @@ RenderObject* RenderObjectChildList::afterPseudoElementRenderer(const RenderObje
     return last;
 }
 
+void RenderObjectChildList::updateBeforeAfterStyle(RenderObject* child, PseudoId type, RenderStyle* pseudoElementStyle)
+{
+    if (!child || child->style()->styleType() != type)
+        return;
+
+    // We have generated content present still. We want to walk this content and update our
+    // style information with the new pseudo-element style.
+    child->setStyle(pseudoElementStyle);
+
+    RenderObject* beforeAfterParent = findBeforeAfterParent(child);
+    if (!beforeAfterParent)
+        return;
+
+    // When beforeAfterParent is not equal to child (e.g. in tables),
+    // we need to create new styles inheriting from pseudoElementStyle
+    // on all the intermediate parents (leaving their display same).
+    if (beforeAfterParent != child) {
+        RenderObject* curr = beforeAfterParent;
+        while (curr && curr != child) {
+            ASSERT(curr->isAnonymous());
+            RefPtr<RenderStyle> newStyle = RenderStyle::create();
+            newStyle->inheritFrom(pseudoElementStyle);
+            newStyle->setDisplay(curr->style()->display());
+            newStyle->setStyleType(curr->style()->styleType());
+            curr->setStyle(newStyle);
+            curr = curr->parent();
+        }
+    }
+
+    // Note that if we ever support additional types of generated content (which should be way off
+    // in the future), this code will need to be patched.
+    for (RenderObject* genChild = beforeAfterParent->firstChild(); genChild; genChild = genChild->nextSibling()) {
+        if (genChild->isText())
+            // Generated text content is a child whose style also needs to be set to the pseudo-element style.
+            genChild->setStyle(pseudoElementStyle);
+        else if (genChild->isImage()) {
+            // Images get an empty style that inherits from the pseudo.
+            RefPtr<RenderStyle> style = RenderStyle::create();
+            style->inheritFrom(pseudoElementStyle);
+            genChild->setStyle(style.release());
+        } else {
+            // RenderListItem may insert a list marker here. We do not need to care about this case.
+            // Otherwise, genChild must be a first-letter container. updateFirstLetter() will take care of it.
+            ASSERT(genChild->isListMarker() || genChild->style()->styleType() == FIRST_LETTER);
+        }
+    }
+}
+
+static RenderObject* createRenderForBeforeAfterContent(RenderObject* owner, const ContentData* content, RenderStyle* pseudoElementStyle)
+{
+    RenderObject* renderer = 0;
+    switch (content->type()) {
+    case CONTENT_NONE:
+        break;
+    case CONTENT_TEXT:
+        renderer = new (owner->renderArena()) RenderTextFragment(owner->document() /* anonymous object */, static_cast<const TextContentData*>(content)->text().impl());
+        renderer->setStyle(pseudoElementStyle);
+        break;
+    case CONTENT_OBJECT: {
+        RenderImage* image = new (owner->renderArena()) RenderImage(owner->document()); // anonymous object
+        RefPtr<RenderStyle> style = RenderStyle::create();
+        style->inheritFrom(pseudoElementStyle);
+        image->setStyle(style.release());
+        if (const StyleImage* styleImage = static_cast<const ImageContentData*>(content)->image())
+            image->setImageResource(RenderImageResourceStyleImage::create(const_cast<StyleImage*>(styleImage)));
+        else
+            image->setImageResource(RenderImageResource::create());
+        renderer = image;
+        break;
+    }
+    case CONTENT_COUNTER:
+        renderer = new (owner->renderArena()) RenderCounter(owner->document(), *static_cast<const CounterContentData*>(content)->counter());
+        renderer->setStyle(pseudoElementStyle);
+        break;
+    case CONTENT_QUOTE:
+        renderer = new (owner->renderArena()) RenderQuote(owner->document(), static_cast<const QuoteContentData*>(content)->quote());
+        renderer->setStyle(pseudoElementStyle);
+        break;
+    }
+    return renderer;
+}
+
 void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, PseudoId type, const RenderObject* styledObject)
 {
     // Double check that the document did in fact use generated content rules.  Otherwise we should not have been called.
@@ -414,49 +496,7 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
         pseudoElementStyle->setDisplay(INLINE);
 
     if (oldContentPresent) {
-        if (child && child->style()->styleType() == type) {
-            // We have generated content present still.  We want to walk this content and update our
-            // style information with the new pseudo-element style.
-            child->setStyle(pseudoElementStyle);
-
-            RenderObject* beforeAfterParent = findBeforeAfterParent(child);
-            if (!beforeAfterParent)
-                return;
-
-            // When beforeAfterParent is not equal to child (e.g. in tables),
-            // we need to create new styles inheriting from pseudoElementStyle 
-            // on all the intermediate parents (leaving their display same).
-            if (beforeAfterParent != child) {
-                RenderObject* curr = beforeAfterParent;
-                while (curr && curr != child) {
-                    ASSERT(curr->isAnonymous());
-                    RefPtr<RenderStyle> newStyle = RenderStyle::create();
-                    newStyle->inheritFrom(pseudoElementStyle);
-                    newStyle->setDisplay(curr->style()->display());
-                    newStyle->setStyleType(curr->style()->styleType());
-                    curr->setStyle(newStyle);
-                    curr = curr->parent();
-                }
-            }
-
-            // Note that if we ever support additional types of generated content (which should be way off
-            // in the future), this code will need to be patched.
-            for (RenderObject* genChild = beforeAfterParent->firstChild(); genChild; genChild = genChild->nextSibling()) {
-                if (genChild->isText())
-                    // Generated text content is a child whose style also needs to be set to the pseudo-element style.
-                    genChild->setStyle(pseudoElementStyle);
-                else if (genChild->isImage()) {
-                    // Images get an empty style that inherits from the pseudo.
-                    RefPtr<RenderStyle> style = RenderStyle::create();
-                    style->inheritFrom(pseudoElementStyle);
-                    genChild->setStyle(style.release());
-                } else {
-                    // RenderListItem may insert a list marker here. We do not need to care about this case.
-                    // Otherwise, genChild must be a first-letter container. updateFirstLetter() will take care of it.
-                    ASSERT(genChild->isListMarker() || genChild->style()->styleType() == FIRST_LETTER);
-                }
-            }
-        }
+        updateBeforeAfterStyle(child, type, pseudoElementStyle);
         return; // We've updated the generated content. That's all we needed to do.
     }
     
@@ -473,38 +513,10 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
     // Generated content consists of a single container that houses multiple children (specified
     // by the content property).  This generated content container gets the pseudo-element style set on it.
     RenderObject* generatedContentContainer = 0;
-    
+
     // Walk our list of generated content and create render objects for each.
     for (const ContentData* content = pseudoElementStyle->contentData(); content; content = content->next()) {
-        RenderObject* renderer = 0;
-        switch (content->type()) {
-            case CONTENT_NONE:
-                break;
-            case CONTENT_TEXT:
-                renderer = new (owner->renderArena()) RenderTextFragment(owner->document() /* anonymous object */, static_cast<const TextContentData*>(content)->text().impl());
-                renderer->setStyle(pseudoElementStyle);
-                break;
-            case CONTENT_OBJECT: {
-                RenderImage* image = new (owner->renderArena()) RenderImage(owner->document()); // anonymous object
-                RefPtr<RenderStyle> style = RenderStyle::create();
-                style->inheritFrom(pseudoElementStyle);
-                image->setStyle(style.release());
-                if (const StyleImage* styleImage = static_cast<const ImageContentData*>(content)->image())
-                    image->setImageResource(RenderImageResourceStyleImage::create(const_cast<StyleImage*>(styleImage)));
-                else
-                    image->setImageResource(RenderImageResource::create());
-                renderer = image;
-                break;
-            }
-        case CONTENT_COUNTER:
-            renderer = new (owner->renderArena()) RenderCounter(owner->document(), *static_cast<const CounterContentData*>(content)->counter());
-            renderer->setStyle(pseudoElementStyle);
-            break;
-        case CONTENT_QUOTE:
-            renderer = new (owner->renderArena()) RenderQuote(owner->document(), static_cast<const QuoteContentData*>(content)->quote());
-            renderer->setStyle(pseudoElementStyle);
-            break;
-        }
+        RenderObject* renderer =  createRenderForBeforeAfterContent(owner, content, pseudoElementStyle);
 
         if (renderer) {
             if (!generatedContentContainer) {
