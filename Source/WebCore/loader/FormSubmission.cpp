@@ -180,6 +180,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
     RefPtr<DOMFormData> domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmission());
     Vector<pair<String, String> > formValues;
 
+    bool containsPasswordData = false;
     for (unsigned i = 0; i < form->associatedElements().size(); ++i) {
         FormAssociatedElement* control = form->associatedElements()[i];
         HTMLElement* element = toHTMLElement(control);
@@ -192,6 +193,8 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
                 if (input->isSearchField())
                     input->addSearchResult();
             }
+            if (input->isPasswordField() && !input->value().isEmpty())
+                containsPasswordData = true;
         }
     }
 
@@ -211,6 +214,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
     }
 
     formData->setIdentifier(generateFormDataIdentifier());
+    formData->setContainsPasswordData(containsPasswordData);
     String targetOrBaseTarget = copiedAttributes.target().isEmpty() ? document->baseTarget() : copiedAttributes.target();
     RefPtr<FormState> formState = FormState::create(form, formValues, document->frame(), trigger);
     return adoptRef(new FormSubmission(copiedAttributes.method(), actionURL, targetOrBaseTarget, encodingType, formState.release(), formData.release(), boundary, lockHistory, event));

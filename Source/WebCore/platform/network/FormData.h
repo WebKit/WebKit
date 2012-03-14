@@ -135,6 +135,9 @@ public:
     void setIdentifier(int64_t identifier) { m_identifier = identifier; }
     int64_t identifier() const { return m_identifier; }
 
+    bool containsPasswordData() const { return m_containsPasswordData; }
+    void setContainsPasswordData(bool containsPasswordData) { m_containsPasswordData = containsPasswordData; }
+
     static EncodingType parseEncodingType(const String& type)
     {
         if (equalIgnoringCase(type, "text/plain"))
@@ -156,6 +159,7 @@ private:
     bool m_hasGeneratedFiles;
     bool m_alwaysStream;
     Vector<char> m_boundary;
+    bool m_containsPasswordData;
 };
 
 inline bool operator==(const FormData& a, const FormData& b)

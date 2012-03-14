@@ -92,6 +92,9 @@ public:
     WEBKIT_EXPORT long long identifier() const;
     WEBKIT_EXPORT void setIdentifier(long long);
 
+    WEBKIT_EXPORT bool containsPasswordData() const;
+    WEBKIT_EXPORT void setContainsPasswordData(bool);
+
 #if WEBKIT_IMPLEMENTATION
     WebHTTPBody(const WTF::PassRefPtr<WebCore::FormData>&);
     WebHTTPBody& operator=(const WTF::PassRefPtr<WebCore::FormData>&);

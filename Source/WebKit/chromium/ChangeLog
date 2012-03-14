@@ -1,3 +1,20 @@
+2012-03-14  Marja Hölttä  <marja@google.com>
+
+        WebHTTPBody: Keep track of whether the data includes passwords.
+        https://bugs.webkit.org/show_bug.cgi?id=81003
+
+        Reviewed by Darin Fisher.
+
+        This change enables Chrome to save HTTP bodies selectively, only
+        if they don't contain passwords.
+
+        * public/platform/WebHTTPBody.h:
+        (WebHTTPBody): Added containsPasswordData, setContainsPasswordData.
+        * src/WebHTTPBody.cpp:
+        (WebKit::WebHTTPBody::containsPasswordData): Added.
+        (WebKit):
+        (WebKit::WebHTTPBody::setContainsPasswordData): Added.
+
 2012-03-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

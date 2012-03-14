@@ -150,6 +150,16 @@ void WebHTTPBody::setIdentifier(long long identifier)
     return m_private->setIdentifier(identifier);
 }
 
+bool WebHTTPBody::containsPasswordData() const
+{
+    return m_private->containsPasswordData();
+}
+
+void WebHTTPBody::setContainsPasswordData(bool containsPasswordData)
+{
+    m_private->setContainsPasswordData(containsPasswordData);
+}
+
 WebHTTPBody::WebHTTPBody(const PassRefPtr<FormData>& data)
     : m_private(static_cast<WebHTTPBodyPrivate*>(data.leakRef()))
 {

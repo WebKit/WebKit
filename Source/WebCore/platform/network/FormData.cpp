@@ -43,6 +43,7 @@ inline FormData::FormData()
     : m_identifier(0)
     , m_hasGeneratedFiles(false)
     , m_alwaysStream(false)
+    , m_containsPasswordData(false)
 {
 }
 
@@ -52,6 +53,7 @@ inline FormData::FormData(const FormData& data)
     , m_identifier(data.m_identifier)
     , m_hasGeneratedFiles(false)
     , m_alwaysStream(false)
+    , m_containsPasswordData(data.m_containsPasswordData)
 {
     // We shouldn't be copying FormData that hasn't already removed its generated files
     // but just in case, make sure the new FormData is ready to generate its own files.
