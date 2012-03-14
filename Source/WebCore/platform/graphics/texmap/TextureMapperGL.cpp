@@ -419,30 +419,21 @@ static void swizzleBGRAToRGBA(uint32_t* data, const IntSize& size)
     }
 }
 
-// FIXME: Move this to Extensions3D when we move TextureMapper to use GC3D.
-static bool hasExtension(const char* extension)
+static bool driverSupportsBGRASwizzling()
 {
-    static Vector<String> availableExtensions;
-    if (!availableExtensions.isEmpty())
-        return availableExtensions.contains(extension);
-    String extensionsString(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
-    extensionsString.split(" ", availableExtensions);
-    return availableExtensions.contains(extension);
-}
-static bool hasBGRAExtension()
-{
-#if !defined(TEXMAP_OPENGL_ES_2)
+#if defined(TEXMAP_OPENGL_ES_2)
+    // FIXME: Implement reliable detection. See also https://bugs.webkit.org/show_bug.cgi?id=81103.
+    return false;
+#else
     return true;
 #endif
-    static bool hasBGRA = hasExtension("GL_EXT_texture_format_BGRA8888");
-    return hasBGRA;
 }
 
 void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect)
 {
     GLuint glFormat = GL_RGBA;
     GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id))
-    if (hasBGRAExtension())
+    if (driverSupportsBGRASwizzling())
         glFormat = GL_BGRA;
     else {
         swizzleBGRAToRGBA(static_cast<uint32_t*>(const_cast<void*>(data)), targetRect.size());
@@ -476,7 +467,7 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
     if (IntSize(qtImage.size()) != sourceRect.size())
         qtImage = qtImage.copy(sourceRect);
     if (format == BGRAFormat || format == BGRFormat) {
-        if (hasBGRAExtension())
+        if (driverSupportsBGRASwizzling())
             glFormat = isOpaque() ? GL_BGR : GL_BGRA;
         else
             swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(qtImage.bits()), qtImage.size());
