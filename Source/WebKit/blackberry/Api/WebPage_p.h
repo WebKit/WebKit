@@ -156,7 +156,7 @@ public:
     WebCore::IntSize absoluteVisibleOverflowSize() const;
 
     // Virtual functions inherited from PageClientBlackBerry.
-    virtual void setCursor(WebCore::PlatformCursorHandle);
+    virtual void setCursor(WebCore::PlatformCursor);
     virtual Platform::NetworkStreamFactory* networkStreamFactory();
     virtual Platform::Graphics::Window* platformWindow() const;
     virtual void setPreventsScreenDimming(bool preventDimming);

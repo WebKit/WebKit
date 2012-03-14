@@ -1843,7 +1843,7 @@ bool WebPagePrivate::setViewMode(ViewMode mode)
     return true; // Needs re-layout!
 }
 
-void WebPagePrivate::setCursor(PlatformCursorHandle handle)
+void WebPagePrivate::setCursor(PlatformCursor handle)
 {
     if (m_currentCursor.type() != handle.type()) {
         m_currentCursor = handle;

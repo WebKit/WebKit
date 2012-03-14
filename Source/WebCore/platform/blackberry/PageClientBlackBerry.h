@@ -39,7 +39,7 @@ namespace WebCore {
 
 class PageClientBlackBerry {
 public:
-    virtual void setCursor(WebCore::PlatformCursorHandle) = 0;
+    virtual void setCursor(WebCore::PlatformCursor) = 0;
     virtual BlackBerry::Platform::NetworkStreamFactory* networkStreamFactory() = 0;
     virtual BlackBerry::Platform::Graphics::Window* platformWindow() const = 0;
     virtual void setPreventsScreenDimming(bool) = 0;

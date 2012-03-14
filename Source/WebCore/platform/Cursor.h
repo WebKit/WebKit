@@ -43,6 +43,8 @@ typedef HICON HCURSOR;
 #include <QCursor>
 #elif PLATFORM(CHROMIUM)
 #include "PlatformCursor.h"
+#elif PLATFORM(BLACKBERRY)
+#include <BlackBerryPlatformCursor.h>
 #endif
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
@@ -90,6 +92,8 @@ namespace WebCore {
     typedef wxCursor* PlatformCursor;
 #elif PLATFORM(CHROMIUM)
     // See PlatformCursor.h
+#elif PLATFORM(BLACKBERRY)
+    typedef BlackBerry::Platform::BlackBerryCursor PlatformCursor;
 #else
     typedef void* PlatformCursor;
 #endif
@@ -146,7 +150,7 @@ namespace WebCore {
         static const Cursor& fromType(Cursor::Type);
 
         Cursor()
-#if !PLATFORM(IOS)
+#if !PLATFORM(IOS) && !PLATFORM(BLACKBERRY)
             : m_platformCursor(0)
 #endif
         {
