@@ -2060,7 +2060,7 @@ webcore_sources += \
 	Source/WebCore/fileapi/DOMFileSystemSync.h \
 	Source/WebCore/fileapi/DOMWindowFileSystem.cpp \
 	Source/WebCore/fileapi/DOMWindowFileSystem.h \
-	Source/WebCore/fileapi/EntriesCallback.h \
+	Source/WebCore/Modules/filesystem/EntriesCallback.h \
 	Source/WebCore/fileapi/Entry.cpp \
 	Source/WebCore/fileapi/Entry.h \
 	Source/WebCore/fileapi/EntryArray.cpp \
@@ -4879,7 +4879,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
 	$(WebCore)/Modules/filesystem/DirectoryReader.idl \
 	$(WebCore)/Modules/filesystem/DirectoryReaderSync.idl \
-	$(WebCore)/fileapi/EntriesCallback.idl \
+	$(WebCore)/Modules/filesystem/EntriesCallback.idl \
 	$(WebCore)/fileapi/Entry.idl \
 	$(WebCore)/fileapi/EntryArray.idl \
 	$(WebCore)/fileapi/EntryArraySync.idl \

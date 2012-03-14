@@ -1667,7 +1667,7 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/DOMFileSystem.idl
         fileapi/DOMFileSystemSync.idl
         fileapi/DOMWindowFileSystem.idl
-        fileapi/EntriesCallback.idl
+        Modules/filesystem/EntriesCallback.idl
         fileapi/Entry.idl
         fileapi/EntrySync.idl
         fileapi/EntryArray.idl

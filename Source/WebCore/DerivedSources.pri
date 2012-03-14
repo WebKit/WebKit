@@ -223,7 +223,7 @@ IDL_BINDINGS += \
     $$PWD/fileapi/DOMFileSystem.idl \
     $$PWD/fileapi/DOMFileSystemSync.idl \
     $$PWD/fileapi/DOMWindowFileSystem.idl \
-    $$PWD/fileapi/EntriesCallback.idl \
+    $$PWD/Modules/filesystem/EntriesCallback.idl \
     $$PWD/fileapi/Entry.idl \
     $$PWD/fileapi/EntryArray.idl \
     $$PWD/fileapi/EntryArraySync.idl \

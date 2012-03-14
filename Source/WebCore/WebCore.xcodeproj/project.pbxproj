@@ -9830,7 +9830,7 @@
 		8987853E122CA064003AABDA /* DOMFilePath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMFilePath.h; path = fileapi/DOMFilePath.h; sourceTree = "<group>"; };
 		8987853F122CA064003AABDA /* DOMFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DOMFileSystem.cpp; path = fileapi/DOMFileSystem.cpp; sourceTree = "<group>"; };
 		89878540122CA064003AABDA /* DOMFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMFileSystem.h; path = fileapi/DOMFileSystem.h; sourceTree = "<group>"; };
-		89878541122CA064003AABDA /* EntriesCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntriesCallback.h; path = fileapi/EntriesCallback.h; sourceTree = "<group>"; };
+		89878541122CA064003AABDA /* EntriesCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntriesCallback.h; path = Modules/filesystem/EntriesCallback.h; sourceTree = "<group>"; };
 		89878542122CA064003AABDA /* Entry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Entry.cpp; path = fileapi/Entry.cpp; sourceTree = "<group>"; };
 		89878543122CA064003AABDA /* Entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Entry.h; path = fileapi/Entry.h; sourceTree = "<group>"; };
 		89878544122CA064003AABDA /* EntryArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntryArray.cpp; path = fileapi/EntryArray.cpp; sourceTree = "<group>"; };

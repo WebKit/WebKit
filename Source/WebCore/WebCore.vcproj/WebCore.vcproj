@@ -24092,6 +24092,10 @@
 				        RelativePath="..\Modules\filesystem\DirectoryReaderSync.h"
 				        >
 			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\EntriesCallback.h"
+				        >
+			        </File>
                         </Filter>
 			<Filter
 				Name="geolocation"
@@ -56943,10 +56947,6 @@
 			</File>
 			<File
 				RelativePath="..\html\EmailInputType.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\EntriesCallback.h"
 				>
 			</File>
 			<File

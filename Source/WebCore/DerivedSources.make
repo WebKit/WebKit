@@ -202,7 +202,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
     $(WebCore)/Modules/filesystem/DirectoryReader.idl \
     $(WebCore)/Modules/filesystem/DirectoryReaderSync.idl \
-    $(WebCore)/fileapi/EntriesCallback.idl \
+    $(WebCore)/Modules/filesystem/EntriesCallback.idl \
     $(WebCore)/fileapi/Entry.idl \
     $(WebCore)/fileapi/EntryArray.idl \
     $(WebCore)/fileapi/EntryArraySync.idl \

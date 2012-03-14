@@ -3058,11 +3058,11 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         Modules/filesystem/DirectoryReader.h \
         Modules/filesystem/DirectoryReaderBase.h \
         Modules/filesystem/DirectoryReaderSync.h \
+        Modules/filesystem/EntriesCallback.h \
         fileapi/DOMFilePath.h \
         fileapi/DOMFileSystem.h \
         fileapi/DOMFileSystemBase.h \
         fileapi/DOMFileSystemSync.h \
-        fileapi/EntriesCallback.h \
         fileapi/Entry.h \
         fileapi/EntryArray.h \
         fileapi/EntryArraySync.h \
