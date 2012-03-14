@@ -1,3 +1,11 @@
+2012-03-13  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed, mark verifyCullChildLinesUpTopLeft() as failed.
+
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore):
+        (WebCore::TEST):
+
 2012-03-14  Marja Hölttä  <marja@google.com>
 
         WebHTTPBody: Keep track of whether the data includes passwords.

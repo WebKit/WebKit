@@ -805,13 +805,7 @@ WebInspector.HeapSnapshot.prototype = {
 
     get nodeCount()
     {
-        if (this._nodeCount)
-            return this._nodeCount;
-
-        this._nodeCount = 0;
-        for (var iter = this._allNodes; iter.hasNext(); iter.next())
-            ++this._nodeCount;
-        return this._nodeCount;
+        return this.nodeIndexes.length - 1;
     },
 
     nodeFieldValuesByIndex: function(fieldName, indexes)
@@ -835,8 +829,10 @@ WebInspector.HeapSnapshot.prototype = {
         if (typeof this._maxNodeId === "number")
             return this._maxNodeId;
         this._maxNodeId = 0;
-        for (var iter = this._allNodes; iter.hasNext(); iter.next()) {
-            var id = iter.node.id;
+        var node = new WebInspector.HeapSnapshotNode(this, this.nodeIndexes[0]);
+        for (var i = 0; i < this.nodeCount; ++i) {
+            node.nodeIndex = this.nodeIndexes[i];
+            var id = node.id;
             if ((id % 2) && id > this._maxNodeId)
                 this._maxNodeId = id;
         }
@@ -922,10 +918,10 @@ WebInspector.HeapSnapshot.prototype = {
         //  - "indexArray" is an array of indexes in the "backRefsArray"
         //    with the same positions as in the _nodeIndex.
         var indexArray = this[indexArrayName] = new Int32Array(this._nodeIndex.length);
-        for (var i = 0, l = indexArray.length; i < l; ++i)
-            indexArray[i] = 0;
-        for (var nodesIter = this._allNodes; nodesIter.hasNext(); nodesIter.next()) {
-            indexCallback(nodesIter.node, function (position) { ++indexArray[position]; });
+        var node = new WebInspector.HeapSnapshotNode(this, this.nodeIndexes[0]);
+        for (var i = 0; i < this.nodeCount; ++i) {
+            node.nodeIndex = this.nodeIndexes[i];
+            indexCallback(node, function (position) { ++indexArray[position]; });
         }
         var backRefsCount = 0;
         for (i = 0, l = indexArray.length; i < l; ++i)
@@ -939,8 +935,10 @@ WebInspector.HeapSnapshot.prototype = {
             indexArray[i] = backRefsPosition;
             backRefsPosition += backRefsCount;
         }
-        for (nodesIter = this._allNodes; nodesIter.hasNext(); nodesIter.next()) {
-            dataCallback(nodesIter.node,
+        node = new WebInspector.HeapSnapshotNode(this, this.nodeIndexes[0]);
+        for (var i = 0; i < this.nodeCount; ++i) {
+            node.nodeIndex = this.nodeIndexes[i];
+            dataCallback(node,
                          function (backRefIndex) { return backRefIndex + (--backRefsArray[backRefIndex]); },
                          function (backRefIndex, destIndex) { backRefsArray[backRefIndex] = destIndex; });
         }
@@ -1026,8 +1024,9 @@ WebInspector.HeapSnapshot.prototype = {
         }
 
         var aggregates = {};
-        for (var iter = this._allNodes; iter.hasNext(); iter.next()) {
-            var node = iter.node;
+        var node = new WebInspector.HeapSnapshotNode(this, this.nodeIndexes[0]);
+        for (var i = 0; i < this.nodeCount; ++i) {
+            node.nodeIndex = this.nodeIndexes[i];
             if (shouldSkip(node))
                 continue;
             var className = node.className;
@@ -1080,9 +1079,17 @@ WebInspector.HeapSnapshot.prototype = {
                 });
     },
 
+    get nodeIndexes()
+    {
+        if (!this._nodeIndex)
+            this._buildNodeIndex();
+        return this._nodeIndex;
+    },
+
     _buildNodeIndex: function()
     {
-        var count = this.nodeCount;
+        var count = 0;
+        for (var nodesIter = this._allNodes; nodesIter.hasNext(); nodesIter.next(), ++count);
         this._nodeIndex = new Int32Array(count + 1);
         count = 0;
         for (var nodesIter = this._allNodes; nodesIter.hasNext(); nodesIter.next(), ++count)
