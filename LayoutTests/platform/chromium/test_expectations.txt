@@ -3962,6 +3962,3 @@ BUGWK81145 LION : svg/custom/delete-text-crash.html = TEXT
 BUGWK81145 LION : fast/writing-mode/broken-ideograph-small-caps.html = CRASH
 BUGWK81145 LION : fast/writing-mode/broken-ideographic-font.html = CRASH
 BUGWK81145 LION : fast/writing-mode/japanese-rl-text-with-broken-font.html = CRASH
-
-// New test. Just needs rebaseline.
-BUGWK12437 : svg/repaint/repainting-after-animation-element-removal.svg = IMAGE
