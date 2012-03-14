@@ -1,3 +1,12 @@
+2012-03-14  Ojan Vafai  <ojan@chromium.org>
+
+        Add the chromium lion bot to garden-o-matic and remove
+        the platform_move_to in builders.py since the Chromium Lion
+        port is now a normal port.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+
 2012-03-14  Dirk Pranke  <dpranke@chromium.org>
 
         Fix regression/crash introduced in r110724 - bad type passed from skipped_tests() by default.

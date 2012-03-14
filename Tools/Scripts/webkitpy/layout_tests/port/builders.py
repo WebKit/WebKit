@@ -50,7 +50,7 @@ _exact_matches = {
     "Webkit Mac10.5 (dbg)(2)": {"port_name": "chromium-mac-leopard", "specifiers": set(["leopard", "debug"])},
     "Webkit Mac10.6": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard"])},
     "Webkit Mac10.6 (dbg)": {"port_name": "chromium-mac-snowleopard", "specifiers": set(["snowleopard", "debug"])},
-    "Webkit Mac10.7": {"port_name": "chromium-mac-lion", "specifiers": set(["lion"]), "move_overwritten_baselines_to": ["chromium-mac-snowleopard", "chromium-mac-leopard"]},
+    "Webkit Mac10.7": {"port_name": "chromium-mac-lion", "specifiers": set(["lion"])},
 
     # These builders are on build.webkit.org.
     "GTK Linux 32-bit Debug": {"port_name": "gtk", "specifiers": set(["gtk"])},
