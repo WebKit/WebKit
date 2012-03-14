@@ -20,15 +20,16 @@
 #ifndef TextureMapper_h
 #define TextureMapper_h
 
+#if USE(ACCELERATED_COMPOSITING)
+
 #if PLATFORM(QT)
 #include <qglobal.h>
-#endif
 
-#if USE(ACCELERATED_COMPOSITING)
 #if defined(QT_OPENGL_LIB) || (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
     #if defined(QT_OPENGL_ES_2) && !defined(TEXMAP_OPENGL_ES_2)
         #define TEXMAP_OPENGL_ES_2
     #endif
+#endif
 #endif
 
 #include "FilterOperations.h"
