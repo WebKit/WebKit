@@ -50,6 +50,18 @@ class MacPort(ApplePort):
             # with MallocStackLogging enabled.
             self.set_option_default("batch_size", 1000)
 
+    def _most_recent_version(self):
+        # This represents the most recently-shipping version of the operating system.
+        return self.VERSION_FALLBACK_ORDER[-2]
+
+    def baseline_path(self):
+        if self.name() == self._most_recent_version():
+            # Baselines for the most recently shiping version should go into 'mac', not 'mac-foo'.
+            if self.get_option('webkit_test_runner'):
+                return self._webkit_baseline_path('mac-wk2')
+            return self._webkit_baseline_path('mac')
+        return ApplePort.baseline_path(self)
+
     def baseline_search_path(self):
         fallback_index = self.VERSION_FALLBACK_ORDER.index(self._port_name_with_version())
         fallback_names = list(self.VERSION_FALLBACK_ORDER[fallback_index:])

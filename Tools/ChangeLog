@@ -1,3 +1,24 @@
+2012-03-14  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: run with no args on lion, is putting baselines in platform/mac-lion, not platform/mac
+        https://bugs.webkit.org/show_bug.cgi?id=81028
+
+        Reviewed by Ojan Vafai.
+
+        The mac port had incorrect lookups for 'mac-lion' and
+        'mac-future' in some places. This patch fixes that and adds a
+        bunch of tests.
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.baseline_path):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (MacTest.assert_skipped_file_search_paths):
+        (MacTest.test_skipped_file_search_paths):
+        (_assert_search_path):
+        (test_baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._skipped_file_search_paths):
+
 2012-03-13  Jer Noble  <jer.noble@apple.com>
 
         Lion Intel Debug WebKit2 Tests crashing under [WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]

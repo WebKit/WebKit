@@ -335,12 +335,9 @@ class WebKitPort(Port):
     def _skipped_file_search_paths(self):
         # Unlike baseline_search_path, we only want to search [WK2-PORT, PORT-VERSION, PORT] not the full casade.
         # Note order doesn't matter since the Skipped file contents are all combined.
-        #
-        # FIXME: It's not correct to assume that port names map directly to
-        # directory names. For example, mac-future is a port name that does
-        # not have a cooresponding directory. The WebKit2 ports are another
-        # example.
-        search_paths = set([self.port_name, self.name()])
+        search_paths = set([self.port_name])
+        if 'future' not in self.name():
+            search_paths.add(self.name())
         if self.get_option('webkit_test_runner'):
             # Because nearly all of the skipped tests for WebKit 2 are due to cross-platform
             # issues, all wk2 ports share a skipped list under platform/wk2.
