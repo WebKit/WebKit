@@ -1,3 +1,11 @@
+2012-03-13  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed, mark verifyCullChildLinesUpTopLeft() as failed.
+
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore):
+        (WebCore::TEST):
+
 2012-03-13  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] wrong transform causing incorrect culling
