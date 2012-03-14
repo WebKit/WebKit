@@ -27,9 +27,9 @@
 #include "config.h"
 #include "DNS.h"
 
-#include "CString.h"
 #include "GOwnPtrSoup.h"
 #include "ResourceHandle.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
