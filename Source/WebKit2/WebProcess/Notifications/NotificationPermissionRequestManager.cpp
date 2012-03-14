@@ -41,7 +41,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 static uint64_t generateRequestID()
 {
     static uint64_t uniqueRequestID = 1;
@@ -61,7 +61,7 @@ NotificationPermissionRequestManager::NotificationPermissionRequestManager(WebPa
 
 void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, PassRefPtr<VoidCallback> callback)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (permissionLevel(origin) != NotificationClient::PermissionNotAllowed) {
         callback->handleEvent();
         return;
@@ -80,7 +80,7 @@ void NotificationPermissionRequestManager::startRequest(SecurityOrigin* origin, 
 
 void NotificationPermissionRequestManager::cancelRequest(SecurityOrigin* origin)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     uint64_t id = m_originToIDMap.take(origin);
     if (!id)
         return;
@@ -94,7 +94,7 @@ void NotificationPermissionRequestManager::cancelRequest(SecurityOrigin* origin)
 
 NotificationClient::Permission NotificationPermissionRequestManager::permissionLevel(SecurityOrigin* securityOrigin)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (!m_page->corePage()->settings()->notificationsEnabled())
         return NotificationClient::PermissionDenied;
     
@@ -107,7 +107,7 @@ NotificationClient::Permission NotificationPermissionRequestManager::permissionL
 
 void NotificationPermissionRequestManager::didReceiveNotificationPermissionDecision(uint64_t requestID, bool allowed)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (!isRequestIDValid(requestID))
         return;
 

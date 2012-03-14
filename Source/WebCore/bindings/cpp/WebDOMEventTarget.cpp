@@ -56,7 +56,7 @@
 #include "WebDOMSharedWorkerContext.h"
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "WebDOMNotification.h"
 #endif
 
@@ -122,7 +122,7 @@ ConvertTo(SharedWorker)
 ConvertTo(SharedWorkerContext)
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 ConvertTo(Notification)
 #endif
 
@@ -166,7 +166,7 @@ WebDOMEventTarget toWebKit(WebCore::EventTarget* value)
         return toWebKit(workerContext);
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (WebCore::Notification* notification = value->toNotification())
         return toWebKit(notification);
 #endif

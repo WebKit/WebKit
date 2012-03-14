@@ -31,7 +31,7 @@
 #include "config.h"
 #include "NotificationPresenterImpl.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "KURL.h"
 #include "Notification.h"
@@ -111,4 +111,4 @@ void NotificationPresenterImpl::requestPermission(ScriptExecutionContext* contex
 
 } // namespace WebKit
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

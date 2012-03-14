@@ -20,7 +20,7 @@
 #ifndef NotificationPresenterClientEfl_h
 #define NotificationPresenterClientEfl_h
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "Notification.h"
 #include "NotificationPresenter.h"
 

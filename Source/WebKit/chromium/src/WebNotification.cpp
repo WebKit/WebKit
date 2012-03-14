@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebNotification.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "Event.h"
 #include "Notification.h"
@@ -174,4 +174,4 @@ void WebNotification::assign(WebNotificationPrivate* p)
 
 } // namespace WebKit
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

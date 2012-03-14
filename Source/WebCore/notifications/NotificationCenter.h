@@ -41,7 +41,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 namespace WebCore {
 
@@ -90,6 +90,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #endif // NotificationCenter_h

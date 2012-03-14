@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "V8NotificationCenter.h"
 
 #include "ExceptionCode.h"
@@ -107,4 +107,4 @@ v8::Handle<v8::Value> V8NotificationCenter::requestPermissionCallback(const v8::
 
 }  // namespace WebCore
 
-#endif  // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

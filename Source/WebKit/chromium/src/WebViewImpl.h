@@ -416,7 +416,7 @@ public:
         m_autofillPopupShowing = false;
     }
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     // Returns the provider of desktop notifications.
     NotificationPresenterImpl* notificationPresenterImpl();
 #endif
@@ -682,7 +682,7 @@ private:
     OwnPtr<SettingsMap> m_inspectorSettingsMap;
     OwnPtr<DragScrollTimer> m_dragScrollTimer;
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     // The provider of desktop notifications;
     NotificationPresenterImpl m_notificationPresenter;
 #endif

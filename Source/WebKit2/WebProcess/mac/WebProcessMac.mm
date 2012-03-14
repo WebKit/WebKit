@@ -251,7 +251,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationManager.initialize(parameters.notificationPermissions);
 #endif
 

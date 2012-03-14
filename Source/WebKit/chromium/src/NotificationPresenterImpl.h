@@ -37,7 +37,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 namespace WebKit {
 
@@ -66,6 +66,6 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #endif

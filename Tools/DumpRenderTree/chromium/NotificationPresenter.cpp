@@ -31,7 +31,7 @@
 #include "config.h"
 #include "NotificationPresenter.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "WebKit.h"
 #include "platform/WebKitPlatformSupport.h"
@@ -151,4 +151,4 @@ void NotificationPresenter::requestPermission(
     callback->permissionRequestComplete();
 }
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

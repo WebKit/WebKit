@@ -32,7 +32,7 @@
 #include <WebCore/Notification.h>
 #include <WebCore/NotificationClient.h>
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 interface IWebDesktopNotificationPresenter;
 

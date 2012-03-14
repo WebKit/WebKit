@@ -116,14 +116,14 @@ bool WebRuntimeFeatures::isSocketsEnabled()
 
 void WebRuntimeFeatures::enableNotifications(bool enable)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     RuntimeEnabledFeatures::setWebkitNotificationsEnabled(enable);
 #endif
 }
 
 bool WebRuntimeFeatures::isNotificationsEnabled()
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     return RuntimeEnabledFeatures::webkitNotificationsEnabled();
 #else
     return false;

@@ -77,7 +77,7 @@ public:
     Timer<NotificationWrapper> m_closeTimer;
 };
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 typedef QHash <Notification*, NotificationWrapper*> NotificationsQueue;
 

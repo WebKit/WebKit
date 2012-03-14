@@ -78,13 +78,13 @@ private:
     void didUpdateNotificationDecision(const String& originString, bool allowed);
     void didRemoveNotificationDecisions(const Vector<String>& originStrings);
     
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     void removeNotificationFromContextMap(uint64_t notificationID, WebCore::Notification*);
 #endif
 
     WebProcess* m_process;
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     typedef HashMap<RefPtr<WebCore::Notification>, uint64_t> NotificationMap;
     NotificationMap m_notificationMap;
     

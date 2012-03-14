@@ -340,7 +340,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
         WebCore::provideDeviceOrientationTo(page, new DeviceOrientationClientQt);
     WebCore::provideDeviceMotionTo(page, new DeviceMotionClientQt);
 #endif
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(page, NotificationPresenterClientQt::notificationPresenter());
 #endif
 
@@ -363,7 +363,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 
     PageGroup::setShouldTrackVisitedLinks(true);
     
-#if ENABLE(NOTIFICATIONS)    
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     NotificationPresenterClientQt::notificationPresenter()->addClient();
 #endif
 }
@@ -387,7 +387,7 @@ QWebPagePrivate::~QWebPagePrivate()
     if (inspector)
         inspector->setPage(0);
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     NotificationPresenterClientQt::notificationPresenter()->removeClient();
 #endif
 }
@@ -2149,7 +2149,7 @@ void QWebPage::setFeaturePermission(QWebFrame* frame, Feature feature, Permissio
 {
     switch (feature) {
     case Notifications:
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
         if (policy == PermissionGrantedByUser)
             NotificationPresenterClientQt::notificationPresenter()->allowNotificationForFrame(frame->d->frame);
 #endif

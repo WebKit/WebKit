@@ -28,7 +28,7 @@
 
 #import "WebNotification.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 namespace WebCore {
 class Notification;

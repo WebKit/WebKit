@@ -96,7 +96,7 @@ WorkerThread::WorkerThread(const KURL& scriptURL, const String& userAgent, const
     , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerReportingProxy(workerReportingProxy)
     , m_startupData(WorkerThreadStartupData::create(scriptURL, userAgent, sourceCode, startMode, contentSecurityPolicy, contentSecurityPolicyType))
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     , m_notificationClient(0)
 #endif
 {

@@ -26,7 +26,7 @@
 #ifndef WebNotificationClient_h
 #define WebNotificationClient_h
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include <WebCore/NotificationClient.h>
 
@@ -59,6 +59,6 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #endif // WebNotificationClient_h

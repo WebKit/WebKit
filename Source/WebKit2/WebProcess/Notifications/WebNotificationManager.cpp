@@ -29,7 +29,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "WebNotification.h"
 #include "WebNotificationManagerProxyMessages.h"
 #include "WebPageProxyMessages.h"
@@ -45,7 +45,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 static uint64_t generateNotificationID()
 {
     static uint64_t uniqueNotificationID = 1;
@@ -69,21 +69,21 @@ void WebNotificationManager::didReceiveMessage(CoreIPC::Connection* connection, 
 
 void WebNotificationManager::initialize(const HashMap<String, bool>& permissions)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_permissionsMap = permissions;
 #endif
 }
 
 void WebNotificationManager::didUpdateNotificationDecision(const String& originString, bool allowed)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_permissionsMap.set(originString, allowed);
 #endif
 }
 
 void WebNotificationManager::didRemoveNotificationDecisions(const Vector<String>& originStrings)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     size_t count = originStrings.size();
     for (size_t i = 0; i < count; ++i)
         m_permissionsMap.remove(originStrings[i]);
@@ -92,7 +92,7 @@ void WebNotificationManager::didRemoveNotificationDecisions(const Vector<String>
 
 NotificationClient::Permission WebNotificationManager::policyForOrigin(WebCore::SecurityOrigin *origin) const
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (!origin)
         return NotificationClient::PermissionNotAllowed;
     
@@ -106,7 +106,7 @@ NotificationClient::Permission WebNotificationManager::policyForOrigin(WebCore::
 
 bool WebNotificationManager::show(Notification* notification, WebPage* page)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (!notification || !page->corePage()->settings()->notificationsEnabled())
         return true;
     
@@ -126,7 +126,7 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
 
 void WebNotificationManager::cancel(Notification* notification, WebPage* page)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (!notification || !page->corePage()->settings()->notificationsEnabled())
         return;
     
@@ -140,7 +140,7 @@ void WebNotificationManager::cancel(Notification* notification, WebPage* page)
 
 void WebNotificationManager::clearNotifications(WebCore::ScriptExecutionContext* context, WebPage* page)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     NotificationContextMap::iterator it = m_notificationContextMap.find(context);
     if (it == m_notificationContextMap.end())
         return;
@@ -161,7 +161,7 @@ void WebNotificationManager::clearNotifications(WebCore::ScriptExecutionContext*
 
 void WebNotificationManager::didDestroyNotification(Notification* notification, WebPage* page)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     uint64_t notificationID = m_notificationMap.take(notification);
     if (!notificationID)
         return;
@@ -174,7 +174,7 @@ void WebNotificationManager::didDestroyNotification(Notification* notification, 
 
 void WebNotificationManager::didShowNotification(uint64_t notificationID)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (!isNotificationIDValid(notificationID))
         return;
     
@@ -188,7 +188,7 @@ void WebNotificationManager::didShowNotification(uint64_t notificationID)
 
 void WebNotificationManager::didClickNotification(uint64_t notificationID)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (!isNotificationIDValid(notificationID))
         return;
 
@@ -202,7 +202,7 @@ void WebNotificationManager::didClickNotification(uint64_t notificationID)
 
 void WebNotificationManager::didCloseNotifications(const Vector<uint64_t>& notificationIDs)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     size_t count = notificationIDs.size();
     for (size_t i = 0; i < count; ++i) {
         uint64_t notificationID = notificationIDs[i];
@@ -221,7 +221,7 @@ void WebNotificationManager::didCloseNotifications(const Vector<uint64_t>& notif
 #endif
 }
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 void WebNotificationManager::removeNotificationFromContextMap(uint64_t notificationID, Notification* notification)
 {
     // This is a helper function for managing the hash maps.

@@ -418,7 +418,7 @@ DOMWindow::~DOMWindow()
         ASSERT(!m_sessionStorage);
         ASSERT(!m_localStorage);
         ASSERT(!m_applicationCache);
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
         ASSERT(!m_notifications);
 #endif
 #if ENABLE(BLOB)
@@ -478,7 +478,7 @@ void DOMWindow::willDetachPage()
 {
     InspectorInstrumentation::frameWindowDiscarded(m_frame, this);
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     // Clearing Notifications requests involves accessing the client so it must be done
     // before the frame is detached.
     resetNotifications();
@@ -528,7 +528,7 @@ void DOMWindow::disconnectDOMWindowProperties()
     for (HashSet<DOMWindowProperty*>::iterator it = m_properties.begin(); it != stop; ++it)
         (*it)->disconnectFrame();
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     // FIXME: Notifications shouldn't have different disconnection logic than
     // the rest of the DOMWindowProperties.
     // There is currently no way to reconnect them in resumeFromPageCache() so
@@ -571,7 +571,7 @@ void DOMWindow::clearDOMWindowProperties()
     m_sessionStorage = 0;
     m_localStorage = 0;
     m_applicationCache = 0;
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     // FIXME: Notifications shouldn't have different disconnection logic than
     // the rest of the DOMWindowProperties.
     resetNotifications();
@@ -784,7 +784,7 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
     return m_localStorage.get();
 }
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 NotificationCenter* DOMWindow::webkitNotifications() const
 {
     if (!isCurrentlyDisplayedInFrame())

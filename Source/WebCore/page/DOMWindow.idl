@@ -170,7 +170,7 @@ module window {
         readonly attribute [V8EnabledAtRuntime] Storage localStorage
             getter raises(DOMException);
 
-#if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
+#if (defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS) || (defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS)
         readonly attribute [V8EnabledAtRuntime] NotificationCenter webkitNotifications;
 #endif
 

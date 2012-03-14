@@ -279,7 +279,7 @@ void WebContext::ensureWebProcess()
 
     parameters.defaultRequestTimeoutInterval = WebURLRequest::defaultTimeoutInterval();
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationManagerProxy->populateCopyOfNotificationPermissions(parameters.notificationPermissions);
 #endif
 

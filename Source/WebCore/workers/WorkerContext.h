@@ -105,7 +105,7 @@ namespace WebCore {
         // ScriptExecutionContext
         virtual WorkerEventQueue* eventQueue() const;
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
         NotificationCenter* webkitNotifications() const;
 #endif
 
@@ -172,7 +172,7 @@ namespace WebCore {
         OwnPtr<WorkerScriptController> m_script;
         WorkerThread* m_thread;
 
-#if ENABLE_NOTIFICATIONS
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
         mutable RefPtr<NotificationCenter> m_notifications;
 #endif
 #if ENABLE(BLOB)

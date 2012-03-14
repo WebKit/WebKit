@@ -2122,7 +2122,7 @@ __ZNK7WebCore7IntSizecv7_NSSizeEv
 _wkCreateVMPressureDispatchOnMainQueue
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 __ZN7WebCore12NotificationC1Ev
 __ZN7WebCore12NotificationD1Ev
 __ZN7WebCore12Notification17dispatchShowEventEv

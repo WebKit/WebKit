@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "Document.h"
 #include "JSCustomVoidCallback.h"
@@ -70,4 +70,4 @@ JSValue JSNotificationCenter::requestPermission(ExecState* exec)
 
 } // namespace
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

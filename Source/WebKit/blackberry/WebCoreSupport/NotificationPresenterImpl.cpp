@@ -19,7 +19,7 @@
 #include "config.h"
 #include "NotificationPresenterImpl.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include <Event.h>
 #include <Notification.h>
 #include <NotificationPresenterBlackBerry.h>
@@ -155,4 +155,4 @@ void NotificationPresenterImpl::notificationClicked(const std::string& id)
 
 } // namespace WebKit
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

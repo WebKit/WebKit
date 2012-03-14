@@ -62,7 +62,7 @@ namespace WebCore {
         // Number of active worker threads.
         static unsigned workerThreadCount();
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
         NotificationClient* getNotificationClient() { return m_notificationClient; }
         void setNotificationClient(NotificationClient* client) { m_notificationClient = client; }
 #endif
@@ -93,7 +93,7 @@ namespace WebCore {
 
         OwnPtr<WorkerThreadStartupData> m_startupData;
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
         NotificationClient* m_notificationClient;
 #endif
 

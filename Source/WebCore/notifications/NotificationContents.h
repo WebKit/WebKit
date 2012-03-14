@@ -32,7 +32,7 @@
 #ifndef NotificationContents_h
 #define NotificationContents_h
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "KURL.h"
 #include <wtf/text/WTFString.h>
@@ -55,6 +55,6 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #endif // NotificationContents_h

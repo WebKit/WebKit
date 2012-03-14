@@ -55,7 +55,7 @@
 #include <Evas.h>
 #include <wtf/text/CString.h>
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "NotificationPresenterClientEfl.h"
 #endif
 
@@ -417,7 +417,7 @@ void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& database
 }
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 NotificationClient* ChromeClientEfl::notificationPresenter() const
 {
     notImplemented();

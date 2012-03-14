@@ -46,7 +46,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 namespace WebCore {
 
 class NotificationCenter;
@@ -164,6 +164,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #endif // Notifications_h

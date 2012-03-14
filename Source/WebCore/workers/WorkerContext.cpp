@@ -59,7 +59,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/UnusedParam.h>
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "NotificationCenter.h"
 #endif
 
@@ -104,7 +104,7 @@ WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThr
 WorkerContext::~WorkerContext()
 {
     ASSERT(currentThread() == thread()->threadID());
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notifications.clear();
 #endif
 
@@ -294,7 +294,7 @@ void WorkerContext::addMessageToWorkerConsole(MessageSource source, MessageType 
         InspectorInstrumentation::addMessageToConsole(this, source, type, level, message, sourceURL, lineNumber);
 }
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 NotificationCenter* WorkerContext::webkitNotifications() const
 {
     if (!m_notifications)

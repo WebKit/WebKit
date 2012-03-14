@@ -389,7 +389,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #if ENABLE(INPUT_SPEECH)
     provideSpeechInputTo(m_page.get(), m_speechInputClient.get());
 #endif
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     provideNotification(m_page.get(), notificationPresenterImpl());
 #endif
 
@@ -2957,7 +2957,7 @@ void WebViewImpl::setOverlayLayer(WebCore::GraphicsLayer* layer)
     }
 }
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 NotificationPresenterImpl* WebViewImpl::notificationPresenterImpl()
 {
     if (!m_notificationPresenter.isInitialized() && m_client)

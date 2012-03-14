@@ -28,7 +28,7 @@
 #include "KURL.h"
 #include "PopupMenu.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "NotificationClient.h"
 #endif
 
@@ -114,7 +114,7 @@ public:
     virtual void exceededDatabaseQuota(Frame*, const String&);
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     virtual WebCore::NotificationClient* notificationPresenter() const;
 #endif
 

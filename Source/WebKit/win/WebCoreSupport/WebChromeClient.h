@@ -150,7 +150,7 @@ public:
     virtual void exitFullscreenForNode(WebCore::Node*);
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     virtual WebCore::NotificationClient* notificationPresenter() const { return reinterpret_cast<WebCore::NotificationClient*>(m_notificationsDelegate.get()); }
 #endif
 
@@ -175,7 +175,7 @@ private:
 
     WebView* m_webView;
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     OwnPtr<WebDesktopNotificationsDelegate> m_notificationsDelegate;
 #endif
 };

@@ -141,7 +141,7 @@ WebProcess::WebProcess()
 #endif
     , m_textCheckerState()
     , m_geolocationManager(this)
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     , m_notificationManager(this)
 #endif
     , m_iconDatabaseProxy(this)
@@ -638,7 +638,7 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (messageID.is<CoreIPC::MessageClassWebNotificationManager>()) {
         m_notificationManager.didReceiveMessage(connection, messageID, arguments);
         return;

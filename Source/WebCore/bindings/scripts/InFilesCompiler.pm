@@ -166,6 +166,23 @@ sub toMacroStyle($$)
     die "Ok, you got me. This script is really just a giant hack. (\$camelCase=${camelCase})";
 }
 
+sub preferredConditional()
+{
+    my $object = shift;
+    my $conditional = shift;
+
+    my @conditionals = split('\\|', $conditional);
+    return $conditionals[0];
+}
+
+sub conditionalStringFromAttributeValue()
+{
+    my $object = shift;
+    my $conditional = shift;
+    
+    return "ENABLE(" . join(') || ENABLE(', split('\\|', $conditional)) . ")";
+}
+
 sub generateInterfacesHeader()
 {
     my $object = shift;
@@ -202,17 +219,18 @@ sub generateInterfacesHeader()
     my $macroStyledNamespace = $object->toMacroStyle($namespace);
 
     for my $conditional (sort keys %interfacesByConditional) {
-        print F "#if ENABLE($conditional)\n";
-        print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$conditional(macro) \\\n";
+        my $preferredConditional = $object->preferredConditional($conditional);
+        print F "#if " . $object->conditionalStringFromAttributeValue($conditional) . "\n";
+        print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$preferredConditional(macro) \\\n";
 
         for my $interface (sort keys %{ $interfacesByConditional{$conditional} }) {
             next if defined($unconditionalInterfaces{$interface});
             print F "    macro($interface) \\\n";
         }
 
-        print F "// End of DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$conditional\n";
+        print F "// End of DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$preferredConditional\n";
         print F "#else\n";
-        print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$conditional(macro)\n";
+        print F "#define DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$preferredConditional(macro)\n";
         print F "#endif\n";
         print F "\n";
     }
@@ -224,7 +242,8 @@ sub generateInterfacesHeader()
     }
     print F "    \\\n";
     for my $conditional (sort keys %interfacesByConditional) {
-        print F "    DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$conditional(macro) \\\n";
+        my $preferredConditional = $object->preferredConditional($conditional);
+        print F "    DOM_${macroStyledNamespace}_INTERFACES_FOR_EACH_$preferredConditional(macro) \\\n";
     }
 
     print F "\n";
@@ -258,7 +277,7 @@ sub generateHeadersHeader()
         next if defined($includedInterfaces{$interfaceName});
         $includedInterfaces{$interfaceName} = 1;
 
-        print F "#if ENABLE($conditional)\n" if $conditional;
+        print F "#if " . $object->conditionalStringFromAttributeValue($conditional) . "\n" if $conditional;
         print F "#include \"$interfaceName.h\"\n";
         print F "#if USE(JSC)\n";
         print F "#include \"JS$interfaceName.h\"\n";

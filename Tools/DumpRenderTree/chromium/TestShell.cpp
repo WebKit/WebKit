@@ -138,7 +138,7 @@ TestShell::TestShell(bool testShellMode)
     m_layoutTestController = adoptPtr(new LayoutTestController(this));
     m_eventSender = adoptPtr(new EventSender(this));
     m_textInputController = adoptPtr(new TextInputController(this));
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
 #endif
     m_printer = m_testShellMode ? TestEventPrinter::createTestShellPrinter() : TestEventPrinter::createDRTPrinter();
@@ -294,7 +294,7 @@ void TestShell::resetTestController()
     m_layoutTestController->reset();
     m_eventSender->reset();
     m_webViewHost->reset();
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter->reset();
 #endif
     m_drtDevToolsAgent->reset();

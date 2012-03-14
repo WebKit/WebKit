@@ -122,7 +122,7 @@ struct WebProcessCreationParameters {
     String cookieStorageDirectory;
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     HashMap<String, bool> notificationPermissions;
 #endif
 };

@@ -25,7 +25,7 @@
 
 #import "WebNotificationClient.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #import "WebDelegateImplementationCaching.h"
 #import "WebNotificationInternal.h"
 #import "WebPreferencesPrivate.h"
@@ -39,7 +39,7 @@
 
 using namespace WebCore;
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 @interface WebNotificationPolicyListener : NSObject <WebAllowDenyPolicyListener>
 {
     RefPtr<VoidCallback> _callback;
@@ -48,7 +48,7 @@ using namespace WebCore;
 @end
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 static uint64_t generateNotificationID()
 {
     static uint64_t uniqueNotificationID = 1;
@@ -63,7 +63,7 @@ WebNotificationClient::WebNotificationClient(WebView *webView)
 
 bool WebNotificationClient::show(Notification* notification)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (![m_webView _notificationProvider])
         return false;
 
@@ -84,7 +84,7 @@ bool WebNotificationClient::show(Notification* notification)
 
 void WebNotificationClient::cancel(Notification* notification)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebNotification *webNotification = m_notificationMap.get(notification).get();
     if (!webNotification)
         return;
@@ -97,7 +97,7 @@ void WebNotificationClient::cancel(Notification* notification)
 
 void WebNotificationClient::clearNotifications(ScriptExecutionContext* context)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     NotificationContextMap::iterator it = m_notificationContextMap.find(context);
     if (it == m_notificationContextMap.end())
         return;
@@ -120,7 +120,7 @@ void WebNotificationClient::clearNotifications(ScriptExecutionContext* context)
 
 void WebNotificationClient::notificationObjectDestroyed(Notification* notification)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     RetainPtr<WebNotification> webNotification = m_notificationMap.take(notification);
     if (!webNotification)
         return;
@@ -141,7 +141,7 @@ void WebNotificationClient::notificationObjectDestroyed(Notification* notificati
 
 void WebNotificationClient::notificationControllerDestroyed()
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     [m_webView _notificationControllerDestroyed];
 #endif
     delete this;
@@ -149,7 +149,7 @@ void WebNotificationClient::notificationControllerDestroyed()
 
 void WebNotificationClient::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
     SEL selector = @selector(webView:decidePolicyForNotificationRequestFromOrigin:listener:);
@@ -173,7 +173,7 @@ void WebNotificationClient::requestPermission(ScriptExecutionContext* context, P
 
 NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (!context || !context->isDocument())
         return NotificationClient::PermissionDenied;
     if (![[m_webView preferences] notificationsEnabled])
@@ -197,7 +197,7 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 #endif
 }
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 @implementation WebNotificationPolicyListener
 - (id)initWithCallback:(PassRefPtr<VoidCallback>)callback
 {

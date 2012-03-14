@@ -32,7 +32,7 @@
 module threads {
 
     interface [
-        Conditional=NOTIFICATIONS,
+        Conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS,
         ActiveDOMObject,
         EventTarget,
         OmitConstructor

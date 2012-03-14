@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 const double notificationTimeout = 10.0;
 
@@ -70,7 +70,7 @@ NotificationPresenterClientQt* NotificationPresenterClientQt::notificationPresen
 NotificationWrapper::NotificationWrapper()
     : m_closeTimer(this, &NotificationWrapper::close)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #ifndef QT_NO_SYSTEMTRAYICON
     m_notificationIcon = nullptr;
@@ -81,14 +81,14 @@ NotificationWrapper::NotificationWrapper()
 
 void NotificationWrapper::close(Timer<NotificationWrapper>*)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     NotificationPresenterClientQt::notificationPresenter()->cancel(this);
 #endif
 }
 
 const QString NotificationWrapper::title() const
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
     if (notification)
         return notification->contents().title;
@@ -98,7 +98,7 @@ const QString NotificationWrapper::title() const
 
 const QString NotificationWrapper::message() const
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
     if (notification)
         return notification->contents().body;
@@ -109,7 +109,7 @@ const QString NotificationWrapper::message() const
 const QByteArray NotificationWrapper::iconData() const
 {
     QByteArray iconData;
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
     if (notification) {
         if (notification->iconData())
@@ -122,7 +122,7 @@ const QByteArray NotificationWrapper::iconData() const
 const QUrl NotificationWrapper::openerPageUrl() const
 {
     QUrl url;
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
     if (notification) {
         if (notification->scriptExecutionContext()) 
@@ -134,19 +134,19 @@ const QUrl NotificationWrapper::openerPageUrl() const
 
 void NotificationWrapper::notificationClicked()
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     NotificationPresenterClientQt::notificationPresenter()->notificationClicked(this);
 #endif
 }
 
 void NotificationWrapper::notificationClosed()
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     NotificationPresenterClientQt::notificationPresenter()->cancel(this);
 #endif
 }
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 NotificationPresenterClientQt::NotificationPresenterClientQt() : m_clientCount(0)
 {
@@ -464,7 +464,7 @@ QWebFrame* NotificationPresenterClientQt::toFrame(ScriptExecutionContext* contex
     return QWebFramePrivate::kit(document->frame());
 }
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 }
 
 #include "moc_NotificationPresenterClientQt.cpp"

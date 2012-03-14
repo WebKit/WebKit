@@ -123,7 +123,7 @@ HRESULT STDMETHODCALLTYPE DRTDesktopNotificationPresenter::checkNotificationPerm
         /* [in] */ BSTR origin, 
         /* [out, retval] */ int* result)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     JSStringRef jsOrigin = JSStringCreateWithBSTR(origin);
     bool allowed = ::gLayoutTestController->checkDesktopNotificationPermission(jsOrigin);
 

@@ -19,7 +19,7 @@
 #ifndef NotificationPresenterImpl_h
 #define NotificationPresenterImpl_h
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include <NotificationAckListener.h>
 #include <NotificationClient.h>
 #include <NotificationPresenterBlackBerry.h>
@@ -81,5 +81,5 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #endif // NotificationPresenterImpl_h

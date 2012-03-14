@@ -70,7 +70,7 @@
 #include "LayerWebKitThread.h"
 #include "NetworkManager.h"
 #include "NodeRenderStyle.h"
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "NotificationPresenterImpl.h"
 #endif
 #include "Page.h"
@@ -431,7 +431,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     WebCore::provideDeviceOrientationTo(m_page, new DeviceOrientationClientBlackBerry(this));
     WebCore::provideDeviceMotionTo(m_page, new DeviceMotionClientBlackBerry(this));
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(m_page, NotificationPresenterImpl::instance());
 #endif
 

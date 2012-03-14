@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NotificationController.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "NotificationClient.h"
 #include <wtf/PassOwnPtr.h>
@@ -70,4 +70,4 @@ void provideNotification(Page* page, NotificationClient* client)
 
 } // namespace WebCore
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

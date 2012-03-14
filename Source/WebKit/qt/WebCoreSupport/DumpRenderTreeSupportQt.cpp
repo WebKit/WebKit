@@ -790,7 +790,7 @@ void DumpRenderTreeSupportQt::dumpSetAcceptsEditing(bool b)
 
 void DumpRenderTreeSupportQt::dumpNotification(bool b)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     NotificationPresenterClientQt::dumpNotification = b;
 #endif
 }
@@ -987,7 +987,7 @@ void DumpRenderTreeSupportQt::addUserStyleSheet(QWebPage* page, const QString& s
 
 void DumpRenderTreeSupportQt::simulateDesktopNotificationClick(const QString& title)
 {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     NotificationPresenterClientQt::notificationPresenter()->notificationClicked(title);
 #endif
 }

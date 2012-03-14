@@ -131,7 +131,7 @@ public:
     // for this origin.
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t totalSpaceNeeded);
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     virtual WebCore::NotificationClient* notificationPresenter() const;
 #endif
 

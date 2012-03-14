@@ -687,7 +687,7 @@ void Frame::willDetachPage()
     if (Frame* parent = tree()->parent())
         parent->loader()->checkLoadComplete();
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (m_domWindow)
         m_domWindow->resetNotifications();
 #endif
@@ -737,7 +737,7 @@ void Frame::transferChildFrameToNewDocument()
         }
 
         if (m_domWindow) {
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
             m_domWindow->resetNotifications();
 #endif
         }

@@ -237,7 +237,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     
     m_page = adoptPtr(new Page(pageClients));
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(m_page.get(), new WebNotificationClient(this));
 #endif
 
@@ -1952,7 +1952,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setShouldDisplayTextDescriptions(store.getBoolValueForKey(WebPreferencesKey::shouldDisplayTextDescriptionsKey()));
 #endif
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     settings->setNotificationsEnabled(store.getBoolValueForKey(WebPreferencesKey::notificationsEnabledKey()));
 #endif
 

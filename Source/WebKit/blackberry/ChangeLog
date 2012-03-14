@@ -1,3 +1,25 @@
+2012-03-13  Jon Lee  <jonlee@apple.com>
+
+        Separate NOTIFICATIONS and LEGACY_NOTIFICATIONS
+        https://bugs.webkit.org/show_bug.cgi?id=80922
+        <rdar://problem/11035082>
+
+        Reviewed by Jian Li.
+
+        You can include either NOTIFICATIONS or LEGACY_NOTIFICATIONS and have a complete API.
+        LEGACY_NOTIFICATIONS should cover all of the previous functionality, and NOTIFICATIONS will cover the
+        new API. Therefore, APIs that are common between the two will have:
+        #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+
+        This patch initially sets both to be exactly the same. As other bugs with patches begin to migrate to
+        the new API, the defines will begin to split. This allows ports to decide which set of APIs to include.
+
+        Update everything to be #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        * WebCoreSupport/NotificationPresenterImpl.cpp:
+        * WebCoreSupport/NotificationPresenterImpl.h:
+
 2012-03-14  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Syncing up left over bits in Api from our local branch to upstream
