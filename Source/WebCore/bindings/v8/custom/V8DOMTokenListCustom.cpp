@@ -29,25 +29,27 @@
  */
 
 #include "config.h"
-#include "V8StyleSheet.h"
+#include "V8DOMTokenList.h"
 
+#include "DOMTokenList.h"
+#include "V8Binding.h"
 #include "V8DOMWrapper.h"
-#include "V8CSSStyleSheet.h"
-#include "V8Node.h"
+#include "V8Element.h"
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(StyleSheet* impl)
+v8::Handle<v8::Value> toV8(DOMTokenList* impl)
 {
     if (!impl)
         return v8::Null();
-    if (impl->isCSSStyleSheet())
-        return toV8(static_cast<CSSStyleSheet*>(impl));
-    v8::Handle<v8::Object> wrapper = V8StyleSheet::wrap(impl);
-    // Add a hidden reference from stylesheet object to its owner node.
-    Node* ownerNode = impl->ownerNode();
-    if (ownerNode && !wrapper.IsEmpty())
-        V8DOMWrapper::setNamedHiddenReference(wrapper, "ownerNode", toV8(ownerNode));
+    v8::Handle<v8::Object> wrapper = V8DOMTokenList::wrap(impl);
+    // Add a hidden reference from the element to the DOMTokenList.
+    Element* element = impl->element();
+    if (!wrapper.IsEmpty() && element) {
+        v8::Handle<v8::Value> elementValue = toV8(element);
+        if (!elementValue.IsEmpty() && elementValue->IsObject())
+            elementValue.As<v8::Object>()->SetHiddenValue(V8HiddenPropertyName::domTokenList(), wrapper);
+    }
     return wrapper;
 }
 
