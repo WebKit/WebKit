@@ -41,8 +41,8 @@ Item {
     property bool __movingHorizontally: flickableItem ? flickableItem.movingHorizontally : false
     property bool __movingVertically: flickableItem ? flickableItem.movingVertically : false
 
-    property real __viewWidth:  flickableItem ? flickableItem.width: 0
-    property real __viewHeight:  flickableItem ? flickableItem.height: 0
+    property real __viewWidth:  flickableItem ? flickableItem.width - (anchors.margins * 2) : 0
+    property real __viewHeight:  flickableItem ? flickableItem.height - (anchors.margins * 2) : 0
 
     property int __hideTimeout: 800
     property real __indicatorSize: 5
