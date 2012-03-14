@@ -1,3 +1,19 @@
+2012-03-14  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 110196
+
+    2012-03-08  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/10981173> Dashboard regions should not be in device space
+
+            Reviewed by John Sullivan.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/mac/DeviceScaleFactorInDashboardRegions.mm: Added.
+            (-[DeviceScaleFactorInDashboardRegionsUIDelegate webView:dashboardRegionsChanged:]):
+            (TestWebKitAPI):
+            (TestWebKitAPI::TEST):
+
 2011-1-13  Lucas Forschler  <lforschler@apple.com>
 
     Merge 104239

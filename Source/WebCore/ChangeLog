@@ -1,5 +1,23 @@
 2012-03-14  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 110196
+
+    2012-03-08  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/10981173> Dashboard regions should not be in device space
+
+            Reviewed by John Sullivan.
+
+            Test: TestWebKitAPI/Tests/mac/DeviceScaleFactorInDashboardRegions.mm
+
+            * rendering/RenderInline.cpp:
+            (WebCore::RenderInline::addDashboardRegions): Stop applying the device scale factor to
+            Dashboard regions.
+            * rendering/RenderObject.cpp:
+            (WebCore::RenderObject::addDashboardRegions): Ditto.
+
+2012-03-14  Lucas Forschler  <lforschler@apple.com>
+
     Merge 110480
 
     2012-03-12  Beth Dakin  <bdakin@apple.com>
