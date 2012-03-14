@@ -141,7 +141,7 @@ bool SVGTextPathElement::rendererIsNeeded(const NodeRenderingContext& context)
 
 void SVGTextPathElement::insertedIntoDocument()
 {
-    SVGTextContentElement::insertedIntoDocument();
+    SVGStyledElement::insertedIntoDocument();
 
     String id;
     Element* targetElement = SVGURIReference::targetElementFromIRIString(href(), document(), &id);

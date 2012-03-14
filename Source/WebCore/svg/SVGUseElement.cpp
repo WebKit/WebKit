@@ -80,12 +80,14 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGUseElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
 END_REGISTER_ANIMATED_PROPERTIES
 
-inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* document)
+inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* document, bool wasInsertedByParser)
     : SVGStyledTransformableElement(tagName, document)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
     , m_width(LengthModeWidth)
     , m_height(LengthModeHeight)
+    , m_wasInsertedByParser(wasInsertedByParser)
+    , m_haveFiredLoadEvent(false)
     , m_needsShadowTreeRecreation(false)
 {
     ASSERT(hasTagName(SVGNames::useTag));
@@ -94,10 +96,10 @@ inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* docu
     setHasCustomWillOrDidRecalcStyle();
 }
 
-PassRefPtr<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document* document)
+PassRefPtr<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document* document, bool wasInsertedByParser)
 {
     // Always build a #shadow-root for SVGUseElement.
-    RefPtr<SVGUseElement> use = adoptRef(new SVGUseElement(tagName, document));
+    RefPtr<SVGUseElement> use = adoptRef(new SVGUseElement(tagName, document, wasInsertedByParser));
     use->ensureShadowRoot();
     return use.release();
 }
@@ -180,6 +182,7 @@ void SVGUseElement::insertedIntoDocument()
     ASSERT(!m_targetElementInstance || !isWellFormedDocument(document()));
     ASSERT(!hasPendingResources() || !isWellFormedDocument(document()));
     buildPendingResource();
+    SVGExternalResourcesRequired::insertedIntoDocument(this);
 }
 
 void SVGUseElement::removedFromDocument()
@@ -228,6 +231,9 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (SVGTests::handleAttributeChange(this, attrName))
+        return;
+
+    if (SVGExternalResourcesRequired::handleAttributeChange(this, attrName))
         return;
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
@@ -911,12 +917,16 @@ bool SVGUseElement::selfHasRelativeLengths() const
     return static_cast<SVGStyledElement*>(element)->hasRelativeLengths();
 }
 
-void SVGUseElement::notifyFinished(CachedResource*)
+void SVGUseElement::notifyFinished(CachedResource* resource)
 {
     if (!inDocument())
         return;
 
     invalidateShadowTree();
+    if (resource->errorOccurred())
+        dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+    else if (!resource->wasCanceled())
+        SVGExternalResourcesRequired::dispatchLoadEvent(this);
 }
 
 bool SVGUseElement::cachedDocumentIsStillLoading()
@@ -937,6 +947,12 @@ bool SVGUseElement::instanceTreeIsLoading(SVGElementInstance* targetElementInsta
             instanceTreeIsLoading(instance);
     }
     return false;
+}
+
+void SVGUseElement::finishParsingChildren()
+{
+    SVGStyledTransformableElement::finishParsingChildren();
+    SVGExternalResourcesRequired::finishParsingChildren();
 }
 
 }

@@ -43,7 +43,7 @@ class SVGUseElement : public SVGStyledTransformableElement,
                       public SVGURIReference,
                       public CachedSVGDocumentClient {
 public:
-    static PassRefPtr<SVGUseElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<SVGUseElement> create(const QualifiedName&, Document*, bool wasInsertedByParser);
     virtual ~SVGUseElement();
 
     SVGElementInstance* instanceRoot();
@@ -54,7 +54,7 @@ public:
     RenderObject* rendererClipChild() const;
 
 private:
-    SVGUseElement(const QualifiedName&, Document*);
+    SVGUseElement(const QualifiedName&, Document*, bool wasInsertedByParser);
 
     virtual bool isValid() const { return SVGTests::isValid(); }
     virtual bool supportsFocus() const { return true; }
@@ -76,6 +76,9 @@ private:
     void buildShadowAndInstanceTree(SVGElement* target);
     void detachInstance();
 
+    virtual bool haveLoadedRequiredResources() { return SVGExternalResourcesRequired::haveLoadedRequiredResources(); }
+
+    virtual void finishParsingChildren();
     virtual bool selfHasRelativeLengths() const;
 
     // Instance tree handling
@@ -115,6 +118,13 @@ private:
     virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
     virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 
+    // SVGExternalResourcesRequired
+    virtual void setHaveFiredLoadEvent(bool haveFiredLoadEvent) { m_haveFiredLoadEvent = haveFiredLoadEvent; }
+    virtual bool isParserInserted() const { return m_wasInsertedByParser; }
+    virtual bool haveFiredLoadEvent() const { return m_haveFiredLoadEvent; }
+
+    bool m_wasInsertedByParser;
+    bool m_haveFiredLoadEvent;
     bool m_needsShadowTreeRecreation;
     RefPtr<SVGElementInstance> m_targetElementInstance;
     CachedResourceHandle<CachedSVGDocument> m_cachedDocument;

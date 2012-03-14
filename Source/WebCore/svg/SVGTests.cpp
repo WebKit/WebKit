@@ -145,19 +145,18 @@ bool SVGTests::isKnownAttribute(const QualifiedName& attrName)
         || attrName == SVGNames::systemLanguageAttr;
 }
 
-bool SVGTests::handleAttributeChange(const SVGElement* targetElement, const QualifiedName& attrName)
+bool SVGTests::handleAttributeChange(SVGElement* targetElement, const QualifiedName& attrName)
 {
+    ASSERT(targetElement);
     if (!isKnownAttribute(attrName))
         return false;
     if (!targetElement->inDocument())
-        return false;
-    SVGElement* svgElement = const_cast<SVGElement*>(targetElement);
-    ASSERT(svgElement);
-    bool valid = svgElement->isValid();
-    if (valid && !svgElement->attached())
-        svgElement->attach();
-    if (!valid && svgElement->attached())
-        svgElement->detach();
+        return true;
+    bool valid = targetElement->isValid();
+    if (valid && !targetElement->attached())
+        targetElement->attach();
+    if (!valid && targetElement->attached())
+        targetElement->detach();
     return true;
 }
 

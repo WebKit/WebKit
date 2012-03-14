@@ -48,6 +48,76 @@ void SVGExternalResourcesRequired::addSupportedAttributes(HashSet<QualifiedName>
     supportedAttributes.add(SVGNames::externalResourcesRequiredAttr);
 }
 
+bool SVGExternalResourcesRequired::handleAttributeChange(SVGElement* targetElement, const QualifiedName& attrName)
+{
+    ASSERT(targetElement);
+    if (!isKnownAttribute(attrName))
+        return false;
+    if (!targetElement->inDocument())
+        return true;
+
+    // Handle dynamic updates of the 'externalResourcesRequired' attribute. Only possible case: changing from 'true' to 'false'
+    // causes an immediate dispatch of the SVGLoad event. If the attribute value was 'false' before inserting the script element
+    // in the document, the SVGLoad event has already been dispatched.
+    if (!externalResourcesRequiredBaseValue() && !haveFiredLoadEvent() && !isParserInserted()) {
+        setHaveFiredLoadEvent(true);
+        ASSERT(targetElement->haveLoadedRequiredResources());
+
+        targetElement->sendSVGLoadEventIfPossible();
+    }
+
+    return true;
+}
+
+void SVGExternalResourcesRequired::dispatchLoadEvent(SVGElement* targetElement)
+{
+    bool externalResourcesRequired = externalResourcesRequiredBaseValue();
+
+    if (isParserInserted())
+        ASSERT(externalResourcesRequired != haveFiredLoadEvent());
+    else if (haveFiredLoadEvent())
+        return;
+
+    // HTML and SVG differ completely in the 'onload' event handling of <script> elements.
+    // HTML fires the 'load' event after it sucessfully loaded a remote resource, otherwise an error event.
+    // SVG fires the SVGLoad event immediately after parsing the <script> element, if externalResourcesRequired
+    // is set to 'false', otherwise it dispatches the 'SVGLoad' event just after loading the remote resource.
+    if (!externalResourcesRequired)
+        return;
+
+    ASSERT(!haveFiredLoadEvent());
+
+    // Dispatch SVGLoad event
+    setHaveFiredLoadEvent(true);
+    ASSERT(targetElement->haveLoadedRequiredResources());
+
+    targetElement->sendSVGLoadEventIfPossible();
+}
+
+void SVGExternalResourcesRequired::insertedIntoDocument(SVGElement* targetElement)
+{
+    if (isParserInserted())
+        return;
+
+    // Eventually send SVGLoad event now for the dynamically inserted script element.
+    if (externalResourcesRequiredBaseValue())
+        return;
+    setHaveFiredLoadEvent(true);
+    targetElement->sendSVGLoadEventIfPossible();
+}
+
+void SVGExternalResourcesRequired::finishParsingChildren()
+{
+    // A SVGLoad event has been fired by SVGElement::finishParsingChildren.
+    if (!externalResourcesRequiredBaseValue())
+        setHaveFiredLoadEvent(true);
+}
+
+bool SVGExternalResourcesRequired::haveLoadedRequiredResources() const
+{
+    return !externalResourcesRequiredBaseValue() || haveFiredLoadEvent();
+}
+
 }
 
 #endif // ENABLE(SVG)

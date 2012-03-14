@@ -42,9 +42,21 @@ public:
     bool parseAttribute(Attribute*);
     bool isKnownAttribute(const QualifiedName&);
     void addSupportedAttributes(HashSet<QualifiedName>&);
+    bool handleAttributeChange(SVGElement*, const QualifiedName&);
 
 protected:
+    // These types look a bit awkward, but have to match the generic types of the SVGAnimatedProperty macros.
     virtual void setExternalResourcesRequiredBaseValue(const bool&) = 0;
+    virtual bool& externalResourcesRequiredBaseValue() const = 0;
+
+    virtual void setHaveFiredLoadEvent(bool) { }
+    virtual bool isParserInserted() const { return false; }
+    virtual bool haveFiredLoadEvent() const { return false; }
+
+    void dispatchLoadEvent(SVGElement*);
+    void insertedIntoDocument(SVGElement*);
+    void finishParsingChildren();
+    bool haveLoadedRequiredResources() const;
 };
 
 } // namespace WebCore

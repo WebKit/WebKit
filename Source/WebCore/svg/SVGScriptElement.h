@@ -55,7 +55,7 @@ private:
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-    virtual bool haveLoadedRequiredResources();
+    virtual bool haveLoadedRequiredResources() { return SVGExternalResourcesRequired::haveLoadedRequiredResources(); }
 
     virtual String sourceAttributeValue() const;
     virtual String charsetAttributeValue() const;
@@ -67,9 +67,14 @@ private:
     virtual bool deferAttributeValue() const;
     virtual bool hasSourceAttribute() const;
 
-    virtual void dispatchLoadEvent();
+    virtual void dispatchLoadEvent() { SVGExternalResourcesRequired::dispatchLoadEvent(this); }
 
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
+
+    // SVGExternalResourcesRequired
+    virtual void setHaveFiredLoadEvent(bool haveFiredLoadEvent) { ScriptElement::setHaveFiredLoadEvent(haveFiredLoadEvent); }
+    virtual bool isParserInserted() const { return ScriptElement::isParserInserted(); }
+    virtual bool haveFiredLoadEvent() const { return ScriptElement::haveFiredLoadEvent(); }
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGScriptElement)
         DECLARE_ANIMATED_STRING(Href, href)

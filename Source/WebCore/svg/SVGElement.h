@@ -110,6 +110,8 @@ public:
     StylePropertySet* animatedSMILStyleProperties() const;
     StylePropertySet* ensureAnimatedSMILStyleProperties();
 
+    virtual bool haveLoadedRequiredResources();
+
 protected:
     SVGElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
 
@@ -136,7 +138,6 @@ private:
     void mapInstanceToElement(SVGElementInstance*);
     void removeInstanceMapping(SVGElementInstance*);
 
-    virtual bool haveLoadedRequiredResources();
 };
 
 struct SVGAttributeHashTranslator {

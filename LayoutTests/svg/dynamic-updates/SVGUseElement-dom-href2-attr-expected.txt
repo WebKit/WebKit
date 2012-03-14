@@ -5,7 +5,6 @@ Tests dynamic updates of the 'href' attribute of the SVGUseElement object
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS useElement.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "../custom/resources/rgb.svg#R"
 PASS useElement.getAttributeNS('http://www.w3.org/1999/xlink', 'href') is "#MyRect"
 PASS successfullyParsed is true
 

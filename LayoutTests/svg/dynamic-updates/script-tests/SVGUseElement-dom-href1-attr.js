@@ -10,6 +10,8 @@ rootSVGElement.appendChild(defsElement);
 var useElement = createSVGElement("use");
 useElement.setAttribute("x", "10");
 useElement.setAttribute("y", "10");
+useElement.setAttribute("externalResourcesRequired", "true");
+useElement.setAttribute("onload", "completeTest()");
 useElement.setAttributeNS(xlinkNS, "xlink:href", "#MyRect");
 
 var rectElement = createSVGElement("rect");
@@ -31,8 +33,6 @@ shouldBeEqualToString("useElement.getAttributeNS('" + xlinkNS + "', 'href')", "#
 function repaintTest() {
     useElement.setAttributeNS(xlinkNS, "xlink:href", "../custom/resources/rgb.svg#G");
     shouldBeEqualToString("useElement.getAttributeNS('" + xlinkNS + "', 'href')", "../custom/resources/rgb.svg#G");
-
-    completeTest();
 }
 
 var successfullyParsed = true;
