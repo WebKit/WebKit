@@ -434,11 +434,18 @@ namespace double_conversion {
     const int kMaxSignificantDigits = 772;
     
     
-    // Returns true if a nonspace found and false if the end has reached.
+    // Returns true if whitespace found and false if the end has reached.
     static inline bool AdvanceToNonspace(const char** current, const char* end) {
         while (*current != end) {
-            if (**current != ' ') return true;
-            ++*current;
+            switch(**current) {
+            case ' ':
+            case '\t':
+            case '\v':
+            case '\r':
+            case '\f':
+            case '\n': ++*current; continue;
+            default: return true;
+            }
         }
         return false;
     }

@@ -648,12 +648,13 @@ static const double tinytens[] = { 1e-16, 1e-32, 1e-64, 1e-128,
 #define Scale_Bit 0x10
 #define n_bigtens 5
 
-template<AllowTrailingJunkTag allowTrailingJunk>
+template<AllowTrailingJunkTag allowTrailingJunk, AllowTrailingSpacesTag allowTrailingSpaces>
 double strtod(const char* s00, char** se)
 {
     int length = strlen(s00);
     double_conversion::StringToDoubleConverter converter(
         (allowTrailingJunk ? double_conversion::StringToDoubleConverter::ALLOW_TRAILING_JUNK : 0) |
+        (allowTrailingSpaces ? double_conversion::StringToDoubleConverter::ALLOW_TRAILING_SPACES : 0) |
         double_conversion::StringToDoubleConverter::ALLOW_LEADING_SPACES,
         0.0, 
         (allowTrailingJunk ? std::numeric_limits<double>::quiet_NaN() : 0.0), 
@@ -665,8 +666,10 @@ double strtod(const char* s00, char** se)
     return result;
 }
 
-template double strtod<AllowTrailingJunk>(const char*, char**);
-template double strtod<DisallowTrailingJunk>(const char*, char**);
+template double strtod<AllowTrailingJunk, AllowTrailingSpaces>(const char*, char**);
+template double strtod<AllowTrailingJunk, DisallowTrailingSpaces>(const char*, char**);
+template double strtod<DisallowTrailingJunk, AllowTrailingSpaces>(const char*, char**);
+template double strtod<DisallowTrailingJunk, DisallowTrailingSpaces>(const char*, char**);
 
 static ALWAYS_INLINE int quorem(BigInt& b, BigInt& S)
 {

@@ -1053,7 +1053,7 @@ static inline double toDoubleType(const CharType* data, size_t length, bool* ok,
     bytes[length] = '\0';
     char* start = bytes.data();
     char* end;
-    double val = WTF::strtod<allowTrailingJunk>(start, &end);
+    double val = WTF::strtod<allowTrailingJunk, WTF::DisallowTrailingSpaces>(start, &end);
     if (ok)
         *ok = (end == 0 || *end == '\0') && !isnan(val);
     if (didReadNumber)

@@ -36,10 +36,11 @@ WTF_EXPORT_PRIVATE void dtoaRoundSF(DtoaBuffer result, double dd, int ndigits, b
 WTF_EXPORT_PRIVATE void dtoaRoundDP(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exponent, unsigned& precision);
 
 enum AllowTrailingJunkTag { DisallowTrailingJunk = 0, AllowTrailingJunk };
+enum AllowTrailingSpacesTag { DisallowTrailingSpaces = 0, AllowTrailingSpaces };
 
 // s00: input string. Must not be 0 and must be terminated by 0.
 // se: *se will have the last consumed character position + 1.
-template<AllowTrailingJunkTag allowTrailingJunk>
+template<AllowTrailingJunkTag allowTrailingJunk, AllowTrailingSpacesTag allowTrailingSpaces>
 double strtod(const char* s00, char** se);
 
 // Size = 80 for sizeof(DtoaBuffer) + some sign bits, decimal point, 'e', exponent digits.

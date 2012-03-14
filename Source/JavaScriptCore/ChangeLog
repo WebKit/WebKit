@@ -1,3 +1,36 @@
+2012-03-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Type conversion of exponential part failed
+        https://bugs.webkit.org/show_bug.cgi?id=80673
+
+        Reviewed by Geoffrey Garen.
+
+        * parser/Lexer.cpp:
+        (JSC::::lex):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::parseInt):
+        (JSC):
+        (JSC::jsStrDecimalLiteral): Added another template argument that exposes whether or not
+        we accept trailing junk to clients of jsStrDecimalLiteral. Also added additional template 
+        parameter for strtod to allow trailing spaces.
+        (JSC::toDouble):
+        (JSC::parseFloat): Accept trailing junk, as per the ECMA 262 spec (15.1.2.3).
+        * runtime/LiteralParser.cpp:
+        (JSC::::Lexer::lexNumber):
+        * tests/mozilla/expected.html: Update the expected page for run-javascriptcore-tests so that 
+        we will run ecma/TypeConversion/9.3.1-3.js as a regression test now.
+        * wtf/dtoa.cpp:
+        (WTF):
+        (WTF::strtod): We also needed to sometimes accept trailing spaces to pass a few other tests that were 
+        broken by changing the default allowance of trailing junk in jsStrDecimalLiteral.
+        * wtf/dtoa.h:
+        * wtf/dtoa/double-conversion.cc: When the AdvanceToNonspace function was lifted out of the 
+        Chromium codebase, the person porting it only thought to check for spaces when skipping whitespace.
+        A few of our JSC tests check for other types of trailing whitespace, so I've added checks for those 
+        here to cover those cases (horizontal tab, vertical tab, carriage return, form feed, and line feed).
+        * wtf/text/WTFString.cpp:
+        (WTF::toDoubleType): Disallow trailing spaces, as this breaks form input verification stuff.
+
 2012-03-13  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, build fix since is_pod<> includes some header that I didn't know about.

@@ -537,7 +537,7 @@ TokenType LiteralParser<CharType>::Lexer::lexNumber(LiteralParserToken<CharType>
     }
     buffer[i] = 0;
     char* end;
-    token.numberToken = WTF::strtod<WTF::AllowTrailingJunk>(buffer.data(), &end);
+    token.numberToken = WTF::strtod<WTF::AllowTrailingJunk, WTF::DisallowTrailingSpaces>(buffer.data(), &end);
     ASSERT(buffer.data() + (token.end - token.start) == end);
     return TokNumber;
 }
