@@ -35,6 +35,7 @@
 #include "HTMLEmbedElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
+#include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
 #include "KeyboardEvent.h"
 #include "MainResourceLoader.h"
@@ -89,8 +90,15 @@ void MediaDocumentParser::createDocumentStructure()
     m_mediaElement->setAttribute(autoplayAttr, "");
 
     m_mediaElement->setAttribute(nameAttr, "media");
-    m_mediaElement->setSrc(document()->url());
-    
+
+    RefPtr<Element> sourceElement = document()->createElement(sourceTag, false);
+    HTMLSourceElement* source = static_cast<HTMLSourceElement*>(sourceElement.get());
+    source->setSrc(document()->url());
+
+    if (DocumentLoader* loader = document()->loader())
+        source->setType(loader->responseMIMEType());
+
+    m_mediaElement->appendChild(sourceElement, ec);
     body->appendChild(mediaElement, ec);
 
     Frame* frame = document()->frame();
