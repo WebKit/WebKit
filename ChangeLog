@@ -1,3 +1,16 @@
+2012-03-14  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Enable HTML5 Summary and Details elements
+        https://bugs.webkit.org/show_bug.cgi?id=81027
+
+        Enabling Summary and Details elements by default and removing related
+        tests from skip list since they should pass now.
+
+        Reviewed by Antonio Gomes.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2012-03-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: add didCancelFrame timeline event
