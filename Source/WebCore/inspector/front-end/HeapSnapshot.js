@@ -562,18 +562,25 @@ WebInspector.HeapSnapshotNode.prototype = {
         switch (this.type) {
         case "hidden":
             return WebInspector.UIString("(system)");
-        case "object": {
-            var commentPos = this.name.indexOf("/");
-            return commentPos !== -1 ? this.name.substring(0, commentPos).trimRight() : this.name;
-        }
-        case "native": {
-            var entitiesCountPos = this.name.indexOf("/");
-            return entitiesCountPos !== -1 ? this.name.substring(0, entitiesCountPos).trimRight() : this.name;
-        }
+        case "object":
+        case "native":
+            return this.name;
         case "code":
             return WebInspector.UIString("(compiled code)");
         default:
             return "(" + this.type + ")";
+        }
+    },
+
+    get classIndex()
+    {
+        var type = this._type();
+        switch (type) {
+        case this._snapshot._nodeObjectType:
+        case this._snapshot._nodeNativeType:
+            return this._name();
+        default:
+            return -1 - type;
         }
     },
 
@@ -610,6 +617,11 @@ WebInspector.HeapSnapshotNode.prototype = {
     get isHidden()
     {
         return this._type() === this._snapshot._nodeHiddenType;
+    },
+
+    get isNative()
+    {
+        return this._type() === this._snapshot._nodeNativeType;
     },
 
     get isSynthetic()
@@ -757,6 +769,9 @@ WebInspector.HeapSnapshot.prototype = {
         this._firstEdgeOffset = meta.fields.indexOf("children");
         this._nodeTypes = meta.types[this._nodeTypeOffset];
         this._nodeHiddenType = this._nodeTypes.indexOf("hidden");
+        this._nodeObjectType = this._nodeTypes.indexOf("object");
+        this._nodeNativeType = this._nodeTypes.indexOf("native");
+        this._nodeCodeType = this._nodeTypes.indexOf("code");
         this._nodeSyntheticType = this._nodeTypes.indexOf("synthetic");
         var edgesMeta = meta.types[this._firstEdgeOffset];
         this._edgeFieldsCount = edgesMeta.fields.length;
@@ -1009,31 +1024,31 @@ WebInspector.HeapSnapshot.prototype = {
 
     _buildAggregates: function(filter)
     {
-        function shouldSkip(node)
+        function shouldSkip(node, classIndex)
         {
             if (filter && !filter(node))
                 return true;
-            if (node.type !== "native" && node.selfSize === 0)
-                return true;
-            var className = node.className;
-            if (className === "Document DOM tree")
-                return true;
-            if (className === "Detached DOM tree")
+            if (!node.isNative && node.selfSize === 0)
                 return true;
             return false;
         }
 
         var aggregates = {};
+        var aggregatesByClassName = {};
         var node = new WebInspector.HeapSnapshotNode(this, this.nodeIndexes[0]);
         for (var i = 0; i < this.nodeCount; ++i) {
             node.nodeIndex = this.nodeIndexes[i];
-            if (shouldSkip(node))
+            var classIndex = node.classIndex;
+            if (shouldSkip(node, classIndex))
                 continue;
-            var className = node.className;
-            var nameMatters = node.type === "object" || node.type === "native";
-            if (!aggregates.hasOwnProperty(className))
-                aggregates[className] = { count: 0, self: 0, maxRet: 0, type: node.type, name: nameMatters ? node.name : null, idxs: [] };
-            var clss = aggregates[className];
+            if (!(classIndex in aggregates)) {
+                var nodeType = node.type;
+                var nameMatters = nodeType === "object" || nodeType === "native";
+                var value = { count: 0, self: 0, maxRet: 0, type: nodeType, name: nameMatters ? node.name : null, idxs: [] };
+                aggregates[classIndex] = value;
+                aggregatesByClassName[node.className] = value;
+            }
+            var clss = aggregates[classIndex];
             ++clss.count;
             clss.self += node.selfSize;
             clss.idxs.push(node.nodeIndex);
@@ -1042,28 +1057,28 @@ WebInspector.HeapSnapshot.prototype = {
         // Recursively visit dominators tree and sum up retained sizes
         // of topmost objects in each class.
         // This gives us retained sizes for classes.
-        var seenClasses = {};
+        var seenClassNameIndexes = {};
         var snapshot = this;
         function forDominatedNodes(nodeIndex)
         {
             var node = new WebInspector.HeapSnapshotNode(snapshot, nodeIndex);
-            var className = node.className;
-            var seen = !!seenClasses[className];
-            if (!seen && className in aggregates && !shouldSkip(node)) {
-                aggregates[className].maxRet += node.retainedSize;
-                seenClasses[className] = true;
+            var classIndex = node.classIndex;
+            var seen = !!seenClassNameIndexes[classIndex];
+            if (!seen && classIndex in aggregates && !shouldSkip(node, classIndex)) {
+                aggregates[classIndex].maxRet += node.retainedSize;
+                seenClassNameIndexes[classIndex] = true;
             }
             var dominatedNodes = snapshot._dominatedNodesOfNode(node);
             for (var i = 0; i < dominatedNodes.length; i++)
                 forDominatedNodes(dominatedNodes.item(i));
-            seenClasses[className] = seen;
+            seenClassNameIndexes[classIndex] = seen;
         }
         forDominatedNodes(this._rootNodeIndex);
 
         // Shave off provisionally allocated space.
-        for (var className in aggregates)
-            aggregates[className].idxs = aggregates[className].idxs.slice(0);
-        return aggregates;
+        for (var classIndex in aggregates)
+            aggregates[classIndex].idxs = aggregates[classIndex].idxs.slice(0);
+        return aggregatesByClassName;
     },
 
     _sortAggregateIndexes: function(aggregates)
