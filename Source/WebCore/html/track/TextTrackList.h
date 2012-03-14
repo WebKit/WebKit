@@ -66,7 +66,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(addtrack);
 
     void clearOwner() { m_owner = 0; }
-    HTMLMediaElement* owner() { return m_owner; }
+    Node* owner() const;
     
     bool isFiringEventListeners() { return m_dispatchingEvents; }
 

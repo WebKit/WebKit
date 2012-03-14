@@ -109,8 +109,8 @@ void TextTrackList::append(PassRefPtr<TextTrack> prpTrack)
     } else
         ASSERT_NOT_REACHED();
 
-    ASSERT(!track->mediaElement() || track->mediaElement() == owner());
-    track->setMediaElement(owner());
+    ASSERT(!track->mediaElement() || track->mediaElement() == m_owner);
+    track->setMediaElement(m_owner);
 
     scheduleAddTrackEvent(track.release());
 }
@@ -130,7 +130,7 @@ void TextTrackList::remove(TextTrack* track)
     if (index == notFound)
         return;
 
-    ASSERT(track->mediaElement() == owner());
+    ASSERT(track->mediaElement() == m_owner);
     track->setMediaElement(0);
 
     tracks->remove(index);
@@ -173,6 +173,11 @@ void TextTrackList::asyncEventTimerFired(Timer<TextTrackList>*)
     for (size_t index = 0; index < count; ++index)
         dispatchEvent(pendingEvents[index].release(), ec);
     --m_dispatchingEvents;
+}
+
+Node* TextTrackList::owner() const
+{
+    return m_owner;
 }
 
 #endif
