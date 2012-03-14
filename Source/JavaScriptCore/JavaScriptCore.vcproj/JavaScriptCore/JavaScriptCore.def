@@ -1,7 +1,5 @@
 EXPORTS
 
-    ??$strtod@$00@WTF@@YANPBDPAPAD@Z
-    ??$strtod@$0A@@WTF@@YANPBDPAPAD@Z
     ??0ArrayBufferView@WTF@@IAE@V?$PassRefPtr@VArrayBuffer@WTF@@@1@I@Z
     ??0CString@WTF@@QAE@PBD@Z
     ??0CString@WTF@@QAE@PBDI@Z

@@ -1,5 +1,11 @@
 2012-03-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Windows build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-03-13  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Type conversion of exponential part failed
         https://bugs.webkit.org/show_bug.cgi?id=80673
 
