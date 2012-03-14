@@ -1,5 +1,14 @@
 2012-03-14  Dirk Pranke  <dpranke@chromium.org>
 
+        Fix regression/crash introduced in r110724 - bad type passed from skipped_tests() by default.
+
+        Unreviewed, build fix.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.skipped_tests):
+
+2012-03-14  Dirk Pranke  <dpranke@chromium.org>
+
         Please add a way to manually skip some tests in NRWT
         https://bugs.webkit.org/show_bug.cgi?id=81019
 
