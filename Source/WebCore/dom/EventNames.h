@@ -212,6 +212,8 @@ namespace WebCore {
     \
     macro(webkitpointerlocklost) \
     \
+    macro(webkitRegionLayoutUpdate) \
+    \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 

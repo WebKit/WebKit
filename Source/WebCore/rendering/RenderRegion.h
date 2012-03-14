@@ -91,6 +91,8 @@ public:
 
     RegionState regionState() const { return isValid() ? m_regionState : RegionUndefined; }
     void setRegionState(RegionState regionState) { m_regionState = regionState; }
+    void setDispatchRegionLayoutUpdateEvent(bool value) { m_dispatchRegionLayoutUpdateEvent = value; }
+    bool shouldDispatchRegionLayoutUpdateEvent() { return m_dispatchRegionLayoutUpdateEvent; }
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
@@ -120,6 +122,7 @@ private:
     bool m_isValid;
     bool m_hasCustomRegionStyle;
     RegionState m_regionState;
+    bool m_dispatchRegionLayoutUpdateEvent;
 };
 
 inline RenderRegion* toRenderRegion(RenderObject* object)

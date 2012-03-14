@@ -569,6 +569,8 @@ public:
 
     virtual void handleLocalEvents(Event*);
 
+    void dispatchRegionLayoutUpdateEvent();
+
     void dispatchSubtreeModifiedEvent();
     void dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent);
     void dispatchFocusInEvent(const AtomicString& eventType, PassRefPtr<Node> oldFocusedNode);

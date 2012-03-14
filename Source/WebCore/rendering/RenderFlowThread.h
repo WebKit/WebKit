@@ -146,6 +146,7 @@ private:
     void checkInvalidRegions();
 
     bool shouldRepaint(const LayoutRect&) const;
+    void regionLayoutUpdateEventTimerFired(Timer<RenderFlowThread>*);
 
     typedef ListHashSet<RenderObject*> FlowThreadChildList;
     FlowThreadChildList m_flowThreadChildList;
@@ -199,6 +200,7 @@ private:
     bool m_regionsHaveUniformLogicalHeight;
     bool m_overflow;
     RefPtr<WebKitNamedFlow> m_namedFlow;
+    Timer<RenderFlowThread> m_regionLayoutUpdateEventTimer;
 };
 
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)

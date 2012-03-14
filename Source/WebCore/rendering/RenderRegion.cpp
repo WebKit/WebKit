@@ -48,6 +48,7 @@ RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
     , m_isValid(false)
     , m_hasCustomRegionStyle(false)
     , m_regionState(RegionUndefined)
+    , m_dispatchRegionLayoutUpdateEvent(false)
 {
     ASSERT(node->document()->cssRegionsEnabled());
 }

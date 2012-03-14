@@ -1,0 +1,81 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<style>
+#article {
+    -webkit-flow-into: article;
+    border: 2px solid black;
+}
+#region_1, #region_2{
+    -webkit-flow-from: no_article;
+    overflow:hidden;
+    display:inline-block;
+    vertical-align:top;
+    margin:10px;
+}
+.block {
+   display:block;
+}
+#region_1, #region_2 { height:110px; width:200px; margin: 5px;}
+</style>
+</head>
+<body>
+<div id="description" class="block"></div>
+<div id="article">
+    <div>
+        <div id="content" style="height: 200px; background-color: green;"></div>
+    </div>
+</div>
+
+<div id="region_1"></div>
+<div id="region_2"></div>
+
+<div id="console" class="block"></div>
+
+<script>
+    description("Tests regionLayoutEvent")
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    window.jsTestIsAsync = true;
+    function flowContent(flowName) {
+        var r = document.getElementById("region_1");
+        r.style.webkitFlowFrom = flowName;
+        r = document.getElementById("region_2");
+        r.style.webkitFlowFrom = flowName;
+    }
+    var count = 0;
+    function region1Updated(event) {
+        shouldBeEqualToString("event.target.id", "region_1");
+        if (++count > 1) {
+           var r1 = document.getElementById("region_1");
+           r1.removeEventListener("webkitRegionLayoutUpdate", region1Updated);
+           // this should be reached after region_2 is removed from flow
+           finishJSTest();
+        }
+    }
+    function region2Updated(event) {
+        shouldBeEqualToString("event.target.id", "region_2");
+        var r2 = document.getElementById("region_2");
+        r2.removeEventListener("webkitRegionLayoutUpdate", region2Updated);
+        r2.addEventListener("webkitRegionLayoutUpdate", regionUpdated);
+        debug("Removing region_2 from flow");
+        r2.style.webkitFlowFrom = "none"; // this will trigger a new round of events due to layout
+    }
+    function regionUpdated(event) {
+        testFailed(event.target.id + " event shouldn't have been dispatched" );
+    }
+    function startTest() {
+        var r1 = document.getElementById("region_1");
+        var r2 = document.getElementById("region_2");
+        r1.addEventListener("webkitRegionLayoutUpdate", region1Updated);
+        r2.addEventListener("webkitRegionLayoutUpdate", region2Updated);
+        debug("Flow content");
+        flowContent("article");
+    }
+    window.addEventListener("load", startTest);
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
