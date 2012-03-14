@@ -291,11 +291,12 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
             
     case ValueToInt32:
-        if (m_graph[node.child1()].shouldNotSpeculateInteger()) {
-            if (m_graph[node.child1()].shouldSpeculateDouble())
-                forNode(node.child1()).filter(PredictNumber);
-        } else
+        if (m_graph[node.child1()].shouldSpeculateInteger())
             forNode(node.child1()).filter(PredictInt32);
+        else if (m_graph[node.child1()].shouldSpeculateNumber())
+            forNode(node.child1()).filter(PredictNumber);
+        else if (m_graph[node.child1()].shouldSpeculateBoolean())
+            forNode(node.child1()).filter(PredictBoolean);
         
         forNode(nodeIndex).set(PredictInt32);
         break;

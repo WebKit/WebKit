@@ -700,6 +700,11 @@ struct Node {
         return !!(prediction() & PredictDouble);
     }
     
+    bool shouldSpeculateBoolean()
+    {
+        return isBooleanPrediction(prediction());
+    }
+    
     bool shouldSpeculateFinalObject()
     {
         return isFinalObjectPrediction(prediction());

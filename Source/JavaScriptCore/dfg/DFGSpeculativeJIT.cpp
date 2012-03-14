@@ -1490,31 +1490,43 @@ void SpeculativeJIT::compileGetByValOnString(Node& node)
 
 void SpeculativeJIT::compileValueToInt32(Node& node)
 {
-    if (at(node.child1()).shouldNotSpeculateInteger()) {
-        if (at(node.child1()).shouldSpeculateDouble()) {
-            SpeculateDoubleOperand op1(this, node.child1());
-            GPRTemporary result(this);
-            FPRReg fpr = op1.fpr();
-            GPRReg gpr = result.gpr();
-            JITCompiler::Jump truncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateSuccessful);
-            
-            silentSpillAllRegisters(gpr);
-            callOperation(toInt32, gpr, fpr);
-            silentFillAllRegisters(gpr);
-            
-            truncatedToInteger.link(&m_jit);
-            integerResult(gpr, m_compileIndex);
-            return;
-        }
-        // Do it the safe way.
-        nonSpeculativeValueToInt32(node);
+    if (at(node.child1()).shouldSpeculateInteger()) {
+        SpeculateIntegerOperand op1(this, node.child1());
+        GPRTemporary result(this, op1);
+        m_jit.move(op1.gpr(), result.gpr());
+        integerResult(result.gpr(), m_compileIndex, op1.format());
         return;
     }
     
-    SpeculateIntegerOperand op1(this, node.child1());
-    GPRTemporary result(this, op1);
-    m_jit.move(op1.gpr(), result.gpr());
-    integerResult(result.gpr(), m_compileIndex, op1.format());
+    if (at(node.child1()).shouldSpeculateNumber()) {
+        SpeculateDoubleOperand op1(this, node.child1());
+        GPRTemporary result(this);
+        FPRReg fpr = op1.fpr();
+        GPRReg gpr = result.gpr();
+        JITCompiler::Jump truncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateSuccessful);
+        
+        silentSpillAllRegisters(gpr);
+        callOperation(toInt32, gpr, fpr);
+        silentFillAllRegisters(gpr);
+        
+        truncatedToInteger.link(&m_jit);
+        integerResult(gpr, m_compileIndex);
+        return;
+    }
+    
+    if (at(node.child1()).shouldSpeculateBoolean()) {
+        SpeculateBooleanOperand op1(this, node.child1());
+        GPRTemporary result(this, op1);
+        
+        m_jit.and32(JITCompiler::TrustedImm32(1), op1.gpr());
+        
+        integerResult(op1.gpr(), m_compileIndex);
+        return;
+    }
+    
+    // Do it the safe way.
+    nonSpeculativeValueToInt32(node);
+    return;
 }
 
 void SpeculativeJIT::compileUInt32ToNumber(Node& node)

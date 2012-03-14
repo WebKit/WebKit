@@ -1,3 +1,24 @@
+2012-03-13  Filip Pizlo  <fpizlo@apple.com>
+
+        ValueToInt32 speculation will cause OSR exits even when it does not have to
+        https://bugs.webkit.org/show_bug.cgi?id=81068
+        <rdar://problem/11043926>
+
+        Reviewed by Anders Carlsson.
+        
+        Two related changes:
+        1) ValueToInt32 will now always just defer to the non-speculative path, instead
+           of exiting, if it doesn't know what speculations to perform.
+        2) ValueToInt32 will speculate boolean if it sees this to be profitable.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateBoolean):
+        (Node):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+
 2012-03-13  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         More Windows build fixing
