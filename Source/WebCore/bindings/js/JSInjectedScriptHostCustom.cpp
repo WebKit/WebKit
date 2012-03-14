@@ -91,7 +91,11 @@ JSValue JSInjectedScriptHost::inspectedObject(ExecState* exec)
         return jsUndefined();
 
     JSLock lock(SilenceAssertionsOnly);
-    return object->get(exec).jsValue();
+    ScriptValue scriptValue = object->get(exec);
+    if (scriptValue.hasNoValue())
+        return jsUndefined();
+
+    return scriptValue.jsValue();
 }
 
 JSValue JSInjectedScriptHost::internalConstructorName(ExecState* exec)
