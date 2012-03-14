@@ -46,7 +46,6 @@ struct SlowPathReturnType {
     void* a;
     void* b;
 };
-COMPILE_ASSERT(std::is_pod<SlowPathReturnType>::value, SlowPathReturnType_is_POD);
 
 inline SlowPathReturnType encodeResult(void* a, void* b)
 {

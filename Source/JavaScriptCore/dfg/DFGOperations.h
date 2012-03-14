@@ -167,7 +167,6 @@ struct DFGHandler {
         uint64_t encoded;
     } u;
 };
-COMPILE_ASSERT(std::is_pod<DFGHandler>::value, DFGHandler_is_POD);
 
 inline DFGHandler createDFGHandler(ExecState* exec, void* handler)
 {

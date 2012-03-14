@@ -1,5 +1,13 @@
 2012-03-13  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, build fix since is_pod<> includes some header that I didn't know about.
+        Removing the assert for now.
+
+        * dfg/DFGOperations.h:
+        * llint/LLIntSlowPaths.h:
+
+2012-03-13  Filip Pizlo  <fpizlo@apple.com>
+
         Functions with C linkage should return POD types
         https://bugs.webkit.org/show_bug.cgi?id=81061
 
