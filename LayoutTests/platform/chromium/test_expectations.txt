@@ -310,9 +310,6 @@ WONTFIX SKIP LINUX WIN : fast/events/option-tab.html = FAIL
 // Has a 150ms setTimeout and seems racy
 BUGWK72402 MAC DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = TEXT
 
-// mac failures
-BUGWK72402 SLOW MAC : compositing/geometry/empty-embed-rects.html = PASS
-
 // We don't ship compositing on Leopard.
 WONTFIX SKIP LEOPARD : compositing = PASS TIMEOUT FAIL
 WONTFIX SKIP LEOPARD : platform/chromium/compositing = PASS TIMEOUT FAIL
@@ -1006,9 +1003,6 @@ BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-36-t.svg = TEXT
 BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-39-t.svg = TEXT
 // Appears elsewhere commented
 BUGWK75968 : svg/W3C-SVG-1.1/animate-elem-40-t.svg = TEXT
-BUGWK75968 MAC : svg/batik/paints/patternPreserveAspectRatioA.svg = TEXT
-BUGWK75968 MAC : svg/batik/text/textProperties.svg = TEXT
-BUGWK75968 MAC : svg/batik/text/textStyles.svg = TEXT
 BUGWK75968 MAC : svg/text/text-text-05-t.svg = TEXT
 
 
@@ -3181,7 +3175,7 @@ BUGWK65124 WIN : fast/writing-mode/japanese-lr-text.html = IMAGE+TEXT
 BUGWK65124 WIN : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE+TEXT
 BUGWK65124 WIN : fast/writing-mode/japanese-rl-text.html = IMAGE+TEXT
 
-BUGWK65199 : fast/writing-mode/broken-ideograph-small-caps.html = PASS FAIL
+BUGWK65199 LINUX WIN LEOPARD SNOWLEOPARD : fast/writing-mode/broken-ideograph-small-caps.html = PASS FAIL
 
 BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
@@ -3407,7 +3401,6 @@ BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
 
 BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 
-BUGWK71450 MAC DEBUG SLOW : fast/frames/valid.html = PASS
 BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 
 // Introduced due to BUGWK53512, fails under Skia right now
@@ -3920,6 +3913,105 @@ BUGWK80976 SNOWLEOPARD : transitions/interrupt-transform-transition.html = PASS 
 BUGWK80976 SNOWLEOPARD : svg/as-image/svg-image-leak-loader.html = PASS CRASH
 BUGWK80976 SNOWLEOPARD : svg/custom/feComponentTransfer-Gamma.svg = PASS CRASH
 BUGWK80976 SNOWLEOPARD : transitions/multiple-text-shadow-transition.html = PASS CRASH
+
+BUGWK81145 LION : compositing/plugins/composited-plugin.html = IMAGE+TEXT
+BUGWK81145 LION : css1/text_properties/text_transform.html = IMAGE+TEXT
+BUGWK81145 LION : css3/filters/effect-brightness.html = IMAGE+TEXT
+BUGWK81145 LION : css3/filters/effect-combined.html = IMAGE+TEXT
+BUGWK81145 LION : css3/filters/effect-contrast.html = IMAGE+TEXT
+BUGWK81145 LION : css3/filters/effect-grayscale.html = IMAGE+TEXT
+BUGWK81145 LION : css3/filters/effect-hue-rotate.html = IMAGE+TEXT
+BUGWK81145 LION : css3/filters/effect-invert.html = IMAGE+TEXT
+BUGWK81145 LION : css3/filters/effect-opacity.html = IMAGE+TEXT
+BUGWK81145 LION : css3/filters/effect-saturate.html = IMAGE+TEXT
+BUGWK81145 LION : css3/filters/effect-sepia.html = IMAGE+TEXT
+BUGWK81145 LION : fast/repaint/transform-absolute-in-positioned-container.html = IMAGE+TEXT
+BUGWK81145 LION : fast/text/international/bidi-AN-after-empty-run.html = IMAGE+TEXT
+BUGWK81145 LION : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
+BUGWK81145 LION : svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t.svg = IMAGE+TEXT
+BUGWK81145 LION : svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t.svg = IMAGE+TEXT
+BUGWK81145 LION : svg/batik/text/longTextOnPath.svg = IMAGE+TEXT
+BUGWK81145 LION : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
+BUGWK81145 LION : animations/cross-fade-webkit-mask-box-image.html = IMAGE
+BUGWK81145 LION : compositing/iframes/iframe-content-flipping.html = IMAGE
+BUGWK81145 LION : css3/filters/custom/effect-custom-combined-missing.html = IMAGE
+BUGWK81145 LION : css3/filters/custom/effect-custom-parameters.html = IMAGE
+BUGWK81145 LION : css3/filters/custom/effect-custom.html = IMAGE
+BUGWK81145 LION : css3/filters/effect-brightness-hw.html = IMAGE
+BUGWK81145 LION : css3/filters/effect-invert-hw.html = IMAGE
+BUGWK81145 LION : css3/filters/effect-saturate-hw.html = IMAGE
+BUGWK81145 LION : css3/filters/effect-sepia-hw.html = IMAGE
+BUGWK81145 LION : css3/filters/filter-repaint.html = IMAGE
+BUGWK81145 LION : css3/filters/filter-with-transform.html = IMAGE
+BUGWK81145 LION : css3/filters/nested-filter.html = IMAGE
+BUGWK81145 LION : css3/filters/nested-filters.html = IMAGE
+BUGWK81145 LION : css3/filters/regions-expanding.html = IMAGE
+BUGWK81145 LION : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
+BUGWK81145 LION : fast/box-shadow/single-pixel-shadow.html = IMAGE
+BUGWK81145 LION : fast/forms/file/file-input-pressed-state.html = IMAGE
+BUGWK81145 LION : fast/frames/invalid.html = IMAGE
+BUGWK81145 LION : fast/frames/valid.html = IMAGE
+BUGWK81145 LION : fast/gradients/css3-color-stop-units.html = IMAGE
+BUGWK81145 LION : fast/repaint/background-scaling.html = IMAGE
+BUGWK81145 LION : fast/repaint/scale-page-shrink.html = IMAGE
+BUGWK81145 LION : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE
+BUGWK81145 LION : fast/writing-mode/vertical-align-table-baseline.html = IMAGE
+BUGWK81145 LION : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
+BUGWK81145 LION : svg/W3C-SVG-1.1/filters-displace-01-f.svg = IMAGE
+BUGWK81145 LION : svg/W3C-SVG-1.1/filters-image-01-b.svg = IMAGE
+BUGWK81145 LION : svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg = IMAGE
+BUGWK81145 LION : svg/batik/filters/feTile.svg = IMAGE
+BUGWK81145 LION : svg/batik/filters/filterRegions.svg = IMAGE
+BUGWK81145 LION : svg/batik/masking/maskRegions.svg = IMAGE
+BUGWK81145 LION : svg/batik/paints/gradientLimit.svg = IMAGE
+BUGWK81145 LION : svg/batik/paints/patternPreserveAspectRatioA.svg = IMAGE
+BUGWK81145 LION : svg/batik/paints/patternRegionA.svg = IMAGE
+BUGWK81145 LION : svg/batik/paints/patternRegions-positioned-objects.svg = IMAGE
+BUGWK81145 LION : svg/batik/paints/patternRegions.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/smallFonts.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textAnchor.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textDecoration.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textEffect.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textEffect2.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textEffect3.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textFeatures.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textLayout.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textLayout2.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textLength.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textOnPath.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textOnPathSpaces.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textPosition.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textPosition2.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textProperties.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textProperties2.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/textStyles.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/verticalText.svg = IMAGE
+BUGWK81145 LION : svg/batik/text/verticalTextOnPath.svg = IMAGE
+BUGWK81145 LION : svg/custom/massive-coordinates.svg = IMAGE
+BUGWK81145 LION : svg/dynamic-updates/SVGUseElement-dom-href1-attr.html = IMAGE
+BUGWK81145 LION : svg/dynamic-updates/SVGUseElement-dom-href2-attr.html = IMAGE
+BUGWK81145 LION : svg/dynamic-updates/SVGUseElement-svgdom-href1-prop.html = IMAGE
+BUGWK81145 LION : svg/dynamic-updates/SVGUseElement-svgdom-href2-prop.html = IMAGE
+BUGWK81145 LION : compositing/geometry/empty-embed-rects.html = TEXT
+BUGWK81145 LION : css3/filters/composited-during-transition-layertree.html = TEXT
+BUGWK81145 LION : editing/inserting/insert-3907422-fix.html = TEXT
+BUGWK81145 LION : editing/pasteboard/paste-text-002.html = TEXT
+BUGWK81145 LION : editing/pasteboard/paste-text-003.html = TEXT
+BUGWK81145 LION : editing/pasteboard/paste-text-004.html = TEXT
+BUGWK81145 LION : editing/pasteboard/paste-text-005.html = TEXT
+BUGWK81145 LION : editing/pasteboard/paste-text-008.html = TEXT
+BUGWK81145 LION : editing/spelling/spelling-backspace-between-lines.html = TEXT
+BUGWK81145 LION : fast/events/offsetX-offsetY.html = TEXT
+BUGWK81145 LION : fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html = TEXT
+BUGWK81145 LION : fast/loader/loadInProgress.html = TEXT
+BUGWK81145 LION : fast/text/selection-rect-rounding.html = TEXT
+BUGWK81145 LION : platform/chromium/virtual/gpu/fast/canvas/set-colors.html = TEXT
+BUGWK81145 LION : plugins/plugin-javascript-access.html = TEXT
+BUGWK81145 LION : svg/css/getComputedStyle-basic.xhtml = TEXT
+BUGWK81145 LION : svg/custom/delete-text-crash.html = TEXT
+BUGWK81145 LION : fast/writing-mode/broken-ideograph-small-caps.html = CRASH
+BUGWK81145 LION : fast/writing-mode/broken-ideographic-font.html = CRASH
+BUGWK81145 LION : fast/writing-mode/japanese-rl-text-with-broken-font.html = CRASH
 
 // New test. Just needs rebaseline.
 BUGWK12437 : svg/repaint/repainting-after-animation-element-removal.svg = IMAGE
