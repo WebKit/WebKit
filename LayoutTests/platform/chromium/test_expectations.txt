@@ -3849,8 +3849,6 @@ BUGWK75568 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE PAS
 
 // Those tests need a text baseline after lazily allocating layers.
 // The change should only be layer removal.
-BUGWK75568 : compositing/geometry/object-clip-rects-assertion.html = TEXT
-BUGWK75568 : compositing/overflow/ancestor-overflow.html = IMAGE PASS
 BUGWK75568 : fast/events/mouse-relative-position.html = TEXT
 
 BUGWK80531 : fast/repaint/search-field-cancel.html = TEXT IMAGE+TEXT
