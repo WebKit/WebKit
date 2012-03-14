@@ -96,6 +96,60 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
     double a1 = m_a1;
     double a2 = m_a2;
 
+// Optimize the hot multiply-add by pipelining with SSE2 instructions.
+#ifdef __SSE2__
+    double na1 = -a1;
+    double na2 = -a2;
+
+    __asm__(
+        "movl     %4,      %%edx\n\t" // move sourceP to edx
+        "movl     %5,      %%ecx\n\t" // move destP to ecx
+        "movl     %6,      %%eax\n\t" // move n to eax
+        "testl    %%eax,   %%eax\n\t"
+        "je .LabelEnd\n\t"
+        "movss    (%%edx), %%xmm7\n\t" // load x to xmm7[63:0]
+        "cvtss2sd %%xmm7,  %%xmm1\n\t" // convert x from float to double
+        "movlpd   %1,      %%xmm0\n\t" // move x2 to xmm0[63:0]
+        "movlpd   %9,      %%xmm2\n\t" // move b2 to xmm2[63:0]
+        "movlpd   %7,      %%xmm3\n\t" // move b0 to xmm3[63:0]
+        "movhpd   %0,      %%xmm0\n\t" // move x1 to xmm0[127:64] ----> (x1 x2)
+        "movhpd   %3,      %%xmm1\n\t" // move y2 to xmm1[127:64] ----> (y2 x )
+        "movhpd   %8,      %%xmm2\n\t" // move b1 to xmm2[127:64] ----> (b1 b2)
+        "movhpd   %11,     %%xmm3\n\t" // move a2 to xmm3[127:64] ----> (a2 b0)
+        "movlpd   %2,      %%xmm4\n\t" // move y1 to xmm4[63:0]
+        ".LabelLoop:\n\t"
+        "addl     $4,      %%edx\n\t" // sourceP++
+        "movapd   %%xmm0,  %%xmm5\n\t" // copy (x1 x2)
+        "movapd   %%xmm1,  %%xmm6\n\t" // copy (y2 x )
+        "shufpd   $0, %%xmm4, %%xmm1\n\t" // y2=y1
+        "mulpd    %%xmm2,  %%xmm5\n\t" // (x1*b1 x2*b2)
+        "mulpd    %%xmm3,  %%xmm6\n\t" // (y2*a2 x *b0)
+        "shufpd   $1, %%xmm1, %%xmm0\n\t" // x2=x1 x1=x
+        "mulsd    %10,     %%xmm4\n\t" // a1*y1
+        "addpd    %%xmm6,  %%xmm5\n\t" // (x1*b1+y2*a2 x2*b2+x*b0)
+        "subl     $1,      %%eax\n\t" // n--
+        "movapd   %%xmm5,  %%xmm6\n\t"
+        "movss    (%%edx), %%xmm7\n\t" // load x
+        "cvtss2sd %%xmm7,  %%xmm1\n\t" // cvt x from float to double  x = new x
+        "addsd    %%xmm4,  %%xmm5\n\t" // a1*y1 + (x2*b2+x*b0)
+        "shufpd   $1, %%xmm6, %%xmm6\n\t" // (x1*b1+y2*a2 x2*b2+x*b0) -> (x2*b2+x*b0 x1*b1+y2*a2)
+        "addsd    %%xmm6,  %%xmm5\n\t" // y
+        "cvtsd2ss %%xmm5,  %%xmm7\n\t"
+        "movss    %%xmm7,  (%%ecx)\n\t" // y -> *destP
+        "movapd   %%xmm5,  %%xmm4\n\t" // y1 = y
+        "addl     $4,      %%ecx\n\t" // destP++
+        "testl    %%eax,   %%eax\n\t"
+        "jne .LabelLoop\n\t" // while()
+        "movhpd   %%xmm0,  %0\n\t"
+        "movlpd   %%xmm0,  %1\n\t"
+        "movlpd   %%xmm4,  %2\n\t"
+        "movhpd   %%xmm1,  %3\n\t"
+        ".LabelEnd:\n\t"
+        :"+m"(x1), "+m"(x2), "+m"(y1), "+m"(y2)
+        :"m"(sourceP), "m"(destP), "m"(n), "m"(b0), "m"(b1), "m"(b2), "m"(na1), "m"(na2)
+        :"eax", "edx", "ecx", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6", "xmm7"
+    );
+#else
     while (n--) {
         // FIXME: this can be optimized by pipelining the multiply adds...
         float x = *sourceP++;
@@ -109,6 +163,7 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
         y2 = y1;
         y1 = y;
     }
+#endif
 
     // Local variables back to member. Flush denormals here so we
     // don't slow down the inner loop above.
