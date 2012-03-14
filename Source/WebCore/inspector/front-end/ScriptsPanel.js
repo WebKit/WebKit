@@ -259,8 +259,8 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
 
-        if (!uiSourceCode.url) {
-            // Anonymous sources are shown only when stepping.
+        if (!uiSourceCode.url || uiSourceCode.isSnippetEvaluation) {
+            // Anonymous sources and snippets evaluations are shown only when stepping.
             return;
         }
 
@@ -614,7 +614,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _revealExecutionLine: function(uiLocation)
     {
-        // Anonymous scripts are not added to files select by default.
+        // Some scripts (anonymous and snippets evaluations) are not added to files select by default.
         this._addUISourceCode(uiLocation.uiSourceCode);
         var sourceFrame = this._showFile(uiLocation.uiSourceCode);
         sourceFrame.revealLine(uiLocation.lineNumber);

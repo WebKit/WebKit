@@ -138,7 +138,7 @@ WebInspector.SnippetsModel.prototype = {
 
     /**
      * @param {string} sourceURL
-     * @return {string}
+     * @return {string|null}
      */
     snippetIdForSourceURL: function(sourceURL)
     {
@@ -148,7 +148,7 @@ WebInspector.SnippetsModel.prototype = {
 
     /**
      * @param {string} sourceURL
-     * @return {WebInspector.Snippet}
+     * @return {WebInspector.Snippet|null}
      */
     snippetForSourceURL: function(sourceURL)
     {

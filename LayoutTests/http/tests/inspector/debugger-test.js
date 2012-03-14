@@ -178,9 +178,9 @@ InspectorTest.showScriptSource = function(scriptName, callback)
 InspectorTest.dumpScriptsNavigator = function(navigator)
 {
     InspectorTest.addResult("Dumping ScriptsNavigator 'Scripts' tab:");
-    dumpNavigatorTreeOutline(navigator._navigatorScriptsTree);
+    dumpNavigatorTreeOutline(navigator._scriptsTree);
     InspectorTest.addResult("Dumping ScriptsNavigator 'Content scripts' tab:");
-    dumpNavigatorTreeOutline(navigator._navigatorContentScriptsTree);
+    dumpNavigatorTreeOutline(navigator._contentScriptsTree);
 
     function dumpNavigatorTreeElement(prefix, treeElement)
     {
