@@ -1025,6 +1025,7 @@ fast/replaced/applet-rendering-java-disabled.html
 java
 
 # WebKitTestRunner needs layoutTestController.displayInvalidatedRegion
+compositing/plugins/invalidate_rect.html
 plugins/windowless_plugin_paint_test.html
 
 # WebKitTestRunner needs layoutTestController.setMinimumTimerInterval
