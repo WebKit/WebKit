@@ -28,13 +28,13 @@
 
 #include "PageOverlay.h"
 #include "WebFindOptions.h"
+#include <WebCore/IntRect.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
     class Frame;
-    class IntRect;
 }
 
 namespace WebKit {
@@ -77,6 +77,7 @@ private:
     // Whether the UI process is showing the find indicator. Note that this can be true even if
     // the find indicator isn't showing, but it will never be false when it is showing.
     bool m_isShowingFindIndicator;
+    WebCore::IntRect m_findIndicatorRect;
 };
 
 } // namespace WebKit

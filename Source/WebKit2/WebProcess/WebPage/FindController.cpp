@@ -216,6 +216,7 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
     }            
 
     m_webPage->send(Messages::WebPageProxy::SetFindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, m_webPage->corePage()->deviceScaleFactor(), handle, !isShowingOverlay, shouldAnimate));
+    m_findIndicatorRect = selectionRectInWindowCoordinates;
     m_isShowingFindIndicator = true;
 
     return true;
@@ -347,6 +348,16 @@ void FindController::drawRect(PageOverlay* pageOverlay, GraphicsContext& graphic
     // Clear out the holes.
     for (size_t i = 0; i < rects.size(); ++i)
         graphicsContext.fillRect(rects[i]);
+
+    if (!m_isShowingFindIndicator)
+        return;
+
+    if (Frame* selectedFrame = frameWithSelection(m_webPage->corePage())) {
+        IntRect findIndicatorRect = selectedFrame->view()->contentsToWindow(enclosingIntRect(selectedFrame->selection()->bounds()));
+
+        if (findIndicatorRect != m_findIndicatorRect)
+            hideFindIndicator();
+    }
 }
 
 bool FindController::mouseEvent(PageOverlay* pageOverlay, const WebMouseEvent& mouseEvent)

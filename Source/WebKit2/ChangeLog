@@ -1,3 +1,22 @@
+2012-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Find bouncy doesn’t hide when a subframe is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=81060
+        <rdar://problem/9365329>
+
+        Reviewed by Andreas Kling.
+
+        Instead of hiding the find indicator when pageDidScroll is called, add a check to FindController::drawRect and hide
+        the find indicator there if the find selection bounds have changed since the last call to drawRect.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+        (WebKit::FindController::drawRect):
+        * WebProcess/WebPage/FindController.h:
+        (FindController):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::pageDidScroll):
+
 2012-03-13  Jeff Miller  <jeffm@apple.com>
 
         Support loading a WKPage from web archive data

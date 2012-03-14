@@ -1163,9 +1163,6 @@ PassRefPtr<WebImage> WebPage::snapshotInDocumentCoordinates(const IntRect& rect,
 
 void WebPage::pageDidScroll()
 {
-    // Hide the find indicator.
-    m_findController.hideFindIndicator();
-
     m_uiClient.pageDidScroll(this);
 
     send(Messages::WebPageProxy::PageDidScroll());
