@@ -1,3 +1,19 @@
+2012-03-14  Oliver Hunt  <oliver@apple.com>
+
+        Make ARMv7 work again
+        https://bugs.webkit.org/show_bug.cgi?id=81157
+
+        Reviewed by Geoffrey Garen.
+
+        We were trying to use the ARMv7 dataRegister as a scratch register in a scenario
+        where we the ARMv7MacroAssembler would also try to use dataRegister for its own
+        nefarious purposes.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::store32):
+        * assembler/MacroAssemblerARMv7.h:
+        (MacroAssemblerARMv7):
+
 2012-03-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Heap::destroy leaks CopiedSpace

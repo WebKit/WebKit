@@ -828,9 +828,17 @@ public:
             store32(blind.value1, dest);
             xor32(blind.value2, dest);
 #else
-            RegisterID scratchRegister = (RegisterID)scratchRegisterForBlinding();
-            loadXorBlindedConstant(xorBlindConstant(imm), scratchRegister);
-            store32(scratchRegister, dest);
+            if (RegisterID scratchRegister = (RegisterID)scratchRegisterForBlinding()) {
+                loadXorBlindedConstant(xorBlindConstant(imm), scratchRegister);
+                store32(scratchRegister, dest);
+            } else {
+                // If we don't have a scratch register available for use, we'll just 
+                // place a random number of nops.
+                uint32_t nopCount = random() & 3;
+                while (nopCount--)
+                    nop();
+                store32(imm.asTrustedImm32(), dest);
+            }
 #endif
         } else
             store32(imm.asTrustedImm32(), dest);

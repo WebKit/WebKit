@@ -722,7 +722,6 @@ public:
     }
 
 #if ENABLE(JIT_CONSTANT_BLINDING)
-    static RegisterID scratchRegisterForBlinding() { return dataTempRegister; }
     static bool shouldBlindForSpecificArch(uint32_t value)
     {
         ARMThumbImmediate immediate = ARMThumbImmediate::makeEncodedImm(value);
