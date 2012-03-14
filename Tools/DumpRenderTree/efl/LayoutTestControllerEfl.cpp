@@ -65,7 +65,15 @@ void LayoutTestController::addDisallowedURL(JSStringRef)
 
 void LayoutTestController::clearBackForwardList()
 {
-    notImplemented();
+    Ewk_History* history = ewk_view_history_get(browser->mainView());
+    if (!history)
+        return;
+
+    Ewk_History_Item* item = ewk_history_history_item_current_get(history);
+    ewk_history_clear(history);
+    ewk_history_history_item_add(history, item);
+    ewk_history_history_item_set(history, item);
+    ewk_history_item_free(item);
 }
 
 JSStringRef LayoutTestController::copyDecodedHostName(JSStringRef)

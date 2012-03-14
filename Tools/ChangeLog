@@ -1,3 +1,17 @@
+2012-03-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Implement LayoutTestController::clearBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=80142
+
+        Adding missing implementation clearBackForwardList to EFL's
+        LayoutTestController. This implementation allows us to unskip 
+        tests connected with history.
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::clearBackForwardList): Implemented.
+
 2012-03-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL][DRT] Expose window.internals object
