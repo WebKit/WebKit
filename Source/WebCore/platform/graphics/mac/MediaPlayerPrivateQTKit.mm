@@ -1462,6 +1462,11 @@ MediaPlayer::SupportsType MediaPlayerPrivateQTKit::supportsType(const String& ty
     // Only return "IsSupported" if there is no codecs parameter for now as there is no way to ask QT if it supports an
     // extended MIME type yet.
 
+    // Due to <rdar://problem/10777059>, avoid calling the mime types cache functions if at
+    // all possible:
+    if (!type.startsWith("video/") && !type.startsWith("audio/"))
+        return MediaPlayer::IsNotSupported;
+
     // We check the "modern" type cache first, as it doesn't require QTKitServer to start.
     if (mimeModernTypesCache().contains(type) || mimeCommonTypesCache().contains(type))
         return codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
