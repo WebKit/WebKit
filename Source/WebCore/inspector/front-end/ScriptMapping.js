@@ -70,10 +70,18 @@ WebInspector.ScriptMapping.prototype.__proto__ = WebInspector.Object.prototype;
 WebInspector.MainScriptMapping = function()
 {
     this._mappings = [];
+    
     this._resourceMapping = new WebInspector.ResourceScriptMapping();
-    this._resourceMapping.addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
     this._mappings.push(this._resourceMapping);
 
+    if (WebInspector.experimentsSettings.snippetsSupport.isEnabled()) {
+        this._snippetsMapping = new WebInspector.SnippetsScriptMapping();
+        this._mappings.push(this._snippetsMapping);
+    }
+
+    for (var i = 0; i < this._mappings.length; ++i)
+        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
+    
     this._mappingForScriptId = {};
     this._mappingForUISourceCode = new Map();
     this._liveLocationsForScriptId = {};
@@ -155,10 +163,23 @@ WebInspector.MainScriptMapping.prototype = {
     {
         this._liveLocationsForScriptId[script.scriptId] = [];
 
-        var mapping = this._resourceMapping;
-
+        var mapping = this._mappingForScript(script);
         this._mappingForScriptId[script.scriptId] = mapping;
         mapping.addScript(script);
+    },
+
+    /**
+     * @param {WebInspector.Script} script
+     * @return {WebInspector.ScriptMapping}
+     */
+    _mappingForScript: function(script)
+    {
+        if (WebInspector.experimentsSettings.snippetsSupport.isEnabled()) {
+            if (WebInspector.snippetsModel.snippetIdForSourceURL(script.sourceURL))
+                return this._snippetsMapping;
+        }
+            
+        return this._resourceMapping;
     },
 
     /**
