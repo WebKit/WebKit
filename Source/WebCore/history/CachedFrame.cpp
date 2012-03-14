@@ -173,9 +173,10 @@ CachedFrame::CachedFrame(Frame* frame)
     m_document->suspendScriptedAnimationControllerCallbacks();
     m_document->suspendActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);
     m_cachedFrameScriptData = adoptPtr(new ScriptCachedFrameData(frame));
-    
-    if (DOMWindow* domWindow = m_cachedFrameScriptData->domWindow())
-        domWindow->suspendForPageCache();
+
+    m_domWindow = frame->domWindow();
+    ASSERT(m_domWindow);
+    m_domWindow->suspendForPageCache();
 
     frame->loader()->client()->savePlatformDataToCachedFrame(this);
 

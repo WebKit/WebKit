@@ -38,7 +38,6 @@
 namespace WebCore {
     class Frame;
     class JSDOMWindow;
-    class DOMWindow;
     class DOMWrapperWorld;
 
     class ScriptCachedFrameData {
@@ -51,11 +50,9 @@ namespace WebCore {
 
         void restore(Frame*);
         void clear();
-        DOMWindow* domWindow() const;
 
     private:
         JSDOMWindowSet m_windows;
-        DOMWindow* m_domWindow;
     };
 
 } // namespace WebCore
