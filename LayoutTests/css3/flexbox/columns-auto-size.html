@@ -76,6 +76,26 @@ if (window.layoutTestController)
   <div data-expected-height="20" data-offset-y="50" style="padding-top: 10px"><div data-expected-height="10" data-offset-y="60" style="height: 10px"></div></div>
 </div>
 
+<div class="flexbox horizontal" data-expected-height="20">
+  <div data-expected-height="10" data-offset-y="0" style="height: -webkit-flex(0 1 auto)"><div style="height: 10px"></div></div>
+  <div data-expected-height="10" data-offset-y="10" style="height: -webkit-flex(0 2 auto)"><div style="height: 10px"></div></div>
+</div>
+
+<div class="flexbox horizontal" style="min-height: 10px" data-expected-height="20">
+  <div data-expected-height="10" data-offset-y="0" style="height: -webkit-flex(0 1 auto)"><div style="height: 10px"></div></div>
+  <div data-expected-height="10" data-offset-y="10" style="height: -webkit-flex(0 2 auto)"><div style="height: 10px"></div></div>
+</div>
+
+<div class="flexbox horizontal" style="min-height: 5px; max-height: 17px;" data-expected-height="17">
+  <div data-expected-height="9" data-offset-y="0" style="height: -webkit-flex(0 1 auto)"><div style="height: 10px"></div></div>
+  <div data-expected-height="8" data-offset-y="9" style="height: -webkit-flex(0 2 auto)"><div style="height: 10px"></div></div>
+</div>
+
+<div class="flexbox horizontal" style="min-height: 5px; max-height: 30px; padding-top: 1px; padding-bottom: 2px;" data-expected-height="33">
+  <div data-expected-height="15" data-offset-y="1" style="height: -webkit-flex(0 1 auto)"><div style="height: 20px"></div></div>
+  <div data-expected-height="15" data-offset-y="16" style="height: -webkit-flex(0 1 auto)"><div style="height: 20px"></div></div>
+</div>
+
 <div class="flexbox vertical">
   <div data-expected-width="10" data-offset-x="20" style="width: -webkit-flex(1 0 10px)"></div>
   <div data-expected-width="10" data-offset-x="10" style="width: 10px;"></div>
