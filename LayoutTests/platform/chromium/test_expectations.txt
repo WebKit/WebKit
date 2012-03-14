@@ -943,9 +943,6 @@ BUGWK77903 MAC : svg/repaint/inner-svg-change-viewBox-contract.svg = IMAGE IMAGE
 // New test, needs a rebaseline
 BUGWK78631 : svg/dom/SVGLocatable-getCTM-svg-root.html = IMAGE
 
-// Need rebaselining after bug 64591
-BUGWK64591 : compositing/repaint/become-overlay-composited-layer.html = PASS FAIL
-
 // BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
 
 // We show reduced version of the entire SVN image rather than an image
@@ -1576,9 +1573,6 @@ BUGCR9798 SLOW WIN DEBUG : fast/dom/Window/slow-unload-handler.html = PASS
 // SKIA_TEXT results - differ only in low-bits of shadow, or positioning
 // when GDI integralizes its positions before applying the CTM
 // rebaseline when SKIA_TEXT is on by default
-BUGCR99500 WIN : compositing/geometry/fixed-position-composited-page-scale.html = IMAGE
-BUGCR99500 WIN : compositing/geometry/fixed-position-iframe-composited-page-scale.html = IMAGE
-BUGCR99500 WIN : compositing/geometry/fixed-position-transform-composited-page-scale.html = IMAGE
 BUGCR99500 WIN : fast/borders/border-antialiasing.html = IMAGE
 BUGCR99500 WIN : fast/reflections/reflection-overflow-hidden.html = IMAGE
 BUGCR99500 WIN : fast/repaint/reflection-redraw.html = IMAGE
@@ -2611,26 +2605,13 @@ WONTFIX WIN LINUX : compositing/images/direct-pdf-image.html = IMAGE
 BUGWK47925 LEOPARD : compositing/plugins/composited-plugin.html = IMAGE+TEXT
 BUGWK47925 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEXT
 
-BUGWK47949 LINUX WIN : compositing/reflections/nested-reflection-anchor-point.html = IMAGE+TEXT
-BUGWK47949 MAC : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
-BUGWK47949 LINUX WIN : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
-
-// The following are flaky on Mac 10.6; occasionally the layers fail to show up.
-BUGWK47949 MAC : compositing/reflections/nested-reflection.html = IMAGE PASS
-BUGWK47949 MAC : compositing/reflections/reflection-opacity.html = IMAGE PASS
-BUGWK47949 : compositing/reflections/reflection-positioning.html = IMAGE PASS
-BUGWK47949 : compositing/reflections/nested-reflection-transition.html = IMAGE PASS
-BUGWK47949 MAC : compositing/reflections/nested-reflection-size-change.html = IMAGE PASS
-BUGWK79647 WIN MAC : compositing/reflections/reflection-ordering.html = IMAGE PASS
-BUGWK79647 WIN LINUX : compositing/reflections/remove-add-reflection.html = IMAGE PASS
-
-// Need rebaselines
-BUGWK47949 : compositing/reflections/nested-reflection-transformed.html = IMAGE
-BUGWK47949 : compositing/reflections/nested-reflection-transformed2.html = IMAGE
+// We don't handle reflections in the right way to support this.
+BUGWK47949 : compositing/reflections/reflection-opacity.html = IMAGE
 
 // Flaky because these are a poorly written tests. Need dino's new animation API
 BUGWK54306 : compositing/reflections/animation-inside-reflection.html = PASS IMAGE IMAGE+TEXT
 BUGWK54306 : compositing/reflections/nested-reflection-animated.html = PASS IMAGE
+BUGWK54306 : compositing/reflections/nested-reflection-transition.html = IMAGE PASS
 
 // These tests are too slow with our MESA backend.  We can re-enable when we have
 // bots running tests on real hardware.
@@ -3497,11 +3478,6 @@ BUGWK73991 WIN7 VISTA RELEASE : platform/win/fast/text/uniscribe-missing-glyph.h
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/bidi-neutral-run.html = TEXT
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/thai-line-breaks.html = TEXT
 
-BUGWK74050 : compositing/reflections/nested-reflection-on-overflow.html = IMAGE PASS
-BUGWK74050 : compositing/reflections/reflection-in-composited.html = IMAGE PASS
-BUGWK74050 : compositing/reflections/simple-composited-reflections.html = IMAGE PASS
-BUGWK74050 : compositing/reflections/nested-reflection-mask-change.html = IMAGE PASS
-
 BUGWK74055 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 BUGWK74055 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/canvas-largedraws.html = TIMEOUT
 
@@ -3689,10 +3665,6 @@ BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.h
 BUGWK80517 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
 BUGWK80517 DEBUG : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE PASS
 
-// Test is acting extra flakey on Mac and Win Debug
-BUGCR114777 : compositing/culling/filter-occlusion-blur-large.html = PASS IMAGE
-BUGCR114777 : compositing/culling/filter-occlusion-blur.html = PASS IMAGE
-
 // Needs new baselines.
 BUGWK65072 : svg/text/exs-display-none.svg = IMAGE IMAGE+TEXT
 BUGWK65072 : svg/text/ems-display-none.svg = IMAGE IMAGE+TEXT
@@ -3837,11 +3809,6 @@ BUG_SENORBLANCO DEBUG : css3/filters/composited-during-animation-layertree.html 
 
 // New test, crashing as of r110224:110226.
 BUG_SENORBLANCO : fast/events/input-focus-no-duplicate-events.html = CRASH
-
-// May require rebaseline after this patch lands.
-BUGWK80743 WIN MAC : compositing/geometry/vertical-scroll-composited.html = PASS IMAGE
-BUGWK80743 WIN MAC : compositing/direct-image-compositing.html = PASS IMAGE
-BUGWK80743 WIN MAC : platform/chromium/compositing/huge-layer-rotated.html = PASS IMAGE
 
 BUGWK80665 : fast/js/string-match.html = TEXT
 BUGWK80665 : fast/js/string-replace-2.html = TEXT
