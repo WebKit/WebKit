@@ -85,24 +85,20 @@ bool RenderIFrame::flattenFrame()
         return false;
 
     HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(node());
-    bool isScrollable = element->scrollingMode() != ScrollbarAlwaysOff;
-
-    if (style()->width().isFixed() && style()->height().isFixed()) {
-        if (!isScrollable)
-            return false;
-        if (style()->width().value() <= 0 || style()->height().value() <= 0)
-            return false;
-    }
-
     Frame* frame = element->document()->frame();
+
     bool enabled = frame && frame->settings() && frame->settings()->frameFlatteningEnabled();
 
     if (!enabled || !frame->page())
         return false;
 
-    FrameView* view = frame->page()->mainFrame()->view();
-    if (!view)
-        return false;
+    if (style()->width().isFixed() && style()->height().isFixed()) {
+        // Do not flatten iframes with scrolling="no".
+        if (element->scrollingMode() == ScrollbarAlwaysOff)
+            return false;
+        if (style()->width().value() <= 0 || style()->height().value() <= 0)
+            return false;
+    }
 
     // Do not flatten offscreen inner frames during frame flattening, as flattening might make them visible.
     IntRect boundingRect = absoluteBoundingBoxRectIgnoringTransforms();
