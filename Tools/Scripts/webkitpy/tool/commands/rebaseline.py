@@ -40,6 +40,7 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.user import User
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models import test_failures
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.layout_tests.port import builders
 from webkitpy.tool.grammar import pluralize
@@ -108,6 +109,17 @@ class RebaselineTest(AbstractDeclarativeCommand):
         if not self._tool.scm().exists(target_baseline):
             self._tool.scm().add(target_baseline)
 
+    def _update_expectations_file(self, builder_name, test_name):
+        port = self._tool.port_factory.get_from_builder_name(builder_name)
+        expectationsString = port.test_expectations()
+        expectations = TestExpectations(port, None, expectationsString, port.test_configuration())
+
+        for test_configuration in port.all_test_configurations():
+            if test_configuration.version == port.test_configuration().version:
+                expectationsString = expectations.remove_configuration_from_test(test_name, test_configuration)
+
+        self._tool.filesystem.write_text_file(port.path_to_test_expectations_file(), expectationsString)
+
     def _test_root(self, test_name):
         return os.path.splitext(test_name)[0]
 
@@ -130,13 +142,17 @@ class RebaselineTest(AbstractDeclarativeCommand):
         print "Retrieving %s." % source_baseline
         self._save_baseline(self._tool.web.get_binary(source_baseline, convert_404_to_None=True), target_baseline)
 
-    def execute(self, options, args, tool):
+    def _rebaseline_test_and_update_expectations(self, builder_name, test_name, platforms_to_move_existing_baselines_to):
         for suffix in _baseline_suffix_list:
-            if len(args) > 2:
-                platforms_to_move_existing_baselines_to = args[2:]
-            else:
-                platforms_to_move_existing_baselines_to = None
-            self._rebaseline_test(args[0], args[1], platforms_to_move_existing_baselines_to, suffix)
+            self._rebaseline_test(builder_name, test_name, platforms_to_move_existing_baselines_to, suffix)
+        self._update_expectations_file(builder_name, test_name)
+
+    def execute(self, options, args, tool):
+        if len(args) > 2:
+            platforms_to_move_existing_baselines_to = args[2:]
+        else:
+            platforms_to_move_existing_baselines_to = None
+        self._rebaseline_test_and_update_expectations(args[0], args[1], platforms_to_move_existing_baselines_to)
 
 
 class OptimizeBaselines(AbstractDeclarativeCommand):

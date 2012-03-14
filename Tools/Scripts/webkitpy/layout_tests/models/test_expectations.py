@@ -816,6 +816,25 @@ class TestExpectations(object):
     def has_warnings(self):
         return self._has_warnings
 
+    def remove_configuration_from_test(self, test, test_configuration):
+        expectations_to_remove = []
+        for expectation in self._expectations:
+            if expectation.name != test or expectation.is_flaky() or not expectation.parsed_expectations:
+                continue
+            if iter(expectation.parsed_expectations).next() not in (FAIL, TEXT, IMAGE, IMAGE_PLUS_TEXT, AUDIO):
+                continue
+            if test_configuration not in expectation.matching_configurations:
+                continue
+
+            expectation.matching_configurations.remove(test_configuration)
+            if not expectation.matching_configurations:
+                expectations_to_remove.append(expectation)
+
+        for expectation in expectations_to_remove:
+            self._expectations.remove(expectation)
+
+        return TestExpectationSerializer.list_to_string(self._expectations, self._parser._test_configuration_converter)
+
     def remove_rebaselined_tests(self, except_these_tests):
         """Returns a copy of the expectations with the tests removed."""
         def without_rebaseline_modifier(expectation):

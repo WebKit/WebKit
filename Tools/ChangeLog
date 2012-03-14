@@ -1,3 +1,32 @@
+2012-03-13  Ojan Vafai  <ojan@chromium.org>
+
+        Have webkit-patch rebaseline-test update test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=81054
+
+        Reviewed by Dirk Pranke.
+
+        This will allow us to use the All Failures tab in garden-o-matic
+        to rebaseline tests without making test_expectations.txt stale.
+
+        It's conservative and only removes lines if the test is
+        not flaky and fails in a way the rebaseline would fix (e.g.
+        CRASH/TIMEOUT will not be touched).
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.remove_configuration_from_test):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (RemoveConfigurationsTest):
+        (RemoveConfigurationsTest.test_remove):
+        (test_remove_line):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._is_supported_port):
+        (RebaselineTest):
+        (RebaselineTest._update_expectations_file):
+        (RebaselineTest._rebaseline_test_and_update_expectations):
+        (RebaselineTest.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_rebaseline_updates_expectations_file):
+
 2012-03-14  Jessie Berlin  <jberlin@apple.com>
 
         Crash in WKTR under addChromeInputField due to using 0 as a key in a HashMap
