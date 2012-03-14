@@ -604,6 +604,11 @@ void TextureMapperGL::bindSurface(BitmapTexture *surfacePointer)
 
 bool TextureMapperGL::beginScissorClip(const TransformationMatrix& modelViewMatrix, const FloatRect& targetRect)
 {
+    // 3D transforms are currently not supported in scissor clipping
+    // resulting in cropped surfaces when z>0.
+    if (!modelViewMatrix.isAffine())
+        return false;
+
     FloatQuad quad = modelViewMatrix.projectQuad(targetRect);
     IntRect rect = quad.enclosingBoundingBox();
 
