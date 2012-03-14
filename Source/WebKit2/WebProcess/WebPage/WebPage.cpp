@@ -2617,8 +2617,13 @@ void WebPage::SandboxExtensionTracker::didCommitProvisionalLoad(WebFrame* frame)
 {
     if (!frame->isMainFrame())
         return;
-    
-    ASSERT(!m_pendingProvisionalSandboxExtension);
+
+    // Generally, there should be no pending extension at this stage, but we can have one if UI process
+    // has an out of date idea of WebProcess state, and initiates a load or reload without stopping an existing one.
+    if (m_pendingProvisionalSandboxExtension) {
+        m_pendingProvisionalSandboxExtension->invalidate();
+        m_pendingProvisionalSandboxExtension = nullptr;
+    }
 
     // The provisional load has been committed. Invalidate the currently committed sandbox
     // extension and make the provisional sandbox extension the committed sandbox extension.
@@ -2632,6 +2637,13 @@ void WebPage::SandboxExtensionTracker::didFailProvisionalLoad(WebFrame* frame)
 {
     if (!frame->isMainFrame())
         return;
+
+    // Generally, there should be no pending extension at this stage, but we can have one if UI process
+    // has an out of date idea of WebProcess state, and initiates a load or reload without stopping an existing one.
+    if (m_pendingProvisionalSandboxExtension) {
+        m_pendingProvisionalSandboxExtension->invalidate();
+        m_pendingProvisionalSandboxExtension = nullptr;
+    }
 
     if (!m_provisionalSandboxExtension)
         return;
