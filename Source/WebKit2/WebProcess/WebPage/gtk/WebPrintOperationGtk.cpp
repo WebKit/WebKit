@@ -26,8 +26,10 @@
 #include "config.h"
 #include "WebPrintOperationGtk.h"
 
+#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/ErrorsGtk.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformContextCairo.h>
@@ -72,13 +74,14 @@ public:
     static void enumeratePrintersFinished(WebPrintOperationGtkUnix* printOperation)
     {
         if (!printOperation->m_printJob) {
-            // FIXME: Printing error.
+            printOperation->printDone(printerNotFoundError(printOperation->m_printContext));
             return;
         }
 
-        cairo_surface_t* surface = gtk_print_job_get_surface(printOperation->m_printJob.get(), 0);
+        GOwnPtr<GError> error;
+        cairo_surface_t* surface = gtk_print_job_get_surface(printOperation->m_printJob.get(), &error.outPtr());
         if (!surface) {
-            // FIXME: Printing error.
+            printOperation->printDone(printError(printOperation->m_printContext, error->message));
             return;
         }
 
@@ -143,8 +146,9 @@ public:
             cairo_show_page(cr);
     }
 
-    static void printJobComplete(GtkPrintJob* printJob, WebPrintOperationGtkUnix* printOperation, const GError*)
+    static void printJobComplete(GtkPrintJob* printJob, WebPrintOperationGtkUnix* printOperation, const GError* error)
     {
+        printOperation->printDone(error ? printError(printOperation->m_printContext, error->message) : WebCore::ResourceError());
         printOperation->m_printJob = 0;
     }
 
@@ -210,6 +214,7 @@ struct PrintPagesData {
         , collated(0)
         , uncollated(0)
         , isDone(false)
+        , isValid(true)
     {
         if (printOperation->collateCopies()) {
             collatedCopies = printOperation->copies();
@@ -247,6 +252,11 @@ struct PrintPagesData {
             for (int i = 0; i < printOperation->pageCount(); ++i)
                 pages.append(i);
         }
+
+        if (!pages.size()) {
+            isValid = false;
+            return;
+        }
         printOperation->setNumberOfPagesToPrint(pages.size());
 
         size_t numberUp = printOperation->numberUp();
@@ -282,9 +292,11 @@ struct PrintPagesData {
             break;
         }
 
-        // FIXME: check pagePostion is between [0..pages.size() - 1]
-        // and cancel the operation otherwise when error reporting
-        // is implemented.
+        if (sheetNumber * numberUp >= pages.size()) {
+            isValid = false;
+            return;
+        }
+
         printOperation->setPagePosition(sheetNumber * numberUp);
         pageNumber = pages[printOperation->pagePosition()];
         firstPagePosition = printOperation->pagePosition();
@@ -361,6 +373,7 @@ struct PrintPagesData {
     size_t uncollatedCopies;
 
     bool isDone : 1;
+    bool isValid : 1;
 };
 
 PassRefPtr<WebPrintOperationGtk> WebPrintOperationGtk::create(WebPage* page, const PrintInfo& printInfo)
@@ -656,31 +669,42 @@ void WebPrintOperationGtk::printPagesIdleDone(gpointer userData)
 {
     PrintPagesData* data = static_cast<PrintPagesData*>(userData);
 
-    data->printOperation->printDone();
+    data->printOperation->printPagesDone();
     delete data;
 }
 
-void WebPrintOperationGtk::printDone()
+void WebPrintOperationGtk::printPagesDone()
 {
     m_printPagesIdleId = 0;
-
     endPrint();
-    // Job is now sent to the printer, we can notify the UI process that we are done.
-    m_webPage->send(Messages::WebPageProxy::VoidCallback(m_callbackID));
     m_cairoContext = 0;
+}
+
+void WebPrintOperationGtk::printDone(const WebCore::ResourceError& error)
+{
+    if (m_printPagesIdleId)
+        g_source_remove(m_printPagesIdleId);
+    m_printPagesIdleId = 0;
+
+    // Print finished or failed, notify the UI process that we are done.
+    m_webPage->send(Messages::WebPageProxy::PrintFinishedCallback(error, m_callbackID));
 }
 
 void WebPrintOperationGtk::print(cairo_surface_t* surface, double xDPI, double yDPI)
 {
     ASSERT(m_printContext);
 
+    OwnPtr<PrintPagesData> data = adoptPtr(new PrintPagesData(this));
+    if (!data->isValid) {
+        printDone(invalidPageRangeToPrint(m_printContext));
+        return;
+    }
+
     m_xDPI = xDPI;
     m_yDPI = yDPI;
     m_cairoContext = adoptRef(cairo_create(surface));
-
-    PrintPagesData* data = new PrintPagesData(this);
     m_printPagesIdleId = gdk_threads_add_idle_full(G_PRIORITY_DEFAULT_IDLE + 10, printPagesIdle,
-                                                   data, printPagesIdleDone);
+                                                   data.leakPtr(), printPagesIdleDone);
 }
 
 }

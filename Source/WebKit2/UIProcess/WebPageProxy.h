@@ -154,6 +154,10 @@ class WebGestureEvent;
 typedef GenericCallback<WKStringRef, StringImpl*> StringCallback;
 typedef GenericCallback<WKSerializedScriptValueRef, WebSerializedScriptValue*> ScriptValueCallback;
 
+#if PLATFORM(GTK)
+typedef GenericCallback<WKErrorRef> PrintFinishedCallback;
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
 struct QueuedTouchEvents {
     QueuedTouchEvents(const NativeWebTouchEvent& event)
@@ -600,7 +604,7 @@ public:
     void drawRectToPDF(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, PassRefPtr<DataCallback>);
     void drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, PassRefPtr<DataCallback>);
 #elif PLATFORM(GTK)
-    void drawPagesForPrinting(WebFrameProxy*, const PrintInfo&, PassRefPtr<VoidCallback>);
+    void drawPagesForPrinting(WebFrameProxy*, const PrintInfo&, PassRefPtr<PrintFinishedCallback>);
 #endif
 
     const String& pendingAPIRequestURL() const { return m_pendingAPIRequestURL; }
@@ -838,6 +842,9 @@ private:
     void scriptValueCallback(const CoreIPC::DataReference&, uint64_t);
     void computedPagesCallback(const Vector<WebCore::IntRect>&, double totalScaleFactorForPrinting, uint64_t);
     void validateCommandCallback(const String&, bool, int, uint64_t);
+#if PLATFORM(GTK)
+    void printFinishedCallback(const WebCore::ResourceError&, uint64_t);
+#endif
 
     void focusedFrameChanged(uint64_t frameID);
     void frameSetLargestFrameChanged(uint64_t frameID);
@@ -915,6 +922,9 @@ private:
     HashMap<uint64_t, RefPtr<ScriptValueCallback> > m_scriptValueCallbacks;
     HashMap<uint64_t, RefPtr<ComputedPagesCallback> > m_computedPagesCallbacks;
     HashMap<uint64_t, RefPtr<ValidateCommandCallback> > m_validateCommandCallbacks;
+#if PLATFORM(GTK)
+    HashMap<uint64_t, RefPtr<PrintFinishedCallback> > m_printFinishedCallbacks;
+#endif
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
 

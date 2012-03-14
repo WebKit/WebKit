@@ -144,6 +144,9 @@ messages -> WebPageProxy {
     ScriptValueCallback(CoreIPC::DataReference resultData, uint64_t callbackID)
     ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
     ValidateCommandCallback(WTF::String command, bool isEnabled, int32_t state, uint64_t callbackID)
+#if PLATFORM(GTK)
+    PrintFinishedCallback(WebCore::ResourceError error, uint64_t callbackID)
+#endif
 
     PageScaleFactorDidChange(double scaleFactor)
 

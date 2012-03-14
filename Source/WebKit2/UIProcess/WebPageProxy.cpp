@@ -396,6 +396,9 @@ void WebPageProxy::close()
     m_loadDependentStringCallbackIDs.clear();
     invalidateCallbackMap(m_scriptValueCallbacks);
     invalidateCallbackMap(m_computedPagesCallbacks);
+#if PLATFORM(GTK)
+    invalidateCallbackMap(m_printFinishedCallbacks);
+#endif
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);
@@ -3183,6 +3186,20 @@ void WebPageProxy::validateCommandCallback(const String& commandName, bool isEna
     callback->performCallbackWithReturnValue(commandName.impl(), isEnabled, state);
 }
 
+#if PLATFORM(GTK)
+void WebPageProxy::printFinishedCallback(const ResourceError& printError, uint64_t callbackID)
+{
+    RefPtr<PrintFinishedCallback> callback = m_printFinishedCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    RefPtr<WebError> error = WebError::create(printError);
+    callback->performCallbackWithReturnValue(error.get());
+}
+#endif
+
 void WebPageProxy::focusedFrameChanged(uint64_t frameID)
 {
     if (!frameID) {
@@ -3286,6 +3303,9 @@ void WebPageProxy::processDidCrash()
     invalidateCallbackMap(m_scriptValueCallbacks);
     invalidateCallbackMap(m_computedPagesCallbacks);
     invalidateCallbackMap(m_validateCommandCallbacks);
+#if PLATFORM(GTK)
+    invalidateCallbackMap(m_printFinishedCallbacks);
+#endif
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);
@@ -3600,16 +3620,16 @@ void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& printIn
     process()->send(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 #elif PLATFORM(GTK)
-void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, PassRefPtr<VoidCallback> didPrintCallback)
+void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, PassRefPtr<PrintFinishedCallback> didPrintCallback)
 {
-    RefPtr<VoidCallback> callback = didPrintCallback;
+    RefPtr<PrintFinishedCallback> callback = didPrintCallback;
     if (!isValid()) {
         callback->invalidate();
         return;
     }
 
     uint64_t callbackID = callback->callbackID();
-    m_voidCallbacks.set(callbackID, callback.get());
+    m_printFinishedCallbacks.set(callbackID, callback.get());
     m_isInPrintingMode = true;
     process()->send(Messages::WebPage::DrawPagesForPrinting(frame->frameID(), printInfo, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }

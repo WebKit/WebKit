@@ -38,6 +38,7 @@ typedef struct _GtkPageRange GtkPageRange;
 
 namespace WebCore {
 class PrintContext;
+class ResourceError;
 };
 
 namespace WebKit {
@@ -49,6 +50,7 @@ public:
     static PassRefPtr<WebPrintOperationGtk> create(WebPage*, const PrintInfo&);
     ~WebPrintOperationGtk();
 
+    WebCore::PrintContext* printContext() const { return m_printContext; }
     GtkPrintSettings* printSettings() const { return m_printSettings.get(); }
     GtkPageSetup* pageSetup() const { return m_pageSetup.get(); }
     void setNumberOfPagesToPrint(size_t numberOfPages) { m_numberOfPagesToPrint = numberOfPages; }
@@ -87,7 +89,8 @@ protected:
     void getRowsAndColumnsOfPagesPerSheet(size_t& rows, size_t& columns);
     void getPositionOfPageInSheet(size_t rows, size_t columns, int& x, int&y);
     void prepareContextToDraw();
-    void printDone();
+    void printPagesDone();
+    void printDone(const WebCore::ResourceError&);
 
     WebPage* m_webPage;
     GRefPtr<GtkPrintSettings> m_printSettings;

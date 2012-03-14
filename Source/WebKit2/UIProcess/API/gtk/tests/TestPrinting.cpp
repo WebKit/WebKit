@@ -72,37 +72,63 @@ static void testWebViewPrintRequested(WebViewTest* test, gconstpointer)
 }
 
 #ifdef HAVE_GTK_UNIX_PRINTING
-static void testPrintOperationPrintLoadChanged(WebKitWebView*, WebKitLoadEvent loadEvent, WebViewTest* test)
-{
-    if (loadEvent != WEBKIT_LOAD_FINISHED)
-        return;
-    g_main_loop_quit(test->m_mainLoop);
-}
+class PrintTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(PrintTest);
 
-static void testPrintOperationPrintFinished(WebKitPrintOperation* printOperation, WebViewTest* test)
-{
-    g_object_unref(printOperation);
-    g_main_loop_quit(test->m_mainLoop);
-}
+    static void printFinishedCallback(WebKitPrintOperation*, PrintTest* test)
+    {
+        g_main_loop_quit(test->m_mainLoop);
+    }
 
-static gboolean testPrintOperationPrintPrinter(GtkPrinter* printer, gpointer userData)
-{
-    if (strcmp(gtk_printer_get_name(printer), "Print to File"))
-        return FALSE;
+    static void printFailedCallback(WebKitPrintOperation*, GError* error, PrintTest* test)
+    {
+        g_assert(test->m_expectedError);
+        g_assert(error);
+        g_assert(g_error_matches(error, WEBKIT_PRINT_ERROR, test->m_expectedError));
+    }
 
-    GtkPrinter** foundPrinter = static_cast<GtkPrinter**>(userData);
-    *foundPrinter = static_cast<GtkPrinter*>(g_object_ref(printer));
-    return TRUE;
-}
+    PrintTest()
+        : m_expectedError(0)
+    {
+        m_printOperation = adoptGRef(webkit_print_operation_new(m_webView));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_printOperation.get()));
+        g_signal_connect(m_printOperation.get(), "finished", G_CALLBACK(printFinishedCallback), this);
+        g_signal_connect(m_printOperation.get(), "failed", G_CALLBACK(printFailedCallback), this);
+    }
 
-static void testPrintOperationPrint(WebViewTest* test, gconstpointer)
+    static gboolean testPrintOperationPrintPrinter(GtkPrinter* printer, gpointer userData)
+    {
+        if (strcmp(gtk_printer_get_name(printer), "Print to File"))
+            return FALSE;
+
+        GtkPrinter** foundPrinter = static_cast<GtkPrinter**>(userData);
+        *foundPrinter = static_cast<GtkPrinter*>(g_object_ref(printer));
+        return TRUE;
+    }
+
+    GtkPrinter* findPrintToFilePrinter()
+    {
+        GtkPrinter* printer = 0;
+        gtk_enumerate_printers(testPrintOperationPrintPrinter, &printer, 0, TRUE);
+        return printer;
+    }
+
+    void waitUntilPrintFinished()
+    {
+        g_main_loop_run(m_mainLoop);
+    }
+
+    GRefPtr<WebKitPrintOperation> m_printOperation;
+    unsigned int m_expectedError;
+};
+
+static void testPrintOperationPrint(PrintTest* test, gconstpointer)
 {
-    g_signal_connect(test->m_webView, "load-changed", G_CALLBACK(testPrintOperationPrintLoadChanged), test);
     test->loadHtml("<html><body>WebKitGTK+ printing test</body></html>", 0);
-    g_main_loop_run(test->m_mainLoop);
+    test->waitUntilLoadFinished();
 
-    GtkPrinter* printer = 0;
-    gtk_enumerate_printers(testPrintOperationPrintPrinter, &printer, 0, TRUE);
+    GRefPtr<GtkPrinter> printer = adoptGRef(test->findPrintToFilePrinter());
     if (!printer) {
         g_message("%s", "Cannot test WebKitPrintOperation/print: no suitable printer found");
         return;
@@ -113,16 +139,12 @@ static void testPrintOperationPrint(WebViewTest* test, gconstpointer)
     GOwnPtr<char> outputURI(g_file_get_uri(outputFile.get()));
 
     GRefPtr<GtkPrintSettings> printSettings = adoptGRef(gtk_print_settings_new());
-    gtk_print_settings_set_printer(printSettings.get(), gtk_printer_get_name(printer));
+    gtk_print_settings_set_printer(printSettings.get(), gtk_printer_get_name(printer.get()));
     gtk_print_settings_set(printSettings.get(), GTK_PRINT_SETTINGS_OUTPUT_URI, outputURI.get());
-    g_object_unref(printer);
 
-    GRefPtr<WebKitPrintOperation> printOperation = webkit_print_operation_new(test->m_webView);
-    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(printOperation.get()));
-    g_signal_connect(printOperation.get(), "finished", G_CALLBACK(testPrintOperationPrintFinished), test);
-    webkit_print_operation_set_print_settings(printOperation.get(), printSettings.get());
-    webkit_print_operation_print(printOperation.get());
-    g_main_loop_run(test->m_mainLoop);
+    webkit_print_operation_set_print_settings(test->m_printOperation.get(), printSettings.get());
+    webkit_print_operation_print(test->m_printOperation.get());
+    test->waitUntilPrintFinished();
 
     GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(outputFile.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE","G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
                                                               static_cast<GFileQueryInfoFlags>(0), 0, 0));
@@ -131,6 +153,40 @@ static void testPrintOperationPrint(WebViewTest* test, gconstpointer)
     g_assert_cmpstr(g_file_info_get_content_type(fileInfo.get()), ==, "application/pdf");
 
     g_file_delete(outputFile.get(), 0, 0);
+}
+
+static void testPrintOperationErrors(PrintTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body>WebKitGTK+ printing errors test</body></html>", 0);
+    test->waitUntilLoadFinished();
+
+    GRefPtr<GtkPrinter> printer = adoptGRef(test->findPrintToFilePrinter());
+    if (!printer) {
+        g_message("%s", "Cannot test WebKitPrintOperation/print: no suitable printer found");
+        return;
+    }
+
+    // General Error: invalid filename.
+    test->m_expectedError = WEBKIT_PRINT_ERROR_GENERAL;
+    GRefPtr<GtkPrintSettings> printSettings = adoptGRef(gtk_print_settings_new());
+    gtk_print_settings_set_printer(printSettings.get(), gtk_printer_get_name(printer.get()));
+    gtk_print_settings_set(printSettings.get(), GTK_PRINT_SETTINGS_OUTPUT_URI, "file:///foo/bar");
+    webkit_print_operation_set_print_settings(test->m_printOperation.get(), printSettings.get());
+    webkit_print_operation_print(test->m_printOperation.get());
+    test->waitUntilPrintFinished();
+
+    // Printer not found error.
+    test->m_expectedError = WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND;
+    gtk_print_settings_set_printer(printSettings.get(), "The fake WebKit printer");
+    webkit_print_operation_print(test->m_printOperation.get());
+    test->waitUntilPrintFinished();
+
+    // No pages to print: print even pages for a single page document.
+    test->m_expectedError = WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE;
+    gtk_print_settings_set_printer(printSettings.get(), gtk_printer_get_name(printer.get()));
+    gtk_print_settings_set_page_set(printSettings.get(), GTK_PAGE_SET_EVEN);
+    webkit_print_operation_print(test->m_printOperation.get());
+    test->waitUntilPrintFinished();
 }
 #endif // HAVE_GTK_UNIX_PRINTING
 
@@ -142,7 +198,8 @@ void beforeAll()
     WebViewTest::add("WebKitPrintOperation", "printing-settings", testPrintOperationPrintSettings);
     WebViewTest::add("WebKitWebView", "print-requested", testWebViewPrintRequested);
 #ifdef HAVE_GTK_UNIX_PRINTING
-    WebViewTest::add("WebKitPrintOperation", "print", testPrintOperationPrint);
+    PrintTest::add("WebKitPrintOperation", "print", testPrintOperationPrint);
+    PrintTest::add("WebKitPrintOperation", "print-errors", testPrintOperationErrors);
 #endif
 }
 

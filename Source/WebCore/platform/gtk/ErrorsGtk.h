@@ -24,6 +24,7 @@
 
 namespace WebCore {
 
+class PrintContext;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -32,6 +33,7 @@ const char* const errorDomainNetwork = "WebKitNetworkError";
 const char* const errorDomainPolicy = "WebKitPolicyError";
 const char* const errorDomainPlugin = "WebKitPluginError";
 const char* const errorDomainDownload = "WebKitDownloadError";
+const char* const errorDomainPrint = "WebKitPrintError";
 
 enum NetworkError {
     NetworkErrorFailed = 399,
@@ -65,6 +67,12 @@ enum DownloadError {
     DownloadErrorDestination = 401
 };
 
+enum PrintError {
+    PrintErrorGeneral = 599,
+    PrintErrorPrinterNotFound = 500,
+    PrintErrorInvalidPageRange = 501
+};
+
 ResourceError cancelledError(const ResourceRequest&);
 ResourceError blockedError(const ResourceRequest&);
 ResourceError cannotShowURLError(const ResourceRequest&);
@@ -75,6 +83,9 @@ ResourceError pluginWillHandleLoadError(const ResourceResponse&);
 ResourceError downloadNetworkError(const ResourceError&);
 ResourceError downloadCancelledByUserError(const ResourceResponse&);
 ResourceError downloadDestinationError(const ResourceResponse&, const String& errorMessage);
+ResourceError printError(const PrintContext*, const String& errorMessage);
+ResourceError printerNotFoundError(const PrintContext*);
+ResourceError invalidPageRangeToPrint(const PrintContext*);
 
 }
 

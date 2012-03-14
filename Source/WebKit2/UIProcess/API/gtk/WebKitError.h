@@ -29,10 +29,11 @@
 
 G_BEGIN_DECLS
 
-#define WEBKIT_NETWORK_ERROR webkit_network_error_quark ()
-#define WEBKIT_POLICY_ERROR  webkit_policy_error_quark ()
-#define WEBKIT_PLUGIN_ERROR  webkit_plugin_error_quark ()
+#define WEBKIT_NETWORK_ERROR  webkit_network_error_quark ()
+#define WEBKIT_POLICY_ERROR   webkit_policy_error_quark ()
+#define WEBKIT_PLUGIN_ERROR   webkit_plugin_error_quark ()
 #define WEBKIT_DOWNLOAD_ERROR webkit_download_error_quark ()
+#define WEBKIT_PRINT_ERROR    webkit_print_error_quark ()
 
 /**
  * WebKitNetworkError:
@@ -104,6 +105,20 @@ typedef enum {
     WEBKIT_DOWNLOAD_ERROR_DESTINATION = 401
 } WebKitDownloadError;
 
+/**
+ * WebKitPrintError:
+ * @WEBKIT_PRINT_ERROR_GENERAL: Unspecified error during a print operation
+ * @WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND: Selected printer cannot be found
+ * @WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE: Invalid page range
+ *
+ * Enum values used to denote the various print errors.
+ */
+typedef enum {
+    WEBKIT_PRINT_ERROR_GENERAL = 599,
+    WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND = 500,
+    WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE = 501
+} WebKitPrintError;
+
 WEBKIT_API GQuark
 webkit_network_error_quark  (void);
 
@@ -115,6 +130,9 @@ webkit_plugin_error_quark   (void);
 
 WEBKIT_API GQuark
 webkit_download_error_quark (void);
+
+WEBKIT_API GQuark
+webkit_print_error_quark    (void);
 
 G_END_DECLS
 

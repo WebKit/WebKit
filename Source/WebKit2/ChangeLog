@@ -1,3 +1,56 @@
+2012-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Handle printing errors in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=77197
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitError.cpp:
+        (webkit_print_error_quark): Add new error domain for print
+        errors.
+        * UIProcess/API/gtk/WebKitError.h: Ad print errors.
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkit_print_operation_class_init): Add
+        WebKitPrintOperation::failed signal.
+        (drawPagesForPrintingCompleted): Emit WebKitPrintOperation::failed
+        when the print operation failed with the given error.
+        (webkitPrintOperationPrintPagesForFrame): Use
+        PrintFinishedCallback instead of a VoidCallback.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestPrinting.cpp:
+        (testPrintOperationPrint):
+        (testPrintOperationErrors): Test different print errors are
+        correctly reported.
+        (beforeAll):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Invalidate print finished callbacks
+        map.
+        (WebKit::WebPageProxy::printFinishedCallback): Callback called
+        when the print operation has finished in the web process.
+        (WebKit::WebPageProxy::processDidCrash): Invalidate print finished
+        callbacks map.
+        (WebKit::WebPageProxy::drawPagesForPrinting): Use a
+        PrintFinishedCallback instead of a VoidCallback.
+        * UIProcess/WebPageProxy.h:
+        (WebKit): Delcare PrintFinishedCallback as a generic callback.
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in: Use PrintFinishedCallback
+        instead of VoidCallback as callback argument of
+        DrawPagesForPrinting message.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::PrintPagesData::PrintPagesData): Mark the data as invalid
+        when there are no pages to print.
+        (PrintPagesData): Add isValid parameter to mark the data struct as
+        invalid.
+        (WebKit::WebPrintOperationGtk::printPagesIdleDone): Call
+        printPagesDone() instead of printDone().
+        (WebKit::WebPrintOperationGtk::printPagesDone): Renamed.
+        (WebKit::WebPrintOperationGtk::printDone): Notify the UI process
+        that the print operation has finsihed.
+        (WebKit::WebPrintOperationGtk::print): Finish the print if the
+        PrintPagesData struct is not valid.
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+
 2012-03-13  Jer Noble  <jer.noble@apple.com>
 
         Lion Intel Debug WebKit2 Tests crashing under [WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]
