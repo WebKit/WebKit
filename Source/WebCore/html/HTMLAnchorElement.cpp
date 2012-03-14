@@ -25,6 +25,7 @@
 #include "HTMLAnchorElement.h"
 
 #include "Attribute.h"
+#include "DNS.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
@@ -37,7 +38,6 @@
 #include "Page.h"
 #include "PingLoader.h"
 #include "RenderImage.h"
-#include "ResourceHandle.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
@@ -221,7 +221,7 @@ void HTMLAnchorElement::parseAttribute(Attribute* attr)
             String parsedURL = stripLeadingAndTrailingHTMLSpaces(attr->value());
             if (document()->isDNSPrefetchEnabled()) {
                 if (protocolIs(parsedURL, "http") || protocolIs(parsedURL, "https") || parsedURL.startsWith("//"))
-                    ResourceHandle::prepareForURL(document()->completeURL(parsedURL));
+                    prefetchDNS(document()->completeURL(parsedURL).host());
             }
             if (document()->page() && !document()->page()->javaScriptURLsAreAllowed() && protocolIsJavaScript(parsedURL)) {
                 clearIsLink();

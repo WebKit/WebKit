@@ -179,14 +179,6 @@ static void ensureSessionIsInitialized(SoupSession* session)
     g_object_set_data(G_OBJECT(session), "webkit-init", reinterpret_cast<void*>(0xdeadbeef));
 }
 
-void ResourceHandle::prepareForURL(const KURL& url)
-{
-    GOwnPtr<SoupURI> soupURI(soup_uri_new(url.string().utf8().data()));
-    if (!soupURI)
-        return;
-    soup_session_prepare_for_uri(ResourceHandle::defaultSession(), soupURI.get());
-}
-
 // Called each time the message is going to be sent again except the first time.
 // It's used mostly to let webkit know about redirects.
 static void restartedCallback(SoupMessage* msg, gpointer data)

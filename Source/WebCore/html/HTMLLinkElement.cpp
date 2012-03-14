@@ -42,7 +42,6 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "Page.h"
-#include "ResourceHandle.h"
 #include "ScriptEventListener.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"

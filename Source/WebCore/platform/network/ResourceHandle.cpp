@@ -28,7 +28,6 @@
 #include "ResourceHandleInternal.h"
 
 #include "BlobRegistry.h"
-#include "DNS.h"
 #include "Logging.h"
 #include "ResourceHandleClient.h"
 #include "Timer.h"
@@ -184,13 +183,6 @@ void ResourceHandle::setDefersLoading(bool defers)
 
     platformSetDefersLoading(defers);
 }
-
-#if !USE(SOUP)
-void ResourceHandle::prepareForURL(const KURL& url)
-{
-    return prefetchDNS(url.host());
-}
-#endif
 
 void ResourceHandle::cacheMetadata(const ResourceResponse&, const Vector<char>&)
 {

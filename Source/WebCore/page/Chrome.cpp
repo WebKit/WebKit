@@ -373,7 +373,7 @@ void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modif
     if (result.innerNode()) {
         Document* document = result.innerNode()->document();
         if (document && document->isDNSPrefetchEnabled())
-            ResourceHandle::prepareForURL(result.absoluteLinkURL());
+            prefetchDNS(result.absoluteLinkURL().host());
     }
     m_client->mouseDidMoveOverElement(result, modifierFlags);
 
