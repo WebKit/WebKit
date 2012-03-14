@@ -230,6 +230,13 @@ CachedXSLStyleSheet* CachedResourceLoader::requestXSLStyleSheet(ResourceRequest&
 }
 #endif
 
+#if ENABLE(SVG)
+CachedSVGDocument* CachedResourceLoader::requestSVGDocument(ResourceRequest& request)
+{
+    return static_cast<CachedSVGDocument*>(requestResource(CachedResource::SVGDocumentResource, request, request.url(), defaultCachedResourceOptions()));
+}
+#endif
+
 #if ENABLE(LINK_PREFETCH)
 CachedResource* CachedResourceLoader::requestLinkResource(CachedResource::Type type, ResourceRequest& request, ResourceLoadPriority priority)
 {

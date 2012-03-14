@@ -40,7 +40,20 @@ public:
     void addSupportedAttributes(HashSet<QualifiedName>&);
 
     static String fragmentIdentifierFromIRIString(const String&, Document*);
-    static Element* targetElementFromIRIString(const String&, Document*, String* = 0);
+    static Element* targetElementFromIRIString(const String&, Document*, String* = 0, Document* = 0);
+
+    static inline bool isExternalURIReference(const String& uri, Document* baseDocument)
+    {
+        if (uri.startsWith("#"))
+            return false;
+
+        size_t startOfFragmentIdentifier = uri.find('#');
+        // If the target document is the base document but its path is given in format href="thisDocument.svg#targetTag"
+        // then we should handle it as internal.
+        if (uri.substring(0, startOfFragmentIdentifier) != baseDocument->url().lastPathComponent())
+            return true;
+        return false;
+    }
 
 protected:
     virtual void setHrefBaseValue(const String&) = 0;

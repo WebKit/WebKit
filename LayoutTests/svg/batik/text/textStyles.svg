@@ -23,7 +23,7 @@
 <!-- Test description here                                                     -->
 <!--                                                                           -->
 <!-- @author bill.haneman@ireland.sun.com                                      -->
-<!-- @version $Id: textStyles.svg,v 1.5 2004/08/18 07:12:23 vhardy Exp $                                                             -->
+<!-- @version $Id: textStyles.svg,v 1.5 2004/08/18 07:12:23 vhardy Exp $       -->
 <!-- ========================================================================= -->
 <?xml-stylesheet type="text/css" href="../resources/test.css" ?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="450" height="500" viewBox="0 0 450 500">
@@ -35,7 +35,7 @@
 
     <defs>
      <style type="text/css"><![CDATA[
-       .Caption { font-size: 8; font-family: dialog; font-weight: normal;
+       .Caption { font-size: 12px; font-family: dialog; font-weight: normal;
                   font-style: normal; stroke: none; stroke-width: 0; 
                   fill: black } ]]>
      </style>
@@ -124,17 +124,17 @@
 
         <g transform="translate(100, 110)" class="SansSerifPlain">
             <use xlink:href="#sample"/>
-            <text y="15" class="Caption">SansSerif, normal weight</text>
+            <text font-size="15" y="15" class="Caption">SansSerif, normal weight</text>
         </g>
 
         <g transform="translate(225, 110)" class="SansSerifBold">
             <use xlink:href="#sample"/>
-            <text y="15" class="Caption">SansSerif, bold</text>
+            <text font-size="15"  y="15" class="Caption">SansSerif, bold</text>
         </g>
 
         <g transform="translate(350, 110)" class="SansSerifOblique">
             <use xlink:href="#sample"/>
-            <text y="15" class="Caption">SansSerif, oblique</text>
+            <text  font-size="15" y="15" class="Caption">SansSerif, oblique</text>
         </g>
 
         <g transform="translate(100, 160)" class="SerifPlain">

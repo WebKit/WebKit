@@ -22,6 +22,7 @@
 #define SVGUseElement_h
 
 #if ENABLE(SVG)
+#include "CachedSVGDocument.h"
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
@@ -32,15 +33,18 @@
 
 namespace WebCore {
 
+class CachedSVGDocument;
 class SVGElementInstance;
 
 class SVGUseElement : public SVGStyledTransformableElement,
                       public SVGTests,
                       public SVGLangSpace,
                       public SVGExternalResourcesRequired,
-                      public SVGURIReference {
+                      public SVGURIReference,
+                      public CachedSVGDocumentClient {
 public:
     static PassRefPtr<SVGUseElement> create(const QualifiedName&, Document*);
+    virtual ~SVGUseElement();
 
     SVGElementInstance* instanceRoot();
     SVGElementInstance* animatedInstanceRoot() const;
@@ -100,6 +104,12 @@ private:
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 
+    bool cachedDocumentIsStillLoading();
+    Document* externalDocument() const;
+    bool instanceTreeIsLoading(SVGElementInstance*);
+    virtual void notifyFinished(CachedResource*);
+    Document* referencedDocument() const;
+
     // SVGTests
     virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }
     virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
@@ -107,6 +117,7 @@ private:
 
     bool m_needsShadowTreeRecreation;
     RefPtr<SVGElementInstance> m_targetElementInstance;
+    CachedResourceHandle<CachedSVGDocument> m_cachedDocument;
 };
 
 }

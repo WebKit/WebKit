@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class CachedCSSStyleSheet;
+class CachedSVGDocument;
 class CachedFont;
 class CachedImage;
 class CachedRawResource;
@@ -69,6 +70,9 @@ public:
     CachedFont* requestFont(ResourceRequest&);
     CachedRawResource* requestRawResource(ResourceRequest&, const ResourceLoaderOptions&);
 
+#if ENABLE(SVG)
+    CachedSVGDocument* requestSVGDocument(ResourceRequest&);
+#endif
 #if ENABLE(XSLT)
     CachedXSLStyleSheet* requestXSLStyleSheet(ResourceRequest&);
 #endif

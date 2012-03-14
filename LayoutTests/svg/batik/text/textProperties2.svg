@@ -49,7 +49,7 @@
     </defs>
 
     <g id="testContent">
-        <text class="title" x="50%" y="40" font-size="15" >
+        <text class="title" x="50%" y="40" font-size="15px" >
             Text display and visibility.</text>
 
         <text x="50%" y="74" text-anchor="middle"

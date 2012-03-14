@@ -1041,6 +1041,11 @@ BUGWK62974 LINUX WIN : svg/wicd/test-rightsizing-b.xhtml = IMAGE+TEXT
 BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
 BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
 
+// These tests will need rebaseline after landing 12499.
+BUGWK12499 LINUX : svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg = IMAGE+TEXT IMAGE TEXT PASS
+BUGWK12499 LINUX : svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t.svg = IMAGE+TEXT IMAGE TEXT PASS
+BUGWK12499 LINUX : svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t.svg = IMAGE+TEXT IMAGE TEXT PASS
+
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------
