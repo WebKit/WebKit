@@ -96,6 +96,7 @@ module window {
         void setShouldDisplayTrackKind(in Document document, in DOMString kind, in boolean enabled) raises (DOMException);
         boolean shouldDisplayTrackKind(in Document document, in DOMString trackKind) raises (DOMException);
 #endif
+
         attribute [Custom] Array userPreferredLanguages;
 
         unsigned long wheelEventHandlerCount(in Document document) raises (DOMException);
@@ -104,6 +105,9 @@ module window {
         NodeList nodesFromRect(in Document document, in long x, in long y,
             in unsigned long topPadding, in unsigned long rightPadding, in unsigned long bottomPadding, in unsigned long leftPadding,
             in boolean ignoreClipping) raises (DOMException);
+
+        void emitInspectorDidBeginFrame();
+        void emitInspectorDidCancelFrame();
 
         readonly attribute InternalSettings settings;
     };

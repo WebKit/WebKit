@@ -1,3 +1,12 @@
+2012-03-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: add didCancelFrame timeline event
+        https://bugs.webkit.org/show_bug.cgi?id=80994
+
+        Reviewed by Pavel Feldman.
+
+        * Source/autotools/symbols.filter:
+
 2012-03-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Deal with multiple paths in QMAKE_EXTRA_MODULE_FORWARDS

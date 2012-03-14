@@ -129,6 +129,9 @@ public:
     PassRefPtr<NodeList> nodesFromRect(Document*, int x, int y, unsigned topPadding, unsigned rightPadding,
         unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, ExceptionCode&) const;
 
+    void emitInspectorDidBeginFrame();
+    void emitInspectorDidCancelFrame();
+
     static const char* internalsId;
 
     InternalSettings* settings() const { return m_settings.get(); }

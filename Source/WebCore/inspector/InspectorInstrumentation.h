@@ -121,6 +121,7 @@ public:
     static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext*, int timerId);
     static void didFireTimer(const InspectorInstrumentationCookie&);
     static void didBeginFrame(Page*);
+    static void didCancelFrame(Page*);
     static InspectorInstrumentationCookie willLayout(Frame*);
     static void didLayout(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willLoadXHR(ScriptExecutionContext*, XMLHttpRequest*);
@@ -274,6 +275,7 @@ private:
     static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents*, int timerId);
     static void didFireTimerImpl(const InspectorInstrumentationCookie&);
     static void didBeginFrameImpl(InstrumentingAgents*);
+    static void didCancelFrameImpl(InstrumentingAgents*);
     static InspectorInstrumentationCookie willLayoutImpl(InstrumentingAgents*);
     static void didLayoutImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willLoadXHRImpl(InstrumentingAgents*, XMLHttpRequest*);
@@ -718,6 +720,15 @@ inline void InspectorInstrumentation::didBeginFrame(Page* page)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         didBeginFrameImpl(instrumentingAgents);
+#endif
+}
+
+inline void InspectorInstrumentation::didCancelFrame(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        didCancelFrameImpl(instrumentingAgents);
 #endif
 }
 

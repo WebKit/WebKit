@@ -388,6 +388,12 @@ void InspectorInstrumentation::didBeginFrameImpl(InstrumentingAgents* instrument
         timelineAgent->didBeginFrame();
 }
 
+void InspectorInstrumentation::didCancelFrameImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didCancelFrame();
+}
+
 InspectorInstrumentationCookie InspectorInstrumentation::willLayoutImpl(InstrumentingAgents* instrumentingAgents)
 {
     int timelineAgentId = 0;

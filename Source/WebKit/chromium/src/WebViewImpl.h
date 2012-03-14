@@ -140,6 +140,7 @@ public:
     virtual void didLosePointerLock();
     virtual void didChangeWindowResizerRect();
     virtual void instrumentBeginFrame();
+    virtual void instrumentCancelFrame();
 
     // WebView methods:
     virtual void initializeMainFrame(WebFrameClient*);

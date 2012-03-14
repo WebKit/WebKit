@@ -1,3 +1,22 @@
+2012-03-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: add didCancelFrame timeline event
+        https://bugs.webkit.org/show_bug.cgi?id=80994
+
+        Reviewed by Pavel Feldman.
+
+        - add intrumentCanceFrame(), called when renderer decides not to
+            render frame after instrumentBeginFrame() was called.
+
+        * public/WebWidget.h:
+        (WebWidget):
+        (WebKit::WebWidget::instrumentCancelFrame):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::instrumentCancelFrame):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-03-14  Dana Jansens  <danakj@chromium.org>
 
         Region can acquire an empty span by subtracting an empty Region

@@ -174,7 +174,12 @@ void InspectorTimelineAgent::setIncludeMemoryDetails(ErrorString*, bool value)
 
 void InspectorTimelineAgent::didBeginFrame()
 {
-    appendRecord(InspectorObject::create(), TimelineRecordType::BeginFrame, true);
+    pushCancelableRecord(InspectorObject::create(), TimelineRecordType::BeginFrame);
+}
+
+void InspectorTimelineAgent::didCancelFrame()
+{
+    cancelRecord(TimelineRecordType::BeginFrame);
 }
 
 void InspectorTimelineAgent::willCallFunction(const String& scriptName, int scriptLine)
@@ -433,6 +438,7 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
 void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack)
 {
     pushGCEventRecords();
+    commitCancelableRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     record->setObject("data", data);
     record->setString("type", type);
@@ -442,8 +448,36 @@ void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, cons
 void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack)
 {
     pushGCEventRecords();
+    commitCancelableRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type));
+}
+
+void InspectorTimelineAgent::pushCancelableRecord(PassRefPtr<InspectorObject> data, const String& type)
+{
+    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), 0);
+    m_recordStack.append(TimelineRecordEntry(record.release(), data, 0, type, true));
+}
+
+void InspectorTimelineAgent::commitCancelableRecords()
+{
+    while (!m_recordStack.isEmpty()) {
+        TimelineRecordEntry entry = m_recordStack.last();
+        if (!m_recordStack.last().cancelable)
+            break;
+        m_recordStack.removeLast();
+        entry.record->setObject("data", entry.data);
+        addRecordToTimeline(entry.record, entry.type);
+    }
+}
+
+void InspectorTimelineAgent::cancelRecord(const String& type)
+{
+    if (m_recordStack.isEmpty())
+        return;
+    TimelineRecordEntry entry = m_recordStack.last();
+    if (entry.cancelable && entry.type == type)
+        m_recordStack.removeLast();
 }
 
 void InspectorTimelineAgent::clearRecordStack()

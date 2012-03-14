@@ -1,0 +1,55 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    window.internals.emitInspectorDidBeginFrame();
+    console.timeStamp("FRAME 1");
+
+    window.internals.emitInspectorDidBeginFrame();
+    window.internals.emitInspectorDidCancelFrame();
+
+    window.internals.emitInspectorDidBeginFrame();
+    console.timeStamp("FRAME 2");
+    window.internals.emitInspectorDidCancelFrame();
+}
+
+function test()
+{
+    function formatRecord(record)
+    {
+        if (record.type === WebInspector.TimelineModel.RecordType.TimeStamp ||
+            record.type === WebInspector.TimelineModel.RecordType.BeginFrame) {
+            InspectorTest.dumpTimelineRecord(record);
+        }
+    }
+
+    InspectorTest.startTimeline(function() {
+        InspectorTest.evaluateInPage("performActions()", step2);
+    });
+
+    function step2()
+    {
+        InspectorTest.stopTimeline(finish);
+    }
+
+    function finish()
+    {
+        InspectorTest.printTimelineRecords(null, formatRecord);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests reporting and canceling of didBeginFrame events in Timeline
+</p>
+
+</body>
+</html>

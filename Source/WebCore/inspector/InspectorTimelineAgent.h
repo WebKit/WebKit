@@ -84,6 +84,7 @@ public:
     void didDispatchEvent();
 
     void didBeginFrame();
+    void didCancelFrame();
 
     void willLayout();
     void didLayout();
@@ -133,14 +134,15 @@ public:
 
 private:
     struct TimelineRecordEntry {
-        TimelineRecordEntry(PassRefPtr<InspectorObject> record, PassRefPtr<InspectorObject> data, PassRefPtr<InspectorArray> children, const String& type)
-            : record(record), data(data), children(children), type(type)
+        TimelineRecordEntry(PassRefPtr<InspectorObject> record, PassRefPtr<InspectorObject> data, PassRefPtr<InspectorArray> children, const String& type, bool cancelable = false)
+            : record(record), data(data), children(children), type(type), cancelable(cancelable)
         {
         }
         RefPtr<InspectorObject> record;
         RefPtr<InspectorObject> data;
         RefPtr<InspectorArray> children;
         String type;
+        bool cancelable;
     };
         
     InspectorTimelineAgent(InstrumentingAgents*, InspectorState*, InspectorType);
@@ -150,7 +152,9 @@ private:
         
     void didCompleteCurrentRecord(const String& type);
     void appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack);
-
+    void pushCancelableRecord(PassRefPtr<InspectorObject>, const String& type);
+    void commitCancelableRecords();
+    void cancelRecord(const String& type);
     void addRecordToTimeline(PassRefPtr<InspectorObject>, const String& type);
 
     void pushGCEventRecords();

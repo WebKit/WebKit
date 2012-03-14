@@ -195,6 +195,9 @@ public:
     // Instrumentation method that marks beginning of frame update that includes
     // things like animate()/layout()/paint()/composite().
     virtual void instrumentBeginFrame() { }
+    // Cancels the effect of instrumentBeginFrame() in case there were no events
+    // following the call to instrumentBeginFrame().
+    virtual void instrumentCancelFrame() { }
 
 protected:
     ~WebWidget() { }

@@ -42,6 +42,7 @@
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
 #include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "InternalSettings.h"
 #include "IntRect.h"
 #include "Language.h"
@@ -701,6 +702,16 @@ PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int x, int y, 
     }
 
     return document->nodesFromRect(x, y, topPadding, rightPadding, bottomPadding, leftPadding, ignoreClipping);
+}
+
+void Internals::emitInspectorDidBeginFrame()
+{
+    InspectorInstrumentation::didBeginFrame(frame()->page());
+}
+
+void Internals::emitInspectorDidCancelFrame()
+{
+    InspectorInstrumentation::didCancelFrame(frame()->page());
 }
 
 }

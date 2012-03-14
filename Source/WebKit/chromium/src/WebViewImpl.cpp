@@ -1250,6 +1250,11 @@ void WebViewImpl::instrumentBeginFrame()
     InspectorInstrumentation::didBeginFrame(m_page.get());
 }
 
+void WebViewImpl::instrumentCancelFrame()
+{
+    InspectorInstrumentation::didCancelFrame(m_page.get());
+}
+
 void WebViewImpl::animate(double frameBeginTime)
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME)
