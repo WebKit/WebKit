@@ -1755,7 +1755,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
         return;
 
     BorderEdge edges[4];
-    getBorderEdgeInfo(edges, includeLogicalLeftEdge, includeLogicalRightEdge);
+    getBorderEdgeInfo(edges, style, includeLogicalLeftEdge, includeLogicalRightEdge);
 
     RoundedRect outerBorder = style->getRoundedBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect innerBorder = style->getRoundedInnerBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
@@ -2560,9 +2560,8 @@ void RenderBoxModelObject::clipBorderSideForComplexInnerPath(GraphicsContext* gr
     graphicsContext->clipOutRoundedRect(calculateAdjustedInnerBorder(innerBorder, side));
 }
 
-void RenderBoxModelObject::getBorderEdgeInfo(BorderEdge edges[], bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
+void RenderBoxModelObject::getBorderEdgeInfo(BorderEdge edges[], const RenderStyle* style, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
-    const RenderStyle* style = this->style();
     bool horizontal = style->isHorizontalWritingMode();
 
     edges[BSTop] = BorderEdge(style->borderTopWidth(),
@@ -2593,7 +2592,7 @@ void RenderBoxModelObject::getBorderEdgeInfo(BorderEdge edges[], bool includeLog
 bool RenderBoxModelObject::borderObscuresBackgroundEdge(const FloatSize& contextScale) const
 {
     BorderEdge edges[4];
-    getBorderEdgeInfo(edges);
+    getBorderEdgeInfo(edges, style());
 
     for (int i = BSTop; i <= BSLeft; ++i) {
         const BorderEdge& currEdge = edges[i];
@@ -2616,7 +2615,7 @@ bool RenderBoxModelObject::borderObscuresBackground() const
         return false;
 
     BorderEdge edges[4];
-    getBorderEdgeInfo(edges);
+    getBorderEdgeInfo(edges, style());
 
     for (int i = BSTop; i <= BSLeft; ++i) {
         const BorderEdge& currEdge = edges[i];

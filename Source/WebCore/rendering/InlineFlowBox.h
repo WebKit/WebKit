@@ -137,13 +137,13 @@ public:
     {
         if (!includeLogicalLeftEdge())
             return 0;
-        return isHorizontal() ? renderer()->style()->borderLeftWidth() : renderer()->style()->borderTopWidth();
+        return isHorizontal() ? renderer()->style(isFirstLineStyle())->borderLeftWidth() : renderer()->style(isFirstLineStyle())->borderTopWidth();
     }
     int borderLogicalRight() const
     {
         if (!includeLogicalRightEdge())
             return 0;
-        return isHorizontal() ? renderer()->style()->borderRightWidth() : renderer()->style()->borderBottomWidth();
+        return isHorizontal() ? renderer()->style(isFirstLineStyle())->borderRightWidth() : renderer()->style(isFirstLineStyle())->borderBottomWidth();
     }
     int paddingLogicalLeft() const
     {
