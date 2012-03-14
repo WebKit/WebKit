@@ -1,5 +1,27 @@
 2012-03-14  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 110480
+
+    2012-03-12  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=80888
+            Clear background for NSTextFieldCell is unreliable and not necessary
+            -and corresponding-
+            <rdar://problem/10663710>
+
+            Reviewed by Dan Bernstein.
+
+            With http://trac.webkit.org/changeset/104240 I thought it was necessary to 
+            make NSTextFieldCells draw with a clear background in order to allow styled 
+            text fields. That is not actually necessary; we just had a different bug 
+            where isControlStyled() was only checking for styled borders on text fields. 
+            Text fields can also be styled with backgrounds, so they need the full check.
+            * rendering/RenderThemeMac.mm:
+            (WebCore::RenderThemeMac::isControlStyled):
+            (WebCore::RenderThemeMac::textField):
+
+2012-03-14  Lucas Forschler  <lforschler@apple.com>
+
     Merge 104240
 
     2012-01-05  Beth Dakin  <bdakin@apple.com>
