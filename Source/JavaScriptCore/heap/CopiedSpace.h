@@ -68,6 +68,8 @@ public:
     size_t totalMemoryAllocated() { return m_totalMemoryAllocated; }
     size_t totalMemoryUtilized() { return m_totalMemoryUtilized; }
 
+    void destroy();
+
     static CopiedBlock* blockFor(void*);
 
 private:

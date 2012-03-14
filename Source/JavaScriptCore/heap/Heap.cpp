@@ -379,8 +379,9 @@ void Heap::destroy()
     m_handleHeap.finalizeWeakHandles();
     m_globalData->smallStrings.finalizeSmallStrings();
     shrink();
+    m_storageSpace.destroy();
     ASSERT(!size());
-    
+
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     m_slotVisitor.m_visitedTypeCounts.dump(WTF::dataFile(), "Visited Type Counts");
     m_destroyedTypeCounts.dump(WTF::dataFile(), "Destroyed Type Counts");

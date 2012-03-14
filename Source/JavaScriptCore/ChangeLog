@@ -1,3 +1,23 @@
+2012-03-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Heap::destroy leaks CopiedSpace
+        https://bugs.webkit.org/show_bug.cgi?id=81055
+
+        Reviewed by Geoffrey Garen.
+
+        Added a destroy() function to CopiedSpace that moves all normal size 
+        CopiedBlocks from the CopiedSpace to the Heap's list of free blocks 
+        as well as deallocates all of the oversize blocks in the CopiedSpace. 
+        This function is now called in Heap::destroy().
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::destroy):
+        (JSC):
+        * heap/CopiedSpace.h:
+        (CopiedSpace):
+        * heap/Heap.cpp:
+        (JSC::Heap::destroy):
+
 2012-03-14  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Implement REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR using AnimationFrameRateController

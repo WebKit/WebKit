@@ -261,4 +261,26 @@ CheckedBoolean CopiedSpace::getFreshBlock(AllocationEffort allocationEffort, Cop
     return true;
 }
 
+void CopiedSpace::destroy()
+{
+    while (!m_toSpace->isEmpty()) {
+        CopiedBlock* block = static_cast<CopiedBlock*>(m_toSpace->removeHead());
+        MutexLocker locker(m_heap->m_freeBlockLock);
+        m_heap->m_freeBlocks.append(block);
+        m_heap->m_numberOfFreeBlocks++;
+    }
+
+    while (!m_fromSpace->isEmpty()) {
+        CopiedBlock* block = static_cast<CopiedBlock*>(m_fromSpace->removeHead());
+        MutexLocker locker(m_heap->m_freeBlockLock);
+        m_heap->m_freeBlocks.append(block);
+        m_heap->m_numberOfFreeBlocks++;
+    }
+
+    while (!m_oversizeBlocks.isEmpty()) {
+        CopiedBlock* block = static_cast<CopiedBlock*>(m_oversizeBlocks.removeHead());
+        block->m_allocation.deallocate();
+    }
+}
+
 } // namespace JSC
