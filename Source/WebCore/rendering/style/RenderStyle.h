@@ -1224,7 +1224,7 @@ public:
     void setTextStrokeWidth(float w) { SET_VAR(rareInheritedData, textStrokeWidth, w) }
     void setTextFillColor(const Color& c) { SET_VAR(rareInheritedData, textFillColor, c) }
     void setColorSpace(ColorSpace space) { SET_VAR(rareInheritedData, colorSpace, space) }
-    void setOpacity(float f) { SET_VAR(rareNonInheritedData, opacity, f); }
+    void setOpacity(float f) { float v = clampTo<float>(f, 0, 1); SET_VAR(rareNonInheritedData, opacity, v); }
     void setAppearance(ControlPart a) { SET_VAR(rareNonInheritedData, m_appearance, a); }
     // For valid values of box-align see http://www.w3.org/TR/2009/WD-css3-flexbox-20090723/#alignment
     void setBoxAlign(EBoxAlignment a) { SET_VAR(rareNonInheritedData.access()->m_deprecatedFlexibleBox, align, a); }

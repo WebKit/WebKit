@@ -3387,11 +3387,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
     case CSSPropertyOpacity:
-        HANDLE_INHERIT_AND_INITIAL(opacity, Opacity)
-        if (!primitiveValue || !primitiveValue->isNumber())
-            return; // Error case.
-        // Clamp opacity to the range 0-1
-        m_style->setOpacity(clampTo<float>(primitiveValue->getDoubleValue(), 0, 1));
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(opacity, Opacity)
         return;
     case CSSPropertySrc: // Only used in @font-face rules.
         return;
