@@ -154,21 +154,11 @@ JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState*, JSCell*);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.
+
+// According to C++ rules, a type used for the return signature of function with C linkage (i.e.
+// 'extern "C"') needs to be POD; hence putting any constructors into it could cause either compiler
+// warnings, or worse, a change in the ABI used to return these types.
 struct DFGHandler {
-    DFGHandler(ExecState* exec, void* handler)
-    {
-        u.s.exec = exec;
-        u.s.handler = handler;
-    }
-
-#if !CPU(X86_64)
-    uint64_t encoded()
-    {
-        COMPILE_ASSERT(sizeof(Union) == sizeof(uint64_t), DFGHandler_Union_is_64bit);
-        return u.encoded;
-    }
-#endif
-
     union Union {
         struct Struct {
             ExecState* exec;
@@ -177,17 +167,28 @@ struct DFGHandler {
         uint64_t encoded;
     } u;
 };
+COMPILE_ASSERT(std::is_pod<DFGHandler>::value, DFGHandler_is_POD);
+
+inline DFGHandler createDFGHandler(ExecState* exec, void* handler)
+{
+    DFGHandler result;
+    result.u.s.exec = exec;
+    result.u.s.handler = handler;
+    return result;
+}
+
 #if CPU(X86_64)
 typedef DFGHandler DFGHandlerEncoded;
 inline DFGHandlerEncoded dfgHandlerEncoded(ExecState* exec, void* handler)
 {
-    return DFGHandler(exec, handler);
+    return createDFGHandler(exec, handler);
 }
 #else
 typedef uint64_t DFGHandlerEncoded;
 inline DFGHandlerEncoded dfgHandlerEncoded(ExecState* exec, void* handler)
 {
-    return DFGHandler(exec, handler).encoded();
+    COMPILE_ASSERT(sizeof(DFGHandler::Union) == sizeof(uint64_t), DFGHandler_Union_is_64bit);
+    return createDFGHandler(exec, handler).u.encoded;
 }
 #endif
 DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState*, uint32_t);

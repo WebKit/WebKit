@@ -1,5 +1,18 @@
 2012-03-13  Filip Pizlo  <fpizlo@apple.com>
 
+        Functions with C linkage should return POD types
+        https://bugs.webkit.org/show_bug.cgi?id=81061
+
+        Reviewed by Mark Rowe.
+
+        * dfg/DFGOperations.h:
+        * llint/LLIntSlowPaths.h:
+        (LLInt):
+        (SlowPathReturnType):
+        (JSC::LLInt::encodeResult):
+
+2012-03-13  Filip Pizlo  <fpizlo@apple.com>
+
         Loads from UInt32Arrays should not result in a double up-convert if it isn't necessary
         https://bugs.webkit.org/show_bug.cgi?id=80979
         <rdar://problem/11036848>

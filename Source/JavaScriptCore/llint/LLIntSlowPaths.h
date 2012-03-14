@@ -39,20 +39,21 @@ struct Instruction;
 namespace LLInt {
 
 #if USE(JSVALUE64)
+// According to C++ rules, a type used for the return signature of function with C linkage (i.e.
+// 'extern "C"') needs to be POD; hence putting any constructors into it could cause either compiler
+// warnings, or worse, a change in the ABI used to return these types.
 struct SlowPathReturnType {
     void* a;
     void* b;
-    
-    SlowPathReturnType(void* a, void* b)
-        : a(a)
-        , b(b)
-    {
-    }
 };
+COMPILE_ASSERT(std::is_pod<SlowPathReturnType>::value, SlowPathReturnType_is_POD);
 
 inline SlowPathReturnType encodeResult(void* a, void* b)
 {
-    return SlowPathReturnType(a, b);
+    SlowPathReturnType result;
+    result.a = a;
+    result.b = b;
+    return result;
 }
 #else
 typedef int64_t SlowPathReturnType;
