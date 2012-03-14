@@ -55,7 +55,6 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
-#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTTPParsers.h"
@@ -139,8 +138,8 @@
 #include <memalloc.h>
 #endif
 
-#if ENABLE(SKIA_GPU_CANVAS)
-#include "BlackBerryPlatformGraphics.h"
+#if ENABLE(ACCELERATED_2D_CANVAS)
+#include "SharedGraphicsContext3D.h"
 #include "GrContext.h"
 #endif
 
@@ -195,16 +194,16 @@ static KURL parseUrl(const String& url)
 }
 
 // Helper functions to convert to and from WebCore types.
-static inline MouseEventType toWebCoreMouseEventType(const Platform::MouseEvent::Type type)
+static inline WebCore::PlatformEvent::Type toWebCoreMouseEventType(const BlackBerry::Platform::MouseEvent::Type type)
 {
     switch (type) {
-    case Platform::MouseEvent::MouseButtonDown:
-        return MouseEventPressed;
+    case BlackBerry::Platform::MouseEvent::MouseButtonDown:
+        return WebCore::PlatformEvent::MousePressed;
     case Platform::MouseEvent::MouseButtonUp:
-        return MouseEventReleased;
+        return WebCore::PlatformEvent::MouseReleased;
     case Platform::MouseEvent::MouseMove:
     default:
-        return MouseEventMoved;
+        return WebCore::PlatformEvent::MouseMoved;
     }
 }
 
@@ -428,9 +427,9 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 #else
     pageClients.geolocationClient = m_geolocationClient;
 
-    pageClients.deviceMotionClient = new DeviceMotionClientBlackBerry(this);
-    pageClients.deviceOrientationClient = new DeviceOrientationClientBlackBerry(this);
     m_page = new Page(pageClients);
+    WebCore::provideDeviceOrientationTo(m_page, new DeviceOrientationClientBlackBerry(this));
+    WebCore::provideDeviceMotionTo(m_page, new DeviceMotionClientBlackBerry(this));
 
 #if ENABLE(NOTIFICATIONS)
     WebCore::provideNotification(m_page, NotificationPresenterImpl::instance());
@@ -464,7 +463,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     Platform::Settings* settings = Platform::Settings::get();
     m_page->settings()->setWebGLEnabled(settings && settings->isWebGLSupported());
 #endif
-#if ENABLE(SKIA_GPU_CANVAS)
+#if ENABLE(ACCELERATED_2D_CANVAS)
     m_page->settings()->setCanvasUsesAcceleratedDrawing(true);
     m_page->settings()->setAccelerated2dCanvasEnabled(true);
 #endif
@@ -786,11 +785,11 @@ void WebPagePrivate::setLoadState(LoadState state)
         {
             unscheduleZoomAboutPoint();
 
-#if ENABLE(SKIA_GPU_CANVAS)
+#if ENABLE(ACCELERATED_2D_CANVAS)
             if (m_page->settings()->canvasUsesAcceleratedDrawing()) {
                 // Free GPU resources as we're on a new page.
                 // This will help us to free memory pressure.
-                Platform::Graphics::makeSharedResourceContextCurrent(Platform::Graphics::GLES2);
+                SharedGraphicsContext3D::get()->makeContextCurrent();
                 GrContext* grContext = Platform::Graphics::getGrContext();
                 grContext->freeGpuResources();
             }
@@ -2000,9 +1999,9 @@ bool WebPagePrivate::useFixedLayout() const
     return true;
 }
 
-Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy)
+ActiveNodeContext WebPagePrivate::activeNodeContext(TargetDetectionStrategy strategy)
 {
-    Platform::WebContext context;
+    ActiveNodeContext context;
 
     RefPtr<Node> node = contextNode(strategy);
     m_currentContextNode = node;
@@ -2021,10 +2020,10 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
 
         String pattern = findPatternStringForUrl(href);
         if (!pattern.isEmpty())
-            context.setPattern(pattern.utf8().data());
+            context.setPattern(pattern);
 
         if (!href.string().isEmpty()) {
-            context.setUrl(href.string().utf8().data());
+            context.setUrl(href.string());
 
             // Links are non-selectable by default, but selection should be allowed
             // providing the page is selectable, use the parent to determine it.
@@ -2034,75 +2033,58 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     }
 
     if (!nodeAllowSelectionOverride && !node->canStartSelection())
-        context.resetFlag(Platform::WebContext::IsSelectable);
+        context.resetFlag(ActiveNodeContext::IsSelectable);
 
     if (node->isHTMLElement()) {
         HTMLImageElement* imageElement = 0;
-        HTMLMediaElement* mediaElement = 0;
-
         if (node->hasTagName(HTMLNames::imgTag))
             imageElement = static_cast<HTMLImageElement*>(node.get());
         else if (node->hasTagName(HTMLNames::areaTag))
             imageElement = static_cast<HTMLAreaElement*>(node.get())->imageElement();
-
-        if (static_cast<HTMLElement*>(node.get())->isMediaElement())
-            mediaElement = static_cast<HTMLMediaElement*>(node.get());
-
         if (imageElement && imageElement->renderer()) {
-            context.setFlag(Platform::WebContext::IsImage);
             // FIXME: At the mean time, we only show "Save Image" when the image data is available.
             if (CachedResource* cachedResource = imageElement->cachedImage()) {
                 if (cachedResource->isLoaded() && cachedResource->data()) {
                     String url = stripLeadingAndTrailingHTMLSpaces(imageElement->getAttribute(HTMLNames::srcAttr).string());
-                    context.setSrc(node->document()->completeURL(url).string().utf8().data());
+                    context.setImageSrc(node->document()->completeURL(url).string());
                 }
             }
             String alt = imageElement->altText();
             if (!alt.isNull())
-                context.setAlt(alt.utf8().data());
-        }
-
-        if (mediaElement) {
-            if (mediaElement->hasAudio())
-                context.setFlag(Platform::WebContext::IsAudio);
-            if (mediaElement->hasVideo())
-                context.setFlag(Platform::WebContext::IsVideo);
-
-            String src = stripLeadingAndTrailingHTMLSpaces(mediaElement->getAttribute(HTMLNames::srcAttr).string());
-            context.setSrc(node->document()->completeURL(src).string().utf8().data());
+                context.setImageAlt(alt);
         }
     }
 
     if (node->isTextNode()) {
         Text* curText = static_cast<Text*>(node.get());
         if (!curText->wholeText().isEmpty())
-            context.setText(curText->wholeText().utf8().data());
+            context.setText(curText->wholeText());
     }
 
     if (node->isElementNode()) {
         Element* element = static_cast<Element*>(node->shadowAncestorNode());
         if (DOMSupport::isTextBasedContentEditableElement(element)) {
-            context.setFlag(Platform::WebContext::IsInput);
+            context.setFlag(ActiveNodeContext::IsInput);
             if (element->hasTagName(HTMLNames::inputTag))
-                context.setFlag(Platform::WebContext::IsSingleLine);
+                context.setFlag(ActiveNodeContext::IsSingleLine);
             if (DOMSupport::isPasswordElement(element))
-                context.setFlag(Platform::WebContext::IsPassword);
+                context.setFlag(ActiveNodeContext::IsPassword);
 
             String elementText(DOMSupport::inputElementText(element));
             if (!elementText.stripWhiteSpace().isEmpty())
-                context.setText(elementText.utf8().data());
+                context.setText(elementText);
         }
     }
 
     if (node->isFocusable())
-        context.setFlag(Platform::WebContext::IsFocusable);
+        context.setFlag(ActiveNodeContext::IsFocusable);
 
     return context;
 }
 
-Platform::WebContext WebPage::webContext(TargetDetectionStrategy strategy) const
+ActiveNodeContext WebPage::activeNodeContext(TargetDetectionStrategy strategy) const
 {
-    return d->webContext(strategy);
+    return d->activeNodeContext(strategy);
 }
 
 void WebPagePrivate::updateCursor()
@@ -2115,7 +2097,7 @@ void WebPagePrivate::updateCursor()
     else if (m_lastMouseEvent.button() == RightButton)
         buttonMask = Platform::MouseEvent::ScreenRightMouseButton;
 
-    Platform::MouseEvent event(buttonMask, buttonMask, mapToTransformed(m_lastMouseEvent.pos()), mapToTransformed(m_lastMouseEvent.globalPos()), 0, 0);
+    BlackBerry::Platform::MouseEvent event(buttonMask, buttonMask, mapToTransformed(m_lastMouseEvent.position()), mapToTransformed(m_lastMouseEvent.globalPos()), 0, 0);
     m_webPage->mouseEvent(event);
 }
 
@@ -2423,7 +2405,7 @@ PassRefPtr<Node> WebPagePrivate::contextNode(TargetDetectionStrategy strategy)
     if (isTouching)
         contentPos = lastFatFingersResult.adjustedPosition();
     else
-        contentPos = mapFromViewportToContents(m_lastMouseEvent.pos());
+        contentPos = mapFromViewportToContents(m_lastMouseEvent.position());
 
     if (strategy == RectBased) {
         FatFingersResult result = FatFingers(this, lastFatFingersResult.adjustedPosition(), FatFingers::Text).findBestPoint();
@@ -3519,10 +3501,10 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
 {
     EventHandler* eventHandler = m_mainFrame->eventHandler();
 
-    if (mouseEvent.eventType() == MouseEventMoved)
+    if (mouseEvent.type() == WebCore::PlatformEvent::MouseMoved)
         return eventHandler->mouseMoved(mouseEvent);
 
-    if (mouseEvent.eventType() == MouseEventScroll)
+    if (mouseEvent.type() == WebCore::PlatformEvent::MouseScroll)
         return true;
 
     Node* node = 0;
@@ -3534,12 +3516,11 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
     }
 
     if (!node) {
-        HitTestResult result = eventHandler->hitTestResultAtPoint(mapFromViewportToContents(mouseEvent.pos()), false /*allowShadowContent*/);
+        HitTestResult result = eventHandler->hitTestResultAtPoint(mapFromViewportToContents(mouseEvent.position()), false /*allowShadowContent*/);
         node = result.innerNode();
     }
 
-    if (mouseEvent.eventType() == MouseEventPressed) {
-        m_inputHandler->enableInputMode();
+    if (mouseEvent.type() == WebCore::PlatformEvent::MousePressed) {
         if (m_inputHandler->willOpenPopupForNode(node)) {
             // Do not allow any human generated mouse or keyboard events to select <option>s in the list box
             // because we use a pop up dialog to handle the actual selections. This prevents options from
@@ -3559,7 +3540,7 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
             }
         } else
             eventHandler->handleMousePressEvent(mouseEvent);
-    } else if (mouseEvent.eventType() == MouseEventReleased) {
+    } else if (mouseEvent.type() == WebCore::PlatformEvent::MouseReleased) {
         // FIXME: For <select> and <options> elements, we explicitly do not forward this event to WebCore so
         // as to preserve symmetry with the MouseEventPressed handling (above). This has the side-effect that
         // mouseup events are not fired on such elements for human generated mouse release events. See RIM Bug #1579.

@@ -266,7 +266,7 @@ public:
     void notifyPluginRectChanged(int id, const WebCore::IntRect& rectChanged);
 
     // Context Methods.
-    Platform::WebContext webContext(TargetDetectionStrategy);
+    ActiveNodeContext activeNodeContext(TargetDetectionStrategy);
     PassRefPtr<WebCore::Node> contextNode(TargetDetectionStrategy);
 
 #if ENABLE(VIEWPORT_REFLOW)

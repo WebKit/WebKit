@@ -37,6 +37,7 @@
 
 #include <BlackBerryPlatformExecutableMessage.h>
 #include <BlackBerryPlatformIntRectRegion.h>
+#include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMessage.h>
 #include <BlackBerryPlatformMessageClient.h>
 #include <BlackBerryPlatformWindow.h>
@@ -2229,7 +2230,7 @@ void BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Buffer*
         if (m_webPage->d->m_page->inspectorController()->enabled()) {
             WebCore::IntPoint scrollPosition = m_client->frame()->view()->scrollPosition();
             graphicsContext.translate(scrollPosition.x(), scrollPosition.y());
-            m_webPage->d->m_page->inspectorController()->drawNodeHighlight(graphicsContext);
+            m_webPage->d->m_page->inspectorController()->drawHighlight(graphicsContext);
         }
 #endif
 
@@ -2562,7 +2563,7 @@ void BackingStorePrivate::drawAndBlendLayersForDirectRendering(const Platform::I
 
 bool BackingStorePrivate::isActive() const
 {
-    return BackingStorePrivate::s_currentBackingStoreOwner == m_webPage && !SurfacePool::globalSurfacePool()->isEmpty();
+    return BackingStorePrivate::s_currentBackingStoreOwner == m_webPage && SurfacePool::globalSurfacePool()->isActive();
 }
 
 BackingStore::BackingStore(WebPage* webPage, BackingStoreClient* client)
@@ -2646,6 +2647,16 @@ bool BackingStore::isDirectRenderingToWindow() const
 {
     BackingStoreMutexLocker locker(d);
     return d->shouldDirectRenderingToWindow();
+}
+
+void BackingStore::createBackingStoreMemory()
+{
+    SurfacePool::globalSurfacePool()->createBuffers();
+}
+
+void BackingStore::releaseBackingStoreMemory()
+{
+    SurfacePool::globalSurfacePool()->releaseBuffers();
 }
 
 bool BackingStore::defersBlit() const

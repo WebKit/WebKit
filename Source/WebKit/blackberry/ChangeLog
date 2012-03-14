@@ -1,3 +1,30 @@
+2012-03-14  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Syncing up left over bits in Api from our local branch to upstream
+        https://bugs.webkit.org/show_bug.cgi?id=81105
+
+        Reviewed by Rob Buis.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::renderContents):
+        (BlackBerry::WebKit::BackingStorePrivate::isActive):
+        (BlackBerry::WebKit::BackingStore::createBackingStoreMemory):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStore::releaseBackingStoreMemory):
+        * Api/BackingStore.h:
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::toWebCoreMouseEventType):
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::activeNodeContext):
+        (BlackBerry::WebKit::WebPage::activeNodeContext):
+        (BlackBerry::WebKit::WebPagePrivate::updateCursor):
+        (BlackBerry::WebKit::WebPagePrivate::contextNode):
+        (BlackBerry::WebKit::WebPagePrivate::handleMouseEvent):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-03-14  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Implement REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR using AnimationFrameRateController

@@ -74,6 +74,9 @@ public:
 
     bool isDirectRenderingToWindow() const;
 
+    void createBackingStoreMemory();
+    void releaseBackingStoreMemory();
+
 private:
     friend class BlackBerry::WebKit::BackingStoreClient;
     friend class BlackBerry::WebKit::WebPage;
