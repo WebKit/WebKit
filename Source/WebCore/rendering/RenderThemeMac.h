@@ -218,6 +218,7 @@ private:
     NSMenu* searchMenuTemplate() const;
     NSSliderCell* sliderThumbHorizontal() const;
     NSSliderCell* sliderThumbVertical() const;
+    NSTextFieldCell* textField() const;
 
 #if ENABLE(METER_TAG)
     NSLevelIndicatorStyle levelIndicatorStyleFor(ControlPart) const;
@@ -231,6 +232,7 @@ private:
     mutable RetainPtr<NSSliderCell> m_sliderThumbHorizontal;
     mutable RetainPtr<NSSliderCell> m_sliderThumbVertical;
     mutable RetainPtr<NSLevelIndicatorCell> m_levelIndicator;
+    mutable RetainPtr<NSTextFieldCell> m_textField;
 
     bool m_isSliderThumbHorizontalPressed;
     bool m_isSliderThumbVerticalPressed;
