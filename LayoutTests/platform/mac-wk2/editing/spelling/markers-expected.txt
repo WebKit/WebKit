@@ -1,0 +1,19 @@
+Grammar Error Only
+PASS internals.markerCountForNode(e.firstChild, "spelling") is 0
+FAIL internals.markerCountForNode(e.firstChild, "grammar") should be 1. Was 0.
+FAIL range.toString() should be a. Threw exception TypeError: 'null' is not an object (evaluating 'range.toString')
+Spelling Error Only
+FAIL internals.markerCountForNode(e.firstChild, "spelling") should be 1. Was 0.
+FAIL range.toString() should be zz. Threw exception TypeError: 'null' is not an object (evaluating 'range.toString')
+PASS internals.markerCountForNode(e.firstChild, "grammar") is 0
+Grammar and Spelling Error
+FAIL internals.markerCountForNode(e.firstChild, "spelling") should be 1. Was 0.
+FAIL range.toString() should be zz. Threw exception TypeError: 'null' is not an object (evaluating 'range.toString')
+FAIL internals.markerCountForNode(e.firstChild, "grammar") should be 1. Was 0.
+FAIL range.toString() should be orange,zz,apple.. Threw exception TypeError: 'null' is not an object (evaluating 'range.toString')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+I have a issue.
+zz.
+orange,zz,apple.

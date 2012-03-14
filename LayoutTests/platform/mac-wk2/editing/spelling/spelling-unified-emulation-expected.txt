@@ -1,0 +1,18 @@
+The spellchecker should work correctly if unified spellcheck path is used.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+FAIL numMarked should be 1. Was 0.
+FAIL numMarked should be 1. Was 0.
+FAIL numMarked should be 2. Was 0.
+FAIL numMarked should be 3. Was 0.
+FAIL numMarked should be 3. Was 0.
+FAIL numMarked should be 1. Was 0.
+FAIL numMarked should be 1. Was 0.
+FAIL numMarked should be 1. Was 0.
+PASS numMarked is length
+PASS numMarked is length
+PASS successfullyParsed is true
+
+TEST COMPLETE
+I would like to sleep, zzz.
