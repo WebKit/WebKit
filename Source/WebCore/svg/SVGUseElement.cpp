@@ -198,6 +198,9 @@ Document* SVGUseElement::referencedDocument() const
 Document* SVGUseElement::externalDocument() const
 {
     if (m_cachedDocument && m_cachedDocument->isLoaded()) {
+        // Gracefully handle error condition.
+        if (m_cachedDocument->errorOccurred())
+            return 0;
         ASSERT(m_cachedDocument->document());
         return m_cachedDocument->document();
     }
@@ -400,6 +403,10 @@ void SVGUseElement::buildPendingResource()
     String id;
     Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id, externalDocument());
     if (!target) {
+        // If we can't find the target of an external element, just give up.
+        // We can't observe if the target somewhen enters the external document, nor should we do it.
+        if (externalDocument())
+            return;
         if (hasPendingResources() || id.isEmpty())
             return;
 

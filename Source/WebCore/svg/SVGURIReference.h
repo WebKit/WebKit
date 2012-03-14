@@ -42,17 +42,16 @@ public:
     static String fragmentIdentifierFromIRIString(const String&, Document*);
     static Element* targetElementFromIRIString(const String&, Document*, String* = 0, Document* = 0);
 
-    static inline bool isExternalURIReference(const String& uri, Document* baseDocument)
+    static inline bool isExternalURIReference(const String& uri, Document* document)
     {
-        if (uri.startsWith("#"))
+        // If the URI matches our documents URL, early exit, we're dealing with a local reference.
+        ASSERT(document);
+        KURL url = document->completeURL(uri);
+        if (equalIgnoringFragmentIdentifier(url, document->url()))
             return false;
 
-        size_t startOfFragmentIdentifier = uri.find('#');
-        // If the target document is the base document but its path is given in format href="thisDocument.svg#targetTag"
-        // then we should handle it as internal.
-        if (uri.substring(0, startOfFragmentIdentifier) != baseDocument->url().lastPathComponent())
-            return true;
-        return false;
+        // If the URI doesn't contain a base string, just see if it starts with a fragment-identifier.
+        return uri.find('#') != notFound;
     }
 
 protected:

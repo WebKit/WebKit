@@ -87,23 +87,21 @@ Element* SVGURIReference::targetElementFromIRIString(const String& iri, Document
     if (url == KURL())
         return 0;
 
-    // If we're requesting an external resources, and externalDocument is non-zero, the load already succeeded.
-    // Go ahead and check if the externalDocuments URL matches the expected URL, that we resolved using the
-    // host document before in urlFromIRIStringWithFragmentIdentifier(). For internal resources, the same
-    // assumption must hold true, just with the host documents URL, not the external documents URL.
-    if (!equalIgnoringFragmentIdentifier(url, externalDocument ? externalDocument->url() : document->url()))
-        return 0;
-
     if (fragmentIdentifier)
         *fragmentIdentifier = id;
 
     if (id.isEmpty())
         return 0;
 
-    if (externalDocument)
+    if (externalDocument) {
+        // Enforce that the referenced url matches the url of the document that we've loaded for it!
+        ASSERT(equalIgnoringFragmentIdentifier(url, externalDocument->url()));
         return externalDocument->getElementById(id);
+    }
+
+    // Exit early if the referenced url is external, and we have no externalDocument given.
     if (isExternalURIReference(iri, document))
-        return 0; // Non-existing external resource
+        return 0;
 
     return document->getElementById(id);
 }
