@@ -3,25 +3,22 @@
          baseURL: "./resources/dromaeo/web/index.html",
 
          computeScores: function (results) {
-             var mean = 0, min = 0, max = 0, median = 0;
+             var mean = 0, min = 0, max = 0, stdev = 0, varsum = 0;
 
              for (var i = 0; i < results.length; ++i) {
                  var item = results[i];
-                 if (item.mean == 0 || item.max == 0 || item.min == 0 || item.median == 0)
-                     return {median: 0, mean: 0, min: 0, max: 0, stdev: 0};
-
-                 mean += 1000 / item.mean;
-                 min += 1000 / item.max;
-                 max += 1000 / item.min;
-                 median += 1000 / item.median;
+                 mean += item.mean;
+                 min += item.min;
+                 max += item.max;
+                 varsum += item.deviation * item.deviation;
              }
 
              return {
-                 median: median,
+                 median: 0,
                  mean: mean,
                  min: min,
                  max: max,
-                 stdev: 0
+                 stdev: Math.sqrt(varsum)
              };
          },
 
