@@ -7,16 +7,6 @@
 
 description('Tests that lookup in inline event handlers keeps references alive');
 
-function forceGC()
-{
-    if (window.GCController)
-        return GCController.collect();
-
-    // Force garbage collection
-    for (var ndx = 0; ndx < 99000; ndx++)
-        var str = new String("1234");
-}
-
 var result;
 var pa = '(FAIL input)'
 var ss = '(FAIL form)'
@@ -30,7 +20,7 @@ var f = input.onclick;
 
 input.parentNode.removeChild(input);
 input = null;
-forceGC();
+gc();
 
 f();
 shouldBeEqualToString('result', 'PASS');

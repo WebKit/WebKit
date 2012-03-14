@@ -434,13 +434,13 @@ function gc() {
     if (typeof GCController !== "undefined")
         GCController.collect();
     else {
-        function gcRec(n) {
+        var gcRec = function (n) {
             if (n < 1)
                 return {};
             var temp = {i: "ab" + i + (i / 100000)};
             temp += "foo";
             gcRec(n-1);
-        }
+        };
         for (var i = 0; i < 1000; i++)
             gcRec(10)
     }

@@ -14,14 +14,6 @@
 <script>
 description('Should not crash or have an assertion failure if a node was removed during an "invalid" event dispatching for the node.');
 
-function gc() {
-    if (window.GCController)
-        return GCController.collect();
-    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
-        var s = new String("");
-    }
-}
-
 function handler(event) {
     var node = event.target;
     node.parentNode.removeChild(node);

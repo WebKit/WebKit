@@ -4,16 +4,6 @@
 
 description('Tests that lookup in inline event handlers keeps references alive');
 
-function forceGC()
-{
-    if (window.GCController)
-        return GCController.collect();
-
-    // Force garbage collection
-    for (var ndx = 0; ndx < 99000; ndx++)
-        var str = new String("1234");
-}
-
 function dispatchClick(element)
 {
     var clickEvent = document.createEvent('MouseEvent');
@@ -32,7 +22,7 @@ var div2 = document.createElement('div');
 div2.onclick = div1.onclick;
 
 div1 = null;
-forceGC();
+gc();
 
 dispatchClick(div2);
 shouldBeEqualToString('result', 'PASS');

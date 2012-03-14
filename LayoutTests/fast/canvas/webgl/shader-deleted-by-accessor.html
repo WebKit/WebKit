@@ -9,14 +9,6 @@
 <div id="console"></div>
 
 <script>
-function gc()
-{
-    if (window.GCController)
-        return GCController.collect();
-
-    for (var i = 0; i < 10000; ++i)
-        var s = new String("AAAA");
-}
 
 description("Verifies that WebGLRenderingContext::getAttachedShaders doesn't crash when an accessor property is defined on Array.prototype.");
 

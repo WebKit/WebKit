@@ -10,16 +10,6 @@ are not prematurely garbage collected.
 
 </pre>
 <script>
-function gc() {
-    if (window.GCController) {
-        GCController.collect();
-        return;
-    }
-
-    for (var i = 0; i < 10000; i++)
-        new String(i);
-}
-
 if (window.internals) {
     var ps = [];
 

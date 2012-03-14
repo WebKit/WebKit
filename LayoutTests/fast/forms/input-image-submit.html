@@ -12,14 +12,6 @@
 
 <div id="console"></div>
 <script>
-function gc() {
-    if (window.GCController)
-        return GCController.collect();
-
-    for (var i = 0; i < 10000; i++)
-        var s = new String("");
-}
-
 function notifyDone() {
     if (window.layoutTestController)
         layoutTestController.notifyDone();

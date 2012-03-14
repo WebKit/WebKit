@@ -2,22 +2,6 @@ if (this.importScripts) {
     importScripts('fs-worker-common.js');
     importScripts('../../js/resources/js-test-pre.js');
     importScripts('file-writer-utils.js');
-    function gc() {
-        if (typeof GCController !== "undefined")
-            GCController.collect();
-        else {
-            function gcRec(n) {
-                if (n < 1)
-                    return {};
-                var temp = {i: "ab" + i + (i / 100000)};
-                temp += "foo";
-                gcRec(n-1);
-            }
-            for (var i = 0; i < 1000; i++)
-                gcRec(10)
-        }
-    }
-
 }
 
 description("Test that a blob won't get garbage-collected while being written out by a FileWriter.");
