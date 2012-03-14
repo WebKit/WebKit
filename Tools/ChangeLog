@@ -1,5 +1,29 @@
 2012-03-14  Dirk Pranke  <dpranke@chromium.org>
 
+        Please add a way to manually skip some tests in NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=81019
+
+        Reviewed by Ojan Vafai.
+
+        This patch implements the -i / --ignore-tests flag from ORWT
+        and refactors the test_expectations.py code slightly to handle
+        it.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.parse_expectations):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.__init__):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (test_add_skipped_tests):
+        (test_add_skipped_tests_duplicate):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_ignore_tests):
+        (MainTest.test_ignore_tests.assert_ignored):
+
+2012-03-14  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: run with no args on lion, is putting baselines in platform/mac-lion, not platform/mac
         https://bugs.webkit.org/show_bug.cgi?id=81028
 

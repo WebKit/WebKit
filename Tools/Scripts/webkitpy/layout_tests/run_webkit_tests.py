@@ -379,6 +379,8 @@ def parse_args(args=None):
         # old-run-webkit-tests:
         # -i|--ignore-tests               Comma-separated list of directories
         #                                 or tests to ignore
+        optparse.make_option("-i", "--ignore-tests", action="append", default=[],
+            help="directories or test to ignore (may specify multiple times)"),
         optparse.make_option("--test-list", action="append",
             help="read list of tests to run from file", metavar="FILE"),
         # old-run-webkit-tests uses --skipped==[default|ignore|only]

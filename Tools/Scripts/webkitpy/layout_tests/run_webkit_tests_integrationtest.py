@@ -397,6 +397,20 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_tests_run(['--skip-pixel-test-if-no-baseline'] + tests_to_run, tests_included=True, flatten_batches=True)
         self.assertEquals(tests_run, ['passes/image.html', 'passes/text.html'])
 
+    def test_ignore_tests(self):
+        def assert_ignored(args, tests_expected_to_run):
+            tests_to_run = ['failures/expected/image.html', 'passes/image.html']
+            tests_run = get_tests_run(args + tests_to_run, tests_included=True, flatten_batches=True)
+            self.assertEquals(tests_run, tests_expected_to_run)
+
+        assert_ignored(['-i', 'failures/expected/image.html'], ['passes/image.html'])
+        assert_ignored(['-i', 'passes'], ['failures/expected/image.html'])
+
+        # Note here that there is an expectation for failures/expected/image.html already, but
+        # it is overriden by the command line arg. This might be counter-intuitive.
+        # FIXME: This isn't currently working ...
+        # assert_ignored(['-i', 'failures/expected'], ['passes/image.html'])
+
     def test_iterations(self):
         tests_to_run = ['passes/image.html', 'passes/text.html']
         tests_run = get_tests_run(['--iterations', '2'] + tests_to_run, tests_included=True, flatten_batches=True)

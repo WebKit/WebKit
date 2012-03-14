@@ -687,7 +687,8 @@ class TestExpectations(object):
         return cls.EXPECTATIONS.get(string.lower())
 
     def __init__(self, port, tests, expectations,
-                 test_config, is_lint_mode=False, overrides=None):
+                 test_config, is_lint_mode=False, overrides=None,
+                 skipped_tests=None):
         """Loads and parses the test expectations given in the string.
         Args:
             port: handle to object containing platform-specific functionality
@@ -702,6 +703,7 @@ class TestExpectations(object):
                 entries in |expectations|. This is used by callers
                 that need to manage two sets of expectations (e.g., upstream
                 and downstream expectations).
+            skipped_tests: test paths to skip.
         """
         self._full_test_list = tests
         self._test_config = test_config
@@ -713,7 +715,7 @@ class TestExpectations(object):
 
         self._expectations = self._parser.parse(expectations)
         self._add_expectations(self._expectations, overrides_allowed=False)
-        self._add_skipped_tests(port.skipped_tests(tests))
+        self._add_skipped_tests(skipped_tests or [])
 
         if overrides:
             overrides_expectations = self._parser.parse(overrides)

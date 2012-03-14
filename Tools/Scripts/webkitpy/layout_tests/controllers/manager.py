@@ -364,13 +364,15 @@ class Manager(object):
         structure holding them. Throws an error if the test_list files have
         invalid syntax."""
         port = self._port
+        tests_to_ignore = set(self._options.ignore_tests)
         self._expectations = test_expectations.TestExpectations(
             port,
             self._test_files,
             port.test_expectations(),
             port.test_configuration(),
             self._options.lint_test_files,
-            port.test_expectations_overrides())
+            port.test_expectations_overrides(),
+            port.skipped_tests(self._test_files).union(tests_to_ignore))
 
     def _split_into_chunks_if_necessary(self, skipped):
         if not self._options.run_chunk and not self._options.run_part:
