@@ -42,6 +42,7 @@ namespace WebCore {
 class MediaStreamCenterInternal;
 #endif
 
+class IceCandidateDescriptor;
 class MediaStreamComponent;
 class MediaStreamDescriptor;
 
@@ -73,6 +74,8 @@ public:
     void didSetMediaStreamTrackEnabled(MediaStreamDescriptor*, MediaStreamComponent*);
     void didStopLocalMediaStream(MediaStreamDescriptor*);
     void didConstructMediaStream(MediaStreamDescriptor*);
+
+    String constructSdp(IceCandidateDescriptor*);
 
     // Calls from the platform to update the DOM objects
     void endLocalMediaStream(MediaStreamDescriptor*);

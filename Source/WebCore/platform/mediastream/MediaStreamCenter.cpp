@@ -55,6 +55,11 @@ void MediaStreamCenter::endLocalMediaStream(MediaStreamDescriptor* streamDescrip
         streamDescriptor->setEnded();
 }
 
+String MediaStreamCenter::constructSdp(IceCandidateDescriptor*)
+{
+    return "";
+}
+
 #if !PLATFORM(CHROMIUM)
 
 // Empty implementations for ports that build with MEDIA_STREAM enabled by default, but haven't yet implemented MediaStreamCenter.
