@@ -4,7 +4,7 @@ Tests that console logging dumps large arrays properly.
 
 
 
-console-big-array.html:13Array[101]
+Array[101]
     [0 … 4]
     0: 0
     1: 1
@@ -37,9 +37,9 @@ console-big-array.html:13Array[101]
     24: 24
     100: 100
     length: 101
-    __proto__: Array[0]
+    __proto__: Array[0] console-big-array.html:13
 
-console-big-array.html:19Array[101]
+Array[101]
     0: 0
     1: 1
     2: 2
@@ -52,5 +52,5 @@ console-big-array.html:19Array[101]
     9: 9
     100: 100
     length: 101
-    __proto__: Array[0]
+    __proto__: Array[0] console-big-array.html:19
 

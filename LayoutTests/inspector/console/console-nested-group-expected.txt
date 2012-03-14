@@ -3,16 +3,16 @@ CONSOLE MESSAGE: line 14: Message that must not be in any group
 CONSOLE MESSAGE: line 21: Message inside third group
 Tests that console.group/groupEnd messages won't be coalesced. Bug 56114. Bug 63521.
 
-console-nested-group.html:9outer group console-message console-log-level console-group-title
-console-nested-group.html:10inner group console-message console-log-level console-group-title
-console-nested-group.html:11Message inside inner group console-message console-log-level
+outer group console-nested-group.html:9 console-message console-log-level console-group-title
+inner group console-nested-group.html:10 console-message console-log-level console-group-title
+Message inside inner group console-nested-group.html:11 console-message console-log-level
  console-message console-log-level
  console-message console-log-level
-console-nested-group.html:14Message that must not be in any group console-message console-log-level
-console-nested-group.html:19One of several groups which shouldn't be coalesced. console-message console-log-level console-group-title
-console-nested-group.html:19One of several groups which shouldn't be coalesced. console-message console-log-level console-group-title
-console-nested-group.html:19One of several groups which shouldn't be coalesced. console-message console-log-level console-group-title
-console-nested-group.html:21Message inside third group console-message console-log-level
+Message that must not be in any group console-nested-group.html:14 console-message console-log-level
+One of several groups which shouldn't be coalesced. console-nested-group.html:19 console-message console-log-level console-group-title
+One of several groups which shouldn't be coalesced. console-nested-group.html:19 console-message console-log-level console-group-title
+One of several groups which shouldn't be coalesced. console-nested-group.html:19 console-message console-log-level console-group-title
+Message inside third group console-nested-group.html:21 console-message console-log-level
  console-message console-log-level
  console-message console-log-level
  console-message console-log-level

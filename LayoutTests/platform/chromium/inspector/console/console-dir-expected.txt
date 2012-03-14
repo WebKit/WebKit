@@ -5,18 +5,18 @@ Tests that console logging dumps proper messages.
 
 
 
-console-dir.html:9Array[2]
+Array[2]
     0: "test1"
     1: "test2"
     length: 2
-    __proto__: Array[0]
+    __proto__: Array[0] console-dir.html:9
 
-console-dir.html:10NodeList[1]
+NodeList[1]
     0: HTMLHtmlElement
     length: 1
-    __proto__: NodeList
+    __proto__: NodeList console-dir.html:10
 
-console-dir.html:11XPathResult
+XPathResult
     booleanValue: [Exception: XPathException]
     invalidIteratorState: false
     numberValue: [Exception: XPathException]
@@ -24,5 +24,5 @@ console-dir.html:11XPathResult
     singleNodeValue: [Exception: XPathException]
     snapshotLength: [Exception: XPathException]
     stringValue: [Exception: XPathException]
-    __proto__: XPathResult
+    __proto__: XPathResult console-dir.html:11
 

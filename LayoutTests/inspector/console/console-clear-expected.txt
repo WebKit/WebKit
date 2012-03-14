@@ -4,8 +4,8 @@ CONSOLE MESSAGE: line 11: three
 Tests that console is cleared upon requestClearMessages call.
 
 === Before clear ===
-console-clear.html:9one
-console-clear.html:10two
-console-clear.html:11three
+one console-clear.html:9
+two console-clear.html:10
+three console-clear.html:11
 === After clear ===
 

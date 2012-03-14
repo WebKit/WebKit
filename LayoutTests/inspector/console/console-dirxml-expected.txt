@@ -4,8 +4,8 @@ CONSOLE MESSAGE: line 14: [object HTMLParagraphElement]
 CONSOLE MESSAGE: line 15: [object HTMLParagraphElement]
 Tests that console logging dumps proper messages.
 
-console-dirxml.html:12#document
-console-dirxml.html:13#document-fragment
-console-dirxml.html:14<p></p>
-console-dirxml.html:15[<p></p>]
+#document console-dirxml.html:12
+#document-fragment console-dirxml.html:13
+<p></p> console-dirxml.html:14
+[<p></p>] console-dirxml.html:15
 

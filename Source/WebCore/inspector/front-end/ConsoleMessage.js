@@ -128,9 +128,11 @@ WebInspector.ConsoleMessageImpl.prototype = {
             }
         }
 
-        if (this._anchorElement)
-            this._formattedMessage.appendChild(this._anchorElement);
         this._formattedMessage.appendChild(this._messageElement);
+        if (this._anchorElement) {
+            this._formattedMessage.appendChild(document.createTextNode(" "));
+            this._formattedMessage.appendChild(this._anchorElement);
+        }
         
         var dumpStackTrace = !!this._stackTrace && this._stackTrace.length && (this.source === WebInspector.ConsoleMessage.MessageSource.Network || this.level === WebInspector.ConsoleMessage.MessageLevel.Error || this.type === WebInspector.ConsoleMessage.MessageType.Trace);
         if (dumpStackTrace) {
@@ -494,6 +496,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
             content.appendChild(messageTextElement);
 
             if (frame.url) {
+                content.appendChild(document.createTextNode(" "));
                 var urlElement = this._linkifyCallFrame(frame);
                 content.appendChild(urlElement);
             }

@@ -4,9 +4,9 @@ CONSOLE MESSAGE: line 11: three
 Tests that console is cleared upon clear() eval in console.
 
 === Before clear ===
-console-command-clear.html:9one
-console-command-clear.html:10two
-console-command-clear.html:11three
+one console-command-clear.html:9
+two console-command-clear.html:10
+three console-command-clear.html:11
 === After clear ===
 undefined
 

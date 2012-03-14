@@ -15,14 +15,14 @@ Tests methods of webInspector.console extension API
 Started extension.
 Running tests...
 RUNNING TEST: extension_testAddConsoleMessages
-extensions-console.html:46log message console-message console-log-level
-extensions-console.html:47debug message console-message console-log-level
-extensions-console.html:48warning message console-message console-warning-level
-extensions-console.html:49error message console-message console-error-level
-extensions-console.html:50log message with two parameters, an integer: 42 and a string: foo console-message console-log-level
+log message extensions-console.html:46 console-message console-log-level
+debug message extensions-console.html:47 console-message console-log-level
+warning message extensions-console.html:48 console-message console-warning-level
+error message extensions-console.html:49 console-message console-error-level
+log message with two parameters, an integer: 42 and a string: foo extensions-console.html:50 console-message console-log-level
 log message from evaluated code console-message console-log-level
 debug message from extension console-message console-debug-level
-test-url.html:42log message from extension console-message console-log-level
+log message from extension test-url.html:42 console-message console-log-level
 warning message from extension console-message console-warning-level
 error message from extension console-message console-error-level
 RUNNING TEST: extension_testGetConsoleMessages
