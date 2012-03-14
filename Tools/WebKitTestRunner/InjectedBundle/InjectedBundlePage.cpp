@@ -288,6 +288,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         supportsFullScreen,
         enterFullScreenForElement,
         exitFullScreenForElement,
+        beganEnterFullScreen,
+        beganExitFullScreen,
     };
     WKBundlePageSetFullScreenClient(m_page, &fullScreenClient);
 #endif
@@ -1111,6 +1113,18 @@ void InjectedBundlePage::exitFullScreenForElement(WKBundlePageRef pageRef, WKBun
         InjectedBundle::shared().os() << "exitFullScreenForElement()\n";
     WKBundlePageWillExitFullScreen(pageRef);
     WKBundlePageDidExitFullScreen(pageRef);
+}
+
+void InjectedBundlePage::beganEnterFullScreen(WKBundlePageRef, WKRect, WKRect)
+{
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpFullScreenCallbacks())
+        InjectedBundle::shared().os() << "beganEnterFullScreen()\n";
+}
+
+void InjectedBundlePage::beganExitFullScreen(WKBundlePageRef, WKRect, WKRect)
+{
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpFullScreenCallbacks())
+        InjectedBundle::shared().os() << "beganExitFullScreen()\n";
 }
 #endif
 

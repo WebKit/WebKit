@@ -35,6 +35,7 @@
 
 namespace WebCore {
 class Element;
+class IntRect;
 }
 
 namespace WebKit {
@@ -46,6 +47,8 @@ public:
     bool supportsFullScreen(WebPage*, bool withKeyboard);
     void enterFullScreenForElement(WebPage*, WebCore::Element*);
     void exitFullScreenForElement(WebPage*, WebCore::Element*);
+    void beganEnterFullScreen(WebPage*, WebCore::IntRect& initialFrame, WebCore::IntRect& finalFrame);
+    void beganExitFullScreen(WebPage*, WebCore::IntRect& initialFrame, WebCore::IntRect& finalFrame);
 };
 
 } // namespace WebKit

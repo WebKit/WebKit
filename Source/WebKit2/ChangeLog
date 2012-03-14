@@ -1,3 +1,26 @@
+2012-03-13  Jer Noble  <jer.noble@apple.com>
+
+        Lion Intel Debug WebKit2 Tests crashing under [WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]
+        https://bugs.webkit.org/show_bug.cgi?id=81056
+
+        Reviewed by Jessie Berlin.
+
+        Give the InjectedBundlePageFullScreenClient a first crack at beganEnterFullScreen and beganExitFullScreen:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::willEnterFullScreen):
+        (WebKit::WebFullScreenManager::willExitFullScreen):
+
+        And call the client function if it exists; otherwise, continue to message the page:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.cpp:
+        (WebKit::InjectedBundlePageFullScreenClient::beganEnterFullScreen):
+        (WebKit::InjectedBundlePageFullScreenClient::beganExitFullScreen):
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.h:
+
+        Add a custom APIClientTraits for InjectedBundlePageFullScreenClient to handle the API number change.
+        * Shared/APIClientTraits.cpp:
+        * Shared/APIClientTraits.h:
+
 2012-03-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: add didCancelFrame timeline event

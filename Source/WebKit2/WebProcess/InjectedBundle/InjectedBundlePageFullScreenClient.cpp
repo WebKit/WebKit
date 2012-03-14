@@ -32,6 +32,8 @@
 #include "InjectedBundleNodeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WKSharedAPICast.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebPage.h"
 #include <WebCore/Element.h>
@@ -66,6 +68,24 @@ void InjectedBundlePageFullScreenClient::exitFullScreenForElement(WebPage *page,
         m_client.exitFullScreenForElement(toAPI(page), toAPI(nodeHandle.get()));
     } else
         page->send(Messages::WebFullScreenManagerProxy::ExitFullScreen());
+}
+
+
+void InjectedBundlePageFullScreenClient::beganEnterFullScreen(WebPage *page, IntRect& initialFrame, IntRect& finalFrame)
+{
+    if (m_client.beganEnterFullScreen)
+        m_client.beganEnterFullScreen(toAPI(page), toAPI(initialFrame), toAPI(finalFrame));
+    else
+        page->send(Messages::WebFullScreenManagerProxy::BeganEnterFullScreen(initialFrame, finalFrame));
+}
+
+
+void InjectedBundlePageFullScreenClient::beganExitFullScreen(WebPage *page, IntRect& initialFrame, IntRect& finalFrame)
+{
+    if (m_client.beganExitFullScreen)
+        m_client.beganExitFullScreen(toAPI(page), toAPI(initialFrame), toAPI(finalFrame));
+    else
+        page->send(Messages::WebFullScreenManagerProxy::BeganExitFullScreen(initialFrame, finalFrame));
 }
 
 } // namespace WebKit

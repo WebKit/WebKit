@@ -39,6 +39,11 @@ const size_t APIClientTraits<WKBundlePageResourceLoadClient>::interfaceSizesByVe
     offsetof(WKBundlePageResourceLoadClient, shouldCacheResponse),
     sizeof(WKBundlePageResourceLoadClient)
 };
+
+const size_t APIClientTraits<WKBundlePageFullScreenClient>::interfaceSizesByVersion[] = {
+    offsetof(WKBundlePageFullScreenClient, beganEnterFullScreen),
+    sizeof(WKBundlePageFullScreenClient)
+};
     
 const size_t APIClientTraits<WKPageContextMenuClient>::interfaceSizesByVersion[] = {
     offsetof(WKPageContextMenuClient, contextMenuDismissed),
