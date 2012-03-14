@@ -93,11 +93,13 @@ static Vector<pair<int, String> > getRegularExpressionMatchesByLines(const Regul
     return result;
 }
 
-static PassRefPtr<TypeBuilder::Page::SearchMatch> buildObjectForSearchMatch(int lineNumber, String lineContent)
+static PassRefPtr<InspectorObject> buildObjectForSearchMatch(int lineNumber, String lineContent)
 {
-    return TypeBuilder::Page::SearchMatch::create()
-        .setLineNumber(lineNumber)
-        .setLineContent(lineContent);
+    RefPtr<InspectorObject> result = InspectorObject::create();
+    result->setNumber("lineNumber", lineNumber);
+    result->setString("lineContent", lineContent);
+
+    return result;
 }
 
 RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex)
@@ -125,15 +127,15 @@ int countRegularExpressionMatches(const RegularExpression& regex, const String& 
     return result;
 }
 
-PassRefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch> > searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
+PassRefPtr<InspectorArray> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
 {
-    RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch> > result = TypeBuilder::Array<TypeBuilder::Page::SearchMatch>::create();
+    RefPtr<InspectorArray> result = InspectorArray::create();
 
     RegularExpression regex = ContentSearchUtils::createSearchRegex(query, caseSensitive, isRegex);
     Vector<pair<int, String> > matches = getRegularExpressionMatchesByLines(regex, text);
 
     for (Vector<pair<int, String> >::const_iterator it = matches.begin(); it != matches.end(); ++it)
-        result->addItem(buildObjectForSearchMatch(it->first, it->second));
+        result->pushValue(buildObjectForSearchMatch(it->first, it->second));
 
     return result;
 }

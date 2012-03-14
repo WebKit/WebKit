@@ -29,7 +29,6 @@
 #ifndef ContentSearchUtils_h
 #define ContentSearchUtils_h
 
-#include "InspectorTypeBuilder.h"
 #include "PlatformString.h"
 
 #include <wtf/Vector.h>
@@ -43,7 +42,7 @@ namespace ContentSearchUtils {
 
 RegularExpression createSearchRegex(const String& query, bool caseSensitive, bool isRegex);
 int countRegularExpressionMatches(const RegularExpression&, const String&);
-PassRefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch> > searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
+PassRefPtr<InspectorArray> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
 
 String findSourceURL(const String& content);
 String findSourceMapURL(const String& content);

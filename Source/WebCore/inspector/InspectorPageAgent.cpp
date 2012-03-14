@@ -395,28 +395,29 @@ void InspectorPageAgent::navigate(ErrorString*, const String& url)
     frame->loader()->changeLocation(frame->document()->securityOrigin(), frame->document()->completeURL(url), "", false, false);
 }
 
-static PassRefPtr<TypeBuilder::Page::Cookie> buildObjectForCookie(const Cookie& cookie)
+static PassRefPtr<InspectorObject> buildObjectForCookie(const Cookie& cookie)
 {
-    return TypeBuilder::Page::Cookie::create()
-        .setName(cookie.name)
-        .setValue(cookie.value)
-        .setDomain(cookie.domain)
-        .setPath(cookie.path)
-        .setExpires(cookie.expires)
-        .setSize((cookie.name.length() + cookie.value.length()))
-        .setHttpOnly(cookie.httpOnly)
-        .setSecure(cookie.secure)
-        .setSession(cookie.session);
+    RefPtr<InspectorObject> value = InspectorObject::create();
+    value->setString("name", cookie.name);
+    value->setString("value", cookie.value);
+    value->setString("domain", cookie.domain);
+    value->setString("path", cookie.path);
+    value->setNumber("expires", cookie.expires);
+    value->setNumber("size", (cookie.name.length() + cookie.value.length()));
+    value->setBoolean("httpOnly", cookie.httpOnly);
+    value->setBoolean("secure", cookie.secure);
+    value->setBoolean("session", cookie.session);
+    return value;
 }
 
-static PassRefPtr<TypeBuilder::Array<TypeBuilder::Page::Cookie> > buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
+static PassRefPtr<InspectorArray> buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
 {
-    RefPtr<TypeBuilder::Array<TypeBuilder::Page::Cookie> > cookies = TypeBuilder::Array<TypeBuilder::Page::Cookie>::create();
+    RefPtr<InspectorArray> cookies = InspectorArray::create();
 
     ListHashSet<Cookie>::iterator end = cookiesList.end();
     ListHashSet<Cookie>::iterator it = cookiesList.begin();
     for (int i = 0; it != end; ++it, i++)
-        cookies->addItem(buildObjectForCookie(*it));
+        cookies->pushObject(buildObjectForCookie(*it));
 
     return cookies;
 }
@@ -465,7 +466,7 @@ static Vector<KURL> allResourcesURLsForFrame(Frame* frame)
     return result;
 }
 
-void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Page::Cookie> >& cookies, WTF::String* cookiesString)
+void InspectorPageAgent::getCookies(ErrorString*, RefPtr<InspectorArray>& cookies, WTF::String* cookiesString)
 {
     // If we can get raw cookies.
     ListHashSet<Cookie> rawCookiesList;
@@ -501,14 +502,10 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<TypeBuilder::Array<Type
         }
     }
 
-    // FIXME: Do not return empty string/empty array. Make returns optional instead. https://bugs.webkit.org/show_bug.cgi?id=80855
-    if (rawCookiesImplemented) {
+    if (rawCookiesImplemented)
         cookies = buildArrayForCookies(rawCookiesList);
-        *cookiesString = "";
-    } else {
-        cookies = TypeBuilder::Array<TypeBuilder::Page::Cookie>::create();
+    else
         *cookiesString = stringCookiesList;
-    }
 }
 
 void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, const String& domain)
@@ -524,7 +521,7 @@ void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, co
     }
 }
 
-void InspectorPageAgent::getResourceTree(ErrorString*, RefPtr<TypeBuilder::Page::FrameResourceTree>& object)
+void InspectorPageAgent::getResourceTree(ErrorString*, RefPtr<InspectorObject>& object)
 {
     object = buildObjectForFrameTree(m_page->mainFrame());
 }
@@ -551,9 +548,9 @@ static bool textContentForCachedResource(CachedResource* cachedResource, String*
     return false;
 }
 
-void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch> >& results)
+void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>& results)
 {
-    results = TypeBuilder::Array<TypeBuilder::Page::SearchMatch>::create();
+    results = InspectorArray::create();
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
@@ -593,9 +590,9 @@ static PassRefPtr<InspectorObject> buildObjectForSearchResult(const String& fram
     return result;
 }
 
-void InspectorPageAgent::searchInResources(ErrorString*, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchResult> >& results)
+void InspectorPageAgent::searchInResources(ErrorString*, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>& results)
 {
-    RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchResult> > searchResults = TypeBuilder::Array<TypeBuilder::Page::SearchResult>::create();
+    RefPtr<InspectorArray> searchResults = InspectorArray::create();
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
@@ -820,34 +817,34 @@ void InspectorPageAgent::didPaint()
     m_lastPaintContext = 0;
 }
 
-PassRefPtr<TypeBuilder::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
+PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrame(Frame* frame)
 {
-    RefPtr<TypeBuilder::Page::Frame> frameObject = TypeBuilder::Page::Frame::create()
-         .setId(frameId(frame))
-         .setLoaderId(loaderId(frame->loader()->documentLoader()))
-         .setUrl(frame->document()->url().string())
-         .setMimeType(frame->loader()->documentLoader()->responseMIMEType());
+    RefPtr<InspectorObject> frameObject = InspectorObject::create();
+    frameObject->setString("id", frameId(frame));
     if (frame->tree()->parent())
-        frameObject->setParentId(frameId(frame->tree()->parent()));
+        frameObject->setString("parentId", frameId(frame->tree()->parent()));
     if (frame->ownerElement()) {
         String name = frame->ownerElement()->getNameAttribute();
         if (name.isEmpty())
             name = frame->ownerElement()->getAttribute(HTMLNames::idAttr);
-        frameObject->setName(name);
+        frameObject->setString("name", name);
     }
-    // FIXME: Make this field non-optional. https://bugs.webkit.org/show_bug.cgi?id=80857
-    frameObject->setSecurityOrigin(frame->document()->securityOrigin()->toString());
+    frameObject->setString("url", frame->document()->url().string());
+    frameObject->setString("loaderId", loaderId(frame->loader()->documentLoader()));
+    frameObject->setString("securityOrigin", frame->document()->securityOrigin()->toString());
+    frameObject->setString("mimeType", frame->loader()->documentLoader()->responseMIMEType());
 
     return frameObject;
 }
 
-PassRefPtr<TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTree(Frame* frame)
+PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrameTree(Frame* frame)
 {
+    RefPtr<InspectorObject> result = InspectorObject::create();
     RefPtr<InspectorObject> frameObject = buildObjectForFrame(frame);
+    result->setObject("frame", frameObject);
+
     RefPtr<InspectorArray> subresources = InspectorArray::create();
-    RefPtr<TypeBuilder::Page::FrameResourceTree> result = TypeBuilder::Page::FrameResourceTree::create()
-         .setFrame(frameObject)
-         .setResources(subresources);
+    result->setArray("resources", subresources);
 
     Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
     for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {

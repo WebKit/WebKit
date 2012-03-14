@@ -95,12 +95,12 @@ public:
     virtual void removeScriptToEvaluateOnLoad(ErrorString*, const String& identifier);
     virtual void reload(ErrorString*, const bool* optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad);
     virtual void navigate(ErrorString*, const String& url);
-    virtual void getCookies(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Page::Cookie> >& cookies, WTF::String* cookiesString);
+    virtual void getCookies(ErrorString*, RefPtr<InspectorArray>& cookies, WTF::String* cookiesString);
     virtual void deleteCookie(ErrorString*, const String& cookieName, const String& domain);
-    virtual void getResourceTree(ErrorString*, RefPtr<TypeBuilder::Page::FrameResourceTree>&);
+    virtual void getResourceTree(ErrorString*, RefPtr<InspectorObject>&);
     virtual void getResourceContent(ErrorString*, const String& frameId, const String& url, String* content, bool* base64Encoded);
-    virtual void searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchMatch> >&);
-    virtual void searchInResources(ErrorString*, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<TypeBuilder::Array<TypeBuilder::Page::SearchResult> >&);
+    virtual void searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<InspectorArray>&);
+    virtual void searchInResources(ErrorString*, const String&, const bool* caseSensitive, const bool* isRegex, RefPtr<InspectorArray>&);
     virtual void setDocumentContent(ErrorString*, const String& frameId, const String& html);
     virtual void setScreenSizeOverride(ErrorString*, int width, int height);
     virtual void setShowPaintRects(ErrorString*, bool show);
@@ -137,8 +137,8 @@ private:
     void setFrameViewFixedLayout(int, int);
     void clearFrameViewFixedLayout();
 
-    PassRefPtr<TypeBuilder::Page::Frame> buildObjectForFrame(Frame*);
-    PassRefPtr<TypeBuilder::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
+    PassRefPtr<InspectorObject> buildObjectForFrame(Frame*);
+    PassRefPtr<InspectorObject> buildObjectForFrameTree(Frame*);
     Page* m_page;
     InjectedScriptManager* m_injectedScriptManager;
     InspectorClient* m_client;
