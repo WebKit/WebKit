@@ -439,7 +439,6 @@ public:
             , stencil(false)
             , antialias(true)
             , premultipliedAlpha(true)
-            , canRecoverFromContextLoss(true)
             , preserveDrawingBuffer(false)
             , noExtensions(false)
             , shareResources(true)
@@ -452,7 +451,6 @@ public:
         bool stencil;
         bool antialias;
         bool premultipliedAlpha;
-        bool canRecoverFromContextLoss;
         bool preserveDrawingBuffer;
         bool noExtensions;
         bool shareResources;

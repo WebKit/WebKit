@@ -1,3 +1,16 @@
+2012-03-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove canRecoverFromContextLoss attribute, it's unused
+        https://bugs.webkit.org/show_bug.cgi?id=81158
+
+        Reviewed by Stephen White.
+
+        Deletes the canRecoverFromContextLoss attribute from WebCore::GraphicsContext3D::Attributes. This is still left in
+        WebGraphicsContext3D::Attributes, since chromium-side code still references it.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3D::create):
+
 2012-03-14  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Fix accelerated Canvas2D with threaded compositing.

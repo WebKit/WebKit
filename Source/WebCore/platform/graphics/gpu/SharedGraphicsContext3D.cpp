@@ -45,7 +45,6 @@ public:
             attributes.depth = false;
             attributes.stencil = true;
             attributes.antialias = false;
-            attributes.canRecoverFromContextLoss = false;
             attributes.shareResources = true;
             attributes.preferDiscreteGPU = true;
             m_context = GraphicsContext3D::create(attributes, 0);
