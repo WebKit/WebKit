@@ -3425,30 +3425,6 @@ BUGWK73865 : media/track/text-track-cue-is-reachable.html = TEXT CRASH
 BUGWK73865 : media/track/text-track-is-reachable.html = TEXT CRASH
 
 // Need rebaselining
-BUGWK79746 : media/media-document-audio-repaint.html = IMAGE+TEXT
-BUGWK79746 : media/video-no-audio.html = TEXT
-BUGWK79746 : media/controls-strict.html = TEXT
-BUGWK79746 : media/video-volume-slider.html = TEXT
-BUGWK79746 : media/controls-styling.html = TEXT
-BUGWK79746 : media/video-display-toggle.html = TEXT
-BUGWK79746 : media/audio-controls-rendering.html = TEXT
-BUGWK79746 : media/video-zoom-controls.html = TEXT
-BUGWK79746 : media/video-controls-rendering.html = TEXT
-BUGWK79746 : media/controls-without-preload.html = TEXT
-BUGWK79746 : media/media-controls-clone.html = TEXT
-BUGWK79746 : fast/layers/video-layer.html = TEXT
-BUGWK79746 : media/video-empty-source.html = TEXT
-BUGWK79746 : media/video-playing-and-pause.html = TEXT
-BUGWK79746 : media/controls-after-reload.html = TEXT
-BUGWK79746 : media/audio-repaint.html = IMAGE+TEXT
-BUGWK79746 : media/controls-layout-direction.html = IMAGE
-BUGWK79746 : media/video-aspect-ratio.html = IMAGE
-BUGWK79746 : media/video-colorspace-yuv420.html = IMAGE
-BUGWK79746 : media/video-colorspace-yuv422.html = IMAGE
-BUGWK79746 : media/video-frame-accurate-seek.html = IMAGE
-BUGWK79746 : media/video-layer-crash.html = IMAGE
-BUGWK79746 : media/video-transformed.html = IMAGE
-BUGWK79746 : media/video-zoom.html = IMAGE
 
 BUGWK72271 MAC DEBUG : fast/loader/javascript-url-in-embed.html = PASS CRASH
 BUGWK72271 SNOWLEOPARD DEBUG : fast/dom/node-iterator-reference-node-moved-crash.html = PASS CRASH

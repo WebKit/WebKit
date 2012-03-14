@@ -12,9 +12,9 @@ layer at (8,8) size 300x150
 layer at (8,162) size 300x150
   RenderVideo {VIDEO} at (0,0) size 300x150
 layer at (8,8) size 300x150
-  RenderBlock (relative positioned) {DIV} at (0,0) size 300x150
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x150
 layer at (8,126) size 300x32
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,118) size 300x32 [bgcolor=#00000099]
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,118) size 300x32 [bgcolor=#00000099]
 layer at (15,132) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,126) size 236x32
@@ -33,9 +33,9 @@ layer at (46,128) size 9x29
 layer at (274,126) size 34x32
   RenderButton {INPUT} at (266,0) size 34x32
 layer at (308,126) size 300x32
-  RenderBlock (relative positioned) {DIV} at (0,0) size 300x32
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x32
 layer at (308,126) size 300x32
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x32 [bgcolor=#00000099]
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x32 [bgcolor=#00000099]
 layer at (315,132) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (338,126) size 236x32
@@ -54,9 +54,9 @@ layer at (346,128) size 9x29
 layer at (574,126) size 34x32
   RenderButton {INPUT} at (266,0) size 34x32
 layer at (8,162) size 300x150
-  RenderBlock (relative positioned) {DIV} at (0,0) size 300x150
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x150
 layer at (8,280) size 300x32
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,118) size 300x32 [bgcolor=#00000099]
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,118) size 300x32 [bgcolor=#00000099]
 layer at (15,286) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,280) size 236x32
@@ -75,9 +75,9 @@ layer at (46,282) size 9x29
 layer at (274,280) size 34x32
   RenderButton {INPUT} at (266,0) size 34x32
 layer at (308,280) size 300x32
-  RenderBlock (relative positioned) {DIV} at (0,0) size 300x32
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x32
 layer at (308,280) size 300x32
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 300x32 [bgcolor=#00000099]
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x32 [bgcolor=#00000099]
 layer at (315,286) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (338,280) size 236x32

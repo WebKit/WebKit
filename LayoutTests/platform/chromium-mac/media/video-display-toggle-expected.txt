@@ -10,9 +10,9 @@ layer at (0,0) size 800x600
 layer at (8,26) size 320x240
   RenderVideo {VIDEO} at (0,18) size 320x240
 layer at (8,26) size 320x240
-  RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
 layer at (8,234) size 320x32
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,208) size 320x32 [bgcolor=#00000099]
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,208) size 320x32 [bgcolor=#00000099]
 layer at (15,240) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,234) size 256x32
