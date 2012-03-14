@@ -1,3 +1,11 @@
+2012-03-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Deal with multiple paths in QMAKE_EXTRA_MODULE_FORWARDS
+
+        Reviewed by Simon Hausmann.
+
+        * Source/api.pri:
+
 2012-03-14  Max Vujovic  <mvujovic@adobe.com>
 
         GTK 32-bit Linux Release build failing after r110580 (from bug 80338)

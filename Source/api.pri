@@ -52,13 +52,27 @@ haveQt(5) {
         convenience_module_path = $${ROOT_BUILD_DIR}/modules
         module_filename = $$basename(QT.webkit.module_pri)
 
-        make_module_fwd_convenience.target = $$convenience_module_path/$$module_filename
-        make_module_fwd_convenience.commands = $$QMAKE_MKDIR $$convenience_module_path \
-            && echo \"include($$QMAKE_EXTRA_MODULE_FORWARDS/$$module_filename)\" > $$convenience_module_path/$$module_filename
-        make_module_fwd_convenience.depends = $$QMAKE_EXTRA_MODULE_FORWARDS/$$module_filename
+        # The QMAKE_EXTRA_MODULE_FORWARDS might contain more than one path,
+        # so we iterate the paths and find one that matches our build dir.
+        for(module_forward, QMAKE_EXTRA_MODULE_FORWARDS) {
+            in_build_dir = $$find(module_forward, ^$${ROOT_BUILD_DIR})
+            !isEmpty(in_build_dir) {
+                webkit_module_forward = $$module_forward
+                break()
+            }
+        }
 
-        QMAKE_EXTRA_TARGETS += make_module_fwd_convenience
-        DEFAULT_TARGETS += make_module_fwd_convenience
+        isEmpty(webkit_module_forward) {
+            warning(Could not resolve QMAKE_EXTRA_MODULE_FORWARDS path!)
+        } else {
+            make_module_fwd_convenience.target = $$convenience_module_path/$$module_filename
+            make_module_fwd_convenience.commands = $$QMAKE_MKDIR $$convenience_module_path \
+                && echo \"include($$webkit_module_forward/$$module_filename)\" > $$convenience_module_path/$$module_filename
+            make_module_fwd_convenience.depends = $$webkit_module_forward/$$module_filename
+
+            QMAKE_EXTRA_TARGETS += make_module_fwd_convenience
+            DEFAULT_TARGETS += make_module_fwd_convenience
+        }
 
         qt_developer_build {
             # Copy the module forward file into Qt so that the module
