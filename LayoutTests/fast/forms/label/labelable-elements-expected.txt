@@ -45,7 +45,7 @@ PASS element.labels is undefined.
 PASS element.labels is not null
 
 Labelable: output [object HTMLOutputElement]
-FAIL element.labels.length should be 1. Threw exception TypeError: Cannot read property 'length' of null
+PASS element.labels.length is 1
 
 Labelable: progress [object HTMLProgressElement]
 PASS element.labels.length is 1
