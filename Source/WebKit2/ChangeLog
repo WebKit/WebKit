@@ -1,3 +1,22 @@
+2012-03-14  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][WK2] Move code common to both ProxyAuthentication and Authentication context objects into a base class
+        https://bugs.webkit.org/show_bug.cgi?id=80627
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No impact to QML API.
+
+        * UIProcess/qt/QtDialogRunner.cpp:
+        (BaseAuthenticationContextObject):
+        (BaseAuthenticationContextObject::BaseAuthenticationContextObject):
+        (HttpAuthenticationDialogContextObject):
+        (HttpAuthenticationDialogContextObject::HttpAuthenticationDialogContextObject):
+        (HttpAuthenticationDialogContextObject::realm):
+        (ProxyAuthenticationDialogContextObject):
+        (ProxyAuthenticationDialogContextObject::ProxyAuthenticationDialogContextObject):
+        (QtDialogRunner::initForAuthentication):
+
 2012-03-14  Anders Carlsson  <andersca@apple.com>
 
         With tiled drawing enabled, clicking a link to a PDF causes a cross-fade

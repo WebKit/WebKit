@@ -69,23 +69,20 @@ private:
     QString m_defaultValue;
 };
 
-class AuthenticationDialogContextObject : public QObject {
+class BaseAuthenticationContextObject : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString hostname READ hostname CONSTANT)
-    Q_PROPERTY(QString realm READ realm CONSTANT)
     Q_PROPERTY(QString prefilledUsername READ prefilledUsername CONSTANT)
 
 public:
-    AuthenticationDialogContextObject(const QString& hostname, const QString& realm, const QString& prefilledUsername)
+    BaseAuthenticationContextObject(const QString& hostname, const QString& prefilledUsername)
         : QObject()
         , m_hostname(hostname)
-        , m_realm(realm)
         , m_prefilledUsername(prefilledUsername)
     {
     }
 
     QString hostname() const { return m_hostname; }
-    QString realm() const { return m_realm; }
     QString prefilledUsername() const { return m_prefilledUsername; }
 
 public slots:
@@ -98,41 +95,41 @@ signals:
 
 private:
     QString m_hostname;
-    QString m_realm;
     QString m_prefilledUsername;
 };
 
-class ProxyAuthenticationDialogContextObject : public QObject {
+class HttpAuthenticationDialogContextObject : public BaseAuthenticationContextObject {
     Q_OBJECT
-    Q_PROPERTY(QString hostname READ hostname CONSTANT)
-    Q_PROPERTY(quint16 port READ port CONSTANT)
-    Q_PROPERTY(QString prefilledUsername READ prefilledUsername CONSTANT)
+    Q_PROPERTY(QString realm READ realm CONSTANT)
 
 public:
-    ProxyAuthenticationDialogContextObject(const QString& hostname, quint16 port, const QString& prefilledUsername)
-        : QObject()
-        , m_hostname(hostname)
-        , m_port(port)
-        , m_prefilledUsername(prefilledUsername)
+    HttpAuthenticationDialogContextObject(const QString& hostname, const QString& realm, const QString& prefilledUsername)
+        : BaseAuthenticationContextObject(hostname, prefilledUsername)
+        , m_realm(realm)
     {
     }
 
-    QString hostname() const { return m_hostname; }
-    quint16 port() const { return m_port; }
-    QString prefilledUsername() const { return m_prefilledUsername; }
-
-public slots:
-    void accept(const QString& username, const QString& password) { emit accepted(username, password); }
-    void reject() { emit rejected(); }
-
-signals:
-    void accepted(const QString& username, const QString& password);
-    void rejected();
+    QString realm() const { return m_realm; }
 
 private:
-    QString m_hostname;
+    QString m_realm;
+};
+
+class ProxyAuthenticationDialogContextObject : public BaseAuthenticationContextObject {
+    Q_OBJECT
+    Q_PROPERTY(quint16 port READ port CONSTANT)
+
+public:
+    ProxyAuthenticationDialogContextObject(const QString& hostname, quint16 port, const QString& prefilledUsername)
+        : BaseAuthenticationContextObject(hostname, prefilledUsername)
+        , m_port(port)
+    {
+    }
+
+    quint16 port() const { return m_port; }
+
+private:
     quint16 m_port;
-    QString m_prefilledUsername;
 };
 
 class CertificateVerificationDialogContextObject : public QObject {
@@ -196,7 +193,7 @@ bool QtDialogRunner::initForPrompt(QDeclarativeComponent* component, QQuickItem*
 
 bool QtDialogRunner::initForAuthentication(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& hostname, const QString& realm, const QString& prefilledUsername)
 {
-    AuthenticationDialogContextObject* contextObject = new AuthenticationDialogContextObject(hostname, realm, prefilledUsername);
+    HttpAuthenticationDialogContextObject* contextObject = new HttpAuthenticationDialogContextObject(hostname, realm, prefilledUsername);
     if (!createDialog(component, dialogParent, contextObject))
         return false;
 
