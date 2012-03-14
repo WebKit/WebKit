@@ -144,6 +144,10 @@
 #include "GrContext.h"
 #endif
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+#include "PlatformScreen.h"
+#endif
+
 #define DEBUG_BLOCK_ZOOM 0
 #define DEBUG_TOUCH_EVENTS 0
 #define DEBUG_WEBPAGE_LOAD 0
@@ -482,6 +486,10 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     blockClickRadius = int(roundf(0.35 * Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(0).width())); // The clicked rectangle area should be a fixed unit of measurement.
 
     m_page->settings()->setDelegateSelectionPaint(true);
+
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    m_page->windowScreenDidChange((PlatformDisplayID)0);
+#endif
 }
 
 void WebPagePrivate::load(const char* url, const char* networkToken, const char* method, Platform::NetworkRequest::CachePolicy cachePolicy, const char* data, size_t dataLength, const char* const* headers, size_t headersLength, bool isInitial, bool mustHandleInternally, bool forceDownload, const char* overrideContentType)

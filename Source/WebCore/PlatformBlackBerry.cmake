@@ -195,6 +195,13 @@ LIST(APPEND WEBDOM_IDL_HEADERS
     bindings/cpp/WebDOMString.h
 )
 
+if (ENABLE_REQUEST_ANIMATION_FRAME)
+    LIST(APPEND WebCore_SOURCES
+        platform/graphics/blackberry/DisplayRefreshMonitorBlackBerry.cpp
+        platform/graphics/DisplayRefreshMonitor.cpp
+    )
+ENDIF ()
+
 if (ENABLE_WEBGL)
     LIST(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/gpu"

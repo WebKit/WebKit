@@ -31,6 +31,9 @@
 #include "PlatformScreen.h"
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#if PLATFORM(BLACKBERRY)
+#include <BlackBerryPlatformAnimation.h>
+#endif
 
 #if PLATFORM(MAC)
 typedef struct __CVDisplayLink *CVDisplayLinkRef;
@@ -68,6 +71,17 @@ private:
     PlatformDisplayID m_displayID;
 };
 
+#if PLATFORM(BLACKBERRY)
+class DisplayAnimationClient : public BlackBerry::Platform::AnimationFrameRateClient {
+public:
+    DisplayAnimationClient(DisplayRefreshMonitor *);
+    ~DisplayAnimationClient() { }
+private:
+    virtual void animationFrameChanged();
+    DisplayRefreshMonitor *m_monitor;
+};
+#endif
+
 //
 // Monitor for display refresh messages for a given screen
 //
@@ -97,7 +111,8 @@ public:
 
 private:
     void notifyClients();
-    
+    static void refreshDisplayOnMainThread(void* data);
+
     double m_timestamp;
     bool m_active;
     bool m_scheduled;
@@ -106,13 +121,18 @@ private:
     DisplayRefreshMonitorManager* m_manager;
     Mutex m_mutex;
     Vector<DisplayRefreshMonitorClient*> m_clients;
-    
+#if PLATFORM(BLACKBERRY)
+public:
+    void displayLinkFired();
+private:
+    DisplayAnimationClient *m_animationClient;
+    void startAnimationClient();
+    void stopAnimationClient();
+#endif
 #if PLATFORM(MAC)
 public:
     void displayLinkFired(double nowSeconds, double outputTimeSeconds);
 private:
-    static void refreshDisplayOnMainThread(void* data);
-
     CVDisplayLinkRef m_displayLink;
 #endif
 };

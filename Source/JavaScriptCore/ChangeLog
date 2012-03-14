@@ -1,3 +1,14 @@
+2012-03-14  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Implement REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR using AnimationFrameRateController
+        https://bugs.webkit.org/show_bug.cgi?id=81000
+
+        Enable WTF_USE_REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR for BlackBerry.
+
+        Reviewed by Antonio Gomes.
+
+        * wtf/Platform.h:
+
 2012-03-13  Filip Pizlo  <fpizlo@apple.com>
 
         ValueToInt32 speculation will cause OSR exits even when it does not have to
