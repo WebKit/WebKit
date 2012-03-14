@@ -1,3 +1,19 @@
+2012-03-14  Anders Carlsson  <andersca@apple.com>
+
+        With tiled drawing enabled, clicking a link to a PDF causes a cross-fade
+        https://bugs.webkit.org/show_bug.cgi?id=79247
+        <rdar://problem/10910808>
+
+        Reviewed by Sam Weinig.
+
+        Instead of creating a new CALayer for the WKView when we're in tiled mode, re-use the existing layer that AppKit makes for us.
+        This way, we won't get any implicit animations when we change layer properties (such as sublayers in this case).
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        (-[WKView wantsUpdateLayer]):
+        (-[WKView updateLayer]):
+
 2012-03-14  Alexey Proskuryakov  <ap@apple.com>
 
         WebProcess sometimes hits an assertion in SandboxExtensionTracker::didCommitProvisionalLoad after running regression tests

@@ -2525,9 +2525,11 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     bool hadPDFView = _data->_pdfViewController;
     _data->_pdfViewController = nullptr;
 
+    self.wantsLayer = pageHasCustomRepresentation;
+
     if (pageHasCustomRepresentation)
         _data->_pdfViewController = PDFViewController::create(self);
-    
+
     if (pageHasCustomRepresentation != hadPDFView)
         _data->_page->drawingArea()->pageCustomRepresentationChanged();
 }
@@ -2882,10 +2884,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [self _registerDraggedTypes];
 
     if ([self _shouldUseTiledDrawingArea]) {
-        CALayer *layer = [CALayer layer];
-        layer.backgroundColor = CGColorGetConstantColor(kCGColorWhite);
-        self.layer = layer;
-
         self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawNever;
         self.wantsLayer = YES;
     }
@@ -2894,6 +2892,18 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     return self;
 }
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+- (BOOL)wantsUpdateLayer
+{
+    return [self _shouldUseTiledDrawingArea];
+}
+
+- (void)updateLayer
+{
+    self.layer.backgroundColor = CGColorGetConstantColor(kCGColorWhite);
+}
+#endif
 
 - (WKPageRef)pageRef
 {
