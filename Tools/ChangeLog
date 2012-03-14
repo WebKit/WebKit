@@ -1,3 +1,15 @@
+2012-03-14  Jessie Berlin  <jberlin@apple.com>
+
+        Crash in WKTR under addChromeInputField due to using 0 as a key in a HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=81167
+
+        Reviewed by Sam Weinig.
+
+        Do not use 0 as a key in a HashMap.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        cacheLayoutTestControllerCallback uses the enum as keys for the callback map.
+
 2012-03-14  Ojan Vafai  <ojan@chromium.org>
 
         Add the chromium lion bot to garden-o-matic and remove
