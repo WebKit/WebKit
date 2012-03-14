@@ -1,3 +1,12 @@
+2012-03-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Last buildfix for Qt after r110595. :)
+
+        Reviewed by Benjamin Poulain.
+
+        * Api/qwebpage.cpp:
+        * WebCoreSupport/GeolocationClientQt.h:
+
 2012-03-13  Benjamin Poulain  <bpoulain@apple.com>
 
         Attempt to fix QtMinimal bot after r110595
