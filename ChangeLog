@@ -1,3 +1,15 @@
+2012-03-14  Max Vujovic  <mvujovic@adobe.com>
+
+        GTK 32-bit Linux Release build failing after r110580 (from bug 80338)
+        https://bugs.webkit.org/show_bug.cgi?id=81063
+
+        Prospective build fix for GTK 32-bit Linux Release.
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/symbols.filter: Adding symbol for ClientRectList(Vector<FloatQuad>) for
+        GTK 32-bit.
+
 2012-03-13  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11025225> Assertion failure in RenderView::computeRectForRepaint() (!repaintContainer || repaintContainer == this) at store.apple.com
