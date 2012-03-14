@@ -59,6 +59,10 @@
 #include "WebGLRenderingContext.h"
 #endif
 
+#if PLATFORM(CHROMIUM)
+#include "PlatformSupport.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -460,6 +464,11 @@ bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
     // Do not use acceleration for small canvas.
     if (size.width() * size.height() < settings->minimumAccelerated2dCanvasSize())
         return false;
+
+#if PLATFORM(CHROMIUM)
+    if (!PlatformSupport::canAccelerate2dCanvas())
+        return false;
+#endif
 
     return true;
 #else

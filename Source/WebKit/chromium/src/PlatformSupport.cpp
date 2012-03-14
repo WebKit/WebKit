@@ -1136,4 +1136,9 @@ WorkerContextProxy* WorkerContextProxy::create(Worker* worker)
 }
 #endif
 
+bool PlatformSupport::canAccelerate2dCanvas()
+{
+    return webKitPlatformSupport()->canAccelerate2dCanvas();
+}
+
 } // namespace WebCore

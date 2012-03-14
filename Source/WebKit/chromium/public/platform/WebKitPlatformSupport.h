@@ -386,6 +386,8 @@ public:
     // Returns newly allocated and initialized offscreen WebGraphicsContext3D instance.
     virtual WebGraphicsContext3D* createOffscreenGraphicsContext3D(const WebGraphicsContext3D::Attributes&) { return 0; }
 
+    virtual bool canAccelerate2dCanvas() { return false; }
+
     // Audio --------------------------------------------------------------
 
     virtual double audioHardwareSampleRate() { return 0; }

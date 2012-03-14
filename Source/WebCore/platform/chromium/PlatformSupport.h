@@ -435,6 +435,8 @@ public:
 
     static void didStartWorkerRunLoop(WorkerRunLoop*);
     static void didStopWorkerRunLoop(WorkerRunLoop*);
+
+    static bool canAccelerate2dCanvas();
 };
 
 } // namespace WebCore
