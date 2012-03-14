@@ -1,0 +1,33 @@
+<html>
+<head>
+    <script type="text/javascript">
+        if (window.layoutTestController) {
+            layoutTestController.waitUntilDone();
+            layoutTestController.dumpAsText();
+            layoutTestController.setFrameFlatteningEnabled(true);
+        }
+
+        function test()
+        {
+            setTimeout(function() {
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }, 0);
+        }
+    </script>
+</head>
+<body onload="test()">
+    <div>
+        <p>This test verifies that nested iframes do not cause assertion failure, when javascript is forcing layout. PASS if no assert in debug.</p>
+    </div>
+    <iframe src="data:text/html,
+            <style>body { background-color: green; }</style>
+            <body>
+            <iframe src='data:text/html,
+                <style>body { background-color: yellow; }</style>
+                <body></body>' scrolling='no' height='50px' width='50px'></iframe>
+            <script>document.body.offsetHeight</script>
+            </body>" scrolling="no" height="100px" width="100px"></iframe>
+     <script>document.body.offsetHeight</script>
+</body>
+</html>

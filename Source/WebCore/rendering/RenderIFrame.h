@@ -34,6 +34,8 @@ class RenderIFrame : public RenderFrameBase {
 public:
     explicit RenderIFrame(Element*);
 
+    bool flattenFrame();
+
 private:
     virtual void computeLogicalHeight();
     virtual void computeLogicalWidth();
@@ -43,8 +45,6 @@ private:
     virtual bool isRenderIFrame() const { return true; }
 
     virtual const char* renderName() const { return "RenderPartObject"; } // Lying for now to avoid breaking tests
-
-    bool flattenFrame();
 
 };
 

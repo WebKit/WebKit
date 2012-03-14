@@ -406,6 +406,8 @@ private:
 
     FrameView* parentFrameView() const;
 
+    bool isInChildFrameWithFrameFlattening();
+
     virtual AXObjectCache* axObjectCache() const;
     void notifyWidgetsInAllFrames(WidgetNotification);
     
