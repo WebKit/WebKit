@@ -366,7 +366,7 @@ static void getComboBoxMetrics(RenderStyle* style, GtkBorder& border, int& focus
     if (style->appearance() == NoControlPart)
         return;
 
-    GtkStyleContext* context = getStyleContext(GTK_TYPE_BUTTON);
+    GtkStyleContext* context = getStyleContext(GTK_TYPE_COMBO_BOX);
     gtk_style_context_save(context);
 
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
@@ -522,12 +522,11 @@ bool RenderThemeGtk::paintMenuList(RenderObject* renderObject, const PaintInfo& 
     gtk_style_context_restore(arrowStyleContext);
 
     // Paint the separator if needed.
-    GtkStyleContext* separatorStyleContext = getStyleContext(GTK_TYPE_SEPARATOR);
+    GtkStyleContext* separatorStyleContext = getStyleContext(GTK_TYPE_COMBO_BOX);
     gtk_style_context_save(separatorStyleContext);
 
     gtk_style_context_set_direction(separatorStyleContext, direction);
     gtk_style_context_add_class(separatorStyleContext, "separator");
-    gtk_style_context_add_class(separatorStyleContext, GTK_STYLE_CLASS_BUTTON);
 
     gboolean wideSeparators;
     gint separatorWidth;
