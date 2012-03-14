@@ -52,9 +52,9 @@ class WebPluginSiteDataManager;
 class WebProcessProxy;
 struct PluginProcessCreationParameters;
 
-class PluginProcessProxy : CoreIPC::Connection::Client, ProcessLauncher::Client {
+class PluginProcessProxy : public RefCounted<PluginProcessProxy>, CoreIPC::Connection::Client, ProcessLauncher::Client {
 public:
-    static PassOwnPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginModuleInfo&);
+    static PassRefPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginModuleInfo&);
     ~PluginProcessProxy();
 
     const PluginModuleInfo& pluginInfo() const { return m_pluginInfo; }

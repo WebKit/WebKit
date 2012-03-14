@@ -202,7 +202,7 @@ void PluginProcessProxy::exitFullscreen()
 
 void PluginProcessProxy::setModalWindowIsShowing(bool modalWindowIsShowing)
 {
-    if (modalWindowIsShowing == m_modalWindowIsShowing) 
+    if (modalWindowIsShowing == m_modalWindowIsShowing)
         return;
     
     m_modalWindowIsShowing = modalWindowIsShowing;
@@ -223,7 +223,11 @@ void PluginProcessProxy::beginModal()
     
     m_activationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationWillBecomeActiveNotification object:NSApp queue:nil
                                                                          usingBlock:^(NSNotification *){ applicationDidBecomeActive(); }];
-    
+
+    // The call to -[NSApp runModalForWindow:] below will run a nested run loop, and if the plug-in process
+    // crashes the PluginProcessProxy object can be destroyed. Protect against this here.
+    RefPtr<PluginProcessProxy> protect(this);
+
     [NSApp runModalForWindow:m_placeholderWindow.get()];
     
     [m_placeholderWindow.get() orderOut:nil];

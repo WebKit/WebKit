@@ -87,8 +87,9 @@ PluginProcessProxy* PluginProcessManager::pluginProcessWithPath(const String& pl
 {
     for (size_t i = 0; i < m_pluginProcesses.size(); ++i) {
         if (m_pluginProcesses[i]->pluginInfo().path == pluginPath)
-            return m_pluginProcesses[i];
+            return m_pluginProcesses[i].get();
     }
+
     return 0;
 }
 
@@ -97,10 +98,12 @@ PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(const PluginM
     if (PluginProcessProxy* pluginProcess = pluginProcessWithPath(plugin.path))
         return pluginProcess;
 
-    PluginProcessProxy* pluginProcess = PluginProcessProxy::create(this, plugin).leakPtr();
-    m_pluginProcesses.append(pluginProcess);
+    RefPtr<PluginProcessProxy> pluginProcess = PluginProcessProxy::create(this, plugin);
+    PluginProcessProxy* pluginProcessPtr = pluginProcess.get();
 
-    return pluginProcess;
+    m_pluginProcesses.append(pluginProcess.release());
+
+    return pluginProcessPtr;
 }
 
 } // namespace WebKit

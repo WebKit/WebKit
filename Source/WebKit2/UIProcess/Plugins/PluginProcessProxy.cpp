@@ -47,9 +47,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* PluginProcessManager, const PluginModuleInfo& pluginInfo)
+PassRefPtr<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* PluginProcessManager, const PluginModuleInfo& pluginInfo)
 {
-    return adoptPtr(new PluginProcessProxy(PluginProcessManager, pluginInfo));
+    return adoptRef(new PluginProcessProxy(PluginProcessManager, pluginInfo));
 }
 
 PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManager, const PluginModuleInfo& pluginInfo)
@@ -151,9 +151,8 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
     while (!m_pendingClearSiteDataReplies.isEmpty())
         didClearSiteData(m_pendingClearSiteDataReplies.begin()->first);
 
-    // Tell the plug-in process manager to forget about this plug-in process proxy.
+    // Tell the plug-in process manager to forget about this plug-in process proxy. This may cause us to be deleted.
     m_pluginProcessManager->removePluginProcessProxy(this);
-    delete this;
 }
 
 void PluginProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
