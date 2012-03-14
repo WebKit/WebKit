@@ -125,6 +125,7 @@ WebInspector.IDBDataView = function(model, databaseId, objectStore, index)
     this._skipCount = 0;
 
     this.update(objectStore, index);
+    this._entries = [];
 }
 
 WebInspector.IDBDataView.prototype = {
@@ -286,7 +287,8 @@ WebInspector.IDBDataView.prototype = {
          */
         function callback(entries, hasMore)
         {
-            this._dataGrid.removeChildren();
+            this.clear();
+            this._entries = entries;
             for (var i = 0; i < entries.length; ++i) {
                 var data = {};
                 data["number"] = i + skipCount;
@@ -319,6 +321,16 @@ WebInspector.IDBDataView.prototype = {
     get statusBarItems()
     {
         return [this._refreshButton.element];
+    },
+
+    clear: function()
+    {
+        this._dataGrid.removeChildren();
+        for (var i = 0; i < this._entries.length; ++i) {
+            var value = this._entries[i].value;
+            value.release();
+        }
+        this._entries = [];
     }
 }
 

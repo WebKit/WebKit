@@ -1570,6 +1570,7 @@ WebInspector.IndexedDBTreeElement.prototype = {
         if (!idbDatabaseTreeElement)
             return;
 
+        idbDatabaseTreeElement.clear();
         this.removeChild(idbDatabaseTreeElement);
         this._idbDatabaseTreeElements.remove(idbDatabaseTreeElement);
     },
@@ -1666,10 +1667,8 @@ WebInspector.IDBDatabaseTreeElement.prototype = {
             this._idbObjectStoreTreeElements[objectStore.name].update(objectStore);
         }
         for (var objectStoreName in this._idbObjectStoreTreeElements) {
-            if (!objectStoreNames[objectStoreName]) {
-                this.removeChild(this._idbObjectStoreTreeElements[objectStoreName]);
-                delete this._idbObjectStoreTreeElements[objectStoreName];
-            }
+            if (!objectStoreNames[objectStoreName])
+                this._objectStoreRemoved(objectStoreName);
         }
 
         if (this.children.length) {
@@ -1695,6 +1694,23 @@ WebInspector.IDBDatabaseTreeElement.prototype = {
             this._view = new WebInspector.IDBDatabaseView(this._database);
 
         this._storagePanel.showIndexedDB(this._view);
+    },
+
+    /**
+     * @param {string} objectStoreName
+     */
+    _objectStoreRemoved: function(objectStoreName)
+    {
+        var objectStoreTreeElement = this._idbObjectStoreTreeElements[objectStoreName];
+        objectStoreTreeElement.clear();
+        this.removeChild(objectStoreTreeElement);
+        delete this._idbObjectStoreTreeElements[objectStoreName];
+    },
+
+    clear: function()
+    {
+        for (var objectStoreName in this._idbObjectStoreTreeElements)
+            this._objectStoreRemoved(objectStoreName);
     }
 }
 
@@ -1741,6 +1757,10 @@ WebInspector.IDBObjectStoreTreeElement.prototype = {
             this._idbIndexTreeElements[index.name].update(index);
         }
         for (var indexName in this._idbIndexTreeElements) {
+            if (!indexNames[indexName])
+                this._indexRemoved(indexName);
+        }
+        for (var indexName in this._idbIndexTreeElements) {
             if (!indexNames[indexName]) {
                 this.removeChild(this._idbIndexTreeElements[indexName]);
                 delete this._idbIndexTreeElements[indexName];
@@ -1770,6 +1790,25 @@ WebInspector.IDBObjectStoreTreeElement.prototype = {
             this._view = new WebInspector.IDBDataView(this._model, this._databaseId, this._objectStore, null);
 
         this._storagePanel.showIndexedDB(this._view);
+    },
+
+    /**
+     * @param {string} indexName
+     */
+    _indexRemoved: function(indexName)
+    {
+        var indexTreeElement = this._idbIndexTreeElements[indexName];
+        indexTreeElement.clear();
+        this.removeChild(indexTreeElement);
+        delete this._idbIndexTreeElements[indexName];
+    },
+
+    clear: function()
+    {
+        for (var indexName in this._idbIndexTreeElements)
+            this._indexRemoved(indexName);
+        if (this._view)
+            this._view.clear();
     }
 }
 
@@ -1830,6 +1869,12 @@ WebInspector.IDBIndexTreeElement.prototype = {
             this._view = new WebInspector.IDBDataView(this._model, this._databaseId, this._objectStore, this._index);
 
         this._storagePanel.showIndexedDB(this._view);
+    },
+
+    clear: function()
+    {
+        if (this._view)
+            this._view.clear();
     }
 }
 
