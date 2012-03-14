@@ -112,4 +112,16 @@ TEST(RegionTest, containsPoint)
     TEST_BOTTOM_OF_RECT(r, 31, 40, 10, 10);
 }
 
+TEST(RegionTest, emptySpan)
+{
+    Region r;
+    r.unite(IntRect(5, 0, 10, 10));
+    r.unite(IntRect(0, 5, 10, 10));
+    r.subtract(IntRect(7, 7, 10, 0));
+
+    Vector<IntRect> rects = r.rects();
+    for (size_t i = 0; i < rects.size(); ++i)
+        EXPECT_FALSE(rects[i].isEmpty());
+}
+
 } // namespace

@@ -1,3 +1,14 @@
+2012-03-14  Dana Jansens  <danakj@chromium.org>
+
+        Region can acquire an empty span by subtracting an empty Region
+        https://bugs.webkit.org/show_bug.cgi?id=81074
+
+        Reviewed by Anders Carlsson.
+
+        * tests/RegionTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+
 2012-03-13  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed, mark verifyCullChildLinesUpTopLeft() as failed.

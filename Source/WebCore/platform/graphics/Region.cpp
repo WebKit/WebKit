@@ -500,6 +500,9 @@ void Region::unite(const Region& region)
 
 void Region::subtract(const Region& region)
 {
+    if (region.isEmpty())
+        return;
+
     Shape subtractedShape = Shape::subtractShapes(m_shape, region.m_shape);
 
     m_shape.swap(subtractedShape);
