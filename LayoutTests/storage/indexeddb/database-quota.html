@@ -12,7 +12,8 @@ description("Tests IndexedDB's quota enforcing mechanism.");
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('database-quota')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('database-quota')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -57,7 +58,7 @@ function checkObjectStore()
 
 function checkQuotaEnforcing()
 {
-    var trans = evalAndLog("trans = db.transaction(['test123'], webkitIDBTransaction.READ_WRITE)");
+    var trans = evalAndLog("trans = db.transaction(['test123'], IDBTransaction.READ_WRITE)");
     trans.onabort = testComplete;
     trans.oncomplete = unexpectedCompleteCallback;
     debug("Creating 'data' which contains 64K of data");

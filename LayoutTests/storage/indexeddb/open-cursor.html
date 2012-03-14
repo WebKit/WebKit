@@ -20,7 +20,7 @@ function emptyCursorSuccess()
 function openEmptyCursor()
 {
     debug("Opening an empty cursor.");
-    keyRange = webkitIDBKeyRange.lowerBound("InexistentKey");
+    keyRange = IDBKeyRange.lowerBound("InexistentKey");
     request = evalAndLog("objectStore.openCursor(keyRange)");
     request.onsuccess = emptyCursorSuccess;
     request.onerror = unexpectedErrorCallback;
@@ -48,7 +48,7 @@ function cursorSuccess()
 function openCursor()
 {
     debug("Opening cursor");
-    keyRange = webkitIDBKeyRange.lowerBound("myKey");
+    keyRange = IDBKeyRange.lowerBound("myKey");
     request = evalAndLog("event.target.source.openCursor(keyRange)");
     request.onsuccess = cursorSuccess;
     request.onerror = unexpectedErrorCallback;
@@ -80,7 +80,8 @@ function openSuccess()
  
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('open-cursor')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('open-cursor')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

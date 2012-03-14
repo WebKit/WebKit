@@ -13,11 +13,7 @@ description("Test IndexedDB opening database connections during transactions");
 
 function test()
 {
-    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
-    evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;");
-    shouldBeFalse("IDBTransaction == null");
-    debug("");
+    removeVendorPrefixes();
     prepareDatabase();
 }
 

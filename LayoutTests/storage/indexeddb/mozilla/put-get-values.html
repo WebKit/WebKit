@@ -19,8 +19,7 @@ description("Test IndexedDB's putting and getting values in an object store");
 
 function test()
 {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
+    removeVendorPrefixes();
 
     name = window.location.pathname;
     description = "My Test Database";

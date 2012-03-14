@@ -14,7 +14,8 @@ test();
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('cursor-delete')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('cursor-delete')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -48,8 +49,8 @@ function setVersionSuccess()
 function openCursor()
 {
     debug("openCursor1");
-    evalAndLog("trans = db.transaction(['test'], webkitIDBTransaction.READ_WRITE)");
-    keyRange = webkitIDBKeyRange.lowerBound("myKey1");
+    evalAndLog("trans = db.transaction(['test'], IDBTransaction.READ_WRITE)");
+    keyRange = IDBKeyRange.lowerBound("myKey1");
     request = evalAndLog("trans.objectStore('test').openCursor({range: keyRange})");
     request.onsuccess = cursorSuccess;
     request.onerror = unexpectedErrorCallback;
@@ -78,7 +79,7 @@ function cursorEmpty()
 
 function addObject()
 {
-    evalAndLog("trans = db.transaction(['test'], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(['test'], IDBTransaction.READ_WRITE)");
     objectStore = evalAndLog("objectStore = trans.objectStore('test')");
     request = evalAndLog("objectStore.add('myValue1', 'myKey1')");
     request.onsuccess = openCursor2;

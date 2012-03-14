@@ -12,10 +12,7 @@ description("Test features of IndexedDB's multiEntry indices.");
 
 function test()
 {
-    evalAndLog("window.indexedDB = window.indexedDB || window.webkitIndexedDB");
-    shouldBeTrue("indexedDB != null");
-    evalAndLog("window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction");
-    shouldBeTrue("IDBTransaction != null");
+    removeVendorPrefixes();
 
     request = evalAndLog("indexedDB.open('index-multiEntry')");
     request.onerror = unexpectedErrorCallback;

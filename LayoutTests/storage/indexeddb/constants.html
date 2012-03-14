@@ -12,30 +12,31 @@ description("Test IndexedDB's constants.");
 
 function test()
 {
-    shouldBe("webkitIDBDatabaseException.UNKNOWN_ERR", "1");
-    shouldBe("webkitIDBDatabaseException.NON_TRANSIENT_ERR", "2");
-    shouldBe("webkitIDBDatabaseException.NOT_FOUND_ERR", "3");
-    shouldBe("webkitIDBDatabaseException.CONSTRAINT_ERR", "4");
-    shouldBe("webkitIDBDatabaseException.DATA_ERR", "5");
-    shouldBe("webkitIDBDatabaseException.NOT_ALLOWED_ERR", "6");
-    shouldBe("webkitIDBDatabaseException.TRANSACTION_INACTIVE_ERR", "7");
-    shouldBe("webkitIDBDatabaseException.ABORT_ERR", "8");
-    shouldBe("webkitIDBDatabaseException.READ_ONLY_ERR", "9");
-    shouldBe("webkitIDBDatabaseException.TIMEOUT_ERR", "10");
-    shouldBe("webkitIDBDatabaseException.QUOTA_ERR", "11");
-    shouldBe("webkitIDBDatabaseException.VER_ERR", "12");
+    removeVendorPrefixes();
+    shouldBe("IDBDatabaseException.UNKNOWN_ERR", "1");
+    shouldBe("IDBDatabaseException.NON_TRANSIENT_ERR", "2");
+    shouldBe("IDBDatabaseException.NOT_FOUND_ERR", "3");
+    shouldBe("IDBDatabaseException.CONSTRAINT_ERR", "4");
+    shouldBe("IDBDatabaseException.DATA_ERR", "5");
+    shouldBe("IDBDatabaseException.NOT_ALLOWED_ERR", "6");
+    shouldBe("IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "7");
+    shouldBe("IDBDatabaseException.ABORT_ERR", "8");
+    shouldBe("IDBDatabaseException.READ_ONLY_ERR", "9");
+    shouldBe("IDBDatabaseException.TIMEOUT_ERR", "10");
+    shouldBe("IDBDatabaseException.QUOTA_ERR", "11");
+    shouldBe("IDBDatabaseException.VER_ERR", "12");
 
-    shouldBe("webkitIDBRequest.LOADING", "1");
-    shouldBe("webkitIDBRequest.DONE", "2");
+    shouldBe("IDBRequest.LOADING", "1");
+    shouldBe("IDBRequest.DONE", "2");
 
-    shouldBe("webkitIDBCursor.NEXT", "0");
-    shouldBe("webkitIDBCursor.NEXT_NO_DUPLICATE", "1");
-    shouldBe("webkitIDBCursor.PREV", "2");
-    shouldBe("webkitIDBCursor.PREV_NO_DUPLICATE", "3");
+    shouldBe("IDBCursor.NEXT", "0");
+    shouldBe("IDBCursor.NEXT_NO_DUPLICATE", "1");
+    shouldBe("IDBCursor.PREV", "2");
+    shouldBe("IDBCursor.PREV_NO_DUPLICATE", "3");
 
-    shouldBe("webkitIDBTransaction.READ_ONLY", "0");
-    shouldBe("webkitIDBTransaction.READ_WRITE", "1");
-    shouldBe("webkitIDBTransaction.VERSION_CHANGE", "2");
+    shouldBe("IDBTransaction.READ_ONLY", "0");
+    shouldBe("IDBTransaction.READ_WRITE", "1");
+    shouldBe("IDBTransaction.VERSION_CHANGE", "2");
 }
 
 test();

@@ -3,29 +3,28 @@ Test IndexedDB's basics.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS 'webkitIndexedDB' in self is true
-PASS webkitIndexedDB == null is false
-PASS 'webkitIDBCursor' in self is true
-PASS webkitIDBCursor == null is false
-webkitIndexedDB.open('basics')
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
+indexedDB.open('basics')
 PASS 'result' in request is true
 Expecting exception from request.result
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
 PASS 'errorCode' in request is true
 Expecting exception from request.errorCode
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
 PASS 'webkitErrorMessage' in request is true
 Expecting exception from request.webkitErrorMessage
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
 PASS 'source' in request is true
-PASS request.source is webkitIndexedDB
+PASS request.source is indexedDB
 PASS 'transaction' in request is true
 PASS request.transaction is null
 PASS 'readyState' in request is true
-PASS request.readyState is webkitIDBRequest.LOADING
+PASS request.readyState is IDBRequest.LOADING
 PASS 'onsuccess' in request is true
 PASS request.onsuccess is null
 PASS 'onerror' in request is true
@@ -39,11 +38,11 @@ PASS event.target.errorCode is 0
 PASS 'webkitErrorMessage' in event.target is true
 PASS event.target.webkitErrorMessage is undefined.
 PASS 'source' in event.target is true
-PASS request.source is webkitIndexedDB
+PASS request.source is indexedDB
 PASS 'transaction' in event.target is true
 PASS event.target.transaction is null
 PASS 'readyState' in request is true
-PASS event.target.readyState is webkitIDBRequest.DONE
+PASS event.target.readyState is IDBRequest.DONE
 PASS 'onsuccess' in event.target is true
 PASS 'onerror' in event.target is true
 PASS event.target.LOADING is 1

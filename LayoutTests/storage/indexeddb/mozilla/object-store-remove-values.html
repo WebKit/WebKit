@@ -19,8 +19,7 @@ description("Test IndexedDB: adds, gets, deletes, and re-gets a record in a vari
 
 function test()
 {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
+    removeVendorPrefixes();
 
     name = window.location.pathname;
     description = "My Test Database";

@@ -24,6 +24,24 @@ if (self.importScripts && !self.postMessage) {
     };
 }
 
+function removeVendorPrefixes()
+{
+    IDBCursor = self.IDBCursor || self.webkitIDBCursor;
+    IDBDatabase = self.IDBDatabase || self.webkitIDBDatabase;
+    IDBDatabaseError = self.IDBDatabaseError || self.webkitIDBDatabaseError;
+    IDBDatabaseException = self.IDBDatabaseException || self.webkitIDBDatabaseException;
+    IDBFactory = self.IDBFactory || self.webkitIDBFactory;
+    IDBIndex = self.IDBIndex || self.webkitIDBIndex;
+    IDBKeyRange = self.IDBKeyRange || self.webkitIDBKeyRange;
+    IDBObjectStore = self.IDBObjectStore || self.webkitIDBObjectStore;
+    IDBRequest = self.IDBRequest || self.webkitIDBRequest;
+    IDBTransaction = self.IDBTransaction || self.webkitIDBTransaction;
+
+    indexedDB = evalAndLog("indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;");
+    shouldBeTrue("Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction)");
+    debug("");
+}
+
 function unexpectedSuccessCallback()
 {
     testFailed("Success function called unexpectedly.");

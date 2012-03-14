@@ -3,7 +3,10 @@ Test IndexedDB's cursor update.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('cursor-update')
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
+indexedDB.open('cursor-update')
 db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
@@ -27,7 +30,7 @@ objectStore.add({number: 2, id: 2}).onerror = unexpectedErrorCallback
 objectStore.add({number: 3, id: 3}).onerror = unexpectedErrorCallback
 objectStore.add({number: 4, id: 4}).onerror = unexpectedErrorCallback
 openBasicCursor()
-trans = db.transaction(['basicStore', 'autoIncrementStore', 'keyPathStore'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['basicStore', 'autoIncrementStore', 'keyPathStore'], IDBTransaction.READ_WRITE)
 trans.objectStore('basicStore')
 objectStore.openCursor(keyRange)
 basicUpdateCursor()
@@ -106,25 +109,25 @@ trans.objectStore('keyPathStore').openCursor(keyRange)
 keyPathUpdateCursor()
 Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.DATA_ERR
+PASS code is IDBDatabaseException.DATA_ERR
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
 Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.DATA_ERR
+PASS code is IDBDatabaseException.DATA_ERR
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
 Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.DATA_ERR
+PASS code is IDBDatabaseException.DATA_ERR
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
 Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.DATA_ERR
+PASS code is IDBDatabaseException.DATA_ERR
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
@@ -157,22 +160,22 @@ keyCursor()
 PASS event.target.result.key is counter + 100
 PASS event.target.result.primaryKey is counter
 event.target.result.update({id: counter, number: counter + 200})
-PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
 keyCursor()
 PASS event.target.result.key is counter + 100
 PASS event.target.result.primaryKey is counter
 event.target.result.update({id: counter, number: counter + 200})
-PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
 keyCursor()
 PASS event.target.result.key is counter + 100
 PASS event.target.result.primaryKey is counter
 event.target.result.update({id: counter, number: counter + 200})
-PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
 keyCursor()
 PASS event.target.result.key is counter + 100
 PASS event.target.result.primaryKey is counter
 event.target.result.update({id: counter, number: counter + 200})
-PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS code is IDBDatabaseException.NOT_ALLOWED_ERR
 keyCursor()
 PASS counter is 5
 transactionComplete()

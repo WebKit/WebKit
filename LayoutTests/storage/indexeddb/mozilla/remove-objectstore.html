@@ -19,10 +19,7 @@ description("Test IndexedDB deleting an object store");
 
 function test()
 {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
-    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
-    shouldBeFalse("IDBDatabaseException == null");
+    removeVendorPrefixes();
 
     name = window.location.pathname;
     description = "My Test Database";

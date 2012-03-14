@@ -12,8 +12,7 @@ description("Ensure VERSION_CHANGE transaction doesn't run concurrently with oth
 
 
 function test() {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
+    removeVendorPrefixes();
     openDBConnection();
 }
 

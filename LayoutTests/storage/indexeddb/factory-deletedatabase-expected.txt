@@ -3,7 +3,10 @@ Test IndexedDB's webkitIndexedDB.deleteDatabase().
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('database-to-delete')
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
+indexedDB.open('database-to-delete')
 db = event.target.result
 db.setVersion('new version')
 trans = event.target.result
@@ -12,13 +15,13 @@ store = db.createObjectStore('storeName', null)
 store.createIndex('indexName', '')
 PASS store.indexNames.contains('indexName') is true
 store.add('value', 'key')
-db.transaction('storeName', webkitIDBTransaction.READ_WRITE)
+db.transaction('storeName', IDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')
 store.get('key')
 PASS event.target.result is "value"
 db.setVersion('new version')
-request = webkitIndexedDB.deleteDatabase('database-to-delete')
-webkitIndexedDB.open('database-to-delete')
+request = indexedDB.deleteDatabase('database-to-delete')
+indexedDB.open('database-to-delete')
 db = event.target.result
 db.setVersion('new version')
 PASS db.objectStoreNames.length is 0

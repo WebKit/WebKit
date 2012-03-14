@@ -12,12 +12,7 @@ description("Test transaction aborts send the proper onabort messages..");
 
 function test()
 {
-    evalAndLog("window.indexedDB = window.indexedDB || window.webkitIndexedDB");
-    shouldBeTrue("indexedDB != null");
-    evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction");
-    shouldBeTrue("IDBTransaction != null");
-    evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException");
-    shouldBeTrue("IDBDatabaseException != null");
+    removeVendorPrefixes();
 
     request = evalAndLog("indexedDB.open('name')");
     request.onsuccess = setVersion;

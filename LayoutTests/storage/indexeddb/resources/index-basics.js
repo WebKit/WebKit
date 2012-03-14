@@ -7,7 +7,8 @@ description("Test the basics of IndexedDB's webkitIDBIndex.");
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('index-basics')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('index-basics')");
     request.onsuccess = setVersion;
     request.onerror = unexpectedErrorCallback;
 }

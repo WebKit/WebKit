@@ -12,7 +12,8 @@ description("Test features of IndexedDB's unique indices.");
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('index-unique')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('index-unique')");
     request.onsuccess = setVersion;
     request.onerror = unexpectedErrorCallback;
 }
@@ -45,7 +46,7 @@ function deleteExisting()
 function setVersionCompleted()
 {
     debug("setVersionCompleted():");
-    window.transaction = evalAndLog("transaction = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)");
+    window.transaction = evalAndLog("transaction = db.transaction(['store'], IDBTransaction.READ_WRITE)");
 
     request = evalAndLog("transaction.objectStore('store').put({x: 1}, 'foo')");
     request.onerror = unexpectedErrorCallback;
@@ -69,7 +70,7 @@ function addMoreDataFailed()
     // Don't abort the transaction.
     evalAndLog("event.preventDefault()");
 
-    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.CONSTRAINT_ERR");
+    shouldBe("event.target.errorCode", "IDBDatabaseException.CONSTRAINT_ERR");
 
     // Update the 'foo' entry in object store, changing the value of x.
     request = evalAndLog("transaction.objectStore('store').put({x: 0}, 'foo')");
@@ -82,7 +83,7 @@ function changeDataSuccess()
     debug("changeDataSuccess():");
 
     // An index cursor starting at 1 should not find anything.
-    var request = evalAndLog("transaction.objectStore('store').index('index').openCursor(webkitIDBKeyRange.lowerBound(1))");
+    var request = evalAndLog("transaction.objectStore('store').index('index').openCursor(IDBKeyRange.lowerBound(1))");
     request.onsuccess = cursorSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -93,7 +94,7 @@ function cursorSuccess()
     shouldBe("event.target.result", "null");
 
     // A key cursor starting at 1 should not find anything.
-    var request = evalAndLog("transaction.objectStore('store').index('index').openKeyCursor(webkitIDBKeyRange.lowerBound(1))");
+    var request = evalAndLog("transaction.objectStore('store').index('index').openKeyCursor(IDBKeyRange.lowerBound(1))");
     request.onsuccess = keyCursorSuccess;
     request.onerror = unexpectedErrorCallback;
 }

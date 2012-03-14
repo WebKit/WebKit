@@ -3,12 +3,9 @@ Test IndexedDB's key generator behavior.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-indexedDB = window.indexedDB || window.webkitIndexedDB
-PASS indexedDB != null is true
-IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction
-PASS IDBTransaction != null is true
-IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange
-PASS IDBKeyRange != null is true
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
 
 Verify that each object store has an independent key generator.
 request = indexedDB.deleteDatabase('key-generator')

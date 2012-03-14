@@ -12,7 +12,8 @@ description("Test event propogation on IDBTransaction.");
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('transaction-event-propagation')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('transaction-event-propagation')");
     request.onsuccess = setVersion;
     request.onerror = unexpectedErrorCallback;
 }
@@ -43,7 +44,7 @@ function deleteExisting()
 function startTest()
 {
     debug("Verifing abort");
-    trans = evalAndLog("trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)");
+    trans = evalAndLog("trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     evalAndLog("trans.onabort = abortFiredCallback");
     evalAndLog("trans.oncomplete = unexpectedAbortCallback");
     evalAndLog("db.addEventListener('abort', dbAbortCaptureCallback, true)");
@@ -93,7 +94,7 @@ function dbAbortBubbleCallback()
     dbBubbleFired1 = true;
     debug("");
     debug("Verifing success.");
-    trans = evalAndLog("trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)");
+    trans = evalAndLog("trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)");
     evalAndLog("trans.oncomplete = completeFiredCallback");
     evalAndLog("trans.onabort = unexpectedAbortCallback");
     evalAndLog("db.removeEventListener('abort', dbAbortCaptureCallback, true)");

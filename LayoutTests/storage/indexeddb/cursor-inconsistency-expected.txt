@@ -3,7 +3,10 @@ Test consistency of IndexedDB's cursor objects.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('cursor-inconsistency')
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
+indexedDB.open('cursor-inconsistency')
 db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
@@ -16,7 +19,7 @@ objectStore.add('someValue2', 'someKey2').onerror = unexpectedErrorCallback
 objectStore.add('someValue3', 'someKey3').onerror = unexpectedErrorCallback
 objectStore.add('someValue4', 'someKey4').onerror = unexpectedErrorCallback
 openBasicCursor()
-trans = db.transaction(['basicStore'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['basicStore'], IDBTransaction.READ_WRITE)
 trans.objectStore('basicStore')
 objectStore.openCursor(keyRange)
 

@@ -12,7 +12,8 @@ description("Test IndexedDB's create and removeObjectStore");
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('create-and-remove-object-store')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('create-and-remove-object-store')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -31,9 +32,9 @@ function openSuccess()
 function testCreateAndRemove()
 {
     debug("Trying create");
-    evalAndExpectException('db.createObjectStore("some os")', "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException('db.createObjectStore("some os")', "IDBDatabaseException.NOT_ALLOWED_ERR");
     debug("Trying remove");
-    evalAndExpectException('db.deleteObjectStore("some os")', "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException('db.deleteObjectStore("some os")', "IDBDatabaseException.NOT_ALLOWED_ERR");
 }
 
 function cleanDatabase()
@@ -41,7 +42,7 @@ function cleanDatabase()
     deleteAllObjectStores(db);
 
     os = evalAndLog("db.createObjectStore('tmp')");
-    evalAndExpectException("db.createObjectStore('tmp')", "webkitIDBDatabaseException.CONSTRAINT_ERR");
+    evalAndExpectException("db.createObjectStore('tmp')", "IDBDatabaseException.CONSTRAINT_ERR");
 
     trans = evalAndLog("trans = db.transaction(['tmp'])");
     request = evalAndLog("trans.objectStore('tmp').get(0)");
@@ -56,9 +57,9 @@ function tryOnceMore()
     testCreateAndRemove();
 
     debug("Trying create with store that already exists");
-    evalAndExpectException("db.createObjectStore('tmp')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("db.createObjectStore('tmp')", "IDBDatabaseException.NOT_ALLOWED_ERR");
     debug("Trying remove with store that already exists");
-    evalAndExpectException("db.deleteObjectStore('tmp')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("db.deleteObjectStore('tmp')", "IDBDatabaseException.NOT_ALLOWED_ERR");
 
     finishJSTest();
 }

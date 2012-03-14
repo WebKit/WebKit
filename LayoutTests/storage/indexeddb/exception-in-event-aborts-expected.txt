@@ -1,11 +1,14 @@
-CONSOLE MESSAGE: line 61: Uncaught this exception is expected
-CONSOLE MESSAGE: line 61: Uncaught this exception is expected
+CONSOLE MESSAGE: line 62: Uncaught this exception is expected
+CONSOLE MESSAGE: line 62: Uncaught this exception is expected
 Test exceptions in IDBRequest handlers cause aborts.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('exception-in-event-aborts')
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
+indexedDB.open('exception-in-event-aborts')
 db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
@@ -16,7 +19,7 @@ Deleted all object stores.
 store = db.createObjectStore('storeName', null)
 store.add({x: 'value', y: 'zzz'}, 'key')
 
-trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 trans.onabort = transactionAborted1
 trans.oncomplete = unexpectedCompleteCallback
 store = trans.objectStore('storeName')
@@ -27,7 +30,7 @@ Throwing
 
 PASS Got expected error: 'this exception is expected'
 PASS The transaction was aborted.
-trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 trans.onabort = transactionAborted2
 trans.oncomplete = unexpectedCompleteCallback
 store = trans.objectStore('storeName')
@@ -38,7 +41,7 @@ Throwing
 
 PASS Got expected error: 'this exception is expected'
 PASS The transaction was aborted.
-trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 trans.onabort = unexpectedAbortCallback
 trans.oncomplete = transactionCompleted1
 store = trans.objectStore('storeName')
@@ -48,7 +51,7 @@ event.preventDefault()
 Throwing within a try block
 
 PASS The transaction completed.
-trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 trans.onabort = unexpectedAbortCallback
 trans.oncomplete = transactionCompleted2
 store = trans.objectStore('storeName')

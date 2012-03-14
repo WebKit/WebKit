@@ -3,9 +3,10 @@ Test IndexedDB's behavior adding inline and passed key simultaneously
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS 'webkitIndexedDB' in window is true
-PASS webkitIndexedDB == null is false
-webkitIndexedDB.open(name, description)
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
+indexedDB.open(name, description)
 openSuccess():
 db = event.target.result
 request = db.setVersion('version 1')
@@ -14,7 +15,7 @@ Deleted all object stores.
 objectStore = db.createObjectStore('baz', { keyPath: 'id' });
 Expecting exception from objectStore.add({id: 5}, 5);
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.DATA_ERR
+PASS code is IDBDatabaseException.DATA_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

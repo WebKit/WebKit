@@ -3,7 +3,10 @@ Test IndexedDB's openCursor.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('cursor-delete')
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
+indexedDB.open('cursor-delete')
 db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
@@ -16,7 +19,7 @@ objectStore.add('myValue2', 'myKey2')
 objectStore.add('myValue3', 'myKey3')
 objectStore.add('myValue4', 'myKey4')
 openCursor1
-trans = db.transaction(['test'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['test'], IDBTransaction.READ_WRITE)
 trans.objectStore('test').openCursor({range: keyRange})
 event.target.result.delete()
 PASS event.target.result.value is "myValue1"
@@ -33,7 +36,7 @@ event.target.result.continue()
 PASS counter is 5
 trans.objectStore('test').openCursor(keyRange)
 PASS event.target.result is null
-trans = db.transaction(['test'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['test'], IDBTransaction.READ_WRITE)
 objectStore = trans.objectStore('test')
 objectStore.add('myValue1', 'myKey1')
 openCursor2

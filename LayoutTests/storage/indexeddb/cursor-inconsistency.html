@@ -14,7 +14,8 @@ test();
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('cursor-inconsistency')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('cursor-inconsistency')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -49,11 +50,11 @@ function setVersionSuccess()
 function openBasicCursor()
 {
     debug("openBasicCursor()");
-    evalAndLog("trans = db.transaction(['basicStore'], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(['basicStore'], IDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = transactionComplete;
 
-    keyRange = webkitIDBKeyRange.lowerBound("someKey1");
+    keyRange = IDBKeyRange.lowerBound("someKey1");
     window.objectStore = evalAndLog("trans.objectStore('basicStore')");
     request = evalAndLog("objectStore.openCursor(keyRange)");
     request.onsuccess = checkCursor;

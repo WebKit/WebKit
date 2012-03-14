@@ -23,10 +23,7 @@ if (window.eventSender) {
 
 function test()
 {
-    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB");
-    shouldBeTrue("indexedDB != null");
-    evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction");
-    shouldBeTrue("IDBTransaction != null");
+    removeVendorPrefixes();
     prepareDatabase();
 }
 

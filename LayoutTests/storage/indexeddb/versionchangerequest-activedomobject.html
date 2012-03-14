@@ -12,8 +12,7 @@
 description("Ensure that IDBVersionChangeRequest objects are not GC'd if they have pending events");
 
 function test() {
-    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
+    removeVendorPrefixes();
 
     debug("");
     evalAndLog("window.dbname = 'versionchangerequest-activedomobject'");

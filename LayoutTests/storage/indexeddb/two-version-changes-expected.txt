@@ -3,8 +3,9 @@ Test behavior when the same connection calls setVersion twice
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
-IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.mozIDBTransaction;
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
 PASS indexedDB == null is false
 PASS IDBTransaction == null is false
 window.state = 'starting'

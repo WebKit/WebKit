@@ -3,7 +3,10 @@ Test event propogation on IDBTransaction.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('transaction-event-propagation')
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
+indexedDB.open('transaction-event-propagation')
 db = event.target.result
 db.setVersion('new version')
 trans = event.target.result
@@ -13,7 +16,7 @@ Deleted all object stores.
 store = db.createObjectStore('storeName', null)
 store.add({x: 'value', y: 'zzz'}, 'key')
 Verifing abort
-trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 trans.onabort = abortFiredCallback
 trans.oncomplete = unexpectedAbortCallback
 db.addEventListener('abort', dbAbortCaptureCallback, true)
@@ -45,7 +48,7 @@ PASS event.target is trans
 PASS event.currentTarget is db
 
 Verifing success.
-trans = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 trans.oncomplete = completeFiredCallback
 trans.onabort = unexpectedAbortCallback
 db.removeEventListener('abort', dbAbortCaptureCallback, true)

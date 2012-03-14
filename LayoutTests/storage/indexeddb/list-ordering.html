@@ -40,9 +40,7 @@ for (i = 0; i < permuted_order.length - 2; i += 2) {
 
 function test()
 {
-    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB");
-    shouldBeTrue("indexedDB != null");
-
+    removeVendorPrefixes();
     debug("check that the expected order is the canonical JS sort order:");
     evalAndLog("sorted_order = expected_order.slice(); sorted_order.sort()");
     shouldBeTrue("areArraysEqual(sorted_order, expected_order)");

@@ -12,7 +12,7 @@ description("Test IndexedDB's KeyRange.");
 
 function checkSingleKeyRange(value)
 {
-    keyRange = evalAndLog("webkitIDBKeyRange.only(" + value + ")");
+    keyRange = evalAndLog("IDBKeyRange.only(" + value + ")");
     shouldBe("keyRange.lower", "" + value);
     shouldBe("keyRange.upper", "" + value);
     shouldBeFalse("keyRange.lowerOpen");
@@ -21,7 +21,7 @@ function checkSingleKeyRange(value)
 
 function checkLowerBoundKeyRange(value, open)
 {
-    keyRange = evalAndLog("webkitIDBKeyRange.lowerBound(" + value + "," + open + ")");
+    keyRange = evalAndLog("IDBKeyRange.lowerBound(" + value + "," + open + ")");
     shouldBe("keyRange.lower", "" + value);
     if (open === undefined)
         open = false;
@@ -32,7 +32,7 @@ function checkLowerBoundKeyRange(value, open)
 
 function checkUpperBoundKeyRange(value, open)
 {
-    keyRange = evalAndLog("webkitIDBKeyRange.upperBound(" + value + "," + open + ")");
+    keyRange = evalAndLog("IDBKeyRange.upperBound(" + value + "," + open + ")");
     shouldBe("keyRange.upper", "" + value);
     if (open === undefined)
         open = false;
@@ -43,7 +43,7 @@ function checkUpperBoundKeyRange(value, open)
 
 function checkBoundKeyRange(lower, upper, lowerOpen, upperOpen)
 {
-    keyRange = evalAndLog("webkitIDBKeyRange.bound(" + lower + "," + upper + ", " + lowerOpen + ", " + upperOpen + ")");
+    keyRange = evalAndLog("IDBKeyRange.bound(" + lower + "," + upper + ", " + lowerOpen + ", " + upperOpen + ")");
     shouldBe("keyRange.lower", "" + lower);
     shouldBe("keyRange.upper", "" + upper);
     if (lowerOpen === undefined)
@@ -56,18 +56,19 @@ function checkBoundKeyRange(lower, upper, lowerOpen, upperOpen)
 
 function test()
 {
-    shouldBeFalse("'lower' in webkitIDBKeyRange");
-    shouldBeFalse("'upper' in webkitIDBKeyRange");
-    shouldBeFalse("'lowerOpen' in webkitIDBKeyRange");
-    shouldBeFalse("'upperOpen' in webkitIDBKeyRange");
-    shouldBeTrue("'only' in webkitIDBKeyRange");
-    shouldBeTrue("'lowerBound' in webkitIDBKeyRange");
-    shouldBeTrue("'upperBound' in webkitIDBKeyRange");
-    shouldBeTrue("'bound' in webkitIDBKeyRange");
+    removeVendorPrefixes();
+    shouldBeFalse("'lower' in IDBKeyRange");
+    shouldBeFalse("'upper' in IDBKeyRange");
+    shouldBeFalse("'lowerOpen' in IDBKeyRange");
+    shouldBeFalse("'upperOpen' in IDBKeyRange");
+    shouldBeTrue("'only' in IDBKeyRange");
+    shouldBeTrue("'lowerBound' in IDBKeyRange");
+    shouldBeTrue("'upperBound' in IDBKeyRange");
+    shouldBeTrue("'bound' in IDBKeyRange");
 
     debug("");
 
-    var instance = evalAndLog("instance = webkitIDBKeyRange.only(1)");
+    var instance = evalAndLog("instance = IDBKeyRange.only(1)");
     shouldBeTrue("'lower' in instance");
     shouldBeTrue("'upper' in instance");
     shouldBeTrue("'lowerOpen' in instance");
@@ -124,7 +125,7 @@ function test()
 
     try {
         debug("Passing an invalid key into only({})");
-        webkitIDBKeyRange.only({});
+        IDBKeyRange.only({});
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
@@ -132,7 +133,7 @@ function test()
 
     try {
         debug("Passing an invalid key into upperBound({})");
-        webkitIDBKeyRange.upperBound({});
+        IDBKeyRange.upperBound({});
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
@@ -140,7 +141,7 @@ function test()
  
     try {
         debug("Passing an invalid key into lowerBound({})");
-        webkitIDBKeyRange.lowerBound({});
+        IDBKeyRange.lowerBound({});
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
@@ -148,7 +149,7 @@ function test()
 
     try {
         debug("Passing an invalid key into bound(null, {})");
-        webkitIDBKeyRange.bound(null, {});
+        IDBKeyRange.bound(null, {});
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
@@ -156,7 +157,7 @@ function test()
 
     try {
         debug("Passing an invalid key into bound({},null)");
-        webkitIDBKeyRange.bound({}, null);
+        IDBKeyRange.bound({}, null);
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
@@ -164,26 +165,26 @@ function test()
 
     try {
         debug("Passing an invalid key into bound({}, {})");
-        webkitIDBKeyRange.bound({}, {});
+        IDBKeyRange.bound({}, {});
         testFailed("No exception thrown");
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
     }
 
     debug("Lower key greater than higher key, bound(4, 3)");
-    evalAndExpectException("webkitIDBKeyRange.bound(4, 3)", "webkitIDBDatabaseException.DATA_ERR");
+    evalAndExpectException("IDBKeyRange.bound(4, 3)", "IDBDatabaseException.DATA_ERR");
 
     debug("Equal keys, either of the bounds is open, bound(4, 4, true, false)");
-    evalAndExpectException("webkitIDBKeyRange.bound(4, 4, true, false)", "webkitIDBDatabaseException.DATA_ERR");
+    evalAndExpectException("IDBKeyRange.bound(4, 4, true, false)", "IDBDatabaseException.DATA_ERR");
 
     debug("Equal keys, either of the bounds is open, bound(4, 4, false, true)");
-    evalAndExpectException("webkitIDBKeyRange.bound(4, 4, false, true)", "webkitIDBDatabaseException.DATA_ERR");
+    evalAndExpectException("IDBKeyRange.bound(4, 4, false, true)", "IDBDatabaseException.DATA_ERR");
 
     debug("Equal keys, either of the bounds is open, bound(4, 4, true, true)");
-    evalAndExpectException("webkitIDBKeyRange.bound(4, 4, true, true)", "webkitIDBDatabaseException.DATA_ERR");
+    evalAndExpectException("IDBKeyRange.bound(4, 4, true, true)", "IDBDatabaseException.DATA_ERR");
 
     debug("Equal keys, none of the bounds is open, bound(4, 4, false, false)");
-    webkitIDBKeyRange.bound(4, 4, false, false);
+    IDBKeyRange.bound(4, 4, false, false);
 }
 
 test();

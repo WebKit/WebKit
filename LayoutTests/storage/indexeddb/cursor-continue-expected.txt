@@ -3,12 +3,9 @@ Test IndexedDB's IDBCursor.continue() with a key parameter.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-window.indexedDB = window.indexedDB || window.webkitIndexedDB
-PASS indexedDB != null is true
-window.IDBCursor = window.IDBCursor || window.webkitIDBCursor
-PASS IDBCursor != null is true
-window.IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException
-PASS IDBDatabaseException != null is true
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
 indexedDB.open('cursor-continue')
 db = event.target.result
 db.setVersion('new version')

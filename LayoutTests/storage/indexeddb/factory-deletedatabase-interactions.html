@@ -98,8 +98,7 @@ function runSteps(commands) {
 }
 
 function test() {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
+    removeVendorPrefixes();
     test1();
 }
 

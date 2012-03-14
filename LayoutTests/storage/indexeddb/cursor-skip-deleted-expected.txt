@@ -3,7 +3,10 @@ Test IndexedDB's cursor skips deleted entries.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('cursor-skip-deleted')
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
+indexedDB.open('cursor-skip-deleted')
 db = event.target.result
 db.setVersion('new version')
 setVersionSuccess():
@@ -16,10 +19,10 @@ objectStore.createIndex('nameIndex', 'name')
 resetObjectStore():
 
 basicCursorTest()
-trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['store'], IDBTransaction.READ_WRITE)
 
 testCursor():
-trans.objectStore('store').openCursor(webkitIDBKeyRange.lowerBound(0))
+trans.objectStore('store').openCursor(IDBKeyRange.lowerBound(0))
 0: Alpha
 1: Bravo
 request = trans.objectStore('store').delete(0)
@@ -58,7 +61,7 @@ resetObjectStore():
 reverseCursorTest():
 
 testCursor():
-trans.objectStore('store').openCursor(webkitIDBKeyRange.lowerBound(0), webkitIDBCursor.PREV)
+trans.objectStore('store').openCursor(IDBKeyRange.lowerBound(0), IDBCursor.PREV)
 25: Zulu
 24: Yankee
 request = trans.objectStore('store').delete(25)
@@ -97,7 +100,7 @@ resetObjectStore():
 indexCursorTest():
 
 testCursor():
-trans.objectStore('store').index('nameIndex').openCursor(webkitIDBKeyRange.lowerBound('Alpha'))
+trans.objectStore('store').index('nameIndex').openCursor(IDBKeyRange.lowerBound('Alpha'))
 0: Alpha
 1: Bravo
 request = trans.objectStore('store').delete(0)

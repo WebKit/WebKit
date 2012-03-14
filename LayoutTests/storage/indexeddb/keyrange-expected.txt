@@ -3,16 +3,19 @@ Test IndexedDB's KeyRange.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS 'lower' in webkitIDBKeyRange is false
-PASS 'upper' in webkitIDBKeyRange is false
-PASS 'lowerOpen' in webkitIDBKeyRange is false
-PASS 'upperOpen' in webkitIDBKeyRange is false
-PASS 'only' in webkitIDBKeyRange is true
-PASS 'lowerBound' in webkitIDBKeyRange is true
-PASS 'upperBound' in webkitIDBKeyRange is true
-PASS 'bound' in webkitIDBKeyRange is true
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
 
-instance = webkitIDBKeyRange.only(1)
+PASS 'lower' in IDBKeyRange is false
+PASS 'upper' in IDBKeyRange is false
+PASS 'lowerOpen' in IDBKeyRange is false
+PASS 'upperOpen' in IDBKeyRange is false
+PASS 'only' in IDBKeyRange is true
+PASS 'lowerBound' in IDBKeyRange is true
+PASS 'upperBound' in IDBKeyRange is true
+PASS 'bound' in IDBKeyRange is true
+
+instance = IDBKeyRange.only(1)
 PASS 'lower' in instance is true
 PASS 'upper' in instance is true
 PASS 'lowerOpen' in instance is true
@@ -22,187 +25,187 @@ PASS 'lowerBound' in instance is false
 PASS 'upperBound' in instance is false
 PASS 'bound' in instance is false
 
-webkitIDBKeyRange.only(1)
+IDBKeyRange.only(1)
 PASS keyRange.lower is 1
 PASS keyRange.upper is 1
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.only(3.14)
+IDBKeyRange.only(3.14)
 PASS keyRange.lower is 3.14
 PASS keyRange.upper is 3.14
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.only('a')
+IDBKeyRange.only('a')
 PASS keyRange.lower is 'a'
 PASS keyRange.upper is 'a'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.lowerBound(10,true)
+IDBKeyRange.lowerBound(10,true)
 PASS keyRange.lower is 10
 PASS keyRange.lowerOpen is true
 PASS keyRange.upper is null
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.lowerBound(11,false)
+IDBKeyRange.lowerBound(11,false)
 PASS keyRange.lower is 11
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is null
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.lowerBound(12,undefined)
+IDBKeyRange.lowerBound(12,undefined)
 PASS keyRange.lower is 12
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is null
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.lowerBound(10.1,true)
+IDBKeyRange.lowerBound(10.1,true)
 PASS keyRange.lower is 10.1
 PASS keyRange.lowerOpen is true
 PASS keyRange.upper is null
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.lowerBound(11.2,false)
+IDBKeyRange.lowerBound(11.2,false)
 PASS keyRange.lower is 11.2
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is null
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.lowerBound(12.3,undefined)
+IDBKeyRange.lowerBound(12.3,undefined)
 PASS keyRange.lower is 12.3
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is null
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.lowerBound('aa',true)
+IDBKeyRange.lowerBound('aa',true)
 PASS keyRange.lower is 'aa'
 PASS keyRange.lowerOpen is true
 PASS keyRange.upper is null
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.lowerBound('ab',false)
+IDBKeyRange.lowerBound('ab',false)
 PASS keyRange.lower is 'ab'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is null
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.lowerBound('ac',undefined)
+IDBKeyRange.lowerBound('ac',undefined)
 PASS keyRange.lower is 'ac'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is null
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.upperBound(20,true)
+IDBKeyRange.upperBound(20,true)
 PASS keyRange.upper is 20
 PASS keyRange.upperOpen is true
 PASS keyRange.lower is null
 PASS keyRange.lowerOpen is false
-webkitIDBKeyRange.upperBound(21,false)
+IDBKeyRange.upperBound(21,false)
 PASS keyRange.upper is 21
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is null
 PASS keyRange.lowerOpen is false
-webkitIDBKeyRange.upperBound(22,undefined)
+IDBKeyRange.upperBound(22,undefined)
 PASS keyRange.upper is 22
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is null
 PASS keyRange.lowerOpen is false
-webkitIDBKeyRange.upperBound(20.2,true)
+IDBKeyRange.upperBound(20.2,true)
 PASS keyRange.upper is 20.2
 PASS keyRange.upperOpen is true
 PASS keyRange.lower is null
 PASS keyRange.lowerOpen is false
-webkitIDBKeyRange.upperBound(21.3,false)
+IDBKeyRange.upperBound(21.3,false)
 PASS keyRange.upper is 21.3
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is null
 PASS keyRange.lowerOpen is false
-webkitIDBKeyRange.upperBound(22.4,undefined)
+IDBKeyRange.upperBound(22.4,undefined)
 PASS keyRange.upper is 22.4
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is null
 PASS keyRange.lowerOpen is false
-webkitIDBKeyRange.upperBound('ba',true)
+IDBKeyRange.upperBound('ba',true)
 PASS keyRange.upper is 'ba'
 PASS keyRange.upperOpen is true
 PASS keyRange.lower is null
 PASS keyRange.lowerOpen is false
-webkitIDBKeyRange.upperBound('bb',false)
+IDBKeyRange.upperBound('bb',false)
 PASS keyRange.upper is 'bb'
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is null
 PASS keyRange.lowerOpen is false
-webkitIDBKeyRange.upperBound('bc',undefined)
+IDBKeyRange.upperBound('bc',undefined)
 PASS keyRange.upper is 'bc'
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is null
 PASS keyRange.lowerOpen is false
-webkitIDBKeyRange.bound(30,40, undefined, undefined)
+IDBKeyRange.bound(30,40, undefined, undefined)
 PASS keyRange.lower is 30
 PASS keyRange.upper is 40
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound(31,41, false, false)
+IDBKeyRange.bound(31,41, false, false)
 PASS keyRange.lower is 31
 PASS keyRange.upper is 41
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound(32,42, false, true)
+IDBKeyRange.bound(32,42, false, true)
 PASS keyRange.lower is 32
 PASS keyRange.upper is 42
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is true
-webkitIDBKeyRange.bound(33,43, true, false)
+IDBKeyRange.bound(33,43, true, false)
 PASS keyRange.lower is 33
 PASS keyRange.upper is 43
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound(34,44, true, true)
+IDBKeyRange.bound(34,44, true, true)
 PASS keyRange.lower is 34
 PASS keyRange.upper is 44
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is true
-webkitIDBKeyRange.bound(30.1,40.2, undefined, undefined)
+IDBKeyRange.bound(30.1,40.2, undefined, undefined)
 PASS keyRange.lower is 30.1
 PASS keyRange.upper is 40.2
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound(31.3,41.4, false, false)
+IDBKeyRange.bound(31.3,41.4, false, false)
 PASS keyRange.lower is 31.3
 PASS keyRange.upper is 41.4
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound(32.5,42.6, false, true)
+IDBKeyRange.bound(32.5,42.6, false, true)
 PASS keyRange.lower is 32.5
 PASS keyRange.upper is 42.6
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is true
-webkitIDBKeyRange.bound(33.7,43.8, true, false)
+IDBKeyRange.bound(33.7,43.8, true, false)
 PASS keyRange.lower is 33.7
 PASS keyRange.upper is 43.8
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound(34.9,44, true, true)
+IDBKeyRange.bound(34.9,44, true, true)
 PASS keyRange.lower is 34.9
 PASS keyRange.upper is 44
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is true
-webkitIDBKeyRange.bound('aaa','aba', false, false)
+IDBKeyRange.bound('aaa','aba', false, false)
 PASS keyRange.lower is 'aaa'
 PASS keyRange.upper is 'aba'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound('aab','abb', undefined, undefined)
+IDBKeyRange.bound('aab','abb', undefined, undefined)
 PASS keyRange.lower is 'aab'
 PASS keyRange.upper is 'abb'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound('aac','abc', false, false)
+IDBKeyRange.bound('aac','abc', false, false)
 PASS keyRange.lower is 'aac'
 PASS keyRange.upper is 'abc'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound('aad','abd', false, true)
+IDBKeyRange.bound('aad','abd', false, true)
 PASS keyRange.lower is 'aad'
 PASS keyRange.upper is 'abd'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is true
-webkitIDBKeyRange.bound('aae','abe', true, false)
+IDBKeyRange.bound('aae','abe', true, false)
 PASS keyRange.lower is 'aae'
 PASS keyRange.upper is 'abe'
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is false
-webkitIDBKeyRange.bound('aaf','abf', true, true)
+IDBKeyRange.bound('aaf','abf', true, true)
 PASS keyRange.lower is 'aaf'
 PASS keyRange.upper is 'abf'
 PASS keyRange.lowerOpen is true
@@ -220,21 +223,21 @@ PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 Passing an invalid key into bound({}, {})
 PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 Lower key greater than higher key, bound(4, 3)
-Expecting exception from webkitIDBKeyRange.bound(4, 3)
+Expecting exception from IDBKeyRange.bound(4, 3)
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.DATA_ERR
+PASS code is IDBDatabaseException.DATA_ERR
 Equal keys, either of the bounds is open, bound(4, 4, true, false)
-Expecting exception from webkitIDBKeyRange.bound(4, 4, true, false)
+Expecting exception from IDBKeyRange.bound(4, 4, true, false)
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.DATA_ERR
+PASS code is IDBDatabaseException.DATA_ERR
 Equal keys, either of the bounds is open, bound(4, 4, false, true)
-Expecting exception from webkitIDBKeyRange.bound(4, 4, false, true)
+Expecting exception from IDBKeyRange.bound(4, 4, false, true)
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.DATA_ERR
+PASS code is IDBDatabaseException.DATA_ERR
 Equal keys, either of the bounds is open, bound(4, 4, true, true)
-Expecting exception from webkitIDBKeyRange.bound(4, 4, true, true)
+Expecting exception from IDBKeyRange.bound(4, 4, true, true)
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.DATA_ERR
+PASS code is IDBDatabaseException.DATA_ERR
 Equal keys, none of the bounds is open, bound(4, 4, false, false)
 PASS successfullyParsed is true
 

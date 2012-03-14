@@ -4,10 +4,9 @@ Test structured clone permutations in IndexedDB. File/FileList tests require Dum
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-indexedDB = window.indexedDB || window.webkitIndexedDB
-PASS indexedDB != null is true
-IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction
-PASS IDBTransaction != null is true
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
 
 Prepare Database
 indexedDB.deleteDatabase('structured-clone')

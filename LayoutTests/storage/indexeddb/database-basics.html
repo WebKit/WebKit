@@ -12,10 +12,7 @@ description("Test the basics of IndexedDB's IDBDatabase.");
 
 function test()
 {
-    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB");
-    shouldBeTrue("indexedDB != null");
-    evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException");
-    shouldBeTrue("IDBDatabaseException != null");
+    removeVendorPrefixes();
 
     request = evalAndLog("indexedDB.open('database-basics')");
     request.onsuccess = openSuccess;

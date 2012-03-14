@@ -3,8 +3,9 @@ Test for crbug.com/108071
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
-PASS indexedDB == null is false
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
 indexedDB.deleteDatabase(DBNAME)
 indexedDB.open(DBNAME)
 db = event.target.result
@@ -23,7 +24,7 @@ objectStore.add({id: 3, name: "Delta"})
 objectStore.add({id: 4, name: "Echo"})
 
 iterateAndDeleteFirstElement():
-trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['store'], IDBTransaction.READ_WRITE)
 trans.objectStore('store').openCursor()
 0: Alpha
 trans.objectStore('store').delete(0)

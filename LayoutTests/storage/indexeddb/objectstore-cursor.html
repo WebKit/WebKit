@@ -24,7 +24,7 @@ window.testData = [
  
 function openDatabase()
 {
-    request = evalAndLog("webkitIndexedDB.open('objectstore-cursor')");
+    request = evalAndLog("indexedDB.open('objectstore-cursor')");
     request.onsuccess = setVersion;
     request.onerror = unexpectedErrorCallback;
 }
@@ -150,13 +150,13 @@ function runNextTest()
 
     var keyRange;
     if (lower !== null && upper !== null)
-        keyRange = webkitIDBKeyRange.bound(testData[lower], testData[upper], lowerIsOpen, upperIsOpen);
+        keyRange = IDBKeyRange.bound(testData[lower], testData[upper], lowerIsOpen, upperIsOpen);
     else if (lower !== null)
-        keyRange = webkitIDBKeyRange.lowerBound(testData[lower], lowerIsOpen);
+        keyRange = IDBKeyRange.lowerBound(testData[lower], lowerIsOpen);
     else
-        keyRange = webkitIDBKeyRange.upperBound(testData[upper], upperIsOpen);
+        keyRange = IDBKeyRange.upperBound(testData[upper], upperIsOpen);
  
-    var request = objectStore.openCursor(keyRange, ascending ? webkitIDBCursor.NEXT : webkitIDBCursor.PREV);
+    var request = objectStore.openCursor(keyRange, ascending ? IDBCursor.NEXT : IDBCursor.PREV);
     request.onsuccess = cursorIteration;
     request.onerror = unexpectedErrorCallback;
 }
@@ -222,11 +222,12 @@ function testNullKeyRange()
     debug("");
     debug(str);
  
-    var request = objectStore.openCursor(null, ascending ? webkitIDBCursor.NEXT : webkitIDBCursor.PREV);
+    var request = objectStore.openCursor(null, ascending ? IDBCursor.NEXT : IDBCursor.PREV);
     request.onsuccess = cursorIteration;
     request.onerror = unexpectedErrorCallback;
 }
  
+removeVendorPrefixes();
 openDatabase(); // The first step.
  
 </script>

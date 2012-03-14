@@ -3,7 +3,10 @@ Test IndexedDB's IDBObjectStore auto-increment feature.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('objectstore-autoincrement')
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
+indexedDB.open('objectstore-autoincrement')
 openSuccess():
 db = event.target.result
 db.setVersion('new version')
@@ -24,7 +27,7 @@ PASS storeNames.contains('StoreWithAutoIncrement') is true
 PASS storeNames.contains('PlainOldStore') is true
 PASS storeNames.length is 4
 setVersionCompleted():
-trans = db.transaction(['StoreWithKeyPath', 'StoreWithAutoIncrement', 'PlainOldStore'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['StoreWithKeyPath', 'StoreWithAutoIncrement', 'PlainOldStore'], IDBTransaction.READ_WRITE)
 store = trans.objectStore('StoreWithKeyPath')
 Insert into object store with auto increment and key path, with key in the object.
 store.add({name: 'Jeffersson', number: '7010', id: 3})
@@ -59,12 +62,12 @@ store = trans.objectStore('PlainOldStore')
 Try adding with no key to object store without auto increment.
 Expecting exception from store.add({name: 'Adam'})
 PASS Exception was thrown.
-PASS code is webkitIDBDatabaseException.DATA_ERR
+PASS code is IDBDatabaseException.DATA_ERR
 store.add({name: 'Adam'}, 1)
 addAdamSuccess():
 PASS event.target.result is 1
 testLongKeyPath():
-trans = db.transaction('StoreWithLongKeyPath', webkitIDBTransaction.READ_WRITE)
+trans = db.transaction('StoreWithLongKeyPath', IDBTransaction.READ_WRITE)
 store = trans.objectStore('StoreWithLongKeyPath')
 store.add({foo: 'bar'})
 store.add({foo: 'bar', a: {}})

@@ -12,7 +12,8 @@ description("Test IndexedDB's IDBObjectStore auto-increment feature.");
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('objectstore-autoincrement')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('objectstore-autoincrement')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -58,7 +59,7 @@ function setVersionCompleted()
 {
     debug("setVersionCompleted():");
 
-    window.trans = evalAndLog("trans = db.transaction(['StoreWithKeyPath', 'StoreWithAutoIncrement', 'PlainOldStore'], webkitIDBTransaction.READ_WRITE)");
+    window.trans = evalAndLog("trans = db.transaction(['StoreWithKeyPath', 'StoreWithAutoIncrement', 'PlainOldStore'], IDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = testLongKeyPath;
 
@@ -144,7 +145,7 @@ function getAbrahamSuccess()
 
     window.store = evalAndLog("store = trans.objectStore('PlainOldStore')");
     debug("Try adding with no key to object store without auto increment.");
-    evalAndExpectException("store.add({name: 'Adam'})", "webkitIDBDatabaseException.DATA_ERR");
+    evalAndExpectException("store.add({name: 'Adam'})", "IDBDatabaseException.DATA_ERR");
     request = evalAndLog("store.add({name: 'Adam'}, 1)");
     request.onsuccess = addAdamSuccess;
     request.onerror = unexpectedErrorCallback;
@@ -159,7 +160,7 @@ function addAdamSuccess()
 function testLongKeyPath()
 {
     debug("testLongKeyPath():");
-    trans = evalAndLog("trans = db.transaction('StoreWithLongKeyPath', webkitIDBTransaction.READ_WRITE)");
+    trans = evalAndLog("trans = db.transaction('StoreWithLongKeyPath', IDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = finishJSTest;
 

@@ -12,12 +12,7 @@ description("Test IndexedDB's IDBObjectStore.delete(IDBKeyRange) method.");
 
 function test()
 {
-    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB");
-    shouldBeTrue("indexedDB != null");
-    evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction");
-    shouldBeTrue("IDBTransaction != null");
-    evalAndLog("IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange");
-    shouldBeTrue("IDBKeyRange != null");
+    removeVendorPrefixes();
 
     evalAndLog("request = indexedDB.deleteDatabase('delete-range')");
     request.onerror = unexpectedErrorCallback;

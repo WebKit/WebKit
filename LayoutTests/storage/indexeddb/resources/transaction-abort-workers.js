@@ -7,13 +7,9 @@ description("Test IndexedDB workers, recursion, and transaction termination.");
 
 function test()
 {
-    shouldBeTrue("'webkitIndexedDB' in self");
-    shouldBeFalse("webkitIndexedDB == null");
+    removeVendorPrefixes();
 
-    shouldBeTrue("'webkitIDBCursor' in self");
-    shouldBeFalse("webkitIDBCursor == null");
-
-    evalAndLog("request = webkitIndexedDB.open('transaction-abort-worker')");
+    evalAndLog("request = indexedDB.open('transaction-abort-worker')");
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function () {
         evalAndLog("db = request.result");
@@ -43,7 +39,7 @@ function createTransaction()
 function transactionAborted()
 {
     testPassed("Transaction aborted");
-    evalAndExpectException("store.get(0)", "webkitIDBDatabaseException.TRANSACTION_INACTIVE_ERR");
+    evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
     recursionTest();
 }
 
@@ -76,7 +72,7 @@ function recurse(count)
 function transactionCompleted()
 {
     testPassed("transaction completed");
-    evalAndExpectException("store.get(0)", "webkitIDBDatabaseException.TRANSACTION_INACTIVE_ERR");
+    evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
 
     debug("");
     debug("trying a timeout callback:");
@@ -93,7 +89,7 @@ function timeoutTest()
     transaction.oncomplete = unexpectedCompleteCallback;
     transaction.onabort = function () {
         testPassed("transaction started in setTimeout() callback aborted");
-        evalAndExpectException("store.get(0)", "webkitIDBDatabaseException.TRANSACTION_INACTIVE_ERR");
+        evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
 
         errorTest();
     };
@@ -125,7 +121,7 @@ function errorHandler(e)
 function errorTransactionAborted()
 {
     testPassed("Transaction aborted");
-    evalAndExpectException("store.get(0)", "webkitIDBDatabaseException.TRANSACTION_INACTIVE_ERR");
+    evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR");
     finishJSTest();
 }
 

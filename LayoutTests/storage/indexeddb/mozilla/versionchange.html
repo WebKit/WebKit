@@ -19,10 +19,7 @@ description("Test IndexedDB's triggering versionchange event");
 
 function test()
 {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
-    IDBTransaction = evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;");
-    shouldBeFalse("IDBTransaction == null");
+    removeVendorPrefixes();
 
     name = window.location.pathname;
     description = "My Test Database";

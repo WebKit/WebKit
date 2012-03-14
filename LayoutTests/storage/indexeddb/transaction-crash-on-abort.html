@@ -12,10 +12,9 @@ description("Test IndexedDB transaction does not crash on abort.");
 
 function test()
 {
-    shouldBeTrue("'webkitIndexedDB' in window");
-    shouldBeFalse("webkitIndexedDB == null");
+    removeVendorPrefixes();
 
-    request = evalAndLog("webkitIndexedDB.open('transaction-crash-on-abort')");
+    request = evalAndLog("indexedDB.open('transaction-crash-on-abort')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

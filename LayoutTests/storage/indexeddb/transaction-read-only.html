@@ -12,10 +12,9 @@ description("Test read-only transactions in IndexedDB.");
 
 function test()
 {
-    shouldBeTrue("'webkitIndexedDB' in window");
-    shouldBeFalse("webkitIndexedDB == null");
+    removeVendorPrefixes();
 
-    request = evalAndLog("webkitIndexedDB.open('transaction-read-only')");
+    request = evalAndLog("indexedDB.open('transaction-read-only')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -42,10 +41,10 @@ function cleanDatabase()
 function setVersionDone()
 {
     trans = evalAndLog("trans = db.transaction('store')");
-    evalAndExpectException("trans.objectStore('store').put('a', 'b')", "webkitIDBDatabaseException.READ_ONLY_ERR");
+    evalAndExpectException("trans.objectStore('store').put('a', 'b')", "IDBDatabaseException.READ_ONLY_ERR");
 
     trans = evalAndLog("trans = db.transaction('store')");
-    evalAndExpectException("trans.objectStore('store').delete('x')", "webkitIDBDatabaseException.READ_ONLY_ERR");
+    evalAndExpectException("trans.objectStore('store').delete('x')", "IDBDatabaseException.READ_ONLY_ERR");
 
     trans = evalAndLog("trans = db.transaction('store')");
     cur = evalAndLog("cur = trans.objectStore('store').openCursor()");
@@ -56,7 +55,7 @@ function setVersionDone()
 function gotCursor()
 {
     shouldBeFalse("!event.target.result");
-    evalAndExpectException("event.target.result.delete()", "webkitIDBDatabaseException.READ_ONLY_ERR");
+    evalAndExpectException("event.target.result.delete()", "IDBDatabaseException.READ_ONLY_ERR");
 
     finishJSTest();
 }

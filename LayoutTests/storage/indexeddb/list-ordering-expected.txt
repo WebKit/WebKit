@@ -4,8 +4,9 @@ Test string list ordering in IndexedDB.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-indexedDB = window.indexedDB || window.webkitIndexedDB
-PASS indexedDB != null is true
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
 check that the expected order is the canonical JS sort order:
 sorted_order = expected_order.slice(); sorted_order.sort()
 PASS areArraysEqual(sorted_order, expected_order) is true

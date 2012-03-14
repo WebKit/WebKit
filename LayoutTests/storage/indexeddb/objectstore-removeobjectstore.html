@@ -12,7 +12,8 @@ description("Test IndexedDB's webkitIDBObjectStore.deleteObjectStore().");
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('objectstore-removeobjectstore')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('objectstore-removeobjectstore')");
     request.onsuccess = startSetVersion;
     request.onerror = unexpectedErrorCallback;
 }

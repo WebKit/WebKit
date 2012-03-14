@@ -12,8 +12,7 @@ description("Test behavior when the same connection calls setVersion twice");
 
 
 function test() {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    IDBTransaction = evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.mozIDBTransaction;");
+    removeVendorPrefixes();
 
     shouldBeFalse("indexedDB == null");
     shouldBeFalse("IDBTransaction == null");

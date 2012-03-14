@@ -4,7 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Starting worker: resources/objectstore-basics.js
-[Worker] webkitIndexedDB.open('objectstore-basics')
+[Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS [Worker] Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+[Worker] 
+[Worker] indexedDB.open('objectstore-basics')
 [Worker] openSuccess():
 [Worker] db = event.target.result
 [Worker] db.setVersion('new version')
@@ -46,7 +49,7 @@ PASS [Worker] storeNames.length is 1
 [Worker] Ask for an index that doesn't exist:
 [Worker] index = store.index('asdf')
 PASS [Worker] Exception thrown.
-PASS [Worker] code is webkitIDBDatabaseException.NOT_FOUND_ERR
+PASS [Worker] code is IDBDatabaseException.NOT_FOUND_ERR
 [Worker] createIndex():
 [Worker] index = store.createIndex('indexName', 'x', {unique: true})
 PASS [Worker] index !== null is true
@@ -56,7 +59,7 @@ PASS [Worker] index !== null is true
 [Worker] Ask for an index that doesn't exist:
 [Worker] index = store.index('asdf')
 PASS [Worker] Exception thrown.
-PASS [Worker] code is webkitIDBDatabaseException.NOT_FOUND_ERR
+PASS [Worker] code is IDBDatabaseException.NOT_FOUND_ERR
 [Worker] db.setVersion("version fail")
 PASS [Worker] db.version is "version fail"
 [Worker] setVersionTrans = event.target.result
@@ -75,7 +78,7 @@ PASS [Worker] store.indexNames[1] is null
 PASS [Worker] store.indexNames[100] is null
 PASS [Worker] store.indexNames.item(1) is null
 PASS [Worker] store.indexNames.item(100) is null
-[Worker] transaction = db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
+[Worker] transaction = db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 [Worker] store = transaction.objectStore('storeName')
 [Worker] Try to insert data with a Date key:
 [Worker] store.add({x: 'foo'}, testDate)
@@ -89,20 +92,20 @@ PASS [Worker] code is 25
 PASS [Worker] event.target.result is "key"
 [Worker] event.target.source.add({x: 'foo'}, 'zzz')
 [Worker] addAgainFailure():
-PASS [Worker] event.target.errorCode is webkitIDBDatabaseException.CONSTRAINT_ERR
+PASS [Worker] event.target.errorCode is IDBDatabaseException.CONSTRAINT_ERR
 [Worker] event.preventDefault()
-[Worker] db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
+[Worker] db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 [Worker] store = transaction.objectStore('storeName')
 [Worker] store.add({x: 'somevalue'}, 'somekey')
 [Worker] Expecting exception from store.add({x: 'othervalue'}, null)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
-[Worker] db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
+[Worker] db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 [Worker] store = transaction.objectStore('storeName')
 [Worker] Expecting exception from store.add({x: null}, 'validkey')
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
-[Worker] db.transaction(['storeName'], webkitIDBTransaction.READ_WRITE)
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
+[Worker] db.transaction(['storeName'], IDBTransaction.READ_WRITE)
 [Worker] store = transaction.objectStore('storeName')
 [Worker] store.get('key')
 [Worker] getSuccess():
@@ -121,19 +124,19 @@ PASS [Worker] event.target.result is undefined
 [Worker] Passing an invalid key into store.get().
 [Worker] Expecting exception from store.get({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] Passing an invalid key into store.delete().
 [Worker] Expecting exception from store.delete({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] Passing an invalid key into store.add().
 [Worker] Expecting exception from store.add(null, {})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] Passing an invalid key into store.put().
 [Worker] Expecting exception from store.put(null, {})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] 
 [Worker] testPreConditions():
 [Worker] db.setVersion('precondition version')
@@ -146,53 +149,53 @@ PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
 [Worker] The object store uses in-line keys and the key parameter was provided.
 [Worker] Expecting exception from storeWithInLineKeys.put({key: 1}, 'key')
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 [Worker] Expecting exception from storeWithOutOfLineKeys.put({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.
 [Worker] Expecting exception from storeWithInLineKeys.put({key: null})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.
 [Worker] Expecting exception from storeWithInLineKeys.put({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] The key parameter was provided but does not contain a valid key.
 [Worker] Expecting exception from storeWithOutOfLineKeys.put({}, null)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] If there are any indexes referencing this object store whose key path is a string, evaluating their key path on the value parameter yields a value, and that value is not a valid key.
 [Worker] Expecting exception from storeWithIndex.put({indexKey: null}, 'key')
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] 
 [Worker] IDBObjectStore.add()
 [Worker] The object store uses in-line keys and the key parameter was provided.
 [Worker] Expecting exception from storeWithInLineKeys.add({key: 1}, 'key')
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 [Worker] Expecting exception from storeWithOutOfLineKeys.add({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.
 [Worker] Expecting exception from storeWithInLineKeys.add({key: null})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.
 [Worker] Expecting exception from storeWithInLineKeys.add({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] The key parameter was provided but does not contain a valid key.
 [Worker] Expecting exception from storeWithOutOfLineKeys.add({}, null)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 [Worker] If there are any indexes referencing this object store whose key path is a string, evaluating their key path on the value parameter yields a value, and that value is not a valid key.
 [Worker] Expecting exception from storeWithIndex.add({indexKey: null}, 'key')
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.DATA_ERR
+PASS [Worker] code is IDBDatabaseException.DATA_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

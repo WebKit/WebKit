@@ -12,13 +12,7 @@ description("Test IndexedDB transaction basics.");
 
 function test()
 {
-    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB");
-    shouldBeTrue("indexedDB != null");
-    evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction");
-    shouldBeTrue("IDBTransaction != null");
-    evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException");
-    shouldBeTrue("IDBDatabaseException != null");
-    debug("");
+    removeVendorPrefixes();
 
     request = evalAndLog("indexedDB.open('transaction-basics')");
     request.onsuccess = openSuccess;

@@ -13,13 +13,12 @@ description("Test IndexedDB key types");
 
 function test()
 {
-    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
+    removeVendorPrefixes();
 
-    evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;");
+    evalAndLog("IDBTransaction = window.IDBTransaction || window.IDBTransaction;");
     shouldBeFalse("IDBTransaction == null");
 
-    evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
+    evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.IDBDatabaseException;");
     shouldBeFalse("IDBDatabaseException == null");
 
 

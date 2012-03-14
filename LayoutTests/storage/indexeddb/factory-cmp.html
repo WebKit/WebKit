@@ -12,10 +12,7 @@ description("Test IndexedDB key comparison using IDBFactory.cmp().");
 
 function test()
 {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
-    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
-    shouldBeFalse("IDBDatabaseException == null");
+    removeVendorPrefixes();
 
     shouldBeTrue("typeof indexedDB.cmp === 'function'");
 

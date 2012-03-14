@@ -3,8 +3,9 @@ Ensure VERSION_CHANGE transaction doesn't run concurrently with other transactio
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
-PASS indexedDB == null is false
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
 window.state = 'starting'
 indexedDB.open('version-change-exclusive')
 db = event.target.result

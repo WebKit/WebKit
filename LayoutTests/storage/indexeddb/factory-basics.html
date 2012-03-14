@@ -12,8 +12,7 @@ description("Test the basics of IndexedDB's IDBFactory.");
 
 function test()
 {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
+    removeVendorPrefixes();
 
     shouldBeTrue("typeof indexedDB.open === 'function'");
     shouldBeTrue("typeof indexedDB.cmp === 'function'");

@@ -13,17 +13,13 @@ description("An open connection blocks a separate connection's setVersion call")
 connections = []
 function test()
 {
-    if ('webkitIndexedDB' in window)
-        IndexedDB = webkitIndexedDB;
-    else if ('mozIndexedDB' in window)
-        IndexedDB = mozIndexedDB;
-    shouldBeFalse("IndexedDB == null");
+    removeVendorPrefixes();
     openDBConnection();
 }
 
 function openDBConnection()
 {
-    request = evalAndLog("IndexedDB.open('set-version-blocked')");
+    request = evalAndLog("indexedDB.open('set-version-blocked')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }

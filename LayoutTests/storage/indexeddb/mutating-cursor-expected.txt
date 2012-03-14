@@ -3,7 +3,10 @@ Test mutating an IndexedDB's objectstore from a cursor.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-webkitIndexedDB.open('mutating-cursor')
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
+indexedDB.open('mutating-cursor')
 db = event.target.result
 db.setVersion('1')
 setVersionSuccess():
@@ -16,7 +19,7 @@ objectStore.add(2, 2).onerror = unexpectedErrorCallback
 objectStore.add(3, 3).onerror = unexpectedErrorCallback
 objectStore.add(4, 4).onerror = unexpectedErrorCallback
 openForwardCursor()
-trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['store'], IDBTransaction.READ_WRITE)
 trans.objectStore('store')
 objectStore.openCursor()
 forwardCursor()
@@ -49,9 +52,9 @@ forwardCursor()
 PASS cursorSteps is 5
 forwardCursorComplete()
 openReverseCursor()
-trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)
+trans = db.transaction(['store'], IDBTransaction.READ_WRITE)
 trans.objectStore('store')
-objectStore.openCursor(null, webkitIDBCursor.PREV)
+objectStore.openCursor(null, IDBCursor.PREV)
 reverseCursor()
 5
 PASS cursor.key is cursorSteps

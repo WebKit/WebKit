@@ -3,8 +3,9 @@ Test interleaved open/close/setVersion calls in various permutations
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
-PASS indexedDB == null is false
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
 
 TEST: setVersion blocked on open handles
 window.dbname = 'test1'; window.ver = 1; window.steps = []

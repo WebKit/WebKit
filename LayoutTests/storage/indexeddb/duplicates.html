@@ -14,9 +14,9 @@ testCount = 0;
 function test()
 {
     if (testCount++ == 0)
-        request = evalAndLog("webkitIndexedDB.open('duplicates-1')");
+        request = evalAndLog("indexedDB.open('duplicates-1')");
     else
-        request = evalAndLog("webkitIndexedDB.open('duplicates-2')");
+        request = evalAndLog("indexedDB.open('duplicates-2')");
     request.onsuccess = setVersion;
     request.onerror = unexpectedErrorCallback;
 }
@@ -167,6 +167,7 @@ function last()
         finishJSTest();
 }
 
+removeVendorPrefixes();
 test();
 
 

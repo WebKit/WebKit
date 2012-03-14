@@ -19,14 +19,7 @@ description("Test IndexedDB: request result persists in setTimeout callback");
 
 function test()
 {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
-    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
-    shouldBeFalse("IDBDatabaseException == null");
-    IDBDatabase = evalAndLog("IDBDatabase = window.IDBDatabase || window.webkitIDBDatabase;");
-    shouldBeFalse("IDBDatabase == null");
-    IDBTransaction = evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;");
-    shouldBeFalse("IDBTransaction == null");
+    removeVendorPrefixes();
 
     name = window.location.pathname;
     description = "My Test Database";

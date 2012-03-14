@@ -13,11 +13,7 @@ description("Test IndexedDB deleteIndex method");
 
 function test()
 {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
-    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
-    shouldBeFalse("IDBDatabaseException == null");
-
+    removeVendorPrefixes();
     request = evalAndLog("indexedDB.open('deleteIndex')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;

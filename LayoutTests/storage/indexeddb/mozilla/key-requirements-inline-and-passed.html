@@ -19,12 +19,11 @@ description("Test IndexedDB's behavior adding inline and passed key simultaneous
 
 function test()
 {
-    shouldBeTrue("'webkitIndexedDB' in window");
-    shouldBeFalse("webkitIndexedDB == null");
+    removeVendorPrefixes();
 
     name = window.location.pathname;
     description = "My Test Database";
-    request = evalAndLog("webkitIndexedDB.open(name, description)");
+    request = evalAndLog("indexedDB.open(name, description)");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -44,7 +43,7 @@ function cleanDatabase()
     debug("cleanDatabase():");
     deleteAllObjectStores(db);
     objectStore = evalAndLog("objectStore = db.createObjectStore('baz', { keyPath: 'id' });");
-    evalAndExpectException("objectStore.add({id: 5}, 5);", "webkitIDBDatabaseException.DATA_ERR");
+    evalAndExpectException("objectStore.add({id: 5}, 5);", "IDBDatabaseException.DATA_ERR");
     finishJSTest();
 }
 

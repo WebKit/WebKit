@@ -19,12 +19,7 @@ description("Test IndexedDB's cursor mutation");
 
 function test()
 {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB");
-    shouldBeFalse("indexedDB == null");
-    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException");
-    shouldBeFalse("IDBDatabaseException == null");
-    IDBTransaction = evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction");
-    shouldBeFalse("IDBTransaction == null");
+    removeVendorPrefixes();
 
     debug("");
     name = 'cursor-mutation';

@@ -13,10 +13,7 @@ description("4 open connections try to setVersion at the same time.  3 connectio
 connections = []
 function test()
 {
-    evalAndLog("window.indexedDB = window.indexedDB || window.webkitIndexedDB");
-    shouldBeTrue("indexedDB != null");
-    evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException");
-    shouldBeTrue("IDBDatabaseException != null");
+    removeVendorPrefixes();
 
     openDBConnection();
 }

@@ -12,10 +12,7 @@ description("Test IndexedDB's IDBObjectStore.count().");
 
 function test()
 {
-    evalAndLog("window.indexedDB = window.indexedDB || window.webkitIndexedDB");
-    evalAndLog("window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction");
-    evalAndLog("window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange");
-    evalAndLog("window.IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException");
+    removeVendorPrefixes();
     request = evalAndLog("indexedDB.open('objectstore-count')");
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function() {

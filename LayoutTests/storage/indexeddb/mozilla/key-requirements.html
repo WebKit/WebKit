@@ -19,8 +19,7 @@ description("Test IndexedDB's event.target.result after add() and put()");
 
 function test()
 {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
+    removeVendorPrefixes();
 
     name = window.location.pathname;
     description = "My Test Database";

@@ -36,12 +36,7 @@ window.testData = [
 
 function test()
 {
-    evalAndLog("window.indexedDB = window.indexedDB || window.webkitIndexedDB");
-    shouldBeTrue("indexedDB != null");
-    evalAndLog("window.IDBCursor = window.IDBCursor || window.webkitIDBCursor");
-    shouldBeTrue("IDBCursor != null");
-    evalAndLog("window.IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException");
-    shouldBeTrue("IDBDatabaseException != null");
+    removeVendorPrefixes();
     openDatabase();
 }
 

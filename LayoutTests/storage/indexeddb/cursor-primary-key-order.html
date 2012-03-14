@@ -13,12 +13,7 @@ description("Test IndexedDB primary key ordering and readback from cursors.");
 
 function test()
 {
-    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
-    evalAndLog("IDBCursor = window.IDBCursor || window.webkitIDBCursor;");
-    shouldBeFalse("IDBCursor == null");
-    evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction");
-    shouldBeFalse("IDBTransaction == null");
+    removeVendorPrefixes();
 
     prepareDatabase();
 }

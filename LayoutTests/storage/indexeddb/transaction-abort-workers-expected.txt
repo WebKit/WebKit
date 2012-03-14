@@ -4,11 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Starting worker: resources/transaction-abort-workers.js
-PASS [Worker] 'webkitIndexedDB' in self is true
-PASS [Worker] webkitIndexedDB == null is false
-PASS [Worker] 'webkitIDBCursor' in self is true
-PASS [Worker] webkitIDBCursor == null is false
-[Worker] request = webkitIndexedDB.open('transaction-abort-worker')
+[Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS [Worker] Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+[Worker] 
+[Worker] request = indexedDB.open('transaction-abort-worker')
 [Worker] db = request.result
 [Worker] request = db.setVersion('1')
 [Worker] Deleted all object stores.
@@ -21,7 +20,7 @@ PASS [Worker] webkitIDBCursor == null is false
 PASS [Worker] Transaction aborted
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
 [Worker] 
 [Worker] recursionTest():
 [Worker] transaction = db.transaction('store')
@@ -49,7 +48,7 @@ PASS [Worker] transaction is still active
 PASS [Worker] transaction completed
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
 [Worker] 
 [Worker] trying a timeout callback:
 [Worker] setTimeout(timeoutTest, 0)
@@ -60,7 +59,7 @@ PASS [Worker] code is webkitIDBDatabaseException.TRANSACTION_INACTIVE_ERR
 PASS [Worker] transaction started in setTimeout() callback aborted
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
 [Worker] 
 [Worker] errorTest():
 [Worker] self.old_onerror = self.onerror
@@ -75,7 +74,7 @@ event.preventDefault()
 PASS [Worker] Transaction aborted
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is webkitIDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

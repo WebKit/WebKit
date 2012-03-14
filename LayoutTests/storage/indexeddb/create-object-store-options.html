@@ -12,10 +12,9 @@ description("Test IndexedDB's createObjectStore's various options");
 
 function test()
 {
-    shouldBeTrue("'webkitIndexedDB' in window");
-    shouldBeFalse("webkitIndexedDB == null");
+    removeVendorPrefixes();
 
-    request = evalAndLog("webkitIndexedDB.open('create-object-store-options', 'description')");
+    request = evalAndLog("indexedDB.open('create-object-store-options', 'description')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -39,8 +38,8 @@ function cleanDatabase()
     debug("db.createObjectStore('c', {autoIncrement: true});");
     db.createObjectStore('c', {autoIncrement: true});
 
-    trans = evalAndLog("trans = db.transaction(['a', 'b'], webkitIDBTransaction.READ_WRITE)");
-    shouldBe("trans.mode", "webkitIDBTransaction.READ_WRITE");
+    trans = evalAndLog("trans = db.transaction(['a', 'b'], IDBTransaction.READ_WRITE)");
+    shouldBe("trans.mode", "IDBTransaction.READ_WRITE");
 
     req = evalAndLog("trans.objectStore('a').put({'a': 0})");
     req.onsuccess = putB;

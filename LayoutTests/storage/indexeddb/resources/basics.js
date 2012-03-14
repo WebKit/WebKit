@@ -7,25 +7,20 @@ description("Test IndexedDB's basics.");
 
 function test()
 {
-    shouldBeTrue("'webkitIndexedDB' in self");
-    shouldBeFalse("webkitIndexedDB == null");
-
-    shouldBeTrue("'webkitIDBCursor' in self");
-    shouldBeFalse("webkitIDBCursor == null");
-
-    request = evalAndLog("webkitIndexedDB.open('basics')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('basics')");
     shouldBeTrue("'result' in request");
-    evalAndExpectException("request.result", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("request.result", "IDBDatabaseException.NOT_ALLOWED_ERR");
     shouldBeTrue("'errorCode' in request");
-    evalAndExpectException("request.errorCode", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("request.errorCode", "IDBDatabaseException.NOT_ALLOWED_ERR");
     shouldBeTrue("'webkitErrorMessage' in request");
-    evalAndExpectException("request.webkitErrorMessage", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("request.webkitErrorMessage", "IDBDatabaseException.NOT_ALLOWED_ERR");
     shouldBeTrue("'source' in request");
-    shouldBe("request.source", "webkitIndexedDB");
+    shouldBe("request.source", "indexedDB");
     shouldBeTrue("'transaction' in request");
     shouldBeNull("request.transaction");
     shouldBeTrue("'readyState' in request");
-    shouldBe("request.readyState", "webkitIDBRequest.LOADING");
+    shouldBe("request.readyState", "IDBRequest.LOADING");
     shouldBeTrue("'onsuccess' in request");
     shouldBeNull("request.onsuccess");
     shouldBeTrue("'onerror' in request");
@@ -46,11 +41,11 @@ function openCallback(evt)
     shouldBeTrue("'webkitErrorMessage' in event.target");
     shouldBeUndefined("event.target.webkitErrorMessage");
     shouldBeTrue("'source' in event.target");
-    shouldBe("request.source", "webkitIndexedDB");
+    shouldBe("request.source", "indexedDB");
     shouldBeTrue("'transaction' in event.target");
     shouldBeNull("event.target.transaction");
     shouldBeTrue("'readyState' in request");
-    shouldBe("event.target.readyState", "webkitIDBRequest.DONE");
+    shouldBe("event.target.readyState", "IDBRequest.DONE");
     shouldBeTrue("'onsuccess' in event.target");
     shouldBeTrue("'onerror' in event.target");
     shouldBe("event.target.LOADING", "1");

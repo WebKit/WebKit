@@ -14,7 +14,8 @@ test();
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('mutating-cursor')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('mutating-cursor')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -48,7 +49,7 @@ function setVersionSuccess()
 function openForwardCursor()
 {
     debug("openForwardCursor()");
-    evalAndLog("trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(['store'], IDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = forwardCursorComplete;
 
@@ -93,12 +94,12 @@ function forwardCursorComplete()
 function openReverseCursor()
 {
     debug("openReverseCursor()");
-    evalAndLog("trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(['store'], IDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = reverseCursorComplete;
 
     window.objectStore = evalAndLog("trans.objectStore('store')");
-    request = evalAndLog("objectStore.openCursor(null, webkitIDBCursor.PREV)");
+    request = evalAndLog("objectStore.openCursor(null, IDBCursor.PREV)");
     request.onsuccess = reverseCursor;
     request.onerror = unexpectedErrorCallback;
     window.cursorSteps = 6;

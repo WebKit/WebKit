@@ -16,10 +16,9 @@ var body = document.getElementsByTagName("body")[0];
 description("Test that pending transactions are not aborted during recursive JS calls until all JS is finished.");
 
 function setup() {
-    shouldBeTrue("'webkitIndexedDB' in window");
-    shouldBeFalse("webkitIndexedDB == null");
+    removeVendorPrefixes();
 
-    request = evalAndLog("webkitIndexedDB.open('transaction-abort-with-js-recursion')");
+    request = evalAndLog("indexedDB.open('transaction-abort-with-js-recursion')");
     request.onsuccess = setVersion;
     request.onerror = unexpectedErrorCallback;
 }
@@ -34,7 +33,7 @@ function setVersion() {
 function click() {
     store = db.createObjectStore('objectStore', null);
     body.onclick = test;
-    var pendingTransaction = evalAndLog("pendingTransaction = db.transaction(['objectStore'], webkitIDBTransaction.READ_WRITE)");
+    var pendingTransaction = evalAndLog("pendingTransaction = db.transaction(['objectStore'], IDBTransaction.READ_WRITE)");
     pendingTransaction.onsuccess = unexpectedErrorCallback;
     pendingTransaction.onerror = unexpectedErrorCallback;
     pendingTransaction.onabort = abortCallback;
@@ -49,7 +48,7 @@ function click() {
 function test()
 {
     debug("Start re-entrant JS");
-    transaction = evalAndLog("transaction = db.transaction(['objectStore'], webkitIDBTransaction.READ_WRITE)");
+    transaction = evalAndLog("transaction = db.transaction(['objectStore'], IDBTransaction.READ_WRITE)");
     debug("End re-entrant JS");
 }
 

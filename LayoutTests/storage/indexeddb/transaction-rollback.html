@@ -12,10 +12,9 @@ description("Test IndexedDB transaction rollback.");
 
 function test()
 {
-    shouldBeTrue("'webkitIndexedDB' in window");
-    shouldBeFalse("webkitIndexedDB == null");
+    removeVendorPrefixes();
 
-    request = evalAndLog("webkitIndexedDB.open('transaction-rollback')");
+    request = evalAndLog("indexedDB.open('transaction-rollback')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
 }
@@ -45,7 +44,7 @@ function setVersionComplete()
 {
     debug("setVersionComplete():");
 
-    window.transaction = evalAndLog("transaction = db.transaction(['myObjectStore'], webkitIDBTransaction.READ_WRITE)");
+    window.transaction = evalAndLog("transaction = db.transaction(['myObjectStore'], IDBTransaction.READ_WRITE)");
     transaction.onabort = abortCallback;
     transaction.oncomplete = unexpectedCompleteCallback;
 
@@ -78,7 +77,7 @@ function abortCallback()
     debug("abortCallback():");
     debug('Transaction was aborted.');
 
-    window.transaction = evalAndLog("transaction = db.transaction(['myObjectStore'], webkitIDBTransaction.READ)");
+    window.transaction = evalAndLog("transaction = db.transaction(['myObjectStore'], IDBTransaction.READ)");
     window.store = evalAndLog("store = transaction.objectStore('myObjectStore')");
     request = evalAndLog("store.get('rollbackKey123')");
     request.onerror = unexpectedErrorCallback;

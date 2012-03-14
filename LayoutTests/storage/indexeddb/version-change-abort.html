@@ -13,11 +13,7 @@ description("Ensure that aborted VERSION_CHANGE transactions are completely roll
 
 
 function test() {
-    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;");
-    shouldBeFalse("indexedDB == null");
-    shouldBeFalse("IDBTransaction == null");
-    debug("");
+    removeVendorPrefixes();
     openDBConnection();
 }
 

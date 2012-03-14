@@ -4,7 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Starting worker: resources/index-basics.js
-[Worker] webkitIndexedDB.open('index-basics')
+[Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS [Worker] Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+[Worker] 
+[Worker] indexedDB.open('index-basics')
 [Worker] db = event.target.result
 [Worker] db.setVersion('new version')
 [Worker] setVersionSuccess():

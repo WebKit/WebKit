@@ -19,8 +19,7 @@ description("Test IndexedDB's behavior deleting entry with no key");
 
 function test()
 {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
+    removeVendorPrefixes();
 
     name = window.location.pathname;
     description = "My Test Database";
@@ -42,7 +41,7 @@ function cleanDatabaseAndCreateObjectStore()
 {
     deleteAllObjectStores(db);
     objectStore = evalAndLog("objectStore = db.createObjectStore('bar');");
-    evalAndExpectException("objectStore.delete(null);", "webkitIDBDatabaseException.DATA_ERR");
+    evalAndExpectException("objectStore.delete(null);", "IDBDatabaseException.DATA_ERR");
     finishJSTest();
 }
 

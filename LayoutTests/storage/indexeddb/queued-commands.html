@@ -12,7 +12,8 @@ description("Verify that queuing up several commands works (and they all fire)."
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('queued-commands')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('queued-commands')");
     request.onsuccess = setVersion;
     request.onerror = unexpectedErrorCallback;
 }

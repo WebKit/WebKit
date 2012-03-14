@@ -12,12 +12,7 @@ description("Test IndexedDB index population.");
 
 function test()
 {
-    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB");
-    shouldBeTrue("indexedDB != null");
-    evalAndLog("IDBIndex = window.IDBIndex || window.webkitIDBIndex");
-    shouldBeTrue("IDBIndex != null");
-    evalAndLog("IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange");
-    shouldBeTrue("IDBKeyRange != null");
+    removeVendorPrefixes();
 
     request = evalAndLog("indexedDB.deleteDatabase('index-population')");
     request.onsuccess = deleteSuccess;

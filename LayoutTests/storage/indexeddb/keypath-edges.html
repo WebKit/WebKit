@@ -13,12 +13,7 @@ description("Test IndexedDB keyPath edge cases");
 
 function test()
 {
-    evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB;");
-    shouldBeFalse("indexedDB == null");
-    evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
-    shouldBeFalse("IDBDatabaseException == null");
-    evalAndLog("IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;");
-    shouldBeFalse("IDBTransaction == null");
+    removeVendorPrefixes();
 
     request = evalAndLog("indexedDB.deleteDatabase('keypath-edges')");
     request.onerror = unexpectedErrorCallback;

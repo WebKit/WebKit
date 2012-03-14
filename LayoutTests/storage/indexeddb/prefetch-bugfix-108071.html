@@ -16,8 +16,7 @@ var names = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo'];
 
 function test()
 {
-    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
-    shouldBeFalse("indexedDB == null");
+    removeVendorPrefixes();
     DBNAME = 'prefetch-bugfix-108071';
     request = evalAndLog("indexedDB.deleteDatabase(DBNAME)");
     request.onerror = unexpectedErrorCallback;
@@ -68,7 +67,7 @@ function iterateAndDeleteFirstElement()
 {
     debug("iterateAndDeleteFirstElement():");
 
-    evalAndLog("trans = db.transaction(['store'], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction(['store'], IDBTransaction.READ_WRITE)");
     trans.onabort = transactionAborted;
     trans.oncomplete = unexpectedCompleteCallback;
 

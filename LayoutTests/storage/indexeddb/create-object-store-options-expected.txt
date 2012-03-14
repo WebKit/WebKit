@@ -3,17 +3,18 @@ Test IndexedDB's createObjectStore's various options
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS 'webkitIndexedDB' in window is true
-PASS webkitIndexedDB == null is false
-webkitIndexedDB.open('create-object-store-options', 'description')
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
+
+indexedDB.open('create-object-store-options', 'description')
 db = event.target.result
 request = db.setVersion('version 1')
 Deleted all object stores.
 db.createObjectStore('a', {keyPath: 'a'})
 db.createObjectStore('b')
 db.createObjectStore('c', {autoIncrement: true});
-trans = db.transaction(['a', 'b'], webkitIDBTransaction.READ_WRITE)
-PASS trans.mode is webkitIDBTransaction.READ_WRITE
+trans = db.transaction(['a', 'b'], IDBTransaction.READ_WRITE)
+PASS trans.mode is IDBTransaction.READ_WRITE
 trans.objectStore('a').put({'a': 0})
 Expecting TypeError exception from db.createObjectStore('d', 'bar');
 PASS Exception was thrown.

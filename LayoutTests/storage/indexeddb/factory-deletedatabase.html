@@ -12,7 +12,8 @@ description("Test IndexedDB's webkitIndexedDB.deleteDatabase().");
 
 function test()
 {
-    request = evalAndLog("webkitIndexedDB.open('database-to-delete')");
+    removeVendorPrefixes();
+    request = evalAndLog("indexedDB.open('database-to-delete')");
     request.onsuccess = startSetVersion;
     request.onerror = unexpectedErrorCallback;
 }
@@ -43,7 +44,7 @@ function deleteExisting()
 
 function getValue()
 {
-    transaction = evalAndLog("db.transaction('storeName', webkitIDBTransaction.READ_WRITE)");
+    transaction = evalAndLog("db.transaction('storeName', IDBTransaction.READ_WRITE)");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
@@ -64,14 +65,14 @@ function addIndex()
 function deleteDatabase()
 {
     db.onversionchange = function() { db.close(); }
-    request = evalAndLog("request = webkitIndexedDB.deleteDatabase('database-to-delete')");
+    request = evalAndLog("request = indexedDB.deleteDatabase('database-to-delete')");
     request.onsuccess = reopenDatabase;
     request.onerror = unexpectedErrorCallback;
 }
 
 function reopenDatabase()
 {
-    request = evalAndLog("webkitIndexedDB.open('database-to-delete')");
+    request = evalAndLog("indexedDB.open('database-to-delete')");
     request.onsuccess = startSetVersionAgain;
     request.onerror = unexpectedErrorCallback;
 }
