@@ -3794,6 +3794,9 @@ BUGWK79823 : compositing/geometry/fixed-position.html = PASS IMAGE
 BUGWK79823 : compositing/reflections/compositing-change-inside-reflection.html = PASS IMAGE
 BUGWK79823 : compositing/webgl/webgl-reflection.html = PASS IMAGE
 BUGWK79823 : platform/chromium/compositing/render-surface-alpha-blending.html = PASS IMAGE
+BUGWK79823 : platform/chromium/compositing/child-layer-3d-sorting.html = PASS IMAGE
+BUGWK79823 : platform/chromium/compositing/plugins/webplugin-reflection.html = PASS IMAGE
+
 // Already associated with bug 47949 on Mac.
 BUGWK79823 WIN LINUX : compositing/reflections/nested-reflection.html = PASS IMAGE
 
