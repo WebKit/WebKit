@@ -669,6 +669,20 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Fle
     }
 }
 
+LayoutUnit RenderFlexibleBox::lineBreakLength()
+{
+    if (!isColumnFlow())
+        return mainAxisContentExtent();
+
+    LayoutUnit height = computeContentLogicalHeightUsing(style()->logicalHeight());
+    if (height == -1)
+        height = std::numeric_limits<LayoutUnit>::max();
+    LayoutUnit maxHeight = computeContentLogicalHeightUsing(style()->logicalMaxHeight());
+    if (maxHeight != -1)
+        height = std::min(height, maxHeight);
+    return height;
+}
+
 bool RenderFlexibleBox::computeNextFlexLine(FlexOrderIterator& iterator, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalPositiveFlexibility, float& totalNegativeFlexibility)
 {
     orderedChildren.clear();
@@ -677,6 +691,8 @@ bool RenderFlexibleBox::computeNextFlexLine(FlexOrderIterator& iterator, Ordered
 
     if (!iterator.currentChild())
         return false;
+
+    LayoutUnit lineBreak = lineBreakLength();
 
     for (RenderBox* child = iterator.currentChild(); child; child = iterator.next()) {
         if (child->isPositioned()) {
@@ -690,10 +706,7 @@ bool RenderFlexibleBox::computeNextFlexLine(FlexOrderIterator& iterator, Ordered
         else
             childMainAxisExtent += child->marginHeight();
 
-        // FIXME: For auto sized column flexbox, mainAxisContentExtent (the height) hasn't been computed yet so we break
-        // after the first child. If the height is auto, we need to look at max-height to determine the line breaks.
-        // https://bugs.webkit.org/show_bug.cgi?id=80929
-        if (isMultiline() && preferredMainAxisExtent + childMainAxisExtent > mainAxisContentExtent() && orderedChildren.size() > 0)
+        if (isMultiline() && preferredMainAxisExtent + childMainAxisExtent > lineBreak && orderedChildren.size() > 0)
             break;
         orderedChildren.append(child);
         preferredMainAxisExtent += childMainAxisExtent;

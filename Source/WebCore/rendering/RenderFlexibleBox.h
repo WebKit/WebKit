@@ -103,6 +103,7 @@ private:
     LayoutUnit marginBoxAscentForChild(RenderBox*);
 
     void computeMainAxisPreferredSizes(bool relayoutChildren, FlexOrderHashSet&);
+    LayoutUnit lineBreakLength();
     bool computeNextFlexLine(FlexOrderIterator&, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
     bool runFreeSpaceAllocationAlgorithm(const OrderedFlexItemList&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
     void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);

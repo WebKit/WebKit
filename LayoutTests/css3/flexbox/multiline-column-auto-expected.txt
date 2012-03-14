@@ -1,0 +1,6 @@
+Test to make sure that multiline columns break at the right places when auto sized.
+
+PASS
+PASS
+PASS
+PASS

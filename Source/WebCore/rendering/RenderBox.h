@@ -341,6 +341,7 @@ public:
 
     LayoutUnit computeLogicalWidthInRegionUsing(LogicalWidthType, LayoutUnit availableLogicalWidth, const RenderBlock* containingBlock, RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage);
     LayoutUnit computeLogicalHeightUsing(const Length& height);
+    LayoutUnit computeContentLogicalHeightUsing(const Length& height);
     LayoutUnit computeReplacedLogicalWidthUsing(Length width) const;
     LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, bool includeMaxWidth = true) const;
     LayoutUnit computeReplacedLogicalHeightUsing(Length height) const;

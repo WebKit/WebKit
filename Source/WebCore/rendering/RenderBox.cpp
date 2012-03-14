@@ -2152,18 +2152,22 @@ void RenderBox::computeLogicalHeight()
     }
 }
 
-LayoutUnit RenderBox::computeLogicalHeightUsing(const Length& h)
+LayoutUnit RenderBox::computeLogicalHeightUsing(const Length& height)
+{
+    LayoutUnit logicalHeight = computeContentLogicalHeightUsing(height);
+    if (logicalHeight != -1)
+        logicalHeight = computeBorderBoxLogicalHeight(logicalHeight);
+    return logicalHeight;
+}
+
+LayoutUnit RenderBox::computeContentLogicalHeightUsing(const Length& height)
 {
     LayoutUnit logicalHeight = -1;
-    if (!h.isAuto()) {
-        if (h.isFixed())
-            logicalHeight = h.value();
-        else if (h.isPercent())
-            logicalHeight = computePercentageLogicalHeight(h);
-        if (logicalHeight != -1) {
-            logicalHeight = computeBorderBoxLogicalHeight(logicalHeight);
-            return logicalHeight;
-        }
+    if (!height.isAuto()) {
+        if (height.isFixed())
+            logicalHeight = height.value();
+        else if (height.isPercent())
+            logicalHeight = computePercentageLogicalHeight(height);
     }
     return logicalHeight;
 }

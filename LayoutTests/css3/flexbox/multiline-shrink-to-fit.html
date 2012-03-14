@@ -26,8 +26,7 @@
 <body>
 <p>Test to make sure that multiline column flexboxes shrink-to-fit properly.</p>
 
-<!-- FIXME: Remove the height once https://bugs.webkit.org/show_bug.cgi?id=80929 is fixed. -->
-<div class="flexbox" style="height: 60px">
+<div class="flexbox">
   <div style="width: 100px; height: 20px"></div>
   <div style="width: 100px; height: 10px"></div>
   <div style="width: 100px; height: 10px"></div>
@@ -43,9 +42,8 @@
 </div>
 <p style="clear:left">The grey background should be 400px wide.</p>
 
-<!-- FIXME: Remove the height once https://bugs.webkit.org/show_bug.cgi?id=80929 is fixed. -->
 <div style="width: 150px">
-<div class="flexbox" style="height: 60px">
+<div class="flexbox">
   <div style="width: 100px; height: 20px"></div>
   <div style="width: 100px; height: 10px"></div>
   <div style="width: 100px; height: 10px"></div>
