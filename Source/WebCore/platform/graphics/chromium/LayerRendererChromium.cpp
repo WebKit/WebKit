@@ -389,10 +389,6 @@ void LayerRendererChromium::beginDrawingFrame()
     }
 
     makeContextCurrent();
-    // The GL viewport covers the entire visible area, including the scrollbars.
-    GLC(m_context.get(), m_context->viewport(0, 0, viewportWidth(), viewportHeight()));
-    m_windowMatrix = screenMatrix(0, 0, viewportWidth(), viewportHeight());
-
     // Bind the common vertex attributes used for drawing all the layers.
     m_sharedGeometry->prepareForDraw();
 
@@ -1143,9 +1139,6 @@ void LayerRendererChromium::copyOffscreenTextureToDisplay()
 
 bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
 {
-    if (m_currentRenderSurface == renderSurface)
-        return true;
-
     m_currentRenderSurface = renderSurface;
 
     if ((renderSurface == m_defaultRenderSurface && !settings().compositeOffscreen) || (!renderSurface && settings().compositeOffscreen)) {

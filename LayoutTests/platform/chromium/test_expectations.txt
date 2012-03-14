@@ -2614,16 +2614,19 @@ BUGWK47925 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEX
 BUGWK47949 LINUX WIN : compositing/reflections/nested-reflection-anchor-point.html = IMAGE+TEXT
 BUGWK47949 MAC : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 BUGWK47949 LINUX WIN : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
+
 // The following are flaky on Mac 10.6; occasionally the layers fail to show up.
 BUGWK47949 MAC : compositing/reflections/nested-reflection.html = IMAGE PASS
-BUGWK47949 : compositing/reflections/nested-reflection-transformed.html = IMAGE PASS
 BUGWK47949 MAC : compositing/reflections/reflection-opacity.html = IMAGE PASS
 BUGWK47949 : compositing/reflections/reflection-positioning.html = IMAGE PASS
-BUGWK47949 : compositing/reflections/nested-reflection-transformed2.html = IMAGE PASS
 BUGWK47949 : compositing/reflections/nested-reflection-transition.html = IMAGE PASS
 BUGWK47949 MAC : compositing/reflections/nested-reflection-size-change.html = IMAGE PASS
 BUGWK79647 WIN MAC : compositing/reflections/reflection-ordering.html = IMAGE PASS
 BUGWK79647 WIN LINUX : compositing/reflections/remove-add-reflection.html = IMAGE PASS
+
+// Need rebaselines
+BUGWK47949 : compositing/reflections/nested-reflection-transformed.html = IMAGE
+BUGWK47949 : compositing/reflections/nested-reflection-transformed2.html = IMAGE
 
 // Flaky because these are a poorly written tests. Need dino's new animation API
 BUGWK54306 : compositing/reflections/animation-inside-reflection.html = PASS IMAGE IMAGE+TEXT
@@ -3538,8 +3541,6 @@ BUGWK74662 : fast/text/unicode-variation-selector.html = IMAGE+TEXT
 
 BUGWK74634 WIN : compositing/absolute-position-changed-with-composited-parent-layer.html = IMAGE
 
-BUGWK74731 : compositing/reflections/reflection-positioning2.html = PASS IMAGE
-
 BUGWK74746 : fast/filesystem/workers/file-from-file-entry-sync.html = PASS CRASH
 BUGWK74746 : fast/filesystem/workers/file-entry-to-uri-sync.html = PASS CRASH
 BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods.html = FAIL
@@ -3672,9 +3673,6 @@ BUGWK77526 WIN LINUX : svg/text/text-align-04-b.svg = PASS IMAGE
 
 // Will need rebaselines for mock scrollbars
 
-// Flaky, needs investigation
-BUGJAMESR : compositing/masks/masked-ancestor.html = IMAGE PASS
-
 BUGWK77534 LINUX : plugins/createScriptableObject-before-start.html = PASS MISSING
 
 BUGWK77889 WIN DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
@@ -3773,28 +3771,11 @@ BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-async.html = PASS CRASH
 BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-sync.html = PASS CRASH
 BUGWK79540 LEOPARD DEBUG : fast/files/workers/worker-read-file-async.html = PASS CRASH
 
-BUGWK79572 : css3/filters/effect-drop-shadow-hw.html = PASS IMAGE
-BUGWK80007 : css3/filters/filtered-compositing-descendant.html = PASS IMAGE
-
 BUGWK79642 : accessibility/aria-describedby-on-input.html = TIMEOUT
 BUGWK79642 : fast/loader/subresource-willSendRequest-null.html = TIMEOUT
 
 BUGWK79702 : fast/regex/lastIndex.html = TEXT
 BUGWK79703 : fast/regex/overflow.html = TEXT
-
-BUGWK79823 : compositing/repaint/opacity-between-absolute.html = PASS IMAGE
-BUGWK79823 : compositing/reflections/masked-reflection-on-composited.html = PASS IMAGE
-BUGWK79823 : compositing/reflections/reflection-on-composited.html = PASS IMAGE
-BUGWK79823 : compositing/geometry/fixed-position.html = PASS IMAGE
-BUGWK79823 : compositing/reflections/compositing-change-inside-reflection.html = PASS IMAGE
-BUGWK79823 : compositing/webgl/webgl-reflection.html = PASS IMAGE
-BUGWK79823 : compositing/masks/direct-image-mask.html = PASS IMAGE
-BUGWK79823 : platform/chromium/compositing/render-surface-alpha-blending.html = PASS IMAGE
-BUGWK79823 : platform/chromium/compositing/child-layer-3d-sorting.html = PASS IMAGE
-BUGWK79823 : platform/chromium/compositing/plugins/webplugin-reflection.html = PASS IMAGE
-
-// Already associated with bug 47949 on Mac.
-BUGWK79823 WIN LINUX : compositing/reflections/nested-reflection.html = PASS IMAGE
 
 BUGWK79862 : fast/js/primitive-property-access-edge-cases.html = TEXT
 BUGWK79862 : fast/js/read-modify-eval.html = TEXT
@@ -3887,11 +3868,6 @@ BUG_SENORBLANCO : fast/events/input-focus-no-duplicate-events.html = CRASH
 BUGWK80743 WIN MAC : compositing/geometry/vertical-scroll-composited.html = PASS IMAGE
 BUGWK80743 WIN MAC : compositing/direct-image-compositing.html = PASS IMAGE
 BUGWK80743 WIN MAC : platform/chromium/compositing/huge-layer-rotated.html = PASS IMAGE
-
-BUGWK80563 : css3/filters/effect-combined-hw.html = PASS IMAGE
-BUGWK80563 : css3/filters/effect-hue-rotate-hw.html = PASS IMAGE
-BUGWK80563 : css3/filters/effect-opacity-hw.html = PASS IMAGE
-BUGWK80563 : compositing/reflections/nested-reflection-opacity.html = PASS IMAGE
 
 BUGWK80665 : fast/js/string-match.html = TEXT
 BUGWK80665 : fast/js/string-replace-2.html = TEXT
