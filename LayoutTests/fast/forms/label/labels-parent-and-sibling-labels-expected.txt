@@ -35,8 +35,6 @@ Check emailType
 PASS element.labels.length is 2
 Check fileType
 PASS element.labels.length is 2
-Check hiddenType
-PASS element.labels.length is 2
 Check imageType
 PASS element.labels.length is 2
 Check monthType

@@ -658,6 +658,11 @@ bool InputType::isImageButton() const
     return false;
 }
 
+bool InputType::isLabelable() const
+{
+    return true;
+}
+
 bool InputType::isNumberField() const
 {
     return false;

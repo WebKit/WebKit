@@ -100,6 +100,7 @@ public:
     virtual bool isFileUpload() const;
     virtual bool isHiddenType() const;
     virtual bool isImageButton() const;
+    virtual bool isLabelable() const;
     virtual bool isNumberField() const;
     virtual bool isPasswordField() const;
     virtual bool isRadioButton() const;

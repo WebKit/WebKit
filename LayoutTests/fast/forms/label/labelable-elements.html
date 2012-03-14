@@ -21,8 +21,14 @@ for (var name in tester.dataSet) {
         shouldNotBe('element.labels', 'null');
     } else if (!data.isLabelable) {
         debug('\nNot labelable: ' + name + ' ' + element);
-        shouldBeUndefined('element.labels');
-        shouldNotBe('element.labels', 'null');
+        if (data.inputType) {
+            // Note: labels attribute of input element isn't undefined,
+            // because HTMLInputElement.idl defines labels attribute.
+            shouldBe('element.labels', 'null');
+        } else {
+            shouldBeUndefined('element.labels');
+            shouldNotBe('element.labels', 'null');
+        }
     } else {
         debug('\nLabelable: ' + name + ' ' + element);
         shouldBe('element.labels.length', '1');

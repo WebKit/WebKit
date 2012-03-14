@@ -51,9 +51,6 @@ PASS element.labels.length is 1
 Check fileType
 PASS element.labels.length is 0
 PASS element.labels.length is 1
-Check hiddenType
-PASS element.labels.length is 0
-PASS element.labels.length is 1
 Check imageType
 PASS element.labels.length is 0
 PASS element.labels.length is 1

@@ -50,6 +50,7 @@ private:
     virtual bool rendererIsNeeded() OVERRIDE;
     virtual bool storesValueSeparateFromAttribute() OVERRIDE;
     virtual bool isHiddenType() const OVERRIDE;
+    virtual bool isLabelable() const OVERRIDE { return false; }
     virtual bool shouldRespectHeightAndWidthAttributes() OVERRIDE;
     virtual void setValue(const String&, bool, TextFieldEventBehavior) OVERRIDE;
     virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;

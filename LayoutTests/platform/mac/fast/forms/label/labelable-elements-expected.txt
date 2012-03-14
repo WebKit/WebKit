@@ -81,8 +81,7 @@ Labelable: fileType [object HTMLInputElement]
 PASS element.labels.length is 1
 
 Not labelable: hiddenType [object HTMLInputElement]
-FAIL element.labels should be undefined. Was [object NodeList]
-PASS element.labels is not null
+PASS element.labels is null
 
 Labelable: imageType [object HTMLInputElement]
 PASS element.labels.length is 1
