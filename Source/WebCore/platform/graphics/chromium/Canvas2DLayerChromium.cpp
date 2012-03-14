@@ -103,8 +103,14 @@ void Canvas2DLayerChromium::paintContentsIfDirty(const Region& /* occludedScreen
     if (!drawsContent())
         return;
 
-    if (m_useDoubleBuffering)
+    if (m_useDoubleBuffering && layerTreeHost()) {
+        TextureManager* textureManager = layerTreeHost()->contentsTextureManager();
+        if (m_frontTexture)
+            m_frontTexture->setTextureManager(textureManager);
+        else
+            m_frontTexture = ManagedTexture::create(textureManager);
         m_frontTexture->reserve(m_size, GraphicsContext3D::RGBA);
+    }
 
     if (!needsDisplay())
         return;
@@ -125,22 +131,6 @@ void Canvas2DLayerChromium::paintContentsIfDirty(const Region& /* occludedScreen
 
     TRACE_EVENT("GrContext::flush", m_context, 0);
     m_context->flush();
-}
-
-void Canvas2DLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
-{
-    CanvasLayerChromium::setLayerTreeHost(host);
-
-    if (m_useDoubleBuffering && host)
-        setTextureManager(host->contentsTextureManager());
-}
-
-void Canvas2DLayerChromium::setTextureManager(TextureManager* textureManager)
-{
-    if (m_frontTexture)
-        m_frontTexture->setTextureManager(textureManager);
-    else
-        m_frontTexture = ManagedTexture::create(textureManager);
 }
 
 void Canvas2DLayerChromium::updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)

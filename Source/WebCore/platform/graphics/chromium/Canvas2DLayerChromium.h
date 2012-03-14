@@ -57,7 +57,6 @@ public:
     virtual bool drawsContent() const;
     virtual void paintContentsIfDirty(const Region& occludedScreenSpace);
 
-    virtual void setLayerTreeHost(CCLayerTreeHost*);
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
     virtual void pushPropertiesTo(CCLayerImpl*);
     virtual void unreserveContentsTexture();
@@ -68,7 +67,6 @@ private:
     Canvas2DLayerChromium(PassRefPtr<GraphicsContext3D>, const IntSize&);
 
     friend class Canvas2DLayerChromiumTest;
-    void setTextureManager(TextureManager*);
 
     RefPtr<GraphicsContext3D> m_context;
     bool m_contextLost;

@@ -27,13 +27,18 @@
 #include "Canvas2DLayerChromium.h"
 
 #include "CCSchedulerTestCommon.h"
+#include "FakeCCLayerTreeHostClient.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "Region.h"
 #include "TextureManager.h"
+#include "WebCompositor.h"
+#include "WebKit.h"
 #include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCTextureUpdater.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebThread.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -47,6 +52,24 @@ using testing::Return;
 using testing::Test;
 
 namespace {
+
+class FakeCCLayerTreeHost : public CCLayerTreeHost {
+public:
+    static PassRefPtr<FakeCCLayerTreeHost> create()
+    {
+        RefPtr<FakeCCLayerTreeHost> host = adoptRef(new FakeCCLayerTreeHost);
+        host->initialize();
+        return host.release();
+    }
+
+private:
+    FakeCCLayerTreeHost()
+        : CCLayerTreeHost(&m_client, CCSettings())
+    {
+    }
+
+    FakeCCLayerTreeHostClient m_client;
+};
 
 class MockCanvasContext : public FakeWebGraphicsContext3D {
 public:
@@ -69,10 +92,6 @@ public:
     MOCK_METHOD3(deleteTexture, void(unsigned, const IntSize&, GC3Denum));
 };
 
-} // namespace
-
-namespace WebCore {
-
 class Canvas2DLayerChromiumTest : public Test {
 protected:
     void fullLifecycleTest(bool threaded)
@@ -89,11 +108,15 @@ protected:
         CCTextureUpdater updater(&allocatorMock);
 
         const IntSize size(300, 150);
-        const size_t maxTextureSize = size.width() * size.height() * 4;
-        OwnPtr<TextureManager> textureManager = TextureManager::create(maxTextureSize, maxTextureSize, maxTextureSize);
 
+        OwnPtr<WebThread> thread;
         if (threaded)
-            CCProxy::setImplThread(new FakeCCThread);
+           thread = adoptPtr(webKitPlatformSupport()->createThread("Canvas2DLayerChromiumTest"));
+        WebCompositor::initialize(thread.get());
+
+        RefPtr<FakeCCLayerTreeHost> layerTreeHost = FakeCCLayerTreeHost::create();
+        // Force an update, so that we get a valid TextureManager.
+        layerTreeHost->updateLayers();
 
         const WebGLId backTextureId = 1;
         const WebGLId frontTextureId = 2;
@@ -127,7 +150,7 @@ protected:
 
         RefPtr<Canvas2DLayerChromium> canvas = Canvas2DLayerChromium::create(mainContext.get(), size);
         canvas->setIsDrawable(true);
-        canvas->setTextureManager(textureManager.get());
+        canvas->setLayerTreeHost(layerTreeHost.get());
         canvas->setBounds(IntSize(600, 300));
         canvas->setTextureId(backTextureId);
 
@@ -151,8 +174,10 @@ protected:
                 EXPECT_EQ(backTextureId, static_cast<CCCanvasLayerImpl*>(layerImpl.get())->textureId());
         }
         canvas.clear();
-        textureManager->reduceMemoryToLimit(0);
-        textureManager->deleteEvictedTextures(&allocatorMock);
+        layerTreeHost->contentsTextureManager()->reduceMemoryToLimit(0);
+        layerTreeHost->contentsTextureManager()->deleteEvictedTextures(&allocatorMock);
+        layerTreeHost.clear();
+        WebCompositor::shutdown();
     }
 };
 
@@ -166,4 +191,4 @@ TEST_F(Canvas2DLayerChromiumTest, testFullLifecycleThreaded)
     fullLifecycleTest(true);
 }
 
-} // namespace webcore
+} // namespace

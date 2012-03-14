@@ -142,6 +142,17 @@ void expectTreesAreIdentical(LayerChromium* layer, CCLayerImpl* ccLayer)
         expectTreesAreIdentical(layerChildren[i].get(), ccLayerChildren[i].get());
 }
 
+// Attempts to synchronizes a null tree. This should not crash, and should
+// return a null tree.
+TEST(TreeSynchronizerTest, syncNullTree)
+{
+    DebugScopedSetImplThread impl;
+
+    OwnPtr<CCLayerImpl> ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(0, nullptr);
+
+    EXPECT_TRUE(!ccLayerTreeRoot.get());
+}
+
 // Constructs a very simple tree and synchronizes it without trying to reuse any preexisting layers.
 TEST(TreeSynchronizerTest, syncSimpleTreeFromEmpty)
 {

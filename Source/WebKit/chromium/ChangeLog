@@ -1,3 +1,20 @@
+2012-03-14  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Fix accelerated Canvas2D with threaded compositing.
+        https://bugs.webkit.org/show_bug.cgi?id=80998
+
+        Reviewed by James Robinson.
+
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        Instantiate a CCLayerTreeHost, so that Canvas2DLayerChromium can
+        retrieve its texture manager.  Also move the test into the unnamed
+        namespace -- since it's already using WebCore, there's little reason for
+        it to also be in the namespace.
+        * tests/TreeSynchronizerTest.cpp:
+        (WebKitTests):
+        (WebKitTests::TEST):
+        Add a new test for trying to synchronize NULL tree.
+
 2012-03-14  James Robinson  <jamesr@chromium.org>
 
         [chromium] Provide explicit polling API to check if the platform is capable of accelerated 2d canvas
