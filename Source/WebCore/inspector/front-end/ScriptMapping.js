@@ -135,7 +135,8 @@ WebInspector.MainScriptMapping.prototype = {
 
     _unregisterLiveLocation: function(scriptId, liveLocation)
     {
-        this._liveLocationsForScriptId[scriptId].remove(liveLocation);
+        if (this._liveLocationsForScriptId[scriptId])
+            this._liveLocationsForScriptId[scriptId].remove(liveLocation);
     },
 
     _updateLiveLocations: function(scriptIds)
