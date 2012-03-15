@@ -187,6 +187,12 @@ class TestRunner:
 
 if __name__ == "__main__":
     option_parser = optparse.OptionParser(usage='usage: %prog [options] [test...]')
+    option_parser.add_option('-r', '--release',
+                             action='store_true', dest='release',
+                             help='Run in Release')
+    option_parser.add_option('-d', '--debug',
+                             action='store_true', dest='debug',
+                             help='Run in Debug')
     option_parser.add_option('-v', '--verbose',
                              action='store_true', dest='verbose',
                              help='Run gtester in verbose mode')

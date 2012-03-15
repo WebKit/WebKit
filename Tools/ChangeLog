@@ -1,3 +1,9 @@
+2012-03-15  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix attempt after r110845.
+
+        * Scripts/run-gtk-tests: Added --release and --debug options.
+
 2012-03-15  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         Parametrize run-with-jhbuild and update-webkitgtk-libs with platform --gtk/--efl
