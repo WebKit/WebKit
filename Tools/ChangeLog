@@ -1,3 +1,18 @@
+2012-03-14  Tim Horton  <timothy_horton@apple.com>
+
+        NRWT should respect --additional-platform-directory's Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=81172
+
+        Reviewed by Timothy Hatcher.
+
+        Respect the Skipped file inside all paths included via the --additional-platform-directory option. Test results
+        from said path are already used, but the Skipped file is ignored.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._skipped_file_search_paths):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (test_skipped_file_search_paths):
+
 2012-03-14  Ojan Vafai  <ojan@chromium.org>
 
         Unreviewed, rolling out r110783.

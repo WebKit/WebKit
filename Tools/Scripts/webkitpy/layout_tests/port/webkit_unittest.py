@@ -151,6 +151,8 @@ class WebKitPortTest(port_testcase.PortTestCase):
         self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport', 'testwebkitport-version']))
         port._options = MockOptions(webkit_test_runner=True)
         self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport', 'testwebkitport-version', 'testwebkitport-wk2', 'wk2']))
+        port._options = MockOptions(additional_platform_directory=["internal-testwebkitport"])
+        self.assertEqual(port._skipped_file_search_paths(), set(['testwebkitport', 'testwebkitport-version', 'internal-testwebkitport']))
 
     def test_root_option(self):
         port = TestWebKitPort()
