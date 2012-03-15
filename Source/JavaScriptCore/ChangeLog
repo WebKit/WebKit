@@ -1,3 +1,13 @@
+2012-03-15  Andras Becsi  <andras.becsi@nokia.com>
+
+        Fix ARM build after r110792.
+
+        Unreviewed build fix.
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush):
+        Remove superfluous curly brackets.
+
 2012-03-15  Gavin Barraclough  <barraclough@apple.com>
 
         ARMv7: prefer vmov(gpr,gpr->double) over vmov(gpr->single)

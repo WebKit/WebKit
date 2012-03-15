@@ -212,7 +212,6 @@ public:
                 : "r0", "r1", "r2");
             currentPage += pageSize();
         } while (lastPage >= currentPage);
-     }
     }
 #elif OS(WINCE)
     static void cacheFlush(void* code, size_t size)
