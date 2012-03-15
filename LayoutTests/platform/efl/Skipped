@@ -295,11 +295,6 @@ fast/dom/shadow
 # defined(ENABLE_INPUT_COLOR) is disabled
 fast/forms/color/input-color-onchange-event.html
 
-# EFL's LayoutTestController does not implement nodesFromRect
-fast/dom/nodesFromRect-basic.html
-fast/dom/nodesFromRect-inner-documents.html
-fast/dom/nodesFromRect-links-and-text.html
-
 # EFL's LayoutTestController does not implement copy{Encoded,Decoded}HostName
 fast/encoding/idn-security.html
 
