@@ -21,6 +21,7 @@ import subprocess
 import os
 import sys
 import time
+import optparse
 from gi.repository import Gio, GLib
 
 TIMEOUT=180 # seconds
@@ -35,7 +36,7 @@ class TestRunner:
                 # https://bugs.webkit.org/show_bug.cgi?id=76910
                 "WebKit2APITests/TestDownloads" ]
 
-    def __init__(self):
+    def __init__(self, tests=[]):
 
         # FIXME: webkit-build-directory --configuration always returns
         # Release because we never call set-webkit-configuration.
@@ -55,7 +56,13 @@ class TestRunner:
         self._timed_out = False
         self._gtk_tools_directory = os.path.join(top_level, "Tools", "gtk")
         self._programs_path = os.path.join(build_directory, "Programs")
-        self._tests = []
+        self._tests = self._get_tests(tests)
+
+    def _get_tests(self, tests):
+        if tests:
+            return tests
+
+        tests = []
         for test_dir in self.TEST_DIRS:
             absolute_test_dir = os.path.join(self._programs_path, test_dir)
             if not os.path.isdir(absolute_test_dir):
@@ -71,7 +78,8 @@ class TestRunner:
 
                 test_path = os.path.join(self._programs_path, test_relative_path)
                 if os.path.isfile(test_path) and os.access(test_path, os.X_OK):
-                    self._tests.append(test_path)
+                    tests.append(test_path)
+        return tests
 
     def _lookup_atspi2_binary(self, jhbuild_path, filename):
         process = subprocess.Popen([jhbuild_path ,'pkg-config', '--variable=exec_prefix', 'atspi-2'], stdout=subprocess.PIPE)
@@ -117,14 +125,14 @@ class TestRunner:
                 sys.stderr.flush()
                 self._a11y_registryd = None
 
-    def run(self):
+    def run(self, options):
         if not self._tests:
             sys.stderr.write("ERROR: tests not found in %s.\n" % (self._programs_path))
             sys.stderr.flush()
             return 1
 
         test_env = os.environ
-        test_env["DISPLAY"] = ":55"
+        test_env["DISPLAY"] = options.display
         test_env["WEBKIT_INSPECTOR_PATH"] = os.path.abspath(os.path.join(self._programs_path, 'resources', 'inspector'))
         test_env['GSETTINGS_BACKEND'] = 'memory'
 
@@ -149,7 +157,11 @@ class TestRunner:
             self._ensure_accessibility_daemon_is_running(jhbuild_path, test_env)
 
             for test in self._tests:
-                process = subprocess.Popen([jhbuild_path ,'gtester', test], env=test_env)
+                tester_command = [jhbuild_path , 'gtester']
+                if options.verbose:
+                    tester_command.append('--verbose')
+                tester_command.append(test)
+                process = subprocess.Popen(tester_command, env=test_env)
                 if process.wait():
                     failed_tests.append(test)
 
@@ -174,8 +186,16 @@ class TestRunner:
         return len(failed_tests) or int(self._timed_out)
 
 if __name__ == "__main__":
+    option_parser = optparse.OptionParser(usage='usage: %prog [options] [test...]')
+    option_parser.add_option('-v', '--verbose',
+                             action='store_true', dest='verbose',
+                             help='Run gtester in verbose mode')
+    option_parser.add_option('--display', action='store', dest='display', default=':55',
+                             help='Display to run Xvfb')
+    options, args = option_parser.parse_args()
+
     try:
-        xvfb = subprocess.Popen(["Xvfb", ":55", "-screen", "0", "800x600x24", "-nolisten", "tcp"],
+        xvfb = subprocess.Popen(["Xvfb", options.display, "-screen", "0", "800x600x24", "-nolisten", "tcp"],
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except:
         sys.stderr.write("Failed to run Xvfb\n")
@@ -183,6 +203,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     try:
-        sys.exit(TestRunner().run())
+        sys.exit(TestRunner(args).run(options))
     finally:
         xvfb.kill()

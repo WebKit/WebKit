@@ -1,5 +1,30 @@
 2012-03-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add command line options to run-gtk-tests script
+        https://bugs.webkit.org/show_bug.cgi?id=81218
+
+        Reviewed by Philippe Normand.
+
+        Following command line options have been added:
+
+        -v, --verbose: to run gtester with --verbose. That would be used
+        by the bots to make it easier to know which test case it failing.
+
+        --display: to use a different display for Xvfb
+
+        It's also possible to pass one or more tests as arguments.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner.__init__): Receive command line arguments.
+        (TestRunner._get_tests): Get all the tests or the ones passed by
+        command line arguments.
+        (TestRunner._ensure_accessibility_daemon_is_running): Use display
+        command line argument.
+        (TestRunner.run): Pas command line options.
+        (TestRunner.run.run_tests): Pass command line arguments.
+
+2012-03-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] WebKit2APITests/TestPrinting timeout in the bots
         https://bugs.webkit.org/show_bug.cgi?id=81211
 
