@@ -1,3 +1,18 @@
+2012-03-14  Hojong Han  <hojong.han@samsung.com>
+
+        Run cacheFlush page by page to assure of flushing all the requested ranges
+        https://bugs.webkit.org/show_bug.cgi?id=77712
+
+        Reviewed by Geoffrey Garen.
+
+        Current MetaAllocator concept, always coalesces adjacent free spaces,
+        doesn't meet memory management of Linux kernel.
+        In a certain case Linux kernel doesn't regard contiguous virtual memory areas as one but two.
+        Therefore cacheFlush page by page guarantees a flush-requested range.
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush):
+
 2012-03-14  Oliver Hunt  <oliver@apple.com>
 
         Make ARMv7 work again
