@@ -30,6 +30,6 @@ module svg {
     ] SVGAnimatedRect {
         readonly attribute SVGRect baseVal;
         readonly attribute SVGRect animVal;
-    }
+    };
 
-};
+}
