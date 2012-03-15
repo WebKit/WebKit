@@ -69,6 +69,8 @@
 
 using namespace BlackBerry::WebKit;
 
+using BlackBerry::Platform::Graphics::Window;
+
 namespace WebCore {
 
 static CString frameOrigin(Frame* frame)
@@ -151,7 +153,11 @@ void ChromeClientBlackBerry::setWindowRect(const FloatRect&)
 
 FloatRect ChromeClientBlackBerry::windowRect()
 {
-    const IntSize windowSize = m_webPagePrivate->m_client->window()->windowSize();
+    IntSize windowSize;
+
+    if (Window* window = m_webPagePrivate->m_client->window())
+        windowSize = window->windowSize();
+
     return FloatRect(0, 0, windowSize.width(), windowSize.height());
 }
 
@@ -373,7 +379,10 @@ IntRect ChromeClientBlackBerry::windowResizerRect() const
 
 IntPoint ChromeClientBlackBerry::screenToWindow(const IntPoint& screenPos) const
 {
-    IntPoint windowPoint = m_webPagePrivate->m_client->window()->windowLocation();
+    IntPoint windowPoint;
+    if (Window* window = m_webPagePrivate->m_client->window())
+        windowPoint = window->windowLocation();
+
     windowPoint.move(-screenPos.x(), -screenPos.y());
     return windowPoint;
 }
@@ -381,7 +390,10 @@ IntPoint ChromeClientBlackBerry::screenToWindow(const IntPoint& screenPos) const
 IntRect ChromeClientBlackBerry::windowToScreen(const IntRect& windowRect) const
 {
     IntRect windowPoint(windowRect);
-    IntPoint location(m_webPagePrivate->m_client->window()->windowLocation());
+    IntPoint location;
+    if (Window* window = m_webPagePrivate->m_client->window())
+        location = window->windowLocation();
+
     windowPoint.move(location.x(), location.y());
     return windowPoint;
 }

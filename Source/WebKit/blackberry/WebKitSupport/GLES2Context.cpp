@@ -42,6 +42,8 @@
 
 #include <GLES2/gl2.h>
 
+using BlackBerry::Platform::Graphics::Window;
+
 namespace BlackBerry {
 namespace WebKit {
 
@@ -72,8 +74,10 @@ PassOwnPtr<GLES2Context> GLES2Context::create(WebPagePrivate* page)
 GLES2Context::GLES2Context(WebPagePrivate* page)
     : m_window(0)
 {
-    if (page->m_client->window()->windowUsage() == Platform::Graphics::Window::GLES2Usage)
-        m_window = page->m_client->window();
+    if (Window* window = page->m_client->window()) {
+        if (window->windowUsage() == Window::GLES2Usage)
+            m_window = window;
+    }
 }
 
 GLES2Context::~GLES2Context()

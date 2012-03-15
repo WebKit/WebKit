@@ -47,7 +47,7 @@ public:
 
     void setRootLayer(WebCore::LayerCompositingThread*);
 
-    void setCompositingOntoMainWindow(bool);
+    void setBackingStoreUsesOpenGL(bool);
 
     void commit(WebCore::LayerWebKitThread* rootLayerProxy);
 
@@ -77,7 +77,7 @@ private:
     int m_compositedGeneration;
     WebCore::IntRect m_compositedDstRect;
     WebCore::FloatRect m_compositedContentsRect;
-    bool m_compositingOntoMainWindow;
+    bool m_backingStoreUsesOpenGL;
     BlackBerry::Platform::Timer<WebPageCompositor> m_animationTimer;
     BlackBerry::Platform::TimerClient* m_timerClient;
 };

@@ -1,3 +1,51 @@
+2012-03-14  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Make sure WebPage and BackingStore don't crash without a Window
+        https://bugs.webkit.org/show_bug.cgi?id=81099
+
+        Reviewed by Rob Buis.
+
+        Also rename the "compositing/blitting to main window" variables to
+        instead refer to OpenGL compositing. The code paths it triggers are
+        related to the BackingStore using OpenGL compositing, and can be useful
+        even when there's no window.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::isOpenGLCompositing):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::copyPreviousContentsToBackSurfaceOfWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::paintDefaultBackground):
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitTileRect):
+        (BlackBerry::WebKit::BackingStorePrivate::blendCompositingSurface):
+        (BlackBerry::WebKit::BackingStorePrivate::renderContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitToWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::checkerWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::invalidateWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::clearWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::drawSubLayers):
+        (BlackBerry::WebKit::BackingStorePrivate::surfaceSize):
+        (BlackBerry::WebKit::BackingStorePrivate::buffer):
+        * Api/BackingStore_p.h:
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::didPluginEnterFullScreen):
+        (BlackBerry::WebKit::WebPagePrivate::didPluginExitFullScreen):
+        (BlackBerry::WebKit::WebPagePrivate::drawLayersOnCommit):
+        (BlackBerry::WebKit::WebPagePrivate::drawSubLayers):
+        (BlackBerry::WebKit::WebPagePrivate::rootLayerCommitTimerFired):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::windowRect):
+        (WebCore::ChromeClientBlackBerry::screenToWindow):
+        (WebCore::ChromeClientBlackBerry::windowToScreen):
+        * WebKitSupport/GLES2Context.cpp:
+        (BlackBerry::WebKit::GLES2Context::GLES2Context):
+        * WebKitSupport/TouchEventHandler.h:
+        * WebKitSupport/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositor::WebPageCompositor):
+        (BlackBerry::WebKit::WebPageCompositor::setBackingStoreUsesOpenGL):
+        (BlackBerry::WebKit::WebPageCompositor::drawLayers):
+        * WebKitSupport/WebPageCompositor.h:
+
 2012-03-13  Jon Lee  <jonlee@apple.com>
 
         Separate NOTIFICATIONS and LEGACY_NOTIFICATIONS

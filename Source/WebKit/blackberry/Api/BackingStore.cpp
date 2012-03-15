@@ -61,6 +61,7 @@
 using namespace WebCore;
 using namespace std;
 
+using BlackBerry::Platform::Graphics::Window;
 using BlackBerry::Platform::IntRect;
 using BlackBerry::Platform::IntPoint;
 using BlackBerry::Platform::IntSize;
@@ -247,6 +248,15 @@ bool BackingStorePrivate::shouldDirectRenderingToWindow() const
     const unsigned tilesNecessary = minimumNumberOfTilesWide() * minimumNumberOfTilesHigh();
     const unsigned tilesAvailable = currentState->numberOfTilesWide() * currentState->numberOfTilesHigh();
     return tilesAvailable < tilesNecessary;
+}
+
+bool BackingStorePrivate::isOpenGLCompositing() const
+{
+    if (Window* window = m_webPage->client()->window())
+        return window->windowUsage() == Window::GLES2Usage;
+
+    // If there's no window, OpenGL rendering is currently the only option.
+    return true;
 }
 
 void BackingStorePrivate::suspendScreenAndBackingStoreUpdates()
@@ -991,7 +1001,7 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
                            m_suspendBackingStoreUpdates ? "true" : "false");
 #endif
 
-    bool blittingDirectlyToCompositingWindow = m_webPage->d->m_client->window()->windowUsage() == BlackBerry::Platform::Graphics::Window::GLES2Usage;
+    bool blittingDirectlyToCompositingWindow = isOpenGLCompositing();
 
     BackingStoreGeometry* currentState = frontState();
     TileMap currentMap = currentState->tileMap();
@@ -1146,7 +1156,8 @@ void BackingStorePrivate::copyPreviousContentsToBackSurfaceOfWindow()
     if (previousContentsRegion.isEmpty())
         return;
 
-    m_webPage->client()->window()->copyFromFrontToBack(previousContentsRegion);
+    if (Window* window = m_webPage->client()->window())
+        window->copyFromFrontToBack(previousContentsRegion);
     windowBackBufferState()->addBlittedRegion(previousContentsRegion);
 }
 
@@ -1192,7 +1203,7 @@ void BackingStorePrivate::paintDefaultBackground(const Platform::IntRect& conten
             // Because of rounding it is possible that overScrollRect could be off-by-one larger
             // than the surface size of the window. We prevent this here, by clamping
             // it to ensure that can't happen.
-            overScrollRect.intersect(Platform::IntRect(Platform::IntPoint(0, 0), m_webPage->client()->window()->surfaceSize()));
+            overScrollRect.intersect(Platform::IntRect(Platform::IntPoint(0, 0), surfaceSize()));
         }
 
         clearWindow(overScrollRect, color.red(), color.green(), color.blue(), color.alpha());
@@ -1260,7 +1271,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
     if (!contents.isEmpty())
         transformation = TransformationMatrix::rectToRect(FloatRect(FloatPoint(0.0, 0.0), WebCore::IntSize(contents.size())), WebCore::IntRect(dstRect));
 
-    bool blittingDirectlyToCompositingWindow = m_webPage->d->m_client->window()->windowUsage() == BlackBerry::Platform::Graphics::Window::GLES2Usage;
+    bool blittingDirectlyToCompositingWindow = isOpenGLCompositing();
 #if USE(ACCELERATED_COMPOSITING)
     BackingStoreCompositingSurface* compositingSurface =
         SurfacePool::globalSurfacePool()->compositingSurface();
@@ -1364,7 +1375,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
                 // Because of rounding it is possible that dirtyRect could be off-by-one larger
                 // than the surface size of the dst buffer. We prevent this here, by clamping
                 // it to ensure that can't happen.
-                dirtyRectT.intersect(Platform::IntRect(Platform::IntPoint(0, 0), m_webPage->client()->window()->surfaceSize()));
+                dirtyRectT.intersect(Platform::IntRect(Platform::IntPoint(0, 0), surfaceSize()));
             }
             const Platform::IntPoint contentsOrigin(dirtyRect.x() + origin.x(), dirtyRect.y() + origin.y());
 #if DEBUG_CHECKERBOARD
@@ -1405,7 +1416,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
                     // Because of rounding it is possible that dirtyRect could be off-by-one larger
                     // than the surface size of the dst buffer. We prevent this here, by clamping
                     // it to ensure that can't happen.
-                    dirtyRectT.intersect(Platform::IntRect(Platform::IntPoint(0, 0), m_webPage->client()->window()->surfaceSize()));
+                    dirtyRectT.intersect(Platform::IntRect(Platform::IntPoint(0, 0), surfaceSize()));
                 }
 
                 blitToWindow(dirtyRectT,
@@ -1451,8 +1462,7 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 
 #if DEBUG_VISUALIZE
     // FIXME: This should not explicitely depend on WebCore::.
-    BlackBerry::Platform::Graphics::Buffer* windowBuffer =
-        m_webPage->client()->window()->buffer();
+    BlackBerry::Platform::Graphics::Buffer* windowBuffer = buffer();
     BlackBerry::Platform::Graphics::Drawable* bufferDrawable =
         BlackBerry::Platform::Graphics::lockBufferDrawable(windowBuffer);
     PlatformGraphicsContext* bufferPlatformGraphicsContext =
@@ -1543,7 +1553,7 @@ Platform::IntRect BackingStorePrivate::blitTileRect(TileBuffer* tileBuffer,
         // Because of rounding it is possible that dirtyRect could be off-by-one larger
         // than the surface size of the dst buffer. We prevent this here, by clamping
         // it to ensure that can't happen.
-        dirtyRect.intersect(Platform::IntRect(Platform::IntPoint(0, 0), m_webPage->client()->window()->surfaceSize()));
+        dirtyRect.intersect(Platform::IntRect(Platform::IntPoint(0, 0), surfaceSize()));
     }
 
     ASSERT(!dirtyRect.isEmpty());
@@ -1579,7 +1589,7 @@ void BackingStorePrivate::blendCompositingSurface(const Platform::IntRect& dstRe
 
         holePunchRect.intersect(dstRect);
         holePunchRect.intersect(Platform::IntRect(
-            Platform::IntPoint(0, 0), m_webPage->client()->window()->surfaceSize()));
+            Platform::IntPoint(0, 0), surfaceSize()));
 
         if (!holePunchRect.isEmpty())
             clearWindow(holePunchRect, 0, 0, 0, 0);
@@ -1591,7 +1601,7 @@ void BackingStorePrivate::blendCompositingSurface(const Platform::IntRect& dstRe
     for (size_t i = 0; i < rects.size(); ++i) {
         rects[i].intersect(dstRect);
 #if DEBUG_COMPOSITING_DIRTY_REGION
-        clearBuffer(m_webPage->client()->window()->buffer(), rects[i], 255, 0, 0, 128);
+        clearBuffer(buffer(), rects[i], 255, 0, 0, 128);
 #endif
         blitToWindow(rects[i], frontBuffer->nativeBuffer(), rects[i], true /*blend*/, 255);
     }
@@ -2138,7 +2148,7 @@ void BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Buffer*
 
     BlackBerry::Platform::Graphics::Buffer* targetBuffer = tileBuffer
         ? tileBuffer
-        : m_webPage->client()->window()->buffer();
+        : buffer();
 
     if (contentsSize.isEmpty()
         || !Platform::IntRect(Platform::IntPoint(0, 0), m_client->transformedContentsSize()).contains(contentsRect)
@@ -2276,7 +2286,7 @@ void BackingStorePrivate::blitToWindow(const Platform::IntRect& dstRect,
     windowFrontBufferState()->clearBlittedRegion(dstRect);
     windowBackBufferState()->addBlittedRegion(dstRect);
 
-    BlackBerry::Platform::Graphics::Buffer* dstBuffer = m_webPage->client()->window()->buffer();
+    BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
     ASSERT(dstBuffer);
     ASSERT(srcBuffer);
     if (!dstBuffer)
@@ -2305,7 +2315,7 @@ void BackingStorePrivate::checkerWindow(const Platform::IntRect& dstRect,
     windowFrontBufferState()->clearBlittedRegion(dstRect);
     windowBackBufferState()->addBlittedRegion(dstRect);
 
-    BlackBerry::Platform::Graphics::Buffer* dstBuffer = m_webPage->client()->window()->buffer();
+    BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
     ASSERT(dstBuffer);
     if (!dstBuffer)
         BlackBerry::Platform::log(BlackBerry::Platform::LogLevelWarn, "Empty window buffer, couldn't checkerWindow");
@@ -2364,7 +2374,8 @@ void BackingStorePrivate::invalidateWindow(const Platform::IntRect& dst)
 #endif
 
     m_currentWindowBackBuffer = (m_currentWindowBackBuffer + 1) % 2;
-    m_webPage->client()->window()->post(dstRect);
+    if (Window* window = m_webPage->client()->window())
+        window->post(dstRect);
 }
 
 void BackingStorePrivate::clearWindow()
@@ -2377,14 +2388,14 @@ void BackingStorePrivate::clearWindow()
         return;
     }
 
-    BlackBerry::Platform::Graphics::Buffer* dstBuffer = m_webPage->client()->window()->buffer();
+    BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
     ASSERT(dstBuffer);
     if (!dstBuffer)
         BlackBerry::Platform::log(BlackBerry::Platform::LogLevelWarn, "Empty window buffer, couldn't clearWindow");
 
     windowFrontBufferState()->clearBlittedRegion();
     windowBackBufferState()->addBlittedRegion(Platform::IntRect(
-        Platform::IntPoint(0, 0), m_webPage->client()->window()->surfaceSize()));
+        Platform::IntPoint(0, 0), surfaceSize()));
 
     Color color(m_webPage->settings()->backgroundColor());
     BlackBerry::Platform::Graphics::clearBuffer(dstBuffer,
@@ -2415,7 +2426,7 @@ void BackingStorePrivate::clearWindow(const Platform::IntRect& rect,
         return;
     }
 
-    BlackBerry::Platform::Graphics::Buffer* dstBuffer = m_webPage->client()->window()->buffer();
+    BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
     ASSERT(dstBuffer);
     if (!dstBuffer)
         BlackBerry::Platform::log(BlackBerry::Platform::LogLevelWarn, "Empty window buffer, couldn't clearWindow");
@@ -2505,9 +2516,7 @@ bool BackingStorePrivate::drawSubLayers()
     if (!BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread())
         return false;
 
-    bool blittingDirectlyToCompositingWindow = m_webPage->d->m_client->window()->windowUsage() == BlackBerry::Platform::Graphics::Window::GLES2Usage;
-
-    if (m_suspendBackingStoreUpdates && !blittingDirectlyToCompositingWindow)
+    if (m_suspendBackingStoreUpdates && !isOpenGLCompositing())
         return false;
 
     Platform::IntRect dst = m_webPage->client()->userInterfaceBlittedDestinationRect();
@@ -2680,6 +2689,22 @@ bool BackingStore::hasBlitJobs() const
 void BackingStore::blitOnIdle()
 {
     d->blitVisibleContents(true /*force*/);
+}
+
+Platform::IntSize BackingStorePrivate::surfaceSize() const
+{
+    if (Window* window = m_webPage->client()->window())
+        return window->surfaceSize();
+
+    return Platform::IntSize();
+}
+
+Platform::Graphics::Buffer* BackingStorePrivate::buffer() const
+{
+    if (Window* window = m_webPage->client()->window())
+        return window->buffer();
+
+    return 0;
 }
 
 }

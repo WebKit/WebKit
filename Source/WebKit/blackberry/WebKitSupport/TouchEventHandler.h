@@ -24,7 +24,6 @@
 #include "IntPoint.h"
 
 #include <BlackBerryPlatformTouchEvent.h>
-#include <BlackBerryPlatformWindow.h>
 
 namespace BlackBerry {
 namespace WebKit {

@@ -41,7 +41,7 @@ WebPageCompositor::WebPageCompositor(WebPagePrivate* page)
     , m_layerRenderer(LayerRenderer::create(page->m_page))
     , m_generation(0)
     , m_compositedGeneration(-1)
-    , m_compositingOntoMainWindow(false)
+    , m_backingStoreUsesOpenGL(false)
     , m_animationTimer(this, &WebPageCompositor::animationTimerFired)
     , m_timerClient(new Platform::GenericTimerClient(Platform::userInterfaceThreadTimerClient()))
 {
@@ -65,10 +65,10 @@ void WebPageCompositor::setRootLayer(LayerCompositingThread* rootLayer)
     m_layerRenderer->setRootLayer(m_rootLayer.get());
 }
 
-void WebPageCompositor::setCompositingOntoMainWindow(bool compositingOntoMainWindow)
+void WebPageCompositor::setBackingStoreUsesOpenGL(bool backingStoreUsesOpenGL)
 {
-    m_compositingOntoMainWindow = compositingOntoMainWindow;
-    m_layerRenderer->setClearSurfaceOnDrawLayers(!compositingOntoMainWindow);
+    m_backingStoreUsesOpenGL = backingStoreUsesOpenGL;
+    m_layerRenderer->setClearSurfaceOnDrawLayers(!backingStoreUsesOpenGL);
 }
 
 void WebPageCompositor::commit(LayerWebKitThread* rootLayer)
@@ -84,7 +84,7 @@ bool WebPageCompositor::drawLayers(const IntRect& dstRect, const FloatRect& cont
 {
     // Save a draw if we already drew this generation, for example due to a concurrent scroll operation.
     if (m_compositedGeneration == m_generation && dstRect == m_compositedDstRect
-        && contents == m_compositedContentsRect && !m_compositingOntoMainWindow)
+        && contents == m_compositedContentsRect && !m_backingStoreUsesOpenGL)
         return false;
 
     m_layerRenderer->drawLayers(contents, m_layoutRectForCompositing, m_contentsSizeForCompositing, dstRect);

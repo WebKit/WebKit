@@ -1937,6 +1937,10 @@ void WebPagePrivate::didPluginEnterFullScreen(PluginView* plugin, const char* wi
 {
     m_fullScreenPluginView = plugin;
     m_client->didPluginEnterFullScreen();
+
+    if (!m_client->window())
+        return;
+
     Platform::Graphics::Window::setTransparencyDiscardFilter(windowUniquePrefix);
     m_client->window()->setSensitivityFullscreenOverride(true);
 }
@@ -1945,6 +1949,10 @@ void WebPagePrivate::didPluginExitFullScreen(PluginView* plugin, const char* win
 {
     m_fullScreenPluginView = 0;
     m_client->didPluginExitFullScreen();
+
+    if (!m_client->window())
+        return;
+
     Platform::Graphics::Window::setTransparencyDiscardFilter(0);
     m_client->window()->setSensitivityFullscreenOverride(false);
 }
@@ -5072,7 +5080,7 @@ void WebPagePrivate::drawLayersOnCommit()
         return;
     }
 
-    if (m_client->window()->windowUsage() == Platform::Graphics::Window::GLES2Usage) {
+    if (m_backingStore->d->isOpenGLCompositing()) {
         m_backingStore->d->blitVisibleContents();
         return; // blitVisibleContents() includes drawSubLayers() in this case.
     }
@@ -5103,8 +5111,7 @@ bool WebPagePrivate::drawSubLayers(const IntRect& dstRect, const FloatRect& cont
         return false;
 
     if (m_compositor) {
-        m_compositor->setCompositingOntoMainWindow(
-            m_client->window()->windowUsage() == Platform::Graphics::Window::GLES2Usage);
+        m_compositor->setBackingStoreUsesOpenGL(m_backingStore->d->isOpenGLCompositing());
         return m_compositor->drawLayers(dstRect, contents);
     }
 
@@ -5232,7 +5239,7 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
     requestLayoutIfNeeded();
 
     bool isSingleTargetWindow = SurfacePool::globalSurfacePool()->compositingSurface()
-        || m_client->window()->windowUsage() == Platform::Graphics::Window::GLES2Usage;
+        || m_backingStore->d->isOpenGLCompositing();
 
     // If we are doing direct rendering and have a single rendering target,
     // committing is equivalent to a one shot drawing synchronization.

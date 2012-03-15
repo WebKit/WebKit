@@ -106,6 +106,11 @@ public:
     // the minimum number of tiles required to scroll.
     bool shouldDirectRenderingToWindow() const;
 
+    // Returns whether we're using the OpenGL code path for compositing the
+    // backing store tiles. This can be due to the main window using
+    // BlackBerry::Platform::Graphics::Window::GLES2Usage.
+    bool isOpenGLCompositing() const;
+
     bool isSuspended() const { return m_suspendBackingStoreUpdates; }
 
     // Suspends all screen updates so that 'blitContents' is disabled.
@@ -318,6 +323,10 @@ public:
     static void setCurrentBackingStoreOwner(WebPage* webPage) { BackingStorePrivate::s_currentBackingStoreOwner = webPage; }
     static WebPage* currentBackingStoreOwner() { return BackingStorePrivate::s_currentBackingStoreOwner; }
     bool isActive() const;
+
+    // Surface abstraction, maybe BlackBerry::Platform::Graphics::Buffer could be made public instead.
+    BlackBerry::Platform::IntSize surfaceSize() const;
+    BlackBerry::Platform::Graphics::Buffer* buffer() const;
 
     static WebPage* s_currentBackingStoreOwner;
 
