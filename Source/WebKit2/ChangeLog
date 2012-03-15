@@ -1,3 +1,16 @@
+2012-03-15  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION(r107168?): Assertion failures under pageContainsAnyHorizontalScrollbars causing multiple "crashes" on the Lion Intel Debug WebKit2 testers
+        https://bugs.webkit.org/show_bug.cgi?id=81162
+        <rdar://problem/11050423>
+
+        Reviewed by Beth Dakin and Jessie Berlin.
+
+        Downgrade the ASSERT to a simple if check since scrollableArea->isOnActivePage() can return false when layout happens during page transitions.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::pageContainsAnyHorizontalScrollbars):
+
 2012-03-15  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=81258

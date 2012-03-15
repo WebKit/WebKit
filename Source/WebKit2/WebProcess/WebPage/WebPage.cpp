@@ -3069,7 +3069,8 @@ static bool pageContainsAnyHorizontalScrollbars(Frame* mainFrame)
 
         for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
             ScrollableArea* scrollableArea = *it;
-            ASSERT(scrollableArea->isOnActivePage());
+            if (!scrollableArea->isOnActivePage())
+                continue;
 
             if (hasEnabledHorizontalScrollbar(scrollableArea))
                 return true;
