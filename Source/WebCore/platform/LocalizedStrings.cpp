@@ -599,7 +599,7 @@ String AXARIAContentGroupText(const String& ariaType)
     if (ariaType == "ARIALandmarkComplementary")
         return WEB_UI_STRING("complementary", "An ARIA accessibility group that acts as a region of complementary information.");
     if (ariaType == "ARIALandmarkContentInfo")
-        return WEB_UI_STRING("content", "An ARIA accessibility group that contains content.");
+        return WEB_UI_STRING("content information", "An ARIA accessibility group that contains content.");
     if (ariaType == "ARIALandmarkMain")
         return WEB_UI_STRING("main", "An ARIA accessibility group that is the main portion of the website.");
     if (ariaType == "ARIALandmarkNavigation")

@@ -41,9 +41,15 @@
                           "AXDocumentNote", "AXLandmarkNavigation", "AXDocumentRegion", "AXLandmarkSearch", "AXApplicationStatus", 
                           "AXUserInterfaceTooltip", "AXDocumentMath", "AXDefinition");
 
+          var roleDescriptions = new Array("application", "article", "banner", "complementary",
+                          "content information", "document", "log", "main", "marquee",
+                          "note", "navigation", "region", "search", "application status", 
+                          "tooltip", "math", "definition");
+
           for (var k = 0; k < subroles.length; k++) {
               shouldBe("obj.childAtIndex(k).role", "'AXRole: AXGroup'");
               shouldBe("obj.childAtIndex(k).subrole", '"AXSubrole: ' + subroles[k] + '"');
+              shouldBe("obj.childAtIndex(k).roleDescription", '"AXRoleDescription: ' + roleDescriptions[k] + '"');
           }
     }
 
