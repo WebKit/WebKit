@@ -1,3 +1,20 @@
+2012-03-15  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=81258
+
+        Add a preference for enabling the new multi-column layout code that will be based on regions.
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setRegionBasedColumnsEnabled:]):
+        (-[WebPreferences regionBasedColumnsEnabled]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2012-03-15  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11036900> and https://bugs.webkit.org/show_bug.cgi?id=81079

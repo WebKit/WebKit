@@ -1,3 +1,20 @@
+2012-03-15  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=81258
+
+        Add a preference for enabling the new multi-column layout code that will be based on regions.
+
+        Reviewed by Beth Dakin.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetRegionBasedColumnsEnabled):
+        (WKPreferencesGetRegionBasedColumnsEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2012-03-14  Anders Carlsson  <andersca@apple.com>
 
         Can't swipe to go back/forward when the current page is a PDF document

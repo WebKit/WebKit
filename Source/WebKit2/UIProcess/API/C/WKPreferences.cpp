@@ -418,6 +418,16 @@ bool WKPreferencesGetCSSRegionsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->cssRegionsEnabled();
 }
 
+void WKPreferencesSetRegionBasedColumnsEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setRegionBasedColumnsEnabled(flag);
+}
+
+bool WKPreferencesGetRegionBasedColumnsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->regionBasedColumnsEnabled();
+}
+
 void WKPreferencesSetNeedsSiteSpecificQuirks(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setNeedsSiteSpecificQuirks(flag);

@@ -390,6 +390,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitMediaPlaybackAllowsInlinePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebAudioEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitSuppressesIncrementalRenderingKey,
+        [NSNumber numberWithBool:NO],   WebKitRegionBasedColumnsEnabledKey,
         [NSNumber numberWithBool:YES],  WebKitBackspaceKeyNavigationEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitShouldDisplaySubtitlesPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldDisplayCaptionsPreferenceKey,
@@ -1662,6 +1663,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)notificationsEnabled
 {
     return [self _boolValueForKey:WebKitNotificationsEnabledKey];
+}
+
+- (void)setRegionBasedColumnsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitRegionBasedColumnsEnabledKey];
+}
+
+- (BOOL)regionBasedColumnsEnabled
+{
+    return [self _boolValueForKey:WebKitRegionBasedColumnsEnabledKey];
 }
 
 @end

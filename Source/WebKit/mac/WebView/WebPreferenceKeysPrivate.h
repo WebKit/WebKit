@@ -119,6 +119,7 @@
 #define WebKitShouldDisplayTextDescriptionsPreferenceKey @"WebKitShouldDisplayTextDescriptions"
 #define WebKitNotificationsEnabledKey @"WebKitNotificationsEnabled"
 #define WebKitSuppressesIncrementalRenderingKey @"WebKitSuppressesIncrementalRendering"
+#define WebKitRegionBasedColumnsEnabledKey @"WebKitRegionBasedColumnsEnabled"
 
 // These are private both because callers should be using the cover methods and because the
 // cover methods themselves are private.
