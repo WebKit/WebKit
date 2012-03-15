@@ -1,3 +1,14 @@
+2012-03-15  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Remove some features that we do not have anymore
+        https://bugs.webkit.org/show_bug.cgi?id=81274
+
+        Reviewed by Antonio Gomes.
+
+        Remove some features that we do not have anymore, code was removed some time ago.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-03-14  Matt Falkenhagen  <falken@chromium.org>
 
         Allow per-script font settings to be specified in layout tests
