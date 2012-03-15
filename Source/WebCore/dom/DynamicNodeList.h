@@ -88,7 +88,7 @@ protected:
 
 private:
     using DynamicNodeList::invalidateCache;
-    friend class NodeListsNodeData;
+    friend struct NodeListsNodeData;
 
     Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
     Node* itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
