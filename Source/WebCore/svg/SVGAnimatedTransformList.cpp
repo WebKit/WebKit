@@ -48,7 +48,7 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromStrin
     return animatedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromCopy(SVGGenericAnimatedType* animatedType)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromVariant(SVGGenericAnimatedType* animatedType)
 {
     ASSERT(animatedType);
     return SVGAnimatedType::createTransformList(new SVGTransformList(*reinterpret_cast<SVGTransformList*>(animatedType)));

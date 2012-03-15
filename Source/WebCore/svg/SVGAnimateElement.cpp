@@ -232,10 +232,10 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     m_animatedProperty = animatedPropertyForType(animator->type());
     if (m_animatedProperty) {
         if (!m_animatedType) {
-            m_animatedType = animator->constructFromCopy(m_animatedProperty->currentBaseValue(animator->type()));
+            m_animatedType = animator->constructFromVariant(m_animatedProperty->currentBaseValueVariant(animator->type()));
             animationStarted(m_animatedProperty, m_animatedType.get());
         } else
-            m_animatedType->setVariantValue(m_animatedProperty->currentBaseValue(m_animator->type()));
+            m_animatedType->setVariantValue(m_animatedProperty->currentBaseValueVariant(m_animator->type()));
         ASSERT(m_animatedPropertyType == animator->type());
         ASSERT(m_animatedPropertyType == m_animatedProperty->animatedPropertyType());
         return;

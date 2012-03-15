@@ -40,7 +40,7 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthListAnimator::constructFromString(c
     return animateType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthListAnimator::constructFromCopy(SVGGenericAnimatedType* animatedType)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthListAnimator::constructFromVariant(SVGGenericAnimatedType* animatedType)
 {
     ASSERT(animatedType);
     return SVGAnimatedType::createLengthList(new SVGLengthList(*reinterpret_cast<SVGLengthList*>(animatedType)));

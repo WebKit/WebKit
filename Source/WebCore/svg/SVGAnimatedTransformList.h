@@ -45,7 +45,7 @@ public:
     virtual ~SVGAnimatedTransformListAnimator() { }
 
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
-    virtual PassOwnPtr<SVGAnimatedType> constructFromCopy(SVGGenericAnimatedType*);
+    virtual PassOwnPtr<SVGAnimatedType> constructFromVariant(SVGGenericAnimatedType*);
 
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);

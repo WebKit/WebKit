@@ -75,7 +75,7 @@ public:
         return animVal()->values();
     }
 
-    virtual SVGGenericAnimatedType* currentBaseValue(AnimatedPropertyType expectedPropertyType) const
+    virtual SVGGenericAnimatedType* currentBaseValueVariant(AnimatedPropertyType expectedPropertyType) const
     {
         ASSERT_UNUSED(expectedPropertyType, animatedPropertyType() == expectedPropertyType);
         return reinterpret_cast<SVGGenericAnimatedType*>(&m_values);

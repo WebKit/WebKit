@@ -52,7 +52,7 @@ public:
     virtual void animationEnded() = 0;
     virtual void animationValueWillChange() = 0;
     virtual void animationValueDidChange() = 0;
-    virtual SVGGenericAnimatedType* currentBaseValue(AnimatedPropertyType) const = 0;
+    virtual SVGGenericAnimatedType* currentBaseValueVariant(AnimatedPropertyType) const = 0;
 
     // Caching facilities.
     typedef HashMap<SVGAnimatedPropertyDescription, RefPtr<SVGAnimatedProperty>, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits> Cache;

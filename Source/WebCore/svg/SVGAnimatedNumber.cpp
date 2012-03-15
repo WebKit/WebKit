@@ -43,7 +43,7 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromString(const
     return animtedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromCopy(SVGGenericAnimatedType* animatedType)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromVariant(SVGGenericAnimatedType* animatedType)
 {
     ASSERT(animatedType);
     return SVGAnimatedType::createNumber(new float(*reinterpret_cast<float*>(animatedType)));

@@ -47,7 +47,7 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthAnimator::constructFromString(const
     return SVGAnimatedType::createLength(new SVGLength(m_lengthMode, string));
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthAnimator::constructFromCopy(SVGGenericAnimatedType* animatedType)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthAnimator::constructFromVariant(SVGGenericAnimatedType* animatedType)
 {
     ASSERT(animatedType);
     return SVGAnimatedType::createLength(new SVGLength(*reinterpret_cast<SVGLength*>(animatedType)));
