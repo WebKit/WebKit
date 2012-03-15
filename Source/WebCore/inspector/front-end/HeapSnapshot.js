@@ -933,9 +933,11 @@ WebInspector.HeapSnapshot.prototype = {
         //  - "indexArray" is an array of indexes in the "backRefsArray"
         //    with the same positions as in the _nodeIndex.
         var indexArray = this[indexArrayName] = new Int32Array(this._nodeIndex.length);
-        var node = new WebInspector.HeapSnapshotNode(this, this.nodeIndexes[0]);
-        for (var i = 0; i < this.nodeCount; ++i) {
-            node.nodeIndex = this.nodeIndexes[i];
+        var nodeIndexes = this.nodeIndexes;
+        var nodeCount = this.nodeCount;
+        var node = new WebInspector.HeapSnapshotNode(this, nodeIndexes[0]);
+        for (var i = 0; i < nodeCount; ++i) {
+            node.nodeIndex = nodeIndexes[i];
             indexCallback(node, function (position) { ++indexArray[position]; });
         }
         var backRefsCount = 0;
@@ -950,9 +952,8 @@ WebInspector.HeapSnapshot.prototype = {
             indexArray[i] = backRefsPosition;
             backRefsPosition += backRefsCount;
         }
-        node = new WebInspector.HeapSnapshotNode(this, this.nodeIndexes[0]);
-        for (var i = 0; i < this.nodeCount; ++i) {
-            node.nodeIndex = this.nodeIndexes[i];
+        for (var i = 0; i < nodeCount; ++i) {
+            node.nodeIndex = nodeIndexes[i];
             dataCallback(node,
                          function (backRefIndex) { return backRefIndex + (--backRefsArray[backRefIndex]); },
                          function (backRefIndex, destIndex) { backRefsArray[backRefIndex] = destIndex; });
