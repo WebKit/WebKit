@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -40,7 +40,6 @@
 #include "EventNames.h"
 #include "NotificationCenter.h"
 #include "NotificationClient.h"
-#include "NotificationContents.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ThreadableLoader.h"
@@ -73,10 +72,11 @@ Notification::Notification(const KURL& url, ScriptExecutionContext* context, Exc
     m_notificationURL = url;
 }
 
-Notification::Notification(const NotificationContents& contents, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
+Notification::Notification(const String& title, const String& body, const String& iconURI, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
     : ActiveDOMObject(context, this)
     , m_isHTML(false)
-    , m_contents(contents)
+    , m_title(title)
+    , m_body(body)
     , m_state(Idle)
     , m_notificationCenter(provider)
 {
@@ -86,7 +86,8 @@ Notification::Notification(const NotificationContents& contents, ScriptExecution
         return;
     }
 
-    if (!contents.icon.isEmpty() && !contents.icon.isValid()) {
+    m_icon = iconURI.isEmpty() ? KURL() : scriptExecutionContext()->completeURL(iconURI);
+    if (!m_icon.isEmpty() && !m_icon.isValid()) {
         ec = SYNTAX_ERR;
         return;
     }
@@ -107,9 +108,9 @@ PassRefPtr<Notification> Notification::create(const KURL& url, ScriptExecutionCo
     return notification.release();
 }
 
-PassRefPtr<Notification> Notification::create(const NotificationContents& contents, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
+PassRefPtr<Notification> Notification::create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider) 
 { 
-    RefPtr<Notification> notification(adoptRef(new Notification(contents, context, ec, provider)));
+    RefPtr<Notification> notification(adoptRef(new Notification(title, body, iconURI, context, ec, provider)));
     notification->suspendIfNeeded();
     return notification.release();
 }

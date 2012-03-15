@@ -925,7 +925,6 @@
 		33503CC71017A1B1003B47E1 /* Notification.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33503CC61017A1B1003B47E1 /* Notification.cpp */; };
 		3390CA550FFC157B00921962 /* NotificationCenter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3390CA510FFC157B00921962 /* NotificationCenter.cpp */; };
 		3390CA560FFC157B00921962 /* NotificationCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3390CA520FFC157B00921962 /* NotificationCenter.h */; };
-		3390CA580FFC157B00921962 /* NotificationContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 3390CA540FFC157B00921962 /* NotificationContents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 339B5B62131DAA3200F48D02 /* CookiesStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33C0CCD4112C5E6200CE057D /* SecureTextInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33C0CCD2112C5E6200CE057D /* SecureTextInput.cpp */; };
 		33C0CCD5112C5E6200CE057D /* SecureTextInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 33C0CCD3112C5E6200CE057D /* SecureTextInput.h */; };
@@ -7788,7 +7787,6 @@
 		3390CA510FFC157B00921962 /* NotificationCenter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NotificationCenter.cpp; path = notifications/NotificationCenter.cpp; sourceTree = "<group>"; };
 		3390CA520FFC157B00921962 /* NotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationCenter.h; path = notifications/NotificationCenter.h; sourceTree = "<group>"; };
 		3390CA530FFC157B00921962 /* NotificationCenter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NotificationCenter.idl; path = notifications/NotificationCenter.idl; sourceTree = "<group>"; };
-		3390CA540FFC157B00921962 /* NotificationContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationContents.h; path = notifications/NotificationContents.h; sourceTree = "<group>"; };
 		339B5B62131DAA3200F48D02 /* CookiesStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookiesStrategy.h; sourceTree = "<group>"; };
 		33C0CCD2112C5E6200CE057D /* SecureTextInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecureTextInput.cpp; sourceTree = "<group>"; };
 		33C0CCD3112C5E6200CE057D /* SecureTextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecureTextInput.h; sourceTree = "<group>"; };
@@ -14400,7 +14398,6 @@
 				3390CA520FFC157B00921962 /* NotificationCenter.h */,
 				3390CA530FFC157B00921962 /* NotificationCenter.idl */,
 				33503C9910179A74003B47E1 /* NotificationClient.h */,
-				3390CA540FFC157B00921962 /* NotificationContents.h */,
 				3128CA67147331520074C72A /* NotificationController.cpp */,
 				3128CA6A147331630074C72A /* NotificationController.h */,
 			);
@@ -23581,7 +23578,6 @@
 				A8EA7EBE0A1945D000A8EF5F /* Notation.h in Headers */,
 				312C0C41146DC6CC0016C911 /* Notification.h in Headers */,
 				3390CA560FFC157B00921962 /* NotificationCenter.h in Headers */,
-				3390CA580FFC157B00921962 /* NotificationContents.h in Headers */,
 				3128CA6B147331630074C72A /* NotificationController.h in Headers */,
 				33503C9A10179A74003B47E1 /* NotificationClient.h in Headers */,
 				98EB1F951313FE0500D0E1EA /* NotImplemented.h in Headers */,

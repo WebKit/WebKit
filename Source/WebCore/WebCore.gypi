@@ -209,7 +209,6 @@
             'Modules/webdatabase/StorageTracker.h',
             'Modules/webdatabase/StorageTrackerClient.h',
             'notifications/NotificationClient.h',
-            'notifications/NotificationContents.h',
             'notifications/NotificationController.h',
             'page/Chrome.h',
             'page/ChromeClient.h',

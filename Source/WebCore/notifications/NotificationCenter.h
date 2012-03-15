@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,7 +34,6 @@
 
 #include "ExceptionCode.h"
 #include "Notification.h"
-#include "NotificationContents.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -71,8 +70,7 @@ public:
             ec = INVALID_STATE_ERR;
             return 0;
         }
-        NotificationContents contents(iconURI.isEmpty() ? KURL() : scriptExecutionContext()->completeURL(iconURI), title, body);
-        return Notification::create(contents, scriptExecutionContext(), ec, this);
+        return Notification::create(title, body, iconURI, scriptExecutionContext(), ec, this);
     }
 
     NotificationClient* client() const { return m_client; }

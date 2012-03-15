@@ -85,7 +85,7 @@ Notification* core(WebNotification *notification)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     ASSERT(core(self));
-    return core(self)->contents().title;
+    return core(self)->title();
 #else
     return nil;
 #endif
@@ -95,7 +95,7 @@ Notification* core(WebNotification *notification)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     ASSERT(core(self));
-    return core(self)->contents().body;
+    return core(self)->body();
 #else
     return nil;
 #endif

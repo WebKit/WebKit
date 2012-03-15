@@ -53617,10 +53617,6 @@
 				RelativePath="..\notifications\NotificationClient.h"
 				>
 			</File>
-			<File
-				RelativePath="..\notifications\NotificationContents.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="editing"

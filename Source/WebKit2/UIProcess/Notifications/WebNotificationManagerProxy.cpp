@@ -33,7 +33,6 @@
 #include "WebNotificationManagerMessages.h"
 #include "WebPageProxy.h"
 #include "WebSecurityOrigin.h"
-#include <WebCore/NotificationContents.h>
 
 using namespace WTF;
 using namespace WebCore;

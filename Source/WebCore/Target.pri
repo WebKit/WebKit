@@ -2076,7 +2076,6 @@ HEADERS += \
     notifications/Notification.h \
     notifications/NotificationCenter.h \
     notifications/NotificationClient.h \
-    notifications/NotificationContents.h \
     notifications/NotificationController.h \
     page/animation/AnimationBase.h \
     page/animation/AnimationController.h \

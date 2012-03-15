@@ -1,3 +1,21 @@
+2012-03-07  Jon Lee  <jonlee@apple.com>
+
+        Move NotificationContents into Notification
+        https://bugs.webkit.org/show_bug.cgi?id=80487
+        <rdar://problem/10965519>
+
+        Reviewed by Jian Li.
+
+        Refactor to use accessor methods on Notification.
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationWrapper::title):
+        (WebCore::NotificationWrapper::message):
+        (WebCore::NotificationPresenterClientQt::displayNotification):
+        (WebCore::NotificationPresenterClientQt::cancel):
+        (WebCore::NotificationPresenterClientQt::notificationClicked):
+        (WebCore::NotificationPresenterClientQt::dumpReplacedIdText):
+        (WebCore::NotificationPresenterClientQt::dumpShowText):
+
 2012-03-13  Jon Lee  <jonlee@apple.com>
 
         Separate NOTIFICATIONS and LEGACY_NOTIFICATIONS

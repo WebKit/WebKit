@@ -1,3 +1,15 @@
+2012-03-07  Jon Lee  <jonlee@apple.com>
+
+        Move NotificationContents into Notification
+        https://bugs.webkit.org/show_bug.cgi?id=80487
+        <rdar://problem/10965519>
+
+        Reviewed by Jian Li.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp: Remove extraneous include.
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show): Refactor to use accessor methods on Notification.
+
 2012-03-15  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction. WinCairo export definitions

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,7 +36,6 @@
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "KURL.h"
-#include "NotificationContents.h"
 #include "SharedBuffer.h"
 #include "TextDirection.h"
 #include "ThreadableLoaderClient.h"
@@ -62,7 +61,7 @@ class Notification : public RefCounted<Notification>, public ActiveDOMObject, pu
 public:
     Notification();
     static PassRefPtr<Notification> create(const KURL&, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter> provider);
-    static PassRefPtr<Notification> create(const NotificationContents&, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter> provider);
+    static PassRefPtr<Notification> create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter> provider);
     
     virtual ~Notification();
 
@@ -75,10 +74,9 @@ public:
     KURL url() const { return m_notificationURL; }
     void setURL(KURL url) { m_notificationURL = url; }
     
-    KURL iconURL() { return m_contents.icon; }
-    
-    const NotificationContents& contents() const { return m_contents; }
-    NotificationContents& contents() { return m_contents; }
+    KURL iconURL() const { return m_icon; }
+    String title() const { return m_title; }
+    String body() const { return m_body; }
 
     String dir() const { return m_direction; }
     void setDir(const String& dir) { m_direction = dir; }
@@ -127,7 +125,7 @@ public:
 
 private:
     Notification(const KURL&, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter>);
-    Notification(const NotificationContents&, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter>);
+    Notification(const String& title, const String& body, const String& iconURI, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter>);
 
     // EventTarget interface
     virtual void refEventTarget() { ref(); }
@@ -139,8 +137,13 @@ private:
     void finishLoading();
 
     bool m_isHTML;
+
+    // Text notifications.
+    KURL m_icon;
+    String m_title;
+    String m_body;
+    // FIXME: Deprecate HTML Notifications.
     KURL m_notificationURL;
-    NotificationContents m_contents;
 
     String m_direction;
     String m_replaceId;

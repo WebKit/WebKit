@@ -88,13 +88,13 @@ WebURL WebNotification::iconURL() const
 WebString WebNotification::title() const
 {
     ASSERT(!isHTML());
-    return m_private->contents().title;
+    return m_private->title();
 }
 
 WebString WebNotification::body() const
 {
     ASSERT(!isHTML());
-    return m_private->contents().body;
+    return m_private->body();
 }
 
 WebTextDirection WebNotification::direction() const
