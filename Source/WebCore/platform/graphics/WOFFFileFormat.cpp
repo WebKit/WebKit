@@ -84,13 +84,13 @@ static bool readUInt16(SharedBuffer* buffer, size_t& offset, uint16_t& value)
 static bool writeUInt32(Vector<char>& vector, uint32_t value)
 {
     uint32_t bigEndianValue = htonl(value);
-    return vector.tryAppend(reinterpret_cast<char*>(&bigEndianValue), sizeof(bigEndianValue));
+    return vector.tryAppend(reinterpret_cast_ptr<char*>(&bigEndianValue), sizeof(bigEndianValue));
 }
 
 static bool writeUInt16(Vector<char>& vector, uint16_t value)
 {
     uint16_t bigEndianValue = htons(value);
-    return vector.tryAppend(reinterpret_cast<char*>(&bigEndianValue), sizeof(bigEndianValue));
+    return vector.tryAppend(reinterpret_cast_ptr<char*>(&bigEndianValue), sizeof(bigEndianValue));
 }
 
 static const uint32_t woffSignature = 0x774f4646; /* 'wOFF' */
@@ -210,7 +210,7 @@ bool convertWOFFToSfnt(SharedBuffer* woff, Vector<char>& sfnt)
             return false;
 
         // Write an sfnt table directory entry.
-        uint32_t* sfntTableDirectoryPtr = reinterpret_cast<uint32_t*>(sfnt.data() + sfntTableDirectoryCursor);
+        uint32_t* sfntTableDirectoryPtr = reinterpret_cast_ptr<uint32_t*>(sfnt.data() + sfntTableDirectoryCursor);
         *sfntTableDirectoryPtr++ = htonl(tableTag);
         *sfntTableDirectoryPtr++ = htonl(tableOrigChecksum);
         *sfntTableDirectoryPtr++ = htonl(sfnt.size());
