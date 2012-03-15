@@ -1,3 +1,23 @@
+2012-03-14  Anders Carlsson  <andersca@apple.com>
+
+        java/java-and-plugins.html test failing
+        https://bugs.webkit.org/show_bug.cgi?id=81188
+        <rdar://problem/11048657>
+
+        Reviewed by Sam Weinig.
+
+        When we're marshaling JSObjects that wrap plug-in objects, make sure to check that the
+        current plug-in instance is the same as the plug-in instance the object came from and don't
+        pass the unwrapped object ID if that is the case.
+        
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::getObjectID):
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray):
+        (WebKit::NetscapePluginInstanceProxy::marshalValues):
+        * Plugins/Hosted/ProxyInstance.h:
+        (ProxyInstance):
+        (WebKit::ProxyInstance::instanceProxy):
+
 2012-03-14  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(r110383): ASSERTION failures in JSCell::finishCreation causing multiple tests to "crash" on the Lion Intel Debug Bots

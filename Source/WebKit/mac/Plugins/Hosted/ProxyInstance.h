@@ -52,6 +52,9 @@ public:
     JSC::JSValue fieldValue(JSC::ExecState*, const JSC::Bindings::Field*) const;
     void setFieldValue(JSC::ExecState*, const JSC::Bindings::Field*, JSC::JSValue) const;
     
+
+    NetscapePluginInstanceProxy* instanceProxy() { return m_instanceProxy; }
+
     void invalidate();
     
     uint32_t objectID() const { return m_objectID; }

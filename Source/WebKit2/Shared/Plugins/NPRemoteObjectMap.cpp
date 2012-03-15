@@ -88,6 +88,18 @@ void NPRemoteObjectMap::unregisterNPObject(uint64_t npObjectID)
     m_registeredNPObjects.remove(npObjectID);
 }
 
+static uint64_t remoteNPObjectID(Plugin* plugin, NPObject* npObject)
+{
+    if (!NPObjectProxy::isNPObjectProxy(npObject))
+        return 0;
+
+    NPObjectProxy* npObjectProxy = NPObjectProxy::toNPObjectProxy(npObject);
+    if (npObjectProxy->plugin() != plugin)
+        return 0;
+
+    return npObjectProxy->npObjectID();
+}
+
 NPVariantData NPRemoteObjectMap::npVariantToNPVariantData(const NPVariant& variant, Plugin* plugin)
 {
     switch (variant.type) {
@@ -111,14 +123,11 @@ NPVariantData NPRemoteObjectMap::npVariantToNPVariantData(const NPVariant& varia
 
     case NPVariantType_Object: {
         NPObject* npObject = variant.value.objectValue;
-        if (NPObjectProxy::isNPObjectProxy(npObject)) {
-            NPObjectProxy* npObjectProxy = NPObjectProxy::toNPObjectProxy(npObject);
 
-            uint64_t npObjectID = npObjectProxy->npObjectID();
-
+        if (uint64_t npObjectID = remoteNPObjectID(plugin, npObject)) {
             // FIXME: Under some circumstances, this might leak the NPObjectProxy object. 
             // Figure out how to avoid that.
-            retainNPObject(npObjectProxy);
+            retainNPObject(npObject);
             return NPVariantData::makeRemoteNPObjectID(npObjectID);
         }
 

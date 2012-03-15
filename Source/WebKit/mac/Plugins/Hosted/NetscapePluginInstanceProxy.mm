@@ -1252,6 +1252,23 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
     return true;
 }
 
+static bool getObjectID(NetscapePluginInstanceProxy* pluginInstanceProxy, JSObject* object, uint64_t& objectID)
+{
+    if (object->classInfo() != &ProxyRuntimeObject::s_info)
+        return false;
+
+    ProxyRuntimeObject* runtimeObject = static_cast<ProxyRuntimeObject*>(object);
+    ProxyInstance* instance = runtimeObject->getInternalProxyInstance();
+    if (!instance)
+        return false;
+
+    if (instance->instanceProxy() != pluginInstanceProxy)
+        return false;
+
+    objectID = instance->objectID();
+    return true;
+}
+    
 void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecState* exec, JSValue value)
 {
     JSLock lock(SilenceAssertionsOnly);
@@ -1269,12 +1286,10 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
         [array addObject:[NSNumber numberWithInt:NullValueType]];
     else if (value.isObject()) {
         JSObject* object = asObject(value);
-        if (object->classInfo() == &ProxyRuntimeObject::s_info) {
-            ProxyRuntimeObject* runtimeObject = static_cast<ProxyRuntimeObject*>(object);
-            if (ProxyInstance* instance = runtimeObject->getInternalProxyInstance()) {
-                [array addObject:[NSNumber numberWithInt:NPObjectValueType]];
-                [array addObject:[NSNumber numberWithInt:instance->objectID()]];
-            }
+        uint64_t objectID;
+        if (getObjectID(this, object, objectID)) {
+            [array addObject:[NSNumber numberWithInt:NPObjectValueType]];
+            [array addObject:[NSNumber numberWithInt:objectID]];
         } else {
             [array addObject:[NSNumber numberWithInt:JSObjectValueType]];
             [array addObject:[NSNumber numberWithInt:m_localObjects.idForObject(exec->globalData(), object)]];
