@@ -36,6 +36,7 @@
 #import "WebPreferences.h"
 #import <PDFKit/PDFKit.h>
 #import <WebCore/LocalizedStrings.h>
+#import <objc/runtime.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
@@ -114,6 +115,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 - (PDFView *)pdfView;
 - (void)setDocument:(PDFDocument *)pdfDocument;
 
+- (BOOL)forwardScrollWheelEvent:(NSEvent *)wheelEvent;
 - (void)_applyPDFPreferences;
 - (PDFSelection *)_nextMatchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag fromSelection:(PDFSelection *)initialSelection startInSelection:(BOOL)startInSelection;
 @end
@@ -383,6 +385,11 @@ static void insertOpenWithDefaultPDFMenuItem(NSMenu *menu, NSUInteger index)
     _pdfViewController->print();
 }
 
+- (BOOL)forwardScrollWheelEvent:(NSEvent *)wheelEvent
+{
+    return _pdfViewController->forwardScrollWheelEvent(wheelEvent);
+}
+
 @end
 
 namespace WebKit {
@@ -486,6 +493,51 @@ Class PDFViewController::pdfPreviewViewClass()
     
     return pdfPreviewViewClass;
 }
+
+bool PDFViewController::forwardScrollWheelEvent(NSEvent *wheelEvent)
+{
+    CGFloat deltaX = [wheelEvent deltaX];
+    if ((deltaX > 0 && !page()->canGoBack()) || (deltaX < 0 && !page()->canGoForward()))
+        return false;
+
+    [m_wkView scrollWheel:wheelEvent];
+    return true;
+}
+
+static IMP oldPDFViewScrollView_scrollWheel;
+
+static WKPDFView *findEnclosingWKPDFView(NSView *view)
+{
+    for (NSView *superview = [view superview]; superview; superview = [superview superview]) {
+        if ([superview isKindOfClass:[WKPDFView class]])
+            return static_cast<WKPDFView *>(superview);
+    }
+
+    return nil;
+}
+
+static void PDFViewScrollView_scrollWheel(NSScrollView* self, SEL _cmd, NSEvent *wheelEvent)
+{
+    CGFloat deltaX = [wheelEvent deltaX];
+    CGFloat deltaY = [wheelEvent deltaY];
+
+    NSSize contentsSize = [[self documentView] bounds].size;
+    NSRect visibleRect = [self documentVisibleRect];
+
+    // We only want to forward the wheel events if the horizontal delta is non-zero,
+    // and only if we're pinned to either the left or right side.
+    // We also never want to forward momentum scroll events.
+    if ([wheelEvent momentumPhase] == NSEventPhaseNone && deltaX && fabsf(deltaY) < fabsf(deltaX)
+        && ((deltaX > 0 && visibleRect.origin.x <= 0) || (deltaX < 0 && contentsSize.width <= NSMaxX(visibleRect)))) {
+    
+        if (WKPDFView *pdfView = findEnclosingWKPDFView(self)) {
+            if ([pdfView forwardScrollWheelEvent:wheelEvent])
+                return;
+        }
+    }
+
+    oldPDFViewScrollView_scrollWheel(self, _cmd, wheelEvent);
+}
     
 NSBundle* PDFViewController::pdfKitBundle()
 {
@@ -502,6 +554,12 @@ NSBundle* PDFViewController::pdfKitBundle()
     pdfKitBundle = [NSBundle bundleWithPath:pdfKitPath];
     if (![pdfKitBundle load])
         LOG_ERROR("Couldn't load PDFKit.framework");
+
+    if (Class pdfViewScrollViewClass = [pdfKitBundle classNamed:@"PDFViewScrollView"]) {
+        if (Method scrollWheel = class_getInstanceMethod(pdfViewScrollViewClass, @selector(scrollWheel:)))
+            oldPDFViewScrollView_scrollWheel = method_setImplementation(scrollWheel, reinterpret_cast<IMP>(PDFViewScrollView_scrollWheel));
+    }
+
     return pdfKitBundle;
 }
 

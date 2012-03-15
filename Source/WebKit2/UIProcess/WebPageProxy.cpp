@@ -1826,6 +1826,13 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
 
     if (frame->isMainFrame()) {
         m_mainFrameHasCustomRepresentation = frameHasCustomRepresentation;
+
+        if (m_mainFrameHasCustomRepresentation) {
+            // Always assume that the main frame is pinned here, since the custom representation view will handle
+            // any wheel events and dispatch them to the WKView when necessary.
+            m_mainFrameIsPinnedToLeftSide = true;
+            m_mainFrameIsPinnedToRightSide = true;
+        }
         m_pageClient->didCommitLoadForMainFrame(frameHasCustomRepresentation);
     }
 

@@ -62,6 +62,8 @@ public:
 
     static Class pdfPreviewViewClass();
 
+    bool forwardScrollWheelEvent(NSEvent *);
+
     NSPrintOperation *makePrintOperation(NSPrintInfo *);
     void openPDFInFinder();
     void savePDFToDownloadsFolder();
