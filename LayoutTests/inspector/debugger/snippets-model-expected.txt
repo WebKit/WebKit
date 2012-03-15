@@ -1,5 +1,7 @@
-Tests how snippets model stores, saves and loads snippets
+Tests snippets model.
 
+
+Running: testCreateRenameEditDelete
 Dumping saved snippets:
 Dumping model snippets:
 Snippet created.
@@ -32,4 +34,9 @@ Dumping model snippets:
 Another snippet deleted.
 Dumping saved snippets:
 Dumping model snippets:
+
+Running: testEvaluate
+Last evaluation source url for snippet: snippets://1_1
+Last evaluation source url for snippet: snippets://2_2
+Last evaluation source url for snippet: snippets://1_3
 

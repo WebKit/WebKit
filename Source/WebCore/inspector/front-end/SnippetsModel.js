@@ -32,41 +32,35 @@
  */
 WebInspector.SnippetsModel = function()
 {
-    /** @type {Array.<WebInspector.Snippet>} */ this._snippets;
+    this._snippets = {};
 
     this._lastSnippetIdentifierSetting = WebInspector.settings.createSetting("lastSnippetIdentifier", 0);
     this._snippetsSetting = WebInspector.settings.createSetting("snippets", []);
+    this._lastSnippetEvaluationIndexSetting = WebInspector.settings.createSetting("lastSnippetEvaluationIndex", 0);
 
     this._loadSettings();
 }
 
+WebInspector.SnippetsModel.snippetsSourceURLPrefix = "snippets://";
+
 WebInspector.SnippetsModel.EventTypes = {
     SnippetAdded: "SnippetAdded",
+    SnippetWillBeEvaluated: "SnippetWillBeEvaluated",
     SnippetRenamed: "SnippetRenamed",
     SnippetRemoved: "SnippetRemoved",
 }
 
 WebInspector.SnippetsModel.prototype = {
-    /**
-     * @return {Array.<WebInspector.Snippet>}
-     */
-    get snippets()
-    {
-        return this._snippets.slice();
-    },
-
     _saveSettings: function()
     {
         var savedSnippets = [];
-        for (var i = 0; i < this._snippets.length; ++i)
-            savedSnippets.push(this._snippets[i].serializeToObject());
-
+        for (var id in this._snippets)
+            savedSnippets.push(this._snippets[id].serializeToObject());
         this._snippetsSetting.set(savedSnippets);
     },
 
     _loadSettings: function()
     {
-        this._snippets = [];
         var savedSnippets = this._snippetsSetting.get();
         for (var i = 0; i < savedSnippets.length; ++i)
             this._snippetAdded(WebInspector.Snippet.fromObject(savedSnippets[i]));
@@ -77,14 +71,9 @@ WebInspector.SnippetsModel.prototype = {
      */
     deleteSnippet: function(snippet)
     {
-        for (var i = 0; i < this._snippets.length; ++i) {
-            if (snippet.id === this._snippets[i].id) {
-                this._snippets.splice(i, 1);
-                this._saveSettings();
-                this.dispatchEventToListeners(WebInspector.SnippetsModel.EventTypes.SnippetRemoved, snippet);
-                break;
-            }
-        }
+        delete this._snippets[snippet.id];
+        this._saveSettings();
+        this.dispatchEventToListeners(WebInspector.SnippetsModel.EventTypes.SnippetRemoved, snippet);
     },
 
     /**
@@ -92,8 +81,9 @@ WebInspector.SnippetsModel.prototype = {
      */
     createSnippet: function()
     {
-        var snippetId = this._lastSnippetIdentifierSetting.get() + 1;
-        this._lastSnippetIdentifierSetting.set(snippetId);
+        var nextId = this._lastSnippetIdentifierSetting.get() + 1;
+        var snippetId = String(nextId);
+        this._lastSnippetIdentifierSetting.set(nextId);
         var snippet = new WebInspector.Snippet(this, snippetId);
         this._snippetAdded(snippet);
         this._saveSettings();
@@ -106,12 +96,12 @@ WebInspector.SnippetsModel.prototype = {
      */
     _snippetAdded: function(snippet)
     {
-        this._snippets.push(snippet);
+        this._snippets[snippet.id] = snippet;
         this.dispatchEventToListeners(WebInspector.SnippetsModel.EventTypes.SnippetAdded, snippet);
     },
 
     /**
-     * @param {number} snippetId
+     * @param {string} snippetId
      */
     _snippetContentUpdated: function(snippetId)
     {
@@ -128,12 +118,30 @@ WebInspector.SnippetsModel.prototype = {
     },
 
     /**
-     * @param {number} snippetId
-     * @return {WebInspector.Snippet|undefined}
+     * @param {WebInspector.Snippet} snippet
      */
-    snippetForId: function(snippetId)
+    _evaluateSnippet: function(snippet)
     {
-        return this._snippets[snippetId];
+        this.dispatchEventToListeners(WebInspector.SnippetsModel.EventTypes.SnippetWillBeEvaluated, snippet);
+        var evaluationIndex = this._lastSnippetEvaluationIndexSetting.get() + 1;
+        this._lastSnippetEvaluationIndexSetting.set(evaluationIndex);
+
+        var sourceURL = this._sourceURLForSnippet(snippet, evaluationIndex);
+        snippet._lastEvaluationSourceURL = sourceURL;
+        var expression = "\n//@ sourceURL=" + sourceURL + "\n" + snippet.content;
+        // FIXME: evaluate snippet here.
+    },
+
+    /**
+     * @param {WebInspector.Snippet} snippet
+     * @param {string} evaluationIndex
+     * @return {string}
+     */
+    _sourceURLForSnippet: function(snippet, evaluationIndex)
+    {
+        var snippetsPrefix = WebInspector.SnippetsModel.snippetsSourceURLPrefix;
+        var evaluationSuffix = evaluationIndex ? "_" + evaluationIndex : "";
+        return snippetsPrefix + snippet.id + evaluationSuffix;
     },
 
     /**
@@ -142,8 +150,12 @@ WebInspector.SnippetsModel.prototype = {
      */
     snippetIdForSourceURL: function(sourceURL)
     {
-        // FIXME: to be implemented.
-        return null;
+        var snippetsPrefix = WebInspector.SnippetsModel.snippetsSourceURLPrefix;
+        if (sourceURL.indexOf(snippetsPrefix) !== 0)
+            return null;
+        var splittedURL = sourceURL.substring(snippetsPrefix.length).split("_");
+        var snippetId = splittedURL[0];
+        return snippetId;
     },
 
     /**
@@ -152,8 +164,13 @@ WebInspector.SnippetsModel.prototype = {
      */
     snippetForSourceURL: function(sourceURL)
     {
-        // FIXME: to be implemented.
-        return null;
+        var snippetId = this.snippetIdForSourceURL(sourceURL);
+        if (!snippetId)
+            return null;
+        var snippet = this._snippets[snippetId];
+        if (!snippet || snippet._lastEvaluationSourceURL !== sourceURL)
+            return null;
+        return snippet;
     }
 }
 
@@ -163,7 +180,7 @@ WebInspector.SnippetsModel.prototype.__proto__ = WebInspector.Object.prototype;
  * @constructor
  * @extends {WebInspector.Object}
  * @param {WebInspector.SnippetsModel} model
- * @param {number} id
+ * @param {string} id
  * @param {string=} name
  * @param {string=} content
  */
@@ -229,6 +246,11 @@ WebInspector.Snippet.prototype = {
         this._model._snippetContentUpdated(this._id);
     },
 
+    evaluate: function()
+    {
+        this._model._evaluateSnippet(this);
+    },
+
     /**
      * @return {Object}
      */
@@ -253,10 +275,10 @@ WebInspector.SnippetsScriptMapping = function()
     this._snippetForScriptId = {};
     this._uiSourceCodeForScriptId = {};
     this._scriptForUISourceCode = new Map();
-    this._snippetForUISourceCode = new Map();
     this._uiSourceCodeForSnippet = new Map();
     
     WebInspector.snippetsModel.addEventListener(WebInspector.SnippetsModel.EventTypes.SnippetAdded, this._snippetAdded.bind(this));
+    WebInspector.snippetsModel.addEventListener(WebInspector.SnippetsModel.EventTypes.SnippetWillBeEvaluated, this._snippetWillBeEvaluated.bind(this));
     WebInspector.snippetsModel.addEventListener(WebInspector.SnippetsModel.EventTypes.SnippetRemoved, this._snippetRemoved.bind(this));
 }
 
@@ -290,8 +312,7 @@ WebInspector.SnippetsScriptMapping.prototype = {
         if (!script)
             return null;
 
-        var snippet = this._snippetForUISourceCode.get(uiSourceCode);
-        if (snippet) {
+        if (uiSourceCode.isSnippet) {
             var rawLineNumber = lineNumber + WebInspector.Snippet.evaluatedSnippetExtraLinesCount;
             return WebInspector.debuggerModel.createRawLocation(script, rawLineNumber, columnNumber);
         }
@@ -319,7 +340,7 @@ WebInspector.SnippetsScriptMapping.prototype = {
         var result = [];
         for (var scriptId in this._uiSourceCodeForScriptId) {
             var uiSourceCode = this._uiSourceCodeForScriptId[scriptId];
-            if (this._snippetForUISourceCode.get(uiSourceCode))
+            if (uiSourceCode.isSnippet)
                 continue;
             result.push(uiSourceCode);
         }
@@ -336,8 +357,9 @@ WebInspector.SnippetsScriptMapping.prototype = {
             this._createUISourceCodeForScript(script);
             return;
         }
-        this._releaseSnippetScript(snippet);        
         var uiSourceCode = this._uiSourceCodeForSnippet.get(snippet);
+        console.assert(!this._scriptForUISourceCode.get(uiSourceCode));
+
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
         this._snippetForScriptId[script.scriptId] = snippet;
         this._scriptForUISourceCode.put(uiSourceCode, script);
@@ -357,9 +379,18 @@ WebInspector.SnippetsScriptMapping.prototype = {
         uiSourceCode.isSnippet = true;
         uiSourceCode.isEditable = true;
         this._uiSourceCodeForSnippet.put(snippet, uiSourceCode);
-        this._snippetForUISourceCode.put(uiSourceCode, snippet);
+        uiSourceCode.snippet = snippet;
         var data = { removedItems: [], addedItems: [uiSourceCode], scriptIds: [] };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _snippetWillBeEvaluated: function(event)
+    {
+        var snippet = /** @type {WebInspector.Snippet} */ event.data;
+        this._releaseSnippetScript(snippet);
     },
 
     /**
@@ -401,7 +432,6 @@ WebInspector.SnippetsScriptMapping.prototype = {
         var uiSourceCode = this._uiSourceCodeForSnippet.get(snippet);
         this._releaseSnippetScript(snippet);
         this._uiSourceCodeForSnippet.remove(snippet);
-        this._snippetForUISourceCode.remove(uiSourceCode);
         var data = { removedItems: [uiSourceCode], addedItems: [], scriptIds: [] };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
     },
