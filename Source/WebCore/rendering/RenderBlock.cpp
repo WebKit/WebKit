@@ -5993,120 +5993,67 @@ static inline RenderObject* findFirstLetterBlock(RenderBlock* start)
     return 0;
 }
 
-void RenderBlock::updateFirstLetter()
+void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderObject* currentChild)
 {
-    if (!document()->usesFirstLetterRules())
-        return;
-    // Don't recur
-    if (style()->styleType() == FIRST_LETTER)
-        return;
-
-    // FIXME: We need to destroy the first-letter object if it is no longer the first child.  Need to find
-    // an efficient way to check for that situation though before implementing anything.
-    RenderObject* firstLetterBlock = findFirstLetterBlock(this);
-    if (!firstLetterBlock)
-        return;
-
-    // Drill into inlines looking for our first text child.
-    RenderObject* currChild = firstLetterBlock->firstChild();
-    while (currChild) {
-        if (currChild->isText())
-            break;
-        if (currChild->isListMarker())
-            currChild = currChild->nextSibling();
-        else if (currChild->isFloatingOrPositioned()) {
-            if (currChild->style()->styleType() == FIRST_LETTER) {
-                currChild = currChild->firstChild();
-                break;
-            }
-            currChild = currChild->nextSibling();
-        } else if (currChild->isReplaced() || currChild->isRenderButton() || currChild->isMenuList())
-            break;
-        else if (currChild->style()->hasPseudoStyle(FIRST_LETTER) && canHaveGeneratedChildren(currChild))  {
-            // We found a lower-level node with first-letter, which supersedes the higher-level style
-            firstLetterBlock = currChild;
-            currChild = currChild->firstChild();
-        }
-        else
-            currChild = currChild->firstChild();
-    }
-
-    if (!currChild)
-        return;
-
-    // If the child already has style, then it has already been created, so we just want
-    // to update it.
-    if (currChild->parent()->style()->styleType() == FIRST_LETTER) {
-        RenderObject* firstLetter = currChild->parent();
-        RenderObject* firstLetterContainer = firstLetter->parent();
-        RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
-        ASSERT(firstLetter->isFloating() || firstLetter->isInline());
-
-        if (Node::diff(firstLetter->style(), pseudoStyle) == Node::Detach) {
-            // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
-            RenderObject* newFirstLetter;
-            if (pseudoStyle->display() == INLINE)
-                newFirstLetter = new (renderArena()) RenderInline(document());
-            else
-                newFirstLetter = new (renderArena()) RenderBlock(document());
-            newFirstLetter->setStyle(pseudoStyle);
-
-            // Move the first letter into the new renderer.
-            LayoutStateDisabler layoutStateDisabler(view());
-            while (RenderObject* child = firstLetter->firstChild()) {
-                if (child->isText())
-                    toRenderText(child)->removeAndDestroyTextBoxes();
-                firstLetter->removeChild(child);
-                newFirstLetter->addChild(child, 0);
-            }
-
-            RenderTextFragment* remainingText = 0;
-            RenderObject* nextSibling = firstLetter->nextSibling();
-            RenderObject* remainingTextObject = toRenderBoxModelObject(firstLetter)->firstLetterRemainingText();
-            if (remainingTextObject && remainingTextObject->isText() && toRenderText(remainingTextObject)->isTextFragment())
-                remainingText = toRenderTextFragment(remainingTextObject);
-            if (remainingText) {
-                ASSERT(remainingText->isAnonymous() || remainingText->node()->renderer() == remainingText);
-                // Replace the old renderer with the new one.
-                remainingText->setFirstLetter(newFirstLetter);
-                toRenderBoxModelObject(newFirstLetter)->setFirstLetterRemainingText(remainingText);
-            }
-            firstLetter->destroy();
-            firstLetter = newFirstLetter;
-            firstLetterContainer->addChild(firstLetter, nextSibling);
-        } else
-            firstLetter->setStyle(pseudoStyle);
-
-        for (RenderObject* genChild = firstLetter->firstChild(); genChild; genChild = genChild->nextSibling()) {
-            if (genChild->isText()) 
-                genChild->setStyle(pseudoStyle);
-        }
-
-        return;
-    }
-
-    if (!currChild->isText() || currChild->isBR())
-        return;
-
-    // If the child does not already have style, we create it here.
-    RenderObject* firstLetterContainer = currChild->parent();
-
-    // Our layout state is not valid for the repaints we are going to trigger by
-    // adding and removing children of firstLetterContainer.
-    LayoutStateDisabler layoutStateDisabler(view());
-
-    RenderText* textObj = toRenderText(currChild);
-
-    // Create our pseudo style now that we have our firstLetterContainer determined.
+    RenderObject* firstLetter = currentChild->parent();
+    RenderObject* firstLetterContainer = firstLetter->parent();
     RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
+    ASSERT(firstLetter->isFloating() || firstLetter->isInline());
 
+    if (Node::diff(firstLetter->style(), pseudoStyle) == Node::Detach) {
+        // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
+        RenderObject* newFirstLetter;
+        if (pseudoStyle->display() == INLINE)
+            newFirstLetter = new (renderArena()) RenderInline(document());
+        else
+            newFirstLetter = new (renderArena()) RenderBlock(document());
+        newFirstLetter->setStyle(pseudoStyle);
+
+        // Move the first letter into the new renderer.
+        LayoutStateDisabler layoutStateDisabler(view());
+        while (RenderObject* child = firstLetter->firstChild()) {
+            if (child->isText())
+                toRenderText(child)->removeAndDestroyTextBoxes();
+            firstLetter->removeChild(child);
+            newFirstLetter->addChild(child, 0);
+        }
+
+        RenderTextFragment* remainingText = 0;
+        RenderObject* nextSibling = firstLetter->nextSibling();
+        RenderObject* remainingTextObject = toRenderBoxModelObject(firstLetter)->firstLetterRemainingText();
+        if (remainingTextObject && remainingTextObject->isText() && toRenderText(remainingTextObject)->isTextFragment())
+            remainingText = toRenderTextFragment(remainingTextObject);
+        if (remainingText) {
+            ASSERT(remainingText->isAnonymous() || remainingText->node()->renderer() == remainingText);
+            // Replace the old renderer with the new one.
+            remainingText->setFirstLetter(newFirstLetter);
+            toRenderBoxModelObject(newFirstLetter)->setFirstLetterRemainingText(remainingText);
+        }
+        firstLetter->destroy();
+        firstLetter = newFirstLetter;
+        firstLetterContainer->addChild(firstLetter, nextSibling);
+    } else
+        firstLetter->setStyle(pseudoStyle);
+
+    for (RenderObject* genChild = firstLetter->firstChild(); genChild; genChild = genChild->nextSibling()) {
+        if (genChild->isText())
+            genChild->setStyle(pseudoStyle);
+    }
+}
+
+void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, RenderObject* currentChild)
+{
+    RenderObject* firstLetterContainer = currentChild->parent();
+    RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     RenderObject* firstLetter = 0;
     if (pseudoStyle->display() == INLINE)
         firstLetter = new (renderArena()) RenderInline(document());
     else
         firstLetter = new (renderArena()) RenderBlock(document());
     firstLetter->setStyle(pseudoStyle);
-    firstLetterContainer->addChild(firstLetter, currChild);
+    firstLetterContainer->addChild(firstLetter, currentChild);
+
+    RenderText* textObj = toRenderText(currentChild);
 
     // The original string is going to be either a generated content string or a DOM node's
     // string.  We want the original string before it got transformed in case first-letter has
@@ -6157,6 +6104,63 @@ void RenderBlock::updateFirstLetter()
 
         textObj->destroy();
     }
+}
+
+void RenderBlock::updateFirstLetter()
+{
+    if (!document()->usesFirstLetterRules())
+        return;
+    // Don't recur
+    if (style()->styleType() == FIRST_LETTER)
+        return;
+
+    // FIXME: We need to destroy the first-letter object if it is no longer the first child. Need to find
+    // an efficient way to check for that situation though before implementing anything.
+    RenderObject* firstLetterBlock = findFirstLetterBlock(this);
+    if (!firstLetterBlock)
+        return;
+
+    // Drill into inlines looking for our first text child.
+    RenderObject* currChild = firstLetterBlock->firstChild();
+    while (currChild) {
+        if (currChild->isText())
+            break;
+        if (currChild->isListMarker())
+            currChild = currChild->nextSibling();
+        else if (currChild->isFloatingOrPositioned()) {
+            if (currChild->style()->styleType() == FIRST_LETTER) {
+                currChild = currChild->firstChild();
+                break;
+            }
+            currChild = currChild->nextSibling();
+        } else if (currChild->isReplaced() || currChild->isRenderButton() || currChild->isMenuList())
+            break;
+        else if (currChild->style()->hasPseudoStyle(FIRST_LETTER) && canHaveGeneratedChildren(currChild))  {
+            // We found a lower-level node with first-letter, which supersedes the higher-level style
+            firstLetterBlock = currChild;
+            currChild = currChild->firstChild();
+        } else
+            currChild = currChild->firstChild();
+    }
+
+    if (!currChild)
+        return;
+
+    // If the child already has style, then it has already been created, so we just want
+    // to update it.
+    if (currChild->parent()->style()->styleType() == FIRST_LETTER) {
+        updateFirstLetterStyle(firstLetterBlock, currChild);
+        return;
+    }
+
+    if (!currChild->isText() || currChild->isBR())
+        return;
+
+    // Our layout state is not valid for the repaints we are going to trigger by
+    // adding and removing children of firstLetterContainer.
+    LayoutStateDisabler layoutStateDisabler(view());
+
+    createFirstLetterRenderer(firstLetterBlock, currChild);
 }
 
 // Helper methods for obtaining the last line, computing line counts and heights for line counts
