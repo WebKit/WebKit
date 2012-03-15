@@ -947,6 +947,10 @@ BUGWK77903 MAC : svg/repaint/inner-svg-change-viewBox-contract.svg = IMAGE IMAGE
 // New test, needs a rebaseline
 BUGWK78631 : svg/dom/SVGLocatable-getCTM-svg-root.html = IMAGE
 
+// Still failing on LinuxC. Possibly an out-of-date baseline that was not noticed
+// because the test was expected to fail already.
+BUGWK81253 LINUX : svg/text/text-tselect-02-f.svg = IMAGE
+
 // We show reduced version of the entire SVN image rather than an image
 // BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
 
