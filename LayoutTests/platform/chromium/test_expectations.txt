@@ -947,8 +947,6 @@ BUGWK77903 MAC : svg/repaint/inner-svg-change-viewBox-contract.svg = IMAGE IMAGE
 // New test, needs a rebaseline
 BUGWK78631 : svg/dom/SVGLocatable-getCTM-svg-root.html = IMAGE
 
-// BUGCR8763 MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE
-
 // We show reduced version of the entire SVN image rather than an image
 // BUGCR23463 LINUX WIN : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE
 
@@ -965,8 +963,6 @@ BUGWK79568 : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = FAIL
 BUGWK79568 : svg/W3C-SVG-1.1/struct-use-01-t.svg = FAIL
 BUGWK79568 LINUX : svg/W3C-SVG-1.1/animate-elem-77-t.svg = IMAGE
 BUGWK79568 MAC : svg/W3C-SVG-1.1/animate-elem-77-t.svg = TEXT
-// Appears elsewhere commented
-BUGWK79568 : svg/filters/filter-source-position.svg = IMAGE
 BUGWK79568 : svg/clip-path/clip-path-text-and-shape.svg = TEXT
 BUGWK79568 : svg/clip-path/clip-path-with-text-clipped.svg = TEXT
 // Appears elsewhere commented
@@ -1081,7 +1077,9 @@ BUGCR3244 : svg/as-background-image/svg-as-background-6.html = FAIL
 BUGCR19559 LINUX WIN : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
 
 // Probably need to change the test upstream to describe it better and use no
-// hard coded numbers.
+// hard coded numbers. Or, like most other SVG content we can ignore the
+// platform specific differences and update the expectations if they are
+// reasonable.
 BUGCR19897 LINUX WIN : svg/custom/getscreenctm-in-mixed-content2.xhtml = FAIL
 
 BUGCR10306 LINUX : svg/carto.net/combobox.svg = FAIL
@@ -1960,10 +1958,10 @@ BUGWK71758 : fast/url/port.html = TEXT PASS
 
 BUGWK33812 SKIP : fast/dom/icon-url-property.html = FAIL
 
-// might have been flaky
-BUGJAMESR LINUX WIN : svg/filters/filter-clip.svg = IMAGE
-// BUGJAMESR LINUX WIN : svg/filters/filter-source-position.svg = IMAGE
-BUGCR29737 BUGCR30048 BUGJAMESR LINUX WIN : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
+// Occasionally succeed, but mostly failing
+BUGCR30939 LINUX WIN : svg/filters/filter-clip.svg = IMAGE PASS
+BUGCR30939 LINUX WIN : svg/filters/filter-source-position.svg = IMAGE PASS
+BUGCR30939 LINUX WIN : svg/filters/shadow-on-rect-with-filter.svg = IMAGE PASS
 
 // New layoutTestController function added at r57993
 BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
@@ -2165,7 +2163,7 @@ BUGCR49029 : fast/js/object-literal-syntax.html = TEXT
 
 BUGCR48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 
-BUGWK42428 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
+BUGCR32682 LINUX WIN : svg/W3C-SVG-1.1/filters-conv-01-f.svg = IMAGE+TEXT
 
 // Needs V8 change.
 BUGCR49343 : fast/js/reserved-words-as-property.html = TEXT
@@ -2311,9 +2309,6 @@ BUGCR58333 LINUX WIN : fast/css/font-face-download-error.html = PASS TEXT
 BUGCR58212 WIN : http/tests/appcache/main-resource-redirect.html = PASS TIMEOUT TEXT
 
 BUGCR58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TIMEOUT
-
-// Failing somewhere between after Webkit r69367 and r69417.
-BUGCR58970 LINUX : svg/text/text-tselect-02-f.svg = PASS IMAGE
 
 // Failing from r69420, mac failing from r71493:r71496
 BUGCR58735 SLOW : http/tests/misc/prefetch-purpose.html = PASS
@@ -2970,7 +2965,6 @@ BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-specular-01-f.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-turb-01-f.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-turb-02-f.svg = PASS IMAGE
 BUGCR83426 MAC : svg/W3C-SVG-1.1/masking-mask-01-b.svg = PASS IMAGE
-// BUGCR83426 MAC : svg/css/circle-in-mask-with-shadow.svg = PASS IMAGE
 BUGCR83426 MAC : svg/custom/foreign-object-skew.svg = PASS IMAGE
 BUGCR83426 MAC : svg/filters/feLighting-crash.svg = PASS IMAGE
 
@@ -3695,14 +3689,14 @@ BUGWK79224 VISTA WIN7 : fast/canvas/webgl/tex-image-with-format-and-type.html = 
 BUGWK79224 VISTA WIN7 : platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 
 // Need rebaselining after bug 75091
-BUGWK75091 : svg/carto.net/tabgroup.svg = FAIL
-BUGWK75091 : svg/carto.net/window.svg = FAIL
-BUGWK75091 : svg/custom/js-late-clipPath-and-object-creation.svg = FAIL PASS
-BUGWK75091 : svg/custom/js-late-gradient-and-object-creation.svg = FAIL PASS
-BUGWK75091 : svg/custom/js-late-pattern-and-object-creation.svg = FAIL PASS
-BUGWK75091 : svg/custom/text-ctm.svg = FAIL
-BUGWK75091 : svg/custom/use-detach.svg = FAIL
-BUGWK75091 : svg/hixie/perf/003.xml = FAIL
+BUGWK81217 : svg/carto.net/tabgroup.svg = FAIL
+BUGWK81217 : svg/carto.net/window.svg = FAIL
+BUGWK81217 : svg/custom/js-late-clipPath-and-object-creation.svg = FAIL PASS
+BUGWK81217 : svg/custom/js-late-gradient-and-object-creation.svg = FAIL PASS
+BUGWK81217 : svg/custom/js-late-pattern-and-object-creation.svg = FAIL PASS
+BUGWK81217 : svg/custom/text-ctm.svg = FAIL
+BUGWK81217 : svg/custom/use-detach.svg = FAIL
+BUGWK81217 : svg/hixie/perf/003.xml = FAIL
 
 // Failing since added by r108699
 BUGWK79454 WIN : svg/text/text-rescale.html = IMAGE+TEXT
