@@ -436,6 +436,7 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
     WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
     WKPreferencesSetXSSAuditorEnabled(preferences, false);
+    WKPreferencesSetWebAudioEnabled(preferences, true);
     WKPreferencesSetDeveloperExtrasEnabled(preferences, true);
     WKPreferencesSetJavaScriptCanOpenWindowsAutomatically(preferences, true);
     WKPreferencesSetJavaScriptCanAccessClipboard(preferences, true);

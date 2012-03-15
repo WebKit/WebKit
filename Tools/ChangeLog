@@ -1,3 +1,17 @@
+2012-03-15  Jessie Berlin  <jberlin@apple.com>
+
+        fast/dom/Window/window-properties.html and fast/dom/prototype-inheritance-2.html failing on
+        Mac WK2 because WebAudio is not enabled
+        https://bugs.webkit.org/show_bug.cgi?id=81259
+
+        Reviewed by Dan Bernstein.
+
+        Enable WebAudio so that it appears in the window object in the tests.
+        The webaudio tests are all still skipped in the Mac Skipped list.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2012-03-15  David Levin  <levin@chromium.org>
 
         Various autoresize fixes.
