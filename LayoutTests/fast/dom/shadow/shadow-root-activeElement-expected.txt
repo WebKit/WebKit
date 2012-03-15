@@ -6,12 +6,19 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS shadowRoot.activeElement is defined.
 PASS shadowRootInside.activeElement is defined.
-PASS firstChildInTreeOne.focus();shadowRoot.activeElement is firstChildInTreeOne
-PASS secondChildInTreeOne.focus();shadowRoot.activeElement is secondChildInTreeOne
-PASS secondChildInTreeOne.blur();shadowRoot.activeElement is document.body
-PASS firstChildInTreeTwo.focus();shadowRootInside.activeElement is firstChildInTreeTwo
-PASS secondChildInTreeTwo.focus();shadowRootInside.activeElement is secondChildInTreeTwo
-PASS secondChildInTreeTwo.blur();shadowRootInside.activeElement is document.body
+PASS childInBody.focus();document.activeElement is childInBody
+PASS childInBody.focus();shadowRoot.activeElement is null
+PASS childInBody.focus();shadowRootInside.activeElement is null
+PASS childInTreeOne.focus();document.activeElement is shadowHost
+PASS childInTreeOne.focus();shadowRoot.activeElement is childInTreeOne
+PASS childInTreeOne.focus();shadowRootInside.activeElement is null
+PASS childInTreeTwo.focus();document.activeElement is shadowHost
+PASS childInTreeTwo.focus();shadowRoot.activeElement is shadowHostInside
+PASS childInTreeTwo.focus();shadowRootInside.activeElement is childInTreeTwo
+childInTreeTwo.blur();
+PASS document.activeElement is document.body
+PASS shadowRoot.activeElement is null
+PASS shadowRootInside.activeElement is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

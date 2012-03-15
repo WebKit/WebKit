@@ -171,7 +171,7 @@ Element* TreeScope::activeElement()
     if (!node && document->page())
         node = focusedFrameOwnerElement(document->page()->focusController()->focusedFrame(), document->frame());
     if (!node)
-        return document->body();
+        return this == document ? document->body() : 0;
 
     TreeScope* treeScope = node->treeScope();
 
@@ -179,7 +179,8 @@ Element* TreeScope::activeElement()
         node = treeScope->rootNode()->shadowHost();
         treeScope = node->treeScope();
     }
-
+    if (this != treeScope)
+        return 0;
     if (node->isElementNode())
         return toElement(node);
     return 0;

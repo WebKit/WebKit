@@ -12,52 +12,55 @@ description("This tests the activeElement property of a ShadowRoot.");
 if (!window.internals)
     debug('This test runs on DRT only');
 
-if (window.layoutTestController) {
+if (window.layoutTestController)
     layoutTestController.dumpAsText();
 
+var childInBody = document.createElement("p");
+childInBody.tabIndex = "1";
+document.body.appendChild(childInBody);
 
 // First ShodowHost
-shadowHost = document.createElement("div");
+var shadowHost = document.createElement("div");
 document.body.appendChild(shadowHost);
-shadowRoot = new WebKitShadowRoot(shadowHost);
+var shadowRoot = new WebKitShadowRoot(shadowHost);
 
 // Second ShadowHost
 shadowHostInside = document.createElement("div");
 shadowRoot.appendChild(shadowHostInside);
-shadowRootInside = new WebKitShadowRoot(shadowHostInside);
+var shadowRootInside = new WebKitShadowRoot(shadowHostInside);
 
-// Add two children inside first Shadow host
-var firstChildInTreeOne = document.createElement("p");
-firstChildInTreeOne.setAttribute("id", "firstChildInTreeOne");
-firstChildInTreeOne.tabIndex = "1";
-shadowRoot.appendChild(firstChildInTreeOne);
+// Add a child inside first Shadow host
+var childInTreeOne = document.createElement("p");
+childInTreeOne.setAttribute("id", "childInTreeOne");
+childInTreeOne.tabIndex = "1";
+shadowRoot.appendChild(childInTreeOne);
 
-var secondChildInTreeOne = document.createElement("p");
-secondChildInTreeOne.setAttribute("id", "secondChildInTreeOne");
-secondChildInTreeOne.tabIndex = "2";
-shadowRoot.appendChild(secondChildInTreeOne);
-
-// Add two children inside second shadow host
-var firstChildInTreeTwo = document.createElement("p");
-firstChildInTreeTwo.setAttribute("id", "firstChildInTreeTwo");
-firstChildInTreeTwo.tabIndex = "3";
-shadowRootInside.appendChild(firstChildInTreeTwo);
-
-var secondChildInTreeTwo = document.createElement("p");
-secondChildInTreeTwo.setAttribute("id", "secondChildInTreeTwo");
-secondChildInTreeTwo.tabIndex = "4";
-shadowRootInside.appendChild(secondChildInTreeTwo);
+// Add a child inside second shadow host
+var childInTreeTwo = document.createElement("p");
+childInTreeTwo.setAttribute("id", "childInTreeTwo");
+childInTreeTwo.tabIndex = "1";
+shadowRootInside.appendChild(childInTreeTwo);
 
 shouldBeDefined("shadowRoot.activeElement");
 shouldBeDefined("shadowRootInside.activeElement");
-shouldBe("firstChildInTreeOne.focus();shadowRoot.activeElement", "firstChildInTreeOne");
-shouldBe("secondChildInTreeOne.focus();shadowRoot.activeElement", "secondChildInTreeOne");
-shouldBe("secondChildInTreeOne.blur();shadowRoot.activeElement", "document.body");
-shouldBe("firstChildInTreeTwo.focus();shadowRootInside.activeElement", "firstChildInTreeTwo");
-shouldBe("secondChildInTreeTwo.focus();shadowRootInside.activeElement", "secondChildInTreeTwo");
-shouldBe("secondChildInTreeTwo.blur();shadowRootInside.activeElement", "document.body");
 
-}
+shouldBe("childInBody.focus();document.activeElement", "childInBody");
+shouldBe("childInBody.focus();shadowRoot.activeElement", "null");
+shouldBe("childInBody.focus();shadowRootInside.activeElement", "null");
+
+shouldBe("childInTreeOne.focus();document.activeElement", "shadowHost");
+shouldBe("childInTreeOne.focus();shadowRoot.activeElement", "childInTreeOne");
+shouldBe("childInTreeOne.focus();shadowRootInside.activeElement", "null");
+
+shouldBe("childInTreeTwo.focus();document.activeElement", "shadowHost");
+shouldBe("childInTreeTwo.focus();shadowRoot.activeElement", "shadowHostInside");
+shouldBe("childInTreeTwo.focus();shadowRootInside.activeElement", "childInTreeTwo");
+
+evalAndLog("childInTreeTwo.blur();");
+shouldBe("document.activeElement", "document.body");
+shouldBe("shadowRoot.activeElement", "null");
+shouldBe("shadowRootInside.activeElement", "null");
+
 var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
