@@ -1,4 +1,8 @@
 /*
+ * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2012. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
