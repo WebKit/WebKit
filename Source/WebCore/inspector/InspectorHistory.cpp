@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InspectorHistory.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorHistory.h"
 
 #include "Node.h"
 

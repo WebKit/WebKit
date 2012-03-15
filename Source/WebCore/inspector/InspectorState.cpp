@@ -27,9 +27,10 @@
  */
 
 #include "config.h"
-#include "InspectorState.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorState.h"
 
 #include "InspectorStateClient.h"
 

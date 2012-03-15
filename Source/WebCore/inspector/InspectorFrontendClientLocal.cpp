@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InspectorFrontendClientLocal.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorFrontendClientLocal.h"
 
 #include "Chrome.h"
 #include "FloatRect.h"

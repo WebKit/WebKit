@@ -30,9 +30,9 @@
 
 #include "config.h"
 
-#include "WorkerConsoleAgent.h"
-
 #if ENABLE(INSPECTOR) && ENABLE(WORKERS)
+
+#include "WorkerConsoleAgent.h"
 
 namespace WebCore {
 

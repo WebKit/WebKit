@@ -23,9 +23,10 @@
  */
 
 #include "config.h"
-#include "InspectorStyleSheet.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorStyleSheet.h"
 
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"

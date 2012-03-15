@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InspectorMemoryAgent.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorMemoryAgent.h"
 
 #include "CharacterData.h"
 #include "DOMWrapperVisitor.h"

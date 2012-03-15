@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InspectorClient.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorClient.h"
 
 #include "Frame.h"
 #include "Page.h"

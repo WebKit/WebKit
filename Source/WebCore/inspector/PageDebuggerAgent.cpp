@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "PageDebuggerAgent.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+
+#include "PageDebuggerAgent.h"
 
 #include "PageScriptDebugServer.h"
 

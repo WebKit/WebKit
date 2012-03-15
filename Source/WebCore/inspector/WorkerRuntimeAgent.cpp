@@ -30,9 +30,9 @@
 
 #include "config.h"
 
-#include "WorkerRuntimeAgent.h"
-
 #if ENABLE(INSPECTOR) && ENABLE(WORKERS)
+
+#include "WorkerRuntimeAgent.h"
 
 #include "ScriptState.h"
 

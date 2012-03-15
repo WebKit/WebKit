@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "DOMPatchSupport.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "DOMPatchSupport.h"
 
 #include "Attribute.h"
 #include "Base64.h"

@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "InspectorApplicationCacheAgent.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorApplicationCacheAgent.h"
 
 #include "ApplicationCacheHost.h"
 #include "DocumentLoader.h"

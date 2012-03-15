@@ -30,9 +30,9 @@
 
 #include "config.h"
 
-#include "PageRuntimeAgent.h"
-
 #if ENABLE(INSPECTOR)
+
+#include "PageRuntimeAgent.h"
 
 #include "InspectorPageAgent.h"
 #include "Page.h"

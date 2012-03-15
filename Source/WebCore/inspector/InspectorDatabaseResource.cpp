@@ -29,9 +29,11 @@
  */
 
 #include "config.h"
-#include "InspectorDatabaseResource.h"
 
 #if ENABLE(SQL_DATABASE) && ENABLE(INSPECTOR)
+
+#include "InspectorDatabaseResource.h"
+
 #include "Database.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"

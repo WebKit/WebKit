@@ -30,9 +30,9 @@
 
 #include "config.h"
 
-#include "InspectorPageAgent.h"
-
 #if ENABLE(INSPECTOR)
+
+#include "InspectorPageAgent.h"
 
 #include "Base64.h"
 #include "CachedCSSStyleSheet.h"

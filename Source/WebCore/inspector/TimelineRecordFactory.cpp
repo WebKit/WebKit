@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "TimelineRecordFactory.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "TimelineRecordFactory.h"
 
 #include "Event.h"
 #include "InspectorValues.h"

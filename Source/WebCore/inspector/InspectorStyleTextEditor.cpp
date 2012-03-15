@@ -23,9 +23,10 @@
  */
 
 #include "config.h"
-#include "InspectorStyleTextEditor.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorStyleTextEditor.h"
 
 #include "CSSPropertySourceData.h"
 #include "HTMLParserIdioms.h"

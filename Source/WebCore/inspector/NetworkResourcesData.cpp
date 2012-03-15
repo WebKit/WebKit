@@ -27,13 +27,14 @@
  */
 
 #include "config.h"
+
+#if ENABLE(INSPECTOR)
+
 #include "NetworkResourcesData.h"
 
 #include "DOMImplementation.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
-
-#if ENABLE(INSPECTOR)
 
 namespace {
 // 10MB

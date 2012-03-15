@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InstrumentingAgents.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InstrumentingAgents.h"
 
 #include "InspectorController.h"
 #include "Page.h"

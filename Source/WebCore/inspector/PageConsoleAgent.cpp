@@ -30,9 +30,9 @@
 
 #include "config.h"
 
-#include "PageConsoleAgent.h"
-
 #if ENABLE(INSPECTOR)
+
+#include "PageConsoleAgent.h"
 
 #include "DOMWindow.h"
 #include "InjectedScriptHost.h"

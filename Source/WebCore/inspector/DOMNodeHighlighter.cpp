@@ -27,9 +27,10 @@
  */
 
 #include "config.h"
-#include "DOMNodeHighlighter.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "DOMNodeHighlighter.h"
 
 #include "Element.h"
 #include "FontCache.h"

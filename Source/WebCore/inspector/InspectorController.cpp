@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InspectorController.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorController.h"
 
 #include "Frame.h"
 #include "GraphicsContext.h"

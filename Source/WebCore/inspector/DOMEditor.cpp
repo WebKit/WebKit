@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "DOMEditor.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "DOMEditor.h"
 
 #include "DOMPatchSupport.h"
 #include "Document.h"

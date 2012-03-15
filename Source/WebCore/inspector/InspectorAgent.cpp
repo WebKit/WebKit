@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InspectorAgent.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorAgent.h"
 
 #include "Document.h"
 #include "DocumentLoader.h"

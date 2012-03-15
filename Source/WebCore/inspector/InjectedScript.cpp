@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InjectedScript.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InjectedScript.h"
 
 #include "DOMWindow.h"
 #include "Frame.h"

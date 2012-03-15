@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InspectorDOMAgent.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorDOMAgent.h"
 
 #include "Attr.h"
 #include "CSSComputedStyleDeclaration.h"

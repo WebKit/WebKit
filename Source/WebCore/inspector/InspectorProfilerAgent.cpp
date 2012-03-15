@@ -28,9 +28,10 @@
  */
 
 #include "config.h"
-#include "InspectorProfilerAgent.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+
+#include "InspectorProfilerAgent.h"
 
 #include "Console.h"
 #include "InjectedScript.h"

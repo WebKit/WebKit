@@ -29,9 +29,10 @@
 */
 
 #include "config.h"
-#include "InspectorInstrumentation.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorInstrumentation.h"
 
 #include "CSSRule.h"
 #include "CSSStyleRule.h"

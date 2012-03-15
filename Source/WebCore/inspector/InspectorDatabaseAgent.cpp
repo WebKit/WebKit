@@ -28,9 +28,9 @@
 
 #include "config.h"
 
-#include "InspectorDatabaseAgent.h"
-
 #if ENABLE(INSPECTOR) && ENABLE(SQL_DATABASE)
+
+#include "InspectorDatabaseAgent.h"
 
 #include "Database.h"
 #include "ExceptionCode.h"

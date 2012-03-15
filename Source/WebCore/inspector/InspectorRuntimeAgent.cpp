@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InspectorRuntimeAgent.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorRuntimeAgent.h"
 
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"

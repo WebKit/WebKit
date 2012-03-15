@@ -28,9 +28,10 @@
  */
 
 #include "config.h"
-#include "InspectorDebuggerAgent.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#include "InspectorDebuggerAgent.h"
+
 #include "ContentSearchUtils.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"

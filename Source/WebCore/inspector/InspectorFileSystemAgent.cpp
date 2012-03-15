@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InspectorFileSystemAgent.h"
 
 #if ENABLE(INSPECTOR) && ENABLE(FILE_SYSTEM)
+
+#include "InspectorFileSystemAgent.h"
 
 #include "DOMFileSystem.h"
 #include "InspectorState.h"

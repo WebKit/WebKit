@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InjectedScriptManager.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InjectedScriptManager.h"
 
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"

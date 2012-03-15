@@ -24,9 +24,10 @@
 
 
 #include "config.h"
-#include "InspectorConsoleAgent.h"
 
 #if ENABLE(INSPECTOR)
+#include "InspectorConsoleAgent.h"
+
 #include "InstrumentingAgents.h"
 #include "Console.h"
 #include "ConsoleMessage.h"

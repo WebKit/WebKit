@@ -24,11 +24,10 @@
  */
 
 #include "config.h"
-#include "IdentifiersFactory.h"
-
-#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(INSPECTOR)
+
+#include "IdentifiersFactory.h"
 
 #include <wtf/text/StringBuilder.h>
 

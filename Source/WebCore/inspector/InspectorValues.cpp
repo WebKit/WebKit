@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InspectorValues.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorValues.h"
 
 #include <wtf/DecimalNumber.h>
 #include <wtf/dtoa.h>

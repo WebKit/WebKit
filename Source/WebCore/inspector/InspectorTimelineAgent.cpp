@@ -29,9 +29,10 @@
 */
 
 #include "config.h"
-#include "InspectorTimelineAgent.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorTimelineAgent.h"
 
 #include "Event.h"
 #include "IdentifiersFactory.h"

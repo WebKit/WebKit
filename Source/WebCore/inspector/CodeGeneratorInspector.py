@@ -1814,11 +1814,12 @@ $methodNamesEnumContent
 """
 
 #include "config.h"
+
+#if ENABLE(INSPECTOR)
+
 #include "InspectorBackendDispatcher.h"
 #include <wtf/text/WTFString.h>
 #include <wtf/text/CString.h>
-
-#if ENABLE(INSPECTOR)
 
 #include "InspectorAgent.h"
 #include "InspectorValues.h"

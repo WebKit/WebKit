@@ -27,9 +27,10 @@
  */
 
 #include "config.h"
-#include "ContentSearchUtils.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "ContentSearchUtils.h"
 
 #include "InspectorValues.h"
 #include "RegularExpression.h"

@@ -29,10 +29,12 @@
 */
 
 #include "config.h"
-#include "InspectorCounters.h"
-#include "ThreadGlobalData.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorCounters.h"
+
+#include "ThreadGlobalData.h"
 
 namespace WebCore {
 

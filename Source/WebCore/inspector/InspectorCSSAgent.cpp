@@ -23,9 +23,10 @@
  */
 
 #include "config.h"
-#include "InspectorCSSAgent.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorCSSAgent.h"
 
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSImportRule.h"

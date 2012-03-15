@@ -28,9 +28,9 @@
 
 #include "config.h"
 
-#include "InspectorDOMStorageAgent.h"
-
 #if ENABLE(INSPECTOR)
+
+#include "InspectorDOMStorageAgent.h"
 
 #include "Database.h"
 #include "DOMWindow.h"

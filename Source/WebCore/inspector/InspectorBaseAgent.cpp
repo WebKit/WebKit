@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InspectorBaseAgent.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorBaseAgent.h"
 
 namespace WebCore {
 

@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "InspectorIndexedDBAgent.h"
 
 #if ENABLE(INSPECTOR) && ENABLE(INDEXED_DATABASE)
+
+#include "InspectorIndexedDBAgent.h"
 
 #include "DOMStringList.h"
 #include "DOMWindow.h"

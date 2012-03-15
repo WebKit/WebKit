@@ -28,9 +28,10 @@
  */
 
 #include "config.h"
-#include "InspectorFrontendHost.h"
 
 #if ENABLE(INSPECTOR)
+
+#include "InspectorFrontendHost.h"
 
 #include "ContextMenu.h"
 #include "ContextMenuItem.h"
