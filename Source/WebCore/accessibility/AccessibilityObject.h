@@ -557,7 +557,7 @@ public:
     virtual void updateChildrenIfNecessary();
     virtual void setNeedsToUpdateChildren() { }
     virtual void clearChildren();
-    virtual void detachFromParent() { }
+    virtual void detachFromParent();
 
     virtual void selectedChildren(AccessibilityChildrenVector&) { }
     virtual void visibleChildren(AccessibilityChildrenVector&) { }
@@ -667,7 +667,13 @@ public:
     }
 #endif
 #endif
-
+    
+#if PLATFORM(MAC)
+    void overrideAttachmentParent(AccessibilityObject* parent);
+#else
+    void overrideAttachmentParent(AccessibilityObject*) { }
+#endif
+    
 #if HAVE(ACCESSIBILITY)
     // a platform-specific method for determining if an attachment is ignored
     bool accessibilityIgnoreAttachment() const;

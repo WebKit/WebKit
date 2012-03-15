@@ -306,6 +306,7 @@ private:
     void addTextFieldChildren();
     void addImageMapChildren();
     void addAttachmentChildren();
+    void updateAttachmentViewParents();
     
     void ariaSelectedRows(AccessibilityChildrenVector&);
     

@@ -33,6 +33,21 @@
 
 namespace WebCore {
 
+void AccessibilityObject::overrideAttachmentParent(AccessibilityObject* parent)
+{
+    if (!isAttachment())
+        return;
+    
+    id parentWrapper = nil;
+    if (parent) {
+        if (parent->accessibilityIsIgnored())
+            parent = parent->parentObjectUnignored();
+        parentWrapper = parent->wrapper();
+    }
+    
+    [[wrapper() attachmentView] accessibilitySetOverrideValue:parentWrapper forAttribute:NSAccessibilityParentAttribute];
+}
+    
 bool AccessibilityObject::accessibilityIgnoreAttachment() const
 {
     // FrameView attachments are now handled by AccessibilityScrollView, 

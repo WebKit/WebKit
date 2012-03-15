@@ -1141,6 +1141,12 @@ void AccessibilityObject::updateChildrenIfNecessary()
         addChildren();    
 }
 
+void AccessibilityObject::detachFromParent()
+{
+    if (isAttachment())
+        overrideAttachmentParent(0);
+}
+    
 void AccessibilityObject::clearChildren()
 {
     // Some objects have weak pointers to their parents and those associations need to be detached.
