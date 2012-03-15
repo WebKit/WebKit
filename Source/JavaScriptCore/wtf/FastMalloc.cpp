@@ -1733,7 +1733,7 @@ inline Span* TCMalloc_PageHeap::New(Length n) {
     return NULL;
   }
 
-  return AllocLarge(n);
+  return New(n);
 }
 
 Span* TCMalloc_PageHeap::AllocLarge(Length n) {

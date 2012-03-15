@@ -1,5 +1,19 @@
 2012-03-14  Hojong Han  <hojong.han@samsung.com>
 
+        Fix memory allocation failed by fastmalloc
+        https://bugs.webkit.org/show_bug.cgi?id=79614
+
+        Reviewed by Geoffrey Garen.
+
+        Memory allocation failed even if the heap grows successfully.
+        It is wrong to get the span only from the large list after the heap grows,
+        because new span could be added in the normal list.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::New):
+
+2012-03-14  Hojong Han  <hojong.han@samsung.com>
+
         Run cacheFlush page by page to assure of flushing all the requested ranges
         https://bugs.webkit.org/show_bug.cgi?id=77712
 
