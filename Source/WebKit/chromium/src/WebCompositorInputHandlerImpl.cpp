@@ -27,12 +27,15 @@
 
 #include "WebCompositorInputHandlerImpl.h"
 
+#include "PlatformGestureCurveTarget.h"
+#include "TouchFlingPlatformGestureCurve.h"
 #include "WebCompositorImpl.h"
 #include "WebCompositorInputHandlerClient.h"
 #include "WebInputEvent.h"
 #include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
+#include "cc/CCActiveGestureAnimation.h"
 #include "cc/CCProxy.h"
+#include "platform/WebKitPlatformSupport.h"
 #include <wtf/ThreadingPrimitives.h>
 
 using namespace WebCore;
@@ -43,6 +46,36 @@ PassOwnPtr<CCInputHandler> CCInputHandler::create(CCInputHandlerClient* inputHan
 {
     return WebKit::WebCompositorInputHandlerImpl::create(inputHandlerClient);
 }
+
+class PlatformGestureToCCGestureAdapter : public CCGestureCurve, public PlatformGestureCurveTarget {
+public:
+    static PassOwnPtr<CCGestureCurve> create(PassOwnPtr<PlatformGestureCurve> platformCurve)
+    {
+        return adoptPtr(new PlatformGestureToCCGestureAdapter(platformCurve));
+    }
+
+    virtual bool apply(double time, CCGestureCurveTarget* target)
+    {
+        ASSERT(target);
+        m_target = target;
+        return m_curve->apply(time, this);
+    }
+
+    virtual void scrollBy(const IntPoint& scrollDelta)
+    {
+        ASSERT(m_target);
+        m_target->scrollBy(scrollDelta);
+    }
+
+private:
+    PlatformGestureToCCGestureAdapter(PassOwnPtr<PlatformGestureCurve> curve)
+        : m_curve(curve)
+    {
+    }
+
+    OwnPtr<PlatformGestureCurve> m_curve;
+    CCGestureCurveTarget* m_target;
+};
 
 }
 
@@ -126,6 +159,7 @@ void WebCompositorInputHandlerImpl::handleInputEvent(const WebInputEvent& event)
         CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(wheelEvent.x, wheelEvent.y), CCInputHandlerClient::Wheel);
         switch (scrollStatus) {
         case CCInputHandlerClient::ScrollStarted:
+            // FIXME: use WheelFlingPlatformGestureCurve here to get smooth wheel scrolling?
             m_inputHandlerClient->scrollBy(IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
             m_inputHandlerClient->scrollEnd();
             m_client->didHandleInputEvent();
@@ -170,9 +204,11 @@ void WebCompositorInputHandlerImpl::handleInputEvent(const WebInputEvent& event)
 #endif
         if (m_scrollStarted) {
             m_inputHandlerClient->scrollEnd();
-            m_client->didHandleInputEvent();
             m_scrollStarted = false;
-            return;
+
+            const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
+            if (handleGestureFling(gestureEvent))
+                return;
         }
     } else if (event.type == WebInputEvent::GesturePinchBegin) {
         ASSERT(!m_expectPinchUpdateEnd);
@@ -196,8 +232,42 @@ void WebCompositorInputHandlerImpl::handleInputEvent(const WebInputEvent& event)
         m_inputHandlerClient->pinchGestureUpdate(gestureEvent.deltaX, IntPoint(gestureEvent.x, gestureEvent.y));
         m_client->didHandleInputEvent();
         return;
+    } else if (event.type == WebInputEvent::GestureTapDown) {
+        if (m_inputHandlerClient->activeGestureAnimation()) {
+            m_inputHandlerClient->setActiveGestureAnimation(nullptr);
+            m_client->didHandleInputEvent();
+            return;
+        }
     }
+
     m_client->didNotHandleInputEvent(true /* sendToWidget */);
+}
+
+bool WebCompositorInputHandlerImpl::handleGestureFling(const WebGestureEvent& gestureEvent)
+{
+    // GestureScrollEnd with non-zero velocity (deltaX/Y) signals start of Fling.
+    if (!gestureEvent.deltaX && !gestureEvent.deltaY) {
+        m_client->didHandleInputEvent();
+        return true;
+    }
+
+    CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(gestureEvent.x, gestureEvent.y), CCInputHandlerClient::Gesture);
+    switch (scrollStatus) {
+    case CCInputHandlerClient::ScrollStarted: {
+        OwnPtr<PlatformGestureCurve> flingCurve = TouchFlingPlatformGestureCurve::create(FloatPoint(gestureEvent.deltaX, gestureEvent.deltaY));
+        OwnPtr<CCActiveGestureAnimation> animation = CCActiveGestureAnimation::create(PlatformGestureToCCGestureAdapter::create(flingCurve.release()), this);
+        m_inputHandlerClient->setActiveGestureAnimation(animation.release());
+        m_client->didHandleInputEvent();
+        return true;
+    }
+    case CCInputHandlerClient::ScrollIgnored:
+        m_client->didNotHandleInputEvent(false /* sendToWidget */);
+        return true;
+    case CCInputHandlerClient::ScrollFailed:
+        break;
+    }
+
+    return false;
 }
 
 int WebCompositorInputHandlerImpl::identifier() const
@@ -208,6 +278,12 @@ int WebCompositorInputHandlerImpl::identifier() const
 
 void WebCompositorInputHandlerImpl::willDraw(double monotonicTime)
 {
+}
+
+void WebCompositorInputHandlerImpl::scrollBy(const IntPoint& increment)
+{
+    if (m_inputHandlerClient)
+        m_inputHandlerClient->scrollBy(toSize(increment));
 }
 
 }

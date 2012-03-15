@@ -30,13 +30,14 @@
 
 namespace WebCore {
 
-PassOwnPtr<CCActiveGestureAnimation> CCActiveGestureAnimation::create(double startTime, PassOwnPtr<CCGestureCurve> curve, CCGestureCurveTarget* target)
+PassOwnPtr<CCActiveGestureAnimation> CCActiveGestureAnimation::create(PassOwnPtr<CCGestureCurve> curve, CCGestureCurveTarget* target)
 {
-    return adoptPtr(new CCActiveGestureAnimation(startTime, curve, target));
+    return adoptPtr(new CCActiveGestureAnimation(curve, target));
 }
 
-CCActiveGestureAnimation::CCActiveGestureAnimation(double startTime, PassOwnPtr<CCGestureCurve> curve, CCGestureCurveTarget* target)
-    : m_startTime(startTime)
+CCActiveGestureAnimation::CCActiveGestureAnimation(PassOwnPtr<CCGestureCurve> curve, CCGestureCurveTarget* target)
+    : m_startTime(0)
+    , m_waitingForFirstTick(true)
     , m_gestureCurve(curve)
     , m_gestureCurveTarget(target)
 {
@@ -48,6 +49,11 @@ CCActiveGestureAnimation::~CCActiveGestureAnimation()
 
 bool CCActiveGestureAnimation::animate(double time)
 {
+    if (m_waitingForFirstTick) {
+        m_startTime = time;
+        m_waitingForFirstTick = false;
+    }
+
     // CCGestureCurves used zero-based time, so subtract start-time.
     return m_gestureCurve->apply(time - m_startTime, m_gestureCurveTarget);
 }

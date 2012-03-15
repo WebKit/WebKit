@@ -38,16 +38,20 @@
 #endif
 
 #include "FloatPoint.h"
+#include "PlatformGestureCurveTarget.h"
 #include "ScrollAnimator.h"
 #include "Timer.h"
+#include <wtf/OwnPtr.h>
 
 class ScrollAnimatorNoneTest;
 
 namespace WebCore {
 
+class IntPoint;
+class ActivePlatformGestureAnimation;
 struct ScrollAnimatorParameters;
 
-class ScrollAnimatorNone : public ScrollAnimator {
+class ScrollAnimatorNone : public ScrollAnimator, public PlatformGestureCurveTarget {
 public:
     ScrollAnimatorNone(ScrollableArea*);
     virtual ~ScrollAnimatorNone();
@@ -90,6 +94,9 @@ public:
         Curve m_coastTimeCurve;
         double m_maximumCoastTime;
     };
+
+    // PlatformGestureCurveTarget implementation.
+    virtual void scrollBy(const IntPoint&);
 
 protected:
     friend class ::ScrollAnimatorNoneTest;
@@ -151,6 +158,8 @@ protected:
     float m_firstVelocity;
     bool m_firstVelocitySet;
     bool m_firstVelocityIsVertical;
+
+    OwnPtr<ActivePlatformGestureAnimation> m_gestureAnimation;
 };
 
 } // namespace WebCore

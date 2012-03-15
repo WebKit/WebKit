@@ -32,17 +32,18 @@
 
 namespace WebCore {
 
-PassOwnPtr<ActivePlatformGestureAnimation> ActivePlatformGestureAnimation::create(double startTime, PassOwnPtr<PlatformGestureCurve> curve, PlatformGestureCurveTarget* target)
+PassOwnPtr<ActivePlatformGestureAnimation> ActivePlatformGestureAnimation::create(PassOwnPtr<PlatformGestureCurve> curve, PlatformGestureCurveTarget* target)
 {
-    return adoptPtr(new ActivePlatformGestureAnimation(startTime, curve, target));
+    return adoptPtr(new ActivePlatformGestureAnimation(curve, target));
 }
 
 ActivePlatformGestureAnimation::~ActivePlatformGestureAnimation()
 {
 }
 
-ActivePlatformGestureAnimation::ActivePlatformGestureAnimation(double startTime, PassOwnPtr<PlatformGestureCurve> curve, PlatformGestureCurveTarget* target)
-    : m_startTime(startTime)
+ActivePlatformGestureAnimation::ActivePlatformGestureAnimation(PassOwnPtr<PlatformGestureCurve> curve, PlatformGestureCurveTarget* target)
+    : m_startTime(0)
+    , m_waitingForFirstTick(true)
     , m_curve(curve)
     , m_target(target)
 {
@@ -50,6 +51,10 @@ ActivePlatformGestureAnimation::ActivePlatformGestureAnimation(double startTime,
 
 bool ActivePlatformGestureAnimation::animate(double time)
 {
+    if (m_waitingForFirstTick) {
+        m_startTime = time;
+        m_waitingForFirstTick = false;
+    }
     // All PlatformGestureCurves assume zero-based time, so we subtract
     // the animation start time before passing to the curve.
     return m_curve->apply(time - m_startTime, m_target);

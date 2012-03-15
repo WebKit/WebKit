@@ -37,15 +37,16 @@ class CCGestureCurveTarget;
 class CCActiveGestureAnimation {
     WTF_MAKE_NONCOPYABLE(CCActiveGestureAnimation);
 public:
-    static PassOwnPtr<CCActiveGestureAnimation> create(double startTime, PassOwnPtr<CCGestureCurve>, CCGestureCurveTarget*);
+    static PassOwnPtr<CCActiveGestureAnimation> create(PassOwnPtr<CCGestureCurve>, CCGestureCurveTarget*);
     ~CCActiveGestureAnimation();
 
     bool animate(double time);
 
 private:
-    CCActiveGestureAnimation(double startTime, PassOwnPtr<CCGestureCurve>, CCGestureCurveTarget*);
+    CCActiveGestureAnimation(PassOwnPtr<CCGestureCurve>, CCGestureCurveTarget*);
 
     double m_startTime;
+    double m_waitingForFirstTick;
     OwnPtr<CCGestureCurve> m_gestureCurve;
     CCGestureCurveTarget* m_gestureCurveTarget;
 };

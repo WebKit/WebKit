@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class CCActiveGestureAnimation;
 class CCCompletionEvent;
 class CCPageScaleAnimation;
 class CCLayerImpl;
@@ -72,6 +73,9 @@ public:
     virtual void pinchGestureUpdate(float, const IntPoint&);
     virtual void pinchGestureEnd();
     virtual void startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTime, double duration);
+    virtual CCActiveGestureAnimation* activeGestureAnimation() { return m_activeGestureAnimation.get(); }
+    // To clear an active animation, pass nullptr.
+    virtual void setActiveGestureAnimation(PassOwnPtr<CCActiveGestureAnimation>);
 
     // Virtual for testing.
     virtual void beginCommit();
@@ -135,6 +139,7 @@ protected:
     CCLayerTreeHostImpl(const CCSettings&, CCLayerTreeHostImplClient*);
 
     void animatePageScale(double monotonicTime);
+    void animateGestures(double monotonicTime);
 
     // Virtual for testing.
     virtual void animateLayers(double monotonicTime, double wallClockTime);
@@ -178,6 +183,7 @@ private:
     IntPoint m_previousPinchAnchor;
 
     OwnPtr<CCPageScaleAnimation> m_pageScaleAnimation;
+    OwnPtr<CCActiveGestureAnimation> m_activeGestureAnimation;
 
     // This is used for ticking animations slowly when hidden.
     OwnPtr<CCLayerTreeHostImplTimeSourceAdapter> m_timeSourceClientAdapter;

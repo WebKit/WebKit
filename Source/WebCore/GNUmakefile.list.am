@@ -2986,6 +2986,8 @@ webcore_sources += \
 	Source/WebCore/platform/animation/AnimationList.h \
 	Source/WebCore/platform/animation/AnimationUtilities.h \
 	Source/WebCore/platform/animation/TimingFunction.h \
+	Source/WebCore/platform/ActivePlatformGestureAnimation.cpp \
+	Source/WebCore/platform/ActivePlatformGestureAnimation.h \
 	Source/WebCore/platform/Arena.cpp \
 	Source/WebCore/platform/Arena.h \
 	Source/WebCore/platform/AsyncFileSystem.cpp \
@@ -3423,6 +3425,7 @@ webcore_sources += \
 	Source/WebCore/platform/PlatformEvent.cpp \
 	Source/WebCore/platform/PlatformEvent.h \
 	Source/WebCore/platform/PlatformExportMacros.h \
+	Source/WebCore/platform/PlatformGestureCurve.h \
 	Source/WebCore/platform/PlatformGestureEvent.h \
 	Source/WebCore/platform/PlatformKeyboardEvent.h \
 	Source/WebCore/platform/PlatformMenuDescription.h \
@@ -3544,6 +3547,8 @@ webcore_sources += \
 	Source/WebCore/platform/text/UnicodeBidi.h \
 	Source/WebCore/platform/text/UnicodeRange.cpp \
 	Source/WebCore/platform/text/UnicodeRange.h \
+	Source/WebCore/platform/TouchFlingPlatformGestureCurve.cpp \
+	Source/WebCore/platform/TouchFlingPlatformGestureCurve.h \
 	Source/WebCore/platform/ThemeTypes.h \
 	Source/WebCore/platform/ThreadCheck.h \
 	Source/WebCore/platform/ThreadGlobalData.cpp \

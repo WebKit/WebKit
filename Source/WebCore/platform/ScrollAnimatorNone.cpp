@@ -34,12 +34,14 @@
 
 #include "ScrollAnimatorNone.h"
 
+#include "ActivePlatformGestureAnimation.h"
 #include "FloatPoint.h"
 #include "NotImplemented.h"
 #include "OwnArrayPtr.h"
 #include "PlatformGestureEvent.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
+#include "TouchFlingPlatformGestureCurve.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 #include <wtf/PassOwnPtr.h>
@@ -471,6 +473,7 @@ void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset
 void ScrollAnimatorNone::cancelAnimations()
 {
     m_animationActive = false;
+    m_gestureAnimation.clear();
 }
 
 void ScrollAnimatorNone::serviceScrollAnimations()
@@ -516,6 +519,13 @@ void ScrollAnimatorNone::animationTimerFired()
     if (m_verticalData.m_startTime && m_verticalData.animateScroll(currentTime))
         continueAnimation = true;
 
+    if (m_gestureAnimation) {
+        if (m_gestureAnimation->animate(currentTime))
+            continueAnimation = true;
+        else
+            m_gestureAnimation.clear();
+    }
+
     if (continueAnimation)
         startNextTimer();
     else
@@ -542,6 +552,12 @@ void ScrollAnimatorNone::stopAnimationTimerIfNeeded()
 {
     if (animationTimerActive())
         m_animationActive = false;
+}
+
+void ScrollAnimatorNone::scrollBy(const IntPoint& location)
+{
+    m_currentPosX += location.x();
+    m_currentPosY += location.y();
 }
 
 } // namespace WebCore

@@ -28,6 +28,8 @@
 
 #include "WebCompositor.h"
 #include "WebCompositorInputHandler.h"
+#include "WebInputEvent.h"
+#include "cc/CCGestureCurve.h"
 #include "cc/CCInputHandler.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -38,6 +40,7 @@ class Mutex;
 }
 
 namespace WebCore {
+class CCGestureCurveTarget;
 class CCInputHandlerClient;
 class CCThread;
 }
@@ -47,7 +50,7 @@ namespace WebKit {
 class WebCompositorInputHandlerClient;
 
 // Temporarily subclassing from WebCompositor while downstream changes land.
-class WebCompositorInputHandlerImpl : public WebCompositor, public WebCore::CCInputHandler {
+class WebCompositorInputHandlerImpl : public WebCompositor, public WebCore::CCInputHandler, public WebCore::CCGestureCurveTarget {
     WTF_MAKE_NONCOPYABLE(WebCompositorInputHandlerImpl);
 public:
     static PassOwnPtr<WebCompositorInputHandlerImpl> create(WebCore::CCInputHandlerClient*);
@@ -63,8 +66,13 @@ public:
     virtual int identifier() const;
     virtual void willDraw(double monotonicTime);
 
+    // WebCore::CCGestureCurveTarget implementation.
+    virtual void scrollBy(const WebCore::IntPoint&);
+
 private:
     explicit WebCompositorInputHandlerImpl(WebCore::CCInputHandlerClient*);
+
+    bool handleGestureFling(const WebGestureEvent&);
 
     WebCompositorInputHandlerClient* m_client;
     int m_identifier;

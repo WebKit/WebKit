@@ -30,8 +30,10 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
+#include "cc/CCActiveGestureAnimation.h"
 #include "cc/CCDamageTracker.h"
 #include "cc/CCDelayBasedTimeSource.h"
+#include "cc/CCGestureCurve.h"
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostCommon.h"
@@ -143,6 +145,7 @@ void CCLayerTreeHostImpl::animate(double monotonicTime, double wallClockTime)
 {
     animatePageScale(monotonicTime);
     animateLayers(monotonicTime, wallClockTime);
+    animateGestures(monotonicTime);
 }
 
 void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTime, double duration)
@@ -168,6 +171,14 @@ void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition,
 
     m_client->setNeedsRedrawOnImplThread();
     m_client->setNeedsCommitOnImplThread();
+}
+
+void CCLayerTreeHostImpl::setActiveGestureAnimation(PassOwnPtr<CCActiveGestureAnimation> gestureAnimation)
+{
+    m_activeGestureAnimation = gestureAnimation;
+
+    if (m_activeGestureAnimation)
+        m_client->setNeedsRedrawOnImplThread();
 }
 
 void CCLayerTreeHostImpl::trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList)
@@ -795,6 +806,18 @@ void CCLayerTreeHostImpl::sendDidLoseContextRecursive(CCLayerImpl* current)
     sendDidLoseContextRecursive(current->replicaLayer());
     for (size_t i = 0; i < current->children().size(); ++i)
         sendDidLoseContextRecursive(current->children()[i].get());
+}
+
+void CCLayerTreeHostImpl::animateGestures(double monotonicTime)
+{
+    if (!m_activeGestureAnimation)
+        return;
+
+    bool isContinuing = m_activeGestureAnimation->animate(monotonicTime);
+    if (isContinuing)
+        m_client->setNeedsRedrawOnImplThread();
+    else
+        m_activeGestureAnimation.clear();
 }
 
 } // namespace WebCore

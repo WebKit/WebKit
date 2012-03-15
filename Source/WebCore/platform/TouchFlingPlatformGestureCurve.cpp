@@ -77,7 +77,7 @@ bool TouchFlingPlatformGestureCurve::apply(double time, PlatformGestureCurveTarg
     m_cumulativeScroll = scroll;
 
     if (time < 1.5 || scrollIncrement != IntPoint::zero()) {
-        target->setScrollIncrement(scrollIncrement);
+        target->scrollBy(scrollIncrement);
         return true;
     }
 

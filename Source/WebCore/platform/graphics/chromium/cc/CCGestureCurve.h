@@ -31,11 +31,10 @@ class IntPoint;
 
 class CCGestureCurveTarget {
 public:
-    virtual void setScrollIncrement(const IntPoint&) = 0;
-    // FIXME: add interfaces for setScroll(), setPageScaleAndScroll(), etc.
-
-protected:
     virtual ~CCGestureCurveTarget() { }
+
+    virtual void scrollBy(const IntPoint&) = 0;
+    // FIXME: add interfaces for scroll(), etc.
 };
 
 class CCGestureCurve {

@@ -197,6 +197,7 @@ public:
             || type == GestureScrollUpdate
             || type == GestureFlingStart
             || type == GestureFlingCancel
+            || type == GestureTapDown
             || type == GestureTap; // FIXME: Why is GestureTap on this list?
     }
 };

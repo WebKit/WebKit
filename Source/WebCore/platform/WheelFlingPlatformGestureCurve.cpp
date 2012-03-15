@@ -64,7 +64,7 @@ bool WheelFlingPlatformGestureCurve::apply(double time, PlatformGestureCurveTarg
     m_cumulativeScroll = scroll;
 
     if (cdf < 0.5 || scrollIncrement != IntPoint::zero()) {
-        target->setScrollIncrement(scrollIncrement);
+        target->scrollBy(scrollIncrement);
         return true;
     }
 

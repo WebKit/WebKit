@@ -42,7 +42,7 @@ using namespace WebCore;
 
 class MockPlatformGestureCurveTarget : public PlatformGestureCurveTarget {
 public:
-    virtual void setScrollIncrement(const IntPoint& delta)
+    virtual void scrollBy(const IntPoint& delta)
     {
         m_cumulativeDelta = m_cumulativeDelta + delta;
     }
@@ -57,7 +57,7 @@ private:
 TEST(PlatformGestureCurve, flingCurve)
 {
     MockPlatformGestureCurveTarget target;
-    OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(0, WheelFlingPlatformGestureCurve::create(FloatPoint(100, 0)), &target);
+    OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(WheelFlingPlatformGestureCurve::create(FloatPoint(100, 0)), &target);
 
     // Note: the expectations below are dependent on the value of sigma hard-coded in the Rayleigh
     //       curve. If sigma changes, these test expectations will also change.
@@ -69,23 +69,24 @@ TEST(PlatformGestureCurve, flingCurve)
     EXPECT_FALSE(animation->animate(1001));
     // Since the Rayleigh CDF maxes out at 1, we expect the cumulative scroll increments to
     // match the input velocity parameter.
-    // Since we can be off by +/-0.5 on each conversion to int for setScrollIncrement,
-    // pick the 'nearness' to be within the number of times animate returns true.
     EXPECT_NEAR(target.cumulativeDelta().x(), 100, 1);
     EXPECT_EQ(target.cumulativeDelta().y(), 0);
 
+    // Test animation when not starting at t = 0.
     double baseTime = 42.42;
-    animation = ActivePlatformGestureAnimation::create(baseTime, WheelFlingPlatformGestureCurve::create(FloatPoint(100, 0)), &target);
+    animation = ActivePlatformGestureAnimation::create(WheelFlingPlatformGestureCurve::create(FloatPoint(100, 0)), &target);
     target.resetCumulativeDelta();
 
     EXPECT_TRUE(animation->animate(baseTime + 0.35));
     EXPECT_TRUE(animation->animate(baseTime + 1.35));
-    EXPECT_FALSE(animation->animate(baseTime + 1000));
+    EXPECT_TRUE(animation->animate(baseTime + 1000));
+    EXPECT_FALSE(animation->animate(baseTime + 1001));
     EXPECT_NEAR(target.cumulativeDelta().x(), 100, 1);
 
-    animation = ActivePlatformGestureAnimation::create(0, WheelFlingPlatformGestureCurve::create(FloatPoint(50, 150)), &target);
+    animation = ActivePlatformGestureAnimation::create(WheelFlingPlatformGestureCurve::create(FloatPoint(50, 150)), &target);
     target.resetCumulativeDelta();
 
+    // Test animation with both horizontal and vertical scroll velocities.
     EXPECT_TRUE(animation->animate(0));
     EXPECT_TRUE(animation->animate(0.25));
     EXPECT_TRUE(animation->animate(0.45));
@@ -99,7 +100,7 @@ TEST(PlatformGestureCurve, flingCurve)
 TEST(PlatformGestureCurve, flingCurveTouch)
 {
     MockPlatformGestureCurveTarget target;
-    OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(0, TouchFlingPlatformGestureCurve::create(FloatPoint(1000, 0)), &target);
+    OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::create(FloatPoint(1000, 0)), &target);
 
     // Note: the expectations below are dependent on the value of sigma hard-coded in the Rayleigh
     //       curve. If sigma changes, these test expectations will also change.
@@ -110,8 +111,6 @@ TEST(PlatformGestureCurve, flingCurveTouch)
     EXPECT_TRUE(animation->animate(0.9));
     EXPECT_TRUE(animation->animate(1000));
     EXPECT_FALSE(animation->animate(1001));
-    // Since we can be off by +/-0.5 on each conversion to int for setScrollIncrement,
-    // pick the 'nearness' to be within the 5 * number of times animate returns true.
     EXPECT_NEAR(target.cumulativeDelta().x(), 1000, 1);
     EXPECT_EQ(target.cumulativeDelta().y(), 0);
 }

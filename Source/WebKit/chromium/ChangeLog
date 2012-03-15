@@ -1,3 +1,29 @@
+2012-03-14  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Wire up PlatformGestureCurves for CC, ScrollAnimatorNone.
+        https://bugs.webkit.org/show_bug.cgi?id=80607
+
+        Reviewed by James Robinson.
+
+        * public/WebInputEvent.h:
+        (WebKit::WebInputEvent::isScrollGestureEventType):
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (PlatformGestureToCCGestureAdapter):
+        (WebCore::PlatformGestureToCCGestureAdapter::create):
+        (WebCore::PlatformGestureToCCGestureAdapter::apply):
+        (WebCore::PlatformGestureToCCGestureAdapter::scrollBy):
+        (WebCore::PlatformGestureToCCGestureAdapter::PlatformGestureToCCGestureAdapter):
+        (WebCore):
+        (WebKit::WebCompositorInputHandlerImpl::handleInputEvent):
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+        (WebKit):
+        (WebKit::WebCompositorInputHandlerImpl::scrollBy):
+        * src/WebCompositorInputHandlerImpl.h:
+        (WebCore):
+        (WebCompositorInputHandlerImpl):
+        * tests/PlatformGestureCurveTest.cpp:
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+
 2012-03-15  Dana Jansens  <danakj@chromium.org>
 
         [Chromium] REGRESSION(r110596) CCQuadCullerTest.verifyCullChildLinesUpTopLeft fails on Windows

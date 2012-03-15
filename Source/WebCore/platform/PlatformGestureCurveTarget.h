@@ -31,8 +31,8 @@ class IntPoint;
 
 class PlatformGestureCurveTarget {
 public:
-    virtual void setScrollIncrement(const IntPoint&) = 0;
-    // FIXME: add interfaces for setScroll(), setPageScaleAndScroll(), etc.
+    virtual void scrollBy(const IntPoint&) = 0;
+    // FIXME: add interfaces for scroll(), etc.
 
 protected:
     virtual ~PlatformGestureCurveTarget() { }

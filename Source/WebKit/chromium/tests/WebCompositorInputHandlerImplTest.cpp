@@ -30,6 +30,7 @@
 #include "WebCompositor.h"
 #include "WebCompositorInputHandlerClient.h"
 #include "WebInputEvent.h"
+#include "cc/CCActiveGestureAnimation.h"
 #include "cc/CCInputHandler.h"
 #include "cc/CCSingleThreadProxy.h"
 
@@ -49,6 +50,7 @@ public:
         , m_pinchStarted(false)
         , m_pinchEnded(false)
         , m_pinchMagnification(0)
+        , m_scrollByCalled(false)
     {
     }
     virtual ~MockInputHandlerClient() { }
@@ -58,12 +60,16 @@ public:
     bool pinchStarted() const { return m_pinchStarted; }
     bool pinchEnded() const { return m_pinchEnded; }
     float pinchMaginifcation() const { return m_pinchMagnification; }
+    bool scrollByCalled() const { return m_scrollByCalled; }
 
     void resetPinch()
     {
-        m_pinchStarted = m_pinchEnded = false;
+        m_pinchStarted = m_pinchEnded = m_scrollByCalled = false;
         m_pinchMagnification = 0;
     }
+
+    virtual WebCore::CCActiveGestureAnimation* activeGestureAnimation() { return m_activeGestureAnimation.get(); }
+    virtual void setActiveGestureAnimation(PassOwnPtr<WebCore::CCActiveGestureAnimation> animation) { m_activeGestureAnimation = animation; }
 
 private:
     virtual void setNeedsRedraw() OVERRIDE { }
@@ -71,7 +77,7 @@ private:
     {
         return m_scrollStatus;
     }
-    virtual void scrollBy(const WebCore::IntSize&) OVERRIDE { }
+    virtual void scrollBy(const WebCore::IntSize&) OVERRIDE { m_scrollByCalled = true; }
     virtual void scrollEnd() OVERRIDE { }
 
     virtual void pinchGestureBegin() OVERRIDE
@@ -96,6 +102,9 @@ private:
     bool m_pinchStarted;
     bool m_pinchEnded;
     float m_pinchMagnification;
+    bool m_scrollByCalled;
+
+    OwnPtr<WebCore::CCActiveGestureAnimation> m_activeGestureAnimation;
 };
 
 class MockWebCompositorInputHandlerClient : public WebKit::WebCompositorInputHandlerClient {
@@ -277,6 +286,54 @@ TEST(WebCompositorInputHandlerImpl, gesturePinch)
 
     inputHandler->setClient(0);
 
+    WebKit::WebCompositor::shutdown();
+}
+
+TEST(WebCompositorInputHandlerImpl, gestureFling)
+{
+    WebKit::WebCompositor::initialize(0);
+
+    // WebCompositorInputHandler APIs can only be called from the compositor thread.
+    WebCore::DebugScopedSetImplThread alwaysImplThread;
+
+    MockInputHandlerClient mockInputHandler;
+    OwnPtr<WebCompositorInputHandlerImpl> inputHandler = WebCompositorInputHandlerImpl::create(&mockInputHandler);
+    MockWebCompositorInputHandlerClient mockClient;
+    inputHandler->setClient(&mockClient);
+
+    WebKit::WebGestureEvent gesture;
+
+    // Need scrollBegin before sending a scrollEnd event.
+    gesture.type = WebKit::WebInputEvent::GestureScrollBegin;
+    inputHandler->handleInputEvent(gesture);
+    EXPECT_TRUE(mockClient.handled());
+    EXPECT_FALSE(mockClient.sendToWidget());
+    mockClient.reset();
+
+    gesture.type = WebKit::WebInputEvent::GestureScrollEnd;
+    gesture.deltaX = 2;
+    inputHandler->handleInputEvent(gesture);
+    EXPECT_TRUE(mockClient.handled());
+    EXPECT_FALSE(mockClient.sendToWidget());
+    ASSERT_TRUE(mockInputHandler.activeGestureAnimation());
+    EXPECT_FALSE(mockInputHandler.scrollByCalled());
+    mockInputHandler.activeGestureAnimation()->animate(0.001);
+    EXPECT_TRUE(mockInputHandler.scrollByCalled());
+    mockClient.reset();
+
+    // Verify that a GestureTapDown during an animation cancels it.
+    gesture.type = WebKit::WebInputEvent::GestureTapDown;
+    inputHandler->handleInputEvent(gesture);
+    EXPECT_FALSE(mockInputHandler.activeGestureAnimation());
+    mockClient.reset();
+
+    // Verify that a GestureTapDown when no animation is active is not handled.
+    gesture.type = WebKit::WebInputEvent::GestureTapDown;
+    inputHandler->handleInputEvent(gesture);
+    EXPECT_FALSE(mockClient.handled());
+    EXPECT_TRUE(mockClient.sendToWidget());
+
+    inputHandler->setClient(0);
     WebKit::WebCompositor::shutdown();
 }
 
