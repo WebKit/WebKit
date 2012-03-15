@@ -1,3 +1,9 @@
+2012-03-15  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj:
+
 2012-03-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         Move wx port to using export macros
