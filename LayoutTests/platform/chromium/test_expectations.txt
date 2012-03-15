@@ -3913,3 +3913,15 @@ BUGWK81145 LION : fast/events/platform-wheelevent-paging-x-in-scrolling-page.htm
 BUGWK81145 LION : fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html = TEXT
 BUGWK81145 LION : fast/events/platform-wheelevent-paging-y-in-scrolling-page.html = TEXT
 BUGWK81145 LION : fast/events/scrollbar-double-click.html = TEXT
+
+// Migrated from chromium's downstream test_expectations
+BUGYANGGUO LINUX X86_64 : fast/repaint/moving-shadow-on-container.html = TEXT
+BUGYANGGUO LINUX X86_64 : fast/repaint/moving-shadow-on-path.html = TEXT
+BUGYANGGUO LINUX X86_64 : svg/css/stars-with-shadow.html = TEXT
+BUGYANGGUO MAC : fast/repaint/moving-shadow-on-container.html = TEXT
+BUGYANGGUO MAC : fast/repaint/moving-shadow-on-path.html = TEXT
+BUGYANGGUO MAC : svg/css/stars-with-shadow.html = TEXT
+BUGYANGGUO WIN : fast/repaint/moving-shadow-on-container.html = TEXT
+BUGYANGGUO WIN : fast/repaint/moving-shadow-on-path.html = TEXT
+BUGYANGGUO WIN : svg/css/stars-with-shadow.html = TEXT
+
