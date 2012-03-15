@@ -57,4 +57,10 @@ void deleteOwnedPtr(Eina_Module* ptr)
         eina_module_free(ptr); // If module wasn't unloaded, eina_module_free() calls eina_module_unload().
 }
 
+void deleteOwnedPtr(Ecore_Timer* ptr)
+{
+    if (ptr)
+        ecore_timer_del(ptr);
+}
+
 }
