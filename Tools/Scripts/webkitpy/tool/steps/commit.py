@@ -44,6 +44,7 @@ class Commit(AbstractStep):
     def options(cls):
         return AbstractStep.options() + [
             Options.check_builders,
+            Options.non_interactive,
         ]
 
     def _commit_warning(self, error):
@@ -66,6 +67,8 @@ class Commit(AbstractStep):
         try:
             self._tool.executive.run_and_throw_if_fail(self._tool.port().check_webkit_style_command() + args, cwd=self._tool.scm().checkout_root)
         except ScriptError, e:
+            if self._options.non_interactive:
+                raise
             if not self._tool.user.confirm("Are you sure you want to continue?", default="n"):
                 self._exit(1)
 
@@ -94,12 +97,14 @@ class Commit(AbstractStep):
                 self._state["commit_text"] = commit_text
                 break;
             except AmbiguousCommitError, e:
-                if self._tool.user.confirm(self._commit_warning(e)):
+                if self._options.non_interactive or self._tool.user.confirm(self._commit_warning(e)):
                     force_squash = True
                 else:
                     # This will correctly interrupt the rest of the commit process.
                     raise ScriptError(message="Did not commit")
             except AuthenticationError, e:
+                if self._options.non_interactive:
+                    raise ScriptError(message="Authentication required")
                 username = self._tool.user.prompt("%s login: " % e.server_host, repeat=5)
                 if not username:
                     raise ScriptError("You need to specify the username on %s to perform the commit as." % e.server_host)

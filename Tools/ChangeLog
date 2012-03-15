@@ -1,3 +1,21 @@
+2012-03-15  Adam Barth  <abarth@webkit.org>
+
+        The commit-queue can hang when the test_expectations.txt style check fails during commit
+        https://bugs.webkit.org/show_bug.cgi?id=81251
+
+        Reviewed by Eric Seidel.
+
+        We forgot to check the --non-interactive flag, so we end up prompting
+        the "user" who doesn't exist on the bot.  We might consider teaching
+        the User class about non-interactive if we have this sort of bug again.
+
+        * Scripts/webkitpy/tool/steps/commit.py:
+        (Commit.options):
+        (Commit._check_test_expectations):
+        (Commit.run):
+        * Scripts/webkitpy/tool/steps/commit_unittest.py:
+        (CommitTest.test_check_test_expectations):
+
 2012-03-15  Jessie Berlin  <jberlin@apple.com>
 
         fast/dom/Window/window-properties.html and fast/dom/prototype-inheritance-2.html failing on
