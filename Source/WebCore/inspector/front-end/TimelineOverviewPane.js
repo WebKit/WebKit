@@ -39,7 +39,7 @@ WebInspector.TimelineOverviewPane = function(presentationModel)
     this.element.id = "timeline-overview-panel";
 
     this._windowStartTime = 0;
-    this._windowEndTime = null;
+    this._windowEndTime = Infinity;
 
     this._presentationModel = presentationModel;
 
@@ -274,7 +274,7 @@ WebInspector.TimelineOverviewPane.prototype = {
     reset: function()
     {
         this._windowStartTime = 0;
-        this._windowEndTime = null;
+        this._windowEndTime = Infinity;
         this._overviewWindow.reset();
         this._overviewCalculator.reset();
         this._overviewGrid.updateDividers(true, this._overviewCalculator);
@@ -292,7 +292,7 @@ WebInspector.TimelineOverviewPane.prototype = {
      */
     accept: function(record)
     {
-        return record.endTime >= this._windowStartTime && (typeof this._windowEndTime !== "number" || record.startTime <= this._windowEndTime);
+        return record.endTime >= this._windowStartTime && record.startTime <= this._windowEndTime;
     },
 
     windowStartTime: function()
@@ -302,7 +302,7 @@ WebInspector.TimelineOverviewPane.prototype = {
 
     windowEndTime: function()
     {
-        return this._windowEndTime || this._presentationModel.maximumRecordTime();
+        return this._windowEndTime < Infinity ? this._windowEndTime : this._presentationModel.maximumRecordTime();
     },
 
     windowLeft: function()
@@ -803,42 +803,37 @@ WebInspector.TimelineVerticalOverview.prototype = {
         this._recordsPerBar = 1;
         this._frameMode = false;
         this._barTimes = [];
+        this._longestBarTime = 0;
     },
 
-    update: function(records)
+    update: function(allRecords)
     {
-        records = this._filterRecords(records);
-
+        var records = [];
         var frameCount = 0;
-        var boundarySpan = 0;
-        var lastFrameTime = records.length && records[0].startTime;
-        for (var i = 0; i < records.length; ++i) {
-            var record = records[i];
-            var duration = record.endTime - record.startTime;
-            if (boundarySpan < duration)
-                boundarySpan = duration;
-            if (record.type === WebInspector.TimelineModel.RecordType.BeginFrame || (frameCount && (i + 1 === records.length))) {
-                // if we have frames, take frame duration into account
-                if (record.startTime - lastFrameTime > boundarySpan)
-                    boundarySpan = record.startTime - lastFrameTime;
-                lastFrameTime = record.startTime;
+        for (var i = 0; i < allRecords.length; ++i) {
+            var record = allRecords[i];
+            if (record.category.hidden)
+                continue;
+            if (record.type === WebInspector.TimelineModel.RecordType.BeginFrame || (frameCount && (i + 1 === records.length)))
                 ++frameCount;
-            }
+            records.push(record);
         }
         // If we have frames, aggregate by frames; otherwise, just show top-level records.
         var recordCount = frameCount || records.length;
 
-        const paddingTop = 4;
         const minBarWidth = 4;
-        var scale = (this.element.clientHeight - paddingTop) / boundarySpan;
         this._recordsPerBar = Math.max(1, recordCount * minBarWidth / this.element.clientWidth);
         var numberOfBars = Math.ceil(recordCount / this._recordsPerBar);
 
         this._barTimes = [];
+        this._longestBarTime = 0;
         this.element.removeChildren();
         var padding = this.element.createChild("div", "padding");
 
         var statistics = frameCount ? this._aggregateFrames(records, numberOfBars) : this._aggregateRecords(records, numberOfBars);
+        const paddingTop = 4;
+        var scale = (this.element.clientHeight - paddingTop) / this._longestBarTime;
+
         for (var i = 0; i < statistics.length; ++i)
             this.element.insertBefore(this._buildBar(statistics[i], scale), padding);
     },
@@ -866,6 +861,7 @@ WebInspector.TimelineVerticalOverview.prototype = {
             }
             var barEndTime = records[currentRecord - 1].endTime;
             if (longestFrameStatistics) {
+                this._longestBarTime = Math.max(this._longestBarTime, longestFrameTime);
                 statistics.push(longestFrameStatistics);
                 this._barTimes.push({ startTime: barStartTime, endTime: barEndTime });
             }
@@ -909,18 +905,10 @@ WebInspector.TimelineVerticalOverview.prototype = {
             }
             var barEndTime = records[currentRecord - 1].endTime;
             statistics.push(longestRecord.aggregatedStats);
+            this._longestBarTime = Math.max(this._longestBarTime, longestRecord.endTime - longestRecord.startTime);
             this._barTimes.push({ startTime: barStartTime, endTime: barEndTime });
         }
         return statistics;
-    },
-
-    _filterRecords: function(records)
-    {
-        function filter(record)
-        {
-            return !record.category.hidden;
-        }
-        return records.filter(filter);
     },
 
     _buildBar: function(statistics, scale)
@@ -955,8 +943,8 @@ WebInspector.TimelineVerticalOverview.prototype = {
         var lastBar = Math.min(Math.ceil((rightOffset - offset0 - 2) / barWidth), this._barTimes.length - 1);
         const snapToRightTolerancePixels = 3;
         return {
-            startTime: this._barTimes[firstBar].startTime,
-            endTime: rightOffset + snapToRightTolerancePixels > windowSpan ? null : this._barTimes[lastBar].endTime
+            startTime: firstBar >= this._barTimes.length ? Infinity : this._barTimes[firstBar].startTime,
+            endTime: rightOffset + snapToRightTolerancePixels > windowSpan ? Infinity : this._barTimes[lastBar].endTime
         }
     }
 }
