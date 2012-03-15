@@ -77,4 +77,12 @@ UScriptCode localeToScriptCodeForFontSelection(const String& locale)
     return scriptCodeForFontSelection(scriptCode);
 }
 
+UScriptCode scriptNameToCode(const String& name)
+{
+    int32_t code = u_getPropertyValueEnum(UCHAR_SCRIPT, name.utf8().data());
+    if (code >= 0 && code < USCRIPT_CODE_LIMIT)
+        return static_cast<UScriptCode>(code);
+    return USCRIPT_INVALID_CODE;
+}
+
 } // namespace WebCore

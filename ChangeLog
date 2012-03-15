@@ -1,3 +1,16 @@
+2012-03-14  Matt Falkenhagen  <falken@chromium.org>
+
+        Allow per-script font settings to be specified in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=78184
+
+        Reviewed by Hajime Morita.
+
+        This adds per-script font settings to InternalSettings, so it can be used in layout tests instead of
+        the per-script font settings support in DumpRenderTree overridePreference, which has only been implemented
+        for Chromium so far.
+
+        * Source/autotools/symbols.filter: Added symbols.
+
 2012-03-14  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Enable HTML5 Summary and Details elements

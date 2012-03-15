@@ -2,9 +2,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.overridePreference("WebKitStandardFontMap", [ "Hans", "Ahem" ]);
-    layoutTestController.overridePreference("WebKitFantasyFontMap", [ "Hans", "Ahem" ]);
+if (window.internals) {
+    window.internals.settings.setStandardFontFamily("Ahem", "Hans");
+    window.internals.settings.setFantasyFontFamily("Ahem", "Hans");
 }
 </script>
 </head>

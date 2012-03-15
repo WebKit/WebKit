@@ -36,7 +36,8 @@
 
 namespace WebCore {
 
-UScriptCode localeToScriptCodeForFontSelection(const String& locale);
+UScriptCode localeToScriptCodeForFontSelection(const String&);
+UScriptCode scriptNameToCode(const String&);
 
 }
 

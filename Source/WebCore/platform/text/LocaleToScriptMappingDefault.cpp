@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-static UScriptCode getScriptCode(const String& scriptName)
+UScriptCode scriptNameToCode(const String& scriptName)
 {
     struct ScriptNameCode {
         const char* name;
@@ -158,7 +158,7 @@ static UScriptCode getScriptCode(const String& scriptName)
             scriptNameCodeMap.set(scriptNameCodeList[i].name, scriptNameCodeList[i].code);
     }
 
-    HashMap<String, UScriptCode>::iterator it = scriptNameCodeMap.find(scriptName);
+    HashMap<String, UScriptCode>::iterator it = scriptNameCodeMap.find(scriptName.lower());
     if (it != scriptNameCodeMap.end())
         return it->second;
     return USCRIPT_INVALID_CODE;
@@ -387,7 +387,7 @@ UScriptCode localeToScriptCodeForFontSelection(const String& locale)
         size_t pos = canonicalLocale.reverseFind('_');
         if (pos == notFound)
             break;
-        UScriptCode code = getScriptCode(canonicalLocale.substring(pos + 1));
+        UScriptCode code = scriptNameToCode(canonicalLocale.substring(pos + 1));
         if (code != USCRIPT_INVALID_CODE && code != USCRIPT_UNKNOWN)
             return code;
         canonicalLocale = canonicalLocale.substring(0, pos);

@@ -63,6 +63,13 @@ public:
     void setPerTileDrawingEnabled(bool enabled, ExceptionCode&);
     void setTouchEventEmulationEnabled(bool enabled, ExceptionCode&);
     void setShadowDOMEnabled(bool enabled, ExceptionCode&);
+    void setStandardFontFamily(const String& family, const String& script, ExceptionCode&);
+    void setSerifFontFamily(const String& family, const String& script, ExceptionCode&);
+    void setSansSerifFontFamily(const String& family, const String& script, ExceptionCode&);
+    void setFixedFontFamily(const String& family, const String& script, ExceptionCode&);
+    void setCursiveFontFamily(const String& family, const String& script, ExceptionCode&);
+    void setFantasyFontFamily(const String& family, const String& script, ExceptionCode&);
+    void setPictographFontFamily(const String& family, const String& script, ExceptionCode&);
 
     void restoreTo(Settings*);
 
