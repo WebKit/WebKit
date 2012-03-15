@@ -39,6 +39,12 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberListAnimator::constructFromString(c
     return animtedType.release();
 }
 
+PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberListAnimator::constructFromCopy(SVGGenericAnimatedType* animatedType)
+{
+    ASSERT(animatedType);
+    return SVGAnimatedType::createNumberList(new SVGNumberList(*reinterpret_cast<SVGNumberList*>(animatedType)));
+}
+
 void SVGAnimatedNumberListAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
 {
     ASSERT(m_contextElement);

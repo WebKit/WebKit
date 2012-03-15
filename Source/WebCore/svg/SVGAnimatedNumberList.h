@@ -37,6 +37,7 @@ DECLARE_ANIMATED_LIST_PROPERTY(SVGAnimatedNumberList, SVGNumberList, UpperProper
 DEFINE_ANIMATED_PROPERTY(AnimatedNumberList, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
 
 class SVGAnimationElement;
+class SVGGenericAnimatedType;
 
 class SVGAnimatedNumberListAnimator : public SVGAnimatedTypeAnimator {
     
@@ -45,6 +46,7 @@ public:
     virtual ~SVGAnimatedNumberListAnimator() { }
     
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
+    virtual PassOwnPtr<SVGAnimatedType> constructFromCopy(SVGGenericAnimatedType*);
     
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);

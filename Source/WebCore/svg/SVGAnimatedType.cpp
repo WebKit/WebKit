@@ -455,15 +455,15 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     switch (type) {
     case AnimatedLength:
     case AnimatedLengthList:
-    case AnimatedTransformList:
     case AnimatedNumber:
+    case AnimatedNumberList:
+    case AnimatedTransformList:
         return true;
     case AnimatedAngle:
     case AnimatedBoolean:
     case AnimatedColor:
     case AnimatedEnumeration:
     case AnimatedInteger:
-    case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
@@ -488,18 +488,20 @@ void SVGAnimatedType::setVariantValue(SVGGenericAnimatedType* type)
     case AnimatedLengthList:
         *m_data.lengthList = *reinterpret_cast<SVGLengthList*>(type);
         return;
-    case AnimatedTransformList:
-        *m_data.transformList = *reinterpret_cast<SVGTransformList*>(type);
-        return;
     case AnimatedNumber:
         *m_data.number = *reinterpret_cast<float*>(type);
+        return;
+    case AnimatedNumberList:
+        *m_data.numberList = *reinterpret_cast<SVGNumberList*>(type);
+        return;
+    case AnimatedTransformList:
+        *m_data.transformList = *reinterpret_cast<SVGTransformList*>(type);
         return;
     case AnimatedAngle:
     case AnimatedBoolean:
     case AnimatedColor:
     case AnimatedEnumeration:
     case AnimatedInteger:
-    case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
