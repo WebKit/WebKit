@@ -742,7 +742,60 @@ bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, StringImpl* b)
     return !memcmp(a.data(), b->characters(), b->length() * sizeof(UChar));
 }
 
-WTF_EXPORT_PRIVATE int codePointCompare(const StringImpl*, const StringImpl*);
+template<typename CharacterType1, typename CharacterType2>
+static inline int codePointCompare(unsigned l1, unsigned l2, const CharacterType1* c1, const CharacterType2* c2)
+{
+    const unsigned lmin = l1 < l2 ? l1 : l2;
+    unsigned pos = 0;
+    while (pos < lmin && *c1 == *c2) {
+        c1++;
+        c2++;
+        pos++;
+    }
+
+    if (pos < lmin)
+        return (c1[0] > c2[0]) ? 1 : -1;
+
+    if (l1 == l2)
+        return 0;
+
+    return (l1 > l2) ? 1 : -1;
+}
+
+static inline int codePointCompare8(const StringImpl* string1, const StringImpl* string2)
+{
+    return codePointCompare(string1->length(), string2->length(), string1->characters8(), string2->characters8());
+}
+
+static inline int codePointCompare16(const StringImpl* string1, const StringImpl* string2)
+{
+    return codePointCompare(string1->length(), string2->length(), string1->characters16(), string2->characters16());
+}
+
+static inline int codePointCompare8To16(const StringImpl* string1, const StringImpl* string2)
+{
+    return codePointCompare(string1->length(), string2->length(), string1->characters8(), string2->characters16());
+}
+
+static inline int codePointCompare(const StringImpl* string1, const StringImpl* string2)
+{
+    if (!string1)
+        return (string2 && string2->length()) ? -1 : 0;
+
+    if (!string2)
+        return string1->length() ? 1 : 0;
+
+    bool string1Is8Bit = string1->is8Bit();
+    bool string2Is8Bit = string2->is8Bit();
+    if (string1Is8Bit) {
+        if (string2Is8Bit)
+            return codePointCompare8(string1, string2);
+        return codePointCompare8To16(string1, string2);
+    }
+    if (string2Is8Bit)
+        return -codePointCompare8To16(string2, string1);
+    return codePointCompare16(string1, string2);
+}
 
 static inline bool isSpaceOrNewline(UChar c)
 {

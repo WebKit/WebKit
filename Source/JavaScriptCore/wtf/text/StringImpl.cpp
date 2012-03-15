@@ -777,29 +777,6 @@ static inline bool equalIgnoringCase(const UChar* a, const UChar* b, int length)
     return umemcasecmp(a, b, length) == 0;
 }
 
-int codePointCompare(const StringImpl* s1, const StringImpl* s2)
-{
-    const unsigned l1 = s1 ? s1->length() : 0;
-    const unsigned l2 = s2 ? s2->length() : 0;
-    const unsigned lmin = l1 < l2 ? l1 : l2;
-    const UChar* c1 = s1 ? s1->characters() : 0;
-    const UChar* c2 = s2 ? s2->characters() : 0;
-    unsigned pos = 0;
-    while (pos < lmin && *c1 == *c2) {
-        c1++;
-        c2++;
-        pos++;
-    }
-
-    if (pos < lmin)
-        return (c1[0] > c2[0]) ? 1 : -1;
-
-    if (l1 == l2)
-        return 0;
-
-    return (l1 > l2) ? 1 : -1;
-}
-
 size_t StringImpl::find(UChar c, unsigned start)
 {
     if (is8Bit())

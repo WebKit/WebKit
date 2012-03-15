@@ -1,3 +1,25 @@
+2012-03-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        Avoid StringImpl::getData16SlowCase() when sorting array
+        https://bugs.webkit.org/show_bug.cgi?id=81070
+
+        Reviewed by Geoffrey Garen.
+
+        The function codePointCompare() is used intensively when sorting strings.
+        This patch improves its performance by:
+        -Avoiding character conversion.
+        -Inlining the function.
+
+        This makes Peacekeeper's arrayCombined test 30% faster.
+
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringImpl.h:
+        (WTF):
+        (WTF::codePointCompare):
+        (WTF::codePointCompare8):
+        (WTF::codePointCompare16):
+        (WTF::codePointCompare8To16):
+
 2012-03-14  Hojong Han  <hojong.han@samsung.com>
 
         Fix memory allocation failed by fastmalloc
