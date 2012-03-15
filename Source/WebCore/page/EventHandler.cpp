@@ -2317,7 +2317,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     // Instead, the handlers should know convert vertical scrolls
     // appropriately.
     PlatformWheelEvent event = e;
-    if (m_baseEventType != PlatformEvent::NoType && shouldTurnVerticalTicksIntoHorizontal(result))
+    if (m_baseEventType == PlatformEvent::NoType && shouldTurnVerticalTicksIntoHorizontal(result))
         event = event.copyTurningVerticalTicksIntoHorizontalTicks();
 
     if (node) {
