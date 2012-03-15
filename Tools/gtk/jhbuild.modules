@@ -113,7 +113,9 @@
     <branch module="/pub/GNOME/sources/gtk+/3.0/gtk+-3.0.12.tar.xz" version="3.0.12"
             repo="ftp.gnome.org"
             hash="sha256:219fdea120897981840e909fac40d4d433fe061a37b12b9402e215c819ebeae9"
-            md5sum="b9869b671b0fe5905dce2fee57c965cf"/>
+            md5sum="b9869b671b0fe5905dce2fee57c965cf">
+      <patch file="gtk+-3.0.12-gtkprinter.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="glib">
