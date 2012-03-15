@@ -3931,3 +3931,7 @@ BUGWK81145 LION : svg/custom/delete-text-crash.html = TEXT
 BUGWK81145 LION : fast/writing-mode/broken-ideograph-small-caps.html = CRASH
 BUGWK81145 LION : fast/writing-mode/broken-ideographic-font.html = CRASH
 BUGWK81145 LION : fast/writing-mode/japanese-rl-text-with-broken-font.html = CRASH
+BUGWK81145 LION : fast/events/platform-wheelevent-paging-x-in-scrolling-page.html = TEXT
+BUGWK81145 LION : fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html = TEXT
+BUGWK81145 LION : fast/events/platform-wheelevent-paging-y-in-scrolling-page.html = TEXT
+BUGWK81145 LION : fast/events/scrollbar-double-click.html = TEXT
