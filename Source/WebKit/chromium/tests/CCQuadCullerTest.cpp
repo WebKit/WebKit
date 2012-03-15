@@ -110,8 +110,7 @@ TEST(CCQuadCullerTest, verifyNoCulling)
     EXPECT_NEAR(overdraw.m_pixelsCulled, 0, 1);
 }
 
-// Fails on Windows https://bugs.webkit.org/show_bug.cgi?id=81083
-TEST(CCQuadCullerTest, FAILS_verifyCullChildLinesUpTopLeft)
+TEST(CCQuadCullerTest, verifyCullChildLinesUpTopLeft)
 {
     DECLARE_AND_INITIALIZE_TEST_QUADS
 

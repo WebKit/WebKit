@@ -64,8 +64,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::enterTargetRenderSurf
     const RenderSurfaceType* oldAncestorThatMovesPixels = !oldTarget ? 0 : oldTarget->nearestAncestorThatMovesPixels();
     const RenderSurfaceType* newAncestorThatMovesPixels = newTarget->nearestAncestorThatMovesPixels();
 
-    m_stack.append(StackObject());
-    m_stack.last().surface = newTarget;
+    m_stack.append(StackObject(newTarget));
 
     // We copy the screen occlusion into the new RenderSurface subtree, but we never copy in the
     // target occlusion, since we are looking at a new RenderSurface target.
@@ -310,6 +309,8 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::unoccludedContentR
         return contentRect;
     if (contentRect.isEmpty())
         return contentRect;
+
+    ASSERT(layer->targetRenderSurface() == m_stack.last().surface);
 
     // We want to return a rect that contains all the visible parts of |contentRect| in both screen space and in the target surface.
     // So we find the visible parts of |contentRect| in each space, and take the intersection.

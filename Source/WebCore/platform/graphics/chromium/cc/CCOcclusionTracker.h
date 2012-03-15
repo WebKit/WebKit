@@ -86,6 +86,8 @@ public:
 
 protected:
     struct StackObject {
+        StackObject() : surface(0) { }
+        StackObject(const RenderSurfaceType* surface) : surface(surface) { }
         const RenderSurfaceType* surface;
         Region occlusionInScreen;
         Region occlusionInTarget;
