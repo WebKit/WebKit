@@ -1,3 +1,16 @@
+2012-03-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WK2] WebPageProxy::activeURL should return unreachableURL() when it's not empty
+        https://bugs.webkit.org/show_bug.cgi?id=75465
+
+        Reviewed by Philippe Normand.
+
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::replaceContent): Return the main frame
+        unreachableURL if it's not empty.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::activeURL):
+
 2012-03-14  Anders Carlsson  <andersca@apple.com>
 
         java/java-and-plugins.html test failing

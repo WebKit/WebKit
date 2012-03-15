@@ -645,7 +645,8 @@ String WebPageProxy::activeURL() const
     if (!m_pendingAPIRequestURL.isNull())
         return m_pendingAPIRequestURL;
 
-    // FIXME: What do we do in the case of the unreachable URL?
+    if (!m_mainFrame->unreachableURL().isEmpty())
+        return m_mainFrame->unreachableURL();
 
     switch (m_mainFrame->loadState()) {
     case WebFrameProxy::LoadStateProvisional:

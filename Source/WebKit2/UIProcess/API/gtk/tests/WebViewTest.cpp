@@ -74,15 +74,7 @@ void WebViewTest::loadRequest(WebKitURIRequest* request)
 
 void WebViewTest::replaceContent(const char* html, const char* contentURI, const char* baseURI)
 {
-    // FIXME: The active uri should be the contentURI,
-    // but WebPageProxy doesn't return the unreachableURL
-    // when the page has been loaded with AlternateHTML()
-    // See https://bugs.webkit.org/show_bug.cgi?id=75465.
-#if 0
     m_activeURI = contentURI;
-#else
-    m_activeURI = "about:blank";
-#endif
     webkit_web_view_replace_content(m_webView, html, contentURI, baseURI);
 }
 
