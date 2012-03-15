@@ -39,6 +39,7 @@ public:
     bool concatenate(AffineTransform& result) const;
  
     String valueAsString() const;
+    void parse(const String&);
 };
 
 template<>

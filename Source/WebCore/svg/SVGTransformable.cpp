@@ -170,10 +170,12 @@ static inline bool parseAndSkipType(const UChar*& currTransform, const UChar* en
     return true;
 }
 
-bool SVGTransformable::parseTransformAttribute(SVGTransformList& list, const AtomicString& transform)
+SVGTransform::SVGTransformType SVGTransformable::parseTransformType(const String& typeString)
 {
-    const UChar* start = transform.characters();
-    return parseTransformAttribute(list, start, start + transform.length());
+    unsigned short type = SVGTransform::SVG_TRANSFORM_UNKNOWN;
+    const UChar* characters = typeString.characters();
+    parseAndSkipType(characters, characters + typeString.length(), type);
+    return static_cast<SVGTransform::SVGTransformType>(type);
 }
 
 bool SVGTransformable::parseTransformAttribute(SVGTransformList& list, const UChar*& currTransform, const UChar* end, TransformParsingMode mode)

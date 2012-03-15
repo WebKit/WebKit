@@ -107,8 +107,7 @@ void SVGStyledTransformableElement::parseAttribute(Attribute* attr)
 
     if (attr->name() == SVGNames::transformAttr) {
         SVGTransformList newList;
-        if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))
-            newList.clear();
+        newList.parse(attr->value());
         detachAnimatedTransformListWrappers(newList.size());
         setTransformBaseValue(newList);
         return;

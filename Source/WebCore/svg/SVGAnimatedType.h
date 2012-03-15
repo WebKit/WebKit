@@ -35,6 +35,7 @@ class SVGNumberList;
 class SVGPathByteStream;
 class SVGPointList;
 class SVGPreserveAspectRatio;
+class SVGTransformList;
 
 class SVGAnimatedType {
     WTF_MAKE_FAST_ALLOCATED;
@@ -55,6 +56,7 @@ public:
     static PassOwnPtr<SVGAnimatedType> createPreserveAspectRatio(SVGPreserveAspectRatio*);
     static PassOwnPtr<SVGAnimatedType> createRect(FloatRect*);
     static PassOwnPtr<SVGAnimatedType> createString(String*);
+    static PassOwnPtr<SVGAnimatedType> createTransformList(SVGTransformList*);
     static bool supportsAnimVal(AnimatedPropertyType);
 
     AnimatedPropertyType type() const { return m_type; }
@@ -73,6 +75,7 @@ public:
     SVGPreserveAspectRatio& preserveAspectRatio();
     FloatRect& rect();
     String& string();
+    SVGTransformList& transformList();
 
     // Use with care, the actual type of the generic animated object has to be equal to our type().
     void setVariantValue(SVGGenericAnimatedType*);
@@ -109,6 +112,7 @@ private:
         SVGPointList* pointList;
         FloatRect* rect;
         String* string;
+        SVGTransformList* transformList;
         SVGGenericAnimatedType* variant;
     } m_data;
 };

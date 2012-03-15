@@ -41,28 +41,44 @@ rootSVGElement.appendChild(rect);
 // Setup animation test
 function sample1() {
     // Check initial/end conditions
-    shouldBeCloseEnough("pattern.patternTransform.animVal.getItem(0).matrix.a", "1");
-    shouldBeCloseEnough("pattern.patternTransform.baseVal.getItem(0).matrix.a", "1");
+    shouldBe("pattern.patternTransform.animVal.numberOfItems", "0");
+    shouldBe("pattern.patternTransform.baseVal.numberOfItems", "0");
 }
 
 function sample2() {
-    // Check half-time conditions
-    shouldBeCloseEnough("pattern.patternTransform.animVal.getItem(0).matrix.a", "1.5");
-    shouldBeCloseEnough("pattern.patternTransform.baseVal.getItem(0).matrix.a", "1.5");
+    shouldBe("pattern.patternTransform.animVal.numberOfItems", "1");
+    shouldBe("pattern.patternTransform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_SCALE");
+    shouldBeCloseEnough("pattern.patternTransform.animVal.getItem(0).matrix.a", "1");
+
+    shouldBe("pattern.patternTransform.baseVal.numberOfItems", "0");
 }
 
 function sample3() {
+    // Check half-time conditions
+    shouldBe("pattern.patternTransform.animVal.numberOfItems", "1");
+    shouldBe("pattern.patternTransform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_SCALE");
+    shouldBeCloseEnough("pattern.patternTransform.animVal.getItem(0).matrix.a", "1.5");
+
+    shouldBe("pattern.patternTransform.baseVal.numberOfItems", "0");
+}
+
+function sample4() {
+    // Check half-time conditions
+    shouldBe("pattern.patternTransform.animVal.numberOfItems", "1");
+    shouldBe("pattern.patternTransform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_SCALE");
     shouldBeCloseEnough("pattern.patternTransform.animVal.getItem(0).matrix.a", "2");
-    shouldBeCloseEnough("pattern.patternTransform.baseVal.getItem(0).matrix.a", "2");
+
+    shouldBe("pattern.patternTransform.baseVal.numberOfItems", "0");
 }
 
 function executeTest() {
     const expectedValues = [
         // [animationId, time, sampleCallback]
         ["animation", 0.0,   sample1],
-        ["animation", 2.0,   sample2],
-        ["animation", 3.999, sample3],
-        ["animation", 4.001, sample1]
+        ["animation", 0.001, sample2],
+        ["animation", 2.0,   sample3],
+        ["animation", 3.999, sample4],
+        ["animation", 4.0,   sample1]
     ];
 
     runAnimationTest(expectedValues);

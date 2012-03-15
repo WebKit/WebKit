@@ -4100,6 +4100,7 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAnimatedRect.h \
 	Source/WebCore/svg/SVGAnimatedString.cpp \
 	Source/WebCore/svg/SVGAnimatedString.h \
+	Source/WebCore/svg/SVGAnimatedTransformList.cpp \
 	Source/WebCore/svg/SVGAnimatedTransformList.h \
 	Source/WebCore/svg/SVGAnimatedType.cpp \
 	Source/WebCore/svg/SVGAnimatedType.h \

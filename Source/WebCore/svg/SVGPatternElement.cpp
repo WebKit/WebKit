@@ -127,9 +127,7 @@ void SVGPatternElement::parseAttribute(Attribute* attr)
         return;
     } else if (attr->name() == SVGNames::patternTransformAttr) {
         SVGTransformList newList;
-        if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))
-            newList.clear();
-
+        newList.parse(attr->value());
         detachAnimatedPatternTransformListWrappers(newList.size());
         setPatternTransformBaseValue(newList);
         return;

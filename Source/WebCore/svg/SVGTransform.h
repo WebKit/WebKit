@@ -68,6 +68,8 @@ public:
     bool isValid() const { return m_type != SVG_TRANSFORM_UNKNOWN; }
     String valueAsString() const;
 
+    static const String& transformTypePrefixForParsing(SVGTransformType);
+
 private:
     friend bool operator==(const SVGTransform& a, const SVGTransform& b);
 

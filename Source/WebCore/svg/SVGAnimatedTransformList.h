@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedTransformListPropertyTearOff.h"
+#include "SVGAnimatedTypeAnimator.h"
 
 namespace WebCore {
 
@@ -33,6 +34,28 @@ DECLARE_ANIMATED_LIST_PROPERTY(SVGAnimatedTransformList, SVGTransformList, Upper
 
 #define DEFINE_ANIMATED_TRANSFORM_LIST(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(AnimatedTransformList, OwnerType, DOMAttribute, DOMAttribute.localName(), UpperProperty, LowerProperty)
+
+class SVGAnimationElement;
+class SVGAnimateTransformElement;
+class SVGGenericAnimatedType;
+
+class SVGAnimatedTransformListAnimator : public SVGAnimatedTypeAnimator {
+public:
+    SVGAnimatedTransformListAnimator(SVGAnimationElement*, SVGElement*);
+    virtual ~SVGAnimatedTransformListAnimator() { }
+
+    virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
+    virtual PassOwnPtr<SVGAnimatedType> constructFromCopy(SVGGenericAnimatedType*);
+
+    virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
+    virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
+                                        OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue);
+    virtual float calculateDistance(const String& fromString, const String& toString);
+
+private:
+    PassOwnPtr<SVGAnimatedType> constructFromString(SVGAnimateTransformElement*, const String&);
+};
 
 } // namespace WebCore
 

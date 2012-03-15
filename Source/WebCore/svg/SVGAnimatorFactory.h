@@ -35,6 +35,7 @@
 #include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGAnimatedRect.h"
 #include "SVGAnimatedString.h"
+#include "SVGAnimatedTransformList.h"
 
 namespace WebCore {
 
@@ -76,8 +77,9 @@ public:
             return adoptPtr(new SVGAnimatedRectAnimator(animationElement, contextElement));
         case AnimatedString:
             return adoptPtr(new SVGAnimatedStringAnimator(animationElement, contextElement));
+        case AnimatedTransformList:
+            return adoptPtr(new SVGAnimatedTransformListAnimator(animationElement, contextElement));
         case AnimatedEnumeration: // FIXME: Implementation needed.
-        case AnimatedTransformList: // FIXME: Implementation needed.
         case AnimatedUnknown:
             break;
         }

@@ -22,44 +22,30 @@
 
 #ifndef SVGAnimateTransformElement_h
 #define SVGAnimateTransformElement_h
-#if ENABLE(SVG)
 
-#include "SVGAnimationElement.h"
+#if ENABLE(SVG)
+#include "SVGAnimateElement.h"
 #include "SVGTransform.h"
-#include "SVGTransformDistance.h"
 
 namespace WebCore {
 
 class AffineTransform;
 
-class SVGAnimateTransformElement : public SVGAnimationElement {
+class SVGAnimateTransformElement : public SVGAnimateElement {
 public:
     static PassRefPtr<SVGAnimateTransformElement> create(const QualifiedName&, Document*);
+
+    SVGTransform::SVGTransformType transformType() const { return m_type; }
 
 private:
     SVGAnimateTransformElement(const QualifiedName&, Document*);
     
     virtual bool hasValidAttributeType();
-    AnimatedPropertyType determineAnimatedPropertyType(SVGElement*) const;
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(Attribute*) OVERRIDE;
 
-    virtual void resetToBaseValue(const String&);
-    virtual bool calculateFromAndToValues(const String& fromString, const String& toString);
-    virtual bool calculateFromAndByValues(const String& fromString, const String& byString);
-    virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement);
-    virtual void applyResultsToTarget();
-    virtual float calculateDistance(const String& fromString, const String& toString);
-
-    SVGTransform parseTransformValue(const String&) const;
-    
     SVGTransform::SVGTransformType m_type;
-    
-    unsigned m_baseIndexInTransformList;
-
-    SVGTransform m_toTransform;
-    SVGTransform m_fromTransform;
 };
 
 } // namespace WebCore

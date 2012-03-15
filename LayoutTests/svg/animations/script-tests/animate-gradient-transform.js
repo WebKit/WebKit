@@ -44,20 +44,36 @@ rootSVGElement.appendChild(rect);
 // Setup animation test
 function sample1() {
     // Check initial conditions
-    shouldBeCloseEnough("gradient.gradientTransform.baseVal.consolidate().matrix.e", "0");
-    shouldThrow("gradient.gradientTransform.animVal.consolidate().matrix.e");
+    shouldThrow("gradient.gradientTransform.animVal.consolidate()");
+    shouldBe("gradient.gradientTransform.animVal.numberOfItems", "1");
+    shouldBeCloseEnough("gradient.gradientTransform.animVal.getItem(0).matrix.e", "0");
+    shouldBe("gradient.gradientTransform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_TRANSLATE");
+
+    shouldBe("gradient.gradientTransform.baseVal.numberOfItems", "1");
+    shouldBe("gradient.gradientTransform.baseVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_TRANSLATE");
+    shouldBe("gradient.gradientTransform.baseVal.getItem(0).matrix.e", "0");
 }
 
 function sample2() {
     // Check half-time conditions
-    shouldBeCloseEnough("gradient.gradientTransform.baseVal.consolidate().matrix.e", "100");
-    shouldThrow("gradient.gradientTransform.animVal.consolidate().matrix.e");
+    shouldBe("gradient.gradientTransform.animVal.numberOfItems", "1");
+    shouldBe("gradient.gradientTransform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_TRANSLATE");
+    shouldBeCloseEnough("gradient.gradientTransform.animVal.getItem(0).matrix.e", "100");
+
+    shouldBe("gradient.gradientTransform.baseVal.numberOfItems", "1");
+    shouldBe("gradient.gradientTransform.baseVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_TRANSLATE");
+    shouldBe("gradient.gradientTransform.baseVal.getItem(0).matrix.e", "0");
 }
 
 function sample3() {
     // Check end conditions
-    shouldBeCloseEnough("gradient.gradientTransform.baseVal.consolidate().matrix.e", "200");
-    shouldThrow("gradient.gradientTransform.animVal.consolidate().matrix.e");
+    shouldBe("gradient.gradientTransform.animVal.numberOfItems", "1");
+    shouldBe("gradient.gradientTransform.animVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_TRANSLATE");
+    shouldBeCloseEnough("gradient.gradientTransform.animVal.getItem(0).matrix.e", "200");
+
+    shouldBe("gradient.gradientTransform.baseVal.numberOfItems", "1");
+    shouldBe("gradient.gradientTransform.baseVal.getItem(0).type", "SVGTransform.SVG_TRANSFORM_TRANSLATE");
+    shouldBe("gradient.gradientTransform.baseVal.getItem(0).matrix.e", "0");
 }
 
 function executeTest() {  
@@ -65,7 +81,8 @@ function executeTest() {
         // [animationId, time, sampleCallback]
         ["animation", 0.0, sample1],
         ["animation", 2.0, sample2],
-        ["animation", 4.0, sample3]
+        ["animation", 3.999, sample3],
+        ["animation", 4.001, sample3]
     ];
 
     runAnimationTest(expectedValues);

@@ -26,6 +26,7 @@
 #include "AffineTransform.h"
 #include "SVGSVGElement.h"
 #include "SVGTransform.h"
+#include "SVGTransformable.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -71,6 +72,13 @@ String SVGTransformList::valueAsString() const
     }
 
     return builder.toString();
+}
+
+void SVGTransformList::parse(const String& transform)
+{
+    const UChar* start = transform.characters();
+    if (!SVGTransformable::parseTransformAttribute(*this, start, start + transform.length()))
+        clear();
 }
 
 } // namespace WebCore

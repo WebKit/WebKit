@@ -43,7 +43,7 @@ SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* doc
     , m_toPropertyValueType(RegularPropertyValue)
     , m_animatedProperty(0)
 {
-    ASSERT(hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::setTag) || hasTagName(SVGNames::animateColorTag));
+    ASSERT(hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::setTag) || hasTagName(SVGNames::animateColorTag) || hasTagName(SVGNames::animateTransformTag));
 }
 
 PassRefPtr<SVGAnimateElement> SVGAnimateElement::create(const QualifiedName& tagName, Document* document)
@@ -130,7 +130,7 @@ AnimatedPropertyType SVGAnimateElement::determineAnimatedPropertyType(SVGElement
 
     // Animations of transform lists are not allowed for <animate> or <set>
     // http://www.w3.org/TR/SVG/animate.html#AnimationAttributesAndProperties
-    if (type == AnimatedTransformList)
+    if (type == AnimatedTransformList && !hasTagName(SVGNames::animateTransformTag))
         return AnimatedUnknown;
 
     return type;
@@ -166,7 +166,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
 
     ASSERT(percentage >= 0 && percentage <= 1);
     ASSERT(m_animatedPropertyType != AnimatedEnumeration);
-    ASSERT(m_animatedPropertyType != AnimatedTransformList);
+    ASSERT(m_animatedPropertyType != AnimatedTransformList || hasTagName(SVGNames::animateTransformTag));
     ASSERT(m_animatedPropertyType != AnimatedUnknown);
     ASSERT(m_animator);
     ASSERT(m_animator->type() == m_animatedPropertyType);
@@ -176,6 +176,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
 
     ASSERT(resultElement->hasTagName(SVGNames::animateTag)
         || resultElement->hasTagName(SVGNames::animateColorTag)
+        || resultElement->hasTagName(SVGNames::animateTransformTag)
         || resultElement->hasTagName(SVGNames::setTag));
 
     SVGAnimateElement* resultAnimationElement = static_cast<SVGAnimateElement*>(resultElement);
@@ -250,7 +251,7 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
 void SVGAnimateElement::applyResultsToTarget()
 {
     ASSERT(m_animatedPropertyType != AnimatedEnumeration);
-    ASSERT(m_animatedPropertyType != AnimatedTransformList);
+    ASSERT(m_animatedPropertyType != AnimatedTransformList || hasTagName(SVGNames::animateTransformTag));
     ASSERT(m_animatedPropertyType != AnimatedUnknown);
     ASSERT(m_animatedType);
     setTargetAttributeAnimatedValue(m_animatedType.get());

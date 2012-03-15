@@ -5813,6 +5813,7 @@
             'svg/SVGAnimatedPreserveAspectRatio.cpp',
             'svg/SVGAnimatedRect.cpp',
             'svg/SVGAnimatedString.cpp',
+            'svg/SVGAnimatedTransformList.cpp',
             'svg/SVGAnimatedType.cpp',
             'svg/SVGAnimateElement.cpp',
             'svg/SVGAnimateElement.h',

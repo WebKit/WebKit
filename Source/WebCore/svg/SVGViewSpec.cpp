@@ -48,7 +48,7 @@ SVGViewSpec::SVGViewSpec(SVGElement* contextElement)
 
 void SVGViewSpec::setTransform(const String& transform)
 {
-    SVGTransformable::parseTransformAttribute(m_transform, transform);
+    m_transform.parse(transform);
 }
 
 void SVGViewSpec::setViewBoxString(const String& viewBoxStr)

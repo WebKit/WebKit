@@ -3501,6 +3501,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGAnimatedPreserveAspectRatio.cpp \
               svg/SVGAnimatedRect.cpp \
               svg/SVGAnimatedString.cpp \
+              svg/SVGAnimatedTransformList.cpp \
               svg/SVGAnimatedType.cpp \
               svg/SVGAnimateElement.cpp \
               svg/SVGAnimateMotionElement.cpp \

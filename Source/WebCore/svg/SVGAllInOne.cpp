@@ -46,6 +46,7 @@
 #include "SVGAnimatedPreserveAspectRatio.cpp"
 #include "SVGAnimatedRect.cpp"
 #include "SVGAnimatedString.cpp"
+#include "SVGAnimatedTransformList.cpp"
 #include "SVGAnimatedType.cpp"
 #include "SVGAnimateElement.cpp"
 #include "SVGAnimateMotionElement.cpp"

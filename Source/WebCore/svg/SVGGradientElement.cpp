@@ -91,9 +91,7 @@ void SVGGradientElement::parseAttribute(Attribute* attr)
 
     if (attr->name() == SVGNames::gradientTransformAttr) {
         SVGTransformList newList;
-        if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))
-            newList.clear();
-
+        newList.parse(attr->value());
         detachAnimatedGradientTransformListWrappers(newList.size());
         setGradientTransformBaseValue(newList);
         return;
