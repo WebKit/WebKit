@@ -116,7 +116,10 @@ void WebNotification::detachPresenter()
 
 void WebNotification::dispatchDisplayEvent()
 {
+#if ENABLE(LEGACY_NOTIFICATIONS)
     dispatchEvent("display");
+#endif
+    dispatchEvent("show");
 }
 
 void WebNotification::dispatchErrorEvent(const WebKit::WebString& /* errorMessage */)

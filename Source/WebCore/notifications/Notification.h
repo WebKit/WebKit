@@ -89,9 +89,9 @@ public:
     TextDirection direction() const { return dir() == "rtl" ? RTL : LTR; }
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(show);
-    // FIXME: The latest Web Notifications standard uses the onshow event listener.
-    // The ondisplay event listener should be removed when implementations change the event listener to onshow.
+#if ENABLE(LEGACY_NOTIFICATIONS)
     DEFINE_ATTRIBUTE_EVENT_LISTENER(display);
+#endif
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(close);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(click);
