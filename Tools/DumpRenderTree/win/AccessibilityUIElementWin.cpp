@@ -574,6 +574,11 @@ AccessibilityUIElement AccessibilityUIElement::selectedRowAtIndex(unsigned index
     return 0;
 }
 
+AccessibilityUIElement AccessibilityUIElement::rowAtIndex(unsigned index)
+{
+    return 0;
+}
+
 AccessibilityUIElement AccessibilityUIElement::disclosedByRow()
 {
     return 0;

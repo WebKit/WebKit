@@ -33,6 +33,7 @@
 #include "AccessibilityImageMapLink.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilitySpinButton.h"
+#include "AccessibilityTable.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -3636,7 +3637,10 @@ void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& re
 {
     // Get all the rows. 
     AccessibilityChildrenVector allRows;
-    ariaTreeRows(allRows);
+    if (isTree())
+        ariaTreeRows(allRows);
+    else if (isAccessibilityTable() && toAccessibilityTable(this)->supportsSelectedRows())
+        allRows = toAccessibilityTable(this)->rows();
 
     // Determine which rows are selected.
     bool isMulti = isMultiSelectable();

@@ -74,6 +74,12 @@ bool AccessibilityTableRow::isTableRow() const
     return true;
 }
     
+AccessibilityObject* AccessibilityTableRow::observableObject() const
+{
+    // This allows the table to be the one who sends notifications about tables.
+    return parentTable();
+}
+    
 bool AccessibilityTableRow::accessibilityIsIgnored() const
 {    
     AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();

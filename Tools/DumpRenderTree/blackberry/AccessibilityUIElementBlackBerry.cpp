@@ -423,6 +423,12 @@ AccessibilityUIElement AccessibilityUIElement::selectedRowAtIndex(unsigned)
     return 0;
 }
 
+AccessibilityUIElement AccessibilityUIElement::rowAtIndex(unsigned)
+{
+    notImplemented();
+    return 0;
+}
+
 AccessibilityUIElement AccessibilityUIElement::disclosedByRow()
 {
     notImplemented();

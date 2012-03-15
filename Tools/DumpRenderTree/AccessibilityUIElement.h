@@ -177,6 +177,7 @@ public:
     AccessibilityUIElement selectedRowAtIndex(unsigned);
     AccessibilityUIElement disclosedByRow();
     AccessibilityUIElement disclosedRowAtIndex(unsigned);
+    AccessibilityUIElement rowAtIndex(unsigned);
 
     // ARIA specific
     AccessibilityUIElement ariaOwnsElementAtIndex(unsigned);

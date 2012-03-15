@@ -349,6 +349,17 @@ AccessibilityUIElement AccessibilityUIElement::selectedRowAtIndex(unsigned index
     return 0;
 }
 
+AccessibilityUIElement AccessibilityUIElement::rowAtIndex(unsigned index)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray* rows = [m_element accessibilityAttributeValue:NSAccessibilityRowsAttribute];
+    if (index < [rows count])
+        return [rows objectAtIndex:index];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
 AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 {
     BEGIN_AX_OBJC_EXCEPTIONS

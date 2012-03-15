@@ -54,7 +54,8 @@ public:
 private:
     // ARIA treegrids and grids support selected rows.
     virtual bool supportsSelectedRows() { return true; }    
-
+    virtual bool isMultiSelectable() const { return true; }
+    
     bool addChild(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
 };
 

@@ -58,6 +58,8 @@ public:
     
 private:
     int m_rowIndex;
+    
+    virtual AccessibilityObject* observableObject() const;
 }; 
    
 } // namespace WebCore 
