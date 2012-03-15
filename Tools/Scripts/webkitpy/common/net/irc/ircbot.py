@@ -73,8 +73,25 @@ class IRCBot(ircbot.SingleServerIRCBot, MessagePumpDelegate):
 
     def on_pubmsg(self, connection, event):
         nick = irclib.nm_to_n(event.source())
-        request = event.arguments()[0].split(":", 1)
-        if len(request) > 1 and irclib.irc_lower(request[0]) == irclib.irc_lower(self.connection.get_nickname()):
+        request = event.arguments()[0]
+
+        if not irclib.irc_lower(request).startswith(irclib.irc_lower(connection.get_nickname())):
+            return
+
+        if len(request) <= len(connection.get_nickname()):
+            return
+
+        # Some IRC clients, like xchat-gnome, default to using a comma
+        # when addressing someone.
+        vocative_separator = request[len(connection.get_nickname())]
+        if vocative_separator == ':':
+            request = request.split(':', 1)
+        elif vocative_separator == ',':
+            request = request.split(',', 1)
+        else:
+            return
+
+        if len(request) > 1:
             response = self._delegate.irc_message_received(nick, request[1])
             if response:
                 connection.privmsg(self._channel, response)

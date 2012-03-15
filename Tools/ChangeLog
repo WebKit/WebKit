@@ -1,3 +1,13 @@
+2012-03-14  Gustavo Noronha Silva  <gns@gnome.org>
+
+        sheriffbot should also be addressable with a comma in addition to colon
+        https://bugs.webkit.org/show_bug.cgi?id=81101
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/net/irc/ircbot.py:
+        (IRCBot.on_pubmsg):
+
 2012-03-15  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] MiniBrowser scroll indicators should not scroll out of view
