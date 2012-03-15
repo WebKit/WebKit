@@ -112,7 +112,7 @@ WebDOM##type WebDOMEventTarget::to##type() \
 ConvertTo(Node)
 ConvertTo(DOMWindow)
 
-#if ENABLE(WORKERS)
+#if ENABLE(WORKERS) && 0
 ConvertTo(Worker)
 ConvertTo(DedicatedWorkerContext)
 #endif
@@ -150,7 +150,7 @@ WebDOMEventTarget toWebKit(WebCore::EventTarget* value)
         return toWebKit(instance);
 #endif
 
-#if ENABLE(WORKERS)
+#if ENABLE(WORKERS) && 0
     if (WebCore::Worker* worker = value->toWorker())
         return toWebKit(worker);
 
