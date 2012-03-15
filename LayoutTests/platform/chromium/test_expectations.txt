@@ -2659,6 +2659,10 @@ BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
 
 BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = PASS TEXT IMAGE IMAGE+TEXT
 
+BUGWK81240 MAC : svg/text/bidi-reorder-value-lists.svg = PASS IMAGE+TEXT
+
+BUGWK81243 : svg/repaint/repainting-after-animation-element-removal.svg = PASS IMAGE
+
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 LINUX WIN : fast/writing-mode/text-orientation-basic.html = IMAGE+TEXT
 BUGCR75561 LEOPARD : fast/writing-mode/text-orientation-basic.html = IMAGE IMAGE+TEXT
@@ -3437,7 +3441,7 @@ BUGWK73494 : svg/as-image/svg-non-integer-scaled-image.html = IMAGE PASS
 BUGWK73872 LINUX : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
 
 BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-permanently.html = TIMEOUT
-BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT PASS
+BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT IMAGE TEXT PASS
 
 BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
 
