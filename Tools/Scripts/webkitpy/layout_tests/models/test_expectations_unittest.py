@@ -378,53 +378,6 @@ BUGX : failures/expected/text.html = TEXT
                                      "BUG_TEST XP : passes/text.html = TEXT\n")
 
 
-class RemoveConfigurationsTest(Base):
-    def test_remove(self):
-        host = MockHost()
-        test_port = host.port_factory.get('test-win-xp', None)
-        test_port.test_exists = lambda test: True
-        test_port.test_isfile = lambda test: True
-
-        test_config = test_port.test_configuration()
-        expectations = TestExpectations(test_port,
-             tests=self.get_basic_tests(),
-             expectations="""BUGX LINUX WIN RELEASE : failures/expected/foo.html = TEXT
-BUGY WIN DEBUG : failures/expected/foo.html = CRASH
-""",
-             test_config=test_config,
-             is_lint_mode=False,
-             overrides=None)
-
-        actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', test_config)
-
-        self.assertEqual("""BUGX LINUX VISTA WIN7 RELEASE : failures/expected/foo.html = TEXT
-BUGY WIN DEBUG : failures/expected/foo.html = CRASH
-""", actual_expectations)
-
-    def test_remove_line(self):
-        host = MockHost()
-        test_port = host.port_factory.get('test-win-xp', None)
-        test_port.test_exists = lambda test: True
-        test_port.test_isfile = lambda test: True
-
-        test_config = test_port.test_configuration()
-        expectations = TestExpectations(test_port,
-             tests=None,
-             expectations="""BUGX WIN RELEASE : failures/expected/foo.html = TEXT
-BUGY WIN DEBUG : failures/expected/foo.html = CRASH
-""",
-             test_config=test_config,
-             is_lint_mode=False,
-             overrides=None)
-
-        actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', test_config)
-        actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', host.port_factory.get('test-win-vista', None).test_configuration())
-        actual_expectations = expectations.remove_configuration_from_test('failures/expected/foo.html', host.port_factory.get('test-win-win7', None).test_configuration())
-
-        self.assertEqual("""BUGY WIN DEBUG : failures/expected/foo.html = CRASH
-""", actual_expectations)
-
-
 class RebaseliningTest(Base):
     """Test rebaselining-specific functionality."""
     def assertRemove(self, input_expectations, tests, expected_expectations):

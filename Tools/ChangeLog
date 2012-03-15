@@ -1,3 +1,23 @@
+2012-03-14  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed, rolling out r110783.
+        http://trac.webkit.org/changeset/110783
+        https://bugs.webkit.org/show_bug.cgi?id=81054
+
+        Caused existing test expectation lines to expand to one for
+        each test configuration.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.has_warnings):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (test_macro_overrides):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._save_baseline):
+        (RebaselineTest._rebaseline_test):
+        (RebaselineTest.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_tests_to_update):
+
 2012-03-13  Jon Lee  <jonlee@apple.com>
 
         Separate NOTIFICATIONS and LEGACY_NOTIFICATIONS
