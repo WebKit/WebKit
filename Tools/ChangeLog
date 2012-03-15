@@ -1,5 +1,29 @@
 2012-03-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Actually use --release and --debug command line options in run-gtk-test
+        https://bugs.webkit.org/show_bug.cgi?id=81234
+
+        Reviewed by Philippe Normand.
+
+        Actually handle --release and --debug command line options to
+        create the build directory, falling back to current hack to detect
+        whether it's a Release or Debug build when both options are missed.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner.__init__): Receive options too.
+        (TestRunner._get_top_level_directory): Helper function to get the
+        top level directory.
+        (TestRunner._get_build_directory): Helper function to get the
+        build directory depending on --release/--debug command line
+        options or gessing it if both options are missing.
+        (TestRunner._ensure_accessibility_daemon_is_running): Use
+        self-options now.
+        (TestRunner.run): Ditto.
+        (TestRunner.run.run_tests): Pass options to the constructor
+        instead of run().
+
+2012-03-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Run unit tests with --verbose in the bots
         https://bugs.webkit.org/show_bug.cgi?id=81230
 
