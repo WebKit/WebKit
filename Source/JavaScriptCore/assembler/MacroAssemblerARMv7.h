@@ -907,7 +907,7 @@ public:
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
     {
-        m_assembler.vmov(fpTempRegisterAsSingle(), src);
+        m_assembler.vmov(fpTempRegister, src, src);
         m_assembler.vcvt_signedToFloatingPoint(dest, fpTempRegisterAsSingle());
     }
 
@@ -915,7 +915,7 @@ public:
     {
         // Fixme: load directly into the fpr!
         load32(address, dataTempRegister);
-        m_assembler.vmov(fpTempRegisterAsSingle(), dataTempRegister);
+        m_assembler.vmov(fpTempRegister, dataTempRegister, dataTempRegister);
         m_assembler.vcvt_signedToFloatingPoint(dest, fpTempRegisterAsSingle());
     }
 
@@ -923,7 +923,7 @@ public:
     {
         // Fixme: load directly into the fpr!
         load32(address.m_ptr, dataTempRegister);
-        m_assembler.vmov(fpTempRegisterAsSingle(), dataTempRegister);
+        m_assembler.vmov(fpTempRegister, dataTempRegister, dataTempRegister);
         m_assembler.vcvt_signedToFloatingPoint(dest, fpTempRegisterAsSingle());
     }
     

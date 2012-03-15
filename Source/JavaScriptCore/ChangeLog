@@ -1,3 +1,16 @@
+2012-03-15  Gavin Barraclough  <barraclough@apple.com>
+
+        ARMv7: prefer vmov(gpr,gpr->double) over vmov(gpr->single)
+        https://bugs.webkit.org/show_bug.cgi?id=81256
+
+        Reviewed by Oliver Hunt.
+
+        This is a 0.5% sunspider progression.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::convertInt32ToDouble):
+            - switch which form of vmov we use.
+
 2012-03-15  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [EFL] Add OwnPtr specialization for Ecore_Timer.
