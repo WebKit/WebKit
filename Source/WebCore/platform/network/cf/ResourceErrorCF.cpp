@@ -148,7 +148,7 @@ CFErrorRef ResourceError::cfError() const
         if (!m_failingURL.isEmpty()) {
             RetainPtr<CFStringRef> failingURLString(AdoptCF, m_failingURL.createCFString());
             CFDictionarySetValue(userInfo.get(), failingURLStringKey, failingURLString.get());
-            RetainPtr<CFURLRef> url(AdoptCF, KURL(ParsedURLString, m_failingURL).createCFURL());
+            RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithString(0, failingURLString.get(), 0));
             CFDictionarySetValue(userInfo.get(), failingURLKey, url.get());
         }
 
