@@ -380,7 +380,13 @@ void InspectorTimelineAgent::didFireAnimationFrame()
     didCompleteCurrentRecord(TimelineRecordType::FireAnimationFrame);
 }
 
-void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, const String& type)
+void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> record, const String& type)
+{
+    commitCancelableRecords();
+    innerAddRecordToTimeline(record, type);
+}
+
+void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, const String& type)
 {
     RefPtr<InspectorObject> record(prpRecord);
     record->setString("type", type);
@@ -439,7 +445,6 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
 void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack)
 {
     pushGCEventRecords();
-    commitCancelableRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     record->setObject("data", data);
     record->setString("type", type);
@@ -462,13 +467,19 @@ void InspectorTimelineAgent::pushCancelableRecord(PassRefPtr<InspectorObject> da
 
 void InspectorTimelineAgent::commitCancelableRecords()
 {
+    Vector<TimelineRecordEntry> cancelableRecords;
     while (!m_recordStack.isEmpty()) {
         TimelineRecordEntry entry = m_recordStack.last();
         if (!m_recordStack.last().cancelable)
             break;
         m_recordStack.removeLast();
+        cancelableRecords.append(entry);
+    }
+    while (!cancelableRecords.isEmpty()) {
+        TimelineRecordEntry entry = cancelableRecords.last();
+        cancelableRecords.removeLast();
         entry.record->setObject("data", entry.data);
-        addRecordToTimeline(entry.record, entry.type);
+        innerAddRecordToTimeline(entry.record.release(), entry.type);
     }
 }
 
