@@ -21,24 +21,45 @@ text.appendChild(animate);
 
 // Setup animation test
 function sample1() {
-	shouldBeCloseEnough("text.x.animVal.getItem(0).value", "50");
-	shouldBeCloseEnough("text.x.animVal.getItem(1).value", "70");
-	shouldBeCloseEnough("text.x.animVal.getItem(2).value", "90");
-	shouldBeCloseEnough("text.x.animVal.getItem(3).value", "110");
+    shouldBe("text.x.animVal.numberOfItems", "4");
+    shouldBeCloseEnough("text.x.animVal.getItem(0).value", "50");
+    shouldBeCloseEnough("text.x.animVal.getItem(1).value", "70");
+    shouldBeCloseEnough("text.x.animVal.getItem(2).value", "90");
+    shouldBeCloseEnough("text.x.animVal.getItem(3).value", "110");
+
+    shouldBe("text.x.baseVal.numberOfItems", "4");
+    shouldBe("text.x.baseVal.getItem(0).value", "50");
+    shouldBe("text.x.baseVal.getItem(1).value", "70");
+    shouldBe("text.x.baseVal.getItem(2).value", "90");
+    shouldBe("text.x.baseVal.getItem(3).value", "110");
 }
 
 function sample2() {
-	shouldBeCloseEnough("text.x.animVal.getItem(0).value", "81.7");
-	shouldBeCloseEnough("text.x.animVal.getItem(1).value", "75");
-	shouldBeCloseEnough("text.x.animVal.getItem(2).value", "144.5");
-	shouldBeCloseEnough("text.x.animVal.getItem(3).value", "197.3");
+    shouldBe("text.x.animVal.numberOfItems", "4");
+    shouldBeCloseEnough("text.x.animVal.getItem(0).value", "81.7");
+    shouldBeCloseEnough("text.x.animVal.getItem(1).value", "75");
+    shouldBeCloseEnough("text.x.animVal.getItem(2).value", "144.5");
+    shouldBeCloseEnough("text.x.animVal.getItem(3).value", "197.3");
+
+    shouldBe("text.x.baseVal.numberOfItems", "4");
+    shouldBe("text.x.baseVal.getItem(0).value", "50");
+    shouldBe("text.x.baseVal.getItem(1).value", "70");
+    shouldBe("text.x.baseVal.getItem(2).value", "90");
+    shouldBe("text.x.baseVal.getItem(3).value", "110");
 }
 
 function sample3() {
-	shouldBeCloseEnough("text.x.animVal.getItem(0).value", "113.4");
-	shouldBeCloseEnough("text.x.animVal.getItem(1).value", "80");
-	shouldBeCloseEnough("text.x.animVal.getItem(2).value", "100");
-	shouldBeCloseEnough("text.x.animVal.getItem(3).value", "384");
+    shouldBe("text.x.animVal.numberOfItems", "4");
+    shouldBeCloseEnough("text.x.animVal.getItem(0).value", "113.4");
+    shouldBeCloseEnough("text.x.animVal.getItem(1).value", "80");
+    shouldBeCloseEnough("text.x.animVal.getItem(2).value", "100");
+    shouldBeCloseEnough("text.x.animVal.getItem(3).value", "384");
+
+    shouldBe("text.x.baseVal.numberOfItems", "4");
+    shouldBe("text.x.baseVal.getItem(0).value", "50");
+    shouldBe("text.x.baseVal.getItem(1).value", "70");
+    shouldBe("text.x.baseVal.getItem(2).value", "90");
+    shouldBe("text.x.baseVal.getItem(3).value", "110");
 }
 
 function executeTest() {

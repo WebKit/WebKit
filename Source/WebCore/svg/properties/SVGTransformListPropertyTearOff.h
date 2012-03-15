@@ -32,49 +32,48 @@ public:
     typedef SVGAnimatedListPropertyTearOff<SVGTransformList> AnimatedListPropertyTearOff;
     typedef SVGAnimatedListPropertyTearOff<SVGTransformList>::ListWrapperCache ListWrapperCache;
 
-    static PassRefPtr<SVGListPropertyTearOff<SVGTransformList> > create(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role)
+    static PassRefPtr<SVGListPropertyTearOff<SVGTransformList> > create(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role, SVGTransformList& values, ListWrapperCache& wrappers)
     {
         ASSERT(animatedProperty);
-        return adoptRef(new SVGTransformListPropertyTearOff(animatedProperty, role));
+        return adoptRef(new SVGTransformListPropertyTearOff(animatedProperty, role, values, wrappers));
     }
 
     PassRefPtr<SVGPropertyTearOff<SVGTransform> > createSVGTransformFromMatrix(SVGPropertyTearOff<SVGMatrix>* matrix, ExceptionCode& ec)
     {
+        ASSERT(m_values);
         if (!matrix) {
             ec = TYPE_MISMATCH_ERR;
             return 0;
         }
-        SVGTransformList& values = m_animatedProperty->values();
-        return SVGPropertyTearOff<SVGTransform>::create(values.createSVGTransformFromMatrix(matrix->propertyReference()));
+        return SVGPropertyTearOff<SVGTransform>::create(m_values->createSVGTransformFromMatrix(matrix->propertyReference()));
     }
 
     PassRefPtr<SVGPropertyTearOff<SVGTransform> > consolidate(ExceptionCode& ec)
     {
+        ASSERT(m_values);
+        ASSERT(m_wrappers);
         if (!canAlterList(ec))
             return 0;
 
-        SVGTransformList& values = m_animatedProperty->values();
-        ListWrapperCache& wrappers = m_animatedProperty->wrappers();
-        ASSERT(values.size() == wrappers.size());
+        ASSERT(m_values->size() == m_wrappers->size());
 
         // Spec: If the list was empty, then a value of null is returned.
-        if (values.isEmpty())
+        if (m_values->isEmpty())
             return 0;
 
-        m_animatedProperty->detachListWrappers(0);
-        RefPtr<SVGPropertyTearOff<SVGTransform> > wrapper = SVGPropertyTearOff<SVGTransform>::create(values.consolidate());
-        wrappers.append(wrapper);
+        detachListWrappers(0);
+        RefPtr<SVGPropertyTearOff<SVGTransform> > wrapper = SVGPropertyTearOff<SVGTransform>::create(m_values->consolidate());
+        m_wrappers->append(wrapper);
 
-        ASSERT(values.size() == wrappers.size());
+        ASSERT(m_values->size() == m_wrappers->size());
         return wrapper.release();
     }
 
 private:
-    SVGTransformListPropertyTearOff(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role)
-        : SVGListPropertyTearOff<SVGTransformList>(animatedProperty, role)
+    SVGTransformListPropertyTearOff(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role, SVGTransformList& values, ListWrapperCache& wrappers)
+        : SVGListPropertyTearOff<SVGTransformList>(animatedProperty, role, values, wrappers)
     {
     }
-
 };
 
 }

@@ -187,6 +187,14 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
 
     // Target element might have changed.
     m_animator->setContextElement(targetElement);
+
+    // Be sure to detach list wrappers before we modfiy their underlying value. If we'd do
+    // if after calculateAnimatedValue() ran the cached pointers in the list propery tear
+    // offs would point nowhere, and we couldn't create copies of those values anymore,
+    // while detaching. This is covered by assertions, moving this down would fire them.
+    if (SVGAnimatedProperty* animatedProperty = animatedPropertyForType(m_animator->type()))
+        animatedProperty->animationValueWillChange();
+
     m_animator->calculateAnimatedValue(percentage, repeat, m_fromType, m_toType, resultAnimationElement->m_animatedType);
 }
 

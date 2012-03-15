@@ -31,23 +31,22 @@ namespace WebCore {
 
 void SVGPathSegListPropertyTearOff::clear(ExceptionCode& ec)
 {
-    SVGPathSegList& values = m_animatedProperty->values();
-    if (values.isEmpty())
+    ASSERT(m_values);
+    if (m_values->isEmpty())
         return;
 
-    unsigned size = values.size();
+    unsigned size = m_values->size();
     for (unsigned i = 0; i < size; ++i) {
-        ListItemType item = values.at(i);
+        ListItemType item = m_values->at(i);
         static_cast<SVGPathSegWithContext*>(item.get())->setContextAndRole(0, PathSegUndefinedRole);
     }
 
-    SVGPathSegListPropertyTearOff::Base::clearValues(values, ec);
+    SVGPathSegListPropertyTearOff::Base::clearValues(ec);
 }
 
 SVGPathSegListPropertyTearOff::PassListItemType SVGPathSegListPropertyTearOff::getItem(unsigned index, ExceptionCode& ec)
 {
-    SVGPathSegList& values = m_animatedProperty->values();
-    ListItemType returnedItem = Base::getItemValues(values, index, ec);
+    ListItemType returnedItem = Base::getItemValues(index, ec);
     if (returnedItem) {
         ASSERT(static_cast<SVGPathSegWithContext*>(returnedItem.get())->contextElement() == contextElement());
         ASSERT(static_cast<SVGPathSegWithContext*>(returnedItem.get())->role() == m_pathSegRole);
@@ -57,8 +56,7 @@ SVGPathSegListPropertyTearOff::PassListItemType SVGPathSegListPropertyTearOff::g
 
 SVGPathSegListPropertyTearOff::PassListItemType SVGPathSegListPropertyTearOff::removeItem(unsigned index, ExceptionCode& ec)
 {
-    SVGPathSegList& values = m_animatedProperty->values();
-    SVGPathSegListPropertyTearOff::ListItemType removedItem = SVGPathSegListPropertyTearOff::Base::removeItemValues(values, index, ec);
+    SVGPathSegListPropertyTearOff::ListItemType removedItem = SVGPathSegListPropertyTearOff::Base::removeItemValues(index, ec);
     if (removedItem)
         static_cast<SVGPathSegWithContext*>(removedItem.get())->setContextAndRole(0, PathSegUndefinedRole);
     return removedItem.release();

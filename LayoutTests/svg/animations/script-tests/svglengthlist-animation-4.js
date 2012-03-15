@@ -21,17 +21,31 @@ text.appendChild(animate);
 
 // Setup animation test
 function sample1() {
+    shouldBe("text.x.animVal.numberOfItems", "4");
     shouldBeCloseEnough("text.x.animVal.getItem(0).value", "50");
     shouldBeCloseEnough("text.x.animVal.getItem(1).value", "60");
     shouldBeCloseEnough("text.x.animVal.getItem(2).value", "70");
     shouldBeCloseEnough("text.x.animVal.getItem(3).value", "80");
+
+    shouldBe("text.x.baseVal.numberOfItems", "4");
+    shouldBe("text.x.baseVal.getItem(0).value", "50");
+    shouldBe("text.x.baseVal.getItem(1).value", "60");
+    shouldBe("text.x.baseVal.getItem(2).value", "70");
+    shouldBe("text.x.baseVal.getItem(3).value", "80");
 }
 
 function sample2() {
+    shouldBe("text.x.animVal.numberOfItems", "4");
     shouldBeCloseEnough("text.x.animVal.getItem(0).value", "60");
     shouldBeCloseEnough("text.x.animVal.getItem(1).value", "70");
     shouldBeCloseEnough("text.x.animVal.getItem(2).value", "80");
     shouldBeCloseEnough("text.x.animVal.getItem(3).value", "90");
+
+    shouldBe("text.x.baseVal.numberOfItems", "4");
+    shouldBe("text.x.baseVal.getItem(0).value", "50");
+    shouldBe("text.x.baseVal.getItem(1).value", "60");
+    shouldBe("text.x.baseVal.getItem(2).value", "70");
+    shouldBe("text.x.baseVal.getItem(3).value", "80");
 }
 
 function sample3() {
@@ -40,6 +54,12 @@ function sample3() {
     shouldBeCloseEnough("text.x.animVal.getItem(1).value", "80");
     shouldBeCloseEnough("text.x.animVal.getItem(2).value", "90");
     shouldBeCloseEnough("text.x.animVal.getItem(3).value", "100");
+
+    shouldBe("text.x.baseVal.numberOfItems", "4");
+    shouldBe("text.x.baseVal.getItem(0).value", "50");
+    shouldBe("text.x.baseVal.getItem(1).value", "60");
+    shouldBe("text.x.baseVal.getItem(2).value", "70");
+    shouldBe("text.x.baseVal.getItem(3).value", "80");
 }
 
 function executeTest() {

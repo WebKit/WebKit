@@ -37,6 +37,7 @@ public:
     SVGElement* contextElement() const { return m_contextElement.get(); }
     const QualifiedName& attributeName() const { return m_attributeName; }
     AnimatedPropertyType animatedPropertyType() const { return m_animatedPropertyType; }
+    bool isAnimating() const { return m_isAnimating; }
 
     void commitChange()
     {
@@ -47,9 +48,11 @@ public:
 
     virtual bool isAnimatedListTearOff() const { return false; }
 
+    // FIXME: Make these pure once SVGAnimatedStaticPropertyTearOff supports animVal as well.
     virtual void animationStarted(SVGAnimatedType*) { ASSERT_NOT_REACHED(); }
     virtual void animationEnded() { ASSERT_NOT_REACHED(); }
-    virtual void animationValueChanged() { ASSERT_NOT_REACHED(); }
+    virtual void animationValueWillChange() { ASSERT_NOT_REACHED(); }
+    virtual void animationValueDidChange() { ASSERT_NOT_REACHED(); }
     virtual SVGGenericAnimatedType* currentBaseValue(AnimatedPropertyType) const
     {
         ASSERT_NOT_REACHED();
@@ -70,6 +73,9 @@ public:
                 break;
             }
         }
+
+        // Assure that animationEnded() was called, if animationStarted() was called before.
+        ASSERT(!m_isAnimating);
     }
 
     // lookupOrCreateWrapper & helper methods.
@@ -139,6 +145,7 @@ protected:
         : m_contextElement(contextElement)
         , m_attributeName(attributeName)
         , m_animatedPropertyType(animatedPropertyType)
+        , m_isAnimating(false)
     {
     }
 
@@ -152,6 +159,9 @@ private:
     RefPtr<SVGElement> m_contextElement;
     const QualifiedName& m_attributeName;
     AnimatedPropertyType m_animatedPropertyType;
+
+protected:
+    bool m_isAnimating;
 };
 
 }

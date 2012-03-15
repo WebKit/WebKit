@@ -32,14 +32,14 @@ public:
     SVGProperty* baseVal()
     {
         if (!m_baseVal)
-            m_baseVal = SVGTransformListPropertyTearOff::create(this, BaseValRole);
+            m_baseVal = SVGTransformListPropertyTearOff::create(this, BaseValRole, m_values, m_wrappers);
         return m_baseVal.get();
     }
 
     SVGProperty* animVal()
     {
         if (!m_animVal)
-            m_animVal = SVGTransformListPropertyTearOff::create(this, AnimValRole);
+            m_animVal = SVGTransformListPropertyTearOff::create(this, AnimValRole, m_values, m_wrappers);
         return m_animVal.get();
     }
 

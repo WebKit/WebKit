@@ -34,14 +34,14 @@ public:
     SVGProperty* baseVal(SVGPathSegRole role)
     {
         if (!m_baseVal)
-            m_baseVal = SVGPathSegListPropertyTearOff::create(this, BaseValRole, role);
+            m_baseVal = SVGPathSegListPropertyTearOff::create(this, BaseValRole, role, m_values, m_wrappers);
         return m_baseVal.get();
     }
 
     SVGProperty* animVal(SVGPathSegRole role)
     {
         if (!m_animVal)
-            m_animVal = SVGPathSegListPropertyTearOff::create(this, AnimValRole, role);
+            m_animVal = SVGPathSegListPropertyTearOff::create(this, AnimValRole, role, m_values, m_wrappers);
         return m_animVal.get();
     }
 

@@ -29,6 +29,7 @@ template<typename PropertyType>
 class SVGListPropertyTearOff : public SVGListProperty<PropertyType> {
 public:
     typedef SVGListProperty<PropertyType> Base;
+    typedef SVGListPropertyTearOff<PropertyType> Self;
 
     typedef typename SVGPropertyTraits<PropertyType>::ListItemType ListItemType;
     typedef SVGPropertyTearOff<ListItemType> ListItemTearOff;
@@ -36,28 +37,31 @@ public:
     typedef SVGAnimatedListPropertyTearOff<PropertyType> AnimatedListPropertyTearOff;
     typedef typename SVGAnimatedListPropertyTearOff<PropertyType>::ListWrapperCache ListWrapperCache;
 
-    static PassRefPtr<SVGListPropertyTearOff<PropertyType> > create(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role)
+    using Base::m_values;
+    using Base::m_wrappers;
+
+    static PassRefPtr<Self> create(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role, PropertyType& values, ListWrapperCache& wrappers)
     {
         ASSERT(animatedProperty);
-        return adoptRef(new SVGListPropertyTearOff<PropertyType>(animatedProperty, role));
+        return adoptRef(new Self(animatedProperty, role, values, wrappers));
     }
 
     int removeItemFromList(ListItemTearOff* removeItem, bool shouldSynchronizeWrappers)
     {
-        PropertyType& values = m_animatedProperty->values();
-        ListWrapperCache& wrappers = m_animatedProperty->wrappers();
+        ASSERT(m_values);
+        ASSERT(m_wrappers);
 
         // Lookup item in cache and remove its corresponding wrapper.
-        unsigned size = wrappers.size();
-        ASSERT(size == values.size());
+        unsigned size = m_wrappers->size();
+        ASSERT(size == m_values->size());
         for (unsigned i = 0; i < size; ++i) {
-            RefPtr<ListItemTearOff>& item = wrappers.at(i);
+            RefPtr<ListItemTearOff>& item = m_wrappers->at(i);
             if (item != removeItem)
                 continue;
 
             item->detachWrapper();
-            wrappers.remove(i);
-            values.remove(i);
+            m_wrappers->remove(i);
+            m_values->remove(i);
 
             if (shouldSynchronizeWrappers)
                 commitChange();
@@ -71,17 +75,12 @@ public:
     // SVGList API
     void clear(ExceptionCode& ec)
     {
-        Base::clearValuesAndWrappers(m_animatedProperty.get(), ec);
-    }
-
-    unsigned numberOfItems() const
-    {
-        return Base::numberOfItemsValuesAndWrappers(m_animatedProperty.get());
+        Base::clearValuesAndWrappers(ec);
     }
 
     PassListItemTearOff initialize(PassListItemTearOff passNewItem, ExceptionCode& ec)
     {
-        return Base::initializeValuesAndWrappers(m_animatedProperty.get(), passNewItem, ec);
+        return Base::initializeValuesAndWrappers(passNewItem, ec);
     }
 
     PassListItemTearOff getItem(unsigned index, ExceptionCode& ec)
@@ -91,12 +90,12 @@ public:
 
     PassListItemTearOff insertItemBefore(PassListItemTearOff passNewItem, unsigned index, ExceptionCode& ec)
     {
-        return Base::insertItemBeforeValuesAndWrappers(m_animatedProperty.get(), passNewItem, index, ec);
+        return Base::insertItemBeforeValuesAndWrappers(passNewItem, index, ec);
     }
 
     PassListItemTearOff replaceItem(PassListItemTearOff passNewItem, unsigned index, ExceptionCode& ec)
     {
-        return Base::replaceItemValuesAndWrappers(m_animatedProperty.get(), passNewItem, index, ec);
+        return Base::replaceItemValuesAndWrappers(passNewItem, index, ec);
     }
 
     PassListItemTearOff removeItem(unsigned index, ExceptionCode& ec)
@@ -106,30 +105,30 @@ public:
 
     PassListItemTearOff appendItem(PassListItemTearOff passNewItem, ExceptionCode& ec)
     {
-        return Base::appendItemValuesAndWrappers(m_animatedProperty.get(), passNewItem, ec);
+        return Base::appendItemValuesAndWrappers(passNewItem, ec);
     }
 
 protected:
-    SVGListPropertyTearOff(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role)
-        : SVGListProperty<PropertyType>(role)
+    SVGListPropertyTearOff(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role, PropertyType& values, ListWrapperCache& wrappers)
+        : SVGListProperty<PropertyType>(role, values, &wrappers)
         , m_animatedProperty(animatedProperty)
     {
     }
 
     virtual void commitChange()
     {
-        PropertyType& values = m_animatedProperty->values();
-        ListWrapperCache& wrappers = m_animatedProperty->wrappers();
+        ASSERT(m_values);
+        ASSERT(m_wrappers);
 
         // Update existing wrappers, as the index in the values list has changed.
-        unsigned size = wrappers.size();
-        ASSERT(size == values.size());
+        unsigned size = m_wrappers->size();
+        ASSERT(size == m_values->size());
         for (unsigned i = 0; i < size; ++i) {
-            RefPtr<ListItemTearOff>& item = wrappers.at(i);
+            ListItemTearOff* item = m_wrappers->at(i).get();
             if (!item)
                 continue;
             item->setAnimatedProperty(m_animatedProperty.get());
-            item->setValue(values.at(i));
+            item->setValue(m_values->at(i));
         }
 
         m_animatedProperty->commitChange();

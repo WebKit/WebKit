@@ -35,23 +35,22 @@ public:
     typedef SVGPropertyTraits<SVGPathSegList>::ListItemType ListItemType;
     typedef PassRefPtr<SVGPathSeg> PassListItemType;
 
-    static PassRefPtr<SVGPathSegListPropertyTearOff> create(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role, SVGPathSegRole pathSegRole)
+    static PassRefPtr<SVGPathSegListPropertyTearOff> create(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role, SVGPathSegRole pathSegRole, SVGPathSegList& values, ListWrapperCache& wrappers)
     {
         ASSERT(animatedProperty);
-        return adoptRef(new SVGPathSegListPropertyTearOff(animatedProperty, role, pathSegRole));
+        return adoptRef(new SVGPathSegListPropertyTearOff(animatedProperty, role, pathSegRole, values, wrappers));
     }
 
     int removeItemFromList(const ListItemType& removeItem, bool shouldSynchronizeWrappers)
     {
-        SVGPathSegList& values = m_animatedProperty->values();
-
-        unsigned size = values.size();
+        ASSERT(m_values);
+        unsigned size = m_values->size();
         for (unsigned i = 0; i < size; ++i) {
-            ListItemType& item = values.at(i);
+            ListItemType& item = m_values->at(i);
             if (item != removeItem)
                 continue;
 
-            values.remove(i);
+            m_values->remove(i);
 
             if (shouldSynchronizeWrappers)
                 commitChange();
@@ -65,12 +64,6 @@ public:
     // SVGList API
     void clear(ExceptionCode&);
 
-    unsigned numberOfItems() const
-    {
-        SVGPathSegList& values = m_animatedProperty->values();
-        return Base::numberOfItemsValues(values);
-    }
-
     PassListItemType initialize(PassListItemType passNewItem, ExceptionCode& ec)
     {
         // Not specified, but FF/Opera do it this way, and it's just sane.
@@ -80,8 +73,7 @@ public:
         }
 
         ListItemType newItem = passNewItem;
-        SVGPathSegList& values = m_animatedProperty->values();
-        return Base::initializeValues(values, newItem, ec);
+        return Base::initializeValues(newItem, ec);
     }
 
     PassListItemType getItem(unsigned index, ExceptionCode&);
@@ -95,8 +87,7 @@ public:
         }
 
         ListItemType newItem = passNewItem;
-        SVGPathSegList& values = m_animatedProperty->values();
-        return Base::insertItemBeforeValues(values, newItem, index, ec);
+        return Base::insertItemBeforeValues(newItem, index, ec);
     }
 
     PassListItemType replaceItem(PassListItemType passNewItem, unsigned index, ExceptionCode& ec)
@@ -108,8 +99,7 @@ public:
         }
 
         ListItemType newItem = passNewItem;
-        SVGPathSegList& values = m_animatedProperty->values();
-        return Base::replaceItemValues(values, newItem, index, ec);
+        return Base::replaceItemValues(newItem, index, ec);
     }
 
     PassListItemType removeItem(unsigned index, ExceptionCode&);
@@ -123,13 +113,12 @@ public:
         }
 
         ListItemType newItem = passNewItem;
-        SVGPathSegList& values = m_animatedProperty->values();
-        return Base::appendItemValues(values, newItem, ec);
+        return Base::appendItemValues(newItem, ec);
     }
 
 private:
-    SVGPathSegListPropertyTearOff(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role, SVGPathSegRole pathSegRole)
-        : SVGListProperty<SVGPathSegList>(role)
+    SVGPathSegListPropertyTearOff(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role, SVGPathSegRole pathSegRole, SVGPathSegList& values, ListWrapperCache& wrappers)
+        : SVGListProperty<SVGPathSegList>(role, values, &wrappers)
         , m_animatedProperty(animatedProperty)
         , m_pathSegRole(pathSegRole)
     {
@@ -139,8 +128,8 @@ private:
 
     virtual void commitChange()
     {
-        SVGPathSegList& values = m_animatedProperty->values();
-        values.commitChange(m_animatedProperty->contextElement());
+        ASSERT(m_values);
+        m_values->commitChange(m_animatedProperty->contextElement());
     }
 
     virtual void processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify);

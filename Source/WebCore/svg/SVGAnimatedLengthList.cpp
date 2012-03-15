@@ -40,6 +40,12 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthListAnimator::constructFromString(c
     return animateType.release();
 }
 
+PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthListAnimator::constructFromCopy(SVGGenericAnimatedType* animatedType)
+{
+    ASSERT(animatedType);
+    return SVGAnimatedType::createLengthList(new SVGLengthList(*reinterpret_cast<SVGLengthList*>(animatedType)));
+}
+
 void SVGAnimatedLengthListAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
 {
     ASSERT(m_contextElement);

@@ -432,13 +432,13 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     // FIXME: This lists the current state of our animVal support: only SVGLength is supported for now.
     switch (type) {
     case AnimatedLength:
+    case AnimatedLengthList:
         return true;
     case AnimatedAngle:
     case AnimatedBoolean:
     case AnimatedColor:
     case AnimatedEnumeration:
     case AnimatedInteger:
-    case AnimatedLengthList:
     case AnimatedNumber:
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
@@ -463,12 +463,14 @@ void SVGAnimatedType::setVariantValue(SVGGenericAnimatedType* type)
     case AnimatedLength:
         *m_data.length = *reinterpret_cast<SVGLength*>(type);
         return;
+    case AnimatedLengthList:
+        *m_data.lengthList = *reinterpret_cast<SVGLengthList*>(type);
+        return;
     case AnimatedAngle:
     case AnimatedBoolean:
     case AnimatedColor:
     case AnimatedEnumeration:
     case AnimatedInteger:
-    case AnimatedLengthList:
     case AnimatedNumber:
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:

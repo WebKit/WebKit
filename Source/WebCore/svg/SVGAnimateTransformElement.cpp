@@ -133,6 +133,9 @@ static PassRefPtr<SVGAnimatedTransformList> animatedTransformListFor(SVGElement*
     
 void SVGAnimateTransformElement::resetToBaseValue(const String& baseValue)
 {
+    // FIXME: Once we added SVGAnimatedTransformListAnimator, this whole class is unncessary.
+    // See bug https://bugs.webkit.org/show_bug.cgi?id=80758. Once this is fixed animVal support
+    // for <animateTransform> is finished, and this class is almost empty.
     SVGElement* targetElement = this->targetElement();
     if (!targetElement || determineAnimatedPropertyType(targetElement) == AnimatedUnknown)
         return;
@@ -149,8 +152,9 @@ void SVGAnimateTransformElement::resetToBaseValue(const String& baseValue)
     
     if (baseValue.isEmpty()) {
         if (RefPtr<SVGAnimatedTransformList> list = animatedTransformListFor(targetElement)) {
-            list->detachListWrappers(0);
-            list->values().clear();
+            SVGListProperty<SVGTransformList>* baseVal = static_cast<SVGListProperty<SVGTransformList>*>(list->baseVal());
+            baseVal->detachListWrappers(0);
+            baseVal->values().clear();
         }
     } else
         targetElement->setAttribute(SVGNames::transformAttr, baseValue);
@@ -158,24 +162,29 @@ void SVGAnimateTransformElement::resetToBaseValue(const String& baseValue)
 
 void SVGAnimateTransformElement::calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement*)
 {
+    // FIXME: Once we added SVGAnimatedTransformListAnimator, this whole class is unncessary.
+    // See bug https://bugs.webkit.org/show_bug.cgi?id=80758. Once this is fixed animVal support
+    // for <animateTransform> is finished, and this class is almost empty.
     SVGElement* targetElement = this->targetElement();
     if (!targetElement || determineAnimatedPropertyType(targetElement) == AnimatedUnknown)
         return;
     RefPtr<SVGAnimatedTransformList> animatedList = animatedTransformListFor(targetElement);
     ASSERT(animatedList);
-    
+    SVGListProperty<SVGTransformList>* baseVal = static_cast<SVGListProperty<SVGTransformList>*>(animatedList->baseVal());
+    ASSERT(baseVal);
+
     if (calcMode() == CalcModeDiscrete)
         percentage = percentage < 0.5 ? 0 : 1;
 
     if (!isAdditive()) {
-        animatedList->detachListWrappers(0);
-        animatedList->values().clear();
+        baseVal->detachListWrappers(0);
+        baseVal->values().clear();
     }
     if (isAccumulated() && repeat)
         percentage += repeat;
     SVGTransform transform = SVGTransformDistance(m_fromTransform, m_toTransform).scaledDistance(percentage).addToSVGTransform(m_fromTransform);
-    animatedList->values().append(transform);
-    animatedList->wrappers().append(RefPtr<SVGPropertyTearOff<SVGTransform> >());
+    baseVal->values().append(transform);
+    baseVal->wrappers().append(RefPtr<SVGPropertyTearOff<SVGTransform> >());
 }
     
 bool SVGAnimateTransformElement::calculateFromAndToValues(const String& fromString, const String& toString)
@@ -224,7 +233,13 @@ void SVGAnimateTransformElement::applyResultsToTarget()
     RefPtr<SVGAnimatedTransformList> animatedList = animatedTransformListFor(targetElement);
     if (!animatedList)
         return;
-    SVGTransformList* transformList = &animatedList->values();
+
+    // FIXME: Once we added SVGAnimatedTransformListAnimator, this whole class is unncessary.
+    // See bug https://bugs.webkit.org/show_bug.cgi?id=80758. Once this is fixed animVal support
+    // for <animateTransform> is finished, and this class is almost empty.
+    SVGListProperty<SVGTransformList>* baseVal = static_cast<SVGListProperty<SVGTransformList>*>(animatedList->baseVal());
+    ASSERT(baseVal);
+    SVGTransformList& transformList = baseVal->values();
 
     const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
     const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
@@ -232,13 +247,13 @@ void SVGAnimateTransformElement::applyResultsToTarget()
         SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
         ASSERT(shadowTreeElement);
         if (shadowTreeElement->isStyledTransformable())
-            static_cast<SVGStyledTransformableElement*>(shadowTreeElement)->setTransformBaseValue(*transformList);
+            static_cast<SVGStyledTransformableElement*>(shadowTreeElement)->setTransformBaseValue(transformList);
         else if (shadowTreeElement->hasTagName(SVGNames::textTag))
-            static_cast<SVGTextElement*>(shadowTreeElement)->setTransformBaseValue(*transformList);
+            static_cast<SVGTextElement*>(shadowTreeElement)->setTransformBaseValue(transformList);
         else if (shadowTreeElement->hasTagName(SVGNames::linearGradientTag) || shadowTreeElement->hasTagName(SVGNames::radialGradientTag))
-            static_cast<SVGGradientElement*>(shadowTreeElement)->setGradientTransformBaseValue(*transformList);
+            static_cast<SVGGradientElement*>(shadowTreeElement)->setGradientTransformBaseValue(transformList);
         else if (shadowTreeElement->hasTagName(SVGNames::patternTag))
-            static_cast<SVGPatternElement*>(shadowTreeElement)->setPatternTransformBaseValue(*transformList);
+            static_cast<SVGPatternElement*>(shadowTreeElement)->setPatternTransformBaseValue(transformList);
         if (RenderObject* renderer = shadowTreeElement->renderer()) {
             renderer->setNeedsTransformUpdate();
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);

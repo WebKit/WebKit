@@ -379,7 +379,7 @@ void SVGAnimationElement::applyAnimatedValue(SVGAnimationElement::ShouldApplyAni
         break;
     case ApplyXMLAnimation:
         if (SVGAnimatedProperty* property = findMatchingAnimatedProperty(targetElement, attributeName, animatedType->type())) {
-            property->animationValueChanged();
+            property->animationValueDidChange();
             break;
         }
 
