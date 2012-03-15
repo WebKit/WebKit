@@ -1,3 +1,9 @@
+2012-03-15  Peter Beverloo  <peter@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-03-14  Chris Fleizach  <cfleizach@apple.com>
 
         AXDescription for HTML5 footer and ARIA role contentinfo incorrect
