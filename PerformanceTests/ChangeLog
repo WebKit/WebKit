@@ -1,3 +1,11 @@
+2012-03-15  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Fix the test failing with run-perf-tests.
+
+        Rubber stamped by Ryosuke Niwa.
+
+        * CSS/CSSPropertySetterGetter.html:
+
 2012-03-14  Alexis Menard  <alexis.menard@openbossa.org>
 
         Add a new perf test to benchmark setting and reading CSS properties from JS.
