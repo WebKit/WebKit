@@ -869,8 +869,9 @@ double RenderThemeQt::caretBlinkInterval() const
     return static_cast<QGuiApplication*>(qApp)->styleHints()->cursorFlashTime() / 1000.0 / 2.0;
 }
 
-String RenderThemeQt::fileListNameForWidth(const FileList* fileList, const Font& font, int width) const
+String RenderThemeQt::fileListNameForWidth(const FileList* fileList, const Font& font, int width, bool multipleFilesAllowed) const
 {
+    UNUSED_PARAM(multipleFilesAllowed);
     if (width <= 0)
         return String();
 
