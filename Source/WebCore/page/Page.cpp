@@ -324,7 +324,6 @@ void Page::goBackOrForward(int distance)
         }
     }
 
-    ASSERT(item);
     if (!item)
         return;
 
