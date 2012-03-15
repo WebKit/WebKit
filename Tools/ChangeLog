@@ -1,5 +1,29 @@
 2012-03-15  Adam Barth  <abarth@webkit.org>
 
+        Update the start-queue.sh script to match what we're using on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=81277
+
+        Reviewed by Eric Seidel.
+
+        Over time we've added more magic git commands to clean up the local repo after
+        it has been borked in various ways. The idea behind this sequence is to clear
+        out any changes in the working copy and then to rebuild the master branch from
+        origin/master.
+
+        This patch also removes the watchdog timer that we've stopped using on the
+        bots.
+
+        This patch was reviewed on <https://github.com/eseidel/webkit/pull/1>.
+        Note: Eric and I are experimenting with GitHub to see if it might be
+        useful for WebKit.  If you have thoughts on this topic, please feel
+        free to grab Eric or me on #webkit to chat.  I assume that he and I are
+        the only ones who care about this file so using this alternative
+        process for this patch shouldn't cause any trouble.
+
+        * EWSTools/start-queue.sh:
+
+2012-03-15  Adam Barth  <abarth@webkit.org>
+
         The commit-queue can hang when the test_expectations.txt style check fails during commit
         https://bugs.webkit.org/show_bug.cgi?id=81251
 

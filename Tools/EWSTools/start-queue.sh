@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2010, 2011 Google Inc. All rights reserved.
+# Copyright (c) 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,17 +27,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-killAfterTimeout() {
-    TARGET_PID=$1
-    TIMEOUT=$2
-    sleep $TIMEOUT && kill -9 $TARGET_PID &
-    WATCHDOG_PID=$!
-    wait $TARGET_PID
-    # FIXME: This kill will fail (and log) when the watchdog has exited (by killing the child process).
-    # There is likely magic shell commands to make it not log (redirecting stderr/stdout didn't work).
-    kill -9 $WATCHDOG_PID
-}
-
 if [[ $# -ne 2 ]];then
 echo "Usage: start-queue.sh QUEUE_NAME BOT_ID"
 echo
@@ -56,28 +45,25 @@ BOT_ID=$2
 cd /mnt/git/webkit-$QUEUE_NAME
 while :
 do
-  git reset --hard trunk # Throw away any patches in our tree.
-  git clean --force # Remove any left-over layout test results, added files, etc.
+  # This somewhat quirky sequence of steps seems to clear up all the broken
+  # git situations we've gotten ourself into in the past.
+  git reset --hard HEAD # Throw away any patches in our tree.
+  git clean -f # Remove any left-over layout test results, added files, etc.
   git rebase --abort # If we got killed during a git rebase, we need to clean up.
+  git checkout HEAD^ # Move to a detached head so we can blow away master.
+  git branch -D master # Blow away master in case it has diverged from origin/master.
+  git checkout origin/master -b master # Re-create master from origin/master.
 
-  # Fetch before we rebase to speed up the rebase (fetching from git.webkit.org is way faster than pulling from svn.webkit.org)
-  git fetch
-  git svn rebase
-
-  # Hack to fix cr-jail-1 (cr-mac-ews).  gclient seems to be failing to update third_party/leveldatabase.
-  # FIXME: This can be removed at any point in the future.
-  svn cleanup Source/WebKit/chromium/third_party/leveldatabase
+  # Most queues auto-update as part of their normal operation, but updating
+  # here makes sure that we get the latest version of the master process.
+  ./Tools/Scripts/update-webkit
 
   # test-webkitpy has code to remove orphaned .pyc files, so we
   # run it before running webkit-patch to avoid stale .pyc files
   # preventing webkit-patch from launching.
-  ./Tools/Scripts/test-webkitpy &
-  killAfterTimeout $! $[60*10] # Wait up to 10 minutes for it to run (should take < 30 seconds).
+  ./Tools/Scripts/test-webkitpy
 
   # We use --exit-after-iteration to pick up any changes to webkit-patch, including
   # changes to the committers.py file.
-  # test-webkitpy has been known to hang in the past, so run it using killAfterTimeout
-  # See https://bugs.webkit.org/show_bug.cgi?id=57724.
-  ./Tools/Scripts/webkit-patch $QUEUE_NAME --bot-id=$BOT_ID --no-confirm --exit-after-iteration 10 &
-  killAfterTimeout $! $[60*60*12] # Wait up to 12 hours.
+  ./Tools/Scripts/webkit-patch $QUEUE_NAME --bot-id=$BOT_ID --no-confirm --exit-after-iteration 10
 done
