@@ -77,6 +77,16 @@ namespace WebCore {
 #if PLATFORM(GTK)
         ContextMenuItemTagInputMethods,
         ContextMenuItemTagUnicode,
+        ContextMenuItemTagUnicodeInsertLRMMark,
+        ContextMenuItemTagUnicodeInsertRLMMark,
+        ContextMenuItemTagUnicodeInsertLREMark,
+        ContextMenuItemTagUnicodeInsertRLEMark,
+        ContextMenuItemTagUnicodeInsertLROMark,
+        ContextMenuItemTagUnicodeInsertRLOMark,
+        ContextMenuItemTagUnicodeInsertPDFMark,
+        ContextMenuItemTagUnicodeInsertZWSMark,
+        ContextMenuItemTagUnicodeInsertZWJMark,
+        ContextMenuItemTagUnicodeInsertZWNJMark,
 #endif
         ContextMenuItemTagSpellingGuess,
         ContextMenuItemTagNoGuessesFound,

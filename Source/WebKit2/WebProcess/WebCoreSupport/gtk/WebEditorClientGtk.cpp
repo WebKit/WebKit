@@ -194,5 +194,9 @@ void WebEditorClient::setSelectionPrimaryClipboardIfNeeded(Frame* frame)
 #endif
 }
 
+bool WebEditorClient::shouldShowUnicodeMenu()
+{
+    return true;
+}
 
 }

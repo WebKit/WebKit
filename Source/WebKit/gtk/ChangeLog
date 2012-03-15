@@ -1,3 +1,20 @@
+2012-03-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement unicode submenu items
+        https://bugs.webkit.org/show_bug.cgi?id=81117
+
+        Reviewed by Martin Robinson.
+
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        (WebKit::getUnicodeMenuItemPosition): Helper function to get the
+        position of the unicode menu item in the default context menu.
+        (WebKit::ContextMenuClient::getCustomMenuFromDefaultItems): Remove
+        code to build the unicode menu, since it's now built by WebCore.
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::shouldShowUnicodeMenu): Check whether
+        unicode menu should be shown based on gtk-show-unicode-menu GtkSetting.
+        * WebCoreSupport/EditorClientGtk.h:
+
 2012-03-13  Adam Barth  <abarth@webkit.org> && Benjamin Poulain  <bpoulain@apple.com>
 
         Always enable ENABLE(CLIENT_BASED_GEOLOCATION)

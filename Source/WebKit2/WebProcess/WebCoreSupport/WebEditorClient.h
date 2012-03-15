@@ -148,6 +148,9 @@ private:
     virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel) OVERRIDE;
     virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String& replacedString, const String& replacementString) OVERRIDE;
 #endif
+#if PLATFORM(GTK)
+    virtual bool shouldShowUnicodeMenu() OVERRIDE;
+#endif
     WebPage* m_page;
 };
 

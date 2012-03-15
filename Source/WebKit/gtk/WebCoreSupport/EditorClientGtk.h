@@ -137,6 +137,8 @@ class EditorClient : public WebCore::EditorClient {
         virtual void willSetInputMethodState();
         virtual void setInputMethodState(bool enabled);
 
+        virtual bool shouldShowUnicodeMenu();
+
     private:
 #if ENABLE(SPELLCHECK)
         TextCheckerClientGtk m_textCheckerClient;

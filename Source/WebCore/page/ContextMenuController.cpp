@@ -65,10 +65,15 @@
 #include "ResourceRequest.h"
 #include "Settings.h"
 #include "TextIterator.h"
+#include "TypingCommand.h"
 #include "UserTypingGestureIndicator.h"
 #include "WindowFeatures.h"
 #include "markup.h"
 #include <wtf/unicode/Unicode.h>
+
+#if PLATFORM(GTK)
+#include <wtf/gobject/GOwnPtr.h>
+#endif
 
 using namespace WTF;
 using namespace Unicode;
@@ -181,6 +186,17 @@ static void openNewWindow(const KURL& urlToLoad, Frame* frame)
     }
 }
 
+#if PLATFORM(GTK)
+static void insertUnicodeCharacter(UChar character, Frame* frame)
+{
+    String text(&character, 1);
+    if (!frame->editor()->shouldInsertText(text, frame->selection()->toNormalizedRange().get(), EditorInsertActionTyped))
+        return;
+
+    TypingCommand::insertText(frame->document(), text, 0, TypingCommand::TextCompositionNone);
+}
+#endif
+
 void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 {
     ASSERT(item->type() == ActionType || item->type() == CheckableActionType);
@@ -283,6 +299,36 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 #if PLATFORM(GTK)
     case ContextMenuItemTagDelete:
         frame->editor()->performDelete();
+        break;
+    case ContextMenuItemTagUnicodeInsertLRMMark:
+        insertUnicodeCharacter(leftToRightMark, frame);
+        break;
+    case ContextMenuItemTagUnicodeInsertRLMMark:
+        insertUnicodeCharacter(rightToLeftMark, frame);
+        break;
+    case ContextMenuItemTagUnicodeInsertLREMark:
+        insertUnicodeCharacter(leftToRightEmbed, frame);
+        break;
+    case ContextMenuItemTagUnicodeInsertRLEMark:
+        insertUnicodeCharacter(rightToLeftEmbed, frame);
+        break;
+    case ContextMenuItemTagUnicodeInsertLROMark:
+        insertUnicodeCharacter(leftToRightOverride, frame);
+        break;
+    case ContextMenuItemTagUnicodeInsertRLOMark:
+        insertUnicodeCharacter(rightToLeftOverride, frame);
+        break;
+    case ContextMenuItemTagUnicodeInsertPDFMark:
+        insertUnicodeCharacter(popDirectionalFormatting, frame);
+        break;
+    case ContextMenuItemTagUnicodeInsertZWSMark:
+        insertUnicodeCharacter(zeroWidthSpace, frame);
+        break;
+    case ContextMenuItemTagUnicodeInsertZWJMark:
+        insertUnicodeCharacter(zeroWidthJoiner, frame);
+        break;
+    case ContextMenuItemTagUnicodeInsertZWNJMark:
+        insertUnicodeCharacter(zeroWidthNonJoiner, frame);
         break;
 #endif
 #if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
@@ -530,7 +576,38 @@ void ContextMenuController::createAndAppendSpeechSubMenu(ContextMenuItem& speech
 
 #endif
  
-#if !PLATFORM(GTK)
+#if PLATFORM(GTK)
+
+void ContextMenuController::createAndAppendUnicodeSubMenu(ContextMenuItem& unicodeMenuItem)
+{
+    ContextMenu unicodeMenu;
+
+    ContextMenuItem leftToRightMarkMenuItem(ActionType, ContextMenuItemTagUnicodeInsertLRMMark, contextMenuItemTagUnicodeInsertLRMMark());
+    ContextMenuItem rightToLeftMarkMenuItem(ActionType, ContextMenuItemTagUnicodeInsertRLMMark, contextMenuItemTagUnicodeInsertRLMMark());
+    ContextMenuItem leftToRightEmbedMenuItem(ActionType, ContextMenuItemTagUnicodeInsertLREMark, contextMenuItemTagUnicodeInsertLREMark());
+    ContextMenuItem rightToLeftEmbedMenuItem(ActionType, ContextMenuItemTagUnicodeInsertRLEMark, contextMenuItemTagUnicodeInsertRLEMark());
+    ContextMenuItem leftToRightOverrideMenuItem(ActionType, ContextMenuItemTagUnicodeInsertLROMark, contextMenuItemTagUnicodeInsertLROMark());
+    ContextMenuItem rightToLeftOverrideMenuItem(ActionType, ContextMenuItemTagUnicodeInsertRLOMark, contextMenuItemTagUnicodeInsertRLOMark());
+    ContextMenuItem popDirectionalFormattingMenuItem(ActionType, ContextMenuItemTagUnicodeInsertPDFMark, contextMenuItemTagUnicodeInsertPDFMark());
+    ContextMenuItem zeroWidthSpaceMenuItem(ActionType, ContextMenuItemTagUnicodeInsertZWSMark, contextMenuItemTagUnicodeInsertZWSMark());
+    ContextMenuItem zeroWidthJoinerMenuItem(ActionType, ContextMenuItemTagUnicodeInsertZWJMark, contextMenuItemTagUnicodeInsertZWJMark());
+    ContextMenuItem zeroWidthNonJoinerMenuItem(ActionType, ContextMenuItemTagUnicodeInsertZWNJMark, contextMenuItemTagUnicodeInsertZWNJMark());
+
+    appendItem(leftToRightMarkMenuItem, &unicodeMenu);
+    appendItem(rightToLeftMarkMenuItem, &unicodeMenu);
+    appendItem(leftToRightEmbedMenuItem, &unicodeMenu);
+    appendItem(rightToLeftEmbedMenuItem, &unicodeMenu);
+    appendItem(leftToRightOverrideMenuItem, &unicodeMenu);
+    appendItem(rightToLeftOverrideMenuItem, &unicodeMenu);
+    appendItem(popDirectionalFormattingMenuItem, &unicodeMenu);
+    appendItem(zeroWidthSpaceMenuItem, &unicodeMenu);
+    appendItem(zeroWidthJoinerMenuItem, &unicodeMenu);
+    appendItem(zeroWidthNonJoinerMenuItem, &unicodeMenu);
+
+    unicodeMenuItem.setSubMenu(&unicodeMenu);
+}
+
+#else
 
 void ContextMenuController::createAndAppendWritingDirectionSubMenu(ContextMenuItem& writingDirectionMenuItem)
 {
@@ -943,7 +1020,15 @@ void ContextMenuController::populate()
             createAndAppendSpeechSubMenu(SpeechMenuItem);
             appendItem(SpeechMenuItem, m_contextMenu.get());
 #endif
-#if !PLATFORM(GTK)
+#if PLATFORM(GTK)
+            EditorClient* client = frame->editor()->client();
+            if (client && client->shouldShowUnicodeMenu()) {
+                ContextMenuItem UnicodeMenuItem(SubmenuType, ContextMenuItemTagUnicode, contextMenuItemTagUnicode());
+                createAndAppendUnicodeSubMenu(UnicodeMenuItem);
+                appendItem(*separatorItem(), m_contextMenu.get());
+                appendItem(UnicodeMenuItem, m_contextMenu.get());
+            }
+#else
             ContextMenuItem WritingDirectionMenuItem(SubmenuType, ContextMenuItemTagWritingDirectionMenu, 
                 contextMenuItemTagWritingDirectionMenu());
             createAndAppendWritingDirectionSubMenu(WritingDirectionMenuItem);
@@ -1062,6 +1147,16 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagInputMethods:
         case ContextMenuItemTagUnicode:
+        case ContextMenuItemTagUnicodeInsertLRMMark:
+        case ContextMenuItemTagUnicodeInsertRLMMark:
+        case ContextMenuItemTagUnicodeInsertLREMark:
+        case ContextMenuItemTagUnicodeInsertRLEMark:
+        case ContextMenuItemTagUnicodeInsertLROMark:
+        case ContextMenuItemTagUnicodeInsertRLOMark:
+        case ContextMenuItemTagUnicodeInsertPDFMark:
+        case ContextMenuItemTagUnicodeInsertZWSMark:
+        case ContextMenuItemTagUnicodeInsertZWJMark:
+        case ContextMenuItemTagUnicodeInsertZWNJMark:
             shouldEnable = true;
             break;
 #endif

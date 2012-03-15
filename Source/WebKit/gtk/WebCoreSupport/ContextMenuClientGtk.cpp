@@ -24,6 +24,7 @@
 #include "ContextMenuController.h"
 #include "HitTestResult.h"
 #include "KURL.h"
+#include "LocalizedStrings.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "webkitwebviewprivate.h"
@@ -70,60 +71,22 @@ static GtkWidget* inputMethodsMenuItem (WebKitWebView* webView)
     return menuitem;
 }
 
-// Values taken from gtktextutil.c
-typedef struct {
-  const char *label;
-  gunichar ch;
-} GtkUnicodeMenuEntry;
-static const GtkUnicodeMenuEntry bidi_menu_entries[] = {
-  { N_("LRM _Left-to-right mark"), 0x200E },
-  { N_("RLM _Right-to-left mark"), 0x200F },
-  { N_("LRE Left-to-right _embedding"), 0x202A },
-  { N_("RLE Right-to-left e_mbedding"), 0x202B },
-  { N_("LRO Left-to-right _override"), 0x202D },
-  { N_("RLO Right-to-left o_verride"), 0x202E },
-  { N_("PDF _Pop directional formatting"), 0x202C },
-  { N_("ZWS _Zero width space"), 0x200B },
-  { N_("ZWJ Zero width _joiner"), 0x200D },
-  { N_("ZWNJ Zero width _non-joiner"), 0x200C }
-};
-
-static void insertControlCharacter(GtkWidget* widget)
+static int getUnicodeMenuItemPosition(GtkMenu* menu)
 {
-    // GtkUnicodeMenuEntry* entry = (GtkUnicodeMenuEntry*)g_object_get_data(G_OBJECT(widget), "gtk-unicode-menu-entry");
-    notImplemented();
-}
-
-static GtkWidget* unicodeMenuItem(WebKitWebView* webView)
-{
-    if (gtk_major_version > 2 || (gtk_major_version == 2 && gtk_minor_version >= 10)) {
-        GtkSettings* settings = webView ? gtk_widget_get_settings(GTK_WIDGET(webView)) : gtk_settings_get_default();
-
-        gboolean showMenu = TRUE;
-        if (settings)
-            g_object_get(settings, "gtk-show-unicode-menu", &showMenu, NULL);
-        if (!showMenu)
-            return 0;
+    GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
+    int unicodeMenuItemPosition = -1;
+    GList* iter;
+    int i = 0;
+    for (iter = items.get(), i = 0; iter; iter = g_list_next(iter), ++i) {
+        GtkMenuItem* item = GTK_MENU_ITEM(iter->data);
+        if (GTK_IS_SEPARATOR_MENU_ITEM(item))
+            continue;
+        if (String::fromUTF8(gtk_menu_item_get_label(item)) == contextMenuItemTagUnicode()) {
+            unicodeMenuItemPosition = i;
+            break;
+        }
     }
-
-    GtkWidget* menuitem = gtk_image_menu_item_new_with_mnemonic(
-        _("_Insert Unicode Control Character"));
-
-    GtkWidget* unicodeContextMenu = gtk_menu_new();
-    unsigned i;
-    for (i = 0; i < G_N_ELEMENTS(bidi_menu_entries); i++) {
-        GtkWidget* menuitem = gtk_menu_item_new_with_mnemonic(_(bidi_menu_entries[i].label));
-        g_object_set_data(G_OBJECT(menuitem), "gtk-unicode-menu-entry", (gpointer)&bidi_menu_entries[i]);
-        g_signal_connect(menuitem, "activate", G_CALLBACK(insertControlCharacter), 0);
-        gtk_widget_show(menuitem);
-        gtk_menu_shell_append(GTK_MENU_SHELL(unicodeContextMenu), menuitem);
-        // FIXME: Make the item sensitive as insertControlCharacter() is implemented
-        gtk_widget_set_sensitive(menuitem, FALSE);
-    }
-
-    gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), unicodeContextMenu);
-
-    return menuitem;
+    return unicodeMenuItemPosition;
 }
 
 PlatformMenuDescription ContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu* menu)
@@ -134,26 +97,21 @@ PlatformMenuDescription ContextMenuClient::getCustomMenuFromDefaultItems(Context
     HitTestResult result = core(webView)->contextMenuController()->hitTestResult();
 
     if (result.isContentEditable()) {
-
         GtkWidget* imContextMenu = inputMethodsMenuItem(webView);
-        GtkWidget* unicodeContextMenu = unicodeMenuItem(webView);
+        if (!imContextMenu)
+            return gtkmenu;
 
-        if (imContextMenu || unicodeContextMenu) {
+        // Place the im context menu item right before the unicode menu item
+        // if it's present.
+        int unicodeMenuItemPosition = getUnicodeMenuItemPosition(gtkmenu);
+        if (unicodeMenuItemPosition == -1) {
             GtkWidget* separator = gtk_separator_menu_item_new();
             gtk_menu_shell_append(GTK_MENU_SHELL(gtkmenu), separator);
             gtk_widget_show(separator);
         }
 
-        if (imContextMenu) {
-            gtk_menu_shell_append(GTK_MENU_SHELL(gtkmenu), imContextMenu);
-            gtk_widget_show(imContextMenu);
-        }
-
-        if (unicodeContextMenu) {
-            gtk_menu_shell_append(GTK_MENU_SHELL(gtkmenu), unicodeContextMenu);
-            gtk_widget_show(unicodeContextMenu);
-        }
-
+        gtk_menu_shell_insert(GTK_MENU_SHELL(gtkmenu), imContextMenu, unicodeMenuItemPosition);
+        gtk_widget_show(imContextMenu);
     }
 
     return gtkmenu;

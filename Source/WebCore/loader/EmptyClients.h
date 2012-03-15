@@ -517,6 +517,9 @@ public:
     virtual bool isAutomaticSpellingCorrectionEnabled() { return false; }
     virtual void toggleAutomaticSpellingCorrection() { }
 #endif
+#if PLATFORM(GTK)
+    virtual bool shouldShowUnicodeMenu() { return false; }
+#endif
     TextCheckerClient* textChecker() { return &m_textCheckerClient; }
 
 #if USE(AUTOCORRECTION_PANEL)

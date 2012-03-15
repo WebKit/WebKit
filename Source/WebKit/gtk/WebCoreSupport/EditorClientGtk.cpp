@@ -133,6 +133,21 @@ void EditorClient::setInputMethodState(bool active)
 #endif
 }
 
+bool EditorClient::shouldShowUnicodeMenu()
+{
+    if (gtk_major_version > 2 || (gtk_major_version == 2 && gtk_minor_version >= 10)) {
+        GtkSettings* settings = gtk_widget_get_settings(GTK_WIDGET(m_webView));
+        if (!settings)
+            return true;
+
+        gboolean enabled;
+        g_object_get(settings, "gtk-show-unicode-menu", &enabled, NULL);
+        return enabled;
+    }
+
+    return true;
+}
+
 bool EditorClient::shouldDeleteRange(Range* range)
 {
     gboolean accept = TRUE;

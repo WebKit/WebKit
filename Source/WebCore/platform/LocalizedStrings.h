@@ -69,6 +69,16 @@ namespace WebCore {
     String contextMenuItemTagDelete();
     String contextMenuItemTagInputMethods();
     String contextMenuItemTagUnicode();
+    String contextMenuItemTagUnicodeInsertLRMMark();
+    String contextMenuItemTagUnicodeInsertRLMMark();
+    String contextMenuItemTagUnicodeInsertLREMark();
+    String contextMenuItemTagUnicodeInsertRLEMark();
+    String contextMenuItemTagUnicodeInsertLROMark();
+    String contextMenuItemTagUnicodeInsertRLOMark();
+    String contextMenuItemTagUnicodeInsertPDFMark();
+    String contextMenuItemTagUnicodeInsertZWSMark();
+    String contextMenuItemTagUnicodeInsertZWJMark();
+    String contextMenuItemTagUnicodeInsertZWNJMark();
 #endif
 #if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
     String contextMenuItemTagSelectAll();

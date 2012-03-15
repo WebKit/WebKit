@@ -85,6 +85,9 @@ namespace WebCore {
         void createAndAppendTextDirectionSubMenu(ContextMenuItem&);
         void createAndAppendSubstitutionsSubMenu(ContextMenuItem&);
         void createAndAppendTransformationsSubMenu(ContextMenuItem&);
+#if PLATFORM(GTK)
+        void createAndAppendUnicodeSubMenu(ContextMenuItem&);
+#endif
 
         Page* m_page;
         ContextMenuClient* m_client;
