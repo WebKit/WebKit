@@ -1,6 +1,7 @@
 @echo off
 
 set PrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\private\JavaScriptCore
+set PGOPrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\..\Release_PGO\include\private\JavaScriptCore
 
 if "%1" EQU "clean" goto :clean
 if "%1" EQU "rebuild" call :clean
@@ -27,6 +28,7 @@ for %%f in (
     wtf\text\WTFString.cpp
 ) do (
     echo F | xcopy /y /d ..\..\%%f "%PrivateHeadersDirectory%\%%f" >NUL
+    echo F | xcopy /y /d ..\..\%%f "%PGOPrivateHeadersDirectory%\%%f" >NUL
 )
 
 goto :EOF
@@ -35,3 +37,4 @@ goto :EOF
 
 echo Deleting copied files...
 if exist "%PrivateHeadersDirectory%" rmdir /s /q "%PrivateHeadersDirectory%" >NUL
+if exist "%PGOPrivateHeadersDirectory%" rmdir /s /q "%PGOPrivateHeadersDirectory%" >NUL

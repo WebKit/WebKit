@@ -5,4 +5,8 @@
 	Name="jscReleasePGO"
 	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\production.vsprops;.\jscCommon.vsprops"
 	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\..\Production\include\private&quot;;&quot;$(ConfigurationBuildDir)\..\Production\include\private\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\..\Production\include\private\JavaScriptCore\wtf\text&quot;"
+	/>
 </VisualStudioPropertySheet>
