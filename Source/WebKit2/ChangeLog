@@ -1,3 +1,11 @@
+2012-03-15  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction. WinCairo export definitions
+        file was not updated when the main Apple file was changed.
+
+        * win/WebKit2CFLite.def: Revise export declarations to match
+        new symbol names.
+
 2012-03-15  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION(r107168?): Assertion failures under pageContainsAnyHorizontalScrollbars causing multiple "crashes" on the Lion Intel Debug WebKit2 testers

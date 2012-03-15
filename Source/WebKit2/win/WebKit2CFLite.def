@@ -112,6 +112,8 @@ EXPORTS
         ?createThread@WTF@@YAIP6AXPAX@Z0PBD@Z
         ?currentThread@WTF@@YAIXZ
         ?detachThread@WTF@@YAXI@Z
+        ?didBeginFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
+        ?didCancelFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
         ?initializeMainThread@WTF@@YAXXZ
         ?initializeThreading@WTF@@YAXXZ
         ?isMainThread@WTF@@YA_NXZ
@@ -153,8 +155,6 @@ EXPORTS
         ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@V?$PassRefPtr@VDocument@WebCore@@@4@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z
         ?create@ShadowRoot@WebCore@@SA?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@PAVElement@2@AAH@Z
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
-        ?didBeginFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
-        ?didCancelFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
         ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z
         ?externalRepresentation@WebCore@@YA?AVString@WTF@@PAVElement@1@I@Z
@@ -176,7 +176,7 @@ EXPORTS
         ?page@Document@WebCore@@QBEPAVPage@2@XZ
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
         ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVElement@2@HH_N@Z
-        ?removeShadowRootList@Element@WebCore@@QAEXXZ
+        ?removeAllShadowRoots@ShadowTree@WebCore@@QAEXXZ
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
         ?s_info@JSNode@WebCore@@2UClassInfo@JSC@@B
         ?scriptExecutionContext@JSDOMGlobalObject@WebCore@@QBEPAVScriptExecutionContext@2@XZ
@@ -209,8 +209,10 @@ EXPORTS
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRectList@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVRange@1@@Z
+        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNodeList@1@@Z
         ?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@@WTF@@XZ
         ?view@Document@WebCore@@QBEPAVFrameView@2@XZ
         ?willDetachPage@FrameDestructionObserver@WebCore@@UAEXXZ
+        ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIII_N@Z
