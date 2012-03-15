@@ -1,3 +1,15 @@
+2012-03-14  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r110383): ASSERTION failures in JSCell::finishCreation causing multiple tests to "crash" on the Lion Intel Debug Bots
+        https://bugs.webkit.org/show_bug.cgi?id=80993
+
+        Reviewed by Mark Rowe.
+
+        Moved $(BUILT_PRODUCTS_DIR)/usr/local/include to the front of HEADER_SEARCH_PATH
+        to fix builds given the wtf move.
+
+        * Configurations/WebKit.xcconfig:
+
 2012-03-13  Jon Lee  <jonlee@apple.com>
 
         Separate NOTIFICATIONS and LEGACY_NOTIFICATIONS
