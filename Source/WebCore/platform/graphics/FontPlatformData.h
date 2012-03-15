@@ -50,7 +50,7 @@
 #endif
 
 #if USE(CAIRO)
-#include "HashFunctions.h"
+#include <wtf/HashFunctions.h>
 #include <cairo.h>
 #endif
 

@@ -20,7 +20,7 @@
 #ifndef RefPtrCairo_h
 #define RefPtrCairo_h
 
-#include "RefPtr.h"
+#include <wtf/RefPtr.h>
 
 typedef struct _cairo cairo_t;
 typedef struct _cairo_surface cairo_surface_t;
