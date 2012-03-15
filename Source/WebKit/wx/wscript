@@ -68,21 +68,18 @@ def configure(conf):
     
 def pre_build(bld):
     """
-    The wxWebKit library should be rebuilt if jscore or webcore changes,
-    so we make those static libs as dependencies.
+    The wxWebKit library should be rebuilt if the webcore static 
+    library changes, so we mark it as a dependency.
     """
     
     ext = '.a'
     if sys.platform.startswith('win'):
         ext = '.lib'
     
-    libjscore = os.path.join(output_dir, 'libjscore%s' % ext)
     libwebcore = os.path.join(output_dir, 'libwebcore%s' % ext)
     
-    assert os.path.exists(libjscore)
     assert os.path.exists(libwebcore)
     
-    bld.env.CXXDEPS_JSCORE = Utils.h_file(libjscore)
     bld.env.CXXDEPS_WEBCORE = Utils.h_file(libwebcore)
     
 def build(bld):

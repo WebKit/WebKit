@@ -46,6 +46,7 @@ def build(bld):
             jscore_excludes.append('JSStringRefBSTR.cpp')
             jscore_excludes.extend(get_excludes(jscore_dir, ['*Win.cpp']))
 
+    bld.env.LIBDIR = output_dir
     full_dirs = get_dirs_for_features(jscore_dir, features=[Options.options.port.lower()], dirs=jscore_dirs)
 
     includes = common_includes + full_dirs
@@ -54,9 +55,10 @@ def build(bld):
 
     # 1. A simple program
     jscore = bld.new_task_gen(
-        features = 'cc cxx cstaticlib',
+        features = 'cc cxx cshlib',
         includes = '. .. assembler DerivedSources ForwardingHeaders ' + ' '.join(includes),
         source = sources,
+        defines = ['BUILDING_JavaScriptCore'],
         target = 'jscore',
         uselib = 'WX ICU ' + get_config(),
         uselib_local = '',

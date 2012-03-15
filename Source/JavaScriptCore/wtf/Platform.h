@@ -1134,7 +1134,7 @@
    since most ports try to support sub-project independence, adding new headers
    to WTF causes many ports to break, and so this way we can address the build
    breakages one port at a time. */
-#if PLATFORM(MAC) || PLATFORM(QT)
+#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(WX)
 #define WTF_USE_EXPORT_MACROS 1
 #else
 #define WTF_USE_EXPORT_MACROS 0

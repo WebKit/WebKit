@@ -127,6 +127,8 @@ webcore_dirs_common = [
     'Source/WebCore/loader/cache',
     'Source/WebCore/loader/icon',
     'Source/WebCore/Modules/geolocation',
+    'Source/WebCore/Modules/indexeddb',
+    'Source/WebCore/Modules/webdatabase',
     'Source/WebCore/notifications',
     'Source/WebCore/page',
     'Source/WebCore/page/animation',
@@ -162,6 +164,7 @@ webcore_dirs_common = [
     'Source/WebCore/svg/properties',
     'Source/WebCore/testing',
     'Source/WebCore/testing/js',
+    'Source/WebCore/workers',
     'Source/WebCore/xml',
     'Source/WebCore/xml/parser',
 ]
@@ -243,7 +246,7 @@ def common_configure(conf):
     build_port = Options.options.port
 
     feature_defines = ['ENABLE_DATABASE', 'ENABLE_SQL_DATABASE', 'ENABLE_XSLT', 'ENABLE_JAVASCRIPT_DEBUGGER',
-                    'ENABLE_SVG', 'ENABLE_FILTERS', 'ENABLE_SVG_FONTS', 'ENABLE_INSPECTOR',
+                    'ENABLE_SVG', 'ENABLE_FILTERS', 'ENABLE_SVG_FONTS', 'ENABLE_INSPECTOR', 'ENABLE_WORKERS',
                     'BUILDING_%s' % build_port.upper()]
 
     conf.env["FEATURE_DEFINES"] = ' '.join(feature_defines)
@@ -313,7 +316,7 @@ def common_configure(conf):
     if build_port == "wx":
         update_wx_deps(conf, wk_root, msvc_version)
 
-        conf.env.append_value('CXXDEFINES', ['BUILDING_WX__=1', 'JS_NO_EXPORT'])
+        conf.env.append_value('CXXDEFINES', ['BUILDING_WX__=1'])
 
         if building_on_win32:
             conf.env.append_value('LIBPATH', os.path.join(msvclibs_dir, 'lib'))
@@ -438,13 +441,14 @@ def common_configure(conf):
         #libxslt
         conf.env['LIB_XSLT'] = ['libxslt']
     else:
+        conf.env.append_value('CXXFLAGS', ['-fvisibility=hidden'])
         if build_port == 'wx':
             port_uses['wx'].append('PTHREADS')
             conf.env.append_value('LIB', ['jpeg', 'png', 'pthread'])
             conf.env.append_value('LIBPATH', os.path.join(wklibs_dir, 'unix', 'lib'))
             conf.env.append_value('CPPPATH', os.path.join(wklibs_dir, 'unix', 'include'))
             conf.env.append_value('CXXFLAGS', ['-fPIC', '-DPIC'])
-
+            conf.env.append_value('CXXFLAGS', ['-g'])
         conf.check_cfg(msg='Checking for libxslt', path='xslt-config', args='--cflags --libs', package='', uselib_store='XSLT', mandatory=True)
         conf.check_cfg(path='xml2-config', args='--cflags --libs', package='', uselib_store='XML', mandatory=True)
         if sys.platform.startswith('darwin') and min_version and min_version == '10.4':

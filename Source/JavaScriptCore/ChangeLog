@@ -1,3 +1,13 @@
+2012-03-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Move wx port to using export macros
+        https://bugs.webkit.org/show_bug.cgi?id=77279
+
+        Reviewed by Hajime Morita.
+
+        * wscript:
+        * wtf/Platform.h:
+
 2012-03-14  Benjamin Poulain  <bpoulain@apple.com>
 
         Avoid StringImpl::getData16SlowCase() when sorting array

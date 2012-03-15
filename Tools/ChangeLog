@@ -1,3 +1,13 @@
+2012-03-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Move wx port to using export macros
+        https://bugs.webkit.org/show_bug.cgi?id=77279
+
+        Reviewed by Hajime Morita.
+
+        * waf/build/settings.py:
+        (common_configure):
+
 2012-03-15  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix attempt after r110845.
