@@ -1035,9 +1035,6 @@ fast/dom/timer-increase-min-interval.html
 fast/dom/timer-increase-then-decrease-min-interval-repeating.html
 fast/dom/timer-increase-then-decrease-min-interval.html
 
-# WebKitTestRunner needs layoutTestController.setValueForUser
-fast/forms/onchange-setvalueforuser.html
-
 # WebKitTestRunner needs layoutTestController.originsWithLocalStorage
 storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html

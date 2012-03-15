@@ -779,7 +779,25 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef jsURL)
 
 void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef element, JSStringRef value)
 {
-    // FIXME: implement
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate> webViewPrivate(Query, webView);
+    if (!webViewPrivate)
+        return;
+
+    COMPtr<IDOMElement> domElement;
+    if (FAILED(webViewPrivate->elementFromJS(context, element, &domElement)))
+        return;
+
+    COMPtr<IDOMHTMLInputElement> domInputElement;
+    if (FAILED(domElement->QueryInterface(IID_IDOMHTMLInputElement, reinterpret_cast<void**>(&domInputElement))))
+        return;
+
+    _bstr_t valueBSTR(JSStringCopyBSTR(value), false);
+
+    domInputElement->setValueForUser(valueBSTR);
 }
 
 void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)

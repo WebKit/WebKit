@@ -1,3 +1,20 @@
+2012-03-15  Lynn Neir  <lynn.neir@skype.net>
+
+        Implement LayoutTestController::setValueForUser on Windows https://bugs.webkit.org/show_bug.cgi?id=55834
+
+        Implemented setValueForUser in both DumpRenderTree and WebKitTestRunner.
+
+        Reviewed by Jessie Berlin.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setValueForUser):
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::setValueForUser):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (LayoutTestController):
+
 2012-03-15  Adam Barth  <abarth@webkit.org>
 
         Update the start-queue.sh script to match what we're using on the bots
