@@ -1997,8 +1997,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         [self getRectsBeingDrawn:&rectsBeingDrawn count:&numRectsBeingDrawn];
         for (NSInteger i = 0; i < numRectsBeingDrawn; ++i) {
             Region unpaintedRegion;
-            IntRect rect = enclosingIntRect(rectsBeingDrawn[i]);
-            drawingArea->paint(context, rect, unpaintedRegion);
+            drawingArea->paint(context, enclosingIntRect(rectsBeingDrawn[i]), unpaintedRegion);
 
             // If the window doesn't have a valid backing store, we need to fill the parts of the page that we
             // didn't paint with the background color (white or clear), to avoid garbage in those areas.
