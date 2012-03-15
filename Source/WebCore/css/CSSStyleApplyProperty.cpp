@@ -266,17 +266,17 @@ enum ColorInherit {NoInheritFromParent = 0, InheritFromParent};
 Color defaultInitialColor();
 Color defaultInitialColor() { return Color(); }
 template <ColorInherit inheritColorFromParent,
-          const Color& (RenderStyle::*getterFunction)() const,
+          Color (RenderStyle::*getterFunction)() const,
           void (RenderStyle::*setterFunction)(const Color&),
           void (RenderStyle::*visitedLinkSetterFunction)(const Color&),
-          const Color& (RenderStyle::*defaultFunction)() const,
+          Color (RenderStyle::*defaultFunction)() const,
           Color (*initialFunction)() = &defaultInitialColor>
 class ApplyPropertyColor {
 public:
     static void applyInheritValue(CSSStyleSelector* selector)
     {
         // Visited link style can never explicitly inherit from parent visited link style so no separate getters are needed.
-        const Color& color = (selector->parentStyle()->*getterFunction)();
+        Color color = (selector->parentStyle()->*getterFunction)();
         applyColorValue(selector, color.isValid() ? color : (selector->parentStyle()->*defaultFunction)());
     }
 

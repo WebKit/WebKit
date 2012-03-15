@@ -1377,13 +1377,13 @@ public:
     SVGRenderStyle* accessSVGStyle() { return m_svgStyle.access(); }
 
     const SVGPaint::SVGPaintType& fillPaintType() const { return svgStyle()->fillPaintType(); }
-    const Color& fillPaintColor() const { return svgStyle()->fillPaintColor(); }
+    Color fillPaintColor() const { return svgStyle()->fillPaintColor(); }
     void setFillPaintColor(const Color& c) { accessSVGStyle()->setFillPaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, c, ""); }
     float fillOpacity() const { return svgStyle()->fillOpacity(); }
     void setFillOpacity(float f) { accessSVGStyle()->setFillOpacity(f); }
 
     const SVGPaint::SVGPaintType& strokePaintType() const { return svgStyle()->strokePaintType(); }
-    const Color& strokePaintColor() const { return svgStyle()->strokePaintColor(); }
+    Color strokePaintColor() const { return svgStyle()->strokePaintColor(); }
     void setStrokePaintColor(const Color& c) { accessSVGStyle()->setStrokePaint(SVGPaint::SVG_PAINTTYPE_RGBCOLOR, c, ""); }
     float strokeOpacity() const { return svgStyle()->strokeOpacity(); }
     void setStrokeOpacity(float f) { accessSVGStyle()->setStrokeOpacity(f); }
@@ -1717,36 +1717,36 @@ private:
     bool isDisplayInlineType(EDisplay display) const { return display == INLINE || isDisplayReplacedType(display); }
 
     // Color accessors are all private to make sure callers use visitedDependentColor instead to access them.
-    const Color& invalidColor() const { static Color invalid; return invalid; }
-    const Color& borderLeftColor() const { return surround->border.left().color(); }
-    const Color& borderRightColor() const { return surround->border.right().color(); }
-    const Color& borderTopColor() const { return surround->border.top().color(); }
-    const Color& borderBottomColor() const { return surround->border.bottom().color(); }
-    const Color& backgroundColor() const { return m_background->color(); }
-    const Color& color() const { return inherited->color; }
-    const Color& columnRuleColor() const { return rareNonInheritedData->m_multiCol->m_rule.color(); }
-    const Color& outlineColor() const { return m_background->outline().color(); }
-    const Color& textEmphasisColor() const { return rareInheritedData->textEmphasisColor; }
-    const Color& textFillColor() const { return rareInheritedData->textFillColor; }
-    const Color& textStrokeColor() const { return rareInheritedData->textStrokeColor; }
-    const Color& visitedLinkColor() const { return inherited->visitedLinkColor; }
-    const Color& visitedLinkBackgroundColor() const { return rareNonInheritedData->m_visitedLinkBackgroundColor; }
-    const Color& visitedLinkBorderLeftColor() const { return rareNonInheritedData->m_visitedLinkBorderLeftColor; }
-    const Color& visitedLinkBorderRightColor() const { return rareNonInheritedData->m_visitedLinkBorderRightColor; }
-    const Color& visitedLinkBorderBottomColor() const { return rareNonInheritedData->m_visitedLinkBorderBottomColor; }
-    const Color& visitedLinkBorderTopColor() const { return rareNonInheritedData->m_visitedLinkBorderTopColor; }
-    const Color& visitedLinkOutlineColor() const { return rareNonInheritedData->m_visitedLinkOutlineColor; }
-    const Color& visitedLinkColumnRuleColor() const { return rareNonInheritedData->m_multiCol->m_visitedLinkColumnRuleColor; }
-    const Color& visitedLinkTextEmphasisColor() const { return rareInheritedData->visitedLinkTextEmphasisColor; }
-    const Color& visitedLinkTextFillColor() const { return rareInheritedData->visitedLinkTextFillColor; }
-    const Color& visitedLinkTextStrokeColor() const { return rareInheritedData->visitedLinkTextStrokeColor; }
+    Color invalidColor() const { static Color invalid; return invalid; }
+    Color borderLeftColor() const { return surround->border.left().color(); }
+    Color borderRightColor() const { return surround->border.right().color(); }
+    Color borderTopColor() const { return surround->border.top().color(); }
+    Color borderBottomColor() const { return surround->border.bottom().color(); }
+    Color backgroundColor() const { return m_background->color(); }
+    Color color() const { return inherited->color; }
+    Color columnRuleColor() const { return rareNonInheritedData->m_multiCol->m_rule.color(); }
+    Color outlineColor() const { return m_background->outline().color(); }
+    Color textEmphasisColor() const { return rareInheritedData->textEmphasisColor; }
+    Color textFillColor() const { return rareInheritedData->textFillColor; }
+    Color textStrokeColor() const { return rareInheritedData->textStrokeColor; }
+    Color visitedLinkColor() const { return inherited->visitedLinkColor; }
+    Color visitedLinkBackgroundColor() const { return rareNonInheritedData->m_visitedLinkBackgroundColor; }
+    Color visitedLinkBorderLeftColor() const { return rareNonInheritedData->m_visitedLinkBorderLeftColor; }
+    Color visitedLinkBorderRightColor() const { return rareNonInheritedData->m_visitedLinkBorderRightColor; }
+    Color visitedLinkBorderBottomColor() const { return rareNonInheritedData->m_visitedLinkBorderBottomColor; }
+    Color visitedLinkBorderTopColor() const { return rareNonInheritedData->m_visitedLinkBorderTopColor; }
+    Color visitedLinkOutlineColor() const { return rareNonInheritedData->m_visitedLinkOutlineColor; }
+    Color visitedLinkColumnRuleColor() const { return rareNonInheritedData->m_multiCol->m_visitedLinkColumnRuleColor; }
+    Color visitedLinkTextEmphasisColor() const { return rareInheritedData->visitedLinkTextEmphasisColor; }
+    Color visitedLinkTextFillColor() const { return rareInheritedData->visitedLinkTextFillColor; }
+    Color visitedLinkTextStrokeColor() const { return rareInheritedData->visitedLinkTextStrokeColor; }
 
     Color colorIncludingFallback(int colorProperty, bool visitedLink) const;
 
 #if ENABLE(SVG)
-    const Color& stopColor() const { return svgStyle()->stopColor(); }
-    const Color& floodColor() const { return svgStyle()->floodColor(); }
-    const Color& lightingColor() const { return svgStyle()->lightingColor(); }
+    Color stopColor() const { return svgStyle()->stopColor(); }
+    Color floodColor() const { return svgStyle()->floodColor(); }
+    Color lightingColor() const { return svgStyle()->lightingColor(); }
 #endif
 
     void appendContent(PassOwnPtr<ContentData>);

@@ -418,6 +418,23 @@ public:
     }
 };
 
+class PropertyWrapperColor : public PropertyWrapperGetter<Color> {
+public:
+    PropertyWrapperColor(int prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
+        : PropertyWrapperGetter<Color>(prop, getter)
+        , m_setter(setter)
+    {
+    }
+
+    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    {
+        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<Color>::m_getter)(), (b->*PropertyWrapperGetter<Color>::m_getter)(), progress));
+    }
+
+protected:
+    void (RenderStyle::*m_setter)(const Color&);
+};
+
 #if USE(ACCELERATED_COMPOSITING)
 class PropertyWrapperAcceleratedOpacity : public PropertyWrapper<float> {
 public:
@@ -610,7 +627,7 @@ private:
 
 class PropertyWrapperMaybeInvalidColor : public PropertyWrapperBase {
 public:
-    PropertyWrapperMaybeInvalidColor(int prop, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
+    PropertyWrapperMaybeInvalidColor(int prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
         : PropertyWrapperBase(prop)
         , m_getter(getter)
         , m_setter(setter)
@@ -649,22 +666,22 @@ public:
     }
 
 private:
-    const Color& (RenderStyle::*m_getter)() const;
+    Color (RenderStyle::*m_getter)() const;
     void (RenderStyle::*m_setter)(const Color&);
 };
 
 enum MaybeInvalidColorTag { MaybeInvalidColor };
 class PropertyWrapperVisitedAffectedColor : public PropertyWrapperBase {
 public:
-    PropertyWrapperVisitedAffectedColor(int prop, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&), 
-                                        const Color& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
+    PropertyWrapperVisitedAffectedColor(int prop, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&), 
+                                        Color (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
         : PropertyWrapperBase(prop)
-        , m_wrapper(adoptPtr(new PropertyWrapper<const Color&>(prop, getter, setter)))
-        , m_visitedWrapper(adoptPtr(new PropertyWrapper<const Color&>(prop, visitedGetter, visitedSetter)))
+        , m_wrapper(adoptPtr(new PropertyWrapperColor(prop, getter, setter)))
+        , m_visitedWrapper(adoptPtr(new PropertyWrapperColor(prop, visitedGetter, visitedSetter)))
     {
     }
-    PropertyWrapperVisitedAffectedColor(int prop, MaybeInvalidColorTag, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&), 
-                                        const Color& (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
+    PropertyWrapperVisitedAffectedColor(int prop, MaybeInvalidColorTag, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&), 
+                                        Color (RenderStyle::*visitedGetter)() const, void (RenderStyle::*visitedSetter)(const Color&))
         : PropertyWrapperBase(prop)
         , m_wrapper(adoptPtr(new PropertyWrapperMaybeInvalidColor(prop, getter, setter)))
         , m_visitedWrapper(adoptPtr(new PropertyWrapperMaybeInvalidColor(prop, visitedGetter, visitedSetter)))
@@ -887,7 +904,7 @@ private:
 #if ENABLE(SVG)
 class PropertyWrapperSVGPaint : public PropertyWrapperBase {
 public:
-    PropertyWrapperSVGPaint(int prop, const SVGPaint::SVGPaintType& (RenderStyle::*paintTypeGetter)() const, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
+    PropertyWrapperSVGPaint(int prop, const SVGPaint::SVGPaintType& (RenderStyle::*paintTypeGetter)() const, Color (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
         : PropertyWrapperBase(prop)
         , m_paintTypeGetter(paintTypeGetter)
         , m_getter(getter)
@@ -941,7 +958,7 @@ public:
 
 private:
     const SVGPaint::SVGPaintType& (RenderStyle::*m_paintTypeGetter)() const;
-    const Color& (RenderStyle::*m_getter)() const;
+    Color (RenderStyle::*m_getter)() const;
     void (RenderStyle::*m_setter)(const Color&);
 };
 #endif
