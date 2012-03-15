@@ -1,3 +1,14 @@
+2012-03-15  Patrick Gansterer  <paroga@webkit.org>
+
+        [EFL] Make zlib a general build requirement
+        https://bugs.webkit.org/show_bug.cgi?id=80153
+
+        Reviewed by Hajime Morita.
+
+        After r109538 WebSocket module needs zlib to support deflate-frame extension.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-03-15  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Remove some features that we do not have anymore

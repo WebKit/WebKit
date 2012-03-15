@@ -148,9 +148,6 @@ IF (WTF_USE_CAIRO)
       platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
       platform/graphics/freetype/SimpleFontDataFreeType.cpp
     )
-    LIST(APPEND WebCore_LIBRARIES
-      ${ZLIB_LIBRARIES}
-    )
   ENDIF ()
 
   IF (WTF_USE_PANGO)
@@ -213,6 +210,7 @@ LIST(APPEND WebCore_LIBRARIES
   ${SQLITE_LIBRARIES}
   ${Glib_LIBRARIES}
   ${LIBSOUP24_LIBRARIES}
+  ${ZLIB_LIBRARIES}
 )
 
 IF (ENABLE_VIDEO)
@@ -236,6 +234,7 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   ${SQLITE_INCLUDE_DIR}
   ${Glib_INCLUDE_DIRS}
   ${LIBSOUP24_INCLUDE_DIRS}
+  ${ZLIB_INCLUDE_DIRS}
 )
 
 IF (ENABLE_VIDEO)

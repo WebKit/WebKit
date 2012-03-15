@@ -1203,7 +1203,7 @@
 #define WTF_USE_WTFURL 0
 #endif
 
-#if !PLATFORM(QT) && !PLATFORM(EFL)
+#if !defined(WTF_USE_ZLIB) && !PLATFORM(QT)
 #define WTF_USE_ZLIB 1
 #endif
 
