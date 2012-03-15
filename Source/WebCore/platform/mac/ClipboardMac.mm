@@ -253,13 +253,13 @@ bool ClipboardMac::setData(const String &type, const String &data)
         Vector<String> types;
         types.append(String(NSURLPboardType));
 
-        platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
+        platformStrategies()->pasteboardStrategy()->addTypes(types, m_pasteboardName);
         platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, String(NSURLPboardType), m_pasteboardName);
         NSURL *url = [[NSURL alloc] initWithString:cocoaData];
 
         if ([url isFileURL] && m_frame->document()->securityOrigin()->canLoadLocalResources()) {
             types.append(String(NSFilenamesPboardType));
-            platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
+            platformStrategies()->pasteboardStrategy()->addTypes(types, m_pasteboardName);
             Vector<String> fileList;
             fileList.append(String([url path]));
             platformStrategies()->pasteboardStrategy()->setPathnamesForType(fileList, String(NSFilenamesPboardType), m_pasteboardName);
@@ -273,7 +273,7 @@ bool ClipboardMac::setData(const String &type, const String &data)
         // everything else we know of goes on the pboard as a string
         Vector<String> types;
         types.append(cocoaType);
-        platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
+        platformStrategies()->pasteboardStrategy()->addTypes(types, m_pasteboardName);
         platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, cocoaType, m_pasteboardName);
         return true;
     }

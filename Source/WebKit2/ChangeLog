@@ -1,3 +1,21 @@
+2012-03-15  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11036900> and https://bugs.webkit.org/show_bug.cgi?id=81079
+        REGRESSION(r107844): Clipboard API only remembers most recent data set on clipboard
+
+        Reviewed by Sam Weinig.
+
+        Add the non-destructive "addTypes" to supplement the destructive "setTypes"
+
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContext.messages.in:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::addPasteboardTypes):
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::addTypes):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2012-03-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement unicode submenu items

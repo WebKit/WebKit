@@ -1,3 +1,15 @@
+2012-03-15  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11036900> and https://bugs.webkit.org/show_bug.cgi?id=81079
+        REGRESSION(r107844): Clipboard API only remembers most recent data set on clipboard
+
+        Reviewed by Sam Weinig.
+
+        Add the non-destructive "addTypes" to supplement the destructive "setTypes"
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::addTypes):
+
 2012-03-14  Anders Carlsson  <andersca@apple.com>
 
         java/java-and-plugins.html test failing

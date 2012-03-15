@@ -203,6 +203,11 @@ void WebContext::getPasteboardColor(const String& pasteboardName, WebCore::Color
     color = PlatformPasteboard(pasteboardName).color();    
 }
 
+void WebContext::addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes)
+{
+    PlatformPasteboard(pasteboardName).addTypes(pasteboardTypes);
+}
+
 void WebContext::setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes)
 {
     PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);

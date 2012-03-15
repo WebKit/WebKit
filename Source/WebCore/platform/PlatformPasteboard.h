@@ -52,6 +52,7 @@ public:
     Color color();
     
     void copy(const String& fromPasteboard);
+    void addTypes(const Vector<String>& pasteboardTypes);
     void setTypes(const Vector<String>& pasteboardTypes);
     void setBufferForType(PassRefPtr<SharedBuffer>, const String& pasteboardType);
     void setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType);

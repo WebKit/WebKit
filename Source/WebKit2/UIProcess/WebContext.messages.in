@@ -53,6 +53,7 @@ messages -> WebContext {
     GetPasteboardChangeCount(WTF::String pasteboardName) -> (uint64_t changeCount)
     GetPasteboardUniqueName() -> (WTF::String pasteboardName)
     GetPasteboardColor(WTF::String pasteboardName) -> (WebCore::Color color)
+    AddPasteboardTypes(WTF::String pasteboardName, Vector<WTF::String> pasteboardTypes)
     SetPasteboardTypes(WTF::String pasteboardName, Vector<WTF::String> pasteboardTypes)
     SetPasteboardPathnamesForType(WTF::String pasteboardName, WTF::String pasteboardType, Vector<WTF::String> pathnames)
     SetPasteboardStringForType(WTF::String pasteboardName, WTF::String pasteboardType, WTF::String string)
