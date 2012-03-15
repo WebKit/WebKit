@@ -1844,3 +1844,6 @@ tables/mozilla/bugs/bug1188.html
 
 # Bug 80531
 fast/forms/textfield-overflow.html
+
+# http://bugs.webkit.org/show_bug.cgi?id=81006
+svg/custom/delete-text-crash.html

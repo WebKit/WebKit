@@ -577,3 +577,6 @@ fast/dom/navigator-vibration.html
 # http:///webkit.org/b/80531
 # REGRESSION(r110072): fast/forms/textfield-overflow.html is failing
 fast/forms/textfield-overflow.html
+
+# http://bugs.webkit.org/show_bug.cgi?id=81006
+svg/custom/delete-text-crash.html
