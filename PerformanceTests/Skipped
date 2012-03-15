@@ -2,7 +2,6 @@
 Mutation
 
 # Do not conform to WebKit or Chromium perf test styles
-Layout
 PageLoad
 SunSpider
 XSSAuditor

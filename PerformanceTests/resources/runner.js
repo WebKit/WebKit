@@ -1,6 +1,27 @@
 
 var PerfTestRunner = {};
 
+// To make the benchmark results predictable, we replace Math.random with a
+// 100% deterministic alternative.
+PerfTestRunner.randomSeed = PerfTestRunner.initialRandomSeed = 49734321;
+
+PerfTestRunner.resetRandomSeed = function() {
+    PerfTestRunner.randomSeed = PerfTestRunner.initialRandomSeed
+}
+
+PerfTestRunner.random = Math.random = function() {
+    // Robert Jenkins' 32 bit integer hash function.
+    var randomSeed = PerfTestRunner.randomSeed;
+    randomSeed = ((randomSeed + 0x7ed55d16) + (randomSeed << 12))  & 0xffffffff;
+    randomSeed = ((randomSeed ^ 0xc761c23c) ^ (randomSeed >>> 19)) & 0xffffffff;
+    randomSeed = ((randomSeed + 0x165667b1) + (randomSeed << 5))   & 0xffffffff;
+    randomSeed = ((randomSeed + 0xd3a2646c) ^ (randomSeed << 9))   & 0xffffffff;
+    randomSeed = ((randomSeed + 0xfd7046c5) + (randomSeed << 3))   & 0xffffffff;
+    randomSeed = ((randomSeed ^ 0xb55a4f09) ^ (randomSeed >>> 16)) & 0xffffffff;
+    PerfTestRunner.randomSeed = randomSeed;
+    return (randomSeed & 0xfffffff) / 0x10000000;
+};
+
 PerfTestRunner.log = function (text) {
     if (!document.getElementById("log")) {
         var pre = document.createElement('pre');

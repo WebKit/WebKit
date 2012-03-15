@@ -1,3 +1,40 @@
+2012-03-14  Alexandru Chiculita  <achicu@adobe.com>
+
+        Layout/floats.html should be runnable by run-perf-tests
+        https://bugs.webkit.org/show_bug.cgi?id=77051
+
+        Reviewed by Ryosuke Niwa.
+
+        I've split Layout/floats.html into multiple tests for each button in the original manual test.
+        Some tests take longer to run and I've changed the number of iterations, so that each tests finishes under 30s per run.
+
+        * DOM/resources/dom-perf.js:
+        * Layout/floats.html: Removed.
+        * Layout/floats_100_100.html: Added.
+        * Layout/floats_100_100_nested.html: Added.
+        * Layout/floats_20_100.html: Added.
+        * Layout/floats_20_100_nested.html: Added.
+        * Layout/floats_2_100.html: Added.
+        * Layout/floats_2_100_nested.html: Added.
+        * Layout/floats_50_100.html: Added.
+        * Layout/floats_50_100_nested.html: Added.
+        * Layout/resources/floats.css: Added.
+        (.container):
+        (.float):
+        (.big):
+        (.float-end):
+        * Layout/resources/floats.js: Added.
+        (.):
+        * Skipped:
+        * resources/runner.js:
+        (PerfTestRunner.resetRandomSeed):
+        (PerfTestRunner.random):
+        (Math.random):
+            Moved the Math.random to runner.js to be used by all tests.
+            Added resetRandomSeed to bring the randomizer back to initial seed.
+            It is useful to get the same results at every run and minimize the
+            differences between runs.
+
 2012-03-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r110559.
