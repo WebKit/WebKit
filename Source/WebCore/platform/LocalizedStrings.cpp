@@ -567,6 +567,11 @@ String AXDefinitionListDefinitionText()
     return WEB_UI_STRING("definition", "definition phrase");
 }
 
+String AXFooterRoleDescriptionText()
+{
+    return WEB_UI_STRING("footer", "accessibility role description for a footer");
+}
+
 #if PLATFORM(MAC)
 String AXARIAContentGroupText(const String& ariaType)
 {

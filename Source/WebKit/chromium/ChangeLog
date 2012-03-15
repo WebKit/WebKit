@@ -1,3 +1,12 @@
+2012-03-14  Chris Fleizach  <cfleizach@apple.com>
+
+        AXDescription for HTML5 footer and ARIA role contentinfo incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=78967
+
+        Reviewed by Beth Dakin.
+
+        * src/LocalizedStrings.cpp:
+
 2012-03-13  Jon Lee  <jonlee@apple.com>
 
         Separate NOTIFICATIONS and LEGACY_NOTIFICATIONS

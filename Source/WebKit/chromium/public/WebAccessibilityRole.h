@@ -67,6 +67,7 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleDocumentRegion,
     WebAccessibilityRoleDrawer,
     WebAccessibilityRoleEditableText,
+    WebAccessibilityRoleFooter,
     WebAccessibilityRoleForm,
     WebAccessibilityRoleGrid,
     WebAccessibilityRoleGroup,

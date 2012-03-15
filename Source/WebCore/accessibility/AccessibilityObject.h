@@ -121,6 +121,7 @@ enum AccessibilityRole {
     DocumentRegionRole,            
     DrawerRole,
     EditableTextRole,
+    FooterRole,
     FormRole,
     GridRole,
     GroupRole,

@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<footer>footer</footer>
+<div role="contentinfo">content info</div>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a footer element has a different role description from a contentinfo");
+
+    if (window.accessibilityController) {
+
+          // this text field should be required.
+          document.getElementById("body").focus();
+          var obj = accessibilityController.focusedElement;
+
+          var footer = obj.childAtIndex(0);
+          var contentInfo = obj.childAtIndex(1);
+         
+          shouldBe("footer.role", "contentInfo.role");
+          shouldBe("footer.subrole", "contentInfo.subrole");
+          shouldBe("footer.roleDescription", "'AXRoleDescription: footer'");
+          shouldBe("contentInfo.roleDescription", "'AXRoleDescription: content information'");
+
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

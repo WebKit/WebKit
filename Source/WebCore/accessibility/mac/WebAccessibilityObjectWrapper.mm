@@ -1549,7 +1549,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { LabelRole, NSAccessibilityGroupRole },
         { DivRole, NSAccessibilityGroupRole },
         { FormRole, NSAccessibilityGroupRole },
-        { SpinButtonRole, NSAccessibilityIncrementorRole }
+        { SpinButtonRole, NSAccessibilityIncrementorRole },
+        { FooterRole, NSAccessibilityGroupRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -1614,6 +1615,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXLandmarkBanner";
         case LandmarkComplementaryRole:
             return @"AXLandmarkComplementary";
+        // Footer roles should appear as content info types.
+        case FooterRole:
         case LandmarkContentInfoRole:
             return @"AXLandmarkContentInfo";
         case LandmarkMainRole:
@@ -1726,6 +1729,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                 return AXDefinitionListTermText();
             case DefinitionListDefinitionRole:
                 return AXDefinitionListDefinitionText();
+            case FooterRole:
+                return AXFooterRoleDescriptionText();
         }
     }        
     

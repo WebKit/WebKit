@@ -158,6 +158,12 @@ String AXDefinitionListDefinitionText()
     return String("definition");
 }
 
+String AXFooterRoleDescriptionText()
+{
+    notImplemented();
+    return String("footer");
+}
+
 String AXButtonActionVerb()
 {
     return query(WebLocalizedString::AXButtonActionVerb);

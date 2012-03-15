@@ -398,6 +398,12 @@ String AXDefinitionListTermText()
     return String();
 }
 
+String AXFooterRoleDescriptionText()
+{
+    notImplemented();
+    return String();
+}
+
 String AXLinkActionVerb()
 {
     notImplemented();

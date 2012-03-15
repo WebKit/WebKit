@@ -367,6 +367,11 @@ String AXDefinitionListDefinitionText()
     return String::fromUTF8(_("definition"));
 }
 
+String AXFooterRoleDescriptionText()
+{
+    return String::fromUTF8(_("footer"));
+}
+
 String AXButtonActionVerb()
 {
     return String::fromUTF8(_("press"));
