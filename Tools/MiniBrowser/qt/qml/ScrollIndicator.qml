@@ -65,11 +65,11 @@ Item {
             opacity: 0.5
             smooth: true
 
-            x: flickableItem ? flickableItem.visibleArea.xPosition * horizontalIndicator.width : 0;
-            y: 0
-
             width: flickableItem ? flickableItem.visibleArea.widthRatio * horizontalIndicator.width: 0;
             height: __indicatorSize
+
+            x: flickableItem ? Math.min(parent.width - width, Math.max(0, flickableItem.visibleArea.xPosition * horizontalIndicator.width)) : 0;
+            y: 0
         }
 
         states: [
@@ -111,11 +111,11 @@ Item {
             opacity: 0.5
             smooth: true;
 
-            x: 0
-            y: flickableItem ? flickableItem.visibleArea.yPosition * verticalIndicator.height : 0;
-
             width: __indicatorSize
             height: flickableItem ? flickableItem.visibleArea.heightRatio * verticalIndicator.height : 0;
+
+            x: 0
+            y: flickableItem ? Math.min(parent.height - height, Math.max(0, flickableItem.visibleArea.yPosition * verticalIndicator.height)) : 0
         }
 
         states: [
