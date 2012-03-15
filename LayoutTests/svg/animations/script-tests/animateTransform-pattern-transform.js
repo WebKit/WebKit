@@ -78,7 +78,7 @@ function executeTest() {
         ["animation", 0.001, sample2],
         ["animation", 2.0,   sample3],
         ["animation", 3.999, sample4],
-        ["animation", 4.0,   sample1]
+        ["animation", 4.001, sample1]
     ];
 
     runAnimationTest(expectedValues);
