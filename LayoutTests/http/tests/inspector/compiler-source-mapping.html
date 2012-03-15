@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src="inspector-test.js"></script>
+<script src="debugger-test.js"></script>
 
 <script>
 
@@ -126,23 +127,56 @@ function test()
             next();
         },
 
-        function testLoad(next)
+        function testCompilerScriptMapping(next)
         {
-            var sourceMapping = new WebInspector.ClosureCompilerSourceMapping("http://localhost:8000/inspector/resources/source-map.json");
-            var success = sourceMapping.load();
-            InspectorTest.assertTrue(success);
+            var mapping = new WebInspector.CompilerScriptMapping();
+            var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
+            script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
+            mapping.addScript(script);
 
-            var sources = sourceMapping.sources();
-            InspectorTest.assertEquals(2, sources.length);
-            InspectorTest.assertEquals("http://localhost:8000/inspector/resources/source1.js", sources[0]);
-            InspectorTest.assertEquals("http://localhost:8000/inspector/resources/source2.js", sources[1]);
+            var uiSourceCodeList = mapping.uiSourceCodeList();
+            InspectorTest.assertEquals(2, uiSourceCodeList.length);
+            InspectorTest.assertEquals("http://localhost:8000/inspector/resources/source1.js", uiSourceCodeList[0].url);
+            InspectorTest.assertEquals("http://localhost:8000/inspector/resources/source2.js", uiSourceCodeList[1].url);
 
-            var sourceCode1 = sourceMapping.loadSourceCode(sourceMapping.sources()[0]);
-            InspectorTest.assertEquals(0, sourceCode1.indexOf("window.addEventListener"));
+            InspectorTest.checkUILocation(uiSourceCodeList[0], 4, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 81)));
+            InspectorTest.checkUILocation(uiSourceCodeList[0], 5, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 93)));
+            InspectorTest.checkUILocation(uiSourceCodeList[1], 7, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 1, 151)));
 
-            var sourceCode2 = sourceMapping.loadSourceCode(sourceMapping.sources()[1]);
-            InspectorTest.assertEquals(0, sourceCode2.indexOf("function ClickHandler()"));
-            next();
+            InspectorTest.checkRawLocation(script, 0, 42, mapping.uiLocationToRawLocation(uiSourceCodeList[0], 3, 10));
+            InspectorTest.checkRawLocation(script, 1, 85, mapping.uiLocationToRawLocation(uiSourceCodeList[1], 0, 0));
+            InspectorTest.checkRawLocation(script, 1, 110, mapping.uiLocationToRawLocation(uiSourceCodeList[1], 5, 2));
+
+            uiSourceCodeList[0].requestContent(didRequestContent1);
+
+            function didRequestContent1(mimeType, content)
+            {
+                InspectorTest.assertEquals(0, content.indexOf("window.addEventListener"));
+                uiSourceCodeList[1].requestContent(didRequestContent2);
+            }
+
+            function didRequestContent2(mimeType, content)
+            {
+                InspectorTest.assertEquals(0, content.indexOf("function ClickHandler()"));
+                next();
+            }
+        },
+
+        function testCompilerSourceMappingCouldNotBeLoaded(next)
+        {
+            var mainScriptMapping = new WebInspector.MainScriptMapping();
+            mainScriptMapping.addEventListener(WebInspector.MainScriptMapping.Events.UISourceCodeListChanged, uiSourceCodeListChanged);
+
+            var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
+            script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json_";
+            mainScriptMapping.addScript(script);
+
+            function uiSourceCodeListChanged(event)
+            {
+                InspectorTest.assertEquals(1, event.data.addedItems.length);
+                InspectorTest.assertEquals("compiled.js", event.data.addedItems[0].url);
+                next();
+            }
         }
     ]);
 };

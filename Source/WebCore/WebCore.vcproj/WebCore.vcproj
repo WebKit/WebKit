@@ -73305,6 +73305,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\CompilerScriptMapping.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\CompilerSourceMapping.js"
 					>
 				</File>

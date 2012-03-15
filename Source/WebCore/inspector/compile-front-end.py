@@ -61,6 +61,7 @@ modules = [
             "InspectorBackend.js",
             "ApplicationCacheModel.js",
             "Color.js",
+            "CompilerScriptMapping.js",
             "CompilerSourceMapping.js",
             "ConsoleModel.js",
             "ContentProviders.js",

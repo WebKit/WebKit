@@ -39,9 +39,8 @@
  * @param {WebInspector.Resource} resource
  * @param {WebInspector.ScriptFormatter} formatter
  * @param {boolean} formatted
- * @param {WebInspector.CompilerSourceMapping} compilerSourceMapping
  */
-WebInspector.RawSourceCode = function(id, script, resource, formatter, formatted, compilerSourceMapping)
+WebInspector.RawSourceCode = function(id, script, resource, formatter, formatted)
 {
     this.id = id;
     this.url = script.sourceURL;
@@ -49,10 +48,9 @@ WebInspector.RawSourceCode = function(id, script, resource, formatter, formatted
     this._scripts = [script];
     this._formatter = formatter;
     this._formatted = formatted;
-    this._compilerSourceMapping = compilerSourceMapping;
     this._resource = resource;
 
-    this._useTemporaryContent = !this._compilerSourceMapping && this._resource && !this._resource.finished;
+    this._useTemporaryContent = this._resource && !this._resource.finished;
     this._hasNewScripts = true;
     if (!this._useTemporaryContent)
         this._updateSourceMapping();
@@ -116,14 +114,11 @@ WebInspector.RawSourceCode.prototype = {
         if (this._formatted === formatted)
             return;
         this._formatted = formatted;
-        if (!this._compilerSourceMapping)
-            this._updateSourceMapping();
+        this._updateSourceMapping();
     },
 
     _resourceFinished: function()
     {
-        if (this._compilerSourceMapping)
-            return;
         this._useTemporaryContent = false;
         this._updateSourceMapping();
     },
@@ -178,26 +173,6 @@ WebInspector.RawSourceCode.prototype = {
      */
     _createSourceMapping: function(callback)
     {
-        if (this._compilerSourceMapping) {
-            var success = this._compilerSourceMapping.load();
-            if (!success) {
-                delete this._compilerSourceMapping;
-                callback(null);
-                return;
-            }
-            var uiSourceCodeList = [];
-            var sourceURLs = this._compilerSourceMapping.sources();
-            for (var i = 0; i < sourceURLs.length; ++i) {
-                var sourceURL = sourceURLs[i];
-                var contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL, this._compilerSourceMapping);
-                var uiSourceCode = this._createUISourceCode(sourceURL, sourceURL, contentProvider);
-                uiSourceCodeList.push(uiSourceCode);
-            }
-            var sourceMapping = new WebInspector.RawSourceCode.CompilerSourceMapping(this, uiSourceCodeList, this._compilerSourceMapping);
-            callback(sourceMapping);
-            return;
-        }
-
         var originalContentProvider = this._createContentProvider();
         if (!this._formatted) {
             var uiSourceCode = this._createUISourceCode(this.url, this.url, originalContentProvider);
@@ -239,8 +214,7 @@ WebInspector.RawSourceCode.prototype = {
     {
         var uiSourceCode = new WebInspector.UISourceCode(id, url, contentProvider);
         uiSourceCode.isContentScript = this.isContentScript;
-        uiSourceCode.isEditable = this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset
-                                  && !this._formatted && !this._compilerSourceMapping;
+        uiSourceCode.isEditable = this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset && !this._formatted;
         return uiSourceCode;
     },
 
@@ -345,7 +319,7 @@ WebInspector.RawSourceCode.FormattedSourceMapping.prototype = {
      */
     rawLocationToUILocation: function(rawLocation)
     {
-        var location = this._mapping.originalToFormatted(rawLocation.lineNumber, rawLocation.columnNumber);
+        var location = this._mapping.originalToFormatted(rawLocation.lineNumber, rawLocation.columnNumber || 0);
         return new WebInspector.UILocation(this._uiSourceCodeList[0], location[0], location[1]);
     },
 
@@ -359,55 +333,6 @@ WebInspector.RawSourceCode.FormattedSourceMapping.prototype = {
     {
         console.assert(uiSourceCode === this._uiSourceCodeList[0]);
         var location = this._mapping.formattedToOriginal(lineNumber, columnNumber);
-        return WebInspector.debuggerModel.createRawLocation(this._rawSourceCode._scripts[0], location[0], location[1]);
-    },
-
-    /**
-     * @return {Array.<WebInspector.UISourceCode>}
-     */
-    uiSourceCodeList: function()
-    {
-        return this._uiSourceCodeList;
-    }
-}
-
-/**
- * @constructor
- * @implements {WebInspector.RawSourceCode.SourceMapping}
- * @param {WebInspector.RawSourceCode} rawSourceCode
- * @param {Array.<WebInspector.UISourceCode>} uiSourceCodeList
- * @param {WebInspector.CompilerSourceMapping} mapping
- */
-WebInspector.RawSourceCode.CompilerSourceMapping = function(rawSourceCode, uiSourceCodeList, mapping)
-{
-    this._rawSourceCode = rawSourceCode;
-    this._uiSourceCodeList = uiSourceCodeList;
-    this._mapping = mapping;
-    this._uiSourceCodeByURL = {};
-    for (var i = 0; i < uiSourceCodeList.length; ++i)
-        this._uiSourceCodeByURL[uiSourceCodeList[i].url] = uiSourceCodeList[i];
-}
-
-WebInspector.RawSourceCode.CompilerSourceMapping.prototype = {
-    /**
-     * @param {DebuggerAgent.Location} rawLocation
-     */
-    rawLocationToUILocation: function(rawLocation)
-    {
-        var location = this._mapping.compiledLocationToSourceLocation(rawLocation.lineNumber, rawLocation.columnNumber || 0);
-        var uiSourceCode = this._uiSourceCodeByURL[location.sourceURL];
-        return new WebInspector.UILocation(uiSourceCode, location.lineNumber, location.columnNumber);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {number} lineNumber
-     * @param {number} columnNumber
-     * @return {DebuggerAgent.Location}
-     */
-    uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
-    {
-        var location = this._mapping.sourceLocationToCompiledLocation(uiSourceCode.url, lineNumber);
         return WebInspector.debuggerModel.createRawLocation(this._rawSourceCode._scripts[0], location[0], location[1]);
     },
 

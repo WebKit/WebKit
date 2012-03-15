@@ -70,9 +70,14 @@ WebInspector.ScriptMapping.prototype.__proto__ = WebInspector.Object.prototype;
 WebInspector.MainScriptMapping = function()
 {
     this._mappings = [];
-    
+
     this._resourceMapping = new WebInspector.ResourceScriptMapping();
     this._mappings.push(this._resourceMapping);
+    this._compilerMapping = new WebInspector.CompilerScriptMapping();
+    this._mappings.push(this._compilerMapping);
+
+    for (var i = 0; i < this._mappings.length; ++i)
+        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
 
     if (WebInspector.experimentsSettings.snippetsSupport.isEnabled()) {
         this._snippetsMapping = new WebInspector.SnippetsScriptMapping();
@@ -81,7 +86,7 @@ WebInspector.MainScriptMapping = function()
 
     for (var i = 0; i < this._mappings.length; ++i)
         this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
-    
+
     this._mappingForScriptId = {};
     this._mappingForUISourceCode = new Map();
     this._liveLocationsForScriptId = {};
@@ -178,7 +183,12 @@ WebInspector.MainScriptMapping.prototype = {
             if (WebInspector.snippetsModel.snippetIdForSourceURL(script.sourceURL))
                 return this._snippetsMapping;
         }
-            
+
+        if (WebInspector.settings.sourceMapsEnabled.get() && script.sourceMapURL) {
+            if (this._compilerMapping.loadSourceMapForScript(script))
+                return this._compilerMapping;
+        }
+
         return this._resourceMapping;
     },
 

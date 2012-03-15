@@ -100,11 +100,7 @@ WebInspector.ResourceScriptMapping.prototype = {
             }
         }
 
-        var compilerSourceMapping = null;
-        if (WebInspector.settings.sourceMapsEnabled.get() && script.sourceMapURL)
-            compilerSourceMapping = new WebInspector.ClosureCompilerSourceMapping(script.sourceMapURL, script.sourceURL);
-
-        var rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, resource, this._formatter, this._formatSource, compilerSourceMapping);
+        var rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, resource, this._formatter, this._formatSource);
         this._rawSourceCodes.push(rawSourceCode);
         this._bindScriptToRawSourceCode(script, rawSourceCode);
 

@@ -282,4 +282,32 @@ InspectorTest.queryScripts = function(filter)
     return scripts;
 };
 
+InspectorTest.createScriptMock = function(url, startLine, startColumn, isContentScript, source)
+{
+    var scriptId = ++InspectorTest._lastScriptId;
+    var lineCount = source.lineEndings().length;
+    var endLine = startLine + lineCount - 1;
+    var endColumn = lineCount === 1 ? startColumn + source.length : source.length - source.lineEndings()[lineCount - 2];
+    var script = new WebInspector.Script(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript);
+    script.requestSource = function(callback) { callback(source); };
+    WebInspector.debuggerModel._scripts[scriptId] = script;
+    return script;
+}
+
+InspectorTest._lastScriptId = 0;
+
+InspectorTest.checkRawLocation = function(script, lineNumber, columnNumber, location)
+{
+    InspectorTest.assertEquals(script.scriptId, location.scriptId);
+    InspectorTest.assertEquals(lineNumber, location.lineNumber);
+    InspectorTest.assertEquals(columnNumber, location.columnNumber);
+};
+
+InspectorTest.checkUILocation = function(uiSourceCode, lineNumber, columnNumber, location)
+{
+    InspectorTest.assertEquals(uiSourceCode, location.uiSourceCode);
+    InspectorTest.assertEquals(lineNumber, location.lineNumber);
+    InspectorTest.assertEquals(columnNumber, location.columnNumber);
+};
+
 };

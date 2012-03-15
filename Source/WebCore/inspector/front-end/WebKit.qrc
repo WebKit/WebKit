@@ -17,6 +17,7 @@
     <file>CallStackSidebarPane.js</file>
     <file>Checkbox.js</file>
     <file>Color.js</file>
+    <file>CompilerScriptMapping.js</file>
     <file>CompilerSourceMapping.js</file>
     <file>ConsoleMessage.js</file>
     <file>ConsoleModel.js</file>

@@ -11,5 +11,7 @@ Running: testSections
 
 Running: testResolveSourceMappingURL
 
-Running: testLoad
+Running: testCompilerScriptMapping
+
+Running: testCompilerSourceMappingCouldNotBeLoaded
 

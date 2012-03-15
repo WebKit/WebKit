@@ -13,7 +13,3 @@ Running: testFormattingWithFinishedResource
 
 Running: testFormattingWithPendingResource
 
-Running: testCompilerSourceMapping
-
-Running: testCompilerSourceMappingCouldNotBeLoaded
-
