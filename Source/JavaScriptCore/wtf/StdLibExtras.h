@@ -154,12 +154,16 @@ template<typename T, size_t Size> char (&ArrayLengthHelperFunction(T (&)[Size]))
 #define WTF_ARRAY_LENGTH(array) sizeof(::WTF::ArrayLengthHelperFunction(array))
 
 // Efficient implementation that takes advantage of powers of two.
+inline size_t roundUpToMultipleOf(size_t divisor, size_t x)
+{
+    ASSERT(divisor && !(divisor & (divisor - 1)));
+    size_t remainderMask = divisor - 1; \
+    return (x + remainderMask) & ~remainderMask;
+}
 template<size_t divisor> inline size_t roundUpToMultipleOf(size_t x)
 {
     COMPILE_ASSERT(divisor && !(divisor & (divisor - 1)), divisor_is_a_power_of_two);
-
-    size_t remainderMask = divisor - 1;
-    return (x + remainderMask) & ~remainderMask;
+    return roundUpToMultipleOf(divisor, x);
 }
 
 enum BinarySearchMode {

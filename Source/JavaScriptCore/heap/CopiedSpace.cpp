@@ -71,8 +71,8 @@ CheckedBoolean CopiedSpace::tryAllocateOversize(size_t bytes, void** outPtr)
 {
     ASSERT(isOversize(bytes));
     
-    size_t blockSize = WTF::roundUpToMultipleOf<s_pageSize>(sizeof(CopiedBlock) + bytes);
-    PageAllocationAligned allocation = PageAllocationAligned::allocate(blockSize, s_pageSize, OSAllocator::JSGCHeapPages);
+    size_t blockSize = WTF::roundUpToMultipleOf(WTF::pageSize(), sizeof(CopiedBlock) + bytes);
+    PageAllocationAligned allocation = PageAllocationAligned::allocate(blockSize, WTF::pageSize(), OSAllocator::JSGCHeapPages);
     if (!static_cast<bool>(allocation)) {
         *outPtr = 0;
         return false;

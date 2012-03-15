@@ -35,6 +35,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/OSAllocator.h>
 #include <wtf/PageAllocationAligned.h>
+#include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadingPrimitives.h>
 
@@ -118,8 +119,6 @@ private:
     size_t m_numberOfLoanedBlocks;
 
     static const size_t s_maxAllocationSize = 32 * KB;
-    static const size_t s_pageSize = 4 * KB;
-    static const size_t s_pageMask = ~(s_pageSize - 1);
     static const size_t s_initialBlockNum = 16;
     static const size_t s_blockMask = ~(HeapBlock::s_blockSize - 1);
 };

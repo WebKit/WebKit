@@ -38,6 +38,7 @@
 namespace WTF {
 
 static size_t s_pageSize;
+static size_t s_pageMask;
 
 #if OS(UNIX)
 
@@ -65,6 +66,13 @@ size_t pageSize()
         s_pageSize = systemPageSize();
     ASSERT(isPowerOfTwo(s_pageSize));
     return s_pageSize;
+}
+
+size_t pageMask()
+{
+    if (!s_pageMask)
+        s_pageMask = ~(pageSize() - 1);
+    return s_pageMask;
 }
 
 } // namespace WTF

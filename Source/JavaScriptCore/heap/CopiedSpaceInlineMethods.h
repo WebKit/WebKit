@@ -171,7 +171,7 @@ inline bool CopiedSpace::isPinned(void* ptr)
 
 inline CopiedBlock* CopiedSpace::oversizeBlockFor(void* ptr)
 {
-    return reinterpret_cast<CopiedBlock*>(reinterpret_cast<size_t>(ptr) & s_pageMask);
+    return reinterpret_cast<CopiedBlock*>(reinterpret_cast<size_t>(ptr) & WTF::pageMask());
 }
 
 inline CopiedBlock* CopiedSpace::blockFor(void* ptr)
