@@ -40,6 +40,7 @@ DEFINE_ANIMATED_PROPERTY(AnimatedNumber, OwnerType, DOMAttribute, DOMAttribute.l
 DEFINE_ANIMATED_PROPERTY(AnimatedNumberOptionalNumber, OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty)
 
 class SVGAnimationElement;
+class SVGGenericAnimatedType;
 
 class SVGAnimatedNumberAnimator : public SVGAnimatedTypeAnimator {
 
@@ -50,6 +51,7 @@ public:
     static void calculateAnimatedNumber(SVGAnimationElement*, float percentage, unsigned repeatCount, float& animatedNumber, float fromNumber, float toNumber);
 
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
+    virtual PassOwnPtr<SVGAnimatedType> constructFromCopy(SVGGenericAnimatedType*);
 
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);

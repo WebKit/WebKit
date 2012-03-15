@@ -48,16 +48,11 @@ public:
 
     virtual bool isAnimatedListTearOff() const { return false; }
 
-    // FIXME: Make these pure once SVGAnimatedStaticPropertyTearOff supports animVal as well.
-    virtual void animationStarted(SVGAnimatedType*) { ASSERT_NOT_REACHED(); }
-    virtual void animationEnded() { ASSERT_NOT_REACHED(); }
-    virtual void animationValueWillChange() { ASSERT_NOT_REACHED(); }
-    virtual void animationValueDidChange() { ASSERT_NOT_REACHED(); }
-    virtual SVGGenericAnimatedType* currentBaseValue(AnimatedPropertyType) const
-    {
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
+    virtual void animationStarted(SVGAnimatedType*) = 0;
+    virtual void animationEnded() = 0;
+    virtual void animationValueWillChange() = 0;
+    virtual void animationValueDidChange() = 0;
+    virtual SVGGenericAnimatedType* currentBaseValue(AnimatedPropertyType) const = 0;
 
     // Caching facilities.
     typedef HashMap<SVGAnimatedPropertyDescription, RefPtr<SVGAnimatedProperty>, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits> Cache;
