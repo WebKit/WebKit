@@ -1,3 +1,13 @@
+2012-03-15  David Levin  <levin@chromium.org>
+
+        Various autoresize fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=81199
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::reset): Stop using the deprecated api that was removed.
+
 2012-03-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Actually use --release and --debug command line options in run-gtk-test

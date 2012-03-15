@@ -2268,14 +2268,6 @@ void WebViewImpl::disableAutoResizeMode()
     configureAutoResizeMode();
 }
 
-void WebViewImpl::enableAutoResizeMode(bool enable, const WebSize& minSize, const WebSize& maxSize)
-{
-    if (enable)
-        enableAutoResizeMode(minSize, maxSize);
-    else
-        disableAutoResizeMode();
-}
-
 void WebViewImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScale)
 {
     m_pageDefinedMinimumPageScaleFactor = minPageScale;

@@ -2367,9 +2367,6 @@ void FrameView::autoSizeIfEnabled()
         int height = documentRenderBox->scrollHeight();
         IntSize newSize(width, height);
 
-        // Ensure the size is at least the min bounds.
-        newSize = newSize.expandedTo(m_minAutoSize);
-
         // Check to see if a scrollbar is needed for a given dimension and
         // if so, increase the other dimension to account for the scrollbar.
         // Since the dimensions are only for the view rectangle, once a
@@ -2393,6 +2390,9 @@ void FrameView::autoSizeIfEnabled()
             // Don't bother checking for a horizontal scrollbar because the height is
             // already greater the maximum.
         }
+
+        // Ensure the size is at least the min bounds.
+        newSize = newSize.expandedTo(m_minAutoSize);
 
         // Bound the dimensions by the max bounds and determine what scrollbars to show.
         ScrollbarMode horizonalScrollbarMode = ScrollbarAlwaysOff;

@@ -193,10 +193,6 @@ public:
         const WebSize& minSize,
         const WebSize& maxSize);
     virtual void disableAutoResizeMode();
-    virtual void enableAutoResizeMode(
-        bool enable,
-        const WebSize& minSize,
-        const WebSize& maxSize);
     virtual void performMediaPlayerAction(
         const WebMediaPlayerAction& action,
         const WebPoint& location);

@@ -266,12 +266,6 @@ public:
     // Turn off auto-resize.
     virtual void disableAutoResizeMode() = 0;
 
-    // DEPRECATED
-    virtual void enableAutoResizeMode(
-        bool enable,
-        const WebSize& minSize,
-        const WebSize& maxSize) = 0;
-
     // Media ---------------------------------------------------------------
 
     // Performs the specified media player action on the node at the given location.

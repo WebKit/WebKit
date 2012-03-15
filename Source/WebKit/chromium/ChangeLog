@@ -1,3 +1,26 @@
+2012-03-15  David Levin  <levin@chromium.org>
+
+        Various autoresize fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=81199
+
+        Reviewed by Darin Fisher.
+
+        * public/WebView.h:
+        (WebView): Remove a deprecated api.
+        * src/WebViewImpl.cpp: Ditto.
+        * src/WebViewImpl.h: Ditto.
+        * tests/FrameTestHelpers.cpp:
+        (WebKit::FrameTestHelpers::registerMockedURLLoad): Added an overload with more flexibility.
+        The previous api didn't allow one to request a url with a search string.
+        (FrameTestHelpers):
+        * tests/FrameTestHelpers.h:
+        (FrameTestHelpers): Ditto.
+        * tests/WebViewTest.cpp: Fix the test because calling javascript:
+        was working. Make the test generic and added a lot more tests to cover
+        various possibilities. I avoided using a layout test because there wasn't
+        a way to get the scrollbar state, so I just generalized a test that was already there.
+        * tests/data/specify_size.html: Allow the test to take its size from the search string.
+
 2012-03-15  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.

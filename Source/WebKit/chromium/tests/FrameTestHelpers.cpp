@@ -48,6 +48,11 @@ namespace FrameTestHelpers {
 
 void registerMockedURLLoad(const std::string& base, const std::string& fileName)
 {
+    registerMockedURLLoad(GURL(base + fileName), fileName);
+}
+
+void registerMockedURLLoad(GURL url, const std::string& fileName)
+{
     WebURLResponse response;
     response.initialize();
     response.setMIMEType("text/html");
@@ -56,7 +61,7 @@ void registerMockedURLLoad(const std::string& base, const std::string& fileName)
     filePath += "/Source/WebKit/chromium/tests/data/";
     filePath += fileName;
 
-    webkit_support::RegisterMockedURL(GURL(base + fileName), response, WebString::fromUTF8(filePath));
+    webkit_support::RegisterMockedURL(url, response, WebString::fromUTF8(filePath));
 }
 
 void loadFrame(WebFrame* frame, const std::string& url)

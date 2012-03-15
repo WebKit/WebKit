@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -42,6 +42,7 @@
 #include "platform/WebSize.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
+#include <googleurl/src/gurl.h>
 #include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>
 
@@ -49,12 +50,28 @@ using namespace WebKit;
 
 namespace {
 
+enum HorizontalScrollbarState {
+    NoHorizontalScrollbar,
+    VisibleHorizontalScrollbar,
+};
+
+enum VerticalScrollbarState {
+    NoVerticalScrollbar,
+    VisibleVerticalScrollbar,
+};
+
 class TestData {
 public:
     void setWebView(WebView* webView) { m_webView = static_cast<WebViewImpl*>(webView); }
     void setSize(const WebSize& newSize) { m_size = newSize; }
-    bool hasHorizontalScrollbar() const { return m_webView->hasHorizontalScrollbar(); }
-    bool hasVerticalScrollbar() const  { return m_webView->hasVerticalScrollbar(); }
+    HorizontalScrollbarState horizontalScrollbarState() const
+    {
+        return m_webView->hasHorizontalScrollbar() ? VisibleHorizontalScrollbar: NoHorizontalScrollbar;
+    }
+    VerticalScrollbarState verticalScrollbarState() const
+    {
+        return m_webView->hasVerticalScrollbar() ? VisibleVerticalScrollbar : NoVerticalScrollbar;
+    }
     int width() const { return m_size.width; }
     int height() const { return m_size.height; }
 
@@ -88,6 +105,11 @@ public:
     }
 
 protected:
+    void testAutoResize(const WebSize& minAutoResize, const WebSize& maxAutoResize,
+                        const std::string& pageWidth, const std::string& pageHeight,
+                        int expectedWidth, int expectedHeight,
+                        HorizontalScrollbarState expectedHorizontalState, VerticalScrollbarState expectedVerticalState);
+
     std::string m_baseURL;
 };
 
@@ -119,35 +141,108 @@ TEST_F(WebViewTest, FocusIsInactive)
     webView->close();
 }
 
-TEST_F(WebViewTest, AutoResizeMinimumSize)
+void WebViewTest::testAutoResize(const WebSize& minAutoResize, const WebSize& maxAutoResize,
+                                 const std::string& pageWidth, const std::string& pageHeight,
+                                 int expectedWidth, int expectedHeight,
+                                 HorizontalScrollbarState expectedHorizontalState, VerticalScrollbarState expectedVerticalState)
 {
     AutoResizeWebViewClient client;
-    FrameTestHelpers::registerMockedURLLoad(m_baseURL, "specify_size.html");
-    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "specify_size.html", true, 0, &client);
+    std::string url = m_baseURL + "specify_size.html?" + pageWidth + ":" + pageHeight;
+    FrameTestHelpers::registerMockedURLLoad(GURL(url), "specify_size.html");
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(url, true, 0, &client);
     client.testData().setWebView(webView);
-    FrameTestHelpers::loadFrame(webView->mainFrame(), "javascript:document.getElementById('sizer').style.height = '56px';");
-    FrameTestHelpers::loadFrame(webView->mainFrame(), "javascript:document.getElementById('sizer').style.width = '91px';");
 
     WebFrameImpl* frame = static_cast<WebFrameImpl*>(webView->mainFrame());
     WebCore::FrameView* frameView = frame->frame()->view();
+    frameView->layout();
     EXPECT_FALSE(frameView->layoutPending());
     EXPECT_FALSE(frameView->needsLayout());
 
-    WebSize minSize(91, 56);
-    WebSize maxSize(403, 302);
-    webView->enableAutoResizeMode(true, minSize, maxSize);
+    webView->enableAutoResizeMode(minAutoResize, maxAutoResize);
     EXPECT_TRUE(frameView->layoutPending());
     EXPECT_TRUE(frameView->needsLayout());
     frameView->layout();
 
     EXPECT_TRUE(frame->frame()->document()->isHTMLDocument());
 
-    EXPECT_EQ(91, client.testData().width());
-    EXPECT_EQ(56, client.testData().height());
-    EXPECT_FALSE(client.testData().hasHorizontalScrollbar());
-    EXPECT_FALSE(client.testData().hasVerticalScrollbar());
+    EXPECT_EQ(expectedWidth, client.testData().width());
+    EXPECT_EQ(expectedHeight, client.testData().height());
+    EXPECT_EQ(expectedHorizontalState, client.testData().horizontalScrollbarState());
+    EXPECT_EQ(expectedVerticalState, client.testData().verticalScrollbarState());
 
     webView->close();
+}
+
+TEST_F(WebViewTest, AutoResizeMinimumSize)
+{
+    WebSize minAutoResize(91, 56);
+    WebSize maxAutoResize(403, 302);
+    std::string pageWidth = "91px";
+    std::string pageHeight = "56px";
+    int expectedWidth = 91;
+    int expectedHeight = 56;
+    testAutoResize(minAutoResize, maxAutoResize, pageWidth, pageHeight,
+                   expectedWidth, expectedHeight, NoHorizontalScrollbar, NoVerticalScrollbar);
+}
+
+TEST_F(WebViewTest, AutoResizeHeightOverflowAndFixedWidth)
+{
+    WebSize minAutoResize(90, 95);
+    WebSize maxAutoResize(90, 100);
+    std::string pageWidth = "60px";
+    std::string pageHeight = "200px";
+    int expectedWidth = 90;
+    int expectedHeight = 100;
+    testAutoResize(minAutoResize, maxAutoResize, pageWidth, pageHeight,
+                   expectedWidth, expectedHeight, NoHorizontalScrollbar, VisibleVerticalScrollbar);
+}
+
+TEST_F(WebViewTest, AutoResizeFixedHeightAndWidthOverflow)
+{
+    WebSize minAutoResize(90, 100);
+    WebSize maxAutoResize(200, 100);
+    std::string pageWidth = "300px";
+    std::string pageHeight = "80px";
+    int expectedWidth = 200;
+    int expectedHeight = 100;
+    testAutoResize(minAutoResize, maxAutoResize, pageWidth, pageHeight,
+                   expectedWidth, expectedHeight, VisibleHorizontalScrollbar, NoVerticalScrollbar);
+}
+
+TEST_F(WebViewTest, AutoResizeInBetweenSizes)
+{
+    WebSize minAutoResize(90, 95);
+    WebSize maxAutoResize(200, 300);
+    std::string pageWidth = "100px";
+    std::string pageHeight = "200px";
+    int expectedWidth = 100;
+    int expectedHeight = 200;
+    testAutoResize(minAutoResize, maxAutoResize, pageWidth, pageHeight,
+                   expectedWidth, expectedHeight, NoHorizontalScrollbar, NoVerticalScrollbar);
+}
+
+TEST_F(WebViewTest, AutoResizeOverflowSizes)
+{
+    WebSize minAutoResize(90, 95);
+    WebSize maxAutoResize(200, 300);
+    std::string pageWidth = "300px";
+    std::string pageHeight = "400px";
+    int expectedWidth = 200;
+    int expectedHeight = 300;
+    testAutoResize(minAutoResize, maxAutoResize, pageWidth, pageHeight,
+                   expectedWidth, expectedHeight, VisibleHorizontalScrollbar, VisibleVerticalScrollbar);
+}
+
+TEST_F(WebViewTest, AutoResizeMaxSize)
+{
+    WebSize minAutoResize(90, 95);
+    WebSize maxAutoResize(200, 300);
+    std::string pageWidth = "200px";
+    std::string pageHeight = "300px";
+    int expectedWidth = 200;
+    int expectedHeight = 300;
+    testAutoResize(minAutoResize, maxAutoResize, pageWidth, pageHeight,
+                   expectedWidth, expectedHeight, NoHorizontalScrollbar, NoVerticalScrollbar);
 }
 
 }
