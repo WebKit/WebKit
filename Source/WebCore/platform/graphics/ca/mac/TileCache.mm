@@ -238,7 +238,10 @@ IntRect TileCache::bounds() const
 IntRect TileCache::rectForTileIndex(const TileIndex& tileIndex) const
 {
     IntRect rect(tileIndex.x() * m_tileSize.width(), tileIndex.y() * m_tileSize.height(), m_tileSize.width(), m_tileSize.height());
-    rect.intersect(bounds());
+    IntRect scaledBounds(bounds());
+    scaledBounds.scale(m_scale);
+
+    rect.intersect(scaledBounds);
 
     return rect;
 }
