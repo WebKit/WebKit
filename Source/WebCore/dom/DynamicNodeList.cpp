@@ -31,12 +31,10 @@ namespace WebCore {
 DynamicSubtreeNodeList::DynamicSubtreeNodeList(PassRefPtr<Node> node)
     : DynamicNodeList(node)
 {
-    rootNode()->registerDynamicSubtreeNodeList(this);
 }
 
 DynamicSubtreeNodeList::~DynamicSubtreeNodeList()
 {
-    rootNode()->unregisterDynamicSubtreeNodeList(this);
 }
 
 unsigned DynamicSubtreeNodeList::length() const

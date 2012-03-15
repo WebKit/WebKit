@@ -528,7 +528,6 @@ public:
     void unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
     void invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName&);
     void invalidateNodeListsCacheAfterChildrenChanged();
-    void notifyLocalNodeListsLabelChanged();
     void removeCachedClassNodeList(ClassNodeList*, const String&);
 
     void removeCachedNameNodeList(NameNodeList*, const String&);

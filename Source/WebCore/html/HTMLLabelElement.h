@@ -50,8 +50,6 @@ private:
     virtual void defaultEventHandler(Event*);
 
     void focus(bool restorePreviousSelection = true);
-
-    virtual void parseAttribute(Attribute*) OVERRIDE;
 };
 
 } //namespace

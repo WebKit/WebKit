@@ -940,22 +940,22 @@ static void removeNodeListCacheIfPossible(Node* node, NodeRareData* data)
     node->treeScope()->removeNodeListCache();
 }
 
+// FIXME: Move this function to Document
 void Node::registerDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
 {
+    ASSERT(isDocumentNode());
     NodeRareData* data = ensureRareData();
-    // We haven't been receiving notifications while there were no registered lists, so the cache is invalid now.
-    if (data->nodeLists() && (!treeScope() || !treeScope()->hasNodeListCaches()))
-        data->nodeLists()->invalidateCaches();
-
-    data->ensureNodeLists(this)->m_listsWithCaches.add(list);
+    data->ensureNodeLists(this)->m_listsInvalidatedAtDocument.add(list);
 }
 
+// FIXME: Move this function to Document
 void Node::unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
 {
+    ASSERT(isDocumentNode());
     ASSERT(hasRareData());
     ASSERT(rareData()->nodeLists());
     NodeRareData* data = rareData();
-    data->nodeLists()->m_listsWithCaches.remove(list);
+    data->nodeLists()->m_listsInvalidatedAtDocument.remove(list);
     removeNodeListCacheIfPossible(this, data);
 }
 
@@ -974,7 +974,8 @@ void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& at
         && attrName != itempropAttr
         && attrName != itemtypeAttr
 #endif
-        && attrName != nameAttr)
+        && attrName != nameAttr
+        && attrName != forAttr)
         return;
 
     if (!treeScope()->hasNodeListCaches())
@@ -989,7 +990,6 @@ void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& at
             continue;
 
         data->nodeLists()->invalidateCachesThatDependOnAttributes();
-        removeNodeListCacheIfPossible(node, data);
     }
 }
 
@@ -1008,25 +1008,7 @@ void Node::invalidateNodeListsCacheAfterChildrenChanged()
             continue;
 
         data->nodeLists()->invalidateCaches();
-
-        NodeListsNodeData::NodeListSet::iterator end = data->nodeLists()->m_listsWithCaches.end();
-        for (NodeListsNodeData::NodeListSet::iterator it = data->nodeLists()->m_listsWithCaches.begin(); it != end; ++it)
-            (*it)->invalidateCache();
-
-        removeNodeListCacheIfPossible(node, data);
     }
-}
-
-void Node::notifyLocalNodeListsLabelChanged()
-{
-    if (!hasRareData())
-        return;
-    NodeRareData* data = rareData();
-    if (!data->nodeLists())
-        return;
-
-    if (data->nodeLists()->m_labelsNodeListCache)
-        data->nodeLists()->m_labelsNodeListCache->invalidateCache();
 }
 
 void Node::removeCachedClassNodeList(ClassNodeList* list, const String& className)
@@ -2307,8 +2289,6 @@ void Node::showTreeForThisAcrossFrame() const
 
 void NodeListsNodeData::invalidateCaches()
 {
-    if (m_labelsNodeListCache)
-        m_labelsNodeListCache->invalidateCache();
     TagNodeListCache::const_iterator tagCacheEnd = m_tagNodeListCache.end();
     for (TagNodeListCache::const_iterator it = m_tagNodeListCache.begin(); it != tagCacheEnd; ++it)
         it->second->invalidateCache();
@@ -2320,6 +2300,11 @@ void NodeListsNodeData::invalidateCaches()
 
 void NodeListsNodeData::invalidateCachesThatDependOnAttributes()
 {
+    // Used by labels and region node lists on document.
+    NodeListsNodeData::NodeListSet::iterator end = m_listsInvalidatedAtDocument.end();
+    for (NodeListsNodeData::NodeListSet::iterator it = m_listsInvalidatedAtDocument.begin(); it != end; ++it)
+        (*it)->invalidateCache();
+
     ClassNodeListCache::iterator classCacheEnd = m_classNodeListCache.end();
     for (ClassNodeListCache::iterator it = m_classNodeListCache.begin(); it != classCacheEnd; ++it)
         it->second->invalidateCache();
@@ -2339,7 +2324,7 @@ void NodeListsNodeData::invalidateCachesThatDependOnAttributes()
 
 bool NodeListsNodeData::isEmpty() const
 {
-    if (!m_listsWithCaches.isEmpty())
+    if (!m_listsInvalidatedAtDocument.isEmpty())
         return false;
 
     if (!m_tagNodeListCache.isEmpty())

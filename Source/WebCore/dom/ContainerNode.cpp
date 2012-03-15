@@ -55,7 +55,7 @@ typedef pair<RefPtr<Node>, unsigned> CallbackParameters;
 typedef pair<NodeCallback, CallbackParameters> CallbackInfo;
 typedef Vector<CallbackInfo> NodeCallbackQueue;
 
-typedef Vector<RefPtr<Node>, 1> NodeVector;
+typedef Vector<RefPtr<Node>, 11> NodeVector;
 static NodeCallbackQueue* s_postAttachCallbackQueue;
 
 static size_t s_attachDepth;
