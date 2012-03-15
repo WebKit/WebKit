@@ -36,7 +36,7 @@ class ArrayBuffer;
 class Int8Array : public IntegralTypedArrayBase<signed char> {
 public:
     static inline PassRefPtr<Int8Array> create(unsigned length);
-    static inline PassRefPtr<Int8Array> create(signed char* array, unsigned length);
+    static inline PassRefPtr<Int8Array> create(const signed char* array, unsigned length);
     static inline PassRefPtr<Int8Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
     // Can’t use "using" here due to a bug in the RVCT compiler.
@@ -62,7 +62,7 @@ PassRefPtr<Int8Array> Int8Array::create(unsigned length)
     return TypedArrayBase<signed char>::create<Int8Array>(length);
 }
 
-PassRefPtr<Int8Array> Int8Array::create(signed char* array, unsigned length)
+PassRefPtr<Int8Array> Int8Array::create(const signed char* array, unsigned length)
 {
     return TypedArrayBase<signed char>::create<Int8Array>(array, length);
 }

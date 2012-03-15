@@ -1,3 +1,35 @@
+2012-03-15  David Dorwin  <ddorwin@chromium.org>
+
+        Make the array pointer parameters in the Typed Array create() methods const.
+        https://bugs.webkit.org/show_bug.cgi?id=81147
+
+        Reviewed by Kenneth Russell.
+
+        This allows const arrays to be passed to these methods.
+        They use PassRefPtr<Subclass> create(), which already has a const parameter.
+
+        * wtf/Int16Array.h:
+        (Int16Array):
+        (WTF::Int16Array::create):
+        * wtf/Int32Array.h:
+        (Int32Array):
+        (WTF::Int32Array::create):
+        * wtf/Int8Array.h:
+        (Int8Array):
+        (WTF::Int8Array::create):
+        * wtf/Uint16Array.h:
+        (Uint16Array):
+        (WTF::Uint16Array::create):
+        * wtf/Uint32Array.h:
+        (Uint32Array):
+        (WTF::Uint32Array::create):
+        * wtf/Uint8Array.h:
+        (Uint8Array):
+        (WTF::Uint8Array::create):
+        * wtf/Uint8ClampedArray.h:
+        (Uint8ClampedArray):
+        (WTF::Uint8ClampedArray::create):
+
 2012-03-15  Myles Maxfield  <mmaxfield@google.com>
 
         CopiedSpace::tryAllocateOversize assumes system page size

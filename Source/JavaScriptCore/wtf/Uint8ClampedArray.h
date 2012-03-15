@@ -35,7 +35,7 @@ namespace WTF {
 class Uint8ClampedArray : public Uint8Array {
 public:
     static inline PassRefPtr<Uint8ClampedArray> create(unsigned length);
-    static inline PassRefPtr<Uint8ClampedArray> create(unsigned char* array, unsigned length);
+    static inline PassRefPtr<Uint8ClampedArray> create(const unsigned char* array, unsigned length);
     static inline PassRefPtr<Uint8ClampedArray> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
     // Can’t use "using" here due to a bug in the RVCT compiler.
@@ -61,7 +61,7 @@ PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::create(unsigned length)
     return TypedArrayBase<unsigned char>::create<Uint8ClampedArray>(length);
 }
 
-PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::create(unsigned char* array, unsigned length)
+PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::create(const unsigned char* array, unsigned length)
 {
     return TypedArrayBase<unsigned char>::create<Uint8ClampedArray>(array, length);
 }

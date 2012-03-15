@@ -34,7 +34,7 @@ namespace WTF {
 class Int32Array : public IntegralTypedArrayBase<int> {
 public:
     static inline PassRefPtr<Int32Array> create(unsigned length);
-    static inline PassRefPtr<Int32Array> create(int* array, unsigned length);
+    static inline PassRefPtr<Int32Array> create(const int* array, unsigned length);
     static inline PassRefPtr<Int32Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
     // Can’t use "using" here due to a bug in the RVCT compiler.
@@ -60,7 +60,7 @@ PassRefPtr<Int32Array> Int32Array::create(unsigned length)
     return TypedArrayBase<int>::create<Int32Array>(length);
 }
 
-PassRefPtr<Int32Array> Int32Array::create(int* array, unsigned length)
+PassRefPtr<Int32Array> Int32Array::create(const int* array, unsigned length)
 {
     return TypedArrayBase<int>::create<Int32Array>(array, length);
 }

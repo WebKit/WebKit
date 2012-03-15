@@ -36,7 +36,7 @@ class ArrayBuffer;
 class Uint16Array : public IntegralTypedArrayBase<unsigned short> {
 public:
     static inline PassRefPtr<Uint16Array> create(unsigned length);
-    static inline PassRefPtr<Uint16Array> create(unsigned short* array, unsigned length);
+    static inline PassRefPtr<Uint16Array> create(const unsigned short* array, unsigned length);
     static inline PassRefPtr<Uint16Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
     // Can’t use "using" here due to a bug in the RVCT compiler.
@@ -62,7 +62,7 @@ PassRefPtr<Uint16Array> Uint16Array::create(unsigned length)
     return TypedArrayBase<unsigned short>::create<Uint16Array>(length);
 }
 
-PassRefPtr<Uint16Array> Uint16Array::create(unsigned short* array, unsigned length)
+PassRefPtr<Uint16Array> Uint16Array::create(const unsigned short* array, unsigned length)
 {
     return TypedArrayBase<unsigned short>::create<Uint16Array>(array, length);
 }

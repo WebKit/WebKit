@@ -36,7 +36,7 @@ class ArrayBuffer;
 class Uint32Array : public IntegralTypedArrayBase<unsigned int> {
 public:
     static inline PassRefPtr<Uint32Array> create(unsigned length);
-    static inline PassRefPtr<Uint32Array> create(unsigned int* array, unsigned length);
+    static inline PassRefPtr<Uint32Array> create(const unsigned int* array, unsigned length);
     static inline PassRefPtr<Uint32Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
     // Can’t use "using" here due to a bug in the RVCT compiler.
@@ -62,7 +62,7 @@ PassRefPtr<Uint32Array> Uint32Array::create(unsigned length)
     return TypedArrayBase<unsigned int>::create<Uint32Array>(length);
 }
 
-PassRefPtr<Uint32Array> Uint32Array::create(unsigned int* array, unsigned length)
+PassRefPtr<Uint32Array> Uint32Array::create(const unsigned int* array, unsigned length)
 {
     return TypedArrayBase<unsigned int>::create<Uint32Array>(array, length);
 }
