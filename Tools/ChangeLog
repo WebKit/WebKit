@@ -1,3 +1,13 @@
+2012-03-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Run unit tests with --verbose in the bots
+        https://bugs.webkit.org/show_bug.cgi?id=81230
+
+        Reviewed by Martin Robinson.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunGtkAPITests): Add --verbose to run-gtk-test command.
+
 2012-03-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         Move wx port to using export macros
