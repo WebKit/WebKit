@@ -34,7 +34,7 @@ namespace JSC {
 
     class NumericStrings {
     public:
-        UString add(double d)
+        ALWAYS_INLINE UString add(double d)
         {
             CacheEntry<double>& entry = lookup(d);
             if (d == entry.key && !entry.value.isNull())
@@ -44,7 +44,7 @@ namespace JSC {
             return entry.value;
         }
 
-        UString add(int i)
+        ALWAYS_INLINE UString add(int i)
         {
             if (static_cast<unsigned>(i) < cacheSize)
                 return lookupSmallString(static_cast<unsigned>(i));
@@ -56,7 +56,7 @@ namespace JSC {
             return entry.value;
         }
 
-        UString add(unsigned i)
+        ALWAYS_INLINE UString add(unsigned i)
         {
             if (i < cacheSize)
                 return lookupSmallString(static_cast<unsigned>(i));
@@ -79,7 +79,7 @@ namespace JSC {
         CacheEntry<double>& lookup(double d) { return doubleCache[WTF::FloatHash<double>::hash(d) & (cacheSize - 1)]; }
         CacheEntry<int>& lookup(int i) { return intCache[WTF::IntHash<int>::hash(i) & (cacheSize - 1)]; }
         CacheEntry<unsigned>& lookup(unsigned i) { return unsignedCache[WTF::IntHash<unsigned>::hash(i) & (cacheSize - 1)]; }
-        const UString& lookupSmallString(unsigned i)
+        ALWAYS_INLINE const UString& lookupSmallString(unsigned i)
         {
             ASSERT(i < cacheSize);
             if (smallIntCache[i].isNull())

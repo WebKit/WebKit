@@ -1,3 +1,17 @@
+2012-03-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        NumericStrings should be inlined
+        https://bugs.webkit.org/show_bug.cgi?id=81183
+
+        Reviewed by Gavin Barraclough.
+
+        NumericStrings is not always inlined. When it is not, the class is not faster
+        than using UString::number() directly.
+
+        * runtime/NumericStrings.h:
+        (JSC::NumericStrings::add):
+        (JSC::NumericStrings::lookupSmallString):
+
 2012-03-15  Andras Becsi  <andras.becsi@nokia.com>
 
         Fix ARM build after r110792.
