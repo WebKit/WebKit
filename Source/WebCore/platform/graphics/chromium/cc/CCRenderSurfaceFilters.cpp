@@ -274,10 +274,7 @@ SkBitmap CCRenderSurfaceFilters::apply(const FilterOperations& filters, unsigned
             SkAutoTUnref<SkImageFilter> filter(new SkBlurImageFilter(stdX, stdY));
             SkPaint paint;
             paint.setImageFilter(filter.get());
-            paint.setColor(0xFFFFFFFF);
-            canvas.saveLayer(0, &paint);
-            canvas.drawBitmap(source, 0, 0);
-            canvas.restore();
+            canvas.drawSprite(source, 0, 0, &paint);
             break;
         }
         case FilterOperation::DROP_SHADOW: {
