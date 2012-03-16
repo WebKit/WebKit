@@ -66,12 +66,12 @@ struct EntityDescription {
 // FIXME: Noncopyable?
 class MarkupAccumulator {
 public:
-    MarkupAccumulator(Vector<Node*>*, EAbsoluteURLs resolveUrlsMethod, const Range* = 0);
+    MarkupAccumulator(Vector<Node*>*, EAbsoluteURLs, const Range* = 0);
     virtual ~MarkupAccumulator();
 
-    String serializeNodes(Node* node, Node* nodeToSkip, EChildrenOnly childrenOnly);
+    String serializeNodes(Node* targetNode, Node* nodeToSkip, EChildrenOnly);
 
-    static void appendComment(StringBuilder& out, const String& comment);
+    static void appendComment(StringBuilder&, const String&);
 
 protected:
     virtual void appendString(const String&);
@@ -79,41 +79,41 @@ protected:
     virtual void appendEndTag(Node*);
     static size_t totalLength(const Vector<String>&);
     size_t length() const { return totalLength(m_succeedingMarkup); }
-    void concatenateMarkup(StringBuilder& out);
-    void appendAttributeValue(StringBuilder& result, const String& attribute, bool documentIsHTML);
+    void concatenateMarkup(StringBuilder&);
+    void appendAttributeValue(StringBuilder&, const String&, bool);
     virtual void appendCustomAttributes(StringBuilder&, Element*, Namespaces*);
-    void appendNodeValue(StringBuilder& out, const Node*, const Range*, EntityMask);
+    void appendNodeValue(StringBuilder&, const Node*, const Range*, EntityMask);
     bool shouldAddNamespaceElement(const Element*);
     bool shouldAddNamespaceAttribute(const Attribute&, Namespaces&);
-    void appendNamespace(StringBuilder& result, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&);
+    void appendNamespace(StringBuilder&, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&);
     EntityMask entityMaskForText(Text*) const;
-    virtual void appendText(StringBuilder& out, Text*);
-    void appendDocumentType(StringBuilder& result, const DocumentType*);
-    void appendProcessingInstruction(StringBuilder& out, const String& target, const String& data);
-    virtual void appendElement(StringBuilder& out, Element*, Namespaces*);
-    void appendOpenTag(StringBuilder& out, Element*, Namespaces*);
-    void appendCloseTag(StringBuilder& out, Element*);
-    void appendAttribute(StringBuilder& out, Element*, const Attribute&, Namespaces*);
-    void appendCDATASection(StringBuilder& out, const String& section);
-    void appendStartMarkup(StringBuilder& result, const Node*, Namespaces*);
+    virtual void appendText(StringBuilder&, Text*);
+    void appendDocumentType(StringBuilder&, const DocumentType*);
+    void appendProcessingInstruction(StringBuilder&, const String& target, const String& data);
+    virtual void appendElement(StringBuilder&, Element*, Namespaces*);
+    void appendOpenTag(StringBuilder&, Element*, Namespaces*);
+    void appendCloseTag(StringBuilder&, Element*);
+    void appendAttribute(StringBuilder&, Element*, const Attribute&, Namespaces*);
+    void appendCDATASection(StringBuilder&, const String&);
+    void appendStartMarkup(StringBuilder&, const Node*, Namespaces*);
     bool shouldSelfClose(const Node*);
-    bool elementCannotHaveEndTag(const Node* node);
-    void appendEndMarkup(StringBuilder& result, const Node*);
+    bool elementCannotHaveEndTag(const Node*);
+    void appendEndMarkup(StringBuilder&, const Node*);
 
     Vector<Node*>* const m_nodes;
     const Range* const m_range;
 
 private:
-    String resolveURLIfNeeded(const Element*, const String& urlString) const;
-    void appendQuotedURLAttributeValue(StringBuilder& result, const Element*, const Attribute&);
-    void serializeNodesWithNamespaces(Node*, Node* nodeToSkip, EChildrenOnly, const Namespaces*);
+    String resolveURLIfNeeded(const Element*, const String&) const;
+    void appendQuotedURLAttributeValue(StringBuilder&, const Element*, const Attribute&);
+    void serializeNodesWithNamespaces(Node* targetNode, Node* nodeToSkip, EChildrenOnly, const Namespaces*);
 
     Vector<String> m_succeedingMarkup;
     const EAbsoluteURLs m_resolveURLsMethod;
 };
 
 // FIXME: This method should be integrated with MarkupAccumulator.
-void appendCharactersReplacingEntities(StringBuilder& out, const UChar* content, size_t length, EntityMask);
+void appendCharactersReplacingEntities(StringBuilder&, const UChar*, size_t, EntityMask);
 
 }
 
