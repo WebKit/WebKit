@@ -464,6 +464,8 @@ void EditorClientBlackBerry::handleKeyboardEvent(KeyboardEvent* event)
     String commandName = interpretKeyEvent(event);
 
     if (!commandName.isEmpty()) {
+        // Hot key handling. Cancel processing mode.
+        m_webPagePrivate->m_inputHandler->setProcessingChange(false);
         if (frame->editor()->command(commandName).execute())
             event->setDefaultHandled();
         return;

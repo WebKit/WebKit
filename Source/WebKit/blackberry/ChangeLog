@@ -1,3 +1,18 @@
+2012-03-16  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Input processing mode should be cancelled when processing hot keys
+        https://bugs.webkit.org/show_bug.cgi?id=81348
+
+        Reviewed by Rob Buis.
+
+        Don't suppress IMF notifications if we are handling
+        the event as a hotkey.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::handleKeyboardEvent):
+
 2012-03-16  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Can not open certain links from bridge applications
