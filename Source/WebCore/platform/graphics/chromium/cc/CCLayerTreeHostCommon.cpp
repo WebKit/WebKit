@@ -83,8 +83,12 @@ static bool layerShouldBeSkipped(LayerType* layer)
     // Some additional conditions need to be computed at a later point after the recursion is finished.
     //   - the intersection of render surface content and layer clipRect is empty
     //   - the visibleLayerRect is empty
+    //
+    // Note, if the layer should not have been drawn due to being fully transparent,
+    // we would have skipped the entire subtree and never made it into this function,
+    // so it is safe to omit this check here.
 
-    if (!layer->drawsContent() || !layer->opacity() || layer->bounds().isEmpty())
+    if (!layer->drawsContent() || layer->bounds().isEmpty())
         return true;
 
     // The layer should not be drawn if (1) it is not double-sided and (2) the back of the layer is facing the screen.
@@ -102,6 +106,22 @@ static bool layerShouldBeSkipped(LayerType* layer)
     }
 
     return false;
+}
+
+static bool subtreeShouldBeSkipped(CCLayerImpl* layer)
+{
+    // The opacity of a layer always applies to its children (either implicitly
+    // via a render surface or explicitly if the parent preserves 3D), so the
+    // entire subtree can be skipped if this layer is fully transparent.
+    return !layer->opacity();
+}
+
+static bool subtreeShouldBeSkipped(LayerChromium* layer)
+{
+    // If the opacity is being animated then the opacity on the main thread is unreliable
+    // (since the impl thread may be using a different opacity), so it should not be trusted.
+    // In particular, it should not cause the subtree to be skipped.
+    return !layer->opacity() && !layer->opacityIsAnimating();
 }
 
 template<typename LayerType>
@@ -230,14 +250,15 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     //        S is the scale adjustment (to scale up to the layer size)
     //
 
-    float drawOpacity = layer->opacity();
-    if (layer->parent() && layer->parent()->preserves3D())
-        drawOpacity *= layer->parent()->drawOpacity();
-    // The opacity of a layer always applies to its children (either implicitly
-    // via a render surface or explicitly if the parent preserves 3D), so the
-    // entire subtree can be skipped if this layer is fully transparent.
-    if (!drawOpacity)
+    if (subtreeShouldBeSkipped(layer))
         return false;
+
+    float drawOpacity = layer->opacity();
+    bool drawOpacityIsAnimating = layer->opacityIsAnimating();
+    if (layer->parent() && layer->parent()->preserves3D()) {
+        drawOpacity *= layer->parent()->drawOpacity();
+        drawOpacityIsAnimating |= layer->parent()->drawOpacityIsAnimating();
+    }
 
     IntSize bounds = layer->bounds();
     FloatPoint anchorPoint = layer->anchorPoint();
@@ -286,7 +307,9 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
 
         // The opacity value is moved from the layer to its surface, so that the entire subtree properly inherits opacity.
         renderSurface->setDrawOpacity(drawOpacity);
+        renderSurface->setDrawOpacityIsAnimating(drawOpacityIsAnimating);
         layer->setDrawOpacity(1);
+        layer->setDrawOpacityIsAnimating(false);
 
         TransformationMatrix layerOriginTransform = combinedTransform;
         layerOriginTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
@@ -320,6 +343,7 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         transformedLayerRect = enclosingIntRect(layer->drawTransform().mapRect(layerRect));
 
         layer->setDrawOpacity(drawOpacity);
+        layer->setDrawOpacityIsAnimating(drawOpacityIsAnimating);
 
         if (layer != rootLayer) {
             ASSERT(layer->parent());

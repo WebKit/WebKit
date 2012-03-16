@@ -228,6 +228,15 @@ CCActiveAnimation* CCLayerAnimationController::getActiveAnimation(int groupId, C
     return 0;
 }
 
+bool CCLayerAnimationController::isAnimatingProperty(CCActiveAnimation::TargetProperty targetProperty) const
+{
+    for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
+        if (m_activeAnimations[i]->runState() != CCActiveAnimation::Finished && m_activeAnimations[i]->runState() != CCActiveAnimation::Aborted && m_activeAnimations[i]->targetProperty() == targetProperty)
+            return true;
+    }
+    return false;
+}
+
 void CCLayerAnimationController::remove(int groupId, CCActiveAnimation::TargetProperty targetProperty)
 {
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {

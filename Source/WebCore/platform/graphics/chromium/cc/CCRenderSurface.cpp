@@ -52,6 +52,7 @@ CCRenderSurface::CCRenderSurface(CCLayerImpl* owningLayer)
     , m_skipsDraw(false)
     , m_surfacePropertyChanged(false)
     , m_drawOpacity(1)
+    , m_drawOpacityIsAnimating(false)
     , m_nearestAncestorThatMovesPixels(0)
 {
     m_damageTracker = CCDamageTracker::create();

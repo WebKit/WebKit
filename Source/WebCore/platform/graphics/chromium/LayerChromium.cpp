@@ -80,6 +80,7 @@ LayerChromium::LayerChromium()
     , m_alwaysReserveTextures(false)
     , m_replicaLayer(0)
     , m_drawOpacity(0)
+    , m_drawOpacityIsAnimating(false)
     , m_targetRenderSurface(0)
     , m_contentsScale(1.0)
     , m_layerAnimationDelegate(0)
@@ -389,6 +390,11 @@ void LayerChromium::setOpacity(float opacity)
     setNeedsCommit();
 }
 
+bool LayerChromium::opacityIsAnimating() const
+{
+    return m_layerAnimationController->isAnimatingProperty(CCActiveAnimation::Opacity);
+}
+
 void LayerChromium::setOpaque(bool opaque)
 {
     if (m_opaque == opaque)
@@ -419,6 +425,11 @@ void LayerChromium::setTransform(const TransformationMatrix& transform)
         return;
     m_transform = transform;
     setNeedsCommit();
+}
+
+bool LayerChromium::transformIsAnimating() const
+{
+    return m_layerAnimationController->isAnimatingProperty(CCActiveAnimation::Transform);
 }
 
 void LayerChromium::setScrollPosition(const IntPoint& scrollPosition)

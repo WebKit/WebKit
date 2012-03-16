@@ -63,6 +63,9 @@ public:
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float drawOpacity) { m_drawOpacity = drawOpacity; }
 
+    bool drawOpacityIsAnimating() const { return m_drawOpacityIsAnimating; }
+    void setDrawOpacityIsAnimating(bool drawOpacityIsAnimating) { m_drawOpacityIsAnimating = drawOpacityIsAnimating; }
+
     // This goes from content space with the origin in the center of the rect being transformed to the target space with the origin in the top left of the
     // rect being transformed. Position the rect so that the origin is in the center of it before applying this transform.
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
@@ -99,6 +102,7 @@ private:
     bool m_skipsDraw;
 
     float m_drawOpacity;
+    bool m_drawOpacityIsAnimating;
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_replicaDrawTransform;
     TransformationMatrix m_originTransform;

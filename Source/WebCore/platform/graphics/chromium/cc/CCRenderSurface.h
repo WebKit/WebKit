@@ -70,6 +70,9 @@ public:
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
 
+    bool drawOpacityIsAnimating() const { return m_drawOpacityIsAnimating; }
+    void setDrawOpacityIsAnimating(bool drawOpacityIsAnimating) { m_drawOpacityIsAnimating = drawOpacityIsAnimating; }
+
     void setDrawTransform(const TransformationMatrix& drawTransform) { m_drawTransform = drawTransform; }
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
 
@@ -131,6 +134,7 @@ private:
 
     OwnPtr<ManagedTexture> m_contentsTexture;
     float m_drawOpacity;
+    bool m_drawOpacityIsAnimating;
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_replicaDrawTransform;
     TransformationMatrix m_originTransform;

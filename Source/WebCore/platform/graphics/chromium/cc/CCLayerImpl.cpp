@@ -65,6 +65,7 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_targetRenderSurface(0)
     , m_drawDepth(0)
     , m_drawOpacity(0)
+    , m_drawOpacityIsAnimating(false)
     , m_debugBorderColor(0, 0, 0, 0)
     , m_debugBorderWidth(0)
     , m_layerAnimationController(CCLayerAnimationControllerImpl::create(this))
@@ -425,6 +426,11 @@ void CCLayerImpl::setOpacity(float opacity)
     noteLayerPropertyChangedForSubtree();
 }
 
+bool CCLayerImpl::opacityIsAnimating() const
+{
+    return m_layerAnimationController->isAnimatingProperty(CCActiveAnimation::Opacity);
+}
+
 void CCLayerImpl::setPosition(const FloatPoint& position)
 {
     if (m_position == position)
@@ -460,6 +466,11 @@ void CCLayerImpl::setTransform(const TransformationMatrix& transform)
 
     m_transform = transform;
     noteLayerPropertyChangedForSubtree();
+}
+
+bool CCLayerImpl::transformIsAnimating() const
+{
+    return m_layerAnimationController->isAnimatingProperty(CCActiveAnimation::Transform);
 }
 
 void CCLayerImpl::setDebugBorderColor(Color debugBorderColor)

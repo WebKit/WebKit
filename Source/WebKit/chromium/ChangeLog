@@ -1,3 +1,20 @@
+2012-03-16  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Threaded opacity animation jump to opacity of 0
+        https://bugs.webkit.org/show_bug.cgi?id=80744
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF):
+        (CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity):
+        (WTF::CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity::CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity):
+        (WTF::CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity::beginTest):
+        (WTF::CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity::animateLayers):
+        (WTF::CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity::commitCompleteOnCCThread):
+        (WTF::CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity::afterTest):
+        (WTF::TEST_F):
+
 2012-03-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Changes to overdraw metrics to allow upload tracking

@@ -58,6 +58,7 @@ public:
 
     bool hasActiveAnimation() const { return m_activeAnimations.size(); }
     CCActiveAnimation* getActiveAnimation(int groupId, CCActiveAnimation::TargetProperty);
+    bool isAnimatingProperty(CCActiveAnimation::TargetProperty) const;
 
 protected:
     CCLayerAnimationController();

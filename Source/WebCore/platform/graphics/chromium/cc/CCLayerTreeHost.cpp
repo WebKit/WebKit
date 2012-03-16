@@ -544,7 +544,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
         if (it.representsTargetRenderSurface()) {
-            ASSERT(it->renderSurface()->drawOpacity());
+            ASSERT(it->renderSurface()->drawOpacity() || it->drawOpacityIsAnimating());
 
             occlusionTracker.finishedTargetRenderSurface(*it, it->renderSurface());
             paintMaskAndReplicaForRenderSurface(*it, paintType);
@@ -567,7 +567,7 @@ void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTe
     CCLayerIteratorType end = CCLayerIteratorType::end(&m_updateList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&m_updateList); it != end; ++it) {
         if (it.representsTargetRenderSurface()) {
-            ASSERT(it->renderSurface()->drawOpacity());
+            ASSERT(it->renderSurface()->drawOpacity() || it->drawOpacityIsAnimating());
             if (it->maskLayer())
                 it->maskLayer()->updateCompositorResources(context, updater);
 

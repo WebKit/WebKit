@@ -42,6 +42,7 @@ RenderSurfaceChromium::RenderSurfaceChromium(LayerChromium* owningLayer)
     , m_maskLayer(0)
     , m_skipsDraw(false)
     , m_drawOpacity(1)
+    , m_drawOpacityIsAnimating(false)
     , m_nearestAncestorThatMovesPixels(0)
 {
 }

@@ -72,6 +72,8 @@ public:
     // Returns true if there are any animations that are neither finished nor aborted.
     bool hasActiveAnimation() const;
 
+    bool isAnimatingProperty(CCActiveAnimation::TargetProperty) const;
+
 private:
     friend class CCLayerAnimationController;
 

@@ -357,7 +357,7 @@ protected:
         CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
         ASSERT(test);
         if (test->m_layerTreeHost && test->m_layerTreeHost->rootLayer())
-            addOpacityTransitionToLayer(*test->m_layerTreeHost->rootLayer(), 0, 0, 1);
+            addOpacityTransitionToLayer(*test->m_layerTreeHost->rootLayer(), 0, 0, 0.5);
     }
 
     static void dispatchAddAnimation(void* self)
@@ -366,7 +366,7 @@ protected:
         CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
         ASSERT(test);
         if (test->m_layerTreeHost && test->m_layerTreeHost->rootLayer())
-            addOpacityTransitionToLayer(*test->m_layerTreeHost->rootLayer(), 10, 0, 1);
+            addOpacityTransitionToLayer(*test->m_layerTreeHost->rootLayer(), 10, 0, 0.5);
     }
 
     static void dispatchSetNeedsAnimateAndCommit(void* self)
@@ -982,6 +982,40 @@ private:
 };
 
 TEST_F(CCLayerTreeHostTestTickAnimationWhileBackgrounded, runMultiThread)
+{
+    runTestThreaded();
+}
+
+// Ensures that when opacity is being animated, this value does not cause the subtree to be skipped.
+class CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity()
+    {
+    }
+
+    virtual void beginTest()
+    {
+        m_layerTreeHost->rootLayer()->setDrawOpacity(1);
+        m_layerTreeHost->setViewportSize(IntSize(10, 10));
+        m_layerTreeHost->rootLayer()->setOpacity(0);
+        postAddAnimationToMainThread();
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl*)
+    {
+        // If the subtree was skipped when preparing to draw, the layer's draw opacity
+        // will not have been updated. It should be set to 0 due to the animation.
+        // Without the animation, the layer will be skipped since it has zero opacity.
+        EXPECT_EQ(0, m_layerTreeHost->rootLayer()->drawOpacity());
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+};
+
+TEST_F(CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity, runMultiThread)
 {
     runTestThreaded();
 }

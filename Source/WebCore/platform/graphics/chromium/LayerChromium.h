@@ -110,6 +110,7 @@ public:
 
     void setOpacity(float);
     float opacity() const { return m_opacity; }
+    bool opacityIsAnimating() const;
 
     void setFilters(const FilterOperations&);
     const FilterOperations& filters() const { return m_filters; }
@@ -125,6 +126,7 @@ public:
 
     void setTransform(const TransformationMatrix&);
     const TransformationMatrix& transform() const { return m_transform; }
+    bool transformIsAnimating() const;
 
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
     void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
@@ -187,6 +189,10 @@ public:
 
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
+
+    bool drawOpacityIsAnimating() const { return m_drawOpacityIsAnimating; }
+    void setDrawOpacityIsAnimating(bool drawOpacityIsAnimating) { m_drawOpacityIsAnimating = drawOpacityIsAnimating; }
+
     const IntRect& clipRect() const { return m_clipRect; }
     void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
     RenderSurfaceChromium* targetRenderSurface() const { return m_targetRenderSurface; }
@@ -313,6 +319,7 @@ private:
     // Transient properties.
     OwnPtr<RenderSurfaceChromium> m_renderSurface;
     float m_drawOpacity;
+    bool m_drawOpacityIsAnimating;
     IntRect m_clipRect;
     RenderSurfaceChromium* m_targetRenderSurface;
     TransformationMatrix m_drawTransform;

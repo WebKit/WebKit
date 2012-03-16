@@ -57,10 +57,15 @@ public:
 
     // CCLayerAnimationControllerImplClient implementation.
     virtual int id() const { return m_layerId; }
+
     virtual void setOpacity(float);
     virtual float opacity() const { return m_opacity; }
+    bool opacityIsAnimating() const;
+
     virtual void setTransform(const TransformationMatrix&);
     virtual const TransformationMatrix& transform() const { return m_transform; }
+    bool transformIsAnimating() const;
+
     virtual const IntSize& bounds() const { return m_bounds; }
 
     virtual ~CCLayerImpl();
@@ -151,6 +156,9 @@ public:
 
     float drawOpacity() const { return m_drawOpacity; }
     void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
+
+    bool drawOpacityIsAnimating() const { return m_drawOpacityIsAnimating; }
+    void setDrawOpacityIsAnimating(bool drawOpacityIsAnimating) { m_drawOpacityIsAnimating = drawOpacityIsAnimating; }
 
     const IntRect& clipRect() const { return m_clipRect; }
     void setClipRect(const IntRect& rect) { m_clipRect = rect; }
@@ -311,6 +319,7 @@ private:
     // to sort layers from back to front.
     float m_drawDepth;
     float m_drawOpacity;
+    bool m_drawOpacityIsAnimating;
 
     // Debug borders.
     Color m_debugBorderColor;

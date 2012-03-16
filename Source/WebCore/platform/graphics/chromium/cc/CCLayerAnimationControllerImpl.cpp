@@ -83,6 +83,15 @@ bool CCLayerAnimationControllerImpl::hasActiveAnimation() const
     return false;
 }
 
+bool CCLayerAnimationControllerImpl::isAnimatingProperty(CCActiveAnimation::TargetProperty targetProperty) const
+{
+    for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
+        if (m_activeAnimations[i]->runState() != CCActiveAnimation::Finished && m_activeAnimations[i]->runState() != CCActiveAnimation::Aborted && m_activeAnimations[i]->targetProperty() == targetProperty)
+            return true;
+    }
+    return false;
+}
+
 void CCLayerAnimationControllerImpl::startAnimationsWaitingForNextTick(double monotonicTime, CCAnimationEventsVector& events)
 {
     for (size_t i = 0; i < m_activeAnimations.size(); ++i) {
