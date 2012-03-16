@@ -1,3 +1,16 @@
+2012-03-16  Alexey Proskuryakov  <ap@apple.com>
+
+        ASSERTION FAILED: m_loadState == LoadStateCommitted in WebFrameProxy::didFinishLoad causing
+        "crashes" on Lion Intel Debug WebKit2 Tests
+        https://bugs.webkit.org/show_bug.cgi?id=81184
+        <rdar://problem/11052462>
+
+        Rubber-stamped by Anders Carlsson.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp: (WebKit::WebFrameLoaderClient::finishedLoading):
+        Don't leave a lingering m_pluginView after load is finished. When plug-in data was empty,
+        we would create the plug-in here, but failed to finalize the load.
+
 2012-03-08  Jer Noble  <jer.noble@apple.com>
 
         Support W3C Full Screen API proposal

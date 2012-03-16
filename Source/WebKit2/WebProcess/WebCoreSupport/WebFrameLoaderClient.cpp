@@ -874,13 +874,14 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
             
             webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomRepresentation(loader->response().suggestedFilename(), dataReference));
         }
-
-        return;
     }
 
-    m_pluginView->manualLoadDidFinishLoading();
-    m_pluginView = 0;
-    m_hasSentResponseToPluginView = false;
+    // Plugin view could have been created inside committedLoad().
+    if (m_pluginView) {
+        m_pluginView->manualLoadDidFinishLoading();
+        m_pluginView = 0;
+        m_hasSentResponseToPluginView = false;
+    }
 }
 
 void WebFrameLoaderClient::updateGlobalHistory()
