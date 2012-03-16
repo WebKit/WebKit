@@ -2346,6 +2346,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) co
                         return logicalHeight.calcValue(availableHeight - borderAndPaddingLogicalHeight());
                     }
                     cb = cb->containingBlock();
+                    toRenderBlock(cb)->addPercentHeightDescendant(const_cast<RenderBox*>(this));
                 }
             }
             return computeContentBoxLogicalHeight(logicalHeight.calcValue(availableHeight));
