@@ -2019,10 +2019,6 @@ fast/writing-mode/border-styles-vertical-rl.html
 # https://bugs.webkit.org/show_bug.cgi?id=80689
 fast/viewport/viewport-133.html
 
-#[Qt] New fast/forms/label/labelable-elements.html fails
-#https://bugs.webkit.org/show_bug.cgi?id=80985
-fast/forms/label/labelable-elements.html
-
 # ============================================================================= #
 # failing fonts tests
 # ============================================================================= #

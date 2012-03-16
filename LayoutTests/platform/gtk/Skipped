@@ -1597,8 +1597,5 @@ plugins/netscape-plugin-page-cache-works.html
 # https://bugs.webkit.org/show_bug.cgi?id=80534
 fast/events/autoscroll-in-textfield.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=80466
-fast/forms/label/labelable-elements.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=81089
 inspector/debugger/snippets-model.html
