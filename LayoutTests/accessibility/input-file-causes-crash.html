@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"> 
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+ 
+<input id="file-input" style="display:run-in;" type="file"/>
+<dl>
+ 
+<p id="description"></p>
+<div id="console"></div>
+ 
+<script>
+    description("This can cause a crash if AccessibilityRenderObject assumes that a file input element's renderer must be type RenderFileUploadControl, but in corner cases (display:run-in) this may not be true.");
+
+    if (window.accessibilityController) {
+        document.getElementById("file-input").focus();
+        var element = accessibilityController.focusedElement;
+        var title = element.title;
+        shouldBeNonNull("title");
+    }
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
