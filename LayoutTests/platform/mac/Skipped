@@ -585,3 +585,5 @@ svg/custom/delete-text-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=81289
 # <rdar://problem/11059777>
 canvas/philip/tests/2d.line.cap.round.html
+canvas/philip/tests/2d.shadow.canvas.transparent.2.html
+canvas/philip/tests/2d.shadow.image.transparent.2.html
