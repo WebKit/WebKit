@@ -37,15 +37,6 @@ class CCRenderSurface;
 class LayerChromium;
 class RenderSurfaceChromium;
 
-template<typename RenderSurfaceType>
-class CCOcclusionTrackerDamageClientBase {
-public:
-    virtual FloatRect damageRect(const RenderSurfaceType*) const = 0;
-};
-
-typedef CCOcclusionTrackerDamageClientBase<RenderSurfaceChromium> CCOcclusionTrackerDamageClient;
-typedef CCOcclusionTrackerDamageClientBase<CCRenderSurface> CCOcclusionTrackerDamageClientImpl;
-
 // This class is used to track occlusion of layers while traversing them in a front-to-back order. As each layer is visited, one of the
 // methods in this class is called to notify it about the current target surface.
 // Then, occlusion in the content space of the current layer may be queried, via methods such as occluded() and unoccludedContentRect().
@@ -54,10 +45,8 @@ typedef CCOcclusionTrackerDamageClientBase<CCRenderSurface> CCOcclusionTrackerDa
 template<typename LayerType, typename RenderSurfaceType>
 class CCOcclusionTrackerBase {
     WTF_MAKE_NONCOPYABLE(CCOcclusionTrackerBase);
-    typedef CCOcclusionTrackerDamageClientBase<RenderSurfaceType> DamageClientType;
 public:
     CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace);
-    CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, const DamageClientType*);
 
     // Called when visiting a layer representing itself. If the target was not already current, then this indicates we have entered a new surface subtree.
     void enterTargetRenderSurface(const RenderSurfaceType* newTarget);
@@ -111,7 +100,6 @@ protected:
 
 private:
     IntRect m_scissorRectInScreenSpace;
-    const DamageClientType* m_surfaceDamageClient;
     OwnPtr<CCOverdrawMetrics> m_overdrawMetrics;
     bool m_usePaintTracking; // FIXME: Remove this when paint tracking is on for paint culling.
 };

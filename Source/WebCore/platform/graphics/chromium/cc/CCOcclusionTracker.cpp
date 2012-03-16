@@ -41,16 +41,6 @@ namespace WebCore {
 template<typename LayerType, typename RenderSurfaceType>
 CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace)
     : m_scissorRectInScreenSpace(scissorRectInScreenSpace)
-    , m_surfaceDamageClient(0)
-    , m_overdrawMetrics(CCOverdrawMetrics::create())
-    , m_usePaintTracking(true) // FIXME: Remove this when paint tracking is on for paint culling.
-{
-}
-
-template<typename LayerType, typename RenderSurfaceType>
-CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, const DamageClientType* surfaceDamageClient)
-    : m_scissorRectInScreenSpace(scissorRectInScreenSpace)
-    , m_surfaceDamageClient(surfaceDamageClient)
     , m_overdrawMetrics(CCOverdrawMetrics::create())
     , m_usePaintTracking(true) // FIXME: Remove this when paint tracking is on for paint culling.
 {
@@ -333,8 +323,7 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::layerScissorRectIn
 {
     const RenderSurfaceType* targetSurface = m_stack.last().surface;
     FloatRect totalScissor = targetSurface->contentRect();
-    if (m_surfaceDamageClient)
-        totalScissor.intersect(m_surfaceDamageClient->damageRect(targetSurface));
+    // FIXME: layer->clipRect() and layer->usesLayerClipping() is changing: https://bugs.webkit.org/show_bug.cgi?id=80622
     if (!layer->clipRect().isEmpty())
         totalScissor.intersect(layer->clipRect());
     return enclosingIntRect(totalScissor);
@@ -357,7 +346,6 @@ const Region& CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::currentOcclu
 
 // Declare the possible functions here for the linker.
 template CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace);
-template CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, const CCOcclusionTrackerDamageClient* surfaceDamageClient);
 template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::enterTargetRenderSurface(const RenderSurfaceChromium* newTarget);
 template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::finishedTargetRenderSurface(const LayerChromium* owningLayer, const RenderSurfaceChromium* finishedTarget);
 template void CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::leaveToTargetRenderSurface(const RenderSurfaceChromium* newTarget);
@@ -369,7 +357,6 @@ template const Region& CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromi
 template IntRect CCOcclusionTrackerBase<LayerChromium, RenderSurfaceChromium>::layerScissorRectInTargetSurface(const LayerChromium*) const;
 
 template CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace);
-template CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, const CCOcclusionTrackerDamageClientImpl* surfaceDamageClient);
 template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::enterTargetRenderSurface(const CCRenderSurface* newTarget);
 template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::finishedTargetRenderSurface(const CCLayerImpl* owningLayer, const CCRenderSurface* finishedTarget);
 template void CCOcclusionTrackerBase<CCLayerImpl, CCRenderSurface>::leaveToTargetRenderSurface(const CCRenderSurface* newTarget);

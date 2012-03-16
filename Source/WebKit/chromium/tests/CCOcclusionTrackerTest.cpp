@@ -79,12 +79,6 @@ public:
     {
     }
 
-    TestCCOcclusionTrackerBase(IntRect screenScissorRect, const CCOcclusionTrackerDamageClientBase<RenderSurfaceType>* damageClient)
-        : CCOcclusionTrackerBase<LayerType, RenderSurfaceType>(screenScissorRect, damageClient)
-        , m_overrideLayerScissorRect(false)
-    {
-    }
-
     Region occlusionInScreenSpace() const { return CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::m_stack.last().occlusionInScreen; }
     Region occlusionInTargetSurface() const { return CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::m_stack.last().occlusionInTarget; }
 
@@ -100,20 +94,6 @@ protected:
 private:
     bool m_overrideLayerScissorRect;
     IntRect m_layerScissorRect;
-};
-
-template<typename RenderSurfaceType>
-class TestDamageClient : public CCOcclusionTrackerDamageClientBase<RenderSurfaceType> {
-public:
-    // The interface
-    virtual FloatRect damageRect(const RenderSurfaceType*) const { return m_damageRect; }
-
-    // Testing stuff
-    TestDamageClient(const FloatRect& damageRect) : m_damageRect(damageRect) { }
-    void setDamageRect(const FloatRect& damageRect) { m_damageRect = damageRect; }
-
-private:
-    FloatRect m_damageRect;
 };
 
 struct CCOcclusionTrackerTestMainThreadTypes {
@@ -1255,31 +1235,6 @@ protected:
 ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestScreenScissorRectOutsideChild);
 
 template<class Types, bool opaqueLayers>
-class CCOcclusionTrackerTestDamageRectOutsideChild : public CCOcclusionTrackerTest<Types, opaqueLayers> {
-protected:
-    void runMyTest()
-    {
-        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
-        typename Types::ContentLayerType* layer = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true);
-        this->calcDrawEtc(parent);
-
-        TestDamageClient<typename Types::RenderSurfaceType> damage(FloatRect(200, 100, 100, 100));
-        TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000), &damage);
-
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
-
-        EXPECT_TRUE(occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)).isEmpty());
-
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
-
-        EXPECT_EQ_RECT(IntRect(200, 100, 100, 100), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
-    }
-};
-
-ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestDamageRectOutsideChild);
-
-template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestLayerScissorRectOverChild : public CCOcclusionTrackerTest<Types, opaqueLayers> {
 protected:
     void runMyTest()
@@ -1354,31 +1309,6 @@ protected:
 };
 
 ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestScreenScissorRectOverChild);
-
-template<class Types, bool opaqueLayers>
-class CCOcclusionTrackerTestDamageRectOverChild : public CCOcclusionTrackerTest<Types, opaqueLayers> {
-protected:
-    void runMyTest()
-    {
-        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
-        typename Types::ContentLayerType* layer = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true);
-        this->calcDrawEtc(parent);
-
-        TestDamageClient<typename Types::RenderSurfaceType> damage(FloatRect(100, 100, 100, 100));
-        TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000), &damage);
-
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
-
-        EXPECT_EQ_RECT(IntRect(100, 100, 100, 100), occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)));
-
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
-
-        EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)).isEmpty());
-    }
-};
-
-ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestDamageRectOverChild);
 
 template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestLayerScissorRectPartlyOverChild : public CCOcclusionTrackerTest<Types, opaqueLayers> {
@@ -1465,31 +1395,6 @@ protected:
 ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestScreenScissorRectPartlyOverChild);
 
 template<class Types, bool opaqueLayers>
-class CCOcclusionTrackerTestDamageRectPartlyOverChild : public CCOcclusionTrackerTest<Types, opaqueLayers> {
-protected:
-    void runMyTest()
-    {
-        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
-        typename Types::ContentLayerType* layer = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true);
-        this->calcDrawEtc(parent);
-
-        TestDamageClient<typename Types::RenderSurfaceType> damage(FloatRect(50, 50, 200, 200));
-        TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000), &damage);
-
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
-
-        EXPECT_EQ_RECT(IntRect(50, 50, 150, 150), occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)));
-
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
-
-        EXPECT_EQ_RECT(IntRect(50, 50, 200, 200), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
-    }
-};
-
-ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestDamageRectPartlyOverChild);
-
-template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestLayerScissorRectOverNothing : public CCOcclusionTrackerTest<Types, opaqueLayers> {
 protected:
     void runMyTest()
@@ -1572,31 +1477,6 @@ protected:
 };
 
 ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestScreenScissorRectOverNothing);
-
-template<class Types, bool opaqueLayers>
-class CCOcclusionTrackerTestDamageRectOverNothing : public CCOcclusionTrackerTest<Types, opaqueLayers> {
-protected:
-    void runMyTest()
-    {
-        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
-        typename Types::ContentLayerType* layer = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(200, 200), true);
-        this->calcDrawEtc(parent);
-
-        TestDamageClient<typename Types::RenderSurfaceType> damage(FloatRect(500, 500, 100, 100));
-        TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000), &damage);
-
-        occlusion.enterTargetRenderSurface(layer->renderSurface());
-
-        EXPECT_TRUE(occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)).isEmpty());
-
-        occlusion.markOccludedBehindLayer(layer);
-        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
-
-        EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)).isEmpty());
-    }
-};
-
-ALL_CCOCCLUSIONTRACKER_TEST(CCOcclusionTrackerTestDamageRectOverNothing);
 
 template<class Types, bool opaqueLayers>
 class CCOcclusionTrackerTestLayerScissorRectForLayerOffOrigin : public CCOcclusionTrackerTest<Types, opaqueLayers> {
