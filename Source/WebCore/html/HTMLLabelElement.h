@@ -34,6 +34,7 @@ public:
     static PassRefPtr<HTMLLabelElement> create(const QualifiedName&, Document*);
 
     LabelableElement* control();
+    HTMLFormElement* form() const;
 
 private:
     HTMLLabelElement(const QualifiedName&, Document*);

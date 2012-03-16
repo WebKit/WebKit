@@ -8,16 +8,22 @@
 <form id="form">
     <input type="hidden" id="input1" value="value1">
     <input type="hidden" id="input2" value="value2" form="X">
+    <label id="label1">label1</label>
+    <label id="label2" form="X">label2</label>
 </form>
 <div id="console"></div>
 <script>
-description('This page ensures that &lt;input from="X"&gt; don\'t associate with any form elements when there is no &lt;form id="X"&gt;.');
+description('This page ensures that &lt;input from="X"&gt; and &lt;label from="X"&gt; don\'t associate with any form elements when there is no &lt;form id="X"&gt;.');
 
 var form = document.getElementById('form');
-var elementShouldHaveForm = document.getElementById('input1');
-var elementShouldNotHaveForm = document.getElementById('input2');
-shouldBe('elementShouldHaveForm.form', 'form');
-shouldBeNull('elementShouldNotHaveForm.form');
+var inputShouldHaveForm = document.getElementById('input1');
+var inputShouldNotHaveForm = document.getElementById('input2');
+var labelShouldHaveForm = document.getElementById('label1');
+var labelShouldNotHaveForm = document.getElementById('label2');
+shouldBe('inputShouldHaveForm.form', 'form');
+shouldBeNull('inputShouldNotHaveForm.form');
+shouldBe('labelShouldHaveForm.form', 'form');
+shouldBeNull('labelShouldNotHaveForm.form');
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
 </body>

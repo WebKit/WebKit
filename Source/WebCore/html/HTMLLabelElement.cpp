@@ -28,7 +28,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "LabelableElement.h"
+#include "FormAssociatedElement.h"
 #include "HTMLNames.h"
 
 namespace WebCore {
@@ -85,6 +85,11 @@ LabelableElement* HTMLLabelElement::control()
     // Find the first element whose id is controlId. If it is found and it is a labelable form control,
     // return it, otherwise return 0.
     return nodeAsLabelableElement(treeScope()->getElementById(controlId));
+}
+
+HTMLFormElement* HTMLLabelElement::form() const
+{
+    return FormAssociatedElement::findAssociatedForm(this, 0);
 }
 
 void HTMLLabelElement::setActive(bool down, bool pause)

@@ -74,6 +74,27 @@ void FormAssociatedElement::removedFromDocument()
         element->document()->unregisterFormElementWithFormAttribute(this);
 }
 
+HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* element, HTMLFormElement* currentAssociatedForm)
+{
+    const AtomicString& formId(element->fastGetAttribute(formAttr));
+    if (!formId.isNull() && element->inDocument()) {
+        // The HTML5 spec says that the element should be associated with
+        // the first element in the document to have an ID that equal to
+        // the value of form attribute, so we put the result of
+        // treeScope()->getElementById() over the given element.
+        HTMLFormElement* newForm = 0;
+        Element* newFormCandidate = element->treeScope()->getElementById(formId);
+        if (newFormCandidate && newFormCandidate->hasTagName(formTag))
+            newForm = static_cast<HTMLFormElement*>(newFormCandidate);
+        return newForm;
+    }
+
+    if (!currentAssociatedForm)
+        return element->findFormAncestor();
+
+    return currentAssociatedForm;
+}
+
 void FormAssociatedElement::insertedIntoTree()
 {
     resetFormOwner();
@@ -130,24 +151,7 @@ void FormAssociatedElement::formWillBeDestroyed()
 
 void FormAssociatedElement::resetFormOwner()
 {
-    HTMLElement* element = toHTMLElement(this);
-    const AtomicString& formId(element->fastGetAttribute(formAttr));
-    if (m_form) {
-        if (formId.isNull())
-            return;
-    }
-    HTMLFormElement* newForm = 0;
-    if (!formId.isNull() && element->inDocument()) {
-        // The HTML5 spec says that the element should be associated with
-        // the first element in the document to have an ID that equal to
-        // the value of form attribute, so we put the result of
-        // treeScope()->getElementById() over the given element.
-        Element* firstElement = element->treeScope()->getElementById(formId);
-        if (firstElement && firstElement->hasTagName(formTag))
-            newForm = static_cast<HTMLFormElement*>(firstElement);
-    } else
-        newForm = element->findFormAncestor();
-    setForm(newForm);
+    setForm(findAssociatedForm(toHTMLElement(this), m_form));
 }
 
 void FormAssociatedElement::formAttributeChanged()

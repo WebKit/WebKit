@@ -41,6 +41,7 @@ public:
     void ref() { refFormAssociatedElement(); }
     void deref() { derefFormAssociatedElement(); }
 
+    static HTMLFormElement* findAssociatedForm(const HTMLElement*, HTMLFormElement*);
     HTMLFormElement* form() const { return m_form; }
     ValidityState* validity();
 

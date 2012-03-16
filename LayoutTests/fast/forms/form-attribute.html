@@ -13,7 +13,6 @@ var container = document.createElement('div');
 document.body.appendChild(container);
 
 debug('- Checks the existence of the form attribute for each form-associated elements.');
-debug('FIXME: &lt;label&gt; doesn\'t support the form attribute for now.');
 container.innerHTML = '<form id=owner></form>' +
     '<button name=victim form=owner />' +
     '<fieldset name=victim form=owner />' +
@@ -43,10 +42,14 @@ debug('- Ensures that the form attribute points the form owner even if the eleme
 container.innerHTML = '<form id=owner></form>' +
     '<form id=shouldNotBeOwner>' +
     '    <input id=inputElement name=victim form=owner />' +
+    '    <label id=labelElement name=victim form=owner />' +
     '</form>';
 owner = document.getElementById('owner');
 var inputElement = document.getElementById('inputElement');
+var labelElement = document.getElementById('labelElement');
 shouldBe('inputElement.form', 'owner');
+shouldBe('labelElement.form', 'owner');
+
 
 debug('');
 debug('- Ensures that the form attribute of all form-associated element with or witout form attribute points the form owner.');
@@ -54,14 +57,23 @@ container.innerHTML = '<form id=owner>' +
     '    <input id=inputElement1 name=victim />' +
     '    <input id=inputElement2 name=victim form=owner />' +
     '    <input id=inputElement3 name=victim />' +
+    '    <label id=labelElement1 name=victim />' +
+    '    <label id=labelElement2 name=victim form=owner />' +
+    '    <label id=labelElement3 name=victim />' +
     '</form>';
 owner = document.getElementById('owner');
 var inputElement1 = document.getElementById('inputElement1');
 var inputElement2 = document.getElementById('inputElement2');
 var inputElement3 = document.getElementById('inputElement3');
+var labelElement1 = document.getElementById('labelElement1');
+var labelElement2 = document.getElementById('labelElement2');
+var labelElement3 = document.getElementById('labelElement3');
 shouldBe('inputElement1.form', 'owner');
 shouldBe('inputElement2.form', 'owner');
 shouldBe('inputElement3.form', 'owner');
+shouldBe('labelElement1.form', 'owner');
+shouldBe('labelElement2.form', 'owner');
+shouldBe('labelElement3.form', 'owner');
 
 debug('');
 debug('- Ensures that the form attribute points the form owner even if the form element is nested another form element.');
@@ -71,21 +83,31 @@ container.innerHTML = '<form id=owner>' +
     '        <input id=inputElement1 name=victim form=owner />' +
     '        <input id=inputElement2 name=victim />' +
     '        <input id=inputElement3 name=victim form=owner />' +
+    '        <label id=labelElement1 name=victim form=owner />' +
+    '        <label id=labelElement2 name=victim />' +
+    '        <label id=labelElement3 name=victim form=owner />' +
     '    </form>' +
     '</form>';
 owner = document.getElementById('owner');
 inputElement1 = document.getElementById('inputElement1');
 inputElement2 = document.getElementById('inputElement2');
 inputElement3 = document.getElementById('inputElement3');
+labelElement1 = document.getElementById('labelElement1');
+labelElement2 = document.getElementById('labelElement2');
+labelElement3 = document.getElementById('labelElement3');
 shouldBe('inputElement1.form', 'owner');
 shouldBe('inputElement2.form', 'owner');
 shouldBe('inputElement3.form', 'owner');
+shouldBe('labelElement1.form', 'owner');
+shouldBe('labelElement2.form', 'owner');
+shouldBe('labelElement3.form', 'owner');
 
 debug('');
 debug('- Ensures whether the form owner is set correctly when the value of form attribute of a form-associated element changed.');
 container.innerHTML = '<form id=form1></form>' +
     '<form id=form2></form>' +
     '<input id=inputElement name=victim form=form1 />' +
+    '<label id=labelElement name=victim form=form1 />' +
     '<object id=objectElement name=victim form=form1></object>';
 var form1 = document.getElementById('form1');
 var form2 = document.getElementById('form2');
@@ -93,6 +115,12 @@ inputElement = document.getElementById('inputElement');
 shouldBe('inputElement.form', 'form1');
 inputElement.attributes['form'].value = 'form2';
 shouldBe('inputElement.form', 'form2');
+
+// HTMLabelElement has its own implementation of formAttr processing and so needs its own test.
+labelElement = document.getElementById('labelElement');
+shouldBe('labelElement.form', 'form1');
+labelElement.attributes['form'].value = 'form2';
+shouldBe('labelElement.form', 'form2');
 
 // HTMLObjectElement has its own implementation of formAttr processing and so needs its own test.
 objectElement = document.getElementById('objectElement');
@@ -104,6 +132,7 @@ debug('');
 debug('- Ensures whether the form owner is set correctly when the value of form attribute is added/removed.');
 container.innerHTML = '<form id=owner name=firstOwner></form>' +
     '<input id=inputElement name=victim />' +
+    '<label id=labelElement name=victim />' +
     '<object id=objectElement name=victim></object>';
 owner = document.getElementById('owner');
 inputElement = document.getElementById('inputElement');
@@ -113,6 +142,14 @@ inputElement.setAttribute('form', 'owner');
 shouldBe('inputElement.form', 'owner');
 inputElement.removeAttribute('form');
 shouldBe('inputElement.form', 'null');
+
+// HTMLLabelElement has its own implementation of formAttr processing and so needs its own test.
+labelElement = document.getElementById('labelElement');
+shouldBe('labelElement.form', 'null');
+labelElement.setAttribute('form', 'owner');
+shouldBe('labelElement.form', 'owner');
+labelElement.removeAttribute('form');
+shouldBe('labelElement.form', 'null');
 
 // HTMLObjectElement has its own implementation of formAttr processing and so needs its own test.
 objectElement = document.getElementById('objectElement');
@@ -126,18 +163,23 @@ debug('');
 debug('- Ensures whether the form owner is set correctly when the form owner is added/removed.');
 container.innerHTML = '<form id=owner name=firstOwner></form>' +
     '<form id=owner name=secondOwner></form>' +
-    '<input id=inputElement name=victim form=owner />';
+    '<input id=inputElement name=victim form=owner />' +
+    '<label id=labelElement name=victim form=owner />';
 owner = document.getElementById('owner');
 shouldBeEqualToString('owner.name', 'firstOwner');
 inputElement = document.getElementById('inputElement');
+labelElement = document.getElementById('labelElement');
 container.removeChild(owner);
 owner = document.getElementById('owner');
 shouldBeEqualToString('owner.name', 'secondOwner');
 shouldBe('inputElement.form', 'owner');
+shouldBe('labelElement.form', 'owner');
 container.removeChild(owner);
 shouldBe('inputElement.form', 'null');
+shouldBe('labelElement.form', 'null');
 container.appendChild(owner);
 shouldBe('inputElement.form', 'owner');
+shouldBe('labelElement.form', 'owner');
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
