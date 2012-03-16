@@ -32,7 +32,7 @@ import StringIO
 
 from .bugzilla import Bugzilla, BugzillaQueries, EditUsersParser
 
-from webkitpy.common.checkout.changelog import parse_bug_id
+from webkitpy.common.config import urls
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.net.web_mock import MockBrowser
 from webkitpy.thirdparty.mock import Mock
@@ -89,17 +89,11 @@ class BugzillaTest(unittest.TestCase):
         self.assertEquals(None, bugs.attachment_url_for_id(None))
 
     def test_parse_bug_id(self):
-        # FIXME: These would be all better as doctests
+        # Test that we can parse the urls we produce.
         bugs = Bugzilla()
-        self.assertEquals(12345, parse_bug_id("http://webkit.org/b/12345"))
-        self.assertEquals(12345, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?id=12345"))
-        self.assertEquals(12345, parse_bug_id(bugs.short_bug_url_for_bug_id(12345)))
-        self.assertEquals(12345, parse_bug_id(bugs.bug_url_for_bug_id(12345)))
-        self.assertEquals(12345, parse_bug_id(bugs.bug_url_for_bug_id(12345, xml=True)))
-
-        # Our bug parser is super-fragile, but at least we're testing it.
-        self.assertEquals(None, parse_bug_id("http://www.webkit.org/b/12345"))
-        self.assertEquals(None, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345"))
+        self.assertEquals(12345, urls.parse_bug_id(bugs.short_bug_url_for_bug_id(12345)))
+        self.assertEquals(12345, urls.parse_bug_id(bugs.bug_url_for_bug_id(12345)))
+        self.assertEquals(12345, urls.parse_bug_id(bugs.bug_url_for_bug_id(12345, xml=True)))
 
     _bug_xml = """
     <bug>

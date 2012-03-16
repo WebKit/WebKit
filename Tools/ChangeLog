@@ -1,3 +1,25 @@
+2012-03-15  Eric Seidel  <eric@webkit.org>
+
+        Move parse_bug_id into config/urls in preparation for re-use elsewhere.
+        https://bugs.webkit.org/show_bug.cgi?id=81313
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (parse_bug_id_from_changelog):
+        * Scripts/webkitpy/common/config/urls.py:
+        (parse_bug_id):
+        * Scripts/webkitpy/common/config/urls_unittest.py: Copied from Tools/Scripts/webkitpy/common/config/urls.py.
+        (URLsTest):
+        (URLsTest.test_parse_bug_id):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        (test_parse_bug_id):
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (_post_error_and_check_for_bug_url):
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        (Sheriff.post_rollout_patch):
+        (Sheriff.post_chromium_deps_roll):
+
 2012-03-15  Adam Barth  <abarth@webkit.org>
 
         The commit-queue should fast-track patches that have already passed the testing EWS bots

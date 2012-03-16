@@ -39,20 +39,6 @@ import webkitpy.common.config.urls as config_urls
 from webkitpy.common.system.deprecated_logging import log
 
 
-# FIXME: parse_bug_id should not be a free function.
-# FIXME: Where should this function live in the dependency graph?
-def parse_bug_id(message):
-    if not message:
-        return None
-    match = re.search(config_urls.bug_url_short, message)
-    if match:
-        return int(match.group('bug_id'))
-    match = re.search(config_urls.bug_url_long, message)
-    if match:
-        return int(match.group('bug_id'))
-    return None
-
-
 # FIXME: parse_bug_id_from_changelog should not be a free function.
 # Parse the bug ID out of a Changelog message based on the format that is
 # used by prepare-ChangeLog
@@ -67,7 +53,7 @@ def parse_bug_id_from_changelog(message):
         return int(match.group('bug_id'))
     # We weren't able to find a bug URL in the format used by prepare-ChangeLog. Fall back to the
     # first bug URL found anywhere in the message.
-    return parse_bug_id(message)
+    return config_urls.parse_bug_id(message)
 
 
 class ChangeLogEntry(object):

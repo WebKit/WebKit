@@ -51,3 +51,15 @@ bug_url_short = r"https?\://webkit\.org/b/(?P<bug_id>\d+)"
 
 buildbot_url = "http://build.webkit.org"
 chromium_buildbot_url = "http://build.chromium.org/p/chromium.webkit"
+
+
+def parse_bug_id(message):
+    if not message:
+        return None
+    match = re.search(bug_url_short, message)
+    if match:
+        return int(match.group('bug_id'))
+    match = re.search(bug_url_long, message)
+    if match:
+        return int(match.group('bug_id'))
+    return None
