@@ -1,3 +1,14 @@
+2012-03-16  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] viewportRect has changed to viewportSize
+        https://bugs.webkit.org/show_bug.cgi?id=81262
+
+        Reviewed by Antonio Gomes.
+
+        Set size instead of rect in constructor.
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+
 2012-03-16  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Enable PAGE_VISIBILITY_API

@@ -61,7 +61,7 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
 
         m_scrollPosition = m_webPage->mapToTransformed(view->scrollPosition());
         m_contentsSize = m_webPage->mapToTransformed(view->contentsSize());
-        m_viewportRect = m_webPage->mapToTransformed(view->visibleContentRect(false /*includeScrollbars*/));
+        m_viewportSize = m_webPage->mapToTransformed(view->visibleContentRect(false /*includeScrollbars*/)).size();
 
         m_visibleWindowRect = m_webPage->mapToTransformed(m_webPage->getRecursiveVisibleWindowRect(view));
         IntRect transformedWindowRect = IntRect(IntPoint::zero(), m_webPage->transformedViewportSize());
@@ -87,7 +87,7 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         ScrollableArea* scrollableArea = static_cast<ScrollableArea*>(m_layer);
         m_scrollPosition = m_webPage->mapToTransformed(scrollableArea->scrollPosition());
         m_contentsSize = m_webPage->mapToTransformed(scrollableArea->contentsSize());
-        m_viewportRect = m_webPage->mapToTransformed(scrollableArea->visibleContentRect(false /*includeScrollbars*/));
+        m_viewportSize = m_webPage->mapToTransformed(scrollableArea->visibleContentRect(false /*includeScrollbars*/)).size();
 
         m_visibleWindowRect = m_layer->renderer()->absoluteClippedOverflowRect();
         m_visibleWindowRect = m_layer->renderer()->frame()->view()->contentsToWindow(m_visibleWindowRect);
