@@ -403,6 +403,11 @@ v8 {
 }
 
 SOURCES += \
+    Modules/filesystem/DOMWindowFileSystem.cpp \
+    Modules/filesystem/DirectoryEntry.cpp \
+    Modules/filesystem/DirectoryEntrySync.cpp \
+    Modules/filesystem/DirectoryReader.cpp \
+    Modules/filesystem/DirectoryReaderSync.cpp \
     css/CSSAspectRatioValue.cpp \
     css/CSSBorderImageSliceValue.cpp \
     css/CSSBorderImage.cpp \
@@ -667,11 +672,6 @@ SOURCES += \
     fileapi/DOMFileSystem.cpp \
     fileapi/DOMFileSystemBase.cpp \
     fileapi/DOMFileSystemSync.cpp \
-    fileapi/DOMWindowFileSystem.cpp \
-    Modules/filesystem/DirectoryEntry.cpp \
-    Modules/filesystem/DirectoryEntrySync.cpp \
-    Modules/filesystem/DirectoryReader.cpp \
-    Modules/filesystem/DirectoryReaderSync.cpp \
     fileapi/Entry.cpp \
     fileapi/EntryArray.cpp \
     fileapi/EntryArraySync.cpp \

@@ -19,6 +19,7 @@ mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCoreTestSupport"
 
 xcopy /y /d "%ProjectDir%..\config.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%CONFIGURATIONBUILDDIR%\obj\WebCore\DerivedSources\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
+xcopy /y /d "%ProjectDir%..\Modules\filesystem\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\Modules\geolocation\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\Modules\webdatabase\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\Modules\websockets\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"

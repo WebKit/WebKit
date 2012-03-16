@@ -1635,6 +1635,7 @@ ENDIF ()
 
 if (ENABLE_FILE_SYSTEM)
     LIST(APPEND WebCore_SOURCES
+        Modules/filesystem/DOMWindowFileSystem.cpp
         Modules/filesystem/DirectoryEntry.cpp
         Modules/filesystem/DirectoryEntrySync.cpp
         Modules/filesystem/DirectoryReader.cpp
@@ -1643,7 +1644,6 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/DOMFileSystem.cpp
         fileapi/DOMFileSystemBase.cpp
         fileapi/DOMFileSystemSync.cpp
-        fileapi/DOMWindowFileSystem.cpp
         fileapi/Entry.cpp
         fileapi/EntryArray.cpp
         fileapi/EntryArraySync.cpp
@@ -1660,13 +1660,13 @@ if (ENABLE_FILE_SYSTEM)
         platform/AsyncFileSystem.cpp
     )
     LIST(APPEND WebCore_IDL_FILES
+        Modules/filesystem/DOMWindowFileSystem.idl
         Modules/filesystem/DirectoryEntry.idl
         Modules/filesystem/DirectoryEntrySync.idl
         Modules/filesystem/DirectoryReader.idl
         Modules/filesystem/DirectoryReaderSync.idl
         fileapi/DOMFileSystem.idl
         fileapi/DOMFileSystemSync.idl
-        fileapi/DOMWindowFileSystem.idl
         Modules/filesystem/EntriesCallback.idl
         fileapi/Entry.idl
         fileapi/EntrySync.idl

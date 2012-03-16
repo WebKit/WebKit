@@ -197,7 +197,7 @@ BINDING_IDLS = \
     $(WebCore)/fileapi/Blob.idl \
     $(WebCore)/fileapi/DOMFileSystem.idl \
     $(WebCore)/fileapi/DOMFileSystemSync.idl \
-    $(WebCore)/fileapi/DOMWindowFileSystem.idl \
+    $(WebCore)/Modules/filesystem/DOMWindowFileSystem.idl \
     $(WebCore)/Modules/filesystem/DirectoryEntry.idl \
     $(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
     $(WebCore)/Modules/filesystem/DirectoryReader.idl \

@@ -976,6 +976,7 @@
           ],
           'variables': {
             'generator_include_dirs': [
+              '--include', '../Modules/filesystem',
               '--include', '../Modules/indexeddb',
               '--include', '../Modules/mediastream',
               '--include', '../Modules/webdatabase',

@@ -24096,6 +24096,14 @@
 				        RelativePath="..\Modules\filesystem\EntriesCallback.h"
 				        >
 			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DOMWindowFileSystem.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DOMWindowFileSystem.h"
+				        >
+			        </File>
                         </Filter>
 			<Filter
 				Name="geolocation"
@@ -74141,14 +74149,6 @@
 		<Filter
 			Name="fileapi"
 			>
-			<File
-				RelativePath="..\fileapi\DOMWindowFileSystem.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DOMWindowFileSystem.h"
-				>
-			</File>
 			<File
 				RelativePath="..\fileapi\EntryBase.cpp"
 				>

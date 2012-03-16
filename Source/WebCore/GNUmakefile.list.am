@@ -2047,6 +2047,8 @@ webcore_sources += \
 	Source/WebCore/fileapi/Blob.h \
 	Source/WebCore/fileapi/BlobURL.cpp \
 	Source/WebCore/fileapi/BlobURL.h \
+	Source/WebCore/Modules/filesystem/DOMWindowFileSystem.cpp \
+	Source/WebCore/Modules/filesystem/DOMWindowFileSystem.h \
 	Source/WebCore/Modules/filesystem/DirectoryEntry.cpp \
 	Source/WebCore/Modules/filesystem/DirectoryEntry.h \
 	Source/WebCore/Modules/filesystem/DirectoryEntrySync.cpp \
@@ -2063,8 +2065,6 @@ webcore_sources += \
 	Source/WebCore/fileapi/DOMFileSystemBase.h \
 	Source/WebCore/fileapi/DOMFileSystemSync.cpp \
 	Source/WebCore/fileapi/DOMFileSystemSync.h \
-	Source/WebCore/fileapi/DOMWindowFileSystem.cpp \
-	Source/WebCore/fileapi/DOMWindowFileSystem.h \
 	Source/WebCore/Modules/filesystem/EntriesCallback.h \
 	Source/WebCore/fileapi/Entry.cpp \
 	Source/WebCore/fileapi/Entry.h \
@@ -4890,7 +4890,7 @@ webcore_built_sources += \
 dom_binding_idls += \
 	$(WebCore)/fileapi/DOMFileSystem.idl \
 	$(WebCore)/fileapi/DOMFileSystemSync.idl \
-	$(WebCore)/fileapi/DOMWindowFileSystem.idl \
+	$(WebCore)/Modules/filesystem/DOMWindowFileSystem.idl \
 	$(WebCore)/Modules/filesystem/DirectoryEntry.idl \
 	$(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
 	$(WebCore)/Modules/filesystem/DirectoryReader.idl \

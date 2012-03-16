@@ -216,13 +216,13 @@ IDL_BINDINGS += \
     $$PWD/dom/WebKitTransitionEvent.idl \
     $$PWD/dom/WheelEvent.idl \
     $$PWD/fileapi/Blob.idl \
+    $$PWD/Modules/filesystem/DOMWindowFileSystem.idl \
     $$PWD/Modules/filesystem/DirectoryEntry.idl \
     $$PWD/Modules/filesystem/DirectoryEntrySync.idl \
     $$PWD/Modules/filesystem/DirectoryReader.idl \
     $$PWD/Modules/filesystem/DirectoryReaderSync.idl \
     $$PWD/fileapi/DOMFileSystem.idl \
     $$PWD/fileapi/DOMFileSystemSync.idl \
-    $$PWD/fileapi/DOMWindowFileSystem.idl \
     $$PWD/Modules/filesystem/EntriesCallback.idl \
     $$PWD/fileapi/Entry.idl \
     $$PWD/fileapi/EntryArray.idl \
