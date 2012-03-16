@@ -28,7 +28,7 @@ State at 'canplaythrough' event:
         role: AXRole: push button
 
 
-        description: AXDescription: fullscreen
+        description: AXDescription: enter fullscreen
         role: AXRole: push button
 
 
