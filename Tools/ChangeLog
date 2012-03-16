@@ -1,3 +1,26 @@
+2012-03-16  Ojan Vafai  <ojan@chromium.org>
+
+        Have webkit-patch rebaseline-test update test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=81054
+
+        Recommit http://trac.webkit.org/changeset/110783 now that
+        http://trac.webkit.org/changeset/111034 has landed.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.remove_configuration_from_test):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (RemoveConfigurationsTest):
+        (RemoveConfigurationsTest.test_remove):
+        (test_remove_line):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._update_expectations_file):
+        (RebaselineTest._rebaseline_test_and_update_expectations):
+        (RebaselineTest):
+        (RebaselineTest.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_rebaseline_updates_expectations_file_noop):
+        (test_rebaseline_updates_expectations_file):
+
 2012-03-15  Ojan Vafai  <ojan@chromium.org>
 
         Specifier collapsing when writing test expectations lines gets a number of cases wrong

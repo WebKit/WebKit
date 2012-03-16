@@ -165,7 +165,9 @@ class TestExpectationSerializer(object):
         serializer = cls(test_configuration_converter)
 
         def serialize(expectation_line):
-            if not reconstitute_only_these or expectation_line in reconstitute_only_these:
+            # If reconstitute_only_these is an empty list, we want to return original_string.
+            # So we need to compare reconstitute_only_these to None, not just check if it's falsey.
+            if reconstitute_only_these is None or expectation_line in reconstitute_only_these:
                 return serializer.to_string(expectation_line)
             return expectation_line.original_string
 
@@ -815,6 +817,29 @@ class TestExpectations(object):
 
     def has_warnings(self):
         return self._has_warnings
+
+    def remove_configuration_from_test(self, test, test_configuration):
+        expectations_to_remove = []
+        modified_expectations = []
+
+        for expectation in self._expectations:
+            if expectation.name != test or expectation.is_flaky() or not expectation.parsed_expectations:
+                continue
+            if iter(expectation.parsed_expectations).next() not in (FAIL, TEXT, IMAGE, IMAGE_PLUS_TEXT, AUDIO):
+                continue
+            if test_configuration not in expectation.matching_configurations:
+                continue
+
+            expectation.matching_configurations.remove(test_configuration)
+            if expectation.matching_configurations:
+                modified_expectations.append(expectation)
+            else:
+                expectations_to_remove.append(expectation)
+
+        for expectation in expectations_to_remove:
+            self._expectations.remove(expectation)
+
+        return TestExpectationSerializer.list_to_string(self._expectations, self._parser._test_configuration_converter, modified_expectations)
 
     def remove_rebaselined_tests(self, except_these_tests):
         """Returns a copy of the expectations with the tests removed."""
