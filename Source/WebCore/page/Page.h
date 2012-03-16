@@ -292,12 +292,6 @@ namespace WebCore {
         void setJavaScriptURLsAreAllowed(bool);
         bool javaScriptURLsAreAllowed() const;
 
-        typedef HashSet<ScrollableArea*> ScrollableAreaSet;
-        void addScrollableArea(ScrollableArea*);
-        void removeScrollableArea(ScrollableArea*);
-        bool containsScrollableArea(ScrollableArea*) const;
-        const ScrollableAreaSet* scrollableAreaSet() const { return m_scrollableAreaSet.get(); }
-
         // Don't allow more than a certain number of frames in a page.
         // This seems like a reasonable upper bound, and otherwise mutually
         // recursive frameset pages can quickly bring the program to its knees
@@ -415,8 +409,6 @@ namespace WebCore {
         ViewportArguments m_viewportArguments;
 
         double m_minimumTimerInterval;
-
-        OwnPtr<ScrollableAreaSet> m_scrollableAreaSet;
 
         bool m_isEditable;
 

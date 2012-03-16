@@ -406,6 +406,14 @@ bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFra
     return true;
 }
 
+static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didShow)
+{
+    if (didShow)
+        scrollableArea->scrollAnimator()->contentAreaDidShow();
+    else
+        scrollableArea->scrollAnimator()->contentAreaDidHide();
+}
+
 void FocusController::setActive(bool active)
 {
     if (m_isActive == active)
@@ -419,13 +427,22 @@ void FocusController::setActive(bool active)
             view->updateControlTints();
         }
 
-        if (const HashSet<ScrollableArea*>* scrollableAreas = m_page->scrollableAreaSet()) {
-            HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
-            for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it) {
-                if (!active)
-                    (*it)->scrollAnimator()->contentAreaDidHide();
-                else
-                    (*it)->scrollAnimator()->contentAreaDidShow();
+        contentAreaDidShowOrHide(view, !active);
+
+        for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+            FrameView* frameView = frame->view();
+            if (!frameView)
+                continue;
+
+            const HashSet<ScrollableArea*>* scrollableAreas = frameView->scrollableAreas();
+            if (!scrollableAreas)
+                continue;
+
+            for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(), end = scrollableAreas->end(); it != end; ++it) {
+                ScrollableArea* scrollableArea = *it;
+                ASSERT(scrollableArea->isOnActivePage());
+
+                contentAreaDidShowOrHide(scrollableArea, !active);
             }
         }
     }

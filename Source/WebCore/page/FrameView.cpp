@@ -139,16 +139,17 @@ FrameView::FrameView(Frame* frame)
 {
     init();
 
-    if (m_frame) {
-        if (Page* page = m_frame->page()) {
-            m_page = page;
-            m_page->addScrollableArea(this);
+    // FIXME: Can m_frame ever be null here?
+    if (!m_frame)
+        return;
 
-            if (m_frame == m_page->mainFrame()) {
-                ScrollableArea::setVerticalScrollElasticity(ScrollElasticityAllowed);
-                ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityAllowed);
-            }
-        }
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    if (m_frame == page->mainFrame()) {
+        ScrollableArea::setVerticalScrollElasticity(ScrollElasticityAllowed);
+        ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityAllowed);
     }
 }
 
@@ -189,9 +190,6 @@ FrameView::~FrameView()
     
     ASSERT(!m_scrollCorner);
     ASSERT(m_actionScheduler->isEmpty());
-
-    if (m_page)
-        m_page->removeScrollableArea(this);
 
     if (m_frame) {
         ASSERT(m_frame->view() != this || !m_frame->contentRenderer());
@@ -2267,31 +2265,32 @@ void FrameView::setAnimatorsAreActive()
     if (!page)
         return;
 
-    const HashSet<ScrollableArea*>* scrollableAreas = page->scrollableAreaSet();
-    if (!scrollableAreas)
+    scrollAnimator()->setIsActive();
+
+    if (!m_scrollableAreas)
         return;
 
-    HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
-    for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it) {
-        // FIXME: This extra check to make sure the ScrollableArea is on an active page needs 
-        // to be here as long as the ScrollableArea HashSet lives on Page. But it should really be
-        // moved to the top-level Document or a similar class that really represents a single 
-        // web page. https://bugs.webkit.org/show_bug.cgi?id=62762
-        if ((*it)->isOnActivePage())
-            (*it)->scrollAnimator()->setIsActive();
+    for (HashSet<ScrollableArea*>::const_iterator it = m_scrollableAreas->begin(), end = m_scrollableAreas->end(); it != end; ++it) {
+        ScrollableArea* scrollableArea = *it;
+
+        ASSERT(scrollableArea->isOnActivePage());
+        scrollableArea->scrollAnimator()->setIsActive();
     }
 }
 
 void FrameView::notifyPageThatContentAreaWillPaint() const
 {
-    Page* page = m_frame->page();
-    const HashSet<ScrollableArea*>* scrollableAreas = page->scrollableAreaSet();
-    if (!scrollableAreas)
+    scrollAnimator()->contentAreaWillPaint();
+
+    if (!m_scrollableAreas)
         return;
 
-    HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
-    for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it)
-        (*it)->scrollAnimator()->contentAreaWillPaint();
+    for (HashSet<ScrollableArea*>::const_iterator it = m_scrollableAreas->begin(), end = m_scrollableAreas->end(); it != end; ++it) {
+        ScrollableArea* scrollableArea = *it;
+
+        ASSERT(scrollableArea->isOnActivePage());
+        scrollableArea->scrollAnimator()->contentAreaWillPaint();
+    }
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -2895,6 +2894,43 @@ void FrameView::setRepaintThrottlingMaxDeferredRepaintDelayDuringLoading(double 
 void FrameView::setRepaintThrottlingDeferredRepaintDelayIncrementDuringLoading(double p)
 {
     s_deferredRepaintDelayIncrementDuringLoading = p;
+}
+
+void FrameView::addScrollableArea(ScrollableArea* scrollableArea)
+{
+    if (!m_scrollableAreas)
+        m_scrollableAreas = adoptPtr(new ScrollableAreaSet);
+    m_scrollableAreas->add(scrollableArea);
+}
+
+void FrameView::removeScrollableArea(ScrollableArea* scrollableArea)
+{
+    if (!m_scrollableAreas)
+        return;
+    m_scrollableAreas->remove(scrollableArea);
+}
+
+bool FrameView::containsScrollableArea(ScrollableArea* scrollableArea) const
+{
+    if (!m_scrollableAreas)
+        return false;
+    return m_scrollableAreas->contains(scrollableArea);
+}
+
+void FrameView::addChild(PassRefPtr<Widget> widget)
+{
+    if (widget->isFrameView())
+        addScrollableArea(static_cast<FrameView*>(widget.get()));
+
+    ScrollView::addChild(widget);
+}
+
+void FrameView::removeChild(Widget* widget)
+{
+    if (widget->isFrameView())
+        removeScrollableArea(static_cast<FrameView*>(widget));
+
+    ScrollView::removeChild(widget);
 }
 
 bool FrameView::isVerticalDocument() const

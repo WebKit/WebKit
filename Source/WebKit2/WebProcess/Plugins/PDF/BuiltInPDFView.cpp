@@ -357,7 +357,7 @@ bool BuiltInPDFView::initialize(PluginController* pluginController, const Parame
 {
     m_pluginController = pluginController;
 
-    m_frame->coreFrame()->page()->addScrollableArea(this);
+    m_frame->coreFrame()->view()->addScrollableArea(this);
 
     // Load the src URL if needed.
     m_sourceURL = parameters.url;
@@ -370,8 +370,8 @@ bool BuiltInPDFView::initialize(PluginController* pluginController, const Parame
 void BuiltInPDFView::destroy()
 {
     if (m_frame) {
-        if (Page* page = m_frame->coreFrame()->page())
-            page->removeScrollableArea(this);
+        if (FrameView* frameView = m_frame->coreFrame()->view())
+            frameView->removeScrollableArea(this);
     }
 
     destroyScrollbar(HorizontalScrollbar);

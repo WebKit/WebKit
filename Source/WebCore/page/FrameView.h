@@ -285,6 +285,15 @@ public:
 
     void clearOwningRendererForCustomScrollbars(RenderBox*);
 
+    typedef HashSet<ScrollableArea*> ScrollableAreaSet;
+    void addScrollableArea(ScrollableArea*);
+    void removeScrollableArea(ScrollableArea*);
+    bool containsScrollableArea(ScrollableArea*) const;
+    const ScrollableAreaSet* scrollableAreas() const { return m_scrollableAreas.get(); }
+
+    virtual void addChild(PassRefPtr<Widget>) OVERRIDE;
+    virtual void removeChild(Widget*) OVERRIDE;
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
@@ -343,7 +352,6 @@ private:
 #endif
 
     virtual void notifyPageThatContentAreaWillPaint() const;
-    virtual void disconnectFromPage() { m_page = 0; }
 
     void deferredRepaintTimerFired(Timer<FrameView>*);
     void doDeferredRepaints();
@@ -441,7 +449,7 @@ private:
     // Renderer to hold our custom scroll corner.
     RenderScrollbarPart* m_scrollCorner;
 
-    Page* m_page;
+    OwnPtr<ScrollableAreaSet> m_scrollableAreas;
 
     static double s_deferredRepaintDelay;
     static double s_initialDeferredRepaintDelayDuringLoading;

@@ -145,8 +145,6 @@ public:
     
     virtual bool shouldRubberBandInDirection(ScrollDirection) const { return true; }
 
-    virtual void disconnectFromPage() { }
-
 private:
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;

@@ -170,7 +170,6 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_reflection(0)
     , m_scrollCorner(0)
     , m_resizer(0)
-    , m_scrollableAreaPage(0)
 {
     ScrollableArea::setConstrainsScrollingToContentEdge(false);
 
@@ -187,8 +186,10 @@ RenderLayer::~RenderLayer()
             frame->eventHandler()->resizeLayerDestroyed();
     }
 
-    if (m_scrollableAreaPage)
-        m_scrollableAreaPage->removeScrollableArea(this);
+    if (Frame* frame = renderer()->frame()) {
+        if (FrameView* frameView = frame->view())
+            frameView->removeScrollableArea(this);
+    }
 
     destroyScrollbar(HorizontalScrollbar);
     destroyScrollbar(VerticalScrollbar);
@@ -4054,18 +4055,17 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
         updateReflectionStyle();
     }
     
-    if (scrollsOverflow()) {
-        if (!m_scrollableAreaPage) {
-            if (Frame* frame = renderer()->frame()) {
-                if (Page* page = frame->page()) {
-                    m_scrollableAreaPage = page;
-                    m_scrollableAreaPage->addScrollableArea(this);
-                }
-            }
+#if ENABLE(CSS_FILTERS)
+    updateOrRemoveFilterEffect();
+#endif
+
+    if (Frame* frame = renderer()->frame()) {
+        if (FrameView* frameView = frame->view()) {
+            if (scrollsOverflow())
+                frameView->addScrollableArea(this);
+            else
+                frameView->removeScrollableArea(this);
         }
-    } else if (m_scrollableAreaPage) {
-        m_scrollableAreaPage->removeScrollableArea(this);
-        m_scrollableAreaPage = 0;
     }
     
     // FIXME: Need to detect a swap from custom to native scrollbars (and vice versa).

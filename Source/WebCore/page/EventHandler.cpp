@@ -1539,8 +1539,10 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event, bool onlyUpdateSc
         return result;
 
     if (RenderLayer* layer = layerForNode(hoveredNode.innerNode())) {
-        if (page->containsScrollableArea(layer))
-            layer->scrollAnimator()->mouseMovedInContentArea();
+        if (FrameView* frameView = m_frame->view()) {
+            if (frameView->containsScrollableArea(layer))
+                layer->scrollAnimator()->mouseMovedInContentArea();
+        }
     }
 
     if (FrameView* frameView = m_frame->view())
@@ -1966,10 +1968,14 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
             }
         } else if (page && (layerForLastNode && (!layerForNodeUnderMouse || layerForNodeUnderMouse != layerForLastNode))) {
             // The mouse has moved between layers.
-            if (page->containsScrollableArea(layerForLastNode))
-                layerForLastNode->scrollAnimator()->mouseExitedContentArea();
+            if (Frame* frame = m_lastNodeUnderMouse->document()->frame()) {
+                if (FrameView* frameView = frame->view()) {
+                    if (frameView->containsScrollableArea(layerForLastNode))
+                        layerForLastNode->scrollAnimator()->mouseExitedContentArea();
+                }
+            }
         }
-        
+
         if (m_nodeUnderMouse && (!m_lastNodeUnderMouse || m_lastNodeUnderMouse->document() != m_frame->document())) {
             // The mouse has moved between frames.
             if (Frame* frame = m_nodeUnderMouse->document()->frame()) {
@@ -1978,10 +1984,14 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
             }
         } else if (page && (layerForNodeUnderMouse && (!layerForLastNode || layerForNodeUnderMouse != layerForLastNode))) {
             // The mouse has moved between layers.
-            if (page->containsScrollableArea(layerForNodeUnderMouse))
-                layerForNodeUnderMouse->scrollAnimator()->mouseEnteredContentArea();
+            if (Frame* frame = m_nodeUnderMouse->document()->frame()) {
+                if (FrameView* frameView = frame->view()) {
+                    if (frameView->containsScrollableArea(layerForNodeUnderMouse))
+                        layerForNodeUnderMouse->scrollAnimator()->mouseEnteredContentArea();
+                }
+            }
         }
-        
+
         if (m_lastNodeUnderMouse && m_lastNodeUnderMouse->document() != m_frame->document()) {
             m_lastNodeUnderMouse = 0;
             m_lastScrollbarUnderMouse = 0;
