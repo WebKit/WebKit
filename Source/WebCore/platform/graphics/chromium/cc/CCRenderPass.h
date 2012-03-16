@@ -34,7 +34,6 @@
 namespace WebCore {
 
 class CCLayerImpl;
-class CCOverdrawMetrics;
 class CCRenderSurface;
 class CCSharedQuadState;
 
@@ -55,7 +54,7 @@ class CCRenderPass {
 public:
     static PassOwnPtr<CCRenderPass> create(CCRenderSurface*);
 
-    void appendQuadsForLayer(CCLayerImpl*, CCOcclusionTrackerImpl*, CCOverdrawMetrics*);
+    void appendQuadsForLayer(CCLayerImpl*, CCOcclusionTrackerImpl*);
     void appendQuadsForRenderSurfaceLayer(CCLayerImpl*);
 
     const CCQuadList& quadList() const { return m_quadList; }

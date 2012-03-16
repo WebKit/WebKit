@@ -58,20 +58,26 @@ static inline float quadArea(const FloatQuad& quad)
                        wedgeProduct(quad.p4(), quad.p1())));
 }
 
-void CCOverdrawMetrics::didDraw(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect, const IntRect& opaqueRect)
+void CCOverdrawMetrics::didCull(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect)
 {
     float beforeCullArea = quadArea(transformToTarget.mapQuad(FloatQuad(beforeCullRect)));
+    float afterCullArea = quadArea(transformToTarget.mapQuad(FloatQuad(afterCullRect)));
+
+    m_pixelsCulled += beforeCullArea - afterCullArea;
+}
+
+void CCOverdrawMetrics::didDraw(const TransformationMatrix& transformToTarget, const IntRect& afterCullRect, const IntRect& opaqueRect)
+{
     float afterCullArea = quadArea(transformToTarget.mapQuad(FloatQuad(afterCullRect)));
     float afterCullOpaqueArea = quadArea(transformToTarget.mapQuad(FloatQuad(intersection(opaqueRect, afterCullRect))));
 
     m_pixelsDrawnOpaque += afterCullOpaqueArea;
     m_pixelsDrawnTranslucent += afterCullArea - afterCullOpaqueArea;
-    m_pixelsCulled += beforeCullArea - afterCullArea;
 }
 
 void CCOverdrawMetrics::recordMetrics(const CCLayerTreeHost* layerTreeHost) const
 {
-    recordMetricsInternal<CCLayerTreeHost>(PAINTING, layerTreeHost);
+    recordMetricsInternal<CCLayerTreeHost>(UPLOADING, layerTreeHost);
 }
 
 void CCOverdrawMetrics::recordMetrics(const CCLayerTreeHostImpl* layerTreeHost) const
@@ -97,13 +103,13 @@ void CCOverdrawMetrics::recordMetricsInternal(MetricsType metricsType, const Lay
         opaqueCounterName = "PixelsDrawnOpaque";
         translucentCounterName = "PixelsDrawnTranslucent";
         break;
-    case PAINTING:
-        histogramOpaqueName = "Renderer4.paintPixelCountOpaque";
-        histogramTranslucentName = "Renderer4.paintPixelCountTranslucent";
-        histogramCulledName = "Renderer4.paintPixelCountCulled";
-        cullCounterName = "PaintPixelsCulled";
-        opaqueCounterName = "PixelsPaintedOpaque";
-        translucentCounterName = "PixelsPaintedTranslucent";
+    case UPLOADING:
+        histogramOpaqueName = "Renderer4.uploadPixelCountOpaque";
+        histogramTranslucentName = "Renderer4.uploadPixelCountTranslucent";
+        histogramCulledName = "Renderer4.uploadPixelCountCulled";
+        cullCounterName = "UploadPixelsCulled";
+        opaqueCounterName = "PixelsUploadedOpaque";
+        translucentCounterName = "PixelsUploadedTranslucent";
         break;
     }
     ASSERT(histogramOpaqueName);

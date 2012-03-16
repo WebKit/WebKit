@@ -25,17 +25,21 @@
 #ifndef CCOverdrawMetrics_h
 #define CCOverdrawMetrics_h
 
+#include <wtf/PassOwnPtr.h>
+
 namespace WebCore {
 class IntRect;
 class TransformationMatrix;
 class CCLayerTreeHost;
 class CCLayerTreeHostImpl;
 
+// FIXME: compute overdraw metrics only occasionally, not every frame.
 class CCOverdrawMetrics {
 public:
-    CCOverdrawMetrics();
+    static PassOwnPtr<CCOverdrawMetrics> create() { return adoptPtr(new CCOverdrawMetrics()); }
 
-    void didDraw(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect, const IntRect& opaqueRect);
+    void didCull(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect);
+    void didDraw(const TransformationMatrix& transformToTarget, const IntRect& afterCullRect, const IntRect& opaqueRect);
 
     void recordMetrics(const CCLayerTreeHost*) const;
     void recordMetrics(const CCLayerTreeHostImpl*) const;
@@ -46,9 +50,11 @@ public:
     float pixelsCulled() const { return m_pixelsCulled; }
 
 private:
+    CCOverdrawMetrics();
+
     enum MetricsType {
         DRAWING,
-        PAINTING
+        UPLOADING
     };
 
     template<typename LayerTreeHostType>

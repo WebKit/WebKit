@@ -78,9 +78,9 @@ static PassOwnPtr<CCTiledLayerImpl> makeLayer(const TransformationMatrix& drawTr
     return layer.release();
 }
 
-static void appendQuads(CCQuadList& quadList, CCTiledLayerImpl* layer, CCOcclusionTrackerImpl& occlusionTracker, CCOverdrawMetrics& overdraw)
+static void appendQuads(CCQuadList& quadList, CCTiledLayerImpl* layer, CCOcclusionTrackerImpl& occlusionTracker)
 {
-    CCQuadCuller quadCuller(quadList, layer, &occlusionTracker, &overdraw);
+    CCQuadCuller quadCuller(quadList, layer, &occlusionTracker);
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
     layer->appendQuads(quadCuller, sharedQuadState.get());
 }
@@ -88,7 +88,6 @@ static void appendQuads(CCQuadList& quadList, CCTiledLayerImpl* layer, CCOcclusi
 #define DECLARE_AND_INITIALIZE_TEST_QUADS               \
     DebugScopedSetImplThread impl;                      \
     CCQuadList quadList;                                \
-    CCOverdrawMetrics overdraw;                         \
     TransformationMatrix childTransform;                \
     IntSize rootSize = IntSize(300, 300);               \
     IntRect rootRect = IntRect(IntPoint(), rootSize);   \
@@ -103,12 +102,12 @@ TEST(CCQuadCullerTest, verifyNoCulling)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(TransformationMatrix(), childRect, 1.0, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 13u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 130000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 130000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullChildLinesUpTopLeft)
@@ -119,13 +118,13 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpTopLeft)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(TransformationMatrix(), childRect, 1.0, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 9u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 90000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 40000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 40000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullWhenChildOpacityNotOne)
@@ -136,13 +135,13 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpacityNotOne)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(childTransform, childRect, 0.9, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 13u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 90000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 40000, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 40000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullWhenChildOpaqueFlagFalse)
@@ -153,13 +152,13 @@ TEST(CCQuadCullerTest, verifyCullWhenChildOpaqueFlagFalse)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(childTransform, childRect, 1.0, false, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 13u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 90000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 40000, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 40000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullCenterTileOnly)
@@ -172,9 +171,9 @@ TEST(CCQuadCullerTest, verifyCullCenterTileOnly)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(childTransform, childRect, 1.0, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 12u);
 
     IntRect quadVisibleRect1 = quadList[5].get()->quadVisibleRect();
@@ -192,9 +191,9 @@ TEST(CCQuadCullerTest, verifyCullCenterTileOnly)
     EXPECT_EQ(quadVisibleRect6.height(), 50);
     EXPECT_EQ(quadVisibleRect6.y(), 250);
 
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 100000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 30000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 100000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 30000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize1)
@@ -215,14 +214,14 @@ TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize1)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(childTransform, childRect, 1.0, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 2u);
 
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 20363, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 20363, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize2)
@@ -243,14 +242,14 @@ TEST(CCQuadCullerTest, verifyCullCenterTileNonIntegralSize2)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(childTransform, childRect, 1.0, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 2u);
 
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 19643, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 19643, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullChildLinesUpBottomRight)
@@ -263,13 +262,13 @@ TEST(CCQuadCullerTest, verifyCullChildLinesUpBottomRight)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(childTransform, childRect, 1.0, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 9u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 90000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 40000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 40000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullSubRegion)
@@ -283,13 +282,13 @@ TEST(CCQuadCullerTest, verifyCullSubRegion)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(childTransform, childRect, 1.0, false, childOpaqueRect);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 12u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 90000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 30000, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 10000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 30000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 10000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullSubRegion2)
@@ -303,13 +302,13 @@ TEST(CCQuadCullerTest, verifyCullSubRegion2)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(childTransform, childRect, 1.0, false, childOpaqueRect);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 12u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 90000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 25000, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 15000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 25000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 15000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullSubRegionCheckOvercull)
@@ -323,13 +322,13 @@ TEST(CCQuadCullerTest, verifyCullSubRegionCheckOvercull)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(childTransform, childRect, 1.0, false, childOpaqueRect);
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 13u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 90000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 30000, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 10000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 90000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 30000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 10000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsDontOcclude)
@@ -343,13 +342,13 @@ TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsDontOcclude)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(childTransform, childRect, 1.0, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 13u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 130000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 130000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
 }
 
 // This test requires some explanation: here we are rotating the quads to be culled.
@@ -369,13 +368,13 @@ TEST(CCQuadCullerTest, verifyNonAxisAlignedQuadsSafelyCulled)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(TransformationMatrix(), childRect, 1.0, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(-100, -100, 1000, 1000));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 12u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 100600, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 29400, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 100600, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 29400, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullOutsideScissorOverTile)
@@ -386,13 +385,13 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverTile)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(TransformationMatrix(), childRect, 1.0, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(200, 100, 100, 100));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 1u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 10000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 120000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 10000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 120000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullOutsideScissorOverCulledTile)
@@ -403,13 +402,13 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverCulledTile)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(TransformationMatrix(), childRect, 1.0, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(100, 100, 100, 100));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 1u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 10000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 120000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 10000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 120000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullOutsideScissorOverPartialTiles)
@@ -420,13 +419,13 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverPartialTiles)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(TransformationMatrix(), childRect, 1.0, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(50, 50, 200, 200));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 9u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 40000, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 90000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 40000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 90000, 1);
 }
 
 TEST(CCQuadCullerTest, verifyCullOutsideScissorOverNoTiles)
@@ -437,13 +436,13 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverNoTiles)
     OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(TransformationMatrix(), childRect, 1.0, true, IntRect());
     TestCCOcclusionTrackerImpl occlusionTracker(IntRect(500, 500, 100, 100));
 
-    appendQuads(quadList, childLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, childLayer.get(), occlusionTracker);
     occlusionTracker.markOccludedBehindLayer(childLayer.get());
-    appendQuads(quadList, rootLayer.get(), occlusionTracker, overdraw);
+    appendQuads(quadList, rootLayer.get(), occlusionTracker);
     EXPECT_EQ(quadList.size(), 0u);
-    EXPECT_NEAR(overdraw.pixelsDrawnOpaque(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsDrawnTranslucent(), 0, 1);
-    EXPECT_NEAR(overdraw.pixelsCulled(), 130000, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 130000, 1);
 }
 
 } // namespace

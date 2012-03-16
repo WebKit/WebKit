@@ -40,11 +40,10 @@ using namespace std;
 
 namespace WebCore {
 
-CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker, CCOverdrawMetrics* overdrawMetrics)
+CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker)
     : m_quadList(quadList)
     , m_layer(layer)
     , m_occlusionTracker(occlusionTracker)
-    , m_overdrawMetrics(overdrawMetrics)
 {
 }
 
@@ -56,8 +55,8 @@ void CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
     if (keepQuad)
         drawQuad->setQuadVisibleRect(culledRect);
 
-    if (m_overdrawMetrics)
-        m_overdrawMetrics->didDraw(drawQuad->quadTransform(), drawQuad->quadRect(), culledRect, drawQuad->opaqueRect());
+    m_occlusionTracker->overdrawMetrics().didCull(drawQuad->quadTransform(), drawQuad->quadRect(), culledRect);
+    m_occlusionTracker->overdrawMetrics().didDraw(drawQuad->quadTransform(), culledRect, drawQuad->opaqueRect());
 
     // Release the quad after we're done using it.
     if (keepQuad)

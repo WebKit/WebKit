@@ -42,6 +42,7 @@ template<typename LayerType, typename RenderSurfaceType>
 CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace)
     : m_scissorRectInScreenSpace(scissorRectInScreenSpace)
     , m_surfaceDamageClient(0)
+    , m_overdrawMetrics(CCOverdrawMetrics::create())
     , m_usePaintTracking(true) // FIXME: Remove this when paint tracking is on for paint culling.
 {
 }
@@ -50,6 +51,7 @@ template<typename LayerType, typename RenderSurfaceType>
 CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, const DamageClientType* surfaceDamageClient)
     : m_scissorRectInScreenSpace(scissorRectInScreenSpace)
     , m_surfaceDamageClient(surfaceDamageClient)
+    , m_overdrawMetrics(CCOverdrawMetrics::create())
     , m_usePaintTracking(true) // FIXME: Remove this when paint tracking is on for paint culling.
 {
 }

@@ -37,7 +37,6 @@
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostCommon.h"
-#include "cc/CCOverdrawMetrics.h"
 #include "cc/CCPageScaleAnimation.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCThreadTask.h"
@@ -271,9 +270,6 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         passes.append(pass.release());
     }
 
-    // FIXME: compute overdraw metrics only occasionally, not every frame.
-    CCOverdrawMetrics overdrawMetrics;
-
     IntRect scissorRect;
     if (layerRendererCapabilities().usingPartialSwap)
         scissorRect = enclosingIntRect(m_rootDamageRect);
@@ -307,11 +303,11 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         }
 
         it->willDraw(m_layerRenderer.get());
-        pass->appendQuadsForLayer(*it, &occlusionTracker, &overdrawMetrics);
+        pass->appendQuadsForLayer(*it, &occlusionTracker);
         occlusionTracker.markOccludedBehindLayer(*it);
     }
 
-    overdrawMetrics.recordMetrics(this);
+    occlusionTracker.overdrawMetrics().recordMetrics(this);
 }
 
 void CCLayerTreeHostImpl::animateLayersRecursive(CCLayerImpl* current, double monotonicTime, double wallClockTime, CCAnimationEventsVector& events, bool& didAnimate, bool& needsAnimateLayers)

@@ -1,5 +1,19 @@
 2012-03-16  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Changes to overdraw metrics to allow upload tracking
+        https://bugs.webkit.org/show_bug.cgi?id=81222
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore::appendQuads):
+        (WebCore):
+        (WebCore::TEST):
+        * tests/MockCCQuadCuller.h:
+        (WebCore::MockCCQuadCuller::MockCCQuadCuller):
+
+2012-03-16  Dana Jansens  <danakj@chromium.org>
+
         [chromium] Quads that become fully opaque after culling should not use blending
         https://bugs.webkit.org/show_bug.cgi?id=81235
 

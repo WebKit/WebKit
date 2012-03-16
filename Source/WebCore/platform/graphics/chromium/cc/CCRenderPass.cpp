@@ -46,9 +46,9 @@ CCRenderPass::CCRenderPass(CCRenderSurface* targetSurface)
     ASSERT(m_targetSurface);
 }
 
-void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker, CCOverdrawMetrics* overdrawMetrics)
+void CCRenderPass::appendQuadsForLayer(CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker)
 {
-    CCQuadCuller quadCuller(m_quadList, layer, occlusionTracker, overdrawMetrics);
+    CCQuadCuller quadCuller(m_quadList, layer, occlusionTracker);
 
     OwnPtr<CCSharedQuadState> sharedQuadState = layer->createSharedQuadState();
     layer->appendQuads(quadCuller, sharedQuadState.get());
