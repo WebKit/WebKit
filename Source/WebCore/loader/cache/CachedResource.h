@@ -248,7 +248,7 @@ public:
     double loadFinishTime() const { return m_loadFinishTime; }
 
 protected:
-    virtual void checkNotify();
+    void checkNotify();
 
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);

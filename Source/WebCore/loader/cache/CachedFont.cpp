@@ -198,4 +198,13 @@ void CachedFont::checkNotify()
          c->fontLoaded(this);
 }
 
+
+void CachedFont::error(CachedResource::Status status)
+{
+    setStatus(status);
+    ASSERT(errorOccurred());
+    setLoading(false);
+    checkNotify();
+}
+
 }
