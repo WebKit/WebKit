@@ -85,8 +85,6 @@ protected:
     unsigned m_numberOfChannels;
 
     // m_parameters holds the tweakable compressor parameters.
-    // FIXME: expose some of the most important ones (such as threshold, attack, release)
-    // as DynamicsCompressorNode attributes.
     float m_parameters[ParamLast];
     void initializeParameters();
 

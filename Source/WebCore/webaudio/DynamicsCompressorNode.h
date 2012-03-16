@@ -52,6 +52,8 @@ public:
     AudioParam* threshold() { return m_threshold.get(); }
     AudioParam* knee() { return m_knee.get(); }
     AudioParam* ratio() { return m_ratio.get(); }
+    AudioParam* attack() { return m_attack.get(); }
+    AudioParam* release() { return m_release.get(); }
 
     // Amount by which the compressor is currently compressing the signal in decibels.
     AudioParam* reduction() { return m_reduction.get(); }
@@ -67,6 +69,8 @@ private:
     RefPtr<AudioParam> m_knee;
     RefPtr<AudioParam> m_ratio;
     RefPtr<AudioParam> m_reduction;
+    RefPtr<AudioParam> m_attack;
+    RefPtr<AudioParam> m_release;
 };
 
 } // namespace WebCore
