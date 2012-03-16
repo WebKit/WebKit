@@ -400,6 +400,12 @@ public:
 
     static WebCore::IntSize defaultMaxLayoutSize();
 
+    void setVisible(bool);
+#if ENABLE(PAGE_VISIBILITY_API)
+    void setPageVisibilityState();
+#endif
+    void notifyAppActivationStateChange(ActivationStateType);
+
     WebPage* m_webPage;
     WebPageClient* m_client;
     WebCore::Page* m_page;
@@ -412,6 +418,7 @@ public:
 #endif
 
     bool m_visible;
+    ActivationStateType m_activationState;
     bool m_shouldResetTilesWhenShown;
     bool m_userScalable;
     bool m_userPerformedManualZoom;

@@ -1,3 +1,23 @@
+2012-03-16  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Enable PAGE_VISIBILITY_API
+        https://bugs.webkit.org/show_bug.cgi?id=81257
+
+        Set Page visibility state for BlackBerry port.
+
+        Reviewed by Rob Buis.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::setPageVisibilityState):
+        (BlackBerry::WebKit::WebPagePrivate::setVisible):
+        (BlackBerry::WebKit::WebPage::setVisible):
+        (BlackBerry::WebKit::WebPagePrivate::notifyAppActivationStateChange):
+        (BlackBerry::WebKit::WebPage::notifyAppActivationStateChange):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-03-14  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Make sure WebPage and BackingStore don't crash without a Window

@@ -272,6 +272,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_currentContextNode(0)
     , m_webSettings(0) // Initialized by init.
     , m_visible(false)
+    , m_activationState(ActivationActive)
     , m_shouldResetTilesWhenShown(false)
     , m_userScalable(true)
     , m_userPerformedManualZoom(false)
@@ -2894,12 +2895,31 @@ bool WebPage::isVisible() const
     return d->m_visible;
 }
 
+#if ENABLE(PAGE_VISIBILITY_API)
+void WebPagePrivate::setPageVisibilityState()
+{
+    static bool s_initialVisibilityState = true;
+
+    m_page->setVisibilityState(m_visible && m_activationState == ActivationActive ? PageVisibilityStateVisible : PageVisibilityStateHidden, s_initialVisibilityState);
+    s_initialVisibilityState = false;
+}
+#endif
+
+void WebPagePrivate::setVisible(bool visible)
+{
+    m_visible = visible;
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    setPageVisibilityState();
+#endif
+}
+
 void WebPage::setVisible(bool visible)
 {
     if (d->m_visible == visible)
         return;
 
-    d->m_visible = visible;
+    d->setVisible(visible);
 
     if (!visible) {
         d->suspendBackingStore();
@@ -4958,6 +4978,15 @@ void WebPage::notifyDeviceIdleStateChange(bool enterIdle)
         (*it)->handleIdleEvent(enterIdle);
 }
 
+void WebPagePrivate::notifyAppActivationStateChange(ActivationStateType activationState)
+{
+    m_activationState = activationState;
+
+#if ENABLE(PAGE_VISIBILITY_API)
+    setPageVisibilityState();
+#endif
+}
+
 void WebPage::notifyAppActivationStateChange(ActivationStateType activationState)
 {
 #if ENABLE(VIDEO)
@@ -4980,6 +5009,8 @@ void WebPage::notifyAppActivationStateChange(ActivationStateType activationState
             break;
         }
     }
+
+    d->notifyAppActivationStateChange(activationState);
 }
 
 void WebPage::notifySwipeEvent()

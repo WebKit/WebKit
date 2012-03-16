@@ -1,3 +1,14 @@
+2012-03-16  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Enable PAGE_VISIBILITY_API
+        https://bugs.webkit.org/show_bug.cgi?id=81257
+
+        Enable Page Visibility API for BlackBerry.
+
+        Reviewed by Rob Buis.
+
+        * Scripts/build-webkit:
+
 2012-03-16  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Add computedStyleIncludingVisitedInfo to DumpRenderTreeSupport
