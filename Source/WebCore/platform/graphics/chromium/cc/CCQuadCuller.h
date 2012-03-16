@@ -30,12 +30,13 @@
 
 namespace WebCore {
 class CCLayerImpl;
+class CCOverdrawMetrics;
 
 class CCQuadCuller {
 public:
     // Passing 0 for CCOverdrawCounts* is valid, and disable the extra computation
     // done to estimate over draw statistics.
-    CCQuadCuller(CCQuadList&, CCLayerImpl*, CCOcclusionTrackerImpl*, CCOverdrawCounts*);
+    CCQuadCuller(CCQuadList&, CCLayerImpl*, CCOcclusionTrackerImpl*, CCOverdrawMetrics*);
 
     virtual void append(PassOwnPtr<CCDrawQuad> passDrawQuad);
 
@@ -43,7 +44,7 @@ private:
     CCQuadList& m_quadList;
     CCLayerImpl* m_layer;
     CCOcclusionTrackerImpl* m_occlusionTracker;
-    CCOverdrawCounts* m_overdrawCounts;
+    CCOverdrawMetrics* m_overdrawMetrics;
 };
 
 }

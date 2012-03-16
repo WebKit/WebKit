@@ -1,3 +1,15 @@
+2012-03-15  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Move overdraw metrics into a templated class for both paint and draw metrics.
+        https://bugs.webkit.org/show_bug.cgi?id=81156
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCQuadCullerTest.cpp:
+        (WebCore::appendQuads):
+        (WebCore):
+        (WebCore::TEST):
+
 2012-03-07  Jon Lee  <jonlee@apple.com>
 
         Move NotificationContents into Notification

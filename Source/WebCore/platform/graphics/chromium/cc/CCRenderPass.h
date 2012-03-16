@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class CCLayerImpl;
+class CCOverdrawMetrics;
 class CCRenderSurface;
 class CCSharedQuadState;
 
@@ -49,28 +50,12 @@ public:
     inline constBackToFrontIterator backToFrontEnd() const { return rend(); }
 };
 
-struct CCOverdrawCounts {
-    CCOverdrawCounts()
-       : m_pixelsDrawnOpaque(0)
-       , m_pixelsDrawnTransparent(0)
-       , m_pixelsCulled(0)
-    {
-    }
-    // Count of pixels that are opaque (and thus occlude). Ideally this is no more
-    // than wiewport width x height.
-    float m_pixelsDrawnOpaque;
-    // Count of pixels that are possibly transparent, and cannot occlude.
-    float m_pixelsDrawnTransparent;
-    // Count of pixels not drawn as they are occluded by somthing opaque.
-    float m_pixelsCulled;
-};
-
 class CCRenderPass {
     WTF_MAKE_NONCOPYABLE(CCRenderPass);
 public:
     static PassOwnPtr<CCRenderPass> create(CCRenderSurface*);
 
-    void appendQuadsForLayer(CCLayerImpl*, CCOcclusionTrackerImpl*, CCOverdrawCounts*);
+    void appendQuadsForLayer(CCLayerImpl*, CCOcclusionTrackerImpl*, CCOverdrawMetrics*);
     void appendQuadsForRenderSurfaceLayer(CCLayerImpl*);
 
     const CCQuadList& quadList() const { return m_quadList; }

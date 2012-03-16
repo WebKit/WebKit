@@ -3485,6 +3485,8 @@
             'platform/graphics/chromium/cc/CCLayerTreeHostImpl.h',
             'platform/graphics/chromium/cc/CCOcclusionTracker.cpp',
             'platform/graphics/chromium/cc/CCOcclusionTracker.h',
+            'platform/graphics/chromium/cc/CCOverdrawMetrics.cpp',
+            'platform/graphics/chromium/cc/CCOverdrawMetrics.h',
             'platform/graphics/chromium/cc/CCPageScaleAnimation.cpp',
             'platform/graphics/chromium/cc/CCPageScaleAnimation.h',
             'platform/graphics/chromium/cc/CCPluginDrawQuad.cpp',

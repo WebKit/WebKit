@@ -32,6 +32,7 @@
 #include "Region.h"
 #include "TransformationMatrix.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCOverdrawMetrics.h"
 #include "cc/CCRenderPass.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 
@@ -39,27 +40,12 @@ using namespace std;
 
 namespace WebCore {
 
-CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker, CCOverdrawCounts* overdrawCounts)
+CCQuadCuller::CCQuadCuller(CCQuadList& quadList, CCLayerImpl* layer, CCOcclusionTrackerImpl* occlusionTracker, CCOverdrawMetrics* overdrawMetrics)
     : m_quadList(quadList)
     , m_layer(layer)
     , m_occlusionTracker(occlusionTracker)
-    , m_overdrawCounts(overdrawCounts)
+    , m_overdrawMetrics(overdrawMetrics)
 {
-}
-
-static float wedgeProduct(const FloatPoint& p1, const FloatPoint& p2)
-{
-    return p1.x() * p2.y() - p1.y() * p2.x();
-}
-
-// Computes area of quads that are possibly non-rectangular. Can
-// be easily extended to polygons.
-static float quadArea(const FloatQuad& quad)
-{
-    return fabs(0.5 * (wedgeProduct(quad.p1(), quad.p2()) +
-                   wedgeProduct(quad.p2(), quad.p3()) +
-                   wedgeProduct(quad.p3(), quad.p4()) +
-                   wedgeProduct(quad.p4(), quad.p1())));
 }
 
 void CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
@@ -70,30 +56,10 @@ void CCQuadCuller::append(PassOwnPtr<CCDrawQuad> passDrawQuad)
     if (keepQuad)
         drawQuad->setQuadVisibleRect(culledRect);
 
-    // FIXME: Make a templated metrics class and move the logic out to there.
-    // Temporary code anyways, indented to make the diff clear.
-    {
-        if (m_overdrawCounts) {
-            // We compute the area of the transformed quad, as this should be in pixels.
-            float area = quadArea(drawQuad->quadTransform().mapQuad(FloatQuad(drawQuad->quadRect())));
-            if (keepQuad) {
-                bool didReduceQuadSize = culledRect != drawQuad->quadRect();
-                if (didReduceQuadSize) {
-                    float visibleQuadRectArea = quadArea(drawQuad->quadTransform().mapQuad(FloatQuad(drawQuad->quadVisibleRect())));
-                    m_overdrawCounts->m_pixelsCulled += area - visibleQuadRectArea;
-                    area = visibleQuadRectArea;
-                }
-                IntRect visibleOpaqueRect(drawQuad->quadVisibleRect());
-                visibleOpaqueRect.intersect(drawQuad->opaqueRect());
-                FloatQuad visibleOpaqueQuad = drawQuad->quadTransform().mapQuad(FloatQuad(visibleOpaqueRect));
-                float opaqueArea = quadArea(visibleOpaqueQuad);
-                m_overdrawCounts->m_pixelsDrawnOpaque += opaqueArea;
-                m_overdrawCounts->m_pixelsDrawnTransparent += area - opaqueArea;
-            } else
-                m_overdrawCounts->m_pixelsCulled += area;
-        }
-    }
+    if (m_overdrawMetrics)
+        m_overdrawMetrics->didDraw(drawQuad->quadTransform(), drawQuad->quadRect(), culledRect, drawQuad->opaqueRect());
 
+    // Release the quad after we're done using it.
     if (keepQuad)
         m_quadList.append(drawQuad.release());
 }

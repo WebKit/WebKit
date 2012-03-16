@@ -37,6 +37,7 @@
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostCommon.h"
+#include "cc/CCOverdrawMetrics.h"
 #include "cc/CCPageScaleAnimation.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCThreadTask.h"
@@ -271,7 +272,7 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
     }
 
     // FIXME: compute overdraw metrics only occasionally, not every frame.
-    CCOverdrawCounts overdrawCounts;
+    CCOverdrawMetrics overdrawMetrics;
 
     IntRect scissorRect;
     if (layerRendererCapabilities().usingPartialSwap)
@@ -306,14 +307,11 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         }
 
         it->willDraw(m_layerRenderer.get());
-        pass->appendQuadsForLayer(*it, &occlusionTracker, &overdrawCounts);
+        pass->appendQuadsForLayer(*it, &occlusionTracker, &overdrawMetrics);
         occlusionTracker.markOccludedBehindLayer(*it);
     }
 
-    float normalization = 1000.f / (m_layerRenderer->viewportWidth() * m_layerRenderer->viewportHeight());
-    PlatformSupport::histogramCustomCounts("Renderer4.pixelOverdrawOpaque", static_cast<int>(normalization * overdrawCounts.m_pixelsDrawnOpaque), 100, 1000000, 50);
-    PlatformSupport::histogramCustomCounts("Renderer4.pixelOverdrawTransparent", static_cast<int>(normalization * overdrawCounts.m_pixelsDrawnTransparent), 100, 1000000, 50);
-    PlatformSupport::histogramCustomCounts("Renderer4.pixelOverdrawCulled", static_cast<int>(normalization * overdrawCounts.m_pixelsCulled), 100, 1000000, 50);
+    overdrawMetrics.recordMetrics(this);
 }
 
 void CCLayerTreeHostImpl::animateLayersRecursive(CCLayerImpl* current, double monotonicTime, double wallClockTime, CCAnimationEventsVector& events, bool& didAnimate, bool& needsAnimateLayers)
