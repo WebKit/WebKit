@@ -45,7 +45,7 @@ namespace {
 
 // Number of textures to update with each call to
 // scheduledActionUpdateMoreResources().
-static const size_t textureUpdatesPerFrame = 5;
+static const size_t textureUpdatesPerFrame = 32;
 
 } // anonymous namespace
 
