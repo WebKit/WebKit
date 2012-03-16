@@ -1,3 +1,17 @@
+2012-03-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Properly set forms tests-specific settings
+        https://bugs.webkit.org/show_bug.cgi?id=81237
+
+        Reviewed by Philippe Normand.
+
+        Call Settings::setInteractiveFormValidationEnabled and
+        Settings::setValidationMessageTimerMagnification with
+        proper values when in testing mode.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+
 2012-03-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement unicode submenu items

@@ -3519,8 +3519,12 @@ static void webkit_web_view_init(WebKitWebView* webView)
     WebCore::provideDeviceOrientationTo(priv->corePage, new DeviceOrientationClientGtk);
 #endif
 
-    if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled())
+    if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {
         static_cast<GeolocationClientMock*>(pageClients.geolocationClient)->setController(priv->corePage->geolocationController());
+        // Set some testing-specific settings
+        priv->corePage->settings()->setInteractiveFormValidationEnabled(true);
+        priv->corePage->settings()->setValidationMessageTimerMagnification(-1);
+    }
 
     // Pages within a same session need to be linked together otherwise some functionalities such
     // as visited link coloration (across pages) and changing popup window location will not work.
