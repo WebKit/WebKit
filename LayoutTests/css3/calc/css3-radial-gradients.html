@@ -42,6 +42,11 @@
     background-image: -webkit-radial-gradient(-webkit-calc(20%) -webkit-calc(20%), circle closest-corner, red -50%, green, blue -webkit-calc(150%));
     background-image: -moz-radial-gradient(-webkit-calc(20%) -webkit-calc(20%), circle closest-corner, red -50%, green, blue -webkit-calc(150%));
 }
+
+.gradient8 {
+    background-image: -webkit-radial-gradient(circle closest-side, red, green -webkit-calc(50% + 10px), blue);
+    background-image: -moz-radial-gradient(circle closest-side, red, green -moz-calc(50% + 10px), blue);
+}
 </style>
 <body>
     <div class="gradient1 box"></div>
@@ -53,4 +58,5 @@
     <div class="gradient6 box"></div>
     <br>
     <div class="gradient7 box"></div>
+    <div class="gradient8 box"></div>
 </body>
