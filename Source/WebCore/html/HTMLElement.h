@@ -102,6 +102,7 @@ public:
 #endif
 
     virtual bool isInsertionPoint() const { return false; }
+    virtual bool isLabelable() const { return false; }
 
 protected:
     HTMLElement(const QualifiedName& tagName, Document*);

@@ -84,7 +84,7 @@ private:
     virtual void subtreeHasChanged();
 
     virtual bool isEnumeratable() const { return true; }
-    virtual bool isLabelable() const OVERRIDE { return true; }
+    virtual bool supportLabels() const OVERRIDE { return true; }
 
     virtual const AtomicString& formControlType() const;
 

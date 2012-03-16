@@ -42,7 +42,7 @@ LabelableElement::~LabelableElement()
 
 PassRefPtr<NodeList> LabelableElement::labels()
 {
-    if (!isLabelable())
+    if (!supportLabels())
         return 0;
     if (!document())
         return 0;

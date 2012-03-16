@@ -658,7 +658,7 @@ bool InputType::isImageButton() const
     return false;
 }
 
-bool InputType::isLabelable() const
+bool InputType::supportLabels() const
 {
     return true;
 }

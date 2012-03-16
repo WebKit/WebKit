@@ -9,11 +9,11 @@ if (window.layoutTestController)
 <table><form id=form1>
 <meter id=meter1></meter>
 </form></table>
-<div>This test passes if the meter element can find its form.</div>
+<div>This test passes if the meter element doesn't have form attribute.</div>
 <div id=console>FAIL</div>
 
 <script>
-if (document.getElementById('meter1').form.id == "form1")
+if (document.getElementById('meter1').form === undefined)
     document.getElementById('console').innerHTML = "PASS";
 </script>
 </body>

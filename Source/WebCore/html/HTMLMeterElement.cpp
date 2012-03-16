@@ -39,8 +39,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLMeterElement::HTMLMeterElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
-    : HTMLFormControlElement(tagName, document, form)
+HTMLMeterElement::HTMLMeterElement(const QualifiedName& tagName, Document* document)
+    : LabelableElement(tagName, document)
 {
     ASSERT(hasTagName(meterTag));
 }
@@ -49,9 +49,9 @@ HTMLMeterElement::~HTMLMeterElement()
 {
 }
 
-PassRefPtr<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
+PassRefPtr<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Document* document)
 {
-    RefPtr<HTMLMeterElement> meter = adoptRef(new HTMLMeterElement(tagName, document, form));
+    RefPtr<HTMLMeterElement> meter = adoptRef(new HTMLMeterElement(tagName, document));
     meter->createShadowSubtree();
     return meter;
 }
@@ -66,12 +66,6 @@ bool HTMLMeterElement::childShouldCreateRenderer(const NodeRenderingContext& chi
     return childContext.isOnEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
 }
 
-const AtomicString& HTMLMeterElement::formControlType() const
-{
-    DEFINE_STATIC_LOCAL(const AtomicString, meter, ("meter"));
-    return meter;
-}
-
 bool HTMLMeterElement::supportsFocus() const
 {
     return Node::supportsFocus() && !disabled();
@@ -82,12 +76,12 @@ void HTMLMeterElement::parseAttribute(Attribute* attribute)
     if (attribute->name() == valueAttr || attribute->name() == minAttr || attribute->name() == maxAttr || attribute->name() == lowAttr || attribute->name() == highAttr || attribute->name() == optimumAttr)
         didElementStateChange();
     else
-        HTMLFormControlElement::parseAttribute(attribute);
+        LabelableElement::parseAttribute(attribute);
 }
 
 void HTMLMeterElement::attach()
 {
-    HTMLFormControlElement::attach();
+    LabelableElement::attach();
     didElementStateChange();
 }
 

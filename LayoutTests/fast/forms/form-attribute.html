@@ -20,7 +20,6 @@ container.innerHTML = '<form id=owner></form>' +
     '<input name=victim form=owner />' +
     '<keygen name=victim form=owner />' +
     '<label name=victim form=owner />' +
-    '<meter name=victim form=owner />' +
     '<object name=victim form=owner></object>' +
     '<output name=victim form=owner />' +
     '<progress name=victim form=owner />' +
@@ -33,7 +32,6 @@ shouldBe('document.getElementsByTagName("fieldset")[0].form', 'owner');
 shouldBe('document.getElementsByTagName("input")[0].form', 'owner');
 shouldBe('document.getElementsByTagName("keygen")[0].form', 'owner');
 shouldBe('document.getElementsByTagName("label")[0].form', 'owner');
-shouldBe('document.getElementsByTagName("meter")[0].form', 'owner');
 shouldBe('document.getElementsByTagName("object")[0].form', 'owner');
 shouldBe('document.getElementsByTagName("output")[0].form', 'owner');
 shouldBe('document.getElementsByTagName("progress")[0].form', 'owner');

@@ -25,7 +25,7 @@
 #define HTMLLabelElement_h
 
 #include "HTMLElement.h"
-#include "HTMLFormControlElement.h"
+#include "LabelableElement.h"
 
 namespace WebCore {
 
@@ -33,7 +33,7 @@ class HTMLLabelElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLLabelElement> create(const QualifiedName&, Document*);
 
-    HTMLFormControlElement* control();
+    LabelableElement* control();
 
 private:
     HTMLLabelElement(const QualifiedName&, Document*);

@@ -10,7 +10,6 @@ PASS document.getElementsByTagName("fieldset")[0].form is owner
 PASS document.getElementsByTagName("input")[0].form is owner
 PASS document.getElementsByTagName("keygen")[0].form is owner
 FAIL document.getElementsByTagName("label")[0].form should be [object HTMLFormElement]. Was null.
-PASS document.getElementsByTagName("meter")[0].form is owner
 PASS document.getElementsByTagName("object")[0].form is owner
 PASS document.getElementsByTagName("output")[0].form is owner
 PASS document.getElementsByTagName("progress")[0].form is owner

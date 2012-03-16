@@ -28,24 +28,27 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "HTMLFormControlElement.h"
-#include "HTMLFormElement.h"
+#include "LabelableElement.h"
 #include "HTMLNames.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-static HTMLFormControlElement* nodeAsLabelableFormControl(Node* node)
+static LabelableElement* nodeAsLabelableElement(Node* node)
 {
-    if (!node || !node->isElementNode() || !static_cast<Element*>(node)->isFormControlElement())
+    if (!node || !node->isHTMLElement())
         return 0;
     
-    HTMLFormControlElement* formControlElement = static_cast<HTMLFormControlElement*>(node);
-    if (!formControlElement->isLabelable())
+    HTMLElement* element = static_cast<HTMLElement*>(node);
+    if (!element->isLabelable())
         return 0;
 
-    return formControlElement;
+    LabelableElement* labelableElement = static_cast<LabelableElement*>(element);
+    if (!labelableElement->supportLabels())
+        return 0;
+
+    return labelableElement;
 }
 
 inline HTMLLabelElement::HTMLLabelElement(const QualifiedName& tagName, Document* document)
@@ -64,7 +67,7 @@ bool HTMLLabelElement::isFocusable() const
     return false;
 }
 
-HTMLFormControlElement* HTMLLabelElement::control()
+LabelableElement* HTMLLabelElement::control()
 {
     const AtomicString& controlId = getAttribute(forAttr);
     if (controlId.isNull()) {
@@ -73,15 +76,15 @@ HTMLFormControlElement* HTMLLabelElement::control()
         // the form element must be "labelable form-associated element".
         Node* node = this;
         while ((node = node->traverseNextNode(this))) {
-            if (HTMLFormControlElement* formControlElement = nodeAsLabelableFormControl(node))
-                return formControlElement;
+            if (LabelableElement* element = nodeAsLabelableElement(node))
+                return element;
         }
         return 0;
     }
     
     // Find the first element whose id is controlId. If it is found and it is a labelable form control,
     // return it, otherwise return 0.
-    return nodeAsLabelableFormControl(treeScope()->getElementById(controlId));
+    return nodeAsLabelableElement(treeScope()->getElementById(controlId));
 }
 
 void HTMLLabelElement::setActive(bool down, bool pause)

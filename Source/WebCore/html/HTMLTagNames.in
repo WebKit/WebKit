@@ -83,7 +83,7 @@ mark interfaceName=HTMLElement
 marquee
 menu
 meta
-meter interfaceName=HTMLMeterElement, constructorNeedsFormElement, conditional=METER_TAG
+meter interfaceName=HTMLMeterElement, conditional=METER_TAG
 nav interfaceName=HTMLElement
 nobr interfaceName=HTMLElement
 noembed interfaceName=HTMLElement

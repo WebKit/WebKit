@@ -22,15 +22,15 @@
 #define HTMLMeterElement_h
 
 #if ENABLE(METER_TAG)
-#include "HTMLFormControlElement.h"
+#include "LabelableElement.h"
 
 namespace WebCore {
 
 class MeterValueElement;
 
-class HTMLMeterElement : public HTMLFormControlElement {
+class HTMLMeterElement : public LabelableElement {
 public:
-    static PassRefPtr<HTMLMeterElement> create(const QualifiedName&, Document*, HTMLFormElement*);
+    static PassRefPtr<HTMLMeterElement> create(const QualifiedName&, Document*);
 
     enum GaugeRegion {
         GaugeRegionOptimum,
@@ -62,15 +62,14 @@ public:
     bool canContainRangeEndPoint() const { return false; }
 
 private:
-    HTMLMeterElement(const QualifiedName&, Document*, HTMLFormElement*);
+    HTMLMeterElement(const QualifiedName&, Document*);
     virtual ~HTMLMeterElement();
 
-    virtual bool isLabelable() const OVERRIDE { return true; }
+    virtual bool supportLabels() const OVERRIDE { return true; }
 
     virtual bool supportsFocus() const;
 
     virtual bool recalcWillValidate() const { return false; }
-    virtual const AtomicString& formControlType() const;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
     virtual void parseAttribute(Attribute*) OVERRIDE;

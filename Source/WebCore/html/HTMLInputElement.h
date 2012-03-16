@@ -256,7 +256,7 @@ private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
     virtual bool isEnumeratable() const;
-    virtual bool isLabelable() const OVERRIDE;
+    virtual bool supportLabels() const OVERRIDE;
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     virtual void aboutToUnload();
     virtual bool shouldUseInputMethod();
