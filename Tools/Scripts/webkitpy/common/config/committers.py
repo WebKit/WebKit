@@ -285,7 +285,7 @@ committers_unable_to_review = [
     Committer("Lucas Forschler", ["lforschler@apple.com"], "lforschler"),
     Committer("Luke Macpherson", ["macpherson@chromium.org", "macpherson@google.com"], "macpherson"),
     Committer("Mads Ager", "ager@chromium.org"),
-    Committer("Mahesh Kulkarni", "mahesh.kulkarni@nokia.com", "maheshk"),
+    Committer("Mahesh Kulkarni", ["mahesh.kulkarni@nokia.com", "maheshk@webkit.org"], "maheshk"),
     Committer("Marcus Voltis Bulach", "bulach@chromium.org"),
     Committer("Mario Sanchez Prada", ["msanchez@igalia.com", "mario@webkit.org"], "msanchez"),
     Committer("Mark Hahnenberg", "mhahnenberg@apple.com"),

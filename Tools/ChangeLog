@@ -1,3 +1,9 @@
+2012-03-16  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Updating email for committer.py script.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-03-16  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] DRT: Add support for sending gesture scrolls without a begin
