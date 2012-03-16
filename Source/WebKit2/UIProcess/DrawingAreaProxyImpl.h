@@ -78,8 +78,7 @@ private:
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
 
 #if USE(UI_SIDE_COMPOSITING)
-    virtual void setVisibleContentsRectForScaling(const WebCore::IntRect& visibleContentsRect, float scale);
-    virtual void setVisibleContentsRectForPanning(const WebCore::IntRect& visibleContentsRect, const WebCore::FloatPoint&);
+    virtual void setVisibleContentsRect(const WebCore::IntRect& visibleContentsRect, float scale, const WebCore::FloatPoint& trajectory);
     virtual void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float opacity, const WebCore::FloatRect&);
     virtual void paintLayerTree(BackingStore::PlatformGraphicsContext);
     void didReceiveLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

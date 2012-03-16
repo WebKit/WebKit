@@ -118,15 +118,10 @@ void LayerTreeHostProxy::destroyDirectlyCompositedImage(int64_t key)
     dispatchUpdate(bind(&WebLayerTreeRenderer::destroyImage, m_renderer.get(), key));
 }
 
-void LayerTreeHostProxy::setVisibleContentsRectForPanning(const IntRect& rect, const FloatPoint& trajectoryVector)
+void LayerTreeHostProxy::setVisibleContentsRect(const IntRect& rect, float scale, const FloatPoint& trajectoryVector)
 {
-    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::SetVisibleContentsRectForPanning(rect, trajectoryVector), m_drawingAreaProxy->page()->pageID());
-}
-
-void LayerTreeHostProxy::setVisibleContentsRectForScaling(const IntRect& rect, float scale)
-{
-    m_renderer->setVisibleContentsRectForScaling(rect, scale);
-    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::SetVisibleContentsRectForScaling(rect, scale), m_drawingAreaProxy->page()->pageID());
+    m_renderer->setVisibleContentsRect(rect, scale);
+    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::SetVisibleContentsRect(rect, scale, trajectoryVector), m_drawingAreaProxy->page()->pageID());
 }
 
 void LayerTreeHostProxy::renderNextFrame()

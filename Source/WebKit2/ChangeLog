@@ -1,3 +1,40 @@
+2012-03-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Merge setVisibleContentsForScaling with setVisibleContentsRectForPanning
+        https://bugs.webkit.org/show_bug.cgi?id=81346
+
+        Reviewed by Simon Hausmann.
+
+        This cleans up the code path and is one step on the way to avoid
+        calling both methods in succession, for instance after ending pinch
+        zoom.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewLegacyPrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::_q_commitScaleChange):
+        (QQuickWebViewPrivate::_q_commitPositionChange):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::setVisibleContentsRect):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::setVisibleContentsRect):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (DrawingAreaProxyImpl):
+        * UIProcess/LayerTreeHostProxy.cpp:
+        (WebKit::LayerTreeHostProxy::setVisibleContentsRect):
+        * UIProcess/LayerTreeHostProxy.h:
+        (LayerTreeHostProxy):
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::setVisibleContentsRect):
+        * UIProcess/WebLayerTreeRenderer.h:
+        (WebLayerTreeRenderer):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::setVisibleContentsRect):
+        * WebProcess/WebPage/LayerTreeHost.messages.in:
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::setVisibleContentsRect):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+        (LayerTreeHostQt):
+
 2012-03-16  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [EFL][WK2] Add ProcessLauncherEfl.cpp

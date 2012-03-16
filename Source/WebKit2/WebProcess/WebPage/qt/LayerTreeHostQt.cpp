@@ -415,24 +415,26 @@ WebCore::IntRect LayerTreeHostQt::visibleContentsRect() const
     return m_visibleContentsRect;
 }
 
-void LayerTreeHostQt::setVisibleContentsRectForScaling(const IntRect& rect, float scale)
+void LayerTreeHostQt::setVisibleContentsRect(const IntRect& rect, float scale, const FloatPoint& trajectoryVector)
 {
-    m_visibleContentsRect = rect;
-    m_contentsScale = scale;
+    bool contentsRectDidChange = rect != m_visibleContentsRect;
+    bool contentsScaleDidChange = scale != m_contentsScale;
 
-    HashSet<WebCore::WebGraphicsLayer*>::iterator end = m_registeredLayers.end();
-    for (HashSet<WebCore::WebGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it) {
-        (*it)->setContentsScale(scale);
-        (*it)->adjustVisibleRect();
+    if (trajectoryVector != FloatPoint::zero())
+        toWebGraphicsLayer(m_nonCompositedContentLayer.get())->setVisibleContentRectTrajectoryVector(trajectoryVector);
+
+    if (contentsRectDidChange || contentsScaleDidChange) {
+        m_visibleContentsRect = rect;
+        m_contentsScale = scale;
+
+        HashSet<WebCore::WebGraphicsLayer*>::iterator end = m_registeredLayers.end();
+        for (HashSet<WebCore::WebGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it) {
+            if (contentsScaleDidChange)
+                (*it)->setContentsScale(scale);
+            if (contentsRectDidChange)
+                (*it)->adjustVisibleRect();
+        }
     }
-    scheduleLayerFlush();
-}
-
-void LayerTreeHostQt::setVisibleContentsRectForPanning(const IntRect& rect, const FloatPoint& trajectoryVector)
-{
-    m_visibleContentsRect = rect;
-
-    toWebGraphicsLayer(m_nonCompositedContentLayer.get())->setVisibleContentRectTrajectoryVector(trajectoryVector);
 
     scheduleLayerFlush();
 }

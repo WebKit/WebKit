@@ -54,8 +54,7 @@ public:
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float opacity, const WebCore::FloatRect& clip);
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
     void purgeGLResources();
-    void setVisibleContentsRectForScaling(const WebCore::IntRect&, float);
-    void setVisibleContentsRectForPanning(const WebCore::IntRect&, const WebCore::FloatPoint&);
+    void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint& trajectory);
     void didRenderFrame();
     void createTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo&);
     void updateTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo&);

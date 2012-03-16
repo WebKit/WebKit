@@ -155,7 +155,7 @@ void WebLayerTreeRenderer::paintToGraphicsContext(QPainter* painter)
     m_textureMapper->setGraphicsContext(0);
 }
 
-void WebLayerTreeRenderer::setVisibleContentsRectForScaling(const IntRect& rect, float scale)
+void WebLayerTreeRenderer::setVisibleContentsRect(const IntRect& rect, float scale)
 {
     m_visibleContentsRect = rect;
     m_contentsScale = scale;

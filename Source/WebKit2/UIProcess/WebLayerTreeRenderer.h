@@ -51,7 +51,7 @@ public:
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&);
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
     void syncRemoteContent();
-    void setVisibleContentsRectForScaling(const WebCore::IntRect&, float);
+    void setVisibleContentsRect(const WebCore::IntRect&, float scale);
 
     void detach();
     void appendUpdate(const Function<void()>&);

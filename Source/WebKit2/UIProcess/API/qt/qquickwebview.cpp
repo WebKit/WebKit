@@ -506,7 +506,7 @@ void QQuickWebViewLegacyPrivate::updateViewportSize()
     // The fixed layout is handled by the FrameView and the drawing area doesn't behave differently
     // whether its fixed or not. We still need to tell the drawing area which part of it
     // has to be rendered on tiles, and in desktop mode it's all of it.
-    webPageProxy->drawingArea()->setVisibleContentsRectForScaling(IntRect(IntPoint(), viewportSize), 1);
+    webPageProxy->drawingArea()->setVisibleContentsRect(IntRect(IntPoint(), viewportSize), 1, FloatPoint());
 }
 
 QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* viewport)
@@ -657,7 +657,7 @@ void QQuickWebViewFlickablePrivate::_q_commitScaleChange()
     const QRect visibleRect(visibleContentsRect());
     float scale = pageView->contentsScale();
 
-    drawingArea->setVisibleContentsRectForScaling(visibleRect, scale);
+    drawingArea->setVisibleContentsRect(visibleRect, scale, FloatPoint());
     webPageProxy->setFixedVisibleContentRect(visibleRect);
 }
 
@@ -668,11 +668,9 @@ void QQuickWebViewPrivate::_q_commitPositionChange(const QPointF& trajectoryVect
         return;
 
     const QRect visibleRect(visibleContentsRect());
-    drawingArea->setVisibleContentsRectForPanning(visibleRect, trajectoryVector);
+    float scale = pageView->contentsScale();
 
-    if (!trajectoryVector.isNull())
-        return;
-
+    drawingArea->setVisibleContentsRect(visibleRect, scale, trajectoryVector);
     webPageProxy->setFixedVisibleContentRect(visibleRect);
 }
 
