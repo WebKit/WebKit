@@ -67,6 +67,10 @@
 #include "ColorChooser.h"
 #endif
 
+#if ENABLE(BATTERY_STATUS)
+#include "BatteryController.h"
+#endif
+
 namespace WebCore {
 
 static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerTypes& result)
@@ -712,6 +716,24 @@ void Internals::emitInspectorDidBeginFrame()
 void Internals::emitInspectorDidCancelFrame()
 {
     InspectorInstrumentation::didCancelFrame(frame()->page());
+}
+
+void Internals::setBatteryStatus(Document* document, const String& eventType, bool charging, double chargingTime, double dischargingTime, double level, ExceptionCode& ec)
+{
+    if (!document || !document->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+#if ENABLE(BATTERY_STATUS)
+    BatteryController::from(document->page())->didChangeBatteryStatus(eventType, BatteryStatus::create(charging, chargingTime, dischargingTime, level));
+#else
+    UNUSED_PARAM(eventType);
+    UNUSED_PARAM(charging);
+    UNUSED_PARAM(chargingTime);
+    UNUSED_PARAM(dischargingTime);
+    UNUSED_PARAM(level);
+#endif
 }
 
 }

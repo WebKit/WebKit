@@ -2058,3 +2058,6 @@ fast/mutation/end-of-task-delivery.html
 
 #Vibration API is not implemented.
 fast/dom/navigator-vibration.html
+
+#Battery Status API is not implemented.
+batterystatus

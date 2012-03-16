@@ -136,6 +136,8 @@ public:
 
     InternalSettings* settings() const { return m_settings.get(); }
 
+    void setBatteryStatus(Document*, const String& eventType, bool charging, double chargingTime, double dischargingTime, double level, ExceptionCode&);
+
 private:
     explicit Internals(Document*);
     DocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);

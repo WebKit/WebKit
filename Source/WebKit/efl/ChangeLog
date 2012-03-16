@@ -1,3 +1,31 @@
+2012-03-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Support for Battery Status API
+        https://bugs.webkit.org/show_bug.cgi?id=62698
+
+        Add BatteryClientEfl class implementation for the layout tests now.
+        BatteryClientEfl class is not fully implemented in this patch.
+        (It will be completed by other patch as necessary in the Efl port.)
+        http://www.w3.org/TR/battery-status/
+
+        Reviewed by Adam Barth.
+
+        * WebCoreSupport/BatteryClientEfl.cpp: Added.
+        (WebCore):
+        (WebCore::BatteryClientEfl::BatteryClientEfl):
+        (WebCore::BatteryClientEfl::setController):
+        (WebCore::BatteryClientEfl::startUpdating):
+        (WebCore::BatteryClientEfl::stopUpdating):
+        (WebCore::BatteryClientEfl::batteryControllerDestroyed):
+        (WebCore::BatteryClientEfl::setBatteryStatus):
+        * WebCoreSupport/BatteryClientEfl.h: Added.
+        (WebCore):
+        (BatteryClientEfl):
+        (WebCore::BatteryClientEfl::~BatteryClientEfl):
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_priv_new):
+
 2012-03-13  Jon Lee  <jonlee@apple.com>
 
         Separate NOTIFICATIONS and LEGACY_NOTIFICATIONS

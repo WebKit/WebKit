@@ -402,6 +402,9 @@ webintents/
 # Pointer Lock is not implemented.
 pointer-lock/
 
+#Battery Status API support not yet. http://webkit.org/b/62698
+batterystatus
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################

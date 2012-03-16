@@ -1661,6 +1661,9 @@ fast/repaint/transform-absolute-in-positioned-container.html
 #Vibration API is not implemented.
 fast/dom/navigator-vibration.html
 
+#Battery Status API is not implemented.
+batterystatus
+
 # Those tests need a text baseline after lazily allocating layers.
 # The change should only be layer removal.
 animations/combo-transform-translate+scale.html

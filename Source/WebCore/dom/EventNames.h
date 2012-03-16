@@ -41,6 +41,8 @@ namespace WebCore {
     macro(blur) \
     macro(cached) \
     macro(change) \
+    macro(chargingchange) \
+    macro(chargingtimechange) \
     macro(checking) \
     macro(click) \
     macro(close) \
@@ -55,6 +57,7 @@ namespace WebCore {
     macro(dblclick) \
     macro(devicemotion) \
     macro(deviceorientation) \
+    macro(dischargingtimechange) \
     macro(display) \
     macro(downloading) \
     macro(drag) \
@@ -74,6 +77,7 @@ namespace WebCore {
     macro(keydown) \
     macro(keypress) \
     macro(keyup) \
+    macro(levelchange) \
     macro(load) \
     macro(loadstart) \
     macro(message) \

@@ -110,6 +110,10 @@ module window {
         void emitInspectorDidCancelFrame();
 
         readonly attribute InternalSettings settings;
+
+#if defined(ENABLE_BATTERY_STATUS) && ENABLE_BATTERY_STATUS
+        void setBatteryStatus(in Document document, in DOMString eventType, in boolean charging, in double chargingTime, in double dischargingTime, in double level) raises (DOMException);
+#endif
     };
 }
 

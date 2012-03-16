@@ -1,3 +1,15 @@
+2012-03-16  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Support for Battery Status API
+        https://bugs.webkit.org/show_bug.cgi?id=62698
+
+        Add include directory and file.
+        http://www.w3.org/TR/battery-status/
+
+        Reviewed by Adam Barth.
+
+        * Scripts/build-webkit:
+
 2012-03-16  Kishore Bolisetty  <kbolisetty@innominds.com>
 
         check-webkit-style fails on LayoutTests/platform/efl/test_expectations.txt

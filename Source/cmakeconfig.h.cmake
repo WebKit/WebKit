@@ -6,6 +6,7 @@
 
 
 #cmakedefine01 ENABLE_AS_IMAGE
+#cmakedefine01 ENABLE_BATTERY_STATUS
 #cmakedefine01 ENABLE_BLOB
 #cmakedefine01 ENABLE_CHANNEL_MESSAGING
 #cmakedefine01 ENABLE_DATALIST

@@ -583,3 +583,7 @@ svg/custom/delete-text-crash.html
 canvas/philip/tests/2d.line.cap.round.html
 canvas/philip/tests/2d.shadow.canvas.transparent.2.html
 canvas/philip/tests/2d.shadow.image.transparent.2.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=62698
+# Needs BatteryClient implementation.
+batterystatus/

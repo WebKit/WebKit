@@ -362,6 +362,9 @@ fast/dom/Window/window-postmessage-arrays.html
 #Vibration API is not implemented.
 fast/dom/navigator-vibration.html
 
+#Battery Status API is not implemented.
+batterystatus
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

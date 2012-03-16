@@ -70,6 +70,7 @@ my (
     $threeDRenderingSupport,
     $accelerated2dCanvasSupport,
     $animationAPISupport,
+    $batterystatusAPISupport,
     $blobSupport,
     $channelMessagingSupport,
     $coverageSupport,
@@ -159,6 +160,9 @@ my @features = (
 
     { option => "animation-api", desc => "Toggle animation API support",
       define => "ENABLE_ANIMATION_API", default => isBlackBerry(), value => \$animationAPISupport },
+
+    { option => "battery-status-api", desc => "Toggle battery status API support",
+      define => "ENABLE_BATTERY_STATUS", default => isEfl(), value => \$batterystatusAPISupport },
 
     { option => "blob", desc => "Toggle Blob support",
       define => "ENABLE_BLOB", default => (isAppleMacWebKit() || isGtk() || isChromium() || isBlackBerry()), value => \$blobSupport },

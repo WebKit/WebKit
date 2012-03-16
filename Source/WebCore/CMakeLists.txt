@@ -2334,6 +2334,22 @@ SET(WebCoreTestSupport_SOURCES
     testing/InternalSettings.cpp
 )
 
+IF (ENABLE_BATTERY_STATUS)
+    LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/Modules/battery"
+    )
+    LIST(APPEND WebCore_IDL_FILES
+        Modules/battery/NavigatorBattery.idl
+        Modules/battery/BatteryManager.idl
+    )
+    LIST(APPEND WebCore_SOURCES
+        Modules/battery/NavigatorBattery.cpp
+        Modules/battery/BatteryController.cpp
+        Modules/battery/BatteryManager.cpp
+        Modules/battery/BatteryStatus.cpp
+    )
+ENDIF ()
+
 # Modules that the bindings generator scripts may use
 SET(SCRIPTS_RESOLVE_SUPPLEMENTAL
     ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm

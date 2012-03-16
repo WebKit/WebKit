@@ -74,6 +74,10 @@
 #include "VibrationClientEfl.h"
 #endif
 
+#if ENABLE(BATTERY_STATUS)
+#include "BatteryClientEfl.h"
+#endif
+
 static const float zoomMinimum = 0.05;
 static const float zoomMaximum = 4.0;
 
@@ -616,6 +620,10 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 
 #if ENABLE(VIBRATION)
     WebCore::provideVibrationTo(priv->page.get(), new WebCore::VibrationClientEfl(smartData->self));
+#endif
+
+#if ENABLE(BATTERY_STATUS)
+    WebCore::provideBatteryTo(priv->page.get(), new WebCore::BatteryClientEfl);
 #endif
 
     priv->pageSettings = priv->page->settings();
