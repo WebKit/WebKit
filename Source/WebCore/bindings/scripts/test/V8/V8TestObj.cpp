@@ -51,6 +51,8 @@
 #include "V8d.h"
 #include "V8e.h"
 #include "V8int.h"
+#include "V8sequence.h"
+#include "V8sequence<ScriptProfile>.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -214,6 +216,22 @@ static void testObjAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Valu
     TestObj* imp = V8TestObj::toNative(info.Holder());
     TestObj* v = V8TestObj::HasInstance(value) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
     imp->setTestObjAttr(WTF::getPtr(v));
+    return;
+}
+
+static v8::Handle<v8::Value> sequenceAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.sequenceAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return toV8(imp->sequenceAttr());
+}
+
+static void sequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.sequenceAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    sequence<ScriptProfile>* v = V8sequence<ScriptProfile>::HasInstance(value) ? V8sequence<ScriptProfile>::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    imp->setSequenceAttr(WTF::getPtr(v));
     return;
 }
 
@@ -1035,6 +1053,27 @@ static v8::Handle<v8::Value> objMethodWithArgsCallback(const v8::Arguments& args
     return toV8(imp->objMethodWithArgs(intArg, strArg, objArg));
 }
 
+static v8::Handle<v8::Value> methodWithSequenceArgCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.methodWithSequenceArg");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(sequence*, , V8sequence::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8sequence::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    imp->methodWithSequenceArg();
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> methodReturningSequenceCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.methodReturningSequence");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    return toV8(imp->methodReturningSequence(intArg));
+}
+
 static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.methodThatRequiresAllArgsAndThrows");
@@ -1761,6 +1800,8 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"stringAttr", TestObjInternal::stringAttrAttrGetter, TestObjInternal::stringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'testObjAttr' (Type: 'attribute' ExtAttr: '')
     {"testObjAttr", TestObjInternal::testObjAttrAttrGetter, TestObjInternal::testObjAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'sequenceAttr' (Type: 'attribute' ExtAttr: '')
+    {"sequenceAttr", TestObjInternal::sequenceAttrAttrGetter, TestObjInternal::sequenceAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'XMLObjAttr' (Type: 'attribute' ExtAttr: '')
     {"XMLObjAttr", TestObjInternal::XMLObjAttrAttrGetter, TestObjInternal::XMLObjAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'create' (Type: 'attribute' ExtAttr: '')
@@ -1861,6 +1902,7 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"voidMethod", TestObjInternal::voidMethodCallback},
     {"intMethod", TestObjInternal::intMethodCallback},
     {"objMethod", TestObjInternal::objMethodCallback},
+    {"methodReturningSequence", TestObjInternal::methodReturningSequenceCallback},
     {"serializedValue", TestObjInternal::serializedValueCallback},
     {"idbKey", TestObjInternal::idbKeyCallback},
     {"optionsObject", TestObjInternal::optionsObjectCallback},
@@ -2003,6 +2045,12 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Handle<v8::FunctionTemplate> objMethodWithArgsArgv[objMethodWithArgsArgc] = { v8::Handle<v8::FunctionTemplate>(), v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate() };
     v8::Handle<v8::Signature> objMethodWithArgsSignature = v8::Signature::New(desc, objMethodWithArgsArgc, objMethodWithArgsArgv);
     proto->Set(v8::String::New("objMethodWithArgs"), v8::FunctionTemplate::New(TestObjInternal::objMethodWithArgsCallback, v8::Handle<v8::Value>(), objMethodWithArgsSignature));
+
+    // Custom Signature 'methodWithSequenceArg'
+    const int methodWithSequenceArgArgc = 1;
+    v8::Handle<v8::FunctionTemplate> methodWithSequenceArgArgv[methodWithSequenceArgArgc] = { V8sequence::GetRawTemplate() };
+    v8::Handle<v8::Signature> methodWithSequenceArgSignature = v8::Signature::New(desc, methodWithSequenceArgArgc, methodWithSequenceArgArgv);
+    proto->Set(v8::String::New("methodWithSequenceArg"), v8::FunctionTemplate::New(TestObjInternal::methodWithSequenceArgCallback, v8::Handle<v8::Value>(), methodWithSequenceArgSignature));
 
     // Custom Signature 'methodThatRequiresAllArgsAndThrows'
     const int methodThatRequiresAllArgsAndThrowsArgc = 2;

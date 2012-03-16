@@ -88,7 +88,7 @@ our $constValue = '("[^"\r\n]*")|(0[xX][a-fA-F0-9]+)|(-?[0-9]*)';
 our $idlDataType = '[a-zA-Z0-9\ ]';   # Generic data type identifier
 
 # Magic IDL parsing regular expressions
-my $supportedTypes = "((?:(?:unsigned )?(?:int|short|(?:long )?long)|(?:$idlIdNs*))(?:\\[\\])?)";
+my $supportedTypes = "((?:(?:unsigned )?(?:int|short|(?:long )?long)|(?:$idlIdNs*))(?:\\[\\]|<(?:$idlIdNs*)>)?)";
 
 # Special IDL notations. This regular expression extracts the string between the first [ and its corresponding ].
 our $extendedAttributeSyntax = qr/\[[^\[\]]*(?:(??{$IDLStructure::extendedAttributeSyntax})[^\[\]]*)*\]/x; # Used for extended attributes
@@ -103,7 +103,7 @@ our $setterRaisesSelector = '\bsetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)'
 
 our $typeNamespaceSelector = '((?:' . $idlId . '*::)*)\s*(' . $idlDataType . '*)';
 
-our $interfaceSelector = 'interface\s*((?:' . $extendedAttributeSyntax . ' )?)(' . $idlIdNs . '*)\s*(?::(\s*[^{]*))?{([-a-zA-Z0-9_"=\s(),;:\[\]&\|]*)';
+our $interfaceSelector = 'interface\s*((?:' . $extendedAttributeSyntax . ' )?)(' . $idlIdNs . '*)\s*(?::(\s*[^{]*))?{([-a-zA-Z0-9_"=\s(),;:\[\]<>&\|]*)';
 our $interfaceMethodSelector = '\s*((?:' . $extendedAttributeSyntax . ' )?)(static\s+)?' . $supportedTypes . '\s*(' . $idlIdNs . '*)\s*\(\s*([a-zA-Z0-9:\s,=\[\]]*)';
 our $interfaceParameterSelector = '(in|out)\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)';
 

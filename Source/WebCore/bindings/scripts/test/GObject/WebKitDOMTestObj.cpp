@@ -33,6 +33,7 @@
 #include "WebKitDOMBinding.h"
 #include "bool.h"
 #include "gobject/ConvertToUTF8String.h"
+#include "sequence<ScriptProfile>.h"
 #include "webkit/WebKitDOMDictionary.h"
 #include "webkit/WebKitDOMDictionaryPrivate.h"
 #include "webkit/WebKitDOMDocument.h"
@@ -57,6 +58,10 @@
 #include "webkit/WebKitDOMdPrivate.h"
 #include "webkit/WebKitDOMe.h"
 #include "webkit/WebKitDOMePrivate.h"
+#include "webkit/WebKitDOMsequence.h"
+#include "webkit/WebKitDOMsequence<ScriptProfile>.h"
+#include "webkit/WebKitDOMsequence<ScriptProfile>Private.h"
+#include "webkit/WebKitDOMsequencePrivate.h"
 #include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
@@ -156,6 +161,32 @@ webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* self, glong int_arg, 
     }
     PassRefPtr<WebCore::TestObj> g_res = WTF::getPtr(item->objMethodWithArgs(int_arg, converted_str_arg, converted_obj_arg));
     WebKitDOMTestObj* res = WebKit::kit(g_res.get());
+    return res;
+}
+
+void
+webkit_dom_test_obj_method_with_sequence_arg(WebKitDOMTestObj* self, WebKitDOMsequence* )
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail();
+    WebCore::sequence * converted_ = NULL;
+    if ( != NULL) {
+        converted_ = WebKit::core();
+        g_return_if_fail(converted_);
+    }
+    item->methodWithSequenceArg(converted_);
+}
+
+WebKitDOMsequence<ScriptProfile>*
+webkit_dom_test_obj_method_returning_sequence(WebKitDOMTestObj* self, glong int_arg)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    PassRefPtr<WebCore::sequence<ScriptProfile>> g_res = WTF::getPtr(item->methodReturningSequence(int_arg));
+    WebKitDOMsequence<ScriptProfile>* res = WebKit::kit(g_res.get());
     return res;
 }
 
@@ -777,6 +808,32 @@ webkit_dom_test_obj_set_test_obj_attr(WebKitDOMTestObj* self, WebKitDOMTestObj* 
         g_return_if_fail(converted_value);
     }
     item->setTestObjAttr(converted_value);
+}
+
+WebKitDOMsequence<ScriptProfile>*
+webkit_dom_test_obj_get_sequence_attr(WebKitDOMTestObj* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    PassRefPtr<WebCore::sequence<ScriptProfile>> g_res = WTF::getPtr(item->sequenceAttr());
+    WebKitDOMsequence<ScriptProfile>* res = WebKit::kit(g_res.get());
+    return res;
+}
+
+void
+webkit_dom_test_obj_set_sequence_attr(WebKitDOMTestObj* self, WebKitDOMsequence<ScriptProfile>* value)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail(value);
+    WebCore::sequence<ScriptProfile> * converted_value = NULL;
+    if (value != NULL) {
+        converted_value = WebKit::core(value);
+        g_return_if_fail(converted_value);
+    }
+    item->setSequenceAttr(converted_value);
 }
 
 WebKitDOMTestObj*
@@ -1538,6 +1595,7 @@ enum {
     PROP_UNSIGNED_LONG_LONG_ATTR,
     PROP_STRING_ATTR,
     PROP_TEST_OBJ_ATTR,
+    PROP_SEQUENCE_ATTR,
     PROP_XML_OBJ_ATTR,
     PROP_CREATE,
     PROP_REFLECTED_STRING_ATTR,
@@ -1794,6 +1852,12 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint prop_id, GVa
     case PROP_TEST_OBJ_ATTR:
     {
         RefPtr<WebCore::TestObj> ptr = coreSelf->testObjAttr();
+        g_value_set_object(value, WebKit::kit(ptr.get()));
+        break;
+    }
+    case PROP_SEQUENCE_ATTR:
+    {
+        RefPtr<WebCore::sequence<ScriptProfile>> ptr = coreSelf->sequenceAttr();
         g_value_set_object(value, WebKit::kit(ptr.get()));
         break;
     }
@@ -2087,6 +2151,13 @@ G_MAXUINT64, /* min */
                                                            "test_obj_test-obj-attr", /* short description */
                                                            "read-write  WebKitDOMTestObj* TestObj.test-obj-attr", /* longer - could do with some extra doc stuff here */
                                                            WEBKIT_TYPE_DOM_TEST_OBJ, /* gobject type */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_SEQUENCE_ATTR,
+                                    g_param_spec_object("sequence-attr", /* name */
+                                                           "test_obj_sequence-attr", /* short description */
+                                                           "read-write  WebKitDOMsequence<ScriptProfile>* TestObj.sequence-attr", /* longer - could do with some extra doc stuff here */
+                                                           WEBKIT_TYPE_DOM_SEQUENCE<SCRIPT_PROFILE>, /* gobject type */
                                                            WEBKIT_PARAM_READWRITE));
     g_object_class_install_property(gobjectClass,
                                     PROP_XML_OBJ_ATTR,

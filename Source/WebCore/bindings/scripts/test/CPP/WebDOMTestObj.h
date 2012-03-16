@@ -43,6 +43,8 @@ class WebDOMbool;
 class WebDOMc;
 class WebDOMd;
 class WebDOMe;
+class WebDOMsequence;
+class WebDOMsequence<ScriptProfile>;
 
 class WebDOMTestObj : public WebDOMObject {
 public:
@@ -87,6 +89,8 @@ public:
     void setStringAttr(const WebDOMString&);
     WebDOMTestObj testObjAttr() const;
     void setTestObjAttr(const WebDOMTestObj&);
+    WebDOMsequence<ScriptProfile> sequenceAttr() const;
+    void setSequenceAttr(const WebDOMsequence<ScriptProfile>&);
     WebDOMTestObj XMLObjAttr() const;
     void setXMLObjAttr(const WebDOMTestObj&);
     bool create() const;
@@ -147,6 +151,8 @@ public:
     int intMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
     WebDOMTestObj objMethod();
     WebDOMTestObj objMethodWithArgs(int intArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
+    void methodWithSequenceArg(const WebDOMsequence& );
+    WebDOMsequence<ScriptProfile> methodReturningSequence(int intArg);
     WebDOMTestObj methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg);
     void serializedValue(const WebDOMString& serializedArg);
     void idbKey(const WebDOMIDBKey& key);

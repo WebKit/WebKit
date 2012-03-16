@@ -116,6 +116,28 @@ WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* self, glong int_arg, const gchar* str_arg, WebKitDOMTestObj* obj_arg);
 
 /**
+ * webkit_dom_test_obj_method_with_sequence_arg:
+ * @self: A #WebKitDOMTestObj
+ * @: A #WebKitDOMsequence
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_method_with_sequence_arg(WebKitDOMTestObj* self, WebKitDOMsequence* );
+
+/**
+ * webkit_dom_test_obj_method_returning_sequence:
+ * @self: A #WebKitDOMTestObj
+ * @int_arg: A #glong
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMsequence<ScriptProfile>*
+webkit_dom_test_obj_method_returning_sequence(WebKitDOMTestObj* self, glong int_arg);
+
+/**
  * webkit_dom_test_obj_method_that_requires_all_args_and_throws:
  * @self: A #WebKitDOMTestObj
  * @str_arg: A #gchar
@@ -673,6 +695,27 @@ webkit_dom_test_obj_get_test_obj_attr(WebKitDOMTestObj* self);
 **/
 WEBKIT_API void
 webkit_dom_test_obj_set_test_obj_attr(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
+
+/**
+ * webkit_dom_test_obj_get_sequence_attr:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMsequence<ScriptProfile>*
+webkit_dom_test_obj_get_sequence_attr(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_sequence_attr:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #WebKitDOMsequence<ScriptProfile>
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_sequence_attr(WebKitDOMTestObj* self, WebKitDOMsequence<ScriptProfile>* value);
 
 /**
  * webkit_dom_test_obj_get_xml_obj_attr:
