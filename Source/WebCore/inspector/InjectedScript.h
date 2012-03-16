@@ -64,14 +64,14 @@ public:
                   bool includeCommandLineAPI,
                   bool returnByValue,
                   RefPtr<InspectorObject>* result,
-                  bool* wasThrown);
+                  TypeBuilder::OptOutput<bool>* wasThrown);
     void callFunctionOn(ErrorString*,
                         const String& objectId,
                         const String& expression,
                         const String& arguments,
                         bool returnByValue,
                         RefPtr<InspectorObject>* result,
-                        bool* wasThrown);
+                        TypeBuilder::OptOutput<bool>* wasThrown);
     void evaluateOnCallFrame(ErrorString*,
                              const ScriptValue& callFrames,
                              const String& callFrameId,
@@ -80,7 +80,7 @@ public:
                              bool includeCommandLineAPI,
                              bool returnByValue,
                              RefPtr<TypeBuilder::Runtime::RemoteObject>* result,
-                             bool* wasThrown);
+                             TypeBuilder::OptOutput<bool>* wasThrown);
     void getFunctionDetails(ErrorString*, const String& functionId, RefPtr<TypeBuilder::Debugger::FunctionDetails>* result);
     void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<InspectorArray>* result);
     Node* nodeForObjectId(const String& objectId);
@@ -105,7 +105,7 @@ private:
     bool canAccessInspectedWindow() const;
     ScriptValue callFunctionWithEvalEnabled(ScriptFunctionCall&, bool& hadException) const;
     void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
-    void makeEvalCall(ErrorString*, ScriptFunctionCall&, RefPtr<InspectorObject>* result, bool* wasThrown);
+    void makeEvalCall(ErrorString*, ScriptFunctionCall&, RefPtr<InspectorObject>* result, TypeBuilder::OptOutput<bool>* wasThrown);
     ScriptValue nodeAsScriptValue(Node*);
 
     ScriptObject m_injectedScriptObject;

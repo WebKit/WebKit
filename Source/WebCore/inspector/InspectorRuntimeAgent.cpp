@@ -98,7 +98,9 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
     }
 #endif
 
-    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", asBool(includeCommandLineAPI), asBool(returnByValue), &result, wasThrown);
+    TypeBuilder::OptOutput<bool> wasThrownOpt;
+    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", asBool(includeCommandLineAPI), asBool(returnByValue), &result, &wasThrownOpt);
+    *wasThrown = wasThrownOpt.isAssigned() ? wasThrownOpt.getValue() : false;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (pauseStateChanged)
@@ -116,7 +118,10 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const Strin
     String arguments;
     if (optionalArguments)
         arguments = (*optionalArguments)->toJSONString();
-    injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), &result, wasThrown);
+
+    TypeBuilder::OptOutput<bool> wasThrownOpt;
+    injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), &result, &wasThrownOpt);
+    *wasThrown = wasThrownOpt.isAssigned() ? wasThrownOpt.getValue() : false;
 }
 
 void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String& objectId, const bool* const ownProperties, RefPtr<InspectorArray>& result)

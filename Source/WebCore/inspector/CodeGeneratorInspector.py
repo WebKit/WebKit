@@ -59,6 +59,8 @@ TYPE_NAME_FIX_MAP = {
 TYPES_WITH_RUNTIME_CAST_SET = frozenset(["Runtime.RemoteObject", "Runtime.PropertyDescriptor",
                                          "Debugger.FunctionDetails", "Debugger.CallFrame"])
 
+STRICT_ENABLED_DOMAINS = ["Debugger", "Page"]
+
 
 cmdline_parser = optparse.OptionParser()
 cmdline_parser.add_option("--output_h_dir")
@@ -579,6 +581,28 @@ class CommandReturnPassModel:
         def get_set_return_condition():
             return None
 
+    class OptOutput:
+        def __init__(self, var_type):
+            self.var_type = var_type
+
+        def get_return_var_type(self):
+            return "TypeBuilder::OptOutput<%s>" % self.var_type
+
+        @staticmethod
+        def get_output_argument_prefix():
+            return "&"
+
+        @staticmethod
+        def get_output_to_raw_expression():
+            return "%s.getValue()"
+
+        def get_output_parameter_type(self):
+            return "TypeBuilder::OptOutput<%s>*" % self.var_type
+
+        @staticmethod
+        def get_set_return_condition():
+            return "%s.isAssigned()"
+
 
 class TypeModel:
     class RefPtrBased:
@@ -617,8 +641,7 @@ class TypeModel:
 
                 @staticmethod
                 def get_command_return_pass_model():
-                    # FIXME: to be replaced with OptOutput model.
-                    return CommandReturnPassModel.ByPointer(base_self.type_name)
+                    return CommandReturnPassModel.OptOutput(base_self.type_name)
 
                 @staticmethod
                 def get_input_param_type_text():
@@ -668,8 +691,7 @@ class TypeModel:
                 return self
 
             def get_command_return_pass_model(self):
-                # FIXME: to be replaced with OptOutput model.
-                return CommandReturnPassModel.ByPointer(self.base.type_name)
+                return CommandReturnPassModel.OptOutput(self.base.type_name)
 
             def get_input_param_type_text(self):
                 return "const %s* const" % self.base.type_name
@@ -1697,13 +1719,16 @@ ${frontendDomainMethodDeclarations}        void setInspectorFrontendChannel(Insp
     if (!$agentField)
         protocolErrors->pushString("${domainName} handler is not available.");
 $methodOutCode
-    ErrorString error;
 $methodInCode
-    if (!protocolErrors->length())
+    RefPtr<InspectorObject> result = InspectorObject::create();
+    ErrorString error;
+    if (!protocolErrors->length()) {
         $agentField->$methodName(&error$agentCallParams);
 
-    RefPtr<InspectorObject> result = InspectorObject::create();
-${responseCook}    sendResponse(callId, result, String::format("Some arguments of method '%s' can't be processed", "$domainName.$methodName"), protocolErrors, error);
+        if (!error.length()) {
+${responseCook}        }
+    }
+    sendResponse(callId, result, String::format("Some arguments of method '%s' can't be processed", "$domainName.$methodName"), protocolErrors, error);
 }
 """)
 
@@ -2114,11 +2139,39 @@ $methods
 
 #include "InspectorValues.h"
 #include <PlatformString.h>
+#include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 namespace TypeBuilder {
+
+template<typename T>
+class OptOutput {
+public:
+    OptOutput() : m_assigned(false) { }
+
+    void operator=(T value)
+    {
+        m_value = value;
+        m_assigned = true;
+    }
+
+    bool isAssigned() { return m_assigned; }
+
+    T getValue()
+    {
+        ASSERT(isAssigned());
+        return m_value;
+    }
+
+private:
+    T m_value;
+    bool m_assigned;
+
+    WTF_MAKE_NONCOPYABLE(OptOutput);
+};
+
 
 // This class provides "Traits" type for the input type T. It is programmed using C++ template specialization
 // technique. By default it simply takes "ItemTraits" type from T, but it doesn't work with the base types.
@@ -2510,6 +2563,9 @@ class Generator:
     @staticmethod
     def process_event(json_event, domain_name, frontend_method_declaration_lines):
         event_name = json_event["name"]
+
+        strict_mode = domain_name in STRICT_ENABLED_DOMAINS
+
         parameter_list = []
         method_line_list = []
         backend_js_event_param_list = []
@@ -2536,13 +2592,20 @@ class Generator:
                     type_model = type_model.get_optional()
                     raw_type_model = raw_type_model.get_optional()
 
-                annotated_type = get_annotated_type_text(raw_type_model.get_input_param_type_text(), type_model.get_input_param_type_text())
+                if strict_mode:
+                    # All types are strict.
+                    annotated_type = type_model.get_input_param_type_text()
+                    mode_type_binding = param_type_binding
+                else:
+                    # All types are raw.
+                    annotated_type = get_annotated_type_text(raw_type_model.get_input_param_type_text(), type_model.get_input_param_type_text())
+                    mode_type_binding = raw_type_binding
 
                 parameter_list.append("%s %s" % (annotated_type, parameter_name))
 
                 setter_argument = raw_type_model.get_event_setter_expression_pattern() % parameter_name
-                if raw_type_binding.get_setter_value_expression_pattern():
-                    setter_argument = raw_type_binding.get_setter_value_expression_pattern() % setter_argument
+                if mode_type_binding.get_setter_value_expression_pattern():
+                    setter_argument = mode_type_binding.get_setter_value_expression_pattern() % setter_argument
 
                 setter_code = "    paramsObject->set%s(\"%s\", %s);\n" % (setter_type, parameter_name, setter_argument)
                 if optional:
@@ -2565,6 +2628,9 @@ class Generator:
     @staticmethod
     def process_command(json_command, domain_name, agent_field_name, agent_interface_name):
         json_command_name = json_command["name"]
+
+        strict_mode = domain_name in STRICT_ENABLED_DOMAINS
+
         Generator.method_name_enum_list.append("        k%s_%sCmd," % (domain_name, json_command["name"]))
         Generator.method_handler_list.append("            &InspectorBackendDispatcherImpl::%s_%s," % (domain_name, json_command_name))
         Generator.backend_method_declaration_list.append("    void %s_%s(long callId, InspectorObject* requestMessageObject);" % (domain_name, json_command_name))
@@ -2653,24 +2719,42 @@ class Generator:
                 if optional:
                     type_model = type_model.get_optional()
 
-                raw_type_model = return_type_binding.get_type_model()
-                if optional:
-                    raw_type_model = raw_type_model.get_optional()
+                if strict_mode:
+                    # All types are strict. Values do not have default values.
+                    code = "    %s out_%s;\n" % (type_model.get_command_return_pass_model().get_return_var_type(), json_return_name)
+                    param = ", %sout_%s" % (type_model.get_command_return_pass_model().get_output_argument_prefix(), json_return_name)
+                    var_name = "out_%s" % json_return_name
+                    setter_argument = type_model.get_command_return_pass_model().get_output_to_raw_expression() % var_name
+                    if return_type_binding.get_setter_value_expression_pattern():
+                        setter_argument = return_type_binding.get_setter_value_expression_pattern() % setter_argument
 
-                code = "    %s out_%s = %s;\n" % (raw_type.get_raw_type_model().get_command_return_pass_model().get_return_var_type(), json_return_name, initializer)
-                param = ", %sout_%s" % (raw_type.get_output_pass_model().get_argument_prefix(), json_return_name)
-                cook = "        result->set%s(\"%s\", out_%s);\n" % (setter_type, json_return_name, json_return_name)
-                if optional:
-                    # FIXME: support optional properly. Probably an additional output parameter should be in each case.
-                    # FIXME: refactor this condition; it's a hack now.
-                    var_type_text = raw_type.get_raw_type_model().get_command_return_pass_model().get_return_var_type()
-                    if var_type_text == "bool" or var_type_text.startswith("RefPtr<"):
-                        cook = ("        if (out_%s)\n    " % json_return_name) + cook
-                    else:
-                        cook = "        // FIXME: support optional here.\n" + cook
+                    cook = "            result->set%s(\"%s\", %s);\n" % (setter_type, json_return_name,
+                                                                     setter_argument)
 
-                annotated_type = get_annotated_type_text(raw_type.get_raw_type_model().get_command_return_pass_model().get_return_var_type() + raw_type.get_output_pass_model().get_parameter_type_suffix(),
-                                                         type_model.get_command_return_pass_model().get_output_parameter_type())
+                    set_condition_pattern = type_model.get_command_return_pass_model().get_set_return_condition()
+                    if set_condition_pattern:
+                        cook = ("            if (%s)\n    " % (set_condition_pattern % var_name)) + cook
+                    annotated_type = type_model.get_command_return_pass_model().get_output_parameter_type()
+                else:
+                    # All types are raw. Values always have default values.
+                    raw_type_model = return_type_binding.get_type_model()
+                    if optional:
+                        raw_type_model = raw_type_model.get_optional()
+
+                    code = "    %s out_%s = %s;\n" % (raw_type.get_raw_type_model().get_command_return_pass_model().get_return_var_type(), json_return_name, initializer)
+                    param = ", %sout_%s" % (raw_type.get_output_pass_model().get_argument_prefix(), json_return_name)
+                    cook = "            result->set%s(\"%s\", out_%s);\n" % (setter_type, json_return_name, json_return_name)
+                    if optional:
+                        # FIXME: support optional properly. Probably an additional output parameter should be in each case.
+                        # FIXME: refactor this condition; it's a hack now.
+                        var_type_text = raw_type.get_raw_type_model().get_command_return_pass_model().get_return_var_type()
+                        if var_type_text == "bool" or var_type_text.startswith("RefPtr<"):
+                            cook = ("            if (out_%s)\n    " % json_return_name) + cook
+                        else:
+                            cook = "            // FIXME: support optional here.\n" + cook
+
+                    annotated_type = get_annotated_type_text(raw_type.get_raw_type_model().get_command_return_pass_model().get_return_var_type() + raw_type.get_output_pass_model().get_parameter_type_suffix(),
+                                                             type_model.get_command_return_pass_model().get_output_parameter_type())
 
                 param_name = "out_%s" % json_return_name
                 if optional:
@@ -2686,7 +2770,7 @@ class Generator:
 
             js_reply_list = "[%s]" % join(backend_js_reply_param_list, ", ")
 
-            response_cook_text = "    if (!protocolErrors->length() && !error.length()) {\n%s    }\n" % join(response_cook_list, "")
+            response_cook_text = join(response_cook_list, "")
 
         Generator.backend_method_implementation_list.append(Templates.backend_method.substitute(None,
             domainName=domain_name, methodName=json_command_name,
