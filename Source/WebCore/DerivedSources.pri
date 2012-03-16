@@ -375,6 +375,7 @@ IDL_BINDINGS += \
     $$PWD/inspector/ScriptProfile.idl \
     $$PWD/inspector/ScriptProfileNode.idl \
     $$PWD/loader/appcache/DOMApplicationCache.idl \
+    $$PWD/notifications/DOMWindowNotifications.idl \
     $$PWD/notifications/Notification.idl \
     $$PWD/notifications/NotificationCenter.idl \
     $$PWD/page/BarInfo.idl \

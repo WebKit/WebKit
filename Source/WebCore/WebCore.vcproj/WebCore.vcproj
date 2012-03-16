@@ -53606,6 +53606,14 @@
 			Name="notifications"
 			>
 			<File
+				RelativePath="..\notifications\DOMWindowNotifications.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\notifications\DOMWindowNotifications.h"
+				>
+			</File>
+			<File
 				RelativePath="..\notifications\Notification.cpp"
 				>
 			</File>

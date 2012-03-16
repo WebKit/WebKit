@@ -4113,6 +4113,8 @@
 		A8748BE012CBF2DC001FBA41 /* HashTools.h in Headers */ = {isa = PBXBuildFile; fileRef = A8748BDF12CBF2DC001FBA41 /* HashTools.h */; };
 		A883DF270F3D045D00F19BF6 /* VisibleSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A883DF250F3D045D00F19BF6 /* VisibleSelection.cpp */; };
 		A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = A883DF260F3D045D00F19BF6 /* VisibleSelection.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A886CF761512301700D279F4 /* DOMWindowNotifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A886CF731512301700D279F4 /* DOMWindowNotifications.cpp */; };
+		A886CF771512301700D279F4 /* DOMWindowNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = A886CF741512301700D279F4 /* DOMWindowNotifications.h */; };
 		A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */; };
 		A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */ = {isa = PBXBuildFile; fileRef = A88DD4860B4629A300C02990 /* PathTraversalState.h */; };
 		A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A88DD4880B4629B000C02990 /* PathTraversalState.cpp */; };
@@ -10908,6 +10910,7 @@
 		A86629CC09DA2B47009633A5 /* JSMouseEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMouseEvent.cpp; sourceTree = "<group>"; };
 		A86629CD09DA2B47009633A5 /* JSKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSKeyboardEvent.h; sourceTree = "<group>"; };
 		A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSKeyboardEvent.cpp; sourceTree = "<group>"; };
+		A86E87711512DCEA00AD14C1 /* DOMWindowNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DOMWindowNotifications.idl; path = notifications/DOMWindowNotifications.idl; sourceTree = "<group>"; };
 		A871D44C0A127CBC00B12A68 /* HTMLPlugInElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInElement.h; sourceTree = "<group>"; };
 		A871D44D0A127CBC00B12A68 /* HTMLPlugInElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPlugInElement.cpp; sourceTree = "<group>"; };
 		A871D44E0A127CBC00B12A68 /* HTMLParamElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLParamElement.h; sourceTree = "<group>"; };
@@ -10969,6 +10972,8 @@
 		A8748BDF12CBF2DC001FBA41 /* HashTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashTools.h; sourceTree = "<group>"; };
 		A883DF250F3D045D00F19BF6 /* VisibleSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibleSelection.cpp; sourceTree = "<group>"; };
 		A883DF260F3D045D00F19BF6 /* VisibleSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleSelection.h; sourceTree = "<group>"; };
+		A886CF731512301700D279F4 /* DOMWindowNotifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DOMWindowNotifications.cpp; path = notifications/DOMWindowNotifications.cpp; sourceTree = "<group>"; };
+		A886CF741512301700D279F4 /* DOMWindowNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMWindowNotifications.h; path = notifications/DOMWindowNotifications.h; sourceTree = "<group>"; };
 		A88DD4860B4629A300C02990 /* PathTraversalState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathTraversalState.h; sourceTree = "<group>"; };
 		A88DD4880B4629B000C02990 /* PathTraversalState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PathTraversalState.cpp; sourceTree = "<group>"; };
 		A89943260B42338700D7C802 /* BitmapImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitmapImage.h; sourceTree = "<group>"; };
@@ -14391,6 +14396,9 @@
 		333F703D0FB49C16008E12A6 /* notifications */ = {
 			isa = PBXGroup;
 			children = (
+				A86E87711512DCEA00AD14C1 /* DOMWindowNotifications.idl */,
+				A886CF731512301700D279F4 /* DOMWindowNotifications.cpp */,
+				A886CF741512301700D279F4 /* DOMWindowNotifications.h */,
 				33503CC61017A1B1003B47E1 /* Notification.cpp */,
 				333F704F0FB49CA2008E12A6 /* Notification.h */,
 				333F704E0FB49CA2008E12A6 /* Notification.idl */,
@@ -24575,6 +24583,7 @@
 				E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */,
 				450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */,
 				C5B4C24D1509236C00A6EF37 /* WebCoreNSURLExtras.h in Headers */,
+				A886CF771512301700D279F4 /* DOMWindowNotifications.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27556,6 +27565,7 @@
 				C5B4C24E1509236C00A6EF37 /* WebCoreNSURLExtras.mm in Sources */,
 				9B2B7AC11509850A008932CC /* MicroDataItemValue.cpp in Sources */,
 				7157F062150B6564006EAABD /* SVGAnimatedTransformList.cpp in Sources */,
+				A886CF761512301700D279F4 /* DOMWindowNotifications.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

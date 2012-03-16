@@ -56,7 +56,6 @@ namespace WebCore {
     class MediaQueryList;
     class Navigator;
     class Node;
-    class NotificationCenter;
     class Page;
     class Performance;
     class PostMessageTimer;
@@ -356,13 +355,6 @@ namespace WebCore {
         Storage* sessionStorage(ExceptionCode&) const;
         Storage* localStorage(ExceptionCode&) const;
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-        NotificationCenter* webkitNotifications() const;
-        // Renders webkitNotifications object safely inoperable, disconnects
-        // if from embedder-provided NotificationClient.
-        void resetNotifications();
-#endif
-
 #if ENABLE(QUOTA)
         StorageInfo* webkitStorageInfo() const;
 #endif
@@ -449,10 +441,6 @@ namespace WebCore {
         mutable RefPtr<Storage> m_sessionStorage;
         mutable RefPtr<Storage> m_localStorage;
         mutable RefPtr<DOMApplicationCache> m_applicationCache;
-
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-        mutable RefPtr<NotificationCenter> m_notifications;
-#endif
 
 #if ENABLE(WEB_TIMING)
         mutable RefPtr<Performance> m_performance;
