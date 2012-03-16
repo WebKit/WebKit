@@ -11,9 +11,16 @@ function dispatchClick(element)
     element.dispatchEvent(clickEvent);
 }
 
+// Ignore errors due to the syntax error in the attribute.
+window.onerror = function() {
+    return true;
+};
+
 var div = document.createElement('div');
 div.setAttribute('onclick', 'return 42; }(); var x = {');
 dispatchClick(div);
+
+testPassed('Did not crash');
 
 </script>
 <script src="../js/resources/js-test-post.js"></script>
