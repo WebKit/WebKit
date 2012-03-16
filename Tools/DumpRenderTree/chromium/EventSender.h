@@ -99,6 +99,7 @@ public:
 
     void gestureScrollBegin(const CppArgumentList&, CppVariant*);
     void gestureScrollEnd(const CppArgumentList&, CppVariant*);
+    void gestureScrollFirstPoint(const CppArgumentList&, CppVariant*);
     void gestureScrollUpdate(const CppArgumentList&, CppVariant*);
     void gestureTap(const CppArgumentList&, CppVariant*);
     void gestureEvent(WebKit::WebInputEvent::Type, const CppArgumentList&);

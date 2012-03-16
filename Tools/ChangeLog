@@ -1,3 +1,16 @@
+2012-03-16  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] DRT: Add support for sending gesture scrolls without a begin
+        https://bugs.webkit.org/show_bug.cgi?id=81292
+
+        Reviewed by Kent Tamura.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::EventSender):
+        (EventSender::gestureScrollFirstPoint):
+        * DumpRenderTree/chromium/EventSender.h:
+        (EventSender):
+
 2012-03-02  Carlos Garcia Campos  <cgarcia@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] WebKitIconDatabase doesn't keep icons cached

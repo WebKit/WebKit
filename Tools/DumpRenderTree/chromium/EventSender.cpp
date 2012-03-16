@@ -281,6 +281,7 @@ EventSender::EventSender(TestShell* shell)
     bindMethod("updateTouchPoint", &EventSender::updateTouchPoint);
     bindMethod("gestureScrollBegin", &EventSender::gestureScrollBegin);
     bindMethod("gestureScrollEnd", &EventSender::gestureScrollEnd);
+    bindMethod("gestureScrollFirstPoint", &EventSender::gestureScrollFirstPoint);
     bindMethod("gestureScrollUpdate", &EventSender::gestureScrollUpdate);
     bindMethod("gestureTap", &EventSender::gestureTap);
     bindMethod("zoomPageIn", &EventSender::zoomPageIn);
@@ -1084,6 +1085,16 @@ void EventSender::gestureTap(const CppArgumentList& arguments, CppVariant* resul
 {
     result->setNull();
     gestureEvent(WebInputEvent::GestureTap, arguments);
+}
+
+void EventSender::gestureScrollFirstPoint(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isNumber())
+        return;
+
+    WebPoint point(arguments[0].toInt32(), arguments[1].toInt32());
+    m_currentGestureLocation = point;
 }
 
 void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& arguments)
