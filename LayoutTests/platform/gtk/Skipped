@@ -1483,7 +1483,6 @@ fast/css/zoom-body-scroll.html
 fast/repaint/moving-shadow-on-container.html
 fast/repaint/moving-shadow-on-path.html
 css3/flexbox/line-wrapping.html
-editing/selection/move-by-word-visually-multi-line.html
 fast/block/float/overhanging-tall-block.html
 fast/css/font-face-data-uri.html
 fast/css/font-face-download-error.html
@@ -1580,3 +1579,19 @@ inspector/debugger/snippets-model.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=81320
 editing/pasteboard/copy-two-pasteboard-types-both-work.html
+
+# Failing since isWordTextBreak is not implemented. https://bugs.webkit.org/show_bug.cgi?id=81136
+editing/selection/move-by-word-visually-crash-test-1.html
+editing/selection/move-by-word-visually-crash-test-2.html
+editing/selection/move-by-word-visually-crash-test-3.html
+editing/selection/move-by-word-visually-crash-test-4.html
+editing/selection/move-by-word-visually-crash-test-textarea.html
+editing/selection/move-by-word-visually-empty-div.html
+editing/selection/move-by-word-visually-inline-block-positioned-element.html
+editing/selection/move-by-word-visually-multi-line.html
+editing/selection/move-by-word-visually-multi-space.html
+editing/selection/move-by-word-visually-null-box.html
+editing/selection/move-by-word-visually-single-space-inline-element.html
+editing/selection/move-by-word-visually-single-space-one-element.html
+editing/selection/move-by-word-visually-textarea.html
+editing/selection/move-by-word-visually-wrong-left-right.html
