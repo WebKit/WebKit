@@ -175,6 +175,9 @@ struct RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::cacheThemePartNew(Fo
         return 0;
     }
 
+    // By default EFL creates buffers without alpha.
+    ecore_evas_alpha_set(entry->ee, EINA_TRUE);
+
     entry->o = edje_object_add(ecore_evas_get(entry->ee));
     ASSERT(entry->o);
     if (!themePartCacheEntryReset(entry, type)) {
