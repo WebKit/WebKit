@@ -68,6 +68,10 @@ QT_END_NAMESPACE
 typedef QObject* PlatformWidget;
 #endif
 
+#if PLATFORM(BLACKBERRY)
+typedef void* PlatformWidget;
+#endif
+
 #if PLATFORM(WX)
 class wxWindow;
 typedef wxWindow* PlatformWidget;
@@ -83,6 +87,9 @@ typedef Evas_Object* PlatformWidget;
 #if PLATFORM(QT)
 class QWebPageClient;
 typedef QWebPageClient* PlatformPageClient;
+#elif PLATFORM(BLACKBERRY)
+#include "PageClientBlackBerry.h"
+typedef PageClientBlackBerry* PlatformPageClient;
 #else
 typedef PlatformWidget PlatformPageClient;
 #endif
