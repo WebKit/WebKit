@@ -30,7 +30,6 @@
 #include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Element.h"
-#include "HTMLContentSelector.h"
 #include "HTMLShadowElement.h"
 #include "InspectorInstrumentation.h"
 #include "RuntimeEnabledFeatures.h"
@@ -178,15 +177,14 @@ void ShadowTree::attach()
 {
     // Children of m_selector is populated lazily in
     // ensureSelector(), and here we just ensure that it is in clean state.
-    ASSERT(!selector() || !selector()->hasCandidates());
+    ASSERT(!selector().hasPopulated());
 
+    selector().willSelect();
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         if (!root->attached())
             root->attach();
     }
-
-    if (HTMLContentSelector* contentSelector = selector())
-        contentSelector->didSelect();
+    selector().didSelect();
 }
 
 void ShadowTree::attachHost(Element* host)
@@ -222,9 +220,7 @@ InsertionPoint* ShadowTree::insertionPointFor(Node* node) const
         return 0;
     }
 
-    if (!m_selector)
-        return 0;
-    HTMLContentSelection* found = m_selector->findFor(node);
+    HTMLContentSelection* found = selector().findFor(node);
     if (!found)
         return 0;
     return found->insertionPoint();
@@ -315,14 +311,6 @@ void ShadowTree::reattachHostChildrenAndShadow()
     hostNode->detachChildrenIfNeeded();
     reattach();
     hostNode->attachChildrenIfNeeded();
-}
-
-HTMLContentSelector* ShadowTree::ensureSelector()
-{
-    if (!m_selector)
-        m_selector = adoptPtr(new HTMLContentSelector());
-    m_selector->willSelectOver(host());
-    return m_selector.get();
 }
 
 } // namespace

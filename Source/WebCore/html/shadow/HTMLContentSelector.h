@@ -134,17 +134,37 @@ public:
     void unselect(HTMLContentSelectionList*);
     HTMLContentSelection* findFor(Node* key) const;
 
-    void willSelectOver(Element* shadowHost);
+    void willSelect();
+    bool isSelecting() const;
     void didSelect();
-    bool hasCandidates() const { return !m_candidates.isEmpty(); }
+
+    void populateIfNecessary(Element* shadowHost);
+    bool hasPopulated() const;
 
 private:
+    enum SelectingPhase {
+        SelectionPrevented,
+        SelectionStarted,
+        HostChildrenPopulated,
+    };
+
     void removeFromSet(HTMLContentSelectionList*);
     void addToSet(HTMLContentSelectionList*);
 
     Vector<RefPtr<Node> > m_candidates;
     HTMLContentSelectionSet m_selectionSet;
+    SelectingPhase m_phase;
 };
+
+inline bool HTMLContentSelector::isSelecting() const
+{
+    return m_phase != SelectionPrevented;
+}
+
+inline bool HTMLContentSelector::hasPopulated() const
+{
+    return m_phase == HostChildrenPopulated;
+}
 
 }
 

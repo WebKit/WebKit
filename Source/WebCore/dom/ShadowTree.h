@@ -28,6 +28,7 @@
 #define ShadowTree_h
 
 #include "ExceptionCode.h"
+#include "HTMLContentSelector.h"
 #include "ShadowRoot.h"
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Noncopyable.h>
@@ -38,7 +39,6 @@ namespace WebCore {
 
 class Node;
 class Element;
-class HTMLContentSelector;
 class InsertionPoint;
 class TreeScope;
 
@@ -46,6 +46,8 @@ class ShadowTree {
 public:
     ShadowTree();
     ~ShadowTree();
+
+    Element* host() const;
 
     bool hasShadowRoot() const;
     ShadowRoot* youngestShadowRoot() const;
@@ -79,14 +81,13 @@ public:
 
     InsertionPoint* insertionPointFor(Node*) const;
 
-    HTMLContentSelector* selector() const;
-    HTMLContentSelector* ensureSelector();
+    HTMLContentSelector& selector();
+    const HTMLContentSelector& selector() const;
 
 private:
-    Element* host() const;
 
     DoublyLinkedList<ShadowRoot> m_shadowRoots;
-    OwnPtr<HTMLContentSelector> m_selector;
+    HTMLContentSelector m_selector;
     bool m_needsRecalculateContent : 1;
     WTF_MAKE_NONCOPYABLE(ShadowTree);
 };
@@ -106,9 +107,14 @@ inline ShadowRoot* ShadowTree::oldestShadowRoot() const
     return m_shadowRoots.tail();
 }
 
-inline HTMLContentSelector* ShadowTree::selector() const
+inline HTMLContentSelector& ShadowTree::selector()
 {
-    return m_selector.get();
+    return m_selector;
+}
+
+inline const HTMLContentSelector& ShadowTree::selector() const
+{
+    return m_selector;
 }
 
 inline void ShadowTree::clearNeedsReattachHostChildrenAndShadow()

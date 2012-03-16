@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shadow Content Element Crash</title>
+</head>
+<body>
+<p>This test confirms adding a content element into a shadow root does not cause crash.</p>
+
+<div id='container'>FAIL</div>
+
+<script>
+var div = document.getElementById('container');
+var root = new WebKitShadowRoot(div);
+root.innerHTML = "<content select='span'>PASS</content>";
+</script>
+
+</body>
+</html>

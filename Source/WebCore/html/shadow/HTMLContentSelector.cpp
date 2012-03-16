@@ -100,6 +100,7 @@ void HTMLContentSelectionList::append(PassRefPtr<HTMLContentSelection> child)
 }
 
 HTMLContentSelector::HTMLContentSelector()
+    : m_phase(SelectionPrevented)
 {
 }
 
@@ -110,6 +111,7 @@ HTMLContentSelector::~HTMLContentSelector()
 
 void HTMLContentSelector::select(InsertionPoint* insertionPoint, HTMLContentSelectionList* selections)
 {
+    ASSERT(m_phase == HostChildrenPopulated);
     ASSERT(selections->isEmpty());
 
     ContentSelectorQuery query(insertionPoint);
@@ -141,16 +143,28 @@ HTMLContentSelection* HTMLContentSelector::findFor(Node* key) const
     return m_selectionSet.find(key);
 }
 
+void HTMLContentSelector::willSelect()
+{
+    m_phase = SelectionStarted;
+}
+
 void HTMLContentSelector::didSelect()
 {
+    ASSERT(m_phase != SelectionPrevented);
+    m_phase = SelectionPrevented;
     m_candidates.clear();
 }
 
-void HTMLContentSelector::willSelectOver(Element* shadowHost)
+void HTMLContentSelector::populateIfNecessary(Element* shadowHost)
 {
-    if (!m_candidates.isEmpty())
+    if (hasPopulated())
         return;
+
+    ASSERT(m_candidates.isEmpty());
     ASSERT(shadowHost);
+    ASSERT(m_phase == SelectionStarted);
+
+    m_phase = HostChildrenPopulated;
     for (Node* node = shadowHost->firstChild(); node; node = node->nextSibling())
         m_candidates.append(node);
 }

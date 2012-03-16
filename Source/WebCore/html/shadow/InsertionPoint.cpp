@@ -109,15 +109,21 @@ bool InsertionPoint::rendererIsNeeded(const NodeRenderingContext& context)
 
 inline void InsertionPoint::distributeHostChildren(ShadowTree* tree)
 {
-    HTMLContentSelector* selector = tree->ensureSelector();
-    selector->unselect(&m_selections);
-    selector->select(this, &m_selections);
+    if (!tree->selector().isSelecting()) {
+        // If HTMLContentSelector is not int selecting phase, it means InsertionPoint is attached from
+        // non-ShadowTree node. To run distribute algorithm, we have to reattach ShadowTree.
+        tree->setNeedsReattachHostChildrenAndShadow();
+        return;
+    }
+
+    tree->selector().populateIfNecessary(tree->host());
+    tree->selector().unselect(&m_selections);
+    tree->selector().select(this, &m_selections);
 }
 
 inline void InsertionPoint::clearDistribution(ShadowTree* tree)
 {
-    if (HTMLContentSelector* selector = tree->selector())
-        selector->unselect(&m_selections);
+    tree->selector().unselect(&m_selections);
 }
 
 inline void InsertionPoint::attachDistributedNode()
