@@ -27,6 +27,7 @@
 
 #include "AdjustViewSizeOrNot.h"
 #include "Color.h"
+#include "Frame.h"
 #include "LayoutTypes.h"
 #include "PaintPhase.h"
 #include "ScrollView.h"
@@ -74,6 +75,9 @@ public:
 
     Frame* frame() const { return m_frame.get(); }
     void clearFrame();
+
+    int mapFromLayoutToCSSUnits(LayoutUnit);
+    LayoutUnit mapFromCSSToLayoutUnits(int);
 
     LayoutUnit marginWidth() const { return m_margins.width(); } // -1 means default
     LayoutUnit marginHeight() const { return m_margins.height(); } // -1 means default
@@ -528,6 +532,16 @@ inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
     static const unsigned visualPixelThreshold = 32 * 32;
     if (m_visuallyNonEmptyPixelCount > visualPixelThreshold)
         setIsVisuallyNonEmpty();
+}
+
+inline int FrameView::mapFromLayoutToCSSUnits(LayoutUnit value)
+{
+    return value / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor());
+}
+
+inline LayoutUnit FrameView::mapFromCSSToLayoutUnits(int value)
+{
+    return value * m_frame->pageZoomFactor() * m_frame->frameScaleFactor();
 }
 
 } // namespace WebCore

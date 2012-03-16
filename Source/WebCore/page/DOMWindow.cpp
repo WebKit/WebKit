@@ -1132,10 +1132,10 @@ int DOMWindow::innerHeight() const
     FrameView* view = m_frame->view();
     if (!view)
         return 0;
-    
+
     long height = view->visibleContentRect(/* includeScrollbars */ true).height();
     InspectorInstrumentation::applyScreenHeightOverride(m_frame, &height);
-    return static_cast<int>(height / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor()));
+    return view->mapFromLayoutToCSSUnits(height);
 }
 
 int DOMWindow::innerWidth() const
@@ -1149,7 +1149,7 @@ int DOMWindow::innerWidth() const
 
     long width = view->visibleContentRect(/* includeScrollbars */ true).width();
     InspectorInstrumentation::applyScreenWidthOverride(m_frame, &width);
-    return static_cast<int>(width / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor()));
+    return view->mapFromLayoutToCSSUnits(width);
 }
 
 int DOMWindow::screenX() const
@@ -1187,7 +1187,7 @@ int DOMWindow::scrollX() const
 
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
-    return static_cast<int>(view->scrollX() / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor()));
+    return view->mapFromLayoutToCSSUnits(view->scrollX());
 }
 
 int DOMWindow::scrollY() const
@@ -1201,7 +1201,7 @@ int DOMWindow::scrollY() const
 
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
-    return static_cast<int>(view->scrollY() / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor()));
+    return view->mapFromLayoutToCSSUnits(view->scrollY());
 }
 
 bool DOMWindow::closed() const
@@ -1419,9 +1419,8 @@ void DOMWindow::scrollTo(int x, int y) const
     if (!view)
         return;
 
-    int zoomedX = static_cast<int>(x * m_frame->pageZoomFactor() * m_frame->frameScaleFactor());
-    int zoomedY = static_cast<int>(y * m_frame->pageZoomFactor() * m_frame->frameScaleFactor());
-    view->setScrollPosition(IntPoint(zoomedX, zoomedY));
+    IntPoint layoutPos(view->mapFromCSSToLayoutUnits(x), view->mapFromCSSToLayoutUnits(y));
+    view->setScrollPosition(layoutPos);
 }
 
 void DOMWindow::moveBy(float x, float y) const
