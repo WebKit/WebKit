@@ -65,7 +65,7 @@ bool NotificationPresenterImpl::show(Notification* notification)
         message = n->url().string();
     } else {
         // FIXME: Strip the content into one line.
-        message = n->contents().title() + ": " + n->contents().body();
+        message = n->contents().title + ": " + n->contents().body;
     }
 
     m_platformPresenter->show(std::string(uuid.utf8().data()), std::string(message.utf8().data()));

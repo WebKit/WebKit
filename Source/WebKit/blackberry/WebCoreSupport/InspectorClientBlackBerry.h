@@ -51,6 +51,8 @@ public:
     virtual void storeSetting(const String& key, const String& value);
     virtual void inspectorWindowObjectCleared();
     virtual void openInspectorFrontend(InspectorController*);
+    virtual void closeInspectorFrontend();
+    virtual void bringFrontendToFront();
     virtual bool sendMessageToFrontend(const String&);
     virtual void clearBrowserCache();
     virtual void clearBrowserCookies();

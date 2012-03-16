@@ -124,6 +124,16 @@ void InspectorClientBlackBerry::openInspectorFrontend(InspectorController*)
     notImplemented();
 }
 
+void InspectorClientBlackBerry::closeInspectorFrontend()
+{
+    notImplemented();
+}
+
+void InspectorClientBlackBerry::bringFrontendToFront()
+{
+    notImplemented();
+}
+
 bool InspectorClientBlackBerry::sendMessageToFrontend(const String& message)
 {
     CString utf8Message = message.utf8();

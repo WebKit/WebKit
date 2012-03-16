@@ -70,13 +70,13 @@ public:
     virtual bool shouldInterruptJavaScript();
     virtual KeyboardUIMode keyboardUIMode();
     virtual IntRect windowResizerRect() const;
-    virtual void invalidateWindow(const IntRect&, bool);
-    virtual void invalidateContentsAndWindow(const IntRect&, bool);
+    virtual void invalidateRootView(const IntRect&, bool);
+    virtual void invalidateContentsAndRootView(const IntRect&, bool);
     virtual void invalidateContentsForSlowScroll(const IntSize&, const IntRect&, bool, const ScrollView*);
     virtual void scroll(const IntSize&, const IntRect&, const IntRect&);
     virtual void scrollableAreasDidChange();
-    virtual IntPoint screenToWindow(const IntPoint&) const;
-    virtual IntRect windowToScreen(const IntRect&) const;
+    virtual IntPoint screenToRootView(const IntPoint&) const;
+    virtual IntRect rootViewToScreen(const IntRect&) const;
     virtual void contentsSizeChanged(Frame*, const IntSize&) const;
     virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const;
     virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned int);
@@ -88,6 +88,7 @@ public:
     virtual void dispatchViewportPropertiesDidChange(const ViewportArguments&) const;
     virtual bool shouldRubberBandInDirection(ScrollDirection) const { return true; }
     virtual void numWheelEventHandlersChanged(unsigned) { }
+    virtual void numTouchEventHandlersChanged(unsigned) { }
     virtual void print(Frame*);
     virtual void exceededDatabaseQuota(Frame*, const String&);
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
@@ -103,6 +104,7 @@ public:
 #endif
 
 #if ENABLE(INPUT_COLOR)
+    virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&);
     void openColorChooser(ColorChooser*, const Color&) { }
     void cleanupColorChooser(ColorChooser*) { }
     void setSelectedColorInColorChooser(ColorChooser*, const Color&) { }
@@ -131,6 +133,7 @@ public:
 #endif
     virtual bool selectItemWritingDirectionIsNatural();
     virtual bool selectItemAlignmentFollowsMenuWritingDirection();
+    virtual bool hasOpenedPopup() const;
     virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
     virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
 

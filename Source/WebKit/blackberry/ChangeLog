@@ -1,3 +1,49 @@
+2012-03-16  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Syncing up left over bits in WebCoreSupport from our local branch to upstream
+        https://bugs.webkit.org/show_bug.cgi?id=81120
+
+        Reviewed by Rob Buis.
+
+        This is a consolidation of various changes that are in our local dev branch
+        but do not appear in our upstreamed port.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+        * WebCoreSupport/AboutDataHaveFeatures.in:
+        * WebCoreSupport/AboutDataUseFeatures.in:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::hasOpenedPopup):
+        (WebCore):
+        (WebCore::ChromeClientBlackBerry::screenToRootView):
+        (WebCore::ChromeClientBlackBerry::rootViewToScreen):
+        (WebCore::ChromeClientBlackBerry::invalidateRootView):
+        (WebCore::ChromeClientBlackBerry::invalidateContentsAndRootView):
+        (WebCore::ChromeClientBlackBerry::invalidateContentsForSlowScroll):
+        (WebCore::ChromeClientBlackBerry::scrollableAreasDidChange):
+        (WebCore::ChromeClientBlackBerry::createColorChooser):
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+        (WebCore::ChromeClientBlackBerry::numTouchEventHandlersChanged):
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::registerUndoStep):
+        (WebCore::EditorClientBlackBerry::registerRedoStep):
+        (WebCore::EditorClientBlackBerry::undo):
+        (WebCore::EditorClientBlackBerry::redo):
+        * WebCoreSupport/EditorClientBlackBerry.h:
+        (EditorClientBlackBerry):
+        * WebCoreSupport/GeolocationControllerClientBlackBerry.cpp:
+        (GeolocationControllerClientBlackBerry::requestPermission):
+        (GeolocationControllerClientBlackBerry::cancelPermissionRequest):
+        * WebCoreSupport/GeolocationControllerClientBlackBerry.h:
+        * WebCoreSupport/InspectorClientBlackBerry.cpp:
+        (WebCore::InspectorClientBlackBerry::closeInspectorFrontend):
+        (WebCore):
+        (WebCore::InspectorClientBlackBerry::bringFrontendToFront):
+        * WebCoreSupport/InspectorClientBlackBerry.h:
+        (InspectorClientBlackBerry):
+        * WebCoreSupport/NotificationPresenterImpl.cpp:
+        (WebCore::NotificationPresenterImpl::show):
+
 2012-03-16  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Input fields with id of e-mail and url should be styled as such.

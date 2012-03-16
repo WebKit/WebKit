@@ -60,8 +60,8 @@ public:
     virtual void didEndEditing();
     virtual void didWriteSelectionToPasteboard();
     virtual void didSetSelectionTypesForPasteboard();
-    virtual void registerCommandForUndo(PassRefPtr<EditCommand>);
-    virtual void registerCommandForRedo(PassRefPtr<EditCommand>);
+    virtual void registerUndoStep(PassRefPtr<UndoStep>);
+    virtual void registerRedoStep(PassRefPtr<UndoStep>);
     virtual void clearUndoRedoOperations();
     virtual bool canCopyCut(Frame*, bool) const;
     virtual bool canPaste(Frame*, bool) const;
@@ -108,7 +108,7 @@ private:
 
     bool m_inRedo;
 
-    typedef Deque<RefPtr<WebCore::EditCommand> > EditCommandStack;
+    typedef Deque<RefPtr<WebCore::UndoStep> > EditCommandStack;
     EditCommandStack m_undoStack;
     EditCommandStack m_redoStack;
 };
