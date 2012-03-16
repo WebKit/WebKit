@@ -83,7 +83,7 @@ public:
 
     bool isTextButton() const;
 
-    virtual bool isRadioButton() const;
+    bool isRadioButton() const;
     bool isTextField() const;
     bool isSearchField() const;
     bool isInputTypeHidden() const;

@@ -80,7 +80,6 @@ public:
     virtual bool isEnabledFormControl() const { return !disabled(); }
     virtual bool isReadOnlyFormControl() const { return readOnly(); }
 
-    virtual bool isRadioButton() const { return false; }
     virtual bool canTriggerImplicitSubmission() const { return false; }
 
     // Override in derived classes to get the encoded name=value pair for submitting.
