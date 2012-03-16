@@ -394,7 +394,10 @@ ScrollAnimatorNone::~ScrollAnimatorNone()
 
 void ScrollAnimatorNone::fireUpAnAnimation(FloatPoint fp)
 {
-    UNUSED_PARAM(fp);
+    if (m_gestureAnimation)
+        m_gestureAnimation.clear();
+    m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::create(fp), this);
+    startNextTimer();
 }
 
 bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
