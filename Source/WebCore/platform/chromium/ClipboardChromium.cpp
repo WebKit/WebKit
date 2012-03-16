@@ -31,7 +31,9 @@
 #include "ChromiumDataObject.h"
 #include "ClipboardMimeTypes.h"
 #include "ClipboardUtilitiesChromium.h"
+#include "DataTransferItem.h"
 #include "DataTransferItemChromium.h"
+#include "DataTransferItemList.h"
 #include "DataTransferItemListChromium.h"
 #include "Document.h"
 #include "DragData.h"
@@ -81,7 +83,7 @@ private:
 class DataTransferItemPolicyWrapper : public DataTransferItem {
 public:
     static PassRefPtr<DataTransferItemPolicyWrapper> create(
-        PassRefPtr<ClipboardChromium>, PassRefPtr<DataTransferItem>);
+        PassRefPtr<ClipboardChromium>, PassRefPtr<DataTransferItemChromium>);
 
     virtual String kind() const;
     virtual String type() const;
@@ -90,10 +92,10 @@ public:
     virtual PassRefPtr<Blob> getAsFile() const;
 
 private:
-    DataTransferItemPolicyWrapper(PassRefPtr<ClipboardChromium>, PassRefPtr<DataTransferItem>);
+    DataTransferItemPolicyWrapper(PassRefPtr<ClipboardChromium>, PassRefPtr<DataTransferItemChromium>);
 
     RefPtr<ClipboardChromium> m_clipboard;
-    RefPtr<DataTransferItem> m_item;
+    RefPtr<DataTransferItemChromium> m_item;
 };
 
 PassRefPtr<DataTransferItemListPolicyWrapper> DataTransferItemListPolicyWrapper::create(
@@ -113,7 +115,7 @@ PassRefPtr<DataTransferItem> DataTransferItemListPolicyWrapper::item(unsigned lo
 {
     if (m_clipboard->policy() == ClipboardNumb)
         return 0;
-    RefPtr<DataTransferItem> item = m_list->item(index);
+    RefPtr<DataTransferItemChromium> item = m_list->item(index);
     if (!item)
         return 0;
     return DataTransferItemPolicyWrapper::create(m_clipboard, item);
@@ -125,8 +127,7 @@ void DataTransferItemListPolicyWrapper::deleteItem(unsigned long index, Exceptio
         ec = INVALID_STATE_ERR;
         return;
     }
-    // FIXME: We handle all the exceptions here, so we don't need to propogate ec.
-    m_list->deleteItem(index, ec);
+    m_list->deleteItem(index);
 }
 
 void DataTransferItemListPolicyWrapper::clear()
@@ -147,7 +148,7 @@ void DataTransferItemListPolicyWrapper::add(PassRefPtr<File> file)
 {
     if (m_clipboard->policy() != ClipboardWritable)
         return;
-    m_list->add(file);
+    m_list->add(file, m_clipboard->frame()->document()->scriptExecutionContext());
 }
 
 DataTransferItemListPolicyWrapper::DataTransferItemListPolicyWrapper(
@@ -158,7 +159,7 @@ DataTransferItemListPolicyWrapper::DataTransferItemListPolicyWrapper(
 }
 
 PassRefPtr<DataTransferItemPolicyWrapper> DataTransferItemPolicyWrapper::create(
-    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<DataTransferItem> item)
+    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<DataTransferItemChromium> item)
 {
     return adoptRef(new DataTransferItemPolicyWrapper(clipboard, item));
 }
@@ -182,7 +183,7 @@ void DataTransferItemPolicyWrapper::getAsString(PassRefPtr<StringCallback> callb
     if (m_clipboard->policy() != ClipboardReadable && m_clipboard->policy() != ClipboardWritable)
         return;
 
-    m_item->getAsString(callback);
+    m_item->getAsString(callback, m_clipboard->frame()->document()->scriptExecutionContext());
 }
 
 PassRefPtr<Blob> DataTransferItemPolicyWrapper::getAsFile() const
@@ -194,7 +195,7 @@ PassRefPtr<Blob> DataTransferItemPolicyWrapper::getAsFile() const
 }
 
 DataTransferItemPolicyWrapper::DataTransferItemPolicyWrapper(
-    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<DataTransferItem> item)
+    PassRefPtr<ClipboardChromium> clipboard, PassRefPtr<DataTransferItemChromium> item)
     : m_clipboard(clipboard)
     , m_item(item)
 {
@@ -207,11 +208,16 @@ using namespace HTMLNames;
 // We provide the IE clipboard types (URL and Text), and the clipboard types specified in the WHATWG Web Applications 1.0 draft
 // see http://www.whatwg.org/specs/web-apps/current-work/ Section 6.3.5.3
 
-static String normalizeType(const String& type)
+static String normalizeType(const String& type, bool* convertToURL = 0)
 {
     String cleanType = type.stripWhiteSpace().lower();
     if (cleanType == mimeTypeText || cleanType.startsWith(mimeTypeTextPlainEtc))
         return mimeTypeTextPlain;
+    if (cleanType == mimeTypeURL) {
+        if (convertToURL)
+          *convertToURL = true;
+        return mimeTypeTextURIList;
+    }
     return cleanType;
 }
 
@@ -227,8 +233,6 @@ ClipboardChromium::ClipboardChromium(ClipboardType clipboardType,
     : Clipboard(policy, clipboardType)
     , m_dataObject(dataObject)
     , m_frame(frame)
-    , m_originalSequenceNumber(PlatformSupport::clipboardSequenceNumber(currentPasteboardBuffer()))
-    , m_dragStorageUpdated(true)
 {
 }
 
@@ -244,10 +248,9 @@ PassRefPtr<ClipboardChromium> ClipboardChromium::create(ClipboardType clipboardT
 
 void ClipboardChromium::clearData(const String& type)
 {
-    if (policy() != ClipboardWritable || !m_dataObject)
+    if (policy() != ClipboardWritable)
         return;
 
-    m_dragStorageUpdated = true;
     m_dataObject->clearData(normalizeType(type));
 
     ASSERT_NOT_REACHED();
@@ -258,20 +261,40 @@ void ClipboardChromium::clearAllData()
     if (policy() != ClipboardWritable)
         return;
 
-    m_dragStorageUpdated = true;
     m_dataObject->clearAll();
 }
 
 String ClipboardChromium::getData(const String& type) const
 {
-    bool ignoredSuccess = false;
-    if (policy() != ClipboardReadable || !m_dataObject)
+    if (policy() != ClipboardReadable)
         return String();
 
-    if (isForCopyAndPaste() && platformClipboardChanged())
-        return String();
+    bool convertToURL = false;
+    String data = m_dataObject->getData(normalizeType(type, &convertToURL));
+    if (!convertToURL)
+        return data;
+    return convertURIListToURL(data);
 
-    return m_dataObject->getData(normalizeType(type), ignoredSuccess);
+    Vector<String> uriList;
+    // Line separator is \r\n per RFC 2483 - howver, for compatiblity
+    // reasons we also allow just \n here.
+    data.split('\n', uriList);
+    // Process the input and return the first valid RUL. In case no URLs can
+    // be found, return an empty string. This is in line with the HTML5
+    // spec (see "The DragEvent and DataTransfer interfaces").
+    for (size_t i = 0; i < uriList.size(); ++i) {
+        String& line = uriList[i];
+        line = line.stripWhiteSpace();
+        if (line.isEmpty())
+            continue;
+        if (line[0] == '#')
+            continue;
+        KURL url = KURL(ParsedURLString, line);
+        if (url.isValid())
+            return url;
+    }
+
+    return String();
 }
 
 bool ClipboardChromium::setData(const String& type, const String& data)
@@ -279,47 +302,34 @@ bool ClipboardChromium::setData(const String& type, const String& data)
     if (policy() != ClipboardWritable)
         return false;
 
-    m_dragStorageUpdated = true;
     return m_dataObject->setData(normalizeType(type), data);
-}
-
-bool ClipboardChromium::platformClipboardChanged() const
-{
-    return PlatformSupport::clipboardSequenceNumber(currentPasteboardBuffer()) != m_originalSequenceNumber;
 }
 
 // extensions beyond IE's API
 HashSet<String> ClipboardChromium::types() const
 {
-    HashSet<String> results;
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
-        return results;
+        return HashSet<String>();
 
-    if (!m_dataObject)
-        return results;
-
-    results = m_dataObject->types();
-
-    if (m_dataObject->containsFilenames())
-        results.add(mimeTypeFiles);
-
-    return results;
+    return m_dataObject->types();
 }
 
 PassRefPtr<FileList> ClipboardChromium::files() const
 {
+    RefPtr<FileList> files = FileList::create();
     if (policy() != ClipboardReadable)
-        return FileList::create();
+        return files.release();
 
-    if (!m_dataObject)
-        return FileList::create();
+    RefPtr<DataTransferItemListChromium> list = m_dataObject->items();
+    for (size_t i = 0; i < list->length(); ++i) {
+        if (list->item(i)->kind() == DataTransferItem::kindFile) {
+            RefPtr<Blob> blob = list->item(i)->getAsFile();
+            if (blob && blob->isFile())
+                files->append(static_cast<File*>(blob.get()));
+        }
+    }
 
-    const Vector<String>& filenames = m_dataObject->filenames();
-    RefPtr<FileList> fileList = FileList::create();
-    for (size_t i = 0; i < filenames.size(); ++i)
-        fileList->append(File::create(filenames.at(i)));
-
-    return fileList.release();
+    return files.release();
 }
 
 void ClipboardChromium::setDragImage(CachedImage* image, Node* node, const IntPoint& loc)
@@ -389,8 +399,6 @@ static void writeImageToDataObject(ChromiumDataObject* dataObject, Element* elem
     if (!imageBuffer || !imageBuffer->size())
         return;
 
-    dataObject->setFileContent(imageBuffer);
-
     // Determine the filename for the file contents of the image.
     String filename = cachedImage->response().suggestedFilename();
     if (filename.isEmpty())
@@ -410,8 +418,7 @@ static void writeImageToDataObject(ChromiumDataObject* dataObject, Element* elem
 
     ClipboardChromium::validateFilename(filename, extension);
 
-    dataObject->setFileContentFilename(filename + extension);
-    dataObject->setFileExtension(extension);
+    dataObject->addSharedBuffer(filename + extension, imageBuffer);
 }
 
 void ClipboardChromium::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
@@ -419,9 +426,7 @@ void ClipboardChromium::declareAndWriteDragImage(Element* element, const KURL& u
     if (!m_dataObject)
         return;
 
-    m_dragStorageUpdated = true;
-    m_dataObject->setData(mimeTypeURL, url);
-    m_dataObject->setUrlTitle(title);
+    m_dataObject->setURLAndTitle(url, title);
 
     // Write the bytes in the image to the file format.
     writeImageToDataObject(m_dataObject.get(), element, url);
@@ -436,16 +441,13 @@ void ClipboardChromium::writeURL(const KURL& url, const String& title, Frame*)
         return;
     ASSERT(!url.isEmpty());
 
-    m_dragStorageUpdated = true;
-    m_dataObject->setData(mimeTypeURL, url);
-    m_dataObject->setUrlTitle(title);
+    m_dataObject->setURLAndTitle(url, title);
 
     // The URL can also be used as plain text.
     m_dataObject->setData(mimeTypeTextPlain, url.string());
 
     // The URL can also be used as an HTML fragment.
-    m_dataObject->setData(mimeTypeTextHTML, urlToMarkup(url, title));
-    m_dataObject->setHtmlBaseUrl(url);
+    m_dataObject->setHTMLAndBaseURL(urlToMarkup(url, title), url);
 }
 
 void ClipboardChromium::writeRange(Range* selectedRange, Frame* frame)
@@ -454,9 +456,7 @@ void ClipboardChromium::writeRange(Range* selectedRange, Frame* frame)
     if (!m_dataObject)
          return;
 
-    m_dragStorageUpdated = true;
-    m_dataObject->setData(mimeTypeTextHTML, createMarkup(selectedRange, 0, AnnotateForInterchange, false, ResolveNonLocalURLs));
-    m_dataObject->setHtmlBaseUrl(frame->document()->url());
+    m_dataObject->setHTMLAndBaseURL(createMarkup(selectedRange, 0, AnnotateForInterchange, false, ResolveNonLocalURLs), frame->document()->url());
 
     String str = frame->editor()->selectedText();
 #if OS(WINDOWS)
@@ -477,76 +477,24 @@ void ClipboardChromium::writePlainText(const String& text)
 #endif
     replaceNBSPWithSpace(str);
 
-    m_dragStorageUpdated = true;
     m_dataObject->setData(mimeTypeTextPlain, str);
 }
 
 bool ClipboardChromium::hasData()
 {
     ASSERT(isForDragAndDrop());
-    if (!m_dataObject)
-        return false;
 
-    return m_dataObject->hasData();
+    return m_dataObject->items()->length() > 0;
 }
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 PassRefPtr<DataTransferItemList> ClipboardChromium::items()
 {
-    if (!m_dataObject)
-        // Return an unassociated empty list.
-        return DataTransferItemListChromium::create(this, m_frame->document()->scriptExecutionContext());
-
-    if (!m_itemList)
-        m_itemList = DataTransferItemListChromium::create(this, m_frame->document()->scriptExecutionContext());
-
     // FIXME: According to the spec, we are supposed to return the same collection of items each
     // time. We now return a wrapper that always wraps the *same* set of items, so JS shouldn't be
     // able to tell, but we probably still want to fix this.
-    return DataTransferItemListPolicyWrapper::create(this, m_itemList);
+    return DataTransferItemListPolicyWrapper::create(this, m_dataObject->items());
 }
-
-// FIXME: integrate ChromiumDataObject and DataTransferItemList rather than holding them separately and keeping them synced.
-void ClipboardChromium::mayUpdateItems(Vector<RefPtr<DataTransferItem> >& items)
-{
-    if (!items.isEmpty() && !storageHasUpdated())
-        return;
-
-    items.clear();
-
-    ScriptExecutionContext* scriptExecutionContext = m_frame->document()->scriptExecutionContext();
-
-    if (isForCopyAndPaste() && policy() == ClipboardReadable) {
-        // Iterate through the types and add them.
-        HashSet<String> types = m_dataObject->types();
-        for (HashSet<String>::const_iterator it = types.begin(); it != types.end(); ++it)
-            items.append(DataTransferItemChromium::createFromPasteboard(this, scriptExecutionContext, *it));
-        return;
-    }
-
-    bool success = false;
-    String plainText = m_dataObject->getData(mimeTypeTextPlain, success);
-    if (success)
-        items.append(DataTransferItemChromium::create(this, scriptExecutionContext, plainText, mimeTypeTextPlain));
-
-    success = false;
-    String htmlText = m_dataObject->getData(mimeTypeTextHTML, success);
-    if (success)
-        items.append(DataTransferItemChromium::create(this, scriptExecutionContext, htmlText, mimeTypeTextHTML));
-
-    if (m_dataObject->containsFilenames()) {
-        const Vector<String>& filenames = m_dataObject->filenames();
-        for (Vector<String>::const_iterator it = filenames.begin(); it != filenames.end(); ++it)
-            items.append(DataTransferItemChromium::create(this, scriptExecutionContext, File::create(*it)));
-    }
-    m_dragStorageUpdated = false;
-}
-
-bool ClipboardChromium::storageHasUpdated() const
-{
-    return (isForCopyAndPaste() && platformClipboardChanged()) || (isForDragAndDrop() && m_dragStorageUpdated);
-}
-
 #endif
 
 } // namespace WebCore

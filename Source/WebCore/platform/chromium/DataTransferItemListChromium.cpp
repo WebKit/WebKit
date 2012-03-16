@@ -37,118 +37,78 @@
 #include "ChromiumDataObject.h"
 #include "ClipboardChromium.h"
 #include "ClipboardMimeTypes.h"
+#include "ClipboardUtilitiesChromium.h"
+#include "DataTransferItem.h"
 #include "DataTransferItemChromium.h"
 #include "ExceptionCode.h"
 #include "File.h"
 #include "KURL.h"
+#include "PlatformSupport.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableBlobRegistry.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-PassRefPtr<DataTransferItemListChromium> DataTransferItemListChromium::create(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
+PassRefPtr<DataTransferItemListChromium> DataTransferItemListChromium::create()
 {
-    return adoptRef(new DataTransferItemListChromium(owner, context));
+    return adoptRef(new DataTransferItemListChromium());
 }
 
-DataTransferItemListChromium::DataTransferItemListChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context)
-    : m_owner(owner)
-    , m_context(context)
+PassRefPtr<DataTransferItemListChromium> DataTransferItemListChromium::createFromPasteboard()
+{
+    RefPtr<DataTransferItemListChromium> list = create();
+    uint64_t sequenceNumber = PlatformSupport::clipboardSequenceNumber(currentPasteboardBuffer());
+    bool ignored;
+    HashSet<String> types = PlatformSupport::clipboardReadAvailableTypes(currentPasteboardBuffer(), &ignored);
+    for (HashSet<String>::const_iterator it = types.begin(); it != types.end(); ++it)
+        list->m_itemList.append(DataTransferItemChromium::createFromPasteboard(*it, sequenceNumber));
+    return list.release();
+}
+
+DataTransferItemListChromium::DataTransferItemListChromium()
 {
 }
 
 size_t DataTransferItemListChromium::length() const
 {
-    clipboardChromium()->mayUpdateItems(m_items);
-    return m_items.size();
+    return m_itemList.size();
 }
 
-PassRefPtr<DataTransferItem> DataTransferItemListChromium::item(unsigned long index)
+PassRefPtr<DataTransferItemChromium> DataTransferItemListChromium::item(unsigned long index)
 {
-    clipboardChromium()->mayUpdateItems(m_items);
     if (index >= length())
         return 0;
-    return m_items[index];
+    return m_itemList[index];
 }
 
-void DataTransferItemListChromium::deleteItem(unsigned long index, ExceptionCode& ec)
+void DataTransferItemListChromium::deleteItem(unsigned long index)
 {
-    clipboardChromium()->mayUpdateItems(m_items);
     if (index >= length())
         return;
-    RefPtr<DataTransferItem> item = m_items[index];
-
-    RefPtr<ChromiumDataObject> dataObject = clipboardChromium()->dataObject();
-    if (!dataObject)
-        return;
-
-    if (item->kind() == DataTransferItem::kindString) {
-        m_items.remove(index);
-        dataObject->clearData(item->type());
-        return;
-    }
-
-    ASSERT(item->kind() == DataTransferItem::kindFile);
-    RefPtr<Blob> blob = item->getAsFile();
-    if (!blob || !blob->isFile())
-        return;
-
-    m_items.clear();
-    const Vector<String>& filenames = dataObject->filenames();
-    Vector<String> copiedFilenames;
-    for (size_t i = 0; i < filenames.size(); ++i) {
-        if (filenames[i] != static_cast<File*>(blob.get())->path())
-            copiedFilenames.append(static_cast<File*>(blob.get())->path());
-    }
-    dataObject->setFilenames(copiedFilenames);
+    m_itemList.remove(index);
 }
 
 void DataTransferItemListChromium::clear()
 {
-    m_items.clear();
-    clipboardChromium()->clearAllData();
+    m_itemList.clear();
 }
 
 void DataTransferItemListChromium::add(const String& data, const String& type, ExceptionCode& ec)
 {
-    RefPtr<ChromiumDataObject> dataObject = clipboardChromium()->dataObject();
-    if (!dataObject)
-        return;
-
-    bool success = false;
-    dataObject->getData(type, success);
-    if (success) {
-        // Adding data with the same type should fail with NOT_SUPPORTED_ERR.
+    if (!internalAddStringItem(DataTransferItemChromium::createFromString(type, data)))
         ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
-    m_items.clear();
-    dataObject->setData(type, data);
 }
 
-void DataTransferItemListChromium::add(PassRefPtr<File> file)
+void DataTransferItemListChromium::add(PassRefPtr<File> file, ScriptExecutionContext* context)
 {
     if (!file)
         return;
 
-    RefPtr<ChromiumDataObject> dataObject = clipboardChromium()->dataObject();
-    if (!dataObject)
-        return;
+    m_itemList.append(DataTransferItemChromium::createFromFile(file));
 
-    m_items.clear();
-
-    // Updating dataObject's fileset so that we will be seeing the consistent list even if we reconstruct the items later.
-    dataObject->addFilename(file->path());
-
-    // FIXME: Allow multiple files to be dragged out at once if more than one file is added to the storage. For now we manually set up drag-out download URL only if it has not been set yet.
-    bool success = false;
-    dataObject->getData(mimeTypeDownloadURL, success);
-    if (success)
-        return;
-
-    KURL urlForDownload = BlobURL::createPublicURL(m_context->securityOrigin());
+    // FIXME: Allow multiple files to be dragged out at once if more than one file is added to the storage.
+    KURL urlForDownload = BlobURL::createPublicURL(context->securityOrigin());
     ThreadableBlobRegistry::registerBlobURL(urlForDownload, file->url());
 
     StringBuilder downloadUrl;
@@ -157,12 +117,26 @@ void DataTransferItemListChromium::add(PassRefPtr<File> file)
     downloadUrl.append(encodeWithURLEscapeSequences(file->name()));
     downloadUrl.append(":");
     downloadUrl.append(urlForDownload.string());
-    dataObject->setData(mimeTypeDownloadURL, downloadUrl.toString());
+
+    internalAddStringItem(DataTransferItemChromium::createFromString(mimeTypeDownloadURL, downloadUrl.toString()));
 }
 
-ClipboardChromium* DataTransferItemListChromium::clipboardChromium() const
+// FIXME: Make sure item is released correctly in case of failure.
+bool DataTransferItemListChromium::internalAddStringItem(PassRefPtr<DataTransferItemChromium> item)
 {
-    return static_cast<ClipboardChromium*>(m_owner.get());
+    ASSERT(item->kind() == DataTransferItem::kindString);
+    for (size_t i = 0; i < m_itemList.size(); ++i)
+        if (m_itemList[i]->kind() == DataTransferItem::kindString && m_itemList[i]->type() == item->type())
+            return false;
+
+    m_itemList.append(item);
+    return true;
+}
+
+void DataTransferItemListChromium::internalAddFileItem(PassRefPtr<DataTransferItemChromium> item)
+{
+    ASSERT(item->kind() == DataTransferItem::kindFile);
+    m_itemList.append(item);
 }
 
 } // namespace WebCore

@@ -60,4 +60,26 @@ void replaceNBSPWithSpace(String& str)
     str.replace(NonBreakingSpaceCharacter, SpaceCharacter);
 }
 
+String convertURIListToURL(const String& uriList)
+{
+    Vector<String> items;
+    // Line separator is \r\n per RFC 2483 - however, for compatibility
+    // reasons we allow just \n here.
+    uriList.split('\n', items);
+    // Process the input and return the first valid URL. In case no URLs can
+    // be found, return an empty string. This is in line with the HTML5 spec.
+    for (size_t i = 0; i < items.size(); ++i) {
+        String& line = items[i];
+        line = line.stripWhiteSpace();
+        if (line.isEmpty())
+            continue;
+        if (line[0] == '#')
+            continue;
+        KURL url = KURL(ParsedURLString, line);
+        if (url.isValid())
+            return url;
+    }
+    return String();
+}
+
 } // namespace WebCore

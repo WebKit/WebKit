@@ -1,3 +1,15 @@
+2012-03-15  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Refactor ClipboardChromium and DataTransferItemList/DataTransferItem to support HTML spec
+        https://bugs.webkit.org/show_bug.cgi?id=76598
+
+        Reviewed by Tony Chang.
+
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::items):
+        (WebKit::WebDragData::addItem):
+        (WebKit::WebDragData::assign):
+
 2012-03-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Add overdraw metrics for texture uploads

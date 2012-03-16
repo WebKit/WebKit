@@ -33,40 +33,43 @@
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
-#include "DataTransferItemList.h"
+#include "DataTransferItemChromium.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Clipboard;
-class ClipboardChromium;
+class ChromiumDataObject;
 class File;
+class KURL;
 class ScriptExecutionContext;
 
 typedef int ExceptionCode;
 
-class DataTransferItemListChromium : public DataTransferItemList {
+class DataTransferItemListChromium : public RefCounted<DataTransferItemListChromium> {
 public:
-    static PassRefPtr<DataTransferItemListChromium> create(PassRefPtr<Clipboard>, ScriptExecutionContext*);
+    static PassRefPtr<DataTransferItemListChromium> create();
+    static PassRefPtr<DataTransferItemListChromium> createFromPasteboard();
 
-    virtual size_t length() const;
-    virtual PassRefPtr<DataTransferItem> item(unsigned long index);
+    size_t length() const;
+    PassRefPtr<DataTransferItemChromium> item(unsigned long index);
     // FIXME: Implement V8DataTransferItemList::indexedPropertyDeleter to get this called.
-    virtual void deleteItem(unsigned long index, ExceptionCode&);
-    virtual void clear();
-    virtual void add(const String& data, const String& type, ExceptionCode&);
-    virtual void add(PassRefPtr<File>);
+    void deleteItem(unsigned long index);
+    void clear();
+    void add(const String& data, const String& type, ExceptionCode&);
+    void add(PassRefPtr<File>, ScriptExecutionContext*);
 
 private:
-    DataTransferItemListChromium(PassRefPtr<Clipboard>, ScriptExecutionContext*);
-    ClipboardChromium* clipboardChromium() const;
+    friend class ChromiumDataObject;
 
-    RefPtr<Clipboard> m_owner;
-    // Indirectly owned by our parent.
-    ScriptExecutionContext* m_context;
-    // FIXME: m_items should not be mutable. This will be fixed by https://bugs.webkit.org/show_bug.cgi?id=76598
-    mutable Vector<RefPtr<DataTransferItem> > m_items;
+    DataTransferItemListChromium();
+
+    // FIXME: Combine with ChromiumDataObject to eliminate the need for these methods.
+    bool internalAddStringItem(PassRefPtr<DataTransferItemChromium>);
+    void internalAddFileItem(PassRefPtr<DataTransferItemChromium>);
+
+    Vector<RefPtr<DataTransferItemChromium> > m_itemList;
 };
 
 } // namespace WebCore

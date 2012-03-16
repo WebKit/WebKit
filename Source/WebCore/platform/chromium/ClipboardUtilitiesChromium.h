@@ -44,6 +44,7 @@ PasteboardPrivate::ClipboardBuffer currentPasteboardBuffer();
 void replaceNewlinesWithWindowsStyleNewlines(String&);
 #endif
 void replaceNBSPWithSpace(String&);
+String convertURIListToURL(const String& uriList);
 
 } // namespace WebCore
 

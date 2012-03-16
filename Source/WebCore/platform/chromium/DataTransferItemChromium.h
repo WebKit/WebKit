@@ -33,48 +33,61 @@
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
-#include "DataTransferItem.h"
+#include "File.h"
+#include "KURL.h"
+#include "SharedBuffer.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Clipboard;
-class ClipboardChromium;
-class File;
+class Blob;
 class ScriptExecutionContext;
+class StringCallback;
 
-class DataTransferItemChromium : public DataTransferItem {
+class DataTransferItemChromium : public RefCounted<DataTransferItemChromium> {
 public:
-    static PassRefPtr<DataTransferItemChromium> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& data, const String& type);
-    static PassRefPtr<DataTransferItemChromium> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, PassRefPtr<File>);
-    static PassRefPtr<DataTransferItemChromium> createFromPasteboard(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& type);
+    static PassRefPtr<DataTransferItemChromium> createFromString(const String& type, const String& data);
+    static PassRefPtr<DataTransferItemChromium> createFromFile(PassRefPtr<File>);
+    static PassRefPtr<DataTransferItemChromium> createFromURL(const String& url, const String& title);
+    static PassRefPtr<DataTransferItemChromium> createFromHTML(const String& html, const KURL& baseURL);
+    static PassRefPtr<DataTransferItemChromium> createFromSharedBuffer(const String& filename, PassRefPtr<SharedBuffer>);
+    static PassRefPtr<DataTransferItemChromium> createFromPasteboard(const String& type, uint64_t sequenceNumber);
 
-    virtual String kind() const { return m_kind; }
-    virtual String type() const { return m_type; }
-    virtual void getAsString(PassRefPtr<StringCallback>) const;
-    virtual PassRefPtr<Blob> getAsFile() const;
+    String kind() const { return m_kind; }
+    String type() const { return m_type; }
+    void getAsString(PassRefPtr<StringCallback>, ScriptExecutionContext*) const;
+    PassRefPtr<Blob> getAsFile() const;
+
+    // Used to support legacy DataTransfer APIs and renderer->browser serialization.
+    String internalGetAsString() const;
+    PassRefPtr<SharedBuffer> sharedBuffer() const { return m_sharedBuffer; }
+    String title() const { return m_title; }
+    KURL baseURL() const { return m_baseURL; }
+    bool isFilename() const;
 
 private:
-    friend class DataTransferItemListChromium;
-
     enum DataSource {
         PasteboardSource,
         InternalSource,
     };
 
-    DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, DataSource, const String& kind, const String& type, const String& data);
-    DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, DataSource, PassRefPtr<File>);
+    DataTransferItemChromium(const String& kind, const String& type);
+    DataTransferItemChromium(const String& kind, const String& type, uint64_t sequenceNumber);
 
-    ClipboardChromium* clipboardChromium() const;
+    DataSource m_source;
+    String m_kind;
+    String m_type;
 
-    ScriptExecutionContext* m_context;
-    const RefPtr<Clipboard> m_owner;
-    const String m_kind;
-    const String m_type;
-    const DataSource m_source;
-    const String m_data;
+    String m_data;
     RefPtr<File> m_file;
+    RefPtr<SharedBuffer> m_sharedBuffer;
+    // Optional metadata. Currently used for URL, HTML, and dragging files in.
+    String m_title;
+    KURL m_baseURL;
+
+    uint64_t m_sequenceNumber; // Only valid when m_source == PasteboardSource
 };
 
 } // namespace WebCore
