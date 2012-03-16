@@ -49,6 +49,10 @@ RateLimiter::RateLimiter(GraphicsContext3D* context)
     m_contextSupportsRateLimitingExtension = context->getExtensions()->supports("GL_CHROMIUM_rate_limit_offscreen_context");
 }
 
+RateLimiter::~RateLimiter()
+{
+}
+
 void RateLimiter::start()
 {
     if (m_contextSupportsRateLimitingExtension && !m_timer.isActive())

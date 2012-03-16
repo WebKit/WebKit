@@ -28,9 +28,9 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "PassRefPtr.h"
 #include "Timer.h"
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -40,12 +40,14 @@ class GraphicsContext3D;
 class RateLimiter : public RefCounted<RateLimiter> {
 public:
     static PassRefPtr<RateLimiter> create(GraphicsContext3D*);
+    ~RateLimiter();
+
     void start();
     void stop();
 
 private:
     explicit RateLimiter(GraphicsContext3D*);
-    GraphicsContext3D* m_context;
+    RefPtr<GraphicsContext3D> m_context;
     bool m_contextSupportsRateLimitingExtension;
     Timer<RateLimiter> m_timer;
     void rateLimitContext(Timer<RateLimiter>*);
