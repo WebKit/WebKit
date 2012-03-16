@@ -30,6 +30,7 @@
 #include "markup.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -78,7 +79,7 @@ protected:
     void appendStartTag(Node*, Namespaces* = 0);
     virtual void appendEndTag(Node*);
     static size_t totalLength(const Vector<String>&);
-    size_t length() const { return totalLength(m_succeedingMarkup); }
+    size_t length() const { return m_markup.length(); }
     void concatenateMarkup(StringBuilder&);
     void appendAttributeValue(StringBuilder&, const String&, bool);
     virtual void appendCustomAttributes(StringBuilder&, Element*, Namespaces*);
@@ -108,7 +109,7 @@ private:
     void appendQuotedURLAttributeValue(StringBuilder&, const Element*, const Attribute&);
     void serializeNodesWithNamespaces(Node* targetNode, Node* nodeToSkip, EChildrenOnly, const Namespaces*);
 
-    Vector<String> m_succeedingMarkup;
+    StringBuilder m_markup;
     const EAbsoluteURLs m_resolveURLsMethod;
 };
 

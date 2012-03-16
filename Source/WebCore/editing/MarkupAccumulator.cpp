@@ -37,7 +37,6 @@
 #include "KURL.h"
 #include "ProcessingInstruction.h"
 #include "XMLNSNames.h"
-#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -87,11 +86,8 @@ MarkupAccumulator::~MarkupAccumulator()
 
 String MarkupAccumulator::serializeNodes(Node* targetNode, Node* nodeToSkip, EChildrenOnly childrenOnly)
 {
-    StringBuilder result;
     serializeNodesWithNamespaces(targetNode, nodeToSkip, childrenOnly, 0);
-    result.reserveCapacity(length());
-    concatenateMarkup(result);
-    return result.toString();
+    return m_markup.toString();
 }
 
 void MarkupAccumulator::serializeNodesWithNamespaces(Node* targetNode, Node* nodeToSkip, EChildrenOnly childrenOnly, const Namespaces* namespaces)
@@ -134,23 +130,19 @@ String MarkupAccumulator::resolveURLIfNeeded(const Element* element, const Strin
 
 void MarkupAccumulator::appendString(const String& string)
 {
-    m_succeedingMarkup.append(string);
+    m_markup.append(string);
 }
 
 void MarkupAccumulator::appendStartTag(Node* node, Namespaces* namespaces)
 {
-    StringBuilder markup;
-    appendStartMarkup(markup, node, namespaces);
-    appendString(markup.toString());
+    appendStartMarkup(m_markup, node, namespaces);
     if (m_nodes)
         m_nodes->append(node);
 }
 
 void MarkupAccumulator::appendEndTag(Node* node)
 {
-    StringBuilder markup;
-    appendEndMarkup(markup, node);
-    appendString(markup.toString());
+    appendEndMarkup(m_markup, node);
 }
 
 size_t MarkupAccumulator::totalLength(const Vector<String>& strings)
@@ -161,13 +153,9 @@ size_t MarkupAccumulator::totalLength(const Vector<String>& strings)
     return length;
 }
 
-// FIXME: This is a very inefficient way of accumulating the markup.
-// We're converting results of appendStartMarkup and appendEndMarkup from StringBuilder to String
-// and then back to StringBuilder and again to String here.
 void MarkupAccumulator::concatenateMarkup(StringBuilder& result)
 {
-    for (size_t i = 0; i < m_succeedingMarkup.size(); ++i)
-        result.append(m_succeedingMarkup[i]);
+    result.append(m_markup);
 }
 
 void MarkupAccumulator::appendAttributeValue(StringBuilder& result, const String& attribute, bool documentIsHTML)
@@ -184,13 +172,13 @@ void MarkupAccumulator::appendQuotedURLAttributeValue(StringBuilder& result, con
 {
     ASSERT(element->isURLAttribute(const_cast<Attribute*>(&attribute)));
     const String resolvedURLString = resolveURLIfNeeded(element, attribute.value());
-    UChar quoteChar = '\"';
+    UChar quoteChar = '"';
     String strippedURLString = resolvedURLString.stripWhiteSpace();
     if (protocolIsJavaScript(strippedURLString)) {
         // minimal escaping for javascript urls
         if (strippedURLString.contains('"')) {
             if (strippedURLString.contains('\''))
-                strippedURLString.replace('\"', "&quot;");
+                strippedURLString.replace('"', "&quot;");
             else
                 quoteChar = '\'';
         }
@@ -301,9 +289,11 @@ void MarkupAccumulator::appendText(StringBuilder& result, Text* text)
 void MarkupAccumulator::appendComment(StringBuilder& result, const String& comment)
 {
     // FIXME: Comment content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "-->".
-    result.append("<!--");
+    static const char commentBegin[] = "<!--";
+    result.append(commentBegin, sizeof(commentBegin) - 1);
     result.append(comment);
-    result.append("-->");
+    static const char commentEnd[] = "-->";
+    result.append(commentEnd, sizeof(commentEnd) - 1);
 }
 
 void MarkupAccumulator::appendDocumentType(StringBuilder& result, const DocumentType* n)
@@ -311,38 +301,45 @@ void MarkupAccumulator::appendDocumentType(StringBuilder& result, const Document
     if (n->name().isEmpty())
         return;
 
-    result.append("<!DOCTYPE ");
+    static const char doctypeString[] = "<!DOCTYPE ";
+    result.append(doctypeString, sizeof(doctypeString) - 1);
     result.append(n->name());
     if (!n->publicId().isEmpty()) {
-        result.append(" PUBLIC \"");
+        static const char publicString[] = " PUBLIC \"";
+        result.append(publicString, sizeof(publicString) - 1);
         result.append(n->publicId());
-        result.append("\"");
+        result.append('"');
         if (!n->systemId().isEmpty()) {
-            result.append(" \"");
+            result.append(' ');
+            result.append('"');
             result.append(n->systemId());
-            result.append("\"");
+            result.append('"');
         }
     } else if (!n->systemId().isEmpty()) {
-        result.append(" SYSTEM \"");
+        static const char systemString[] = " SYSTEM \"";
+        result.append(systemString, sizeof(systemString) - 1);
         result.append(n->systemId());
-        result.append("\"");
+        result.append('"');
     }
     if (!n->internalSubset().isEmpty()) {
-        result.append(" [");
+        result.append(' ');
+        result.append('[');
         result.append(n->internalSubset());
-        result.append("]");
+        result.append(']');
     }
-    result.append(">");
+    result.append('>');
 }
 
 void MarkupAccumulator::appendProcessingInstruction(StringBuilder& result, const String& target, const String& data)
 {
     // FIXME: PI data is not escaped, but XMLSerializer (and possibly other callers) this should raise an exception if it includes "?>".
-    result.append("<?");
+    result.append('<');
+    result.append('?');
     result.append(target);
-    result.append(" ");
+    result.append(' ');
     result.append(data);
-    result.append("?>");
+    result.append('?');
+    result.append('>');
 }
 
 void MarkupAccumulator::appendElement(StringBuilder& result, Element* element, Namespaces* namespaces)
@@ -366,7 +363,7 @@ void MarkupAccumulator::appendOpenTag(StringBuilder& result, Element* element, N
     result.append('<');
     result.append(element->nodeNamePreservingCase());
     if (!element->document()->isHTMLDocument() && namespaces && shouldAddNamespaceElement(element))
-        appendNamespace(result, element->prefix(), element->namespaceURI(), *namespaces);    
+        appendNamespace(result, element->prefix(), element->namespaceURI(), *namespaces);
 }
 
 void MarkupAccumulator::appendCloseTag(StringBuilder& result, Element* element)
@@ -395,9 +392,9 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, Element* element,
     if (element->isURLAttribute(const_cast<Attribute*>(&attribute)))
         appendQuotedURLAttributeValue(result, element, attribute);
     else {
-        result.append('\"');
+        result.append('"');
         appendAttributeValue(result, attribute.value(), documentIsHTML);
-        result.append('\"');
+        result.append('"');
     }
 
     if (!documentIsHTML && namespaces && shouldAddNamespaceAttribute(attribute, *namespaces))
@@ -407,9 +404,11 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, Element* element,
 void MarkupAccumulator::appendCDATASection(StringBuilder& result, const String& section)
 {
     // FIXME: CDATA content is not escaped, but XMLSerializer (and possibly other callers) should raise an exception if it includes "]]>".
-    result.append("<![CDATA[");
+    static const char cdataBegin[] = "<![CDATA[";
+    result.append(cdataBegin, sizeof(cdataBegin) - 1);
     result.append(section);
-    result.append("]]>");
+    static const char cdataEnd[] = "]]>";
+    result.append(cdataEnd, sizeof(cdataEnd) - 1);
 }
 
 void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node* node, Namespaces* namespaces)
