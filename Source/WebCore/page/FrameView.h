@@ -446,7 +446,7 @@ private:
     bool m_firstLayout;
     bool m_isTransparent;
     Color m_baseBackgroundColor;
-    LayoutSize m_lastLayoutSize;
+    IntSize m_lastViewportSize;
     float m_lastZoomFactor;
 
     String m_mediaType;

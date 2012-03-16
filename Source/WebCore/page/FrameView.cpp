@@ -228,7 +228,7 @@ void FrameView::reset()
     m_firstLayout = true;
     m_firstLayoutCallbackPending = false;
     m_wasScrolledByUser = false;
-    m_lastLayoutSize = LayoutSize();
+    m_lastViewportSize = IntSize();
     m_lastZoomFactor = 1.0f;
     m_deferringRepaints = 0;
     m_repaintCount = 0;
@@ -1022,7 +1022,10 @@ void FrameView::layout(bool allowSubtree)
 
                     m_firstLayout = false;
                     m_firstLayoutCallbackPending = true;
-                    m_lastLayoutSize = LayoutSize(layoutWidth(), layoutHeight());
+                    if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
+                        m_lastViewportSize = fixedLayoutSize();
+                    else
+                        m_lastViewportSize = visibleContentRect(true /*includeScrollbars*/).size();
                     m_lastZoomFactor = root->style()->zoom();
 
                     // Set the initial vMode to AlwaysOn if we're auto.
@@ -2306,10 +2309,14 @@ void FrameView::performPostLayoutTasks()
     m_actionScheduler->resume();
 
     if (!root->printing()) {
-        LayoutSize currentSize = LayoutSize(layoutWidth(), layoutHeight());
+        IntSize currentSize;
+        if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
+            currentSize = fixedLayoutSize();
+        else
+            currentSize = visibleContentRect(true /*includeScrollbars*/).size();
         float currentZoomFactor = root->style()->zoom();
-        bool resized = !m_firstLayout && (currentSize != m_lastLayoutSize || currentZoomFactor != m_lastZoomFactor);
-        m_lastLayoutSize = currentSize;
+        bool resized = !m_firstLayout && (currentSize != m_lastViewportSize || currentZoomFactor != m_lastZoomFactor);
+        m_lastViewportSize = currentSize;
         m_lastZoomFactor = currentZoomFactor;
         if (resized) {
             m_frame->eventHandler()->sendResizeEvent();
