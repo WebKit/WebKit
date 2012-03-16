@@ -115,19 +115,19 @@ class TestConfigurationConverter(object):
         self._specifier_sorter = SpecifierSorter()
         self._collapsing_sets_by_size = {}
         self._junk_specifier_combinations = {}
-        collapsing_sets_by_category = {}
+        self._collapsing_sets_by_category = {}
         matching_sets_by_category = {}
         for configuration in all_test_configurations:
             for category, specifier in configuration.items():
                 self._specifier_to_configuration_set.setdefault(specifier, set()).add(configuration)
                 self._specifier_sorter.add_specifier(category, specifier)
-                collapsing_sets_by_category.setdefault(category, set()).add(specifier)
+                self._collapsing_sets_by_category.setdefault(category, set()).add(specifier)
                 # FIXME: This seems extra-awful.
                 for cat2, spec2 in configuration.items():
                     if category == cat2:
                         continue
                     matching_sets_by_category.setdefault(specifier, {}).setdefault(cat2, set()).add(spec2)
-        for collapsing_set in collapsing_sets_by_category.values():
+        for collapsing_set in self._collapsing_sets_by_category.values():
             self._collapsing_sets_by_size.setdefault(len(collapsing_set), set()).add(frozenset(collapsing_set))
 
         for specifier, sets_by_category in matching_sets_by_category.items():
@@ -165,16 +165,49 @@ class TestConfigurationConverter(object):
 
     @classmethod
     def collapse_macros(cls, macros_dict, specifiers_list):
-        for i in range(len(specifiers_list)):
-            for macro_specifier, macro in macros_dict.items():
-                specifiers_set = set(specifiers_list[i])
+        for macro_specifier, macro in macros_dict.items():
+            if len(macro) == 1:
+                continue
+
+            for combination in itertools.combinations(specifiers_list, len(macro)):
+                if cls.symmetric_difference(combination) == set(macro):
+                    for item in combination:
+                        specifiers_list.remove(item)
+                    new_specifier_set = cls.intersect_combination(combination)
+                    new_specifier_set.add(macro_specifier)
+                    specifiers_list.append(frozenset(new_specifier_set))
+
+        def collapse_individual_specifier_set(macro_specifier, macro):
+            specifiers_to_remove = []
+            specifiers_to_add = []
+            for specifier_set in specifiers_list:
                 macro_set = set(macro)
-                if specifiers_set >= macro_set:
-                    specifiers_list[i] = frozenset((specifiers_set - macro_set) | set([macro_specifier]))
+                if macro_set.intersection(specifier_set) == macro_set:
+                    specifiers_to_remove.append(specifier_set)
+                    specifiers_to_add.append(frozenset((set(specifier_set) - macro_set) | set([macro_specifier])))
+            for specifier in specifiers_to_remove:
+                specifiers_list.remove(specifier)
+            for specifier in specifiers_to_add:
+                specifiers_list.append(specifier)
+
+        for macro_specifier, macro in macros_dict.items():
+            collapse_individual_specifier_set(macro_specifier, macro)
+
+    @classmethod
+    def intersect_combination(cls, combination):
+        return reduce(set.intersection, [set(specifiers) for specifiers in combination])
+
+    @classmethod
+    def symmetric_difference(cls, iterable):
+        union = set()
+        intersection = iterable[0]
+        for item in iterable:
+            union = union | item
+            intersection = intersection.intersection(item)
+        return union - intersection
 
     def to_specifiers_list(self, test_configuration_set):
         """Convert a set of TestConfiguration instances into one or more list of specifiers."""
-
         # Easy out: if the set is all configurations, the modifier is empty.
         if len(test_configuration_set) == len(self._all_test_configurations):
             return [[]]
@@ -188,20 +221,14 @@ class TestConfigurationConverter(object):
                     values -= junk_specifier_set
             specifiers_list.append(frozenset(values))
 
-        def intersect_combination(combination):
-            return reduce(set.intersection, [set(specifiers) for specifiers in combination])
-
-        def symmetric_difference(iterable):
-            return reduce(lambda x, y: x ^ y, iterable)
-
         def try_collapsing(size, collapsing_sets):
             if len(specifiers_list) < size:
                 return False
             for combination in itertools.combinations(specifiers_list, size):
-                if symmetric_difference(combination) in collapsing_sets:
+                if self.symmetric_difference(combination) in collapsing_sets:
                     for item in combination:
                         specifiers_list.remove(item)
-                    specifiers_list.append(frozenset(intersect_combination(combination)))
+                    specifiers_list.append(frozenset(self.intersect_combination(combination)))
                     return True
             return False
 
@@ -211,14 +238,14 @@ class TestConfigurationConverter(object):
             while try_collapsing(size, collapsing_sets):
                 pass
 
-        def try_abbreviating():
+        def try_abbreviating(collapsing_sets):
             if len(specifiers_list) < 2:
                 return False
             for combination in itertools.combinations(specifiers_list, 2):
                 for collapsing_set in collapsing_sets:
-                    diff = symmetric_difference(combination)
+                    diff = self.symmetric_difference(combination)
                     if diff <= collapsing_set:
-                        common = intersect_combination(combination)
+                        common = self.intersect_combination(combination)
                         for item in combination:
                             specifiers_list.remove(item)
                         specifiers_list.append(frozenset(common | diff))
@@ -227,11 +254,30 @@ class TestConfigurationConverter(object):
 
         # 3) Abbreviate specifier sets by combining specifiers across categories.
         #   (xp, release), (win7, release) --> (xp, win7, release)
-        while try_abbreviating():
+        while try_abbreviating(self._collapsing_sets_by_size.values()):
             pass
+
 
         # 4) Substitute specifier subsets that match macros witin each set:
         #   (xp, vista, win7, release) -> (win, release)
         self.collapse_macros(self._configuration_macros, specifiers_list)
+
+        macro_keys = set(self._configuration_macros.keys())
+
+        # 5) Collapsing macros may have created combinations the can now be abbreviated.
+        #   (xp, release), (linux, x86, release), (linux, x86_64, release) --> (xp, release), (linux, release) --> (xp, linux, release)
+        while try_abbreviating([self._collapsing_sets_by_category['version'] | macro_keys]):
+            pass
+
+        # 6) Remove cases where we have collapsed but have all macros.
+        #   (android, win, mac, linux, release) --> (release)
+        specifiers_to_remove = []
+        for specifier_set in specifiers_list:
+            if macro_keys <= specifier_set:
+                specifiers_to_remove.append(specifier_set)
+
+        for specifier_set in specifiers_to_remove:
+            specifiers_list.remove(specifier_set)
+            specifiers_list.append(frozenset(specifier_set - macro_keys))
 
         return specifiers_list

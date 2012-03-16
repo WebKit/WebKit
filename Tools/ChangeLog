@@ -1,3 +1,45 @@
+2012-03-15  Ojan Vafai  <ojan@chromium.org>
+
+        Specifier collapsing when writing test expectations lines gets a number of cases wrong
+        https://bugs.webkit.org/show_bug.cgi?id=81309
+
+        Reviewed by Dimitri Glazkov.
+
+        I've run this over all the lines in the current Chromium test_expectations.txt file,
+        so I'm relatively confident we now cover all the cases.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py:
+        (TestConfigurationConverter.__init__):
+        (TestConfigurationConverter.collapse_macros):
+        (TestConfigurationConverter.collapse_macros.collapse_individual_specifier_set):
+        (TestConfigurationConverter):
+        (TestConfigurationConverter.intersect_combination):
+        (TestConfigurationConverter.symmetric_difference):
+        (TestConfigurationConverter.to_specifiers_list):
+        (TestConfigurationConverter.to_specifiers_list.try_collapsing):
+        (TestConfigurationConverter.to_specifiers_list.try_abbreviating):
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py:
+        (make_mock_all_test_configurations_set):
+        (TestConfigurationConverterTest.test_symmetric_difference):
+        (TestConfigurationConverterTest.test_to_config_set):
+        (TestConfigurationConverterTest.test_macro_expansion):
+        (TestConfigurationConverterTest.test_to_specifier_lists):
+        (TestConfigurationConverterTest.test_converter_macro_collapsing):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        The android port uses "arm" as it's architecture, which is technically correct,
+        but considerably complicates making collapsing work. We probably should kill
+        the concept of architecture entirely. The benefits are not worth the code
+        complexity.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumPortTest.test_all_test_configurations):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_rebaseline_updates_expectations_file_noop):
+        (test_rebaseline_updates_expectations_file):
+
 2012-03-16  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][Wk2] Assertion Failure and crash on file upload

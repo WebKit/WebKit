@@ -162,8 +162,8 @@ class ChromiumPortTest(port_testcase.PortTestCase):
         """Validate the complete set of configurations this port knows about."""
         port = self.make_port()
         self.assertEquals(set(port.all_test_configurations()), set([
-            TestConfiguration('icecreamsandwich', 'arm', 'debug'),
-            TestConfiguration('icecreamsandwich', 'arm', 'release'),
+            TestConfiguration('icecreamsandwich', 'x86', 'debug'),
+            TestConfiguration('icecreamsandwich', 'x86', 'release'),
             TestConfiguration('leopard', 'x86', 'debug'),
             TestConfiguration('leopard', 'x86', 'release'),
             TestConfiguration('snowleopard', 'x86', 'debug'),

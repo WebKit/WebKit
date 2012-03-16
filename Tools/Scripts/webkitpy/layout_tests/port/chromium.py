@@ -67,7 +67,9 @@ class ChromiumPort(Port):
         ('win7', 'x86'),
         ('lucid', 'x86'),
         ('lucid', 'x86_64'),
-        ('icecreamsandwich', 'arm'))
+        # FIXME: Technically this should be 'arm', but adding a third architecture type breaks TestConfigurationConverter.
+        # If we need this to be 'arm' in the future, then we first have to fix TestConfigurationConverter.
+        ('icecreamsandwich', 'x86'))
 
     ALL_BASELINE_VARIANTS = [
         'chromium-mac-lion', 'chromium-mac-snowleopard', 'chromium-mac-leopard',

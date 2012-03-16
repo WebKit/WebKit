@@ -143,8 +143,6 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
         self._operating_system = 'android'
         self._version = 'icecreamsandwich'
-        # FIXME: we may support other architectures in the future.
-        self._architecture = 'arm'
         self._original_governor = None
         self._android_base_dir = None
 
