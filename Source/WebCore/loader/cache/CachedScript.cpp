@@ -104,14 +104,6 @@ void CachedScript::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
     checkNotify();
 }
 
-void CachedScript::error(CachedResource::Status status)
-{
-    setStatus(status);
-    ASSERT(errorOccurred());
-    setLoading(false);
-    checkNotify();
-}
-
 void CachedScript::destroyDecodedData()
 {
     m_script = String();
