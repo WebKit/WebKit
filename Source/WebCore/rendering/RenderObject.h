@@ -29,6 +29,7 @@
 #include "CachedImage.h"
 #include "Document.h"
 #include "Element.h"
+#include "FractionalLayoutUnit.h"
 #include "FloatQuad.h"
 #include "LayoutTypes.h"
 #include "PaintPhase.h"
@@ -717,6 +718,7 @@ public:
     {
         return clippedOverflowRectForRepaint(0);
     }
+    IntRect pixelSnappedAbsoluteClippedOverflowRect() const;
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual LayoutRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, LayoutUnit outlineWidth) const;
 
@@ -1139,6 +1141,11 @@ inline void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRenderi
 inline int adjustForAbsoluteZoom(int value, RenderObject* renderer)
 {
     return adjustForAbsoluteZoom(value, renderer->style());
+}
+
+inline int adjustForAbsoluteZoom(FractionalLayoutUnit value, RenderObject* renderer)
+{
+    return adjustForAbsoluteZoom(value.floor(), renderer->style());
 }
 
 inline void adjustFloatQuadForAbsoluteZoom(FloatQuad& quad, RenderObject* renderer)
