@@ -1,3 +1,22 @@
+2012-03-16  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11027997> and https://bugs.webkit.org/show_bug.cgi?id=81412
+        REGRESSION (r107435) Copy a link and paste to Mail: Nothing is pasted
+
+        Reviewed by Geoff Garen.
+
+        Add new message so the WebProcess can ask the UIProcesses pasteboard for the URL:
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContext.messages.in:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::getPasteboardURL):
+
+        Use that new message to implement the pasteboard strategy:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::url):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        (WebPlatformStrategies):
+
 2012-03-16  Alexey Proskuryakov  <ap@apple.com>
 
         ASSERTION FAILED: m_loadState == LoadStateCommitted in WebFrameProxy::didFinishLoad causing

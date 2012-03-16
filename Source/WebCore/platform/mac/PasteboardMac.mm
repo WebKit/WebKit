@@ -513,7 +513,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
         return fragment.release();
 
     if (types.contains(String(NSURLPboardType))) {
-        NSURL *URL = [NSURL URLWithString:platformStrategies()->pasteboardStrategy()->stringForType(NSURLPboardType, m_pasteboardName)];
+        NSURL *URL = platformStrategies()->pasteboardStrategy()->url(m_pasteboardName);
         Document* document = frame->document();
         ASSERT(document);
         if (!document)

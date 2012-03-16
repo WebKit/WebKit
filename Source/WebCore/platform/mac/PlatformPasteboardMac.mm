@@ -20,11 +20,12 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "config.h"
 #import "Color.h"
+#import "KURL.h"
 #import "PlatformPasteboard.h"
 
 namespace WebCore {
@@ -88,6 +89,11 @@ Color PlatformPasteboard::color()
     
     return makeRGBA((int)([color redComponent] * 255.0 + 0.5), (int)([color greenComponent] * 255.0 + 0.5), 
                     (int)([color blueComponent] * 255.0 + 0.5), (int)([color alphaComponent] * 255.0 + 0.5));    
+}
+
+KURL PlatformPasteboard::url()
+{
+    return [NSURL URLFromPasteboard:m_pasteboard.get()];
 }
 
 void PlatformPasteboard::copy(const String& fromPasteboard)

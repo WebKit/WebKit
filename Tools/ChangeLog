@@ -1,3 +1,13 @@
+2012-03-16  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11027997> and https://bugs.webkit.org/show_bug.cgi?id=81412
+        REGRESSION (r107435) Copy a link and paste to Mail: Nothing is pasted
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/WebViewCanPasteURL.mm: Added.
+
 2012-03-16  Ojan Vafai  <ojan@chromium.org>
 
         Mark wontfix tests in full_results.json so we can ignore them in garden-o-matic

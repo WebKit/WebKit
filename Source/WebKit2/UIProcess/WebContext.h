@@ -226,6 +226,7 @@ private:
     void getPasteboardChangeCount(const String& pasteboardName, uint64_t& changeCount);
     void getPasteboardUniqueName(String& pasteboardName);
     void getPasteboardColor(const String& pasteboardName, WebCore::Color&);
+    void getPasteboardURL(const String& pasteboardName, WTF::String&);
     void addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes);
     void setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes);
     void setPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames);

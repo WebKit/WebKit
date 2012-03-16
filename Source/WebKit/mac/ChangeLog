@@ -1,3 +1,17 @@
+2012-03-16  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/11027997> and https://bugs.webkit.org/show_bug.cgi?id=81412
+        REGRESSION (r107435) Copy a link and paste to Mail: Nothing is pasted
+
+        Reviewed by Geoff Garen.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::setInsertionPasteboard):
+        * WebCoreSupport/WebPlatformStrategies.h:
+        (WebPlatformStrategies):
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::url):
+
 2012-03-08  Jer Noble  <jer.noble@apple.com>
 
         Support W3C Full Screen API proposal

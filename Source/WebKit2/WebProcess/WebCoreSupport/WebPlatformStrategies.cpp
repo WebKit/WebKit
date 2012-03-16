@@ -34,6 +34,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/Color.h>
+#include <WebCore/KURL.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformPasteboard.h>
 
@@ -197,6 +198,14 @@ Color WebPlatformStrategies::color(const String& pasteboardName)
     WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPasteboardColor(pasteboardName),
                                                 Messages::WebContext::GetPasteboardColor::Reply(color), 0);
     return color;
+}
+
+KURL WebPlatformStrategies::url(const String& pasteboardName)
+{
+    String urlString;
+    WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPasteboardURL(pasteboardName),
+                                                Messages::WebContext::GetPasteboardURL::Reply(urlString), 0);
+    return KURL(ParsedURLString, urlString);
 }
 
 void WebPlatformStrategies::addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)

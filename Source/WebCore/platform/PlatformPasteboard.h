@@ -38,6 +38,7 @@ OBJC_CLASS NSPasteboard;
 namespace WebCore {
 
 class Color;
+class KURL;
 
 class PlatformPasteboard {
 public:
@@ -50,6 +51,7 @@ public:
     String stringForType(const String& pasteboardType);
     int changeCount() const;
     Color color();
+    KURL url();
     
     void copy(const String& fromPasteboard);
     void addTypes(const Vector<String>& pasteboardTypes);

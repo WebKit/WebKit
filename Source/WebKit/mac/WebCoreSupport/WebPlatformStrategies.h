@@ -64,7 +64,8 @@ private:
     virtual int changeCount(const String& pasteboardName) OVERRIDE;
     virtual String uniqueName() OVERRIDE;
     virtual WebCore::Color color(const String& pasteboardName) OVERRIDE;
-    
+    virtual WebCore::KURL url(const String& pasteboardName) OVERRIDE;
+
     virtual void copy(const String& fromPasteboard, const String& toPasteboard) OVERRIDE;
     virtual void addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) OVERRIDE;
     virtual void setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName) OVERRIDE;
