@@ -387,9 +387,15 @@ class ResultSummaryTest(unittest.TestCase):
         return test_names, result_summary.ResultSummary(expectations, test_names), expectations
 
     # FIXME: Use this to test more of summarize_results. This was moved from printing_unittest.py.
-    def get_unexpected_results(self, port, expected, passing, flaky):
-        tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html']
+    def summarized_results(self, port, expected, passing, flaky, extra_tests=[], extra_expectations=None):
+        tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html', 'failures/expected/wontfix.html']
+        if extra_tests:
+            tests.extend(extra_tests)
+
         expectations = ''
+        if extra_expectations:
+            expectations += extra_expectations
+
         paths, rs, exp = self.get_result_summary(port, tests, expectations)
         if expected:
             rs.add(self.get_result('passes/text.html', test_expectations.PASS), expected)
@@ -403,6 +409,10 @@ class ResultSummaryTest(unittest.TestCase):
             rs.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), expected)
             rs.add(self.get_result('failures/expected/timeout.html', test_expectations.CRASH), expected)
             rs.add(self.get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected)
+
+        for test in extra_tests:
+            rs.add(self.get_result(test, test_expectations.CRASH), expected)
+
         retry = rs
         if flaky:
             paths, retry, exp = self.get_result_summary(port, tests, expectations)
@@ -410,20 +420,29 @@ class ResultSummaryTest(unittest.TestCase):
             retry.add(self.get_result('failures/expected/timeout.html'), True)
             retry.add(self.get_result('failures/expected/crash.html'), True)
         unexpected_results = manager.summarize_results(port, exp, rs, retry, test_timings={}, only_unexpected=True, interrupted=False)
-        return unexpected_results
+        expected_results = manager.summarize_results(port, exp, rs, retry, test_timings={}, only_unexpected=False, interrupted=False)
+        return expected_results, unexpected_results
 
     def test_no_svn_revision(self):
         host = MockHost()
         port = host.port_factory.get('test')
-        results = self.get_unexpected_results(port, expected=False, passing=False, flaky=False)
-        self.assertTrue('revision' not in results)
+        expected_results, unexpected_results = self.summarized_results(port, expected=False, passing=False, flaky=False)
+        self.assertTrue('revision' not in unexpected_results)
 
     def test_svn_revision(self):
         host = MockHost()
         port = host.port_factory.get('test')
         port._options.builder_name = 'dummy builder'
-        results = self.get_unexpected_results(port, expected=False, passing=False, flaky=False)
-        self.assertTrue('revision' in results)
+        expected_results, unexpected_results = self.summarized_results(port, expected=False, passing=False, flaky=False)
+        self.assertTrue('revision' in unexpected_results)
+
+    def test_summarized_results_wontfix(self):
+        host = MockHost()
+        port = host.port_factory.get('test')
+        port._options.builder_name = 'dummy builder'
+        port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), "failures/expected/wontfix.html"), "Dummy test contents")
+        expected_results, unexpected_results = self.summarized_results(port, expected=False, passing=False, flaky=False, extra_tests=['failures/expected/wontfix.html'], extra_expectations='BUGX WONTFIX : failures/expected/wontfix.html = FAIL\n')
+        self.assertTrue(expected_results['tests']['failures']['expected']['wontfix.html']['wontfix'])
 
 if __name__ == '__main__':
     port_testcase.main()

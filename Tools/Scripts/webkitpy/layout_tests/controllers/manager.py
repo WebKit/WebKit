@@ -170,6 +170,9 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         if result.has_stderr:
             test_dict['has_stderr'] = True
 
+        if expectations.has_modifier(test_name, test_expectations.WONTFIX):
+            test_dict['wontfix'] = True
+
         if result_type == test_expectations.PASS:
             num_passes += 1
             # FIXME: include passing tests that have stderr output.
