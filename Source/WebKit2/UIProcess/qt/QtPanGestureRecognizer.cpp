@@ -63,10 +63,7 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event)
         m_state = GestureRecognitionStarted;
         m_firstPosition = touchPoint.screenPos();
         m_touchBegin.reset(new QTouchEvent(*event));
-
-        // Touch begin while bouncing back from panning should move the content to the end position immediately.
-        interactionEngine()->panGestureCancelled();
-        interactionEngine()->ensureContentWithinViewportBoundary(/*immediate*/ true);
+        interactionEngine()->cancelScrollAnimation();
         return false;
     case QEvent::TouchUpdate: {
         ASSERT(m_state != NoGesture);

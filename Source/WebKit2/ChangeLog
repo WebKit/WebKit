@@ -1,3 +1,23 @@
+2012-03-16  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Fix bounce-back behaviour for panning
+        https://bugs.webkit.org/show_bug.cgi?id=81144
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        If the pan gesture recognizer receives a touch begin event
+        during an ongoing kinetic scroll animation of a previous
+        pan gesture, the animation is stopped and the content is
+        immediately positioned back to valid boundaries.
+
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::recognize):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::cancelScrollAnimation):
+        (WebKit):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+
 2012-03-16  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][Wk2] Assertion Failure and crash on file upload

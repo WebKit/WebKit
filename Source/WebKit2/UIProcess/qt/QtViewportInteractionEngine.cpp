@@ -489,6 +489,19 @@ bool QtViewportInteractionEngine::scaleAnimationActive() const
     return m_scaleAnimation->state() == QAbstractAnimation::Running;
 }
 
+void QtViewportInteractionEngine::cancelScrollAnimation()
+{
+    ViewportUpdateDeferrer guard(this);
+
+    // If the pan gesture recognizer receives a touch begin event
+    // during an ongoing kinetic scroll animation of a previous
+    // pan gesture, the animation is stopped and the content is
+    // immediately positioned back to valid boundaries.
+
+    m_flickProvider->cancelFlick();
+    ensureContentWithinViewportBoundary(/*immediate*/ true);
+}
+
 void QtViewportInteractionEngine::interruptScaleAnimation()
 {
     // This interrupts the scale animation exactly where it is, even if it is out of bounds.

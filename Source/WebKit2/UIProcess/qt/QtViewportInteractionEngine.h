@@ -78,6 +78,7 @@ public:
     void pagePositionRequest(const QPoint& pos);
 
     bool scrollAnimationActive() const;
+    void cancelScrollAnimation();
 
     bool panGestureActive() const;
     void panGestureStarted(const QTouchEvent*);
@@ -93,7 +94,6 @@ public:
     void pinchGestureRequestUpdate(const QPointF& pinchCenterInViewportCoordinates, qreal totalScaleFactor);
     void pinchGestureEnded();
 
-    bool ensureContentWithinViewportBoundary(bool immediate = false);
     void zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea);
     void focusEditableArea(const QRectF& caretArea, const QRectF& targetArea);
 
@@ -134,6 +134,7 @@ private:
     qreal outerBoundedCSSScale(qreal);
 
     QRectF computePosRangeForItemAtScale(qreal itemScale) const;
+    bool ensureContentWithinViewportBoundary(bool immediate = false);
 
     void scaleContent(const QPointF& centerInCSSCoordinates, qreal cssScale);
 
