@@ -32,6 +32,7 @@
 #include "FilterOperations.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
+#include "Region.h"
 #include "TextureManager.h"
 #include "WebCompositor.h"
 #include "WebKit.h"
@@ -1272,15 +1273,15 @@ public:
     int updateCount() { return m_updateCount; }
     void resetUpdateCount() { m_updateCount = 0; }
 
-    virtual void paintContentsIfDirty(const CCOcclusionTracker* occlusion)
+    virtual void paintContentsIfDirty(const Region& occludedScreenSpace)
     {
-        ContentLayerChromium::paintContentsIfDirty(occlusion);
+        ContentLayerChromium::paintContentsIfDirty(occludedScreenSpace);
         m_paintContentsCount++;
     }
 
-    virtual void idlePaintContentsIfDirty(const CCOcclusionTracker* occlusion)
+    virtual void idlePaintContentsIfDirty(const Region& occluded)
     {
-        ContentLayerChromium::idlePaintContentsIfDirty(occlusion);
+        ContentLayerChromium::idlePaintContentsIfDirty(occluded);
         m_idlePaintContentsCount++;
     }
 
@@ -1632,9 +1633,9 @@ class TestLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<TestLayerChromium> create() { return adoptRef(new TestLayerChromium()); }
 
-    virtual void paintContentsIfDirty(const CCOcclusionTracker* occlusion)
+    virtual void paintContentsIfDirty(const Region& occludedScreenSpace)
     {
-        m_occludedScreenSpace = occlusion ? occlusion->currentOcclusionInScreenSpace() : Region();
+        m_occludedScreenSpace = occludedScreenSpace;
     }
 
     virtual bool drawsContent() const { return true; }

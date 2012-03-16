@@ -43,7 +43,6 @@
 #include "RenderSurfaceChromium.h"
 #include "ShaderChromium.h"
 #include "TransformationMatrix.h"
-#include "cc/CCOcclusionTracker.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -162,8 +161,8 @@ public:
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return m_isDrawable; }
-    virtual void paintContentsIfDirty(const CCOcclusionTracker* /* occlusion */) { }
-    virtual void idlePaintContentsIfDirty(const CCOcclusionTracker* /* occlusion */) { }
+    virtual void paintContentsIfDirty(const Region& /* occludedScreenSpace */) { }
+    virtual void idlePaintContentsIfDirty(const Region& /* occludedScreenSpace */) { }
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&) { }
     virtual void setIsMask(bool) { }
     virtual void unreserveContentsTexture() { }

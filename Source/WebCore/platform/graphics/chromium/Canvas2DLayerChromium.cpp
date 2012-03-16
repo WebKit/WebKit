@@ -97,7 +97,7 @@ void Canvas2DLayerChromium::setCanvas(SkCanvas* canvas)
     m_canvas = canvas;
 }
 
-void Canvas2DLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* /* occlusion */)
+void Canvas2DLayerChromium::paintContentsIfDirty(const Region& /* occludedScreenSpace */)
 {
     TRACE_EVENT("Canvas2DLayerChromium::paintContentsIfDirty", this, 0);
     if (!drawsContent())

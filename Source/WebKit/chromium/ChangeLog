@@ -1,3 +1,22 @@
+2012-03-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r110929.
+        http://trac.webkit.org/changeset/110929
+        https://bugs.webkit.org/show_bug.cgi?id=81306
+
+        breaking webkit_unit_tests (Requested by morrita on #webkit).
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::ContentLayerChromiumWithUpdateTracking::paintContentsIfDirty):
+        (WTF::ContentLayerChromiumWithUpdateTracking::idlePaintContentsIfDirty):
+        (WTF::TestLayerChromium::paintContentsIfDirty):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeTiledLayerChromium::prepareToUpdate):
+        (WTF::FakeTiledLayerChromium::prepareToUpdateIdle):
+        (WTF::FakeTiledLayerChromium::paintContentsIfDirty):
+        (WTF::TEST):
+
 2012-03-15  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Decide occlusion in paint culling with CCOcclusionTracker

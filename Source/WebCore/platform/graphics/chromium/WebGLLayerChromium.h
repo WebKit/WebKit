@@ -53,7 +53,7 @@ public:
     void setTextureId(unsigned textureId) { m_textureId = textureId; }
 
     virtual bool drawsContent() const;
-    virtual void paintContentsIfDirty(const CCOcclusionTracker*);
+    virtual void paintContentsIfDirty(const Region&);
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
     virtual void pushPropertiesTo(CCLayerImpl*);
     virtual void setNeedsDisplayRect(const FloatRect&);

@@ -70,7 +70,7 @@ bool WebGLLayerChromium::drawsContent() const
     return LayerChromium::drawsContent() && !m_contextLost;
 }
 
-void WebGLLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* /* occlusion */)
+void WebGLLayerChromium::paintContentsIfDirty(const Region&)
 {
     if (!drawsContent() || !m_needsDisplay || !m_textureUpdated)
         return;

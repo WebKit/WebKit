@@ -216,7 +216,7 @@ private:
     void initializeLayerRenderer();
 
     enum PaintType { PaintVisible, PaintIdle };
-    static void paintContentsIfDirty(LayerChromium*, PaintType, const CCOcclusionTracker*);
+    static void paintContentsIfDirty(LayerChromium*, PaintType, const Region& occludedScreenSpace);
     void paintLayerContents(const LayerList&, PaintType);
     void paintMaskAndReplicaForRenderSurface(LayerChromium*, PaintType);
 

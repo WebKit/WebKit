@@ -55,7 +55,7 @@ public:
     virtual void setNeedsDisplayRect(const FloatRect&);
 
     virtual bool drawsContent() const;
-    virtual void paintContentsIfDirty(const CCOcclusionTracker*);
+    virtual void paintContentsIfDirty(const Region& occludedScreenSpace);
 
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
     virtual void pushPropertiesTo(CCLayerImpl*);

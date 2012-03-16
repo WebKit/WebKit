@@ -397,9 +397,22 @@ bool TiledLayerChromium::tileNeedsBufferedUpdate(UpdatableTile* tile)
     return true;
 }
 
-void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int right, int bottom, const CCOcclusionTracker* occlusion)
+// FIXME: This gets rolled into CCOcclusionTracker when we stop passing around Region objects.
+static inline TransformationMatrix contentToLayerTransform(const IntSize& boundsInLayerSpace, const IntSize& boundsInContentSpace)
+{
+    TransformationMatrix transform;
+    // Scale from content space to layer space
+    transform.scaleNonUniform(boundsInLayerSpace.width() / static_cast<double>(boundsInContentSpace.width()),
+                              boundsInLayerSpace.height() / static_cast<double>(boundsInContentSpace.height()));
+    return transform;
+}
+
+void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int right, int bottom, const Region& occludedScreenSpace)
 {
     createTextureUpdaterIfNeeded();
+
+    // Tiles are in the layer's content space, the occluded region is in screen space.
+    TransformationMatrix contentToScreenSpace = screenSpaceTransform() * contentToLayerTransform(bounds(), contentBounds());
 
     // Create tiles as needed, expanding a dirty rect to contain all
     // the dirty regions currently being drawn. All dirty tiles that are to be painted
@@ -415,9 +428,9 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             // When not idle painting, if the visible region of the tile is occluded, don't reserve a texture or mark it for update.
             // If any part of the tile is visible, then we need to paint it so the tile is pushed to the impl thread.
             // This will also avoid painting the tile in the next loop, below.
-            if (!idle && occlusion) {
+            if (!idle) {
                 IntRect visibleTileRect = intersection(m_tiler->tileBounds(i, j), visibleLayerRect());
-                if (occlusion->occluded(this, visibleTileRect))
+                if (occludedScreenSpace.contains(contentToScreenSpace.mapRect(visibleTileRect)))
                     continue;
             }
 
@@ -559,7 +572,7 @@ void TiledLayerChromium::resetUpdateState()
     }
 }
 
-void TiledLayerChromium::prepareToUpdate(const IntRect& layerRect, const CCOcclusionTracker* occlusion)
+void TiledLayerChromium::prepareToUpdate(const IntRect& layerRect, const Region& occludedScreenSpace)
 {
     m_skipsDraw = false;
     m_skipsIdlePaint = false;
@@ -576,10 +589,10 @@ void TiledLayerChromium::prepareToUpdate(const IntRect& layerRect, const CCOcclu
     int left, top, right, bottom;
     m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
 
-    prepareToUpdateTiles(false, left, top, right, bottom, occlusion);
+    prepareToUpdateTiles(false, left, top, right, bottom, occludedScreenSpace);
 }
 
-void TiledLayerChromium::prepareToUpdateIdle(const IntRect& layerRect, const CCOcclusionTracker* occlusion)
+void TiledLayerChromium::prepareToUpdateIdle(const IntRect& layerRect, const Region& occludedScreenSpace)
 {
     // Abort if we have already prepared a paint or run out of memory.
     if (m_skipsIdlePaint || !m_paintRect.isEmpty())
@@ -601,7 +614,7 @@ void TiledLayerChromium::prepareToUpdateIdle(const IntRect& layerRect, const CCO
     m_tiler->layerRectToTileIndices(layerRect, left, top, right, bottom);
 
     // Prepaint anything that was occluded but inside the layer's visible region.
-    prepareToUpdateTiles(true, left, top, right, bottom, 0);
+    prepareToUpdateTiles(true, left, top, right, bottom, occludedScreenSpace);
     if (!m_paintRect.isEmpty() || m_skipsIdlePaint)
         return;
 
@@ -611,25 +624,25 @@ void TiledLayerChromium::prepareToUpdateIdle(const IntRect& layerRect, const CCO
     while (!m_skipsIdlePaint && (left > prepaintLeft || top > prepaintTop || right < prepaintRight || bottom < prepaintBottom)) {
         if (bottom < prepaintBottom) {
             ++bottom;
-            prepareToUpdateTiles(true, left, bottom, right, bottom, 0);
+            prepareToUpdateTiles(true, left, bottom, right, bottom, occludedScreenSpace);
             if (!m_paintRect.isEmpty() || m_skipsIdlePaint)
                 break;
         }
         if (top > prepaintTop) {
             --top;
-            prepareToUpdateTiles(true, left, top, right, top, 0);
+            prepareToUpdateTiles(true, left, top, right, top, occludedScreenSpace);
             if (!m_paintRect.isEmpty() || m_skipsIdlePaint)
                 break;
         }
         if (left > prepaintLeft) {
             --left;
-            prepareToUpdateTiles(true, left, top, left, bottom, 0);
+            prepareToUpdateTiles(true, left, top, left, bottom, occludedScreenSpace);
             if (!m_paintRect.isEmpty() || m_skipsIdlePaint)
                 break;
         }
         if (right < prepaintRight) {
             ++right;
-            prepareToUpdateTiles(true, right, top, right, bottom, 0);
+            prepareToUpdateTiles(true, right, top, right, bottom, occludedScreenSpace);
             if (!m_paintRect.isEmpty() || m_skipsIdlePaint)
                 break;
         }
