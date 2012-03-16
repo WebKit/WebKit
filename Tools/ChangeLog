@@ -1,3 +1,10 @@
+2012-03-15  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build change after wtf path changes.
+
+        * DumpRenderTree/win/ImageDiffWinCairoCommon.vsprops: Updated include
+        directories to look at the private header directory to find 'wtf'.
+
 2012-03-15  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r110595): webkit-patch suggest-reviewers doesn't work
