@@ -1207,20 +1207,6 @@ bool CSSStyleSelector::matchesRuleSet(RuleSet* ruleSet)
 
 bool CSSStyleSelector::canShareStyleWithControl(StyledElement* element) const
 {
-#if ENABLE(PROGRESS_TAG)
-    if (element->hasTagName(progressTag)) {
-        if (!m_element->hasTagName(progressTag))
-            return false;
-
-        HTMLProgressElement* thisProgressElement = static_cast<HTMLProgressElement*>(element);
-        HTMLProgressElement* otherProgressElement = static_cast<HTMLProgressElement*>(m_element);
-        if (thisProgressElement->isDeterminate() != otherProgressElement->isDeterminate())
-            return false;
-
-        return true;
-    }
-#endif
-
     HTMLInputElement* thisInputElement = element->toInputElement();
     HTMLInputElement* otherInputElement = m_element->toInputElement();
 
@@ -1344,6 +1330,18 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
 #if ENABLE(STYLE_SCOPED)
     if (element->hasScopedHTMLStyleChild())
         return false;
+#endif
+
+#if ENABLE(PROGRESS_TAG)
+    if (element->hasTagName(progressTag)) {
+        if (!m_element->hasTagName(progressTag))
+            return false;
+
+        HTMLProgressElement* thisProgressElement = static_cast<HTMLProgressElement*>(element);
+        HTMLProgressElement* otherProgressElement = static_cast<HTMLProgressElement*>(m_element);
+        if (thisProgressElement->isDeterminate() != otherProgressElement->isDeterminate())
+            return false;
+    }
 #endif
 
     bool isControl = element->isFormControlElement();

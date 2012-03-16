@@ -1093,7 +1093,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             }
         case CSSSelector::PseudoIndeterminate:
             {
-                if (!element || !element->isFormControlElement())
+                if (!element)
                     break;
 #if ENABLE(PROGRESS_TAG)
                 if (element->hasTagName(progressTag)) {

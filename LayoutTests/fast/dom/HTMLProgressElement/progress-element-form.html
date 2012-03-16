@@ -9,11 +9,11 @@ if (window.layoutTestController)
 <table><form id=form1>
 <progress id=progress1></progress>
 </form></table>
-<div>This test passes if the progress element can find its form.</div>
+<div>This test passes if the progress element doesn't have form attribute.</div>
 <div id=console>FAIL</div>
 
 <script>
-if (document.getElementById('progress1').form.id == "form1")
+if (document.getElementById('progress1').form === undefined)
     document.getElementById('console').innerHTML = "PASS";
 </script>
 </body>

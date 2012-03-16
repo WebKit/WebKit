@@ -99,7 +99,7 @@ p interfaceName=HTMLParagraphElement
 param
 plaintext interfaceName=HTMLElement
 pre
-progress interfaceName=HTMLProgressElement, constructorNeedsFormElement, conditional=PROGRESS_TAG
+progress interfaceName=HTMLProgressElement, conditional=PROGRESS_TAG
 q interfaceName=HTMLQuoteElement
 rp interfaceName=HTMLElement
 rt interfaceName=HTMLElement

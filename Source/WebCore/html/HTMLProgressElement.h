@@ -22,18 +22,18 @@
 #define HTMLProgressElement_h
 
 #if ENABLE(PROGRESS_TAG)
-#include "HTMLFormControlElement.h"
+#include "LabelableElement.h"
 
 namespace WebCore {
 
 class ProgressValueElement;
 
-class HTMLProgressElement : public HTMLFormControlElement {
+class HTMLProgressElement : public LabelableElement {
 public:
     static const double IndeterminatePosition;
     static const double InvalidPosition;
 
-    static PassRefPtr<HTMLProgressElement> create(const QualifiedName&, Document*, HTMLFormElement*);
+    static PassRefPtr<HTMLProgressElement> create(const QualifiedName&, Document*);
 
     double value() const;
     void setValue(double, ExceptionCode&);
@@ -48,16 +48,12 @@ public:
     virtual bool canContainRangeEndPoint() const { return false; }
 
 private:
-    HTMLProgressElement(const QualifiedName&, Document*, HTMLFormElement*);
+    HTMLProgressElement(const QualifiedName&, Document*);
     virtual ~HTMLProgressElement();
 
     virtual bool supportLabels() const OVERRIDE { return true; }
 
     virtual bool supportsFocus() const;
-
-    virtual bool recalcWillValidate() const { return false; }
-
-    virtual const AtomicString& formControlType() const;
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;

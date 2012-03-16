@@ -21,7 +21,6 @@ container.innerHTML = '<form id=owner></form>' +
     '<label name=victim form=owner />' +
     '<object name=victim form=owner></object>' +
     '<output name=victim form=owner />' +
-    '<progress name=victim form=owner />' +
     '<select name=victim form=owner />' +
     '<textarea name=victim form=owner />';
 
@@ -33,7 +32,6 @@ shouldBe('document.getElementsByTagName("keygen")[0].form', 'owner');
 shouldBe('document.getElementsByTagName("label")[0].form', 'owner');
 shouldBe('document.getElementsByTagName("object")[0].form', 'owner');
 shouldBe('document.getElementsByTagName("output")[0].form', 'owner');
-shouldBe('document.getElementsByTagName("progress")[0].form', 'owner');
 shouldBe('document.getElementsByTagName("select")[0].form', 'owner');
 shouldBe('document.getElementsByTagName("textarea")[0].form', 'owner');
 
