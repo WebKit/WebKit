@@ -3466,16 +3466,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
     }
-    case CSSPropertyWebkitLineClamp: {
-        HANDLE_INHERIT_AND_INITIAL(lineClamp, LineClamp)
-        if (!primitiveValue)
-            return;
-        if (primitiveValue->isNumber())
-            m_style->setLineClamp(LineClampValue(primitiveValue->getIntValue(CSSPrimitiveValue::CSS_NUMBER), LineClampLineCount));
-        else if (primitiveValue->isPercentage())
-            m_style->setLineClamp(LineClampValue(primitiveValue->getIntValue(CSSPrimitiveValue::CSS_PERCENTAGE), LineClampPercentage));
+    case CSSPropertyWebkitLineClamp:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(lineClamp, LineClamp)
         return;
-    }
     case CSSPropertyWebkitLocale: {
         HANDLE_INHERIT_AND_INITIAL(locale, Locale);
         if (primitiveValue->getIdent() == CSSValueAuto)
