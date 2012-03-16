@@ -1260,6 +1260,11 @@ http/tests/navigation/post-goback1.html
 platform/mac/plugins/testplugin-onnew-onpaint.html
 plugins/no-mime-with-valid-extension.html
 
+# Unexplained plugin timeouts
+# https://bugs.webkit.org/show_bug.cgi?id=81392
+plugins/crash-restoring-plugin-page-from-page-cache.html
+plugins/netscape-plugin-page-cache-works.html
+
 # Causes subsequent plugin tests to fail, time out or crash
 plugins/destroy-on-setwindow.html
 
