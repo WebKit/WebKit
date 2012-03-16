@@ -24056,6 +24056,54 @@
                         <Filter
                                 Name="filesystem"
                                 >
+			        <File
+				        RelativePath="..\Modules\filesystem\AsyncFileWriter.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\AsyncFileWriterClient.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DOMFilePath.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DOMFilePath.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DOMFileSystem.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DOMFileSystem.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DOMFileSystemBase.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DOMFileSystemBase.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DOMFileSystemSync.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DOMFileSystemSync.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DOMWindowFileSystem.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\DOMWindowFileSystem.h"
+				        >
+			        </File>
         		        <File
         			        RelativePath="..\Modules\filesystem\DirectoryEntry.cpp"
 	        		        >
@@ -24097,11 +24145,151 @@
 				        >
 			        </File>
 			        <File
-				        RelativePath="..\Modules\filesystem\DOMWindowFileSystem.cpp"
+				        RelativePath="..\Modules\filesystem\EntryBase.cpp"
 				        >
 			        </File>
 			        <File
-				        RelativePath="..\Modules\filesystem\DOMWindowFileSystem.h"
+				        RelativePath="..\Modules\filesystem\Entry.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\Entry.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\EntryArray.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\EntryArray.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\EntryArraySync.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\EntryArraySync.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\EntryBase.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\EntryCallback.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\EntrySync.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\EntrySync.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\ErrorCallback.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileCallback.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileEntry.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileEntry.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileEntrySync.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileEntrySync.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileError.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileSystemCallback.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileSystemCallbacks.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileSystemCallbacks.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileWriter.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileWriter.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileWriterBase.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileWriterBase.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileWriterBaseCallback.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileWriterCallback.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileWriterSync.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\FileWriterSync.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\LocalFileSystem.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\LocalFileSystem.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\Metadata.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\MetadataCallback.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\SyncCallbackHelper.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\WebKitFlags.h"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\WorkerContextFileSystem.cpp"
+				        >
+			        </File>
+			        <File
+				        RelativePath="..\Modules\filesystem\WorkerContextFileSystem.h"
 				        >
 			        </File>
                         </Filter>
@@ -56766,14 +56954,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\fileapi\AsyncFileWriter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\AsyncFileWriterClient.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\BaseButtonInputType.cpp"
 				>
 			</File>
@@ -56946,38 +57126,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\fileapi\DOMFilePath.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DOMFilePath.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DOMFileSystem.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DOMFileSystem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DOMFileSystemBase.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DOMFileSystemBase.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DOMFileSystemSync.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\DOMFileSystemSync.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\DOMFormData.cpp"
 				>
 			</File>
@@ -57018,79 +57166,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\fileapi\Entry.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\Entry.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\EntryArray.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\EntryArray.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\EntryArraySync.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\EntryArraySync.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\EntryBase.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\EntryCallback.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\EntrySync.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\EntrySync.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\ErrorCallback.h"
-				>
-			</File>
-			<File
 				RelativePath="..\fileapi\File.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\fileapi\File.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileCallback.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileEntry.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileEntry.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileEntrySync.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileEntrySync.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileError.h"
 				>
 			</File>
 			<File
@@ -57146,18 +57226,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\fileapi\FileSystemCallback.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileSystemCallbacks.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileSystemCallbacks.h"
-				>
-			</File>
-			<File
 				RelativePath="..\fileapi\FileThread.cpp"
 				>
 			</File>
@@ -57167,38 +57235,6 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\FileThreadTask.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileWriter.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileWriter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileWriterBase.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileWriterBase.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileWriterBaseCallback.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileWriterCallback.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileWriterSync.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\FileWriterSync.h"
 				>
 			</File>
 			<File
@@ -61538,14 +61574,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\fileapi\LocalFileSystem.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\LocalFileSystem.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\MediaController.cpp"
 				>
 			</File>
@@ -61571,14 +61599,6 @@
 			</File>
 			<File
 				RelativePath="..\html\MediaFragmentURIParser.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\Metadata.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\MetadataCallback.h"
 				>
 			</File>
 			<File
@@ -61763,10 +61783,6 @@
 			</File>
 			<File
 				RelativePath="..\html\VoidCallback.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\WebKitFlags.h"
 				>
 			</File>
 			<File
@@ -74207,26 +74223,6 @@
 			</File>
 			<File
 				RelativePath="..\mathml\MathMLTextElement.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="fileapi"
-			>
-			<File
-				RelativePath="..\fileapi\EntryBase.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\SyncCallbackHelper.h"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\WorkerContextFileSystem.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\fileapi\WorkerContextFileSystem.h"
 				>
 			</File>
 		</Filter>

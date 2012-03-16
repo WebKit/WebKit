@@ -58,6 +58,30 @@ VPATH = \
 #
 
 BINDING_IDLS = \
+    $(WebCore)/Modules/filesystem/DOMFileSystem.idl \
+    $(WebCore)/Modules/filesystem/DOMFileSystemSync.idl \
+    $(WebCore)/Modules/filesystem/DOMWindowFileSystem.idl \
+    $(WebCore)/Modules/filesystem/DirectoryEntry.idl \
+    $(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
+    $(WebCore)/Modules/filesystem/DirectoryReader.idl \
+    $(WebCore)/Modules/filesystem/DirectoryReaderSync.idl \
+    $(WebCore)/Modules/filesystem/EntriesCallback.idl \
+    $(WebCore)/Modules/filesystem/Entry.idl \
+    $(WebCore)/Modules/filesystem/EntryArray.idl \
+    $(WebCore)/Modules/filesystem/EntryArraySync.idl \
+    $(WebCore)/Modules/filesystem/EntryCallback.idl \
+    $(WebCore)/Modules/filesystem/EntrySync.idl \
+    $(WebCore)/Modules/filesystem/ErrorCallback.idl \
+    $(WebCore)/Modules/filesystem/FileCallback.idl \
+    $(WebCore)/Modules/filesystem/FileEntry.idl \
+    $(WebCore)/Modules/filesystem/FileEntrySync.idl \
+    $(WebCore)/Modules/filesystem/FileSystemCallback.idl \
+    $(WebCore)/Modules/filesystem/FileWriter.idl \
+    $(WebCore)/Modules/filesystem/FileWriterCallback.idl \
+    $(WebCore)/Modules/filesystem/FileWriterSync.idl \
+    $(WebCore)/Modules/filesystem/Metadata.idl \
+    $(WebCore)/Modules/filesystem/MetadataCallback.idl \
+    $(WebCore)/Modules/filesystem/WorkerContextFileSystem.idl \
     $(WebCore)/Modules/geolocation/Geolocation.idl \
     $(WebCore)/Modules/geolocation/Geoposition.idl \
     $(WebCore)/Modules/geolocation/NavigatorGeolocation.idl \
@@ -195,38 +219,14 @@ BINDING_IDLS = \
     $(WebCore)/dom/WebKitTransitionEvent.idl \
     $(WebCore)/dom/WheelEvent.idl \
     $(WebCore)/fileapi/Blob.idl \
-    $(WebCore)/fileapi/DOMFileSystem.idl \
-    $(WebCore)/fileapi/DOMFileSystemSync.idl \
-    $(WebCore)/Modules/filesystem/DOMWindowFileSystem.idl \
-    $(WebCore)/Modules/filesystem/DirectoryEntry.idl \
-    $(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
-    $(WebCore)/Modules/filesystem/DirectoryReader.idl \
-    $(WebCore)/Modules/filesystem/DirectoryReaderSync.idl \
-    $(WebCore)/Modules/filesystem/EntriesCallback.idl \
-    $(WebCore)/fileapi/Entry.idl \
-    $(WebCore)/fileapi/EntryArray.idl \
-    $(WebCore)/fileapi/EntryArraySync.idl \
-    $(WebCore)/fileapi/EntryCallback.idl \
-    $(WebCore)/fileapi/EntrySync.idl \
-    $(WebCore)/fileapi/ErrorCallback.idl \
     $(WebCore)/fileapi/File.idl \
-    $(WebCore)/fileapi/FileCallback.idl \
-    $(WebCore)/fileapi/FileEntry.idl \
-    $(WebCore)/fileapi/FileEntrySync.idl \
     $(WebCore)/fileapi/FileError.idl \
     $(WebCore)/fileapi/FileException.idl \
     $(WebCore)/fileapi/FileList.idl \
     $(WebCore)/fileapi/FileReader.idl \
     $(WebCore)/fileapi/FileReaderSync.idl \
-    $(WebCore)/fileapi/FileSystemCallback.idl \
-    $(WebCore)/fileapi/FileWriter.idl \
-    $(WebCore)/fileapi/FileWriterCallback.idl \
-    $(WebCore)/fileapi/FileWriterSync.idl \
-    $(WebCore)/fileapi/Metadata.idl \
-    $(WebCore)/fileapi/MetadataCallback.idl \
     $(WebCore)/fileapi/OperationNotAllowedException.idl \
     $(WebCore)/fileapi/WebKitBlobBuilder.idl \
-    $(WebCore)/fileapi/WorkerContextFileSystem.idl \
     $(WebCore)/html/DOMFormData.idl \
     $(WebCore)/html/DOMSettableTokenList.idl \
     $(WebCore)/html/DOMTokenList.idl \

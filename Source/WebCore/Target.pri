@@ -403,11 +403,27 @@ v8 {
 }
 
 SOURCES += \
+    Modules/filesystem/DOMFilePath.cpp \
+    Modules/filesystem/DOMFileSystem.cpp \
+    Modules/filesystem/DOMFileSystemBase.cpp \
+    Modules/filesystem/DOMFileSystemSync.cpp \
     Modules/filesystem/DOMWindowFileSystem.cpp \
     Modules/filesystem/DirectoryEntry.cpp \
     Modules/filesystem/DirectoryEntrySync.cpp \
     Modules/filesystem/DirectoryReader.cpp \
     Modules/filesystem/DirectoryReaderSync.cpp \
+    Modules/filesystem/Entry.cpp \
+    Modules/filesystem/EntryArray.cpp \
+    Modules/filesystem/EntryArraySync.cpp \
+    Modules/filesystem/EntryBase.cpp \
+    Modules/filesystem/EntrySync.cpp \
+    Modules/filesystem/FileEntry.cpp \
+    Modules/filesystem/FileEntrySync.cpp \
+    Modules/filesystem/FileWriter.cpp \
+    Modules/filesystem/FileWriterBase.cpp \
+    Modules/filesystem/FileWriterSync.cpp \
+    Modules/filesystem/LocalFileSystem.cpp \
+    Modules/filesystem/WorkerContextFileSystem.cpp \
     css/CSSAspectRatioValue.cpp \
     css/CSSBorderImageSliceValue.cpp \
     css/CSSBorderImage.cpp \
@@ -668,32 +684,16 @@ SOURCES += \
     fileapi/AsyncFileStream.cpp \
     fileapi/Blob.cpp \
     fileapi/BlobURL.cpp \
-    fileapi/DOMFilePath.cpp \
-    fileapi/DOMFileSystem.cpp \
-    fileapi/DOMFileSystemBase.cpp \
-    fileapi/DOMFileSystemSync.cpp \
-    fileapi/Entry.cpp \
-    fileapi/EntryArray.cpp \
-    fileapi/EntryArraySync.cpp \
-    fileapi/EntryBase.cpp \
-    fileapi/EntrySync.cpp \
     fileapi/File.cpp \
-    fileapi/FileEntry.cpp \
-    fileapi/FileEntrySync.cpp \
     fileapi/FileException.cpp \
     fileapi/FileList.cpp \
     fileapi/FileReader.cpp \
     fileapi/FileReaderLoader.cpp \
     fileapi/FileReaderSync.cpp \
     fileapi/FileThread.cpp \
-    fileapi/FileWriter.cpp \
-    fileapi/FileWriterBase.cpp \
-    fileapi/FileWriterSync.cpp \
-    fileapi/LocalFileSystem.cpp \
     fileapi/OperationNotAllowedException.cpp \
     fileapi/ThreadableBlobRegistry.cpp \
     fileapi/WebKitBlobBuilder.cpp \
-    fileapi/WorkerContextFileSystem.cpp \
     history/BackForwardController.cpp \
     history/BackForwardListImpl.cpp \
     history/CachedFrame.cpp \
@@ -3057,39 +3057,39 @@ contains(DEFINES, ENABLE_DATA_TRANSFER_ITEMS=1) {
 
 contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
     HEADERS += \
-        fileapi/AsyncFileWriter.h \
+        Modules/filesystem/AsyncFileWriter.h \
+        Modules/filesystem/DOMFilePath.h \
+        Modules/filesystem/DOMFileSystem.h \
+        Modules/filesystem/DOMFileSystemBase.h \
+        Modules/filesystem/DOMFileSystemSync.h \
         Modules/filesystem/DirectoryEntry.h \
         Modules/filesystem/DirectoryEntrySync.h \
         Modules/filesystem/DirectoryReader.h \
         Modules/filesystem/DirectoryReaderBase.h \
         Modules/filesystem/DirectoryReaderSync.h \
         Modules/filesystem/EntriesCallback.h \
-        fileapi/DOMFilePath.h \
-        fileapi/DOMFileSystem.h \
-        fileapi/DOMFileSystemBase.h \
-        fileapi/DOMFileSystemSync.h \
-        fileapi/Entry.h \
-        fileapi/EntryArray.h \
-        fileapi/EntryArraySync.h \
-        fileapi/EntryBase.h \
-        fileapi/EntryCallback.h \
-        fileapi/EntrySync.h \
-        fileapi/ErrorCallback.h \
-        fileapi/FileCallback.h \
-        fileapi/FileEntry.h \
-        fileapi/FileEntrySync.h \
-        fileapi/FileSystemCallback.h \
-        fileapi/FileSystemCallbacks.h \
-        fileapi/FileWriter.h \
-        fileapi/FileWriterBase.h \
-        fileapi/FileWriterBaseCallback.h \
-        fileapi/FileWriterCallback.h \
-        fileapi/FileWriterClient.h \
-        fileapi/FileWriterSync.h \
-        fileapi/WebKitFlags.h \
-        fileapi/LocalFileSystem.h \
-        fileapi/Metadata.h \
-        fileapi/MetadataCallback.h \
+        Modules/filesystem/Entry.h \
+        Modules/filesystem/EntryArray.h \
+        Modules/filesystem/EntryArraySync.h \
+        Modules/filesystem/EntryBase.h \
+        Modules/filesystem/EntryCallback.h \
+        Modules/filesystem/EntrySync.h \
+        Modules/filesystem/ErrorCallback.h \
+        Modules/filesystem/FileCallback.h \
+        Modules/filesystem/FileEntry.h \
+        Modules/filesystem/FileEntrySync.h \
+        Modules/filesystem/FileSystemCallback.h \
+        Modules/filesystem/FileSystemCallbacks.h \
+        Modules/filesystem/FileWriter.h \
+        Modules/filesystem/FileWriterBase.h \
+        Modules/filesystem/FileWriterBaseCallback.h \
+        Modules/filesystem/FileWriterCallback.h \
+        Modules/filesystem/FileWriterClient.h \
+        Modules/filesystem/FileWriterSync.h \
+        Modules/filesystem/WebKitFlags.h \
+        Modules/filesystem/LocalFileSystem.h \
+        Modules/filesystem/Metadata.h \
+        Modules/filesystem/MetadataCallback.h \
         platform/AsyncFileSystem.h \
         platform/AsyncFileSystemCallbacks.h \
         platform/FileMetadata.h

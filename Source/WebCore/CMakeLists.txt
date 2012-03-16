@@ -1638,28 +1638,28 @@ ENDIF ()
 
 if (ENABLE_FILE_SYSTEM)
     LIST(APPEND WebCore_SOURCES
+        Modules/filesystem/DOMFilePath.cpp
+        Modules/filesystem/DOMFileSystem.cpp
+        Modules/filesystem/DOMFileSystemBase.cpp
+        Modules/filesystem/DOMFileSystemSync.cpp
         Modules/filesystem/DOMWindowFileSystem.cpp
         Modules/filesystem/DirectoryEntry.cpp
         Modules/filesystem/DirectoryEntrySync.cpp
         Modules/filesystem/DirectoryReader.cpp
         Modules/filesystem/DirectoryReaderSync.cpp
-        fileapi/DOMFilePath.cpp
-        fileapi/DOMFileSystem.cpp
-        fileapi/DOMFileSystemBase.cpp
-        fileapi/DOMFileSystemSync.cpp
-        fileapi/Entry.cpp
-        fileapi/EntryArray.cpp
-        fileapi/EntryArraySync.cpp
-        fileapi/EntryBase.cpp
-        fileapi/EntrySync.cpp
-        fileapi/FileEntry.cpp
-        fileapi/FileEntrySync.cpp
-        fileapi/FileSystemCallbacks.cpp
-        fileapi/FileWriter.cpp
-        fileapi/FileWriterBase.cpp
-        fileapi/FileWriterSync.cpp
-        fileapi/LocalFileSystem.cpp
-        fileapi/WorkerContextFileSystem.cpp
+        Modules/filesystem/Entry.cpp
+        Modules/filesystem/EntryArray.cpp
+        Modules/filesystem/EntryArraySync.cpp
+        Modules/filesystem/EntryBase.cpp
+        Modules/filesystem/EntrySync.cpp
+        Modules/filesystem/FileEntry.cpp
+        Modules/filesystem/FileEntrySync.cpp
+        Modules/filesystem/FileSystemCallbacks.cpp
+        Modules/filesystem/FileWriter.cpp
+        Modules/filesystem/FileWriterBase.cpp
+        Modules/filesystem/FileWriterSync.cpp
+        Modules/filesystem/LocalFileSystem.cpp
+        Modules/filesystem/WorkerContextFileSystem.cpp
         platform/AsyncFileSystem.cpp
     )
     LIST(APPEND WebCore_IDL_FILES
@@ -1668,25 +1668,25 @@ if (ENABLE_FILE_SYSTEM)
         Modules/filesystem/DirectoryEntrySync.idl
         Modules/filesystem/DirectoryReader.idl
         Modules/filesystem/DirectoryReaderSync.idl
-        fileapi/DOMFileSystem.idl
-        fileapi/DOMFileSystemSync.idl
+        Modules/filesystem/DOMFileSystem.idl
+        Modules/filesystem/DOMFileSystemSync.idl
         Modules/filesystem/EntriesCallback.idl
-        fileapi/Entry.idl
-        fileapi/EntrySync.idl
-        fileapi/EntryArray.idl
-        fileapi/EntryArraySync.idl
-        fileapi/EntryCallback.idl
-        fileapi/ErrorCallback.idl
-        fileapi/FileCallback.idl
-        fileapi/FileEntry.idl
-        fileapi/FileEntrySync.idl
-        fileapi/FileSystemCallback.idl
-        fileapi/FileWriterCallback.idl
-        fileapi/FileWriter.idl
-        fileapi/FileWriterSync.idl
-        fileapi/Metadata.idl
-        fileapi/MetadataCallback.idl
-        fileapi/WorkerContextFileSystem.idl
+        Modules/filesystem/Entry.idl
+        Modules/filesystem/EntrySync.idl
+        Modules/filesystem/EntryArray.idl
+        Modules/filesystem/EntryArraySync.idl
+        Modules/filesystem/EntryCallback.idl
+        Modules/filesystem/ErrorCallback.idl
+        Modules/filesystem/FileCallback.idl
+        Modules/filesystem/FileEntry.idl
+        Modules/filesystem/FileEntrySync.idl
+        Modules/filesystem/FileSystemCallback.idl
+        Modules/filesystem/FileWriterCallback.idl
+        Modules/filesystem/FileWriter.idl
+        Modules/filesystem/FileWriterSync.idl
+        Modules/filesystem/Metadata.idl
+        Modules/filesystem/MetadataCallback.idl
+        Modules/filesystem/WorkerContextFileSystem.idl
     )
 ENDIF ()
 

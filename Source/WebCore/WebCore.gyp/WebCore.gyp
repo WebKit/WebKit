@@ -1804,6 +1804,7 @@
 
         ['exclude', 'AllInOne\\.cpp$'],
 
+        ['exclude', 'Modules/filesystem/LocalFileSystem\\.cpp$'],
         ['exclude', 'Modules/indexeddb/IDBFactoryBackendInterface\\.cpp$'],
         ['exclude', 'Modules/indexeddb/IDBKeyPathBackendImpl\\.cpp$'],
         ['exclude', 'Modules/webdatabase/DatabaseTrackerClient\\.h$'],
@@ -1811,7 +1812,6 @@
         ['exclude', 'Modules/webdatabase/OriginQuotaManager\\.(cpp|h)$'],
         ['exclude', 'Modules/webdatabase/OriginUsageRecord\\.(cpp|h)$'],
         ['exclude', 'Modules/webdatabase/SQLTransactionClient\\.cpp$'],
-        ['exclude', 'fileapi/LocalFileSystem\\.cpp$'],
         ['exclude', 'inspector/InspectorFrontendClientLocal\\.cpp$'],
         ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],
         ['exclude', 'loader/UserStyleSheetLoader\\.cpp$'],

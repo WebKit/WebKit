@@ -86,6 +86,30 @@ STYLESHEETS_EMBED = \
     $$PWD/css/mobileThemeQt.css
 
 IDL_BINDINGS += \
+    $$PWD/Modules/filesystem/DOMFileSystem.idl \
+    $$PWD/Modules/filesystem/DOMFileSystemSync.idl \
+    $$PWD/Modules/filesystem/DOMWindowFileSystem.idl \
+    $$PWD/Modules/filesystem/DirectoryEntry.idl \
+    $$PWD/Modules/filesystem/DirectoryEntrySync.idl \
+    $$PWD/Modules/filesystem/DirectoryReader.idl \
+    $$PWD/Modules/filesystem/DirectoryReaderSync.idl \
+    $$PWD/Modules/filesystem/EntriesCallback.idl \
+    $$PWD/Modules/filesystem/Entry.idl \
+    $$PWD/Modules/filesystem/EntryArray.idl \
+    $$PWD/Modules/filesystem/EntryArraySync.idl \
+    $$PWD/Modules/filesystem/EntryCallback.idl \
+    $$PWD/Modules/filesystem/EntrySync.idl \
+    $$PWD/Modules/filesystem/ErrorCallback.idl \
+    $$PWD/Modules/filesystem/FileCallback.idl \
+    $$PWD/Modules/filesystem/FileEntry.idl \
+    $$PWD/Modules/filesystem/FileEntrySync.idl \
+    $$PWD/Modules/filesystem/FileSystemCallback.idl \
+    $$PWD/Modules/filesystem/FileWriter.idl \
+    $$PWD/Modules/filesystem/FileWriterCallback.idl \
+    $$PWD/Modules/filesystem/Metadata.idl \
+    $$PWD/Modules/filesystem/MetadataCallback.idl \
+    $$PWD/Modules/filesystem/WebKitBlobBuilder.idl \
+    $$PWD/Modules/filesystem/WorkerContextFileSystem.idl \
     $$PWD/Modules/geolocation/Geolocation.idl \
     $$PWD/Modules/geolocation/Geoposition.idl \
     $$PWD/Modules/geolocation/NavigatorGeolocation.idl \
@@ -216,37 +240,13 @@ IDL_BINDINGS += \
     $$PWD/dom/WebKitTransitionEvent.idl \
     $$PWD/dom/WheelEvent.idl \
     $$PWD/fileapi/Blob.idl \
-    $$PWD/Modules/filesystem/DOMWindowFileSystem.idl \
-    $$PWD/Modules/filesystem/DirectoryEntry.idl \
-    $$PWD/Modules/filesystem/DirectoryEntrySync.idl \
-    $$PWD/Modules/filesystem/DirectoryReader.idl \
-    $$PWD/Modules/filesystem/DirectoryReaderSync.idl \
-    $$PWD/fileapi/DOMFileSystem.idl \
-    $$PWD/fileapi/DOMFileSystemSync.idl \
-    $$PWD/Modules/filesystem/EntriesCallback.idl \
-    $$PWD/fileapi/Entry.idl \
-    $$PWD/fileapi/EntryArray.idl \
-    $$PWD/fileapi/EntryArraySync.idl \
-    $$PWD/fileapi/EntryCallback.idl \
-    $$PWD/fileapi/EntrySync.idl \
-    $$PWD/fileapi/ErrorCallback.idl \
     $$PWD/fileapi/File.idl \
-    $$PWD/fileapi/FileCallback.idl \
-    $$PWD/fileapi/FileEntry.idl \
-    $$PWD/fileapi/FileEntrySync.idl \
     $$PWD/fileapi/FileError.idl \
     $$PWD/fileapi/FileException.idl \
     $$PWD/fileapi/FileList.idl \
     $$PWD/fileapi/FileReader.idl \
     $$PWD/fileapi/FileReaderSync.idl \
-    $$PWD/fileapi/FileSystemCallback.idl \
-    $$PWD/fileapi/FileWriter.idl \
-    $$PWD/fileapi/FileWriterCallback.idl \
     $$PWD/fileapi/OperationNotAllowedException.idl \
-    $$PWD/fileapi/Metadata.idl \
-    $$PWD/fileapi/MetadataCallback.idl \
-    $$PWD/fileapi/WebKitBlobBuilder.idl \
-    $$PWD/fileapi/WorkerContextFileSystem.idl \
     $$PWD/html/canvas/ArrayBufferView.idl \
     $$PWD/html/canvas/ArrayBuffer.idl \
     $$PWD/html/canvas/DataView.idl \

@@ -962,6 +962,62 @@ dom_binding_idls += \
 	$(WebCore)/xml/XSLTProcessor.idl
 
 webcore_sources += \
+	Source/WebCore/Modules/filesystem/AsyncFileWriter.h \
+	Source/WebCore/Modules/filesystem/AsyncFileWriterClient.h \
+	Source/WebCore/Modules/filesystem/DOMFilePath.cpp \
+	Source/WebCore/Modules/filesystem/DOMFilePath.h \
+	Source/WebCore/Modules/filesystem/DOMFileSystem.cpp \
+	Source/WebCore/Modules/filesystem/DOMFileSystem.h \
+	Source/WebCore/Modules/filesystem/DOMFileSystemBase.cpp \
+	Source/WebCore/Modules/filesystem/DOMFileSystemBase.h \
+	Source/WebCore/Modules/filesystem/DOMFileSystemSync.cpp \
+	Source/WebCore/Modules/filesystem/DOMFileSystemSync.h \
+	Source/WebCore/Modules/filesystem/DOMWindowFileSystem.cpp \
+	Source/WebCore/Modules/filesystem/DOMWindowFileSystem.h \
+	Source/WebCore/Modules/filesystem/DirectoryEntry.cpp \
+	Source/WebCore/Modules/filesystem/DirectoryEntry.h \
+	Source/WebCore/Modules/filesystem/DirectoryEntrySync.cpp \
+	Source/WebCore/Modules/filesystem/DirectoryEntrySync.h \
+	Source/WebCore/Modules/filesystem/DirectoryReader.cpp \
+	Source/WebCore/Modules/filesystem/DirectoryReader.h \
+	Source/WebCore/Modules/filesystem/DirectoryReaderSync.cpp \
+	Source/WebCore/Modules/filesystem/DirectoryReaderSync.h \
+	Source/WebCore/Modules/filesystem/EntriesCallback.h \
+	Source/WebCore/Modules/filesystem/Entry.cpp \
+	Source/WebCore/Modules/filesystem/Entry.h \
+	Source/WebCore/Modules/filesystem/EntryArray.cpp \
+	Source/WebCore/Modules/filesystem/EntryArray.h \
+	Source/WebCore/Modules/filesystem/EntryArraySync.cpp \
+	Source/WebCore/Modules/filesystem/EntryArraySync.h \
+	Source/WebCore/Modules/filesystem/EntryBase.cpp \
+	Source/WebCore/Modules/filesystem/EntryBase.h \
+	Source/WebCore/Modules/filesystem/EntryCallback.h \
+	Source/WebCore/Modules/filesystem/EntrySync.cpp \
+	Source/WebCore/Modules/filesystem/EntrySync.h \
+	Source/WebCore/Modules/filesystem/ErrorCallback.h \
+	Source/WebCore/Modules/filesystem/FileCallback.h \
+	Source/WebCore/Modules/filesystem/FileEntry.cpp \
+	Source/WebCore/Modules/filesystem/FileEntry.h \
+	Source/WebCore/Modules/filesystem/FileEntrySync.cpp \
+	Source/WebCore/Modules/filesystem/FileEntrySync.h \
+	Source/WebCore/Modules/filesystem/FileSystemCallback.h \
+	Source/WebCore/Modules/filesystem/FileSystemCallbacks.cpp \
+	Source/WebCore/Modules/filesystem/FileSystemCallbacks.h \
+	Source/WebCore/Modules/filesystem/FileWriter.cpp \
+	Source/WebCore/Modules/filesystem/FileWriter.h \
+	Source/WebCore/Modules/filesystem/FileWriterBase.cpp \
+	Source/WebCore/Modules/filesystem/FileWriterBase.h \
+	Source/WebCore/Modules/filesystem/FileWriterBaseCallback.h \
+	Source/WebCore/Modules/filesystem/FileWriterCallback.h \
+	Source/WebCore/Modules/filesystem/FileWriterSync.cpp \
+	Source/WebCore/Modules/filesystem/FileWriterSync.h \
+	Source/WebCore/Modules/filesystem/LocalFileSystem.cpp \
+	Source/WebCore/Modules/filesystem/LocalFileSystem.h \
+	Source/WebCore/Modules/filesystem/MetadataCallback.h \
+	Source/WebCore/Modules/filesystem/Metadata.h \
+	Source/WebCore/Modules/filesystem/WebKitFlags.h \
+	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.cpp \
+	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.h \
 	Source/WebCore/Modules/geolocation/Geolocation.cpp \
 	Source/WebCore/Modules/geolocation/Geolocation.h \
 	Source/WebCore/Modules/geolocation/GeolocationController.cpp \
@@ -2041,49 +2097,11 @@ webcore_sources += \
 	Source/WebCore/editing/WritingDirection.h \
 	Source/WebCore/fileapi/AsyncFileStream.cpp \
 	Source/WebCore/fileapi/AsyncFileStream.h \
-	Source/WebCore/fileapi/AsyncFileWriter.h \
-	Source/WebCore/fileapi/AsyncFileWriterClient.h \
 	Source/WebCore/fileapi/Blob.cpp \
 	Source/WebCore/fileapi/Blob.h \
 	Source/WebCore/fileapi/BlobURL.cpp \
 	Source/WebCore/fileapi/BlobURL.h \
-	Source/WebCore/Modules/filesystem/DOMWindowFileSystem.cpp \
-	Source/WebCore/Modules/filesystem/DOMWindowFileSystem.h \
-	Source/WebCore/Modules/filesystem/DirectoryEntry.cpp \
-	Source/WebCore/Modules/filesystem/DirectoryEntry.h \
-	Source/WebCore/Modules/filesystem/DirectoryEntrySync.cpp \
-	Source/WebCore/Modules/filesystem/DirectoryEntrySync.h \
-	Source/WebCore/Modules/filesystem/DirectoryReader.cpp \
-	Source/WebCore/Modules/filesystem/DirectoryReader.h \
-	Source/WebCore/Modules/filesystem/DirectoryReaderSync.cpp \
-	Source/WebCore/Modules/filesystem/DirectoryReaderSync.h \
-	Source/WebCore/fileapi/DOMFilePath.cpp \
-	Source/WebCore/fileapi/DOMFilePath.h \
-	Source/WebCore/fileapi/DOMFileSystem.cpp \
-	Source/WebCore/fileapi/DOMFileSystem.h \
-	Source/WebCore/fileapi/DOMFileSystemBase.cpp \
-	Source/WebCore/fileapi/DOMFileSystemBase.h \
-	Source/WebCore/fileapi/DOMFileSystemSync.cpp \
-	Source/WebCore/fileapi/DOMFileSystemSync.h \
-	Source/WebCore/Modules/filesystem/EntriesCallback.h \
-	Source/WebCore/fileapi/Entry.cpp \
-	Source/WebCore/fileapi/Entry.h \
-	Source/WebCore/fileapi/EntryArray.cpp \
-	Source/WebCore/fileapi/EntryArray.h \
-	Source/WebCore/fileapi/EntryArraySync.cpp \
-	Source/WebCore/fileapi/EntryArraySync.h \
-	Source/WebCore/fileapi/EntryBase.cpp \
-	Source/WebCore/fileapi/EntryBase.h \
-	Source/WebCore/fileapi/EntryCallback.h \
-	Source/WebCore/fileapi/EntrySync.cpp \
-	Source/WebCore/fileapi/EntrySync.h \
-	Source/WebCore/fileapi/ErrorCallback.h \
-	Source/WebCore/fileapi/FileCallback.h \
 	Source/WebCore/fileapi/File.cpp \
-	Source/WebCore/fileapi/FileEntry.cpp \
-	Source/WebCore/fileapi/FileEntry.h \
-	Source/WebCore/fileapi/FileEntrySync.cpp \
-	Source/WebCore/fileapi/FileEntrySync.h \
 	Source/WebCore/fileapi/FileError.h \
 	Source/WebCore/fileapi/FileException.h \
 	Source/WebCore/fileapi/File.h \
@@ -2098,33 +2116,15 @@ webcore_sources += \
 	Source/WebCore/fileapi/FileReaderLoaderClient.h \
 	Source/WebCore/fileapi/FileReaderSync.cpp \
 	Source/WebCore/fileapi/FileReaderSync.h \
-	Source/WebCore/fileapi/FileSystemCallback.h \
-	Source/WebCore/fileapi/FileSystemCallbacks.cpp \
-	Source/WebCore/fileapi/FileSystemCallbacks.h \
 	Source/WebCore/fileapi/FileThread.cpp \
 	Source/WebCore/fileapi/FileThread.h \
 	Source/WebCore/fileapi/FileThreadTask.h \
-	Source/WebCore/fileapi/FileWriter.cpp \
-	Source/WebCore/fileapi/FileWriter.h \
-	Source/WebCore/fileapi/FileWriterBase.cpp \
-	Source/WebCore/fileapi/FileWriterBase.h \
-	Source/WebCore/fileapi/FileWriterBaseCallback.h \
-	Source/WebCore/fileapi/FileWriterCallback.h \
-	Source/WebCore/fileapi/FileWriterSync.cpp \
-	Source/WebCore/fileapi/FileWriterSync.h \
-	Source/WebCore/fileapi/WebKitFlags.h \
-	Source/WebCore/fileapi/LocalFileSystem.cpp \
-	Source/WebCore/fileapi/LocalFileSystem.h \
-	Source/WebCore/fileapi/MetadataCallback.h \
-	Source/WebCore/fileapi/Metadata.h \
 	Source/WebCore/fileapi/OperationNotAllowedException.cpp \
 	Source/WebCore/fileapi/OperationNotAllowedException.h \
 	Source/WebCore/fileapi/ThreadableBlobRegistry.cpp \
 	Source/WebCore/fileapi/ThreadableBlobRegistry.h \
 	Source/WebCore/fileapi/WebKitBlobBuilder.cpp \
 	Source/WebCore/fileapi/WebKitBlobBuilder.h \
-	Source/WebCore/fileapi/WorkerContextFileSystem.cpp \
-	Source/WebCore/fileapi/WorkerContextFileSystem.h \
 	Source/WebCore/history/BackForwardController.cpp \
 	Source/WebCore/history/BackForwardController.h \
 	Source/WebCore/history/BackForwardList.h \
@@ -4892,30 +4892,30 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMetadataCallback.h
 
 dom_binding_idls += \
-	$(WebCore)/fileapi/DOMFileSystem.idl \
-	$(WebCore)/fileapi/DOMFileSystemSync.idl \
+	$(WebCore)/Modules/filesystem/DOMFileSystem.idl \
+	$(WebCore)/Modules/filesystem/DOMFileSystemSync.idl \
 	$(WebCore)/Modules/filesystem/DOMWindowFileSystem.idl \
 	$(WebCore)/Modules/filesystem/DirectoryEntry.idl \
 	$(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
 	$(WebCore)/Modules/filesystem/DirectoryReader.idl \
 	$(WebCore)/Modules/filesystem/DirectoryReaderSync.idl \
 	$(WebCore)/Modules/filesystem/EntriesCallback.idl \
-	$(WebCore)/fileapi/Entry.idl \
-	$(WebCore)/fileapi/EntryArray.idl \
-	$(WebCore)/fileapi/EntryArraySync.idl \
-	$(WebCore)/fileapi/EntryCallback.idl \
-	$(WebCore)/fileapi/EntrySync.idl \
-	$(WebCore)/fileapi/ErrorCallback.idl \
-	$(WebCore)/fileapi/FileCallback.idl \
-	$(WebCore)/fileapi/FileEntry.idl \
-	$(WebCore)/fileapi/FileEntrySync.idl \
-	$(WebCore)/fileapi/FileSystemCallback.idl \
-	$(WebCore)/fileapi/FileWriter.idl \
-	$(WebCore)/fileapi/FileWriterCallback.idl \
-	$(WebCore)/fileapi/FileWriterSync.idl \
-	$(WebCore)/fileapi/Metadata.idl \
-	$(WebCore)/fileapi/MetadataCallback.idl \
-	$(WebCore)/fileapi/WorkerContextFileSystem.idl
+	$(WebCore)/Modules/filesystem/Entry.idl \
+	$(WebCore)/Modules/filesystem/EntryArray.idl \
+	$(WebCore)/Modules/filesystem/EntryArraySync.idl \
+	$(WebCore)/Modules/filesystem/EntryCallback.idl \
+	$(WebCore)/Modules/filesystem/EntrySync.idl \
+	$(WebCore)/Modules/filesystem/ErrorCallback.idl \
+	$(WebCore)/Modules/filesystem/FileCallback.idl \
+	$(WebCore)/Modules/filesystem/FileEntry.idl \
+	$(WebCore)/Modules/filesystem/FileEntrySync.idl \
+	$(WebCore)/Modules/filesystem/FileSystemCallback.idl \
+	$(WebCore)/Modules/filesystem/FileWriter.idl \
+	$(WebCore)/Modules/filesystem/FileWriterCallback.idl \
+	$(WebCore)/Modules/filesystem/FileWriterSync.idl \
+	$(WebCore)/Modules/filesystem/Metadata.idl \
+	$(WebCore)/Modules/filesystem/MetadataCallback.idl \
+	$(WebCore)/Modules/filesystem/WorkerContextFileSystem.idl
 
 webcoregtk_sources += \
 	Source/WebCore/platform/gtk/AsyncFileSystemGtk.cpp \
