@@ -3566,10 +3566,8 @@ BUGKW76557 : svg/custom/transform-with-shadow-and-gradient.svg = IMAGE
 
 BUGWK76558 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TEXT
 
-// This test is passing, but it doesn't seem possible to add GPU+Leopard specific baselines.
-BUGJAMESR LEOPARD : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
-
-BUGWK77187 WIN : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
+// rebaseline when skia 3398 lands
+BUGEPOGER : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
 
 BUGWK76511 : compositing/geometry/video-opacity-overlay.html = IMAGE PASS
 BUGWK76511 : compositing/geometry/video-fixed-scrolling.html = IMAGE
