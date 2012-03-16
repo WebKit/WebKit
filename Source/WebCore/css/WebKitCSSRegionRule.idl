@@ -29,8 +29,7 @@
 
 module css {
 
-    interface [
-    ] WebKitCSSRegionRule : CSSRule {
+    interface WebKitCSSRegionRule : CSSRule {
         readonly attribute CSSRuleList cssRules;
     };
 
