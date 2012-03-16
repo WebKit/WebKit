@@ -39,6 +39,7 @@ class CachedCSSStyleSheet;
 class CachedResource;
 class CachedResourceLoader;
 class KURL;
+class ScriptExecutionContext;
 class SecurityOrigin;
 struct SecurityOriginHash;
 
@@ -153,6 +154,8 @@ public:
 
     static bool shouldMakeResourcePurgeableOnEviction();
 
+    static void removeUrlFromCache(ScriptExecutionContext*, const String& urlString);
+
     // Function to collect cache statistics for the caches window in the Safari Debug menu.
     Statistics getStatistics();
     
@@ -192,6 +195,8 @@ private:
 
     bool makeResourcePurgeable(CachedResource*);
     void evict(CachedResource*);
+
+    static void removeUrlFromCacheImpl(ScriptExecutionContext*, const String& urlString);
 
     bool m_disabled;  // Whether or not the cache is enabled.
     bool m_pruneEnabled;

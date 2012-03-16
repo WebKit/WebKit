@@ -89,10 +89,9 @@ void DOMURL::revokeObjectURL(ScriptExecutionContext* scriptExecutionContext, con
     if (!scriptExecutionContext)
         return;
 
-    KURL url(KURL(), urlString);
-    if (CachedResource* resource = memoryCache()->resourceForURL(url))
-        memoryCache()->remove(resource);
+    MemoryCache::removeUrlFromCache(scriptExecutionContext, urlString);
 
+    KURL url(KURL(), urlString);
     HashSet<String>& blobURLs = scriptExecutionContext->publicURLManager().blobURLs();
     if (blobURLs.contains(url.string())) {
         ThreadableBlobRegistry::unregisterBlobURL(url);
