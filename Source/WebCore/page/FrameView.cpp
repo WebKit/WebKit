@@ -2288,7 +2288,9 @@ void FrameView::notifyPageThatContentAreaWillPaint() const
     for (HashSet<ScrollableArea*>::const_iterator it = m_scrollableAreas->begin(), end = m_scrollableAreas->end(); it != end; ++it) {
         ScrollableArea* scrollableArea = *it;
 
-        ASSERT(scrollableArea->isOnActivePage());
+        if (!scrollableArea->isOnActivePage())
+            continue;
+
         scrollableArea->scrollAnimator()->contentAreaWillPaint();
     }
 }
