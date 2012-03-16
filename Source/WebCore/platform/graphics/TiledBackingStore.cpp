@@ -69,10 +69,14 @@ void TiledBackingStore::setTileCreationDelay(double delay)
 void TiledBackingStore::coverWithTilesIfNeeded(const FloatPoint& trajectoryVector)
 {
     IntRect visibleRect = this->visibleRect();
-    if (m_trajectoryVector == trajectoryVector && m_visibleRect == visibleRect)
+
+    FloatPoint normalizedVector = trajectoryVector;
+    normalizedVector.normalize();
+
+    if (m_trajectoryVector == normalizedVector && m_visibleRect == visibleRect)
         return;
 
-    m_trajectoryVector = trajectoryVector;
+    m_trajectoryVector = normalizedVector;
     m_visibleRect = visibleRect;
 
     startBackingStoreUpdateTimer();
@@ -340,8 +344,7 @@ void TiledBackingStore::computeCoverAndKeepRect(const IntRect& visibleRect, IntR
         coverRect.inflateY(visibleRect.height() * (m_coverAreaMultiplier - 1) / 2);
         keepRect = coverRect;
 
-        float trajectoryVectorNorm = sqrt(pow(m_trajectoryVector.x(), 2) + pow(m_trajectoryVector.y(), 2));
-        if (trajectoryVectorNorm) {
+        if (m_trajectoryVector == FloatPoint::zero()) {
             // A null trajectory vector (no motion) means that tiles for the coverArea will be created.
             // A non-null trajectory vector will shrink the covered rect to visibleRect plus its expansion from its
             // center toward the cover area edges in the direction of the given vector.
@@ -356,8 +359,8 @@ void TiledBackingStore::computeCoverAndKeepRect(const IntRect& visibleRect, IntR
 
             // Unite the visible rect with a "ghost" of the visible rect moved in the direction of the trajectory vector.
             coverRect = visibleRect;
-            coverRect.move(coverRect.width() * m_trajectoryVector.x() / trajectoryVectorNorm * trajectoryVectorMultiplier,
-                           coverRect.height() * m_trajectoryVector.y() / trajectoryVectorNorm * trajectoryVectorMultiplier);
+            coverRect.move(coverRect.width() * m_trajectoryVector.x() * trajectoryVectorMultiplier,
+                           coverRect.height() * m_trajectoryVector.y() * trajectoryVectorMultiplier);
 
             coverRect.unite(visibleRect);
         }
