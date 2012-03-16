@@ -1,3 +1,17 @@
+2012-03-16  YoungTaeck Song  <youngtaeck.song@samsung.com>
+
+        [EFL][WK2] Add ProcessLauncherEfl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=75464
+
+        Reviewed by Hajime Morita.
+
+        Add first version of ProcessLauncherEfl.cpp including launchProcess() and terminateProcess().
+
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp: Added.
+        (WebKit::ProcessLauncher::launchProcess):
+        (WebKit::ProcessLauncher::terminateProcess):
+        (WebKit::ProcessLauncher::platformInvalidate):
+
 2012-03-15  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Snow Leopard build.
