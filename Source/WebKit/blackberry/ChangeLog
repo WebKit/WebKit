@@ -1,3 +1,26 @@
+2012-03-16  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Syncing up left over bits in Api from our local branch to upstream
+        https://bugs.webkit.org/show_bug.cgi?id=81105
+
+        Reviewed by Rob Buis.
+
+        This patches fixes up a previous sync done in this directory and adds some new bits
+        as well.  This is accurate as of ddea1528b37b29925638fe1183318b3c3994f1f8 in our
+        local repo.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::drawAndBlendLayersForDirectRendering):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::drawLayersOnCommitIfNeeded):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        (BlackBerry::WebKit::WebPage::webContext):
+        (BlackBerry::WebKit::WebPagePrivate::handleMouseEvent):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-03-16  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Input processing mode should be cancelled when processing hot keys

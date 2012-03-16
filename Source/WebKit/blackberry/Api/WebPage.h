@@ -19,10 +19,12 @@
 #ifndef WebPage_h
 #define WebPage_h
 
-#include "ActiveNodeContext.h"
 #include "BlackBerryGlobal.h"
+#include "WebString.h"
+
 #include <BlackBerryPlatformGuardedPointer.h>
 #include <BlackBerryPlatformInputEvents.h>
+#include <BlackBerryPlatformWebContext.h>
 #include <imf/input_data.h>
 #include <network/NetworkRequest.h>
 
@@ -257,7 +259,7 @@ public:
 
     WebString textHasAttribute(const WebString& query) const;
 
-    ActiveNodeContext activeNodeContext(TargetDetectionStrategy) const;
+    Platform::WebContext webContext(TargetDetectionStrategy) const;
 
     typedef intptr_t BackForwardId;
     struct BackForwardEntry {

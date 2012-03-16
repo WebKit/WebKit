@@ -2568,6 +2568,46 @@ void BackingStorePrivate::drawAndBlendLayersForDirectRendering(const Platform::I
     blendCompositingSurface(visibleDirtyRect);
 #endif
 }
+
+bool BackingStorePrivate::drawLayersOnCommitIfNeeded()
+{
+    // Check if rendering caused a commit and we need to redraw the layers
+    if (!m_needsDrawLayersOnCommit)
+        return false;
+
+    m_needsDrawLayersOnCommit = false;
+    m_webPage->d->drawLayersOnCommit();
+
+    return true;
+}
+
+void BackingStorePrivate::drawAndBlendLayersForDirectRendering(const Platform::IntRect& dirtyRect)
+{
+    ASSERT(BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread());
+    if (!BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread())
+        return;
+
+    // Because we're being called sync from the WebKit thread, we can use
+    // regular WebPage size and transformation functions without concerns.
+    WebCore::IntRect contentsRect = visibleContentsRect();
+    WebCore::FloatRect untransformedContentsRect = m_webPage->d->mapFromTransformedFloatRect(WebCore::FloatRect(contentsRect));
+    WebCore::IntRect contentsScreenRect = m_client->mapFromTransformedContentsToTransformedViewport(contentsRect);
+    WebCore::IntRect dstRect = intersection(contentsScreenRect,
+        WebCore::IntRect(WebCore::IntPoint(0, 0), m_webPage->d->transformedViewportSize()));
+
+    // Check if rendering caused a commit and we need to redraw the layers.
+    m_needsDrawLayersOnCommit = false;
+    m_webPage->d->drawSubLayers(dstRect, untransformedContentsRect);
+
+#if ENABLE_COMPOSITING_SURFACE
+    // See above comment about sync calling, visibleContentsRect() is safe here.
+    Platform::IntRect visibleDirtyRect = dirtyRect;
+    visibleDirtyRect.intersect(visibleContentsRect());
+    visibleDirtyRect = m_client->mapFromTransformedContentsToTransformedViewport(visibleDirtyRect);
+
+    blendCompositingSurface(visibleDirtyRect);
+#endif
+}
 #endif
 
 bool BackingStorePrivate::isActive() const
