@@ -3494,7 +3494,6 @@ BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/thai-line-breaks.html = 
 BUGWK74055 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 BUGWK74055 LEOPARD : platform/chromium/virtual/gpu/fast/canvas/canvas-largedraws.html = TIMEOUT
 
-BUGWK74157 SNOWLEOPARD : animations/cross-fade-border-image-source.html = IMAGE
 BUGWK74157 SNOWLEOPARD : transitions/cross-fade-border-image.html = IMAGE+TEXT IMAGE
 BUGWK74157 LEOPARD : animations/cross-fade-webkit-mask-box-image.html = IMAGE+TEXT IMAGE
 
@@ -3504,7 +3503,6 @@ BUGWK74374 WIN : fast/forms/select-listbox-multiple-no-focusring.html = IMAGE
 
 BUGWK74662 : fast/text/unicode-variation-selector.html = IMAGE+TEXT
 
-BUGWK74634 WIN : compositing/absolute-position-changed-with-composited-parent-layer.html = IMAGE
 
 BUGWK74746 : fast/filesystem/workers/file-from-file-entry-sync.html = PASS CRASH
 BUGWK74746 : fast/filesystem/workers/file-entry-to-uri-sync.html = PASS CRASH
