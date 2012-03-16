@@ -95,11 +95,18 @@ PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, Pass
     return request.release();
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::add");
     if (key && (key->type() == IDBKey::InvalidType)) {
         ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }
+
+    RefPtr<SerializedScriptValue> value = prpValue;
+    if (value->blobURLs().size() > 0) {
+        // FIXME: Add Blob/File/FileList support
+        ec = DATA_CLONE_ERR;
         return 0;
     }
 
@@ -112,11 +119,18 @@ PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, Pass
     return request.release();
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     IDB_TRACE("IDBObjectStore::put");
     if (key && (key->type() == IDBKey::InvalidType)) {
         ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }
+
+    RefPtr<SerializedScriptValue> value = prpValue;
+    if (value->blobURLs().size() > 0) {
+        // FIXME: Add Blob/File/FileList support
+        ec = DATA_CLONE_ERR;
         return 0;
     }
 

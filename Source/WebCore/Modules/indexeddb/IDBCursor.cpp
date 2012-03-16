@@ -91,9 +91,17 @@ IDBAny* IDBCursor::source() const
     return m_source.get();
 }
 
-PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> prpValue, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursor::update");
+
+    RefPtr<SerializedScriptValue> value = prpValue;
+    if (value->blobURLs().size() > 0) {
+        // FIXME: Add Blob/File/FileList support
+        ec = DATA_CLONE_ERR;
+        return 0;
+    }
+
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
     m_backend->update(value, request, ec);
     if (ec) {

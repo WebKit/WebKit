@@ -27,6 +27,7 @@
 #ifndef SerializedScriptValue_h
 #define SerializedScriptValue_h
 
+#include "PlatformString.h"
 #include "ScriptState.h"
 #include <heap/Strong.h>
 #include <runtime/JSValue.h>
@@ -92,6 +93,7 @@ public:
 #endif
 
     const Vector<uint8_t>& data() { return m_data; }
+    const Vector<String>& blobURLs() const { return m_blobURLs; }
 
 #if ENABLE(INDEXED_DATABASE)
     static PassRefPtr<SerializedScriptValue> create(JSC::ExecState*, JSC::JSValue);
@@ -108,11 +110,13 @@ private:
     static void maybeThrowExceptionIfSerializationFailed(JSC::ExecState*, SerializationReturnCode);
     static bool serializationDidCompleteSuccessfully(SerializationReturnCode);
     static PassOwnPtr<ArrayBufferContentsArray> transferArrayBuffers(ArrayBufferArray&, SerializationReturnCode&);
-    
+
     SerializedScriptValue(Vector<unsigned char>&);
-    SerializedScriptValue(Vector<unsigned char>&, PassOwnPtr<ArrayBufferContentsArray>);
+    SerializedScriptValue(Vector<unsigned char>&, Vector<String>& blobURLs);
+    SerializedScriptValue(Vector<unsigned char>&, Vector<String>& blobURLs, PassOwnPtr<ArrayBufferContentsArray>);
     Vector<unsigned char> m_data;
     OwnPtr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
+    Vector<String> m_blobURLs;
 };
 
 }

@@ -80,6 +80,8 @@ public:
     ScriptValue deserializeForInspector(ScriptState*);
 #endif
 
+    const Vector<String>& blobURLs() const { return m_blobURLs; }
+
 private:
     enum StringDataMode {
         StringValue,
@@ -95,6 +97,7 @@ private:
 
     String m_data;
     OwnPtr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
+    Vector<String> m_blobURLs;
 };
 
 } // namespace WebCore

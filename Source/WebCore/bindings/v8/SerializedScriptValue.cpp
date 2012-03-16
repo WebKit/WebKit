@@ -606,13 +606,14 @@ public:
         JSFailure
     };
 
-    Serializer(Writer& writer, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, v8::TryCatch& tryCatch)
+    Serializer(Writer& writer, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, Vector<String>& blobURLs, v8::TryCatch& tryCatch)
         : m_writer(writer)
         , m_tryCatch(tryCatch)
         , m_depth(0)
         , m_execDepth(0)
         , m_status(Success)
         , m_nextObjectReference(0)
+        , m_blobURLs(blobURLs)
     {
         ASSERT(!tryCatch.HasCaught());
         if (messagePorts) {
@@ -977,6 +978,7 @@ private:
         if (!blob)
             return;
         m_writer.writeBlob(blob->url().string(), blob->type(), blob->size());
+        m_blobURLs.append(blob->url().string());
     }
 
     void writeFile(v8::Handle<v8::Value> value)
@@ -985,6 +987,7 @@ private:
         if (!file)
             return;
         m_writer.writeFile(file->path(), file->url().string(), file->type());
+        m_blobURLs.append(file->url().string());
     }
 
     void writeFileList(v8::Handle<v8::Value> value)
@@ -993,6 +996,9 @@ private:
         if (!fileList)
             return;
         m_writer.writeFileList(*fileList);
+        unsigned length = fileList->length();
+        for (unsigned i = 0; i < length; ++i)
+            m_blobURLs.append(fileList->item(i)->url().string());
     }
 
     void writeImageData(v8::Handle<v8::Value> value)
@@ -1111,6 +1117,7 @@ private:
     ObjectPool m_transferredMessagePorts;
     ObjectPool m_transferredArrayBuffers;
     uint32_t m_nextObjectReference;
+    Vector<String>& m_blobURLs;
 };
 
 Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, StateBase* next)
@@ -2204,7 +2211,7 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value,
     Serializer::Status status;
     {
         v8::TryCatch tryCatch;
-        Serializer serializer(writer, messagePorts, arrayBuffers, tryCatch);
+        Serializer serializer(writer, messagePorts, arrayBuffers, m_blobURLs, tryCatch);
         status = serializer.serialize(value);
         if (status == Serializer::JSException) {
             // If there was a JS exception thrown, re-throw it.

@@ -1,0 +1,115 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<input type="file" id="fileInput" multiple></input>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Confirm Blob/File/FileList limitations of WebKit's IndexedDB implementation.");
+// FIXME: This verifies that blob-type data is rejected for now, rather than silently failing.
+// Tracked for the Chromium port as: http://crbug.com/108012
+
+fileInput = document.getElementById("fileInput");
+if (window.eventSender) {
+    var fileRect = fileInput.getClientRects()[0];
+    var targetX = fileRect.left + fileRect.width / 2;
+    var targetY = fileRect.top + fileRect.height / 2;
+    eventSender.beginDragWithFiles(['resources/test-data.html', 'resources/test-data.txt']);
+    eventSender.mouseMoveTo(targetX, targetY);
+    eventSender.mouseUp();
+}
+
+function test()
+{
+    removeVendorPrefixes();
+    prepareDatabase();
+}
+
+function prepareDatabase()
+{
+    debug("");
+    debug("Prepare Database");
+    request = evalAndLog("indexedDB.deleteDatabase('noblobs')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function(e) {
+        request = evalAndLog("indexedDB.open('noblobs')");
+        request.onerror = unexpectedErrorCallback;
+        request.onsuccess = function(e) {
+            evalAndLog("db = request.result");
+            shouldBeEqualToString("db.version", "");
+            request = evalAndLog("db.setVersion('1')");
+            request.onerror = unexpectedErrorCallback;
+            request.onsuccess = function(e) {
+                evalAndLog("store = db.createObjectStore('storeName')");
+                evalAndLog("store.put('value', 'key')");
+                var trans = request.result;
+                trans.onerror = unexpectedErrorCallback;
+                trans.onabort = unexpectedAbortCallback;
+                trans.oncomplete = testBlob();
+            };
+        };
+    };
+}
+
+function testBlob()
+{
+    debug("");
+    debug("testBlob():");
+
+    evalAndLog("BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder");
+    shouldBeTrue("BlobBuilder != null");
+    shouldBeTrue("FileReader != null");
+    evalAndLog("builder = new BlobBuilder()");
+    evalAndLog("test_content = 'This is a test. This is only a test.'");
+    evalAndLog("builder.append(test_content)");
+    evalAndLog("blob = builder.getBlob()");
+    validateExceptions("blob", testFile);
+}
+
+function testFile()
+{
+    debug("");
+    debug("testFile():");
+    evalAndLog("file = fileInput.files[0]");
+    validateExceptions("file", testFileList);
+}
+
+function testFileList()
+{
+    debug("");
+    debug("testFileList():");
+    evalAndLog("filelist = fileInput.files");
+    validateExceptions("filelist", finishJSTest);
+}
+
+function validateExceptions(variable, onComplete)
+{
+    debug("");
+    debug("validateExceptions(" + variable + "):");
+    evalAndLog("transaction = db.transaction('storeName', IDBTransaction.READ_WRITE)");
+    evalAndLog("store = transaction.objectStore('storeName')");
+    evalAndExpectException("store.put(" + variable + ", 'key')", "DOMException.DATA_CLONE_ERR");
+    evalAndExpectException("store.add(" + variable + ", 'key')", "DOMException.DATA_CLONE_ERR");
+    evalAndLog("request = store.openCursor()");
+    request.onsuccess = function () {
+        evalAndLog("cursor = request.result");
+        evalAndExpectException("cursor.update(" + variable + ")", "DOMException.DATA_CLONE_ERR");
+    };
+    transaction.oncomplete = onComplete;
+}
+
+if (window.eventSender) {
+    test();
+} else {
+    alert("Select file(s) using the input control above to initiate the test");
+    document.getElementById("fileInput").onchange = test;
+}
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -216,7 +216,7 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, WrapperT
                     proxy = V8Proxy::retrieve(frame);
             }
 #if ENABLE(WORKERS)
-            else
+            else if (isWrapperOfType(globalPrototype, &V8WorkerContext::info))
                 workerContext = V8WorkerContext::toNative(lookupDOMWrapper(V8WorkerContext::GetTemplate(), context->Global()));
 #endif
         }

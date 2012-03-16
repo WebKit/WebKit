@@ -321,9 +321,9 @@ class CloneSerializer : CloneBase {
 public:
     static SerializationReturnCode serialize(ExecState* exec, JSValue value,
                                              MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers,
-                                             Vector<uint8_t>& out)
+                                             Vector<String>& blobURLs, Vector<uint8_t>& out)
     {
-        CloneSerializer serializer(exec, messagePorts, arrayBuffers, out);
+        CloneSerializer serializer(exec, messagePorts, arrayBuffers, blobURLs, out);
         return serializer.serialize(value);
     }
 
@@ -354,9 +354,10 @@ public:
 private:
     typedef HashMap<JSObject*, uint32_t> ObjectPool;
 
-    CloneSerializer(ExecState* exec, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, Vector<uint8_t>& out)
+    CloneSerializer(ExecState* exec, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, Vector<String>& blobURLs, Vector<uint8_t>& out)
         : CloneBase(exec)
         , m_buffer(out)
+        , m_blobURLs(blobURLs)
         , m_emptyIdentifier(exec, UString("", 0))
     {
         write(CurrentVersion);
@@ -583,6 +584,7 @@ private:
             if (obj->inherits(&JSBlob::s_info)) {
                 write(BlobTag);
                 Blob* blob = toBlob(obj);
+                m_blobURLs.append(blob->url());
                 write(blob->url());
                 write(blob->type());
                 write(blob->size());
@@ -767,6 +769,7 @@ private:
 
     void write(const File* file)
     {
+        m_blobURLs.append(file->url());
         write(file->path());
         write(file->url());
         write(file->type());
@@ -778,6 +781,7 @@ private:
     }
 
     Vector<uint8_t>& m_buffer;
+    Vector<String>& m_blobURLs;
     ObjectPool m_objectPool;
     ObjectPool m_transferredMessagePorts;
     ObjectPool m_transferredArrayBuffers;
@@ -1662,10 +1666,17 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer)
     m_data.swap(buffer);
 }
 
-SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, PassOwnPtr<ArrayBufferContentsArray> arrayBufferContentsArray)
+SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<String>& blobURLs)
+{
+    m_data.swap(buffer);
+    m_blobURLs.swap(blobURLs);
+}
+
+SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<String>& blobURLs, PassOwnPtr<ArrayBufferContentsArray> arrayBufferContentsArray)
     : m_arrayBufferContentsArray(arrayBufferContentsArray)
 {
     m_data.swap(buffer);
+    m_blobURLs.swap(blobURLs);
 }
 
 PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValue::transferArrayBuffers(
@@ -1703,7 +1714,8 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec,
                                                                 SerializationErrorMode throwExceptions)
 {
     Vector<uint8_t> buffer;
-    SerializationReturnCode code = CloneSerializer::serialize(exec, value, messagePorts, arrayBuffers, buffer);
+    Vector<String> blobURLs;
+    SerializationReturnCode code = CloneSerializer::serialize(exec, value, messagePorts, arrayBuffers, blobURLs, buffer);
 
     OwnPtr<ArrayBufferContentsArray> arrayBufferContentsArray;
 
@@ -1716,7 +1728,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec,
     if (!serializationDidCompleteSuccessfully(code))
         return 0;
 
-    return adoptRef(new SerializedScriptValue(buffer, arrayBufferContentsArray.release()));
+    return adoptRef(new SerializedScriptValue(buffer, blobURLs, arrayBufferContentsArray.release()));
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
