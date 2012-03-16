@@ -1304,12 +1304,15 @@ bool FrameSelection::recomputeCaretRect()
     
     if (oldAbsCaretBounds == m_absCaretBounds)
         return false;
-        
+
+#if ENABLE(TEXT_CARET)
     LayoutRect oldAbsoluteCaretRepaintBounds = m_absoluteCaretRepaintBounds;
+#endif
+
     // We believe that we need to inflate the local rect before transforming it to obtain the repaint bounds.
     m_absoluteCaretRepaintBounds = caretRepaintRect(m_selection.start().deprecatedNode());
 
-#if ENABLE(TEXT_CARET)    
+#if ENABLE(TEXT_CARET)
     if (RenderView* view = toRenderView(m_frame->document()->renderer())) {
         // FIXME: make caret repainting container-aware.
         view->repaintRectangleInViewAndCompositedLayers(oldAbsoluteCaretRepaintBounds, false);
