@@ -33,9 +33,7 @@
 #include "cc/CCTiledLayerImpl.h"
 
 namespace WebCore {
-
 class LayerTextureUpdater;
-class Region;
 class UpdatableTile;
 
 class TiledLayerChromium : public LayerChromium {
@@ -90,10 +88,10 @@ protected:
     void resetUpdateState();
 
     // Prepare data needed to update textures that intersect with layerRect.
-    void prepareToUpdate(const IntRect& layerRect, const Region& occludedTargetSpace);
+    void prepareToUpdate(const IntRect& layerRect, const CCOcclusionTracker*);
 
     // Same as above, but this will try to paint additional surrounding content if idle.
-    void prepareToUpdateIdle(const IntRect& layerRect, const Region& occludedTargetSpace);
+    void prepareToUpdateIdle(const IntRect& layerRect, const CCOcclusionTracker*);
 
     // After preparing an update, returns true if more pre-painting is needed.
     bool needsIdlePaint(const IntRect& layerRect);
@@ -113,7 +111,7 @@ private:
     bool tileOnlyNeedsPartialUpdate(UpdatableTile*);
     bool tileNeedsBufferedUpdate(UpdatableTile*);
 
-    void prepareToUpdateTiles(bool idle, int left, int top, int right, int bottom, const Region& occludedTargetSpace);
+    void prepareToUpdateTiles(bool idle, int left, int top, int right, int bottom, const CCOcclusionTracker*);
     IntRect idlePaintRect(const IntRect& visibleLayerRect);
 
     UpdatableTile* tileAt(int, int) const;

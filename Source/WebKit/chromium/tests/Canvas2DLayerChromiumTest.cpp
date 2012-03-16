@@ -156,8 +156,7 @@ protected:
 
         canvas->setNeedsDisplay();
         EXPECT_TRUE(canvas->needsDisplay());
-        Region occludedScreenSpace;
-        canvas->paintContentsIfDirty(occludedScreenSpace);
+        canvas->paintContentsIfDirty(0);
         EXPECT_FALSE(canvas->needsDisplay());
         {
             DebugScopedSetImplThread scopedImplThread;

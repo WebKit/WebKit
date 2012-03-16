@@ -499,14 +499,14 @@ void CCLayerTreeHost::reserveTextures()
 }
 
 // static
-void CCLayerTreeHost::paintContentsIfDirty(LayerChromium* layer, PaintType paintType, const Region& occludedScreenSpace)
+void CCLayerTreeHost::paintContentsIfDirty(LayerChromium* layer, PaintType paintType, const CCOcclusionTracker* occlusion)
 {
     ASSERT(layer);
     ASSERT(PaintVisible == paintType || PaintIdle == paintType);
     if (PaintVisible == paintType)
-        layer->paintContentsIfDirty(occludedScreenSpace);
+        layer->paintContentsIfDirty(occlusion);
     else
-        layer->idlePaintContentsIfDirty(occludedScreenSpace);
+        layer->idlePaintContentsIfDirty(occlusion);
 }
 
 void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderSurfaceLayer, PaintType paintType)
@@ -516,20 +516,19 @@ void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderS
     // mask and replica should be painted.
 
     // FIXME: If the surface has a replica, it should be painted with occlusion that excludes the current target surface subtree.
-    Region noOcclusion;
 
     if (renderSurfaceLayer->maskLayer()) {
         renderSurfaceLayer->maskLayer()->setVisibleLayerRect(IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
-        paintContentsIfDirty(renderSurfaceLayer->maskLayer(), paintType, noOcclusion);
+        paintContentsIfDirty(renderSurfaceLayer->maskLayer(), paintType, 0);
     }
 
     LayerChromium* replicaLayer = renderSurfaceLayer->replicaLayer();
     if (replicaLayer) {
-        paintContentsIfDirty(replicaLayer, paintType, noOcclusion);
+        paintContentsIfDirty(replicaLayer, paintType, 0);
 
         if (replicaLayer->maskLayer()) {
             replicaLayer->maskLayer()->setVisibleLayerRect(IntRect(IntPoint(), replicaLayer->maskLayer()->contentBounds()));
-            paintContentsIfDirty(replicaLayer->maskLayer(), paintType, noOcclusion);
+            paintContentsIfDirty(replicaLayer->maskLayer(), paintType, 0);
         }
     }
 }
@@ -553,7 +552,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
             ASSERT(!it->bounds().isEmpty());
 
             occlusionTracker.enterTargetRenderSurface(it->targetRenderSurface());
-            paintContentsIfDirty(*it, paintType, occlusionTracker.currentOcclusionInScreenSpace());
+            paintContentsIfDirty(*it, paintType, &occlusionTracker);
             occlusionTracker.markOccludedBehindLayer(*it);
         } else
             occlusionTracker.leaveToTargetRenderSurface(it.targetRenderSurfaceLayer()->renderSurface());

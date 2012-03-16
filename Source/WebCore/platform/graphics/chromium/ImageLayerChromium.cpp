@@ -158,7 +158,7 @@ void ImageLayerChromium::setContents(Image* contents)
     setNeedsDisplay();
 }
 
-void ImageLayerChromium::paintContentsIfDirty(const Region& occludedScreenSpace)
+void ImageLayerChromium::paintContentsIfDirty(const CCOcclusionTracker* occlusion)
 {
     createTextureUpdaterIfNeeded();
     if (m_needsDisplay) {
@@ -168,7 +168,7 @@ void ImageLayerChromium::paintContentsIfDirty(const Region& occludedScreenSpace)
         m_needsDisplay = false;
     }
 
-    prepareToUpdate(visibleLayerRect(), occludedScreenSpace);
+    prepareToUpdate(visibleLayerRect(), occlusion);
 }
 
 void ImageLayerChromium::createTextureUpdaterIfNeeded()

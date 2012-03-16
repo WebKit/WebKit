@@ -1,5 +1,28 @@
 2012-03-15  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Decide occlusion in paint culling with CCOcclusionTracker
+        https://bugs.webkit.org/show_bug.cgi?id=81181
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::ContentLayerChromiumWithUpdateTracking::paintContentsIfDirty):
+        (WTF::ContentLayerChromiumWithUpdateTracking::idlePaintContentsIfDirty):
+        (WTF::TestLayerChromium::paintContentsIfDirty):
+        * tests/Canvas2DLayerChromiumTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+        (TestCCOcclusionTracker):
+        (WTF::TestCCOcclusionTracker::TestCCOcclusionTracker):
+        (WTF::TestCCOcclusionTracker::setOcclusion):
+        (WTF::TestCCOcclusionTracker::layerScissorRectInTargetSurface):
+        (WTF):
+        (WTF::FakeTiledLayerChromium::prepareToUpdate):
+        (WTF::FakeTiledLayerChromium::prepareToUpdateIdle):
+        (WTF::FakeTiledLayerChromium::paintContentsIfDirty):
+        (WTF::TEST):
+
+2012-03-15  Dana Jansens  <danakj@chromium.org>
+
         [chromium] Move overdraw metrics into a templated class for both paint and draw metrics.
         https://bugs.webkit.org/show_bug.cgi?id=81156
 
