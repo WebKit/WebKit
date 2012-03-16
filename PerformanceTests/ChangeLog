@@ -1,3 +1,27 @@
+2012-03-15  Kentaro Hara  <haraken@chromium.org>
+
+        [PerformanceTests] run-perf-tests should output correct units
+        https://bugs.webkit.org/show_bug.cgi?id=78303
+
+        Reviewed by Ryosuke Niwa.
+
+        Previously run-perf-tests just supported "ms" for units.
+        Consequently, Dromaeo perf tests had been reporting runs/s as "ms".
+        This patch fixes run-perf-tests so that they can support custom units.
+        The default unit is "ms".
+
+        The test result looks like this:
+
+        $ ./Tools/Scripts/run-perf-tests Dromaeo/dom-attr.html
+        RESULT Dromaeo: dom-attr= 6465.9525483 runs/s
+        median= 0.0 runs/s, stdev= 24.2983433436 runs/s, min= 6435.87649402 runs/s, max= 6515.63693392 runs/s
+
+        * Dromaeo/resources/dromaeorunner.js:
+        (.):
+        * resources/runner.js:
+        (PerfTestRunner.computeStatistics):
+        (PerfTestRunner.printStatistics):
+
 2012-03-15  Alexis Menard  <alexis.menard@openbossa.org>
 
         Fix the test failing with run-perf-tests.

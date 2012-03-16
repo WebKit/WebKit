@@ -284,11 +284,14 @@ class PerfTestsRunner(object):
         test_name = filesystem.splitext(test_name)[0]
         results = {}
         keys = ['avg', 'median', 'stdev', 'min', 'max']
-        score_regex = re.compile(r'^(' + r'|'.join(keys) + r')\s+([0-9\.]+)')
+        score_regex = re.compile(r'^(?P<key>' + r'|'.join(keys) + r')\s+(?P<value>[0-9\.]+)\s*(?P<unit>.*)')
+        unit = "ms"
         for line in re.split('\n', output.text):
             score = score_regex.match(line)
             if score:
-                results[score.group(1)] = float(score.group(2))
+                results[score.group('key')] = float(score.group('value'))
+                if score.group('unit'):
+                    unit = score.group('unit')
                 continue
 
             if not self._should_ignore_line_in_parser_test_result(line):
@@ -298,8 +301,8 @@ class PerfTestsRunner(object):
         if test_failed or set(keys) != set(results.keys()):
             return True
         self._results[filesystem.join(category, test_name).replace('\\', '/')] = results
-        self._buildbot_output.write('RESULT %s: %s= %s ms\n' % (category, test_name, results['avg']))
-        self._buildbot_output.write(', '.join(['%s= %s ms' % (key, results[key]) for key in keys[1:]]) + '\n')
+        self._buildbot_output.write('RESULT %s: %s= %s %s\n' % (category, test_name, results['avg'], unit))
+        self._buildbot_output.write(', '.join(['%s= %s %s' % (key, results[key], unit) for key in keys[1:]]) + '\n')
         return False
 
     def _run_single_test(self, test, driver, is_chromium_style):

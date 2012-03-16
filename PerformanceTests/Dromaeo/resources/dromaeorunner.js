@@ -18,7 +18,8 @@
                  mean: mean,
                  min: min,
                  max: max,
-                 stdev: Math.sqrt(varsum)
+                 stdev: Math.sqrt(varsum),
+                 unit: "runs/s"
              };
          },
 
@@ -32,7 +33,7 @@
                      DRT.targetDocument = iframe.contentDocument;
                      DRT.targetWindow = iframe.contentDocument.defaultView;
                  });
-             
+
              window.addEventListener(
                  "message",
                  function(event) {

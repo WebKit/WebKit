@@ -75,6 +75,7 @@ PerfTestRunner.computeStatistics = function (times) {
     }
     result.variance = squareSum / data.length;
     result.stdev = Math.sqrt(result.variance);
+    result.unit = "ms";
 
     return result;
 }
@@ -87,11 +88,11 @@ PerfTestRunner.logStatistics = function (times) {
 
 PerfTestRunner.printStatistics = function (statistics) {
     this.log("");
-    this.log("avg " + statistics.mean);
-    this.log("median " + statistics.median);
-    this.log("stdev " + statistics.stdev);
-    this.log("min " + statistics.min);
-    this.log("max " + statistics.max);
+    this.log("avg " + statistics.mean + " " + statistics.unit);
+    this.log("median " + statistics.median + " " + statistics.unit);
+    this.log("stdev " + statistics.stdev + " " + statistics.unit);
+    this.log("min " + statistics.min + " " + statistics.unit);
+    this.log("max " + statistics.max + " " + statistics.unit);
 }
 
 PerfTestRunner.gc = function () {
