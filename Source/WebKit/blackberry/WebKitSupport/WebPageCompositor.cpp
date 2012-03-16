@@ -38,7 +38,8 @@ namespace WebKit {
 
 WebPageCompositor::WebPageCompositor(WebPagePrivate* page)
     : m_webPage(page)
-    , m_layerRenderer(LayerRenderer::create(page->m_page))
+    , m_context(GLES2Context::create(page))
+    , m_layerRenderer(LayerRenderer::create(m_context.get()))
     , m_generation(0)
     , m_compositedGeneration(-1)
     , m_backingStoreUsesOpenGL(false)

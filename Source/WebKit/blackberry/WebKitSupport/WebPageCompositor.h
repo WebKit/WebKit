@@ -21,6 +21,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "GLES2Context.h"
 #include "LayerCompositingThread.h"
 #include "LayerRenderer.h"
 
@@ -68,6 +69,8 @@ private:
     void animationTimerFired();
 
     WebPagePrivate* m_webPage;
+    // Please maintain this order since m_layerRenderer depends on m_context in initialization list.
+    OwnPtr<GLES2Context> m_context;
     OwnPtr<WebCore::LayerRenderer> m_layerRenderer;
     RefPtr<WebCore::LayerCompositingThread> m_rootLayer;
     WebCore::IntRect m_layoutRectForCompositing;

@@ -150,7 +150,7 @@ JSValueRef DumpRenderTreeSupport::computedStyleIncludingVisitedInfo(JSContextRef
         return JSValueMakeUndefined(context);
     JSElement* jsElement = static_cast<JSElement*>(asObject(jsValue));
     Element* element = jsElement->impl();
-    RefPtr<CSSComputedStyleDeclaration> style = computedStyle(element, true);
+    RefPtr<CSSComputedStyleDeclaration> style = CSSComputedStyleDeclaration::create(element, true);
     return toRef(exec, toJS(exec, jsElement->globalObject(), style.get()));
 }
 

@@ -237,7 +237,7 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
             } else // Fat finger point in viewport coordinates.
                 adjustedPoint = m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition());
 
-            PlatformMouseEvent mouseEvent(adjustedPoint, m_lastScreenPoint, MouseEventReleased, 1, LeftButton, TouchScreen);
+            PlatformMouseEvent mouseEvent(adjustedPoint, m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, TouchScreen);
             m_webPage->handleMouseEvent(mouseEvent);
             m_lastFatFingersResult.reset(); // Reset the fat finger result as its no longer valid when a user's finger is not on the screen.
 
@@ -251,7 +251,7 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
         }
     case Platform::TouchPoint::TouchMoved:
         if (m_convertTouchToMouse) {
-            PlatformMouseEvent mouseEvent(point.m_pos, m_lastScreenPoint, MouseEventMoved, 1, LeftButton, TouchScreen);
+            PlatformMouseEvent mouseEvent(point.m_pos, m_lastScreenPoint, PlatformEvent::MouseMoved, 1, LeftButton, TouchScreen);
             m_lastScreenPoint = point.m_screenPos;
             if (!m_webPage->handleMouseEvent(mouseEvent)) {
                 m_convertTouchToMouse = false;
@@ -294,13 +294,12 @@ unsigned TouchEventHandler::spellCheck(Platform::TouchPoint& touchPoint)
 void TouchEventHandler::handleFatFingerPressed()
 {
     if (!m_didCancelTouch) {
-
         // First update the mouse position with a MouseMoved event.
-        PlatformMouseEvent mouseMoveEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, MouseEventMoved, 0, LeftButton, TouchScreen);
+        PlatformMouseEvent mouseMoveEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MouseMoved, 0, LeftButton, TouchScreen);
         m_webPage->handleMouseEvent(mouseMoveEvent);
 
         // Then send the MousePressed event.
-        PlatformMouseEvent mousePressedEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, MouseEventPressed, 1, LeftButton, TouchScreen);
+        PlatformMouseEvent mousePressedEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MousePressed, 1, LeftButton, TouchScreen);
         m_webPage->handleMouseEvent(mousePressedEvent);
     }
 }

@@ -155,7 +155,7 @@ std::string SurfacePool::sharedPixmapGroup() const
 
 void SurfacePool::createBuffers()
 {
-    if (!m_initialized || m_tilePool.isEmpty())
+    if (!m_initialized || m_tilePool.isEmpty() || !m_buffersSuspended)
         return;
 
     // Create the tile pool.
@@ -173,7 +173,7 @@ void SurfacePool::createBuffers()
 
 void SurfacePool::releaseBuffers()
 {
-    if (!m_initialized || m_tilePool.isEmpty())
+    if (!m_initialized || m_tilePool.isEmpty() || m_buffersSuspended)
         return;
 
     m_buffersSuspended = true;
@@ -181,16 +181,20 @@ void SurfacePool::releaseBuffers()
     // Release the tile pool.
     for (size_t i = 0; i < m_tilePool.size(); ++i) {
         m_tilePool[i]->frontBuffer()->clearRenderedRegion();
+        // Clear the buffer to prevent accidental leakage of (possibly sensitive) pixel data.
+        BlackBerry::Platform::Graphics::clearBuffer(m_tilePool[i]->frontBuffer()->nativeBuffer(), 0, 0, 0, 0);
         BlackBerry::Platform::Graphics::destroyPixmapBuffer(m_tilePool[i]->frontBuffer()->nativeBuffer());
     }
 
     if (m_visibleTileBuffer) {
         m_visibleTileBuffer->frontBuffer()->clearRenderedRegion();
+        BlackBerry::Platform::Graphics::clearBuffer(m_visibleTileBuffer->frontBuffer()->nativeBuffer(), 0, 0, 0, 0);
         BlackBerry::Platform::Graphics::destroyPixmapBuffer(m_visibleTileBuffer->frontBuffer()->nativeBuffer());
     }
 
     if (backBuffer()) {
         backBuffer()->clearRenderedRegion();
+        BlackBerry::Platform::Graphics::clearBuffer(backBuffer()->nativeBuffer(), 0, 0, 0, 0);
         BlackBerry::Platform::Graphics::destroyPixmapBuffer(backBuffer()->nativeBuffer());
     }
 }

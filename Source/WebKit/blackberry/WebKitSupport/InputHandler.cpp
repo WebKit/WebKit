@@ -1306,6 +1306,7 @@ spannable_string_t* InputHandler::spannableTextInRange(int start, int end, int32
     pst->length = stringLength;
     pst->spans_count = 0;
     pst->spans = 0;
+
     return pst;
 }
 

@@ -1,5 +1,32 @@
 2012-03-16  Nima Ghanavatian  <nghanavatian@rim.com>
 
+        [BlackBerry] Syncing up left over bits in WebKitSupport from our local branch to upstream
+        https://bugs.webkit.org/show_bug.cgi?id=81118
+
+        Reviewed by Rob Buis.
+
+        This is a consolidation of various changes that are in our local dev branch
+        but do not appear in our upstreamed port.
+
+        * WebKitSupport/DumpRenderTreeSupport.cpp:
+        (DumpRenderTreeSupport::computedStyleIncludingVisitedInfo):
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::isElementClickable):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::spannableTextInRange):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::createBuffers):
+        (BlackBerry::WebKit::SurfacePool::releaseBuffers):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+        (BlackBerry::WebKit::TouchEventHandler::handleFatFingerPressed):
+        * WebKitSupport/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositor::WebPageCompositor):
+        * WebKitSupport/WebPageCompositor.h:
+        (WebPageCompositor):
+
+2012-03-16  Nima Ghanavatian  <nghanavatian@rim.com>
+
         [BlackBerry] Syncing up left over bits in WebCoreSupport from our local branch to upstream
         https://bugs.webkit.org/show_bug.cgi?id=81120
 

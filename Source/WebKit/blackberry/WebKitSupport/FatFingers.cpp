@@ -110,7 +110,7 @@ bool FatFingers::isElementClickable(Element* element) const
         // Notice, B is not a hyperlink, or form control, and does not register any mouse event handler. Then B cannot
         // be clicked. Suppose B specified the CSS property "cursor: pointer". Then, B will be considered as clickable.
         return hasMousePressListener(element)
-            || computedStyle(element)->getPropertyValue(cssPropertyID("cursor")) == "pointer";
+            || CSSComputedStyleDeclaration::create(element)->getPropertyValue(cssPropertyID("cursor")) == "pointer";
     default:
         ASSERT_NOT_REACHED();
     }
