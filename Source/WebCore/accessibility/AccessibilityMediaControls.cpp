@@ -82,7 +82,8 @@ MediaControlElementType AccessibilityMediaControl::controlType() const
 
 String AccessibilityMediaControl::controlTypeName() const
 {
-    DEFINE_STATIC_LOCAL(const String, mediaFullscreenButtonName, ("FullscreenButton"));
+    DEFINE_STATIC_LOCAL(const String, mediaEnterFullscreenButtonName, ("EnterFullscreenButton"));
+    DEFINE_STATIC_LOCAL(const String, mediaExitFullscreenButtonName, ("ExitFullscreenButton"));
     DEFINE_STATIC_LOCAL(const String, mediaMuteButtonName, ("MuteButton"));
     DEFINE_STATIC_LOCAL(const String, mediaPlayButtonName, ("PlayButton"));
     DEFINE_STATIC_LOCAL(const String, mediaSeekBackButtonName, ("SeekBackButton"));
@@ -98,8 +99,10 @@ String AccessibilityMediaControl::controlTypeName() const
     DEFINE_STATIC_LOCAL(const String, mediaHideClosedCaptionsButtonName, ("HideClosedCaptionsButton"));
 
     switch (controlType()) {
-    case MediaFullscreenButton:
-        return mediaFullscreenButtonName;
+    case MediaEnterFullscreenButton:
+        return mediaEnterFullscreenButtonName;
+    case MediaExitFullscreenButton:
+        return mediaExitFullscreenButtonName;
     case MediaMuteButton:
         return mediaMuteButtonName;
     case MediaPlayButton:
@@ -165,7 +168,8 @@ bool AccessibilityMediaControl::accessibilityIsIgnored() const
 AccessibilityRole AccessibilityMediaControl::roleValue() const
 {
     switch (controlType()) {
-    case MediaFullscreenButton:
+    case MediaEnterFullscreenButton:
+    case MediaExitFullscreenButton:
     case MediaMuteButton:
     case MediaPlayButton:
     case MediaSeekBackButton:

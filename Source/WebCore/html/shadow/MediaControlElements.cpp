@@ -968,7 +968,7 @@ const AtomicString& MediaControlFullscreenVolumeSliderElement::shadowPseudoId() 
 // ----------------------------
 
 inline MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(Document* document, MediaControls* controls)
-    : MediaControlInputElement(document, MediaFullscreenButton)
+    : MediaControlInputElement(document, MediaEnterFullscreenButton)
     , m_controls(controls)
 {
 }
@@ -1010,6 +1010,11 @@ const AtomicString& MediaControlFullscreenButtonElement::shadowPseudoId() const
 {
     DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-fullscreen-button"));
     return id;
+}
+
+void MediaControlFullscreenButtonElement::setIsFullscreen(bool isFullscreen)
+{
+    setDisplayType(isFullscreen ? MediaExitFullscreenButton : MediaEnterFullscreenButton);
 }
 
 // ----------------------------

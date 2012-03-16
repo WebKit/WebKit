@@ -534,8 +534,10 @@ String localizedMediaControlElementString(const String& name)
         return String::fromUTF8(_("remaining time"));
     if (name == "StatusDisplay")
         return String::fromUTF8(_("status"));
-    if (name == "FullscreenButton")
-        return String::fromUTF8(_("fullscreen"));
+    if (name == "EnterFullscreenButton")
+        return String::fromUTF8(_("enter fullscreen"));
+    if (name == "ExitFullscreenButton")
+        return String::fromUTF8(_("exit fullscreen"));
     if (name == "SeekForwardButton")
         return String::fromUTF8(_("fast forward"));
     if (name == "SeekBackButton")
@@ -581,8 +583,10 @@ String localizedMediaControlElementHelpText(const String& name)
         return String::fromUTF8(_("seek quickly back"));
     if (name == "SeekForwardButton")
         return String::fromUTF8(_("seek quickly forward"));
-    if (name == "FullscreenButton")
+    if (name == "EnterFullscreenButton")
         return String::fromUTF8(_("Play movie in fullscreen mode"));
+    if (name == "EnterFullscreenButton")
+        return String::fromUTF8(_("Exit fullscreen mode"));
     if (name == "ShowClosedCaptionsButton")
         return String::fromUTF8(_("start displaying closed captions"));
     if (name == "HideClosedCaptionsButton")

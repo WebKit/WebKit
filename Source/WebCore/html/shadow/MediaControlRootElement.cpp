@@ -482,6 +482,7 @@ void MediaControlRootElement::enteredFullscreen()
     }
 
     m_panel->setCanBeDragged(true);
+    m_fullScreenButton->setIsFullscreen(true);
 
     if (Page* page = document()->page())
         page->chrome()->setCursorHiddenUntilMouseMoves(true);
@@ -500,6 +501,7 @@ void MediaControlRootElement::exitedFullscreen()
     m_returnToRealTimeButton->show();
 
     m_panel->setCanBeDragged(false);
+    m_fullScreenButton->setIsFullscreen(false);
 
     // We will keep using the panel, but we want it to go back to the standard position.
     // This will matter right away because we use the panel even when not fullscreen.

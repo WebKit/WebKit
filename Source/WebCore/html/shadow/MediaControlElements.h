@@ -47,7 +47,7 @@ class MediaControls;
 
 // Must match WebKitSystemInterface.h
 enum MediaControlElementType {
-    MediaFullscreenButton = 0,
+    MediaEnterFullscreenButton = 0,
     MediaMuteButton,
     MediaPlayButton,
     MediaSeekBackButton,
@@ -73,6 +73,7 @@ enum MediaControlElementType {
     MediaVolumeSliderMuteButton,
     MediaTextTrackDisplayContainer,
     MediaTextTrackDisplay,
+    MediaExitFullscreenButton,
 };
 
 HTMLMediaElement* toParentMediaElement(Node*);
@@ -401,6 +402,7 @@ public:
     static PassRefPtr<MediaControlFullscreenButtonElement> create(Document*, MediaControls*);
 
     virtual void defaultEventHandler(Event*);
+    void setIsFullscreen(bool);
 
 private:
     MediaControlFullscreenButtonElement(Document*, MediaControls*);

@@ -501,8 +501,10 @@ String localizedMediaControlElementString(const String& name)
         return QCoreApplication::translate("QWebPage", "Remaining Time", "Media controller element");
     if (name == "StatusDisplay")
         return QCoreApplication::translate("QWebPage", "Status Display", "Media controller element");
-    if (name == "FullscreenButton")
-        return QCoreApplication::translate("QWebPage", "Fullscreen Button", "Media controller element");
+    if (name == "EnterFullscreenButton")
+        return QCoreApplication::translate("QWebPage", "EnterFullscreen Button", "Media controller element");
+    if (name == "ExitFullscreenButton")
+        return QCoreApplication::translate("QWebPage", "ExitFullscreen Button", "Media controller element");
     if (name == "SeekForwardButton")
         return QCoreApplication::translate("QWebPage", "Seek Forward Button", "Media controller element");
     if (name == "SeekBackButton")
@@ -539,8 +541,10 @@ String localizedMediaControlElementHelpText(const String& name)
         return QCoreApplication::translate("QWebPage", "Remaining movie time", "Media controller element");
     if (name == "StatusDisplay")
         return QCoreApplication::translate("QWebPage", "Current movie status", "Media controller element");
-    if (name == "FullscreenButton")
+    if (name == "EnterFullscreenButton")
         return QCoreApplication::translate("QWebPage", "Play movie in full-screen mode", "Media controller element");
+    if (name == "ExitFullscreenButton")
+        return QCoreApplication::translate("QWebPage", "Exit full-screen mode", "Media controller element");
     if (name == "SeekForwardButton")
         return QCoreApplication::translate("QWebPage", "Seek quickly back", "Media controller element");
     if (name == "SeekBackButton")

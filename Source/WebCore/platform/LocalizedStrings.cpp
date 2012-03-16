@@ -811,8 +811,10 @@ String localizedMediaControlElementString(const String& name)
         return WEB_UI_STRING("remaining time", "accessibility role description for time remaining display");
     if (name == "StatusDisplay")
         return WEB_UI_STRING("status", "accessibility role description for movie status");
-    if (name == "FullscreenButton")
-        return WEB_UI_STRING("fullscreen", "accessibility role description for enter fullscreen button");
+    if (name == "EnterFullscreenButton")
+        return WEB_UI_STRING("enter fullscreen", "accessibility role description for enter fullscreen button");
+    if (name == "ExitFullscreenButton")
+        return WEB_UI_STRING("exit fullscreen", "accessibility role description for exit fullscreen button");
     if (name == "SeekForwardButton")
         return WEB_UI_STRING("fast forward", "accessibility role description for fast forward button");
     if (name == "SeekBackButton")
