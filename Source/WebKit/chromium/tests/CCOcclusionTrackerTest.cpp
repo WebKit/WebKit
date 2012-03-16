@@ -756,22 +756,22 @@ protected:
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         EXPECT_TRUE(occlusion.occluded(child, clippedLayerInChild));
-        EXPECT_TRUE(occlusion.unoccludedContentRect(parent, clippedLayerInChild).isEmpty());
+        EXPECT_TRUE(occlusion.unoccludedContentRect(child, clippedLayerInChild).isEmpty());
         clippedLayerInChild.move(-1, 0);
         EXPECT_FALSE(occlusion.occluded(child, clippedLayerInChild));
-        EXPECT_FALSE(occlusion.unoccludedContentRect(parent, clippedLayerInChild).isEmpty());
+        EXPECT_FALSE(occlusion.unoccludedContentRect(child, clippedLayerInChild).isEmpty());
         clippedLayerInChild.move(1, 0);
         clippedLayerInChild.move(1, 0);
         EXPECT_FALSE(occlusion.occluded(child, clippedLayerInChild));
-        EXPECT_FALSE(occlusion.unoccludedContentRect(parent, clippedLayerInChild).isEmpty());
+        EXPECT_FALSE(occlusion.unoccludedContentRect(child, clippedLayerInChild).isEmpty());
         clippedLayerInChild.move(-1, 0);
         clippedLayerInChild.move(0, -1);
         EXPECT_FALSE(occlusion.occluded(child, clippedLayerInChild));
-        EXPECT_FALSE(occlusion.unoccludedContentRect(parent, clippedLayerInChild).isEmpty());
+        EXPECT_FALSE(occlusion.unoccludedContentRect(child, clippedLayerInChild).isEmpty());
         clippedLayerInChild.move(0, 1);
         clippedLayerInChild.move(0, 1);
         EXPECT_FALSE(occlusion.occluded(child, clippedLayerInChild));
-        EXPECT_FALSE(occlusion.unoccludedContentRect(parent, clippedLayerInChild).isEmpty());
+        EXPECT_FALSE(occlusion.unoccludedContentRect(child, clippedLayerInChild).isEmpty());
         clippedLayerInChild.move(0, -1);
 
         occlusion.markOccludedBehindLayer(child);
@@ -1268,7 +1268,7 @@ protected:
 
         occlusion.enterTargetRenderSurface(layer->renderSurface());
 
-        EXPECT_TRUE(occlusion.unoccludedContentRect(parent, IntRect(0, 0, 200, 200)).isEmpty());
+        EXPECT_TRUE(occlusion.unoccludedContentRect(layer, IntRect(0, 0, 200, 200)).isEmpty());
 
         occlusion.markOccludedBehindLayer(layer);
         occlusion.leaveToTargetRenderSurface(parent->renderSurface());
@@ -1725,7 +1725,7 @@ protected:
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
         typename Types::LayerType* container = this->createLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
-        typename Types::ContentLayerType* layer = this->createDrawingSurface(container, transform, FloatPoint(100, 100), IntSize(200, 200), true);
+        typename Types::ContentLayerType* layer = this->createDrawingLayer(container, transform, FloatPoint(100, 100), IntSize(200, 200), true);
         this->calcDrawEtc(parent);
 
         TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
@@ -1750,7 +1750,7 @@ protected:
 
         typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
         typename Types::LayerType* container = this->createLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
-        typename Types::ContentLayerType* layer = this->createDrawingSurface(container, transform, FloatPoint(100, 100), IntSize(200, 200), true);
+        typename Types::ContentLayerType* layer = this->createDrawingLayer(container, transform, FloatPoint(100, 100), IntSize(200, 200), true);
         container->setPreserves3D(true);
         this->calcDrawEtc(parent);
 
