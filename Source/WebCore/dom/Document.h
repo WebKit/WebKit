@@ -1079,6 +1079,11 @@ public:
     void removeFullScreenElementOfSubtree(Node*, bool amongChildrenOnly = false);
     bool isAnimatingFullScreen() const;
     void setAnimatingFullScreen(bool);
+
+    // W3C API
+    bool webkitFullscreenEnabled() const;
+    Element* webkitFullscreenElement() const { return !m_fullScreenElementStack.isEmpty() ? m_fullScreenElementStack.first().get() : 0; }
+    void webkitExitFullscreen();
 #endif
 
     // Used to allow element that loads data without going through a FrameLoader to delay the 'load' event.
@@ -1188,6 +1193,13 @@ private:
 #endif
 
     HTMLCollection* cachedCollection(CollectionType);
+
+#if ENABLE(FULLSCREEN_API)
+    void clearFullscreenElementStack();
+    void popFullscreenElementStack();
+    void pushFullscreenElementStack(Element*);
+    void addDocumentToFullScreenChangeEventQueue(Document*);
+#endif
 
     int m_guardRefCount;
 
@@ -1421,10 +1433,11 @@ private:
 #if ENABLE(FULLSCREEN_API)
     bool m_areKeysEnabledInFullScreen;
     RefPtr<Element> m_fullScreenElement;
+    Deque<RefPtr<Element> > m_fullScreenElementStack;
     RenderFullScreen* m_fullScreenRenderer;
     Timer<Document> m_fullScreenChangeDelayTimer;
-    Deque<RefPtr<Element> > m_fullScreenChangeEventTargetQueue;
-    Deque<RefPtr<Element> > m_fullScreenErrorEventTargetQueue;
+    Deque<RefPtr<Node> > m_fullScreenChangeEventTargetQueue;
+    Deque<RefPtr<Node> > m_fullScreenErrorEventTargetQueue;
     bool m_isAnimatingFullScreen;
     LayoutRect m_savedPlaceholderFrameRect;
     RefPtr<RenderStyle> m_savedPlaceholderRenderStyle;

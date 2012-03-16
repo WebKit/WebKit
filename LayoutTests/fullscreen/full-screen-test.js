@@ -98,10 +98,18 @@ function waitForEventAndEnd(element, eventName, funcString)
     waitForEvent(element, eventName, funcString, true)
 }
 
-function waitForEvent(element, eventName, func, endit)
+function waitForEventOnce(element, eventName, func, endit)
+{
+    waitForEvent(element, eventName, func, endit, true)
+}
+
+function waitForEvent(element, eventName, func, endit, once)
 {
     function _eventCallback(event)
     {
+        if (once)
+            element.removeEventListener(eventName, _eventCallback);
+
         consoleWrite("EVENT(" + eventName + ")");
 
         if (func)

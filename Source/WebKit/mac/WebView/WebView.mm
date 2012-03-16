@@ -6284,14 +6284,9 @@ bool LayerFlushController::flushLayers()
 #if ENABLE(FULLSCREEN_API)
 - (BOOL)_supportsFullScreenForElement:(const WebCore::Element*)element withKeyboard:(BOOL)withKeyboard
 {
-    if (withKeyboard)
-        return NO;
-
     if (![[WebPreferences standardPreferences] fullScreenEnabled])
         return NO;
 
-    // FIXME: If the element is in an IFrame, we should ensure it has 
-    // an AllowsFullScreen=YES attribute before allowing fullscreen access.
     return YES;
 }
 

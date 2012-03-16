@@ -91,10 +91,7 @@ void WebFullScreenManagerProxy::setAnimatingFullScreen(bool animating)
 
 void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, bool& supports)
 {
-    if (withKeyboard)
-        supports = false;
-    else
-        supports = true;
+    supports = true;
 }
 
 } // namespace WebKit

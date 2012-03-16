@@ -129,8 +129,12 @@ module core {
 #endif
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+        // Mozilla version
         const unsigned short ALLOW_KEYBOARD_INPUT = 1;
         [V8EnabledAtRuntime] void webkitRequestFullScreen(in [Optional=DefaultIsUndefined] unsigned short flags);
+
+        // W3C version
+        [V8EnabledAtRuntime] void webkitRequestFullscreen();
 #endif
 
         // CSS Regions API

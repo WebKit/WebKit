@@ -377,13 +377,17 @@ public:
     
 #if ENABLE(FULLSCREEN_API)
     enum {
-        ALLOW_KEYBOARD_INPUT = 1
+        ALLOW_KEYBOARD_INPUT = 1 << 0,
+        LEGACY_MOZILLA_REQUEST = 1 << 1,
     };
     
     void webkitRequestFullScreen(unsigned short flags);
     virtual bool containsFullScreenElement() const;
     virtual void setContainsFullScreenElement(bool);
     virtual void setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(bool);
+
+    // W3C API
+    void webkitRequestFullscreen();
 #endif
 
     virtual bool isSpellCheckingEnabled() const;

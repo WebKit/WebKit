@@ -12,6 +12,9 @@ function runTest() {
         consoleWrite("SUCCEED - did not enter full screen!");
     });
 
+    if (layoutTestController)
+        layoutTestController.setPopupBlockingEnabled(true);
+
     var div = document.createElement('div');
     document.documentElement.appendChild(div);
     consoleWrite("Added child element.")

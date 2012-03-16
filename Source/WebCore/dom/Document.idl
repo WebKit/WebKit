@@ -241,10 +241,16 @@ module core {
             raises(DOMException);
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
+        // Mozilla version
         readonly attribute [V8EnabledAtRuntime] boolean webkitIsFullScreen;
         readonly attribute [V8EnabledAtRuntime] boolean webkitFullScreenKeyboardInputAllowed;
         readonly attribute [V8EnabledAtRuntime] Element webkitCurrentFullScreenElement;
         [V8EnabledAtRuntime] void webkitCancelFullScreen();
+
+        // W3C version
+        readonly attribute [V8EnabledAtRuntime] boolean webkitFullscreenEnabled;
+        readonly attribute [V8EnabledAtRuntime] Element webkitFullscreenElement;
+        [V8EnabledAtRuntime] void webkitExitFullscreen();
 #endif
 
         WebKitNamedFlow webkitGetFlowByName(in DOMString name);

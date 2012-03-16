@@ -1858,9 +1858,14 @@ bool Element::childShouldCreateRenderer(const NodeRenderingContext& childContext
 #endif
     
 #if ENABLE(FULLSCREEN_API)
+void Element::webkitRequestFullscreen()
+{
+    document()->requestFullScreenForElement(this, ALLOW_KEYBOARD_INPUT, Document::EnforceIFrameAllowFulScreenRequirement);
+}
+
 void Element::webkitRequestFullScreen(unsigned short flags)
 {
-    document()->requestFullScreenForElement(this, flags, Document::EnforceIFrameAllowFulScreenRequirement);
+    document()->requestFullScreenForElement(this, (flags | LEGACY_MOZILLA_REQUEST), Document::EnforceIFrameAllowFulScreenRequirement);
 }
 
 bool Element::containsFullScreenElement() const

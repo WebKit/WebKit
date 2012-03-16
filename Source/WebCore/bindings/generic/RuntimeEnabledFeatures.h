@@ -71,6 +71,7 @@ public:
     static bool webkitIDBTransactionEnabled() { return isIndexedDBEnabled; }
 
 #if ENABLE(FULLSCREEN_API)
+    // Mozilla version
     static bool webkitFullScreenAPIEnabled() { return isFullScreenAPIEnabled; }
     static void setWebkitFullScreenAPIEnabled(bool isEnabled) { isFullScreenAPIEnabled = isEnabled; }
     static bool webkitRequestFullScreenEnabled() { return isFullScreenAPIEnabled; }
@@ -78,6 +79,12 @@ public:
     static bool webkitFullScreenKeyboardInputAllowedEnabled() { return isFullScreenAPIEnabled; }
     static bool webkitCurrentFullScreenElementEnabled() { return isFullScreenAPIEnabled; }
     static bool webkitCancelFullScreenEnabled() { return isFullScreenAPIEnabled; }
+
+    // W3C version
+    static bool webkitFullscreenEnabledEnabled() { return isFullScreenAPIEnabled; }
+    static bool webkitFullscreenElementEnabled() { return isFullScreenAPIEnabled; }
+    static bool webkitExitFullscreenEnabled() { return isFullScreenAPIEnabled; }
+    static bool webkitRequestFullscreenEnabled() { return isFullScreenAPIEnabled; }
 #endif
 
 #if ENABLE(POINTER_LOCK)

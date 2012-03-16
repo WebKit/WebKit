@@ -9,7 +9,10 @@
     } else {
         waitForEvent(document, 'webkitfullscreenchange', function() {
            logResult("Entered full screen.", false); 
+           endTest();
         });
+        if (layoutTestController)
+            layoutTestController.setPopupBlockingEnabled(true);
         waitForEventAndEnd(document, 'webkitfullscreenerror');
         document.documentElement.webkitRequestFullScreen();
     }

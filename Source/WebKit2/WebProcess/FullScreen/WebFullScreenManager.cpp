@@ -101,8 +101,6 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
 {
-    ASSERT(element);
-    ASSERT(m_element == element);
     m_page->injectedBundleFullScreenClient().exitFullScreenForElement(m_page.get(), element);
 }
 
