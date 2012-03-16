@@ -68,7 +68,12 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
     
     if (!exec->argumentCount()) {
         // Constructor for default AudioContext which talks to audio hardware.
-        audioContext = AudioContext::create(document);
+        ExceptionCode ec = 0;
+        audioContext = AudioContext::create(document, ec);
+        if (ec) {
+            setDOMException(exec, ec);
+            return JSValue::encode(JSValue());
+        }
         if (!audioContext.get())
             return throwVMError(exec, createSyntaxError(exec, "audio resources unavailable for AudioContext construction"));
     } else {

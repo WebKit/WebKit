@@ -72,7 +72,7 @@ class JavaScriptAudioNode;
 class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTarget {
 public:
     // Create an AudioContext for rendering to the audio hardware.
-    static PassRefPtr<AudioContext> create(Document*);
+    static PassRefPtr<AudioContext> create(Document*, ExceptionCode&);
 
     // Create an AudioContext for offline (non-realtime) rendering.
     static PassRefPtr<AudioContext> createOfflineContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode&);
