@@ -1,3 +1,16 @@
+2012-03-16  Kishore Bolisetty  <kbolisetty@innominds.com>
+
+        check-webkit-style fails on LayoutTests/platform/efl/test_expectations.txt
+        https://bugs.webkit.org/show_bug.cgi?id=81007
+
+        Reviewed by Adam Barth.
+
+        A dedidcated build slave is available for efl on build.webkit.org. 
+        This change add's an entry for the elf port in list of available port builders.
+        This is required because test_expectations.py when triggered, looks for a valid port object for the specified port. 
+
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+
 2012-03-16  Adam Barth  <abarth@webkit.org>
 
         [webkitpy] StatusServer.next_work_item has an incorrectly named local variable

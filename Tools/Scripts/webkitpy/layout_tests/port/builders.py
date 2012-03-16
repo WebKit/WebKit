@@ -60,6 +60,7 @@ _exact_matches = {
     "Qt Linux Release": {"port_name": "qt-linux", "specifiers": set(["win", "linux", "mac"])},
     "Windows XP Debug (Tests)": {"port_name": "win-xp", "specifiers": set(["win"])},
     "Windows 7 Release (WebKit2 Tests)": {"port_name": "win-future-wk2", "specifiers": set(["wk2"])},
+    "EFL Linux Release": {"port_name": "efl", "specifiers": set(["efl"])},
 }
 
 
