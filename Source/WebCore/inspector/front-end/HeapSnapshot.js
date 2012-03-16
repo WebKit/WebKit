@@ -893,6 +893,9 @@ WebInspector.HeapSnapshot.prototype = {
 
     aggregates: function(sortedIndexes, key, filterString)
     {
+        if (!this._retainers)
+            this._buildRetainers();
+
         if (!this._aggregates) {
             this._aggregates = {};
             this._aggregatesSortedFlags = {};
@@ -1025,7 +1028,7 @@ WebInspector.HeapSnapshot.prototype = {
 
     _buildAggregates: function(filter)
     {
-        function shouldSkip(node, classIndex)
+        function shouldSkip(node)
         {
             if (filter && !filter(node))
                 return true;
@@ -1039,9 +1042,9 @@ WebInspector.HeapSnapshot.prototype = {
         var node = new WebInspector.HeapSnapshotNode(this, this.nodeIndexes[0]);
         for (var i = 0, l = this.nodeCount; i < l; ++i) {
             node.nodeIndex = this.nodeIndexes[i];
-            var classIndex = node.classIndex;
-            if (shouldSkip(node, classIndex))
+            if (shouldSkip(node))
                 continue;
+            var classIndex = node.classIndex;
             if (!(classIndex in aggregates)) {
                 var nodeType = node.type;
                 var nameMatters = nodeType === "object" || nodeType === "native";
@@ -1065,7 +1068,7 @@ WebInspector.HeapSnapshot.prototype = {
             var node = new WebInspector.HeapSnapshotNode(snapshot, nodeIndex);
             var classIndex = node.classIndex;
             var seen = !!seenClassNameIndexes[classIndex];
-            if (!seen && classIndex in aggregates && !shouldSkip(node, classIndex)) {
+            if (!seen && classIndex in aggregates && !shouldSkip(node)) {
                 aggregates[classIndex].maxRet += node.retainedSize;
                 seenClassNameIndexes[classIndex] = true;
             }
