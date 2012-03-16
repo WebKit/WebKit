@@ -81,20 +81,20 @@ enum ReasonFrameCannotBeInPageCache {
     ClientDeniesCaching,
     NumberOfReasonsFramesCannotBeInPageCache,
 };
+COMPILE_ASSERT(NumberOfReasonsFramesCannotBeInPageCache <= sizeof(unsigned)*8, ReasonFrameCannotBeInPageCacheDoesNotFitInBitmap);
 
 static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
 {
 #ifdef NDEBUG
     UNUSED_PARAM(indentLevel);
 #endif
-    // Only bother logging for frames that have actually loaded and have content.
-    if (frame->loader()->stateMachine()->creatingInitialEmptyDocument())
-        return false;
-    KURL currentURL = frame->loader()->documentLoader() ? frame->loader()->documentLoader()->url() : KURL();
-    if (currentURL.isEmpty())
-        return false;
-    
     PCLOG("+---");
+    if (!frame->loader()->documentLoader()) {
+        PCLOG("   -There is no DocumentLoader object");
+        return 1 << NoDocumentLoader;
+    }
+
+    KURL currentURL = frame->loader()->documentLoader()->url();
     KURL newURL = frame->loader()->provisionalDocumentLoader() ? frame->loader()->provisionalDocumentLoader()->url() : KURL();
     if (!newURL.isEmpty())
         PCLOG(" Determining if frame can be cached navigating from (", currentURL.string(), ") to (", newURL.string(), "):");
@@ -102,73 +102,67 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
         PCLOG(" Determining if subframe with URL (", currentURL.string(), ") can be cached:");
      
     unsigned rejectReasons = 0;
-    
-    if (!frame->loader()->documentLoader()) {
-        PCLOG("   -There is no DocumentLoader object");
-        rejectReasons |= 1 << NoDocumentLoader;
-    } else {
-        if (!frame->loader()->documentLoader()->mainDocumentError().isNull()) {
-            PCLOG("   -Main document has an error");
-            rejectReasons |= 1 << MainDocumentError;
-        }
-        if (frame->loader()->documentLoader()->substituteData().isValid() && frame->loader()->documentLoader()->substituteData().failingURL().isEmpty()) {
-            PCLOG("   -Frame is an error page");
-            rejectReasons |= 1 << IsErrorPage;
-        }
-        if (frame->loader()->subframeLoader()->containsPlugins() && !frame->page()->settings()->pageCacheSupportsPlugins()) {
-            PCLOG("   -Frame contains plugins");
-            rejectReasons |= 1 << HasPlugins;
-        }
-        if (frame->document()->url().protocolIs("https")
-            && (frame->loader()->documentLoader()->response().cacheControlContainsNoCache()
-                || frame->loader()->documentLoader()->response().cacheControlContainsNoStore())) {
-            PCLOG("   -Frame is HTTPS, and cache control prohibits caching or storing");
-            rejectReasons |= 1 << IsHttpsAndCacheControlled;
-        }
-        if (frame->domWindow() && frame->domWindow()->hasEventListeners(eventNames().unloadEvent)) {
-            PCLOG("   -Frame has an unload event listener");
-            rejectReasons |= 1 << HasUnloadListener;
-        }
+    if (!frame->loader()->documentLoader()->mainDocumentError().isNull()) {
+        PCLOG("   -Main document has an error");
+        rejectReasons |= 1 << MainDocumentError;
+    }
+    if (frame->loader()->documentLoader()->substituteData().isValid() && frame->loader()->documentLoader()->substituteData().failingURL().isEmpty()) {
+        PCLOG("   -Frame is an error page");
+        rejectReasons |= 1 << IsErrorPage;
+    }
+    if (frame->loader()->subframeLoader()->containsPlugins() && !frame->page()->settings()->pageCacheSupportsPlugins()) {
+        PCLOG("   -Frame contains plugins");
+        rejectReasons |= 1 << HasPlugins;
+    }
+    if (frame->document()->url().protocolIs("https")
+        && (frame->loader()->documentLoader()->response().cacheControlContainsNoCache()
+            || frame->loader()->documentLoader()->response().cacheControlContainsNoStore())) {
+        PCLOG("   -Frame is HTTPS, and cache control prohibits caching or storing");
+        rejectReasons |= 1 << IsHttpsAndCacheControlled;
+    }
+    if (frame->domWindow() && frame->domWindow()->hasEventListeners(eventNames().unloadEvent)) {
+        PCLOG("   -Frame has an unload event listener");
+        rejectReasons |= 1 << HasUnloadListener;
+    }
 #if ENABLE(SQL_DATABASE)
-        if (DatabaseContext::hasOpenDatabases(frame->document())) {
-            PCLOG("   -Frame has open database handles");
-            rejectReasons |= 1 << HasDatabaseHandles;
-        }
+    if (DatabaseContext::hasOpenDatabases(frame->document())) {
+        PCLOG("   -Frame has open database handles");
+        rejectReasons |= 1 << HasDatabaseHandles;
+    }
 #endif
 #if ENABLE(SHARED_WORKERS)
-        if (SharedWorkerRepository::hasSharedWorkers(frame->document())) {
-            PCLOG("   -Frame has associated SharedWorkers");
-            rejectReasons |= 1 << HasSharedWorkers;
-        }
+    if (SharedWorkerRepository::hasSharedWorkers(frame->document())) {
+        PCLOG("   -Frame has associated SharedWorkers");
+        rejectReasons |= 1 << HasSharedWorkers;
+    }
 #endif
-        if (!frame->loader()->history()->currentItem()) {
-            PCLOG("   -No current history item");
-            rejectReasons |= 1 << NoHistoryItem;
-        }
-        if (frame->loader()->quickRedirectComing()) {
-            PCLOG("   -Quick redirect is coming");
-            rejectReasons |= 1 << QuickRedirectComing;
-        }
-        if (frame->loader()->documentLoader()->isLoadingInAPISense()) {
-            PCLOG("   -DocumentLoader is still loading in API sense");
-            rejectReasons |= 1 << IsLoadingInAPISense;
-        }
-        if (frame->loader()->documentLoader()->isStopping()) {
-            PCLOG("   -DocumentLoader is in the middle of stopping");
-            rejectReasons |= 1 << IsStopping;
-        }
-        if (!frame->document()->canSuspendActiveDOMObjects()) {
-            PCLOG("   -The document cannot suspect its active DOM Objects");
-            rejectReasons |= 1 << CannotSuspendActiveDOMObjects;
-        }
-        if (!frame->loader()->documentLoader()->applicationCacheHost()->canCacheInPageCache()) {
-            PCLOG("   -The DocumentLoader uses an application cache");
-            rejectReasons |= 1 << DocumentLoaderUsesApplicationCache;
-        }
-        if (!frame->loader()->client()->canCachePage()) {
-            PCLOG("   -The client says this frame cannot be cached");
-            rejectReasons |= 1 << ClientDeniesCaching;
-        }
+    if (!frame->loader()->history()->currentItem()) {
+        PCLOG("   -No current history item");
+        rejectReasons |= 1 << NoHistoryItem;
+    }
+    if (frame->loader()->quickRedirectComing()) {
+        PCLOG("   -Quick redirect is coming");
+        rejectReasons |= 1 << QuickRedirectComing;
+    }
+    if (frame->loader()->documentLoader()->isLoadingInAPISense()) {
+        PCLOG("   -DocumentLoader is still loading in API sense");
+        rejectReasons |= 1 << IsLoadingInAPISense;
+    }
+    if (frame->loader()->documentLoader()->isStopping()) {
+        PCLOG("   -DocumentLoader is in the middle of stopping");
+        rejectReasons |= 1 << IsStopping;
+    }
+    if (!frame->document()->canSuspendActiveDOMObjects()) {
+        PCLOG("   -The document cannot suspect its active DOM Objects");
+        rejectReasons |= 1 << CannotSuspendActiveDOMObjects;
+    }
+    if (!frame->loader()->documentLoader()->applicationCacheHost()->canCacheInPageCache()) {
+        PCLOG("   -The DocumentLoader uses an application cache");
+        rejectReasons |= 1 << DocumentLoaderUsesApplicationCache;
+    }
+    if (!frame->loader()->client()->canCachePage()) {
+        PCLOG("   -The client says this frame cannot be cached");
+        rejectReasons |= 1 << ClientDeniesCaching;
     }
 
     HistogramSupport::histogramEnumeration("PageCache.FrameCacheable", !rejectReasons, 2);
@@ -203,6 +197,7 @@ enum ReasonPageCannotBeInPageCache {
     IsSameLoad,
     NumberOfReasonsPagesCannotBeInPageCache,
 };
+COMPILE_ASSERT(NumberOfReasonsPagesCannotBeInPageCache <= sizeof(unsigned)*8, ReasonPageCannotBeInPageCacheDoesNotFitInBitmap);
 
 static void logCanCachePageDecision(Page* page)
 {
