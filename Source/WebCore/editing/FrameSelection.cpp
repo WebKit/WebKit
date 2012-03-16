@@ -642,11 +642,14 @@ VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity)
             pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).right(true);
         break;
     case WordGranularity:
+#if !OS(WINCE)
+        // Visual word movement relies on isWordTextBreak which is not implemented in WinCE.
         if (visualWordMovementEnabled()
             || (m_frame && m_frame->editor()->behavior().shouldMoveLeftRightByWordInVisualOrder())) {
             pos = rightWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
             break;
         }
+#endif
     case SentenceGranularity:
     case LineGranularity:
     case ParagraphGranularity:
@@ -809,11 +812,13 @@ VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity)
             pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).left(true);
         break;
     case WordGranularity:
+#if !OS(WINCE)
         if (visualWordMovementEnabled()
             || (m_frame && m_frame->editor()->behavior().shouldMoveLeftRightByWordInVisualOrder())) {
             pos = leftWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
             break;
         }
+#endif
     case SentenceGranularity:
     case LineGranularity:
     case ParagraphGranularity:

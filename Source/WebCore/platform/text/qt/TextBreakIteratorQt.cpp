@@ -150,4 +150,9 @@ namespace WebCore {
         return true;
     }
 
+    bool isWordTextBreak(TextBreakIterator*)
+    {
+        return true;
+    }
+
 }

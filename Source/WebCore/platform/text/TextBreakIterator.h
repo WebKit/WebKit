@@ -56,6 +56,7 @@ namespace WebCore {
     int textBreakPreceding(TextBreakIterator*, int);
     int textBreakFollowing(TextBreakIterator*, int);
     bool isTextBreak(TextBreakIterator*, int);
+    bool isWordTextBreak(TextBreakIterator*);
 
     const int TextBreakDone = -1;
 

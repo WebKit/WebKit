@@ -175,6 +175,10 @@ function moveByWordOnEveryChar(sel, test, searchDirection, dir)
     var prevOffset = sel.anchorOffset;
     var prevNode = sel.anchorNode;
 
+    // advance is used to special handling the case that arrow key is not able to reach certain position.
+    // In which case, we will need to manually skip this word break position in order to report correct log.
+    var advance = true; 
+
     while (1) {
         var positions = [];
         positions.push({ node: sel.anchorNode, offset: sel.anchorOffset });
@@ -205,9 +209,15 @@ function moveByWordOnEveryChar(sel, test, searchDirection, dir)
             break;
 
         position = { node: sel.anchorNode, offset: sel.anchorOffset };
-        if (wordBreakIndex < wordBreaks.length 
+        if ((wordBreakIndex < wordBreaks.length 
             && positionEqualToWordBreak(position, wordBreaks[wordBreakIndex]))
+            || (test == document.getElementById("notReachablePosition")
+            && sel.anchorOffset > wordBreaks[wordBreakIndex]
+            && advance
+            && searchDirection == "right")) {
             ++wordBreakIndex;
+            advance = false;
+        }
 
         prevNode = sel.anchorNode;
         prevOffset = sel.anchorOffset;

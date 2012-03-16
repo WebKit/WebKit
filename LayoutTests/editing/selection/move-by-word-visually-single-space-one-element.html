@@ -65,6 +65,12 @@ where child_node_index is optional, default is the first child of the anchor nod
 <div dir=ltr class="test_move_by_word" title="0 4 8 11|11 8 4 0" contenteditable>שנב abc סטז</div>
 <div dir=rtl class="test_move_by_word" title="11 8 4 0|0 4 8 11" contenteditable>שנב abc סטז</div>
 
+<!-- Test with Bidi control characters -->
+<div dir=ltr class="test_move_by_word" id="notReachablePosition" title="0 9 8 14 17|17 14 8 9 0" contenteditable>abc &#x202b;באד def&#x202c; xyz</div>
+
+<!-- Test with image -- non-inline-text-box -->
+<div id="d_1" dir=ltr class="test_move_by_word" contenteditable title="[d_1, 0, 1][d_1, 4, 1][d_1, 8, 1][d_1, 1, 3][d_1, 5, 3][d_1, 8, 3]|[d_1, 8, 3][d_1, 5, 3][d_1, 1, 3][d_1, 8, 1][d_1, 4, 1][d_1, 0, 1]">abc def hij <img src=../../accessibility/resources/cake.png> opq rst </div>
+
 <!-- empty div -->
 <div dir=ltr class="test_move_by_word" title="0|0" contenteditable></div>
 

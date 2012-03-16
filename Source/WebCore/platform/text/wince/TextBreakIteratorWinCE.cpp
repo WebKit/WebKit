@@ -317,6 +317,11 @@ bool isTextBreak(TextBreakIterator*, int)
     return true;
 }
 
+bool isWordTextBreak(TextBreakIterator*)
+{
+    return true;
+}
+
 TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
 {
     return characterBreakIterator(string, length);

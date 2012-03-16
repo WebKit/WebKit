@@ -1,0 +1,2 @@
+abc ששש def שנב opq סטז uvw ששש xyz
+ctrl/alt+right from left of סטז should move cursor to left of opq. But it actually moved to position 4

@@ -385,4 +385,9 @@ bool isTextBreak(TextBreakIterator* iterator, int offset)
     return iterator->m_charIterator.getIndex() == index;
 }
 
+bool isWordTextBreak(TextBreakIterator*)
+{
+    return true;
+}
+
 }

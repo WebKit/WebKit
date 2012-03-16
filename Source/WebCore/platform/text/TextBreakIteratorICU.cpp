@@ -139,6 +139,12 @@ bool isTextBreak(TextBreakIterator* iterator, int position)
     return ubrk_isBoundary(reinterpret_cast<UBreakIterator*>(iterator), position);
 }
 
+bool isWordTextBreak(TextBreakIterator* iterator)
+{
+    int ruleStatus = ubrk_getRuleStatus(reinterpret_cast<UBreakIterator*>(iterator));
+    return ruleStatus != UBRK_WORD_NONE;
+}
+
 static TextBreakIterator* setUpIteratorWithRules(bool& createdIterator, TextBreakIterator*& iterator,
     const char* breakRules, const UChar* string, int length)
 {

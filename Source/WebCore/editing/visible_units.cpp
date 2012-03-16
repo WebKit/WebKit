@@ -49,6 +49,375 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace WTF::Unicode;
 
+static Node* previousLeafWithSameEditability(Node* node, EditableType editableType)
+{
+    bool editable = node->rendererIsEditable(editableType);
+    node = node->previousLeafNode();
+    while (node) {
+        if (editable == node->rendererIsEditable(editableType))
+            return node;
+        node = node->previousLeafNode();
+    }
+    return 0;
+}
+
+static Node* enclosingNodeWithNonInlineRenderer(Node* node)
+{
+    for (; node; node = node->parentNode()) {
+        if (node->renderer() && !node->renderer()->isInline())
+            return node;
+    }
+    return 0;
+}
+
+static Node* nextLeafWithSameEditability(Node* node, int offset)
+{
+    bool editable = node->rendererIsEditable();
+    ASSERT(offset >= 0);
+    Node* child = node->childNode(offset);
+    node = child ? child->nextLeafNode() : node->lastDescendant()->nextLeafNode();
+    while (node) {
+        if (editable == node->rendererIsEditable())
+            return node;
+        node = node->nextLeafNode();
+    }
+    return 0;
+}
+
+static Node* nextLeafWithSameEditability(Node* node, EditableType editableType = ContentIsEditable)
+{
+    if (!node)
+        return 0;
+    
+    bool editable = node->rendererIsEditable(editableType);
+    node = node->nextLeafNode();
+    while (node) {
+        if (editable == node->rendererIsEditable(editableType))
+            return node;
+        node = node->nextLeafNode();
+    }
+    return 0;
+}
+
+// FIXME: consolidate with code in previousLinePosition.
+static const RootInlineBox* previousRootInlineBox(const InlineBox* box, const VisiblePosition& visiblePosition)
+{
+    Node* highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), ContentIsEditable);
+    Node* node = box->renderer()->node();
+    Node* enclosingBlockNode = enclosingNodeWithNonInlineRenderer(node);
+    Node* previousNode = previousLeafWithSameEditability(node, ContentIsEditable);
+
+    while (previousNode && enclosingBlockNode == enclosingNodeWithNonInlineRenderer(previousNode))
+        previousNode = previousLeafWithSameEditability(previousNode, ContentIsEditable);
+  
+    while (previousNode && !previousNode->isShadowRoot()) {
+        if (highestEditableRoot(firstPositionInOrBeforeNode(previousNode), ContentIsEditable) != highestRoot)
+            break;
+
+        Position pos = previousNode->hasTagName(brTag) ? positionBeforeNode(previousNode) :
+            createLegacyEditingPosition(previousNode, caretMaxOffset(previousNode));
+        
+        if (pos.isCandidate()) {
+            RenderedPosition renderedPos(pos, DOWNSTREAM);
+            RootInlineBox* root = renderedPos.rootBox();
+            if (root)
+                return root;
+        }
+
+        previousNode = previousLeafWithSameEditability(previousNode, ContentIsEditable);
+    }
+    return 0;
+}
+
+static const RootInlineBox* nextRootInlineBox(const InlineBox* box, const VisiblePosition& visiblePosition)
+{
+    Node* highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), ContentIsEditable);
+    Node* node = box->renderer()->node();
+    Node* enclosingBlockNode = enclosingNodeWithNonInlineRenderer(node);
+    Node* nextNode = nextLeafWithSameEditability(node, ContentIsEditable);
+    while (nextNode && enclosingBlockNode == enclosingNodeWithNonInlineRenderer(nextNode))
+        nextNode = nextLeafWithSameEditability(nextNode, ContentIsEditable);
+  
+    while (nextNode && !nextNode->isShadowRoot()) {
+        if (highestEditableRoot(firstPositionInOrBeforeNode(nextNode), ContentIsEditable) != highestRoot)
+            break;
+
+        Position pos;
+        pos = createLegacyEditingPosition(nextNode, caretMinOffset(nextNode));
+        
+        if (pos.isCandidate()) {
+            RenderedPosition renderedPos(pos, DOWNSTREAM);
+            RootInlineBox* root = renderedPos.rootBox();
+            if (root)
+                return root;
+        }
+
+        nextNode = nextLeafWithSameEditability(nextNode, ContentIsEditable);
+    }
+    return 0;
+}
+
+static int boxIndexInVector(const InlineTextBox* box, const Vector<InlineBox*>& leafBoxesInLogicalOrder)
+{
+    for (size_t i = 0; i < leafBoxesInLogicalOrder.size(); ++i) {
+        if (box == leafBoxesInLogicalOrder[i])
+            return i;
+    }
+    return 0;
+}
+
+static const InlineTextBox* previousBoxInLine(const RootInlineBox* root, const InlineTextBox* box, Vector<InlineBox*>& leafBoxesInLogicalOrder)
+{
+    if (!root)
+        return 0;
+
+    leafBoxesInLogicalOrder.clear();
+    root->collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder);
+
+    // If box is null, root is box's previous RootInlineBox, and previousBox is the last logical box in root.
+    int boxIndex = leafBoxesInLogicalOrder.size() - 1;
+    if (box)
+        boxIndex = boxIndexInVector(box, leafBoxesInLogicalOrder) - 1;
+
+    for (int i = boxIndex; i >= 0; --i) {
+        if (leafBoxesInLogicalOrder[i]->isInlineTextBox())
+            return toInlineTextBox(leafBoxesInLogicalOrder[i]);
+    }
+
+    return 0;
+}
+
+static const InlineTextBox* logicallyPreviousBox(const VisiblePosition& visiblePosition, const InlineTextBox* textBox, bool& previousBoxInDifferentBlock)
+{
+    const InlineBox* startBox = textBox;
+    Vector<InlineBox*> leafBoxesInLogicalOrder;
+
+    const InlineTextBox* previousBox = previousBoxInLine(startBox->root(), textBox, leafBoxesInLogicalOrder);
+    if (previousBox)
+        return previousBox;
+
+    previousBox = previousBoxInLine(startBox->root()->prevRootBox(), 0, leafBoxesInLogicalOrder);
+    if (previousBox)
+        return previousBox;
+
+    while (1) { 
+        const RootInlineBox* previousRoot = previousRootInlineBox(startBox, visiblePosition);
+        if (!previousRoot)
+            break;
+
+        previousBox = previousBoxInLine(previousRoot, 0, leafBoxesInLogicalOrder);
+        if (previousBox) {
+            previousBoxInDifferentBlock = true;
+            return previousBox;
+        }
+
+        if (!leafBoxesInLogicalOrder.size())
+            break;
+        startBox = leafBoxesInLogicalOrder[0];
+    }
+    return 0;
+}
+
+static const InlineTextBox* nextBoxInLine(const RootInlineBox* root, const InlineTextBox* box, Vector<InlineBox*>& leafBoxesInLogicalOrder)
+{
+    if (!root)
+        return 0;
+
+    leafBoxesInLogicalOrder.clear();
+    root->collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder);
+
+    // If box is null, root is box's next RootInlineBox, and nextBox is the first logical box in root.
+    // Otherwise, root is box's RootInlineBox, and nextBox is the next logical box in the same line.
+    size_t nextBoxIndex = 0;
+    if (box)
+        nextBoxIndex = boxIndexInVector(box, leafBoxesInLogicalOrder) + 1;
+
+    for (size_t i = nextBoxIndex; i < leafBoxesInLogicalOrder.size(); ++i) {
+        if (leafBoxesInLogicalOrder[i]->isInlineTextBox())
+            return toInlineTextBox(leafBoxesInLogicalOrder[i]);
+    }
+
+    return 0;
+}
+
+static const InlineTextBox* logicallyNextBox(const VisiblePosition& visiblePosition, const InlineTextBox* textBox, bool& nextBoxInDifferentBlock)
+{
+    const InlineBox* startBox = textBox;
+    Vector<InlineBox*> leafBoxesInLogicalOrder;
+
+    const InlineTextBox* nextBox = nextBoxInLine(startBox->root(), textBox, leafBoxesInLogicalOrder);
+    if (nextBox)
+        return nextBox;
+
+    nextBox = nextBoxInLine(startBox->root()->nextRootBox(), 0, leafBoxesInLogicalOrder);
+    if (nextBox)
+        return nextBox;
+
+    while (1) { 
+        const RootInlineBox* nextRoot = nextRootInlineBox(startBox, visiblePosition);
+        if (!nextRoot)
+            break;
+
+        nextBox = nextBoxInLine(nextRoot, 0, leafBoxesInLogicalOrder);
+        if (nextBox) {
+            nextBoxInDifferentBlock = true;
+            return nextBox;
+        }
+
+        if (!leafBoxesInLogicalOrder.size())
+            break;
+        startBox = leafBoxesInLogicalOrder[0];
+    }
+    return 0;
+}
+
+static TextBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox,
+     int& previousBoxLength, bool& previousBoxInDifferentBlock)
+{
+    previousBoxInDifferentBlock = false;
+
+    // FIXME: Handle the case when we don't have an inline text box.
+    const InlineTextBox* previousBox = logicallyPreviousBox(visiblePosition, textBox, previousBoxInDifferentBlock);
+
+    int len = 0;
+    Vector<UChar, 1024> string;
+    if (previousBox) {
+        previousBoxLength = previousBox->len();
+        string.append(previousBox->textRenderer()->text()->characters() + previousBox->start(), previousBoxLength); 
+        len += previousBoxLength;
+    }
+    string.append(textBox->textRenderer()->text()->characters() + textBox->start(), textBox->len());
+    len += textBox->len();
+
+    return wordBreakIterator(string.data(), len);
+} 
+
+static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox, bool& nextBoxInDifferentBlock)
+{
+    nextBoxInDifferentBlock = false;
+
+    // FIXME: Handle the case when we don't have an inline text box.
+    const InlineTextBox* nextBox = logicallyNextBox(visiblePosition, textBox, nextBoxInDifferentBlock);
+
+    int len = 0;
+    Vector<UChar, 1024> string;
+    string.append(textBox->textRenderer()->text()->characters() + textBox->start(), textBox->len());
+    len += textBox->len();
+    if (nextBox) {
+        string.append(nextBox->textRenderer()->text()->characters() + nextBox->start(), nextBox->len()); 
+        len += nextBox->len();
+    }
+
+    return wordBreakIterator(string.data(), len);
+} 
+
+static bool isLogicalStartOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
+{
+    bool boundary = hardLineBreak ? true : isTextBreak(iter, position);
+    if (!boundary)
+        return false;
+
+    textBreakFollowing(iter, position);
+    // isWordTextBreak returns true after moving across a word and false after moving across a punctuation/space.
+    return isWordTextBreak(iter);
+}
+
+static bool islogicalEndOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
+{
+    bool boundary = isTextBreak(iter, position);
+    return (hardLineBreak || boundary) && isWordTextBreak(iter);
+}
+
+enum CursorMovementDirection { MoveLeft, MoveRight };
+
+static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition, CursorMovementDirection direction)
+{
+    if (visiblePosition.isNull())
+        return VisiblePosition();
+
+    TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
+    InlineBox* previouslyVisitedBox = 0;
+    VisiblePosition current = visiblePosition;
+    TextBreakIterator* iter = 0;
+
+    while (1) {
+        VisiblePosition adjacentCharacterPosition = direction == MoveRight ? current.right(true) : current.left(true); 
+        if (adjacentCharacterPosition == current || adjacentCharacterPosition.isNull())
+            return VisiblePosition();
+    
+        InlineBox* box;
+        int offsetInBox;
+        adjacentCharacterPosition.deepEquivalent().getInlineBoxAndOffset(UPSTREAM, box, offsetInBox);
+    
+        if (!box)
+            break;
+        if (!box->isInlineTextBox()) {
+            current = adjacentCharacterPosition;
+            continue;
+        }
+
+        InlineTextBox* textBox = toInlineTextBox(box);
+        int previousBoxLength = 0;
+        bool previousBoxInDifferentBlock = false;
+        bool nextBoxInDifferentBlock = false;
+        bool movingIntoNewBox = previouslyVisitedBox != box;
+
+        if (offsetInBox == box->caretMinOffset())
+            iter = wordBreakIteratorForMinOffsetBoundary(visiblePosition, textBox, previousBoxLength, previousBoxInDifferentBlock);
+        else if (offsetInBox == box->caretMaxOffset())
+            iter = wordBreakIteratorForMaxOffsetBoundary(visiblePosition, textBox, nextBoxInDifferentBlock);
+        else if (movingIntoNewBox) {
+            iter = wordBreakIterator(textBox->textRenderer()->text()->characters() + textBox->start(), textBox->len());
+            previouslyVisitedBox = box;
+        }
+
+        textBreakFirst(iter);
+        int offsetInIterator = offsetInBox - textBox->start() + previousBoxLength;
+
+        bool isWordBreak;
+        if (box->direction() == blockDirection) {
+            bool logicalStartInRenderer = offsetInBox == static_cast<int>(textBox->start()) && previousBoxInDifferentBlock;
+            isWordBreak = isLogicalStartOfWord(iter, offsetInIterator, logicalStartInRenderer);
+        } else {
+            bool logicalEndInRenderer = offsetInBox == static_cast<int>(textBox->start() + textBox->len()) && nextBoxInDifferentBlock;
+            isWordBreak = islogicalEndOfWord(iter, offsetInIterator, logicalEndInRenderer);
+        }      
+
+        if (isWordBreak)
+            return adjacentCharacterPosition;
+    
+        current = adjacentCharacterPosition;
+    }
+    return VisiblePosition();
+}
+
+VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
+{
+    VisiblePosition leftWordBreak = visualWordPosition(visiblePosition, MoveLeft);
+    leftWordBreak = visiblePosition.honorEditingBoundaryAtOrBefore(leftWordBreak);
+    
+    // FIXME: How should we handle a non-editable position?
+    if (leftWordBreak.isNull() && isEditablePosition(visiblePosition.deepEquivalent())) {
+        TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
+        leftWordBreak = blockDirection == LTR ? startOfEditableContent(visiblePosition) : endOfEditableContent(visiblePosition);
+    }
+    return leftWordBreak;
+}
+
+VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
+{
+    VisiblePosition rightWordBreak = visualWordPosition(visiblePosition, MoveRight);
+    rightWordBreak = visiblePosition.honorEditingBoundaryAtOrBefore(rightWordBreak);
+
+    // FIXME: How should we handle a non-editable position?
+    if (rightWordBreak.isNull() && isEditablePosition(visiblePosition.deepEquivalent())) {
+        TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
+        rightWordBreak = blockDirection == LTR ? endOfEditableContent(visiblePosition) : startOfEditableContent(visiblePosition);
+    }
+    return rightWordBreak;
+}
+
+
 enum BoundarySearchContextAvailability { DontHaveMoreContext, MayHaveMoreContext };
 
 typedef unsigned (*BoundarySearchFunction)(const UChar*, unsigned length, unsigned offset, BoundarySearchContextAvailability, bool& needMoreContext);
@@ -517,28 +886,6 @@ bool isEndOfLine(const VisiblePosition &p)
     return p.isNotNull() && p == endOfLine(p);
 }
 
-// The first leaf before node that has the same editability as node.
-static Node* previousLeafWithSameEditability(Node* node, EditableType editableType)
-{
-    bool editable = node->rendererIsEditable(editableType);
-    Node* n = node->previousLeafNode();
-    while (n) {
-        if (editable == n->rendererIsEditable(editableType))
-            return n;
-        n = n->previousLeafNode();
-    }
-    return 0;
-}
-
-static Node* enclosingNodeWithNonInlineRenderer(Node* n)
-{
-    for (Node* p = n; p; p = p->parentNode()) {
-        if (p->renderer() && !p->renderer()->isInline())
-            return p;
-    }
-    return 0;
-}
-
 static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(RootInlineBox* root, int lineDirectionPoint)
 {
     ASSERT(root);
@@ -625,34 +972,6 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     return VisiblePosition(firstPositionInNode(rootElement), DOWNSTREAM);
 }
 
-static Node* nextLeafWithSameEditability(Node* node, int offset)
-{
-    bool editable = node->rendererIsEditable();
-    ASSERT(offset >= 0);
-    Node* child = node->childNode(offset);
-    Node* n = child ? child->nextLeafNode() : node->lastDescendant()->nextLeafNode();
-    while (n) {
-        if (editable == n->rendererIsEditable())
-            return n;
-        n = n->nextLeafNode();
-    }
-    return 0;
-}
-
-static Node* nextLeafWithSameEditability(Node* node, EditableType editableType = ContentIsEditable)
-{
-    if (!node)
-        return 0;
-    
-    bool editable = node->rendererIsEditable(editableType);
-    Node* n = node->nextLeafNode();
-    while (n) {
-        if (editable == n->rendererIsEditable(editableType))
-            return n;
-        n = n->nextLeafNode();
-    }
-    return 0;
-}
 
 VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int lineDirectionPoint, EditableType editableType)
 {
@@ -1097,545 +1416,6 @@ VisiblePosition leftBoundaryOfLine(const VisiblePosition& c, TextDirection direc
 VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection direction)
 {
     return direction == LTR ? logicalEndOfLine(c) : logicalStartOfLine(c);
-}
-
-static const int invalidOffset = -1;
-static const int offsetNotFound = -1;
-
-static bool positionIsInBox(const VisiblePosition& wordBreak, const InlineBox* box, int& offsetOfWordBreak)
-{
-    if (wordBreak.isNull())
-        return false;
-
-    InlineBox* boxOfWordBreak;
-    wordBreak.getInlineBoxAndOffset(boxOfWordBreak, offsetOfWordBreak);
-    return box == boxOfWordBreak;
-}
-
-static VisiblePosition previousWordBreakInBoxInsideBlockWithSameDirectionality(const InlineBox* box, const VisiblePosition& previousWordBreak, int& offsetOfWordBreak)
-{
-    // In a LTR block, the word break should be on the left boundary of a word.
-    // In a RTL block, the word break should be on the right boundary of a word.
-    // Because nextWordPosition() returns the word break on the right boundary of the word for LTR text,
-    // we need to use previousWordPosition() to traverse words within the inline boxes from right to left
-    // to find the previous word break (i.e. the first word break on the left). The same applies to RTL text.
-    
-    bool hasSeenWordBreakInThisBox = previousWordBreak.isNotNull();
-
-    VisiblePosition wordBreak;
-
-    if (hasSeenWordBreakInThisBox)
-        wordBreak = previousWordBreak;
-    else {
-        wordBreak = createLegacyEditingPosition(box->renderer()->node(), box->caretMaxOffset());
-
-        // Return the rightmost word boundary of LTR box or leftmost word boundary of RTL box if
-        // it is not in the previously visited boxes. For example, given a logical text 
-        // "abc def     hij opq", there are 2 boxes: the "abc def " (starts at 0 and length is 8) 
-        // and the "hij opq" (starts at 12 and length is 7). The word breaks are 
-        // "abc |def |    hij |opq". We normally catch the word break between "def" and "hij" when
-        // we visit the box that contains "hij opq", but this word break doesn't exist in the box
-        // that contains "hij opq" when there are multiple spaces. So we detect it when we're
-        // traversing the box that contains "abc def " instead.
-
-        if ((box->isLeftToRightDirection() && box->nextLeafChild())
-            || (!box->isLeftToRightDirection() && box->prevLeafChild())) {
-
-            VisiblePosition positionAfterWord = nextBoundary(wordBreak, nextWordPositionBoundary);
-            if (positionAfterWord.isNotNull()) {
-                VisiblePosition positionBeforeWord = previousBoundary(positionAfterWord, previousWordPositionBoundary);
-            
-                if (positionIsInBox(positionBeforeWord, box, offsetOfWordBreak))
-                    return positionBeforeWord;
-            }
-        }
-    }
-  
-    wordBreak = previousBoundary(wordBreak, previousWordPositionBoundary);
-    if (previousWordBreak == wordBreak)
-        return VisiblePosition();
-
-    return positionIsInBox(wordBreak, box, offsetOfWordBreak) ? wordBreak : VisiblePosition();
-}
-
-static VisiblePosition leftmostPositionInRTLBoxInLTRBlock(const InlineBox* box)
-{
-    // FIXME: Probably need to take care of bidi level too.
-    Node* node = box->renderer()->node();
-    InlineBox* previousLeaf = box->prevLeafChild();
-    InlineBox* nextLeaf = box->nextLeafChild();   
-    
-    if (previousLeaf && !previousLeaf->isLeftToRightDirection())
-        return createLegacyEditingPosition(node, box->caretMaxOffset());
-
-    if (nextLeaf && !nextLeaf->isLeftToRightDirection()) {
-        if (previousLeaf)
-            return createLegacyEditingPosition(previousLeaf->renderer()->node(), previousLeaf->caretMaxOffset());
-
-        InlineBox* lastRTLLeaf;
-        do {
-            lastRTLLeaf = nextLeaf;
-            nextLeaf = nextLeaf->nextLeafChild();
-        } while (nextLeaf && !nextLeaf->isLeftToRightDirection());
-        return createLegacyEditingPosition(lastRTLLeaf->renderer()->node(), lastRTLLeaf->caretMinOffset());
-    }
-
-    return createLegacyEditingPosition(node, box->caretMinOffset());
-}
-
-static VisiblePosition rightmostPositionInLTRBoxInRTLBlock(const InlineBox* box)
-{
-    // FIXME: Probably need to take care of bidi level too.
-    Node* node = box->renderer()->node();
-    InlineBox* previousLeaf = box->prevLeafChild();
-    InlineBox* nextLeaf = box->nextLeafChild();   
-    
-    if (nextLeaf && nextLeaf->isLeftToRightDirection())    
-        return createLegacyEditingPosition(node, box->caretMaxOffset());
-
-    if (previousLeaf && previousLeaf->isLeftToRightDirection()) {
-        if (nextLeaf)
-            return createLegacyEditingPosition(nextLeaf->renderer()->node(), nextLeaf->caretMaxOffset());
-
-        InlineBox* firstLTRLeaf;
-        do {
-            firstLTRLeaf = previousLeaf;
-            previousLeaf = previousLeaf->prevLeafChild();
-        } while (previousLeaf && previousLeaf->isLeftToRightDirection());
-        return createLegacyEditingPosition(firstLTRLeaf->renderer()->node(), firstLTRLeaf->caretMinOffset());
-    }
-
-    return createLegacyEditingPosition(node, box->caretMinOffset());
-}
-    
-static VisiblePosition lastWordBreakInBox(const InlineBox* box, int& offsetOfWordBreak)
-{
-    // Add the leftmost word break for RTL box or rightmost word break for LTR box.
-    InlineBox* previousLeaf = box->prevLeafChild();
-    InlineBox* nextLeaf = box->nextLeafChild();
-    VisiblePosition boundaryPosition;
-    if (box->direction() == RTL && (!previousLeaf || previousLeaf->isLeftToRightDirection()))
-        boundaryPosition = leftmostPositionInRTLBoxInLTRBlock(box);
-    else if (box->direction() == LTR && (!nextLeaf || !nextLeaf->isLeftToRightDirection()))
-        boundaryPosition = rightmostPositionInLTRBoxInRTLBlock(box);
-
-    if (boundaryPosition.isNull())
-        return VisiblePosition();            
-
-    VisiblePosition wordBreak = nextBoundary(boundaryPosition, nextWordPositionBoundary);
-    if (wordBreak.isNull())
-        wordBreak = boundaryPosition;
-    else if (wordBreak != boundaryPosition)
-        wordBreak = previousBoundary(wordBreak, previousWordPositionBoundary);
-
-    return positionIsInBox(wordBreak, box, offsetOfWordBreak) ? wordBreak : VisiblePosition();    
-}
-
-static bool positionIsVisuallyOrderedInBoxInBlockWithDifferentDirectionality(const VisiblePosition& wordBreak, const InlineBox* box, int& offsetOfWordBreak)
-{
-    int previousOffset = offsetOfWordBreak;
-    return positionIsInBox(wordBreak, box, offsetOfWordBreak)
-        && (previousOffset == invalidOffset || previousOffset < offsetOfWordBreak);
-}
-    
-static VisiblePosition nextWordBreakInBoxInsideBlockWithDifferentDirectionality(
-    const InlineBox* box, const VisiblePosition& previousWordBreak, int& offsetOfWordBreak, bool& isLastWordBreakInBox)
-{
-    // FIXME: Probably need to take care of bidi level too.
-    
-    // In a LTR block, the word break should be on the left boundary of a word.
-    // In a RTL block, the word break should be on the right boundary of a word.
-    // Because previousWordPosition() returns the word break on the right boundary of the word for RTL text,
-    // we need to use nextWordPosition() to traverse words within the inline boxes from right to left to find the next word break.
-    // The same applies to LTR text, in which words are traversed within the inline boxes from left to right.
-    
-    bool hasSeenWordBreakInThisBox = previousWordBreak.isNotNull();
-    VisiblePosition wordBreak = hasSeenWordBreakInThisBox ? previousWordBreak : 
-        createLegacyEditingPosition(box->renderer()->node(), box->caretMinOffset());
-
-    wordBreak = nextBoundary(wordBreak, nextWordPositionBoundary);
-  
-    // Given RTL box "ABC DEF" either follows a LTR box or is the first visual box in an LTR block as an example,
-    // the visual display of the RTL box is: "(0)J(10)I(9)H(8) (7)F(6)E(5)D(4) (3)C(2)B(1)A(11)",
-    // where the number in parenthesis represents offset in visiblePosition. 
-    // Start at offset 0, the first word break is at offset 3, the 2nd word break is at offset 7, and the 3rd word break should be at offset 0.
-    // But nextWordPosition() of offset 7 is offset 11, which should be ignored, 
-    // and the position at offset 0 should be manually added as the last word break within the box.
-    if (wordBreak != previousWordBreak && positionIsVisuallyOrderedInBoxInBlockWithDifferentDirectionality(wordBreak, box, offsetOfWordBreak)) {
-        isLastWordBreakInBox = false;
-        return wordBreak;
-    }
-    
-    isLastWordBreakInBox = true;
-    return lastWordBreakInBox(box, offsetOfWordBreak);
-}
-
-struct WordBoundaryEntry {
-    WordBoundaryEntry()
-        : offsetInInlineBox(invalidOffset) 
-    { 
-    }
-
-    WordBoundaryEntry(const VisiblePosition& position, int offset)
-        : visiblePosition(position)
-        , offsetInInlineBox(offset) 
-    { 
-    }
-
-    VisiblePosition visiblePosition;
-    int offsetInInlineBox;
-};
-    
-typedef Vector<WordBoundaryEntry, 50> WordBoundaryVector;
-    
-static void collectWordBreaksInBoxInsideBlockWithSameDirectionality(const InlineBox* box, WordBoundaryVector& orderedWordBoundaries)
-{
-    orderedWordBoundaries.clear();
-
-    VisiblePosition wordBreak;
-    int offsetOfWordBreak = invalidOffset;
-    while (1) {
-        wordBreak = previousWordBreakInBoxInsideBlockWithSameDirectionality(box, wordBreak, offsetOfWordBreak);
-        if (wordBreak.isNull())
-            break;
-        WordBoundaryEntry wordBoundaryEntry(wordBreak, offsetOfWordBreak);
-        orderedWordBoundaries.append(wordBoundaryEntry);
-    }
-}
-
-static void collectWordBreaksInBoxInsideBlockWithDifferntDirectionality(const InlineBox* box, WordBoundaryVector& orderedWordBoundaries)
-{
-    orderedWordBoundaries.clear();
-    
-    VisiblePosition wordBreak;
-    int offsetOfWordBreak = invalidOffset;
-    bool isLastWordBreakInBox = false;
-    while (1) {
-        wordBreak = nextWordBreakInBoxInsideBlockWithDifferentDirectionality(box, wordBreak, offsetOfWordBreak, isLastWordBreakInBox);
-        if (wordBreak.isNotNull()) {
-            WordBoundaryEntry wordBoundaryEntry(wordBreak, offsetOfWordBreak);
-            orderedWordBoundaries.append(wordBoundaryEntry);
-        }
-        if (isLastWordBreakInBox)
-            break;
-    }
-}
-
-static void collectWordBreaksInBox(const InlineBox* box, WordBoundaryVector& orderedWordBoundaries, TextDirection blockDirection)
-{
-    if (box->direction() == blockDirection)
-        collectWordBreaksInBoxInsideBlockWithSameDirectionality(box, orderedWordBoundaries);
-    else
-        collectWordBreaksInBoxInsideBlockWithDifferntDirectionality(box, orderedWordBoundaries);        
-}
-    
-static VisiblePosition previousWordBoundaryInBox(const InlineBox* box, int offset)
-{
-    int offsetOfWordBreak = 0;
-    VisiblePosition wordBreak;
-    while (true) {
-        wordBreak = previousWordBreakInBoxInsideBlockWithSameDirectionality(box, wordBreak, offsetOfWordBreak);
-        if (wordBreak.isNull())
-            break;
-        if (offset == invalidOffset || offsetOfWordBreak != offset)
-            return wordBreak;
-    }        
-    return VisiblePosition();
-}
-
-static VisiblePosition nextWordBoundaryInBox(const InlineBox* box, int offset)
-{
-    int offsetOfWordBreak = 0;
-    VisiblePosition wordBreak;
-    bool isLastWordBreakInBox = false;
-    do {
-        wordBreak = nextWordBreakInBoxInsideBlockWithDifferentDirectionality(box, wordBreak, offsetOfWordBreak, isLastWordBreakInBox);
-        if (wordBreak.isNotNull() && (offset == invalidOffset || offsetOfWordBreak != offset))
-            return wordBreak;
-    } while (!isLastWordBreakInBox);       
-    return VisiblePosition();
-}
-    
-static VisiblePosition visuallyLastWordBoundaryInBox(const InlineBox* box, int offset, TextDirection blockDirection)
-{
-    WordBoundaryVector orderedWordBoundaries;
-    collectWordBreaksInBox(box, orderedWordBoundaries, blockDirection);
-    if (!orderedWordBoundaries.size()) 
-        return VisiblePosition();
-    if (offset == invalidOffset || orderedWordBoundaries[orderedWordBoundaries.size() - 1].offsetInInlineBox != offset)
-        return orderedWordBoundaries[orderedWordBoundaries.size() - 1].visiblePosition;
-    if (orderedWordBoundaries.size() > 1)
-        return orderedWordBoundaries[orderedWordBoundaries.size() - 2].visiblePosition;
-    return VisiblePosition();
-}
-        
-static int greatestOffsetUnder(int offset, bool boxAndBlockAreInSameDirection, const WordBoundaryVector& orderedWordBoundaries)
-{
-    if (!orderedWordBoundaries.size())
-        return offsetNotFound;
-    // FIXME: binary search.
-    if (boxAndBlockAreInSameDirection) {
-        for (unsigned i = 0; i < orderedWordBoundaries.size(); ++i) {
-            if (orderedWordBoundaries[i].offsetInInlineBox < offset)
-                return i;
-        }
-        return offsetNotFound;
-    }
-    for (int i = orderedWordBoundaries.size() - 1; i >= 0; --i) {
-        if (orderedWordBoundaries[i].offsetInInlineBox < offset)
-            return i;
-    }
-    return offsetNotFound;
-}
-
-static int smallestOffsetAbove(int offset, bool boxAndBlockAreInSameDirection, const WordBoundaryVector& orderedWordBoundaries)
-{
-    if (!orderedWordBoundaries.size())
-        return offsetNotFound;
-    // FIXME: binary search.
-    if (boxAndBlockAreInSameDirection) {
-        for (int i = orderedWordBoundaries.size() - 1; i >= 0; --i) {
-            if (orderedWordBoundaries[i].offsetInInlineBox > offset)
-                return i;
-        }
-        return offsetNotFound;
-    }
-    for (unsigned i = 0; i < orderedWordBoundaries.size(); ++i) {
-        if (orderedWordBoundaries[i].offsetInInlineBox > offset)
-            return i;
-    }
-    return offsetNotFound;
-}
-
-static const RootInlineBox* previousRootInlineBox(const InlineBox* box)
-{
-    Node* node = box->renderer()->node();
-    Node* enclosingBlockNode = enclosingNodeWithNonInlineRenderer(node);
-    Node* previousNode = node->previousLeafNode();
-    while (previousNode && enclosingBlockNode == enclosingNodeWithNonInlineRenderer(previousNode))
-        previousNode = previousNode->previousLeafNode();
-  
-    while (previousNode && !previousNode->isShadowRoot()) {
-        Position pos = createLegacyEditingPosition(previousNode, caretMaxOffset(previousNode));
-        
-        if (pos.isCandidate()) {
-            RenderedPosition renderedPos(pos, DOWNSTREAM);
-            RootInlineBox* root = renderedPos.rootBox();
-            if (root)
-                return root;
-        }
-
-        previousNode = previousNode->previousLeafNode();
-    }
-    return 0;
-}
-
-static const RootInlineBox* nextRootInlineBox(const InlineBox* box)
-{
-    Node* node = box->renderer()->node();
-    Node* enclosingBlockNode = enclosingNodeWithNonInlineRenderer(node);
-    Node* nextNode = node->nextLeafNode();
-    while (nextNode && enclosingBlockNode == enclosingNodeWithNonInlineRenderer(nextNode))
-        nextNode = nextNode->nextLeafNode();
-  
-    while (nextNode && !nextNode->isShadowRoot()) {
-        Position pos;
-        pos = createLegacyEditingPosition(nextNode, caretMinOffset(nextNode));
-        
-        if (pos.isCandidate()) {
-            RenderedPosition renderedPos(pos, DOWNSTREAM);
-            RootInlineBox* root = renderedPos.rootBox();
-            if (root)
-                return root;
-        }
-
-        nextNode = nextNode->nextLeafNode();
-    }
-    return 0;
-}
-
-static const InlineBox* leftInlineBox(const InlineBox* box, TextDirection blockDirection)
-{
-    if (box->prevLeafChild())
-        return box->prevLeafChild();
-    
-    const RootInlineBox* rootBox = box->root();
-    const bool isBlockLTR = blockDirection == LTR;
-    const InlineFlowBox* leftLineBox = isBlockLTR ? rootBox->prevLineBox() : rootBox->nextLineBox();
-    if (leftLineBox)
-        return leftLineBox->lastLeafChild();
-
-    const RootInlineBox* leftRootInlineBox = isBlockLTR ? previousRootInlineBox(box) :
-        nextRootInlineBox(box); 
-    return leftRootInlineBox ? leftRootInlineBox->lastLeafChild() : 0; 
-}
-
-static const InlineBox* rightInlineBox(const InlineBox* box, TextDirection blockDirection)
-{
-    if (box->nextLeafChild())
-        return box->nextLeafChild();
-    
-    const RootInlineBox* rootBox = box->root();
-    const bool isBlockLTR = blockDirection == LTR;
-    const InlineFlowBox* rightLineBox = isBlockLTR ? rootBox->nextLineBox() : rootBox->prevLineBox();
-    if (rightLineBox)
-        return rightLineBox->firstLeafChild();
-
-    const RootInlineBox* rightRootInlineBox = isBlockLTR ? nextRootInlineBox(box) :
-        previousRootInlineBox(box); 
-    return rightRootInlineBox ? rightRootInlineBox->firstLeafChild() : 0; 
-}
-
-static VisiblePosition leftWordBoundary(const InlineBox* box, int offset, TextDirection blockDirection)
-{
-    VisiblePosition wordBreak;
-    for  (const InlineBox* adjacentBox = box; adjacentBox; adjacentBox = leftInlineBox(adjacentBox, blockDirection)) {
-        if (blockDirection == LTR) {
-            if (adjacentBox->isLeftToRightDirection()) 
-                wordBreak = previousWordBoundaryInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset);
-            else
-                wordBreak = nextWordBoundaryInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset);
-        } else 
-            wordBreak = visuallyLastWordBoundaryInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset, blockDirection);            
-        if (wordBreak.isNotNull())
-            return wordBreak;
-    }
-    return VisiblePosition();
-}
- 
-static VisiblePosition rightWordBoundary(const InlineBox* box, int offset, TextDirection blockDirection)
-{
-    
-    VisiblePosition wordBreak;
-    for (const InlineBox* adjacentBox = box; adjacentBox; adjacentBox = rightInlineBox(adjacentBox, blockDirection)) {
-        if (blockDirection == RTL) {
-            if (adjacentBox->isLeftToRightDirection())
-                wordBreak = nextWordBoundaryInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset);
-            else
-                wordBreak = previousWordBoundaryInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset);
-        } else 
-            wordBreak = visuallyLastWordBoundaryInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset, blockDirection);            
-        if (!wordBreak.isNull())
-            return wordBreak;
-    }
-    return VisiblePosition();
-}
-    
-static bool positionIsInBoxButNotOnBoundary(const VisiblePosition& wordBreak, const InlineBox* box)
-{
-    int offsetOfWordBreak;
-    return positionIsInBox(wordBreak, box, offsetOfWordBreak)
-        && offsetOfWordBreak != box->caretMaxOffset() && offsetOfWordBreak != box->caretMinOffset();
-}
-
-static VisiblePosition leftWordPositionIgnoringEditingBoundary(const VisiblePosition& visiblePosition)
-{
-    InlineBox* box;
-    int offset;
-    visiblePosition.getInlineBoxAndOffset(box, offset);
-
-    if (!box)
-        return VisiblePosition();
-
-    TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
-
-    // FIXME: If the box's directionality is the same as that of the enclosing block, when the offset is at the box boundary
-    // and the direction is towards inside the box, do I still need to make it a special case? For example, a LTR box inside a LTR block,
-    // when offset is at box's caretMinOffset and the direction is DirectionRight, should it be taken care as a general case?
-    if (offset == box->caretLeftmostOffset())
-        return leftWordBoundary(leftInlineBox(box, blockDirection), invalidOffset, blockDirection);
-    if (offset == box->caretRightmostOffset())
-        return leftWordBoundary(box, offset, blockDirection);
-    
-    
-    VisiblePosition wordBreak;
-    if (blockDirection == LTR) {
-        if (box->direction() == blockDirection)
-            wordBreak = previousBoundary(visiblePosition, previousWordPositionBoundary);
-        else
-            wordBreak = nextBoundary(visiblePosition, nextWordPositionBoundary);
-    }
-    if (wordBreak.isNotNull() && positionIsInBoxButNotOnBoundary(wordBreak, box))
-        return wordBreak;
-    
-    WordBoundaryVector orderedWordBoundaries;
-    collectWordBreaksInBox(box, orderedWordBoundaries, blockDirection);
-
-    int index = box->isLeftToRightDirection() ? greatestOffsetUnder(offset, blockDirection == LTR, orderedWordBoundaries)
-        : smallestOffsetAbove(offset, blockDirection == RTL, orderedWordBoundaries);
-    if (index >= 0)
-        return orderedWordBoundaries[index].visiblePosition;
-    
-    return leftWordBoundary(leftInlineBox(box, blockDirection), invalidOffset, blockDirection);
-}
-
-static VisiblePosition rightWordPositionIgnoringEditingBoundary(const VisiblePosition& visiblePosition)
-{
-    InlineBox* box;
-    int offset;
-    visiblePosition.getInlineBoxAndOffset(box, offset);
-
-    if (!box)
-        return VisiblePosition();
-
-    TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
-    
-    if (offset == box->caretLeftmostOffset())
-        return rightWordBoundary(box, offset, blockDirection);
-    if (offset == box->caretRightmostOffset())
-        return rightWordBoundary(rightInlineBox(box, blockDirection), invalidOffset, blockDirection);
- 
-    VisiblePosition wordBreak;
-    if (blockDirection == RTL) {
-        if (box->direction() == blockDirection)
-            wordBreak = previousBoundary(visiblePosition, previousWordPositionBoundary);
-        else
-            wordBreak = nextBoundary(visiblePosition, nextWordPositionBoundary);
-    }
-    if (wordBreak.isNotNull() && positionIsInBoxButNotOnBoundary(wordBreak, box))
-        return wordBreak;
-    
-    WordBoundaryVector orderedWordBoundaries;
-    collectWordBreaksInBox(box, orderedWordBoundaries, blockDirection);
-    
-    int index = box->isLeftToRightDirection() ? smallestOffsetAbove(offset, blockDirection == LTR, orderedWordBoundaries)
-        : greatestOffsetUnder(offset, blockDirection == RTL, orderedWordBoundaries);
-    if (index >= 0)
-        return orderedWordBoundaries[index].visiblePosition;
-    
-    return rightWordBoundary(rightInlineBox(box, blockDirection), invalidOffset, blockDirection);
-}
-
-VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
-{
-    if (visiblePosition.isNull())
-        return VisiblePosition();
-
-    VisiblePosition leftWordBreak = leftWordPositionIgnoringEditingBoundary(visiblePosition);
-    leftWordBreak = visiblePosition.honorEditingBoundaryAtOrBefore(leftWordBreak);
-    
-    // FIXME: How should we handle a non-editable position?
-    if (leftWordBreak.isNull() && isEditablePosition(visiblePosition.deepEquivalent())) {
-        TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
-        leftWordBreak = blockDirection == LTR ? startOfEditableContent(visiblePosition) : endOfEditableContent(visiblePosition);
-    }
-    return leftWordBreak;
-}
-
-VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
-{
-    if (visiblePosition.isNull())
-        return VisiblePosition();
-
-    VisiblePosition rightWordBreak = rightWordPositionIgnoringEditingBoundary(visiblePosition);
-    rightWordBreak = visiblePosition.honorEditingBoundaryAtOrBefore(rightWordBreak);
-
-    // FIXME: How should we handle a non-editable position?
-    if (rightWordBreak.isNull() && isEditablePosition(visiblePosition.deepEquivalent())) {
-        TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
-        rightWordBreak = blockDirection == LTR ? endOfEditableContent(visiblePosition) : startOfEditableContent(visiblePosition);
-    }
-    return rightWordBreak;
 }
 
 }

@@ -17,30 +17,14 @@ Move left by one word
 " rst uvw"[8, 5, 1], "hij opq"[4], "abc def "[8, 4, 0]
 Test 4, RTL:
 Move left by one word
-"abc def "[0], " rst uvw"[4], "hij opq"[3], "abc def "[7, 3], " rst uvw"[8]    FAIL expected: ["abc def "[ 0, ]" rst uvw"[ 4, ]"hij opq"[ 7,  3, ]"abc def "[ 7,  3, ]" rst uvw"[ 8]
-" rst uvw"[4], "hij opq"[3]   FAIL expected "hij opq"[ 7]
-" rst uvw"[3], "hij opq"[3]   FAIL expected "hij opq"[ 7]
-" rst uvw"[2], "hij opq"[3]   FAIL expected "hij opq"[ 7]
-" rst uvw"[1], "hij opq"[3]   FAIL expected "hij opq"[ 7]
+"abc def "[0], " rst uvw"[4], "hij opq"[7, 3], "abc def "[7, 3], " rst uvw"[8]
 Move right by one word
-" rst uvw"[8], "abc def "[3, 7], "hij opq"[3], " rst uvw"[4], "abc def "[0]    FAIL expected: [" rst uvw"[ 8, ]"abc def "[ 3,  7, ]"hij opq"[ 3,  7, ]" rst uvw"[ 4, ]"abc def "[ 0]
-"hij opq"[3], " rst uvw"[4]   FAIL expected "hij opq"[ 7]
-"hij opq"[4], " rst uvw"[4]   FAIL expected "hij opq"[ 7]
-"hij opq"[5], " rst uvw"[4]   FAIL expected "hij opq"[ 7]
-"hij opq"[6], " rst uvw"[4]   FAIL expected "hij opq"[ 7]
+" rst uvw"[8], "abc def "[3, 7], "hij opq"[3, 7], " rst uvw"[4], "abc def "[0]
 Test 5, RTL:
 Move left by one word
-"abc def "[0], " rst uvw"[4], "hij opq"[3], "abc def "[7, 3], " rst uvw"[8]    FAIL expected: ["abc def "[ 0, ]" rst uvw"[ 4, ]"hij opq"[ 7,  3, ]"abc def "[ 7,  3, ]" rst uvw"[ 8]
-" rst uvw"[4], "hij opq"[3]   FAIL expected "hij opq"[ 7]
-" rst uvw"[3], "hij opq"[3]   FAIL expected "hij opq"[ 7]
-" rst uvw"[2], "hij opq"[3]   FAIL expected "hij opq"[ 7]
-" rst uvw"[1], "hij opq"[3]   FAIL expected "hij opq"[ 7]
+"abc def "[0], " rst uvw"[4], "hij opq"[7, 3], "abc def "[7, 3], " rst uvw"[8]
 Move right by one word
-" rst uvw"[8], "abc def "[3, 7], "hij opq"[3], " rst uvw"[4], "abc def "[0]    FAIL expected: [" rst uvw"[ 8, ]"abc def "[ 3,  7, ]"hij opq"[ 3,  7, ]" rst uvw"[ 4, ]"abc def "[ 0]
-"hij opq"[3], " rst uvw"[4]   FAIL expected "hij opq"[ 7]
-"hij opq"[4], " rst uvw"[4]   FAIL expected "hij opq"[ 7]
-"hij opq"[5], " rst uvw"[4]   FAIL expected "hij opq"[ 7]
-"hij opq"[6], " rst uvw"[4]   FAIL expected "hij opq"[ 7]
+" rst uvw"[8], "abc def "[3, 7], "hij opq"[3, 7], " rst uvw"[4], "abc def "[0]
 Test 6, LTR:
 Move right by one word
 "abc def "[0, 4, 8], "hij opq"[4], " rst uvw"[1, 5, 8]
@@ -88,32 +72,14 @@ Move left by one word
 "FFZ LIG"[7, 3], "abc def"[4], "ABD DSU "[8, 3, 0]
 Test 15, RTL:
 Move left by one word
-"ABD opq DSU "[0, 4, 8, 12], "abc AAA def"[8, 4, 3], "FFZ rst LIG"[4, 8, 11]    FAIL expected: ["ABD opq DSU "[ 0,  4,  8,  12, ]"abc AAA def"[ 4,  3, ]"FFZ rst LIG"[ 4,  8,  11]
-"ABD opq DSU "[12], "abc AAA def"[8]   FAIL expected "abc AAA def"[ 4]
-"abc AAA def"[10, 8]   FAIL expected "abc AAA def"[ 4]
-"abc AAA def"[9, 8]   FAIL expected "abc AAA def"[ 4]
+"ABD opq DSU "[0, 4, 8, 12], "abc AAA def"[4, 3], "FFZ rst LIG"[4, 8, 11]
 Move right by one word
-"FFZ rst LIG"[11, 8, 4], "abc AAA def"[3, 4, 8], "ABD opq DSU "[12, 8, 4, 0]    FAIL expected: ["FFZ rst LIG"[ 11,  8,  4, ]"abc AAA def"[ 3,  4, ]"ABD opq DSU "[ 12,  8,  4,  0]
-"abc AAA def"[4, 8]   FAIL expected "ABD opq DSU "[ 12]
+"FFZ rst LIG"[11, 8, 4], "abc AAA def"[3, 4], "ABD opq DSU "[12, 8, 4, 0]
 Test 16, LTR:
 Move right by one word
-"ABD opq DSU "[0, 4], "abc AAA def"[8, 4], "ABD opq DSU "[12, 11], "FFZ rst LIG"[4, 8, 11]    FAIL expected: ["ABD opq DSU "[ 0,  4,  8, ]"abc AAA def"[ 8,  7, ]"ABD opq DSU "[ 12,  11, ]"FFZ rst LIG"[ 4,  8,  11]
-"ABD opq DSU "[4], "abc AAA def"[8]   FAIL expected "ABD opq DSU "[ 8]
-"ABD opq DSU "[5], "abc AAA def"[8]   FAIL expected "ABD opq DSU "[ 8]
-"ABD opq DSU "[6], "abc AAA def"[8]   FAIL expected "ABD opq DSU "[ 8]
-"ABD opq DSU "[7], "abc AAA def"[8]   FAIL expected "ABD opq DSU "[ 8]
-"abc AAA def"[8, 4]   FAIL expected "abc AAA def"[ 7]
-"abc AAA def"[9, 4]   FAIL expected "abc AAA def"[ 7]
-"abc AAA def"[10, 4]   FAIL expected "abc AAA def"[ 7]
-"abc AAA def"[11, 4]   FAIL expected "abc AAA def"[ 7]
-"abc AAA def"[7, 4]   FAIL expected "ABD opq DSU "[ 12]
-"abc AAA def"[6, 4]   FAIL expected "ABD opq DSU "[ 12]
-"abc AAA def"[5, 4]   FAIL expected "ABD opq DSU "[ 12]
+"ABD opq DSU "[0, 4, 8], "abc AAA def"[8, 7], "ABD opq DSU "[12, 11], "FFZ rst LIG"[4, 8, 11]
 Move left by one word
-"FFZ rst LIG"[11, 8, 4], "ABD opq DSU "[11, 12], "abc AAA def"[7, 8], "ABD opq DSU "[4, 0]    FAIL expected: ["FFZ rst LIG"[ 11,  8,  4, ]"ABD opq DSU "[ 11,  12, ]"abc AAA def"[ 7,  8, ]"ABD opq DSU "[ 8,  4,  0]
-"abc AAA def"[8], "ABD opq DSU "[4]   FAIL expected "ABD opq DSU "[ 8]
-"FFZ rst LIG"[1], "ABD opq DSU "[4]   FAIL expected "ABD opq DSU "[ 8]
-"FFZ rst LIG"[2], "ABD opq DSU "[4]   FAIL expected "ABD opq DSU "[ 8]
+"FFZ rst LIG"[11, 8, 4], "ABD opq DSU "[11, 12], "abc AAA def"[7, 8], "ABD opq DSU "[8, 4, 0]
 Test 17, RTL:
 Move left by one word
 "ABD opq DSU "[0, 4, 8, 12], "abc AAA def"[4, 8], "FFZ rst LIG"[4, 8, 11]
@@ -131,14 +97,7 @@ Move left by one word
 "FFZ"[3], "bbb AAA "[7, 4], "aaa "[4, 0]
 Test 20, RTL:
 Move left by one word
-"ABD opq rst DSU "[0, 4, 7, 12, 16], "abc uvw AAA def lmn"[12, 8, 7, 3], "ABW hij xyz FXX"[4, 7, 12, 15]    FAIL expected: ["ABD opq rst DSU "[ 0,  4,  7,  12,  16, ]"abc uvw AAA def lmn"[ 15,  8,  7,  3, ]"ABW hij xyz FXX"[ 4,  7,  12,  15]
-"ABD opq rst DSU "[16], "abc uvw AAA def lmn"[12]   FAIL expected "abc uvw AAA def lmn"[ 15]
-"abc uvw AAA def lmn"[18, 12]   FAIL expected "abc uvw AAA def lmn"[ 15]
-"abc uvw AAA def lmn"[17, 12]   FAIL expected "abc uvw AAA def lmn"[ 15]
-"abc uvw AAA def lmn"[16, 12]   FAIL expected "abc uvw AAA def lmn"[ 15]
-"abc uvw AAA def lmn"[15, 12]   FAIL expected "abc uvw AAA def lmn"[ 8]
-"abc uvw AAA def lmn"[14, 12]   FAIL expected "abc uvw AAA def lmn"[ 8]
-"abc uvw AAA def lmn"[13, 12]   FAIL expected "abc uvw AAA def lmn"[ 8]
+"ABD opq rst DSU "[0, 4, 7, 12, 16], "abc uvw AAA def lmn"[15, 8, 7, 3], "ABW hij xyz FXX"[4, 7, 12, 15]
 Move right by one word
 "ABW hij xyz FXX"[15, 12, 7, 4], "abc uvw AAA def lmn"[3, 7, 8, 15], "ABD opq rst DSU "[16, 12, 7, 4, 0]
 
