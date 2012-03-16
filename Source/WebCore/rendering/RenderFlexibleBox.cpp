@@ -571,7 +571,7 @@ LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* 
     Length mainAxisLength = mainAxisLengthForChild(child);
     if (mainAxisLength.isAuto()) {
         LayoutUnit mainAxisExtent = hasOrthogonalFlow(child) ? child->logicalHeight() : child->maxPreferredLogicalWidth();
-        return mainAxisExtent - mainAxisBorderAndPaddingExtentForChild(child) - mainAxisScrollbarExtentForChild(child);
+        return mainAxisExtent - mainAxisBorderAndPaddingExtentForChild(child);
     }
     return mainAxisLength.calcMinValue(mainAxisContentExtent());
 }
