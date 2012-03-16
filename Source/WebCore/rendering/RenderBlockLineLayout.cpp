@@ -123,18 +123,18 @@ inline void LineWidth::updateAvailableWidth()
 
 inline void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::FloatingObject* newFloat)
 {
-    int height = m_block->logicalHeight();
+    LayoutUnit height = m_block->logicalHeight();
     if (height < m_block->logicalTopForFloat(newFloat) || height >= m_block->logicalBottomForFloat(newFloat))
         return;
 
     if (newFloat->type() == RenderBlock::FloatingObject::FloatLeft) {
         m_left = m_block->pixelSnappedLogicalRightForFloat(newFloat);
         if (m_isFirstLine && m_block->style()->isLeftToRightDirection())
-            m_left += m_block->textIndentOffset();
+            m_left += floorToInt(m_block->textIndentOffset());
     } else {
         m_right = m_block->pixelSnappedLogicalLeftForFloat(newFloat);
         if (m_isFirstLine && !m_block->style()->isLeftToRightDirection())
-            m_right -= m_block->textIndentOffset();
+            m_right -= floorToInt(m_block->textIndentOffset());
     }
 
     computeAvailableWidthFromLeftAndRight();
@@ -159,8 +159,8 @@ void LineWidth::fitBelowFloats()
     ASSERT(!m_committedWidth);
     ASSERT(!fitsOnLine());
 
-    int floatLogicalBottom;
-    int lastFloatLogicalBottom = m_block->logicalHeight();
+    LayoutUnit floatLogicalBottom;
+    LayoutUnit lastFloatLogicalBottom = m_block->logicalHeight();
     float newLineWidth = m_availableWidth;
     float newLineLeft = m_left;
     float newLineRight = m_right;
@@ -654,7 +654,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
             glyphOverflow.computeBounds = true; 
     }
     
-    int hyphenWidth = 0;
+    LayoutUnit hyphenWidth = 0;
     if (toInlineTextBox(run->m_box)->hasHyphen()) {
         const Font& font = renderer->style(lineInfo.isFirstLine())->font();
         hyphenWidth = measureHyphenWidth(renderer, font);
@@ -1109,8 +1109,8 @@ public:
     LineInfo& lineInfo() { return m_lineInfo; }
     const LineInfo& lineInfo() const { return m_lineInfo; }
 
-    int endLineLogicalTop() const { return m_endLineLogicalTop; }
-    void setEndLineLogicalTop(int logicalTop) { m_endLineLogicalTop = logicalTop; }
+    LayoutUnit endLineLogicalTop() const { return m_endLineLogicalTop; }
+    void setEndLineLogicalTop(LayoutUnit logicalTop) { m_endLineLogicalTop = logicalTop; }
 
     RootInlineBox* endLine() const { return m_endLine; }
     void setEndLine(RootInlineBox* line) { m_endLine = line; }
@@ -1129,7 +1129,7 @@ private:
     RootInlineBox* m_endLine;
     LineInfo m_lineInfo;
     unsigned m_floatIndex;
-    int m_endLineLogicalTop;
+    LayoutUnit m_endLineLogicalTop;
     bool m_endLineMatched;
     bool m_checkForFloatsFromLastLine;
     
@@ -1400,19 +1400,19 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
         // This has to be done before adding in the bottom border/padding, or the float will
         // include the padding incorrectly. -dwh
         if (layoutState.checkForFloatsFromLastLine()) {
-            int bottomVisualOverflow = lastRootBox()->logicalBottomVisualOverflow();
-            int bottomLayoutOverflow = lastRootBox()->logicalBottomLayoutOverflow();
+            LayoutUnit bottomVisualOverflow = lastRootBox()->logicalBottomVisualOverflow();
+            LayoutUnit bottomLayoutOverflow = lastRootBox()->logicalBottomLayoutOverflow();
             TrailingFloatsRootInlineBox* trailingFloatsLineBox = new (renderArena()) TrailingFloatsRootInlineBox(this);
             m_lineBoxes.appendLineBox(trailingFloatsLineBox);
             trailingFloatsLineBox->setConstructed();
             GlyphOverflowAndFallbackFontsMap textBoxDataMap;
             VerticalPositionCache verticalPositionCache;
-            int blockLogicalHeight = logicalHeight();
+            LayoutUnit blockLogicalHeight = logicalHeight();
             trailingFloatsLineBox->alignBoxesInBlockDirection(blockLogicalHeight, textBoxDataMap, verticalPositionCache);
             trailingFloatsLineBox->setLineTopBottomPositions(blockLogicalHeight, blockLogicalHeight, blockLogicalHeight, blockLogicalHeight);
             trailingFloatsLineBox->setPaginatedLineWidth(availableLogicalWidthForContent(blockLogicalHeight));
-            IntRect logicalLayoutOverflow(0, blockLogicalHeight, 1, bottomLayoutOverflow - blockLogicalHeight);
-            IntRect logicalVisualOverflow(0, blockLogicalHeight, 1, bottomVisualOverflow - blockLogicalHeight);
+            LayoutRect logicalLayoutOverflow(0, blockLogicalHeight, 1, bottomLayoutOverflow - blockLogicalHeight);
+            LayoutRect logicalVisualOverflow(0, blockLogicalHeight, 1, bottomVisualOverflow - blockLogicalHeight);
             trailingFloatsLineBox->setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow, trailingFloatsLineBox->lineTop(), trailingFloatsLineBox->lineBottom());
         }
 
@@ -1517,7 +1517,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repain
     // Expand the last line to accommodate Ruby and emphasis marks.
     int lastLineAnnotationsAdjustment = 0;
     if (lastRootBox()) {
-        int lowestAllowedPosition = max(lastRootBox()->lineBottom(), logicalHeight() + paddingAfter());
+        LayoutUnit lowestAllowedPosition = max(lastRootBox()->lineBottom(), logicalHeight() + paddingAfter());
         if (!style()->isFlippedLinesWritingMode())
             lastLineAnnotationsAdjustment = lastRootBox()->computeUnderAnnotationAdjustment(lowestAllowedPosition);
         else
@@ -2690,8 +2690,8 @@ void RenderBlock::checkLinesForTextOverflow()
     const Font& font = style()->font();
     DEFINE_STATIC_LOCAL(AtomicString, ellipsisStr, (&horizontalEllipsis, 1));
     const Font& firstLineFont = firstLineStyle()->font();
-    LayoutUnit firstLineEllipsisWidth = firstLineFont.width(constructTextRun(this, firstLineFont, &horizontalEllipsis, 1, firstLineStyle()));
-    LayoutUnit ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(constructTextRun(this, font, &horizontalEllipsis, 1, style()));
+    int firstLineEllipsisWidth = firstLineFont.width(constructTextRun(this, firstLineFont, &horizontalEllipsis, 1, firstLineStyle()));
+    int ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(constructTextRun(this, font, &horizontalEllipsis, 1, style()));
 
     // For LTR text truncation, we want to get the right edge of our padding box, and then we want to see
     // if the right edge of a line box exceeds that.  For RTL, we use the left edge of the padding box and

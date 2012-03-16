@@ -120,6 +120,11 @@ inline int roundToInt(LayoutUnit value)
     return value;
 }
 
+inline int floorToInt(LayoutUnit value)
+{
+    return value;
+}
+
 inline LayoutUnit roundedLayoutUnit(float value)
 {
     return lroundf(value);
@@ -153,6 +158,11 @@ inline LayoutUnit clampToLayoutUnit(double value)
 inline bool isIntegerValue(const LayoutUnit)
 {
     return true;
+}
+
+inline LayoutUnit boundedMultiply(const LayoutUnit& a, const LayoutUnit& b)
+{
+    return a * b;
 }
 
 } // namespace WebCore

@@ -166,6 +166,17 @@ public:
     {
         return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(position), firstLine, 0);
     }
+    LayoutUnit pixelSnappedLogicalLeftOffsetForLine(LayoutUnit position, bool firstLine) const 
+    {
+        return roundToInt(logicalLeftOffsetForLine(position, firstLine));
+    }
+    LayoutUnit pixelSnappedLogicalRightOffsetForLine(LayoutUnit position, bool firstLine) const 
+    {
+        // FIXME: Multicolumn layouts break carrying over subpixel values to the logical right offset because the lines may be shifted
+        // by a subpixel value for all but the first column. This can lead to the actual pixel snapped width of the column being off
+        // by one pixel when rendered versus layed out, which can result in the line being clipped. For now, we have to floor.
+        return floorToInt(logicalRightOffsetForLine(position, firstLine));
+    }
     LayoutUnit startOffsetForLine(LayoutUnit position, bool firstLine) const
     {
         return style()->isLeftToRightDirection() ? logicalLeftOffsetForLine(position, firstLine)
@@ -177,17 +188,6 @@ public:
             : logicalWidth() - logicalRightOffsetForLine(position, firstLine);
     }
 
-    // FIXME: The implementation for these functions will change once we move to subpixel layout. See bug 60318.
-    int pixelSnappedLogicalRightOffsetForLine(LayoutUnit position, bool firstLine) const
-    {
-        return logicalRightOffsetForLine(position, logicalRightOffsetForContent(position), firstLine, 0);
-    }
-
-    int pixelSnappedLogicalLeftOffsetForLine(LayoutUnit position, bool firstLine) const
-    {
-        return roundToInt(logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(position), firstLine, 0));
-    }
-    
     LayoutUnit startAlignedOffsetForLine(RenderBox* child, LayoutUnit position, bool firstLine);
     LayoutUnit textIndentOffset() const;
 
@@ -261,7 +261,7 @@ public:
     // The page logical offset is the object's offset from the top of the page in the page progression
     // direction (so an x-offset in vertical text and a y-offset for horizontal text).
     LayoutUnit pageLogicalOffset() const { return m_rareData ? m_rareData->m_pageLogicalOffset : zeroLayoutUnit; }
-    void setPageLogicalOffset(int);
+    void setPageLogicalOffset(LayoutUnit);
 
     RootInlineBox* lineGridBox() const { return m_rareData ? m_rareData->m_lineGridBox : 0; }
     void setLineGridBox(RootInlineBox* box)
@@ -600,13 +600,12 @@ private:
         LayoutUnit width() const { return m_frameRect.width(); }
         LayoutUnit height() const { return m_frameRect.height(); }
 
-        // FIXME: The implementation for these functions will change once we move to subpixel layout. See bug 60318.
-        int pixelSnappedX() const { return x(); }
-        int pixelSnappedMaxX() const { return maxX(); }
-        int pixelSnappedY() const { return y(); }
-        int pixelSnappedMaxY() const { return maxY(); }
-        int pixelSnappedWidth() const { return width(); }
-        int pixelSnappedHeight() const { return height(); }
+        int pixelSnappedX() const { ASSERT(isPlaced()); return m_frameRect.pixelSnappedX(); }
+        int pixelSnappedMaxX() const { ASSERT(isPlaced()); return m_frameRect.pixelSnappedMaxX(); }
+        int pixelSnappedY() const { ASSERT(isPlaced()); return m_frameRect.pixelSnappedY(); }
+        int pixelSnappedMaxY() const { ASSERT(isPlaced()); return m_frameRect.pixelSnappedMaxY(); }
+        int pixelSnappedWidth() const { return m_frameRect.pixelSnappedWidth(); }
+        int pixelSnappedHeight() const { return m_frameRect.pixelSnappedHeight(); }
 
         void setX(LayoutUnit x) { ASSERT(!isInPlacedTree()); m_frameRect.setX(x); }
         void setY(LayoutUnit y) { ASSERT(!isInPlacedTree()); m_frameRect.setY(y); }

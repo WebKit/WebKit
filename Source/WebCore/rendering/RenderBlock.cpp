@@ -2780,13 +2780,10 @@ void RenderBlock::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (document()->didLayoutWithPendingStylesheets() && !isRenderView())
         return;
 
-    // We don't want to hand off painting in the line box tree with the accumulated error of the render tree, as this will cause
-    // us to mess up painting aligned things (such as underlines in text) with both the render tree and line box tree's error.
-    LayoutPoint roundedPaintOffset = roundedIntPoint(paintOffset);
     if (childrenInline())
-        m_lineBoxes.paint(this, paintInfo, roundedPaintOffset);
+        m_lineBoxes.paint(this, paintInfo, paintOffset);
     else
-        paintChildren(paintInfo, roundedPaintOffset);
+        paintChildren(paintInfo, paintOffset);
 }
 
 void RenderBlock::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -3786,7 +3783,7 @@ void RenderBlock::newLine(EClear clear)
 {
     positionNewFloats();
     // set y position
-    int newY = 0;
+    LayoutUnit newY = 0;
     switch (clear)
     {
         case CLEFT:
@@ -4477,7 +4474,7 @@ bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const LayoutPo
     if (!scrollsOverflow() || !hasLayer())
         return false;
 
-    return layer()->hitTestOverflowControls(result, pointInContainer - toLayoutSize(accumulatedOffset));
+    return layer()->hitTestOverflowControls(result, roundedIntPoint(pointInContainer - toLayoutSize(accumulatedOffset)));
 }
 
 bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
@@ -5018,7 +5015,7 @@ bool RenderBlock::layoutColumns(bool hasSpecifiedPageLogicalHeight, LayoutUnit p
                                                                    view()->layoutState()->pageLogicalOffset(borderBefore() + paddingBefore() + contentLogicalHeight()) - colInfo->forcedBreakOffset());
                 columnHeight = max(colInfo->minimumColumnHeight(), distanceBetweenBreaks);
             }
-        } else if (contentLogicalHeight() > pageLogicalHeight * desiredColumnCount) {
+        } else if (contentLogicalHeight() > boundedMultiply(pageLogicalHeight, desiredColumnCount)) {
             // Now that we know the intrinsic height of the columns, we have to rebalance them.
             columnHeight = max<LayoutUnit>(colInfo->minimumColumnHeight(), ceilf((float)contentLogicalHeight() / desiredColumnCount));
         }
@@ -5409,7 +5406,7 @@ static inline void stripTrailingSpace(float& inlineMax, float& inlineMin,
 
 static inline void updatePreferredWidth(LayoutUnit& preferredWidth, float& result)
 {
-    LayoutUnit snappedResult = ceiledLayoutUnit(result);
+    LayoutUnit snappedResult = ceilf(result);
     preferredWidth = max(snappedResult, preferredWidth);
 }
 
@@ -6369,7 +6366,7 @@ void RenderBlock::setPaginationStrut(LayoutUnit strut)
     m_rareData->m_paginationStrut = strut;
 }
 
-void RenderBlock::setPageLogicalOffset(int logicalOffset)
+void RenderBlock::setPageLogicalOffset(LayoutUnit logicalOffset)
 {
     if (!m_rareData) {
         if (!logicalOffset)
@@ -7172,13 +7169,13 @@ void RenderBlock::setMarginAfterForChild(RenderBox* child, LayoutUnit margin)
 
 RenderBlock::MarginValues RenderBlock::marginValuesForChild(RenderBox* child)
 {
-    int childBeforePositive = 0;
-    int childBeforeNegative = 0;
-    int childAfterPositive = 0;
-    int childAfterNegative = 0;
+    LayoutUnit childBeforePositive = 0;
+    LayoutUnit childBeforeNegative = 0;
+    LayoutUnit childAfterPositive = 0;
+    LayoutUnit childAfterNegative = 0;
 
-    int beforeMargin = 0;
-    int afterMargin = 0;
+    LayoutUnit beforeMargin = 0;
+    LayoutUnit afterMargin = 0;
 
     RenderBlock* childRenderBlock = child->isRenderBlock() ? toRenderBlock(child) : 0;
     
@@ -7286,8 +7283,8 @@ inline void RenderBlock::FloatingObjects::decreaseObjectsCount(FloatingObject::T
 inline RenderBlock::FloatingObjectInterval RenderBlock::FloatingObjects::intervalForFloatingObject(FloatingObject* floatingObject)
 {
     if (m_horizontalWritingMode)
-        return RenderBlock::FloatingObjectInterval(floatingObject->y(), floatingObject->maxY(), floatingObject);
-    return RenderBlock::FloatingObjectInterval(floatingObject->x(), floatingObject->maxX(), floatingObject);
+        return RenderBlock::FloatingObjectInterval(floatingObject->pixelSnappedY(), floatingObject->pixelSnappedMaxY(), floatingObject);
+    return RenderBlock::FloatingObjectInterval(floatingObject->pixelSnappedX(), floatingObject->pixelSnappedMaxX(), floatingObject);
 }
 
 void RenderBlock::FloatingObjects::addPlacedObject(FloatingObject* floatingObject)
