@@ -1,3 +1,19 @@
+2012-03-15  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r110595): webkit-patch suggest-reviewers doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=81293
+
+        Reviewed by Adam Barth.
+
+        r110595 introduced new format of the author field of ChangeLog entry:
+        "Adam Barth  <abarth@webkit.org> && Benjamin Poulain  <bpoulain@apple.com>"
+        Updte chanelog.py to support it.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLogEntry._split_contributor_names):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_parse_authors):
+
 2012-03-15  Lynn Neir  <lynn.neir@skype.net>
 
         Implement LayoutTestController::setValueForUser on Windows https://bugs.webkit.org/show_bug.cgi?id=55834

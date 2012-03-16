@@ -425,6 +425,8 @@ class ChangeLogTest(unittest.TestCase):
             [('Zan Dobersek', 'zandobersek@gmail.com'), ('Philippe Normand', 'pnormand@igalia.com')])
         self._assert_parse_authors('New Contributor  <new@webkit.org> and Noob  <noob@webkit.org>',
             [('New Contributor', 'new@webkit.org'), ('Noob', 'noob@webkit.org')])
+        self._assert_parse_authors('Adam Barth  <abarth@webkit.org> && Benjamin Poulain  <bpoulain@apple.com>',
+            [('Adam Barth', 'abarth@webkit.org'), ('Benjamin Poulain', 'bpoulain@apple.com')])
 
     def _assert_has_valid_reviewer(self, reviewer_line, expected):
         self.assertEqual(self._entry_with_reviewer(reviewer_line).has_valid_reviewer(), expected)

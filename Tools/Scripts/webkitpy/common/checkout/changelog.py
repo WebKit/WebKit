@@ -147,7 +147,7 @@ class ChangeLogEntry(object):
 
     @staticmethod
     def _split_contributor_names(text):
-        return re.split(r'\s*(?:,(?:\s+and\s+|&)?|(?:^|\s+)and\s+|[/+&])\s*', text)
+        return re.split(r'\s*(?:,(?:\s+and\s+|&)?|(?:^|\s+)and\s+|&&|[/+&])\s*', text)
 
     def _fuzz_match_reviewers(self, reviewers_text_list):
         if not reviewers_text_list:
