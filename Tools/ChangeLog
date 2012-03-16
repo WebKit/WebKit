@@ -1,3 +1,19 @@
+2012-03-16  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][Wk2] Assertion Failure and crash on file upload
+        https://bugs.webkit.org/show_bug.cgi?id=80854
+
+        Reviewed by Simon Hausmann.
+
+        Added filePicker to WebView using experimental API.
+
+        * MiniBrowser/qt/MiniBrowser.qrc:
+        * MiniBrowser/qt/icons/folder.png: Added.
+        * MiniBrowser/qt/icons/titlebar.png: Added.
+        * MiniBrowser/qt/icons/up.png: Added.
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * MiniBrowser/qt/qml/FilePicker.qml: Added.
+
 2012-03-16  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Updating email for committer.py script.

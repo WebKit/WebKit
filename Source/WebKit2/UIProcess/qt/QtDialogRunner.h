@@ -22,6 +22,7 @@
 #define QtDialogRunner_h
 
 #include <QtCore/QEventLoop>
+#include <QtCore/QStringList>
 #include <wtf/OwnPtr.h>
 
 class QDeclarativeComponent;
@@ -41,6 +42,7 @@ public:
     bool initForAuthentication(QDeclarativeComponent*, QQuickItem* dialogParent, const QString& hostname, const QString& realm, const QString& prefilledUsername);
     bool initForCertificateVerification(QDeclarativeComponent*, QQuickItem*, const QString& hostname);
     bool initForProxyAuthentication(QDeclarativeComponent*, QQuickItem*, const QString& hostname, uint16_t port, const QString& prefilledUsername);
+    bool initForFilePicker(QDeclarativeComponent*, QQuickItem*, const QStringList& selectedFiles);
 
     QQuickItem* dialog() const { return m_dialog.get(); }
 
@@ -49,6 +51,8 @@ public:
 
     QString username() const { return m_username; }
     QString password() const { return m_password; }
+
+    QStringList filePaths() const { return m_filepaths; }
 
 public slots:
     void onAccepted(const QString& result = QString())
@@ -63,6 +67,12 @@ public slots:
         m_password = password;
     }
 
+    void onFileSelected(const QStringList& filePaths)
+    {
+        m_wasAccepted = true;
+        m_filepaths = filePaths;
+    }
+
 private:
     bool createDialog(QDeclarativeComponent*, QQuickItem* dialogParent, QObject* contextObject);
 
@@ -73,6 +83,7 @@ private:
 
     QString m_username;
     QString m_password;
+    QStringList m_filepaths;
 };
 
 #endif // QtDialogRunner_h

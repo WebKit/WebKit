@@ -50,7 +50,6 @@ class QWebViewportInfo;
 
 QT_BEGIN_NAMESPACE
 class QDeclarativeComponent;
-class QFileDialog;
 QT_END_NAMESPACE
 
 class QQuickWebViewPrivate {
@@ -93,8 +92,6 @@ public:
     virtual void _q_commitScaleChange() { }
     void _q_commitPositionChange(const QPointF&);
 
-    void _q_onOpenPanelFilesSelected();
-    void _q_onOpenPanelFinished(int result);
     void _q_onVisibleChanged();
     void _q_onUrlChanged();
     void _q_onReceivedResponseFromDownload(QWebDownloadItem*);
@@ -158,10 +155,9 @@ protected:
     QDeclarativeComponent* certificateVerificationDialog;
     QDeclarativeComponent* itemSelector;
     QDeclarativeComponent* proxyAuthenticationDialog;
+    QDeclarativeComponent* filePicker;
 
     WebCore::ViewportArguments viewportArguments;
-    QFileDialog* fileDialog;
-    WKOpenPanelResultListenerRef openPanelResultListener;
 
     bool userDidOverrideContentWidth;
     bool userDidOverrideContentHeight;

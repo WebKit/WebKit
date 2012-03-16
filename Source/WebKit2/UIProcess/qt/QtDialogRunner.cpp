@@ -157,6 +157,31 @@ private:
     QString m_hostname;
 };
 
+class FilePickerContextObject : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QStringList fileList READ fileList CONSTANT)
+
+public:
+    FilePickerContextObject(const QStringList& selectedFiles)
+        : QObject()
+        , m_fileList(selectedFiles)
+    {
+    }
+
+    QStringList fileList() const { return m_fileList; }
+
+public slots:
+    void reject() { emit rejected();}
+    void accept(const QVariant& path) { emit fileSelected(path.toStringList()); }
+
+signals:
+    void rejected();
+    void fileSelected(const QStringList&);
+
+private:
+    QStringList m_fileList;
+};
+
 bool QtDialogRunner::initForAlert(QDeclarativeComponent* component, QQuickItem* dialogParent, const QString& message)
 {
     DialogContextObject* contextObject = new DialogContextObject(message);
@@ -225,6 +250,19 @@ bool QtDialogRunner::initForCertificateVerification(QDeclarativeComponent* compo
 
     connect(contextObject, SIGNAL(accepted()), SLOT(onAccepted()));
     connect(contextObject, SIGNAL(accepted()), SLOT(quit()));
+    connect(contextObject, SIGNAL(rejected()), SLOT(quit()));
+
+    return true;
+}
+
+bool QtDialogRunner::initForFilePicker(QDeclarativeComponent* component, QQuickItem* dialogParent, const QStringList& selectedFiles)
+{
+    FilePickerContextObject* contextObject = new FilePickerContextObject(selectedFiles);
+    if (!createDialog(component, dialogParent, contextObject))
+        return false;
+
+    connect(contextObject, SIGNAL(fileSelected(QStringList)), SLOT(onFileSelected(QStringList)));
+    connect(contextObject, SIGNAL(fileSelected(QStringList)), SLOT(quit()));
     connect(contextObject, SIGNAL(rejected()), SLOT(quit()));
 
     return true;

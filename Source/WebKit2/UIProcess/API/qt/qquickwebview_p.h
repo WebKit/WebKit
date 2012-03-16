@@ -191,8 +191,6 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_commitPositionChange(const QPointF&));
     Q_PRIVATE_SLOT(d_func(), void _q_commitScaleChange());
 
-    Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFilesSelected());
-    Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFinished(int result));
     Q_PRIVATE_SLOT(d_func(), void _q_onVisibleChanged());
     Q_PRIVATE_SLOT(d_func(), void _q_onUrlChanged());
     Q_PRIVATE_SLOT(d_func(), void _q_onReceivedResponseFromDownload(QWebDownloadItem*));
@@ -250,6 +248,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QDeclarativeComponent* proxyAuthenticationDialog READ proxyAuthenticationDialog WRITE setProxyAuthenticationDialog NOTIFY proxyAuthenticationDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* certificateVerificationDialog READ certificateVerificationDialog WRITE setCertificateVerificationDialog NOTIFY certificateVerificationDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* itemSelector READ itemSelector WRITE setItemSelector NOTIFY itemSelectorChanged)
+    Q_PROPERTY(QDeclarativeComponent* filePicker READ filePicker WRITE setFilePicker NOTIFY filePickerChanged)
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_PROPERTY(QWebViewportInfo* viewportInfo READ viewportInfo CONSTANT FINAL)
     Q_PROPERTY(QDeclarativeListProperty<QQuickUrlSchemeDelegate> urlSchemeDelegates READ schemeDelegates)
@@ -277,6 +276,8 @@ public:
     void setItemSelector(QDeclarativeComponent*);
     QDeclarativeComponent* proxyAuthenticationDialog() const;
     void setProxyAuthenticationDialog(QDeclarativeComponent*);
+    QDeclarativeComponent* filePicker() const;
+    void setFilePicker(QDeclarativeComponent*);
 
     QWebViewportInfo* viewportInfo();
 
@@ -329,6 +330,7 @@ Q_SIGNALS:
     void authenticationDialogChanged();
     void certificateVerificationDialogChanged();
     void itemSelectorChanged();
+    void filePickerChanged();
     void downloadRequested(QWebDownloadItem* downloadItem);
     void permissionRequested(QWebPermissionRequest* permission);
     void messageReceived(const QVariantMap& message);

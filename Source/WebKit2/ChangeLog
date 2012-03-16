@@ -1,5 +1,42 @@
 2012-03-16  Dinu Jacob  <dinu.jacob@nokia.com>
 
+        [Qt][Wk2] Assertion Failure and crash on file upload
+        https://bugs.webkit.org/show_bug.cgi?id=80854
+
+        Reviewed by Simon Hausmann.
+
+        Crash resulted from attempting to create QFileDialog, a QtWidget based dialog from a 
+        QGuiApplication. Replace QFileDialog with a QML implementable component.
+        Added a new property 'filePicker' to WebView experimental to set the QML component for
+        file upload triggered by an input file element.
+
+        Co-authored with Kasthuri Nallappasoundararajan <kasthuri.n-s@nokia.com>
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::chooseFiles):
+        (QQuickWebViewExperimental::filePicker):
+        (QQuickWebViewExperimental::setFilePicker):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior.pro:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_singleFileUpload.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/singlefileupload.html: Added.
+        * UIProcess/qt/QtDialogRunner.cpp:
+        (FilePickerContextObject):
+        (FilePickerContextObject::FilePickerContextObject):
+        (FilePickerContextObject::fileList):
+        (FilePickerContextObject::reject):
+        (FilePickerContextObject::accept):
+        (QtDialogRunner::initForFilePicker):
+        * UIProcess/qt/QtDialogRunner.h:
+        (QtDialogRunner):
+        (QtDialogRunner::filePaths):
+        (QtDialogRunner::onFileSelected):
+
+2012-03-16  Dinu Jacob  <dinu.jacob@nokia.com>
+
         [Qt][WK2] Build failure when using --no-touch-events
         https://bugs.webkit.org/show_bug.cgi?id=81241
 

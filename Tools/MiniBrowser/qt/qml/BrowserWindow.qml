@@ -313,6 +313,7 @@ Rectangle {
         experimental.promptDialog: PromptDialog { }
         experimental.authenticationDialog: AuthenticationDialog { }
         experimental.proxyAuthenticationDialog: ProxyAuthenticationDialog { }
+        experimental.filePicker: FilePicker { }
 
         ScrollIndicator {
             flickableItem: webView.experimental.flickable

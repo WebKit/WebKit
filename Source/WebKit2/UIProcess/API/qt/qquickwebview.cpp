@@ -47,7 +47,6 @@
 #include <private/qquickflickable_p.h>
 #include <JavaScriptCore/InitializeThreading.h>
 #include <QDeclarativeEngine>
-#include <QFileDialog>
 #include <QtQuick/QQuickCanvas>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
@@ -76,6 +75,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , certificateVerificationDialog(0)
     , itemSelector(0)
     , proxyAuthenticationDialog(0)
+    , filePicker(0)
     , userDidOverrideContentWidth(false)
     , userDidOverrideContentHeight(false)
     , m_navigatorQtObjectEnabled(false)
@@ -375,50 +375,28 @@ void QQuickWebViewPrivate::execDialogRunner(QtDialogRunner& dialogRunner)
 
 void QQuickWebViewPrivate::chooseFiles(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, QtWebPageUIClient::FileChooserType type)
 {
-#ifndef QT_NO_FILEDIALOG
     Q_Q(QQuickWebView);
-    openPanelResultListener = listenerRef;
 
-    // Qt does not support multiple files suggestion, so we get just the first suggestion.
-    QString selectedFileName;
-    if (!selectedFileNames.isEmpty())
-        selectedFileName = selectedFileNames.at(0);
-
-    Q_ASSERT(!fileDialog);
-
-    QWindow* window = q->canvas();
-    if (!window)
+    if (!filePicker || type == QtWebPageUIClient::MultipleFilesSelection)
         return;
 
-    fileDialog = new QFileDialog(0, QString(), selectedFileName);
-    fileDialog->window()->winId(); // Ensure that the dialog has a window
-    Q_ASSERT(fileDialog->window()->windowHandle());
-    fileDialog->window()->windowHandle()->setTransientParent(window);
+    QtDialogRunner dialogRunner;
+    if (!dialogRunner.initForFilePicker(filePicker, q, selectedFileNames))
+        return;
 
-    fileDialog->open(q, SLOT(_q_onOpenPanelFilesSelected()));
+    execDialogRunner(dialogRunner);
 
-    q->connect(fileDialog, SIGNAL(finished(int)), SLOT(_q_onOpenPanelFinished(int)));
-#endif
-}
+    if (dialogRunner.wasAccepted()) {
+        QStringList selectedPaths = dialogRunner.filePaths();
 
-void QQuickWebViewPrivate::_q_onOpenPanelFilesSelected()
-{
-    const QStringList fileList = fileDialog->selectedFiles();
-    Vector<RefPtr<APIObject> > wkFiles(fileList.size());
+        Vector<RefPtr<APIObject> > wkFiles(selectedPaths.size());
+        for (unsigned i = 0; i < selectedPaths.size(); ++i)
+            wkFiles[i] = WebURL::create(QUrl::fromLocalFile(selectedPaths.at(i)).toString());            
 
-    for (unsigned i = 0; i < fileList.size(); ++i)
-        wkFiles[i] = WebURL::create(QUrl::fromLocalFile(fileList.at(i)).toString());
+        WKOpenPanelResultListenerChooseFiles(listenerRef, toAPI(ImmutableArray::adopt(wkFiles).leakRef()));
+    } else
+        WKOpenPanelResultListenerCancel(listenerRef);
 
-    WKOpenPanelResultListenerChooseFiles(openPanelResultListener, toAPI(ImmutableArray::adopt(wkFiles).leakRef()));
-}
-
-void QQuickWebViewPrivate::_q_onOpenPanelFinished(int result)
-{
-    if (result == QDialog::Rejected)
-        WKOpenPanelResultListenerCancel(openPanelResultListener);
-
-    fileDialog->deleteLater();
-    fileDialog = 0;
 }
 
 void QQuickWebViewPrivate::setViewInAttachedProperties(QObject* object)
@@ -966,6 +944,21 @@ void QQuickWebViewExperimental::setItemSelector(QDeclarativeComponent* itemSelec
         return;
     d->itemSelector = itemSelector;
     emit itemSelectorChanged();
+}
+
+QDeclarativeComponent* QQuickWebViewExperimental::filePicker() const
+{
+    Q_D(const QQuickWebView);
+    return d->filePicker;
+}
+
+void QQuickWebViewExperimental::setFilePicker(QDeclarativeComponent* filePicker)
+{
+    Q_D(QQuickWebView);
+    if (d->filePicker == filePicker)
+        return;
+    d->filePicker = filePicker;
+    emit filePickerChanged();
 }
 
 QQuickUrlSchemeDelegate* QQuickWebViewExperimental::schemeDelegates_At(QDeclarativeListProperty<QQuickUrlSchemeDelegate>* property, int index)
