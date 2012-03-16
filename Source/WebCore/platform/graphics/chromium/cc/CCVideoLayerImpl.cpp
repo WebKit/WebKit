@@ -156,6 +156,9 @@ void CCVideoLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
 
 void CCVideoLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
 {
+    if (!m_frame)
+        return;
+
     IntRect quadRect(IntPoint(), bounds());
     OwnPtr<CCVideoDrawQuad> videoQuad = CCVideoDrawQuad::create(sharedQuadState, quadRect, m_textures, m_frame, m_format);
 
