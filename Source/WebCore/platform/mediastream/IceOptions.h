@@ -52,7 +52,7 @@ public:
     UseCandidatesOption useCandidates() { return m_useCandidates; }
 
  private:
-    IceOptions(UseCandidatesOption useCandidates) : m_useCandidates(useCandidates) { }
+    explicit IceOptions(UseCandidatesOption useCandidates) : m_useCandidates(useCandidates) { }
 
     UseCandidatesOption m_useCandidates;
 };

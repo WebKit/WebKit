@@ -54,7 +54,7 @@ public:
     const String& initialSdp();
 
 private:
-    SessionDescriptionDescriptor(const String& sdp);
+    explicit SessionDescriptionDescriptor(const String& sdp);
 
     String m_initialSdp;
     Vector<RefPtr<IceCandidateDescriptor> > m_candidates;

@@ -34,10 +34,8 @@ module p2p {
         Conditional=MEDIA_STREAM,
         Constructor(in DOMString sdp)
     ] SessionDescription {
-        // adds the specified candidate to the description
         void addCandidate(in IceCandidate candidate);
 
-        // serializes the description to SDP
         DOMString toSdp();
     };
 
