@@ -542,12 +542,12 @@ LayoutUnit RenderBoxModelObject::offsetTop() const
 
 int RenderBoxModelObject::pixelSnappedOffsetWidth() const
 {
-    return offsetWidth();
+    return snapSizeToPixel(offsetWidth(), offsetLeft());
 }
 
 int RenderBoxModelObject::pixelSnappedOffsetHeight() const
 {
-    return offsetHeight();
+    return snapSizeToPixel(offsetHeight(), offsetTop());
 }
 
 LayoutUnit RenderBoxModelObject::paddingTop(PaddingOptions) const
@@ -731,8 +731,8 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         context->addRoundedRectClip(border);
     }
     
-    LayoutUnit bLeft = includeLeftEdge ? borderLeft() : zeroLayoutUnit;
-    LayoutUnit bRight = includeRightEdge ? borderRight() : zeroLayoutUnit;
+    int bLeft = includeLeftEdge ? borderLeft() : 0;
+    int bRight = includeRightEdge ? borderRight() : 0;
     LayoutUnit pLeft = includeLeftEdge ? paddingLeft() : zeroLayoutUnit;
     LayoutUnit pRight = includeRightEdge ? paddingRight() : zeroLayoutUnit;
 
@@ -879,55 +879,53 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
 }
 
-static inline LayoutUnit resolveWidthForRatio(LayoutUnit height, const FloatSize& intrinsicRatio)
+static inline int resolveWidthForRatio(int height, const FloatSize& intrinsicRatio)
 {
-    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-    return static_cast<LayoutUnit>(ceilf(height * intrinsicRatio.width() / intrinsicRatio.height()));
+    return ceilf(height * intrinsicRatio.width() / intrinsicRatio.height());
 }
 
-static inline LayoutUnit resolveHeightForRatio(LayoutUnit width, const FloatSize& intrinsicRatio)
+static inline int resolveHeightForRatio(int width, const FloatSize& intrinsicRatio)
 {
-    // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-    return static_cast<LayoutUnit>(ceilf(width * intrinsicRatio.height() / intrinsicRatio.width()));
+    return ceilf(width * intrinsicRatio.height() / intrinsicRatio.width());
 }
 
-static inline LayoutSize resolveAgainstIntrinsicWidthOrHeightAndRatio(const LayoutSize& size, const FloatSize& intrinsicRatio, LayoutUnit useWidth, LayoutUnit useHeight)
+static inline IntSize resolveAgainstIntrinsicWidthOrHeightAndRatio(const IntSize& size, const FloatSize& intrinsicRatio, int useWidth, int useHeight)
 {
     if (intrinsicRatio.isEmpty()) {
         if (useWidth)
-            return LayoutSize(useWidth, size.height());
-        return LayoutSize(size.width(), useHeight);
+            return IntSize(useWidth, size.height());
+        return IntSize(size.width(), useHeight);
     }
 
     if (useWidth)
-        return LayoutSize(useWidth, resolveHeightForRatio(useWidth, intrinsicRatio));
-    return LayoutSize(resolveWidthForRatio(useHeight, intrinsicRatio), useHeight);
+        return IntSize(useWidth, resolveHeightForRatio(useWidth, intrinsicRatio));
+    return IntSize(resolveWidthForRatio(useHeight, intrinsicRatio), useHeight);
 }
 
-static inline LayoutSize resolveAgainstIntrinsicRatio(const LayoutSize& size, const FloatSize& intrinsicRatio)
+static inline IntSize resolveAgainstIntrinsicRatio(const IntSize& size, const FloatSize& intrinsicRatio)
 {
     // Two possible solutions: (size.width(), solutionHeight) or (solutionWidth, size.height())
     // "... must be assumed to be the largest dimensions..." = easiest answer: the rect with the largest surface area.
 
-    LayoutUnit solutionWidth = resolveWidthForRatio(size.height(), intrinsicRatio);
-    LayoutUnit solutionHeight = resolveHeightForRatio(size.width(), intrinsicRatio);
+    int solutionWidth = resolveWidthForRatio(size.height(), intrinsicRatio);
+    int solutionHeight = resolveHeightForRatio(size.width(), intrinsicRatio);
     if (solutionWidth <= size.width()) {
         if (solutionHeight <= size.height()) {
             // If both solutions fit, choose the one covering the larger area.
-            LayoutUnit areaOne = solutionWidth * size.height();
-            LayoutUnit areaTwo = size.width() * solutionHeight;
+            int areaOne = solutionWidth * size.height();
+            int areaTwo = size.width() * solutionHeight;
             if (areaOne < areaTwo)
-                return LayoutSize(size.width(), solutionHeight);
-            return LayoutSize(solutionWidth, size.height());
+                return IntSize(size.width(), solutionHeight);
+            return IntSize(solutionWidth, size.height());
         }
 
         // Only the first solution fits.
-        return LayoutSize(solutionWidth, size.height());
+        return IntSize(solutionWidth, size.height());
     }
 
     // Only the second solution fits, assert that.
     ASSERT(solutionHeight <= size.height());
-    return LayoutSize(size.width(), solutionHeight);
+    return IntSize(size.width(), solutionHeight);
 }
 
 IntSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* image, const IntSize& positioningAreaSize) const
@@ -1083,6 +1081,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     LayoutUnit left = 0;
     LayoutUnit top = 0;
     IntSize positioningAreaSize;
+    IntRect snappedPaintRect = pixelSnappedIntRect(paintRect);
 
     // Determine the background positioning area and set destRect to the background painting area.
     // destRect will be adjusted later if the background is non-repeating.
@@ -1099,7 +1098,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
 #endif
 
     if (!fixedAttachment) {
-        geometry.setDestRect(paintRect);
+        geometry.setDestRect(snappedPaintRect);
 
         LayoutUnit right = 0;
         LayoutUnit bottom = 0;
@@ -1121,11 +1120,13 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
         // its margins. Since those were added in already, we have to factor them out when computing
         // the background positioning area.
         if (isRoot()) {
-            positioningAreaSize = LayoutSize(toRenderBox(this)->width() - left - right, toRenderBox(this)->height() - top - bottom);
+            positioningAreaSize = IntSize(snapSizeToPixel(toRenderBox(this)->width() - left - right, toRenderBox(this)->x()),
+                                          snapSizeToPixel(toRenderBox(this)->height() - top - bottom, toRenderBox(this)->y()));
             left += marginLeft();
             top += marginTop();
         } else
-            positioningAreaSize = LayoutSize(paintRect.width() - left - right, paintRect.height() - top - bottom);
+            positioningAreaSize = IntSize(snapSizeToPixel(paintRect.width() - left - right, paintRect.x()),
+                                          snapSizeToPixel(paintRect.height() - top - bottom, paintRect.y()));
     } else {
         geometry.setDestRect(pixelSnappedIntRect(viewRect()));
         positioningAreaSize = geometry.destRect().size();
@@ -1140,20 +1141,20 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
 
     LayoutUnit xPosition = fillLayer->xPosition().calcMinValue(positioningAreaSize.width() - geometry.tileSize().width(), true);
     if (backgroundRepeatX == RepeatFill)
-        geometry.setPhaseX(geometry.tileSize().width() ? layoutMod(geometry.tileSize().width() - (xPosition + left), geometry.tileSize().width()) : LayoutUnit(0));
+        geometry.setPhaseX(geometry.tileSize().width() ? geometry.tileSize().width() - (xPosition + left) % geometry.tileSize().width() : 0);
     else
         geometry.setNoRepeatX(xPosition + left);
 
     LayoutUnit yPosition = fillLayer->yPosition().calcMinValue(positioningAreaSize.height() - geometry.tileSize().height(), true);
     if (backgroundRepeatY == RepeatFill)
-        geometry.setPhaseY(geometry.tileSize().height() ? layoutMod(geometry.tileSize().height() - (yPosition + top), geometry.tileSize().height()) : LayoutUnit(0));
+        geometry.setPhaseY(geometry.tileSize().height() ? geometry.tileSize().height() - (yPosition + top) % geometry.tileSize().height() : 0);
     else 
         geometry.setNoRepeatY(yPosition + top);
 
     if (fixedAttachment)
-        geometry.useFixedAttachment(paintRect.location());
+        geometry.useFixedAttachment(snappedPaintRect.location());
 
-    geometry.clip(paintRect);
+    geometry.clip(snappedPaintRect);
     geometry.setDestOrigin(geometry.destRect().location());
 }
 
@@ -1191,7 +1192,7 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     LayoutUnit bottomWithOutset = rect.maxY() + bottomOutset;
     LayoutUnit leftWithOutset = rect.x() - leftOutset;
     LayoutUnit rightWithOutset = rect.maxX() + rightOutset;
-    LayoutRect borderImageRect = LayoutRect(leftWithOutset, topWithOutset, rightWithOutset - leftWithOutset, bottomWithOutset - topWithOutset);
+    IntRect borderImageRect = pixelSnappedIntRect(leftWithOutset, topWithOutset, rightWithOutset - leftWithOutset, bottomWithOutset - topWithOutset);
 
     IntSize imageSize = calculateImageIntrinsicDimensions(styleImage, borderImageRect.size());
 
