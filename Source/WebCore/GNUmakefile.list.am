@@ -3330,6 +3330,10 @@ webcore_sources += \
 	Source/WebCore/platform/mediastream/DeprecatedPeerConnectionHandlerClient.h \
 	Source/WebCore/platform/mediastream/IceCandidateDescriptor.cpp \
 	Source/WebCore/platform/mediastream/IceCandidateDescriptor.h \
+	Source/WebCore/platform/mediastream/IceOptions.cpp \
+	Source/WebCore/platform/mediastream/IceOptions.h \
+	Source/WebCore/platform/mediastream/MediaHints.cpp \
+	Source/WebCore/platform/mediastream/MediaHints.h \
 	Source/WebCore/platform/mediastream/MediaStreamCenter.cpp \
 	Source/WebCore/platform/mediastream/MediaStreamCenter.h \
 	Source/WebCore/platform/mediastream/MediaStreamComponent.h \
