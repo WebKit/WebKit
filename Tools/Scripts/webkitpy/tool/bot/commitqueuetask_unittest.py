@@ -84,6 +84,9 @@ class MockCommitQueue(CommitQueueTaskDelegate):
     def build_style(self):
         return "both"
 
+    def did_pass_testing_ews(self, patch):
+        return False
+
 
 class FailingTestCommitQueue(MockCommitQueue):
     def __init__(self, error_plan, test_failure_plan):
@@ -139,6 +142,24 @@ run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_passed: success_message='Passed tests' patch='10000'
+run_webkit_patch: ['land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 10000]
+command_passed: success_message='Landed patch' patch='10000'
+"""
+        self._run_through_task(commit_queue, expected_stderr)
+
+    def test_fast_success_case(self):
+        commit_queue = MockCommitQueue([])
+        commit_queue.did_pass_testing_ews = lambda patch: True
+        expected_stderr = """run_webkit_patch: ['clean']
+command_passed: success_message='Cleaned working directory' patch='10000'
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='10000'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 10000]
+command_passed: success_message='Applied patch' patch='10000'
+run_webkit_patch: ['validate-changelog', '--non-interactive', 10000]
+command_passed: success_message='ChangeLog validated' patch='10000'
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
+command_passed: success_message='Built patch' patch='10000'
 run_webkit_patch: ['land-attachment', '--force-clean', '--non-interactive', '--parent-command=commit-queue', 10000]
 command_passed: success_message='Landed patch' patch='10000'
 """

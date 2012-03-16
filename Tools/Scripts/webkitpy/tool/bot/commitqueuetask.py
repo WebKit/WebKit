@@ -33,6 +33,9 @@ class CommitQueueTaskDelegate(PatchAnalysisTaskDelegate):
     def parent_command(self):
         return "commit-queue"
 
+    def did_pass_testing_ews(self, patch):
+        raise NotImplementedError("subclasses must implement")
+
 
 class CommitQueueTask(PatchAnalysisTask):
     def validate(self):
@@ -58,6 +61,11 @@ class CommitQueueTask(PatchAnalysisTask):
         "ChangeLog validated",
         "ChangeLog did not pass validation")
 
+    def _did_pass_tests_recently(self):
+        if self._delegate.did_pass_testing_ews(self._patch):
+            return True
+        return self._test_patch()
+
     def run(self):
         if not self.validate():
             return False
@@ -74,7 +82,7 @@ class CommitQueueTask(PatchAnalysisTask):
                 if not self._build_without_patch():
                     return False
                 return self.report_failure()
-            if not self._test_patch():
+            if not self._did_pass_tests_recently():
                 return False
         # Make sure the patch is still valid before landing (e.g., make sure
         # no one has set commit-queue- since we started working on the patch.)

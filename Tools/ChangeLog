@@ -1,3 +1,30 @@
+2012-03-15  Adam Barth  <abarth@webkit.org>
+
+        The commit-queue should fast-track patches that have already passed the testing EWS bots
+        https://bugs.webkit.org/show_bug.cgi?id=81305
+
+        Reviewed by Eric Seidel.
+
+        If a patch has already passed the testing EWS bots (currently only the
+        chromium-ews bot), we should be able to land the patch without running
+        the tests again.  This patch is somewhat risky in that the tests might
+        have been broken between when the EWS bots ran and when the
+        commit-queue is processing the patch.  If that turns out to be a
+        problem in practice, we'll tighten up this fast-track in some way,
+        likely by making sure that the pass status is recent.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        (CommitQueueTaskDelegate.did_pass_testing_ews):
+        (CommitQueueTask._did_pass_tests_recently):
+        (CommitQueueTask.run):
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (MockCommitQueue.did_pass_testing_ews):
+        (test_fast_success_case):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (CommitQueue.did_pass_testing_ews):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (test_did_pass_testing_ews):
+
 2012-03-15  Kentaro Hara  <haraken@chromium.org>
 
         [PerformanceTests] run-perf-tests should output correct units

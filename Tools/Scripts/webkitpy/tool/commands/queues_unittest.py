@@ -436,6 +436,12 @@ The commit-queue is continuing to process your patch.
 
         OutputCapture().assert_outputs(self, queue.report_flaky_tests, [QueuesTest.mock_work_item, test_results, MockZipFile()], expected_stderr=expected_stderr)
 
+    def test_did_pass_testing_ews(self):
+        tool = MockTool()
+        patch = tool.bugs.fetch_attachment(10000)
+        queue = TestCommitQueue(tool)
+        self.assertFalse(queue.did_pass_testing_ews(patch))
+
 
 class StyleQueueTest(QueuesTest):
     def test_style_queue_with_style_exception(self):

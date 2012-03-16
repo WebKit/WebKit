@@ -333,6 +333,12 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         reporter = FlakyTestReporter(self._tool, self.name)
         reporter.report_flaky_tests(patch, flaky_test_results, results_archive)
 
+    def did_pass_testing_ews(self, patch):
+        # Currently, chromium-ews is the only testing EWS. Once there are more,
+        # should make sure they all pass.
+        status = self._tool.status_server.patch_status("chromium-ews", patch.id())
+        return status == self._pass_status
+
     # StepSequenceErrorHandler methods
 
     def handle_script_error(cls, tool, state, script_error):
