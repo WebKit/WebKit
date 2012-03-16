@@ -1248,6 +1248,7 @@ SOURCES += \
     rendering/RenderMarquee.cpp \
     rendering/RenderMenuList.cpp \
     rendering/RenderMeter.cpp \
+    rendering/RenderMultiColumnBlock.cpp \
     rendering/RenderObject.cpp \
     rendering/RenderObjectChildList.cpp \
     rendering/RenderPart.cpp \
@@ -2415,6 +2416,7 @@ HEADERS += \
     rendering/RenderMedia.h \
     rendering/RenderMenuList.h \
     rendering/RenderMeter.h \
+    rendering/RenderMultiColumnBlock.h \
     rendering/RenderObjectChildList.h \
     rendering/RenderObject.h \
     rendering/RenderPart.h \
