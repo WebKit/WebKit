@@ -430,8 +430,15 @@ webkit_web_view_get_hit_test_result             (WebKitWebView        *web_view,
 WEBKIT_API const gchar *
 webkit_web_view_get_icon_uri                    (WebKitWebView        *web_view);
 
+#if !defined(WEBKIT_DISABLE_DEPRECATED)
 WEBKIT_API GdkPixbuf *
 webkit_web_view_get_icon_pixbuf                 (WebKitWebView        *web_view);
+#endif
+
+WEBKIT_API GdkPixbuf *
+webkit_web_view_try_get_favicon_pixbuf          (WebKitWebView        *web_view,
+                                                 guint                 width,
+                                                 guint                 height);
 
 WEBKIT_API WebKitDOMDocument *
 webkit_web_view_get_dom_document                (WebKitWebView        *web_view);

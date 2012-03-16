@@ -107,6 +107,9 @@ typedef struct _WebKitWebPluginClass WebKitWebPluginClass;
 typedef struct _WebKitSpellChecker WebKitSpellChecker; /* dummy typedef */
 typedef struct _WebKitSpellCheckerInterface WebKitSpellCheckerInterface;
 
+typedef struct _WebKitFaviconDatabase WebKitFaviconDatabase;
+typedef struct _WebKitFaviconDatabaseClass WebKitFaviconDatabaseClass;
+
 G_END_DECLS
 
 #endif

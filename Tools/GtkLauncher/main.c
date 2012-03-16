@@ -40,6 +40,7 @@ static void activateUriEntryCb(GtkWidget* entry, gpointer data)
     WebKitWebView *webView = g_object_get_data(G_OBJECT(entry), "web-view");
     const gchar* uri = gtk_entry_get_text(GTK_ENTRY(entry));
     g_assert(uri);
+    gtk_entry_set_icon_from_pixbuf(GTK_ENTRY(entry), GTK_ENTRY_ICON_PRIMARY, 0);
     webkit_web_view_load_uri(webView, uri);
 }
 
@@ -195,16 +196,32 @@ static gboolean webViewLeavingFullScreen(WebKitWebView *webView, GObject *elemen
     return FALSE;
 }
 
+static void iconLoadedCb(WebKitWebView* webView, const char* iconURI, GtkWidget* uriEntry)
+{
+    GdkPixbuf *icon = webkit_web_view_try_get_favicon_pixbuf(webView, 16, 16);
+    if (!icon)
+        return;
+
+    gtk_entry_set_icon_from_pixbuf(GTK_ENTRY(uriEntry), GTK_ENTRY_ICON_PRIMARY, icon);
+    g_object_unref(icon);
+}
+
 static GtkWidget* createBrowser(GtkWidget* window, GtkWidget* uriEntry, GtkWidget* statusbar, WebKitWebView* webView, GtkWidget* vbox)
 {
+    char *iconDatabasePath;
     GtkWidget *scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
     gtk_container_add(GTK_CONTAINER(scrolledWindow), GTK_WIDGET(webView));
 
+    iconDatabasePath = g_build_filename(g_get_user_data_dir(), "webkit", "icondatabase", NULL);
+    webkit_favicon_database_set_path(webkit_get_favicon_database(), iconDatabasePath);
+    g_free(iconDatabasePath);
+
     g_signal_connect(webView, "notify::title", G_CALLBACK(notifyTitleCb), window);
     g_signal_connect(webView, "notify::load-status", G_CALLBACK(notifyLoadStatusCb), uriEntry);
     g_signal_connect(webView, "notify::progress", G_CALLBACK(notifyProgressCb), window);
+    g_signal_connect(webView, "icon-loaded", G_CALLBACK(iconLoadedCb), uriEntry);
     g_signal_connect(webView, "hovering-over-link", G_CALLBACK(linkHoverCb), statusbar);
     g_signal_connect(webView, "create-web-view", G_CALLBACK(createWebViewCb), window);
     g_signal_connect(webView, "web-view-ready", G_CALLBACK(webViewReadyCb), window);

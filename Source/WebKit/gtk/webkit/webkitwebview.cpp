@@ -11,6 +11,7 @@
  *  Copyright (C) 2009 Movial Creative Technologies Inc.
  *  Copyright (C) 2009 Bobby Powers
  *  Copyright (C) 2010 Joone Hur <joone@kldp.org>
+ *  Copyright (C) 2012 Igalia S.L.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -67,7 +68,6 @@
 #include "HTMLNames.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
-#include "IconDatabase.h"
 #include "InspectorClientGtk.h"
 #include "MemoryCache.h"
 #include "MouseEventWithHitTestResults.h"
@@ -86,6 +86,7 @@
 #include "webkitdownload.h"
 #include "webkitdownloadprivate.h"
 #include "webkitenumtypes.h"
+#include "webkitfavicondatabase.h"
 #include "webkitgeolocationpolicydecision.h"
 #include "webkitglobalsprivate.h"
 #include "webkithittestresultprivate.h"
@@ -5062,6 +5063,8 @@ const gchar* webkit_web_view_get_icon_uri(WebKitWebView* webView)
  * Returns: (transfer full): a new reference to a #GdkPixbuf, or %NULL
  *
  * Since: 1.3.13
+ *
+ * Deprecated: 1.8: Use webkit_web_view_try_get_favicon_pixbuf() instead.
  */
 GdkPixbuf* webkit_web_view_get_icon_pixbuf(WebKitWebView* webView)
 {
@@ -5072,7 +5075,36 @@ GdkPixbuf* webkit_web_view_get_icon_pixbuf(WebKitWebView* webView)
     return webkit_icon_database_get_icon_pixbuf(database, pageURI);
 }
 
+/**
+ * webkit_web_view_try_get_favicon_pixbuf:
+ * @web_view: the #WebKitWebView object
+ * @width: the desired width for the icon
+ * @height: the desired height for the icon
+ *
+ * Obtains a #GdkPixbuf of the favicon for the given
+ * #WebKitWebView. This will return %NULL is there is no icon for the
+ * current #WebKitWebView or if the icon is in the database but not
+ * available at the moment of this call. Use
+ * webkit_web_view_get_icon_uri() if you need to distinguish these
+ * cases.  Usually you want to connect to WebKitWebView::icon-loaded
+ * and call this method in the callback.
+ *
+ * See also webkit_favicon_database_try_get_favicon_pixbuf(). Contrary
+ * to this function the icon database one returns the URL of the page
+ * containing the icon.
+ *
+ * Returns: (transfer full): a new reference to a #GdkPixbuf, or %NULL
+ *
+ * Since: 1.8
+ */
+GdkPixbuf* webkit_web_view_try_get_favicon_pixbuf(WebKitWebView* webView, guint width, guint height)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
+    const gchar* pageURI = webkit_web_view_get_uri(webView);
+    WebKitFaviconDatabase* database = webkit_get_favicon_database();
+    return webkit_favicon_database_try_get_favicon_pixbuf(database, pageURI, width, height);
+}
 
 /**
  * webkit_web_view_get_dom_document:
@@ -5139,6 +5171,31 @@ void webViewExitFullscreen(WebKitWebView* webView)
         priv->fullscreenVideoController->exitFullscreen();
 #endif
 }
+
+#if ENABLE(ICONDATABASE)
+void webkitWebViewIconLoaded(WebKitFaviconDatabase* database, const char* frameURI, WebKitWebView* webView)
+{
+    // Since we definitely have an icon the WebView doesn't need to
+    // listen for notifications any longer.
+    webkitWebViewRegisterForIconNotification(webView, false);
+
+    // webkit_web_view_get_icon_uri() properly updates the "icon-uri" property.
+    g_object_notify(G_OBJECT(webView), "icon-uri");
+    g_signal_emit(webView, webkit_web_view_signals[ICON_LOADED], 0, webkit_web_view_get_icon_uri(webView));
+}
+
+void webkitWebViewRegisterForIconNotification(WebKitWebView* webView, bool shouldRegister)
+{
+    WebKitFaviconDatabase* database = webkit_get_favicon_database();
+    if (shouldRegister) {
+        if (!g_signal_handler_is_connected(database, webView->priv->iconLoadedHandler))
+            webView->priv->iconLoadedHandler = g_signal_connect(database, "icon-loaded",
+                                                                G_CALLBACK(webkitWebViewIconLoaded), webView);
+    } else
+        if (g_signal_handler_is_connected(database, webView->priv->iconLoadedHandler))
+            g_signal_handler_disconnect(database, webView->priv->iconLoadedHandler);
+}
+#endif
 
 namespace WebKit {
 

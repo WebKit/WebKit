@@ -468,6 +468,7 @@ webkit_web_view_set_view_mode
 webkit_web_view_set_view_source_mode
 webkit_web_view_set_zoom_level
 webkit_web_view_stop_loading
+webkit_web_view_try_get_favicon_pixbuf
 webkit_web_view_undo
 webkit_web_view_unmark_text_matches
 webkit_web_view_zoom_in
@@ -517,6 +518,7 @@ webkit_get_web_plugin_database
 webkit_remove_all_web_databases
 webkit_set_default_web_database_quota
 webkit_set_web_database_directory_path
+webkit_get_favicon_database
 webkit_get_icon_database
 webkit_get_text_checker
 webkit_set_text_checker
@@ -671,6 +673,30 @@ WEBKIT_IS_ICON_DATABASE_CLASS
 <SUBSECTION Private>
 WebKitIconDatabaseClass
 WebKitIconDatabasePrivate
+</SECTION>
+
+<SECTION>
+<FILE>webkitfavicondatabase</FILE>
+<TITLE>WebKitFaviconDatabase</TITLE>
+WebKitFaviconDatabase
+webkit_favicon_database_clear
+webkit_favicon_database_get_favicon_pixbuf
+webkit_favicon_database_get_favicon_pixbuf_finish
+webkit_favicon_database_get_favicon_uri
+webkit_favicon_database_get_path
+webkit_favicon_database_get_type
+webkit_favicon_database_set_path
+webkit_favicon_database_try_get_favicon_pixbuf
+<SUBSECTION Standard>
+WEBKIT_TYPE_FAVICON_DATABASE
+WEBKIT_FAVICON_DATABASE
+WEBKIT_FAVICON_DATABASE_CLASS
+WEBKIT_FAVICON_DATABASE_GET_CLASS
+WEBKIT_IS_FAVICON_DATABASE
+WEBKIT_IS_FAVICON_DATABASE_CLASS
+<SUBSECTION Private>
+WebKitFaviconDatabaseClass
+WebKitFaviconDatabasePrivate
 </SECTION>
 
 <SECTION>

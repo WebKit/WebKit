@@ -99,6 +99,10 @@ struct _WebKitWebViewPrivate {
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<WebKit::AcceleratedCompositingContext> acceleratedCompositingContext;
 #endif
+
+#if ENABLE(ICONDATABASE)
+    gulong iconLoadedHandler;
+#endif
 };
 
 void webkit_web_view_notify_ready(WebKitWebView*);
@@ -118,6 +122,11 @@ GtkMenu* webkit_web_view_get_context_menu(WebKitWebView*);
 
 void webViewEnterFullscreen(WebKitWebView* webView, WebCore::Node*);
 void webViewExitFullscreen(WebKitWebView* webView);
+
+#if ENABLE(ICONDATABASE)
+void webkitWebViewRegisterForIconNotification(WebKitWebView*, bool shouldRegister);
+void webkitWebViewIconLoaded(WebKitFaviconDatabase*, const char* frameURI, WebKitWebView*);
+#endif
 }
 
 #endif

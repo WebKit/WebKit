@@ -59,6 +59,8 @@
  * be deleted from it.
  *
  * Since: 1.3.13
+ *
+ * Deprecated: 1.8: Use WebKitFaviconDatabase instead.
  */
 
 using namespace WebKit;
@@ -140,6 +142,8 @@ static void webkit_icon_database_class_init(WebKitIconDatabaseClass* klass)
       * The absolute path of the icon database folder.
       *
       * Since: 1.3.13
+      *
+      * Deprecated: 1.8: Use WebKitFaviconDatabase::path instead.
       */
      g_object_class_install_property(gobjectClass, PROP_PATH,
                                      g_param_spec_string("path",
@@ -160,6 +164,8 @@ static void webkit_icon_database_class_init(WebKitIconDatabaseClass* klass)
      * the main frame of a particular #WebKitWebView.
      *
      * Since: 1.3.13
+     *
+     * Deprecated: 1.8: Use WebKitFaviconDatabase::icon-loaded instead.
      */
     webkit_icon_database_signals[ICON_LOADED] = g_signal_new("icon-loaded",
             G_TYPE_FROM_CLASS(klass),
@@ -191,6 +197,8 @@ static void webkit_icon_database_init(WebKitIconDatabase* database)
  * Returns: the absolute path of the database folder, or %NULL
  *
  * Since: 1.3.13
+ *
+ * Deprecated: 1.8: Use webkit_favicon_database_get_path() instead.
  **/
 const gchar* webkit_icon_database_get_path(WebKitIconDatabase* database)
 {
@@ -217,6 +225,8 @@ static void closeIconDatabaseOnExit()
  * Passing %NULL or "" disables the icon database.
  *
  * Since: 1.3.13
+ *
+ * Deprecated: 1.8: Use webkit_favicon_database_set_path() instead.
  **/
 void webkit_icon_database_set_path(WebKitIconDatabase* database, const gchar* path)
 {
@@ -254,6 +264,8 @@ void webkit_icon_database_set_path(WebKitIconDatabase* database, const gchar* pa
  * Returns: a newly allocated URI for the favicon, or %NULL
  *
  * Since: 1.3.13
+ *
+ * Deprecated: 1.8: Use webkit_favicon_database_get_favicon_uri() instead.
  **/
 gchar* webkit_icon_database_get_icon_uri(WebKitIconDatabase* database, const gchar* pageURI)
 {
@@ -282,6 +294,8 @@ gchar* webkit_icon_database_get_icon_uri(WebKitIconDatabase* database, const gch
  * Returns: (transfer full): a new reference to a #GdkPixbuf, or %NULL
  *
  * Since: 1.3.13
+ *
+ * Deprecated: 1.8: Use webkit_favicon_database_try_get_favicon_pixbuf() instead.
  **/
 GdkPixbuf* webkit_icon_database_get_icon_pixbuf(WebKitIconDatabase* database, const gchar* pageURI)
 {
@@ -307,6 +321,8 @@ GdkPixbuf* webkit_icon_database_get_icon_pixbuf(WebKitIconDatabase* database, co
  * Clears all icons from the database.
  *
  * Since: 1.3.13
+ *
+ * Deprecated: 1.8: Use webkit_favicon_database_clear() instead.
  **/
 void webkit_icon_database_clear(WebKitIconDatabase* database)
 {

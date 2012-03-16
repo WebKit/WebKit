@@ -1,3 +1,118 @@
+2012-03-16  Carlos Garcia Campos  <cgarcia@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] WebKitIconDatabase doesn't keep icons cached
+        https://bugs.webkit.org/show_bug.cgi?id=56200
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Added new files to compilation.
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::registerForIconNotification): instruct
+        the WebView to listen to IconDatabase's notifications.
+        (WebKit::FrameLoaderClient::dispatchDidReceiveIcon): ask both
+        WebView and IconDatabase to issue notifications for a new icon.
+        * docs/webkitgtk-docs.sgml: updated docs.
+        * docs/webkitgtk-sections.txt: ditto.
+        * docs/webkitgtk.types: ditto.
+        * tests/testicondatabase.c: Added.
+        (server_callback):
+        (deleteDatabaseFileIfExists):
+        (testWebkitIconDatabaseSetPath):
+        (iconDatabaseGetIconValidCallback):
+        (iconDatabaseGetIconInvalidCallback):
+        (iconDatabaseGetIconCancelledCallback):
+        (mainLoopQuitIfLoadCompleted):
+        (idleQuitLoopCallback):
+        (webkitWebViewIconLoaded):
+        (loadURI):
+        (faviconDatabaseGetFaviconValidIdle):
+        (faviconDatabaseGetFaviconInvalidIdle):
+        (faviconDatabaseGetFaviconCancelledIdle):
+        (testWebKitFaviconDatabaseGetFavicon):
+        (testWebKitFaviconDatabaseGetFaviconURI):
+        (testWebKitFaviconDatabaseRemoveAll):
+        (testWebKitFaviconDatabaseCloseDatabase):
+        (main):
+        * webkit/webkit.h: added new API.
+        * webkit/webkitdefines.h: added WebKitFaviconDatabase.
+        * webkit/webkitfavicondatabase.cpp:
+        (IconDatabaseClientGtk): IconDatabaseClient implementation.
+        (IconDatabaseClientGtk::performImport):
+        (IconDatabaseClientGtk::didRemoveAllIcons):
+        (IconDatabaseClientGtk::didImportIconURLForPageURL):
+        (IconDatabaseClientGtk::didImportIconDataForPageURL):
+        (IconDatabaseClientGtk::didChangeIconForPageURL):
+        (IconDatabaseClientGtk::didFinishURLImport):
+        (PendingIconRequest): machinery for asynchronous calls.
+        (PendingIconRequest::PendingIconRequest):
+        (PendingIconRequest::~PendingIconRequest):
+        (PendingIconRequest::pageURI):
+        (PendingIconRequest::asyncResult):
+        (PendingIconRequest::asyncResultCancel):
+        (PendingIconRequest::asyncResultCompleteInIdle):
+        (PendingIconRequest::asyncResultComplete):
+        (_WebKitIconDatabasePrivate):
+        (webkit_favicon_database_dispose): GObject stuff.
+        (webkit_favicon_database_set_property): ditto.
+        (webkit_favicon_database_get_property): ditto.
+        (webkit_favicon_database_class_init): ditto.
+        (webkit_favicon_database_init): ditto.
+        (webkitFaviconDatabaseNotifyAndUpdateExpiration): notify about new
+        icons and update expiration times.
+        (webkitFaviconDatabaseDispatchDidReceiveIcon): "protected" method
+        called by the FrameLoaderClient to inform about new icons.
+        (webkit_favicon_database_get_path): retrieves database path.
+        (selectQueryCallback): releases expired icons to let IconDatabase
+        prune them.
+        (webkitFaviconDatabasePruneExpiredIcons): selects the icons to be
+        pruned by the IconDatabase.
+        (webkitFaviconDatabaseClose): close the database.
+        (createExpirationTimesDatabaseTableIfNotExists): creates the
+        database used to control expiration times.
+        (webkit_favicon_database_set_path): opens the database delaying the
+        cleanup of icons until the import is complete.
+        (webkit_favicon_database_get_favicon_uri): returns the uri of the
+        favicon.
+        (getIconPixbufSynchronously): helper function to call
+        IconDatabase::synchronousIconURLForPageURL().
+        (webkit_favicon_database_try_get_favicon_pixbuf): returns the
+        favicon if exists and is loaded from disk.
+        (webkitFaviconDatabaseGetOrCreateRequests): helper function to get
+        the vector of pending requests for the given uri.
+        (webkitfavicondatabaseDeleteRequests): helper function to remove the
+        vector of pending requests for the given uri.
+        (getIconPixbufCancelled):
+        (webkitFaviconDatabaseGetIconPixbufCancelled):
+        (webkit_favicon_database_get_favicon_pixbuf): asynchronously
+        retrieve icons from the database.
+        (webkit_favicon_database_get_favicon_pixbuf_finish): finishes an
+        operation started with webkit_icon_database_get_icon_pixbuf().
+        (webkitFaviconDatabaseProcessPendingIconsForURI): process pending
+        requests once the import is finished.
+        (webkitFaviconDatabaseImportFinished): check pending requests and
+        delete those that ask for icons that do not exist in the database.
+        (webkit_favicon_database_clear): clears the database.
+        * webkit/webkitfavicondatabase.h: added.
+        (_WebKitFaviconDatabase):
+        (_WebKitFaviconDatabaseClass):
+        * webkit/webkitfavicondatabaseprivate.h: Added.
+        * webkit/webkitglobals.cpp:
+        (webkit_get_favicon_database): retrieves the new
+        WebKitFaviconDatabase.
+        (webkitExit): unref icon database on exit.
+        * webkit/webkitglobals.h: added new API.
+        * webkit/webkiticondatabase.cpp: added deprecation documentation.
+        (webkit_icon_database_class_init):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_try_get_icon_pixbuf): new API that uses the new
+        WebKitFaviconDatabase API.
+        (webkitWebViewIconLoaded): dispatch the icon-loaded signal when
+        requested by the FrameLoaderClient.
+        (webkitWebViewRegisterForIconNotification): starts/stops listening
+        to icon database notifications.
+        * webkit/webkitwebview.h: added new API.
+        * webkit/webkitwebviewprivate.h: added some protected methods.
+
 2012-03-16  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Add computedStyleIncludingVisitedInfo to DumpRenderTreeSupport
