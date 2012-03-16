@@ -34,8 +34,10 @@
 
 #include "MediaStreamCenter.h"
 
+#include "IceCandidateDescriptor.h"
 #include "MainThread.h"
 #include "MediaStreamDescriptor.h"
+#include "SessionDescriptionDescriptor.h"
 
 namespace WebCore {
 
@@ -56,6 +58,11 @@ void MediaStreamCenter::endLocalMediaStream(MediaStreamDescriptor* streamDescrip
 }
 
 String MediaStreamCenter::constructSdp(IceCandidateDescriptor*)
+{
+    return "";
+}
+
+String MediaStreamCenter::constructSdp(SessionDescriptionDescriptor*)
 {
     return "";
 }
