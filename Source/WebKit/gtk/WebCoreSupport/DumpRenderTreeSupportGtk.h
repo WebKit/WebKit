@@ -83,6 +83,7 @@ public:
     static void setValueForUser(JSContextRef, JSValueRef, JSStringRef);
     static bool shouldClose(WebKitWebFrame*);
     static bool elementDoesAutoCompleteForElementWithId(WebKitWebFrame*, JSStringRef);
+    static JSValueRef computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef);
 
     // WebKitWebView
     static void executeCoreCommandByName(WebKitWebView*, const gchar* name, const gchar* value);

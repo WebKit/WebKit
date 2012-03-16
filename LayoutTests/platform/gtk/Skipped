@@ -1138,14 +1138,6 @@ fast/canvas/pointInPath.html
 # https://bugs.webkit.org/show_bug.cgi?id=49179
 animations/stop-animation-on-suspend.html
 
-# computedStyleIncludingVisitedInfo is not implemented
-# https://bugs.webkit.org/show_bug.cgi?id=37336
-fast/history/nested-visited-test.html
-fast/history/self-is-visited.html
-fast/history/sibling-visited-test.html
-fast/history/multiple-classes-visited.html
-fast/loader/stateobjects/state-url-sets-links-visited.html
-
 # Rounding color problems inside pixman
 # https://bugs.webkit.org/show_bug.cgi?id=49964
 fast/canvas/canvas-getImageData.html

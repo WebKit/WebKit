@@ -26,6 +26,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
 #include "AnimationController.h"
+#include "CSSComputedStyleDeclaration.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "EditorClientGtk.h"
@@ -41,6 +42,7 @@
 #include "GeolocationPosition.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
+#include "JSCSSStyleDeclaration.h"
 #include "JSDOMWindow.h"
 #include "JSDocument.h"
 #include "JSElement.h"
@@ -886,6 +888,22 @@ bool DumpRenderTreeSupportGtk::elementDoesAutoCompleteForElementWithId(WebKitWeb
         return false;
 
     return inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->shouldAutocomplete();
+}
+
+JSValueRef DumpRenderTreeSupportGtk::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef nodeObject)
+{
+    JSC::ExecState* exec = toJS(context);
+    if (!nodeObject)
+        return JSValueMakeUndefined(context);
+
+    JSValue jsValue = toJS(exec, nodeObject);
+    if (!jsValue.inherits(&JSElement::s_info))
+        return JSValueMakeUndefined(context);
+
+    JSElement* jsElement = static_cast<JSElement*>(asObject(jsValue));
+    Element* element = jsElement->impl();
+    RefPtr<CSSComputedStyleDeclaration> style = CSSComputedStyleDeclaration::create(element, true);
+    return toRef(exec, toJS(exec, jsElement->globalObject(), style.get()));
 }
 
 void DumpRenderTreeSupportGtk::deliverAllMutationsIfNecessary()

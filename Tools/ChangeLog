@@ -1,3 +1,15 @@
+2012-03-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Add computedStyleIncludingVisitedInfo to DumpRenderTreeSupport
+        https://bugs.webkit.org/show_bug.cgi?id=81232
+
+        Reviewed by Philippe Normand.
+
+        Use the newly-added helper method in DumpRenderTreeSupportGtk.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::computedStyleIncludingVisitedInfo):
+
 2012-03-15  Eric Seidel  <eric@webkit.org>
 
         Move parse_bug_id into config/urls in preparation for re-use elsewhere.
