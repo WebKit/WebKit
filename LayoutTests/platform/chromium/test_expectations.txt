@@ -41,7 +41,6 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int8array.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-uint8clampedarray.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int16array.html = PASS
-BUGCR24182 SLOW DEBUG MAC : svg/hixie/perf/007.xml = PASS
 // BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
 // See BUGCR104797
 
@@ -1787,6 +1786,14 @@ BUGCR28005 MAC : fast/css/color-correction-on-text-shadow.html = IMAGE
 BUGCR28005 LINUX WIN : fast/css/color-correction-on-background-image.html = FAIL
 BUGCR28005 LINUX WIN : fast/css/color-correction-untagged-images.html = IMAGE+TEXT
 
+// Rebaseline when the CR bug is closed (enabling hairline clipping fix)
+BUGCR118411 : fast/repaint/focus-ring.html = IMAGE
+BUGCR118411 : fast/repaint/list-marker.html = IMAGE
+BUGCR118411 : svg/as-background-image/background-image-preserveaspectRatio-support.html = IMAGE
+BUGCR118411 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE
+BUGCR118411 : svg/hixie/perf/001.xml = IMAGE
+BUGCR118411 : svg/hixie/perf/002.xml = IMAGE
+BUGCR118411 : svg/hixie/perf/007.xml = IMAGE
 
 // WebKit merge 50756:50820, possibly due to WebKit r50808/r50786 and Chromium r31715
 BUGCR27553 WIN : fast/text/atsui-partial-selection.html = IMAGE
