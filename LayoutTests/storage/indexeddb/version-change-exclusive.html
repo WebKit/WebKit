@@ -18,7 +18,7 @@ function test() {
 
 function openDBConnection()
 {
-    evalAndLog("window.state = 'starting'");
+    evalAndLog("self.state = 'starting'");
     request = evalAndLog("indexedDB.open('version-change-exclusive')");
     request.onsuccess = openSuccess;
     request.onerror = unexpectedErrorCallback;
@@ -26,7 +26,7 @@ function openDBConnection()
 
 function openSuccess()
 {
-    window.db = evalAndLog("db = event.target.result");
+    self.db = evalAndLog("db = event.target.result");
 
     debug("calling setVersion() - callback should run immediately");
     var versionChangeRequest = evalAndLog("db.setVersion('version 1')");
@@ -45,10 +45,10 @@ function inSetVersion()
 {
     debug("setVersion() callback");
     debug("starting work in VERSION_CHANGE transaction");
-    evalAndLog("window.state = 'VERSION_CHANGE started'");
+    evalAndLog("self.state = 'VERSION_CHANGE started'");
 
-    window.store = evalAndLog("store = db.createObjectStore('test-store')");
-    window.count = 0;
+    self.store = evalAndLog("store = db.createObjectStore('test-store')");
+    self.count = 0;
     do_async_puts();
 
     function do_async_puts() {
@@ -56,11 +56,11 @@ function inSetVersion()
         req.onerror = unexpectedErrorCallback;
         req.onsuccess = function (e) {
             debug("in put's onsuccess");
-            if (++window.count < 10) {
+            if (++self.count < 10) {
                 do_async_puts();
             } else {
                 debug("ending work in VERSION_CHANGE transaction");
-                evalAndLog("window.state = 'VERSION_CHANGE finished'");
+                evalAndLog("self.state = 'VERSION_CHANGE finished'");
             }
         };
     }
@@ -69,7 +69,7 @@ function inSetVersion()
 function openAgainSuccess()
 {
     debug("open() callback - this should appear after VERSION_CHANGE transaction ends");
-    shouldBeEqualToString("window.state", "VERSION_CHANGE finished");
+    shouldBeEqualToString("self.state", "VERSION_CHANGE finished");
     finishJSTest();
 }
 

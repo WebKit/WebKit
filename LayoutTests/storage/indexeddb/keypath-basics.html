@@ -14,7 +14,7 @@ description("Test for valid and invalid keypaths");
 function test()
 {
     removeVendorPrefixes();
-    name = window.location.pathname;
+    name = self.location.pathname;
     description = "My Test Database";
     request = evalAndLog("indexedDB.open(name, description)");
     request.onsuccess = openSuccess;

@@ -11,9 +11,9 @@ openSuccess():
 db = event.target.result
 request = db.setVersion('version 1')
 Deleted all object stores.
-PASS window.db.objectStoreNames is []
-PASS window.db.objectStoreNames.length is 0
-PASS window.db.objectStoreNames.contains('storeFail') is false
+PASS self.db.objectStoreNames is []
+PASS self.db.objectStoreNames.length is 0
+PASS self.db.objectStoreNames.contains('storeFail') is false
 request = startSetVersion('version fail')
 addRemoveIDBObjects():
 trans = event.target.result
@@ -24,9 +24,9 @@ db.deleteObjectStore('storeFail')
 store.deleteIndex('indexFail')
 
 testSetVersionAbort2():
-PASS window.db.objectStoreNames is []
-PASS window.db.objectStoreNames.length is 0
-PASS window.db.objectStoreNames.contains('storeFail') is false
+PASS self.db.objectStoreNames is []
+PASS self.db.objectStoreNames.length is 0
+PASS self.db.objectStoreNames.contains('storeFail') is false
 request = startSetVersion('version fail')
 addRemoveAddIDBObjects():
 trans = event.target.result
@@ -40,9 +40,9 @@ index = store.createIndex('indexFail', 'x')
 
 testSetVersionAbort3():
 PASS event.cancelable is false
-PASS window.db.objectStoreNames is []
-PASS window.db.objectStoreNames.length is 0
-PASS window.db.objectStoreNames.contains('storeFail') is false
+PASS self.db.objectStoreNames is []
+PASS self.db.objectStoreNames.length is 0
+PASS self.db.objectStoreNames.contains('storeFail') is false
 request = startSetVersion('version fail')
 addIDBObjects():
 PASS event.cancelable is false
@@ -87,9 +87,9 @@ PASS Exception was thrown.
 PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
 
 testSetVersionAbort4():
-PASS window.db.objectStoreNames is []
-PASS window.db.objectStoreNames.length is 0
-PASS window.db.objectStoreNames.contains('storeFail') is false
+PASS self.db.objectStoreNames is []
+PASS self.db.objectStoreNames.length is 0
+PASS self.db.objectStoreNames.contains('storeFail') is false
 request = startSetVersion('version fail')
 addIDBObjectsAndCommit():
 trans = event.target.result

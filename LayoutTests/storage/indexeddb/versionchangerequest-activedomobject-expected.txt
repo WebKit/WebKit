@@ -7,18 +7,18 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
 
 
-window.dbname = 'versionchangerequest-activedomobject'
+self.dbname = 'versionchangerequest-activedomobject'
 
 testDeleteDatabase():
-indexedDB.deleteDatabase(window.dbname)
-window.gc()
+indexedDB.deleteDatabase(self.dbname)
+self.gc()
 PASS deleteDatabase's IDBVersionChangeRequest.onsuccess event fired
 
 testSetVersion():
-openRequest = indexedDB.open(window.dbname)
+openRequest = indexedDB.open(self.dbname)
 db = openRequest.result
 db.setVersion('1')
-window.gc()
+self.gc()
 PASS setVersion's IDBVersionChangeRequest.onsuccess event fired
 PASS successfullyParsed is true
 

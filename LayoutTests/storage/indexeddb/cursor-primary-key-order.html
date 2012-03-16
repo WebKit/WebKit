@@ -36,7 +36,7 @@ function prepareDatabase()
     };
 }
 
-window.keys = [
+self.keys = [
     "-Infinity",
     "-2",
     "-1",
@@ -67,7 +67,7 @@ function populateStore()
     trans.onabort = unexpectedAbortCallback;
     var count = 0;
     var indexKey = 0;
-    var keys = window.keys.slice();
+    var keys = self.keys.slice();
     keys.reverse();
     keys.forEach(function(key) {
         var value = { indexKey: indexKey, count: count++ };
@@ -93,7 +93,7 @@ function checkStore()
         if (cursorRequest.result) {
             evalAndLog("cursor = cursorRequest.result");
             shouldBe("cursor.key", String(indexKey));
-            shouldBe("cursor.primaryKey", window.keys[count++]);
+            shouldBe("cursor.primaryKey", self.keys[count++]);
             cursor.continue();
         } else {
             shouldBeTrue("count === keys.length");

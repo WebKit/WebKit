@@ -37,8 +37,8 @@ function deleteExisting()
 
     deleteAllObjectStores(db);
 
-    window.store = evalAndLog("db.createObjectStore('store')");
-    window.indexObject = evalAndLog("store.createIndex('index', 'x', {unique: true})");
+    self.store = evalAndLog("db.createObjectStore('store')");
+    self.indexObject = evalAndLog("store.createIndex('index', 'x', {unique: true})");
 
     // Let setVersion transaction complete.
 }
@@ -46,7 +46,7 @@ function deleteExisting()
 function setVersionCompleted()
 {
     debug("setVersionCompleted():");
-    window.transaction = evalAndLog("transaction = db.transaction(['store'], IDBTransaction.READ_WRITE)");
+    self.transaction = evalAndLog("transaction = db.transaction(['store'], IDBTransaction.READ_WRITE)");
 
     request = evalAndLog("transaction.objectStore('store').put({x: 1}, 'foo')");
     request.onerror = unexpectedErrorCallback;

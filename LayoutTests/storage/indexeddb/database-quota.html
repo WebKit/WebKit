@@ -20,7 +20,7 @@ function test()
 
 function openSuccess()
 {
-    window.db = evalAndLog("db = event.target.result");
+    self.db = evalAndLog("db = event.target.result");
 
     request = evalAndLog("db.setVersion('new version')");
     request.onsuccess = setVersionSuccess;
@@ -30,7 +30,7 @@ function openSuccess()
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    window.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = checkQuotaEnforcing;
@@ -62,12 +62,12 @@ function checkQuotaEnforcing()
     trans.onabort = testComplete;
     trans.oncomplete = unexpectedCompleteCallback;
     debug("Creating 'data' which contains 64K of data");
-    window.data = "X";
+    self.data = "X";
     for (var i = 0; i < 16; i++)
         data += data;
     shouldBe("data.length", "65536");
-    window.dataAdded = 0;
-    window.store = evalAndLog("store = trans.objectStore('test123')");
+    self.dataAdded = 0;
+    self.store = evalAndLog("store = trans.objectStore('test123')");
     addData();
 }
 

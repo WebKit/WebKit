@@ -8,7 +8,7 @@ PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDat
 
 
 TEST: deleteDatabase blocked on open handles
-window.dbname = 'test1'; window.ver = 1; window.steps = []
+self.dbname = 'test1'; self.ver = 1; self.steps = []
 'h.open'
 'h.open.onsuccess'
 'deleteDatabase()'
@@ -17,10 +17,10 @@ window.dbname = 'test1'; window.ver = 1; window.steps = []
 'deleteDatabase().onblocked'
 'h.close'
 'deleteDatabase().onsuccess'
-PASS window.steps.toString() is "h.open,h.open.onsuccess,deleteDatabase(),h.onversionchange,deleteDatabase().onblocked,h.close,deleteDatabase().onsuccess"
+PASS self.steps.toString() is "h.open,h.open.onsuccess,deleteDatabase(),h.onversionchange,deleteDatabase().onblocked,h.close,deleteDatabase().onsuccess"
 
 TEST: deleteDatabase not blocked when handles close immediately
-window.dbname = 'test2'; window.ver = 1; window.steps = []
+self.dbname = 'test2'; self.ver = 1; self.steps = []
 'h.open'
 'h.open.onsuccess'
 'deleteDatabase()'
@@ -30,10 +30,10 @@ window.dbname = 'test2'; window.ver = 1; window.steps = []
 'deleteDatabase().onblocked'
 'deleteDatabase().onsuccess'
 NOTE: Will FAIL with extra bogus deleteDatabase().onblocked step; https://bugs.webkit.org/show_bug.cgi?id=71130
-FAIL window.steps.toString() should be h.open,h.open.onsuccess,deleteDatabase(),h.onversionchange,h.close,deleteDatabase().onsuccess. Was h.open,h.open.onsuccess,deleteDatabase(),h.onversionchange,h.close,deleteDatabase().onblocked,deleteDatabase().onsuccess.
+FAIL self.steps.toString() should be h.open,h.open.onsuccess,deleteDatabase(),h.onversionchange,h.close,deleteDatabase().onsuccess. Was h.open,h.open.onsuccess,deleteDatabase(),h.onversionchange,h.close,deleteDatabase().onblocked,deleteDatabase().onsuccess.
 
 TEST: deleteDatabase is delayed if a VERSION_CHANGE transaction is running
-window.dbname = 'test3'; window.ver = 1; window.steps = []
+self.dbname = 'test3'; self.ver = 1; self.steps = []
 'h.open'
 'h.open.onsuccess'
 'h.setVersion'
@@ -45,7 +45,7 @@ window.dbname = 'test3'; window.ver = 1; window.steps = []
 'deleteDatabase().onblocked'
 'h.close'
 'deleteDatabase().onsuccess'
-PASS window.steps.toString() is "h.open,h.open.onsuccess,h.setVersion,deleteDatabase(),h.setVersion.onsuccess,h.setVersion.transaction-complete,h.onversionchange,deleteDatabase().onblocked,h.close,deleteDatabase().onsuccess"
+PASS self.steps.toString() is "h.open,h.open.onsuccess,h.setVersion,deleteDatabase(),h.setVersion.onsuccess,h.setVersion.transaction-complete,h.onversionchange,deleteDatabase().onblocked,h.close,deleteDatabase().onsuccess"
 PASS successfullyParsed is true
 
 TEST COMPLETE

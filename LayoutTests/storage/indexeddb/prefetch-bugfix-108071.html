@@ -40,7 +40,7 @@ function openSuccess()
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    window.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = iterateAndDeleteFirstElement;

@@ -29,7 +29,7 @@ function setVersion()
 
 function deleteExisting()
 {
-    window.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     evalAndLog("trans.oncomplete = startTest");

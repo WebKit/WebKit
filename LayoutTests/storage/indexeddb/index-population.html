@@ -30,7 +30,7 @@ function doSetVersion1()
 {
     debug("");
     debug("doSetVersion1():");
-    window.db = evalAndLog("db = event.target.result");
+    self.db = evalAndLog("db = event.target.result");
     request = evalAndLog("request = db.setVersion('version 1')");
     request.onsuccess = setVersion1;
     request.onerror = unexpectedErrorCallback;

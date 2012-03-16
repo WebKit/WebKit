@@ -598,7 +598,7 @@ PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
 
 Other host object types:
-Expecting exception from store.put(window, 'key')
+Expecting exception from store.put(self, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
 Expecting exception from store.put(document, 'key')

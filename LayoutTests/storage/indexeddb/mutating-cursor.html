@@ -32,7 +32,7 @@ function openSuccess()
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    window.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = openForwardCursor;
@@ -53,17 +53,17 @@ function openForwardCursor()
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = forwardCursorComplete;
 
-    window.objectStore = evalAndLog("trans.objectStore('store')");
+    self.objectStore = evalAndLog("trans.objectStore('store')");
     request = evalAndLog("objectStore.openCursor()");
     request.onsuccess = forwardCursor;
     request.onerror = unexpectedErrorCallback;
-    window.cursorSteps = 0;
+    self.cursorSteps = 0;
 }
 
 function forwardCursor()
 {
     debug("forwardCursor()");
-    window.cursor = event.target.result;
+    self.cursor = event.target.result;
 
     if (event.target.result == null) {
         shouldBe("cursorSteps", "5");
@@ -98,17 +98,17 @@ function openReverseCursor()
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = reverseCursorComplete;
 
-    window.objectStore = evalAndLog("trans.objectStore('store')");
+    self.objectStore = evalAndLog("trans.objectStore('store')");
     request = evalAndLog("objectStore.openCursor(null, IDBCursor.PREV)");
     request.onsuccess = reverseCursor;
     request.onerror = unexpectedErrorCallback;
-    window.cursorSteps = 6;
+    self.cursorSteps = 6;
 }
 
 function reverseCursor()
 {
     debug("reverseCursor()");
-    window.cursor = event.target.result;
+    self.cursor = event.target.result;
 
     if (event.target.result == null) {
         shouldBe("cursorSteps", "0");

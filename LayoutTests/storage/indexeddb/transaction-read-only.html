@@ -22,7 +22,7 @@ function test()
 function openSuccess()
 {
     debug("openSuccess():");
-    window.db = evalAndLog("db = event.target.result");
+    self.db = evalAndLog("db = event.target.result");
     request = evalAndLog("result = db.setVersion('version 1')");
     request.onsuccess = cleanDatabase;
     request.onerror = unexpectedErrorCallback;

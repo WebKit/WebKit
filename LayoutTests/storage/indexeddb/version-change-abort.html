@@ -26,7 +26,7 @@ function openDBConnection()
 
 function openSuccess()
 {
-    window.db = evalAndLog("db = event.target.result");
+    self.db = evalAndLog("db = event.target.result");
     debug("");
 
     evalAndLog("vcreq = db.setVersion('version 1')");
@@ -71,8 +71,8 @@ function inSetVersion2()
     evalAndLog("store = db.createObjectStore('store2')");
 
     // Ensure the test harness error handler is not invoked.
-    window.originalWindowOnError = window.onerror;
-    window.onerror = null;
+    self.originalWindowOnError = self.onerror;
+    self.onerror = null;
 
     debug("raising exception");
     throw new Error("This should *NOT* be caught!");
@@ -84,7 +84,7 @@ function setVersion2Abort()
     debug("setVersion2Abort() callback");
 
     // Restore test harness error handler.
-    window.onerror = window.originalWindowOnError;
+    self.onerror = self.originalWindowOnError;
 
     shouldBeEqualToString("db.version", "version 1");
     shouldBeTrue("db.objectStoreNames.contains('store1')");

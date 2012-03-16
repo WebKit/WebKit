@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
 
-window.state = 'starting'
+self.state = 'starting'
 indexedDB.open('version-change-exclusive')
 db = event.target.result
 calling setVersion() - callback should run immediately
@@ -15,7 +15,7 @@ calling open() - callback should wait until VERSION_CHANGE transaction is comple
 indexedDB.open('version-change-exclusive')
 setVersion() callback
 starting work in VERSION_CHANGE transaction
-window.state = 'VERSION_CHANGE started'
+self.state = 'VERSION_CHANGE started'
 store = db.createObjectStore('test-store')
 store.put(0, 0)
 in put's onsuccess
@@ -38,9 +38,9 @@ in put's onsuccess
 store.put(9, 9)
 in put's onsuccess
 ending work in VERSION_CHANGE transaction
-window.state = 'VERSION_CHANGE finished'
+self.state = 'VERSION_CHANGE finished'
 open() callback - this should appear after VERSION_CHANGE transaction ends
-PASS window.state is "VERSION_CHANGE finished"
+PASS self.state is "VERSION_CHANGE finished"
 PASS successfullyParsed is true
 
 TEST COMPLETE

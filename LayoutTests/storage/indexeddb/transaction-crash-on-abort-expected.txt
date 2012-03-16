@@ -12,7 +12,7 @@ db = event.target.result
 db.setVersion('1.0')
 db.createObjectStore('foo')
 db.transaction('foo')
-window.gc()
+self.gc()
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -33,14 +33,14 @@ function setVersion()
 function deleteExisting()
 {
     debug("setVersionSuccess():");
-    window.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
     deleteAllObjectStores(db);
 
-    window.store = evalAndLog("db.createObjectStore('storeName', null)");
-    window.indexObject = evalAndLog("store.createIndex('indexName', 'x')");
+    self.store = evalAndLog("db.createObjectStore('storeName', null)");
+    self.indexObject = evalAndLog("store.createIndex('indexName', 'x')");
     addData();
 }
 
@@ -97,7 +97,7 @@ function openKeyCursor()
 {
     shouldBe("event.target.result", "undefined");
 
-    window.request = evalAndLog("indexObject.openKeyCursor()");
+    self.request = evalAndLog("indexObject.openKeyCursor()");
     request.onsuccess = cursor1Continue;
     request.onerror = unexpectedErrorCallback;
 }
@@ -110,7 +110,7 @@ function cursor1Continue()
 
     // We re-use the last request object.
     evalAndLog("event.target.result.continue()");
-    window.request.onsuccess = cursor1Continue2;
+    self.request.onsuccess = cursor1Continue2;
 }
 
 function cursor1Continue2()
@@ -121,14 +121,14 @@ function cursor1Continue2()
 
     // We re-use the last request object.
     evalAndLog("event.target.result.continue()");
-    window.request.onsuccess = openObjectCursor;
+    self.request.onsuccess = openObjectCursor;
 }
 
 function openObjectCursor()
 {
     shouldBeTrue("event.target.result === null");
 
-    window.request = evalAndLog("indexObject.openCursor()");
+    self.request = evalAndLog("indexObject.openCursor()");
     request.onsuccess = cursor2Continue;
     request.onerror = unexpectedErrorCallback;
 }
@@ -142,7 +142,7 @@ function cursor2Continue()
 
     // We re-use the last request object.
     evalAndLog("event.target.result.continue()");
-    window.request.onsuccess = cursor2Continue2;
+    self.request.onsuccess = cursor2Continue2;
 }
 
 function cursor2Continue2()
@@ -154,7 +154,7 @@ function cursor2Continue2()
 
     // We re-use the last request object.
     evalAndLog("event.target.result.continue()");
-    window.request.onsuccess = last;
+    self.request.onsuccess = last;
 }
 
 function last()

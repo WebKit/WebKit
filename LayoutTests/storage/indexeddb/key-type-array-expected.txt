@@ -6,9 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDatabaseException && IDBFactory && IDBIndex && IDBKeyRange && IDBObjectStore && IDBRequest && IDBTransaction) is true
 
-IDBTransaction = window.IDBTransaction || window.IDBTransaction;
+IDBTransaction = self.IDBTransaction || self.IDBTransaction;
 PASS IDBTransaction == null is false
-IDBDatabaseException = window.IDBDatabaseException || window.IDBDatabaseException;
+IDBDatabaseException = self.IDBDatabaseException || self.IDBDatabaseException;
 PASS IDBDatabaseException == null is false
 indexedDB.open(name, description)
 db = openreq.result
@@ -217,18 +217,18 @@ Expecting exception from store.put('value', [ /regex/ ]);
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 
-testing invalid array key: [ window ]
-Expecting exception from store.put('value', [ window ]);
+testing invalid array key: [ self ]
+Expecting exception from store.put('value', [ self ]);
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 
-testing invalid array key: [ window.document ]
-Expecting exception from store.put('value', [ window.document ]);
+testing invalid array key: [ self.document ]
+Expecting exception from store.put('value', [ self.document ]);
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 
-testing invalid array key: [ window.document.body ]
-Expecting exception from store.put('value', [ window.document.body ]);
+testing invalid array key: [ self.document.body ]
+Expecting exception from store.put('value', [ self.document.body ]);
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 

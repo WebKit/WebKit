@@ -15,14 +15,14 @@ function test()
 {
     removeVendorPrefixes();
 
-    evalAndLog("IDBTransaction = window.IDBTransaction || window.IDBTransaction;");
+    evalAndLog("IDBTransaction = self.IDBTransaction || self.IDBTransaction;");
     shouldBeFalse("IDBTransaction == null");
 
-    evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.IDBDatabaseException;");
+    evalAndLog("IDBDatabaseException = self.IDBDatabaseException || self.IDBDatabaseException;");
     shouldBeFalse("IDBDatabaseException == null");
 
 
-    name = window.location.pathname;
+    name = self.location.pathname;
     description = "My Test Database";
     openreq = evalAndLog("indexedDB.open(name, description)");
     openreq.onsuccess = openSuccess;
@@ -164,9 +164,9 @@ function testInvalidArrayKeys()
         "[ {} ]",
         "[ function () {} ]",
         "[ /regex/ ]",
-        "[ window ]",
-        "[ window.document ]",
-        "[ window.document.body ]",
+        "[ self ]",
+        "[ self.document ]",
+        "[ self.document.body ]",
         "cyclic_array",
         "cyclic_array2",
         "cyclic_array3",

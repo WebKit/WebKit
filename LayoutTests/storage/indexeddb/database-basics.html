@@ -21,7 +21,7 @@ function test()
 
 function openSuccess()
 {
-    window.db = evalAndLog("db = event.target.result");
+    self.db = evalAndLog("db = event.target.result");
 
     request = evalAndLog("db.setVersion('new version')");
     request.onsuccess = setVersionSuccess;
@@ -31,7 +31,7 @@ function openSuccess()
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    window.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
@@ -76,7 +76,7 @@ function checkObjectStore()
 
 function commitAndContinue()
 {
-    window.setTimeout(testSetVersionAbort, 0);
+    self.setTimeout(testSetVersionAbort, 0);
 }
 
 function testSetVersionAbort()

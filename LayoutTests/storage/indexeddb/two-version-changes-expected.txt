@@ -8,32 +8,32 @@ PASS Boolean(indexedDB && IDBCursor && IDBDatabase && IDBDatabaseError && IDBDat
 
 PASS indexedDB == null is false
 PASS IDBTransaction == null is false
-window.state = 'starting'
+self.state = 'starting'
 indexedDB.open('two-versions-one-connection')
 db = event.target.result
-window.state = 0
+self.state = 0
 db.setVersion('version 1')
 db.setVersion('version 2')
 setVersion() #1 callback
-window.store1 = db.createObjectStore('test-store1')
-PASS ++window.state is 1
-window.store1.put('aaa', 111)
-PASS ++window.state is 2
-PASS ++window.state is 3
+self.store1 = db.createObjectStore('test-store1')
+PASS ++self.state is 1
+self.store1.put('aaa', 111)
+PASS ++self.state is 2
+PASS ++self.state is 3
 halfway there...
 setVersion() #2 callback
-PASS ++window.state is 4
-window.store2 = db.createObjectStore('test-store2')
-window.store2.put('bbb', 222)
-PASS ++window.state is 5
-PASS ++window.state is 6
-PASS window.db.version is "version 2"
-window.trans = db.transaction(['test-store1', 'test-store2'])
-window.store = window.trans.objectStore('test-store1')
-window.req = window.store.get(111)
+PASS ++self.state is 4
+self.store2 = db.createObjectStore('test-store2')
+self.store2.put('bbb', 222)
+PASS ++self.state is 5
+PASS ++self.state is 6
+PASS self.db.version is "version 2"
+self.trans = db.transaction(['test-store1', 'test-store2'])
+self.store = self.trans.objectStore('test-store1')
+self.req = self.store.get(111)
 PASS event.target.result is "aaa"
-window.store = window.trans.objectStore('test-store2')
-window.req = window.store.get(222)
+self.store = self.trans.objectStore('test-store2')
+self.req = self.store.get(222)
 PASS event.target.result is "bbb"
 PASS successfullyParsed is true
 

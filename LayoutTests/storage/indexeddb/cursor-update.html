@@ -32,7 +32,7 @@ function openSuccess()
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    window.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = openBasicCursor;
@@ -67,7 +67,7 @@ function openBasicCursor()
     trans.oncomplete = transactionComplete;
 
     keyRange = IDBKeyRange.lowerBound("myKey1");
-    window.objectStore = evalAndLog("trans.objectStore('basicStore')");
+    self.objectStore = evalAndLog("trans.objectStore('basicStore')");
     request = evalAndLog("objectStore.openCursor(keyRange)");
     request.onsuccess = basicUpdateCursor;
     request.onerror = unexpectedErrorCallback;

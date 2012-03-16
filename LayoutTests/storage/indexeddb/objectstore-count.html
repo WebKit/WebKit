@@ -27,7 +27,7 @@ function prepareDatabase()
 {
     debug("");
     debug("preparing database");
-    window.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
 
     deleteAllObjectStores(db);

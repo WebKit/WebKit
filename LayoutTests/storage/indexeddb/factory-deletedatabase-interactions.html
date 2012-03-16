@@ -12,44 +12,44 @@ description("Test the deleteDatabase call and its interaction with open/setVersi
 
 function Connection(id) {
     id = String(id);
-    var self = this;
+    var that = this;
     this.open = function(opts) {
-        window.steps.push(evalAndLog("'" + id + ".open'"));
-        var req = indexedDB.open(window.dbname);
+        self.steps.push(evalAndLog("'" + id + ".open'"));
+        var req = indexedDB.open(self.dbname);
         req.onerror = unexpectedErrorCallback;
         req.onsuccess = function (e) {
-            self.handle = e.target.result;
-            window.steps.push(evalAndLog("'" + id + ".open.onsuccess'"));
-            self.handle.onversionchange = function(e) {
-                window.steps.push(evalAndLog("'" + id + ".onversionchange'"));
-                if (opts && opts.onversion) { opts.onversion.call(self); }
+            that.handle = e.target.result;
+            self.steps.push(evalAndLog("'" + id + ".open.onsuccess'"));
+            that.handle.onversionchange = function(e) {
+                self.steps.push(evalAndLog("'" + id + ".onversionchange'"));
+                if (opts && opts.onversion) { opts.onversion.call(that); }
             };
-            if (opts && opts.onsuccess) { opts.onsuccess.call(self); }
+            if (opts && opts.onsuccess) { opts.onsuccess.call(that); }
         };
     };
 
     this.close = function() {
-        window.steps.push(evalAndLog("'" + id + ".close'"));
+        self.steps.push(evalAndLog("'" + id + ".close'"));
         this.handle.close();
     };
 
     this.setVersion = function(opts) {
-        window.steps.push(evalAndLog("'" + id + ".setVersion'"));
-        var req = this.handle.setVersion(String(window.ver++));
+        self.steps.push(evalAndLog("'" + id + ".setVersion'"));
+        var req = this.handle.setVersion(String(self.ver++));
         req.onabort = function (e) {
-            window.steps.push(evalAndLog("'" + id + ".setVersion.onabort'"));
-            if (opts && opts.onabort) { opts.onabort.call(self); }
+            self.steps.push(evalAndLog("'" + id + ".setVersion.onabort'"));
+            if (opts && opts.onabort) { opts.onabort.call(that); }
         };
         req.onblocked = function (e) {
-            window.steps.push(evalAndLog("'" + id + ".setVersion.onblocked'"));
-            if (opts && opts.onblocked) { opts.onblocked.call(self); }
+            self.steps.push(evalAndLog("'" + id + ".setVersion.onblocked'"));
+            if (opts && opts.onblocked) { opts.onblocked.call(that); }
         };
         req.onsuccess = function (e) {
-            window.steps.push(evalAndLog("'" + id + ".setVersion.onsuccess'"));
-            if (self.handle.objectStoreNames.contains("test-store" + window.ver)) {
-                self.handle.deleteObjectStore("test-store" + window.ver);
+            self.steps.push(evalAndLog("'" + id + ".setVersion.onsuccess'"));
+            if (that.handle.objectStoreNames.contains("test-store" + self.ver)) {
+                that.handle.deleteObjectStore("test-store" + self.ver);
             }
-            var store = self.handle.createObjectStore("test-store" + window.ver);
+            var store = that.handle.createObjectStore("test-store" + self.ver);
             var count = 0;
             do_async_puts(); // Keep this transaction running for a while
             function do_async_puts() {
@@ -59,32 +59,32 @@ function Connection(id) {
                     if (++count < 10) {
                         do_async_puts();
                     } else {
-                        window.steps.push(evalAndLog("'" + id + ".setVersion.transaction-complete'"));
-                        if (opts && opts.onsuccess) { opts.onsuccess.call(self); }
+                        self.steps.push(evalAndLog("'" + id + ".setVersion.transaction-complete'"));
+                        if (opts && opts.onsuccess) { opts.onsuccess.call(that); }
                     }
                 };
             }
         };
         req.onerror = function (e) {
-            window.steps.push(evalAndLog("'" + id + ".setVersion.onerror'"));
-            if (opts && opts.onerror) { opts.onerror.call(self); }
+            self.steps.push(evalAndLog("'" + id + ".setVersion.onerror'"));
+            if (opts && opts.onerror) { opts.onerror.call(that); }
         };
     };
 }
 
 function deleteDatabase(id, name, opts) {
-    window.steps.push(evalAndLog("'deleteDatabase(" + id + ")'"));
+    self.steps.push(evalAndLog("'deleteDatabase(" + id + ")'"));
     var req = indexedDB.deleteDatabase(name);
     req.onsuccess = function (e) {
-        window.steps.push(evalAndLog("'deleteDatabase(" + id + ").onsuccess'"));
+        self.steps.push(evalAndLog("'deleteDatabase(" + id + ").onsuccess'"));
         if (opts && opts.onsuccess) { opts.onsuccess.call(null); }
     };
     req.onerror = function (e) {
-        window.steps.push(evalAndLog("'deleteDatabase(" + id + ").onerror'"));
+        self.steps.push(evalAndLog("'deleteDatabase(" + id + ").onerror'"));
         if (opts && opts.onerror) { opts.onerror.call(null); }
     };
     req.onblocked = function (e) {
-        window.steps.push(evalAndLog("'deleteDatabase(" + id + ").onblocked'"));
+        self.steps.push(evalAndLog("'deleteDatabase(" + id + ").onblocked'"));
         if (opts && opts.onblocked) { opts.onblocked.call(null); }
     };
 }
@@ -105,18 +105,18 @@ function test() {
 function test1() {
     debug("");
     debug("TEST: deleteDatabase blocked on open handles");
-    evalAndLog("window.dbname = 'test1'; window.ver = 1; window.steps = []");
+    evalAndLog("self.dbname = 'test1'; self.ver = 1; self.steps = []");
     var h = new Connection("h");
     runSteps([function(doNext) { h.open({onsuccess: doNext,
                                 onversion: function() {
                                     debug("    h closing, but not immediately");
                                     setTimeout(function() { h.close(); }, 0);
                                 }}); },
-        function(doNext) { deleteDatabase("", window.dbname, {
+        function(doNext) { deleteDatabase("", self.dbname, {
                            onsuccess: finishTest}); },
         ]);
     function finishTest() {
-        shouldBeEqualToString("window.steps.toString()",
+        shouldBeEqualToString("self.steps.toString()",
                               ["h.open",
                                "h.open.onsuccess",
                                "deleteDatabase()",
@@ -132,19 +132,19 @@ function test1() {
 function test2() {
     debug("");
     debug("TEST: deleteDatabase not blocked when handles close immediately");
-    evalAndLog("window.dbname = 'test2'; window.ver = 1; window.steps = []");
+    evalAndLog("self.dbname = 'test2'; self.ver = 1; self.steps = []");
     var h = new Connection("h");
     runSteps([function(doNext) { h.open({onsuccess: doNext,
                                           onversion: function() {
                                               debug("    h closing immediately");
                                               h.close();
                                           }}); },
-        function(doNext) { deleteDatabase("", window.dbname, {
+        function(doNext) { deleteDatabase("", self.dbname, {
                            onsuccess: finishTest}); },
         ]);
     function finishTest() {
         debug("NOTE: Will FAIL with extra bogus deleteDatabase().onblocked step; https://bugs.webkit.org/show_bug.cgi?id=71130");
-        shouldBeEqualToString("window.steps.toString()",
+        shouldBeEqualToString("self.steps.toString()",
                               ["h.open",
                                "h.open.onsuccess",
                                "deleteDatabase()",
@@ -159,7 +159,7 @@ function test2() {
 function test3() {
     debug("");
     debug("TEST: deleteDatabase is delayed if a VERSION_CHANGE transaction is running");
-    evalAndLog("window.dbname = 'test3'; window.ver = 1; window.steps = []");
+    evalAndLog("self.dbname = 'test3'; self.ver = 1; self.steps = []");
     var h = new Connection("h");
     runSteps([function(doNext) { h.open({onsuccess: doNext,
                                 onversion: function() {
@@ -167,12 +167,12 @@ function test3() {
                                     setTimeout(function() { h.close(); }, 0);
                                 }}); },
               function(doNext) { h.setVersion(); doNext(); },
-              function(doNext) { deleteDatabase("", window.dbname,
+              function(doNext) { deleteDatabase("", self.dbname,
                                 {onsuccess: finishTest}); },
               ]);
 
     function finishTest() {
-        shouldBeEqualToString("window.steps.toString()",
+        shouldBeEqualToString("self.steps.toString()",
                               ["h.open",
                                "h.open.onsuccess",
                                "h.setVersion",

@@ -351,10 +351,10 @@ PASS code is IDBDatabaseException.DATA_ERR
 Expecting exception from indexedDB.cmp('valid', /regex/)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(/regex/, window)
+Expecting exception from indexedDB.cmp(/regex/, self)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(window, /regex/)
+Expecting exception from indexedDB.cmp(self, /regex/)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 Expecting exception from indexedDB.cmp(/regex/, 'valid')
@@ -363,46 +363,46 @@ PASS code is IDBDatabaseException.DATA_ERR
 Expecting exception from indexedDB.cmp('valid', /regex/)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(window, 'valid')
+Expecting exception from indexedDB.cmp(self, 'valid')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp('valid', window)
+Expecting exception from indexedDB.cmp('valid', self)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(window, window.document)
+Expecting exception from indexedDB.cmp(self, self.document)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(window.document, window)
+Expecting exception from indexedDB.cmp(self.document, self)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(window, 'valid')
+Expecting exception from indexedDB.cmp(self, 'valid')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp('valid', window)
+Expecting exception from indexedDB.cmp('valid', self)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(window.document, 'valid')
+Expecting exception from indexedDB.cmp(self.document, 'valid')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp('valid', window.document)
+Expecting exception from indexedDB.cmp('valid', self.document)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(window.document, window.document.body)
+Expecting exception from indexedDB.cmp(self.document, self.document.body)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(window.document.body, window.document)
+Expecting exception from indexedDB.cmp(self.document.body, self.document)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(window.document, 'valid')
+Expecting exception from indexedDB.cmp(self.document, 'valid')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp('valid', window.document)
+Expecting exception from indexedDB.cmp('valid', self.document)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp(window.document.body, 'valid')
+Expecting exception from indexedDB.cmp(self.document.body, 'valid')
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
-Expecting exception from indexedDB.cmp('valid', window.document.body)
+Expecting exception from indexedDB.cmp('valid', self.document.body)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 

@@ -21,7 +21,7 @@ function test()
 function openSuccess()
 {
     debug("openSuccess():");
-    window.db = evalAndLog("db = event.target.result");
+    self.db = evalAndLog("db = event.target.result");
 
     request = evalAndLog("db.setVersion('new version')");
     request.onsuccess = setVersionSuccess;
@@ -31,7 +31,7 @@ function openSuccess()
 function setVersionSuccess()
 {
     debug("setVersionSuccess():");
-    window.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = setVersionCompleted;
@@ -39,7 +39,7 @@ function setVersionSuccess()
     deleteAllObjectStores(db);
 
     debug("createObjectStore():");
-    window.store = evalAndLog("store = db.createObjectStore('StoreWithKeyPath', {keyPath: 'id', autoIncrement: true})");
+    self.store = evalAndLog("store = db.createObjectStore('StoreWithKeyPath', {keyPath: 'id', autoIncrement: true})");
     evalAndLog("db.createObjectStore('StoreWithAutoIncrement', {autoIncrement: true})");
     evalAndLog("db.createObjectStore('PlainOldStore', {autoIncrement: false})");
     evalAndLog("db.createObjectStore('StoreWithLongKeyPath', {keyPath: 'a.b.c.id', autoIncrement: true})");
@@ -59,11 +59,11 @@ function setVersionCompleted()
 {
     debug("setVersionCompleted():");
 
-    window.trans = evalAndLog("trans = db.transaction(['StoreWithKeyPath', 'StoreWithAutoIncrement', 'PlainOldStore'], IDBTransaction.READ_WRITE)");
+    self.trans = evalAndLog("trans = db.transaction(['StoreWithKeyPath', 'StoreWithAutoIncrement', 'PlainOldStore'], IDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = testLongKeyPath;
 
-    window.store = evalAndLog("store = trans.objectStore('StoreWithKeyPath')");
+    self.store = evalAndLog("store = trans.objectStore('StoreWithKeyPath')");
 
     debug("Insert into object store with auto increment and key path, with key in the object.");
     request = evalAndLog("store.add({name: 'Jeffersson', number: '7010', id: 3})");
@@ -99,7 +99,7 @@ function getLincolnAfterInjectedKeySuccess()
     shouldBeEqualToString("event.target.result.number", "7012");
     shouldBe("event.target.result.id", "4");
 
-    window.store = evalAndLog("store = trans.objectStore('StoreWithAutoIncrement')");
+    self.store = evalAndLog("store = trans.objectStore('StoreWithAutoIncrement')");
     debug("Insert into object store with key gen using explicit key");
     request = evalAndLog("store.add({name: 'Lincoln', number: '7012'}, 5)");
     request.onsuccess = addLincolnWithExplicitKeySuccess;
@@ -143,7 +143,7 @@ function getAbrahamSuccess()
     shouldBeEqualToString("event.target.result.name", "Abraham");
     shouldBeEqualToString("event.target.result.number", "2107");
 
-    window.store = evalAndLog("store = trans.objectStore('PlainOldStore')");
+    self.store = evalAndLog("store = trans.objectStore('PlainOldStore')");
     debug("Try adding with no key to object store without auto increment.");
     evalAndExpectException("store.add({name: 'Adam'})", "IDBDatabaseException.DATA_ERR");
     request = evalAndLog("store.add({name: 'Adam'}, 1)");

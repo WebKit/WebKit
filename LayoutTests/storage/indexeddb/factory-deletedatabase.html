@@ -29,12 +29,12 @@ function startSetVersion()
 
 function deleteExisting()
 {
-    window.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.result");
     shouldBeTrue("trans !== null");
 
     store = evalAndLog("store = db.createObjectStore('storeName', null)");
 
-    window.index = evalAndLog("store.createIndex('indexName', '')");
+    self.index = evalAndLog("store.createIndex('indexName', '')");
     shouldBeTrue("store.indexNames.contains('indexName')");
 
     request = evalAndLog("store.add('value', 'key')");

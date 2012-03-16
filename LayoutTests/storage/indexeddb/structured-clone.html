@@ -11,7 +11,7 @@
 
 description("Test structured clone permutations in IndexedDB. File/FileList tests require DumpRenderTree.");
 
-if (window.eventSender) {
+if (self.eventSender) {
     var fileInput = document.getElementById("fileInput");
     var fileRect = fileInput.getClientRects()[0];
     var targetX = fileRect.left + fileRect.width / 2;
@@ -109,7 +109,7 @@ function testValue(value, callback)
     transaction.onabort = unexpectedAbortCallback;
     evalAndLog("store = transaction.objectStore('storeName')");
 
-    window.value = value;
+    self.value = value;
     request = evalAndLog("store.put(value, 'key')");
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function(e) {
@@ -147,7 +147,7 @@ function testPrimitiveValue(string, callback)
     var value = eval("value = (" + string + ")");
     test_data = value;
     testValue(test_data, function(result) {
-        window.result = result;
+        self.result = result;
         shouldBeTrue("is(test_data, result)");
         debug("");
         callback();
@@ -160,7 +160,7 @@ function testObjectWithValue(string, callback)
     var value = eval("value = (" + string + ")");
     test_data = value;
     testValue(test_data, function(result) {
-        window.result = result;
+        self.result = result;
         shouldBeEqualToString("typeof result", "object");
         shouldBe("Object.prototype.toString.call(result)", "Object.prototype.toString.call(test_data)");
         shouldBeTrue("test_data !== result");
@@ -282,7 +282,7 @@ function testRegExpObject(callback)
         var value = eval("value = (" + string + ")");
         test_data = value;
         testValue(test_data, function(result) {
-            window.result = result;
+            self.result = result;
             shouldBeTrue("test_data !== result");
             shouldBeEqualToString("Object.prototype.toString.call(result)", "[object RegExp]");
             shouldBe("result.toString()", "test_data.toString()");
@@ -317,7 +317,7 @@ function testImageData(callback)
     }
 
     testValue(test_data, function(result) {
-        window.result = result;
+        self.result = result;
         shouldBeTrue("test_data !== result");
         shouldBeEqualToString("Object.prototype.toString.call(result)", "[object ImageData]");
         shouldBe("result.width", "test_data.width");
@@ -350,7 +350,7 @@ function readBlobAsText(blob, callback)
 function checkBlobContents(blob, expected, callback)
 {
     readBlobAsText(blob, function(text) {
-        window.text = text;
+        self.text = text;
         shouldBeEqualToString("text", expected);
         callback();
     });
@@ -360,8 +360,8 @@ function compareBlobs(blob1, blob2, callback)
 {
     readBlobAsText(blob1, function(text1) {
         readBlobAsText(blob2, function(text2) {
-            window.text1 = text1;
-            window.text2 = text2;
+            self.text1 = text1;
+            self.text2 = text2;
             shouldBeEqualToString("text2", text1);
             callback();
         });
@@ -378,7 +378,7 @@ function testBlob(callback)
     callback();
     return;
 
-    evalAndLog("BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder");
+    evalAndLog("BlobBuilder = self.BlobBuilder || self.WebKitBlobBuilder");
     shouldBeTrue("BlobBuilder != null");
     shouldBeTrue("FileReader != null");
     evalAndLog("builder = new BlobBuilder()");
@@ -386,7 +386,7 @@ function testBlob(callback)
     evalAndLog("builder.append(test_content)");
     evalAndLog("test_data = builder.getBlob()");
     testValue(test_data, function(result) {
-        window.result = result;
+        self.result = result;
         shouldBeTrue("test_data !== result");
         shouldBeEqualToString("Object.prototype.toString.call(result)", "[object Blob]");
         shouldBe("result.size", "test_data.size");
@@ -397,8 +397,8 @@ function testBlob(callback)
 
 function compareFiles(file1, file2, callback)
 {
-    window.file1 = file1;
-    window.file2 = file2;
+    self.file1 = file1;
+    self.file2 = file2;
     shouldBeTrue("file1 !== file2");
     shouldBeEqualToString("Object.prototype.toString.call(file1)", "[object File]");
     shouldBeEqualToString("Object.prototype.toString.call(file2)", "[object File]");
@@ -426,9 +426,9 @@ function testFile(callback)
 
     evalAndLog("test_content = fileInput.files[0]");
 
-    window.test_data = test_content;
+    self.test_data = test_content;
     testValue(test_data, function(result) {
-        window.result = result;
+        self.result = result;
         compareFiles(result, test_data, callback);
     });
 }
@@ -446,9 +446,9 @@ function testFileList(callback)
 
     evalAndLog("test_content = fileInput.files");
 
-    window.test_data = test_content;
+    self.test_data = test_content;
     testValue(test_data, function(result) {
-        window.result = result;
+        self.result = result;
         shouldBeTrue("test_data !== result");
         shouldBeEqualToString("Object.prototype.toString.call(result)", "[object FileList]");
         shouldBe("result.length", "test_data.length");
@@ -477,7 +477,7 @@ function testArray(callback) {
     evalAndLog("test_data[30] = null");
 
     testValue(test_data, function(result) {
-        window.result = result;
+        self.result = result;
         shouldBeTrue("test_data !== result");
         shouldBeTrue("test_data.length === result.length");
         Object.keys(test_data).forEach(
@@ -500,7 +500,7 @@ function testObject(callback) {
     evalAndLog("test_data[''] = null");
 
     testValue(test_data, function(result) {
-        window.result = result;
+        self.result = result;
         shouldBeTrue("test_data !== result");
         shouldBeTrue("arrayCompare(Object.keys(result).sort(), Object.keys(test_data).sort())");
         Object.keys(test_data).forEach(
@@ -530,7 +530,7 @@ function testBadTypes()
 
     debug("");
     debug("Other host object types:");
-    evalAndExpectException("store.put(window, 'key')", "DOMException.DATA_CLONE_ERR");
+    evalAndExpectException("store.put(self, 'key')", "DOMException.DATA_CLONE_ERR");
     evalAndExpectException("store.put(document, 'key')", "DOMException.DATA_CLONE_ERR");
     evalAndExpectException("store.put(document.body, 'key')", "DOMException.DATA_CLONE_ERR");
 }

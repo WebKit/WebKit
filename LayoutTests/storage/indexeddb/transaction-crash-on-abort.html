@@ -32,7 +32,7 @@ function setVersionSuccess()
 {
     evalAndLog("db.createObjectStore('foo')");
     evalAndLog("db.transaction('foo')");
-    evalAndLog("window.gc()");
+    evalAndLog("self.gc()");
     finishJSTest();
 }
 

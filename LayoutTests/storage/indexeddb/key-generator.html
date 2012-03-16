@@ -76,11 +76,11 @@ function runTests() {
 }
 
 function check(store, key, expected) {
-    window.store = store;
+    self.store = store;
     request = evalAndLog("request = store.get(" + JSON.stringify(key) + ")");
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = function (e) {
-        window.expected = expected;
+        self.expected = expected;
         if (JSON.stringify(event.target.result) === JSON.stringify(expected)) {
             testPassed("Got " + JSON.stringify(event.target.result) + " for key: " + JSON.stringify(key));
         } else {
