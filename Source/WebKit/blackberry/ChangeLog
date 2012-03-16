@@ -1,3 +1,15 @@
+2012-03-16  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Crash when going back from an xhtml document containing <img>
+        https://bugs.webkit.org/show_bug.cgi?id=81297
+
+        Reviewed by Rob Buis.
+
+        This is manually reverting the offending internal commit which checked-in before upstreaming.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::canCachePage):
+
 2012-03-16  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] viewportRect has changed to viewportSize

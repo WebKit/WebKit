@@ -24,7 +24,6 @@
 #include "BackingStoreClient.h"
 #include "BackingStore_p.h"
 #include "Base64.h"
-#include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClientBlackBerry.h"
 #include "ClientExtension.h"
@@ -34,7 +33,6 @@
 #include "FrameView.h"
 #include "HTMLFormElement.h"
 #include "HTMLHeadElement.h"
-#include "HTMLImageElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLMetaElement.h"
@@ -1207,15 +1205,6 @@ bool FrameLoaderClientBlackBerry::canCachePage() const
     if (nodeList.get()->length() > 0)
         return false;
 
-    // The multipart of "multipart/x-mixed-replace" only supports image, correct?
-    // FIXME: Do we have a better place to handle this case?
-    nodeList = m_frame->document()->getElementsByTagName(HTMLNames::imgTag.localName());
-    for (unsigned i = 0; i < nodeList.get()->length(); ++i) {
-        HTMLImageElement* node = static_cast<HTMLImageElement*>(nodeList.get()->item(i));
-        CachedImage* cachedimage = node ? node->cachedImage() : 0;
-        if (cachedimage && cachedimage->response().isMultipartPayload())
-            return false;
-    }
     return true;
 }
 
