@@ -178,7 +178,9 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     // FIXME: Remove this code when we stop doing the 'with' hack above.
     v8::Local<v8::Value> innerValue = intermediateFunction->Call(v8Context->Global(), 3, parameters);
 
-    ASSERT(innerValue->IsFunction());
+    if (innerValue.IsEmpty() || !innerValue->IsFunction())
+        return;
+
     v8::Local<v8::Function> wrappedFunction = innerValue.As<v8::Function>();
 
     // Change the toString function on the wrapper function to avoid it
@@ -205,7 +207,7 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
         toStringResult.append(m_code);
         toStringResult.append("\n}");
         wrappedFunction->SetHiddenValue(V8HiddenPropertyName::toStringString(), v8ExternalString(toStringResult));
-        wrappedFunction->Set(v8::String::New("toString"), toStringFunction);
+        wrappedFunction->Set(v8::String::NewSymbol("toString"), toStringFunction);
     }
 
     wrappedFunction->SetName(v8::String::New(fromWebCoreString(m_functionName), m_functionName.length()));

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+
+description('Tests that malformed code in event handler attributes does not cause a crash');
+
+function dispatchClick(element)
+{
+    var clickEvent = document.createEvent('MouseEvent');
+    clickEvent.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    element.dispatchEvent(clickEvent);
+}
+
+var div = document.createElement('div');
+div.setAttribute('onclick', 'return 42; }(); var x = {');
+dispatchClick(div);
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
