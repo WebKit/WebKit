@@ -304,9 +304,52 @@ bool isPositionInNode(Node* node, const Position& position)
     return rangeForNode->isPointInRange(domNodeAtPos, offset, ec);
 }
 
-bool matchesReservedStringPreventingAutocomplete(AtomicString& string)
+static bool matchesReservedStringEmail(const AtomicString& string)
 {
-    if (string.contains("email", false /* caseSensitive */)
+    return string.contains("email", false /* caseSensitive */);
+}
+
+static bool matchesReservedStringUrl(const AtomicString& string)
+{
+    return string.contains("url", false /* caseSensitive */);
+}
+
+bool elementIdOrNameIndicatesEmail(const HTMLInputElement* inputElement)
+{
+    if (!inputElement)
+        return false;
+
+    if (matchesReservedStringEmail(inputElement->getIdAttribute()))
+        return true;
+
+    if (inputElement->fastHasAttribute(HTMLNames::nameAttr)) {
+        if (matchesReservedStringEmail(inputElement->fastGetAttribute(HTMLNames::nameAttr)))
+            return true;
+    }
+
+    return false;
+}
+
+bool elementIdOrNameIndicatesUrl(const HTMLInputElement* inputElement)
+{
+    if (!inputElement)
+        return false;
+
+    if (matchesReservedStringUrl(inputElement->getIdAttribute()))
+        return true;
+
+    if (inputElement->fastHasAttribute(HTMLNames::nameAttr)) {
+        if (matchesReservedStringUrl(inputElement->fastGetAttribute(HTMLNames::nameAttr)))
+            return true;
+    }
+
+    return false;
+}
+
+static bool matchesReservedStringPreventingAutocomplete(const AtomicString& string)
+{
+    if (matchesReservedStringEmail(string)
+        || matchesReservedStringUrl(string)
         || string.contains("user", false /* caseSensitive */)
         || string.contains("name", false /* caseSensitive */)
         || string.contains("login", false /* caseSensitive */))

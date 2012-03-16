@@ -1,3 +1,31 @@
+2012-03-16  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Input fields with id of e-mail and url should be styled as such.
+        https://bugs.webkit.org/show_bug.cgi?id=81364
+
+        Reviewed by Rob Buis.
+
+        Treat fields that have name/id's that match url or
+        email as url or email fields providing the appropriate
+        keyboard.
+
+        PR 137259.
+
+        Reviewed Internally by Gen Mak and Nima Ghanavatian.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::matchesReservedStringEmail):
+        (DOMSupport):
+        (BlackBerry::WebKit::DOMSupport::matchesReservedStringUrl):
+        (BlackBerry::WebKit::DOMSupport::elementIdOrNameIndicatesEmail):
+        (BlackBerry::WebKit::DOMSupport::elementIdOrNameIndicatesUrl):
+        (BlackBerry::WebKit::DOMSupport::matchesReservedStringPreventingAutocomplete):
+        * WebKitSupport/DOMSupport.h:
+        (WebCore):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::convertInputType):
+        (BlackBerry::WebKit::inputStyle):
+
 2012-03-16  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Syncing up left over bits in Api from our local branch to upstream

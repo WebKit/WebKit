@@ -154,6 +154,10 @@ static BlackBerryInputType convertInputType(const HTMLInputElement* inputElement
     if (inputElement->isTimeControl())
         return InputTypeTime;
     // FIXME: missing WEEK popup selector
+    if (DOMSupport::elementIdOrNameIndicatesEmail(inputElement))
+        return InputTypeEmail;
+    if (DOMSupport::elementIdOrNameIndicatesUrl(inputElement))
+        return InputTypeURL;
 
     return InputTypeText;
 }
@@ -161,15 +165,18 @@ static BlackBerryInputType convertInputType(const HTMLInputElement* inputElement
 static int inputStyle(BlackBerryInputType type, const Element* element)
 {
     switch (type) {
-    case InputTypeText:
+    case InputTypeEmail:
+    case InputTypeURL:
     case InputTypeSearch:
+    case InputTypeText:
     case InputTypeTextArea:
         {
             // Regular input mode, disable help if autocomplete is off.
             int imfMask = 0;
-            if (DOMSupport::elementSupportsAutocomplete(element) == DOMSupport::Off)
+            DOMSupport::AttributeState autoCompleteState = DOMSupport::elementSupportsAutocomplete(element);
+            if (autoCompleteState == DOMSupport::Off)
                 imfMask = NO_AUTO_TEXT | NO_PREDICTION;
-            else if (DOMSupport::elementSupportsAutocomplete(element) != DOMSupport::On
+            else if (autoCompleteState != DOMSupport::On
                      && DOMSupport::elementIdOrNameIndicatesNoAutocomplete(element))
                 imfMask = NO_AUTO_TEXT | NO_PREDICTION;
 
@@ -181,14 +188,14 @@ static int inputStyle(BlackBerryInputType type, const Element* element)
 
             if (imfMask)
                 return imfMask;
+            else if ((type == InputTypeEmail || type == InputTypeURL) && autoCompleteState != DOMSupport::On)
+                return NO_AUTO_TEXT | NO_PREDICTION | NO_AUTO_CORRECTION;
             break;
         }
     case InputTypeIsIndex:
     case InputTypePassword:
-    case InputTypeEmail:
     case InputTypeNumber:
     case InputTypeTelephone:
-    case InputTypeURL:
         // Disable special handling.
         return NO_AUTO_TEXT | NO_PREDICTION | NO_AUTO_CORRECTION;
     default:
