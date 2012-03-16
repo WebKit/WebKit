@@ -845,7 +845,7 @@ WebInspector.HeapSnapshot.prototype = {
             return this._maxNodeId;
         this._maxNodeId = 0;
         var node = new WebInspector.HeapSnapshotNode(this, this.nodeIndexes[0]);
-        for (var i = 0; i < this.nodeCount; ++i) {
+        for (var i = 0, l = this.nodeCount; i < l; ++i) {
             node.nodeIndex = this.nodeIndexes[i];
             var id = node.id;
             if ((id % 2) && id > this._maxNodeId)
@@ -968,7 +968,7 @@ WebInspector.HeapSnapshot.prototype = {
             (function (node, callback)
              {
                  for (var edgesIter = node.edges; edgesIter.hasNext(); edgesIter.next())
-                     callback(this._findNodePositionInIndex(edgesIter.edge.nodeIndex));
+                     callback(this._nodePosition[edgesIter.edge.nodeIndex]);
              }).bind(this),
             (function (node, indexCallback, dataCallback)
              {
@@ -1037,7 +1037,7 @@ WebInspector.HeapSnapshot.prototype = {
         var aggregates = {};
         var aggregatesByClassName = {};
         var node = new WebInspector.HeapSnapshotNode(this, this.nodeIndexes[0]);
-        for (var i = 0; i < this.nodeCount; ++i) {
+        for (var i = 0, l = this.nodeCount; i < l; ++i) {
             node.nodeIndex = this.nodeIndexes[i];
             var classIndex = node.classIndex;
             if (shouldSkip(node, classIndex))
@@ -1106,21 +1106,22 @@ WebInspector.HeapSnapshot.prototype = {
     {
         var count = 0;
         for (var nodesIter = this._allNodes; nodesIter.hasNext(); nodesIter.next(), ++count);
-        this._nodeIndex = new Int32Array(count + 1);
+        var nodeIndex = new Int32Array(count + 1);
+        var nodePosition = {};
         count = 0;
-        for (var nodesIter = this._allNodes; nodesIter.hasNext(); nodesIter.next(), ++count)
-            this._nodeIndex[count] = nodesIter.index;
-        this._nodeIndex[count] = this._nodes.length;
-    },
-
-    _findNodePositionInIndex: function(index)
-    {
-        return binarySearch(index, this._nodeIndex, this._numbersComparator);
+        for (var nodesIter = this._allNodes; nodesIter.hasNext(); nodesIter.next(), ++count) {
+            nodeIndex[count] = nodesIter.index;
+            nodePosition[nodesIter.index] = count;
+        }
+        nodeIndex[count] = this._nodes.length;
+        nodePosition[this._nodes.length] = count;
+        this._nodeIndex = nodeIndex;
+        this._nodePosition = nodePosition;
     },
 
     _findNearestNodeIndex: function(index)
     {
-        var result = this._findNodePositionInIndex(index);
+        var result = binarySearch(index, this._nodeIndex, this._numbersComparator);
         if (result < 0) {
             result = -result - 1;
             nodeIndex = this._nodeIndex[result];
@@ -1134,7 +1135,7 @@ WebInspector.HeapSnapshot.prototype = {
 
     _getRetainerIndex: function(nodeIndex)
     {
-        var nodePosition = this._findNodePositionInIndex(nodeIndex);
+        var nodePosition = this._nodePosition[nodeIndex];
         return this._retainerIndex[nodePosition];
     },
 
@@ -1147,7 +1148,7 @@ WebInspector.HeapSnapshot.prototype = {
              {
                  var dominatorIndex = node.dominatorIndex;
                  if (dominatorIndex !== node.nodeIndex)
-                     callback(this._findNodePositionInIndex(dominatorIndex));
+                     callback(this._nodePosition[dominatorIndex]);
              }).bind(this),
             (function (node, indexCallback, dataCallback)
              {
@@ -1161,7 +1162,7 @@ WebInspector.HeapSnapshot.prototype = {
 
     _getDominatedIndex: function(nodeIndex)
     {
-        var nodePosition = this._findNodePositionInIndex(nodeIndex);
+        var nodePosition = this._nodePosition[nodeIndex];
         return this._dominatedIndex[nodePosition];
     },
 
