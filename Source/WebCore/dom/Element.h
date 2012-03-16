@@ -295,6 +295,7 @@ public:
 
     void willModifyAttribute(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
     void willRemoveAttribute(const QualifiedName&, const AtomicString& value);
+    void didAddAttribute(Attribute*);
     void didModifyAttribute(Attribute*);
     void didRemoveAttribute(Attribute*);
 

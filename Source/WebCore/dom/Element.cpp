@@ -2005,12 +2005,18 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
 #endif
 }
 
+void Element::didAddAttribute(Attribute* attr)
+{
+    attributeChanged(attr);
+    InspectorInstrumentation::didModifyDOMAttr(document(), this, attr->name().localName(), attr->value());
+    dispatchSubtreeModifiedEvent();
+}
+
 void Element::didModifyAttribute(Attribute* attr)
 {
     attributeChanged(attr);
-
     InspectorInstrumentation::didModifyDOMAttr(document(), this, attr->name().localName(), attr->value());
-    dispatchSubtreeModifiedEvent();
+    // Do not dispatch a DOMSubtreeModified event here; see bug 81141.
 }
 
 void Element::didRemoveAttribute(Attribute* attr)

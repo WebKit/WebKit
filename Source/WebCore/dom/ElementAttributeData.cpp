@@ -105,7 +105,7 @@ void ElementAttributeData::addAttribute(PassRefPtr<Attribute> prpAttribute, Elem
         attr->m_element = element;
 
     if (element && inUpdateStyleAttribute == NotInUpdateStyleAttribute)
-        element->didModifyAttribute(attribute.get());
+        element->didAddAttribute(attribute.get());
 }
 
 void ElementAttributeData::removeAttribute(size_t index, Element* element, EInUpdateStyleAttribute inUpdateStyleAttribute)
