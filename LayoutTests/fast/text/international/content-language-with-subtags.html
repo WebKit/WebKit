@@ -3,8 +3,8 @@
 <head>
 <meta http-equiv="content-language" content="zh_tw_foobar">
 <script>
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitStandardFontMap", [ "Hant", "Ahem" ]);
+if (window.internals)
+    window.internals.settings.setStandardFontFamily("Ahem", "Hant");
 </script>
 <title>Test font selection based on content-language</title>
 </head>
