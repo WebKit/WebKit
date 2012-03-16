@@ -1,3 +1,15 @@
+2012-03-14  Landry Breuil  <landry@openbsd.org>
+
+        WebKit/gtk/resources/error.html font-size error
+        https://bugs.webkit.org/show_bug.cgi?id=39232
+
+        Reviewed by Martin Robinson.
+
+        Fix font-size in the 404 error page. Apparently the % is filtered out,
+        so 120% becomes 120 and the error message is huge. Experienced in epiphany.
+
+        * resources/error.html: Double the % so it doesn't get filtered
+
 2012-03-16  Carlos Garcia Campos  <cgarcia@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] WebKitIconDatabase doesn't keep icons cached
