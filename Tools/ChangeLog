@@ -1,3 +1,16 @@
+2012-03-16  Adam Barth  <abarth@webkit.org>
+
+        [webkitpy] StatusServer.next_work_item has an incorrectly named local variable
+        https://bugs.webkit.org/show_bug.cgi?id=81302
+
+        Reviewed by Eric Seidel.
+
+        This is a trivial patch, but the variable name turned up in a grep of
+        webkitpy and looks like copy pasta.
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+        (StatusServer.next_work_item):
+
 2012-03-16  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Enable PAGE_VISIBILITY_API

@@ -125,8 +125,8 @@ class StatusServer:
 
     def next_work_item(self, queue_name):
         _log.debug("Fetching next work item for %s" % queue_name)
-        patch_status_url = "%s/next-patch/%s" % (self.url, queue_name)
-        return self._fetch_url(patch_status_url)
+        next_patch_url = "%s/next-patch/%s" % (self.url, queue_name)
+        return self._fetch_url(next_patch_url)
 
     def _post_release_work_item(self, queue_name, patch):
         release_patch_url = "%s/release-patch" % (self.url)
