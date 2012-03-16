@@ -48,7 +48,7 @@ const AtomicString& RadioInputType::formControlType() const
 
 bool RadioInputType::valueMissing(const String&) const
 {
-    return element()->checkedRadioButtons().isInRequiredGroup(element()) && !element()->checkedRadioButtons().checkedButtonForGroup(element()->name());
+    return element()->isInRequiredRadioButtonGroup() && !element()->checkedRadioButtonForGroup();
 }
 
 String RadioInputType::valueMissingText() const
@@ -130,7 +130,7 @@ bool RadioInputType::isKeyboardFocusable() const
     }
 
     // Allow keyboard focus if we're checked or if nothing in the group is checked.
-    return element()->checked() || !element()->checkedRadioButtons().checkedButtonForGroup(element()->name());
+    return element()->checked() || !element()->checkedRadioButtonForGroup();
 }
 
 bool RadioInputType::shouldSendChangeEventAfterCheckedChanged()
@@ -152,7 +152,7 @@ PassOwnPtr<ClickHandlingState> RadioInputType::willDispatchClick()
     OwnPtr<ClickHandlingState> state = adoptPtr(new ClickHandlingState);
 
     state->checked = element()->checked();
-    state->checkedRadioButton = element()->checkedRadioButtons().checkedButtonForGroup(element()->name());
+    state->checkedRadioButton = element()->checkedRadioButtonForGroup();
 
 #if PLATFORM(IOS)
     state->indeterminate = element()->indeterminate();

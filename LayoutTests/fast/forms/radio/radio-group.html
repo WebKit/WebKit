@@ -114,7 +114,7 @@ shouldBeTrue('orphanDiv.getElementsByTagName("input")[1].checked');
 debug('Parsing an orphan form:');
 document.body.removeChild(orphanDiv);
 orphanDiv.innerHTML = '<form><input type=radio name=name3 checked><input type=radio name=name3 checked></form>';
-shouldBeTrue('orphanDiv.getElementsByTagName("input")[0].checked');
+shouldBeFalse('orphanDiv.getElementsByTagName("input")[0].checked');
 shouldBeTrue('orphanDiv.getElementsByTagName("input")[1].checked');
 
 debug('');

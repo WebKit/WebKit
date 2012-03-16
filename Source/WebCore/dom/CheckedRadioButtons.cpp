@@ -165,11 +165,6 @@ void RadioButtonGroup::setNeedsValidityCheckForAllButtons()
 
 // ----------------------------------------------------------------
 
-static inline bool shouldMakeRadioGroup(HTMLInputElement* element)
-{
-    return element->isRadioButton() && !element->name().isEmpty() && element->inDocument();
-}
-
 // Explicity define empty constructor and destructor in order to prevent the
 // compiler from generating them as inlines. So we don't need to to define
 // RadioButtonGroup in the header.
@@ -183,7 +178,8 @@ CheckedRadioButtons::~CheckedRadioButtons()
 
 void CheckedRadioButtons::addButton(HTMLInputElement* element)
 {
-    if (!shouldMakeRadioGroup(element))
+    ASSERT(element->isRadioButton());
+    if (element->name().isEmpty())
         return;
 
     if (!m_nameToGroupMap)
@@ -197,7 +193,8 @@ void CheckedRadioButtons::addButton(HTMLInputElement* element)
 
 void CheckedRadioButtons::updateCheckedState(HTMLInputElement* element)
 {
-    if (!shouldMakeRadioGroup(element))
+    ASSERT(element->isRadioButton());
+    if (element->name().isEmpty())
         return;
     ASSERT(m_nameToGroupMap);
     if (!m_nameToGroupMap)
@@ -209,7 +206,8 @@ void CheckedRadioButtons::updateCheckedState(HTMLInputElement* element)
 
 void CheckedRadioButtons::requiredAttributeChanged(HTMLInputElement* element)
 {
-    if (!shouldMakeRadioGroup(element))
+    ASSERT(element->isRadioButton());
+    if (element->name().isEmpty())
         return;
     ASSERT(m_nameToGroupMap);
     if (!m_nameToGroupMap)
@@ -228,21 +226,18 @@ HTMLInputElement* CheckedRadioButtons::checkedButtonForGroup(const AtomicString&
     return group ? group->checkedButton() : 0;
 }
 
-bool CheckedRadioButtons::isInRequiredGroup(HTMLInputElement* element) const
+bool CheckedRadioButtons::isRequiredGroup(const AtomicString& name) const
 {
-    ASSERT(element->isRadioButton());
-    if (!element->inDocument())
-        return false;
     if (!m_nameToGroupMap)
         return false;
-
-    RadioButtonGroup* group = m_nameToGroupMap->get(element->name().impl());
+    RadioButtonGroup* group = m_nameToGroupMap->get(name.impl());
     return group && group->isRequired();
 }
 
 void CheckedRadioButtons::removeButton(HTMLInputElement* element)
 {
-    if (!shouldMakeRadioGroup(element))
+    ASSERT(element->isRadioButton());
+    if (element->name().isEmpty())
         return;
     if (!m_nameToGroupMap)
         return;

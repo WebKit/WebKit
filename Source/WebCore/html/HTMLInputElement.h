@@ -221,10 +221,9 @@ public:
     HTMLOptionElement* selectedOption() const;
 #endif
 
-    // These functions are public so they can be used in InputType classes.
-    // Otherwise, they would be private.
-    CheckedRadioButtons& checkedRadioButtons() const;
-    void updateCheckedRadioButtons();
+    HTMLInputElement* checkedRadioButtonForGroup() const;
+    bool isInRequiredRadioButtonGroup() const;
+
     void setValueInternal(const String&, TextFieldEventBehavior);
 
     void cacheSelectionInResponseToSetValue(int caretOffset) { cacheSelection(caretOffset, caretOffset, SelectionHasNoDirection); }
@@ -339,6 +338,11 @@ private:
 #endif
     void parseMaxLengthAttribute(Attribute*);
     void updateValueIfNeeded();
+
+    // Returns null if this isn't associated with any radio button group.
+    CheckedRadioButtons* checkedRadioButtons() const;
+    void addToRadioButtonGroup();
+    void removeFromRadioButtonGroup();
 
     AtomicString m_name;
     String m_valueIfDirty;

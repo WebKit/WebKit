@@ -45,7 +45,7 @@ Adding the orphan tree to a document:
 PASS orphanDiv.getElementsByTagName("input")[0].checked is false
 PASS orphanDiv.getElementsByTagName("input")[1].checked is true
 Parsing an orphan form:
-PASS orphanDiv.getElementsByTagName("input")[0].checked is true
+PASS orphanDiv.getElementsByTagName("input")[0].checked is false
 PASS orphanDiv.getElementsByTagName("input")[1].checked is true
 
 Moving a radio button to another Document:
