@@ -1,3 +1,26 @@
+2012-03-16  Adam Barth  <abarth@webkit.org>
+
+        Remove sheriff-bot's last-green-revision command
+        https://bugs.webkit.org/show_bug.cgi?id=81314
+
+        Reviewed by Eric Seidel.
+
+        This command is a cruel joke.  WebKit doesn't really ever have a
+        last-green-revision.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (BuildBot._find_green_revision):
+        * Scripts/webkitpy/common/net/buildbot/buildbot_mock.py:
+        (MockBuildBot.builder_statuses):
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        (test_find_green_revision):
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (IRCCommand.execute):
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+        (SheriffIRCBotTest.test_help):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PatchesToReview.execute):
+
 2012-03-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Make gccdepends test aware of broken icecream deps generation

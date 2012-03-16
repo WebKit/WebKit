@@ -473,30 +473,3 @@ class BuildBot(object):
             if len(builders_succeeded_in_future) == len(builder_revisions) and len(builders_succeeded_in_past) == len(builder_revisions):
                 return revision
         return None
-
-    def last_green_revision(self, builder_name_regex):
-        compiled_builder_name_regex = re.compile(builder_name_regex, flags=re.IGNORECASE)
-        builders = [builder for builder in self.builders() if compiled_builder_name_regex.search(builder.name())]
-        if len(builders) > 10:
-            return '"%s" matches too many bots' % builder_name_regex
-        elif not len(builders):
-            return '"%s" doesn\'t match any bot' % builder_name_regex
-
-        builder_revisions = {}
-        for builder in builders:
-            builder_revisions[builder] = self._revisions_for_builder(builder)
-
-        result = ''
-        revision_with_all_builders = self._find_green_revision(builder_revisions)
-        if revision_with_all_builders:
-            result += 'The last known green revision is %d\n' % revision_with_all_builders
-
-        for builder in builders:
-            succeeded_revisions = [revision for revision, succeeded in builder_revisions[builder] if succeeded]
-            if not succeeded_revisions:
-                result += '%s has had no green revision in the last %d runs' % (builder.name(), len(builder_revisions[builder]))
-            else:
-                result += '%s: %d' % (builder.name(), max(succeeded_revisions))
-            result += "\n"
-
-        return result

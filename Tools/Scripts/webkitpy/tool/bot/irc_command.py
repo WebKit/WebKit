@@ -52,16 +52,6 @@ class IRCCommand(object):
         raise NotImplementedError, "subclasses must implement"
 
 
-class LastGreenRevision(IRCCommand):
-    def execute(self, nick, args, tool, sheriff):
-        if not args:
-            return "%s: Usage: last-green-revision BUILDER_NAME" % nick
-        result = tool.buildbot.last_green_revision(' '.join(args))
-        for line in result.split('\n'):
-            if line:
-                tool.irc().post("%s: %s" % (nick, line))
-
-
 class Restart(IRCCommand):
     def execute(self, nick, args, tool, sheriff):
         tool.irc().post("Restarting...")
@@ -257,7 +247,6 @@ class CreateBug(IRCCommand):
 visible_commands = {
     "help": Help,
     "hi": Hi,
-    "last-green-revision": LastGreenRevision,
     "restart": Restart,
     "rollout": Rollout,
     "whois": Whois,

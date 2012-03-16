@@ -434,31 +434,6 @@ class BuildBotTest(unittest.TestCase):
             'Builder 3': [(1, True), (3, True), (7, True), (11, False), (12, True)],
         }), 7)
 
-    def test_last_green_revision(self):
-        buildbot = BuildBot()
-
-        def mock_builds_from_builders():
-            return self._fake_builds_at_index(0)
-
-        # Revision, is_green
-        # Ordered from newest (highest number) to oldest.
-        fake_builder1 = Builder("Fake Builder 1", None)
-        fake_builder1.revisions = [(1, True), (3, False), (5, True), (10, True), (12, False)]
-        fake_builder2 = Builder("Fake Builder 2", None)
-        fake_builder2.revisions = [(1, True), (3, False), (7, True), (9, True), (12, False)]
-        some_builder = Builder("Some Builder", None)
-        some_builder.revisions = [(1, True), (3, True), (7, True), (11, False), (12, True)]
-
-        buildbot.builders = lambda: [fake_builder1, fake_builder2, some_builder]
-        buildbot._revisions_for_builder = lambda builder: builder.revisions
-        buildbot._latest_builds_from_builders = mock_builds_from_builders
-        self.assertEqual(buildbot.last_green_revision(''),
-            "The last known green revision is 7\nFake Builder 1: 10\nFake Builder 2: 9\nSome Builder: 12\n")
-
-        some_builder.revisions = [(1, False), (3, False)]
-        self.assertEqual(buildbot.last_green_revision(''),
-            "Fake Builder 1: 10\nFake Builder 2: 9\nSome Builder has had no green revision in the last 2 runs\n")
-
     def _fetch_build(self, build_number):
         if build_number == 5:
             return "correct build"
