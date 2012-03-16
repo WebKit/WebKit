@@ -308,6 +308,10 @@ TEST(TiledLayerChromiumTest, pushOccludedDirtyTiles)
     layer->updateCompositorResources(0, updater);
     layer->pushPropertiesTo(layerImpl.get());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
+
     // We should have both tiles on the impl side.
     EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
     EXPECT_TRUE(layerImpl->hasTileAt(0, 1));
@@ -321,6 +325,10 @@ TEST(TiledLayerChromiumTest, pushOccludedDirtyTiles)
     layer->prepareToUpdate(IntRect(0, 0, 100, 100), &occluded);
     layer->updateCompositorResources(0, updater);
     layer->pushPropertiesTo(layerImpl.get());
+
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000 + 2500, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
 
     // We should still have both tiles, as part of the top tile is still unoccluded.
     EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
@@ -824,6 +832,10 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusion)
     layer->prepareToUpdate(IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36-3, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 330000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 30000, 1);
+
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
 
     occluded.setOcclusion(IntRect(250, 200, 300, 100));
@@ -831,12 +843,20 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusion)
     layer->prepareToUpdate(IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36-2, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 330000 + 340000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 30000 + 20000, 1);
+
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
 
     occluded.setOcclusion(IntRect(250, 250, 300, 100));
     layer->invalidateRect(IntRect(0, 0, 600, 600));
     layer->prepareToUpdate(IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36, layer->fakeLayerTextureUpdater()->prepareRectCount());
+
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 330000 + 340000 + 360000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 30000 + 20000, 1);
 }
 
 TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
@@ -857,6 +877,10 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
     layer->prepareToUpdate(IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(24-3, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 210000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 30000, 1);
+
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
 
     // Now the visible region stops at the edge of the occlusion so the partly visible tiles become fully occluded.
@@ -866,6 +890,10 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
     layer->prepareToUpdate(IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(24-6, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 210000 + 180000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 30000 + 60000, 1);
+
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
 
     // Now the visible region is even smaller than the occlusion, it should have the same result.
@@ -874,6 +902,11 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
     layer->invalidateRect(IntRect(0, 0, 600, 600));
     layer->prepareToUpdate(IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(24-6, layer->fakeLayerTextureUpdater()->prepareRectCount());
+
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 210000 + 180000 + 180000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 30000 + 60000 + 60000, 1);
+
 }
 
 TEST(TiledLayerChromiumTest, tilesNotPaintedWithoutInvalidation)
@@ -893,11 +926,19 @@ TEST(TiledLayerChromiumTest, tilesNotPaintedWithoutInvalidation)
     layer->prepareToUpdate(IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36-3, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 330000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 30000, 1);
+
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
 
     // Repaint without marking it dirty.
     layer->prepareToUpdate(IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(0, layer->fakeLayerTextureUpdater()->prepareRectCount());
+
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 330000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 30000, 1);
 }
 
 TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndTransforms)
@@ -921,6 +962,10 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndTransforms)
     layer->invalidateRect(IntRect(0, 0, 600, 600));
     layer->prepareToUpdate(IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(36-3, layer->fakeLayerTextureUpdater()->prepareRectCount());
+
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 330000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 30000, 1);
 }
 
 TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
@@ -947,6 +992,10 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     // number of tiles 3x3.
     EXPECT_EQ(9, layer->fakeLayerTextureUpdater()->prepareRectCount());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 90000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
+
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
 
     // This makes sure the painting works when the content space is scaled to
@@ -957,6 +1006,10 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     layer->invalidateRect(IntRect(0, 0, 600, 600));
     layer->prepareToUpdate(IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(9-1, layer->fakeLayerTextureUpdater()->prepareRectCount());
+
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 90000 + 80000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 10000, 1);
 
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
 
@@ -971,12 +1024,17 @@ TEST(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     layer->invalidateRect(IntRect(0, 0, 600, 600));
     layer->prepareToUpdate(IntRect(0, 0, 600, 600), &occluded);
     EXPECT_EQ(9-1, layer->fakeLayerTextureUpdater()->prepareRectCount());
+
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 90000 + 80000 + 80000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 10000 + 10000, 1);
 }
 
 TEST(TiledLayerChromiumTest, opaqueContentsRegion)
 {
     OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
     RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    TestCCOcclusionTracker occluded;
 
     // The tile size is 100x100, so this invalidates and then paints two tiles in various ways.
 
@@ -987,49 +1045,70 @@ TEST(TiledLayerChromiumTest, opaqueContentsRegion)
     IntRect visibleBounds = IntRect(0, 0, 100, 150);
 
     layer->setBounds(contentBounds.size());
+    layer->setDrawTransform(TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
     layer->setVisibleLayerRect(visibleBounds);
     layer->setDrawOpacity(1);
 
     // If the layer doesn't paint opaque content, then the opaqueContentsRegion should be empty.
-    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(opaquePaintRect);
+    layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
     layer->invalidateRect(contentBounds);
-    layer->prepareToUpdate(contentBounds, 0);
+    layer->prepareToUpdate(contentBounds, &occluded);
     opaqueContents = layer->opaqueContentsRegion();
     EXPECT_TRUE(opaqueContents.isEmpty());
+
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
 
     // opaqueContentsRegion should match the visible part of what is painted opaque.
     opaquePaintRect = IntRect(10, 10, 90, 190);
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(opaquePaintRect);
     layer->invalidateRect(contentBounds);
-    layer->prepareToUpdate(contentBounds, 0);
+    layer->prepareToUpdate(contentBounds, &occluded);
     opaqueContents = layer->opaqueContentsRegion();
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
 
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 17100, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000 + 20000 - 17100, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
+
     // If we paint again without invalidating, the same stuff should be opaque.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
-    layer->prepareToUpdate(contentBounds, 0);
+    layer->prepareToUpdate(contentBounds, &occluded);
     opaqueContents = layer->opaqueContentsRegion();
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
+
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 17100, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000 + 20000 - 17100, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
 
     // If we repaint a non-opaque part of the tile, then it shouldn't lose its opaque-ness. And other tiles should
     // not be affected.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
     layer->invalidateRect(IntRect(0, 0, 1, 1));
-    layer->prepareToUpdate(contentBounds, 0);
+    layer->prepareToUpdate(contentBounds, &occluded);
     opaqueContents = layer->opaqueContentsRegion();
     EXPECT_EQ_RECT(intersection(opaquePaintRect, visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
+
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 17100, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000 + 20000 - 17100 + 1, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
 
     // If we repaint an opaque part of the tile, then it should lose its opaque-ness. But other tiles should still
     // not be affected.
     layer->fakeLayerTextureUpdater()->setOpaquePaintRect(IntRect());
     layer->invalidateRect(IntRect(10, 10, 1, 1));
-    layer->prepareToUpdate(contentBounds, 0);
+    layer->prepareToUpdate(contentBounds, &occluded);
     opaqueContents = layer->opaqueContentsRegion();
     EXPECT_EQ_RECT(intersection(IntRect(10, 100, 90, 100), visibleBounds), opaqueContents.bounds());
     EXPECT_EQ(1u, opaqueContents.rects().size());
+
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnOpaque(), 17100, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsDrawnTranslucent(), 20000 + 20000 - 17100 + 1 + 1, 1);
+    EXPECT_NEAR(occluded.overdrawMetrics().pixelsCulled(), 0, 1);
 }
 
 } // namespace

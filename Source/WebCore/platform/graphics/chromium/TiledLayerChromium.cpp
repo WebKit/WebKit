@@ -63,19 +63,18 @@ public:
     ManagedTexture* managedTexture() { return m_texture->texture(); }
 
     bool isDirty() const { return !m_dirtyRect.isEmpty(); }
-    void copyAndClearDirty()
-    {
-        m_updateRect = m_dirtyRect;
-        m_dirtyRect = IntRect();
-    }
-    bool isDirtyForCurrentFrame() { return !m_dirtyRect.isEmpty() && m_updateRect.isEmpty(); }
+    // Returns whether the layer was dirty and not updated in the current frame. For tiles that were not culled, the
+    // updateRect holds the area of the tile that was updated. Otherwise, the area that would have been updated.
+    bool isDirtyForCurrentFrame() { return !m_dirtyRect.isEmpty() && (m_updateRect.isEmpty() || m_updateCulled); }
 
     IntRect m_dirtyRect;
     IntRect m_updateRect;
     bool m_partialUpdate;
+    bool m_updateCulled;
 private:
     explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture)
         : m_partialUpdate(false)
+        , m_updateCulled(false)
         , m_texture(texture)
     {
     }
@@ -195,6 +194,9 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTexture
             // call to updateCompositorResources().
             if (!tile)
                 CRASH();
+
+            if (tile->m_updateCulled)
+                continue;
 
             IntRect sourceRect = tile->m_updateRect;
             if (tile->m_updateRect.isEmpty())
@@ -412,13 +414,17 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             if (!tile)
                 tile = createTile(i, j);
 
-            // When not idle painting, if the visible region of the tile is occluded, don't reserve a texture or mark it for update.
-            // If any part of the tile is visible, then we need to paint it so the tile is pushed to the impl thread.
-            // This will also avoid painting the tile in the next loop, below.
+            // Save the dirty rect since WebKit can change the tile's dirty rect during painting.
+            tile->m_updateRect = tile->m_dirtyRect;
+
+            // When not idle painting, if the visible region of the tile is occluded, don't reserve a texture or update the tile.
+            // If any part of the tile is visible, then we need to update it so the tile is pushed to the impl thread.
             if (!idle && occlusion) {
                 IntRect visibleTileRect = intersection(m_tiler->tileBounds(i, j), visibleLayerRect());
-                if (occlusion->occluded(this, visibleTileRect))
+                if (occlusion->occluded(this, visibleTileRect)) {
+                    tile->m_updateCulled = true;
                     continue;
+                }
             }
 
             // FIXME: Decide if partial update should be allowed based on cost
@@ -448,7 +454,8 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             }
 
             dirtyLayerRect.unite(tile->m_dirtyRect);
-            tile->copyAndClearDirty();
+            // Clear the dirty rect.
+            tile->m_dirtyRect = IntRect();
         }
     }
 
@@ -479,10 +486,22 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
 
             IntRect tileRect = m_tiler->tileBounds(i, j);
 
-            // Use m_updateRect as copyAndClearDirty above moved the existing dirty rect to m_updateRect if the tile isn't culled.
+            // Use m_updateRect as the above loop copied the dirty rect for this frame to m_updateRect.
             const IntRect& dirtyRect = tile->m_updateRect;
             if (dirtyRect.isEmpty())
                 continue;
+
+            // sourceRect starts as a full-sized tile with border texels included.
+            IntRect sourceRect = m_tiler->tileRect(tile);
+            sourceRect.intersect(dirtyRect);
+            // Paint rect not guaranteed to line up on tile boundaries, so
+            // make sure that sourceRect doesn't extend outside of it.
+            sourceRect.intersect(m_paintRect);
+
+            if (tile->m_updateCulled && occlusion) {
+                occlusion->overdrawMetrics().didCull(TransformationMatrix(), sourceRect, IntRect());
+                continue;
+            }
 
             // Save what was painted opaque in the tile. Keep the old area if the paint didn't touch it, and didn't paint some
             // other part of the tile opaque.
@@ -497,18 +516,13 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
                     tile->setOpaqueRect(tilePaintedOpaqueRect);
             }
 
-            // sourceRect starts as a full-sized tile with border texels included.
-            IntRect sourceRect = m_tiler->tileRect(tile);
-            sourceRect.intersect(dirtyRect);
-            // Paint rect not guaranteed to line up on tile boundaries, so
-            // make sure that sourceRect doesn't extend outside of it.
-            sourceRect.intersect(m_paintRect);
-
             tile->m_updateRect = sourceRect;
             if (sourceRect.isEmpty())
                 continue;
 
             tile->texture()->prepareRect(sourceRect);
+            if (occlusion)
+                occlusion->overdrawMetrics().didDraw(TransformationMatrix(), sourceRect, tile->opaqueRect());
         }
     }
 }
@@ -556,6 +570,7 @@ void TiledLayerChromium::resetUpdateState()
         UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
         tile->m_updateRect = IntRect();
         tile->m_partialUpdate = false;
+        tile->m_updateCulled = false;
     }
 }
 

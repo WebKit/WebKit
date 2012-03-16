@@ -557,6 +557,8 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
         } else
             occlusionTracker.leaveToTargetRenderSurface(it.targetRenderSurfaceLayer()->renderSurface());
     }
+
+    occlusionTracker.overdrawMetrics().recordMetrics(this);
 }
 
 void CCLayerTreeHost::updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)

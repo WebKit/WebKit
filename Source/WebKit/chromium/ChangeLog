@@ -1,5 +1,15 @@
 2012-03-16  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Add overdraw metrics for texture uploads
+        https://bugs.webkit.org/show_bug.cgi?id=81175
+
+        Reviewed by Adrienne Walker.
+
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+
+2012-03-16  Dana Jansens  <danakj@chromium.org>
+
         [chromium] Remove surface damage client from occlusion tracker
         https://bugs.webkit.org/show_bug.cgi?id=81242
 
