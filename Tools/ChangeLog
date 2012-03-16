@@ -1,3 +1,18 @@
+2012-03-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Make gccdepends test aware of broken icecream deps generation
+
+        Icecream seems to build the files without passing -o to gcc with
+        the original destination path, which means the target name in the
+        dependency file is wrong.
+
+        Also, echo something to the final file instead of just touching it,
+        so it's not deleted on every build.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/config.tests/gccdepends/gccdepends.pro:
+
 2012-03-16  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Support for Battery Status API
