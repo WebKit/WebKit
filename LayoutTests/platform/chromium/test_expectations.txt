@@ -8,7 +8,6 @@
 
 BUGCR24182 SLOW MAC DEBUG : fast/css/large-list-of-rules-crash.html = PASS
 BUGCR24182 SLOW LINUX MAC DEBUG : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
-BUGCR24182 SLOW MAC DEBUG : fast/forms/form-associated-element-crash3.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/forms/select-set-length-with-mutation-remove.html = PASS
 BUGCR24182 SLOW : fast/js/regexp-overflow.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
@@ -3366,9 +3365,9 @@ BUGWK70641 SNOWLEOPARD : fast/frames/sandboxed-iframe-scripting.html = PASS CRAS
 
 BUGWK70837 : compositing/video/video-poster.html = PASS TIMEOUT TEXT
 
-BUGWK70866 LINUX DEBUG : fast/forms/form-associated-element-crash3.html = TIMEOUT
-BUGWK72039 LINUX RELEASE : fast/forms/form-associated-element-crash.html = MISSING PASS
+BUGWK70866 LINUX MAC DEBUG : fast/forms/form-associated-element-crash3.html = TIMEOUT PASS
 BUGWK72039 RELEASE : fast/forms/form-associated-element-crash3.html = MISSING PASS
+BUGWK72039 LINUX RELEASE : fast/forms/form-associated-element-crash.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order.html = MISSING PASS
 BUGWK72039 LINUX RELEASE : fast/forms/form-attribute-elements-order2.html = MISSING PASS
