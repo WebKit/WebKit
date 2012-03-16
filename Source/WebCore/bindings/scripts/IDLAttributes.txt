@@ -97,6 +97,7 @@ ReplaceableConstructor
 ReturnNewObject
 StrictTypeChecking
 Supplemental=*
+TransferList=*
 TreatNullAs=NullString
 TreatReturnedNullStringAs=False|Null|Undefined
 TreatUndefinedAs=NullString

@@ -1426,11 +1426,11 @@ END
 END
     }
 
-    my ($parameterCheckString, $paramIndex) = GenerateParametersCheck($function, $implClassName);
+    my ($parameterCheckString, $paramIndex, %replacements) = GenerateParametersCheck($function, $implClassName);
     push(@implContentDecls, $parameterCheckString);
 
     # Build the function call string.
-    push(@implContentDecls, GenerateFunctionCallString($function, $paramIndex, "    ", $implClassName));
+    push(@implContentDecls, GenerateFunctionCallString($function, $paramIndex, "    ", $implClassName, %replacements));
 
     if ($raisesExceptions) {
         push(@implContentDecls, "    }\n");
@@ -1511,6 +1511,20 @@ sub GenerateArgumentsCountCheck
     return $argumentsCountCheckString;
 }
 
+sub GetIndexOf
+{
+    my $paramName = shift;
+    my @paramList = @_;
+    my $index = 0;
+    foreach my $param (@paramList) {
+        if ($paramName eq $param) {
+            return $index;
+        }
+        $index++;
+    }
+    return -1;
+}
+
 sub GenerateParametersCheck
 {
     my $function = shift;
@@ -1518,6 +1532,9 @@ sub GenerateParametersCheck
 
     my $parameterCheckString = "";
     my $paramIndex = 0;
+    my @paramTransferListNames = ();
+    my %replacements = ();
+
     foreach my $parameter (@{$function->parameters}) {
         TranslateParameter($parameter);
 
@@ -1528,7 +1545,7 @@ sub GenerateParametersCheck
         my $optional = $parameter->extendedAttributes->{"Optional"};
         if ($optional && $optional ne "DefaultIsUndefined" && $optional ne "DefaultIsNullString" && !$parameter->extendedAttributes->{"Callback"}) {
             $parameterCheckString .= "    if (args.Length() <= $paramIndex) {\n";
-            my $functionCall = GenerateFunctionCallString($function, $paramIndex, "    " x 2, $implClassName);
+            my $functionCall = GenerateFunctionCallString($function, $paramIndex, "    " x 2, $implClassName, %replacements);
             $parameterCheckString .= $functionCall;
             $parameterCheckString .= "    }\n";
         }
@@ -1536,6 +1553,12 @@ sub GenerateParametersCheck
         my $parameterDefaultPolicy = "DefaultIsUndefined";
         if ($optional and $optional eq "DefaultIsNullString") {
             $parameterDefaultPolicy = "DefaultIsNullString";
+        }
+
+        if (GetIndexOf($parameterName, @paramTransferListNames) != -1) {
+            $replacements{$parameterName} = "messagePortArray" . ucfirst($parameterName);
+            $paramIndex++;
+            next;
         }
 
         AddToImplIncludes("ExceptionCode.h");
@@ -1557,8 +1580,39 @@ sub GenerateParametersCheck
             }
         } elsif ($parameter->type eq "SerializedScriptValue") {
             AddToImplIncludes("SerializedScriptValue.h");
+            my $useTransferList = 0;
+            my $transferListName = "";
+            my $TransferListName = "";
+            if ($parameter->extendedAttributes->{"TransferList"}) {
+                $transferListName = $parameter->extendedAttributes->{"TransferList"};
+                push(@paramTransferListNames, $transferListName);
+
+                my @allParameterNames = ();
+                foreach my $parameter (@{$function->parameters}) {
+                    push(@allParameterNames, $parameter->name);
+                }
+                my $transferListIndex = GetIndexOf($transferListName, @allParameterNames);
+                if ($transferListIndex == -1) {
+                    die "IDL error: TransferList refers to a nonexistent argument";
+                }
+
+                AddToImplIncludes("ArrayBuffer.h");
+                AddToImplIncludes("MessagePort.h");
+                $TransferListName = ucfirst($transferListName);
+                $parameterCheckString .= "    MessagePortArray messagePortArray$TransferListName;\n";
+                $parameterCheckString .= "    ArrayBufferArray arrayBufferArray$TransferListName;\n";
+                $parameterCheckString .= "    if (args.Length() > $transferListIndex) {\n";
+                $parameterCheckString .= "        if (!extractTransferables(args[$transferListIndex], messagePortArray$TransferListName, arrayBufferArray$TransferListName))\n";
+                $parameterCheckString .= "            return throwError(\"Could not extract transferables\", V8Proxy::TypeError);\n";
+                $parameterCheckString .= "    }\n";
+                $useTransferList = 1;
+            }
             $parameterCheckString .= "    bool ${parameterName}DidThrow = false;\n";
-            $parameterCheckString .= "    $nativeType $parameterName = SerializedScriptValue::create(args[$paramIndex], 0, 0, ${parameterName}DidThrow);\n";
+            if (!$useTransferList) {
+                    $parameterCheckString .= "    $nativeType $parameterName = SerializedScriptValue::create(args[$paramIndex], 0, 0, ${parameterName}DidThrow);\n";
+            } else {
+                    $parameterCheckString .= "    $nativeType $parameterName = SerializedScriptValue::create(args[$paramIndex], &messagePortArray$TransferListName, &arrayBufferArray$TransferListName, ${parameterName}DidThrow);\n";
+            }
             $parameterCheckString .= "    if (${parameterName}DidThrow)\n";
             $parameterCheckString .= "        return v8::Undefined();\n";
         } elsif (TypeCanFailConversion($parameter)) {
@@ -1609,7 +1663,7 @@ sub GenerateParametersCheck
 
         $paramIndex++;
     }
-    return ($parameterCheckString, $paramIndex);
+    return ($parameterCheckString, $paramIndex, %replacements);
 }
 
 sub GenerateConstructorCallback
@@ -1652,7 +1706,7 @@ END
         push(@implContent, "    ExceptionCode ec = 0;\n");
     }
 
-    my ($parameterCheckString, $paramIndex) = GenerateParametersCheck($function, $implClassName);
+    my ($parameterCheckString, $paramIndex, %replacements) = GenerateParametersCheck($function, $implClassName);
     push(@implContent, $parameterCheckString);
 
     if ($dataNode->extendedAttributes->{"CallWith"} && $dataNode->extendedAttributes->{"CallWith"} eq "ScriptExecutionContext") {
@@ -1673,7 +1727,11 @@ END
     my $index = 0;
     foreach my $parameter (@{$function->parameters}) {
         last if $index eq $paramIndex;
-        push(@argumentList, $parameter->name);
+        if ($replacements{$parameter->name}) {
+            push(@argumentList, $replacements{$parameter->name});
+        } else {
+            push(@argumentList, $parameter->name);
+        }
         $index++;
     }
 
@@ -1837,7 +1895,7 @@ END
         push(@implContent, "    ExceptionCode ec = 0;\n");
     }
 
-    my ($parameterCheckString, $paramIndex) = GenerateParametersCheck($function, $implClassName);
+    my ($parameterCheckString, $paramIndex, %replacements) = GenerateParametersCheck($function, $implClassName);
     push(@implContent, $parameterCheckString);
 
     push(@beforeArgumentList, "document");
@@ -1850,7 +1908,11 @@ END
     my $index = 0;
     foreach my $parameter (@{$function->parameters}) {
         last if $index eq $paramIndex;
-        push(@argumentList, $parameter->name);
+        if ($replacements{$parameter->name}) {
+            push(@argumentList, $replacements{$parameter->name});
+        } else {
+            push(@argumentList, $parameter->name);
+        }
         $index++;
     }
 
@@ -3150,6 +3212,7 @@ sub GenerateFunctionCallString()
     my $numberOfParameters = shift;
     my $indent = shift;
     my $implClassName = shift;
+    my %replacements = @_;
 
     my $name = $function->signature->name;
     my $returnType = GetTypeFromSignature($function->signature);
@@ -3194,7 +3257,9 @@ sub GenerateFunctionCallString()
         my $paramName = $parameter->name;
         my $paramType = $parameter->type;
 
-        if ($parameter->type eq "IDBKey" || $parameter->type eq "NodeFilter" || $parameter->type eq "XPathNSResolver") {
+        if ($replacements{$paramName}) {
+            push @arguments, $replacements{$paramName};
+        } elsif ($parameter->type eq "IDBKey" || $parameter->type eq "NodeFilter" || $parameter->type eq "XPathNSResolver") {
             push @arguments, "$paramName.get()";
         } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($parameter->type) and not $implClassName =~ /List$/) {
             push @arguments, "$paramName->propertyReference()";

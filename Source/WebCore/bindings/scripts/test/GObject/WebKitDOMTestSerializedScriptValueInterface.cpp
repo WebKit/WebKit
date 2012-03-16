@@ -32,6 +32,8 @@
 #include "TestSerializedScriptValueInterface.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"
+#include "webkit/WebKitDOMArray.h"
+#include "webkit/WebKitDOMArrayPrivate.h"
 #include "webkit/WebKitDOMSerializedScriptValue.h"
 #include "webkit/WebKitDOMSerializedScriptValuePrivate.h"
 #include "webkit/WebKitDOMTestSerializedScriptValueInterface.h"
@@ -53,6 +55,60 @@ WebKitDOMTestSerializedScriptValueInterface* kit(WebCore::TestSerializedScriptVa
 }
     
 } // namespace WebKit //
+
+void
+webkit_dom_test_serialized_script_value_interface_accept_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* data, WebKitDOMArray* transfer_list)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    g_return_if_fail(data);
+    g_return_if_fail(transfer_list);
+    WebCore::SerializedScriptValue * converted_data = NULL;
+    if (data != NULL) {
+        converted_data = WebKit::core(data);
+        g_return_if_fail(converted_data);
+    }
+    WebCore::Array * converted_transfer_list = NULL;
+    if (transfer_list != NULL) {
+        converted_transfer_list = WebKit::core(transfer_list);
+        g_return_if_fail(converted_transfer_list);
+    }
+    item->acceptTransferList(converted_data, converted_transfer_list);
+}
+
+void
+webkit_dom_test_serialized_script_value_interface_multi_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* first, WebKitDOMArray* tx, WebKitDOMSerializedScriptValue* second, WebKitDOMArray* txx)
+{
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestSerializedScriptValueInterface * item = WebKit::core(self);
+    g_return_if_fail(first);
+    g_return_if_fail(tx);
+    g_return_if_fail(second);
+    g_return_if_fail(txx);
+    WebCore::SerializedScriptValue * converted_first = NULL;
+    if (first != NULL) {
+        converted_first = WebKit::core(first);
+        g_return_if_fail(converted_first);
+    }
+    WebCore::Array * converted_tx = NULL;
+    if (tx != NULL) {
+        converted_tx = WebKit::core(tx);
+        g_return_if_fail(converted_tx);
+    }
+    WebCore::SerializedScriptValue * converted_second = NULL;
+    if (second != NULL) {
+        converted_second = WebKit::core(second);
+        g_return_if_fail(converted_second);
+    }
+    WebCore::Array * converted_txx = NULL;
+    if (txx != NULL) {
+        converted_txx = WebKit::core(txx);
+        g_return_if_fail(converted_txx);
+    }
+    item->multiTransferList(converted_first, converted_tx, converted_second, converted_txx);
+}
 
 WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_value(WebKitDOMTestSerializedScriptValueInterface* self)
