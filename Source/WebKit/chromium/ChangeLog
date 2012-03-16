@@ -1,3 +1,16 @@
+2012-03-15  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: SpeechRecognition, Controller and Client
+        https://bugs.webkit.org/show_bug.cgi?id=81096
+
+        Reviewed by Adam Barth.
+
+        Provide a SpeechRecognitionController to Page, with a NULL client for
+        now.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+
 2012-03-15  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Fix some assertions in occlusion tracker unit tests

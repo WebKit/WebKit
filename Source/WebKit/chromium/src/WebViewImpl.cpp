@@ -106,6 +106,7 @@
 #include "Settings.h"
 #include "SharedGraphicsContext3D.h"
 #include "SpeechInputClientImpl.h"
+#include "SpeechRecognitionClient.h"
 #include "TextIterator.h"
 #include "Timer.h"
 #include "TraceEvent.h"
@@ -388,6 +389,9 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #endif
 #if ENABLE(INPUT_SPEECH)
     provideSpeechInputTo(m_page.get(), m_speechInputClient.get());
+#endif
+#if ENABLE(SCRIPTED_SPEECH)
+    provideSpeechRecognitionTo(m_page.get(), 0); // FIXME: Provide a real implementation.
 #endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     provideNotification(m_page.get(), notificationPresenterImpl());

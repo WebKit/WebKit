@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+description('Tests the basics of the Speech JavaScript API');
+
+function run() {
+    // Check availability of constructors.
+    shouldBeTrue("'webkitSpeechRecognition' in self");
+    shouldBeFalse("webkitSpeechRecognition == null");
+
+    // Check for members of SpeechRecognition.
+    window.speechReco = new webkitSpeechRecognition();
+    shouldBeFalse("speechReco == null");
+    shouldBeTrue("'grammars' in speechReco");
+    shouldBeFalse("speechReco.grammars == null");
+    shouldBeTrue("speechReco.grammars.length === 0");
+    shouldBeTrue("'lang' in speechReco");
+    shouldBeTrue("'continuous' in speechReco");
+    shouldBeTrue("'start' in speechReco");
+    shouldBeTrue("'stop' in speechReco");
+    shouldBeTrue("'abort' in speechReco");
+    shouldBeTrue("'onaudiostart' in speechReco");
+    shouldBeTrue("'onsoundstart' in speechReco");
+    shouldBeTrue("'onspeechstart' in speechReco");
+    shouldBeTrue("'onspeechend' in speechReco");
+    shouldBeTrue("'onsoundend' in speechReco");
+    shouldBeTrue("'onaudioend' in speechReco");
+    shouldBeTrue("'onresult' in speechReco");
+    shouldBeTrue("'onnomatch' in speechReco");
+    shouldBeTrue("'onresultdeleted' in speechReco");
+    shouldBeTrue("'onerror' in speechReco");
+    shouldBeTrue("'onstart' in speechReco");
+    shouldBeTrue("'onend' in speechReco");
+
+    finishJSTest();
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

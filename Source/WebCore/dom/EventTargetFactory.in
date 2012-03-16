@@ -21,6 +21,7 @@ Node
 Notification conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS
 SharedWorker conditional=SHARED_WORKERS
 SharedWorkerContext conditional=SHARED_WORKERS
+SpeechRecognition conditional=SCRIPTED_SPEECH
 SVGElementInstance conditional=SVG
 TextTrack conditional=VIDEO_TRACK
 TextTrackCue conditional=VIDEO_TRACK
