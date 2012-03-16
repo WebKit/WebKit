@@ -77,6 +77,7 @@ class BitmapTextureGL : public BitmapTexture {
 public:
     virtual IntSize size() const;
     virtual bool isValid() const;
+    virtual bool canReuseWith(const IntSize& contentsSize, Flags = 0);
     virtual void didReset();
     void bind();
     void initializeStencil();

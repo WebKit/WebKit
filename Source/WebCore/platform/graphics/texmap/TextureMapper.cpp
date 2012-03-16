@@ -37,31 +37,10 @@ PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& s
         if (texture->refCount() > 1)
             continue;
 
-        // We default to the first available texture.
-        if (!selectedTexture) {
+        if (texture->canReuseWith(size)) {
             selectedTexture = texture;
-            continue;
+            break;
         }
-
-        IntSize textureSize = texture->size();
-        IntSize selectedTextureSize = selectedTexture->size();
-
-        // We prefer to pick a texture that's equal or larger than the requested size.
-        if (textureSize.width() < size.width() || textureSize.height() < size.height())
-            continue;
-
-        // We select the new texture if the currently selected texture is smaller than the
-        // required size, and the new texture has a smaller area.
-        int textureArea = textureSize.width() * textureSize.height();
-        int selectedTextureArea = selectedTextureSize.width() * selectedTextureSize.height();
-        bool selectedTextureFitsSize =
-                selectedTextureSize.width() >= size.width()
-                && selectedTextureSize.height() >= size.height();
-
-        if (selectedTextureFitsSize && selectedTextureArea <= textureArea)
-            continue;
-
-        selectedTexture = texture;
     }
 
     if (!selectedTexture) {
@@ -69,7 +48,7 @@ PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& s
         m_texturePool.append(selectedTexture);
     }
 
-    selectedTexture->reset(size, false);
+    selectedTexture->reset(size);
     return selectedTexture;
 }
 

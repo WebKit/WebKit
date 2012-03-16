@@ -390,6 +390,11 @@ const char* TextureMapperGL::type() const
     return "OpenGL";
 }
 
+bool BitmapTextureGL::canReuseWith(const IntSize& contentsSize, Flags)
+{
+    return contentsSize == m_textureSize;
+}
+
 void BitmapTextureGL::didReset()
 {
     if (!m_id)

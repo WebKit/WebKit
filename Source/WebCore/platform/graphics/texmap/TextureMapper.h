@@ -73,13 +73,14 @@ public:
     inline Flags flags() const { return m_flags; }
 
     virtual int bpp() const { return 32; }
-    virtual void didReset() { }
-    void reset(const IntSize& size, Flags flags)
+    virtual bool canReuseWith(const IntSize& contentsSize, Flags flags = 0) { return false; }
+    void reset(const IntSize& size, Flags flags = 0)
     {
         m_flags = flags;
         m_contentSize = size;
         didReset();
     }
+    virtual void didReset() { }
 
     inline IntSize contentSize() const { return m_contentSize; }
     inline int numberOfBytes() const { return size().width() * size().height() * bpp() >> 3; }
