@@ -196,8 +196,10 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
     , m_setCanStartMediaTimer(WebProcess::shared().runLoop(), this, &WebPage::setCanStartMediaTimerFired)
     , m_findController(this)
+#if ENABLE(TOUCH_EVENTS)
 #if PLATFORM(QT)
     , m_tapHighlightController(this)
+#endif
 #endif
 #if ENABLE(GEOLOCATION)
     , m_geolocationPermissionRequestManager(this)

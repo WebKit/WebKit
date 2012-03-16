@@ -320,7 +320,7 @@ public:
     static const WebEvent* currentEvent();
 
     FindController& findController() { return m_findController; }
-#if PLATFORM(QT)
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(QT)
     TapHighlightController& tapHighlightController() { return m_tapHighlightController; }
 #endif
 
@@ -734,7 +734,7 @@ private:
 #endif
 
     FindController m_findController;
-#if PLATFORM(QT)
+#if ENABLE(TOUCH_EVENTS) && PLATFORM(QT)
     TapHighlightController m_tapHighlightController;
 #endif
     RefPtr<PageOverlay> m_pageOverlay;

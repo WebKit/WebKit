@@ -69,7 +69,9 @@ public:
     void didFindZoomableArea(const WebCore::IntPoint& target, const WebCore::IntRect& area);
     void updateTextInputState();
     void doneWithGestureEvent(const WebGestureEvent& event, bool wasEventHandled);
+#if ENABLE(TOUCH_EVENTS)
     void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
+#endif
     void resetGestureRecognizers();
 
     QtViewportInteractionEngine* interactionEngine() { return m_interactionEngine; }

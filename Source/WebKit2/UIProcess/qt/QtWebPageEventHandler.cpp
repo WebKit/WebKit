@@ -230,8 +230,12 @@ void QtWebPageEventHandler::handleDropEvent(QDropEvent* ev)
 
 void QtWebPageEventHandler::handlePotentialSingleTapEvent(const QTouchEvent::TouchPoint& point)
 {
+#if ENABLE(TOUCH_EVENTS)
     QTransform fromItemTransform = m_webPage->transformFromItem();
     m_webPageProxy->handlePotentialActivation(fromItemTransform.map(point.pos()).toPoint());
+#else
+    Q_UNUSED(point);
+#endif
 }
 
 void QtWebPageEventHandler::handleSingleTapEvent(const QTouchEvent::TouchPoint& point)
@@ -422,6 +426,7 @@ void QtWebPageEventHandler::doneWithGestureEvent(const WebGestureEvent& event, b
     setInputPanelVisible(newVisible);
 }
 
+#if ENABLE(TOUCH_EVENTS)
 void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
 {
     if (!m_interactionEngine)
@@ -469,6 +474,7 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
         m_tapGestureRecognizer.recognize(ev, eventTimestampMillis);
     }
 }
+#endif
 
 void QtWebPageEventHandler::didFindZoomableArea(const IntPoint& target, const IntRect& area)
 {

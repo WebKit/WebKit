@@ -98,7 +98,9 @@ public:
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
     virtual void updateTextInputState();
     virtual void doneWithGestureEvent(const WebGestureEvent&, bool wasEventHandled);
+#if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
+#endif
 
 private:
     QQuickWebView* m_webView;

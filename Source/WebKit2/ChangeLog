@@ -1,3 +1,25 @@
+2012-03-16  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][WK2] Build failure when using --no-touch-events
+        https://bugs.webkit.org/show_bug.cgi?id=81241
+
+        Reviewed by Simon Hausmann.
+
+        Fixed inconsistency in the use of ENABLE_TOUCH_EVENTS flag that caused build
+        failure when using --no-touch-events option
+
+        * UIProcess/qt/QtPageClient.h:
+        (QtPageClient):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handlePotentialSingleTapEvent):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        (QtWebPageEventHandler):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2012-03-16  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Merge setVisibleContentsForScaling with setVisibleContentsRectForPanning
