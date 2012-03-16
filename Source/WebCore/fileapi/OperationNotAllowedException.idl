@@ -30,7 +30,7 @@
 
 module html {
     interface [
-        Conditional=BLOB|FILE_SYSTEM,
+        Conditional=BLOB,
         DoNotCheckConstants,
         JSNoStaticTables
     ] OperationNotAllowedException {
