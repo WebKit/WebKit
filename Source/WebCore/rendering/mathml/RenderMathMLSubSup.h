@@ -52,7 +52,7 @@ private:
     
     enum SubSupType { Sub, Sup, SubSup };
     SubSupType m_kind;
-    RenderBlock* m_scripts;
+    RenderMathMLBlock* m_scripts;
 };
     
 }

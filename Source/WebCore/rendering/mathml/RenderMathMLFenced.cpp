@@ -131,11 +131,7 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject*)
     if (child->isBlockFlow() && child->style()->display() != INLINE_BLOCK) {
         // Block objects wrapper.
 
-        RenderBlock* block = new (renderArena()) RenderBlock(node());
-        RefPtr<RenderStyle> newStyle = RenderStyle::create();
-        newStyle->inheritFrom(style());
-        newStyle->setDisplay(INLINE_BLOCK);
-        block->setStyle(newStyle.release());
+        RenderBlock* block = createAlmostAnonymousBlock(INLINE_BLOCK);
         
         RenderBlock::addChild(block, lastChild());
         block->addChild(child);    

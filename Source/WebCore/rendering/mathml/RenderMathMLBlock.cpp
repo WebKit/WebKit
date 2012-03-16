@@ -49,12 +49,14 @@ bool RenderMathMLBlock::isChildAllowed(RenderObject* child, RenderStyle*) const
     return child->node() && child->node()->nodeType() == Node::ELEMENT_NODE;
 }
 
-PassRefPtr<RenderStyle> RenderMathMLBlock::createBlockStyle()
+RenderMathMLBlock* RenderMathMLBlock::createAlmostAnonymousBlock(EDisplay display)
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::create();
-    newStyle->inheritFrom(style());
-    newStyle->setDisplay(BLOCK);
-    return newStyle;
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
+    newStyle->setDisplay(display);
+    
+    RenderMathMLBlock* newBlock = new (renderArena()) RenderMathMLBlock(node() /* "almost" anonymous block */);
+    newBlock->setStyle(newStyle.release());
+    return newBlock;
 }
 
 void RenderMathMLBlock::stretchToHeight(int height) 

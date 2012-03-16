@@ -171,8 +171,8 @@ layer at (0,0) size 800x537
         RenderText {#text} at (0,0) size 0x0
 layer at (182,180) size 20x20
   RenderMathMLRoot {mroot} at (1,0) size 20x20
-    RenderBlock {mroot} at (12,15) size 0x0
-    RenderBlock {mroot} at (12,4) size 8x16
+    RenderMathMLBlock {mroot} at (12,15) size 0x0
+    RenderMathMLBlock {mroot} at (12,4) size 8x16
       RenderInline {mn} at (0,0) size 8x16
         RenderText {#text} at (0,0) size 8x16
           text run at (0,0) width 8: "2"
@@ -182,8 +182,8 @@ layer at (182,180) size 12x14
       text run at (2,0) width 6: "3"
 layer at (84,216) size 45x22
   RenderMathMLRoot {mroot} at (1,0) size 45x22
-    RenderBlock {mroot} at (37,17) size 0x0
-    RenderBlock {mroot} at (37,6) size 8x16
+    RenderMathMLBlock {mroot} at (37,17) size 0x0
+    RenderMathMLBlock {mroot} at (37,6) size 8x16
       RenderInline {mn} at (0,0) size 8x16
         RenderText {#text} at (0,0) size 8x16
           text run at (0,0) width 8: "2"
@@ -208,8 +208,8 @@ layer at (84,216) size 37x16
         text run at (28,0) width 5: "z"
 layer at (194,254) size 71x40
   RenderMathMLRoot {mroot} at (1,0) size 71x40
-    RenderBlock {mroot} at (39,24) size 0x0
-    RenderBlock {mroot} at (39,3) size 32x34
+    RenderMathMLBlock {mroot} at (39,24) size 0x0
+    RenderMathMLBlock {mroot} at (39,3) size 32x34
       RenderMathMLFraction {mfrac} at (1,0) size 31x34
         RenderMathMLBlock {mfrac} at (0,0) size 31x16
           RenderMathMLRow {mrow} at (3,0) size 25x16
@@ -256,8 +256,8 @@ layer at (194,263) size 37x16
         text run at (28,0) width 5: "z"
 layer at (84,310) size 27x48
   RenderMathMLRoot {mroot} at (1,0) size 27x48
-    RenderBlock {mroot} at (19,43) size 0x0
-    RenderBlock {mroot} at (19,32) size 8x16
+    RenderMathMLBlock {mroot} at (19,43) size 0x0
+    RenderMathMLBlock {mroot} at (19,32) size 8x16
       RenderInline {mn} at (0,0) size 8x16
         RenderText {#text} at (0,0) size 8x16
           text run at (0,0) width 8: "2"
@@ -279,8 +279,8 @@ layer at (84,310) size 19x42
           text run at (4,2) width 5: "z"
 layer at (119,445) size 326x76
   RenderMathMLRoot {mroot} at (1,0) size 326x76
-    RenderBlock {mroot} at (18,50) size 0x0
-    RenderBlock {mroot} at (18,3) size 308x70
+    RenderMathMLBlock {mroot} at (18,50) size 0x0
+    RenderMathMLBlock {mroot} at (18,3) size 308x70
       RenderMathMLRow {mrow} at (11,0) size 297x70
         RenderInline {mn} at (0,0) size 8x16
           RenderText {#text} at (0,36) size 8x16
@@ -295,8 +295,8 @@ layer at (119,478) size 12x14
       text run at (2,0) width 6: "3"
 layer at (166,448) size 279x70
   RenderMathMLRoot {mroot} at (18,0) size 279x70
-    RenderBlock {mroot} at (18,47) size 0x0
-    RenderBlock {mroot} at (18,3) size 261x64
+    RenderMathMLBlock {mroot} at (18,47) size 0x0
+    RenderMathMLBlock {mroot} at (18,3) size 261x64
       RenderMathMLRow {mrow} at (9,0) size 252x64
         RenderInline {mn} at (0,0) size 8x16
           RenderText {#text} at (0,33) size 8x16
@@ -311,8 +311,8 @@ layer at (166,477) size 12x14
       text run at (2,0) width 6: "4"
 layer at (211,451) size 234x64
   RenderMathMLRoot {mroot} at (18,0) size 234x64
-    RenderBlock {mroot} at (18,44) size 0x0
-    RenderBlock {mroot} at (18,3) size 216x58
+    RenderMathMLBlock {mroot} at (18,44) size 0x0
+    RenderMathMLBlock {mroot} at (18,3) size 216x58
       RenderMathMLRow {mrow} at (8,0) size 208x58
         RenderInline {mn} at (0,0) size 8x16
           RenderText {#text} at (0,30) size 8x16
@@ -327,8 +327,8 @@ layer at (211,477) size 12x14
       text run at (2,0) width 6: "5"
 layer at (255,454) size 190x58
   RenderMathMLRoot {mroot} at (18,0) size 190x58
-    RenderBlock {mroot} at (18,41) size 0x0
-    RenderBlock {mroot} at (18,3) size 172x52
+    RenderMathMLBlock {mroot} at (18,41) size 0x0
+    RenderMathMLBlock {mroot} at (18,3) size 172x52
       RenderMathMLRow {mrow} at (6,0) size 166x52
         RenderInline {mn} at (0,0) size 8x16
           RenderText {#text} at (0,27) size 8x16
@@ -343,8 +343,8 @@ layer at (255,476) size 12x14
       text run at (2,0) width 6: "6"
 layer at (297,457) size 148x52
   RenderMathMLRoot {mroot} at (18,0) size 148x52
-    RenderBlock {mroot} at (17,38) size 0x0
-    RenderBlock {mroot} at (17,3) size 131x46
+    RenderMathMLBlock {mroot} at (17,38) size 0x0
+    RenderMathMLBlock {mroot} at (17,3) size 131x46
       RenderMathMLRow {mrow} at (4,0) size 127x46
         RenderInline {mn} at (0,0) size 8x16
           RenderText {#text} at (0,24) size 8x16
@@ -359,8 +359,8 @@ layer at (297,475) size 12x14
       text run at (2,0) width 6: "7"
 layer at (336,460) size 109x46
   RenderMathMLRoot {mroot} at (18,0) size 109x46
-    RenderBlock {mroot} at (16,35) size 0x0
-    RenderBlock {mroot} at (16,3) size 93x40
+    RenderMathMLBlock {mroot} at (16,35) size 0x0
+    RenderMathMLBlock {mroot} at (16,3) size 93x40
       RenderMathMLRow {mrow} at (3,0) size 90x40
         RenderInline {mn} at (0,0) size 8x16
           RenderText {#text} at (0,21) size 8x16
@@ -375,8 +375,8 @@ layer at (336,474) size 12x14
       text run at (2,0) width 6: "8"
 layer at (373,463) size 72x40
   RenderMathMLRoot {mroot} at (18,0) size 72x40
-    RenderBlock {mroot} at (14,32) size 0x0
-    RenderBlock {mroot} at (14,3) size 58x34
+    RenderMathMLBlock {mroot} at (14,32) size 0x0
+    RenderMathMLBlock {mroot} at (14,3) size 58x34
       RenderMathMLRow {mrow} at (2,0) size 56x34
         RenderInline {mn} at (0,0) size 8x16
           RenderText {#text} at (0,18) size 8x16
@@ -391,8 +391,8 @@ layer at (373,474) size 12x14
       text run at (2,0) width 6: "9"
 layer at (407,466) size 38x34
   RenderMathMLRoot {mroot} at (18,0) size 38x34
-    RenderBlock {mroot} at (28,29) size 0x0
-    RenderBlock {mroot} at (28,18) size 10x16
+    RenderMathMLBlock {mroot} at (28,29) size 0x0
+    RenderMathMLBlock {mroot} at (28,18) size 10x16
       RenderInline {mi} at (0,0) size 10x16
         RenderText {#text} at (0,0) size 10x16
           text run at (0,0) width 10: "A"

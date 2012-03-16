@@ -29,7 +29,6 @@
 
 #include "RenderMathMLUnderOver.h"
 
-#include "FontSelector.h"
 #include "MathMLNames.h"
 
 namespace WebCore {
@@ -67,10 +66,7 @@ RenderBoxModelObject* RenderMathMLUnderOver::base() const
 
 void RenderMathMLUnderOver::addChild(RenderObject* child, RenderObject* beforeChild)
 {    
-    RenderMathMLBlock* row = new (renderArena()) RenderMathMLBlock(node());
-    RefPtr<RenderStyle> rowStyle = createBlockStyle();
-    row->setStyle(rowStyle.release());
-    row->setIsAnonymous(true);
+    RenderBlock* row = createAnonymousBlock();
     
     // look through the children for rendered elements counting the blocks so we know what child
     // we are adding

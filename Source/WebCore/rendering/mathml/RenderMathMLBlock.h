@@ -60,6 +60,10 @@ public:
     virtual void paint(PaintInfo&, const LayoutPoint&);
 #endif
     
+    // Create a new RenderBlock, with a new style inheriting from this->style().
+    // FIXME: Create a true anonymous block, like RenderBlock::createAnonymousBlock().
+    RenderMathMLBlock* createAlmostAnonymousBlock(EDisplay = BLOCK);
+    
 protected:
     static LayoutUnit getBoxModelObjectHeight(const RenderObject* object)
     {
@@ -79,7 +83,6 @@ protected:
         
         return 0;
     }
-    virtual PassRefPtr<RenderStyle> createBlockStyle();
 
 private:
     virtual const char* renderName() const { return isAnonymous() ? "RenderMathMLBlock (anonymous)" : "RenderMathMLBlock"; }

@@ -73,21 +73,15 @@ void RenderMathMLRoot::addChild(RenderObject* child, RenderObject* )
 {
     if (isEmpty()) {
         // Add a block for the index
-        RenderBlock* block = new (renderArena()) RenderBlock(node());
-        RefPtr<RenderStyle> indexStyle = createBlockStyle();
-        indexStyle->setDisplay(INLINE_BLOCK);
-        block->setStyle(indexStyle.release());
-        RenderBlock::addChild(block);
+        RenderBlock* indexWrapper = createAlmostAnonymousBlock(INLINE_BLOCK);
+        RenderBlock::addChild(indexWrapper);
         
         // FIXME: the wrapping does not seem to be needed anymore.
         // this is the base, so wrap it so we can pad it
-        block = new (renderArena()) RenderBlock(node());
-        RefPtr<RenderStyle> baseStyle = createBlockStyle();
-        baseStyle->setDisplay(INLINE_BLOCK);
-        baseStyle->setPaddingLeft(Length(5 * gRadicalWidth , Percent));
-        block->setStyle(baseStyle.release());
-        RenderBlock::addChild(block);
-        block->addChild(child);
+        RenderBlock* baseWrapper = createAlmostAnonymousBlock(INLINE_BLOCK);
+        baseWrapper->style()->setPaddingLeft(Length(5 * gRadicalWidth, Percent));
+        RenderBlock::addChild(baseWrapper);
+        baseWrapper->addChild(child);
     } else {
         // always add to the index
         firstChild()->addChild(child);

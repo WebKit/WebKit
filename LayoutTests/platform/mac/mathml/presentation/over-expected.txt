@@ -8,11 +8,11 @@ layer at (0,0) size 800x285
           text run at (0,9) width 36: "over: "
         RenderMathMLMath {math} at (36,0) size 12x28
           RenderMathMLUnderOver {mover} at (1,0) size 10x28
-            RenderMathMLBlock (anonymous) at (0,0) size 10x16
+            RenderBlock (anonymous) at (0,0) size 10x16
               RenderInline {mi} at (0,0) size 5x12
                 RenderText {#text} at (0,3) size 5x12
                   text run at (0,3) width 5: "x"
-            RenderMathMLBlock (anonymous) at (0,12) size 10x16
+            RenderBlock (anonymous) at (0,12) size 10x16
               RenderInline {mi} at (0,0) size 10x16
                 RenderText {#text} at (0,0) size 10x16
                   text run at (0,0) width 10: "B"
@@ -22,11 +22,11 @@ layer at (0,0) size 800x285
           text run at (0,9) width 36: "over: "
         RenderMathMLMath {math} at (36,0) size 12x28
           RenderMathMLUnderOver {mover} at (1,0) size 10x28
-            RenderMathMLBlock (anonymous) at (0,0) size 10x16
+            RenderBlock (anonymous) at (0,0) size 10x16
               RenderInline {mi} at (0,0) size 5x12
                 RenderText {#text} at (0,3) size 5x12
                   text run at (0,3) width 5: "y"
-            RenderMathMLBlock (anonymous) at (0,12) size 10x16
+            RenderBlock (anonymous) at (0,12) size 10x16
               RenderInline {mi} at (0,0) size 10x16
                 RenderText {#text} at (0,0) size 10x16
                   text run at (0,0) width 10: "B"
@@ -36,11 +36,11 @@ layer at (0,0) size 800x285
           text run at (0,15) width 36: "over: "
         RenderMathMLMath {math} at (36,0) size 17x36
           RenderMathMLUnderOver {mover} at (1,0) size 15x36
-            RenderMathMLBlock (anonymous) at (0,0) size 15x16
+            RenderBlock (anonymous) at (0,0) size 15x16
               RenderInline {mi} at (0,0) size 5x12
                 RenderText {#text} at (0,3) size 5x12
                   text run at (0,3) width 5: "y"
-            RenderMathMLBlock (anonymous) at (0,12) size 15x24
+            RenderBlock (anonymous) at (0,12) size 15x24
               RenderInline {mi} at (0,0) size 15x24
                 RenderText {#text} at (0,0) size 15x24
                   text run at (0,0) width 15: "B"
@@ -50,11 +50,11 @@ layer at (0,0) size 800x285
           text run at (0,15) width 36: "over: "
         RenderMathMLMath {math} at (36,0) size 19x36
           RenderMathMLUnderOver {mover} at (1,0) size 17x36
-            RenderMathMLBlock (anonymous) at (0,0) size 17x16
+            RenderBlock (anonymous) at (0,0) size 17x16
               RenderInline {mi} at (0,0) size 5x12
                 RenderText {#text} at (0,3) size 5x12
                   text run at (0,3) width 5: "y"
-            RenderMathMLBlock (anonymous) at (0,12) size 17x24
+            RenderBlock (anonymous) at (0,12) size 17x24
               RenderMathMLOperator {mo} at (0,0) size 17x24
                 RenderMathMLBlock {mo} at (0,0) size 17x24
                   RenderText {mo} at (0,0) size 17x24
@@ -65,11 +65,11 @@ layer at (0,0) size 800x285
           text run at (0,26) width 36: "over: "
         RenderMathMLMath {math} at (36,0) size 52x61
           RenderMathMLUnderOver {mover} at (1,0) size 10x61
-            RenderMathMLBlock (anonymous) at (0,0) size 10x16
+            RenderBlock (anonymous) at (0,0) size 10x16
               RenderInline {mi} at (0,0) size 5x12
                 RenderText {#text} at (0,3) size 5x12
                   text run at (0,3) width 5: "y"
-            RenderMathMLBlock (anonymous) at (0,12) size 10x49
+            RenderBlock (anonymous) at (0,12) size 10x49
               RenderMathMLOperator {mo} at (0,0) size 10x49
           RenderBlock {div} at (11,0) size 40x40
         RenderText {#text} at (0,0) size 0x0

@@ -122,16 +122,16 @@ layer at (0,0) size 800x109
                       text run at (0,0) width 6: "a"
             RenderMathMLRow {mrow} at (17,7) size 21x44
               RenderMathMLUnderOver {munderover} at (0,0) size 17x44
-                RenderMathMLBlock (anonymous) at (0,0) size 17x16
+                RenderBlock (anonymous) at (0,0) size 17x16
                   RenderInline {mi} at (0,0) size 7x12
                     RenderText {#text} at (5,3) size 7x12
                       text run at (5,3) width 7: "n"
-                RenderMathMLBlock (anonymous) at (0,12) size 17x16
+                RenderBlock (anonymous) at (0,12) size 17x16
                   RenderMathMLOperator {mo} at (3,0) size 11x16
                     RenderMathMLBlock {mo} at (0,0) size 11x16
                       RenderText {mo} at (0,0) size 11x16
                         text run at (0,0) width 11: "\x{2211}"
-                RenderMathMLBlock (anonymous) at (0,28) size 17x16
+                RenderBlock (anonymous) at (0,28) size 17x16
                   RenderMathMLRow {mrow} at (0,3) size 17x12
                     RenderInline {mi} at (0,0) size 3x12
                       RenderText {#text} at (0,0) size 3x12
