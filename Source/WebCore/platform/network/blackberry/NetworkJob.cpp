@@ -248,29 +248,32 @@ void NetworkJob::notifyWMLOverride()
         handleNotifyWMLOverride();
 }
 
-void NetworkJob::notifyHeaderReceived(const char* key, const char* value)
+void NetworkJob::notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::HeaderList& headers)
 {
-    if (shouldDeferLoading())
-        m_deferredData.deferHeaderReceived(key, value);
-    else {
-        String keyString(key);
-        String valueString;
-        if (equalIgnoringCase(keyString, "Location")) {
-            // Location, like all headers, is supposed to be Latin-1. But some sites (wikipedia) send it in UTF-8.
-            // All byte strings that are valid UTF-8 are also valid Latin-1 (although outside ASCII, the meaning will
-            // differ), but the reverse isn't true. So try UTF-8 first and fall back to Latin-1 if it's invalid.
-            // (High Latin-1 should be url-encoded anyway.)
-            //
-            // FIXME: maybe we should do this with other headers?
-            // Skip it for now - we don't want to rewrite random bytes unless we're sure. (Definitely don't want to
-            // rewrite cookies, for instance.) Needs more investigation.
-            valueString = String::fromUTF8(value);
-            if (valueString.isNull())
-                valueString = value;
-        } else
-            valueString = value;
+    BlackBerry::Platform::NetworkRequest::HeaderList::const_iterator endIt = headers.end();
+    for (BlackBerry::Platform::NetworkRequest::HeaderList::const_iterator it = headers.begin(); it != endIt; ++it) {
+        if (shouldDeferLoading())
+            m_deferredData.deferHeaderReceived(it->first.c_str(), it->second.c_str());
+        else {
+            String keyString(it->first.c_str());
+            String valueString;
+            if (equalIgnoringCase(keyString, "Location")) {
+                // Location, like all headers, is supposed to be Latin-1. But some sites (wikipedia) send it in UTF-8.
+                // All byte strings that are valid UTF-8 are also valid Latin-1 (although outside ASCII, the meaning will
+                // differ), but the reverse isn't true. So try UTF-8 first and fall back to Latin-1 if it's invalid.
+                // (High Latin-1 should be url-encoded anyway.)
+                //
+                // FIXME: maybe we should do this with other headers?
+                // Skip it for now - we don't want to rewrite random bytes unless we're sure. (Definitely don't want to
+                // rewrite cookies, for instance.) Needs more investigation.
+                valueString = String::fromUTF8(it->second.c_str());
+                if (valueString.isNull())
+                    valueString = it->second.c_str();
+            } else
+                valueString = it->second.c_str();
 
-        handleNotifyHeaderReceived(keyString, valueString);
+            handleNotifyHeaderReceived(keyString, valueString);
+        }
     }
 }
 

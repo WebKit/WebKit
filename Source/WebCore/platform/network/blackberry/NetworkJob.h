@@ -69,7 +69,7 @@ public:
     void handleNotifyStatusReceived(int status, const String& message);
     virtual void notifyWMLOverride();
     void handleNotifyWMLOverride() { m_response.setIsWML(true); }
-    virtual void notifyHeaderReceived(const char* key, const char* value);
+    virtual void notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::HeaderList& headers);
     virtual void notifyMultipartHeaderReceived(const char* key, const char* value);
     // Exists only to resolve ambiguity between char* and String parameters
     void notifyStringHeaderReceived(const String& key, const String& value);
