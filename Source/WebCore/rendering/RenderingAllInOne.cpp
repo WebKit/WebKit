@@ -74,6 +74,7 @@
 #include "RenderMediaControls.cpp"
 #include "RenderMenuList.cpp"
 #include "RenderMeter.cpp"
+#include "RenderMultiColumnBlock.cpp"
 #include "RenderObject.cpp"
 #include "RenderObjectChildList.cpp"
 #include "RenderPart.cpp"
