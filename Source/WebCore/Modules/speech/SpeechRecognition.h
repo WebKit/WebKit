@@ -47,6 +47,7 @@ class SpeechRecognitionResultList;
 class SpeechRecognition : public RefCounted<SpeechRecognition>, public ActiveDOMObject, public EventTarget {
 public:
     static PassRefPtr<SpeechRecognition> create(ScriptExecutionContext*);
+    ~SpeechRecognition();
 
     PassRefPtr<SpeechGrammarList> grammars() { return m_grammars; }
     void setGrammars(PassRefPtr<SpeechGrammarList> grammars) { m_grammars = grammars; }
@@ -99,7 +100,7 @@ private:
     friend class RefCounted<SpeechRecognition>;
 
     SpeechRecognition(ScriptExecutionContext*);
-    ~SpeechRecognition();
+
 
     // EventTarget
     virtual void refEventTarget() OVERRIDE { ref(); }
