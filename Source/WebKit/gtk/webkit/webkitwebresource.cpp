@@ -154,7 +154,7 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* webResourceCl
             G_SIGNAL_RUN_LAST,
             0,
             0, 0,
-            g_cclosure_marshal_VOID__OBJECT,
+            g_cclosure_marshal_VOID__POINTER,
             G_TYPE_NONE, 1,
             G_TYPE_POINTER);
 
