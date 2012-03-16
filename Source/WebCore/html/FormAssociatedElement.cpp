@@ -76,23 +76,7 @@ void FormAssociatedElement::removedFromDocument()
 
 void FormAssociatedElement::insertedIntoTree()
 {
-    HTMLElement* element = toHTMLElement(this);
-    const AtomicString& formId = element->fastGetAttribute(formAttr);
-    if (!formId.isNull()) {
-        HTMLFormElement* newForm = 0;
-        Element* newFormCandidate = element->treeScope()->getElementById(formId);
-        if (newFormCandidate && newFormCandidate->hasTagName(formTag))
-            newForm = static_cast<HTMLFormElement*>(newFormCandidate);
-        setForm(newForm);
-        return;
-    }
-    if (!m_form) {
-        // This handles the case of a new form element being created by
-        // JavaScript and inserted inside a form.  In the case of the parser
-        // setting a form, we will already have a non-null value for m_form,
-        // and so we don't need to do anything.
-        setForm(element->findFormAncestor());
-    }
+    resetFormOwner();
 }
 
 static inline Node* findRoot(Node* n)

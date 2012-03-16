@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<form id=myform></form>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+description('Inserting a form control with a form attribute into a non-document tree should not cause it to get a form owner.');
+
+var input = document.createElement('input');
+input.setAttribute('form', 'myform');
+shouldBeNull('input.form');
+
+var div = document.createElement('div');
+div.appendChild(input);
+shouldBeNull('input.form');
+</script>
+<script src="../js/resources/js-test-post.js"></script>
