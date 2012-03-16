@@ -1,3 +1,20 @@
+2012-03-16  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Quads that become fully opaque after culling should not use blending
+        https://bugs.webkit.org/show_bug.cgi?id=81235
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        (WebKit::BlendStateCheckLayer::appendQuads):
+        (WebKit::BlendStateCheckLayer::setQuadRect):
+        (WebKit::BlendStateCheckLayer::setQuadVisibleRect):
+        (WebKit::BlendStateCheckLayer::setOpaqueContents):
+        (WebKit::BlendStateCheckLayer::setOpaqueContentRect):
+        (WebKit::BlendStateCheckLayer::BlendStateCheckLayer):
+        (BlendStateCheckLayer):
+        (WebKit::TEST_F):
+
 2012-03-15  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: SpeechRecognition, Controller and Client
