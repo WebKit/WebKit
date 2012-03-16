@@ -1,3 +1,28 @@
+2012-03-16  Michael Saboff  <msaboff@apple.com>
+
+        Improve diagnostic benefit of JSGlobalData::m_isInitializingObject
+        https://bugs.webkit.org/show_bug.cgi?id=81244
+
+        Rubber stamped by Filip Pizlo.
+
+        Changed type and name of JSGlobalData::m_isInitializingObject to
+        ClassInfo* and m_initializingObjectClass.
+        Changed JSGlobalData::setInitializingObject to
+        JSGlobalData::setInitializingObjectClass.  This pointer can be used within 
+        the debugger to determine what type of object is being initialized.
+        
+        * runtime/JSCell.h:
+        (JSC::JSCell::finishCreation):
+        (JSC::allocateCell):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        (JSC::JSGlobalData::isInitializingObject):
+        (JSC::JSGlobalData::setInitializingObjectClass):
+        * runtime/Structure.h:
+        (JSC::JSCell::finishCreation):
+
 2012-03-16  Mark Rowe  <mrowe@apple.com>
 
         Build fix. Do not preserve owner and group information when installing the WTF headers.

@@ -161,7 +161,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , m_timeoutCount(512)
 #endif
 #if ENABLE(GC_VALIDATION)
-    , m_isInitializingObject(false)
+    , m_initializingObjectClass(0)
 #endif
     , m_inDefineOwnProperty(false)
 {

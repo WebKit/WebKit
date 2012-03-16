@@ -406,7 +406,7 @@ namespace JSC {
     {
 #if ENABLE(GC_VALIDATION)
         ASSERT(globalData.isInitializingObject());
-        globalData.setInitializingObject(false);
+        globalData.setInitializingObjectClass(0);
         if (structure)
 #endif
             m_structure.setEarlyValue(globalData, this, structure);

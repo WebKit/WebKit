@@ -178,7 +178,7 @@ namespace JSC {
     {
 #if ENABLE(GC_VALIDATION)
         ASSERT(globalData.isInitializingObject());
-        globalData.setInitializingObject(false);
+        globalData.setInitializingObjectClass(0);
 #else
         UNUSED_PARAM(globalData);
 #endif
@@ -330,7 +330,7 @@ namespace JSC {
 #if ENABLE(GC_VALIDATION)
         ASSERT(sizeof(T) == T::s_info.cellSize);
         ASSERT(!heap.globalData()->isInitializingObject());
-        heap.globalData()->setInitializingObject(true);
+        heap.globalData()->setInitializingObjectClass(&T::s_info);
 #endif
         JSCell* result = 0;
         if (NeedsDestructor<T>::value)

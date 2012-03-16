@@ -337,7 +337,7 @@ namespace JSC {
 
 #if ENABLE(GC_VALIDATION)
         bool isInitializingObject() const; 
-        void setInitializingObject(bool);
+        void setInitializingObjectClass(const ClassInfo*);
 #endif
 
 #if CPU(X86) && ENABLE(JIT)
@@ -373,7 +373,7 @@ namespace JSC {
         bool m_canUseJIT;
 #endif
 #if ENABLE(GC_VALIDATION)
-        bool m_isInitializingObject;
+        const ClassInfo* m_initializingObjectClass;
 #endif
         bool m_inDefineOwnProperty;
 
@@ -391,12 +391,12 @@ namespace JSC {
 #if ENABLE(GC_VALIDATION)
     inline bool JSGlobalData::isInitializingObject() const
     {
-        return m_isInitializingObject;
+        return !!m_initializingObjectClass;
     }
 
-    inline void JSGlobalData::setInitializingObject(bool initializingObject)
+    inline void JSGlobalData::setInitializingObjectClass(const ClassInfo* initializingObjectClass)
     {
-        m_isInitializingObject = initializingObject;
+        m_initializingObjectClass = initializingObjectClass;
     }
 #endif
 
