@@ -1,3 +1,31 @@
+2012-03-16  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Can not open certain links from bridge applications
+        https://bugs.webkit.org/show_bug.cgi?id=81197
+
+        Reviewed by Rob Buis.
+
+        Currently, the engine asks the client to handle some type of requests externally.
+        But WebPageClient::handleStringPattern is not yet implemented and exposed to
+        the client. Before that, we still need to give the client a chance to decide
+        how to handle requests such as 'mailto:'.
+
+        To address this problem, r108763 introduced a change that ask the client to
+        decide how to handle the navigation in dispatchDecidePolicyForNewWindowAction().
+        This is not intuitive and will bring troubles, because this navigation will
+        happen in the new page. So the new page client is to decide how to handle
+        the navigation, not the old one.
+
+        This patch reverts r108763 and skips calling WebPageClient::handleStringPattern
+        since it's not implemented.
+
+        This way the new window action will continue, and the logic in
+        dispatchDecidePolicyForNavigationAction() will handle the navigation correctly.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientBlackBerry::decidePolicyForExternalLoad):
+
 2012-03-16  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Crash when going back from an xhtml document containing <img>
