@@ -877,6 +877,8 @@ WebInspector.DebuggerPresentationModel.Linkifier.prototype = {
      */
     linkifyRawLocation: function(rawLocation, classes)
     {
+        if (!WebInspector.debuggerModel.scriptForSourceID(rawLocation.scriptId))
+            return null;
         var anchor = WebInspector.linkifyURLAsNode("", "", classes, false);
         var liveLocation = this._model.createLiveLocation(rawLocation, this._updateAnchor.bind(this, anchor));
         liveLocation.init();
