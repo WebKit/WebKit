@@ -4881,7 +4881,10 @@ int RenderBlock::columnGap() const
 }
 
 void RenderBlock::calcColumnWidth()
-{    
+{   
+    if (document()->regionBasedColumnsEnabled())
+        return;
+
     // Calculate our column width and column count.
     // FIXME: Can overflow on fast/block/float/float-not-removed-from-next-sibling4.html, see https://bugs.webkit.org/show_bug.cgi?id=68744
     unsigned desiredColumnCount = 1;
@@ -5997,7 +6000,7 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
     RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     ASSERT(firstLetter->isFloating() || firstLetter->isInline());
 
-    if (Node::diff(firstLetter->style(), pseudoStyle) == Node::Detach) {
+    if (Node::diff(firstLetter->style(), pseudoStyle, document()) == Node::Detach) {
         // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
         RenderObject* newFirstLetter;
         if (pseudoStyle->display() == INLINE)

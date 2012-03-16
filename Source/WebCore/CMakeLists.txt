@@ -1323,6 +1323,7 @@ SET(WebCore_SOURCES
     rendering/RenderMarquee.cpp
     rendering/RenderMenuList.cpp
     rendering/RenderMeter.cpp
+    rendering/RenderMultiColumnBlock.cpp
     rendering/RenderObject.cpp
     rendering/RenderObjectChildList.cpp
     rendering/RenderPart.cpp

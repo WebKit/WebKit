@@ -4634,6 +4634,8 @@
             'rendering/RenderMenuList.h',
             'rendering/RenderMeter.cpp',
             'rendering/RenderMeter.h',
+            'rendering/RenderMultiColumnBlock.cpp',
+            'rendering/RenderMultiColumnBlock.h',
             'rendering/RenderObject.cpp',
             'rendering/RenderObjectChildList.cpp',
             'rendering/RenderPart.cpp',

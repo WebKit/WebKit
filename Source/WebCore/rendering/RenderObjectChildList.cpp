@@ -472,7 +472,7 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
     // If we don't want generated content any longer, or if we have generated content, but it's no longer
     // identical to the new content data we want to build render objects for, then we nuke all
     // of the old generated content.
-    if (oldContentPresent && (!newContentWanted || Node::diff(child->style(), pseudoElementStyle) == Node::Detach)) {
+    if (oldContentPresent && (!newContentWanted || Node::diff(child->style(), pseudoElementStyle, owner->document()) == Node::Detach)) {
         // Nuke the child. 
         if (child->style()->styleType() == type) {
             oldContentPresent = false;

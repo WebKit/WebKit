@@ -1063,7 +1063,7 @@ void Element::recalcStyle(StyleChange change)
     }
     if (hasParentStyle && (change >= Inherit || needsStyleRecalc())) {
         RefPtr<RenderStyle> newStyle = styleForRenderer();
-        StyleChange ch = diff(currentStyle.get(), newStyle.get());
+        StyleChange ch = Node::diff(currentStyle.get(), newStyle.get(), document());
         if (ch == Detach || !currentStyle) {
             // FIXME: The style gets computed twice by calling attach. We could do better if we passed the style along.
             reattach();

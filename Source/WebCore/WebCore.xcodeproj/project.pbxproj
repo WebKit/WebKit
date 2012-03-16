@@ -5207,6 +5207,7 @@
 		BC3C39B60C0D3D8D005F4D7A /* JSMediaList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */; };
 		BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */; };
 		BC4368E80C226E32005EFB5F /* Rect.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4368E70C226E32005EFB5F /* Rect.h */; };
+		BC45827F151299C10061A556 /* RenderMultiColumnBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC45827E151299C10061A556 /* RenderMultiColumnBlock.cpp */; };
 		BC46C1EE0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */; };
 		BC46C1FA0C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1F00C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp */; };
 		BC46C1FB0C0DDC8F0020CFC3 /* JSCSSCharsetRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46C1F10C0DDC8F0020CFC3 /* JSCSSCharsetRule.h */; };
@@ -5462,6 +5463,7 @@
 		BCC065890F3CE2A700CD2D87 /* JSClientRectList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC065850F3CE2A700CD2D87 /* JSClientRectList.cpp */; };
 		BCC0658A0F3CE2A700CD2D87 /* JSClientRectList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC065860F3CE2A700CD2D87 /* JSClientRectList.h */; };
 		BCC438780E886CC700533DD5 /* JSHTMLInputElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC438770E886CC700533DD5 /* JSHTMLInputElementCustom.cpp */; };
+		BCC52FD6151298D2003F914B /* RenderMultiColumnBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC52FD5151298D1003F914B /* RenderMultiColumnBlock.h */; };
 		BCC573350D695BBE006EF517 /* DOMProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC573330D695BBE006EF517 /* DOMProgressEvent.h */; };
 		BCC573360D695BBE006EF517 /* DOMProgressEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC573340D695BBE006EF517 /* DOMProgressEvent.mm */; };
 		BCC573380D695BD7006EF517 /* DOMProgressEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC573370D695BD7006EF517 /* DOMProgressEventInternal.h */; };
@@ -12225,6 +12227,7 @@
 		BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaList.cpp; sourceTree = "<group>"; };
 		BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSMediaList.h; sourceTree = "<group>"; };
 		BC4368E70C226E32005EFB5F /* Rect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Rect.h; sourceTree = "<group>"; };
+		BC45827E151299C10061A556 /* RenderMultiColumnBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMultiColumnBlock.cpp; sourceTree = "<group>"; };
 		BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRuleCustom.cpp; sourceTree = "<group>"; };
 		BC46C1F00C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSCharsetRule.cpp; sourceTree = "<group>"; };
 		BC46C1F10C0DDC8F0020CFC3 /* JSCSSCharsetRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSCharsetRule.h; sourceTree = "<group>"; };
@@ -12501,6 +12504,7 @@
 		BCC065850F3CE2A700CD2D87 /* JSClientRectList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClientRectList.cpp; sourceTree = "<group>"; };
 		BCC065860F3CE2A700CD2D87 /* JSClientRectList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSClientRectList.h; sourceTree = "<group>"; };
 		BCC438770E886CC700533DD5 /* JSHTMLInputElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLInputElementCustom.cpp; sourceTree = "<group>"; };
+		BCC52FD5151298D1003F914B /* RenderMultiColumnBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMultiColumnBlock.h; sourceTree = "<group>"; };
 		BCC573330D695BBE006EF517 /* DOMProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMProgressEvent.h; sourceTree = "<group>"; };
 		BCC573340D695BBE006EF517 /* DOMProgressEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMProgressEvent.mm; sourceTree = "<group>"; };
 		BCC573370D695BD7006EF517 /* DOMProgressEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMProgressEventInternal.h; sourceTree = "<group>"; };
@@ -20676,6 +20680,8 @@
 				ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */,
 				A454424C119B3687009BE912 /* RenderMeter.cpp */,
 				A454424D119B3687009BE912 /* RenderMeter.h */,
+				BCC52FD5151298D1003F914B /* RenderMultiColumnBlock.h */,
+				BC45827E151299C10061A556 /* RenderMultiColumnBlock.cpp */,
 				BCEA4840097D93020094C9E4 /* RenderObject.cpp */,
 				BCEA4841097D93020094C9E4 /* RenderObject.h */,
 				BC60EFB60F33A0E700812A93 /* RenderObjectChildList.cpp */,
@@ -24583,6 +24589,7 @@
 				E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */,
 				450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */,
 				C5B4C24D1509236C00A6EF37 /* WebCoreNSURLExtras.h in Headers */,
+				BCC52FD6151298D2003F914B /* RenderMultiColumnBlock.h in Headers */,
 				A886CF771512301700D279F4 /* DOMWindowNotifications.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -27565,6 +27572,7 @@
 				C5B4C24E1509236C00A6EF37 /* WebCoreNSURLExtras.mm in Sources */,
 				9B2B7AC11509850A008932CC /* MicroDataItemValue.cpp in Sources */,
 				7157F062150B6564006EAABD /* SVGAnimatedTransformList.cpp in Sources */,
+				BC45827F151299C10061A556 /* RenderMultiColumnBlock.cpp in Sources */,
 				A886CF761512301700D279F4 /* DOMWindowNotifications.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -3720,6 +3720,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderMenuList.h \
 	Source/WebCore/rendering/RenderMeter.cpp \
 	Source/WebCore/rendering/RenderMeter.h \
+    Source/WebCore/rendering/RenderMultiColumnBlock.cpp \
+    Source/WebCore/rendering/RenderMultiColumnBlock.h \
 	Source/WebCore/rendering/RenderObjectChildList.cpp \
 	Source/WebCore/rendering/RenderObjectChildList.h \
 	Source/WebCore/rendering/RenderObject.cpp \

@@ -85,6 +85,7 @@
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
 #include "SelectorQuery.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include "ShadowTree.h"
 #include "StaticNodeList.h"
@@ -303,7 +304,7 @@ void Node::stopIgnoringLeaks()
 #endif
 }
 
-Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2)
+Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2, Document* doc)
 {
     StyleChange ch = NoInherit;
     EDisplay display1 = s1 ? s1->display() : NONE;
@@ -316,7 +317,12 @@ Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2)
     bool colSpan1 = s1 && s1->columnSpan();
     bool colSpan2 = s2 && s2->columnSpan();
     
-    if (display1 != display2 || fl1 != fl2 || colSpan1 != colSpan2 || (s1 && s2 && !s1->contentDataEquivalent(s2)))
+    bool specifiesColumns1 = s1 && (!s1->hasAutoColumnCount() || !s1->hasAutoColumnWidth());
+    bool specifiesColumns2 = s2 && (!s2->hasAutoColumnCount() || !s2->hasAutoColumnWidth());
+
+    if (display1 != display2 || fl1 != fl2 || colSpan1 != colSpan2 
+        || (specifiesColumns1 != specifiesColumns2 && doc->settings()->regionBasedColumnsEnabled())
+        || (s1 && s2 && !s1->contentDataEquivalent(s2)))
         ch = Detach;
     else if (!s1 || !s2)
         ch = Inherit;

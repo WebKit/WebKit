@@ -354,6 +354,8 @@ public:
     bool cssRegionsEnabled() const;
     PassRefPtr<WebKitNamedFlow> webkitGetFlowByName(const String&);
 
+    bool regionBasedColumnsEnabled() const;
+
     /**
      * Retrieve all nodes that intersect a rect in the window's document, until it is fully enclosed by
      * the boundaries of a node.

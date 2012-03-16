@@ -1016,6 +1016,11 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool cre
     return e.release();
 }
 
+bool Document::regionBasedColumnsEnabled() const
+{
+    return settings() && settings()->regionBasedColumnsEnabled(); 
+}
+
 bool Document::cssRegionsEnabled() const
 {
     return settings() && settings()->cssRegionsEnabled(); 
@@ -1610,7 +1615,7 @@ void Document::recalcStyle(StyleChange change)
         m_hasNodesWithPlaceholderStyle = false;
         
         RefPtr<RenderStyle> documentStyle = CSSStyleSelector::styleForDocument(this, m_styleSelector ? m_styleSelector->fontSelector() : 0);
-        StyleChange ch = diff(documentStyle.get(), renderer()->style());
+        StyleChange ch = Node::diff(documentStyle.get(), renderer()->style(), this);
         if (ch != NoChange)
             renderer()->setStyle(documentStyle.release());
     }
