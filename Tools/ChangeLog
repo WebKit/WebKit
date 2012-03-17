@@ -1,5 +1,16 @@
 2012-03-17  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
+        Add a dependencies installation step for EFL to buildbot master.cfg
+        https://bugs.webkit.org/show_bug.cgi?id=81337
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (InstallEflDependencies):
+        (Factory.__init__):
+
+2012-03-17  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
         [EFL] Prefixing run-webkit-tests with run-with-jhbuild
         https://bugs.webkit.org/show_bug.cgi?id=80025
 
