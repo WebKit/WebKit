@@ -61,8 +61,7 @@ private:
     unsigned m_textureId;
     bool m_flipped;
     FloatRect m_uvRect;
-    int m_ioSurfaceWidth;
-    int m_ioSurfaceHeight;
+    IntSize m_ioSurfaceSize;
     uint32_t m_ioSurfaceId;
 };
 

@@ -29,10 +29,7 @@
 
 #include "PluginLayerChromium.h"
 
-#include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCPluginLayerImpl.h"
+#include "cc/CCTextureLayerImpl.h"
 
 namespace WebCore {
 
@@ -46,15 +43,13 @@ PluginLayerChromium::PluginLayerChromium()
     , m_textureId(0)
     , m_flipped(true)
     , m_uvRect(0, 0, 1, 1)
-    , m_ioSurfaceWidth(0)
-    , m_ioSurfaceHeight(0)
     , m_ioSurfaceId(0)
 {
 }
 
 PassOwnPtr<CCLayerImpl> PluginLayerChromium::createCCLayerImpl()
 {
-    return CCPluginLayerImpl::create(m_layerId);
+    return CCTextureLayerImpl::create(m_layerId);
 }
 
 void PluginLayerChromium::setTextureId(unsigned id)
@@ -77,8 +72,7 @@ void PluginLayerChromium::setUVRect(const FloatRect& rect)
 
 void PluginLayerChromium::setIOSurfaceProperties(int width, int height, uint32_t ioSurfaceId)
 {
-    m_ioSurfaceWidth = width;
-    m_ioSurfaceHeight = height;
+    m_ioSurfaceSize = IntSize(width, height);
     m_ioSurfaceId = ioSurfaceId;
     setNeedsCommit();
 }
@@ -92,11 +86,11 @@ void PluginLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 {
     LayerChromium::pushPropertiesTo(layer);
 
-    CCPluginLayerImpl* pluginLayer = static_cast<CCPluginLayerImpl*>(layer);
-    pluginLayer->setTextureId(m_textureId);
-    pluginLayer->setFlipped(m_flipped);
-    pluginLayer->setUVRect(m_uvRect);
-    pluginLayer->setIOSurfaceProperties(m_ioSurfaceWidth, m_ioSurfaceHeight, m_ioSurfaceId);
+    CCTextureLayerImpl* textureLayer = static_cast<CCTextureLayerImpl*>(layer);
+    textureLayer->setTextureId(m_textureId);
+    textureLayer->setFlipped(m_flipped);
+    textureLayer->setUVRect(m_uvRect);
+    textureLayer->setIOSurfaceProperties(m_ioSurfaceSize, m_ioSurfaceId);
 }
 
 }

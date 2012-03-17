@@ -34,8 +34,8 @@
 #include "TextureManager.h"
 #include "WebCompositor.h"
 #include "WebKit.h"
-#include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCSingleThreadProxy.h"
+#include "cc/CCTextureLayerImpl.h"
 #include "cc/CCTextureUpdater.h"
 #include "platform/WebKitPlatformSupport.h"
 #include "platform/WebThread.h"
@@ -162,15 +162,15 @@ protected:
             DebugScopedSetImplThread scopedImplThread;
 
             OwnPtr<CCLayerImpl> layerImpl = canvas->createCCLayerImpl();
-            EXPECT_EQ(0u, static_cast<CCCanvasLayerImpl*>(layerImpl.get())->textureId());
+            EXPECT_EQ(0u, static_cast<CCTextureLayerImpl*>(layerImpl.get())->textureId());
 
             canvas->updateCompositorResources(implContext.get(), updater);
             canvas->pushPropertiesTo(layerImpl.get());
 
             if (threaded)
-                EXPECT_EQ(frontTextureId, static_cast<CCCanvasLayerImpl*>(layerImpl.get())->textureId());
+                EXPECT_EQ(frontTextureId, static_cast<CCTextureLayerImpl*>(layerImpl.get())->textureId());
             else
-                EXPECT_EQ(backTextureId, static_cast<CCCanvasLayerImpl*>(layerImpl.get())->textureId());
+                EXPECT_EQ(backTextureId, static_cast<CCTextureLayerImpl*>(layerImpl.get())->textureId());
         }
         canvas.clear();
         layerTreeHost->contentsTextureManager()->reduceMemoryToLimit(0);

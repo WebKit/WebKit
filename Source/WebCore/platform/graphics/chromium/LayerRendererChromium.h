@@ -40,11 +40,10 @@
 #include "LayerChromium.h"
 #include "TrackingTextureAllocator.h"
 #include "VideoLayerChromium.h"
-#include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCDrawQuad.h"
 #include "cc/CCHeadsUpDisplay.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCPluginLayerImpl.h"
+#include "cc/CCTextureLayerImpl.h"
 #include "cc/CCVideoLayerImpl.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -57,6 +56,7 @@ namespace WebCore {
 class CCHeadsUpDisplay;
 class CCLayerImpl;
 class CCRenderPass;
+class CCTextureDrawQuad;
 class GeometryBinding;
 class GraphicsContext3D;
 class TrackingTextureAllocator;
@@ -121,17 +121,17 @@ public:
     const CCRenderSurface::ProgramAA* renderSurfaceProgramAA();
     const CCRenderSurface::MaskProgram* renderSurfaceMaskProgram();
     const CCRenderSurface::MaskProgramAA* renderSurfaceMaskProgramAA();
+    const CCTextureLayerImpl::ProgramFlip* textureLayerProgramFlip();
+    const CCTextureLayerImpl::ProgramStretch* textureLayerProgramStretch();
+    const CCTextureLayerImpl::ProgramStretchFlip* textureLayerProgramStretchFlip();
+    const CCTextureLayerImpl::TexRectProgram* textureLayerTexRectProgram();
+    const CCTextureLayerImpl::TexRectProgramFlip* textureLayerTexRectProgramFlip();
     const CCTiledLayerImpl::Program* tilerProgram();
     const CCTiledLayerImpl::ProgramOpaque* tilerProgramOpaque();
     const CCTiledLayerImpl::ProgramAA* tilerProgramAA();
     const CCTiledLayerImpl::ProgramSwizzle* tilerProgramSwizzle();
     const CCTiledLayerImpl::ProgramSwizzleOpaque* tilerProgramSwizzleOpaque();
     const CCTiledLayerImpl::ProgramSwizzleAA* tilerProgramSwizzleAA();
-    const CCCanvasLayerImpl::Program* canvasLayerProgram();
-    const CCPluginLayerImpl::Program* pluginLayerProgram();
-    const CCPluginLayerImpl::ProgramFlip* pluginLayerProgramFlip();
-    const CCPluginLayerImpl::TexRectProgram* pluginLayerTexRectProgram();
-    const CCPluginLayerImpl::TexRectProgramFlip* pluginLayerTexRectProgramFlip();
     const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram();
     const CCVideoLayerImpl::YUVProgram* videoLayerYUVProgram();
     const CCVideoLayerImpl::NativeTextureProgram* videoLayerNativeTextureProgram();
@@ -168,10 +168,9 @@ private:
     void drawDebugBorderQuad(const CCDebugBorderDrawQuad*);
     void drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*);
     void drawSolidColorQuad(const CCSolidColorDrawQuad*);
+    void drawTextureQuad(const CCTextureDrawQuad*);
     void drawTileQuad(const CCTileDrawQuad*);
-    void drawCanvasQuad(const CCCanvasDrawQuad*);
     void drawVideoQuad(const CCVideoDrawQuad*);
-    void drawPluginQuad(const CCPluginDrawQuad*);
 
     ManagedTexture* getOffscreenLayerTexture();
     void copyPlaneToTexture(const CCVideoDrawQuad*, const void* plane, int index);
@@ -222,17 +221,17 @@ private:
     OwnPtr<GeometryBinding> m_sharedGeometry;
     OwnPtr<LayerChromium::BorderProgram> m_borderProgram;
     OwnPtr<CCHeadsUpDisplay::Program> m_headsUpDisplayProgram;
+    OwnPtr<CCTextureLayerImpl::ProgramFlip> m_textureLayerProgramFlip;
+    OwnPtr<CCTextureLayerImpl::ProgramStretch> m_textureLayerProgramStretch;
+    OwnPtr<CCTextureLayerImpl::ProgramStretchFlip> m_textureLayerProgramStretchFlip;
+    OwnPtr<CCTextureLayerImpl::TexRectProgram> m_textureLayerTexRectProgram;
+    OwnPtr<CCTextureLayerImpl::TexRectProgramFlip> m_textureLayerTexRectProgramFlip;
     OwnPtr<CCTiledLayerImpl::Program> m_tilerProgram;
     OwnPtr<CCTiledLayerImpl::ProgramOpaque> m_tilerProgramOpaque;
     OwnPtr<CCTiledLayerImpl::ProgramSwizzle> m_tilerProgramSwizzle;
     OwnPtr<CCTiledLayerImpl::ProgramSwizzleOpaque> m_tilerProgramSwizzleOpaque;
     OwnPtr<CCTiledLayerImpl::ProgramAA> m_tilerProgramAA;
     OwnPtr<CCTiledLayerImpl::ProgramSwizzleAA> m_tilerProgramSwizzleAA;
-    OwnPtr<CCCanvasLayerImpl::Program> m_canvasLayerProgram;
-    OwnPtr<CCPluginLayerImpl::Program> m_pluginLayerProgram;
-    OwnPtr<CCPluginLayerImpl::ProgramFlip> m_pluginLayerProgramFlip;
-    OwnPtr<CCPluginLayerImpl::TexRectProgram> m_pluginLayerTexRectProgram;
-    OwnPtr<CCPluginLayerImpl::TexRectProgramFlip> m_pluginLayerTexRectProgramFlip;
     OwnPtr<CCRenderSurface::MaskProgram> m_renderSurfaceMaskProgram;
     OwnPtr<CCRenderSurface::Program> m_renderSurfaceProgram;
     OwnPtr<CCRenderSurface::MaskProgramAA> m_renderSurfaceMaskProgramAA;

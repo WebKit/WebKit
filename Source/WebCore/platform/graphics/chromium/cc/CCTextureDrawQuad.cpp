@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,25 @@
 
 #include "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
-
-#include "cc/CCCanvasLayerImpl.h"
-
-#include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
-#include "cc/CCCanvasDrawQuad.h"
-#include "cc/CCProxy.h"
-#include "cc/CCQuadCuller.h"
-#include <wtf/text/WTFString.h>
+#include "cc/CCTextureDrawQuad.h"
 
 namespace WebCore {
 
-CCCanvasLayerImpl::CCCanvasLayerImpl(int id)
-    : CCLayerImpl(id)
-    , m_textureId(0)
-    , m_hasAlpha(true)
-    , m_premultipliedAlpha(true)
+PassOwnPtr<CCTextureDrawQuad> CCTextureDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool hasAlpha, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
+{
+    return adoptPtr(new CCTextureDrawQuad(sharedQuadState, quadRect, textureId, hasAlpha, premultipliedAlpha, uvRect, flipped, ioSurfaceSize, ioSurfaceTextureId));
+}
+
+CCTextureDrawQuad::CCTextureDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, bool hasAlpha, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::TextureContent, quadRect)
+    , m_textureId(textureId)
+    , m_hasAlpha(hasAlpha)
+    , m_premultipliedAlpha(premultipliedAlpha)
+    , m_uvRect(uvRect)
+    , m_flipped(flipped)
+    , m_ioSurfaceSize(ioSurfaceSize)
+    , m_ioSurfaceTextureId(ioSurfaceTextureId)
 {
 }
 
-CCCanvasLayerImpl::~CCCanvasLayerImpl()
-{
 }
-
-void CCCanvasLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
-{
-    IntRect quadRect(IntPoint(), bounds());
-    quadList.append(CCCanvasDrawQuad::create(sharedQuadState, quadRect, m_textureId, m_hasAlpha, m_premultipliedAlpha));
-}
-
-void CCCanvasLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
-{
-    writeIndent(ts, indent);
-    ts << "canvas layer texture id: " << m_textureId << " premultiplied: " << m_premultipliedAlpha << "\n";
-    CCLayerImpl::dumpLayerProperties(ts, indent);
-}
-
-}
-
-#endif // USE(ACCELERATED_COMPOSITING)

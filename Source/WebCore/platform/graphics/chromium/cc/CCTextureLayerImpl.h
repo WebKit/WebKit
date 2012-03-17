@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,57 +23,63 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCPluginLayerImpl_h
-#define CCPluginLayerImpl_h
+#ifndef CCTextureLayerImpl_h
+#define CCTextureLayerImpl_h
 
-#include "FloatRect.h"
 #include "ProgramBinding.h"
 #include "ShaderChromium.h"
 #include "cc/CCLayerImpl.h"
 
 namespace WebCore {
 
-class CCPluginLayerImpl : public CCLayerImpl {
+class CCTextureLayerImpl : public CCLayerImpl {
 public:
-    static PassOwnPtr<CCPluginLayerImpl> create(int id)
+    static PassOwnPtr<CCTextureLayerImpl> create(int id)
     {
-        return adoptPtr(new CCPluginLayerImpl(id));
+        return adoptPtr(new CCTextureLayerImpl(id));
     }
-    virtual ~CCPluginLayerImpl();
+    virtual ~CCTextureLayerImpl();
 
-    virtual void willDraw(LayerRendererChromium*);
     virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*);
 
-    typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexAlpha> Program;
-    typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexFlipAlpha> ProgramFlip;
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> ProgramFlip;
+    typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexAlpha> ProgramStretch;
+    typedef ProgramBinding<VertexShaderPosTexStretch, FragmentShaderRGBATexFlipAlpha> ProgramStretchFlip;
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectAlpha> TexRectProgram;
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexRectFlipAlpha> TexRectProgramFlip;
 
-    virtual void dumpLayerProperties(TextStream&, int indent) const;
+    virtual void willDraw(LayerRendererChromium*);
     virtual void didLoseContext();
 
+    virtual void dumpLayerProperties(TextStream&, int indent) const;
+
+    unsigned textureId() const { return m_textureId; }
     void setTextureId(unsigned id) { m_textureId = id; }
+    void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
+    void setPremultipliedAlpha(bool premultipliedAlpha) { m_premultipliedAlpha = premultipliedAlpha; }
     void setFlipped(bool flipped) { m_flipped = flipped; }
     void setUVRect(const FloatRect& rect) { m_uvRect = rect; }
-    void setIOSurfaceProperties(int width, int height, uint32_t ioSurfaceId);
+    void setIOSurfaceProperties(const IntSize&, unsigned ioSurfaceId);
+
 
 private:
-    explicit CCPluginLayerImpl(int);
+    explicit CCTextureLayerImpl(int);
 
-    virtual const char* layerTypeAsString() const { return "PluginLayer"; }
+    virtual const char* layerTypeAsString() const { return "TextureLayer"; }
 
     unsigned m_textureId;
+    bool m_hasAlpha;
+    bool m_premultipliedAlpha;
     bool m_flipped;
     FloatRect m_uvRect;
-    uint32_t m_ioSurfaceId;
-    int m_ioSurfaceWidth;
-    int m_ioSurfaceHeight;
 
-    // Internals for the IOSurface rendering path.
+    // Internals for IOSurface-backed textures.
+    unsigned m_ioSurfaceId;
+    IntSize m_ioSurfaceSize;
     bool m_ioSurfaceChanged;
     unsigned m_ioSurfaceTextureId;
 };
 
 }
 
-#endif // CCPluginLayerImpl_h
+#endif // CCTextureLayerImpl_h

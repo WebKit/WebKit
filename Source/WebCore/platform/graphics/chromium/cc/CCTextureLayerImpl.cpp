@@ -27,39 +27,38 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCPluginLayerImpl.h"
+#include "cc/CCTextureLayerImpl.h"
 
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
-#include "cc/CCPluginDrawQuad.h"
 #include "cc/CCProxy.h"
 #include "cc/CCQuadCuller.h"
-#include <wtf/text/WTFString.h>
+#include "cc/CCTextureDrawQuad.h"
 
 namespace WebCore {
 
-CCPluginLayerImpl::CCPluginLayerImpl(int id)
+CCTextureLayerImpl::CCTextureLayerImpl(int id)
     : CCLayerImpl(id)
     , m_textureId(0)
+    , m_hasAlpha(true)
+    , m_premultipliedAlpha(true)
     , m_flipped(true)
     , m_uvRect(0, 0, 1, 1)
     , m_ioSurfaceId(0)
-    , m_ioSurfaceWidth(0)
-    , m_ioSurfaceHeight(0)
     , m_ioSurfaceChanged(false)
     , m_ioSurfaceTextureId(0)
 {
 }
 
-CCPluginLayerImpl::~CCPluginLayerImpl()
+CCTextureLayerImpl::~CCTextureLayerImpl()
 {
     // FIXME: it seems there is no layer renderer / GraphicsContext3D available here. Ideally we
     // would like to delete m_ioSurfaceTextureId.
     m_ioSurfaceTextureId = 0;
 }
 
-void CCPluginLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
+void CCTextureLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
 {
     if (m_ioSurfaceChanged) {
         GraphicsContext3D* context = layerRenderer->context();
@@ -77,8 +76,8 @@ void CCPluginLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
         GLC(context, context->texParameteri(Extensions3D::TEXTURE_RECTANGLE_ARB, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
         GLC(context, context->texParameteri(Extensions3D::TEXTURE_RECTANGLE_ARB, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
         extensions->texImageIOSurface2DCHROMIUM(Extensions3D::TEXTURE_RECTANGLE_ARB,
-                                                m_ioSurfaceWidth,
-                                                m_ioSurfaceHeight,
+                                                m_ioSurfaceSize.width(),
+                                                m_ioSurfaceSize.height(),
                                                 m_ioSurfaceId,
                                                 0);
         // Do not check for error conditions. texImageIOSurface2DCHROMIUM is supposed to hold on to
@@ -91,20 +90,20 @@ void CCPluginLayerImpl::willDraw(LayerRendererChromium* layerRenderer)
     }
 }
 
-void CCPluginLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
+void CCTextureLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
 {
     IntRect quadRect(IntPoint(), bounds());
-    quadList.append(CCPluginDrawQuad::create(sharedQuadState, quadRect, m_uvRect, m_textureId, m_flipped, m_ioSurfaceWidth, m_ioSurfaceHeight, m_ioSurfaceTextureId));
+    quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_textureId, m_hasAlpha, m_premultipliedAlpha, m_uvRect, m_flipped, m_ioSurfaceSize, m_ioSurfaceTextureId));
 }
 
-void CCPluginLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
+void CCTextureLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
 {
     writeIndent(ts, indent);
-    ts << "plugin layer texture id: " << m_textureId << "\n";
+    ts << "texture layer texture id: " << m_textureId << " premultiplied: " << m_premultipliedAlpha << "\n";
     CCLayerImpl::dumpLayerProperties(ts, indent);
 }
 
-void CCPluginLayerImpl::didLoseContext()
+void CCTextureLayerImpl::didLoseContext()
 {
     if (m_ioSurfaceId) {
         // We don't have a valid texture ID in the new context; however,
@@ -114,16 +113,14 @@ void CCPluginLayerImpl::didLoseContext()
     }
 }
 
-void CCPluginLayerImpl::setIOSurfaceProperties(int width, int height, uint32_t ioSurfaceId)
+void CCTextureLayerImpl::setIOSurfaceProperties(const IntSize& size, unsigned ioSurfaceId)
 {
     if (m_ioSurfaceId != ioSurfaceId)
         m_ioSurfaceChanged = true;
 
-    m_ioSurfaceWidth = width;
-    m_ioSurfaceHeight = height;
+    m_ioSurfaceSize = size;
     m_ioSurfaceId = ioSurfaceId;
 }
-
-} // namespace WebCore
+}
 
 #endif // USE(ACCELERATED_COMPOSITING)

@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCPluginDrawQuad_h
-#define CCPluginDrawQuad_h
+#ifndef CCTextureDrawQuad_h
+#define CCTextureDrawQuad_h
 
 #include "cc/CCDrawQuad.h"
 #include <wtf/PassOwnPtr.h>
@@ -32,28 +32,29 @@
 namespace WebCore {
 
 class CCLayerImpl;
-
-class CCPluginDrawQuad : public CCDrawQuad {
-    WTF_MAKE_NONCOPYABLE(CCPluginDrawQuad);
+class CCTextureDrawQuad : public CCDrawQuad {
+    WTF_MAKE_NONCOPYABLE(CCTextureDrawQuad);
 public:
-    static PassOwnPtr<CCPluginDrawQuad> create(const CCSharedQuadState*, const IntRect& quadRect, const FloatRect& uvRect, unsigned textureId, bool flipped, int ioSurfaceWidth, int ioSurfaceHeight, unsigned m_ioSurfaceTextureId);
+    static PassOwnPtr<CCTextureDrawQuad> create(const CCSharedQuadState*, const IntRect&, unsigned textureId, bool hasAlpha, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId);
 
+    unsigned textureId() const { return  m_textureId; }
+    bool hasAlpha() const { return  m_hasAlpha; }
+    bool premultipliedAlpha() const { return  m_premultipliedAlpha; }
     FloatRect uvRect() const { return m_uvRect; }
-    unsigned textureId() const { return m_textureId; }
     bool flipped() const { return m_flipped; }
-    int ioSurfaceWidth() const { return m_ioSurfaceWidth; }
-    int ioSurfaceHeight() const { return m_ioSurfaceHeight; }
 
+    const IntSize& ioSurfaceSize() const { return m_ioSurfaceSize; }
     unsigned ioSurfaceTextureId() const { return m_ioSurfaceTextureId; }
-    
+ 
 private:
-    CCPluginDrawQuad(const CCSharedQuadState*, const IntRect& quadRect, const FloatRect& uvRect, unsigned textureId, bool flipped, int ioSurfaceWidth, int ioSurfaceHeight, unsigned ioSurfaceTextureId);
-
-    FloatRect m_uvRect;
+    CCTextureDrawQuad(const CCSharedQuadState*, const IntRect&, unsigned texture_id, bool hasAlpha, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId);
+    
     unsigned m_textureId;
+    bool m_hasAlpha;
+    bool m_premultipliedAlpha;
+    FloatRect m_uvRect;
     bool m_flipped;
-    int m_ioSurfaceWidth;
-    int m_ioSurfaceHeight;
+    IntSize m_ioSurfaceSize;
     unsigned m_ioSurfaceTextureId;
 };
 

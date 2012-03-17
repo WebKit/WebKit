@@ -27,10 +27,9 @@
 
 #include "cc/CCDrawQuad.h"
 
-#include "cc/CCCanvasDrawQuad.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
-#include "cc/CCPluginDrawQuad.h"
+#include "cc/CCTextureDrawQuad.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
@@ -83,16 +82,15 @@ const CCSolidColorDrawQuad* CCDrawQuad::toSolidColorDrawQuad() const
     return static_cast<const CCSolidColorDrawQuad*>(this);
 }
 
+const CCTextureDrawQuad* CCDrawQuad::toTextureDrawQuad() const
+{
+    ASSERT(m_material == TextureContent);
+    return static_cast<const CCTextureDrawQuad*>(this);
+}
 const CCTileDrawQuad* CCDrawQuad::toTileDrawQuad() const
 {
     ASSERT(m_material == TiledContent);
     return static_cast<const CCTileDrawQuad*>(this);
-}
-
-const CCCanvasDrawQuad* CCDrawQuad::toCanvasDrawQuad() const
-{
-    ASSERT(m_material == CanvasContent);
-    return static_cast<const CCCanvasDrawQuad*>(this);
 }
 
 const CCVideoDrawQuad* CCDrawQuad::toVideoDrawQuad() const
@@ -101,10 +99,5 @@ const CCVideoDrawQuad* CCDrawQuad::toVideoDrawQuad() const
     return static_cast<const CCVideoDrawQuad*>(this);
 }
 
-const CCPluginDrawQuad* CCDrawQuad::toPluginDrawQuad() const
-{
-    ASSERT(m_material == PluginContent);
-    return static_cast<const CCPluginDrawQuad*>(this);
-}
 
 }

@@ -34,12 +34,12 @@
 
 #include "Canvas2DLayerChromium.h"
 
-#include "cc/CCCanvasLayerImpl.h"
-#include "cc/CCLayerTreeHost.h"
-#include "cc/CCTextureUpdater.h"
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h" // For the GLC() macro
+#include "cc/CCLayerTreeHost.h"
+#include "cc/CCTextureLayerImpl.h"
+#include "cc/CCTextureUpdater.h"
 
 #include "SkCanvas.h"
 
@@ -153,11 +153,11 @@ void Canvas2DLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 {
     CanvasLayerChromium::pushPropertiesTo(layer);
 
-    CCCanvasLayerImpl* canvasLayer = static_cast<CCCanvasLayerImpl*>(layer);
+    CCTextureLayerImpl* textureLayer = static_cast<CCTextureLayerImpl*>(layer);
     if (m_useDoubleBuffering)
-        canvasLayer->setTextureId(m_frontTexture->textureId());
+        textureLayer->setTextureId(m_frontTexture->textureId());
     else
-        canvasLayer->setTextureId(m_backTextureId);
+        textureLayer->setTextureId(m_backTextureId);
 }
 
 void Canvas2DLayerChromium::unreserveContentsTexture()

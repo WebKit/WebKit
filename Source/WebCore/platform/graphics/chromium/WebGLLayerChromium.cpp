@@ -37,8 +37,9 @@
 #include "DrawingBuffer.h"
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
 #include "TraceEvent.h"
+#include "cc/CCLayerTreeHost.h"
+#include "cc/CCTextureLayerImpl.h"
 
 namespace WebCore {
 
@@ -100,10 +101,10 @@ void WebGLLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 {
     CanvasLayerChromium::pushPropertiesTo(layer);
 
-    CCCanvasLayerImpl* canvasLayer = static_cast<CCCanvasLayerImpl*>(layer);
-    canvasLayer->setTextureId(m_textureId);
-    canvasLayer->setHasAlpha(m_hasAlpha);
-    canvasLayer->setPremultipliedAlpha(m_premultipliedAlpha);
+    CCTextureLayerImpl* textureLayer = static_cast<CCTextureLayerImpl*>(layer);
+    textureLayer->setTextureId(m_textureId);
+    textureLayer->setHasAlpha(m_hasAlpha);
+    textureLayer->setPremultipliedAlpha(m_premultipliedAlpha);
 }
 
 bool WebGLLayerChromium::paintRenderedResultsToCanvas(ImageBuffer* imageBuffer)

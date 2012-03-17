@@ -33,10 +33,9 @@ namespace WebCore {
 class CCDebugBorderDrawQuad;
 class CCRenderSurfaceDrawQuad;
 class CCSolidColorDrawQuad;
+class CCTextureDrawQuad;
 class CCTileDrawQuad;
-class CCCanvasDrawQuad;
 class CCVideoDrawQuad;
-class CCPluginDrawQuad;
 
 // CCDrawQuad is a bag of data used for drawing a quad. Because different
 // materials need different bits of per-quad data to render, classes that derive
@@ -65,11 +64,10 @@ public:
         Invalid,
         DebugBorder,
         RenderSurface,
+        TextureContent,
         SolidColor,
         TiledContent,
-        CanvasContent,
         VideoContent,
-        PluginContent,
     };
 
     Material material() const { return m_material; }
@@ -77,10 +75,9 @@ public:
     const CCDebugBorderDrawQuad* toDebugBorderDrawQuad() const;
     const CCRenderSurfaceDrawQuad* toRenderSurfaceDrawQuad() const;
     const CCSolidColorDrawQuad* toSolidColorDrawQuad() const;
+    const CCTextureDrawQuad* toTextureDrawQuad() const;
     const CCTileDrawQuad* toTileDrawQuad() const;
-    const CCCanvasDrawQuad* toCanvasDrawQuad() const;
     const CCVideoDrawQuad* toVideoDrawQuad() const;
-    const CCPluginDrawQuad* toPluginDrawQuad() const;
 
 protected:
     CCDrawQuad(const CCSharedQuadState*, Material, const IntRect&);

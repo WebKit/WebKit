@@ -1,3 +1,12 @@
+2012-03-16  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Unify the drawing logic for different layer types that output textures to the compositor
+        https://bugs.webkit.org/show_bug.cgi?id=81286
+
+        Reviewed by Adrienne Walker.
+
+        * tests/Canvas2DLayerChromiumTest.cpp:
+
 2012-03-15  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Refactor ClipboardChromium and DataTransferItemList/DataTransferItem to support HTML spec

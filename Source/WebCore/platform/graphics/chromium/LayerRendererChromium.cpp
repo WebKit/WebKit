@@ -34,8 +34,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "LayerRendererChromium.h"
 
-#include "Canvas2DLayerChromium.h"
-#include "CanvasLayerTextureUpdater.h"
 #include "Extensions3DChromium.h"
 #include "FloatQuad.h"
 #include "GeometryBinding.h"
@@ -52,16 +50,15 @@
 #include "TrackingTextureAllocator.h"
 #include "TreeSynchronizer.h"
 #include "WebGLLayerChromium.h"
-#include "cc/CCCanvasDrawQuad.h"
 #include "cc/CCDamageTracker.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
-#include "cc/CCPluginDrawQuad.h"
 #include "cc/CCProxy.h"
 #include "cc/CCRenderPass.h"
 #include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCSolidColorDrawQuad.h"
+#include "cc/CCTextureDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
 #include "cc/CCVideoDrawQuad.h"
 #include "Extensions3D.h"
@@ -448,17 +445,14 @@ void LayerRendererChromium::drawQuad(const CCDrawQuad* quad, const FloatRect& su
     case CCDrawQuad::SolidColor:
         drawSolidColorQuad(quad->toSolidColorDrawQuad());
         break;
+    case CCDrawQuad::TextureContent:
+        drawTextureQuad(quad->toTextureDrawQuad());
+        break;
     case CCDrawQuad::TiledContent:
         drawTileQuad(quad->toTileDrawQuad());
         break;
-    case CCDrawQuad::CanvasContent:
-        drawCanvasQuad(quad->toCanvasDrawQuad());
-        break;
     case CCDrawQuad::VideoContent:
         drawVideoQuad(quad->toVideoDrawQuad());
-        break;
-    case CCDrawQuad::PluginContent:
-        drawPluginQuad(quad->toPluginDrawQuad());
         break;
     }
 }
@@ -696,31 +690,6 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
     drawTexturedQuad(quad->quadTransform(), tileRect.width(), tileRect.height(), quad->opacity(), localQuad, uniforms.matrixLocation, uniforms.alphaLocation, uniforms.pointLocation);
 }
 
-void LayerRendererChromium::drawCanvasQuad(const CCCanvasDrawQuad* quad)
-{
-    ASSERT(CCProxy::isImplThread());
-    const CCCanvasLayerImpl::Program* program = canvasLayerProgram();
-    ASSERT(program && program->initialized());
-    GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
-    GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quad->textureId()));
-    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
-    GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
-
-    if (quad->hasAlpha() && !quad->premultipliedAlpha())
-        GLC(context(), context()->blendFunc(GraphicsContext3D::SRC_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
-
-    const IntSize& bounds = quad->quadRect().size();
-
-    GLC(context(), context()->useProgram(program->program()));
-    GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
-    drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(),
-                                    program->vertexShader().matrixLocation(),
-                                    program->fragmentShader().alphaLocation(),
-                                    -1);
-
-    GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
-}
-
 void LayerRendererChromium::drawYUV(const CCVideoDrawQuad* quad)
 {
     const CCVideoLayerImpl::YUVProgram* program = videoLayerYUVProgram();
@@ -871,7 +840,7 @@ void LayerRendererChromium::drawVideoQuad(const CCVideoDrawQuad* quad)
     }
 }
 
-struct PluginProgramBinding {
+struct TextureProgramBinding {
     template<class Program> void set(Program* program)
     {
         ASSERT(program && program->initialized());
@@ -886,10 +855,10 @@ struct PluginProgramBinding {
     int alphaLocation;
 };
 
-struct TexStretchPluginProgramBinding : PluginProgramBinding {
+struct TexStretchTextureProgramBinding : TextureProgramBinding {
     template<class Program> void set(Program* program)
     {
-        PluginProgramBinding::set(program);
+        TextureProgramBinding::set(program);
         offsetLocation = program->vertexShader().offsetLocation();
         scaleLocation = program->vertexShader().scaleLocation();
     }
@@ -897,66 +866,82 @@ struct TexStretchPluginProgramBinding : PluginProgramBinding {
     int scaleLocation;
 };
 
-struct TexTransformPluginProgramBinding : PluginProgramBinding {
+struct TexTransformTextureProgramBinding : TextureProgramBinding {
     template<class Program> void set(Program* program)
     {
-        PluginProgramBinding::set(program);
+        TextureProgramBinding::set(program);
         texTransformLocation = program->vertexShader().texTransformLocation();
     }
     int texTransformLocation;
 };
 
-void LayerRendererChromium::drawPluginQuad(const CCPluginDrawQuad* quad)
+void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
 {
     ASSERT(CCProxy::isImplThread());
-
+    unsigned matrixLocation = 0;
+    unsigned alphaLocation = 0;
     if (quad->ioSurfaceTextureId()) {
-        TexTransformPluginProgramBinding binding;
+        TexTransformTextureProgramBinding binding;
         if (quad->flipped())
-            binding.set(pluginLayerTexRectProgramFlip());
+            binding.set(textureLayerTexRectProgramFlip());
         else
-            binding.set(pluginLayerTexRectProgram());
+            binding.set(textureLayerTexRectProgram());
 
         GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
-        GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, quad->ioSurfaceTextureId()));
 
         GLC(context(), context()->useProgram(binding.programId));
         GLC(context(), context()->uniform1i(binding.samplerLocation, 0));
-        // Note: this code path ignores quad->uvRect().
-        GLC(context(), context()->uniform4f(binding.texTransformLocation, 0, 0, quad->ioSurfaceWidth(), quad->ioSurfaceHeight()));
-        const IntSize& bounds = quad->quadRect().size();
-        drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(),
-                                        binding.matrixLocation,
-                                        binding.alphaLocation,
-                                        -1);
-        GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, 0));
+        GLC(context(), context()->uniform4f(binding.texTransformLocation, 0, 0, quad->ioSurfaceSize().width(), quad->ioSurfaceSize().height()));
+
+        matrixLocation = binding.matrixLocation;
+        alphaLocation = binding.alphaLocation;
+    } else if (quad->flipped() && quad->uvRect() == FloatRect(0, 0, 1, 1)) {
+        // A flipped quad with the default UV mapping is common enough to use a special shader.
+        // Canvas 2d and WebGL layers use this path always and plugin/external texture layers use this by default.
+        const CCTextureLayerImpl::ProgramFlip* program = textureLayerProgramFlip();
+        GLC(context(), context()->useProgram(program->program()));
+        GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
+        matrixLocation = program->vertexShader().matrixLocation();
+        alphaLocation = program->fragmentShader().alphaLocation();
     } else {
-        TexStretchPluginProgramBinding binding;
+        TexStretchTextureProgramBinding binding;
         if (quad->flipped())
-            binding.set(pluginLayerProgramFlip());
+            binding.set(textureLayerProgramStretchFlip());
         else
-            binding.set(pluginLayerProgram());
-
-        GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
-        GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quad->textureId()));
-
-        // FIXME: setting the texture parameters every time is redundant. Move this code somewhere
-        // where it will only happen once per texture.
-        GLC(context, context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
-        GLC(context, context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
-        GLC(context, context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
-        GLC(context, context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
-
+            binding.set(textureLayerProgramStretch());
         GLC(context, context()->useProgram(binding.programId));
         GLC(context, context()->uniform1i(binding.samplerLocation, 0));
         GLC(context, context()->uniform2f(binding.offsetLocation, quad->uvRect().x(), quad->uvRect().y()));
         GLC(context, context()->uniform2f(binding.scaleLocation, quad->uvRect().width(), quad->uvRect().height()));
-        const IntSize& bounds = quad->quadRect().size();
-        drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(),
-                                        binding.matrixLocation,
-                                        binding.alphaLocation,
-                                        -1);
+
+        matrixLocation = binding.matrixLocation;
+        alphaLocation = binding.alphaLocation;
     }
+    GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
+
+    if (quad->ioSurfaceTextureId())
+        GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, quad->ioSurfaceTextureId()));
+    else
+        GLC(context(), context()->bindTexture(GraphicsContext3D::TEXTURE_2D, quad->textureId()));
+
+    // FIXME: setting the texture parameters every time is redundant. Move this code somewhere
+    // where it will only happen once per texture.
+    GLC(context, context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context, context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context, context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
+    GLC(context, context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
+
+    if (quad->hasAlpha() && !quad->premultipliedAlpha())
+        GLC(context(), context()->blendFunc(GraphicsContext3D::SRC_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+
+    const IntSize& bounds = quad->quadRect().size();
+
+    drawTexturedQuad(quad->layerTransform(), bounds.width(), bounds.height(), quad->opacity(), sharedGeometryQuad(), matrixLocation, alphaLocation, -1);
+
+    GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+
+    if (quad->ioSurfaceTextureId())
+        GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, 0));
 }
 
 void LayerRendererChromium::finishDrawingFrame()
@@ -1371,59 +1356,59 @@ const CCTiledLayerImpl::ProgramSwizzleAA* LayerRendererChromium::tilerProgramSwi
     return m_tilerProgramSwizzleAA.get();
 }
 
-const CCCanvasLayerImpl::Program* LayerRendererChromium::canvasLayerProgram()
+const CCTextureLayerImpl::ProgramFlip* LayerRendererChromium::textureLayerProgramFlip()
 {
-    if (!m_canvasLayerProgram)
-        m_canvasLayerProgram = adoptPtr(new CCCanvasLayerImpl::Program(m_context.get()));
-    if (!m_canvasLayerProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::canvasLayerProgram::initialize", this, 0);
-        m_canvasLayerProgram->initialize(m_context.get());
+    if (!m_textureLayerProgramFlip)
+        m_textureLayerProgramFlip = adoptPtr(new CCTextureLayerImpl::ProgramFlip(m_context.get()));
+    if (!m_textureLayerProgramFlip->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::textureLayerProgram::initialize", this, 0);
+        m_textureLayerProgramFlip->initialize(m_context.get());
     }
-    return m_canvasLayerProgram.get();
+    return m_textureLayerProgramFlip.get();
 }
 
-const CCPluginLayerImpl::Program* LayerRendererChromium::pluginLayerProgram()
+const CCTextureLayerImpl::ProgramStretch* LayerRendererChromium::textureLayerProgramStretch()
 {
-    if (!m_pluginLayerProgram)
-        m_pluginLayerProgram = adoptPtr(new CCPluginLayerImpl::Program(m_context.get()));
-    if (!m_pluginLayerProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::pluginLayerProgram::initialize", this, 0);
-        m_pluginLayerProgram->initialize(m_context.get());
+    if (!m_textureLayerProgramStretch)
+        m_textureLayerProgramStretch = adoptPtr(new CCTextureLayerImpl::ProgramStretch(m_context.get()));
+    if (!m_textureLayerProgramStretch->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::textureLayerProgram::initialize", this, 0);
+        m_textureLayerProgramStretch->initialize(m_context.get());
     }
-    return m_pluginLayerProgram.get();
+    return m_textureLayerProgramStretch.get();
 }
 
-const CCPluginLayerImpl::ProgramFlip* LayerRendererChromium::pluginLayerProgramFlip()
+const CCTextureLayerImpl::ProgramStretchFlip* LayerRendererChromium::textureLayerProgramStretchFlip()
 {
-    if (!m_pluginLayerProgramFlip)
-        m_pluginLayerProgramFlip = adoptPtr(new CCPluginLayerImpl::ProgramFlip(m_context.get()));
-    if (!m_pluginLayerProgramFlip->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::pluginLayerProgramFlip::initialize", this, 0);
-        m_pluginLayerProgramFlip->initialize(m_context.get());
+    if (!m_textureLayerProgramStretchFlip)
+        m_textureLayerProgramStretchFlip = adoptPtr(new CCTextureLayerImpl::ProgramStretchFlip(m_context.get()));
+    if (!m_textureLayerProgramStretchFlip->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::textureLayerProgramStretchFlip::initialize", this, 0);
+        m_textureLayerProgramStretchFlip->initialize(m_context.get());
     }
-    return m_pluginLayerProgramFlip.get();
+    return m_textureLayerProgramStretchFlip.get();
 }
 
-const CCPluginLayerImpl::TexRectProgram* LayerRendererChromium::pluginLayerTexRectProgram()
+const CCTextureLayerImpl::TexRectProgram* LayerRendererChromium::textureLayerTexRectProgram()
 {
-    if (!m_pluginLayerTexRectProgram)
-        m_pluginLayerTexRectProgram = adoptPtr(new CCPluginLayerImpl::TexRectProgram(m_context.get()));
-    if (!m_pluginLayerTexRectProgram->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::pluginLayerTexRectProgram::initialize", this, 0);
-        m_pluginLayerTexRectProgram->initialize(m_context.get());
+    if (!m_textureLayerTexRectProgram)
+        m_textureLayerTexRectProgram = adoptPtr(new CCTextureLayerImpl::TexRectProgram(m_context.get()));
+    if (!m_textureLayerTexRectProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::textureLayerTexRectProgram::initialize", this, 0);
+        m_textureLayerTexRectProgram->initialize(m_context.get());
     }
-    return m_pluginLayerTexRectProgram.get();
+    return m_textureLayerTexRectProgram.get();
 }
 
-const CCPluginLayerImpl::TexRectProgramFlip* LayerRendererChromium::pluginLayerTexRectProgramFlip()
+const CCTextureLayerImpl::TexRectProgramFlip* LayerRendererChromium::textureLayerTexRectProgramFlip()
 {
-    if (!m_pluginLayerTexRectProgramFlip)
-        m_pluginLayerTexRectProgramFlip = adoptPtr(new CCPluginLayerImpl::TexRectProgramFlip(m_context.get()));
-    if (!m_pluginLayerTexRectProgramFlip->initialized()) {
-        TRACE_EVENT("LayerRendererChromium::pluginLayerTexRectProgramFlip::initialize", this, 0);
-        m_pluginLayerTexRectProgramFlip->initialize(m_context.get());
+    if (!m_textureLayerTexRectProgramFlip)
+        m_textureLayerTexRectProgramFlip = adoptPtr(new CCTextureLayerImpl::TexRectProgramFlip(m_context.get()));
+    if (!m_textureLayerTexRectProgramFlip->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::textureLayerTexRectProgramFlip::initialize", this, 0);
+        m_textureLayerTexRectProgramFlip->initialize(m_context.get());
     }
-    return m_pluginLayerTexRectProgramFlip.get();
+    return m_textureLayerTexRectProgramFlip.get();
 }
 
 const CCVideoLayerImpl::RGBAProgram* LayerRendererChromium::videoLayerRGBAProgram()
@@ -1480,6 +1465,16 @@ void LayerRendererChromium::cleanupSharedObjects()
         m_borderProgram->cleanup(m_context.get());
     if (m_headsUpDisplayProgram)
         m_headsUpDisplayProgram->cleanup(m_context.get());
+    if (m_textureLayerProgramFlip)
+        m_textureLayerProgramFlip->cleanup(m_context.get());
+    if (m_textureLayerProgramStretch)
+        m_textureLayerProgramStretch->cleanup(m_context.get());
+    if (m_textureLayerProgramStretchFlip)
+        m_textureLayerProgramStretchFlip->cleanup(m_context.get());
+    if (m_textureLayerTexRectProgram)
+        m_textureLayerTexRectProgram->cleanup(m_context.get());
+    if (m_textureLayerTexRectProgramFlip)
+        m_textureLayerTexRectProgramFlip->cleanup(m_context.get());
     if (m_tilerProgram)
         m_tilerProgram->cleanup(m_context.get());
     if (m_tilerProgramOpaque)
@@ -1492,16 +1487,6 @@ void LayerRendererChromium::cleanupSharedObjects()
         m_tilerProgramAA->cleanup(m_context.get());
     if (m_tilerProgramSwizzleAA)
         m_tilerProgramSwizzleAA->cleanup(m_context.get());
-    if (m_canvasLayerProgram)
-        m_canvasLayerProgram->cleanup(m_context.get());
-    if (m_pluginLayerProgram)
-        m_pluginLayerProgram->cleanup(m_context.get());
-    if (m_pluginLayerProgramFlip)
-        m_pluginLayerProgramFlip->cleanup(m_context.get());
-    if (m_pluginLayerTexRectProgram)
-        m_pluginLayerTexRectProgram->cleanup(m_context.get());
-    if (m_pluginLayerTexRectProgramFlip)
-        m_pluginLayerTexRectProgramFlip->cleanup(m_context.get());
     if (m_renderSurfaceMaskProgram)
         m_renderSurfaceMaskProgram->cleanup(m_context.get());
     if (m_renderSurfaceProgram)
@@ -1521,17 +1506,17 @@ void LayerRendererChromium::cleanupSharedObjects()
 
     m_borderProgram.clear();
     m_headsUpDisplayProgram.clear();
+    m_textureLayerProgramFlip.clear();
+    m_textureLayerProgramStretch.clear();
+    m_textureLayerProgramStretchFlip.clear();
+    m_textureLayerTexRectProgram.clear();
+    m_textureLayerTexRectProgramFlip.clear();
     m_tilerProgram.clear();
     m_tilerProgramOpaque.clear();
     m_tilerProgramSwizzle.clear();
     m_tilerProgramSwizzleOpaque.clear();
     m_tilerProgramAA.clear();
     m_tilerProgramSwizzleAA.clear();
-    m_canvasLayerProgram.clear();
-    m_pluginLayerProgram.clear();
-    m_pluginLayerProgramFlip.clear();
-    m_pluginLayerTexRectProgram.clear();
-    m_pluginLayerTexRectProgramFlip.clear();
     m_renderSurfaceMaskProgram.clear();
     m_renderSurfaceProgram.clear();
     m_renderSurfaceMaskProgramAA.clear();
