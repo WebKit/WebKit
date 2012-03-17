@@ -120,5 +120,25 @@ template <> void derefGPtr<GstTask>(GstTask* ptr)
         gst_object_unref(ptr);
 }
 
+template <> GRefPtr<GstBus> adoptGRef(GstBus* ptr)
+{
+    ASSERT(!GST_OBJECT_IS_FLOATING(GST_OBJECT(ptr)));
+    return GRefPtr<GstBus>(ptr, GRefPtrAdopt);
+}
+
+template <> GstBus* refGPtr<GstBus>(GstBus* ptr)
+{
+    if (ptr)
+        webkitGstObjectRefSink(GST_OBJECT(ptr));
+
+    return ptr;
+}
+
+template <> void derefGPtr<GstBus>(GstBus* ptr)
+{
+    if (ptr)
+        gst_object_unref(ptr);
+}
+
 }
 #endif // USE(GSTREAMER)
