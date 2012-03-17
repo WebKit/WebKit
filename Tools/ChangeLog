@@ -1,5 +1,17 @@
 2012-03-17  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
+        [EFL] Prefixing run-webkit-tests with run-with-jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=80025
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflDriver):
+        (EflDriver.cmd_line):
+        (EflPort._driver_class):
+
+2012-03-17  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
         [EFL] Add and use run-with-jhbuild and update-webkitefl-libs scripts for EFL
         https://bugs.webkit.org/show_bug.cgi?id=79904
 

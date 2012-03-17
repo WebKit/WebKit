@@ -31,10 +31,16 @@ import signal
 import subprocess
 
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.layout_tests.port.webkit import WebKitPort
+from webkitpy.layout_tests.port.webkit import WebKitDriver, WebKitPort
 
 
 _log = logging.getLogger(__name__)
+
+
+class EflDriver(WebKitDriver):
+    def cmd_line(self):
+        wrapper_path = self._port.path_from_webkit_base("Tools", "efl", "run-with-jhbuild")
+        return [wrapper_path] + WebKitDriver.cmd_line(self)
 
 
 class EflPort(WebKitPort):
@@ -42,6 +48,9 @@ class EflPort(WebKitPort):
 
     def _port_flag_for_scripts(self):
         return "--efl"
+
+    def _driver_class(self):
+        return EflDriver
 
     def _generate_all_test_configurations(self):
         return [TestConfiguration(version=self._version, architecture='x86', build_type=build_type) for build_type in self.ALL_BUILD_TYPES]
