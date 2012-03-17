@@ -108,7 +108,6 @@ IDL_BINDINGS += \
     $$PWD/Modules/filesystem/FileWriterCallback.idl \
     $$PWD/Modules/filesystem/Metadata.idl \
     $$PWD/Modules/filesystem/MetadataCallback.idl \
-    $$PWD/Modules/filesystem/WebKitBlobBuilder.idl \
     $$PWD/Modules/filesystem/WorkerContextFileSystem.idl \
     $$PWD/Modules/geolocation/Geolocation.idl \
     $$PWD/Modules/geolocation/Geoposition.idl \
@@ -247,6 +246,7 @@ IDL_BINDINGS += \
     $$PWD/fileapi/FileReader.idl \
     $$PWD/fileapi/FileReaderSync.idl \
     $$PWD/fileapi/OperationNotAllowedException.idl \
+    $$PWD/fileapi/WebKitBlobBuilder.idl \
     $$PWD/html/canvas/ArrayBufferView.idl \
     $$PWD/html/canvas/ArrayBuffer.idl \
     $$PWD/html/canvas/DataView.idl \
