@@ -974,25 +974,7 @@ void RenderFlexibleBox::alignChildren(const OrderedFlexItemList& children, Layou
             ASSERT_NOT_REACHED();
             break;
         case AlignStretch: {
-            if (!isColumnFlow() && child->style()->logicalHeight().isAuto()) {
-                LayoutUnit logicalHeightBefore = child->logicalHeight();
-                LayoutUnit stretchedLogicalHeight = child->logicalHeight() + availableAlignmentSpaceForChild(lineCrossAxisExtent, child);
-                child->setLogicalHeight(stretchedLogicalHeight);
-                child->computeLogicalHeight();
-
-                if (child->logicalHeight() != logicalHeightBefore) {
-                    child->setOverrideHeight(child->logicalHeight());
-                    child->setLogicalHeight(0);
-                    child->setChildNeedsLayout(true);
-                    child->layoutIfNeeded();
-                }
-            } else if (isColumnFlow() && child->style()->logicalWidth().isAuto() && isMultiline()) {
-                // FIXME: Handle min-width and max-width.
-                LayoutUnit childWidth = lineCrossAxisExtent - crossAxisMarginExtentForChild(child);
-                child->setOverrideWidth(std::max(0, childWidth));
-                child->setChildNeedsLayout(true);
-                child->layoutIfNeeded();
-            }
+            applyStretchAlignmentToChild(child, lineCrossAxisExtent);
             // Since wrap-reverse flips cross start and cross end, strech children should be aligned with the cross end.
             if (style()->flexWrap() == FlexWrapReverse)
                 adjustAlignmentForChild(child, availableAlignmentSpaceForChild(lineCrossAxisExtent, child));
@@ -1026,6 +1008,32 @@ void RenderFlexibleBox::alignChildren(const OrderedFlexItemList& children, Layou
             if (flexAlignForChild(child) == AlignBaseline)
                 adjustAlignmentForChild(child, minMarginAfterBaseline);
         }
+    }
+}
+
+void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox* child, LayoutUnit lineCrossAxisExtent)
+{
+    if (!isColumnFlow() && child->style()->logicalHeight().isAuto()) {
+        LayoutUnit logicalHeightBefore = child->logicalHeight();
+        LayoutUnit stretchedLogicalHeight = child->logicalHeight() + availableAlignmentSpaceForChild(lineCrossAxisExtent, child);
+        if (stretchedLogicalHeight < logicalHeightBefore)
+            return;
+
+        child->setLogicalHeight(stretchedLogicalHeight);
+        child->computeLogicalHeight();
+
+        if (child->logicalHeight() != logicalHeightBefore) {
+            child->setOverrideHeight(child->logicalHeight());
+            child->setLogicalHeight(0);
+            child->setChildNeedsLayout(true);
+            child->layoutIfNeeded();
+        }
+    } else if (isColumnFlow() && child->style()->logicalWidth().isAuto() && isMultiline()) {
+        // FIXME: Handle min-width and max-width.
+        LayoutUnit childWidth = lineCrossAxisExtent - crossAxisMarginExtentForChild(child);
+        child->setOverrideWidth(std::max(0, childWidth));
+        child->setChildNeedsLayout(true);
+        child->layoutIfNeeded();
     }
 }
 
