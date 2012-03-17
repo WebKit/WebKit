@@ -43,23 +43,39 @@ def chromium_results_zip_url(builder_name):
 chromium_lkgr_url = "http://chromium-status.appspot.com/lkgr"
 contribution_guidelines = "http://webkit.org/coding/contributing.html"
 
-bug_server_host = "bugs.webkit.org"
+bug_server_domain = "webkit.org"
+bug_server_host = "bugs." + bug_server_domain
 _bug_server_regex = "https?://%s/" % re.sub('\.', '\\.', bug_server_host)
 bug_server_url = "https://%s/" % bug_server_host
 bug_url_long = _bug_server_regex + r"show_bug\.cgi\?id=(?P<bug_id>\d+)(&ctype=xml)?"
-bug_url_short = r"https?\://webkit\.org/b/(?P<bug_id>\d+)"
+bug_url_short = r"https?\://%s/b/(?P<bug_id>\d+)" % bug_server_domain
+
+attachment_url = _bug_server_regex + r"attachment\.cgi\?id=(?P<attachment_id>\d+)(&action=(?P<action>\w+))?"
+direct_attachment_url = r"https?://bug-(?P<bug_id>\d+)-attachments.%s/attachment\.cgi\?id=(?P<attachment_id>\d+)" % bug_server_domain
 
 buildbot_url = "http://build.webkit.org"
 chromium_buildbot_url = "http://build.chromium.org/p/chromium.webkit"
 
 
-def parse_bug_id(message):
-    if not message:
+def parse_bug_id(string):
+    if not string:
         return None
-    match = re.search(bug_url_short, message)
+    match = re.search(bug_url_short, string)
     if match:
         return int(match.group('bug_id'))
-    match = re.search(bug_url_long, message)
+    match = re.search(bug_url_long, string)
     if match:
         return int(match.group('bug_id'))
+    return None
+
+
+def parse_attachment_id(string):
+    if not string:
+        return None
+    match = re.search(attachment_url, string)
+    if match:
+        return int(match.group('attachment_id'))
+    match = re.search(direct_attachment_url, string)
+    if match:
+        return int(match.group('attachment_id'))
     return None

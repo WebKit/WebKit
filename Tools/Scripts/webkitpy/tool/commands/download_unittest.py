@@ -193,7 +193,7 @@ Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more
 """
         self.assert_execute_outputs(LandAttachment(), [10000], options=self._default_options(), expected_stderr=expected_stderr)
 
-    def test_land_patches(self):
+    def test_land_from_bug(self):
         # FIXME: This expected result is imperfect, notice how it's seeing the same patch as still there after it thought it would have cleared the flags.
         expected_stderr = """2 reviewed patches found on bug 50000.
 Processing 2 patches from 1 bug.
@@ -219,6 +219,33 @@ Committed r49824: <http://trac.webkit.org/changeset/49824>
 Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more patches to land from this bug.
 """
         self.assert_execute_outputs(LandFromBug(), [50000], options=self._default_options(), expected_stderr=expected_stderr)
+
+    def test_land_from_url(self):
+        # FIXME: This expected result is imperfect, notice how it's seeing the same patch as still there after it thought it would have cleared the flags.
+        expected_stderr = """2 patches found on bug 50000.
+Processing 2 patches from 1 bug.
+Updating working directory
+Processing patch 10000 from bug 50000.
+Building WebKit
+Running Python unit tests
+Running Perl unit tests
+Running JavaScriptCore tests
+Running WebKit unit tests
+Running run-webkit-tests
+Committed r49824: <http://trac.webkit.org/changeset/49824>
+Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more patches to land from this bug.
+Updating working directory
+Processing patch 10001 from bug 50000.
+Building WebKit
+Running Python unit tests
+Running Perl unit tests
+Running JavaScriptCore tests
+Running WebKit unit tests
+Running run-webkit-tests
+Committed r49824: <http://trac.webkit.org/changeset/49824>
+Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more patches to land from this bug.
+"""
+        self.assert_execute_outputs(LandFromURL(), ["https://bugs.webkit.org/show_bug.cgi?id=50000"], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_prepare_rollout(self):
         expected_stderr = "Preparing rollout for bug 50000.\nUpdating working directory\n"

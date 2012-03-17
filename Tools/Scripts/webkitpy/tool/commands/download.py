@@ -202,6 +202,23 @@ class ProcessBugsMixin(object):
         return all_patches
 
 
+class ProcessURLsMixin(object):
+    def _fetch_list_of_patches_to_process(self, options, args, tool):
+        all_patches = []
+        for url in args:
+            bug_id = urls.parse_bug_id(url)
+            if bug_id:
+                patches = tool.bugs.fetch_bug(bug_id).patches()
+                log("%s found on bug %s." % (pluralize("patch", len(patches)), bug_id))
+                all_patches += patches
+
+            attachment_id = urls.parse_attachment_id(url)
+            if attachment_id:
+                all_patches += tool.bugs.fetch_attachment(attachment_id)
+
+        return all_patches
+
+
 class CheckStyle(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
     name = "check-style"
     help_text = "Run check-webkit-style on the specified attachments"
@@ -315,6 +332,12 @@ class LandFromBug(AbstractPatchLandingCommand, ProcessBugsMixin):
     help_text = "Land all patches on the given bugs, optionally building and testing them first"
     argument_names = "BUGID [BUGIDS]"
     show_in_main_help = True
+
+
+class LandFromURL(AbstractPatchLandingCommand, ProcessURLsMixin):
+    name = "land-from-url"
+    help_text = "Land all patches on the given URLs, optionally building and testing them first"
+    argument_names = "URL [URLS]"
 
 
 class ValidateChangelog(AbstractSequencedCommand):

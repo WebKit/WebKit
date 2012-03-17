@@ -1,3 +1,28 @@
+2012-03-16  Eric Seidel  <eric@webkit.org>
+
+        Add a land-from-url command
+        https://bugs.webkit.org/show_bug.cgi?id=81411
+
+        Reviewed by Adam Barth.
+
+        Very basic so far.  The goal is to make it landing smarter
+        so that users don't have to bother to parse out the ids out of the urls.
+
+        * Scripts/webkitpy/common/config/urls.py:
+        (parse_bug_id):
+        (parse_attachment_id):
+        * Scripts/webkitpy/common/config/urls_unittest.py:
+        (URLsTest.test_parse_bug_id):
+        (URLsTest):
+        (URLsTest.test_parse_attachment_id):
+        * Scripts/webkitpy/tool/commands/download.py:
+        (ProcessURLsMixin):
+        (ProcessURLsMixin._fetch_list_of_patches_to_process):
+        (LandFromURL):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (test_land_from_bug):
+        (test_land_from_url):
+
 2012-03-16  Dave Tharp  <dtharp@codeaurora.org>
 
         build-webkit launcher instructions use wrong relative path for Qt

@@ -28,7 +28,7 @@
 
 import unittest
 
-from .urls import parse_bug_id
+from .urls import parse_bug_id, parse_attachment_id
 
 
 class URLsTest(unittest.TestCase):
@@ -41,3 +41,14 @@ class URLsTest(unittest.TestCase):
         # Our url parser is super-fragile, but at least we're testing it.
         self.assertEquals(None, parse_bug_id("http://www.webkit.org/b/12345"))
         self.assertEquals(None, parse_bug_id("http://bugs.webkit.org/show_bug.cgi?ctype=xml&id=12345"))
+
+    def test_parse_attachment_id(self):
+        self.assertEquals(12345, parse_attachment_id("https://bugs.webkit.org/attachment.cgi?id=12345&action=review"))
+        self.assertEquals(12345, parse_attachment_id("https://bugs.webkit.org/attachment.cgi?id=12345&action=edit"))
+        self.assertEquals(12345, parse_attachment_id("https://bugs.webkit.org/attachment.cgi?id=12345&action=prettypatch"))
+        self.assertEquals(12345, parse_attachment_id("https://bugs.webkit.org/attachment.cgi?id=12345&action=diff"))
+
+        # Direct attachment links are hosted from per-bug subdomains:
+        self.assertEquals(12345, parse_attachment_id("https://bug-23456-attachments.webkit.org/attachment.cgi?id=12345"))
+        # Make sure secure attachment URLs work too.
+        self.assertEquals(12345, parse_attachment_id("https://bug-23456-attachments.webkit.org/attachment.cgi?id=12345&t=Bqnsdkl9fs"))
