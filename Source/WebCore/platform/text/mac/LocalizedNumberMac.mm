@@ -54,7 +54,7 @@ static RetainPtr<NSNumberFormatter> createFormatterForCurrentLocale()
 static RetainPtr<NSNumberFormatter> createFormatterForCurrentLocaleForDisplay()
 {
     RetainPtr<NSNumberFormatter> formatter = createFormatterForCurrentLocale();
-    [formatter.get() setHasThousandSeparators:NO];
+    [formatter.get() setUsesGroupingSeparator:NO];
     return formatter;
 }
 
