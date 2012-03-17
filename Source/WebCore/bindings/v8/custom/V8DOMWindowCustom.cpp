@@ -426,18 +426,17 @@ v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallback(const v8::Arguments& 
 {
     INC_STATS("DOM.DOMWindow.showModalDialog()");
     DOMWindow* impl = V8DOMWindow::toNative(args.Holder());
-
     V8BindingState* state = V8BindingState::Only();
-
-    DOMWindow* activeWindow = state->activeWindow();
-    DOMWindow* firstWindow = state->firstWindow();
+    if (!V8BindingSecurity::canAccessFrame(state, impl->frame(), true))
+        return v8::Undefined();
 
     // FIXME: Handle exceptions properly.
     String urlString = toWebCoreStringWithNullOrUndefinedCheck(args[0]);
+    DialogHandler handler(args[1]);
     String dialogFeaturesString = toWebCoreStringWithNullOrUndefinedCheck(args[2]);
 
-    DialogHandler handler(args[1]);
-
+    DOMWindow* activeWindow = state->activeWindow();
+    DOMWindow* firstWindow = state->firstWindow();
     impl->showModalDialog(urlString, dialogFeaturesString, activeWindow, firstWindow, setUpDialog, &handler);
 
     return handler.returnValue();
@@ -447,20 +446,21 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DOMWindow.open()");
     DOMWindow* impl = V8DOMWindow::toNative(args.Holder());
-
     V8BindingState* state = V8BindingState::Only();
-
-    DOMWindow* activeWindow = state->activeWindow();
-    DOMWindow* firstWindow = state->firstWindow();
+    if (!V8BindingSecurity::canAccessFrame(state, impl->frame(), true))
+        return v8::Undefined();
 
     // FIXME: Handle exceptions properly.
     String urlString = toWebCoreStringWithNullOrUndefinedCheck(args[0]);
     AtomicString frameName = (args[1]->IsUndefined() || args[1]->IsNull()) ? "_blank" : AtomicString(toWebCoreString(args[1]));
     String windowFeaturesString = toWebCoreStringWithNullOrUndefinedCheck(args[2]);
 
+    DOMWindow* activeWindow = state->activeWindow();
+    DOMWindow* firstWindow = state->firstWindow();
     RefPtr<DOMWindow> openedWindow = impl->open(urlString, frameName, windowFeaturesString, activeWindow, firstWindow);
     if (!openedWindow)
         return v8::Undefined();
+
     return toV8(openedWindow.release());
 }
 

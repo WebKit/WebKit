@@ -54,10 +54,10 @@ window.onload = function()
     shouldBe("window.moveTo.call(targetWindow, 0, 0);", "undefined");
     shouldBe("window.resizeBy.call(targetWindow, 0, 0);", "undefined");
     shouldBe("window.resizeTo.call(targetWindow, 0, 0);", "undefined");
+    shouldBe("window.showModalDialog.call(targetWindow);", "undefined");
 
-    // FIXME:  showModalDialog now works on DRT and thus breaks this test.  Will uncomment after adding a separate test for Mac for showModalDialog - Bug #39897
-    // Throws a TypeError and logs to the error console
-    // shouldBe("window.showModalDialog.call(targetWindow);", '"TypeError: Result of expression \'window.showModalDialog\' [undefined] is not an object."');
+    // Throws an EvalError and logs to the error console
+    shouldBe("window.eval.call(targetWindow, '1+2');", '"EvalError: The \\"this\\" value passed to eval must be the global object from which eval originated"');
 
     // - Tests for the Location object -
     // undefined value indicates failure
