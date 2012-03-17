@@ -58,7 +58,9 @@ static const double cDefaultDecodedDataDeletionInterval = 0;
 MemoryCache* memoryCache()
 {
     static MemoryCache* staticCache = new MemoryCache;
+#if PLATFORM(CHROMIUM)
     ASSERT(WTF::isMainThread());
+#endif
     return staticCache;
 }
 
@@ -93,7 +95,9 @@ bool MemoryCache::add(CachedResource* resource)
 {
     if (disabled())
         return false;
+#if PLATFORM(CHROMIUM)
     ASSERT(WTF::isMainThread());
+#endif
     
     m_resources.set(resource->url(), resource);
     resource->setInCache(true);
@@ -138,7 +142,9 @@ void MemoryCache::revalidationSucceeded(CachedResource* revalidatingResource, co
 
 void MemoryCache::revalidationFailed(CachedResource* revalidatingResource)
 {
+#if PLATFORM(CHROMIUM)
     ASSERT(WTF::isMainThread());
+#endif
     LOG(ResourceLoading, "Revalidation failed for %p", revalidatingResource);
     ASSERT(revalidatingResource->resourceToRevalidate());
     revalidatingResource->clearResourceToRevalidate();
@@ -146,7 +152,9 @@ void MemoryCache::revalidationFailed(CachedResource* revalidatingResource)
 
 CachedResource* MemoryCache::resourceForURL(const KURL& resourceURL)
 {
+#if PLATFORM(CHROMIUM)
     ASSERT(WTF::isMainThread());
+#endif
     KURL url = removeFragmentIdentifierIfNeeded(resourceURL);
     CachedResource* resource = m_resources.get(url);
     bool wasPurgeable = MemoryCache::shouldMakeResourcePurgeableOnEviction() && resource && resource->isPurgeable();
@@ -377,7 +385,9 @@ bool MemoryCache::makeResourcePurgeable(CachedResource* resource)
 
 void MemoryCache::evict(CachedResource* resource)
 {
+#if PLATFORM(CHROMIUM)
     ASSERT(WTF::isMainThread());
+#endif
     LOG(ResourceLoading, "Evicting resource %p for '%s' from cache", resource, resource->url().string().latin1().data());
     // The resource may have already been removed by someone other than our caller,
     // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
