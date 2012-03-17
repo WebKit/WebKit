@@ -1,3 +1,16 @@
+2012-03-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Unreviewed; fix webkitpy unit test failures after r111116.
+
+        It turns out that cmd_line in the patch in bug 80025 had the right
+        signature when it was submitted, but r109242 added a few more
+        required parameters, and since the method (and EflDriver) did not
+        exist at the time we ended up committing a broken method.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflDriver.cmd_line): Add the `pixel_tests' and `per_test_args'
+        arguments.
+
 2012-03-17  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Enable Web Timing for performance profiling and improvement.

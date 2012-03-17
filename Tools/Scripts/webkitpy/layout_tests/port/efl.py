@@ -38,9 +38,9 @@ _log = logging.getLogger(__name__)
 
 
 class EflDriver(WebKitDriver):
-    def cmd_line(self):
+    def cmd_line(self, pixel_tests, per_test_args):
         wrapper_path = self._port.path_from_webkit_base("Tools", "efl", "run-with-jhbuild")
-        return [wrapper_path] + WebKitDriver.cmd_line(self)
+        return [wrapper_path] + WebKitDriver.cmd_line(self, pixel_tests, per_test_args)
 
 
 class EflPort(WebKitPort):
