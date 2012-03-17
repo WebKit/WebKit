@@ -3571,15 +3571,6 @@ BUGWK76558 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TE
 // rebaseline when skia 3398 lands
 BUGEPOGER : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
 
-BUGWK76511 : compositing/geometry/video-opacity-overlay.html = IMAGE PASS
-BUGWK76511 : compositing/geometry/video-fixed-scrolling.html = IMAGE
-BUGWK76511 : compositing/visibility/visibility-simple-video-layer.html = IMAGE
-BUGWK76511 : compositing/self-painting-layers.html = IMAGE
-BUGWK76511 : compositing/layers-inside-overflow-scroll.html = IMAGE
-BUGWK76511 : compositing/reflections/load-video-in-reflection.html = IMAGE
-BUGWK76511 MAC : compositing/overflow/scroll-ancestor-update.html = IMAGE
-BUGWK76511 WIN LINUX : compositing/overflow/scroll-ancestor-update.html = IMAGE+TEXT
-
 BUGWK76727 : fast/multicol/span/span-as-immediate-child-property-removal.html = IMAGE+TEXT TEXT
 BUGWK76727 : fast/multicol/span/span-as-immediate-columns-child-removal.html = IMAGE+TEXT
 
