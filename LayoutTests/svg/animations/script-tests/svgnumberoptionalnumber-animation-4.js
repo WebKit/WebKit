@@ -42,16 +42,25 @@ feGaussianBlur.appendChild(animate);
 function sample1() {
     shouldBeCloseEnough("feGaussianBlur.stdDeviationX.animVal", "5");
     shouldBeCloseEnough("feGaussianBlur.stdDeviationY.animVal", "5");
+
+    shouldBe("feGaussianBlur.stdDeviationX.baseVal", "5");
+    shouldBe("feGaussianBlur.stdDeviationY.baseVal", "5");
 }
 
 function sample2() {
     shouldBeCloseEnough("feGaussianBlur.stdDeviationX.animVal", "10");
     shouldBeCloseEnough("feGaussianBlur.stdDeviationY.animVal", "10");
+
+    shouldBe("feGaussianBlur.stdDeviationX.baseVal", "5");
+    shouldBe("feGaussianBlur.stdDeviationY.baseVal", "5");
 }
 
 function sample3() {
     shouldBeCloseEnough("feGaussianBlur.stdDeviationX.animVal", "15");
     shouldBeCloseEnough("feGaussianBlur.stdDeviationY.animVal", "15");
+
+    shouldBe("feGaussianBlur.stdDeviationX.baseVal", "5");
+    shouldBe("feGaussianBlur.stdDeviationY.baseVal", "5");
 }
 
 function executeTest() {

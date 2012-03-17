@@ -22,7 +22,6 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedProperty.h"
-#include "SVGAnimatedType.h"
 
 namespace WebCore {
 
@@ -60,19 +59,17 @@ public:
         return *m_animatedProperty;
     }
 
-    virtual SVGGenericAnimatedType* currentBaseValueVariant(AnimatedPropertyType expectedPropertyType) const
+    virtual SVGGenericAnimatedType* currentBaseValueVariant() const
     {
-        ASSERT_UNUSED(expectedPropertyType, animatedPropertyType() == expectedPropertyType);
         return reinterpret_cast<SVGGenericAnimatedType*>(&m_property);
     }
 
-    virtual void animationStarted(SVGAnimatedType* animatedType)
+    virtual void animationStarted(SVGGenericAnimatedType* animatedType)
     {
         ASSERT(!m_isAnimating);
         ASSERT(!m_animatedProperty);
         ASSERT(animatedType);
-        ASSERT(animatedType->type() == animatedPropertyType());
-        m_animatedProperty = reinterpret_cast<PropertyType*>(animatedType->variantValue());
+        m_animatedProperty = reinterpret_cast<PropertyType*>(animatedType);
         m_isAnimating = true;
     }
 

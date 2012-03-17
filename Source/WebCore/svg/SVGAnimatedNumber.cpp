@@ -43,10 +43,14 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromString(const
     return animtedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromVariant(SVGGenericAnimatedType* animatedType)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromBaseValue(const Vector<SVGAnimatedProperty*>& properties, Vector<SVGGenericAnimatedType*>& types)
 {
-    ASSERT(animatedType);
-    return SVGAnimatedType::createNumber(new float(*reinterpret_cast<float*>(animatedType)));
+    return SVGAnimatedType::createNumber(constructFromOneBaseValue<float>(properties, types));
+}
+
+void SVGAnimatedNumberAnimator::resetAnimatedTypeToBaseValue(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+{
+    resetAnimatedTypeFromOneBaseValue<float>(properties, type, &SVGAnimatedType::number);
 }
 
 void SVGAnimatedNumberAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)

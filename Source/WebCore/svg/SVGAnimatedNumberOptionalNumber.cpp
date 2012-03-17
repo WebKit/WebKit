@@ -46,6 +46,16 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberOptionalNumberAnimator::constructFr
     return animtedType.release();
 }
 
+PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberOptionalNumberAnimator::constructFromBaseValue(const Vector<SVGAnimatedProperty*>& properties, Vector<SVGGenericAnimatedType*>& types)
+{
+    return SVGAnimatedType::createNumberOptionalNumber(constructFromTwoBaseValues<pair<float, float>, float>(properties, types));
+}
+
+void SVGAnimatedNumberOptionalNumberAnimator::resetAnimatedTypeToBaseValue(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+{
+    resetAnimatedTypeFromTwoBaseValues<pair<float, float>, float>(properties, type, &SVGAnimatedType::numberOptionalNumber);
+}
+
 void SVGAnimatedNumberOptionalNumberAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)
 {
     ASSERT(m_contextElement);

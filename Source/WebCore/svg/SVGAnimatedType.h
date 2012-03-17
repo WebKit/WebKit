@@ -77,10 +77,6 @@ public:
     String& string();
     SVGTransformList& transformList();
 
-    // Use with care, the actual type of the generic animated object has to be equal to our type().
-    void setVariantValue(SVGGenericAnimatedType*);
-    SVGGenericAnimatedType* variantValue() const { return m_data.variant; }
-
     String valueAsString();
     bool setValueAsString(const QualifiedName&, const String&);
     
@@ -113,7 +109,6 @@ private:
         FloatRect* rect;
         String* string;
         SVGTransformList* transformList;
-        SVGGenericAnimatedType* variant;
     } m_data;
 };
     

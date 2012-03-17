@@ -41,7 +41,6 @@ SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* doc
     , m_animatedPropertyType(AnimatedString)
     , m_fromPropertyValueType(RegularPropertyValue)
     , m_toPropertyValueType(RegularPropertyValue)
-    , m_animatedProperty(0)
 {
     ASSERT(hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::setTag) || hasTagName(SVGNames::animateColorTag) || hasTagName(SVGNames::animateTransformTag));
 }
@@ -193,8 +192,9 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     // if after calculateAnimatedValue() ran the cached pointers in the list propery tear
     // offs would point nowhere, and we couldn't create copies of those values anymore,
     // while detaching. This is covered by assertions, moving this down would fire them.
-    if (SVGAnimatedProperty* animatedProperty = animatedPropertyForType(m_animator->type()))
-        animatedProperty->animationValueWillChange();
+    size_t propertiesSize = m_animatedProperties.size();
+    for (size_t i = 0; i < propertiesSize; ++i)
+        m_animatedProperties[i]->animationValueWillChange();
 
     m_animator->calculateAnimatedValue(percentage, repeat, m_fromType, m_toType, resultAnimationElement->m_animatedType);
 }
@@ -223,29 +223,42 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     return true;
 }
 
+#ifndef NDEBUG
+static inline bool propertyTypesAreConsistent(AnimatedPropertyType expectedPropertyType, const Vector<SVGAnimatedProperty*>& properties)
+{
+    for (size_t i = 0; i < properties.size(); ++i) {
+        if (expectedPropertyType != properties[i]->animatedPropertyType())
+            return false;
+    }
+    return true;
+}
+#endif
+
 void SVGAnimateElement::resetToBaseValue(const String& baseString)
 {
     // If animatedProperty is not null, we're dealing with a SVG DOM primitive animation.
     // In that case we don't need any base value strings, but can directly operate on these
     // SVG DOM primitives, like SVGLength.
     SVGAnimatedTypeAnimator* animator = ensureAnimator();
-    m_animatedProperty = animatedPropertyForType(animator->type());
-    if (m_animatedProperty) {
-        if (!m_animatedType) {
-            m_animatedType = animator->constructFromVariant(m_animatedProperty->currentBaseValueVariant(animator->type()));
-            animationStarted(m_animatedProperty, m_animatedType.get());
-        } else
-            m_animatedType->setVariantValue(m_animatedProperty->currentBaseValueVariant(m_animator->type()));
-        ASSERT(m_animatedPropertyType == animator->type());
-        ASSERT(m_animatedPropertyType == m_animatedProperty->animatedPropertyType());
+    ASSERT(m_animatedPropertyType == animator->type());
+
+    m_animatedProperties = animatedPropertiesForType(animator->type());
+    if (m_animatedProperties.isEmpty()) {
+        // Legacy fallback code path, uses the passed-in baseString, which is cached.
+        if (!m_animatedType)
+            m_animatedType = animator->constructFromString(baseString);
+        else
+            m_animatedType->setValueAsString(attributeName(), baseString);
         return;
     }
 
-    if (!m_animatedType)
-        m_animatedType = animator->constructFromString(baseString);
-    else
-        m_animatedType->setValueAsString(attributeName(), baseString);
-    ASSERT(m_animatedPropertyType == animator->type());
+    ASSERT(propertyTypesAreConsistent(m_animatedPropertyType, m_animatedProperties));
+    if (!m_animatedType) {
+        Vector<SVGGenericAnimatedType*> types;
+        m_animatedType = animator->constructFromBaseValue(m_animatedProperties, types);
+        animationStarted(m_animatedProperties, types);
+    } else
+        animator->resetAnimatedTypeToBaseValue(m_animatedProperties, m_animatedType.get());
 }
 
 void SVGAnimateElement::applyResultsToTarget()
@@ -271,9 +284,9 @@ void SVGAnimateElement::targetElementWillChange(SVGElement* currentTarget, SVGEl
 {
     SVGSMILElement::targetElementWillChange(currentTarget, newTarget);
 
-    if (m_animatedProperty) {
-        animationEnded(m_animatedProperty);
-        m_animatedProperty = 0;
+    if (!m_animatedProperties.isEmpty()) {
+        animationEnded(m_animatedProperties);
+        m_animatedProperties.clear();
     }
 
     m_animatedType.clear();

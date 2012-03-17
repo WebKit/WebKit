@@ -346,24 +346,24 @@ static inline void setTargetAttributeAnimatedCSSValue(SVGElement* targetElement,
         targetElement->setNeedsStyleRecalc();
 }
 
-static inline SVGAnimatedProperty* findMatchingAnimatedProperty(SVGElement* targetElement, const QualifiedName& attributeName, AnimatedPropertyType type)
+static inline Vector<SVGAnimatedProperty*> findMatchingAnimatedProperties(SVGElement* targetElement, const QualifiedName& attributeName, AnimatedPropertyType type)
 {
     Vector<RefPtr<SVGAnimatedProperty> > properties;
     targetElement->localAttributeToPropertyMap().animatedPropertiesForAttribute(targetElement, attributeName, properties);
 
+    // FIXME: This check can go away once all types support animVal.
+    if (!SVGAnimatedType::supportsAnimVal(type))
+        return Vector<SVGAnimatedProperty*>();
+
+    Vector<SVGAnimatedProperty*> result;
     size_t propertiesSize = properties.size();
     for (size_t i = 0; i < propertiesSize; ++i) {
         SVGAnimatedProperty* property = properties[i].get();
-        if (property->animatedPropertyType() != type)
-            continue;
-
-        // FIXME: This check can go away once all types support animVal.
-        if (SVGAnimatedType::supportsAnimVal(property->animatedPropertyType()))
-            return property;
-        return 0;
+        if (property->animatedPropertyType() == type)
+            result.append(property);
     }
 
-    return 0;
+    return result;
 }
 
 void SVGAnimationElement::applyAnimatedValue(SVGAnimationElement::ShouldApplyAnimation shouldApply, SVGElement* targetElement, const QualifiedName& attributeName, SVGAnimatedType* animatedType)
@@ -378,9 +378,12 @@ void SVGAnimationElement::applyAnimatedValue(SVGAnimationElement::ShouldApplyAni
         setTargetAttributeAnimatedCSSValue(targetElement, attributeName, animatedType->valueAsString());
         break;
     case ApplyXMLAnimation:
-        if (SVGAnimatedProperty* property = findMatchingAnimatedProperty(targetElement, attributeName, animatedType->type())) {
-            property->animationValueDidChange();
-            break;
+        Vector<SVGAnimatedProperty*> properties = findMatchingAnimatedProperties(targetElement, attributeName, animatedType->type());
+        size_t propertiesSize = properties.size();
+        if (propertiesSize) {
+            for (size_t i = 0; i < propertiesSize; ++i)
+                properties[i]->animationValueDidChange();
+            return;
         }
 
         // FIXME: Deprecated legacy code path which mutates the DOM.
@@ -431,59 +434,68 @@ void SVGAnimationElement::setTargetAttributeAnimatedValue(SVGAnimatedType* anima
     }
 }
 
-static inline void notifyAnimatedPropertyAboutAnimationBeginEnd(SVGAnimatedProperty* property, SVGAnimatedType* type, SVGElement* targetElement, const QualifiedName& attributeName)
+static inline void notifyAnimatedPropertyAboutAnimationBeginEnd(const Vector<SVGAnimatedProperty*>& properties, const Vector<SVGGenericAnimatedType*>& types, SVGElement* targetElement, const QualifiedName& attributeName)
 {
-    ASSERT(property);
+    ASSERT(!properties.isEmpty());
+    ASSERT(types.isEmpty() || properties.size() == types.size());
     ASSERT(targetElement);
-    ASSERT(property->contextElement() == targetElement);
-    ASSERT(property->attributeName() == attributeName);
-    if (type)
-        property->animationStarted(type);
-    else {
-        // animationEnded() notifies the targetElement about the attribute change - take care of blocking
-        // updates to instances of elements, otherwise they use trees got recloned, unncessary.
-        InstanceUpdateBlocker blocker(targetElement);
-        property->animationEnded();
-    }
 
-    // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
-    const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
-    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
-    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
-        SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
-        if (!shadowTreeElement)
-            continue;
-
-        SVGAnimatedProperty* propertyInstance = findMatchingAnimatedProperty(shadowTreeElement, attributeName, property->animatedPropertyType());
-        if (!propertyInstance)
-            continue;
-
+    size_t size = properties.size();
+    for (size_t i = 0; i < size; ++i) {
+        SVGAnimatedProperty* property = properties[i];
+        ASSERT(property->contextElement() == targetElement);
+        ASSERT(property->attributeName() == attributeName);
+        SVGGenericAnimatedType* type = types.isEmpty() ? 0 : types[i];
         if (type)
-            propertyInstance->animationStarted(type);
-        else
-            propertyInstance->animationEnded();
+            property->animationStarted(type);
+        else {
+            InstanceUpdateBlocker blocker(targetElement);
+            property->animationEnded();
+        }
+
+        // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
+        const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
+        const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
+        for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
+            SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
+            if (!shadowTreeElement)
+                continue;
+
+            Vector<SVGAnimatedProperty*> propertiesInstance = findMatchingAnimatedProperties(shadowTreeElement, attributeName, property->animatedPropertyType());
+
+            size_t propertiesInstanceSize = propertiesInstance.size();
+            ASSERT(propertiesInstanceSize == size);
+            for (size_t i = 0; i < propertiesInstanceSize; ++i) {
+                if (type)
+                    propertiesInstance[i]->animationStarted(type);
+                else
+                    propertiesInstance[i]->animationEnded();
+            }
+        }
     }
 }
 
-void SVGAnimationElement::animationStarted(SVGAnimatedProperty* property, SVGAnimatedType* type)
+void SVGAnimationElement::animationStarted(const Vector<SVGAnimatedProperty*>& properties, const Vector<SVGGenericAnimatedType*>& types)
 {
-    ASSERT(type);
-    notifyAnimatedPropertyAboutAnimationBeginEnd(property, type, targetElement(), attributeName());
+    // If properties contains more than one entry, multiple SVG DOM properties map to one XML dom attribute.
+    // eg. stdDeviationX/stdDeviationY both map to SVGNames::stdDeviationAttr.
+    notifyAnimatedPropertyAboutAnimationBeginEnd(properties, types, targetElement(), attributeName());
 }
 
-void SVGAnimationElement::animationEnded(SVGAnimatedProperty* property)
+void SVGAnimationElement::animationEnded(const Vector<SVGAnimatedProperty*>& properties)
 {
-    notifyAnimatedPropertyAboutAnimationBeginEnd(property, 0, targetElement(), attributeName());
+    Vector<SVGGenericAnimatedType*> emptyTypes;
+    notifyAnimatedPropertyAboutAnimationBeginEnd(properties, emptyTypes, targetElement(), attributeName());
 }
 
-SVGAnimatedProperty* SVGAnimationElement::animatedPropertyForType(AnimatedPropertyType type)
+Vector<SVGAnimatedProperty*> SVGAnimationElement::animatedPropertiesForType(AnimatedPropertyType type)
 {
     SVGElement* targetElement = this->targetElement();
     const QualifiedName& attributeName = this->attributeName();
     ShouldApplyAnimation shouldApply = shouldApplyAnimation(targetElement, attributeName);
-    if (shouldApply != ApplyXMLAnimation)
-        return 0;
-    return findMatchingAnimatedProperty(targetElement, attributeName, type);
+    if (shouldApply == ApplyXMLAnimation)
+        return findMatchingAnimatedProperties(targetElement, attributeName, type);
+    return Vector<SVGAnimatedProperty*>();
 }
 
 SVGAnimationElement::ShouldApplyAnimation SVGAnimationElement::shouldApplyAnimation(SVGElement* targetElement, const QualifiedName& attributeName)

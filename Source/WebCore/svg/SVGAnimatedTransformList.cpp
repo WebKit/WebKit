@@ -48,16 +48,20 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromStrin
     return animatedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromVariant(SVGGenericAnimatedType* animatedType)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromBaseValue(const Vector<SVGAnimatedProperty*>& properties, Vector<SVGGenericAnimatedType*>& types)
 {
-    ASSERT(animatedType);
-    return SVGAnimatedType::createTransformList(new SVGTransformList(*reinterpret_cast<SVGTransformList*>(animatedType)));
+    return SVGAnimatedType::createTransformList(constructFromOneBaseValue<SVGTransformList>(properties, types));
 }
 
 inline PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromString(SVGAnimateTransformElement* animateTransformElement, const String& string)
 {
     ASSERT(animateTransformElement);
     return SVGAnimatedTransformListAnimator::constructFromString(SVGTransform::transformTypePrefixForParsing(animateTransformElement->transformType()) + string + ')');
+}
+
+void SVGAnimatedTransformListAnimator::resetAnimatedTypeToBaseValue(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+{
+    resetAnimatedTypeFromOneBaseValue<SVGTransformList>(properties, type, &SVGAnimatedType::transformList);
 }
 
 void SVGAnimatedTransformListAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)

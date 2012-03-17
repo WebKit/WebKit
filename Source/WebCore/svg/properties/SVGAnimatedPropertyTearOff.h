@@ -22,7 +22,6 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedProperty.h"
-#include "SVGAnimatedType.h"
 #include "SVGPropertyTearOff.h"
 
 namespace WebCore {
@@ -59,18 +58,16 @@ public:
         return m_animVal->propertyReference();
     }
 
-    virtual SVGGenericAnimatedType* currentBaseValueVariant(AnimatedPropertyType expectedPropertyType) const
+    virtual SVGGenericAnimatedType* currentBaseValueVariant() const
     {
-        ASSERT_UNUSED(expectedPropertyType, animatedPropertyType() == expectedPropertyType);
         return reinterpret_cast<SVGGenericAnimatedType*>(&m_property);
     }
 
-    virtual void animationStarted(SVGAnimatedType* animatedType)
+    virtual void animationStarted(SVGGenericAnimatedType* animatedType)
     {
         ASSERT(!m_isAnimating);
         ASSERT(animatedType);
-        ASSERT(animatedType->type() == animatedPropertyType());
-        animVal()->setValue(*reinterpret_cast<PropertyType*>(animatedType->variantValue()));
+        animVal()->setValue(*reinterpret_cast<PropertyType*>(animatedType));
         m_isAnimating = true;
     }
 

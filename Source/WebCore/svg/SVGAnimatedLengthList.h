@@ -46,8 +46,9 @@ public:
     virtual ~SVGAnimatedLengthListAnimator() { }
     
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
-    virtual PassOwnPtr<SVGAnimatedType> constructFromVariant(SVGGenericAnimatedType*);
-    
+    virtual PassOwnPtr<SVGAnimatedType> constructFromBaseValue(const Vector<SVGAnimatedProperty*>&, Vector<SVGGenericAnimatedType*>&);
+    virtual void resetAnimatedTypeToBaseValue(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*);
+
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,

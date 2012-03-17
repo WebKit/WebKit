@@ -102,10 +102,10 @@ protected:
 
     String targetAttributeBaseValue();
     void setTargetAttributeAnimatedValue(SVGAnimatedType*);
-    SVGAnimatedProperty* animatedPropertyForType(AnimatedPropertyType);
+    Vector<SVGAnimatedProperty*> animatedPropertiesForType(AnimatedPropertyType);
 
-    void animationStarted(SVGAnimatedProperty*, SVGAnimatedType*);
-    void animationEnded(SVGAnimatedProperty*);
+    void animationStarted(const Vector<SVGAnimatedProperty*>& properties, const Vector<SVGGenericAnimatedType*>& types);
+    void animationEnded(const Vector<SVGAnimatedProperty*>& properties);
 
     // from SVGSMILElement
     virtual void startedActiveInterval();

@@ -21,6 +21,7 @@
 #define SVGAnimatedTypeAnimator_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedProperty.h"
 #include "SVGAnimatedType.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -34,9 +35,10 @@ class SVGAnimatedTypeAnimator {
 public:
     virtual ~SVGAnimatedTypeAnimator() { }
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&) = 0;
-    // FIXME: Make this pure once all types implement this. Its needed for animVal, and currently only SVGLengthAnimator implements this.
-    virtual PassOwnPtr<SVGAnimatedType> constructFromVariant(SVGGenericAnimatedType*) { return PassOwnPtr<SVGAnimatedType>(); }
-    
+    // FIXME: Make these two pure once all types implement this.
+    virtual PassOwnPtr<SVGAnimatedType> constructFromBaseValue(const Vector<SVGAnimatedProperty*>&, Vector<SVGGenericAnimatedType*>&) { return PassOwnPtr<SVGAnimatedType>(); }
+    virtual void resetAnimatedTypeToBaseValue(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*) { }
+
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString) = 0;
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString) = 0;
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount,
@@ -53,6 +55,63 @@ protected:
         , m_animationElement(animationElement)
         , m_contextElement(contextElement)
     {
+    }
+
+    SVGGenericAnimatedType* currentBaseValueVariant(SVGAnimatedProperty* property)
+    {
+        ASSERT(property);
+        ASSERT(property->animatedPropertyType() == m_type);
+        return property->currentBaseValueVariant();
+    }
+
+    template<typename AnimatedType>
+    AnimatedType* constructFromOneBaseValue(const Vector<SVGAnimatedProperty*>& properties, Vector<SVGGenericAnimatedType*>& types)
+    {
+        ASSERT(properties.size() == 1);
+        SVGGenericAnimatedType* animatedType = currentBaseValueVariant(properties[0]);
+
+        // FIXME: Make this type safe, a follow-up patch will adress this.
+        AnimatedType* copy = new AnimatedType(*reinterpret_cast<AnimatedType*>(animatedType));
+        types.append(reinterpret_cast<SVGGenericAnimatedType*>(copy));
+        return copy;
+    }
+
+    template<typename AnimatedType>
+    void resetAnimatedTypeFromOneBaseValue(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type, AnimatedType& (SVGAnimatedType::*getter)())
+    {
+        ASSERT(type);
+        ASSERT(type->type() == m_type);
+        ASSERT(properties.size() == 1);
+        // FIXME: Make this type safe, a follow-up patch will adress this.
+        (type->*getter)() = *reinterpret_cast<AnimatedType*>(currentBaseValueVariant(properties[0]));
+    }
+
+    template<typename AnimatedType, typename ContentType>
+    AnimatedType* constructFromTwoBaseValues(const Vector<SVGAnimatedProperty*>& properties, Vector<SVGGenericAnimatedType*>& types)
+    {
+        ASSERT(properties.size() == 2);
+        SVGGenericAnimatedType* firstType = currentBaseValueVariant(properties[0]);
+        SVGGenericAnimatedType* secondType = currentBaseValueVariant(properties[1]);
+
+        // FIXME: Make this type safe, a follow-up patch will adress this.
+        AnimatedType* copy = new AnimatedType(*reinterpret_cast<ContentType*>(firstType), *reinterpret_cast<ContentType*>(secondType));
+        types.reserveCapacity(2);
+        types.append(reinterpret_cast<SVGGenericAnimatedType*>(&copy->first));
+        types.append(reinterpret_cast<SVGGenericAnimatedType*>(&copy->second));
+        return copy;
+    }
+
+    template<typename AnimatedType, typename ContentType>
+    void resetAnimatedTypeFromTwoBaseValues(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type, AnimatedType& (SVGAnimatedType::*getter)())
+    {
+        ASSERT(type);
+        ASSERT(type->type() == m_type);
+        ASSERT(properties.size() == 2);
+
+        // FIXME: Make this type safe, a follow-up patch will adress this.
+        AnimatedType& animatedTypeValue = (type->*getter)();
+        animatedTypeValue.first = *reinterpret_cast<ContentType*>(currentBaseValueVariant(properties[0]));
+        animatedTypeValue.second = *reinterpret_cast<ContentType*>(currentBaseValueVariant(properties[1]));
     }
 
     AnimatedPropertyType m_type;

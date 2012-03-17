@@ -22,7 +22,6 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedProperty.h"
-#include "SVGAnimatedType.h"
 #include "SVGListPropertyTearOff.h"
 #include "SVGStaticListPropertyTearOff.h"
 
@@ -75,22 +74,20 @@ public:
         return animVal()->values();
     }
 
-    virtual SVGGenericAnimatedType* currentBaseValueVariant(AnimatedPropertyType expectedPropertyType) const
+    virtual SVGGenericAnimatedType* currentBaseValueVariant() const
     {
-        ASSERT_UNUSED(expectedPropertyType, animatedPropertyType() == expectedPropertyType);
         return reinterpret_cast<SVGGenericAnimatedType*>(&m_values);
     }
 
-    virtual void animationStarted(SVGAnimatedType* animatedType)
+    virtual void animationStarted(SVGGenericAnimatedType* animatedType)
     {
         ASSERT(!m_isAnimating);
         ASSERT(animatedType);
-        ASSERT(animatedType->type() == animatedPropertyType());
         ASSERT(m_values.size() == m_wrappers.size());
         ASSERT(m_animatedWrappers.isEmpty());
 
         // Switch to new passed in value type & new wrappers list. The new wrappers list must be created for the new value.
-        PropertyType* newAnimVal = reinterpret_cast<PropertyType*>(animatedType->variantValue());
+        PropertyType* newAnimVal = reinterpret_cast<PropertyType*>(animatedType);
         if (!newAnimVal->isEmpty())
             m_animatedWrappers.fill(0, newAnimVal->size());
 

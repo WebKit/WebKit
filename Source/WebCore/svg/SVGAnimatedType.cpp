@@ -457,6 +457,7 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     case AnimatedLengthList:
     case AnimatedNumber:
     case AnimatedNumberList:
+    case AnimatedNumberOptionalNumber:
     case AnimatedTransformList:
         return true;
     case AnimatedAngle:
@@ -464,7 +465,6 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
     case AnimatedColor:
     case AnimatedEnumeration:
     case AnimatedInteger:
-    case AnimatedNumberOptionalNumber:
     case AnimatedPath:
     case AnimatedPoints:
     case AnimatedPreserveAspectRatio:
@@ -476,43 +476,6 @@ bool SVGAnimatedType::supportsAnimVal(AnimatedPropertyType type)
 
     ASSERT_NOT_REACHED();
     return false;
-}
-
-void SVGAnimatedType::setVariantValue(SVGGenericAnimatedType* type)
-{
-    // FIXME: This lists the current state of our animVal support.
-    switch (m_type) {
-    case AnimatedLength:
-        *m_data.length = *reinterpret_cast<SVGLength*>(type);
-        return;
-    case AnimatedLengthList:
-        *m_data.lengthList = *reinterpret_cast<SVGLengthList*>(type);
-        return;
-    case AnimatedNumber:
-        *m_data.number = *reinterpret_cast<float*>(type);
-        return;
-    case AnimatedNumberList:
-        *m_data.numberList = *reinterpret_cast<SVGNumberList*>(type);
-        return;
-    case AnimatedTransformList:
-        *m_data.transformList = *reinterpret_cast<SVGTransformList*>(type);
-        return;
-    case AnimatedAngle:
-    case AnimatedBoolean:
-    case AnimatedColor:
-    case AnimatedEnumeration:
-    case AnimatedInteger:
-    case AnimatedNumberOptionalNumber:
-    case AnimatedPath:
-    case AnimatedPoints:
-    case AnimatedPreserveAspectRatio:
-    case AnimatedRect:
-    case AnimatedString:
-    case AnimatedUnknown:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore
