@@ -1005,8 +1005,8 @@ FloatPoint3D RenderLayerBacking::computeTransformOrigin(const IntRect& borderBox
     RenderStyle* style = renderer()->style();
 
     FloatPoint3D origin;
-    origin.setX(style->transformOriginX().calcFloatValue(borderBox.width()));
-    origin.setY(style->transformOriginY().calcFloatValue(borderBox.height()));
+    origin.setX(floatValueForLength(style->transformOriginX(), borderBox.width()));
+    origin.setY(floatValueForLength(style->transformOriginY(), borderBox.height()));
     origin.setZ(style->transformOriginZ());
 
     return origin;
@@ -1020,8 +1020,8 @@ FloatPoint RenderLayerBacking::computePerspectiveOrigin(const IntRect& borderBox
     float boxHeight = borderBox.height();
 
     FloatPoint origin;
-    origin.setX(style->perspectiveOriginX().calcFloatValue(boxWidth));
-    origin.setY(style->perspectiveOriginY().calcFloatValue(boxHeight));
+    origin.setX(floatValueForLength(style->perspectiveOriginX(), boxWidth));
+    origin.setY(floatValueForLength(style->perspectiveOriginY(), boxHeight));
 
     return origin;
 }

@@ -844,7 +844,7 @@ LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositio
         } else if (verticalAlign == BASELINE_MIDDLE)
             verticalPosition += -renderer->lineHeight(firstLine, lineDirection) / 2 + renderer->baselinePosition(baselineType(), firstLine, lineDirection);
         else if (verticalAlign == LENGTH)
-            verticalPosition -= renderer->style()->verticalAlignLength().calcValue(renderer->lineHeight(firstLine, lineDirection));
+            verticalPosition -= valueForLength(renderer->style()->verticalAlignLength(), renderer->lineHeight(firstLine, lineDirection));
     }
 
     // Store the cached value.

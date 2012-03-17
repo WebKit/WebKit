@@ -147,25 +147,25 @@ Path HTMLAreaElement::getRegion(const LayoutSize& size) const
         case Poly:
             if (m_coordsLen >= 6) {
                 int numPoints = m_coordsLen / 2;
-                path.moveTo(FloatPoint(m_coords[0].calcMinValue(width), m_coords[1].calcMinValue(height)));
+                path.moveTo(FloatPoint(miminumValueForLength(m_coords[0], width), miminumValueForLength(m_coords[1], height)));
                 for (int i = 1; i < numPoints; ++i)
-                    path.addLineTo(FloatPoint(m_coords[i * 2].calcMinValue(width), m_coords[i * 2 + 1].calcMinValue(height)));
+                    path.addLineTo(FloatPoint(miminumValueForLength(m_coords[i * 2], width), miminumValueForLength(m_coords[i * 2 + 1], height)));
                 path.closeSubpath();
             }
             break;
         case Circle:
             if (m_coordsLen >= 3) {
                 Length radius = m_coords[2];
-                int r = min(radius.calcMinValue(width), radius.calcMinValue(height));
-                path.addEllipse(FloatRect(m_coords[0].calcMinValue(width) - r, m_coords[1].calcMinValue(height) - r, 2 * r, 2 * r));
+                int r = min(miminumValueForLength(radius, width), miminumValueForLength(radius, height));
+                path.addEllipse(FloatRect(miminumValueForLength(m_coords[0], width) - r, miminumValueForLength(m_coords[1], height) - r, 2 * r, 2 * r));
             }
             break;
         case Rect:
             if (m_coordsLen >= 4) {
-                int x0 = m_coords[0].calcMinValue(width);
-                int y0 = m_coords[1].calcMinValue(height);
-                int x1 = m_coords[2].calcMinValue(width);
-                int y1 = m_coords[3].calcMinValue(height);
+                int x0 = miminumValueForLength(m_coords[0], width);
+                int y0 = miminumValueForLength(m_coords[1], height);
+                int x1 = miminumValueForLength(m_coords[2], width);
+                int y1 = miminumValueForLength(m_coords[3], height);
                 path.addRect(FloatRect(x0, y0, x1 - x0, y1 - y0));
             }
             break;

@@ -1445,7 +1445,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintConta
 
         int borderRight = isBox() ? toRenderBox(this)->borderRight() : 0;
         LayoutUnit boxWidth = isBox() ? toRenderBox(this)->width() : zeroLayoutUnit;
-        LayoutUnit borderWidth = max<LayoutUnit>(-outlineStyle->outlineOffset(), max<LayoutUnit>(borderRight, max<LayoutUnit>(style()->borderTopRightRadius().width().calcValue(boxWidth), style()->borderBottomRightRadius().width().calcValue(boxWidth)))) + max<LayoutUnit>(ow, shadowRight);
+        LayoutUnit borderWidth = max<LayoutUnit>(-outlineStyle->outlineOffset(), max<LayoutUnit>(borderRight, max<LayoutUnit>(valueForLength(style()->borderTopRightRadius().width(), boxWidth), valueForLength(style()->borderBottomRightRadius().width(), boxWidth)))) + max<LayoutUnit>(ow, shadowRight);
         LayoutRect rightRect(newOutlineBox.x() + min(newOutlineBox.width(), oldOutlineBox.width()) - borderWidth,
             newOutlineBox.y(),
             width + borderWidth,
@@ -1464,7 +1464,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(RenderBoxModelObject* repaintConta
 
         int borderBottom = isBox() ? toRenderBox(this)->borderBottom() : 0;
         LayoutUnit boxHeight = isBox() ? toRenderBox(this)->height() : zeroLayoutUnit;
-        LayoutUnit borderHeight = max<LayoutUnit>(-outlineStyle->outlineOffset(), max<LayoutUnit>(borderBottom, max<LayoutUnit>(style()->borderBottomLeftRadius().height().calcValue(boxHeight), style()->borderBottomRightRadius().height().calcValue(boxHeight)))) + max<LayoutUnit>(ow, shadowBottom);
+        LayoutUnit borderHeight = max<LayoutUnit>(-outlineStyle->outlineOffset(), max<LayoutUnit>(borderBottom, max<LayoutUnit>(valueForLength(style()->borderBottomLeftRadius().height(), boxHeight), valueForLength(style()->borderBottomRightRadius().height(), boxHeight)))) + max<LayoutUnit>(ow, shadowBottom);
         LayoutRect bottomRect(newOutlineBox.x(),
             min(newOutlineBox.maxY(), oldOutlineBox.maxY()) - borderHeight,
             max(newOutlineBox.width(), oldOutlineBox.width()),

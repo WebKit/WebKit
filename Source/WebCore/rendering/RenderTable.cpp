@@ -232,8 +232,8 @@ void RenderTable::computeLogicalWidth()
         setLogicalWidth(convertStyleLogicalWidthToComputedWidth(styleLogicalWidth, containerWidthInInlineDirection));
     else {
         // Subtract out any fixed margins from our available width for auto width tables.
-        LayoutUnit marginStart = style()->marginStart().calcMinValue(availableLogicalWidth);
-        LayoutUnit marginEnd = style()->marginEnd().calcMinValue(availableLogicalWidth);
+        LayoutUnit marginStart = miminumValueForLength(style()->marginStart(), availableLogicalWidth);
+        LayoutUnit marginEnd = miminumValueForLength(style()->marginEnd(), availableLogicalWidth);
         LayoutUnit marginTotal = marginStart + marginEnd;
         
         // Subtract out our margins to get the available content width.
@@ -261,8 +261,8 @@ void RenderTable::computeLogicalWidth()
     if (!hasPerpendicularContainingBlock)
         computeInlineDirectionMargins(cb, availableLogicalWidth, logicalWidth());
     else {
-        setMarginStart(style()->marginStart().calcMinValue(availableLogicalWidth));
-        setMarginEnd(style()->marginEnd().calcMinValue(availableLogicalWidth));
+        setMarginStart(miminumValueForLength(style()->marginStart(), availableLogicalWidth));
+        setMarginEnd(miminumValueForLength(style()->marginEnd(), availableLogicalWidth));
     }
 }
 
@@ -276,7 +276,7 @@ LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& st
         recalcBordersInRowDirection();
         borders = borderStart() + borderEnd() + (collapseBorders() ? 0 : paddingStart() + paddingEnd());
     }
-    return styleLogicalWidth.calcMinValue(availableWidth) + borders;
+    return miminumValueForLength(styleLogicalWidth, availableWidth) + borders;
 }
 
 void RenderTable::layoutCaption(RenderTableCaption* caption)

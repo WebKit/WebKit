@@ -1802,8 +1802,8 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
         LengthSize size = style->pageSize();
         ASSERT(size.width().isFixed());
         ASSERT(size.height().isFixed());
-        width = size.width().calcValue(0);
-        height = size.height().calcValue(0);
+        width = valueForLength(size.width(), 0);
+        height = valueForLength(size.height(), 0);
         break;
     }
     default:
@@ -1813,10 +1813,10 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 
     // The percentage is calculated with respect to the width even for margin top and bottom.
     // http://www.w3.org/TR/CSS2/box.html#margin-properties
-    marginTop = style->marginTop().isAuto() ? marginTop : style->marginTop().calcValue(width);
-    marginRight = style->marginRight().isAuto() ? marginRight : style->marginRight().calcValue(width);
-    marginBottom = style->marginBottom().isAuto() ? marginBottom : style->marginBottom().calcValue(width);
-    marginLeft = style->marginLeft().isAuto() ? marginLeft : style->marginLeft().calcValue(width);
+    marginTop = style->marginTop().isAuto() ? marginTop : valueForLength(style->marginTop(), width);
+    marginRight = style->marginRight().isAuto() ? marginRight : valueForLength(style->marginRight(), width);
+    marginBottom = style->marginBottom().isAuto() ? marginBottom : valueForLength(style->marginBottom(), width);
+    marginLeft = style->marginLeft().isAuto() ? marginLeft : valueForLength(style->marginLeft(), width);
 }
 
 PassRefPtr<CSSValuePool> Document::cssValuePool() const

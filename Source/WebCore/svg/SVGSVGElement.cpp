@@ -541,7 +541,7 @@ FloatRect SVGSVGElement::currentViewBoxRect() const
 
     // If no viewBox is specified but non-relative width/height values, then we
     // should always synthesize a viewBox if we're embedded through a SVGImage.    
-    return FloatRect(FloatPoint(), FloatSize(intrinsicWidth.calcFloatValue(0), intrinsicHeight.calcFloatValue(0)));
+    return FloatRect(FloatPoint(), FloatSize(floatValueForLength(intrinsicWidth, 0), floatValueForLength(intrinsicHeight, 0)));
 }
 
 FloatSize SVGSVGElement::currentViewportSize() const
@@ -549,7 +549,7 @@ FloatSize SVGSVGElement::currentViewportSize() const
     Length intrinsicWidth = this->intrinsicWidth();
     Length intrinsicHeight = this->intrinsicHeight();
     if (intrinsicWidth.isFixed() && intrinsicHeight.isFixed())
-        return FloatSize(intrinsicWidth.calcFloatValue(0), intrinsicHeight.calcFloatValue(0));
+        return FloatSize(floatValueForLength(intrinsicWidth, 0), floatValueForLength(intrinsicHeight, 0));
 
     if (!renderer())
         return FloatSize();

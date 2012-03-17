@@ -237,7 +237,7 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
         }
         case FilterOperation::BLUR: {
             BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
-            float stdDeviation = blurOperation->stdDeviation().calcFloatValue(0);
+            float stdDeviation = floatValueForLength(blurOperation->stdDeviation(), 0);
             effect = FEGaussianBlur::create(this, stdDeviation, stdDeviation);
             break;
         }

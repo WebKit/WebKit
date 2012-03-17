@@ -27,6 +27,7 @@
 #define PerspectiveTransformOperation_h
 
 #include "Length.h"
+#include "LengthFunctions.h"
 #include "TransformOperation.h"
 
 namespace WebCore {
@@ -41,7 +42,7 @@ public:
     Length perspective() const { return m_p; }
     
 private:
-    virtual bool isIdentity() const { return m_p.calcFloatValue(1) == 0; }
+    virtual bool isIdentity() const { return !floatValueForLength(m_p, 1); }
     virtual OperationType getOperationType() const { return PERSPECTIVE; }
     virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == PERSPECTIVE; }
 
@@ -55,7 +56,7 @@ private:
 
     virtual bool apply(TransformationMatrix& transform, const FloatSize&) const
     {
-        transform.applyPerspective(m_p.calcFloatValue(1));
+        transform.applyPerspective(floatValueForLength(m_p, 1));
         return false;
     }
 

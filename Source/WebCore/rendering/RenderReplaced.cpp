@@ -335,8 +335,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) con
                     logicalWidth = containingBlock()->availableLogicalWidth();
 
                 // This solves above equation for 'width' (== logicalWidth).
-                LayoutUnit marginStart = style()->marginStart().calcMinValue(logicalWidth);
-                LayoutUnit marginEnd = style()->marginEnd().calcMinValue(logicalWidth);
+                LayoutUnit marginStart = miminumValueForLength(style()->marginStart(), logicalWidth);
+                LayoutUnit marginEnd = miminumValueForLength(style()->marginEnd(), logicalWidth);
                 logicalWidth = max(0, logicalWidth - (marginStart + marginEnd + (width() - clientWidth())));
                 if (isPercentageIntrinsicSize)
                     // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656

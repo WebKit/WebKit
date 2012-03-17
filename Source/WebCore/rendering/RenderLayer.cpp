@@ -820,8 +820,8 @@ TransformationMatrix RenderLayer::perspectiveTransform() const
     const float boxWidth = borderBox.width();
     const float boxHeight = borderBox.height();
 
-    float perspectiveOriginX = style->perspectiveOriginX().calcFloatValue(boxWidth);
-    float perspectiveOriginY = style->perspectiveOriginY().calcFloatValue(boxHeight);
+    float perspectiveOriginX = floatValueForLength(style->perspectiveOriginX(), boxWidth);
+    float perspectiveOriginY = floatValueForLength(style->perspectiveOriginY(), boxHeight);
 
     // A perspective origin of 0,0 makes the vanishing point in the center of the element.
     // We want it to be in the top-left, so subtract half the height and width.
@@ -844,8 +844,8 @@ FloatPoint RenderLayer::perspectiveOrigin() const
     const LayoutRect borderBox = toRenderBox(renderer())->borderBoxRect();
     RenderStyle* style = renderer()->style();
 
-    return FloatPoint(style->perspectiveOriginX().calcFloatValue(borderBox.width()),
-                      style->perspectiveOriginY().calcFloatValue(borderBox.height()));
+    return FloatPoint(floatValueForLength(style->perspectiveOriginX(), borderBox.width()),
+                      floatValueForLength(style->perspectiveOriginY(), borderBox.height()));
 }
 
 RenderLayer* RenderLayer::stackingContext() const

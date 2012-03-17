@@ -573,7 +573,7 @@ LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* 
         LayoutUnit mainAxisExtent = hasOrthogonalFlow(child) ? child->logicalHeight() : child->maxPreferredLogicalWidth();
         return mainAxisExtent - mainAxisBorderAndPaddingExtentForChild(child);
     }
-    return mainAxisLength.calcMinValue(mainAxisContentExtent());
+    return miminumValueForLength(mainAxisLength, mainAxisContentExtent());
 }
 
 LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMainAxisExtent)
@@ -680,11 +680,11 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Fle
         // of 0 and because if we're not auto sizing, we don't do a layout that
         // computes the start/end margins.
         if (isHorizontalFlow()) {
-            child->setMarginLeft(child->style()->marginLeft().calcMinValue(flexboxAvailableContentExtent));
-            child->setMarginRight(child->style()->marginRight().calcMinValue(flexboxAvailableContentExtent));
+            child->setMarginLeft(miminumValueForLength(child->style()->marginLeft(), flexboxAvailableContentExtent));
+            child->setMarginRight(miminumValueForLength(child->style()->marginRight(), flexboxAvailableContentExtent));
         } else {
-            child->setMarginTop(child->style()->marginTop().calcMinValue(flexboxAvailableContentExtent));
-            child->setMarginBottom(child->style()->marginBottom().calcMinValue(flexboxAvailableContentExtent));
+            child->setMarginTop(miminumValueForLength(child->style()->marginTop(), flexboxAvailableContentExtent));
+            child->setMarginBottom(miminumValueForLength(child->style()->marginBottom(), flexboxAvailableContentExtent));
         }
     }
 }
@@ -758,8 +758,8 @@ bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithm(const OrderedFlexItemLis
                 childPreferredSize += lroundf(availableFreeSpace * positiveFlexForChild(child) / totalPositiveFlexibility);
 
                 Length childLogicalMaxWidth = isHorizontalFlow() ? child->style()->maxWidth() : child->style()->maxHeight();
-                if (childLogicalMaxWidth.isSpecified() && childPreferredSize > childLogicalMaxWidth.calcValue(flexboxAvailableContentExtent)) {
-                    childPreferredSize = childLogicalMaxWidth.calcValue(flexboxAvailableContentExtent);
+                if (childLogicalMaxWidth.isSpecified() && childPreferredSize > valueForLength(childLogicalMaxWidth, flexboxAvailableContentExtent)) {
+                    childPreferredSize = valueForLength(childLogicalMaxWidth, flexboxAvailableContentExtent);
                     availableFreeSpace -= childPreferredSize - preferredMainAxisContentExtentForChild(child);
                     totalPositiveFlexibility -= positiveFlexForChild(child);
 
@@ -770,8 +770,8 @@ bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithm(const OrderedFlexItemLis
                 childPreferredSize += lroundf(availableFreeSpace * negativeFlexForChild(child) / totalNegativeFlexibility);
 
                 Length childLogicalMinWidth = isHorizontalFlow() ? child->style()->minWidth() : child->style()->minHeight();
-                if (childLogicalMinWidth.isSpecified() && childPreferredSize < childLogicalMinWidth.calcValue(flexboxAvailableContentExtent)) {
-                    childPreferredSize = childLogicalMinWidth.calcValue(flexboxAvailableContentExtent);
+                if (childLogicalMinWidth.isSpecified() && childPreferredSize < valueForLength(childLogicalMinWidth, flexboxAvailableContentExtent)) {
+                    childPreferredSize = valueForLength(childLogicalMinWidth, flexboxAvailableContentExtent);
                     availableFreeSpace += preferredMainAxisContentExtentForChild(child) - childPreferredSize;
                     totalNegativeFlexibility -= negativeFlexForChild(child);
 

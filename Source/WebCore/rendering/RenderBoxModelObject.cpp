@@ -437,12 +437,12 @@ LayoutUnit RenderBoxModelObject::relativePositionOffsetX() const
     if (!style()->left().isAuto()) {
         RenderBlock* cb = containingBlock();
         if (!style()->right().isAuto() && !cb->style()->isLeftToRightDirection())
-            return -style()->right().calcValue(cb->availableWidth());
-        return offset + style()->left().calcValue(cb->availableWidth());
+            return -valueForLength(style()->right(), cb->availableWidth());
+        return offset + valueForLength(style()->left(), cb->availableWidth());
     }
     if (!style()->right().isAuto()) {
         RenderBlock* cb = containingBlock();
-        return offset + -style()->right().calcValue(cb->availableWidth());
+        return offset + -valueForLength(style()->right(), cb->availableWidth());
     }
     return offset;
 }
@@ -462,13 +462,13 @@ LayoutUnit RenderBoxModelObject::relativePositionOffsetY() const
         && (!containingBlock->style()->height().isAuto()
             || !style()->top().isPercent()
             || containingBlock->stretchesToViewport()))
-        return offset + style()->top().calcValue(containingBlock->availableHeight());
+        return offset + valueForLength(style()->top(), containingBlock->availableHeight());
 
     if (!style()->bottom().isAuto()
         && (!containingBlock->style()->height().isAuto()
             || !style()->bottom().isPercent()
             || containingBlock->stretchesToViewport()))
-        return offset + -style()->bottom().calcValue(containingBlock->availableHeight());
+        return offset + -valueForLength(style()->bottom(), containingBlock->availableHeight());
 
     return offset;
 }
@@ -556,7 +556,7 @@ LayoutUnit RenderBoxModelObject::paddingTop(PaddingOptions) const
     Length padding = style()->paddingTop();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return padding.calcMinValue(w);
+    return miminumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingBottom(PaddingOptions) const
@@ -565,7 +565,7 @@ LayoutUnit RenderBoxModelObject::paddingBottom(PaddingOptions) const
     Length padding = style()->paddingBottom();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return padding.calcMinValue(w);
+    return miminumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingLeft(PaddingOptions) const
@@ -574,7 +574,7 @@ LayoutUnit RenderBoxModelObject::paddingLeft(PaddingOptions) const
     Length padding = style()->paddingLeft();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return padding.calcMinValue(w);
+    return miminumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingRight(PaddingOptions) const
@@ -583,7 +583,7 @@ LayoutUnit RenderBoxModelObject::paddingRight(PaddingOptions) const
     Length padding = style()->paddingRight();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return padding.calcMinValue(w);
+    return miminumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingBefore(PaddingOptions) const
@@ -592,7 +592,7 @@ LayoutUnit RenderBoxModelObject::paddingBefore(PaddingOptions) const
     Length padding = style()->paddingBefore();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return padding.calcMinValue(w);
+    return miminumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingAfter(PaddingOptions) const
@@ -601,7 +601,7 @@ LayoutUnit RenderBoxModelObject::paddingAfter(PaddingOptions) const
     Length padding = style()->paddingAfter();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return padding.calcMinValue(w);
+    return miminumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingStart(PaddingOptions) const
@@ -610,7 +610,7 @@ LayoutUnit RenderBoxModelObject::paddingStart(PaddingOptions) const
     Length padding = style()->paddingStart();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return padding.calcMinValue(w);
+    return miminumValueForLength(padding, w);
 }
 
 LayoutUnit RenderBoxModelObject::paddingEnd(PaddingOptions) const
@@ -619,7 +619,7 @@ LayoutUnit RenderBoxModelObject::paddingEnd(PaddingOptions) const
     Length padding = style()->paddingEnd();
     if (padding.isPercent())
         w = containingBlock()->availableLogicalWidth();
-    return padding.calcMinValue(w);
+    return miminumValueForLength(padding, w);
 }
 
 RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& borderRect, InlineFlowBox* box, LayoutUnit inlineBoxWidth, LayoutUnit inlineBoxHeight,
@@ -998,12 +998,12 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
             if (layerWidth.isFixed())
                 w = layerWidth.value();
             else if (layerWidth.isPercent())
-                w = layerWidth.calcValue(positioningAreaSize.width());
+                w = valueForLength(layerWidth, positioningAreaSize.width());
             
             if (layerHeight.isFixed())
                 h = layerHeight.value();
             else if (layerHeight.isPercent())
-                h = layerHeight.calcValue(positioningAreaSize.height());
+                h = valueForLength(layerHeight, positioningAreaSize.height());
             
             // If one of the values is auto we have to use the appropriate
             // scale to maintain our aspect ratio.
@@ -1139,13 +1139,13 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     EFillRepeat backgroundRepeatX = fillLayer->repeatX();
     EFillRepeat backgroundRepeatY = fillLayer->repeatY();
 
-    LayoutUnit xPosition = fillLayer->xPosition().calcMinValue(positioningAreaSize.width() - geometry.tileSize().width(), true);
+    LayoutUnit xPosition = miminumValueForLength(fillLayer->xPosition(), positioningAreaSize.width() - geometry.tileSize().width(), true);
     if (backgroundRepeatX == RepeatFill)
         geometry.setPhaseX(geometry.tileSize().width() ? geometry.tileSize().width() - (xPosition + left) % geometry.tileSize().width() : 0);
     else
         geometry.setNoRepeatX(xPosition + left);
 
-    LayoutUnit yPosition = fillLayer->yPosition().calcMinValue(positioningAreaSize.height() - geometry.tileSize().height(), true);
+    LayoutUnit yPosition = miminumValueForLength(fillLayer->yPosition(), positioningAreaSize.height() - geometry.tileSize().height(), true);
     if (backgroundRepeatY == RepeatFill)
         geometry.setPhaseY(geometry.tileSize().height() ? geometry.tileSize().height() - (yPosition + top) % geometry.tileSize().height() : 0);
     else 
@@ -1164,7 +1164,7 @@ static LayoutUnit computeBorderImageSide(Length borderSlice, LayoutUnit borderSi
         return borderSlice.value() * borderSide;
     if (borderSlice.isAuto())
         return imageSide;
-    return borderSlice.calcValue(boxExtent);
+    return valueForLength(borderSlice, boxExtent);
 }
 
 bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext, const LayoutRect& rect, const RenderStyle* style,
@@ -1202,10 +1202,10 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     int imageWidth = imageSize.width() / style->effectiveZoom();
     int imageHeight = imageSize.height() / style->effectiveZoom();
 
-    int topSlice = min<int>(imageHeight, ninePieceImage.imageSlices().top().calcValue(imageHeight));
-    int rightSlice = min<int>(imageWidth, ninePieceImage.imageSlices().right().calcValue(imageWidth));
-    int bottomSlice = min<int>(imageHeight, ninePieceImage.imageSlices().bottom().calcValue(imageHeight));
-    int leftSlice = min<int>(imageWidth, ninePieceImage.imageSlices().left().calcValue(imageWidth));
+    int topSlice = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().top(), imageHeight));
+    int rightSlice = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().right(), imageWidth));
+    int bottomSlice = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().bottom(), imageHeight));
+    int leftSlice = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().left(), imageWidth));
 
     ENinePieceImageRule hRule = ninePieceImage.horizontalRule();
     ENinePieceImageRule vRule = ninePieceImage.verticalRule();

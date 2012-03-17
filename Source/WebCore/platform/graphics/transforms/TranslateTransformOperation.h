@@ -26,6 +26,7 @@
 #define TranslateTransformOperation_h
 
 #include "Length.h"
+#include "LengthFunctions.h"
 #include "TransformOperation.h"
 
 namespace WebCore {
@@ -42,16 +43,16 @@ public:
         return adoptRef(new TranslateTransformOperation(tx, ty, tz, type));
     }
 
-    double x(const FloatSize& borderBoxSize) const { return m_x.calcFloatValue(borderBoxSize.width()); }
-    double y(const FloatSize& borderBoxSize) const { return m_y.calcFloatValue(borderBoxSize.height()); }
-    double z(const FloatSize&) const { return m_z.calcFloatValue(1); }
+    double x(const FloatSize& borderBoxSize) const { return floatValueForLength(m_x, borderBoxSize.width()); }
+    double y(const FloatSize& borderBoxSize) const { return floatValueForLength(m_y, borderBoxSize.height()); }
+    double z(const FloatSize&) const { return floatValueForLength(m_z, 1); }
 
     Length x() const { return m_x; }
     Length y() const { return m_y; }
     Length z() const { return m_z; }
 
 private:
-    virtual bool isIdentity() const { return m_x.calcFloatValue(1) == 0 && m_y.calcFloatValue(1) == 0 && m_z.calcFloatValue(1) == 0; }
+    virtual bool isIdentity() const { return !floatValueForLength(m_x, 1) && !floatValueForLength(m_y, 1) && !floatValueForLength(m_z, 1); }
 
     virtual OperationType getOperationType() const { return m_type; }
     virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == m_type; }

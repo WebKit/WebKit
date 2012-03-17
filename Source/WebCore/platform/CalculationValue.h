@@ -32,6 +32,7 @@
 #define CalculationValue_h
 
 #include "Length.h"
+#include "LengthFunctions.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -101,7 +102,7 @@ public:
 
     virtual float evaluate(float maxValue) const
     {
-        return m_length.calcFloatValue(maxValue);
+        return floatValueForLength(m_length, maxValue);
     }
     
 private:

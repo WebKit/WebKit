@@ -159,96 +159,6 @@ public:
         *this = Length(value, Fixed);
     }
 
-    int calcValue(int maxValue, bool roundPercentages = false) const
-    {
-        switch (type()) {
-            case Fixed:
-            case Percent:
-            case Calculated:
-                return calcMinValue(maxValue, roundPercentages);
-            case Auto:
-                return maxValue;
-            case Relative:
-            case Intrinsic:
-            case MinIntrinsic:
-            case Undefined:
-                ASSERT_NOT_REACHED();
-                return 0;
-        }
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-
-    int calcMinValue(int maxValue, bool roundPercentages = false) const
-    {
-        switch (type()) {
-            case Fixed:
-                return value();
-            case Percent:
-                if (roundPercentages)
-                    return static_cast<int>(round(maxValue * percent() / 100.0f));
-                // Don't remove the extra cast to float. It is needed for rounding on 32-bit Intel machines that use the FPU stack.
-                return static_cast<int>(static_cast<float>(maxValue * percent() / 100.0f));
-            case Calculated:
-                return nonNanCalculatedValue(maxValue);
-            case Auto:
-                return 0;
-            case Relative:
-            case Intrinsic:
-            case MinIntrinsic:
-            case Undefined:
-                ASSERT_NOT_REACHED();
-                return 0;
-        }
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-
-    // FIXME: when subpixel layout is supported this copy of calcFloatValue() can be removed. See bug 71143.
-    float calcFloatValue(int maxValue) const
-    {
-        switch (type()) {
-            case Fixed:
-                return getFloatValue();
-            case Percent:
-                return static_cast<float>(maxValue * percent() / 100.0f);
-            case Auto:
-                return static_cast<float>(maxValue);
-            case Calculated:
-                return nonNanCalculatedValue(maxValue);                
-            case Relative:
-            case Intrinsic:
-            case MinIntrinsic:
-            case Undefined:
-                ASSERT_NOT_REACHED();
-                return 0;
-        }
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-
-    float calcFloatValue(float maxValue) const
-    {
-        switch (type()) {
-        case Fixed:
-            return getFloatValue();
-        case Percent:
-            return static_cast<float>(maxValue * percent() / 100.0f);
-        case Auto:
-            return static_cast<float>(maxValue);
-        case Calculated:
-            return nonNanCalculatedValue(maxValue);
-        case Relative:
-        case Intrinsic:
-        case MinIntrinsic:
-        case Undefined:
-            ASSERT_NOT_REACHED();
-            return 0;
-        }
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-
     bool isUndefined() const { return type() == Undefined; }
 
     // FIXME calc: https://bugs.webkit.org/show_bug.cgi?id=80357. A calculated Length 
@@ -312,19 +222,19 @@ public:
         return Length(WebCore::blend(fromValue, toValue, progress), resultType);
     }
 
+    float getFloatValue() const
+    {
+        ASSERT(!isUndefined());
+        return m_isFloat ? m_floatValue : m_intValue;
+    }
+    float nonNanCalculatedValue(int maxValue) const;
+
 private:
     int getIntValue() const
     {
         ASSERT(!isUndefined());
         return m_isFloat ? static_cast<int>(m_floatValue) : m_intValue;
     }
-
-    float getFloatValue() const
-    {
-        ASSERT(!isUndefined());
-        return m_isFloat ? m_floatValue : m_intValue;
-    }
-
     void initFromLength(const Length &length) 
     {
         m_quirk = length.m_quirk;
@@ -339,8 +249,7 @@ private:
         if (isCalculated())
             incrementCalculatedRef();
     }
-    
-    float nonNanCalculatedValue(int maxValue) const;
+
     int calculationHandle() const
     {
         ASSERT(isCalculated());

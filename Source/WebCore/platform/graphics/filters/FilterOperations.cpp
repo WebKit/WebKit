@@ -28,6 +28,7 @@
 
 #include "FEGaussianBlur.h"
 #include "IntSize.h"
+#include "LengthFunctions.h"
 
 #if ENABLE(CSS_FILTERS)
 
@@ -107,7 +108,7 @@ void FilterOperations::getOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit
         switch (filterOperation->getOperationType()) {
         case FilterOperation::BLUR: {
             BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
-            float stdDeviation = blurOperation->stdDeviation().calcFloatValue(0);
+            float stdDeviation = floatValueForLength(blurOperation->stdDeviation(), 0);
             IntSize outset = outsetSizeForBlur(stdDeviation);
             top += outset.height();
             right += outset.width();

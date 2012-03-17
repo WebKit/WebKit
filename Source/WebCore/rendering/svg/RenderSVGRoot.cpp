@@ -87,9 +87,9 @@ void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, d
     //   resolving both values to user units.
     if (intrinsicWidthAttribute.isFixed() || intrinsicHeightAttribute.isFixed()) {
         if (intrinsicWidthAttribute.isFixed())
-            intrinsicSize.setWidth(intrinsicWidthAttribute.calcFloatValue(0));
+            intrinsicSize.setWidth(floatValueForLength(intrinsicWidthAttribute, 0));
         if (intrinsicHeightAttribute.isFixed())
-            intrinsicSize.setHeight(intrinsicHeightAttribute.calcFloatValue(0));
+            intrinsicSize.setHeight(floatValueForLength(intrinsicHeightAttribute, 0));
         if (!intrinsicSize.isEmpty())
             intrinsicRatio = intrinsicSize.width() / static_cast<double>(intrinsicSize.height());
         return;
@@ -153,7 +153,7 @@ bool RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const
 
 static inline LayoutUnit resolveLengthAttributeForSVG(const Length& length, float scale, float maxSize)
 {
-    return static_cast<LayoutUnit>(length.calcValue(maxSize) * (length.isFixed() ? scale : 1));
+    return static_cast<LayoutUnit>(valueForLength(length, maxSize) * (length.isFixed() ? scale : 1));
 }
 
 LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) const

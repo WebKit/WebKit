@@ -95,7 +95,7 @@ LayoutUnit RenderTableCell::logicalHeightForRowSizing() const
 {
     LayoutUnit adjustedLogicalHeight = logicalHeight() - (intrinsicPaddingBefore() + intrinsicPaddingAfter());
 
-    LayoutUnit styleLogicalHeight = style()->logicalHeight().calcValue(0);
+    LayoutUnit styleLogicalHeight = valueForLength(style()->logicalHeight(), 0);
     if (document()->inQuirksMode() || style()->boxSizing() == BORDER_BOX) {
         // Explicit heights use the border box in quirks mode.
         // Don't adjust height.

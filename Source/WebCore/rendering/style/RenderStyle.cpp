@@ -802,14 +802,14 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const LayoutSi
     bool applyTransformOrigin = requireTransformOrigin(transformOperations, applyOrigin);
 
     if (applyTransformOrigin)
-        transform.translate3d(transformOriginX().calcFloatValue(borderBoxSize.width()), transformOriginY().calcFloatValue(borderBoxSize.height()), transformOriginZ());
+        transform.translate3d(floatValueForLength(transformOriginX(), borderBoxSize.width()), floatValueForLength(transformOriginY(), borderBoxSize.height()), transformOriginZ());
 
     unsigned size = transformOperations.size();
     for (unsigned i = 0; i < size; ++i)
         transformOperations[i]->apply(transform, borderBoxSize);
 
     if (applyTransformOrigin)
-        transform.translate3d(-transformOriginX().calcFloatValue(borderBoxSize.width()), -transformOriginY().calcFloatValue(borderBoxSize.height()), -transformOriginZ()); 
+        transform.translate3d(-floatValueForLength(transformOriginX(), borderBoxSize.width()), -floatValueForLength(transformOriginY(), borderBoxSize.height()), -transformOriginZ()); 
 }
 
 void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, ApplyTransformOrigin applyOrigin) const
@@ -821,8 +821,8 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
     float offsetY = transformOriginY().type() == Percent ? boundingBox.y() : 0;
     
     if (applyTransformOrigin) {
-        transform.translate3d(transformOriginX().calcFloatValue(boundingBox.width()) + offsetX,
-                              transformOriginY().calcFloatValue(boundingBox.height()) + offsetY,
+        transform.translate3d(floatValueForLength(transformOriginX(), boundingBox.width()) + offsetX,
+                              floatValueForLength(transformOriginY(), boundingBox.height()) + offsetY,
                               transformOriginZ());
     }
     
@@ -831,8 +831,8 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
         transformOperations[i]->apply(transform, boundingBox.size());
     
     if (applyTransformOrigin) {
-        transform.translate3d(-transformOriginX().calcFloatValue(boundingBox.width()) - offsetX,
-                              -transformOriginY().calcFloatValue(boundingBox.height()) - offsetY,
+        transform.translate3d(-floatValueForLength(transformOriginX(), boundingBox.width()) - offsetX,
+                              -floatValueForLength(transformOriginY(), boundingBox.height()) - offsetY,
                               -transformOriginZ());
     }
 }
@@ -877,14 +877,14 @@ void RenderStyle::setBoxShadow(PassOwnPtr<ShadowData> shadowData, bool add)
 static RoundedRect::Radii calcRadiiFor(const BorderData& border, LayoutSize size)
 {
     return RoundedRect::Radii(
-        IntSize(border.topLeft().width().calcValue(size.width()), 
-                border.topLeft().height().calcValue(size.height())),
-        IntSize(border.topRight().width().calcValue(size.width()),
-                border.topRight().height().calcValue(size.height())),
-        IntSize(border.bottomLeft().width().calcValue(size.width()), 
-                border.bottomLeft().height().calcValue(size.height())),
-        IntSize(border.bottomRight().width().calcValue(size.width()), 
-                border.bottomRight().height().calcValue(size.height())));
+        IntSize(valueForLength(border.topLeft().width(), size.width()), 
+                valueForLength(border.topLeft().height(), size.height())),
+        IntSize(valueForLength(border.topRight().width(), size.width()),
+                valueForLength(border.topRight().height(), size.height())),
+        IntSize(valueForLength(border.bottomLeft().width(), size.width()), 
+                valueForLength(border.bottomLeft().height(), size.height())),
+        IntSize(valueForLength(border.bottomRight().width(), size.width()), 
+                valueForLength(border.bottomRight().height(), size.height())));
 }
 
 static float calcConstraintScaleFor(const IntRect& rect, const RoundedRect::Radii& radii)

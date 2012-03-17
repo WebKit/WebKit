@@ -5958,6 +5958,7 @@
 		E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C279570CF9741900E97B98 /* RenderMedia.h */; };
 		E4D687770ED7AE3D006EA978 /* PurgeableBufferMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */; };
 		E4D687790ED7AE4F006EA978 /* PurgeableBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */; };
+		E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED501DC50B249F2900AE18D9 /* EditorMac.mm */; };
 		EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE3A4FF0C7A430600956A37 /* ColorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13071,6 +13072,7 @@
 		E4C279570CF9741900E97B98 /* RenderMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMedia.h; sourceTree = "<group>"; };
 		E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PurgeableBufferMac.cpp; sourceTree = "<group>"; };
 		E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgeableBuffer.h; sourceTree = "<group>"; };
+		E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthFunctions.h; sourceTree = "<group>"; };
 		ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarker.h; sourceTree = "<group>"; };
 		ED501DC50B249F2900AE18D9 /* EditorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = EditorMac.mm; path = mac/EditorMac.mm; sourceTree = "<group>"; };
 		EDE3A4FF0C7A430600956A37 /* ColorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorMac.h; sourceTree = "<group>"; };
@@ -20471,6 +20473,7 @@
 				CD4E0AFA11F7BC27009D3811 /* fullscreen.css */,
 				CDBD93BA1333BD4B002570E3 /* fullscreenQuickTime.css */,
 				93CA4C9909DF93FA00DF8677 /* html.css */,
+				E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */,
 				93CA4C9A09DF93FA00DF8677 /* make-css-file-arrays.pl */,
 				93CA4C9B09DF93FA00DF8677 /* makeprop.pl */,
 				93CA4C9D09DF93FA00DF8677 /* makevalues.pl */,
@@ -23473,6 +23476,7 @@
 				512DD8F50D91E6AF000F89EE /* LegacyWebArchive.h in Headers */,
 				BCE65BEB0EACDF16007E4533 /* Length.h in Headers */,
 				BCFF64910EAD15C200C1D6F7 /* LengthBox.h in Headers */,
+				E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */,
 				BCFF64920EAD15C200C1D6F7 /* LengthSize.h in Headers */,
 				8CADF2A9135C7B36009EF43F /* LevelDBComparator.h in Headers */,
 				8CADF2AB135C7B36009EF43F /* LevelDBDatabase.h in Headers */,

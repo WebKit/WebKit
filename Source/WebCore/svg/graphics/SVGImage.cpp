@@ -293,7 +293,7 @@ void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrin
 
     intrinsicRatio = rootElement->viewBox().size();
     if (intrinsicRatio.isEmpty() && intrinsicWidth.isFixed() && intrinsicHeight.isFixed())
-        intrinsicRatio = FloatSize(intrinsicWidth.calcFloatValue(0), intrinsicHeight.calcFloatValue(0));
+        intrinsicRatio = FloatSize(floatValueForLength(intrinsicWidth, 0), floatValueForLength(intrinsicHeight, 0));
 }
 
 NativeImagePtr SVGImage::nativeImageForCurrentFrame()

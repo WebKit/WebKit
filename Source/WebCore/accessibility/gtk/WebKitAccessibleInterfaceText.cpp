@@ -240,7 +240,7 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
     }
 
     if (!style->textIndent().isUndefined()) {
-        int indentation = style->textIndent().calcValue(object->size().width());
+        int indentation = valueForLength(style->textIndent(), object->size().width());
         buffer.set(g_strdup_printf("%i", indentation));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INDENT), buffer.get());
     }

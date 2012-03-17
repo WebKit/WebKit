@@ -89,6 +89,7 @@
             'css/CSSValue.h',
             'css/CSSValueList.h',
             'css/CSSWrapShapes.h',
+            'css/LengthFunctions.h',
             'css/Pair.h',
             'css/WebKitCSSFilterValue.h',
             'css/WebKitCSSShaderValue.h',

@@ -30,6 +30,7 @@
 #import "PlatformCAAnimation.h"
 
 #import "FloatConversion.h"
+#import "LengthFunctions.h"
 #import "PlatformString.h"
 #import "TimingFunction.h"
 #import <QuartzCore/QuartzCore.h>
@@ -502,7 +503,7 @@ static RetainPtr<id> filterValueForOperation(const FilterOperation* operation, i
 
         if (!operation->isDefault()) {
             const BlurFilterOperation* op = static_cast<const BlurFilterOperation*>(operation);
-            amount = op->stdDeviation().calcFloatValue(0);
+            amount = floatValueForLength(op->stdDeviation(), 0);
         }
         
         value.adoptNS([[NSNumber numberWithDouble:amount] retain]);

@@ -551,7 +551,7 @@ void AutoTableLayout::layout()
         for (size_t i = 0; i < nEffCols; ++i) {
             Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
             if (logicalWidth.isPercent()) {
-                int cellLogicalWidth = max<int>(m_layoutStruct[i].effectiveMinLogicalWidth, logicalWidth.calcMinValue(tableLogicalWidth));
+                int cellLogicalWidth = max<int>(m_layoutStruct[i].effectiveMinLogicalWidth, miminumValueForLength(logicalWidth, tableLogicalWidth));
                 available += m_layoutStruct[i].computedLogicalWidth - cellLogicalWidth;
                 m_layoutStruct[i].computedLogicalWidth = cellLogicalWidth;
             }

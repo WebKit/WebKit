@@ -30,6 +30,7 @@
 #include "cc/CCRenderSurfaceFilters.h"
 
 #include "GraphicsContext3D.h"
+#include "LengthFunctions.h"
 #include "SkBlurImageFilter.h"
 #include "SkCanvas.h"
 #include "SkColorMatrixFilter.h"
@@ -269,8 +270,8 @@ SkBitmap CCRenderSurfaceFilters::apply(const FilterOperations& filters, unsigned
         }
         case FilterOperation::BLUR: {
             const BlurFilterOperation* op = static_cast<const BlurFilterOperation*>(filterOperation);
-            float stdX = op->stdDeviation().calcFloatValue(0);
-            float stdY = op->stdDeviation().calcFloatValue(1);
+            float stdX = floatValueForLength(op->stdDeviation(), 0);
+            float stdY = floatValueForLength(op->stdDeviation(), 1);
             SkAutoTUnref<SkImageFilter> filter(new SkBlurImageFilter(stdX, stdY));
             SkPaint paint;
             paint.setImageFilter(filter.get());

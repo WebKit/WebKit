@@ -34,6 +34,7 @@
 #import "FloatConversion.h"
 #import "GraphicsContext.h"
 #import "GraphicsLayerCA.h"
+#import "LengthFunctions.h"
 #import "WebLayer.h"
 #import "WebTiledLayer.h"
 #import "WebTileCacheLayer.h"
@@ -823,7 +824,7 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
             const BlurFilterOperation* op = static_cast<const BlurFilterOperation*>(filterOperation);
             CIFilter* caFilter = [CIFilter filterWithName:@"CIGaussianBlur"];
             [caFilter setDefaults];
-            [caFilter setValue:[NSNumber numberWithFloat:op->stdDeviation().calcFloatValue(0)] forKey:@"inputRadius"];
+            [caFilter setValue:[NSNumber numberWithFloat:floatValueForLength(op->stdDeviation(), 0)] forKey:@"inputRadius"];
             [caFilter setName:filterName];
             [array.get() addObject:caFilter];
             break;

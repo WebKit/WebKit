@@ -244,7 +244,7 @@ void FixedTableLayout::layout()
             calcWidth[i] = m_width[i].value();
             totalFixedWidth += calcWidth[i];
         } else if (m_width[i].isPercent()) {
-            calcWidth[i] = m_width[i].calcValue(tableLogicalWidth);
+            calcWidth[i] = valueForLength(m_width[i], tableLogicalWidth);
             totalPercentWidth += calcWidth[i];
             totalPercent += m_width[i].percent();
         } else if (m_width[i].isAuto()) {

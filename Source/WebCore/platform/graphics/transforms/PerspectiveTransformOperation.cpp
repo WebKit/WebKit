@@ -39,7 +39,7 @@ PassRefPtr<TransformOperation> PerspectiveTransformOperation::blend(const Transf
         return this;
     
     if (blendToIdentity) {
-        double p = m_p.calcFloatValue(1);
+        double p = floatValueForLength(m_p, 1);
         p = WebCore::blend(p, 1.0, progress); // FIXME: this seems wrong. https://bugs.webkit.org/show_bug.cgi?id=52700
         return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(p), Fixed));
     }
@@ -50,8 +50,8 @@ PassRefPtr<TransformOperation> PerspectiveTransformOperation::blend(const Transf
 
     TransformationMatrix fromT;
     TransformationMatrix toT;
-    fromT.applyPerspective(fromP.calcFloatValue(1));
-    toT.applyPerspective(toP.calcFloatValue(1));
+    fromT.applyPerspective(floatValueForLength(fromP, 1));
+    toT.applyPerspective(floatValueForLength(toP, 1));
     toT.blend(fromT, progress);
     TransformationMatrix::DecomposedType decomp;
     toT.decompose(decomp);

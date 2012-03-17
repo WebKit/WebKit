@@ -1,3 +1,16 @@
+2012-03-17  Joe Thomas  <joethomas@motorola.com>
+
+        move calc*Value functions out from Length (and platform)
+        https://bugs.webkit.org/show_bug.cgi?id=80897
+
+        Moving the Length calc*Value functions out from Length structure and also from /WebCore/platform/ folder.
+        This helps to avoid the layering violation while length calculation. Otherwise layer violation can be avoided only by adding a virtual interface(bug 27160).
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+
 2012-03-17  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10263562> Crash in WebCore::Range::startPosition() when dismissing the Press and Hold panel by clicking in the menu bar

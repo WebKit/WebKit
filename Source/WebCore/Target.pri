@@ -1609,6 +1609,7 @@ HEADERS += \
     css/CSSWrapShapes.h \
     css/FontFeatureValue.h \
     css/FontValue.h \
+    css/LengthFunctions.h \
     css/MediaFeatureNames.h \
     css/MediaList.h \
     css/MediaQuery.h \

@@ -223,7 +223,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
         // Count the total percentage of all of the percentage columns/rows -> totalPercent
         // Count the number of columns/rows which are percentages -> countPercent
         if (grid[i].isPercent()) {
-            gridLayout[i] = max(grid[i].calcValue(availableLen), 0);
+            gridLayout[i] = max(valueForLength(grid[i], availableLen), 0);
             totalPercent += gridLayout[i];
             countPercent++;
         }

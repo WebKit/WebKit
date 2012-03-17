@@ -39,6 +39,7 @@
 #include "GraphicsTypes.h"
 #include "Length.h"
 #include "LengthBox.h"
+#include "LengthFunctions.h"
 #include "LengthSize.h"
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
@@ -630,7 +631,7 @@ public:
             return fontMetrics().lineSpacing();
 
         if (lh.isPercent())
-            return lh.calcMinValue(fontSize());
+            return miminumValueForLength(lh, fontSize());
 
         return lh.value();
     }

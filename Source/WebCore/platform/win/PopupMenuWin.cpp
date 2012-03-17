@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "HWndDC.h"
 #include "HostWindow.h"
+#include "LengthFunctions.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformScreen.h"
@@ -654,7 +655,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         if (itemStyle.isVisible()) {
             int textX = max(0, client()->clientPaddingLeft() - client()->clientInsetLeft());
             if (RenderTheme::defaultTheme()->popupOptionSupportsTextIndent() && itemStyle.textDirection() == LTR)
-                textX += itemStyle.textIndent().calcMinValue(itemRect.width());
+                textX += miminumValueForLength(itemStyle.textIndent(), itemRect.width());
             int textY = itemRect.y() + itemFont.fontMetrics().ascent() + (itemRect.height() - itemFont.fontMetrics().height()) / 2;
             context.drawBidiText(itemFont, textRun, IntPoint(textX, textY));
         }
