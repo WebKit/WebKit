@@ -268,10 +268,10 @@ void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uin
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
-    RefPtr<Range> replacementRange;
     if (replacementRangeStart != NSNotFound) {
-        replacementRange = convertToRange(frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
-        frame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
+        RefPtr<Range> replacementRange = convertToRange(frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
+        if (replacementRange)
+            frame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
 
     if (!frame->editor()->hasComposition()) {

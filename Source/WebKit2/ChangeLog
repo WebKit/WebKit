@@ -1,3 +1,18 @@
+2012-03-17  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10263562> Crash in WebCore::Range::startPosition() when dismissing the Press and Hold panel by clicking in the menu bar
+        https://bugs.webkit.org/show_bug.cgi?id=81454
+
+        Reviewed by Ada Chan.
+
+        When the Press and Hold panel is dismissed by clicking in the menu bar,
+        -insertText:replacementRange: is called with an NSRange whose location is NSNotFound - 1
+        (see <rdar://problem/11069374>). Trying to convert this bogus range to a WebCore Range
+        returns 0, which leads to the crash.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::insertText): Added a null check, to protect the code from bogus ranges.
+
 2012-03-16  Stephanie Lewis  <slewis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=81065
