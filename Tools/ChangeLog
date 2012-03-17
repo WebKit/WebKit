@@ -1,3 +1,12 @@
+2012-03-17  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Enable Web Timing for performance profiling and improvement.
+        https://bugs.webkit.org/show_bug.cgi?id=81085
+
+        Reviewed by Rob Buis.
+
+        * Scripts/build-webkit:
+
 2012-03-17  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         Add a dependencies installation step for EFL to buildbot master.cfg

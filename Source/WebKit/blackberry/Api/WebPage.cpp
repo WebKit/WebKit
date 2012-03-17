@@ -491,6 +491,10 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     m_page->windowScreenDidChange((PlatformDisplayID)0);
 #endif
+
+#if ENABLE(WEB_TIMING)
+    m_page->settings()->setMemoryInfoEnabled(true);
+#endif
 }
 
 void WebPagePrivate::load(const char* url, const char* networkToken, const char* method, Platform::NetworkRequest::CachePolicy cachePolicy, const char* data, size_t dataLength, const char* const* headers, size_t headersLength, bool isInitial, bool mustHandleInternally, bool forceDownload, const char* overrideContentType)

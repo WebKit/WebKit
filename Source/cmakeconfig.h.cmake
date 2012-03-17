@@ -46,6 +46,7 @@
 #cmakedefine01 ENABLE_VIDEO
 #cmakedefine01 ENABLE_WEBGL
 #cmakedefine01 ENABLE_WEB_SOCKETS
+#cmakedefine01 ENABLE_WEB_TIMING
 #cmakedefine01 ENABLE_WORKERS
 #cmakedefine01 ENABLE_XSLT
 
