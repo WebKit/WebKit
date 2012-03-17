@@ -132,7 +132,9 @@ void ConvolverNode::setBuffer(AudioBuffer* buffer)
     AudioBus bufferBus(numberOfChannels, bufferLength, false);
     for (unsigned i = 0; i < numberOfChannels; ++i)
         bufferBus.setChannelMemory(i, buffer->getChannelData(i)->data(), bufferLength);
-    
+
+    bufferBus.setSampleRate(buffer->sampleRate());
+
     // Create the reverb with the given impulse response.
     bool useBackgroundThreads = !context()->isOfflineContext();
     OwnPtr<Reverb> reverb = adoptPtr(new Reverb(&bufferBus, AudioNode::ProcessingSizeInFrames, MaxFFTSize, 2, useBackgroundThreads, m_normalize));
