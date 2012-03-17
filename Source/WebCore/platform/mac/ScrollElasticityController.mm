@@ -367,6 +367,14 @@ void ScrollElasticityController::snapRubberBandTimerFired()
     }
 }
 
+bool ScrollElasticityController::isRubberBandInProgress() const
+{
+    if (!m_inScrollGesture && !m_momentumScrollInProgress && !m_snapRubberbandTimerIsActive)
+        return false;
+
+    return !m_client->stretchAmount().isZero();
+}
+
 void ScrollElasticityController::stopSnapRubberbandTimer()
 {
     m_client->stopSnapRubberbandTimer();

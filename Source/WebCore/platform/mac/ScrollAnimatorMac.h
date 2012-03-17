@@ -120,6 +120,8 @@ private:
 
     void immediateScrollTo(const FloatPoint&);
 
+    virtual bool isRubberBandInProgress() const OVERRIDE;
+
 #if ENABLE(RUBBER_BANDING)
     /// ScrollElasticityControllerClient member functions.
     virtual IntSize stretchAmount() OVERRIDE;

@@ -645,6 +645,15 @@ void ScrollAnimatorMac::immediateScrollTo(const FloatPoint& newPosition)
     notifyPositionChanged();
 }
 
+bool ScrollAnimatorMac::isRubberBandInProgress() const
+{
+#if !ENABLE(RUBBER_BANDING)
+    return false;
+#else
+    return m_scrollElasticityController.isRubberBandInProgress();
+#endif
+}
+
 void ScrollAnimatorMac::immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition)
 {
     ASSERT(m_scrollAnimationHelper);

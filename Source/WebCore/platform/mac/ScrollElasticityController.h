@@ -68,6 +68,8 @@ public:
     bool handleWheelEvent(const PlatformWheelEvent&);
     void snapRubberBandTimerFired();
 
+    bool isRubberBandInProgress() const;
+
 private:
     void stopSnapRubberbandTimer();
     void snapRubberBand();
