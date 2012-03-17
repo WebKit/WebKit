@@ -39,9 +39,4 @@ bool unloadModule(PlatformModule)
     return false;
 }
 
-String openTemporaryFile(const String&, PlatformFileHandle&)
-{
-    return "";
-}
-
 } // namespace WebCore
