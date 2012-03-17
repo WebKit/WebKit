@@ -4,7 +4,7 @@
 <style>
 .container {
     display: inline-block;
-    margin-right: 30px;
+    margin-right: 5px;
 }
 
 .horizontal-tb {
@@ -55,19 +55,13 @@
     height: 120px;
     background: -webkit-radial-gradient(center, ellipse cover, rgba(30,87,153,1) 0%,rgba(89,148,202,1) 62%,rgba(95,154,207,0.7) 68%,rgba(125,185,232,0) 100%);
 }
-
-p {
-    margin-bottom: 30px;
-}
 </style>
 </head>
 <body>
-    <p>Scrollbars should work in all the flexboxes. The first and third
-    columns should overflow the logical height. Each row should be aligned
-    to the same corner.</p>
+    <p>Scrollbars should work in all the flexboxes and each row should show four identical boxes.</p>
 </body>
 <script>
-var writingModes = ['horizontal-bt', 'vertical-rl', 'vertical-lr', 'horizontal-tb'];
+var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-rl', 'vertical-lr'];
 var flexDirections = ['row', 'column', 'row-reverse', 'column-reverse'];
 writingModes.forEach(function(writingMode) {
     flexDirections.forEach(function(flexDirection) {
@@ -78,7 +72,7 @@ writingModes.forEach(function(writingMode) {
             "<div class='" + flexboxClass + "'>" +
             "<div style='width: -webkit-flex(0 1 auto); height: -webkit-flex(0 1 auto)'><div></div></div>" +
             "</div>" +
-            "</div> ";
+            "</div>";
     });
     document.body.innerHTML += "<br>";
 });

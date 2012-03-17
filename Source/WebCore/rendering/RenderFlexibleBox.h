@@ -112,7 +112,6 @@ private:
     void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace);
     void layoutColumnReverse(const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace);
     void alignChildren(const OrderedFlexItemList&, LayoutUnit lineCrossAxisExtent, LayoutUnit maxAscent);
-    void applyStretchAlignmentToChild(RenderBox*, LayoutUnit lineCrossAxisExtent);
     void flipForRightToLeftColumn(FlexOrderIterator&);
     void flipForWrapReverse(FlexOrderIterator&, const WrapReverseContext&);
 };

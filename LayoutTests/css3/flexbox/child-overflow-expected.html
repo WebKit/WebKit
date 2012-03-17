@@ -4,17 +4,14 @@
 <style>
 .container {
     display: inline-block;
-    margin-right: 30px;
-    width: 100px;
-    height: 100px;
-    border: 5px solid pink;
-    position: relative;
+    margin-right: 5px;
 }
 
 .container > div {
+    border: 5px solid pink;
     overflow: auto;
-    width: 100px;
     height: 100px;
+    width: 100px;
 }
 
 .container > div > div {
@@ -22,38 +19,24 @@
     height: 120px;
     background: -webkit-radial-gradient(center, ellipse cover, rgba(30,87,153,1) 0%,rgba(89,148,202,1) 62%,rgba(95,154,207,0.7) 68%,rgba(125,185,232,0) 100%);
 }
-
-p {
-    margin-bottom: 30px;
-}
 </style>
 </head>
 <body>
-    <p>Scrollbars should work in all the flexboxes. The first and third
-    columns should overflow the logical height. Each row should be aligned
-    to the same corner.</p>
-
-    <div class="container bottomLeft"><div style="height: auto; position: absolute; bottom: 0"><div></div></div></div>
-    <div class="container bottomLeft"><div><div></div></div></div>
-    <div class="container bottomLeft"><div style="height: auto; position: absolute; bottom: 0"><div></div></div></div>
-    <div class="container bottomLeft"><div><div></div></div></div>
-    <br>
-    <div class="container topRight"><div style="width: auto; overflow-x: hidden; overflow-y: scroll; position: absolute; right: 0"><div></div></div></div>
-    <div class="container topRight"><div><div></div></div></div>
-    <div class="container topRight"><div style="width: auto; overflow-x: hidden; overflow-y: scroll; position: absolute; right: 0"><div></div></div></div>
-    <div class="container topRight"><div><div></div></div></div>
-    <br>
-    <div class="container"><div style="width: auto; overflow-x: hidden; overflow-y: scroll; position: absolute;"><div></div></div></div>
-    <div class="container"><div><div></div></div></div>
-    <div class="container"><div style="width: auto; overflow-x: hidden; overflow-y: scroll; position: absolute;"><div></div></div></div>
-    <div class="container"><div><div></div></div></div>
-    <br>
-    <div class="container"><div style="height: auto"><div></div></div></div>
-    <div class="container"><div><div></div></div></div>
-    <div class="container"><div style="height: auto"><div></div></div></div>
-    <div class="container"><div><div></div></div></div>
-
+    <p>Scrollbars should work in all the flexboxes and each row should show four identical boxes.</p>
+</body>
 <script>
+var origins = ['', 'bottomLeft', 'topRight', ''];
+
+origins.forEach(function(origin) {
+    for (var i = 0; i < 4; ++i) {
+        var containerClass = 'container ' + origin;
+        document.body.innerHTML +=
+            "<div class='" + containerClass + "'>" +
+            "<div><div></div></div>" +
+            "</div>";
+    }
+    document.body.innerHTML += "<br>";
+});
 
 Array.prototype.forEach.call(document.querySelectorAll('.bottomLeft'), function(element) {
     element.firstChild.scrollTop = 1000;
