@@ -423,8 +423,13 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
         parameters = Parameters(true, 15 * kTickTime, 10 * kTickTime, Cubic, 5 * kTickTime, Cubic, 5 * kTickTime, Linear, 1);
         break;
     case ScrollByPixel:
+#if PLATFORM(CHROMIUM)
+        // FIXME: plumb a flag specifying precise deltas.
+        return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
+#else
         parameters = Parameters(true, 11 * kTickTime, 2 * kTickTime, Cubic, 3 * kTickTime, Cubic, 3 * kTickTime, Quadratic, 1.25);
         break;
+#endif
     case ScrollByPixelVelocity:
         // FIXME: Generalize the scroll interface to support a richer set of parameters.
         if (m_firstVelocitySet) {
