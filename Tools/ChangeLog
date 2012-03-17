@@ -1,3 +1,25 @@
+2012-03-17  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [EFL] Add and use run-with-jhbuild and update-webkitefl-libs scripts for EFL
+        https://bugs.webkit.org/show_bug.cgi?id=79904
+
+        build-webkit --efl will use jhbuild for fetching and building dependencies.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Scripts/update-webkitefl-libs: Added.
+        * Scripts/webkitdirs.pm:
+        (jhbuildWrapperPrefixIfNeeded):
+        (generateBuildSystemFromCMakeProject):
+        (buildCMakeGeneratedProject):
+        * efl/common.py: Added.
+        (script_path):
+        (top_level_path):
+        (number_of_cpus):
+        * efl/jhbuild.modules: Added.
+        * efl/jhbuildrc: Added.
+        * efl/run-with-jhbuild: Added.
+
 2012-03-16  Stephanie Lewis  <slewis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=81065

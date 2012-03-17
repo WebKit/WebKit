@@ -1964,6 +1964,14 @@ sub buildAutotoolsProject($@)
     return 0;
 }
 
+sub jhbuildWrapperPrefixIfNeeded()
+{
+    if (isEfl()) {
+        return File::Spec->catfile(sourceDir(), "Tools", "efl", "run-with-jhbuild");
+    }
+    return "";
+}
+
 sub generateBuildSystemFromCMakeProject
 {
     my ($port, $prefixPath, @cmakeArgs, $additionalCMakeArgs) = @_;
@@ -1989,7 +1997,8 @@ sub generateBuildSystemFromCMakeProject
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters.
-    my $returnCode = system("cmake @args");
+    my $wrapper = jhbuildWrapperPrefixIfNeeded() . " ";
+    my $returnCode = system($wrapper . "cmake @args");
 
     chdir($originalWorkingDirectory);
     return $returnCode;
@@ -2008,7 +2017,8 @@ sub buildCMakeGeneratedProject($)
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
     # parsed for shell metacharacters. In particular, $makeArgs may contain such metacharacters.
-    return system("cmake @args");
+    my $wrapper = jhbuildWrapperPrefixIfNeeded() . " ";
+    return system($wrapper . "cmake @args");
 }
 
 sub cleanCMakeGeneratedProject()
