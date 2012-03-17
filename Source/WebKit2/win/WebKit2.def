@@ -163,9 +163,12 @@ EXPORTS
         ?create@ShadowRoot@WebCore@@SA?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@PAVElement@2@AAH@Z
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
+        ?equal@WTF@@YA_NPBVStringImpl@1@0@Z
         ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z
         ?externalRepresentation@WebCore@@YA?AVString@WTF@@PAVElement@1@I@Z
+        ?find@StringImpl@WTF@@QAEIPAV12@I@Z
         ?frameDestroyed@FrameDestructionObserver@WebCore@@UAEXXZ
+        ?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PBEI@Z
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
         ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
         ?getElementById@TreeScope@WebCore@@QBEPAVElement@2@ABVAtomicString@WTF@@@Z
@@ -177,6 +180,8 @@ EXPORTS
         ?jsStringSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@UStringHash@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
         ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@VMarkerTypes@DocumentMarker@2@@Z
+        ?number@String@WTF@@SA?AV12@I@Z
+        ?number@String@WTF@@SA?AV12@H@Z
         ?observeFrame@FrameDestructionObserver@WebCore@@IAEXPAVFrame@2@@Z
         ?overrideUserPreferredLanguages@WebCore@@YAXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z
         ?numberOfScopedHTMLStyleChildren@Node@WebCore@@QBEIXZ
@@ -184,6 +189,8 @@ EXPORTS
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
         ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVElement@2@HH_N@Z
         ?removeAllShadowRoots@ShadowTree@WebCore@@QAEXXZ
+        ?remove@String@WTF@@QAEXIH@Z
+        ?reverseFind@StringImpl@WTF@@QAEI_WI@Z
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
         ?s_info@JSNode@WebCore@@2UClassInfo@JSC@@B
         ?scriptExecutionContext@JSDOMGlobalObject@WebCore@@QBEPAVScriptExecutionContext@2@XZ
@@ -208,6 +215,7 @@ EXPORTS
         ?settings@Frame@WebCore@@QBEPAVSettings@2@XZ
         ?setFixedElementsLayoutRelativeToFrame@Settings@WebCore@@QAEX_N@Z
         ?shadowTree@Element@WebCore@@QBEPAVShadowTree@2@XZ
+        ?substring@String@WTF@@QBE?AV12@II@Z
         ?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ
         ?text@Range@WebCore@@QBE?AVString@WTF@@XZ
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
@@ -220,6 +228,7 @@ EXPORTS
         ?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@@WTF@@XZ
+        ?utf8@String@WTF@@QBE?AVCString@2@_N@Z
         ?view@Document@WebCore@@QBEPAVFrameView@2@XZ
         ?willDetachPage@FrameDestructionObserver@WebCore@@UAEXXZ
         ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIII_N@Z

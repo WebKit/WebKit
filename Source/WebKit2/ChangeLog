@@ -1,3 +1,13 @@
+2012-03-16  Stephanie Lewis  <slewis@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=81065
+        <rdar://problem/10944309> CrashTracer: [USER] 111 crashes in WebProcess at WebKitTestRunnerInjectedBundle: WTR::InjectedBundle::done + 142
+        Add some string function exports to Windows so the WebKitTestRunner can use them.
+
+        Reviewed by Geoff Garen.
+
+        * win/WebKit2.def:
+
 2012-03-16  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11027997> and https://bugs.webkit.org/show_bug.cgi?id=81412

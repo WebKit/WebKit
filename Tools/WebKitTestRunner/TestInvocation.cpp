@@ -37,6 +37,7 @@
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
+#include <wtf/text/CString.h>
 
 #if OS(WINDOWS)
 #include <direct.h> // For _getcwd.
@@ -242,7 +243,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKArrayRef repaintRects = static_cast<WKArrayRef>(WKDictionaryGetItemForKey(messageBodyDictionary, repaintRectsKey.get()));        
 
         // Dump text.
-        dump(toSTD(textOutput).c_str(), true);
+        dump(toWTFString(textOutput).utf8().data(), true);
 
         // Dump pixels (if necessary).
         if (m_dumpPixels && pixelResult)

@@ -39,6 +39,10 @@
 
 #include <sstream>
 
+namespace WTF {
+class StringBuilder;
+}
+
 namespace WTR {
 
 class InjectedBundlePage;
@@ -66,7 +70,7 @@ public:
     void dumpBackForwardListsForAllPages();
 
     void done();
-    std::ostringstream& os() { return m_outputStream; }
+    WTF::StringBuilder* stringBuilder() { return m_stringBuilder.get(); }
     void setPixelResult(WKImageRef image) { m_pixelResult = image; }
     void setRepaintRects(WKArrayRef rects) { m_repaintRects = rects; }
 
@@ -116,7 +120,7 @@ private:
 
     WKBundleFrameRef m_topLoadingFrame;
 
-    std::ostringstream m_outputStream;
+    OwnPtr<WTF::StringBuilder> m_stringBuilder;
     
     enum State {
         Idle,

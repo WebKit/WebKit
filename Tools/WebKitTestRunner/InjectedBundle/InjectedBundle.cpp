@@ -36,6 +36,8 @@
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WebKit2.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/Vector.h>
 
 namespace WTR {
@@ -78,6 +80,7 @@ void InjectedBundle::didReceiveMessage(WKBundleRef bundle, WKStringRef messageNa
 void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUserData)
 {
     m_bundle = bundle;
+    m_stringBuilder = WTF::adoptPtr(new WTF::StringBuilder());
 
     WKBundleClient client = {
         kWKBundleClientCurrentVersion,
@@ -191,9 +194,9 @@ void InjectedBundle::beginTesting()
 {
     m_state = Testing;
 
-    m_outputStream.str("");
     m_pixelResult.clear();
     m_repaintRects.clear();
+    m_stringBuilder->clear();
 
     m_layoutTestController = LayoutTestController::create();
     m_gcController = GCController::create();
@@ -230,7 +233,7 @@ void InjectedBundle::done()
     WKRetainPtr<WKMutableDictionaryRef> doneMessageBody(AdoptWK, WKMutableDictionaryCreate());
 
     WKRetainPtr<WKStringRef> textOutputKey(AdoptWK, WKStringCreateWithUTF8CString("TextOutput"));
-    WKRetainPtr<WKStringRef> textOutput(AdoptWK, WKStringCreateWithUTF8CString(m_outputStream.str().c_str()));
+    WKRetainPtr<WKStringRef> textOutput(AdoptWK, WKStringCreateWithUTF8CString(m_stringBuilder->toString().utf8().data()));
     WKDictionaryAddItem(doneMessageBody.get(), textOutputKey.get(), textOutput.get());
     
     WKRetainPtr<WKStringRef> pixelResultKey = adoptWK(WKStringCreateWithUTF8CString("PixelResult"));

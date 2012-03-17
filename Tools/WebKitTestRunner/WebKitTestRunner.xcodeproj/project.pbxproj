@@ -635,6 +635,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug)";
 				GCC_OPTIMIZATION_LEVEL = 0;
 			};
 			name = Debug;
