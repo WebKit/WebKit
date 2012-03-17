@@ -742,6 +742,10 @@ exit if $clean;
 # Don't report congrats message if build was interrupted by the user.
 exit if ($result & 127) == SIGINT;
 
+# Explicitly chdir back to where exit will take us anyway, since the following "launcher"
+# message is relative to that directory.
+chdir $originalWorkingDirectory;
+
 # Write out congratulations message.
 writeCongrats();
 

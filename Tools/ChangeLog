@@ -1,3 +1,15 @@
+2012-03-16  Dave Tharp  <dtharp@codeaurora.org>
+
+        build-webkit launcher instructions use wrong relative path for Qt
+        https://bugs.webkit.org/show_bug.cgi?id=81357
+
+        Reviewed by Eric Seidel.
+
+        Ensure we are at the proper directory before generating run-launcher
+        instructions.
+
+        * Scripts/build-webkit:
+
 2012-03-16  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11027997> and https://bugs.webkit.org/show_bug.cgi?id=81412
