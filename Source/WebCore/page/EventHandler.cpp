@@ -2365,6 +2365,24 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
 }
 
 #if ENABLE(GESTURE_EVENTS)
+bool EventHandler::handleGestureTapDown()
+{
+    FrameView* view = m_frame->view();
+    if (!view)
+        return false;
+    view->scrollAnimator()->cancelAnimations();
+    const FrameView::ScrollableAreaSet* areas = view->scrollableAreas();
+    if (!areas)
+        return false;
+    for (FrameView::ScrollableAreaSet::const_iterator it = areas->begin(); it != areas->end(); ++it) {
+        ScrollableArea* sa = *it;
+        ScrollAnimator* animator = sa->scrollAnimator();
+        if (animator)
+            animator->cancelAnimations();
+    }
+    return false;
+}
+
 bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 {
     // FIXME: A more general scroll system (https://bugs.webkit.org/show_bug.cgi?id=80596) will
@@ -2373,8 +2391,7 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 
     switch (gestureEvent.type()) {
     case PlatformEvent::GestureTapDown:
-        // FIXME: Stop animation here.
-        break;
+        return handleGestureTapDown();
     case PlatformEvent::GestureTap:
         return handleGestureTap(gestureEvent);
     case PlatformEvent::GestureScrollUpdate:
