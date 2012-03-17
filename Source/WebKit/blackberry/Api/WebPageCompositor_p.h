@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef WebPageCompositor_h
-#define WebPageCompositor_h
+#ifndef WebPageCompositor_p_h
+#define WebPageCompositor_p_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
@@ -39,10 +39,10 @@ namespace WebKit {
 class WebPagePrivate;
 
 // This class may only be used on the compositing thread.
-class WebPageCompositor {
+class WebPageCompositorPrivate {
 public:
-    WebPageCompositor(WebPagePrivate*);
-    ~WebPageCompositor();
+    WebPageCompositorPrivate(WebPagePrivate*);
+    ~WebPageCompositorPrivate();
 
     bool hardwareCompositing() const;
 
@@ -81,7 +81,7 @@ private:
     WebCore::IntRect m_compositedDstRect;
     WebCore::FloatRect m_compositedContentsRect;
     bool m_backingStoreUsesOpenGL;
-    BlackBerry::Platform::Timer<WebPageCompositor> m_animationTimer;
+    BlackBerry::Platform::Timer<WebPageCompositorPrivate> m_animationTimer;
     BlackBerry::Platform::TimerClient* m_timerClient;
 };
 
@@ -90,4 +90,4 @@ private:
 
 #endif // USE(ACCELERATED_COMPOSITING)
 
-#endif // WebPageCompositor_h
+#endif // WebPageCompositor_p_h

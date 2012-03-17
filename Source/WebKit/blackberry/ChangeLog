@@ -1,3 +1,43 @@
+2012-03-16  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Rename the existing WebPageCompositor class to WebPageCompositorPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=81108
+        RIM PR: 136687
+
+        Reviewed by Rob Buis.
+
+        This is done in anticipation of a new WebPageCompositor class in the
+        public API. The existing internal class will serve to d-pointerize the
+        new public API. In addition, it is and will be possible to create only
+        the private class, for cases where existing code paths require
+        OpenGL compositing (i.e. due to accelerated compositing layers being
+        added to the page).
+
+        Reviewed internally by Robin Cao.
+
+        * Api/BackingStore.h:
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setIsAcceleratedCompositingActive):
+        * Api/WebPageCompositor.cpp: Renamed from Source/WebKit/blackberry/WebKitSupport/WebPageCompositor.cpp.
+        (BlackBerry::WebKit::WebPageCompositorPrivate::WebPageCompositorPrivate):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::~WebPageCompositorPrivate):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::hardwareCompositing):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setRootLayer):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setBackingStoreUsesOpenGL):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::commit):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::drawLayers):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::releaseLayerResources):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::animationTimerFired):
+        * Api/WebPageCompositor_p.h: Renamed from Source/WebKit/blackberry/WebKitSupport/WebPageCompositor.h.
+        (BlackBerry::WebKit::WebPageCompositorPrivate::layoutRectForCompositing):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setLayoutRectForCompositing):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::contentsSizeForCompositing):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setContentsSizeForCompositing):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::lastCompositingResults):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setLastCompositingResults):
+        * Api/WebPage_p.h:
+        * CMakeListsBlackBerry.txt:
+
 2012-03-16  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Syncing up left over bits in WebKitSupport from our local branch to upstream

@@ -119,7 +119,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "FrameLayers.h"
-#include "WebPageCompositor.h"
+#include "WebPageCompositor_p.h"
 #endif
 
 #include <BlackBerryPlatformExecutableMessage.h>
@@ -5325,7 +5325,7 @@ void WebPagePrivate::setIsAcceleratedCompositingActive(bool active)
     }
 
     if (!m_compositor) {
-        m_compositor = adoptPtr(new WebPageCompositor(this));
+        m_compositor = adoptPtr(new WebPageCompositorPrivate(this));
         m_isAcceleratedCompositingActive = m_compositor->hardwareCompositing();
         if (!m_isAcceleratedCompositingActive)
             m_compositor.clear();

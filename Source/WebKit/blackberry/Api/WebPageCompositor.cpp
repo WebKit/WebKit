@@ -19,7 +19,7 @@
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "WebPageCompositor.h"
+#include "WebPageCompositor_p.h"
 
 #include "BackingStore_p.h"
 #include "LayerWebKitThread.h"
@@ -36,43 +36,43 @@ using namespace WebCore;
 namespace BlackBerry {
 namespace WebKit {
 
-WebPageCompositor::WebPageCompositor(WebPagePrivate* page)
+WebPageCompositorPrivate::WebPageCompositorPrivate(WebPagePrivate* page)
     : m_webPage(page)
     , m_context(GLES2Context::create(page))
     , m_layerRenderer(LayerRenderer::create(m_context.get()))
     , m_generation(0)
     , m_compositedGeneration(-1)
     , m_backingStoreUsesOpenGL(false)
-    , m_animationTimer(this, &WebPageCompositor::animationTimerFired)
+    , m_animationTimer(this, &WebPageCompositorPrivate::animationTimerFired)
     , m_timerClient(new Platform::GenericTimerClient(Platform::userInterfaceThreadTimerClient()))
 {
     m_animationTimer.setClient(m_timerClient);
 }
 
-WebPageCompositor::~WebPageCompositor()
+WebPageCompositorPrivate::~WebPageCompositorPrivate()
 {
     m_animationTimer.stop();
     delete m_timerClient;
 }
 
-bool WebPageCompositor::hardwareCompositing() const
+bool WebPageCompositorPrivate::hardwareCompositing() const
 {
     return m_layerRenderer->hardwareCompositing();
 }
 
-void WebPageCompositor::setRootLayer(LayerCompositingThread* rootLayer)
+void WebPageCompositorPrivate::setRootLayer(LayerCompositingThread* rootLayer)
 {
     m_rootLayer = rootLayer;
     m_layerRenderer->setRootLayer(m_rootLayer.get());
 }
 
-void WebPageCompositor::setBackingStoreUsesOpenGL(bool backingStoreUsesOpenGL)
+void WebPageCompositorPrivate::setBackingStoreUsesOpenGL(bool backingStoreUsesOpenGL)
 {
     m_backingStoreUsesOpenGL = backingStoreUsesOpenGL;
     m_layerRenderer->setClearSurfaceOnDrawLayers(!backingStoreUsesOpenGL);
 }
 
-void WebPageCompositor::commit(LayerWebKitThread* rootLayer)
+void WebPageCompositorPrivate::commit(LayerWebKitThread* rootLayer)
 {
     if (!rootLayer)
         return;
@@ -81,7 +81,7 @@ void WebPageCompositor::commit(LayerWebKitThread* rootLayer)
     ++m_generation;
 }
 
-bool WebPageCompositor::drawLayers(const IntRect& dstRect, const FloatRect& contents)
+bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRect& contents)
 {
     // Save a draw if we already drew this generation, for example due to a concurrent scroll operation.
     if (m_compositedGeneration == m_generation && dstRect == m_compositedDstRect
@@ -105,12 +105,12 @@ bool WebPageCompositor::drawLayers(const IntRect& dstRect, const FloatRect& cont
     return true;
 }
 
-void WebPageCompositor::releaseLayerResources()
+void WebPageCompositorPrivate::releaseLayerResources()
 {
     m_layerRenderer->releaseLayerResources();
 }
 
-void WebPageCompositor::animationTimerFired()
+void WebPageCompositorPrivate::animationTimerFired()
 {
     if (m_webPage->m_backingStore->d->shouldDirectRenderingToWindow()) {
         if (m_webPage->m_backingStore->d->isDirectRenderingAnimationMessageScheduled())

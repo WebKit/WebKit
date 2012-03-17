@@ -44,6 +44,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/Api/WebKitMIMETypeConverter.cpp
     blackberry/Api/WebKitTextCodec.cpp
     blackberry/Api/WebPage.cpp
+    blackberry/Api/WebPageCompositor.cpp
     blackberry/Api/WebPageGroupLoadDeferrer.cpp
     blackberry/Api/WebSettings.cpp
     blackberry/WebCoreSupport/AboutData.cpp
@@ -77,7 +78,6 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/SurfacePool.cpp
     blackberry/WebKitSupport/TouchEventHandler.cpp
     blackberry/WebKitSupport/FatFingers.cpp
-    blackberry/WebKitSupport/WebPageCompositor.cpp
 )
 
 IF (ENABLE_DRT)

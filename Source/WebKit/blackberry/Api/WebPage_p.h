@@ -65,7 +65,7 @@ class WebPageClient;
 
 #if USE(ACCELERATED_COMPOSITING)
 class FrameLayers;
-class WebPageCompositor;
+class WebPageCompositorPrivate;
 #endif
 
 // In the client code, there is screen size and viewport.
@@ -499,7 +499,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     bool m_isAcceleratedCompositingActive;
     OwnPtr<FrameLayers> m_frameLayers; // WebKit thread only.
-    OwnPtr<WebPageCompositor> m_compositor; // Compositing thread only.
+    OwnPtr<WebPageCompositorPrivate> m_compositor; // Compositing thread only.
     OwnPtr<WebCore::Timer<WebPagePrivate> > m_rootLayerCommitTimer;
     bool m_needsOneShotDrawingSynchronization;
     bool m_needsCommit;
