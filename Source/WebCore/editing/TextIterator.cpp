@@ -2513,9 +2513,12 @@ UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength, 
 {
     UChar* result = 0;
 
-    // Do this in pieces to avoid massive reallocations if there is a large amount of text.
-    // Use system malloc for buffers since they can consume lots of memory and current TCMalloc is unable return it back to OS.
+    // The initial buffer size can be critical for performance: https://bugs.webkit.org/show_bug.cgi?id=81192
+#if PLATFORM(CHROMIUM) && PLATFORM(MAC)
+    static const unsigned cMaxSegmentSize = 1 << 15;
+#else
     static const unsigned cMaxSegmentSize = 1 << 16;
+#endif
     bufferLength = 0;
     typedef pair<UChar*, unsigned> TextSegment;
     OwnPtr<Vector<TextSegment> > textSegments;
