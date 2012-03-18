@@ -457,6 +457,9 @@ import:
     IMPORT_SYM maybe_space string_or_uri maybe_space maybe_media_list ';' {
         $$ = static_cast<CSSParser*>(parser)->createImportRule($3, $5);
     }
+  | IMPORT_SYM maybe_space string_or_uri maybe_space maybe_media_list TOKEN_EOF {
+        $$ = static_cast<CSSParser*>(parser)->createImportRule($3, $5);
+    }
   | IMPORT_SYM maybe_space string_or_uri maybe_space maybe_media_list invalid_block {
         $$ = 0;
     }

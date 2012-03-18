@@ -7714,8 +7714,12 @@ inline UChar* CSSParser::checkAndSkipString(UChar* currentCharacter, UChar quote
             // String parsing is successful.
             return currentCharacter + 1;
         }
-        if (UNLIKELY(*currentCharacter <= '\r' && (!*currentCharacter || *currentCharacter == '\n' || (*currentCharacter | 0x1) == '\r'))) {
-            // String parsing is failed for character '\0', '\n', '\f' or '\r'.
+        if (UNLIKELY(!*currentCharacter)) {
+            // String parsing is successful up to end of input.
+            return currentCharacter;
+        }
+        if (UNLIKELY(*currentCharacter <= '\r' && (*currentCharacter == '\n' || (*currentCharacter | 0x1) == '\r'))) {
+            // String parsing is failed for character '\n', '\f' or '\r'.
             return 0;
         }
 
@@ -7781,6 +7785,10 @@ inline void CSSParser::parseString(UChar*& result, UChar quote)
         if (UNLIKELY(*m_currentCharacter == quote)) {
             // String parsing is done.
             ++m_currentCharacter;
+            return;
+        }
+        if (UNLIKELY(!*m_currentCharacter)) {
+            // String parsing is done, but don't advance pointer if at the end of input.
             return;
         }
         ASSERT(*m_currentCharacter > '\r' || (*m_currentCharacter < '\n' && *m_currentCharacter) || *m_currentCharacter == '\v');
