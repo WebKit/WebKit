@@ -108,7 +108,7 @@ static bool layerShouldBeSkipped(LayerType* layer)
     return false;
 }
 
-static bool subtreeShouldBeSkipped(CCLayerImpl* layer)
+static inline bool subtreeShouldBeSkipped(CCLayerImpl* layer)
 {
     // The opacity of a layer always applies to its children (either implicitly
     // via a render surface or explicitly if the parent preserves 3D), so the
@@ -116,7 +116,7 @@ static bool subtreeShouldBeSkipped(CCLayerImpl* layer)
     return !layer->opacity();
 }
 
-static bool subtreeShouldBeSkipped(LayerChromium* layer)
+static inline bool subtreeShouldBeSkipped(LayerChromium* layer)
 {
     // If the opacity is being animated then the opacity on the main thread is unreliable
     // (since the impl thread may be using a different opacity), so it should not be trusted.
@@ -281,6 +281,13 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     TransformationMatrix combinedTransform = parentMatrix;
     combinedTransform = combinedTransform.multiply(layerLocalTransform);
 
+    bool layerIsInAnimatingSubtreeForSurface = layer->transformIsAnimating();
+    bool layerIsInAnimatingSubtreeForScreen = layer->transformIsAnimating();
+    if (layer->parent()) {
+        layerIsInAnimatingSubtreeForSurface |= layer->parent()->drawTransformIsAnimating();
+        layerIsInAnimatingSubtreeForScreen |= layer->parent()->screenSpaceTransformIsAnimating();
+    }
+
     FloatRect layerRect(-0.5 * layer->bounds().width(), -0.5 * layer->bounds().height(), layer->bounds().width(), layer->bounds().height());
     IntRect transformedLayerRect;
 
@@ -315,6 +322,12 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         layerOriginTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
         renderSurface->setOriginTransform(layerOriginTransform);
 
+        renderSurface->setTargetSurfaceTransformsAreAnimating(layerIsInAnimatingSubtreeForSurface);
+        renderSurface->setScreenSpaceTransformsAreAnimating(layerIsInAnimatingSubtreeForScreen);
+        layerIsInAnimatingSubtreeForSurface = false;
+        layer->setDrawTransformIsAnimating(layerIsInAnimatingSubtreeForSurface);
+        layer->setScreenSpaceTransformIsAnimating(layerIsInAnimatingSubtreeForScreen);
+
         // Update the aggregate hierarchy matrix to include the transform of the newly created RenderSurface.
         nextHierarchyMatrix.multiply(layerOriginTransform);
 
@@ -340,6 +353,8 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         renderSurfaceLayerList.append(layer);
     } else {
         layer->setDrawTransform(combinedTransform);
+        layer->setDrawTransformIsAnimating(layerIsInAnimatingSubtreeForSurface);
+        layer->setScreenSpaceTransformIsAnimating(layerIsInAnimatingSubtreeForScreen);
         transformedLayerRect = enclosingIntRect(layer->drawTransform().mapRect(layerRect));
 
         layer->setDrawOpacity(drawOpacity);

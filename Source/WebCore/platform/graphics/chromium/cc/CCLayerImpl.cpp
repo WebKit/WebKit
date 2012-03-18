@@ -68,6 +68,8 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_drawOpacityIsAnimating(false)
     , m_debugBorderColor(0, 0, 0, 0)
     , m_debugBorderWidth(0)
+    , m_drawTransformIsAnimating(false)
+    , m_screenSpaceTransformIsAnimating(false)
     , m_layerAnimationController(CCLayerAnimationControllerImpl::create(this))
 {
     ASSERT(CCProxy::isImplThread());

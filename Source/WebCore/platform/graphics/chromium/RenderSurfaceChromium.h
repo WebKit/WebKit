@@ -77,6 +77,11 @@ public:
     const TransformationMatrix& replicaDrawTransform() const { return m_replicaDrawTransform; }
     void setReplicaDrawTransform(const TransformationMatrix& replicaDrawTransform) { m_replicaDrawTransform = replicaDrawTransform; }
 
+    bool targetSurfaceTransformsAreAnimating() const { return m_targetSurfaceTransformsAreAnimating; }
+    void setTargetSurfaceTransformsAreAnimating(bool animating) { m_targetSurfaceTransformsAreAnimating = animating; }
+    bool screenSpaceTransformsAreAnimating() const { return m_screenSpaceTransformsAreAnimating; }
+    void setScreenSpaceTransformsAreAnimating(bool animating) { m_screenSpaceTransformsAreAnimating = animating; }
+
     const IntRect& clipRect() const { return m_clipRect; }
     void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
 
@@ -106,6 +111,8 @@ private:
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_replicaDrawTransform;
     TransformationMatrix m_originTransform;
+    bool m_targetSurfaceTransformsAreAnimating;
+    bool m_screenSpaceTransformsAreAnimating;
     FilterOperations m_filters;
     IntRect m_clipRect;
     Vector<RefPtr<LayerChromium> > m_layerList;

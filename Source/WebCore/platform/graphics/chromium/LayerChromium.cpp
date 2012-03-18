@@ -82,6 +82,8 @@ LayerChromium::LayerChromium()
     , m_drawOpacity(0)
     , m_drawOpacityIsAnimating(false)
     , m_targetRenderSurface(0)
+    , m_drawTransformIsAnimating(false)
+    , m_screenSpaceTransformIsAnimating(false)
     , m_contentsScale(1.0)
     , m_layerAnimationDelegate(0)
 {

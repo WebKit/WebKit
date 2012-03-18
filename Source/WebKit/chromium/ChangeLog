@@ -1,3 +1,16 @@
+2012-03-18  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Transform animation state should be inherited from parents
+        https://bugs.webkit.org/show_bug.cgi?id=81363
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebCore::addOpacityAnimationToLayer):
+        (WebCore):
+        (WebCore::addTransformAnimationToLayer):
+        (WebCore::TEST):
+
 2012-03-16  James Robinson  <jamesr@chromium.org>
 
         [chromium] Unify the drawing logic for different layer types that output textures to the compositor

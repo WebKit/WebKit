@@ -89,6 +89,11 @@ public:
     void setOriginTransform(const TransformationMatrix& originTransform) { m_originTransform = originTransform; }
     const TransformationMatrix& originTransform() const { return m_originTransform; }
 
+    bool targetSurfaceTransformsAreAnimating() const { return m_targetSurfaceTransformsAreAnimating; }
+    void setTargetSurfaceTransformsAreAnimating(bool animating) { m_targetSurfaceTransformsAreAnimating = animating; }
+    bool screenSpaceTransformsAreAnimating() const { return m_screenSpaceTransformsAreAnimating; }
+    void setScreenSpaceTransformsAreAnimating(bool animating) { m_screenSpaceTransformsAreAnimating = animating; }
+
     void setClipRect(const IntRect&);
     const IntRect& clipRect() const { return m_clipRect; }
 
@@ -138,6 +143,8 @@ private:
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_replicaDrawTransform;
     TransformationMatrix m_originTransform;
+    bool m_targetSurfaceTransformsAreAnimating;
+    bool m_screenSpaceTransformsAreAnimating;
     FilterOperations m_filters;
     IntRect m_clipRect;
     Vector<CCLayerImpl*> m_layerList;

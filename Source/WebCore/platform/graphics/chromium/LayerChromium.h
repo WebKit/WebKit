@@ -197,6 +197,12 @@ public:
     void setClipRect(const IntRect& clipRect) { m_clipRect = clipRect; }
     RenderSurfaceChromium* targetRenderSurface() const { return m_targetRenderSurface; }
     void setTargetRenderSurface(RenderSurfaceChromium* surface) { m_targetRenderSurface = surface; }
+
+    bool drawTransformIsAnimating() const { return m_drawTransformIsAnimating; }
+    void setDrawTransformIsAnimating(bool animating) { m_drawTransformIsAnimating = animating; }
+    bool screenSpaceTransformIsAnimating() const { return m_screenSpaceTransformIsAnimating; }
+    void setScreenSpaceTransformIsAnimating(bool animating) { m_screenSpaceTransformIsAnimating = animating; }
+
     // This moves from layer space, with origin in the center to target space with origin in the top left
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
     void setDrawTransform(const TransformationMatrix& matrix) { m_drawTransform = matrix; }
@@ -324,6 +330,8 @@ private:
     RenderSurfaceChromium* m_targetRenderSurface;
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_screenSpaceTransform;
+    bool m_drawTransformIsAnimating;
+    bool m_screenSpaceTransformIsAnimating;
     IntRect m_drawableContentRect;
     float m_contentsScale;
 

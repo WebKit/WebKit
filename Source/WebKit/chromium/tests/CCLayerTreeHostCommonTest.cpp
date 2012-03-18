@@ -29,6 +29,8 @@
 #include "CCLayerTreeTestCommon.h"
 #include "LayerChromium.h"
 #include "TransformationMatrix.h"
+#include "TranslateTransformOperation.h"
+#include "cc/CCLayerAnimationController.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -580,6 +582,178 @@ TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
     ASSERT_EQ(2U, renderSurfaceLayerList.size());
     EXPECT_EQ(parent->id(), renderSurfaceLayerList[0]->id());
     EXPECT_EQ(child->id(), renderSurfaceLayerList[1]->id());
+}
+
+static int addOpacityAnimationToLayer(LayerChromium* layer, float startValue, float endValue, double duration)
+{
+    static int id = 0;
+    WebCore::KeyframeValueList values(AnimatedPropertyOpacity);
+    values.insert(new FloatAnimationValue(0, startValue));
+    values.insert(new FloatAnimationValue(duration, endValue));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+
+    IntSize boxSize;
+    layer->layerAnimationController()->addAnimation(values, boxSize, animation.get(), id, 0, 0);
+    return id++;
+}
+
+static int addTransformAnimationToLayer(LayerChromium* layer, double duration)
+{
+    static int id = 0;
+    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
+
+    TransformOperations operations1;
+    operations1.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    values.insert(new TransformAnimationValue(0, &operations1));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+
+    IntSize boxSize;
+    layer->layerAnimationController()->addAnimation(values, boxSize, animation.get(), id, 0, 0);
+    return id++;
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
+{
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface1 = LayerChromium::create();
+    RefPtr<LayerChromium> renderSurface2 = LayerChromium::create();
+    RefPtr<LayerChromium> childOfRoot = LayerChromium::create();
+    RefPtr<LayerChromium> childOfRS1 = LayerChromium::create();
+    RefPtr<LayerChromium> childOfRS2 = LayerChromium::create();
+    RefPtr<LayerChromium> grandChildOfRoot = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> grandChildOfRS1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    RefPtr<LayerChromiumWithForcedDrawsContent> grandChildOfRS2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(renderSurface1);
+    parent->addChild(childOfRoot);
+    renderSurface1->addChild(childOfRS1);
+    renderSurface1->addChild(renderSurface2);
+    renderSurface2->addChild(childOfRS2);
+    childOfRoot->addChild(grandChildOfRoot);
+    childOfRS1->addChild(grandChildOfRS1);
+    childOfRS2->addChild(grandChildOfRS2);
+
+    // In combination with descendantDrawsContent, opacity != 1 forces the layer to have a new renderSurface.
+    renderSurface1->setOpacity(0.4);
+    renderSurface2->setOpacity(0.5);
+    addOpacityAnimationToLayer(renderSurface1.get(), 1, 0, 10);
+    addOpacityAnimationToLayer(renderSurface2.get(), 1, 0, 10);
+
+    // Also put an animation on a layer without descendants.
+    addOpacityAnimationToLayer(grandChildOfRoot.get(), 1, 0, 10);
+
+    TransformationMatrix layerTransform;
+    layerTransform.translate(1.0, 1.0);
+    TransformationMatrix sublayerTransform;
+    sublayerTransform.scale3d(10.0, 1.0, 1.0);
+
+    // Put transform animations on child, renderSurface2, grandChildOfRoot, and grandChildOfRS2
+    addTransformAnimationToLayer(childOfRoot.get(), 10);
+    addTransformAnimationToLayer(grandChildOfRoot.get(), 10);
+    addTransformAnimationToLayer(renderSurface2.get(), 10);
+    addTransformAnimationToLayer(grandChildOfRS2.get(), 10);
+
+    setLayerPropertiesForTesting(parent.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(renderSurface1.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(renderSurface2.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(childOfRoot.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(childOfRS1.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(childOfRS2.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChildOfRoot.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChildOfRS1.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChildOfRS2.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
+
+    executeCalculateDrawTransformsAndVisibility(parent.get());
+
+    // Only layers that are associated with render surfaces should have an actual renderSurface() value.
+    //
+    ASSERT_TRUE(parent->renderSurface());
+    ASSERT_FALSE(childOfRoot->renderSurface());
+    ASSERT_FALSE(grandChildOfRoot->renderSurface());
+
+    ASSERT_TRUE(renderSurface1->renderSurface());
+    ASSERT_FALSE(childOfRS1->renderSurface());
+    ASSERT_FALSE(grandChildOfRS1->renderSurface());
+
+    ASSERT_TRUE(renderSurface2->renderSurface());
+    ASSERT_FALSE(childOfRS2->renderSurface());
+    ASSERT_FALSE(grandChildOfRS2->renderSurface());
+
+    // Verify all targetRenderSurface accessors
+    //
+    EXPECT_EQ(parent->renderSurface(), parent->targetRenderSurface());
+    EXPECT_EQ(parent->renderSurface(), childOfRoot->targetRenderSurface());
+    EXPECT_EQ(parent->renderSurface(), grandChildOfRoot->targetRenderSurface());
+
+    EXPECT_EQ(renderSurface1->renderSurface(), renderSurface1->targetRenderSurface());
+    EXPECT_EQ(renderSurface1->renderSurface(), childOfRS1->targetRenderSurface());
+    EXPECT_EQ(renderSurface1->renderSurface(), grandChildOfRS1->targetRenderSurface());
+
+    EXPECT_EQ(renderSurface2->renderSurface(), renderSurface2->targetRenderSurface());
+    EXPECT_EQ(renderSurface2->renderSurface(), childOfRS2->targetRenderSurface());
+    EXPECT_EQ(renderSurface2->renderSurface(), grandChildOfRS2->targetRenderSurface());
+
+    // Verify drawOpacityIsAnimating values
+    //
+    EXPECT_FALSE(parent->drawOpacityIsAnimating());
+    EXPECT_FALSE(childOfRoot->drawOpacityIsAnimating());
+    EXPECT_TRUE(grandChildOfRoot->drawOpacityIsAnimating());
+    EXPECT_FALSE(renderSurface1->drawOpacityIsAnimating());
+    EXPECT_TRUE(renderSurface1->renderSurface()->drawOpacityIsAnimating());
+    EXPECT_FALSE(childOfRS1->drawOpacityIsAnimating());
+    EXPECT_FALSE(grandChildOfRS1->drawOpacityIsAnimating());
+    EXPECT_FALSE(renderSurface2->drawOpacityIsAnimating());
+    EXPECT_TRUE(renderSurface2->renderSurface()->drawOpacityIsAnimating());
+    EXPECT_FALSE(childOfRS2->drawOpacityIsAnimating());
+    EXPECT_FALSE(grandChildOfRS2->drawOpacityIsAnimating());
+
+    // Verify drawTransformsAnimatingInTarget values
+    //
+    EXPECT_FALSE(parent->drawTransformIsAnimating());
+    EXPECT_TRUE(childOfRoot->drawTransformIsAnimating());
+    EXPECT_TRUE(grandChildOfRoot->drawTransformIsAnimating());
+    EXPECT_FALSE(renderSurface1->drawTransformIsAnimating());
+    EXPECT_FALSE(renderSurface1->renderSurface()->targetSurfaceTransformsAreAnimating());
+    EXPECT_FALSE(childOfRS1->drawTransformIsAnimating());
+    EXPECT_FALSE(grandChildOfRS1->drawTransformIsAnimating());
+    EXPECT_FALSE(renderSurface2->drawTransformIsAnimating());
+    EXPECT_TRUE(renderSurface2->renderSurface()->targetSurfaceTransformsAreAnimating());
+    EXPECT_FALSE(childOfRS2->drawTransformIsAnimating());
+    EXPECT_TRUE(grandChildOfRS2->drawTransformIsAnimating());
+
+    // Verify drawTransformsAnimatingInScreen values
+    //
+    EXPECT_FALSE(parent->screenSpaceTransformIsAnimating());
+    EXPECT_TRUE(childOfRoot->screenSpaceTransformIsAnimating());
+    EXPECT_TRUE(grandChildOfRoot->screenSpaceTransformIsAnimating());
+    EXPECT_FALSE(renderSurface1->screenSpaceTransformIsAnimating());
+    EXPECT_FALSE(renderSurface1->renderSurface()->screenSpaceTransformsAreAnimating());
+    EXPECT_FALSE(childOfRS1->screenSpaceTransformIsAnimating());
+    EXPECT_FALSE(grandChildOfRS1->screenSpaceTransformIsAnimating());
+    EXPECT_TRUE(renderSurface2->screenSpaceTransformIsAnimating());
+    EXPECT_TRUE(renderSurface2->renderSurface()->screenSpaceTransformsAreAnimating());
+    EXPECT_TRUE(childOfRS2->screenSpaceTransformIsAnimating());
+    EXPECT_TRUE(grandChildOfRS2->screenSpaceTransformIsAnimating());
+
+
+    // Sanity check. If these fail there is probably a bug in the test itself.
+    // It is expected that we correctly set up transforms so that the y-component of the screen-space transform
+    // encodes the "depth" of the layer in the tree.
+    EXPECT_FLOAT_EQ(1.0, parent->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(2.0, childOfRoot->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(3.0, grandChildOfRoot->screenSpaceTransform().m42());
+
+    EXPECT_FLOAT_EQ(2.0, renderSurface1->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(3.0, childOfRS1->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(4.0, grandChildOfRS1->screenSpaceTransform().m42());
+
+    EXPECT_FLOAT_EQ(3.0, renderSurface2->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(4.0, childOfRS2->screenSpaceTransform().m42());
+    EXPECT_FLOAT_EQ(5.0, grandChildOfRS2->screenSpaceTransform().m42());
 }
 
 // FIXME:

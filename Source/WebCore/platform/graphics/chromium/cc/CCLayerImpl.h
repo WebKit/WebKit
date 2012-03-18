@@ -212,6 +212,12 @@ public:
     void setDrawTransform(const TransformationMatrix& matrix) { m_drawTransform = matrix; }
     const TransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
     void setScreenSpaceTransform(const TransformationMatrix& matrix) { m_screenSpaceTransform = matrix; }
+
+    bool drawTransformIsAnimating() const { return m_drawTransformIsAnimating; }
+    void setDrawTransformIsAnimating(bool animating) { m_drawTransformIsAnimating = animating; }
+    bool screenSpaceTransformIsAnimating() const { return m_screenSpaceTransformIsAnimating; }
+    void setScreenSpaceTransformIsAnimating(bool animating) { m_screenSpaceTransformIsAnimating = animating; }
+
     const IntRect& drawableContentRect() const { return m_drawableContentRect; }
     void setDrawableContentRect(const IntRect& rect) { m_drawableContentRect = rect; }
     const FloatRect& updateRect() const { return m_updateRect; }
@@ -332,6 +338,8 @@ private:
 
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_screenSpaceTransform;
+    bool m_drawTransformIsAnimating;
+    bool m_screenSpaceTransformIsAnimating;
 
     // The rect that contributes to the scissor when this layer is drawn.
     // Inherited by the parent layer and further restricted if this layer masks
