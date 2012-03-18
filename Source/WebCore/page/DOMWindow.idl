@@ -170,6 +170,10 @@ module window {
         readonly attribute [V8EnabledAtRuntime] Storage localStorage
             getter raises(DOMException);
 
+#if (defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS) || (defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS)
+        readonly attribute [V8EnabledAtRuntime] NotificationCenter webkitNotifications;
+#endif
+
 #if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
         // This is the interface orientation in degrees. Some examples are:
         //  0 is straight up; -90 is when the device is rotated 90 clockwise;

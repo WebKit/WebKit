@@ -979,7 +979,6 @@ SOURCES += \
     loader/SubresourceLoader.cpp \
     loader/TextResourceDecoder.cpp \
     loader/ThreadableLoader.cpp \
-    notifications/DOMWindowNotifications.cpp \
     notifications/Notification.cpp \
     notifications/NotificationCenter.cpp \
     notifications/NotificationController.cpp \
@@ -2076,7 +2075,6 @@ HEADERS += \
     mathml/MathMLInlineContainerElement.h \
     mathml/MathMLMathElement.h \
     mathml/MathMLTextElement.h \
-    notifications/DOMWindowNotifications.h \
     notifications/Notification.h \
     notifications/NotificationCenter.h \
     notifications/NotificationClient.h \

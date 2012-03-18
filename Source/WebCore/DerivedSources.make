@@ -356,7 +356,6 @@ BINDING_IDLS = \
     $(WebCore)/inspector/ScriptProfile.idl \
     $(WebCore)/inspector/ScriptProfileNode.idl \
     $(WebCore)/loader/appcache/DOMApplicationCache.idl \
-    $(WebCore)/notifications/DOMWindowNotifications.idl \
     $(WebCore)/notifications/Notification.idl \
     $(WebCore)/notifications/NotificationCenter.idl \
     $(WebCore)/page/AbstractView.idl \
