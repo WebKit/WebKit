@@ -23,16 +23,12 @@
 
 #include "LayerTreeHostProxy.h"
 #include "QtWebPageEventHandler.h"
+#include "QtWebPageSGNode.h"
 #include "TransformationMatrix.h"
 #include "WebLayerTreeRenderer.h"
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p.h"
-#include <QPolygonF>
 #include <QtQuick/QQuickCanvas>
-#include <QtQuick/QSGGeometryNode>
-#include <QtQuick/QSGMaterial>
-#include <QtQuick/QSGSimpleRectNode>
-#include <private/qsgrendernode_p.h>
 
 QQuickWebPage::QQuickWebPage(QQuickWebView* viewportItem)
     : QQuickItem(viewportItem)
@@ -81,108 +77,6 @@ void QQuickWebPagePrivate::paint(QPainter* painter)
         webPageProxy->drawingArea()->paintLayerTree(painter);
 }
 
-class ContentsSGNode : public QSGRenderNode {
-public:
-    ContentsSGNode(PassRefPtr<WebLayerTreeRenderer> renderer)
-        : m_renderer(renderer)
-        , m_scale(1)
-    {
-    }
-
-    virtual StateFlags changedStates()
-    {
-        return StateFlags(StencilState) | ColorState | BlendState;
-    }
-
-    virtual void render(const RenderState&)
-    {
-        QMatrix4x4 renderMatrix = matrix() ? *matrix() : QMatrix4x4();
-
-        // Have to apply render scale manualy because it is not applied on page item.
-        // http://trac.webkit.org/changeset/104450
-        renderMatrix.scale(m_scale);
-
-        // FIXME: Support non-rectangular clippings.
-        layerTreeRenderer()->paintToCurrentGLContext(renderMatrix, inheritedOpacity(), clipRect());
-    }
-
-    ~ContentsSGNode()
-    {
-        layerTreeRenderer()->purgeGLResources();
-    }
-
-    WebLayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
-    void setScale(float scale) { m_scale = scale; }
-
-private:
-    QRectF clipRect() const
-    {
-        // Start with an invalid rect.
-        QRectF resultRect(0, 0, -1, -1);
-
-        for (const QSGClipNode* clip = clipList(); clip; clip = clip->clipList()) {
-            QMatrix4x4 clipMatrix;
-            if (clip->matrix())
-                clipMatrix = *clip->matrix();
-            QRectF currentClip;
-
-            if (clip->isRectangular())
-                currentClip = clipMatrix.mapRect(clip->clipRect());
-            else {
-                const QSGGeometry* geometry = clip->geometry();
-                // Assume here that clipNode has only coordinate data.
-                const QSGGeometry::Point2D* geometryPoints = geometry->vertexDataAsPoint2D();
-
-                // Clip region should be at least triangle to make valid clip.
-                if (geometry->vertexCount() < 3)
-                    continue;
-
-                QPolygonF polygon;
-
-                for (int i = 0; i < geometry->vertexCount(); i++)
-                    polygon.append(clipMatrix.map(QPoint(geometryPoints[i].x, geometryPoints[i].y)));
-                currentClip = polygon.boundingRect();
-            }
-
-            if (currentClip.isEmpty())
-                continue;
-
-            if (resultRect.isValid())
-                resultRect &= currentClip;
-            else
-                resultRect = currentClip;
-        }
-
-        return resultRect;
-    }
-
-    RefPtr<WebLayerTreeRenderer> m_renderer;
-    float m_scale;
-};
-
-class BackgroundSGNode : public QSGSimpleRectNode {
-public:
-    BackgroundSGNode()
-        : m_contentsNode(0)
-    {
-    }
-
-    ContentsSGNode* contentsNode(PassRefPtr<WebLayerTreeRenderer> renderer)
-    {
-        if (m_contentsNode && m_contentsNode->layerTreeRenderer() == renderer)
-            return m_contentsNode;
-
-        delete m_contentsNode;
-
-        m_contentsNode = new ContentsSGNode(renderer);
-        appendChildNode(m_contentsNode);
-        return m_contentsNode;
-    }
-
-private:
-    ContentsSGNode* m_contentsNode;
-};
-
 QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 {
     if (!d->webPageProxy->drawingArea())
@@ -191,20 +85,18 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     LayerTreeHostProxy* layerTreeHostProxy = d->webPageProxy->drawingArea()->layerTreeHostProxy();
     WebLayerTreeRenderer* renderer = layerTreeHostProxy->layerTreeRenderer();
 
-    BackgroundSGNode* backgroundNode = static_cast<BackgroundSGNode*>(oldNode);
-    if (!backgroundNode)
-        backgroundNode = new BackgroundSGNode();
-    ContentsSGNode* contentsNode = backgroundNode->contentsNode(renderer);
+    QtWebPageSGNode* node = static_cast<QtWebPageSGNode*>(oldNode);
+    if (!node)
+        node = new QtWebPageSGNode();
+    node->setRenderer(renderer);
     renderer->syncRemoteContent();
 
-    contentsNode->setScale(d->contentsScale);
-
+    node->setScale(d->contentsScale);
     QColor backgroundColor = d->webPageProxy->drawsTransparentBackground() ? Qt::transparent : Qt::white;
-    QRectF backgroundRect(0, 0, d->contentsSize.width() * d->contentsScale, d->contentsSize.height() * d->contentsScale);
-    backgroundNode->setColor(backgroundColor);
-    backgroundNode->setRect(backgroundRect);
+    QRectF backgroundRect(QPointF(0, 0), d->contentsSize);
+    node->setBackground(backgroundRect, backgroundColor);
 
-    return backgroundNode;
+    return node;
 }
 
 QtWebPageEventHandler* QQuickWebPage::eventHandler() const

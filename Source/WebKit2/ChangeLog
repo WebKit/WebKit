@@ -1,5 +1,23 @@
 2012-03-18  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
+        [Qt][WK2] Avoid usage of manual scaling in the Qt scenegraph integration
+        https://bugs.webkit.org/show_bug.cgi?id=81368
+
+        Reviewed by Simon Hausmann.
+
+        Moved the QtScenegraph integration classes to a separate file,
+        QtWebPageSGNode. The nodes created for QQuickWebPage now include
+        a QSGTransformNode that controls the contentsScale, a 
+        QSGSimpleRectNode that controls the background color, and a
+        QSGRenderNode subclass that renders the actual contents.
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::updatePaintNode):
+        * UIProcess/qt/QtWebPageSGNode.cpp: Added.
+        * UIProcess/qt/QtWebPageSGNode.h: Added.
+
+2012-03-18  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
         [Qt] The background is visible for tiles inside the contents area which are not ready
         https://bugs.webkit.org/show_bug.cgi?id=81349
 

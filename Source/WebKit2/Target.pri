@@ -273,6 +273,7 @@ HEADERS += \
     UIProcess/qt/QtPageClient.h \
     UIProcess/qt/QtWebPageLoadClient.h \
     UIProcess/qt/QtWebPagePolicyClient.h \
+    UIProcess/qt/QtWebPageSGNode.h \
     UIProcess/qt/QtWebPageUIClient.h \
     UIProcess/qt/QtFlickProvider.h \
     UIProcess/qt/QtViewportInteractionEngine.h \
@@ -608,6 +609,7 @@ SOURCES += \
     UIProcess/qt/QtPageClient.cpp \
     UIProcess/qt/QtWebPageLoadClient.cpp \
     UIProcess/qt/QtWebPagePolicyClient.cpp \
+    UIProcess/qt/QtWebPageSGNode.cpp \
     UIProcess/qt/QtWebPageUIClient.cpp \
     UIProcess/qt/TextCheckerQt.cpp \
     UIProcess/qt/QtFlickProvider.cpp \
