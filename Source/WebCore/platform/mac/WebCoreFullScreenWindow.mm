@@ -24,6 +24,9 @@
  */
 
 #import "config.h"
+
+#if ENABLE(FULLSCREEN_API)
+
 #import "WebCoreFullScreenWindow.h"
 
 @implementation WebCoreFullScreenWindow
@@ -66,3 +69,4 @@
 }
 @end
 
+#endif // ENABLE(FULLSCREEN_API)
