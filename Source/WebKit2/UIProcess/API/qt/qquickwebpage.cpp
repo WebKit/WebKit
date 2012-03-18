@@ -31,6 +31,7 @@
 #include <QtQuick/QQuickCanvas>
 #include <QtQuick/QSGGeometryNode>
 #include <QtQuick/QSGMaterial>
+#include <QtQuick/QSGSimpleRectNode>
 #include <private/qsgrendernode_p.h>
 
 QQuickWebPage::QQuickWebPage(QQuickWebView* viewportItem)
@@ -80,8 +81,9 @@ void QQuickWebPagePrivate::paint(QPainter* painter)
         webPageProxy->drawingArea()->paintLayerTree(painter);
 }
 
-struct PageProxyNode : public QSGRenderNode {
-    PageProxyNode(PassRefPtr<WebLayerTreeRenderer> renderer)
+class ContentsSGNode : public QSGRenderNode {
+public:
+    ContentsSGNode(PassRefPtr<WebLayerTreeRenderer> renderer)
         : m_renderer(renderer)
         , m_scale(1)
     {
@@ -104,7 +106,7 @@ struct PageProxyNode : public QSGRenderNode {
         layerTreeRenderer()->paintToCurrentGLContext(renderMatrix, inheritedOpacity(), clipRect());
     }
 
-    ~PageProxyNode()
+    ~ContentsSGNode()
     {
         layerTreeRenderer()->purgeGLResources();
     }
@@ -158,6 +160,29 @@ private:
     float m_scale;
 };
 
+class BackgroundSGNode : public QSGSimpleRectNode {
+public:
+    BackgroundSGNode()
+        : m_contentsNode(0)
+    {
+    }
+
+    ContentsSGNode* contentsNode(PassRefPtr<WebLayerTreeRenderer> renderer)
+    {
+        if (m_contentsNode && m_contentsNode->layerTreeRenderer() == renderer)
+            return m_contentsNode;
+
+        delete m_contentsNode;
+
+        m_contentsNode = new ContentsSGNode(renderer);
+        appendChildNode(m_contentsNode);
+        return m_contentsNode;
+    }
+
+private:
+    ContentsSGNode* m_contentsNode;
+};
+
 QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 {
     if (!d->webPageProxy->drawingArea())
@@ -166,23 +191,20 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     LayerTreeHostProxy* layerTreeHostProxy = d->webPageProxy->drawingArea()->layerTreeHostProxy();
     WebLayerTreeRenderer* renderer = layerTreeHostProxy->layerTreeRenderer();
 
-    PageProxyNode* node = static_cast<PageProxyNode*>(oldNode);
-
-    if (node && node->layerTreeRenderer() != renderer) {
-        // This means that LayerTreeHostProxy was deleted and recreated while old paint node survived.
-        // This could happen if web process have crashed. In this case we have to recreate paint node.
-        delete node;
-        node = 0;
-    }
-
+    BackgroundSGNode* backgroundNode = static_cast<BackgroundSGNode*>(oldNode);
+    if (!backgroundNode)
+        backgroundNode = new BackgroundSGNode();
+    ContentsSGNode* contentsNode = backgroundNode->contentsNode(renderer);
     renderer->syncRemoteContent();
 
-    if (!node)
-        node = new PageProxyNode(renderer);
+    contentsNode->setScale(d->contentsScale);
 
-    node->setScale(d->contentsScale);
+    QColor backgroundColor = d->webPageProxy->drawsTransparentBackground() ? Qt::transparent : Qt::white;
+    QRectF backgroundRect(0, 0, d->contentsSize.width() * d->contentsScale, d->contentsSize.height() * d->contentsScale);
+    backgroundNode->setColor(backgroundColor);
+    backgroundNode->setRect(backgroundRect);
 
-    return node;
+    return backgroundNode;
 }
 
 QtWebPageEventHandler* QQuickWebPage::eventHandler() const

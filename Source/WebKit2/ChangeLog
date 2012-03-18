@@ -1,3 +1,24 @@
+2012-03-18  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] The background is visible for tiles inside the contents area which are not ready
+        https://bugs.webkit.org/show_bug.cgi?id=81349
+
+        Reviewed by Simon Hausmann.
+
+        Split PageProxyNode to BackgroundSGNode and ContentsSGNode.
+        BackgroundSGNode paints a solid background, either white or transparent
+        (depending on drawsTransparentBackground flag).
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (ContentsSGNode):
+        (ContentsSGNode::ContentsSGNode):
+        (ContentsSGNode::changedStates):
+        (ContentsSGNode::~ContentsSGNode):
+        (BackgroundSGNode):
+        (BackgroundSGNode::BackgroundSGNode):
+        (BackgroundSGNode::contentsNode):
+        (QQuickWebPage::updatePaintNode):
+
 2012-03-17  Joe Thomas  <joethomas@motorola.com>
 
         move calc*Value functions out from Length (and platform)
