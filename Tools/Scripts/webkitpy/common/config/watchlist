@@ -168,9 +168,9 @@
         "QtWebKit2PublicAPI": [ "alexis.menard@openbossa.org", "zoltan@webkit.org", ],
         "QtWebKit2PlatformSpecific": [ "alexis.menard@openbossa.org", "zoltan@webkit.org", ],
         "CSS": [ "alexis.menard@openbossa.org", "macpherson@chromium.org", ],
-        "EFL": [ "kubo@profusion.mobi", ],
-        "CMake": [ "kubo@profusion.mobi", ],
-        "SoupNetwork": [ "kubo@profusion.mobi", ],
+        "EFL": [ "rakuco@FreeBSD.org", ],
+        "CMake": [ "rakuco@FreeBSD.org", ],
+        "SoupNetwork": [ "rakuco@FreeBSD.org", ],
         "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org" ],
     },
     "MESSAGE_RULES": {

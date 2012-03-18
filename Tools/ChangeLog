@@ -1,3 +1,11 @@
+2012-03-17  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        Unreviewed; switch to using my FreeBSD.org email address, the
+        other one is going to disappear soon.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-03-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         Unreviewed; fix webkitpy unit test failures after r111116.
