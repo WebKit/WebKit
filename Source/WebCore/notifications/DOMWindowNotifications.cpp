@@ -87,13 +87,10 @@ NotificationCenter* DOMWindowNotifications::ensureWebkitNotifications()
 
 void DOMWindowNotifications::disconnectFrame()
 {
-    // FIXME: We should support keep the old m_notificationCenter so we can support reconnectFrame().
-    // See DOMWindowIndexedDatabase::disconnectFrame() for an example of how to do this.
     if (m_notificationCenter) {
         m_notificationCenter->disconnectFrame();
         m_notificationCenter = 0;
     }
-    DOMWindowProperty::disconnectFrame();
 }
 
 } // namespace WebCore
