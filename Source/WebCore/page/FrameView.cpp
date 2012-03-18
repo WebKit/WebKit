@@ -1718,11 +1718,19 @@ void FrameView::repaintFixedElementsAfterScrolling()
         if (RenderView* root = rootRenderer(this)) {
             root->updateWidgetPositions();
             root->layer()->updateLayerPositionsAfterScroll();
-#if USE(ACCELERATED_COMPOSITING)
-            root->compositor()->updateCompositingLayers(CompositingUpdateOnScroll);
-#endif
         }
     }
+}
+
+void FrameView::updateFixedElementsAfterScrolling()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (!m_nestedLayoutCount && hasFixedObjects()) {
+        if (RenderView* root = rootRenderer(this)) {
+            root->compositor()->updateCompositingLayers(CompositingUpdateOnScroll);
+        }
+    }
+#endif
 }
 
 bool FrameView::shouldRubberBandInDirection(ScrollDirection direction) const

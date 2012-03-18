@@ -173,6 +173,7 @@ public:
     void setScrollPosition(const IntPoint&);
     void scrollPositionChangedViaPlatformWidget();
     virtual void repaintFixedElementsAfterScrolling();
+    virtual void updateFixedElementsAfterScrolling();
     virtual bool shouldRubberBandInDirection(ScrollDirection) const;
     virtual bool requestScrollPositionUpdate(const IntPoint&) OVERRIDE;
 
