@@ -48,12 +48,17 @@ SkPictureCanvasLayerTextureUpdater::~SkPictureCanvasLayerTextureUpdater()
 {
 }
 
-void SkPictureCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& /* tileSize */, int /* borderTexels */, float contentsScale, IntRect* resultingOpaqueRect)
+void SkPictureCanvasLayerTextureUpdater::prepareToUpdate(const IntRect& contentRect, const IntSize& /* tileSize */, int borderTexels, float contentsScale, IntRect* resultingOpaqueRect)
 {
     SkCanvas* canvas = m_picture.beginRecording(contentRect.width(), contentRect.height());
     PlatformContextSkia platformContext(canvas);
     platformContext.setDeferred(true);
     platformContext.setTrackOpaqueRegion(!m_layerIsOpaque);
+    // Assumption: if a tiler is using border texels, then it is because the
+    // layer is likely to be filtered or transformed. Because it might be
+    // transformed, set image buffer flag to draw the text in grayscale
+    // instead of using subpixel antialiasing.
+    platformContext.setDrawingToImageBuffer(borderTexels ? true : false);
     GraphicsContext graphicsContext(&platformContext);
     paintContents(graphicsContext, platformContext, contentRect, contentsScale);
     m_picture.endRecording();
