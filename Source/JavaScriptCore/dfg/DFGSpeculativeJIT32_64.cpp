@@ -2515,6 +2515,53 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
+    case RegExpExec: {
+        if (compileRegExpExec(node))
+            return;
+
+        if (!node.adjustedRefCount()) {
+            SpeculateCellOperand base(this, node.child1());
+            SpeculateCellOperand argument(this, node.child2());
+            GPRReg baseGPR = base.gpr();
+            GPRReg argumentGPR = argument.gpr();
+            
+            flushRegisters();
+            GPRResult result(this);
+            callOperation(operationRegExpTest, result.gpr(), baseGPR, argumentGPR);
+            
+            noResult(m_compileIndex);
+            break;
+        }
+
+        SpeculateCellOperand base(this, node.child1());
+        SpeculateCellOperand argument(this, node.child2());
+        GPRReg baseGPR = base.gpr();
+        GPRReg argumentGPR = argument.gpr();
+        
+        flushRegisters();
+        GPRResult2 resultTag(this);
+        GPRResult resultPayload(this);
+        callOperation(operationRegExpExec, resultTag.gpr(), resultPayload.gpr(), baseGPR, argumentGPR);
+        
+        jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
+        break;
+    }
+        
+    case RegExpTest: {
+        SpeculateCellOperand base(this, node.child1());
+        SpeculateCellOperand argument(this, node.child2());
+        GPRReg baseGPR = base.gpr();
+        GPRReg argumentGPR = argument.gpr();
+        
+        flushRegisters();
+        GPRResult result(this);
+        callOperation(operationRegExpTest, result.gpr(), baseGPR, argumentGPR);
+        
+        // If we add a DataFormatBool, we should use it here.
+        booleanResult(result.gpr(), m_compileIndex);
+        break;
+    }
+        
     case ArrayPush: {
         SpeculateCellOperand base(this, node.child1());
         JSValueOperand value(this, node.child2());

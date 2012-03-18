@@ -502,6 +502,28 @@ EncodedJSValue DFG_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue 
     array->push(exec, JSValue::decode(encodedValue));
     return JSValue::encode(jsNumber(array->length()));
 }
+
+EncodedJSValue DFG_OPERATION operationRegExpExec(ExecState* exec, JSCell* base, JSCell* argument)
+{
+    if (!base->inherits(&RegExpObject::s_info))
+        return throwVMTypeError(exec);
+
+    ASSERT(argument->isString() || argument->isObject());
+    JSString* input = argument->isString() ? asString(argument) : asObject(argument)->toString(exec);
+    return JSValue::encode(asRegExpObject(base)->exec(exec, input));
+}
+        
+size_t DFG_OPERATION operationRegExpTest(ExecState* exec, JSCell* base, JSCell* argument)
+{
+    if (!base->inherits(&RegExpObject::s_info)) {
+        throwTypeError(exec);
+        return false;
+    }
+
+    ASSERT(argument->isString() || argument->isObject());
+    JSString* input = argument->isString() ? asString(argument) : asObject(argument)->toString(exec);
+    return asRegExpObject(base)->match(exec, input);
+}
         
 EncodedJSValue DFG_OPERATION operationArrayPop(ExecState* exec, JSArray* array)
 {

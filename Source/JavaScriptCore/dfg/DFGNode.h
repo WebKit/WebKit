@@ -492,6 +492,8 @@ struct Node {
         case ResolveGlobal:
         case ArrayPop:
         case ArrayPush:
+        case RegExpExec:
+        case RegExpTest:
             return true;
         default:
             return false;

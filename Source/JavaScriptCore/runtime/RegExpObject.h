@@ -67,8 +67,8 @@ namespace JSC {
             return m_lastIndex.get();
         }
 
-        JSValue test(ExecState*);
-        JSValue exec(ExecState*);
+        bool match(ExecState*, JSString* string);
+        JSValue exec(ExecState*, JSString* string);
 
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
@@ -95,8 +95,6 @@ namespace JSC {
         JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
 
     private:
-        bool match(ExecState*);
-
         WriteBarrier<RegExp> m_regExp;
         WriteBarrier<Unknown> m_lastIndex;
         bool m_lastIndexIsWritable;

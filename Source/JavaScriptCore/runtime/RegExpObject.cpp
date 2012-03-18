@@ -276,23 +276,18 @@ void RegExpObject::put(JSCell* cell, ExecState* exec, const Identifier& property
     lookupPut<RegExpObject, JSObject>(exec, propertyName, value, ExecState::regExpTable(exec), jsCast<RegExpObject*>(cell), slot);
 }
 
-JSValue RegExpObject::test(ExecState* exec)
+JSValue RegExpObject::exec(ExecState* exec, JSString* string)
 {
-    return jsBoolean(match(exec));
-}
-
-JSValue RegExpObject::exec(ExecState* exec)
-{
-    if (match(exec))
+    if (match(exec, string))
         return exec->lexicalGlobalObject()->regExpConstructor()->arrayOfMatches(exec);
     return jsNull();
 }
 
 // Shared implementation used by test and exec.
-bool RegExpObject::match(ExecState* exec)
+bool RegExpObject::match(ExecState* exec, JSString* string)
 {
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
-    UString input = exec->argument(0).toString(exec)->value(exec);
+    UString input = string->value(exec);
     JSGlobalData* globalData = &exec->globalData();
     if (!regExp()->global()) {
         int position;

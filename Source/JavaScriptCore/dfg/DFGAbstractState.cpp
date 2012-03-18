@@ -629,6 +629,13 @@ bool AbstractState::execute(unsigned indexInBlock)
         forNode(nodeIndex).makeTop();
         break;
             
+    case RegExpExec:
+    case RegExpTest:
+        forNode(node.child1()).filter(PredictCell);
+        forNode(node.child2()).filter(PredictCell);
+        forNode(nodeIndex).makeTop();
+        break;
+            
     case Jump:
         break;
             

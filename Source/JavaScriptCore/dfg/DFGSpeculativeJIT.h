@@ -1184,6 +1184,11 @@ private:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(S_DFGOperation_ECC operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(J_DFGOperation_EPP operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
@@ -1197,6 +1202,11 @@ private:
     JITCompiler::Call callOperation(J_DFGOperation_EJJ operation, GPRReg result, MacroAssembler::TrustedImm32 imm, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(MacroAssembler::TrustedImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm.m_value)))), arg2);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(J_DFGOperation_ECC operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_DFGOperation_ECJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
@@ -1357,6 +1367,11 @@ private:
         m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(S_DFGOperation_ECC operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(S_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload, GPRReg arg2Tag, GPRReg arg2Payload)
     {
         m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag, arg2Payload, arg2Tag);
@@ -1380,6 +1395,11 @@ private:
     JITCompiler::Call callOperation(J_DFGOperation_ECJ operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, GPRReg arg2Tag, GPRReg arg2Payload)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2Payload, arg2Tag);
+        return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
+    }
+    JITCompiler::Call callOperation(J_DFGOperation_ECC operation, GPRReg resultTag, GPRReg resultPayload, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, resultPayload, resultTag);
     }
     JITCompiler::Call callOperation(V_DFGOperation_EC operation, GPRReg arg1)
@@ -1738,8 +1758,9 @@ private:
     void compilePutByValForIntTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node&, size_t elementSize, TypedArraySpeculationRequirements, TypedArraySignedness, TypedArrayRounding = TruncateRounding);
     void compileGetByValOnFloatTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize, TypedArraySpeculationRequirements);
     void compilePutByValForFloatTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node&, size_t elementSize, TypedArraySpeculationRequirements);
-    void compileNewFunctionNoCheck(Node& node);
-    void compileNewFunctionExpression(Node& node);
+    void compileNewFunctionNoCheck(Node&);
+    void compileNewFunctionExpression(Node&);
+    bool compileRegExpExec(Node&);
     
     template <typename ClassType, bool destructor, typename StructureType> 
     void emitAllocateBasicJSObject(StructureType structure, GPRReg resultGPR, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)

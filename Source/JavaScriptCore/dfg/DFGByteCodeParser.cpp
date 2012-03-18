@@ -1379,6 +1379,28 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         return true;
     }
 
+    case RegExpExecIntrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+        
+        NodeIndex regExpExec = addToGraph(RegExpExec, OpInfo(0), OpInfo(prediction), get(registerOffset + argumentToOperand(0)), get(registerOffset + argumentToOperand(1)));
+        if (usesResult)
+            set(resultOperand, regExpExec);
+        
+        return true;
+    }
+        
+    case RegExpTestIntrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+        
+        NodeIndex regExpExec = addToGraph(RegExpTest, OpInfo(0), OpInfo(prediction), get(registerOffset + argumentToOperand(0)), get(registerOffset + argumentToOperand(1)));
+        if (usesResult)
+            set(resultOperand, regExpExec);
+        
+        return true;
+    }
+        
     default:
         return false;
     }

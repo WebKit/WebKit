@@ -45,6 +45,8 @@ enum Intrinsic {
     RoundIntrinsic,
     ExpIntrinsic,
     LogIntrinsic,
+    RegExpExecIntrinsic,
+    RegExpTestIntrinsic,
 };
 
 } // namespace JSC

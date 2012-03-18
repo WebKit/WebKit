@@ -131,6 +131,10 @@ namespace JSC { namespace DFG {
     macro(ArrayPush, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(ArrayPop, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     \
+    /* Optimizations for regular expression matching. */\
+    macro(RegExpExec, NodeResultJS | NodeMustGenerate) \
+    macro(RegExpTest, NodeResultJS | NodeMustGenerate) \
+    \
     /* Optimizations for string access */ \
     macro(StringCharCodeAt, NodeResultInt32) \
     macro(StringCharAt, NodeResultJS) \

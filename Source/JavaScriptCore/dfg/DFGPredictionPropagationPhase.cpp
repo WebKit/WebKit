@@ -186,6 +186,14 @@ private:
             break;
         }
 
+        case RegExpExec:
+        case RegExpTest: {
+            if (node.getHeapPrediction())
+                changed |= mergePrediction(node.getHeapPrediction());
+            changed |= mergeDefaultArithFlags(node, flags);
+            break;
+        }
+
         case StringCharCodeAt: {
             changed |= mergePrediction(PredictInt32);
             changed |= mergeDefaultArithFlags(node, flags);

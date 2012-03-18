@@ -1,3 +1,69 @@
+2012-03-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Strength reduction, RegExp.exec -> RegExp.test
+        https://bugs.webkit.org/show_bug.cgi?id=81459
+
+        Reviewed by Sam Weinig.
+
+        RegExp.prototype.exec & RegExp.prototype.test can both be used to test a regular
+        expression for a match against a string - however exec is more expensive, since
+        it allocates a matches array object. In cases where the result is consumed in a
+        boolean context the allocation of the matches array can be trivially elided.
+
+        For example:
+            function f()
+            {
+                for (i =0; i < 10000000; ++i)
+                    if(!/a/.exec("a"))
+                        err = true;
+            }
+
+        This is a 2.5x speedup on this example microbenchmark loop.
+
+        In a more advanced form of this optimization, we may be able to avoid allocating
+        the array where access to the array can be observed.
+
+        * create_hash_table:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileRegExpExec):
+        (DFG):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jsc.cpp:
+        (GlobalObject::addConstructableFunction):
+        * runtime/Intrinsic.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        (JSC):
+        * runtime/JSFunction.h:
+        (JSFunction):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::exec):
+        (JSC::RegExpObject::match):
+        * runtime/RegExpObject.h:
+        (RegExpObject):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTest):
+        (JSC::regExpProtoFuncExec):
+
 2012-03-16  Michael Saboff  <msaboff@apple.com>
 
         Improve diagnostic benefit of JSGlobalData::m_isInitializingObject

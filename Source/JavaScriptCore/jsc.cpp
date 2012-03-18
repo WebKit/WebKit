@@ -221,7 +221,7 @@ protected:
     void addConstructableFunction(JSGlobalData& globalData, const char* name, NativeFunction function, unsigned arguments)
     {
         Identifier identifier(globalExec(), name);
-        putDirect(globalData, identifier, JSFunction::create(globalExec(), this, arguments, identifier, function, function));
+        putDirect(globalData, identifier, JSFunction::create(globalExec(), this, arguments, identifier, function, NoIntrinsic, function));
     }
 };
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);

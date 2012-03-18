@@ -59,19 +59,20 @@ bool JSFunction::isHostFunctionNonInline() const
     return isHostFunction();
 }
 
-JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, int length, const Identifier& name, NativeFunction nativeFunction, NativeFunction nativeConstructor)
+JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, int length, const Identifier& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
-    NativeExecutable* executable = exec->globalData().getHostFunction(nativeFunction, nativeConstructor);
+    NativeExecutable* executable;
+#if ENABLE(JIT)
+    if (intrinsic != NoIntrinsic && exec->globalData().canUseJIT()) {
+        ASSERT(nativeConstructor == callHostFunctionAsConstructor);
+        executable = exec->globalData().getHostFunction(nativeFunction, intrinsic);
+    } else
+#endif
+        executable = exec->globalData().getHostFunction(nativeFunction, nativeConstructor);
+
     JSFunction* function = new (NotNull, allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, globalObject->functionStructure());
     // Can't do this during initialization because getHostFunction might do a GC allocation.
     function->finishCreation(exec, executable, length, name);
-    return function;
-}
-
-JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, int length, const Identifier& name, NativeExecutable* nativeExecutable)
-{
-    JSFunction* function = new (NotNull, allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, globalObject->functionStructure());
-    function->finishCreation(exec, nativeExecutable, length, name);
     return function;
 }
 

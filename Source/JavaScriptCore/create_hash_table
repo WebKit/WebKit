@@ -290,6 +290,10 @@ sub output() {
             $intrinsic = "ArrayPushIntrinsic" if ($key eq "push");
             $intrinsic = "ArrayPopIntrinsic" if ($key eq "pop");
         }
+        if ($name eq "regExpPrototypeTable") {
+            $intrinsic = "RegExpExecIntrinsic" if ($key eq "exec");
+            $intrinsic = "RegExpTestIntrinsic" if ($key eq "test");
+        }
 
         print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue, $intrinsic },\n";
         $i++;

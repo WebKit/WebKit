@@ -2764,6 +2764,46 @@ void SpeculativeJIT::compileNewFunctionExpression(Node& node)
     cellResult(resultGPR, m_compileIndex);
 }
 
+bool SpeculativeJIT::compileRegExpExec(Node& node)
+{
+    unsigned branchIndexInBlock = detectPeepHoleBranch();
+    if (branchIndexInBlock == UINT_MAX)
+        return false;
+    NodeIndex branchNodeIndex = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
+    ASSERT(node.adjustedRefCount() == 1);
+
+    Node& branchNode = at(branchNodeIndex);
+    BlockIndex taken = branchNode.takenBlockIndex();
+    BlockIndex notTaken = branchNode.notTakenBlockIndex();
+    
+    bool invert = false;
+    if (taken == (m_block + 1)) {
+        invert = true;
+        BlockIndex tmp = taken;
+        taken = notTaken;
+        notTaken = tmp;
+    }
+
+    SpeculateCellOperand base(this, node.child1());
+    SpeculateCellOperand argument(this, node.child2());
+    GPRReg baseGPR = base.gpr();
+    GPRReg argumentGPR = argument.gpr();
+    
+    flushRegisters();
+    GPRResult result(this);
+    callOperation(operationRegExpTest, result.gpr(), baseGPR, argumentGPR);
+
+    branchTest32(invert ? JITCompiler::Zero : JITCompiler::NonZero, result.gpr(), taken);
+    jump(notTaken);
+
+    use(node.child1());
+    use(node.child2());
+    m_indexInBlock = branchIndexInBlock;
+    m_compileIndex = branchNodeIndex;
+
+    return true;
+}
+
 } } // namespace JSC::DFG
 
 #endif

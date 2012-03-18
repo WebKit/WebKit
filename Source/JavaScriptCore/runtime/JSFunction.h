@@ -54,8 +54,7 @@ namespace JSC {
     public:
         typedef JSNonFinalObject Base;
 
-        JS_EXPORT_PRIVATE static JSFunction* create(ExecState*, JSGlobalObject*, int length, const Identifier& name, NativeFunction nativeFunction, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
-        static JSFunction* create(ExecState*, JSGlobalObject*, int length, const Identifier& name, NativeExecutable* nativeExecutable);
+        JS_EXPORT_PRIVATE static JSFunction* create(ExecState*, JSGlobalObject*, int length, const Identifier& name, NativeFunction nativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
         static JSFunction* create(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChain)
         {

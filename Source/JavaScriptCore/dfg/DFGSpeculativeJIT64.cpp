@@ -2559,6 +2559,53 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
+    case RegExpExec: {
+        if (compileRegExpExec(node))
+            return;
+
+        if (!node.adjustedRefCount()) {
+            SpeculateCellOperand base(this, node.child1());
+            SpeculateCellOperand argument(this, node.child2());
+            GPRReg baseGPR = base.gpr();
+            GPRReg argumentGPR = argument.gpr();
+            
+            flushRegisters();
+            GPRResult result(this);
+            callOperation(operationRegExpTest, result.gpr(), baseGPR, argumentGPR);
+            
+            noResult(m_compileIndex);
+            break;
+        }
+
+        SpeculateCellOperand base(this, node.child1());
+        SpeculateCellOperand argument(this, node.child2());
+        GPRReg baseGPR = base.gpr();
+        GPRReg argumentGPR = argument.gpr();
+        
+        flushRegisters();
+        GPRResult result(this);
+        callOperation(operationRegExpExec, result.gpr(), baseGPR, argumentGPR);
+        
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case RegExpTest: {
+        SpeculateCellOperand base(this, node.child1());
+        SpeculateCellOperand argument(this, node.child2());
+        GPRReg baseGPR = base.gpr();
+        GPRReg argumentGPR = argument.gpr();
+        
+        flushRegisters();
+        GPRResult result(this);
+        callOperation(operationRegExpTest, result.gpr(), baseGPR, argumentGPR);
+        
+        // If we add a DataFormatBool, we should use it here.
+        m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
+        jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);
+        break;
+    }
+        
     case ArrayPush: {
         SpeculateCellOperand base(this, node.child1());
         JSValueOperand value(this, node.child2());
