@@ -1,3 +1,18 @@
+2012-03-19  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        jhbuild: Call jhbuild's autogen.sh via bash.
+        https://bugs.webkit.org/show_bug.cgi?id=81485
+
+        Reviewed by Philippe Normand.
+
+        jhbuild's autogen.sh uses "/bin/bash" in the shebang line, however
+        this is usually true only on Linux systems, and even then bash for
+        some reason might not be available in that location. It is safer to
+        call bash directly and pass autogen.sh to it instead.
+
+        * jhbuild/jhbuild-wrapper:
+        (install_jhbuild):
+
 2012-03-19  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Prefix run-launcher with run-with-jhbuild
