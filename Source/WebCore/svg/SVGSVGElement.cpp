@@ -439,13 +439,20 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
         transform.translate(x().value(lengthContext), y().value(lengthContext));
     } else if (mode == SVGLocatable::ScreenScope) {
         if (RenderObject* renderer = this->renderer()) {
+            FloatPoint location;
+            
+            // At the SVG/HTML boundary (aka RenderSVGRoot), we apply the localToBorderBoxTransform 
+            // to map an element from SVG viewport coordinates to CSS box coordinates.
+            // RenderSVGRoot's localToAbsolute method expects CSS box coordinates.
+            if (renderer->isSVGRoot())
+                location = toRenderSVGRoot(renderer)->localToBorderBoxTransform().mapPoint(location);
+            
             // Translate in our CSS parent coordinate space
             // FIXME: This doesn't work correctly with CSS transforms.
-            FloatPoint location = renderer->localToAbsolute(FloatPoint(), false, true);
+            location = renderer->localToAbsolute(location, false, true);
 
-            // Be careful here! localToAbsolute() includes the x/y offset coming from the viewBoxToViewTransform(), because
-            // RenderSVGRoot::localToBorderBoxTransform() (called through mapLocalToContainer(), called from localToAbsolute())
-            // also takes the viewBoxToViewTransform() into account, so we have to subtract it here (original cause of bug #27183)
+            // Be careful here! localToBorderBoxTransform() included the x/y offset coming from the viewBoxToViewTransform(),
+            // so we have to subtract it here (original cause of bug #27183)
             transform.translate(location.x() - viewBoxTransform.e(), location.y() - viewBoxTransform.f());
 
             // Respect scroll offset.

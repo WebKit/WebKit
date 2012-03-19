@@ -55,6 +55,9 @@ public:
 
     virtual bool hasRelativeDimensions() const;
 
+    // localToBorderBoxTransform maps local SVG viewport coordinates to local CSS box coordinates.  
+    const AffineTransform& localToBorderBoxTransform() const { return m_localToBorderBoxTransform; }
+
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }

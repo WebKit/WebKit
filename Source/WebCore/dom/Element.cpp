@@ -547,7 +547,7 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect()
 
     Vector<FloatQuad> quads;
 #if ENABLE(SVG)
-    if (isSVGElement() && renderer()) {
+    if (isSVGElement() && renderer() && !renderer()->isSVGRoot()) {
         // Get the bounding rectangle from the SVG model.
         SVGElement* svgElement = static_cast<SVGElement*>(this);
         FloatRect localRect;
