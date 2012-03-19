@@ -844,6 +844,11 @@ http/tests/security/referrer-policy-https-default.html
 # https://bugs.webkit.org/show_bug.cgi?id=40361
 editing/text-iterator/findString-selection-disabled.html
 
+# WebKit2 needs an implementation of FrameLoaderClient::revertToProvisionalState
+# https://bugs.webkit.org/show_bug.cgi?id=81365
+http/tests/multipart/load-last-non-html-frame.php
+http/tests/multipart/multipart-wait-before-boundary.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
@@ -1212,7 +1217,6 @@ http/tests/history/back-during-onload-triggered-by-back.html
 http/tests/media/reload-after-dialog.html
 http/tests/misc/slow-loading-mask.html
 http/tests/misc/unloadable-script.html
-http/tests/multipart/multipart-wait-before-boundary.html
 http/tests/navigation/back-send-referrer.html
 http/tests/navigation/fallback-anchor-reload.html
 http/tests/navigation/history-back-across-form-submission-to-fragment.html
