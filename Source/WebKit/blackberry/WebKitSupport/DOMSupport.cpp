@@ -311,7 +311,7 @@ static bool matchesReservedStringEmail(const AtomicString& string)
 
 static bool matchesReservedStringUrl(const AtomicString& string)
 {
-    return string.contains("url", false /* caseSensitive */);
+    return equalIgnoringCase("url", string);
 }
 
 bool elementIdOrNameIndicatesEmail(const HTMLInputElement* inputElement)

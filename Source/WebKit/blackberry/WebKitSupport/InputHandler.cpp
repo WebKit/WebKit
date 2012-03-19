@@ -188,7 +188,7 @@ static int inputStyle(BlackBerryInputType type, const Element* element)
 
             if (imfMask)
                 return imfMask;
-            else if ((type == InputTypeEmail || type == InputTypeURL) && autoCompleteState != DOMSupport::On)
+            if ((type == InputTypeEmail || type == InputTypeURL) && autoCompleteState != DOMSupport::On)
                 return NO_AUTO_TEXT | NO_PREDICTION | NO_AUTO_CORRECTION;
             break;
         }
