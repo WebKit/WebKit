@@ -9,6 +9,7 @@ RequestAnimationFrame Properties:
     type : "RequestAnimationFrame"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 FireAnimationFrame Properties:
 {
@@ -21,6 +22,7 @@ FireAnimationFrame Properties:
     type : "FireAnimationFrame"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 CancelAnimationFrame Properties:
 {
@@ -31,5 +33,6 @@ CancelAnimationFrame Properties:
     type : "CancelAnimationFrame"
     usedHeapSize : <number>
     totalHeapSize : <number>
+    counters : <object>
 }
 
