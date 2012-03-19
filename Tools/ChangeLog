@@ -1,3 +1,16 @@
+2012-03-19  David Michael Barr  <davidbarr@google.com>
+
+        Optimize the cleanup sequence in the start-queue.sh script
+        https://github.com/abarth/webkit/pull/1
+
+        Reviewed by Adam Barth.
+
+        Updating the working copy is an expensive operation
+        for a repository the size of WebKit.
+        Attempt to reset only to the target revision.
+
+        * EWSTools/start-queue.sh:
+
 2012-03-19  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         Adjust architecture type of the EFL build bot.

@@ -47,12 +47,10 @@ while :
 do
   # This somewhat quirky sequence of steps seems to clear up all the broken
   # git situations we've gotten ourself into in the past.
-  git reset --hard HEAD # Throw away any patches in our tree.
   git clean -f # Remove any left-over layout test results, added files, etc.
   git rebase --abort # If we got killed during a git rebase, we need to clean up.
-  git checkout HEAD^ # Move to a detached head so we can blow away master.
-  git branch -D master # Blow away master in case it has diverged from origin/master.
-  git checkout origin/master -b master # Re-create master from origin/master.
+  git fetch origin # Avoid updating the working copy to a stale revision.
+  git checkout origin/master -fB master # Re-create master from origin/master.
 
   # Most queues auto-update as part of their normal operation, but updating
   # here makes sure that we get the latest version of the master process.
