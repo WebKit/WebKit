@@ -1015,7 +1015,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_argument_by_val)
 LLINT_SLOW_PATH_DECL(slow_path_get_by_pname)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(getByVal(exec, LLINT_OP(2).jsValue(), LLINT_OP(3).jsValue()));
+    LLINT_RETURN(getByVal(exec, LLINT_OP_C(2).jsValue(), LLINT_OP_C(3).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
