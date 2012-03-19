@@ -210,6 +210,7 @@ results.ResultAnalyzer = base.extends(Object, {
     {
         this._actual = resultNode ? results.failureTypeList(resultNode.actual) : [];
         this._expected = resultNode ? this._addImpliedExpectations(results.failureTypeList(resultNode.expected)) : [];
+        this._wontfix = resultNode ? resultNode.wontfix : false;
     },
     _addImpliedExpectations: function(resultsList)
     {
@@ -239,6 +240,10 @@ results.ResultAnalyzer = base.extends(Object, {
     {
         return this._actual.length > 1;
     },
+    wontfix: function()
+    {
+        return this._wontfix;
+    },
     hasUnexpectedFailures: function()
     {
         var difference = {};
@@ -258,13 +263,13 @@ results.ResultAnalyzer = base.extends(Object, {
 function isExpectedFailure(resultNode)
 {
     var analyzer = new results.ResultAnalyzer(resultNode);
-    return !analyzer.hasUnexpectedFailures() && !analyzer.succeeded() && !analyzer.flaky();
+    return !analyzer.hasUnexpectedFailures() && !analyzer.succeeded() && !analyzer.flaky() && !analyzer.wontfix();
 }
 
 function isUnexpectedFailure(resultNode)
 {
     var analyzer = new results.ResultAnalyzer(resultNode);
-    return analyzer.hasUnexpectedFailures() && !analyzer.succeeded() && !analyzer.flaky();
+    return analyzer.hasUnexpectedFailures() && !analyzer.succeeded() && !analyzer.flaky() && !analyzer.wontfix();
 }
 
 function isResultNode(node)
