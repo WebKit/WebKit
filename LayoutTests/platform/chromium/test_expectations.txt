@@ -3568,6 +3568,8 @@ BUGWK76157 SNOWLEOPARD : compositing/geometry/limit-layer-bounds-transformed-ove
 
 BUGWK76488 : css3/images/cross-fade-background-size.html = IMAGE IMAGE+TEXT
 
+BUGWK81542 SNOWLEOPARD : css3/images/cross-fade-invalidation.html = IMAGE PASS
+
 BUGKW76557 : svg/custom/transform-with-shadow-and-gradient.svg = IMAGE
 
 BUGWK76558 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TEXT
