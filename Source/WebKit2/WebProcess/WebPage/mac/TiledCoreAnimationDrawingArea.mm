@@ -356,7 +356,12 @@ void TiledCoreAnimationDrawingArea::createPageOverlayLayer()
     m_pageOverlayLayer->setDrawsContent(true);
     m_pageOverlayLayer->setSize(m_webPage->size());
 
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+
     [m_rootLayer.get() addSublayer:m_pageOverlayLayer->platformLayer()];
+
+    [CATransaction commit];
 }
 
 void TiledCoreAnimationDrawingArea::destroyPageOverlayLayer()
