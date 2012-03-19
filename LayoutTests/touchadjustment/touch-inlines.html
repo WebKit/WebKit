@@ -1,0 +1,99 @@
+<html>
+<head>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body onload="runTests()">
+
+<p style="width: 10em;">
+<a id="1" href="#1">some link</a><br>
+<a id="2" href="#2">some link breaking lines</a> and <a id="3" href="#3">link</a><br>
+hola mundo! <a id="4" href="#4">a split up link</a><br>
+hello world <a id="5" href="#5">some link also breaking</a><br>
+hi there <a id="6" href="#6">some link that is breaking multiple lines just for the very fun of it</a><br><br>
+</p>
+
+
+<p id='description'></p>
+<div id='console'></div>
+
+<script>
+    var element;
+    var adjustedNode;
+    function testRoundTouch(x, y, radius)
+    {
+        var x = x - radius;
+        var y = y - radius;
+        var width = radius * 2;
+        var height = radius * 2;
+        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
+        if (adjustedNode.nodeType == 3) // TEXT node
+            adjustedNode = adjustedNode.parentNode;
+        return adjustedNode;
+    }
+
+    function testDirectTouches()
+    {
+        debug('Test some direct hits.');
+
+        adjustedNode = testRoundTouch(30, 20, 8)
+        shouldBeEqualToString('adjustedNode.id', '1');
+
+        adjustedNode = testRoundTouch(30, 60, 8)
+        shouldBeEqualToString('adjustedNode.id', '2');
+
+        adjustedNode = testRoundTouch(120, 80, 8)
+        shouldBeEqualToString('adjustedNode.id', '4');
+
+        adjustedNode = testRoundTouch(80, 180, 8)
+        shouldBeEqualToString('adjustedNode.id', '6');
+    }
+
+    function testDirectMisses()
+    {
+        debug('Test a few direct misses.');
+
+        adjustedNode = testRoundTouch(56, 60, 8)
+        shouldBeEqualToString('adjustedNode.id', '');
+
+        adjustedNode = testRoundTouch(20, 160, 4)
+        shouldBeEqualToString('adjustedNode.id', '');
+
+    }
+
+    function testIndirectTouches()
+    {
+        debug('Test some in-direct hits.');
+
+        adjustedNode = testRoundTouch(56, 60, 20)
+        shouldBeEqualToString('adjustedNode.id', '2');
+
+        adjustedNode = testRoundTouch(85, 80, 20)
+        shouldBeEqualToString('adjustedNode.id', '3');
+
+        adjustedNode = testRoundTouch(120, 60, 20)
+        shouldBeEqualToString('adjustedNode.id', '4');
+
+        adjustedNode = testRoundTouch(40, 100, 20)
+        shouldBeEqualToString('adjustedNode.id', '4');
+
+        adjustedNode = testRoundTouch(20, 165, 20)
+        shouldBeEqualToString('adjustedNode.id', '6');
+
+    }
+
+    function runTests()
+    {
+        if (window.layoutTestController && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+            description('Test touch-adjustment on inline links. Making sure we can hit over line-breaks, and can miss when tapping between parts of a line-broken link.');
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            testDirectTouches();
+            testDirectMisses();
+            testIndirectTouches();
+            isSuccessfullyParsed();
+            layoutTestController.notifyDone();
+        }
+    }
+</script>
+</body>
+</html>

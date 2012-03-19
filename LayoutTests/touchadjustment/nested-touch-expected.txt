@@ -1,0 +1,18 @@
+Box with a local click handler.
+Box without a local click handler.
+Test the case where a clickable target is nested inside a document that is monitoring clicks. The target with the local event-handler should be chosen if multiple targets are touched.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing small direct hits.
+PASS adjustedNode.id is element.id
+PASS adjustedNode.id is element.id
+Testing prefered hits.
+PASS adjustedNode.id is element1.id
+PASS adjustedNode.id is element1.id
+PASS adjustedNode.id is element1.id
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

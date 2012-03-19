@@ -73,6 +73,7 @@
 #include "Scrollbar.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
+#include "StaticHashSetNodeList.h"
 #include "StyleCachedImage.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
@@ -87,6 +88,10 @@
 
 #if ENABLE(GESTURE_EVENTS)
 #include "PlatformGestureEvent.h"
+#endif
+
+#if ENABLE(TOUCH_ADJUSTMENT)
+#include "TouchAdjustment.h"
 #endif
 
 #if ENABLE(SVG)
@@ -2412,10 +2417,20 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
 {
     // FIXME: Refactor this code to not hit test multiple times.
+    IntPoint adjustedPoint = gestureEvent.position();
+#if ENABLE(TOUCH_ADJUSTMENT)
+    if (!gestureEvent.area().isEmpty()) {
+        Node* targetNode = 0;
+        // For now we use the adjusted position to ensure the later redundant hit-tests hits the right node.
+        bestClickableNodeForTouchPoint(gestureEvent.position(), IntSize(gestureEvent.area().width() / 2, gestureEvent.area().height() / 2), adjustedPoint, targetNode);
+        if (!targetNode)
+            return false;
+    }
+#endif
     bool defaultPrevented = false;
-    PlatformMouseEvent fakeMouseMove(gestureEvent.position(), gestureEvent.globalPosition(), NoButton, PlatformEvent::MouseMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
-    PlatformMouseEvent fakeMouseDown(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, PlatformEvent::MousePressed, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
-    PlatformMouseEvent fakeMouseUp(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, PlatformEvent::MouseReleased, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+    PlatformMouseEvent fakeMouseMove(adjustedPoint, gestureEvent.globalPosition(), NoButton, PlatformEvent::MouseMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+    PlatformMouseEvent fakeMouseDown(adjustedPoint, gestureEvent.globalPosition(), LeftButton, PlatformEvent::MousePressed, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+    PlatformMouseEvent fakeMouseUp(adjustedPoint, gestureEvent.globalPosition(), LeftButton, PlatformEvent::MouseReleased, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
     mouseMoved(fakeMouseMove);
     defaultPrevented |= handleMousePressEvent(fakeMouseDown);
     defaultPrevented |= handleMouseReleaseEvent(fakeMouseUp);
@@ -2438,6 +2453,22 @@ bool EventHandler::handleGestureScrollCore(const PlatformGestureEvent& gestureEv
         granularity,
         gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
     return handleWheelEvent(syntheticWheelEvent);
+}
+#endif
+
+#if ENABLE(TOUCH_ADJUSTMENT)
+void EventHandler::bestClickableNodeForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntPoint& targetPoint, Node*& targetNode)
+{
+    HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
+    HitTestResult result = hitTestResultAtPoint(touchCenter, /*allowShadowContent*/ false, /*ignoreClipping*/ false, DontHitTestScrollbars, hitType, touchRadius);
+
+    IntRect touchRect = result.rectForPoint(touchCenter);
+    RefPtr<StaticHashSetNodeList> nodeList = StaticHashSetNodeList::adopt(result.rectBasedTestResult());
+    if (!findBestClickableCandidate(targetNode, targetPoint, touchCenter, touchRect, *nodeList.get())) {
+        // Default to just returning innerNonSharedNode.
+        targetPoint = touchCenter;
+        targetNode = result.innerNonSharedNode();
+    }
 }
 #endif
 

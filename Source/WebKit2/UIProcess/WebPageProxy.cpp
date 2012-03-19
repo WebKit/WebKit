@@ -1012,9 +1012,9 @@ void WebPageProxy::handleGestureEvent(const WebGestureEvent& event)
 
 #if ENABLE(TOUCH_EVENTS)
 #if PLATFORM(QT)
-void WebPageProxy::handlePotentialActivation(const IntPoint& layoutPoint)
+void WebPageProxy::handlePotentialActivation(const IntPoint& touchPoint, const IntSize& touchArea)
 {
-    process()->send(Messages::WebPage::HighlightPotentialActivation(layoutPoint), m_pageID);
+    process()->send(Messages::WebPage::HighlightPotentialActivation(touchPoint, touchArea), m_pageID);
 }
 #endif
 

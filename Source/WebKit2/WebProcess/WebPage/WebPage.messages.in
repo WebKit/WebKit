@@ -40,9 +40,8 @@ messages -> WebPage {
 #if ENABLE(TOUCH_EVENTS)
     TouchEvent(WebKit::WebTouchEvent event)
     TouchEventSyncForTesting(WebKit::WebTouchEvent event) -> (bool handled)
-#endif
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(QT)
-    HighlightPotentialActivation(WebCore::IntPoint point)
+    HighlightPotentialActivation(WebCore::IntPoint point, WebCore::IntSize area)
 #endif
 
     ContextMenuHidden()

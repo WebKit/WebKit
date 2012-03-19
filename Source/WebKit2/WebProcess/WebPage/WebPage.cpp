@@ -1448,16 +1448,20 @@ void WebPage::restoreSessionAndNavigateToCurrentItem(const SessionState& session
 
 #if ENABLE(TOUCH_EVENTS)
 #if PLATFORM(QT)
-void WebPage::highlightPotentialActivation(const IntPoint& point)
+void WebPage::highlightPotentialActivation(const IntPoint& point, const IntSize& area)
 {
     Node* activationNode = 0;
     Frame* mainframe = m_page->mainFrame();
+    IntPoint adjustedPoint;
 
     if (point != IntPoint::zero()) {
+#if ENABLE(TOUCH_ADJUSTMENT)
+        mainframe->eventHandler()->bestClickableNodeForTouchPoint(point, IntSize(area.width() / 2, area.height() / 2), adjustedPoint, activationNode);
+#else
         HitTestResult result = mainframe->eventHandler()->hitTestResultAtPoint(mainframe->view()->windowToContents(point), /*allowShadowContent*/ false, /*ignoreClipping*/ true);
         activationNode = result.innerNode();
-
-        if (!activationNode->isFocusable())
+#endif
+        if (activationNode && !activationNode->isFocusable())
             activationNode = activationNode->enclosingLinkEventParentOrSelf();
     }
 

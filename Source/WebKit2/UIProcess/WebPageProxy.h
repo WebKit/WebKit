@@ -391,7 +391,7 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     void handleTouchEvent(const NativeWebTouchEvent&);
 #if PLATFORM(QT)
-    void handlePotentialActivation(const WebCore::IntPoint&);
+    void handlePotentialActivation(const WebCore::IntPoint& touchPoint, const WebCore::IntSize& touchArea);
 #endif
 #endif
 

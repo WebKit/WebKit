@@ -232,7 +232,7 @@ void QtWebPageEventHandler::handlePotentialSingleTapEvent(const QTouchEvent::Tou
 {
 #if ENABLE(TOUCH_EVENTS)
     QTransform fromItemTransform = m_webPage->transformFromItem();
-    m_webPageProxy->handlePotentialActivation(fromItemTransform.map(point.pos()).toPoint());
+    m_webPageProxy->handlePotentialActivation(fromItemTransform.map(point.pos()).toPoint(), IntSize(point.rect().size().toSize()));
 #else
     Q_UNUSED(point);
 #endif

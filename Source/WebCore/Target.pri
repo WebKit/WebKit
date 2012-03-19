@@ -1033,6 +1033,7 @@ SOURCES += \
     page/SecurityPolicy.cpp \
     page/Settings.cpp \
     page/SpatialNavigation.cpp \
+    page/TouchAdjustment.cpp \
     page/SuspendableTimer.cpp \
     page/UserContentURLPattern.cpp \
     page/WindowFeatures.cpp \
@@ -2126,6 +2127,7 @@ HEADERS += \
     page/SpeechInputListener.h \
     page/SpeechInputResult.h \
     page/SpeechInputResultList.h \
+    page/TouchAdjustment.h \
     page/WebKitAnimation.h \
     page/WebKitAnimationList.h \
     page/WindowFeatures.h \

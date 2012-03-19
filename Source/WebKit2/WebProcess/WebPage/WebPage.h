@@ -564,7 +564,7 @@ private:
     void touchEvent(const WebTouchEvent&);
     void touchEventSyncForTesting(const WebTouchEvent&, bool& handled);
 #if PLATFORM(QT)
-    void highlightPotentialActivation(const WebCore::IntPoint&);
+    void highlightPotentialActivation(const WebCore::IntPoint&, const WebCore::IntSize& area);
 #endif
 #endif
     void contextMenuHidden() { m_isShowingContextMenu = false; }

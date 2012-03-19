@@ -88,6 +88,13 @@ public:
     // from transformed rects.
     bool containsQuad(const FloatQuad&) const;
 
+    // The center of the quad. If the quad is the result of a affine-transformed rectangle this is the same as the original center transformed.
+    FloatPoint center() const
+    {
+        return FloatPoint((m_p1.x() + m_p2.x() + m_p3.x() + m_p4.x()) / 4.0,
+                          (m_p1.y() + m_p2.y() + m_p3.y() + m_p4.y()) / 4.0);
+    }
+
     FloatRect boundingBox() const;
     IntRect enclosingBoundingBox() const
     {

@@ -573,6 +573,10 @@ fast/mutation/end-of-task-delivery.html
 # Needs PageClients::vibrationClient() implementation.
 fast/dom/navigator-vibration.html
 
+# Touch adjustment not enabled
+# https://bugs.webkit.org/show_bug.cgi?id=78801
+touchadjustment
+
 # http:///webkit.org/b/80531
 # REGRESSION(r110072): fast/forms/textfield-overflow.html is failing
 fast/forms/textfield-overflow.html

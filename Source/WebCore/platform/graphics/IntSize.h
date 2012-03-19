@@ -104,6 +104,11 @@ public:
         *this = expandedTo(IntSize());
     }
 
+    int diagonalLengthSquared() const
+    {
+        return m_width * m_width + m_height * m_height;
+    }
+
     IntSize transposedSize() const
     {
         return IntSize(m_height, m_width);

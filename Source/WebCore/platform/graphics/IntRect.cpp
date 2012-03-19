@@ -132,6 +132,35 @@ void IntRect::scale(float s)
     m_size.setHeight((int)(height() * s));
 }
 
+static inline int distanceToInterval(int pos, int start, int end)
+{
+    if (pos < start)
+        return start - pos;
+    if (pos > end)
+        return end - pos;
+    return 0;
+}
+
+IntSize IntRect::differenceToPoint(const IntPoint& point) const
+{
+    int xdistance = distanceToInterval(point.x(), x(), maxX());
+    int ydistance = distanceToInterval(point.y(), y(), maxY());
+    return IntSize(xdistance, ydistance);
+}
+
+IntSize IntRect::differenceFromCenterLineToPoint(const IntPoint& point) const
+{
+    // The center-line is the natural center of a rectangle. It has an equal distance to all sides of the rectangle.
+    IntPoint centerPoint = center();
+    int xdistance = centerPoint.x() - point.x();
+    int ydistance = centerPoint.y() - point.y();
+    if (width() > height())
+        xdistance = distanceToInterval(point.x(), x() + (height() / 2), maxX() - (height() / 2));
+    else
+        ydistance = distanceToInterval(point.y(), y() + (width() / 2), maxY() - (width() / 2));
+    return IntSize(xdistance, ydistance);
+}
+
 IntRect unionRect(const Vector<IntRect>& rects)
 {
     IntRect result;

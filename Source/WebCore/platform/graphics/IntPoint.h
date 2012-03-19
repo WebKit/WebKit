@@ -111,6 +111,8 @@ public:
             m_y < other.m_y ? m_y : other.m_y);
     }
 
+    int distanceSquaredToPoint(const IntPoint&) const;
+
     void clampNegativeToZero()
     {
         *this = expandedTo(zero());
@@ -220,6 +222,11 @@ inline IntPoint toPoint(const IntSize& size)
 inline IntSize toSize(const IntPoint& a)
 {
     return IntSize(a.x(), a.y());
+}
+
+inline int IntPoint::distanceSquaredToPoint(const IntPoint& point) const
+{
+    return ((*this) - point).diagonalLengthSquared();
 }
 
 #if PLATFORM(QT)

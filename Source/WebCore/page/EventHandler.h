@@ -167,6 +167,10 @@ public:
     bool handleGestureScrollUpdate(const PlatformGestureEvent&);
 #endif
 
+#if ENABLE(TOUCH_ADJUSTMENT)
+    void bestClickableNodeForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntPoint& targetPoint, Node*& targetNode);
+#endif
+
 #if ENABLE(CONTEXT_MENUS)
     bool sendContextMenuEvent(const PlatformMouseEvent&);
     bool sendContextMenuEventForKey();

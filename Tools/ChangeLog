@@ -1,3 +1,14 @@
+2012-03-19  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Select best target for tap gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=78801
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add TOUCH_ADJUSTMENT to enabled features.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-03-19  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] synthesize wheel events for fling on main thread

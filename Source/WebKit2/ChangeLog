@@ -1,3 +1,23 @@
+2012-03-19  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Select best target for tap gesture.
+        https://bugs.webkit.org/show_bug.cgi?id=78801
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Send radius to handlePotentialSingleTapEvent so it can do the same hit
+        detection the tap gesture later does.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handlePotentialActivation):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handlePotentialSingleTapEvent):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::highlightPotentialActivation):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2012-03-19  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] Add experimental API for dynamically changing the UA string

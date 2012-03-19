@@ -65,6 +65,11 @@
 #include "BatteryController.h"
 #endif
 
+#if ENABLE(TOUCH_ADJUSTMENT)
+#include "EventHandler.h"
+#include "WebKitPoint.h"
+#endif
+
 namespace WebCore {
 
 static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerTypes& result)
@@ -568,6 +573,42 @@ String Internals::rangeAsText(const Range* range, ExceptionCode& ec)
 
     return range->text();
 }
+
+
+#if ENABLE(TOUCH_ADJUSTMENT)
+PassRefPtr<WebKitPoint> Internals::touchPositionAdjustedToBestClickableNode(long x, long y, long width, long height, Document* document, ExceptionCode& ec)
+{
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    IntSize radius(width / 2, height / 2);
+    IntPoint point(x + radius.width(), y + radius.height());
+
+    Node* targetNode;
+    IntPoint adjustedPoint;
+    document->frame()->eventHandler()->bestClickableNodeForTouchPoint(point, radius, adjustedPoint, targetNode);
+    return WebKitPoint::create(adjustedPoint.x(), adjustedPoint.y());
+}
+
+Node* Internals::touchNodeAdjustedToBestClickableNode(long x, long y, long width, long height, Document* document, ExceptionCode& ec)
+{
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    IntSize radius(width / 2, height / 2);
+    IntPoint point(x + radius.width(), y + radius.height());
+
+    Node* targetNode;
+    IntPoint adjustedPoint;
+    document->frame()->eventHandler()->bestClickableNodeForTouchPoint(point, radius, adjustedPoint, targetNode);
+    return targetNode;
+}
+#endif
+
 
 int Internals::lastSpellCheckRequestSequence(Document* document, ExceptionCode& ec)
 {

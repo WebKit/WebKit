@@ -44,6 +44,7 @@ class InternalSettings;
 class Node;
 class Range;
 class ShadowRoot;
+class WebKitPoint;
 
 typedef int ExceptionCode;
 
@@ -110,6 +111,11 @@ public:
     unsigned locationFromRange(Element* scope, const Range*, ExceptionCode&);
     unsigned lengthFromRange(Element* scope, const Range*, ExceptionCode&);
     String rangeAsText(const Range*, ExceptionCode&);
+
+#if ENABLE(TOUCH_ADJUSTMENT)
+    PassRefPtr<WebKitPoint> touchPositionAdjustedToBestClickableNode(long x, long y, long width, long height, Document*, ExceptionCode&);
+    Node* touchNodeAdjustedToBestClickableNode(long x, long y, long width, long height, Document*, ExceptionCode&);
+#endif
 
     int lastSpellCheckRequestSequence(Document*, ExceptionCode&);
     int lastSpellCheckProcessedSequence(Document*, ExceptionCode&);
