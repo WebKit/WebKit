@@ -72,7 +72,8 @@ if (isQt()) {
     }
     
     if (isEfl()) {
-        $launcherPath = catdir($launcherPath, "bin", "EWebLauncher");
+        unshift(@ARGV, catdir($launcherPath, "bin", "EWebLauncher"));
+        $launcherPath = catdir(sourceDir(), "Tools", "efl", "run-with-jhbuild");
     }
     
     if (isWx()) {

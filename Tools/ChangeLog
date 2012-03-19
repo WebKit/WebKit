@@ -1,3 +1,12 @@
+2012-03-19  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [EFL] Prefix run-launcher with run-with-jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=80026
+
+        Reviewed by Hajime Morita.
+
+        * Scripts/run-launcher:
+
 2012-03-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed. Disable -Werror on x86 until proper fix.
