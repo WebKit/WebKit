@@ -258,7 +258,6 @@ BUGWK75568 : editing/selection/select-across-readonly-input-5.html = TEXT
 BUGWK75568 : fast/block/float/032.html = TEXT
 BUGWK75568 : fast/block/float/033.html = TEXT
 BUGWK75568 : fast/block/float/avoidance-rtl.html = TEXT
-BUGWK75568 : fast/block/float/float-not-removed-from-next-sibling3.html = TEXT
 BUGWK75568 : fast/block/float/float-overflow-hidden-containing-block-width.html = TEXT
 BUGWK75568 : fast/block/float/in-margin.html = TEXT
 BUGWK75568 : fast/block/float/overlapping-floats-with-overflow-hidden.html = TEXT
