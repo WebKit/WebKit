@@ -4259,6 +4259,8 @@ void CSSStyleSelector::mapFillXPosition(CSSPropertyID, FillLayer* layer, CSSValu
         l = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (primitiveValue->isPercentage())
         l = Length(primitiveValue->getDoubleValue(), Percent);
+    else if (primitiveValue->isCalculatedPercentageWithLength())
+        l = Length(primitiveValue->cssCalcValue()->toCalcValue(style(), m_rootElementStyle, zoomFactor));
     else
         return;
     layer->setXPosition(l);
@@ -4282,6 +4284,8 @@ void CSSStyleSelector::mapFillYPosition(CSSPropertyID, FillLayer* layer, CSSValu
         l = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (primitiveValue->isPercentage())
         l = Length(primitiveValue->getDoubleValue(), Percent);
+    else if (primitiveValue->isCalculatedPercentageWithLength())
+        l = Length(primitiveValue->cssCalcValue()->toCalcValue(style(), m_rootElementStyle, zoomFactor));
     else
         return;
     layer->setYPosition(l);
