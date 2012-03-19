@@ -1,3 +1,20 @@
+2012-03-19  Hao Zheng  <zhenghao@chromium.org>
+
+        [chromium] DRT crashes at shutdown.
+        https://bugs.webkit.org/show_bug.cgi?id=81504
+
+        Reviewed by James Robinson.
+
+        WebCompositor must be destroyed after WebView is properly destroyed,
+        or some compositor objects like CCLayerTreeHost may not be destroyed.
+        However, it is really hard to make the destruction order correct
+        explicitly in ~TestShell. So move it out to DumpRenderTree.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::~TestShell):
+
 2012-03-19  Dirk Pranke  <dpranke@chromium.org>
 
         add dpranke to webkitpy watchlist

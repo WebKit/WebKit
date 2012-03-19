@@ -176,8 +176,6 @@ TestShell::~TestShell()
 
     // Destroy the WebView before its WebViewHost.
     m_drtDevToolsAgent->setWebView(0);
-
-    WebCompositor::shutdown();
 }
 
 void TestShell::createDRTDevToolsClient(DRTDevToolsAgent* agent)

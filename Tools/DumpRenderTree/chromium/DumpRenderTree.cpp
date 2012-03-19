@@ -31,6 +31,7 @@
 #include "config.h"
 
 #include "TestShell.h"
+#include "WebCompositor.h"
 #include "webkit/support/webkit_support.h"
 #include <v8/include/v8-testing.h>
 #include <v8/include/v8.h>
@@ -285,6 +286,9 @@ int main(int argc, char* argv[])
         // here we help purify reports.
         shell.resetTestController();
     }
+
+    // Shutdown WebCompositor after TestShell is destructed properly.
+    WebKit::WebCompositor::shutdown();
 
     return EXIT_SUCCESS;
 }
