@@ -436,7 +436,7 @@ static inline PlatformKeyboardEvent::Type toWebCorePlatformKeyboardEventType(con
     }
 }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent(BlackBerry::Platform::KeyboardEvent event)
+PlatformKeyboardEvent::PlatformKeyboardEvent(const BlackBerry::Platform::KeyboardEvent& event)
     : PlatformEvent(toWebCorePlatformKeyboardEventType(event.type()), event.shiftActive() || (event.character() == KEYCODE_BACK_TAB), event.ctrlActive(), event.altActive(), false)
     , m_keyIdentifier(keyIdentifierForBlackBerryCharacter(event.character()))
     , m_autoRepeat(false)

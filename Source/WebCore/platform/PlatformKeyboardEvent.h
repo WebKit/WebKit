@@ -55,6 +55,14 @@ QT_END_NAMESPACE
 class wxKeyEvent;
 #endif
 
+#if PLATFORM(BLACKBERRY)
+namespace BlackBerry {
+namespace Platform {
+class KeyboardEvent;
+}
+}
+#endif
+
 #if PLATFORM(EFL)
 typedef struct _Evas_Event_Key_Down Evas_Event_Key_Down;
 typedef struct _Evas_Event_Key_Up Evas_Event_Key_Up;
@@ -72,6 +80,9 @@ namespace WebCore {
             , m_autoRepeat(false)
             , m_isKeypad(false)
             , m_isSystemKey(false)
+#if PLATFORM(BLACKBERRY)
+            , m_unmodifiedCharacter(0)
+#endif
 #if PLATFORM(GTK)
             , m_gdkEventKey(0)
 #endif
@@ -127,6 +138,10 @@ namespace WebCore {
         static bool currentCapsLockState();
         static void getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey);
 
+#if PLATFORM(BLACKBERRY)
+        unsigned short unmodifiedCharacter() const { return m_unmodifiedCharacter; }
+#endif
+
 #if PLATFORM(MAC)
         NSEvent* macEvent() const { return m_macEvent.get(); }
 #endif
@@ -156,6 +171,10 @@ namespace WebCore {
         PlatformKeyboardEvent(wxKeyEvent&);
 #endif
 
+#if PLATFORM(BLACKBERRY)
+        PlatformKeyboardEvent(const BlackBerry::Platform::KeyboardEvent&);
+#endif
+
 #if PLATFORM(EFL)
         PlatformKeyboardEvent(const Evas_Event_Key_Down*);
         PlatformKeyboardEvent(const Evas_Event_Key_Up*);
@@ -171,6 +190,10 @@ namespace WebCore {
         bool m_autoRepeat;
         bool m_isKeypad;
         bool m_isSystemKey;
+
+#if PLATFORM(BLACKBERRY)
+        unsigned short m_unmodifiedCharacter;
+#endif
 
 #if PLATFORM(MAC)
         RetainPtr<NSEvent> m_macEvent;
