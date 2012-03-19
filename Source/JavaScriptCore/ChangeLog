@@ -1,3 +1,17 @@
+2012-03-19  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 110818
+    from http://svn.webkit.org/repository/webkit/branches/safari-534.54-branch
+
+    2012-03-14  Filip Pizlo  <fpizlo@apple.com>
+
+            Fix for possible problems compiling with old versions of gcc
+            <rdar://problem/11043680>
+
+            Rubber stamped by Mark Rowe.
+
+            * Configurations/Base.xcconfig:
+
 2012-03-18  Lucas Forschler  <lforschler@apple.com>
 
     Rollout 110818 on this branch.
