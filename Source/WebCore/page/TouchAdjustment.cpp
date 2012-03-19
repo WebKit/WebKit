@@ -29,6 +29,7 @@
 #include "IntPoint.h"
 #include "IntSize.h"
 #include "Node.h"
+#include "NodeRenderStyle.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
