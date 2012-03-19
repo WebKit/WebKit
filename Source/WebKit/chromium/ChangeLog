@@ -1,3 +1,19 @@
+2012-03-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r111207.
+        http://trac.webkit.org/changeset/111207
+        https://bugs.webkit.org/show_bug.cgi?id=81561
+
+        Causing chromium unit test failure (Requested by reveman on
+        #webkit).
+
+        * src/Extensions3DChromium.cpp:
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore):
+        * src/GraphicsContext3DPrivate.h:
+        (GraphicsContext3DPrivate):
+        * tests/FakeWebGraphicsContext3D.h:
+
 2012-03-19  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API (JSEP): Introducing WebMediaHints and WebIceOptions
