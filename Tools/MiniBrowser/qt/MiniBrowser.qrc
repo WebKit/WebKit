@@ -26,6 +26,5 @@
         <file>qml/ProxyAuthenticationDialog.qml</file>
         <file>qml/ScrollIndicator.qml</file>
         <file>qml/ViewportInfoItem.qml</file>
-        <file>useragentlist.txt</file>
     </qresource>
 </RCC>

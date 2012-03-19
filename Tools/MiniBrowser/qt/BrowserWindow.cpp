@@ -121,10 +121,6 @@ void BrowserWindow::screenshot()
 {
 }
 
-void BrowserWindow::updateUserAgentList()
-{
-}
-
 BrowserWindow::~BrowserWindow()
 {
 }

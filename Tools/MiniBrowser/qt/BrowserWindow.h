@@ -55,9 +55,7 @@ protected slots:
     void screenshot();
 
 private:
-    void updateUserAgentList();
     WindowOptions* m_windowOptions;
-    QStringList m_userAgentList;
 };
 
 #endif
