@@ -15,14 +15,6 @@
 </style>
 <script src="../resources/shadow-test-driver.js"></script>
 <script>
-function setUpOnce() {
-    internals.setMultipleShadowSubtreesEnabled(true);
-}
-
-function tearDownOnce() {
-    internals.setMultipleShadowSubtreesEnabled(false);
-}
-
 var testFuncs = [];
 
 testFuncs.push(function renderingSingleShadowRoot(callIfDone) {

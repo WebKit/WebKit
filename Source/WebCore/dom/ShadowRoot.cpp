@@ -40,10 +40,6 @@
 #include "SVGNames.h"
 #include "markup.h"
 
-#if ENABLE(SHADOW_DOM)
-#include "RuntimeEnabledFeatures.h"
-#endif
-
 namespace WebCore {
 
 ShadowRoot::ShadowRoot(Document* document)
@@ -105,13 +101,7 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ExceptionCode& ec)
 
 PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootCreationPurpose purpose, ExceptionCode& ec)
 {
-#if ENABLE(SHADOW_DOM)
-    bool isMultipleShadowSubtreesEnabled = RuntimeEnabledFeatures::multipleShadowSubtreesEnabled();
-#else
-    bool isMultipleShadowSubtreesEnabled = false;
-#endif
-
-    if (!element || (!isMultipleShadowSubtreesEnabled && element->hasShadowRoot())) {
+    if (!element) {
         ec = HIERARCHY_REQUEST_ERR;
         return 0;
     }

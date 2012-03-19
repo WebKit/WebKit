@@ -8,7 +8,6 @@ PASS new WebKitShadowRoot(undefined) threw exception Error: HIERARCHY_REQUEST_ER
 PASS new WebKitShadowRoot(null) threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
 PASS new WebKitShadowRoot(1) threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
 PASS shadowHost is shadowRoot.host
-PASS new WebKitShadowRoot(shadowHost) threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
 The previous test should not have side effects.
 PASS shadowHost is shadowRoot.host
 PASS shadowRoot.getElementById('div1') is div1
@@ -26,6 +25,7 @@ PASS shadowRoot.querySelector('.class2') is div2
 PASS shadowRoot.querySelector('.foo') is null
 PASS shadowRoot.querySelectorAll('div') is [div1, div2]
 PASS shadowRoot.querySelectorAll('foo') is []
+PASS youngerShadowRoot is not shadowRoot
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -22,7 +22,6 @@ var shadowHost = document.createElement('div');
 document.body.appendChild(shadowHost);
 var shadowRoot = new WebKitShadowRoot(shadowHost);
 shouldBe("shadowHost", "shadowRoot.host");
-shouldThrow("new WebKitShadowRoot(shadowHost)");
 debug('The previous test should not have side effects.');
 shouldBe("shadowHost", "shadowRoot.host");
 
@@ -58,16 +57,9 @@ shouldBeNull("shadowRoot.querySelector('.foo')");
 shouldBe("shadowRoot.querySelectorAll('div')", "[div1, div2]");
 shouldBe("shadowRoot.querySelectorAll('foo')", "[]");
 
-if (window.internals) {
-   window.internals.setMultipleShadowSubtreesEnabled(true);
+var youngerShadowRoot = new WebKitShadowRoot(shadowHost);
+shouldNotBe("youngerShadowRoot", "shadowRoot");
 
-   // FIXME: Enable this test after Element's setShadowRoot should be replaced with ShadowRootList.
-   // https://bugs.webkit.org/show_bug.cgi?id=78313
-   // var youngerShadowRoot = new WebKitShadowRoot(shadowHost);
-   // shouldNotBe("youngerShadowRoot", "shadowRoot");
-
-   window.internals.setMultipleShadowSubtreesEnabled(false);
-}
 
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

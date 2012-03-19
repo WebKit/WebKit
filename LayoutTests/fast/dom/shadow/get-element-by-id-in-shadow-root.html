@@ -27,8 +27,6 @@ function test()
 {
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
-    if (window.internals)
-        window.internals.setMultipleShadowSubtreesEnabled(true);
 
     prepareDomTree(document.body);
     shouldBeEqualToString("getElementInShadowTreeStack('divA/inputB').id", 'inputB');
@@ -36,9 +34,6 @@ function test()
     shouldBeEqualToString("getElementInShadowTreeStack('divA/divC/inputD').id", 'inputD');
     shouldBeEqualToString("getElementInShadowTreeStack('divA/divC//inputE').id", 'inputE');
     shouldBeEqualToString("getElementInShadowTreeStack('divA/divC///inputF').id", 'inputF');
-
-    if (window.internals)
-        window.internals.setMultipleShadowSubtreesEnabled(false);
 }
 
 test();

@@ -2148,6 +2148,5 @@ __ZNK7WebCore20ScrollingCoordinator13scrollingTreeEv
 __ZNK7WebCore4Node31numberOfScopedHTMLStyleChildrenEv
 
 #if ENABLE(SHADOW_DOM)
-__ZN7WebCore22RuntimeEnabledFeatures32setMultipleShadowSubtreesEnabledEb
 __ZN7WebCore22RuntimeEnabledFeatures18isShadowDOMEnabledE
 #endif

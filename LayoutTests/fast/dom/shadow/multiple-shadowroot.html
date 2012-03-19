@@ -7,8 +7,6 @@
 <script>
 description("This test ensure that the multiple shadow root is available.");
 
-internals.setMultipleShadowSubtreesEnabled(true);
-
 var div = document.createElement('div');
 shouldBe("internals.shadowRoot(div)", "null");
 var shadowRoot1 = new WebKitShadowRoot(div);
@@ -25,8 +23,6 @@ shouldBe("internals.olderShadowRoot(shadowRoot3)", "shadowRoot2");
 
 internals.removeShadowRoot(div);
 shouldBe("internals.shadowRoot(div)", "null");
-
-internals.setMultipleShadowSubtreesEnabled(false);
 
 var successfullyParsed = true;
 </script>

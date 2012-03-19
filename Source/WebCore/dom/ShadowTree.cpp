@@ -80,11 +80,6 @@ void ShadowTree::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> shado
 {
     ASSERT(shadowHost);
     ASSERT(shadowRoot);
-#if ENABLE(SHADOW_DOM)
-    ASSERT(!hasShadowRoot() || RuntimeEnabledFeatures::multipleShadowSubtreesEnabled());
-#else
-    ASSERT(!hasShadowRoot());
-#endif
 
     if (!validateShadowRoot(shadowHost->document(), shadowRoot.get(), ec))
         return;

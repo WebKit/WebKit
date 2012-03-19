@@ -57,12 +57,6 @@
 #include "SpellChecker.h"
 #include "TextIterator.h"
 
-#if ENABLE(SHADOW_DOM)
-#include "RuntimeEnabledFeatures.h"
-#else
-#include <wtf/UnusedParam.h>
-#endif
-
 #if ENABLE(INPUT_COLOR)
 #include "ColorChooser.h"
 #endif
@@ -285,15 +279,6 @@ void Internals::removeShadowRoot(Element* host, ExceptionCode& ec)
 
     if (host->hasShadowRoot())
         host->shadowTree()->removeAllShadowRoots();
-}
-
-void Internals::setMultipleShadowSubtreesEnabled(bool enabled)
-{
-#if ENABLE(SHADOW_DOM)
-    RuntimeEnabledFeatures::setMultipleShadowSubtreesEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
 }
 
 Element* Internals::includerFor(Node* node, ExceptionCode& ec)

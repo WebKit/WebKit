@@ -10,14 +10,6 @@
 <iframe id="iframe"></iframe>
 
 <script>
-function setUpOnce() {
-    internals.setMultipleShadowSubtreesEnabled(true);
-}
-
-function tearDownOnce() {
-    internals.setMultipleShadowSubtreesEnabled(false);
-}
-
 function doTest() {
     var target = document.createElement('div');
     sr1 = new WebKitShadowRoot(target);
@@ -34,9 +26,7 @@ function doTest() {
     shouldBe('sr2.ownerDocument', 'iframeDoc');
 }
 
-setUpOnce();
 doTest();
-tearDownOnce();
 var successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

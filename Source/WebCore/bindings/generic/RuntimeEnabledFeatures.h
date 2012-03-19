@@ -211,9 +211,6 @@ public:
 #if ENABLE(SHADOW_DOM)
     static bool shadowDOMEnabled() { return isShadowDOMEnabled; }
     static void setShadowDOMEnabled(bool isEnabled) { isShadowDOMEnabled = isEnabled; }
-
-    static bool multipleShadowSubtreesEnabled() { return isMultipleShadowSubtreesEnabled; }
-    static void setMultipleShadowSubtreesEnabled(bool isEnabled);
 #endif
 
 #if ENABLE(STYLE_SCOPED)
@@ -283,7 +280,6 @@ private:
 
 #if ENABLE(SHADOW_DOM)
     static bool isShadowDOMEnabled;
-    static bool isMultipleShadowSubtreesEnabled;
 #endif
 
 #if ENABLE(STYLE_SCOPED)
