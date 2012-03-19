@@ -731,27 +731,6 @@ http/tests/loading/simple-subframe.html
 http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
 
-# NPRuntime support for out-of-process plug-ins
-# <https://bugs.webkit.org/show_bug.cgi?id=48346>
-http/tests/plugins/cross-frame-object-access.html
-http/tests/plugins/get-url.html
-http/tests/plugins/geturlnotify-from-npp-destroystream.html
-http/tests/plugins/interrupted-get-url.html
-http/tests/plugins/local-geturl-from-remote.html
-http/tests/plugins/npapi-response-headers.html
-plugins/get-url-with-iframe-target.html
-plugins/netscape-plugin-setwindow-size.html
-plugins/nested-plugin-objects.html
-plugins/pass-different-npp-struct.html
-plugins/reentrant-update-widget-positions.html
-plugins/reloadplugins-no-pages.html
-plugins/return-negative-one-from-write.html
-plugins/set-status.html
-plugins/update-widgets-crash.html
-plugins/window-open.html
-plugins/npruntime/identifier-conversion.html
-plugins/npruntime/plugin-scriptable-object-invoke-default.html
-
 # These tests crash the WebProcess when run under WebKitTestRunner.
 # <https://bugs.webkit.org/show_bug.cgi?id=44479>
 fast/parser/remove-misnested-iframe-in-beforeload.html
@@ -1263,6 +1242,14 @@ http/tests/navigation/post-goback1.html
 # Unexplained plugin failures
 platform/mac/plugins/testplugin-onnew-onpaint.html
 plugins/no-mime-with-valid-extension.html
+
+# Unexplained plugin failures that were formerly in the NPRuntime support for out-of-process plug-ins
+# list.
+plugins/netscape-plugin-setwindow-size.html
+plugins/npruntime/plugin-scriptable-object-invoke-default.html
+plugins/pass-different-npp-struct.html
+plugins/reentrant-update-widget-positions.html
+plugins/set-status.html
 
 # Unexplained plugin timeouts
 # https://bugs.webkit.org/show_bug.cgi?id=81392
