@@ -61,6 +61,11 @@
 
 namespace WebCore {
 
+static bool shouldLoadAsEmptyDocument(const KURL& url)
+{
+    return url.isEmpty() || SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(url.protocol());
+}
+
 MainResourceLoader::MainResourceLoader(Frame* frame)
     : ResourceLoader(frame, ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForCrossOriginCredentials, SkipSecurityCheck))
     , m_dataLoadTimer(this, &MainResourceLoader::handleDataLoadNow)
@@ -234,15 +239,6 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
         ref(); // balanced by deref in continueAfterNavigationPolicy
         frameLoader()->policyChecker()->checkNavigationPolicy(newRequest, callContinueAfterNavigationPolicy, this);
     }
-}
-
-static bool shouldLoadAsEmptyDocument(const KURL& url)
-{
-#if PLATFORM(TORCHMOBILE)
-    return url.isEmpty() || (url.protocolIs("about") && equalIgnoringRef(url, blankURL()));
-#else 
-    return url.isEmpty() || SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(url.protocol());
-#endif
 }
 
 void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, const ResourceResponse& r)
