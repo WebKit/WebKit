@@ -311,6 +311,16 @@ static JSValueRef MyObject_convertToType(JSContextRef context, JSObjectRef objec
     return JSValueMakeNull(context);
 }
 
+static JSValueRef MyObject_convertToTypeWrapper(JSContextRef context, JSObjectRef object, JSType type, JSValueRef* exception)
+{
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(exception);
+    // Forward to default object class
+    return 0;
+}
+
 static bool MyObject_set_nullGetForwardSet(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
 {
     UNUSED_PARAM(ctx);
@@ -355,14 +365,65 @@ JSClassDefinition MyObject_definition = {
     MyObject_convertToType,
 };
 
+JSClassDefinition MyObject_convertToTypeWrapperDefinition = {
+    0,
+    kJSClassAttributeNone,
+    
+    "MyObject",
+    NULL,
+    
+    NULL,
+    NULL,
+    
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    MyObject_convertToTypeWrapper,
+};
+
+JSClassDefinition MyObject_nullWrapperDefinition = {
+    0,
+    kJSClassAttributeNone,
+    
+    "MyObject",
+    NULL,
+    
+    NULL,
+    NULL,
+    
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+};
+
 static JSClassRef MyObject_class(JSContextRef context)
 {
     UNUSED_PARAM(context);
 
     static JSClassRef jsClass;
-    if (!jsClass)
-        jsClass = JSClassCreate(&MyObject_definition);
-    
+    if (!jsClass) {
+        JSClassRef baseClass = JSClassCreate(&MyObject_definition);
+        MyObject_convertToTypeWrapperDefinition.parentClass = baseClass;
+        JSClassRef wrapperClass = JSClassCreate(&MyObject_convertToTypeWrapperDefinition);
+        MyObject_nullWrapperDefinition.parentClass = wrapperClass;
+        jsClass = JSClassCreate(&MyObject_nullWrapperDefinition);
+    }
+
     return jsClass;
 }
 
