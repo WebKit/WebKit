@@ -1795,7 +1795,7 @@ BUGCR118411 : svg/as-background-image/background-image-preserveaspectRatio-suppo
 BUGCR118411 : svg/as-image/img-preserveAspectRatio-support-1.html = IMAGE
 BUGCR118411 : svg/hixie/perf/001.xml = IMAGE
 BUGCR118411 : svg/hixie/perf/002.xml = IMAGE
-BUGCR118411 : svg/hixie/perf/007.xml = IMAGE
+BUGCR118411 SLOW : svg/hixie/perf/007.xml = IMAGE
 
 // WebKit merge 50756:50820, possibly due to WebKit r50808/r50786 and Chromium r31715
 BUGCR27553 WIN : fast/text/atsui-partial-selection.html = IMAGE
