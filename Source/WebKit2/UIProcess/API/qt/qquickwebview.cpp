@@ -551,8 +551,7 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
 
     QObject::connect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), q, SLOT(_q_suspend()));
     QObject::connect(interactionEngine.data(), SIGNAL(contentResumeRequested()), q, SLOT(_q_resume()));
-    QObject::connect(interactionEngine.data(), SIGNAL(contentWasMoved(const QPointF&)), q, SLOT(_q_commitPositionChange(const QPointF&)));
-    QObject::connect(interactionEngine.data(), SIGNAL(contentWasScaled()), q, SLOT(_q_commitScaleChange()));
+    QObject::connect(interactionEngine.data(), SIGNAL(contentViewportChanged(QPointF)), q, SLOT(_q_contentViewportChanged(QPointF)));
 
     _q_resume();
 
@@ -619,28 +618,15 @@ void QQuickWebViewFlickablePrivate::updateViewportSize()
     webPageProxy->setViewportSize(viewportSize);
 
     interactionEngine->applyConstraints(computeViewportConstraints());
-    _q_commitScaleChange();
+    _q_contentViewportChanged(QPointF());
 }
 
-void QQuickWebViewFlickablePrivate::_q_commitScaleChange()
+void QQuickWebViewFlickablePrivate::_q_contentViewportChanged(const QPointF& trajectoryVector)
 {
-    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
-    if (!drawingArea)
-        return;
-
     Q_Q(QQuickWebView);
     // This is only for our QML ViewportInfo debugging API.
     q->experimental()->viewportInfo()->didUpdateCurrentScale();
 
-    const QRect visibleRect(visibleContentsRect());
-    float scale = pageView->contentsScale();
-
-    drawingArea->setVisibleContentsRect(visibleRect, scale, FloatPoint());
-    webPageProxy->setFixedVisibleContentRect(visibleRect);
-}
-
-void QQuickWebViewPrivate::_q_commitPositionChange(const QPointF& trajectoryVector)
-{
     DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
     if (!drawingArea)
         return;
@@ -671,8 +657,7 @@ void QQuickWebViewFlickablePrivate::_q_resume()
         postTransitionState->apply();
     }
 
-    // FIXME: Revise this.
-    _q_commitScaleChange();
+    _q_contentViewportChanged(QPointF());
 }
 
 void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)

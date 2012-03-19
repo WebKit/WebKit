@@ -1,3 +1,31 @@
+2012-03-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Merge _q_commitScaleChange and _q_commitPositionChange
+        https://bugs.webkit.org/show_bug.cgi?id=81511
+
+        Reviewed by Simon Hausmann.
+
+        Both methods were used for notifying WebCore of the new
+        viewport and re-tiling. The methods are merge into
+        _q_contentViewportChanged.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        (QQuickWebViewFlickablePrivate::updateViewportSize):
+        (QQuickWebViewFlickablePrivate::_q_contentViewportChanged):
+        (QQuickWebViewFlickablePrivate::_q_resume):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::_q_contentViewportChanged):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::ViewportUpdateDeferrer::~ViewportUpdateDeferrer):
+        (WebKit::QtViewportInteractionEngine::flickableMovingPositionUpdate):
+        (WebKit::QtViewportInteractionEngine::wheelEvent):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+
 2012-03-19  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Select best target for tap gesture.

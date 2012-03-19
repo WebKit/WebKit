@@ -88,9 +88,7 @@ public:
 
     virtual void _q_suspend() { }
     virtual void _q_resume() { }
-
-    virtual void _q_commitScaleChange() { }
-    void _q_commitPositionChange(const QPointF&);
+    virtual void _q_contentViewportChanged(const QPointF& trajectory) { };
 
     void _q_onVisibleChanged();
     void _q_onUrlChanged();
@@ -198,7 +196,7 @@ public:
 
     virtual void _q_suspend();
     virtual void _q_resume();
-    virtual void _q_commitScaleChange();
+    virtual void _q_contentViewportChanged(const QPointF& trajectory);
 
     virtual void pageDidRequestScroll(const QPoint& pos);
     virtual void didChangeContentsSize(const QSize& newSize);

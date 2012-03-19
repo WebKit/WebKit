@@ -86,7 +86,7 @@ public:
         }
 
         // Make sure that tiles all around the viewport will be requested.
-        emit engine->contentWasMoved(QPointF());
+        emit engine->contentViewportChanged(QPointF());
     }
 
 private:
@@ -222,7 +222,7 @@ void QtViewportInteractionEngine::flickableMovingPositionUpdate()
 {
     QPointF newPosition = m_flickProvider->contentPos();
 
-    emit contentWasMoved(m_lastScrollPosition - newPosition);
+    emit contentViewportChanged(m_lastScrollPosition - newPosition);
 
     m_lastScrollPosition = newPosition;
 }
@@ -279,7 +279,7 @@ void QtViewportInteractionEngine::wheelEvent(QWheelEvent* ev)
     QPointF newPosition = -boundPosition(endPosRange.topLeft(), newPos, endPosRange.bottomRight());
     m_flickProvider->setContentPos(newPosition);
 
-    emit contentWasMoved(currentPosition - newPosition);
+    emit contentViewportChanged(currentPosition - newPosition);
 }
 
 void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition)
@@ -528,7 +528,7 @@ void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenter
     m_pinchStartScale = m_content->contentsScale();
 
     // Reset the tiling look-ahead vector so that tiles all around the viewport will be requested on pinch-end.
-    emit contentWasMoved(QPointF());
+    emit contentViewportChanged(QPointF());
 }
 
 void QtViewportInteractionEngine::pinchGestureRequestUpdate(const QPointF& pinchCenterInViewportCoordinates, qreal totalScaleFactor)
