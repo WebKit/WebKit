@@ -103,7 +103,6 @@ public:
 
     virtual void setNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&);
-    virtual bool needsDisplay() const OVERRIDE { return !m_dirtyRects.isEmpty(); }
     virtual void setContentsNeedsDisplay();
     
     virtual void setContentsRect(const IntRect&);

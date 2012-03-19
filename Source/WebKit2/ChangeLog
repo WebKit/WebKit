@@ -1,5 +1,27 @@
 2012-03-19  Anders Carlsson  <andersca@apple.com>
 
+        Find in page highlights get out of place when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=81543
+        <rdar://problem/10932590>
+
+        Reviewed by Sam Weinig.
+
+        When we have a page overlay layer, always force a full repaint of it whenever the page changes.
+        If this turns out to be a real performance problem (measurements suggest that it isn't), we could once
+        again try to figure out when a full page repaint is needed. Doing so could probably be more expensive than
+        simply repainting the page, given that a page overlay consists of a bunch of rect-fills mostly.
+
+        Also turn on accelerated drawing for the page overlay layer, since that cut CPU usage in half when scrolling
+        on a page that had a find overlay visible.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+
+2012-03-19  Anders Carlsson  <andersca@apple.com>
+
         When Find overlay first appears and the page scrolls, the scrolling happens through a fade
         https://bugs.webkit.org/show_bug.cgi?id=81539
         <rdar://problem/11031093>

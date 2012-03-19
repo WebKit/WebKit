@@ -84,8 +84,6 @@ private:
     void createPageOverlayLayer();
     void destroyPageOverlayLayer();
 
-    bool shouldRepaintPageOverlayLayer();
-
     bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 
