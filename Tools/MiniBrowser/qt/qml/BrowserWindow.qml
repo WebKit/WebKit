@@ -303,7 +303,7 @@ Rectangle {
         onUrlChanged: {
             addressLine.text = url
             if (options.printLoadedUrls)
-                console.log("Loaded:", webView.url);
+                console.log("Loaded:", webView.url.toString());
             forceActiveFocus();
         }
 
