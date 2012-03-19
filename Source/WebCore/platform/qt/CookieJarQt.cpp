@@ -202,6 +202,9 @@ void SharedCookieJarQt::getHostnamesWithCookies(HashSet<String>& hostnames)
 
 void SharedCookieJarQt::deleteCookiesForHostname(const String& hostname)
 {
+    if (!m_database.isOpen())
+        return;
+
     QList<QNetworkCookie> cookies = allCookies();
     QList<QNetworkCookie>::Iterator it = cookies.begin();
     QList<QNetworkCookie>::Iterator end = cookies.end();
@@ -220,6 +223,9 @@ void SharedCookieJarQt::deleteCookiesForHostname(const String& hostname)
 
 void SharedCookieJarQt::deleteAllCookies()
 {
+    if (!m_database.isOpen())
+        return;
+
     QSqlQuery sqlQuery(m_database);
     sqlQuery.prepare(QLatin1String("DELETE * FROM cookies"));
     sqlQuery.exec();
@@ -245,6 +251,10 @@ bool SharedCookieJarQt::setCookiesFromUrl(const QList<QNetworkCookie>& cookieLis
 {
     if (!QNetworkCookieJar::setCookiesFromUrl(cookieList, url))
         return false;
+
+    if (!m_database.isOpen())
+        return false;
+
     QSqlQuery sqlQuery(m_database);
     sqlQuery.prepare(QLatin1String("INSERT OR REPLACE INTO cookies (cookieId, cookie) VALUES (:cookieIdvalue, :cookievalue)"));
     QVariantList cookiesIds;
@@ -274,6 +284,9 @@ void SharedCookieJarQt::ensureDatabaseTable()
 
 void SharedCookieJarQt::loadCookies()
 {
+    if (!m_database.isOpen())
+        return;
+
     QList<QNetworkCookie> cookies;
     QSqlQuery sqlQuery(m_database);
     sqlQuery.prepare(QLatin1String("SELECT cookie FROM cookies"));
