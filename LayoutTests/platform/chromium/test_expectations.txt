@@ -3943,3 +3943,5 @@ BUGWK81493 LINUX : svg/custom/js-late-gradient-creation.svg = PASS IMAGE
 BUGWK77368 WIN : css3/flexbox/child-overflow.html = IMAGE
 
 BUGWK81537 : fast/events/touch/gesture/pad-gesture-fling.html = TEXT
+
+BUGWK81544 : fast/text/international/font-fallback-to-common-script.html = IMAGE PASS
