@@ -1245,6 +1245,9 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     m_frame->coreFrame()->loader()->loadURLIntoChildFrame(url, referrer, coreSubframe);
 
     // The frame's onload handler may have removed it from the document.
+    if (!subframe->coreFrame())
+        return 0;
+    ASSERT(subframe->coreFrame() == coreSubframe);
     if (!coreSubframe->tree()->parent())
         return 0;
 

@@ -1,3 +1,14 @@
+2012-03-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Make WebFrameLoaderClient::createFrame more like WebKit1 version.
+        https://bugs.webkit.org/show_bug.cgi?id=81550
+
+        Covered by existing tests.
+
+        Reviewed by Jessie Berlin.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp: (WebKit::WebFrameLoaderClient::createFrame):
+
 2012-03-19  Anders Carlsson  <andersca@apple.com>
 
         Find in page highlights get out of place when scrolling
