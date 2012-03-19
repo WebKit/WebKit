@@ -73,6 +73,20 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::enterTargetRenderSurf
     }
 }
 
+static inline bool layerOpacityKnown(const LayerChromium* layer) { return !layer->drawOpacityIsAnimating(); }
+static inline bool layerOpacityKnown(const CCLayerImpl*) { return true; }
+static inline bool layerTransformsToTargetKnown(const LayerChromium* layer) { return !layer->drawTransformIsAnimating(); }
+static inline bool layerTransformsToTargetKnown(const CCLayerImpl*) { return true; }
+static inline bool layerTransformsToScreenKnown(const LayerChromium* layer) { return !layer->screenSpaceTransformIsAnimating(); }
+static inline bool layerTransformsToScreenKnown(const CCLayerImpl*) { return true; }
+
+static inline bool surfaceOpacityKnown(const RenderSurfaceChromium* surface) { return !surface->drawOpacityIsAnimating(); }
+static inline bool surfaceOpacityKnown(const CCRenderSurface*) { return true; }
+static inline bool surfaceTransformsToTargetKnown(const RenderSurfaceChromium* surface) { return !surface->targetSurfaceTransformsAreAnimating(); }
+static inline bool surfaceTransformsToTargetKnown(const CCRenderSurface*) { return true; }
+static inline bool surfaceTransformsToScreenKnown(const RenderSurfaceChromium* surface) { return !surface->screenSpaceTransformsAreAnimating(); }
+static inline bool surfaceTransformsToScreenKnown(const CCRenderSurface*) { return true; }
+
 template<typename LayerType, typename RenderSurfaceType>
 void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::finishedTargetRenderSurface(const LayerType* owningLayer, const RenderSurfaceType* finishedTarget)
 {
@@ -82,9 +96,15 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::finishedTargetRenderS
     // Make sure we know about the target surface.
     enterTargetRenderSurface(finishedTarget);
 
-    if (owningLayer->maskLayer() || finishedTarget->drawOpacity() < 1 || finishedTarget->filters().hasFilterThatAffectsOpacity()) {
+    // If the occlusion within the surface can not be applied to things outside of the surface's subtree, then clear the occlusion here so it won't be used.
+    if (owningLayer->maskLayer() || !surfaceOpacityKnown(finishedTarget) || finishedTarget->drawOpacity() < 1 || finishedTarget->filters().hasFilterThatAffectsOpacity()) {
         m_stack.last().occlusionInScreen = Region();
         m_stack.last().occlusionInTarget = Region();
+    } else {
+        if (!surfaceTransformsToTargetKnown(finishedTarget))
+            m_stack.last().occlusionInTarget = Region();
+        if (!surfaceTransformsToScreenKnown(finishedTarget))
+            m_stack.last().occlusionInScreen = Region();
     }
 }
 
@@ -141,6 +161,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::leaveToTargetRenderSu
 template<typename LayerType>
 static inline TransformationMatrix contentToScreenSpaceTransform(const LayerType* layer)
 {
+    ASSERT(layerTransformsToScreenKnown(layer));
     IntSize boundsInLayerSpace = layer->bounds();
     IntSize boundsInContentSpace = layer->contentBounds();
 
@@ -159,6 +180,7 @@ static inline TransformationMatrix contentToScreenSpaceTransform(const LayerType
 template<typename LayerType>
 static inline TransformationMatrix contentToTargetSurfaceTransform(const LayerType* layer)
 {
+    ASSERT(layerTransformsToTargetKnown(layer));
     IntSize boundsInLayerSpace = layer->bounds();
     IntSize boundsInContentSpace = layer->contentBounds();
 
@@ -209,15 +231,14 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::markOccludedBehindLay
     if (m_stack.isEmpty())
         return;
 
-    if (layer->drawOpacity() != 1)
+    if (!layerOpacityKnown(layer) || layer->drawOpacity() < 1)
         return;
 
-    TransformationMatrix contentToScreenSpace = contentToScreenSpaceTransform<LayerType>(layer);
-    TransformationMatrix contentToTargetSurface = contentToTargetSurfaceTransform<LayerType>(layer);
-
     // FIXME: Remove m_usePaintTracking when paint tracking is on for paint culling.
-    m_stack.last().occlusionInScreen.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToScreenSpace, m_usePaintTracking));
-    m_stack.last().occlusionInTarget.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToTargetSurface, m_usePaintTracking));
+    if (layerTransformsToScreenKnown(layer))
+        m_stack.last().occlusionInScreen.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToScreenSpaceTransform<LayerType>(layer), m_usePaintTracking));
+    if (layerTransformsToTargetKnown(layer))
+        m_stack.last().occlusionInTarget.unite(computeOcclusionBehindLayer<LayerType>(layer, contentToTargetSurfaceTransform<LayerType>(layer), m_usePaintTracking));
 }
 
 static inline bool testContentRectOccluded(const IntRect& contentRect, const TransformationMatrix& contentSpaceTransform, const IntRect& scissorRect, const Region& occlusion)
@@ -239,9 +260,9 @@ bool CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::occluded(const LayerT
 
     ASSERT(layer->targetRenderSurface() == m_stack.last().surface);
 
-    if (testContentRectOccluded(contentRect, contentToScreenSpaceTransform<LayerType>(layer), m_scissorRectInScreenSpace, m_stack.last().occlusionInScreen))
+    if (layerTransformsToScreenKnown(layer) && testContentRectOccluded(contentRect, contentToScreenSpaceTransform<LayerType>(layer), m_scissorRectInScreenSpace, m_stack.last().occlusionInScreen))
         return true;
-    if (testContentRectOccluded(contentRect, contentToTargetSurfaceTransform<LayerType>(layer), layerScissorRectInTargetSurface(layer), m_stack.last().occlusionInTarget))
+    if (layerTransformsToTargetKnown(layer) && testContentRectOccluded(contentRect, contentToTargetSurfaceTransform<LayerType>(layer), layerScissorRectInTargetSurface(layer), m_stack.last().occlusionInTarget))
         return true;
     return false;
 }
@@ -307,13 +328,16 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::unoccludedContentR
     // We want to return a rect that contains all the visible parts of |contentRect| in both screen space and in the target surface.
     // So we find the visible parts of |contentRect| in each space, and take the intersection.
 
-    TransformationMatrix contentToScreenSpace = contentToScreenSpaceTransform<LayerType>(layer);
-    TransformationMatrix contentToTargetSurface = contentToTargetSurfaceTransform<LayerType>(layer);
+    IntRect unoccludedInScreen = contentRect;
+    if (layerTransformsToScreenKnown(layer))
+        unoccludedInScreen = computeUnoccludedContentRect(contentRect, contentToScreenSpaceTransform<LayerType>(layer), m_scissorRectInScreenSpace, m_stack.last().occlusionInScreen);
 
-    IntRect unoccludedInScreen = computeUnoccludedContentRect(contentRect, contentToScreenSpace, m_scissorRectInScreenSpace, m_stack.last().occlusionInScreen);
     if (unoccludedInScreen.isEmpty())
-        return IntRect();
-    IntRect unoccludedInTarget = computeUnoccludedContentRect(contentRect, contentToTargetSurface, layerScissorRectInTargetSurface(layer), m_stack.last().occlusionInTarget);
+        return unoccludedInScreen;
+
+    IntRect unoccludedInTarget = contentRect;
+    if (layerTransformsToTargetKnown(layer))
+        unoccludedInTarget = computeUnoccludedContentRect(contentRect, contentToTargetSurfaceTransform<LayerType>(layer), layerScissorRectInTargetSurface(layer), m_stack.last().occlusionInTarget);
 
     return intersection(unoccludedInScreen, unoccludedInTarget);
 }

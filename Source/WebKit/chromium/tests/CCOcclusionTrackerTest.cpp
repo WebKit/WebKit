@@ -30,6 +30,8 @@
 #include "LayerChromium.h"
 #include "Region.h"
 #include "TransformationMatrix.h"
+#include "TranslateTransformOperation.h"
+#include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCSingleThreadProxy.h"
@@ -1673,5 +1675,207 @@ protected:
 };
 
 MAIN_THREAD_TEST(CCOcclusionTrackerTestPerspectiveTransformBehindCamera);
+
+template<typename LayerType>
+static int addOpacityAnimationToLayer(LayerType* layer, float startValue, float endValue, double duration)
+{
+    static int id = 0;
+    WebCore::KeyframeValueList values(AnimatedPropertyOpacity);
+    values.insert(new FloatAnimationValue(0, startValue));
+    values.insert(new FloatAnimationValue(duration, endValue));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+
+    IntSize boxSize;
+    layer->layerAnimationController()->addAnimation(values, boxSize, animation.get(), id, 0, 0);
+    return id++;
+}
+
+template<typename LayerType>
+static int addTransformAnimationToLayer(LayerType* layer, double duration)
+{
+    static int id = 0;
+    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
+
+    TransformOperations operations1;
+    operations1.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    values.insert(new TransformAnimationValue(0, &operations1));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+
+    IntSize boxSize;
+    layer->layerAnimationController()->addAnimation(values, boxSize, animation.get(), id, 0, 0);
+    return id++;
+}
+
+template<class Types, bool opaqueLayers>
+class CCOcclusionTrackerTestAnimationOpacity1OnMainThread : public CCOcclusionTrackerTest<Types, opaqueLayers> {
+protected:
+    void runMyTest()
+    {
+        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+        typename Types::ContentLayerType* layer = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300), true);
+        typename Types::ContentLayerType* surface = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300), true);
+        typename Types::ContentLayerType* surfaceChild = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(200, 300), true);
+        typename Types::ContentLayerType* surfaceChild2 = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(100, 300), true);
+
+        addOpacityAnimationToLayer(layer, 0, 1, 10);
+        addOpacityAnimationToLayer(surface, 0, 1, 10);
+        this->calcDrawEtc(parent);
+
+        EXPECT_TRUE(layer->drawOpacityIsAnimating());
+        EXPECT_FALSE(surface->drawOpacityIsAnimating());
+        EXPECT_TRUE(surface->renderSurface()->drawOpacityIsAnimating());
+
+        TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
+
+        occlusion.enterTargetRenderSurface(surface->renderSurface());
+        occlusion.markOccludedBehindLayer(surfaceChild2);
+        EXPECT_EQ_RECT(IntRect(100, 0, 200, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+        occlusion.markOccludedBehindLayer(surfaceChild);
+        EXPECT_EQ_RECT(IntRect(200, 0, 100, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+        occlusion.markOccludedBehindLayer(surface);
+        EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
+        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        // Occlusion is lost when leaving the animating surface.
+        EXPECT_EQ_RECT(IntRect(0, 0, 300, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+
+        occlusion.markOccludedBehindLayer(layer);
+        // Occlusion is not added for the animating layer.
+        EXPECT_EQ_RECT(IntRect(0, 0, 300, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+    }
+};
+
+MAIN_THREAD_TEST(CCOcclusionTrackerTestAnimationOpacity1OnMainThread);
+
+template<class Types, bool opaqueLayers>
+class CCOcclusionTrackerTestAnimationOpacity0OnMainThread : public CCOcclusionTrackerTest<Types, opaqueLayers> {
+protected:
+    void runMyTest()
+    {
+        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+        typename Types::ContentLayerType* layer = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300), true);
+        typename Types::ContentLayerType* surface = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300), true);
+        typename Types::ContentLayerType* surfaceChild = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(200, 300), true);
+        typename Types::ContentLayerType* surfaceChild2 = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(100, 300), true);
+
+        addOpacityAnimationToLayer(layer, 1, 0, 10);
+        addOpacityAnimationToLayer(surface, 1, 0, 10);
+        this->calcDrawEtc(parent);
+
+        EXPECT_TRUE(layer->drawOpacityIsAnimating());
+        EXPECT_FALSE(surface->drawOpacityIsAnimating());
+        EXPECT_TRUE(surface->renderSurface()->drawOpacityIsAnimating());
+
+        TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
+
+        occlusion.enterTargetRenderSurface(surface->renderSurface());
+        occlusion.markOccludedBehindLayer(surfaceChild2);
+        EXPECT_EQ_RECT(IntRect(100, 0, 200, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+        occlusion.markOccludedBehindLayer(surfaceChild);
+        EXPECT_EQ_RECT(IntRect(200, 0, 100, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+        occlusion.markOccludedBehindLayer(surface);
+        EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
+        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        // Occlusion is lost when leaving the animating surface.
+        EXPECT_EQ_RECT(IntRect(0, 0, 300, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+
+        occlusion.markOccludedBehindLayer(layer);
+        // Occlusion is not added for the animating layer.
+        EXPECT_EQ_RECT(IntRect(0, 0, 300, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+    }
+};
+
+MAIN_THREAD_TEST(CCOcclusionTrackerTestAnimationOpacity0OnMainThread);
+
+template<class Types, bool opaqueLayers>
+class CCOcclusionTrackerTestAnimationTranslateOnMainThread : public CCOcclusionTrackerTest<Types, opaqueLayers> {
+protected:
+    void runMyTest()
+    {
+        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300));
+        typename Types::ContentLayerType* layer = this->createDrawingLayer(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300), true);
+        typename Types::ContentLayerType* surface = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(300, 300), true);
+        typename Types::ContentLayerType* surfaceChild = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(200, 300), true);
+        typename Types::ContentLayerType* surfaceChild2 = this->createDrawingLayer(surface, this->identityMatrix, FloatPoint(0, 0), IntSize(100, 300), true);
+        typename Types::ContentLayerType* surface2 = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(0, 0), IntSize(50, 300), true);
+
+        addTransformAnimationToLayer(layer, 10);
+        addTransformAnimationToLayer(surface, 10);
+        addTransformAnimationToLayer(surfaceChild, 10);
+        this->calcDrawEtc(parent);
+
+        EXPECT_TRUE(layer->drawTransformIsAnimating());
+        EXPECT_TRUE(layer->screenSpaceTransformIsAnimating());
+        EXPECT_TRUE(surface->renderSurface()->targetSurfaceTransformsAreAnimating());
+        EXPECT_TRUE(surface->renderSurface()->screenSpaceTransformsAreAnimating());
+        // The surface owning layer doesn't animate against its own surface.
+        EXPECT_FALSE(surface->drawTransformIsAnimating());
+        EXPECT_TRUE(surface->screenSpaceTransformIsAnimating());
+        EXPECT_TRUE(surfaceChild->drawTransformIsAnimating());
+        EXPECT_TRUE(surfaceChild->screenSpaceTransformIsAnimating());
+
+        TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
+
+        occlusion.enterTargetRenderSurface(surface2->renderSurface());
+        occlusion.markOccludedBehindLayer(surface2);
+        occlusion.finishedTargetRenderSurface(surface2, surface2->renderSurface());
+        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+        EXPECT_EQ_RECT(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+
+        occlusion.enterTargetRenderSurface(surface->renderSurface());
+
+        // The layer is moving in screen space but not relative to its target, so occlusion should happen in its target space only.
+        // It also means that things occluding in screen space (e.g. surface2) cannot occlude this layer.
+        EXPECT_EQ_RECT(IntRect(0, 0, 100, 300), occlusion.unoccludedContentRect(surfaceChild2, IntRect(0, 0, 100, 300)));
+        EXPECT_FALSE(occlusion.occluded(surfaceChild, IntRect(0, 0, 50, 300)));
+
+        occlusion.markOccludedBehindLayer(surfaceChild2);
+        EXPECT_FALSE(occlusion.occluded(surfaceChild, IntRect(0, 0, 100, 300)));
+        EXPECT_EQ_RECT(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(0, 0, 100, 300), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+        EXPECT_EQ_RECT(IntRect(100, 0, 200, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+
+        // The surface child is occluded by the surfaceChild2, but is moving relative its target and the screen, so it
+        // can't be occluded.
+        EXPECT_EQ_RECT(IntRect(0, 0, 200, 300), occlusion.unoccludedContentRect(surfaceChild, IntRect(0, 0, 200, 300)));
+        EXPECT_FALSE(occlusion.occluded(surfaceChild, IntRect(0, 0, 50, 300)));
+
+        occlusion.markOccludedBehindLayer(surfaceChild);
+        // The layer is moving in screen space but not relative to its target, so occlusion should happen in its target space only.
+        EXPECT_EQ_RECT(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(0, 0, 100, 300), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+        EXPECT_EQ_RECT(IntRect(100, 0, 200, 300), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+
+        occlusion.markOccludedBehindLayer(surface);
+        // The layer is moving in screen space but not relative to its target, so occlusion should happen in its target space only.
+        EXPECT_EQ_RECT(IntRect(0, 0, 50, 300), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(0, 0, 300, 300), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+        EXPECT_EQ_RECT(IntRect(0, 0, 0, 0), occlusion.unoccludedContentRect(surface, IntRect(0, 0, 300, 300)));
+
+        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
+        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+        // The surface is moving in the screen and in its target, so all occlusion is lost when leaving it.
+        EXPECT_EQ_RECT(IntRect(50, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+
+        occlusion.markOccludedBehindLayer(layer);
+        // The layer is animating in the screen and in its target, so no occlusion is added.
+        EXPECT_EQ_RECT(IntRect(50, 0, 250, 300), occlusion.unoccludedContentRect(parent, IntRect(0, 0, 300, 300)));
+    }
+};
+
+MAIN_THREAD_TEST(CCOcclusionTrackerTestAnimationTranslateOnMainThread);
 
 } // namespace

@@ -1,5 +1,23 @@
 2012-03-18  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Don't occlude on main-thread behind layers/surfaces with impl-thread animations
+        https://bugs.webkit.org/show_bug.cgi?id=81354
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebCore):
+        (WebCore::addOpacityAnimationToLayer):
+        (WebCore::addTransformAnimationToLayer):
+        (CCOcclusionTrackerTestAnimationOpacity1OnMainThread):
+        (WebCore::CCOcclusionTrackerTestAnimationOpacity1OnMainThread::runMyTest):
+        (CCOcclusionTrackerTestAnimationOpacity0OnMainThread):
+        (WebCore::CCOcclusionTrackerTestAnimationOpacity0OnMainThread::runMyTest):
+        (CCOcclusionTrackerTestAnimationTranslateOnMainThread):
+        (WebCore::CCOcclusionTrackerTestAnimationTranslateOnMainThread::runMyTest):
+
+2012-03-18  Dana Jansens  <danakj@chromium.org>
+
         [chromium] Animating opacity is not opaque and should create a render surface on main thread
         https://bugs.webkit.org/show_bug.cgi?id=81401
 
