@@ -961,6 +961,22 @@ void QQuickWebViewExperimental::setFilePicker(QDeclarativeComponent* filePicker)
     emit filePickerChanged();
 }
 
+QString QQuickWebViewExperimental::userAgent() const
+{
+    Q_D(const QQuickWebView);
+    return d->webPageProxy->userAgent();
+}
+
+void QQuickWebViewExperimental::setUserAgent(const QString& userAgent)
+{
+    Q_D(QQuickWebView);
+    if (userAgent == QString(d->webPageProxy->userAgent()))
+        return;
+
+    d->webPageProxy->setUserAgent(userAgent);
+    emit userAgentChanged();
+}
+
 QQuickUrlSchemeDelegate* QQuickWebViewExperimental::schemeDelegates_At(QDeclarativeListProperty<QQuickUrlSchemeDelegate>* property, int index)
 {
     const QObjectList children = property->object->children();

@@ -252,6 +252,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_PROPERTY(QWebViewportInfo* viewportInfo READ viewportInfo CONSTANT FINAL)
     Q_PROPERTY(QDeclarativeListProperty<QQuickUrlSchemeDelegate> urlSchemeDelegates READ schemeDelegates)
+    Q_PROPERTY(QString userAgent READ userAgent WRITE setUserAgent NOTIFY userAgentChanged)
     Q_ENUMS(NavigationRequestActionExperimental)
 
 public:
@@ -278,6 +279,8 @@ public:
     void setProxyAuthenticationDialog(QDeclarativeComponent*);
     QDeclarativeComponent* filePicker() const;
     void setFilePicker(QDeclarativeComponent*);
+    QString userAgent() const;
+    void setUserAgent(const QString& userAgent);
 
     QWebViewportInfo* viewportInfo();
 
@@ -335,6 +338,7 @@ Q_SIGNALS:
     void permissionRequested(QWebPermissionRequest* permission);
     void messageReceived(const QVariantMap& message);
     void proxyAuthenticationDialogChanged();
+    void userAgentChanged();
 
 private:
     QQuickWebView* q_ptr;

@@ -1,3 +1,18 @@
+2012-03-19  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] Add experimental API for dynamically changing the UA string
+
+        Reviewed by Simon Hausmann.
+
+        This patch adds a new property named userAgent to the
+        QQuickWebViewExperimental type which allows us to dynamically change
+        the user agent string from the QML API.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewExperimental::userAgent):
+        (QQuickWebViewExperimental::setUserAgent):
+        * UIProcess/API/qt/qquickwebview_p.h:
+
 2012-03-18  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] Avoid usage of manual scaling in the Qt scenegraph integration
