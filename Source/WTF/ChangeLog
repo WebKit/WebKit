@@ -1,3 +1,9 @@
+2012-03-19  Dan Bernstein  <mitz@apple.com>
+
+        Set the svn:ignore property on the Xcode project.
+
+        * WTF.xcodeproj: Added property svn:ignore.
+
 2012-03-16  Mark Rowe  <mrowe@apple.com>
 
         Build fix. Do not preserve owner and group information when installing the WTF headers.
