@@ -1,3 +1,113 @@
+2012-03-19  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG NodeUse should be called Edge and NodeReferenceBlob should be called AdjacencyList
+        https://bugs.webkit.org/show_bug.cgi?id=81556
+
+        Rubber stamped by Gavin Barraclough.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractState.h:
+        (JSC::DFG::AbstractState::forNode):
+        * dfg/DFGAdjacencyList.h: Copied from Source/JavaScriptCore/dfg/DFGNodeReferenceBlob.h.
+        (JSC::DFG::AdjacencyList::AdjacencyList):
+        (JSC::DFG::AdjacencyList::child):
+        (JSC::DFG::AdjacencyList::setChild):
+        (JSC::DFG::AdjacencyList::child1):
+        (JSC::DFG::AdjacencyList::child2):
+        (JSC::DFG::AdjacencyList::child3):
+        (JSC::DFG::AdjacencyList::setChild1):
+        (JSC::DFG::AdjacencyList::setChild2):
+        (JSC::DFG::AdjacencyList::setChild3):
+        (JSC::DFG::AdjacencyList::child1Unchecked):
+        (JSC::DFG::AdjacencyList::initialize):
+        (AdjacencyList):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addVarArgChild):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::canonicalize):
+        (JSC::DFG::CSEPhase::performSubstitution):
+        * dfg/DFGEdge.h: Copied from Source/JavaScriptCore/dfg/DFGNodeUse.h.
+        (DFG):
+        (JSC::DFG::Edge::Edge):
+        (JSC::DFG::Edge::operator==):
+        (JSC::DFG::Edge::operator!=):
+        (Edge):
+        (JSC::DFG::operator==):
+        (JSC::DFG::operator!=):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::operator[]):
+        (JSC::DFG::Graph::at):
+        (JSC::DFG::Graph::ref):
+        (JSC::DFG::Graph::deref):
+        (JSC::DFG::Graph::clearAndDerefChild1):
+        (JSC::DFG::Graph::clearAndDerefChild2):
+        (JSC::DFG::Graph::clearAndDerefChild3):
+        (Graph):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::getPrediction):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::child1):
+        (JSC::DFG::Node::child1Unchecked):
+        (JSC::DFG::Node::child2):
+        (JSC::DFG::Node::child3):
+        (Node):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::arithNodeFlagsAsString):
+        * dfg/DFGNodeFlags.h:
+        (DFG):
+        (JSC::DFG::nodeUsedAsNumber):
+        * dfg/DFGNodeReferenceBlob.h: Removed.
+        * dfg/DFGNodeUse.h: Removed.
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::mergeDefaultArithFlags):
+        (JSC::DFG::PredictionPropagationPhase::vote):
+        (JSC::DFG::PredictionPropagationPhase::fixupNode):
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::use):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::useChildren):
+        (JSC::DFG::SpeculativeJIT::writeBarrier):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForByteArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileStrictEqForConstant):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::at):
+        (JSC::DFG::SpeculativeJIT::canReuse):
+        (JSC::DFG::SpeculativeJIT::use):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        (JSC::DFG::IntegerOperand::IntegerOperand):
+        (JSC::DFG::DoubleOperand::DoubleOperand):
+        (JSC::DFG::JSValueOperand::JSValueOperand):
+        (JSC::DFG::StorageOperand::StorageOperand):
+        (JSC::DFG::SpeculateIntegerOperand::SpeculateIntegerOperand):
+        (JSC::DFG::SpeculateStrictInt32Operand::SpeculateStrictInt32Operand):
+        (JSC::DFG::SpeculateDoubleOperand::SpeculateDoubleOperand):
+        (JSC::DFG::SpeculateCellOperand::SpeculateCellOperand):
+        (JSC::DFG::SpeculateBooleanOperand::SpeculateBooleanOperand):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull):
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+
 2012-03-19  Gavin Barraclough  <barraclough@apple.com>
 
         Object.freeze broken on latest Nightly

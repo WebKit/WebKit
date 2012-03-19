@@ -127,7 +127,7 @@ private:
         dataLog("   %s @%u: %s ", Graph::opName(op), m_compileIndex, arithNodeFlagsAsString(flags));
 #endif
         
-        flags &= NodeUsedAsMask;
+        flags &= EdgedAsMask;
         
         bool changed = false;
         
@@ -158,7 +158,7 @@ private:
         case Flush: {
             // Make sure that the analysis knows that flushed locals escape.
             VariableAccessData* variableAccessData = node.variableAccessData();
-            variableAccessData->mergeFlags(NodeUsedAsNumber | NodeNeedsNegZero);
+            variableAccessData->mergeFlags(EdgedAsNumber | NodeNeedsNegZero);
             break;
         }
             
@@ -311,7 +311,7 @@ private:
                     changed |= mergePrediction(PredictDouble);
             }
 
-            flags |= NodeUsedAsNumber;
+            flags |= EdgedAsNumber;
             changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
             changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
             break;
@@ -334,7 +334,7 @@ private:
             // can change the outcome. So, ArithMul always checks for overflow
             // no matter what, and always forces its inputs to check as well.
             
-            flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+            flags |= EdgedAsNumber | NodeNeedsNegZero;
             changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
             changed |= m_graph[node.child2()].mergeArithNodeFlags(flags);
             break;
@@ -410,8 +410,8 @@ private:
             else if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());
 
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
-            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags | NodeUsedAsNumber);
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags | EdgedAsNumber | NodeNeedsNegZero);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags | EdgedAsNumber);
             break;
         }
             
@@ -562,9 +562,9 @@ private:
         }
         
         case PutByVal:
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
-            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags | NodeUsedAsNumber);
-            changed |= m_graph[node.child3()].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
+            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags | EdgedAsNumber | NodeNeedsNegZero);
+            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags | EdgedAsNumber);
+            changed |= m_graph[node.child3()].mergeArithNodeFlags(flags | EdgedAsNumber | NodeNeedsNegZero);
             break;
 
 #ifndef NDEBUG
@@ -617,7 +617,7 @@ private:
     bool mergeDefaultArithFlags(Node& node, NodeFlags flags)
     {
         bool changed = false;
-        flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+        flags |= EdgedAsNumber | NodeNeedsNegZero;
         if (node.flags() & NodeHasVarArgs) {
             for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
                 changed |= m_graph[m_graph.m_varArgChildren[childIdx]].mergeArithNodeFlags(flags);
@@ -653,7 +653,7 @@ private:
             propagate(m_graph[m_compileIndex]);
     }
 
-    void vote(NodeUse nodeUse, VariableAccessData::Ballot ballot)
+    void vote(Edge nodeUse, VariableAccessData::Ballot ballot)
     {
         switch (m_graph[nodeUse].op()) {
         case ValueToInt32:
@@ -855,7 +855,7 @@ private:
         case StringCharAt:
         case StringCharCodeAt: {
             if (!!node.child3() && m_graph[node.child3()].op() == Nop)
-                node.children.child3() = NodeUse();
+                node.children.child3() = Edge();
             break;
         }
         default:

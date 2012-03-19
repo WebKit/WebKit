@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGNodeUse_h
-#define DFGNodeUse_h
+#ifndef DFGEdge_h
+#define DFGEdge_h
 
 #include <wtf/Platform.h>
 
@@ -34,21 +34,21 @@
 
 namespace JSC { namespace DFG {
 
-class NodeReferenceBlob;
+class AdjacencyList;
 
-class NodeUse {
+class Edge {
 public:
-    NodeUse()
+    Edge()
         : m_encodedWord(makeWord(NoNode, UntypedUse))
     {
     }
     
-    explicit NodeUse(NodeIndex nodeIndex)
+    explicit Edge(NodeIndex nodeIndex)
         : m_encodedWord(makeWord(nodeIndex, UntypedUse))
     {
     }
     
-    NodeUse(NodeIndex nodeIndex, UseKind useKind)
+    Edge(NodeIndex nodeIndex, UseKind useKind)
         : m_encodedWord(makeWord(nodeIndex, useKind))
     {
     }
@@ -80,17 +80,17 @@ public:
     bool isSet() const { return indexUnchecked() != NoNode; }
     bool operator!() const { return !isSet(); }
     
-    bool operator==(NodeUse other) const
+    bool operator==(Edge other) const
     {
         return m_encodedWord == other.m_encodedWord;
     }
-    bool operator!=(NodeUse other) const
+    bool operator!=(Edge other) const
     {
         return m_encodedWord != other.m_encodedWord;
     }
 
 private:
-    friend class NodeReferenceBlob;
+    friend class AdjacencyList;
     
     static uint32_t shift() { return 4; }
     
@@ -105,19 +105,19 @@ private:
     int32_t m_encodedWord;
 };
 
-inline bool operator==(NodeUse nodeUse, NodeIndex nodeIndex)
+inline bool operator==(Edge nodeUse, NodeIndex nodeIndex)
 {
     return nodeUse.indexUnchecked() == nodeIndex;
 }
-inline bool operator==(NodeIndex nodeIndex, NodeUse nodeUse)
+inline bool operator==(NodeIndex nodeIndex, Edge nodeUse)
 {
     return nodeUse.indexUnchecked() == nodeIndex;
 }
-inline bool operator!=(NodeUse nodeUse, NodeIndex nodeIndex)
+inline bool operator!=(Edge nodeUse, NodeIndex nodeIndex)
 {
     return nodeUse.indexUnchecked() != nodeIndex;
 }
-inline bool operator!=(NodeIndex nodeIndex, NodeUse nodeUse)
+inline bool operator!=(NodeIndex nodeIndex, Edge nodeUse)
 {
     return nodeUse.indexUnchecked() != nodeIndex;
 }
@@ -126,5 +126,5 @@ inline bool operator!=(NodeIndex nodeIndex, NodeUse nodeUse)
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGNodeUse_h
+#endif // DFGEdge_h
 

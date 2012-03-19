@@ -45,7 +45,7 @@ const char* arithNodeFlagsAsString(NodeFlags flags)
     
     bool hasPrinted = false;
     
-    if (flags & NodeUsedAsNumber) {
+    if (flags & EdgedAsNumber) {
         ptr.strcat("UsedAsNum");
         hasPrinted = true;
     }

@@ -84,11 +84,11 @@ public:
     using Vector<Node, 64>::operator[];
     using Vector<Node, 64>::at;
     
-    Node& operator[](NodeUse nodeUse) { return at(nodeUse.index()); }
-    const Node& operator[](NodeUse nodeUse) const { return at(nodeUse.index()); }
+    Node& operator[](Edge nodeUse) { return at(nodeUse.index()); }
+    const Node& operator[](Edge nodeUse) const { return at(nodeUse.index()); }
     
-    Node& at(NodeUse nodeUse) { return at(nodeUse.index()); }
-    const Node& at(NodeUse nodeUse) const { return at(nodeUse.index()); }
+    Node& at(Edge nodeUse) { return at(nodeUse.index()); }
+    const Node& at(Edge nodeUse) const { return at(nodeUse.index()); }
     
     // Mark a node as being referenced.
     void ref(NodeIndex nodeIndex)
@@ -98,7 +98,7 @@ public:
         if (node.ref())
             refChildren(nodeIndex);
     }
-    void ref(NodeUse nodeUse)
+    void ref(Edge nodeUse)
     {
         ref(nodeUse.index());
     }
@@ -108,7 +108,7 @@ public:
         if (at(nodeIndex).deref())
             derefChildren(nodeIndex);
     }
-    void deref(NodeUse nodeUse)
+    void deref(Edge nodeUse)
     {
         deref(nodeUse.index());
     }
@@ -118,7 +118,7 @@ public:
         if (!node.child1())
             return;
         deref(node.child1());
-        node.children.child1() = NodeUse();
+        node.children.child1() = Edge();
     }
 
     void clearAndDerefChild2(Node& node)
@@ -126,7 +126,7 @@ public:
         if (!node.child2())
             return;
         deref(node.child2());
-        node.children.child2() = NodeUse();
+        node.children.child2() = Edge();
     }
 
     void clearAndDerefChild3(Node& node)
@@ -134,7 +134,7 @@ public:
         if (!node.child3())
             return;
         deref(node.child3());
-        node.children.child3() = NodeUse();
+        node.children.child3() = Edge();
     }
 
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
@@ -351,7 +351,7 @@ public:
     CodeBlock* m_profiledBlock;
 
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
-    Vector<NodeUse, 16> m_varArgChildren;
+    Vector<Edge, 16> m_varArgChildren;
     Vector<StorageAccessData> m_storageAccessData;
     Vector<ResolveGlobalData> m_resolveGlobalData;
     Vector<NodeIndex, 8> m_arguments;

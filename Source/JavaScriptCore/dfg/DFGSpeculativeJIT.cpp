@@ -87,21 +87,21 @@ void SpeculativeJIT::useChildren(Node& node)
         for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
             use(m_jit.graph().m_varArgChildren[childIdx]);
     } else {
-        NodeUse child1 = node.child1();
+        Edge child1 = node.child1();
         if (!child1) {
             ASSERT(!node.child2() && !node.child3());
             return;
         }
         use(child1);
         
-        NodeUse child2 = node.child2();
+        Edge child2 = node.child2();
         if (!child2) {
             ASSERT(!node.child3());
             return;
         }
         use(child2);
         
-        NodeUse child3 = node.child3();
+        Edge child3 = node.child3();
         if (!child3)
             return;
         use(child3);
@@ -249,7 +249,7 @@ void SpeculativeJIT::markCellCard(MacroAssembler& jit, GPRReg owner, GPRReg scra
 #endif
 }
 
-void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, NodeUse valueUse, WriteBarrierUseKind useKind, GPRReg scratch1, GPRReg scratch2)
+void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, Edge valueUse, WriteBarrierUseKind useKind, GPRReg scratch1, GPRReg scratch2)
 {
     UNUSED_PARAM(ownerGPR);
     UNUSED_PARAM(valueGPR);
@@ -325,7 +325,7 @@ void SpeculativeJIT::writeBarrier(GPRReg ownerGPR, JSCell* value, WriteBarrierUs
 #endif
 }
 
-void SpeculativeJIT::writeBarrier(JSCell* owner, GPRReg valueGPR, NodeUse valueUse, WriteBarrierUseKind useKind, GPRReg scratch)
+void SpeculativeJIT::writeBarrier(JSCell* owner, GPRReg valueGPR, Edge valueUse, WriteBarrierUseKind useKind, GPRReg scratch)
 {
     UNUSED_PARAM(owner);
     UNUSED_PARAM(valueGPR);
@@ -1619,8 +1619,8 @@ static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg sou
 
 void SpeculativeJIT::compilePutByValForByteArray(GPRReg base, GPRReg property, Node& node)
 {
-    NodeUse baseUse = node.child1();
-    NodeUse valueUse = node.child3();
+    Edge baseUse = node.child1();
+    Edge valueUse = node.child3();
     
     if (!isByteArrayPrediction(m_state.forNode(baseUse).m_type))
         speculationCheck(BadType, JSValueSource::unboxedCell(base), baseUse.index(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSByteArray::s_info)));
@@ -1778,8 +1778,8 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(const TypedArrayDescriptor& 
 
 void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor& descriptor, GPRReg base, GPRReg property, Node& node, size_t elementSize, TypedArraySpeculationRequirements speculationRequirements, TypedArraySignedness signedness, TypedArrayRounding rounding)
 {
-    NodeUse baseUse = node.child1();
-    NodeUse valueUse = node.child3();
+    Edge baseUse = node.child1();
+    Edge valueUse = node.child3();
     
     if (speculationRequirements != NoTypedArrayTypeSpecCheck)
         speculationCheck(BadType, JSValueSource::unboxedCell(base), baseUse, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(descriptor.m_classInfo)));
@@ -1924,8 +1924,8 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(const TypedArrayDescriptor
 
 void SpeculativeJIT::compilePutByValForFloatTypedArray(const TypedArrayDescriptor& descriptor, GPRReg base, GPRReg property, Node& node, size_t elementSize, TypedArraySpeculationRequirements speculationRequirements)
 {
-    NodeUse baseUse = node.child1();
-    NodeUse valueUse = node.child3();
+    Edge baseUse = node.child1();
+    Edge valueUse = node.child3();
     
     SpeculateDoubleOperand valueOp(this, valueUse);
     
@@ -2493,7 +2493,7 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
     return false;
 }
 
-bool SpeculativeJIT::compileStrictEqForConstant(Node& node, NodeUse value, JSValue constant)
+bool SpeculativeJIT::compileStrictEqForConstant(Node& node, Edge value, JSValue constant)
 {
     JSValueOperand op1(this, value);
     

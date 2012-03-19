@@ -181,7 +181,7 @@ public:
     {
         return m_jit.graph()[nodeIndex];
     }
-    Node& at(NodeUse nodeUse)
+    Node& at(Edge nodeUse)
     {
         return at(nodeUse.index());
     }
@@ -221,7 +221,7 @@ public:
         GenerationInfo& info = m_generationInfo[virtualRegister];
         return info.canReuse();
     }
-    bool canReuse(NodeUse nodeUse)
+    bool canReuse(Edge nodeUse)
     {
         return canReuse(nodeUse.index());
     }
@@ -325,7 +325,7 @@ public:
             m_gprs.release(info.gpr());
 #endif
     }
-    void use(NodeUse nodeUse)
+    void use(Edge nodeUse)
     {
         use(nodeUse.index());
     }
@@ -333,9 +333,9 @@ public:
     static void markCellCard(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR1, GPRReg scratchGPR2);
     static void writeBarrier(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, WriteBarrierUseKind);
 
-    void writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, NodeUse valueUse, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg, GPRReg scratchGPR2 = InvalidGPRReg);
+    void writeBarrier(GPRReg ownerGPR, GPRReg valueGPR, Edge valueUse, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg, GPRReg scratchGPR2 = InvalidGPRReg);
     void writeBarrier(GPRReg ownerGPR, JSCell* value, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg, GPRReg scratchGPR2 = InvalidGPRReg);
-    void writeBarrier(JSCell* owner, GPRReg valueGPR, NodeUse valueUse, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg);
+    void writeBarrier(JSCell* owner, GPRReg valueGPR, Edge valueUse, WriteBarrierUseKind, GPRReg scratchGPR1 = InvalidGPRReg);
 
     static GPRReg selectScratchGPR(GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg, GPRReg preserve4 = InvalidGPRReg)
     {
@@ -900,15 +900,15 @@ private:
     enum SpillRegistersMode { NeedToSpill, DontSpill };
 #if USE(JSVALUE64)
     JITCompiler::Call cachedGetById(CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
-    void cachedPutById(CodeOrigin, GPRReg base, GPRReg value, NodeUse valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    void cachedPutById(CodeOrigin, GPRReg base, GPRReg value, Edge valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
 #elif USE(JSVALUE32_64)
     JITCompiler::Call cachedGetById(CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
-    void cachedPutById(CodeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, NodeUse valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    void cachedPutById(CodeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, Edge valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
 #endif
 
-    void nonSpeculativeNonPeepholeCompareNull(NodeUse operand, bool invert = false);
-    void nonSpeculativePeepholeBranchNull(NodeUse operand, NodeIndex branchNodeIndex, bool invert = false);
-    bool nonSpeculativeCompareNull(Node&, NodeUse operand, bool invert = false);
+    void nonSpeculativeNonPeepholeCompareNull(Edge operand, bool invert = false);
+    void nonSpeculativePeepholeBranchNull(Edge operand, NodeIndex branchNodeIndex, bool invert = false);
+    bool nonSpeculativeCompareNull(Node&, Edge operand, bool invert = false);
     
     void nonSpeculativePeepholeBranch(Node&, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
     void nonSpeculativeNonPeepholeCompare(Node&, MacroAssembler::RelationalCondition, S_DFGOperation_EJJ helperFunction);
@@ -1715,15 +1715,15 @@ private:
     void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, const ClassInfo*, PredictionChecker);
     void compileObjectEquality(Node&, const ClassInfo*, PredictionChecker);
     void compileValueAdd(Node&);
-    void compileObjectOrOtherLogicalNot(NodeUse value, const ClassInfo*, bool needSpeculationCheck);
+    void compileObjectOrOtherLogicalNot(Edge value, const ClassInfo*, bool needSpeculationCheck);
     void compileLogicalNot(Node&);
-    void emitObjectOrOtherBranch(NodeUse value, BlockIndex taken, BlockIndex notTaken, const ClassInfo*, bool needSpeculationCheck);
+    void emitObjectOrOtherBranch(Edge value, BlockIndex taken, BlockIndex notTaken, const ClassInfo*, bool needSpeculationCheck);
     void emitBranch(Node&);
     
     void compileIntegerCompare(Node&, MacroAssembler::RelationalCondition);
     void compileDoubleCompare(Node&, MacroAssembler::DoubleCondition);
     
-    bool compileStrictEqForConstant(Node&, NodeUse value, JSValue constant);
+    bool compileStrictEqForConstant(Node&, Edge value, JSValue constant);
     
     bool compileStrictEq(Node&);
     
@@ -1817,7 +1817,7 @@ private:
             return;
         m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), jumpToFail, this));
     }
-    void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeUse nodeUse, MacroAssembler::Jump jumpToFail)
+    void speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail)
     {
         speculationCheck(kind, jsValueSource, nodeUse.index(), jumpToFail);
     }
@@ -1828,7 +1828,7 @@ private:
         for (unsigned i = 0; i < JumpVector.size(); ++i)
             speculationCheck(kind, jsValueSource, nodeIndex, JumpVector[i]);
     }
-    void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeUse nodeUse, MacroAssembler::JumpList& jumpsToFail)
+    void speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::JumpList& jumpsToFail)
     {
         speculationCheck(kind, jsValueSource, nodeUse.index(), jumpsToFail);
     }
@@ -1840,7 +1840,7 @@ private:
         m_jit.codeBlock()->appendSpeculationRecovery(recovery);
         m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), jumpToFail, this, m_jit.codeBlock()->numberOfSpeculationRecoveries()));
     }
-    void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeUse nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
+    void speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
     {
         speculationCheck(kind, jsValueSource, nodeUse.index(), jumpToFail, recovery);
     }
@@ -1872,7 +1872,7 @@ private:
         speculationCheck(kind, jsValueRegs, nodeIndex, m_jit.jump());
         m_compileOkay = false;
     }
-    void terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, NodeUse nodeUse)
+    void terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, Edge nodeUse)
     {
         terminateSpeculativeExecution(kind, jsValueRegs, nodeUse.index());
     }
@@ -1971,7 +1971,7 @@ private:
 
 class IntegerOperand {
 public:
-    explicit IntegerOperand(SpeculativeJIT* jit, NodeUse use)
+    explicit IntegerOperand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
         , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)
@@ -2023,7 +2023,7 @@ private:
 
 class DoubleOperand {
 public:
-    explicit DoubleOperand(SpeculativeJIT* jit, NodeUse use)
+    explicit DoubleOperand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
         , m_index(use.index())
         , m_fprOrInvalid(InvalidFPRReg)
@@ -2064,7 +2064,7 @@ private:
 
 class JSValueOperand {
 public:
-    explicit JSValueOperand(SpeculativeJIT* jit, NodeUse use)
+    explicit JSValueOperand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
         , m_index(use.index())
 #if USE(JSVALUE64)
@@ -2178,7 +2178,7 @@ private:
 
 class StorageOperand {
 public:
-    explicit StorageOperand(SpeculativeJIT* jit, NodeUse use)
+    explicit StorageOperand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
         , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)
@@ -2347,7 +2347,7 @@ private:
 
 class SpeculateIntegerOperand {
 public:
-    explicit SpeculateIntegerOperand(SpeculativeJIT* jit, NodeUse use)
+    explicit SpeculateIntegerOperand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
         , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)
@@ -2394,7 +2394,7 @@ private:
 
 class SpeculateStrictInt32Operand {
 public:
-    explicit SpeculateStrictInt32Operand(SpeculativeJIT* jit, NodeUse use)
+    explicit SpeculateStrictInt32Operand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
         , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)
@@ -2435,7 +2435,7 @@ private:
 
 class SpeculateDoubleOperand {
 public:
-    explicit SpeculateDoubleOperand(SpeculativeJIT* jit, NodeUse use)
+    explicit SpeculateDoubleOperand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
         , m_index(use.index())
         , m_fprOrInvalid(InvalidFPRReg)
@@ -2471,7 +2471,7 @@ private:
 
 class SpeculateCellOperand {
 public:
-    explicit SpeculateCellOperand(SpeculativeJIT* jit, NodeUse use)
+    explicit SpeculateCellOperand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
         , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)
@@ -2512,7 +2512,7 @@ private:
 
 class SpeculateBooleanOperand {
 public:
-    explicit SpeculateBooleanOperand(SpeculativeJIT* jit, NodeUse use)
+    explicit SpeculateBooleanOperand(SpeculativeJIT* jit, Edge use)
         : m_jit(jit)
         , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)

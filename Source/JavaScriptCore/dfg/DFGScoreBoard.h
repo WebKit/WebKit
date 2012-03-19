@@ -122,7 +122,7 @@ public:
             m_free.append(index);
         }
     }
-    void use(NodeUse child)
+    void use(Edge child)
     {
         use(child.indexUnchecked());
     }

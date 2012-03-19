@@ -32,9 +32,9 @@
 
 #include "CodeBlock.h"
 #include "CodeOrigin.h"
+#include "DFGAdjacencyList.h"
 #include "DFGCommon.h"
 #include "DFGNodeFlags.h"
-#include "DFGNodeReferenceBlob.h"
 #include "DFGNodeType.h"
 #include "DFGOperands.h"
 #include "DFGVariableAccessData.h"
@@ -79,7 +79,7 @@ struct Node {
     // Construct a node with up to 3 children, no immediate value.
     Node(NodeType op, CodeOrigin codeOrigin, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : codeOrigin(codeOrigin)
-        , children(NodeReferenceBlob::Fixed, child1, child2, child3)
+        , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_prediction(PredictNone)
@@ -91,7 +91,7 @@ struct Node {
     // Construct a node with up to 3 children and an immediate value.
     Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : codeOrigin(codeOrigin)
-        , children(NodeReferenceBlob::Fixed, child1, child2, child3)
+        , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm.m_value)
@@ -104,7 +104,7 @@ struct Node {
     // Construct a node with up to 3 children and two immediate values.
     Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm1, OpInfo imm2, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : codeOrigin(codeOrigin)
-        , children(NodeReferenceBlob::Fixed, child1, child2, child3)
+        , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
@@ -118,7 +118,7 @@ struct Node {
     // Construct a node with a variable number of children and two immediate values.
     Node(VarArgTag, NodeType op, CodeOrigin codeOrigin, OpInfo imm1, OpInfo imm2, unsigned firstChild, unsigned numChildren)
         : codeOrigin(codeOrigin)
-        , children(NodeReferenceBlob::Variable, firstChild, numChildren)
+        , children(AdjacencyList::Variable, firstChild, numChildren)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
@@ -634,7 +634,7 @@ struct Node {
         return !--m_refCount;
     }
     
-    NodeUse child1()
+    Edge child1()
     {
         ASSERT(!(m_flags & NodeHasVarArgs));
         return children.child1();
@@ -643,18 +643,18 @@ struct Node {
     // This is useful if you want to do a fast check on the first child
     // before also doing a check on the opcode. Use this with care and
     // avoid it if possible.
-    NodeUse child1Unchecked()
+    Edge child1Unchecked()
     {
         return children.child1Unchecked();
     }
 
-    NodeUse child2()
+    Edge child2()
     {
         ASSERT(!(m_flags & NodeHasVarArgs));
         return children.child2();
     }
 
-    NodeUse child3()
+    Edge child3()
     {
         ASSERT(!(m_flags & NodeHasVarArgs));
         return children.child3();
@@ -842,7 +842,7 @@ struct Node {
     // Used to look up exception handling information (currently implemented as a bytecode index).
     CodeOrigin codeOrigin;
     // References to up to 3 children, or links to a variable length set of children.
-    NodeReferenceBlob children;
+    AdjacencyList children;
 
 private:
     uint16_t m_op; // real type is NodeType

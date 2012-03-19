@@ -23,26 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGNodeReferenceBlob_h
-#define DFGNodeReferenceBlob_h
+#ifndef DFGAdjacencyList_h
+#define DFGAdjacencyList_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"
-#include "DFGNodeUse.h"
+#include "DFGEdge.h"
 
 namespace JSC { namespace DFG {
 
-class NodeReferenceBlob {
+class AdjacencyList {
 public:
     enum Kind {
         Fixed,
         Variable
     };
 
-    NodeReferenceBlob(Kind kind)
+    AdjacencyList(Kind kind)
 #if !ASSERT_DISABLED
         : m_kind(kind)
 #endif
@@ -53,7 +53,7 @@ public:
         }
     }
     
-    NodeReferenceBlob(Kind kind, NodeIndex child1, NodeIndex child2, NodeIndex child3)
+    AdjacencyList(Kind kind, NodeIndex child1, NodeIndex child2, NodeIndex child3)
 #if !ASSERT_DISABLED
         : m_kind(Fixed)
 #endif
@@ -62,7 +62,7 @@ public:
         initialize(child1, child2, child3);
     }
     
-    NodeReferenceBlob(Kind kind, unsigned firstChild, unsigned numChildren)
+    AdjacencyList(Kind kind, unsigned firstChild, unsigned numChildren)
 #if !ASSERT_DISABLED
         : m_kind(Variable)
 #endif
@@ -72,42 +72,42 @@ public:
         setNumChildren(numChildren);
     }
     
-    const NodeUse& child(unsigned i) const
+    const Edge& child(unsigned i) const
     {
         ASSERT(i < 3);
         ASSERT(m_kind == Fixed);
         return m_words[i];
     }    
     
-    NodeUse& child(unsigned i)
+    Edge& child(unsigned i)
     {
         ASSERT(i < 3);
         ASSERT(m_kind == Fixed);
         return m_words[i];
     }
     
-    void setChild(unsigned i, NodeUse nodeUse)
+    void setChild(unsigned i, Edge nodeUse)
     {
         ASSERT(i < 30);
         ASSERT(m_kind == Fixed);
         m_words[i] = nodeUse;
     }
     
-    NodeUse child1() const { return child(0); }
-    NodeUse child2() const { return child(1); }
-    NodeUse child3() const { return child(2); }
+    Edge child1() const { return child(0); }
+    Edge child2() const { return child(1); }
+    Edge child3() const { return child(2); }
 
-    NodeUse& child1() { return child(0); }
-    NodeUse& child2() { return child(1); }
-    NodeUse& child3() { return child(2); }
+    Edge& child1() { return child(0); }
+    Edge& child2() { return child(1); }
+    Edge& child3() { return child(2); }
     
-    void setChild1(NodeUse nodeUse) { setChild(0, nodeUse); }
-    void setChild2(NodeUse nodeUse) { setChild(1, nodeUse); }
-    void setChild3(NodeUse nodeUse) { setChild(2, nodeUse); }
+    void setChild1(Edge nodeUse) { setChild(0, nodeUse); }
+    void setChild2(Edge nodeUse) { setChild(1, nodeUse); }
+    void setChild3(Edge nodeUse) { setChild(2, nodeUse); }
     
-    NodeUse child1Unchecked() const { return m_words[0]; }
+    Edge child1Unchecked() const { return m_words[0]; }
     
-    void initialize(NodeUse child1, NodeUse child2, NodeUse child3)
+    void initialize(Edge child1, Edge child2, Edge child3)
     {
         child(0) = child1;
         child(1) = child2;
@@ -116,7 +116,7 @@ public:
     
     void initialize(NodeIndex child1, NodeIndex child2, NodeIndex child3)
     {
-        initialize(NodeUse(child1), NodeUse(child2), NodeUse(child3));
+        initialize(Edge(child1), Edge(child2), Edge(child3));
     }
 
     unsigned firstChild() const
@@ -142,7 +142,7 @@ public:
     }
     
 private:
-    NodeUse m_words[3];
+    Edge m_words[3];
 #if !ASSERT_DISABLED
     Kind m_kind;
 #endif
@@ -152,4 +152,4 @@ private:
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGNodeReferenceBlob_h
+#endif // DFGAdjacencyList_h

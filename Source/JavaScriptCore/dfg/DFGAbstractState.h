@@ -101,7 +101,7 @@ public:
         return m_nodes[nodeIndex];
     }
     
-    AbstractValue& forNode(NodeUse nodeUse)
+    AbstractValue& forNode(Edge nodeUse)
     {
         return forNode(nodeUse.index());
     }

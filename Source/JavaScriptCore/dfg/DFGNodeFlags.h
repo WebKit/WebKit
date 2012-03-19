@@ -47,10 +47,10 @@ namespace JSC { namespace DFG {
 #define NodeClobbersWorld   0x40
 #define NodeMightClobber    0x80
 #define NodeArithMask      0xF00
-#define NodeUseBottom      0x000
-#define NodeUsedAsNumber   0x100
+#define EdgeBottom      0x000
+#define EdgedAsNumber   0x100
 #define NodeNeedsNegZero   0x200
-#define NodeUsedAsMask     0x300
+#define EdgedAsMask     0x300
 #define NodeMayOverflow    0x400
 #define NodeMayNegZero     0x800
 #define NodeBehaviorMask   0xc00
@@ -59,7 +59,7 @@ typedef uint16_t NodeFlags;
 
 static inline bool nodeUsedAsNumber(NodeFlags flags)
 {
-    return !!(flags & NodeUsedAsNumber);
+    return !!(flags & EdgedAsNumber);
 }
 
 static inline bool nodeCanTruncateInteger(NodeFlags flags)

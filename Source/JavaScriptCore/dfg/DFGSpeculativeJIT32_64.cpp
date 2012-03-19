@@ -532,7 +532,7 @@ JITCompiler::Call SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg ba
     return functionCall;
 }
 
-void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, NodeUse valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
+void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR, GPRReg valueTagGPR, GPRReg valuePayloadGPR, Edge valueUse, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
 {
     m_jit.beginUninterruptedSequence();
     JITCompiler::DataLabelPtr structureToCompare;
@@ -576,7 +576,7 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg basePayloadGPR,
     m_jit.addPropertyAccess(PropertyAccessRecord(codeOrigin, structureToCompare, functionCall, structureCheck, JITCompiler::DataLabelCompact(tagStoreWithPatch.label()), JITCompiler::DataLabelCompact(payloadStoreWithPatch.label()), slowCase, doneLabel, safeCast<int8_t>(basePayloadGPR), safeCast<int8_t>(valueTagGPR), safeCast<int8_t>(valuePayloadGPR), safeCast<int8_t>(scratchGPR)));
 }
 
-void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull(NodeUse operand, bool invert)
+void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull(Edge operand, bool invert)
 {
     JSValueOperand arg(this, operand);
     GPRReg argTagGPR = arg.tagGPR();
@@ -608,7 +608,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull(NodeUse operand, bool 
     booleanResult(resultPayloadGPR, m_compileIndex);
 }
 
-void SpeculativeJIT::nonSpeculativePeepholeBranchNull(NodeUse operand, NodeIndex branchNodeIndex, bool invert)
+void SpeculativeJIT::nonSpeculativePeepholeBranchNull(Edge operand, NodeIndex branchNodeIndex, bool invert)
 {
     Node& branchNode = at(branchNodeIndex);
     BlockIndex taken = branchNode.takenBlockIndex();
@@ -650,7 +650,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNull(NodeUse operand, NodeIndex
     jump(notTaken);
 }
 
-bool SpeculativeJIT::nonSpeculativeCompareNull(Node& node, NodeUse operand, bool invert)
+bool SpeculativeJIT::nonSpeculativeCompareNull(Node& node, Edge operand, bool invert)
 {
     unsigned branchIndexInBlock = detectPeepHoleBranch();
     if (branchIndexInBlock != UINT_MAX) {
@@ -908,11 +908,11 @@ void SpeculativeJIT::emitCall(Node& node)
 
     CallLinkInfo::CallType callType = node.op() == Call ? CallLinkInfo::Call : CallLinkInfo::Construct;
 
-    NodeUse calleeNodeUse = m_jit.graph().m_varArgChildren[node.firstChild()];
-    JSValueOperand callee(this, calleeNodeUse);
+    Edge calleeEdge = m_jit.graph().m_varArgChildren[node.firstChild()];
+    JSValueOperand callee(this, calleeEdge);
     GPRReg calleeTagGPR = callee.tagGPR();
     GPRReg calleePayloadGPR = callee.payloadGPR();
-    use(calleeNodeUse);
+    use(calleeEdge);
 
     // The call instruction's first child is either the function (normal call) or the
     // receiver (method call). subsequent children are the arguments.
@@ -924,11 +924,11 @@ void SpeculativeJIT::emitCall(Node& node)
     m_jit.store32(calleeTagGPR, callFrameTagSlot(RegisterFile::Callee));
 
     for (int i = 0; i < numPassedArgs; i++) {
-        NodeUse argNodeUse = m_jit.graph().m_varArgChildren[node.firstChild() + 1 + i];
-        JSValueOperand arg(this, argNodeUse);
+        Edge argEdge = m_jit.graph().m_varArgChildren[node.firstChild() + 1 + i];
+        JSValueOperand arg(this, argEdge);
         GPRReg argTagGPR = arg.tagGPR();
         GPRReg argPayloadGPR = arg.payloadGPR();
-        use(argNodeUse);
+        use(argEdge);
 
         m_jit.store32(argTagGPR, argumentTagSlot(i + dummyThisArgument));
         m_jit.store32(argPayloadGPR, argumentPayloadSlot(i + dummyThisArgument));
@@ -1447,7 +1447,7 @@ void SpeculativeJIT::compileValueAdd(Node& node)
     jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
 }
 
-void SpeculativeJIT::compileObjectOrOtherLogicalNot(NodeUse nodeUse, const ClassInfo* classInfo, bool needSpeculationCheck)
+void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse, const ClassInfo* classInfo, bool needSpeculationCheck)
 {
     JSValueOperand value(this, nodeUse);
     GPRTemporary resultPayload(this);
@@ -1535,7 +1535,7 @@ void SpeculativeJIT::compileLogicalNot(Node& node)
     booleanResult(resultPayloadGPR, m_compileIndex, UseChildrenCalledExplicitly);
 }
 
-void SpeculativeJIT::emitObjectOrOtherBranch(NodeUse nodeUse, BlockIndex taken, BlockIndex notTaken, const ClassInfo* classInfo, bool needSpeculationCheck)
+void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BlockIndex taken, BlockIndex notTaken, const ClassInfo* classInfo, bool needSpeculationCheck)
 {
     JSValueOperand value(this, nodeUse);
     GPRTemporary scratch(this);

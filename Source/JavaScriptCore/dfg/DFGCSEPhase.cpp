@@ -63,7 +63,7 @@ private:
         
         return nodeIndex;
     }
-    NodeIndex canonicalize(NodeUse nodeUse)
+    NodeIndex canonicalize(Edge nodeUse)
     {
         return canonicalize(nodeUse.indexUnchecked());
     }
@@ -470,7 +470,7 @@ private:
         return NoNode;
     }
     
-    void performSubstitution(NodeUse& child, bool addRef = true)
+    void performSubstitution(Edge& child, bool addRef = true)
     {
         // Check if this operand is actually unused.
         if (!child)

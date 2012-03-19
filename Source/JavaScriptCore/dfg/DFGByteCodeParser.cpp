@@ -626,7 +626,7 @@ private:
 
     void addVarArgChild(NodeIndex child)
     {
-        m_graph.m_varArgChildren.append(NodeUse(child));
+        m_graph.m_varArgChildren.append(Edge(child));
         m_numPassedVarArgs++;
     }
     
@@ -2404,7 +2404,7 @@ void ByteCodeParser::processPhiStack()
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 dataLog("      Setting @%u->child1 = @%u.\n", entry.m_phi, valueInPredecessor);
 #endif
-                phiNode->children.setChild1(NodeUse(valueInPredecessor));
+                phiNode->children.setChild1(Edge(valueInPredecessor));
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 dataLog("      Children of @%u: ", entry.m_phi);
                 phiNode->dumpChildren(WTF::dataFile());
@@ -2416,7 +2416,7 @@ void ByteCodeParser::processPhiStack()
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 dataLog("      Setting @%u->child2 = @%u.\n", entry.m_phi, valueInPredecessor);
 #endif
-                phiNode->children.setChild2(NodeUse(valueInPredecessor));
+                phiNode->children.setChild2(Edge(valueInPredecessor));
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 dataLog("      Children of @%u: ", entry.m_phi);
                 phiNode->dumpChildren(WTF::dataFile());
@@ -2428,7 +2428,7 @@ void ByteCodeParser::processPhiStack()
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 dataLog("      Setting @%u->child3 = @%u.\n", entry.m_phi, valueInPredecessor);
 #endif
-                phiNode->children.setChild3(NodeUse(valueInPredecessor));
+                phiNode->children.setChild3(Edge(valueInPredecessor));
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 dataLog("      Children of @%u: ", entry.m_phi);
                 phiNode->dumpChildren(WTF::dataFile());
