@@ -1,0 +1,33 @@
+layer at (0,0) size 784x4260
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x4260
+  RenderBlock {HTML} at (0,0) size 784x4260
+    RenderBody {BODY} at (8,8) size 768x4242
+      RenderBlock {DIV} at (0,0) size 768x116
+        RenderBlock (anonymous) at (0,0) size 768x42
+          RenderText {#text} at (0,0) size 746x42
+            text run at (0,0) width 652: "Test how many resize events are emitted during page load and dynamic content generation. "
+            text run at (652,0) width 94: "Do not resize"
+            text run at (0,21) width 218: "the page. It invalidates the test."
+        RenderBlock {P} at (0,58) size 768x58
+          RenderBlock (anonymous) at (0,0) size 768x21
+            RenderText {#text} at (10,0) size 206x21
+              text run at (10,0) width 206: "Resize events (should be 0): "
+            RenderInline {SPAN} at (0,0) size 9x21
+              RenderText {#text} at (216,0) size 9x21
+                text run at (216,0) width 9: "0"
+            RenderText {#text} at (0,0) size 0x0
+          RenderBlock {P} at (0,37) size 768x21 [color=#008000]
+            RenderText {#text} at (10,0) size 44x21
+              text run at (10,0) width 44: "PASS"
+      RenderBlock {DIV} at (0,132) size 768x4110
+        RenderBlock {DIV} at (10,0) size 748x402 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (10,412) size 748x402 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (10,824) size 748x402 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (10,1236) size 748x402 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (10,1648) size 748x402 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (10,2060) size 748x402 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (10,2472) size 748x402 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (10,2884) size 748x402 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (10,3296) size 748x402 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (10,3708) size 748x402 [border: (1px solid #000000)]
