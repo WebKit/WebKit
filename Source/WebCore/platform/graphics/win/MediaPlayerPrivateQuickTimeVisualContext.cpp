@@ -108,6 +108,7 @@ private:
     virtual bool platformCALayerDrawsContent() const { return false; }
     virtual void platformCALayerLayerDidDisplay(PlatformLayer*) { }
     virtual void platformCALayerDidCreateTiles() { }
+    virtual float platformCALayerDeviceScaleFactor() { return 1; }
 
     MediaPlayerPrivateQuickTimeVisualContext* m_parent;
 };
