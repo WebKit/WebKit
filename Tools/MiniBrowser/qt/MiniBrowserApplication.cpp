@@ -261,6 +261,7 @@ static void printHelp(const QString& programName)
          << "[--window-size (width)x(height)]"
          << "[--maximize]"
          << "[-f]                                    Full screen mode."
+         << "[--user-agent string]"
          << "[-v]"
          << "URL";
 }
@@ -288,6 +289,9 @@ void MiniBrowserApplication::handleUserOptions()
     m_windowOptions.setPrintLoadedUrls(takeOptionFlag(&args, "-v"));
     m_windowOptions.setStartMaximized(takeOptionFlag(&args, "--maximize"));
     m_windowOptions.setStartFullScreen(takeOptionFlag(&args, "-f"));
+
+    if (args.contains("--user-agent"))
+        m_windowOptions.setUserAgent(takeOptionValue(&args, "--user-agent"));
 
     if (args.contains("--window-size")) {
         QString value = takeOptionValue(&args, "--window-size");

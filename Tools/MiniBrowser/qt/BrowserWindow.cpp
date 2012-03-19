@@ -63,11 +63,19 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
             resize(options->requestedWindowSize());
         show();
     }
+
+    if (!options->userAgent().isNull())
+        webViewExperimental()->setUserAgent(options->userAgent());
 }
 
 QQuickWebView* BrowserWindow::webView() const
 {
     return rootObject()->property("webview").value<QQuickWebView*>();
+}
+
+QQuickWebViewExperimental* BrowserWindow::webViewExperimental() const
+{
+    return webView()->property("experimental").value<QQuickWebViewExperimental*>();
 }
 
 void BrowserWindow::load(const QString& url)

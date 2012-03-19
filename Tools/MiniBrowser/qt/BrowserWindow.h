@@ -34,6 +34,7 @@
 #include <QtQuick/QQuickView>
 
 class QQuickWebView;
+class QQuickWebViewExperimental;
 
 class BrowserWindow : public QQuickView {
     Q_OBJECT
@@ -45,6 +46,7 @@ public:
     void reload();
     void focusAddressBar();
     QQuickWebView* webView() const;
+    QQuickWebViewExperimental* webViewExperimental() const;
 
     void updateVisualMockTouchPoints(const QList<QTouchEvent::TouchPoint>& touchPoints);
 

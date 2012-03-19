@@ -64,6 +64,8 @@ public:
     bool startFullScreen() const { return m_startFullScreen; }
     void setRequestedWindowSize(const QSize& size) { m_windowSize = size; }
     QSize requestedWindowSize() const { return m_windowSize; }
+    void setUserAgent(const QString& userAgent) { m_userAgent = userAgent; }
+    QString userAgent() const { return m_userAgent; }
     bool touchMockingEnabled() const { return m_touchMockingEnabled; }
     void setTouchMockingEnabled(bool enabled)
     {
@@ -82,6 +84,7 @@ private:
     bool m_startFullScreen;
     bool m_touchMockingEnabled;
     QSize m_windowSize;
+    QString m_userAgent;
 };
 
 class MiniBrowserApplication : public QGuiApplication {
