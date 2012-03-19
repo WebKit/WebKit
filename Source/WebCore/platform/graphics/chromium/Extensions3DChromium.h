@@ -103,9 +103,20 @@ public:
     void setVisibilityCHROMIUM(bool);
 
     // GL_CHROMIUM_gpu_memory_manager
+    struct GpuMemoryAllocationCHROMIUM {
+        size_t gpuResourceSizeInBytes;
+        bool suggestHaveBackbuffer;
+
+        GpuMemoryAllocationCHROMIUM(size_t gpuResourceSizeInBytes, bool suggestHaveBackbuffer)
+            : gpuResourceSizeInBytes(gpuResourceSizeInBytes)
+            , suggestHaveBackbuffer(suggestHaveBackbuffer)
+        {
+        }
+    };
     class GpuMemoryAllocationChangedCallbackCHROMIUM {
     public:
-        virtual void onGpuMemoryAllocationChanged(size_t gpuResourceSizeInBytes) = 0;
+
+        virtual void onGpuMemoryAllocationChanged(GpuMemoryAllocationCHROMIUM) = 0;
         virtual ~GpuMemoryAllocationChangedCallbackCHROMIUM() { }
     };
     void setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<GpuMemoryAllocationChangedCallbackCHROMIUM>);

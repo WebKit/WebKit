@@ -1,3 +1,15 @@
+2012-03-19  Michal Mocny  <mmocny@google.com>
+
+        [chromium] Updating WebGraphicsContext3D MemoryAllocation callback to accept a struct with have backbuffer suggestion.
+        https://bugs.webkit.org/show_bug.cgi?id=81279
+
+        Reviewed by James Robinson.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GrMemoryAllocationChangedCallback::onGpuMemoryAllocationChanged):
+        (WebCore::GraphicsContext3DMemoryAllocationChangedCallbackAdapter::onMemoryAllocationChanged):
+        (GraphicsContext3DMemoryAllocationChangedCallbackAdapter):
+
 2012-03-19  David Reveman  <reveman@chromium.org>
 
         [Chromium] GL_EXT_occlusion_query_boolean and GL_CHROMIUM_command_buffer_query support.

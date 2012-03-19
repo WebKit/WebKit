@@ -174,13 +174,13 @@ public:
     {
     }
 
-    virtual void onGpuMemoryAllocationChanged(size_t gpuResourceSizeInBytes)
+    virtual void onGpuMemoryAllocationChanged(Extensions3DChromium::GpuMemoryAllocationCHROMIUM allocation)
     {
         GrContext* context = m_context->grContext();
         if (!context)
             return;
 
-        if (!gpuResourceSizeInBytes) {
+        if (!allocation.gpuResourceSizeInBytes) {
             context->freeGpuResources();
             context->setTextureCacheLimits(0, 0);
         } else
@@ -1368,8 +1368,14 @@ public:
 
     virtual void onMemoryAllocationChanged(size_t gpuResourceSizeInBytes)
     {
+        // FIXME: Remove this once clients start using WebGraphicsMemoryAllocation exclusively.
+        onMemoryAllocationChanged(WebKit::WebGraphicsMemoryAllocation(gpuResourceSizeInBytes, true));
+    }
+
+    virtual void onMemoryAllocationChanged(WebKit::WebGraphicsMemoryAllocation allocation)
+    {
         if (m_memoryAllocationChangedCallback)
-            m_memoryAllocationChangedCallback->onGpuMemoryAllocationChanged(gpuResourceSizeInBytes);
+            m_memoryAllocationChangedCallback->onGpuMemoryAllocationChanged(Extensions3DChromium::GpuMemoryAllocationCHROMIUM(allocation.gpuResourceSizeInBytes, allocation.suggestHaveBackbuffer));
     }
 
 private:

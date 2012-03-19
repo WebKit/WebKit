@@ -32,6 +32,7 @@
 #define WebGraphicsContext3D_h
 
 #include "WebCommon.h"
+#include "WebGraphicsMemoryAllocation.h"
 #include "WebNonCopyable.h"
 #include "WebString.h"
 
@@ -129,7 +130,10 @@ public:
 
     class WebGraphicsMemoryAllocationChangedCallbackCHROMIUM {
     public:
+        // FIXME: Remove this once we switch to WebGraphicsMemoryAllocation version.
         virtual void onMemoryAllocationChanged(size_t gpuResourceSizeInBytes) = 0;
+        // FIXME: Make this pure virtual once we implement everywhere.
+        virtual void onMemoryAllocationChanged(WebGraphicsMemoryAllocation) { }
 
     protected:
         virtual ~WebGraphicsMemoryAllocationChangedCallbackCHROMIUM() { }
