@@ -1,3 +1,18 @@
+2012-03-19  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        [EFL] jhbuild: Set CMAKE_PREFIX_PATH in jhbuildrc.
+        https://bugs.webkit.org/show_bug.cgi?id=81491
+
+        Reviewed by Philippe Normand.
+
+        For the find_path(), find_library() etc CMake calls to find the
+        dependencies built with jhbuild, CMAKE_PREFIX_PATH must be properly
+        set, otherwise CMake cannot know the dependencies exist and will only
+        look in the standard directories.
+
+        * efl/jhbuildrc: Set the CMAKE_PREFIX_PATH environment variable with
+        the jhbuild Root directory.
+
 2012-03-19  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         [EFL] Add XDG env vars to jhbuildrc
