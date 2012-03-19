@@ -571,6 +571,9 @@ WONTFIX SKIP : storage/indexeddb/database-quota.html = TEXT
 // need to implement this.
 WONTFIX : platform/win/inverted-colors/non-composited.html = IMAGE+TEXT
 
+// Test for BlackBerry port only
+WONTFIX SKIP : platform/blackberry/editing/text-iterator/findString-markers.html = PASS TIMEOUT FAIL
+
 // -----------------------------------------------------------------
 // LIGHTTPD
 // -----------------------------------------------------------------

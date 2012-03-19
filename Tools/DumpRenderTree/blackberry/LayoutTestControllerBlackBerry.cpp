@@ -848,7 +848,7 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
         else if (JSStringIsEqualToUTF8CString(optionName.get(), "StartInSelection"))
             options |= WebCore::StartInSelection;
     }
-    return BlackBerry::WebKit::DumpRenderTree::currentInstance()->findString(nameStr, options);
+    return BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->findNextString(nameStr.utf8().data(), !(options | WebCore::Backwards));
 }
 
 void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)

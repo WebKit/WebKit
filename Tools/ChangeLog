@@ -1,3 +1,16 @@
+2012-03-19  Andy Chen  <andchen@rim.com>
+
+        [BlackBerry] Add new layout test for text match marker
+        https://bugs.webkit.org/show_bug.cgi?id=81531
+
+        Make the LayoutTestControllerBlackBerry::findString to test the
+        BlackBerry port implementation.
+
+        Reviewed by Rob Buis.
+
+        * DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp:
+        (LayoutTestController::findString):
+
 2012-03-19  Ojan Vafai  <ojan@chromium.org>
 
         Don't show WONTFIX tests in garden-o-matic
