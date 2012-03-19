@@ -21,6 +21,9 @@ PASS obj.foo is 1
 PASS Object.isFrozen(func) is true
 PASS func.prototype === 42 is false
 PASS Object.getOwnPropertyDescriptor(func, "prototype").writable is false
+PASS Object.isFrozen(strictFunc) is true
+PASS strictFunc.prototype === 42 is false
+PASS Object.getOwnPropertyDescriptor(strictFunc, "prototype").writable is false
 PASS Object.isFrozen(array) is true
 PASS array[0] is 0
 PASS Object.getOwnPropertyDescriptor(array, "length").writable is false
@@ -28,6 +31,10 @@ PASS Object.isFrozen(args) is true
 PASS args[0] is 0
 PASS Object.getOwnPropertyDescriptor(args, "length").writable is false
 PASS Object.getOwnPropertyDescriptor(args, "callee").writable is false
+PASS preventExtensionsFreezeIsFrozen(function foo(){}) is true
+PASS preventExtensionsFreezeIsFrozen(function foo(){ "use strict"; }) is true
+PASS preventExtensionsFreezeIsFrozen([0,1,2]) is true
+PASS preventExtensionsFreezeIsFrozen((function(){ return arguments; })(0,1,2)) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

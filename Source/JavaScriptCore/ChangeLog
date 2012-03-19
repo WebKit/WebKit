@@ -1,3 +1,22 @@
+2012-03-19  Gavin Barraclough  <barraclough@apple.com>
+
+        Object.freeze broken on latest Nightly
+        https://bugs.webkit.org/show_bug.cgi?id=80577
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::defineOwnProperty):
+            - defineOwnProperty was checking for correct behaviour, provided that length/callee hadn't
+            been overrridden. instead, just reify length/callee & rely on JSObject::defineOwnProperty.
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::defineOwnProperty):
+            - for arguments/caller/length properties, defineOwnProperty was incorrectly asserting that
+            the object must be extensible; this is incorrect since these properties should already exist
+            on the object. In addition, it was asserting that the arguments/caller values must match the
+            corresponding magic data properties, but for strict mode function this is incorrect. Instead,
+            just reify the arguments/caller accessor & defer to JSObject::defineOwnProperty.
+
 2012-03-19  Filip Pizlo  <fpizlo@apple.com>
 
         LLInt get_by_pname slow path incorrectly assumes that the operands are not constants

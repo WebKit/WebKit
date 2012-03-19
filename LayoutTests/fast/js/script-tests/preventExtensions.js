@@ -96,6 +96,13 @@ func.prototype = 42;
 shouldBeFalse('func.prototype === 42');
 shouldBeFalse('Object.getOwnPropertyDescriptor(func, "prototype").writable')
 
+// Check that freezing a strict function works correctly.
+var strictFunc = freeze(function foo(){ "use strict"; });
+shouldBeTrue('Object.isFrozen(strictFunc)')
+strictFunc.prototype = 42;
+shouldBeFalse('strictFunc.prototype === 42');
+shouldBeFalse('Object.getOwnPropertyDescriptor(strictFunc, "prototype").writable')
+
 // Check that freezing array objects works correctly.
 var array = freeze([0,1,2]);
 shouldBeTrue('Object.isFrozen(array)')
@@ -110,3 +117,16 @@ args[0] = 3;
 shouldBe('args[0]', '0');
 shouldBeFalse('Object.getOwnPropertyDescriptor(args, "length").writable')
 shouldBeFalse('Object.getOwnPropertyDescriptor(args, "callee").writable')
+
+// Check that freeze still works if preventExtensions has been called on the object.
+function preventExtensionsFreezeIsFrozen(x)
+{
+    Object.preventExtensions(x);
+    Object.freeze(x);
+    return Object.isFrozen(x);
+}
+shouldBeTrue('preventExtensionsFreezeIsFrozen(function foo(){})')
+shouldBeTrue('preventExtensionsFreezeIsFrozen(function foo(){ "use strict"; })')
+shouldBeTrue('preventExtensionsFreezeIsFrozen([0,1,2])')
+shouldBeTrue('preventExtensionsFreezeIsFrozen((function(){ return arguments; })(0,1,2))')
+
