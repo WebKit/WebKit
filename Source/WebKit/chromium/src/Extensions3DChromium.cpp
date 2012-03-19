@@ -160,6 +160,41 @@ void Extensions3DChromium::texStorage2DEXT(unsigned int target, int levels, unsi
     m_private->texStorage2DEXT(target, levels, internalFormat, width, height);
 }
 
+Platform3DObject Extensions3DChromium::createQueryEXT()
+{
+    return m_private->createQueryEXT();
+}
+
+void Extensions3DChromium::deleteQueryEXT(Platform3DObject query)
+{
+    m_private->deleteQueryEXT(query);
+}
+
+GC3Dboolean Extensions3DChromium::isQueryEXT(Platform3DObject query)
+{
+    return m_private->isQueryEXT(query);
+}
+
+void Extensions3DChromium::beginQueryEXT(GC3Denum target, Platform3DObject query)
+{
+    m_private->beginQueryEXT(target, query);
+}
+
+void Extensions3DChromium::endQueryEXT(GC3Denum target)
+{
+    m_private->endQueryEXT(target);
+}
+
+void Extensions3DChromium::getQueryivEXT(GC3Denum target, GC3Denum pname, GC3Dint* params)
+{
+    m_private->getQueryivEXT(target, pname, params);
+}
+
+void Extensions3DChromium::getQueryObjectuivEXT(Platform3DObject query, GC3Denum pname, GC3Duint* params)
+{
+    m_private->getQueryObjectuivEXT(query, pname, params);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

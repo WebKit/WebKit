@@ -255,6 +255,14 @@ public:
     virtual void texStorage2DEXT(WGC3Denum target, WGC3Dint levels, WGC3Duint internalformat,
                                  WGC3Dint width, WGC3Dint height) { }
 
+    virtual WebGLId createQueryEXT() { return 1; }
+    virtual void deleteQueryEXT(WebGLId) { }
+    virtual GC3Dboolean isQueryEXT(WebGLId) { return true; }
+    virtual void beginQueryEXT(GC3Denum, WebGLId) { }
+    virtual void endQueryEXT(GC3Denum) { }
+    virtual void getQueryivEXT(GC3Denum, GC3Denum, GC3Dint*) { }
+    virtual void getQueryObjectuivEXT(WebGLId, GC3Denum, GC3Duint*) { }
+
 protected:
     Attributes m_attrs;
 };

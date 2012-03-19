@@ -307,6 +307,15 @@ public:
     // GL_EXT_texture_storage
     void texStorage2DEXT(GC3Denum target, GC3Dint levels, GC3Duint internalformat, GC3Dint width, GC3Dint height);
 
+    // GL_EXT_occlusion_query
+    Platform3DObject createQueryEXT();
+    void deleteQueryEXT(Platform3DObject);
+    GC3Dboolean isQueryEXT(Platform3DObject);
+    void beginQueryEXT(GC3Denum, Platform3DObject);
+    void endQueryEXT(GC3Denum);
+    void getQueryivEXT(GC3Denum, GC3Denum, GC3Dint*);
+    void getQueryObjectuivEXT(Platform3DObject, GC3Denum, GC3Duint*);
+
 private:
     GraphicsContext3DPrivate(PassOwnPtr<WebKit::WebGraphicsContext3D>, bool preserveDrawingBuffer);
 
