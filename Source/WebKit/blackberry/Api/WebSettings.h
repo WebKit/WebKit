@@ -95,7 +95,7 @@ public:
     bool downloadableBinaryFontsEnabled() const;
 
     WebString userAgentString() const;
-    void setUserAgentString(const char*);
+    void setUserAgentString(const WebString&);
 
     WebString defaultTextEncodingName() const;
     void setDefaultTextEncodingName(const char*);

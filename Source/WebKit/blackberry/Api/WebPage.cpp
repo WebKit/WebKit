@@ -102,6 +102,7 @@
 #if ENABLE(WEBDOM)
 #include "WebDOMDocument.h"
 #endif
+#include "WebKitVersion.h"
 #include "WebPageClient.h"
 #include "WebSocket.h"
 #include "npapi.h"
@@ -122,6 +123,7 @@
 #include "WebPageCompositor_p.h"
 #endif
 
+#include <BlackBerryPlatformDeviceInfo.h>
 #include <BlackBerryPlatformExecutableMessage.h>
 #include <BlackBerryPlatformITPolicy.h>
 #include <BlackBerryPlatformKeyboardEvent.h>
@@ -335,6 +337,12 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_hasInRegionScrollableAreas(false)
     , m_updateDelegatedOverlaysDispatched(false)
 {
+    static bool isInitialized = false;
+    if (!isInitialized) {
+        isInitialized = true;
+        BlackBerry::Platform::DeviceInfo::instance();
+        defaultUserAgent();
+    }
 }
 
 WebPage::WebPage(WebPageClient* client, const WebString& pageGroupName, const Platform::IntRect& rect)
@@ -447,6 +455,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     m_page->setCustomHTMLTokenizerTimeDelay(0.3);
 
     m_webSettings = WebSettings::createFromStandardSettings();
+    m_webSettings->setUserAgentString(defaultUserAgent());
 
     // FIXME: We explicitly call setDelegate() instead of passing ourself in createFromStandardSettings()
     // so that we only get one didChangeSettings() callback when we set the page group name. This causes us
@@ -5665,6 +5674,25 @@ void WebPagePrivate::frameUnloaded(const Frame* frame)
 {
     m_inputHandler->frameUnloaded(frame);
     m_inPageSearchManager->frameUnloaded(frame);
+}
+
+const String& WebPagePrivate::defaultUserAgent()
+{
+    static String* defaultUserAgent = new String;
+    if (defaultUserAgent->isEmpty()) {
+        BlackBerry::Platform::DeviceInfo* info = BlackBerry::Platform::DeviceInfo::instance();
+        char uaBuffer[256];
+        int uaSize = snprintf(uaBuffer, 256, "Mozilla/5.0 (%s) AppleWebKit/%d.%d+ (KHTML, like Gecko) Version/%s %sSafari/%d.%d+",
+            info->family(), WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, info->osVersion(),
+            info->isMobile() ? "Mobile " : "", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
+
+        if (uaSize <= 0 || uaSize >= 256)
+            BLACKBERRY_CRASH();
+
+        defaultUserAgent->append(uaBuffer);
+    }
+
+    return *defaultUserAgent;
 }
 
 }

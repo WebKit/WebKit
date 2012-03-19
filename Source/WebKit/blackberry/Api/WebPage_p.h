@@ -399,6 +399,7 @@ public:
     static WebCore::RenderLayer* enclosingFixedPositionedAncestorOrSelfIfFixedPositioned(WebCore::RenderLayer*);
 
     static WebCore::IntSize defaultMaxLayoutSize();
+    static const String& defaultUserAgent();
 
     void setVisible(bool);
 #if ENABLE(PAGE_VISIBILITY_API)

@@ -1,3 +1,30 @@
+2012-03-19  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] Use BlackBerry::Platform::DeviceInfo to generate UserAgent
+        https://bugs.webkit.org/show_bug.cgi?id=81269
+
+        Generate the UserAgent lazily, using it as the default for the
+        WebSettings object. BlackBerry::Platform::DeviceInfo is used
+        to ensure the information is accurate to the specific device.
+
+        Remove the !isEmpty() assert when fetching the UA from the
+        WebSettings object, as it will now always be properly initialized.
+
+        Add a static initializer block to ensure defaultUserAgent() is
+        thread-safe from that moment onward.
+
+        Reviewed by Rob Buis.
+
+        * Api/WebPage.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPagePrivate::defaultUserAgent):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * Api/WebSettings.cpp:
+        (BlackBerry::WebKit::WebSettings::setUserAgentString):
+        * Api/WebSettings.h:
+
 2012-03-19  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Input fields with id of e-mail and url should be styled as such.

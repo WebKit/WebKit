@@ -396,17 +396,10 @@ void WebSettings::setStandardFontFamily(const char* standardFontFamily)
 
 WebString WebSettings::userAgentString() const
 {
-    // FIXME: Is this the best place for this assertion. Why can't we just return an empty string
-    // and let the caller decide how to handle it?
-
-    // The default user agent string is empty. We rely upon the client to set this for us.
-    // We check this by asserting if the client has not done so before the first time it is needed.
-    String userAgentString = m_private->getString(BlackBerryUserAgentString);
-    ASSERT(!userAgentString.isEmpty());
-    return userAgentString;
+    return m_private->getString(BlackBerryUserAgentString);
 }
 
-void WebSettings::setUserAgentString(const char* userAgentString)
+void WebSettings::setUserAgentString(const WebString& userAgentString)
 {
     m_private->setString(BlackBerryUserAgentString, userAgentString);
 }
