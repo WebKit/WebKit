@@ -1,3 +1,16 @@
+2012-03-19  Ojan Vafai  <ojan@chromium.org>
+
+        Make the selected item in the accordion a link to the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=81571
+
+        Reviewed by Dimitri Glazkov.
+
+        Also, make it so that you can select the text of the link, instead of the current behavior
+        of acting as if you had clicked on the accordion header.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/results.css:
+
 2012-03-19  Dirk Pranke  <dpranke@chromium.org>
 
         NRWT runs some tests that are skipped with -i command line option

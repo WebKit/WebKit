@@ -78,3 +78,14 @@
     width: 100%;
     height: auto;
 }
+
+.ui-state-default .link-title, .ui-state-default .link-title:link, .ui-state-default .link-title:visited {
+    display: none;
+}
+.ui-state-active .link-title, .ui-state-active .link-title:link, .ui-state-active .link-title:visited {
+    text-decoration: underline;
+    display: inline-block;
+}
+.ui-state-active .non-link-title, .ui-state-active .non-link-title:link, .ui-state-active .non-link-title:visited {
+    display: none;
+}

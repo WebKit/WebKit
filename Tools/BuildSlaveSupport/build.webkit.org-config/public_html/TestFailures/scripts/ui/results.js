@@ -173,13 +173,18 @@ ui.results.TestSelector = base.extends('div', {
         this._length = 0;
 
         Object.keys(resultsByTest).sort().forEach(function(testName) {
-            var link = document.createElement('a');
-            $(link).attr('href', '#').text(testName);
+            var nonLinkTitle = document.createElement('a');
+            $(nonLinkTitle).addClass('non-link-title');
+            $(nonLinkTitle).attr('href', "#").text(testName);
+
+            var linkTitle = document.createElement('a');
+            $(linkTitle).addClass('link-title');
+            $(linkTitle).attr('href', ui.urlForFlakinessDashboard([testName])).text(testName);
 
             var header = document.createElement('h3');
             $(header).append(new ui.actions.List([
                 new ui.actions.Rebaseline().makeDefault(),
-            ])).append(link);
+            ])).append(nonLinkTitle).append(linkTitle);
             this.appendChild(header);
             this.appendChild(this._delegate.contentForTest(testName));
             ++this._length; // There doesn't seem to be any good way to get this information from accordion.
@@ -188,8 +193,15 @@ ui.results.TestSelector = base.extends('div', {
         $(this).accordion({
             collapsible: true,
             autoHeight: false,
+            event: 'customaccordianclick',
         });
         $(this).accordion('activate', false);
+
+        // jQuery's builtin accordion overrides mousedown, which means you can't select the header text
+        // or click on the link to the flakiness dashboard.
+        $('.ui-accordion-header').live('click', function() {
+            $(this).trigger('customaccordianclick');
+        })
     },
     nextResult: function()
     {
@@ -236,7 +248,7 @@ ui.results.TestSelector = base.extends('div', {
     currentTestName: function()
     {
         var currentIndex = $(this).accordion('option', 'active');
-        return $('h3 a', this)[currentIndex].textContent;
+        return $('h3 .non-link-title', this)[currentIndex].textContent;
     }
 });
 
