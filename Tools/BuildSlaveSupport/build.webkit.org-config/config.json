@@ -285,7 +285,7 @@
                     },
                     {
                       "name": "EFL Linux Release", "type": "BuildAndTest", "builddir": "efl-linux-release",
-                      "platform": "efl", "configuration": "release", "architectures": ["i386"],
+                      "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["efl-linux-slave-1"]
                     }
                   ],

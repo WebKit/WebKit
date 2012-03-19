@@ -1,3 +1,14 @@
+2012-03-19  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Adjust architecture type of the EFL build bot.
+        https://bugs.webkit.org/show_bug.cgi?id=81452
+
+        Reviewed by Tony Chang.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: The
+        buildslave is a 64-bit machine, therefore describe it as being
+        x86_64, not i386.
+
 2012-03-19  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] printLoadedUrls prints "Object" instead of the actual URL.
