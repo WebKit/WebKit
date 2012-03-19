@@ -52,12 +52,18 @@ static void setLoadsImagesAutomaticallyInAllFrames(Page* page)
         frame->document()->cachedResourceLoader()->setAutoLoadImages(page->settings()->loadsImagesAutomatically());
 }
 
+// Sets the entry in the font map for the given script. If family is the empty string, removes the entry instead.
 static inline void setGenericFontFamilyMap(ScriptFontFamilyMap& fontMap, const AtomicString& family, UScriptCode script, Page* page)
 {
     ScriptFontFamilyMap::iterator it = fontMap.find(static_cast<int>(script));
-    if (it != fontMap.end() && it->second == family)
+    if (family.isEmpty()) {
+        if (it == fontMap.end())
+            return;
+        fontMap.remove(it);
+    } else if (it != fontMap.end() && it->second == family)
         return;
-    fontMap.set(static_cast<int>(script), family);
+    else
+        fontMap.set(static_cast<int>(script), family);
     page->setNeedsRecalcStyleInAllFrames();
 }
 
