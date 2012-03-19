@@ -33,9 +33,6 @@
 
 namespace WebCore {
 
-const int intMaxForLength = 0x7ffffff; // max value for a 28-bit int
-const int intMinForLength = (-0x7ffffff - 1); // min value for a 28-bit int
-
 enum LengthType { Auto, Relative, Percent, Fixed, Intrinsic, MinIntrinsic, Calculated, Undefined };
  
 class CalculationValue;    

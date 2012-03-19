@@ -266,8 +266,8 @@ void AutoTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, Layout
         minWidth = max<int>(minWidth, tableLogicalWidth.value());
         maxWidth = minWidth;
     } else if (!remainingPercent && maxNonPercent) {
-        // if there was no remaining percent, maxWidth is invalid.
-        maxWidth = intMaxForLength;        
+        // if there was no remaining percent, maxWidth is invalid
+        maxWidth = std::numeric_limits<LayoutUnit>::max();
     }
 
     Length tableLogicalMinWidth = m_table->style()->logicalMinWidth();

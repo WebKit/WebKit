@@ -448,7 +448,7 @@ public:
             // handle this case
             return;
         } else
-            radiusWidth = Length(max(intMinForLength, min(intMaxForLength, pair->first()->computeLength<int>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()))), Fixed);
+            radiusWidth = pair->first()->computeLength<Length>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
         if (pair->second()->isPercentage())
             radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
         else if (pair->second()->isCalculatedPercentageWithLength()) {
@@ -456,7 +456,7 @@ public:
             // handle this case
             return;
         } else
-            radiusHeight = Length(max(intMinForLength, min(intMaxForLength, pair->second()->computeLength<int>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()))), Fixed);
+            radiusHeight = pair->second()->computeLength<Length>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
         int width = radiusWidth.value();
         int height = radiusHeight.value();
         if (width < 0 || height < 0)
