@@ -39901,6 +39901,62 @@
 				RelativePath="..\rendering\RenderMultiColumnBlock.h"
 				>
 			</File>
+            <File
+				RelativePath="..\rendering\RenderMultiColumnSet.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderMultiColumnSet.h"
+				>
+			</File>
 			<File
 				RelativePath="..\rendering\RenderObject.cpp"
 				>
@@ -40187,6 +40243,14 @@
 			</File>
 			<File
 				RelativePath="..\rendering\RenderRegion.h"
+				>
+			</File>
+            <File
+				RelativePath="..\rendering\RenderRegionSet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderRegionSet.h"
 				>
 			</File>
 			<File

@@ -1249,12 +1249,14 @@ SOURCES += \
     rendering/RenderMenuList.cpp \
     rendering/RenderMeter.cpp \
     rendering/RenderMultiColumnBlock.cpp \
+    rendering/RenderMultiColumnSet.cpp \
     rendering/RenderObject.cpp \
     rendering/RenderObjectChildList.cpp \
     rendering/RenderPart.cpp \
     rendering/RenderProgress.cpp \
     rendering/RenderQuote.cpp \
     rendering/RenderRegion.cpp \
+    rendering/RenderRegionSet.cpp \
     rendering/RenderReplaced.cpp \
     rendering/RenderReplica.cpp \
     rendering/RenderRuby.cpp \

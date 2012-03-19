@@ -3724,6 +3724,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderMeter.h \
     Source/WebCore/rendering/RenderMultiColumnBlock.cpp \
     Source/WebCore/rendering/RenderMultiColumnBlock.h \
+    Source/WebCore/rendering/RenderMultiColumnSet.cpp \
+    Source/WebCore/rendering/RenderMultiColumnSet.h \
 	Source/WebCore/rendering/RenderObjectChildList.cpp \
 	Source/WebCore/rendering/RenderObjectChildList.h \
 	Source/WebCore/rendering/RenderObject.cpp \
@@ -3737,6 +3739,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderQuote.h \
 	Source/WebCore/rendering/RenderRegion.cpp \
 	Source/WebCore/rendering/RenderRegion.h \
+    Source/WebCore/rendering/RenderRegionSet.cpp \
+	Source/WebCore/rendering/RenderRegionSet.h \
 	Source/WebCore/rendering/RenderReplaced.cpp \
 	Source/WebCore/rendering/RenderReplaced.h \
 	Source/WebCore/rendering/RenderReplica.cpp \

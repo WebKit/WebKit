@@ -5507,6 +5507,8 @@
 		BCE1C43B0D9830D3003B02F2 /* JSLocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE1C4390D9830D3003B02F2 /* JSLocation.cpp */; };
 		BCE1C43C0D9830D3003B02F2 /* JSLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE1C43A0D9830D3003B02F2 /* JSLocation.h */; };
 		BCE1C4400D9830F4003B02F2 /* JSLocationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */; };
+		BCE32B9C1517C0B200F542EC /* RenderMultiColumnSet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE32B9B1517C0B100F542EC /* RenderMultiColumnSet.h */; };
+		BCE32B9E1517C22700F542EC /* RenderMultiColumnSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE32B9D1517C22700F542EC /* RenderMultiColumnSet.cpp */; };
 		BCE3BEC20D222B1D007E06E4 /* TagNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */; };
 		BCE3BEC30D222B1D007E06E4 /* TagNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE3BEC10D222B1D007E06E4 /* TagNodeList.h */; };
 		BCE4389C140B1BA8005E437E /* JSDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE4389B140B1BA7005E437E /* JSDictionary.h */; };
@@ -5526,6 +5528,8 @@
 		BCE789861120E7A60060ECE5 /* BidiRun.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE789851120E7A60060ECE5 /* BidiRun.h */; };
 		BCE7898B1120E8020060ECE5 /* BidiRun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE7898A1120E8020060ECE5 /* BidiRun.cpp */; };
 		BCE7B1930D4E86960075A539 /* JSHistoryCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */; };
+		BCE93F451517C567008CCF74 /* RenderRegionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE93F441517C567008CCF74 /* RenderRegionSet.h */; };
+		BCE93F471517C6D5008CCF74 /* RenderRegionSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE93F461517C6D5008CCF74 /* RenderRegionSet.cpp */; };
 		BCEA478F097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */; };
 		BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEA4852097D93020094C9E4 /* RenderBlockLineLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4813097D93020094C9E4 /* RenderBlockLineLayout.cpp */; };
@@ -12550,6 +12554,8 @@
 		BCE1C4390D9830D3003B02F2 /* JSLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLocation.cpp; sourceTree = "<group>"; };
 		BCE1C43A0D9830D3003B02F2 /* JSLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSLocation.h; sourceTree = "<group>"; };
 		BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLocationCustom.cpp; sourceTree = "<group>"; };
+		BCE32B9B1517C0B100F542EC /* RenderMultiColumnSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMultiColumnSet.h; sourceTree = "<group>"; };
+		BCE32B9D1517C22700F542EC /* RenderMultiColumnSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMultiColumnSet.cpp; sourceTree = "<group>"; };
 		BCE3BEC00D222B1D007E06E4 /* TagNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagNodeList.cpp; sourceTree = "<group>"; };
 		BCE3BEC10D222B1D007E06E4 /* TagNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagNodeList.h; sourceTree = "<group>"; };
 		BCE4389B140B1BA7005E437E /* JSDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDictionary.h; sourceTree = "<group>"; };
@@ -12569,6 +12575,8 @@
 		BCE789851120E7A60060ECE5 /* BidiRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BidiRun.h; sourceTree = "<group>"; };
 		BCE7898A1120E8020060ECE5 /* BidiRun.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BidiRun.cpp; sourceTree = "<group>"; };
 		BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHistoryCustom.cpp; sourceTree = "<group>"; };
+		BCE93F441517C567008CCF74 /* RenderRegionSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderRegionSet.h; sourceTree = "<group>"; };
+		BCE93F461517C6D5008CCF74 /* RenderRegionSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderRegionSet.cpp; sourceTree = "<group>"; };
 		BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSComputedStyleDeclaration.cpp; sourceTree = "<group>"; };
 		BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSComputedStyleDeclaration.h; sourceTree = "<group>"; };
 		BCEA477E097CAAC80094C9E4 /* CSSGrammar.y */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.yacc; path = CSSGrammar.y; sourceTree = "<group>"; };
@@ -20681,6 +20689,8 @@
 				A454424D119B3687009BE912 /* RenderMeter.h */,
 				BC45827E151299C10061A556 /* RenderMultiColumnBlock.cpp */,
 				BCC52FD5151298D1003F914B /* RenderMultiColumnBlock.h */,
+				BCE32B9D1517C22700F542EC /* RenderMultiColumnSet.cpp */,
+				BCE32B9B1517C0B100F542EC /* RenderMultiColumnSet.h */,
 				BCEA4840097D93020094C9E4 /* RenderObject.cpp */,
 				BCEA4841097D93020094C9E4 /* RenderObject.h */,
 				BC60EFB60F33A0E700812A93 /* RenderObjectChildList.cpp */,
@@ -20694,6 +20704,8 @@
 				5A574F23131DB93900471B88 /* RenderQuote.h */,
 				D70AD65513E1342B005B50B4 /* RenderRegion.cpp */,
 				D70AD65613E1342B005B50B4 /* RenderRegion.h */,
+				BCE93F461517C6D5008CCF74 /* RenderRegionSet.cpp */,
+				BCE93F441517C567008CCF74 /* RenderRegionSet.h */,
 				A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */,
 				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
 				BCA846D40DC67A350026C309 /* RenderReplica.cpp */,
@@ -22420,7 +22432,6 @@
 				85989DD10ACC8BBD00A0BC51 /* DOMWheelEventInternal.h in Headers */,
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
 				9712A5AE15004EDA0048AF10 /* DOMWindowIndexedDatabase.h in Headers */,
-				A886CF771512301700D279F4 /* DOMWindowNotifications.h in Headers */,
 				97D2AD0414B823A60093DF32 /* DOMWindowProperty.h in Headers */,
 				97BC6A351505F081001B74AC /* DOMWindowSQLDatabase.h in Headers */,
 				F35AE5AC14925F5B004D5776 /* DOMWrapperVisitor.h in Headers */,
@@ -24594,6 +24605,8 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				BCE32B9C1517C0B200F542EC /* RenderMultiColumnSet.h in Headers */,
+				BCE93F451517C567008CCF74 /* RenderRegionSet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25567,7 +25580,6 @@
 				85C7F5E80AAFBAFB004014DD /* DOMWheelEvent.mm in Sources */,
 				1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */,
 				9712A5AD15004EDA0048AF10 /* DOMWindowIndexedDatabase.cpp in Sources */,
-				A886CF761512301700D279F4 /* DOMWindowNotifications.cpp in Sources */,
 				97D2AD0314B823A60093DF32 /* DOMWindowProperty.cpp in Sources */,
 				97BC6A341505F081001B74AC /* DOMWindowSQLDatabase.cpp in Sources */,
 				BC53DA481143134D000D817E /* DOMWrapperWorld.cpp in Sources */,
@@ -27578,6 +27590,8 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				BCE32B9E1517C22700F542EC /* RenderMultiColumnSet.cpp in Sources */,
+				BCE93F471517C6D5008CCF74 /* RenderRegionSet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
