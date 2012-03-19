@@ -193,7 +193,8 @@ void TiledCoreAnimationDrawingArea::didInstallPageOverlay()
 void TiledCoreAnimationDrawingArea::didUninstallPageOverlay()
 {
 #if ENABLE(THREADED_SCROLLING)
-    m_webPage->corePage()->scrollingCoordinator()->setForceMainThreadScrollLayerPositionUpdates(false);
+    if (Page* page = m_webPage->corePage())
+        page->scrollingCoordinator()->setForceMainThreadScrollLayerPositionUpdates(false);
 #endif
 
     destroyPageOverlayLayer();

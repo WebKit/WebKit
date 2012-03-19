@@ -1,3 +1,18 @@
+2012-03-19  Anders Carlsson  <andersca@apple.com>
+
+        Crash when closing an inspected web page with tiled drawing enabled
+        https://bugs.webkit.org/show_bug.cgi?id=81524
+        <rdar://problem/11062396>
+
+        Reviewed by Sam Weinig.
+
+        Guard against the WebPage's underlying WebCore Page being null, which can happen
+        when the inspector highlight overlay is uninstalled by the inspector when the inspected
+        page goes away.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::didUninstallPageOverlay):
+
 2012-03-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Merge _q_commitScaleChange and _q_commitPositionChange
