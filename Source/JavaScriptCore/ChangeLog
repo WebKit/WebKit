@@ -1,3 +1,16 @@
+2012-03-18  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        [EFL] Include ICU_INCLUDE_DIRS when building.
+        https://bugs.webkit.org/show_bug.cgi?id=81483
+
+        Reviewed by Daniel Bates.
+
+        So far, only the ICU libraries were being included when building
+        JavaScriptCore, however the include path is also needed, otherwise the
+        build will fail when ICU is installed into a non-standard location.
+
+        * PlatformEfl.cmake: Include ${ICU_INCLUDE_DIRS}.
+
 2012-03-17  Gavin Barraclough  <barraclough@apple.com>
 
         Strength reduction, RegExp.exec -> RegExp.test
