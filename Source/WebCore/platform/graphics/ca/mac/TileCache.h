@@ -65,10 +65,7 @@ public:
     CALayer *tileContainerLayer() const { return m_tileContainerLayer.get(); }
     void visibleRectChanged(const IntRect&);
 
-    float tileDebugBorderWidth() const { return m_tileDebugBorderWidth; }
     void setTileDebugBorderWidth(float);
-
-    CGColorRef tileDebugBorderColor() const { return m_tileDebugBorderColor.get(); }
     void setTileDebugBorderColor(CGColorRef);
 
 private:

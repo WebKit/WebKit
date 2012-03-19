@@ -116,19 +116,9 @@ using namespace WebCore;
     _tileCache->visibleRectChanged(visibleRect);
 }
 
-- (CGColorRef)borderColor
-{
-    return _tileCache->tileDebugBorderColor();
-}
-
 - (void)setBorderColor:(CGColorRef)borderColor
 {
     _tileCache->setTileDebugBorderColor(borderColor);
-}
-
-- (CGFloat)borderWidth
-{
-    return _tileCache->tileDebugBorderWidth();
 }
 
 - (void)setBorderWidth:(CGFloat)borderWidth
