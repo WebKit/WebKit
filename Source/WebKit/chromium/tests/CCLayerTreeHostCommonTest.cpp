@@ -638,8 +638,6 @@ TEST(CCLayerTreeHostCommonTest, verifyAnimationsForRenderSurfaceHierarchy)
     childOfRS2->addChild(grandChildOfRS2);
 
     // In combination with descendantDrawsContent, opacity != 1 forces the layer to have a new renderSurface.
-    renderSurface1->setOpacity(0.4);
-    renderSurface2->setOpacity(0.5);
     addOpacityAnimationToLayer(renderSurface1.get(), 1, 0, 10);
     addOpacityAnimationToLayer(renderSurface2.get(), 1, 0, 10);
 

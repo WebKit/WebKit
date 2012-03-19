@@ -124,6 +124,19 @@ static inline bool subtreeShouldBeSkipped(LayerChromium* layer)
     return !layer->opacity() && !layer->opacityIsAnimating();
 }
 
+static inline bool layerOpacityIsOpaque(CCLayerImpl* layer)
+{
+    return layer->opacity() == 1;
+}
+
+static inline bool layerOpacityIsOpaque(LayerChromium* layer)
+{
+    // If the opacity is being animated then the opacity on the main thread is unreliable
+    // (since the impl thread may be using a different opacity), so it should not be trusted.
+    // In particular, it should not be treated as opaque.
+    return layer->opacity() == 1 && !layer->opacityIsAnimating();
+}
+
 template<typename LayerType>
 static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlignedWithRespectToParent)
 {
@@ -161,7 +174,7 @@ static bool subtreeShouldRenderToSeparateSurface(LayerType* layer, bool axisAlig
         return true;
 
     // If the layer has opacity != 1 and does not have a preserves-3d transform style.
-    if (layer->opacity() != 1 && !layer->preserves3D() && descendantDrawsContent)
+    if (!layerOpacityIsOpaque(layer) && !layer->preserves3D() && descendantDrawsContent)
         return true;
 
     return false;
