@@ -65,10 +65,11 @@ if (isQt()) {
 
     if (isGtk()) {
         if (isWK2()) {
-            $launcherPath = catdir($launcherPath, "Programs", "MiniBrowser");
+            unshift(@ARGV, catdir($launcherPath, "Programs", "MiniBrowser"));
         } else {
-            $launcherPath = catdir($launcherPath, "Programs", "GtkLauncher");
+            unshift(@ARGV, catdir($launcherPath, "Programs", "GtkLauncher"));
         }
+        $launcherPath = catdir(sourceDir(), "Tools", "gtk", "run-with-jhbuild");
     }
     
     if (isEfl()) {
