@@ -1,5 +1,14 @@
 2012-03-19  Dirk Pranke  <dpranke@chromium.org>
 
+        add dpranke to webkitpy watchlist
+        https://bugs.webkit.org/show_bug.cgi?id=81433
+
+        Reviewed by Benjamin Poulain.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
+2012-03-19  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy is failing on SL/Python 2.6.1
         https://bugs.webkit.org/show_bug.cgi?id=81533
 
