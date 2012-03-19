@@ -1,3 +1,9 @@
+2012-03-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-03-19  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] synthesize wheel events for fling on main thread
