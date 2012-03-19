@@ -65,7 +65,6 @@ public:
     virtual ~CCLayerTreeHostImpl();
 
     // CCInputHandlerClient implementation
-    virtual void setNeedsRedraw();
     virtual CCInputHandlerClient::ScrollStatus scrollBegin(const IntPoint&, CCInputHandlerClient::ScrollInputType);
     virtual void scrollBy(const IntSize&);
     virtual void scrollEnd();
@@ -76,6 +75,7 @@ public:
     virtual CCActiveGestureAnimation* activeGestureAnimation() { return m_activeGestureAnimation.get(); }
     // To clear an active animation, pass nullptr.
     virtual void setActiveGestureAnimation(PassOwnPtr<CCActiveGestureAnimation>);
+    virtual void scheduleAnimation();
 
     // Virtual for testing.
     virtual void beginCommit();
@@ -134,6 +134,8 @@ public:
 
     bool needsAnimateLayers() const { return m_needsAnimateLayers; }
     void setNeedsAnimateLayers() { m_needsAnimateLayers = true; }
+
+    void setNeedsRedraw();
 
 protected:
     CCLayerTreeHostImpl(const CCSettings&, CCLayerTreeHostImplClient*);

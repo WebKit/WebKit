@@ -181,6 +181,11 @@ void CCLayerTreeHostImpl::setActiveGestureAnimation(PassOwnPtr<CCActiveGestureAn
         m_client->setNeedsRedrawOnImplThread();
 }
 
+void CCLayerTreeHostImpl::scheduleAnimation()
+{
+    m_client->setNeedsRedrawOnImplThread();
+}
+
 void CCLayerTreeHostImpl::trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList)
 {
     // For now, we use damage tracking to compute a global scissor. To do this, we must

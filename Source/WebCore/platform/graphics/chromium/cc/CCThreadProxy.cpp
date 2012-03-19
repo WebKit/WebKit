@@ -550,7 +550,7 @@ void CCThreadProxy::scheduledActionDrawAndSwap()
     double monotonicTime = monotonicallyIncreasingTime();
     double wallClockTime = currentTime();
 
-    m_inputHandlerOnImplThread->willDraw(monotonicTime);
+    m_inputHandlerOnImplThread->animate(monotonicTime);
     m_layerTreeHostImpl->animate(monotonicTime, wallClockTime);
     m_layerTreeHostImpl->drawLayers();
 

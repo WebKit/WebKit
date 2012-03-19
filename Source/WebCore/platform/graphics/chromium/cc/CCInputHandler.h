@@ -45,8 +45,6 @@ class IntSize;
 class CCInputHandlerClient {
     WTF_MAKE_NONCOPYABLE(CCInputHandlerClient);
 public:
-    virtual void setNeedsRedraw() = 0;
-
     enum ScrollStatus { ScrollFailed, ScrollStarted, ScrollIgnored };
     enum ScrollInputType { Gesture, Wheel };
 
@@ -80,6 +78,9 @@ public:
     virtual CCActiveGestureAnimation* activeGestureAnimation() = 0;
     virtual void setActiveGestureAnimation(PassOwnPtr<CCActiveGestureAnimation>) = 0;
 
+    // Request another callback to CCInputHandler::animate().
+    virtual void scheduleAnimation() = 0;
+
 protected:
     CCInputHandlerClient() { }
     virtual ~CCInputHandlerClient() { }
@@ -92,7 +93,7 @@ public:
     virtual ~CCInputHandler() { }
 
     virtual int identifier() const = 0;
-    virtual void willDraw(double monotonicTime) = 0;
+    virtual void animate(double monotonicTime) = 0;
 
 protected:
     CCInputHandler() { }

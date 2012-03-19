@@ -1,3 +1,25 @@
+2012-03-18  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Implement fling-by-wheel on compositor thread
+        https://bugs.webkit.org/show_bug.cgi?id=81462
+
+        Reviewed by Adrienne Walker.
+
+        Implement fling-by-wheel and beef up existing unit test coverage considerably by using gmock instead of mocking
+        by hand.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleInputEvent):
+        (WebKit):
+        (WebKit::WebCompositorInputHandlerImpl::handleInputEventInternal):
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+        (WebKit::WebCompositorInputHandlerImpl::animate):
+        (WebKit::WebCompositorInputHandlerImpl::cancelCurrentFling):
+        (WebKit::WebCompositorInputHandlerImpl::scrollBy):
+        * src/WebCompositorInputHandlerImpl.h:
+        (WebCompositorInputHandlerImpl):
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+
 2012-03-19  Emil A Eklund  <eae@chromium.org>
 
         [mac/chromium] Change platform code to use pixelSnappedRect methods

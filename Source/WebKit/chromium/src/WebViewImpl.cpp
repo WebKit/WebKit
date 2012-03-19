@@ -3300,9 +3300,10 @@ void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScal
     if (!mainFrameImpl() || !mainFrameImpl()->frameView())
         return;
 
-    if (pageScaleDelta == 1)
+    if (pageScaleDelta == 1) {
+        TRACE_EVENT_INSTANT2("webkit", "WebViewImpl::applyScrollAndScale::scrollBy", "x", scrollDelta.width, "y", scrollDelta.height);
         mainFrameImpl()->frameView()->scrollBy(scrollDelta);
-    else {
+    } else {
         // The page scale changed, so apply a scale and scroll in a single
         // operation. The old scroll offset (and passed-in delta) are
         // in the old coordinate space, so we first need to multiply them

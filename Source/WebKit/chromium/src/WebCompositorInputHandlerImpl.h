@@ -26,6 +26,7 @@
 #ifndef WebCompositorInputHandlerImpl_h
 #define WebCompositorInputHandlerImpl_h
 
+#include "IntPoint.h"
 #include "WebCompositor.h"
 #include "WebCompositorInputHandler.h"
 #include "WebInputEvent.h"
@@ -64,7 +65,7 @@ public:
 
     // WebCore::CCInputHandler implementation
     virtual int identifier() const;
-    virtual void willDraw(double monotonicTime);
+    virtual void animate(double monotonicTime);
 
     // WebCore::CCGestureCurveTarget implementation.
     virtual void scrollBy(const WebCore::IntPoint&);
@@ -72,7 +73,18 @@ public:
 private:
     explicit WebCompositorInputHandlerImpl(WebCore::CCInputHandlerClient*);
 
-    bool handleGestureFling(const WebGestureEvent&);
+    enum EventDisposition { DidHandle, DidNotHandle, DropEvent };
+    // This function processes the input event and determines the disposition, but does not make
+    // any calls out to the WebCompositorInputHandlerClient. Some input types defer to helpers.
+    EventDisposition handleInputEventInternal(const WebInputEvent&);
+
+    EventDisposition handleGestureFling(const WebGestureEvent&);
+
+    // Returns true if we actually had an active fling to cancel.
+    bool cancelCurrentFling();
+
+    OwnPtr<WebCore::CCActiveGestureAnimation> m_wheelFlingAnimation;
+    WebCore::IntPoint m_wheelFlingPoint; // Pointer position for the current fling.
 
     WebCompositorInputHandlerClient* m_client;
     int m_identifier;
@@ -82,7 +94,7 @@ private:
     bool m_expectScrollUpdateEnd;
     bool m_expectPinchUpdateEnd;
 #endif
-    bool m_scrollStarted;
+    bool m_gestureScrollStarted;
 
     static int s_nextAvailableIdentifier;
     static HashSet<WebCompositorInputHandlerImpl*>* s_compositors;
