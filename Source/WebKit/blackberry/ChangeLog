@@ -1,3 +1,20 @@
+2012-03-19  Tyler Abbott  <tabbott@rim.com>
+
+        [BlackBerry] speed up text selection for large selections
+        https://bugs.webkit.org/show_bug.cgi?id=81536
+
+        When selecting large disjoint areas of text the cost
+        of calculating the IntRectRegion union becomes very
+        expensive. Simply placing all of the text quads into
+        the IntRectRegion is faster despite the larger memory
+        footprint and the additional calculations at render
+        time.
+
+        Reviewed by Rob Buis.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::getConsolidatedRegionOfTextQuadsForSelection):
+
 2012-03-19  Mike Lattanzio  <mlattanzio@rim.com>
 
         [BlackBerry] Use BlackBerry::Platform::DeviceInfo to generate UserAgent

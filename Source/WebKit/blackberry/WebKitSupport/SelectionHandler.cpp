@@ -112,15 +112,18 @@ void SelectionHandler::getConsolidatedRegionOfTextQuadsForSelection(const Visibl
         // framePosition is in main frame coordinates.
         WebCore::IntPoint framePosition = m_webPage->frameOffset(m_webPage->focusedOrMainFrame());
 
-        // The ranges rect list is based on render elements and may include multiple adjacent rects.
-        // Use IntRectRegion to consolidate these rects into bands as well as a container to pass
-        // to the client.
+        // Convert the text quads into a more platform friendy
+        // IntRectRegion and adjust for subframes.
+        std::vector<Platform::IntRect> adjustedIntRects;
+        Platform::IntRect selectionBoundingBox;
         for (unsigned i = 0; i < quadList.size(); i++) {
             WebCore::IntRect enclosingRect = quadList[i].enclosingBoundingBox();
             enclosingRect.intersect(frameRect);
             enclosingRect.move(framePosition.x(), framePosition.y());
-            region = unionRegions(region, IntRectRegion(enclosingRect));
+            adjustedIntRects.push_back(enclosingRect);
+            selectionBoundingBox = unionOfRects(enclosingRect, selectionBoundingBox);
         }
+        region = IntRectRegion(selectionBoundingBox, adjustedIntRects.size(), adjustedIntRects);
     }
 }
 
