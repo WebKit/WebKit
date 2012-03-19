@@ -27,8 +27,10 @@
 #include "NumberOfCores.h"
 
 #if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
-#include <sys/sysctl.h>
+// sys/types.h must come before sys/sysctl.h because the latter uses
+// data types defined in the former. See sysctl(3) and style(9).
 #include <sys/types.h>
+#include <sys/sysctl.h>
 #elif OS(LINUX) || OS(AIX) || OS(SOLARIS)
 #include <unistd.h>
 #elif OS(WINDOWS)
