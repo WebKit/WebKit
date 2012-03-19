@@ -30,10 +30,12 @@ layer at (0,0) size 784x1810
               RenderText {#text} at (0,2) size 71x15
                 text run at (0,2) width 71: "Your Name*"
             RenderTextControl {INPUT} at (325,26) size 186x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderBlock {DIV} at (3,3) size 180x18
             RenderBlock (floating) {SPAN} at (0,52) size 325x20 [color=#333333]
               RenderText {#text} at (0,2) size 122x15
                 text run at (0,2) width 122: "Your e-mail address*"
             RenderTextControl {INPUT} at (325,52) size 186x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderBlock {DIV} at (3,3) size 180x18
             RenderBlock (floating) {SPAN} at (0,78) size 325x20 [color=#333333]
               RenderText {#text} at (0,2) size 129x15
                 text run at (0,2) width 129: "Your degree program*"
@@ -161,10 +163,6 @@ layer at (0,0) size 784x1810
           RenderBlock {SPAN} at (0,16) size 600x20 [color=#333333]
             RenderText {#text} at (244,2) size 112x15
               text run at (244,2) width 112: "\x{A9}2003 Kevin Davis"
-layer at (440,301) size 180x18
-  RenderBlock {DIV} at (3,3) size 180x18
-layer at (440,327) size 180x18
-  RenderBlock {DIV} at (3,3) size 180x18
 layer at (112,854) size 506x106 clip at (113,855) size 504x104
   RenderTextControl {TEXTAREA} at (0,582) size 506x106 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x18

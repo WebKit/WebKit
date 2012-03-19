@@ -12,6 +12,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 195x67 [r=0 c=0 rs=1 cs=1]
               RenderBlock {FORM} at (1,1) size 193x49
                 RenderTextControl {INPUT} at (2,3) size 130x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderBlock {DIV} at (3,3) size 124x18
                 RenderText {#text} at (134,6) size 4x17
                   text run at (134,6) width 4: " "
                 RenderButton {INPUT} at (140,2) size 47x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
@@ -34,6 +35,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 195x67 [r=0 c=0 rs=1 cs=1]
               RenderBlock {FORM} at (1,1) size 193x49
                 RenderTextControl {INPUT} at (2,3) size 130x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderBlock {DIV} at (3,3) size 124x18
                 RenderText {#text} at (134,6) size 4x17
                   text run at (134,6) width 4: " "
                 RenderButton {INPUT} at (140,2) size 47x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
@@ -46,7 +48,3 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,31) size 190x17
                   text run at (0,31) width 190: "Enter City Name or Zip Code"
           RenderTableRow {TR} at (0,71) size 199x0
-layer at (17,58) size 124x18
-  RenderBlock {DIV} at (3,3) size 124x18
-layer at (17,201) size 124x18
-  RenderBlock {DIV} at (3,3) size 124x18

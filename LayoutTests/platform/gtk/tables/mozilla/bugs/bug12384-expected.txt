@@ -10,17 +10,14 @@ layer at (0,0) size 800x584
               RenderTableCell {TD} at (0,0) size 890x30 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderInline {NOBR} at (0,0) size 888x17
                   RenderTextControl {INPUT} at (3,3) size 283x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                    RenderBlock {DIV} at (3,3) size 277x18
                   RenderText {#text} at (288,6) size 14x17
                     text run at (288,6) width 14: " - "
                   RenderTextControl {INPUT} at (303,3) size 283x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                    RenderBlock {DIV} at (3,3) size 277x18
                   RenderText {#text} at (588,6) size 14x17
                     text run at (588,6) width 14: " - "
                   RenderTextControl {INPUT} at (604,3) size 283x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                    RenderBlock {DIV} at (3,3) size 277x18
                 RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,30) size 890x0
-layer at (15,15) size 277x18
-  RenderBlock {DIV} at (3,3) size 277x18
-layer at (315,15) size 277x18
-  RenderBlock {DIV} at (3,3) size 277x18
-layer at (616,15) size 277x18
-  RenderBlock {DIV} at (3,3) size 277x18

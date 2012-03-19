@@ -13,7 +13,5 @@ layer at (0,0) size 800x600
             text run at (0,18) width 708: "switches from being self-painting to non-self-painting that a layout happens to fix up the floating objects lists. "
             text run at (707,18) width 75: "You should"
             text run at (0,36) width 467: "see a 100x100 green square below. If you see any red, the test has failed."
-layer at (8,78) size 100x100
-  RenderBlock (floating) {DIV} at (0,70) size 100x100 [bgcolor=#FF0000]
-layer at (8,78) size 100x100
-  RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
+      RenderBlock (floating) {DIV} at (0,70) size 100x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (0,0) size 100x100 [bgcolor=#008000]

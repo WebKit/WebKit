@@ -76,6 +76,7 @@ layer at (0,0) size 784x696
             RenderText {#text} at (582,7) size 73x17
               text run at (582,7) width 73: "Comment: "
             RenderTextControl {INPUT} at (2,35) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderBlock {DIV} at (3,3) size 187x18
           RenderText {#text} at (197,38) size 4x17
             text run at (197,38) width 4: " "
           RenderButton {INPUT} at (203,34) size 66x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
@@ -116,5 +117,3 @@ layer at (0,0) size 784x696
       RenderBlock {P} at (0,641) size 768x18
         RenderText {#text} at (0,0) size 185x17
           text run at (0,0) width 185: "Last updated in March 1999."
-layer at (13,501) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18

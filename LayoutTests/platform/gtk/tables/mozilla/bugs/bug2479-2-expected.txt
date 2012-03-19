@@ -51,6 +51,7 @@ layer at (0,0) size 800x575
                 RenderTableRow (anonymous) at (0,28) size 161x32
                   RenderTableCell (anonymous) at (0,28) size 161x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,4) size 157x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                      RenderBlock {DIV} at (3,3) size 151x18
             RenderText {#text} at (161,46) size 5x17
               text run at (161,46) width 5: " "
             RenderTable {SPAN} at (165,0) size 161x60
@@ -62,6 +63,7 @@ layer at (0,0) size 800x575
                 RenderTableRow (anonymous) at (0,28) size 161x32
                   RenderTableCell (anonymous) at (0,28) size 161x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,4) size 157x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                      RenderBlock {DIV} at (3,3) size 151x18
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,135) size 568x71
             RenderTable {SPAN} at (0,0) size 377x60
@@ -73,6 +75,7 @@ layer at (0,0) size 800x575
                 RenderTableRow (anonymous) at (0,28) size 377x32
                   RenderTableCell (anonymous) at (0,28) size 377x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,4) size 373x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                      RenderBlock {DIV} at (3,3) size 367x18
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,206) size 568x71
             RenderTable {SPAN} at (0,0) size 161x60
@@ -84,6 +87,7 @@ layer at (0,0) size 800x575
                 RenderTableRow (anonymous) at (0,28) size 161x32
                   RenderTableCell (anonymous) at (0,28) size 161x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,4) size 157x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                      RenderBlock {DIV} at (3,3) size 151x18
             RenderText {#text} at (161,46) size 5x17
               text run at (161,46) width 5: " "
             RenderTable {SPAN} at (165,0) size 161x60
@@ -95,6 +99,7 @@ layer at (0,0) size 800x575
                 RenderTableRow (anonymous) at (0,28) size 161x32
                   RenderTableCell (anonymous) at (0,28) size 161x32 [r=1 c=0 rs=1 cs=1]
                     RenderTextControl {INPUT} at (2,4) size 157x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                      RenderBlock {DIV} at (3,3) size 151x18
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,277) size 568x32
             RenderButton {INPUT} at (2,3) size 71x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
@@ -108,13 +113,3 @@ layer at (0,0) size 800x575
                 RenderText at (0,0) size 81x17
                   text run at (0,0) width 81: "Clear Form"
             RenderText {#text} at (0,0) size 0x0
-layer at (161,282) size 151x18
-  RenderBlock {DIV} at (3,3) size 151x18
-layer at (326,282) size 151x18
-  RenderBlock {DIV} at (3,3) size 151x18
-layer at (161,353) size 367x18
-  RenderBlock {DIV} at (3,3) size 367x18
-layer at (161,424) size 151x18
-  RenderBlock {DIV} at (3,3) size 151x18
-layer at (326,424) size 151x18
-  RenderBlock {DIV} at (3,3) size 151x18

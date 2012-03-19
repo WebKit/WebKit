@@ -19,11 +19,47 @@ layer at (0,0) size 800x600
         text run at (526,109) width 4: " "
       RenderText {#text} at (632,109) size 4x17
         text run at (632,109) width 4: " "
+      RenderDeprecatedFlexibleBox {DIV} at (636,36) size 102x92 [border: (1px solid #808080)]
+        RenderBlock (anonymous) at (1,1) size 100x90
+          RenderText {#text} at (0,0) size 94x89
+            text run at (0,0) width 51: "0 lines. "
+            text run at (50,0) width 44: "This is"
+            text run at (0,18) width 64: "an invalid"
+            text run at (0,36) width 67: "value for -"
+            text run at (0,54) width 79: "webkit-line-"
+            text run at (0,72) width 44: "clamp."
       RenderText {#text} at (0,0) size 0x0
+      RenderDeprecatedFlexibleBox {DIV} at (0,164) size 102x92 [border: (1px solid #808080)]
+        RenderBlock (anonymous) at (1,1) size 100x90
+          RenderText {#text} at (0,0) size 99x89
+            text run at (0,0) width 56: "-1 lines. "
+            text run at (55,0) width 44: "This is"
+            text run at (0,18) width 64: "an invalid"
+            text run at (0,36) width 67: "value for -"
+            text run at (0,54) width 79: "webkit-line-"
+            text run at (0,72) width 44: "clamp."
       RenderText {#text} at (102,237) size 4x17
         text run at (102,237) width 4: " "
+      RenderDeprecatedFlexibleBox {DIV} at (106,182) size 102x74 [border: (1px solid #808080)]
+        RenderBlock (anonymous) at (1,1) size 100x72
+          RenderText {#text} at (0,0) size 97x71
+            text run at (0,0) width 35: "-1%. "
+            text run at (34,0) width 63: "This is an"
+            text run at (0,18) width 84: "invalid value"
+            text run at (0,36) width 77: "for -webkit-"
+            text run at (0,54) width 73: "line-clamp."
       RenderText {#text} at (208,237) size 4x17
         text run at (208,237) width 4: " "
+      RenderDeprecatedFlexibleBox {DIV} at (212,128) size 102x128 [border: (1px solid #808080)]
+        RenderBlock (anonymous) at (1,1) size 100x126
+          RenderText {#text} at (0,0) size 99x125
+            text run at (0,0) width 38: "150%"
+            text run at (0,18) width 69: "truncation."
+            text run at (0,36) width 86: "This does the"
+            text run at (0,54) width 99: "least truncation"
+            text run at (0,72) width 57: "possible,"
+            text run at (0,90) width 65: "truncating"
+            text run at (0,108) width 53: "nothing."
       RenderText {#text} at (0,0) size 0x0
 layer at (8,58) size 102x73 clip at (9,59) size 100x71 scrollHeight 143
   RenderDeprecatedFlexibleBox {DIV} at (0,50) size 102x73 [border: (1px solid #808080)]
@@ -114,43 +150,3 @@ layer at (538,76) size 102x55 clip at (539,77) size 100x53 scrollHeight 107
         text run at (0,54) width 68: "of ellipsis-"
         text run at (0,72) width 83: "truncation of"
         text run at (0,90) width 96: "multi-line text."
-layer at (644,44) size 102x92 clip at (645,45) size 100x90
-  RenderDeprecatedFlexibleBox {DIV} at (636,36) size 102x92 [border: (1px solid #808080)]
-    RenderBlock (anonymous) at (1,1) size 100x90
-      RenderText {#text} at (0,0) size 94x89
-        text run at (0,0) width 51: "0 lines. "
-        text run at (50,0) width 44: "This is"
-        text run at (0,18) width 64: "an invalid"
-        text run at (0,36) width 67: "value for -"
-        text run at (0,54) width 79: "webkit-line-"
-        text run at (0,72) width 44: "clamp."
-layer at (8,172) size 102x92 clip at (9,173) size 100x90
-  RenderDeprecatedFlexibleBox {DIV} at (0,164) size 102x92 [border: (1px solid #808080)]
-    RenderBlock (anonymous) at (1,1) size 100x90
-      RenderText {#text} at (0,0) size 99x89
-        text run at (0,0) width 56: "-1 lines. "
-        text run at (55,0) width 44: "This is"
-        text run at (0,18) width 64: "an invalid"
-        text run at (0,36) width 67: "value for -"
-        text run at (0,54) width 79: "webkit-line-"
-        text run at (0,72) width 44: "clamp."
-layer at (114,190) size 102x74 clip at (115,191) size 100x72
-  RenderDeprecatedFlexibleBox {DIV} at (106,182) size 102x74 [border: (1px solid #808080)]
-    RenderBlock (anonymous) at (1,1) size 100x72
-      RenderText {#text} at (0,0) size 97x71
-        text run at (0,0) width 35: "-1%. "
-        text run at (34,0) width 63: "This is an"
-        text run at (0,18) width 84: "invalid value"
-        text run at (0,36) width 77: "for -webkit-"
-        text run at (0,54) width 73: "line-clamp."
-layer at (220,136) size 102x128 clip at (221,137) size 100x126
-  RenderDeprecatedFlexibleBox {DIV} at (212,128) size 102x128 [border: (1px solid #808080)]
-    RenderBlock (anonymous) at (1,1) size 100x126
-      RenderText {#text} at (0,0) size 99x125
-        text run at (0,0) width 38: "150%"
-        text run at (0,18) width 69: "truncation."
-        text run at (0,36) width 86: "This does the"
-        text run at (0,54) width 99: "least truncation"
-        text run at (0,72) width 57: "possible,"
-        text run at (0,90) width 65: "truncating"
-        text run at (0,108) width 53: "nothing."

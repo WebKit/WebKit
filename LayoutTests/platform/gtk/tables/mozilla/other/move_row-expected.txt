@@ -31,9 +31,15 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 43: "Row 5"
       RenderBlock (anonymous) at (0,134) size 784x31
         RenderTextControl {INPUT} at (2,3) size 22x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,3) size 16x18
+            RenderText {#text} at (1,0) size 9x17
+              text run at (1,0) width 9: "2"
         RenderText {#text} at (26,6) size 4x17
           text run at (26,6) width 4: " "
         RenderTextControl {INPUT} at (32,3) size 22x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,3) size 16x18
+            RenderText {#text} at (1,0) size 9x17
+              text run at (1,0) width 9: "4"
         RenderText {#text} at (56,6) size 4x17
           text run at (56,6) width 4: " "
         RenderButton {INPUT} at (62,2) size 34x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
@@ -41,11 +47,3 @@ layer at (0,0) size 800x600
             RenderText at (0,0) size 18x17
               text run at (0,0) width 18: "go"
         RenderText {#text} at (0,0) size 0x0
-layer at (13,148) size 16x18
-  RenderBlock {DIV} at (3,3) size 16x18
-    RenderText {#text} at (1,0) size 9x17
-      text run at (1,0) width 9: "2"
-layer at (43,148) size 16x18
-  RenderBlock {DIV} at (3,3) size 16x18
-    RenderText {#text} at (1,0) size 9x17
-      text run at (1,0) width 9: "4"

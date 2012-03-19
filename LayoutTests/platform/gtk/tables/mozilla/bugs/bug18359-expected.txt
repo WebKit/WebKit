@@ -18,6 +18,9 @@ layer at (0,0) size 800x600
                     text run at (1,19) width 40: "URL:"
               RenderTableCell {TD} at (65,6) size 604x30 [r=0 c=1 rs=1 cs=1]
                 RenderTextControl {INPUT} at (3,3) size 598x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderBlock {DIV} at (3,3) size 592x18
+                    RenderText {#text} at (1,0) size 122x17
+                      text run at (1,0) width 122: "http://jimbob/jars/"
               RenderTableCell {TD} at (671,4) size 111x33 [r=0 c=2 rs=1 cs=1]
                 RenderButton {INPUT} at (3,3) size 67x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (8,4) size 51x18
@@ -41,7 +44,3 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (8,4) size 89x18
                     RenderText at (0,0) size 89x17
                       text run at (0,0) width 89: "Trigger case"
-layer at (79,76) size 592x18
-  RenderBlock {DIV} at (3,3) size 592x18
-    RenderText {#text} at (1,0) size 122x17
-      text run at (1,0) width 122: "http://jimbob/jars/"

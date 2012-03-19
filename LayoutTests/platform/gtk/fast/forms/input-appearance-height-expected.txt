@@ -10,12 +10,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,5) size 37x17
           text run at (0,5) width 37: "input "
         RenderTextControl {INPUT} at (39,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,3) size 187x18
         RenderText {#text} at (233,5) size 5x17
           text run at (233,5) width 5: " "
         RenderBR {BR} at (237,19) size 1x0
         RenderText {#text} at (0,33) size 28x17
           text run at (0,33) width 28: "text "
         RenderTextControl {INPUT} at (30,30) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,3) size 187x18
         RenderText {#text} at (224,33) size 5x17
           text run at (224,33) width 5: " "
         RenderBR {BR} at (228,47) size 1x0
@@ -77,12 +79,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,236) size 51x17
           text run at (0,236) width 51: "isindex "
         RenderTextControl {INPUT} at (52,233) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,3) size 187x18
         RenderText {#text} at (247,236) size 5x17
           text run at (247,236) width 5: " "
         RenderBR {BR} at (251,250) size 1x0
         RenderText {#text} at (0,264) size 65x17
           text run at (0,264) width 65: "password "
         RenderTextControl {INPUT} at (66,261) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,3) size 187x18
         RenderText {#text} at (261,264) size 5x17
           text run at (261,264) width 5: " "
         RenderBR {BR} at (265,278) size 1x0
@@ -92,17 +96,8 @@ layer at (0,0) size 800x600
           RenderDeprecatedFlexibleBox {DIV} at (3,3) size 187x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 171x18
+              RenderBlock {DIV} at (0,0) size 171x18
             RenderBlock {DIV} at (171,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
-layer at (50,31) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18
-layer at (41,59) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18
-layer at (63,262) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18
-layer at (77,290) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18
-layer at (58,318) size 171x18
-  RenderBlock {DIV} at (0,0) size 171x18
 layer at (99,177) size 31x14
   RenderBlock (relative positioned) {DIV} at (0,0) size 31x14

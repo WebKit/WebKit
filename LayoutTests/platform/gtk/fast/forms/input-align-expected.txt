@@ -8,40 +8,35 @@ layer at (0,0) size 800x600
           text run at (0,0) width 576: "The following 5 inputs should be all be rendered exactly the same, aligned to the left side."
       RenderBlock (anonymous) at (0,34) size 784x112
         RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,3) size 187x18
+            RenderText {#text} at (1,0) size 131x17
+              text run at (1,0) width 131: "The quick brown..."
         RenderText {#text} at (197,5) size 4x17
           text run at (197,5) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,30) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,3) size 187x18
+            RenderText {#text} at (1,0) size 131x17
+              text run at (1,0) width 131: "The quick brown..."
         RenderText {#text} at (197,33) size 4x17
           text run at (197,33) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,58) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,3) size 187x18
+            RenderText {#text} at (1,0) size 131x17
+              text run at (1,0) width 131: "The quick brown..."
         RenderText {#text} at (197,61) size 4x17
           text run at (197,61) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,86) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderBlock {DIV} at (3,3) size 187x18
+            RenderText {#text} at (1,0) size 131x17
+              text run at (1,0) width 131: "The quick brown..."
         RenderText {#text} at (197,89) size 4x17
           text run at (197,89) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
       RenderBlock {DIV} at (0,146) size 784x28
         RenderTextControl {INPUT} at (2,2) size 193x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-layer at (13,47) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18
-    RenderText {#text} at (1,0) size 131x17
-      text run at (1,0) width 131: "The quick brown..."
-layer at (13,75) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18
-    RenderText {#text} at (1,0) size 131x17
-      text run at (1,0) width 131: "The quick brown..."
-layer at (13,103) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18
-    RenderText {#text} at (1,0) size 131x17
-      text run at (1,0) width 131: "The quick brown..."
-layer at (13,131) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18
-    RenderText {#text} at (1,0) size 131x17
-      text run at (1,0) width 131: "The quick brown..."
-layer at (13,159) size 187x18
-  RenderBlock {DIV} at (3,3) size 187x18
-    RenderText {#text} at (1,0) size 131x17
-      text run at (1,0) width 131: "The quick brown..."
+          RenderBlock {DIV} at (3,3) size 187x18
+            RenderText {#text} at (1,0) size 131x17
+              text run at (1,0) width 131: "The quick brown..."

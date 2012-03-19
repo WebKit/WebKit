@@ -10,6 +10,9 @@ layer at (0,0) size 800x600
         RenderDeprecatedFlexibleBox {DIV} at (3,0) size 64x6
           RenderBlock {DIV} at (0,3) size 0x0
           RenderBlock {DIV} at (0,0) size 58x6
+            RenderBlock {DIV} at (0,0) size 58x6
+              RenderText {#text} at (1,0) size 12x6
+                text run at (1,0) width 12: "mini"
           RenderBlock {DIV} at (58,0) size 6x6
       RenderText {#text} at (70,112) size 4x17
         text run at (70,112) width 4: " "
@@ -17,6 +20,9 @@ layer at (0,0) size 800x600
         RenderDeprecatedFlexibleBox {DIV} at (3,3) size 168x34
           RenderBlock {DIV} at (0,17) size 0x0
           RenderBlock {DIV} at (0,8) size 153x17
+            RenderBlock {DIV} at (0,0) size 153x17
+              RenderText {#text} at (1,0) size 36x17
+                text run at (1,0) width 36: "small"
           RenderBlock {DIV} at (153,9) size 15x15
       RenderText {#text} at (252,112) size 4x17
         text run at (252,112) width 4: " "
@@ -24,17 +30,8 @@ layer at (0,0) size 800x600
         RenderDeprecatedFlexibleBox {DIV} at (3,3) size 311x194
           RenderBlock {DIV} at (0,97) size 0x0
           RenderBlock {DIV} at (0,81) size 287x31
+            RenderBlock {DIV} at (0,0) size 287x31
+              RenderText {#text} at (1,0) size 85x30
+                text run at (1,0) width 85: "regular"
           RenderBlock {DIV} at (287,85) size 24x24
       RenderText {#text} at (0,0) size 0x0
-layer at (11,128) size 58x6
-  RenderBlock {DIV} at (0,0) size 58x6
-    RenderText {#text} at (1,0) size 12x6
-      text run at (1,0) width 12: "mini"
-layer at (87,120) size 153x17
-  RenderBlock {DIV} at (0,0) size 153x17
-    RenderText {#text} at (1,0) size 36x17
-      text run at (1,0) width 36: "small"
-layer at (269,110) size 287x31
-  RenderBlock {DIV} at (0,0) size 287x31
-    RenderText {#text} at (1,0) size 85x30
-      text run at (1,0) width 85: "regular"

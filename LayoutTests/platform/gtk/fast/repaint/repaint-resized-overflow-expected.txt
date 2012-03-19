@@ -29,7 +29,6 @@ layer at (0,0) size 800x264
         RenderText {#text} at (91,3) size 612x17
           text run at (91,3) width 5: " "
           text run at (95,3) width 608: "The white square will have a blue border and a blue horizontal line running through its middle."
-layer at (8,148) size 784x108
-  RenderBlock {DIV} at (0,132) size 784x108
-    RenderBlock {DIV} at (0,0) size 108x108 [border: (4px solid #0000FF)]
-      RenderBlock {DIV} at (124,4) size 10x100
+      RenderBlock {DIV} at (0,132) size 784x108
+        RenderBlock {DIV} at (0,0) size 108x108 [border: (4px solid #0000FF)]
+          RenderBlock {DIV} at (124,4) size 10x100
