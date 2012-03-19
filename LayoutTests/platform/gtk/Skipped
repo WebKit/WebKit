@@ -949,6 +949,8 @@ fast/animation/request-animation-frame-during-modal.html
 fast/events/show-modal-dialog-onblur-onfocus.html
 fast/events/scroll-event-during-modal-dialog.html
 fast/harness/show-modal-dialog.html
+http/tests/security/cross-frame-access-call.html
+http/tests/security/cross-frame-access-get.html
 inspector/console/console-long-eval-crash.html
 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html
 sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.1_T11.html
@@ -1598,7 +1600,3 @@ editing/selection/move-by-word-visually-wrong-left-right.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43022
 tables/mozilla_expected_failures/bugs/bug85016.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=81500
-http/tests/security/cross-frame-access-call.html
-http/tests/security/cross-frame-access-get.html
