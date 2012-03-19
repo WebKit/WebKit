@@ -4,11 +4,6 @@ var renderLengthSeconds = 8;
 var pulseLengthSeconds = 1;
 var pulseLengthFrames = pulseLengthSeconds * sampleRate;
 
-// The convolver has a latency of 128 samples in the implementation.
-// We need to take this into account when verifying the output of the
-// convolver. See https://bugs.webkit.org/show_bug.cgi?id=75564.
-var convolveDelaySamples = 128;
-
 function createSquarePulseBuffer(context, sampleFrameLength) {
     var audioBuffer = context.createBuffer(1, sampleFrameLength, context.sampleRate);
 
@@ -41,27 +36,6 @@ function createTrianglePulseBuffer(context, sampleFrameLength) {
     return audioBuffer;
 }
 
-// Verify that the initial latency of the convolver is exactly zero.
-// Return true if so.
-function checkLatency(data) {
-    var isZero = true;
-
-    for (var i = 0; i < convolveDelaySamples; ++i) {
-        if (data[i] != 0) {
-            isZero = false;
-            break;
-        }
-    }
-
-    if (isZero) {
-        testPassed("Initial latency of convolver is silent.");
-    } else {
-        testFailed("Initial latency of convolver is not silent.");
-    }
-
-    return isZero;
-}
-
 function log10(x) {
   return Math.log(x)/Math.LN10;
 }
@@ -79,7 +53,7 @@ function checkTriangularPulse(rendered, reference) {
     var maxDeltaIndex = 0;
 
     for (var i = 0; i < reference.length; ++i) {
-        var diff = rendered[i + convolveDelaySamples] - reference[i];
+        var diff = rendered[i] - reference[i];
         var x = Math.abs(diff);
         if (x > maxDelta) {
             maxDelta = x;
@@ -111,7 +85,7 @@ function checkTail1(data, reference, breakpoint) {
     var isZero = true;
     var tail1Max = 0;
 
-    for (var i = reference.length + convolveDelaySamples; i < reference.length + breakpoint; ++i) {
+    for (var i = reference.length; i < reference.length + breakpoint; ++i) {
         var mag = Math.abs(data[i]);
         if (mag > tail1Max) {
             tail1Max = mag;
@@ -173,11 +147,6 @@ function checkConvolvedResult(trianglePulse) {
     
         var success = true;
     
-        // Verify the initial part is exactly zero because of the
-        // latency in the convolver.
-
-        success = success && checkLatency(renderedData);
-
         // Verify the triangular pulse is actually triangular.
 
         success = success && checkTriangularPulse(renderedData, referenceData);

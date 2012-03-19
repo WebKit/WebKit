@@ -3052,6 +3052,8 @@
             'platform/audio/Cone.cpp',
             'platform/audio/Cone.h',
             'platform/audio/DenormalDisabler.h',
+            'platform/audio/DirectConvolver.cpp',
+            'platform/audio/DirectConvolver.h',
             'platform/audio/Distance.cpp',
             'platform/audio/Distance.h',
             'platform/audio/DynamicsCompressor.cpp',

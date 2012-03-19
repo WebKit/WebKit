@@ -5481,6 +5481,8 @@ webcore_sources += \
 	Source/WebCore/platform/audio/Cone.cpp \
 	Source/WebCore/platform/audio/Cone.h \
 	Source/WebCore/platform/audio/DenormalDisabler.h \
+	Source/WebCore/platform/audio/DirectConvolver.cpp \
+	Source/WebCore/platform/audio/DirectConvolver.h \
 	Source/WebCore/platform/audio/Distance.cpp \
 	Source/WebCore/platform/audio/Distance.h \
 	Source/WebCore/platform/audio/DynamicsCompressor.h \
