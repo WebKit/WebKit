@@ -1326,6 +1326,11 @@ platform/mac/fast/forms/input-appearance-spinbutton-up.html
 # https://bugs.webkit.org/show_bug.cgi?id=73435
 http/tests/security/local-image-from-remote-whitelisted.html
 
+# Editing input tests that time out unexpectedly.
+# https://bugs.webkit.org/show_bug.cgi?id=81547
+editing/input/reveal-edit-on-input-vertically.html
+editing/input/reveal-contenteditable-on-input-vertically.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
