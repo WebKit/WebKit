@@ -1423,6 +1423,17 @@ void RenderBlock::computeRegionRangeForBlock()
         enclosingRenderFlowThread()->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
 }
 
+bool RenderBlock::recomputeLogicalWidth()
+{
+    LayoutUnit oldWidth = logicalWidth();
+    LayoutUnit oldColumnWidth = desiredColumnWidth();
+
+    computeLogicalWidth();
+    calcColumnWidth();
+
+    return oldWidth != logicalWidth() || oldColumnWidth != desiredColumnWidth();
+}
+
 void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight, BlockLayoutPass layoutPass)
 {
     ASSERT(needsLayout());
@@ -1435,16 +1446,10 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
 
     LayoutRepainter repainter(*this, everHadLayout() && checkForRepaintDuringLayout());
 
-    LayoutUnit oldWidth = logicalWidth();
-    LayoutUnit oldColumnWidth = desiredColumnWidth();
-
-    computeLogicalWidth();
-    calcColumnWidth();
+    if (recomputeLogicalWidth())
+        relayoutChildren = true;
 
     m_overflow.clear();
-
-    if (oldWidth != logicalWidth() || oldColumnWidth != desiredColumnWidth())
-        relayoutChildren = true;
 
     // If nothing changed about our floating positioned objects, let's go ahead and try to place them as
     // floats to avoid doing two passes.

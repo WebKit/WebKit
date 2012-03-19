@@ -985,6 +985,8 @@ protected:
 
     virtual bool requiresColumns(int desiredColumnCount) const;
 
+    virtual bool recomputeLogicalWidth();
+
 public:
     LayoutUnit offsetFromLogicalTopOfFirstPage() const;
     RenderRegion* regionAtBlockOffset(LayoutUnit) const;

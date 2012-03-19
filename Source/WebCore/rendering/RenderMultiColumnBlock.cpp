@@ -26,11 +26,51 @@
 #include "config.h"
 #include "RenderMultiColumnBlock.h"
 
+using namespace std;
+
 namespace WebCore {
 
 RenderMultiColumnBlock::RenderMultiColumnBlock(Node* node)
     : RenderBlock(node)
+    , m_columnCount(1)
+    , m_columnWidth(0)
 {
+}
+
+void RenderMultiColumnBlock::computeColumnCountAndWidth()
+{
+    // Calculate our column width and column count.
+    // FIXME: Can overflow on fast/block/float/float-not-removed-from-next-sibling4.html, see https://bugs.webkit.org/show_bug.cgi?id=68744
+    m_columnCount = 1;
+    m_columnWidth = contentLogicalWidth();
+    
+    ASSERT(!style()->hasAutoColumnCount() || !style()->hasAutoColumnWidth());
+
+    LayoutUnit availWidth = m_columnWidth;
+    LayoutUnit colGap = columnGap();
+    LayoutUnit colWidth = max<LayoutUnit>(1, LayoutUnit(style()->columnWidth()));
+    int colCount = max<int>(1, style()->columnCount());
+
+    if (style()->hasAutoColumnWidth() && !style()->hasAutoColumnCount()) {
+        m_columnCount = colCount;
+        m_columnWidth = max<LayoutUnit>(0, (availWidth - ((m_columnCount - 1) * colGap)) / m_columnCount);
+    } else if (!style()->hasAutoColumnWidth() && style()->hasAutoColumnCount()) {
+        m_columnCount = max<LayoutUnit>(1, (availWidth + colGap) / (colWidth + colGap));
+        m_columnWidth = ((availWidth + colGap) / m_columnCount) - colGap;
+    } else {
+        m_columnCount = max<LayoutUnit>(min<LayoutUnit>(colCount, (availWidth + colGap) / (colWidth + colGap)), 1);
+        m_columnWidth = ((availWidth + colGap) / m_columnCount) - colGap;
+    }
+}
+
+bool RenderMultiColumnBlock::recomputeLogicalWidth()
+{
+    bool relayoutChildren = RenderBlock::recomputeLogicalWidth();
+    LayoutUnit oldColumnWidth = m_columnWidth;
+    computeColumnCountAndWidth();
+    if (m_columnWidth != oldColumnWidth)
+        relayoutChildren = true;
+    return relayoutChildren;
 }
 
 const char* RenderMultiColumnBlock::renderName() const

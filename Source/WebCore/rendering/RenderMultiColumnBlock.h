@@ -37,6 +37,14 @@ public:
     
 private:
     virtual const char* renderName() const;
+
+    virtual bool recomputeLogicalWidth();
+    void computeColumnCountAndWidth();
+
+private:
+    unsigned m_columnCount;   // The default column count/width that are based off our containing block width. These values represent only the default,
+    LayoutUnit m_columnWidth; // since a multi-column block that is split across variable width pages or regions will have different column counts and widths in each.
+                              // These values will be cached (eventually) for multi-column blocks.
 };
 
 } // namespace WebCore
