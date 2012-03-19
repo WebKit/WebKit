@@ -31,7 +31,7 @@
 #include "config.h"
 #include "V8XMLHttpRequest.h"
 
-#include "ArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
 #include "Document.h"
 #include "Frame.h"
 #include "InspectorInstrumentation.h"

@@ -37,7 +37,7 @@
 #include "ActivePlatformGestureAnimation.h"
 #include "FloatPoint.h"
 #include "NotImplemented.h"
-#include "OwnArrayPtr.h"
+#include <wtf/OwnArrayPtr.h>
 #include "PlatformGestureEvent.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"

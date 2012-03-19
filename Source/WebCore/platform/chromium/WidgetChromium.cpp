@@ -31,7 +31,7 @@
 #include "config.h"
 #include "Widget.h"
 
-#include "Assertions.h"
+#include <wtf/Assertions.h>
 #include "HostWindow.h"
 #include "ScrollView.h"
 

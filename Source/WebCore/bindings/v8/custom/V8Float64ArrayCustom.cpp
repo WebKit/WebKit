@@ -24,14 +24,15 @@
  */
 
 #include "config.h"
-#include "Float64Array.h"
+#include "V8Float64Array.h"
 
-#include "ArrayBuffer.h"
 #include "V8ArrayBuffer.h"
 #include "V8ArrayBufferViewCustom.h"
 #include "V8Binding.h"
-#include "V8Float64Array.h"
 #include "V8Proxy.h"
+
+#include <wtf/ArrayBuffer.h>
+#include <wtf/Float64Array.h>
 
 namespace WebCore {
 

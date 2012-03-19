@@ -31,8 +31,8 @@
 #include "config.h"
 #include "WebArrayBuffer.h"
 
-#include "ArrayBuffer.h"
 #include "V8ArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;

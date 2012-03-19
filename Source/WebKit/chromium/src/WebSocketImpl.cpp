@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebSocketImpl.h"
 
-#include "ArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
 #include "Document.h"
 #include "KURL.h"
 #if ENABLE(WEB_SOCKETS)

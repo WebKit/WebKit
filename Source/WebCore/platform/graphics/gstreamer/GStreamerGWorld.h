@@ -22,10 +22,12 @@
 #define GStreamerGWorld_h
 #if ENABLE(VIDEO) && USE(GSTREAMER) && !defined(GST_API_VERSION_1)
 
-#include "GOwnPtr.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/gobject/GOwnPtr.h>
+
 #include "PlatformVideoWindow.h"
-#include "RefCounted.h"
-#include "RefPtr.h"
+
 #include <glib.h>
 
 typedef struct _GstElement GstElement;

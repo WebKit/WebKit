@@ -32,14 +32,16 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "ManagedTexture.h"
-#include "MathExtras.h"
 #include "Region.h"
 #include "TextStream.h"
 #include "TraceEvent.h"
+
 #include "cc/CCLayerImpl.h"
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCTiledLayerImpl.h"
+
 #include <wtf/CurrentTime.h>
+#include <wtf/MathExtras.h>
 
 // Start tiling when the width and height of a layer are larger than this size.
 static int maxUntiledSize = 512;

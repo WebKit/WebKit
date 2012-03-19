@@ -56,6 +56,7 @@
             'type': 'executable',
             'dependencies': [
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support_gfx',
+                '<(source_dir)/WTF/WTF.gyp/WTF.gyp:newwtf',
             ],
             'include_dirs': [
                 '<(source_dir)/JavaScriptCore',
@@ -78,6 +79,7 @@
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:inspector_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
                 '<(source_dir)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
+                '<(source_dir)/WTF/WTF.gyp/WTF.gyp:newwtf',
                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
@@ -89,7 +91,6 @@
                 '<(chromium_src_dir)',
                 '<(source_dir)/WebKit/chromium/public',
                 '<(source_dir)/JavaScriptCore',
-                '<(source_dir)/JavaScriptCore/wtf', # wtf/text/*.h refers headers in wtf/ without wtf/.
                 '<(DEPTH)',
             ],
             'defines': [

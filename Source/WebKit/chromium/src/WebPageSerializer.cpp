@@ -41,19 +41,18 @@
 #include "KURL.h"
 #include "MHTMLArchive.h"
 #include "PageSerializer.h"
-#include "Vector.h"
-
 #include "platform/WebCString.h"
+#include "platform/WebString.h"
+#include "platform/WebURL.h"
+#include "platform/WebVector.h"
 #include "WebFrame.h"
 #include "WebFrameImpl.h"
 #include "WebPageSerializerClient.h"
 #include "WebPageSerializerImpl.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
-#include "platform/WebVector.h"
 #include "WebView.h"
 #include "WebViewImpl.h"
 
+#include <wtf/Vector.h>
 #include <wtf/text/StringConcatenate.h>
 
 using namespace WebCore;

@@ -32,9 +32,11 @@
 
 #include "GraphicsContext.h"
 #include "MIMETypeRegistry.h"
-#include "PassRefPtr.h"
 #include "PlatformContextCairo.h"
+
 #include <gtk/gtk.h>
+
+#include <wtf/PassRefPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

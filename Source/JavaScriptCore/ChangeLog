@@ -1,3 +1,13 @@
+2012-03-19  Eric Seidel  <eric@webkit.org>
+
+        Fix WTF header include discipline in Chromium WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=81281
+
+        Reviewed by James Robinson.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+        * wtf/unicode/icu/CollatorICU.cpp:
+
 2012-03-19  Filip Pizlo  <fpizlo@apple.com>
 
         DFG NodeUse should be called Edge and NodeReferenceBlob should be called AdjacencyList

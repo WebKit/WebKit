@@ -31,7 +31,7 @@
 #ifndef V8ArrayBufferViewCustom_h
 #define V8ArrayBufferViewCustom_h
 
-#include "ArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
 #include "ExceptionCode.h"
 
 #include "V8ArrayBuffer.h"

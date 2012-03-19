@@ -34,8 +34,6 @@
 #include "MHTMLArchive.h"
 
 #include "Base64.h"
-#include "CryptographicallyRandomNumber.h"
-#include "DateMath.h"
 #include "Document.h"
 #include "Frame.h"
 #include "MHTMLParser.h"
@@ -44,13 +42,16 @@
 #include "PageSerializer.h"
 #include "QuotedPrintable.h"
 #include "SharedBuffer.h"
-#include <time.h>
+
+#include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/DateMath.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
 #if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif
+#include <time.h>
 
 
 namespace WebCore {

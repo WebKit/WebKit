@@ -26,7 +26,8 @@
 
 #include "GraphicsLayerTextureMapper.h"
 #include "ImageBuffer.h"
-#include "MathExtras.h"
+
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 

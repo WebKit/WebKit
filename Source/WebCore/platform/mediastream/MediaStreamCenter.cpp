@@ -35,9 +35,10 @@
 #include "MediaStreamCenter.h"
 
 #include "IceCandidateDescriptor.h"
-#include "MainThread.h"
 #include "MediaStreamDescriptor.h"
 #include "SessionDescriptionDescriptor.h"
+
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

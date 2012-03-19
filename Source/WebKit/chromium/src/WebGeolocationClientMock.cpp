@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebGeolocationClientMock.h"
 
-#include "CurrentTime.h"
+#include <wtf/CurrentTime.h>
 #include "Geolocation.h"
 #include "GeolocationClientMock.h"
 #include "GeolocationError.h"

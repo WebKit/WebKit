@@ -33,7 +33,7 @@
 
 #include "Image.h"
 #include "IntPoint.h"
-#include "RefPtr.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

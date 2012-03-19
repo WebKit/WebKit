@@ -36,6 +36,7 @@ use webkitdirs;
 
 determineIsChromiumAndroid();
 
+chdirWebKit();
 chdir("Source/WebKit/chromium") or die $!;
 
 # Find gclient or install it.

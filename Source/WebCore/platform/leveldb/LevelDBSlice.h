@@ -29,7 +29,7 @@
 #if USE(LEVELDB)
 
 #include "PlatformString.h"
-#include <Vector.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

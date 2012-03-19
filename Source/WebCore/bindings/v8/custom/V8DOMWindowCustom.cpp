@@ -31,7 +31,7 @@
 #include "config.h"
 #include "V8DOMWindow.h"
 
-#include "ArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
 #include "Chrome.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTimer.h"

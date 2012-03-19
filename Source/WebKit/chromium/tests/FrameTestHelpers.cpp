@@ -31,7 +31,7 @@
 #include "config.h"
 #include "FrameTestHelpers.h"
 
-#include "StdLibExtras.h"
+#include <wtf/StdLibExtras.h>
 #include "WebFrame.h"
 #include "WebFrameClient.h"
 #include "WebSettings.h"

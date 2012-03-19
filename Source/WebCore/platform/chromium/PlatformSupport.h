@@ -38,12 +38,12 @@
 #include "FileSystem.h"
 #include "ImageSource.h"
 #include "LinkHash.h"
-#include "PassRefPtr.h"
 #include "PasteboardPrivate.h"
 #include "PluginData.h"
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
 typedef struct NPObject NPObject;

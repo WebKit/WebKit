@@ -32,7 +32,7 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "NPObjectWrapper.h"
-#include "OwnArrayPtr.h"
+#include <wtf/OwnArrayPtr.h>
 #include "PlatformString.h"
 #include "ScriptSourceCode.h"
 #include "UserGestureIndicator.h"

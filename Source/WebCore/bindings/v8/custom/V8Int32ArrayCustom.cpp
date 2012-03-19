@@ -29,8 +29,8 @@
  */
 
 #include "config.h"
-#include "ArrayBuffer.h"
-#include "Int32Array.h"
+#include <wtf/ArrayBuffer.h>
+#include <wtf/Int32Array.h>
 
 #include "V8Binding.h"
 #include "V8ArrayBuffer.h"

@@ -22,10 +22,11 @@
 
 #include "AXObjectCache.h"
 #include "Frame.h"
-#include "RefPtr.h"
 #include "WebKitAccessibleWrapperAtk.h"
 
 #include <gtk/gtk.h>
+
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

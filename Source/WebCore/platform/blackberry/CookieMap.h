@@ -27,9 +27,9 @@
 #ifndef CookieMap_h
 #define CookieMap_h
 
-#include "HashMap.h"
 #include "PlatformString.h"
-#include "Vector.h"
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

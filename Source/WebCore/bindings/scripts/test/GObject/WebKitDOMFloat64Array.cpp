@@ -25,8 +25,8 @@
 #include <wtf/RefPtr.h>
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
-#include "Float64Array.h"
-#include "Int32Array.h"
+#include <wtf/Float64Array.h>
+#include <wtf/Int32Array.h>
 #include "JSMainThreadExecState.h"
 #include "WebKitDOMBinding.h"
 #include "gobject/ConvertToUTF8String.h"

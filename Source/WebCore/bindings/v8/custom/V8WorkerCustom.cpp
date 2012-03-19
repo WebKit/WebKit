@@ -35,7 +35,7 @@
 
 #include "Worker.h"
 
-#include "ArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "SerializedScriptValue.h"

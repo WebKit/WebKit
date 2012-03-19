@@ -21,9 +21,9 @@
 #include "config.h"
 #include "WebDOMFloat64Array.h"
 
-#include "Float32Array.h"
-#include "Float64Array.h"
-#include "Int32Array.h"
+#include <wtf/Float32Array.h>
+#include <wtf/Float64Array.h>
+#include <wtf/Int32Array.h>
 #include "WebDOMFloat32Array.h"
 #include "WebDOMInt32Array.h"
 #include "WebExceptionHandler.h"

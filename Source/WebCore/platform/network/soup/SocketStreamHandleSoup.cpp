@@ -31,16 +31,18 @@
 #include "config.h"
 #include "SocketStreamHandle.h"
 
-#include "GOwnPtr.h"
 #include "KURL.h"
 #include "Logging.h"
 #include "NotFound.h"
 #include "NotImplemented.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
-#include "Vector.h"
+
 #include <gio/gio.h>
 #include <glib.h>
+
+#include <wtf/Vector.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
 #define READ_BUFFER_SIZE 1024

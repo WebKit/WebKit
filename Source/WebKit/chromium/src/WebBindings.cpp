@@ -35,7 +35,7 @@
 #include "npruntime_priv.h"
 
 #if USE(V8)
-#include "ArrayBufferView.h"
+#include <wtf/ArrayBufferView.h>
 #include "DOMWindow.h"
 #include "NPV8Object.h"  // for PrivateIdentifier
 #include "Range.h"

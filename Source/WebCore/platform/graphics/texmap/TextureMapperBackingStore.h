@@ -22,9 +22,10 @@
 
 #include "FloatRect.h"
 #include "Image.h"
-#include "RefPtr.h"
 #include "TextureMapper.h"
 #include "TextureMapperPlatformLayer.h"
+
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

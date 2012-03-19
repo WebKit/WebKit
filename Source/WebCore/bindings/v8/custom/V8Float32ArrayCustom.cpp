@@ -29,13 +29,14 @@
  */
 
 #include "config.h"
-#include "ArrayBuffer.h"
-#include "Float32Array.h"
+#include "V8Float32Array.h"
+
+#include <wtf/ArrayBuffer.h>
+#include <wtf/Float32Array.h>
 
 #include "V8Binding.h"
 #include "V8ArrayBuffer.h"
 #include "V8ArrayBufferViewCustom.h"
-#include "V8Float32Array.h"
 #include "V8Proxy.h"
 
 namespace WebCore {

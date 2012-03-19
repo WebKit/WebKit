@@ -31,7 +31,7 @@
 #ifndef PopupMenuPrivate_h
 #define PopupMenuPrivate_h
 
-#include "RefPtr.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

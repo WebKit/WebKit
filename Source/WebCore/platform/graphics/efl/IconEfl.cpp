@@ -37,8 +37,9 @@
 #include "GraphicsContext.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
-#include "PassRefPtr.h"
-#include "PlatformString.h"
+
+#include <wtf/PassRefPtr.h>
+#include <wtf/PlatformString.h>
 
 namespace WebCore {
 

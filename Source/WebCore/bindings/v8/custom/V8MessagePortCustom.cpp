@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#include "ArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
 #include "ExceptionCode.h"
 #include "MessagePort.h"
 #include "SerializedScriptValue.h"

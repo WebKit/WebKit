@@ -29,7 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 #if USE(LEVELDB)
 
-#include "Assertions.h"
+#include <wtf/Assertions.h>
 #include "FileSystem.h"
 #include "IDBFactoryBackendImpl.h"
 #include "IDBKeyRange.h"

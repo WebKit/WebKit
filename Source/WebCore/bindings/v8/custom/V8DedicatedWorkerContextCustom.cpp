@@ -33,7 +33,7 @@
 #if ENABLE(WORKERS)
 #include "V8DedicatedWorkerContext.h"
 
-#include "ArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
 #include "DedicatedWorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
 #include "V8Binding.h"

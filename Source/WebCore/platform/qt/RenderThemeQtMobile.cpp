@@ -35,12 +35,14 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PaintInfo.h"
-#include "PassRefPtr.h"
 #include "QWebPageClient.h"
 #include "RenderBox.h"
 #if ENABLE(PROGRESS_TAG)
 #include "RenderProgress.h"
 #endif
+
+#include <wtf/PassRefPtr.h>
+
 #include <QColor>
 #include <QFile>
 #include <QFontMetrics>

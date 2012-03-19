@@ -28,7 +28,7 @@
 
 #include "V8AudioContext.h"
 
-#include "ArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
 #include "AudioBuffer.h"
 #include "AudioContext.h"
 #include "Frame.h"

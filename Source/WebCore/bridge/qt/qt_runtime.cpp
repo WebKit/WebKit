@@ -23,7 +23,6 @@
 #include "APICast.h"
 #include "BooleanObject.h"
 #include "DateInstance.h"
-#include "DateMath.h"
 #include "DatePrototype.h"
 #include "FunctionPrototype.h"
 #include "Interpreter.h"
@@ -51,6 +50,9 @@
 #include "qt_instance.h"
 #include "qt_pixmapruntime.h"
 #include "qvarlengtharray.h"
+
+#include <wtf/DateMath.h>
+
 #include <limits.h>
 #include <runtime/Error.h>
 #include <runtime_array.h>

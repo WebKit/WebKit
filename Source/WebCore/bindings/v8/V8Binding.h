@@ -33,11 +33,11 @@
 
 #include "BindingSecurity.h"
 #include "DOMDataStore.h"
-#include "MathExtras.h"
 #include "PlatformString.h"
 #include "V8DOMWrapper.h"
 #include "V8GCController.h"
 #include "V8HiddenPropertyName.h"
+#include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/AtomicString.h>
 

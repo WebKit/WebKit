@@ -34,10 +34,11 @@
 #include "Image.h"
 #include "NativeImageSkia.h"
 #include "NotImplemented.h"
-#include "RefPtr.h"
 #include "SkBitmap.h"
 
 #include "skia/ext/image_operations.h"
+
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

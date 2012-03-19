@@ -25,9 +25,9 @@
  */
 
 #include "config.h"
-#include "Uint8ClampedArray.h"
 
-#include "ArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
+#include <wtf/Uint8ClampedArray.h>
 
 #include "V8ArrayBuffer.h"
 #include "V8ArrayBufferViewCustom.h"

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformMouseEvent.h"
 
-#include "Assertions.h"
+#include <wtf/Assertions.h>
 #include <wx/defs.h>
 #include <wx/event.h>
 #include <wtf/CurrentTime.h>

@@ -27,17 +27,17 @@
  */
 
 #include "config.h"
-#include "Collator.h"
+#include <wtf/unicode/Collator.h>
 
 #if USE(ICU_UNICODE) && !UCONFIG_NO_COLLATION
 
-#include "Assertions.h"
-#include "Threading.h"
+#include <wtf/Assertions.h>
+#include <wtf/Threading.h>
 #include <unicode/ucol.h>
 #include <string.h>
 
 #if OS(DARWIN)
-#include "RetainPtr.h"
+#include <wtf/RetainPtr.h>
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 

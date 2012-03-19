@@ -22,7 +22,7 @@
 #include "KURL.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
-#include "Vector.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

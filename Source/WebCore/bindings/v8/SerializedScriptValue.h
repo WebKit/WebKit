@@ -31,9 +31,9 @@
 #ifndef SerializedScriptValue_h
 #define SerializedScriptValue_h
 
-#include "ArrayBuffer.h"
 #include "ScriptValue.h"
 #include <v8.h>
+#include <wtf/ArrayBuffer.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {

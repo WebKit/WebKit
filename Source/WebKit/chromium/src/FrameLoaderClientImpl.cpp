@@ -37,19 +37,19 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FormState.h"
-#include "FrameLoader.h"
 #include "FrameLoadRequest.h"
+#include "FrameLoader.h"
 #include "FrameNetworkingContextImpl.h"
 #include "FrameView.h"
-#include "HTTPParsers.h"
-#include "HistoryItem.h"
-#include "HitTestResult.h"
 #include "HTMLAppletElement.h"
 #include "HTMLFormElement.h"  // needed by FormState.h
 #include "HTMLNames.h"
+#include "HTTPParsers.h"
+#include "HistoryItem.h"
+#include "HitTestResult.h"
 #include "IntentRequest.h"
-#include "MessageEvent.h"
 #include "MIMETypeRegistry.h"
+#include "MessageEvent.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "PlatformString.h"
@@ -59,7 +59,6 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceLoader.h"
 #include "Settings.h"
-#include "StringExtras.h"
 #include "WebDOMEvent.h"
 #include "WebDataSourceImpl.h"
 #include "WebDevToolsAgentPrivate.h"
@@ -69,8 +68,6 @@
 #include "WebFrameImpl.h"
 #include "WebIntentRequest.h"
 #include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
-#include <public/WebMimeRegistry.h>
 #include "WebNode.h"
 #include "WebPermissionClient.h"
 #include "WebPlugin.h"
@@ -78,14 +75,18 @@
 #include "WebPluginLoadObserver.h"
 #include "WebPluginParams.h"
 #include "WebSecurityOrigin.h"
-#include "platform/WebURL.h"
-#include "platform/WebURLError.h"
-#include "platform/WebVector.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include "WindowFeatures.h"
 #include "WrappedResourceRequest.h"
 #include "WrappedResourceResponse.h"
+#include "platform/WebKitPlatformSupport.h"
+#include "platform/WebURL.h"
+#include "platform/WebURLError.h"
+#include "platform/WebVector.h"
+#include <public/WebMimeRegistry.h>
+
+#include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 
 #if USE(V8)

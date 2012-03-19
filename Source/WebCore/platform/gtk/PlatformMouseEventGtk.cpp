@@ -27,7 +27,7 @@
 #include "config.h"
 #include "PlatformMouseEvent.h"
 
-#include "Assertions.h"
+#include <wtf/Assertions.h>
 
 #include <gdk/gdk.h>
 

@@ -33,7 +33,6 @@
 
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
-#include "Noncopyable.h"
 #include "OpaqueRegionSkia.h"
 
 #include "SkCanvas.h"
@@ -42,6 +41,7 @@
 #include "SkPaint.h"
 #include "SkPath.h"
 
+#include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

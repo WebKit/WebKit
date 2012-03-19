@@ -24,12 +24,14 @@
  */
 
 #include "config.h"
-// this needs to be included before fontprops.h for UChar* to be defined.
+
+#include <wtf/MathExtras.h>
+// Unicode.h needs to be included before fontprops.h for UChar* to be defined.
+// FIXME: This is wrong, fontprops.h should just forward-declare UChar.
 #include <wtf/unicode/Unicode.h>
 
 #include "fontprops.h"
 #include "math.h"
-#include "MathExtras.h"
 
 #include <wx/defs.h>
 #include <wx/gdicmn.h>

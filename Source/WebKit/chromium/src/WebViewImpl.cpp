@@ -114,7 +114,6 @@
 #include "TraceEvent.h"
 #include "TypingCommand.h"
 #include "UserGestureIndicator.h"
-#include "Vector.h"
 #include "WebAccessibilityObject.h"
 #include "WebAutofillClient.h"
 #include "WebCompositorImpl.h"

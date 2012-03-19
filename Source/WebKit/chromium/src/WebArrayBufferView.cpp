@@ -29,7 +29,7 @@
 #include "config.h"
 #include "platform/WebArrayBufferView.h"
 
-#include "ArrayBufferView.h"
+#include <wtf/ArrayBufferView.h>
 
 using namespace WTF;
 

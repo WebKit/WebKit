@@ -31,7 +31,7 @@
 #include "config.h"
 #include "V8Utilities.h"
 
-#include "ArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"

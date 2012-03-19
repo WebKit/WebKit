@@ -31,7 +31,7 @@
 #include "config.h"
 #include "V8DOMWrapper.h"
 
-#include "ArrayBufferView.h"
+#include <wtf/ArrayBufferView.h>
 #include "DocumentLoader.h"
 #include "EventTargetHeaders.h"
 #include "EventTargetInterfaces.h"

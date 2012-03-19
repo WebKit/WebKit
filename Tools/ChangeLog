@@ -1,3 +1,13 @@
+2012-03-19  Eric Seidel  <eric@webkit.org>
+
+        Fix WTF header include discipline in Chromium WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=81281
+
+        Reviewed by James Robinson.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * Scripts/update-webkit-chromium: Made it possible to run this from a directory other than the root.
+
 2012-03-19  Andy Chen  <andchen@rim.com>
 
         [BlackBerry] Add new layout test for text match marker

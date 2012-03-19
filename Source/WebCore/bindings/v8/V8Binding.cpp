@@ -34,15 +34,16 @@
 #include "DOMStringList.h"
 #include "DOMWrapperVisitor.h"
 #include "Element.h"
-#include "MathExtras.h"
 #include "PlatformString.h"
 #include "QualifiedName.h"
-#include "StdLibExtras.h"
-#include "Threading.h"
 #include "V8DOMStringList.h"
 #include "V8Element.h"
 #include "V8Proxy.h"
+
+#include <wtf/MathExtras.h>
 #include <wtf/MainThread.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/Threading.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>

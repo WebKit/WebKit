@@ -106,11 +106,12 @@
         'wtf_config',
         '<(chromium_src_dir)/third_party/icu/icu.gyp:icui18n',
         '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
+        '../../WTF/WTF.gyp/WTF.gyp:newwtf',
       ],
       'include_dirs': [
         '../',
-        '../wtf',
-        '../wtf/unicode',
+        '../wtf', # Some .cpp expect #include "Assertions.h", etc. to work.
+        '../wtf/unicode', # Likewise some expect #include "Collator.h" to work.
       ],
       'sources': [
         '<@(javascriptcore_publicheader_files)',
@@ -145,7 +146,6 @@
       'direct_dependent_settings': {
         'include_dirs': [
           '../',
-          '../wtf',
         ],
         # Some warnings occur in JSC headers, so they must also be disabled
         # in targets that use JSC.
@@ -197,6 +197,7 @@
       'type': 'static_library',
       'dependencies': [
         'wtf',
+        '../../WTF/WTF.gyp/WTF.gyp:newwtf',
       ],
       'variables': { 'optimize': 'max' },
       'actions': [

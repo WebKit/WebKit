@@ -163,9 +163,9 @@
 #ifndef TraceEvent_h
 #define TraceEvent_h
 
-#include "DynamicAnnotations.h"
 #include "PlatformSupport.h"
 
+#include <wtf/DynamicAnnotations.h>
 #include <wtf/text/CString.h>
 
 // Issues begin trace event here and end trace event when the current scope ends.

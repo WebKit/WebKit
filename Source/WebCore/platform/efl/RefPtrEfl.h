@@ -20,7 +20,7 @@
 #ifndef RefPtrEfl_h
 #define RefPtrEfl_h
 
-#include "RefPtr.h"
+#include <wtf/RefPtr.h>
 
 typedef struct _Evas_Object Evas_Object;
 

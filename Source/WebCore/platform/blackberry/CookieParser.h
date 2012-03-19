@@ -28,7 +28,7 @@
 #define CookieParser_h
 
 #include "KURL.h"
-#include "Vector.h"
+#include <wtf/Vector.h>
 
 namespace WTF {
 class String;

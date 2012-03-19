@@ -1,3 +1,23 @@
+2012-03-19  Eric Seidel  <eric@webkit.org>
+
+        Fix WTF header include discipline in Chromium WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=81281
+
+        Reviewed by James Robinson.
+
+        * src/CompositionUnderlineBuilder.h:
+        * src/CompositionUnderlineVectorBuilder.h:
+        * src/FrameLoaderClientImpl.cpp:
+        * src/WebArrayBuffer.cpp:
+        * src/WebArrayBufferView.cpp:
+        * src/WebBindings.cpp:
+        * src/WebColorName.cpp:
+        * src/WebGeolocationClientMock.cpp:
+        * src/WebPageSerializer.cpp:
+        * src/WebSocketImpl.cpp:
+        * src/WebViewImpl.cpp:
+        * tests/FrameTestHelpers.cpp:
+
 2012-03-19  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Invalidate/update evicted tiles during commit
