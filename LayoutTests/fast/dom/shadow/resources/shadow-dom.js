@@ -5,20 +5,27 @@ function createShadowRoot()
 }
 
 // This function can take optional child elements, which might be a result of createShadowRoot(), as arguments[2:].
+// You must enable SHADOW_DOM flag if you use this fucntion to host multiple ShadowRoots
+// since window.internals does not have a function which can be used to host multiple shadow roots.
+// FIXME: window.internals should have such function and remove the restriction.
 function createDOM(tagName, attributes)
 {
     var element = document.createElement(tagName);
     for (var name in attributes)
         element.setAttribute(name, attributes[name]);
     var childElements = Array.prototype.slice.call(arguments, 2);
+    var shadowRootCount = 0;
     for (var i = 0; i < childElements.length; ++i) {
         var child = childElements[i];
         if (child.isShadowRoot) {
+            ++shadowRootCount;
             var shadowRoot;
             if (window.WebKitShadowRoot)
-              shadowRoot = new WebKitShadowRoot(element);
+                shadowRoot = new WebKitShadowRoot(element);
+            else if (shadowRootcount == 1)
+                shadowRoot = internals.ensureShadowRoot(element);
             else
-              shadowRoot = internals.ensureShadowRoot(element);
+                throw "CreateDOM cannot be used to host multiple ShadowRoots without new WebKitShadowRoot()";
             for (var j = 0; j < child.children.length; ++j)
                 shadowRoot.appendChild(child.children[j]);
         } else
@@ -30,7 +37,7 @@ function createDOM(tagName, attributes)
 function isShadowRoot(node)
 {
     // FIXME: window.internals should have internals.isShadowRoot(node).
-    return node.host;
+    return node.nodeName == "#shadow-root" || node.host;
 }
 
 // You can spefify youngerShadowRoot by consecutive slashes.
