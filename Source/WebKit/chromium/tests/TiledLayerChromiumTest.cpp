@@ -335,6 +335,48 @@ TEST(TiledLayerChromiumTest, pushOccludedDirtyTiles)
     EXPECT_TRUE(layerImpl->hasTileAt(0, 1));
 }
 
+TEST(TiledLayerChromiumTest, pushDeletedTiles)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    DebugScopedSetImplThread implThread;
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    // The tile size is 100x100, so this invalidates and then paints two tiles.
+    layer->setBounds(IntSize(100, 200));
+    layer->invalidateRect(IntRect(0, 0, 100, 200));
+    layer->prepareToUpdate(IntRect(0, 0, 100, 200), 0);
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // We should have both tiles on the impl side.
+    EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
+    EXPECT_TRUE(layerImpl->hasTileAt(0, 1));
+
+    textureManager->evictAndDeleteAllTextures(&textureAllocator);
+    textureManager->setMaxMemoryLimitBytes(4*1024*1024);
+    textureManager->setPreferredMemoryLimitBytes(4*1024*1024);
+
+    // This should drop the tiles on the impl thread.
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // We should now have no textures on the impl thread.
+    EXPECT_FALSE(layerImpl->hasTileAt(0, 0));
+    EXPECT_FALSE(layerImpl->hasTileAt(0, 1));
+
+    // This should recreate and update the deleted textures.
+    layer->prepareToUpdate(IntRect(0, 0, 100, 100), 0);
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // We should only have the first tile since the other tile was invalidated but not painted.
+    EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
+    EXPECT_FALSE(layerImpl->hasTileAt(0, 1));
+}
+
 TEST(TiledLayerChromiumTest, pushIdlePaintTiles)
 {
     OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);

@@ -63,6 +63,11 @@ public:
     ManagedTexture* managedTexture() { return m_texture->texture(); }
 
     bool isDirty() const { return !m_dirtyRect.isEmpty(); }
+    void copyAndClearDirty()
+    {
+        m_updateRect = m_dirtyRect;
+        m_dirtyRect = IntRect();
+    }
     // Returns whether the layer was dirty and not updated in the current frame. For tiles that were not culled, the
     // updateRect holds the area of the tile that was updated. Otherwise, the area that would have been updated.
     bool isDirtyForCurrentFrame() { return !m_dirtyRect.isEmpty() && (m_updateRect.isEmpty() || m_updateCulled); }
@@ -414,8 +419,10 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             if (!tile)
                 tile = createTile(i, j);
 
-            // Save the dirty rect since WebKit can change the tile's dirty rect during painting.
-            tile->m_updateRect = tile->m_dirtyRect;
+            if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat)) {
+                // Sets the dirty rect to a full-sized tile with border texels.
+                tile->m_dirtyRect = m_tiler->tileRect(tile);
+            }
 
             // When not idle painting, if the visible region of the tile is occluded, don't reserve a texture or update the tile.
             // If any part of the tile is visible, then we need to update it so the tile is pushed to the impl thread.
@@ -423,6 +430,8 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
                 IntRect visibleTileRect = intersection(m_tiler->tileBounds(i, j), visibleLayerRect());
                 if (occlusion->occluded(this, visibleTileRect)) {
                     tile->m_updateCulled = true;
+                    // Save the area we culled for recording metrics.
+                    tile->m_updateRect = tile->m_dirtyRect;
                     continue;
                 }
             }
@@ -431,10 +440,8 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             // of update. https://bugs.webkit.org/show_bug.cgi?id=77376
             if (tileOnlyNeedsPartialUpdate(tile) && layerTreeHost() && layerTreeHost()->requestPartialTextureUpdate())
                 tile->m_partialUpdate = true;
-            else if (tileNeedsBufferedUpdate(tile) && layerTreeHost())
+            else if (tileNeedsBufferedUpdate(tile) && layerTreeHost()) {
                 layerTreeHost()->deleteTextureAfterCommit(tile->managedTexture()->steal());
-
-            if (!tile->managedTexture()->isValid(m_tiler->tileSize(), m_textureFormat)) {
                 // Sets the dirty rect to a full-sized tile with border texels.
                 tile->m_dirtyRect = m_tiler->tileRect(tile);
             }
@@ -454,8 +461,7 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             }
 
             dirtyLayerRect.unite(tile->m_dirtyRect);
-            // Clear the dirty rect.
-            tile->m_dirtyRect = IntRect();
+            tile->copyAndClearDirty();
         }
     }
 
