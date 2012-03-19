@@ -146,7 +146,10 @@ void PlatformPasteboard::setPathnamesForType(const Vector<String>& pathnames, co
 
 void PlatformPasteboard::setStringForType(const String& string, const String& pasteboardType)
 {
-    [m_pasteboard.get() setString:string forType:pasteboardType];
+    if (pasteboardType == String(NSURLPboardType))
+        [[NSURL URLWithString:string] writeToPasteboard:m_pasteboard.get()];
+    else
+        [m_pasteboard.get() setString:string forType:pasteboardType];
 }
 
 }

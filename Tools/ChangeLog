@@ -1,3 +1,20 @@
+2012-03-19  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10848575> and https://bugs.webkit.org/show_bug.cgi?id=81516
+        REGRESSION (r107435) URLs copied from WebKit apps aren't in the right pasteboard format
+
+        Reviewed by Enrica Casucci.
+
+        Bring up a context menu on a link, copy the link, then verify the pasteboard contents
+        are in the correct format.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/ContextMenuCanCopyURL.html: Added.
+        * TestWebKitAPI/Tests/mac/ContextMenuCanCopyURL.mm: Added.
+        (-[ContextMenuCanCopyURLDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::contextMenuCopyLink):
+        (TestWebKitAPI::TEST):
+
 2012-03-19  Ojan Vafai  <ojan@chromium.org>
 
         Make the selected item in the accordion a link to the flakiness dashboard
