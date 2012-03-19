@@ -1,3 +1,14 @@
+2012-03-19  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
+
+        [EFL] Add XDG env vars to jhbuildrc
+        https://bugs.webkit.org/show_bug.cgi?id=81510
+
+        Needed to ensure correct glib behaviour in jhbuild environment.
+
+        Reviewed by Philippe Normand.
+
+        * efl/jhbuildrc:
+
 2012-03-19  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Select best target for tap gesture.
