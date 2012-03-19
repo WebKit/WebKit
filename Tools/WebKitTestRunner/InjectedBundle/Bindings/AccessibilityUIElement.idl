@@ -118,6 +118,7 @@ module WTR {
         AccessibilityUIElement selectedRowAtIndex(in unsigned long index);
         AccessibilityUIElement disclosedByRow();
         AccessibilityUIElement disclosedRowAtIndex(in unsigned long index);
+        AccessibilityUIElement rowAtIndex(in unsigned long index);
         int indexInTable();
         DOMString rowIndexRange();
         DOMString columnIndexRange();

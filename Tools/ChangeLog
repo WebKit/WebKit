@@ -1,3 +1,21 @@
+2012-03-19  Chris Fleizach  <cfleizach@apple.com>
+
+        platform/mac/accessibility/selected-rows-table.html failing on Lion Intel Debug WebKit2 testers
+        https://bugs.webkit.org/show_bug.cgi?id=81530
+
+        Reviewed by Jessie Berlin.
+
+        Add rowAtIndex to WebKitTestRunner.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::rowAtIndex):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR):
+        (WTR::AccessibilityUIElement::rowAtIndex):
+
 2012-03-19  Ojan Vafai  <ojan@chromium.org>
 
         Change garden-o-matic All Failures tab to Expected Failures

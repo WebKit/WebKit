@@ -326,6 +326,17 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(u
 
     return 0;
 }
+    
+PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::rowAtIndex(unsigned index)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray* rows = [m_element accessibilityAttributeValue:NSAccessibilityRowsAttribute];
+    if (index < [rows count])
+        return AccessibilityUIElement::create([rows objectAtIndex:index]);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::selectedChildAtIndex(unsigned index) const
 {

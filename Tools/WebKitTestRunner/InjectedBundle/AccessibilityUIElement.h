@@ -180,6 +180,7 @@ public:
     PassRefPtr<AccessibilityUIElement> selectedRowAtIndex(unsigned);
     PassRefPtr<AccessibilityUIElement> disclosedByRow();
     PassRefPtr<AccessibilityUIElement> disclosedRowAtIndex(unsigned);
+    PassRefPtr<AccessibilityUIElement> rowAtIndex(unsigned);
 
     // ARIA specific
     PassRefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
