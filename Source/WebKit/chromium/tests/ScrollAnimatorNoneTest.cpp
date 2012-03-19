@@ -125,7 +125,7 @@ TEST(ScrollAnimatorEnabled, Enabled)
     scrollAnimatorNone.reset();
 
     scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByPixel, 4, 25);
-    EXPECT_NE(100, scrollAnimatorNone.currentX());
+    EXPECT_EQ(100, scrollAnimatorNone.currentX());
     EXPECT_NE(0, scrollAnimatorNone.currentX());
     EXPECT_EQ(0, scrollAnimatorNone.currentY());
     scrollAnimatorNone.reset();

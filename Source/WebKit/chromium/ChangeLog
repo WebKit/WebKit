@@ -1,3 +1,10 @@
+2012-03-18  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Fix test that was broken by r111128
+
+        * tests/ScrollAnimatorNoneTest.cpp:
+        (TEST): ScrollByPixel no longer animates.
+
 2012-03-18  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Don't occlude on main-thread behind layers/surfaces with impl-thread animations
