@@ -1874,7 +1874,7 @@ bool RenderBlock::handleRunInChild(RenderBox* child)
     // Move the nodes from the old child to the new child
     for (RenderObject* runInChild = blockRunIn->firstChild(); runInChild;) {
         RenderObject* nextSibling = runInChild->nextSibling();
-        blockRunIn->children()->removeChildNode(blockRunIn, runInChild, false);
+        blockRunIn->children()->removeChildNode(blockRunIn, runInChild);
         inlineRunIn->addChild(runInChild); // Use addChild instead of appendChildNode since it handles correct placement of the children relative to :after-generated content.
         runInChild = nextSibling;
     }
