@@ -371,11 +371,6 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, const Iden
         PropertySlot slot;
         thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
     } else if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().length || propertyName == exec->propertyNames().caller) {
-        if (!object->isExtensible()) {
-            if (throwException)
-                throwError(exec, createTypeError(exec, "Attempting to define property on object that is not extensible."));
-            return false;
-        }
         if (descriptor.configurablePresent() && descriptor.configurable()) {
             if (throwException)
                 throwError(exec, createTypeError(exec, "Attempting to configurable attribute of unconfigurable property."));

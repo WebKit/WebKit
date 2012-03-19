@@ -30,7 +30,6 @@
 #include "APICast.h"
 #include "CodeBlock.h"
 #include "ExceptionHelpers.h"
-#include "JSCallbackObject.h"
 #include "JSFunction.h"
 #include "FunctionPrototype.h"
 #include <runtime/JSGlobalObject.h>
@@ -76,6 +75,10 @@ EncodedJSValue JSCallbackFunction::call(ExecState* exec)
     if (exception)
         throwError(exec, toJS(exec, exception));
 
+    // result must be a valid JSValue.
+    if (!result)
+        return throwVMTypeError(exec);
+
     return JSValue::encode(toJS(exec, result));
 }
 
@@ -84,36 +87,5 @@ CallType JSCallbackFunction::getCallData(JSCell*, CallData& callData)
     callData.native.function = call;
     return CallTypeHost;
 }
-
-JSValueRef JSCallbackFunction::toStringCallback(JSContextRef ctx, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef* exception)
-{
-    JSObject* object = toJS(thisObject);
-    if (object->inherits(&JSCallbackObject<JSNonFinalObject>::s_info)) {
-        for (JSClassRef jsClass = jsCast<JSCallbackObject<JSNonFinalObject>*>(object)->classRef(); jsClass; jsClass = jsClass->parentClass)
-            if (jsClass->convertToType)
-                return jsClass->convertToType(ctx, thisObject, kJSTypeString, exception);
-    } else if (object->inherits(&JSCallbackObject<JSGlobalObject>::s_info)) {
-        for (JSClassRef jsClass = jsCast<JSCallbackObject<JSGlobalObject>*>(object)->classRef(); jsClass; jsClass = jsClass->parentClass)
-            if (jsClass->convertToType)
-                return jsClass->convertToType(ctx, thisObject, kJSTypeString, exception);
-    }
-    return 0;
-}
-
-JSValueRef JSCallbackFunction::valueOfCallback(JSContextRef ctx, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef* exception)
-{
-    JSObject* object = toJS(thisObject);
-    if (object->inherits(&JSCallbackObject<JSNonFinalObject>::s_info)) {
-        for (JSClassRef jsClass = jsCast<JSCallbackObject<JSNonFinalObject>*>(object)->classRef(); jsClass; jsClass = jsClass->parentClass)
-            if (jsClass->convertToType)
-                return jsClass->convertToType(ctx, thisObject, kJSTypeNumber, exception);
-    } else if (object->inherits(&JSCallbackObject<JSGlobalObject>::s_info)) {
-        for (JSClassRef jsClass = jsCast<JSCallbackObject<JSGlobalObject>*>(object)->classRef(); jsClass; jsClass = jsClass->parentClass)
-            if (jsClass->convertToType)
-                return jsClass->convertToType(ctx, thisObject, kJSTypeNumber, exception);
-    }
-    return 0;
-}
-
 
 } // namespace JSC

@@ -184,6 +184,30 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSCell* cell, ExecState* exec,
 }
 
 template <class Parent>
+JSValue JSCallbackObject<Parent>::defaultValue(const JSObject* object, ExecState* exec, PreferredPrimitiveType hint)
+{
+    const JSCallbackObject* thisObject = jsCast<const JSCallbackObject*>(object);
+    JSContextRef ctx = toRef(exec);
+    JSObjectRef thisRef = toRef(thisObject);
+    ::JSType jsHint = hint == PreferString ? kJSTypeString : kJSTypeNumber;
+
+    for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
+        if (JSObjectConvertToTypeCallback convertToType = jsClass->convertToType) {
+            JSValueRef exception = 0;
+            JSValueRef result = convertToType(ctx, thisRef, jsHint, &exception);
+            if (exception) {
+                throwError(exec, toJS(exec, exception));
+                return jsUndefined();
+            }
+            if (result)
+                return toJS(exec, result);
+        }
+    }
+    
+    return Parent::defaultValue(object, exec, hint);
+}
+
+template <class Parent>
 bool JSCallbackObject<Parent>::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);

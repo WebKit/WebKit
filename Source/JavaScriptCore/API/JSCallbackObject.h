@@ -175,6 +175,8 @@ private:
 
     static void destroy(JSCell*);
 
+    static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
+
     static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
     static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
     

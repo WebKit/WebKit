@@ -1,3 +1,52 @@
+2012-03-19  Gavin Barraclough  <barraclough@apple.com>
+
+        JSCallbackFunction::toStringCallback/valueOfCallback do not handle 0 return value from convertToType
+        https://bugs.webkit.org/show_bug.cgi?id=81468 <rdar://problem/11034745>
+
+        Reviewed by Oliver Hunt.
+
+        The API specifies that convertToType may opt not to handle a conversion:
+            "@result The objects's converted value, or NULL if the object was not converted."
+        In which case, it would propagate first up the JSClass hierarchy, calling its superclass's
+        conversion functions, and failing that call the JSObject::defaultValue function.
+
+        Unfortunately this behaviour was removed in bug#69677/bug#69858, and instead we now rely on
+        the toStringCallback/valueOfCallback function introduced in bug#69156. Even after a fix in
+        bug#73368, these will return the result from the first convertToType they find, regardless
+        of whether this result is null, and if no convertToType method is found in the api class
+        hierarchy (possible if toStringCallback/valueOfCallback was accessed off the prototype
+        chain), they will also return a null pointer. This is unsafe.
+
+        It would be easy to make the approach based around toStringCallback/valueOfCallback continue
+        to walk the api class hierarchy, but making the fallback to defaultValue would be problematic
+        (since defaultValue calls toStringCallback/valueOfCallback, this would infinitely recurse).
+        Making the fallback work with toString/valueOf methods attached to api objects is probably
+        not the right thing to do – instead, we should just implement the defaultValue trap for api
+        objects.
+
+        In addition, this bug highlights that fact that JSCallbackFunction::call will allow a hard
+        null to be returned from C to JavaScript - this is not okay. Handle with an exception.
+
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::call):
+            - Should be null checking the return value.
+        (JSC):
+            - Remove toStringCallback/valueOfCallback.
+        * API/JSCallbackFunction.h:
+        (JSCallbackFunction):
+            - Remove toStringCallback/valueOfCallback.
+        * API/JSCallbackObject.h:
+        (JSCallbackObject):
+            - Add defaultValue mthods to JSCallbackObject.
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::defaultValue):
+            - Add defaultValue mthods to JSCallbackObject.
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype):
+            - Remove toStringCallback/valueOfCallback.
+        * API/tests/testapi.js:
+            - Revert this test, now we no longer artificially introduce a toString method onto the api object.
+
 2012-03-18  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         [EFL] Include ICU_INCLUDE_DIRS when building.

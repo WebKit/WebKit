@@ -204,17 +204,6 @@ JSObject* OpaqueJSClass::prototype(ExecState* exec)
      *  DerivedClass  |  DerivedClassPrototype
      */
 
-    if (convertToType) {
-        if (!prototypeClass)
-            prototypeClass = OpaqueJSClass::create(&kJSClassDefinitionEmpty).leakRef();
-        if (!prototypeClass->m_staticFunctions)
-            prototypeClass->m_staticFunctions = adoptPtr(new OpaqueJSClassStaticFunctionsTable);
-        const Identifier& toString = exec->propertyNames().toString;
-        const Identifier& valueOf = exec->propertyNames().valueOf;
-        prototypeClass->m_staticFunctions->add(StringImpl::create(toString.characters(), toString.length()), adoptPtr(new StaticFunctionEntry(&JSCallbackFunction::toStringCallback, 0)));
-        prototypeClass->m_staticFunctions->add(StringImpl::create(valueOf.characters(), valueOf.length()), adoptPtr(new StaticFunctionEntry(&JSCallbackFunction::valueOfCallback, 0)));
-    }
-
     if (!prototypeClass)
         return 0;
 
