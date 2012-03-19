@@ -1765,7 +1765,7 @@ void CodeBlock::finalizeUnconditionally()
     Interpreter* interpreter = m_globalData->interpreter;
     // interpreter->classicEnabled() returns true if the old C++ interpreter is enabled. If that's enabled
     // then we're not using LLInt.
-    if (!interpreter->classicEnabled()) {
+    if (!interpreter->classicEnabled() && !!numberOfInstructions()) {
         for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i) {
             Instruction* curInstruction = &instructions()[m_propertyAccessInstructions[i]];
             switch (interpreter->getOpcodeID(curInstruction[0].u.opcode)) {
