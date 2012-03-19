@@ -1,3 +1,23 @@
+2012-03-19  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] synthesize wheel events for fling on main thread
+        https://bugs.webkit.org/show_bug.cgi?id=81458
+
+        Support track pad fling by generating a sequence of wheel events.
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::scrollBy): Call-back from PlatformGestureCurve to dispatch wheel event.
+        (WebKit):
+        (WebKit::WebViewImpl::gestureEvent): Handle GestureFlingStart and GestureFlingCancel.
+        (WebKit::WebViewImpl::updateAnimations): Requests a PlatformGestureCurve to animate forward.
+        (WebKit::WebViewImpl::didCommitLoad): Halt flings on navigations.
+        * src/WebViewImpl.h:
+        (WebCore):
+        (WebViewImpl):
+
 2012-03-19  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] Fix build that was broken by r111137

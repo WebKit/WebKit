@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebViewImpl.h"
 
+#include "ActivePlatformGestureAnimation.h"
 #include "AutofillPopupMenuClient.h"
 #include "AXObjectCache.h"
 #include "BackForwardListChromium.h"
@@ -109,6 +110,7 @@
 #include "SpeechRecognitionClient.h"
 #include "TextIterator.h"
 #include "Timer.h"
+#include "TouchFlingPlatformGestureCurve.h"
 #include "TraceEvent.h"
 #include "TypingCommand.h"
 #include "UserGestureIndicator.h"
@@ -143,6 +145,7 @@
 #include "platform/WebString.h"
 #include "platform/WebVector.h"
 #include "WebViewClient.h"
+#include "WheelEvent.h"
 #include <wtf/ByteArray.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -364,6 +367,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaClientImpl(this)
 #endif
+    , m_flingModifier(0)
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
     // KJS specific wrapper around this method. We need to have threading
@@ -603,11 +607,57 @@ bool WebViewImpl::mouseWheel(const WebMouseWheelEvent& event)
     return mainFrameImpl()->frame()->eventHandler()->handleWheelEvent(platformEvent);
 }
 
+void WebViewImpl::scrollBy(const WebCore::IntPoint& delta)
+{
+    WebMouseWheelEvent syntheticWheel;
+    const float tickDivisor = WebCore::WheelEvent::tickMultiplier;
+
+    syntheticWheel.deltaX = delta.x();
+    syntheticWheel.deltaY = delta.y();
+    syntheticWheel.wheelTicksX = delta.x() / tickDivisor;
+    syntheticWheel.wheelTicksY = delta.y() / tickDivisor;
+    syntheticWheel.hasPreciseScrollingDeltas = true;
+    syntheticWheel.x = m_lastWheelPosition.x;
+    syntheticWheel.y = m_lastWheelPosition.y;
+    syntheticWheel.globalX = m_lastWheelGlobalPosition.x;
+    syntheticWheel.globalY = m_lastWheelGlobalPosition.y;
+    syntheticWheel.modifiers = m_flingModifier;
+
+    mouseWheel(syntheticWheel);
+}
+
 #if ENABLE(GESTURE_EVENTS)
 bool WebViewImpl::gestureEvent(const WebGestureEvent& event)
 {
-    PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-    return mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
+    switch (event.type) {
+    case WebInputEvent::GestureFlingStart: {
+        m_lastWheelPosition = WebPoint(event.x, event.y);
+        m_lastWheelGlobalPosition = WebPoint(event.globalX, event.globalY);
+        m_flingModifier = event.modifiers;
+        // FIXME: Make the curve parametrizable from the browser.
+        m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::create(FloatPoint(event.deltaX, event.deltaY)), this);
+        scheduleAnimation();
+        return true;
+    }
+    case WebInputEvent::GestureFlingCancel:
+        m_gestureAnimation.clear();
+        return true;
+    case WebInputEvent::GestureScrollBegin:
+    case WebInputEvent::GestureScrollEnd:
+    case WebInputEvent::GestureScrollUpdate:
+    case WebInputEvent::GestureTap:
+    case WebInputEvent::GestureTapDown:
+    case WebInputEvent::GestureDoubleTap:
+    case WebInputEvent::GesturePinchBegin:
+    case WebInputEvent::GesturePinchEnd:
+    case WebInputEvent::GesturePinchUpdate: {
+        PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
+        return mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
+    }
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return false;
 }
 
 void WebViewImpl::startPageScaleAnimation(const IntPoint& scroll, bool useAnchor, float newScale, double durationSec)
@@ -1289,6 +1339,15 @@ void WebViewImpl::updateAnimations(double frameBeginTime)
     FrameView* view = webframe->frameView();
     if (!view)
         return;
+
+    // Create synthetic wheel events as necessary for fling.
+    if (m_gestureAnimation) {
+        if (m_gestureAnimation->animate(frameBeginTime))
+            scheduleAnimation();
+        else
+            m_gestureAnimation.clear();
+    }
+
     view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(frameBeginTime));
 #endif
 }
@@ -2838,6 +2897,8 @@ void WebViewImpl::didCommitLoad(bool* isNewNavigation, bool isNavigationWithinPa
     m_observedNewNavigation = false;
     if (!isNavigationWithinPage)
         m_pageScaleFactorIsSet = false;
+
+    m_gestureAnimation.clear();
 }
 
 void WebViewImpl::layoutUpdated(WebFrameImpl* webframe)

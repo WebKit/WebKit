@@ -1,3 +1,19 @@
+2012-03-19  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] synthesize wheel events for fling on main thread
+        https://bugs.webkit.org/show_bug.cgi?id=81458
+
+        Added the ability to dispatch GestureFlingStart and GestureFlingCancel from EventSender.
+
+        Reviewed by James Robinson.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::EventSender):
+        (EventSender::gestureFlingCancel):
+        (EventSender::gestureFlingStart):
+        * DumpRenderTree/chromium/EventSender.h:
+        (EventSender):
+
 2012-03-19  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] Add command line option to set the user agent in the MiniBrowser

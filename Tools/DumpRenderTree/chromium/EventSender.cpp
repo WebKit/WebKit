@@ -279,6 +279,8 @@ EventSender::EventSender(TestShell* shell)
     bindMethod("touchMove", &EventSender::touchMove);
     bindMethod("touchStart", &EventSender::touchStart);
     bindMethod("updateTouchPoint", &EventSender::updateTouchPoint);
+    bindMethod("gestureFlingCancel", &EventSender::gestureFlingCancel);
+    bindMethod("gestureFlingStart", &EventSender::gestureFlingStart);
     bindMethod("gestureScrollBegin", &EventSender::gestureScrollBegin);
     bindMethod("gestureScrollEnd", &EventSender::gestureScrollEnd);
     bindMethod("gestureScrollFirstPoint", &EventSender::gestureScrollFirstPoint);
@@ -1138,6 +1140,42 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
 
     event.globalX = event.x;
     event.globalY = event.y;
+    event.timeStampSeconds = getCurrentEventTimeSec();
+    webview()->handleInputEvent(event);
+}
+
+void EventSender::gestureFlingCancel(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (!arguments.size())
+        return;
+
+    WebGestureEvent event;
+    event.type = WebInputEvent::GestureFlingCancel;
+    event.timeStampSeconds = getCurrentEventTimeSec();
+    webview()->handleInputEvent(event);
+}
+
+void EventSender::gestureFlingStart(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 4)
+        return;
+
+    for (int i = 0; i < 4; i++)
+        if (!arguments[i].isNumber())
+            return;
+
+    WebGestureEvent event;
+    event.type = WebInputEvent::GestureFlingStart;
+
+    event.x = static_cast<float>(arguments[0].toDouble());
+    event.y = static_cast<float>(arguments[1].toDouble());
+    event.globalX = event.x;
+    event.globalY = event.y;
+
+    event.deltaX = static_cast<float>(arguments[2].toDouble());
+    event.deltaY = static_cast<float>(arguments[3].toDouble());
     event.timeStampSeconds = getCurrentEventTimeSec();
     webview()->handleInputEvent(event);
 }

@@ -52,11 +52,13 @@
 #include "IntRect.h"
 #include "NotificationPresenterImpl.h"
 #include "PageOverlayList.h"
+#include "PlatformGestureCurveTarget.h"
 #include "UserMediaClientImpl.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+class ActivePlatformGestureAnimation;
 class ChromiumDataObject;
 class DocumentLoader;
 class Frame;
@@ -65,6 +67,7 @@ class HistoryItem;
 class HitTestResult;
 class KeyboardEvent;
 class Page;
+class PlatformGestureCurveTarget;
 class PlatformKeyboardEvent;
 class PopupContainer;
 class PopupMenuClient;
@@ -96,7 +99,7 @@ class WebMouseWheelEvent;
 class WebSettingsImpl;
 class WebTouchEvent;
 
-class WebViewImpl : public WebView, public WebLayerTreeViewClient, public RefCounted<WebViewImpl> {
+class WebViewImpl : public WebView, public WebLayerTreeViewClient, public RefCounted<WebViewImpl>, public WebCore::PlatformGestureCurveTarget {
 public:
     enum AutoZoomType {
         DoubleTap,
@@ -332,6 +335,9 @@ public:
 
     void numberOfWheelEventHandlersChanged(unsigned);
     void numberOfTouchEventHandlersChanged(unsigned);
+
+    // PlatformGestureCurveTarget implementation for wheel fling.
+    virtual void scrollBy(const WebCore::IntPoint&);
 
     // Handles context menu events orignated via the the keyboard. These
     // include the VK_APPS virtual key and the Shift+F10 combine. Code is
@@ -718,6 +724,10 @@ private:
 #if ENABLE(MEDIA_STREAM)
     UserMediaClientImpl m_userMediaClientImpl;
 #endif
+    OwnPtr<WebCore::ActivePlatformGestureAnimation> m_gestureAnimation;
+    WebPoint m_lastWheelPosition;
+    WebPoint m_lastWheelGlobalPosition;
+    int m_flingModifier;
 };
 
 } // namespace WebKit
