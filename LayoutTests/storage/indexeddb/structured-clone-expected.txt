@@ -1,4 +1,3 @@
-
 Test structured clone permutations in IndexedDB. File/FileList tests require DumpRenderTree.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
