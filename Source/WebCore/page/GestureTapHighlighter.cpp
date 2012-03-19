@@ -138,7 +138,7 @@ Path pathForRenderer(RenderObject* o)
     ASSERT(o);
     Path path;
 
-    Vector<LayoutRect> rects;
+    Vector<IntRect> rects;
     o->addFocusRingRects(rects, /* acc. offset */ ownerFrameToMainFrameOffset(o));
 
     // The basic idea is to allow up to three different boxes in order to highlight

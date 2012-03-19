@@ -325,8 +325,8 @@ namespace WebCore {
         void setRelevantRepaintedObjectsCounterThreshold(uint64_t);
         void startCountingRelevantRepaintedObjects();
         void resetRelevantPaintedObjectCounter();
-        void addRelevantRepaintedObject(RenderObject*, const IntRect& objectPaintRect);
-        void addRelevantUnpaintedObject(RenderObject*, const IntRect& objectPaintRect);
+        void addRelevantRepaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
+        void addRelevantUnpaintedObject(RenderObject*, const LayoutRect& objectPaintRect);
 
         void suspendActiveDOMObjectsAndAnimations();
         void resumeActiveDOMObjectsAndAnimations();

@@ -2535,7 +2535,7 @@ bool EventHandler::sendContextMenuEventForKey()
         RenderBoxModelObject* box = focusedNode->renderBoxModelObject();
         if (!box)
             return false;
-        IntRect clippedRect = box->absoluteClippedOverflowRect();
+        IntRect clippedRect = box->pixelSnappedAbsoluteClippedOverflowRect();
         location = IntPoint(clippedRect.x(), clippedRect.maxY() - 1);
     } else {
         location = IntPoint(

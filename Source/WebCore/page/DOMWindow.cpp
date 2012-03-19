@@ -1135,7 +1135,7 @@ int DOMWindow::innerHeight() const
 
     long height = view->visibleContentRect(/* includeScrollbars */ true).height();
     InspectorInstrumentation::applyScreenHeightOverride(m_frame, &height);
-    return view->mapFromLayoutToCSSUnits(height);
+    return view->mapFromLayoutToCSSUnits(static_cast<int>(height));
 }
 
 int DOMWindow::innerWidth() const
@@ -1149,7 +1149,7 @@ int DOMWindow::innerWidth() const
 
     long width = view->visibleContentRect(/* includeScrollbars */ true).width();
     InspectorInstrumentation::applyScreenWidthOverride(m_frame, &width);
-    return view->mapFromLayoutToCSSUnits(width);
+    return view->mapFromLayoutToCSSUnits(static_cast<int>(width));
 }
 
 int DOMWindow::screenX() const

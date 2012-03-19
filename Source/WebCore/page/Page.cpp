@@ -1041,7 +1041,7 @@ void Page::resetRelevantPaintedObjectCounter()
     m_relevantUnpaintedRegion = Region();
 }
 
-void Page::addRelevantRepaintedObject(RenderObject* object, const IntRect& objectPaintRect)
+void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& objectPaintRect)
 {
     if (!isCountingRelevantRepaintedObjects())
         return;
@@ -1052,14 +1052,16 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const IntRect& objec
             return;
     }
 
+    IntRect snappedPaintRect = pixelSnappedIntRect(objectPaintRect);
+
     // If this object was previously counted as an unpainted object, remove it from that HashSet
     // and corresponding Region. FIXME: This doesn't do the right thing if the objects overlap.
     if (m_relevantUnpaintedRenderObjects.contains(object)) {
         m_relevantUnpaintedRenderObjects.remove(object);
-        m_relevantUnpaintedRegion.subtract(objectPaintRect);
+        m_relevantUnpaintedRegion.subtract(snappedPaintRect);
     }
 
-    m_relevantPaintedRegion.unite(objectPaintRect);
+    m_relevantPaintedRegion.unite(snappedPaintRect);
 
     RenderView* view = object->view();
     if (!view)
@@ -1077,7 +1079,7 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const IntRect& objec
     }
 }
 
-void Page::addRelevantUnpaintedObject(RenderObject* object, const IntRect& objectPaintRect)
+void Page::addRelevantUnpaintedObject(RenderObject* object, const LayoutRect& objectPaintRect)
 {
     if (!isCountingRelevantRepaintedObjects())
         return;
@@ -1089,7 +1091,7 @@ void Page::addRelevantUnpaintedObject(RenderObject* object, const IntRect& objec
     }
 
     m_relevantUnpaintedRenderObjects.add(object);
-    m_relevantUnpaintedRegion.unite(objectPaintRect);
+    m_relevantUnpaintedRegion.unite(pixelSnappedIntRect(objectPaintRect));
 }
 
 void Page::suspendActiveDOMObjectsAndAnimations()

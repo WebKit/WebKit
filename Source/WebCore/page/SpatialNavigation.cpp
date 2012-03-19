@@ -664,10 +664,10 @@ void distanceDataForNode(FocusDirection direction, const FocusCandidate& current
         return;
     }
 
-    LayoutUnit x = (entryPoint.x() - exitPoint.x()) * (entryPoint.x() - exitPoint.x());
-    LayoutUnit y = (entryPoint.y() - exitPoint.y()) * (entryPoint.y() - exitPoint.y());
+    float x = (entryPoint.x() - exitPoint.x()) * (entryPoint.x() - exitPoint.x());
+    float y = (entryPoint.y() - exitPoint.y()) * (entryPoint.y() - exitPoint.y());
 
-    float euclidianDistance = sqrt((x + y) * 1.0f);
+    float euclidianDistance = sqrt(x + y);
 
     // Loosely based on http://www.w3.org/TR/WICD/#focus-handling
     // df = dotDist + dx + dy + 2 * (xdisplacement + ydisplacement) - sqrt(Overlap)

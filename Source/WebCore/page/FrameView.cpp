@@ -1456,7 +1456,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         if (renderBox->layer()->isComposited())
             continue;
 #endif
-        IntRect updateRect = renderBox->layer()->repaintRectIncludingDescendants();
+        IntRect updateRect = pixelSnappedIntRect(renderBox->layer()->repaintRectIncludingDescendants());
         updateRect = contentsToRootView(updateRect);
         if (!isCompositedContentLayer && clipsRepaints())
             updateRect.intersect(rectToScroll);
