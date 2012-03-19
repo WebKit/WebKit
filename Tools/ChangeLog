@@ -1,3 +1,10 @@
+2012-03-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed. Disable -Werror on x86 until proper fix.
+        https://bugs.webkit.org/show_bug.cgi?id=81498
+
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-03-17  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         Unreviewed; switch to using my FreeBSD.org email address, the
