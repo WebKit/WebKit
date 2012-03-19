@@ -76,10 +76,6 @@ private:
     WebCore::IntRect m_layoutRectForCompositing;
     WebCore::IntSize m_contentsSizeForCompositing;
     WebCore::LayerRenderingResults m_lastCompositingResults;
-    int m_generation;
-    int m_compositedGeneration;
-    WebCore::IntRect m_compositedDstRect;
-    WebCore::FloatRect m_compositedContentsRect;
     bool m_backingStoreUsesOpenGL;
     BlackBerry::Platform::Timer<WebPageCompositorPrivate> m_animationTimer;
     BlackBerry::Platform::TimerClient* m_timerClient;

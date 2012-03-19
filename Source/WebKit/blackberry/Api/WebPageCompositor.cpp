@@ -40,8 +40,6 @@ WebPageCompositorPrivate::WebPageCompositorPrivate(WebPagePrivate* page)
     : m_webPage(page)
     , m_context(GLES2Context::create(page))
     , m_layerRenderer(LayerRenderer::create(m_context.get()))
-    , m_generation(0)
-    , m_compositedGeneration(-1)
     , m_backingStoreUsesOpenGL(false)
     , m_animationTimer(this, &WebPageCompositorPrivate::animationTimerFired)
     , m_timerClient(new Platform::GenericTimerClient(Platform::userInterfaceThreadTimerClient()))
@@ -78,25 +76,14 @@ void WebPageCompositorPrivate::commit(LayerWebKitThread* rootLayer)
         return;
 
     rootLayer->commitOnCompositingThread();
-    ++m_generation;
 }
 
 bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRect& contents)
 {
-    // Save a draw if we already drew this generation, for example due to a concurrent scroll operation.
-    if (m_compositedGeneration == m_generation && dstRect == m_compositedDstRect
-        && contents == m_compositedContentsRect && !m_backingStoreUsesOpenGL)
-        return false;
-
     m_layerRenderer->drawLayers(contents, m_layoutRectForCompositing, m_contentsSizeForCompositing, dstRect);
     m_lastCompositingResults = m_layerRenderer->lastRenderingResults();
 
-    m_compositedDstRect = dstRect;
-    m_compositedContentsRect = contents;
-    m_compositedGeneration = m_generation;
-
     if (m_lastCompositingResults.needsAnimationFrame) {
-        ++m_generation; // The animation update moves us along one generation.
         // Using a timeout of 0 actually won't start a timer, it will send a message.
         m_animationTimer.start(1.0 / 60.0);
         m_webPage->updateDelegatedOverlays();
