@@ -36,6 +36,15 @@ public:
     {
     }
 
+    // This copy constructor is for preventing GCC (x86) from creating an
+    // unexpected one as written in <http://webkit.org/b/81502>.
+    CollapsedBorderValue(const CollapsedBorderValue& other)
+        : m_border(other.m_border)
+        , m_borderColor(other.m_borderColor)
+        , m_precedence(other.m_precedence)
+    {
+    }
+
     CollapsedBorderValue(const BorderValue& b, Color c, EBorderPrecedence p)
         : m_border(b)
         , m_borderColor(c)
