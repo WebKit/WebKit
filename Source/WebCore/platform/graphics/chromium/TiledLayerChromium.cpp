@@ -474,8 +474,7 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
     // Due to borders, when the paint rect is extended to tile boundaries, it
     // may end up overlapping more tiles than the original content rect. Record
     // the original tiles so we don't upload more tiles than necessary.
-    if (!m_paintRect.isEmpty())
-        m_requestedUpdateTilesRect = IntRect(left, top, right - left + 1, bottom - top + 1);
+    m_requestedUpdateTilesRect = IntRect(left, top, right - left + 1, bottom - top + 1);
 
     // Calling prepareToUpdate() calls into WebKit to paint, which may have the side
     // effect of disabling compositing, which causes our reference to the texture updater to be deleted.
