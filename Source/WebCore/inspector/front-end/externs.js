@@ -118,7 +118,11 @@ WebInspector.openRequestInNetworkPanel = function(request) {}
 
 WebInspector.populateResourceContextMenu = function(contextMenu, url, preferredLineNumber) {}
 
-WebInspector.evaluateInConsole = function(expression) {}
+/**
+ * @param {string} expression
+ * @param {boolean=} showResultOnly
+ */
+WebInspector.evaluateInConsole = function(expression, showResultOnly) {}
 
 var InjectedFakeWorker = function() {}
 

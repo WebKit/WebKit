@@ -618,9 +618,9 @@ WebInspector.ConsoleView.prototype = {
         RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, this._currentEvaluationContextId(), returnByValue, evalCallback);
     },
 
-    evaluateUsingTextPrompt: function(expression)
+    evaluateUsingTextPrompt: function(expression, showResultOnly)
     {
-        this._appendCommand(expression, this.prompt.text);
+        this._appendCommand(expression, this.prompt.text, false, showResultOnly);
     },
 
     _enterKeyPressed: function(event)
@@ -636,24 +636,27 @@ WebInspector.ConsoleView.prototype = {
         var str = this.prompt.text;
         if (!str.length)
             return;
-        this._appendCommand(str, "");
+        this._appendCommand(str, "", true, false);
     },
 
-    _appendCommand: function(text, newPromptText)
+    _appendCommand: function(text, newPromptText, useCommandLineAPI, showResultOnly)
     {
-        var commandMessage = new WebInspector.ConsoleCommand(text);
-        WebInspector.console.interruptRepeatCount();
-        this._appendConsoleMessage(commandMessage);
+        if (!showResultOnly) {
+            var commandMessage = new WebInspector.ConsoleCommand(text);
+            WebInspector.console.interruptRepeatCount();
+            this._appendConsoleMessage(commandMessage);
+        }
+        this.prompt.text = newPromptText;
 
         function printResult(result, wasThrown)
         {
             if (!result)
                 return;
 
-            this.prompt.pushHistoryItem(text);
-            this.prompt.text = newPromptText;
-
-            WebInspector.settings.consoleHistory.set(this.prompt.historyData.slice(-30));
+            if (!showResultOnly) {
+                this.prompt.pushHistoryItem(text);
+                WebInspector.settings.consoleHistory.set(this.prompt.historyData.slice(-30));
+            }
 
             this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage, this._linkifier));
         }

@@ -406,8 +406,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._updateErrorAndWarningCounts, this);
 
     this.debuggerModel = new WebInspector.DebuggerModel();
-    if (WebInspector.experimentsSettings.snippetsSupport.isEnabled())
-        this.snippetsModel = new WebInspector.SnippetsModel();
+    this.snippetsModel = new WebInspector.SnippetsModel();
     this.debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
 
     this.drawer = new WebInspector.Drawer();
@@ -982,10 +981,10 @@ WebInspector.showProfileForURL = function(url)
     WebInspector.panels.profiles.showProfileForURL(url);
 }
 
-WebInspector.evaluateInConsole = function(expression)
+WebInspector.evaluateInConsole = function(expression, showResultOnly)
 {
     this.showConsole();
-    this.consoleView.evaluateUsingTextPrompt(expression);
+    this.consoleView.evaluateUsingTextPrompt(expression, showResultOnly);
 }
 
 WebInspector.addMainEventListeners = function(doc)

@@ -129,7 +129,7 @@ WebInspector.SnippetsModel.prototype = {
         var sourceURL = this._sourceURLForSnippet(snippet, evaluationIndex);
         snippet._lastEvaluationSourceURL = sourceURL;
         var expression = "\n//@ sourceURL=" + sourceURL + "\n" + snippet.content;
-        // FIXME: evaluate snippet here.
+        WebInspector.evaluateInConsole(expression, true);
     },
 
     /**

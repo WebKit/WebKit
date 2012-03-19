@@ -12,8 +12,8 @@ function test()
     }
 
     // FIXME: Remove once snippets are taken out of experiments.
-    if (!WebInspector.experimentsSettings.snippetsSupport.isEnabled())
-        WebInspector.snippetsModel = new WebInspector.SnippetsModel();
+    WebInspector.experimentsSettings.snippetsSupport = {};
+    WebInspector.experimentsSettings.snippetsSupport.isEnabled = function() { return true; };
 
     InspectorTest.runTestSuite([
         function testCreateRenameEditDelete(next)
@@ -103,9 +103,6 @@ function test()
                     InspectorTest.addResult("Snippet script added, sourceURL = " + script.sourceURL);
                     callback();
                 }
-
-                // FIXME: This should be removed once snippets evaluation itself is implemented.
-                callback();
             }
 
             evaluateSnippetAndDumpEvaluationDetails(snippet1, step2);

@@ -37,6 +37,9 @@ Dumping model snippets:
 
 Running: testEvaluate
 Last evaluation source url for snippet: snippets://1_1
+Snippet script added, sourceURL = snippets://1_1
 Last evaluation source url for snippet: snippets://2_2
+Snippet script added, sourceURL = snippets://2_2
 Last evaluation source url for snippet: snippets://1_3
+Snippet script added, sourceURL = snippets://1_3
 

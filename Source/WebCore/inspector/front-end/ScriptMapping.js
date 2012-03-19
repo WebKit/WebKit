@@ -75,14 +75,8 @@ WebInspector.MainScriptMapping = function()
     this._mappings.push(this._resourceMapping);
     this._compilerMapping = new WebInspector.CompilerScriptMapping();
     this._mappings.push(this._compilerMapping);
-
-    for (var i = 0; i < this._mappings.length; ++i)
-        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
-
-    if (WebInspector.experimentsSettings.snippetsSupport.isEnabled()) {
-        this._snippetsMapping = new WebInspector.SnippetsScriptMapping();
-        this._mappings.push(this._snippetsMapping);
-    }
+    this._snippetsMapping = new WebInspector.SnippetsScriptMapping();
+    this._mappings.push(this._snippetsMapping);
 
     for (var i = 0; i < this._mappings.length; ++i)
         this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
