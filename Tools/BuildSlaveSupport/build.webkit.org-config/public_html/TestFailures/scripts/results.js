@@ -255,6 +255,12 @@ results.ResultAnalyzer = base.extends(Object, {
     }
 })
 
+function isExpectedFailure(resultNode)
+{
+    var analyzer = new results.ResultAnalyzer(resultNode);
+    return !analyzer.hasUnexpectedFailures() && !analyzer.succeeded() && !analyzer.flaky();
+}
+
 function isUnexpectedFailure(resultNode)
 {
     var analyzer = new results.ResultAnalyzer(resultNode);
@@ -266,11 +272,9 @@ function isResultNode(node)
     return !!node.actual;
 }
 
-results.expectedOrUnexpectedFailures = function(resultsTree)
+results.expectedFailures = function(resultsTree)
 {
-    return base.filterTree(resultsTree.tests, isResultNode, function(resultNode) {
-        return !(new results.ResultAnalyzer(resultNode).succeeded());
-    });
+    return base.filterTree(resultsTree.tests, isResultNode, isExpectedFailure);
 };
 
 results.unexpectedFailures = function(resultsTree)
@@ -300,9 +304,9 @@ function resultsByTest(resultsByBuilder, filter)
     return resultsByTest;
 }
 
-results.expectedOrUnexpectedFailuresByTest = function(resultsByBuilder)
+results.expectedFailuresByTest = function(resultsByBuilder)
 {
-    return resultsByTest(resultsByBuilder, results.expectedOrUnexpectedFailures);
+    return resultsByTest(resultsByBuilder, results.expectedFailures);
 };
 
 results.unexpectedFailuresByTest = function(resultsByBuilder)

@@ -31,7 +31,7 @@ $(function() {
             fetchResultsURLs: results.fetchResultsURLs
         });
 
-        var failuresByTest = results.expectedOrUnexpectedFailuresByTest(model.state.resultsByBuilder);
+        var failuresByTest = results.expectedFailuresByTest(model.state.resultsByBuilder);
         var controller = new controllers.ResultsDetails(resultsView, failuresByTest);
         document.body.appendChild(resultsView);
     });

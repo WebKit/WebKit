@@ -108,11 +108,11 @@ $(document).ready(function() {
     unexpected.appendChild(g_info);
     unexpected.appendChild(unexpectedFailuresView);
 
-    var failures = onebar.failures();
-    if (failures) {
+    var expected = onebar.expected();
+    if (expected) {
         var failuresView = new ui.failures.List();
         g_failuresController = new controllers.ExpectedFailures(model.state, failuresView, onebarController);
-        failures.appendChild(failuresView);
+        expected.appendChild(failuresView);
     }
 
     update();

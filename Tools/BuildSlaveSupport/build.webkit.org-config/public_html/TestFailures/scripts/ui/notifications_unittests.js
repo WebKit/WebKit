@@ -199,7 +199,7 @@ test('FailingTestsSummary', 12, function() {
             '</ul>' +
         '</div>');
 
-    testFailures.addFailureAnalysis({testName: 'foo', resultNodesByBuilder: {'Webkit Linux (dbg)(1)': { actual: 'TEXT'}}});
+    testFailures.addFailureAnalysis({testName: 'foo', resultNodesByBuilder: {'Webkit Linux (dbg)': { actual: 'TEXT'}}});
     equal(testFailures.innerHTML,
         '<div class="how">' +
             '<time class="relative">10 minutes ago</time>' +
@@ -209,7 +209,7 @@ test('FailingTestsSummary', 12, function() {
                     '<tr class="TEXT">' +
                         '<td><span>TEXT</span></td>' +
                         '<td></td>' +
-                        '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
+                        '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
                     '</tr>' +
                     '<tr class="BUILDING" style="display: none; "><td><span>BUILDING</span></td><td></td><td></td></tr>' +
                 '</tbody>' +
@@ -250,7 +250,7 @@ test('FailingTestsSummary', 12, function() {
                     '<tr class="TEXT">' +
                         '<td><span>TEXT</span></td>' +
                         '<td></td>' +
-                        '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)(1)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
+                        '<td><a class="failing-builder" target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Linux+(dbg)"><span class="version">lucid</span><span class="architecture">64-bit</span></a></td>' +
                     '</tr>' +
                     '<tr class="BUILDING" style="">' +
                         '<td><span>BUILDING</span></td>' +

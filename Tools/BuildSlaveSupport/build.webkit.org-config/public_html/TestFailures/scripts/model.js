@@ -220,9 +220,9 @@ model.analyzeUnexpectedSuccesses = function(callback)
     });
 };
 
-model.analyzeExpectedOrUnexpectedFailures = function(callback)
+model.analyzeexpectedFailures = function(callback)
 {
-    var expectedFailures = results.expectedOrUnexpectedFailuresByTest(model.state.resultsByBuilder);
+    var expectedFailures = results.expectedFailuresByTest(model.state.resultsByBuilder);
     $.each(expectedFailures, function(testName, resultNodesByBuilder) {
         var failureAnalysis = {
             'testName': testName,

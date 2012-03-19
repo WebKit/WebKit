@@ -127,6 +127,20 @@ test("ResultAnalyzer", 35, function() {
     ok(!analyzer.flaky());
 });
 
+test("expectedFailures", 1, function() {
+    var expectedFailures = results.expectedFailures(unittest.kExampleResultsJSON);
+    deepEqual(expectedFailures, {
+        "scrollbars/custom-scrollbar-with-incomplete-style.html": {
+            "expected": "IMAGE",
+            "actual": "IMAGE"
+        },
+        "userscripts/user-script-video-document.html": {
+            "expected": "FAIL",
+            "actual": "TEXT"
+        }
+    });
+});
+
 test("unexpectedFailures", 1, function() {
     var unexpectedFailures = results.unexpectedFailures(unittest.kExampleResultsJSON);
     deepEqual(unexpectedFailures, {

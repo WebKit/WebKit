@@ -64,15 +64,15 @@ ui.onebar = base.extends('div', {
         this.innerHTML =
             '<ul>' +
                 '<li><a href="#unexpected">Unexpected Failures</a></li>' +
-                '<li><a href="#failures">All Failures</a></li>' +
+                '<li><a href="#expected">Expected Failures</a></li>' +
                 '<li><a href="#results">Results</a></li>' +
             '</ul>' +
             '<div id="unexpected"></div>' +
-            '<div id="failures"></div>' +
+            '<div id="expected"></div>' +
             '<div id="results"></div>';
         this._tabNames = [
             'unexpected',
-            'failures',
+            'expected',
             'results',
         ]
         this._tabs = $(this).tabs({
@@ -100,9 +100,9 @@ ui.onebar = base.extends('div', {
     {
         return this.tabNamed('unexpected');
     },
-    failures: function()
+    expected: function()
     {
-        return this.tabNamed('failures');
+        return this.tabNamed('expected');
     },
     results: function()
     {

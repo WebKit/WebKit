@@ -104,8 +104,8 @@ controllers.ExpectedFailures = base.extends(Object, {
     },
     update: function()
     {
-        var expectedOrUnexpectedFailures = results.expectedOrUnexpectedFailuresByTest(this._model.resultsByBuilder);
-        var failingTestsList = Object.keys(expectedOrUnexpectedFailures);
+        var expectedFailures = results.expectedFailuresByTest(this._model.resultsByBuilder);
+        var failingTestsList = Object.keys(expectedFailures);
 
         $(this._view).empty();
         base.forEachDirectory(failingTestsList, function(label, testsFailingInDirectory) {
@@ -122,7 +122,7 @@ controllers.ExpectedFailures = base.extends(Object, {
             fetchResultsURLs: results.fetchResultsURLs
         });
         var failuresByTest = base.filterDictionary(
-            results.expectedOrUnexpectedFailuresByTest(this._model.resultsByBuilder),
+            results.expectedFailuresByTest(this._model.resultsByBuilder),
             function(key) {
                 return failingTestsList.indexOf(key) != -1;
             });
@@ -256,7 +256,7 @@ controllers.UnexpectedFailures = base.extends(FailureStreamController, {
 });
 
 controllers.Failures = base.extends(FailureStreamController, {
-    _resultsFilter: results.expectedOrUnexpectedFailuresByTest,
+    _resultsFilter: results.expectedFailuresByTest,
 
     _keyFor: function(failureAnalysis)
     {
