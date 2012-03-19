@@ -34,8 +34,8 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileSystem.h"
-#include "WebKitFlags.h"
 #include "PlatformString.h"
+#include "WebKitFlags.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -66,8 +66,8 @@ public:
     AsyncFileSystem* asyncFileSystem() const { return m_asyncFileSystem.get(); }
     SecurityOrigin* securityOrigin() const;
 
-    // Actual FileSystem API implementations.  All the validity checks on virtual paths are done at this level.
-    // They return false for immediate errors that don't involve lower AsyncFileSystem layer (e.g. for name validation errors).  Otherwise they return true (but later may call back with an runtime error).
+    // Actual FileSystem API implementations. All the validity checks on virtual paths are done at this level.
+    // They return false for immediate errors that don't involve lower AsyncFileSystem layer (e.g. for name validation errors). Otherwise they return true (but later may call back with an runtime error).
     bool getMetadata(const EntryBase*, PassRefPtr<MetadataCallback>, PassRefPtr<ErrorCallback>);
     bool move(const EntryBase* source, EntryBase* parent, const String& name, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
     bool copy(const EntryBase* source, EntryBase* parent, const String& name, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);

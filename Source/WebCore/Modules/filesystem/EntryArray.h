@@ -48,7 +48,7 @@ public:
 
     unsigned length() const { return m_entries.size(); }
     Entry* item(unsigned index) const;
-    void set(unsigned index, PassRefPtr<Entry> entry);
+    void set(unsigned index, PassRefPtr<Entry>);
 
     bool isEmpty() const { return m_entries.isEmpty(); }
     void clear() { m_entries.clear(); }

@@ -39,7 +39,7 @@ namespace WebCore {
 
 class AsyncFileWriterClient {
 public:
-    virtual ~AsyncFileWriterClient() {}
+    virtual ~AsyncFileWriterClient() { }
 
     virtual void didWrite(long long bytes, bool complete) = 0;
     virtual void didTruncate() = 0;

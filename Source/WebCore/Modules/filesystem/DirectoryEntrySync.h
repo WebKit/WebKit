@@ -34,8 +34,8 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "EntrySync.h"
-#include "WebKitFlags.h"
 #include "PlatformString.h"
+#include "WebKitFlags.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 

@@ -42,7 +42,7 @@ class Blob;
 
 class AsyncFileWriter {
 public:
-    virtual ~AsyncFileWriter() {}
+    virtual ~AsyncFileWriter() { }
 
     virtual void write(long long position, Blob* data) = 0;
     virtual void truncate(long long length) = 0;
@@ -58,4 +58,3 @@ public:
 #endif // ENABLE(FILE_SYSTEM)
 
 #endif // AsyncFileWriter_h
-

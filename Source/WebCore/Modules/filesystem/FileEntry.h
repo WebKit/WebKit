@@ -54,7 +54,7 @@ public:
     virtual bool isFile() const { return true; }
 
 private:
-    FileEntry(PassRefPtr<DOMFileSystemBase> fileSystem, const String& fullPath);
+    FileEntry(PassRefPtr<DOMFileSystemBase>, const String& fullPath);
 };
 
 } // namespace

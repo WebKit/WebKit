@@ -68,7 +68,7 @@ String DOMFilePath::getName(const String& path)
 String DOMFilePath::getDirectory(const String& path)
 {
     int index = path.reverseFind(DOMFilePath::separator);
-    if (index == 0)
+    if (!index)
         return DOMFilePath::root;
     if (index != -1)
         return path.substring(0, index);

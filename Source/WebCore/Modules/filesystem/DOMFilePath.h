@@ -70,7 +70,7 @@ public:
         return path[path.length() - 1] == DOMFilePath::separator;
     }
 
-    // Evaluates all "../" and "./" segments.  Note that "/../" expands to "/", so you can't ever refer to anything above the root directory.
+    // Evaluates all "../" and "./" segments. Note that "/../" expands to "/", so you can't ever refer to anything above the root directory.
     static String removeExtraParentReferences(const String& path);
 
     // Checks if the given path follows the FileSystem API naming restrictions.

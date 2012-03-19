@@ -65,7 +65,7 @@ public:
     // Other callback methods are implemented by each subclass.
 
 protected:
-    FileSystemCallbacksBase(PassRefPtr<ErrorCallback> errorCallback);
+    FileSystemCallbacksBase(PassRefPtr<ErrorCallback>);
     RefPtr<ErrorCallback> m_errorCallback;
 };
 

@@ -168,9 +168,8 @@ void FileWriter::truncate(long long position, ExceptionCode& ec)
 void FileWriter::abort(ExceptionCode& ec)
 {
     ASSERT(writer());
-    if (m_readyState != WRITING) {
+    if (m_readyState != WRITING)
         return;
-    }
     ++m_numAborts;
 
     if (m_isOperationInProgress)
