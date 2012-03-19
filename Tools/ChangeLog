@@ -1,3 +1,18 @@
+2012-03-19  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy is failing on SL/Python 2.6.1
+        https://bugs.webkit.org/show_bug.cgi?id=81533
+
+        Reviewed by Ojan Vafai.
+
+        It appears that itertools.combinations() is buggy in 2.6.1; this
+        backports the implementation from 2.7.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py:
+        (TestConfigurationConverter.collapse_macros):
+        (TestConfigurationConverter):
+        (TestConfigurationConverter.combinations):
+
 2012-03-19  David Michael Barr  <davidbarr@google.com>
 
         Optimize the cleanup sequence in the start-queue.sh script

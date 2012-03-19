@@ -169,7 +169,7 @@ class TestConfigurationConverter(object):
             if len(macro) == 1:
                 continue
 
-            for combination in itertools.combinations(specifiers_list, len(macro)):
+            for combination in cls.combinations(specifiers_list, len(macro)):
                 if cls.symmetric_difference(combination) == set(macro):
                     for item in combination:
                         specifiers_list.remove(item)
@@ -192,6 +192,30 @@ class TestConfigurationConverter(object):
 
         for macro_specifier, macro in macros_dict.items():
             collapse_individual_specifier_set(macro_specifier, macro)
+
+    # FIXME: itertools.combinations in buggy in Python 2.6.1 (the version that ships on SL).
+    # It seems to be okay in 2.6.5 or later; until then, this is the implementation given
+    # in http://docs.python.org/library/itertools.html (from 2.7).
+    @staticmethod
+    def combinations(iterable, r):
+        # combinations('ABCD', 2) --> AB AC AD BC BD CD
+        # combinations(range(4), 3) --> 012 013 023 123
+        pool = tuple(iterable)
+        n = len(pool)
+        if r > n:
+            return
+        indices = range(r)
+        yield tuple(pool[i] for i in indices)
+        while True:
+            for i in reversed(range(r)):
+                if indices[i] != i + n - r:
+                    break
+            else:
+                return
+            indices[i] += 1
+            for j in range(i + 1, r):
+                indices[j] = indices[j - 1] + 1
+            yield tuple(pool[i] for i in indices)
 
     @classmethod
     def intersect_combination(cls, combination):
@@ -224,7 +248,7 @@ class TestConfigurationConverter(object):
         def try_collapsing(size, collapsing_sets):
             if len(specifiers_list) < size:
                 return False
-            for combination in itertools.combinations(specifiers_list, size):
+            for combination in self.combinations(specifiers_list, size):
                 if self.symmetric_difference(combination) in collapsing_sets:
                     for item in combination:
                         specifiers_list.remove(item)
@@ -241,7 +265,7 @@ class TestConfigurationConverter(object):
         def try_abbreviating(collapsing_sets):
             if len(specifiers_list) < 2:
                 return False
-            for combination in itertools.combinations(specifiers_list, 2):
+            for combination in self.combinations(specifiers_list, 2):
                 for collapsing_set in collapsing_sets:
                     diff = self.symmetric_difference(combination)
                     if diff <= collapsing_set:
