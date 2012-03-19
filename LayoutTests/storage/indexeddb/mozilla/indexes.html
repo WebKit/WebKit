@@ -83,6 +83,7 @@ function openSuccess()
 function createAndPopulateObjectStore()
 {
     deleteAllObjectStores(db);
+    trans = event.target.result;
 
     objectStore = evalAndLog("objectStore = db.createObjectStore(objectStoreName);");
 
@@ -106,7 +107,11 @@ function createIndexes()
       evalAndLog("objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].options);");
     }
     shouldBe("objectStore.indexNames.length", "indexData.length");
+    trans.oncomplete = setVersionComplete;
+}
 
+function setVersionComplete()
+{
     objectStore = evalAndLog("objectStore = db.transaction(objectStoreName).objectStore(objectStoreName);");
 
     // Check global properties to make sure they are correct.

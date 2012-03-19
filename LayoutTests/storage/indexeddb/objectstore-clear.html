@@ -81,7 +81,11 @@ function openKeyCursorSuccess()
 {
     debug("openKeyCursorSuccess():");
     shouldBeNull("event.target.result");
+    trans.oncomplete = setVersionComplete;
+}
 
+function setVersionComplete()
+{
     transaction = evalAndLog("db.transaction(['otherStoreName'])");
     transaction.onabort = unexpectedErrorCallback;
     var otherStore = evalAndLog("otherStore = transaction.objectStore('otherStoreName')");

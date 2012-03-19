@@ -36,8 +36,8 @@ function deleteExisting()
     shouldBeTrue("store.indexNames.contains('indexName')");
 
     request = evalAndLog("store.add('value', 'key')");
-    request.onsuccess = getValue;
     request.onerror = unexpectedErrorCallback;
+    trans.oncomplete = getValue;
 }
 
 function getValue()

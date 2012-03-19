@@ -38,8 +38,8 @@ function deleteExisting()
     shouldBeTrue("store.indexNames.contains('indexName')");
 
     request = evalAndLog("store.add('value', 'key')");
-    request.onsuccess = getValue;
     request.onerror = unexpectedErrorCallback;
+    trans.oncomplete = getValue;
 }
 
 function getValue()
@@ -75,7 +75,7 @@ function deleteObjectStore()
 function createObjectStoreAgain()
 {
     evalAndLog("db.createObjectStore('storeName', null)");
-    getValueAgain();
+    trans.oncomplete = getValueAgain;
 }
 
 function getValueAgain()

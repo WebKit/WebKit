@@ -41,6 +41,11 @@ function cleanDatabase()
 
     osName = "test store";
     objectStore = evalAndLog("objectStore = db.createObjectStore(osName, { autoIncrement: true });");
+    event.target.result.oncomplete = setVersionComplete;
+}
+
+function setVersionComplete()
+{
     request = evalAndLog("request = db.transaction([osName], IDBTransaction.READ_WRITE).objectStore(osName).add({});");
     request.onsuccess = postAdd;
     request.onerror = unexpectedErrorCallback;

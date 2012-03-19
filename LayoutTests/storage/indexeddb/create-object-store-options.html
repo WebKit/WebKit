@@ -35,7 +35,11 @@ function cleanDatabase()
 
     debug("db.createObjectStore('c', {autoIncrement: true});");
     db.createObjectStore('c', {autoIncrement: true});
+    event.target.result.oncomplete = setVersionComplete;
+}
 
+function setVersionComplete()
+{
     trans = evalAndLog("trans = db.transaction(['a', 'b'], IDBTransaction.READ_WRITE)");
     shouldBe("trans.mode", "IDBTransaction.READ_WRITE");
 

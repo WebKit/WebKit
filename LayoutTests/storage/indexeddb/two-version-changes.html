@@ -44,6 +44,7 @@ function openSuccess()
 function inSetVersion1()
 {
     debug("setVersion() #1 callback");
+    trans = event.target.result;
     evalAndLog("self.store1 = db.createObjectStore('test-store1')");
     shouldBe("++self.state", "1");
     var req = evalAndLog("self.store1.put('aaa', 111)");
@@ -57,8 +58,10 @@ function inSetVersion1()
 function inSetVersion2()
 {
     debug("setVersion() #2 callback");
+    trans = event.target.result;
     shouldBe("++self.state", "4");
     evalAndLog("self.store2 = db.createObjectStore('test-store2')");
+
 
     var req = evalAndLog("self.store2.put('bbb', 222)");
     req.onerror = unexpectedErrorCallback;
@@ -83,6 +86,11 @@ function halfwayDone()
 
 function checkResults() {
     shouldBeEqualToString("self.db.version", "version 2");
+    trans.oncomplete = setVersionComplete;
+}
+
+function setVersionComplete()
+{
     trans = evalAndLog("self.trans = db.transaction(['test-store1', 'test-store2'])");
     store = evalAndLog("self.store = self.trans.objectStore('test-store1')");
     req = evalAndLog("self.req = self.store.get(111)");

@@ -47,7 +47,7 @@ function prepareDatabase()
                 var trans = request.result;
                 trans.onerror = unexpectedErrorCallback;
                 trans.onabort = unexpectedAbortCallback;
-                trans.oncomplete = testBlob();
+                trans.oncomplete = testBlob;
             };
         };
     };

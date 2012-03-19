@@ -41,7 +41,11 @@ function cleanDatabase()
 
     os = evalAndLog("db.createObjectStore('tmp')");
     evalAndExpectException("db.createObjectStore('tmp')", "IDBDatabaseException.CONSTRAINT_ERR");
+    event.target.result.oncomplete = setVersionComplete;
+}
 
+function setVersionComplete()
+{
     trans = evalAndLog("trans = db.transaction(['tmp'])");
     request = evalAndLog("trans.objectStore('tmp').get(0)");
     request.onsuccess = tryOnceMore;

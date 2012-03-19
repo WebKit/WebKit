@@ -41,6 +41,11 @@ function cleanDatabase()
 
     osName = "test store";
     objectStore = evalAndLog("objectStore = db.createObjectStore(osName, { autoIncrement: true });");
+    event.target.result.oncomplete = setVersionComplete;
+}
+
+function setVersionComplete()
+{
     evalAndExpectException("db.transaction([osName]).objectStore(osName).add({});", "IDBDatabaseException.READ_ONLY_ERR");
     evalAndExpectException("db.transaction(osName).objectStore(osName).add({});", "IDBDatabaseException.READ_ONLY_ERR");
     key1 = evalAndLog("key1 = 1;");

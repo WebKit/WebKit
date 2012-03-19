@@ -41,8 +41,8 @@ function cleanDatabase()
 
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo', { autoIncrement: true });");
     request = evalAndLog("request = objectStore.add({});");
-    request.onsuccess = clear;
     request.onerror = unexpectedErrorCallback;
+    event.target.result.oncomplete = clear;
 }
 
 function clear()

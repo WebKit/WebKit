@@ -29,6 +29,11 @@ function openSuccess()
 function setVersionSuccess()
 {
     evalAndLog("db.createObjectStore('foo')");
+    event.target.result.oncomplete = setVersionComplete;
+}
+
+function setVersionComplete()
+{
     evalAndLog("db.transaction('foo')");
     evalAndLog("self.gc()");
     finishJSTest();

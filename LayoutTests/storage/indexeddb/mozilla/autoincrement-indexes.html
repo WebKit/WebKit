@@ -37,6 +37,7 @@ function openSuccess()
 
 function setupObjectStore()
 {
+    trans = event.target.result;
     deleteAllObjectStores(db);
 
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo', { keyPath: 'id', autoIncrement: true });");
@@ -53,7 +54,11 @@ function setupIndexes()
 {
     key = evalAndLog("key = event.target.result;");
     shouldBeFalse("key == null");
+    trans.oncomplete = setVersionComplete;
+}
 
+function setVersionComplete()
+{
     objectStore = evalAndLog("objectStore = db.transaction('foo').objectStore('foo');");
     first = evalAndLog("first = objectStore.index('first');");
     request = evalAndLog("request = first.get('foo');");

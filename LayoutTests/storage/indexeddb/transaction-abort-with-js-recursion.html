@@ -24,12 +24,18 @@ function setup() {
 function setVersion() {
     db = evalAndLog("db = event.target.result");
     request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = click;
+    request.onsuccess = setVersionSuccess;
     request.onerror = unexpectedErrorCallback;
 }
 
-function click() {
+function setVersionSuccess()
+{
     store = db.createObjectStore('objectStore', null);
+    event.target.result.oncomplete = click;
+}
+
+function click() 
+{
     body.onclick = test;
     var pendingTransaction = evalAndLog("pendingTransaction = db.transaction(['objectStore'], IDBTransaction.READ_WRITE)");
     pendingTransaction.onsuccess = unexpectedErrorCallback;
