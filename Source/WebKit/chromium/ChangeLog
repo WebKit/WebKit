@@ -1,3 +1,43 @@
+2012-03-19  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API (JSEP): Introducing WebMediaHints and WebIceOptions
+        https://bugs.webkit.org/show_bug.cgi?id=81341
+
+        Reviewed by Darin Fisher.
+
+        Simple WebKit representations of the WebCore/platform versions.
+
+        * WebKit.gyp:
+        * public/platform/WebICEOptions.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebICEOptions):
+        (WebKit::WebICEOptions::WebICEOptions):
+        (WebKit::WebICEOptions::~WebICEOptions):
+        (WebKit::WebICEOptions::operator=):
+        (WebKit::WebICEOptions::isNull):
+        * public/platform/WebMediaHints.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebMediaHints):
+        (WebKit::WebMediaHints::WebMediaHints):
+        (WebKit::WebMediaHints::~WebMediaHints):
+        (WebKit::WebMediaHints::operator=):
+        (WebKit::WebMediaHints::isNull):
+        * src/WebICEOptions.cpp: Added.
+        (WebKit):
+        (WebKit::WebICEOptions::WebICEOptions):
+        (WebKit::WebICEOptions::assign):
+        (WebKit::WebICEOptions::reset):
+        (WebKit::WebICEOptions::candidateTypeToUse):
+        * src/WebMediaHints.cpp: Added.
+        (WebKit):
+        (WebKit::WebMediaHints::WebMediaHints):
+        (WebKit::WebMediaHints::assign):
+        (WebKit::WebMediaHints::reset):
+        (WebKit::WebMediaHints::audio):
+        (WebKit::WebMediaHints::video):
+
 2012-03-19  Michal Mocny  <mmocny@google.com>
 
         [chromium] Updating WebGraphicsContext3D MemoryAllocation callback to accept a struct with have backbuffer suggestion.
