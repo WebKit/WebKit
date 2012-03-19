@@ -40,6 +40,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int8array.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-uint8clampedarray.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int16array.html = PASS
+BUGCR24182 SLOW DEBUG WIN : fullscreen/full-screen-restrictions.html = PASS
 // BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
 // See BUGCR104797
 
