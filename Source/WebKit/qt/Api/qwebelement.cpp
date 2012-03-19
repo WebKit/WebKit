@@ -1495,7 +1495,7 @@ void QWebElement::render(QPainter* painter, const QRect& clip)
 
     view->updateLayoutAndStyleIfNeededRecursive();
 
-    IntRect rect = e->getRect();
+    IntRect rect = e->getPixelSnappedRect();
 
     if (rect.size().isEmpty())
         return;

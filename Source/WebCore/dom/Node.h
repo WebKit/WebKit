@@ -375,6 +375,7 @@ public:
 
     virtual bool shouldUseInputMethod();
     virtual LayoutRect getRect() const;
+    IntRect getPixelSnappedRect() const { return pixelSnappedIntRect(getRect()); }
     LayoutRect renderRect(bool* isReplaced);
 
     // Returns true if the node has a non-empty bounding box in layout.

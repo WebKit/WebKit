@@ -1,3 +1,15 @@
+2012-03-19  Emil A Eklund  <eae@chromium.org>
+
+        [mac/chromium] Change platform code to use pixelSnappedRect methods
+        https://bugs.webkit.org/show_bug.cgi?id=81016
+
+        Reviewed by Eric Seidel.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::computeBlockBounds):
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+        (WebKit::WebViewImpl::refreshAutofillPopup):
+
 2012-03-19  Eric Seidel  <eric@webkit.org>
 
         Fix WTF header include discipline in Chromium WebKit

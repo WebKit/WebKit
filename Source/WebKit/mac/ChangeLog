@@ -1,3 +1,19 @@
+2012-03-19  Emil A Eklund  <eae@chromium.org>
+
+        [mac/chromium] Change platform code to use pixelSnappedRect methods
+        https://bugs.webkit.org/show_bug.cgi?id=81016
+
+        Reviewed by Eric Seidel.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView actualVisibleRectInWindow]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _getVisibleRect:]):
+        (-[WebFrame _computePageRectsWithPrintScaleFactor:pageSize:]):
+        * WebView/WebView.mm:
+        (-[WebView _dashboardRegions]):
+        (-[WebView trackedRepaintRects]):
+
 2012-03-16  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/11027997> and https://bugs.webkit.org/show_bug.cgi?id=81412

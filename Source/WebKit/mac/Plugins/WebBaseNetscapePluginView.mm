@@ -875,7 +875,7 @@ using namespace WebCore;
     if (!frameView)
         return NSZeroRect;
 
-    IntRect widgetRect = renderer->absoluteClippedOverflowRect();
+    IntRect widgetRect = renderer->pixelSnappedAbsoluteClippedOverflowRect();
     widgetRect = frameView->contentsToWindow(widgetRect);
     return intersection(toRenderWidget(renderer)->windowClipRect(), widgetRect);
 }

@@ -583,7 +583,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (RenderPart* ownerRenderer = _private->coreFrame->ownerRenderer()) {
         if (ownerRenderer->needsLayout())
             return NO;
-        *rect = ownerRenderer->absoluteClippedOverflowRect();
+        *rect = ownerRenderer->pixelSnappedAbsoluteClippedOverflowRect();
         return YES;
     }
 
@@ -1293,9 +1293,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!root)
         return [NSArray array];
 
-    const IntRect& documentRect = root->documentRect();
-    float printWidth = root->style()->isHorizontalWritingMode() ? documentRect.width() / printScaleFactor : pageSize.width;
-    float printHeight = root->style()->isHorizontalWritingMode() ? pageSize.height : documentRect.height() / printScaleFactor;
+    const LayoutRect& documentRect = root->documentRect();
+    float printWidth = root->style()->isHorizontalWritingMode() ? static_cast<float>(documentRect.width()) / printScaleFactor : pageSize.width;
+    float printHeight = root->style()->isHorizontalWritingMode() ? pageSize.height : static_cast<float>(documentRect.height()) / printScaleFactor;
 
     PrintContext printContext(_private->coreFrame);
     printContext.computePageRectsWithPageSize(FloatSize(printWidth, printHeight), true);

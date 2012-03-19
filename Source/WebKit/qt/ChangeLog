@@ -1,3 +1,14 @@
+2012-03-19  Emil A Eklund  <eae@chromium.org>
+
+        [mac/qt/chromium] Change platform code to use pixelSnappedRect methods
+        https://bugs.webkit.org/show_bug.cgi?id=81016
+
+        Reviewed by Eric Seidel.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::geometry):
+        (QWebElement::render):
+
 2012-03-16  Teemu Katajisto  <teemu.katajisto@digia.com>
 
         [Qt] QtWebKit documentation missing a few since 4.6 information
