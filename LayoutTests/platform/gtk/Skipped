@@ -1598,3 +1598,7 @@ editing/selection/move-by-word-visually-wrong-left-right.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43022
 tables/mozilla_expected_failures/bugs/bug85016.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=81500
+http/tests/security/cross-frame-access-call.html
+http/tests/security/cross-frame-access-get.html
