@@ -158,6 +158,7 @@ private:
     virtual bool platformCALayerDrawsContent() const { return drawsContent(); }
     virtual void platformCALayerLayerDidDisplay(PlatformLayer* layer) { return layerDidDisplay(layer); }
     virtual void platformCALayerDidCreateTiles() OVERRIDE;
+    virtual float platformCALayerDeviceScaleFactor() OVERRIDE;
 
     void updateOpacityOnLayer();
     

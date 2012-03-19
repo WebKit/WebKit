@@ -98,6 +98,7 @@ private:
     IntRect m_tileCoverageRect;
 
     CGFloat m_scale;
+    CGFloat m_deviceScaleFactor;
 
     bool m_acceleratesDrawing;
 

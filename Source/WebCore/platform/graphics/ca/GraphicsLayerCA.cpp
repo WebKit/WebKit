@@ -972,6 +972,11 @@ void GraphicsLayerCA::platformCALayerDidCreateTiles()
     client()->notifySyncRequired(this);
 }
 
+float GraphicsLayerCA::platformCALayerDeviceScaleFactor()
+{
+    return deviceScaleFactor();
+}
+
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
     if (!m_uncommittedChanges)

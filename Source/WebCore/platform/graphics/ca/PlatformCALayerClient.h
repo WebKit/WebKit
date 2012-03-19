@@ -60,6 +60,7 @@ public:
     virtual void platformCALayerLayerDidDisplay(PlatformLayer*) = 0;
 
     virtual void platformCALayerDidCreateTiles() = 0;
+    virtual float platformCALayerDeviceScaleFactor() = 0;
 
 protected:
     virtual ~PlatformCALayerClient() {}

@@ -55,6 +55,7 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
     , m_tileSize(tileSize)
     , m_tileRevalidationTimer(this, &TileCache::tileRevalidationTimerFired)
     , m_scale(1)
+    , m_deviceScaleFactor(1)
     , m_acceleratesDrawing(false)
     , m_tileDebugBorderWidth(0)
 {
@@ -169,19 +170,28 @@ void TileCache::drawLayer(WebTileLayer* layer, CGContextRef context)
 
 void TileCache::setScale(CGFloat scale)
 {
-    if (m_scale == scale)
+    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
+    float deviceScaleFactor = platformLayer->owner()->platformCALayerDeviceScaleFactor();
+
+    // The scale we get is the produce of the page scale factor and device scale factor.
+    // Divide by the device scale factor so we'll get the page scale factor.
+    scale /= deviceScaleFactor;
+
+    if (m_scale == scale && m_deviceScaleFactor == deviceScaleFactor)
         return;
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    m_deviceScaleFactor = deviceScaleFactor;
     m_scale = scale;
     [m_tileContainerLayer.get() setTransform:CATransform3DMakeScale(1 / m_scale, 1 / m_scale, 1)];
 
     revalidateTiles();
 
-    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
+    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
+        [it->second.get() setContentsScale:deviceScaleFactor];
         [it->second.get() setNeedsDisplay];
+    }
 
-    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(m_tileCacheLayer);
     platformLayer->owner()->platformCALayerDidCreateTiles();
 #endif
 }
@@ -365,6 +375,7 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer(const IntRect& tileRect)
 {
     RetainPtr<WebTileLayer> layer = adoptNS([[WebTileLayer alloc] init]);
     [layer.get() setAnchorPoint:CGPointZero];
+    [layer.get() setContentsScale:m_deviceScaleFactor];
     [layer.get() setFrame:tileRect];
     [layer.get() setTileCache:this];
     [layer.get() setBorderColor:m_tileDebugBorderColor.get()];
