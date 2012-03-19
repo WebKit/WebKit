@@ -4224,6 +4224,8 @@ void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* va
         firstLength = first->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (first->isPercentage())
         firstLength = Length(first->getDoubleValue(), Percent);
+    else if (first->isCalculatedPercentageWithLength())
+        firstLength = Length(first->cssCalcValue()->toCalcValue(style(), m_rootElementStyle, zoomFactor));
     else
         return;
 
@@ -4233,6 +4235,8 @@ void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* va
         secondLength = second->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
     else if (second->isPercentage())
         secondLength = Length(second->getDoubleValue(), Percent);
+    else if (second->isCalculatedPercentageWithLength())
+        secondLength = Length(second->cssCalcValue()->toCalcValue(style(), m_rootElementStyle, zoomFactor));
     else
         return;
 
