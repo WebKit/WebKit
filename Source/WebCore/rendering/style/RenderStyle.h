@@ -1462,9 +1462,21 @@ public:
 
     StyleDifference diff(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
 
-    bool isDisplayReplacedType() const { return isDisplayReplacedType(display()); }
-    bool isDisplayInlineType() const { return isDisplayInlineType(display()); }
-    bool isOriginalDisplayInlineType() const { return isDisplayInlineType(originalDisplay()); }
+    bool isDisplayReplacedType() const
+    {
+        return display() == INLINE_BLOCK || display() == INLINE_BOX || display() == INLINE_TABLE;
+    }
+
+    bool isDisplayInlineType() const
+    {
+        return display() == INLINE || isDisplayReplacedType();
+    }
+
+    bool isOriginalDisplayInlineType() const
+    {
+        return originalDisplay() == INLINE || originalDisplay() == INLINE_BLOCK
+            || originalDisplay() == INLINE_BOX || originalDisplay() == INLINE_TABLE;
+    }
 
     void setWritingMode(WritingMode v) { inherited_flags.m_writingMode = v; }
 
@@ -1714,12 +1726,6 @@ private:
     {
         return isHorizontalWritingMode() ? getImageVerticalOutsets(image, logicalTop, logicalBottom) : getImageHorizontalOutsets(image, logicalTop, logicalBottom);
     }
-
-    bool isDisplayReplacedType(EDisplay display) const
-    {
-        return display == INLINE_BLOCK || display == INLINE_BOX || display == INLINE_FLEXBOX || display == INLINE_TABLE;
-    }
-    bool isDisplayInlineType(EDisplay display) const { return display == INLINE || isDisplayReplacedType(display); }
 
     // Color accessors are all private to make sure callers use visitedDependentColor instead to access them.
     Color invalidColor() const { static Color invalid; return invalid; }
