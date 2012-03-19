@@ -260,17 +260,41 @@ SKIP : failures/expected/image.html""", is_lint_mode=True)
                                                      'failures/expected/text.html') in
                          self._exp.get_tests_with_result_type(SKIP))
 
-    def test_add_skipped_tests(self):
-        port = MockHost().port_factory.get('qt')
-        port._filesystem.files[port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html')] = 'foo'
-        expectations = TestExpectations(port, tests=['failures/expected/text.html'], expectations='', test_config=port.test_configuration(), skipped_tests=set(['failures/expected/text.html']))
-        self.assertEquals(expectations.get_modifiers('failures/expected/text.html'), [TestExpectationParser.DUMMY_BUG_MODIFIER, TestExpectationParser.SKIP_MODIFIER])
-        self.assertEquals(expectations.get_expectations('failures/expected/text.html'), set([PASS]))
 
-    def test_add_skipped_tests_duplicate(self):
+class SkippedTests(Base):
+    def check(self, expectations, overrides, skips, lint=False):
         port = MockHost().port_factory.get('qt')
-        port._filesystem.files[port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html')] = 'foo'
-        self.assertRaises(ParseError, TestExpectations, port, tests=['failures/expected/text.html'], expectations='BUGX : failures/expected/text.html = text\n', test_config=port.test_configuration(), is_lint_mode=True, skipped_tests=set(['failures/expected/text.html']))
+        port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), 'failures/expected/text.html'), 'foo')
+        exp = TestExpectations(port, tests=['failures/expected/text.html'],
+                               expectations=expectations, overrides=overrides, is_lint_mode=lint,
+                               test_config=port.test_configuration(), skipped_tests=set(skips))
+
+        # Check that the expectation is for BUG_DUMMY SKIP : ... = PASS
+        self.assertEquals(exp.get_modifiers('failures/expected/text.html'),
+                          [TestExpectationParser.DUMMY_BUG_MODIFIER, TestExpectationParser.SKIP_MODIFIER])
+        self.assertEquals(exp.get_expectations('failures/expected/text.html'), set([PASS]))
+
+    def test_skipped_tests_work(self):
+        self.check(expectations='', overrides=None, skips=['failures/expected/text.html'])
+
+    def test_duplicate_skipped_test_fails_lint(self):
+        self.assertRaises(ParseError, self.check, expectations='BUGX : failures/expected/text.html = text\n', overrides=None, skips=['failures/expected/text.html'], lint=True)
+
+    def test_skipped_file_overrides_expectations(self):
+        self.check(expectations='BUGX : failures/expected/text.html = TEXT\n', overrides=None,
+                   skips=['failures/expected/text.html'])
+
+    def test_skipped_dir_overrides_expectations(self):
+        self.check(expectations='BUGX : failures/expected/text.html = TEXT\n', overrides=None,
+                   skips=['failures/expected'])
+
+    def test_skipped_file_overrides_overrides(self):
+        self.check(expectations='', overrides='BUGX : failures/expected/text.html = TEXT\n',
+                   skips=['failures/expected/text.html'])
+
+    def test_skipped_dir_overrides_overrides(self):
+        self.check(expectations='', overrides='BUGX : failures/expected/text.html = TEXT\n',
+                   skips=['failures/expected'])
 
 
 class ExpectationSyntaxTests(Base):

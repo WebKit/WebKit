@@ -1,3 +1,49 @@
+2012-03-19  Dirk Pranke  <dpranke@chromium.org>
+
+        NRWT runs some tests that are skipped with -i command line option
+        https://bugs.webkit.org/show_bug.cgi?id=81535
+
+        Reviewed by Ojan Vafai.
+
+        This change modifies the interaction of Skipped files and
+        test_expectations files so that entries in Skipped files (and
+        the -i command line) override *everything* in the expectations
+        file.
+
+        Specifically, a directory in a Skipped file will cause all of
+        the tests in the dir to be skipped even if individual tests in
+        the dir are listed in the test_expectations.txt.
+
+        Skipped files also override anything in an overrides files.
+
+        This seems to make more intuitive sense, since if you list
+        something in the Skips file (and even more specify it on the
+        command line) you probably want it to be universally applied.
+
+        Theoretically we could add more precedence levels and have full
+        paths in an expectations file override dirs in a Skipped file
+        (but not the command line), but I don't know yet that that level
+        of complexity is justified.
+        
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.__init__):
+        (TestExpectations._add_skipped_tests):
+        (TestExpectations._add_test):
+        (TestExpectations._add_expectations):
+        (TestExpectations._add_expectation_line):
+        (TestExpectations._already_seen_better_match):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (test_more_specific_override_resets_skip):
+        (SkippedTests):
+        (SkippedTests.get_exp):
+        (SkippedTests.assert_exp):
+        (SkippedTests.test_skipped_tests_work):
+        (SkippedTests.test_duplicate_skipped_test_fails_lint):
+        (SkippedTests.test_skipped_file_overrides_expectations):
+        (SkippedTests.test_skipped_dir_overrides_expectations):
+        (SkippedTests.test_skipped_file_overrides_overrides):
+        (SkippedTests.test_skipped_dir_overrides_overrides):
+
 2012-03-19  Eric Seidel  <eric@webkit.org>
 
         Fix WTF header include discipline in Chromium WebKit
