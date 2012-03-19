@@ -508,7 +508,11 @@ CachedResource* CachedResourceLoader::loadResource(CachedResource::Type type, Re
         resource->setInCache(true);
     
     resource->setLoadPriority(priority);
+    
+    bool wasPruneEnabled = memoryCache()->pruneEnabled();
+    memoryCache()->setPruneEnabled(false);
     resource->load(this, options);
+    memoryCache()->setPruneEnabled(wasPruneEnabled);
     
     if (!inCache) {
         resource->setOwningCachedResourceLoader(this);

@@ -1,5 +1,22 @@
 2012-03-19  Brady Eidson  <beidson@apple.com>
 
+        <rdar://problem/10917120> and https://bugs.webkit.org/show_bug.cgi?id=81066
+        Crash in 3rd party WebKit apps under XHR/Cache code
+
+        Reviewed by Antti Koivisto.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/MemoryCachePruneWithinResourceLoadDelegate.html: Added.
+        * TestWebKitAPI/Tests/mac/MemoryCachePruneWithinResourceLoadDelegate.mm: Added.
+        (-[MemoryCachePruneTestResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]):
+        (-[MemoryCachePruneTestResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        (-[MemoryCachePruneTestResourceLoadDelegate webView:resource:didFinishLoadingFromDataSource:]):
+        (-[MemoryCachePruneTestResourceLoadDelegate webView:resource:didFailLoadingWithError:fromDataSource:]):
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
+2012-03-19  Brady Eidson  <beidson@apple.com>
+
         <rdar://problem/10848575> and https://bugs.webkit.org/show_bug.cgi?id=81516
         REGRESSION (r107435) URLs copied from WebKit apps aren't in the right pasteboard format
 
