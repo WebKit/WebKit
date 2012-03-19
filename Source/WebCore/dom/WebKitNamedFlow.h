@@ -30,11 +30,14 @@
 #ifndef WebKitNamedFlow_h
 #define WebKitNamedFlow_h
 
+#include <Node.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class NodeList;
 class RenderFlowThread;
 
 class WebKitNamedFlow : public RefCounted<WebKitNamedFlow> {
@@ -47,11 +50,18 @@ public:
     ~WebKitNamedFlow();
 
     bool overflow() const;
+    PassRefPtr<NodeList> contentNodes() const;
+
+    void registerContentNode(Node* contentNode);
+    void unregisterContentNode(Node* contentNode) { m_contentNodes.remove(contentNode); }
 
 private:
     WebKitNamedFlow(RenderFlowThread*);
 
     RenderFlowThread* m_parentFlowThread;
+
+    typedef ListHashSet<Node*> NamedFlowContentNodes;
+    NamedFlowContentNodes m_contentNodes;
 };
 
 }

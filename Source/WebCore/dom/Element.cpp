@@ -66,8 +66,9 @@
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextIterator.h"
-#include "WebKitMutationObserver.h"
 #include "WebKitAnimationList.h"
+#include "WebKitMutationObserver.h"
+#include "WebKitNamedFlow.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
@@ -978,6 +979,15 @@ void Element::attach()
 void Element::detach()
 {
     RenderWidget::suspendWidgetHierarchyUpdates();
+
+    if (document()->cssRegionsEnabled()) {
+        RenderStyle* style = renderer() ? renderer()->style() : computedStyle();
+        if (style && !style->flowThread().isEmpty()) {
+            RefPtr<WebKitNamedFlow> namedFlow = document()->webkitGetFlowByName(style->flowThread(), Document::DoNotCheckFlowNameForInvalidValues);
+            if (namedFlow)
+                namedFlow->unregisterContentNode(this);
+        }
+    }
 
     cancelFocusAppearanceUpdate();
     if (hasRareData())

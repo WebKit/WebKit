@@ -30,7 +30,10 @@
 #include "config.h"
 #include "WebKitNamedFlow.h"
 
+#include "Node.h"
+#include "NodeList.h"
 #include "RenderFlowThread.h"
+#include "StaticNodeList.h"
 
 namespace WebCore {
 
@@ -47,6 +50,39 @@ bool WebKitNamedFlow::overflow() const
 {
     m_parentFlowThread->document()->updateLayoutIgnorePendingStylesheets();
     return m_parentFlowThread->overflow();
+}
+
+PassRefPtr<NodeList> WebKitNamedFlow::contentNodes() const
+{
+    m_parentFlowThread->document()->updateLayoutIgnorePendingStylesheets();
+
+    Vector<RefPtr<Node> > contentNodes;
+    for (NamedFlowContentNodes::const_iterator it = m_contentNodes.begin(); it != m_contentNodes.end(); ++it) {
+        Node* node = const_cast<Node*>(*it);
+        ASSERT(node->computedStyle()->flowThread() == m_parentFlowThread->flowThread());
+        contentNodes.append(node);
+    }
+
+    return StaticNodeList::adopt(contentNodes);
+}
+
+// The content nodes list contains those nodes with -webkit-flow-into: flow.
+// An element with display:none should also be listed among those nodes.
+// The list of nodes is orderer.
+void WebKitNamedFlow::registerContentNode(Node* contentNode)
+{
+    ASSERT(contentNode && contentNode->isElementNode());
+
+    // Find the first content node following the new content node.
+    for (NamedFlowContentNodes::iterator it = m_contentNodes.begin(); it != m_contentNodes.end(); ++it) {
+        Node* node = *it;
+        unsigned short position = contentNode->compareDocumentPosition(node);
+        if (position & Node::DOCUMENT_POSITION_FOLLOWING) {
+            m_contentNodes.insertBefore(node, contentNode);
+            return;
+        }
+    }
+    m_contentNodes.add(contentNode);
 }
 
 } // namespace WebCore

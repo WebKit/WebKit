@@ -352,7 +352,12 @@ public:
     PassRefPtr<Element> createElement(const QualifiedName&, bool createdByParser);
 
     bool cssRegionsEnabled() const;
+    enum FlowNameCheck {
+        CheckFlowNameForInvalidValues,
+        DoNotCheckFlowNameForInvalidValues
+    };
     PassRefPtr<WebKitNamedFlow> webkitGetFlowByName(const String&);
+    PassRefPtr<WebKitNamedFlow> webkitGetFlowByName(const String&, FlowNameCheck);
 
     bool regionBasedColumnsEnabled() const;
 
