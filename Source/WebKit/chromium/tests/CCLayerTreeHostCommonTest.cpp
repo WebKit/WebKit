@@ -605,7 +605,7 @@ static int addTransformAnimationToLayer(LayerChromium* layer, double duration)
     WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
 
     TransformOperations operations1;
-    operations1.operations().append(TranslateTransformOperation::create(Length(2, Fixed), Length(0, Fixed), TransformOperation::TRANSLATE_X));
+    operations1.operations().append(TranslateTransformOperation::create(Length(2, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
     values.insert(new TransformAnimationValue(0, &operations1));
 
     RefPtr<Animation> animation = Animation::create();

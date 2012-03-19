@@ -1,3 +1,14 @@
+2012-03-19  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Fix build that was broken by r111137
+
+        Fixed was ambiguous because of MacTypes.h
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebCore::addTransformAnimationToLayer):
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebCore::addTransformAnimationToLayer):
+
 2012-03-18  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] Fix test that was broken by r111128
