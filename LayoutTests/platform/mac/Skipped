@@ -432,23 +432,7 @@ fast/css-grid-layout
 fast/css/style-scoped
 
 # ENABLE(SHADOW_DOM) is disabled.
-fast/dom/shadow/content-element-api.html
-fast/dom/shadow/content-element-outside-shadow.html
-fast/dom/shadow/content-element-outside-shadow-style.html
-fast/dom/shadow/get-element-by-id-in-shadow-root.html
-fast/dom/shadow/shadow-root-js-api.html
-fast/dom/shadow/shadow-disable.html
-fast/dom/shadow/shadow-root-activeElement.html
-fast/dom/shadow/shadow-root-attached.html
-fast/dom/shadow/shadow-root-innerHTML.html
-fast/dom/shadow/shadow-root-new.html
-fast/dom/shadow/shadow-ul-li.html
-fast/dom/shadow/shadow-root-append.html
-fast/dom/shadow/shadow-element-rendering-single.html
-fast/dom/shadow/shadow-element-rendering-multiple.html
-fast/dom/shadow/multiple-shadowroot.html
-fast/dom/shadow/multiple-shadowroot-rendering.html
-fast/dom/shadow/multiple-shadowroot-adopt.html
+fast/dom/shadow
 
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html
