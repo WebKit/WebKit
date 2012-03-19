@@ -2529,7 +2529,9 @@ void SpeculativeJIT::compile(Node& node)
             GPRResult result(this);
             callOperation(operationRegExpTest, result.gpr(), baseGPR, argumentGPR);
             
-            noResult(m_compileIndex);
+            // Must use jsValueResult because otherwise we screw up register
+            // allocation, which thinks that this node has a result.
+            booleanResult(result.gpr(), m_compileIndex);
             break;
         }
 

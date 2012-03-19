@@ -2562,7 +2562,6 @@ void SpeculativeJIT::compile(Node& node)
     case RegExpExec: {
         if (compileRegExpExec(node))
             return;
-
         if (!node.adjustedRefCount()) {
             SpeculateCellOperand base(this, node.child1());
             SpeculateCellOperand argument(this, node.child2());
@@ -2573,7 +2572,9 @@ void SpeculativeJIT::compile(Node& node)
             GPRResult result(this);
             callOperation(operationRegExpTest, result.gpr(), baseGPR, argumentGPR);
             
-            noResult(m_compileIndex);
+            // Must use jsValueResult because otherwise we screw up register
+            // allocation, which thinks that this node has a result.
+            jsValueResult(result.gpr(), m_compileIndex);
             break;
         }
 
