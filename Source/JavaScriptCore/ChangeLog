@@ -1,5 +1,16 @@
 2012-03-19  Filip Pizlo  <fpizlo@apple.com>
 
+        Prediction propagation for UInt32ToNumber incorrectly assumes that outs outcome does not
+        change throughout the fixpoint
+        https://bugs.webkit.org/show_bug.cgi?id=81583
+
+        Reviewed by Michael Saboff.
+
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+
+2012-03-19  Filip Pizlo  <fpizlo@apple.com>
+
         GC should not attempt to clear LLInt instruction inline caches for code blocks that are in
         the process of being generated
         https://bugs.webkit.org/show_bug.cgi?id=81565

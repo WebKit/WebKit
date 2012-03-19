@@ -217,9 +217,9 @@ private:
             
         case UInt32ToNumber: {
             if (nodeCanSpeculateInteger(node.arithNodeFlags()))
-                changed |= setPrediction(PredictInt32);
+                changed |= mergePrediction(PredictInt32);
             else
-                changed |= setPrediction(PredictNumber);
+                changed |= mergePrediction(PredictNumber);
             
             changed |= m_graph[node.child1()].mergeArithNodeFlags(flags);
             break;
