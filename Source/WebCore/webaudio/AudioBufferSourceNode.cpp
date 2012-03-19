@@ -58,9 +58,7 @@ PassRefPtr<AudioBufferSourceNode> AudioBufferSourceNode::create(AudioContext* co
 AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, float sampleRate)
     : AudioSourceNode(context, sampleRate)
     , m_buffer(0)
-    , m_isPlaying(false)
     , m_isLooping(false)
-    , m_hasFinished(false)
     , m_startTime(0.0)
     , m_endTime(UnknownTime)
     , m_virtualReadIndex(0)
@@ -69,6 +67,7 @@ AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, float sample
     , m_grainDuration(DefaultGrainDuration)
     , m_lastGain(1.0)
     , m_pannerNode(0)
+    , m_playbackState(UNSCHEDULED_STATE)
 {
     setNodeType(NodeTypeAudioBufferSource);
 
@@ -110,18 +109,24 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
 
         // If we know the end time and it's already passed, then don't bother doing any more rendering this cycle.
         if (m_endTime != UnknownTime && endFrame <= quantumStartFrame) {
-            m_isPlaying = false;
             m_virtualReadIndex = 0;
             finish();
         }
         
-        if (!m_isPlaying || m_hasFinished || !buffer() || startFrame >= quantumEndFrame) {
+        if (m_playbackState == UNSCHEDULED_STATE || m_playbackState == FINISHED_STATE
+            || !buffer() || startFrame >= quantumEndFrame) {
             // FIXME: can optimize here by propagating silent hint instead of forcing the whole chain to process silence.
             outputBus->zero();
             m_processLock.unlock();
             return;
         }
 
+        if (m_playbackState == SCHEDULED_STATE) {
+            // Increment the active source count only if we're transitioning from SCHEDULED_STATE to PLAYING_STATE.
+            m_playbackState = PLAYING_STATE;
+            context()->incrementActiveSourceCount();
+        }
+        
         size_t quantumFrameOffset = startFrame > quantumStartFrame ? startFrame - quantumStartFrame : 0;
         quantumFrameOffset = min(quantumFrameOffset, framesToProcess); // clamp to valid range
         size_t bufferFramesToProcess = framesToProcess - quantumFrameOffset;
@@ -150,8 +155,8 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
                     memset(m_destinationChannels[i] + zeroStartFrame, 0, sizeof(float) * framesToZero);
             }
 
-            m_isPlaying = false;
             m_virtualReadIndex = 0;
+
             finish();
         }
 
@@ -167,7 +172,6 @@ bool AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping(AudioBus*, unsign
 {
     if (!loop()) {
         // If we're not looping, then stop playing when we get to the end.
-        m_isPlaying = false;
 
         if (framesToProcess > 0) {
             // We're not looping and we've reached the end of the sample data, but we still need to provide more output,
@@ -343,10 +347,11 @@ void AudioBufferSourceNode::reset()
 
 void AudioBufferSourceNode::finish()
 {
-    if (!m_hasFinished) {
+    if (m_playbackState != FINISHED_STATE) {
         // Let the context dereference this AudioNode.
         context()->notifyNodeFinishedProcessing(this);
-        m_hasFinished = true;
+        m_playbackState = FINISHED_STATE;
+        context()->decrementActiveSourceCount();
     }
 }
 
@@ -390,19 +395,20 @@ unsigned AudioBufferSourceNode::numberOfChannels()
 void AudioBufferSourceNode::noteOn(double when)
 {
     ASSERT(isMainThread());
-    if (m_isPlaying)
+    if (m_playbackState != UNSCHEDULED_STATE)
         return;
 
     m_isGrain = false;
     m_startTime = when;
     m_virtualReadIndex = 0;
-    m_isPlaying = true;
+    m_playbackState = SCHEDULED_STATE;
 }
 
 void AudioBufferSourceNode::noteGrainOn(double when, double grainOffset, double grainDuration)
 {
     ASSERT(isMainThread());
-    if (m_isPlaying)
+
+    if (m_playbackState != UNSCHEDULED_STATE)
         return;
 
     if (!buffer())
@@ -432,13 +438,13 @@ void AudioBufferSourceNode::noteGrainOn(double when, double grainOffset, double 
     // Since playbackRate == 1 is very common, it's worth considering quality.
     m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset, buffer()->sampleRate());
     
-    m_isPlaying = true;
+    m_playbackState = SCHEDULED_STATE;
 }
 
 void AudioBufferSourceNode::noteOff(double when)
 {
     ASSERT(isMainThread());
-    if (!m_isPlaying)
+    if (!(m_playbackState == SCHEDULED_STATE || m_playbackState == PLAYING_STATE))
         return;
     
     when = max(0.0, when);
@@ -496,7 +502,6 @@ void AudioBufferSourceNode::setLooping(bool looping)
 
     m_isLooping = looping;
 }
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

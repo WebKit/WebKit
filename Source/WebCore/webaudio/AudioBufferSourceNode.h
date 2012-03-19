@@ -44,6 +44,23 @@ class AudioContext;
 
 class AudioBufferSourceNode : public AudioSourceNode {
 public:
+    // These are the possible states an AudioBufferSourceNode can be in:
+    //
+    // UNSCHEDULED_STATE - Initial playback state. Created, but not yet scheduled.
+    // SCHEDULED_STATE - Scheduled to play (via noteOn() or noteGrainOn()), but not yet playing.
+    // PLAYING_STATE - Generating sound.
+    // FINISHED_STATE - Finished generating sound.
+    //
+    // The state can only transition to the next state, except for the FINISHED_STATE which can
+    // never be changed.
+    enum PlaybackState {
+        // These must be defined with the same names and values as in the .idl file.
+        UNSCHEDULED_STATE = 0,
+        SCHEDULED_STATE = 1,
+        PLAYING_STATE = 2,
+        FINISHED_STATE = 3
+    };
+    
     static PassRefPtr<AudioBufferSourceNode> create(AudioContext*, float sampleRate);
 
     virtual ~AudioBufferSourceNode();
@@ -66,6 +83,8 @@ public:
     void noteOn(double when);
     void noteGrainOn(double when, double grainOffset, double grainDuration);
     void noteOff(double when);
+
+    unsigned short playbackState() { return static_cast<unsigned short>(m_playbackState); }
 
     // Note: the attribute was originally exposed as .looping, but to be more consistent in naming with <audio>
     // and with how it's described in the specification, the proper attribute name is .loop
@@ -102,16 +121,9 @@ private:
     RefPtr<AudioGain> m_gain;
     RefPtr<AudioParam> m_playbackRate;
 
-    // m_isPlaying is set to true when noteOn() or noteGrainOn() is called.
-    bool m_isPlaying;
-
     // If m_isLooping is false, then this node will be done playing and become inactive after it reaches the end of the sample data in the buffer.
     // If true, it will wrap around to the start of the buffer each time it reaches the end.
     bool m_isLooping;
-
-    // This node is considered finished when it reaches the end of the buffer's sample data after noteOn() has been called.
-    // This will only be set to true if m_isLooping == false.
-    bool m_hasFinished;
 
     // m_startTime is the time to start playing based on the context's timeline (0.0 or a time less than the context's current time means "now").
     double m_startTime; // in seconds
@@ -145,6 +157,8 @@ private:
 
     // Handles the time when we reach the end of sample data (non-looping) or the noteOff() time has been reached.
     void finish();
+
+    PlaybackState m_playbackState;
 };
 
 } // namespace WebCore

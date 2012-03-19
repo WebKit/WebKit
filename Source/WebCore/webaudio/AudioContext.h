@@ -96,7 +96,11 @@ public:
     size_t currentSampleFrame() { return m_destinationNode->currentSampleFrame(); }
     double currentTime() { return m_destinationNode->currentTime(); }
     float sampleRate() { return m_destinationNode->sampleRate(); }
+    unsigned long activeSourceCount() { return static_cast<unsigned long>(m_activeSourceCount); }
 
+    void incrementActiveSourceCount();
+    void decrementActiveSourceCount();
+    
     PassRefPtr<AudioBuffer> createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode&);
     PassRefPtr<AudioBuffer> createBuffer(ArrayBuffer*, bool mixToMono, ExceptionCode&);
 
@@ -312,6 +316,8 @@ private:
     // It is somewhat arbitrary and could be increased if necessary.
     enum { MaxNumberOfChannels = 32 };
 
+    // Number of AudioBufferSourceNodes that are active (playing).
+    int m_activeSourceCount;
 };
 
 } // WebCore
