@@ -260,19 +260,20 @@ bool JSValue::isValidCallee()
 
 JSString* JSValue::toStringSlowCase(ExecState* exec) const
 {
+    JSGlobalData& globalData = exec->globalData();
     ASSERT(!isString());
     if (isInt32())
-        return jsString(&exec->globalData(), exec->globalData().numericStrings.add(asInt32()));
+        return jsString(&globalData, globalData.numericStrings.add(asInt32()));
     if (isDouble())
-        return jsString(&exec->globalData(), exec->globalData().numericStrings.add(asDouble()));
+        return jsString(&globalData, globalData.numericStrings.add(asDouble()));
     if (isTrue())
-        return jsNontrivialString(exec, exec->propertyNames().trueKeyword.ustring());
+        return globalData.smallStrings.trueString(&globalData);
     if (isFalse())
-        return jsNontrivialString(exec, exec->propertyNames().falseKeyword.ustring());
+        return globalData.smallStrings.falseString(&globalData);
     if (isNull())
-        return jsNontrivialString(exec, exec->propertyNames().nullKeyword.ustring());
+        return globalData.smallStrings.nullString(&globalData);
     if (isUndefined())
-        return jsNontrivialString(exec, exec->propertyNames().undefined.ustring());
+        return globalData.smallStrings.undefinedString(&globalData);
 
     ASSERT(isCell());
     JSValue value = asCell()->toPrimitive(exec, PreferString);
