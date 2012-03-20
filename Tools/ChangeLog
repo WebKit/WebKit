@@ -1,5 +1,37 @@
 2012-03-19  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: clean up some port._filesystem references to not reference private members
+        https://bugs.webkit.org/show_bug.cgi?id=81595
+
+        Reviewed by Eric Seidel.
+
+        There should be no functional changes in this patch, just some
+        refactoring. Also, fixes a minor nit in write_image_diff_files(()
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__):
+        (SingleTestRunner._run_compare_test):
+        (SingleTestRunner._run_rebaseline):
+        (SingleTestRunner._save_baseline_data):
+        (SingleTestRunner._handle_error):
+        (SingleTestRunner._run_reftest):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+        (TestResultWriter.__init__):
+        (TestResultWriter._make_output_directory):
+        (TestResultWriter.output_filename):
+        (TestResultWriter._output_testname):
+        (TestResultWriter.write_output_files):
+        (TestResultWriter.write_stderr):
+        (TestResultWriter.write_crash_report):
+        (TestResultWriter.create_text_diff_and_write_result):
+        (TestResultWriter.write_image_diff_files):
+        (copy_file):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer_unittest.py:
+        (TestResultWriterTest.test_reftest_diff_image):
+
+2012-03-19  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: fix nit - incorrect reference to DRT in test_expectations.py
         https://bugs.webkit.org/show_bug.cgi?id=81598
 

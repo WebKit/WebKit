@@ -36,11 +36,11 @@ from webkitpy.layout_tests.models import test_failures
 _log = logging.getLogger(__name__)
 
 
-def write_test_result(port, test_name, driver_output,
+def write_test_result(filesystem, port, test_name, driver_output,
                       expected_driver_output, failures):
     """Write the test result to the result output directory."""
     root_output_dir = port.results_directory()
-    writer = TestResultWriter(port, root_output_dir, test_name)
+    writer = TestResultWriter(filesystem, port, root_output_dir, test_name)
     if driver_output.error:
         writer.write_stderr(driver_output.error)
 
@@ -96,14 +96,15 @@ class TestResultWriter(object):
     FILENAME_SUFFIX_IMAGE_DIFF = "-diff.png"
     FILENAME_SUFFIX_IMAGE_DIFFS_HTML = "-diffs.html"
 
-    def __init__(self, port, root_output_dir, test_name):
+    def __init__(self, filesystem, port, root_output_dir, test_name):
+        self._filesystem = filesystem
         self._port = port
         self._root_output_dir = root_output_dir
         self._test_name = test_name
 
     def _make_output_directory(self):
         """Creates the output directory (if needed) for a given test filename."""
-        fs = self._port._filesystem
+        fs = self._filesystem
         output_filename = fs.join(self._root_output_dir, self._test_name)
         fs.maybe_make_directory(fs.dirname(output_filename))
 
@@ -119,12 +120,12 @@ class TestResultWriter(object):
         Return:
           The absolute path to the output filename
         """
-        fs = self._port._filesystem
+        fs = self._filesystem
         output_filename = fs.join(self._root_output_dir, self._test_name)
         return fs.splitext(output_filename)[0] + modifier
 
     def _output_testname(self, modifier):
-        fs = self._port._filesystem
+        fs = self._filesystem
         return fs.splitext(fs.basename(self._test_name))[0] + modifier
 
     def write_output_files(self, file_type, output, expected):
@@ -144,23 +145,22 @@ class TestResultWriter(object):
         actual_filename = self.output_filename(self.FILENAME_SUFFIX_ACTUAL + file_type)
         expected_filename = self.output_filename(self.FILENAME_SUFFIX_EXPECTED + file_type)
 
-        fs = self._port._filesystem
+        fs = self._filesystem
         if output is not None:
             fs.write_binary_file(actual_filename, output)
         if expected is not None:
             fs.write_binary_file(expected_filename, expected)
 
     def write_stderr(self, error):
-        fs = self._port._filesystem
+        fs = self._filesystem
         filename = self.output_filename(self.FILENAME_SUFFIX_STDERR + ".txt")
         fs.maybe_make_directory(fs.dirname(filename))
         fs.write_binary_file(filename, error)
 
     def write_crash_report(self, crashed_process_name, error):
-        fs = self._port._filesystem
+        fs = self._filesystem
         filename = self.output_filename(self.FILENAME_SUFFIX_CRASH_LOG + ".txt")
         fs.maybe_make_directory(fs.dirname(filename))
-        # FIXME: We shouldn't be grabbing private members of port.
         crash_logs = CrashLogs(fs)
         log = crash_logs.find_newest_log(crashed_process_name)
         # CrashLogs doesn't support every platform, so we fall back to
@@ -180,7 +180,7 @@ class TestResultWriter(object):
         file_type = '.txt'
         actual_filename = self.output_filename(self.FILENAME_SUFFIX_ACTUAL + file_type)
         expected_filename = self.output_filename(self.FILENAME_SUFFIX_EXPECTED + file_type)
-        fs = self._port._filesystem
+        fs = self._filesystem
         # We treat diff output as binary. Diff output may contain multiple files
         # in conflicting encodings.
         diff = self._port.diff_text(expected_text, actual_text, expected_filename, actual_filename)
@@ -205,7 +205,7 @@ class TestResultWriter(object):
 
     def write_image_diff_files(self, image_diff):
         diff_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFF)
-        fs = self._port._filesystem
+        fs = self._filesystem
         fs.write_binary_file(diff_filename, image_diff)
 
         diffs_html_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFFS_HTML)
@@ -262,11 +262,10 @@ Difference between images: <a href="%(diff_filename)s">diff</a><br>
             'diff_filename': self._output_testname(self.FILENAME_SUFFIX_IMAGE_DIFF),
             'prefix': self._output_testname(''),
         }
-        # FIXME: This seems like a text file, not a binary file.
-        self._port._filesystem.write_binary_file(diffs_html_filename, html)
+        self._filesystem.write_text_file(diffs_html_filename, html)
 
     def copy_file(self, src_filepath):
-        fs = self._port._filesystem
+        fs = self._filesystem
         assert fs.exists(src_filepath), 'src_filepath: %s' % src_filepath
         dst_filepath = fs.join(self._root_output_dir, self._port.relative_test_filename(src_filepath))
         self._make_output_directory()
