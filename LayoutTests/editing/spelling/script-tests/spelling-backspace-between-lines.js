@@ -26,7 +26,7 @@ function testWithDelete()
 
     shouldBe("firstLineText()", "'OK'");
     shouldBe("sel.anchorNode.data", "'OK zz OK'");
-    shouldBeTrue("layoutTestController.hasSpellingMarker(3, 2)");
+    shouldBeTrue("internals.hasSpellingMarker(document, 3, 2)");
 
     sel.modify("move", "left", "lineboundary");
     document.execCommand("Delete", false);
@@ -34,7 +34,7 @@ function testWithDelete()
 
     shouldBe("sel.anchorNode.data", "'OKOK zz OK'");
     shouldBe("firstLineText()", "'OKOK zz OK'");
-    shouldBeTrue("layoutTestController.hasSpellingMarker(5, 2)");
+    shouldBeTrue("internals.hasSpellingMarker(document, 5, 2)");
 }
 
 function testWithForwardDelete()
@@ -47,7 +47,7 @@ function testWithForwardDelete()
 
     shouldBe("firstLineText()", "'OK'");
     shouldBe("sel.anchorNode.data", "'OK zz OK'");
-    shouldBeTrue("layoutTestController.hasSpellingMarker(3, 2)");
+    shouldBeTrue("internals.hasSpellingMarker(document, 3, 2)");
 
     sel.modify("move", "left", "line");
     document.execCommand("ForwardDelete", false);
@@ -55,7 +55,7 @@ function testWithForwardDelete()
 
     shouldBe("firstLineText()", "'OKOK zz OK'");
     shouldBe("sel.anchorNode.data", "'OKOK zz OK'");
-    shouldBeTrue("layoutTestController.hasSpellingMarker(5, 2)");
+    shouldBeTrue("internals.hasSpellingMarker(document, 5, 2)");
 }
 
 testWithDelete();

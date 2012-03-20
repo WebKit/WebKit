@@ -1159,11 +1159,6 @@ void LayoutTestController::abortModal()
     [NSApp abortModal];
 }
 
-bool LayoutTestController::hasSpellingMarker(int from, int length)
-{
-    return [mainFrame hasSpellingMarker:from length:length];
-}
-
 bool LayoutTestController::hasGrammarMarker(int from, int length)
 {
     return [mainFrame hasGrammarMarker:from length:length];

@@ -32,8 +32,8 @@ typeCharacterCommand('g');
 typeCharacterCommand('a');
 typeCharacterCommand(' ');
 execDeleteCommand();
-if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
-    if (window.layoutTestController.hasSpellingMarker(7,8) == 1) {
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(document, 7,8) == 1) {
         document.getElementById('console').innerHTML = 'SUCCESS<br>';
     } else {
         document.getElementById('console').innerHTML = "FAILURE. The word 'meagesga' does not have underline.<br>";
@@ -45,8 +45,8 @@ textarea.setSelectionRange(6, 6);
 textarea.focus();
 typeCharacterCommand(' ');
 execForwardDeleteCommand();
-if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
-    if (window.layoutTestController.hasSpellingMarker(7,8) == 1) {
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(document, 7,8) == 1) {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
     } else {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesga' does not have underline.<br>";

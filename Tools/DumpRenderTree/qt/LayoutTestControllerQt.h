@@ -241,7 +241,6 @@ public slots:
 
     // Empty stub method to keep parity with object model exposed by global LayoutTestController.
     void abortModal() {}
-    bool hasSpellingMarker(int from, int length);
 
     void addURLToRedirect(const QString& origin, const QString& destination);
 

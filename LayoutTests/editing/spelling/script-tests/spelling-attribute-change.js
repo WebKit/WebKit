@@ -22,7 +22,7 @@ function testSpellCheckingEnabled(target, enabled)
 
     window.target = target;
     shouldBe("target.spellcheck", enabled ? "true" : "false");
-    shouldBe("layoutTestController.hasSpellingMarker(6, 2)", enabled ? "true" : "false");
+    shouldBe("internals.hasSpellingMarker(document, 6, 2)", enabled ? "true" : "false");
 }
 
 function createElement(tagName, spellcheck)

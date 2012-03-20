@@ -33,8 +33,8 @@ typeCharacterCommand('a');
 typeCharacterCommand(' ');
 execMoveSelectionBackwardByCharacterCommand();
     
-if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
-    if (window.layoutTestController.hasSpellingMarker(7,8) == 1) {
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(document, 7,8) == 1) {
         document.getElementById('console').innerHTML = 'SUCCESS<br>';
     } else {
         document.getElementById('console').innerHTML = "FAILURE. The word 'meagesga' does not have misspell underline.<br>";
@@ -44,8 +44,8 @@ if (window.layoutTestController && window.layoutTestController.hasSpellingMarker
 textarea = document.getElementById('test');
 textarea.setSelectionRange(10, 10);
 textarea.focus();
-if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
-    if (window.layoutTestController.hasSpellingMarker(7,8) == 1) {
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(document, 7,8) == 1) {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
     } else {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesga' does not have misspell underline.<br>";
@@ -55,8 +55,8 @@ if (window.layoutTestController && window.layoutTestController.hasSpellingMarker
 textarea.setSelectionRange(6, 6);
 textarea.focus();
 execMoveSelectionForwardByCharacterCommand();
-if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
-    if (window.layoutTestController.hasSpellingMarker(7,8) == 1) {
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(document, 7,8) == 1) {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
     } else {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesga' does not have misspell underline.<br>";

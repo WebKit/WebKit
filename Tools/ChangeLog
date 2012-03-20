@@ -1,3 +1,30 @@
+2012-03-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Convert hasSpellingMarker to use Internals interface.
+        https://bugs.webkit.org/show_bug.cgi?id=81300
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove hasSpellingMarker functions, because it is able to work in the
+        cross-port way through the Internals interface.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController):
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+
 2012-03-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add new Qt-WK2 performance tester bot to build.webkit.org

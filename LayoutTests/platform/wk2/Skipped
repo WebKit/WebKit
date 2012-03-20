@@ -910,7 +910,7 @@ editing/selection/doubleclick-inline-first-last-contenteditable.html
 # WebKitTestRunner needs layoutTestController.pageProperty
 printing/page-rule-selection.html
 
-# WebKitTestRunner needs layoutTestController.hasSpellingMarker
+# WebKitTestRunner needs internals.hasSpellingMarker
 editing/spelling/design-mode-spellcheck-off.html
 editing/spelling/spellcheck-attribute.html
 editing/spelling/spelling-attribute-at-child.html

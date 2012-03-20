@@ -550,12 +550,6 @@ void LayoutTestController::abortModal()
 {
 }
 
-bool LayoutTestController::hasSpellingMarker(int, int)
-{
-    // FIXME: Implement
-    return false;
-}
-
 bool LayoutTestController::hasGrammarMarker(int, int)
 {
     // FIXME: Implement

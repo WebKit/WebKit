@@ -132,7 +132,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("execCommand", &LayoutTestController::execCommand);
     bindMethod("forceRedSelectionColors", &LayoutTestController::forceRedSelectionColors);
     bindMethod("grantDesktopNotificationPermission", &LayoutTestController::grantDesktopNotificationPermission);
-    bindMethod("hasSpellingMarker", &LayoutTestController::hasSpellingMarker);
     bindMethod("findString", &LayoutTestController::findString);
     bindMethod("isCommandEnabled", &LayoutTestController::isCommandEnabled);
     bindMethod("hasCustomPageSizeStyle", &LayoutTestController::hasCustomPageSizeStyle);
@@ -2001,13 +2000,6 @@ void LayoutTestController::markerTextForListItem(const CppArgumentList& args, Cp
         result->setNull();
     else
         result->set(element.document().frame()->markerTextForListItem(element).utf8());
-}
-
-void LayoutTestController::hasSpellingMarker(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isNumber())
-        return;
-    result->set(m_shell->webView()->mainFrame()->selectionStartHasSpellingMarkerFor(arguments[0].toInt32(), arguments[1].toInt32()));
 }
 
 void LayoutTestController::findString(const CppArgumentList& arguments, CppVariant* result)

@@ -385,7 +385,6 @@ public:
     void loseCompositorContext(const CppArgumentList& args, CppVariant* result);
 
     void markerTextForListItem(const CppArgumentList&, CppVariant*);
-    void hasSpellingMarker(const CppArgumentList&, CppVariant*);
     void findString(const CppArgumentList&, CppVariant*);
 
     void setMinimumTimerInterval(const CppArgumentList&, CppVariant*);

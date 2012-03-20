@@ -137,6 +137,8 @@ public:
     void emitInspectorDidBeginFrame();
     void emitInspectorDidCancelFrame();
 
+    bool hasSpellingMarker(Document*, int from, int length, ExceptionCode&);
+
     static const char* internalsId;
 
     InternalSettings* settings() const { return m_settings.get(); }

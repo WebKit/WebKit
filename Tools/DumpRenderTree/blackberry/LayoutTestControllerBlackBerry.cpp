@@ -715,14 +715,6 @@ void LayoutTestController::resumeAnimations() const
         mainFrame->animation()->resumeAnimations();
 }
 
-bool LayoutTestController::hasSpellingMarker(int from, int length)
-{
-    if (!mainFrame)
-        return false;
-
-    return mainFrame->editor()->selectionStartHasMarkerFor(WebCore::DocumentMarker::Spelling, from, length);
-}
-
 void LayoutTestController::setSerializeHTTPLoads(bool)
 {
     // FIXME: Implement if needed for https://bugs.webkit.org/show_bug.cgi?id=50758.

@@ -684,13 +684,6 @@ unsigned int DumpRenderTreeSupportGtk::workerThreadCount()
 #endif
 }
 
-bool DumpRenderTreeSupportGtk::webkitWebFrameSelectionHasSpellingMarker(WebKitWebFrame *frame, gint from, gint length)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), FALSE);
-
-    return core(frame)->editor()->selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
-}
-
 bool DumpRenderTreeSupportGtk::findString(WebKitWebView* webView, const gchar* targetString, WebKitFindOptions findOptions)
 {
     return core(webView)->findString(String::fromUTF8(targetString), findOptions);

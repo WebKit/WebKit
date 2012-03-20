@@ -943,12 +943,6 @@ void LayoutTestController::removeAllVisitedLinks()
     DumpRenderTreeSupportQt::dumpVisitedLinksCallbacks(true);
 }
 
-bool LayoutTestController::hasSpellingMarker(int, int)
-{
-    // FIXME: Implement.
-    return false;
-}
-
 void LayoutTestController::addURLToRedirect(const QString& origin, const QString& destination)
 {
     DumpRenderTreeSupportQt::addURLToRedirect(origin, destination);

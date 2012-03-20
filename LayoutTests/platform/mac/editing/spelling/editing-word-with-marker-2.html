@@ -41,8 +41,8 @@ resetText();
 textarea = document.getElementById('test');
 textarea.setSelectionRange(7,7);
 typeCharacterCommand(' ');
-if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
-    if (window.layoutTestController.hasSpellingMarker(8,8) == 1) {
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(document, 8,8) == 1) {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
     } else {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesga' doesn't have underline.<br>";
@@ -53,8 +53,8 @@ resetText();
 textarea = document.getElementById('test');
 textarea.setSelectionRange(15,15);
 typeCharacterCommand(' ');
-if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
-    if (window.layoutTestController.hasSpellingMarker(7,8) == 1) {
+if (window.internals && window.internals.hasSpellingMarker) {
+    if (window.internals.hasSpellingMarker(document, 7,8) == 1) {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
     } else {
         document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesga' doesn't have underline.<br>";

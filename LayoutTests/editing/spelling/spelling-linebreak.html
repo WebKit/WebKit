@@ -34,7 +34,7 @@ function editingTest() {
 
     if (window.layoutTestController) {
         selection.setPosition(elem, 0);
-        if (layoutTestController.hasSpellingMarker(6, 2))
+        if (internals.hasSpellingMarker(document, 6, 2))
            log("PASS");
         else
            log("FAIL");

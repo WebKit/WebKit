@@ -11,7 +11,7 @@ function childHasSpellingMarker(markup)
     document.execCommand("InsertText", false, 'z');
     document.execCommand("InsertText", false, 'z');
     document.execCommand("InsertText", false, ' ');
-    var marked = layoutTestController.hasSpellingMarker(1, 2);
+    var marked = internals.hasSpellingMarker(document, 1, 2);
     root.innerHTML = "";
     return marked;
 }

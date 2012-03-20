@@ -762,4 +762,12 @@ void Internals::setBatteryStatus(Document* document, const String& eventType, bo
 #endif
 }
 
+bool Internals::hasSpellingMarker(Document* document, int from, int length, ExceptionCode&)
+{
+    if (!document || !document->frame())
+        return 0;
+
+    return document->frame()->editor()->selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
+}
+
 }

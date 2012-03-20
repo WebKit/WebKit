@@ -53,7 +53,7 @@ function testTypingInvalidWord(id, shouldBeMarked) {
     document.execCommand("InsertText", false, 'z');
     document.execCommand("InsertText", false, 'z');
     document.execCommand("InsertText", false, ' ');
-    if (shouldBeMarked == layoutTestController.hasSpellingMarker(0, 2))
+    if (shouldBeMarked == internals.hasSpellingMarker(document, 0, 2))
         log("PASS:" + id);
     else
         log("FAIL:" + id);

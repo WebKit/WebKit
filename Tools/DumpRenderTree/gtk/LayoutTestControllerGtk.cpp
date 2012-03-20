@@ -976,11 +976,6 @@ void LayoutTestController::abortModal()
 {
 }
 
-bool LayoutTestController::hasSpellingMarker(int from, int length)
-{
-    return DumpRenderTreeSupportGtk::webkitWebFrameSelectionHasSpellingMarker(mainFrame, from, length);
-}
-
 bool LayoutTestController::hasGrammarMarker(int from, int length)
 {
     return false;

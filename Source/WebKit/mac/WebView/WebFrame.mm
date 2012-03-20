@@ -1223,14 +1223,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return coreFrame->layerTreeAsText();
 }
 
-- (BOOL)hasSpellingMarker:(int)from length:(int)length
-{
-    Frame* coreFrame = core(self);
-    if (!coreFrame)
-        return NO;
-    return coreFrame->editor()->selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
-}
-
 - (BOOL)hasGrammarMarker:(int)from length:(int)length
 {
     Frame* coreFrame = core(self);

@@ -1,4 +1,4 @@
-description('This tests Layouttestcontroller.hasSpellingMarker works for differnt type of elements.');
+description('This tests internals.hasSpellingMarker works for differnt type of elements.');
 
 var parent = document.createElement("div");
 document.body.appendChild(parent);
@@ -11,7 +11,7 @@ function hasMarked(markup)
     document.execCommand("InsertText", false, 'z');
     document.execCommand("InsertText", false, ' ');
 
-    return layoutTestController.hasSpellingMarker(0, 2);
+    return internals.hasSpellingMarker(document, 0, 2);
 }
 
 shouldBeTrue("hasMarked(\"<textarea id='test' cols='80' rows='10'></textarea>\");");

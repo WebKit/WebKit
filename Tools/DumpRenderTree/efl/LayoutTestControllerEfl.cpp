@@ -726,12 +726,6 @@ void LayoutTestController::abortModal()
     notImplemented();
 }
 
-bool LayoutTestController::hasSpellingMarker(int, int)
-{
-    notImplemented();
-    return false;
-}
-
 bool LayoutTestController::hasGrammarMarker(int, int)
 {
     notImplemented();

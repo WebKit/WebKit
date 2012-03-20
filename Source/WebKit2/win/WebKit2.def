@@ -232,3 +232,4 @@ EXPORTS
         ?view@Document@WebCore@@QBEPAVFrameView@2@XZ
         ?willDetachPage@FrameDestructionObserver@WebCore@@UAEXXZ
         ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIII_N@Z
+        ?selectionStartHasMarkerFor@Editor@WebCore@@QBE_NW4MarkerType@DocumentMarker@2@HH@Z
