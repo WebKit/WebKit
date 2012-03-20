@@ -1,3 +1,17 @@
+2012-03-20  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Fix the Android build by building NEWWTF for host
+        https://bugs.webkit.org/show_bug.cgi?id=81643
+
+        Reviewed by Tony Gentilcore.
+
+        Chromium for Android builds the ImageDiff target for the host architecture,
+        so all dependencies it has need to be able to build for host as well.
+        r111258 added (new)WTF as a dependency instead of just including the
+        header files, so make it possible to build the newwtf target for host.
+
+        * WTF.gyp/WTF.gyp:
+
 2012-03-19  Dan Bernstein  <mitz@apple.com>
 
         Set the svn:ignore property on the Xcode project.
