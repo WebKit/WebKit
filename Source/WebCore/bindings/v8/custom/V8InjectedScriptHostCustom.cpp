@@ -52,6 +52,9 @@
 #include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Storage.h"
+#include "V8Uint16Array.h"
+#include "V8Uint32Array.h"
+#include "V8Uint8Array.h"
 
 namespace WebCore {
 
@@ -138,6 +141,8 @@ v8::Handle<v8::Value> V8InjectedScriptHost::typeCallback(const v8::Arguments& ar
     if (V8HTMLCollection::HasInstance(value))
         return v8::String::New("array");
     if (V8Int8Array::HasInstance(value) || V8Int16Array::HasInstance(value) || V8Int32Array::HasInstance(value))
+        return v8::String::New("array");
+    if (V8Uint8Array::HasInstance(value) || V8Uint16Array::HasInstance(value) || V8Uint32Array::HasInstance(value))
         return v8::String::New("array");
     if (V8Float32Array::HasInstance(value) || V8Float64Array::HasInstance(value))
         return v8::String::New("array");

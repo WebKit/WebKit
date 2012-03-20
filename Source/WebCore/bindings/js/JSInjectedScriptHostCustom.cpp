@@ -54,6 +54,9 @@
 #include "JSNode.h"
 #include "JSNodeList.h"
 #include "JSStorage.h"
+#include "JSUint16Array.h"
+#include "JSUint32Array.h"
+#include "JSUint8Array.h"
 #include "ScriptValue.h"
 #include "Storage.h"
 #include <parser/SourceCode.h>
@@ -142,6 +145,8 @@ JSValue JSInjectedScriptHost::type(ExecState* exec)
     if (value.inherits(&JSHTMLCollection::s_info))
         return jsString(exec, String("array"));
     if (value.inherits(&JSInt8Array::s_info) || value.inherits(&JSInt16Array::s_info) || value.inherits(&JSInt32Array::s_info))
+        return jsString(exec, String("array"));
+    if (value.inherits(&JSUint8Array::s_info) || value.inherits(&JSUint16Array::s_info) || value.inherits(&JSUint32Array::s_info))
         return jsString(exec, String("array"));
     if (value.inherits(&JSFloat32Array::s_info) || value.inherits(&JSFloat64Array::s_info))
         return jsString(exec, String("array"));
