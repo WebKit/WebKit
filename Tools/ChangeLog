@@ -1,3 +1,31 @@
+2012-03-20  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] Restore color space switching code to run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=80571
+        <rdar://problem/11008529>
+
+        Reviewed by Simon Fraser.
+
+        Make use of the layout test helper hooks to restore the Mac system-wide
+        color profile switching code. This makes WkTR and DRT results match, and
+        causes the main display's color profile to not affect results on Lion.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/LayoutTestHelper.m: Added.
+        (installLayoutTestColorProfile):
+        (restoreUserColorProfile):
+        (simpleSignalHandler):
+        (main):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.release_http_lock):
+        (MacPort):
+        (MacPort._path_to_helper):
+        (MacPort.start_helper):
+        (MacPort.stop_helper):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::windowSnapshotImage):
+
 2012-02-24  Darin Fisher  <darin@chromium.org>
 
         Add more Chromium WebKit API reviewers

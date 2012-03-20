@@ -28,6 +28,7 @@
 
 import logging
 import re
+import subprocess
 
 from webkitpy.layout_tests.port.apple import ApplePort
 from webkitpy.layout_tests.port.leakdetector import LeakDetector
@@ -158,3 +159,25 @@ class MacPort(ApplePort):
 
     def release_http_lock(self):
         pass
+
+    def _path_to_helper(self):
+        binary_name = 'LayoutTestHelper'
+        return self._build_path(binary_name)
+
+    def start_helper(self):
+        helper_path = self._path_to_helper()
+        if helper_path:
+            _log.debug("Starting layout helper %s" % helper_path)
+            # Note: Not thread safe: http://bugs.python.org/issue2320
+            self._helper = subprocess.Popen([helper_path],
+                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=None)
+            is_ready = self._helper.stdout.readline()
+            if not is_ready.startswith('ready'):
+                _log.error("LayoutTestHelper failed to be ready")
+
+    def stop_helper(self):
+        if self._helper:
+            _log.debug("Stopping LayoutTestHelper")
+            self._helper.stdin.write("x\n")
+            self._helper.stdin.close()
+            self._helper.wait()
