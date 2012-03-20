@@ -1,3 +1,38 @@
+2012-03-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Move WTF-related Windows project files out of JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=80680
+        
+        This change only moves the vcproj and related files from JavaScriptCore/JavaScriptCore.vcproj/WTF.
+        It does not move any source code. This is in preparation for the WTF source move out of
+        JavaScriptCore.
+
+        Reviewed by Jessie Berlin.
+
+        * WTF.vcproj: Added.
+        * WTF.vcproj/WTF.vcproj: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTF.vcproj.
+        * WTF.vcproj/WTFCommon.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFCommon.vsprops.
+        * WTF.vcproj/WTFDebug.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFDebug.vsprops.
+        * WTF.vcproj/WTFDebugAll.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFDebugAll.vsprops.
+        * WTF.vcproj/WTFDebugCairoCFLite.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFDebugCairoCFLite.vsprops.
+        * WTF.vcproj/WTFGenerated.make: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFGenerated.make.
+        * WTF.vcproj/WTFGenerated.vcproj: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFGenerated.vcproj.
+        * WTF.vcproj/WTFGeneratedCommon.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFGeneratedCommon.vsprops.
+        * WTF.vcproj/WTFGeneratedDebug.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFGeneratedDebug.vsprops.
+        * WTF.vcproj/WTFGeneratedDebugAll.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFGeneratedDebugAll.vsprops.
+        * WTF.vcproj/WTFGeneratedDebugCairoCFLite.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFGeneratedDebugCairoCFLite.vsprops.
+        * WTF.vcproj/WTFGeneratedProduction.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFGeneratedProduction.vsprops.
+        * WTF.vcproj/WTFGeneratedRelease.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFGeneratedRelease.vsprops.
+        * WTF.vcproj/WTFGeneratedReleaseCairoCFLite.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFGeneratedReleaseCairoCFLite.vsprops.
+        * WTF.vcproj/WTFPostBuild.cmd: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFPostBuild.cmd.
+        * WTF.vcproj/WTFPreBuild.cmd: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFPreBuild.cmd.
+        * WTF.vcproj/WTFProduction.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFProduction.vsprops.
+        * WTF.vcproj/WTFRelease.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFRelease.vsprops.
+        * WTF.vcproj/WTFReleaseCairoCFLite.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFReleaseCairoCFLite.vsprops.
+        * WTF.vcproj/build-generated-files.sh: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/build-generated-files.sh.
+        * WTF.vcproj/copy-files.cmd: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/copy-files.cmd.
+        * WTF.vcproj/work-around-vs-dependency-tracking-bugs.py: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/work-around-vs-dependency-tracking-bugs.py.
+
 2012-03-20  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Fix the Android build by building NEWWTF for host

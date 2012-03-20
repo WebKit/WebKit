@@ -11,7 +11,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebCore", "..\..\..\WebCore
 		{E498CA9D-3BD2-4D52-8E37-C8DC76526325} = {E498CA9D-3BD2-4D52-8E37-C8DC76526325}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTF", "..\..\..\JavaScriptCore\JavaScriptCore.vcproj\WTF\WTF.vcproj", "{AA8A5A85-592B-4357-BC60-E0E91E026AF6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTF", "..\..\..\WTF\WTF.vcproj\WTF.vcproj", "{AA8A5A85-592B-4357-BC60-E0E91E026AF6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5AE5F5E4-782D-4F63-B4D7-3977B52B9950} = {5AE5F5E4-782D-4F63-B4D7-3977B52B9950}
 	EndProjectSection
@@ -188,7 +188,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitTestRunnerLauncher", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WTF", "WTF", "{A671AE22-FBCE-4C41-A723-82939FCA3E92}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTFGenerated", "..\..\..\JavaScriptCore\JavaScriptCore.vcproj\WTF\WTFGenerated.vcproj", "{5AE5F5E4-782D-4F63-B4D7-3977B52B9950}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTFGenerated", "..\..\..\WTF\WTF.vcproj\WTFGenerated.vcproj", "{5AE5F5E4-782D-4F63-B4D7-3977B52B9950}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

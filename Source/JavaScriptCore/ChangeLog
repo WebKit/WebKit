@@ -1,3 +1,40 @@
+2012-03-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Move WTF-related Windows project files out of JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=80680
+
+        This change only moves the vcproj and related files from JavaScriptCore/JavaScriptCore.vcproj/WTF.
+        It does not move any source code. This is in preparation for the WTF source move out of
+        JavaScriptCore.
+
+        Reviewed by Jessie Berlin.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln:
+        * JavaScriptCore.vcproj/WTF: Removed.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFCommon.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFDebug.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFDebugAll.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFDebugCairoCFLite.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFGenerated.make: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFGenerated.vcproj: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedCommon.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedDebug.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedDebugAll.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedDebugCairoCFLite.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedProduction.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedRelease.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFGeneratedReleaseCairoCFLite.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFPostBuild.cmd: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFPreBuild.cmd: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFProduction.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFRelease.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/WTFReleaseCairoCFLite.vsprops: Removed.
+        * JavaScriptCore.vcproj/WTF/build-generated-files.sh: Removed.
+        * JavaScriptCore.vcproj/WTF/copy-files.cmd: Removed.
+        * JavaScriptCore.vcproj/WTF/work-around-vs-dependency-tracking-bugs.py: Removed.
+
 2012-03-20  Benjamin Poulain  <bpoulain@apple.com>
 
         Cache the type string of JavaScript object

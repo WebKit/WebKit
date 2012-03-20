@@ -8,7 +8,7 @@ import sys
 
 # It's fragile to rely on the location of this script to find the top-level
 # source directory.
-TOP_LEVEL_DIRECTORY = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+TOP_LEVEL_DIRECTORY = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
 def main():
