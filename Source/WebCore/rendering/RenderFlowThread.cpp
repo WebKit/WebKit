@@ -952,5 +952,69 @@ void RenderFlowThread::regionLayoutUpdateEventTimerFired(Timer<RenderFlowThread>
     }
 }
 
-} // namespace WebCore
+bool RenderFlowThread::regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const
+{
+    ASSERT(targetRegion);
 
+    for (RenderRegionList::const_iterator it = m_regionList.find(const_cast<RenderRegion*>(startRegion)); it != m_regionList.end(); ++it) {
+        const RenderRegion* currRegion = *it;
+        if (!currRegion->isValid())
+            continue;
+        if (targetRegion == currRegion)
+            return true;
+        if (currRegion == endRegion)
+            break;
+    }
+
+    return false;
+}
+
+bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const RenderRegion* region) const
+{
+    ASSERT(object);
+    ASSERT(region);
+
+    if (!object->inRenderFlowThread())
+        return false;
+    if (object->enclosingRenderFlowThread() != this)
+        return false;
+    if (!m_regionList.contains(const_cast<RenderRegion*>(region)))
+        return false;
+
+    RenderBox* enclosingBox = object->enclosingBox();
+    RenderRegion* enclosingBoxStartRegion = 0;
+    RenderRegion* enclosingBoxEndRegion = 0;
+    getRegionRangeForBox(enclosingBox, enclosingBoxStartRegion, enclosingBoxEndRegion);
+    if (!regionInRange(region, enclosingBoxStartRegion, enclosingBoxEndRegion))
+       return false;
+
+    if (object->isBox())
+        return true;
+
+    LayoutRect objectABBRect = object->absoluteBoundingBoxRect(true);
+    if (!objectABBRect.width())
+        objectABBRect.setWidth(1);
+    if (!objectABBRect.height())
+        objectABBRect.setHeight(1); 
+    if (objectABBRect.intersects(region->absoluteBoundingBoxRect(true)))
+        return true;
+
+    if (region == lastRegion()) {
+        // If the object does not intersect any of the enclosing box regions
+        // then the object is in last region.
+        for (RenderRegionList::const_iterator it = m_regionList.find(enclosingBoxStartRegion); it != m_regionList.end(); ++it) {
+            const RenderRegion* currRegion = *it;
+            if (!region->isValid())
+                continue;
+            if (currRegion == region)
+                break;
+            if (objectABBRect.intersects(currRegion->absoluteBoundingBoxRect(true)))
+                return false;
+        }
+        return true;
+    }
+
+    return false;
+}
+
+} // namespace WebCore

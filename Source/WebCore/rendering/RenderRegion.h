@@ -57,6 +57,7 @@ public:
     void detachRegion();
 
     RenderFlowThread* parentFlowThread() const { return m_parentFlowThread; }
+    RenderFlowThread* flowThread() const { return m_flowThread; }
 
     // Valid regions do not create circular dependencies with other flows.
     bool isValid() const { return m_isValid; }

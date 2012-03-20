@@ -51,6 +51,7 @@ public:
 
     bool overflow() const;
     PassRefPtr<NodeList> contentNodes() const;
+    PassRefPtr<NodeList> getRegionsByContentNode(Node*);
 
     void registerContentNode(Node* contentNode);
     void unregisterContentNode(Node* contentNode) { m_contentNodes.remove(contentNode); }

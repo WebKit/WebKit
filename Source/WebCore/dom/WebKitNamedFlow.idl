@@ -33,6 +33,7 @@ module core {
     ] WebKitNamedFlow {
         readonly attribute boolean overflow;
         readonly attribute NodeList contentNodes;
+        NodeList getRegionsByContentNode(in Node contentNode);
     };
 }
 

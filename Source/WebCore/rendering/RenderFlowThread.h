@@ -137,6 +137,9 @@ public:
 
     bool overflow() const { return m_overflow; }
 
+    // Check if the object is in region and the region is part of this flow thread.
+    bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
+
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
 
@@ -147,6 +150,7 @@ private:
 
     bool shouldRepaint(const LayoutRect&) const;
     void regionLayoutUpdateEventTimerFired(Timer<RenderFlowThread>*);
+    bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
 
     typedef ListHashSet<RenderObject*> FlowThreadChildList;
     FlowThreadChildList m_flowThreadChildList;
