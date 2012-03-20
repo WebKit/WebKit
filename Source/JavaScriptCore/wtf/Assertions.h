@@ -146,6 +146,7 @@ WTF_EXPORT_PRIVATE void WTFLogVerbose(const char* file, int line, const char* fu
 
 WTF_EXPORT_PRIVATE void WTFGetBacktrace(void** stack, int* size);
 WTF_EXPORT_PRIVATE void WTFReportBacktrace();
+WTF_EXPORT_PRIVATE void WTFPrintBacktrace(void** stack, int size);
 
 typedef void (*WTFCrashHookFunction)();
 WTF_EXPORT_PRIVATE void WTFSetCrashHook(WTFCrashHookFunction);

@@ -279,6 +279,17 @@ void WTFGetBacktrace(void** stack, int* size)
 #endif
 }
 
+void WTFReportBacktrace()
+{
+    static const int framesToShow = 31;
+    static const int framesToSkip = 2;
+    void* samples[framesToShow + framesToSkip];
+    int frames = framesToShow + framesToSkip;
+
+    WTFGetBacktrace(samples, &frames);
+    WTFPrintBacktrace(samples + framesToSkip, frames - framesToSkip);
+}
+
 #if OS(DARWIN) || OS(LINUX)
 #  if PLATFORM(QT) || PLATFORM(GTK)
 #    if defined(__GLIBC__) && !defined(__UCLIBC__)
@@ -289,38 +300,31 @@ void WTFGetBacktrace(void** stack, int* size)
 #  endif
 #endif
 
-void WTFReportBacktrace()
+void WTFPrintBacktrace(void** stack, int size)
 {
-    static const int framesToShow = 31;
-    static const int framesToSkip = 2;
-    void* samples[framesToShow + framesToSkip];
-    int frames = framesToShow + framesToSkip;
-
-    WTFGetBacktrace(samples, &frames);
-
 #if USE(BACKTRACE_SYMBOLS)
-    char** symbols = backtrace_symbols(samples, frames);
+    char** symbols = backtrace_symbols(stack, size);
     if (!symbols)
         return;
 #endif
 
-    for (int i = framesToSkip; i < frames; ++i) {
+    for (int i = 0; i < size; ++i) {
         const char* mangledName = 0;
         char* cxaDemangled = 0;
 #if USE(BACKTRACE_SYMBOLS)
         mangledName = symbols[i];
 #elif USE(DLADDR)
         Dl_info info;
-        if (dladdr(samples[i], &info) && info.dli_sname)
+        if (dladdr(stack[i], &info) && info.dli_sname)
             mangledName = info.dli_sname;
         if (mangledName)
             cxaDemangled = abi::__cxa_demangle(mangledName, 0, 0, 0);
 #endif
-        const int frameNumber = i - framesToSkip + 1;
+        const int frameNumber = i + 1;
         if (mangledName || cxaDemangled)
-            printf_stderr_common("%-3d %p %s\n", frameNumber, samples[i], cxaDemangled ? cxaDemangled : mangledName);
+            printf_stderr_common("%-3d %p %s\n", frameNumber, stack[i], cxaDemangled ? cxaDemangled : mangledName);
         else
-            printf_stderr_common("%-3d %p\n", frameNumber, samples[i]);
+            printf_stderr_common("%-3d %p\n", frameNumber, stack[i]);
         free(cxaDemangled);
     }
 
