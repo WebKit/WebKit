@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+class Node;
+class NodeList;
 class RenderFlowThread;
 
 class WebKitNamedFlow : public RefCounted<WebKitNamedFlow> {

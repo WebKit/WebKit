@@ -31,6 +31,8 @@
 #include "WebKitNamedFlow.h"
 
 #include "RenderFlowThread.h"
+#include "RenderRegion.h"
+#include "StaticNodeList.h"
 
 namespace WebCore {
 
