@@ -33,6 +33,7 @@
 
 #include <limits.h>
 #include <limits>
+#include <math.h>
 #include <stdlib.h>
 
 namespace WebCore {

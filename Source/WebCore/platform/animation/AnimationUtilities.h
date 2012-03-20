@@ -26,6 +26,7 @@
 #ifndef AnimationUtilities_h
 #define AnimationUtilities_h
 
+#include "FractionalLayoutUnit.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -48,6 +49,11 @@ inline double blend(double from, double to, double progress)
 inline float blend(float from, float to, double progress)
 {  
     return static_cast<float>(from + (to - from) * progress);
+}
+
+inline FractionalLayoutUnit blend(FractionalLayoutUnit from, FractionalLayoutUnit to, double progress)
+{  
+    return from + (to - from) * progress;
 }
 
 } // namespace WebCore
