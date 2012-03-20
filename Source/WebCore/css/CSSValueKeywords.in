@@ -505,6 +505,14 @@ column-reverse
 // wrap
 wrap-reverse
 
+// CSS_PROP_FLEX_LINE_PACK
+// start
+// end
+// center
+// justify
+// distribute
+// stretch
+
 // CSS_PROP_MARQUEE_DIRECTION
 forwards
 backwards

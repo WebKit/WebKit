@@ -259,6 +259,7 @@ z-index
 -webkit-flex-direction
 -webkit-flex-flow
 -webkit-flex-item-align
+-webkit-flex-line-pack
 -webkit-flex-order
 -webkit-flex-pack
 -webkit-flex-wrap

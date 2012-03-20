@@ -3960,6 +3960,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitFlexDirection:
     case CSSPropertyWebkitFlexFlow:
     case CSSPropertyWebkitFlexItemAlign:
+    case CSSPropertyWebkitFlexLinePack:
     case CSSPropertyWebkitFlexOrder:
     case CSSPropertyWebkitFlexPack:
     case CSSPropertyWebkitFlexWrap:

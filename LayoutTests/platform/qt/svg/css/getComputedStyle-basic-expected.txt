@@ -294,6 +294,8 @@ rect: style.getPropertyValue(-webkit-flex-direction) : row
 rect: style.getPropertyCSSValue(-webkit-flex-direction) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-flex-flow) : row none
 rect: style.getPropertyCSSValue(-webkit-flex-flow) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-flex-line-pack) : stretch
+rect: style.getPropertyCSSValue(-webkit-flex-line-pack) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-flex-wrap) : none
 rect: style.getPropertyCSSValue(-webkit-flex-wrap) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-font-kerning) : auto
@@ -810,6 +812,8 @@ g: style.getPropertyValue(-webkit-flex-direction) : row
 g: style.getPropertyCSSValue(-webkit-flex-direction) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-flex-flow) : row none
 g: style.getPropertyCSSValue(-webkit-flex-flow) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-flex-line-pack) : stretch
+g: style.getPropertyCSSValue(-webkit-flex-line-pack) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-flex-wrap) : none
 g: style.getPropertyCSSValue(-webkit-flex-wrap) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-font-kerning) : auto

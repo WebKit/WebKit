@@ -1724,6 +1724,9 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitFlexWrap:
         validPrimitive = id == CSSValueNone || id == CSSValueWrap || id == CSSValueWrapReverse;
         break;
+    case CSSPropertyWebkitFlexLinePack:
+        validPrimitive = id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter || id == CSSValueJustify || id == CSSValueDistribute || id == CSSValueStretch;
+        break;
     case CSSPropertyWebkitMarquee: {
         const int properties[5] = { CSSPropertyWebkitMarqueeDirection, CSSPropertyWebkitMarqueeIncrement,
                                     CSSPropertyWebkitMarqueeRepetition,

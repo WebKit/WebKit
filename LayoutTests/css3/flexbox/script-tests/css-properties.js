@@ -248,5 +248,40 @@ flexbox.style.webkitFlexFlow = 'row-reverse wrap-reverse';
 shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'row-reverse wrap-reverse');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row-reverse wrap-reverse');
 
+// The initial value is 'stretch'.
+shouldBeEqualToString('flexbox.style.webkitFlexLinePack', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'stretch');
+
+flexbox.style.webkitFlexLinePack = 'start';
+shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'start');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'start');
+
+flexbox.style.webkitFlexLinePack = 'end';
+shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'end');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'end');
+
+flexbox.style.webkitFlexLinePack = 'center';
+shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'center');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'center');
+
+flexbox.style.webkitFlexLinePack = 'justify';
+shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'justify');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'justify');
+
+flexbox.style.webkitFlexLinePack = 'distribute';
+shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'distribute');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'distribute');
+
+flexbox.style.webkitFlexLinePack = 'stretch';
+shouldBeEqualToString('flexbox.style.webkitFlexLinePack', 'stretch');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'stretch');
+
+flexbox.style.webkitFlexLinePack = '';
+shouldBeEqualToString('flexbox.style.webkitFlexLinePack', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'stretch');
+
+flexbox.style.webkitFlexLinePack = 'foo';
+shouldBeEqualToString('flexbox.style.webkitFlexLinePack', '');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexLinePack', 'stretch');
 
 successfullyParsed = true;

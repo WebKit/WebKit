@@ -41,6 +41,7 @@ StyleFlexibleBoxData::StyleFlexibleBoxData()
     , m_flexItemAlign(RenderStyle::initialFlexItemAlign())
     , m_flexDirection(RenderStyle::initialFlexDirection())
     , m_flexWrap(RenderStyle::initialFlexWrap())
+    , m_flexLinePack(RenderStyle::initialFlexLinePack())
 {
 }
 
@@ -56,6 +57,7 @@ StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
     , m_flexItemAlign(o.m_flexItemAlign)
     , m_flexDirection(o.m_flexDirection)
     , m_flexWrap(o.m_flexWrap)
+    , m_flexLinePack(o.m_flexLinePack)
 {
 }
 
@@ -64,7 +66,8 @@ bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
     return m_widthPositiveFlex == o.m_widthPositiveFlex && m_widthNegativeFlex == o.m_widthNegativeFlex
         && m_heightPositiveFlex == o.m_heightPositiveFlex && m_heightNegativeFlex == o.m_heightNegativeFlex
         && m_flexOrder == o.m_flexOrder && m_flexPack == o.m_flexPack && m_flexAlign == o.m_flexAlign
-        && m_flexItemAlign == o.m_flexItemAlign && m_flexDirection == o.m_flexDirection && m_flexWrap == o.m_flexWrap;
+        && m_flexItemAlign == o.m_flexItemAlign && m_flexDirection == o.m_flexDirection && m_flexWrap == o.m_flexWrap
+        && m_flexLinePack == o.m_flexLinePack;
 }
 
 }

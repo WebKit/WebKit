@@ -1298,6 +1298,53 @@ template<> inline CSSPrimitiveValue::operator EFlexDirection() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexLinePack e)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (e) {
+    case LinePackStart:
+        m_value.ident = CSSValueStart;
+        break;
+    case LinePackEnd:
+        m_value.ident = CSSValueEnd;
+        break;
+    case LinePackCenter:
+        m_value.ident = CSSValueCenter;
+        break;
+    case LinePackJustify:
+        m_value.ident = CSSValueJustify;
+        break;
+    case LinePackDistribute:
+        m_value.ident = CSSValueDistribute;
+        break;
+    case LinePackStretch:
+        m_value.ident = CSSValueStretch;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EFlexLinePack() const
+{
+    switch (m_value.ident) {
+    case CSSValueStart:
+        return LinePackStart;
+    case CSSValueEnd:
+        return LinePackEnd;
+    case CSSValueCenter:
+        return LinePackCenter;
+    case CSSValueJustify:
+        return LinePackJustify;
+    case CSSValueDistribute:
+        return LinePackDistribute;
+    case CSSValueStretch:
+        return LinePackStretch;
+    default:
+        ASSERT_NOT_REACHED();
+        return LinePackStretch;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexWrap e)
     : CSSValue(PrimitiveClass)
 {

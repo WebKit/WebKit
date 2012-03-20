@@ -54,6 +54,7 @@ public:
     unsigned m_flexItemAlign : 3; // EFlexAlign
     unsigned m_flexDirection : 2; // EFlexDirection
     unsigned m_flexWrap : 2; // EFlexWrap
+    unsigned m_flexLinePack : 3; // EFlexLinePack
 
 private:
     StyleFlexibleBoxData();
