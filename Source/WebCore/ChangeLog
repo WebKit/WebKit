@@ -1,5 +1,21 @@
 2012-03-19  Martin Robinson  <mrobinson@igalia.com>
 
+        [Cairo] Text extent of shadowed text is calculated incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=65035
+
+        Reviewed by Martin Robinson.
+
+        No new tests. This is already covered by fast/canvas/fillText-shadow.html.
+
+        Correct determine the size of rendered text using x and y bearing from the font
+        extents.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::drawGlyphsShadow): Use the x and y bearing to calculate text extents.
+        This gives a more accurate sizing and avoids clipping the edges of the shadow.
+
+2012-03-19  Martin Robinson  <mrobinson@igalia.com>
+
         [GTK] Menulist buttons have separators even when the theme turns them off
         https://bugs.webkit.org/show_bug.cgi?id=80668
 
