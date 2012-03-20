@@ -1295,7 +1295,11 @@ OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& ev
 
     // During selection, use an I-beam no matter what we're over.
     // If a drag may be starting or we're capturing mouse events for a particular node, don't treat this as a selection.
-    if (m_mousePressed && m_mouseDownMayStartSelect && !m_mouseDownMayStartDrag && m_frame->selection()->isCaretOrRange() && !m_capturingMouseEventsNode)
+    if (m_mousePressed && m_mouseDownMayStartSelect
+#if ENABLE(DRAG_SUPPORT)
+        && !m_mouseDownMayStartDrag
+#endif
+        && m_frame->selection()->isCaretOrRange() && !m_capturingMouseEventsNode)
         return iBeam;
 
     if (renderer) {
