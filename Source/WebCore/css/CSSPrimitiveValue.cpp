@@ -190,20 +190,8 @@ static const AtomicString& valueOrPropertyName(int valueOrPropertyID)
     return nullAtom;
 }
 
-CSSPrimitiveValue::CSSPrimitiveValue()
-    : CSSValue(PrimitiveClass)
-{
-}
-
 CSSPrimitiveValue::CSSPrimitiveValue(int ident)
     : CSSValue(PrimitiveClass)
-{
-    m_primitiveUnitType = CSS_IDENT;
-    m_value.ident = ident;
-}
-
-CSSPrimitiveValue::CSSPrimitiveValue(ClassType classType, int ident)
-    : CSSValue(classType)
 {
     m_primitiveUnitType = CSS_IDENT;
     m_value.ident = ident;
@@ -225,14 +213,6 @@ CSSPrimitiveValue::CSSPrimitiveValue(const String& str, UnitTypes type)
         m_value.string->ref();
 }
 
-
-CSSPrimitiveValue::CSSPrimitiveValue(ClassType classType, const String& str, UnitTypes type)
-    : CSSValue(classType)
-{
-    m_primitiveUnitType = type;
-    if ((m_value.string = str.impl()))
-        m_value.string->ref();
-}
 
 CSSPrimitiveValue::CSSPrimitiveValue(RGBA32 color)
     : CSSValue(PrimitiveClass)

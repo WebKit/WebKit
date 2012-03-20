@@ -268,12 +268,7 @@ public:
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&, const CSSStyleSheet*);
 
-protected:
-    CSSPrimitiveValue(ClassType, int ident);
-    CSSPrimitiveValue(ClassType, const String&, UnitTypes);
-
 private:
-    CSSPrimitiveValue();
     // FIXME: int vs. unsigned overloading is too subtle to distinguish the color and identifier cases.
     CSSPrimitiveValue(int ident);
     CSSPrimitiveValue(unsigned color); // RGB value
@@ -297,10 +292,6 @@ private:
     static void create(int); // compile-time guard
     static void create(unsigned); // compile-time guard
     template<typename T> operator T*(); // compile-time guard
-
-    static PassRefPtr<CSSPrimitiveValue> createUncachedIdentifier(int identifier);
-    static PassRefPtr<CSSPrimitiveValue> createUncachedColor(unsigned rgbValue);
-    static PassRefPtr<CSSPrimitiveValue> createUncached(double value, UnitTypes type);
 
     static UnitTypes canonicalUnitTypeForCategory(UnitCategory category);
 
