@@ -548,7 +548,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
     typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
 
     CCOcclusionTracker occlusionTracker(IntRect(IntPoint(), viewportSize()));
-    occlusionTracker.setUsePaintTracking(false); // FIXME: Remove this to turn on paint tracking for paint culling
+    occlusionTracker.setUsePaintTracking(true); // FIXME: Remove this after m19 branch.
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {

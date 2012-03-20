@@ -1664,6 +1664,9 @@ public:
 
     virtual bool drawsContent() const { return true; }
 
+    virtual Region opaqueContentsRegion() const { return intersection(m_opaqueContentsRect, visibleLayerRect()); }
+    void setOpaqueContentsRect(const IntRect& opaqueContentsRect) { m_opaqueContentsRect = opaqueContentsRect; }
+
     const Region& occludedScreenSpace() const { return m_occludedScreenSpace; }
     void clearOccludedScreenSpace() { m_occludedScreenSpace = Region(); }
 
@@ -1671,6 +1674,7 @@ private:
     TestLayerChromium() : LayerChromium() { }
 
     Region m_occludedScreenSpace;
+    IntRect m_opaqueContentsRect;
 };
 
 static void setLayerPropertiesForTesting(TestLayerChromium* layer, LayerChromium* parent, const TransformationMatrix& transform, const FloatPoint& anchor, const FloatPoint& position, const IntSize& bounds, bool opaque)
@@ -1886,6 +1890,46 @@ public:
 };
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestLayerOcclusion)
+
+class CCLayerTreeHostTestContentLayerOcclusion : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestContentLayerOcclusion() { }
+
+    virtual void beginTest()
+    {
+        RefPtr<TestLayerChromium> rootLayer = TestLayerChromium::create();
+        RefPtr<TestLayerChromium> child = TestLayerChromium::create();
+
+        TransformationMatrix identityMatrix;
+        setLayerPropertiesForTesting(rootLayer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(100, 100), true);
+        setLayerPropertiesForTesting(child.get(), rootLayer.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(30, 30), IntSize(50, 50), false);
+
+        child->setOpaqueContentsRect(IntRect(10, 10, 20, 20));
+
+        m_layerTreeHost->setRootLayer(rootLayer);
+        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->updateLayers();
+        m_layerTreeHost->commitComplete();
+
+        EXPECT_EQ_RECT(IntRect(), child->occludedScreenSpace().bounds());
+        EXPECT_EQ(0u, child->occludedScreenSpace().rects().size());
+
+        EXPECT_EQ_RECT(IntRect(40, 40, 20, 20), rootLayer->occludedScreenSpace().bounds());
+        EXPECT_EQ(1u, rootLayer->occludedScreenSpace().rects().size());
+
+        // Kill the layerTreeHost immediately.
+        m_layerTreeHost->setRootLayer(0);
+        m_layerTreeHost.clear();
+
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+};
+
+SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestContentLayerOcclusion)
 
 class CCLayerTreeHostTestLayerOcclusionWithFilters : public CCLayerTreeHostTest {
 public:
