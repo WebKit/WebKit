@@ -875,7 +875,7 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
                 return;
 
             var resource = WebInspector.resourceForURL(url);
-            if (!resource)
+            if (!resource || resource.type !== WebInspector.Resource.Type.Stylesheet)
                 return;
 
             var majorChange = event.data.majorChange;

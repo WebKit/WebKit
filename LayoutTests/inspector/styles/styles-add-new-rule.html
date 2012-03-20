@@ -8,8 +8,10 @@ function test()
 {
     WebInspector.showPanel("elements");
     InspectorTest.selectNodeAndWaitForStyles("inspected", step1);
+    InspectorTest.addSniffer(WebInspector.Resource.prototype, "addRevision", revisionAdded);
 
     var treeElement;
+    var hasResourceChanged;
 
     function step1()
     {
@@ -50,7 +52,14 @@ function test()
     {
         InspectorTest.addResult("After adding new rule (other):");
         InspectorTest.dumpSelectedElementStyles(true, false, true);
+        if (hasResourceChanged)
+            InspectorTest.addResult("Error: main resource content changed");
         InspectorTest.completeTest();
+    }
+
+    function revisionAdded()
+    {
+        hasResourceChanged = true;
     }
 }
 
