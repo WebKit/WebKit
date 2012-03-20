@@ -20,9 +20,7 @@
         },
         "ChromiumPublicApi": {
             "filename": r"Source/WebKit/chromium/public/"
-        },
-        "ChromiumPlatformApi": {
-            "filename": r"Source/Platform/chromium/public/"
+                        r"|Source/Platform/chromium/public/",
         },
         "AppleMacPublicApi": {
             "filename": r"Source/WebCore/bindings/objc/PublicDOMInterfaces.h"
@@ -148,8 +146,7 @@
         # two different accounts as far as bugzilla is concerned.
         "ChromiumDumpRenderTree": [ "tkent@chromium.org", ],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@google.com" ],
-        "ChromiumPublicApi": [ "abarth@webkit.org", "fishd@chromium.org" ],
-        "ChromiumPlatformApi": [ "abarth@webkit.org", "fishd@chromium.org", "jamesr@chromium.org" ],
+        "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent@chromium.org" ],
         "AppleMacPublicApi": [ "timothy@apple.com" ],
         "Forms": [ "tkent@chromium.org", ],
         "GStreamerGraphics": [ "alexis.menard@openbossa.org", "pnormand@igalia.com", "gns@gnome.org" ],
@@ -174,10 +171,10 @@
         "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org" ],
     },
     "MESSAGE_RULES": {
-        "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "
-                               "because this patch contains changes to the Chromium public API.", ],
-        "ChromiumPlatformApi": [ "Please wait for approval from fishd@chromium.org, abarth@webkit.org or jamesr@chromium.org before submitting "
-                                 "because this patch contains changes to the Chromium platform API.", ],
+        "ChromiumPublicApi": [ "Please wait for approval from abarth@webkit.org, dglazkov@chromium.org, "
+                               "fishd@chromium.org, jamesr@chromium.org or tkent@chromium.org before "
+                               "submitting, as this patch contains changes to the Chromium public API. "
+                               "See also https://trac.webkit.org/wiki/ChromiumWebKitAPI." ],
         "AppleMacPublicApi": [ "Please wait for approval from timothy@apple.com (or another member "
                                "of the Apple Safari Team) before submitting "
                                "because this patch contains changes to the Apple Mac "

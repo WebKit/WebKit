@@ -1,3 +1,14 @@
+2012-02-24  Darin Fisher  <darin@chromium.org>
+
+        Add more Chromium WebKit API reviewers
+        https://bugs.webkit.org/show_bug.cgi?id=81576
+
+        Reviewed by Adam Barth and David Levin.
+
+        Simplify watchlist to lump all WebKit API into one.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-03-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert hasSpellingMarker to use Internals interface.
