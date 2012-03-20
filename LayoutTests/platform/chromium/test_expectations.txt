@@ -40,7 +40,6 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int8array.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-uint8clampedarray.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int16array.html = PASS
-BUGCR24182 SLOW DEBUG WIN : fullscreen/full-screen-restrictions.html = PASS
 // BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
 // See BUGCR104797
 
@@ -3952,3 +3951,5 @@ BUGWK81638 SNOWLEOPARD DEBUG : editing/selection/iframe.html = IMAGE PASS
 
 // Allowed to regress to fix a crash. 
 BUGWK81276 WIN LINUX: fast/inline/continuation-outlines-with-layers.html = IMAGE
+
+BUGWK81721 WIN : fullscreen/full-screen-restrictions.html = PASS TIMEOUT
