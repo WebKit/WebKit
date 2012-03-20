@@ -103,6 +103,10 @@ static Node* nextLeafWithSameEditability(Node* node, EditableType editableType =
 static const RootInlineBox* previousRootInlineBox(const InlineBox* box, const VisiblePosition& visiblePosition)
 {
     Node* highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), ContentIsEditable);
+
+    if (!box->renderer() || !box->renderer()->node())
+        return 0;
+
     Node* node = box->renderer()->node();
     Node* enclosingBlockNode = enclosingNodeWithNonInlineRenderer(node);
     Node* previousNode = previousLeafWithSameEditability(node, ContentIsEditable);
@@ -132,6 +136,10 @@ static const RootInlineBox* previousRootInlineBox(const InlineBox* box, const Vi
 static const RootInlineBox* nextRootInlineBox(const InlineBox* box, const VisiblePosition& visiblePosition)
 {
     Node* highestRoot = highestEditableRoot(visiblePosition.deepEquivalent(), ContentIsEditable);
+
+    if (!box->renderer() || !box->renderer()->node())
+        return 0;
+
     Node* node = box->renderer()->node();
     Node* enclosingBlockNode = enclosingNodeWithNonInlineRenderer(node);
     Node* nextNode = nextLeafWithSameEditability(node, ContentIsEditable);
