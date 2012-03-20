@@ -1,3 +1,18 @@
+2012-03-20  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Crash when dragging the FCC caret over an invalid node.
+        https://bugs.webkit.org/show_bug.cgi?id=81654
+
+        Reviewed by Rob Buis.
+
+        PR 144505.
+
+        The position did not have a valid container node and was causing
+        a crash.  Validate the node pointer before using it.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::DOMContainerNodeForPosition):
+
 2012-03-20  Jason Liu  <jason.liu@torchmobile.com.cn>
 
         [BlackBerry]Cookies shouldn't be set into each of webcore's request and platform's request. And this makes a regression.

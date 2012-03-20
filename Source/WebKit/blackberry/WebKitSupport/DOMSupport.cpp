@@ -285,7 +285,7 @@ VisibleSelection visibleSelectionForRangeInputElement(Element* element, int star
 Node* DOMContainerNodeForPosition(const Position& position)
 {
     Node* nodeAtPos = position.containerNode();
-    if (nodeAtPos->isInShadowTree())
+    if (nodeAtPos && nodeAtPos->isInShadowTree())
         nodeAtPos = nodeAtPos->shadowAncestorNode();
 
     return nodeAtPos;
