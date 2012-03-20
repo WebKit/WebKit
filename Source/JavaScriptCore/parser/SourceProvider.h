@@ -86,7 +86,7 @@ namespace JSC {
             return adoptRef(new UStringSourceProvider(source, url, startPosition));
         }
 
-        UString getRange(int start, int end) const
+        virtual UString getRange(int start, int end) const OVERRIDE
         {
             return m_source.substringSharingImpl(start, end - start);
         }

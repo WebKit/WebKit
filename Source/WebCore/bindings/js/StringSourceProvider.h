@@ -42,7 +42,15 @@ namespace WebCore {
             return adoptRef(new StringSourceProvider(source, url, startPosition));
         }
 
-        JSC::UString getRange(int start, int end) const { return JSC::UString(m_source.characters() + start, end - start); }
+        virtual JSC::UString getRange(int start, int end) const OVERRIDE
+        {
+            int length = end - start;
+            ASSERT(length >= 0);
+            ASSERT(start + length <= length());
+
+            return JSC::UString(StringImpl::create(m_source.impl(), start, length));
+        }
+
         const StringImpl* data() const { return m_source.impl(); }
         int length() const { return m_source.length(); }
         const String& source() const { return m_source; }

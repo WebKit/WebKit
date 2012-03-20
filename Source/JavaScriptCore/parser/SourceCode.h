@@ -72,11 +72,6 @@ namespace JSC {
         int firstLine() const { return m_firstLine; }
         int startOffset() const { return m_startChar; }
         int endOffset() const { return m_endChar; }
-        const UChar* data() const
-        {
-            ASSERT(m_provider->data());
-            return m_provider->data()->characters16() + m_startChar;
-        }
         int length() const { return m_endChar - m_startChar; }
         
         SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine);

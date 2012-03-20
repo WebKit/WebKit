@@ -45,7 +45,16 @@ namespace WebCore {
             m_cachedScript->removeClient(this);
         }
 
-        JSC::UString getRange(int start, int end) const { return JSC::UString(m_cachedScript->script().characters() + start, end - start); }
+        virtual JSC::UString getRange(int start, int end) const OVERRIDE
+        {
+            int length = end - start;
+            ASSERT(length >= 0);
+            ASSERT(start + length <= length());
+
+            String script = m_cachedScript->script();
+            return JSC::UString(StringImpl::create(script.impl(), start, length));
+        }
+
         const StringImpl* data() const { return m_cachedScript->script().impl(); }
         int length() const { return m_cachedScript->script().length(); }
         const String& source() const { return m_cachedScript->script(); }

@@ -1,3 +1,13 @@
+2012-03-19  Benjamin Poulain  <benjamin@webkit.org>
+
+        Do not copy the script source in the SourceProvider, just reference the existing string
+        https://bugs.webkit.org/show_bug.cgi?id=81466
+
+        Reviewed by Geoffrey Garen.
+
+        * parser/SourceCode.h: Remove the unused, and incorrect, function data().
+        * parser/SourceProvider.h: Add OVERRIDE for clarity.
+
 2012-03-19  Filip Pizlo  <fpizlo@apple.com>
 
         Division optimizations fail to infer cases of truncated division and
