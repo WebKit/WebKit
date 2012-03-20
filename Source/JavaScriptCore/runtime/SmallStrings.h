@@ -63,9 +63,6 @@ namespace JSC {
         JS_EXPORT_PRIVATE StringImpl* singleCharacterStringRep(unsigned char character);
 
         void finalizeSmallStrings();
-        void clear();
-
-        unsigned count() const;
 
         JSString** singleCharacterStrings() { return &m_singleCharacterStrings[0]; }
 

@@ -70,7 +70,10 @@ SmallStringsStorage::SmallStringsStorage()
 SmallStrings::SmallStrings()
 {
     COMPILE_ASSERT(singleCharacterStringCount == sizeof(m_singleCharacterStrings) / sizeof(m_singleCharacterStrings[0]), IsNumCharactersConstInSyncWithClassUsage);
-    clear();
+
+    m_emptyString = 0;
+    for (unsigned i = 0; i < singleCharacterStringCount; ++i)
+        m_singleCharacterStrings[i] = 0;
 }
 
 SmallStrings::~SmallStrings()
@@ -82,25 +85,6 @@ void SmallStrings::finalizeSmallStrings()
     finalize(m_emptyString);
     for (unsigned i = 0; i < singleCharacterStringCount; ++i)
         finalize(m_singleCharacterStrings[i]);
-}
-
-void SmallStrings::clear()
-{
-    m_emptyString = 0;
-    for (unsigned i = 0; i < singleCharacterStringCount; ++i)
-        m_singleCharacterStrings[i] = 0;
-}
-
-unsigned SmallStrings::count() const
-{
-    unsigned count = 0;
-    if (m_emptyString)
-        ++count;
-    for (unsigned i = 0; i < singleCharacterStringCount; ++i) {
-        if (m_singleCharacterStrings[i])
-            ++count;
-    }
-    return count;
 }
 
 void SmallStrings::createEmptyString(JSGlobalData* globalData)

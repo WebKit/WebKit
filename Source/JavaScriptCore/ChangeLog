@@ -1,3 +1,22 @@
+2012-03-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Simplify SmallStrings
+        https://bugs.webkit.org/show_bug.cgi?id=81445
+
+        Reviewed by Gavin Barraclough.
+
+        SmallStrings had two methods that should not be public: count() and clear().
+
+        The method clear() is effectively replaced by finalizeSmallStrings(). The body
+        of the method was moved to the constructor since the code is obvious.
+
+        The method count() is unused.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::SmallStrings):
+        * runtime/SmallStrings.h:
+        (SmallStrings):
+
 2012-03-19  Filip Pizlo  <fpizlo@apple.com>
 
         DFG can no longer compile V8-v4/regexp in debug mode
