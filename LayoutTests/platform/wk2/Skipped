@@ -1341,6 +1341,10 @@ jquery/event.html
 jquery/manipulation.html
 jquery/traversing.html
 
+# Times out unexpectedly.
+# https://bugs.webkit.org/show_bug.cgi?id=81609
+fast/loader/window-properties-restored-from-page-cache.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
