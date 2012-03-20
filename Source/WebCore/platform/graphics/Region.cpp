@@ -67,6 +67,9 @@ Vector<IntRect> Region::rects() const
 
 bool Region::contains(const Region& region) const
 {
+    if (!m_bounds.contains(region.m_bounds))
+        return false;
+
     return WebCore::intersect(region, *this) == region;
 }
 
