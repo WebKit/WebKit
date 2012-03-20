@@ -658,8 +658,7 @@ class TestExpectations(object):
                                 IMAGE_PLUS_TEXT: ('image and text mismatch',
                                                   'image and text mismatch'),
                                 AUDIO: ('audio mismatch', 'audio mismatch'),
-                                CRASH: ('DumpRenderTree crash',
-                                        'DumpRenderTree crashes'),
+                                CRASH: ('crash', 'crashes'),
                                 TIMEOUT: ('test timed out', 'tests timed out'),
                                 MISSING: ('no expected result found',
                                           'no expected results found')}
