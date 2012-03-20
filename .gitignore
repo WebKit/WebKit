@@ -11,8 +11,9 @@ Tools/Scripts/webkitpy/thirdparty/autoinstalled
 project.xcworkspace
 xcuserdata
 
-# Ignore auto-generated files by VS2005
+# Ignore auto-generated files by VS2005 and VS2010.
 *.vcproj.*.user
+*.suo
 
 # Ignore common tool auto-generated files.
 .gdb_history
@@ -23,25 +24,21 @@ tags
 # Ignore Chromium projects auto-generated from .gyp files:
 Source/JavaScriptCore/JavaScriptCore.gyp/*.Makefile
 Source/JavaScriptCore/JavaScriptCore.gyp/*.mk
-Source/JavaScriptCore/JavaScriptCore.gyp/*.ninja
 Source/JavaScriptCore/JavaScriptCore.gyp/*.sln
 Source/JavaScriptCore/JavaScriptCore.gyp/*.vcproj*
 Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.xcodeproj
 Source/ThirdParty/glu/*.Makefile
 Source/ThirdParty/glu/*.mk
-Source/ThirdParty/glu/*.ninja
 Source/ThirdParty/glu/*.sln
 Source/ThirdParty/glu/*.vcproj
 Source/ThirdParty/glu/glu.xcodeproj
 Source/WTF/WTF.gyp/*.Makefile
 Source/WTF/WTF.gyp/*.mk
-Source/WTF/WTF.gyp/*.ninja
 Source/WTF/WTF.gyp/*.sln
 Source/WTF/WTF.gyp/*.vcproj*
 Source/WTF/WTF.gyp/WTF.xcodeproj
 Source/WebCore/WebCore.gyp/*.Makefile
 Source/WebCore/WebCore.gyp/*.mk
-Source/WebCore/WebCore.gyp/*.ninja
 Source/WebCore/WebCore.gyp/*.rules
 Source/WebCore/WebCore.gyp/*.sln
 Source/WebCore/WebCore.gyp/*.tmp
@@ -49,7 +46,6 @@ Source/WebCore/WebCore.gyp/*.vcproj*
 Source/WebCore/WebCore.gyp/WebCore.xcodeproj
 Source/WebKit/chromium/*.Makefile
 Source/WebKit/chromium/*.mk
-Source/WebKit/chromium/*.ninja
 Source/WebKit/chromium/*.sln
 Source/WebKit/chromium/*.vcproj*
 Source/WebKit/chromium/All.xcodeproj
@@ -62,13 +58,11 @@ Source/Platform/Platform.gyp/*.vcproj*
 Source/Platform/Platform.gyp/*.xcodeproj*
 Tools/DumpRenderTree/DumpRenderTree.gyp/*.Makefile
 Tools/DumpRenderTree/DumpRenderTree.gyp/*.mk
-Tools/DumpRenderTree/DumpRenderTree.gyp/*.ninja
 Tools/DumpRenderTree/DumpRenderTree.gyp/*.sln
 Tools/DumpRenderTree/DumpRenderTree.gyp/*.vcproj*
 Tools/DumpRenderTree/DumpRenderTree.gyp/*.xcodeproj*
 Tools/TestWebKitAPI/TestWebKitAPI.gyp/*.Makefile
 Tools/TestWebKitAPI/TestWebKitAPI.gyp/*.mk
-Tools/TestWebKitAPI/TestWebKitAPI.gyp/*.ninja
 Tools/TestWebKitAPI/TestWebKitAPI.gyp/*.sln
 Tools/TestWebKitAPI/TestWebKitAPI.gyp/*.vcproj*
 Tools/TestWebKitAPI/TestWebKitAPI.gyp/*.xcodeproj*

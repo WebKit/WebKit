@@ -1,3 +1,14 @@
+2012-03-19  Tony Chang  <tony@chromium.org>
+
+        clean up gitignore
+        https://bugs.webkit.org/show_bug.cgi?id=81594
+
+        Reviewed by James Robinson.
+
+        * .gitignore: .suo files are per-user files used by VS2010. .ninja
+        files are no longer generated in the tree-- they are generated in the
+        build directory.
+
 2012-03-17  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Enable Web Timing for performance profiling and improvement.
