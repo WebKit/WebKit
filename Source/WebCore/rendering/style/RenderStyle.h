@@ -1779,7 +1779,7 @@ inline int adjustForAbsoluteZoom(int value, const RenderStyle* style)
             value++;
     }
 
-    return roundForImpreciseConversion<int, INT_MAX, INT_MIN>(value / zoomFactor);
+    return roundForImpreciseConversion<int>(value / zoomFactor);
 }
 
 inline float adjustFloatForAbsoluteZoom(float value, const RenderStyle* style)
