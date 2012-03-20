@@ -97,10 +97,13 @@
 @end
 
 @interface NSWindow (WKNSWindowDetails)
+#if defined(BUILDING_ON_SNOW_LEOPARD)
 - (NSRect)_growBoxRect;
 - (id)_growBoxOwner;
 - (void)_setShowOpaqueGrowBoxForOwner:(id)owner;
 - (BOOL)_updateGrowBoxForWindowFrameChange;
+#endif
+
 - (NSRect)_intersectBottomCornersWithRect:(NSRect)viewRect;
 - (void)_maskRoundedBottomCorners:(NSRect)clipRect;
 @end
@@ -1744,6 +1747,8 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
     _data->_page->updateWindowIsVisible([[self window] isVisible]);
 }
 
+
+#if defined(BUILDING_ON_SNOW_LEOPARD)
 - (BOOL)_ownsWindowGrowBox
 {
     NSWindow* window = [self window];
@@ -1792,6 +1797,7 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 
     return ownsGrowBox;
 }
+#endif
 
 // FIXME: Use AppKit constants for these when they are available.
 static NSString * const windowDidChangeBackingPropertiesNotification = @"NSWindowDidChangeBackingPropertiesNotification";
@@ -1849,9 +1855,11 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     
     [self removeWindowObservers];
     [self addWindowObserversForWindow:window];
-    
+
+#if defined(BUILDING_ON_SNOW_LEOPARD)
     if ([currentWindow _growBoxOwner] == self)
         [currentWindow _setShowOpaqueGrowBoxForOwner:nil];
+#endif
 }
 
 - (void)viewDidMoveToWindow
@@ -2787,7 +2795,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (void)_didChangeScrollbarsForMainFrame
 {
+#if defined(BUILDING_ON_SNOW_LEOPARD)
     [self _updateGrowBoxForWindowFrameChange];
+#endif
 }
 
 #if ENABLE(FULLSCREEN_API)
