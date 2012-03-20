@@ -59,7 +59,7 @@ public:
     // be used on any other thread.
     static PassRefPtr<GraphicsContext3D> createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D>, GraphicsContext3D::RenderStyle, bool preserveDrawingBuffer = false);
 
-    ~GraphicsContext3DPrivate();
+    virtual ~GraphicsContext3DPrivate();
 
     // Helper function to provide access to the lower-level WebGraphicsContext3D,
     // which is needed for subordinate contexts like WebGL's to share resources

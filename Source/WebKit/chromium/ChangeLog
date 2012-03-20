@@ -1,3 +1,10 @@
+2012-03-19  Keishi Hattori  <keishi@webkit.org>
+
+        [chromium] Fixing build. Adding missing virtual.
+
+        * src/GraphicsContext3DPrivate.h:
+        (GraphicsContext3DPrivate):
+
 2012-03-19  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Push culled tiles that are prepainted
