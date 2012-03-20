@@ -34,12 +34,12 @@
 
 #include "Font.h"
 #include "FontUtilsChromiumWin.h"
-#include "HashMap.h"
-#include "HashSet.h"
 #include "HWndDC.h"
 #include "PlatformSupport.h"
 #include "SimpleFontData.h"
 #include <unicode/uniset.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
 #include <windows.h>

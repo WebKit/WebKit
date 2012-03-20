@@ -21,8 +21,8 @@
 #define TextureMapperAnimation_h
 
 #include "GraphicsLayer.h"
-#include "HashMap.h"
 #include "TransformationMatrix.h"
+#include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
 #if USE(TEXTURE_MAPPER)

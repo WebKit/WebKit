@@ -40,7 +40,7 @@
 #include "PlatformSupport.h"
 #include "SkTypeface_win.h"
 #include "SkiaFontWin.h"
-#include "StdLibExtras.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
