@@ -7,6 +7,15 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		PreprocessorDefinitions="__PRODUCTION__=1"
+		WholeProgramOptimization="false"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		LinkTimeCodeGeneration="0"
+	/>
+	<Tool
+		Name="VCLibrarianTool"
+		LinkTimeCodeGeneration="false"
 	/>
 	<Tool
 		Name="VCMIDLTool"

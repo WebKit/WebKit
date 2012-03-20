@@ -1,3 +1,12 @@
+2012-03-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Disable LTCG on Windows to avoid out of process space errors while linking
+        https://bugs.webkit.org/show_bug.cgi?id=81714
+
+        Reviewed by Jessie Berlin.
+
+        * win/tools/vsprops/production.vsprops:
+
 2012-03-14  Jer Noble  <jer.noble@apple.com>
 
         Wrong icon to restore to windowed mode in full screen video panel
