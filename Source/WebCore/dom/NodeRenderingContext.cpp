@@ -38,7 +38,6 @@
 #include "RenderView.h"
 #include "ShadowRoot.h"
 #include "ShadowTree.h"
-#include "WebKitNamedFlow.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -328,7 +327,6 @@ void NodeRenderingContext::moveToFlowThreadIfNeeded()
     m_flowThread = m_style->flowThread();
     ASSERT(m_node->document()->renderView());
     m_parentFlowRenderer = m_node->document()->renderView()->ensureRenderFlowThreadWithName(m_flowThread);
-    m_parentFlowRenderer->ensureNamedFlow()->registerContentNode(m_node);
 }
 
 NodeRendererFactory::NodeRendererFactory(Node* node)
