@@ -1,3 +1,11 @@
+2012-03-19  Martin Robinson  <mrobinson@igalia.com>
+
+        Update the NEWS and version for the WebKitGTK+ 1.7.92 release.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * configure.ac:
+
 2012-03-19  Scott Byer  <scottbyer@chromium.org>
 
         Cleanup obsolete files.

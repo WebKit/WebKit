@@ -1,4 +1,16 @@
 =================
+WebKitGTK+ 1.7.92
+=================
+
+What's new in WebKitGTK+ 1.7.92?
+
+ - Add a new favicon database API that corrects the problems of the old one.
+ - Fix rendering of combobox / menulist buttons that do not have separators.
+ - Fix misrendering of text shadow extents in some situations.
+ - Fix 'make check' for source trees without an internal jhbuild.
+ - Miscellaneous build fixes.
+
+=================
 WebKitGTK+ 1.7.91
 =================
 
