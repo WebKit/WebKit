@@ -238,6 +238,10 @@ http/tests/xmlhttprequest/basic-auth.html
 http/tests/xmlhttprequest/re-login-async.html
 http/tests/xmlhttprequest/workers/abort-exception-assert.html
 
+# [WK2] fast/dom/Window/timer-resume-on-navigation-back.html times out
+# https://bugs.webkit.org/show_bug.cgi?id=81637
+fast/dom/Window/timer-resume-on-navigation-back.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
