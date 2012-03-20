@@ -1,3 +1,15 @@
+2012-03-20  Jason Liu  <jason.liu@torchmobile.com.cn>
+
+        [BlackBerry]Cookies shouldn't be set into each of webcore's request and platform's request. And this makes a regression.
+        https://bugs.webkit.org/show_bug.cgi?id=80800
+
+        Reviewed by George Staikos.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientBlackBerry::decidePolicyForExternalLoad):
+
 2012-03-19  Adam Barth  <abarth@webkit.org>
 
         Remove support for "magic" iframe

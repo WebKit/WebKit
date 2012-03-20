@@ -20,7 +20,6 @@
 #include "NetworkManager.h"
 
 #include "Chrome.h"
-#include "CookieManager.h"
 #include "CredentialStorage.h"
 #include "Frame.h"
 #include "FrameLoaderClientBlackBerry.h"
@@ -73,7 +72,7 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
         m_initialURL = KURL();
 
     BlackBerry::Platform::NetworkRequest platformRequest;
-    request.initializePlatformRequest(platformRequest, isInitial);
+    request.initializePlatformRequest(platformRequest, frame.loader() && frame.loader()->client() && static_cast<FrameLoaderClientBlackBerry*>(frame.loader()->client())->cookiesEnabled(), isInitial, redirectCount);
 
     // Attach any applicable auth credentials to the NetworkRequest.
     AuthenticationChallenge& challenge = guardJob->getInternal()->m_currentWebChallenge;
@@ -115,16 +114,6 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
         Credential credential = CredentialStorage::get(url);
         if (!credential.isEmpty())
             platformRequest.setCredentials(credential.user().utf8().data(), credential.password().utf8().data(), BlackBerry::Platform::NetworkRequest::AuthHTTPBasic);
-    }
-
-    if ((&frame) && (&frame)->loader() && (&frame)->loader()->client()
-        && static_cast<FrameLoaderClientBlackBerry*>((&frame)->loader()->client())->cookiesEnabled()) {
-        // Prepare a cookie header if there are cookies related to this url.
-        String cookiePairs = cookieManager().getCookie(url, WithHttpOnlyCookies);
-        if (!cookiePairs.isEmpty()) {
-            // We need to check the encoding and encode the cookie header data using latin1 or utf8 to support unicode characters.
-            platformRequest.setCookieData(cookiePairs.containsOnlyLatin1() ? cookiePairs.latin1().data() : cookiePairs.utf8().data());
-        }
     }
 
     if (!request.overrideContentType().isEmpty())

@@ -207,7 +207,7 @@ void FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction(FrameP
     // Let the client have a chance to say whether this navigation should
     // be ignored or not.
     BlackBerry::Platform::NetworkRequest platformRequest;
-    request.initializePlatformRequest(platformRequest, false /*isInitial*/);
+    request.initializePlatformRequest(platformRequest, cookiesEnabled());
     if (isMainFrame() && !m_webPagePrivate->m_client->acceptNavigationRequest(
         platformRequest, BlackBerry::Platform::NavigationType(action.type()))) {
         if (action.type() == NavigationTypeFormSubmitted
@@ -909,20 +909,13 @@ void FrameLoaderClientBlackBerry::dispatchWillSendRequest(DocumentLoader* docLoa
 
     // Any processing which is done for all loads (both main and subresource) should go here.
     BlackBerry::Platform::NetworkRequest platformRequest;
-    request.initializePlatformRequest(platformRequest, false /*isInitial*/);
+    request.initializePlatformRequest(platformRequest, cookiesEnabled());
     m_webPagePrivate->m_client->populateCustomHeaders(platformRequest);
     const BlackBerry::Platform::NetworkRequest::HeaderList& headerLists = platformRequest.getHeaderListRef();
     for (BlackBerry::Platform::NetworkRequest::HeaderList::const_iterator it = headerLists.begin(); it != headerLists.end(); ++it) {
         std::string headerString = it->first;
         std::string headerValueString = it->second;
-        request.setHTTPHeaderField(String(headerString.c_str()), String(headerValueString.c_str()));
-    }
-    if (cookiesEnabled()) {
-        String cookiePairs = cookieManager().getCookie(request.url(), WithHttpOnlyCookies);
-        if (!cookiePairs.isEmpty()) {
-            // We only modify the WebCore request to make the cookies visible in inspector.
-            request.setHTTPHeaderField(String("Cookie"), cookiePairs);
-        }
+        request.setHTTPHeaderField(String::fromUTF8WithLatin1Fallback(headerString.data(), headerString.length()), String::fromUTF8WithLatin1Fallback(headerValueString.data(), headerValueString.length()));
     }
     if (!isMainResourceLoad) {
         // Do nothing for now.
@@ -1068,7 +1061,7 @@ PolicyAction FrameLoaderClientBlackBerry::decidePolicyForExternalLoad(const Reso
             && !request.mustHandleInternally()
             && !isFragmentScroll) {
         BlackBerry::Platform::NetworkRequest platformRequest;
-        request.initializePlatformRequest(platformRequest);
+        request.initializePlatformRequest(platformRequest, cookiesEnabled());
         m_webPagePrivate->m_client->handleExternalLink(platformRequest, request.anchorText().characters(), request.anchorText().length(), m_clientRedirectIsPending);
         return PolicyIgnore;
     }

@@ -20,6 +20,7 @@
 #include "ResourceRequest.h"
 
 #include "BlobRegistryImpl.h"
+#include "CookieManager.h"
 #include <BlackBerryPlatformClient.h>
 #include <network/NetworkRequest.h>
 #include <wtf/HashMap.h>
@@ -126,7 +127,7 @@ ResourceRequest::TargetType ResourceRequest::targetTypeFromMimeType(const String
     return iter->second;
 }
 
-void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest, bool isInitial) const
+void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest, bool cookiesEnabled, bool isInitial, bool isRedirect) const
 {
     // If this is the initial load, skip the request body and headers.
     if (isInitial)
@@ -177,8 +178,22 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
         for (HTTPHeaderMap::const_iterator it = httpHeaderFields().begin(); it != httpHeaderFields().end(); ++it) {
             String key = it->first;
             String value = it->second;
-            if (!key.isEmpty() && !value.isEmpty())
-                platformRequest.addHeader(key.latin1().data(), value.latin1().data());
+            if (!key.isEmpty() && !value.isEmpty()) {
+                // We need to check the encoding and encode the cookie's value using latin1 or utf8 to support unicode characters.
+                if (equalIgnoringCase(key, "Cookie"))
+                    platformRequest.addHeader(key.latin1().data(), value.containsOnlyLatin1() ? value.latin1().data() : value.utf8().data());
+                else
+                    platformRequest.addHeader(key.latin1().data(), value.latin1().data());
+            }
+        }
+       
+        // Redirection's response may contain new cookies, so add cookies again.
+        // If there aren't cookies in the header list, we need trying to add cookies.
+        if (cookiesEnabled && (isRedirect || !httpHeaderFields().contains("Cookie"))) {
+            // Prepare a cookie header if there are cookies related to this url.
+            String cookiePairs = cookieManager().getCookie(url(), WithHttpOnlyCookies);
+            if (!cookiePairs.isEmpty())
+                platformRequest.addHeader("Cookie", cookiePairs.containsOnlyLatin1() ? cookiePairs.latin1().data() : cookiePairs.utf8().data());
         }
 
         // Locale has the form "en-US". Construct accept language like "en-US, en;q=0.8".
