@@ -3578,8 +3578,8 @@ BUGWK76558 : svg/dom/SVGScriptElement/script-load-and-error-events.svg = PASS TE
 // rebaseline when skia 3398 lands
 BUGEPOGER : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
 
-BUGWK76727 : fast/multicol/span/span-as-immediate-child-property-removal.html = IMAGE+TEXT TEXT
-BUGWK76727 : fast/multicol/span/span-as-immediate-columns-child-removal.html = IMAGE+TEXT
+BUGWK76727 : fast/multicol/span/span-as-immediate-child-property-removal.html = IMAGE+TEXT TEXT PASS IMAGE
+BUGWK76727 : fast/multicol/span/span-as-immediate-columns-child-removal.html = IMAGE+TEXT TEXT PASS IMAGE
 
 // Selection should have disappeared, a side-effect of moving RenderSVGRoot to RenderReplaced (a progression!)
 BUGWK76446 WIN LINUX : svg/custom/mouse-move-on-svg-container-standalone.svg = IMAGE+TEXT
