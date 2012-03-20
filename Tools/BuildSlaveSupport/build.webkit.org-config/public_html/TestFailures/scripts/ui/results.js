@@ -165,6 +165,12 @@ ui.results.ResultsDetails = base.extends('div', {
     },
 });
 
+// jQuery's builtin accordion overrides mousedown, which means you can't select the header text
+// or click on the link to the flakiness dashboard.
+$('.ui-accordion-header').live('click', function() {
+    $(this).trigger('customaccordianclick');
+})
+
 ui.results.TestSelector = base.extends('div', {
     init: function(delegate, resultsByTest)
     {
@@ -197,11 +203,6 @@ ui.results.TestSelector = base.extends('div', {
         });
         $(this).accordion('activate', false);
 
-        // jQuery's builtin accordion overrides mousedown, which means you can't select the header text
-        // or click on the link to the flakiness dashboard.
-        $('.ui-accordion-header').live('click', function() {
-            $(this).trigger('customaccordianclick');
-        })
     },
     nextResult: function()
     {

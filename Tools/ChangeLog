@@ -1,3 +1,11 @@
+2012-03-19  Ojan Vafai  <ojan@chromium.org>
+
+        We should only add a live event listener once, not once per TestSelector.
+        Adding one per TestSelector would cause accordion('option', 'active') to
+        incorrectly be "false" if you examine multiple sets of tests.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+
 2012-03-19  Dirk Pranke  <dpranke@chromium.org>
 
         Fix typo introduced in r111293.
