@@ -1,3 +1,10 @@
+2012-03-19  Anders Carlsson  <andersca@apple.com>
+
+        Fix Windows build.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::LayerClient::platformCALayerDeviceScaleFactor):
+
 2012-03-13  Jon Lee  <jonlee@apple.com>
 
         Separate NOTIFICATIONS and LEGACY_NOTIFICATIONS
