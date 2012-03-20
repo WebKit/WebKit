@@ -631,7 +631,7 @@ WebInspector.HeapSnapshotNode.prototype = {
 
     get isWindow()
     {
-        return this.name.substr(0, 6) === "Window";
+        return this.name.indexOf("Window") === 0;
     },
 
     get isDetachedDOMTreesRoot()
@@ -641,7 +641,7 @@ WebInspector.HeapSnapshotNode.prototype = {
 
     get isDetachedDOMTree()
     {
-        return this.className === "Detached DOM tree";
+        return this.className.indexOf("Detached DOM tree") === 0;
     },
 
     get isRoot()
