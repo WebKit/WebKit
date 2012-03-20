@@ -315,15 +315,15 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
     occlusionTracker.overdrawMetrics().recordMetrics(this);
 }
 
-void CCLayerTreeHostImpl::animateLayersRecursive(CCLayerImpl* current, double monotonicTime, double wallClockTime, CCAnimationEventsVector& events, bool& didAnimate, bool& needsAnimateLayers)
+void CCLayerTreeHostImpl::animateLayersRecursive(CCLayerImpl* current, double monotonicTime, double wallClockTime, CCAnimationEventsVector* events, bool& didAnimate, bool& needsAnimateLayers)
 {
     bool subtreeNeedsAnimateLayers = false;
 
-    CCLayerAnimationControllerImpl* currentController = current->layerAnimationController();
+    CCLayerAnimationController* currentController = current->layerAnimationController();
 
     bool hadActiveAnimation = currentController->hasActiveAnimation();
     currentController->animate(monotonicTime, events);
-    bool startedAnimation = events.size() > 0;
+    bool startedAnimation = events->size() > 0;
 
     // We animated if we either ticked a running animation, or started a new animation.
     if (hadActiveAnimation || startedAnimation)
@@ -783,7 +783,7 @@ void CCLayerTreeHostImpl::animateLayers(double monotonicTime, double wallClockTi
     OwnPtr<CCAnimationEventsVector> events(adoptPtr(new CCAnimationEventsVector));
 
     bool didAnimate = false;
-    animateLayersRecursive(m_rootLayerImpl.get(), monotonicTime, wallClockTime, *events, didAnimate, m_needsAnimateLayers);
+    animateLayersRecursive(m_rootLayerImpl.get(), monotonicTime, wallClockTime, events.get(), didAnimate, m_needsAnimateLayers);
 
     if (!events->isEmpty())
         m_client->postAnimationEventsToMainThreadOnImplThread(events.release(), wallClockTime);

@@ -3480,8 +3480,6 @@
             'platform/graphics/chromium/cc/CCKeyframedAnimationCurve.h',
             'platform/graphics/chromium/cc/CCLayerAnimationController.h',
             'platform/graphics/chromium/cc/CCLayerAnimationController.cpp',
-            'platform/graphics/chromium/cc/CCLayerAnimationControllerImpl.h',
-            'platform/graphics/chromium/cc/CCLayerAnimationControllerImpl.cpp',
             'platform/graphics/chromium/cc/CCLayerAnimationDelegate.h',
             'platform/graphics/chromium/cc/CCLayerImpl.cpp',
             'platform/graphics/chromium/cc/CCLayerImpl.h',

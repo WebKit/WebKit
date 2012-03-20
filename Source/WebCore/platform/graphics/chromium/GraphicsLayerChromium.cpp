@@ -749,16 +749,6 @@ void GraphicsLayerChromium::notifyAnimationStarted(double startTime)
         m_client->notifyAnimationStarted(this, startTime);
 }
 
-void GraphicsLayerChromium::notifyAnimationFinished(int animationId)
-{
-    for (AnimationIdMap::iterator idIter = m_animationIdMap.begin(); idIter != m_animationIdMap.end(); ++idIter) {
-        if (idIter->second == animationId) {
-            m_animationIdMap.remove(idIter);
-            return;
-        }
-    }
-}
-
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)

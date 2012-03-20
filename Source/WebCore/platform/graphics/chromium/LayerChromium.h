@@ -43,6 +43,7 @@
 #include "RenderSurfaceChromium.h"
 #include "ShaderChromium.h"
 #include "TransformationMatrix.h"
+#include "cc/CCLayerAnimationController.h"
 #include "cc/CCOcclusionTracker.h"
 
 #include <wtf/OwnPtr.h>
@@ -56,7 +57,6 @@
 namespace WebCore {
 
 class CCAnimationEvent;
-class CCLayerAnimationController;
 class CCLayerAnimationDelegate;
 class CCLayerImpl;
 class CCLayerTreeHost;
@@ -66,11 +66,19 @@ class ScrollbarLayerChromium;
 
 // Base class for composited layers. Special layer types are derived from
 // this class.
-class LayerChromium : public RefCounted<LayerChromium> {
+class LayerChromium : public RefCounted<LayerChromium>, public CCLayerAnimationControllerClient {
 public:
     static PassRefPtr<LayerChromium> create();
 
     virtual ~LayerChromium();
+
+    // CCLayerAnimationControllerClient implementation
+    virtual int id() const { return m_layerId; }
+    virtual void setOpacityFromAnimation(float);
+    virtual float opacity() const { return m_opacity; }
+    virtual void setTransformFromAnimation(const TransformationMatrix&);
+    virtual const TransformationMatrix& transform() const { return m_transform; }
+    virtual const IntSize& bounds() const { return m_bounds; }
 
     const LayerChromium* rootLayer() const;
     LayerChromium* parent() const;
@@ -95,7 +103,6 @@ public:
     bool backgroundCoversViewport() const { return m_backgroundCoversViewport; }
 
     void setBounds(const IntSize&);
-    const IntSize& bounds() const { return m_bounds; }
     virtual IntSize contentBounds() const { return bounds(); }
 
     void setMasksToBounds(bool);
@@ -109,7 +116,6 @@ public:
     virtual bool needsDisplay() const { return m_needsDisplay; }
 
     void setOpacity(float);
-    float opacity() const { return m_opacity; }
     bool opacityIsAnimating() const;
 
     void setFilters(const FilterOperations&);
@@ -125,7 +131,6 @@ public:
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
     void setTransform(const TransformationMatrix&);
-    const TransformationMatrix& transform() const { return m_transform; }
     bool transformIsAnimating() const;
 
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
@@ -180,8 +185,6 @@ public:
     virtual void pushPropertiesTo(CCLayerImpl*);
 
     typedef ProgramBinding<VertexShaderPos, FragmentShaderColor> BorderProgram;
-
-    int id() const { return m_layerId; }
 
     void clearRenderSurface() { m_renderSurface.clear(); }
     RenderSurfaceChromium* renderSurface() const { return m_renderSurface.get(); }

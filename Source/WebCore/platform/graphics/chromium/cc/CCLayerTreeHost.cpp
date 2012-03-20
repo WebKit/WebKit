@@ -32,6 +32,7 @@
 #include "Region.h"
 #include "TraceEvent.h"
 #include "TreeSynchronizer.h"
+#include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerIterator.h"
 #include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCLayerTreeHostImpl.h"
@@ -64,6 +65,7 @@ PassRefPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* clien
 CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings& settings)
     : m_compositorIdentifier(-1)
     , m_animating(false)
+    , m_needsAnimateLayers(false)
     , m_client(client)
     , m_frameNumber(0)
     , m_layerRendererInitialized(false)
@@ -181,6 +183,7 @@ void CCLayerTreeHost::updateAnimations(double frameBeginTime)
 {
     m_animating = true;
     m_client->updateAnimations(frameBeginTime);
+    animateLayers(monotonicallyIncreasingTime());
     m_animating = false;
 }
 
@@ -209,9 +212,12 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 
     hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->releaseRootLayer()));
 
-    // We may have added an animation during the tree sync. This will cause hostImpl to visit its controllers.
-    if (rootLayer())
+    // We may have added an animation during the tree sync. This will cause both layer tree hosts
+    // to visit their controllers.
+    if (rootLayer()) {
         hostImpl->setNeedsAnimateLayers();
+        m_needsAnimateLayers = true;
+    }
 
     hostImpl->setSourceFrameNumber(frameNumber());
     hostImpl->setViewportSize(viewportSize());
@@ -386,9 +392,12 @@ void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostIm
 
     hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->releaseRootLayer()));
 
-    // We may have added an animation during the tree sync. This will cause hostImpl to visit its controllers.
-    if (rootLayer())
+    // We may have added an animation during the tree sync. This will cause both layer tree hosts
+    // to visit their controllers.
+    if (rootLayer()) {
         hostImpl->setNeedsAnimateLayers();
+        m_needsAnimateLayers = true;
+    }
 }
 
 void CCLayerTreeHost::startPageScaleAnimation(const IntSize& targetPosition, bool useAnchor, float scale, double durationSec)
@@ -640,6 +649,33 @@ bool CCLayerTreeHost::requestPartialTextureUpdate()
 void CCLayerTreeHost::deleteTextureAfterCommit(PassOwnPtr<ManagedTexture> texture)
 {
     m_deleteTextureAfterCommitList.append(texture);
+}
+
+void CCLayerTreeHost::animateLayers(double monotonicTime)
+{
+    if (!m_settings.threadedAnimationEnabled || !m_needsAnimateLayers || !m_rootLayer)
+        return;
+
+    TRACE_EVENT("CCLayerTreeHostImpl::animateLayers", this, 0);
+    m_needsAnimateLayers = animateLayersRecursive(m_rootLayer.get(), monotonicTime);
+}
+
+bool CCLayerTreeHost::animateLayersRecursive(LayerChromium* current, double monotonicTime)
+{
+    bool subtreeNeedsAnimateLayers = false;
+    CCLayerAnimationController* currentController = current->layerAnimationController();
+    currentController->animate(monotonicTime, 0);
+
+    // If the current controller still has an active animation, we must continue animating layers.
+    if (currentController->hasActiveAnimation())
+         subtreeNeedsAnimateLayers = true;
+
+    for (size_t i = 0; i < current->children().size(); ++i) {
+        if (animateLayersRecursive(current->children()[i].get(), monotonicTime))
+            subtreeNeedsAnimateLayers = true;
+    }
+
+    return subtreeNeedsAnimateLayers;
 }
 
 void CCLayerTreeHost::setAnimationEventsRecursive(const CCAnimationEventsVector& events, LayerChromium* layer, double wallClockTime)

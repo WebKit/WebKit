@@ -106,12 +106,12 @@ float FakeFloatTransition::getValue(double time) const
     return (1 - time) * m_from + time * m_to;
 }
 
-FakeLayerAnimationControllerImplClient::FakeLayerAnimationControllerImplClient()
+FakeLayerAnimationControllerClient::FakeLayerAnimationControllerClient()
     : m_opacity(0)
 {
 }
 
-FakeLayerAnimationControllerImplClient::~FakeLayerAnimationControllerImplClient()
+FakeLayerAnimationControllerClient::~FakeLayerAnimationControllerClient()
 {
 }
 

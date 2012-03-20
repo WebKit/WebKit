@@ -33,7 +33,6 @@
 #include "LayerChromium.h"
 #include "LayerRendererChromium.h"
 #include "cc/CCDebugBorderDrawQuad.h"
-#include "cc/CCLayerAnimationControllerImpl.h"
 #include "cc/CCLayerSorter.h"
 #include "cc/CCQuadCuller.h"
 #include "cc/CCSolidColorDrawQuad.h"
@@ -70,7 +69,7 @@ CCLayerImpl::CCLayerImpl(int id)
     , m_debugBorderWidth(0)
     , m_drawTransformIsAnimating(false)
     , m_screenSpaceTransformIsAnimating(false)
-    , m_layerAnimationController(CCLayerAnimationControllerImpl::create(this))
+    , m_layerAnimationController(CCLayerAnimationController::create(this))
 {
     ASSERT(CCProxy::isImplThread());
 }
@@ -308,6 +307,16 @@ void CCLayerImpl::resetAllChangeTrackingForSubtree()
 
     for (size_t i = 0; i < m_children.size(); ++i)
         m_children[i]->resetAllChangeTrackingForSubtree();
+}
+
+void CCLayerImpl::setOpacityFromAnimation(float opacity)
+{
+    setOpacity(opacity);
+}
+
+void CCLayerImpl::setTransformFromAnimation(const TransformationMatrix& transform)
+{
+    setTransform(transform);
 }
 
 void CCLayerImpl::setBounds(const IntSize& bounds)

@@ -73,7 +73,6 @@ public:
 
     // Implementation of CCLayerAnimationDelegate
     virtual void notifyAnimationStarted(double time) { }
-    virtual void notifyAnimationFinished(int animationId) { }
 };
 
 // Adapts CCLayerTreeHostImpl for test. Runs real code, then invokes test hooks.
@@ -892,7 +891,6 @@ public:
     CCLayerTreeHostTestAddAnimation()
         : m_numAnimates(0)
         , m_receivedAnimationStartedNotification(false)
-        , m_receivedAnimationFinishedNotification(false)
         , m_startTime(0)
         , m_firstMonotonicTime(0)
     {
@@ -917,7 +915,6 @@ public:
         EXPECT_LT(0, m_firstMonotonicTime);
         EXPECT_NE(m_startTime, m_firstMonotonicTime);
         EXPECT_TRUE(m_receivedAnimationStartedNotification);
-        EXPECT_TRUE(m_receivedAnimationFinishedNotification);
         endTest();
     }
 
@@ -927,11 +924,6 @@ public:
         m_startTime = wallClockTime;
     }
 
-    virtual void notifyAnimationFinished(int)
-    {
-        m_receivedAnimationFinishedNotification = true;
-    }
-
     virtual void afterTest()
     {
     }
@@ -939,7 +931,6 @@ public:
 private:
     int m_numAnimates;
     bool m_receivedAnimationStartedNotification;
-    bool m_receivedAnimationFinishedNotification;
     double m_startTime;
     double m_firstMonotonicTime;
 };

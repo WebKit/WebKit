@@ -63,14 +63,6 @@ public:
         Opacity
     };
 
-    struct AnimationSignature {
-        AnimationSignature(int groupId, TargetProperty targetProperty)
-            : groupId(groupId)
-            , targetProperty(targetProperty) { }
-        int groupId;
-        TargetProperty targetProperty;
-    };
-
     static PassOwnPtr<CCActiveAnimation> create(PassOwnPtr<CCAnimationCurve>, int animationId, int groupId, TargetProperty);
 
     virtual ~CCActiveAnimation();
@@ -103,8 +95,6 @@ public:
     // Takes the given absolute time, and using the start time and the number
     // of iterations, returns the relative time in the current iteration.
     double trimTimeToCurrentIteration(double now) const;
-
-    AnimationSignature signature() const { return AnimationSignature(m_group, m_targetProperty); }
 
     PassOwnPtr<CCActiveAnimation> cloneForImplThread() const;
 

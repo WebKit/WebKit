@@ -26,12 +26,11 @@
 #define CCAnimationTestCommon_h
 
 #include "cc/CCAnimationCurve.h"
-#include "cc/CCLayerAnimationControllerImpl.h"
+#include "cc/CCLayerAnimationController.h"
 
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
-class CCLayerAnimationController;
 class LayerChromium;
 }
 
@@ -77,16 +76,17 @@ private:
     float m_to;
 };
 
-class FakeLayerAnimationControllerImplClient : public WebCore::CCLayerAnimationControllerImplClient {
+class FakeLayerAnimationControllerClient : public WebCore::CCLayerAnimationControllerClient {
 public:
-    FakeLayerAnimationControllerImplClient();
-    virtual ~FakeLayerAnimationControllerImplClient();
+    FakeLayerAnimationControllerClient();
+    virtual ~FakeLayerAnimationControllerClient();
 
+    // CCLayerAnimationControllerClient implementation
     virtual int id() const { return 0; }
+    virtual void setOpacityFromAnimation(float opacity) { m_opacity = opacity; }
     virtual float opacity() const { return m_opacity; }
-    virtual void setOpacity(float opacity) { m_opacity = opacity; }
+    virtual void setTransformFromAnimation(const WebCore::TransformationMatrix& transform) { m_transform = transform; }
     virtual const WebCore::TransformationMatrix& transform() const { return m_transform; }
-    virtual void setTransform(const WebCore::TransformationMatrix& transform) { m_transform = transform; }
     virtual const WebCore::IntSize& bounds() const { return m_bounds; }
 
 private:

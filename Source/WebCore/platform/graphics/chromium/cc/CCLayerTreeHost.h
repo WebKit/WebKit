@@ -225,11 +225,14 @@ private:
     void reserveTextures();
     void clearPendingUpdate();
 
+    void animateLayers(double monotonicTime);
+    bool animateLayersRecursive(LayerChromium* current, double monotonicTime);
     void setAnimationEventsRecursive(const CCAnimationEventsVector&, LayerChromium*, double wallClockTime);
 
     int m_compositorIdentifier;
 
     bool m_animating;
+    bool m_needsAnimateLayers;
 
     CCLayerTreeHostClient* m_client;
 

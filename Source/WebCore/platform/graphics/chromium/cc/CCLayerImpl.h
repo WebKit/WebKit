@@ -33,7 +33,7 @@
 #include "Region.h"
 #include "TextStream.h"
 #include "TransformationMatrix.h"
-#include "cc/CCLayerAnimationControllerImpl.h"
+#include "cc/CCLayerAnimationController.h"
 #include "cc/CCRenderSurface.h"
 #include "cc/CCSharedQuadState.h"
 #include <wtf/OwnPtr.h>
@@ -48,27 +48,22 @@ class CCQuadCuller;
 class LayerChromium;
 class LayerRendererChromium;
 
-class CCLayerImpl : public CCLayerAnimationControllerImplClient {
+class CCLayerImpl : public CCLayerAnimationControllerClient {
 public:
     static PassOwnPtr<CCLayerImpl> create(int id)
     {
         return adoptPtr(new CCLayerImpl(id));
     }
 
-    // CCLayerAnimationControllerImplClient implementation.
-    virtual int id() const { return m_layerId; }
-
-    virtual void setOpacity(float);
-    virtual float opacity() const { return m_opacity; }
-    bool opacityIsAnimating() const;
-
-    virtual void setTransform(const TransformationMatrix&);
-    virtual const TransformationMatrix& transform() const { return m_transform; }
-    bool transformIsAnimating() const;
-
-    virtual const IntSize& bounds() const { return m_bounds; }
-
     virtual ~CCLayerImpl();
+
+    // CCLayerAnimationControllerClient implementation.
+    virtual int id() const { return m_layerId; }
+    virtual void setOpacityFromAnimation(float);
+    virtual float opacity() const { return m_opacity; }
+    virtual void setTransformFromAnimation(const TransformationMatrix&);
+    virtual const TransformationMatrix& transform() const { return m_transform; }
+    virtual const IntSize& bounds() const { return m_bounds; }
 
     // Tree structure.
     CCLayerImpl* parent() const { return m_parent; }
@@ -123,6 +118,9 @@ public:
 
     void setOpaque(bool);
     bool opaque() const { return m_opaque; }
+
+    void setOpacity(float);
+    bool opacityIsAnimating() const;
 
     void setPosition(const FloatPoint&);
     const FloatPoint& position() const { return m_position; }
@@ -208,6 +206,9 @@ public:
     // Returns the rect containtaining this layer in the current view's coordinate system.
     const IntRect getDrawRect() const;
 
+    void setTransform(const TransformationMatrix&);
+    bool transformIsAnimating() const;
+
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
     void setDrawTransform(const TransformationMatrix& matrix) { m_drawTransform = matrix; }
     const TransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
@@ -228,7 +229,7 @@ public:
     bool layerPropertyChanged() const { return m_layerPropertyChanged; }
     void resetAllChangeTrackingForSubtree();
 
-    CCLayerAnimationControllerImpl* layerAnimationController() { return m_layerAnimationController.get(); }
+    CCLayerAnimationController* layerAnimationController() { return m_layerAnimationController.get(); }
 
     virtual Region opaqueContentsRegion() const { return Region(); };
 
@@ -358,7 +359,7 @@ private:
     FloatRect m_updateRect;
 
     // Manages animations for this layer.
-    OwnPtr<CCLayerAnimationControllerImpl> m_layerAnimationController;
+    OwnPtr<CCLayerAnimationController> m_layerAnimationController;
 };
 
 void sortLayers(Vector<CCLayerImpl*>::iterator first, Vector<CCLayerImpl*>::iterator end, CCLayerSorter*);

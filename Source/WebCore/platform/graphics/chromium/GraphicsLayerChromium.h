@@ -116,7 +116,6 @@ public:
 
     // CCLayerAnimationDelegate implementation.
     virtual void notifyAnimationStarted(double startTime);
-    virtual void notifyAnimationFinished(int animationId);
 
     // Exposed for tests.
     LayerChromium* contentsLayer() const { return m_contentsLayer.get(); }

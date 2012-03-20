@@ -1,3 +1,32 @@
+2012-03-20  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Infrastructure to allow animating layers to be only partially updated
+        https://bugs.webkit.org/show_bug.cgi?id=81106
+
+        Reviewed by James Robinson
+
+        * WebKit.gypi:
+        * tests/CCAnimationTestCommon.cpp:
+        (WebKitTests::FakeLayerAnimationControllerClient::FakeLayerAnimationControllerClient):
+        (WebKitTests::FakeLayerAnimationControllerClient::~FakeLayerAnimationControllerClient):
+        * tests/CCAnimationTestCommon.h:
+        (FakeLayerAnimationControllerClient):
+        (WebKitTests::FakeLayerAnimationControllerClient::setOpacityFromAnimation):
+        (WebKitTests::FakeLayerAnimationControllerClient::setTransformFromAnimation):
+        * tests/CCLayerAnimationControllerImplTest.cpp: Removed.
+        * tests/CCLayerAnimationControllerTest.cpp:
+        (WebKitTests::TEST):
+        (WebKitTests):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestAddAnimation::CCLayerTreeHostTestAddAnimation):
+        (WTF::CCLayerTreeHostTestAddAnimation::animateLayers):
+        (CCLayerTreeHostTestAddAnimation):
+        * tests/TreeSynchronizerTest.cpp:
+        (WebKitTests::FakeLayerAnimationController::create):
+        (WebKitTests::FakeLayerAnimationController::FakeLayerAnimationController):
+        (WebKitTests::FakeLayerAnimationController::pushAnimationUpdatesTo):
+        (WebKitTests::TEST):
+
 2012-03-20  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] Marking WebFrameTest.DivAutoZoomParamsTest as failing.

@@ -96,22 +96,23 @@ private:
 
 class FakeLayerAnimationController : public CCLayerAnimationController {
 public:
-    static PassOwnPtr<FakeLayerAnimationController> create()
+    static PassOwnPtr<FakeLayerAnimationController> create(CCLayerAnimationControllerClient* client)
     {
-        return adoptPtr(new FakeLayerAnimationController);
+        return adoptPtr(new FakeLayerAnimationController(client));
     }
 
     bool synchronizedAnimations() const { return m_synchronizedAnimations; }
 
 private:
-    FakeLayerAnimationController()
-        : m_synchronizedAnimations(false)
+    explicit FakeLayerAnimationController(CCLayerAnimationControllerClient* client)
+        : CCLayerAnimationController(client)
+        , m_synchronizedAnimations(false)
     {
     }
 
-    virtual void synchronizeAnimations(CCLayerAnimationControllerImpl* controllerImpl)
+    virtual void pushAnimationUpdatesTo(CCLayerAnimationController* controllerImpl)
     {
-        CCLayerAnimationController::synchronizeAnimations(controllerImpl);
+        CCLayerAnimationController::pushAnimationUpdatesTo(controllerImpl);
         m_synchronizedAnimations = true;
     }
 
@@ -350,7 +351,8 @@ TEST(TreeSynchronizerTest, synchronizeAnimations)
     DebugScopedSetImplThread impl;
     RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
 
-    layerTreeRoot->setLayerAnimationController(FakeLayerAnimationController::create());
+    FakeLayerAnimationControllerClient dummy;
+    layerTreeRoot->setLayerAnimationController(FakeLayerAnimationController::create(&dummy));
 
     EXPECT_FALSE(static_cast<FakeLayerAnimationController*>(layerTreeRoot->layerAnimationController())->synchronizedAnimations());
 

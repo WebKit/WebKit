@@ -30,8 +30,9 @@
 
 namespace WebCore {
 
-CCAnimationEvent::CCAnimationEvent(int layerId)
+CCAnimationEvent::CCAnimationEvent(int layerId, CCActiveAnimation::TargetProperty targetProperty)
     : m_layerId(layerId)
+    , m_targetProperty(targetProperty)
 {
 }
 
@@ -45,19 +46,25 @@ const CCAnimationStartedEvent* CCAnimationEvent::toAnimationStartedEvent() const
     return static_cast<const CCAnimationStartedEvent*>(this);
 }
 
-const CCAnimationFinishedEvent* CCAnimationEvent::toAnimationFinishedEvent() const
+const CCFloatAnimationFinishedEvent* CCAnimationEvent::toFloatAnimationFinishedEvent() const
 {
-    ASSERT(type() == Finished);
-    return static_cast<const CCAnimationFinishedEvent*>(this);
+    ASSERT(type() == FinishedFloatAnimation);
+    return static_cast<const CCFloatAnimationFinishedEvent*>(this);
 }
 
-PassOwnPtr<CCAnimationStartedEvent> CCAnimationStartedEvent::create(int layerId)
+const CCTransformAnimationFinishedEvent* CCAnimationEvent::toTransformAnimationFinishedEvent() const
 {
-    return adoptPtr(new CCAnimationStartedEvent(layerId));
+    ASSERT(type() == FinishedTransformAnimation);
+    return static_cast<const CCTransformAnimationFinishedEvent*>(this);
 }
 
-CCAnimationStartedEvent::CCAnimationStartedEvent(int layerId)
-    : CCAnimationEvent(layerId)
+PassOwnPtr<CCAnimationStartedEvent> CCAnimationStartedEvent::create(int layerId, CCActiveAnimation::TargetProperty targetProperty)
+{
+    return adoptPtr(new CCAnimationStartedEvent(layerId, targetProperty));
+}
+
+CCAnimationStartedEvent::CCAnimationStartedEvent(int layerId, CCActiveAnimation::TargetProperty targetProperty)
+    : CCAnimationEvent(layerId, targetProperty)
 {
 }
 
@@ -70,24 +77,44 @@ CCAnimationEvent::Type CCAnimationStartedEvent::type() const
     return Started;
 }
 
-PassOwnPtr<CCAnimationFinishedEvent> CCAnimationFinishedEvent::create(int layerId, int animationId)
+PassOwnPtr<CCFloatAnimationFinishedEvent> CCFloatAnimationFinishedEvent::create(int layerId, CCActiveAnimation::TargetProperty targetProperty, float finalValue)
 {
-    return adoptPtr(new CCAnimationFinishedEvent(layerId, animationId));
+    return adoptPtr(new CCFloatAnimationFinishedEvent(layerId, targetProperty, finalValue));
 }
 
-CCAnimationFinishedEvent::CCAnimationFinishedEvent(int layerId, int animationId)
-    : CCAnimationEvent(layerId)
-    , m_animationId(animationId)
-{
-}
-
-CCAnimationFinishedEvent::~CCAnimationFinishedEvent()
+CCFloatAnimationFinishedEvent::CCFloatAnimationFinishedEvent(int layerId, CCActiveAnimation::TargetProperty targetProperty, float finalValue)
+    : CCAnimationEvent(layerId, targetProperty)
+    , m_finalValue(finalValue)
 {
 }
 
-CCAnimationEvent::Type CCAnimationFinishedEvent::type() const
+CCFloatAnimationFinishedEvent::~CCFloatAnimationFinishedEvent()
 {
-    return Finished;
+}
+
+CCAnimationEvent::Type CCFloatAnimationFinishedEvent::type() const
+{
+    return FinishedFloatAnimation;
+}
+
+PassOwnPtr<CCTransformAnimationFinishedEvent> CCTransformAnimationFinishedEvent::create(int layerId, CCActiveAnimation::TargetProperty targetProperty, const TransformationMatrix& finalValue)
+{
+    return adoptPtr(new CCTransformAnimationFinishedEvent(layerId, targetProperty, finalValue));
+}
+
+CCTransformAnimationFinishedEvent::CCTransformAnimationFinishedEvent(int layerId, CCActiveAnimation::TargetProperty targetProperty, const TransformationMatrix& finalValue)
+    : CCAnimationEvent(layerId, targetProperty)
+    , m_finalValue(finalValue)
+{
+}
+
+CCTransformAnimationFinishedEvent::~CCTransformAnimationFinishedEvent()
+{
+}
+
+CCAnimationEvent::Type CCTransformAnimationFinishedEvent::type() const
+{
+    return FinishedTransformAnimation;
 }
 
 } // namespace WebCore

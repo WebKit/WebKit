@@ -67,7 +67,6 @@
             'tests/CCDelayBasedTimeSourceTest.cpp',
             'tests/CCFrameRateControllerTest.cpp',
             'tests/CCKeyframedAnimationCurveTest.cpp',
-            'tests/CCLayerAnimationControllerImplTest.cpp',
             'tests/CCLayerAnimationControllerTest.cpp',
             'tests/CCLayerImplTest.cpp',
             'tests/CCLayerIteratorTest.cpp',

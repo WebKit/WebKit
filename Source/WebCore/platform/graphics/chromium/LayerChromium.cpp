@@ -59,7 +59,7 @@ LayerChromium::LayerChromium()
     : m_needsDisplay(false)
     , m_layerId(s_nextLayerId++)
     , m_parent(0)
-    , m_layerAnimationController(CCLayerAnimationController::create())
+    , m_layerAnimationController(CCLayerAnimationController::create(this))
     , m_scrollable(false)
     , m_shouldScrollOnMainThread(false)
     , m_haveWheelEventHandlers(false)
@@ -97,70 +97,6 @@ LayerChromium::~LayerChromium()
 
     // Remove the parent reference from all children.
     removeAllChildren();
-}
-
-bool LayerChromium::addAnimation(const KeyframeValueList& values, const IntSize& boxSize, const Animation* animation, int animationId, int groupId, double timeOffset)
-{
-    if (!m_layerTreeHost || !m_layerTreeHost->settings().threadedAnimationEnabled)
-        return false;
-
-    bool addedAnimation = m_layerAnimationController->addAnimation(values, boxSize, animation, animationId, groupId, timeOffset);
-    if (addedAnimation)
-        setNeedsCommit();
-    return addedAnimation;
-}
-
-void LayerChromium::pauseAnimation(int animationId, double timeOffset)
-{
-    m_layerAnimationController->pauseAnimation(animationId, timeOffset);
-    setNeedsCommit();
-}
-
-void LayerChromium::removeAnimation(int animationId)
-{
-    m_layerAnimationController->removeAnimation(animationId);
-    setNeedsCommit();
-}
-
-void LayerChromium::suspendAnimations(double time)
-{
-    m_layerAnimationController->suspendAnimations(time);
-    setNeedsCommit();
-}
-
-void LayerChromium::resumeAnimations()
-{
-    m_layerAnimationController->resumeAnimations();
-    setNeedsCommit();
-}
-
-void LayerChromium::setLayerAnimationController(PassOwnPtr<CCLayerAnimationController> layerAnimationController)
-{
-    m_layerAnimationController = layerAnimationController;
-    setNeedsCommit();
-}
-
-bool LayerChromium::hasActiveAnimation() const
-{
-    return m_layerAnimationController->hasActiveAnimation();
-}
-
-void LayerChromium::setAnimationEvent(const CCAnimationEvent& event, double wallClockTime)
-{
-    switch (event.type()) {
-
-    case CCAnimationEvent::Started: {
-        m_layerAnimationDelegate->notifyAnimationStarted(wallClockTime);
-        break;
-    }
-
-    case CCAnimationEvent::Finished: {
-        const CCAnimationFinishedEvent* finishedEvent = event.toAnimationFinishedEvent();
-        m_layerAnimationDelegate->notifyAnimationFinished(finishedEvent->animationId());
-        break;
-    }
-
-    }
 }
 
 void LayerChromium::setIsNonCompositedContent(bool isNonCompositedContent)
@@ -536,12 +472,14 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         m_nonFastScrollableRegionChanged = false;
     }
     layer->setOpaque(m_opaque);
-    layer->setOpacity(m_opacity);
+    if (!opacityIsAnimating())
+        layer->setOpacity(m_opacity);
     layer->setPosition(m_position);
     layer->setPreserves3D(preserves3D());
     layer->setScrollPosition(m_scrollPosition);
     layer->setSublayerTransform(m_sublayerTransform);
-    layer->setTransform(m_transform);
+    if (!transformIsAnimating())
+        layer->setTransform(m_transform);
     layer->setUpdateRect(m_updateRect);
 
     layer->setScrollDelta(layer->scrollDelta() - layer->sentScrollDelta());
@@ -552,7 +490,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     if (replicaLayer())
         replicaLayer()->pushPropertiesTo(layer->replicaLayer());
 
-    m_layerAnimationController->synchronizeAnimations(layer->layerAnimationController());
+    m_layerAnimationController->pushAnimationUpdatesTo(layer->layerAnimationController());
 
     // Reset any state that should be cleared for the next update.
     m_updateRect = FloatRect();
@@ -604,6 +542,92 @@ bool LayerChromium::descendantDrawsContent()
             return true;
     }
     return false;
+}
+
+void LayerChromium::setOpacityFromAnimation(float opacity)
+{
+    // This is called due to an ongoing accelerated animation. Since this animation is
+    // also being run on the impl thread, there is no need to request a commit to push
+    // this value over, so set the value directly rather than calling setOpacity.
+    m_opacity = opacity;
+}
+
+void LayerChromium::setTransformFromAnimation(const TransformationMatrix& transform)
+{
+    // This is called due to an ongoing accelerated animation. Since this animation is
+    // also being run on the impl thread, there is no need to request a commit to push
+    // this value over, so set this value directly rather than calling setTransform.
+    m_transform = transform;
+}
+
+bool LayerChromium::addAnimation(const KeyframeValueList& values, const IntSize& boxSize, const Animation* animation, int animationId, int groupId, double timeOffset)
+{
+    if (!m_layerTreeHost || !m_layerTreeHost->settings().threadedAnimationEnabled)
+        return false;
+
+    bool addedAnimation = m_layerAnimationController->addAnimation(values, boxSize, animation, animationId, groupId, timeOffset);
+    if (addedAnimation)
+        setNeedsCommit();
+    return addedAnimation;
+}
+
+void LayerChromium::pauseAnimation(int animationId, double timeOffset)
+{
+    m_layerAnimationController->pauseAnimation(animationId, timeOffset);
+    setNeedsCommit();
+}
+
+void LayerChromium::removeAnimation(int animationId)
+{
+    m_layerAnimationController->removeAnimation(animationId);
+    setNeedsCommit();
+}
+
+void LayerChromium::suspendAnimations(double time)
+{
+    m_layerAnimationController->suspendAnimations(time);
+    setNeedsCommit();
+}
+
+void LayerChromium::resumeAnimations()
+{
+    m_layerAnimationController->resumeAnimations();
+    setNeedsCommit();
+}
+
+void LayerChromium::setLayerAnimationController(PassOwnPtr<CCLayerAnimationController> layerAnimationController)
+{
+    m_layerAnimationController = layerAnimationController;
+    setNeedsCommit();
+}
+
+bool LayerChromium::hasActiveAnimation() const
+{
+    return m_layerAnimationController->hasActiveAnimation();
+}
+
+void LayerChromium::setAnimationEvent(const CCAnimationEvent& event, double wallClockTime)
+{
+    switch (event.type()) {
+    case CCAnimationEvent::Started:
+        m_layerAnimationDelegate->notifyAnimationStarted(wallClockTime);
+        break;
+
+    case CCAnimationEvent::FinishedFloatAnimation: {
+        const CCFloatAnimationFinishedEvent* finishedEvent = event.toFloatAnimationFinishedEvent();
+        ASSERT(finishedEvent->targetProperty() == CCActiveAnimation::Opacity);
+        setOpacity(finishedEvent->finalValue());
+        break;
+    }
+
+    case CCAnimationEvent::FinishedTransformAnimation: {
+        const CCTransformAnimationFinishedEvent* finishedEvent = event.toTransformAnimationFinishedEvent();
+        ASSERT(finishedEvent->targetProperty() == CCActiveAnimation::Transform);
+        setTransform(finishedEvent->finalValue());
+        break;
+    }
+
+    }
 }
 
 void sortLayers(Vector<RefPtr<LayerChromium> >::iterator, Vector<RefPtr<LayerChromium> >::iterator, void*)
