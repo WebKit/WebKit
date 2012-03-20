@@ -36,27 +36,38 @@ class TestRunner:
                 # https://bugs.webkit.org/show_bug.cgi?id=76910
                 "WebKit2APITests/TestDownloads" ]
 
-    def __init__(self, tests=[]):
+    def __init__(self, options, tests=[]):
 
         # FIXME: webkit-build-directory --configuration always returns
         # Release because we never call set-webkit-configuration.
         #build_directory_script = os.path.join(os.path.dirname(__file__), "webkit-build-directory")
         #build_directory = self._executive.run_command([build_directory_script, "--configuration"]).rstrip()
 
-        def is_valid_build_directory(build_dir):
-            return os.path.exists(os.path.join(build_dir, ".libs"))
-
-        script_dir = os.path.dirname(__file__)
-        top_level = os.path.normpath(os.path.join(script_dir, "..", ".."))
-        build_directory = os.path.join(top_level, 'WebKitBuild', 'Release')
-        if not is_valid_build_directory(build_directory):
-            build_directory = os.path.join(top_level, 'WebKitBuild', 'Debug')
-
+        self._options = options
         self._a11y_registryd = None
         self._timed_out = False
-        self._gtk_tools_directory = os.path.join(top_level, "Tools", "gtk")
-        self._programs_path = os.path.join(build_directory, "Programs")
+        self._gtk_tools_directory = os.path.join(self._get_top_level_directory(), "Tools", "gtk")
+        self._programs_path = os.path.join(self._get_build_directory(), "Programs")
         self._tests = self._get_tests(tests)
+
+    def _get_top_level_directory(self):
+        return os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+    def _get_build_directory(self):
+        top_level = self._get_top_level_directory()
+        if self._options.release:
+            return os.path.join(top_level, 'WebKitBuild', 'Release')
+        if self._options.debug:
+            return os.path.join(top_level, 'WebKitBuild', 'Debug')
+
+        build_directory = os.path.join(top_level, 'WebKitBuild', 'Release')
+        if os.path.exists(os.path.join(build_directory, '.libs')):
+            return build_directory
+        build_directory = os.path.join(top_level, 'WebKitBuild', 'Debug')
+        if os.path.exists(os.path.join(build_directory, '.libs')):
+            return build_directory
+
+        return os.path.join(top_level, 'WebKitBuild')
 
     def _get_tests(self, tests):
         if tests:
@@ -125,14 +136,14 @@ class TestRunner:
                 sys.stderr.flush()
                 self._a11y_registryd = None
 
-    def run(self, options):
+    def run(self):
         if not self._tests:
             sys.stderr.write("ERROR: tests not found in %s.\n" % (self._programs_path))
             sys.stderr.flush()
             return 1
 
         test_env = os.environ
-        test_env["DISPLAY"] = options.display
+        test_env["DISPLAY"] = self._options.display
         test_env["WEBKIT_INSPECTOR_PATH"] = os.path.abspath(os.path.join(self._programs_path, 'resources', 'inspector'))
         test_env['GSETTINGS_BACKEND'] = 'memory'
 
@@ -158,7 +169,7 @@ class TestRunner:
 
             for test in self._tests:
                 tester_command = [jhbuild_path , 'gtester']
-                if options.verbose:
+                if self._options.verbose:
                     tester_command.append('--verbose')
                 tester_command.append(test)
                 process = subprocess.Popen(tester_command, env=test_env)
@@ -209,6 +220,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     try:
-        sys.exit(TestRunner(args).run(options))
+        sys.exit(TestRunner(options, args).run())
     finally:
         xvfb.kill()
