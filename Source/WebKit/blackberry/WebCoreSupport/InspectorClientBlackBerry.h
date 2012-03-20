@@ -55,7 +55,9 @@ public:
     virtual void bringFrontendToFront();
     virtual bool sendMessageToFrontend(const String&);
     virtual void clearBrowserCache();
+    virtual bool canClearBrowserCache() { return true; }
     virtual void clearBrowserCookies();
+    virtual bool canClearBrowserCookies() { return true; }
 
 private:
     BlackBerry::WebKit::WebPagePrivate* m_webPagePrivate;

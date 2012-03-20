@@ -1,3 +1,14 @@
+2012-03-20  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] BlackBerry can clear cookies and cache from the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=81670
+
+        Reviewed by Rob Buis.
+
+        * WebCoreSupport/InspectorClientBlackBerry.h:
+        (WebCore::InspectorClientBlackBerry::canClearBrowserCache):
+        (WebCore::InspectorClientBlackBerry::canClearBrowserCookies):
+
 2012-03-20  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Removing doubly defined methods in BackingStore.cpp
