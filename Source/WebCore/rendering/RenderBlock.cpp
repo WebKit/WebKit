@@ -2264,8 +2264,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloa
         // Make sure we layout children if they need it.
         // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
         // an auto value.  Add a method to determine this, so that we can avoid the relayout.
-        RenderStyle* childStyle = child->style();
-        if (relayoutChildren || ((childStyle->logicalHeight().isPercent() || childStyle->logicalMinHeight().isPercent() || childStyle->logicalMaxHeight().isPercent()) && !isRenderView()))
+        if (relayoutChildren || (child->hasRelativeLogicalHeight() && !isRenderView()))
             child->setChildNeedsLayout(true, false);
 
         // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.

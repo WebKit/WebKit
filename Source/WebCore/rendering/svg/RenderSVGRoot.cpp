@@ -429,6 +429,14 @@ bool RenderSVGRoot::hasRelativeDimensions() const
     return svg->intrinsicHeight(SVGSVGElement::IgnoreCSSProperties).isPercent() || svg->intrinsicWidth(SVGSVGElement::IgnoreCSSProperties).isPercent();
 }
 
+bool RenderSVGRoot::hasRelativeLogicalHeight() const
+{
+    SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
+    ASSERT(svg);
+
+    return svg->intrinsicHeight(SVGSVGElement::IgnoreCSSProperties).isPercent();
+}
+
 }
 
 #endif // ENABLE(SVG)

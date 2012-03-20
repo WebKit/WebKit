@@ -461,6 +461,7 @@ public:
     void clearCachedSizeForOverflowClip();
 
     virtual bool hasRelativeDimensions() const;
+    virtual bool hasRelativeLogicalHeight() const;
 
     bool hasHorizontalLayoutOverflow() const
     {
