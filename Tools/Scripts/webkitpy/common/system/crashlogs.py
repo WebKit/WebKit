@@ -35,9 +35,10 @@ class CrashLogs(object):
     def __init__(self, filesystem):
         self._filesystem = filesystem
 
-    def find_newest_log(self, process_name, pid=None):
+    def find_newest_log(self, process_name, pid=None, include_errors=False):
         if sys.platform == "darwin":
-            return self._find_newest_log_darwin(process_name, pid)
+            return self._find_newest_log_darwin(process_name, pid, include_errors)
+        return None
 
     def _log_directory_darwin(self):
         log_directory = self._filesystem.expanduser("~")
@@ -48,29 +49,24 @@ class CrashLogs(object):
             log_directory = self._filesystem.join(log_directory, "CrashReporter")
         return log_directory
 
-    def _find_newest_log_darwin(self, process_name, pid):
+    def _find_newest_log_darwin(self, process_name, pid, include_errors):
         def is_crash_log(fs, dirpath, basename):
             return basename.startswith(process_name + "_") and basename.endswith(".crash")
 
         log_directory = self._log_directory_darwin()
         logs = self._filesystem.files_under(log_directory, file_filter=is_crash_log)
-        if not logs:
-            return None
         first_line_regex = re.compile(r'^Process:\s+(?P<process_name>.*) \[(?P<pid>\d+)\]$')
+        errors = ''
         for path in reversed(sorted(logs)):
             try:
-                with self._filesystem.open_text_file_for_reading(path) as f:
-                    first_line = f.readline()
+                f = self._filesystem.read_text_file(path)
+                match = first_line_regex.match(f[0:f.find('\n')])
+                if match and match.group('process_name') == process_name and (pid is None or int(match.group('pid')) == pid):
+                    return errors + f
+            except IOError, e:
+                if include_errors:
+                    errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
 
-                    match = first_line_regex.match(first_line)
-                    if not match:
-                        continue
-                    if match.group('process_name') != process_name:
-                        continue
-                    if pid is not None and int(match.group('pid')) != pid:
-                        continue
-
-                    f.seek(0, os.SEEK_SET)
-                    return f.read()
-            except IOError:
-                continue
+        if include_errors and errors:
+            return errors
+        return None

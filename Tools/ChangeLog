@@ -1,5 +1,30 @@
 2012-03-19  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: crashlog parsing is broken
+        https://bugs.webkit.org/show_bug.cgi?id=81586
+
+        Reviewed by Adam Barth.
+
+        Seeking on a file opened through codecs() appears to not work
+        correctly (at least on SL).
+        
+        The code was more complicated than it needed to be, so I have
+        revamped it to just read a full crashlog at once and then look
+        for matches. 
+        
+        I have also added the ability to optionally propagate
+        errors back (which can be helpful to debug races when ReportCrash is
+        still running and you need to see that you couldn't open some
+        files, rather than just ignoring them).
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs.find_newest_log):
+        (CrashLogs._find_newest_log_darwin):
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        (CrashLogsTest.test_find_log_darwin):
+
+2012-03-19  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: clean up some port._filesystem references to not reference private members
         https://bugs.webkit.org/show_bug.cgi?id=81595
 

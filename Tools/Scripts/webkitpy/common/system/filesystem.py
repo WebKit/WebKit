@@ -201,6 +201,8 @@ class FileSystem(object):
             f.write(contents)
 
     def open_text_file_for_reading(self, path):
+        # Note: There appears to be an issue with the returned file objects
+        # not being seekable. See http://stackoverflow.com/questions/1510188/can-seek-and-tell-work-with-utf-8-encoded-documents-in-python .
         return codecs.open(path, 'r', 'utf8')
 
     def open_text_file_for_writing(self, path):
