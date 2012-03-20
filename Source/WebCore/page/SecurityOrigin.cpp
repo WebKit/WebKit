@@ -355,15 +355,6 @@ bool SecurityOrigin::canDisplay(const KURL& url) const
     return true;
 }
 
-SecurityOrigin::Policy SecurityOrigin::canShowNotifications() const
-{
-    if (m_universalAccess)
-        return Always;
-    if (isUnique())
-        return Never;
-    return Ask;
-}
-
 void SecurityOrigin::grantLoadLocalResources()
 {
     // This function exists only to support backwards compatibility with older
@@ -395,15 +386,12 @@ String SecurityOrigin::toString() const
 {
     if (isUnique())
         return "null";
-    if (m_protocol == "file" && m_enforceFilePathSeparation)
-        return "null";
-    return toRawString();
-}
 
-String SecurityOrigin::toRawString() const
-{
-    if (m_protocol == "file")
+    if (m_protocol == "file") {
+        if (m_enforceFilePathSeparation)
+            return "null";
         return "file://";
+    }
 
     StringBuilder result;
     result.reserveCapacity(m_protocol.length() + m_host.length() + 10);

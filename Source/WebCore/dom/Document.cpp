@@ -4717,20 +4717,19 @@ void Document::initSecurityContext()
 
     if (Settings* settings = this->settings()) {
         if (!settings->isWebSecurityEnabled()) {
-            // Web security is turned off. We should let this document access every
-            // other document. This is used primary by testing harnesses for web
-            // sites.
-            securityOrigin()->grantUniversalAccess();
+          // Web security is turned off.  We should let this document access every
+          // other document.  This is used primary by testing harnesses for web
+          // sites.
+          securityOrigin()->grantUniversalAccess();
+
         } else if (settings->allowUniversalAccessFromFileURLs() && securityOrigin()->isLocal()) {
-            // Some clients want file:// URLs to have universal access, but that
-            // setting is dangerous for other clients.
-            securityOrigin()->grantUniversalAccess();
+          // Some clients want file:// URLs to have universal access, but that
+          // setting is dangerous for other clients.
+          securityOrigin()->grantUniversalAccess();
         } else if (!settings->allowFileAccessFromFileURLs() && securityOrigin()->isLocal()) {
-            // Some clients want file:// URLs to have even tighter restrictions by
-            // default, and not be able to access other local files.
-            // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
-            // still can have other privileges that can be remembered, thereby not making them unique origins.
-            securityOrigin()->enforceFilePathSeparation();
+          // Some clients want file:// URLs to have even tighter restrictions by
+          // default, and not be able to access other local files.
+          securityOrigin()->enforceFilePathSeparation();
         }
     }
 

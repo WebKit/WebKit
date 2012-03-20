@@ -35,8 +35,6 @@
 #include "ExceptionCode.h"
 #include "Notification.h"
 #include "ScriptExecutionContext.h"
-#include "Timer.h"
-#include "VoidCallback.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -85,23 +83,7 @@ public:
 private:
     NotificationCenter(ScriptExecutionContext*, NotificationClient*);
 
-    class NotificationRequestCallback : public RefCounted<NotificationRequestCallback> {
-    public:
-        static PassRefPtr<NotificationRequestCallback> createAndStartTimer(NotificationCenter*, PassRefPtr<VoidCallback>);
-        void startTimer();
-        void timerFired(Timer<NotificationRequestCallback>*);
-    private:
-        NotificationRequestCallback(NotificationCenter*, PassRefPtr<VoidCallback>);
-
-        RefPtr<NotificationCenter> m_notificationCenter;
-        Timer<NotificationRequestCallback> m_timer;
-        RefPtr<VoidCallback> m_callback;
-    };
-
-    void requestTimedOut(NotificationRequestCallback*);
-
     NotificationClient* m_client;
-    HashSet<RefPtr<NotificationRequestCallback> > m_callbacks;
 };
 
 } // namespace WebCore

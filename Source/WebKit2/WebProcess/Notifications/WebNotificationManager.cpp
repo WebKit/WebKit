@@ -95,9 +95,8 @@ NotificationClient::Permission WebNotificationManager::policyForOrigin(WebCore::
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     if (!origin)
         return NotificationClient::PermissionNotAllowed;
-
-    ASSERT(!origin->isUnique());
-    HashMap<String, bool>::const_iterator it = m_permissionsMap.find(origin->toRawString());
+    
+    HashMap<String, bool>::const_iterator it = m_permissionsMap.find(origin->toString());
     if (it != m_permissionsMap.end())
         return it->second ? NotificationClient::PermissionAllowed : NotificationClient::PermissionDenied;
 #endif

@@ -37,7 +37,7 @@
 
 #include "Document.h"
 #include "NotificationClient.h"
-#include "SecurityOrigin.h"
+#include "VoidCallback.h"
 #include "WorkerContext.h"
 
 namespace WebCore {
@@ -57,17 +57,6 @@ int NotificationCenter::checkPermission()
 {
     if (!client() || !scriptExecutionContext())
         return NotificationClient::PermissionDenied;
-
-    switch (scriptExecutionContext()->securityOrigin()->canShowNotifications()) {
-    case SecurityOrigin::Always:
-        return NotificationClient::PermissionAllowed;
-    case SecurityOrigin::Never:
-        return NotificationClient::PermissionDenied;
-    case SecurityOrigin::Ask:
-        return m_client->checkPermission(scriptExecutionContext());
-    }
-
-    ASSERT_NOT_REACHED();
     return m_client->checkPermission(scriptExecutionContext());
 }
 
@@ -75,18 +64,6 @@ void NotificationCenter::requestPermission(PassRefPtr<VoidCallback> callback)
 {
     if (!client() || !scriptExecutionContext())
         return;
-
-    switch (scriptExecutionContext()->securityOrigin()->canShowNotifications()) {
-    case SecurityOrigin::Always:
-    case SecurityOrigin::Never: {
-        m_callbacks.add(NotificationRequestCallback::createAndStartTimer(this, callback));
-        return;
-    }
-    case SecurityOrigin::Ask:
-        return m_client->requestPermission(scriptExecutionContext(), callback);
-    }
-
-    ASSERT_NOT_REACHED();
     m_client->requestPermission(scriptExecutionContext(), callback);
 }
 
@@ -99,36 +76,6 @@ void NotificationCenter::disconnectFrame()
     m_client->cancelRequestsForPermission(scriptExecutionContext());
     m_client->clearNotifications(scriptExecutionContext());
     m_client = 0;
-}
-
-void NotificationCenter::requestTimedOut(NotificationCenter::NotificationRequestCallback* request)
-{
-    m_callbacks.remove(request);
-}
-
-PassRefPtr<NotificationCenter::NotificationRequestCallback> NotificationCenter::NotificationRequestCallback::createAndStartTimer(NotificationCenter* center, PassRefPtr<VoidCallback> callback)
-{
-    RefPtr<NotificationCenter::NotificationRequestCallback> requestCallback = adoptRef(new NotificationCenter::NotificationRequestCallback(center, callback));
-    requestCallback->startTimer();
-    return requestCallback.release();
-}
-
-NotificationCenter::NotificationRequestCallback::NotificationRequestCallback(NotificationCenter* center, PassRefPtr<VoidCallback> callback)
-    : m_notificationCenter(center)
-    , m_timer(this, &NotificationCenter::NotificationRequestCallback::timerFired)
-    , m_callback(callback)
-{
-}
-
-void NotificationCenter::NotificationRequestCallback::startTimer()
-{
-    m_timer.startOneShot(0);
-}
-
-void NotificationCenter::NotificationRequestCallback::timerFired(Timer<NotificationCenter::NotificationRequestCallback>*)
-{
-    m_callback->handleEvent();
-    m_notificationCenter->requestTimedOut(this);
 }
 
 } // namespace WebCore

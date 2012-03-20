@@ -39,12 +39,6 @@ class KURL;
 
 class SecurityOrigin : public ThreadSafeRefCounted<SecurityOrigin> {
 public:
-    enum Policy {
-        Never = 0,
-        Always,
-        Ask
-    };
-
     static PassRefPtr<SecurityOrigin> create(const KURL&);
     static PassRefPtr<SecurityOrigin> createUnique();
 
@@ -121,7 +115,6 @@ public:
     bool canAccessCookies() const { return !isUnique(); }
     bool canAccessPasswordManager() const { return !isUnique(); }
     bool canAccessFileSystem() const { return !isUnique(); }
-    Policy canShowNotifications() const;
 
     // Technically, we should always allow access to sessionStorage, but we
     // currently don't handle creating a sessionStorage area for unique
@@ -142,8 +135,6 @@ public:
     bool isUnique() const { return m_isUnique; }
 
     // Marks a file:// origin as being in a domain defined by its path.
-    // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
-    // still can have other privileges that can be remembered, thereby not making them unique.
     void enforceFilePathSeparation();
 
     // Convert this SecurityOrigin into a string. The string
@@ -157,10 +148,6 @@ public:
     // SecurityOrigin might be empty, or we might have explicitly decided that
     // we shouldTreatURLSchemeAsNoAccess.
     String toString() const;
-
-    // Similar to toString(), but does not take into account any factors that
-    // could make the string return "null".
-    String toRawString() const;
 
     // Serialize the security origin to a string that could be used as part of
     // file names. This format should be used in storage APIs only.
