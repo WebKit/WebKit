@@ -284,29 +284,28 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     if (ec)
         return false;
 
-    bool isFragment = newChild->nodeType() == DOCUMENT_FRAGMENT_NODE && !newChild->isShadowRoot();
+    NodeVector targets;
+    collectTargetNodes(newChild.get(), targets);
 
     // Add the new child(ren)
-    RefPtr<Node> child = isFragment ? newChild->firstChild() : newChild;
-    while (child) {
+    for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+        Node* child = it->get();
+
         // If the new child is already in the right place, we're done.
         if (prev && (prev == child || prev == child->previousSibling()))
             break;
 
-        // For a fragment we have more children to do.
-        RefPtr<Node> nextChild = isFragment ? child->nextSibling() : 0;
-
         // Remove child from its old position.
         if (ContainerNode* oldParent = child->parentNode())
-            oldParent->removeChild(child.get(), ec);
+            oldParent->removeChild(child, ec);
         if (ec)
             return false;
 
         // Due to arbitrary code running in response to a DOM mutation event it's
-        // possible that "prev" is no longer a child of "this".
+        // possible that "next" is no longer a child of "this".
         // It's also possible that "child" has been inserted elsewhere.
         // In either of those cases, we'll just stop.
-        if (prev && prev->parentNode() != this)
+        if (next && next->parentNode() != this)
             break;
         if (child->parentNode())
             break;
@@ -315,38 +314,22 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         ASSERT(!child->previousSibling());
 
 #if ENABLE(INSPECTOR)
-        InspectorInstrumentation::willInsertDOMNode(document(), child.get(), this);
+        InspectorInstrumentation::willInsertDOMNode(document(), child, this);
 #endif
 
-        treeScope()->adoptIfNeeded(child.get());
+        treeScope()->adoptIfNeeded(child);
 
-        // Add child after "prev".
+        // Add child before "next".
         forbidEventDispatch();
-        Node* next;
-        if (prev) {
-            next = prev->nextSibling();
-            ASSERT(m_firstChild != next);
-            prev->setNextSibling(child.get());
-        } else {
-            next = m_firstChild;
-            m_firstChild = child.get();
-        }
-        if (next) {
-            ASSERT(m_lastChild != prev);
-            ASSERT(next->previousSibling() == prev);
-            next->setPreviousSibling(child.get());
-        } else {
-            ASSERT(m_lastChild == prev);
-            m_lastChild = child.get();
-        }
-        child->setParent(this);
-        child->setPreviousSibling(prev.get());
-        child->setNextSibling(next);
+        if (next)
+            insertBeforeCommon(next.get(), child);
+        else
+            appendChildToContainer(child, this);
         allowEventDispatch();
 
-        childrenChanged(false, prev.get(), next, 1);
-        notifyChildInserted(child.get());
-                
+        childrenChanged(false, prev.get(), next.get(), 1);
+        notifyChildInserted(child);
+
         // Add child to the rendering tree
         if (attached() && !child->attached() && child->parentNode() == this) {
             if (shouldLazyAttach)
@@ -357,10 +340,8 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
 
         // Now that the child is attached to the render tree, dispatch
         // the relevant mutation events.
-        dispatchChildInsertionEvents(child.get());
-
+        dispatchChildInsertionEvents(child);
         prev = child;
-        child = nextChild.release();
     }
 
     dispatchSubtreeModifiedEvent();
@@ -639,13 +620,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
 
         // Append child to the end of the list
         forbidEventDispatch();
-        child->setParent(this);
-        if (m_lastChild) {
-            child->setPreviousSibling(m_lastChild);
-            m_lastChild->setNextSibling(child);
-        } else
-            m_firstChild = child;
-        m_lastChild = child;
+        appendChildToContainer(child, this);
         allowEventDispatch();
 
         // Send notification about the children change.
@@ -678,7 +653,7 @@ void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
     forbidEventDispatch();
     Node* last = m_lastChild;
     // FIXME: This method should take a PassRefPtr.
-    appendChildToContainer<Node, ContainerNode>(newChild.get(), this);
+    appendChildToContainer(newChild.get(), this);
     treeScope()->adoptIfNeeded(newChild.get());
     
     allowEventDispatch();
