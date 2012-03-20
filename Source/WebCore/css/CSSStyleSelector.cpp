@@ -2918,23 +2918,15 @@ bool CSSStyleSelector::useSVGZoomRules()
 
 static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, CSSStyleSelector* selector, Length& length)
 {
-    if (primitiveValue->getIdent() == CSSValueAuto) {
-        length = Length();
-        return true;
-    }
+    Length workingLength = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
+    if (workingLength.isUndefined())
+        return false;
 
-    if (primitiveValue->isLength()) {
-        length = primitiveValue->computeLength<Length>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
-        length.setQuirk(primitiveValue->isQuirkValue());
-        return true;
-    }
+    if (primitiveValue->isLength())
+        workingLength.setQuirk(primitiveValue->isQuirkValue());
 
-    if (primitiveValue->isPercentage()) {
-        length = Length(primitiveValue->getDoubleValue(), Percent);
-        return true;
-    }
-
-    return false;
+    length = workingLength;
+    return true;
 }
 
 static bool createGridTrackList(CSSValue* value, Vector<Length>& lengths, CSSStyleSelector* selector)
@@ -3371,12 +3363,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         CSSReflectValue* reflectValue = static_cast<CSSReflectValue*>(value);
         RefPtr<StyleReflection> reflection = StyleReflection::create();
         reflection->setDirection(reflectValue->direction());
-        if (reflectValue->offset()) {
-            if (reflectValue->offset()->isPercentage())
-                reflection->setOffset(Length(reflectValue->offset()->getDoubleValue(), Percent));
-            else
-                reflection->setOffset(reflectValue->offset()->computeLength<Length>(style(), m_rootElementStyle, zoomFactor));
-        }
+        if (reflectValue->offset())
+            reflection->setOffset(reflectValue->offset()->convertToLength<FixedIntegerConversion | PercentConversion>(style(), m_rootElementStyle, zoomFactor));
         NinePieceImage mask;
         mask.setMaskDefaults();
         mapNinePieceImage(property, reflectValue->mask(), mask);
