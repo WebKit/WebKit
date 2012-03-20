@@ -219,6 +219,10 @@ http/tests/loading/progress-finished-callback.html
 # https://bugs.webkit.org/show_bug.cgi?id=76896
 http/tests/navigation/anchor-frames-gbk.html
 
+# [WK2] http/tests/navigation/https-in-page-cache.html times out on mac-wk2
+# https://bugs.webkit.org/show_bug.cgi?id=81622
+http/tests/navigation/https-in-page-cache.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
