@@ -231,6 +231,13 @@ http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html
 # https://bugs.webkit.org/show_bug.cgi?id=81624
 http/tests/websocket/tests/hixie76/frame-lengths.html
 
+# [WK2] Four http/tests/xmlhttprequest tests fail on mac-wk2
+# https://bugs.webkit.org/show_bug.cgi?id=81627
+http/tests/xmlhttprequest/basic-auth-default.html
+http/tests/xmlhttprequest/basic-auth.html
+http/tests/xmlhttprequest/re-login-async.html
+http/tests/xmlhttprequest/workers/abort-exception-assert.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
