@@ -58,6 +58,10 @@ public:
     // live Objective-C objects whose methods come from that bundle.
     void unload();
 
+#if PLATFORM(MAC)
+    String bundleIdentifier() const;
+#endif
+
     template<typename FunctionType> FunctionType functionPointer(const char* functionName) const;
 
 #if PLATFORM(MAC) && !defined(__LP64__)

@@ -69,6 +69,11 @@ void* Module::platformFunctionPointer(const char* functionName) const
     return CFBundleGetFunctionPointerForName(m_bundle.get(), functionNameString.get());
 }
 
+String Module::bundleIdentifier() const
+{
+    return CFBundleGetIdentifier(m_bundle.get());
+}
+
 #if !defined(__LP64__)
 CFBundleRefNum Module::bundleResourceMap()
 {

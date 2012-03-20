@@ -1,3 +1,25 @@
+2012-03-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Sandboxed PluginProcess should use private temporary and cache directories
+        https://bugs.webkit.org/show_bug.cgi?id=81702
+        <rdar://problem/10792047>
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/Module.h:
+        * Platform/mac/ModuleMac.mm:
+        (WebKit::Module::bundleIdentifier):
+        Expose plug-in's bundle identifier.
+
+        * PluginProcess/mac/com.apple.WebKit.PluginProcess.sb.in: Some unerlated fixes to make
+        networking functional on my testing platforms. These serveices are already allowed for
+        WebProcess.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapeSandboxFunctions.mm:
+        (readSandboxProfile): Unrelated fix - I've been made to rename the profile file, but
+        didn't update where it's read from!
+        (WKN_EnterSandbox): Add a suffix to user directories.
+
 2012-03-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r111445 and r111446.

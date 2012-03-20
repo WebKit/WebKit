@@ -29,6 +29,7 @@
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
 #import "PluginProcess.h"
+#import "NetscapePluginModule.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/SoftLinking.h>
@@ -59,7 +60,7 @@ static bool enteredSandbox;
 
 static CString readSandboxProfile()
 {
-    RetainPtr<CFURLRef> profileURL(AdoptCF, CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("plugin"), CFSTR("sb"), 0));
+    RetainPtr<CFURLRef> profileURL(AdoptCF, CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("com.apple.WebKit.PluginProcess"), CFSTR("sb"), 0));
     char profilePath[PATH_MAX];
     if (!CFURLGetFileSystemRepresentation(profileURL.get(), false, reinterpret_cast<UInt8*>(profilePath), sizeof(profilePath))) {
         fprintf(stderr, "Could not get file system representation of plug-in sandbox URL\n");
@@ -100,6 +101,19 @@ NPError WKN_EnterSandbox(const char* readOnlyPaths[], const char* readWritePaths
     if (profile.isNull())
         exit(EX_NOPERM);
 
+#if !defined(BUILDING_ON_LION)
+    // Use private temporary and cache directories.
+    String systemDirectorySuffix = "com.apple.WebKit.PluginProcess+" + PluginProcess::shared().netscapePluginModule()->module()->bundleIdentifier();
+    setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(systemDirectorySuffix).data(), 0);
+    char temporaryDirectory[PATH_MAX];
+    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
+        fprintf(stderr, "PluginProcess: couldn't retrieve private temporary directory path: %d\n", errno);
+        exit(EX_NOPERM);
+    }
+    setenv("TMPDIR", temporaryDirectory, 1);
+#endif
+
+
     Vector<const char*> extendedReadOnlyPaths;
     if (readOnlyPaths) {
         for (unsigned i = 0; readOnlyPaths[i]; ++i)
@@ -122,15 +136,12 @@ NPError WKN_EnterSandbox(const char* readOnlyPaths[], const char* readWritePaths
             extendedReadWritePaths.append(readWritePaths[i]);
     }
 
-    // FIXME: <rdar://problem/10785457> Use a custom temporary directory.
     char darwinUserTempDirectory[PATH_MAX];
     if (confstr(_CS_DARWIN_USER_TEMP_DIR, darwinUserTempDirectory, PATH_MAX) > 0)
         extendedReadWritePaths.append(darwinUserTempDirectory);
 
-    // FIXME: <rdar://problem/10792047> Use a custom cache directory.
     char darwinUserCacheDirectory[PATH_MAX];
-    size_t darwinUserCachePathSize = confstr(_CS_DARWIN_USER_CACHE_DIR, darwinUserCacheDirectory, PATH_MAX);
-    if (darwinUserCachePathSize > 0)
+    if (confstr(_CS_DARWIN_USER_CACHE_DIR, darwinUserCacheDirectory, PATH_MAX) > 0)
         extendedReadWritePaths.append(darwinUserCacheDirectory);
 
     RetainPtr<CFStringRef> cachePath(AdoptCF, WKCopyFoundationCacheDirectory());
