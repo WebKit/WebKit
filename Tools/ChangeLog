@@ -1,3 +1,12 @@
+2012-03-19  Ionut Biru  <ibiru@archlinux.org>
+
+        [BUILD] use detected python to run generate-gtkdoc
+        https://bugs.webkit.org/show_bug.cgi?id=80695
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Use $(PYTHON) instead of plain `python`
+
 2012-03-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r109760.
