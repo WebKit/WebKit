@@ -1,3 +1,12 @@
+2012-03-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] libWebCore.la has become too big for make
+        https://bugs.webkit.org/show_bug.cgi?id=81582
+
+        Unreviewed build fix.
+
+        * GNUmakefile.am: link-in the new libDerivedWebCore.la
+
 2012-03-16  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Allow running run-gtk-tests during 'make dist'

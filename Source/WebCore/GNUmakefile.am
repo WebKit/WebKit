@@ -837,7 +837,16 @@ DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(WebCore)/
 $(webkitgtk_sources) $(webkit2_sources) $(webkit2_plugin_process_sources) $(webcore_sources) $(webcoregtk_sources) : | $(supplemental_dependency_file) $(webcore_built_sources)
 
 noinst_LTLIBRARIES += \
+	libWebCoreModules.la \
 	libWebCore.la
+
+# Artificial dependency to try to force a relink of the WebCore libraries
+# When their makefiles change.
+webcore_lib_for_dep = libWebCore.la
+$(webcore_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
+
+webcoremodules_lib_for_dep = libWebcoreModules.la
+$(webcoremodules_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
 
 nodist_EXTRA_libWebCore_la_SOURCES = \
 	$(webcore_built_nosources)
@@ -878,6 +887,15 @@ libWebCore_la_CPPFLAGS = \
 	$(UNICODE_CFLAGS) \
 	$(XRENDER_CFLAGS) \
 	$(XT_CFLAGS)
+
+libWebCoreModules_la_SOURCES = \
+	$(webcore_modules_sources)
+
+libWebCoreModules_la_CXXFLAGS = $(libWebCore_la_CXXFLAGS)
+
+libWebCoreModules_la_CFLAGS = $(libWebCore_la_CFLAGS)
+
+libWebCoreModules_la_CPPFLAGS = $(libWebCore_la_CPPFLAGS)
 
 # We have a different library with only the files that require GTK+. It allows us
 # to build a common WebCore lib and two different gtk WebCore libs depending on

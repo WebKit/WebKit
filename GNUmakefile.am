@@ -69,6 +69,7 @@ javascriptcore_sources :=
 javascriptcore_built_sources :=
 javascriptcore_built_nosources :=
 webcore_cppflags :=
+webcore_modules_sources :=
 webcore_sources :=
 webcore_libadd :=
 webcore_built_sources :=

@@ -961,7 +961,7 @@ dom_binding_idls += \
 	$(WebCore)/xml/XPathResult.idl \
 	$(WebCore)/xml/XSLTProcessor.idl
 
-webcore_sources += \
+webcore_modules_sources += \
 	Source/WebCore/Modules/filesystem/AsyncFileWriter.h \
 	Source/WebCore/Modules/filesystem/AsyncFileWriterClient.h \
 	Source/WebCore/Modules/filesystem/DOMFilePath.cpp \
@@ -1017,7 +1017,9 @@ webcore_sources += \
 	Source/WebCore/Modules/filesystem/Metadata.h \
 	Source/WebCore/Modules/filesystem/WebKitFlags.h \
 	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.cpp \
-	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.h \
+	Source/WebCore/Modules/filesystem/WorkerContextFileSystem.h
+
+webcore_sources += \
 	Source/WebCore/Modules/geolocation/Geolocation.cpp \
 	Source/WebCore/Modules/geolocation/Geolocation.h \
 	Source/WebCore/Modules/geolocation/GeolocationController.cpp \
