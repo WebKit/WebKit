@@ -1,3 +1,30 @@
+2012-03-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Division optimizations fail to infer cases of truncated division and
+        mishandle -2147483648/-1
+        https://bugs.webkit.org/show_bug.cgi?id=81428
+        <rdar://problem/11067382>
+
+        Reviewed by Oliver Hunt.
+
+        If you're a division over integers and you're only used as an integer, then you're
+        an integer division and remainder checks become unnecessary. If you're dividing
+        -2147483648 by -1, don't crash.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (MacroAssemblerX86Common):
+        (JSC::MacroAssemblerX86Common::add32):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileIntegerArithDivForX86):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * llint/LowLevelInterpreter64.asm:
+
 2012-03-19  Benjamin Poulain  <bpoulain@apple.com>
 
         Simplify SmallStrings

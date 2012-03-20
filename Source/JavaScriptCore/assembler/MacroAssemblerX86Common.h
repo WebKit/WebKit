@@ -129,6 +129,11 @@ public:
     {
         m_assembler.addl_rm(src, dest.offset, dest.base);
     }
+
+    void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        m_assembler.leal_mr(imm.m_value, src, dest);
+    }
     
     void and32(RegisterID src, RegisterID dest)
     {

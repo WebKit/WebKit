@@ -1737,6 +1737,9 @@ private:
     void compileArithSub(Node&);
     void compileArithNegate(Node&);
     void compileArithMul(Node&);
+#if CPU(X86) || CPU(X86_64)
+    void compileIntegerArithDivForX86(Node&);
+#endif
     void compileArithMod(Node&);
     void compileSoftModulo(Node&);
     void compileGetTypedArrayLength(const TypedArrayDescriptor&, Node&, bool needsSpeculationCheck);

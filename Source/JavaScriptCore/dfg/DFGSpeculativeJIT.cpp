@@ -2450,6 +2450,82 @@ void SpeculativeJIT::compileArithMul(Node& node)
     doubleResult(result.fpr(), m_compileIndex);
 }
 
+#if CPU(X86) || CPU(X86_64)
+void SpeculativeJIT::compileIntegerArithDivForX86(Node& node)
+{
+    SpeculateIntegerOperand op1(this, node.child1());
+    SpeculateIntegerOperand op2(this, node.child2());
+    GPRTemporary eax(this, X86Registers::eax);
+    GPRTemporary edx(this, X86Registers::edx);
+    GPRReg op1GPR = op1.gpr();
+    GPRReg op2GPR = op2.gpr();
+    
+    GPRReg op2TempGPR;
+    GPRReg temp;
+    if (op2GPR == X86Registers::eax || op2GPR == X86Registers::edx) {
+        op2TempGPR = allocate();
+        temp = op2TempGPR;
+    } else {
+        op2TempGPR = InvalidGPRReg;
+        if (op1GPR == X86Registers::eax)
+            temp = X86Registers::edx;
+        else
+            temp = X86Registers::eax;
+    }
+    
+    ASSERT(temp != op1GPR);
+    ASSERT(temp != op2GPR);
+    
+    m_jit.add32(JITCompiler::TrustedImm32(1), op2GPR, temp);
+    
+    JITCompiler::Jump safeDenominator = m_jit.branch32(JITCompiler::Above, temp, JITCompiler::TrustedImm32(1));
+    
+    JITCompiler::Jump done;
+    if (nodeUsedAsNumber(node.arithNodeFlags())) {
+        speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchTest32(JITCompiler::Zero, op2GPR));
+        speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483648)));
+    } else {
+        JITCompiler::Jump zero = m_jit.branchTest32(JITCompiler::Zero, op2GPR);
+        JITCompiler::Jump notNeg2ToThe31 = m_jit.branch32(JITCompiler::Equal, op1GPR, TrustedImm32(-2147483648));
+        zero.link(&m_jit);
+        m_jit.move(TrustedImm32(0), eax.gpr());
+        done = m_jit.jump();
+        notNeg2ToThe31.link(&m_jit);
+    }
+    
+    safeDenominator.link(&m_jit);
+            
+    // If the user cares about negative zero, then speculate that we're not about
+    // to produce negative zero.
+    if (!nodeCanIgnoreNegativeZero(node.arithNodeFlags())) {
+        MacroAssembler::Jump numeratorNonZero = m_jit.branchTest32(MacroAssembler::NonZero, op1GPR);
+        speculationCheck(NegativeZero, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::LessThan, op2GPR, TrustedImm32(0)));
+        numeratorNonZero.link(&m_jit);
+    }
+    
+    if (op2TempGPR != InvalidGPRReg) {
+        m_jit.move(op2GPR, op2TempGPR);
+        op2GPR = op2TempGPR;
+    }
+            
+    m_jit.move(op1GPR, eax.gpr());
+    m_jit.assembler().cdq();
+    m_jit.assembler().idivl_r(op2GPR);
+            
+    if (op2TempGPR != InvalidGPRReg)
+        unlock(op2TempGPR);
+
+    // Check that there was no remainder. If there had been, then we'd be obligated to
+    // produce a double result instead.
+    if (nodeUsedAsNumber(node.arithNodeFlags()))
+        speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branchTest32(JITCompiler::NonZero, edx.gpr()));
+    else
+        done.link(&m_jit);
+            
+    integerResult(eax.gpr(), m_compileIndex);
+}
+#endif // CPU(X86) || CPU(X86_64)
+
 void SpeculativeJIT::compileArithMod(Node& node)
 {
     if (!at(node.child1()).shouldNotSpeculateInteger() && !at(node.child2()).shouldNotSpeculateInteger()
