@@ -27,6 +27,7 @@
 #include "CachedScript.h"
 #include "CachedResourceLoader.h"
 #include "ContentSecurityPolicy.h"
+#include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "DocumentParser.h"
 #include "Frame.h"
@@ -40,6 +41,7 @@
 #include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
@@ -65,6 +67,7 @@ ScriptElement::ScriptElement(Element* element, bool parserInserted, bool already
     , m_willExecuteWhenDocumentFinishedParsing(false)
     , m_forceAsync(!parserInserted)
     , m_willExecuteInOrder(false)
+    , m_requestUsesAccessControl(false)
 {
     ASSERT(m_element);
 }
@@ -245,7 +248,15 @@ bool ScriptElement::requestScript(const String& sourceUrl)
 
     ASSERT(!m_cachedScript);
     if (!stripLeadingAndTrailingHTMLSpaces(sourceUrl).isEmpty()) {
-        ResourceRequest request(m_element->document()->completeURL(sourceUrl));
+        ResourceRequest request = ResourceRequest(m_element->document()->completeURL(sourceUrl));
+
+        String crossOriginMode = m_element->fastGetAttribute(HTMLNames::crossoriginAttr);
+        if (!crossOriginMode.isNull()) {
+            m_requestUsesAccessControl = true;
+            StoredCredentials allowCredentials = equalIgnoringCase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+            updateRequestForAccessControl(request, m_element->document()->securityOrigin(), allowCredentials);
+        }
+
         m_cachedScript = m_element->document()->cachedResourceLoader()->requestScript(request, scriptCharset());
         m_isExternalScript = true;
     }
@@ -303,10 +314,21 @@ void ScriptElement::execute(CachedScript* cachedScript)
     cachedScript->removeClient(this);
 }
 
-void ScriptElement::notifyFinished(CachedResource* o)
+void ScriptElement::notifyFinished(CachedResource* resource)
 {
     ASSERT(!m_willBeParserExecuted);
-    ASSERT_UNUSED(o, o == m_cachedScript);
+    ASSERT_UNUSED(resource, resource == m_cachedScript);
+
+    if (m_requestUsesAccessControl
+        && !m_element->document()->securityOrigin()->canRequest(m_cachedScript->response().url())
+        && !m_cachedScript->passesAccessControlCheck(m_element->document()->securityOrigin())) {
+
+        dispatchErrorEvent();
+        DEFINE_STATIC_LOCAL(String, consoleMessage, ("Cross-origin script load denied by Cross-Origin Resource Sharing policy."));
+        m_element->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
+        return;
+    }
+
     if (m_willExecuteInOrder)
         m_element->document()->scriptRunner()->notifyScriptReady(this, ScriptRunner::IN_ORDER_EXECUTION);
     else

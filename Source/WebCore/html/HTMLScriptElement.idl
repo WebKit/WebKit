@@ -28,5 +28,6 @@ module html {
         attribute [Reflect] boolean defer;
         attribute [Reflect, URL] DOMString src;
         attribute [Reflect] DOMString type;
+        attribute [Reflect] DOMString crossOrigin;
     };
 }
