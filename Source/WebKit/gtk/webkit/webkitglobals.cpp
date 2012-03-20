@@ -41,6 +41,7 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
 #include "webkitapplicationcache.h"
+#include "webkitfavicondatabase.h"
 #include "webkitglobalsprivate.h"
 #include "webkiticondatabase.h"
 #include "webkitsoupauthdialog.h"
@@ -237,6 +238,8 @@ static GtkWidget* currentToplevelCallback(WebKitSoupAuthDialog* feature, SoupMes
  * Return value: (transfer none): the current #WebKitIconDatabase
  *
  * Since: 1.3.13
+ *
+ * Deprecated: 1.8: Use webkit_get_favicon_database() instead
  */
 WebKitIconDatabase* webkit_get_icon_database()
 {
@@ -249,11 +252,35 @@ WebKitIconDatabase* webkit_get_icon_database()
     return database;
 }
 
+/**
+ * webkit_get_favicon_database:
+ *
+ * Returns the #WebKitFaviconDatabase providing access to website
+ * icons.
+ *
+ * Return value: (transfer none): the current #WebKitFaviconDatabase
+ *
+ * Since: 1.8
+ */
+WebKitFaviconDatabase* webkit_get_favicon_database()
+{
+    webkitInit();
+
+    static WebKitFaviconDatabase* database = 0;
+    if (!database)
+        database = WEBKIT_FAVICON_DATABASE(g_object_new(WEBKIT_TYPE_FAVICON_DATABASE, NULL));
+
+    return database;
+}
+
 static GRefPtr<WebKitSpellChecker> textChecker = 0;
 
 static void webkitExit()
 {
     g_object_unref(webkit_get_default_session());
+#if ENABLE(ICONDATABASE)
+    g_object_unref(webkit_get_favicon_database());
+#endif
     textChecker = 0;
 }
 

@@ -1,3 +1,17 @@
+2012-03-19  Carlos Garcia Campos  <cgarcia@igalia.com> and Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] WebKitIconDatabase doesn't keep icons cached
+        https://bugs.webkit.org/show_bug.cgi?id=56200
+
+        Reviewed by Martin Robinson.
+
+        Add support for favicons in GtkLauncher.
+
+        * GtkLauncher/main.c:
+        (activateUriEntryCb):
+        (iconLoadedCb):
+        (createBrowser):
+
 2012-03-19  C Anthony Risinger  <anthony@xtfx.me>
 
         [GTK] r110296 included an extra $ in @$(AM_V_GEN)

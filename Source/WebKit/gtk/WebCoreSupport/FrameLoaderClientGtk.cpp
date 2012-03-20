@@ -65,9 +65,10 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "webkiterror.h"
+#include "webkitfavicondatabase.h"
+#include "webkitfavicondatabaseprivate.h"
 #include "webkitglobals.h"
 #include "webkitglobalsprivate.h"
-#include "webkiticondatabase.h"
 #include "webkitnetworkrequest.h"
 #include "webkitnetworkrequestprivate.h"
 #include "webkitnetworkresponse.h"
@@ -625,7 +626,7 @@ void FrameLoaderClient::didPerformFirstNavigation() const
 
 void FrameLoaderClient::registerForIconNotification(bool shouldRegister)
 {
-    notImplemented();
+    webkitWebViewRegisterForIconNotification(getViewFromFrame(m_frame), shouldRegister);
 }
 
 void FrameLoaderClient::setMainFrameDocumentReady(bool ready)
@@ -802,18 +803,14 @@ void FrameLoaderClient::dispatchDidReceiveIcon()
     if (m_loadingErrorPage)
         return;
 
-    const gchar* frameURI = webkit_web_frame_get_uri(m_frame);
-    WebKitIconDatabase* database = webkit_get_icon_database();
-    g_signal_emit_by_name(database, "icon-loaded", m_frame, frameURI);
-
+    // IconController loads icons only for the main frame.
     WebKitWebView* webView = getViewFromFrame(m_frame);
+    ASSERT(m_frame == webkit_web_view_get_main_frame(webView));
 
-    // Avoid reporting favicons for non-main frames.
-    if (m_frame != webkit_web_view_get_main_frame(webView))
-        return;
-
-    g_object_notify(G_OBJECT(webView), "icon-uri");
-    g_signal_emit_by_name(webView, "icon-loaded", webkit_web_view_get_icon_uri(webView));
+    const char* frameURI = webkit_web_frame_get_uri(m_frame);
+    WebKitFaviconDatabase* database = webkit_get_favicon_database();
+    webkitFaviconDatabaseDispatchDidReceiveIcon(database, frameURI);
+    webkitWebViewIconLoaded(database, frameURI, webView);
 }
 
 void FrameLoaderClient::dispatchDidStartProvisionalLoad()
