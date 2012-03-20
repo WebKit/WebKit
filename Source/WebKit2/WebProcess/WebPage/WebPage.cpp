@@ -2103,7 +2103,7 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dra
 }
 
 #else
-void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const String& dragStorageName, uint32_t flags, const SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const String& dragStorageName, uint32_t flags, const SandboxExtension::Handle& sandboxExtensionHandle, const SandboxExtension::HandleArray& sandboxExtensionsHandleArray)
 {
     if (!m_page) {
         send(Messages::WebPageProxy::DidPerformDragControllerAction(WebCore::DragSession()));
@@ -2128,6 +2128,8 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
         ASSERT(!m_pendingDropSandboxExtension);
 
         m_pendingDropSandboxExtension = SandboxExtension::create(sandboxExtensionHandle);
+        for (size_t i = 0; i < sandboxExtensionsHandleArray.size(); i++)
+            m_pendingDropExtensionsForFileUpload.append(SandboxExtension::create(sandboxExtensionsHandleArray[i]));
 
         m_page->dragController()->performDrag(&dragData);
 
@@ -2137,7 +2139,10 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
             m_pendingDropSandboxExtension->invalidate();
             m_pendingDropSandboxExtension = nullptr;
         }
+        for (size_t i = 0; i < m_pendingDropExtensionsForFileUpload.size(); i++)
+            m_pendingDropExtensionsForFileUpload[i]->invalidate();
 
+        m_pendingDropExtensionsForFileUpload.clear();
         break;
     }
 
@@ -2164,6 +2169,13 @@ void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint glob
 void WebPage::willPerformLoadDragDestinationAction()
 {
     m_sandboxExtensionTracker.willPerformLoadDragDestinationAction(m_pendingDropSandboxExtension.release());
+}
+
+void WebPage::performUploadDragDestinationAction()
+{
+    for (size_t i = 0; i < m_pendingDropExtensionsForFileUpload.size(); i++)
+        m_pendingDropExtensionsForFileUpload[i]->consumePermanently();
+    m_pendingDropExtensionsForFileUpload.clear();
 }
 
 WebUndoStep* WebPage::webUndoStep(uint64_t stepID)

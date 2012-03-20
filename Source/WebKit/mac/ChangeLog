@@ -1,3 +1,15 @@
+2012-03-19  Enrica Casucci  <enrica@apple.com>
+
+        WebKit2: create sandbox extensions for files that are dropped in an input control.
+        https://bugs.webkit.org/show_bug.cgi?id=81153
+        <rdar://problem/11031207>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::willPerformDragDestinationAction): Avoid calling the delegate with the new drag action.
+        We want to avoid any unwanted side effects for the WebKit clients.
+
 2012-03-19  Emil A Eklund  <eae@chromium.org>
 
         [mac/chromium] Change platform code to use pixelSnappedRect methods

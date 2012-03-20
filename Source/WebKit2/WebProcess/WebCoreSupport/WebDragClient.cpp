@@ -36,6 +36,8 @@ void WebDragClient::willPerformDragDestinationAction(DragDestinationAction actio
 {
     if (action == DragDestinationActionLoad)
         m_page->willPerformLoadDragDestinationAction();
+    else if (action == DragDestinationActionUpload)
+        m_page->performUploadDragDestinationAction();
 }
 
 void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*)

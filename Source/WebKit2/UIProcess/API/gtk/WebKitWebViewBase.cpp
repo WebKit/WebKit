@@ -467,7 +467,8 @@ static gboolean webkitWebViewBaseDragDrop(GtkWidget* widget, GdkDragContext* con
         return FALSE;
 
     SandboxExtension::Handle handle;
-    webViewBase->priv->pageProxy->performDrag(dragData.get(), String(), handle);
+    SandboxExtension::HandleArray sandboxExtensionForUpload;
+    webViewBase->priv->pageProxy->performDrag(dragData.get(), String(), handle, sandboxExtensionForUpload);
     gtk_drag_finish(context, TRUE, FALSE, time);
     return TRUE;
 }

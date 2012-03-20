@@ -1686,6 +1686,23 @@ static bool maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
     return true;
 }
 
+static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, SandboxExtension::HandleArray& handles)
+{
+    NSArray *types = [pasteboard types];
+    if (![types containsObject:NSFilenamesPboardType])
+        return;
+    
+    NSArray *files = [pasteboard propertyListForType:NSFilenamesPboardType];
+    handles.allocate([files count]);
+    for (unsigned i = 0; i < [files count]; i++) {
+        NSString *file = [files objectAtIndex:i];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:file])
+            continue;
+        SandboxExtension::Handle handle;
+        SandboxExtension::createHandle(file, SandboxExtension::ReadOnly, handles[i]);
+    }
+}
+
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)draggingInfo
 {
     IntPoint client([self convertPoint:[draggingInfo draggingLocation] fromView:nil]);
@@ -1697,7 +1714,10 @@ static bool maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
     if (createdExtension)
         _data->_page->process()->willAcquireUniversalFileReadSandboxExtension();
 
-    _data->_page->performDrag(&dragData, [[draggingInfo draggingPasteboard] name], sandboxExtensionHandle);
+    SandboxExtension::HandleArray sandboxExtensionForUpload;
+    createSandboxExtensionsForFileUpload([draggingInfo draggingPasteboard], sandboxExtensionForUpload);
+    
+    _data->_page->performDrag(&dragData, [[draggingInfo draggingPasteboard] name], sandboxExtensionHandle, sandboxExtensionForUpload);
 
     return YES;
 }

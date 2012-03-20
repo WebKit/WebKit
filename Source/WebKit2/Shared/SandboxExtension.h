@@ -68,6 +68,28 @@ public:
 #endif
     };
 
+    class HandleArray {
+        WTF_MAKE_NONCOPYABLE(HandleArray);
+        
+    public:
+        HandleArray();
+        ~HandleArray();
+        void allocate(size_t);
+        Handle& operator[](size_t i);
+        const Handle& operator[](size_t i) const;
+        size_t size() const;
+        void encode(CoreIPC::ArgumentEncoder*) const;
+        static bool decode(CoreIPC::ArgumentDecoder*, HandleArray&);
+       
+    private:
+#if ENABLE(WEB_PROCESS_SANDBOX)
+        Handle* m_data;
+#else
+        Handle m_emptyHandle;
+#endif
+        size_t m_size;
+    };
+    
     static PassRefPtr<SandboxExtension> create(const Handle&);
     static void createHandle(const String& path, Type type, Handle&);
     static String createHandleForTemporaryFile(const String& prefix, Type type, Handle&);
@@ -85,11 +107,20 @@ private:
 #endif
 };
 
+
 #if !ENABLE(WEB_PROCESS_SANDBOX)
 inline SandboxExtension::Handle::Handle() { }
 inline SandboxExtension::Handle::~Handle() { }
 inline void SandboxExtension::Handle::encode(CoreIPC::ArgumentEncoder*) const { }
 inline bool SandboxExtension::Handle::decode(CoreIPC::ArgumentDecoder*, Handle&) { return true; }
+inline SandboxExtension::HandleArray::HandleArray() { }
+inline SandboxExtension::HandleArray::~HandleArray() { }
+inline void SandboxExtension::HandleArray::allocate(size_t) { }
+inline size_t SandboxExtension::HandleArray::size() const { return 0; }    
+inline const SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t) const { return m_emptyHandle; }
+inline SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t) { return m_emptyHandle; }
+inline void SandboxExtension::HandleArray::encode(CoreIPC::ArgumentEncoder*) const { }
+inline bool SandboxExtension::HandleArray::decode(CoreIPC::ArgumentDecoder*, HandleArray&) { return true; }
 inline PassRefPtr<SandboxExtension> SandboxExtension::create(const Handle&) { return 0; }
 inline void SandboxExtension::createHandle(const String& path, Type type, Handle&) { }
 inline String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type type, Handle&) {return String();}

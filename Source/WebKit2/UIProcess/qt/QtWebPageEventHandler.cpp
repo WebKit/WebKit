@@ -221,7 +221,8 @@ void QtWebPageEventHandler::handleDropEvent(QDropEvent* ev)
     // FIXME: Should not use QCursor::pos()
     DragData dragData(ev->mimeData(), fromItemTransform.map(ev->pos()), QCursor::pos(), dropActionToDragOperation(ev->possibleActions()));
     SandboxExtension::Handle handle;
-    m_webPageProxy->performDrag(&dragData, String(), handle);
+    SandboxExtension::HandleArray sandboxExtensionForUpload;
+    m_webPageProxy->performDrag(&dragData, String(), handle, sandboxExtensionForUpload);
     ev->setDropAction(dragOperationToDropAction(m_webPageProxy->dragSession().operation));
     ev->accept();
 

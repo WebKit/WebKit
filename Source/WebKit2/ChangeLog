@@ -1,3 +1,61 @@
+2012-03-19  Enrica Casucci  <enrica@apple.com>
+
+        WebKit2: create sandbox extensions for files that are dropped in an input control.
+        https://bugs.webkit.org/show_bug.cgi?id=81153
+        <rdar://problem/11031207>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Now the pasteboard access is performed only in the UI process, it is
+        necessary to create sandbox extensions for each file that is dropped into
+        an input type=file element. The extensions are created at the time the files
+        are dropped and consumed immediately.
+        
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction): Added template that takes 8 arguments.
+        * Shared/SandboxExtension.h:
+        (HandleArray): Added new class to handle an array of sandbox extension handles.
+        (WebKit::SandboxExtension::HandleArray::HandleArray):
+        (WebKit::SandboxExtension::HandleArray::~HandleArray):
+        (WebKit::SandboxExtension::HandleArray::resize):
+        (WebKit::SandboxExtension::HandleArray::operator[]):
+        (WebKit::SandboxExtension::HandleArray::size):
+        (WebKit::SandboxExtension::HandleArray::encode):
+        (WebKit::SandboxExtension::HandleArray::decode):
+        * Shared/mac/SandboxExtensionMac.mm: Added new class implementation.
+        (WebKit::SandboxExtension::HandleArray::HandleArray):
+        (WebKit::SandboxExtension::HandleArray::~HandleArray):
+        (WebKit::SandboxExtension::HandleArray::resize):
+        (WebKit::SandboxExtension::HandleArray::operator[]):
+        (WebKit::SandboxExtension::HandleArray::size):
+        (WebKit::SandboxExtension::HandleArray::encode):
+        (WebKit::SandboxExtension::HandleArray::decode):
+        * UIProcess/API/mac/WKView.mm:
+        (createSandboxExtensionsForFileUpload):
+        (-[WKView performDragOperation:]): Added logic to create the sandbox extensions for each
+        file/directory being dropped.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dragEntered):
+        (WebKit::WebPageProxy::dragUpdated):
+        (WebKit::WebPageProxy::dragExited):
+        (WebKit::WebPageProxy::performDrag):
+        (WebKit::WebPageProxy::performDragControllerAction): Added the handle array parameter.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handleDropEvent):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::Drop):
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        (WebKit::WebDragClient::willPerformDragDestinationAction): Added handling of the new DragActionUpload.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::getPathnamesForType): Implemented using message to the UI process.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        (WebKit::WebPage::performUploadDragDestinationAction): Added method that consumes the received extensions.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2012-03-19  Alexey Proskuryakov  <ap@apple.com>
 
         Make WebFrameLoaderClient::createFrame more like WebKit1 version.
@@ -1422,7 +1480,6 @@
 
         * Configurations/FeatureDefines.xcconfig:
 
->>>>>>> .r110352
 2012-03-08  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed Snow Leopard build fix.

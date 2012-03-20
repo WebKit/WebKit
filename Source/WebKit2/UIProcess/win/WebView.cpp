@@ -1738,7 +1738,8 @@ HRESULT STDMETHODCALLTYPE WebView::Drop(IDataObject* pDataObject, DWORD grfKeySt
     bool createdExtension = maybeCreateSandboxExtensionFromDragData(data, sandboxExtensionHandle);
     if (createdExtension)
         m_page->process()->willAcquireUniversalFileReadSandboxExtension();
-    m_page->performDrag(&data, String(), sandboxExtensionHandle);
+    SandboxExtension::HandleArray sandboxExtensionForUpload;
+    m_page->performDrag(&data, String(), sandboxExtensionHandle, sandboxExtensionForUpload);
     return S_OK;
 }
 

@@ -147,7 +147,7 @@ messages -> WebPage {
     PerformDragControllerAction(uint64_t action, WebCore::DragData dragData)
 #endif
 #if !PLATFORM(WIN) && !PLATFORM(QT) && !PLATFORM(GTK)
-    PerformDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, WTF::String dragStorageName, uint32_t flags, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    PerformDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, WTF::String dragStorageName, uint32_t flags, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::SandboxExtension::HandleArray sandboxExtensionsForUpload)
 #endif
     DragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation)
 

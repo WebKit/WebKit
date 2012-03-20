@@ -439,11 +439,12 @@ public:
 #elif PLATFORM(QT) || PLATFORM(GTK)
     void performDragControllerAction(uint64_t action, WebCore::DragData);
 #else
-    void performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WTF::String& dragStorageName, uint32_t flags, const SandboxExtension::Handle&);
+    void performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WTF::String& dragStorageName, uint32_t flags, const SandboxExtension::Handle&, const SandboxExtension::HandleArray&);
 #endif
     void dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation);
 
     void willPerformLoadDragDestinationAction();
+    void performUploadDragDestinationAction();
 
     void beginPrinting(uint64_t frameID, const PrintInfo&);
     void endPrinting();
@@ -765,6 +766,7 @@ private:
     uint64_t m_pageID;
 
     RefPtr<SandboxExtension> m_pendingDropSandboxExtension;
+    Vector<RefPtr<SandboxExtension> > m_pendingDropExtensionsForFileUpload;
 
     bool m_canRunBeforeUnloadConfirmPanel;
 

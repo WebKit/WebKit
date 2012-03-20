@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2012 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@ namespace WebCore {
         DragDestinationActionDHTML   = 1,
         DragDestinationActionEdit    = 2,
         DragDestinationActionLoad    = 4,
+        DragDestinationActionUpload  = 8,       // This value is not part of WebDragDestinationAction. File upload is always allowed.
         DragDestinationActionAny     = UINT_MAX
     } DragDestinationAction;
     

@@ -86,6 +86,66 @@ bool SandboxExtension::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle&
     return true;
 }
 
+SandboxExtension::HandleArray::HandleArray()
+    : m_data(0)
+    , m_size(0)
+{
+}
+
+SandboxExtension::HandleArray::~HandleArray()
+{
+    if (m_data)
+        delete[] m_data;
+}
+
+void SandboxExtension::HandleArray::allocate(size_t size)
+{
+    if (!size)
+        return;
+
+    ASSERT(!m_data);
+
+    m_data = new SandboxExtension::Handle[size];
+    m_size = size;
+}
+
+SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t i)
+{
+    ASSERT(i < m_size);    
+    return m_data[i];
+}
+
+const SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t i) const
+{
+    ASSERT(i < m_size);
+    return m_data[i];
+}
+
+size_t SandboxExtension::HandleArray::size() const
+{
+    return m_size;
+}
+
+void SandboxExtension::HandleArray::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    encoder->encodeUInt64(size());
+    for (size_t i = 0; i < m_size; ++i)
+        encoder->encode(m_data[i]);
+    
+}
+
+bool SandboxExtension::HandleArray::decode(CoreIPC::ArgumentDecoder* decoder, SandboxExtension::HandleArray& handles)
+{
+    uint64_t size;
+    if (!decoder->decodeUInt64(size))
+        return false;
+    handles.allocate(size);
+    for (size_t i = 0; i < size; i++)
+        if (!decoder->decode(handles[i]))
+            return false;
+    return true;
+}
+
 PassRefPtr<SandboxExtension> SandboxExtension::create(const Handle& handle)
 {
     if (!handle.m_sandboxExtension)
