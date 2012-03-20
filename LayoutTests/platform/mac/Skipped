@@ -584,3 +584,10 @@ tables/mozilla_expected_failures/bugs/bug85016.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=81410
 scrollbars/scrollbar-middleclick-nopaste.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=81599
+# These canvas tests are flaky (fail on bots, not locally, or vice versa)
+fast/canvas/canvas-createPattern-fillRect-shadow.html
+fast/canvas/canvas-draw-canvas-on-canvas-shadow.html
+fast/canvas/canvas-fillRect-gradient-shadow.html
+fast/canvas/set-colors.html
