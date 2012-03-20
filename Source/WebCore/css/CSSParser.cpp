@@ -1309,7 +1309,7 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBorderImageSource:
     case CSSPropertyWebkitMaskBoxImageSource:
         if (id == CSSValueNone) {
-            parsedValue = CSSImageValue::create();
+            parsedValue = cssValuePool()->createIdentifierValue(CSSValueNone);
             m_valueList->next();
         } else if (value->unit == CSSPrimitiveValue::CSS_URI) {
             if (m_styleSheet) {
@@ -3002,7 +3002,7 @@ PassRefPtr<CSSValue> CSSParser::parseBackgroundColor()
 bool CSSParser::parseFillImage(CSSParserValueList* valueList, RefPtr<CSSValue>& value)
 {
     if (valueList->current()->id == CSSValueNone) {
-        value = CSSImageValue::create();
+        value = cssValuePool()->createIdentifierValue(CSSValueNone);
         return true;
     }
     if (valueList->current()->unit == CSSPrimitiveValue::CSS_URI) {
@@ -5541,7 +5541,7 @@ bool CSSParser::parseBorderImage(int propId, RefPtr<CSSValue>& result, bool impo
                 else
                     return false;
             } else if (val->id == CSSValueNone)
-                context.commitImage(CSSImageValue::create());
+                context.commitImage(cssValuePool()->createIdentifierValue(CSSValueNone));
         }
 
         if (!context.canAdvance() && context.allowImageSlice()) {

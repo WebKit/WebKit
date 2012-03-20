@@ -5,7 +5,6 @@ div.test {
     position: absolute;
     left: 250px;
     top: 100px;
-    background-image: url(stars.gif);
 }
 </style>
 <script>
@@ -22,7 +21,6 @@ function runTest()
     var textRule = document.styleSheets[0].cssRules[0];
     var s = textRule.style;
     var leftValue = s.getPropertyCSSValue("left");
-    var bgImageValue = s.getPropertyCSSValue("background-image");
     var console = document.getElementById("console");
 
     try
@@ -33,17 +31,6 @@ function runTest()
     {
         var line = document.createElement("div");
         line.innerText = "setFloatValue " + e.message;
-        console.appendChild(line);
-    }
-
-    try
-    {
-        bgImageValue.setStringValue(bgImageValue.primitiveType, "stripes.gif");
-    }
-    catch (e)
-    {
-        var line = document.createElement("div");
-        line.innerText = "setStringValue " + e.message;
         console.appendChild(line);
     }
 }

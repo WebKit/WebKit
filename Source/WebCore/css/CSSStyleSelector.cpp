@@ -3044,6 +3044,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 didSet = true;
             }
 
+            if (item->isImageValue()) {
+                m_style->setContent(cachedOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageValue*>(item)), didSet);
+                didSet = true;
+                continue;
+            }
+
             if (!item->isPrimitiveValue())
                 continue;
 
@@ -3064,11 +3070,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 didSet = true;
                 // register the fact that the attribute value affects the style
                 m_features.attrsInRules.add(attr.localName().impl());
-            } else if (contentValue->isURI()) {
-                if (!contentValue->isImageValue())
-                    break;
-                m_style->setContent(cachedOrPendingFromValue(CSSPropertyContent, static_cast<CSSImageValue*>(contentValue)), didSet);
-                didSet = true;
             } else if (contentValue->isCounter()) {
                 Counter* counterValue = contentValue->getCounterValue();
                 EListStyleType listStyleType = NoneListStyle;

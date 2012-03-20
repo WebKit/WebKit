@@ -56,7 +56,7 @@ public:
     String cssText() const;
     void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
 
-    bool isPrimitiveValue() const { return m_classType <= PrimitiveClass; }
+    bool isPrimitiveValue() const { return m_classType == PrimitiveClass; }
     bool isValueList() const { return m_classType >= ValueListClass; }
 
     bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }
@@ -93,10 +93,11 @@ protected:
 
     static const size_t ClassTypeBits = 5;
     enum ClassType {
-        // Primitive class types must appear before PrimitiveClass.
+        PrimitiveClass,
+
+        // Image classes.
         ImageClass,
         CursorImageClass,
-        PrimitiveClass,
 
         // Image generator classes.
         CanvasClass,

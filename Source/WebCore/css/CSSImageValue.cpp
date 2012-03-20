@@ -22,6 +22,7 @@
 #include "CSSImageValue.h"
 
 #include "CSSCursorImageValue.h"
+#include "CSSParser.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "MemoryCache.h"
@@ -33,25 +34,22 @@
 namespace WebCore {
 
 CSSImageValue::CSSImageValue(ClassType classType, const String& url)
-    : CSSPrimitiveValue(classType, url, CSS_URI)
+    : CSSValue(classType)
+    , m_url(url)
     , m_accessedImage(false)
 {
 }
 
-CSSImageValue::CSSImageValue()
-    : CSSPrimitiveValue(ImageClass, CSSValueNone)
-    , m_accessedImage(true)
-{
-}
-
 CSSImageValue::CSSImageValue(const String& url)
-    : CSSPrimitiveValue(ImageClass, url, CSS_URI)
+    : CSSValue(ImageClass)
+    , m_url(url)
     , m_accessedImage(false)
 {
 }
 
 CSSImageValue::CSSImageValue(const String& url, StyleImage* image)
-    : CSSPrimitiveValue(ImageClass, url, CSS_URI)
+    : CSSValue(ImageClass)
+    , m_url(url)
     , m_image(image)
     , m_accessedImage(true)
 {
@@ -63,9 +61,6 @@ CSSImageValue::~CSSImageValue()
 
 StyleImage* CSSImageValue::cachedOrPendingImage()
 {
-    if (getIdent() == CSSValueNone)
-        return 0;
-
     if (!m_image)
         m_image = StylePendingImage::create(this);
 
@@ -76,7 +71,7 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
 {
     if (isCursorImageValue())
         return static_cast<CSSCursorImageValue*>(this)->cachedImage(loader);
-    return cachedImage(loader, getStringValue());
+    return cachedImage(loader, m_url);
 }
 
 StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const String& url)
@@ -105,6 +100,11 @@ void CSSImageValue::clearCachedImage()
 {
     m_image = 0;
     m_accessedImage = false;
+}
+
+String CSSImageValue::customCssText() const
+{
+    return "url(" + quoteCSSURLIfNeeded(m_url) + ")";
 }
 
 } // namespace WebCore

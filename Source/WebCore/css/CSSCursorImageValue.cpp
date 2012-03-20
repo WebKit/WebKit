@@ -63,8 +63,7 @@ CSSCursorImageValue::CSSCursorImageValue(const String& url, const IntPoint& hotS
 CSSCursorImageValue::~CSSCursorImageValue()
 {
 #if ENABLE(SVG)
-    const String& url = getStringValue();
-    if (!isSVGCursorIdentifier(url))
+    if (!isSVGCursorIdentifier(url()))
         return;
 
     HashSet<SVGElement*>::const_iterator it = m_referencedElements.begin();
@@ -73,7 +72,7 @@ CSSCursorImageValue::~CSSCursorImageValue()
     for (; it != end; ++it) {
         SVGElement* referencedElement = *it;
         referencedElement->cursorImageValueRemoved();
-        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, referencedElement->document()))
+        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url(), referencedElement->document()))
             cursorElement->removeClient(referencedElement);
     }
 #endif
@@ -87,11 +86,10 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
     if (!element || !element->isSVGElement())
         return false;
 
-    const String& url = getStringValue();
-    if (!isSVGCursorIdentifier(url))
+    if (!isSVGCursorIdentifier(url()))
         return false;
 
-    if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, element->document())) {
+    if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url(), element->document())) {
         // FIXME: This will override hot spot specified in CSS, which is probably incorrect.
         SVGLengthContext lengthContext(0);
         float x = roundf(cursorElement->x().value(lengthContext));
@@ -116,17 +114,15 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
 
 StyleCachedImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
 {
-    String url = getStringValue();
-
 #if ENABLE(SVG)
-    if (isSVGCursorIdentifier(url) && loader && loader->document()) {
+    if (isSVGCursorIdentifier(url()) && loader && loader->document()) {
         // FIXME: This will fail if the <cursor> element is in a shadow DOM (bug 59827)
-        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, loader->document()))
-            url = cursorElement->href();
+        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url(), loader->document()))
+            return CSSImageValue::cachedImage(loader, cursorElement->href());
     }
 #endif
 
-    return CSSImageValue::cachedImage(loader, url);
+    return CSSImageValue::cachedImage(loader, url());
 }
 
 #if ENABLE(SVG)

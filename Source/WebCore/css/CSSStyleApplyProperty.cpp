@@ -1082,18 +1082,16 @@ public:
             selector->style()->setCursor(CURSOR_AUTO);
             for (int i = 0; i < len; i++) {
                 CSSValue* item = list->itemWithoutBoundsCheck(i);
-                if (!item->isPrimitiveValue())
-                    continue;
-                CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
-                if (primitiveValue->isURI()) {
-                    if (primitiveValue->isCursorImageValue()) {
-                        CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(primitiveValue);
-                        if (image->updateIfSVGCursorIsUsed(selector->element())) // Elements with SVG cursors are not allowed to share style.
-                            selector->style()->setUnique();
-                        selector->style()->addCursor(selector->cachedOrPendingFromValue(CSSPropertyCursor, image), image->hotSpot());
-                    }
-                } else if (primitiveValue->isIdent())
-                    selector->style()->setCursor(*primitiveValue);
+                if (item->isCursorImageValue()) {
+                    CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(item);
+                    if (image->updateIfSVGCursorIsUsed(selector->element())) // Elements with SVG cursors are not allowed to share style.
+                        selector->style()->setUnique();
+                    selector->style()->addCursor(selector->cachedOrPendingFromValue(CSSPropertyCursor, image), image->hotSpot());
+                } else if (item->isPrimitiveValue()) {
+                    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
+                    if (primitiveValue->isIdent())
+                        selector->style()->setCursor(*primitiveValue);
+                }
             }
         } else if (value->isPrimitiveValue()) {
             CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
