@@ -20,7 +20,7 @@
 #ifndef GRefPtrClutter_h
 #define GRefPtrClutter_h
 
-#include "GRefPtr.h"
+#include <wtf/gobject/GRefPtr.h>
 
 typedef struct _ClutterActor ClutterActor;
 

@@ -28,7 +28,7 @@
 #include "CSSValueKeywords.h"
 #include "FileList.h"
 #include "FileSystem.h"
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"

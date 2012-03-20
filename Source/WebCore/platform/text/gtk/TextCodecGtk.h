@@ -29,7 +29,7 @@
 #ifndef TextCodecGTK_h
 #define TextCodecGTK_h
 
-#include "GRefPtr.h"
+#include <wtf/gobject/GRefPtr.h>
 #include <glib.h>
 #include "TextCodec.h"
 #include "TextEncoding.h"

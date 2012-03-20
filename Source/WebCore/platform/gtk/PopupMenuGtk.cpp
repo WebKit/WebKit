@@ -28,7 +28,7 @@
 #include "PopupMenuGtk.h"
 
 #include "FrameView.h"
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "GtkUtilities.h"
 #include "HostWindow.h"
 #include <gtk/gtk.h>

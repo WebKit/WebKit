@@ -25,9 +25,10 @@
 
 #include "Image.h"
 
-#include "OwnPtr.h"
 #include <QPainter>
 #include <QPixmap>
+
+#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

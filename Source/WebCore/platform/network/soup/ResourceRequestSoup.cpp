@@ -20,7 +20,7 @@
 #include "config.h"
 #include "ResourceRequest.h"
 
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "GOwnPtrSoup.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"

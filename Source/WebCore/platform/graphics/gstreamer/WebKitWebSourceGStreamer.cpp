@@ -23,19 +23,21 @@
 
 #include "Document.h"
 #include "Frame.h"
-#include "GOwnPtr.h"
-#include "GRefPtr.h"
 #include "GRefPtrGStreamer.h"
 #include "MediaPlayer.h"
 #include "NetworkingContext.h"
-#include "Noncopyable.h"
 #include "NotImplemented.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+ 
 #include <gst/app/gstappsrc.h>
 #include <gst/pbutils/missing-plugins.h>
+
+#include <wtf/Noncopyable.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;

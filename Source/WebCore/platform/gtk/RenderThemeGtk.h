@@ -28,7 +28,7 @@
 #ifndef RenderThemeGtk_h
 #define RenderThemeGtk_h
 
-#include "GRefPtr.h"
+#include <wtf/gobject/GRefPtr.h>
 #include "RenderTheme.h"
 
 typedef struct _GdkColormap GdkColormap;

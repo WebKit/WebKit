@@ -22,7 +22,7 @@
 
 #define LIBSOUP_I_HAVE_READ_BUG_594377_AND_KNOW_SOUP_PASSWORD_MANAGER_MIGHT_GO_AWAY
 
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "GRefPtrGtk.h"
 #include <libsoup/soup.h>
 #include <wtf/FastAllocBase.h>

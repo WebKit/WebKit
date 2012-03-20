@@ -23,9 +23,10 @@
 #include "AudioBus.h"
 
 #include "AudioFileReader.h"
-#include "CString.h"
 #include "FileSystem.h"
-#include "GOwnPtr.h"
+
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/text/CString.h>
 
 #include <gio/gio.h>
 #include <glib.h>

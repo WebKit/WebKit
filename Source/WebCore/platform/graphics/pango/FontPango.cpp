@@ -35,7 +35,7 @@
 #include "Font.h"
 
 #include "CairoUtilities.h"
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
 #include "PlatformContextCairo.h"

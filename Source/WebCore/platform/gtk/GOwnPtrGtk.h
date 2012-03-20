@@ -20,7 +20,7 @@
 #ifndef GOwnPtrGtk_h
 #define GOwnPtrGtk_h
 
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 
 namespace WTF {
 

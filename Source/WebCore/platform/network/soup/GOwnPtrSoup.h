@@ -20,7 +20,7 @@
 #ifndef GOwnPtrSoup_h
 #define GOwnPtrSoup_h
 
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 
 typedef struct _SoupURI SoupURI;
 

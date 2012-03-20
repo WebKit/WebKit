@@ -19,7 +19,7 @@
 #include "config.h"
 #include "SoupURIUtils.h"
 
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include <libsoup/soup.h>
 
 namespace WebCore {

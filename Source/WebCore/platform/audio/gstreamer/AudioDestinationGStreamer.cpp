@@ -24,7 +24,7 @@
 
 #include "AudioChannel.h"
 #include "AudioSourceProvider.h"
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "GRefPtrGStreamer.h"
 #include "WebKitWebAudioSourceGStreamer.h"
 #include <gst/gst.h>

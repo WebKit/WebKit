@@ -23,8 +23,8 @@
 #include "ContextMenuItem.h"
 
 #include "ContextMenu.h"
-#include "GOwnPtr.h"
-#include "GRefPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <gtk/gtk.h>
 #include <wtf/text/CString.h>
 

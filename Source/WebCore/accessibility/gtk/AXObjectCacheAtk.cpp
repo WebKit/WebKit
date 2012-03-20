@@ -23,7 +23,7 @@
 #include "AccessibilityObject.h"
 #include "Document.h"
 #include "Element.h"
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "HTMLSelectElement.h"
 #include "Range.h"
 #include "TextIterator.h"

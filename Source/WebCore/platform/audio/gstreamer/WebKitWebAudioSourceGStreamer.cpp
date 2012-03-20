@@ -24,7 +24,7 @@
 
 #include "AudioBus.h"
 #include "AudioSourceProvider.h"
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "GRefPtrGStreamer.h"
 #include <gst/audio/multichannel.h>
 #include <gst/pbutils/pbutils.h>

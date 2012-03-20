@@ -20,7 +20,7 @@
 #include "config.h"
 #include "ContextMenu.h"
 
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include <gtk/gtk.h>
 
 namespace WebCore {

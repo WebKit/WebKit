@@ -31,7 +31,7 @@
 #include "config.h"
 
 #include "LocalizedStrings.h"
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "IntSize.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"

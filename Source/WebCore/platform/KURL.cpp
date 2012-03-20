@@ -44,7 +44,7 @@
 #include <QUrl>
 #elif USE(GLIB_UNICODE)
 #include <glib.h>
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #endif
 
 // FIXME: This file makes too much use of the + operator on String.

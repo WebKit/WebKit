@@ -26,7 +26,7 @@
 
 #include "TextBreakIterator.h"
 
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include <pango/pango.h>
 using namespace std;
 

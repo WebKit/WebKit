@@ -22,7 +22,7 @@
 
 #include "Base64.h"
 #include "GdkCairoUtilities.h"
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "GRefPtrGtk.h"
 #include "MIMETypeRegistry.h"
 #include <cairo.h>

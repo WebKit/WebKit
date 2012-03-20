@@ -34,7 +34,7 @@
 #include "AccessibilityObject.h"
 #include "Document.h"
 #include "FrameView.h"
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "HostWindow.h"
 #include "InlineTextBox.h"
 #include "NotImplemented.h"

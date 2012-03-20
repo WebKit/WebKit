@@ -22,7 +22,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 
 using namespace std;
 using namespace WebCore;

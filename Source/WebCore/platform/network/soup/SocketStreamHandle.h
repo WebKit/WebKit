@@ -32,7 +32,7 @@
 #ifndef SocketStreamHandle_h
 #define SocketStreamHandle_h
 
-#include "GRefPtr.h"
+#include <wtf/gobject/GRefPtr.h>
 #include "SocketStreamHandleBase.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

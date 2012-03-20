@@ -20,7 +20,7 @@
 #include "config.h"
 #include "Language.h"
 
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "PlatformString.h"
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>

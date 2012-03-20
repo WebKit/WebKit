@@ -23,7 +23,7 @@
 #include "config.h"
 #include "FileSystem.h"
 
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "PlatformString.h"
 #include "UUID.h"
 #include <gio/gio.h>

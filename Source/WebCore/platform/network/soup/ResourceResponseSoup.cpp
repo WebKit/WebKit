@@ -21,7 +21,7 @@
 #include "config.h"
 #include "ResourceResponse.h"
 
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "PlatformString.h"

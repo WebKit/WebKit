@@ -30,7 +30,7 @@
 #include "TextCodecGtk.h"
 
 #include <gio/gio.h>
-#include "GOwnPtr.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include "Logging.h"
 #include "PlatformString.h"
 #include <wtf/Assertions.h>
