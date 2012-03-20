@@ -1,3 +1,20 @@
+2012-03-20  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 107647
+
+    2012-02-13  Oliver Hunt  <oliver@apple.com>
+
+            Executing out of bounds in JSC::Yarr::YarrCodeBlock::execute / JSC::RegExp::match
+            https://bugs.webkit.org/show_bug.cgi?id=76315
+
+            Reviewed by Gavin Barraclough.
+
+            Perform a 3 byte compare using two comparisons, rather than trying to perform the
+            operation with a four byte load.
+
+            * yarr/YarrJIT.cpp:
+            (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+
 2012-03-19  Lucas Forschler  <lforschler@apple.com>
 
     Merge 111162

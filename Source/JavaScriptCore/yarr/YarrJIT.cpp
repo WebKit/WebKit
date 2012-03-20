@@ -728,10 +728,13 @@ class YarrGenerator : private MacroAssembler {
                 break;
             }
             case 3: {
-                BaseIndex address(input, index, TimesOne, (startTermPosition - m_checked) * sizeof(LChar));
-                load32WithUnalignedHalfWords(address, character);
-                and32(Imm32(0xffffff), character);
-                break;
+                BaseIndex highAddress(input, index, TimesOne, (startTermPosition - m_checked) * sizeof(LChar));
+                load16(highAddress, character);
+                if (ignoreCaseMask)
+                    or32(Imm32(ignoreCaseMask), character);
+                op.m_jumps.append(branch32(NotEqual, character, Imm32((allCharacters & 0xffff) | ignoreCaseMask)));
+                op.m_jumps.append(jumpIfCharNotEquals(allCharacters >> 16, startTermPosition + 2 - m_checked, character));
+                return;
             }
             case 4: {
                 BaseIndex address(input, index, TimesOne, (startTermPosition - m_checked) * sizeof(LChar));
