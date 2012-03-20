@@ -1,3 +1,20 @@
+2012-03-20  Adele Peterson  <adele@apple.com>
+
+        "Attempt to insert nil value " exception when calling attributed string APIs on content with a custom font
+        https://bugs.webkit.org/show_bug.cgi?id=81630
+        <rdar://problem/10650660>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/Ahem.ttf: Added.
+        * TestWebKitAPI/Tests/mac/AttributedString.mm: Added.
+        (-[AttributedStringTest webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/attributedStringCustomFont.html: Added.
+
 2012-03-20  Eric Seidel  <eric@webkit.org>
 
         Add link on queues.webkit.org to kov's fancy queue-depth graph

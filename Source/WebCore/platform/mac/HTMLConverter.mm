@@ -1695,8 +1695,8 @@ static NSInteger _colCompare(id block1, id block2, void *)
         RenderStyle* style = renderer->style();
         if (style->textDecorationsInEffect() & UNDERLINE)
             [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
-        NSFont *font = style->font().primaryFont()->getNSFont();
-        [attrs.get() setObject:font forKey:NSFontAttributeName];
+        if (NSFont *font = style->font().primaryFont()->getNSFont())
+            [attrs.get() setObject:font forKey:NSFontAttributeName];
         if (style->visitedDependentColor(CSSPropertyColor).alpha())
             [attrs.get() setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
         else
