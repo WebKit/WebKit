@@ -143,7 +143,6 @@ private:
     void reset();
 
     void createImageBuffer() const;
-    void clearImageBuffer() const;
 
     void setSurfaceSize(const IntSize&);
 
@@ -167,7 +166,6 @@ private:
 
     // m_createdImageBuffer means we tried to malloc the buffer.  We didn't necessarily get it.
     mutable bool m_hasCreatedImageBuffer;
-    mutable bool m_didClearImageBuffer;
     mutable OwnPtr<ImageBuffer> m_imageBuffer;
     
     mutable RefPtr<Image> m_presentedImage;

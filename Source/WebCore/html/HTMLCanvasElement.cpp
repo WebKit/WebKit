@@ -92,7 +92,6 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* doc
 #endif
     , m_originClean(true)
     , m_hasCreatedImageBuffer(false)
-    , m_didClearImageBuffer(false)
 {
     ASSERT(hasTagName(canvasTag));
 }
@@ -254,14 +253,7 @@ void HTMLCanvasElement::reset()
     }
 
     IntSize oldSize = size();
-    // If the size of an existing buffer matches, we can just clear it instead of reallocating.
-    // This optimization is only done for 2D canvases for now.
-    if (m_hasCreatedImageBuffer && oldSize == IntSize(w, h) && (!m_context || m_context->is2d())) {
-        if (!m_didClearImageBuffer)
-            clearImageBuffer();
-        return;
-    }
-    setSurfaceSize(IntSize(w, h));
+    setSurfaceSize(IntSize(w, h)); // The image buffer gets cleared here.
 
 #if ENABLE(WEBGL)
     if (m_context && m_context->is3d() && oldSize != size())
@@ -270,13 +262,8 @@ void HTMLCanvasElement::reset()
 
     if (RenderObject* renderer = this->renderer()) {
         if (m_rendererIsCanvas) {
-            if (oldSize != size()) {
+            if (oldSize != size())
                 toRenderHTMLCanvas(renderer)->canvasSizeChanged();
-#if USE(ACCELERATED_COMPOSITING)
-                if (renderBox() && renderBox()->hasLayer() && renderBox()->layer()->hasAcceleratedCompositing())
-                    renderBox()->layer()->contentChanged(RenderLayer::CanvasChanged);
-#endif
-            }
             if (hadImageBuffer)
                 renderer->repaint();
         }
@@ -511,7 +498,6 @@ void HTMLCanvasElement::createImageBuffer() const
     ASSERT(!m_imageBuffer);
 
     m_hasCreatedImageBuffer = true;
-    m_didClearImageBuffer = true;
 
     FloatSize logicalSize = size();
     FloatSize deviceSize = convertLogicalToDevice(logicalSize);
@@ -587,27 +573,9 @@ Image* HTMLCanvasElement::copiedImage() const
     return m_copiedImage.get();
 }
 
-void HTMLCanvasElement::clearImageBuffer() const
-{
-    ASSERT(m_hasCreatedImageBuffer);
-    ASSERT(!m_didClearImageBuffer);
-
-    if (!m_context)
-        return;
-
-    m_didClearImageBuffer = true;
-
-    if (m_context->is2d()) {
-        CanvasRenderingContext2D* context2D = static_cast<CanvasRenderingContext2D*>(m_context.get());
-        // No need to undo transforms/clip/etc. because we are called right after the context is reset.
-        context2D->clearRect(0, 0, width(), height());
-    }
-}
-
 void HTMLCanvasElement::clearCopiedImage()
 {
     m_copiedImage.clear();
-    m_didClearImageBuffer = false;
 }
 
 AffineTransform HTMLCanvasElement::baseTransform() const

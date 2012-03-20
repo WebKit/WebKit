@@ -124,8 +124,6 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
 #if !ENABLE(DASHBOARD_SUPPORT)
     ASSERT_UNUSED(usesDashboardCompatibilityMode, !usesDashboardCompatibilityMode);
 #endif
-    if (GraphicsContext* context = canvas->drawingContext())
-        context->save();
 }
 
 void CanvasRenderingContext2D::unwindStateStack()
@@ -135,7 +133,7 @@ void CanvasRenderingContext2D::unwindStateStack()
     // GraphicsContext dtor.
     if (size_t stackSize = m_stateStack.size()) {
         if (GraphicsContext* context = canvas()->existingDrawingContext()) {
-            while (stackSize--)
+            while (--stackSize)
                 context->restore();
         }
     }
@@ -163,8 +161,11 @@ void CanvasRenderingContext2D::reset()
     m_stateStack.resize(1);
     m_stateStack.first() = State();
     m_path.clear();
-    if (GraphicsContext* context = canvas()->drawingContext())
-        context->save();
+#if USE(ACCELERATED_COMPOSITING)
+    RenderBox* renderBox = canvas()->renderBox();
+    if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
+        renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
+#endif
 }
 
 CanvasRenderingContext2D::State::State()
