@@ -63,7 +63,7 @@ TEST(WebKit1, AttributedStringTest)
         
     NSAttributedString *attrString = [(NSView <NSTextInput> *)[[[webView.get() mainFrame] frameView] documentView] attributedSubstringFromRange:NSMakeRange(0, 5)];
 
-    EXPECT_TRUE([[attrString string] isEqual:@"Lorem"]);
+    EXPECT_WK_STREQ("Lorem", [attrString string]);
 }
 
 TEST(WebKit2, AttributedStringTest)
@@ -85,7 +85,8 @@ TEST(WebKit2, AttributedStringTest)
     NSRange range = NSMakeRange(0, 5);
     NSRange actualRange;
     NSAttributedString *attrString = [webView.platformView() attributedSubstringForProposedRange:range actualRange:&actualRange];
-    EXPECT_TRUE([[attrString string] isEqual:@"Lorem"]);
+
+    EXPECT_WK_STREQ("Lorem", [attrString string]);
 }
 
     
