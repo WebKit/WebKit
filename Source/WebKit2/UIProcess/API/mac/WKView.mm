@@ -2912,10 +2912,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     [self _registerDraggedTypes];
 
-    if ([self _shouldUseTiledDrawingArea]) {
-        self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawNever;
+    if ([self _shouldUseTiledDrawingArea])
         self.wantsLayer = YES;
-    }
 
     WebContext::statistics().wkViewCount++;
 

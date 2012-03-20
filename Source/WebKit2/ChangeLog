@@ -1,3 +1,17 @@
+2012-03-20  Anders Carlsson  <andersca@apple.com>
+
+        Graphic distortion effect when launching with empty page Safari after reset
+        https://bugs.webkit.org/show_bug.cgi?id=81677
+        <rdar://problem/11065904>
+
+        Reviewed by Sam Weinig.
+
+        Don't set the redraw policy to never, since that was causing the WKView layer to never be updated. Instead,
+        let AppKit decide which redraw policy to use.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+
 2012-03-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert hasSpellingMarker to use Internals interface.
