@@ -1,3 +1,13 @@
+2012-03-19  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] return true/false on GestureFlingCancel if a fling was stopped
+        https://bugs.webkit.org/show_bug.cgi?id=81563
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::gestureEvent):
+
 2012-03-19  Michal Mocny  <mmocny@google.com>
 
         [chromium] Adding support for GL_EXT_discard_framebuffer.

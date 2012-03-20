@@ -639,8 +639,11 @@ bool WebViewImpl::gestureEvent(const WebGestureEvent& event)
         return true;
     }
     case WebInputEvent::GestureFlingCancel:
-        m_gestureAnimation.clear();
-        return true;
+        if (m_gestureAnimation) {
+            m_gestureAnimation.clear();
+            return true;
+        }
+        return false;
     case WebInputEvent::GestureScrollBegin:
     case WebInputEvent::GestureScrollEnd:
     case WebInputEvent::GestureScrollUpdate:
