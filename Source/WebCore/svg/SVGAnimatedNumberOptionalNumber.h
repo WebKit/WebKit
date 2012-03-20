@@ -26,7 +26,6 @@
 namespace WebCore {
 
 class SVGAnimationElement;
-class SVGGenericAnimatedType;
 
 class SVGAnimatedNumberOptionalNumberAnimator : public SVGAnimatedTypeAnimator {
     
@@ -37,8 +36,11 @@ public:
     static void calculateAnimatedNumberOptionalNumber(SVGAnimationElement*, float percentage, unsigned repeatCount, float& animatedNumber, float fromNumber, float toNumber);
     
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
-    virtual PassOwnPtr<SVGAnimatedType> constructFromBaseValue(const Vector<SVGAnimatedProperty*>&, Vector<SVGGenericAnimatedType*>&);
-    virtual void resetAnimatedTypeToBaseValue(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*);
+    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
+    virtual void stopAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
+    virtual void resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*);
+    virtual void animValWillChange(const Vector<SVGAnimatedProperty*>&);
+    virtual void animValDidChange(const Vector<SVGAnimatedProperty*>&);
 
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);

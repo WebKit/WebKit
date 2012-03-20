@@ -59,21 +59,21 @@ public:
         return *m_animatedProperty;
     }
 
-    virtual SVGGenericAnimatedType* currentBaseValueVariant() const
+    const PropertyType& currentBaseValue() const
     {
-        return reinterpret_cast<SVGGenericAnimatedType*>(&m_property);
+        return m_property;
     }
 
-    virtual void animationStarted(SVGGenericAnimatedType* animatedType)
+    void animationStarted(PropertyType* newAnimVal)
     {
         ASSERT(!m_isAnimating);
         ASSERT(!m_animatedProperty);
-        ASSERT(animatedType);
-        m_animatedProperty = reinterpret_cast<PropertyType*>(animatedType);
+        ASSERT(newAnimVal);
+        m_animatedProperty = newAnimVal;
         m_isAnimating = true;
     }
 
-    virtual void animationEnded()
+    void animationEnded()
     {
         ASSERT(m_isAnimating);
         ASSERT(m_animatedProperty);
@@ -87,14 +87,14 @@ public:
         element->svgAttributeChanged(attributeName());
     }
 
-    virtual void animationValueWillChange()
+    void animValWillChange()
     {
         // no-op for non list types.
         ASSERT(m_isAnimating);
         ASSERT(m_animatedProperty);
     }
 
-    virtual void animationValueDidChange()
+    void animValDidChange()
     {
         ASSERT(m_isAnimating);
         ASSERT(m_animatedProperty);

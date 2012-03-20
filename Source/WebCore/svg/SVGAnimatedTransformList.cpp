@@ -48,9 +48,14 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromStrin
     return animatedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromBaseValue(const Vector<SVGAnimatedProperty*>& properties, Vector<SVGGenericAnimatedType*>& types)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    return SVGAnimatedType::createTransformList(constructFromOneBaseValue<SVGTransformList>(properties, types));
+    return SVGAnimatedType::createTransformList(constructFromOneBaseValue<SVGTransformList, SVGAnimatedTransformList>(properties));
+}
+
+void SVGAnimatedTransformListAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
+{
+    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedTransformList>(properties);
 }
 
 inline PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFromString(SVGAnimateTransformElement* animateTransformElement, const String& string)
@@ -59,9 +64,19 @@ inline PassOwnPtr<SVGAnimatedType> SVGAnimatedTransformListAnimator::constructFr
     return SVGAnimatedTransformListAnimator::constructFromString(SVGTransform::transformTypePrefixForParsing(animateTransformElement->transformType()) + string + ')');
 }
 
-void SVGAnimatedTransformListAnimator::resetAnimatedTypeToBaseValue(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedTransformListAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
 {
-    resetAnimatedTypeFromOneBaseValue<SVGTransformList>(properties, type, &SVGAnimatedType::transformList);
+    resetFromOneBaseValue<SVGTransformList, SVGAnimatedTransformList>(properties, type, &SVGAnimatedType::transformList);
+}
+
+void SVGAnimatedTransformListAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValWillChangeForType<SVGAnimatedTransformList>(properties);
+}
+
+void SVGAnimatedTransformListAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValDidChangeForType<SVGAnimatedTransformList>(properties);
 }
 
 void SVGAnimatedTransformListAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)

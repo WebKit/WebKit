@@ -28,7 +28,6 @@ namespace WebCore {
 class Color;
 class FloatRect;
 class SVGAngle;
-class SVGGenericAnimatedType;
 class SVGLength;
 class SVGLengthList;
 class SVGNumberList;

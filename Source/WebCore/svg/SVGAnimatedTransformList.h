@@ -37,7 +37,6 @@ DEFINE_ANIMATED_PROPERTY(AnimatedTransformList, OwnerType, DOMAttribute, DOMAttr
 
 class SVGAnimationElement;
 class SVGAnimateTransformElement;
-class SVGGenericAnimatedType;
 
 class SVGAnimatedTransformListAnimator : public SVGAnimatedTypeAnimator {
 public:
@@ -45,8 +44,11 @@ public:
     virtual ~SVGAnimatedTransformListAnimator() { }
 
     virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
-    virtual PassOwnPtr<SVGAnimatedType> constructFromBaseValue(const Vector<SVGAnimatedProperty*>&, Vector<SVGGenericAnimatedType*>&);
-    virtual void resetAnimatedTypeToBaseValue(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*);
+    virtual PassOwnPtr<SVGAnimatedType> startAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
+    virtual void stopAnimValAnimation(const Vector<SVGAnimatedProperty*>&);
+    virtual void resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>&, SVGAnimatedType*);
+    virtual void animValWillChange(const Vector<SVGAnimatedProperty*>&);
+    virtual void animValDidChange(const Vector<SVGAnimatedProperty*>&);
 
     virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
     virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);

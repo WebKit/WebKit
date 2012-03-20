@@ -43,14 +43,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromString(const
     return animtedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::constructFromBaseValue(const Vector<SVGAnimatedProperty*>& properties, Vector<SVGGenericAnimatedType*>& types)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    return SVGAnimatedType::createNumber(constructFromOneBaseValue<float>(properties, types));
+    return SVGAnimatedType::createNumber(constructFromOneBaseValue<float, SVGAnimatedNumber>(properties));
 }
 
-void SVGAnimatedNumberAnimator::resetAnimatedTypeToBaseValue(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedNumberAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    resetAnimatedTypeFromOneBaseValue<float>(properties, type, &SVGAnimatedType::number);
+    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedNumber>(properties);
+}
+
+void SVGAnimatedNumberAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+{
+    resetFromOneBaseValue<float, SVGAnimatedNumber>(properties, type, &SVGAnimatedType::number);
+}
+
+void SVGAnimatedNumberAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValWillChangeForType<SVGAnimatedNumber>(properties);
+}
+
+void SVGAnimatedNumberAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValDidChangeForType<SVGAnimatedNumber>(properties);
 }
 
 void SVGAnimatedNumberAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)

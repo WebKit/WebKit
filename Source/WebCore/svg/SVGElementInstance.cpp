@@ -30,6 +30,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "FrameView.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGElementInstanceList.h"
 #include "SVGUseElement.h"
 
@@ -122,8 +123,18 @@ void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
     for (HashSet<SVGElementInstance*>::const_iterator it = set.begin(); it != end; ++it) {
         ASSERT((*it)->shadowTreeElement());
         ASSERT((*it)->shadowTreeElement()->correspondingElement());
+        ASSERT((*it)->shadowTreeElement()->correspondingElement() == (*it)->correspondingElement());
         ASSERT((*it)->correspondingElement() == element);
         (*it)->shadowTreeElement()->setCorrespondingElement(0);
+
+        // The shadow tree, which is eventually animated, is mutated. In order to keep the animVal
+        // logic correct, we have to stop the animation, and restart it once the shadow tree has
+        // recloned. Otherwise we miss to call stopAnimValAnimation() on the old shadow tree element
+        // which leads to an assertion once garbage is collected, if the animVal bindings have been
+        // accessed from JS. It would also assert on the next updateAnimations() call as the new
+        // SVGAnimatedProperty object hasn't been initialized yet (using startAnimValAnimation).
+        element->document()->accessSVGExtensions()->removeAllAnimationElementsFromTarget(element);
+
         if (SVGUseElement* element = (*it)->correspondingUseElement()) {
             ASSERT(element->inDocument());
             element->invalidateShadowTree();
@@ -183,6 +194,19 @@ EventTargetData* SVGElementInstance::ensureEventTargetData()
     return 0;
 }
 
+SVGElementInstance::InstanceUpdateBlocker::InstanceUpdateBlocker(SVGElement* targetElement)
+    : m_targetElement(targetElement->isStyled() ? static_cast<SVGStyledElement*>(targetElement) : 0)
+{
+    if (m_targetElement)
+        m_targetElement->setInstanceUpdatesBlocked(true);
+}
+
+SVGElementInstance::InstanceUpdateBlocker::~InstanceUpdateBlocker()
+{
+    if (m_targetElement)
+        m_targetElement->setInstanceUpdatesBlocked(false);
+}
+   
 }
 
 #endif

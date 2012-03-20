@@ -47,14 +47,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthAnimator::constructFromString(const
     return SVGAnimatedType::createLength(new SVGLength(m_lengthMode, string));
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthAnimator::constructFromBaseValue(const Vector<SVGAnimatedProperty*>& properties, Vector<SVGGenericAnimatedType*>& types)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedLengthAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    return SVGAnimatedType::createLength(constructFromOneBaseValue<SVGLength>(properties, types));
+    return SVGAnimatedType::createLength(constructFromOneBaseValue<SVGLength, SVGAnimatedLength>(properties));
 }
 
-void SVGAnimatedLengthAnimator::resetAnimatedTypeToBaseValue(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedLengthAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    resetAnimatedTypeFromOneBaseValue<SVGLength>(properties, type, &SVGAnimatedType::length);
+    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedLength>(properties);
+}
+
+void SVGAnimatedLengthAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+{
+    resetFromOneBaseValue<SVGLength, SVGAnimatedLength>(properties, type, &SVGAnimatedType::length);
+}
+
+void SVGAnimatedLengthAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValWillChangeForType<SVGAnimatedLength>(properties);
+}
+
+void SVGAnimatedLengthAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValDidChangeForType<SVGAnimatedLength>(properties);
 }
 
 void SVGAnimatedLengthAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)

@@ -82,6 +82,14 @@ public:
     AnimationMode animationMode() const;
     CalcMode calcMode() const;
 
+    enum ShouldApplyAnimation {
+        DontApplyAnimation,
+        ApplyCSSAnimation,
+        ApplyXMLAnimation
+    };
+
+    ShouldApplyAnimation shouldApplyAnimation(SVGElement* targetElement, const QualifiedName& attributeName);
+
 protected:
     SVGAnimationElement(const QualifiedName&, Document*);
 
@@ -102,10 +110,6 @@ protected:
 
     String targetAttributeBaseValue();
     void setTargetAttributeAnimatedValue(SVGAnimatedType*);
-    Vector<SVGAnimatedProperty*> animatedPropertiesForType(AnimatedPropertyType);
-
-    void animationStarted(const Vector<SVGAnimatedProperty*>& properties, const Vector<SVGGenericAnimatedType*>& types);
-    void animationEnded(const Vector<SVGAnimatedProperty*>& properties);
 
     // from SVGSMILElement
     virtual void startedActiveInterval();
@@ -128,13 +132,6 @@ private:
     float calculatePercentForFromTo(float percent) const;
     unsigned calculateKeyTimesIndex(float percent) const;
 
-    enum ShouldApplyAnimation {
-        DontApplyAnimation,
-        ApplyCSSAnimation,
-        ApplyXMLAnimation
-    };
-
-    ShouldApplyAnimation shouldApplyAnimation(SVGElement* targetElement, const QualifiedName& attributeName);
     void applyAnimatedValue(ShouldApplyAnimation, SVGElement* targetElement, const QualifiedName& attributeName, SVGAnimatedType*);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGAnimationElement)

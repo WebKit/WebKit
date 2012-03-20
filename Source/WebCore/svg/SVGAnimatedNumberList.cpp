@@ -39,14 +39,29 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberListAnimator::constructFromString(c
     return animtedType.release();
 }
 
-PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberListAnimator::constructFromBaseValue(const Vector<SVGAnimatedProperty*>& properties, Vector<SVGGenericAnimatedType*>& types)
+PassOwnPtr<SVGAnimatedType> SVGAnimatedNumberListAnimator::startAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    return SVGAnimatedType::createNumberList(constructFromOneBaseValue<SVGNumberList>(properties, types));
+    return SVGAnimatedType::createNumberList(constructFromOneBaseValue<SVGNumberList, SVGAnimatedNumberList>(properties));
 }
 
-void SVGAnimatedNumberListAnimator::resetAnimatedTypeToBaseValue(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+void SVGAnimatedNumberListAnimator::stopAnimValAnimation(const Vector<SVGAnimatedProperty*>& properties)
 {
-    resetAnimatedTypeFromOneBaseValue<SVGNumberList>(properties, type, &SVGAnimatedType::numberList);
+    SVGAnimatedTypeAnimator::stopAnimValAnimationForType<SVGAnimatedNumberList>(properties);
+}
+
+void SVGAnimatedNumberListAnimator::resetAnimValToBaseVal(const Vector<SVGAnimatedProperty*>& properties, SVGAnimatedType* type)
+{
+    resetFromOneBaseValue<SVGNumberList, SVGAnimatedNumberList>(properties, type, &SVGAnimatedType::numberList);
+}
+
+void SVGAnimatedNumberListAnimator::animValWillChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValWillChangeForType<SVGAnimatedNumberList>(properties);
+}
+
+void SVGAnimatedNumberListAnimator::animValDidChange(const Vector<SVGAnimatedProperty*>& properties)
+{
+    animValDidChangeForType<SVGAnimatedNumberList>(properties);
 }
 
 void SVGAnimatedNumberListAnimator::calculateFromAndToValues(OwnPtr<SVGAnimatedType>& from, OwnPtr<SVGAnimatedType>& to, const String& fromString, const String& toString)

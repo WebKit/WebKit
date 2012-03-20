@@ -29,7 +29,6 @@
 namespace WebCore {
 
 class SVGElement;
-class SVGGenericAnimatedType;
 
 class SVGAnimatedProperty : public RefCounted<SVGAnimatedProperty> {
 public:
@@ -46,12 +45,6 @@ public:
     }
 
     virtual bool isAnimatedListTearOff() const { return false; }
-
-    virtual void animationStarted(SVGGenericAnimatedType*) = 0;
-    virtual void animationEnded() = 0;
-    virtual void animationValueWillChange() = 0;
-    virtual void animationValueDidChange() = 0;
-    virtual SVGGenericAnimatedType* currentBaseValueVariant() const = 0;
 
     // Caching facilities.
     typedef HashMap<SVGAnimatedPropertyDescription, RefPtr<SVGAnimatedProperty>, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits> Cache;

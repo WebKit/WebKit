@@ -74,20 +74,19 @@ public:
         return animVal()->values();
     }
 
-    virtual SVGGenericAnimatedType* currentBaseValueVariant() const
+    const PropertyType& currentBaseValue() const
     {
-        return reinterpret_cast<SVGGenericAnimatedType*>(&m_values);
+        return m_values;
     }
 
-    virtual void animationStarted(SVGGenericAnimatedType* animatedType)
+    void animationStarted(PropertyType* newAnimVal)
     {
         ASSERT(!m_isAnimating);
-        ASSERT(animatedType);
+        ASSERT(newAnimVal);
         ASSERT(m_values.size() == m_wrappers.size());
         ASSERT(m_animatedWrappers.isEmpty());
 
         // Switch to new passed in value type & new wrappers list. The new wrappers list must be created for the new value.
-        PropertyType* newAnimVal = reinterpret_cast<PropertyType*>(animatedType);
         if (!newAnimVal->isEmpty())
             m_animatedWrappers.fill(0, newAnimVal->size());
 
@@ -97,7 +96,7 @@ public:
         m_isAnimating = true;
     }
 
-    virtual void animationEnded()
+    void animationEnded()
     {
         ASSERT(m_isAnimating);
         ASSERT(m_animVal);
@@ -129,7 +128,7 @@ public:
         ASSERT(animVal()->wrappers().size() == m_animatedWrappers.size());
     }
 
-    virtual void animationValueWillChange()
+    void animValWillChange()
     {
         ASSERT(m_isAnimating);
         ASSERT(m_animVal);
@@ -137,7 +136,7 @@ public:
         synchronizeWrappersIfNeeded();
     }
 
-    virtual void animationValueDidChange()
+    void animValDidChange()
     {
         ASSERT(m_isAnimating);
         ASSERT(m_animVal);

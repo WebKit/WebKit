@@ -35,6 +35,7 @@ void addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, Generi
 
 class SVGUseElement;
 class SVGElementInstanceList;
+class SVGStyledElement;
 
 // SVGElementInstance mimics Node, but without providing all its functionality
 class SVGElementInstance : public TreeShared<SVGElementInstance>,
@@ -83,6 +84,16 @@ public:
         SVGElement* m_element;
     };
 
+    class InstanceUpdateBlocker {
+        WTF_MAKE_NONCOPYABLE(InstanceUpdateBlocker);
+    public:
+        InstanceUpdateBlocker(SVGElement* targetElement);
+        ~InstanceUpdateBlocker();
+
+    private:
+        SVGStyledElement* m_targetElement;
+    };
+    
     static void invalidateAllInstancesOfElement(SVGElement*);
 
     using TreeShared<SVGElementInstance>::ref;
