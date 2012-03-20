@@ -3645,7 +3645,7 @@ BUGWK77183 : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
 // Massive rebaselining, some rebaseline just don't make sense.
 BUGWK78115 WIN : svg/custom/repaint-on-constant-size-change.svg = IMAGE
 
-BUGWK78159 DEBUG WIN SNOWLEOPARD : compositing/iframes/scrolling-iframe.html = PASS TEXT
+BUGWK78159 DEBUG WIN MAC LINUX : compositing/iframes/scrolling-iframe.html = PASS TEXT
 
 // Some of the new baselines don't make any sense.
 BUGWK78175 MAC : compositing/overflow/overflow-scaled-descendant-overlapping.html = IMAGE
