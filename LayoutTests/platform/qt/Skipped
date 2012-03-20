@@ -2746,10 +2746,6 @@ fast/events/dispatch-message-string-data.html
 plugins/mouse-click-plugin-clears-selection.html
 fast/events/mouse-relative-position.html
 
-# http://trac.webkit.org/changeset/111310 made it fail
-# https://bugs.webkit.org/show_bug.cgi?id=81579
-dom/xhtml/level3/core/nodereplacechild30.xhtml
-
 # Failing since isWordTextBreak is not implemented. https://bugs.webkit.org/show_bug.cgi?id=81136
 editing/selection/move-by-word-visually-crash-test-1.html
 editing/selection/move-by-word-visually-crash-test-2.html
