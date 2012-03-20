@@ -434,6 +434,33 @@ TEST(TiledLayerChromiumTest, pushIdlePaintTiles)
     }
 }
 
+TEST(TiledLayerChromiumTest, pushIdlePaintedOccludedTiles)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    DebugScopedSetImplThread implThread;
+    OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(0)));
+    TestCCOcclusionTracker occluded;
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    // The tile size is 100x100, so this invalidates one occluded tile, culls it during paint, but prepaints it.
+    occluded.setOcclusion(IntRect(0, 0, 100, 100));
+
+    layer->setBounds(IntSize(100, 100));
+    layer->setDrawTransform(TransformationMatrix(1, 0, 0, 1, layer->bounds().width() / 2.0, layer->bounds().height() / 2.0));
+    layer->setVisibleLayerRect(IntRect(0, 0, 100, 100));
+    layer->invalidateRect(IntRect(0, 0, 100, 100));
+    layer->prepareToUpdate(IntRect(0, 0, 100, 100), &occluded);
+    layer->prepareToUpdateIdle(IntRect(0, 0, 100, 100), &occluded);
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // We should have the prepainted tile on the impl side.
+    EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
+}
+
 TEST(TiledLayerChromiumTest, pushTilesMarkedDirtyDuringPaint)
 {
     OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);

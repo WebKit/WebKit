@@ -1,3 +1,14 @@
+2012-03-19  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Push culled tiles that are prepainted
+        https://bugs.webkit.org/show_bug.cgi?id=81552
+
+        Reviewed by Adrienne Walker.
+
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::TEST):
+        (WTF):
+
 2012-03-19  James Robinson  <jamesr@chromium.org>
 
         Unreviewed chromium compile fix - put all TRACE_*s in their own scope explicitly.

@@ -72,16 +72,16 @@ public:
     }
     // Returns whether the layer was dirty and not updated in the current frame. For tiles that were not culled, the
     // updateRect holds the area of the tile that was updated. Otherwise, the area that would have been updated.
-    bool isDirtyForCurrentFrame() { return !m_dirtyRect.isEmpty() && (m_updateRect.isEmpty() || m_updateCulled); }
+    bool isDirtyForCurrentFrame() { return !m_dirtyRect.isEmpty() && (m_updateRect.isEmpty() || !m_updated); }
 
     IntRect m_dirtyRect;
     IntRect m_updateRect;
     bool m_partialUpdate;
-    bool m_updateCulled;
+    bool m_updated;
 private:
     explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture)
         : m_partialUpdate(false)
-        , m_updateCulled(false)
+        , m_updated(false)
         , m_texture(texture)
     {
     }
@@ -202,7 +202,7 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTexture
             if (!tile)
                 CRASH();
 
-            if (tile->m_updateCulled)
+            if (!tile->m_updated)
                 continue;
 
             IntRect sourceRect = tile->m_updateRect;
@@ -431,12 +431,16 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             if (!idle && occlusion) {
                 IntRect visibleTileRect = intersection(m_tiler->tileBounds(i, j), visibleLayerRect());
                 if (occlusion->occluded(this, visibleTileRect)) {
-                    tile->m_updateCulled = true;
+                    ASSERT(!tile->m_updated);
                     // Save the area we culled for recording metrics.
                     tile->m_updateRect = tile->m_dirtyRect;
                     continue;
                 }
             }
+
+            // We come through this function multiple times during a commit, and m_updated should be true if the tile is not culled
+            // any single time through the function.
+            tile->m_updated = true;
 
             // FIXME: Decide if partial update should be allowed based on cost
             // of update. https://bugs.webkit.org/show_bug.cgi?id=77376
@@ -505,8 +509,9 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
             // make sure that sourceRect doesn't extend outside of it.
             sourceRect.intersect(m_paintRect);
 
-            if (tile->m_updateCulled && occlusion) {
-                occlusion->overdrawMetrics().didCull(TransformationMatrix(), sourceRect, IntRect());
+            if (!tile->m_updated) {
+                if (occlusion)
+                    occlusion->overdrawMetrics().didCull(TransformationMatrix(), sourceRect, IntRect());
                 continue;
             }
 
@@ -577,7 +582,7 @@ void TiledLayerChromium::resetUpdateState()
         UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
         tile->m_updateRect = IntRect();
         tile->m_partialUpdate = false;
-        tile->m_updateCulled = false;
+        tile->m_updated = false;
     }
 }
 
