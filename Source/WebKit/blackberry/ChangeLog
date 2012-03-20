@@ -1,3 +1,13 @@
+2012-03-20  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Removing doubly defined methods in BackingStore.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=81664
+
+        Reviewed by Rob Buis.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::drawAndBlendLayersForDirectRendering):
+
 2012-03-20  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Crash when dragging the FCC caret over an invalid node.
