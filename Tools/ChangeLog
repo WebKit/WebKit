@@ -1,3 +1,16 @@
+2012-03-20  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Update to Android NDK r7b
+        https://bugs.webkit.org/show_bug.cgi?id=81005
+
+        Reviewed by Adam Barth.
+
+        Update to version r7b of the Android NDK, release notes of which are
+        available on the following page:
+        http://developer.android.com/sdk/ndk/index.html
+
+        * Scripts/update-webkit-chromium:
+
 2012-03-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         x86 GCC bug triggers a compilation error in generated copy constructor of CollapsedBorderValue
