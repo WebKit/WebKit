@@ -83,6 +83,7 @@ enum ReasonFrameCannotBeInPageCache {
 };
 COMPILE_ASSERT(NumberOfReasonsFramesCannotBeInPageCache <= sizeof(unsigned)*8, ReasonFrameCannotBeInPageCacheDoesNotFitInBitmap);
 
+#if PLATFORM(CHROMIUM)
 static int indexOfSingleBit(int32_t v)
 {
     int index = 0;
@@ -98,6 +99,7 @@ static int indexOfSingleBit(int32_t v)
         index += 1;
     return index;
 }
+#endif // PLATFORM(CHROMIUM)
 
 static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
 {
