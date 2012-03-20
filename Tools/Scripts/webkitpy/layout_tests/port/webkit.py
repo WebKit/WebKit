@@ -501,7 +501,7 @@ class WebKitDriver(Driver):
         elif error_line == "#CRASHED - WebProcess\n":
             # WebKitTestRunner uses this to report that the WebProcess subprocess crashed.
             self._crashed_subprocess_name = "WebProcess"
-        return self._has_crashed()
+        return self.has_crashed()
 
     def _command_from_driver_input(self, driver_input):
         if self.is_http_test(driver_input.test_name):
