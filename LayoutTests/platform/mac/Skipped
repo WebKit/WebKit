@@ -598,3 +598,8 @@ canvas/philip/tests/2d.path.arc.scale.1.html
 http/tests/media/video-buffering-repaints-controls.html
 http/tests/media/video-useragent.html
 media/audio-garbage-collect.html
+ 
+# parser test that times out waiting for notifyDone
+# http://bugs.webkit.org/show_bug.cgi?id=81618
+fast/workers/storage/use-same-database-in-page-and-workers.html
+
