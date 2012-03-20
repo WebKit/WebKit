@@ -1,3 +1,15 @@
+2012-03-19  Michal Mocny  <mmocny@google.com>
+
+        [chromium] Adding support for GL_EXT_discard_framebuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=81383
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebGraphicsContext3D):
+        (WebKit::WebGraphicsContext3D::discardFramebufferEXT):
+        (WebKit::WebGraphicsContext3D::ensureFramebufferCHROMIUM):
+
 2012-03-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r111207.

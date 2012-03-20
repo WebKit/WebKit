@@ -107,6 +107,16 @@ void Extensions3DChromium::setVisibilityCHROMIUM(bool visibility)
     m_private->setVisibilityCHROMIUM(visibility);
 }
 
+void Extensions3DChromium::discardFramebufferEXT(GC3Denum target, GC3Dsizei numAttachments, const GC3Denum* attachments)
+{
+    m_private->discardFramebufferEXT(target, numAttachments, attachments);
+}
+
+void Extensions3DChromium::ensureFramebufferCHROMIUM()
+{
+    m_private->ensureFramebufferCHROMIUM();
+}
+
 void Extensions3DChromium::setGpuMemoryAllocationChangedCallbackCHROMIUM(PassOwnPtr<GpuMemoryAllocationChangedCallbackCHROMIUM> callback)
 {
     m_private->setGpuMemoryAllocationChangedCallbackCHROMIUM(callback);

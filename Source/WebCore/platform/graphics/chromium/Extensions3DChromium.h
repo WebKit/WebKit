@@ -90,6 +90,10 @@ public:
     // GL_CHROMIUM_set_visibility
     void setVisibilityCHROMIUM(bool);
 
+    // GL_EXT_discard_framebuffer
+    virtual void discardFramebufferEXT(GC3Denum target, GC3Dsizei numAttachments, const GC3Denum* attachments);
+    virtual void ensureFramebufferCHROMIUM();
+
     // GL_CHROMIUM_gpu_memory_manager
     struct GpuMemoryAllocationCHROMIUM {
         size_t gpuResourceSizeInBytes;

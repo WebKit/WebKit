@@ -879,6 +879,9 @@ DELEGATE_TO_IMPL_1(unmapTexSubImage2DCHROMIUM, const void*)
 
 DELEGATE_TO_IMPL_1(setVisibilityCHROMIUM, bool);
 
+DELEGATE_TO_IMPL_3(discardFramebufferEXT, GC3Denum, GC3Dsizei, const GC3Denum*);
+DELEGATE_TO_IMPL(ensureFramebufferCHROMIUM);
+
 DELEGATE_TO_IMPL_10(blitFramebufferCHROMIUM, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dbitfield, GC3Denum)
 DELEGATE_TO_IMPL_5(renderbufferStorageMultisampleCHROMIUM, GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
 

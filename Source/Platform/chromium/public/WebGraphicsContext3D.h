@@ -160,6 +160,11 @@ public:
     // GL_CHROMIUM_gpu_memory_manager - sets callback to observe changes to memory allocation limits.
     virtual void setMemoryAllocationChangedCallbackCHROMIUM(WebGraphicsMemoryAllocationChangedCallbackCHROMIUM* callback) { }
 
+    // GL_EXT_discard_framebuffer - discard/ensure existance of surface backbuffer.
+    // FIXME: make these pure virtual once they are implemented by clients.
+    virtual void discardFramebufferEXT(WGC3Denum target, WGC3Dsizei numAttachments, const WGC3Denum* attachments) { }
+    virtual void ensureFramebufferCHROMIUM() { }
+
     // Query whether it is built on top of compliant GLES2 implementation.
     virtual bool isGLES2Compliant() = 0;
 

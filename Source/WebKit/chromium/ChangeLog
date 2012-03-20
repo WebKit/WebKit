@@ -1,3 +1,23 @@
+2012-03-19  Michal Mocny  <mmocny@google.com>
+
+        [chromium] Adding support for GL_EXT_discard_framebuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=81383
+
+        Reviewed by James Robinson.
+
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::discardFramebufferEXT):
+        (WebCore):
+        (WebCore::Extensions3DChromium::ensureFramebufferCHROMIUM):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore):
+        * src/GraphicsContext3DPrivate.h:
+        (GraphicsContext3DPrivate):
+        * tests/FakeWebGraphicsContext3D.h:
+        (WebKit::FakeWebGraphicsContext3D::discardFramebufferEXT):
+        (WebKit::FakeWebGraphicsContext3D::ensureFramebufferCHROMIUM):
+        (FakeWebGraphicsContext3D):
+
 2012-03-19  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Times in the cc should be expressed in seconds.
