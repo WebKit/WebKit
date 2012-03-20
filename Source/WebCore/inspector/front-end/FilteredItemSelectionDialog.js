@@ -596,13 +596,20 @@ WebInspector.OpenResourceDialog = function(panel, presentationModel)
 
     this._panel = panel;
     this._uiSourceCodes = presentationModel.uiSourceCodes();
-    
+
     function filterOutEmptyURLs(uiSourceCode)
     {
         return !!uiSourceCode.fileName;
     }
-    
+
     this._uiSourceCodes = this._uiSourceCodes.filter(filterOutEmptyURLs);
+
+    function compareFunction(uiSourceCode1, uiSourceCode2)
+    {
+        return uiSourceCode1.fileName.localeCompare(uiSourceCode2.fileName);
+    }
+
+    this._uiSourceCodes.sort(compareFunction);
 }
 
 /**
