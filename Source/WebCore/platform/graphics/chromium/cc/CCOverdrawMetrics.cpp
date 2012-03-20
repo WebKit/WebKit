@@ -37,8 +37,9 @@
 
 namespace WebCore {
 
-CCOverdrawMetrics::CCOverdrawMetrics()
-    : m_pixelsDrawnOpaque(0)
+CCOverdrawMetrics::CCOverdrawMetrics(bool recordMetricsForFrame)
+    : m_recordMetricsForFrame(recordMetricsForFrame)
+    , m_pixelsDrawnOpaque(0)
     , m_pixelsDrawnTranslucent(0)
     , m_pixelsCulled(0)
 {
@@ -60,6 +61,9 @@ static inline float quadArea(const FloatQuad& quad)
 
 void CCOverdrawMetrics::didCull(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect)
 {
+    if (!m_recordMetricsForFrame)
+        return;
+
     float beforeCullArea = quadArea(transformToTarget.mapQuad(FloatQuad(beforeCullRect)));
     float afterCullArea = quadArea(transformToTarget.mapQuad(FloatQuad(afterCullRect)));
 
@@ -68,6 +72,9 @@ void CCOverdrawMetrics::didCull(const TransformationMatrix& transformToTarget, c
 
 void CCOverdrawMetrics::didDraw(const TransformationMatrix& transformToTarget, const IntRect& afterCullRect, const IntRect& opaqueRect)
 {
+    if (!m_recordMetricsForFrame)
+        return;
+
     float afterCullArea = quadArea(transformToTarget.mapQuad(FloatQuad(afterCullRect)));
     float afterCullOpaqueArea = quadArea(transformToTarget.mapQuad(FloatQuad(intersection(opaqueRect, afterCullRect))));
 
@@ -77,12 +84,14 @@ void CCOverdrawMetrics::didDraw(const TransformationMatrix& transformToTarget, c
 
 void CCOverdrawMetrics::recordMetrics(const CCLayerTreeHost* layerTreeHost) const
 {
-    recordMetricsInternal<CCLayerTreeHost>(UPLOADING, layerTreeHost);
+    if (m_recordMetricsForFrame)
+        recordMetricsInternal<CCLayerTreeHost>(UPLOADING, layerTreeHost);
 }
 
 void CCOverdrawMetrics::recordMetrics(const CCLayerTreeHostImpl* layerTreeHost) const
 {
-    recordMetricsInternal<CCLayerTreeHostImpl>(DRAWING, layerTreeHost);
+    if (m_recordMetricsForFrame)
+        recordMetricsInternal<CCLayerTreeHostImpl>(DRAWING, layerTreeHost);
 }
 
 template<typename LayerTreeHostType>

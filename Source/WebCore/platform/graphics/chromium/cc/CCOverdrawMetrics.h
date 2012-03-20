@@ -36,7 +36,7 @@ class CCLayerTreeHostImpl;
 // FIXME: compute overdraw metrics only occasionally, not every frame.
 class CCOverdrawMetrics {
 public:
-    static PassOwnPtr<CCOverdrawMetrics> create() { return adoptPtr(new CCOverdrawMetrics()); }
+    static PassOwnPtr<CCOverdrawMetrics> create(bool recordMetricsForFrame) { return adoptPtr(new CCOverdrawMetrics(recordMetricsForFrame)); }
 
     void didCull(const TransformationMatrix& transformToTarget, const IntRect& beforeCullRect, const IntRect& afterCullRect);
     void didDraw(const TransformationMatrix& transformToTarget, const IntRect& afterCullRect, const IntRect& opaqueRect);
@@ -50,7 +50,7 @@ public:
     float pixelsCulled() const { return m_pixelsCulled; }
 
 private:
-    CCOverdrawMetrics();
+    explicit CCOverdrawMetrics(bool recordMetricsForFrame);
 
     enum MetricsType {
         DRAWING,
@@ -60,6 +60,8 @@ private:
     template<typename LayerTreeHostType>
     void recordMetricsInternal(MetricsType, const LayerTreeHostType*) const;
 
+    // When false this class is a giant no-op.
+    bool m_recordMetricsForFrame;
     // Count of pixels that are opaque (and thus occlude). Ideally this is no more
     // than wiewport width x height.
     float m_pixelsDrawnOpaque;

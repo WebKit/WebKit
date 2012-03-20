@@ -75,8 +75,8 @@ private:
 template<typename LayerType, typename RenderSurfaceType>
 class TestCCOcclusionTrackerBase : public CCOcclusionTrackerBase<LayerType, RenderSurfaceType> {
 public:
-    TestCCOcclusionTrackerBase(IntRect screenScissorRect)
-        : CCOcclusionTrackerBase<LayerType, RenderSurfaceType>(screenScissorRect)
+    TestCCOcclusionTrackerBase(IntRect screenScissorRect, bool recordMetricsForFrame = false)
+        : CCOcclusionTrackerBase<LayerType, RenderSurfaceType>(screenScissorRect, recordMetricsForFrame)
         , m_overrideLayerScissorRect(false)
     {
     }

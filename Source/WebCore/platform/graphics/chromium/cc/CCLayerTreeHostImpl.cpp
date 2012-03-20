@@ -280,7 +280,9 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         scissorRect = enclosingIntRect(m_rootDamageRect);
     else
         scissorRect = IntRect(IntPoint(), viewportSize());
-    CCOcclusionTrackerImpl occlusionTracker(scissorRect);
+
+    bool recordMetricsForFrame = true; // FIXME: In the future, disable this when about:tracing is off.
+    CCOcclusionTrackerImpl occlusionTracker(scissorRect, recordMetricsForFrame);
 
     // Add quads to the Render passes in FrontToBack order to allow for testing occlusion and performing culling during the tree walk.
     typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;

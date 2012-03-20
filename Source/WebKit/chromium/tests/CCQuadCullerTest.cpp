@@ -40,8 +40,8 @@ namespace {
 
 class TestCCOcclusionTrackerImpl : public CCOcclusionTrackerImpl {
 public:
-    TestCCOcclusionTrackerImpl(const IntRect& scissorRectInScreen)
-        : CCOcclusionTrackerImpl(scissorRectInScreen)
+    TestCCOcclusionTrackerImpl(const IntRect& scissorRectInScreen, bool recordMetricsForFrame = true)
+        : CCOcclusionTrackerImpl(scissorRectInScreen, recordMetricsForFrame)
         , m_scissorRectInScreen(scissorRectInScreen)
     {
         // Pretend we have visited a render surface.
@@ -446,5 +446,23 @@ TEST(CCQuadCullerTest, verifyCullOutsideScissorOverNoTiles)
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
     EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 130000, 1);
 }
+
+TEST(CCQuadCullerTest, verifyWithoutMetrics)
+{
+    DECLARE_AND_INITIALIZE_TEST_QUADS
+
+    OwnPtr<CCTiledLayerImpl> rootLayer = makeLayer(TransformationMatrix(), rootRect, 1.0, true, IntRect());
+    OwnPtr<CCTiledLayerImpl> childLayer = makeLayer(TransformationMatrix(), childRect, 1.0, true, IntRect());
+    TestCCOcclusionTrackerImpl occlusionTracker(IntRect(50, 50, 200, 200), false);
+
+    appendQuads(quadList, sharedStateList, childLayer.get(), occlusionTracker);
+    occlusionTracker.markOccludedBehindLayer(childLayer.get());
+    appendQuads(quadList, sharedStateList, rootLayer.get(), occlusionTracker);
+    EXPECT_EQ(quadList.size(), 9u);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnOpaque(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsDrawnTranslucent(), 0, 1);
+    EXPECT_NEAR(occlusionTracker.overdrawMetrics().pixelsCulled(), 0, 1);
+}
+
 
 } // namespace

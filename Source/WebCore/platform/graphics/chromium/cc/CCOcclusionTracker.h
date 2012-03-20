@@ -46,7 +46,7 @@ template<typename LayerType, typename RenderSurfaceType>
 class CCOcclusionTrackerBase {
     WTF_MAKE_NONCOPYABLE(CCOcclusionTrackerBase);
 public:
-    CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace);
+    CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, bool recordMetricsForFrame);
 
     // Called when visiting a layer representing itself. If the target was not already current, then this indicates we have entered a new surface subtree.
     void enterTargetRenderSurface(const RenderSurfaceType* newTarget);

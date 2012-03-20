@@ -51,7 +51,7 @@ namespace {
 class TestCCOcclusionTracker : public CCOcclusionTracker {
 public:
     TestCCOcclusionTracker()
-        : CCOcclusionTracker(IntRect(0, 0, 1000, 1000))
+        : CCOcclusionTracker(IntRect(0, 0, 1000, 1000), true)
         , m_scissorRectInScreen(IntRect(0, 0, 1000, 1000))
     {
         // Pretend we have visited a render surface.

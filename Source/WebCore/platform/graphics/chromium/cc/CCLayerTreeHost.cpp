@@ -547,7 +547,8 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
     // Use FrontToBack to allow for testing occlusion and performing culling during the tree walk.
     typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
 
-    CCOcclusionTracker occlusionTracker(IntRect(IntPoint(), viewportSize()));
+    bool recordMetricsForFrame = true; // FIXME: In the future, disable this when about:tracing is off.
+    CCOcclusionTracker occlusionTracker(IntRect(IntPoint(), viewportSize()), recordMetricsForFrame);
     occlusionTracker.setUsePaintTracking(true); // FIXME: Remove this after m19 branch.
 
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
