@@ -1,3 +1,13 @@
+2012-03-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Allow running run-gtk-tests during 'make dist'
+        https://bugs.webkit.org/show_bug.cgi?id=81415
+
+        Reviewed by Philippe Normand.
+
+        * GNUmakefile.am: Remove 'make check' rules from the makefile
+        Instead this functionality is now in the Tools makefile.
+
 2012-03-16  Victor Lucero  <victor.lucero@ipartner.cl>
 
         [GTK] WebKitWebResource::load-failed uses the wrong marshaller

@@ -1,3 +1,20 @@
+2012-03-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Allow running run-gtk-tests during 'make distcheck'
+        https://bugs.webkit.org/show_bug.cgi?id=81415
+
+        Reviewed by Philippe Normand.
+
+        Modify the build and run-gtk-tests so that it can run during 'make distcheck'
+
+        * GNUmakefile.am: Distribute run-gtk-tests during 'make dist' and make it the
+        main command run during 'make check.'
+        * Scripts/run-gtk-tests: Refactored run-gtk-tests so that jhbuild is no longer
+        a requirement to run it. If jhbuild isn't around it will simply not start the
+        SPI daemons and skip the WebKit2 accessibility test. Remove test runs from the
+        main loop and simply use the main loop in a synchronous method to start SPI
+        daemons. Did a bunch of general cleanup around these tasks.
+
 2012-03-19  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         jhbuild: Use the multiprocessing module to get the number of CPUs.

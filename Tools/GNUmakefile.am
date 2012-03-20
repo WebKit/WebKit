@@ -236,11 +236,15 @@ TestNetscapePlugin_libtestnetscapeplugin_la_LDFLAGS = \
 CLEANFILES += TestNetscapePlugin/libtestnetscapeplugin.la
 endif
 
+check-local:
+	$(top_srcdir)/Tools/Scripts/run-gtk-tests
+
 EXTRA_DIST += \
 	Tools/gtk/common.py \
 	Tools/gtk/generate-gtkdoc \
 	Tools/gtk/gtkdoc.py \
 	Tools/Scripts/VCSUtils.pm \
+	Tools/Scripts/run-gtk-tests \
 	Tools/Scripts/webkit-build-directory \
 	Tools/Scripts/webkitdirs.pm
 
