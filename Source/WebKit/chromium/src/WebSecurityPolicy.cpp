@@ -68,6 +68,11 @@ void WebSecurityPolicy::registerURLSchemeAsCORSEnabled(const WebString& scheme)
     SchemeRegistry::registerURLSchemeAsCORSEnabled(scheme);
 }
 
+void WebSecurityPolicy::registerURLSchemeAsEmptyDocument(const WebString& scheme)
+{
+    SchemeRegistry::registerURLSchemeAsEmptyDocument(scheme);
+}
+
 void WebSecurityPolicy::addOriginAccessWhitelistEntry(
     const WebURL& sourceOrigin,
     const WebString& destinationProtocol,

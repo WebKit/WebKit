@@ -1,3 +1,16 @@
+2012-03-19  Charlie Reis  <creis@chromium.org>
+
+        [Chromium] Add registerURLSchemeAsEmptyDocument to WebSecurityPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=81421
+
+        Reviewed by Adam Barth.
+
+        * public/WebSecurityPolicy.h:
+        (WebSecurityPolicy):
+        * src/WebSecurityPolicy.cpp:
+        (WebKit::WebSecurityPolicy::registerURLSchemeAsEmptyDocument):
+        (WebKit):
+
 2012-03-19  Keishi Hattori  <keishi@webkit.org>
 
         [chromium] Fixing build. Adding missing virtual.
