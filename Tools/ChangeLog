@@ -1,3 +1,20 @@
+2012-03-20  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] Restore color space switching code to run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=80571
+        <rdar://problem/11008529>
+
+        Reviewed by Simon Fraser.
+
+        http://trac.webkit.org/changeset/111429 broke tools build on Snow Leopard.
+        
+        Use the old CM* API on Snow Leopard, since CGDisplayCreateUUIDFromDisplayID
+        didn't exist until Lion.
+
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        (installLayoutTestColorProfile):
+        (restoreUserColorProfile):
+
 2012-03-20  Adele Peterson  <adele@apple.com>
 
         Update the last test to use EXPECT_WK_STREQ.
