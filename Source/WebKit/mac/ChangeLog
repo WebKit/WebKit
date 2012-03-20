@@ -1,3 +1,15 @@
+2012-03-19  Adam Barth  <abarth@webkit.org>
+
+        Remove support for "magic" iframe
+        https://bugs.webkit.org/show_bug.cgi?id=81590
+
+        Reviewed by Eric Seidel.
+
+        Remove FrameLoaderClient methods that no longer exist.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2012-03-19  Enrica Casucci  <enrica@apple.com>
 
         WebKit2: create sandbox extensions for files that are dropped in an input control.

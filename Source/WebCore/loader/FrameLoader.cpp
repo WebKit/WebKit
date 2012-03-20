@@ -1646,22 +1646,6 @@ bool FrameLoader::frameHasLoaded() const
     return m_stateMachine.committedFirstRealDocumentLoad() || (m_provisionalDocumentLoader && !m_stateMachine.creatingInitialEmptyDocument()); 
 }
 
-void FrameLoader::transferLoadingResourcesFromPage(Page* oldPage)
-{
-    ASSERT(oldPage != m_frame->page());
-    if (isLoading()) {
-        activeDocumentLoader()->transferLoadingResourcesFromPage(oldPage);
-        oldPage->progress()->progressCompleted(m_frame);
-        if (m_frame->page())
-            m_frame->page()->progress()->progressStarted(m_frame);
-    }
-}
-
-void FrameLoader::dispatchTransferLoadingResourceFromPage(ResourceLoader* loader, const ResourceRequest& request, Page* oldPage)
-{
-    notifier()->dispatchTransferLoadingResourceFromPage(loader, request, oldPage);
-}
-
 void FrameLoader::setDocumentLoader(DocumentLoader* loader)
 {
     if (!loader && !m_documentLoader)

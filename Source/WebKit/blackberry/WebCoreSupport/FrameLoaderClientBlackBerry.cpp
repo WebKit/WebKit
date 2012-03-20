@@ -740,17 +740,6 @@ PassRefPtr<Frame> FrameLoaderClientBlackBerry::createFrame(const KURL& url, cons
     return childFrame.release();
 }
 
-void FrameLoaderClientBlackBerry::didTransferChildFrameToNewDocument(Page* /*oldPage*/)
-{
-    Page* newPage = m_frame->page();
-    m_webPagePrivate = static_cast<ChromeClientBlackBerry*>(newPage->chrome()->client())->webPagePrivate();
-}
-
-void FrameLoaderClientBlackBerry::transferLoadingResourceFromPage(ResourceLoader*, const ResourceRequest&, Page*)
-{
-    notImplemented();
-}
-
 ObjectContentType FrameLoaderClientBlackBerry::objectContentType(const KURL& url, const String& mimeTypeIn, bool shouldPreferPlugInsForImages)
 {
     String mimeType = mimeTypeIn;

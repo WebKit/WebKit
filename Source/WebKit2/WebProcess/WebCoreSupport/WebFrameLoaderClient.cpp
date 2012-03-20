@@ -1254,16 +1254,6 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     return coreSubframe;
 }
 
-void WebFrameLoaderClient::didTransferChildFrameToNewDocument(Page*)
-{
-    notImplemented();
-}
-
-void WebFrameLoaderClient::transferLoadingResourceFromPage(ResourceLoader*, const ResourceRequest&, Page*)
-{
-    notImplemented();
-}
-
 PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement* pluginElement, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     ASSERT(paramNames.size() == paramValues.size());

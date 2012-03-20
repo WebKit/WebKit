@@ -221,8 +221,6 @@ namespace WebCore {
 
         void subresourceLoaderFinishedLoadingOnePart(ResourceLoader*);
 
-        void transferLoadingResourcesFromPage(Page*);
-
         void maybeFinishLoadingMultipartContent();
 
         void setDeferMainResourceDataLoad(bool defer) { m_deferMainResourceDataLoad = defer; }

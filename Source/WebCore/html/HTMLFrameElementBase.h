@@ -42,8 +42,6 @@ public:
     int width();
     int height();
 
-    bool canRemainAliveOnRemovalFromTree();
-    void setRemainsAliveOnRemovalFromTree(bool);
 #if ENABLE(FULLSCREEN_API)
     virtual bool allowFullScreen() const;
 #endif
@@ -66,10 +64,6 @@ private:
     virtual bool isURLAttribute(Attribute*) const;
     virtual bool isFrameElementBase() const { return true; }
 
-    virtual void willRemove();
-    void checkInDocumentTimerFired(Timer<HTMLFrameElementBase>*);
-    void updateOnReparenting();
-
     bool viewSourceMode() const { return m_viewSource; }
 
     void setNameAndOpenURL();
@@ -83,20 +77,7 @@ private:
     int m_marginWidth;
     int m_marginHeight;
 
-    // This is a performance optimization some call "magic iframe" which avoids
-    // tearing down the frame hierarchy when a web page calls adoptNode on a
-    // frame owning element but does not immediately insert it into the new
-    // document before JavaScript yields to WebCore.  If the element is not yet
-    // in a document by the time this timer fires, the frame hierarchy teardown
-    // will continue.  This can also be seen as implementation of:
-    // "Removing an iframe from a Document does not cause its browsing context
-    // to be discarded. Indeed, an iframe's browsing context can survive its
-    // original parent Document if its iframe is moved to another Document."
-    // From HTML5: http://www.whatwg.org/specs/web-apps/current-work/multipage/the-iframe-element.html#the-iframe-element
-    Timer<HTMLFrameElementBase> m_checkInDocumentTimer;
-
     bool m_viewSource;
-    bool m_remainsAliveOnRemovalFromTree;
 };
 
 } // namespace WebCore

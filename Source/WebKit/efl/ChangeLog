@@ -1,3 +1,17 @@
+2012-03-19  Adam Barth  <abarth@webkit.org>
+
+        Remove support for "magic" iframe
+        https://bugs.webkit.org/show_bug.cgi?id=81590
+
+        Reviewed by Eric Seidel.
+
+        Remove FrameLoaderClient methods that no longer exist.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        (FrameLoaderClientEfl):
+
 2012-03-16  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Support for Battery Status API

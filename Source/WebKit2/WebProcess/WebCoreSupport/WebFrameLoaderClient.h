@@ -183,8 +183,6 @@ private:
     
     virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::KURL& url, const String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
                                           const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) OVERRIDE;
-    virtual void didTransferChildFrameToNewDocument(WebCore::Page*) OVERRIDE;
-    virtual void transferLoadingResourceFromPage(WebCore::ResourceLoader*, const WebCore::ResourceRequest&, WebCore::Page*) OVERRIDE;
     
     virtual PassRefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::KURL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) OVERRIDE;
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget) OVERRIDE;

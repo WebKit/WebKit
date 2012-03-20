@@ -172,14 +172,6 @@ PassRefPtr<Frame> FrameLoaderClientWinCE::createFrame(const KURL& url, const Str
     return m_webView->createFrame(url, name, ownerElement, referrer, allowsScrolling, marginWidth, marginHeight);
 }
 
-void FrameLoaderClientWinCE::didTransferChildFrameToNewDocument(Page*)
-{
-}
-
-void FrameLoaderClientWinCE::transferLoadingResourceFromPage(ResourceLoader*, const WebCore::ResourceRequest&, Page*)
-{
-}
-
 void FrameLoaderClientWinCE::redirectDataToPlugin(Widget* pluginWidget)
 {
     ASSERT(!m_pluginView);

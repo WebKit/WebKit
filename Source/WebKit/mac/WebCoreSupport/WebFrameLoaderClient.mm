@@ -1386,22 +1386,6 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     return 0;
 }
 
-void WebFrameLoaderClient::didTransferChildFrameToNewDocument(Page* oldPage)
-{
-}
-
-void WebFrameLoaderClient::transferLoadingResourceFromPage(ResourceLoader* loader, const ResourceRequest& originalRequest, Page* oldPage)
-{
-    ASSERT(oldPage != core(m_webFrame.get())->page());
-
-    unsigned long identifier = loader->identifier();
-    ASSERT(![getWebView(m_webFrame.get()) _objectForIdentifier:identifier]);
-
-    assignIdentifierToInitialRequest(identifier, loader->documentLoader(), originalRequest);
-
-    [kit(oldPage) _removeObjectForIdentifier:identifier];
-}
-
 ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

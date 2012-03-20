@@ -850,24 +850,6 @@ void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loa
         frame->loader()->checkLoadComplete();    
 }
 
-void DocumentLoader::transferLoadingResourcesFromPage(Page* oldPage)
-{
-    ASSERT(oldPage != m_frame->page());
-
-    FrameLoader* loader = frameLoader();
-    ASSERT(loader);
-
-    if (isLoadingMainResource())
-        loader->dispatchTransferLoadingResourceFromPage(m_mainResourceLoader.get(), originalRequest(), oldPage);
-
-    if (isLoadingSubresources()) {
-        ResourceLoaderSet::const_iterator it = m_subresourceLoaders.begin();
-        ResourceLoaderSet::const_iterator end = m_subresourceLoaders.end();
-        for (; it != end; ++it)
-            loader->dispatchTransferLoadingResourceFromPage((*it).get(), (*it)->originalRequest(), oldPage);
-    }
-}
-
 void DocumentLoader::maybeFinishLoadingMultipartContent()
 {
     if (!doesProgressiveLoad(m_response.mimeType())) {

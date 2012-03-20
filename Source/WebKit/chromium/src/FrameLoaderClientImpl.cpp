@@ -1460,33 +1460,6 @@ PassRefPtr<Frame> FrameLoaderClientImpl::createFrame(
     return m_webFrame->createChildFrame(frameRequest, ownerElement);
 }
 
-void FrameLoaderClientImpl::didTransferChildFrameToNewDocument(Page*)
-{
-    ASSERT(m_webFrame->frame()->ownerElement());
-
-    WebFrameImpl* newParent = static_cast<WebFrameImpl*>(m_webFrame->parent());
-    if (!newParent || !newParent->client())
-        return;
-
-    // Replace the client since the old client may be destroyed when the
-    // previous page is closed.
-    m_webFrame->setClient(newParent->client());
-}
-
-void FrameLoaderClientImpl::transferLoadingResourceFromPage(ResourceLoader* loader, const ResourceRequest& request, Page* oldPage)
-{
-    assignIdentifierToInitialRequest(loader->identifier(), loader->documentLoader(), request);
-
-    WebFrameImpl* oldWebFrame = WebFrameImpl::fromFrame(oldPage->mainFrame());
-    if (oldWebFrame && oldWebFrame->client())
-        oldWebFrame->client()->removeIdentifierForRequest(loader->identifier());
-
-    ResourceHandle* handle = loader->handle();
-    WebURLLoader* webURLLoader = ResourceHandleInternal::FromResourceHandle(handle)->loader();
-    if (webURLLoader && m_webFrame->client())
-        m_webFrame->client()->didAdoptURLLoader(webURLLoader);
-}
-
 PassRefPtr<Widget> FrameLoaderClientImpl::createPlugin(
     const IntSize& size, // FIXME: how do we use this?
     HTMLPlugInElement* element,

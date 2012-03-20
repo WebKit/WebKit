@@ -148,7 +148,6 @@ public:
     virtual void dispatchDidBecomeFrameset(bool) { }
     virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&);
     virtual PassRefPtr<Frame> createFrame(const KURL&, const String&, HTMLFrameOwnerElement*, const String&, bool, int, int);
-    virtual void didTransferChildFrameToNewDocument(Page*);
     virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool);
     virtual void redirectDataToPlugin(Widget*);
     virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL&, const Vector<String>&, const Vector<String>&) { notImplemented(); return 0; }
@@ -164,8 +163,6 @@ public:
     virtual void loadIconExternally(const String& originalPageUrl, const String& finalPageUrl, const String& iconUrl);
 
     virtual void didDetectXSS(const KURL&, bool) { }
-    virtual void transferLoadingResourceFromPage(ResourceLoader*, const ResourceRequest&, Page*);
-    virtual void didTransferChildFrameToNewDocument() { notImplemented(); };
     virtual void dispatchDidChangeIcons(IconType) { notImplemented(); };
     virtual void dispatchWillSendSubmitEvent(HTMLFormElement*) { notImplemented(); };
 
