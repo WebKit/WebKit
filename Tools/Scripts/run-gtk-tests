@@ -19,7 +19,12 @@
 
 from webkitpy.common.system.executive import Executive
 import subprocess
-import os, sys
+import os
+import sys
+import time
+from gi.repository import Gio, GLib
+
+TIMEOUT=180 # seconds
 
 class TestRunner:
 
@@ -48,6 +53,8 @@ class TestRunner:
         if not is_valid_build_directory(build_directory):
             build_directory = os.path.join(top_level, 'WebKitBuild', 'Debug')
 
+        self._a11y_registryd = None
+        self._timed_out = False
         self._gtk_tools_directory = os.path.join(top_level, "Tools", "gtk")
         self._programs_path = os.path.join(build_directory, "Programs")
         self._tests = []
@@ -72,7 +79,7 @@ class TestRunner:
         exec_prefix = self._executive.run_command([jhbuild_path ,'pkg-config', '--variable=exec_prefix', 'atspi-2']).rstrip('\r\n')
         paths_to_check = [ 'libexec',
                            'lib/at-spi2-core',
-                           'lib32/at-spi2-core'
+                           'lib32/at-spi2-core',
                            'lib64/at-spi2-core' ]
         for path in paths_to_check:
             filepath = os.path.join(exec_prefix, path, filename)
@@ -80,6 +87,35 @@ class TestRunner:
                 return filepath
 
         return None
+
+    def _run_command_when_dbus_service_appears(self, service_name, handler):
+        def on_name_appeared(*args):
+            handler()
+
+        def on_name_vanished(*args):
+            pass
+
+        Gio.bus_watch_name(Gio.BusType.SESSION, service_name,
+                           Gio.BusNameWatcherFlags.NONE, on_name_appeared, on_name_vanished)
+
+
+    def _check_if_tests_have_timed_out(self):
+        if time.time() - self._start_time <= TIMEOUT:
+            return False
+        sys.stdout.write("Tests timed out after %d seconds\n" % TIMEOUT)
+        sys.stdout.flush()
+        self._timed_out = True
+        return True
+
+    def _ensure_accessibility_daemon_is_running(self, jhbuild_path):
+        a11y_registryd_path = self._lookup_atspi2_binary(jhbuild_path, 'at-spi2-registryd')
+        if a11y_registryd_path:
+            try:
+                self._a11y_registryd = Executive().popen([a11y_registryd_path], env=test_env)
+            except:
+                sys.stderr.write("Failed to run the accessibility registry\n")
+                sys.stderr.flush()
+                self._a11y_registryd = None
 
     def run(self):
         if not self._tests:
@@ -92,50 +128,53 @@ class TestRunner:
         test_env["WEBKIT_INSPECTOR_PATH"] = os.path.abspath(os.path.join(self._programs_path, 'resources', 'inspector'))
         test_env['GSETTINGS_BACKEND'] = 'memory'
 
-        exit_status = [0]
+        failed_tests = []
         def _error_handler(error):
-            exit_status[0] = error.exit_code
+            failed_tests.append(error.script_args[2])
 
         jhbuild_path = os.path.join(self._gtk_tools_directory, "run-with-jhbuild")
 
         # Make sure the accessibility bus is launched.
-        a11y_bus_launched = False
         a11y_bus_launcher_path = self._lookup_atspi2_binary(jhbuild_path, 'at-spi-bus-launcher')
-        if a11y_bus_launcher_path:
-            try:
-                a11y_bus_launcher = Executive().popen([a11y_bus_launcher_path], env=test_env)
-                a11y_bus_launched = True
-            except:
-                sys.stderr.write("Failed to launch the accessibility bus\n")
-                sys.stderr.flush()
+        assert(a11y_bus_launcher_path)
+        try:
+            a11y_bus_launcher = Executive().popen([a11y_bus_launcher_path], env=test_env)
+        except:
+            sys.stderr.write("Failed to launch the accessibility bus\n")
+            sys.stderr.flush()
+            return 1
 
-        # Make sure the accessibility registry daemon is running.
-        a11y_registryd_running = False
-        a11y_registryd_path = self._lookup_atspi2_binary(jhbuild_path, 'at-spi2-registryd')
-        if a11y_registryd_path:
-            try:
-                a11y_registryd = Executive().popen([a11y_registryd_path], env=test_env)
-                a11y_registryd_running = True
-            except:
-                sys.stderr.write("Failed to run the accessibility registry\n")
-                sys.stderr.flush()
+        loop = GLib.MainLoop()
+        self._start_time = time.time()
 
-        for test in self._tests:
-            out = self._executive.run_command([jhbuild_path ,'gtester', test], env=test_env,
-                                              error_handler=_error_handler)
-            sys.stdout.write(out)
-            sys.stdout.flush()
+        def run_tests():
+            self._ensure_accessibility_daemon_is_running(jhbuild_path)
 
-        if a11y_registryd_running:
-            a11y_registryd.kill()
-        if a11y_bus_launched:
-            a11y_bus_launcher.kill()
+            for test in self._tests:
+                out = self._executive.run_command([jhbuild_path ,'gtester', test], env=test_env,
+                                                  error_handler=_error_handler)
+                sys.stdout.write(out)
+                sys.stdout.flush()
 
-        if exit_status[0]:
-            sys.stdout.write("Tests failed\n")
-            sys.stdout.flush()
+                if self._check_if_tests_have_timed_out():
+                    break
 
-        return exit_status[0]
+            if self._a11y_registryd:
+                self._a11y_registryd.terminate()
+
+            a11y_bus_launcher.terminate()
+
+            if failed_tests:
+                names = [os.path.basename(t) for t in failed_tests]
+                sys.stdout.write("Tests failed: %s\n" % ", ".join(names))
+                sys.stdout.flush()
+
+            loop.quit()
+
+        self._run_command_when_dbus_service_appears("org.a11y.Bus", run_tests)
+        loop.run()
+
+        return len(failed_tests) or int(self._timed_out)
 
 if __name__ == "__main__":
     try:
