@@ -307,12 +307,22 @@ WebInspector.TabbedPane.prototype = {
             this._headerContentsElement.removeChild(this._dropDownButton);
 
         this._tabsSelect.removeChildren();
+        var tabsToShow = [];
         for (var i = 0; i < this._tabs.length; ++i) {
-            if (this._tabs[i].shown)
+            if (!this._tabs[i].shown)
+                tabsToShow.push(this._tabs[i]);
                 continue;
-            
-            var option = new Option(this._tabs[i].title);
-            option.tab = this._tabs[i];
+        }
+
+        function compareFunction(tab1, tab2)
+        {
+            return tab1.title.localeCompare(tab2.title);
+        }
+        tabsToShow.sort(compareFunction);
+
+        for (var i = 0; i < tabsToShow.length; ++i) {
+            var option = new Option(tabsToShow[i].title);
+            option.tab = tabsToShow[i];
             this._tabsSelect.appendChild(option);
         }
         if (this._tabsSelect.options.length) {
