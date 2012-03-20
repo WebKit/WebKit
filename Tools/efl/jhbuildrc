@@ -16,6 +16,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+import multiprocessing
 import sys
 
 __efl_tools_directory = os.path.abspath(os.path.dirname(__file__))
@@ -42,8 +43,8 @@ prefix = os.path.abspath(common.top_level_path('WebKitBuild','Dependencies', 'Ro
 
 nonotify = True
 notrayicon = True
-if ('MAKEFLAGS' not in os.environ):
-    os.environ['MAKEFLAGS'] = '-j' + str(common.number_of_cpus())
+if 'MAKEFLAGS' not in os.environ:
+    os.environ['MAKEFLAGS'] = '-j%d' % multiprocessing.cpu_count()
 
 # Use system libraries while building.
 if use_lib64:

@@ -81,12 +81,6 @@ def build_path(*args):
     return os.path.join(*(get_build_path(),) + args)
 
 
-def number_of_cpus():
-    process = subprocess.Popen([script_path('num-cpus')], stdout=subprocess.PIPE)
-    stdout = process.communicate()[0]
-    return int(stdout)
-
-
 def prefix_of_pkg_config_file(package):
     process = subprocess.Popen(['pkg-config', '--variable=prefix', package],
                                    stdout=subprocess.PIPE)

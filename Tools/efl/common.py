@@ -16,8 +16,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 import os
-import subprocess
-import sys
 
 script_dir = None
 
@@ -31,9 +29,3 @@ def script_path(*args):
 
 def top_level_path(*args):
     return os.path.join(*((script_path('..', '..'),) + args))
-
-
-def number_of_cpus():
-    process = subprocess.Popen([script_path('num-cpus')], stdout=subprocess.PIPE)
-    stdout = process.communicate()[0]
-    return int(stdout)

@@ -1,3 +1,22 @@
+2012-03-19  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        jhbuild: Use the multiprocessing module to get the number of CPUs.
+        https://bugs.webkit.org/show_bug.cgi?id=81585
+
+        Reviewed by Martin Robinson.
+
+        Now that support for Python 2.5 has been dropped, we can safely
+        use multiprocessing.cpu_count() to obtain the current number of
+        CPUs in the system instead of running a webkitperl script for
+        that.
+
+        * efl/common.py:
+        (top_level_path):
+        * efl/jhbuildrc:
+        * gtk/common.py:
+        (build_path):
+        * gtk/jhbuildrc:
+
 2012-03-19  Ojan Vafai  <ojan@chromium.org>
 
         We should only add a live event listener once, not once per TestSelector.
