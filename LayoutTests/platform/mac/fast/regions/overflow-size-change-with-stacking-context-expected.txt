@@ -38,11 +38,7 @@ Flow Threads
             text run at (0,72) width 216: "regions. These lines will not spill"
             text run at (-23,92) width 81: "out of the"
             text run at (-23,110) width 50: "regions."
-    layer at (42,7) size 500x18 backgroundClip at (42,7) size 216x345 clip at (42,7) size 216x345 outlineClip at (42,7) size 216x345
-      RenderBlock {DIV} at (1,1) size 500x18
-        RenderText {#text} at (-13,0) size 286x18
-          text run at (-13,0) width 286: "Clipped line of text that should not be visible."
-    layer at (42,334) size 500x18 backgroundClip at (42,7) size 216x345 clip at (42,7) size 216x345 outlineClip at (42,7) size 216x345
+    layer at (42,334) size 500x18 backgroundClip at (51,76) size 216x345 clip at (51,76) size 216x345 outlineClip at (51,76) size 216x345
       RenderBlock (positioned) {DIV} at (1,328) size 500x18
         RenderText {#text} at (-23,0) size 286x18
           text run at (-23,0) width 286: "Clipped line of text that should not be visible."
