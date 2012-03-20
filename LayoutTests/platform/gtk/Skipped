@@ -1580,9 +1580,6 @@ fast/events/autoscroll-in-textfield.html
 # https://bugs.webkit.org/show_bug.cgi?id=78801
 touchadjustment
 
-# https://bugs.webkit.org/show_bug.cgi?id=81089
-inspector/debugger/snippets-model.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=81320
 editing/pasteboard/copy-two-pasteboard-types-both-work.html
 

@@ -245,10 +245,6 @@ http/tests/inspector/compiler-source-mapping-debug.html
 # https://bugs.webkit.org/show_bug.cgi?id=79068
 inspector/styles/svg-style.xhtml
 
-# http://trac.webkit.org/changeset/111212 made it fail
-# https://bugs.webkit.org/show_bug.cgi?id=81334
-inspector/debugger/snippets-model.html
-
 # Needs rebaseline
 fast/repaint/scale-page-shrink.html
 
