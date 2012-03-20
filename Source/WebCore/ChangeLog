@@ -1,3 +1,21 @@
+2012-03-19  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Menulist buttons have separators even when the theme turns them off
+        https://bugs.webkit.org/show_bug.cgi?id=80668
+
+        Reviewed by Daniel Bates.
+
+        No new tests. GTK+ theme differences are notoriously difficult
+        to test, because consistent results depend on having certain themes
+        and certain versions of themes installed.
+
+        Instead of using the GTK_TYPE_BUTTON and GTK_TYPE_SEPARATOR tags to get the
+        style context, use GTK_TYPE_COMBO_BOX which should provide more accurate theme settings.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::getComboBoxMetrics): Get metrics from a GTK_TYPE_COMBO_BOX style context.
+        (WebCore::RenderThemeGtk::paintMenuList): Get separator settings from the GTK_TYPE_COMBO_BOX style context.
+
 2012-03-19  Scott Byer  <scottbyer@chromium.org>
 
         Cleanup obsolete files.
