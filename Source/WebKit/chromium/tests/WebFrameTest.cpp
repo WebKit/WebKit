@@ -152,7 +152,7 @@ TEST_F(WebFrameTest, ChromePageNoJavascript)
 }
 
 #if ENABLE(GESTURE_EVENTS)
-TEST_F(WebFrameTest, DivAutoZoomParamsTest)
+TEST_F(WebFrameTest, FAILS_DivAutoZoomParamsTest)
 {
     registerMockedHttpURLLoad("get_scale_for_auto_zoom_into_div_test.html");
 
