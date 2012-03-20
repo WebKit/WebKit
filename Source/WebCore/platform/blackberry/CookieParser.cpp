@@ -27,9 +27,9 @@
 #include "config.h"
 #include "CookieParser.h"
 
-#include "CurrentTime.h"
 #include "Logging.h"
 #include "ParsedCookie.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

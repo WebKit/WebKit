@@ -33,7 +33,6 @@
 
 #include "CookieDatabaseBackingStore.h"
 #include "CookieParser.h"
-#include "CurrentTime.h"
 #include "FileSystem.h"
 #include "Logging.h"
 #include "WebSettings.h"
@@ -42,6 +41,7 @@
 #include <BlackBerryPlatformMessageClient.h>
 #include <BlackBerryPlatformNavigatorHandler.h>
 #include <stdlib.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>

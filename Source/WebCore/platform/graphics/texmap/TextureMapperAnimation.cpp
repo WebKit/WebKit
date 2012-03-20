@@ -20,8 +20,8 @@
 #include "config.h"
 #include "TextureMapperAnimation.h"
 
-#include "CurrentTime.h"
 #include "UnitBezier.h"
+#include <wtf/CurrentTime.h>
 
 #if USE(TEXTURE_MAPPER)
 namespace WebCore {

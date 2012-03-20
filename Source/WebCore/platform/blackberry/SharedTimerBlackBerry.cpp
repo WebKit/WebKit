@@ -19,7 +19,7 @@
 #include "config.h"
 #include "SharedTimer.h"
 
-#include "CurrentTime.h"
+#include <wtf/CurrentTime.h>
 
 #include <BlackBerryPlatformTimer.h>
 

@@ -30,7 +30,6 @@
 #include <vssym32.h>
 
 #include "CSSValueKeywords.h"
-#include "CurrentTime.h"
 #include "FontSelector.h"
 #include "FontUtilsChromiumWin.h"
 #include "GraphicsContext.h"
@@ -46,6 +45,8 @@
 #include "ScrollbarTheme.h"
 #include "SystemInfo.h"
 #include "TransparencyWin.h"
+#include <wtf/CurrentTime.h>
+
 
 // FIXME: This dependency should eventually be removed.
 #include <skia/ext/skia_utils_win.h>
