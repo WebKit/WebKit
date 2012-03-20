@@ -183,7 +183,7 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
     // Use private temporary and cache directories.
     String systemDirectorySuffix = "com.apple.WebProcess+" + parameters.uiProcessBundleIdentifier;
     setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(systemDirectorySuffix).data(), 0);
-    static char temporaryDirectory[PATH_MAX];
+    char temporaryDirectory[PATH_MAX];
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
         fprintf(stderr, "WebProcess: couldn't retrieve private temporary directory path: %d\n", errno);
         exit(EX_NOPERM);
