@@ -51,32 +51,33 @@ TouchFlingPlatformGestureCurve::~TouchFlingPlatformGestureCurve()
 
 bool TouchFlingPlatformGestureCurve::apply(double time, PlatformGestureCurveTarget* target)
 {
-    // Here we implement a cubic bezier curve with parameters [1 1 0 0] which gives
-    // v(0) = 1, a(0) = 0, v(1) = 0, a(1) = 0. The curve is scaled by the initial
+    // Here we implement a cubic bezier curve with parameters [p0 p1 p2 p3] = [1 (3 + 1/tau) 0 0] which gives
+    // v(0) = 1, a(0) = v(0)/tau, v(1) = 0, a(1) = 0. The curve is scaled by the initial
     // velocity, and the time parameter is re-scaled so that larger initial velocities
     // lead to longer initial animations. This should allow the animation to smoothly
     // continue the velocity at the end of the GestureScroll, and smoothly come to a rest
     // at the end. Finally, we have integrated the curve so we can deal with displacement
     // as a function of time, and not velocity.
-    // Finally, we place a constant velocity from ts = 0 .. 0.5, and run the Bezier curve
-    // from ts = 0.5 .. 1.5 to give a longer run-out.
     time *= m_timeScaleFactor;
 
+    static double tau = 0.25;
+    static double p1 =  3.0 + 1 / tau;
+    // Note: "displacement" below is the integral of the cubic bezier curve defined by [p0 p1 p2 p3].
+
     float displacement;
-    if (time <= 0.5)
-        displacement = time;
-    else if (time <= 1.5) {
-        double t = time - 0.5;
-        displacement = t * (1 + t * t * (0.5 * t - 1)) + 0.5;
-    } else
-        displacement = 1.0;
+    if (time < 0)
+        displacement = 0;
+    else if (time < 1)
+        displacement = time * (time * (time * (time * 0.25 * (3 * p1 - 1.0) + (1 - 2 * p1)) + 1.5 * (p1 - 1)) + 1) / m_timeScaleFactor;
+    else
+        displacement = (1 + (p1 - 1) * 1.5 + (1 - 2 * p1) + (3 * p1 - 1) * 0.25) / m_timeScaleFactor;
 
     // Keep track of integer portion of scroll thus far, and prepare increment.
     IntPoint scroll(displacement * m_velocity.x(), displacement * m_velocity.y());
     IntPoint scrollIncrement(scroll - m_cumulativeScroll);
     m_cumulativeScroll = scroll;
 
-    if (time < 1.5 || scrollIncrement != IntPoint::zero()) {
+    if (time < 1 || scrollIncrement != IntPoint::zero()) {
         target->scrollBy(scrollIncrement);
         return true;
     }

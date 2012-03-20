@@ -99,8 +99,10 @@ TEST(PlatformGestureCurve, flingCurve)
 
 TEST(PlatformGestureCurve, flingCurveTouch)
 {
+    double initialVelocity = 1000;
+    const double touchFlingCurveAreaFactor = 2; // Depends on value of tau in TouchFlingPlatformGestureCurve.
     MockPlatformGestureCurveTarget target;
-    OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::create(FloatPoint(1000, 0)), &target);
+    OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::create(FloatPoint(initialVelocity, 0)), &target);
 
     // Note: the expectations below are dependent on the value of sigma hard-coded in the Rayleigh
     //       curve. If sigma changes, these test expectations will also change.
@@ -111,7 +113,7 @@ TEST(PlatformGestureCurve, flingCurveTouch)
     EXPECT_TRUE(animation->animate(0.9));
     EXPECT_TRUE(animation->animate(1000));
     EXPECT_FALSE(animation->animate(1001));
-    EXPECT_NEAR(target.cumulativeDelta().x(), 1000, 1);
+    EXPECT_NEAR(target.cumulativeDelta().x(), initialVelocity * touchFlingCurveAreaFactor, 1);
     EXPECT_EQ(target.cumulativeDelta().y(), 0);
 }
 

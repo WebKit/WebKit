@@ -1,3 +1,12 @@
+2012-03-20  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Tune fling physics curve. [Not for review yet]
+        https://bugs.webkit.org/show_bug.cgi?id=81398
+
+        Reviewed by James Robinson.
+
+        * tests/PlatformGestureCurveTest.cpp:
+
 2012-03-20  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Infrastructure to allow animating layers to be only partially updated
