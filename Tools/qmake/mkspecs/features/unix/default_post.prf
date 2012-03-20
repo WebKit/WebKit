@@ -6,8 +6,7 @@
 
 # Treat warnings as errors on x86/Linux/GCC
 linux-g++* {
-    # Disable -Werror on x86 because of https://bugs.webkit.org/show_bug.cgi?id=81498
-    isEqual(QT_ARCH,x86_64) {
+    isEqual(QT_ARCH,x86_64)|isEqual(QT_ARCH,i386) {
         # Disable -Werror for declarative stuff until we _require_ a Qt 5 with the new names.
         !contains(QT, declarative): QMAKE_CXXFLAGS += -Werror
     }

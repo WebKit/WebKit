@@ -1,3 +1,12 @@
+2012-03-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        x86 GCC bug triggers a compilation error in generated copy constructor of CollapsedBorderValue
+        https://bugs.webkit.org/show_bug.cgi?id=81502
+
+        Unreviewed.
+
+        * qmake/mkspecs/features/unix/default_post.prf: Reenable Werror after r111171.
+
 2012-03-19  Jessie Berlin  <jberlin@apple.com>
 
         Unreviewed; roll out http://trac.webkit.org/changeset/111307 and http://trac.webkit.org/changeset/111293
