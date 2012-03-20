@@ -38,8 +38,8 @@
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 
+#include <text/PlatformString.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/PlatformString.h>
 
 namespace WebCore {
 
