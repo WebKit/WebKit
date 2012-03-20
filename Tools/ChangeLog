@@ -1,3 +1,35 @@
+2012-03-20  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: get ServerProcess out of the reportcrash business
+        https://bugs.webkit.org/show_bug.cgi?id=81600
+
+        Unreviewed, build fix.
+
+        Re-land r111307 and r111293 with fix for crash in NRWT; I
+        was failing to set the crashing process name.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess._reset):
+        (ServerProcess._handle_possible_interrupt):
+        (ServerProcess.write):
+        (ServerProcess.read_stdout):
+        (ServerProcess.has_crashed):
+        (ServerProcess._read):
+        (ServerProcess.stop):
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+        (TrivialMockPort.check_for_leaks):
+        (TestServerProcess.test_broken_pipe):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._read_image_diff):
+        (WebKitDriver.has_crashed):
+        (WebKitDriver._check_for_driver_crash):
+        (WebKitDriver.run_test):
+        (WebKitDriver._read_block):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (MockServerProcess.__init__):
+        (MockServerProcess):
+        (MockServerProcess.has_crashed):
+
 2012-03-20  Tim Horton  <timothy_horton@apple.com>
 
         [mac] Restore color space switching code to run-webkit-tests
