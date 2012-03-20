@@ -129,6 +129,7 @@ function test()
 
         function testCompilerScriptMapping(next)
         {
+            WebInspector.debuggerModel._scripts = [];
             var mapping = new WebInspector.CompilerScriptMapping();
             var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
             script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
@@ -162,8 +163,39 @@ function test()
             }
         },
 
+        function testInlinedSourceMap(next)
+        {
+            WebInspector.debuggerModel._scripts = [];
+            var mapping = new WebInspector.CompilerScriptMapping();
+            var script = InspectorTest.createScriptMock("http://example.com/compiled.js", 0, 0, true, "");
+            var sourceMap = {
+                "file":"compiled.js",
+                "mappings":"AAASA,QAAAA,IAAG,CAACC,CAAD,CAAaC,CAAb,CACZ,CACI,MAAOD,EAAP,CAAoBC,CADxB,CAIA,IAAIC,OAAS;",
+                "sources":["source.js"],
+                "sourcesContent":["<source content>"]
+            };
+            script.sourceMapURL = "data:application/json;base64," + btoa(JSON.stringify(sourceMap));
+            mapping.addScript(script);
+
+            var uiSourceCodeList = mapping.uiSourceCodeList();
+            InspectorTest.assertEquals(1, uiSourceCodeList.length);
+            InspectorTest.assertEquals("source.js", uiSourceCodeList[0].url);
+
+            InspectorTest.checkUILocation(uiSourceCodeList[0], 2, 4, mapping.rawLocationToUILocation(WebInspector.debuggerModel.createRawLocation(script, 0, 18)));
+            InspectorTest.checkRawLocation(script, 0, 18, mapping.uiLocationToRawLocation(uiSourceCodeList[0], 2, 4));
+
+            uiSourceCodeList[0].requestContent(didRequestContent);
+
+            function didRequestContent(mimeType, content)
+            {
+                InspectorTest.assertEquals("<source content>", content);
+                next();
+            }
+        },
+
         function testCompilerSourceMappingCouldNotBeLoaded(next)
         {
+            WebInspector.debuggerModel._scripts = [];
             var mainScriptMapping = new WebInspector.MainScriptMapping();
             mainScriptMapping.addEventListener(WebInspector.MainScriptMapping.Events.UISourceCodeListChanged, uiSourceCodeListChanged);
 

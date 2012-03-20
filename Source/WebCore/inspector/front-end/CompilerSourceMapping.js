@@ -86,6 +86,7 @@ WebInspector.ClosureCompilerSourceMapping = function(sourceMappingURL, scriptSou
     this._sourceMappingURL = this._canonicalizeURL(sourceMappingURL, scriptSourceOrigin);
     this._mappings = [];
     this._reverseMappingsBySourceURL = {};
+    this._sourceContentByURL = {};
 }
 
 WebInspector.ClosureCompilerSourceMapping.prototype = {
@@ -145,6 +146,9 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
      */
     loadSourceCode: function(sourceURL)
     {
+        if (this._sourceContentByURL[sourceURL])
+            return this._sourceContentByURL[sourceURL];
+
         try {
             // FIXME: make sendRequest async.
             return InspectorFrontendHost.loadResourceSynchronously(sourceURL);
@@ -204,6 +208,8 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
             sources.push(url);
             if (!this._reverseMappingsBySourceURL[url])
                 this._reverseMappingsBySourceURL[url] = [];
+            if (map.sourcesContent && map.sourcesContent[i])
+                this._sourceContentByURL[url] = map.sourcesContent[i];
         }
 
         var stringCharIterator = new WebInspector.ClosureCompilerSourceMapping.StringCharIterator(map.mappings);
@@ -267,7 +273,7 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
 
     _canonicalizeURL: function(url, baseURL)
     {
-        if (!url || !baseURL || url.asParsedURL())
+        if (!url || !baseURL || url.asParsedURL() || url.substring(0, 5) === "data:")
             return url;
 
         var base = baseURL.asParsedURL();
