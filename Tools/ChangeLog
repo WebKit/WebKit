@@ -1,5 +1,44 @@
 2012-03-19  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: get ServerProcess out of the reportcrash business
+        https://bugs.webkit.org/show_bug.cgi?id=81600
+
+        Reviewed by Adam Barth.
+
+        ServerProcess was half-aware that ReportCrash might run
+        sometimes, and that the process ServerProcess was talking to
+        might have its own crashing subprocesses; neither of these
+        things really worked right and it made the logic convoluted, so
+        this change makes handling crashes completely separate from the
+        server_process code, so that it can focus on just I/O to the
+        subprocess.
+
+        There should be no functional changes resulting from this patch.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess._reset):
+        (ServerProcess._handle_possible_interrupt):
+        (ServerProcess.write):
+        (ServerProcess.read_stdout):
+        (ServerProcess.has_crashed):
+        (ServerProcess._read):
+        (ServerProcess.stop):
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+        (TrivialMockPort.check_for_leaks):
+        (TestServerProcess.test_broken_pipe):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._read_image_diff):
+        (WebKitDriver.has_crashed):
+        (WebKitDriver._check_for_driver_crash):
+        (WebKitDriver.run_test):
+        (WebKitDriver._read_block):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (MockServerProcess.__init__):
+        (MockServerProcess):
+        (MockServerProcess.has_crashed):
+
+2012-03-19  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: crashlog parsing is broken
         https://bugs.webkit.org/show_bug.cgi?id=81586
 

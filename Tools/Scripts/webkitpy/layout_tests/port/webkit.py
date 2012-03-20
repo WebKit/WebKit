@@ -194,7 +194,7 @@ class WebKitPort(Port):
 
         while True:
             output = sp.read_stdout_line(deadline)
-            if sp.timed_out or sp.crashed or not output:
+            if sp.timed_out or sp.has_crashed() or not output:
                 break
 
             if output.startswith('diff'):  # This is the last line ImageDiff prints.
@@ -209,7 +209,7 @@ class WebKitPort(Port):
 
         if sp.timed_out:
             _log.error("ImageDiff timed out")
-        if sp.crashed:
+        if sp.has_crashed():
             _log.error("ImageDiff crashed")
         # FIXME: There is no need to shut down the ImageDiff server after every diff.
         sp.stop()
@@ -489,31 +489,19 @@ class WebKitDriver(Driver):
     def has_crashed(self):
         if self._server_process is None:
             return False
-        return self._server_process.poll() is not None
+        if self._crashed_subprocess_name:
+            return True
+        return self._server_process.has_crashed()
 
     def _check_for_driver_crash(self, error_line):
         if error_line == "#CRASHED\n":
             # This is used on Windows to report that the process has crashed
             # See http://trac.webkit.org/changeset/65537.
-            self._server_process.set_crashed(True)
+            self._crashed_subprocess_name = self._port.driver_name()
         elif error_line == "#CRASHED - WebProcess\n":
             # WebKitTestRunner uses this to report that the WebProcess subprocess crashed.
-            self._subprocess_crashed("WebProcess")
-        return self._detected_crash()
-
-    def _detected_crash(self):
-        # We can't just check self._server_process.crashed because WebKitTestRunner
-        # can report subprocess crashes at any time by printing
-        # "#CRASHED - WebProcess", we want to count those as crashes as well.
-        return self._server_process.crashed or self._crashed_subprocess_name
-
-    def _subprocess_crashed(self, subprocess_name):
-        self._crashed_subprocess_name = subprocess_name
-
-    def _crashed_process_name(self):
-        if not self._detected_crash():
-            return None
-        return self._crashed_subprocess_name or self._server_process.process_name()
+            self._crashed_subprocess_name = "WebProcess"
+        return self._has_crashed()
 
     def _command_from_driver_input(self, driver_input):
         if self.is_http_test(driver_input.test_name):
@@ -563,9 +551,9 @@ class WebKitDriver(Driver):
         self.error_from_test += self._server_process.pop_all_buffered_stderr()
 
         return DriverOutput(text, image, actual_image_hash, audio,
-            crash=self._detected_crash(), test_time=time.time() - start_time,
+            crash=self.has_crashed(), test_time=time.time() - start_time,
             timeout=self._server_process.timed_out, error=self.error_from_test,
-            crashed_process_name=self._crashed_process_name())
+            crashed_process_name=self._crashed_subprocess_name)
 
     def _read_header(self, block, line, header_text, header_attr, header_filter=None):
         if line.startswith(header_text) and getattr(block, header_attr) is None:
@@ -608,7 +596,7 @@ class WebKitDriver(Driver):
             else:
                 out_line, err_line = self._server_process.read_either_stdout_or_stderr_line(deadline)
 
-            if self._server_process.timed_out or self._detected_crash():
+            if self._server_process.timed_out or self.has_crashed():
                 break
 
             if out_line:
