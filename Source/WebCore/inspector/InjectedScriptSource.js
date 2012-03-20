@@ -422,9 +422,9 @@ InjectedScript.prototype = {
 
         // FireBug's array detection.
         try {
-            if (isFinite(obj.length) && typeof obj.splice === "function")
+            if (typeof obj.splice === "function" && isFinite(obj.length))
                 return "array";
-            if (isFinite(obj.length) && typeof obj.callee === "function") // arguments.
+            if (typeof obj.callee === "function" && isFinite(obj.length)) // arguments.
                 return "array";
         } catch (e) {
         }

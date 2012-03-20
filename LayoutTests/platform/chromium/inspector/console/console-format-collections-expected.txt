@@ -5,6 +5,7 @@ CONSOLE MESSAGE: line 27: undefined
 CONSOLE MESSAGE: line 31: [object HTMLCollection]
 CONSOLE MESSAGE: line 35: [object NodeList]
 CONSOLE MESSAGE: line 41: 1,2,
+CONSOLE MESSAGE: line 44: [object Object]
 Tests that console nicely formats HTML Collections and NodeLists.
 
 [<select id="sel" name="sel">…</select>] console-format-collections.html:15
@@ -16,4 +17,5 @@ Tests that console nicely formats HTML Collections and NodeLists.
 [<select id="sel" name="sel">…</select>, <input type="radio" name="x" value="x1">, <input type="radio" name="x" value="x2">] console-format-collections.html:31
 [<input type="radio" name="x" value="x1">, <input type="radio" name="x" value="x2">] console-format-collections.html:35
 [1, Array[2]] console-format-collections.html:41
+NonArrayWithLength console-format-collections.html:44
 

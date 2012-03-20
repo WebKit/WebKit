@@ -40,8 +40,22 @@ function onload()
     arrayX.push(arrayY);
     console.log(arrayX);
 
+    var nonArray = new NonArrayWithLength();
+    console.log(nonArray);
+
     runTest();
 }
+
+function NonArrayWithLength()
+{
+    this.keys=[];
+}
+
+NonArrayWithLength.prototype.__defineGetter__("length", function()
+{
+    console.log(".length should not be called");
+    return this.keys.length;
+});
 
 function test()
 {
