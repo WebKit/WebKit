@@ -58,8 +58,7 @@ Notification::Notification(const KURL& url, ScriptExecutionContext* context, Exc
     , m_state(Idle)
     , m_notificationCenter(provider)
 {
-    ASSERT(m_notificationCenter->client());
-    if (m_notificationCenter->client()->checkPermission(context) != NotificationClient::PermissionAllowed) {
+    if (m_notificationCenter->checkPermission() != NotificationClient::PermissionAllowed) {
         ec = SECURITY_ERR;
         return;
     }
@@ -80,8 +79,7 @@ Notification::Notification(const String& title, const String& body, const String
     , m_state(Idle)
     , m_notificationCenter(provider)
 {
-    ASSERT(m_notificationCenter->client());
-    if (m_notificationCenter->client()->checkPermission(context) != NotificationClient::PermissionAllowed) {
+    if (m_notificationCenter->checkPermission() != NotificationClient::PermissionAllowed) {
         ec = SECURITY_ERR;
         return;
     }
