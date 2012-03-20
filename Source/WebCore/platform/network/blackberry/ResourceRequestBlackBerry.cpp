@@ -189,7 +189,7 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
        
         // Redirection's response may contain new cookies, so add cookies again.
         // If there aren't cookies in the header list, we need trying to add cookies.
-        if (cookiesEnabled && (isRedirect || !httpHeaderFields().contains("Cookie"))) {
+        if (cookiesEnabled && (isRedirect || !httpHeaderFields().contains("Cookie")) && !url().isNull()) {
             // Prepare a cookie header if there are cookies related to this url.
             String cookiePairs = cookieManager().getCookie(url(), WithHttpOnlyCookies);
             if (!cookiePairs.isEmpty())

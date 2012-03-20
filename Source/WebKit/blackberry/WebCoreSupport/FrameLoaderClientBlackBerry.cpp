@@ -192,33 +192,33 @@ void FrameLoaderClientBlackBerry::dispatchDecidePolicyForResponse(FramePolicyFun
 
 void FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState>)
 {
-    PolicyAction decision = PolicyUse;
+    PolicyAction decision = PolicyIgnore;
 
     const KURL& url = request.url();
-
-    // Fragment scrolls on the same page should always be handled internally.
-    // (Only count as a fragment scroll if we are scrolling to a #fragment url, not back to the top, and reloading
-    // the same url is not a fragment scroll even if it has a #fragment.)
-    const KURL& currentUrl = m_frame->document()->url();
-    bool isFragmentScroll = url.hasFragmentIdentifier() && url != currentUrl && equalIgnoringFragmentIdentifier(currentUrl, url);
-    if (decision == PolicyUse)
+    if (!url.isNull()) {
+        // Fragment scrolls on the same page should always be handled internally.
+        // (Only count as a fragment scroll if we are scrolling to a #fragment url, not back to the top, and reloading
+        // the same url is not a fragment scroll even if it has a #fragment.)
+        const KURL& currentUrl = m_frame->document()->url();
+        bool isFragmentScroll = url.hasFragmentIdentifier() && url != currentUrl && equalIgnoringFragmentIdentifier(currentUrl, url);
         decision = decidePolicyForExternalLoad(request, isFragmentScroll);
 
-    // Let the client have a chance to say whether this navigation should
-    // be ignored or not.
-    BlackBerry::Platform::NetworkRequest platformRequest;
-    request.initializePlatformRequest(platformRequest, cookiesEnabled());
-    if (isMainFrame() && !m_webPagePrivate->m_client->acceptNavigationRequest(
-        platformRequest, BlackBerry::Platform::NavigationType(action.type()))) {
-        if (action.type() == NavigationTypeFormSubmitted
-            || action.type() == NavigationTypeFormResubmitted)
-            m_frame->loader()->resetMultipleFormSubmissionProtection();
+        // Let the client have a chance to say whether this navigation should
+        // be ignored or not.
+        BlackBerry::Platform::NetworkRequest platformRequest;
+        request.initializePlatformRequest(platformRequest, cookiesEnabled());
+        if (isMainFrame() && !m_webPagePrivate->m_client->acceptNavigationRequest(
+            platformRequest, BlackBerry::Platform::NavigationType(action.type()))) {
+            if (action.type() == NavigationTypeFormSubmitted
+                || action.type() == NavigationTypeFormResubmitted)
+                m_frame->loader()->resetMultipleFormSubmissionProtection();
 
-        if (action.type() == NavigationTypeLinkClicked && url.hasFragmentIdentifier()) {
-            ResourceRequest emptyRequest;
-            m_frame->loader()->activeDocumentLoader()->setLastCheckedRequest(emptyRequest);
+            if (action.type() == NavigationTypeLinkClicked && url.hasFragmentIdentifier()) {
+                ResourceRequest emptyRequest;
+                m_frame->loader()->activeDocumentLoader()->setLastCheckedRequest(emptyRequest);
+            }
+            decision = PolicyIgnore;
         }
-        decision = PolicyIgnore;
     }
 
     // If we abort here, dispatchDidCancelClientRedirect will not be called.

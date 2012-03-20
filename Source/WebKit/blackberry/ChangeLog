@@ -1,3 +1,17 @@
+2012-03-20  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Dijit crash WebCore::CookieManager::getRawCookies
+        https://bugs.webkit.org/show_bug.cgi?id=81686
+
+        Reviewed by Rob Buis.
+
+        When deciding the policy for navigation action, if the url of the
+        request is null, ignore it to avoid the ASSERT failure in
+        MainResourceLoader::willSendRequest.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction):
+
 2012-03-20  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] BlackBerry can clear cookies and cache from the Web Inspector
