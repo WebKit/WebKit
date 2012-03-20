@@ -112,7 +112,7 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
 
     result = mmap(result, bytes, protection, flags, fd, 0);
     if (result == MAP_FAILED) {
-    #if ENABLE(CLASSIC_INTERPRETER)
+    #if ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT)
         if (executable)
             result = 0;
         else

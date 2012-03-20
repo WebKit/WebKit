@@ -1,3 +1,17 @@
+2012-03-20  Oliver Hunt  <oliver@apple.com>
+
+        Allow LLINT to work even when executable allocation fails.
+        https://bugs.webkit.org/show_bug.cgi?id=81693
+
+        Reviewed by Gavin Barraclough.
+
+        Don't crash if executable allocation fails if we can fall back on LLINT
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveAndCommit):
+
 2012-03-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Division optimizations fail to infer cases of truncated division and mishandle -2147483648/-1

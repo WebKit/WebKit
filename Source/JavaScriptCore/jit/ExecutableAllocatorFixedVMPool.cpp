@@ -59,7 +59,7 @@ public:
         : MetaAllocator(32) // round up all allocations to 32 bytes
     {
         m_reservation = PageReservation::reserveWithGuardPages(fixedPoolSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
-#if !ENABLE(CLASSIC_INTERPRETER)
+#if !(ENABLE(CLASSIC_INTERPRETER) || ENABLE(LLINT))
         if (!m_reservation)
             CRASH();
 #endif
