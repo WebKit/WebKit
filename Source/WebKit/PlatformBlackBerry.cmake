@@ -72,7 +72,6 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/FrameLayers.cpp
     blackberry/WebKitSupport/InPageSearchManager.cpp
     blackberry/WebKitSupport/InputHandler.cpp
-    blackberry/WebKitSupport/OutOfMemoryHandler.cpp
     blackberry/WebKitSupport/RenderQueue.cpp
     blackberry/WebKitSupport/SelectionHandler.cpp
     blackberry/WebKitSupport/SurfacePool.cpp
@@ -149,7 +148,7 @@ ENDIF ()
 
 IF (WTF_USE_ACCELERATED_COMPOSITING)
     LIST(APPEND WebKit_SOURCES
-        blackberry/WebCoreSupport/GLES2Context.cpp
+        blackberry/WebKitSupport/GLES2Context.cpp
     )
     LIST(APPEND WebKit_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/gles2"
