@@ -46,7 +46,7 @@ namespace WebCore {
         {
             int length = end - start;
             ASSERT(length >= 0);
-            ASSERT(start + length <= length());
+            ASSERT(start + length <= this->length());
 
             return JSC::UString(StringImpl::create(m_source.impl(), start, length));
         }
