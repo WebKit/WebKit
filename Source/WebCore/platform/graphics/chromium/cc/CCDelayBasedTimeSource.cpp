@@ -33,15 +33,15 @@
 
 namespace WebCore {
 
-PassRefPtr<CCDelayBasedTimeSource> CCDelayBasedTimeSource::create(double intervalMs, CCThread* thread)
+PassRefPtr<CCDelayBasedTimeSource> CCDelayBasedTimeSource::create(double interval, CCThread* thread)
 {
-    return adoptRef(new CCDelayBasedTimeSource(intervalMs, thread));
+    return adoptRef(new CCDelayBasedTimeSource(interval, thread));
 }
 
-CCDelayBasedTimeSource::CCDelayBasedTimeSource(double intervalMs, CCThread* thread)
+CCDelayBasedTimeSource::CCDelayBasedTimeSource(double intervalSeconds, CCThread* thread)
     : m_client(0)
     , m_hasTickTarget(false)
-    , m_intervalMs(intervalMs)
+    , m_intervalSeconds(intervalSeconds)
     , m_tickTarget(0)
     , m_state(STATE_INACTIVE)
     , m_timer(thread, this)
@@ -70,32 +70,32 @@ void CCDelayBasedTimeSource::setActive(bool active)
 
     m_state = STATE_ACTIVE;
 
-    double nowMs = monotonicallyIncreasingTimeMs();
-    postNextTickTask(nowMs);
+    double now = monotonicallyIncreasingTime();
+    postNextTickTask(now);
 }
 
 void CCDelayBasedTimeSource::onTimerFired()
 {
     ASSERT(m_state != STATE_INACTIVE);
 
-    double nowMs = monotonicallyIncreasingTimeMs();
+    double now = monotonicallyIncreasingTime();
 
     if (m_state == STATE_STARTING) {
         m_hasTickTarget = true;
-        m_tickTarget = nowMs;
+        m_tickTarget = now;
         m_state = STATE_ACTIVE;
     }
 
-    postNextTickTask(nowMs);
+    postNextTickTask(now);
 
     // Fire the tick
     if (m_client)
         m_client->onTimerTick();
 }
 
-double CCDelayBasedTimeSource::monotonicallyIncreasingTimeMs() const
+double CCDelayBasedTimeSource::monotonicallyIncreasingTime() const
 {
-    return WTF::monotonicallyIncreasingTime() * 1000.0;
+    return WTF::monotonicallyIncreasingTime();
 }
 
 // This code tries to achieve an average tick rate as close to m_intervalMs as possible.
@@ -141,21 +141,23 @@ double CCDelayBasedTimeSource::monotonicallyIncreasingTimeMs() const
 //
 // For the really late delay, we we move to the next logical tick. The timebase is not reset.
 //      now=37   tickTarget=16.667  newTarget=50.000  --> tick(), postDelayedTask(floor(50.000-37)) --> postDelayedTask(13)
-void CCDelayBasedTimeSource::postNextTickTask(double nowMs)
+//
+// Note, that in the above discussion, times are expressed in milliseconds, but in the code, seconds are used.
+void CCDelayBasedTimeSource::postNextTickTask(double now)
 {
-    int numIntervalsElapsed = static_cast<int>(floor((nowMs - m_tickTarget) / m_intervalMs));
-    double lastEffectiveTick = m_tickTarget + m_intervalMs * numIntervalsElapsed;
-    double newTickTarget = lastEffectiveTick + m_intervalMs;
+    int numIntervalsElapsed = static_cast<int>(floor((now - m_tickTarget) / m_intervalSeconds));
+    double lastEffectiveTick = m_tickTarget + m_intervalSeconds * numIntervalsElapsed;
+    double newTickTarget = lastEffectiveTick + m_intervalSeconds;
 
-    long long delay = static_cast<long long>(newTickTarget - nowMs);
-    if (!delay) {
-        newTickTarget = newTickTarget + m_intervalMs;
-        delay = static_cast<long long>(newTickTarget - nowMs);
+    long long delayMs = static_cast<long long>((newTickTarget - now) * 1000.0);
+    if (!delayMs) {
+        newTickTarget = newTickTarget + m_intervalSeconds;
+        delayMs = static_cast<long long>((newTickTarget - now) * 1000.0);
     }
 
     // Post another task *before* the tick and update state
-    ASSERT(newTickTarget > nowMs);
-    m_timer.startOneShot(delay);
+    ASSERT(newTickTarget > now);
+    m_timer.startOneShot(delayMs / 1000.0);
     m_tickTarget = newTickTarget;
 }
 

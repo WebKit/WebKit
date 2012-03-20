@@ -76,12 +76,14 @@ CCTimer::~CCTimer()
     stop();
 }
 
-void CCTimer::startOneShot(double intervalMs)
+void CCTimer::startOneShot(double intervalSeconds)
 {
     stop();
 
     m_task = new CCTimerTask(this);
-    m_thread->postDelayedTask(adoptPtr(m_task), intervalMs);
+
+    // The thread expects delays in milliseconds.
+    m_thread->postDelayedTask(adoptPtr(m_task), intervalSeconds * 1000.0);
 }
 
 void CCTimer::stop()

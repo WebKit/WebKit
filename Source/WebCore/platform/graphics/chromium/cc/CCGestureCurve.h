@@ -41,7 +41,7 @@ class CCGestureCurve {
 public:
     virtual ~CCGestureCurve() { }
 
-    virtual bool apply(double time, CCGestureCurveTarget*) = 0;
+    virtual bool apply(double monotonicTime, CCGestureCurveTarget*) = 0;
 };
 
 } // namespace WebCore

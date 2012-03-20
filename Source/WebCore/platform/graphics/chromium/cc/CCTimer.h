@@ -50,7 +50,7 @@ public:
     ~CCTimer();
 
     // If a previous task is pending, it will be replaced with the new one.
-    void startOneShot(double intervalMs);
+    void startOneShot(double intervalSeconds);
     void stop();
 
     bool isActive() const { return m_task; }

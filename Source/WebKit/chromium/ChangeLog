@@ -1,3 +1,24 @@
+2012-03-19  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Times in the cc should be expressed in seconds.
+        https://bugs.webkit.org/show_bug.cgi?id=80514
+
+        Reviewed by James Robinson.
+
+        * tests/CCDelayBasedTimeSourceTest.cpp:
+        (WebKitTests::TEST):
+        * tests/CCFrameRateControllerTest.cpp:
+        (WebKitTests::TEST):
+        * tests/CCSchedulerTestCommon.h:
+        (WebKitTests::FakeCCThread::pendingDelayMs):
+        (WebKitTests::FakeCCDelayBasedTimeSource::create):
+        (WebKitTests::FakeCCDelayBasedTimeSource::setMonotonicallyIncreasingTime):
+        (WebKitTests::FakeCCDelayBasedTimeSource::monotonicallyIncreasingTime):
+        (WebKitTests::FakeCCDelayBasedTimeSource::FakeCCDelayBasedTimeSource):
+        (FakeCCDelayBasedTimeSource):
+        * tests/CCTimerTest.cpp:
+        (WebKitTests::TEST_F):
+
 2012-03-19  Nat Duca  <nduca@chromium.org>
 
         [chromium] Stop deriving WebCompositor from WebCompositorInputHandler

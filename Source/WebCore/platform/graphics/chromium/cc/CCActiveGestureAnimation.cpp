@@ -47,15 +47,15 @@ CCActiveGestureAnimation::~CCActiveGestureAnimation()
 {
 }
 
-bool CCActiveGestureAnimation::animate(double time)
+bool CCActiveGestureAnimation::animate(double monotonicTime)
 {
     if (m_waitingForFirstTick) {
-        m_startTime = time;
+        m_startTime = monotonicTime;
         m_waitingForFirstTick = false;
     }
 
     // CCGestureCurves used zero-based time, so subtract start-time.
-    return m_gestureCurve->apply(time - m_startTime, m_gestureCurveTarget);
+    return m_gestureCurve->apply(monotonicTime - m_startTime, m_gestureCurveTarget);
 }
 
 } // namespace WebCore

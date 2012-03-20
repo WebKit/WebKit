@@ -47,6 +47,9 @@ namespace {
 // scheduledActionUpdateMoreResources().
 static const size_t textureUpdatesPerFrame = 32;
 
+// Measured in seconds.
+static const double contextRecreationTickRate = 0.03;
+
 } // anonymous namespace
 
 namespace WebCore {
@@ -612,8 +615,6 @@ public:
         m_proxy->tryToRecreateContext();
     }
 
-    enum Recreation { RecreationTickRateMs = 30 };
-
 private:
     explicit CCThreadProxyContextRecreationTimer(CCThreadProxy* proxy)
         : CCTimer(CCProxy::mainThread(), this)
@@ -631,7 +632,7 @@ void CCThreadProxy::beginContextRecreation()
     ASSERT(!m_contextRecreationTimer);
     m_contextRecreationTimer = CCThreadProxyContextRecreationTimer::create(this);
     m_layerTreeHost->didLoseContext();
-    m_contextRecreationTimer->startOneShot(CCThreadProxyContextRecreationTimer::RecreationTickRateMs);
+    m_contextRecreationTimer->startOneShot(contextRecreationTickRate);
 }
 
 void CCThreadProxy::tryToRecreateContext()
@@ -640,7 +641,7 @@ void CCThreadProxy::tryToRecreateContext()
     ASSERT(m_layerTreeHost);
     CCLayerTreeHost::RecreateResult result = m_layerTreeHost->recreateContext();
     if (result == CCLayerTreeHost::RecreateFailedButTryAgain)
-        m_contextRecreationTimer->startOneShot(CCThreadProxyContextRecreationTimer::RecreationTickRateMs);
+        m_contextRecreationTimer->startOneShot(contextRecreationTickRate);
     else if (result == CCLayerTreeHost::RecreateSucceeded)
         m_contextRecreationTimer.clear();
 }
@@ -650,8 +651,8 @@ void CCThreadProxy::initializeImplOnImplThread(CCCompletionEvent* completion)
     TRACE_EVENT("CCThreadProxy::initializeImplOnImplThread", this, 0);
     ASSERT(isImplThread());
     m_layerTreeHostImpl = m_layerTreeHost->createLayerTreeHostImpl(this);
-    const double displayRefreshIntervalMs = 1000.0 / 60.0;
-    OwnPtr<CCFrameRateController> frameRateController = adoptPtr(new CCFrameRateController(CCDelayBasedTimeSource::create(displayRefreshIntervalMs, CCProxy::implThread())));
+    const double displayRefreshInterval = 1.0 / 60.0;
+    OwnPtr<CCFrameRateController> frameRateController = adoptPtr(new CCFrameRateController(CCDelayBasedTimeSource::create(displayRefreshInterval, CCProxy::implThread())));
     m_schedulerOnImplThread = CCScheduler::create(this, frameRateController.release());
     m_schedulerOnImplThread->setVisible(m_layerTreeHostImpl->visible());
 

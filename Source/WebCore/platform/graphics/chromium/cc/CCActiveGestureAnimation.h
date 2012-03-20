@@ -40,7 +40,7 @@ public:
     static PassOwnPtr<CCActiveGestureAnimation> create(PassOwnPtr<CCGestureCurve>, CCGestureCurveTarget*);
     ~CCActiveGestureAnimation();
 
-    bool animate(double time);
+    bool animate(double monotonicTime);
 
 private:
     CCActiveGestureAnimation(PassOwnPtr<CCGestureCurve>, CCGestureCurveTarget*);

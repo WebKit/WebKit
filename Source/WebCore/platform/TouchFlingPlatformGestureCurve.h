@@ -43,7 +43,7 @@ public:
     static PassOwnPtr<PlatformGestureCurve> create(const FloatPoint& velocity);
     virtual ~TouchFlingPlatformGestureCurve();
 
-    virtual bool apply(double time, PlatformGestureCurveTarget*);
+    virtual bool apply(double monotonicTime, PlatformGestureCurveTarget*);
 
 private:
     explicit TouchFlingPlatformGestureCurve(const FloatPoint& velocity);

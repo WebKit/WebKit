@@ -54,7 +54,7 @@ protected:
 TEST_F(CCTimerTest, OneShot)
 {
     CCTimer timer(&m_thread, this);
-    timer.startOneShot(1);
+    timer.startOneShot(0.001);
 
     m_thread.runPendingTask();
     EXPECT_TRUE(m_flag);
@@ -64,7 +64,7 @@ TEST_F(CCTimerTest, OneShot)
 TEST_F(CCTimerTest, StopManually)
 {
     CCTimer timer(&m_thread, this);
-    timer.startOneShot(1);
+    timer.startOneShot(0.001);
     timer.stop();
 
     m_thread.runPendingTask();
@@ -76,7 +76,7 @@ TEST_F(CCTimerTest, StopByScope)
 {
     {
         CCTimer timer(&m_thread, this);
-        timer.startOneShot(1);
+        timer.startOneShot(0.001);
     }
 
     m_thread.runPendingTask();
