@@ -70,7 +70,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(textCheckerState);
     encoder->encode(fullKeyboardAccessEnabled);
     encoder->encode(defaultRequestTimeoutInterval);
-#if USE(CFURLSTORAGESESSIONS)
+#if PLATFORM(MAC) || USE(CFURLSTORAGESESSIONS)
     encoder->encode(uiProcessBundleIdentifier);
 #endif
 #if PLATFORM(MAC)
@@ -147,7 +147,7 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.defaultRequestTimeoutInterval))
         return false;
-#if USE(CFURLSTORAGESESSIONS)
+#if PLATFORM(MAC) || USE(CFURLSTORAGESESSIONS)
     if (!decoder->decode(parameters.uiProcessBundleIdentifier))
         return false;
 #endif

@@ -1,3 +1,23 @@
+2012-03-20  Alexey Proskuryakov  <ap@apple.com>
+
+        WebProcess should use private temporary and cache directories
+        https://bugs.webkit.org/show_bug.cgi?id=80876
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h: (WebProcessCreationParameters):
+        * UIProcess/mac/WebContextMac.mm: (WebKit::WebContext::platformInitializeWebProcess):
+        Always pass uiProcessBundleIdentifier to WebProcess on Mac, it's now used for more than
+        CFURL sessions.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Limit old workaround to platforms that need it.
+
+        * WebProcess/mac/WebProcessMac.mm: (WebKit::initializeSandbox): Tell confstr to use a suffix
+        on user directories.
+
 2012-03-20  Anders Carlsson  <andersca@apple.com>
 
         Graphic distortion effect when launching with empty page Safari after reset

@@ -93,11 +93,14 @@
 (allow file*
     (subpath "/private/var/db/mds/system"))
 
-;; FIXME: <rdar://problem/10792047> Use private user cache directory
+#if !defined(BUILDING_ON_LION)
+(if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
+    (allow file* (subpath (param "DARWIN_USER_CACHE_DIR"))))
+#else
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow file* (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/mds"))))
+#endif
 
-;; FIXME: <rdar://problem/10785457> Use private temporary directory
 (if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
     (allow file* (subpath (param "DARWIN_USER_TEMP_DIR"))))
 
