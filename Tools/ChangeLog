@@ -1,3 +1,9 @@
+2012-03-19  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix attempt after r110845.
+
+        * Scripts/run-gtk-tests: Added --release and --debug options.
+
 2012-03-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add command line options to run-gtk-tests script
