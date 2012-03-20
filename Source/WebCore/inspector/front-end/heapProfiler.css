@@ -187,11 +187,11 @@ body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon {
     right: 0;
 }
 
-.detailed-heapshot-view .constructors-view-grid {
+.detailed-heapshot-view .class-view-grid {
     top: 22px;
 }
 
-.detailed-heapshot-view .constructors-view-toolbar {
+.detailed-heapshot-view .class-view-toolbar {
     height: 22px;
     background-color: #DDD;
     display: block;
@@ -201,7 +201,7 @@ body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon {
     top: 0;
 }
 
-.detailed-heapshot-view .constructors-view-toolbar input.constructors-view-filter {
+.detailed-heapshot-view .class-view-toolbar input.class-name-filter {
     width: 200px;
     height: 18px;
     font-size: 11px;
