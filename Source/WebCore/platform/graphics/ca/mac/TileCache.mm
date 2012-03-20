@@ -375,7 +375,6 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer(const IntRect& tileRect)
 {
     RetainPtr<WebTileLayer> layer = adoptNS([[WebTileLayer alloc] init]);
     [layer.get() setAnchorPoint:CGPointZero];
-    [layer.get() setContentsScale:m_deviceScaleFactor];
     [layer.get() setFrame:tileRect];
     [layer.get() setTileCache:this];
     [layer.get() setBorderColor:m_tileDebugBorderColor.get()];
@@ -384,6 +383,7 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer(const IntRect& tileRect)
     [layer.get() setOpaque:YES];
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    [layer.get() setContentsScale:m_deviceScaleFactor];
     [layer.get() setAcceleratesDrawing:m_acceleratesDrawing];
 #endif
 
