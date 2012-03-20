@@ -1,6 +1,4 @@
-description('Test parsing of the CSS webkit-flow-into property.');
-
-function test(declaration) {
+function testParse(declaration) {
     var div = document.createElement("div");
     div.setAttribute("style", declaration);
     return div.style.webkitFlowInto;
@@ -32,22 +30,22 @@ function testNotInherited(parentValue, childValue) {
     return childWebKitFlowComputedValue;
 }
 
-shouldBeEqualToString('test("-webkit-flow-into: none")', "none");
-shouldBeEqualToString('test("-webkit-flow-into: first-flow")', "first-flow");
-shouldBeEqualToString('test("-webkit-flow-into: \'first flow\'")', "");
-shouldBeEqualToString('test("-webkit-flow-into: ;")', "");
-shouldBeEqualToString('test("-webkit-flow-into: 1")', "");
-shouldBeEqualToString('test("-webkit-flow-into: 1.2")', "");
-shouldBeEqualToString('test("-webkit-flow-into: -1")', "");
-shouldBeEqualToString('test("-webkit-flow-into: 12px")', "");
+test(function() {assert_equals(testParse("-webkit-flow-into: none"), "none")}, "Test Parse none"); 
+test(function() {assert_equals(testParse("-webkit-flow-into: first-flow"), "first-flow")}, "Test Parse first-flow");
+test(function() {assert_equals(testParse("-webkit-flow-into: \'first flow\'"), "")}, "Test Parse 'first-flow'");
+test(function() {assert_equals(testParse("-webkit-flow-into: ;"), "")}, "Test Parse ;");
+test(function() {assert_equals(testParse("-webkit-flow-into: 1"), "")}, "Test Parse 1");
+test(function() {assert_equals(testParse("-webkit-flow-into: 1.2"), "")}, "Test Parse 1.2");
+test(function() {assert_equals(testParse("-webkit-flow-into: -1"), "")}, "Test Parse -1");
+test(function() {assert_equals(testParse("-webkit-flow-into: 12px"), "")}, "Test Parse 12px");
 
-shouldBeEqualToString('testComputedStyle("none")', "none");
-shouldBeEqualToString('testComputedStyle("")', "none");
-shouldBeEqualToString('testComputedStyle("\'first-flow\'")', "none");
-shouldBeEqualToString('testComputedStyle("first-flow")', "first-flow");
-shouldBeEqualToString('testComputedStyle("12px")', "none");
+test(function() {assert_equals(testComputedStyle("none"), "none")}, "Test Computed Style none");
+test(function() {assert_equals(testComputedStyle(""), "none")}, "Test Computed Style ''");
+test(function() {assert_equals(testComputedStyle("\'first-flow\'"), "none")}, "Test Computed Style 'first-flow'");
+test(function() {assert_equals(testComputedStyle("first-flow"), "first-flow")}, "Test Computed Style first-flow");
+test(function() {assert_equals(testComputedStyle("12px"), "none")}, "Test Computed Style 12px ");
 
-shouldBeEqualToString('testNotInherited("none", "none")', "none");
-shouldBeEqualToString('testNotInherited("none", "child-flow")', "child-flow");
-shouldBeEqualToString('testNotInherited("parent-flow", "none")', "none");
-shouldBeEqualToString('testNotInherited("parent-flow", "child-flow")', "child-flow");
+test(function() {assert_equals(testNotInherited("none", "none"), "none")}, "Test Non-Inherited none, none");
+test(function() {assert_equals(testNotInherited("none", "child-flow"), "child-flow")}, "Test Non-Inherited none, child-flow");
+test(function() {assert_equals(testNotInherited("parent-flow", "none"), "none")}, "Test Non-Inherited parent-flow, none");
+test(function() {assert_equals(testNotInherited("parent-flow", "child-flow"), "child-flow")}, "Test Non-Inherited parent-flow, child-flow");

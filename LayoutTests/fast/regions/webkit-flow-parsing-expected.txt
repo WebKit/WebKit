@@ -1,26 +1,20 @@
-Test parsing of the CSS webkit-flow-into property.
+This test verifies that the webkit-flow-into property is correctly parsed
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS test("-webkit-flow-into: none") is "none"
-PASS test("-webkit-flow-into: first-flow") is "first-flow"
-PASS test("-webkit-flow-into: 'first flow'") is ""
-PASS test("-webkit-flow-into: ;") is ""
-PASS test("-webkit-flow-into: 1") is ""
-PASS test("-webkit-flow-into: 1.2") is ""
-PASS test("-webkit-flow-into: -1") is ""
-PASS test("-webkit-flow-into: 12px") is ""
-PASS testComputedStyle("none") is "none"
-PASS testComputedStyle("") is "none"
-PASS testComputedStyle("'first-flow'") is "none"
-PASS testComputedStyle("first-flow") is "first-flow"
-PASS testComputedStyle("12px") is "none"
-PASS testNotInherited("none", "none") is "none"
-PASS testNotInherited("none", "child-flow") is "child-flow"
-PASS testNotInherited("parent-flow", "none") is "none"
-PASS testNotInherited("parent-flow", "child-flow") is "child-flow"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+PASS Test Parse none 
+PASS Test Parse first-flow 
+PASS Test Parse 'first-flow' 
+PASS Test Parse ; 
+PASS Test Parse 1 
+PASS Test Parse 1.2 
+PASS Test Parse -1 
+PASS Test Parse 12px 
+PASS Test Computed Style none 
+PASS Test Computed Style '' 
+PASS Test Computed Style 'first-flow' 
+PASS Test Computed Style first-flow 
+PASS Test Computed Style 12px  
+PASS Test Non-Inherited none, none 
+PASS Test Non-Inherited none, child-flow 
+PASS Test Non-Inherited parent-flow, none 
+PASS Test Non-Inherited parent-flow, child-flow 
 
