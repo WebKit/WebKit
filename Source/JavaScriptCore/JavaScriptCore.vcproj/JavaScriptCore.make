@@ -11,7 +11,8 @@ install:
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
     set WebKitVSPropsRedirectionDir=$(SRCROOT)\AppleInternal\tools\vsprops\OpenSource\1\2\3\4\ 
 !IF "$(BUILDSTYLE)"=="Release_PGO"
-    devenv "JavaScriptCoreSubmit.sln" /rebuild $(BUILDSTYLE)
+    devenv "JavaScriptCoreSubmit.sln" /clean $(BUILDSTYLE)
+    devenv "JavaScriptCoreSubmit.sln" /build $(BUILDSTYLE)
     set PATH=$(SYSTEMDRIVE)\cygwin\bin;$(PATH)
     xcopy "$(SRCROOT)\AppleInternal\tests\SunSpider\*" "%ConfigurationBuildDir%\tests\SunSpider" /e/v/i/h/y
     cd "%ConfigurationBuildDir%\tests\SunSpider"
@@ -20,7 +21,8 @@ install:
     cd "$(SRCROOT)\JavaScriptCore.vcproj"
     devenv "JavaScriptCoreSubmit.sln" /build Release_PGO_Optimize
 !ELSE
-    devenv "JavaScriptCoreSubmit.sln" /rebuild $(BUILDSTYLE)
+    devenv "JavaScriptCoreSubmit.sln" /clean $(BUILDSTYLE)
+    devenv "JavaScriptCoreSubmit.sln" /build $(BUILDSTYLE)
 !ENDIF
     -xcopy "%ConfigurationBuildDir%\bin\JavaScriptCore.dll" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
     -xcopy "%ConfigurationBuildDir%\bin\JavaScriptCore_debug.dll" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y

@@ -1,5 +1,12 @@
 2012-03-20  Steve Falkenburg  <sfalken@apple.com>
 
+        Windows (make based) build fix.
+        <rdar://problem/11069015>
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make: devenv /rebuild doesn't work with JavaScriptCore.vcproj. Use /clean and /build instead.
+
+2012-03-20  Steve Falkenburg  <sfalken@apple.com>
+
         Move WTF-related Windows project files out of JavaScriptCore
         https://bugs.webkit.org/show_bug.cgi?id=80680
 
