@@ -3952,3 +3952,7 @@ BUGWK81638 SNOWLEOPARD DEBUG : editing/selection/iframe.html = IMAGE PASS
 
 // Allowed to regress to fix a crash. 
 BUGWK81276 WIN LINUX: fast/inline/continuation-outlines-with-layers.html = IMAGE
+
+BUGWK81697 : fast/notifications/notifications-check-permission.html = TEXT
+BUGWK81697 : fast/notifications/notifications-request-permission.html = TEXT
+BUGWK81697 : fast/notifications/notifications-without-permission.html = TEXT
