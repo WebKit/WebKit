@@ -1345,6 +1345,10 @@ jquery/traversing.html
 # https://bugs.webkit.org/show_bug.cgi?id=81609
 fast/loader/window-properties-restored-from-page-cache.html
 
+# Flakey on Lion WK2 debug.
+# https://bugs.webkit.org/show_bug.cgi?id=81616
+fast/harness/page-cache-crash-on-data-urls.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
