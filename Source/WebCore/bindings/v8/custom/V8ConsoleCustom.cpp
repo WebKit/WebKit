@@ -36,31 +36,12 @@
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
-#include "ScriptProfile.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
 #include "V8MemoryInfo.h"
 #include "V8Proxy.h"
-#include "V8ScriptProfile.h"
 
 namespace WebCore {
-
-typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-v8::Handle<v8::Value> V8Console::profilesAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    INC_STATS("DOM.Console.profilesAccessorGetter");
-    Console* imp = V8Console::toNative(info.Holder());
-    const ProfilesArray& profiles = imp->profiles();
-    v8::Handle<v8::Array> result = v8::Array::New(profiles.size());
-    int index = 0;
-    ProfilesArray::const_iterator end = profiles.end();
-    for (ProfilesArray::const_iterator iter = profiles.begin(); iter != end; ++iter)
-        result->Set(v8::Integer::New(index++), toV8(iter->get()));
-    return result;
-}
-#endif
 
 v8::Handle<v8::Value> V8Console::traceCallback(const v8::Arguments& args)
 {

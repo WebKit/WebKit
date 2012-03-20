@@ -46,7 +46,7 @@ module window {
         [CallWith=ScriptArguments|CallStack] void markTimeline();
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        readonly attribute [CustomGetter] Array profiles;
+        readonly attribute sequence<ScriptProfile> profiles;
         [Custom] void profile(in DOMString title);
         [Custom] void profileEnd(in DOMString title);
 #endif

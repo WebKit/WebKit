@@ -445,6 +445,15 @@ sub IsSVGAnimatedType
     return 0;
 }
 
+sub GetArrayType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return $1 if $type =~ /^sequence<([\w\d_]+)>.*/;
+    return "";
+}
+
 # Uppercase the first letter while respecting WebKit style guidelines.
 # E.g., xmlEncoding becomes XMLEncoding, but xmlllang becomes Xmllang.
 sub WK_ucfirst

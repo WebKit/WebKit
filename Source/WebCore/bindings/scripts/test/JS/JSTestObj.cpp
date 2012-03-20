@@ -33,6 +33,7 @@
 #include "JSEventListener.h"
 #include "JSSVGDocument.h"
 #include "JSSVGPoint.h"
+#include "JSScriptProfile.h"
 #include "JSTestCallback.h"
 #include "JSTestObj.h"
 #include "JSa.h"
@@ -43,18 +44,18 @@
 #include "JSe.h"
 #include "JSint.h"
 #include "JSsequence.h"
-#include "JSsequence<ScriptProfile>.h"
 #include "KURL.h"
 #include "SVGDocument.h"
 #include "SVGStaticPropertyTearOff.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include "ScriptProfile.h"
 #include "SerializedScriptValue.h"
 #include "TestObj.h"
 #include "bool.h"
-#include "sequence<ScriptProfile>.h"
 #include <runtime/Error.h>
+#include <runtime/JSArray.h>
 #include <runtime/JSString.h>
 #include <wtf/GetPtr.h>
 
@@ -477,7 +478,7 @@ JSValue jsTestObjSequenceAttr(ExecState* exec, JSValue slotBase, const Identifie
     JSTestObj* castedThis = static_cast<JSTestObj*>(asObject(slotBase));
     UNUSED_PARAM(exec);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->sequenceAttr()));
+    JSValue result = jsArray(exec, castedThis->globalObject(), impl->sequenceAttr());
     return result;
 }
 
@@ -965,7 +966,7 @@ void setJSTestObjSequenceAttr(ExecState* exec, JSObject* thisObject, JSValue val
 {
     JSTestObj* castedThis = static_cast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setSequenceAttr(tosequence<ScriptProfile>(value));
+    impl->setSequenceAttr(toNativeArray(exec, value));
 }
 
 
@@ -1423,7 +1424,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodReturningSequence(E
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->methodReturningSequence(intArg)));
+    JSC::JSValue result = jsArray(exec, castedThis->globalObject(), impl->methodReturningSequence(intArg));
     return JSValue::encode(result);
 }
 

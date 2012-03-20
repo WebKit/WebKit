@@ -35,6 +35,7 @@
 #include "StyledElement.h"
 #include <heap/Weak.h>
 #include <runtime/FunctionPrototype.h>
+#include <runtime/JSArray.h>
 #include <runtime/Lookup.h>
 #include <runtime/ObjectPrototype.h>
 #include <wtf/Forward.h>
@@ -276,6 +277,34 @@ enum ParameterDefaultPolicy {
     inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<T> ptr)
     {
         return toJS(exec, globalObject, ptr.get());
+    }
+
+    template <typename Iterable>
+    JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Iterable& iterator)
+    {
+        JSC::MarkedArgumentBuffer list;
+        typename Iterable::const_iterator end = iterator.end();
+
+        for (typename Iterable::const_iterator iter = iterator.begin(); iter != end; ++iter)
+            list.append(toJS(exec, globalObject, WTF::getPtr(*iter)));
+
+        return JSC::constructArray(exec, list);
+    }
+
+    template <class T>
+    Vector<T> toNativeArray(JSC::ExecState* exec, JSC::JSValue value)
+    {
+        if (!isJSArray(value))
+            return Vector<T>();
+
+        Vector<T> result;
+        JSC::JSArray* array = asArray(value);
+
+        for (unsigned i = 0; i < array->length(); ++i) {
+            String indexedValue = ustringToString(array->getIndex(i).toString(exec)->value(exec));
+            result.append(indexedValue);
+        }
+        return result;
     }
 
     // Validates that the passed object is a sequence type per section 4.1.13 of the WebIDL spec.

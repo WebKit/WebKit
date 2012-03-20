@@ -697,27 +697,6 @@ WEBKIT_API void
 webkit_dom_test_obj_set_test_obj_attr(WebKitDOMTestObj* self, WebKitDOMTestObj* value);
 
 /**
- * webkit_dom_test_obj_get_sequence_attr:
- * @self: A #WebKitDOMTestObj
- *
- * Returns: (transfer none):
- *
-**/
-WEBKIT_API WebKitDOMsequence<ScriptProfile>*
-webkit_dom_test_obj_get_sequence_attr(WebKitDOMTestObj* self);
-
-/**
- * webkit_dom_test_obj_set_sequence_attr:
- * @self: A #WebKitDOMTestObj
- * @value: A #WebKitDOMsequence<ScriptProfile>
- *
- * Returns: (transfer none):
- *
-**/
-WEBKIT_API void
-webkit_dom_test_obj_set_sequence_attr(WebKitDOMTestObj* self, WebKitDOMsequence<ScriptProfile>* value);
-
-/**
  * webkit_dom_test_obj_get_xml_obj_attr:
  * @self: A #WebKitDOMTestObj
  *

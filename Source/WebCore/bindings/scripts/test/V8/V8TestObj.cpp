@@ -32,6 +32,7 @@
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include "ScriptProfile.h"
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
@@ -42,6 +43,7 @@
 #include "V8Proxy.h"
 #include "V8SVGDocument.h"
 #include "V8SVGPoint.h"
+#include "V8ScriptProfile.h"
 #include "V8TestCallback.h"
 #include "V8a.h"
 #include "V8any.h"
@@ -52,7 +54,6 @@
 #include "V8e.h"
 #include "V8int.h"
 #include "V8sequence.h"
-#include "V8sequence<ScriptProfile>.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -223,15 +224,15 @@ static v8::Handle<v8::Value> sequenceAttrAttrGetter(v8::Local<v8::String> name, 
 {
     INC_STATS("DOM.TestObj.sequenceAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return toV8(imp->sequenceAttr());
+    return v8Array(imp->sequenceAttr());
 }
 
 static void sequenceAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.sequenceAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    sequence<ScriptProfile>* v = V8sequence<ScriptProfile>::HasInstance(value) ? V8sequence<ScriptProfile>::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
-    imp->setSequenceAttr(WTF::getPtr(v));
+    Vector<ScriptProfile> v = toNativeArray(value);
+    imp->setSequenceAttr(v);
     return;
 }
 
@@ -1071,7 +1072,7 @@ static v8::Handle<v8::Value> methodReturningSequenceCallback(const v8::Arguments
         return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, intArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    return toV8(imp->methodReturningSequence(intArg));
+    return v8Array(imp->methodReturningSequence(intArg));
 }
 
 static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8::Arguments& args)

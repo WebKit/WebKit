@@ -923,6 +923,17 @@ END
     if (!IsNodeSubType($dataNode) && $attrName ne "self" && (IsWrapperType($returnType) && ($attribute->type =~ /^readonly/ || $attribute->signature->extendedAttributes->{"Replaceable"})
         && $returnType ne "EventTarget" && $returnType ne "SerializedScriptValue" && $returnType ne "DOMWindow" 
         && $returnType !~ /SVG/ && $returnType !~ /HTML/ && !IsDOMNodeType($returnType))) {
+
+        my $arrayType = $codeGenerator->GetArrayType($returnType);
+        if ($arrayType) {
+            AddToImplIncludes("V8$arrayType.h");
+            AddToImplIncludes("$arrayType.h");
+            push(@implContentDecls, "    const Vector<RefPtr<$arrayType> > vector = ${getterString};\n");
+            push(@implContentDecls, "    return v8Array(vector);\n");
+            push(@implContentDecls, "}\n\n");
+            return;
+        }
+
         AddIncludesForType($returnType);
         # Check for a wrapper in the wrapper cache. If there is one, we know that a hidden reference has already
         # been created. If we don't find a wrapper, we create both a wrapper and a hidden reference.
@@ -1097,16 +1108,20 @@ END
         }
     } else {
         my $value = JSValueToNative($attribute->signature, "value");
+        my $arrayType = $codeGenerator->GetArrayType($nativeType);
+
         if ($nativeType =~ /^V8Parameter/) {
-          push(@implContentDecls, "    " . ConvertToV8Parameter($attribute->signature, $nativeType, "v", $value, "VOID") . "\n");
+            push(@implContentDecls, "    " . ConvertToV8Parameter($attribute->signature, $nativeType, "v", $value, "VOID") . "\n");
+        } elsif ($arrayType) {
+            push(@implContentDecls, "    Vector<$arrayType> v = $value;\n");
         } else {
-          push(@implContentDecls, "    $nativeType v = $value;\n");
+            push(@implContentDecls, "    $nativeType v = $value;\n");
         }
     }
 
     my $result = "v";
     my $returnType = GetTypeFromSignature($attribute->signature);
-    if (IsRefPtrType($returnType)) {
+    if (IsRefPtrType($returnType) && !$codeGenerator->GetArrayType($returnType)) {
         $result = "WTF::getPtr(" . $result . ")";
     }
 
@@ -3554,6 +3569,10 @@ sub JSValueToNative
         return "V8DOMWrapper::getXPathNSResolver($value)";
     }
 
+    if ($codeGenerator->GetArrayType($type)) {
+        return "toNativeArray($value)";
+    }
+
     AddIncludesForType($type);
 
     if (IsDOMNodeType($type)) {
@@ -3765,6 +3784,13 @@ sub NativeToJSValue
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }
         return "v8String($value)";
+    }
+
+    my $arrayType = $codeGenerator->GetArrayType($type);
+    if ($arrayType) {
+        AddToImplIncludes("V8$arrayType.h");
+        AddToImplIncludes("$arrayType.h");
+        return "v8Array($value)";
     }
 
     AddIncludesForType($type);

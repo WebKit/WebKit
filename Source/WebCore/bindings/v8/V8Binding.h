@@ -286,6 +286,35 @@ namespace WebCore {
         return v8ExternalString(string);
     }
 
+    template<typename Iterable>
+    v8::Handle<v8::Value> v8Array(const Iterable& iterator)
+    {
+        v8::Local<v8::Array> result = v8::Array::New(iterator.size());
+        int index = 0;
+        typename Iterable::const_iterator end = iterator.end();
+        for (typename Iterable::const_iterator iter = iterator.begin(); iter != end; ++iter)
+            result->Set(v8::Integer::New(index++), toV8(WTF::getPtr(*iter)));
+        return result;
+    }
+
+    template <class T>
+    Vector<T> toNativeArray(v8::Handle<v8::Value> value)
+    {
+        if (!value->IsArray())
+            return Vector<T>();
+
+        Vector<T> result;
+        v8::Local<v8::Value> v8Value(v8::Local<v8::Value>::New(value));
+        v8::Local<v8::Array> array = v8::Local<v8::Array>::Cast(v8Value);
+        size_t length = array->Length();
+
+        for (size_t i = 0; i < length; ++i) {
+            String indexedValue = v8StringToWebCoreString(array->Get(i));
+            result.append(indexedValue);
+        }
+        return result;
+    }
+
     // Enables caching v8 wrappers created for WTF::StringImpl.  Currently this cache requires
     // all the calls (both to convert WTF::String to v8::String and to GC the handle)
     // to be performed on the main thread.
