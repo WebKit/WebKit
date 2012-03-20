@@ -3804,6 +3804,26 @@ LayoutRect RenderLayer::selfClipRect() const
     return clippingRootLayer->renderer()->localToAbsoluteQuad(FloatQuad(backgroundRect.rect())).enclosingBoundingBox();
 }
 
+LayoutRect RenderLayer::localClipRect() const
+{
+    // FIXME: border-radius not accounted for.
+    // FIXME: Regions not accounted for.
+    RenderLayer* clippingRootLayer = clippingRoot();
+    LayoutRect layerBounds;
+    ClipRect backgroundRect, foregroundRect, outlineRect;
+    calculateRects(clippingRootLayer, 0, PaintInfo::infiniteRect(), layerBounds, backgroundRect, foregroundRect, outlineRect);
+
+    LayoutRect clipRect = backgroundRect.rect();
+    if (clipRect == PaintInfo::infiniteRect())
+        return clipRect;
+
+    LayoutPoint clippingRootOffset;
+    convertToLayerCoords(clippingRootLayer, clippingRootOffset);
+    clipRect.moveBy(-clippingRootOffset);
+
+    return clipRect;
+}
+
 void RenderLayer::addBlockSelectionGapsBounds(const LayoutRect& bounds)
 {
     m_blockSelectionGapsBounds.unite(bounds);

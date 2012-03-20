@@ -531,12 +531,13 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
     }
     
     LayoutRect unionBounds = boundingBoxRect;
-    
-    if (layer->renderer()->hasOverflowClip() || layer->renderer()->hasMask()) {
+
+    LayoutRect localClipRect = layer->localClipRect();
+    if (localClipRect != PaintInfo::infiniteRect()) {
         LayoutPoint ancestorRelOffset;
         layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
-        boundingBoxRect.moveBy(ancestorRelOffset);
-        return pixelSnappedIntRect(boundingBoxRect);
+        localClipRect.moveBy(ancestorRelOffset);
+        return pixelSnappedIntRect(localClipRect);
     }
 
     if (RenderLayer* reflection = layer->reflectionLayer()) {

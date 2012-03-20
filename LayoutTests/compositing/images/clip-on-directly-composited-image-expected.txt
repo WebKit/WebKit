@@ -6,8 +6,9 @@
       (bounds 800.00 600.00)
       (children 1
         (GraphicsLayer
-          (position 200.00 13.00)
-          (bounds 200.00 200.00)
+          (position 210.00 23.00)
+          (anchor 0.64 0.64)
+          (bounds 140.00 140.00)
           (drawsContent 1)
         )
       )
