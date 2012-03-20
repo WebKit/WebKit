@@ -73,7 +73,7 @@ public:
 
     void setCellLogicalWidths();
     int calcRowLogicalHeight();
-    int layoutRows(int logicalHeight);
+    void layoutRows();
 
     RenderTable* table() const { return toRenderTable(parent()); }
 
@@ -158,6 +158,10 @@ public:
     void setCachedCollapsedBorder(const RenderTableCell*, CollapsedBorderSide, CollapsedBorderValue);
     CollapsedBorderValue& cachedCollapsedBorder(const RenderTableCell*, CollapsedBorderSide);
 
+    // distributeExtraLogicalHeight* methods return the remaining extra logical height.
+    // FIXME: We may want to introduce a structure holding the in-flux layout information.
+    int distributeExtraLogicalHeightToRows(int extraLogicalHeight);
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
@@ -185,9 +189,6 @@ private:
 
     void ensureRows(unsigned);
 
-    // Those methods return the remaining extra logical height.
-    // FIXME: We may want to introduce a structure holding the in-flux layout information.
-    int distributeExtraLogicalHeightToRows(int extraLogicalHeight);
     int distributeExtraLogicalHeightToPercentRows(int extraLogicalHeight, int totalPercent);
     int distributeExtraLogicalHeightToAutoRows(int extraLogicalHeight, unsigned autoRowsCount);
     int distributeRemainingExtraLogicalHeight(int extraLogicalHeight);

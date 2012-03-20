@@ -252,6 +252,8 @@ private:
     void recalcSections() const;
     void layoutCaption(RenderTableCaption*);
 
+    void distributeExtraLogicalHeight(int extraLogicalHeight);
+
     mutable Vector<LayoutUnit> m_columnPos;
     mutable Vector<ColumnStruct> m_columns;
     mutable Vector<RenderTableCaption*> m_captions;

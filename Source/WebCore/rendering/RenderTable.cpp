@@ -299,6 +299,20 @@ void RenderTable::layoutCaption(RenderTableCaption* caption)
     setLogicalHeight(logicalHeight() + caption->logicalHeight() + caption->marginBefore() + caption->marginAfter());
 }
 
+void RenderTable::distributeExtraLogicalHeight(int extraLogicalHeight)
+{
+    if (extraLogicalHeight <= 0)
+        return;
+
+    // FIXME: Distribute the extra logical height between all table sections instead of giving it all to the first one.
+    if (RenderTableSection* section = topSection())
+        extraLogicalHeight = section->distributeExtraLogicalHeightToRows(extraLogicalHeight);
+
+    // FIXME: We really would like to enable this ASSERT to ensure that all the extra space has been distributed.
+    // However our current distribution algorithm does not round properly and thus we can have some remaining height.
+    // ASSERT(!topSection() || !extraLogicalHeight);
+}
+
 void RenderTable::layout()
 {
     ASSERT(needsLayout());
@@ -390,11 +404,10 @@ void RenderTable::layout()
         computedLogicalHeight = computePercentageLogicalHeight(logicalHeightLength);
     computedLogicalHeight = max<LayoutUnit>(0, computedLogicalHeight);
 
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTableSection())
-            // FIXME: Distribute the extra logical height between all table sections instead of giving it all to the first one.
-            toRenderTableSection(child)->layoutRows(child == topSection() ? max<LayoutUnit>(0, computedLogicalHeight - totalSectionLogicalHeight) : 0);
-    }
+    distributeExtraLogicalHeight(floorToInt(computedLogicalHeight - totalSectionLogicalHeight));
+
+    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section))
+        section->layoutRows();
 
     if (!topSection() && computedLogicalHeight > totalSectionLogicalHeight && !document()->inQuirksMode()) {
         // Completely empty tables (with no sections or anything) should at least honor specified height

@@ -520,7 +520,7 @@ int RenderTableSection::distributeExtraLogicalHeightToRows(int extraLogicalHeigh
     return remainingExtraLogicalHeight;
 }
 
-int RenderTableSection::layoutRows(int extraLogicalHeight)
+void RenderTableSection::layoutRows()
 {
 #ifndef NDEBUG
     setNeedsLayoutIsForbidden(true);
@@ -537,8 +537,6 @@ int RenderTableSection::layoutRows(int extraLogicalHeight)
     m_overflow.clear();
     m_overflowingCells.clear();
     m_forceSlowPaintPathWithOverflowingCell = false;
-
-    extraLogicalHeight = distributeExtraLogicalHeightToRows(extraLogicalHeight);
 
     int hspacing = table()->hBorderSpacing();
     int vspacing = table()->vBorderSpacing();
@@ -738,7 +736,6 @@ int RenderTableSection::layoutRows(int extraLogicalHeight)
     ASSERT(hasOverflowingCell == this->hasOverflowingCell());
 
     statePusher.pop();
-    return height();
 }
 
 int RenderTableSection::calcOuterBorderBefore() const
