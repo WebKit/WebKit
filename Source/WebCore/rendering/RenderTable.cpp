@@ -306,7 +306,7 @@ void RenderTable::distributeExtraLogicalHeight(int extraLogicalHeight)
 
     // FIXME: Distribute the extra logical height between all table sections instead of giving it all to the first one.
     if (RenderTableSection* section = topSection())
-        extraLogicalHeight = section->distributeExtraLogicalHeightToRows(extraLogicalHeight);
+        extraLogicalHeight -= section->distributeExtraLogicalHeightToRows(extraLogicalHeight);
 
     // FIXME: We really would like to enable this ASSERT to ensure that all the extra space has been distributed.
     // However our current distribution algorithm does not round properly and thus we can have some remaining height.

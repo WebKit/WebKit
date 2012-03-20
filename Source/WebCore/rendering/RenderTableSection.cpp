@@ -424,14 +424,14 @@ void RenderTableSection::layout()
     setNeedsLayout(false);
 }
 
-int RenderTableSection::distributeExtraLogicalHeightToPercentRows(int extraLogicalHeight, int totalPercent)
+void RenderTableSection::distributeExtraLogicalHeightToPercentRows(int& extraLogicalHeight, int totalPercent)
 {
     if (!totalPercent)
-        return extraLogicalHeight;
+        return;
 
     unsigned totalRows = m_grid.size();
     int totalHeight = m_rowPos[totalRows] + extraLogicalHeight;
-    int add = 0;
+    int totalLogicalHeightAdded = 0;
     totalPercent = min(totalPercent, 100);
     int rowHeight = m_rowPos[1] - m_rowPos[0];
     for (unsigned r = 0; r < totalRows; ++r) {
@@ -440,56 +440,54 @@ int RenderTableSection::distributeExtraLogicalHeightToPercentRows(int extraLogic
             // If toAdd is negative, then we don't want to shrink the row (this bug
             // affected Outlook Web Access).
             toAdd = max(0, toAdd);
-            add += toAdd;
+            totalLogicalHeightAdded += toAdd;
             extraLogicalHeight -= toAdd;
             totalPercent -= m_grid[r].logicalHeight.percent();
         }
         ASSERT(totalRows >= 1);
         if (r < totalRows - 1)
             rowHeight = m_rowPos[r + 2] - m_rowPos[r + 1];
-        m_rowPos[r + 1] += add;
+        m_rowPos[r + 1] += totalLogicalHeightAdded;
     }
-    return extraLogicalHeight;
 }
 
-int RenderTableSection::distributeExtraLogicalHeightToAutoRows(int extraLogicalHeight, unsigned autoRowsCount)
+void RenderTableSection::distributeExtraLogicalHeightToAutoRows(int& extraLogicalHeight, unsigned autoRowsCount)
 {
     if (!autoRowsCount)
-        return extraLogicalHeight;
+        return;
 
-    int add = 0;
+    int totalLogicalHeightAdded = 0;
     for (unsigned r = 0; r < m_grid.size(); ++r) {
         if (autoRowsCount > 0 && m_grid[r].logicalHeight.isAuto()) {
             // Recomputing |extraLogicalHeightForRow| guarantees that we properly ditribute round |extraLogicalHeight|.
             int extraLogicalHeightForRow = extraLogicalHeight / autoRowsCount;
-            add += extraLogicalHeightForRow;
+            totalLogicalHeightAdded += extraLogicalHeightForRow;
             extraLogicalHeight -= extraLogicalHeightForRow;
             --autoRowsCount;
         }
-        m_rowPos[r + 1] += add;
+        m_rowPos[r + 1] += totalLogicalHeightAdded;
     }
-    return extraLogicalHeight;
 }
 
-int RenderTableSection::distributeRemainingExtraLogicalHeight(int extraLogicalHeight)
+void RenderTableSection::distributeRemainingExtraLogicalHeight(int& extraLogicalHeight)
 {
     unsigned totalRows = m_grid.size();
 
     if (extraLogicalHeight <= 0 || !m_rowPos[totalRows])
-        return extraLogicalHeight;
+        return;
 
     // FIXME: m_rowPos[totalRows] - m_rowPos[0] is the total rows' size.
     int totalRowSize = m_rowPos[totalRows];
-    int add = 0;
+    int totalLogicalHeightAdded = 0;
     int previousRowPosition = m_rowPos[0];
     for (unsigned r = 0; r < totalRows; r++) {
         // weight with the original height
-        add += extraLogicalHeight * (m_rowPos[r + 1] - previousRowPosition) / totalRowSize;
+        totalLogicalHeightAdded += extraLogicalHeight * (m_rowPos[r + 1] - previousRowPosition) / totalRowSize;
         previousRowPosition = m_rowPos[r + 1];
-        m_rowPos[r + 1] += add;
+        m_rowPos[r + 1] += totalLogicalHeightAdded;
     }
 
-    return extraLogicalHeight;
+    extraLogicalHeight -= totalLogicalHeightAdded;
 }
 
 int RenderTableSection::distributeExtraLogicalHeightToRows(int extraLogicalHeight)
@@ -514,10 +512,10 @@ int RenderTableSection::distributeExtraLogicalHeightToRows(int extraLogicalHeigh
     }
 
     int remainingExtraLogicalHeight = extraLogicalHeight;
-    remainingExtraLogicalHeight = distributeExtraLogicalHeightToPercentRows(remainingExtraLogicalHeight, totalPercent);
-    remainingExtraLogicalHeight = distributeExtraLogicalHeightToAutoRows(remainingExtraLogicalHeight, autoRowsCount);
-    remainingExtraLogicalHeight = distributeRemainingExtraLogicalHeight(remainingExtraLogicalHeight);
-    return remainingExtraLogicalHeight;
+    distributeExtraLogicalHeightToPercentRows(remainingExtraLogicalHeight, totalPercent);
+    distributeExtraLogicalHeightToAutoRows(remainingExtraLogicalHeight, autoRowsCount);
+    distributeRemainingExtraLogicalHeight(remainingExtraLogicalHeight);
+    return extraLogicalHeight - remainingExtraLogicalHeight;
 }
 
 void RenderTableSection::layoutRows()
