@@ -204,6 +204,11 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_zoom_text_only(settings, TRUE);
     g_assert(webkit_settings_get_zoom_text_only(settings));
 
+    // By default, JavaScript cannot access the clipboard.
+    g_assert(!webkit_settings_get_javascript_can_access_clipboard(settings));
+    webkit_settings_set_javascript_can_access_clipboard(settings, TRUE);
+    g_assert(webkit_settings_get_javascript_can_access_clipboard(settings));
+
     g_object_unref(G_OBJECT(settings));
 }
 

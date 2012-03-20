@@ -232,6 +232,8 @@ webkit_settings_get_enable_webgl
 webkit_settings_set_enable_webgl
 webkit_settings_get_zoom_text_only
 webkit_settings_set_zoom_text_only
+webkit_settings_get_javascript_can_access_clipboard
+webkit_settings_set_javascript_can_access_clipboard
 
 <SUBSECTION Standard>
 WebKitSettingsClass

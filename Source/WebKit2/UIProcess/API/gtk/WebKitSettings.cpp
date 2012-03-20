@@ -105,7 +105,8 @@ enum {
     PROP_PRINT_BACKGROUNDS,
     PROP_ENABLE_WEBAUDIO,
     PROP_ENABLE_WEBGL,
-    PROP_ZOOM_TEXT_ONLY
+    PROP_ZOOM_TEXT_ONLY,
+    PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD
 };
 
 static void webKitSettingsSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -214,6 +215,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         break;
     case PROP_ZOOM_TEXT_ONLY:
         webkit_settings_set_zoom_text_only(settings, g_value_get_boolean(value));
+        break;
+    case PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD:
+        webkit_settings_set_javascript_can_access_clipboard(settings, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -327,6 +331,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         break;
     case PROP_ZOOM_TEXT_ONLY:
         g_value_set_boolean(value, webkit_settings_get_zoom_text_only(settings));
+        break;
+    case PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD:
+        g_value_set_boolean(value, webkit_settings_get_javascript_can_access_clipboard(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -837,6 +844,21 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                     g_param_spec_boolean("zoom-text-only",
                                                          _("Zoom Text Only"),
                                                          _("Whether zoom level of web view changes only the text size"),
+                                                         FALSE,
+                                                         readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:javascript-can-access-clipboard:
+     *
+     * Whether JavaScript can access the clipboard. The default value is %FALSE. If
+     * set to %TRUE, document.execCommand() allows cut, copy and paste commands.
+     *
+     */
+    g_object_class_install_property(gObjectClass,
+                                    PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD,
+                                    g_param_spec_boolean("javascript-can-access-clipboard",
+                                                         _("JavaScript can access clipboard"),
+                                                         _("Whether JavaScript can access Clipboard"),
                                                          FALSE,
                                                          readWriteConstructParamFlags));
 
@@ -2133,3 +2155,41 @@ gboolean webkit_settings_get_zoom_text_only(WebKitSettings* settings)
     return settings->priv->zoomTextOnly;
 }
 
+/**
+ * webkit_settings_get_javascript_can_access_clipboard:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:javascript-can-access-clipboard property.
+ *
+ * Returns: %TRUE If javascript-can-access-clipboard is enabled or %FALSE otherwise.
+ */
+gboolean webkit_settings_get_javascript_can_access_clipboard(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return WKPreferencesGetJavaScriptCanAccessClipboard(settings->priv->preferences.get())
+            && WKPreferencesGetDOMPasteAllowed(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_javascript_can_access_clipboard:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:javascript-can-access-clipboard property.
+ */
+void webkit_settings_set_javascript_can_access_clipboard(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetJavaScriptCanAccessClipboard(priv->preferences.get())
+            && WKPreferencesGetDOMPasteAllowed(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetJavaScriptCanAccessClipboard(priv->preferences.get(), enabled);
+    WKPreferencesSetDOMPasteAllowed(priv->preferences.get(), enabled);
+
+    g_object_notify(G_OBJECT(settings), "javascript-can-access-clipboard");
+}
