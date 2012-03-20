@@ -175,11 +175,12 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
         const WebMouseWheelEvent& wheelEvent = *static_cast<const WebMouseWheelEvent*>(&event);
         CCInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(IntPoint(wheelEvent.x, wheelEvent.y), CCInputHandlerClient::Wheel);
         switch (scrollStatus) {
-        case CCInputHandlerClient::ScrollStarted:
+        case CCInputHandlerClient::ScrollStarted: {
             TRACE_EVENT_INSTANT2("cc", "WebCompositorInputHandlerImpl::handleInput wheel scroll", "deltaX", -wheelEvent.deltaX, "deltaY", -wheelEvent.deltaY);
             m_inputHandlerClient->scrollBy(IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
             m_inputHandlerClient->scrollEnd();
             return DidHandle;
+        }
         case CCInputHandlerClient::ScrollIgnored:
             return DropEvent;
         case CCInputHandlerClient::ScrollFailed:
@@ -264,14 +265,16 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
         m_inputHandlerClient->scheduleAnimation();
         return DidHandle;
     }
-    case CCInputHandlerClient::ScrollFailed:
+    case CCInputHandlerClient::ScrollFailed: {
         TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::failed");
         return DidNotHandle;
-    case CCInputHandlerClient::ScrollIgnored:
+    }
+    case CCInputHandlerClient::ScrollIgnored: {
         TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::ignored");
         // We still pass the curve to the main thread if there's nothing scrollable, in case something
         // registers a handler before the curve is over.
         return DidNotHandle;
+    }
     }
     return DidNotHandle;
 }

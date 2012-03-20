@@ -1,3 +1,11 @@
+2012-03-19  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed chromium compile fix - put all TRACE_*s in their own scope explicitly.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleInputEventInternal):
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+
 2012-03-19  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] return true/false on GestureFlingCancel if a fling was stopped
