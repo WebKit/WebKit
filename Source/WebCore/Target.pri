@@ -2862,8 +2862,8 @@ contains(DEFINES, HAVE_QSTYLE=1) {
 
 contains(DEFINES, ENABLE_SMOOTH_SCROLLING=1) {
     win32-*|wince* {
-        HEADERS += platform/ScrollAnimatorWin.h
-        SOURCES += platform/ScrollAnimatorWin.cpp
+        HEADERS += platform/ScrollAnimatorNone.h
+        SOURCES += platform/ScrollAnimatorNone.cpp
     }
 }
 

@@ -1,3 +1,12 @@
+2012-03-19  Scott Byer  <scottbyer@chromium.org>
+
+        Cleanup obsolete files.
+        https://bugs.webkit.org/show_bug.cgi?id=80737
+
+        Reviewed by James Robinson.
+
+        * wscript:
+
 2012-03-07  Martin Robinson  <mrobinson@igalia.com>
 
         Update the NEWS and version for the 1.7.91 release.
