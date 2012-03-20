@@ -2764,3 +2764,7 @@ editing/selection/move-by-word-visually-single-space-inline-element.html
 editing/selection/move-by-word-visually-single-space-one-element.html
 editing/selection/move-by-word-visually-textarea.html
 editing/selection/move-by-word-visually-wrong-left-right.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=81276
+# Allowed to regress to fix a crash. 
+fast/inline/continuation-outlines-with-layers.html

@@ -3949,3 +3949,6 @@ BUGWK81537 : fast/events/touch/gesture/pad-gesture-fling.html = TEXT
 BUGWK81544 : fast/text/international/font-fallback-to-common-script.html = IMAGE PASS
 
 BUGWK81638 SNOWLEOPARD DEBUG : editing/selection/iframe.html = IMAGE PASS
+
+// Allowed to regress to fix a crash. 
+BUGWK81276 WIN LINUX: fast/inline/continuation-outlines-with-layers.html = IMAGE
