@@ -35,8 +35,9 @@
 
 #include "AffineTransform.h"
 #include "ImageBuffer.h"
-#include "Noncopyable.h"
-#include "wtf/OwnPtr.h"
+ 
+#include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 
 class SkBitmap;
 class SkCanvas;
