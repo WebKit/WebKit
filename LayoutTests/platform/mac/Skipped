@@ -592,3 +592,9 @@ fast/canvas/canvas-draw-canvas-on-canvas-shadow.html
 fast/canvas/canvas-fillRect-gradient-shadow.html
 fast/canvas/set-colors.html
 canvas/philip/tests/2d.path.arc.scale.1.html
+
+# Media tests that time out unexpectedly
+# https://bugs.webkit.org/show_bug.cgi?id=81604
+http/tests/media/video-buffering-repaints-controls.html
+http/tests/media/video-useragent.html
+media/audio-garbage-collect.html
