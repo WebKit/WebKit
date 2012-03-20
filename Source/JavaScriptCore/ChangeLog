@@ -1,3 +1,18 @@
+2012-03-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Division optimizations fail to infer cases of truncated division and mishandle -2147483648/-1
+        https://bugs.webkit.org/show_bug.cgi?id=81428
+
+        32 bit buildfix after r111355.
+
+        2147483648 (2^31) isn't valid int literal in ISO C90, because 2147483647 (2^31-1) is the biggest int.
+        The smallest int is -2147483648 (-2^31) == -2147483647 - 1  == -INT32_MAX-1 == INT32_MIN (stdint.h).
+
+        Reviewed by Zoltan Herczeg.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIntegerArithDivForX86):
+
 2012-03-19  Jochen Eisinger  <jochen@chromium.org>
 
         Split WTFReportBacktrace into WTFReportBacktrace and WTFPrintBacktrace
