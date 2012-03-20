@@ -5396,3 +5396,20 @@ svg/text/exs-display-none.svg
 svg/text/text-fill-opacity.svg
 svg/text/text-viewbox-rescale.html
 svg/text/tspan-dynamic-positioning.svg
+
+# new failing tests
+fast/css/pseudo-first-line-border-width.html
+fast/css/text-overflow-input.html
+fast/events/resize-events.html
+fast/multicol/span/before-child-anonymous-column-block.html
+fast/repaint/table-hover-on-link.html
+fast/text/international/content-language-font-selection.html
+fast/text/international/content-language-with-subtags.html
+fast/text/international/font-fallback-to-common-script.html
+fast/text/international/lang-sensitive-fonts-xml.xhtml
+fast/text/international/lang-sensitive-fonts.html
+fast/text/international/locale-sensitive-fonts.html
+platform/qt/plugins/application-plugin-plugins-disabled.html
+svg/custom/delete-text-crash.html
+touchadjustment/event-triggered-widgets.html
+touchadjustment/touch-inlines.html
