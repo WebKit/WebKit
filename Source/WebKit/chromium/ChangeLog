@@ -1,3 +1,22 @@
+2012-03-19  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Stop deriving WebCompositor from WebCompositorInputHandler
+        https://bugs.webkit.org/show_bug.cgi?id=80586
+
+        Reviewed by Darin Fisher.
+
+        * public/WebCompositor.h:
+        (WebKit):
+        * public/WebCompositorInputHandler.h:
+        (WebCompositorInputHandler):
+        * public/WebWidgetClient.h:
+        (WebWidgetClient):
+        (WebKit::WebWidgetClient::didActivateCompositor):
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandler::fromIdentifier):
+        * src/WebCompositorInputHandlerImpl.h:
+        (WebCompositorInputHandlerImpl):
+
 2012-03-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Implement fling-by-wheel on compositor thread

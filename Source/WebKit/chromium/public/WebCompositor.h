@@ -26,7 +26,6 @@
 #ifndef WebCompositor_h
 #define WebCompositor_h
 
-#include "WebCompositorInputHandler.h"
 #include "platform/WebCommon.h"
 
 namespace WebKit {
@@ -34,16 +33,11 @@ namespace WebKit {
 class WebInputEvent;
 class WebThread;
 
-#define WEBCOMPOSITOR_HAS_INITIALIZE
-
 // This class contains global routines for interacting with the
 // compositor.
 //
 // All calls to the WebCompositor must be made from the main thread.
-//
-// This class currently temporarily inherits from WebCompositorInputHandler
-// while we migrate downstream code to use WebCompositorInputHandler directly.
-class WebCompositor : public WebCompositorInputHandler {
+class WebCompositor {
 public:
     // Initializes the compositor. Threaded compositing is enabled by passing in
     // a non-null WebThread. No compositor classes or methods should be used

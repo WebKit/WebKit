@@ -50,8 +50,7 @@ namespace WebKit {
 
 class WebCompositorInputHandlerClient;
 
-// Temporarily subclassing from WebCompositor while downstream changes land.
-class WebCompositorInputHandlerImpl : public WebCompositor, public WebCore::CCInputHandler, public WebCore::CCGestureCurveTarget {
+class WebCompositorInputHandlerImpl : public WebCompositorInputHandler, public WebCore::CCInputHandler, public WebCore::CCGestureCurveTarget {
     WTF_MAKE_NONCOPYABLE(WebCompositorInputHandlerImpl);
 public:
     static PassOwnPtr<WebCompositorInputHandlerImpl> create(WebCore::CCInputHandlerClient*);
@@ -59,11 +58,11 @@ public:
 
     virtual ~WebCompositorInputHandlerImpl();
 
-    // WebCompositor implementation
+    // WebCompositorInputHandler implementation.
     virtual void setClient(WebCompositorInputHandlerClient*);
     virtual void handleInputEvent(const WebInputEvent&);
 
-    // WebCore::CCInputHandler implementation
+    // WebCore::CCInputHandler implementation.
     virtual int identifier() const;
     virtual void animate(double monotonicTime);
 

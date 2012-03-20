@@ -86,9 +86,9 @@ namespace WebKit {
 int WebCompositorInputHandlerImpl::s_nextAvailableIdentifier = 1;
 HashSet<WebCompositorInputHandlerImpl*>* WebCompositorInputHandlerImpl::s_compositors = 0;
 
-WebCompositor* WebCompositorInputHandler::fromIdentifier(int identifier)
+WebCompositorInputHandler* WebCompositorInputHandler::fromIdentifier(int identifier)
 {
-    return static_cast<WebCompositor*>(WebCompositorInputHandlerImpl::fromIdentifier(identifier));
+    return WebCompositorInputHandlerImpl::fromIdentifier(identifier);
 }
 
 PassOwnPtr<WebCompositorInputHandlerImpl> WebCompositorInputHandlerImpl::create(WebCore::CCInputHandlerClient* inputHandlerClient)
