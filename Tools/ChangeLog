@@ -1,3 +1,11 @@
+2012-03-19  Jessie Berlin  <jberlin@apple.com>
+
+        Unreviewed; roll out http://trac.webkit.org/changeset/111307 and http://trac.webkit.org/changeset/111293
+        because they broke running the layout tests on mac.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver._check_for_driver_crash):
+
 2012-03-16  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Allow running run-gtk-tests during 'make distcheck'

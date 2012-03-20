@@ -70,7 +70,7 @@ class ServerProcess:
         self._proc = None
         self._output = str()  # bytesarray() once we require Python 2.6
         self._error = str()  # bytesarray() once we require Python 2.6
-        self._crashed = False
+        self.set_crashed(False)
         self.timed_out = False
 
     def process_name(self):
@@ -94,17 +94,22 @@ class ServerProcess:
         fl = fcntl.fcntl(fd, fcntl.F_GETFL)
         fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
 
-    def _handle_possible_interrupt(self):
+    def handle_interrupt(self):
         """This routine checks to see if the process crashed or exited
         because of a keyboard interrupt and raises KeyboardInterrupt
         accordingly."""
-        # FIXME: Linux and Mac set the returncode to -signal.SIGINT if a
-        # subprocess is killed with a ctrl^C.  Previous comments in this
-        # routine said that supposedly Windows returns 0xc000001d, but that's not what
-        # -1073741510 evaluates to. Figure out what the right value is
-        # for win32 and cygwin here ...
-        if self._proc.returncode in (-1073741510, -signal.SIGINT):
-            raise KeyboardInterrupt
+        if self.crashed:
+            # This is hex code 0xc000001d, which is used for abrupt
+            # termination. This happens if we hit ctrl+c from the prompt
+            # and we happen to be waiting on the DumpRenderTree.
+            # sdoyon: Not sure for which OS and in what circumstances the
+            # above code is valid. What works for me under Linux to detect
+            # ctrl+c is for the subprocess returncode to be negative
+            # SIGINT. And that agrees with the subprocess documentation.
+            if (-1073741510 == self._proc.returncode or
+                - signal.SIGINT == self._proc.returncode):
+                raise KeyboardInterrupt
+            return
 
     def poll(self):
         """Check to see if the underlying process is running; returns None
@@ -123,7 +128,7 @@ class ServerProcess:
         except IOError, e:
             self.stop()
             # stop() calls _reset(), so we have to set crashed to True after calling stop().
-            self._crashed = True
+            self.set_crashed(True)
 
     def _pop_stdout_line_if_ready(self):
         index_after_newline = self._output.find('\n') + 1
@@ -173,6 +178,11 @@ class ServerProcess:
 
         return self._read(deadline, retrieve_bytes_from_stdout_buffer)
 
+    def _check_for_crash(self, wait_for_crash_reporter=True):
+        if self.poll() != None:
+            self.set_crashed(True, wait_for_crash_reporter)
+            self.handle_interrupt()
+
     def _log(self, message):
         # This is a bit of a hack, but we first log a blank line to avoid
         # messing up the master process's output.
@@ -196,6 +206,10 @@ class ServerProcess:
             self._log('Unable to sample process.')
 
     def _handle_timeout(self):
+        self._executive.wait_newest(self._port.is_crash_reporter)
+        self._check_for_crash(wait_for_crash_reporter=False)
+        if self.crashed:
+            return
         self.timed_out = True
         self._sample()
 
@@ -224,22 +238,20 @@ class ServerProcess:
             # FIXME: Why do we ignore all IOErrors here?
             pass
 
-    def has_crashed(self):
-        if not self._crashed and self.poll():
-            self._crashed = True
-            self._handle_possible_interrupt()
-        return self._crashed
+    def _check_for_abort(self, deadline):
+        self._check_for_crash()
+
+        if time.time() > deadline:
+            self._handle_timeout()
+
+        return self.crashed or self.timed_out
 
     # This read function is a bit oddly-designed, as it polls both stdout and stderr, yet
     # only reads/returns from one of them (buffering both in local self._output/self._error).
     # It might be cleaner to pass in the file descriptor to poll instead.
     def _read(self, deadline, fetch_bytes_from_buffers_callback):
         while True:
-            if self.has_crashed():
-                return None
-
-            if time.time() > deadline:
-                self._handle_timeout()
+            if self._check_for_abort(deadline):
                 return None
 
             bytes = fetch_bytes_from_buffers_callback()
@@ -280,3 +292,9 @@ class ServerProcess:
                 self._executive.kill_process(self._proc.pid)
                 _log.warning('killed')
         self._reset()
+
+    def set_crashed(self, crashed, wait_for_crash_reporter=True):
+        self.crashed = crashed
+        if not self.crashed or not wait_for_crash_reporter:
+            return
+        self._executive.wait_newest(self._port.is_crash_reporter)
