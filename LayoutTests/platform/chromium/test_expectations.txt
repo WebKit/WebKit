@@ -2586,8 +2586,6 @@ BUGCR71022 LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE IMAGE+TEX
 BUGWK53446 DEBUG : http/tests/navigation/forward-and-cancel.html = PASS CRASH TEXT
 BUGWK53446 LINUX RELEASE : http/tests/navigation/forward-and-cancel.html = PASS TEXT
 
-BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = PASS CRASH MISSING
-
 // It is failing since r77459.
 // Fix miscalculation of the overhang area used for painting. We were
 // not correctly accounting for scrollbars resulting in an non-negative
@@ -3949,3 +3947,5 @@ BUGWK77368 WIN : css3/flexbox/child-overflow.html = IMAGE
 BUGWK81537 : fast/events/touch/gesture/pad-gesture-fling.html = TEXT
 
 BUGWK81544 : fast/text/international/font-fallback-to-common-script.html = IMAGE PASS
+
+BUGWK81638 SNOWLEOPARD DEBUG : editing/selection/iframe.html = IMAGE PASS
