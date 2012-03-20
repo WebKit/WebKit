@@ -25,7 +25,6 @@
 #include "RenderThemeChromiumSkia.h"
 
 #include "CSSValueKeywords.h"
-#include "CurrentTime.h"
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
@@ -43,6 +42,8 @@
 #include "TimeRanges.h"
 #include "TransformationMatrix.h"
 #include "UserAgentStyleSheets.h"
+
+#include <wtf/CurrentTime.h>
 
 #include "SkShader.h"
 #include "SkGradientShader.h"
