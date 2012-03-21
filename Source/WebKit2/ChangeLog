@@ -1,3 +1,38 @@
+2012-03-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Don't go through the UI process to update a layer's contents size.
+        https://bugs.webkit.org/show_bug.cgi?id=81764
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        It's happening when navigating pages that contents from the old page
+        is still present on the tiles until the contents size is shrunk to cut it out.
+        Since the contents size updates are asynchronous and go through the UI process,
+        this could occasionally show some glitch frames.
+        Even worse, the user could delay this update by starting to pan and keep
+        his finger on the screen.
+        This patch makes sure that changes to contents size are notifying the LayerTreeHost
+        immediately when in fixed layout mode, and remove the loop through the UI process.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::setContentsSize):
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::didRelaunchProcess):
+        (QQuickWebViewLegacyPrivate::updateViewportSize):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit):
+        (WebKit::DrawingArea::layerTreeHost):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updateBackingStoreState):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (WebKit::DrawingAreaImpl::layerTreeHost):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::sizeDidChange):
+
 2012-03-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         The activation highlight does not always hide

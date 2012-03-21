@@ -222,7 +222,7 @@ void QQuickWebViewPrivate::processDidCrash()
 void QQuickWebViewPrivate::didRelaunchProcess()
 {
     qWarning("WARNING: The web process has been successfully restarted.");
-    pageView->d->setDrawingAreaSize(viewSize());
+    webPageProxy->drawingArea()->setSize(viewSize(), IntSize());
 }
 
 PassOwnPtr<DrawingAreaProxy> QQuickWebViewPrivate::createDrawingAreaProxy()
@@ -484,6 +484,7 @@ void QQuickWebViewLegacyPrivate::updateViewportSize()
     // The fixed layout is handled by the FrameView and the drawing area doesn't behave differently
     // whether its fixed or not. We still need to tell the drawing area which part of it
     // has to be rendered on tiles, and in desktop mode it's all of it.
+    webPageProxy->drawingArea()->setSize(viewportSize, IntSize());
     webPageProxy->drawingArea()->setVisibleContentsRect(IntRect(IntPoint(), viewportSize), 1, FloatPoint());
 }
 

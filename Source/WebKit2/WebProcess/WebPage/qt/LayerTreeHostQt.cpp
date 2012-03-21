@@ -176,6 +176,9 @@ void LayerTreeHostQt::forceRepaint()
 
 void LayerTreeHostQt::sizeDidChange(const WebCore::IntSize& newSize)
 {
+    if (m_rootLayer->size() == newSize)
+        return;
+
     m_rootLayer->setSize(newSize);
 
     // If the newSize exposes new areas of the non-composited content a setNeedsDisplay is needed

@@ -30,6 +30,7 @@
 #include "DrawingArea.h"
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleUserMessageCoders.h"
+#include "LayerTreeHost.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
@@ -441,6 +442,7 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
     if (m_page->useFixedLayout()) {
         // The below method updates the size().
         m_page->resizeToContentsIfNeeded();
+        m_page->drawingArea()->layerTreeHost()->sizeDidChange(m_page->size());
     }
 
     m_page->send(Messages::WebPageProxy::DidChangeContentsSize(m_page->size()));

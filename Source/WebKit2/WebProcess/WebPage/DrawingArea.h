@@ -44,6 +44,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class LayerTreeHost;
 class WebPage;
 struct WebPageCreationParameters;
 
@@ -69,6 +70,7 @@ public:
     virtual bool forceRepaintAsync(uint64_t callbackID) { return false; }
     virtual void setLayerTreeStateIsFrozen(bool) { }
     virtual bool layerTreeStateIsFrozen() const { return false; }
+    virtual LayerTreeHost* layerTreeHost() const { return 0; }
 
     virtual void didInstallPageOverlay() { }
     virtual void didUninstallPageOverlay() { }

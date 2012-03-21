@@ -63,14 +63,6 @@ void QQuickWebPagePrivate::initialize(WebKit::WebPageProxy* webPageProxy)
     eventHandler.reset(new QtWebPageEventHandler(toAPI(webPageProxy), q, viewportItem));
 }
 
-void QQuickWebPagePrivate::setDrawingAreaSize(const QSize& size)
-{
-    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
-    if (!drawingArea)
-        return;
-    drawingArea->setSize(WebCore::IntSize(size), WebCore::IntSize());
-}
-
 void QQuickWebPagePrivate::paint(QPainter* painter)
 {
     if (webPageProxy->drawingArea())
@@ -111,7 +103,6 @@ void QQuickWebPage::setContentsSize(const QSizeF& size)
 
     d->contentsSize = size;
     d->updateSize();
-    d->setDrawingAreaSize(d->contentsSize.toSize());
 }
 
 const QSizeF& QQuickWebPage::contentsSize() const

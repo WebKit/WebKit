@@ -37,7 +37,6 @@ public:
     ~QQuickWebPagePrivate();
 
     void initialize(WebKit::WebPageProxy*);
-    void setDrawingAreaSize(const QSize&);
 
     void updateSize();
 
