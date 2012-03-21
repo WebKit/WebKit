@@ -565,9 +565,6 @@ touchadjustment
 # REGRESSION(r110072): fast/forms/textfield-overflow.html is failing
 fast/forms/textfield-overflow.html
 
-# http://bugs.webkit.org/show_bug.cgi?id=81006
-svg/custom/delete-text-crash.html
-
 # canvas/philip/tests/2d.line.cap.round.html fails on Mac Lion WK1
 # https://bugs.webkit.org/show_bug.cgi?id=81289
 # <rdar://problem/11059777>
