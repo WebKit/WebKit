@@ -2552,8 +2552,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     bool hadPDFView = _data->_pdfViewController;
     _data->_pdfViewController = nullptr;
 
-    self.wantsLayer = pageHasCustomRepresentation;
-
     if (pageHasCustomRepresentation)
         _data->_pdfViewController = PDFViewController::create(self);
 

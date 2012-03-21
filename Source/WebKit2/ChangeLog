@@ -1,3 +1,16 @@
+2012-03-20  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r110780): Loading a PDF always makes the WKView layer backed
+        https://bugs.webkit.org/show_bug.cgi?id=81734
+        <rdar://problem/11088172>
+
+        Reviewed by Adele Peterson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setPageHasCustomRepresentation:]):
+        Don't call -[NSView setWantsLayer:], the web process already takes care of entering and exiting
+        accelerated compositing mode for us.
+
 2012-03-20  Jon Lee  <jonlee@apple.com>
 
         Restrict access to notifications for unique origins and file URLs with no local file access
