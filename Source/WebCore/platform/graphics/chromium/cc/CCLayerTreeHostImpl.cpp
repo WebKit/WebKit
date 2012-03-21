@@ -200,27 +200,12 @@ void CCLayerTreeHostImpl::trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, 
     }
 }
 
-static TransformationMatrix computeScreenSpaceTransformForSurface(CCLayerImpl* renderSurfaceLayer)
-{
-    // The layer's screen space transform can be written as:
-    //   layerScreenSpaceTransform = surfaceScreenSpaceTransform * layerOriginTransform
-    // So, to compute the surface screen space, we can do:
-    //   surfaceScreenSpaceTransform = layerScreenSpaceTransform * inverse(layerOriginTransform)
-
-    TransformationMatrix layerOriginTransform = renderSurfaceLayer->drawTransform();
-    layerOriginTransform.translate(-0.5 * renderSurfaceLayer->bounds().width(), -0.5 * renderSurfaceLayer->bounds().height());
-    TransformationMatrix surfaceScreenSpaceTransform = renderSurfaceLayer->screenSpaceTransform();
-    surfaceScreenSpaceTransform.multiply(layerOriginTransform.inverse());
-
-    return surfaceScreenSpaceTransform;
-}
-
 static FloatRect damageInSurfaceSpace(CCLayerImpl* renderSurfaceLayer, const FloatRect& rootDamageRect)
 {
     FloatRect surfaceDamageRect;
     // For now, we conservatively use the root damage as the damage for
     // all surfaces, except perspective transforms.
-    TransformationMatrix screenSpaceTransform = computeScreenSpaceTransformForSurface(renderSurfaceLayer);
+    const TransformationMatrix& screenSpaceTransform = renderSurfaceLayer->renderSurface()->screenSpaceTransform();
     if (screenSpaceTransform.hasPerspective()) {
         // Perspective projections do not play nice with mapRect of
         // inverse transforms. In this uncommon case, its simpler to

@@ -264,6 +264,25 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
     //        P is the projection matrix
     //        S is the scale adjustment (to scale up to the layer size)
     //
+    // When a render surface has a replica layer, that layer's transform is used to draw a second copy of the surface.
+    // Transforms named here are relative to the surface, unless they specify they are relative to the replica layer.
+    //
+    // The render surface origin transform to its target surface origin is:
+    //        M[surfaceOrigin] = M[owningLayer->Draw] * Tr[origin2center].inverse()
+    //
+    // The render surface origin transform to its the root (screen space) origin is:
+    //        M[surface2root] = M[owningLayer->screenspace]
+    //
+    // The replica draw transform is:
+    //        M[replicaDraw] = M[surfaceOrigin] * Tr[replica->position()] * Tr[replica] * Tr[anchor2center]
+    //                       = M[owningLayer->draw] * Tr[origin2center].inverse() * Tr[replica->position()] * Tr[replica] * Tr[anchor2clippedCenter]
+    //
+    // The replica origin transform to its target surface origin is:
+    //        M[replicaOrigin] = M[surfaceOrigin] * Tr[replica->position()] * Tr[replica] * Tr[origin2anchor].inverse()
+    //
+    // The replica origin transform to the root (screen space) origin is:
+    //        M[replica2root] = M[surface2root] * Tr[replica->position()] * Tr[replica] * Tr[origin2anchor].inverse()
+    //
 
     if (subtreeShouldBeSkipped(layer))
         return false;
@@ -333,9 +352,9 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         layer->setDrawOpacity(1);
         layer->setDrawOpacityIsAnimating(false);
 
-        TransformationMatrix layerOriginTransform = combinedTransform;
-        layerOriginTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
-        renderSurface->setOriginTransform(layerOriginTransform);
+        TransformationMatrix surfaceOriginTransform = combinedTransform;
+        surfaceOriginTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
+        renderSurface->setOriginTransform(surfaceOriginTransform);
 
         renderSurface->setTargetSurfaceTransformsAreAnimating(layerIsInAnimatingSubtreeForSurface);
         renderSurface->setScreenSpaceTransformsAreAnimating(layerIsInAnimatingSubtreeForScreen);
@@ -344,7 +363,7 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         layer->setScreenSpaceTransformIsAnimating(layerIsInAnimatingSubtreeForScreen);
 
         // Update the aggregate hierarchy matrix to include the transform of the newly created RenderSurface.
-        nextHierarchyMatrix.multiply(layerOriginTransform);
+        nextHierarchyMatrix.multiply(surfaceOriginTransform);
 
         // The render surface clipRect contributes to the scissor rect that needs to
         // be applied before drawing the render surface onto its containing
@@ -503,14 +522,29 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
         drawTransform.translate3d(surfaceCenter.x() + centerOffsetDueToClipping.width(), surfaceCenter.y() + centerOffsetDueToClipping.height(), 0);
         renderSurface->setDrawTransform(drawTransform);
 
-        // Compute the transformation matrix used to draw the replica of the render
-        // surface.
+        // The layer's origin is equal to the surface's origin so the screenSpaceTransform is the same.
+        renderSurface->setScreenSpaceTransform(layer->screenSpaceTransform());
+
         if (layer->replicaLayer()) {
+            // Compute the transformation matrix used to draw the surface's replica to the target surface.
             TransformationMatrix replicaDrawTransform = renderSurface->originTransform();
-            replicaDrawTransform.translate3d(layer->replicaLayer()->position().x(), layer->replicaLayer()->position().y(), 0);
+            replicaDrawTransform.translate(layer->replicaLayer()->position().x(), layer->replicaLayer()->position().y());
             replicaDrawTransform.multiply(layer->replicaLayer()->transform());
-            replicaDrawTransform.translate3d(surfaceCenter.x() - anchorPoint.x() * bounds.width(), surfaceCenter.y() - anchorPoint.y() * bounds.height(), 0);
+            replicaDrawTransform.translate(surfaceCenter.x() - anchorPoint.x() * bounds.width(), surfaceCenter.y() - anchorPoint.y() * bounds.height());
             renderSurface->setReplicaDrawTransform(replicaDrawTransform);
+
+            TransformationMatrix surfaceOriginToReplicaOriginTransform;
+            surfaceOriginToReplicaOriginTransform.translate(layer->replicaLayer()->position().x(), layer->replicaLayer()->position().y());
+            surfaceOriginToReplicaOriginTransform.multiply(layer->replicaLayer()->transform());
+            surfaceOriginToReplicaOriginTransform.translate(-anchorPoint.x() * bounds.width(), -anchorPoint.y() * bounds.height());
+
+            // Compute the replica's "originTransform" that maps from the replica's origin space to the target surface origin space.
+            TransformationMatrix replicaOriginTransform = layer->renderSurface()->originTransform() * surfaceOriginToReplicaOriginTransform;
+            renderSurface->setReplicaOriginTransform(replicaOriginTransform);
+
+            // Compute the replica's "screenSpaceTransform" that maps from the replica's origin space to the screen's origin space.
+            TransformationMatrix replicaScreenSpaceTransform = layer->renderSurface()->screenSpaceTransform() * surfaceOriginToReplicaOriginTransform;
+            renderSurface->setReplicaScreenSpaceTransform(replicaScreenSpaceTransform);
         }
 
         // If a render surface has no layer list, then it and none of its children needed to get drawn.

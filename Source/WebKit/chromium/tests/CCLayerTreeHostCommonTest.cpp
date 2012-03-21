@@ -310,6 +310,56 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForSingleRenderSurface)
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->targetRenderSurface()->originTransform());
     EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->targetRenderSurface()->drawTransform());
 
+    // The screen space is the same as the target since the child surface draws into the root.
+    EXPECT_TRANSFORMATION_MATRIX_EQ(parentCompositeTransform, child->targetRenderSurface()->screenSpaceTransform());
+}
+
+TEST(CCLayerTreeHostCommonTest, verifyTransformsForReplica)
+{
+    RefPtr<LayerChromium> parent = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    RefPtr<LayerChromium> childReplica = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> grandChild = adoptRef(new LayerChromiumWithForcedDrawsContent());
+    parent->createRenderSurface();
+    parent->addChild(child);
+    child->addChild(grandChild);
+    child->setReplicaLayer(childReplica.get());
+
+    // Child is set up so that a new render surface should be created.
+    child->setOpacity(0.5f);
+
+    TransformationMatrix identityMatrix;
+    TransformationMatrix parentLayerTransform;
+    parentLayerTransform.scale3d(2.0, 2.0, 1.0);
+    TransformationMatrix parentTranslationToAnchor;
+    parentTranslationToAnchor.translate(2.5, 3.0);
+    TransformationMatrix parentSublayerMatrix;
+    parentSublayerMatrix.scale3d(10.0, 10.0, 3.3);
+    TransformationMatrix parentTranslationToCenter;
+    parentTranslationToCenter.translate(5.0, 6.0);
+    TransformationMatrix parentCompositeTransform = parentTranslationToAnchor * parentLayerTransform * parentTranslationToAnchor.inverse()
+            * parentTranslationToCenter * parentSublayerMatrix * parentTranslationToCenter.inverse();
+    TransformationMatrix childTranslationToCenter;
+    childTranslationToCenter.translate(8.0, 9.0);
+    TransformationMatrix replicaLayerTransform;
+    replicaLayerTransform.scale3d(3.0, 3.0, 1.0);
+    TransformationMatrix replicaCompositeTransform = parentCompositeTransform * replicaLayerTransform;
+
+    // Child's render surface should not exist yet.
+    ASSERT_FALSE(child->renderSurface());
+
+    setLayerPropertiesForTesting(parent.get(), parentLayerTransform, parentSublayerMatrix, FloatPoint(0.25f, 0.25f), FloatPoint(2.5f, 3.0f), IntSize(10, 12), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(16, 18), false);
+    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(-0.5f, -0.5f), IntSize(1, 1), false);
+    setLayerPropertiesForTesting(childReplica.get(), replicaLayerTransform, identityMatrix, FloatPoint(0.0f, 0.0f), FloatPoint(0.0f, 0.0f), IntSize(0, 0), false);
+    executeCalculateDrawTransformsAndVisibility(parent.get());
+
+    // Render surface should have been created now.
+    ASSERT_TRUE(child->renderSurface());
+    ASSERT_EQ(child->renderSurface(), child->targetRenderSurface());
+
+    EXPECT_TRANSFORMATION_MATRIX_EQ(replicaCompositeTransform, child->targetRenderSurface()->replicaOriginTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(replicaCompositeTransform, child->targetRenderSurface()->replicaScreenSpaceTransform());
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
@@ -317,6 +367,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     // This test creates a more complex tree and verifies it all at once. This covers the following cases:
     //   - layers that are described w.r.t. a render surface: should have draw transforms described w.r.t. that surface
     //   - A render surface described w.r.t. an ancestor render surface: should have a draw transform described w.r.t. that ancestor surface
+    //   - Replicas of a render surface are described w.r.t. the replica's transform around its anchor, along with the surface itself.
     //   - Sanity check on recursion: verify transforms of layers described w.r.t. a render surface that is described w.r.t. an ancestor render surface.
     //   - verifying that each layer has a reference to the correct renderSurface and targetRenderSurface values.
 
@@ -326,6 +377,8 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     RefPtr<LayerChromium> childOfRoot = LayerChromium::create();
     RefPtr<LayerChromium> childOfRS1 = LayerChromium::create();
     RefPtr<LayerChromium> childOfRS2 = LayerChromium::create();
+    RefPtr<LayerChromium> replicaOfRS1 = LayerChromium::create();
+    RefPtr<LayerChromium> replicaOfRS2 = LayerChromium::create();
     RefPtr<LayerChromium> grandChildOfRoot = LayerChromium::create();
     RefPtr<LayerChromiumWithForcedDrawsContent> grandChildOfRS1 = adoptRef(new LayerChromiumWithForcedDrawsContent());
     RefPtr<LayerChromiumWithForcedDrawsContent> grandChildOfRS2 = adoptRef(new LayerChromiumWithForcedDrawsContent());
@@ -338,6 +391,8 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     childOfRoot->addChild(grandChildOfRoot);
     childOfRS1->addChild(grandChildOfRS1);
     childOfRS2->addChild(grandChildOfRS2);
+    renderSurface1->setReplicaLayer(replicaOfRS1.get());
+    renderSurface2->setReplicaLayer(replicaOfRS2.get());
 
     // In combination with descendantDrawsContent, opacity != 1 forces the layer to have a new renderSurface.
     renderSurface1->setOpacity(0.5f);
@@ -346,6 +401,7 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     // All layers in the tree are initialized with an anchor at 2.5 and a size of (10,10).
     // matrix "A" is the composite layer transform used in all layers, centered about the anchor point
     // matrix "B" is the sublayer transform used in all layers, centered about the center position of the layer.
+    // matrix "R" is the composite replica transform used in all replica layers.
     //
     // x component tests that layerTransform and sublayerTransform are done in the right order (translation and scale are noncommutative).
     // y component has a translation by 1.0 for every ancestor, which indicates the "depth" of the layer in the hierarchy.
@@ -357,9 +413,12 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     layerTransform.translate(1.0, 1.0);
     TransformationMatrix sublayerTransform;
     sublayerTransform.scale3d(10.0, 1.0, 1.0);
+    TransformationMatrix replicaLayerTransform;
+    replicaLayerTransform.scale3d(-2.0, 5.0, 1.0);
 
     TransformationMatrix A = translationToAnchor * layerTransform * translationToAnchor.inverse();
     TransformationMatrix B = translationToCenter * sublayerTransform * translationToCenter.inverse();
+    TransformationMatrix R = A * translationToAnchor * replicaLayerTransform * translationToAnchor.inverse();
 
     setLayerPropertiesForTesting(parent.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
     setLayerPropertiesForTesting(renderSurface1.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
@@ -370,6 +429,8 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     setLayerPropertiesForTesting(grandChildOfRoot.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
     setLayerPropertiesForTesting(grandChildOfRS1.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
     setLayerPropertiesForTesting(grandChildOfRS2.get(), layerTransform, sublayerTransform, FloatPoint(0.25f, 0.0f), FloatPoint(2.5f, 0.0f), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(replicaOfRS1.get(), replicaLayerTransform, sublayerTransform, FloatPoint(), FloatPoint(2.5f, 0.0f), IntSize(), false);
+    setLayerPropertiesForTesting(replicaOfRS2.get(), replicaLayerTransform, sublayerTransform, FloatPoint(), FloatPoint(2.5f, 0.0f), IntSize(), false);
 
     executeCalculateDrawTransformsAndVisibility(parent.get());
 
@@ -435,8 +496,14 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     //
     // Origin transform of render surface 1 is described with respect to root.
     EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A, renderSurface1->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * R, renderSurface1->renderSurface()->replicaOriginTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A, renderSurface1->renderSurface()->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * R, renderSurface1->renderSurface()->replicaScreenSpaceTransform());
     // Origin transform of render surface 2 is described with respect to render surface 2.
     EXPECT_TRANSFORMATION_MATRIX_EQ(B * A, renderSurface2->renderSurface()->originTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(B * R, renderSurface2->renderSurface()->replicaOriginTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * B * A, renderSurface2->renderSurface()->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(A * B * A * B * R, renderSurface2->renderSurface()->replicaScreenSpaceTransform());
 
     // Sanity check. If these fail there is probably a bug in the test itself.
     // It is expected that we correctly set up transforms so that the y-component of the screen-space transform

@@ -74,8 +74,17 @@ public:
     const TransformationMatrix& originTransform() const { return m_originTransform; }
     void setOriginTransform(const TransformationMatrix& originTransform) { m_originTransform = originTransform; }
 
+    const TransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
+    void setScreenSpaceTransform(const TransformationMatrix& screenSpaceTransform) { m_screenSpaceTransform = screenSpaceTransform; }
+
     const TransformationMatrix& replicaDrawTransform() const { return m_replicaDrawTransform; }
     void setReplicaDrawTransform(const TransformationMatrix& replicaDrawTransform) { m_replicaDrawTransform = replicaDrawTransform; }
+
+    const TransformationMatrix& replicaOriginTransform() const { return m_replicaOriginTransform; }
+    void setReplicaOriginTransform(const TransformationMatrix& replicaOriginTransform) { m_replicaOriginTransform = replicaOriginTransform; }
+
+    const TransformationMatrix& replicaScreenSpaceTransform() const { return m_replicaScreenSpaceTransform; }
+    void setReplicaScreenSpaceTransform(const TransformationMatrix& replicaScreenSpaceTransform) { m_replicaScreenSpaceTransform = replicaScreenSpaceTransform; }
 
     bool targetSurfaceTransformsAreAnimating() const { return m_targetSurfaceTransformsAreAnimating; }
     void setTargetSurfaceTransformsAreAnimating(bool animating) { m_targetSurfaceTransformsAreAnimating = animating; }
@@ -109,8 +118,11 @@ private:
     float m_drawOpacity;
     bool m_drawOpacityIsAnimating;
     TransformationMatrix m_drawTransform;
-    TransformationMatrix m_replicaDrawTransform;
     TransformationMatrix m_originTransform;
+    TransformationMatrix m_screenSpaceTransform;
+    TransformationMatrix m_replicaDrawTransform;
+    TransformationMatrix m_replicaOriginTransform;
+    TransformationMatrix m_replicaScreenSpaceTransform;
     bool m_targetSurfaceTransformsAreAnimating;
     bool m_screenSpaceTransformsAreAnimating;
     FilterOperations m_filters;
