@@ -3892,6 +3892,7 @@ BUGWK77889 LINUX DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
 BUGWK77889 LEOPARD SNOWLEOPARD DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
 
 BUGWK81800 SNOWLEOPARD DEBUG : svg/as-object/embedded-svg-size-changes.html = PASS IMAGE
+BUGWK81817 SNOWLEOPARD DEBUG : svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2.html = PASS IMAGE
 BUGWK77183 : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
 
 // Massive rebaselining, some rebaseline just don't make sense.
@@ -4231,3 +4232,10 @@ BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-s
 BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-size-change.html = PASS IMAGE
 BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-sw.html = PASS IMAGE
 BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-w.html = PASS IMAGE
+
+// Timing out on SNOWLEOPARD DEBUG since at least r111525
+BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/input-type-change3.html = PASS TIMEOUT
+BUGWK81813 SNOWLEOPARD DEBUG : fast/forms/textarea-align.html = PASS TIMEOUT
+BUGWK81814 SNOWLEOPARD DEBUG : fast/parser/fragment-parser.html = PASS TIMEOUT
+BUGWK81815 SNOWLEOPARD DEBUG : fast/writing-mode/japanese-ruby-vertical-lr.html = PASS TIMEOUT
+BUGWK81816 SNOWLEOPARD DEBUG : fast/dom/DOMImplementation/createDocumentType-err.html = PASS TIMEOUT
