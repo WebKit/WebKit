@@ -31,6 +31,7 @@ module window {
         Supplemental=DOMWindow
     ] DOMWindowMediaStream {
         attribute [V8EnabledAtRuntime] DeprecatedPeerConnectionConstructor webkitDeprecatedPeerConnection;
+        attribute [V8EnabledAtRuntime] MediaStreamConstructor webkitMediaStream;
         attribute MediaStreamEventConstructor MediaStreamEvent;
     };
 
