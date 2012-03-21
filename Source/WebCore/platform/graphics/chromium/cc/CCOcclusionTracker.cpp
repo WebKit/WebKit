@@ -114,22 +114,15 @@ static inline Region transformSurfaceOpaqueRegion(const RenderSurfaceType* surfa
     // Verify that rects within the |surface| will remain rects in its target surface after applying |transform|. If this is true, then
     // apply |transform| to each rect within |region| in order to transform the entire Region.
 
-    IntRect bounds = region.bounds();
-    FloatRect centeredBounds(-bounds.width() / 2.0, -bounds.height() / 2.0, bounds.width(), bounds.height());
-    FloatQuad transformedBoundsQuad = transform.mapQuad(FloatQuad(centeredBounds));
+    FloatQuad transformedBoundsQuad = transform.mapQuad(FloatQuad(region.bounds()));
     if (!transformedBoundsQuad.isRectilinear())
         return Region();
 
     Region transformedRegion;
 
-    IntRect surfaceBounds = surface->contentRect();
     Vector<IntRect> rects = region.rects();
-    Vector<IntRect>::const_iterator end = rects.end();
-    for (Vector<IntRect>::const_iterator i = rects.begin(); i != end; ++i) {
-        FloatRect centeredOriginRect(-i->width() / 2.0 + i->x() - surfaceBounds.x(), -i->height() / 2.0 + i->y() - surfaceBounds.y(), i->width(), i->height());
-        FloatRect transformedRect = transform.mapRect(FloatRect(centeredOriginRect));
-        transformedRegion.unite(enclosedIntRect(transformedRect));
-    }
+    for (size_t i = 0; i < rects.size(); ++i)
+        transformedRegion.unite(enclosedIntRect(transform.mapRect(FloatRect(rects[i]))));
     return transformedRegion;
 }
 
@@ -143,7 +136,7 @@ void CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::leaveToTargetRenderSu
     // The target occlusion can be merged out as well but needs to be transformed to the new target.
 
     const RenderSurfaceType* oldTarget = m_stack[lastIndex].surface;
-    Region oldTargetOcclusionInNewTarget = transformSurfaceOpaqueRegion<RenderSurfaceType>(oldTarget, m_stack[lastIndex].occlusionInTarget, oldTarget->drawTransform());
+    Region oldTargetOcclusionInNewTarget = transformSurfaceOpaqueRegion<RenderSurfaceType>(oldTarget, m_stack[lastIndex].occlusionInTarget, oldTarget->originTransform());
 
     if (surfaceWillBeAtTopAfterPop) {
         // Merge the top of the stack down.

@@ -1,5 +1,17 @@
 2012-03-20  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Use origin transform to transform occlusion from surface content space to its target content space
+        https://bugs.webkit.org/show_bug.cgi?id=81730
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebCore):
+        (CCOcclusionTrackerTestSurfaceOcclusionTranslatesToParent):
+        (WebCore::CCOcclusionTrackerTestSurfaceOcclusionTranslatesToParent::runMyTest):
+
+2012-03-20  Dana Jansens  <danakj@chromium.org>
+
         [chromium] Store origin/screen space transforms for surface and replica in the surface
         https://bugs.webkit.org/show_bug.cgi?id=81296
 

@@ -1878,4 +1878,55 @@ protected:
 
 MAIN_THREAD_TEST(CCOcclusionTrackerTestAnimationTranslateOnMainThread);
 
+template<class Types, bool opaqueLayers>
+class CCOcclusionTrackerTestSurfaceOcclusionTranslatesToParent : public CCOcclusionTrackerTest<Types, opaqueLayers> {
+protected:
+    void runMyTest()
+    {
+        TransformationMatrix surfaceTransform;
+        surfaceTransform.translate(300, 300);
+        surfaceTransform.scale(2);
+        surfaceTransform.translate(-150, -150);
+
+        typename Types::ContentLayerType* parent = this->createRoot(this->identityMatrix, FloatPoint(0, 0), IntSize(500, 500));
+        typename Types::ContentLayerType* surface = this->createDrawingSurface(parent, surfaceTransform, FloatPoint(0, 0), IntSize(300, 300), false);
+        typename Types::ContentLayerType* surface2 = this->createDrawingSurface(parent, this->identityMatrix, FloatPoint(50, 50), IntSize(300, 300), false);
+        surface->setOpaqueContentsRect(IntRect(0, 0, 200, 200));
+        surface2->setOpaqueContentsRect(IntRect(0, 0, 200, 200));
+        this->calcDrawEtc(parent);
+
+        TestCCOcclusionTrackerBase<typename Types::LayerType, typename Types::RenderSurfaceType> occlusion(IntRect(0, 0, 1000, 1000));
+
+        occlusion.enterTargetRenderSurface(surface2->renderSurface());
+        occlusion.markOccludedBehindLayer(surface2);
+        occlusion.finishedTargetRenderSurface(surface2, surface2->renderSurface());
+        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+        EXPECT_EQ_RECT(IntRect(50, 50, 200, 200), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(50, 50, 200, 200), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+
+        // Clear any stored occlusion.
+        occlusion.setOcclusionInScreenSpace(Region());
+        occlusion.setOcclusionInTargetSurface(Region());
+
+        occlusion.enterTargetRenderSurface(surface->renderSurface());
+        occlusion.markOccludedBehindLayer(surface);
+        occlusion.finishedTargetRenderSurface(surface, surface->renderSurface());
+        occlusion.leaveToTargetRenderSurface(parent->renderSurface());
+
+        EXPECT_EQ_RECT(IntRect(0, 0, 400, 400), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+        EXPECT_EQ_RECT(IntRect(0, 0, 400, 400), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+
+        EXPECT_EQ_RECT(occlusion.occlusionInScreenSpace().bounds(), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInScreenSpace().rects().size());
+        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
+    }
+};
+
+MAIN_AND_IMPL_THREAD_TEST(CCOcclusionTrackerTestSurfaceOcclusionTranslatesToParent);
+
 } // namespace
