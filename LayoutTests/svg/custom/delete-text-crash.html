@@ -1,7 +1,5 @@
 <html>
 <!-- This test passes if there is no crash or assert -->
-<!-- This test should be updated to use DumpAsText once WK81006 is fixed -->
-<!-- The style overflow should be removed once we migrate to DumpAsText as well -->
 <style type="text/css">
     body {
         overflow: hidden;
@@ -16,7 +14,10 @@
         document.designMode='on';
         document.execCommand('delete');
         document.execCommand('delete');
-    }
+      }
+
+      if (window.layoutTestController)
+        layoutTestController.dumpAsText();
 </script>
 <body onload="testCrash()">
 <svg id="root" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
