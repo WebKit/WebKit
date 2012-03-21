@@ -36,7 +36,6 @@
 #include "FrameLoaderClientBlackBerry.h"
 #include "KURL.h"
 #include "Logging.h"
-#include "NotImplemented.h"
 #include "Page.h"
 #include "PageClientBlackBerry.h"
 #include "PageGroup.h"
@@ -96,26 +95,6 @@ void SocketStreamHandle::platformClose()
     LOG(Network, "SocketStreamHandle %p platformClose", this);
     ASSERT(m_socketStream);
     m_socketStream->streamClose();
-}
-
-void SocketStreamHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge&)
-{
-    notImplemented();
-}
-
-void SocketStreamHandle::receivedCredential(const AuthenticationChallenge&, const Credential&)
-{
-    notImplemented();
-}
-
-void SocketStreamHandle::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&)
-{
-    notImplemented();
-}
-
-void SocketStreamHandle::receivedCancellation(const AuthenticationChallenge&)
-{
-    notImplemented();
 }
 
 // FilterStream interface

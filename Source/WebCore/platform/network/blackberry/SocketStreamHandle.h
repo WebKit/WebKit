@@ -65,12 +65,6 @@ protected:
 private:
     SocketStreamHandle(const String& groupName, const KURL&, SocketStreamHandleClient*);
 
-    // No authentication for streams per se, but proxy may ask for credentials.
-    void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-    void receivedCredential(const AuthenticationChallenge&, const Credential&);
-    void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
-    void receivedCancellation(const AuthenticationChallenge&);
-
     OwnPtr<BlackBerry::Platform::FilterStream> m_socketStream;
 };
 
