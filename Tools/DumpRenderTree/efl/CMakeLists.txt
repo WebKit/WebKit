@@ -109,6 +109,7 @@ SET(DumpRenderTree_LINK_FLAGS
 )
 
 ADD_DEFINITIONS(-DFONTS_CONF_DIR="${TOOLS_DIR}/DumpRenderTree/gtk/fonts"
+                -DDOWNLOADED_FONTS_DIR="${CMAKE_BINARY_DIR}/../Dependencies/Source/webkitgtk-test-fonts-0.0.1"
                 -DDATA_DIR="${THEME_BINARY_DIR}")
 
 INCLUDE_DIRECTORIES(${DumpRenderTree_INCLUDE_DIRECTORIES})

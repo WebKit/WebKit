@@ -33,22 +33,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-static Vector<String> getFontDirectories()
-{
-    Vector<String> fontDirPaths;
-
-    fontDirPaths.append(String("/usr/share/fonts/TTF/"));
-    fontDirPaths.append(String("/usr/share/fonts/truetype/ttf-liberation/"));
-    fontDirPaths.append(String("/usr/share/fonts/liberation/"));
-    fontDirPaths.append(String("/usr/share/fonts/truetype/ttf-dejavu/"));
-    fontDirPaths.append(String("/usr/share/fonts/dejavu/"));
-    fontDirPaths.append(String("/usr/share/fonts/OTF/")); // MathML
-    fontDirPaths.append(String("/usr/share/fonts/opentype/stix/")); // MathML
-    fontDirPaths.append(String("/usr/share/fonts/stix/")); // MathML
-
-    return fontDirPaths;
-}
-
 static Vector<String> getFontFiles()
 {
     Vector<String> fontFilePaths;
@@ -69,26 +53,16 @@ static Vector<String> getFontFiles()
     return fontFilePaths;
 }
 
-static size_t addFontDirectories(const Vector<String>& fontDirectories, FcConfig* config)
+static bool addFontDirectory(const CString& fontDirectory, FcConfig* config)
 {
-    size_t addedDirectories = 0;
+    const char* path = fontDirectory.data();
 
-    for (Vector<String>::const_iterator it = fontDirectories.begin();
-         it != fontDirectories.end(); ++it) {
-        const CString currentDirectory = (*it).utf8();
-        const char* path = currentDirectory.data();
-
-        if (ecore_file_is_dir(path)) {
-            if (!FcConfigAppFontAddDir(config, reinterpret_cast<const FcChar8*>(path))) {
-                fprintf(stderr, "Could not load font at %s!\n", path);
-                continue;
-            }
-
-            ++addedDirectories;
-        }
+    if (!ecore_file_is_dir(path)
+        || !FcConfigAppFontAddDir(config, reinterpret_cast<const FcChar8*>(path))) {
+        fprintf(stderr, "Could not add font directory %s!\n", path);
+        return false;
     }
-
-    return addedDirectories;
+    return true;
 }
 
 static void addFontFiles(const Vector<String>& fontFiles, FcConfig* config)
@@ -115,7 +89,7 @@ void addFontsToEnvironment()
         exit(1);
     }
 
-    if (!addFontDirectories(getFontDirectories(), config)) {
+    if (!addFontDirectory(DOWNLOADED_FONTS_DIR, config)) {
         fprintf(stderr, "None of the font directories could be added. Either install them "
                         "or file a bug at http://bugs.webkit.org if they are installed in "
                         "another location.\n");
