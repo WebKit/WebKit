@@ -1,5 +1,31 @@
 2012-03-21  Ian Vollick  <vollick@chromium.org>
 
+        [chromium] timing functions are getting incorrectly applied for accelerated css transitions
+        https://bugs.webkit.org/show_bug.cgi?id=81692
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCAnimationTestCommon.cpp:
+        (WebCore::addOpacityTransition):
+        (WebKitTests::addOpacityTransitionToController):
+        (WebKitTests::addOpacityTransitionToLayer):
+        * tests/CCAnimationTestCommon.h:
+        (WebKitTests):
+        * tests/CCLayerAnimationControllerTest.cpp:
+        (WebKitTests::TEST):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTest::dispatchAddInstantAnimation):
+        (WTF::CCLayerTreeHostTest::dispatchAddAnimation):
+        (WTF::TEST_F):
+        (WTF):
+        (CCLayerTreeHostTestAddAnimationWithTimingFunction):
+        (WTF::CCLayerTreeHostTestAddAnimationWithTimingFunction::CCLayerTreeHostTestAddAnimationWithTimingFunction):
+        (WTF::CCLayerTreeHostTestAddAnimationWithTimingFunction::beginTest):
+        (WTF::CCLayerTreeHostTestAddAnimationWithTimingFunction::animateLayers):
+        (WTF::CCLayerTreeHostTestAddAnimationWithTimingFunction::afterTest):
+
+2012-03-21  Ian Vollick  <vollick@chromium.org>
+
         [chromium] Animation events should only be used for synchronizing animation start times
         https://bugs.webkit.org/show_bug.cgi?id=81484
 

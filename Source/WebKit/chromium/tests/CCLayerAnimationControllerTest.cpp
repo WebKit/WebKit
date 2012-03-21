@@ -133,7 +133,7 @@ TEST(CCLayerAnimationControllerTest, syncNewAnimation)
 
     EXPECT_FALSE(controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity));
 
-    addOpacityTransitionToController(*controller, 1, 0, 1);
+    addOpacityTransitionToController(*controller, 1, 0, 1, false);
 
     controller->pushAnimationUpdatesTo(controllerImpl.get());
 

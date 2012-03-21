@@ -35,7 +35,7 @@ using namespace WebCore;
 namespace {
 
 template <class Target>
-void addOpacityTransition(Target& target, double duration, float startOpacity, float endOpacity)
+void addOpacityTransition(Target& target, double duration, float startOpacity, float endOpacity, bool useTimingFunction)
 {
     WebCore::KeyframeValueList values(AnimatedPropertyOpacity);
     if (duration > 0)
@@ -44,6 +44,9 @@ void addOpacityTransition(Target& target, double duration, float startOpacity, f
 
     RefPtr<Animation> animation = Animation::create();
     animation->setDuration(duration);
+
+    if (useTimingFunction)
+        animation->setTimingFunction(LinearTimingFunction::create());
 
     IntSize boxSize;
 
@@ -120,14 +123,14 @@ PassOwnPtr<WebCore::CCAnimationCurve> FakeFloatTransition::clone() const
     return adoptPtr(new FakeFloatTransition(*this));
 }
 
-void addOpacityTransitionToController(WebCore::CCLayerAnimationController& controller, double duration, float startOpacity, float endOpacity)
+void addOpacityTransitionToController(WebCore::CCLayerAnimationController& controller, double duration, float startOpacity, float endOpacity, bool useTimingFunction)
 {
-    addOpacityTransition(controller, duration, startOpacity, endOpacity);
+    addOpacityTransition(controller, duration, startOpacity, endOpacity, useTimingFunction);
 }
 
-void addOpacityTransitionToLayer(WebCore::LayerChromium& layer, double duration, float startOpacity, float endOpacity)
+void addOpacityTransitionToLayer(WebCore::LayerChromium& layer, double duration, float startOpacity, float endOpacity, bool useTimingFunction)
 {
-    addOpacityTransition(layer, duration, startOpacity, endOpacity);
+    addOpacityTransition(layer, duration, startOpacity, endOpacity, useTimingFunction);
 }
 
 } // namespace WebKitTests

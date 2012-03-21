@@ -356,7 +356,7 @@ protected:
         CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
         ASSERT(test);
         if (test->m_layerTreeHost && test->m_layerTreeHost->rootLayer())
-            addOpacityTransitionToLayer(*test->m_layerTreeHost->rootLayer(), 0, 0, 0.5);
+            addOpacityTransitionToLayer(*test->m_layerTreeHost->rootLayer(), 0, 0, 0.5, false);
     }
 
     static void dispatchAddAnimation(void* self)
@@ -365,7 +365,7 @@ protected:
         CCLayerTreeHostTest* test = static_cast<CCLayerTreeHostTest*>(self);
         ASSERT(test);
         if (test->m_layerTreeHost && test->m_layerTreeHost->rootLayer())
-            addOpacityTransitionToLayer(*test->m_layerTreeHost->rootLayer(), 10, 0, 0.5);
+            addOpacityTransitionToLayer(*test->m_layerTreeHost->rootLayer(), 10, 0, 0.5, true);
     }
 
     static void dispatchSetNeedsAnimateAndCommit(void* self)
@@ -973,6 +973,44 @@ private:
 };
 
 TEST_F(CCLayerTreeHostTestTickAnimationWhileBackgrounded, runMultiThread)
+{
+    runTestThreaded();
+}
+
+// Ensures that animations continue to be ticked when we are backgrounded.
+class CCLayerTreeHostTestAddAnimationWithTimingFunction : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestAddAnimationWithTimingFunction()
+    {
+    }
+
+    virtual void beginTest()
+    {
+        postAddAnimationToMainThread();
+    }
+
+    virtual void animateLayers(CCLayerTreeHostImpl* layerTreeHostImpl, double monotonicTime)
+    {
+        const CCFloatAnimationCurve* curve = m_layerTreeHost->rootLayer()->layerAnimationController()->getActiveAnimation(0, CCActiveAnimation::Opacity)->curve()->toFloatAnimationCurve();
+        float startOpacity = curve->getValue(0);
+        float endOpacity = curve->getValue(curve->duration());
+        float linearlyInterpolatedOpacity = 0.25 * endOpacity + 0.75 * startOpacity;
+        double time = curve->duration() * 0.25;
+        // If the linear timing function associated with this animation was not picked up,
+        // then the linearly interpolated opacity would be different because of the
+        // default ease timing function.
+        EXPECT_FLOAT_EQ(linearlyInterpolatedOpacity, curve->getValue(time));
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+};
+
+TEST_F(CCLayerTreeHostTestAddAnimationWithTimingFunction, runMultiThread)
 {
     runTestThreaded();
 }

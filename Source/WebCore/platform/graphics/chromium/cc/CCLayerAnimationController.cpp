@@ -67,8 +67,15 @@ PassOwnPtr<CCActiveAnimation> createActiveAnimation(const KeyframeValueList& val
         const Value* originalValue = static_cast<const Value*>(valueList.at(i));
 
         OwnPtr<CCTimingFunction> timingFunction;
-        if (originalValue->timingFunction()) {
-            switch (originalValue->timingFunction()->type()) {
+        const TimingFunction* originalTimingFunction = originalValue->timingFunction();
+
+        // If there hasn't been a timing function associated with this keyframe, use the
+        // animation's timing function, if we have one.
+        if (!originalTimingFunction && animation->isTimingFunctionSet())
+            originalTimingFunction = animation->timingFunction().get();
+
+        if (originalTimingFunction) {
+            switch (originalTimingFunction->type()) {
             case TimingFunction::StepsFunction:
                 // FIXME: add support for steps timing function.
                 return nullptr;
@@ -76,8 +83,8 @@ PassOwnPtr<CCActiveAnimation> createActiveAnimation(const KeyframeValueList& val
                 // Don't set the timing function. Keyframes are interpolated linearly if there is no timing function.
                 break;
             case TimingFunction::CubicBezierFunction:
-                const CubicBezierTimingFunction* originalTimingFunction = static_cast<const CubicBezierTimingFunction*>(originalValue->timingFunction());
-                timingFunction = CCCubicBezierTimingFunction::create(originalTimingFunction->x1(), originalTimingFunction->y1(), originalTimingFunction->x2(), originalTimingFunction->y2());
+                const CubicBezierTimingFunction* originalBezierTimingFunction = static_cast<const CubicBezierTimingFunction*>(originalTimingFunction);
+                timingFunction = CCCubicBezierTimingFunction::create(originalBezierTimingFunction->x1(), originalBezierTimingFunction->y1(), originalBezierTimingFunction->x2(), originalBezierTimingFunction->y2());
                 break;
             } // switch
         } else
