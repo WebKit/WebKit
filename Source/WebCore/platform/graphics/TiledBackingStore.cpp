@@ -79,7 +79,7 @@ void TiledBackingStore::coverWithTilesIfNeeded(const FloatPoint& trajectoryVecto
     m_trajectoryVector = normalizedVector;
     m_visibleRect = visibleRect;
 
-    startBackingStoreUpdateTimer();
+    createTiles();
 }
 
 void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
