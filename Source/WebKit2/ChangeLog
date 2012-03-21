@@ -1,3 +1,22 @@
+2012-03-20  Jon Lee  <jonlee@apple.com>
+
+        Restrict access to notifications for unique origins and file URLs with no local file access
+        https://bugs.webkit.org/show_bug.cgi?id=79704
+        <rdar://problem/10912430>
+
+        Reviewed by Adam Barth.
+
+        In the specific case where a file URL has restricted file access and is denied universal access,
+        SecurityOrigin::canShowNotifications() returns Ask, since it is not considered a unique origin.
+        The cached table of permissions held by the notification manager will typically not have an entry for
+        the toString() representation of these file URLs, which is "null", since that can also cover unique
+        origins, and it is possible that the client will want different permissions between the two types.
+
+        It is reasonable, however, for there to be an entry for "file://", so we use toRawString() to do the lookup.
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::policyForOrigin):
+
 2012-03-20  Alexey Proskuryakov  <ap@apple.com>
 
         Address review comment for WebProcess side, too.
