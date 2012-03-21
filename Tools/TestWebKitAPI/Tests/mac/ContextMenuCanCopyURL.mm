@@ -29,6 +29,7 @@
 #import "WTFStringUtilities.h"
 
 #import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebURLsWithTitles.h>
 #import <WebKit/DOM.h>
 #import <Carbon/Carbon.h>
 #import <wtf/RetainPtr.h>
@@ -51,13 +52,13 @@ static bool didFinishLoad;
 
 namespace TestWebKitAPI {
 
-static void contextMenuCopyLink(WebView* webView)
+static void contextMenuCopyLink(WebView* webView, int itemIndex)
 {
     [[[[webView mainFrame] frameView] documentView] layout];
     
     DOMDocument *document = [[webView mainFrame] DOMDocument];
     DOMElement *documentElement = [document documentElement];
-    DOMHTMLAnchorElement *anchor = (DOMHTMLAnchorElement *)[documentElement querySelector:@"a"];
+    DOMHTMLAnchorElement *anchor = (DOMHTMLAnchorElement *)[[documentElement querySelectorAll:@"a"] item:itemIndex];
 
     NSWindow *window = [webView window];
     NSEvent *event = [NSEvent mouseEventWithType:NSRightMouseDown
@@ -98,10 +99,17 @@ TEST(WebKit1, ContextMenuCanCopyURL)
     
     Util::run(&didFinishLoad);
 
-    contextMenuCopyLink(webView.get());
+    contextMenuCopyLink(webView.get(), 0);
     
     NSURL *url = [NSURL URLFromPasteboard:[NSPasteboard generalPasteboard]];
     EXPECT_EQ(String("http://www.webkit.org/"), String([url absoluteString]));
+
+    contextMenuCopyLink(webView.get(), 1);
+    
+    NSArray * urls = [WebURLsWithTitles URLsFromPasteboard: [NSPasteboard generalPasteboard]];
+    NSArray * titles = [WebURLsWithTitles titlesFromPasteboard: [NSPasteboard generalPasteboard]];
+    EXPECT_WK_STREQ(@"http://xn--ls8h.la/", [[urls objectAtIndex:0] absoluteString]);
+    EXPECT_WK_STREQ(@"http://💩.la", [titles objectAtIndex:0]);
 }
 
 } // namespace TestWebKitAPI

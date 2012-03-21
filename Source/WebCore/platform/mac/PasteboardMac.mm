@@ -225,7 +225,7 @@ static void writeURLForTypes(const Vector<String>& types, const String& pasteboa
     }
     if (types.contains(WebURLsWithTitlesPboardType)) {
         Vector<String> paths;
-        paths.append(userVisibleString);
+        paths.append([cocoaURL absoluteString]);
         paths.append(titleStr.stripWhiteSpace());
         platformStrategies()->pasteboardStrategy()->setPathnamesForType(paths, WebURLsWithTitlesPboardType, pasteboardName);
     }
