@@ -39,7 +39,6 @@
 namespace WebCore {
 
 class Database;
-class EventListenerInfo;
 class InjectedScript;
 class InspectorAgent;
 class InspectorConsoleAgent;
@@ -53,6 +52,8 @@ class Node;
 class ScriptObject;
 class ScriptValue;
 class Storage;
+
+struct EventListenerInfo;
 
 class InjectedScriptHost : public RefCounted<InjectedScriptHost> {
 public:
