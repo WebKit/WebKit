@@ -299,6 +299,7 @@ Never found HTMLTableSectionElement
 Never found Image
 Never found ImageData
 Never found MediaController
+Never found MediaStream
 Never found MessageChannel
 Never found MessagePort
 Never found Node
