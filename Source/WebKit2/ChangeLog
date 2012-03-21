@@ -1,5 +1,32 @@
 2012-03-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt] Apply tile removals at the same time as update buffer swaps.
+        https://bugs.webkit.org/show_bug.cgi?id=81768
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When committing the scale, we have to remove old tiles once the
+        tiles for the new scale are rendered. This should however wait
+        until those tiles gets their buffer swapped (following the DidRenderFrame
+        message) to make sure that there is no rendered gap between the removals
+        and updates swap.
+        This patch continues rendering the removed tiles until the DidRenderFrame
+        message is received to discard the old contents and show the new contents
+        at the same frame.
+
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::commitTileUpdates):
+        (WebKit::WebLayerTreeRenderer::flushLayerChanges):
+        * UIProcess/WebLayerTreeRenderer.h:
+        (WebLayerTreeRenderer):
+        * UIProcess/qt/LayerBackingStore.cpp:
+        (WebKit::LayerBackingStore::removeTile):
+        (WebKit::LayerBackingStore::commitTileUpdates):
+        * UIProcess/qt/LayerBackingStore.h:
+        (LayerBackingStore):
+
+2012-03-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         [Qt] Trigger scene graph repaints only for relevant layer updates.
         https://bugs.webkit.org/show_bug.cgi?id=81765
 

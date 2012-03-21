@@ -323,11 +323,11 @@ void WebLayerTreeRenderer::assignImageToLayer(GraphicsLayer* layer, int64_t imag
     layer->setContentsToMedia(it->second.get());
 }
 
-void WebLayerTreeRenderer::swapBuffers()
+void WebLayerTreeRenderer::commitTileOperations()
 {
     HashSet<RefPtr<LayerBackingStore> >::iterator end = m_backingStoresWithPendingBuffers.end();
     for (HashSet<RefPtr<LayerBackingStore> >::iterator it = m_backingStoresWithPendingBuffers.begin(); it != end; ++it)
-        (*it)->swapBuffers(m_textureMapper.get());
+        (*it)->commitTileOperations(m_textureMapper.get());
 
     m_backingStoresWithPendingBuffers.clear();
 }
@@ -335,7 +335,7 @@ void WebLayerTreeRenderer::swapBuffers()
 void WebLayerTreeRenderer::flushLayerChanges()
 {
     m_rootLayer->syncCompositingState(FloatRect());
-    swapBuffers();
+    commitTileOperations();
 
     // The pending tiles state is on its way for the screen, tell the web process to render the next one.
     callOnMainThread(bind(&WebLayerTreeRenderer::renderNextFrame, this));

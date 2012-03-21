@@ -73,7 +73,7 @@ void LayerBackingStore::createTile(int id, float scale)
 
 void LayerBackingStore::removeTile(int id)
 {
-    m_tiles.remove(id);
+    m_tilesToRemove.append(id);
 }
 
 void LayerBackingStore::updateTile(int id, const IntRect& sourceRect, const IntRect& targetRect, ShareableBitmap* backBuffer)
@@ -134,10 +134,15 @@ void LayerBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const
         textureMapper->endClip();
 }
 
-void LayerBackingStore::swapBuffers(TextureMapper* textureMapper)
+void LayerBackingStore::commitTileOperations(TextureMapper* textureMapper)
 {
-    HashMap<int, LayerBackingStoreTile>::iterator end = m_tiles.end();
-    for (HashMap<int, LayerBackingStoreTile>::iterator it = m_tiles.begin(); it != end; ++it)
+    Vector<int>::iterator tilesToRemoveEnd = m_tilesToRemove.end();
+    for (Vector<int>::iterator it = m_tilesToRemove.begin(); it != tilesToRemoveEnd; ++it)
+        m_tiles.remove(*it);
+    m_tilesToRemove.clear();
+
+    HashMap<int, LayerBackingStoreTile>::iterator tilesEnd = m_tiles.end();
+    for (HashMap<int, LayerBackingStoreTile>::iterator it = m_tiles.begin(); it != tilesEnd; ++it)
         it->second.swapBuffers(textureMapper);
 }
 

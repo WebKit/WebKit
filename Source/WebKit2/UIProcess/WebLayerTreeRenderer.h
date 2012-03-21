@@ -100,7 +100,7 @@ private:
     void assignImageToLayer(WebCore::GraphicsLayer*, int64_t imageID);
     void ensureRootLayer();
     void ensureLayer(WebLayerID);
-    void swapBuffers();
+    void commitTileOperations();
     void syncAnimations();
     void renderNextFrame();
     void purgeBackingStores();

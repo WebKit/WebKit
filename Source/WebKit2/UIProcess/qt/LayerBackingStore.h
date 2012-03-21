@@ -53,7 +53,7 @@ public:
     void removeTile(int);
     void updateTile(int, const WebCore::IntRect&, const WebCore::IntRect&, ShareableBitmap*);
     static PassRefPtr<LayerBackingStore> create() { return adoptRef(new LayerBackingStore); }
-    void swapBuffers(WebCore::TextureMapper*);
+    void commitTileOperations(WebCore::TextureMapper*);
     PassRefPtr<WebCore::BitmapTexture> texture() const;
     virtual void paintToTextureMapper(WebCore::TextureMapper*, const WebCore::FloatRect&, const WebCore::TransformationMatrix&, float, WebCore::BitmapTexture*);
 
@@ -62,6 +62,7 @@ private:
         : m_scale(1.)
     { }
     HashMap<int, LayerBackingStoreTile> m_tiles;
+    Vector<int> m_tilesToRemove;
     float m_scale;
 };
 
