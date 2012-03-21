@@ -28,5 +28,6 @@ EVENT(load)
 EXPECTED (track.readyState == '2') OK
 EXPECTED (track.srclang == 'fa') OK
 
+EXPECTED (video.textTracks.length == '3') OK
 END OF TEST
 

@@ -45,6 +45,8 @@
                 consoleWrite("");
                 testList.current++;
                 if (testList.current >= testList.tests.length) {
+                    var tracks = document.querySelectorAll('track');
+                    testExpected("video.textTracks.length", tracks.length);
                     endTest();
                     return;
                 }

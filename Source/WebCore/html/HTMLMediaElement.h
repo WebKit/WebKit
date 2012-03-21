@@ -204,8 +204,8 @@ public:
     TextTrackList* textTracks();
     CueList currentlyActiveCues() const { return m_currentlyActiveCues; }
 
-    virtual void trackWasAdded(HTMLTrackElement*);
-    virtual void trackWasRemoved(HTMLTrackElement*);
+    virtual void didAddTrack(HTMLTrackElement*);
+    virtual void willRemoveTrack(HTMLTrackElement*);
 
     struct TrackGroup {
         enum GroupKind { CaptionsAndSubtitles, Description, Chapter, Metadata, Other };

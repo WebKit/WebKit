@@ -2490,7 +2490,7 @@ HTMLTrackElement* HTMLMediaElement::showingTrackWithSameKind(HTMLTrackElement* t
     return 0;
 }
 
-void HTMLMediaElement::trackWasAdded(HTMLTrackElement* trackElement)
+void HTMLMediaElement::didAddTrack(HTMLTrackElement* trackElement)
 {
     ASSERT(trackElement->hasTagName(trackTag));
 
@@ -2513,7 +2513,7 @@ void HTMLMediaElement::trackWasAdded(HTMLTrackElement* trackElement)
         scheduleLoad(TextTrackResource);
 }
 
-void HTMLMediaElement::trackWasRemoved(HTMLTrackElement* trackElement)
+void HTMLMediaElement::willRemoveTrack(HTMLTrackElement* trackElement)
 {
     ASSERT(trackElement->hasTagName(trackTag));
 
@@ -2523,7 +2523,7 @@ void HTMLMediaElement::trackWasRemoved(HTMLTrackElement* trackElement)
 #if !LOG_DISABLED
     if (trackElement->hasTagName(trackTag)) {
         KURL url = trackElement->getNonEmptyURLAttribute(srcAttr);
-        LOG(Media, "HTMLMediaElement::trackWasRemoved - 'src' is %s", urlForLogging(url).utf8().data());
+        LOG(Media, "HTMLMediaElement::willRemoveTrack - 'src' is %s", urlForLogging(url).utf8().data());
     }
 #endif
 
