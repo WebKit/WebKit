@@ -1,3 +1,9 @@
+2012-03-21  Peter Beverloo  <peter@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-03-20  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Use origin transform to transform occlusion from surface content space to its target content space
