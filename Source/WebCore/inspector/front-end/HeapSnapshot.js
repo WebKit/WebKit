@@ -110,18 +110,21 @@ WebInspector.HeapSnapshotLoader.prototype = {
                 this._json = "";
                 return true;
             }
+            var nextNumber = 0;
             var startIndex = index;
             while (index < length) {
                 var code = this._json.charCodeAt(index);
                 if (char0 > code || code > char9)
                     break;
+                nextNumber *= 10;
+                nextNumber += (code - char0);
                 ++index;
             }
             if (index === length) {
                 this._json = this._json.slice(startIndex);
                 return true;
             }
-            this._nodes.push(parseInt(this._json.slice(startIndex, index)));
+            this._nodes.push(nextNumber);
         }
     },
 
