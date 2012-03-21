@@ -29,11 +29,11 @@ function test()
         layoutTestController.dumpAsText();
 
     prepareDomTree(document.body);
-    shouldBeEqualToString("getElementInShadowTreeStack('divA/inputB').id", 'inputB');
-    shouldBeEqualToString("getElementInShadowTreeStack('divA/divC').id", 'divC');
-    shouldBeEqualToString("getElementInShadowTreeStack('divA/divC/inputD').id", 'inputD');
-    shouldBeEqualToString("getElementInShadowTreeStack('divA/divC//inputE').id", 'inputE');
-    shouldBeEqualToString("getElementInShadowTreeStack('divA/divC///inputF').id", 'inputF');
+    shouldBeEqualToString("getNodeInShadowTreeStack('divA/inputB').id", 'inputB');
+    shouldBeEqualToString("getNodeInShadowTreeStack('divA/divC').id", 'divC');
+    shouldBeEqualToString("getNodeInShadowTreeStack('divA/divC/inputD').id", 'inputD');
+    shouldBeEqualToString("getNodeInShadowTreeStack('divA/divC//inputE').id", 'inputE');
+    shouldBeEqualToString("getNodeInShadowTreeStack('divA/divC///inputF').id", 'inputF');
 }
 
 test();

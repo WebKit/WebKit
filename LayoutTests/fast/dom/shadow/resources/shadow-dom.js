@@ -42,7 +42,7 @@ function isShadowRoot(node)
 
 // You can spefify youngerShadowRoot by consecutive slashes.
 // See LayoutTests/fast/dom/shadow/get-element-by-id-in-shadow-root.html for actual usages.
-function getElementInShadowTreeStack(path)
+function getNodeInShadowTreeStack(path)
 {
     var ids = path.split('/');
     var node = document.getElementById(ids[0]);

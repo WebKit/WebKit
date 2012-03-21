@@ -89,7 +89,7 @@ function prepareDOMTree(parent)
                'shadowD/shadowF/shadowG/divH', 'shadowD/shadowF/shadowG/divI',
                'shadowD/divJ', 'shadowD/shadowK', 'shadowD/shadowK/divL'];
     for (var i = 0; i < ids.length; ++i) {
-        var element = getElementInShadowTreeStack(ids[i]);
+        var element = getNodeInShadowTreeStack(ids[i]);
         element.addEventListener('mouseover', recordEvent, false);
         element.addEventListener('mouseout', recordEvent, false);
         element.addEventListener('focusin', recordEvent, false);
@@ -102,17 +102,17 @@ function prepareDOMTree(parent)
 function moveMouse(oldElementId, newElementId, message)
 {
     debug('\n' + message + '\n' + 'Moving mouse from ' + oldElementId + ' to ' + newElementId);
-    moveMouseOver(getElementInShadowTreeStack(oldElementId));
+    moveMouseOver(getNodeInShadowTreeStack(oldElementId));
     clearEventRecords();
-    moveMouseOver(getElementInShadowTreeStack(newElementId));
+    moveMouseOver(getNodeInShadowTreeStack(newElementId));
 }
 
 function moveFocus(oldElementId, newElementId, message)
 {
     debug('\n' + message + '\n' + 'Moving focus from ' + oldElementId + ' to ' + newElementId);
-    getElementInShadowTreeStack(oldElementId).focus();
+    getNodeInShadowTreeStack(oldElementId).focus();
     clearEventRecords();
-    getElementInShadowTreeStack(newElementId).focus();
+    getNodeInShadowTreeStack(newElementId).focus();
 }
 
 function test()

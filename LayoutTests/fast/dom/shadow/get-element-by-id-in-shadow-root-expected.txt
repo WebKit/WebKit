@@ -3,11 +3,11 @@ Tests to ensure that internals.getElementByIdInShadowRoot can get an element in 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS getElementInShadowTreeStack('divA/inputB').id is "inputB"
-PASS getElementInShadowTreeStack('divA/divC').id is "divC"
-PASS getElementInShadowTreeStack('divA/divC/inputD').id is "inputD"
-PASS getElementInShadowTreeStack('divA/divC//inputE').id is "inputE"
-PASS getElementInShadowTreeStack('divA/divC///inputF').id is "inputF"
+PASS getNodeInShadowTreeStack('divA/inputB').id is "inputB"
+PASS getNodeInShadowTreeStack('divA/divC').id is "divC"
+PASS getNodeInShadowTreeStack('divA/divC/inputD').id is "inputD"
+PASS getNodeInShadowTreeStack('divA/divC//inputE').id is "inputE"
+PASS getNodeInShadowTreeStack('divA/divC///inputF').id is "inputF"
 PASS successfullyParsed is true
 
 TEST COMPLETE
