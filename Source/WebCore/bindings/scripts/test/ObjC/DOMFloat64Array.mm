@@ -39,9 +39,9 @@
 #import "DOMNodeInternal.h"
 #import "DOMStyleSheetInternal.h"
 #import "ExceptionHandlers.h"
-#import <wtf/Float32Array.h>
-#import <wtf/Float64Array.h>
-#import <wtf/Int32Array.h>
+#import "Float32Array.h"
+#import "Float64Array.h"
+#import "Int32Array.h"
 #import "JSMainThreadExecState.h"
 #import "ThreadCheck.h"
 #import "WebScriptObjectPrivate.h"
