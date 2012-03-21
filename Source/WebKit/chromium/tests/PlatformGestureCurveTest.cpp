@@ -100,7 +100,7 @@ TEST(PlatformGestureCurve, flingCurve)
 TEST(PlatformGestureCurve, flingCurveTouch)
 {
     double initialVelocity = 1000;
-    const double touchFlingCurveAreaFactor = 2; // Depends on value of tau in TouchFlingPlatformGestureCurve.
+    const double touchFlingCurveAreaFactor = 1; // Depends on parameterization in TouchFlingPlatformGestureCurve.
     MockPlatformGestureCurveTarget target;
     OwnPtr<ActivePlatformGestureAnimation> animation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::create(FloatPoint(initialVelocity, 0)), &target);
 

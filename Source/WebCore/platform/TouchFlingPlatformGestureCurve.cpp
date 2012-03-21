@@ -27,6 +27,7 @@
 #include "TouchFlingPlatformGestureCurve.h"
 
 #include "PlatformGestureCurveTarget.h"
+#include "UnitBezier.h"
 #include <math.h>
 
 namespace WebCore {
@@ -40,7 +41,7 @@ PassOwnPtr<PlatformGestureCurve> TouchFlingPlatformGestureCurve::create(const Fl
 
 TouchFlingPlatformGestureCurve::TouchFlingPlatformGestureCurve(const FloatPoint& velocity)
     : m_velocity(velocity)
-    , m_timeScaleFactor(1000 / max(1.f, max(fabs(velocity.x()), fabs(velocity.y()))))
+    , m_timeScaleFactor(3 / log10(max(10.f, max(fabs(velocity.x()), fabs(velocity.y())))))
 {
     ASSERT(velocity != FloatPoint::zero());
 }
@@ -51,26 +52,21 @@ TouchFlingPlatformGestureCurve::~TouchFlingPlatformGestureCurve()
 
 bool TouchFlingPlatformGestureCurve::apply(double time, PlatformGestureCurveTarget* target)
 {
-    // Here we implement a cubic bezier curve with parameters [p0 p1 p2 p3] = [1 (3 + 1/tau) 0 0] which gives
-    // v(0) = 1, a(0) = v(0)/tau, v(1) = 0, a(1) = 0. The curve is scaled by the initial
-    // velocity, and the time parameter is re-scaled so that larger initial velocities
-    // lead to longer initial animations. This should allow the animation to smoothly
-    // continue the velocity at the end of the GestureScroll, and smoothly come to a rest
-    // at the end. Finally, we have integrated the curve so we can deal with displacement
-    // as a function of time, and not velocity.
+    // Use 2-D Bezier curve with a "stretched-italic-s" curve.
+    // We scale time logarithmically as this (subjectively) feels better.
     time *= m_timeScaleFactor;
 
-    static double tau = 0.25;
-    static double p1 =  3.0 + 1 / tau;
-    // Note: "displacement" below is the integral of the cubic bezier curve defined by [p0 p1 p2 p3].
+    static UnitBezier flingBezier(0.3333, 0.6666, 0.6666, 1);
 
     float displacement;
     if (time < 0)
         displacement = 0;
-    else if (time < 1)
-        displacement = time * (time * (time * (time * 0.25 * (3 * p1 - 1.0) + (1 - 2 * p1)) + 1.5 * (p1 - 1)) + 1) / m_timeScaleFactor;
-    else
-        displacement = (1 + (p1 - 1) * 1.5 + (1 - 2 * p1) + (3 * p1 - 1) * 0.25) / m_timeScaleFactor;
+    else if (time < 1) {
+        // Below, s is the curve parameter for the 2-D Bezier curve (time(s), displacement(s)).
+        double s = flingBezier.solveCurveX(time, 1.e-3);
+        displacement = flingBezier.sampleCurveY(s);
+    } else
+        displacement = 1;
 
     // Keep track of integer portion of scroll thus far, and prepare increment.
     IntPoint scroll(displacement * m_velocity.x(), displacement * m_velocity.y());
