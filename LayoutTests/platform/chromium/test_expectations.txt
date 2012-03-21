@@ -1196,6 +1196,9 @@ BUGWK77535 : svg/repaint/inner-svg-change-viewPort-relative.svg = IMAGE IMAGE+TE
 // Updated test, needs a rebaseline
 BUGWK78613 : svg/custom/circle-move-invalidation.svg = IMAGE IMAGE+TEXT
 
+// Has been crashing since it was added.
+BUGWK81796 SNOWLEOPARD DEBUG : svg/custom/fill-opacity-update.svg = CRASH
+
 // Updated test, needs a rebaseline
 BUGWK81219 : svg/filters/feColorMatrix-invalid-animation.svg = TEXT
 
