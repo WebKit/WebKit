@@ -277,6 +277,8 @@ void SharedCookieJarQt::ensureDatabaseTable()
         qWarning("Can't open cookie database");
         return;
     }
+    m_database.exec(QLatin1String("PRAGMA synchronous=OFF"));
+
     QSqlQuery sqlQuery(m_database);
     sqlQuery.prepare(QLatin1String("CREATE TABLE IF NOT EXISTS cookies (cookieId VARCHAR PRIMARY KEY, cookie BLOB);"));
     sqlQuery.exec();
