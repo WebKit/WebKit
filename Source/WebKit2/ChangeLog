@@ -1,5 +1,20 @@
 2012-03-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt] Don't clip the contents rendering to the contents size.
+        https://bugs.webkit.org/show_bug.cgi?id=81770
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The original bug was caused by the contents size updates
+        having to go through the UI process before being applied
+        on the TiledBackingStore of the non composited contents layer.
+        With this bug being fixed, the clipping isn't necessary anymore.
+
+        * UIProcess/qt/LayerBackingStore.cpp:
+        (WebKit::LayerBackingStore::paintToTextureMapper):
+
+2012-03-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         [Qt] Apply tile removals at the same time as update buffer swaps.
         https://bugs.webkit.org/show_bug.cgi?id=81768
 

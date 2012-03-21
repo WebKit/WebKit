@@ -119,19 +119,10 @@ void LayerBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const
             continue;
 
         tilesToPaint.prepend(&tile);
-        coveredRect.unite(tile.rect());
     }
-
-    bool shouldClip = !targetRect.contains(coveredRect);
-
-    if (shouldClip)
-        textureMapper->beginClip(transform, targetRect);
 
     for (size_t i = 0; i < tilesToPaint.size(); ++i)
         tilesToPaint[i]->paint(textureMapper, transform, opacity, mask);
-
-    if (shouldClip)
-        textureMapper->endClip();
 }
 
 void LayerBackingStore::commitTileOperations(TextureMapper* textureMapper)
