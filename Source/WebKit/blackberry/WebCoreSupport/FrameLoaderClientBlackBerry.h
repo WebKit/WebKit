@@ -164,11 +164,10 @@ public:
 
     virtual void didDetectXSS(const KURL&, bool) { }
     virtual void dispatchDidChangeIcons(IconType) { notImplemented(); };
-    virtual void dispatchWillSendSubmitEvent(HTMLFormElement*) { notImplemented(); };
+    virtual void dispatchWillSendSubmitEvent(HTMLFormElement*);
 
     virtual void willDeferLoading();
     virtual void didResumeLoading();
-    virtual void authenticationChallenge(const String& realm, String& username, String& password);
 
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext();
 

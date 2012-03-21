@@ -31,6 +31,8 @@
 #include "ChromeClientBlackBerry.h"
 #include "ContextMenuClientBlackBerry.h"
 #include "CookieManager.h"
+#include "CredentialManager.h"
+#include "CredentialTransformData.h"
 #include "DOMSupport.h"
 #include "Database.h"
 #include "DatabaseSync.h"
@@ -2015,6 +2017,33 @@ int WebPagePrivate::showAlertDialog(WebPageClient::AlertType atype)
 bool WebPagePrivate::isActive() const
 {
     return m_client->isActive();
+}
+
+Credential WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSpace& protectionSpace)
+{
+    WebString username;
+    WebString password;
+
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+    if (!m_webSettings->isPrivateBrowsingEnabled())
+        credentialManager().autofillAuthenticationChallenge(protectionSpace, username, password);
+#endif
+
+    m_client->authenticationChallenge(protectionSpace.realm().characters(), protectionSpace.realm().length(), username, password);
+
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+    Credential inputCredential(username, password, CredentialPersistencePermanent);
+    if (!m_webSettings->isPrivateBrowsingEnabled())
+        credentialManager().saveCredentialIfConfirmed(this, CredentialTransformData(url, protectionSpace, inputCredential));
+#else
+    Credential inputCredential(username, password, CredentialPersistenceNone);
+#endif
+    return inputCredential;
+}
+
+PageClientBlackBerry::SaveCredentialType WebPagePrivate::notifyShouldSaveCredential(bool isNew)
+{
+    return static_cast<PageClientBlackBerry::SaveCredentialType>(m_client->notifyShouldSaveCredential(isNew));
 }
 
 bool WebPagePrivate::useFixedLayout() const

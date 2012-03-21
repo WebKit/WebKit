@@ -77,6 +77,12 @@ public:
         MediaInvalidError,
     };
 
+    enum SaveCredentialType {
+        SaveCredentialNeverForThisSite = 0,
+        SaveCredentialNotNow,
+        SaveCredentialYes
+    };
+
     virtual int getInstanceId() const = 0;
 
     virtual void notifyLoadStarted() = 0;
@@ -206,6 +212,7 @@ public:
 
     virtual void setPreventsScreenIdleDimming(bool noDimming) = 0;
     virtual void authenticationChallenge(const unsigned short* realm, unsigned int realmLength, WebString& username, WebString& password) = 0;
+    virtual SaveCredentialType notifyShouldSaveCredential(bool isNew) = 0;
 
     virtual bool shouldPluginEnterFullScreen() = 0;
     virtual void didPluginEnterFullScreen() = 0;

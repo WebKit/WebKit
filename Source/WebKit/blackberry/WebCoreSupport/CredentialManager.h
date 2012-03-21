@@ -24,6 +24,8 @@
 #include "HTMLCollection.h"
 #include <wtf/PassRefPtr.h>
 
+class PageClientBlackBerry;
+
 namespace BlackBerry {
 namespace WebKit {
 class WebString;
@@ -31,22 +33,22 @@ class WebString;
 }
 
 namespace WebCore {
-class FrameLoaderClientBlackBerry;
 class KURL;
 class ProtectionSpace;
 class CredentialTransformData;
 
 class CredentialManager {
 public:
-    CredentialManager(FrameLoaderClientBlackBerry*);
-
     void autofillAuthenticationChallenge(const ProtectionSpace&, BlackBerry::WebKit::WebString& username, BlackBerry::WebKit::WebString& password);
     void autofillPasswordForms(PassRefPtr<HTMLCollection> docForms);
-    void saveCredentialIfConfirmed(const CredentialTransformData&);
+    void saveCredentialIfConfirmed(PageClientBlackBerry*, const CredentialTransformData&);
 
-private:
-    FrameLoaderClientBlackBerry* m_frameLoaderClient;
+ private:
+    friend CredentialManager& credentialManager();
+    CredentialManager() { }
 };
+
+CredentialManager& credentialManager();
 
 } // WebCore
 

@@ -1,3 +1,53 @@
+2012-03-21  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Credential save and autofill implemetation
+        https://bugs.webkit.org/show_bug.cgi?id=80401
+
+        Reviewed by Rob Buis.
+
+        This patch is intended to implement the credential persist
+        and autofill feature for BlackBerry porting.
+
+        Moved interface authenticationChallenge() from class
+        FrameLoaderClientBlackBerry to WebPagePrivate (derived from
+        PageClientBlackBerry as changes made in its parent interface class);
+        Implemented notifyShouldSaveCredential() in WebPagePrivate
+        and WebPageClient as well.
+        Added credentialManager() to retrive CredentialManager instance
+        as a global singleton; removed its m_frameLoaderClient which is
+        replaced with a passed in PageClientBlackBerry pointer, and modified
+        the interface function accordingly.
+
+        For the http authentication, autofill the input dialog in
+        function authenticationChallenge() and save the credential
+        information in the same function;
+        For the in-form authentication, autofill the username and
+        password input fields in function dispatchDidFinishLoad(),
+        and save the credential information in function
+        dispatchWillSubmitForm() or dispatchWillSendSubmitEvent().
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::authenticationChallenge):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::notifyShouldSaveCredential):
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/CredentialManager.cpp:
+        (WebCore::credentialManager):
+        (WebCore::CredentialManager::saveCredentialIfConfirmed):
+        * WebCoreSupport/CredentialManager.h:
+        (CredentialManager):
+        (WebCore::CredentialManager::CredentialManager):
+        (WebCore):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent):
+        (WebCore):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+
 2012-03-20  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Dijit crash WebCore::CookieManager::getRawCookies

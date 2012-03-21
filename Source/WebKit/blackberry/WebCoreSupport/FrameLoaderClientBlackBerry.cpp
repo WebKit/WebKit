@@ -28,6 +28,9 @@
 #include "ChromeClientBlackBerry.h"
 #include "ClientExtension.h"
 #include "CookieManager.h"
+#include "CredentialBackingStore.h"
+#include "CredentialManager.h"
+#include "CredentialTransformData.h"
 #include "DumpRenderTreeClient.h"
 #include "FrameNetworkingContextBlackBerry.h"
 #include "FrameView.h"
@@ -50,6 +53,7 @@
 #include "Page.h"
 #include "PluginView.h"
 #include "ProgressTracker.h"
+#include "ProtectionSpace.h"
 #include "ScopePointer.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
@@ -602,6 +606,11 @@ void FrameLoaderClientBlackBerry::dispatchDidFinishLoad()
                 m_webPagePrivate->m_client->setAlternateFeedDetails(title.utf8().data(), href.utf8().data());
         }
     }
+
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+    if (!m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled())
+        credentialManager().autofillPasswordForms(m_frame->document()->forms());
+#endif
 }
 
 void FrameLoaderClientBlackBerry::dispatchDidFinishDocumentLoad()
@@ -694,10 +703,25 @@ void FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad(const ResourceE
     }
 }
 
-void FrameLoaderClientBlackBerry::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState>)
+void FrameLoaderClientBlackBerry::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState> formState)
 {
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+    if (!m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled())
+        credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, CredentialTransformData(formState->form()));
+#endif
+
     // FIXME: Stub.
     (m_frame->loader()->policyChecker()->*function)(PolicyUse);
+}
+
+void FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent(HTMLFormElement* form)
+{
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+    if (!m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled())
+        credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, CredentialTransformData(form));
+#else
+    notImplemented();
+#endif
 }
 
 PassRefPtr<Frame> FrameLoaderClientBlackBerry::createFrame(const KURL& url, const String& name
@@ -1123,17 +1147,6 @@ void FrameLoaderClientBlackBerry::readyToRender(bool pageIsVisuallyNonEmpty)
 PassRefPtr<FrameNetworkingContext> FrameLoaderClientBlackBerry::createNetworkingContext()
 {
     return FrameNetworkingContextBlackBerry::create(m_frame);
-}
-
-void FrameLoaderClientBlackBerry::authenticationChallenge(const String& realm, String& username, String& password)
-{
-    WebString webPageUsername;
-    WebString webPagePassword;
-
-    m_webPagePrivate->m_client->authenticationChallenge(realm.characters(), realm.length(), webPageUsername, webPagePassword);
-
-    username = webPageUsername;
-    password = webPagePassword;
 }
 
 void FrameLoaderClientBlackBerry::startDownload(const ResourceRequest& request, const String& /*suggestedName*/)

@@ -21,6 +21,8 @@
 
 #include "AboutData.h"
 #include "Base64.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "CookieManager.h"
 #include "CredentialStorage.h"
 #include "Frame.h"
@@ -30,6 +32,7 @@
 #include "MIMESniffing.h"
 #include "MIMETypeRegistry.h"
 #include "NetworkManager.h"
+#include "Page.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
@@ -868,8 +871,11 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
             // If they are correct, they will the put into CredentialStorage.
             m_handle->getInternal()->m_user = "";
             m_handle->getInternal()->m_pass = "";
-        } else
-            m_frame->loader()->client()->authenticationChallenge(realm, username, password);
+        } else {
+            Credential inputCredential = m_frame->page()->chrome()->client()->platformPageClient()->authenticationChallenge(newURL, protectionSpace);
+            username = inputCredential.user();
+            password = inputCredential.password();
+        }
 
         if (username.isEmpty() && password.isEmpty())
             return false;
