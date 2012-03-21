@@ -1,3 +1,25 @@
+2012-03-21  Eric Seidel  <eric@webkit.org>
+
+        WTF::MetaAllocator has a weak vtable (discovered when building wtf as a static library)
+        https://bugs.webkit.org/show_bug.cgi?id=81838
+
+        Reviewed by Geoffrey Garen.
+
+        My understanding is that weak vtables happen when the compiler/linker cannot
+        determine which compilation unit should constain the vtable.  In this case
+        because there were only pure virtual functions as well as an "inline"
+        virtual destructor (thus the virtual destructor was defined in many compilation
+        units).  Since you can't actually "inline" a virtual function (it still has to
+        bounce through the vtable), the "inline" on this virutal destructor doesn't
+        actually help performance, and is only serving to confuse the compiler here.
+        I've moved the destructor implementation to the .cpp file, thus making
+        it clear to the compiler where the vtable should be stored, and solving the error.
+
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::~MetaAllocator):
+        (WTF):
+        * wtf/MetaAllocator.h:
+
 2012-03-20  Gavin Barraclough  <barraclough@apple.com>
 
         RegExpMatchesArray should not copy the ovector

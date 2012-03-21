@@ -33,6 +33,20 @@
 
 namespace WTF {
 
+MetaAllocator::~MetaAllocator()
+{
+    for (FreeSpaceNode* node = m_freeSpaceSizeMap.first(); node;) {
+        FreeSpaceNode* next = node->successor();
+        m_freeSpaceSizeMap.remove(node);
+        freeFreeSpaceNode(node);
+        node = next;
+    }
+    m_lock.Finalize();
+#ifndef NDEBUG
+    ASSERT(!m_mallocBalance);
+#endif
+}
+
 void MetaAllocatorTracker::notify(MetaAllocatorHandle* handle)
 {
     m_allocations.insert(handle);

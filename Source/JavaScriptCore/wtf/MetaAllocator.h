@@ -196,20 +196,6 @@ private:
 #endif
 };
 
-inline MetaAllocator::~MetaAllocator()
-{
-    for (FreeSpaceNode* node = m_freeSpaceSizeMap.first(); node;) {
-        FreeSpaceNode* next = node->successor();
-        m_freeSpaceSizeMap.remove(node);
-        freeFreeSpaceNode(node);
-        node = next;
-    }
-    m_lock.Finalize();
-#ifndef NDEBUG
-    ASSERT(!m_mallocBalance);
-#endif
-}
-
 } // namespace WTF
 
 #endif // WTF_MetaAllocator_h
