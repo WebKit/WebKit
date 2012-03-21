@@ -1,3 +1,53 @@
+2012-03-21  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: clean up actually getting crash logs from DRT/WTR crashes
+        https://bugs.webkit.org/show_bug.cgi?id=81603
+
+        Reviewed by Adam Barth.
+
+        Add a new _get_crash_log() overridable method on the Port
+        object to customize how we fetch crash logs per port.
+        Mac will now slow-spin with a timeout waiting for the crash log, rather
+        than waiting for the ReportCrash process to exit (it appears
+        that the mac will manage multiple crashes with a single
+        ReportCrash process, the process waits around longer than
+        necessary, presumably to avoid thrashing if processes are
+        repeatedly crashing).
+
+        Also, add the DriverOutput should contain the crash log and other info,
+        which is created in a port-specific manner but can then be
+        treated generically. Previously single_test_runner would get
+        told that something crashed and attempt to do something to get
+        the crash log, but it didn't have the information it needed to
+        od the right thing; better to make the driver hand back the
+        right info.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._handle_error):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+        (TestResultWriter.write_crash_log):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.diff_text):
+        (Port._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumDriverTest.test_crash_log):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (DriverOutput.__init__):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.is_lion):
+        (MacPort._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.__init__):
+        (WebKitDriver._start):
+        (WebKitDriver.has_crashed):
+        (WebKitDriver._check_for_driver_crash):
+        (WebKitDriver.run_test):
+
 2012-03-21  Dominik Röttsches  <dominik.rottsches@linux.intel.com>
 
         [EFL] Use jhbuild downloaded fonts instead of hardcoded system font paths

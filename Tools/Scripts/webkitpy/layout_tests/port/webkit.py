@@ -437,7 +437,7 @@ class WebKitDriver(Driver):
         # "#CRASHED - PROCESSNAME".  Since those can happen at any time
         # and ServerProcess won't be aware of them (since the actual tool
         # didn't crash, just a subprocess) we record the crashed subprocess name here.
-        self._crashed_subprocess_name = None
+        self._crashed_process_name = None
 
         # stderr reading is scoped on a per-test (not per-block) basis, so we store the accumulated
         # stderr output, as well as if we've seen #EOF on this driver instance.
@@ -483,28 +483,34 @@ class WebKitDriver(Driver):
         # FIXME: We're assuming that WebKitTestRunner checks this DumpRenderTree-named environment variable.
         environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
-        self._crashed_subprocess_name = None
+        self._crashed_process_name = None
+        self._crashed_pid = None
         self._server_process = server_process.ServerProcess(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
 
     def has_crashed(self):
         if self._server_process is None:
             return False
-        if self._crashed_subprocess_name:
+        if self._crashed_process_name:
             return True
         if self._server_process.has_crashed():
-            self._crashed_subprocess_name = self._port.driver_name()
+            self._crashed_process_name = self._server_process.name()
+            self._crashed_pid = self._server_process.pid()
             return True
-        return False
 
     def _check_for_driver_crash(self, error_line):
         if error_line == "#CRASHED\n":
             # This is used on Windows to report that the process has crashed
             # See http://trac.webkit.org/changeset/65537.
-            self._crashed_subprocess_name = self._port.driver_name()
-            return True
-        if error_line == "#CRASHED - WebProcess\n":
+            self._crashed_process_name = self._server_process.name()
+            self._crashed_pid = self._server_process.pid()
+        elif error_line.startswith("#CRASHED - WebProcess"):
             # WebKitTestRunner uses this to report that the WebProcess subprocess crashed.
-            self._crashed_subprocess_name = "WebProcess"
+            pid = None
+            m = re.match('pid (\d+)', err_line)
+            if m:
+                pid = int(m.group(1))
+            self._crashed_process_name = 'WebProcess'
+            self._crashed_pid = pid
             return True
         return self.has_crashed()
 
@@ -555,10 +561,15 @@ class WebKitDriver(Driver):
         # FIXME: We may need to also read stderr until the process dies?
         self.error_from_test += self._server_process.pop_all_buffered_stderr()
 
+        crash_log = ''
+        if self.has_crashed():
+            crash_log = self._port._get_crash_log(self._crashed_process_name, self._crashed_pid, text, self.error_from_test)
+
         return DriverOutput(text, image, actual_image_hash, audio,
             crash=self.has_crashed(), test_time=time.time() - start_time,
             timeout=self._server_process.timed_out, error=self.error_from_test,
-            crashed_process_name=self._crashed_subprocess_name)
+            crashed_process_name=self._crashed_process_name,
+            crashed_pid=self._crashed_pid, crash_log=crash_log)
 
     def _read_header(self, block, line, header_text, header_attr, header_filter=None):
         if line.startswith(header_text) and getattr(block, header_attr) is None:
