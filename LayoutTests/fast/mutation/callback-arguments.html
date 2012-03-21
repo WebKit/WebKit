@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<body>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+description('Verifies that MutationObserver is passed to the callback as expected.');
+
+function mutationCallback(mutations, observer) {
+    window.thisArgument = this;
+    window.argument2 = observer;
+    shouldBe('thisArgument', 'mutationObserver');
+    shouldBe('argument2', 'mutationObserver');
+    finishJSTest();
+}
+var mutationObserver = new WebKitMutationObserver(mutationCallback);
+var div = document.createElement('div');
+mutationObserver.observe(div, {attributes: true});
+div.setAttribute('foo', 'bar');
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>

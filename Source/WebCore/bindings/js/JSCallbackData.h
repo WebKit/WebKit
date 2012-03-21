@@ -65,6 +65,7 @@ public:
     JSDOMGlobalObject* globalObject() { return m_globalObject.get(); }
     
     JSC::JSValue invokeCallback(JSC::MarkedArgumentBuffer&, bool* raisedException = 0);
+    JSC::JSValue invokeCallback(JSC::JSValue thisValue, JSC::MarkedArgumentBuffer&, bool* raisedException = 0);
 
 private:
     JSC::Strong<JSC::JSObject> m_callback;

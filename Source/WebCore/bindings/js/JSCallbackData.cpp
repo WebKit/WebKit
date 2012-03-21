@@ -45,6 +45,12 @@ void JSCallbackData::deleteData(void* context)
 JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, bool* raisedException)
 {
     ASSERT(callback());
+    return invokeCallback(callback(), args, raisedException);
+}
+
+JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& args, bool* raisedException)
+{
+    ASSERT(callback());
     ASSERT(globalObject());
 
     ExecState* exec = globalObject()->globalExec();
@@ -58,7 +64,7 @@ JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, bool* raisedE
         if (callType == CallTypeNone)
             return JSValue();
     }
-    
+
     ScriptExecutionContext* context = globalObject()->scriptExecutionContext();
     // We will fail to get the context if the frame has been detached.
     if (!context)
@@ -69,8 +75,8 @@ JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, bool* raisedE
 
     bool contextIsDocument = context->isDocument();
     JSValue result = contextIsDocument
-        ? JSMainThreadExecState::call(exec, function, callType, callData, callback(), args)
-        : JSC::call(exec, function, callType, callData, callback(), args);
+        ? JSMainThreadExecState::call(exec, function, callType, callData, thisValue, args)
+        : JSC::call(exec, function, callType, callData, thisValue, args);
 
     InspectorInstrumentation::didCallFunction(cookie);
     globalObject()->globalData().timeoutChecker.stop();
@@ -84,8 +90,8 @@ JSValue JSCallbackData::invokeCallback(MarkedArgumentBuffer& args, bool* raisedE
             *raisedException = true;
         return result;
     }
-    
+
     return result;
 }
-    
+
 } // namespace WebCore

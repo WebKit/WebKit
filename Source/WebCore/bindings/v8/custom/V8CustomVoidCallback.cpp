@@ -65,6 +65,11 @@ void V8CustomVoidCallback::handleEvent()
 
 bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext* scriptExecutionContext)
 {
+    return invokeCallback(callback, v8::Context::GetCurrent()->Global(), argc, argv, callbackReturnValue, scriptExecutionContext);
+}
+
+bool invokeCallback(v8::Persistent<v8::Object> callback, v8::Handle<v8::Object> thisObject, int argc, v8::Handle<v8::Value> argv[], bool& callbackReturnValue, ScriptExecutionContext* scriptExecutionContext)
+{
     v8::TryCatch exceptionCatcher;
     exceptionCatcher.SetVerbose(true);
 
@@ -80,8 +85,6 @@ bool invokeCallback(v8::Persistent<v8::Object> callback, int argc, v8::Handle<v8
 
     if (callbackFunction.IsEmpty())
         return false;
-
-    v8::Handle<v8::Object> thisObject = v8::Context::GetCurrent()->Global();
 
     Frame* frame = scriptExecutionContext && scriptExecutionContext->isDocument() ? static_cast<Document*>(scriptExecutionContext)->frame() : 0;
     v8::Handle<v8::Value> result = V8Proxy::instrumentedCallFunction(frame, callbackFunction, thisObject, argc, argv);
