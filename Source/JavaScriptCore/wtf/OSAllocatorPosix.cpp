@@ -71,7 +71,7 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
         flags |= MAP_JIT;
 #endif
 
-#if OS(LINUX)
+#if (OS(LINUX) && CPU(X86_64))
     // Linux distros usually do not allow overcommit by default, so
     // JSC's strategy of mmaping a large amount of memory upfront
     // won't work very well on some systems. Fortunately there's a

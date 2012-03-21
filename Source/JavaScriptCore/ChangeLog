@@ -1,3 +1,16 @@
+2012-03-21  Hojong Han  <hojong.han@samsung.com>
+
+        Fix out of memory by allowing overcommit
+        https://bugs.webkit.org/show_bug.cgi?id=81743
+
+        Reviewed by Geoffrey Garen.
+
+        Garbage collection is not triggered and new blocks are added
+        because overcommit is allowed by MAP_NORESERVE flag when high water mark is big enough.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveAndCommit):
+
 2012-03-21  Jessie Berlin  <jberlin@apple.com>
 
         More Windows build fixing.
