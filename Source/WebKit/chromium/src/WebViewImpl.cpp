@@ -644,10 +644,25 @@ bool WebViewImpl::gestureEvent(const WebGestureEvent& event)
             return true;
         }
         return false;
+    case WebInputEvent::GestureTap: {
+        PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
+        RefPtr<WebCore::PopupContainer> selectPopup;
+        selectPopup = m_selectPopup;
+        hideSelectPopup();
+        ASSERT(!m_selectPopup);
+        bool gestureHandled = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
+        if (m_selectPopup && m_selectPopup == selectPopup) {
+            // That tap triggered a select popup which is the same as the one that
+            // was showing before the tap. It means the user tapped the select
+            // while the popup was showing, and as a result we first closed then
+            // immediately reopened the select popup. It needs to be closed.
+            hideSelectPopup();
+        }
+        return gestureHandled;
+    }
     case WebInputEvent::GestureScrollBegin:
     case WebInputEvent::GestureScrollEnd:
     case WebInputEvent::GestureScrollUpdate:
-    case WebInputEvent::GestureTap:
     case WebInputEvent::GestureTapDown:
     case WebInputEvent::GestureDoubleTap:
     case WebInputEvent::GesturePinchBegin:
@@ -2753,9 +2768,14 @@ void WebViewImpl::applyAutofillSuggestions(
         inputElem, names, labels, icons, uniqueIDs, separatorIndex);
 
     if (!m_autofillPopup) {
+        PopupContainerSettings popupSettings = autofillPopupSettings;
+        popupSettings.defaultDeviceScaleFactor =
+            m_page->settings()->defaultDeviceScaleFactor();
+        if (!popupSettings.defaultDeviceScaleFactor)
+            popupSettings.defaultDeviceScaleFactor = 1;
         m_autofillPopup = PopupContainer::create(m_autofillPopupClient.get(),
                                                  PopupContainer::Suggestion,
-                                                 autofillPopupSettings);
+                                                 popupSettings);
     }
 
     if (m_autofillPopupShowing) {

@@ -44,6 +44,7 @@
 #include "PopupMenuChromium.h"
 #include "PopupMenuClient.h"
 #include "RenderTheme.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScrollbarTheme.h"
 #include "StringTruncator.h"
 #include "TextRun.h"
@@ -352,6 +353,7 @@ void PopupListBox::typeAheadFind(const PlatformKeyboardEvent& event)
 
 void PopupListBox::paint(GraphicsContext* gc, const IntRect& rect)
 {
+    int scale = m_settings.defaultDeviceScaleFactor;
     // adjust coords for scrolled frame
     IntRect r = intersection(rect, frameRect());
     int tx = x() - scrollX();
@@ -366,6 +368,8 @@ void PopupListBox::paint(GraphicsContext* gc, const IntRect& rect)
 
     // FIXME: Can we optimize scrolling to not require repainting the entire
     // window? Should we?
+    if (scale != 1)
+        gc->scale(FloatSize(scale, scale));
     for (int i = 0; i < numItems(); ++i)
         paintRow(gc, r, i);
 
@@ -388,6 +392,19 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     IntRect rowRect = getRowBounds(rowIndex);
     if (!rowRect.intersects(rect))
         return;
+
+    int scale = m_settings.defaultDeviceScaleFactor;
+    // RowRect has already been scaled by the defaultDeviceScaleFactor.
+    // To avoid scaling it twice, we have to unscale it before drawing.
+    if (scale != 1) {
+        // Height and y should both be evenly divisible by scale.
+        ASSERT(!(rowRect.y() % scale));
+        rowRect.setY(rowRect.y() / scale);
+        ASSERT(!(rowRect.height() % scale));
+        rowRect.setHeight(rowRect.height() / scale);
+        rowRect.setWidth(ceilf(static_cast<float>(rowRect.width()) / scale));
+        // rowRect.x is always 0.
+    }
 
     PopupMenuStyle style = m_popupClient->itemStyle(rowIndex);
 
@@ -613,15 +630,16 @@ void PopupListBox::setOriginalIndex(int index)
 
 int PopupListBox::getRowHeight(int index)
 {
-    if (index < 0)
-        return PopupMenuChromium::minimumRowHeight();
-
-    if (m_popupClient->itemStyle(index).isDisplayNone())
-        return PopupMenuChromium::minimumRowHeight();
+    int scale = m_settings.defaultDeviceScaleFactor;
+    int paddingForTouch = 0;
+    if (RuntimeEnabledFeatures::touchEnabled())
+        paddingForTouch = PopupMenuChromium::optionPaddingForTouch();
+    if (index < 0 || m_popupClient->itemStyle(index).isDisplayNone())
+        return PopupMenuChromium::minimumRowHeight() * scale;
 
     // Separator row height is the same size as itself.
     if (m_popupClient->itemIsSeparator(index))
-        return max(separatorHeight, PopupMenuChromium::minimumRowHeight());
+        return max(separatorHeight, (PopupMenuChromium::minimumRowHeight())) * scale;
 
     String icon = m_popupClient->itemIcon(index);
     RefPtr<Image> image(Image::loadPlatformResource(icon.utf8().data()));
@@ -631,7 +649,7 @@ int PopupListBox::getRowHeight(int index)
 
     int linePaddingHeight = m_popupClient->menuStyle().menuType() == PopupMenuStyle::AutofillPopup ? kLinePaddingHeight : 0;
     int calculatedRowHeight = max(fontHeight, iconHeight) + linePaddingHeight * 2;
-    return max(calculatedRowHeight, PopupMenuChromium::minimumRowHeight());
+    return (max(calculatedRowHeight, PopupMenuChromium::minimumRowHeight()) + paddingForTouch) * scale;
 }
 
 IntRect PopupListBox::getRowBounds(int index)

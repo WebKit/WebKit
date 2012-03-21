@@ -1,3 +1,19 @@
+2012-03-21  Tim Dresser  <tdresser@chromium.org>
+
+        [chromium] Increase size of Combo Box Options for touch and high DPI devices
+        https://bugs.webkit.org/show_bug.cgi?id=80027
+
+        Reviewed by Darin Fisher.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::gestureEvent):
+        (WebKit::WebViewImpl::applyAutofillSuggestions):
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TestWebViewClient::screenInfo):
+        (WebKit::SelectPopupMenuTest::SetUp):
+        (WebKit::SelectPopupMenuTest::TearDown):
+        (SelectPopupMenuTest):
+
 2012-03-21  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [Chromium] [WebSocket] provide WebFrameClient with a chance of

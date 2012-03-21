@@ -42,6 +42,7 @@
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
 #include "PopupMenuChromium.h"
+#include "RuntimeEnabledFeatures.h"
 #include "WebDocument.h"
 #include "WebElement.h"
 #include "WebFrame.h"
@@ -154,7 +155,7 @@ public:
     // We need to override this so that the popup menu size is not 0
     // (the layout code checks to see if the popup fits on the screen).
     virtual WebScreenInfo screenInfo()
-    { 
+    {
         WebScreenInfo screenInfo;
         screenInfo.availableRect.height = 2000;
         screenInfo.availableRect.width = 2000;
@@ -181,6 +182,10 @@ public:
 protected:
     virtual void SetUp()
     {
+        // When touch is enabled, padding is added to option elements
+        // In these tests, we'll assume touch is disabled.
+        m_touchWasEnabled = RuntimeEnabledFeatures::touchEnabled();
+        RuntimeEnabledFeatures::setTouchEnabled(false);
         m_webView = static_cast<WebViewImpl*>(WebView::create(&m_webviewClient));
         m_webView->initializeMainFrame(&m_webFrameClient);
         m_popupMenu = adoptRef(new PopupMenuChromium(&m_popupMenuClient));
@@ -191,6 +196,7 @@ protected:
         m_popupMenu = 0;
         m_webView->close();
         webkit_support::UnregisterAllMockedURLs();
+        RuntimeEnabledFeatures::setTouchEnabled(m_touchWasEnabled);
     }
 
     // Returns true if there currently is a select popup in the WebView.
@@ -278,6 +284,7 @@ protected:
     TestWebFrameClient m_webFrameClient;
     TestPopupMenuClient m_popupMenuClient;
     RefPtr<PopupMenu> m_popupMenu;
+    bool m_touchWasEnabled;
     std::string baseURL;
 };
 
