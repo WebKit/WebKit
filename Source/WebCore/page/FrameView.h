@@ -208,7 +208,12 @@ public:
     void beginDeferredRepaints();
     void endDeferredRepaints();
     void checkStopDelayingDeferredRepaints();
+    void startDeferredRepaintTimer(double delay);
     void resetDeferredRepaintDelay();
+
+    void beginDisableRepaints();
+    void endDisableRepaints();
+    bool repaintsDisabled() { return m_disableRepaints > 0; }
 
 #if ENABLE(DASHBOARD_SUPPORT)
     void updateDashboardRegions();
@@ -475,7 +480,9 @@ private:
     Timer<FrameView> m_deferredRepaintTimer;
     double m_deferredRepaintDelay;
     double m_lastPaintTime;
-    
+
+    unsigned m_disableRepaints;
+
     bool m_isTrackingRepaints; // Used for testing.
     Vector<IntRect> m_trackedRepaintRects;
 
