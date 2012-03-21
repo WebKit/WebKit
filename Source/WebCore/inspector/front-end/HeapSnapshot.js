@@ -991,16 +991,17 @@ WebInspector.HeapSnapshot.prototype = {
         // bfs for Window roots
         var list = [];
         for (var iter = this.rootNode.edges; iter.hasNext(); iter.next()) {
-            if (iter.edge.node.isWindow) {
-                list.push(iter.edge.node);
-                this._distancesToWindow[iter.edge.node.nodeIndex] = 0;
+            var node = iter.edge.node;
+            if (node.isWindow) {
+                list.push(node.nodeIndex);
+                this._distancesToWindow[node.nodeIndex] = 0;
             }
         }
         this._bfs(list);
 
         // bfs for root
         list = [];
-        list.push(this.rootNode);
+        list.push(this._rootNodeIndex);
         this._distancesToWindow[this.rootNode.nodeIndex] = 0;
         this._bfs(list);
     },
@@ -1008,20 +1009,21 @@ WebInspector.HeapSnapshot.prototype = {
     _bfs: function(list)
     {
         var index = 0;
+        var node = this.rootNode;
         while (index < list.length) {
-            var node = list[index++]; // shift generates too much garbage.
+            var nodeIndex = list[index++]; // shift generates too much garbage.
             if (index > 100000) {
                 list = list.slice(index);
                 index = 0;
             }
-            var distance = this._distancesToWindow[node.nodeIndex] + 1;
+            var distance = this._distancesToWindow[nodeIndex] + 1;
+            node.nodeIndex = nodeIndex;
             for (var iter = node.edges; iter.hasNext(); iter.next()) {
-                var edge = iter.edge;
-                var childNode = edge.node;
-                if (typeof this._distancesToWindow[childNode.nodeIndex] !== "undefined")
+                var childNodeIndex = iter.edge.nodeIndex;
+                if (childNodeIndex in this._distancesToWindow)
                     continue;
-                this._distancesToWindow[childNode.nodeIndex] = distance;
-                list.push(childNode);
+                this._distancesToWindow[childNodeIndex] = distance;
+                list.push(childNodeIndex);
             }
         }
     },
