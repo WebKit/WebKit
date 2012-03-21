@@ -1607,9 +1607,5 @@ tables/mozilla_expected_failures/bugs/bug85016.html
 # Allowed to regress to fix a crash. 
 fast/inline/continuation-outlines-with-layers.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=81705
-# REGRESSION (r111416): fast/dom/prototype-inheritance-2.html is failing
-fast/dom/prototype-inheritance-2.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=81089
 inspector/debugger/snippets-model.html
