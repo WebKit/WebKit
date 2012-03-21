@@ -292,7 +292,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         Node* child = it->get();
 
         // If the new child is already in the right place, we're done.
-        if (prev && (prev == child || prev == child->previousSibling()))
+        if (next && (next == child || next == child->previousSibling()))
             break;
 
         // Remove child from its old position.
