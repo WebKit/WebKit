@@ -74,6 +74,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
+#include "TiledBacking.h"
 #endif
 
 #if ENABLE(SVG)
@@ -837,16 +838,24 @@ bool FrameView::isSoftwareRenderable() const
 
 void FrameView::didMoveOnscreen()
 {
-    RenderView* root = rootRenderer(this);
-    if (root)
+#if USE(ACCELERATED_COMPOSITING)
+    if (TiledBacking* tiledBacking = this->tiledBacking())
+        tiledBacking->setIsInWindow(true);
+#endif
+
+    if (RenderView* root = rootRenderer(this))
         root->didMoveOnscreen();
     contentAreaDidShow();
 }
 
 void FrameView::willMoveOffscreen()
 {
-    RenderView* root = rootRenderer(this);
-    if (root)
+#if USE(ACCELERATED_COMPOSITING)
+    if (TiledBacking* tiledBacking = this->tiledBacking())
+        tiledBacking->setIsInWindow(false);
+#endif
+
+    if (RenderView* root = rootRenderer(this))
         root->willMoveOffscreen();
     contentAreaDidHide();
 }

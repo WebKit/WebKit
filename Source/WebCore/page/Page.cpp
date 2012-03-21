@@ -154,6 +154,7 @@ Page::Page(PageClients& pageClients)
     , m_viewMode(ViewModeWindowed)
     , m_minimumTimerInterval(Settings::defaultMinDOMTimerInterval())
     , m_isEditable(false)
+    , m_isOnscreen(true)
 #if ENABLE(PAGE_VISIBILITY_API)
     , m_visibilityState(PageVisibilityStateVisible)
 #endif
@@ -682,9 +683,11 @@ unsigned Page::pageCount() const
 
 void Page::didMoveOnscreen()
 {
+    m_isOnscreen = true;
+
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (frame->view())
-            frame->view()->didMoveOnscreen();
+        if (FrameView* frameView = frame->view())
+            frameView->didMoveOnscreen();
     }
     
     resumeScriptedAnimations();
@@ -692,9 +695,11 @@ void Page::didMoveOnscreen()
 
 void Page::willMoveOffscreen()
 {
+    m_isOnscreen = false;
+
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (frame->view())
-            frame->view()->willMoveOffscreen();
+        if (FrameView* frameView = frame->view())
+            frameView->willMoveOffscreen();
     }
     
     suspendScriptedAnimations();

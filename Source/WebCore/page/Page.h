@@ -267,6 +267,7 @@ namespace WebCore {
         // Notifications when the Page starts and stops being presented via a native window.
         void didMoveOnscreen();
         void willMoveOffscreen();
+        bool isOnscreen() const { return m_isOnscreen; }
 
         void windowScreenDidChange(PlatformDisplayID);
         
@@ -419,6 +420,7 @@ namespace WebCore {
         double m_minimumTimerInterval;
 
         bool m_isEditable;
+        bool m_isOnscreen;
 
 #if ENABLE(PAGE_VISIBILITY_API)
         PageVisibilityState m_visibilityState;

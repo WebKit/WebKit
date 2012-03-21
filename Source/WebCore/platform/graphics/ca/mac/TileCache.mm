@@ -56,6 +56,7 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
     , m_tileRevalidationTimer(this, &TileCache::tileRevalidationTimerFired)
     , m_scale(1)
     , m_deviceScaleFactor(1)
+    , m_isInWindow(true)
     , m_acceleratesDrawing(false)
     , m_tileDebugBorderWidth(0)
 {
@@ -218,6 +219,14 @@ void TileCache::visibleRectChanged(const IntRect& visibleRect)
 
     m_visibleRect = visibleRect;
     revalidateTiles();
+}
+
+void TileCache::setIsInWindow(bool isInWindow)
+{
+    if (m_isInWindow == isInWindow)
+        return;
+
+    m_isInWindow = isInWindow;
 }
 
 void TileCache::setTileDebugBorderWidth(float borderWidth)

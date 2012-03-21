@@ -52,6 +52,7 @@
 #include "RenderEmbeddedObject.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
+#include "TiledBacking.h"
 
 #if ENABLE(CSS_FILTERS)
 #include "FilterEffectRenderer.h"
@@ -110,6 +111,13 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     }
     
     createPrimaryGraphicsLayer();
+
+    if (m_usingTiledCacheLayer) {
+        if (Page* page = renderer()->frame()->page()) {
+            if (TiledBacking* tiledBacking = m_graphicsLayer->tiledBacking())
+                tiledBacking->setIsInWindow(page->isOnscreen());
+        }
+    }
 }
 
 RenderLayerBacking::~RenderLayerBacking()

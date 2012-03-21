@@ -35,6 +35,7 @@ public:
     virtual ~TiledBacking() { }
 
     virtual void visibleRectChanged(const IntRect&) = 0;
+    virtual void setIsInWindow(bool) = 0;
 };
 
 } // namespace WebCore

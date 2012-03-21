@@ -73,6 +73,7 @@ private:
 
     // TiledBacking member functions.
     virtual void visibleRectChanged(const IntRect&) OVERRIDE;
+    virtual void setIsInWindow(bool) OVERRIDE;
 
     IntRect bounds() const;
 
@@ -102,6 +103,7 @@ private:
     CGFloat m_scale;
     CGFloat m_deviceScaleFactor;
 
+    bool m_isInWindow;
     bool m_acceleratesDrawing;
 
     RetainPtr<CGColorRef> m_tileDebugBorderColor;
