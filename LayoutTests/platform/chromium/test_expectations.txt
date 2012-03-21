@@ -805,7 +805,7 @@ WONTFIX SKIP WIN LINUX : platform/chromium/compositing/rubberbanding = IMAGE
 
 // This requires usp10.dll version 1.600 or greater on Windows and
 // it isn't installed on XP by default.
-WONTFIX WIN : css3/font-feature-settings-rendering.html = PASS FAIL
+WONTFIX XP : css3/font-feature-settings-rendering.html = PASS FAIL
 
 // These test the CoreAnimation plugin model which we never intend to support on
 // Windows and Linux.
@@ -2016,9 +2016,6 @@ BUGCR28409 : http/tests/xmlhttprequest/logout.html = FAIL
 
 // WebKit Roll 49640:49684
 BUG_JEREMY MAC : fast/frames/onlyCommentInIFrame.html = FAIL
-
-// Incorrect baseline removed.
-BUGCR25433 LINUX WIN : css2.1/t040103-ident-03-c.html = IMAGE
 
 // This only crashes on the old buildbot slave. It fails image, like the other slaves, on the new one.
 // FIXME: Make this just be IMAGE after we move over to the new bots.
@@ -3348,8 +3345,6 @@ BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT
 // These started failing with r88913.  The results are visibly wrong, and the
 // checked-in pixel results for Safari (platform/mac) are wrong too.
 BUGWK62754 LINUX WIN : css2.1/20110323/block-replaced-width-001.htm = IMAGE+TEXT
-BUGWK62754 LINUX WIN : css2.1/20110323/replaced-elements-001.htm = IMAGE+TEXT
-BUGWK62754 LINUX WIN : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+TEXT
 
 // Probably related to the above, but just flaky (esp. in debug)
 BUGWK63937 MAC : css2.1/20110323/replaced-intrinsic-ratio-001.htm = PASS IMAGE TEXT IMAGE+TEXT
