@@ -280,10 +280,8 @@ WebInspector.TextPrompt.prototype = {
         if (!handled && invokeDefault)
             handled = this.defaultKeyHandler(event);
 
-        if (handled) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
+        if (handled)
+            event.consume();
 
         return handled;
     },
@@ -885,8 +883,7 @@ WebInspector.TextPromptWithHistory.prototype = {
         }
 
         if (newText !== undefined) {
-            event.stopPropagation();
-            event.preventDefault();
+            event.consume();
             this.text = newText;
 
             if (isPrevious) {
@@ -1139,8 +1136,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
     _onItemMouseDown: function(text, event)
     {
         this.acceptSuggestion(text);
-        event.stopPropagation();
-        event.preventDefault();
+        event.consume();
     },
 
     _createItemElement: function(prefix, text)

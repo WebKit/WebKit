@@ -386,12 +386,11 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
     _promptKeyDown: function(context, event)
     {
         if (isEnterKey(event)) {
-            event.stopPropagation();
-            event.preventDefault();
+            event.consume();
             return this.editingCommitted(null, context.elementToEdit.textContent, context.previousContent, context);
         }
         if (event.keyIdentifier === "U+001B") { // Esc
-            event.stopPropagation();
+            event.consume();
             return this.editingCancelled(null, context);
         }
     },

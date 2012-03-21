@@ -376,6 +376,13 @@ KeyboardEvent.prototype.__defineGetter__("data", function()
     }
 });
 
+Event.prototype.consume = function()
+{
+    this.stopImmediatePropagation();
+    this.preventDefault();
+    this.handled = true;
+}
+
 Text.prototype.select = function(start, end)
 {
     start = start || 0;
@@ -923,9 +930,9 @@ function isEnterKey(event) {
     return event.keyCode !== 229 && event.keyIdentifier === "Enter";
 }
 
-function stopPropagation(e)
+function consumeEvent(e)
 {
-    e.stopPropagation();
+    e.consume();
 }
 
 /**

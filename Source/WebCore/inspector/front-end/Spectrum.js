@@ -34,7 +34,7 @@ WebInspector.Spectrum = function()
 {
     this._popover = new WebInspector.Popover();
     this._popover.setCanShrink(false);
-    this._popover.element.addEventListener("mousedown", stopPropagation, false);
+    this._popover.element.addEventListener("mousedown", consumeEvent, false);
 
     this._containerElement = document.createElement('div');
     this._containerElement.className = "spectrum-container";
@@ -186,13 +186,9 @@ WebInspector.Spectrum.draggable = function(element, onmove, onstart, onstop) {
     var maxHeight;
     var maxWidth;
 
-    function prevent(e)
+    function consume(e)
     {
-        if (e.stopPropagation)
-            e.stopPropagation();
-
-        if (e.preventDefault)
-            e.preventDefault();
+        e.consume();
     }
 
     function move(e)
@@ -222,21 +218,21 @@ WebInspector.Spectrum.draggable = function(element, onmove, onstart, onstop) {
             scrollOffset = element.scrollOffset();
             offset = element.totalOffset();
 
-            doc.addEventListener("selectstart", prevent, false);
-            doc.addEventListener("dragstart", prevent, false);
+            doc.addEventListener("selectstart", consume, false);
+            doc.addEventListener("dragstart", consume, false);
             doc.addEventListener("mousemove", move, false);
             doc.addEventListener("mouseup", stop, false);
 
             move(e);
-            prevent(e);
+            consume(e);
         }
     }
 
     function stop(e)
     {
         if (dragging) {
-            doc.removeEventListener("selectstart", prevent, false);
-            doc.removeEventListener("dragstart", prevent, false);
+            doc.removeEventListener("selectstart", consume, false);
+            doc.removeEventListener("dragstart", consume, false);
             doc.removeEventListener("mousemove", move, false);
             doc.removeEventListener("mouseup", stop, false);
 
@@ -410,13 +406,11 @@ WebInspector.Spectrum.prototype = {
         if (!this._previousFocusElement)
             this._previousFocusElement = WebInspector.currentFocusElement();
         this._popover.show(this._containerElement, element);
-        WebInspector.markBeingEdited(this._containerElement, true);    
         WebInspector.setCurrentFocusElement(this._containerElement);
     },
 
     hide: function()
     {
-        WebInspector.markBeingEdited(this._containerElement, false);
         this._popover.hide();
 
         document.removeEventListener("mousedown", this._hideProxy, false);
@@ -434,8 +428,7 @@ WebInspector.Spectrum.prototype = {
     {
         if (event.keyIdentifier === "Enter" || event.keyIdentifier === "U+001B") { // Escape key
             this.hide();
-            event.stopPropagation();
-            event.preventDefault();
+            event.consume();
         }
     }
 }

@@ -101,14 +101,14 @@ WebInspector.WatchExpressionsSidebarPane.prototype = {
 
     _addButtonClicked: function(event)
     {
-        event.stopPropagation();
+        event.consume();
         this.expanded = true;
         this.section.addNewExpressionAndEdit();
     },
 
     _refreshButtonClicked: function(event)
     {
-        event.stopPropagation();
+        event.consume();
         this.refreshExpressions();
     }
 }
@@ -146,7 +146,7 @@ WebInspector.WatchExpressionsSection.prototype = {
     update: function(e)
     {
         if (e)
-            e.stopPropagation();
+            e.consume();
 
         function appendResult(expression, watchIndex, result, wasThrown)
         {

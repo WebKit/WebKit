@@ -57,7 +57,7 @@ WebInspector.Checkbox.prototype = {
         {
             if (listener)
                 listener(event);
-            event.stopPropagation();
+            event.consume();
             return true;
         }
 

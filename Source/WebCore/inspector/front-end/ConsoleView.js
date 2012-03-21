@@ -628,8 +628,7 @@ WebInspector.ConsoleView.prototype = {
         if (event.altKey || event.ctrlKey || event.shiftKey)
             return;
 
-        event.preventDefault();
-        event.stopPropagation();
+        event.consume();
 
         this.prompt.clearAutoComplete(true);
 
@@ -847,8 +846,7 @@ WebInspector.ConsoleGroup.prototype = {
             groupTitleElement.scrollIntoViewIfNeeded(true);
         }
 
-        event.stopPropagation();
-        event.preventDefault();
+        event.consume();
     }
 }
 

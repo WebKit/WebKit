@@ -125,16 +125,6 @@ var WebInspector = {
         }
     },
 
-    _escPressed: function()
-    {
-        
-        // If drawer is open with some view other than console then close it.
-        if (!this._toggleConsoleButton.toggled && WebInspector.drawer.visible)
-            this.closeDrawerView();
-        else
-            this._toggleConsoleButtonClicked();
-    },
-
     closeDrawerView: function()
     {
         // Once drawer is closed console should be shown if it was shown before current view replaced it in drawer. 
@@ -598,12 +588,11 @@ WebInspector.documentClick = function(event)
         return;
 
     // Prevent the link from navigating, since we don't do any navigation by following links normally.
-    event.preventDefault();
-    event.stopPropagation();
+    event.consume();
 
     function followLink()
     {
-        if (WebInspector.isInEditMode(event) || WebInspector._showAnchorLocation(anchor))
+        if (WebInspector.isBeingEdited(event.target) || WebInspector._showAnchorLocation(anchor))
             return;
 
         const profileMatch = WebInspector.ProfileType.URLRegExp.exec(anchor.href);
@@ -687,17 +676,16 @@ WebInspector.documentKeyDown = function(event)
     const helpKey = WebInspector.isMac() ? "U+003F" : "U+00BF"; // "?" for both platforms
 
     if (event.keyIdentifier === "F1" ||
-        (event.keyIdentifier === helpKey && event.shiftKey && (!WebInspector.isInEditMode(event) || event.metaKey))) {
+        (event.keyIdentifier === helpKey && event.shiftKey && (!WebInspector.isBeingEdited(event.target) || event.metaKey))) {
         WebInspector.shortcutsScreen.show();
-        event.stopPropagation();
-        event.preventDefault();
+        event.consume();
         return;
     }
 
     if (WebInspector.currentFocusElement() && WebInspector.currentFocusElement().handleKeyEvent) {
         WebInspector.currentFocusElement().handleKeyEvent(event);
         if (event.handled) {
-            event.preventDefault();
+            event.consume();
             return;
         }
     }
@@ -705,7 +693,7 @@ WebInspector.documentKeyDown = function(event)
     if (WebInspector.inspectorView.currentPanel()) {
         WebInspector.inspectorView.currentPanel().handleShortcut(event);
         if (event.handled) {
-            event.preventDefault();
+            event.consume();
             return;
         }
     }
@@ -713,28 +701,22 @@ WebInspector.documentKeyDown = function(event)
     WebInspector.searchController.handleShortcut(event);
     WebInspector.advancedSearchController.handleShortcut(event);
     if (event.handled) {
-        event.preventDefault();
+        event.consume();
         return;
     }
 
     var isMac = WebInspector.isMac();
     switch (event.keyIdentifier) {
-        case "U+001B": // Escape key
-            if (event.target.hasStyleClass("text-prompt") || !WebInspector.isInEditMode(event)) {
-                event.preventDefault();
-                this._escPressed();
-            }
-            break;
         case "U+0052": // R key
             if ((event.metaKey && isMac) || (event.ctrlKey && !isMac)) {
                 PageAgent.reload(event.shiftKey);
-                event.preventDefault();
+                event.consume();
             }
             break;
         case "F5":
             if (!isMac) {
                 PageAgent.reload(event.ctrlKey || event.shiftKey);
-                event.preventDefault();
+                event.consume();
             }
             break;
     }
@@ -748,22 +730,36 @@ WebInspector.documentKeyDown = function(event)
         case 187: // +
             if (isValidZoomShortcut) {
                 WebInspector._zoomIn();
-                event.preventDefault();
+                event.consume();
             }
             break;
         case 109: // -
         case 189: // -
             if (isValidZoomShortcut) {
                 WebInspector._zoomOut();
-                event.preventDefault();
+                event.consume();
             }
             break;
         case 48: // 0
             if (isValidZoomShortcut) {
                 WebInspector._resetZoom();
-                event.preventDefault();
+                event.consume();
             }
             break;
+    }
+}
+
+WebInspector.postDocumentKeyDown = function(event)
+{
+    if (event.handled)
+        return;
+
+    if (event.keyIdentifier === "U+001B") { // Escape key
+        // If drawer is open with some view other than console then close it.
+        if (!this._toggleConsoleButton.toggled && WebInspector.drawer.visible)
+            this.closeDrawerView();
+        else
+            this._toggleConsoleButtonClicked();
     }
 }
 
@@ -989,7 +985,8 @@ WebInspector.evaluateInConsole = function(expression, showResultOnly)
 
 WebInspector.addMainEventListeners = function(doc)
 {
-    doc.addEventListener("keydown", this.documentKeyDown.bind(this), false);
+    doc.addEventListener("keydown", this.documentKeyDown.bind(this), true);
+    doc.addEventListener("keydown", this.postDocumentKeyDown.bind(this), false);
     doc.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
     doc.addEventListener("copy", this.documentCopy.bind(this), true);
     doc.addEventListener("contextmenu", this.contextMenuEventFired.bind(this), true);

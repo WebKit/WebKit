@@ -200,10 +200,10 @@ WebInspector.SearchController.prototype = {
             // If focus belongs here and text is empty - nothing to do, return unhandled.
             // When search was selected manually and is currently blank, we'd like Esc stay unhandled
             // and hit console drawer handler.
-            if (event.target.value === "" && WebInspector.currentFocusElement() === WebInspector.previousFocusElement())
+            if (event.target.value === "")
                 return;
-            event.preventDefault();
-            event.stopPropagation();
+
+            event.consume();
 
             this.cancelSearch();
             WebInspector.setCurrentFocusElement(WebInspector.previousFocusElement());

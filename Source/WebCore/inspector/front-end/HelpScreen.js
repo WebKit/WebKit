@@ -92,7 +92,7 @@ WebInspector.HelpScreen.prototype = {
     {
         if (this._isShown && this._closeKeys.indexOf(event.keyCode) >= 0) {
             this.hide();
-            event.stopPropagation();
+            event.consume();
         }
     },
 

@@ -278,7 +278,7 @@ WebInspector.View.prototype = {
             return;
         }
 
-        if (WebInspector.experimentsSettings.debugCSS.isEnabled()) {
+        if (window.debugCSS) { /* debugging support */
             styleElement = document.createElement("link");
             styleElement.rel = "stylesheet";
             styleElement.type = "text/css";

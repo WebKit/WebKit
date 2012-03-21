@@ -140,7 +140,7 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
     _breakpointCheckboxClicked: function(breakpoint, event)
     {
         // Breakpoint element has it's own click handler.
-        event.stopPropagation();
+        event.consume();
 
         this._model.setBreakpointEnabled(breakpoint.uiSourceCode, breakpoint.lineNumber, event.target.checked);
     },
@@ -286,7 +286,7 @@ WebInspector.XHRBreakpointsSidebarPane = function()
 WebInspector.XHRBreakpointsSidebarPane.prototype = {
     _addButtonClicked: function(event)
     {
-        event.stopPropagation();
+        event.consume();
 
         this.expanded = true;
 

@@ -257,7 +257,7 @@ WebInspector.NetworkLogView.prototype = {
         var header = this._dataGrid.headerTableHeader("timeline");
         header.replaceChild(timelineSorting, header.firstChild);
 
-        timelineSorting.addEventListener("click", function(event) { event.stopPropagation() }, false);
+        timelineSorting.addEventListener("click", function(event) { event.consume() }, false);
         timelineSorting.addEventListener("change", this._sortByTimeline.bind(this), false);
         this._timelineSortSelector = timelineSorting;
     },

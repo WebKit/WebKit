@@ -89,7 +89,7 @@ WebInspector.InspectorView.prototype = {
     {
         switch (event.keyIdentifier) {
             case "Left":
-                var isBackKey = !event.shiftKey && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !WebInspector.isInEditMode(event);
+                var isBackKey = !event.shiftKey && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !WebInspector.isBeingEdited(event.target);
                 if (isBackKey && this._canGoBackInHistory()) {
                     this._goBackInHistory();
                     event.preventDefault();
@@ -97,7 +97,7 @@ WebInspector.InspectorView.prototype = {
                 break;
 
             case "Right":
-                var isForwardKey = !event.shiftKey && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !WebInspector.isInEditMode(event);
+                var isForwardKey = !event.shiftKey && WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !WebInspector.isBeingEdited(event.target);
                 if (isForwardKey && this._canGoForwardInHistory()) {
                     this._goForwardInHistory();
                     event.preventDefault();

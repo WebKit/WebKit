@@ -59,7 +59,7 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     this.settingsSelectElement.appendChild(option);
 
     // Prevent section from collapsing.
-    var muteEventListener = function(event) { event.stopPropagation(); event.preventDefault(); };
+    var muteEventListener = function(event) { event.consume(); };
 
     this.settingsSelectElement.addEventListener("click", muteEventListener, true);
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
@@ -736,7 +736,7 @@ WebInspector.StylesSidebarPane.prototype = {
 
     _createNewRule: function(event)
     {
-        event.stopPropagation();
+        event.consume();
         this.expanded = true;
         this.addBlankSection().startEditingSelector();
     },
@@ -805,7 +805,7 @@ WebInspector.StylesSidebarPane.prototype = {
 
     _toggleElementStatePane: function(event)
     {
-        event.stopPropagation();
+        event.consume();
         if (!this._elementStateButton.hasStyleClass("toggled")) {
             this.expand();
             this._elementStateButton.addStyleClass("toggled");
@@ -1244,7 +1244,7 @@ WebInspector.StylePropertiesSection.prototype = {
             return;
 
         if (event.target.hasStyleClass("header") || this.element.hasStyleClass("read-only") || event.target.enclosingNodeOrSelfWithClass("media")) {
-            event.stopPropagation();
+            event.consume();
             return;
         }
         this.expand();
@@ -1254,8 +1254,7 @@ WebInspector.StylePropertiesSection.prototype = {
     _handleSelectorClick: function(event)
     {
         this._startEditingOnMouseEvent();
-        event.stopPropagation();
-        event.preventDefault();
+        event.consume();
     },
 
     _startEditingOnMouseEvent: function()
@@ -1749,9 +1748,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
                 swatchElement.className = "swatch";
 
-                swatchElement.addEventListener("mousedown", stopPropagation, false);
+                swatchElement.addEventListener("mousedown", consumeEvent, false);
                 swatchElement.addEventListener("click", swatchClick, false);
-                swatchElement.addEventListener("dblclick", stopPropagation, false);
+                swatchElement.addEventListener("dblclick", consumeEvent, false);
 
                 swatchInnerElement.style.backgroundColor = text;
 
@@ -1803,8 +1802,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                             scrollerElement.addEventListener("scroll", repositionSpectrum, false);
                         }
                     }
-                    e.stopPropagation();
-                    e.preventDefault();
+                    e.consume();
                 }
 
                 function getFormat()
@@ -2024,8 +2022,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     _mouseClick: function(event)
     {
-        event.stopPropagation();
-        event.preventDefault();
+        event.consume();
 
         if (event.target === this.listItemElement) {
             if (this.section._checkWillCancelEditing())
@@ -2203,7 +2200,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 break;
             }
 
-            event.stopPropagation();
+            event.consume();
             return;
         }
 

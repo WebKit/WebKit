@@ -131,6 +131,12 @@ WebInspector.Event.prototype = {
     preventDefault: function()
     {
         this.defaultPrevented = true;
+    },
+
+    consume: function()
+    {
+        this.stopPropagation();
+        this.preventDefault();
     }
 }
 

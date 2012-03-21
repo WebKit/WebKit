@@ -56,7 +56,7 @@ WebInspector.EventListenersSidebarPane = function()
         this.settingsSelectElement[0].selected = true;
     else if (filter === "selected")
         this.settingsSelectElement[1].selected = true;
-    this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
+    this.settingsSelectElement.addEventListener("click", function(event) { event.consume() }, false);
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
 
     this.titleElement.appendChild(this.settingsSelectElement);

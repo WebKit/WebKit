@@ -229,7 +229,7 @@ WebInspector.ToolbarDropdown.prototype = {
     {
         if (event.keyCode !== WebInspector.KeyboardShortcut.Keys.Esc.code)
             return;
-        event.stopPropagation();
+        event.consume();
         this.hide();
     }
 }

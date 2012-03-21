@@ -257,8 +257,7 @@ WebInspector.CSSSelectorProfileView.prototype = {
 
         this.refreshShowAsPercents();
 
-        event.preventDefault();
-        event.stopPropagation();
+        event.consume();
     }
 }
 

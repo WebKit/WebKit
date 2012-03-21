@@ -877,8 +877,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         if (!cell || (!cell.hasStyleClass("count-column") && !cell.hasStyleClass("shallowSize-column") && !cell.hasStyleClass("retainedSize-column")))
             return;
 
-        event.preventDefault();
-        event.stopPropagation();
+        event.consume();
     },
 
     _mouseClickInRetainmentGrid: function(event)
@@ -1051,7 +1050,7 @@ WebInspector.DetailedHeapshotView.prototype = {
 
         WebInspector.elementDragStart(this.retainmentViewHeader, this._retainersHeaderDragging.bind(this), this._endRetainersHeaderDragging.bind(this), event, "row-resize");
         this._previousDragPosition = event.pageY;
-        event.stopPropagation();
+        event.consume();
     },
 
     _retainersHeaderDragging: function(event)
@@ -1060,15 +1059,14 @@ WebInspector.DetailedHeapshotView.prototype = {
         height += this._previousDragPosition - event.pageY;
         this._previousDragPosition = event.pageY;
         this._updateRetainmentViewHeight(height);
-        event.preventDefault();
-        event.stopPropagation();
+        event.consume();
     },
 
     _endRetainersHeaderDragging: function(event)
     {
         WebInspector.elementDragEnd(event);
         delete this._previousDragPosition;
-        event.stopPropagation();
+        event.consume();
     },
 
     _updateRetainmentViewHeight: function(height)

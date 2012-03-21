@@ -55,6 +55,8 @@ Element.prototype.scrollIntoViewIfNeeded = function(param) {}
 Event.prototype.isMetaOrCtrlForTest = false;
 /** @param {...*} vararg */
 Event.prototype.initWebKitWheelEvent = function(vararg) {}
+Event.prototype.stopImmediatePropagation = function() {}
+
 /** @param {Element} element */
 window.getComputedStyle = function(element) {}
 
