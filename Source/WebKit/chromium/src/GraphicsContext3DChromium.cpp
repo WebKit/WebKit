@@ -892,6 +892,14 @@ DELEGATE_TO_IMPL_1R(getTranslatedShaderSourceANGLE, Platform3DObject, String)
 DELEGATE_TO_IMPL_5(texImageIOSurface2DCHROMIUM, GC3Denum, GC3Dint, GC3Dint, GC3Duint, GC3Duint)
 DELEGATE_TO_IMPL_5(texStorage2DEXT, GC3Denum, GC3Dint, GC3Duint, GC3Dint, GC3Dint)
 
+DELEGATE_TO_IMPL_R(createQueryEXT, Platform3DObject)
+DELEGATE_TO_IMPL_1(deleteQueryEXT, Platform3DObject)
+DELEGATE_TO_IMPL_1R(isQueryEXT, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_IMPL_2(beginQueryEXT, GC3Denum, Platform3DObject)
+DELEGATE_TO_IMPL_1(endQueryEXT, GC3Denum)
+DELEGATE_TO_IMPL_3(getQueryivEXT, GC3Denum, GC3Denum, GC3Dint*)
+DELEGATE_TO_IMPL_3(getQueryObjectuivEXT, Platform3DObject, GC3Denum, GC3Duint*)
+
 //----------------------------------------------------------------------
 // GraphicsContext3D
 //

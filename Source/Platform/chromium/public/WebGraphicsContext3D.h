@@ -407,6 +407,14 @@ public:
     virtual void texStorage2DEXT(WGC3Denum target, WGC3Dint levels, WGC3Duint internalformat,
                                  WGC3Dint width, WGC3Dint height) { }
 
+    // GL_EXT_occlusion_query
+    virtual WebGLId createQueryEXT() { return 0; }
+    virtual void deleteQueryEXT(WebGLId query) { }
+    virtual WGC3Dboolean isQueryEXT(WebGLId query) { return false; }
+    virtual void beginQueryEXT(WGC3Denum target, WebGLId query) { }
+    virtual void endQueryEXT(WGC3Denum target) { }
+    virtual void getQueryivEXT(WGC3Denum target, WGC3Denum pname, WGC3Dint* params) { }
+    virtual void getQueryObjectuivEXT(WebGLId query, WGC3Denum pname, WGC3Duint* params) { }
 
 #if WEBKIT_USING_SKIA
     GrGLInterface* createGrGLInterface();

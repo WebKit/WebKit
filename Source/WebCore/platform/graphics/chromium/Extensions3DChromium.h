@@ -46,8 +46,10 @@ public:
     //   GL_CHROMIUM_rate_limit_offscreen_context
     //   GL_CHROMIUM_paint_framebuffer_canvas
     //   GL_CHROMIUM_iosurface (Mac OS X specific)
+    //   GL_CHROMIUM_command_buffer_query
     //   GL_ANGLE_texture_usage
     //   GL_EXT_texture_storage
+    //   GL_EXT_occlusion_query_boolean
 
     // Extensions3D methods.
     virtual bool supports(const String&);
@@ -75,7 +77,17 @@ public:
         GL_FRAMEBUFFER_ATTACHMENT_ANGLE = 0x93A3,
 
         // GL_EXT_texture_storage
-        BGRA8_EXT = 0x93A1
+        BGRA8_EXT = 0x93A1,
+
+        // GL_EXT_occlusion_query_boolean
+        ANY_SAMPLES_PASSED_EXT = 0x8C2F,
+        ANY_SAMPLES_PASSED_CONSERVATIVE_EXT = 0x8D6A,
+        CURRENT_QUERY_EXT = 0x8865,
+        QUERY_RESULT_EXT = 0x8866,
+        QUERY_RESULT_AVAILABLE_EXT = 0x8867,
+
+        // GL_CHROMIUM_command_buffer_query
+        COMMANDS_ISSUED_CHROMIUM = 0x84F2
     };
 
     // GL_CHROMIUM_post_sub_buffer
@@ -134,6 +146,15 @@ public:
 
     // GL_EXT_texture_storage
     void texStorage2DEXT(unsigned target, int levels, unsigned internalformat, int width, int height);
+
+    // GL_EXT_occlusion_query
+    Platform3DObject createQueryEXT();
+    void deleteQueryEXT(Platform3DObject);
+    GC3Dboolean isQueryEXT(Platform3DObject);
+    void beginQueryEXT(GC3Denum, Platform3DObject);
+    void endQueryEXT(GC3Denum);
+    void getQueryivEXT(GC3Denum, GC3Denum, GC3Dint*);
+    void getQueryObjectuivEXT(Platform3DObject, GC3Denum, GC3Duint*);
 
 private:
     // Instances of this class are strictly owned by the GraphicsContext3D implementation and do not

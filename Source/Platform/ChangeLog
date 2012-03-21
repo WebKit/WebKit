@@ -1,3 +1,22 @@
+2012-03-21  David Reveman  <reveman@chromium.org>
+
+        [Chromium] GL_EXT_occlusion_query_boolean and GL_CHROMIUM_command_buffer_query support.
+        https://bugs.webkit.org/show_bug.cgi?id=80988
+
+        Reviewed by Adrienne Walker.
+
+        Add EXT_occlusion_query API to WebGraphicsContext3D.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebGraphicsContext3D):
+        (WebKit::WebGraphicsContext3D::createQueryEXT):
+        (WebKit::WebGraphicsContext3D::deleteQueryEXT):
+        (WebKit::WebGraphicsContext3D::isQueryEXT):
+        (WebKit::WebGraphicsContext3D::beginQueryEXT):
+        (WebKit::WebGraphicsContext3D::endQueryEXT):
+        (WebKit::WebGraphicsContext3D::getQueryivEXT):
+        (WebKit::WebGraphicsContext3D::getQueryObjectuivEXT):
+
 2012-03-19  Michal Mocny  <mmocny@google.com>
 
         [chromium] Adding support for GL_EXT_discard_framebuffer.
