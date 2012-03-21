@@ -21276,7 +21276,7 @@
 				FD7F298F13D4C0CB00AD9535 /* WaveShaperProcessor.cpp */,
 				FD7F299013D4C0CB00AD9535 /* WaveShaperProcessor.h */,
 			);
-			path = webaudio;
+			path = Modules/webaudio;
 			sourceTree = "<group>";
 		};
 		FD31604012B026A300C1A359 /* audio */ = {

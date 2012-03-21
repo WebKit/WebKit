@@ -21,6 +21,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/Modules/filesystem \
     $$SOURCE_DIR/Modules/geolocation \
     $$SOURCE_DIR/Modules/indexeddb \
+    $$SOURCE_DIR/Modules/webaudio \
     $$SOURCE_DIR/Modules/webdatabase \
     $$SOURCE_DIR/Modules/websockets \
     $$SOURCE_DIR/accessibility \
@@ -82,7 +83,6 @@ INCLUDEPATH += \
     $$SOURCE_DIR/svg/graphics/filters \
     $$SOURCE_DIR/svg/properties \
     $$SOURCE_DIR/testing \
-    $$SOURCE_DIR/webaudio \
     $$SOURCE_DIR/websockets \
     $$SOURCE_DIR/workers \
     $$SOURCE_DIR/xml \

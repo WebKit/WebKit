@@ -31,6 +31,7 @@ VPATH = \
     $(WebCore)/Modules/filesystem \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
+    $(WebCore)/Modules/webaudio \
     $(WebCore)/Modules/webdatabase \
     $(WebCore)/Modules/websockets \
     $(WebCore)/bindings/generic \
@@ -50,7 +51,6 @@ VPATH = \
     $(WebCore)/plugins \
     $(WebCore)/storage \
     $(WebCore)/xml \
-    $(WebCore)/webaudio \
     $(WebCore)/workers \
     $(WebCore)/svg \
     $(WebCore)/testing \
@@ -104,6 +104,33 @@ BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeRequest.idl \
     $(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
+    $(WebCore)/Modules/webaudio/AudioBuffer.idl \
+    $(WebCore)/Modules/webaudio/AudioBufferCallback.idl \
+    $(WebCore)/Modules/webaudio/AudioBufferSourceNode.idl \
+    $(WebCore)/Modules/webaudio/AudioChannelMerger.idl \
+    $(WebCore)/Modules/webaudio/AudioChannelSplitter.idl \
+    $(WebCore)/Modules/webaudio/AudioContext.idl \
+    $(WebCore)/Modules/webaudio/AudioDestinationNode.idl \
+    $(WebCore)/Modules/webaudio/AudioGain.idl \
+    $(WebCore)/Modules/webaudio/AudioGainNode.idl \
+    $(WebCore)/Modules/webaudio/AudioListener.idl \
+    $(WebCore)/Modules/webaudio/AudioNode.idl \
+    $(WebCore)/Modules/webaudio/AudioPannerNode.idl \
+    $(WebCore)/Modules/webaudio/AudioParam.idl \
+    $(WebCore)/Modules/webaudio/AudioProcessingEvent.idl \
+    $(WebCore)/Modules/webaudio/AudioSourceNode.idl \
+    $(WebCore)/Modules/webaudio/BiquadFilterNode.idl \
+    $(WebCore)/Modules/webaudio/ConvolverNode.idl \
+    $(WebCore)/Modules/webaudio/DOMWindowWebAudio.idl \
+    $(WebCore)/Modules/webaudio/DelayNode.idl \
+    $(WebCore)/Modules/webaudio/DynamicsCompressorNode.idl \
+    $(WebCore)/Modules/webaudio/HighPass2FilterNode.idl \
+    $(WebCore)/Modules/webaudio/JavaScriptAudioNode.idl \
+    $(WebCore)/Modules/webaudio/LowPass2FilterNode.idl \
+    $(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
+    $(WebCore)/Modules/webaudio/OfflineAudioCompletionEvent.idl \
+    $(WebCore)/Modules/webaudio/RealtimeAnalyserNode.idl \
+    $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
     $(WebCore)/Modules/webdatabase/DOMWindowSQLDatabase.idl \
     $(WebCore)/Modules/webdatabase/Database.idl \
     $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
@@ -545,33 +572,6 @@ BINDING_IDLS = \
     $(WebCore)/svg/SVGZoomEvent.idl \
     $(WebCore)/testing/Internals.idl \
     $(WebCore)/testing/InternalSettings.idl \
-    $(WebCore)/webaudio/AudioBuffer.idl \
-    $(WebCore)/webaudio/AudioBufferCallback.idl \
-    $(WebCore)/webaudio/AudioBufferSourceNode.idl \
-    $(WebCore)/webaudio/AudioChannelMerger.idl \
-    $(WebCore)/webaudio/AudioChannelSplitter.idl \
-    $(WebCore)/webaudio/AudioContext.idl \
-    $(WebCore)/webaudio/AudioDestinationNode.idl \
-    $(WebCore)/webaudio/AudioGain.idl \
-    $(WebCore)/webaudio/AudioGainNode.idl \
-    $(WebCore)/webaudio/AudioListener.idl \
-    $(WebCore)/webaudio/AudioNode.idl \
-    $(WebCore)/webaudio/AudioPannerNode.idl \
-    $(WebCore)/webaudio/AudioParam.idl \
-    $(WebCore)/webaudio/AudioProcessingEvent.idl \
-    $(WebCore)/webaudio/AudioSourceNode.idl \
-    $(WebCore)/webaudio/BiquadFilterNode.idl \
-    $(WebCore)/webaudio/ConvolverNode.idl \
-    $(WebCore)/webaudio/DOMWindowWebAudio.idl \
-    $(WebCore)/webaudio/DelayNode.idl \
-    $(WebCore)/webaudio/DynamicsCompressorNode.idl \
-    $(WebCore)/webaudio/HighPass2FilterNode.idl \
-    $(WebCore)/webaudio/JavaScriptAudioNode.idl \
-    $(WebCore)/webaudio/LowPass2FilterNode.idl \
-    $(WebCore)/webaudio/MediaElementAudioSourceNode.idl \
-    $(WebCore)/webaudio/OfflineAudioCompletionEvent.idl \
-    $(WebCore)/webaudio/RealtimeAnalyserNode.idl \
-    $(WebCore)/webaudio/WaveShaperNode.idl \
     $(WebCore)/workers/AbstractWorker.idl \
     $(WebCore)/workers/DedicatedWorkerContext.idl \
     $(WebCore)/workers/SharedWorker.idl \

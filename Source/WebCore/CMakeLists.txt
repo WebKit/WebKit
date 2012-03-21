@@ -3,6 +3,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/filesystem"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
+    "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/Modules/websockets"
     "${WEBCORE_DIR}/accessibility"
@@ -64,7 +65,6 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/svg/graphics"
     "${WEBCORE_DIR}/svg/graphics/filters"
     "${WEBCORE_DIR}/svg/properties"
-    "${WEBCORE_DIR}/webaudio"
     "${WEBCORE_DIR}/websockets"
     "${WEBCORE_DIR}/workers"
     "${WEBCORE_DIR}/xml"
@@ -96,6 +96,7 @@ SET(WebCore_IDL_INCLUDES
     Modules/filesystem
     Modules/geolocation
     Modules/indexeddb
+    Modules/webaudio
     Modules/webdatabase
     Modules/websockets
     bindings/generic
@@ -110,7 +111,6 @@ SET(WebCore_IDL_INCLUDES
     plugins
     storage
     svg
-    webaudio
     workers
     xml
 )
@@ -376,27 +376,27 @@ SET(WebCore_IDL_FILES
     storage/StorageInfoQuotaCallback.idl
     storage/StorageInfoUsageCallback.idl
 
-    webaudio/AudioBuffer.idl
-    webaudio/AudioBufferSourceNode.idl
-    webaudio/AudioChannelSplitter.idl
-    webaudio/AudioChannelMerger.idl
-    webaudio/AudioContext.idl
-    webaudio/AudioDestinationNode.idl
-    webaudio/AudioGain.idl
-    webaudio/AudioGainNode.idl
-    webaudio/AudioListener.idl
-    webaudio/AudioNode.idl
-    webaudio/AudioPannerNode.idl
-    webaudio/AudioParam.idl
-    webaudio/AudioProcessingEvent.idl
-    webaudio/AudioSourceNode.idl
-    webaudio/ConvolverNode.idl
-    webaudio/DOMWindowWebAudio.idl
-    webaudio/DelayNode.idl
-    webaudio/HighPass2FilterNode.idl
-    webaudio/JavaScriptAudioNode.idl
-    webaudio/LowPass2FilterNode.idl
-    webaudio/RealtimeAnalyserNode.idl
+    Modules/webaudio/AudioBuffer.idl
+    Modules/webaudio/AudioBufferSourceNode.idl
+    Modules/webaudio/AudioChannelSplitter.idl
+    Modules/webaudio/AudioChannelMerger.idl
+    Modules/webaudio/AudioContext.idl
+    Modules/webaudio/AudioDestinationNode.idl
+    Modules/webaudio/AudioGain.idl
+    Modules/webaudio/AudioGainNode.idl
+    Modules/webaudio/AudioListener.idl
+    Modules/webaudio/AudioNode.idl
+    Modules/webaudio/AudioPannerNode.idl
+    Modules/webaudio/AudioParam.idl
+    Modules/webaudio/AudioProcessingEvent.idl
+    Modules/webaudio/AudioSourceNode.idl
+    Modules/webaudio/ConvolverNode.idl
+    Modules/webaudio/DOMWindowWebAudio.idl
+    Modules/webaudio/DelayNode.idl
+    Modules/webaudio/HighPass2FilterNode.idl
+    Modules/webaudio/JavaScriptAudioNode.idl
+    Modules/webaudio/LowPass2FilterNode.idl
+    Modules/webaudio/RealtimeAnalyserNode.idl
 
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl

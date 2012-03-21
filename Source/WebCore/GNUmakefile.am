@@ -15,6 +15,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/Modules/geolocation \
 	-I$(srcdir)/Source/WebCore/Modules/indexeddb \
 	-I$(srcdir)/Source/WebCore/Modules/mediastream \
+	-I$(srcdir)/Source/WebCore/Modules/webaudio \
 	-I$(srcdir)/Source/WebCore/Modules/webdatabase \
 	-I$(srcdir)/Source/WebCore/Modules/websockets \
 	-I$(srcdir)/Source/WebCore/accessibility \
@@ -87,7 +88,6 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/svg/properties \
 	-I$(srcdir)/Source/WebCore/testing \
 	-I$(srcdir)/Source/WebCore/testing/js \
-	-I$(srcdir)/Source/WebCore/webaudio \
 	-I$(srcdir)/Source/WebCore/websockets \
 	-I$(srcdir)/Source/WebCore/workers \
 	-I$(srcdir)/Source/WebCore/xml \
@@ -783,6 +783,7 @@ IDL_PATH := \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
     $(WebCore)/Modules/mediastream \
+    $(WebCore)/Modules/webaudio \
     $(WebCore)/Modules/webdatabase \
     $(WebCore)/Modules/websockets \
     $(WebCore)/bindings/js \
@@ -802,7 +803,6 @@ IDL_PATH := \
     $(WebCore)/storage \
     $(WebCore)/svg \
     $(WebCore)/testing \
-    $(WebCore)/webaudio \
     $(WebCore)/websockets \
     $(WebCore)/workers \
     $(WebCore)/xml
@@ -945,6 +945,7 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/geolocation/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/indexeddb/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \
+	$(shell ls $(srcdir)/Source/WebCore/Modules/webaudio/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/webdatabase/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/Modules/websockets/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/css/*.idl) \
@@ -962,7 +963,6 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/storage/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/svg/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/testing/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/webaudio/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/workers/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/xml/*.idl) \
 	Source/ThirdParty/ANGLE/src/compiler/glslang.l \

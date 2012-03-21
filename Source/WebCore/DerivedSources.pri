@@ -129,6 +129,27 @@ IDL_BINDINGS += \
     $$PWD/Modules/indexeddb/IDBRequest.idl \
     $$PWD/Modules/indexeddb/IDBTransaction.idl \
     $$PWD/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
+    $$PWD/Modules/webaudio/AudioBuffer.idl \
+    $$PWD/Modules/webaudio/AudioBufferSourceNode.idl \
+    $$PWD/Modules/webaudio/AudioChannelMerger.idl \
+    $$PWD/Modules/webaudio/AudioChannelSplitter.idl \
+    $$PWD/Modules/webaudio/AudioContext.idl \
+    $$PWD/Modules/webaudio/AudioDestinationNode.idl \
+    $$PWD/Modules/webaudio/AudioGain.idl \
+    $$PWD/Modules/webaudio/AudioGainNode.idl \
+    $$PWD/Modules/webaudio/AudioListener.idl \
+    $$PWD/Modules/webaudio/AudioNode.idl \
+    $$PWD/Modules/webaudio/AudioPannerNode.idl \
+    $$PWD/Modules/webaudio/AudioParam.idl \
+    $$PWD/Modules/webaudio/AudioProcessingEvent.idl \
+    $$PWD/Modules/webaudio/AudioSourceNode.idl \
+    $$PWD/Modules/webaudio/ConvolverNode.idl \
+    $$PWD/Modules/webaudio/DelayNode.idl \
+    $$PWD/Modules/webaudio/DOMWindowWebAudio.idl \
+    $$PWD/Modules/webaudio/HighPass2FilterNode.idl \
+    $$PWD/Modules/webaudio/JavaScriptAudioNode.idl \
+    $$PWD/Modules/webaudio/LowPass2FilterNode.idl \
+    $$PWD/Modules/webaudio/RealtimeAnalyserNode.idl \
     $$PWD/Modules/webdatabase/DOMWindowSQLDatabase.idl \
     $$PWD/Modules/webdatabase/Database.idl \
     $$PWD/Modules/webdatabase/DatabaseCallback.idl \
@@ -411,27 +432,6 @@ IDL_BINDINGS += \
     $$PWD/storage/StorageInfoUsageCallback.idl \
     $$PWD/testing/Internals.idl \
     $$PWD/testing/InternalSettings.idl \
-    $$PWD/webaudio/AudioBuffer.idl \
-    $$PWD/webaudio/AudioBufferSourceNode.idl \
-    $$PWD/webaudio/AudioChannelMerger.idl \
-    $$PWD/webaudio/AudioChannelSplitter.idl \
-    $$PWD/webaudio/AudioContext.idl \
-    $$PWD/webaudio/AudioDestinationNode.idl \
-    $$PWD/webaudio/AudioGain.idl \
-    $$PWD/webaudio/AudioGainNode.idl \
-    $$PWD/webaudio/AudioListener.idl \
-    $$PWD/webaudio/AudioNode.idl \
-    $$PWD/webaudio/AudioPannerNode.idl \
-    $$PWD/webaudio/AudioParam.idl \
-    $$PWD/webaudio/AudioProcessingEvent.idl \
-    $$PWD/webaudio/AudioSourceNode.idl \
-    $$PWD/webaudio/ConvolverNode.idl \
-    $$PWD/webaudio/DelayNode.idl \
-    $$PWD/webaudio/DOMWindowWebAudio.idl \
-    $$PWD/webaudio/HighPass2FilterNode.idl \
-    $$PWD/webaudio/JavaScriptAudioNode.idl \
-    $$PWD/webaudio/LowPass2FilterNode.idl \
-    $$PWD/webaudio/RealtimeAnalyserNode.idl \
     $$PWD/workers/AbstractWorker.idl \
     $$PWD/workers/DedicatedWorkerContext.idl \
     $$PWD/workers/SharedWorker.idl \
@@ -699,6 +699,7 @@ generateBindings.commands = perl -I$$PWD/bindings/scripts $$generateBindings.scr
                             --include $$PWD/Modules/filesystem \
                             --include $$PWD/Modules/geolocation \
                             --include $$PWD/Modules/indexeddb \
+                            --include $$PWD/Modules/webaudio \
                             --include $$PWD/Modules/webdatabase \
                             --include $$PWD/Modules/websockets \
                             --include $$PWD/dom \
@@ -709,7 +710,6 @@ generateBindings.commands = perl -I$$PWD/bindings/scripts $$generateBindings.scr
                             --include $$PWD/storage \
                             --include $$PWD/css \
                             --include $$PWD/testing \
-                            --include $$PWD/webaudio \
                             --include $$PWD/workers \
                             --outputDir ${QMAKE_FUNC_FILE_OUT_PATH} \
                             --supplementalDependencyFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
