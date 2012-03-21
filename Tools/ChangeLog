@@ -1,3 +1,18 @@
+2012-03-21  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][Mac] ranlib segfaults when creating symbol tables for libWebCore.a.
+        https://bugs.webkit.org/show_bug.cgi?id=81750
+
+        Building WebCore on mac currently creates an archive that is bigger than
+        4GB. But ranlib fails to create a symbol table for such a big archive,
+        even on 64bit machines.
+        Therefore we start using SVGAllInOne.cpp when building debug
+        on mac. This reduces the size of the archive by about 300MB.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/mac/default_pre.prf:
+
 2012-03-21  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         Updated the address list of committers.py.
