@@ -3863,6 +3863,7 @@
             'platform/graphics/qt/TileQt.cpp',
             'platform/graphics/qt/TransformationMatrixQt.cpp',
             'platform/graphics/qt/TransparencyLayer.h',
+            'platform/graphics/skia/BitmapImageSingleFrameSkia.cpp',
             'platform/graphics/skia/BitmapImageSingleFrameSkia.h',
             'platform/graphics/skia/FloatPointSkia.cpp',
             'platform/graphics/skia/FloatRectSkia.cpp',

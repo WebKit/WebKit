@@ -73,6 +73,17 @@ BitmapImage::~BitmapImage()
     stopAnimation();
 }
 
+bool BitmapImage::isBitmapImage() const
+{
+    return true;
+}
+
+bool BitmapImage::hasSingleSecurityOrigin() const
+{
+    return true;
+}
+
+
 void BitmapImage::destroyDecodedData(bool destroyAll)
 {
     int framesCleared = 0;
@@ -290,6 +301,11 @@ float BitmapImage::frameDurationAtIndex(size_t index)
     return m_frames[index].m_duration;
 }
 
+NativeImagePtr BitmapImage::nativeImageForCurrentFrame()
+{
+    return frameAtIndex(currentFrame());
+}
+
 bool BitmapImage::frameHasAlphaAtIndex(size_t index)
 {
     if (index >= frameCount())
@@ -300,6 +316,20 @@ bool BitmapImage::frameHasAlphaAtIndex(size_t index)
 
     return m_frames[index].m_hasAlpha;
 }
+
+bool BitmapImage::currentFrameHasAlpha()
+{
+    return frameHasAlphaAtIndex(currentFrame());
+}
+
+#if !ASSERT_DISABLED
+bool BitmapImage::notSolidColor()
+{
+    return size().width() != 1 || size().height() != 1 || frameCount() > 1;
+}
+#endif
+
+
 
 int BitmapImage::repetitionCount(bool imageKnownToBeComplete)
 {
@@ -436,6 +466,13 @@ void BitmapImage::resetAnimation()
     destroyDecodedDataIfNecessary(true);
 }
 
+unsigned BitmapImage::decodedSize() const
+{
+    return m_decodedSize;
+}
+
+
+
 void BitmapImage::advanceAnimation(Timer<BitmapImage>*)
 {
     internalAdvanceAnimation(false);
@@ -482,6 +519,24 @@ bool BitmapImage::internalAdvanceAnimation(bool skippingFrames)
     if (skippingFrames != advancedAnimation)
         imageObserver()->animationAdvanced(this);
     return advancedAnimation;
+}
+
+bool BitmapImage::mayFillWithSolidColor()
+{
+    if (!m_checkedForSolidColor && frameCount() > 0) {
+        checkForSolidColor();
+        // WINCE PORT: checkForSolidColor() doesn't set m_checkedForSolidColor until
+        // it gets enough information to make final decision.
+#if !OS(WINCE)
+        ASSERT(m_checkedForSolidColor);
+#endif
+    }
+    return m_isSolidColor && !m_currentFrame;
+}
+
+Color BitmapImage::solidColor() const
+{
+    return m_solidColor;
 }
 
 }

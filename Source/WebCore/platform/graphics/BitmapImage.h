@@ -108,9 +108,9 @@ public:
     }
     ~BitmapImage();
     
-    virtual bool isBitmapImage() const { return true; }
+    virtual bool isBitmapImage() const;
 
-    virtual bool hasSingleSecurityOrigin() const { return true; }
+    virtual bool hasSingleSecurityOrigin() const;
 
     virtual IntSize size() const;
     IntSize currentFrameSize() const;
@@ -125,7 +125,7 @@ public:
     virtual void stopAnimation();
     virtual void resetAnimation();
     
-    virtual unsigned decodedSize() const { return m_decodedSize; }
+    virtual unsigned decodedSize() const;
 
 #if PLATFORM(MAC)
     // Accessors for native image formats.
@@ -151,15 +151,12 @@ public:
     virtual GdkPixbuf* getGdkPixbuf();
 #endif
 
-    virtual NativeImagePtr nativeImageForCurrentFrame() { return frameAtIndex(currentFrame()); }
+    virtual NativeImagePtr nativeImageForCurrentFrame();
     bool frameHasAlphaAtIndex(size_t);
-    virtual bool currentFrameHasAlpha() { return frameHasAlphaAtIndex(currentFrame()); }
+    virtual bool currentFrameHasAlpha();
 
 #if !ASSERT_DISABLED
-    virtual bool notSolidColor()
-    {
-        return size().width() != 1 || size().height() != 1 || frameCount() > 1;
-    }
+    virtual bool notSolidColor();
 #endif
 
 protected:
@@ -239,19 +236,8 @@ protected:
     // changed.
     void checkForSolidColor();
     
-    virtual bool mayFillWithSolidColor()
-    {
-        if (!m_checkedForSolidColor && frameCount() > 0) {
-            checkForSolidColor();
-            // WINCE PORT: checkForSolidColor() doesn't set m_checkedForSolidColor until
-            // it gets enough information to make final decision.
-#if !OS(WINCE)
-            ASSERT(m_checkedForSolidColor);
-#endif
-        }
-        return m_isSolidColor && m_currentFrame == 0;
-    }
-    virtual Color solidColor() const { return m_solidColor; }
+    virtual bool mayFillWithSolidColor();
+    virtual Color solidColor() const;
     
     ImageSource m_source;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).
