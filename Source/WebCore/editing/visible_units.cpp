@@ -280,7 +280,7 @@ static const InlineTextBox* logicallyNextBox(const VisiblePosition& visiblePosit
 }
 
 static TextBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox,
-     int& previousBoxLength, bool& previousBoxInDifferentBlock)
+     int& previousBoxLength, bool& previousBoxInDifferentBlock, Vector<UChar, 1024>& string)
 {
     previousBoxInDifferentBlock = false;
 
@@ -288,7 +288,7 @@ static TextBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePos
     const InlineTextBox* previousBox = logicallyPreviousBox(visiblePosition, textBox, previousBoxInDifferentBlock);
 
     int len = 0;
-    Vector<UChar, 1024> string;
+    string.clear();
     if (previousBox) {
         previousBoxLength = previousBox->len();
         string.append(previousBox->textRenderer()->text()->characters() + previousBox->start(), previousBoxLength); 
@@ -300,7 +300,8 @@ static TextBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePos
     return wordBreakIterator(string.data(), len);
 } 
 
-static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox, bool& nextBoxInDifferentBlock)
+static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, const InlineTextBox* textBox,
+    bool& nextBoxInDifferentBlock, Vector<UChar, 1024>& string)
 {
     nextBoxInDifferentBlock = false;
 
@@ -308,7 +309,7 @@ static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePos
     const InlineTextBox* nextBox = logicallyNextBox(visiblePosition, textBox, nextBoxInDifferentBlock);
 
     int len = 0;
-    Vector<UChar, 1024> string;
+    string.clear();
     string.append(textBox->textRenderer()->text()->characters() + textBox->start(), textBox->len());
     len += textBox->len();
     if (nextBox) {
@@ -370,14 +371,18 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
         bool nextBoxInDifferentBlock = false;
         bool movingIntoNewBox = previouslyVisitedBox != box;
 
+        Vector<UChar, 1024> string;
         if (offsetInBox == box->caretMinOffset())
-            iter = wordBreakIteratorForMinOffsetBoundary(visiblePosition, textBox, previousBoxLength, previousBoxInDifferentBlock);
+            iter = wordBreakIteratorForMinOffsetBoundary(visiblePosition, textBox, previousBoxLength, previousBoxInDifferentBlock, string);
         else if (offsetInBox == box->caretMaxOffset())
-            iter = wordBreakIteratorForMaxOffsetBoundary(visiblePosition, textBox, nextBoxInDifferentBlock);
+            iter = wordBreakIteratorForMaxOffsetBoundary(visiblePosition, textBox, nextBoxInDifferentBlock, string);
         else if (movingIntoNewBox) {
             iter = wordBreakIterator(textBox->textRenderer()->text()->characters() + textBox->start(), textBox->len());
             previouslyVisitedBox = box;
         }
+
+        if (!iter)
+            break;
 
         textBreakFirst(iter);
         int offsetInIterator = offsetInBox - textBox->start() + previousBoxLength;
