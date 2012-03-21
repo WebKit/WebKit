@@ -19,6 +19,9 @@ for %%d in (
     xcopy /y /d ..\..\JavaScriptCore\%%d\*.h "%PrivateHeadersDirectory%\%%d" >NUL
 )
 
+echo Copying wtf/Platform.h ...
+xcopy /y /d ..\wtf\Platform.h "%PrivateHeadersDirectory%\wtf" >NUL
+
 echo Copying other files...
 for %%f in (
     create_hash_table

@@ -1,5 +1,15 @@
 2012-03-21  Jessie Berlin  <jberlin@apple.com>
 
+        Fix the Windows build after r111504.
+
+        * WTF.vcproj/WTF.vcproj:
+        Platform.h was moved to Source/WTF.
+        * WTF.vcproj/copy-files.cmd:
+        Copy Platform.h from its new source location. This separate copy will not be necessary once
+        the full move is done and all the headers are being copied at once from the new locations.
+
+2012-03-21  Jessie Berlin  <jberlin@apple.com>
+
         WTF headers should be in $(ConfigurationBuildDir)\include\private\wtf, not
         $(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf.
         https://bugs.webkit.org/show_bug.cgi?id=81739
