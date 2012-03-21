@@ -28,6 +28,7 @@
 
 #include "IntPointHash.h"
 #include "IntRect.h"
+#include "TiledBacking.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -44,7 +45,7 @@ class FloatRect;
 class IntPoint;
 class IntRect;
 
-class TileCache {
+class TileCache : public TiledBacking {
     WTF_MAKE_NONCOPYABLE(TileCache);
 
 public:
@@ -63,18 +64,19 @@ public:
     void setAcceleratesDrawing(bool);
 
     CALayer *tileContainerLayer() const { return m_tileContainerLayer.get(); }
-    void visibleRectChanged(const IntRect&);
 
     void setTileDebugBorderWidth(float);
     void setTileDebugBorderColor(CGColorRef);
 
 private:
-    typedef IntPoint TileIndex;
-
     TileCache(WebTileCacheLayer*, const IntSize& tileSize);
+
+    // TiledBacking member functions.
+    virtual void visibleRectChanged(const IntRect&) OVERRIDE;
 
     IntRect bounds() const;
 
+    typedef IntPoint TileIndex;
     IntRect rectForTileIndex(const TileIndex&) const;
     void getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight);
 

@@ -873,9 +873,9 @@ void GraphicsLayerCA::syncCompositingStateForThisLayerOnly()
     commitLayerChangesAfterSublayers();
 }
 
-void GraphicsLayerCA::visibleRectChanged(const IntRect& visibleRect)
+TiledBacking* GraphicsLayerCA::tiledBacking()
 {
-    m_layer->visibleRectChanged(visibleRect);
+    return m_layer->tiledBacking();
 }
 
 void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)

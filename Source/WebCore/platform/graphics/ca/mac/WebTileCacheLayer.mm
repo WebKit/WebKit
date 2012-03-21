@@ -111,9 +111,9 @@ using namespace WebCore;
     return _tileCache->tileContainerLayer();
 }
 
-- (void)visibleRectChanged:(const IntRect&)visibleRect
+- (WebCore::TiledBacking*)tiledBacking
 {
-    _tileCache->visibleRectChanged(visibleRect);
+    return _tileCache.get();
 }
 
 - (void)setBorderColor:(CGColorRef)borderColor

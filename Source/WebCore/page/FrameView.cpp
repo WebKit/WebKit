@@ -690,6 +690,19 @@ GraphicsLayer* FrameView::layerForScrollCorner() const
     return root->compositor()->layerForScrollCorner();
 }
 
+TiledBacking* FrameView::tiledBacking()
+{
+    RenderView* root = rootRenderer(this);
+    if (!root)
+        return 0;
+
+    RenderLayerBacking* backing = root->layer()->backing();
+    if (!backing)
+        return 0;
+
+    return backing->graphicsLayer()->tiledBacking();
+}
+
 #if ENABLE(RUBBER_BANDING)
 GraphicsLayer* FrameView::layerForOverhangAreas() const
 {

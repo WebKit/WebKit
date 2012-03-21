@@ -598,6 +598,7 @@
 		1AF62F2414DAFE910041556C /* ScrollingThreadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */; };
 		1AF62F2514DAFE9E0041556C /* ScrollingThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62F2014DAFE790041556C /* ScrollingThread.cpp */; };
 		1AF62F2614DAFEA10041556C /* ScrollingThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF62F2114DAFE790041556C /* ScrollingThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1AF89A421518FDEA00E547B5 /* TiledBacking.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF89A411518FDEA00E547B5 /* TiledBacking.h */; };
 		1AF8E11A1256592600230FF7 /* ProxyServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF8E1191256592600230FF7 /* ProxyServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF8E13312565A4400230FF7 /* ProxyServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF8E13212565A4400230FF7 /* ProxyServer.cpp */; };
 		1AF8E1C3125673E000230FF7 /* ProxyServerCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF8E1C1125673E000230FF7 /* ProxyServerCFNet.cpp */; };
@@ -7448,6 +7449,7 @@
 		1AF62F2014DAFE790041556C /* ScrollingThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingThread.cpp; sourceTree = "<group>"; };
 		1AF62F2114DAFE790041556C /* ScrollingThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingThread.h; sourceTree = "<group>"; };
 		1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingThreadMac.mm; sourceTree = "<group>"; };
+		1AF89A411518FDEA00E547B5 /* TiledBacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TiledBacking.h; sourceTree = "<group>"; };
 		1AF8E1191256592600230FF7 /* ProxyServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyServer.h; sourceTree = "<group>"; };
 		1AF8E13212565A4400230FF7 /* ProxyServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyServer.cpp; sourceTree = "<group>"; };
 		1AF8E1C1125673E000230FF7 /* ProxyServerCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyServerCFNet.cpp; sourceTree = "<group>"; };
@@ -19267,6 +19269,7 @@
 				376DCCE013B4F966002EBEFC /* TextRun.cpp */,
 				A824B4640E2EF2EA0081A7B7 /* TextRun.h */,
 				37C28A6710F659CC008C7813 /* TypesettingFeatures.h */,
+				1AF89A411518FDEA00E547B5 /* TiledBacking.h */,
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
 				939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */,
 				939B02ED0EA2DBC400C54570 /* WidthIterator.h */,
@@ -24607,6 +24610,7 @@
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				BCE32B9C1517C0B200F542EC /* RenderMultiColumnSet.h in Headers */,
 				BCE93F451517C567008CCF74 /* RenderRegionSet.h in Headers */,
+				1AF89A421518FDEA00E547B5 /* TiledBacking.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

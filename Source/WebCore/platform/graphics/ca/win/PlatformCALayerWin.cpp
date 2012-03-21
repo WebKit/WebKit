@@ -633,8 +633,9 @@ void PlatformCALayer::setContentsScale(float)
 {
 }
 
-void PlatformCALayer::visibleRectChanged(const IntRect&)
+TiledBacking* PlatformCALayer::tiledBacking()
 {
+    return 0;
 }
 
 #ifndef NDEBUG

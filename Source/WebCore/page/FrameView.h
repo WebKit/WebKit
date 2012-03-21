@@ -125,6 +125,8 @@ public:
     // Called when changes to the GraphicsLayer hierarchy have to be synchronized with
     // content rendered via the normal painting path.
     void setNeedsOneShotDrawingSynchronization();
+
+    virtual TiledBacking* tiledBacking() OVERRIDE;
 #endif
 
     bool hasCompositedContent() const;

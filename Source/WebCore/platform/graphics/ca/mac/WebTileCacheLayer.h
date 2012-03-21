@@ -29,6 +29,7 @@
 namespace WebCore {
     class IntRect;
     class TileCache;
+    class TiledBacking;
 }
 
 @interface WebTileCacheLayer : CALayer {
@@ -36,6 +37,6 @@ namespace WebCore {
 }
 
 - (CALayer *)tileContainerLayer;
-- (void)visibleRectChanged:(const WebCore::IntRect&)visibleRect;
+- (WebCore::TiledBacking*)tiledBacking;
 
 @end

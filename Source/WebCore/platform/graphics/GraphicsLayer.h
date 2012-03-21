@@ -95,6 +95,7 @@ class FloatPoint3D;
 class GraphicsContext;
 class Image;
 class TextStream;
+class TiledBacking;
 class TimingFunction;
 
 // Base class for animation values (also used for transitions). Here to
@@ -427,8 +428,7 @@ public:
 
     bool usingTiledLayer() const { return m_usingTiledLayer; }
 
-    // Called whenever the visible rect of the given GraphicsLayer changed.
-    virtual void visibleRectChanged(const IntRect&) { }
+    virtual TiledBacking* tiledBacking() { return 0; }
 
 #if PLATFORM(QT) || PLATFORM(GTK)
     // This allows several alternative GraphicsLayer implementations in the same port,

@@ -38,6 +38,7 @@ class PlatformWheelEvent;
 class ScrollAnimator;
 #if USE(ACCELERATED_COMPOSITING)
 class GraphicsLayer;
+class TiledBacking;
 #endif
 
 class ScrollableArea {
@@ -160,6 +161,10 @@ public:
     // animations.
     virtual bool scheduleAnimation() { return false; }
     void serviceScrollAnimations();
+
+#if USE(ACCELERATED_COMPOSITING)
+    virtual TiledBacking* tiledBacking() { return 0; }
+#endif
 
 protected:
     ScrollableArea();

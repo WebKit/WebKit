@@ -53,6 +53,7 @@
 #include "ScrollbarTheme.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
+#include "TiledBacking.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLMediaElement.h"
@@ -1029,8 +1030,8 @@ void RenderLayerCompositor::frameViewDidScroll()
     FrameView* frameView = m_renderView->frameView();
     IntPoint scrollPosition = frameView->scrollPosition();
 
-    if (RenderLayerBacking* backing = rootRenderLayer()->backing())
-        backing->graphicsLayer()->visibleRectChanged(frameView->visibleContentRect(false /* exclude scrollbars */));
+    if (TiledBacking* tiledBacking = frameView->tiledBacking())
+        tiledBacking->visibleRectChanged(frameView->visibleContentRect(false /* exclude scrollbars */));
 
     if (!m_scrollLayer)
         return;
