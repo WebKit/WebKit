@@ -555,7 +555,9 @@ void CCThreadProxy::scheduledActionDrawAndSwap()
 
     m_inputHandlerOnImplThread->animate(monotonicTime);
     m_layerTreeHostImpl->animate(monotonicTime, wallClockTime);
-    m_layerTreeHostImpl->drawLayers();
+    CCLayerTreeHostImpl::FrameData frame;
+    m_layerTreeHostImpl->prepareToDraw(frame);
+    m_layerTreeHostImpl->drawLayers(frame);
 
     // Check for a pending compositeAndReadback.
     if (m_readbackRequestOnImplThread) {

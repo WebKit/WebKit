@@ -123,7 +123,7 @@ TransformationMatrix CCTiledLayerImpl::quadTransform() const
     return transform;
 }
 
-void CCTiledLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
+void CCTiledLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool& usedCheckerboard)
 {
     const IntRect& layerRect = visibleLayerRect();
 
@@ -149,7 +149,7 @@ void CCTiledLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadSta
                 continue;
 
             if (!tile || !tile->textureId()) {
-                quadList.append(CCSolidColorDrawQuad::create(sharedQuadState, tileRect, backgroundColor()));
+                usedCheckerboard |= quadList.append(CCSolidColorDrawQuad::create(sharedQuadState, tileRect, backgroundColor()));
                 continue;
             }
 

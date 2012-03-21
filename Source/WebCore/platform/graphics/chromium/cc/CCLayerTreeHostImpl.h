@@ -60,6 +60,8 @@ public:
 // CCLayerTreeHostImpl owns the CCLayerImpl tree as well as associated rendering state
 class CCLayerTreeHostImpl : public CCInputHandlerClient, LayerRendererChromiumClient {
     WTF_MAKE_NONCOPYABLE(CCLayerTreeHostImpl);
+    typedef Vector<CCLayerImpl*> CCLayerList;
+
 public:
     static PassOwnPtr<CCLayerTreeHostImpl> create(const CCSettings&, CCLayerTreeHostImplClient*);
     virtual ~CCLayerTreeHostImpl();
@@ -77,11 +79,17 @@ public:
     virtual void setActiveGestureAnimation(PassOwnPtr<CCActiveGestureAnimation>);
     virtual void scheduleAnimation();
 
+    struct FrameData {
+        CCRenderPassList renderPasses;
+        CCLayerList renderSurfaceLayerList;
+    };
+
     // Virtual for testing.
     virtual void beginCommit();
     virtual void commitComplete();
     virtual void animate(double monotonicTime, double wallClockTime);
-    virtual void drawLayers();
+    virtual bool prepareToDraw(FrameData&);
+    virtual void drawLayers(const FrameData&);
 
     // LayerRendererChromiumClient implementation
     virtual const IntSize& viewportSize() const { return m_viewportSize; }
@@ -151,8 +159,6 @@ protected:
     int m_frameNumber;
 
 private:
-    typedef Vector<CCLayerImpl*> CCLayerList;
-
     void computeDoubleTapZoomDeltas(CCScrollAndScaleSet* scrollInfo);
     void computePinchZoomDeltas(CCScrollAndScaleSet* scrollInfo);
     void makeScrollAndScaleSet(CCScrollAndScaleSet* scrollInfo, const IntSize& scrollOffset, float pageScale);
@@ -162,7 +168,8 @@ private:
     void adjustScrollsForPageScaleChange(float);
     void updateMaxScrollPosition();
     void trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
-    void calculateRenderPasses(CCRenderPassList&, CCLayerList& renderSurfaceLayerList);
+    // Returns false if the frame should not be displayed.
+    bool calculateRenderPasses(CCRenderPassList&, CCLayerList& renderSurfaceLayerList);
     void animateLayersRecursive(CCLayerImpl*, double monotonicTime, double wallClockTime, CCAnimationEventsVector*, bool& didAnimate, bool& needsAnimateLayers);
     IntSize contentSize() const;
     void sendDidLoseContextRecursive(CCLayerImpl*);

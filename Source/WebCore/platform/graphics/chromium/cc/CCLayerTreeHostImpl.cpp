@@ -220,9 +220,10 @@ static FloatRect damageInSurfaceSpace(CCLayerImpl* renderSurfaceLayer, const Flo
     return surfaceDamageRect;
 }
 
-void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLayerList& renderSurfaceLayerList)
+bool CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLayerList& renderSurfaceLayerList)
 {
-    TRACE_EVENT1("webkit", "CCLayerTreeHostImpl::calculateRenderPasses", "renderSurfaceLayerList.size()", static_cast<long long unsigned>(renderSurfaceLayerList.size()));
+    ASSERT(passes.isEmpty());
+    ASSERT(renderSurfaceLayerList.isEmpty());
 
     renderSurfaceLayerList.append(rootLayer());
 
@@ -238,6 +239,8 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         TRACE_EVENT("CCLayerTreeHostImpl::calcDrawEtc", this, 0);
         CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer(), rootLayer(), identityMatrix, identityMatrix, renderSurfaceLayerList, rootLayer()->renderSurface()->layerList(), &m_layerSorter, layerRendererCapabilities().maxTextureSize);
     }
+
+    TRACE_EVENT1("webkit", "CCLayerTreeHostImpl::calculateRenderPasses", "renderSurfaceLayerList.size()", static_cast<long long unsigned>(renderSurfaceLayerList.size()));
 
     if (layerRendererCapabilities().usingPartialSwap)
         trackDamageForAllSurfaces(rootLayer(), renderSurfaceLayerList);
@@ -272,6 +275,9 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
     // Add quads to the Render passes in FrontToBack order to allow for testing occlusion and performing culling during the tree walk.
     typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
 
+    // If we are unable to draw an animation on some layer, then we abort the entire frame.
+    bool drawFrame = true;
+
     CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
     for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
         CCRenderSurface* renderSurface = it.targetRenderSurfaceLayer()->renderSurface();
@@ -295,11 +301,23 @@ void CCLayerTreeHostImpl::calculateRenderPasses(CCRenderPassList& passes, CCLaye
         }
 
         it->willDraw(m_layerRenderer.get());
-        pass->appendQuadsForLayer(*it, &occlusionTracker);
+
+        bool usedCheckerboard = false;
+        pass->appendQuadsForLayer(*it, &occlusionTracker, usedCheckerboard);
+        if (usedCheckerboard) {
+            bool layerHasAnimatingTransform = it->screenSpaceTransformIsAnimating() || it->drawTransformIsAnimating();
+            if (layerHasAnimatingTransform) {
+                drawFrame = false;
+                break;
+            }
+        }
+
         occlusionTracker.markOccludedBehindLayer(*it);
     }
 
-    occlusionTracker.overdrawMetrics().recordMetrics(this);
+    if (drawFrame)
+        occlusionTracker.overdrawMetrics().recordMetrics(this);
+    return drawFrame;
 }
 
 void CCLayerTreeHostImpl::animateLayersRecursive(CCLayerImpl* current, double monotonicTime, double wallClockTime, CCAnimationEventsVector* events, bool& didAnimate, bool& needsAnimateLayers)
@@ -339,26 +357,39 @@ IntSize CCLayerTreeHostImpl::contentSize() const
     return m_scrollLayerImpl->children()[0]->contentBounds();
 }
 
-void CCLayerTreeHostImpl::drawLayers()
+bool CCLayerTreeHostImpl::prepareToDraw(FrameData& frame)
+{
+    TRACE_EVENT("CCLayerTreeHostImpl::prepareToDraw", this, 0);
+
+    frame.renderPasses.clear();
+    frame.renderSurfaceLayerList.clear();
+
+    if (!rootLayer())
+        return false;
+
+    if (!calculateRenderPasses(frame.renderPasses, frame.renderSurfaceLayerList)) {
+        frame.renderPasses.clear();
+        frame.renderSurfaceLayerList.clear();
+        return false;
+    }
+
+    // If we return true, then we expect drawLayers() to be called before this function is called again.
+    return true;
+}
+
+void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
 {
     TRACE_EVENT("CCLayerTreeHostImpl::drawLayers", this, 0);
     ASSERT(m_layerRenderer);
 
-    if (!rootLayer())
-        return;
-
-    CCRenderPassList passes;
-    CCLayerList renderSurfaceLayerList;
-    calculateRenderPasses(passes, renderSurfaceLayerList);
-
     m_layerRenderer->beginDrawingFrame();
-    for (size_t i = 0; i < passes.size(); ++i)
-        m_layerRenderer->drawRenderPass(passes[i].get());
+    for (size_t i = 0; i < frame.renderPasses.size(); ++i)
+        m_layerRenderer->drawRenderPass(frame.renderPasses[i].get());
 
     typedef CCLayerIterator<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerIteratorActions::BackToFront> CCLayerIteratorType;
 
-    CCLayerIteratorType end = CCLayerIteratorType::end(&renderSurfaceLayerList);
-    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&renderSurfaceLayerList); it != end; ++it) {
+    CCLayerIteratorType end = CCLayerIteratorType::end(&frame.renderSurfaceLayerList);
+    for (CCLayerIteratorType it = CCLayerIteratorType::begin(&frame.renderSurfaceLayerList); it != end; ++it) {
         if (it.representsItself() && !it->visibleLayerRect().isEmpty())
             it->didDraw();
     }

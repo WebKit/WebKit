@@ -136,7 +136,7 @@ PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
     return CCSharedQuadState::create(quadTransform(), drawTransform(), visibleLayerRect(), layerClipRect, drawOpacity(), opaque());
 }
 
-void CCLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState)
+void CCLayerImpl::appendQuads(CCQuadCuller& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     appendGutterQuads(quadList, sharedQuadState);
 }

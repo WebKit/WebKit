@@ -50,7 +50,7 @@ public:
     virtual ~CCVideoLayerImpl();
 
     virtual void willDraw(LayerRendererChromium*);
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*);
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& usedCheckerboard);
     virtual void didDraw();
 
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> RGBAProgram;

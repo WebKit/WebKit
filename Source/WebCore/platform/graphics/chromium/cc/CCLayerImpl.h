@@ -84,7 +84,7 @@ public:
 
     PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
     virtual void willDraw(LayerRendererChromium*) { }
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*);
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& usedCheckerboard);
     virtual void didDraw() { }
     void appendDebugBorderQuad(CCQuadCuller&, const CCSharedQuadState*) const;
 

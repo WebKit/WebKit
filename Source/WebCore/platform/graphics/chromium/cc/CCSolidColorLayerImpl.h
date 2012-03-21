@@ -42,7 +42,7 @@ public:
     virtual ~CCSolidColorLayerImpl();
 
     virtual TransformationMatrix quadTransform() const;
-    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*);
+    virtual void appendQuads(CCQuadCuller&, const CCSharedQuadState*, bool& usedCheckerboard);
 
 protected:
     explicit CCSolidColorLayerImpl(int id);

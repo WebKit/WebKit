@@ -44,11 +44,14 @@ public:
         , m_activeQuadList(externalQuadList)
     { }
 
-    virtual void append(WTF::PassOwnPtr<WebCore::CCDrawQuad> newQuad)
+    virtual bool append(WTF::PassOwnPtr<WebCore::CCDrawQuad> newQuad)
     {
         OwnPtr<WebCore::CCDrawQuad> drawQuad = newQuad;
-        if (!drawQuad->quadRect().isEmpty())
+        if (!drawQuad->quadRect().isEmpty()) {
             m_activeQuadList.append(drawQuad.release());
+            return true;
+        }
+        return false;
     }
 
     const WebCore::CCQuadList& quadList() const { return m_activeQuadList; };
