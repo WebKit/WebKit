@@ -1,0 +1,47 @@
+<!doctype html>
+
+ <style>
+    #first-box {
+        height: 100%;
+        width: 50%;
+        background-color: green;
+        float: right;
+    }
+
+    
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+    }
+
+    #region1 {
+        width: 200px;
+        height: 150px;
+        
+    }
+    
+    #region2 {
+        width: 300px;
+        height: 180px;
+    }
+    
+    #region3 {
+        width: 120px;
+        height: 120px;
+    }
+</style>
+
+<body>
+<p>The green positioned object should only be as tall as the first region it
+is contained in. It should fill the right half of the first region, and no red
+should be visible.</p>
+
+
+
+
+    <div id="region1">
+        <div id="first-box">
+        </div>
+    </div>
+    <div id="region2"></div>
+    <div id="region3"></div>
+
