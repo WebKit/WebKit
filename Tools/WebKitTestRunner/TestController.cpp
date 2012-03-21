@@ -38,6 +38,10 @@
 #include <cstdio>
 #include <wtf/PassOwnPtr.h>
 
+#if PLATFORM(MAC)
+#include <WebKit2/WKPagePrivateMac.h>
+#endif
+
 #if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK)
 #include "EventSenderProxy.h"
 #endif
@@ -125,7 +129,7 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
 
 static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long, unsigned long long, const void*)
 {
-    static const unsigned long long defaultQuota = 5 * 1024 * 1024;    
+    static const unsigned long long defaultQuota = 5 * 1024 * 1024;
     return defaultQuota;
 }
 
@@ -173,7 +177,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // takeFocus
         focus,
         unfocus,
-        0, // runJavaScriptAlert        
+        0, // runJavaScriptAlert
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
         0, // setStatusText
@@ -337,7 +341,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // takeFocus
         0, // focus
         0, // unfocus
-        0, // runJavaScriptAlert        
+        0, // runJavaScriptAlert
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
         0, // setStatusText
@@ -404,7 +408,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didChangeBackForwardList
         0, // shouldGoToBackForwardListItem
         0, // didRunInsecureContentForFrame
-        0, // didDetectXSSForFrame 
+        0, // didDetectXSSForFrame
         0, // didNewFirstVisuallyNonEmptyLayout
         0, // willGoToBackForwardListItem
     };
@@ -414,7 +418,7 @@ void TestController::initialize(int argc, const char* argv[])
 bool TestController::resetStateToConsistentValues()
 {
     m_state = Resetting;
-    
+
     m_beforeUnloadReturnValue = true;
 
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("Reset"));
@@ -490,7 +494,12 @@ bool TestController::resetStateToConsistentValues()
 bool TestController::runTest(const char* test)
 {
     if (!resetStateToConsistentValues()) {
+#if PLATFORM(MAC)
+        pid_t pid = WKPageGetProcessIdentifier(m_mainWebView->page());
+        fprintf(stderr, "#CRASHED - WebProcess (pid %ld)\n", static_cast<long>(pid));
+#else
         fputs("#CRASHED - WebProcess\n", stderr);
+#endif
         fflush(stderr);
         return false;
     }
@@ -508,7 +517,7 @@ bool TestController::runTest(const char* test)
     m_currentInvocation = adoptPtr(new TestInvocation(pathOrURL));
     m_currentInvocation->setSkipPixelTestOption(m_skipPixelTestOption);
     if (m_dumpPixels)
-        m_currentInvocation->setIsPixelTest(expectedPixelHash);    
+        m_currentInvocation->setIsPixelTest(expectedPixelHash);
 
     m_currentInvocation->invoke();
     m_currentInvocation.clear();
@@ -800,7 +809,12 @@ void TestController::processDidCrash()
     // This function can be called multiple times when crash logs are being saved on Windows, so
     // ensure we only print the crashed message once.
     if (!m_didPrintWebProcessCrashedMessage) {
+#if PLATFORM(MAC)
+        pid_t pid = WKPageGetProcessIdentifier(m_mainWebView->page());
+        fprintf(stderr, "#CRASHED - WebProcess (pid %ld)\n", static_cast<long>(pid));
+#else
         fputs("#CRASHED - WebProcess\n", stderr);
+#endif
         fflush(stderr);
         m_didPrintWebProcessCrashedMessage = true;
     }

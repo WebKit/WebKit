@@ -1,3 +1,21 @@
+2012-03-21  Dirk Pranke  <dpranke@chromium.org>
+
+        WTR - log the pid of a crashing WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=81575
+
+        Reviewed by Alexey Proskuryakov.
+
+        This allows run-webkit-tests to find the right crash log for a
+        given crashed WebProcess in WebKit2.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::exceededDatabaseQuota):
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::runTest):
+        (WTR::TestController::processDidCrash):
+
 2012-03-21  Enrica Casucci  <enrica@apple.com>
 
         WebKitURLWithTitles pasteboard format should support URLs containing Emoji characters.
