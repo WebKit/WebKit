@@ -86,7 +86,14 @@ public:
         double secondMoment = m_sumOfSquares / m_count;
         double firstMoment = m_sum / m_count;
         
-        return secondMoment - firstMoment * firstMoment;
+        double result = secondMoment - firstMoment * firstMoment;
+        
+        // It's possible to get -epsilon. Protect against this and turn it into
+        // +0.
+        if (result <= 0)
+            return 0;
+        
+        return result;
     }
     
     // NB. This gives a biased standard deviation. See above.

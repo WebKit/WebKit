@@ -42,10 +42,6 @@ namespace JSC {
 
 PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGlobalData* globalData, TrampolineStructure *trampolines)
 {
-#if ENABLE(JIT_USE_SOFT_MODULO)
-    Label softModBegin = align();
-    softModulo();
-#endif
     // (1) This function provides fast property access for string length
     Label stringLengthBegin = align();
 
@@ -222,10 +218,6 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     trampolines->ctiNativeConstruct = patchBuffer.trampolineAt(nativeConstructThunk);
     trampolines->ctiStringLengthTrampoline = patchBuffer.trampolineAt(stringLengthBegin);
 
-#if ENABLE(JIT_USE_SOFT_MODULO)
-    trampolines->ctiSoftModulo = patchBuffer.trampolineAt(softModBegin);
-#endif
-    
     return executableMemory.release();
 }
 
@@ -1641,99 +1633,6 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     stubCall.addArgument(property);
     stubCall.call(dst);
 }
-
-#if ENABLE(JIT_USE_SOFT_MODULO)
-void JIT::softModulo()
-{
-    move(regT2, regT3);
-    move(regT0, regT2);
-    move(TrustedImm32(0), regT1);
-    JumpList exitBranch;
-
-    // Check for negative result reminder
-    Jump positiveRegT3 = branch32(GreaterThanOrEqual, regT3, TrustedImm32(0));
-    neg32(regT3);
-    xor32(TrustedImm32(1), regT1);
-    positiveRegT3.link(this);
-
-    Jump positiveRegT2 = branch32(GreaterThanOrEqual, regT2, TrustedImm32(0));
-    neg32(regT2);
-    xor32(TrustedImm32(2), regT1);
-    positiveRegT2.link(this);
-
-    // Save the condition for negative reminder
-    push(regT1);
-
-    exitBranch.append(branch32(LessThan, regT2, regT3));
-
-    // Power of two fast case
-    move(regT3, regT0);
-    sub32(TrustedImm32(1), regT0);
-    Jump notPowerOfTwo = branchTest32(NonZero, regT0, regT3);
-    and32(regT0, regT2);
-    exitBranch.append(jump());
-
-    notPowerOfTwo.link(this);
-
-#if CPU(X86) || CPU(X86_64)
-    move(regT2, regT0);
-    m_assembler.cdq();
-    m_assembler.idivl_r(regT3);
-    move(regT1, regT2);
-#elif CPU(MIPS)
-    m_assembler.div(regT2, regT3);
-    m_assembler.mfhi(regT2);
-#else
-    countLeadingZeros32(regT2, regT0);
-    countLeadingZeros32(regT3, regT1);
-    sub32(regT0, regT1);
-
-    Jump useFullTable = branch32(Equal, regT1, TrustedImm32(31));
-
-    neg32(regT1);
-    add32(TrustedImm32(31), regT1);
-
-    int elementSizeByShift = -1;
-#if CPU(ARM)
-    elementSizeByShift = 3;
-#else
-#error "JIT_USE_SOFT_MODULO not yet supported on this platform."
-#endif
-    relativeTableJump(regT1, elementSizeByShift);
-
-    useFullTable.link(this);
-    // Modulo table
-    for (int i = 31; i > 0; --i) {
-#if CPU(ARM_TRADITIONAL)
-        m_assembler.cmp_r(regT2, m_assembler.lsl(regT3, i));
-        m_assembler.sub_r(regT2, regT2, m_assembler.lsl(regT3, i), ARMAssembler::CS);
-#elif CPU(ARM_THUMB2)
-        ShiftTypeAndAmount shift(SRType_LSL, i);
-        m_assembler.sub_S(regT1, regT2, regT3, shift);
-        m_assembler.it(ARMv7Assembler::ConditionCS);
-        m_assembler.mov(regT2, regT1);
-#else
-#error "JIT_USE_SOFT_MODULO not yet supported on this platform."
-#endif
-    }
-
-    Jump lower = branch32(Below, regT2, regT3);
-    sub32(regT3, regT2);
-    lower.link(this);
-#endif
-
-    exitBranch.link(this);
-
-    // Check for negative reminder
-    pop(regT1);
-    Jump positiveResult = branch32(Equal, regT1, TrustedImm32(0));
-    neg32(regT2);
-    positiveResult.link(this);
-
-    move(regT2, regT0);
-    ret();
-}
-#endif // ENABLE(JIT_USE_SOFT_MODULO)
 
 } // namespace JSC
 

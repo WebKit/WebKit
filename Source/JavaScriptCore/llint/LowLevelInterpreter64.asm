@@ -117,7 +117,8 @@ macro checkSwitchToJITForLoop()
             btpz t0, .recover
             jmp t0
         .recover:
-            loadp ArgumentCount + TagOffset[cfr], PC
+            move t3, PB
+            loadi ArgumentCount + TagOffset[cfr], PC
         end)
 end
 

@@ -1,3 +1,42 @@
+2012-03-20  Filip Pizlo  <fpizlo@apple.com>
+
+        op_mod fails on many interesting corner cases
+        https://bugs.webkit.org/show_bug.cgi?id=81648
+
+        Reviewed by Oliver Hunt.
+        
+        Removed most strength reduction for op_mod, and fixed the integer handling
+        to do the right thing for corner cases. Oddly, this revealed bugs in OSR,
+        which this patch also fixes.
+        
+        This patch is performance neutral on all of the major benchmarks we track.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileSoftModulo):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITArithmetic.cpp:
+        (JSC):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC):
+        * jit/JITStubs.h:
+        (TrampolineStructure):
+        (JSC::JITThunks::ctiNativeConstruct):
+        * llint/LowLevelInterpreter64.asm:
+        * wtf/Platform.h:
+        * wtf/SimpleStats.h:
+        (WTF::SimpleStats::variance):
+
 2012-03-20  Steve Falkenburg  <sfalken@apple.com>
 
         Windows (make based) build fix.

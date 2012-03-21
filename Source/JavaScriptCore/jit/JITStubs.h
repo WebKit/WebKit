@@ -92,7 +92,6 @@ namespace JSC {
         MacroAssemblerCodePtr ctiVirtualConstruct;
         MacroAssemblerCodePtr ctiNativeCall;
         MacroAssemblerCodePtr ctiNativeConstruct;
-        MacroAssemblerCodePtr ctiSoftModulo;
     };
 
 #if CPU(X86_64)
@@ -323,7 +322,6 @@ namespace JSC {
 #endif
             return m_trampolineStructure.ctiNativeConstruct;
         }
-        MacroAssemblerCodePtr ctiSoftModulo() { return m_trampolineStructure.ctiSoftModulo; }
 
         MacroAssemblerCodeRef ctiStub(JSGlobalData*, ThunkGenerator);
 

@@ -1049,6 +1049,11 @@ JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* fu
     return function;
 }
 
+double operationFModOnInts(int32_t a, int32_t b)
+{
+    return fmod(a, b);
+}
+
 DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState* exec, uint32_t callIndex)
 {
     JSGlobalData* globalData = &exec->globalData();

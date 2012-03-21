@@ -732,7 +732,7 @@ void JIT::emitSlow_op_pre_dec(Instruction* currentInstruction, Vector<SlowCaseEn
 
 /* ------------------------------ BEGIN: OP_MOD ------------------------------ */
 
-#if CPU(X86) || CPU(X86_64) || CPU(MIPS)
+#if CPU(X86) || CPU(X86_64)
 
 void JIT::emit_op_mod(Instruction* currentInstruction)
 {
@@ -740,20 +740,25 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
-#if CPU(X86) || CPU(X86_64)
     // Make sure registers are correct for x86 IDIV instructions.
     ASSERT(regT0 == X86Registers::eax);
     ASSERT(regT1 == X86Registers::edx);
     ASSERT(regT2 == X86Registers::ecx);
-#endif
 
-    emitGetVirtualRegisters(op1, regT0, op2, regT2);
-    emitJumpSlowCaseIfNotImmediateInteger(regT0);
+    emitGetVirtualRegisters(op1, regT3, op2, regT2);
+    emitJumpSlowCaseIfNotImmediateInteger(regT3);
     emitJumpSlowCaseIfNotImmediateInteger(regT2);
 
-    addSlowCase(branchPtr(Equal, regT2, TrustedImmPtr(JSValue::encode(jsNumber(0)))));
+    move(regT3, regT0);
+    addSlowCase(branchTest32(Zero, regT2));
+    Jump denominatorNotNeg1 = branch32(NotEqual, regT2, TrustedImm32(-1));
+    addSlowCase(branch32(Equal, regT0, TrustedImm32(-2147483647-1)));
+    denominatorNotNeg1.link(this);
     m_assembler.cdq();
     m_assembler.idivl_r(regT2);
+    Jump numeratorPositive = branch32(GreaterThanOrEqual, regT3, TrustedImm32(0));
+    addSlowCase(branchTest32(Zero, regT1));
+    numeratorPositive.link(this);
     emitFastArithReTagImmediate(regT1, regT0);
     emitPutVirtualRegister(result);
 }
@@ -765,13 +770,15 @@ void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
+    linkSlowCase(iter);
+    linkSlowCase(iter);
     JITStubCall stubCall(this, cti_op_mod);
-    stubCall.addArgument(regT0);
+    stubCall.addArgument(regT3);
     stubCall.addArgument(regT2);
     stubCall.call(result);
 }
 
-#else // CPU(X86) || CPU(X86_64) || CPU(MIPS)
+#else // CPU(X86) || CPU(X86_64)
 
 void JIT::emit_op_mod(Instruction* currentInstruction)
 {
@@ -787,20 +794,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-#if ENABLE(JIT_USE_SOFT_MODULO)
-    unsigned result = currentInstruction[1].u.operand;
-    unsigned op1 = currentInstruction[2].u.operand;
-    unsigned op2 = currentInstruction[3].u.operand;
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-    JITStubCall stubCall(this, cti_op_mod);
-    stubCall.addArgument(op1, regT2);
-    stubCall.addArgument(op2, regT2);
-    stubCall.call(result);
-#else
     ASSERT_NOT_REACHED();
-#endif
 }
 
 #endif // CPU(X86) || CPU(X86_64)

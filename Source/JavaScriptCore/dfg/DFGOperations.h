@@ -79,6 +79,7 @@ typedef JSCell* DFG_OPERATION (*C_DFGOperation_E)(ExecState*);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EC)(ExecState*, JSCell*);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef double DFG_OPERATION (*D_DFGOperation_DD)(double, double);
+typedef double DFG_OPERATION (*D_DFGOperation_ZZ)(int32_t, int32_t);
 typedef double DFG_OPERATION (*D_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef int32_t DFG_OPERATION (*Z_DFGOperation_D)(double);
 typedef size_t DFG_OPERATION (*S_DFGOperation_ECC)(ExecState*, JSCell*, JSCell*);
@@ -155,6 +156,7 @@ JSCell* DFG_OPERATION operationCreateActivation(ExecState*);
 void DFG_OPERATION operationTearOffActivation(ExecState*, JSCell*);
 JSCell* DFG_OPERATION operationNewFunction(ExecState*, JSCell*);
 JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState*, JSCell*);
+double operationFModOnInts(int32_t, int32_t);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.

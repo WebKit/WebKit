@@ -1202,25 +1202,28 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
 
-#if ENABLE(JIT_USE_SOFT_MODULO)
-
 #if CPU(X86) || CPU(X86_64)
     // Make sure registers are correct for x86 IDIV instructions.
     ASSERT(regT0 == X86Registers::eax);
     ASSERT(regT1 == X86Registers::edx);
     ASSERT(regT2 == X86Registers::ecx);
     ASSERT(regT3 == X86Registers::ebx);
-#endif
 
-    emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
+    emitLoad2(op1, regT0, regT3, op2, regT1, regT2);
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-    addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
+    addSlowCase(branch32(NotEqual, regT0, TrustedImm32(JSValue::Int32Tag)));
 
-    addSlowCase(branch32(Equal, regT2, TrustedImm32(0)));
-
-    emitNakedCall(m_globalData->jitStubs->ctiSoftModulo());
-
-    emitStoreInt32(dst, regT0, (op1 == dst || op2 == dst));
+    move(regT3, regT0);
+    addSlowCase(branchTest32(Zero, regT2));
+    Jump denominatorNotNeg1 = branch32(NotEqual, regT2, TrustedImm32(-1));
+    addSlowCase(branch32(Equal, regT0, TrustedImm32(-2147483647-1)));
+    denominatorNotNeg1.link(this);
+    m_assembler.cdq();
+    m_assembler.idivl_r(regT2);
+    Jump numeratorPositive = branch32(GreaterThanOrEqual, regT3, TrustedImm32(0));
+    addSlowCase(branchTest32(Zero, regT1));
+    numeratorPositive.link(this);
+    emitStoreInt32(dst, regT1, (op1 == dst || op2 == dst));
 #else
     JITStubCall stubCall(this, cti_op_mod);
     stubCall.addArgument(op1);
@@ -1231,10 +1234,12 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-#if ENABLE(JIT_USE_SOFT_MODULO)
+#if CPU(X86) || CPU(X86_64)
     unsigned result = currentInstruction[1].u.operand;
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
+    linkSlowCase(iter);
+    linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
     linkSlowCase(iter);
