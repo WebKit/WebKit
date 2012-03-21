@@ -32,13 +32,12 @@
 
 #if PLATFORM(QT)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QOpenGLContext>
 #include <QPlatformPixmap>
 #endif
 #endif
 
-#if defined(TEXMAP_OPENGL_ES_2)
-#include <EGL/egl.h>
-#elif OS(WINDOWS)
+#if OS(WINDOWS)
 #include <windows.h>
 #elif OS(MAC_OS_X)
 #include <AGL/agl.h>
@@ -72,11 +71,11 @@ inline static void debugGLCommand(const char* command, int line)
 
 struct TextureMapperGLData {
     struct SharedGLData : public RefCounted<SharedGLData> {
-#if defined(TEXMAP_OPENGL_ES_2)
-        typedef EGLContext GLContext;
+#if PLATFORM(QT) && (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+        typedef QOpenGLContext* GLContext;
         static GLContext getCurrentGLContext()
         {
-            return eglGetCurrentContext();
+            return QOpenGLContext::currentContext();
         }
 #elif OS(WINDOWS)
         typedef HGLRC GLContext;
