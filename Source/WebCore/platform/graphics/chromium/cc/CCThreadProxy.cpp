@@ -397,7 +397,7 @@ void CCThreadProxy::scheduledActionBeginFrame()
     TRACE_EVENT0("cc", "CCThreadProxy::scheduledActionBeginFrame");
     ASSERT(!m_pendingBeginFrameRequest);
     m_pendingBeginFrameRequest = adoptPtr(new BeginFrameAndCommitState());
-    m_pendingBeginFrameRequest->frameBeginTime = 0;
+    m_pendingBeginFrameRequest->frameBeginTime = currentTime();
     m_pendingBeginFrameRequest->scrollInfo = m_layerTreeHostImpl->processScrollDeltas();
 
     m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::beginFrame));
