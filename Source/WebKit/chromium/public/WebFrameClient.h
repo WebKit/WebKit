@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -63,6 +63,8 @@ class WebMediaPlayerClient;
 class WebNode;
 class WebPlugin;
 class WebSharedWorker;
+class WebSharedWorkerClient;
+class WebSocketStreamHandle;
 class WebStorageQuotaCallbacks;
 class WebString;
 class WebURL;
@@ -70,7 +72,6 @@ class WebURLLoader;
 class WebURLRequest;
 class WebURLResponse;
 class WebWorker;
-class WebSharedWorkerClient;
 struct WebPluginParams;
 struct WebRect;
 struct WebSize;
@@ -380,6 +381,11 @@ public:
     // Start a Web Intents activity. The callee uses the |WebIntentRequest|
     // object to coordinate replies to the intent invocation.
     virtual void dispatchIntent(WebFrame*, const WebIntentRequest&) { }
+
+    // WebSocket -----------------------------------------------------
+
+    // A WebSocket object is going to open new stream connection.
+    virtual void willOpenSocketStream(WebSocketStreamHandle*) { }
 
     // Messages ------------------------------------------------------
 

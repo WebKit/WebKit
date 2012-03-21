@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,6 +96,7 @@ namespace WebCore {
     class ResourceResponse;
     class SecurityOrigin;
     class SharedBuffer;
+    class SocketStreamHandle;
     class StringWithDirection;
     class SubstituteData;
     class Widget;
@@ -328,6 +330,8 @@ namespace WebCore {
 #if ENABLE(WEB_INTENTS)
         virtual void dispatchIntent(PassRefPtr<IntentRequest>) = 0;
 #endif
+
+        virtual void dispatchWillOpenSocketStream(SocketStreamHandle*) { }
     };
 
 } // namespace WebCore

@@ -1,3 +1,35 @@
+2012-03-21  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [Chromium] [WebSocket] provide WebFrameClient with a chance of
+        accessing to opening WebSocketStreamHandle.
+        https://bugs.webkit.org/show_bug.cgi?id=78459
+
+        Reviewed by Kent Tamura and Darin Fisher.
+
+        Add dispatchWillOpenSocketStream client function to WebFrameClient with
+        an argument representing an opening SocketStreamHandle.
+        These mechanisms provide embedders with a chance to bind arbitrary
+        data to a WebSocketStreamHandle from WebFrameClient to which the
+        WebSocket object having the WebSocketStreamHandle belongs.
+
+        No new tests because this change just provide mechanisms to embedders.
+
+        * public/WebFrameClient.h: Add dispatchWillOpenSocketStream declaration.
+        (WebKit):
+        (WebFrameClient):
+        (WebKit::WebFrameClient::willOpenSocketStream):
+        * public/platform/WebSocketStreamHandle.h: Add default implementation to virtual functions.
+        (WebKit::WebSocketStreamHandle::connect):
+        (WebKit::WebSocketStreamHandle::send):
+        (WebKit::WebSocketStreamHandle::close):
+        * src/FrameLoaderClientImpl.cpp: Implement dispatchWillOpenSocketStream.
+        (WebKit::FrameLoaderClientImpl::dispatchWillOpenSocketStream):
+        (WebKit):
+        * src/FrameLoaderClientImpl.h: Add dispatchWillOpenSocketStream declaratioin.
+        (FrameLoaderClientImpl):
+        * src/SocketStreamHandle.cpp: Call willOpenSocketStream client function.
+        (WebCore::SocketStreamHandleInternal::connect):
+
 2012-03-21  Ian Vollick  <vollick@chromium.org>
 
         [chromium] timing functions are getting incorrectly applied for accelerated css transitions

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,6 +59,7 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceLoader.h"
 #include "Settings.h"
+#include "SocketStreamHandleInternal.h"
 #include "WebDOMEvent.h"
 #include "WebDataSourceImpl.h"
 #include "WebDevToolsAgentPrivate.h"
@@ -75,6 +76,7 @@
 #include "WebPluginLoadObserver.h"
 #include "WebPluginParams.h"
 #include "WebSecurityOrigin.h"
+#include "platform/WebSocketStreamHandle.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include "WindowFeatures.h"
@@ -1622,5 +1624,10 @@ void FrameLoaderClientImpl::dispatchIntent(PassRefPtr<WebCore::IntentRequest> in
     m_webFrame->client()->dispatchIntent(webFrame(), intentRequest);
 }
 #endif
+
+void FrameLoaderClientImpl::dispatchWillOpenSocketStream(SocketStreamHandle* handle)
+{
+    m_webFrame->client()->willOpenSocketStream(SocketStreamHandleInternal::toWebSocketStreamHandle(handle));
+}
 
 } // namespace WebKit

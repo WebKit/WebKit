@@ -39,6 +39,9 @@
 #include "Document.h"
 #include "FileError.h"
 #include "FileReaderLoader.h"
+#include "Frame.h"
+#include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "Page.h"
@@ -263,6 +266,14 @@ void WebSocketChannel::resume()
     m_suspended = false;
     if ((m_buffer || m_closed) && m_client && !m_resumeTimer.isActive())
         m_resumeTimer.startOneShot(0);
+}
+
+void WebSocketChannel::willOpenSocketStream(SocketStreamHandle* handle)
+{
+    LOG(Network, "WebSocketChannel %p willOpensocketStream", this);
+    ASSERT(handle);
+    if (m_document->frame())
+        m_document->frame()->loader()->client()->dispatchWillOpenSocketStream(handle);
 }
 
 void WebSocketChannel::didOpenSocketStream(SocketStreamHandle* handle)

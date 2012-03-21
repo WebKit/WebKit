@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -44,13 +44,13 @@ public:
     virtual ~WebSocketStreamHandle() { }
 
     // Connect new socket stream asynchronously.
-    virtual void connect(const WebURL&, WebSocketStreamHandleClient*) = 0;
+    virtual void connect(const WebURL&, WebSocketStreamHandleClient*) { }
 
     // Send web socket frame data on the socket stream.
-    virtual bool send(const WebData&) = 0;
+    virtual bool send(const WebData&) { return false; }
 
     // Close the socket stream.
-    virtual void close() = 0;
+    virtual void close() { }
 };
 
 } // namespace WebKit

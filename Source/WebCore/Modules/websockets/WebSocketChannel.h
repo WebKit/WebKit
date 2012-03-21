@@ -84,6 +84,7 @@ public:
     virtual void resume() OVERRIDE;
 
     // SocketStreamHandleClient functions.
+    virtual void willOpenSocketStream(SocketStreamHandle*) OVERRIDE;
     virtual void didOpenSocketStream(SocketStreamHandle*) OVERRIDE;
     virtual void didCloseSocketStream(SocketStreamHandle*) OVERRIDE;
     virtual void didReceiveSocketStreamData(SocketStreamHandle*, const char*, int) OVERRIDE;
