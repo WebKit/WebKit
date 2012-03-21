@@ -1,3 +1,16 @@
+2012-03-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        The activation highlight does not always hide
+        https://bugs.webkit.org/show_bug.cgi?id=81767
+
+        Reviewed by Simon Hausmann.
+
+        The zero point used for hiding potential activations should
+        not be transformed.
+
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handlePotentialSingleTapEvent):
+
 2012-03-21  Dinu Jacob  <dinu.jacob@nokia.com>
 
         [Qt][WK2] Item cannot be selected from select list in touch webview

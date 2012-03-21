@@ -232,8 +232,13 @@ void QtWebPageEventHandler::handleDropEvent(QDropEvent* ev)
 void QtWebPageEventHandler::handlePotentialSingleTapEvent(const QTouchEvent::TouchPoint& point)
 {
 #if ENABLE(TOUCH_EVENTS)
-    QTransform fromItemTransform = m_webPage->transformFromItem();
-    m_webPageProxy->handlePotentialActivation(fromItemTransform.map(point.pos()).toPoint(), IntSize(point.rect().size().toSize()));
+    if (point.pos() == QPointF()) {
+        // An empty point deactivates the highlighting.
+        m_webPageProxy->handlePotentialActivation(IntPoint(), IntSize());
+    } else {
+        QTransform fromItemTransform = m_webPage->transformFromItem();
+        m_webPageProxy->handlePotentialActivation(IntPoint(fromItemTransform.map(point.pos()).toPoint()), IntSize(point.rect().size().toSize()));
+    }
 #else
     Q_UNUSED(point);
 #endif
