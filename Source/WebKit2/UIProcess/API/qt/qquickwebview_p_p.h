@@ -118,6 +118,8 @@ public:
 
     QRect visibleContentsRect() const;
 
+    void setDialogActive(bool active) { m_dialogActive = active; }
+
     // PageClient.
     WebCore::IntSize viewSize() const;
     void didReceiveMessageFromNavigatorQtObject(const String& message);
@@ -162,7 +164,7 @@ protected:
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;
     bool m_loadStartedSignalSent;
-    bool m_dialogRunnerActive;
+    bool m_dialogActive;
     QUrl m_iconURL;
     QUrl m_deferedUrlToLoad;
 };

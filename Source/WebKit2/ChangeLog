@@ -1,3 +1,24 @@
+2012-03-21  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        [Qt][WK2] Item cannot be selected from select list in touch webview
+        https://bugs.webkit.org/show_bug.cgi?id=81674
+
+        Reviewed by Simon Hausmann.
+
+        Activate flag to prevent QQuickWebView from accepting touch event when select
+        dialog is being displayed.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::execDialogRunner):
+        (QQuickWebView::touchEvent):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::setDialogActive):
+        (QQuickWebViewPrivate):
+        * UIProcess/qt/WebPopupMenuProxyQt.cpp:
+        (WebKit::WebPopupMenuProxyQt::showPopupMenu):
+        (WebKit::WebPopupMenuProxyQt::hidePopupMenu):
+
 2012-03-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Remove the PostTransitionState

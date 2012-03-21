@@ -81,7 +81,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , m_navigatorQtObjectEnabled(false)
     , m_renderToOffscreenBuffer(false)
     , m_loadStartedSignalSent(false)
-    , m_dialogRunnerActive(false)
+    , m_dialogActive(false)
 {
     viewport->setFlags(QQuickItem::ItemClipsChildrenToShape);
     QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
@@ -366,10 +366,10 @@ void QQuickWebViewPrivate::execDialogRunner(QtDialogRunner& dialogRunner)
     setViewInAttachedProperties(dialogRunner.dialog());
 
     disableMouseEvents();
-    m_dialogRunnerActive = true;
+    m_dialogActive = true;
 
     dialogRunner.exec();
-    m_dialogRunnerActive = false;
+    m_dialogActive = false;
     enableMouseEvents();
 }
 
@@ -1325,7 +1325,7 @@ void QQuickWebView::focusOutEvent(QFocusEvent* event)
 void QQuickWebView::touchEvent(QTouchEvent* event)
 {
     Q_D(QQuickWebView);
-    if (d->m_dialogRunnerActive) {
+    if (d->m_dialogActive) {
         event->ignore();
         return;
     }
