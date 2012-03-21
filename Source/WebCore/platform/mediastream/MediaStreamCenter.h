@@ -77,8 +77,8 @@ public:
     void didStopLocalMediaStream(MediaStreamDescriptor*);
     void didConstructMediaStream(MediaStreamDescriptor*);
 
-    String constructSdp(IceCandidateDescriptor*);
-    String constructSdp(SessionDescriptionDescriptor*);
+    String constructSDP(IceCandidateDescriptor*);
+    String constructSDP(SessionDescriptionDescriptor*);
 
     // Calls from the platform to update the DOM objects
     void endLocalMediaStream(MediaStreamDescriptor*);

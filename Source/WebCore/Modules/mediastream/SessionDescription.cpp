@@ -67,7 +67,7 @@ void SessionDescription::addCandidate(PassRefPtr<IceCandidate> candidate)
 
 String SessionDescription::toSdp()
 {
-    return m_descriptor->toSdp();
+    return m_descriptor->toSDP();
 }
 
 SessionDescriptionDescriptor* SessionDescription::descriptor()

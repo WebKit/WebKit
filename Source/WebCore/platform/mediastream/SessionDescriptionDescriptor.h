@@ -47,16 +47,16 @@ public:
     virtual ~SessionDescriptionDescriptor();
 
     void addCandidate(PassRefPtr<IceCandidateDescriptor>);
-    String toSdp();
+    String toSDP();
 
     size_t numberOfAddedCandidates() const;
     IceCandidateDescriptor* candidate(size_t index) const;
-    const String& initialSdp();
+    const String& initialSDP();
 
 private:
     explicit SessionDescriptionDescriptor(const String& sdp);
 
-    String m_initialSdp;
+    String m_initialSDP;
     Vector<RefPtr<IceCandidateDescriptor> > m_candidates;
 };
 

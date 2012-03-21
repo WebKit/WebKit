@@ -69,7 +69,7 @@ const String& IceCandidate::candidateLine()
 
 String IceCandidate::toSdp()
 {
-    return m_descriptor->toSdp();
+    return m_descriptor->toSDP();
 }
 
 IceCandidateDescriptor* IceCandidate::descriptor()

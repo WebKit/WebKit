@@ -47,7 +47,7 @@ public:
     const String& label() { return m_label; }
     const String& candidateLine() { return m_candidateLine; }
 
-    String toSdp();
+    String toSDP();
 
 private:
     IceCandidateDescriptor(const String& label, const String& candidateLine);

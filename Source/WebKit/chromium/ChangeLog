@@ -1,3 +1,49 @@
+2012-03-21  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API (JSEP): Introducing WebSessionDescription and WebIceCandidate
+        https://bugs.webkit.org/show_bug.cgi?id=81339
+
+        Reviewed by Adam Barth.
+
+        Simple WebKit representations of the WebCore/platform versions.
+
+        * WebKit.gyp:
+        * public/platform/WebICECandidateDescriptor.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebICECandidateDescriptor):
+        (WebKit::WebICECandidateDescriptor::WebICECandidateDescriptor):
+        (WebKit::WebICECandidateDescriptor::~WebICECandidateDescriptor):
+        (WebKit::WebICECandidateDescriptor::operator=):
+        (WebKit::WebICECandidateDescriptor::isNull):
+        * public/platform/WebSessionDescriptionDescriptor.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebSessionDescriptionDescriptor):
+        (WebKit::WebSessionDescriptionDescriptor::WebSessionDescriptionDescriptor):
+        (WebKit::WebSessionDescriptionDescriptor::~WebSessionDescriptionDescriptor):
+        (WebKit::WebSessionDescriptionDescriptor::operator=):
+        (WebKit::WebSessionDescriptionDescriptor::isNull):
+        * src/WebICECandidateDescriptor.cpp: Added.
+        (WebKit):
+        (WebKit::WebICECandidateDescriptor::WebICECandidateDescriptor):
+        (WebKit::WebICECandidateDescriptor::assign):
+        (WebKit::WebICECandidateDescriptor::reset):
+        (WebKit::WebICECandidateDescriptor::initialize):
+        (WebKit::WebICECandidateDescriptor::operator PassRefPtr<WebCore::IceCandidateDescriptor>):
+        (WebKit::WebICECandidateDescriptor::label):
+        (WebKit::WebICECandidateDescriptor::candidateLine):
+        * src/WebSessionDescriptionDescriptor.cpp: Added.
+        (WebKit):
+        (WebKit::WebSessionDescriptionDescriptor::WebSessionDescriptionDescriptor):
+        (WebKit::WebSessionDescriptionDescriptor::assign):
+        (WebKit::WebSessionDescriptionDescriptor::reset):
+        (WebKit::WebSessionDescriptionDescriptor::operator WTF::PassRefPtr<WebCore::SessionDescriptionDescriptor>):
+        (WebKit::WebSessionDescriptionDescriptor::initialize):
+        (WebKit::WebSessionDescriptionDescriptor::numberOfAddedCandidates):
+        (WebKit::WebSessionDescriptionDescriptor::candidate):
+        (WebKit::WebSessionDescriptionDescriptor::initialSDP):
+
 2012-03-21  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Use floating point scroll deltas for layers

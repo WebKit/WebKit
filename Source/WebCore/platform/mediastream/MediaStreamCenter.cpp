@@ -58,12 +58,12 @@ void MediaStreamCenter::endLocalMediaStream(MediaStreamDescriptor* streamDescrip
         streamDescriptor->setEnded();
 }
 
-String MediaStreamCenter::constructSdp(IceCandidateDescriptor*)
+String MediaStreamCenter::constructSDP(IceCandidateDescriptor*)
 {
     return "";
 }
 
-String MediaStreamCenter::constructSdp(SessionDescriptionDescriptor*)
+String MediaStreamCenter::constructSDP(SessionDescriptionDescriptor*)
 {
     return "";
 }

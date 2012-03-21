@@ -45,7 +45,7 @@ PassRefPtr<SessionDescriptionDescriptor> SessionDescriptionDescriptor::create(co
 }
 
 SessionDescriptionDescriptor::SessionDescriptionDescriptor(const String& sdp)
-    : m_initialSdp(sdp)
+    : m_initialSDP(sdp)
 {
 }
 
@@ -58,9 +58,9 @@ void SessionDescriptionDescriptor::addCandidate(PassRefPtr<IceCandidateDescripto
     m_candidates.append(candidate);
 }
 
-String SessionDescriptionDescriptor::toSdp()
+String SessionDescriptionDescriptor::toSDP()
 {
-    return MediaStreamCenter::instance().constructSdp(this);
+    return MediaStreamCenter::instance().constructSDP(this);
 }
 
 size_t SessionDescriptionDescriptor::numberOfAddedCandidates() const
@@ -73,9 +73,9 @@ IceCandidateDescriptor* SessionDescriptionDescriptor::candidate(size_t index) co
     return m_candidates[index].get();
 }
 
-const String& SessionDescriptionDescriptor::initialSdp()
+const String& SessionDescriptionDescriptor::initialSDP()
 {
-    return m_initialSdp;
+    return m_initialSDP;
 }
 
 } // namespace WebCore

@@ -53,9 +53,9 @@ IceCandidateDescriptor::~IceCandidateDescriptor()
 {
 }
 
-String IceCandidateDescriptor::toSdp()
+String IceCandidateDescriptor::toSDP()
 {
-    return MediaStreamCenter::instance().constructSdp(this);
+    return MediaStreamCenter::instance().constructSDP(this);
 }
 
 } // namespace WebCore
