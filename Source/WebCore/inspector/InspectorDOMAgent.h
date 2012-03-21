@@ -153,6 +153,8 @@ public:
 
     Node* highlightedNode() const;
 
+    void getEventListeners(Node*, Vector<EventListenerInfo>& listenersArray, bool includeAncestors);
+
     // Methods called from the InspectorInstrumentation.
     void setDocument(Document*);
     void releaseDanglingNodes();

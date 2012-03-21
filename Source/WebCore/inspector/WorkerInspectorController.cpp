@@ -110,6 +110,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
         , 0
 #endif
         , 0
+        , 0
     );
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

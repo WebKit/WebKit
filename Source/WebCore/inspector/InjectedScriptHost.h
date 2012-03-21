@@ -39,9 +39,11 @@
 namespace WebCore {
 
 class Database;
+class EventListenerInfo;
 class InjectedScript;
 class InspectorAgent;
 class InspectorConsoleAgent;
+class InspectorDOMAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorFrontend;
@@ -63,6 +65,7 @@ public:
             , InspectorDatabaseAgent* databaseAgent
 #endif
             , InspectorDOMStorageAgent* domStorageAgent
+            , InspectorDOMAgent* domAgent
         )
     {
         m_inspectorAgent = inspectorAgent;
@@ -71,6 +74,7 @@ public:
         m_databaseAgent = databaseAgent;
 #endif
         m_domStorageAgent = domStorageAgent;
+        m_domAgent = domAgent;
     }
 
     static Node* scriptValueAsNode(ScriptValue);
@@ -88,6 +92,8 @@ public:
     InspectableObject* inspectedObject(unsigned int num);
 
     void inspectImpl(PassRefPtr<InspectorValue> objectToInspect, PassRefPtr<InspectorValue> hints);
+    void getEventListenersImpl(Node*, Vector<EventListenerInfo>& listenersArray);
+
     void clearConsoleMessages();
     void copyText(const String& text);
 #if ENABLE(SQL_DATABASE)
@@ -109,6 +115,7 @@ private:
     InspectorDatabaseAgent* m_databaseAgent;
 #endif
     InspectorDOMStorageAgent* m_domStorageAgent;
+    InspectorDOMAgent* m_domAgent;
     long m_lastWorkerId;
     Vector<OwnPtr<InspectableObject> > m_inspectedObjects;
     OwnPtr<InspectableObject> m_defaultInspectableObject;

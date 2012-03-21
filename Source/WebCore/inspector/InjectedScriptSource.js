@@ -577,7 +577,7 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
 
 CommandLineAPI.members_ = [
     "$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd",
-    "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear"
+    "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners"
 ];
 
 function CommandLineAPIImpl()
@@ -683,6 +683,11 @@ CommandLineAPIImpl.prototype = {
     clear: function()
     {
         InjectedScriptHost.clearConsoleMessages();
+    },
+
+    getEventListeners: function(node)
+    {
+        return InjectedScriptHost.getEventListeners(node);
     },
 
     _inspectedObject: function(num)

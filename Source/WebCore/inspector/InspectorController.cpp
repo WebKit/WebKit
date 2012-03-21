@@ -150,6 +150,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
         , databaseAgent
 #endif
         , domStorageAgent
+        , m_domAgent
     );
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

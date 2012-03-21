@@ -42,8 +42,10 @@
 #endif
 #include "ExceptionCode.h"
 #include "InjectedScriptHost.h"
+#include "InspectorDOMAgent.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorValues.h"
+#include "JSEventListener.h"
 #include "JSFloat32Array.h"
 #include "JSFloat64Array.h"
 #include "JSHTMLAllCollection.h"
@@ -182,6 +184,56 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
     UString displayName = function->displayName(exec);
     if (!displayName.isEmpty())
         result->putDirect(exec->globalData(), Identifier(exec, "displayName"), jsString(exec, displayName));
+    return result;
+}
+
+static JSArray* getJSListenerFunctions(ExecState* exec, Document* document, const EventListenerInfo& listenerInfo)
+{
+    JSArray* result = constructEmptyArray(exec);
+    size_t handlersCount = listenerInfo.eventListenerVector.size();
+    for (size_t i = 0, outputIndex = 0; i < handlersCount; ++i) {
+        const JSEventListener* jsListener = JSEventListener::cast(listenerInfo.eventListenerVector[i].listener.get());
+        if (!jsListener)
+            continue;
+        // Hide listeners from other contexts.
+        if (jsListener->isolatedWorld() != currentWorld(exec))
+            continue;
+        JSObject* function = jsListener->jsFunction(document);
+        JSObject* listenerEntry = constructEmptyObject(exec);
+        listenerEntry->putDirect(exec->globalData(), Identifier(exec, "listener"), function);
+        listenerEntry->putDirect(exec->globalData(), Identifier(exec, "useCapture"), jsBoolean(listenerInfo.eventListenerVector[i].useCapture));
+        result->putDirectIndex(exec, outputIndex++, JSValue(listenerEntry));
+    }
+    return result;
+}
+
+JSValue JSInjectedScriptHost::getEventListeners(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+    JSValue value = exec->argument(0);
+    if (!value.isObject() || value.isNull())
+        return jsUndefined();
+    Node* node = toNode(value);
+    if (!node)
+        return jsUndefined();
+    // This can only happen for orphan DocumentType nodes.
+    Document* document = node->document();
+    if (!node->document())
+        return jsUndefined();
+
+    Vector<EventListenerInfo> listenersArray;
+    impl()->getEventListenersImpl(node, listenersArray);
+
+    JSObject* result = constructEmptyObject(exec);
+    for (size_t i = 0; i < listenersArray.size(); ++i) {
+        JSArray* listeners = getJSListenerFunctions(exec, document, listenersArray[i]);
+        if (!listeners->length())
+            continue;
+        AtomicString eventType = listenersArray[i].eventType;
+        result->putDirect(exec->globalData(), Identifier(exec, eventType.impl()), JSValue(listeners));
+    }
+
     return result;
 }
 

@@ -723,44 +723,17 @@ void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const
     m_domEditor->replaceWholeText(toText(node), value, errorString);
 }
 
-void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>& listenersArray)
+void InspectorDOMAgent::getEventListenersForNode(ErrorString* errorString, int nodeId, RefPtr<InspectorArray>& listenersArray)
 {
     Node* node = nodeForId(nodeId);
-    EventTargetData* d;
-
-    // Quick break if a null node or no listeners at all
-    if (!node || !(d = node->eventTargetData()))
+    if (!node) {
+        *errorString = "No such node";
         return;
-
-    // Get the list of event types this Node is concerned with
-    Vector<AtomicString> eventTypes = d->eventListenerMap.eventTypes();
-
-    // Quick break if no useful listeners
-    size_t eventTypesLength = eventTypes.size();
-    if (!eventTypesLength)
-        return;
-
-    // The Node's Ancestors (not including self)
-    Vector<ContainerNode*> ancestors;
-    for (ContainerNode* ancestor = node->parentOrHostNode(); ancestor; ancestor = ancestor->parentOrHostNode())
-        ancestors.append(ancestor);
-
-    // Nodes and their Listeners for the concerned event types (order is top to bottom)
+    }
     Vector<EventListenerInfo> eventInformation;
-    for (size_t i = ancestors.size(); i; --i) {
-        ContainerNode* ancestor = ancestors[i - 1];
-        for (size_t j = 0; j < eventTypesLength; ++j) {
-            AtomicString& type = eventTypes[j];
-            if (ancestor->hasEventListeners(type))
-                eventInformation.append(EventListenerInfo(ancestor, type, ancestor->getEventListeners(type)));
-        }
-    }
-
-    // Insert the Current Node at the end of that list (last in capturing, first in bubbling)
-    for (size_t i = 0; i < eventTypesLength; ++i) {
-        const AtomicString& type = eventTypes[i];
-        eventInformation.append(EventListenerInfo(node, type, node->getEventListeners(type)));
-    }
+    getEventListeners(node, eventInformation, true);
+    if (eventInformation.isEmpty())
+        return;
 
     // Get Capturing Listeners (in this order)
     size_t eventInformationLength = eventInformation.size();
@@ -783,6 +756,46 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPt
             if (!listener.useCapture)
                 listenersArray->pushObject(buildObjectForEventListener(listener, info.eventType, info.node));
         }
+    }
+}
+
+void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>& eventInformation, bool includeAncestors)
+{
+    EventTargetData* d;
+
+    // Quick break if no listeners at all
+    if (!(d = node->eventTargetData()))
+        return;
+
+    // Get the list of event types this Node is concerned with
+    Vector<AtomicString> eventTypes = d->eventListenerMap.eventTypes();
+
+    // Quick break if no useful listeners
+    size_t eventTypesLength = eventTypes.size();
+    if (!eventTypesLength)
+        return;
+
+    if (includeAncestors) {
+        // The Node's Ancestors (not including self)
+        Vector<ContainerNode*> ancestors;
+        for (ContainerNode* ancestor = node->parentOrHostNode(); ancestor; ancestor = ancestor->parentOrHostNode())
+            ancestors.append(ancestor);
+
+        // Nodes and their Listeners for the concerned event types (order is top to bottom)
+        for (size_t i = ancestors.size(); i; --i) {
+            ContainerNode* ancestor = ancestors[i - 1];
+            for (size_t j = 0; j < eventTypesLength; ++j) {
+                AtomicString& type = eventTypes[j];
+                if (ancestor->hasEventListeners(type))
+                    eventInformation.append(EventListenerInfo(ancestor, type, ancestor->getEventListeners(type)));
+            }
+        }
+    }
+
+    // Insert the Current Node at the end of that list (last in capturing, first in bubbling)
+    for (size_t i = 0; i < eventTypesLength; ++i) {
+        const AtomicString& type = eventTypes[i];
+        eventInformation.append(EventListenerInfo(node, type, node->getEventListeners(type)));
     }
 }
 
