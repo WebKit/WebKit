@@ -37,10 +37,6 @@ module html {
 #if defined(ENABLE_DIRECTORY_UPLOAD) && ENABLE_DIRECTORY_UPLOAD
         readonly attribute DOMString webkitRelativePath;
 #endif
-
-        // FIXME: obsolete attributes. To be removed.
-        readonly attribute DOMString fileName;
-        readonly attribute unsigned long long fileSize;
     };
 
 }

@@ -74,10 +74,6 @@ public:
     // Note that this involves synchronous file operation. Think twice before calling this function.
     void captureSnapshot(long long& snapshotSize, double& snapshotModificationTime) const;
 
-    // FIXME: obsolete attributes. To be removed.
-    const String& fileName() const { return name(); }
-    unsigned long long fileSize() const { return size(); }
-
 private:
     File(const String& path);
 

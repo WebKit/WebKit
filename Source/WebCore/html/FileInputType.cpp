@@ -143,7 +143,7 @@ bool FileInputType::appendFormData(FormDataList& encoding, bool multipart) const
         // submission of file inputs, and Firefox doesn't add "name=" query
         // parameter.
         for (unsigned i = 0; i < numFiles; ++i)
-            encoding.appendData(element()->name(), fileList->item(i)->fileName());
+            encoding.appendData(element()->name(), fileList->item(i)->name());
         return true;
     }
 
@@ -240,7 +240,7 @@ bool FileInputType::getTypeSpecificValue(String& value)
     // decided to try to parse the value by looking for backslashes
     // (because that's what Windows file paths use). To be compatible
     // with that code, we make up a fake path for the file.
-    value = "C:\\fakepath\\" + m_fileList->item(0)->fileName();
+    value = "C:\\fakepath\\" + m_fileList->item(0)->name();
     return true;
 }
 
@@ -417,7 +417,7 @@ String FileInputType::defaultToolTip() const
 
     StringBuilder names;
     for (size_t i = 0; i < listSize; ++i) {
-        names.append(fileList->item(i)->fileName());
+        names.append(fileList->item(i)->name());
         if (i != listSize - 1)
             names.append('\n');
     }
