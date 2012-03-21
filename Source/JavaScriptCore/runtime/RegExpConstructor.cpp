@@ -97,16 +97,6 @@ const ClassInfo RegExpMatchesArray::s_info = {"Array", &JSArray::s_info, 0, 0, C
 @end
 */
 
-RegExpResult& RegExpResult::operator=(const RegExpConstructorPrivate& rhs)
-{
-    this->input = rhs.input;
-    this->ovector = rhs.lastOvector();
-    this->lastNumSubPatterns = rhs.lastNumSubPatterns;
-    
-    return *this;            
-}
-
-
 RegExpConstructor::RegExpConstructor(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure)
 {
@@ -129,45 +119,47 @@ void RegExpConstructor::destroy(JSCell* cell)
     jsCast<RegExpConstructor*>(cell)->RegExpConstructor::~RegExpConstructor();
 }
 
-RegExpMatchesArray::RegExpMatchesArray(ExecState* exec)
-    : JSArray(exec->globalData(), exec->lexicalGlobalObject()->regExpMatchesArrayStructure())
-    , m_didFillArrayInstance(false)
+void RegExpMatchesArray::finishCreation(JSGlobalData& globalData)
 {
+    Base::finishCreation(globalData, m_regExp->numSubpatterns() + 1);
 }
 
-void RegExpMatchesArray::finishCreation(JSGlobalData& globalData, const RegExpConstructorPrivate& data)
+void RegExpMatchesArray::reifyAllProperties(ExecState* exec)
 {
-    Base::finishCreation(globalData, data.lastNumSubPatterns + 1);
-    m_regExpResult = data;
-}
+    ASSERT(m_state != ReifiedAll);
+    ASSERT(m_result);
+ 
+    reifyMatchPropertyIfNecessary(exec);
 
-void RegExpMatchesArray::destroy(JSCell* cell)
-{
-    jsCast<RegExpMatchesArray*>(cell)->RegExpMatchesArray::~RegExpMatchesArray();
-}
+    if (unsigned numSubpatterns = m_regExp->numSubpatterns()) {
+        Vector<int, 32> subPatternResults;
+        int position = m_regExp->match(exec->globalData(), m_input->value(exec), m_result.start, &subPatternResults);
+        ASSERT_UNUSED(position, position >= 0 && static_cast<size_t>(position) == m_result.start);
+        ASSERT(m_result.start == static_cast<size_t>(subPatternResults[0]));
+        ASSERT(m_result.end == static_cast<size_t>(subPatternResults[1]));
 
-void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
-{
-    unsigned lastNumSubpatterns = m_regExpResult.lastNumSubPatterns;
-
-    for (unsigned i = 0; i <= lastNumSubpatterns; ++i) {
-        int start = m_regExpResult.ovector[2 * i];
-        if (start >= 0)
-            putDirectIndex(exec, i, jsSubstring(exec, m_regExpResult.input, start, m_regExpResult.ovector[2 * i + 1] - start), false);
-        else
-            putDirectIndex(exec, i, jsUndefined(), false);
+        for (unsigned i = 1; i <= numSubpatterns; ++i) {
+            int start = subPatternResults[2 * i];
+            if (start >= 0)
+                putDirectIndex(exec, i, jsSubstring(exec, m_input.get(), start, subPatternResults[2 * i + 1] - start), false);
+            else
+                putDirectIndex(exec, i, jsUndefined(), false);
+        }
     }
 
     PutPropertySlot slot;
-    JSArray::put(this, exec, exec->propertyNames().index, jsNumber(m_regExpResult.ovector[0]), slot);
-    JSArray::put(this, exec, exec->propertyNames().input, jsString(exec, m_regExpResult.input), slot);
+    JSArray::put(this, exec, exec->propertyNames().index, jsNumber(m_result.start), slot);
+    JSArray::put(this, exec, exec->propertyNames().input, m_input.get(), slot);
 
-    m_didFillArrayInstance = true;
+    m_state = ReifiedAll;
 }
 
-JSObject* RegExpConstructor::arrayOfMatches(ExecState* exec) const
+void RegExpMatchesArray::reifyMatchProperty(ExecState* exec)
 {
-    return RegExpMatchesArray::create(exec, d);
+    ASSERT(m_state == ReifiedNone);
+    ASSERT(m_result);
+    putDirectIndex(exec, 0, jsSubstring(exec, m_input.get(), m_result.start, m_result.end - m_result.start), false);
+    m_state = ReifiedMatch;
 }
 
 JSValue RegExpConstructor::getBackref(ExecState* exec, unsigned i) const

@@ -35,6 +35,7 @@
 #include "PropertyNameArray.h"
 #include "RegExpCache.h"
 #include "RegExpConstructor.h"
+#include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
@@ -404,7 +405,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
 
 static NEVER_INLINE EncodedJSValue removeUsingRegExpSearch(ExecState* exec, JSString* string, const UString& source, RegExp* regExp)
 {
-    int lastIndex = 0;
+    size_t lastIndex = 0;
     unsigned startPosition = 0;
 
     Vector<StringRange, 16> sourceRanges;
@@ -413,21 +414,18 @@ static NEVER_INLINE EncodedJSValue removeUsingRegExpSearch(ExecState* exec, JSSt
     unsigned sourceLen = source.length();
 
     while (true) {
-        int matchIndex;
-        int matchLen = 0;
-        int* ovector;
-        regExpConstructor->performMatch(*globalData, regExp, source, startPosition, matchIndex, matchLen, &ovector);
-        if (matchIndex < 0)
+        MatchResult result = regExpConstructor->performMatch(*globalData, regExp, source, startPosition);
+        if (!result)
             break;
 
-        if (lastIndex < matchIndex)
-            sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
+        if (lastIndex < result.start)
+            sourceRanges.append(StringRange(lastIndex, result.start - lastIndex));
 
-        lastIndex = matchIndex + matchLen;
+        lastIndex = result.end;
         startPosition = lastIndex;
 
         // special case of empty match
-        if (!matchLen) {
+        if (result.empty()) {
             startPosition++;
             if (startPosition > sourceLen)
                 break;
@@ -471,7 +469,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
 
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
 
-    int lastIndex = 0;
+    size_t lastIndex = 0;
     unsigned startPosition = 0;
 
     Vector<StringRange, 16> sourceRanges;
@@ -488,16 +486,13 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
         JSGlobalData* globalData = &exec->globalData();
         if (source.is8Bit()) {
             while (true) {
-                int matchIndex;
-                int matchLen = 0;
                 int* ovector;
-                regExpConstructor->performMatch(*globalData, regExp, source, startPosition, matchIndex, matchLen, &ovector);
-                if (matchIndex < 0)
+                MatchResult result = regExpConstructor->performMatch(*globalData, regExp, source, startPosition, &ovector);
+                if (!result)
                     break;
 
-                sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
+                sourceRanges.append(StringRange(lastIndex, result.start - lastIndex));
 
-                int completeMatchStart = ovector[0];
                 unsigned i = 0;
                 for (; i < regExp->numSubpatterns() + 1; ++i) {
                     int matchStart = ovector[i * 2];
@@ -509,20 +504,20 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
                         cachedCall.setArgument(i, jsSubstring8(globalData, source, matchStart, matchLen));
                 }
 
-                cachedCall.setArgument(i++, jsNumber(completeMatchStart));
+                cachedCall.setArgument(i++, jsNumber(result.start));
                 cachedCall.setArgument(i++, string);
 
                 cachedCall.setThis(jsUndefined());
-                JSValue result = cachedCall.call();
-                replacements.append(result.toString(cachedCall.newCallFrame(exec))->value(exec));
+                JSValue jsResult = cachedCall.call();
+                replacements.append(jsResult.toString(cachedCall.newCallFrame(exec))->value(exec));
                 if (exec->hadException())
                     break;
 
-                lastIndex = matchIndex + matchLen;
+                lastIndex = result.end;
                 startPosition = lastIndex;
 
                 // special case of empty match
-                if (!matchLen) {
+                if (result.empty()) {
                     startPosition++;
                     if (startPosition > sourceLen)
                         break;
@@ -530,16 +525,13 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
             }
         } else {
             while (true) {
-                int matchIndex;
-                int matchLen = 0;
                 int* ovector;
-                regExpConstructor->performMatch(*globalData, regExp, source, startPosition, matchIndex, matchLen, &ovector);
-                if (matchIndex < 0)
+                MatchResult result = regExpConstructor->performMatch(*globalData, regExp, source, startPosition, &ovector);
+                if (!result)
                     break;
 
-                sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
+                sourceRanges.append(StringRange(lastIndex, result.start - lastIndex));
 
-                int completeMatchStart = ovector[0];
                 unsigned i = 0;
                 for (; i < regExp->numSubpatterns() + 1; ++i) {
                     int matchStart = ovector[i * 2];
@@ -551,20 +543,20 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
                         cachedCall.setArgument(i, jsSubstring(globalData, source, matchStart, matchLen));
                 }
 
-                cachedCall.setArgument(i++, jsNumber(completeMatchStart));
+                cachedCall.setArgument(i++, jsNumber(result.start));
                 cachedCall.setArgument(i++, string);
 
                 cachedCall.setThis(jsUndefined());
-                JSValue result = cachedCall.call();
-                replacements.append(result.toString(cachedCall.newCallFrame(exec))->value(exec));
+                JSValue jsResult = cachedCall.call();
+                replacements.append(jsResult.toString(cachedCall.newCallFrame(exec))->value(exec));
                 if (exec->hadException())
                     break;
 
-                lastIndex = matchIndex + matchLen;
+                lastIndex = result.end;
                 startPosition = lastIndex;
 
                 // special case of empty match
-                if (!matchLen) {
+                if (result.empty()) {
                     startPosition++;
                     if (startPosition > sourceLen)
                         break;
@@ -574,17 +566,14 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
     } else {
         JSGlobalData* globalData = &exec->globalData();
         do {
-            int matchIndex;
-            int matchLen = 0;
             int* ovector;
-            regExpConstructor->performMatch(*globalData, regExp, source, startPosition, matchIndex, matchLen, &ovector);
-            if (matchIndex < 0)
+            MatchResult result = regExpConstructor->performMatch(*globalData, regExp, source, startPosition, &ovector);
+            if (!result)
                 break;
 
             if (callType != CallTypeNone) {
-                sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
+                sourceRanges.append(StringRange(lastIndex, result.start - lastIndex));
 
-                int completeMatchStart = ovector[0];
                 MarkedArgumentBuffer args;
 
                 for (unsigned i = 0; i < regExp->numSubpatterns() + 1; ++i) {
@@ -597,7 +586,7 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
                         args.append(jsSubstring(exec, source, matchStart, matchLen));
                 }
 
-                args.append(jsNumber(completeMatchStart));
+                args.append(jsNumber(result.start));
                 args.append(string);
 
                 replacements.append(call(exec, replaceValue, callType, callData, jsUndefined(), args).toString(exec)->value(exec));
@@ -605,8 +594,8 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
                     break;
             } else {
                 int replLen = replacementString.length();
-                if (lastIndex < matchIndex || replLen) {
-                    sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
+                if (lastIndex < result.start || replLen) {
+                    sourceRanges.append(StringRange(lastIndex, result.start - lastIndex));
 
                     if (replLen)
                         replacements.append(substituteBackreferences(replacementString, source, ovector, regExp));
@@ -615,11 +604,11 @@ static NEVER_INLINE EncodedJSValue replaceUsingRegExpSearch(ExecState* exec, JSS
                 }
             }
 
-            lastIndex = matchIndex + matchLen;
+            lastIndex = result.end;
             startPosition = lastIndex;
 
             // special case of empty match
-            if (!matchLen) {
+            if (result.empty()) {
                 startPosition++;
                 if (startPosition > sourceLen)
                     break;
@@ -810,17 +799,18 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
-    UString s = thisValue.toString(exec)->value(exec);
+    JSString* string = thisValue.toString(exec);
+    UString s = string->value(exec);
     JSGlobalData* globalData = &exec->globalData();
 
     JSValue a0 = exec->argument(0);
 
-    RegExp* reg;
+    RegExp* regExp;
     bool global = false;
     if (a0.inherits(&RegExpObject::s_info)) {
         RegExpObject* regExpObject = asRegExpObject(a0);
-        reg = regExpObject->regExp();
-        if ((global = reg->global())) {
+        regExp = regExpObject->regExp();
+        if ((global = regExp->global())) {
             // ES5.1 15.5.4.10 step 8.a.
             regExpObject->setLastIndex(exec, 0);
             if (exec->hadException())
@@ -833,27 +823,25 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
          *  replaced with the result of the expression new RegExp(regexp).
          *  Per ECMA 15.10.4.1, if a0 is undefined substitute the empty string.
          */
-        reg = RegExp::create(exec->globalData(), a0.isUndefined() ? UString("") : a0.toString(exec)->value(exec), NoFlags);
-        if (!reg->isValid())
-            return throwVMError(exec, createSyntaxError(exec, reg->errorMessage()));
+        regExp = RegExp::create(exec->globalData(), a0.isUndefined() ? UString("") : a0.toString(exec)->value(exec), NoFlags);
+        if (!regExp->isValid())
+            return throwVMError(exec, createSyntaxError(exec, regExp->errorMessage()));
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
-    int pos;
-    int matchLength = 0;
-    regExpConstructor->performMatch(*globalData, reg, s, 0, pos, matchLength);
-    if (!global) {
-        // case without 'g' flag is handled like RegExp.prototype.exec
-        if (pos < 0)
-            return JSValue::encode(jsNull());
-        return JSValue::encode(regExpConstructor->arrayOfMatches(exec));
-    }
+    MatchResult result = regExpConstructor->performMatch(*globalData, regExp, s, 0);
+    // case without 'g' flag is handled like RegExp.prototype.exec
+    if (!global)
+        return JSValue::encode(result ? RegExpMatchesArray::create(exec, string, regExp, result) : jsNull());
 
     // return array of matches
     MarkedArgumentBuffer list;
-    while (pos >= 0) {
-        list.append(jsSubstring(exec, s, pos, matchLength));
-        pos += matchLength == 0 ? 1 : matchLength;
-        regExpConstructor->performMatch(*globalData, reg, s, pos, pos, matchLength);
+    while (result) {
+        size_t end = result.end;
+        size_t length = end - result.start;
+        list.append(jsSubstring(exec, s, result.start, length));
+        if (!length)
+            ++end;
+        result = regExpConstructor->performMatch(*globalData, regExp, s, end);
     }
     if (list.isEmpty()) {
         // if there are no matches at all, it's important to return
@@ -890,10 +878,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
             return throwVMError(exec, createSyntaxError(exec, reg->errorMessage()));
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
-    int pos;
-    int matchLength = 0;
-    regExpConstructor->performMatch(*globalData, reg, s, 0, pos, matchLength);
-    return JSValue::encode(jsNumber(pos));
+    MatchResult result = regExpConstructor->performMatch(*globalData, reg, s, 0);
+    return JSValue::encode(result ? jsNumber(result.start) : jsNumber(-1));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)

@@ -84,7 +84,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
     if (!thisValue.inherits(&RegExpObject::s_info))
         return throwVMTypeError(exec);
-    return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->match(exec, exec->argument(0).toString(exec))));
+    return JSValue::encode(jsBoolean(asRegExpObject(thisValue)->test(exec, exec->argument(0).toString(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)

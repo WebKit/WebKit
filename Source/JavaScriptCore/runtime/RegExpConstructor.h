@@ -23,6 +23,7 @@
 
 #include "InternalFunction.h"
 #include "RegExp.h"
+#include "RegExpObject.h"
 #include <wtf/OwnPtr.h>
 
 namespace JSC {
@@ -93,8 +94,7 @@ namespace JSC {
 
         static const ClassInfo s_info;
 
-        void performMatch(JSGlobalData&, RegExp*, const UString&, int startOffset, int& position, int& length, int** ovector = 0);
-        JSObject* arrayOfMatches(ExecState*) const;
+        MatchResult performMatch(JSGlobalData&, RegExp*, const UString&, int startOffset, int** ovector = 0);
 
         void setInput(const UString&);
         const UString& input() const;
@@ -135,23 +135,27 @@ namespace JSC {
       expression matching through the performMatch function. We use cached results to calculate, 
       e.g., RegExp.lastMatch and RegExp.leftParen.
     */
-    ALWAYS_INLINE void RegExpConstructor::performMatch(JSGlobalData& globalData, RegExp* r, const UString& s, int startOffset, int& position, int& length, int** ovector)
+    ALWAYS_INLINE MatchResult RegExpConstructor::performMatch(JSGlobalData& globalData, RegExp* r, const UString& s, int startOffset, int** ovector)
     {
-        position = r->match(globalData, s, startOffset, &d.tempOvector());
+        int position = r->match(globalData, s, startOffset, &d.tempOvector());
 
         if (ovector)
             *ovector = d.tempOvector().data();
 
-        if (position != -1) {
-            ASSERT(!d.tempOvector().isEmpty());
+        if (position == -1)
+            return MatchResult::failed();
 
-            length = d.tempOvector()[1] - d.tempOvector()[0];
+        ASSERT(!d.tempOvector().isEmpty());
+        ASSERT(d.tempOvector()[0] == position);
+        ASSERT(d.tempOvector()[1] >= position);
+        size_t end = d.tempOvector()[1];
 
-            d.input = s;
-            d.lastInput = s;
-            d.changeLastOvector();
-            d.lastNumSubPatterns = r->numSubpatterns();
-        }
+        d.input = s;
+        d.lastInput = s;
+        d.changeLastOvector();
+        d.lastNumSubPatterns = r->numSubpatterns();
+
+        return MatchResult(position, end);
     }
 
 } // namespace JSC

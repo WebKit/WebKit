@@ -26,6 +26,28 @@
 
 namespace JSC {
     
+    struct MatchResult {
+        ALWAYS_INLINE MatchResult(size_t start, size_t end)
+            : start(start)
+            , end(end)
+        {
+        }
+        ALWAYS_INLINE static MatchResult failed()
+        {
+            return MatchResult(WTF::notFound, 0);
+        }
+        ALWAYS_INLINE operator bool()
+        {
+            return start != WTF::notFound;
+        }
+        ALWAYS_INLINE bool empty()
+        {
+            return start == end;
+        }
+        size_t start;
+        size_t end;
+    };
+    
     class RegExpObject : public JSNonFinalObject {
     public:
         typedef JSNonFinalObject Base;
@@ -67,8 +89,8 @@ namespace JSC {
             return m_lastIndex.get();
         }
 
-        bool match(ExecState*, JSString* string);
-        JSValue exec(ExecState*, JSString* string);
+        bool test(ExecState* exec, JSString* string) { return match(exec, string); }
+        JSValue exec(ExecState*, JSString*);
 
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
@@ -95,6 +117,8 @@ namespace JSC {
         JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&, bool shouldThrow);
 
     private:
+        MatchResult match(ExecState*, JSString*);
+
         WriteBarrier<RegExp> m_regExp;
         WriteBarrier<Unknown> m_lastIndex;
         bool m_lastIndexIsWritable;

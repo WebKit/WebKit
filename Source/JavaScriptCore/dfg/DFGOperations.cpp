@@ -522,7 +522,7 @@ size_t DFG_OPERATION operationRegExpTest(ExecState* exec, JSCell* base, JSCell* 
 
     ASSERT(argument->isString() || argument->isObject());
     JSString* input = argument->isString() ? asString(argument) : asObject(argument)->toString(exec);
-    return asRegExpObject(base)->match(exec, input);
+    return asRegExpObject(base)->test(exec, input);
 }
         
 EncodedJSValue DFG_OPERATION operationArrayPop(ExecState* exec, JSArray* array)

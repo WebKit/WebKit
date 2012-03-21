@@ -1,3 +1,77 @@
+2012-03-20  Gavin Barraclough  <barraclough@apple.com>
+
+        RegExpMatchesArray should not copy the ovector
+        https://bugs.webkit.org/show_bug.cgi?id=81742
+
+        Reviewed by Michael Saboff.
+
+        Currently, all RegExpMatchesArray object contain Vector<int, 32>, used to hold any sub-pattern results.
+        This makes allocation/construction/destruction of these objects more expensive. Instead, just store the
+        main match, and recreate the sub-pattern ranges only if necessary (these are often only used for grouping,
+        and the results never accessed).
+        If the main match (index 0) of the RegExpMatchesArray is accessed, reify that value alone.
+
+        * dfg/DFGOperations.cpp:
+            - RegExpObject match renamed back to test (test returns a bool).
+        * runtime/RegExpConstructor.cpp:
+        (JSC):
+            - Removed RegExpResult, RegExpMatchesArray constructor, destroy method.
+        (JSC::RegExpMatchesArray::finishCreation):
+            - Removed RegExpConstructorPrivate parameter.
+        (JSC::RegExpMatchesArray::reifyAllProperties):
+            - (Was fillArrayInstance) Reify all properties of the RegExpMatchesArray.
+            If there are sub-pattern properties, the RegExp is re-run to generate their values.
+        (JSC::RegExpMatchesArray::reifyMatchProperty):
+            - Reify just the match (index 0) property of the RegExpMatchesArray.
+        * runtime/RegExpConstructor.h:
+        (RegExpConstructor):
+        (JSC::RegExpConstructor::performMatch):
+            - performMatch now returns a MatchResult, rather than using out-parameters.
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::RegExpMatchesArray):
+            - Moved from .cpp, stores the input/regExp/result to use when lazily reifying properties.
+        (RegExpMatchesArray):
+        (JSC::RegExpMatchesArray::create):
+            - Now passed the input string matched against, the RegExp, and the MatchResult.
+        (JSC::RegExpMatchesArray::reifyAllPropertiesIfNecessary):
+        (JSC::RegExpMatchesArray::reifyMatchPropertyIfNecessary):
+            - Helpers to conditionally reify properties.
+        (JSC::RegExpMatchesArray::getOwnPropertySlot):
+        (JSC::RegExpMatchesArray::getOwnPropertySlotByIndex):
+        (JSC::RegExpMatchesArray::getOwnPropertyDescriptor):
+        (JSC::RegExpMatchesArray::put):
+        (JSC::RegExpMatchesArray::putByIndex):
+        (JSC::RegExpMatchesArray::deleteProperty):
+        (JSC::RegExpMatchesArray::deletePropertyByIndex):
+        (JSC::RegExpMatchesArray::getOwnPropertyNames):
+        (JSC::RegExpMatchesArray::defineOwnProperty):
+            - Changed to use reifyAllPropertiesIfNecessary/reifyMatchPropertyIfNecessary
+            (getOwnPropertySlotByIndex calls reifyMatchPropertyIfNecessary if index is 0).
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::exec):
+        (JSC::RegExpObject::match):
+            - match now returns a MatchResult.
+        * runtime/RegExpObject.h:
+        (JSC::MatchResult::MatchResult):
+            - Added the result of a match is a start & end tuple.
+        (JSC::MatchResult::failed):
+            - A failure is indicated by (notFound, 0).
+        (JSC::MatchResult::operator bool):
+            - Evaluates to false if the match failed.
+        (JSC::MatchResult::empty):
+            - Evaluates to true if the match succeeded with length 0.
+        (JSC::RegExpObject::test):
+            - Now returns a bool.
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTest):
+            - RegExpObject match renamed back to test (test returns a bool).
+        * runtime/StringPrototype.cpp:
+        (JSC::removeUsingRegExpSearch):
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+            - performMatch now returns a MatchResult, rather than using out-parameters.
+
 2012-03-21  Hojong Han  <hojong.han@samsung.com>
 
         Fix out of memory by allowing overcommit

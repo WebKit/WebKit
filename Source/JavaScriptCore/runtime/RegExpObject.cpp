@@ -29,6 +29,7 @@
 #include "Lexer.h"
 #include "Lookup.h"
 #include "RegExpConstructor.h"
+#include "RegExpMatchesArray.h"
 #include "RegExpPrototype.h"
 #include "UStringBuilder.h"
 #include "UStringConcatenate.h"
@@ -278,23 +279,20 @@ void RegExpObject::put(JSCell* cell, ExecState* exec, const Identifier& property
 
 JSValue RegExpObject::exec(ExecState* exec, JSString* string)
 {
-    if (match(exec, string))
-        return exec->lexicalGlobalObject()->regExpConstructor()->arrayOfMatches(exec);
+    if (MatchResult result = match(exec, string))
+        return RegExpMatchesArray::create(exec, string, regExp(), result);
     return jsNull();
 }
 
 // Shared implementation used by test and exec.
-bool RegExpObject::match(ExecState* exec, JSString* string)
+MatchResult RegExpObject::match(ExecState* exec, JSString* string)
 {
+    RegExp* regExp = this->regExp();
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     UString input = string->value(exec);
-    JSGlobalData* globalData = &exec->globalData();
-    if (!regExp()->global()) {
-        int position;
-        int length;
-        regExpConstructor->performMatch(*globalData, m_regExp.get(), input, 0, position, length);
-        return position >= 0;
-    }
+    JSGlobalData& globalData = exec->globalData();
+    if (!regExp->global())
+        return regExpConstructor->performMatch(globalData, regExp, input, 0);
 
     JSValue jsLastIndex = getLastIndex();
     unsigned lastIndex;
@@ -302,27 +300,20 @@ bool RegExpObject::match(ExecState* exec, JSString* string)
         lastIndex = jsLastIndex.asUInt32();
         if (lastIndex > input.length()) {
             setLastIndex(exec, 0);
-            return false;
+            return MatchResult::failed();
         }
     } else {
         double doubleLastIndex = jsLastIndex.toInteger(exec);
         if (doubleLastIndex < 0 || doubleLastIndex > input.length()) {
             setLastIndex(exec, 0);
-            return false;
+            return MatchResult::failed();
         }
         lastIndex = static_cast<unsigned>(doubleLastIndex);
     }
 
-    int position;
-    int length = 0;
-    regExpConstructor->performMatch(*globalData, m_regExp.get(), input, lastIndex, position, length);
-    if (position < 0) {
-        setLastIndex(exec, 0);
-        return false;
-    }
-
-    setLastIndex(exec, position + length);
-    return true;
+    MatchResult result = regExpConstructor->performMatch(globalData, regExp, input, lastIndex);
+    setLastIndex(exec, result.end);
+    return result;
 }
 
 } // namespace JSC
