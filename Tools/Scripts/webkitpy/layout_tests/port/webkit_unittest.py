@@ -240,8 +240,11 @@ class WebKitPortTest(port_testcase.PortTestCase):
 class MockServerProcess(object):
     def __init__(self, lines=None):
         self.timed_out = False
-        self.crashed = False
         self.lines = lines or []
+        self.crashed = False
+
+    def has_crashed(self):
+        return self.crashed
 
     def read_stdout_line(self, deadline):
         return self.lines.pop(0) + "\n"
