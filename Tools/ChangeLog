@@ -1,3 +1,18 @@
+2012-03-20  Adam Barth  <abarth@webkit.org>
+
+        svn-apply should move inflight patches from WebCore/webaudio to WebCore/Modules/webaudio
+        https://bugs.webkit.org/show_bug.cgi?id=81567
+
+        Reviewed by Eric Seidel.
+
+        This temporary measure should help us avoid disrupting the folks
+        working on WebAudio when we move the webaudio directory to Modules.
+
+        * Scripts/VCSUtils.pm:
+        (adjustPathForRecentRenamings):
+        (parseGitDiffHeader):
+        (parseSvnDiffHeader):
+
 2012-03-20  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r111453.
