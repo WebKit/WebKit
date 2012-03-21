@@ -41,6 +41,7 @@ typedef struct CGColor *CGColorRef;
 typedef struct CGFont *CGFontRef;
 typedef struct CGColorSpace *CGColorSpaceRef;
 typedef struct CGPattern *CGPatternRef;
+typedef struct CGPath *CGMutablePathRef;
 typedef unsigned short CGGlyph;
 typedef struct __CFReadStream * CFReadStreamRef;
 typedef struct __CFRunLoop * CFRunLoopRef;
@@ -304,6 +305,10 @@ extern dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
 #if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
 extern NSString *(*wkGetMacOSXVersionString)(void);
 extern bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
+#endif
+
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+extern void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 #endif
 
 }

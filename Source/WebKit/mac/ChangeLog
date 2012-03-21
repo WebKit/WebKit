@@ -1,3 +1,18 @@
+2012-03-21  Tim Horton  <timothy_horton@apple.com>
+
+        Make use of CG rounded-rect primitives
+        https://bugs.webkit.org/show_bug.cgi?id=79932
+        <rdar://problem/9274953>
+
+        Reviewed by Simon Fraser.
+        
+        Portions of patch by Nikolas Zimmermann and Mustafizur Rahaman.
+
+        Add wkCGPathAddRoundedRect.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2012-03-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert hasSpellingMarker to use Internals interface.

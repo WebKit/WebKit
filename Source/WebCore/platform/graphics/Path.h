@@ -135,8 +135,14 @@ namespace WebCore {
         void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, bool anticlockwise);
         void addRect(const FloatRect&);
         void addEllipse(const FloatRect&);
-        void addRoundedRect(const FloatRect&, const FloatSize& roundingRadii);
-        void addRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
+
+        enum RoundedRectStrategy {
+            PreferNativeRoundedRect,
+            PreferBezierRoundedRect
+        };
+
+        void addRoundedRect(const FloatRect&, const FloatSize& roundingRadii, RoundedRectStrategy = PreferNativeRoundedRect);
+        void addRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius, RoundedRectStrategy = PreferNativeRoundedRect);
         void addRoundedRect(const RoundedRect&);
 
         void translate(const FloatSize&);
@@ -146,7 +152,12 @@ namespace WebCore {
         void apply(void* info, PathApplierFunction) const;
         void transform(const AffineTransform&);
 
+        void addPathForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius, RoundedRectStrategy = PreferNativeRoundedRect);
         void addBeziersForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
+
+#if USE(CG)
+        void platformAddPathForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
+#endif
 
     private:
         PlatformPathPtr m_path;

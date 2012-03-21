@@ -39,6 +39,14 @@
 #include <wtf/MathExtras.h>
 #include <wtf/RetainPtr.h>
 
+#if PLATFORM(MAC) || PLATFORM(CHROMIUM)
+#include "WebCoreSystemInterface.h"
+#endif
+
+#if PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
+
 namespace WebCore {
 
 static size_t putBytesNowhere(void*, const void*, size_t count)
@@ -224,6 +232,21 @@ void Path::addBezierCurveTo(const FloatPoint& cp1, const FloatPoint& cp2, const 
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 {
     CGPathAddArcToPoint(m_path, 0, p1.x(), p1.y(), p2.x(), p2.y(), radius);
+}
+
+void Path::platformAddPathForRoundedRect(const FloatRect& rect, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius)
+{
+#if PLATFORM(MAC) && (!defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD))
+    bool equalWidths = (topLeftRadius.width() == topRightRadius.width() && topRightRadius.width() == bottomLeftRadius.width() && bottomLeftRadius.width() == bottomRightRadius.width());
+    bool equalHeights = (topLeftRadius.height() == bottomLeftRadius.height() && bottomLeftRadius.height() == topRightRadius.height() && topRightRadius.height() == bottomRightRadius.height());
+
+    if (equalWidths && equalHeights) {
+        wkCGPathAddRoundedRect(m_path, 0, rect, topLeftRadius.width(), topLeftRadius.height());
+        return;
+    }
+#endif
+
+    addBeziersForRoundedRect(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
 }
 
 void Path::closeSubpath()

@@ -186,3 +186,7 @@ dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
 NSString *(*wkGetMacOSXVersionString)(void);
 bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 #endif
+
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
+#endif
