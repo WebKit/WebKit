@@ -180,7 +180,8 @@ void V8DOMWindowShell::disposeContextHandles()
         // It's likely that disposing the context has created a lot of
         // garbage. Notify V8 about this so it'll have a chance of cleaning
         // it up when idle.
-        V8GCForContextDispose::instance().notifyContextDisposed();
+        bool isMainFrame = m_frame->page() && (m_frame->page()->mainFrame() == m_frame); 
+        V8GCForContextDispose::instance().notifyContextDisposed(isMainFrame);
     }
 
     WrapperBoilerplateMap::iterator it = m_wrapperBoilerplates.begin();

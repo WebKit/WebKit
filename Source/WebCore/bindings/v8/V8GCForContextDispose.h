@@ -38,7 +38,7 @@ namespace WebCore {
 
 class V8GCForContextDispose {
 public:
-    void notifyContextDisposed();
+    void notifyContextDisposed(bool isMainFrame);
     void notifyIdleSooner(double maximumFireInterval);
 
     static V8GCForContextDispose& instance();
@@ -48,6 +48,7 @@ private:
     void pseudoIdleTimerFired(Timer<V8GCForContextDispose>*);
 
     Timer<V8GCForContextDispose> m_pseudoIdleTimer;
+    bool m_didDisposeContextForMainFrame;
 };
 
 }

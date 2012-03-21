@@ -37,11 +37,13 @@ namespace WebCore {
 
 V8GCForContextDispose::V8GCForContextDispose()
     : m_pseudoIdleTimer(this, &V8GCForContextDispose::pseudoIdleTimerFired)
+    , m_didDisposeContextForMainFrame(false)
 {
 }
 
-void V8GCForContextDispose::notifyContextDisposed()
+void V8GCForContextDispose::notifyContextDisposed(bool isMainFrame)
 {
+    m_didDisposeContextForMainFrame = m_didDisposeContextForMainFrame || isMainFrame;
     v8::V8::ContextDisposedNotification();
     if (!m_pseudoIdleTimer.isActive())
         m_pseudoIdleTimer.startOneShot(0.8);
@@ -66,7 +68,11 @@ V8GCForContextDispose& V8GCForContextDispose::instance()
 
 void V8GCForContextDispose::pseudoIdleTimerFired(Timer<V8GCForContextDispose>*)
 {
-    v8::V8::IdleNotification();
+    const int longIdlePauseInMs = 1000;
+    const int shortIdlePauseInMs = 10;
+    int hint = m_didDisposeContextForMainFrame ? longIdlePauseInMs : shortIdlePauseInMs;
+    v8::V8::IdleNotification(hint);
+    m_didDisposeContextForMainFrame = false;
 }
 
 } // namespace WebCore
