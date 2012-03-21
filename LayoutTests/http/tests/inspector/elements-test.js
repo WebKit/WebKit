@@ -192,7 +192,7 @@ InspectorTest.expandSelectedElementEventListenersEventBars = function(callback)
 {
     var eventListenerSections = WebInspector.panels.elements.sidebarPanes.eventListeners.sections;
     for (var i = 0; i < eventListenerSections.length; ++i) {
-        var eventBarChildren = eventListenerSections[i].eventBars.children;
+        var eventBarChildren = eventListenerSections[i]._eventBars.children;
         for (var j = 0; j < eventBarChildren.length; ++j)
             eventBarChildren[j]._section.expand();
     }
@@ -214,7 +214,7 @@ InspectorTest.dumpSelectedElementEventListeners = function(callback)
         var eventType = section._title;
         InspectorTest.addResult("");
         InspectorTest.addResult("======== " + eventType + " ========");
-        var eventBarChildren = section.eventBars.children;
+        var eventBarChildren = section._eventBars.children;
         for (var j = 0; j < eventBarChildren.length; ++j) {
             var objectPropertiesSection = eventBarChildren[j]._section;
             InspectorTest.dumpObjectPropertySection(objectPropertiesSection, {

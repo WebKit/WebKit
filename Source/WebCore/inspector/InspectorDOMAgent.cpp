@@ -725,15 +725,11 @@ void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const
 
 void InspectorDOMAgent::getEventListenersForNode(ErrorString* errorString, int nodeId, RefPtr<InspectorArray>& listenersArray)
 {
-    Node* node = nodeForId(nodeId);
-    if (!node) {
-        *errorString = "No such node";
+    Node* node = assertNode(errorString, nodeId);
+    if (!node)
         return;
-    }
     Vector<EventListenerInfo> eventInformation;
     getEventListeners(node, eventInformation, true);
-    if (eventInformation.isEmpty())
-        return;
 
     // Get Capturing Listeners (in this order)
     size_t eventInformationLength = eventInformation.size();
@@ -761,41 +757,27 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString* errorString, int n
 
 void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>& eventInformation, bool includeAncestors)
 {
-    EventTargetData* d;
-
-    // Quick break if no listeners at all
-    if (!(d = node->eventTargetData()))
-        return;
-
-    // Get the list of event types this Node is concerned with
-    Vector<AtomicString> eventTypes = d->eventListenerMap.eventTypes();
-
-    // Quick break if no useful listeners
-    size_t eventTypesLength = eventTypes.size();
-    if (!eventTypesLength)
-        return;
-
+    // The Node's Ancestors including self.
+    Vector<Node*> ancestors;
+    // Push this node as the firs element.
+    ancestors.append(node);
     if (includeAncestors) {
-        // The Node's Ancestors (not including self)
-        Vector<ContainerNode*> ancestors;
         for (ContainerNode* ancestor = node->parentOrHostNode(); ancestor; ancestor = ancestor->parentOrHostNode())
             ancestors.append(ancestor);
-
-        // Nodes and their Listeners for the concerned event types (order is top to bottom)
-        for (size_t i = ancestors.size(); i; --i) {
-            ContainerNode* ancestor = ancestors[i - 1];
-            for (size_t j = 0; j < eventTypesLength; ++j) {
-                AtomicString& type = eventTypes[j];
-                if (ancestor->hasEventListeners(type))
-                    eventInformation.append(EventListenerInfo(ancestor, type, ancestor->getEventListeners(type)));
-            }
-        }
     }
 
-    // Insert the Current Node at the end of that list (last in capturing, first in bubbling)
-    for (size_t i = 0; i < eventTypesLength; ++i) {
-        const AtomicString& type = eventTypes[i];
-        eventInformation.append(EventListenerInfo(node, type, node->getEventListeners(type)));
+    // Nodes and their Listeners for the concerned event types (order is top to bottom)
+    for (size_t i = ancestors.size(); i; --i) {
+        Node* ancestor = ancestors[i - 1];
+        EventTargetData* d = ancestor->eventTargetData();
+        if (!d)
+            continue;
+        // Get the list of event types this Node is concerned with
+        Vector<AtomicString> eventTypes = d->eventListenerMap.eventTypes();
+        for (size_t j = 0; j < eventTypes.size(); ++j) {
+            AtomicString& type = eventTypes[j];
+            eventInformation.append(EventListenerInfo(ancestor, type, ancestor->getEventListeners(type)));
+        }
     }
 }
 

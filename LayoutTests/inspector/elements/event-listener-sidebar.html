@@ -19,13 +19,36 @@ function setupEventListeners()
     document.addEventListener("click", function(event) { console.log("click - document - capturing"); }, true);
     document.addEventListener("mousedown", f, false);
     document.removeEventListener("mousedown", f, false);
+
+    document.body.addEventListener("custom event", f, true);
 }
 
 function test()
 {
-    InspectorTest.selectNodeWithId("node", callback);
+    WebInspector.settings.eventListenersFilter.set("all");
+    InspectorTest.selectNodeWithId("node", step1);
 
-    function callback()
+    function step1()
+    {
+        InspectorTest.expandAndDumpSelectedElementEventListeners(step2);
+    }
+    function step2()
+    {
+        InspectorTest.selectNodeWithId("node-without-listeners", step3);
+    }
+    function step3()
+    {
+        InspectorTest.expandAndDumpSelectedElementEventListeners(step4);
+    }
+    function step4()
+    {
+        var eventListenersPane = WebInspector.panels.elements.sidebarPanes.eventListeners;
+        eventListenersPane.settingsSelectElement.selectedIndex = 1;
+        eventListenersPane._changeSetting();
+        InspectorTest.addResult("Listeners for selected node only(should be no listeners):");
+        InspectorTest.expandAndDumpSelectedElementEventListeners(step5);
+    }
+    function step5()
     {
         InspectorTest.expandAndDumpSelectedElementEventListeners(InspectorTest.completeTest);
     }
@@ -45,6 +68,8 @@ Tests event listeners output in the Elements sidebar panel.
 </p>
 
 <button id="node">Inspect Me</button>
+
+<div id="node-without-listeners"></div>
 
 </body>
 </html>
