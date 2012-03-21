@@ -21,7 +21,7 @@
 #define _WEBSECURITYORIGIN_P_H_
 
 #include "SecurityOrigin.h"
-#include "RefPtr.h"
+#include <wtf/RefPtr.h>
 
 class QWebSecurityOriginPrivate : public QSharedData {
 public:

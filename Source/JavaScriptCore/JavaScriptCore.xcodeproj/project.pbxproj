@@ -1093,7 +1093,6 @@
 		65C647B3093EF8D60022C380 /* RefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RefPtr.h; sourceTree = "<group>"; tabWidth = 8; };
 		65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSWrapperObject.cpp; sourceTree = "<group>"; };
 		65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSWrapperObject.h; sourceTree = "<group>"; };
-		65D6D87E09B5A32E0002E4D7 /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		65DFC92A08EA173A00F7300B /* HashFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashFunctions.h; sourceTree = "<group>"; tabWidth = 8; };
 		65DFC92B08EA173A00F7300B /* HashMap.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashMap.h; sourceTree = "<group>"; tabWidth = 8; };
 		65DFC92C08EA173A00F7300B /* HashSet.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashSet.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -2141,7 +2140,6 @@
 				44DD48520FAEA85000D6B4EB /* PassOwnPtr.h */,
 				6580F795094070560082C219 /* PassRefPtr.h */,
 				651DCA02136A6FAB00F74194 /* PassTraits.h */,
-				65D6D87E09B5A32E0002E4D7 /* Platform.h */,
 				A7D649A91015224E009B2E1B /* PossiblyNull.h */,
 				088FA5B90EF76D4300578E6F /* RandomNumber.cpp */,
 				088FA5BA0EF76D4300578E6F /* RandomNumber.h */,

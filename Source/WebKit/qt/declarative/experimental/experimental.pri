@@ -43,7 +43,8 @@ INCLUDEPATH += \
     ../../../../JavaScriptCore/wtf/unicode \
     ../../../../JavaScriptCore/runtime \
     ../../../../WebKit2/Platform \
-    ../../../../WebKit2/Platform/CoreIPC
+    ../../../../WebKit2/Platform/CoreIPC \
+    ../../../../WTF
 
 target.path = $$[QT_INSTALL_IMPORTS]/$${TARGET.module_name}
 

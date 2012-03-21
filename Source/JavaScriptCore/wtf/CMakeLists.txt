@@ -69,7 +69,7 @@ SET(WTF_HEADERS
     ParallelJobsGeneric.h
     ParallelJobsLibdispatch.h
     ParallelJobsOpenMP.h
-    Platform.h
+    ${WTF_DIR}/wtf/Platform.h
     PossiblyNull.h
     RandomNumber.h
     RandomNumberSeed.h

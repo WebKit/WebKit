@@ -1,3 +1,23 @@
+2012-03-20  Eric Seidel  <eric@webkit.org>
+
+        Move wtf/Platform.h from JavaScriptCore to Source/WTF/wtf
+        https://bugs.webkit.org/show_bug.cgi?id=80911
+
+        Reviewed by Adam Barth.
+
+        Update build systems to account for the new location of Platform.h
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.vcproj/work-around-vs-dependency-tracking-bugs.py:
+        (react_to_vsprops_changes):
+        * WTF.xcodeproj/project.pbxproj:
+        * config.h: I don't think this change is 100% correct (but seemed to be needed to make qt-wk2 build)
+         - This dependency on JSC should be removed regardless (in a later patch).
+        * wtf/Platform.h: Renamed from Source/JavaScriptCore/wtf/Platform.h.
+
 2012-03-20  Steve Falkenburg  <sfalken@apple.com>
 
         Move WTF-related Windows project files out of JavaScriptCore

@@ -15,7 +15,8 @@ WEBKIT += wtf webcore
 
 INCLUDEPATH += \
     $$PWD/.. \
-    $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport
+    $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport \
+    $${ROOT_WEBKIT_DIR}/Source/WTF
 
 QT = core gui network testlib webkit
 macx: QT += xml

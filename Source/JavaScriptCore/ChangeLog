@@ -1,3 +1,19 @@
+2012-03-20  Eric Seidel  <eric@webkit.org>
+
+        Move wtf/Platform.h from JavaScriptCore to Source/WTF/wtf
+        https://bugs.webkit.org/show_bug.cgi?id=80911
+
+        Reviewed by Adam Barth.
+
+        Update the various build systems to depend on Source/WTF headers
+        as well as remove references to Platform.h (since it's now moved).
+
+        * CMakeLists.txt:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+
 2012-03-20  Filip Pizlo  <fpizlo@apple.com>
 
         op_mod fails on many interesting corner cases

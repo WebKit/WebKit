@@ -496,7 +496,7 @@ sub unlinkZeroFiles()
 my @projects = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKit");
 
 # Build WTF as a separate static library on ports which support it.
-splice @projects, 0, 0, "Source/WTF" if isAppleMacWebKit();
+splice @projects, 0, 0, "Source/WTF" if isAppleMacWebKit() or isAppleWinWebKit();
 
 for my $dir (@projects) {
     if (! -d $dir) {

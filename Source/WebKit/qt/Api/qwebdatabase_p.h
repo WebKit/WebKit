@@ -24,7 +24,7 @@
 
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
-#include "RefPtr.h"
+#include <wtf/RefPtr.h>
 
 
 class QWebDatabasePrivate : public QSharedData {

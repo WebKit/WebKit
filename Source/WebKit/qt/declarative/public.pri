@@ -44,7 +44,8 @@ INCLUDEPATH += \
     ../../../WebKit2/Shared/qt \
     ../../../JavaScriptCore \
     ../../../JavaScriptCore/runtime \
-    ../../../JavaScriptCore/wtf
+    ../../../JavaScriptCore/wtf \
+    ../../../WTF
 
 SOURCES += plugin.cpp
 

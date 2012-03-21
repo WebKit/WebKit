@@ -31,7 +31,7 @@ def react_to_vsprops_changes():
 
     # Touch wtf/Platform.h so all files will be recompiled. This is necessary
     # to pick up changes to preprocessor macros (e.g., ENABLE_*).
-    wtf_platform_h = os.path.join(TOP_LEVEL_DIRECTORY, 'Source', 'JavaScriptCore', 'wtf', 'Platform.h')
+    wtf_platform_h = os.path.join(TOP_LEVEL_DIRECTORY, 'Source', 'WTF', 'wtf', 'Platform.h')
     touch_if_older_than(wtf_platform_h, newest_vsprops_time)
 
 

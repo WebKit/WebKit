@@ -32,10 +32,10 @@
 
 #include "InspectorClient.h"
 #include "InspectorFrontendClientLocal.h"
-#include "OwnPtr.h"
-#include "PassOwnPtr.h"
 #include <QtCore/QString>
 #include <wtf/Forward.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 class QWebPage;
 class QWebView;

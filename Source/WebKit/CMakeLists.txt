@@ -1,4 +1,5 @@
 SET(WebKit_INCLUDE_DIRECTORIES
+    "${WTF_DIR}"
     "${WEBKIT_DIR}"
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/webdatabase"

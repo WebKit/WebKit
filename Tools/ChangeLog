@@ -1,3 +1,17 @@
+2012-03-20  Eric Seidel  <eric@webkit.org>
+
+        Move wtf/Platform.h from JavaScriptCore to Source/WTF/wtf
+        https://bugs.webkit.org/show_bug.cgi?id=80911
+
+        Reviewed by Adam Barth.
+
+        Update include paths for Source/WTF.
+
+        * DumpRenderTree/efl/CMakeLists.txt:
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * QtTestBrowser/QtTestBrowser.pro:
+        * Scripts/build-webkit: Build Source/WTF on AppleWin as well.
+
 2012-03-20  Adam Barth  <abarth@webkit.org>
 
         svn-apply should move inflight patches from WebCore/webaudio to WebCore/Modules/webaudio

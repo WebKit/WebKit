@@ -27,11 +27,11 @@
 #include "QtNetworkRequestData.h"
 
 #include "ArgumentCodersQt.h"
-#include "Platform.h"
 #include "WebCoreArgumentCoders.h"
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QUuid>
+#include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

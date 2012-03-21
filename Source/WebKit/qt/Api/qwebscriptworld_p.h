@@ -20,7 +20,7 @@
 #ifndef _QWEBSCRIPTWORLD_P_H_
 #define _QWEBSCRIPTWORLD_P_H_
 
-#include "RefPtr.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
     class DOMWrapperWorld;

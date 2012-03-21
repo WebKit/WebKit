@@ -1,5 +1,6 @@
 SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}"
+    "${WTF_DIR}"
     "${WEBCORE_DIR}/Modules/filesystem"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"

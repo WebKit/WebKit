@@ -26,7 +26,7 @@
 #ifndef QtNetworkRequestData_h
 #define QtNetworkRequestData_h
 
-#include "RefCounted.h"
+#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {

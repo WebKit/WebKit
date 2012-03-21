@@ -12,6 +12,7 @@ JAVASCRIPTCORE_GENERATED_SOURCES_DIR = $${ROOT_BUILD_DIR}/Source/JavaScriptCore/
 INCLUDEPATH += \
     $$SOURCE_DIR \
     $$SOURCE_DIR/.. \
+    $$SOURCE_DIR/../WTF \
     $$SOURCE_DIR/assembler \
     $$SOURCE_DIR/bytecode \
     $$SOURCE_DIR/bytecompiler \

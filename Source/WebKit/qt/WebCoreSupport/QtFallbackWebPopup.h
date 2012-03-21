@@ -20,8 +20,8 @@
 #ifndef QtFallbackWebPopup_h
 #define QtFallbackWebPopup_h
 
-#include "Platform.h"
 #include "qwebkitplatformplugin.h"
+#include <wtf/Platform.h>
 
 #include <QComboBox>
 

@@ -997,7 +997,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\JavaScriptCore\wtf\Platform.h"
+			RelativePath="wtf\Platform.h"
 			>
 		</File>
 		<File

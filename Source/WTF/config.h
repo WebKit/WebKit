@@ -31,7 +31,7 @@
 #include <wtf/ExportMacros.h>
 // WTF cannot depend on JSC even if USE(JSC).
 #if USE(JSC) && !defined(BUILDING_WTF)
-#include "JSExportMacros.h"
+#include "runtime/JSExportMacros.h"
 #endif
 
 #if OS(WINDOWS)

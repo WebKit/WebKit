@@ -41,6 +41,7 @@ SET(DumpRenderTree_LIBRARIES
 )
 
 SET(DumpRenderTree_INCLUDE_DIRECTORIES
+    ${WTF_DIR}
     "${WEBKIT_DIR}/efl/ewk"
     ${WEBKIT_DIR}/efl
     ${WEBCORE_DIR}

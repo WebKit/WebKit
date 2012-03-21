@@ -21,7 +21,7 @@
 #ifndef QtWebComboBox_h
 #define QtWebComboBox_h
 
-#include "Platform.h"
+#include <wtf/Platform.h>
 
 #include <QComboBox>
 

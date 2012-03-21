@@ -1,3 +1,16 @@
+2012-03-20  Eric Seidel  <eric@webkit.org>
+
+        Move wtf/Platform.h from JavaScriptCore to Source/WTF/wtf
+        https://bugs.webkit.org/show_bug.cgi?id=80911
+
+        Reviewed by Adam Barth.
+
+        Update to not depend on "Foo.h" includes for WTF headers.
+
+        * Shared/qt/QtNetworkReplyData.h:
+        * Shared/qt/QtNetworkRequestData.cpp:
+        * Shared/qt/QtNetworkRequestData.h:
+
 2012-03-20  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION (r110780): Loading a PDF always makes the WKView layer backed

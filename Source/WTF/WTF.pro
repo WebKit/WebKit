@@ -102,7 +102,7 @@ HEADERS += \
     PassOwnPtr.h \
     PassRefPtr.h \
     PassTraits.h \
-    Platform.h \
+    ../../WTF/wtf/Platform.h \
     PossiblyNull.h \
     qt/UtilsQt.h \
     RandomNumber.h \
