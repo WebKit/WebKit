@@ -70,9 +70,11 @@ ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t 
 
     // But, the FFT convolution itself incurs fftSize / 2 latency, so subtract this out...
     size_t halfSize = fftSize / 2;
-    ASSERT(totalDelay >= halfSize);
-    if (totalDelay >= halfSize)
-        totalDelay -= halfSize;
+    if (!m_directMode) {
+        ASSERT(totalDelay >= halfSize);
+        if (totalDelay >= halfSize)
+            totalDelay -= halfSize;
+    }
 
     // We divide up the total delay, into pre and post delay sections so that we can schedule at exactly the moment when the FFT will happen.
     // This is coordinated with the other stages, so they don't all do their FFTs at the same time...
