@@ -3716,7 +3716,7 @@ BUGWK73494 : svg/as-image/svg-non-integer-scaled-image.html = IMAGE PASS
 
 BUGWK73872 LINUX : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
 
-BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-permanently.html = TIMEOUT
+BUGWK73514 WIN : platform/chromium/compositing/lost-compositor-context-permanently.html = PASS TIMEOUT
 BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT IMAGE TEXT PASS
 
 BUGWK73607 LINUX DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
