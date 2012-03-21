@@ -1048,14 +1048,24 @@ WebInspector.HeapSnapshot.prototype = {
             if (!(classIndex in aggregates)) {
                 var nodeType = node.type;
                 var nameMatters = nodeType === "object" || nodeType === "native";
-                var value = { count: 0, self: 0, maxRet: 0, type: nodeType, name: nameMatters ? node.name : null, idxs: [] };
+                var value = {
+                    count: 1,
+                    distanceToWindow: node.distanceToWindow,
+                    self: node.selfSize,
+                    maxRet: 0,
+                    type: nodeType,
+                    name: nameMatters ? node.name : null,
+                    idxs: [node.nodeIndex]
+                };
                 aggregates[classIndex] = value;
                 aggregatesByClassName[node.className] = value;
+            } else {
+                var clss = aggregates[classIndex];
+                clss.distanceToWindow = Math.min(clss.distanceToWindow, node.distanceToWindow);
+                ++clss.count;
+                clss.self += node.selfSize;
+                clss.idxs.push(node.nodeIndex);
             }
-            var clss = aggregates[classIndex];
-            ++clss.count;
-            clss.self += node.selfSize;
-            clss.idxs.push(node.nodeIndex);
         }
 
         // Recursively visit dominators tree and sum up retained sizes
@@ -1562,6 +1572,7 @@ WebInspector.HeapSnapshotNodesProvider.prototype = {
         return {
             id: node.id,
             name: node.name,
+            distanceToWindow: node.distanceToWindow,
             nodeIndex: node.nodeIndex,
             retainedSize: node.retainedSize,
             selfSize: node.selfSize,

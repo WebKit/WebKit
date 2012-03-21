@@ -219,6 +219,7 @@ WebInspector.HeapSnapshotConstructorsDataGrid = function()
 {
     var columns = {
         object: { title: WebInspector.UIString("Constructor"), disclosure: true, sortable: true },
+        distanceToWindow: { title: WebInspector.UIString("Distance"), width: "90px", sortable: true },
         count: { title: WebInspector.UIString("Objects Count"), width: "90px", sortable: true },
         shallowSize: { title: WebInspector.UIString("Shallow Size"), width: "120px", sortable: true },
         retainedSize: { title: WebInspector.UIString("Retained Size"), width: "120px", sort: "descending", sortable: true }
@@ -234,6 +235,7 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
     {
         return {
             object: ["_name", sortAscending, "_count", false],
+            distanceToWindow: ["_distanceToWindow", sortAscending, "_retainedSize", true],
             count: ["_count", sortAscending, "_name", true],
             shallowSize: ["_shallowSize", sortAscending, "_name", true],
             retainedSize: ["_retainedSize", sortAscending, "_name", true]
