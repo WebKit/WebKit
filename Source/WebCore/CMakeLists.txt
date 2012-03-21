@@ -124,6 +124,28 @@ SET(WebCore_IDL_FILES
     Modules/geolocation/PositionError.idl
     Modules/geolocation/PositionErrorCallback.idl
 
+    Modules/webaudio/AudioBuffer.idl
+    Modules/webaudio/AudioBufferSourceNode.idl
+    Modules/webaudio/AudioChannelSplitter.idl
+    Modules/webaudio/AudioChannelMerger.idl
+    Modules/webaudio/AudioContext.idl
+    Modules/webaudio/AudioDestinationNode.idl
+    Modules/webaudio/AudioGain.idl
+    Modules/webaudio/AudioGainNode.idl
+    Modules/webaudio/AudioListener.idl
+    Modules/webaudio/AudioNode.idl
+    Modules/webaudio/AudioPannerNode.idl
+    Modules/webaudio/AudioParam.idl
+    Modules/webaudio/AudioProcessingEvent.idl
+    Modules/webaudio/AudioSourceNode.idl
+    Modules/webaudio/ConvolverNode.idl
+    Modules/webaudio/DOMWindowWebAudio.idl
+    Modules/webaudio/DelayNode.idl
+    Modules/webaudio/HighPass2FilterNode.idl
+    Modules/webaudio/JavaScriptAudioNode.idl
+    Modules/webaudio/LowPass2FilterNode.idl
+    Modules/webaudio/RealtimeAnalyserNode.idl
+
     Modules/websockets/CloseEvent.idl
     Modules/websockets/DOMWindowWebSocket.idl
 
@@ -376,28 +398,6 @@ SET(WebCore_IDL_FILES
     storage/StorageInfoErrorCallback.idl
     storage/StorageInfoQuotaCallback.idl
     storage/StorageInfoUsageCallback.idl
-
-    Modules/webaudio/AudioBuffer.idl
-    Modules/webaudio/AudioBufferSourceNode.idl
-    Modules/webaudio/AudioChannelSplitter.idl
-    Modules/webaudio/AudioChannelMerger.idl
-    Modules/webaudio/AudioContext.idl
-    Modules/webaudio/AudioDestinationNode.idl
-    Modules/webaudio/AudioGain.idl
-    Modules/webaudio/AudioGainNode.idl
-    Modules/webaudio/AudioListener.idl
-    Modules/webaudio/AudioNode.idl
-    Modules/webaudio/AudioPannerNode.idl
-    Modules/webaudio/AudioParam.idl
-    Modules/webaudio/AudioProcessingEvent.idl
-    Modules/webaudio/AudioSourceNode.idl
-    Modules/webaudio/ConvolverNode.idl
-    Modules/webaudio/DOMWindowWebAudio.idl
-    Modules/webaudio/DelayNode.idl
-    Modules/webaudio/HighPass2FilterNode.idl
-    Modules/webaudio/JavaScriptAudioNode.idl
-    Modules/webaudio/LowPass2FilterNode.idl
-    Modules/webaudio/RealtimeAnalyserNode.idl
 
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl
