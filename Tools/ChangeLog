@@ -1,3 +1,11 @@
+2012-03-21  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        Updated the address list of committers.py.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-03-21  W. James MacLean  <wjmaclean@chromium.org>
 
         Updating my nick in committers file.
