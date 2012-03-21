@@ -1,5 +1,16 @@
 2012-03-21  Jessie Berlin  <jberlin@apple.com>
 
+        More Windows build fixing.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        Fix the order of the include directories to look in include/private first before looking
+        in include/private/JavaScriptCore.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleasePGO.vsprops:
+        Look in the Production output directory (where the wtf headers will be). This is the same
+        thing that is done for jsc and testRegExp in ReleasePGO.
+
+2012-03-21  Jessie Berlin  <jberlin@apple.com>
+
         WTF headers should be in $(ConfigurationBuildDir)\include\private\wtf, not
         $(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf.
         https://bugs.webkit.org/show_bug.cgi?id=81739

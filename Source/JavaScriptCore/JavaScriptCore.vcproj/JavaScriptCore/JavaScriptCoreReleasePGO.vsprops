@@ -9,4 +9,8 @@
 		Name="VCLinkerTool"
 		AdditionalLibraryDirectories="&quot;$(ConfigurationBuildDir)\..\Production\lib&quot;"
 	/>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\..\Production\include\private&quot;"
+	/>
 </VisualStudioPropertySheet>
