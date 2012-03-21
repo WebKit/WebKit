@@ -177,8 +177,8 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UISourceCodeRemoved, this._uiSourceCodeRemoved, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessagesCleared, this._consoleMessagesCleared, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, this._breakpointAdded, this);
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, this._breakpointRemoved, this);
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UIBreakpointAdded, this._uiBreakpointAdded, this);
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.UIBreakpointRemoved, this._uiBreakpointRemoved, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, this._debuggerPaused, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerResumed, this._debuggerResumed, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
@@ -308,26 +308,26 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame.addMessageToSource(message.lineNumber, message.originalMessage);
     },
 
-    _breakpointAdded: function(event)
+    _uiBreakpointAdded: function(event)
     {
-        var breakpoint = event.data;
+        var uiBreakpoint = /** @type {WebInspector.UIBreakpoint} */ event.data;
 
-        var sourceFrame = this._sourceFramesByUISourceCode.get(breakpoint.uiSourceCode)
+        var sourceFrame = this._sourceFramesByUISourceCode.get(uiBreakpoint.uiSourceCode)
         if (sourceFrame && sourceFrame.loaded)
-            sourceFrame.addBreakpoint(breakpoint.lineNumber, breakpoint.resolved, breakpoint.condition, breakpoint.enabled);
+            sourceFrame.addBreakpoint(uiBreakpoint.lineNumber, uiBreakpoint.resolved, uiBreakpoint.condition, uiBreakpoint.enabled);
 
-        this.sidebarPanes.jsBreakpoints.addBreakpoint(breakpoint);
+        this.sidebarPanes.jsBreakpoints.addBreakpoint(uiBreakpoint);
     },
 
-    _breakpointRemoved: function(event)
+    _uiBreakpointRemoved: function(event)
     {
-        var breakpoint = event.data;
+        var uiBreakpoint = /** @type {WebInspector.UIBreakpoint} */ event.data;
 
-        var sourceFrame = this._sourceFramesByUISourceCode.get(breakpoint.uiSourceCode)
+        var sourceFrame = this._sourceFramesByUISourceCode.get(uiBreakpoint.uiSourceCode)
         if (sourceFrame && sourceFrame.loaded)
-            sourceFrame.removeBreakpoint(breakpoint.lineNumber);
+            sourceFrame.removeBreakpoint(uiBreakpoint.lineNumber);
 
-        this.sidebarPanes.jsBreakpoints.removeBreakpoint(breakpoint.uiSourceCode, breakpoint.lineNumber);
+        this.sidebarPanes.jsBreakpoints.removeBreakpoint(uiBreakpoint.uiSourceCode, uiBreakpoint.lineNumber);
     },
 
     _consoleCommandEvaluatedInSelectedCallFrame: function(event)

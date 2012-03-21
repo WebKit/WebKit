@@ -15,15 +15,15 @@ function test()
     var uiBreakpoints = {};
     function breakpointAdded(breakpoint)
     {
-        InspectorTest.addResult("breakpointAdded(" + [breakpoint.uiSourceCodeId, breakpoint.lineNumber, breakpoint.condition, breakpoint.enabled].join(", ") + ")");
-        var breakpointId = breakpoint.uiSourceCodeId + ":" + breakpoint.lineNumber;
+        InspectorTest.addResult("breakpointAdded(" + [breakpoint.uiSourceCode.id, breakpoint.lineNumber, breakpoint.condition, breakpoint.enabled].join(", ") + ")");
+        var breakpointId = breakpoint.uiSourceCode.id + ":" + breakpoint.lineNumber;
         InspectorTest.assertTrue(!(breakpointId in uiBreakpoints));
         uiBreakpoints[breakpointId] = breakpoint.condition + "|" + breakpoint.enabled;
     }
     function breakpointRemoved(breakpoint)
     {
-        InspectorTest.addResult("breakpointRemoved(" + [breakpoint.uiSourceCodeId, breakpoint.lineNumber].join(", ") + ")");
-        var breakpointId = breakpoint.uiSourceCodeId + ":" + breakpoint.lineNumber;
+        InspectorTest.addResult("breakpointRemoved(" + [breakpoint.uiSourceCode.id, breakpoint.lineNumber].join(", ") + ")");
+        var breakpointId = breakpoint.uiSourceCode.id + ":" + breakpoint.lineNumber;
         InspectorTest.assertTrue(breakpointId in uiBreakpoints);
         delete uiBreakpoints[breakpointId];
     }
@@ -89,7 +89,7 @@ function test()
 
             function checkResults()
             {
-                assertEquals({"a.js:10":"foo == bar|true","a.js:20":"|false","b.js:3":"|true"}, uiBreakpoints);
+                assertEquals({"a.js:10":"foo == bar|true","a.js:20":"|false"}, uiBreakpoints);
                 assertEquals({"a.js:10:0": "foo == bar"}, debuggerBreakpoints);
                 next();
             }
@@ -173,7 +173,7 @@ function test()
 
             function navigateToA()
             {
-                assertEquals({"a.js:10":"foo == bar|true","a.js:20":"|false","b.js:3":"|true"}, uiBreakpoints);
+                assertEquals({"b.js:3":"|true"}, uiBreakpoints);
                 assertEquals({"a.js:10:0":"foo == bar","b.js:3:0":""}, debuggerBreakpoints);
 
                 InspectorTest.addResult("\nNavigate back to A.");
@@ -187,7 +187,7 @@ function test()
 
             function checkResults()
             {
-                assertEquals({"a.js:20":"|false","b.js:3":"|true","a.js:11":"foo == bar|true"}, uiBreakpoints);
+                assertEquals({"a.js:20":"|false","a.js:11":"foo == bar|true"}, uiBreakpoints);
                 assertEquals({"a.js:10:0":"foo == bar","b.js:3:0":""}, debuggerBreakpoints);
                 checkBreakpointStorage([{"sourceFileId":"a.js","lineNumber":11,"condition":"foo == bar","enabled":true},
                                         {"sourceFileId":"a.js","lineNumber":20,"condition":"","enabled":false},
@@ -217,6 +217,7 @@ function test()
 
                 InspectorTest.addResult("\nFormat source.");
                 breakpointManager.reset();
+                breakpointManager.uiSourceCodeRemoved(originalUISourceCode);
 
                 scriptMapping.rawLocationToUILocation = function(rawLocation) { return { lineNumber: rawLocation.lineNumber * 2, columnNumber: rawLocation.columnNumber * 2 }; };
                 scriptMapping.uiLocationToRawLocation = function(uiSourceCode, lineNumber) { return { scriptId: "c.js", lineNumber: Math.floor(lineNumber / 2), columnNumber: 0 }; };

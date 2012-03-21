@@ -63,8 +63,8 @@ WebInspector.DebuggerPresentationModel.Events = {
     UISourceCodeRemoved: "source-file-removed",
     ConsoleMessageAdded: "console-message-added",
     ConsoleMessagesCleared: "console-messages-cleared",
-    BreakpointAdded: "breakpoint-added",
-    BreakpointRemoved: "breakpoint-removed",
+    UIBreakpointAdded: "ui-breakpoint-added",
+    UIBreakpointRemoved: "ui-breakpoint-removed",
     DebuggerPaused: "debugger-paused",
     DebuggerResumed: "debugger-resumed",
     DebuggerReset: "debugger-reset",
@@ -155,16 +155,10 @@ WebInspector.DebuggerPresentationModel.prototype = {
         var removedItems = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["removedItems"];
         var addedItems = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["addedItems"];
 
-        for (var i = 0; i < removedItems.length; ++i) {
-            var breakpoints = this._breakpointManager.breakpointsForUISourceCode(removedItems[i]);
-            for (var lineNumber in breakpoints) {
-                var breakpoint = breakpoints[lineNumber];
-                this._breakpointRemoved(breakpoint);
-                delete breakpoint.uiSourceCode;
-            }
-        }
-
-        this._restoreBreakpoints(addedItems);
+        for (var i = 0; i < removedItems.length; ++i)
+            this._breakpointManager.uiSourceCodeRemoved(removedItems[i]);
+        for (var i = 0; i < addedItems.length; ++i)
+            this._breakpointManager.uiSourceCodeAdded(addedItems[i]);
 
         if (!removedItems.length) {
             for (var i = 0; i < addedItems.length; ++i)
@@ -175,20 +169,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         } else {
             var eventData = { uiSourceCodeList: addedItems, oldUISourceCodeList: removedItems };
             this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UISourceCodeReplaced, eventData);
-        }
-    },
-
-    /**
-     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodeList
-     */
-    _restoreBreakpoints: function(uiSourceCodeList)
-    {
-        for (var i = 0; i < uiSourceCodeList.length; ++i) {
-            var uiSourceCode = uiSourceCodeList[i];
-            this._breakpointManager.uiSourceCodeAdded(uiSourceCode);
-            var breakpoints = this._breakpointManager.breakpointsForUISourceCode(uiSourceCode);
-            for (var lineNumber in breakpoints)
-                this._breakpointAdded(breakpoints[lineNumber]);
         }
     },
 
@@ -449,29 +429,27 @@ WebInspector.DebuggerPresentationModel.prototype = {
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {number} lineNumber
-     * @return {WebInspector.Breakpoint|undefined}
+     * @return {WebInspector.UIBreakpoint|undefined}
      */
     findBreakpoint: function(uiSourceCode, lineNumber)
     {
-        return this._breakpointManager.breakpointsForUISourceCode(uiSourceCode)[lineNumber];
+        return this._breakpointManager.breakpointsForUISourceCode(uiSourceCode)[String(lineNumber)];
     },
 
     /**
-     * @param {WebInspector.Breakpoint} breakpoint
+     * @param {WebInspector.UIBreakpoint} uiBreakpoint
      */
-    _breakpointAdded: function(breakpoint)
+    _breakpointAdded: function(uiBreakpoint)
     {
-        if (breakpoint.uiSourceCode)
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, breakpoint);
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UIBreakpointAdded, uiBreakpoint);
     },
 
     /**
-     * @param {WebInspector.Breakpoint} breakpoint
+     * @param {WebInspector.UIBreakpoint} uiBreakpoint
      */
-    _breakpointRemoved: function(breakpoint)
+    _breakpointRemoved: function(uiBreakpoint)
     {
-        if (breakpoint.uiSourceCode)
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, breakpoint);
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.UIBreakpointRemoved, uiBreakpoint);
     },
 
     _debuggerPaused: function()
