@@ -272,7 +272,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
     for (int k = 0; k < len; k++) {
         UChar ch = *(str + k);
         bool treatAsSpace = Font::treatAsSpace(ch);
-        bool treatAsZeroWidthSpace = ch == zeroWidthSpace || Font::treatAsZeroWidthSpace(ch);
+        bool treatAsZeroWidthSpace = Font::treatAsZeroWidthSpace(ch);
         if (treatAsSpace || treatAsZeroWidthSpace) {
             // Substitute in the space glyph at the appropriate place in the glyphs
             // array.

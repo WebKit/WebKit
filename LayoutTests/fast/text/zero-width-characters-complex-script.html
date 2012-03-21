@@ -1,11 +1,9 @@
 <head>
 <script>
 
-function testChar(ch)
+function testChar(a, b, ch)
 {
     // Strings a and b selected here do not have any 'interaction' between them.
-    var a = "\u0915\u093E"
-    var b = "\u0916";
     var span = document.getElementById("characters");
     span.firstChild.data = a + b;
     var abWidth = span.offsetWidth;
@@ -21,39 +19,56 @@ function testChar(ch)
     return 1;
 }
 
+function testWithZeroWidthSpace(a, b) {
+    var failedCount = 0;
+
+    for (var i = 1; i < 32; ++i)
+        if (i != 9 && i != 10 && i != 13)
+            failedCount += testChar(a, b, i);
+
+    for (var i = 0x7F; i < 0xA0; ++i)
+        failedCount += testChar(a, b, i);
+    failedCount += testChar(a, b, 0xAD);
+
+    // ZWJ (U+200C) and ZWNJ (U+200D) are excluded because they
+    // can affect the rendering in complex script text.
+    failedCount += testChar(a, b, 0x200B);
+    failedCount += testChar(a, b, 0x200E);
+    failedCount += testChar(a, b, 0x200F);
+    failedCount += testChar(a, b, 0x202A);
+    failedCount += testChar(a, b, 0x202B);
+    failedCount += testChar(a, b, 0x202C);
+    failedCount += testChar(a, b, 0x202D);
+    failedCount += testChar(a, b, 0x202E);
+    failedCount += testChar(a, b, 0xFEFF);
+    failedCount += testChar(a, b, 0xFFFC);
+
+    return failedCount;
+}
+
 function test()
 {
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
-    var failedCount = 0;
-    for (var i = 1; i < 32; ++i)
-        if (i != 9 && i != 10 && i != 13)
-            failedCount += testChar(i);
 
-    for (var i = 0x7F; i < 0xA0; ++i)
-        failedCount += testChar(i);
-    failedCount += testChar(0xAD);
-    // ZWJ (U+200C) and ZWNJ (U+200D) are excluded because they
-    // can affect the rendering in complex script text.
-    failedCount += testChar(0x200B);
-    failedCount += testChar(0x200E);
-    failedCount += testChar(0x200F);
-    failedCount += testChar(0x202A);
-    failedCount += testChar(0x202B);
-    failedCount += testChar(0x202C);
-    failedCount += testChar(0x202D);
-    failedCount += testChar(0x202E);
-    failedCount += testChar(0xFEFF);
-    failedCount += testChar(0xFFFC);
+    var failedDevanagariCount = testWithZeroWidthSpace("\u0915\u093E", "\u0916");
+
+    var failedArabicCount = testWithZeroWidthSpace("\u0627\u0644\u0645\u062A\u0648\u0633\u0637\u0020\u200B\u200B\u0647\u0648\u0020\u0020", "\u0647\u0648\u0020");
 
     var testArea = document.getElementById("testArea");
     testArea.parentNode.removeChild(testArea);
 
-    if (failedCount > 0) 
-        result = "FAIL: " + failedCount + " characters had non-zero width" +
-                 " or failed to get measured.";
-    else
+    var result = "";
+    if (failedDevanagariCount == 0 && failedArabicCount == 0)
         result = "PASS: All characters had zero-width.";
+    else {
+        if (failedDevanagariCount > 0)
+            result = "FAIL: " + failedDevanagariCount + " characters had non-zero width" +
+                 " or failed to get measured when test with Devanagari";
+        if (failedArabicCount > 0)
+            result += "\nFAIL: " + failedArabicCount + " characters had non-zero width" +
+                 " or failed to get measured when test with Arabic";
+    }
     document.getElementById("result").firstChild.data = result;
 }
 </script>
