@@ -3891,6 +3891,7 @@ BUGWK77889 WIN DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
 BUGWK77889 LINUX DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
 BUGWK77889 LEOPARD SNOWLEOPARD DEBUG : fast/forms/listbox-clear-restore.html = PASS IMAGE
 
+BUGWK81800 SNOWLEOPARD DEBUG : svg/as-object/embedded-svg-size-changes.html = PASS IMAGE
 BUGWK77183 : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
 
 // Massive rebaselining, some rebaseline just don't make sense.
@@ -4216,3 +4217,17 @@ BUGWK81735 DEBUG : fast/canvas/canvas-toDataURL-webp.html = CRASH TIMEOUT PASS
 BUGWK81735 DEBUG : platform/chromium/virtual/gpu/fast/canvas/canvas-toDataURL-webp.html = CRASH TIMEOUT
 
 BUGWK81778 DEBUG : webaudio/convolution-mono-mono.html = CRASH
+
+// Old test, has been flaky on and off for snowleopard debug since at least r111389
+BUGWK81801 SNOWLEOPARD DEBUG : fast/forms/basic-textareas.html = PASS TEXT
+
+// Rubber band tests are flaky
+BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-e.html = PASS IMAGE
+BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-n.html = PASS IMAGE
+BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-ne.html = PASS IMAGE
+BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-nw.html = PASS IMAGE
+BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-s.html = PASS IMAGE
+BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-se.html = PASS IMAGE
+BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-size-change.html = PASS IMAGE
+BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-sw.html = PASS IMAGE
+BUGW81803 MAC : platform/chromium/compositing/rubberbanding/transform-overhang-w.html = PASS IMAGE
