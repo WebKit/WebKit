@@ -2004,10 +2004,6 @@ fast/text/emphasis-avoid-ruby.html
 # https://bugs.webkit.org/show_bug.cgi?id=80293
 fast/text/international/spaces-combined-in-vertical-text.html
 
-# [Qt] fast/css/resize-single-axis.html timeout
-# https://bugs.webkit.org/show_bug.cgi?id=80604
-fast/css/resize-single-axis.html
-
 # viewport meta tag tests that differ from the Opera results
 fast/viewport/viewport-65.html
 fast/viewport/viewport-82.html
