@@ -65,7 +65,7 @@ RenderObject* HTMLProgressElement::createRenderer(RenderArena* arena, RenderStyl
 
 bool HTMLProgressElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    return childContext.isOnEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
+    return childContext.isOnUpperEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
 }
 
 bool HTMLProgressElement::supportsFocus() const

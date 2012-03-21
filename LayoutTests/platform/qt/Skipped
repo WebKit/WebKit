@@ -167,6 +167,8 @@ fast/dom/shadow/content-element-api.html
 fast/dom/shadow/content-element-move.html
 fast/dom/shadow/content-element-outside-shadow.html
 fast/dom/shadow/content-element-outside-shadow-style.html
+fast/dom/shadow/content-element-in-media-element.html
+fast/dom/shadow/content-element-in-meter-element.html
 fast/dom/shadow/get-element-by-id-in-shadow-root.html
 fast/dom/shadow/iframe-shadow.html
 fast/dom/shadow/multiple-shadowroot.html

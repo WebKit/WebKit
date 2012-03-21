@@ -328,7 +328,7 @@ RenderObject* HTMLSelectElement::createRenderer(RenderArena* arena, RenderStyle*
 
 bool HTMLSelectElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    return childContext.isOnEncapsulationBoundary() && HTMLFormControlElementWithState::childShouldCreateRenderer(childContext);
+    return childContext.isOnUpperEncapsulationBoundary() && HTMLFormControlElementWithState::childShouldCreateRenderer(childContext);
 }
 
 HTMLCollection* HTMLSelectElement::selectedOptions()

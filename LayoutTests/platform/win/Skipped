@@ -1007,6 +1007,7 @@ fast/dom/HTMLProgressElement
 fast/dom/shadow/tree-scope-crash.html
 fast/forms/form-attribute.html
 
+
 # view mode media feature
 fast/media/view-mode-media-feature.html
 fast/media/media-query-list-02.html
@@ -1460,6 +1461,8 @@ fast/css/style-scoped
 fast/dom/shadow/content-element-api.html
 fast/dom/shadow/content-element-outside-shadow.html
 fast/dom/shadow/content-element-outside-shadow-style.html
+fast/dom/shadow/content-element-in-media-element.html
+fast/dom/shadow/content-element-in-meter-element.html
 fast/dom/shadow/get-element-by-id-in-shadow-root.html
 fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-disable.html

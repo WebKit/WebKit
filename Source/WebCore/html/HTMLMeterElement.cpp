@@ -63,7 +63,7 @@ RenderObject* HTMLMeterElement::createRenderer(RenderArena* arena, RenderStyle*)
 
 bool HTMLMeterElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    return childContext.isOnEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
+    return childContext.isOnUpperEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
 }
 
 bool HTMLMeterElement::supportsFocus() const

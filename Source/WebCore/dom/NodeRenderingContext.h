@@ -62,6 +62,7 @@ public:
 
     void hostChildrenChanged();
 
+    bool isOnUpperEncapsulationBoundary() const;
     bool isOnEncapsulationBoundary() const;
     bool hasFlowThreadParent() const { return m_parentFlowRenderer; }
     RenderFlowThread* parentFlowRenderer() const { return m_parentFlowRenderer; }
@@ -115,6 +116,11 @@ inline bool NodeRenderingContext::isOnEncapsulationBoundary() const
     return (m_phase == AttachingDistributed
             || m_phase == AttachingShadowChild
             || m_phase == AttachingFallbacked);
+}
+
+inline bool NodeRenderingContext::isOnUpperEncapsulationBoundary() const
+{
+    return m_phase == AttachingShadowChild;
 }
 
 class NodeRendererFactory {
