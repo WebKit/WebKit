@@ -27,6 +27,7 @@
 
 #include "BrowserWindow.h"
 #include "BrowserSettingsDialog.h"
+#include <string.h>
 
 enum {
     PROP_0,
@@ -77,7 +78,7 @@ static void resetStatusText(GtkWidget *widget, BrowserWindow *window)
 
 static void activateUriEntryCallback(BrowserWindow *window)
 {
-    webkit_web_view_load_uri(window->webView, gtk_entry_get_text(GTK_ENTRY(window->uriEntry)));
+    browser_window_load_uri(window, gtk_entry_get_text(GTK_ENTRY(window->uriEntry)));
 }
 
 static void reloadCallback(BrowserWindow *window)
@@ -479,4 +480,17 @@ WebKitWebView *browser_window_get_view(BrowserWindow *window)
     g_return_val_if_fail(BROWSER_IS_WINDOW(window), 0);
 
     return window->webView;
+}
+
+void browser_window_load_uri(BrowserWindow *window, const char *uri)
+{
+    g_return_if_fail(BROWSER_IS_WINDOW(window));
+    g_return_if_fail(uri);
+
+    if (!g_str_has_prefix(uri, "javascript:")) {
+        webkit_web_view_load_uri(window->webView, uri);
+        return;
+    }
+
+    webkit_web_view_run_javascript(window->webView, strstr(uri, "javascript:"), NULL, NULL);
 }

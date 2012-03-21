@@ -1,5 +1,21 @@
 2012-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Allow running javascript from location bar in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=81331
+
+        Reviewed by Martin Robinson.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (activateUriEntryCallback): Use browser_window_load_uri().
+        (browser_window_load_uri): Check whether uri starts with
+        javascript: and run the given script, or just call
+        webkit_web_view_load_uri() to load the given uri.
+        * MiniBrowser/gtk/BrowserWindow.h:
+        * MiniBrowser/gtk/main.c:
+        (createBrowserWindow): Use browser_window_load_uri().
+
+2012-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add webkit_web_view_run_javascript() to WebKit2 GTK+
         https://bugs.webkit.org/show_bug.cgi?id=75543
 

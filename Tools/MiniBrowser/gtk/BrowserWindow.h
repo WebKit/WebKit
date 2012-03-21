@@ -45,6 +45,7 @@ GType browser_window_get_type(void);
 
 GtkWidget* browser_window_new(WebKitWebView*);
 WebKitWebView* browser_window_get_view(BrowserWindow*);
+void browser_window_load_uri(BrowserWindow *, const char *uri);
 
 G_END_DECLS
 

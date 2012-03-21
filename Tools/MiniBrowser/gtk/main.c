@@ -53,7 +53,7 @@ static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings
         g_object_unref(webkitSettings);
     }
 
-    webkit_web_view_load_uri(WEBKIT_WEB_VIEW(webView), url);
+    browser_window_load_uri(BROWSER_WINDOW(mainWindow), url);
     g_free(url);
 
     gtk_widget_grab_focus(webView);
