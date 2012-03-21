@@ -1,3 +1,21 @@
+2012-03-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf-o-matic: don't query datastore to generate chart API urls
+        https://bugs.webkit.org/show_bug.cgi?id=81499
+
+        Reviewed by Hajime Morita.
+
+        Parse json text to extract timestamps and test values instead of iterating
+        through the data store.
+
+        * Websites/webkit-perf.appspot.com/create_handler.py:
+        (CreateHandler.post):
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Runs._timestamp_and_value_from_json_entry):
+        (Runs):
+        (Runs.to_json):
+        (Runs.chart_params):
+
 2012-03-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert hasSpellingMarker to use Internals interface.

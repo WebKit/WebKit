@@ -356,6 +356,10 @@ class Runs(db.Model):
             builder_id, statistics]
 
     @staticmethod
+    def _timestamp_and_value_from_json_entry(json_entry):
+        return json_entry[2], json_entry[3]
+
+    @staticmethod
     def _key_name(branch_id, platform_id, test_id):
         return 'runs:%d,%d,%d' % (test_id, branch_id, platform_id)
 
@@ -417,7 +421,6 @@ class Runs(db.Model):
         return '{"test_runs": [%s], "averages": {%s}, "min": %s, "max": %s, "date_range": null, "stat": "ok"}' % (self.json_runs,
             self.json_averages, str(self.json_min) if self.json_min else 'null', str(self.json_max) if self.json_max else 'null')
 
-    # FIXME: Use data in JSON to compute values to avoid iterating through the datastore.
     def chart_params(self, display_days, now=datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)):
         chart_data_x = []
         chart_data_y = []
@@ -425,12 +428,12 @@ class Runs(db.Model):
         start_timestamp = mktime((end_time - timedelta(display_days)).timetuple())
         end_timestamp = mktime(end_time.timetuple())
 
-        for build, result in self._generate_runs(self.branch, self.platform, self.test.name):
-            timestamp = mktime(build.timestamp.timetuple())
+        for entry in json.loads('[' + self.json_runs + ']'):
+            timestamp, value = Runs._timestamp_and_value_from_json_entry(entry)
             if timestamp < start_timestamp or timestamp > end_timestamp:
                 continue
             chart_data_x.append(timestamp)
-            chart_data_y.append(result.value)
+            chart_data_y.append(value)
 
         dates = [end_time - timedelta(display_days / 7.0 * (7 - i)) for i in range(0, 8)]
 
