@@ -227,7 +227,7 @@ float TiledBackingStore::coverageRatio(const WebCore::IntRect& contentsRect) con
 
 bool TiledBackingStore::visibleAreaIsCovered() const
 {
-    return coverageRatio(visibleRect()) == 1.0f;
+    return coverageRatio(m_client->tiledBackingStoreVisibleRect()) == 1.0f;
 }
 
 void TiledBackingStore::createTiles()
