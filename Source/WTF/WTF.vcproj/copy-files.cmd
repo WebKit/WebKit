@@ -1,7 +1,7 @@
 @echo off
 
-set PrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\private\JavaScriptCore
-set PGOPrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\..\Release_PGO\include\private\JavaScriptCore
+set PrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\private
+set PGOPrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\..\Release_PGO\include\private
 
 if "%1" EQU "clean" goto :clean
 if "%1" EQU "rebuild" call :clean

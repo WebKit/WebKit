@@ -7,6 +7,6 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\..\Production\include\private&quot;;&quot;$(ConfigurationBuildDir)\..\Production\include\private\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\..\Production\include\private\JavaScriptCore\wtf\text&quot;"
+		AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\..\Production\include\private&quot;;&quot;$(ConfigurationBuildDir)\..\Production\include\private\wtf\text&quot;"
 	/>
 </VisualStudioPropertySheet>

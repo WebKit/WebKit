@@ -1,3 +1,14 @@
+2012-03-21  Jessie Berlin  <jberlin@apple.com>
+
+        WTF headers should be in $(ConfigurationBuildDir)\include\private\wtf, not
+        $(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf.
+        https://bugs.webkit.org/show_bug.cgi?id=81739
+
+        Reviewed by Dan Bernstein.
+
+        * WTF.vcproj/copy-files.cmd:
+        Copy the headers to private/include/wtf instead of private/include/JavaScriptCore/wtf.
+
 2012-03-20  Eric Seidel  <eric@webkit.org>
 
         Move wtf/Platform.h from JavaScriptCore to Source/WTF/wtf

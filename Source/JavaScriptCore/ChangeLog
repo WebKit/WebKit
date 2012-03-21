@@ -1,3 +1,23 @@
+2012-03-21  Jessie Berlin  <jberlin@apple.com>
+
+        WTF headers should be in $(ConfigurationBuildDir)\include\private\wtf, not
+        $(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf.
+        https://bugs.webkit.org/show_bug.cgi?id=81739
+
+        Reviewed by Dan Bernstein.
+
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        Look for AtomicString.cpp, StringBuilder.cpp, StringImpl.cpp, and WTFString.cpp in the wtf
+        subdirectory of the build output, not the JavaScriptCore/wtf subdirectory.
+        * JavaScriptCore.vcproj/testRegExp/testRegExp.vcproj:
+        Ditto.
+
+        * JavaScriptCore.vcproj/testRegExp/testRegExpReleasePGO.vsprops:
+        Get the headers for those 4 files from the wtf subdirectory of the build output, not the
+        JavaScriptCore/wtf subdirectory.
+        * JavaScriptCore.vcproj/jsc/jscReleasePGO.vsprops:
+        Ditto.
+
 2012-03-20  Eric Seidel  <eric@webkit.org>
 
         Move wtf/Platform.h from JavaScriptCore to Source/WTF/wtf

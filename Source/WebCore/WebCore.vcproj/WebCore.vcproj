@@ -71870,15 +71870,15 @@
 			Name="strings"
 			>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf\text\AtomicString.cpp"
+				RelativePath="$(ConfigurationBuildDir)\include\private\wtf\text\AtomicString.cpp"
 				>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf\text\StringImpl.cpp"
+				RelativePath="$(ConfigurationBuildDir)\include\private\wtf\text\StringImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\wtf\text\WTFString.cpp"
+				RelativePath="$(ConfigurationBuildDir)\include\private\wtf\text\WTFString.cpp"
 				>
 			</File>
 		</Filter>
