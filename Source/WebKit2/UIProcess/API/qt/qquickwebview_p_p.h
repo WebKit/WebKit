@@ -204,25 +204,7 @@ public:
     QtViewportInteractionEngine::Constraints computeViewportConstraints();
 
 private:
-    // This class is responsible for collecting and applying all properties
-    // on the viewport item, when transitioning from page A to page B is finished.
-    // See more at https://trac.webkit.org/wiki/QtWebKitLayoutInteraction
-    class PostTransitionState {
-    public:
-        PostTransitionState(QQuickWebViewFlickablePrivate* parent)
-            : p(parent)
-        { }
-
-        void apply();
-
-        QQuickWebViewFlickablePrivate* p;
-        QSize contentsSize;
-        QPoint position;
-    };
-
     QScopedPointer<QtViewportInteractionEngine> interactionEngine;
-    OwnPtr<PostTransitionState> postTransitionState;
-    bool isTransitioningToNewPage;
     bool pageIsSuspended;
     bool loadSuccessDispatchIsPending;
 };

@@ -1,3 +1,34 @@
+2012-03-21  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Remove the PostTransitionState
+        https://bugs.webkit.org/show_bug.cgi?id=81751
+
+        Reviewed by Simon Hausmann.
+
+        As we are handling content size change event etc from the
+        WebProcess, that conflicts with the PostTransitionState handling
+        and we therefore need to handle this slightly differently.
+
+        Remove the code and make sure that we never resize the tiled
+        area to something smaller than the layout viewport.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate):
+        (QQuickWebViewFlickablePrivate::loadDidCommit):
+        (QQuickWebViewFlickablePrivate::didFinishFirstNonEmptyLayout):
+        (QQuickWebViewFlickablePrivate::didChangeViewportProperties):
+        (QQuickWebViewFlickablePrivate::_q_resume):
+        (QQuickWebViewFlickablePrivate::pageDidRequestScroll):
+        (QQuickWebViewFlickablePrivate::didChangeContentsSize):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::applyConstraints):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::resizeToContentsIfNeeded):
+
 2012-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_web_view_run_javascript() to WebKit2 GTK+

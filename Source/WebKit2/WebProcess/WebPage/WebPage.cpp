@@ -852,7 +852,7 @@ void WebPage::resizeToContentsIfNeeded()
     if (contentSize == m_viewSize)
         return;
 
-    m_viewSize = contentSize;
+    m_viewSize = contentSize.expandedTo(view->fixedLayoutSize());
     view->resize(m_viewSize);
     view->setNeedsLayout();
 }

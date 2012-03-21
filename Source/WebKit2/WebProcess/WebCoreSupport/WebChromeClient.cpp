@@ -438,10 +438,13 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
         return;
 
 #if PLATFORM(QT)
-    m_page->send(Messages::WebPageProxy::DidChangeContentsSize(size));
-
-    if (m_page->useFixedLayout())
+    if (m_page->useFixedLayout()) {
+        // The below method updates the size().
         m_page->resizeToContentsIfNeeded();
+    }
+
+    m_page->send(Messages::WebPageProxy::DidChangeContentsSize(m_page->size()));
+
 #endif
 
     FrameView* frameView = frame->view();

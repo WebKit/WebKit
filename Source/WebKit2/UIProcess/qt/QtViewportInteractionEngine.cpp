@@ -418,6 +418,8 @@ void QtViewportInteractionEngine::applyConstraints(const Constraints& constraint
     // We always have to apply the constrains even if they didn't change, as
     // the initial scale might need to be applied.
 
+    reset();
+
     ViewportUpdateDeferrer guard(this);
 
     m_constraints = constraints;

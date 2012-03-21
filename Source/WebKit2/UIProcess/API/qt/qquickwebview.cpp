@@ -489,8 +489,6 @@ void QQuickWebViewLegacyPrivate::updateViewportSize()
 
 QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* viewport)
     : QQuickWebViewPrivate(viewport)
-    , postTransitionState(adoptPtr(new PostTransitionState(this)))
-    , isTransitioningToNewPage(false)
     , pageIsSuspended(true)
     , loadSuccessDispatchIsPending(false)
 {
@@ -581,25 +579,17 @@ void QQuickWebViewFlickablePrivate::loadDidCommit()
 {
     // Due to entering provisional load before committing, we
     // might actually be suspended here.
-
-    isTransitioningToNewPage = true;
 }
 
 void QQuickWebViewFlickablePrivate::didFinishFirstNonEmptyLayout()
 {
-    if (!pageIsSuspended) {
-        isTransitioningToNewPage = false;
-        postTransitionState->apply();
-    }
 }
 
 void QQuickWebViewFlickablePrivate::didChangeViewportProperties(const WebCore::ViewportArguments& args)
 {
     viewportArguments = args;
 
-    if (isTransitioningToNewPage)
-        return;
-
+    // FIXME: If suspended we should do this on resume.
     interactionEngine->applyConstraints(computeViewportConstraints());
 }
 
@@ -652,33 +642,17 @@ void QQuickWebViewFlickablePrivate::_q_resume()
     pageIsSuspended = false;
     webPageProxy->resumeActiveDOMObjectsAndAnimations();
 
-    if (isTransitioningToNewPage) {
-        isTransitioningToNewPage = false;
-        postTransitionState->apply();
-    }
-
     _q_contentViewportChanged(QPointF());
 }
 
 void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)
 {
-    if (isTransitioningToNewPage) {
-        postTransitionState->position = pos;
-        return;
-    }
-
     interactionEngine->pagePositionRequest(pos);
 }
 
 void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
 {
     Q_Q(QQuickWebView);
-    // FIXME: We probably want to handle suspend here as well
-    if (isTransitioningToNewPage) {
-        postTransitionState->contentsSize = newSize;
-        return;
-    }
-
     pageView->setContentsSize(newSize);
     q->experimental()->viewportInfo()->didUpdateContentsSize();
 }
@@ -718,21 +692,6 @@ QtViewportInteractionEngine::Constraints QQuickWebViewFlickablePrivate::computeV
     q->experimental()->viewportInfo()->didUpdateViewportConstraints();
 
     return newConstraints;
-}
-
-void QQuickWebViewFlickablePrivate::PostTransitionState::apply()
-{
-    p->interactionEngine->reset();
-    p->interactionEngine->applyConstraints(p->computeViewportConstraints());
-    p->interactionEngine->pagePositionRequest(position);
-
-    if (contentsSize.isValid()) {
-        p->pageView->setContentsSize(contentsSize);
-        p->q_ptr->experimental()->viewportInfo()->didUpdateContentsSize();
-    }
-
-    position = QPoint();
-    contentsSize = QSize();
 }
 
 /*!
