@@ -349,7 +349,7 @@ committers_unable_to_review = [
     Committer("Vincent Scheib", "scheib@chromium.org", "scheib"),
     Committer("Vitaly Repeshko", "vitalyr@chromium.org"),
     Committer("William Siegrist", "wsiegrist@apple.com", "wms"),
-    Committer("W. James MacLean", "wjmaclean@chromium.org", "wjmaclean"),
+    Committer("W. James MacLean", "wjmaclean@chromium.org", "seumas"),
     Committer("Xianzhu Wang", ["wangxianzhu@chromium.org", "phnixwxz@gmail.com", "wangxianzhu@google.com"], "wangxianzhu"),
     Committer("Xiaomei Ji", "xji@chromium.org", "xji"),
     Committer("Yael Aharon", "yael.aharon@nokia.com", "yael"),

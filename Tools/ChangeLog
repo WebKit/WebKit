@@ -1,3 +1,11 @@
+2012-03-21  W. James MacLean  <wjmaclean@chromium.org>
+
+        Updating my nick in committers file.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-03-21  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Remove Android build-fix when the proper fix rolled into WebKit
