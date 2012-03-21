@@ -33,7 +33,6 @@
 #include "WebKitDOMBinding.h"
 #include "bool.h"
 #include "gobject/ConvertToUTF8String.h"
-#include "sequence<ScriptProfile>.h"
 #include "webkit/WebKitDOMDictionary.h"
 #include "webkit/WebKitDOMDictionaryPrivate.h"
 #include "webkit/WebKitDOMDocument.h"
@@ -59,8 +58,6 @@
 #include "webkit/WebKitDOMe.h"
 #include "webkit/WebKitDOMePrivate.h"
 #include "webkit/WebKitDOMsequence.h"
-#include "webkit/WebKitDOMsequence<ScriptProfile>.h"
-#include "webkit/WebKitDOMsequence<ScriptProfile>Private.h"
 #include "webkit/WebKitDOMsequencePrivate.h"
 #include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
@@ -177,17 +174,6 @@ webkit_dom_test_obj_method_with_sequence_arg(WebKitDOMTestObj* self, WebKitDOMse
         g_return_if_fail(converted_);
     }
     item->methodWithSequenceArg(converted_);
-}
-
-WebKitDOMsequence<ScriptProfile>*
-webkit_dom_test_obj_method_returning_sequence(WebKitDOMTestObj* self, glong int_arg)
-{
-    g_return_val_if_fail(self, 0);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj * item = WebKit::core(self);
-    PassRefPtr<WebCore::sequence<ScriptProfile>> g_res = WTF::getPtr(item->methodReturningSequence(int_arg));
-    WebKitDOMsequence<ScriptProfile>* res = WebKit::kit(g_res.get());
-    return res;
 }
 
 WebKitDOMTestObj*

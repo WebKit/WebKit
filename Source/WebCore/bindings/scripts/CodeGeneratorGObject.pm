@@ -192,6 +192,7 @@ sub SkipFunction {
     my $prefix = shift;
 
     my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . decamelize($function->signature->name);
+    my $functionReturnType = $prefix eq "set_" ? "void" : $function->signature->type;
     my $isCustomFunction = $function->signature->extendedAttributes->{"Custom"};
     my $callWith = $function->signature->extendedAttributes->{"CallWith"};
     my $isUnsupportedCallWith = $codeGenerator->ExtendedAttributeContains($callWith, "ScriptArguments") || $codeGenerator->ExtendedAttributeContains($callWith, "CallStack");
@@ -211,6 +212,10 @@ sub SkipFunction {
     }
 
     if ($function->signature->name eq "getCSSCanvasContext") {
+        return 1;
+    }
+
+    if ($codeGenerator->GetArrayType($functionReturnType)) {
         return 1;
     }
 

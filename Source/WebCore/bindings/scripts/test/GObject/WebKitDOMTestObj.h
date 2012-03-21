@@ -127,17 +127,6 @@ WEBKIT_API void
 webkit_dom_test_obj_method_with_sequence_arg(WebKitDOMTestObj* self, WebKitDOMsequence* );
 
 /**
- * webkit_dom_test_obj_method_returning_sequence:
- * @self: A #WebKitDOMTestObj
- * @int_arg: A #glong
- *
- * Returns: (transfer none):
- *
-**/
-WEBKIT_API WebKitDOMsequence<ScriptProfile>*
-webkit_dom_test_obj_method_returning_sequence(WebKitDOMTestObj* self, glong int_arg);
-
-/**
  * webkit_dom_test_obj_method_that_requires_all_args_and_throws:
  * @self: A #WebKitDOMTestObj
  * @str_arg: A #gchar
