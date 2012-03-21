@@ -153,7 +153,7 @@ void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition,
     if (!m_scrollLayerImpl)
         return;
 
-    IntSize scrollTotal = toSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
+    IntSize scrollTotal = flooredIntSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
     scrollTotal.scale(m_pageScaleDelta);
     float scaleTotal = m_pageScale * m_pageScaleDelta;
     IntSize scaledContentSize = contentSize();
@@ -517,7 +517,7 @@ void CCLayerTreeHostImpl::adjustScrollsForPageScaleChange(float pageScaleChange)
 
     // We also need to convert impl-side scroll deltas to pageScale space.
     if (m_scrollLayerImpl) {
-        IntSize scrollDelta = m_scrollLayerImpl->scrollDelta();
+        FloatSize scrollDelta = m_scrollLayerImpl->scrollDelta();
         scrollDelta.scale(pageScaleChange);
         m_scrollLayerImpl->setScrollDelta(scrollDelta);
     }
@@ -676,7 +676,7 @@ void CCLayerTreeHostImpl::computePinchZoomDeltas(CCScrollAndScaleSet* scrollInfo
 
     // Compute where the scroll offset/page scale would be if fully pinch-zoomed
     // out from the anchor point.
-    FloatSize scrollBegin = toSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
+    IntSize scrollBegin = flooredIntSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
     scrollBegin.scale(m_pageScaleDelta);
     float scaleBegin = m_pageScale * m_pageScaleDelta;
     float pageScaleDeltaToSend = m_minPageScale / m_pageScale;
@@ -724,7 +724,7 @@ PassOwnPtr<CCScrollAndScaleSet> CCLayerTreeHostImpl::processScrollDeltas()
     // FIXME: track scrolls from layers other than the root
     CCLayerTreeHostCommon::ScrollUpdateInfo scroll;
     scroll.layerId = m_scrollLayerImpl->id();
-    scroll.scrollDelta = m_scrollLayerImpl->scrollDelta();
+    scroll.scrollDelta = flooredIntSize(m_scrollLayerImpl->scrollDelta());
     scrollInfo->scrolls.append(scroll);
 
     m_scrollLayerImpl->setSentScrollDelta(scroll.scrollDelta);
@@ -746,7 +746,7 @@ void CCLayerTreeHostImpl::animatePageScale(double monotonicTime)
     if (!m_pageScaleAnimation)
         return;
 
-    IntSize scrollTotal = toSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
+    IntSize scrollTotal = flooredIntSize(m_scrollLayerImpl->scrollPosition() + m_scrollLayerImpl->scrollDelta());
 
     setPageScaleDelta(m_pageScaleAnimation->pageScaleAtTime(monotonicTime) / m_pageScale);
     IntSize nextScroll = m_pageScaleAnimation->scrollOffsetAtTime(monotonicTime);

@@ -2225,4 +2225,57 @@ TEST_F(CCLayerTreeHostTestSetRepeatedLostContext, runMultiThread)
     runTestThreaded();
 }
 
+class CCLayerTreeHostTestFractionalScroll : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestFractionalScroll()
+        : m_scrollAmount(1.75, 0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        m_layerTreeHost->rootLayer()->setScrollable(true);
+        postSetNeedsCommitToMainThread();
+    }
+
+    virtual void drawLayersOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        CCLayerImpl* root = impl->rootLayer();
+        root->setMaxScrollPosition(IntSize(100, 100));
+
+        // Check that a fractional scroll delta is correctly accumulated over multiple commits.
+        if (impl->frameNumber() == 1) {
+            EXPECT_EQ(root->scrollPosition(), IntPoint(0, 0));
+            EXPECT_EQ(root->scrollDelta(), FloatSize(0, 0));
+            postSetNeedsCommitToMainThread();
+        } else if (impl->frameNumber() == 2) {
+            EXPECT_EQ(root->scrollPosition(), flooredIntPoint(m_scrollAmount));
+            EXPECT_EQ(root->scrollDelta(), FloatSize(fmod(m_scrollAmount.width(), 1), 0));
+            postSetNeedsCommitToMainThread();
+        } else if (impl->frameNumber() == 3) {
+            EXPECT_EQ(root->scrollPosition(), flooredIntPoint(m_scrollAmount + m_scrollAmount));
+            EXPECT_EQ(root->scrollDelta(), FloatSize(fmod(2 * m_scrollAmount.width(), 1), 0));
+            endTest();
+        }
+        root->scrollBy(m_scrollAmount);
+    }
+
+    virtual void applyScrollAndScale(const IntSize& scrollDelta, float scale)
+    {
+        IntPoint position = m_layerTreeHost->rootLayer()->scrollPosition();
+        m_layerTreeHost->rootLayer()->setScrollPosition(position + scrollDelta);
+    }
+
+    virtual void afterTest()
+    {
+    }
+private:
+    FloatSize m_scrollAmount;
+};
+
+TEST_F(CCLayerTreeHostTestFractionalScroll, runMultiThread)
+{
+    runTestThreaded();
+}
+
 } // namespace

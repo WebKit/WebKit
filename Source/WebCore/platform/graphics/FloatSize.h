@@ -178,6 +178,11 @@ inline IntSize roundedIntSize(const FloatSize& p)
     return IntSize(static_cast<int>(roundf(p.width())), static_cast<int>(roundf(p.height())));
 }
 
+inline IntSize flooredIntSize(const FloatSize& p)
+{
+    return IntSize(static_cast<int>(p.width()), static_cast<int>(p.height()));
+}
+
 inline IntSize expandedIntSize(const FloatSize& p)
 {
     return IntSize(clampToInteger(ceilf(p.width())), clampToInteger(ceilf(p.height())));

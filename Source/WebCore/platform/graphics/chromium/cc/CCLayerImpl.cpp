@@ -187,9 +187,9 @@ void CCLayerImpl::bindContentsTexture(LayerRendererChromium*)
     ASSERT_NOT_REACHED();
 }
 
-void CCLayerImpl::scrollBy(const IntSize& scroll)
+void CCLayerImpl::scrollBy(const FloatSize& scroll)
 {
-    IntSize newDelta = m_scrollDelta + scroll;
+    FloatSize newDelta = m_scrollDelta + scroll;
     IntSize minDelta = -toSize(m_scrollPosition);
     IntSize maxDelta = m_maxScrollPosition - toSize(m_scrollPosition);
     // Clamp newDelta so that position + delta stays within scroll bounds.
@@ -525,7 +525,7 @@ void CCLayerImpl::setScrollPosition(const IntPoint& scrollPosition)
     noteLayerPropertyChangedForSubtree();
 }
 
-void CCLayerImpl::setScrollDelta(const IntSize& scrollDelta)
+void CCLayerImpl::setScrollDelta(const FloatSize& scrollDelta)
 {
     if (m_scrollDelta == scrollDelta)
         return;

@@ -1,3 +1,22 @@
+2012-03-21  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Use floating point scroll deltas for layers
+        https://bugs.webkit.org/show_bug.cgi?id=81546
+
+        Reviewed by James Robinson.
+
+        New unit test for accumulating fractional scroll deltas across multiple commits.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (CCLayerTreeHostTestFractionalScroll):
+        (WTF::CCLayerTreeHostTestFractionalScroll::CCLayerTreeHostTestFractionalScroll):
+        (WTF::CCLayerTreeHostTestFractionalScroll::beginTest):
+        (WTF::CCLayerTreeHostTestFractionalScroll::drawLayersOnCCThread):
+        (WTF::CCLayerTreeHostTestFractionalScroll::applyScrollAndScale):
+        (WTF::CCLayerTreeHostTestFractionalScroll::afterTest):
+        (WTF):
+        (WTF::TEST_F):
+
 2012-03-21  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: Expose necessary IDB exception codes through WebKit API

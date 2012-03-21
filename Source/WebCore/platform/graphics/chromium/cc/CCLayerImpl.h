@@ -174,8 +174,8 @@ public:
     const IntSize& maxScrollPosition() const {return m_maxScrollPosition; }
     void setMaxScrollPosition(const IntSize& maxScrollPosition) { m_maxScrollPosition = maxScrollPosition; }
 
-    const IntSize& scrollDelta() const { return m_scrollDelta; }
-    void setScrollDelta(const IntSize&);
+    const FloatSize& scrollDelta() const { return m_scrollDelta; }
+    void setScrollDelta(const FloatSize&);
 
     float pageScaleDelta() const { return m_pageScaleDelta; }
     void setPageScaleDelta(float);
@@ -183,7 +183,7 @@ public:
     const IntSize& sentScrollDelta() const { return m_sentScrollDelta; }
     void setSentScrollDelta(const IntSize& sentScrollDelta) { m_sentScrollDelta = sentScrollDelta; }
 
-    void scrollBy(const IntSize& scroll);
+    void scrollBy(const FloatSize& scroll);
 
     bool scrollable() const { return m_scrollable; }
     void setScrollable(bool scrollable) { m_scrollable = scrollable; }
@@ -305,7 +305,7 @@ private:
 
     bool m_drawsContent;
 
-    IntSize m_scrollDelta;
+    FloatSize m_scrollDelta;
     IntSize m_sentScrollDelta;
     IntSize m_maxScrollPosition;
     float m_pageScaleDelta;
