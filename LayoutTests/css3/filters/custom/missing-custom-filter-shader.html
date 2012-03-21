@@ -5,6 +5,7 @@
         <title>Testing that custom-filters do not render when shaders are missing</title>
         <script>
             if (window.layoutTestController) {
+                window.layoutTestController.overridePreference("WebKitCSSCustomFilterEnabled", "1");
                 window.layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
                 window.layoutTestController.dumpAsText(true);
                 window.layoutTestController.waitUntilDone();

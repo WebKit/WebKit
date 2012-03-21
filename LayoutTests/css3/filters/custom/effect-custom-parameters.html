@@ -4,9 +4,8 @@
         <title>Testing that the custom filter receives the correct number parameters.</title>
         <script>
             if (window.layoutTestController) {
+                window.layoutTestController.overridePreference("WebKitCSSCustomFilterEnabled", "1");
                 window.layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
-                // Force software rendering mode.
-                window.layoutTestController.overridePreference("WebKitAcceleratedCompositingEnabled", "0");
                 window.layoutTestController.dumpAsText(true);
                 window.layoutTestController.waitUntilDone();
             }

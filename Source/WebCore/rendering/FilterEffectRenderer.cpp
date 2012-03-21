@@ -46,6 +46,7 @@
 #include "CustomFilterProgram.h"
 #include "CustomFilterOperation.h"
 #include "FECustomFilter.h"
+#include "FrameView.h"
 #include "Settings.h"
 #endif
 
@@ -258,7 +259,7 @@ void FilterEffectRenderer::build(Document* document, const FilterOperations& ope
             cachedCustomFilterPrograms.append(program);
             program->addClient(this);
             if (program->isLoaded()) {
-                effect = FECustomFilter::create(this, document, program, customFilterOperation->parameters(),
+                effect = FECustomFilter::create(this, document->view()->root()->hostWindow(), program, customFilterOperation->parameters(),
                                                 customFilterOperation->meshRows(), customFilterOperation->meshColumns(),
                                                 customFilterOperation->meshBoxType(), customFilterOperation->meshType());
             }

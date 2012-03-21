@@ -1,3 +1,20 @@
+2012-03-21  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Make CSS Shaders compile on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=81435
+
+        Reviewed by Stephen White.
+        
+        I've added WebKitCSSCustomFilterEnabled support for the layoutTestController.overridePreference function.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::overridePreference):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+        (WebPreferences):
+
 2012-03-21  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: clean up actually getting crash logs from DRT/WTR crashes

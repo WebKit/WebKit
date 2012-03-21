@@ -1,3 +1,22 @@
+2012-03-21  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Make CSS Shaders compile on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=81435
+
+        Reviewed by Stephen White.
+
+        I've added the ENABLE_CSS_SHADERS flag by default, but kept CSS Shaders disabled using the runtime flag.
+        
+        This change adds a new public API to WebSettings with syntax void setExperimentalCSSCustomFilterEnabled(bool).
+
+        * features.gypi:
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setExperimentalCSSCustomFilterEnabled):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2012-03-21  David Reveman  <reveman@chromium.org>
 
         [Chromium] GL_EXT_occlusion_query_boolean and GL_CHROMIUM_command_buffer_query support.

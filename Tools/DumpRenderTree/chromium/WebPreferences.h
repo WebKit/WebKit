@@ -112,6 +112,7 @@ struct WebPreferences {
     bool hixie76WebSocketProtocolEnabled;
     bool perTilePaintingEnabled;
     bool mockScrollbarsEnabled;
+    bool cssCustomFilterEnabled;
 
     WebPreferences() { reset(); }
     void reset();

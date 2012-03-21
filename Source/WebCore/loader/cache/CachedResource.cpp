@@ -106,6 +106,9 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
         return ResourceRequest::TargetIsFontResource;
     case CachedResource::ImageResource:
         return ResourceRequest::TargetIsImage;
+#if ENABLE(CSS_SHADERS)
+    case CachedResource::ShaderResource:
+#endif
     case CachedResource::RawResource:
         return ResourceRequest::TargetIsSubresource;    
 #if ENABLE(LINK_PREFETCH)

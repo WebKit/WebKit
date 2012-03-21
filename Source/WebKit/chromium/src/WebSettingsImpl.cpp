@@ -298,6 +298,11 @@ void WebSettingsImpl::setExperimentalCSSRegionsEnabled(bool enabled)
     m_settings->setCSSRegionsEnabled(enabled);
 }
 
+void WebSettingsImpl::setExperimentalCSSCustomFilterEnabled(bool enabled)
+{
+    m_settings->setCSSCustomFilterEnabled(enabled);
+}
+
 void WebSettingsImpl::setOpenGLMultisamplingEnabled(bool enabled)
 {
     m_settings->setOpenGLMultisamplingEnabled(enabled);

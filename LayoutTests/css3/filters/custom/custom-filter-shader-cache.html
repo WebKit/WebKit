@@ -5,6 +5,7 @@
         <title>Testing that cached shader resources are shared correctly between elements</title>
         <script>
             if (window.layoutTestController) {
+                window.layoutTestController.overridePreference("WebKitCSSCustomFilterEnabled", "1");
                 window.layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
                 window.layoutTestController.dumpAsText(true);
                 window.layoutTestController.waitUntilDone();

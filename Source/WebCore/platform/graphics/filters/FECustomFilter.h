@@ -48,15 +48,15 @@ class CustomFilterMesh;
 class CustomFilterNumberParameter;
 class CustomFilterProgram;
 class CustomFilterShader;
-class Document;
 class DrawingBuffer;
 class GraphicsContext3D;
+class HostWindow;
 class IntSize;
 class Texture;
 
 class FECustomFilter : public FilterEffect {
 public:
-    static PassRefPtr<FECustomFilter> create(Filter*, Document*, PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&,
+    static PassRefPtr<FECustomFilter> create(Filter*, HostWindow*, PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&,
                    unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, 
                    CustomFilterOperation::MeshType);
 
@@ -66,7 +66,7 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
 private:
-    FECustomFilter(Filter*, Document*, PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&,
+    FECustomFilter(Filter*, HostWindow*, PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&,
                    unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, 
                    CustomFilterOperation::MeshType);
     
@@ -77,7 +77,7 @@ private:
     void bindProgramParameters();
     void bindProgramAndBuffers(ByteArray* srcPixelArray);
     
-    Document* m_document;
+    HostWindow* m_hostWindow;
     
     RefPtr<GraphicsContext3D> m_context;
     RefPtr<DrawingBuffer> m_drawingBuffer;
