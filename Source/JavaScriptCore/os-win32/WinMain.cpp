@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "Vector.h"
+#include <wtf/Vector.h>
 #include <winbase.h>
 #include <winnls.h>
 #include <wtf/UnusedParam.h>

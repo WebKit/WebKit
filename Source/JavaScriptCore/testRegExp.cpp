@@ -21,7 +21,7 @@
 #include "config.h"
 #include "RegExp.h"
 
-#include "CurrentTime.h"
+#include <wtf/CurrentTime.h>
 #include "InitializeThreading.h"
 #include "JSGlobalObject.h"
 #include "UStringBuilder.h"

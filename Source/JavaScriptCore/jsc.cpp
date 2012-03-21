@@ -24,7 +24,7 @@
 
 #include "BytecodeGenerator.h"
 #include "Completion.h"
-#include "CurrentTime.h"
+#include <wtf/CurrentTime.h>
 #include "ExceptionHelpers.h"
 #include "InitializeThreading.h"
 #include "Interpreter.h"

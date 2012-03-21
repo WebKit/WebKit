@@ -38,7 +38,7 @@
 #elif OS(WINDOWS)
 #include <windows.h>
 #else
-#include "CurrentTime.h"
+#include <wtf/CurrentTime.h>
 #endif
 
 using namespace std;

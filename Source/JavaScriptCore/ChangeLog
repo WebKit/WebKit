@@ -1,5 +1,19 @@
 2012-03-21  Eric Seidel  <eric@webkit.org>
 
+        Fix remaining WTF includes in JavaScriptCore in preparation for moving WTF headers out of JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=81834
+
+        Reviewed by Adam Barth.
+
+        * jsc.cpp:
+        * os-win32/WinMain.cpp:
+        * runtime/JSDateMath.cpp:
+        * runtime/TimeoutChecker.cpp:
+        * testRegExp.cpp:
+        * tools/CodeProfiling.cpp:
+
+2012-03-21  Eric Seidel  <eric@webkit.org>
+
         WTF::MetaAllocator has a weak vtable (discovered when building wtf as a static library)
         https://bugs.webkit.org/show_bug.cgi?id=81838
 
