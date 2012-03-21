@@ -29,6 +29,25 @@
 
 2012-03-21  Dirk Pranke  <dpranke@chromium.org>
 
+        fix regression on gtk port introduced by r111609
+        https://bugs.webkit.org/show_bug.cgi?id=81839
+
+        Reviewed by Philippe Normand.
+
+        r111609 should've initialized a couple of missing fields in
+        WebKitDriver, and also should've checked for method overrides
+        in the other ports :(.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkDriver._start):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.__init__):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_crash_log):
+        (MainTest.test_web_process_crash_log):
+
+2012-03-21  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: clean up actually getting crash logs from DRT/WTR crashes
         https://bugs.webkit.org/show_bug.cgi?id=81603
 

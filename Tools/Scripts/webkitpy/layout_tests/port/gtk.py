@@ -54,6 +54,8 @@ class GtkDriver(WebKitDriver):
         environment = self._port.setup_environ_for_server(server_name)
         # We must do this here because the DISPLAY number depends on _worker_number
         environment['DISPLAY'] = ":%d" % (display_id)
+        self._crashed_process_name = None
+        self._crashed_pid = None
         self._server_process = ServerProcess(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
 
     def stop(self):

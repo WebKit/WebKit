@@ -438,6 +438,7 @@ class WebKitDriver(Driver):
         # and ServerProcess won't be aware of them (since the actual tool
         # didn't crash, just a subprocess) we record the crashed subprocess name here.
         self._crashed_process_name = None
+        self._crashed_pid = None
 
         # stderr reading is scoped on a per-test (not per-block) basis, so we store the accumulated
         # stderr output, as well as if we've seen #EOF on this driver instance.
@@ -506,7 +507,7 @@ class WebKitDriver(Driver):
         elif error_line.startswith("#CRASHED - WebProcess"):
             # WebKitTestRunner uses this to report that the WebProcess subprocess crashed.
             pid = None
-            m = re.match('pid (\d+)', err_line)
+            m = re.match('pid (\d+)', error_line)
             if m:
                 pid = int(m.group(1))
             self._crashed_process_name = 'WebProcess'
