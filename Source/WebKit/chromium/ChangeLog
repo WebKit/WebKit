@@ -1,3 +1,18 @@
+2012-03-21  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Expose necessary IDB exception codes through WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=81597
+
+        To fix http://crbug.com/96826 and http://crbug.com/113118 we need to be able throw
+        exceptions from the Chromium side, so expose the necessary members of IDBDatabaseException.
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebIDBDatabaseException.h: Added.
+        (WebKit):
+        * src/AssertMatchingEnums.cpp:
+
 2012-03-21  Tim Dresser  <tdresser@chromium.org>
 
         [chromium] Increase size of Combo Box Options for touch and high DPI devices

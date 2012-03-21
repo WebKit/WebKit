@@ -179,6 +179,7 @@
                 'public/WebIDBDatabase.h',
                 'public/WebIDBDatabaseCallbacks.h',
                 'public/WebIDBDatabaseError.h',
+                'public/WebIDBDatabaseException.h',
                 'public/WebIDBFactory.h',
                 'public/WebIDBIndex.h',
                 'public/WebIDBKey.h',
