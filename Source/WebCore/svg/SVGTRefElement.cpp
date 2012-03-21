@@ -263,6 +263,10 @@ void SVGTRefElement::buildPendingResource()
     // Remove any existing event listener.
     clearEventListener();
 
+    // If we're not yet in a document, this function will be called again from insertedIntoDocument().
+    if (!inDocument())
+        return;
+
     String id;
     Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
     if (!target) {
@@ -276,10 +280,6 @@ void SVGTRefElement::buildPendingResource()
     }
 
     updateReferencedText();
-
-    // We should not add the event listener if we are not in document yet.
-    if (!inDocument())
-        return;
 
     m_eventListener = TargetListener::create(this, id);
     target->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
