@@ -776,7 +776,15 @@ void InspectorDOMAgent::getEventListeners(Node* node, Vector<EventListenerInfo>&
         Vector<AtomicString> eventTypes = d->eventListenerMap.eventTypes();
         for (size_t j = 0; j < eventTypes.size(); ++j) {
             AtomicString& type = eventTypes[j];
-            eventInformation.append(EventListenerInfo(ancestor, type, ancestor->getEventListeners(type)));
+            const EventListenerVector& listeners = ancestor->getEventListeners(type);
+            EventListenerVector filteredListeners;
+            filteredListeners.reserveCapacity(listeners.size());
+            for (size_t k = 0; k < listeners.size(); ++k) {
+                if (listeners[k].listener->type() == EventListener::JSEventListenerType)
+                    filteredListeners.append(listeners[k]);
+            }
+            if (!filteredListeners.isEmpty())
+                eventInformation.append(EventListenerInfo(ancestor, type, filteredListeners));
         }
     }
 }

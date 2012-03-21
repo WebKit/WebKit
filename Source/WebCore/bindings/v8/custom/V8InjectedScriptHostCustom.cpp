@@ -189,8 +189,10 @@ static v8::Handle<v8::Array> getJSListenerFunctions(Document* document, const Ev
     size_t handlersCount = listenerInfo.eventListenerVector.size();
     for (size_t i = 0, outputIndex = 0; i < handlersCount; ++i) {
         RefPtr<EventListener> listener = listenerInfo.eventListenerVector[i].listener;
-        if (listener->type() != EventListener::JSEventListenerType)
+        if (listener->type() != EventListener::JSEventListenerType) {
+            ASSERT_NOT_REACHED();
             continue;
+        }
         V8AbstractEventListener* v8Listener = static_cast<V8AbstractEventListener*>(listener.get());
         v8::Local<v8::Context> context = toV8Context(document, v8Listener->worldContext());
         // Hide listeners from other contexts.

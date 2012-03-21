@@ -193,8 +193,10 @@ static JSArray* getJSListenerFunctions(ExecState* exec, Document* document, cons
     size_t handlersCount = listenerInfo.eventListenerVector.size();
     for (size_t i = 0, outputIndex = 0; i < handlersCount; ++i) {
         const JSEventListener* jsListener = JSEventListener::cast(listenerInfo.eventListenerVector[i].listener.get());
-        if (!jsListener)
+        if (!jsListener) {
+            ASSERT_NOT_REACHED();
             continue;
+        }
         // Hide listeners from other contexts.
         if (jsListener->isolatedWorld() != currentWorld(exec))
             continue;
