@@ -288,7 +288,7 @@ enum ParameterDefaultPolicy {
         for (typename Iterable::const_iterator iter = iterator.begin(); iter != end; ++iter)
             list.append(toJS(exec, globalObject, WTF::getPtr(*iter)));
 
-        return JSC::constructArray(exec, list);
+        return JSC::constructArray(exec, globalObject, list);
     }
 
     template <class T>
