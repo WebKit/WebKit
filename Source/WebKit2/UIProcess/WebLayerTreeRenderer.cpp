@@ -274,8 +274,8 @@ void WebLayerTreeRenderer::setRootLayerID(WebLayerID layerID)
 
 PassRefPtr<LayerBackingStore> WebLayerTreeRenderer::getBackingStore(WebLayerID id)
 {
-    ensureLayer(id);
     TextureMapperLayer* layer = toTextureMapperLayer(layerByID(id));
+    ASSERT(layer);
     RefPtr<LayerBackingStore> backingStore = static_cast<LayerBackingStore*>(layer->backingStore().get());
     if (!backingStore) {
         backingStore = LayerBackingStore::create();

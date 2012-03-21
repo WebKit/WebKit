@@ -430,35 +430,37 @@ WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer* layer)
 
 void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
 {
+
+    if (m_modified) {
+        computeTransformedVisibleRect();
+
+        m_layerInfo.name = name();
+        m_layerInfo.anchorPoint = anchorPoint();
+        m_layerInfo.backfaceVisible = backfaceVisibility();
+        m_layerInfo.childrenTransform = childrenTransform();
+        m_layerInfo.contentsOpaque = contentsOpaque();
+        m_layerInfo.contentsRect = contentsRect();
+        m_layerInfo.drawsContent = drawsContent();
+        m_layerInfo.mask = toWebLayerID(maskLayer());
+        m_layerInfo.masksToBounds = masksToBounds();
+        m_layerInfo.opacity = opacity();
+        m_layerInfo.parent = toWebLayerID(parent());
+        m_layerInfo.pos = position();
+        m_layerInfo.preserves3D = preserves3D();
+        m_layerInfo.replica = toWebLayerID(replicaLayer());
+        m_layerInfo.size = size();
+        m_layerInfo.transform = transform();
+        m_contentNeedsDisplay = false;
+        m_layerInfo.children.clear();
+
+        for (size_t i = 0; i < children().size(); ++i)
+            m_layerInfo.children.append(toWebLayerID(children()[i]));
+
+        m_webGraphicsLayerClient->didSyncCompositingStateForLayer(m_layerInfo);
+    }
+
     updateContentBuffers();
 
-    if (!m_modified)
-        return;
-
-    computeTransformedVisibleRect();
-    m_layerInfo.name = name();
-    m_layerInfo.anchorPoint = anchorPoint();
-    m_layerInfo.backfaceVisible = backfaceVisibility();
-    m_layerInfo.childrenTransform = childrenTransform();
-    m_layerInfo.contentsOpaque = contentsOpaque();
-    m_layerInfo.contentsRect = contentsRect();
-    m_layerInfo.drawsContent = drawsContent();
-    m_layerInfo.mask = toWebLayerID(maskLayer());
-    m_layerInfo.masksToBounds = masksToBounds();
-    m_layerInfo.opacity = opacity();
-    m_layerInfo.parent = toWebLayerID(parent());
-    m_layerInfo.pos = position();
-    m_layerInfo.preserves3D = preserves3D();
-    m_layerInfo.replica = toWebLayerID(replicaLayer());
-    m_layerInfo.size = size();
-    m_layerInfo.transform = transform();
-    m_contentNeedsDisplay = false;
-    m_layerInfo.children.clear();
-
-    for (size_t i = 0; i < children().size(); ++i)
-        m_layerInfo.children.append(toWebLayerID(children()[i]));
-
-    m_webGraphicsLayerClient->didSyncCompositingStateForLayer(m_layerInfo);
     m_modified = false;
     m_layerInfo.imageIsUpdated = false;
     if (m_hasPendingAnimations)
@@ -514,7 +516,6 @@ void WebGraphicsLayer::tiledBackingStorePaint(GraphicsContext* context, const In
 {
     if (rect.isEmpty())
         return;
-    m_modified = true;
     paintGraphicsLayerContents(*context, rect);
 }
 
@@ -558,19 +559,16 @@ Color WebGraphicsLayer::tiledBackingStoreBackgroundColor() const
 }
 void WebGraphicsLayer::createTile(int tileID, const UpdateInfo& updateInfo)
 {
-    m_modified = true;
     m_webGraphicsLayerClient->createTile(id(), tileID, updateInfo);
 }
 
 void WebGraphicsLayer::updateTile(int tileID, const UpdateInfo& updateInfo)
 {
-    m_modified = true;
     m_webGraphicsLayerClient->updateTile(id(), tileID, updateInfo);
 }
 
 void WebGraphicsLayer::removeTile(int tileID)
 {
-    m_modified = true;
     m_webGraphicsLayerClient->removeTile(id(), tileID);
 }
 

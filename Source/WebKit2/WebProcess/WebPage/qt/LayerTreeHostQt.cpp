@@ -400,16 +400,19 @@ bool LayerTreeHost::supportsAcceleratedCompositing()
 
 void LayerTreeHostQt::createTile(WebLayerID layerID, int tileID, const UpdateInfo& updateInfo)
 {
+    m_shouldSyncFrame = true;
     m_webPage->send(Messages::LayerTreeHostProxy::CreateTileForLayer(layerID, tileID, updateInfo));
 }
 
 void LayerTreeHostQt::updateTile(WebLayerID layerID, int tileID, const UpdateInfo& updateInfo)
 {
+    m_shouldSyncFrame = true;
     m_webPage->send(Messages::LayerTreeHostProxy::UpdateTileForLayer(layerID, tileID, updateInfo));
 }
 
 void LayerTreeHostQt::removeTile(WebLayerID layerID, int tileID)
 {
+    m_shouldSyncFrame = true;
     m_webPage->send(Messages::LayerTreeHostProxy::RemoveTileForLayer(layerID, tileID));
 }
 
