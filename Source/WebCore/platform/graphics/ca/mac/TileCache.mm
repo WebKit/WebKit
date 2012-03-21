@@ -80,7 +80,7 @@ void TileCache::tileCacheLayerBoundsChanged()
         return;
     }
 
-    scheduleTileRevalidation();
+    scheduleTileRevalidation(0);
 }
 
 void TileCache::setNeedsDisplay()
@@ -227,6 +227,12 @@ void TileCache::setIsInWindow(bool isInWindow)
         return;
 
     m_isInWindow = isInWindow;
+
+    if (!m_isInWindow) {
+        // Schedule a timeout to drop tiles that are outside of the visible rect in 4 seconds.
+        const double tileRevalidationTimeout = 4;
+        scheduleTileRevalidation(tileRevalidationTimeout);
+    }
 }
 
 void TileCache::setTileDebugBorderWidth(float borderWidth)
@@ -277,12 +283,27 @@ void TileCache::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft
     bottomRight.setY(max(clampedRect.maxY() / m_tileSize.height(), 0));
 }
 
-void TileCache::scheduleTileRevalidation()
+IntRect TileCache::tileCoverageRect() const
 {
-    if (m_tileRevalidationTimer.isActive())
+    IntRect tileCoverageRect = m_visibleRect;
+
+    if (m_isInWindow) {
+        // Inflate the coverage rect so that it covers 2x of the visible width and 3x of the visible height.
+        // These values were chosen because it's more common to have tall pages and to scroll vertically,
+        // so we keep more tiles above and below the current area.
+        tileCoverageRect.inflateX(tileCoverageRect.width() / 2);
+        tileCoverageRect.inflateY(tileCoverageRect.height());
+    }
+
+    return tileCoverageRect;
+}
+
+void TileCache::scheduleTileRevalidation(double interval)
+{
+    if (m_tileRevalidationTimer.isActive() && m_tileRevalidationTimer.nextFireInterval() < interval)
         return;
 
-    m_tileRevalidationTimer.startOneShot(0);
+    m_tileRevalidationTimer.startOneShot(interval);
 }
 
 void TileCache::tileRevalidationTimerFired(Timer<TileCache>*)
@@ -301,13 +322,7 @@ void TileCache::revalidateTiles()
     if (m_visibleRect.isEmpty() || bounds().isEmpty())
         return;
 
-    IntRect tileCoverageRect = m_visibleRect;
-
-    // Inflate the coverage rect so that it covers 2x of the visible width and 3x of the visible height.
-    // These values were chosen because it's more common to have tall pages and to scroll vertically,
-    // so we keep more tiles above and below the current area.
-    tileCoverageRect.inflateX(tileCoverageRect.width() / 2);
-    tileCoverageRect.inflateY(tileCoverageRect.height());
+    IntRect tileCoverageRect = this->tileCoverageRect();
 
     Vector<TileIndex> tilesToRemove;
 

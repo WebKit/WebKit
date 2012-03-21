@@ -81,7 +81,9 @@ private:
     IntRect rectForTileIndex(const TileIndex&) const;
     void getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight);
 
-    void scheduleTileRevalidation();
+    IntRect tileCoverageRect() const;
+
+    void scheduleTileRevalidation(double interval);
     void tileRevalidationTimerFired(Timer<TileCache>*);
     void revalidateTiles();
 
