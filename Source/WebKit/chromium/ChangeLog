@@ -1,5 +1,17 @@
 2012-03-21  Peter Beverloo  <peter@chromium.org>
 
+        [Chromium] Remove Android build-fix when the proper fix rolled into WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=80861
+
+        Reviewed by Tony Chang.
+
+        No longer set the CC.target environment variable as this is no longer
+        required for project file generation.
+
+        * gyp_webkit:
+
+2012-03-21  Peter Beverloo  <peter@chromium.org>
+
         Unreviewed.  Rolled DEPS.
 
         * DEPS:
