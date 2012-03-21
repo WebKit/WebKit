@@ -57,7 +57,7 @@ void RenderIFrame::computeLogicalHeight()
         if (!view)
             return;
         int border = borderTop() + borderBottom();
-        setHeight(max(height(), view->contentsHeight() + border));
+        setHeight(max<LayoutUnit>(height(), view->contentsHeight() + border));
     }
 }
 
@@ -75,7 +75,7 @@ void RenderIFrame::computeLogicalWidth()
         if (!view)
             return;
         LayoutUnit border = borderLeft() + borderRight();
-        setWidth(max(width(), view->contentsWidth() + border));
+        setWidth(max<LayoutUnit>(width(), view->contentsWidth() + border));
     }
 }
 

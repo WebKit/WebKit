@@ -78,9 +78,9 @@ void RenderFrameBase::layoutWithFlattening(bool fixedWidth, bool fixedHeight)
 
     // expand the frame by setting frame height = content height
     if (isScrollable || !fixedHeight || childRoot->isFrameSet())
-        setHeight(max(height(), childFrameView->contentsHeight() + vBorder));
+        setHeight(max<LayoutUnit>(height(), childFrameView->contentsHeight() + vBorder));
     if (isScrollable || !fixedWidth || childRoot->isFrameSet())
-        setWidth(max(width(), childFrameView->contentsWidth() + hBorder));
+        setWidth(max<LayoutUnit>(width(), childFrameView->contentsWidth() + hBorder));
 
     updateWidgetPosition();
 

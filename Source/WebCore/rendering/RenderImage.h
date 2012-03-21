@@ -94,7 +94,7 @@ private:
 
     IntSize imageSizeForError(CachedImage*) const;
     void imageDimensionsChanged(bool imageSizeChanged, const IntRect* = 0);
-    bool updateIntrinsicSizeIfNeeded(const LayoutSize&, bool imageSizeChanged);
+    bool updateIntrinsicSizeIfNeeded(const IntSize&, bool imageSizeChanged);
 
     void paintAreaElementFocusRing(PaintInfo&);
 

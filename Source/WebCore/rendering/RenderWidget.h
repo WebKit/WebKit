@@ -70,7 +70,7 @@ private:
     virtual void setSelectionState(SelectionState);
     virtual void setOverlapTestResult(bool);
 
-    bool setWidgetGeometry(const IntRect&);
+    bool setWidgetGeometry(const LayoutRect&);
     bool updateWidgetGeometry();
 
     RefPtr<Widget> m_widget;

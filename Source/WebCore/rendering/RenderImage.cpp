@@ -175,7 +175,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     imageDimensionsChanged(imageSizeChanged, rect);
 }
 
-bool RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize, bool imageSizeChanged)
+bool RenderImage::updateIntrinsicSizeIfNeeded(const IntSize& newSize, bool imageSizeChanged)
 {
     if (newSize == intrinsicSize() && !imageSizeChanged)
         return false;
@@ -416,18 +416,19 @@ void RenderImage::areaElementFocusChanged(HTMLAreaElement* element)
 
 void RenderImage::paintIntoRect(GraphicsContext* context, const LayoutRect& rect)
 {
-    if (!m_imageResource->hasImage() || m_imageResource->errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
+    IntRect alignedRect = pixelSnappedIntRect(rect);
+    if (!m_imageResource->hasImage() || m_imageResource->errorOccurred() || alignedRect.width() <= 0 || alignedRect.height() <= 0)
         return;
 
-    RefPtr<Image> img = m_imageResource->image(rect.width(), rect.height());
+    RefPtr<Image> img = m_imageResource->image(alignedRect.width(), alignedRect.height());
     if (!img || img->isNull())
         return;
 
     HTMLImageElement* imageElt = (node() && node()->hasTagName(imgTag)) ? static_cast<HTMLImageElement*>(node()) : 0;
     CompositeOperator compositeOperator = imageElt ? imageElt->compositeOperator() : CompositeSourceOver;
     Image* image = m_imageResource->image().get();
-    bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, rect.size());
-    context->drawImage(m_imageResource->image(rect.width(), rect.height()).get(), style()->colorSpace(), rect, compositeOperator, useLowQualityScaling);
+    bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, alignedRect.size());
+    context->drawImage(m_imageResource->image(alignedRect.width(), alignedRect.height()).get(), style()->colorSpace(), alignedRect, compositeOperator, useLowQualityScaling);
 }
 
 bool RenderImage::backgroundIsObscured() const
@@ -525,8 +526,8 @@ LayoutUnit RenderImage::computeReplacedLogicalWidth(bool includeMaxWidth) const
         if (cachedImage && cachedImage->image()) {
             containerSize = cachedImage->image()->size();
             // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
-            containerSize.setWidth(static_cast<LayoutUnit>(containerSize.width() * style()->effectiveZoom()));
-            containerSize.setHeight(static_cast<LayoutUnit>(containerSize.height() * style()->effectiveZoom()));
+            containerSize.setWidth(roundToInt(containerSize.width() * style()->effectiveZoom()));
+            containerSize.setHeight(roundToInt(containerSize.height() * style()->effectiveZoom()));
         }
     }
 
