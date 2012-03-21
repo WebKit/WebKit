@@ -25,16 +25,16 @@
 #ifndef HTMLOptionElement_h
 #define HTMLOptionElement_h
 
-#include "HTMLElement.h"
+#include "HTMLFormControlElement.h"
 
 namespace WebCore {
 
 class HTMLSelectElement;
 
-class HTMLOptionElement : public HTMLElement {
+class HTMLOptionElement : public HTMLFormControlElement {
 public:
-    static PassRefPtr<HTMLOptionElement> create(Document*);
-    static PassRefPtr<HTMLOptionElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLOptionElement> create(Document*, HTMLFormElement*);
+    static PassRefPtr<HTMLOptionElement> create(const QualifiedName&, Document*, HTMLFormElement*);
     static PassRefPtr<HTMLOptionElement> createForJSConstructor(Document*, const String& data, const String& value,
        bool defaultSelected, bool selected, ExceptionCode&);
 
@@ -54,8 +54,7 @@ public:
     String label() const;
     void setLabel(const String&);
 
-    virtual bool isEnabledFormControl() const OVERRIDE { return !disabled(); }
-    bool ownElementDisabled() const { return m_disabled; }
+    bool ownElementDisabled() const { return HTMLFormControlElement::disabled(); }
 
     virtual bool disabled() const;
 
@@ -64,7 +63,7 @@ public:
     void setSelectedState(bool);
 
 private:
-    HTMLOptionElement(const QualifiedName&, Document*);
+    HTMLOptionElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 
     virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
@@ -72,6 +71,8 @@ private:
     virtual void attach();
     virtual void detach();
     virtual void setRenderStyle(PassRefPtr<RenderStyle>);
+
+    virtual const AtomicString& formControlType() const;
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
 
@@ -86,7 +87,6 @@ private:
 
     String m_value;
     String m_label;
-    bool m_disabled;
     bool m_isSelected;
     RefPtr<RenderStyle> m_style;
 };

@@ -65,7 +65,6 @@
 #include "HTMLElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "HTMLOptionElement.h"
 #include "HTMLProgressElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTextAreaElement.h"
@@ -1344,18 +1343,6 @@ bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
             return false;
     }
 #endif
-
-    if (element->hasTagName(optionTag)) {
-        if (!m_element->hasTagName(optionTag))
-            return false;
-
-        HTMLOptionElement* thisOptionElement = static_cast<HTMLOptionElement*>(element);
-        HTMLOptionElement* otherOptionElement = static_cast<HTMLOptionElement*>(m_element);
-        if (thisOptionElement->isEnabledFormControl() != otherOptionElement->isEnabledFormControl())
-            return false;
-        if (thisOptionElement->selected() != otherOptionElement->selected())
-            return false;
-    }
 
     bool isControl = element->isFormControlElement();
 

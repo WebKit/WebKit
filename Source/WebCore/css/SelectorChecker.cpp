@@ -1052,7 +1052,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
         case CSSSelector::PseudoDefault:
             return element && element->isDefaultButtonForForm();
         case CSSSelector::PseudoDisabled:
-            if (element && (element->isFormControlElement() || element->hasTagName(optionTag)))
+            if (element && element->isFormControlElement())
                 return !element->isEnabledFormControl();
             break;
         case CSSSelector::PseudoReadOnly:
@@ -1079,7 +1079,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
             return (element->willValidate() && !element->isValidFormControlElement()) || element->hasUnacceptableValue();
         case CSSSelector::PseudoChecked:
             {
-                if (!element)
+                if (!element || !element->isFormControlElement())
                     break;
                 // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that
                 // you can't be both checked and indeterminate. We will behave like WinIE behind the scenes and just

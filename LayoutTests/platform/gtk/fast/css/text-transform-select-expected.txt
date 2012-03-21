@@ -9,8 +9,8 @@ layer at (0,0) size 800x520
       RenderBlock {DIV} at (0,18) size 784x81
         RenderMenuList {SELECT} at (2,51) size 87x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 85x26
-            RenderText at (4,4) size 45x17
-              text run at (4,4) width 45: "heLLo"
+            RenderText at (4,4) size 53x17
+              text run at (4,4) width 53: "HELLO"
         RenderText {#text} at (91,56) size 4x17
           text run at (91,56) width 4: " "
         RenderListBox {SELECT} at (97,2) size 82x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
@@ -23,8 +23,8 @@ layer at (0,0) size 800x520
       RenderBlock {DIV} at (0,99) size 784x81
         RenderMenuList {SELECT} at (2,51) size 81x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 79x26
-            RenderText at (4,4) size 45x17
-              text run at (4,4) width 45: "heLLo"
+            RenderText at (4,4) size 48x17
+              text run at (4,4) width 48: "HeLLo"
         RenderText {#text} at (85,56) size 4x17
           text run at (85,56) width 4: " "
         RenderListBox {SELECT} at (91,2) size 76x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
@@ -37,8 +37,8 @@ layer at (0,0) size 800x520
       RenderBlock {DIV} at (0,180) size 784x81
         RenderMenuList {SELECT} at (2,51) size 66x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 64x26
-            RenderText at (4,4) size 45x17
-              text run at (4,4) width 45: "heLLo"
+            RenderText at (4,4) size 34x17
+              text run at (4,4) width 34: "hello"
         RenderText {#text} at (70,56) size 4x17
           text run at (70,56) width 4: " "
         RenderListBox {SELECT} at (76,2) size 61x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
@@ -51,8 +51,8 @@ layer at (0,0) size 800x520
       RenderBlock {DIV} at (0,261) size 784x81
         RenderMenuList {SELECT} at (2,51) size 70x28 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 68x26
-            RenderText at (4,4) size 10x17
-              text run at (4,4) width 10: "\x{DF}"
+            RenderText at (4,4) size 22x17
+              text run at (4,4) width 22: "SS"
         RenderText {#text} at (74,56) size 4x17
           text run at (74,56) width 4: " "
         RenderListBox {SELECT} at (80,2) size 65x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]

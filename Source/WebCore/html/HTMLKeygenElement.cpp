@@ -81,7 +81,7 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
     RefPtr<HTMLSelectElement> select = KeygenSelectElement::create(document);
     ExceptionCode ec = 0;
     for (size_t i = 0; i < keys.size(); ++i) {
-        RefPtr<HTMLOptionElement> option = HTMLOptionElement::create(document);
+        RefPtr<HTMLOptionElement> option = HTMLOptionElement::create(document, this->form());
         select->appendChild(option, ec);
         option->appendChild(Text::create(document, keys[i]), ec);
     }
