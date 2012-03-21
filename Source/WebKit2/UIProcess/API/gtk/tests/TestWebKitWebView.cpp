@@ -452,6 +452,66 @@ static void testWebViewZoomLevel(WebViewTest* test, gconstpointer)
     g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->m_webView), ==, 2.5);
 }
 
+static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
+{
+    static const char* html = "<html><body><a id='WebKitLink' href='http://www.webkitgtk.org/' title='WebKitGTK+ Title'>WebKitGTK+ Website</a></body></html>";
+    test->loadHtml(html, 0);
+    test->waitUntilLoadFinished();
+
+    GOwnPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.getElementById('WebKitLink').title;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    GOwnPtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "WebKitGTK+ Title");
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.getElementById('WebKitLink').href;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "http://www.webkitgtk.org/");
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.getElementById('WebKitLink').textContent", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "WebKitGTK+ Website");
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("a = 25;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 25);
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("a = 2.5;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 2.5);
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("a = true", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    g_assert(WebViewTest::javascriptResultToBoolean(javascriptResult));
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("a = false", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    g_assert(!WebViewTest::javascriptResultToBoolean(javascriptResult));
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("a = null", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    g_assert(WebViewTest::javascriptResultIsNull(javascriptResult));
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("function Foo() { a = 25; } Foo();", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    g_assert(WebViewTest::javascriptResultIsUndefined(javascriptResult));
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("foo();", &error.outPtr());
+    g_assert(!javascriptResult);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
@@ -463,6 +523,7 @@ void beforeAll()
     UIClientTest::add("WebKitWebView", "window-properties", testWebViewWindowProperties);
     UIClientTest::add("WebKitWebView", "mouse-target", testWebViewMouseTarget);
     WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);
+    WebViewTest::add("WebKitWebView", "run-javascript", testWebViewRunJavaScript);
 }
 
 void afterAll()

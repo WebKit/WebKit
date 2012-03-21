@@ -1,3 +1,60 @@
+2012-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_web_view_run_javascript() to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=75543
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitError.cpp:
+        (webkit_javascript_error_quark): Add new error domain for
+        Javascript errors.
+        * UIProcess/API/gtk/WebKitError.h:
+        * UIProcess/API/gtk/WebKitJavascriptResult.cpp: Added.
+        (webkitJavascriptResultCreate): Create a WebKitJavascriptResult
+        for the given WKSerializedScriptValueRef.
+        (webkit_javascript_result_ref): Increment reference count of
+        WebKitJavascriptResult.
+        (webkit_javascript_result_unref): Decrement reference count of
+        WebKitJavascriptResult.
+        (webkit_javascript_result_get_global_context): Get global
+        javascript context of the result.
+        (webkit_javascript_result_get_value): Get the JSValueRef of the
+        result.
+        * UIProcess/API/gtk/WebKitJavascriptResult.h: Added.
+        * UIProcess/API/gtk/WebKitJavascriptResultPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewFinalize): Release the global javascript context.
+        (webkit_web_view_get_javascript_global_context): Get or create the
+        global javascript context.
+        (webkitWebViewRunJavaScriptCallback): Callback called by C API when
+        javascript execution finishes.
+        (webkit_web_view_run_javascript): Asynchronously run a given
+        javascript.
+        (webkit_web_view_run_javascript_finish): Finish async operation
+        started by webkit_web_view_run_javascript().
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add
+        webkit_javascript_result_get_type().
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewRunJavaScript):
+        (beforeAll):
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::WebViewTest):
+        (WebViewTest::~WebViewTest):
+        (runJavaScriptReadyCallback):
+        (WebViewTest::runJavaScriptAndWaitUntilFinished):
+        (jsValueToCString):
+        (WebViewTest::javascriptResultToCString):
+        (WebViewTest::javascriptResultToNumber):
+        (WebViewTest::javascriptResultToBoolean):
+        (WebViewTest::javascriptResultIsNull):
+        (WebViewTest::javascriptResultIsUndefined):
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+        * UIProcess/API/gtk/webkit2.h:
+
 2012-03-20  Eric Seidel  <eric@webkit.org>
 
         Move wtf/Platform.h from JavaScriptCore to Source/WTF/wtf

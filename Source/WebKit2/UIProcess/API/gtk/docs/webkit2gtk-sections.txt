@@ -49,8 +49,6 @@ webkit_web_context_get_type
 WebKitWebView
 WebKitLoadEvent
 WebKitPolicyDecisionType
-WebKitScriptDialog
-WebKitScriptDialogType
 
 <SUBSECTION Editing Commands>
 WEBKIT_EDITING_COMMAND_CUT
@@ -89,6 +87,20 @@ webkit_web_view_can_execute_editing_command
 webkit_web_view_can_execute_editing_command_finish
 webkit_web_view_execute_editing_command
 webkit_web_view_get_find_controller
+webkit_web_view_get_javascript_global_context
+webkit_web_view_run_javascript
+webkit_web_view_run_javascript_finish
+
+<SUBSECTION WebKitJavascriptResult>
+WebKitJavascriptResult
+webkit_javascript_result_ref
+webkit_javascript_result_unref
+webkit_javascript_result_get_global_context
+webkit_javascript_result_get_value
+
+<SUBSECTION WebKitScriptDialog>
+WebKitScriptDialog
+WebKitScriptDialogType
 webkit_script_dialog_get_dialog_type
 webkit_script_dialog_get_message
 webkit_script_dialog_confirm_set_confirmed
@@ -103,10 +115,12 @@ WEBKIT_TYPE_WEB_VIEW
 WEBKIT_WEB_VIEW_CLASS
 WEBKIT_IS_WEB_VIEW_CLASS
 WEBKIT_WEB_VIEW_GET_CLASS
+WEBKIT_TYPE_JAVASCRIPT_RESULT
 WEBKIT_TYPE_SCRIPT_DIALOG
 
 <SUBSECTION Private>
 webkit_web_view_get_type
+webkit_javascript_result_get_type
 webkit_script_dialog_get_type
 WebKitWebViewPrivate
 </SECTION>
@@ -466,16 +480,19 @@ WEBKIT_PLUGIN_ERROR
 WEBKIT_POLICY_ERROR
 WEBKIT_DOWNLOAD_ERROR
 WEBKIT_PRINT_ERROR
+WEBKIT_JAVASCRIPT_ERROR
 WebKitNetworkError
 WebKitPluginError
 WebKitPolicyError
 WebKitDownloadError
 WebKitPrintError
+WebKitJavascriptError
 webkit_network_error_quark
 webkit_plugin_error_quark
 webkit_policy_error_quark
 webkit_download_error_quark
 webkit_print_error_quark
+webkit_javascript_error_quark
 </SECTION>
 
 <SECTION>

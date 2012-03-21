@@ -77,3 +77,8 @@ GQuark webkit_print_error_quark()
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PRINT_ERROR_GENERAL, PrintErrorGeneral);
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND, PrintErrorPrinterNotFound);
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE, PrintErrorInvalidPageRange);
+
+GQuark webkit_javascript_error_quark()
+{
+    return g_quark_from_static_string("WebKitJavascriptError");
+}

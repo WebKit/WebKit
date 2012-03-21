@@ -29,11 +29,12 @@
 
 G_BEGIN_DECLS
 
-#define WEBKIT_NETWORK_ERROR  webkit_network_error_quark ()
-#define WEBKIT_POLICY_ERROR   webkit_policy_error_quark ()
-#define WEBKIT_PLUGIN_ERROR   webkit_plugin_error_quark ()
-#define WEBKIT_DOWNLOAD_ERROR webkit_download_error_quark ()
-#define WEBKIT_PRINT_ERROR    webkit_print_error_quark ()
+#define WEBKIT_NETWORK_ERROR    webkit_network_error_quark ()
+#define WEBKIT_POLICY_ERROR     webkit_policy_error_quark ()
+#define WEBKIT_PLUGIN_ERROR     webkit_plugin_error_quark ()
+#define WEBKIT_DOWNLOAD_ERROR   webkit_download_error_quark ()
+#define WEBKIT_PRINT_ERROR      webkit_print_error_quark ()
+#define WEBKIT_JAVASCRIPT_ERROR webkit_print_error_quark ()
 
 /**
  * WebKitNetworkError:
@@ -119,20 +120,33 @@ typedef enum {
     WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE = 501
 } WebKitPrintError;
 
-WEBKIT_API GQuark
-webkit_network_error_quark  (void);
+/**
+ * WebKitJavascriptError:
+ * @WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED: An exception was raised in Javascript execution
+ *
+ * Enum values used to denote errors happending when executing Javascript
+ */
+typedef enum {
+    WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED = 699
+} WebKitJavascriptError;
 
 WEBKIT_API GQuark
-webkit_policy_error_quark   (void);
+webkit_network_error_quark    (void);
 
 WEBKIT_API GQuark
-webkit_plugin_error_quark   (void);
+webkit_policy_error_quark     (void);
 
 WEBKIT_API GQuark
-webkit_download_error_quark (void);
+webkit_plugin_error_quark     (void);
 
 WEBKIT_API GQuark
-webkit_print_error_quark    (void);
+webkit_download_error_quark   (void);
+
+WEBKIT_API GQuark
+webkit_print_error_quark      (void);
+
+WEBKIT_API GQuark
+webkit_javascript_error_quark (void);
 
 G_END_DECLS
 

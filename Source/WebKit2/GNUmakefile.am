@@ -92,6 +92,7 @@ libwebkit2gtkinclude_HEADERS = \
 	$(WebKit2)/UIProcess/API/gtk/WebKitError.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitFindController.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitHitTestResult.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitJavascriptResult.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitNavigationPolicyDecision.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitPolicyDecision.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitPrintOperation.h \
@@ -555,6 +556,9 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitHitTestResult.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitHitTestResultPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitJavascriptResult.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitJavascriptResult.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitJavascriptResultPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitLoaderClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitLoaderClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFindController.h \

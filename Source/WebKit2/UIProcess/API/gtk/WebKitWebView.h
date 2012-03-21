@@ -28,10 +28,12 @@
 #ifndef WebKitWebView_h
 #define WebKitWebView_h
 
+#include <JavaScriptCore/JSBase.h>
 #include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitFindController.h>
 #include <webkit2/WebKitHitTestResult.h>
+#include <webkit2/WebKitJavascriptResult.h>
 #include <webkit2/WebKitScriptDialog.h>
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
@@ -267,6 +269,18 @@ webkit_web_view_execute_editing_command            (WebKitWebView             *w
 WEBKIT_API WebKitFindController *
 webkit_web_view_get_find_controller                (WebKitWebView             *web_view);
 
+WEBKIT_API JSGlobalContextRef
+webkit_web_view_get_javascript_global_context      (WebKitWebView             *web_view);
+
+WEBKIT_API void
+webkit_web_view_run_javascript                     (WebKitWebView             *web_view,
+                                                    const gchar               *script,
+                                                    GAsyncReadyCallback        callback,
+                                                    gpointer                   user_data);
+WEBKIT_API WebKitJavascriptResult *
+webkit_web_view_run_javascript_finish              (WebKitWebView             *web_view,
+                                                    GAsyncResult              *result,
+                                                    GError                   **error);
 G_END_DECLS
 
 #endif

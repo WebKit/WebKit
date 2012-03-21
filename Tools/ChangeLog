@@ -1,3 +1,13 @@
+2012-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_web_view_run_javascript() to WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=75543
+
+        Reviewed by Martin Robinson.
+
+        * MiniBrowser/gtk/GNUmakefile.am: Add javascriptcore_cppflags to
+        MiniBrowser CPP flags.
+
 2012-03-20  Eric Seidel  <eric@webkit.org>
 
         Move wtf/Platform.h from JavaScriptCore to Source/WTF/wtf

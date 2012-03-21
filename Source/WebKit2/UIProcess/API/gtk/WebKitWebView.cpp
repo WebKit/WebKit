@@ -25,6 +25,7 @@
 #include "WebKitEnumTypes.h"
 #include "WebKitError.h"
 #include "WebKitHitTestResultPrivate.h"
+#include "WebKitJavascriptResultPrivate.h"
 #include "WebKitLoaderClient.h"
 #include "WebKitMarshal.h"
 #include "WebKitPolicyClient.h"
@@ -38,6 +39,7 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageProxy.h"
+#include <JavaScriptCore/APICast.h>
 #include <WebCore/DragIcon.h>
 #include <WebCore/GtkUtilities.h>
 #include <glib/gi18n-lib.h>
@@ -100,6 +102,7 @@ struct _WebKitWebViewPrivate {
     unsigned mouseTargetModifiers;
 
     GRefPtr<WebKitFindController> findController;
+    JSGlobalContextRef javascriptGlobalContext;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -255,7 +258,10 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
 
 static void webkitWebViewFinalize(GObject* object)
 {
-    WEBKIT_WEB_VIEW(object)->priv->~WebKitWebViewPrivate();
+    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(object)->priv;
+    if (priv->javascriptGlobalContext)
+        JSGlobalContextRelease(priv->javascriptGlobalContext);
+    priv->~WebKitWebViewPrivate();
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
 }
 
@@ -1465,4 +1471,141 @@ WebKitFindController* webkit_web_view_get_find_controller(WebKitWebView* webView
         webView->priv->findController = adoptGRef(WEBKIT_FIND_CONTROLLER(g_object_new(WEBKIT_TYPE_FIND_CONTROLLER, "web-view", webView, NULL)));
 
     return webView->priv->findController.get();
+}
+
+/**
+ * webkit_web_view_get_javascript_global_context:
+ * @web_view: a #WebKitWebView
+ *
+ * Get the global JavaScript context used by @web_view to deserialize the
+ * result values of scripts executed with webkit_web_view_run_javascript().
+ *
+ * Returns: the <function>JSGlobalContextRef</function> used by @web_view to deserialize
+ *    the result values of scripts.
+ */
+JSGlobalContextRef webkit_web_view_get_javascript_global_context(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    if (!webView->priv->javascriptGlobalContext)
+        webView->priv->javascriptGlobalContext = JSGlobalContextCreate(0);
+    return webView->priv->javascriptGlobalContext;
+}
+
+static void webkitWebViewRunJavaScriptCallback(WKSerializedScriptValueRef wkSerializedScriptValue, WKErrorRef, void* context)
+{
+    GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
+    if (wkSerializedScriptValue) {
+        GRefPtr<WebKitWebView> webView = adoptGRef(WEBKIT_WEB_VIEW(g_async_result_get_source_object(G_ASYNC_RESULT(result.get()))));
+        WebKitJavascriptResult* scriptResult = webkitJavascriptResultCreate(webView.get(), wkSerializedScriptValue);
+        g_simple_async_result_set_op_res_gpointer(result.get(), scriptResult, reinterpret_cast<GDestroyNotify>(webkit_javascript_result_unref));
+    } else {
+        GError* error = 0;
+        g_set_error_literal(&error, WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED, _("An exception was raised in JavaScript"));
+        g_simple_async_result_take_error(result.get(), error);
+    }
+    g_simple_async_result_complete(result.get());
+}
+
+/**
+ * webkit_web_view_run_javascript:
+ * @web_view: a #WebKitWebView
+ * @script: the script to run
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously run @script in the context of the current page in @web_view.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_web_view_run_javascript_finish() to get the result of the operation.
+ */
+void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(script);
+
+    WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
+    WKRetainPtr<WKStringRef> wkScript = adoptWK(WKStringCreateWithUTF8CString(script));
+    GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(webView), callback, userData,
+                                                           reinterpret_cast<gpointer>(webkit_web_view_run_javascript));
+    WKPageRunJavaScriptInMainFrame(wkPage, wkScript.get(), result, webkitWebViewRunJavaScriptCallback);
+}
+
+/**
+ * webkit_web_view_run_javascript_finish:
+ * @web_view: a #WebKitWebView
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_web_view_run_javascript().
+ *
+ * This is an example of using webkit_web_view_run_javascript() with a script returning
+ * a string:
+ *
+ * <informalexample><programlisting>
+ * static void
+ * web_view_javascript_finished (GObject      *object,
+ *                               GAsyncResult *result,
+ *                               gpointer      user_data)
+ * {
+ *     WebKitJavascriptResult *js_result;
+ *     JSValueRef              value;
+ *     JSGlobalContextRef      context;
+ *     GError                 *error = NULL;
+ *
+ *     js_result = webkit_web_view_run_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
+ *     if (!js_result) {
+ *         g_warning ("Error running javascript: %s", error->message);
+ *         g_error_free (error);
+ *         return;
+ *     }
+ *
+ *     context = webkit_javascript_result_get_global_context (js_result);
+ *     value = webkit_javascript_result_get_value (js_result);
+ *     if (JSValueIsString (context, value)) {
+ *         JSStringRef *js_str_value;
+ *         gchar       *str_value;
+ *         gsize        str_length;
+ *
+ *         js_str_value = JSValueToStringCopy (context, value, NULL));
+ *         str_length = JSStringGetMaximumUTF8CStringSize (js_str_value);
+ *         str_value = (gchar *)g_malloc (str_length));
+ *         JSStringGetUTF8CString (js_str_value, str_value, str_length);
+ *         JSStringRelease (js_str_value);
+ *         g_print ("Script result: %s\n", str_value);
+ *         g_free (str_value);
+ *     } else {
+ *         g_warning ("Error running javascript: unexpected return value");
+ *     }
+ *     webkit_javascript_result_unref (js_result);
+ * }
+ *
+ * static void
+ * web_view_get_link_url (WebKitWebView *web_view,
+ *                        const gchar   *link_id)
+ * {
+ *     gchar *script;
+ *
+ *     script = g_strdup_printf ("window.document.getElementById('%s').href;", link_id);
+ *     webkit_web_view_run_javascript (web_view, script, web_view_javascript_finished, NULL);
+ *     g_free (script);
+ * }
+ * </programlisting></informalexample>
+ *
+ * Returns: (transfer full): a #WebKitJavascriptResult with the result of the last executed statement in @script
+ *    or %NULL in case of error
+ */
+WebKitJavascriptResult* webkit_web_view_run_javascript_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), 0);
+
+    GSimpleAsyncResult* simpleResult = G_SIMPLE_ASYNC_RESULT(result);
+    g_warn_if_fail(g_simple_async_result_get_source_tag(simpleResult) == webkit_web_view_run_javascript);
+
+    if (g_simple_async_result_propagate_error(simpleResult, error))
+        return 0;
+
+    WebKitJavascriptResult* scriptResult = static_cast<WebKitJavascriptResult*>(g_simple_async_result_get_op_res_gpointer(simpleResult));
+    return scriptResult ? webkit_javascript_result_ref(scriptResult) : 0;
 }

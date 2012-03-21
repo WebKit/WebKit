@@ -32,6 +32,7 @@
 #include <webkit2/WebKitError.h>
 #include <webkit2/WebKitFindController.h>
 #include <webkit2/WebKitHitTestResult.h>
+#include <webkit2/WebKitJavascriptResult.h>
 #include <webkit2/WebKitPrintOperation.h>
 #include <webkit2/WebKitScriptDialog.h>
 #include <webkit2/WebKitSettings.h>

@@ -30,6 +30,7 @@
 #include <WebKit2/WKDownload.h>
 #include <WebKit2/WKFindOptions.h>
 #include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WKSerializedScriptValue.h>
 #include <WebKit2/WKString.h>
 #include <WebKit2/WebKit2.h>
 #include <glib.h>
