@@ -50,6 +50,12 @@ void WebICEOptions::assign(const WebICEOptions& other)
     m_private = other.m_private;
 }
 
+void WebICEOptions::initialize(CandidateType candidateType)
+{
+    ASSERT(isNull());
+    m_private = IceOptions::create(static_cast<IceOptions::UseCandidatesOption>(candidateType));
+}
+
 void WebICEOptions::reset()
 {
     m_private.reset();
@@ -58,18 +64,7 @@ void WebICEOptions::reset()
 WebICEOptions::CandidateType WebICEOptions::candidateTypeToUse() const
 {
     ASSERT(!isNull());
-
-    switch (m_private->useCandidates()) {
-    case IceOptions::ALL:
-        return CandidateTypeAll;
-    case IceOptions::NO_RELAY:
-        return CandidateTypeNoRelay;
-    case IceOptions::ONLY_RELAY:
-        return CandidateTypeOnlyRelay;
-    default:
-        ASSERT_NOT_REACHED();
-        return CandidateTypeAll;
-    }
+    return static_cast<CandidateType>(m_private->useCandidates());
 }
 
 } // namespace WebKit

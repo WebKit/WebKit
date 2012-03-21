@@ -1,5 +1,30 @@
 2012-03-21  Tommy Widenflycht  <tommyw@google.com>
 
+        [chromium] MediaStream API (JSEP): Enhancing WebMediaHints and WebICEOptions
+        https://bugs.webkit.org/show_bug.cgi?id=81652
+
+        Reviewed by Adam Barth.
+
+        Adding an initialize method to WebMediaHints and WebICEOptions.
+        This is needed for Chromium unittests.
+
+        * public/platform/WebICEOptions.h:
+        (WebKit::WebICEOptions::WebICEOptions):
+        (WebICEOptions):
+        * public/platform/WebMediaHints.h:
+        (WebKit::WebMediaHints::WebMediaHints):
+        (WebMediaHints):
+        * src/AssertMatchingEnums.cpp:
+        * src/WebICEOptions.cpp:
+        (WebKit::WebICEOptions::initialize):
+        (WebKit):
+        (WebKit::WebICEOptions::candidateTypeToUse):
+        * src/WebMediaHints.cpp:
+        (WebKit::WebMediaHints::initialize):
+        (WebKit):
+
+2012-03-21  Tommy Widenflycht  <tommyw@google.com>
+
         [chromium] MediaStream API (JSEP): Introducing WebSessionDescription and WebIceCandidate
         https://bugs.webkit.org/show_bug.cgi?id=81339
 

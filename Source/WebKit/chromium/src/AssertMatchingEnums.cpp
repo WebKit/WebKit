@@ -51,6 +51,7 @@
 #include "IDBDatabaseException.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBKey.h"
+#include "IceOptions.h"
 #include "IconURL.h"
 #include "MediaPlayer.h"
 #include "MediaStreamSource.h"
@@ -94,12 +95,13 @@
 #include "WebStorageQuotaType.h"
 #include "WebTextAffinity.h"
 #include "WebTextCaseSensitivity.h"
-#include "WebTextCheckingType.h"
 #include "WebTextCheckingResult.h"
+#include "WebTextCheckingType.h"
 #include "WebVideoFrame.h"
 #include "WebView.h"
 #include "platform/WebClipboard.h"
 #include "platform/WebFileSystem.h"
+#include "platform/WebICEOptions.h"
 #include "platform/WebMediaStreamSource.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>
@@ -503,6 +505,10 @@ COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStatePrerender, PageVisibilityStat
 #if ENABLE(MEDIA_STREAM)
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::TypeAudio, MediaStreamSource::TypeAudio);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::TypeVideo, MediaStreamSource::TypeVideo);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebICEOptions::CandidateTypeAll, IceOptions::ALL);
+COMPILE_ASSERT_MATCHING_ENUM(WebICEOptions::CandidateTypeNoRelay, IceOptions::NO_RELAY);
+COMPILE_ASSERT_MATCHING_ENUM(WebICEOptions::CandidateTypeOnlyRelay, IceOptions::ONLY_RELAY);
 #endif
 
 COMPILE_ASSERT_MATCHING_ENUM(WebReferrerPolicyAlways, SecurityPolicy::ReferrerPolicyAlways);

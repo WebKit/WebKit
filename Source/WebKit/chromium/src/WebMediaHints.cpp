@@ -50,6 +50,12 @@ void WebMediaHints::assign(const WebMediaHints& other)
     m_private = other.m_private;
 }
 
+void WebMediaHints::initialize(bool audio, bool video)
+{
+    ASSERT(isNull());
+    m_private = MediaHints::create(audio, video);
+}
+
 void WebMediaHints::reset()
 {
     m_private.reset();

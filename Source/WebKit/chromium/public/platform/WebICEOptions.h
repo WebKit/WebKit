@@ -51,6 +51,7 @@ public:
         CandidateTypeOnlyRelay,
     };
 
+    WebICEOptions() { }
     WebICEOptions(const WebICEOptions& other) { assign(other); }
     ~WebICEOptions() { reset(); }
 
@@ -62,6 +63,7 @@ public:
 
     WEBKIT_EXPORT void assign(const WebICEOptions&);
 
+    WEBKIT_EXPORT void initialize(CandidateType);
     WEBKIT_EXPORT void reset();
     bool isNull() const { return m_private.isNull(); }
 
@@ -72,8 +74,6 @@ public:
 #endif
 
 private:
-    WebICEOptions() { }
-
     WebPrivatePtr<WebCore::IceOptions> m_private;
 };
 

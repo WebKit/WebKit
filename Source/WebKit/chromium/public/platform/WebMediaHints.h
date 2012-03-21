@@ -45,6 +45,7 @@ class WebString;
 
 class WebMediaHints {
 public:
+    WebMediaHints() { }
     WebMediaHints(const WebMediaHints& other) { assign(other); }
     ~WebMediaHints() { reset(); }
 
@@ -56,6 +57,7 @@ public:
 
     WEBKIT_EXPORT void assign(const WebMediaHints&);
 
+    WEBKIT_EXPORT void initialize(bool audio, bool video);
     WEBKIT_EXPORT void reset();
     bool isNull() const { return m_private.isNull(); }
 
@@ -67,8 +69,6 @@ public:
 #endif
 
 private:
-    WebMediaHints() { }
-
     WebPrivatePtr<WebCore::MediaHints> m_private;
 };
 
