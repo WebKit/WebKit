@@ -92,6 +92,11 @@ public:
     CCAnimationCurve* curve() { return m_curve.get(); }
     const CCAnimationCurve* curve() const { return m_curve.get(); }
 
+    // If this is true, even if the animation is running, it will not be tickable until
+    // it is given a start time. This is true for animations running on the main thread.
+    bool needsSynchronizedStartTime() const { return m_needsSynchronizedStartTime; }
+    void setNeedsSynchronizedStartTime(bool needsSynchronizedStartTime) { m_needsSynchronizedStartTime = needsSynchronizedStartTime; }
+
     // Takes the given absolute time, and using the start time and the number
     // of iterations, returns the relative time in the current iteration.
     double trimTimeToCurrentIteration(double now) const;
@@ -119,6 +124,8 @@ private:
     RunState m_runState;
     int m_iterations;
     double m_startTime;
+
+    bool m_needsSynchronizedStartTime;
 
     // These are used in trimTimeToCurrentIteration to account for time
     // spent while paused. This is not included in AnimationState since it

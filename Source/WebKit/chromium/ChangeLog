@@ -1,3 +1,19 @@
+2012-03-21  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Animation events should only be used for synchronizing animation start times
+        https://bugs.webkit.org/show_bug.cgi?id=81484
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF):
+        (CCLayerTreeHostTestSynchronizeAnimationStartTimes):
+        (WTF::CCLayerTreeHostTestSynchronizeAnimationStartTimes::CCLayerTreeHostTestSynchronizeAnimationStartTimes):
+        (WTF::CCLayerTreeHostTestSynchronizeAnimationStartTimes::beginTest):
+        (WTF::CCLayerTreeHostTestSynchronizeAnimationStartTimes::animateLayers):
+        (WTF::CCLayerTreeHostTestSynchronizeAnimationStartTimes::afterTest):
+        (WTF::TEST_F):
+
 2012-03-21  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Remove Android build-fix when the proper fix rolled into WebKit

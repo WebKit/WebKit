@@ -1006,6 +1006,49 @@ public:
     }
 };
 
+// Ensures that main thread animations have their start times synchronized with impl thread animations.
+class CCLayerTreeHostTestSynchronizeAnimationStartTimes : public CCLayerTreeHostTestThreadOnly {
+public:
+    CCLayerTreeHostTestSynchronizeAnimationStartTimes()
+        : m_numAnimates(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        postAddAnimationToMainThread();
+    }
+
+    virtual void animateLayers(CCLayerTreeHostImpl* layerTreeHostImpl, double monotonicTime)
+    {
+        if (!m_numAnimates) {
+            m_numAnimates++;
+            return;
+        }
+
+        CCLayerAnimationController* controllerImpl = layerTreeHostImpl->rootLayer()->layerAnimationController();
+        CCLayerAnimationController* controller = m_layerTreeHost->rootLayer()->layerAnimationController();
+        CCActiveAnimation* animationImpl = controllerImpl->getActiveAnimation(0, CCActiveAnimation::Opacity);
+        CCActiveAnimation* animation = controller->getActiveAnimation(0, CCActiveAnimation::Opacity);
+
+        EXPECT_EQ(animationImpl->startTime(), animation->startTime());
+
+        endTest();
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+    int m_numAnimates;
+};
+
+TEST_F(CCLayerTreeHostTestSynchronizeAnimationStartTimes, runMultiThread)
+{
+    runTestThreaded();
+}
+
 TEST_F(CCLayerTreeHostTestDoNotSkipLayersWithAnimatedOpacity, runMultiThread)
 {
     runTestThreaded();

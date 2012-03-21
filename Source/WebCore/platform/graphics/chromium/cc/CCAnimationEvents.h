@@ -27,87 +27,26 @@
 
 #include "cc/CCActiveAnimation.h"
 
-#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class CCAnimationStartedEvent;
-class CCFloatAnimationFinishedEvent;
-class CCTransformAnimationFinishedEvent;
+struct CCAnimationStartedEvent {
+    CCAnimationStartedEvent(int layerId, int groupId, CCActiveAnimation::TargetProperty targetProperty, double monotonicTime)
+        : layerId(layerId)
+        , groupId(groupId)
+        , targetProperty(targetProperty)
+        , monotonicTime(monotonicTime)
+    {
+    }
 
-class CCAnimationEvent {
-public:
-    enum Type { Started, FinishedFloatAnimation, FinishedTransformAnimation };
-
-    virtual ~CCAnimationEvent();
-
-    virtual Type type() const = 0;
-
-    int layerId() const { return m_layerId; }
-
-    CCActiveAnimation::TargetProperty targetProperty() const { return m_targetProperty; }
-
-    const CCAnimationStartedEvent* toAnimationStartedEvent() const;
-    const CCFloatAnimationFinishedEvent* toFloatAnimationFinishedEvent() const;
-    const CCTransformAnimationFinishedEvent* toTransformAnimationFinishedEvent() const;
-
-protected:
-    CCAnimationEvent(int layerId, CCActiveAnimation::TargetProperty);
-
-private:
-    int m_layerId;
-    CCActiveAnimation::TargetProperty m_targetProperty;
+    int layerId;
+    int groupId;
+    CCActiveAnimation::TargetProperty targetProperty;
+    double monotonicTime;
 };
 
-// Indicates that an animation has started on a particular layer.
-class CCAnimationStartedEvent : public CCAnimationEvent {
-public:
-    static PassOwnPtr<CCAnimationStartedEvent> create(int layerId, CCActiveAnimation::TargetProperty);
-
-    virtual ~CCAnimationStartedEvent();
-
-    virtual Type type() const;
-
-private:
-    CCAnimationStartedEvent(int layerId, CCActiveAnimation::TargetProperty);
-};
-
-// Indicates that a float animation has completed.
-class CCFloatAnimationFinishedEvent : public CCAnimationEvent {
-public:
-    static PassOwnPtr<CCFloatAnimationFinishedEvent> create(int layerId, CCActiveAnimation::TargetProperty, float finalValue);
-
-    virtual ~CCFloatAnimationFinishedEvent();
-
-    virtual Type type() const;
-
-    float finalValue() const { return m_finalValue; }
-
-private:
-    CCFloatAnimationFinishedEvent(int layerId, CCActiveAnimation::TargetProperty, float finalValue);
-
-    float m_finalValue;
-};
-
-// Indicates that a transform animation has completed.
-class CCTransformAnimationFinishedEvent : public CCAnimationEvent {
-public:
-    static PassOwnPtr<CCTransformAnimationFinishedEvent> create(int layerId, CCActiveAnimation::TargetProperty, const TransformationMatrix& finalValue);
-
-    virtual ~CCTransformAnimationFinishedEvent();
-
-    virtual Type type() const;
-
-    const TransformationMatrix& finalValue() const { return m_finalValue; }
-
-private:
-    CCTransformAnimationFinishedEvent(int layerId, CCActiveAnimation::TargetProperty, const TransformationMatrix& finalValue);
-
-    TransformationMatrix m_finalValue;
-};
-
-typedef Vector<OwnPtr<CCAnimationEvent> > CCAnimationEventsVector;
+typedef Vector<CCAnimationStartedEvent> CCAnimationEventsVector;
 
 } // namespace WebCore
 

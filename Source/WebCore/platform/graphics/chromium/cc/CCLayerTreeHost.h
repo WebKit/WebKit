@@ -125,7 +125,7 @@ public:
     static bool anyLayerTreeHostInstanceExists();
 
     // CCLayerTreeHost interface to CCProxy.
-    void updateAnimations(double frameBeginTime);
+    void updateAnimations(double wallClockTime);
     void layout();
     void beginCommitOnImplThread(CCLayerTreeHostImpl*);
     void finishCommitOnImplThread(CCLayerTreeHostImpl*);

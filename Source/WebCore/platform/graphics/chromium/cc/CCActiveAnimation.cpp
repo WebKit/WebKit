@@ -45,6 +45,7 @@ CCActiveAnimation::CCActiveAnimation(PassOwnPtr<CCAnimationCurve> curve, int ani
     , m_runState(WaitingForTargetAvailability)
     , m_iterations(1)
     , m_startTime(0)
+    , m_needsSynchronizedStartTime(false)
     , m_pauseTime(0)
     , m_totalPausedTime(0)
 {

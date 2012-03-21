@@ -606,28 +606,10 @@ bool LayerChromium::hasActiveAnimation() const
     return m_layerAnimationController->hasActiveAnimation();
 }
 
-void LayerChromium::setAnimationEvent(const CCAnimationEvent& event, double wallClockTime)
+void LayerChromium::notifyAnimationStarted(const CCAnimationStartedEvent& event, double wallClockTime)
 {
-    switch (event.type()) {
-    case CCAnimationEvent::Started:
-        m_layerAnimationDelegate->notifyAnimationStarted(wallClockTime);
-        break;
-
-    case CCAnimationEvent::FinishedFloatAnimation: {
-        const CCFloatAnimationFinishedEvent* finishedEvent = event.toFloatAnimationFinishedEvent();
-        ASSERT(finishedEvent->targetProperty() == CCActiveAnimation::Opacity);
-        setOpacity(finishedEvent->finalValue());
-        break;
-    }
-
-    case CCAnimationEvent::FinishedTransformAnimation: {
-        const CCTransformAnimationFinishedEvent* finishedEvent = event.toTransformAnimationFinishedEvent();
-        ASSERT(finishedEvent->targetProperty() == CCActiveAnimation::Transform);
-        setTransform(finishedEvent->finalValue());
-        break;
-    }
-
-    }
+    m_layerAnimationController->notifyAnimationStarted(event);
+    m_layerAnimationDelegate->notifyAnimationStarted(wallClockTime);
 }
 
 void sortLayers(Vector<RefPtr<LayerChromium> >::iterator, Vector<RefPtr<LayerChromium> >::iterator, void*)

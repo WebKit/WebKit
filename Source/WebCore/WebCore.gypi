@@ -3537,7 +3537,6 @@
             'platform/graphics/chromium/cc/CCActiveGestureAnimation.h',
             'platform/graphics/chromium/cc/CCAnimationCurve.cpp',
             'platform/graphics/chromium/cc/CCAnimationCurve.h',
-            'platform/graphics/chromium/cc/CCAnimationEvents.cpp',
             'platform/graphics/chromium/cc/CCAnimationEvents.h',
             'platform/graphics/chromium/cc/CCDamageTracker.cpp',
             'platform/graphics/chromium/cc/CCDamageTracker.h',

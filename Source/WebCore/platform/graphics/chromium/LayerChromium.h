@@ -56,7 +56,7 @@
 
 namespace WebCore {
 
-class CCAnimationEvent;
+struct CCAnimationStartedEvent;
 class CCLayerAnimationDelegate;
 class CCLayerImpl;
 class CCLayerTreeHost;
@@ -242,7 +242,7 @@ public:
 
     bool hasActiveAnimation() const;
 
-    void setAnimationEvent(const CCAnimationEvent&, double wallClockTime);
+    void notifyAnimationStarted(const CCAnimationStartedEvent&, double wallClockTime);
 
     virtual Region opaqueContentsRegion() const { return Region(); };
 

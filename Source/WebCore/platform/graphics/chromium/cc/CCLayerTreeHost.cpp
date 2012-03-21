@@ -179,10 +179,10 @@ void CCLayerTreeHost::deleteContentsTexturesOnImplThread(TextureAllocator* alloc
         m_contentsTextureManager->evictAndDeleteAllTextures(allocator);
 }
 
-void CCLayerTreeHost::updateAnimations(double frameBeginTime)
+void CCLayerTreeHost::updateAnimations(double wallClockTime)
 {
     m_animating = true;
-    m_client->updateAnimations(frameBeginTime);
+    m_client->updateAnimations(wallClockTime);
     animateLayers(monotonicallyIncreasingTime());
     m_animating = false;
 }
@@ -682,8 +682,8 @@ bool CCLayerTreeHost::animateLayersRecursive(LayerChromium* current, double mono
 void CCLayerTreeHost::setAnimationEventsRecursive(const CCAnimationEventsVector& events, LayerChromium* layer, double wallClockTime)
 {
     for (size_t eventIndex = 0; eventIndex < events.size(); ++eventIndex) {
-        if (layer->id() == events[eventIndex]->layerId())
-            layer->setAnimationEvent(*events[eventIndex], wallClockTime);
+        if (layer->id() == events[eventIndex].layerId)
+            layer->notifyAnimationStarted(events[eventIndex], wallClockTime);
     }
 
     for (size_t childIndex = 0; childIndex < layer->children().size(); ++childIndex)
