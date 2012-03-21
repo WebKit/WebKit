@@ -31,6 +31,7 @@
 #include "AudioBus.h"
 #include "AudioUtilities.h"
 #include "FFTFrame.h"
+#include "VectorMath.h"
 
 #include <algorithm>
 #include <limits.h>
@@ -112,12 +113,22 @@ void RealtimeAnalyser::writeInput(AudioBus* bus, size_t framesToProcess)
         return;    
     
     // Perform real-time analysis
-    // FIXME : for now just use left channel (must mix if stereo source)
     const float* source = bus->channel(0)->data();
+    float* dest = m_inputBuffer.data() + m_writeIndex;
 
     // The source has already been sanity checked with isBusGood above.
-    
-    memcpy(m_inputBuffer.data() + m_writeIndex, source, sizeof(float) * framesToProcess);
+    memcpy(dest, source, sizeof(float) * framesToProcess);
+
+    // Sum all channels in one if numberOfChannels > 1.
+    unsigned numberOfChannels = bus->numberOfChannels();
+    if (numberOfChannels > 1) {
+        for (unsigned i = 1; i < numberOfChannels; i++) {
+            source = bus->channel(i)->data();
+            VectorMath::vadd(dest, 1, source, 1, dest, 1, framesToProcess);
+        }
+        const float scale =  1.0 / numberOfChannels;
+        VectorMath::vsmul(dest, 1, &scale, dest, 1, framesToProcess);
+    }
 
     m_writeIndex += framesToProcess;
     if (m_writeIndex >= InputBufferSize)
