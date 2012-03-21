@@ -231,7 +231,7 @@ Settings::Settings(Page* page)
     , m_scrollAnimatorEnabled(true)
 #endif
 #if ENABLE(WEB_SOCKETS)
-    , m_useHixie76WebSocketProtocol(true)
+    , m_useHixie76WebSocketProtocol(false)
 #endif
     , m_mediaPlaybackRequiresUserGesture(false)
     , m_mediaPlaybackAllowsInline(true)
