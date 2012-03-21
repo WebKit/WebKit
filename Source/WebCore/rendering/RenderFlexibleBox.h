@@ -49,6 +49,11 @@ public:
     bool isHorizontalFlow() const;
 
 private:
+    enum FlexSign {
+        PositiveFlexibility,
+        NegativeFlexibility,
+    };
+
     struct FlexOrderHashTraits;
     typedef HashSet<int, DefaultHash<int>::Hash, FlexOrderHashTraits> FlexOrderHashSet;
 
@@ -104,9 +109,9 @@ private:
 
     void computeMainAxisPreferredSizes(bool relayoutChildren, FlexOrderHashSet&);
     LayoutUnit lineBreakLength();
-    bool computeNextFlexLine(FlexOrderIterator&, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
+    bool computeNextFlexLine(FlexOrderIterator&, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalPositiveFlexibility, float& totalNegativeFlexibility, LayoutUnit& minMaxAppliedMainAxisExtent);
     LayoutUnit computeAvailableFreeSpace(LayoutUnit preferredMainAxisExtent);
-    bool runFreeSpaceAllocationAlgorithm(const OrderedFlexItemList&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
+    bool resolveFlexibleLengths(FlexSign, const OrderedFlexItemList&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
     void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);
     void prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset);
     void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace);

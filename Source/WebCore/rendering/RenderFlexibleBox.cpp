@@ -606,6 +606,7 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     LayoutUnit preferredMainAxisExtent;
     float totalPositiveFlexibility;
     float totalNegativeFlexibility;
+    LayoutUnit minMaxAppliedMainAxisExtent;
     FlexOrderIterator flexIterator(this, flexOrderValues);
 
     // For wrap-reverse, we need to layout as wrap, then reverse the lines. The next two arrays
@@ -613,11 +614,12 @@ void RenderFlexibleBox::layoutFlexItems(bool relayoutChildren)
     WrapReverseContext wrapReverseContext(style()->flexWrap());
 
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
-    while (computeNextFlexLine(flexIterator, orderedChildren, preferredMainAxisExtent, totalPositiveFlexibility, totalNegativeFlexibility)) {
+    while (computeNextFlexLine(flexIterator, orderedChildren, preferredMainAxisExtent, totalPositiveFlexibility, totalNegativeFlexibility, minMaxAppliedMainAxisExtent)) {
         LayoutUnit availableFreeSpace = computeAvailableFreeSpace(preferredMainAxisExtent);
+        FlexSign flexSign = (minMaxAppliedMainAxisExtent < preferredMainAxisExtent + availableFreeSpace) ? PositiveFlexibility : NegativeFlexibility;
         InflexibleFlexItemSize inflexibleItems;
         WTF::Vector<LayoutUnit> childSizes;
-        while (!runFreeSpaceAllocationAlgorithm(orderedChildren, availableFreeSpace, totalPositiveFlexibility, totalNegativeFlexibility, inflexibleItems, childSizes)) {
+        while (!resolveFlexibleLengths(flexSign, orderedChildren, availableFreeSpace, totalPositiveFlexibility, totalNegativeFlexibility, inflexibleItems, childSizes)) {
             ASSERT(totalPositiveFlexibility >= 0 && totalNegativeFlexibility >= 0);
             ASSERT(inflexibleItems.size() > 0);
         }
@@ -703,15 +705,17 @@ LayoutUnit RenderFlexibleBox::lineBreakLength()
     return height;
 }
 
-bool RenderFlexibleBox::computeNextFlexLine(FlexOrderIterator& iterator, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalPositiveFlexibility, float& totalNegativeFlexibility)
+bool RenderFlexibleBox::computeNextFlexLine(FlexOrderIterator& iterator, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalPositiveFlexibility, float& totalNegativeFlexibility, LayoutUnit& minMaxAppliedMainAxisExtent)
 {
     orderedChildren.clear();
     preferredMainAxisExtent = 0;
     totalPositiveFlexibility = totalNegativeFlexibility = 0;
+    minMaxAppliedMainAxisExtent = 0;
 
     if (!iterator.currentChild())
         return false;
 
+    LayoutUnit flexboxAvailableContentExtent = mainAxisContentExtent();
     LayoutUnit lineBreak = lineBreakLength();
 
     for (RenderBox* child = iterator.currentChild(); child; child = iterator.next()) {
@@ -720,24 +724,33 @@ bool RenderFlexibleBox::computeNextFlexLine(FlexOrderIterator& iterator, Ordered
             continue;
         }
 
-        LayoutUnit childMainAxisExtent = mainAxisBorderAndPaddingExtentForChild(child) + preferredMainAxisContentExtentForChild(child);
-        if (isHorizontalFlow())
-            childMainAxisExtent += child->marginWidth();
-        else
-            childMainAxisExtent += child->marginHeight();
+        LayoutUnit childMainAxisExtent = preferredMainAxisContentExtentForChild(child);
+        LayoutUnit childMainAxisMarginBoxExtent = mainAxisBorderAndPaddingExtentForChild(child) + childMainAxisExtent;
+        childMainAxisMarginBoxExtent += isHorizontalFlow() ? child->marginWidth() : child->marginHeight();
 
-        if (isMultiline() && preferredMainAxisExtent + childMainAxisExtent > lineBreak && orderedChildren.size() > 0)
+        if (isMultiline() && preferredMainAxisExtent + childMainAxisMarginBoxExtent > lineBreak && orderedChildren.size() > 0)
             break;
         orderedChildren.append(child);
-        preferredMainAxisExtent += childMainAxisExtent;
+        preferredMainAxisExtent += childMainAxisMarginBoxExtent;
         totalPositiveFlexibility += positiveFlexForChild(child);
         totalNegativeFlexibility += negativeFlexForChild(child);
+
+        LayoutUnit childMinMaxAppliedMainAxisExtent = childMainAxisExtent;
+        // FIXME: valueForLength isn't quite right in quirks mode: percentage heights should check parents until a value is found.
+        // https://bugs.webkit.org/show_bug.cgi?id=81809
+        Length maxLength = isHorizontalFlow() ? child->style()->maxWidth() : child->style()->maxHeight();
+        if (maxLength.isSpecified() && childMinMaxAppliedMainAxisExtent > valueForLength(maxLength, flexboxAvailableContentExtent))
+            childMinMaxAppliedMainAxisExtent = valueForLength(maxLength, flexboxAvailableContentExtent);
+        Length minLength = isHorizontalFlow() ? child->style()->minWidth() : child->style()->minHeight();
+        if (minLength.isSpecified() && childMinMaxAppliedMainAxisExtent < valueForLength(minLength, flexboxAvailableContentExtent))
+            childMinMaxAppliedMainAxisExtent = valueForLength(minLength, flexboxAvailableContentExtent);
+        minMaxAppliedMainAxisExtent += childMinMaxAppliedMainAxisExtent - childMainAxisExtent + childMainAxisMarginBoxExtent;
     }
     return true;
 }
 
 // Returns true if we successfully ran the algorithm and sized the flex items.
-bool RenderFlexibleBox::runFreeSpaceAllocationAlgorithm(const OrderedFlexItemList& children, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize& inflexibleItems, WTF::Vector<LayoutUnit>& childSizes)
+bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign, const OrderedFlexItemList& children, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize& inflexibleItems, WTF::Vector<LayoutUnit>& childSizes)
 {
     childSizes.clear();
 
