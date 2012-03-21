@@ -792,8 +792,12 @@ WebInspector.HeapSnapshot.prototype = {
             detachedDOMTreeNode: 2,
         };
 
-        this._distancesToWindow = [];
         this._markInvisibleEdges();
+        this._buildNodeIndex();
+        this._buildRetainers();
+        this._buildDominatedNodes();
+        this._calculateFlags();
+        this._calculateObjectToWindowDistance();
     },
 
     dispose: function()
@@ -811,6 +815,7 @@ WebInspector.HeapSnapshot.prototype = {
         delete this._dominatedNodes;
         delete this._dominatedIndex;
         delete this._flags;
+        delete this._distancesToWindow;
     },
 
     get _allNodes()
@@ -866,9 +871,6 @@ WebInspector.HeapSnapshot.prototype = {
 
     _retainersForNode: function(node)
     {
-        if (!this._retainers)
-            this._buildRetainers();
-
         var retIndexFrom = this._getRetainerIndex(node.nodeIndex);
         var retIndexTo = this._getRetainerIndex(node._nextNodeIndex);
         return new WebInspector.HeapSnapshotArraySlice(this, "_retainers", retIndexFrom, retIndexTo);
@@ -876,9 +878,6 @@ WebInspector.HeapSnapshot.prototype = {
 
     _dominatedNodesOfNode: function(node)
     {
-        if (!this._dominatedNodes)
-            this._buildDominatedNodes();
-
         var dominatedIndexFrom = this._getDominatedIndex(node.nodeIndex);
         var dominatedIndexTo = this._getDominatedIndex(node._nextNodeIndex);
         return new WebInspector.HeapSnapshotArraySlice(this, "_dominatedNodes", dominatedIndexFrom, dominatedIndexTo);
@@ -886,16 +885,11 @@ WebInspector.HeapSnapshot.prototype = {
 
     _flagsOfNode: function(node)
     {
-        if (!this._flags)
-            this._calculateFlags();
         return this._flags[node.nodeIndex];
     },
 
     aggregates: function(sortedIndexes, key, filterString)
     {
-        if (!this._retainers)
-            this._buildRetainers();
-
         if (!this._aggregates) {
             this._aggregates = {};
             this._aggregatesSortedFlags = {};
@@ -927,9 +921,6 @@ WebInspector.HeapSnapshot.prototype = {
 
     _buildReverseIndex: function(indexArrayName, backRefsArrayName, indexCallback, dataCallback)
     {
-        if (!this._nodeIndex)
-            this._buildNodeIndex();
-
         // Builds up two arrays:
         //  - "backRefsArray" is a continuous array, where each node owns an
         //    interval (can be empty) with corresponding back references.
@@ -981,7 +972,6 @@ WebInspector.HeapSnapshot.prototype = {
                      dataCallback(indexCallback(retIndex), node.nodeIndex + this._firstEdgeOffset + edge.edgeIndex);
                  }
              }).bind(this));
-        this._calculateObjectToWindowDistance();
     },
 
     _calculateObjectToWindowDistance: function()
@@ -1112,8 +1102,6 @@ WebInspector.HeapSnapshot.prototype = {
 
     get nodeIndexes()
     {
-        if (!this._nodeIndex)
-            this._buildNodeIndex();
         return this._nodeIndex;
     },
 
