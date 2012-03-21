@@ -64,7 +64,6 @@ void LayerTreeHostProxy::updateViewport()
 void LayerTreeHostProxy::dispatchUpdate(const Function<void()>& function)
 {
     m_renderer->appendUpdate(function);
-    updateViewport();
 }
 
 void LayerTreeHostProxy::createTileForLayer(int layerID, int tileID, const WebKit::UpdateInfo& updateInfo)
@@ -90,11 +89,13 @@ void LayerTreeHostProxy::removeTileForLayer(int layerID, int tileID)
 void LayerTreeHostProxy::deleteCompositingLayer(WebLayerID id)
 {
     dispatchUpdate(bind(&WebLayerTreeRenderer::deleteLayer, m_renderer.get(), id));
+    updateViewport();
 }
 
 void LayerTreeHostProxy::setRootCompositingLayer(WebLayerID id)
 {
     dispatchUpdate(bind(&WebLayerTreeRenderer::setRootLayerID, m_renderer.get(), id));
+    updateViewport();
 }
 
 void LayerTreeHostProxy::syncCompositingLayerState(const WebLayerInfo& info)
@@ -105,6 +106,7 @@ void LayerTreeHostProxy::syncCompositingLayerState(const WebLayerInfo& info)
 void LayerTreeHostProxy::didRenderFrame()
 {
     dispatchUpdate(bind(&WebLayerTreeRenderer::flushLayerChanges, m_renderer.get()));
+    updateViewport();
 }
 
 void LayerTreeHostProxy::createDirectlyCompositedImage(int64_t key, const WebKit::ShareableBitmap::Handle& handle)

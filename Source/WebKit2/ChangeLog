@@ -1,5 +1,21 @@
 2012-03-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt] Trigger scene graph repaints only for relevant layer updates.
+        https://bugs.webkit.org/show_bug.cgi?id=81765
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Tile updates and removal shouldn't re-render the scene all by themselves
+        since they need a buffer swap before having any effect on the framebuffer.
+
+        * UIProcess/LayerTreeHostProxy.cpp:
+        (WebKit::LayerTreeHostProxy::dispatchUpdate):
+        (WebKit::LayerTreeHostProxy::deleteCompositingLayer):
+        (WebKit::LayerTreeHostProxy::setRootCompositingLayer):
+        (WebKit::LayerTreeHostProxy::didRenderFrame):
+
+2012-03-21  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         [Qt] Don't go through the UI process to update a layer's contents size.
         https://bugs.webkit.org/show_bug.cgi?id=81764
 
