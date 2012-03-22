@@ -98,6 +98,7 @@ public:
     virtual const CCLayerImpl* rootLayer() const  { return m_rootLayerImpl.get(); }
     virtual void didLoseContext();
     virtual void onSwapBuffersComplete();
+    virtual void setFullRootLayerDamage();
 
     // Implementation
     bool canDraw();
@@ -133,10 +134,6 @@ public:
     float pageScale() const { return m_pageScale; }
 
     PassOwnPtr<CCScrollAndScaleSet> processScrollDeltas();
-
-    // Where possible, redraws are scissored to a damage region calculated from changes to
-    // layer properties. This function overrides the damage region for the next draw cycle.
-    void setFullRootLayerDamage();
 
     void startPageScaleAnimation(const IntSize& tragetPosition, bool useAnchor, float scale, double durationSec);
 

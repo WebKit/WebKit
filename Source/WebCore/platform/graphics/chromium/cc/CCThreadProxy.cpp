@@ -91,6 +91,8 @@ bool CCThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect)
     ASSERT(isMainThread());
     ASSERT(m_layerTreeHost);
 
+    ScopedEnsureFramebufferAllocation ensureFramebuffer(m_layerTreeHostImpl->layerRenderer());
+
     if (!m_layerRendererInitialized) {
         TRACE_EVENT("compositeAndReadback_EarlyOut_LR_Uninitialized", this, 0);
         return false;

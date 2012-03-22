@@ -165,6 +165,31 @@ private:
     LayerRendererChromium* m_layerRenderer;
 };
 
+class LayerRendererGpuMemoryAllocationChangedCallbackAdapter : public Extensions3DChromium::GpuMemoryAllocationChangedCallbackCHROMIUM {
+public:
+    static PassOwnPtr<LayerRendererGpuMemoryAllocationChangedCallbackAdapter> create(LayerRendererChromium* layerRenderer)
+    {
+        return adoptPtr(new LayerRendererGpuMemoryAllocationChangedCallbackAdapter(layerRenderer));
+    }
+    virtual ~LayerRendererGpuMemoryAllocationChangedCallbackAdapter() { }
+
+    virtual void onGpuMemoryAllocationChanged(Extensions3DChromium::GpuMemoryAllocationCHROMIUM allocation)
+    {
+        if (!allocation.suggestHaveBackbuffer)
+            m_layerRenderer->discardFramebuffer();
+        else
+            m_layerRenderer->ensureFramebuffer();
+    }
+
+private:
+    explicit LayerRendererGpuMemoryAllocationChangedCallbackAdapter(LayerRendererChromium* layerRenderer)
+        : m_layerRenderer(layerRenderer)
+    {
+    }
+
+    LayerRendererChromium* m_layerRenderer;
+};
+
 
 PassOwnPtr<LayerRendererChromium> LayerRendererChromium::create(LayerRendererChromiumClient* client, PassRefPtr<GraphicsContext3D> context)
 {
@@ -184,6 +209,7 @@ LayerRendererChromium::LayerRendererChromium(LayerRendererChromiumClient* client
     , m_defaultRenderSurface(0)
     , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))
     , m_isViewportChanged(false)
+    , m_isFramebufferDiscarded(false)
 {
 }
 
@@ -259,6 +285,17 @@ bool LayerRendererChromium::initialize()
     if (m_capabilities.usingTextureStorageExtension)
         extensions->ensureEnabled("GL_EXT_texture_storage");
 
+    m_capabilities.usingGpuMemoryManager = extensions->supports("GL_CHROMIUM_gpu_memory_manager");
+    if (m_capabilities.usingGpuMemoryManager) {
+        extensions->ensureEnabled("GL_CHROMIUM_gpu_memory_manager");
+        Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(extensions);
+        extensions3DChromium->setGpuMemoryAllocationChangedCallbackCHROMIUM(LayerRendererGpuMemoryAllocationChangedCallbackAdapter::create(this));
+    }
+
+    m_capabilities.usingDiscardFramebuffer = extensions->supports("GL_CHROMIUM_discard_framebuffer");
+    if (m_capabilities.usingDiscardFramebuffer)
+        extensions->ensureEnabled("GL_CHROMIUM_discard_framebuffer");
+
     GLC(m_context.get(), m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_capabilities.maxTextureSize));
     m_capabilities.bestTextureFormat = PlatformColor::bestTextureFormat(m_context.get());
 
@@ -277,6 +314,7 @@ LayerRendererChromium::~LayerRendererChromium()
     ASSERT(CCProxy::isImplThread());
     Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(m_context->getExtensions());
     extensions3DChromium->setSwapBuffersCompleteCallbackCHROMIUM(nullptr);
+    extensions3DChromium->setGpuMemoryAllocationChangedCallbackCHROMIUM(nullptr);
     m_headsUpDisplay.clear(); // Explicitly destroy the HUD before the TextureManager dies.
     cleanupSharedObjects();
 }
@@ -310,6 +348,10 @@ void LayerRendererChromium::setVisible(bool visible)
 {
     if (!visible)
         releaseRenderSurfaceTextures();
+
+    // FIXME: Remove this once framebuffer is automatically recreated on first use
+    if (visible)
+        ensureFramebuffer();
 
     // TODO: Replace setVisibilityCHROMIUM with an extension to explicitly manage front/backbuffers
     // crbug.com/116049
@@ -1031,6 +1073,13 @@ void LayerRendererChromium::finish()
 
 void LayerRendererChromium::swapBuffers(const IntRect& subBuffer)
 {
+    // FIXME: Remove this once gpu process supports ignoring swap buffers command while framebuffer is discarded.
+    //        Alternatively (preferably?), protect all cc code so as not to attempt a swap after a framebuffer discard.
+    if (m_isFramebufferDiscarded) {
+        m_client->setFullRootLayerDamage();
+        return;
+    }
+
     TRACE_EVENT("LayerRendererChromium::swapBuffers", this, 0);
     // We're done! Time to swapbuffers!
 
@@ -1052,6 +1101,38 @@ void LayerRendererChromium::swapBuffers(const IntRect& subBuffer)
 void LayerRendererChromium::onSwapBuffersComplete()
 {
     m_client->onSwapBuffersComplete();
+}
+
+void LayerRendererChromium::discardFramebuffer()
+{
+    if (m_isFramebufferDiscarded)
+        return;
+
+    if (!m_capabilities.usingDiscardFramebuffer)
+        return;
+
+    Extensions3D* extensions = m_context->getExtensions();
+    Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(extensions);
+    // FIXME: Update attachments argument to appropriate values once they are no longer ignored.
+    extensions3DChromium->discardFramebufferEXT(GraphicsContext3D::TEXTURE_2D, 0, 0);
+    m_isFramebufferDiscarded = true;
+
+    // Damage tracker needs a full reset every time framebuffer is discarded.
+    m_client->setFullRootLayerDamage();
+}
+
+void LayerRendererChromium::ensureFramebuffer()
+{
+    if (!m_isFramebufferDiscarded)
+        return;
+
+    if (!m_capabilities.usingDiscardFramebuffer)
+        return;
+
+    Extensions3D* extensions = m_context->getExtensions();
+    Extensions3DChromium* extensions3DChromium = static_cast<Extensions3DChromium*>(extensions);
+    extensions3DChromium->ensureFramebufferCHROMIUM();
+    m_isFramebufferDiscarded = false;
 }
 
 void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& rect)

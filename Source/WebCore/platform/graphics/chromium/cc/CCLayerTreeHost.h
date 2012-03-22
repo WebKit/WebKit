@@ -102,6 +102,8 @@ struct LayerRendererCapabilities {
         , usingSwapCompleteCallback(false)
         , usingTextureUsageHint(false)
         , usingTextureStorageExtension(false)
+        , usingGpuMemoryManager(false)
+        , usingDiscardFramebuffer(false)
         , maxTextureSize(0) { }
 
     GC3Denum bestTextureFormat;
@@ -113,6 +115,8 @@ struct LayerRendererCapabilities {
     bool usingSwapCompleteCallback;
     bool usingTextureUsageHint;
     bool usingTextureStorageExtension;
+    bool usingGpuMemoryManager;
+    bool usingDiscardFramebuffer;
     int maxTextureSize;
 };
 

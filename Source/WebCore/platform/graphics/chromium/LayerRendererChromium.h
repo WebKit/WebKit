@@ -61,6 +61,7 @@ class GeometryBinding;
 class GraphicsContext3D;
 class TrackingTextureAllocator;
 class LayerRendererSwapBuffersCompleteCallbackAdapter;
+class ScopedEnsureFramebufferAllocation;
 
 class LayerRendererChromiumClient {
 public:
@@ -70,6 +71,7 @@ public:
     virtual const CCLayerImpl* rootLayer() const = 0;
     virtual void didLoseContext() = 0;
     virtual void onSwapBuffersComplete() = 0;
+    virtual void setFullRootLayerDamage() = 0;
 };
 
 // Class that handles drawing of composited render layers using GL.
@@ -160,10 +162,15 @@ public:
                           float width, float height, float opacity, const FloatQuad&,
                           int matrixLocation, int alphaLocation, int quadLocation);
 
-private:
+    void discardFramebuffer();
+    void ensureFramebuffer();
+    bool isFramebufferDiscarded() const { return m_isFramebufferDiscarded; }
+
+protected:
     LayerRendererChromium(LayerRendererChromiumClient*, PassRefPtr<GraphicsContext3D>);
     bool initialize();
 
+private:
     void drawQuad(const CCDrawQuad*, const FloatRect& surfaceDamageRect);
     void drawDebugBorderQuad(const CCDebugBorderDrawQuad*);
     void drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*);
@@ -254,7 +261,36 @@ private:
     FloatQuad m_sharedGeometryQuad;
 
     bool m_isViewportChanged;
+    bool m_isFramebufferDiscarded;
 };
+
+// The purpose of this helper is twofold:
+// 1. To ensure that a framebuffer is available for scope lifetime, and
+// 2. To reset framebuffer allocation to previous state on scope exit.
+// If the framebuffer is recreated, its contents are undefined.
+// FIXME: Prevent/delay discarding framebuffer via any means while any
+// instance of this is alive. At the moment, this isn't an issue.
+class ScopedEnsureFramebufferAllocation {
+public:
+    explicit ScopedEnsureFramebufferAllocation(LayerRendererChromium* layerRenderer)
+        : m_layerRenderer(layerRenderer)
+        , m_framebufferWasInitiallyDiscarded(layerRenderer->isFramebufferDiscarded())
+    {
+        if (m_framebufferWasInitiallyDiscarded)
+            m_layerRenderer->ensureFramebuffer();
+    }
+
+    ~ScopedEnsureFramebufferAllocation()
+    {
+        if (m_framebufferWasInitiallyDiscarded)
+            m_layerRenderer->discardFramebuffer();
+    }
+
+private:
+    LayerRendererChromium* m_layerRenderer;
+    bool m_framebufferWasInitiallyDiscarded;
+};
+
 
 // Setting DEBUG_GL_CALLS to 1 will call glGetError() after almost every GL
 // call made by the compositor. Useful for debugging rendering issues but

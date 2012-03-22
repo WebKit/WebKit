@@ -105,6 +105,7 @@
             'tests/KeyboardTest.cpp',
             'tests/KURLTest.cpp',
             'tests/LayerChromiumTest.cpp',
+            'tests/LayerRendererChromiumTest.cpp',
             'tests/LayerTextureUpdaterTest.cpp',
             'tests/LevelDBTest.cpp',
             'tests/LocalizedNumberICUTest.cpp',

@@ -1,3 +1,36 @@
+2012-03-22  Michal Mocny  <mmocny@google.com>
+
+        [chromium] LayerRendererChromium should use GpuMemoryAllocationChanged callback to explicitly manage framebuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=81823
+
+        Reviewed by Adrienne Walker.
+
+        * WebKit.gypi:
+        * tests/LayerRendererChromiumTest.cpp: Added.
+        (FrameCountingMemoryAllocationSettingContext):
+        (FrameCountingMemoryAllocationSettingContext::FrameCountingMemoryAllocationSettingContext):
+        (FrameCountingMemoryAllocationSettingContext::prepareTexture):
+        (FrameCountingMemoryAllocationSettingContext::setMemoryAllocationChangedCallbackCHROMIUM):
+        (FrameCountingMemoryAllocationSettingContext::getString):
+        (FrameCountingMemoryAllocationSettingContext::frameCount):
+        (FrameCountingMemoryAllocationSettingContext::setMemoryAllocation):
+        (FakeLayerRendererChromiumClient):
+        (FakeLayerRendererChromiumClient::FakeLayerRendererChromiumClient):
+        (FakeLayerRendererChromiumClient::viewportSize):
+        (FakeLayerRendererChromiumClient::settings):
+        (FakeLayerRendererChromiumClient::rootLayer):
+        (FakeLayerRendererChromiumClient::didLoseContext):
+        (FakeLayerRendererChromiumClient::onSwapBuffersComplete):
+        (FakeLayerRendererChromiumClient::setFullRootLayerDamage):
+        (FakeLayerRendererChromiumClient::setFullRootLayerDamageCount):
+        (FakeLayerRendererChromium):
+        (FakeLayerRendererChromium::FakeLayerRendererChromium):
+        (LayerRendererChromiumTest):
+        (LayerRendererChromiumTest::LayerRendererChromiumTest):
+        (LayerRendererChromiumTest::SetUp):
+        (LayerRendererChromiumTest::swapBuffers):
+        (TEST_F):
+
 2012-03-22  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Make CCDamageTracker robust to empty layer lists

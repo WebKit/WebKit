@@ -480,11 +480,6 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
 
     m_layerRenderer->setVisible(visible);
 
-    // Reset the damage tracker because the front/back buffers may have been damaged by the GPU
-    // process on visibility change.
-    if (visible && m_layerRenderer->capabilities().usingPartialSwap)
-        setFullRootLayerDamage();
-
     const bool shouldTickInBackground = !visible && m_needsAnimateLayers;
     m_timeSourceClientAdapter->setActive(shouldTickInBackground);
 }
