@@ -76,6 +76,7 @@ static void createKeyMap()
     keyMap().set("Delete", "U+007F");
     keyMap().set("Tab", "U+0009");
     keyMap().set("ISO_Left_Tab", "U+0009");
+    keyMap().set("BackSpace", "U+0008");
 }
 
 static void createWindowsKeyMap()

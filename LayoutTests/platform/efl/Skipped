@@ -725,9 +725,6 @@ media/video-volume-slider.html
 # EFL's LayoutTestController does not implement authenticateSession
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 
-# Set unicode backspace value in EFL's createKeyMap
-fast/events/backspace-navigates-back.html
-
 # EFL's LayoutTestController does not implement abortModal
 fast/events/show-modal-dialog-onblur-onfocus.html
 fast/harness/show-modal-dialog.html
