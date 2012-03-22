@@ -1,3 +1,9 @@
+2012-03-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Touch a file to make Chromium Windows bots happy.
+
+        * chromium/public/WebGraphicsContext3D.h:
+
 2012-03-21  David Reveman  <reveman@chromium.org>
 
         [Chromium] GL_EXT_occlusion_query_boolean and GL_CHROMIUM_command_buffer_query support.
