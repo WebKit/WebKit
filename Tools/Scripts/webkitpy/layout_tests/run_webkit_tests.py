@@ -156,9 +156,9 @@ def _set_up_derived_options(port, options):
 
     if not options.time_out_ms:
         if options.configuration == "Debug":
-            options.time_out_ms = str(2 * Manager.DEFAULT_TEST_TIMEOUT_MS)
+            options.time_out_ms = str(2 * port.default_test_timeout_ms())
         else:
-            options.time_out_ms = str(Manager.DEFAULT_TEST_TIMEOUT_MS)
+            options.time_out_ms = str(port.default_test_timeout_ms())
 
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
 

@@ -284,12 +284,6 @@ class Manager(object):
     """A class for managing running a series of tests on a series of layout
     test files."""
 
-
-    # The per-test timeout in milliseconds, if no --time-out-ms option was
-    # given to run_webkit_tests. This should correspond to the default timeout
-    # in DumpRenderTree.
-    DEFAULT_TEST_TIMEOUT_MS = 6 * 1000
-
     def __init__(self, port, options, printer):
         """Initialize test runner data structures.
 

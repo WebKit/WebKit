@@ -153,6 +153,12 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         if adb_args:
             self._adb_command += shlex.split(adb_args)
 
+    def default_test_timeout_ms(self):
+        # Android platform has less computing power than desktop platforms.
+        # Using 10 seconds allows us to pass most slow tests which are not
+        # marked as slow tests on desktop platforms.
+        return 10 * 1000
+
     def default_child_processes(self):
         # Currently we only use one process, but it might be helpful to use
         # more that one process in the future to improve performance.

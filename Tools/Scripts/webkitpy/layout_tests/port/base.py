@@ -141,6 +141,9 @@ class Port(object):
         self._reftest_list = {}
         self._results_directory = None
 
+    def default_test_timeout_ms(self):
+        return 6 * 1000
+
     def wdiff_available(self):
         if self._wdiff_available is None:
             self._wdiff_available = self.check_wdiff(logging=False)
