@@ -456,6 +456,7 @@ public:
     {
         ExceptionCode ec = 0;
         m_idbCursor->continueFunction(0, this, ec);
+        m_idbCursor->postSuccessHandlerCallback();
         m_idbTransaction->didCompleteTaskEvents();
     }
 
@@ -464,6 +465,7 @@ public:
         if (!m_frontendProvider->frontend())
             return;
 
+        m_idbCursor->postSuccessHandlerCallback();
         m_idbTransaction->didCompleteTaskEvents();
 
         switch (m_cursorType) {
