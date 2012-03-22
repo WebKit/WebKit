@@ -1,3 +1,9 @@
+2012-03-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Increment the perf-o-matic app version.
+
+        * Websites/webkit-perf.appspot.com/app.yaml:
+
 2012-03-20  Eric Seidel  <eric@webkit.org>
 
         Move wtf/Platform.h from JavaScriptCore to Source/WTF/wtf
