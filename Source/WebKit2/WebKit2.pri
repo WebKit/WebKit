@@ -59,6 +59,8 @@ INCLUDEPATH += \
 # The WebKit2 Qt APIs depend on qwebkitglobal.h, which lives in WebKit
 INCLUDEPATH += $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/Api
 
+INCLUDEPATH += $${ROOT_WEBKIT_DIR}/Source/WTF/wtf/qt
+
 INCLUDEPATH += $$WEBKIT2_GENERATED_SOURCES_DIR
 
 linux-*: {

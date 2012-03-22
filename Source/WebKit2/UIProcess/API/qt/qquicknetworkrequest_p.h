@@ -22,7 +22,7 @@
 #define qquicknetworkrequest_p_h
 
 #include "QtNetworkRequestData.h"
-#include "RefPtr.h"
+#include "wtf/RefPtr.h"
 #include "qwebkitglobal.h"
 #include <QObject>
 #include <QtDeclarative/qdeclarativelist.h>
