@@ -298,6 +298,18 @@ void QtViewportInteractionEngine::pagePositionRequest(const QPoint& pagePosition
     setItemRectVisible(endVisibleContentRect);
 }
 
+void QtViewportInteractionEngine::touchBegin()
+{
+    // Prevents resuming the page between the user's flicks of the page while the animation is running.
+    if (scrollAnimationActive())
+        m_touchUpdateDeferrer = adoptPtr(new ViewportUpdateDeferrer(this, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
+}
+
+void QtViewportInteractionEngine::touchEnd()
+{
+    m_touchUpdateDeferrer.clear();
+}
+
 QRectF QtViewportInteractionEngine::computePosRangeForItemAtScale(qreal itemScale) const
 {
     const QSizeF contentItemSize = m_content->contentsSize() * itemScale;
@@ -517,8 +529,6 @@ bool QtViewportInteractionEngine::pinchGestureActive() const
 
 void QtViewportInteractionEngine::pinchGestureStarted(const QPointF& pinchCenterInViewportCoordinates)
 {
-    ASSERT(!m_suspendCount);
-
     if (!m_constraints.isUserScalable)
         return;
 

@@ -1,3 +1,25 @@
+2012-03-22  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Don't resume the suspended page if the user is continuously flicking.
+        https://bugs.webkit.org/show_bug.cgi?id=81895
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Create an additional suspend deferrer between TouchBegin and TouchEnd to
+        relay with the one kept while the flick animation is running.
+        This allows the page to be suspended when a pan gesture starts and stay
+        that way until the last flick animation ends.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::touchBegin):
+        (WebKit):
+        (WebKit::QtViewportInteractionEngine::touchEnd):
+        (WebKit::QtViewportInteractionEngine::pinchGestureStarted):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (QtViewportInteractionEngine):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::doneWithTouchEvent):
+
 2012-03-22  Carlos Garcia Campos  <cgarcia@bb-webkit-rel-64.local.igalia.com>
 
         [GTK] Use the angle-bracket form to include wtf headers

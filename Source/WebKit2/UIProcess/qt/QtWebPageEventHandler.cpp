@@ -449,6 +449,7 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
     case QEvent::TouchBegin:
         ASSERT(!m_interactionEngine->panGestureActive());
         ASSERT(!m_interactionEngine->pinchGestureActive());
+        m_interactionEngine->touchBegin();
 
         // The interaction engine might still be animating kinetic scrolling or a scale animation
         // such as double-tap to zoom or the bounce back effect. A touch stops the kinetic scrolling
@@ -459,6 +460,9 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
         // The scale animation can only be interrupted by a pinch gesture, which will then take over.
         if (m_interactionEngine->scaleAnimationActive() && m_pinchGestureRecognizer.isRecognized())
             m_interactionEngine->interruptScaleAnimation();
+        break;
+    case QEvent::TouchEnd:
+        m_interactionEngine->touchEnd();
         break;
     default:
         break;

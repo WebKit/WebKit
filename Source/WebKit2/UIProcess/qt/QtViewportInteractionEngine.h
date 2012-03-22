@@ -76,6 +76,8 @@ public:
 
     void wheelEvent(QWheelEvent*);
     void pagePositionRequest(const QPoint& pos);
+    void touchBegin();
+    void touchEnd();
 
     bool scrollAnimationActive() const;
     void cancelScrollAnimation();
@@ -148,6 +150,7 @@ private:
     bool m_hasSuspendedContent;
     OwnPtr<ViewportUpdateDeferrer> m_scaleUpdateDeferrer;
     OwnPtr<ViewportUpdateDeferrer> m_scrollUpdateDeferrer;
+    OwnPtr<ViewportUpdateDeferrer> m_touchUpdateDeferrer;
 
     bool m_hadUserInteraction;
 
