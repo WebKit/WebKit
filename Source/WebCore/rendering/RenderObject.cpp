@@ -1872,7 +1872,10 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
         // when scrolling a page with a fixed background image. As an optimization, assuming there are
         // no fixed positoned elements on the page, we can acclerate scrolling (via blitting) if we
         // ignore the CSS property "background-attachment: fixed".
-        shouldBlitOnFixedBackgroundImage = true;
+#if PLATFORM(QT)
+        if (view()->frameView()->delegatesScrolling())
+#endif
+            shouldBlitOnFixedBackgroundImage = true;
 #endif
 
         bool newStyleSlowScroll = newStyle && !shouldBlitOnFixedBackgroundImage && newStyle->hasFixedBackgroundImage();

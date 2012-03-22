@@ -1,3 +1,14 @@
+2012-03-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Enable FAST_MOBILE_SCROLLING when scrolling is delegated.
+        https://bugs.webkit.org/show_bug.cgi?id=81889
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enable FAST_MOBILE_SCROLLING feature.
+
+        * qmake/mkspecs/features/features.prf:
+
 2012-03-22  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
 
         [EFL] DRT: Do not pass a relative path to DOWNLOADED_FONTS_DIR.
