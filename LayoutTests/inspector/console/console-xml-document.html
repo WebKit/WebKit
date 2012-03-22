@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function onload()
+{
+    console.dirxml((new DOMParser()).parseFromString("<MixedCase> Test </MixedCase>", "text/xml"));
+    runTest();
+}
+
+function test()
+{
+    InspectorTest.expandConsoleMessages();
+    InspectorTest.runAfterPendingDispatches(callback);
+
+    function callback()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that XML document contents are logged using the correct case in the console.
+</p>
+
+</body>
+</html>

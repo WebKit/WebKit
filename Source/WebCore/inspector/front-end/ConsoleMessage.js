@@ -284,6 +284,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
             if (!treeOutline.children[0].hasChildren)
                 treeOutline.element.addStyleClass("single-node");
             elem.appendChild(treeOutline.element);
+            treeOutline.element.treeElementForTest = treeOutline.children[0];
         }
         object.pushNodeToFrontend(printNode.bind(this));
     },

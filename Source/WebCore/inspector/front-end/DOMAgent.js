@@ -907,7 +907,10 @@ WebInspector.DOMAgent.prototype = {
      */
     _setDetachedRoot: function(payload)
     {
-        new WebInspector.DOMNode(this, null, false, payload);
+        if (payload.nodeName === "#document")
+            new WebInspector.DOMDocument(this, payload);
+        else
+            new WebInspector.DOMNode(this, null, false, payload);
     },
 
     /**
