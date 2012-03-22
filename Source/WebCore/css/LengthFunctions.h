@@ -24,99 +24,14 @@
 #ifndef LengthFunctions_h
 #define LengthFunctions_h
 
-#include "Length.h"
-
 namespace WebCore {
 
-inline int miminumValueForLength(Length length, int maximumValue, bool roundPercentages = false)
-{
-    switch (length.type()) {
-    case Fixed:
-        return length.value();
-    case Percent:
-        if (roundPercentages)
-            return static_cast<int>(round(maximumValue * length.percent() / 100.0f));
-        // Don't remove the extra cast to float. It is needed for rounding on 32-bit Intel machines that use the FPU stack.
-        return static_cast<int>(static_cast<float>(maximumValue * length.percent() / 100.0f));
-    case Calculated:
-        return length.nonNanCalculatedValue(maximumValue);
-    case Auto:
-        return 0;
-    case Relative:
-    case Intrinsic:
-    case MinIntrinsic:
-    case Undefined:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
+struct Length;
 
-inline int valueForLength(Length length, int maximumValue, bool roundPercentages = false)
-{
-    switch (length.type()) {
-    case Fixed:
-    case Percent:
-    case Calculated:
-        return miminumValueForLength(length, maximumValue, roundPercentages);
-    case Auto:
-        return maximumValue;
-    case Relative:
-    case Intrinsic:
-    case MinIntrinsic:
-    case Undefined:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-// FIXME: when subpixel layout is supported this copy of floatValueForLength() can be removed. See bug 71143.
-inline float floatValueForLength(Length length, int maximumValue)
-{
-    switch (length.type()) {
-    case Fixed:
-        return length.getFloatValue();
-    case Percent:
-        return static_cast<float>(maximumValue * length.percent() / 100.0f);
-    case Auto:
-        return static_cast<float>(maximumValue);
-    case Calculated:
-        return length.nonNanCalculatedValue(maximumValue);                
-    case Relative:
-    case Intrinsic:
-    case MinIntrinsic:
-    case Undefined:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-inline float floatValueForLength(Length length, float maximumValue)
-{
-    switch (length.type()) {
-    case Fixed:
-        return length.getFloatValue();
-    case Percent:
-        return static_cast<float>(maximumValue * length.percent() / 100.0f);
-    case Auto:
-        return static_cast<float>(maximumValue);
-    case Calculated:
-        return length.nonNanCalculatedValue(maximumValue);
-    case Relative:
-    case Intrinsic:
-    case MinIntrinsic:
-    case Undefined:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
+int miminumValueForLength(Length, int maximumValue, bool roundPercentages = false);
+int valueForLength(Length, int maximumValue, bool roundPercentages = false);
+float floatValueForLength(Length, int maximumValue);
+float floatValueForLength(Length, float maximumValue);
 
 } // namespace WebCore
 

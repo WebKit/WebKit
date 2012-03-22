@@ -2430,6 +2430,7 @@
             'css/FontFeatureValue.h',
             'css/FontValue.cpp',
             'css/FontValue.h',
+            'css/LengthFunctions.cpp',
             'css/MediaFeatureNames.cpp',
             'css/MediaFeatureNames.h',
             'css/MediaList.cpp',

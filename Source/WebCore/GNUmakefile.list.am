@@ -1647,6 +1647,7 @@ webcore_sources += \
 	Source/WebCore/css/FontFeatureValue.h \
 	Source/WebCore/css/FontValue.cpp \
 	Source/WebCore/css/FontValue.h \
+	Source/WebCore/css/LengthFunctions.cpp \
 	Source/WebCore/css/LengthFunctions.h \
 	Source/WebCore/css/MediaFeatureNames.cpp \
 	Source/WebCore/css/MediaFeatureNames.h \
