@@ -290,9 +290,6 @@ class Port(object):
                                     actual_filename)
         return ''.join(diff)
 
-    def is_crash_reporter(self, process_name):
-        return False
-
     def check_for_leaks(self, process_name, process_pid):
         # Subclasses should check for leaks in the running process
         # and print any necessary warnings if leaks are found.
@@ -1053,6 +1050,15 @@ class Port(object):
     def _driver_class(self):
         """Returns the port's driver implementation."""
         raise NotImplementedError('Port._driver_class')
+
+    def _get_crash_log(self, name, pid, stdout, stderr):
+        name_str = name or '<unknown process name>'
+        pid_str = str(pid or '<unknown>')
+        stdout_lines = (stdout or '<empty>').decode('utf8').splitlines()
+        stderr_lines = (stderr or '<empty>').decode('utf8').splitlines()
+        return 'crash log for %s (pid %s):\n%s\n%s\n' % (name_str, pid_str,
+            '\n'.join(('STDOUT: ' + l) for l in stdout_lines),
+            '\n'.join(('STDERR: ' + l) for l in stderr_lines))
 
     def virtual_test_suites(self):
         return []

@@ -188,3 +188,7 @@ java/
         expected_logs = "Cannot run tests in parallel on Snow Leopard due to rdar://problem/10621525.\n"
         child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_logs=expected_logs)
         self.assertEqual(child_processes, 1)
+
+    def test_get_crash_log(self):
+        # Mac crash logs are tested elsewhere
+        pass

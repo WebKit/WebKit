@@ -90,6 +90,8 @@ class MockDRTPortTest(port_testcase.PortTestCase):
     def integration_test_helper(self):
         pass
 
+    def test_get_crash_log(self):
+        pass
 
 class MockDRTTest(unittest.TestCase):
     def input_line(self, port, test_name, checksum=None):

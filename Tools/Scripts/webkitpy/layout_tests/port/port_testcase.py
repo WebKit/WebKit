@@ -312,6 +312,14 @@ class PortTestCase(unittest.TestCase):
 
             i += 1
 
+    def test_get_crash_log(self):
+        port = self.make_port()
+        self.assertEquals(port._get_crash_log(None, None, None, None),
+           ('crash log for <unknown process name> (pid <unknown>):\n'
+            'STDOUT: <empty>\n'
+            'STDERR: <empty>\n'))
+
+
 # FIXME: This class and main() should be merged into test-webkitpy.
 class EnhancedTestLoader(unittest.TestLoader):
     integration_tests = False

@@ -1,3 +1,47 @@
+2012-03-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Re-land fix for r81603 yet again (!) with latest build fix.
+        https://bugs.webkit.org/show_bug.cgi?id=81603
+
+        Unreviewed, build fix.
+
+        The latest problem was a bad sprintf() in
+        BasePort._get_crash_log(). I've reworked that routine and added
+        unit tests for coverage.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._handle_error):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+        (TestResultWriter.write_crash_log):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.diff_text):
+        (Port._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumDriverTest.test_crash_log):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (DriverOutput.__init__):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.is_lion):
+        (MacPort._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (test_default_child_processes):
+        (test_get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockDRTPortTest.test_get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.__init__):
+        (WebKitDriver._start):
+        (WebKitDriver.has_crashed):
+        (WebKitDriver._check_for_driver_crash):
+        (WebKitDriver.run_test):
+
 2012-03-22  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] Enable support for handling database quota's in the MiniBrowser
