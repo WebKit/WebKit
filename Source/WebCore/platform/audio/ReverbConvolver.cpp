@@ -231,9 +231,7 @@ void ReverbConvolver::reset()
 
 size_t ReverbConvolver::latencyFrames() const
 {
-    // FIXME: ConvolverNode should not incur processing latency
-    // <https://bugs.webkit.org/show_bug.cgi?id=75564>
-    return m_minFFTSize / 2;
+    return 0;
 }
 
 } // namespace WebCore
