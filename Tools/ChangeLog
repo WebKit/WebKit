@@ -1,3 +1,21 @@
+2012-03-22  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+        [EFL] DRT: Do not pass a relative path to DOWNLOADED_FONTS_DIR.
+        https://bugs.webkit.org/show_bug.cgi?id=81900
+
+        Reviewed by Gustavo Noronha Silva.
+
+        r111598 added the DOWNLOADED_FONTS_DIR define, but it used a relative
+        path which assumed a certain directory structure for the build
+        directory which may noy be true.
+
+        Instead, hardcode the path to the downloaded fonts starting from the
+        top-level source directory. While this solution is also far from
+        perfect, it makes it more consistent and reliable, and easier to
+        tackle at once with the rest of bug 81475.
+
+        * DumpRenderTree/efl/CMakeLists.txt:
+
 2012-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Allow to run any jhbuild command with jhbuild-wrapper script
