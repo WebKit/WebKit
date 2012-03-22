@@ -293,8 +293,14 @@ Node* DOMContainerNodeForPosition(const Position& position)
 
 bool isPositionInNode(Node* node, const Position& position)
 {
+    if (!node)
+        return false;
+
     int offset = 0;
     Node* domNodeAtPos = DOMContainerNodeForPosition(position);
+    if (!domNodeAtPos)
+        return false;
+
     if (domNodeAtPos == position.containerNode())
         offset = position.computeOffsetInContainerNode();
 
