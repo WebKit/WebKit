@@ -92,7 +92,8 @@ int SocketStreamHandleInternal::send(const char* data, int len)
 void SocketStreamHandleInternal::close()
 {
     LOG(Network, "close");
-    m_socket->close();
+    if (m_socket)
+        m_socket->close();
 }
     
 void SocketStreamHandleInternal::didOpenStream(WebSocketStreamHandle* socketHandle, int maxPendingSendAllowed)
