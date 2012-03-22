@@ -1,0 +1,35 @@
+layer at (0,0) size 785x608
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x608
+  RenderBlock {HTML} at (0,0) size 785x608
+    RenderBody {BODY} at (8,8) size 769x592
+      RenderBlock {DIV} at (0,0) size 769x26
+        RenderText {#text} at (0,0) size 176x26
+          text run at (0,0) width 176: "Before empty span"
+      RenderBlock (anonymous) at (0,26) size 769x144
+        RenderInline {SPAN} at (0,0) size 0x26
+        RenderText {#text} at (0,59) size 17x26
+          text run at (0,59) width 17: "X"
+      RenderBlock {DIV} at (0,170) size 769x26
+        RenderText {#text} at (0,0) size 162x26
+          text run at (0,0) width 162: "After empty span"
+      RenderBlock {DIV} at (0,196) size 769x26
+        RenderText {#text} at (0,0) size 176x26
+          text run at (0,0) width 176: "Before empty span"
+      RenderBlock (anonymous) at (0,222) size 769x166
+        RenderInline {SPAN} at (0,0) size 0x161
+        RenderText {#text} at (0,110) size 17x26
+          text run at (0,110) width 17: "X"
+      RenderBlock {DIV} at (0,388) size 769x26
+        RenderText {#text} at (0,0) size 162x26
+          text run at (0,0) width 162: "After empty span"
+      RenderBlock {DIV} at (0,414) size 769x26
+        RenderText {#text} at (0,0) size 176x26
+          text run at (0,0) width 176: "Before empty span"
+      RenderBlock (anonymous) at (0,440) size 769x126
+        RenderInline {SPAN} at (0,0) size 0x26
+        RenderText {#text} at (0,100) size 17x26
+          text run at (0,100) width 17: "X"
+      RenderBlock {DIV} at (0,566) size 769x26
+        RenderText {#text} at (0,0) size 162x26
+          text run at (0,0) width 162: "After empty span"
