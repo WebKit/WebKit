@@ -1023,6 +1023,10 @@ WebInspector.TextEditorMainPanel.prototype = {
         this.clearLineHighlight();
         this._highlightedLine = lineNumber;
         this.revealLine(lineNumber);
+
+        if (!this._readOnly)
+            this._restoreSelection(new WebInspector.TextRange(lineNumber, 0, lineNumber, 0), false);
+
         this.addDecoration(lineNumber, "webkit-highlighted-line");
     },
 
@@ -1049,17 +1053,18 @@ WebInspector.TextEditorMainPanel.prototype = {
         this.beginUpdates();
         this._enterTextChangeMode();
 
-        var callback = function(oldRange, newRange) {
+        function callback(oldRange, newRange)
+        {
             this._exitTextChangeMode(oldRange, newRange);
             this._enterTextChangeMode();
-        }.bind(this);
-
-        var range = redo ? this._textModel.redo(callback) : this._textModel.undo(callback);
-        if (range)
-            this._setCaretLocation(range.endLine, range.endColumn, true);
-
+        }
+        var range = redo ? this._textModel.redo(callback.bind(this)) : this._textModel.undo(callback.bind(this));
         this._exitTextChangeMode(null, null);
         this.endUpdates();
+
+        // Restore location post-repaint.
+        if (range)
+            this._setCaretLocation(range.endLine, range.endColumn, true);
 
         return true;
     },

@@ -130,7 +130,10 @@ WebInspector.TextEditorModel.prototype = {
             range = new WebInspector.TextRange(0, 0, this._lines.length - 1, this._lines[this._lines.length - 1].length);
             this._lineBreak = /\r\n/.test(text) ? "\r\n" : "\n";
         }
-        var command = this._pushUndoableCommand(range);
+        var command = this._pushUndoableCommand(range, text);
+        if (!command)
+            return range; // Noop
+
         var newRange = this._innerSetText(range, text);
         command.range = newRange.clone();
 
@@ -257,7 +260,7 @@ WebInspector.TextEditorModel.prototype = {
             delete attrs[name];
     },
 
-    _pushUndoableCommand: function(range)
+    _pushUndoableCommand: function(range, text)
     {
         var command = {
             text: this.copyRange(range),
@@ -266,6 +269,9 @@ WebInspector.TextEditorModel.prototype = {
             endLine: range.startLine,
             endColumn: range.startColumn
         };
+        if (text === command.text)
+            return null;
+
         if (this._inUndo)
             this._redoStack.push(command);
         else {
