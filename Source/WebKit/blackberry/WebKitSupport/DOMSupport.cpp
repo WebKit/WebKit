@@ -385,6 +385,34 @@ bool elementIdOrNameIndicatesNoAutocomplete(const Element* element)
     return false;
 }
 
+bool elementPatternIndicatesHexadecimal(const HTMLInputElement* inputElement)
+{
+    if (!inputElement)
+        return false;
+
+    if (inputElement->fastHasAttribute(HTMLNames::patternAttr)) {
+        AtomicString patternAttribute = inputElement->fastGetAttribute(HTMLNames::patternAttr);
+        if (patternAttribute.startsWith("[0-9a-fA-F]")) {
+            // The pattern is for hexadecimal, make sure nothing else is permitted.
+
+            // Check if it was an exact match.
+            if (patternAttribute.length() == 11)
+                return true;
+
+            // Is the regex specifying a character count?
+            if (patternAttribute[11] != '{' || !patternAttribute.endsWith("}"))
+                return false;
+
+            int count = 0;
+            // Make sure the number in the regex is actually a number.
+            if ((sscanf(patternAttribute.string().latin1().data(), "[0-9a-fA-F]{%d}\0", &count) == 1) && count > 0)
+                return true;
+        }
+    }
+
+    return false;
+}
+
 IntPoint convertPointToFrame(const Frame* sourceFrame, const Frame* targetFrame, const IntPoint& point, const bool clampToTargetFrame)
 {
     ASSERT(sourceFrame && targetFrame);

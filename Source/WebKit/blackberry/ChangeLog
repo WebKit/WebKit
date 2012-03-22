@@ -1,5 +1,28 @@
 2012-03-22  Mike Fenton  <mifenton@rim.com>
 
+        [BlackBerry] Add pattern matching for hexadecimal type input fields
+        https://bugs.webkit.org/show_bug.cgi?id=81944
+
+        Reviewed by Rob Buis.
+
+        PR 98504.
+
+        Add mapping of patterns matching hexadecimal input
+        to a specialized type and provide input styling based
+        on that format.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::elementPatternIndicatesHexadecimal):
+        (DOMSupport):
+        * WebKitSupport/DOMSupport.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::convertInputType):
+        (BlackBerry::WebKit::inputStyle):
+
+2012-03-22  Mike Fenton  <mifenton@rim.com>
+
         [BlackBerry] DOMSupport isPositionInNode should have early returns for null nodes
         https://bugs.webkit.org/show_bug.cgi?id=81929
 

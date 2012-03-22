@@ -158,6 +158,8 @@ static BlackBerryInputType convertInputType(const HTMLInputElement* inputElement
         return InputTypeEmail;
     if (DOMSupport::elementIdOrNameIndicatesUrl(inputElement))
         return InputTypeURL;
+    if (DOMSupport::elementPatternIndicatesHexadecimal(inputElement))
+        return InputTypeHexadecimal;
 
     return InputTypeText;
 }
@@ -196,6 +198,7 @@ static int inputStyle(BlackBerryInputType type, const Element* element)
     case InputTypePassword:
     case InputTypeNumber:
     case InputTypeTelephone:
+    case InputTypeHexadecimal:
         // Disable special handling.
         return NO_AUTO_TEXT | NO_PREDICTION | NO_AUTO_CORRECTION;
     default:
