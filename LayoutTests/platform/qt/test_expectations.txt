@@ -20,3 +20,11 @@ BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.htm
 BUGWK62662 DEBUG : inspector/cookie-parser.html = CRASH PASS
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
+
+// Rebaseline after https://bugs.webkit.org/show_bug.cgi?id=78412
+BUGWK78412 : tables/mozilla/bugs/bug2123.html = TEXT
+BUGWK78412 : tables/mozilla/bugs/bug2509.html = TEXT
+BUGWK78412 : tables/mozilla/bugs/bug34176.html = TEXT
+BUGWK78412 : tables/mozilla/bugs/bug44505.html = TEXT
+BUGWK78412 : tables/mozilla_expected_failures/bugs/bug59252.html = TEXT
+BUGWK78412 : tables/mozilla_expected_failures/bugs/bug7243.html = TEXT

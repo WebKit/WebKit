@@ -36,7 +36,7 @@
           var success = lastSuccess == cellId;
           if (!success) failed = true;
           logMsg += (success ? "SUCCESS" : "FAIL") + "<br />";
-          xpos += cellwidth;
+          xpos += cellwidth + 1;
         }
         ypos += cellHeight;
       }
@@ -47,7 +47,7 @@
     }
 
     function CreateTable(tablewidth, rowcount, colcount) {
-      var cellwidth = (tablewidth / colcount);
+      var cellwidth = (tablewidth / colcount) - 1;
       var tablestr = "<table style=\"table-layout:fixed;\" border=\"1\" width=\"" + 
                      tablewidth + "\" cellspacing=\"0\" cellpadding=\"0\">";
       for (var row = 0; row < rowcount; row++) {

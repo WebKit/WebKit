@@ -1864,3 +1864,14 @@ tables/mozilla_expected_failures/bugs/bug85016.html
 # https://bugs.webkit.org/show_bug.cgi?id=81276
 # Allowed to regress to fix a crash. 
 fast/inline/continuation-outlines-with-layers.html
+
+# Rebaseline after https://bugs.webkit.org/show_bug.cgi?id=78412
+tables/mozilla/bugs/bug2123.html
+tables/mozilla/bugs/bug2509.html
+tables/mozilla/bugs/bug34176.html
+tables/mozilla/bugs/bug44505.html
+tables/mozilla_expected_failures/bugs/bug59252.html
+tables/mozilla_expected_failures/bugs/bug7243.html
+fast/repaint/scroll-inside-table-cell.html
+fast/repaint/scroll-relative-table-inside-table-cell.html
+fast/table/cell-pref-width-invalidation.html

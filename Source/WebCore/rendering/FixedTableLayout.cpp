@@ -156,8 +156,10 @@ int FixedTableLayout::calcWidthArray(int)
                 Length w = cell->styleOrColLogicalWidth();
                 unsigned span = cell->colSpan();
                 int effectiveColWidth = 0;
-                if (w.isFixed() && w.isPositive())
+                if (w.isFixed() && w.isPositive()) {
+                    w.setValue(w.value() + cell->borderAndPaddingLogicalWidth());
                     effectiveColWidth = w.value();
+                }
                 
                 unsigned usedSpan = 0;
                 unsigned i = 0;
