@@ -280,7 +280,7 @@ void AudioFileReader::decodeAudioForBusCreation()
     // A deinterleave element is added once a src pad becomes available in decodebin.
     m_pipeline = gst_pipeline_new(0);
 
-    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline)));
+    GRefPtr<GstBus> bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
     gst_bus_add_signal_watch(bus.get());
     g_signal_connect(bus.get(), "message", G_CALLBACK(messageCallback), this);
 
@@ -334,7 +334,7 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     g_main_loop_run(m_loop.get());
     g_main_context_pop_thread_default(context.get());
 
-    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline)));
+    GRefPtr<GstBus> bus = gst_pipeline_get_bus(GST_PIPELINE(m_pipeline));
     g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(messageCallback), this);
 
     g_signal_handlers_disconnect_by_func(m_decodebin.get(), reinterpret_cast<gpointer>(onGStreamerDecodebinPadAddedCallback), this);
