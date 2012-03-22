@@ -27,7 +27,7 @@ MACRO(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
 
     GET_TARGET_PROPERTY(TARGET_TYPE ${_target} TYPE)
     IF (${TARGET_TYPE} STREQUAL "STATIC_LIBRARY") # -fPIC is automatically added to shared libraries
-        SET(OLD_COMPILE_FLAGS "-fPIC")
+        SET(OLD_COMPILE_FLAGS "-fPIC ${OLD_COMPILE_FLAGS}")
     ENDIF ()
 
     SET(OLD_COMPILE_FLAGS "-fno-exceptions -fno-strict-aliasing ${OLD_COMPILE_FLAGS}")

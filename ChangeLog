@@ -1,3 +1,14 @@
+2012-03-22  Ming Xie  <mxie@rim.com>
+
+        OLD_COMPILE_FLAGS was set incorrectly in WebKitHelpers.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=81961
+
+        Reviewed by Rob Buis.
+
+        This fixes the regression introduced by r109292
+
+        * Source/cmake/WebKitHelpers.cmake:
+
 2012-03-22  Dave Michael  <dmichael@chromium.org>
 
         HTMLPluginElement is not destroyed on reload or navigation if getNPObject is called
