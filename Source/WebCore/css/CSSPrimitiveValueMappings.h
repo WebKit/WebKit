@@ -30,8 +30,9 @@
 #ifndef CSSPrimitiveValueMappings_h
 #define CSSPrimitiveValueMappings_h
 
-#include "ColorSpace.h"
+#include "CSSCalculationValue.h"
 #include "CSSPrimitiveValue.h"
+#include "ColorSpace.h"
 #include "CSSValueKeywords.h"
 #include "FontDescription.h"
 #include "FontSmoothingMode.h"
@@ -3767,11 +3768,13 @@ template<> inline CSSPrimitiveValue::operator WrapThrough() const
 }
 
 enum LengthConversion {
+    AnyConversion = ~0,
     FixedIntegerConversion = 1 << 0,
     FixedFloatConversion = 1 << 1,
     AutoConversion = 1 << 2,
     PercentConversion = 1 << 3,
-    FractionConversion = 1 << 4
+    FractionConversion = 1 << 4,
+    CalculatedConversion = 1 << 5
 };
 
 template<int supported> Length CSSPrimitiveValue::convertToLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
@@ -3788,6 +3791,8 @@ template<int supported> Length CSSPrimitiveValue::convertToLength(RenderStyle* s
         return Length(getDoubleValue() * 100.0, Percent);
     if ((supported & AutoConversion) && getIdent() == CSSValueAuto)
         return Length(Auto);
+    if ((supported & CalculatedConversion) && isCalculated())
+        return Length(cssCalcValue()->toCalcValue(style, rootStyle, multiplier));
     return Length(Undefined);
 }
 

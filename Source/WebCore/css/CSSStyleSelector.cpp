@@ -4199,35 +4199,22 @@ void CSSStyleSelector::mapFillSize(CSSPropertyID, FillLayer* layer, CSSValue* va
         return;
     }
 
-    Pair* pair = primitiveValue->getPairValue();
-
-    CSSPrimitiveValue* first = pair ? static_cast<CSSPrimitiveValue*>(pair->first()) : primitiveValue;
-    CSSPrimitiveValue* second = pair ? static_cast<CSSPrimitiveValue*>(pair->second()) : 0;
-
-    Length firstLength, secondLength;
-
     float zoomFactor = m_style->effectiveZoom();
 
-    if (first->getIdent() == CSSValueAuto)
-        firstLength = Length();
-    else if (first->isLength())
-        firstLength = first->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
-    else if (first->isPercentage())
-        firstLength = Length(first->getDoubleValue(), Percent);
-    else if (first->isCalculatedPercentageWithLength())
-        firstLength = Length(first->cssCalcValue()->toCalcValue(style(), m_rootElementStyle, zoomFactor));
-    else
-        return;
+    Length firstLength;
+    Length secondLength;
 
-    if (!second || second->getIdent() == CSSValueAuto)
+    if (Pair* pair = primitiveValue->getPairValue()) {
+        CSSPrimitiveValue* first = static_cast<CSSPrimitiveValue*>(pair->first());
+        CSSPrimitiveValue* second = static_cast<CSSPrimitiveValue*>(pair->second());
+        firstLength = first->convertToLength<AnyConversion>(style(), m_rootElementStyle, zoomFactor);
+        secondLength = second->convertToLength<AnyConversion>(style(), m_rootElementStyle, zoomFactor);
+    } else {
+        firstLength = primitiveValue->convertToLength<AnyConversion>(style(), m_rootElementStyle, zoomFactor);
         secondLength = Length();
-    else if (second->isLength())
-        secondLength = second->computeLength<Length>(style(), m_rootElementStyle, zoomFactor);
-    else if (second->isPercentage())
-        secondLength = Length(second->getDoubleValue(), Percent);
-    else if (second->isCalculatedPercentageWithLength())
-        secondLength = Length(second->cssCalcValue()->toCalcValue(style(), m_rootElementStyle, zoomFactor));
-    else
+    }
+
+    if (firstLength.isUndefined() || secondLength.isUndefined())
         return;
 
     b.setWidth(firstLength);

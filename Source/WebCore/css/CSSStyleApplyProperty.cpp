@@ -1563,13 +1563,7 @@ public:
         if (primitiveValue->getIdent())
             return selector->style()->setVerticalAlign(*primitiveValue);
 
-        Length length;
-        if (primitiveValue->isLength())
-            length = primitiveValue->computeLength<Length>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
-        else if (primitiveValue->isPercentage())
-            length = Length(primitiveValue->getDoubleValue(), Percent);
-
-        selector->style()->setVerticalAlignLength(length);
+        selector->style()->setVerticalAlignLength(primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()));
     }
 
     static PropertyHandler createHandler()
