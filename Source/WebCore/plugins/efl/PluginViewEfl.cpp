@@ -38,6 +38,7 @@
 #include "HostWindow.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
+#include "PageClientEfl.h"
 #include "PluginPackage.h"
 #include "npruntime_impl.h"
 #include "runtime/JSLock.h"
@@ -282,7 +283,8 @@ bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* re
     }
 
     case NPNVnetscapeWindow: {
-        Evas_Object* widget = m_parentFrame->view()->hostWindow()->platformPageClient();
+        PageClientEfl* pageClient = static_cast<PageClientEfl*>(m_parentFrame->view()->hostWindow()->platformPageClient());
+        Evas_Object* widget = pageClient->view();
         Evas* evas = evas_object_evas_get(widget);
         Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(evas);
         *static_cast<XID*>(value) = static_cast<Window>(ecore_evas_window_get(ecoreEvas));

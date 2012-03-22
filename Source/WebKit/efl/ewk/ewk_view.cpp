@@ -45,6 +45,7 @@
 #include "JSDOMWindow.h"
 #include "JSLock.h"
 #include "LayoutTypes.h"
+#include "PageClientEfl.h"
 #include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
@@ -76,6 +77,10 @@
 
 #if ENABLE(BATTERY_STATUS)
 #include "BatteryClientEfl.h"
+#endif
+
+#if USE(ACCELERATED_COMPOSITING)
+#include "NotImplemented.h"
 #endif
 
 static const float zoomMinimum = 0.05;
@@ -142,6 +147,7 @@ struct _Ewk_View_Private_Data {
     WebCore::Frame* mainFrame;
     WebCore::ViewportArguments viewportArguments;
     Ewk_History* history;
+    OwnPtr<WebCore::PageClientEfl> pageClient;
     struct {
         Ewk_Menu menu;
         WebCore::PopupMenuClient* menuClient;
@@ -715,6 +721,8 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->history = ewk_history_new(static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList()));
 
     priv->soupSession = WebCore::ResourceHandle::defaultSession();
+
+    priv->pageClient = adoptPtr(new WebCore::PageClientEfl(smartData->self));
 
     return priv;
 }
@@ -3924,6 +3932,20 @@ void ewk_view_soup_session_set(Evas_Object* ewkView, SoupSession* session)
     priv->soupSession = session;
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_Native_Surface* nativeSurface, const WebCore::IntRect& rect)
+{
+    notImplemented();
+    return false;
+}
+
+WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Object* ewkView)
+{
+    notImplemented();
+    return 0;
+}
+#endif
+
 namespace EWKPrivate {
 
 WebCore::Page *corePage(const Evas_Object *ewkView)
@@ -3931,6 +3953,13 @@ WebCore::Page *corePage(const Evas_Object *ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
     return priv->page.get();
+}
+
+WebCore::PlatformPageClient corePageClient(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+    return priv->pageClient.get();
 }
 
 } // namespace EWKPrivate

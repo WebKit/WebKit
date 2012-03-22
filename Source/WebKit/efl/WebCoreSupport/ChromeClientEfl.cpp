@@ -339,7 +339,7 @@ IntPoint ChromeClientEfl::screenToRootView(const IntPoint& point) const
 
 PlatformPageClient ChromeClientEfl::platformPageClient() const
 {
-    return m_view;
+    return EWKPrivate::corePageClient(m_view);
 }
 
 void ChromeClientEfl::scrollbarsModeDidChange() const

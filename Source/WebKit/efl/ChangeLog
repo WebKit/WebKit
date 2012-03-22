@@ -1,3 +1,37 @@
+2012-03-22  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        [EFL] Add PageClientEfl to WebCoreSupport.
+        https://bugs.webkit.org/show_bug.cgi?id=80748
+
+        Reviewed by Noam Rosenthal.
+
+        This patch adds PageClientEfl for implementaion of accelerated compositing.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::platformPageClient):
+        * WebCoreSupport/PageClientEfl.cpp: Added.
+        (WebCore):
+        (WebCore::PageClientEfl::PageClientEfl):
+        (WebCore::PageClientEfl::~PageClientEfl):
+        (WebCore::PageClientEfl::createEvasObjectForAcceleratedCompositing):
+        Just call ewk_view_accelerated_compositing_object_create().
+        (WebCore::PageClientEfl::acceleratedCompositingContext):
+        Just call ewk_view_accelerated_compositing_context_get().
+        * WebCoreSupport/PageClientEfl.h: Added.
+        (WebCore):
+        (PageClientEfl):
+        (WebCore::PageClientEfl::view): Return ewkView.
+        * ewk/ewk_private.h:
+        (WebCore):
+        (EWKPrivate):
+        * ewk/ewk_view.cpp:
+        (_Ewk_View_Private_Data): Add OwnPtr<PageClientEfl>.
+        (_ewk_view_priv_new): Create a new PageClientEfl.
+        (ewk_view_accelerated_compositing_object_create): Not implemented.
+        (ewk_view_accelerated_compositing_context_get): Not implemented.
+        (EWKPrivate::corePageClient): Return the PageClientEfl pointer.
+        (EWKPrivate):
+
 2012-03-19  Adam Barth  <abarth@webkit.org>
 
         Remove support for "magic" iframe

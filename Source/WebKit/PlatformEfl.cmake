@@ -13,6 +13,7 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/wtf/gobject"
     "${WEBCORE_DIR}/platform/efl"
     "${WEBCORE_DIR}/platform/graphics/cairo"
+    "${WEBCORE_DIR}/platform/graphics/efl"
     ${Cairo_INCLUDE_DIRS}
     ${ECORE_X_INCLUDE_DIRS}
     ${EDJE_INCLUDE_DIRS}
@@ -80,6 +81,7 @@ LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/StorageTrackerClientEfl.cpp
     efl/WebCoreSupport/InspectorClientEfl.cpp
     efl/WebCoreSupport/NotificationPresenterClientEfl.cpp
+    efl/WebCoreSupport/PageClientEfl.cpp
 
     efl/ewk/ewk_auth.cpp
     efl/ewk/ewk_auth_soup.cpp

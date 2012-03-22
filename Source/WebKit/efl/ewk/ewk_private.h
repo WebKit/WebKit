@@ -36,6 +36,9 @@
 #include "ewk_js.h"
 #include "ewk_view.h"
 #include <Evas.h>
+#if USE(ACCELERATED_COMPOSITING)
+#include <Evas_GL.h>
+#endif
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
@@ -74,6 +77,10 @@ namespace WebCore {
 struct PopupMenuClient;
 struct ContextMenu;
 struct ContextMenuItem;
+#if USE(ACCELERATED_COMPOSITING)
+class GraphicsContext3D;
+class GraphicsLayer;
+#endif
 }
 
 struct Ewk_Window_Object_Cleared_Event {
@@ -87,6 +94,7 @@ namespace EWKPrivate {
 WebCore::Frame *coreFrame(const Evas_Object *ewkFrame);
 WebCore::Page *corePage(const Evas_Object *ewkView);
 WebCore::HistoryItem *coreHistoryItem(const Ewk_History_Item *ewkHistoryItem);
+WebCore::PlatformPageClient corePageClient(Evas_Object* ewkView);
 
 Evas_Object* kitFrame(const WebCore::Frame* coreFrame);
 
@@ -233,5 +241,10 @@ void ewk_frame_mixed_content_displayed_set(Evas_Object* ewkFrame, bool hasDispla
 void ewk_frame_mixed_content_run_set(Evas_Object* ewkFrame, bool hasRun);
 void ewk_view_mixed_content_displayed_set(Evas_Object* ewkView, bool hasDisplayed);
 void ewk_view_mixed_content_run_set(Evas_Object* ewkView, bool hasRun);
+
+#if USE(ACCELERATED_COMPOSITING)
+bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_Native_Surface* nativeSurface, const WebCore::IntRect& rect);
+WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Object* ewkView);
+#endif
 
 #endif // ewk_private_h

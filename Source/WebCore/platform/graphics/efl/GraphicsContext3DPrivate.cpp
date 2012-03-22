@@ -139,7 +139,7 @@ bool GraphicsContext3DPrivate::createSurface(PageClientEfl* pageClient, bool ren
         evas_gl_native_surface_get(m_evasGL, m_surface, &nativeSurface);
 
         // Create and specially set up a evas_object which act as the render targer surface.
-        if (!pageClient->createEvasObjectForAcceleratedCompositing(&nativeSurface, x, y, width, height))
+        if (!pageClient->createEvasObjectForAcceleratedCompositing(&nativeSurface, IntRect(x, y, width, height)))
             return false;
     }
 #endif

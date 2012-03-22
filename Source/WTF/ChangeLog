@@ -1,3 +1,12 @@
+2012-03-22  Hyowon Kim  <hw1008.kim@samsung.com>
+
+        [EFL] Add PageClientEfl to WebCoreSupport.
+        https://bugs.webkit.org/show_bug.cgi?id=80748
+
+        Reviewed by Noam Rosenthal.
+
+        * wtf/Platform.h: Disable accelerated compositing. It's not ready yet.
+
 2012-03-21  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=80322
