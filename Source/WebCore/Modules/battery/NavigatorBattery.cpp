@@ -39,6 +39,9 @@ NavigatorBattery::~NavigatorBattery()
 
 BatteryManager* NavigatorBattery::webkitBattery(ScriptExecutionContext* context, Navigator* navigator)
 {
+    if (!navigator->frame())
+        return 0;
+
     NavigatorBattery* navigatorBattery = NavigatorBattery::from(navigator);
     if (!navigatorBattery->m_batteryManager)
         navigatorBattery->m_batteryManager = BatteryManager::create(context, navigator);
