@@ -27,11 +27,11 @@
 #include "FullscreenVideoController.h"
 #include "GtkClickCounter.h"
 #include "GtkDragAndDropHelper.h"
-#include "GOwnPtr.h"
 #include "Page.h"
 #include "ResourceHandle.h"
 #include "WidgetBackingStore.h"
 #include <webkit/webkitwebview.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 namespace WebKit {
 WebCore::Page* core(WebKitWebView*);

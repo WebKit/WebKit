@@ -25,8 +25,6 @@
 #include "Chrome.h"
 #include "FrameNetworkingContextGtk.h"
 #include "GtkUtilities.h"
-#include "GOwnPtr.h"
-#include "GRefPtr.h"
 #include "IconDatabase.h"
 #include "Logging.h"
 #include "MemoryCache.h"
@@ -53,6 +51,8 @@
 #include <runtime/InitializeThreading.h>
 #include <stdlib.h>
 #include <wtf/MainThread.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 
 #if USE(CLUTTER)
 #include <clutter-gtk/clutter-gtk.h>

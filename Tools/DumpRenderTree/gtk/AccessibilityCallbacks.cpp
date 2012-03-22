@@ -31,10 +31,10 @@
 
 #include "AccessibilityController.h"
 #include "DumpRenderTree.h"
-#include "GOwnPtr.h"
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 static guint stateChangeListenerId = 0;
 static guint focusEventListenerId = 0;

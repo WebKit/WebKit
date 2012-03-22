@@ -22,8 +22,6 @@
 #include "webkitdownload.h"
 
 #include "ErrorsGtk.h"
-#include "GRefPtr.h"
-#include "Noncopyable.h"
 #include "NotImplemented.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
@@ -39,6 +37,8 @@
 #include "webkitnetworkresponseprivate.h"
 #include <glib/gi18n-lib.h>
 #include <glib/gstdio.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 #ifdef ERROR

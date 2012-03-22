@@ -31,9 +31,9 @@
 #include "config.h"
 
 #include "TestMain.h"
-#include <JavaScriptCore/GRefPtr.h>
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
+#include <wtf/gobject/GRefPtr.h>
 
 static void testWebKitSettings(Test*, gconstpointer)
 {

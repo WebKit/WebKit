@@ -35,12 +35,12 @@
 
 #include "PlatformWebView.h"
 #include "TestController.h"
-#include <GOwnPtr.h>
 #include <GtkVersioning.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {

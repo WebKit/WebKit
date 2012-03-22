@@ -23,8 +23,8 @@
 #ifndef webkitwebsettingsprivate_h
 #define webkitwebsettingsprivate_h
 
-#include "CString.h"
 #include "webkitwebsettings.h"
+#include <wtf/text/CString.h>
 
 extern "C" {
 

@@ -32,7 +32,7 @@
 
 #include "DragClient.h"
 #include "DragIcon.h"
-#include "GRefPtr.h"
+#include <wtf/gobject/GRefPtr.h>
 
 typedef struct _WebKitWebView WebKitWebView;
 

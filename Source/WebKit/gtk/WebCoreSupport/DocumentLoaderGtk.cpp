@@ -30,9 +30,9 @@
 #include "config.h"
 #include "DocumentLoaderGtk.h"
 
-#include "GRefPtr.h"
 #include "webkitwebdatasource.h"
 #include "webkitwebdatasourceprivate.h"
+#include <wtf/gobject/GRefPtr.h>
 
 using namespace WebCore;
 

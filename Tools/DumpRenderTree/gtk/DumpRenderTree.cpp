@@ -36,7 +36,6 @@
 #include "EditingCallbacks.h"
 #include "EventSender.h"
 #include "GCController.h"
-#include "GOwnPtr.h"
 #include "LayoutTestController.h"
 #include "PixelDumpSupport.h"
 #include "SelfScrollingWebKitWebView.h"
@@ -53,6 +52,7 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 #include <wtf/Assertions.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GlibUtilities.h>
 
 #if PLATFORM(X11)

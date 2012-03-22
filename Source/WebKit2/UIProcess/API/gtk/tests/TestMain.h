@@ -20,9 +20,9 @@
 #ifndef TestMain_h
 #define TestMain_h
 
-#include <JavaScriptCore/GOwnPtr.h>
-#include <JavaScriptCore/HashSet.h>
 #include <glib-object.h>
+#include <wtf/HashSet.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 #define MAKE_GLIB_TEST_FIXTURE(ClassName) \
     static void setUp(ClassName* fixture, gconstpointer data) \

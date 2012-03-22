@@ -21,10 +21,10 @@
 #include "config.h"
 #include "webkitnetworkrequest.h"
 
-#include "GRefPtr.h"
 #include "ResourceRequest.h"
 #include "webkitglobalsprivate.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 /**

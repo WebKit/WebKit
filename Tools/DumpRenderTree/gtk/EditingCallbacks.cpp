@@ -29,12 +29,12 @@
 #include "config.h"
 #include "EditingCallbacks.h"
 
-#include "CString.h"
 #include "DumpRenderTree.h"
-#include "GOwnPtr.h"
 #include "LayoutTestController.h"
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/text/CString.h>
 
 static CString dumpNodePath(WebKitDOMNode* node)
 {

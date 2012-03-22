@@ -22,10 +22,10 @@
 #include "config.h"
 #include "webkitnetworkresponse.h"
 
-#include "GRefPtr.h"
 #include "ResourceResponse.h"
 #include "webkitglobalsprivate.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 /**

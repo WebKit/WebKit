@@ -29,9 +29,9 @@
 #include "FontDescription.h"
 #include "FontOrientation.h"
 #include "GlyphBuffer.h"
-#include "HashFunctions.h"
 #include "RefPtrCairo.h"
 #include <wtf/Forward.h>
+#include <wtf/HashFunctions.h>
 
 typedef struct _FcFontSet FcFontSet;
 

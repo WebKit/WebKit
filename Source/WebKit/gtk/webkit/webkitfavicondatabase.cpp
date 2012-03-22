@@ -24,7 +24,6 @@
 #include "DatabaseDetails.h"
 #include "DatabaseTracker.h"
 #include "FileSystem.h"
-#include "GRefPtr.h"
 #include "IconDatabase.h"
 #include "IconDatabaseClient.h"
 #include "Image.h"
@@ -38,6 +37,7 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/MainThread.h>
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 /**

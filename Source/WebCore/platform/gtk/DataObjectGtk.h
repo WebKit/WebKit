@@ -20,10 +20,10 @@
 #define DataObjectGtk_h
 
 #include "FileList.h"
-#include <GRefPtr.h>
 #include "KURL.h"
 #include "Range.h"
 #include <wtf/RefCounted.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 

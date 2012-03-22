@@ -1,3 +1,19 @@
+2012-03-22  Carlos Garcia Campos  <cgarcia@bb-webkit-rel-64.local.igalia.com>
+
+        [GTK] Use the angle-bracket form to include wtf headers
+        https://bugs.webkit.org/show_bug.cgi?id=81884
+
+        Reviewed by Eric Seidel.
+
+        Use #include <wtf/foo> instead of #include "foo".
+
+        * DumpRenderTree/gtk/AccessibilityCallbacks.cpp:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        * DumpRenderTree/gtk/EditingCallbacks.cpp:
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp:
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+
 2012-03-22  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         Unreviewed, add Michael Brüning and Allan Jensen to committers.py.

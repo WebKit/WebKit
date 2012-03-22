@@ -44,11 +44,11 @@
 #include "TimeRanges.h"
 #include "VideoSinkGStreamer.h"
 #include "WebKitWebSourceGStreamer.h"
-#include <GOwnPtr.h>
 #include <gst/gst.h>
 #include <gst/video/video.h>
 #include <limits>
 #include <math.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
 #ifdef GST_API_VERSION_1

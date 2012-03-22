@@ -23,8 +23,8 @@
 #ifndef webkitwebdatasourceprivate_h
 #define webkitwebdatasourceprivate_h
 
-#include "RefPtr.h"
 #include "webkitwebdatasource.h"
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 

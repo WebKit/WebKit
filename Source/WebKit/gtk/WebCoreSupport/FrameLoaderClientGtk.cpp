@@ -39,8 +39,6 @@
 #include "FrameNetworkingContextGtk.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "GOwnPtr.h"
-#include "GRefPtr.h"
 #include "GtkPluginWidget.h"
 #include "HTMLAppletElement.h"
 #include "HTMLFormElement.h"
@@ -92,6 +90,8 @@
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 #include <stdio.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 

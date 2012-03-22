@@ -1,3 +1,15 @@
+2012-03-22  Carlos Garcia Campos  <cgarcia@bb-webkit-rel-64.local.igalia.com>
+
+        [GTK] Use the angle-bracket form to include wtf headers
+        https://bugs.webkit.org/show_bug.cgi?id=81884
+
+        Reviewed by Eric Seidel.
+
+        Use #include <wtf/foo> instead of #include <JavaScriptCore/foo>.
+
+        * UIProcess/API/gtk/tests/TestMain.h:
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+
 2012-03-22  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][WK2] The background appears to have one extra pixel from the contents

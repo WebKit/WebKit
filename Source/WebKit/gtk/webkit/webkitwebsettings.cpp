@@ -28,13 +28,13 @@
 
 #include "EditingBehavior.h"
 #include "FileSystem.h"
-#include "GOwnPtr.h"
 #include "KURL.h"
 #include "PluginDatabase.h"
 #include "webkitenumtypes.h"
 #include "webkitglobalsprivate.h"
 #include "webkitversion.h"
 #include "webkitwebsettingsprivate.h"
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 #include <glib/gi18n-lib.h>

@@ -22,10 +22,10 @@
 
 #include "DumpRenderTree.h"
 
-#include <GOwnPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
-#include <webkit/webkit.h>
 #include <string.h>
+#include <webkit/webkit.h>
+#include <wtf/gobject/GOwnPtr.h>
 
 // Returns a newly allocated UTF-8 character buffer which must be freed with g_free()
 gchar* JSStringCopyUTF8CString(JSStringRef jsString)

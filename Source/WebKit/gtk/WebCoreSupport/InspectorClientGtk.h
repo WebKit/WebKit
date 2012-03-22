@@ -29,13 +29,13 @@
 #ifndef InspectorClientGtk_h
 #define InspectorClientGtk_h
 
-#include "GOwnPtr.h"
-#include "GRefPtr.h"
 #include "InspectorClient.h"
 #include "InspectorFrontendClientLocal.h"
 #include "webkitwebview.h"
 #include "webkitwebinspector.h"
 #include <wtf/Forward.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 
 namespace WebCore {
     class Page;

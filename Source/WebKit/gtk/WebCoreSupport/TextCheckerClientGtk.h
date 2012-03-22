@@ -31,8 +31,8 @@
 #ifndef TextCheckerClientGtk_h
 #define TextCheckerClientGtk_h
 
-#include "GRefPtr.h"
 #include "TextCheckerClient.h"
+#include <wtf/gobject/GRefPtr.h>
 
 typedef struct _WebKitSpellChecker WebKitSpellChecker;
 

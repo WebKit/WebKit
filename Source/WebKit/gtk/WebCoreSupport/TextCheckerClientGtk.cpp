@@ -24,11 +24,11 @@
 #include "config.h"
 #include "TextCheckerClientGtk.h"
 
-#include "GOwnPtr.h"
 #include "NotImplemented.h"
 #include "webkitspellchecker.h"
 #include "webkitwebsettingsprivate.h"
 #include <glib.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;

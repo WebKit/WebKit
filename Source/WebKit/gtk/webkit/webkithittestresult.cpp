@@ -21,8 +21,6 @@
 #include "config.h"
 #include "webkithittestresult.h"
 
-#include "GOwnPtr.h"
-#include "GRefPtr.h"
 #include "HitTestResult.h"
 #include "KURL.h"
 #include "WebKitDOMBinding.h"
@@ -31,6 +29,8 @@
 #include "webkitglobals.h"
 #include "webkitglobalsprivate.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 /**

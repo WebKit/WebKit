@@ -21,10 +21,10 @@
 
 #if ENABLE(SPELLCHECK)
 
-#include "GOwnPtr.h"
 #include "webkitspellchecker.h"
 #include <enchant.h>
 #include <gtk/gtk.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
 /**

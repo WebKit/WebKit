@@ -1,3 +1,32 @@
+2012-03-22  Carlos Garcia Campos  <cgarcia@bb-webkit-rel-64.local.igalia.com>
+
+        [GTK] Use the angle-bracket form to include wtf headers
+        https://bugs.webkit.org/show_bug.cgi?id=81884
+
+        Reviewed by Eric Seidel.
+
+        Use #include <wtf/foo> instead of #include "foo".
+
+        * WebCoreSupport/DocumentLoaderGtk.cpp:
+        * WebCoreSupport/DragClientGtk.h:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        * WebCoreSupport/FullscreenVideoController.h:
+        * WebCoreSupport/GeolocationClientGtk.h:
+        * WebCoreSupport/InspectorClientGtk.h:
+        * WebCoreSupport/TextCheckerClientGtk.cpp:
+        * WebCoreSupport/TextCheckerClientGtk.h:
+        * webkit/webkitdownload.cpp:
+        * webkit/webkitfavicondatabase.cpp:
+        * webkit/webkitglobals.cpp:
+        * webkit/webkithittestresult.cpp:
+        * webkit/webkitnetworkrequest.cpp:
+        * webkit/webkitnetworkresponse.cpp:
+        * webkit/webkitspellcheckerenchant.cpp:
+        * webkit/webkitwebdatasourceprivate.h:
+        * webkit/webkitwebsettings.cpp:
+        * webkit/webkitwebsettingsprivate.h:
+        * webkit/webkitwebviewprivate.h:
+
 2012-03-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Convert hasSpellingMarker to use Internals interface.

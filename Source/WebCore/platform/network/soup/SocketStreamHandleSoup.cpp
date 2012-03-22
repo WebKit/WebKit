@@ -33,7 +33,6 @@
 
 #include "KURL.h"
 #include "Logging.h"
-#include "NotFound.h"
 #include "NotImplemented.h"
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
@@ -41,6 +40,7 @@
 #include <gio/gio.h>
 #include <glib.h>
 
+#include <wtf/NotFound.h>
 #include <wtf/Vector.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>

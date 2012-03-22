@@ -23,11 +23,11 @@
 
 #if ENABLE(GEOLOCATION)
 
-#include "GRefPtr.h"
 #include "GeolocationClient.h"
 #include "GeolocationPosition.h"
 #include <geoclue/geoclue-master.h>
 #include <geoclue/geoclue-position.h>
+#include <wtf/gobject/GRefPtr.h>
 
 typedef struct _WebKitWebView WebKitWebView;
 
