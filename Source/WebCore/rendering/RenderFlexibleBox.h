@@ -61,7 +61,7 @@ private:
     typedef WTF::HashMap<const RenderBox*, LayoutUnit> InflexibleFlexItemSize;
     typedef WTF::Vector<RenderBox*> OrderedFlexItemList;
 
-    struct LineContext;
+    struct WrapReverseContext;
 
     bool hasOrthogonalFlow(RenderBox* child) const;
     bool isColumnFlow() const;
@@ -114,12 +114,12 @@ private:
     bool resolveFlexibleLengths(FlexSign, const OrderedFlexItemList&, LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
     void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);
     void prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset);
-    void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, WTF::Vector<LineContext>& lineContexts);
+    void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace);
     void layoutColumnReverse(const OrderedFlexItemList&, const WTF::Vector<LayoutUnit>& childSizes, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace);
-    void alignChildren(FlexOrderIterator&, const WTF::Vector<LineContext>&);
+    void alignChildren(const OrderedFlexItemList&, LayoutUnit lineCrossAxisExtent, LayoutUnit maxAscent);
     void applyStretchAlignmentToChild(RenderBox*, LayoutUnit lineCrossAxisExtent);
     void flipForRightToLeftColumn(FlexOrderIterator&);
-    void flipForWrapReverse(FlexOrderIterator&, const WTF::Vector<LineContext>&);
+    void flipForWrapReverse(FlexOrderIterator&, const WrapReverseContext&);
 };
 
 } // namespace WebCore
