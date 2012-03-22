@@ -1,3 +1,9 @@
+2012-03-22  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        Unreviewed, add Michael Brüning and Allan Jensen to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-03-22  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Enable FAST_MOBILE_SCROLLING when scrolling is delegated.
