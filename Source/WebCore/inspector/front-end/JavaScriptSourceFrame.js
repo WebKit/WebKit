@@ -303,10 +303,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     _resolveObjectForPopover: function(element, showCallback, objectGroupName)
     {
-        if (!this.readOnly) {
-            this._popoverHelper.hidePopover();
-            return;
-        }
         this._highlightElement = this._highlightExpression(element);
 
         function showObjectPopover(result, wasThrown)
@@ -315,7 +311,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
                 this._popoverHelper.hidePopover();
                 return;
             }
-            showCallback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
+            showCallback(WebInspector.RemoteObject.fromPayload(result), wasThrown, this._highlightElement);
             // Popover may have been removed by showCallback().
             if (this._highlightElement)
                 this._highlightElement.addStyleClass("source-frame-eval-expression");
@@ -417,6 +413,16 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         } else
             this._setBreakpoint(lineNumber, "", true);
         event.preventDefault();
+    },
+
+    _onKeyDown: function(event)
+    {
+        if (event.keyIdentifier === "U+001B") { // Escape key
+            if (this._popoverHelper.isPopoverVisible()) {
+                this._popoverHelper.hidePopover();
+                event.consume();
+            }
+        }
     },
 
     _editBreakpointCondition: function(lineNumber, condition, callback)

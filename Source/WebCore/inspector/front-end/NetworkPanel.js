@@ -917,6 +917,10 @@ WebInspector.NetworkLogView.prototype = {
         return resource && resource.timing ? anchor : null;
     },
 
+    /**
+     * @param {Element} anchor
+     * @param {WebInspector.Popover} popover
+     */
     _showPopover: function(anchor, popover)
     {
         var resource = anchor.parentElement.resource;

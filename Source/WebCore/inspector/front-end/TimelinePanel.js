@@ -731,6 +731,10 @@ WebInspector.TimelinePanel.prototype = {
         }
     },
 
+    /**
+     * @param {Element} anchor
+     * @param {WebInspector.Popover} popover
+     */
     _showPopover: function(anchor, popover)
     {
         var record = anchor.row._record;

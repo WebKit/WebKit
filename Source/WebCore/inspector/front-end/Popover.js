@@ -190,6 +190,9 @@ WebInspector.Popover.prototype = {
 
 /**
  * @constructor
+ * @param {Element} panelElement
+ * @param {function(Element, Event):Element|undefined} getAnchor
+ * @param {function(Element, WebInspector.Popover):undefined} showPopover
  * @param {function()=} onHide
  * @param {boolean=} disableOnClick
  */
@@ -259,6 +262,11 @@ WebInspector.PopoverHelper.prototype = {
             clearTimeout(this._hoverTimer);
             delete this._hoverTimer;
         }
+    },
+
+    isPopoverVisible: function()
+    {
+        return !!this._popover;
     },
 
     hidePopover: function()

@@ -391,6 +391,10 @@ WebInspector.ElementsPanel.prototype = {
         }
     },
 
+    /**
+     * @param {Element} anchor
+     * @param {WebInspector.Popover} popover
+     */
     _showPopover: function(anchor, popover)
     {
         var listItem = anchor.enclosingNodeOrSelfWithNodeNameInArray(["li"]);
