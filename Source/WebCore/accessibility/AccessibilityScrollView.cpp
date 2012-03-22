@@ -163,7 +163,7 @@ AccessibilityObject* AccessibilityScrollView::webAreaObject() const
     return axObjectCache()->getOrCreate(doc->renderer());
 }
 
-AccessibilityObject* AccessibilityScrollView::accessibilityHitTest(const LayoutPoint& point) const
+AccessibilityObject* AccessibilityScrollView::accessibilityHitTest(const IntPoint& point) const
 {
     AccessibilityObject* webArea = webAreaObject();
     if (!webArea)

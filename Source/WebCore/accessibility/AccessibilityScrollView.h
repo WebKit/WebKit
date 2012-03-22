@@ -57,7 +57,7 @@ private:
     virtual AccessibilityObject* scrollBar(AccessibilityOrientation);
     virtual void addChildren();
     virtual void clearChildren();
-    virtual AccessibilityObject* accessibilityHitTest(const LayoutPoint&) const;
+    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const;
     virtual void updateChildrenIfNecessary();
     virtual void setNeedsToUpdateChildren() { m_childrenDirty = true; }
     void updateScrollbars();

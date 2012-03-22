@@ -489,25 +489,25 @@ bool AccessibilityObject::isARIAControl(AccessibilityRole ariaRole)
     || ariaRole == ComboBoxRole || ariaRole == SliderRole; 
 }
 
-LayoutPoint AccessibilityObject::clickPoint()
+IntPoint AccessibilityObject::clickPoint()
 {
     LayoutRect rect = elementRect();
-    return LayoutPoint(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);
+    return roundedIntPoint(LayoutPoint(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2));
 }
 
-LayoutRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector<FloatQuad>& quads)
+IntRect AccessibilityObject::boundingBoxForQuads(RenderObject* obj, const Vector<FloatQuad>& quads)
 {
     ASSERT(obj);
     if (!obj)
-        return LayoutRect();
+        return IntRect();
     
     size_t count = quads.size();
     if (!count)
-        return LayoutRect();
+        return IntRect();
     
-    LayoutRect result;
+    IntRect result;
     for (size_t i = 0; i < count; ++i) {
-        LayoutRect r = quads[i].enclosingBoundingBox();
+        IntRect r = quads[i].enclosingBoundingBox();
         if (!r.isEmpty()) {
             if (obj->style()->hasAppearance())
                 obj->theme()->adjustRepaintRect(obj, r);
@@ -1466,7 +1466,7 @@ bool AccessibilityObject::supportsARIALiveRegion() const
     return equalIgnoringCase(liveRegion, "polite") || equalIgnoringCase(liveRegion, "assertive");
 }
 
-AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const LayoutPoint& point) const
+AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& point) const
 { 
     // Send the hit test back into the sub-frame if necessary.
     if (isAttachment()) {
@@ -1619,8 +1619,8 @@ static int computeBestScrollOffset(int currentScrollOffset,
 
 void AccessibilityObject::scrollToMakeVisible() const
 {
-    IntRect objectRect = boundingBoxRect();
-    objectRect.move(-objectRect.x(), -objectRect.y());
+    IntRect objectRect = pixelSnappedIntRect(boundingBoxRect());
+    objectRect.setLocation(IntPoint());
     scrollToMakeVisibleWithSubFocus(objectRect);
 }
 

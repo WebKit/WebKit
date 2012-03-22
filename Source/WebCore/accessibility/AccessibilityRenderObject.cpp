@@ -2651,7 +2651,7 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
     }    
 }
 
-VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const LayoutPoint& point) const
+VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoint& point) const
 {
     if (!m_renderer)
         return VisiblePosition();
@@ -2676,7 +2676,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const LayoutP
     while (1) {
         LayoutPoint ourpoint;
 #if PLATFORM(MAC)
-        ourpoint = frameView->screenToContents(roundedIntPoint(point));
+        ourpoint = frameView->screenToContents(point);
 #else
         ourpoint = point;
 #endif
@@ -2819,7 +2819,7 @@ IntRect AccessibilityRenderObject::doAXBoundsForRange(const PlainTextRange& rang
     return IntRect();
 }
 
-AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTMLAreaElement* area, const LayoutPoint& point) const
+AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTMLAreaElement* area, const IntPoint& point) const
 {
     if (!area)
         return 0;
@@ -2855,7 +2855,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     Node* node = hitTestResult.innerNode()->shadowAncestorNode();
 
     if (node->hasTagName(areaTag)) 
-        return accessibilityImageMapHitTest(static_cast<HTMLAreaElement*>(node), roundedIntPoint(point));
+        return accessibilityImageMapHitTest(static_cast<HTMLAreaElement*>(node), point);
     
     if (node->hasTagName(optionTag))
         node = static_cast<HTMLOptionElement*>(node)->ownerSelectElement();
