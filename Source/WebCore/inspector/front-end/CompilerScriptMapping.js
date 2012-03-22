@@ -79,6 +79,19 @@ WebInspector.CompilerScriptMapping.prototype = {
     },
 
     /**
+     * @param {WebInspector.SourceMapParser} sourceMap
+     * @return {Array.<WebInspector.UISourceCode>}
+     */
+    _uiSourceCodesForSourceMap: function(sourceMap)
+    {
+        var result = []
+        var sourceURLs = sourceMap.sources();
+        for (var i = 0; i < sourceURLs.length; ++i)
+            result.push(this._uiSourceCodeByURL[sourceURLs[i]]);
+        return result;
+    },
+
+    /**
      * @param {WebInspector.Script} script
      */
     addScript: function(script)
@@ -87,8 +100,9 @@ WebInspector.CompilerScriptMapping.prototype = {
 
         if (this._scriptForSourceMap.get(sourceMap)) {
             this._sourceMapForScriptId[script.scriptId] = sourceMap;
-            var data = { removedItems: [], addedItems: [], scriptIds: [script.scriptId] };
-            this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
+            var uiSourceCodes = this._uiSourceCodesForSourceMap(sourceMap);
+            var data = { scriptId: script.scriptId, uiSourceCodes: uiSourceCodes };
+            this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptBound, data);
             return;
         }
 
@@ -109,8 +123,10 @@ WebInspector.CompilerScriptMapping.prototype = {
 
         this._sourceMapForScriptId[script.scriptId] = sourceMap;
         this._scriptForSourceMap.put(sourceMap, script);
-        var data = { removedItems: [], addedItems: uiSourceCodeList, scriptIds: [script.scriptId] };
+        var data = { removedItems: [], addedItems: uiSourceCodeList };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
+        var data = { scriptId: script.scriptId, uiSourceCodes: uiSourceCodeList };
+        this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptBound, data);
     },
 
     /**
@@ -134,7 +150,7 @@ WebInspector.CompilerScriptMapping.prototype = {
 
     reset: function()
     {
-        var data = { removedItems: this.uiSourceCodeList(), addedItems: [], scriptIds: [] };
+        var data = { removedItems: this.uiSourceCodeList(), addedItems: [] };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
 
         this._sourceMapByURL = {};

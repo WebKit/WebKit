@@ -37,7 +37,9 @@ WebInspector.ScriptMapping = function()
 }
 
 WebInspector.ScriptMapping.Events = {
-    UISourceCodeListChanged: "us-source-code-list-changed"
+    UISourceCodeListChanged: "ui-source-code-list-changed",
+    ScriptBound: "script-bound",
+    ScriptUnbound: "script-unbound",
 }
 
 WebInspector.ScriptMapping.prototype = {
@@ -78,8 +80,11 @@ WebInspector.MainScriptMapping = function()
     this._snippetsMapping = new WebInspector.SnippetsScriptMapping();
     this._mappings.push(this._snippetsMapping);
 
-    for (var i = 0; i < this._mappings.length; ++i)
+    for (var i = 0; i < this._mappings.length; ++i) {
         this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, this._handleUISourceCodeListChanged, this);
+        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.ScriptBound, this._handleScriptBound, this);
+        this._mappings[i].addEventListener(WebInspector.ScriptMapping.Events.ScriptUnbound, this._handleScriptUnbound, this);
+    }
 
     this._mappingForScriptId = {};
     this._mappingForUISourceCode = new Map();
@@ -87,7 +92,7 @@ WebInspector.MainScriptMapping = function()
 }
 
 WebInspector.MainScriptMapping.Events = {
-    UISourceCodeListChanged: "us-source-code-list-changed"
+    UISourceCodeListChanged: "ui-source-code-list-changed"
 }
 
 WebInspector.MainScriptMapping.prototype = {
@@ -133,13 +138,11 @@ WebInspector.MainScriptMapping.prototype = {
             this._liveLocationsForScriptId[scriptId].remove(liveLocation);
     },
 
-    _updateLiveLocations: function(scriptIds)
+    _updateLiveLocation: function(scriptId)
     {
-        for (var i = 0; i < scriptIds.length; ++i) {
-            var liveLocations = this._liveLocationsForScriptId[scriptIds[i]];
-            for (var j = 0; j < liveLocations.length; ++j)
-                liveLocations[j]._update();
-        }
+        var liveLocations = this._liveLocationsForScriptId[scriptId];
+        for (var j = 0; j < liveLocations.length; ++j)
+            liveLocations[j]._update();
     },
 
     /**
@@ -195,15 +198,32 @@ WebInspector.MainScriptMapping.prototype = {
         var scriptMapping = /** @type {WebInspector.ScriptMapping} */ event.target;
         var removedItems = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["removedItems"];
         var addedItems = /** @type {Array.<WebInspector.UISourceCode>} */ event.data["addedItems"];
-        var scriptIds = /** @type {Array.<number>} */ event.data["scriptIds"];
 
         for (var i = 0; i < removedItems.length; ++i)
             this._mappingForUISourceCode.remove(removedItems[i]);
         for (var i = 0; i < addedItems.length; ++i)
             this._mappingForUISourceCode.put(addedItems[i], scriptMapping);
-        this._updateLiveLocations(scriptIds);
         this.dispatchEventToListeners(WebInspector.MainScriptMapping.Events.UISourceCodeListChanged, event.data);
     },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _handleScriptBound: function(event)
+    {
+        var scriptId = /** @type {number} */ event.data.scriptId;
+        this._updateLiveLocation(scriptId);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _handleScriptUnbound: function(event)
+    {
+        var scriptId = /** @type {number} */ event.data.scriptId;
+        this._updateLiveLocation(scriptId);
+    },
+
 
     /**
      * @param {boolean} formatSource

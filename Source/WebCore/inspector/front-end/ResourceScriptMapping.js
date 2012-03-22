@@ -139,8 +139,23 @@ WebInspector.ResourceScriptMapping.prototype = {
             scriptIds.push(rawSourceCode._scripts[i].scriptId);
         var removedItems = removedItem ? [removedItem] : [];
         var addedItems = addedItem ? [addedItem] : [];
-        var data = { removedItems: removedItems, addedItems: addedItems, scriptIds: scriptIds };
+
+        if (removedItem) {
+            for (var i = 0; i < scriptIds.length; ++i) {
+                var data = { scriptId: scriptIds[i], uiSourceCodes: [removedItem] };
+                this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptUnbound, data);
+            }
+        }
+
+        var data = { removedItems: removedItems, addedItems: addedItems };
         this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.UISourceCodeListChanged, data);
+
+        if (addedItem) {
+            for (var i = 0; i < scriptIds.length; ++i) {
+                var data = { scriptId: scriptIds[i], uiSourceCodes: [addedItem] };
+                this.dispatchEventToListeners(WebInspector.ScriptMapping.Events.ScriptBound, data);
+            }
+        }
     },
 
     /**
