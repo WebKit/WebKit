@@ -963,9 +963,12 @@ void GraphicsLayerCA::platformCALayerPaintContents(GraphicsContext& context, con
     paintGraphicsLayerContents(context, clip);
 }
 
-void GraphicsLayerCA::platformCALayerDidCreateTiles()
+void GraphicsLayerCA::platformCALayerDidCreateTiles(const Vector<FloatRect>& dirtyRects)
 {
     ASSERT(m_layer->layerType() == PlatformCALayer::LayerTypeTileCacheLayer);
+
+    for (size_t i = 0; i < dirtyRects.size(); ++i)
+        setNeedsDisplayInRect(dirtyRects[i]);
 
     // Ensure that the layout is up to date before any individual tiles are painted by telling the client
     // that it needs to sync its layer state, which will end up scheduling the layer flusher.

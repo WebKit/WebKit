@@ -1,3 +1,16 @@
+2012-03-22  Anders Carlsson  <andersca@apple.com>
+
+        ASSERT(!needsLayout) in RenderView.cpp when visiting http://www.panic.com/blog/
+        https://bugs.webkit.org/show_bug.cgi?id=81953
+        <rdar://problem/11086998>
+
+        Reviewed by Sam Weinig.
+
+        Update for changes to WebCore.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::LayerClient::platformCALayerDidCreateTiles):
+
 2012-03-20  Steve Falkenburg  <sfalken@apple.com>
 
         Move WTF-related Windows project files out of JavaScriptCore

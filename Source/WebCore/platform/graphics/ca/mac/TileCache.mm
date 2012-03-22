@@ -182,6 +182,8 @@ void TileCache::setScale(CGFloat scale)
         return;
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    Vector<FloatRect> dirtyRects;
+
     m_deviceScaleFactor = deviceScaleFactor;
     m_scale = scale;
     [m_tileContainerLayer.get() setTransform:CATransform3DMakeScale(1 / m_scale, 1 / m_scale, 1)];
@@ -190,10 +192,15 @@ void TileCache::setScale(CGFloat scale)
 
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
         [it->second.get() setContentsScale:deviceScaleFactor];
-        [it->second.get() setNeedsDisplay];
+
+        IntRect tileRect = rectForTileIndex(it->first);
+        FloatRect scaledTileRect = tileRect;
+
+        scaledTileRect.scale(1 / m_scale);
+        dirtyRects.append(scaledTileRect);
     }
 
-    platformLayer->owner()->platformCALayerDidCreateTiles();
+    platformLayer->owner()->platformCALayerDidCreateTiles(dirtyRects);
 #endif
 }
 
@@ -350,7 +357,7 @@ void TileCache::revalidateTiles()
     TileIndex bottomRight;
     getTileIndexRangeForRect(tileCoverageRect, topLeft, bottomRight);
 
-    bool didCreateOrResizeTiles = false;
+    Vector<FloatRect> dirtyRects;
 
     for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
         for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
@@ -358,22 +365,19 @@ void TileCache::revalidateTiles()
 
             IntRect tileRect = rectForTileIndex(tileIndex);
             RetainPtr<WebTileLayer>& tileLayer = m_tiles.add(tileIndex, 0).first->second;
-            if (tileLayer) {
+            if (!tileLayer) {
+                tileLayer = createTileLayer(tileRect);
+                [m_tileContainerLayer.get() addSublayer:tileLayer.get()];
+            } else {
                 // We already have a layer for this tile. Ensure that its size is correct.
-                if (!CGSizeEqualToSize([tileLayer.get() frame].size, tileRect.size())) {
-                    [tileLayer.get() setFrame:tileRect];
-                    [tileLayer.get() setNeedsDisplay];
-                    didCreateOrResizeTiles = true;
-                }
-                continue;
+                if (CGSizeEqualToSize([tileLayer.get() frame].size, tileRect.size()))
+                    continue;
+                [tileLayer.get() setFrame:tileRect];
             }
 
-            didCreateOrResizeTiles = true;
-
-            tileLayer = createTileLayer(tileRect);
-
-            [tileLayer.get() setNeedsDisplay];
-            [m_tileContainerLayer.get() addSublayer:tileLayer.get()];
+            FloatRect scaledTileRect = tileRect;
+            scaledTileRect.scale(1 / m_scale);
+            dirtyRects.append(scaledTileRect);
         }
     }
 
@@ -384,10 +388,7 @@ void TileCache::revalidateTiles()
         m_tileCoverageRect.unite(rectForTileIndex(tileIndex));
     }
 
-    if (!didCreateOrResizeTiles)
-        return;
-
-    platformLayer->owner()->platformCALayerDidCreateTiles();
+    platformLayer->owner()->platformCALayerDidCreateTiles(dirtyRects);
 }
 
 WebTileLayer* TileCache::tileLayerAtIndex(const TileIndex& index) const
