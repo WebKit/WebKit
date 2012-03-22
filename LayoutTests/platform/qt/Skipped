@@ -258,6 +258,7 @@ fast/js/constructor-length.html
 fast/dom/MicroData
 
 # ENABLE(MUTATION_OBSERVERS) is disabled
+fast/mutation/callback-arguments.html
 fast/mutation/callback-second-argument.html
 fast/mutation/create-during-delivery.html
 fast/mutation/cross-document.html
