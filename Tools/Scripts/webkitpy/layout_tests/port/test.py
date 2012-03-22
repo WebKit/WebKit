@@ -35,7 +35,6 @@ from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 from webkitpy.layout_tests.port.base import VirtualTestSuite
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.crashlogs import CrashLogs
 
 
 # This sets basic expectations for a test. Each individual expectation
@@ -520,22 +519,13 @@ class TestDriver(Driver):
         if test.actual_audio:
             audio = base64.b64decode(test.actual_audio)
         crashed_process_name = None
-        crashed_pid = None
         if test.crash:
             crashed_process_name = self._port.driver_name()
-            crashed_pid = 1
         elif test.web_process_crash:
             crashed_process_name = 'WebProcess'
-            crashed_pid = 2
-
-        crash_log = ''
-        if crashed_process_name:
-            crash_logs = CrashLogs(self._port._filesystem)
-            crash_log = crash_logs.find_newest_log(crashed_process_name, None) or ''
-
-        return DriverOutput(actual_text, test.actual_image, test.actual_checksum, audio,
-            crash=test.crash or test.web_process_crash, crashed_process_name=crashed_process_name,
-            crashed_pid=crashed_pid, crash_log=crash_log,
+        return DriverOutput(actual_text, test.actual_image,
+            test.actual_checksum, audio, crash=test.crash or test.web_process_crash,
+            crashed_process_name=crashed_process_name,
             test_time=time.time() - start_time, timeout=test.timeout, error=test.error)
 
     def start(self, pixel_tests, per_test_args):

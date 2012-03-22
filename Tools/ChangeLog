@@ -1,5 +1,40 @@
 2012-03-22  Csaba Osztrogonác  <ossy@webkit.org>
 
+        webkitpy: clean up actually getting crash logs from DRT/WTR crashes
+        https://bugs.webkit.org/show_bug.cgi?id=81603
+
+        Unreviewed rolling out r111609 and part of r111615,
+        because it broke NRWT on Qt-WK2 platform.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._handle_error):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+        (TestResultWriter.write_crash_report):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.is_crash_reporter):
+        (Port._driver_class):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        (ChromiumDriverTest.test_crashed_process_name):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (DriverOutput.__init__):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort):
+        (MacPort.is_crash_reporter):
+        (MacPort.release_http_lock):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestDriver.run_test):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver.__init__):
+        (WebKitDriver._start):
+        (WebKitDriver.has_crashed):
+        (WebKitDriver._check_for_driver_crash):
+        (WebKitDriver.run_test):
+
+2012-03-22  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Add full platforms to Qt buildslaves
         https://bugs.webkit.org/show_bug.cgi?id=81877
 

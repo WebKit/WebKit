@@ -91,23 +91,17 @@ class ChromiumDriverTest(unittest.TestCase):
         self.driver._proc.stdout.readline = mock_readline
         self._assert_write_command_and_read_line(expected_crash=True)
 
-    def test_crash_log(self):
+    def test_crashed_process_name(self):
         self.driver._proc = Mock()
 
         # Simulate a crash by having stdout close unexpectedly.
         def mock_readline():
             raise IOError
         self.driver._proc.stdout.readline = mock_readline
-        self.driver._proc.pid = 1234
 
         self.driver.test_to_uri = lambda test: 'mocktesturi'
-        self.driver._port.driver_name = lambda: 'mockdriver'
-        self.driver._port._get_crash_log = lambda name, pid, out, err: 'mockcrashlog'
         driver_output = self.driver.run_test(DriverInput(test_name='some/test.html', timeout=1, image_hash=None, is_reftest=False))
-        self.assertTrue(driver_output.crash)
-        self.assertEqual(driver_output.crashed_process_name, 'mockdriver')
-        self.assertEqual(driver_output.crashed_pid, 1234)
-        self.assertEqual(driver_output.crash_log, 'mockcrashlog')
+        self.assertEqual(self.driver._port.driver_name(), driver_output.crashed_process_name)
 
     def test_stop(self):
         self.pid = None

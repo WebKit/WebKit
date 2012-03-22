@@ -64,8 +64,7 @@ class DriverOutput(object):
     strip_patterns.append((re.compile('scrollHeight [0-9]+'), 'scrollHeight'))
 
     def __init__(self, text, image, image_hash, audio, crash=False,
-            test_time=0, timeout=False, error='', crashed_process_name='??',
-            crashed_pid=None, crash_log=None):
+            test_time=0, timeout=False, error='', crashed_process_name=None):
         # FIXME: Args could be renamed to better clarify what they do.
         self.text = text
         self.image = image  # May be empty-string if the test crashes.
@@ -74,8 +73,6 @@ class DriverOutput(object):
         self.audio = audio  # Binary format is port-dependent.
         self.crash = crash
         self.crashed_process_name = crashed_process_name
-        self.crashed_pid = crashed_pid
-        self.crash_log = crash_log
         self.test_time = test_time
         self.timeout = timeout
         self.error = error  # stderr output
