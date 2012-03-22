@@ -1,3 +1,10 @@
+2012-03-22  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the JavaScriptCore debug build after r111778.
+
+        * WTF.xcodeproj/project.pbxproj: Use debug DEBUG_DEFINES when building
+        the Debug configuration.
+
 2012-03-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         Actually move WTF files to their new home
