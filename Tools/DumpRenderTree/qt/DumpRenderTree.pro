@@ -11,7 +11,7 @@ DESTDIR = $$ROOT_BUILD_DIR/bin
 
 load(features)
 
-WEBKIT += wtf webcore
+WEBKIT += wtf javascriptcore webcore
 
 INCLUDEPATH += \
     $$PWD/.. \
@@ -36,7 +36,7 @@ HEADERS += \
     testplugin.h
 
 SOURCES += \
-    $${ROOT_WEBKIT_DIR}/Source/JavaScriptCore/wtf/Assertions.cpp \
+    $${ROOT_WEBKIT_DIR}/Source/WTF/wtf/Assertions.cpp \
     $$PWD/../WorkQueue.cpp \
     DumpRenderTreeQt.cpp \
     EventSenderQt.cpp \

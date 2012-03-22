@@ -21,7 +21,7 @@ haveQt(5) {
     # path for QtScript when it's built as a standalone module
     QT += script
 } else {
-    INCLUDEPATH += $$PWD/../JavaScriptCore/wtf/qt/compat
+    INCLUDEPATH += $$PWD/../WTF/wtf/qt/compat
 }
 
 RESOURCES += \

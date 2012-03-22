@@ -200,7 +200,8 @@ HEADERS += \
 
 INCLUDEPATH += \
     $$PWD/WebKit/qt/Api \
-    $$PWD/WebKit/qt/WebCoreSupport
+    $$PWD/WebKit/qt/WebCoreSupport \
+    $$PWD/WTF/wtf/qt
 
 contains(DEFINES, ENABLE_VIDEO=1) {
     !contains(DEFINES, WTF_USE_QTKIT=1):!contains(DEFINES, WTF_USE_GSTREAMER=1):contains(DEFINES, WTF_USE_QT_MULTIMEDIA=1) {

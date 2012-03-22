@@ -16,7 +16,8 @@ INCLUDEPATH += \
     $$SOURCE_DIR \
     $$SOURCE_DIR/gobject \
     $$SOURCE_DIR/qt \
-    $$SOURCE_DIR/unicode
+    $$SOURCE_DIR/unicode \
+    $$SOURCE_DIR/wtf
 
 haveQt(5) {
     mac {

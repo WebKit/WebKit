@@ -1,3 +1,12 @@
+2012-03-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Actually move WTF files to their new home
+        https://bugs.webkit.org/show_bug.cgi?id=81844
+
+        [Qt] Unreviewed buildfix after r111778.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+
 2012-03-22  Dan Bernstein  <mitz@apple.com>
 
         Font fallback in WebKitTestRunner depends on user settings
