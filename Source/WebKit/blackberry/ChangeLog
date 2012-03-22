@@ -5,6 +5,19 @@
 
         Reviewed by Rob Buis.
 
+        Make suggested style clean up and move int offset = 0 directly
+        above is actual usage.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::isPositionInNode):
+
+2012-03-22  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] DOMSupport isPositionInNode should have early returns for null nodes
+        https://bugs.webkit.org/show_bug.cgi?id=81929
+
+        Reviewed by Rob Buis.
+
         Add early returns in isPositionInNode when either
         node or the position node is null.
 
