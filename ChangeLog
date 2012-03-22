@@ -1,5 +1,11 @@
 2012-03-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add the forgotten admin.html after r108917.
+
+        * Websites/webkit-perf.appspot.com/admin.html: Added.
+
+2012-03-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Increment the perf-o-matic app version.
 
         * Websites/webkit-perf.appspot.com/app.yaml:
