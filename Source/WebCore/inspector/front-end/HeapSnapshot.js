@@ -959,56 +959,22 @@ WebInspector.HeapSnapshot.prototype = {
 
     _buildRetainers: function()
     {
-        var nodeIndexes = this.nodeIndexes;
-        var nodePositions = this._nodePosition;
-        var nodeCount = this.nodeCount;
-        var nodes = this._nodes;
-
-        // Builds up two arrays:
-        //  - "backRefsArray" is a continuous array, where each node owns an
-        //    interval (can be empty) with corresponding back references.
-        //  - "indexArray" is an array of indexes in the "backRefsArray"
-        //    with the same positions as in the _nodeIndex.
-        var indexArray = this._retainerIndex = new Int32Array(nodeCount);
-        var edgesCountOffset = this._edgesCountOffset;
-        var firstEdgeOffset = this._firstEdgeOffset;
-        var edgeFieldsCount = this._edgeFieldsCount;
-        var edgeToNodeOffset = this._edgeToNodeOffset;
-        var backRefsCount = 0;
-        // Count the number of retainers for each node
-        for (var i = 0; i < nodeCount; ++i) {
-            var nodeIndex = nodeIndexes[i];
-            var edgesOffset = nodeIndex + firstEdgeOffset + edgeToNodeOffset;
-            var edgesCount = nodes[nodeIndex + edgesCountOffset];
-            backRefsCount += edgesCount;
-            for (var j = 0; j < edgesCount; ++j) {
-              var targetNodeIndex = nodes[j * edgeFieldsCount + edgesOffset];
-              ++indexArray[nodePositions[targetNodeIndex]];
-            }
-        }
-        var backRefsArray = this._retainers = new Int32Array(backRefsCount);
-        // Put in the first slot of each backRefsArray slice the count of entries
-        // that will be filled.
-        var backRefsPosition = 0;
-        for (i = 0; i < nodeCount; ++i) {
-            backRefsCount = backRefsArray[backRefsPosition] = indexArray[i];
-            indexArray[i] = backRefsPosition;
-            backRefsPosition += backRefsCount;
-        }
-        var retainerIndex = this._retainerIndex;
-        // Fill up the retainers array with indexes of edges.
-        for (var i = 0; i < nodeCount; ++i) {
-            var nodeIndex = nodeIndexes[i];
-            var edgesOffset = nodeIndex + firstEdgeOffset;
-            var edgesCount = nodes[nodeIndex + edgesCountOffset];
-            for (var j = 0; j < edgesCount; ++j) {
-                var edgeIndex = j * edgeFieldsCount + edgesOffset;
-                var retNode = nodePositions[nodes[edgeIndex + edgeToNodeOffset]];
-                var retIndex = indexArray[retNode];
-                var backRefIndex = retIndex + (--backRefsArray[retIndex]);
-                backRefsArray[backRefIndex] = edgeIndex;
-            }
-        }
+        this._buildReverseIndex(
+            "_retainerIndex",
+            "_retainers",
+            (function (node, callback)
+             {
+                 for (var edgesIter = node.edges; edgesIter.hasNext(); edgesIter.next())
+                     callback(this._nodePosition[edgesIter.edge.nodeIndex]);
+             }).bind(this),
+            (function (node, indexCallback, dataCallback)
+             {
+                 for (var edgesIter = node.edges; edgesIter.hasNext(); edgesIter.next()) {
+                     var edge = edgesIter.edge;
+                     var retIndex = this._getRetainerIndex(edge.nodeIndex);
+                     dataCallback(indexCallback(retIndex), node.nodeIndex + this._firstEdgeOffset + edge.edgeIndex);
+                 }
+             }).bind(this));
     },
 
     _calculateObjectToWindowDistance: function()
