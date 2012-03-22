@@ -56,6 +56,7 @@ public:
 #if ENABLE(WEBGL)
     PassRefPtr<CustomFilterShader> createShaderWithContext(GraphicsContext3D*);
 #endif
+
 protected:
     // StyleCustomFilterProgram can notify the clients that the cached resources are
     // loaded and it is ready to create CustomFilterShader objects.
